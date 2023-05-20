@@ -52,7 +52,7 @@ display: flex;
 
 body{
     overflow: hidden;
-    background: url("images/bg.png") ;
+    background: url("Images/bg.png") ;
     min-height: 100%;
     background-repeat: no-repeat;
     background-attachment: fixed;
