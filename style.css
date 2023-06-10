@@ -31,6 +31,7 @@ nav{
 
 .navItems{
 display: flex;
+position: relative;
 }
 
 .navItems li{
@@ -49,7 +50,7 @@ display: flex;
 .navItems li:hover a{
     color: rgb(166, 207, 255)
     }
-
+  
 body{
     overflow: hidden;
     background:rgb(23, 19, 41);
