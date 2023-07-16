@@ -130,6 +130,7 @@ h4 {
 
 iframe{
     box-shadow: 1px 10px 30px 10px  rgba(80, 80, 80, 0.288);
+    border-radius: 18px;
 }
 
 @keyframes float {
