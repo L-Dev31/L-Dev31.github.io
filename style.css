@@ -53,7 +53,6 @@ position: relative;
   
 body{
     overflow: hidden;
-    background:rgb(23, 19, 41);
     background: url("https://media.discordapp.net/attachments/1081363009357758557/1116445631137972264/bg.png?width=574&height=671") ;
     min-height: 100%;
     background-repeat: no-repeat;
@@ -63,7 +62,6 @@ body{
 }
 
 .container {
-  border-top: rgb(91, 88, 255);
     animation-name: ColAnim;
     animation-duration: 1s;
     animation-timing-function: linear;
@@ -79,22 +77,24 @@ body{
 
 @keyframes ColAnim {
     0%   {border-radius: 0%;color: #ffffff;}
-    100% {border-radius: 70px 70px 0px 0px;color: rgb(91, 88, 255)}
+    100% {border-radius: 70px 70px 0px 0px}
   }
 
   strong {
-    color: rgb(91, 88, 255);
+    background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to right, #4e54c8, #ee8ffb);
   }
 
   h2 {
-    animation-name: ColAnim;
-    animation-duration: 1s;
-    animation-timing-function: linear;
     font-size: 80px;
-    color: rgb(91, 88, 255);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, #4e54c8, #ee8ffb);
     text-align: center;
     text-transform: capitalize;
-    letter-spacing: 6px;
     }
 
 h3 {
@@ -102,7 +102,10 @@ h3 {
     animation-duration: 1s;
     animation-timing-function: linear;
     font-size: 40px;
-    color: rgb(91, 88, 255);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, #4e54c8, #ee8ffb);
     margin-left: 10%;
     margin-right: 10%;
     text-transform: capitalize;
@@ -157,7 +160,7 @@ iframe{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(91, 88, 255);
+    background-image: linear-gradient(to right, #4e54c8, #ee8ffb);
     padding: 20px;
     font-size: 18px;
   }
