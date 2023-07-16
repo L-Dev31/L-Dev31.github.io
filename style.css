@@ -52,7 +52,10 @@ position: relative;
     }
   
 body{
+  zoom: 0.5;
+
     overflow: hidden;
+    background:rgb(173, 173, 173);
     background: url("https://media.discordapp.net/attachments/1081363009357758557/1116445631137972264/bg.png?width=574&height=671") ;
     min-height: 100%;
     background-repeat: no-repeat;
@@ -201,7 +204,8 @@ iframe{
     background: #f1f3f4;
     border-radius: 20px;
     box-shadow: 0 50px 80px rgba(0, 0, 0, 0.5);
-
+    justify-content: center;
+    text-align: center;
   }
 
   .player .imgbox {
@@ -278,7 +282,6 @@ iframe{
   text-align: center;
   margin-top: 5vh;
   margin-bottom: 40em;
-  
 }
 
 .pic-ctn > img {
@@ -292,6 +295,7 @@ iframe{
   box-shadow: 0 50px 80px rgba(0, 0, 0, 0.5);
   border-radius: 15px;
   min-height: 780px;
+  margin-left: 92em;
 }
 
 
