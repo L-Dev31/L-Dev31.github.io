@@ -138,26 +138,6 @@ iframe{
     box-shadow: 1px 10px 30px 10px  rgba(80, 80, 80, 0.288);
     border-radius: 18px;
 }
-
-@keyframes float {
-    0% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(20px);
-    }
-    100% {
-      transform: translateY(0);
-    }
-  }
-  
-  .Floaty {
-    animation: float 2s ease-in-out infinite;
-    margin-left: 43%;
-    margin-right: 10%;
-    margin-top: 1em;
-    margin-bottom: 2em;
-  }
   
   footer {
     display: flex;
@@ -196,8 +176,9 @@ iframe{
     text-transform: uppercase;
   }
 
+  
   .player{
-    margin-left: 5%;
+    margin-left: 6.5%;
     margin-top: 2%;
     margin-bottom: 2%;
     width: 350px;
