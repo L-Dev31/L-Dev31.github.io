@@ -13,6 +13,7 @@ html {
     text-shadow: rgba(33, 41, 53, 0.432) 1px 0 10px;
 }
 
+
 .logo {
     display: block;
     margin: 0 auto;
@@ -75,7 +76,8 @@ body{
     min-height: 100vh;
     background: linear-gradient(to bottom, #fff, #e1e1e1, #e1e1e1, #fff);
     box-shadow: 1px 10px 20px 12px rgba(0, 0, 0, 0.699);
-
+    justify-content: center;
+    
 }
 
 @keyframes ColAnim {
@@ -132,7 +134,18 @@ h4 {
         letter-spacing: 2px;
         margin-bottom: 5em;
 }
-
+#fullscreen-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("votre_image.jpg");
+  background-size: cover;
+  background-position: center;
+  opacity: 1;
+  transition: opacity 1s ease;
+}
 
 iframe{
     box-shadow: 1px 10px 30px 10px  rgba(80, 80, 80, 0.288);
@@ -178,15 +191,12 @@ iframe{
 
   
   .player{
-    margin-left: 6.5%;
-    margin-top: 2%;
-    margin-bottom: 2%;
+    margin: 1.5em;
     width: 350px;
     background: #f1f3f4;
     border-radius: 20px;
     box-shadow: 0 50px 80px rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    text-align: center;
+    
   }
 
   .player .imgbox {
@@ -210,14 +220,23 @@ iframe{
 
 .boxart {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
 }
-
 .trailer__player {
   margin-top: 10px;
   margin-bottom: 3%;
-  text-align: center;   
+  text-align: center;
 }
+
+@media (max-width: 767px) {
+  .trailer__player video {
+    width: 100%;
+    height: auto;
+    max-height: 300px; /* Ajustez cette valeur en fonction de vos besoins */
+  }
+}
+
 
 .media__player {
   margin-top: 10px;
