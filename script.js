@@ -19,10 +19,8 @@ if (window.innerWidth <= 767) {
       });
     }
   
-    // Appeler la fonction lors du chargement initial de la page
     applyTransformationToElements();
   
-    // Appeler la fonction lors du redimensionnement de la fenêtre
     window.addEventListener('resize', applyTransformationToElements);
   }
   
@@ -58,7 +56,38 @@ window.addEventListener('scroll', lazyLoad);
 window.addEventListener('resize', lazyLoad);
 window.addEventListener('load', lazyLoad);
 
-rotateImages(); // Pour initialiser l'animation dès le chargement de la page
+rotateImages();
 
 setInterval(rotateImages, 4000);
 
+function loadTranslations(language) {
+    return fetch(`Language/${language}.json`)
+      .then(response => response.json())
+      .then(data => {
+        translations[language] = data;
+        console.log(`Translations loaded for language: ${language}`);
+        applyTranslations();
+      })
+      .catch(error => {
+        console.error(`Failed to load translations for language: ${language}`);
+        console.error(error);
+      });
+  }
+  
+  const flags = document.querySelectorAll('.FlagIMG');
+  flags.forEach(flag => {
+    flag.addEventListener('click', function() {
+      const language = this.getAttribute('data-language');
+      loadTranslations(language);
+    });
+  });
+  
+  loadTranslations('fr')
+    .then(() => {
+      const translationsFr = translations['fr'];
+
+      document.getElementById('title').textContent = translationsFr.title;
+      document.getElementById('welcome').textContent = translationsFr.welcome;
+      document.getElementById('button').textContent = translationsFr.button;
+    });
+  

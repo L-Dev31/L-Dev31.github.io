@@ -1,2 +1,2 @@
 # L-Dev31.github.io
-My official Website containing SMAG and more !
+This website isn't finished!!!!
