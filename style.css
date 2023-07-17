@@ -229,15 +229,6 @@ iframe{
   text-align: center;
 }
 
-@media (max-width: 767px) {
-  .trailer__player video {
-    width: 100%;
-    height: auto;
-    max-height: 300px; /* Ajustez cette valeur en fonction de vos besoins */
-  }
-}
-
-
 .media__player {
   margin-top: 10px;
   margin-bottom: 3%;
@@ -245,72 +236,72 @@ iframe{
 }
 
 .pic-ctn {
+  width: 100%;
+  height: 200px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  
-}
-
-
-@keyframes display {
-  0% {
-    transform: translateX(200px);
-    opacity: 0;
-  }
-  10% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  20% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  30% {
-    transform: translateX(-200px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(-200px);
-    opacity: 0;
-  }
-}
-
-.pic-ctn {
+  flex-wrap: wrap;
+  margin-top: 1vh;
+  margin-bottom: 45em;
   position: relative;
-  width: 100vw;
-  height: 200px;
-  text-align: center;
-  margin-top: 5vh;
-  margin-bottom: 40em;
 }
 
-.pic-ctn > img {
-  position: absolute;
-  z-index: 1;
-  max-width: 1270px;
-  top: 0;
+.pic-ctn img {
+  
+  width: 1280px;
+  height: 720px;
+  object-fit: cover;
   opacity: 0;
-  animation: display 20s infinite;
-  margin: 10px;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-100%);
   box-shadow: 0 50px 80px rgba(0, 0, 0, 0.5);
-  border-radius: 15px;
-  min-height: 780px;
-  margin-left: 92em;
+  border-radius: 10px;
+  transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+}
+
+.pic-ctn img.active {
+  opacity: 1;
+  transform: translateX(0%);
+  z-index: 1;
+}
+
+.pic-ctn img.previous {
+  opacity: 0;
+  transform: translateX(-100%);
+  z-index: 0;
+}
+
+.pic-ctn img.next {
+  opacity: 0;
+  transform: translateX(100%);
+  z-index: 0;
+}
+
+@media (max-width: 767px) {
+  .pic-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+  }
+
+  .pic-ctn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: auto;
+  }
+
+  .pic-ctn img {
+    width: auto;
+    height: 400px;
+    margin: 10px;
+  }
 }
 
 
-img:nth-child(2) {
-  animation-delay: 4s;
-}
-img:nth-child(3) {
-  animation-delay: 8s;
-}
-img:nth-child(4) {
-  animation-delay: 12s;
-}
-img:nth-child(5) {
-  animation-delay: 16s;
-}
 
 .textbox a {
   color: rgb(0, 183, 255);
