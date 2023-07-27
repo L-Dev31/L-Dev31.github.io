@@ -100,7 +100,7 @@ strong {
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  background-image: linear-gradient(to right, #4e54c8, #ee8ffb);
+  background-image: linear-gradient(to right bottom, #4e54c8, #ee8ffb);
 }
 
 h2 {
