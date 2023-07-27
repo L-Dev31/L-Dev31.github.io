@@ -11,9 +11,21 @@ html {
   color: white;
   font-family: 'poppins', sans-serif;
   text-shadow: rgba(33, 41, 53, 0.432) 1px 0 10px;
-  scrollbar-color: #4e54c8 white;
 }
 
+::-webkit-scrollbar {
+  width: 25px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgb(255, 255, 255);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background-image: linear-gradient(to bottom, #9da0dd, #dbb4e1);
+}
 
 .logo {
   display: block;
