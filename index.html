@@ -4,23 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>L-Dev</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #24202c, #252329);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .project {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 50%;
+            background-color: #00000033;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: box-shadow 0.5s;
+        }
+
+        .project:hover {
+            box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.300); 
+        }
+
+
+        .project img {
+            max-width: 800;
+            border-radius: 20px 0 0 20px;
+        }
+
+        .project-info {
+            padding: 20px;
+            width: 50%;
+        }
+
+        h1, h2, p {
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+
+        a {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+    </style>
 </head>
 <body>
     <h1>My projects</h1>
-    <h2>Super Mario Another Galaxy</h2>
-    <p>A Super Mario Galaxy 2 mod using GLE-V3 and Project Template</p>
-    <a href="smag/index.html">show more</a>
 
-    <h2>GPMailbox</h2>
-    <p>Un site ecommerce communautaire pour l'archipel de Guadeloupe</p>
-    <a href="smag/index.html">show more</a>
+    <div class="project">
+        <img src="image/smag.jpg" alt="Super Mario Another Galaxy">
+        <div class="project-info">
+            <h2>Super Mario Another Galaxy</h2>
+            <p>A Super Mario Galaxy 2 mod using GLE-V3 and Project Template</p>
+            <a href="smag/index.html">show more</a>
+        </div>
+    </div>
 
-    <h2>Suyu</h2>
-    <p>A non official website for Suyu emulator</p>
-    <a href="suyu.dev/index.html">show more</a>
+    <div class="project">
+        <img src="image/gdb.jpg" alt="GPMailbox">
+        <div class="project-info">
+            <h2>GPMailbox</h2>
+            <p>Un site ecommerce communautaire pour l'archipel de Guadeloupe</p>
+            <a href="gpmailbox/index.html">show more</a>
+        </div>
+    </div>
 
-    <h2>SpaceWebsite</h2>
-    <p>Un devoirs de NSI réalisé a SR consistant à décrire les planetes du systeme solaire</p>
-    <a href="space/index.html">show more</a>
+    <div class="project">
+        <img src="image/suyu.jpg" alt="Suyu">
+        <div class="project-info">
+            <h2>Suyu</h2>
+            <p>A non official website for Suyu emulator</p>
+            <a href="suyu.dev/index.html">show more</a>
+        </div>
+    </div>
+
+    <div class="project">
+        <img src="image/space.jpg" alt="SpaceWebsite">
+        <div class="project-info">
+            <h2>SpaceWebsite</h2>
+            <p>Un devoirs de NSI réalisé a SR consistant à décrire les planetes du systeme solaire</p>
+            <a href="space/index.html">show more</a>
+        </div>
+    </div>
 </body>
 </html>
