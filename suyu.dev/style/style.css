@@ -328,6 +328,7 @@ svg {
   position: relative;
   justify-content: center; 
 }
+
 .imageContainer h1 {
   background-image: linear-gradient(90deg, #0198FC 0%, #ffa4d1 40%, #ff8482 60%, #FE3153 100%);
   color: transparent;
@@ -338,7 +339,7 @@ svg {
   opacity: 0;
   top: 5%;
   transition: opacity 1s ease, transform 1s ease, background-image 0.5s ease;
-  max-width: 1400px;
+  max-width: 1300px;
   margin: 0 auto;
 }
 
@@ -351,7 +352,6 @@ svg {
   bottom: 10px;
   opacity: 0;
   transition: opacity 1s ease, transform 1s ease;
-  max-width: 1200px;
 }
 
 .imageContainer h1.active, .imageContainer img.deviceImage.active {
