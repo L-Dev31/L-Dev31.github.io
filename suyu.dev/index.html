@@ -126,32 +126,32 @@
     rotateSVG();
     
     document.addEventListener('DOMContentLoaded', function() {
-        var navbar = document.querySelector('nav');
-    
-        window.addEventListener('scroll', function() {
-            if (window.scrollY >= 100) {
-                navbar.classList.add('sticky');
-            } else {
-                navbar.classList.remove('sticky');
-            }
+    var navbar = document.querySelector('nav');
+
+    window.addEventListener('scroll', function() {
+        if (window.scrollY >= 100) {
+            navbar.classList.add('sticky');
+        } else {
+            navbar.classList.remove('sticky');
+        }
+    });
+
+    var navLinks = document.querySelectorAll('nav a');
+
+    navLinks.forEach(function(link) {
+        link.addEventListener('click', function(event) {
+            event.preventDefault(); // Empêche le comportement par défaut du lien
+            var targetId = this.getAttribute('href'); // Récupère l'ID de la cible du lien
+            var targetElement = document.querySelector(targetId); // Sélectionne l'élément cible
+            var offsetTop = targetElement.offsetTop; // Récupère la position de l'élément cible par rapport au haut de la page
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth' // Défilement en douceur
+            });
         });
     });
-    
-    window.addEventListener('scroll', function() {
-      var element = document.querySelector('.imageContainer h1');
-      var image = document.querySelector('.imageContainer img.deviceImage');
-      var position = element.getBoundingClientRect();
-    
-      if(position.top < window.innerHeight && position.bottom >= 0) {
-        element.classList.add('active');
-        setTimeout(function() {
-          image.classList.add('active');
-        }, 500);
-      } else {
-        element.classList.remove('active');
-        image.classList.remove('active');
-      }
-    });
+});
+
     
     var images = ["image/middleImages/switchfw.png","image/middleImages/android.png","image/middleImages/devices.png"];
     var texts = ["Working Nintendo Switch Firmware","Play your favorite games on Android","A new way to discover Nintendo Switch Games"];
