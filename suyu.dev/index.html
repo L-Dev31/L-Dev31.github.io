@@ -140,13 +140,13 @@
 
     navLinks.forEach(function(link) {
         link.addEventListener('click', function(event) {
-            event.preventDefault(); // Empêche le comportement par défaut du lien
-            var targetId = this.getAttribute('href'); // Récupère l'ID de la cible du lien
-            var targetElement = document.querySelector(targetId); // Sélectionne l'élément cible
-            var offsetTop = targetElement.offsetTop; // Récupère la position de l'élément cible par rapport au haut de la page
+            event.preventDefault();
+            var targetId = this.getAttribute('href'); 
+            var targetElement = document.querySelector(targetId); 
+            var offsetTop = targetElement.offsetTop;
             window.scrollTo({
                 top: offsetTop,
-                behavior: 'smooth' // Défilement en douceur
+                behavior: 'smooth' 
             });
         });
     });

@@ -4,83 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>L-Dev31</title>
-    <style>
-        body {
-            background: linear-gradient(to right, #24202c, #252329);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        .project {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            width: 50%;
-            background-color: #00000033;
-            border-radius: 20px;
-            overflow: hidden;
-            transition: box-shadow 0.5s;
-            margin-bottom: 20px;
-        }
-
-        .project-info {
-            padding: 20px;
-            width: 50%;
-            align-self: flex-end; 
-        }
-
-        .project:hover {
-            box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.300); 
-        }
-
-
-        .project img {
-            max-width: 800;
-            border-radius: 20px 0 0 20px;
-        }
-
-        h1, h2, p {
-            margin: 0;
-        }
-
-        h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-
-        p {
-            font-size: 1em;
-            margin-bottom: 20px;
-        }
-
-        a {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 50px;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
-
-        a:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="image/favicon.png">
 </head>
+<style>
+body {
+    background: #1D1D25;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    z-index: 2;
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    background-color: #121217;
+    box-shadow: 0 10px 10px #0000002d;
+    padding: 10px 0;
+    z-index: 1000;
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    margin: 0;
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.nav-links li a {
+    color: #a5a5a5;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.nav-links li a:hover {
+    color: #ffffff;
+}
+
+.section {
+    padding: 50px 0;
+}
+
+.project {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #00000033;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: box-shadow 0.5s;
+    margin-bottom: 20px;
+    height: 200px;
+}
+
+.project-info {
+    padding: 20px;
+    width: 50%;
+}
+
+.project:hover {
+    box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.300); 
+}
+
+.project img {
+    max-width: 100%;
+    border-radius: 20px 0 0 20px;
+}
+
+h1, h2, p {
+    margin: 0;
+}
+
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1em;
+    margin-bottom: 20px;
+}
+
+a {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+a:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+</style>
 <body>
-    <h1>My projects</h1>
+
+<nav class="navbar">
+    <div class="container">
+        <h1 class="logo" style="margin-left: 250px;">L-Dev31</h1>
+        <ul class="nav-links">
+            <li><a href="#active-projects">Active Projects</a></li>
+            <li><a href="#other-projects" style="margin-right: 200px;">Other Projects</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div id="active-projects" class="section">
+    <h1>Active projects</h1>
 
     <div class="project">
         <img src="image/smag.jpg" alt="Super Mario Another Galaxy">
@@ -117,6 +176,10 @@
             <a href="suyu.dev/index.html">show more</a>
         </div>
     </div>
+</div>
+
+<div id="other-projects" class="section">
+    <h1>Other projects</h1>
 
     <div class="project">
         <img src="image/space.jpg" alt="SpaceWebsite">
@@ -126,5 +189,16 @@
             <a href="space/index.html">show more</a>
         </div>
     </div>
+
+    <div class="project">
+        <img src="image/wlux.jpg" alt="SpaceWebsite">
+        <div class="project-info">
+            <h2>Winelux</h2>
+            <p>A webdesign project that doesn't really have any importance. It is a website for a fictive wine brand in Luxembourg</p>
+            <a href="winelux/index.html">show more</a>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
