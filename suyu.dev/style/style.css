@@ -89,7 +89,7 @@ to {
 }
 
 h1 {
-  font-size: 6em;
+  font-size: 5em;
   font-family: 'normal', sans-serif;
   margin-bottom: 20px;
   z-index: 1;
@@ -226,7 +226,7 @@ svg {
 }
 
 .gradient-sub-title {
-  background-image: linear-gradient(90deg, #0198FC 0%, #ff8482 70%, #FE3153 100%) !important;
+  background-image: linear-gradient(90deg, #0198FC 0%, #ffa4d1 40%, #ff8482 60%, #FE3153 100%) !important;
   font-weight: bold;
   -webkit-background-clip: text !important; 
   background-clip: text !important;
@@ -328,9 +328,8 @@ svg {
   position: relative;
   justify-content: center; 
 }
-
 .imageContainer h1 {
-  background-image: linear-gradient(90deg, #0198FC 0%, #de7d7b 56%, #FE3153 100%);
+  background-image: linear-gradient(90deg, #0198FC 0%, #ffa4d1 40%, #ff8482 60%, #FE3153 100%);
   color: transparent;
   -webkit-background-clip: text;
   text-align: center;
@@ -345,10 +344,10 @@ svg {
 
 .imageContainer img.deviceImage {
   position: absolute;
-  width: 1300px;
+  max-width: 1300px;
   max-height: 700px;
   left: calc(50% - 600px); 
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(1);
   bottom: 10px;
   opacity: 0;
   transition: opacity 1s ease, transform 1s ease;
@@ -357,12 +356,17 @@ svg {
 
 .imageContainer h1.active, .imageContainer img.deviceImage.active {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 
 .imageContainer h1.change-background {
   transition: background-image 0.5s ease;
 }
+
+.imageContainer:hover img.deviceImage {
+  transform: translateX(-50%) scale(0.8);
+}
+
 
 @keyframes fadeIn {
   0% { opacity: 0; }
