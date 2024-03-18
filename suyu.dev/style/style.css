@@ -340,19 +340,20 @@ svg {
   top: 5%;
   transition: opacity 1s ease, transform 1s ease, background-image 0.5s ease;
   max-width: 1300px;
+  max-height: 30%;
   margin: 0 auto;
 }
 
 .imageContainer img.deviceImage {
   position: absolute;
-  max-width: 1300px;
+  max-width: 60%;
   max-height: 700px;
-  left: calc(50% - 600px); 
-  transform: translateX(-50%) scale(1);
+  left: calc(50% - (1150px / 2));
   bottom: 10px;
   opacity: 0;
   transition: opacity 1s ease, transform 1s ease;
 }
+
 
 .imageContainer h1.active, .imageContainer img.deviceImage.active {
   opacity: 1;

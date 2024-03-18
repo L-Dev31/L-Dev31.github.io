@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suyu</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="text-animation">
+            <span class="letter">S</span>
+            <span class="letter">U</span>
+            <span class="letter">Y</span>
+            <span class="letter">U</span>
+        </div>
+        <div class="image-container">
+            <img src="image.jpg" alt="Image">
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+    const letters = document.querySelectorAll(".letter");
+    letters.forEach((letter, index) => {
+        setTimeout(() => {
+            letter.style.opacity = "1";
+        }, 500 * index);
+    });
+
+    setTimeout(function() {
+        document.querySelector(".image-container").style.opacity = "1";
+    }, 1500);
+});
+
+    </script>
+</body>
+</html>
