@@ -88,6 +88,13 @@ body {
   object-fit: cover;
 }
 
+@media screen and (max-width: 767px) {
+  #video-background {
+    min-width: 50%; 
+    min-height: 100%;
+  }
+}
+
 .page-container {
   display: flex;
   flex-direction: column;
