@@ -1,3 +1,17 @@
+document.addEventListener("DOMContentLoaded", function() {
+  var bgVideo = document.getElementById('bg-video');
+  var hasPlayed = localStorage.getItem('videoPlayed');
+  
+  if (hasPlayed) {
+    bgVideo.play();
+  } else {
+    bgVideo.oncanplaythrough = function() {
+      bgVideo.play();
+      localStorage.setItem('videoPlayed', 'true');
+    };
+  }
+});
+
 if (window.innerWidth <= 767) {
     function applyTransformationToElements() {
       var containers = document.querySelectorAll('.trailer__player');
