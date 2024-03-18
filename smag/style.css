@@ -8,9 +8,8 @@ html {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  color: white;
+  color: #fff;
   font-family: 'poppins', sans-serif;
-  text-shadow: rgba(33, 41, 53, 0.432) 1px 0 10px;
 }
 
 ::-webkit-scrollbar {
@@ -44,14 +43,15 @@ nav{
 }
 
 .navItems{
-display: flex;
-position: relative;
+  display: flex;
+  position: relative;
 }
 
 .navItems li{
   list-style: none;
   margin: 0 15px;
-  }
+  z-index: 2;
+}
 
 .navItems li a{
   font-size: 25px;
@@ -59,41 +59,65 @@ position: relative;
   text-decoration: none;
   text-transform: capitalize;
   text-shadow: 2px 2px  #0000002f;
+  transition: color .2s;
+  font-weight: bold;
   }
 
 .navItems li:hover a{
-  color: rgb(166, 207, 255)
-  }
+  color: #b0bdff
+}
 
-body{
+body {
   zoom: 0.5;
   overflow: hidden;
-  background:rgb(173, 173, 173);
-  background: url("https://cdn.discordapp.com/attachments/953700099018608710/1143483143916101762/image.png") ;
   min-height: 100%;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: center;
-  background-size: cover;
+}
+
+#video-background {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  z-index: -1;
+}
+
+#video-background video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
 
 .container {
-  animation-name: ColAnim;
-  animation-duration: 1s;
-  animation-timing-function: linear;
+  flex: 1;
   border-top-style: solid; 
-  border-top-width: 70px; 
   border-radius: 70px 70px 0px 0px;
-  width : 100%;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #fff, #e1e1e1, #e1e1e1, #fff);
-  box-shadow: 1px 10px 20px 12px rgba(0, 0, 0, 0.699);
-  justify-content: center;
+  width: 100%;
+  background-image: linear-gradient(to bottom, #c0c8d6, white);
+  backdrop-filter: blur(50px);
+  box-shadow: 1px -20px 40px 40px #00000043;
+  box-shadow: inset 0 20px 50px white;
+  position: relative;
+  min-height: 160vh;
 }
 
-@keyframes ColAnim {
-  0%   {border-radius: 0%;color: #ffffff;}
-  100% {border-radius: 70px 70px 0px 0px}
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(to right, #4e54c8, #ee8ffb);
+  padding: 20px;
+  font-size: 18px;
 }
 
 strong {
@@ -104,6 +128,7 @@ strong {
 }
 
 h2 {
+  margin-top: 20px;
   font-size: 80px;
   background-clip: text;
   -webkit-background-clip: text;
@@ -111,6 +136,7 @@ h2 {
   background-image: linear-gradient(to right, #4e54c8, #ee8ffb);
   text-align: center;
   text-transform: capitalize;
+  text-shadow: 0;
   }
 
 h3 {
@@ -145,20 +171,12 @@ h4 {
   text-transform: capitalize;
   letter-spacing: 2px;
   margin-bottom: 5em;
+  font-size: 30px;
 }
 
 iframe{
-  box-shadow: 1px 10px 30px 10px  rgba(80, 80, 80, 0.288);
+  box-shadow: 1px 10px 30px 10px  rgba(80, 80, 80, 0.250);
   border-radius: 18px;
-}
-
-footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-image: linear-gradient(to right, #4e54c8, #ee8ffb);
-  padding: 20px;
-  font-size: 18px;
 }
 
 .social-media {
@@ -195,7 +213,7 @@ h5{
   width: 450px;
   background: #f1f3f4;
   border-radius: 20px;
-  box-shadow: 0 50px 80px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 50px 80px rgba(0, 0, 0, 0.250);
 }
 
 .player .imgbox {
@@ -248,7 +266,7 @@ h5{
   position: absolute;
   top: 50%;
   transform: translateX(-100%);
-  box-shadow: 0 50px 80px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 50px 80px rgba(0, 0, 0, 0.250);
   border-radius: 18px;
   transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
 }
@@ -298,7 +316,7 @@ z-index: 0;
   margin: 0 20px;
   border-radius: 10px;
   margin-bottom: 2%;
-  box-shadow: 0 50px 80px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 50px 80px rgba(0, 0, 0, 0.236);
   transition: transform 0.3s ease;
   width: 250px;
   height: auto;
@@ -320,4 +338,8 @@ z-index: 0;
     height: auto;
     box-shadow: 0 50px 80px rgba(0, 0, 0, 0);
   }
+  }
+
+  a{
+    text-decoration: none;
   }
