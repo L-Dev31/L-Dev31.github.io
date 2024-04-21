@@ -45,8 +45,6 @@
         <img src="image/middleImages/devices.png" class="deviceImage">
      </div>
      
-
-    
     <div class="container-wrapper">
         <div class="container1">
             <h1>Built by and for the community</h1>
@@ -153,42 +151,37 @@
 });
 
     
-    var images = ["image/middleImages/switchfw.png","image/middleImages/android.png","image/middleImages/devices.png"];
-    var texts = ["Working Nintendo Switch Firmware","Play your favorite  switch games on Android","A new way to discover Nintendo Switch Games"];
+var images = ["image/middleImages/switchfw.png","image/middleImages/android.png","image/middleImages/devices.png"];
+var texts = ["Working Nintendo Switch Firmware","Play your favorite  switch games on Android","A new way to discover Nintendo Switch Games"];
+
+var currentIndex = 0;
+var imageContainer = document.querySelector('.imageContainer');
+var h1 = imageContainer.querySelector('h1');
+var image = imageContainer.querySelector('.deviceImage');
+
+function changeContent() {
+  image.src = images[currentIndex];
+  h1.textContent = texts[currentIndex];
+  
+  h1.classList.add('active');
+  image.classList.add('active');
+
+  setTimeout(function() {
+    h1.classList.remove('active');
+    image.classList.remove('active');
+  }, 5000);
+
+  setTimeout(function() {
+    h1.classList.toggle('change-background');
     
-    var currentIndex = 0;
-    var imageContainer = document.querySelector('.imageContainer');
-    var h1 = imageContainer.querySelector('h1');
-    var image = imageContainer.querySelector('.deviceImage');
+    currentIndex = (currentIndex + 1) % images.length;
     
-    function changeContent() {
-      image.src = images[currentIndex];
-      h1.textContent = texts[currentIndex];
-    
-      h1.classList.remove('active');
-      image.classList.remove('active');
-    
-      setTimeout(function() {
-        h1.classList.add('active');
-        image.classList.add('active');
-      }, 10);
-    
-      setTimeout(function() {
-        h1.classList.remove('active');
-        image.classList.remove('active');
-      }, 9500); 
-    
-      setTimeout(function() {
-        h1.classList.toggle('change-background');
-      }, 500); 
-    
-      setTimeout(function() {
-        h1.classList.toggle('change-background'); 
-      }, 9500); 
-    
-      currentIndex = (currentIndex + 1) % images.length;
-    }
-    
-    setInterval(changeContent, 10000);
-    </script>
+  }, 100);
+}
+
+changeContent();
+
+setInterval(changeContent, 6000);
+
+</script>
 </html>
