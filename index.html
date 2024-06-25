@@ -7,183 +7,84 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="image/favicon.png">
 </head>
-<style>
-body {
-    background: #1D1D25;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    color: #fff;
-    z-index: 2;
-}
-
-.navbar {
-    position: sticky;
-    top: 0;
-    background-color: #17171E;
-    padding: 10px 0;
-    z-index: 1000;
-}
-
-.container {
-    width: 90%;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.navbar img {
-    margin: 0 auto; 
-    width: 100px;
-}
-
-.section {
-    padding: 50px 0;
-}
-
-.project {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    background-color: #17171E;
-    border-radius: 20px;
-    overflow: hidden;
-    transition: box-shadow 0.5s;
-    margin-bottom: 20px;
-    height: 200px;
-}
-
-.project-info {
-    padding: 20px;
-    width: 50%;
-}
-
-.project:hover {
-    box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.300); 
-}
-
-.project img {
-    max-width: 100%;
-    border-radius: 20px 0 0 20px;
-}
-
-h1, h2, p {
-    margin: 0;
-}
-
-h1 {
-    font-size: 2em;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-h2 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-}
-
-p {
-    font-size: 1em;
-    margin-bottom: 20px;
-}
-
-a {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 50px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
-
-a:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-}
-
-</style>
 <body>
 
-<nav class="navbar">
-    <div class="container">
-        <img src="image/logo.png">
+<div class="gradient-top"></div>
+    
+<div class="navbar">
+    <img id="logo" src="image/logo.svg" Alt="Logo">
+    <div class="text-container">
+        <span class="name"><strong>Léo Tosku</strong></span>
+        <span class="description">3D and Webdesign</span>
     </div>
-</nav>
-
-<div id="active-projects" class="section">
-    <h1>Active projects</h1>
-
-    <div class="project">
-        <img src="image/smag.jpg" alt="Super Mario Another Galaxy">
-        <div class="project-info">
-            <h2>Super Mario Another Galaxy</h2>
-            <p>A Super Mario Galaxy 2 mod using GLE-V3 and Project Template (Website need to be redone)</p>
-            <a href="smag/index.html">show more</a>
-        </div>
-    </div>
-
-    <div class="project">
-        <img src="image/infw.jpg" alt="Infinite Wii">
-        <div class="project-info">
-            <h2>Infinite Wii</h2>
-            <p>A New Super Mario Bros. Wii mod combining mario's and kirby's universes (Website is a copy of SMAG's)</p>
-            <a href="https://liq.codes/infinite/">show more</a>
-        </div>
-    </div>
-
-    <div class="project">
-        <img src="image/gdb.jpg" alt="GPMailbox">
-        <div class="project-info">
-            <h2>GPMailbox</h2>
-            <p>A community ecommerce website for Guadeloupe's Archipelago (Outdated)</p>
-            <a href="https://gpmailbox.github.io">show more</a>
-        </div>
+    <div class="links-container">
+        <a href="#" class="link" id="everything">Tout</a>
+        <a href="#" class="link" id="personal-project">Projets personnels</a>
+        <a href="#" class="link" id="commissions">Commissions</a>
+        <a href="#" class="link" id="info">Infos</a>
     </div>
 </div>
 
-<div id="other-projects" class="section">
-    <h1>Other stuff</h1>
-
-    <div class="project">
-        <img src="image/space.jpg" alt="SpaceWebsite">
-        <div class="project-info">
-            <h2>SpaceWebsite</h2>
-            <p>A webdesign homework that aims to show and explain solar system's planets</p>
-            <a href="space/index.html">show more</a>
-        </div>
+<div class="gallery">
+    <div class="gallery-item personal-project">
+        <a href="https://gpmailbox.github.io" target="_blank">
+            <div class="project-logo"><img src="image/gpmx-logo.png" alt="Logo"></div>
+            <img src="image/gpmx.jpg" alt="GPMailbox">
+            <div class="overlay">Léo Tosku - <strong>GPMailbox</strong></div>
+        </a>
     </div>
-
-    <div class="project">
-        <img src="image/wlux.jpg" alt="SpaceWebsite">
-        <div class="project-info">
-            <h2>Winelux</h2>
-            <p>A webdesign project that doesn't really have any importance. It is a website for a fictive wine brand in Luxembourg</p>
-            <a href="winelux/index.html">show more</a>
-        </div>
+    <div class="gallery-item personal-project">
+        <a href="https://github.com/L-Dev31/GPTranslator" target="_blank">
+            <div class="project-logo"><img src="image/gptr-logo.png" alt="Logo"></div>
+            <img src="image/gptr.jpg" alt="GPTranslator">
+            <div class="overlay">Léo Tosku - <strong>GPTranslator</strong></div>
+        </a>
     </div>
-
-    <div class="project">
-        <img src="image/suyu.jpg" alt="Suyu">
-        <div class="project-info">
-            <h2>Suyu</h2>
-            <p>A non official website for Suyu emulator</p>
-            <a href="suyu.dev/index.html">show more</a>
-        </div>
+    <div class="gallery-item personal-project">
+        <a href="winelux/index.html" target="_blank">
+            <div class="project-logo"><img src="image/wlux-logo.png" alt="Logo"></div>
+            <img src="image/wlux.jpg" alt="Winelux">
+            <div class="overlay">Léo Tosku - <strong>WineLux</strong></div>
+        </a>
     </div>
-
-    <div class="project">
-        <img src="image/cv.jpg" alt="CV">
-        <div class="project-info">
-            <h2>Curiculum Vitae</h2>
-            <p>A simple CV website</p>
-            <a href="CV/index.html">show more</a>
-        </div>
+    <div class="gallery-item commission">
+        <a href="https://www.booking.com/hotel/gp/villa-dream.fr.html" target="_blank">
+            <div class="project-logo"><img src="image/vadm-logo.png" alt="Logo"></div>
+            <img src="image/vadm.jpg" alt="Villa Dream">
+            <div class="overlay">Viviane De-Vries & Georges Bouly - <strong>Villa Dream</strong></div>
+        </a>
     </div>
-
+    <div class="gallery-item personal-project">
+        <a href="smag/index.html" target="_blank">
+            <div class="project-logo"><img src="image/smag-logo.png" alt="Logo"></div>
+            <img src="image/smag.jpg" alt="Super Mario Another Galaxy">
+            <div class="overlay">SMAG Team - <strong>Super Mario Another Galaxy</strong></div>
+        </a>
+    </div>
+    <div class="gallery-item commission">
+        <a href="https://liq.codes/infinite/" target="_blank">
+            <div class="project-logo"><img src="image/infw-logo.png" alt="Logo"></div>
+            <img src="image/infw.jpg" alt="Infinite Wii">
+            <div class="overlay">LiQ & Infinite Wii Team - <strong>Infinite Wii</strong></div>
+        </a>
+    </div>
+    <div class="gallery-item commission">
+        <a href="CV/index.html" target="_blank">
+            <div class="project-logo"><img src="image/cvit-logo.png" alt="Logo"></div>
+            <img src="image/cvit.jpg" alt="CV">
+            <div class="overlay">Fabbiola Zenelaj - <strong>Curiculum Vitae Template</strong></div>
+        </a>
+    </div>
+    <div class="gallery-item commission">
+        <a href="suyu.dev/index.html" target="_blank">
+            <div class="project-logo"><img src="image/suyu-logo.png" alt="Logo"></div>
+            <img src="image/suyu.jpg" alt="Suyu">
+            <div class="overlay">Suyu Dev Team - <strong>Suyu</strong></div>
+        </a>
+    </div>
 </div>
 
+<!-- Script -->
+<script src="script.js"></script>
 </body>
 </html>
