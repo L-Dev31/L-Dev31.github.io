@@ -20,15 +20,11 @@ body {
     background-image: url('image/bgNoise.png');
     background-attachment: fixed;
     font-family: 'Thin', sans-serif;
+    background-size: 20vh;
     margin: 0;
     padding: 0;
     color: #fff;
     z-index: 2;
-}
-
-body::before{
-    background: linear-gradient(to bottom, #080808, #080808c0, transparent);
-    
 }
 
 strong {
