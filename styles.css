@@ -27,14 +27,13 @@ body {
     z-index: 2;
 }
 
-body::before{
-    background: linear-gradient(to bottom, #080808, #080808c0, transparent);
-    
-}
-
 strong {
     font-family: 'Bold', sans-serif;
     margin-left: 0.5vh;
+}
+
+.no-scroll {
+    overflow: hidden;
 }
 
 .landing-page {

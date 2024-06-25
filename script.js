@@ -2,15 +2,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const landingLogo = document.getElementById('landing-logo');
     const landingPage = document.querySelector('.landing-page');
+    const body = document.body;
 
-    // Waiting 
+    // Désactiver le défilement
+    body.classList.add('no-scroll');
+
+    // Attendre 2 secondes avant de commencer l'animation
     setTimeout(() => {
         landingLogo.classList.add('shrink');
     }, 1000);
 
-    // End Animation
+    // Attendre encore 0.5 secondes pour cacher la page de landing
     setTimeout(() => {
         landingPage.classList.add('hidden');
+        body.classList.remove('no-scroll');
         document.querySelector('.navbar').style.display = 'flex';
         document.querySelector('.gallery').style.display = 'block';
     }, 2000);
