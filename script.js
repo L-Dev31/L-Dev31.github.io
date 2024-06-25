@@ -68,12 +68,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Désactiver le défilement
     body.classList.add('no-scroll');
 
-    // Attendre 2 secondes avant de commencer l'animation
     setTimeout(() => {
+        window.scrollTo(0, 0);
         landingLogo.classList.add('shrink');
     }, 1000);
 
-    // Attendre encore 0.5 secondes pour cacher la page de landing
     setTimeout(() => {
         landingPage.classList.add('hidden');
     }, 2000);
