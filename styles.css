@@ -18,6 +18,7 @@ html {
 
 body {
     background-image: url('image/bgNoise.png');
+    background-size: 20vh;
     background-attachment: fixed;
     font-family: 'Thin', sans-serif;
     margin: 0;
@@ -97,7 +98,7 @@ strong {
 }
 
 .description {
-    margin-left: 5px;
+    margin-left: 0.5vh;
     color: #818181;
 }
 
