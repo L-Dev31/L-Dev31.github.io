@@ -1,4 +1,20 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+    const landingLogo = document.getElementById('landing-logo');
+    const landingPage = document.querySelector('.landing-page');
+
+    // Waiting 
+    setTimeout(() => {
+        landingLogo.classList.add('shrink');
+    }, 1000);
+
+    // End Animation
+    setTimeout(() => {
+        landingPage.classList.add('hidden');
+        document.querySelector('.navbar').style.display = 'flex';
+        document.querySelector('.gallery').style.display = 'block';
+    }, 2000);
+    
     const personalProjectLink = document.getElementById('personal-project');
     const commissionsLink = document.getElementById('commissions');
     const everythingLink = document.getElementById('everything');
