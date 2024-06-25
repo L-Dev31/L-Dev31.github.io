@@ -81,5 +81,14 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         body.classList.remove('no-scroll');
     }, 2750);
+
+    var unavailableLinks = document.querySelectorAll('.unavailable a');
+
+    unavailableLinks.forEach(function(link) {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            alert("Ce site n'est pas accessible pour l'instant");
+        });
+    });
 });
 
