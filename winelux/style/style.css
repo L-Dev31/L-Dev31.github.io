@@ -91,7 +91,7 @@ h6 {
     background-attachment: fixed;
     background-image: var(--bg-image);
     background-size: cover;
-    height: 300px;
+    height: 30vh;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -149,6 +149,8 @@ h6 {
     align-items: center;
     justify-content: space-between;
     background-image: var(--bg-image2);
+    background-size: 222vh;
+    background-repeat: no-repeat;
 }
 
 #left-image {

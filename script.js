@@ -1,24 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-
-    const landingLogo = document.getElementById('landing-logo');
-    const landingPage = document.querySelector('.landing-page');
-    const body = document.body;
-
-    // Désactiver le défilement
-    body.classList.add('no-scroll');
-
-    // Attendre 2 secondes avant de commencer l'animation
-    setTimeout(() => {
-        landingLogo.classList.add('shrink');
-    }, 1000);
-
-    // Attendre encore 0.5 secondes pour cacher la page de landing
-    setTimeout(() => {
-        landingPage.classList.add('hidden');
-        body.classList.remove('no-scroll');
-        document.querySelector('.navbar').style.display = 'flex';
-        document.querySelector('.gallery').style.display = 'block';
-    }, 2000);
     
     const personalProjectLink = document.getElementById('personal-project');
     const commissionsLink = document.getElementById('commissions');
@@ -80,5 +60,26 @@ document.addEventListener('DOMContentLoaded', function() {
             link.classList.add('clicked');
         });
     });
+
+    const landingLogo = document.getElementById('landing-logo');
+    const landingPage = document.querySelector('.landing-page');
+    const body = document.body;
+
+    // Désactiver le défilement
+    body.classList.add('no-scroll');
+
+    // Attendre 2 secondes avant de commencer l'animation
+    setTimeout(() => {
+        landingLogo.classList.add('shrink');
+    }, 1000);
+
+    // Attendre encore 0.5 secondes pour cacher la page de landing
+    setTimeout(() => {
+        landingPage.classList.add('hidden');
+    }, 2000);
+
+    setTimeout(() => {
+        body.classList.remove('no-scroll');
+    }, 2750);
 });
 
