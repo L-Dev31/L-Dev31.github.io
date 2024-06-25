@@ -144,6 +144,7 @@ strong {
 }
 
 .gallery-item .overlay {
+    border-radius: 1.5vh;
     position: absolute;
     font-size: 2vh;
     top: 0;
