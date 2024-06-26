@@ -113,6 +113,7 @@ strong {
     margin: 0.5vh;
     justify-content: center;
     flex: 1 0 calc(50% - 10px);
+    overflow: hidden;
 }
 
 .gallery-item img {
