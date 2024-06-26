@@ -91,3 +91,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+document.addEventListener('scroll', function() {
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const galleryItemsImg = document.querySelectorAll('.gallery-img');
+    const scrollPosition = window.pageYOffset;
+    
+    galleryItems.forEach((img, index) => {
+        const imgParent = img.parentElement;
+        let speed = 4;
+        const offset = imgParent.getBoundingClientRect().top + scrollPosition;
+        const imgYOffset = (scrollPosition - offset) / speed;
+
+        img.style.transform = `translateY(${imgYOffset}px)`;
+    });
+
+    galleryItemsImg.forEach((img, index) => {
+        const imgParent = img.parentElement;
+        let speed = 5;
+        const offset = imgParent.getBoundingClientRect().top + scrollPosition;
+        const imgYOffset = (scrollPosition - offset) / speed;
+
+        img.style.transform = `translateY(${imgYOffset}px)`;
+    });
+});

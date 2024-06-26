@@ -34,12 +34,12 @@ strong {
 
 .links-container {
     position: absolute;
-    right: 2vh;
+    right: 0;
     top: 0;
     display: flex;
     gap: 5vh;
     justify-content: right;
-    margin-right: 20px;
+    margin-right: 2vh;
     z-index: 200;
 }
 
@@ -72,9 +72,11 @@ strong {
 .navbar {
     display: flex;
     z-index: 100;
+    background-color: white;
 }
 
 #logo {
+    color: blue;
     z-index: 100;
     margin-left: 2vh;
     top: 10vh;
@@ -114,14 +116,12 @@ strong {
     justify-content: center;
     flex: 1 0 calc(50% - 10px);
     overflow: hidden;
+    height: 40vh;
 }
 
-.gallery-item img {
-    border-radius: 1.5vh;
+.gallery-img {
     width: 100%;
-    height: 40vh;
     object-position: center;
-    object-fit: cover;
     display: block;
 }
 
@@ -145,14 +145,13 @@ strong {
 }
 
 .gallery-item .overlay {
-    border-radius: 1.5vh;
     position: absolute;
     font-size: 2vh;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.75);
+    background: linear-gradient(to top, #08080870, transparent);
     color: #fff;
     display: flex;
     align-items: center;
@@ -207,4 +206,17 @@ name {
     transform: scale(0.5);
     left: -3vh;
     top: 0;
+}
+
+.Ig-link{
+    margin-top: 20vh;
+    height: 10vh;
+}
+
+.Ig-link a{
+    text-decoration: none;
+    position: absolute;
+    right: 2vh;
+    color: #ffffff;
+    font-size: 30px;
 }
