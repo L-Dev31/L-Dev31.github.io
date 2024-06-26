@@ -130,7 +130,7 @@ strong {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100vh; 
+    min-width: 100vh; 
     transition: transform 0.75s ease;
     z-index: 2;
 }
@@ -138,6 +138,7 @@ strong {
 .project-logo img {
     display: block;
     max-height: 20vh;
+    min-height: 20vh;
 }
 
 .gallery-item:hover .project-logo {
