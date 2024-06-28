@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const personalProjectLink = document.getElementById('personal-project');
     const commissionsLink = document.getElementById('commissions');
     const everythingLink = document.getElementById('everything');
-    const infoLink = document.getElementById('info');
+    const infoLink = document.getElementById('info-link');
+    const infosContainer = document.getElementById('infos');
     const galleryItems = document.querySelectorAll('.gallery-item');
 
     // Initially show all gallery items
@@ -46,7 +47,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showInfoText() {
-        filterItems('');
+        galleryItems.forEach(item => {
+            item.style.display = 'none';
+        });
+        infosContainer.innerHTML = `
+        <div class="infos">
+            <h1>Qui est <strong>Léo Tosku</strong> ?</h1>
+            <h3 class="subtitle"><strong>Léo Tosku</strong> est un jeune et passionné designer numérique résidant en Guadeloupe. <br><br> Prodige du monde numérique, Il a commencé son parcours en design numérique à l'âge de 10 ans. Depuis, il a contribué à des projets indépendants importants en Guadeloupe, démontrant un talent pour les styles modernes et simplistes, le glassmorphism et des designs inspirés par l'esthétique de Google LLC. <br><br> En plus de ses compétences en design, Il s'est plongé dans la modélisation 3D dès l'âge de 12 ans, apportant sa vision créative à de nombreux projets de jeux vidéo. <br><br> Pour de nouveaux projets ou plus d'infos : <br>leotoskuepro@gmail.com</h3>
+            <img src="image/LéoTosku.jpg" alt="Profile Image" class="info-image">
+        </div>
+        `;
+        infosContainer.style.display = 'block';
     }
 
     const links = document.querySelectorAll('.link');
@@ -92,18 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('scroll', function() {
-    const galleryItems = document.querySelectorAll('.gallery-item');
     const galleryItemsImg = document.querySelectorAll('.gallery-img');
     const scrollPosition = window.pageYOffset;
-    
-    galleryItems.forEach((img, index) => {
-        const imgParent = img.parentElement;
-        let speed = 4;
-        const offset = imgParent.getBoundingClientRect().top + scrollPosition;
-        const imgYOffset = (scrollPosition - offset) / speed;
-
-        img.style.transform = `translateY(${imgYOffset}px)`;
-    });
 
     galleryItemsImg.forEach((img, index) => {
         const imgParent = img.parentElement;
