@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         galleryItems.forEach(item => {
             item.style.display = 'block';
         });
+        infosContainer.style.display = 'none';  // Hide infos container when showing all items
     }
 
     function filterItems(category) {
@@ -44,19 +45,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.style.display = 'none';
             }
         });
+        infosContainer.style.display = 'none';  // Hide infos container when filtering items
     }
 
     function showInfoText() {
         galleryItems.forEach(item => {
             item.style.display = 'none';
         });
-        infosContainer.innerHTML = `
-        <div class="infos">
-            <h1>Qui est <strong>Léo Tosku</strong> ?</h1>
-            <h3 class="subtitle"><strong>Léo Tosku</strong> est un jeune et passionné designer numérique résidant en Guadeloupe. <br><br> Prodige du monde numérique, Il a commencé son parcours en design numérique à l'âge de 10 ans. Depuis, il a contribué à des projets indépendants importants en Guadeloupe, démontrant un talent pour les styles modernes et simplistes, le glassmorphism et des designs inspirés par l'esthétique de Google LLC. <br><br> En plus de ses compétences en design, Il s'est plongé dans la modélisation 3D dès l'âge de 12 ans, apportant sa vision créative à de nombreux projets de jeux vidéo. <br><br> Pour de nouveaux projets ou plus d'infos : <br>leotoskuepro@gmail.com</h3>
-            <img src="image/LéoTosku.jpg" alt="Profile Image" class="info-image">
-        </div>
-        `;
         infosContainer.style.display = 'block';
     }
 
