@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    
+
     const personalProjectLink = document.getElementById('personal-project');
     const commissionsLink = document.getElementById('commissions');
     const everythingLink = document.getElementById('everything');
@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function showAllItems() {
+        resetScrollPositions();
         galleryItems.forEach(item => {
             item.style.display = 'block';
         });
@@ -38,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function filterItems(category) {
+        resetScrollPositions();
         galleryItems.forEach(item => {
             if (item.classList.contains(category)) {
                 item.style.display = 'block';
@@ -49,10 +51,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showInfoText() {
+        resetScrollPositions();
         galleryItems.forEach(item => {
             item.style.display = 'none';
         });
         infosContainer.style.display = 'block';
+    }
+
+    function resetScrollPositions() {
+        window.scrollTo(0, 0);  // Reset the scroll position of the window
+        galleryItems.forEach(item => {
+            item.scrollTop = 0;  // Reset the scroll position of each gallery item
+        });
     }
 
     const links = document.querySelectorAll('.link');
