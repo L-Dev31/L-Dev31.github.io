@@ -23,7 +23,7 @@ body {
     background-size: 20vh;
     margin: 0;
     padding: 0;
-    color: #fff;
+    color: white;
     z-index: 2;
 }
 
@@ -47,7 +47,7 @@ strong {
     margin-top: 13.5vh;
     text-decoration: none;
     font-size: 5vh;
-    color: #ffffff; 
+    color: white; 
     transition: margin-top 0.15s ease;
 }
 
@@ -56,7 +56,19 @@ strong {
 }
 
 .link.clicked {
-    color: #818181;
+    color: gray;
+}
+
+.download {
+    margin-top: 13.5vh;
+    text-decoration: none;
+    font-size: 5vh;
+    color: white; 
+    transition: margin-top 0.15s ease;
+}
+
+.download:hover {
+    margin-top: 13.25vh;
 }
 
 .gradient-top{
@@ -96,7 +108,7 @@ strong {
 
 .description {
     margin-left: 0.5vh;
-    color: #818181;
+    color: gray;
 }
 
 .gallery-item.personal-project,
@@ -153,7 +165,7 @@ strong {
     width: 100%;
     height: 100%;
     background: linear-gradient(to top, #08080870, transparent);
-    color: #fff;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -210,15 +222,21 @@ name {
 }
 
 .Ig-link{
-    margin-top: 5vh;
-    height: 10vh;
+    height: 8vh;
+    pointer-events: none;
+    transition: transform 0.15s ease;
+}
+
+.Ig-link:hover{
+    transform: translateY(-2.5px);
 }
 
 .Ig-link a{
+    pointer-events:all;
     text-decoration: none;
     position: absolute;
     right: 2vh;
-    color: #ffffff;
+    color: white;
     font-size: 3vh;
 }
 
@@ -241,7 +259,7 @@ h1{
 }
 
 .subtitle {
-    color: #818181;
+    color: gray;
     margin-right: 100vh;
     font-size: 3vh;
     margin-bottom: 15vh;
