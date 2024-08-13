@@ -1,4 +1,70 @@
+function getTextWidth(text, font) {
+    const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+    const context = canvas.getContext("2d");
+    context.font = font;
+    const metrics = context.measureText(text);
+    return metrics.width;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+
+    //Scrolling text
+    const scrollingTexts = document.querySelectorAll('.scrolling-text p');
+    const speed = 200;
+
+    scrollingTexts.forEach(p => {
+        const textContent = p.textContent.trim();
+        const parent = p.parentElement;
+        const parentWidth = parent.offsetWidth;
+        const computedStyle = window.getComputedStyle(p);
+        const font = `${computedStyle.fontSize} ${computedStyle.fontFamily}`;
+        const textWidth = getTextWidth(textContent, font);
+        const repeatCount = 99; //Temporary since the code's shitty
+
+        let repeatedText = '';
+        for (let i = 0; i < repeatCount; i++) {
+            repeatedText += textContent + ' ';
+        }
+
+        p.textContent = repeatedText.trim();
+        
+        const totalWidth = textWidth * repeatCount;
+        const animationDuration = totalWidth / speed;
+
+        p.style.whiteSpace = 'nowrap';
+        p.style.display = 'inline-block';
+        p.style.animation = `scroll-left ${animationDuration}s linear infinite`;
+    });
+
+    const styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = `
+    @keyframes scroll-left {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-100%);
+        }
+    }`;
+    document.head.appendChild(styleSheet);
+
+    // Cursor
+    const cursor = document.createElement('div');
+    cursor.classList.add('cursor');
+    document.body.appendChild(cursor);
+
+    document.addEventListener('mousemove', (e) => {
+        const x = e.clientX + window.scrollX;
+        const y = e.clientY + window.scrollY;
+        cursor.style.transform = `translate(${x}px, ${y}px)`;
+    });
+
+    document.addEventListener('scroll', (e) => {
+        const x = e.clientX + window.scrollX;
+        const y = e.clientY + window.scrollY;
+        cursor.style.transform = `translate(${x}px, ${y}px)`;
+    });
 
     const personalProjectLink = document.getElementById('personal-project');
     const commissionsLink = document.getElementById('commissions');
@@ -6,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const infoLink = document.getElementById('info-link');
     const infosContainer = document.getElementById('infos');
     const galleryItems = document.querySelectorAll('.gallery-item');
+    const headerContainer = document.getElementById('header');
 
     // Initially show all gallery items
     showAllItems();
@@ -36,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
             item.style.display = 'block';
         });
         infosContainer.style.display = 'none';  // Hide infos container when showing all items
+        headerContainer.style.display = 'block'; // Show Header when showing all items
     }
 
     function filterItems(category) {
@@ -47,6 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.style.display = 'none';
             }
         });
+        headerContainer.style.display = 'none';
         infosContainer.style.display = 'none';  // Hide infos container when filtering items
     }
 
@@ -55,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
         galleryItems.forEach(item => {
             item.style.display = 'none';
         });
+        headerContainer.style.display = 'none';  // Hide Header
         infosContainer.style.display = 'block';
     }
 

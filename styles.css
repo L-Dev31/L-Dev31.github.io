@@ -1,36 +1,86 @@
 @font-face {
     font-family: 'Bold';
     src: url('font/Bold.otf') format('opentype');
-    font-weight: 1000;
+    font-weight: 2000;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Thin';
     src: url('font/Thin.otf') format('opentype');
-    font-weight: bold;
+    font-weight: lighter;
     font-style: normal;
+}
+
+@font-face {
+    font-family: 'Heavitas';
+    src: url('font/Heavitas.ttf') format('truetype');
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Lux';
+    src: url('font/Lux.otf') format('opentype');
+    font-weight: -10;
+    font-style: normal;
+}
+
+*{
+    cursor: none;
 }
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
-    background-image: url('image/bgNoise.png');
     background-attachment: fixed;
     font-family: 'Thin', sans-serif;
-    background-size: 20vh;
+    background-size: 100%;
+    background-image: url('image/BlackBG.jpg');
     margin: 0;
     padding: 0;
-    color: white;
+    color: #e0e0e0;
+    background-color: #111111;
     z-index: 2;
+    margin-top: 30vh;
 }
 
 strong {
     font-family: 'Bold', sans-serif;
     margin-left: 0.5vh;
 }
+
+.bg {
+    z-index: -1;
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    width: 200%;
+    height: 200vh;
+    background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
+    background-repeat: repeat;
+    animation: bg-animation .2s infinite;
+    opacity: .9;
+    visibility: visible;
+  }
+  
+  @keyframes bg-animation {
+      0% { transform: translate(0,0) }
+      10% { transform: translate(-5%,-5%) }
+      20% { transform: translate(-10%,5%) }
+      30% { transform: translate(5%,-10%) }
+      40% { transform: translate(-5%,15%) }
+      50% { transform: translate(-10%,5%) }
+      60% { transform: translate(15%,0) }
+      70% { transform: translate(0,10%) }
+      80% { transform: translate(-15%,0) }
+      90% { transform: translate(10%,5%) }
+      100% { transform: translate(5%,0) }
+  }
 
 .links-container {
     position: absolute;
@@ -47,7 +97,7 @@ strong {
     margin-top: 13.5vh;
     text-decoration: none;
     font-size: 5vh;
-    color: white; 
+    color: #e0e0e0;
     transition: margin-top 0.15s ease;
 }
 
@@ -63,7 +113,7 @@ strong {
     margin-top: 13.5vh;
     text-decoration: none;
     font-size: 5vh;
-    color: white; 
+    color: #e0e0e0;
     transition: margin-top 0.15s ease;
 }
 
@@ -71,24 +121,13 @@ strong {
     margin-top: 13.25vh;
 }
 
-.gradient-top{
-    display: flex;
-    align-items: center;
-    background: linear-gradient(to bottom, #080808, #08080880, transparent);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    min-height: 30vh; 
-}
-
 .navbar {
     display: flex;
     z-index: 100;
-    background-color: white;
+    background-color: #e0e0e0;
 }
 
 #logo {
-    color: blue;
     z-index: 100;
     margin-left: 2vh;
     top: 10vh;
@@ -124,11 +163,18 @@ strong {
 
 .gallery-item {
     position: relative;
-    margin: 0.5vh;
+    margin: 2.5vh;
     justify-content: center;
-    flex: 1 0 calc(50% - 10px);
+    border-radius: 5vh;
     overflow: hidden;
-    height: 40vh;
+    height: 75vh;
+    width: 100%;
+    transition: transform 0.5s;
+    box-shadow: 0 0 3vh #00000099
+}
+
+.gallery-item:hover{
+    transform: scaleX(0.95) scaleY(0.95);
 }
 
 .gallery-img {
@@ -164,14 +210,15 @@ strong {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to top, #08080870, transparent);
-    color: white;
+    background:#08080870;
+    color: #e0e0e0;
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
     transition: opacity 0.3s ease;
-    font-size: 2vh;
+    font-family: 'Thin', sans-serif;
+    font-size: 2.5vh;
 }
 
 .gallery-item:hover .overlay {
@@ -179,9 +226,8 @@ strong {
 }
 
 name {
-    color: white;
+    color: #e0e0e0;
 }
-
 
 .no-scroll {
     overflow: hidden;
@@ -228,7 +274,7 @@ name {
 }
 
 .Ig-link:hover{
-    transform: translateY(-2.5px);
+    transform: translateY(-0.3vh);
 }
 
 .Ig-link a{
@@ -236,20 +282,23 @@ name {
     text-decoration: none;
     position: absolute;
     right: 2vh;
-    color: white;
+    color: #e0e0e0;
     font-size: 3vh;
 }
 
 #infos{
     margin-left: 2.5vh;
+    min-height: 72.5vh;
 }
 
 #infos img {
     position: absolute;
     right: 2.5vh;
-    top: 30vh;
+    top: 35vh;
     width: 70vh;
     height: 85vh;
+    border-radius: 5vh;
+    box-shadow: 0 0 3vh #00000099;
     object-fit: cover;
 }
 
@@ -262,7 +311,7 @@ h1{
     color: gray;
     margin-right: 100vh;
     font-size: 3vh;
-    margin-bottom: 20vh;
+    margin-top: 5vh;
 }
 
 .subtitle a {
@@ -272,4 +321,108 @@ h1{
 
 .subtitle a:hover {
     text-decoration: underline;
+}
+
+.cursor {
+    z-index: 999;
+    width: 2.5vh;
+    height: 2.5vh;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+}
+
+
+header {
+    text-align: center;
+    padding: 5vh 0;
+    position: relative;
+    min-height: 50vh;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2vh;
+}
+
+.header-content h1 {
+    text-shadow: 0 0 2vh #00000099;
+    font-family: 'Lux';
+    font-size: 25vh;
+    margin: 0;
+}
+
+.scrolling-bands {
+    position: relative;
+    width: 110%;
+    left: -1vh;
+    height: 10vh;
+}
+
+.band {
+    position: absolute;
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 3vh #00000099;
+}
+
+.band1 {
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%);
+    transform: rotate(-3deg);
+    top: 0;
+}
+
+.band2 {
+    background: #e0e0e0;
+    transform: rotate(3deg);
+    top: 5vh;
+}
+
+.scrolling-text {
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+}
+
+.scrolling-text p {
+    font-family: 'Heavitas', sans-serif;
+    font-size: 7.5vh;
+    margin: 0;
+}
+
+.band1 .scrolling-text p {
+    color: #e0e0e0;
+}
+
+.band2 .scrolling-text p {
+    color: #131313;
+}
+
+.achievements {
+    font-family: 'Bold', sans-serif;
+    background: #08080880;
+    color: #ffffff;
+    backdrop-filter: blur(15px);
+    border-radius: 5vh;
+    margin-left: 3.5vh;
+    margin-right: 3.5vh;
+    margin-top: 15vh;
+    padding: 20px; 
+    transition: background 1s ease-in-out;
+    text-align: center; 
+}
+
+.achievements h2 {
+    font-family: 'Bold', sans-serif;
+    font-size: 7vh;
 }

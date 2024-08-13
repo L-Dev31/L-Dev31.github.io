@@ -11,8 +11,6 @@
 </head>
 <body class="no-scroll">
     
-<div class="gradient-top"></div>
-    
 <div class="navbar">
     <img id="logo" src="image/logo.svg" Alt="Logo">
     <div class="text-container">
@@ -29,9 +27,42 @@
     </div>
 </div>
 
+<div class="bg"></div>
+
+<header id="header">
+    <div class="header-content">
+        <h1>UNE BELLE ALLURE AUX BONNES IDÉES</h1>
+    </div>
+    <div class="scrolling-bands">
+        <div class="band band1">
+            <div class="scrolling-text">
+                <p>Web Design • Modélisation 3D • Créations uniques • Programmation • Digital Design • </p>
+            </div>
+        </div>
+        <div class="band band2">
+            <div class="scrolling-text">
+                <p>Digital Design • Programmation • Créations uniques • Modélisation 3D • Web Design • </p>
+            </div>
+        </div>
+    </div>
+    <div class="achievements" style="text-align: center; padding: 20px 0;">
+        <h2>Mes Réalisations</h2>
+        <div class="achievements-container" style="display: flex; justify-content: center; gap: 30px;">
+            <div class="achievement-item">
+                <i class="fas fa-graduation-cap" style="font-size: 2em; color: #e0d950;"></i>
+                <p>Baccalauréat Géneral - 2025</p>
+            </div>
+            <div class="achievement-item">
+                <i class="fas fa-medal" style="font-size: 2em; color: #E94E1A;"></i>
+                <p>1er prix du jury "Trophées NSI" - 2024</p>
+            </div>
+        </div>
+    </div>
+</header>
+
     <div id="infos" style="display:none;">
-        <h1>Qui est <strong>Léo Tosku</strong> ?</h1>
-        <h3 class="subtitle"><strong>Léo Tosku</strong> est un jeune et passionné designer numérique résidant en Guadeloupe. <br><br> Prodige du monde numérique, Il a commencé son parcours en design numérique à l'âge de 10 ans. Depuis, il a contribué à des projets indépendants importants en Guadeloupe, démontrant un talent pour les styles modernes et simplistes.<br><br> En plus de ses compétences en design, Il s'est plongé dans la modélisation 3D dès l'âge de 12 ans, apportant sa vision créative à de nombreux projets de jeux vidéo. <br><br> Pour de nouveaux projets ou plus d'infos : <br><a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a></h3>
+        <h1>Qui suis-je ?</h1>
+        <h3 class="subtitle">Je suis un designer et programmeur basé en Guadeloupe. <br> Né d'une famille Néerlando-Albanaise et ayant grandit à Cannes, dans le Sud de la France et installé en Guadeloupe depuis 2022. <br><br> J'ai commencé mon parcours en design numérique à l'âge de 10 ans. Depuis, j'ai contribué à de nombreux projets indépendants importants dans l'archipel, démontrant une passion pour les styles modernes et simplistes.<br><br> En plus de mes compétences en design, Je me suis plongé dans la modélisation 3D dès l'âge de 12 ans, apportant ma vision créative à de nombreux projets de jeux vidéo. <br><br> Pour de nouveaux projets ou plus d'infos : <br><strong><a href="mailto:leotoskuepro@gmail.com">Leotoskuepro@gmail.com</a><strong></h3>
         <div class="info-img-container">
             <img src="image/LéoTosku.jpg" alt="Profile Image" class="info-img">
         </div>
@@ -45,6 +76,8 @@
             <div class="overlay">Léo Tosku - <strong>GPMailbox</strong></div>
         </a>
     </div>
+    
+    <!--
     <div class="gallery-item personal-project unavailable">
         <a href="#" target="_blank">
             <div class="project-logo"><img src="image/gptr-logo.png" alt="Logo"></div>
@@ -52,28 +85,8 @@
             <div class="overlay">Léo Tosku - <strong>GPTranslator</strong></div>
         </a>
     </div>
-    <div class="gallery-item personal-project">
-        <a href="smag/index.html" target="_blank">
-            <div class="project-logo"><img src="image/smag-logo.png" alt="Logo"></div>
-            <img src="image/smag.jpg" class="gallery-img" alt="Super Mario Another Galaxy">
-            <div class="overlay">SMAG Team - <strong>Super Mario Another Galaxy</strong></div>
-        </a>
-    </div>
-    <div class="gallery-item commission">
-        <a href="https://liq.codes/infinite/" target="_blank">
-            <div class="project-logo"><img src="image/infw-logo.png" alt="Logo"></div>
-            <img src="image/infw.jpg" class="gallery-img" alt="Infinite Wii">
-            <div class="overlay">LiQ & Infinite Wii Team - <strong>Infinite Wii</strong></div>
-        </a>
-    </div>
+    -->
 
-    <div class="gallery-item personal-project">
-        <a href="winelux/index.html" target="_blank">
-            <div class="project-logo"><img src="image/wlux-logo.png" alt="Logo"></div>
-            <img src="image/wlux.jpg" class="gallery-img" alt="Winelux">
-            <div class="overlay">Léo Tosku - <strong>WineLux</strong></div>
-        </a>
-    </div>
     <div class="gallery-item commission">
         <a href="suyu.dev/index.html" target="_blank">
             <div class="project-logo"><img src="image/suyu-logo.png" alt="Logo"></div>
@@ -81,21 +94,32 @@
             <div class="overlay">Suyu Dev Team - <strong>Suyu</strong></div>
         </a>
     </div>
+    
+    <div class="gallery-item personal-project">
+        <a href="winelux/index.html" target="_blank">
+            <div class="project-logo"><img src="image/wlux-logo.png" alt="Logo"></div>
+            <img src="image/wlux.jpg" class="gallery-img" alt="Winelux">
+            <div class="overlay">Léo Tosku - <strong>WineLux</strong></div>
+        </a>
+    </div>
 
-    <div class="gallery-item commission unavailable">
-        <a href="https://www.booking.com/hotel/gp/villa-dream.fr.html" target="_blank">
-            <div class="project-logo"><img src="image/vadm-logo.png" alt="Logo"></div>
-            <img src="image/vadm.jpg" class="gallery-img" alt="Villa Dream">
-            <div class="overlay">Viviane De-Vries & Georges Bouly - <strong>Villa Dream</strong></div>
+    <div class="gallery-item personal-project">
+        <a href="smag/index.html" target="_blank">
+            <div class="project-logo"><img src="image/smag-logo.png" alt="Logo"></div>
+            <img src="image/smag.jpg" class="gallery-img" alt="Super Mario Another Galaxy">
+            <div class="overlay">SMAG Team - <strong>Super Mario Another Galaxy</strong></div>
         </a>
     </div>
+
+    <!--
     <div class="gallery-item commission">
-        <a href="CV/index.html" target="_blank">
-            <div class="project-logo"><img src="image/cvit-logo.png" alt="Logo"></div>
-            <img src="image/cvit.jpg" class="gallery-img" alt="CV">
-            <div class="overlay">Fabbiola Zenelaj - <strong>Curiculum Vitae Template</strong></div>
+        <a href="https://liq.codes/infinite/" target="_blank">
+            <div class="project-logo"><img src="image/infw-logo.png" alt="Logo"></div>
+            <img src="image/infw.jpg" class="gallery-img" alt="Infinite Wii">
+            <div class="overlay">LiQ & Infinite Wii Team - <strong>Infinite Wii</strong></div>
         </a>
     </div>
+    -->
 
 </div>
 
