@@ -118,8 +118,11 @@
     }
 
     .link-mobile {
+        margin-left: 2vh;
+        position: relative;
         visibility:visible;
         margin-top: 10.5vh;
+        right: 0;
     }
 
     .links-container{
@@ -128,5 +131,12 @@
 
     #infos{
         margin-left: 2.5vh;
+    }
+
+    .download-mobile {
+        margin-left: 2vh;
+        position: relative;
+        visibility: visible;
+        margin-top: 10.5vh;
     }
 }

@@ -102,7 +102,9 @@ strong {
 }
 
 .link-mobile {
+    position: absolute;
     visibility: hidden;
+    max-width: 0px;
 }
 
 .link-mobile.clicked {
@@ -117,12 +119,17 @@ strong {
     color: gray;
 }
 
-.download {
+.download, .download-mobile {
     margin-top: 13.5vh;
     text-decoration: none;
     font-size: 5vh;
     color: #e0e0e0;
     transition: margin-top 0.15s ease;
+}
+
+.download-mobile {
+    position: absolute;
+    visibility: hidden;
 }
 
 .download:hover {

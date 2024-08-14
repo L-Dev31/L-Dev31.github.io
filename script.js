@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.innerWidth < 768) {  
         speed = 50;
     } else {
-        speed = 100;
+        speed = 500;
     }
 
     scrollingTexts.forEach(p => {
