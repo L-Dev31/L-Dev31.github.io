@@ -116,6 +116,7 @@
 
     .Ig-link a{
         font-size: 2vh;
+        bottom: 0;
     }
 
     .link-mobile {
@@ -133,7 +134,7 @@
     #infos{
         margin-top: 10vh;
         margin-left: 2.5vh;
-        height: 75vh;
+        height: 0%;
     }
 
     .download-mobile {

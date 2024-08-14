@@ -29,7 +29,6 @@
 }
 
 html {
-    scroll-behavior: smooth;
     overflow-x: hidden;
 }
 
@@ -49,7 +48,7 @@ body {
 strong {
     color: #fff;
     font-family: 'Bold', sans-serif;
-    margin-left: 0.5vh;
+    margin-left: 0.5vh
 }
 
 .bg {
@@ -283,6 +282,8 @@ name {
 }
 
 .Ig-link{
+    text-align: right;
+    margin-right: 2vh;
     height: 8vh;
     pointer-events: none;
     transition: transform 0.15s ease;
@@ -295,8 +296,7 @@ name {
 .Ig-link a{
     pointer-events:all;
     text-decoration: none;
-    position: absolute;
-    right: 2vh;
+    position: relative;
     color: #e0e0e0;
     font-size: 3vh;
 }
