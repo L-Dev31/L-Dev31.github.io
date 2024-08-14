@@ -284,7 +284,7 @@ name {
 .Ig-link{
     text-align: right;
     margin-right: 2vh;
-    height: 8vh;
+    height: 4vh;
     pointer-events: none;
     transition: transform 0.15s ease;
 }
