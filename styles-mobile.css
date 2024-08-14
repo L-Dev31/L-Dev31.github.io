@@ -6,6 +6,11 @@
 
     body{
         margin-top: 10vh;
+        background-size: 150%;
+    }
+
+    .cursor {
+        display: none;
     }
 
     .achievements h2 {
@@ -21,10 +26,6 @@
     }
 
     .download{
-        visibility: hidden;
-    }
-
-    .cursor{
         visibility: hidden;
     }
 
@@ -130,7 +131,9 @@
     }
 
     #infos{
+        margin-top: 10vh;
         margin-left: 2.5vh;
+        height: 75vh;
     }
 
     .download-mobile {
