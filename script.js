@@ -154,12 +154,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const links = document.querySelectorAll('.link');
+    const linksMobile = document.querySelectorAll('.link-mobile');
 
     links.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             // Remove 'clicked' class from all links
             links.forEach(l => l.classList.remove('clicked'));
+            linksMobile.forEach(l => l.classList.remove('clicked'));
+            // Add 'clicked' class to the clicked link
+            link.classList.add('clicked');
+        });
+    });
+
+    linksMobile.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Remove 'clicked' class from all links
+            links.forEach(l => l.classList.remove('clicked'));
+            linksMobile.forEach(l => l.classList.remove('clicked'));
             // Add 'clicked' class to the clicked link
             link.classList.add('clicked');
         });

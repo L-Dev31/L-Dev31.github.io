@@ -105,6 +105,10 @@ strong {
     visibility: hidden;
 }
 
+.link-mobile.clicked {
+    color: grey;
+}
+
 .link:hover {
     margin-top: 13.25vh;
 }
