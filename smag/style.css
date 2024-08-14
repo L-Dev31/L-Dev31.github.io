@@ -81,15 +81,9 @@ body {
 }
 
 #video-background video {
-  min-height: 50vh;
+  min-height: 150vh;
   width: 100%;
   object-fit: cover;
-}
-
-@media screen and (max-width: 767px) {
-  #video-background {
-    min-height: 100vh;
-  }
 }
 
 .page-container {
