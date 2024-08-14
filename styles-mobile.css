@@ -139,4 +139,8 @@
         visibility: visible;
         margin-top: 10.5vh;
     }
+
+    h1{
+        font-size: 4vh;
+    }
 }

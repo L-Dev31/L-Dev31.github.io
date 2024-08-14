@@ -317,8 +317,8 @@ name {
 }
 
 h1{
-    margin-top: 15vh;
-    font-size: 5vh;
+    text-align: center;
+    font-size: 7.5vh;
 }
 
 .subtitle {
@@ -426,11 +426,11 @@ header {
     font-family: 'Bold', sans-serif;
     background: #08080880;
     color: #ffffff;
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(35px);
     margin-top: 15vh;
-    padding: 20px; 
-    transition: background 1s ease-in-out;
+    padding: 20px;
     text-align: center; 
+    font-size: 4vh;
 }
 
 .achievements h2 {
