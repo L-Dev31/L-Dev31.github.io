@@ -422,3 +422,114 @@ header {
     font-family: 'Bold', sans-serif;
     font-size: 7vh;
 }
+
+
+/* Adjustments for small devices */
+@media (max-width: 768px) {
+
+    body{
+        margin-top: 20vh;
+    }
+
+    .achievements h2 {
+        font-size: 5vh;
+    }
+
+    .achievement-item {
+        font-size: 2vh;
+    }
+
+    .header-content h1 {
+        font-size: 7.5vh;
+    }
+
+    .download{
+        visibility: hidden;
+    }
+
+    .cursor{
+        visibility: hidden;
+    }
+
+    .link {
+        visibility: hidden;
+    }
+
+    header{
+        min-width:100%;
+    }
+
+    header h1 {
+        font-size: 15vh;
+    }
+
+    .band{
+        height: 5vh;
+    }
+
+    .band1 {
+        transform: rotateZ(-3deg);
+    }    
+
+    .band2{
+        transform: translateY(-3.5vh) rotateZ(3deg);
+    }
+
+    .band1 .scrolling-text p, 
+    .band2 .scrolling-text p {
+        font-size: 3.5vh;
+    }
+
+    .landing-page{
+        visibility: hidden;
+    }
+
+    .achievements {
+        margin-top: 5vh;
+        flex-direction: column;
+        gap: 10px;
+        font-size: smaller;
+    }
+
+    #infos img {
+        width: 100%;
+        height: auto;
+        position: static;
+        margin-top: 1em;
+    }
+
+    .subtitle {
+        margin-right: 0;
+        font-size: 2.5vh;
+    }
+
+    .gallery-item {
+        margin: 1em 0;
+        height: 25vh;
+        border-radius: 5vh;
+    }
+
+    .project-logo img {
+        visibility: hidden;
+    }
+
+    .gallery-item img{
+        min-height: 100%;
+    }
+
+    .gallery-item .overlay {
+        opacity: 1;
+        font-size: 2vh;
+        background-color: #08080880
+    }
+
+    #logo {
+        width: 7.5vh;
+    }
+    
+    .text-container {
+        font-size: 2vh;
+        top: 11vh;
+        left: 10vh;
+    }
+}

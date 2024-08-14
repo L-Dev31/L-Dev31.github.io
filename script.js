@@ -178,6 +178,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('scroll', function() {
+    if (window.innerWidth < 768) {
+        return; 
+    }
+
     const galleryItemsImg = document.querySelectorAll('.gallery-img');
     const scrollPosition = window.pageYOffset;
 
@@ -190,3 +194,4 @@ document.addEventListener('scroll', function() {
         img.style.transform = `translateY(${imgYOffset}px)`;
     });
 });
+
