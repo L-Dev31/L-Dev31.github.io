@@ -10,12 +10,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //Scrolling text
     const scrollingTexts = document.querySelectorAll('.scrolling-text p');
-    const speed = 100;
+
+    //Speed in function of the device bc once again js is shitty as fuck
+    let speed;
+    if (window.innerWidth < 768) {  
+        speed = 50;
+    } else {
+        speed = 100;
+    }
 
     scrollingTexts.forEach(p => {
         const textContent = p.textContent.trim();
-        const parent = p.parentElement;
-        const parentWidth = parent.offsetWidth;
         const computedStyle = window.getComputedStyle(p);
         const font = `${computedStyle.fontSize} ${computedStyle.fontFamily}`;
         const textWidth = getTextWidth(textContent, font);
@@ -69,33 +74,46 @@ document.addEventListener('DOMContentLoaded', function() {
     const personalProjectLink = document.getElementById('personal-project');
     const commissionsLink = document.getElementById('commissions');
     const everythingLink = document.getElementById('everything');
+    const everythingLinkMobile = document.getElementById('everything-mobile');
     const infoLink = document.getElementById('info-link');
+    const infoLinkMobile = document.getElementById('info-link-mobile')
     const infosContainer = document.getElementById('infos');
     const galleryItems = document.querySelectorAll('.gallery-item');
     const headerContainer = document.getElementById('header');
-
+    
     // Initially show all gallery items
     showAllItems();
-
+    
     personalProjectLink.addEventListener('click', function(e) {
         e.preventDefault();
         filterItems('personal-project');
     });
-
+    
     commissionsLink.addEventListener('click', function(e) {
         e.preventDefault();
         filterItems('commission');
     });
-
+    
     everythingLink.addEventListener('click', function(e) {
         e.preventDefault();
         showAllItems();
     });
 
+    everythingLinkMobile.addEventListener('click', function(e) {
+        e.preventDefault();
+        showAllItems();
+    });
+    
     infoLink.addEventListener('click', function(e) {
         e.preventDefault();
         showInfoText();
     });
+
+    infoLinkMobile.addEventListener('click', function(e) {
+        e.preventDefault();
+        showInfoText();
+    });
+    
 
     function showAllItems() {
         resetScrollPositions();
