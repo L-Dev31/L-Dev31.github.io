@@ -1,14 +1,13 @@
 @font-face {
     font-family: 'Bold';
     src: url('font/Bold.otf') format('opentype');
-    font-weight: 2000;
+    font-weight: 1000;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Thin';
     src: url('font/Thin.otf') format('opentype');
-    font-weight: lighter;
     font-style: normal;
 }
 
@@ -48,6 +47,7 @@ body {
 }
 
 strong {
+    color: #fff;
     font-family: 'Bold', sans-serif;
     margin-left: 0.5vh;
 }
@@ -297,7 +297,6 @@ name {
     top: 35vh;
     width: 70vh;
     height: 85vh;
-    border-radius: 5vh;
     box-shadow: 0 0 3vh #00000099;
     object-fit: cover;
 }
@@ -413,9 +412,6 @@ header {
     background: #08080880;
     color: #ffffff;
     backdrop-filter: blur(15px);
-    border-radius: 5vh;
-    margin-left: 3.5vh;
-    margin-right: 3.5vh;
     margin-top: 15vh;
     padding: 20px; 
     transition: background 1s ease-in-out;

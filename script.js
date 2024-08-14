@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //Scrolling text
     const scrollingTexts = document.querySelectorAll('.scrolling-text p');
-    const speed = 200;
+    const speed = 100;
 
     scrollingTexts.forEach(p => {
         const textContent = p.textContent.trim();
