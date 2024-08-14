@@ -81,7 +81,7 @@ body {
 }
 
 #video-background video {
-  min-height: 150vh;
+  min-height: 125vh;
   width: 100%;
   object-fit: cover;
 }
