@@ -114,6 +114,10 @@
         left: 10vh;
     }
 
+    .Ig-link{
+        height: 5vh;
+    }
+
     .Ig-link a{
         font-size: 2vh;
         bottom: 0;
@@ -135,6 +139,10 @@
         margin-top: 13.5vh;
         margin-left: 2.5vh;
         height: 0%;
+    }
+
+    #infos img{
+        max-height: 0;
     }
 
     .download-mobile {
