@@ -389,12 +389,14 @@ header {
 }
 
 .band1 {
+    overflow: hidden;
     background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%);
     transform: rotate(-3deg);
     top: 0;
 }
 
 .band2 {
+    overflow: hidden;
     background: #e0e0e0;
     transform: rotate(3deg);
     top: 5vh;
@@ -424,9 +426,9 @@ header {
     font-family: 'Bold', sans-serif;
     background: #08080880;
     color: #ffffff;
-    backdrop-filter: blur(35px);
+    backdrop-filter: blur(3.5vh);
     margin-top: 15vh;
-    padding: 20px;
+    padding: 2vh;
     text-align: center; 
     font-size: 4vh;
 }
@@ -434,4 +436,23 @@ header {
 .achievements h2 {
     font-family: 'Bold', sans-serif;
     font-size: 7vh;
+}
+
+.zoom-out-page{
+    visibility: hidden;
+    position: absolute;
+    top: 0;
+    z-index: 999;
+    background-color: #080808aa;
+    backdrop-filter: blur(3vh);
+    pointer-events: none;
+    width: 100%;
+    min-height: 100%;
+}
+
+.zoom-out-page h1{
+    position: absolute;
+    top: 30vh;
+    font-size: 15vh;
+    left: 12.5vh;
 }
