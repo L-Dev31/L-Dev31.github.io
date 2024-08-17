@@ -12,6 +12,39 @@
         visibility: visible;
     }
 }
+
+@media (max-width: 1080px) {
+    .download{
+        visibility: hidden;
+    }
+
+    .link {
+        visibility: hidden;
+    }
+
+    #logo {
+        width: 7.5vh;
+    }
+    
+    .text-container {
+        font-size: 2vh;
+        top: 11vh;
+        left: 10vh;
+    }
+    
+    .link-mobile {
+        margin-left: 2vh;
+        position: relative;
+        visibility:visible;
+        margin-top: 10.5vh;
+        right: 0;
+    }
+
+    .links-container{
+        gap: 2vh;
+    }
+}
+
 @media (max-width: 768px) {
 
     html{
@@ -29,18 +62,6 @@
 
     .achievement-item {
         font-size: 2vh;
-    }
-
-    .header-content h1 {
-        font-size: 5.5vh;
-    }
-
-    .download{
-        visibility: hidden;
-    }
-
-    .link {
-        visibility: hidden;
     }
 
     header{
@@ -114,16 +135,6 @@
         background-color: #08080880
     }
 
-    #logo {
-        width: 7.5vh;
-    }
-    
-    .text-container {
-        font-size: 2vh;
-        top: 11vh;
-        left: 10vh;
-    }
-
     .Ig-link{
         height: 5vh;
     }
@@ -133,16 +144,8 @@
         bottom: 0;
     }
 
-    .link-mobile {
-        margin-left: 2vh;
-        position: relative;
-        visibility:visible;
-        margin-top: 10.5vh;
-        right: 0;
-    }
-
-    .links-container{
-        gap: 2vh;
+    .header-content h1 {
+        font-size: 5.5vh;
     }
 
     #infos{
