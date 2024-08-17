@@ -8,11 +8,6 @@ function getTextWidth(text, font) {
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    if (window.innerWidth > 2000) {
-        window.scrollTo(0, 0); // Fait défiler la page en haut instantanément
-        return;
-    }
-
     //Scrolling text
     const scrollingTexts = document.querySelectorAll('.scrolling-text p');
 
