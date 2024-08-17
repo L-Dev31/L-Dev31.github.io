@@ -1,4 +1,10 @@
 @media (max-width: 768px) {
+    .cursor {
+        display: none;
+    }
+}
+
+@media (max-width: 4500px) {
 
     html{
         overflow-x: hidden;
@@ -7,10 +13,6 @@
     body{
         margin-top: 10vh;
         background-size: 150%;
-    }
-
-    .cursor {
-        display: none;
     }
 
     .achievements h2 {
