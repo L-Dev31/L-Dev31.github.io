@@ -1,228 +1,34 @@
-function getTextWidth(text, font) {
-    const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
-    const context = canvas.getContext("2d");
-    context.font = font;
-    const metrics = context.measureText(text);
-    return metrics.width;
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-
-    //Scrolling text
-    const scrollingTexts = document.querySelectorAll('.scrolling-text p');
-
-    //Speed in function of the device bc once again js is shitty as fuck
-    let speed;
-    if (window.innerWidth < 768) {  
-        speed = 50;
-    } else {
-        speed = 100;
-    }
-
-    scrollingTexts.forEach(p => {
-        const textContent = p.textContent.trim();
-        const computedStyle = window.getComputedStyle(p);
-        const font = `${computedStyle.fontSize} ${computedStyle.fontFamily}`;
-        const textWidth = getTextWidth(textContent, font);
-        const repeatCount = 99; //Temporary since the code's shitty
-
-        let repeatedText = '';
-        for (let i = 0; i < repeatCount; i++) {
-            repeatedText += textContent + ' ';
-        }
-
-        p.textContent = repeatedText.trim();
-        
-        const totalWidth = textWidth * repeatCount;
-        const animationDuration = totalWidth / speed;
-
-        p.style.whiteSpace = 'nowrap';
-        p.style.display = 'inline-block';
-        p.style.animation = `scroll-left ${animationDuration}s linear infinite`;
-    });
-
-    const styleSheet = document.createElement("style");
-    styleSheet.type = "text/css";
-    styleSheet.innerText = `
-    @keyframes scroll-left {
-        from {
-            transform: translateX(0);
-        }
-        to {
-            transform: translateX(-100%);
-        }
-    }`;
-    document.head.appendChild(styleSheet);
-
-    // Cursor
-    const cursor = document.createElement('div');
-    cursor.classList.add('cursor');
-    document.body.appendChild(cursor);
-
-    document.addEventListener('mousemove', (e) => {
-        const x = e.clientX + window.scrollX;
-        const y = e.clientY + window.scrollY;
-        cursor.style.transform = `translate(${x}px, ${y}px)`;
-    });
-
-    document.addEventListener('scroll', (e) => {
-        const x = e.clientX + window.scrollX;
-        const y = e.clientY + window.scrollY;
-        cursor.style.transform = `translate(${x}px, ${y}px)`;
-    });
-
-    const personalProjectLink = document.getElementById('personal-project');
-    const commissionsLink = document.getElementById('commissions');
-    const everythingLink = document.getElementById('everything');
-    const everythingLinkMobile = document.getElementById('everything-mobile');
-    const infoLink = document.getElementById('info-link');
-    const infoLinkMobile = document.getElementById('info-link-mobile')
-    const infosContainer = document.getElementById('infos');
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    const headerContainer = document.getElementById('header');
-    
-    // Initially show all gallery items
-    showAllItems();
-    
-    personalProjectLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        filterItems('personal-project');
-    });
-    
-    commissionsLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        filterItems('commission');
-    });
-    
-    everythingLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        showAllItems();
-    });
-
-    everythingLinkMobile.addEventListener('click', function(e) {
-        e.preventDefault();
-        showAllItems();
-    });
-    
-    infoLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        showInfoText();
-    });
-
-    infoLinkMobile.addEventListener('click', function(e) {
-        e.preventDefault();
-        showInfoText();
-    });
-    
-
-    function showAllItems() {
-        resetScrollPositions();
-        galleryItems.forEach(item => {
-            item.style.display = 'block';
-        });
-        infosContainer.style.display = 'none';  // Hide infos container when showing all items
-        headerContainer.style.display = 'block'; // Show Header when showing all items
-    }
-
-    function filterItems(category) {
-        resetScrollPositions();
-        galleryItems.forEach(item => {
-            if (item.classList.contains(category)) {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-        headerContainer.style.display = 'none';
-        infosContainer.style.display = 'none';  // Hide infos container when filtering items
-    }
-
-    function showInfoText() {
-        resetScrollPositions();
-        galleryItems.forEach(item => {
-            item.style.display = 'none';
-        });
-        headerContainer.style.display = 'none';  // Hide Header
-        infosContainer.style.display = 'block';
-    }
-
-    function resetScrollPositions() {
-        window.scrollTo(0, 0);  // Reset the scroll position of the window
-        galleryItems.forEach(item => {
-            item.scrollTop = 0;  // Reset the scroll position of each gallery item
-        });
-    }
-
-    const links = document.querySelectorAll('.link');
-    const linksMobile = document.querySelectorAll('.link-mobile');
-
-    links.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Remove 'clicked' class from all links
-            links.forEach(l => l.classList.remove('clicked'));
-            linksMobile.forEach(l => l.classList.remove('clicked'));
-            // Add 'clicked' class to the clicked link
-            link.classList.add('clicked');
-        });
-    });
-
-    linksMobile.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Remove 'clicked' class from all links
-            links.forEach(l => l.classList.remove('clicked'));
-            linksMobile.forEach(l => l.classList.remove('clicked'));
-            // Add 'clicked' class to the clicked link
-            link.classList.add('clicked');
-        });
-    });
-
-    const landingLogo = document.getElementById('landing-logo');
-    const landingPage = document.querySelector('.landing-page');
-    const body = document.body;
-
-    // Désactiver le défilement
-    body.classList.add('no-scroll');
-
+const imageUrls = [
+    'https://wallpapercave.com/wp/wp5593679.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/0/0a/Serene_mountain_landscape.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/6/6e/Sunrise_landscape_with_mountains.jpg'
+  ];
+  let imageIndex = 0;
+  const background = document.getElementById('background');
+  
+  // Fonction de changement de fond avec fondu
+  function changeBackground() {
+    background.style.opacity = '0';
+  
+    // Attendre la fin du fondu (1 seconde) pour changer l'image et ramener l'opacité
     setTimeout(() => {
-        window.scrollTo(0, 0);
-        landingLogo.classList.add('shrink');
+      imageIndex = (imageIndex + 1) % imageUrls.length;
+      background.style.backgroundImage = `url(${imageUrls[imageIndex]})`;
+      background.style.opacity = '1';
     }, 1000);
-
-    setTimeout(() => {
-        landingPage.classList.add('hidden');
-    }, 2000);
-
-    setTimeout(() => {
-        body.classList.remove('no-scroll');
-    }, 2750);
-
-    var unavailableLinks = document.querySelectorAll('.unavailable a');
-
-    unavailableLinks.forEach(function(link) {
-        link.addEventListener('click', function(event) {
-            event.preventDefault();
-            alert("Ce site n'est pas accessible pour l'instant");
-        });
-    });
-});
-
-document.addEventListener('scroll', function() {
-    if (window.innerWidth < 768) {
-        return; 
-    }
-
-    const galleryItemsImg = document.querySelectorAll('.gallery-img');
-    const scrollPosition = window.pageYOffset;
-
-    galleryItemsImg.forEach((img, index) => {
-        const imgParent = img.parentElement;
-        let speed = 5;
-        const offset = imgParent.getBoundingClientRect().top + scrollPosition;
-        const imgYOffset = (scrollPosition - offset) / speed;
-
-        img.style.transform = `translateY(${imgYOffset}px)`;
-    });
-});
-
+  }
+  
+  // Définir l'intervalle de changement d'image toutes les 30 secondes
+  setInterval(changeBackground, 30000);
+  
+  // Fonction de mise à jour de l'heure et de la date
+  function updateTimeAndDate() {
+    const now = new Date();
+    const optionsTime = { timeZone: 'America/Guadeloupe', hour: '2-digit', minute: '2-digit' };
+    document.getElementById('time').textContent = new Intl.DateTimeFormat('fr-FR', optionsTime).format(now);
+  
+    const optionsDate = { weekday: 'long', day: 'numeric', month: 'long' };
+    document.getElementById('date').textContent = new Intl.DateTimeFormat('fr-FR', optionsDate).format(now);
+  }
+  setInterval(updateTimeAndDate, 1000); // Mise à jour chaque seconde
+  updateTimeAndDate();

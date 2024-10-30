@@ -1,0 +1,99 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+  
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+}
+  
+.overlay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+  
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 1s ease-in-out;
+    z-index: 0;
+}
+  
+.gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent, rgba(0, 0, 0, 1));
+    z-index: 0;
+}
+  
+.info {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+  
+.time {
+    font-size: 3em;
+    font-weight: bold;
+}
+  
+.date {
+    font-size: 1.2em;
+}
+  
+.weather {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 3em;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+}
+  
+.weather-icon {
+    margin-left: 10px;
+    font-size: 1em;
+}
+  
+.metadata {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.75em;
+    color: #ffffff;
+    opacity: 0.7;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+#rssContainer {
+    z-index: 2;
+    position: relative;
+}
+
+.rss-container strong {
+    font-weight: bold;
+}
+
+.rss-container span {
+    font-weight: normal;
+}
