@@ -1,111 +1,81 @@
 const images = [
     {
-        url: 'https://images.pexels.com/photos/8957663/pexels-photo-8957663.jpeg',
+        url: 'images/BG/8957663.jpg',
         title: 'Сочи, Краснодарский край',
         creator: 'Илья Бунин',
         date: '2019'
     },
     {
-        url: 'https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg',
+        url: 'images/BG/417173.jpg',
         title: 'Montagne Grise Et Brune',
         creator: 'Pixabay',
         date: '2016'
     },
     {
-        url: 'https://images.pexels.com/photos/2187662/pexels-photo-2187662.jpeg',
+        url: 'images/BG/2187662.jpg',
         title: 'Chemin Entre Les Maisons Traditionnelles',
         creator: 'Evgeny Tchebotarev',
         date: '2019'
     },
     {
-        url: 'https://images.pexels.com/photos/402028/pexels-photo-402028.jpeg',
+        url: 'images/BG/402028.jpg',
         title: 'Temple Rouge Et Noir Entouré D\'arbres',
         creator: 'Belle Co',
         date: '2017'
     },
     {
-        url: 'https://images.pexels.com/photos/15989756/pexels-photo-15989756/free-photo-of-nature-eau-animal-faune.jpeg',
+        url: 'images/BG/15989756.jpg',
         title: 'Racoon',
         creator: 'Chris F',
         date: '2023'
     },
     {
-        url: 'https://images.pexels.com/photos/3647545/pexels-photo-3647545.jpeg',
+        url: 'images/BG/3647545.jpg',
         title: 'Saut d\'Acomat',
         creator: 'Greg Galas',
         date: '2019'
     },
     {
-        url: 'https://images.pexels.com/photos/3386540/pexels-photo-3386540.jpeg',
+        url: 'images/BG/3386540.jpg',
         title: 'Vue Aérienne De La Ville De Belo Horizonte à L\'aube',
         creator: 'André Moura',
         date: '2019'
     },
     {
-        url: 'https://images.pexels.com/photos/219692/pexels-photo-219692.jpeg',
+        url: 'images/BG/219692.jpg',
         title: 'Bâtiments De Grande Hauteur Pendant La Photo De Nuit',
         creator: 'Pixabay',
         date: '2016'
     },
     {
-        url: 'https://cdn.pixabay.com/photo/2017/11/07/23/23/berchtesgaden-2928712_1280.jpg',
-        title: 'Berchtesgaden',
-        creator: 'Felix Mittermeier',
-        date: '2014'
-    },
-    {
-        url: 'https://cdn.pixabay.com/photo/2016/07/22/16/29/fog-1535201_1280.jpg',
-        title: 'Into the mist',
-        creator: 'LUM3N',
-        date: '2016'
-    },
-    {
-        url: 'https://cdn.pixabay.com/photo/2023/01/08/09/34/jellyfish-7704801_1280.jpg',
+        url: 'images/BG/7704801.jpg',
         title: 'Deep sea creature',
         creator: 'Tyna Janoch',
         date: '2023'
     },
     {
-        url: 'https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_1280.jpg',
-        title: 'Nature, Eaux, Lac.',
-        creator: 'jplenio',
-        date: '2018'
-    },
-    {
-        url: 'https://images.pexels.com/photos/247599/pexels-photo-247599.jpeg',
+        url: 'images/BG/247599.jpg',
         title: 'Vue panoramique du riz paddy',
         creator: 'Pixabay',
         date: '2016'
     },
     {
-        url: 'https://images.pexels.com/photos/210186/pexels-photo-210186.jpeg',
-        title: 'Lone Tree in Desert',
+        url: 'images/BG/210186.jpg',
+        title: 'Cascade',
         creator: 'Pixabay',
         date: '2015'
     },
     {
-        url: 'https://images.pexels.com/photos/1146709/pexels-photo-1146709.jpeg',
-        title: 'Aerial View of Ocean Waves',
+        url: 'images/BG/1146709.jpg',
+        title: 'Trees in the mist',
         creator: 'Oleg Magni',
         date: '2019'
     },
     {
-        url: 'https://images.pexels.com/photos/33109/fall-autumn-red-season.jpg',
-        title: 'Autumn Leaves in Forest',
-        creator: 'Pixabay',
-        date: '2016'
-    },
-    {
-        url: 'https://images.pexels.com/photos/1029604/pexels-photo-1029604.jpeg',
+        url: 'images/BG/1029604.jpg',
         title: 'Pebbles',
         creator: 'Eberhard Grossgasteiger',
         date: '2018'
-    },
-    {
-        url: 'https://images.pexels.com/photos/39811/pexels-photo-39811.jpeg',
-        title: 'Rainy road',
-        creator: 'Pixabay',
-        date: '2015'
     }
 ];
 
