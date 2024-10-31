@@ -176,20 +176,55 @@ setInterval(fetchWeather, 1800000);
 
 const rssFeeds = [
     {
+        url: 'https://api.allorigins.win/get?url=https://www.allocine.fr/rss/news.xml',
+        logo: 'images/RSS/AlloCine.png',
+        name: 'Allo Ciné'
+    },
+    {
+        url: 'https://api.allorigins.win/get?url=https://www.francetvinfo.fr/france/guadeloupe.rss',
+        logo: 'images/RSS/La1ere.png',
+        name: 'Guadeloupe la 1ère'
+    },
+    {
+        url: 'https://api.allorigins.win/get?url=https://www.bfmtv.com/rss/international/',
+        logo: 'images/RSS/BFMTV.png',
+        name: 'BFMTV'
+    },
+    {
+        url: 'https://api.allorigins.win/get?url=https://www.diplomatie.gouv.fr/spip.php?page=backend-fd',
+        logo: 'images/RSS/FranceDiplomacie.png',
+        name: 'France Diplomacie'
+    },
+    {
+        url: 'https://api.allorigins.win/get?url=https://www.jeuxvideo.com/rss/rss-news.xml',
+        logo: 'images/RSS/Jeuxvideo.com.png',
+        name: 'Jeuxvideo.com'
+    },
+    {
         url: 'https://api.allorigins.win/get?url=https://www.nintendo.com/fr-fr/news.xml?_gl=1*17ftptg*_gcl_au*NjM5ODI3MDg4LjE3MzAyNTQxMzk.*_ga*MTA3NDA2MTgxNC4xNzMwMjU0MTQw*_ga_8CCMZ61YS8*MTczMDI1NDEzOS4xLjAuMTczMDI1NDEzOS4wLjAuMA..&_ga=2.182971877.218097624.1730254140-1074061814.1730254140',
-        logo: 'https://static-00.iconduck.com/assets.00/nintendo-icon-1024x1024-faiufau9.png'
+        logo: 'images/RSS/Nintendo.png',
+        name: 'Nintendo'
     },
     {
         url: 'https://api.allorigins.win/get?url=https://www.francetvinfo.fr/monde.rss',
-        logo: 'https://myradioendirect.fr/public/uploads/radio_img/france-info/play_250_250.jpg'
+        logo: 'images/RSS/FranceInfo.png',
+        name: 'France Info'
     },
     {
         url: 'https://api.allorigins.win/get?url=https://www.lemonde.fr/rss/une.xml',
-        logo: 'https://www.theofficialboard.com/img/twitterCompanyBigImages/33427.jpg'
+        logo: 'images/RSS/LeMonde.png',
+        name: 'Le Monde'
     }
 ];
+
 let currentFeedIndex = 0;
-let previousItems = [];
+const lastItems = {};
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('fr-FR', options);
+}
 
 async function fetchFeed(feed) {
     try {
@@ -203,21 +238,29 @@ async function fetchFeed(feed) {
         if (items.length > 0) {
             const firstItem = items[0];
             const title = firstItem.querySelector("title").textContent.trim();
-            const description = firstItem.querySelector("description").textContent.trim();
+            let description = firstItem.querySelector("description").textContent.trim();
             const link = firstItem.querySelector("link").textContent.trim();
             const imageUrl = firstItem.querySelector("media\\:thumbnail") ? firstItem.querySelector("media\\:thumbnail").getAttribute("url") : "";
+            const pubDate = firstItem.querySelector("pubDate") ? formatDate(firstItem.querySelector("pubDate").textContent.trim()) : "";
 
-            displayFeed(feed, title, description, link, imageUrl);
+            if (description.length > 2400) {
+                description = description.substring(0, 2400) + "... [Voir la suite]";
+            }
+            
+            if (lastItems[feed.name] !== title) {
+                displayFeed(feed, title, description, link, imageUrl, pubDate);
+                lastItems[feed.name] = title;
+            }
         } else {
-            displayFeed(feed, "Aucun article disponible", "Le flux RSS est vide ou non accessible.", "", "");
+            displayFeed(feed, "Aucun article disponible", "Le flux RSS est vide ou non accessible.", "", "", "");
         }
     } catch (error) {
         console.error("Erreur de récupération du flux RSS:", error);
-        displayFeed(feed, "Erreur de récupération", "Impossible de charger les données RSS.", "", "");
+        displayFeed(feed, "Erreur de récupération", "Impossible de charger les données RSS.", "", "", "");
     }
 }
 
-function displayFeed(feed, title, description, link, imageUrl) {
+function displayFeed(feed, title, description, link, imageUrl, pubDate) {
     rssContainer.innerHTML = `
         <div style="
             display: flex;
@@ -228,20 +271,23 @@ function displayFeed(feed, title, description, link, imageUrl) {
             outline: 1.5px solid rgba(255, 255, 255, 0.25); 
             backdrop-filter: blur(25px); 
             position: absolute;
-            top: 120px;
+            top: 125px;
             left: 20px;
             right: 20px;
             cursor: pointer;
         " onclick="window.open('${link}', '_blank')">
-            <img src="${feed.logo}" alt="${feed.name}" style="
-                width: 50px; 
-                height: 50px; 
-                border-radius: 50%; 
-                margin-right: 15px;
-            ">
+            <div style="text-align: center; margin-right: 20px;">
+                <img src="${feed.logo}" alt="${feed.name}" style="
+                    width: 50px; 
+                    height: 50px; 
+                    border-radius: 50%;
+                ">
+                <div style="color: white; font-size: 0.8em;">${feed.name}</div>
+            </div>
             <div style="color: white;">
                 <div><strong>${title}</strong></div>
-                <div>${description}</div>
+                <div style="font-size: 0.8em; color: white; opacity: 0.5; margin-bottom: 5px;">${pubDate}</div>
+                <div style="margin-top: 10px;">${description}</div>
             </div>
             ${imageUrl ? `<img src="${imageUrl}" alt="Image de l'article" style="border-radius: 10px; margin-top: 10px; max-width: 100%; height: auto;">` : ""}
         </div>
@@ -252,8 +298,9 @@ function initFeedRotation() {
     setInterval(() => {
         currentFeedIndex = (currentFeedIndex + 1) % rssFeeds.length;
         fetchFeed(rssFeeds[currentFeedIndex]);
-    }, 31000);
+    }, 30000);
 }
 
+// Initialisation
 fetchFeed(rssFeeds[currentFeedIndex]);
 initFeedRotation();
