@@ -213,8 +213,8 @@ async function fetchFeed(feed) {
             const imageUrl = firstItem.querySelector("media\\:thumbnail") ? firstItem.querySelector("media\\:thumbnail").getAttribute("url") : "";
             const pubDate = firstItem.querySelector("pubDate") ? formatDate(firstItem.querySelector("pubDate").textContent.trim()) : "";
 
-            if (description.length > 1400) {
-                description = description.substring(0, 1400) + "... [Voir la suite]";
+            if (description.length > 1500) {
+                description = description.substring(0, 1500) + "... [Voir la suite]";
             }
             
             if (lastItems[feed.name] !== title) {
