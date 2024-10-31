@@ -146,6 +146,11 @@ setInterval(fetchWeather, 1800000);
 
 const rssFeeds = [
     {
+        url: 'https://api.allorigins.win/get?url=https://www.bfmtv.com/rss/international/',
+        logo: 'images/RSS/BFMTV.png',
+        name: 'BFMTV'
+    },
+    {
         url: 'https://api.allorigins.win/get?url=https://www.allocine.fr/rss/news.xml',
         logo: 'images/RSS/AlloCine.png',
         name: 'Allo Ciné'
@@ -154,11 +159,6 @@ const rssFeeds = [
         url: 'https://api.allorigins.win/get?url=https://www.francetvinfo.fr/france/guadeloupe.rss',
         logo: 'images/RSS/La1ere.png',
         name: 'Guadeloupe la 1ère'
-    },
-    {
-        url: 'https://api.allorigins.win/get?url=https://www.bfmtv.com/rss/international/',
-        logo: 'images/RSS/BFMTV.png',
-        name: 'BFMTV'
     },
     {
         url: 'https://api.allorigins.win/get?url=https://www.diplomatie.gouv.fr/spip.php?page=backend-fd',
@@ -213,8 +213,8 @@ async function fetchFeed(feed) {
             const imageUrl = firstItem.querySelector("media\\:thumbnail") ? firstItem.querySelector("media\\:thumbnail").getAttribute("url") : "";
             const pubDate = firstItem.querySelector("pubDate") ? formatDate(firstItem.querySelector("pubDate").textContent.trim()) : "";
 
-            if (description.length > 2400) {
-                description = description.substring(0, 2400) + "... [Voir la suite]";
+            if (description.length > 1375) {
+                description = description.substring(0, 1375) + "... [Voir la suite]";
             }
             
             if (lastItems[feed.name] !== title) {
