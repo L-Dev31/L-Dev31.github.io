@@ -213,7 +213,7 @@ async function fetchFeed(feed) {
             const imageUrl = firstItem.querySelector("media\\:thumbnail") ? firstItem.querySelector("media\\:thumbnail").getAttribute("url") : "";
             const pubDate = firstItem.querySelector("pubDate") ? formatDate(firstItem.querySelector("pubDate").textContent.trim()) : "";
 
-            if (description.length > 1550) {
+            if (description.length > 1500) {
                 description = description.substring(0, 1550) + "... [Voir la suite]";
             }
             
@@ -245,6 +245,8 @@ function displayFeed(feed, title, description, link, imageUrl, pubDate) {
             left: 20px;
             right: 20px;
             cursor: pointer;
+            max-height: 340px;
+            overflow: hidden
         " onclick="window.open('${link}', '_blank')">
             <div style="text-align: center; margin-right: 20px;">
                 <img src="${feed.logo}" alt="${feed.name}" style="
@@ -259,7 +261,14 @@ function displayFeed(feed, title, description, link, imageUrl, pubDate) {
                 <div style="font-size: 0.8em; color: white; opacity: 0.5; margin-bottom: 5px;">${pubDate}</div>
                 <div style="margin-top: 10px;">${description}</div>
             </div>
-            ${imageUrl ? `<img src="${imageUrl}" alt="Image de l'article" style="border-radius: 10px; margin-top: 10px; max-width: 100%; height: auto;">` : ""}
+            ${imageUrl ? `<img src="${imageUrl}" alt="Image de l'article" style="
+                border-radius: 12px;
+                margin-top: 10px;
+                max-width: 100px;
+                max-height: 25%;
+                height: auto;
+                width: auto;
+            ">` : ""}
         </div>
     `;
 }
