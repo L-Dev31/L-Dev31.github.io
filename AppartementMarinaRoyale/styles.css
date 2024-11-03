@@ -124,18 +124,8 @@
     background-color: var(--primary-color);
     color: #ffffff;
     text-align: center;
-    padding: 1rem;
-  }
-  
-  .footer-content a {
-    color: #ffffff;
-    margin: 0 0.5rem;
-    font-size: 1.2rem;
-    transition: color 0.3s;
-  }
-  
-  .footer-content a:hover {
-    color: #f0f0f0;
+    padding: 2vh;
+    font-size: 2vh;
   }
   
   .carousel-section {
