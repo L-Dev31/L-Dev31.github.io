@@ -18,7 +18,7 @@
     </nav>
   </header>
 
-  <!--Header Section-->
+  <!-- Header Section -->
   <section class="video-section">
     <video autoplay loop muted playsinline class="background-video">
       <source src="images/stars.mp4" type="video/mp4">
@@ -33,7 +33,7 @@
     </div>
   </section>
 
-  <!--Carousel Section-->
+  <!-- Carousel Section -->
   <section class="carousel-section">
     <h1>Les photos</h1>
     <div class="carousel-container">
@@ -41,35 +41,35 @@
         <img src="images/1.jpg" alt="Photo 1" class="carousel-image active">
         <img src="images/2.jpg" alt="Photo 2" class="carousel-image">
         <img src="images/3.jpg" alt="Photo 3" class="carousel-image">
-        <img src="images/4.jpg" alt="Photo 2" class="carousel-image">
-        <img src="images/5.jpg" alt="Photo 3" class="carousel-image">
-        <img src="images/6.jpg" alt="Photo 2" class="carousel-image">
-        <img src="images/7.jpg" alt="Photo 3" class="carousel-image">
+        <img src="images/4.jpg" alt="Photo 4" class="carousel-image">
+        <img src="images/5.jpg" alt="Photo 5" class="carousel-image">
+        <img src="images/6.jpg" alt="Photo 6" class="carousel-image">
+        <img src="images/7.jpg" alt="Photo 7" class="carousel-image">
       </div>
       <div class="carousel-info">
         <h2></h2>
         <p></p>
       </div>
     </div>
-  </section>  
+  </section>
 
-  <!--Nearby Section-->
+  <!-- Nearby Section -->
   <section class="nearby-section">
     <h1>Lieux à Proximité</h1>
     <div class="bg-filter"></div>
     <div class="nearby-image-wrapper">
-        <img src="images/GolfOldCourse.jpg" alt="Golf Old Course" class="nearby-image active">
-        <img src="images/PlageLaRaguette.jpg" alt="Plage la Raguette" class="nearby-image">
-        <img src="images/ChateauLaNapoule.jpg" alt="Restaurant" class="nearby-image">
+      <img src="images/GolfOldCourse.jpg" alt="Golf Old Course" class="nearby-image active">
+      <img src="images/PlageLaRaguette.jpg" alt="Plage La Raguette" class="nearby-image">
+      <img src="images/ChateauLaNapoule.jpg" alt="Château La Napoule" class="nearby-image">
     </div>
     <div class="text-overlay">
-        <h3 class="title">Plage</h3>
-        <p class="distance">300m de l'appartement</p>
+      <h3 class="title">Plage</h3>
+      <p class="distance">300m de l'appartement</p>
     </div>
   </section>
 
-<!-- Contact Section -->
-<section class="contact-section">
+  <!-- Contact Section -->
+  <section class="contact-section">
     <h1>Contactez-nous</h1>
     <form id="contact-form">
       <input type="text" id="name" placeholder="Votre nom" required>
@@ -81,52 +81,46 @@
 
   <!-- Footer -->
   <footer>
-    <div class="footer-content">
-      <p>Suivez-nous</p>
-      <a href="#"><i class="fab fa-facebook-f"></i></a>
-      <a href="#"><i class="fab fa-instagram"></i></a>
-      <a href="#"><i class="fab fa-twitter"></i></a>
-    </div>
+    <p><i class="fa-solid fa-phone"></i> 06 20 76 70 80</p>
   </footer>
 
-    <script src="script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
+  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
     // Initialiser EmailJS
     (function() {
-        emailjs.init("H8mmDaM4ID9oNXT0p"); // Remplacez par votre ID utilisateur EmailJS
+        emailjs.init("H8mmDaM4ID9oNXT0p");
     })();
 
     // Gérer la soumission du formulaire
     document.getElementById('contact-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Empêche le rechargement de la page
+      event.preventDefault();
 
-        // Récupérer les valeurs des champs
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const message = document.getElementById('message').value;
-        const date = new Date().toLocaleString(); // Obtenir la date actuelle
+      // Récupérer les valeurs des champs
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+      const date = new Date().toLocaleString();
 
-        // Préparer les paramètres de l'e-mail
-        const templateParams = {
-        to_name: "Leo Tosku",
+      // Préparer les paramètres de l'e-mail
+      const templateParams = {
         from_name: name,
         user_email: email,
         message: message,
         send_date: date
-        };
+      };
 
-        // Envoyer l'e-mail
-        emailjs.send("service_uod38x2", "template_byvyf7a", templateParams)
-            .then(function(response) {
-            console.log("Succès !", response.status, response.text);
-            alert("Message envoyé avec succès !");
-            }, function(error) {
-            console.log("Échec...", error);
-            alert("Échec de l'envoi du message. Veuillez réessayer.");
-            });
+      // Envoyer l'e-mail
+      emailjs.send("service_uod38x2", "template_byvyf7a", templateParams)
+        .then(function(response) {
+          console.log("Succès !", response.status, response.text);
+          alert("Message envoyé avec succès !");
+        }, function(error) {
+          console.log("Échec...", error);
+          alert("Échec de l'envoi du message. Veuillez réessayer.");
+        });
     });
-    </script>
+  </script>
 
 </body>
 </html>

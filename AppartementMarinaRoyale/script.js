@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const titleElement = document.querySelector('.carousel-info h2');
     const descriptionElement = document.querySelector('.carousel-info p');
     const carouselInfo = document.querySelector('.carousel-info');
-  
+
     const slidesInfo = [
         { 
           title: "Piscine à Disposition", 
@@ -33,31 +33,31 @@ document.addEventListener("DOMContentLoaded", () => {
           title: "Une douche moderne", 
           description: "Salle de bain avec une douche moderne, conçue pour un moment de détente optimal." 
         }
-      ];      
-  
+    ];
+
     let currentIndex = 0;
-  
+
     function showSlide(index) {
-      images.forEach((img, i) => img.classList.toggle('active', i === index));
-  
-      carouselInfo.classList.remove('active');
-      setTimeout(() => {
-        titleElement.textContent = slidesInfo[index].title;
-        descriptionElement.textContent = slidesInfo[index].description;
-        carouselInfo.classList.add('active');
-      }, 1500);
+        images.forEach((img, i) => img.classList.toggle('active', i === index));
+
+        carouselInfo.classList.remove('active');
+        setTimeout(() => {
+            titleElement.textContent = slidesInfo[index].title;
+            descriptionElement.textContent = slidesInfo[index].description;
+            carouselInfo.classList.add('active');
+        }, 1500);
     }
-  
+
     function nextSlide() {
-      currentIndex = (currentIndex + 1) % images.length;
-      showSlide(currentIndex);
+        currentIndex = (currentIndex + 1) % images.length;
+        showSlide(currentIndex);
     }
-  
+
     showSlide(currentIndex);
     setInterval(nextSlide, 10000);
-  });
+});
 
-  document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     const images = document.querySelectorAll('.nearby-image');
     const textOverlay = document.querySelector('.text-overlay');
     const title = document.querySelector('.title');
@@ -84,16 +84,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function nextSlide() {
         const currentImage = images[currentIndex];
-        currentImage.classList.add('leaving'); // Ajoute la classe pour l'animation de sortie
+        currentImage.classList.add('leaving');
     
-        // Ajoute un écouteur pour attendre la fin de la transition
         currentImage.addEventListener('transitionend', handleTransitionEnd);
 
         function handleTransitionEnd() {
-            // Enlève l'écouteur après la première exécution pour éviter les appels multiples
             currentImage.removeEventListener('transitionend', handleTransitionEnd);
-            
-            // Réinitialise la classe et change l'index pour la nouvelle image
             currentImage.classList.remove('active', 'leaving');
             currentIndex = (currentIndex + 1) % images.length;
             showSlide(currentIndex);
