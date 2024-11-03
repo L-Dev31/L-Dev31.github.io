@@ -364,4 +364,21 @@
     background-color: var(--bg);
     color: var(--secondary-color);
   }
-  
+
+.season-pricing {
+    display: flex;
+    gap: 15vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.season {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.season-icon {
+    font-size: 2em;
+    display: block;
+    margin-bottom: 0.2em;
+}
