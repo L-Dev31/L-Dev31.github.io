@@ -19,10 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
           description: "Studio au design contemporain avec des finitions élégantes." 
         },
         { 
-          title: "Cuisine équipée", 
-          description: "Cuisine entièrement équipée avec plaque de cuisson, réfrigérateur, micro-ondes et ustensiles. Préparez vos repas comme un chef dans ce bel espace fonctionnel." 
-        },
-        { 
           title: "Une vue sur les collines", 
           description: "Admirez une vue panoramique sur les collines environnantes depuis votre studio pour un cadre apaisant au quotidien." 
         },

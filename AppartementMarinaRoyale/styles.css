@@ -121,6 +121,7 @@
   
   /* Footer */
   footer {
+    height: 6vh;
     z-index: 4;
     position: fixed;
     bottom: 0;
@@ -129,7 +130,7 @@
     color: #ffffff;
     text-align: center;
     padding: 1.5vh;
-    font-size: 2vh;
+    font-size: 2.75vh;
   }
   
   .carousel-section {
@@ -313,7 +314,7 @@
   }
   
   .contact-section {
-    height: 100vh;
+    height: 106vh;
     background-color: var(--secondary-color);
     color: var(--bg);
     padding: 4vh 2vh;
