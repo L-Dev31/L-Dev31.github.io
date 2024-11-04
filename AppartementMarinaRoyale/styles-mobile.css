@@ -18,7 +18,8 @@
 
     /* Section vidéo en fond */
     .video-section h1 {
-        visibility: hidden;
+        top: 23%;
+        font-size: 7.5vh;
     }
 
     .video-section {
