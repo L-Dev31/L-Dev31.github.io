@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const images = document.querySelectorAll('.carousel-image');
+    // Carrousel d'images
+    const carouselImages = document.querySelectorAll('.carousel-image');
     const titleElement = document.querySelector('.carousel-info h2');
     const descriptionElement = document.querySelector('.carousel-info p');
     const carouselInfo = document.querySelector('.carousel-info');
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         { 
           title: "Un canapé-lit", 
-          description: "Un canapé-lit de belle qualitée permettant un gain d'espace pour la journée et un sommeil paisible avec vue sur les collines" 
+          description: "Un canapé-lit de belle qualité permettant un gain d'espace pour la journée et un sommeil paisible avec vue sur les collines." 
         },
         { 
           title: "Une douche moderne", 
@@ -38,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentIndex = 0;
 
     function showSlide(index) {
-        images.forEach((img, i) => img.classList.toggle('active', i === index));
+        carouselImages.forEach((img, i) => img.classList.toggle('active', i === index));
 
         carouselInfo.classList.remove('active');
         setTimeout(() => {
@@ -49,16 +50,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function nextSlide() {
-        currentIndex = (currentIndex + 1) % images.length;
+        currentIndex = (currentIndex + 1) % carouselImages.length;
         showSlide(currentIndex);
     }
 
     showSlide(currentIndex);
     setInterval(nextSlide, 10000);
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-    const images = document.querySelectorAll('.nearby-image');
+    // Carrousel des lieux à proximité
+    const nearbyImages = document.querySelectorAll('.nearby-image');
     const textOverlay = document.querySelector('.text-overlay');
     const title = document.querySelector('.title');
     const distance = document.querySelector('.distance');
@@ -70,11 +70,11 @@ document.addEventListener("DOMContentLoaded", () => {
         { src: "images/ChateauLaNapouleBG.jpg", title: "Château la Napoule", distance: "à 2km" },
     ];
 
-    let currentIndex = 0;
+    let nearbyIndex = 0;
 
-    function showSlide(index) {
-        images.forEach(img => img.classList.remove('active'));
-        images[index].classList.add('active');
+    function showNearbySlide(index) {
+        nearbyImages.forEach(img => img.classList.remove('active'));
+        nearbyImages[index].classList.add('active');
 
         nearbySection.style.backgroundImage = `url(${imageData[index].src})`;
         title.textContent = imageData[index].title;
@@ -82,22 +82,52 @@ document.addEventListener("DOMContentLoaded", () => {
         textOverlay.classList.add('active');
     }
 
-    function nextSlide() {
-        const currentImage = images[currentIndex];
+    function nextNearbySlide() {
+        const currentImage = nearbyImages[nearbyIndex];
         currentImage.classList.add('leaving');
     
-        currentImage.addEventListener('transitionend', handleTransitionEnd);
-
-        function handleTransitionEnd() {
+        currentImage.addEventListener('transitionend', function handleTransitionEnd() {
             currentImage.removeEventListener('transitionend', handleTransitionEnd);
             currentImage.classList.remove('active', 'leaving');
-            currentIndex = (currentIndex + 1) % images.length;
-            showSlide(currentIndex);
-        }
+            nearbyIndex = (nearbyIndex + 1) % nearbyImages.length;
+            showNearbySlide(nearbyIndex);
+        });
 
         textOverlay.classList.remove('active');
     }
 
-    showSlide(currentIndex);
-    setInterval(nextSlide, 8000);
+    showNearbySlide(nearbyIndex);
+    setInterval(nextNearbySlide, 8000);
+
+    // Initialiser EmailJS
+    (function() {
+        emailjs.init("H8mmDaM4ID9oNXT0p");
+    })();
+
+    // Soumission du formulaire de contact
+    document.getElementById('contact-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const message = document.getElementById('message').value;
+        const date = new Date().toLocaleString();
+
+        const templateParams = {
+            from_name: name,
+            user_email: email,
+            message: message,
+            send_date: date
+        };
+
+        emailjs.send("service_uod38x2", "template_byvyf7a", templateParams)
+            .then(response => {
+                console.log("Succès !", response.status, response.text);
+                alert("Message envoyé avec succès !");
+            })
+            .catch(error => {
+                console.log("Échec...", error);
+                alert("Échec de l'envoi du message. Veuillez réessayer.");
+            });
+    });
 });

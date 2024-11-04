@@ -27,10 +27,7 @@
     </video>
     <h1 class="fade-in">Appartement Marina Royale</h1>
     <div class="content-overlay fade-in">
-        <p class="description">Profitez d'un studio calme et élégant à la Marina Royale de Mandelieu pour un prix abordable. Résidence sécurisée et vue panoramique sur collines verdoyantes. Studio de 23m² pour 2 personnes avec accès piscine et parking gratuit. <br><br>❄️ Basse Saison (du 16 sept au 14 juin): <strong>48€</strong> la nuit <br>☀️ Haute Saison (du 15 juin 15 sept): <strong>75€</strong> la nuit </p>      
-        <div class="buttons">
-        <a href="https://www.airbnb.fr/rooms/1273377684655749459" target="_blank"><button class="btn"><i class="fa-brands fa-airbnb"></i> Air BnB</button></a>
-      </div>
+        <p class="description">Profitez d'un studio calme et élégant à la Marina Royale de Mandelieu pour un prix abordable. Résidence sécurisée et vue panoramique sur collines verdoyantes. Studio de 23m² pour 2 personnes avec accès piscine et parking gratuit. <br><br>❄️ Basse Saison (du 16 sept au 14 juin): <strong>48€</strong> la nuit <br><br> ☀️ Haute Saison (du 15 juin 15 sept): <strong>75€</strong> la nuit </p>      
     </div>
   </section>
 
@@ -87,41 +84,6 @@
 
   <script src="script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script type="text/javascript">
-    // Initialiser EmailJS
-    (function() {
-        emailjs.init("H8mmDaM4ID9oNXT0p");
-    })();
-
-    // Gérer la soumission du formulaire
-    document.getElementById('contact-form').addEventListener('submit', function(event) {
-      event.preventDefault();
-
-      // Récupérer les valeurs des champs
-      const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value;
-      const message = document.getElementById('message').value;
-      const date = new Date().toLocaleString();
-
-      // Préparer les paramètres de l'e-mail
-      const templateParams = {
-        from_name: name,
-        user_email: email,
-        message: message,
-        send_date: date
-      };
-
-      // Envoyer l'e-mail
-      emailjs.send("service_uod38x2", "template_byvyf7a", templateParams)
-        .then(function(response) {
-          console.log("Succès !", response.status, response.text);
-          alert("Message envoyé avec succès !");
-        }, function(error) {
-          console.log("Échec...", error);
-          alert("Échec de l'envoi du message. Veuillez réessayer.");
-        });
-    });
-  </script>
 
 </body>
 </html>

@@ -38,7 +38,7 @@
   .navbar .logo img {
     height: 30vh;
     display: block;
-    margin: 5vh auto 0;
+    margin: 2vh auto 0;
   }
   
   /* Video Section */
@@ -54,7 +54,7 @@
   
   .video-section h1 {
     position: absolute;
-    top: 40%;
+    top: 35%;
     font-size: 12.5vh;
     color: #ffffff;
     font-family: 'Mooncrowd', sans-serif;
