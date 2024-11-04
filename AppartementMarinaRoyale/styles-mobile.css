@@ -18,8 +18,7 @@
 
     /* Section vidéo en fond */
     .video-section h1 {
-        top: 32.5%;
-        font-size: 8.5vw;
+        visibility: hidden;
     }
 
     .video-section {
@@ -40,7 +39,7 @@
 
     /* Description de l'appartement */
     .description {
-        font-size: 5vw;
+        font-size: 2.3815vh;
         padding: 0 1em;
         text-align: justify;
     }
@@ -70,11 +69,11 @@
 
     .carousel-info h2 {
         text-align: left;
-        font-size: 8.5vw;
+        font-size: 4vh;
     }
 
     .carousel-info p {
-        font-size: 5vw;
+        font-size: 2vh;
     }
 
     /* Nearby Section */
@@ -115,12 +114,11 @@
     .contact-section input,
     .contact-section textarea {
         font-size: 2.5vh;
-        min-width: 45vh!important;
+        min-width: 80%!important;
     }
 
     .contact-section button {
-        min-width: 45vh!important;
-        max-width: 45vh!important;
+        width: 100%!important;
         font-size: 2.5vh;
         padding: 1vh 2vh;
     }
