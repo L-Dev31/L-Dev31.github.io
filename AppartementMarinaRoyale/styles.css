@@ -113,7 +113,7 @@
   
   /* Apartment Description */
   .description {
-    font-size: 3.25vh;
+    font-size: 2.75vh;
     max-width: 125vh;
     margin: 5vh auto;
     text-align: justify;
@@ -129,14 +129,18 @@
   }
   
   .carousel-section {
+    overflow: hidden;
     position: relative;
-    height: 100vh;
+    width: 100%;
+    min-height: 100vh;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--bg);
-    overflow: hidden;
-  }
+    padding: 2vh;
+    box-sizing: border-box;
+}
   
   .carousel-section h1 {
     position: absolute;
@@ -290,6 +294,8 @@
     background-color: #06153e80;
     height: 100%;
     width: 100%;
+    min-height: 100%;
+    min-width: 100%;
     backdrop-filter: blur(5px);
   } 
   

@@ -1,0 +1,137 @@
+/* Styles pour écrans de moins de 768px (mobile) */
+@media (max-width: 768px) {
+
+    /* Ajustements généraux */
+    body {
+        max-width: 100%;
+        overflow-x: hidden!important;
+    }
+
+    /* Navbar */
+    .navbar {
+        max-width: 100%;
+    }
+
+    .navbar .logo img {
+        height: 20vh;
+    }
+
+    /* Section vidéo en fond */
+    .video-section h1 {
+        top: 32.5%;
+        font-size: 8.5vw;
+    }
+
+    .video-section {
+        min-width: 100%;
+        max-width: 100%
+    }
+
+    .buttons {
+        flex-direction: column;
+        gap: 1em;
+        align-items: center;
+    }
+
+    .btn {
+        font-size: 2.5vh;
+        padding: 0.8em 1.5em;
+    }
+
+    /* Description de l'appartement */
+    .description {
+        font-size: 5vw;
+        padding: 0 1em;
+        text-align: justify;
+    }
+
+    /* Carousel section */
+
+    .carousel-section h1 {
+        font-size: 10vh
+    }
+
+    .carousel-container {
+        height: 70vh;
+        width: 100%;
+        padding: 0 1em;
+        flex-wrap: wrap;
+    }
+
+    .carousel {
+        width: 100%;
+        height: 40vh;
+    }
+
+    .carousel-info {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .carousel-info h2 {
+        text-align: left;
+        font-size: 8.5vw;
+    }
+
+    .carousel-info p {
+        font-size: 5vw;
+    }
+
+    /* Nearby Section */
+    .nearby-section h1 {
+        top: 5vh;
+        text-align: center;
+        font-size: 10vh;
+    }
+
+    .nearby-image {
+        top: 37%;
+        height: 40vh;
+        width: 40vh;
+    }
+
+    .title {
+        font-size: 5vh;
+    }
+
+    .distance {
+        font-size: 2vh;
+    }
+
+    /* Contact Section */
+    .contact-section {
+        padding: 2vh 1em;
+    }
+
+    .contact-section h1 {
+        font-size: 8vh;
+    }
+
+    .contact-section form {
+        width: 90%;
+        gap: 1.5vh;
+    }
+
+    .contact-section input,
+    .contact-section textarea {
+        font-size: 2.5vh;
+        min-width: 45vh!important;
+    }
+
+    .contact-section button {
+        min-width: 45vh!important;
+        max-width: 45vh!important;
+        font-size: 2.5vh;
+        padding: 1vh 2vh;
+    }
+
+    /* Footer */
+    footer {
+        font-size: 1em;
+    }
+
+    .footer-content a {
+        font-size: 1em;
+    }
+
+}
