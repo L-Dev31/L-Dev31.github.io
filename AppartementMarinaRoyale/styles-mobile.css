@@ -21,6 +21,10 @@
         max-width: 100%
     }
 
+    .video-section h1 { 
+        font-size: 8vh;
+    }
+
     .buttons {
         flex-direction: column;
         gap: 1em;
