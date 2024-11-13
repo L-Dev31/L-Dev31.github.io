@@ -216,17 +216,20 @@ async function fetchFeed(feed) {
             if (description.length > 1500) {
                 description = description.substring(0, 1550) + "... [Voir la suite]";
             }
-            
+
+            // Vérifier si l'article est nouveau pour éviter les doublons
             if (lastItems[feed.name] !== title) {
                 displayFeed(feed, title, description, link, imageUrl, pubDate);
                 lastItems[feed.name] = title;
             }
         } else {
-            displayFeed(feed, "Aucun article disponible", "Le flux RSS est vide ou non accessible.", "", "", "");
+            // Si le flux est vide, on passe immédiatement au suivant
+            skipToNextFeed();
         }
     } catch (error) {
         console.error("Erreur de récupération du flux RSS:", error);
-        displayFeed(feed, "Erreur de récupération", "Impossible de charger les données RSS.", "", "", "");
+        // En cas d'erreur, on passe au flux suivant
+        skipToNextFeed();
     }
 }
 
@@ -250,8 +253,8 @@ function displayFeed(feed, title, description, link, imageUrl, pubDate) {
         " onclick="window.open('${link}', '_blank')">
             <div style="text-align: center; margin-right: 20px;">
                 <img src="${feed.logo}" alt="${feed.name}" style="
-                    width: 50px; 
-                    height: 50px; 
+                    max-width: 50px; 
+                    max-height: 50px; 
                     border-radius: 50%;
                 ">
                 <div style="color: white; font-size: 0.8em;">${feed.name}</div>
@@ -259,20 +262,20 @@ function displayFeed(feed, title, description, link, imageUrl, pubDate) {
             <div style="color: white;">
                 <div><strong>${title}</strong></div>
                 <div style="font-size: 0.8em; color: white; opacity: 0.5; margin-bottom: 5px;">${pubDate}</div>
-                <div style="margin-top: 10px;">${description}</div>
+                <div class="rss-description" style="margin-top: 10px;">${description}</div>
             </div>
-            ${imageUrl ? `<img src="${imageUrl}" alt="Image de l'article" style="
-                border-radius: 12px;
-                margin-top: 10px;
-                max-width: 100px;
-                max-height: 25%;
-                height: auto;
-                width: auto;
-            ">` : ""}
         </div>
     `;
 }
 
+
+// Fonction pour passer immédiatement au flux suivant
+function skipToNextFeed() {
+    currentFeedIndex = (currentFeedIndex + 1) % rssFeeds.length;
+    fetchFeed(rssFeeds[currentFeedIndex]);
+}
+
+// Initialisation de la rotation des flux avec gestion des erreurs
 function initFeedRotation() {
     setInterval(() => {
         currentFeedIndex = (currentFeedIndex + 1) % rssFeeds.length;
