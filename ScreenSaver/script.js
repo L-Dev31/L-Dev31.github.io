@@ -250,7 +250,7 @@ function displayFeed(feed, title, description, link, imageUrl, pubDate) {
             cursor: pointer;
             max-height: 340px;
             overflow: hidden
-        " onclick="window.open('${link}', '_blank')">
+        " onclick="window.open('${link}')">
             <div style="text-align: center; margin-right: 20px;">
                 <img src="${feed.logo}" alt="${feed.name}" style="
                     max-width: 50px; 
