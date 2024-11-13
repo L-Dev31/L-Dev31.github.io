@@ -130,6 +130,6 @@ body, html {
 .rss-description img {
     border-radius: 10px;
     outline: solid 1px rgba(255, 255, 255, 0.25);
-    height: 200px;
+    height: 180px;
     width: auto;
 }
