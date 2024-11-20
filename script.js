@@ -80,9 +80,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const infosContainer = document.getElementById('infos');
     const galleryItems = document.querySelectorAll('.gallery-item');
     const headerContainer = document.getElementById('header');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     // Initially show all gallery items
     showAllItems();
+
+    if (isMobile) {
+        const noPhoneItems = document.querySelectorAll('.no-phone');
+        
+        noPhoneItems.forEach(item => {
+            // Bloquer les liens ou masquer les éléments
+            const link = item.querySelector('a');
+            if (link) {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    alert("Ce site n'est pas accessible sur un téléphone.");
+                });
+            }
+        });
+    }
     
     personalProjectLink.addEventListener('click', function(e) {
         e.preventDefault();

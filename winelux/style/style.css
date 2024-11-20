@@ -141,6 +141,15 @@ h6 {
     margin-top: 20px;
 }
 
+#social-icons i {
+    margin: 0 5px;
+    transition: transform 0.15s ease;
+}
+
+#social-icons i:hover {
+    transform: scale(1.2);
+}
+
 #header3 {
     background-color: var(--color-dark);
     color: var(--color-light);
