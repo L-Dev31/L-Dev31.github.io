@@ -133,3 +133,12 @@ body, html {
     height: 180px;
     width: auto;
 }
+
+.rss-description a {
+    color: turquoise;
+    font-weight: bold;
+}
+
+.rss-description strong {
+    font-size: medium;
+}

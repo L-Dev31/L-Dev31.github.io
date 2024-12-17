@@ -6,6 +6,12 @@ const images = [
         date: '2019'
     },
     {
+        url: 'images/BG/393773.jpg',
+        title: 'Man Doing Hand Stand on Mountain',
+        creator: 'Sam Kolder',
+        date: '2016'
+    },
+    {
         url: 'images/BG/417173.jpg',
         title: 'Montagne Grise Et Brune',
         creator: 'Pixabay',
@@ -145,6 +151,11 @@ fetchWeather();
 setInterval(fetchWeather, 1800000);
 
 const rssFeeds = [
+    {
+        url: 'https://api.allorigins.win/get?url=https://feeds.feedburner.com/nintendolife/latest',
+        logo: 'images/RSS/NintendoLife.png',
+        name: 'Nintendo Life'
+    },
     {
         url: 'https://api.allorigins.win/get?url=https://www.bfmtv.com/rss/international/',
         logo: 'images/RSS/BFMTV.png',
