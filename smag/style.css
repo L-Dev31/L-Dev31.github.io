@@ -63,7 +63,7 @@ nav{
   }
 
 .navItems li:hover a{
-  color: #b0bdff
+  text-decoration: underline;
 }
 
 body {
@@ -200,7 +200,6 @@ h5{
   color: #555;
   text-transform: uppercase;
 }
-
 
 .player{
   margin: 1.5em;
