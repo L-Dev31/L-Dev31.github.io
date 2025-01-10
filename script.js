@@ -201,15 +201,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Désactiver le défilement
     body.classList.add('no-scroll');
 
+    // Animer l'intro
     setTimeout(() => {
-        window.scrollTo(0, 0);
-        landingLogo.classList.add('shrink');
+        window.scrollTo(0, 0); // Ramène en haut de la page
+        landingLogo.classList.add('shrink'); // Ajoute une animation au logo
     }, 1000);
 
+    // Cacher la page d'intro
     setTimeout(() => {
-        landingPage.classList.add('hidden');
+        landingPage.classList.add('hidden'); // Cache l'intro
     }, 2000);
 
+    // Réactiver le défilement
     setTimeout(() => {
         body.classList.remove('no-scroll');
     }, 2750);

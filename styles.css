@@ -26,7 +26,28 @@
 
 *{
     cursor: none;
+
+/* Scrollbar */
 }
+
+    /* Firefox */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #ffffff #1c1c1c;
+    }
+
+    /* Chrome, Edge, and Safari */
+    *::-webkit-scrollbar {
+        width: 20px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: #1c1c1c;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: #ffffff;
+    }
 
 html {
     overflow-x: hidden;
@@ -244,7 +265,8 @@ name {
 }
 
 .no-scroll {
-    overflow: hidden;
+    overflow: hidden!important;
+    height: 65vh!important;
 }
 
 .landing-page {
