@@ -1,35 +1,70 @@
+//Screenshots Carousel
 const picCtn = document.querySelector('.pic-ctn');
 const pics = Array.from(picCtn.querySelectorAll('.pic'));
+const prevBtn = document.querySelector('.prev-btn');
+const nextBtn = document.querySelector('.next-btn');
 
 let currentIndex = 0;
+let interval;
 
-function lazyLoad() {
-  pics.forEach((pic) => {
-    if (pic.getBoundingClientRect().top < window.innerHeight) {
-      pic.classList.add('loaded');
-    }
-  });
+function showImage(index) {
+  // Masquer toutes les images
+  pics.forEach((pic) => pic.classList.remove('active'));
+
+  // Afficher l'image actuelle
+  pics[index].classList.add('active');
 }
 
-function rotateImages() {
-  const previousIndex = currentIndex === 0 ? pics.length - 1 : currentIndex - 1;
-  const nextIndex = (currentIndex + 1) % pics.length;
-
-  pics[previousIndex].classList.remove('previous');
-  pics[currentIndex].classList.remove('active');
-  pics[nextIndex].classList.remove('next');
-
-  pics[previousIndex].classList.add('next');
-  pics[currentIndex].classList.add('previous');
-  pics[nextIndex].classList.add('active');
-
-  currentIndex = nextIndex;
+function nextImage() {
+  currentIndex = (currentIndex + 1) % pics.length;
+  showImage(currentIndex);
 }
 
-window.addEventListener('scroll', lazyLoad);
-window.addEventListener('resize', lazyLoad);
-window.addEventListener('load', lazyLoad);
+function prevImage() {
+  currentIndex = (currentIndex - 1 + pics.length) % pics.length;
+  showImage(currentIndex);
+}
 
-rotateImages();
+function startCarousel() {
+  interval = setInterval(nextImage, 4000);
+}
 
-setInterval(rotateImages, 4000);
+function stopCarousel() {
+  clearInterval(interval);
+}
+
+// Boutons de navigation
+prevBtn.addEventListener('click', () => {
+  stopCarousel();
+  prevImage();
+  startCarousel();
+});
+
+nextBtn.addEventListener('click', () => {
+  stopCarousel();
+  nextImage();
+  startCarousel();
+});
+
+// Pause au survol
+picCtn.addEventListener('mouseenter', stopCarousel);
+picCtn.addEventListener('mouseleave', startCarousel);
+
+// Démarrer le carrousel
+startCarousel();
+
+
+// Music
+const audioElements = document.querySelectorAll('audio');
+
+audioElements.forEach(audio => {
+    audio.addEventListener('play', () => {
+        // Stop every songs except the one that is playing
+        audioElements.forEach(otherAudio => {
+            if (otherAudio !== audio && !otherAudio.paused) {
+                otherAudio.pause();
+                otherAudio.currentTime = 0; // Reset Music Timer to 0
+            }
+        });
+    });
+});
