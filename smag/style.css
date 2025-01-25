@@ -212,10 +212,6 @@ h5{
   padding: 25px;
 }
 
-.credit h5 strong {
-  margin-left: 25px;
-}
-
 .engine-credit {
   outline: #8eacb4 solid 2px !important;
   background-color: #99e6e650 !important;
@@ -406,10 +402,6 @@ h5{
     text-align: left;
     width: 96.5%;
     margin: 20px 10px;
-  }
-
-  .credit h5 strong {
-    margin-left: 5px;
   }
 
   h5 {
