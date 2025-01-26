@@ -387,7 +387,6 @@ footer p {
 /* Styles de base pour le mobile */
 @media (max-width: 768px) {
     body{
-        width: 97%;
         overflow-x: hidden;
     }
     /* Ajustements généraux */
