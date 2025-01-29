@@ -1,5 +1,6 @@
 @import url('colors.css');
 body {
+    overflow-x: hidden;
     margin: 0;
     font-family: 'Arial', sans-serif;
     background-color: var(--color-light);
@@ -374,7 +375,7 @@ h6 {
 #right-content p,
 .section p {
     margin-bottom: 20px;
-    margin-right: 20px;
+    margin-right: 10px;
     text-align: left;
 }
 
