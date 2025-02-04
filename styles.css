@@ -519,15 +519,15 @@ header {
     flex-direction: column;
     align-items: center;
     transition: all 0.5s;
-    opacity: 1;
+    filter: brightness(1);
 }
 
 .art-gallery-container:hover .art-item:not(:hover) {
-    opacity: 0.5;
+    filter: brightness(0.8);
 }
 
 .art-item:hover {
-    opacity: 1;
+    filter: brightness(1);
     transform: scale(1.05);
     z-index: 2;
 }
