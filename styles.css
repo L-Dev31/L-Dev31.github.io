@@ -204,12 +204,12 @@ strong {
     overflow: hidden;
     height: 75vh;
     width: 100%;
-    transition: transform 0.5s;
+    transition: all 0.5s;
     box-shadow: 0 0 3vh #00000099
 }
 
 .gallery-item:hover{
-    transform: scaleX(0.95) scaleY(0.95);
+    transform: scale(0.95);
 }
 
 .gallery-img {
@@ -479,3 +479,83 @@ header {
     font-size: 15vh;
     left: 12.5vh;
 }
+
+#art-gallery {
+    align-items: center;
+    padding: 5vh 2vw;
+    text-align: center;
+    background: #08080880;
+    backdrop-filter: blur(3.5vh);
+    margin: 3vh 2vw;
+    border-radius: 2vh;
+}
+  
+  /* Titres de la section */
+  #art-gallery h1 {
+    font-size: 6vh;
+    margin-bottom: 6vh;
+    color: #fff;
+  }
+  
+  /* Conteneur des items */
+  .art-gallery-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4vh;
+  }
+  
+  /* Style de chaque item */
+  .art-item {
+    padding: 2vh;
+    background: #1c1c1c;
+    border-radius: 2vh;
+    overflow: hidden;
+    width: 25vw;
+    max-width: 300px;
+    min-width: 200px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.5s;
+    opacity: 1;
+}
+
+.art-gallery-container:hover .art-item:not(:hover) {
+    opacity: 0.5;
+}
+
+.art-item:hover {
+    opacity: 1;
+    transform: scale(1.05);
+    z-index: 2;
+}
+  
+  /* Image de l'item en 1:1 */
+  .art-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+  }
+  
+  /* Zone d'info sous l'image */
+  .art-info {
+    width: 100%;
+    padding: 2vh;
+    background: #1c1c1c;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+  
+  /* Titre de l'œuvre */
+  .art-title {
+    margin-left: 1.5vh;
+    font-size: 2.2vh;
+    font-family: 'Bold', sans-serif;
+    color: #fff;
+    margin: 0;
+  }
