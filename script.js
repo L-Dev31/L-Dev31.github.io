@@ -80,6 +80,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const infosContainer = document.getElementById('infos');
     const galleryItems = document.querySelectorAll('.gallery-item');
     const headerContainer = document.getElementById('header');
+    const art3dLink = document.getElementById('art-link');
+    const art3dLinkMobile = document.getElementById('art-link-mobile');
+    const art3dGallery = document.getElementById('art-gallery');
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     // Initially show all gallery items
@@ -130,12 +133,33 @@ document.addEventListener('DOMContentLoaded', function() {
         showInfoText();
     });
     
+    art3dLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        show3dArt();
+    });
+    
+    art3dLinkMobile.addEventListener('click', function(e) {
+        e.preventDefault();
+        show3dArt();
+    });
+    
+    // Ajouter la fonction
+    function show3dArt() {
+        resetScrollPositions();
+        galleryItems.forEach(item => {
+            item.style.display = 'none';
+        });
+        headerContainer.style.display = 'none';
+        infosContainer.style.display = 'none';
+        art3dGallery.style.display = 'block';
+    }
 
     function showAllItems() {
         resetScrollPositions();
         galleryItems.forEach(item => {
             item.style.display = 'block';
         });
+        art3dGallery.style.display = 'none';  // Hide art container when showing all items
         infosContainer.style.display = 'none';  // Hide infos container when showing all items
         headerContainer.style.display = 'block'; // Show Header when showing all items
     }
@@ -159,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
             item.style.display = 'none';
         });
         headerContainer.style.display = 'none';  // Hide Header
+        art3dGallery.style.display = 'none';  // Hide art container
         infosContainer.style.display = 'block';
     }
 
@@ -244,4 +269,30 @@ document.addEventListener('scroll', function() {
         img.style.transform = `translateY(${imgYOffset}px)`;
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.innerWidth < 768) { // Appliquer seulement sur mobile
+        const items = document.querySelectorAll(".art-item, .gallery-item");
+
+        function checkPosition() {
+            let middleScreen = window.innerHeight / 2;
+
+            items.forEach(item => {
+                let rect = item.getBoundingClientRect();
+                let itemCenter = rect.top + rect.height / 2;
+
+                if (Math.abs(middleScreen - itemCenter) < rect.height / 2) {
+                    item.classList.add("active");
+                } else {
+                    item.classList.remove("active");
+                }
+            });
+        }
+
+        window.addEventListener("scroll", checkPosition);
+        checkPosition(); // Appel initial
+    }
+});
+
+
 

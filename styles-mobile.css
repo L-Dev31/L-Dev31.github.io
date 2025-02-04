@@ -97,10 +97,20 @@
     }
 
     .gallery-item {
+        transform: scale(0.95);
         margin: 1em 0;
         height: 25vh;
+        filter: brightness(1.1);
         border-radius: 5vh;
     }
+
+    .gallery .gallery-item:not(.active){
+        filter: brightness(0.8);
+    }
+
+    .gallery .gallery-item.active {
+        transform: scale(1);
+    }   
 
     .project-logo img {
         visibility: hidden;
@@ -108,10 +118,6 @@
 
     .gallery-item img{
         min-height: 100%;
-    }
-
-    .gallery-item:hover{
-        transform: scale(1);
     }
 
     .gallery-item .overlay {
@@ -152,5 +158,20 @@
 
     h1{
         font-size: 4vh;
+    }
+
+    #art-gallery {
+        background-color: transparent;
+        backdrop-filter: none;
+    }
+
+    .art-gallery-container .art-item:not(.active) {
+        filter: brightness(0.8);
+    }
+
+    .art-gallery-container .art-item.active {
+        transform: scale(1.05);
+        z-index: 2;
+        filter: brightness(1);
     }
 }
