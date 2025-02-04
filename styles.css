@@ -208,10 +208,6 @@ strong {
     box-shadow: 0 0 3vh #00000099
 }
 
-.gallery-item:hover{
-    transform: scale(0.95);
-}
-
 .gallery-img {
     width: 100%;
     object-position: center;
@@ -520,19 +516,7 @@ header {
     align-items: center;
     transition: all 0.5s;
     filter: brightness(1);
-}
-
-.art-gallery-container:hover .art-item:not(:hover) {
-    filter: brightness(0.8);
-}
-
-.art-item:hover {
-    filter: brightness(1);
-    transform: scale(1.05);
-    z-index: 2;
-}
-  
-  /* Image de l'item en 1:1 */
+}  
   .art-img {
     width: 100%;
     aspect-ratio: 1 / 1;
@@ -540,7 +524,6 @@ header {
     display: block;
   }
   
-  /* Zone d'info sous l'image */
   .art-info {
     width: 100%;
     padding: 2vh;
@@ -551,11 +534,30 @@ header {
     position: relative;
   }
   
-  /* Titre de l'œuvre */
   .art-title {
+    text-align: center;
+    width: 100%;
     margin-left: 1.5vh;
     font-size: 2.2vh;
     font-family: 'Bold', sans-serif;
     color: #fff;
     margin: 0;
   }
+
+
+  @media (min-width: 768px) {
+    .gallery-item:hover{
+        transform: scale(0.95);
+        filter: brightness(1.1);
+    }
+
+    .art-gallery-container:hover .art-item:not(:hover) {
+        filter: brightness(0.8);
+    }
+
+    .art-item:hover {
+        filter: brightness(1);
+        transform: scale(1.05);
+        z-index: 2;
+    }
+}
