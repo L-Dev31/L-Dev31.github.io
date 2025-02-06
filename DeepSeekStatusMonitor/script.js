@@ -14,6 +14,13 @@ var stateHistory = {
         return this.usages.reduce(function (acc, val) {
             return acc + val;
         }, 0) / this.usages.length;
+    },
+    getAveragePing: function () {
+        // Calculate the average of the last 5 pings
+        if (this.pings.length === 0) return 0;
+        return this.pings.reduce(function (acc, val) {
+            return acc + val;
+        }, 0) / this.pings.length;
     }
 };
 
@@ -173,7 +180,7 @@ function measurePingAndUpdate() {
                     var finalPing = measurements[1];
                     var usage = mapPingToUsage(finalPing);
                     stateHistory.add(finalPing, usage);
-                    updateInterface(stateHistory.getStableUsage(), finalPing);
+                    updateInterface(stateHistory.getStableUsage(), stateHistory.getAveragePing());
                 }
             };
 
@@ -188,7 +195,7 @@ function measurePingAndUpdate() {
 }
 
 // Updates the UI with stable results
-function updateInterface(usage, ping) {
+function updateInterface(usage, averagePing) {
     var progressBar = document.getElementById("progress-bar");
     if (progressBar) {
         progressBar.style.width = usage + "%";
@@ -200,8 +207,8 @@ function updateInterface(usage, ping) {
     if (statusTitle && statusDescription) {
         var status = getStatusText(usage);
         statusTitle.textContent = status.title;
-        statusDescription.innerHTML = ping !== null
-            ? status.description + "<br>(Ping: " + Math.round(ping) + " ms)"
+        statusDescription.innerHTML = averagePing !== null
+            ? status.description + "<br>(Ping moyen: " + Math.round(averagePing) + " ms)"
             : "We're currently seeking a ping response. The server might be overused or inaccessible. Please wait...";
     }
 }
