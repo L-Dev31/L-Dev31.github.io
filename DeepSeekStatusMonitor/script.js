@@ -5,10 +5,11 @@ var stateHistory = {
     add: function (ping, usage) {
         this.pings.push(ping);
         this.usages.push(usage);
-        if (this.pings.length > 5) this.pings.shift(); 
-        if (this.usages.length > 5) this.usages.shift(); 
+        if (this.pings.length > 5) this.pings.shift(); // Keep last 5 pings
+        if (this.usages.length > 5) this.usages.shift(); // Keep last 5 usages
     },
     getStableUsage: function () {
+        // Use the average of the last 5 measurements for stability
         if (this.usages.length === 0) return 0;
         return this.usages.reduce(function (acc, val) {
             return acc + val;
@@ -172,7 +173,7 @@ function updateInterface(usage, ping) {
         statusDescription.innerHTML = ping !== null
             ? "DeepSeek is currently in <strong>" + status.title + "</strong> state.<br>" +
             "(Ping: " + Math.round(ping) + " ms)"
-            : "We're currently seeking a ping response. The server might be overused. Please wait...";
+            : "We're currently seeking a ping response. The server might be overused or inaccessible. Please wait...";
     }
 }
 
