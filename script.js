@@ -106,11 +106,13 @@ document.addEventListener('DOMContentLoaded', function() {
     personalProjectLink.addEventListener('click', function(e) {
         e.preventDefault();
         filterItems('personal-project');
+        art3dGallery.style.display = 'none';
     });
     
     commissionsLink.addEventListener('click', function(e) {
         e.preventDefault();
         filterItems('commission');
+        art3dGallery.style.display = 'none';
     });
     
     everythingLink.addEventListener('click', function(e) {
@@ -121,6 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
     everythingLinkMobile.addEventListener('click', function(e) {
         e.preventDefault();
         showAllItems();
+        art3dGallery.style.display = 'none';
     });
     
     infoLink.addEventListener('click', function(e) {
@@ -159,9 +162,9 @@ document.addEventListener('DOMContentLoaded', function() {
         galleryItems.forEach(item => {
             item.style.display = 'block';
         });
-        art3dGallery.style.display = 'none';  // Hide art container when showing all items
-        infosContainer.style.display = 'none';  // Hide infos container when showing all items
-        headerContainer.style.display = 'block'; // Show Header when showing all items
+        art3dGallery.style.display = 'none'; 
+        infosContainer.style.display = 'none';  
+        headerContainer.style.display = 'block'; 
     }
 
     function filterItems(category) {
