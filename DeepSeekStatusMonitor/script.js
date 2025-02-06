@@ -96,26 +96,56 @@ function getInterpolatedColor(value) {
     return 'rgb(' + r + ', ' + g + ', ' + b + ')';
 }
 
-// Determines status text with hysteresis to prevent rapid changes
+// Determines status text with full descriptions and advice
 function getStatusText(usage) {
     var currentStatus = window.lastKnownStatus || { usage: 0 };
-    var newStatus;
+    var newStatus, description;
 
     if (usage < 25) {
         newStatus = "Optimal";
+        description = `
+        DeepSeek is performing at peak efficiency.
+        <ul>
+            <li>This level of performance is rare. It might be an error.</li>
+            <li>You may continue using DeepSeek with complete confidence.</li>
+        </ul>`;
     } else if (usage < 50) {
         newStatus = "Stable";
+        description = `
+        DeepSeek is operating stably despite a slight increase in load.
+        <ul>
+            <li>Traffic levels remain within best ranges.</li>
+            <li>You may continue using DeepSeek without concerns.</li>
+        </ul>`;
     } else if (usage < 75) {
         newStatus = "Moderate Load";
+        description = `
+        DeepSeek is experiencing moderate load conditions, which might result in occasional delays.
+        <ul>
+            <li>Some responses may be delayed or not delivered promptly.</li>
+            <li>Overall functionality remains largely intact.</li>
+        </ul>`;
     } else if (usage < 90) {
         newStatus = "High Load";
+        description = `
+        DeepSeek is currently under high load, which may cause significant delays.
+        <ul>
+            <li>We recommend reducing your usage temporarily.</li>
+            <li>Avoid heavy operations until performance improves.</li>
+        </ul>`;
     } else {
         newStatus = "Critical Load";
+        description = `
+        DeepSeek is experiencing critical load due to excessive traffic.
+        <ul>
+            <li>Usage may be severely impacted.</li>
+            <li>We recommend using alternative AI services until performance is restored.</li>
+        </ul>`;
     }
 
     // Only update status if difference is significant or persists
     if (!currentStatus.title || Math.abs(usage - currentStatus.usage) > 15 || newStatus === currentStatus.title) {
-        window.lastKnownStatus = { title: newStatus, usage: usage };
+        window.lastKnownStatus = { title: newStatus, usage: usage, description: description };
     }
 
     return window.lastKnownStatus;
@@ -171,8 +201,7 @@ function updateInterface(usage, ping) {
         var status = getStatusText(usage);
         statusTitle.textContent = status.title;
         statusDescription.innerHTML = ping !== null
-            ? "DeepSeek is currently in <strong>" + status.title + "</strong> state.<br>" +
-            "(Ping: " + Math.round(ping) + " ms)"
+            ? status.description + "<br>(Ping: " + Math.round(ping) + " ms)"
             : "We're currently seeking a ping response. The server might be overused or inaccessible. Please wait...";
     }
 }
