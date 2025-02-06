@@ -1,0 +1,78 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100%;
+    background: radial-gradient(circle at bottom left, #1b263e, #0B0F19);
+    font-family: Arial, sans-serif;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #main-container {
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+  }
+  #logo img {
+    max-width: 100%;
+    height: auto;
+  }
+  #status-container {
+    margin: 3vh auto;
+    padding: 2vh;
+    border-radius: 2vh;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  #progress-bar-container {
+    width: 100%;
+    height: 3vh;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 1.5vh;
+    overflow: hidden;
+    margin-bottom: 2vh;
+  }
+  #progress-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 1s ease, background-color 1s ease;
+  }
+  #status-text h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    transition: opacity 1s ease;
+  }
+  #status-text p {
+    text-align: left;
+    margin: 0.5rem 0 0;
+    font-size: 1rem;
+    transition: opacity 1s ease;
+  }
+  /* Styling for the advice list */
+  #status-text ul {
+    margin: 0.5rem 0 0 1.2rem;
+    padding: 0;
+  }
+  #status-text li {
+    margin: 0.3rem 0;
+  }
+
+  .credit {
+    position: fixed;
+    bottom: 2vh;
+    left: 2vh;
+    font-size: 0.8rem;
+    opacity: 0.2;
+  }
+
+  .credit a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .credit a:hover {
+    text-decoration: underline;
+  }

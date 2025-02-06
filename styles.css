@@ -1,25 +1,25 @@
 @font-face {
     font-family: 'Bold';
-    src: url('font/Bold.otf') format('opentype');
+    src: url('Elements/font/Bold.otf') format('opentype');
     font-weight: 1000;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Thin';
-    src: url('font/Thin.otf') format('opentype');
+    src: url('Elements/font/Thin.otf') format('opentype');
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Heavitas';
-    src: url('font/Heavitas.ttf') format('truetype');
+    src: url('Elements/font/Heavitas.ttf') format('truetype');
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Lux';
-    src: url('font/Lux.otf') format('opentype');
+    src: url('Elements/font/Lux.otf') format('opentype');
     font-weight: -10;
     font-style: normal;
 }
@@ -57,7 +57,7 @@ body {
     background-attachment: fixed;
     font-family: 'Thin', sans-serif;
     background-size: 100%;
-    background-image: url('image/BlackBG.jpg');
+    background-image: url('Elements/image/BlackBG.jpg');
     margin: 0;
     padding: 0;
     color: #e0e0e0;
