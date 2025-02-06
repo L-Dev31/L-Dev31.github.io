@@ -21,6 +21,7 @@ html, body {
     height: auto;
   }
   #status-container {
+    height: 220px;
     margin: 3vh auto;
     padding: 2vh;
     border-radius: 2vh;

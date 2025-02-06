@@ -2,39 +2,84 @@
  function mapPingToUsage(ping) {
     if (ping <= 100) return 0;
     if (ping >= 500) return 100;
-    return ((ping - 100) / 400) * 100;
+  
+    const breakpoints = [
+        { ping: 50, usage: 0.00 },
+        { ping: 75, usage: 3.57 },
+        { ping: 100, usage: 7.14 },
+        { ping: 125, usage: 10.71 },
+        { ping: 150, usage: 14.29 },
+        { ping: 175, usage: 17.86 },
+        { ping: 200, usage: 21.43 },
+        { ping: 225, usage: 25.00 },
+        { ping: 250, usage: 28.57 },
+        { ping: 275, usage: 32.14 },
+        { ping: 300, usage: 35.71 },
+        { ping: 325, usage: 39.29 },
+        { ping: 350, usage: 42.86 },
+        { ping: 375, usage: 46.43 },
+        { ping: 400, usage: 50.00 },
+        { ping: 425, usage: 53.57 },
+        { ping: 450, usage: 57.14 },
+        { ping: 475, usage: 60.71 },
+        { ping: 500, usage: 64.29 },
+        { ping: 525, usage: 67.86 },
+        { ping: 550, usage: 71.43 },
+        { ping: 575, usage: 75.00 },
+        { ping: 600, usage: 78.57 },
+        { ping: 625, usage: 82.14 },
+        { ping: 650, usage: 85.71 },
+        { ping: 675, usage: 89.29 },
+        { ping: 700, usage: 92.86 },
+        { ping: 725, usage: 96.43 },
+        { ping: 750, usage: 100.00 }
+    ];
+  
+    for (let i = 0; i < breakpoints.length - 1; i++) {
+      let current = breakpoints[i];
+      let next = breakpoints[i + 1];
+      if (ping >= current.ping && ping <= next.ping) {
+        let ratio = (ping - current.ping) / (next.ping - current.ping);
+        return current.usage + ratio * (next.usage - current.usage);
+      }
+    }
   }
 
-  /* 
-    Interpolates the color based on the usage percentage:
-      - 0%   : Cyan         → rgb(0, 255, 255)
-      - 33%  : Blue         → rgb(0, 0, 255)
-      - 66%  : Violet       → rgb(138, 43, 226)
-      - 100% : Red-Violet   → rgb(199, 21, 133)
-  */
   function getInterpolatedColor(value) {
     let r, g, b, ratio;
-    if (value <= 33) {
-      // Cyan to Blue
-      ratio = value / 33;
-      r = 0;
-      g = Math.round(255 * (1 - ratio));
-      b = 255;
-    } else if (value <= 66) {
-      // Blue to Violet
-      ratio = (value - 33) / 33;
-      r = Math.round(0 + (138 - 0) * ratio);
-      g = Math.round(0 + (43 - 0) * ratio);
-      b = Math.round(255 + (226 - 255) * ratio);
+    if (value <= 16) {
+        // Cyan → Bleu clair
+        ratio = value / 16;
+        r = 0;
+        g = Math.round(255 * (1 - ratio));
+        b = 255;
+    } else if (value <= 33) {
+        // Bleu clair → Bleu foncé
+        ratio = (value - 16) / 17;
+        r = 0;
+        g = Math.round(150 * (1 - ratio));
+        b = Math.round(255 * (1 - ratio * 0.2));
+    } else if (value <= 50) {
+        // Bleu foncé → Violet
+        ratio = (value - 33) / 17;
+        r = Math.round(75 * ratio);
+        g = Math.round(0 + (43 - 0) * ratio);
+        b = Math.round(200 + (226 - 200) * ratio);
+    } else if (value <= 75) {
+        // Violet → Rose
+        ratio = (value - 50) / 25;
+        r = Math.round(75 + (199 - 75) * ratio);
+        g = Math.round(43 + (21 - 43) * ratio);
+        b = Math.round(226 + (133 - 226) * ratio);
     } else {
-      // Violet to Red-Violet
-      ratio = (value - 66) / 34;
-      r = Math.round(138 + (199 - 138) * ratio);
-      g = Math.round(43 + (21 - 43) * ratio);
-      b = Math.round(226 + (133 - 226) * ratio);
+        // Rose → Rouge-Violet
+        ratio = (value - 75) / 25;
+        r = Math.round(199 + (255 - 199) * ratio);
+        g = Math.round(21 * (1 - ratio));
+        b = Math.round(133 * (1 - ratio));
     }
     return `rgb(${r}, ${g}, ${b})`;
-  }
+    }
 
   // Returns the status title and a formal description with advice based on usage.
   function getStatusText(usage) {
@@ -122,4 +167,4 @@
 
   // Start the first measurement and repeat every 5 seconds.
   measurePingAndUpdate();
-  setInterval(measurePingAndUpdate, 3000);
+  setInterval(measurePingAndUpdate, 2500);
