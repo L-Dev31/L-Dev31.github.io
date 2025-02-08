@@ -1,30 +1,24 @@
-// State history to track measurements and stabilize results
+// State history: tracks last 5 measurements and make an average for stability
 var stateHistory = {
     pings: [],
     usages: [],
-    add: function (ping, usage) {
+    add: function(ping, usage) {
         this.pings.push(ping);
         this.usages.push(usage);
-        if (this.pings.length > 5) this.pings.shift(); // Keep last 5 pings
-        if (this.usages.length > 5) this.usages.shift(); // Keep last 5 usages
+        if (this.pings.length > 5) this.pings.shift();
+        if (this.usages.length > 5) this.usages.shift();
     },
-    getStableUsage: function () {
-        // Use the average of the last 5 measurements for stability
+    getStableUsage: function() {
         if (this.usages.length === 0) return 0;
-        return this.usages.reduce(function (acc, val) {
-            return acc + val;
-        }, 0) / this.usages.length;
+        return this.usages.reduce((acc, val) => acc + val, 0) / this.usages.length;
     },
-    getAveragePing: function () {
-        // Calculate the average of the last 5 pings
+    getAveragePing: function() {
         if (this.pings.length === 0) return 0;
-        return this.pings.reduce(function (acc, val) {
-            return acc + val;
-        }, 0) / this.pings.length;
+        return this.pings.reduce((acc, val) => acc + val, 0) / this.pings.length;
     }
 };
 
-// Maps ping (in ms) to a usage percentage
+// Maps ping (ms) to a usage percentage
 function mapPingToUsage(ping) {
     if (ping <= 50) return 0;
     if (ping >= 750) return 100;
@@ -103,7 +97,7 @@ function getInterpolatedColor(value) {
     return 'rgb(' + r + ', ' + g + ', ' + b + ')';
 }
 
-// Determines status text with full descriptions and advice
+// Determines status text with full descriptions and advices
 function getStatusText(usage) {
     var currentStatus = window.lastKnownStatus || { usage: 0 };
     var newStatus, description;
@@ -158,25 +152,24 @@ function getStatusText(usage) {
     return window.lastKnownStatus;
 }
 
-// Measures ping using multiple simultaneous requests for stability
+// Measures ping using 3 requests for stability (cuz else it just moves back and forth between normal and critical)
 function measurePingAndUpdate() {
     var measurements = [];
     var completed = 0;
 
     // Take 3 quick measurements
     for (var i = 0; i < 3; i++) {
-        (function () {
+        (function() {
             var img = new Image();
             var start = performance.now();
-            img.src = 'https://chat.deepseek.com/favicon.svg?t=' + Date.now() + '-' + i;
+            img.src = 'https://cdn.deepseek.com/chat/icon.png?t=' + Date.now() + '-' + i;
 
-            img.onload = function () {
+            img.onload = function() {
                 measurements.push(performance.now() - start);
                 completed++;
-
                 if (completed === 3) {
                     // Use median value to filter outliers
-                    measurements.sort(function (a, b) { return a - b; });
+                    measurements.sort(function(a, b) { return a - b; });
                     var finalPing = measurements[1];
                     var usage = mapPingToUsage(finalPing);
                     stateHistory.add(finalPing, usage);
@@ -184,7 +177,7 @@ function measurePingAndUpdate() {
                 }
             };
 
-            img.onerror = function () {
+            img.onerror = function() {
                 completed++;
                 if (completed === 3) {
                     updateInterface(100, null);
@@ -194,7 +187,7 @@ function measurePingAndUpdate() {
     }
 }
 
-// Updates the UI with stable results
+// Updates the UI
 function updateInterface(usage, averagePing) {
     var progressBar = document.getElementById("progress-bar");
     if (progressBar) {
@@ -213,6 +206,6 @@ function updateInterface(usage, averagePing) {
     }
 }
 
-// Start measurements and repeat every 4 seconds
+// Start measurements and repeat every 3 seconds
 measurePingAndUpdate();
-setInterval(measurePingAndUpdate, 4000);
+setInterval(measurePingAndUpdate, 3000);
