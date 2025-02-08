@@ -201,7 +201,7 @@ function updateInterface(usage, averagePing) {
         var status = getStatusText(usage);
         statusTitle.textContent = status.title;
         statusDescription.innerHTML = averagePing !== null
-            ? status.description + "<br>(Ping moyen: " + Math.round(averagePing) + " ms)"
+            ? status.description + "<br>(Ping: " + Math.round(averagePing) + " ms)"
             : "We're currently seeking a ping response. The server might be overused or inaccessible. Please wait...";
     }
 }
