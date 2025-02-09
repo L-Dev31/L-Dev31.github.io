@@ -400,7 +400,7 @@ footer p {
 
     /* Hero Section */
     .hero {
-        height: auto;
+        height: 95vh;
         padding: 60px 0;
     }
 
