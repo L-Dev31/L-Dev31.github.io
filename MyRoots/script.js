@@ -1,7 +1,7 @@
 let familyData = [];
 let countryData = {};
 let religionData = {};
-let familyInfoData = {}; // Ajout de la déclaration de familyInfoData
+let familyInfoData = {};
 
 async function loadExternalData() {
     try {
@@ -12,7 +12,6 @@ async function loadExternalData() {
             fetch('DB/family.json')
         ]);
   
-        // Vérifiez les réponses
         if (!familyRes.ok) throw new Error('Erreur de chargement de data.json');
         if (!countryRes.ok) throw new Error('Erreur de chargement de country.json');
         if (!religionRes.ok) throw new Error('Erreur de chargement de religion.json');
