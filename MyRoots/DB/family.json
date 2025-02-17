@@ -1,0 +1,10 @@
+{
+    "toskudevries": {
+      "name": "Tosku De-Vries",
+      "icon": "/Images/Blason/toskudevries.png"
+    },
+    "devries": {
+      "name": "De-Vries",
+      "icon": "/Images/Blason/devries.png"
+    }
+  }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MyRoots</title>
+    <script src="familytree.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="Images/Logo/favicon.png"/>
+</head>
+<body>
+    <div id="tree"></div>
+
+    <div id="info-panel">
+        <div class="info-header">
+            <img class="info-photo" id="infoPhoto" src="" alt="">
+            <div class="info-title">
+                <h2 id="infoName"></h2>
+                <p id="infoDates"></p>
+            </div>
+        </div>
+        <div class="info-details">
+            <div class="info-row">
+                <span class="info-label">Ville :</span>
+                <span id="infoCity"></span>
+            </div>
+            <div id="infoFamily" style="display: none;">
+                <!-- Blason -->
+            </div>
+            <div class="info-row">
+                <span class="info-label">Pays :</span>
+                <img class="info-flag" id="infoFlag" src="" alt="">
+                <span id="infoCountry"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Religion :</span>
+                <img class="info-icon" id="infoReligionIcon" src="" alt="">
+                <span id="infoReligion"></span>
+            </div>
+        </div>
+    </div>
+
+    <img class="logo" src="/Images/Logo/logo.png" alt="logo">
+
+    <script src="script.js"></script>
+</body>
+</html>
