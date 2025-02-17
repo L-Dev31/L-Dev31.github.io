@@ -1,20 +1,20 @@
 {
-    "nl1839": { "name": "royaume des Pays-Bas", "flag": "/Images/Flags/nl1839.png" },
-    "nl1944": { "name": "Reichskommissariat Niederlande", "flag": "/Images/Flags/nl1944.png" },
-    "nl1945": { "name": "royaume des Pays-Bas", "flag": "/Images/Flags/nl1945.png" },
+    "nl1839": { "name": "royaume des Pays-Bas", "flag": "../Images/Flags/nl1839.png" },
+    "nl1944": { "name": "Reichskommissariat Niederlande", "flag": "../Images/Flags/nl1944.png" },
+    "nl1945": { "name": "royaume des Pays-Bas", "flag": "../Images/Flags/nl1945.png" },
 
-    "fr1946": { "name": "4ème république Française", "flag": "/Images/Flags/fr1946.png" },
-    "fr1976": { "name": "5ème république Française", "flag": "/Images/Flags/fr1976.png" },
-    "fr2020": { "name": "5ème république Française", "flag": "/Images/Flags/fr2020.png" },
+    "fr1946": { "name": "4ème république Française", "flag": "../Images/Flags/fr1946.png" },
+    "fr1976": { "name": "5ème république Française", "flag": "../Images/Flags/fr1976.png" },
+    "fr2020": { "name": "5ème république Française", "flag": "../Images/Flags/fr2020.png" },
 
-    "al1867": { "name": "vilayet de Shkodra", "flag": "/Images/Flags/al1867.png" },
-    "al1925": { "name": "république d'Albanie", "flag": "/Images/Flags/al1925.png" },
-    "al1928": { "name": "royaume d'Albanie", "flag": "/Images/Flags/al1928.png" },
-    "al1939": { "name": "protectorat Italien du royaume d'Albanie", "flag": "/Images/Flags/al1939.png" },
-    "al1943": { "name": "état-client Allemand du royaume d'Albanie", "flag": "/Images/Flags/al1943.png" },
-    "al1944": { "name": "gouvernement démocratique Albanais", "flag": "/Images/Flags/al1944.png" },
-    "al1946": { "name": "république populaire socialiste d'Albanie", "flag": "/Images/Flags/al1946.png" },
-    "al1991": { "name": "république d'Albanie", "flag": "/Images/Flags/al1991.png" },
+    "al1867": { "name": "vilayet de Shkodra", "flag": "../Images/Flags/al1867.png" },
+    "al1925": { "name": "république d'Albanie", "flag": "../Images/Flags/al1925.png" },
+    "al1928": { "name": "royaume d'Albanie", "flag": "../Images/Flags/al1928.png" },
+    "al1939": { "name": "protectorat Italien du royaume d'Albanie", "flag": "../Images/Flags/al1939.png" },
+    "al1943": { "name": "état-client Allemand du royaume d'Albanie", "flag": "../Images/Flags/al1943.png" },
+    "al1944": { "name": "gouvernement démocratique Albanais", "flag": "../Images/Flags/al1944.png" },
+    "al1946": { "name": "république populaire socialiste d'Albanie", "flag": "../Images/Flags/al1946.png" },
+    "al1991": { "name": "république d'Albanie", "flag": "../Images/Flags/al1991.png" },
 
-    "it1946": { "name": "république d'Italie", "flag": "/Images/Flags/it1946.png" }
+    "it1946": { "name": "république d'Italie", "flag": "../Images/Flags/it1946.png" }
 }
