@@ -1,0 +1,158 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
+
+#tree {
+  min-width: 100vw;
+  min-height: 100vh;
+  background-attachment: fixed;
+  background-color: #fffbf1;
+  background-image: radial-gradient(circle, #f7f1df 0.2vh, transparent 0.2vh);
+  background-size: 3vh 3vh;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: auto;
+}
+
+.family-tree {
+  min-width: 3000px;
+  min-height: 2000px;
+  padding: 50px;
+}
+
+.node.dead rect {
+  background-color: #222!important;
+}
+
+.node image {
+  outline: 2px solid #ddd!important;
+  border-radius: 35%;
+}
+
+.node rect {
+  fill: white!important;
+  stroke-width: 2px;
+}
+
+.node text {
+  fill: #222 !important;
+}
+
+.node.male rect {
+  stroke: #4a90e2 !important;
+}
+
+.node.female rect {
+  stroke: #e26a8d !important;
+}
+
+.person-content {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.ft-person[male] { border-color: #4a90e2; }
+.ft-person[female] { border-color: #e26a8d; }
+
+#info-panel {
+  border: 0.2vh solid #eaeaea;
+  position: fixed;
+  bottom: 2vh;
+  left: 2vh;
+  background-color: white;
+  padding: 2vh;
+  border-radius: 1vh;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 30vh;
+  height: auto;
+  font-size: 1.6vh;
+  z-index: 1000;
+  display: none;
+}
+
+#info-panel.male {
+  border-left: 0.5vh solid #4a90e2;
+}
+
+#info-panel.female {
+  border-left: 0.5vh solid #e26a8d;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5vh;
+}
+
+.info-photo {
+  width: 6vh;
+  height: 6vh;
+  border-radius: 2vh;
+  outline: 2px solid #ddd;
+  margin-right: 1.5vh;
+  object-fit: cover;
+}
+
+.info-title h2 {
+  margin: 0 0 0.5vh;
+  font-size: 1.8vh;
+}
+
+.info-title p {
+  margin: 0;
+  font-size: 1.1vh;
+  color: #666;
+}
+
+.info-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+}
+
+.info-label {
+  font-weight: bold;
+  min-width: 7vh;
+}
+
+.info-flag {
+  border-radius: 0.5vh;
+  width: 4vh;
+  height: auto;
+  object-fit: contain;
+}
+
+.info-icon {
+  width: 3.5vh;
+  height: auto;
+  object-fit: contain;
+}
+
+.info-blason {
+  width: 4vh;
+  height: auto;
+  object-fit: contain;
+}
+
+.familytree-toolbar, .familytree-menu, .bft-btn-zoom, .bft-edit-form {
+  display: none !important;
+}
+
+.logo {
+  z-index: 0;
+  width: 20vh;
+  position: fixed;
+  bottom: 2vh;
+  right: 2vh;
+  opacity: 0.25;
+}
