@@ -1,7 +1,7 @@
 {
-    "nl1839": { "name": "royaume des Pays-Bas", "flag": "/MyRoots/Images/Flags/nl1839.png" },
-    "nl1944": { "name": "Reichskommissariat Niederlande", "flag": "/MyRoots/Images/Flags/nl1944.png" },
-    "nl1945": { "name": "royaume des Pays-Bas", "flag": "/MyRoots/Images/Flags/nl1945.png" },
+    "nl1839": { "name": "royaume des Pays-Bas", "flag": "MyRoots/Images/Flags/nl1839.png" },
+    "nl1944": { "name": "Reichskommissariat Niederlande", "flag": "MyRoots/Images/Flags/nl1944.png" },
+    "nl1945": { "name": "royaume des Pays-Bas", "flag": "MyRoots/Images/Flags/nl1945.png" },
 
     "fr1946": { "name": "4ème république Française", "flag": "/MyRoots/Images/Flags/fr1946.png" },
     "fr1976": { "name": "5ème république Française", "flag": "/MyRoots/Images/Flags/fr1976.png" },
