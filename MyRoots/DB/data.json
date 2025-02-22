@@ -548,7 +548,7 @@
     "city": "Oude Pekela",
     "img": "Images/Persons/Unknown.jpg",
     "gender": "male",
-    "pids": ["maayke"],
+    "pids": ["maaike1747"],
     "children": ["pieter1776"]
   },
   {
@@ -562,7 +562,7 @@
     "img": "Images/Persons/Unknown.jpg",
     "gender": "male",
     "pids": ["jantje17xx"],
-    "children": ["maayke"]
+    "children": ["maaike1747"]
   },
   {
     "id": "jantje17xx",
@@ -575,11 +575,11 @@
     "img": "Images/Persons/Unknown.jpg",
     "gender": "female",
     "pids": ["pieter17xx"],
-    "children": ["maayke"]
+    "children": ["maaike1747"]
   },
   {
-    "id": "maayke",
-    "name": "Maayke Pieters ZETSTRA",
+    "id": "maaike1747",
+    "name": "Maaike Pieters ZETSTRA",
     "born": "1747",
     "death": "10/12/1824",
     "religion": "p",
@@ -605,7 +605,7 @@
     "pids": ["cornelia1783","jieskje"],
     "children": ["sytze1818","antje","paulus","janna","jan1855"],
     "fid": "jan1752",
-    "mid": "maayke"
+    "mid": "maaike1747"
   },
   {
     "id": "sytse1778",
@@ -618,7 +618,7 @@
     "img": "Images/Persons/Unknown.jpg",
     "gender": "male",
     "fid": "jan1752",
-    "mid": "maayke"
+    "mid": "maaike1747"
   },
   {
     "id": "meile",
@@ -631,7 +631,7 @@
     "img": "Images/Persons/Unknown.jpg",
     "gender": "female",
     "fid": "jan1752",
-    "mid": "maayke"
+    "mid": "maaike1747"
   },
   {
     "id": "jacob",
@@ -644,7 +644,7 @@
     "img": "Images/Persons/Unknown.jpg",
     "gender": "male",
     "fid": "jan1752",
-    "mid": "maayke"
+    "mid": "maaike1747"
   },
   {
     "id": "hendrik",
@@ -657,7 +657,7 @@
     "img": "Images/Persons/Unknown.jpg",
     "gender": "male",
     "fid": "jan1752",
-    "mid": "maayke"
+    "mid": "maaike1747"
   },
   {
     "id": "cornelia1783",
@@ -787,7 +787,7 @@
     "img": "Images/Persons/Unknown.jpg",
     "gender": "male",
     "pids": ["sybrigje1825"],
-    "children": ["sybren1863","berber","pieter1847", "pieter1850", "pieter1850", "cornelia1857", "trijntje1854", "maaike", "sybren1855"],
+    "children": ["sybren1863","berber","pieter1847", "pieter1850", "pieter1850", "cornelia1857", "trijntje1854", "maaike1867", "sybren1855"],
     "fid": "pieter1776",
     "mid": "cornelia1783"
   },
@@ -802,7 +802,7 @@
     "img": "Images/Persons/Unknown.jpg",
     "gender": "female",
     "pids": ["sytze1818"],
-    "children": ["sybren1863","berber","pieter1847", "pieter1850", "pieter1850", "cornelia1857", "trijntje1854", "maaike", "sybren1855"]
+    "children": ["sybren1863","berber","pieter1847", "pieter1850", "pieter1850", "cornelia1857", "trijntje1854", "maaike1867", "sybren1855"]
   },
   {
     "id": "pieter1847",
@@ -908,7 +908,7 @@
     "pids": ["trijntje1854"]
   },
   {
-    "id": "maaike",
+    "id": "maaike1867",
     "name": "Maaike Sytzes OOSTERHAVEN",
     "born": "06/09/1867",
     "death": null,
@@ -931,7 +931,7 @@
     "city": "Spannum",
     "img": "Images/Persons/Unknown.jpg",
     "gender": "male",
-    "pids": ["maaike"]
+    "pids": ["maaike1867"]
   },
   {
     "id": "berber",
