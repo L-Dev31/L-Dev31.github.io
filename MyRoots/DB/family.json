@@ -1,10 +1,18 @@
 {
     "toskudevries": {
       "name": "Tosku De-Vries",
-      "icon": "/MyRoots/Images/Blason/toskudevries.png"
+      "icon": "Images/Blason/toskudevries.png"
     },
     "devries": {
       "name": "De-Vries",
-      "icon": "/MyRoots/Images/Blason/devries.png"
+      "icon": "Images/Blason/devries.png"
+    },
+    "lanting": {
+      "name": "Lanting",
+      "icon": "Images/Blason/lanting.png"
+    },
+    "schaar": {
+      "name": "Schaar (van der)",
+      "icon": "Images/Blason/schaar.png"
     }
   }
