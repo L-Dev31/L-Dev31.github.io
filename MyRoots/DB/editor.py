@@ -28,12 +28,12 @@ class RoundedFrame(tk.Canvas):
 class FamilyTreeEditor:
     def __init__(self, root):
         self.root = root
-        self.root.title("Family Tree Editor")
+        self.root.title("Éditeur d'Arbre Généalogique")
         self.root.geometry("1280x800")
         self.current_person = None
         self.images = {}
         
-        # Set favicon
+        # Définir le favicon
         self.set_favicon("../Images/logo/favicon.png")
         
         self.setup_styles()
@@ -47,7 +47,7 @@ class FamilyTreeEditor:
             img = ImageTk.PhotoImage(img)
             self.root.tk.call("wm", "iconphoto", self.root._w, img)
         except Exception as e:
-            print(f"Error loading favicon: {e}")
+            print(f"Erreur de chargement du favicon: {e}")
 
     def setup_styles(self):
         self.style = ttk.Style()
@@ -76,13 +76,13 @@ class FamilyTreeEditor:
         main_frame = ttk.Frame(self.root)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-        # Left Panel
+        # Panneau de gauche
         left_panel = RoundedFrame(main_frame, radius=15, bg='#f5f5f5', highlightthickness=0)
         left_panel.pack(side=tk.LEFT, fill=tk.Y, padx=5, pady=5)
         
-        ttk.Label(left_panel, text="Family Members", font=('Segoe UI', 12, 'bold')).pack(pady=10)
+        ttk.Label(left_panel, text="Membres de la Famille", font=('Segoe UI', 12, 'bold')).pack(pady=10)
         
-        # Search Field
+        # Champ de recherche
         self.search_var = tk.StringVar()
         self.search_entry = ttk.Entry(left_panel, textvariable=self.search_var, font=('Segoe UI', 10))
         self.search_entry.pack(fill=tk.X, padx=10, pady=5)
@@ -93,20 +93,22 @@ class FamilyTreeEditor:
         self.person_list.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         self.person_list.bind('<<ListboxSelect>>', self.on_person_select)
 
-        # Right Panel
+        # Panneau de droite
         right_panel = ttk.Frame(main_frame)
         right_panel.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
-        # Personal Info Section
+        # Section Informations Personnelles
         info_frame = RoundedFrame(right_panel, radius=15, bg='#f5f5f5', highlightthickness=0)
         info_frame.pack(fill=tk.BOTH, expand=True, pady=5)
         
         self.img_label = ttk.Label(info_frame)
         self.img_label.place(x=20, y=20)
 
+        ttk.Button(info_frame, text="Téléverser une Image", command=self.upload_image).place(x=20, y=180)
+
         entries = [
-            ("ID:", 0), ("Name:", 1), ("Born:", 2), ("Died:", 3),
-            ("Gender:", 4), ("Mother:", 6), ("Father:", 7)
+            ("ID:", 0), ("Nom:", 1), ("Naissance:", 2), ("Décès:", 3),
+            ("Genre:", 4), ("Mère:", 6), ("Père:", 7)
         ]
         
         for text, row in entries:
@@ -135,24 +137,22 @@ class FamilyTreeEditor:
         self.father_combo.bind('<KeyRelease>', lambda e: self.filter_parents('father'))
         self.father_combo.bind('<<ComboboxSelected>>', lambda e: self.update_parent('father'))
 
-        ttk.Button(info_frame, text="Upload Image", command=self.upload_image).place(x=300, y=340)
-
-        # Location Section
+        # Section Localisation
         loc_frame = RoundedFrame(right_panel, radius=15, bg='#f5f5f5', highlightthickness=0)
         loc_frame.pack(fill=tk.X, pady=5)
         
-        ttk.Label(loc_frame, text="Country:").grid(row=0, column=0, padx=20, pady=10)
+        ttk.Label(loc_frame, text="Pays:").grid(row=0, column=0, padx=20, pady=10)
         self.country_combo = ttk.Combobox(loc_frame, font=('Segoe UI', 10), width=30)
         self.country_combo.grid(row=0, column=1, pady=10)
         self.country_combo['values'] = [v['name'] for v in self.countries.values()]
         self.country_flag = ttk.Label(loc_frame)
         self.country_flag.grid(row=0, column=2, padx=10)
         
-        ttk.Label(loc_frame, text="City:").grid(row=1, column=0, padx=20, pady=10)
+        ttk.Label(loc_frame, text="Ville:").grid(row=1, column=0, padx=20, pady=10)
         self.city_entry = ttk.Entry(loc_frame, font=('Segoe UI', 10), width=25)
         self.city_entry.grid(row=1, column=1, pady=10)
 
-        # Religion Section
+        # Section Religion
         rel_frame = RoundedFrame(right_panel, radius=15, bg='#f5f5f5', highlightthickness=0)
         rel_frame.pack(fill=tk.X, pady=5)
         
@@ -163,25 +163,39 @@ class FamilyTreeEditor:
         self.religion_icon = ttk.Label(rel_frame)
         self.religion_icon.grid(row=0, column=2, padx=10)
 
-        # Family Blason Section
+        # Section Blason de la Famille
         family_frame = RoundedFrame(right_panel, radius=15, bg='#f5f5f5', highlightthickness=0)
         family_frame.pack(fill=tk.X, pady=5)
         
-        ttk.Label(family_frame, text="Family Blason:").grid(row=0, column=0, padx=20, pady=10)
+        ttk.Label(family_frame, text="Blason de la Famille:").grid(row=0, column=0, padx=20, pady=10)
         self.family_combo = ttk.Combobox(family_frame, font=('Segoe UI', 10), width=30)
         self.family_combo.grid(row=0, column=1, pady=10)
         self.family_combo['values'] = [v['name'] for v in self.families.values()]
         self.family_blason = ttk.Label(family_frame)
         self.family_blason.grid(row=0, column=2, padx=10)
 
-        # Buttons
+        # Section Partenaires et Enfants
+        relations_frame = RoundedFrame(right_panel, radius=15, bg='#f5f5f5', highlightthickness=0)
+        relations_frame.pack(fill=tk.X, pady=5)
+        
+        ttk.Label(relations_frame, text="Partenaires:").grid(row=0, column=0, padx=20, pady=10)
+        self.partners_list = tk.Listbox(relations_frame, font=('Segoe UI', 10), 
+                                      bg='white', relief='flat', highlightthickness=0)
+        self.partners_list.grid(row=0, column=1, pady=10)
+        
+        ttk.Label(relations_frame, text="Enfants:").grid(row=1, column=0, padx=20, pady=10)
+        self.children_list = tk.Listbox(relations_frame, font=('Segoe UI', 10), 
+                                      bg='white', relief='flat', highlightthickness=0)
+        self.children_list.grid(row=1, column=1, pady=10)
+
+        # Boutons
         btn_frame = ttk.Frame(right_panel)
         btn_frame.pack(pady=10)
-        ttk.Button(btn_frame, text="Save", command=self.save_person).pack(side=tk.LEFT, padx=5)
-        ttk.Button(btn_frame, text="New Person", command=self.new_person).pack(side=tk.LEFT, padx=5)
-        ttk.Button(btn_frame, text="Delete", command=self.delete_person).pack(side=tk.LEFT, padx=5)
+        ttk.Button(btn_frame, text="Sauvegarder", command=self.save_person).pack(side=tk.LEFT, padx=5)
+        ttk.Button(btn_frame, text="Nouvelle Personne", command=self.new_person).pack(side=tk.LEFT, padx=5)
+        ttk.Button(btn_frame, text="Supprimer", command=self.delete_person).pack(side=tk.LEFT, padx=5)
 
-        # Bindings
+        # Liaisons
         self.country_combo.bind('<<ComboboxSelected>>', self.update_country_flag)
         self.religion_combo.bind('<<ComboboxSelected>>', self.update_religion_icon)
         self.family_combo.bind('<<ComboboxSelected>>', self.update_family_blason)
@@ -219,7 +233,7 @@ class FamilyTreeEditor:
         self.update_parent_combo('mother')
         self.update_parent_combo('father')
 
-        # Country/Religion/Family
+        # Pays/Religion/Famille
         country_code = self.current_person.get('country', '')
         country = self.countries.get(country_code, {'name': ''})
         self.country_combo.set(country['name'])
@@ -236,8 +250,21 @@ class FamilyTreeEditor:
         self.update_family_blason()
 
         # Image
-        img_path = self.current_person.get('img', '../Images/Persons/Unknown.jpg')
+        img_path = f"../{self.current_person.get('img', 'Images/Persons/Unknown.jpg')}"
         self.show_image(img_path)
+
+        # Partenaires et Enfants
+        self.partners_list.delete(0, tk.END)
+        for pid in self.current_person.get('pids', []):
+            partner = next((p for p in self.data if p['id'] == pid), None)
+            if partner:
+                self.partners_list.insert(tk.END, partner['name'])
+        
+        self.children_list.delete(0, tk.END)
+        for child_id in self.current_person.get('children', []):
+            child = next((p for p in self.data if p['id'] == child_id), None)
+            if child:
+                self.children_list.insert(tk.END, child['name'])
 
     def update_parent_combo(self, parent_type):
         combo = self.mother_combo if parent_type == 'mother' else self.father_combo
@@ -277,27 +304,27 @@ class FamilyTreeEditor:
             self.img_label.configure(image=photo)
             self.img_label.image = photo
         except Exception as e:
-            print(f"Error loading image: {e}")
+            print(f"Erreur de chargement de l'image: {e}")
 
     def update_country_flag(self, event=None):
         country_name = self.country_combo.get()
         country_code = next((k for k, v in self.countries.items() if v['name'] == country_name), None)
         if country_code:
-            flag_path = f"../Images/{country_code}.png"
+            flag_path = f"../{self.countries[country_code]['flag']}"
             self.load_image(flag_path, self.country_flag)
 
     def update_religion_icon(self, event=None):
         religion_name = self.religion_combo.get()
         religion_code = next((k for k, v in self.religions.items() if v['name'] == religion_name), '?')
         if religion_code:
-            icon_path = f"../Images/{religion_code}.png"
+            icon_path = f"../{self.religions[religion_code]['icon']}"
             self.load_image(icon_path, self.religion_icon)
 
     def update_family_blason(self, event=None):
         family_name = self.family_combo.get()
         family_id = next((k for k, v in self.families.items() if v['name'] == family_name), '')
         if family_id:
-            blason_path = f"../Images/{family_id}.png"
+            blason_path = f"../{self.families[family_id]['icon']}"
             self.load_image(blason_path, self.family_blason)
 
     def load_image(self, path, label):
@@ -308,7 +335,7 @@ class FamilyTreeEditor:
             label.configure(image=photo)
             label.image = photo
         except Exception as e:
-            print(f"Error loading image: {e}")
+            print(f"Erreur de chargement de l'image: {e}")
 
     def upload_image(self):
         file_path = filedialog.askopenfilename()
@@ -318,7 +345,7 @@ class FamilyTreeEditor:
             filename = os.path.basename(file_path)
             dest_path = os.path.join(target_dir, filename)
             shutil.copy(file_path, dest_path)
-            self.current_person['img'] = f"../Images/Persons/{filename}"
+            self.current_person['img'] = f"Images/Persons/{filename}"
             self.show_image(dest_path)
 
     def save_person(self):
@@ -339,12 +366,12 @@ class FamilyTreeEditor:
         with open('data.json', 'w', encoding='utf-8') as f:
             json.dump(self.data, f, indent=2, ensure_ascii=False)
         self.populate_person_list()
-        messagebox.showinfo("Saved", "Person data saved successfully")
+        messagebox.showinfo("Sauvegardé", "Données de la personne sauvegardées avec succès")
 
     def new_person(self):
         new_person = {
             "id": f"new_{len(self.data)+1}",
-            "name": "New Person",
+            "name": "Nouvelle Personne",
             "img": "../Images/Persons/Unknown.jpg",
             "gender": "male",
             "religion": "?",
@@ -357,7 +384,7 @@ class FamilyTreeEditor:
         if not self.current_person: return
         self.data.remove(self.current_person)
         self.populate_person_list()
-        messagebox.showinfo("Deleted", "Person removed successfully")
+        messagebox.showinfo("Supprimé", "Personne supprimée avec succès")
 
 if __name__ == "__main__":
     root = tk.Tk()

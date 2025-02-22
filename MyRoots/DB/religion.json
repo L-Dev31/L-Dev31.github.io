@@ -1,9 +1,10 @@
 {
-    "?": { "name": "Inconnue", "icon": "/MyRoots/Images/Icons/unknown.png" },
-    "c": { "name": "Catholique", "icon": "/MyRoots/Images/Icons/catholic.png" },
-    "p": { "name": "Protestant", "icon": "/MyRoots/Images/Icons/protestant.png" },
-    "o": { "name": "Orthodox", "icon": "/MyRoots/Images/Icons/orthodox.svg" },
-    "i": { "name": "Islam", "icon": "/MyRoots/Images/Icons/islam.png" },
-    "a": { "name": "Athéisme", "icon": "/MyRoots/Images/Icons/atheism.png" },
-    "h": { "name": "Hindu", "icon": "/MyRoots/Images/Icons/hindu.svg" }
+    "?": { "name": "Inconnue", "icon": "Images/Icons/unknown.png" },
+    "c": { "name": "Catholique", "icon": "Images/Icons/catholic.png" },
+    "p": { "name": "Protestant", "icon": "Images/Icons/protestant.png" },
+    "o": { "name": "Orthodox", "icon": "Images/Icons/orthodox.svg" },
+    "i": { "name": "Islam", "icon": "Images/Icons/islam.png" },
+    "a": { "name": "Athéisme", "icon": "Images/Icons/atheism.png" },
+    "h": { "name": "Hindu", "icon": "Images/Icons/hindu.svg" },
+    "r": { "name": "Rastafarisme", "icon": "Images/Icons/rastafarian.png" }
 }
