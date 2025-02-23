@@ -478,10 +478,22 @@
     "city": "Appelscha",
     "img": "Images/Persons/Jan_De-Vries.jpg",
     "gender": "male",
-    "pids": ["marijke"],
+    "pids": ["marijke","marigje"],
     "fid": "roelof",
     "mid": "elizabeth",
     "children": ["viviane", "sandra"]
+  },
+  {
+    "id": "marigje",
+    "name": "Marigje, Catharina EDELENBOS",
+    "born": null,
+    "death": "2015",
+    "religion": "p",
+    "country": "nl1944",
+    "city": "Blokzijl",
+    "img": "Images/Persons/Unknown.jpg",
+    "gender": "female",
+    "pids": ["jan1944"]
   },
   {
     "id": "auke19xx",
@@ -1492,7 +1504,7 @@
     "family": "devries",
     "born": "26/08/1994",
     "death": null,
-    "religion": "r",
+    "religion": "?",
     "country": "fr1976",
     "city": "Cannes",
     "img": "Images/Persons/Sandra_De-Vries.jpg",
