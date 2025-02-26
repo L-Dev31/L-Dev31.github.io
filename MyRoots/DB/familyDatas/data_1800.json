@@ -1,0 +1,947 @@
+[
+    {
+        "id": "ali",
+        "name": "Ali Tosku",
+        "born": "18??",
+        "death": null,
+        "religion": "?",
+        "country": "al1844",
+        "city": null,
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "file"
+        ],
+        "children": [
+            "nuredin"
+        ]
+    },
+    {
+        "id": "file",
+        "name": "File",
+        "born": "18??",
+        "death": null,
+        "religion": "?",
+        "country": "al1844",
+        "city": null,
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "ali"
+        ],
+        "children": [
+            "nuredin"
+        ]
+    },
+    {
+        "id": "melle",
+        "name": "Melle Ales Visser",
+        "born": "18??",
+        "death": null,
+        "religion": "?",
+        "country": "nl1796",
+        "city": null,
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "antje"
+        ]
+    },
+    {
+        "id": "jieskje",
+        "name": "Jieskje Reinders Rispens",
+        "born": "18??",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": null,
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "pieter1776"
+        ],
+        "children": [
+            "jan1855"
+        ]
+    },
+    {
+        "id": "gerben",
+        "name": "Gerben Hylarides",
+        "born": "18??",
+        "death": null,
+        "religion": "?",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "trijntje1854"
+        ]
+    },
+    {
+        "id": "antje",
+        "name": "Antje Pieters Oosterhaven",
+        "born": "1803",
+        "death": "12/06/1866",
+        "religion": "p",
+        "country": "nl1796",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "pieter1776",
+        "mid": "cornelia1783",
+        "pids": [
+            "melle"
+        ]
+    },
+    {
+        "id": "paulus",
+        "name": "Paulus Pieters Oosterhaven",
+        "born": "1806",
+        "death": null,
+        "religion": "p",
+        "country": "nl1806",
+        "city": "Dongjum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "pieter1776",
+        "mid": "cornelia1783",
+        "pids": [
+            "klaaske"
+        ]
+    },
+    {
+        "id": "klaaske",
+        "name": "Klaaske Jacobs Mulder",
+        "born": "1808",
+        "death": null,
+        "religion": "?",
+        "country": "nl1806",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "paulus"
+        ]
+    },
+    {
+        "id": "sytze1818",
+        "name": "Sytze Pieters Oosterhaven",
+        "born": "1818",
+        "death": "23/06/1893",
+        "religion": "p",
+        "country": "nl1815",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "sybrigje1825"
+        ],
+        "children": [
+            "sybren1863",
+            "berber",
+            "pieter1847",
+            "pieter1850",
+            "pieter1850",
+            "cornelia1857",
+            "trijntje1854",
+            "maaike1867",
+            "sybren1855"
+        ],
+        "fid": "pieter1776",
+        "mid": "cornelia1783"
+    },
+    {
+        "id": "hendrik1820",
+        "name": "Hendrik Jans Bakker",
+        "born": "05/09/1820",
+        "death": "20/09/1911",
+        "religion": "p",
+        "country": "nl1815",
+        "city": "Woudsend",
+        "img": "Images/Persons/Hendrik1820_Jans_Bakker.jpg",
+        "gender": "male",
+        "pids": [
+            "geertje1831"
+        ],
+        "children": [
+            "riemke1866"
+        ]
+    },
+    {
+        "id": "janna",
+        "name": "Janna Pieters Oosterhaven",
+        "born": "1821",
+        "death": "24/06/1849",
+        "religion": "p",
+        "country": "nl1815",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "pieter1776",
+        "mid": "cornelia1783",
+        "pids": [
+            "foeke"
+        ]
+    },
+    {
+        "id": "foeke",
+        "name": "Foeke Jans Wynia",
+        "family": "wynia",
+        "born": "1823",
+        "death": null,
+        "religion": "?",
+        "country": "nl1815",
+        "city": "Wommels",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "janna"
+        ]
+    },
+    {
+        "id": "sybrigje1825",
+        "name": "Sybrigje Sybrens Bakker",
+        "born": "1825",
+        "death": null,
+        "religion": "p",
+        "country": "nl1815",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "sytze1818"
+        ],
+        "children": [
+            "sybren1863",
+            "berber",
+            "pieter1847",
+            "pieter1850",
+            "pieter1850",
+            "cornelia1857",
+            "trijntje1854",
+            "maaike1867",
+            "sybren1855"
+        ]
+    },
+    {
+        "id": "geertje1831",
+        "name": "Geertje Faber Tjittes",
+        "born": "11/10/1831",
+        "death": "20/09/1911",
+        "religion": "p",
+        "country": "nl1815",
+        "city": "Woudsend",
+        "img": "Images/Persons/Geertje1831_Faber_Tjittes.jpg",
+        "gender": "female",
+        "pids": [
+            "hendrik1820"
+        ],
+        "children": [
+            "riemke1866"
+        ]
+    },
+    {
+        "id": "neno1838",
+        "name": "Neno Burhoven Viëtor",
+        "family": "burhovenvietor",
+        "born": "18/02/1838",
+        "death": "13/12/1908",
+        "religion": "p",
+        "country": "nl1815",
+        "city": "Workum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "trijntje1844"
+        ],
+        "children": [
+            "tetje"
+        ]
+    },
+    {
+        "id": "trijntje1844",
+        "name": "Trijntje (Tjeerds) Kikstra",
+        "family": "burhovenvietor",
+        "born": "29/04/1844",
+        "death": "12/05/1929",
+        "religion": "p",
+        "country": "nl1815",
+        "city": "Menaldumadeel",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "neno1838"
+        ],
+        "children": [
+            "tetje"
+        ]
+    },
+    {
+        "id": "pieter1847",
+        "name": "Pieter Oosterhaven",
+        "born": "13/07/1847",
+        "death": "28/03/1849",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "sytze1818",
+        "mid": "sybrigje1825"
+    },
+    {
+        "id": "pieter1850",
+        "name": "Pieter Sytzes Oosterhaven",
+        "born": "04/09/1850",
+        "death": "10/03/1931",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "sytze1818",
+        "mid": "sybrigje1825",
+        "pids": [
+            "jantje",
+            "johanna"
+        ]
+    },
+    {
+        "id": "lieuwe",
+        "name": "Lieuwe Siebes Greidanus",
+        "family": "greydanus",
+        "born": "21/04/1851",
+        "death": "20/05/1935",
+        "religion": "?",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "male",
+        "pids": [
+            "cornelia1857"
+        ],
+        "children": [
+            "siebe1877",
+            "sijbrigje1878",
+            "sijtse1880",
+            "taeke1882",
+            "(dab)greidanus1885",
+            "hiltje1886",
+            "trijntje1888",
+            "janke1890",
+            "pieter1893",
+            "sijbren1895",
+            "tjerk1897",
+            "jan1898"
+        ]
+    },
+    {
+        "id": "trijntje1854",
+        "name": "Trijntje Sytzes Oosterhaven",
+        "born": "1854",
+        "death": "22/03/1923",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "sytze1818",
+        "mid": "sybrigje1825",
+        "pids": [
+            "gerben"
+        ]
+    },
+    {
+        "id": "jan1855",
+        "name": "Pieters Jans Oosterhaven",
+        "born": "1855",
+        "death": "21/05/1864",
+        "religion": "p",
+        "country": "nl1815",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "pieter1776",
+        "mid": "jieskje"
+    },
+    {
+        "id": "sybren1855",
+        "name": "Sybren Bergsma",
+        "born": "1855",
+        "death": null,
+        "religion": "?",
+        "country": "nl1839",
+        "city": "Oosterlittens",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "berber"
+        ]
+    },
+    {
+        "id": "johanna",
+        "name": "Johanna Eppinga",
+        "born": "1857",
+        "death": null,
+        "religion": "?",
+        "country": "nl1839",
+        "city": "Wons (Wonseradeel)",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "pieter1850"
+        ]
+    },
+    {
+        "id": "cornelia1857",
+        "name": "Cornelia Sytzes Oosterhaven",
+        "born": "01/02/1857",
+        "death": "26/07/1938",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "sytze1818",
+        "mid": "sybrigje1825",
+        "pids": [
+            "lieuwe"
+        ],
+        "children": [
+            "siebe1877",
+            "sijbrigje1878",
+            "sijtse1880",
+            "taeke1882",
+            "(dab)greidanus1885",
+            "hiltje1886",
+            "trijntje1888",
+            "janke1890",
+            "pieter1893",
+            "sijbren1895",
+            "tjerk1897",
+            "jan1898"
+        ]
+    },
+    {
+        "id": "jantje",
+        "name": "Jantje Jongema",
+        "born": "1858",
+        "death": null,
+        "religion": "?",
+        "country": "nl1839",
+        "city": "Spannum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "pieter1850"
+        ]
+    },
+    {
+        "id": "berber",
+        "name": "Berber Oosterhaven",
+        "born": "31/05/1862",
+        "death": "18/12/1936",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "sytze1818",
+        "mid": "sybrigje1825",
+        "pids": [
+            "sybren1855"
+        ]
+    },
+    {
+        "id": "sybren1863",
+        "name": "Sybren Oosterhaven",
+        "born": "01/07/1863",
+        "death": "24/12/1917",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Sybren1863_Oosterhaven.jpg",
+        "gender": "male",
+        "pids": [
+            "minkje1868"
+        ],
+        "children": [
+            "sybrigje1898",
+            "sytze1863",
+            "dirk",
+            "anne",
+            "lutgertje"
+        ],
+        "fid": "sytze1818",
+        "mid": "sybrigje1825"
+    },
+    {
+        "id": "jan1865",
+        "name": "Jan Noordmans",
+        "born": "1865",
+        "death": null,
+        "religion": "?",
+        "country": "nl1839",
+        "city": "Spannum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "maaike1867"
+        ]
+    },
+    {
+        "id": "auke1866",
+        "name": "Auke Sipkes Plat",
+        "born": "12/05/1866",
+        "death": "24/04/1938",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldum",
+        "img": "Images/Persons/Auke1866_Sipkes_Plat.jpg",
+        "gender": "male",
+        "pids": [
+            "riemke1866"
+        ],
+        "children": [
+            "geertje"
+        ]
+    },
+    {
+        "id": "riemke1866",
+        "name": "Riemke Bakker",
+        "born": "10/07/1866",
+        "death": "1955",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Dronrijp",
+        "img": "Images/Persons/Riemke1866_Bakker.jpg",
+        "gender": "female",
+        "pids": [
+            "auke1866"
+        ],
+        "children": [
+            "geertje"
+        ],
+        "fid": "hendrik1820",
+        "mid": "geertje1831"
+    },
+    {
+        "id": "maaike1867",
+        "name": "Maaike Sytzes Oosterhaven",
+        "born": "06/09/1867",
+        "death": null,
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "sytze1818",
+        "mid": "sybrigje1825",
+        "pids": [
+            "jan1865"
+        ]
+    },
+    {
+        "id": "minkje1868",
+        "name": "Minkje Van Dijk",
+        "born": "26/01/1868",
+        "death": "03/08/1892",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Peins",
+        "img": "Images/Persons/Minkje1868_Van_Dijk.jpg",
+        "gender": "female",
+        "pids": [
+            "sybren1863"
+        ],
+        "children": [
+            "sybrigje1898",
+            "sytze1863",
+            "dirk",
+            "anne",
+            "lutgertje"
+        ]
+    },
+    {
+        "id": "siebe1875",
+        "name": "Siebe Van Der Schaar",
+        "family": "schaar",
+        "born": "30/04/1875",
+        "death": "11/01/1956",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldumadeel",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "tetje1875"
+        ],
+        "children": [
+            "trijntje1900",
+            "sybren1901",
+            "petrus1878",
+            "symon1880",
+            "gerhardus1882",
+            "(dab)vietor1885"
+        ]
+    },
+    {
+        "id": "ida1873",
+        "name": "Ida Burhoven Viëtor",
+        "family": "burhovenvietor",
+        "born": "23/02/1873",
+        "death": "26/11/1943",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Dronrijp",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "neno1838",
+        "mid": "trijntje1844"
+    },
+    {
+        "id": "tetje1875",
+        "name": "Tetje Burhoven Viëtor",
+        "family": "burhovenvietor",
+        "born": "12/09/1875",
+        "death": "29/05/1941",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Dronrijp",
+        "img": "Images/Persons/Tetje1875_Burhoven_Vietor.jpg",
+        "gender": "female",
+        "pids": [
+            "siebe1875"
+        ],
+        "children": [
+            "trijntje1900",
+            "sybren1901",
+            "petrus1878",
+            "symon1880",
+            "gerhardus1882",
+            "(dab)vietor1885"
+        ],
+        "fid": "neno1838",
+        "mid": "trijntje1844"
+    },
+    {
+        "id": "petrus1878",
+        "name": "Petrus Adrianus Vietor",
+        "family": "burhovenvietor",
+        "born": "11/03/1878",
+        "death": "19/05/1951",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldumadeel",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "neno1838",
+        "mid": "trijntje1844"
+    },
+    {
+        "id": "symon1880",
+        "name": "Symon Tjeerd Burhoven Vietor",
+        "family": "burhovenvietor",
+        "born": "16/08/1880",
+        "death": "04/05/1931",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldumadeel",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "neno1838",
+        "mid": "trijntje1844"
+    },
+    {
+        "id": "gerhardus1882",
+        "name": "Gerhardus Burhoven Vietor",
+        "family": "burhovenvietor",
+        "born": "03/11/1882",
+        "death": "11/01/1883",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldumadeel",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "neno1838",
+        "mid": "trijntje1844"
+    },
+    {
+        "id": "(dab)vietor1885",
+        "name": "[Mort à La Naissance]",
+        "family": "burhovenvietor",
+        "born": "17/03/1885",
+        "death": "17/03/1885",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldumadeel",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "neno1838",
+        "mid": "trijntje1844"
+    },
+    {
+        "id": "siebe1877",
+        "name": "Siebe Lieuwes Greidanus",
+        "family": "greydanus",
+        "born": "20/03/1877",
+        "death": null,
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "male",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "sijbrigje1878",
+        "name": "Sijbrigje Greidanus",
+        "family": "greydanus",
+        "born": "06/05/1878",
+        "death": "06/03/1959",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "female",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "sijtse1880",
+        "name": "Sijtse Greidanus",
+        "family": "greydanus",
+        "born": "15/07/1880",
+        "death": "26/01/1951",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "male",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "taeke1882",
+        "name": "Taeke Lieuwes Greidanus",
+        "family": "greydanus",
+        "born": "20/03/1882",
+        "death": "29/11/1958",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Frankeradeel",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "male",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "(dab)greidanus1885",
+        "name": "[Morte à La Naissance]",
+        "family": "greydanus",
+        "born": "28/02/1885",
+        "death": "26/01/1951",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "female",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "hiltje1886",
+        "name": "Hiltje Greidanus",
+        "family": "greydanus",
+        "born": "15/07/1886",
+        "death": "25/03/1937",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "female",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "trijntje1888",
+        "name": "Trijntje Greidanus",
+        "family": "greydanus",
+        "born": "01/10/1888",
+        "death": "23/07/1899",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "female",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "janke1890",
+        "name": "Janke Lieuwes Greidanus",
+        "family": "greydanus",
+        "born": "22/08/1890",
+        "death": "19/05/1976",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Janke1890_Lieuwes_Greidanus.jpg",
+        "gender": "female",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "pieter1893",
+        "name": "Pieter Lieuwes Greidanus",
+        "family": "greydanus",
+        "born": "22/09/1893",
+        "death": "31/01/1959",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "male",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "sijbren1895",
+        "name": "Sijbren Greidanus",
+        "family": "greydanus",
+        "born": "03/05/1895",
+        "death": "20/07/1899",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "male",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "sytze1895",
+        "name": "Sytze Oosterhaven",
+        "born": "04/02/1895",
+        "death": null,
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Sytze1895_Oosterhaven.jpg",
+        "gender": "male",
+        "fid": "sybren1863",
+        "mid": "minkje1868",
+        "pids": [
+            "trijntje1897"
+        ]
+    },
+    {
+        "id": "dirk",
+        "name": "Dirk Oosterhaven",
+        "born": "21/04/1896",
+        "death": null,
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Dirk_Oosterhaven.jpg",
+        "gender": "male",
+        "fid": "sybren1863",
+        "mid": "minkje1868",
+        "pids": [
+            "saapke"
+        ]
+    },
+    {
+        "id": "tjerk1897",
+        "name": "Tjerk Greidanus",
+        "family": "greydanus",
+        "born": "28/05/1897",
+        "death": "01/08/1981",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "male",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "trijntje1897",
+        "name": "Trijntje Hoitema",
+        "born": "1897",
+        "death": null,
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "sytze1895"
+        ]
+    },
+    {
+        "id": "willem1898",
+        "name": "Willem Harmens Lanting",
+        "family": "lanting",
+        "born": "09/07/1898",
+        "death": "04/06/1981",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Willem1898_Lanting.jpg",
+        "gender": "male",
+        "pids": [
+            "sybrigje1898"
+        ],
+        "children": [
+            "harmen",
+            "sybren1923",
+            "tjerk",
+            "sijtze",
+            "jelte",
+            "aafke",
+            "minkje"
+        ]
+    },
+    {
+        "id": "jan1898",
+        "name": "Jan Greidanus",
+        "family": "greydanus",
+        "born": "09/11/1898",
+        "death": "07/06/1960",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Greydanus.jpg",
+        "gender": "male",
+        "fid": "lieuwe",
+        "mid": "cornelia1857"
+    },
+    {
+        "id": "sybrigje1898",
+        "name": "Sybrigje Oosterhaven",
+        "born": "29/10/1898",
+        "death": null,
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Tzum",
+        "img": "Images/Persons/Sybrigje1898_Oosterhaven.jpg",
+        "gender": "female",
+        "pids": [
+            "willem1898"
+        ],
+        "fid": "sybren1863",
+        "mid": "minkje1868",
+        "children": [
+            "harmen",
+            "sybren1923",
+            "tjerk",
+            "sijtze1929",
+            "jelte",
+            "aafke",
+            "minkje"
+        ]
+    }
+]
