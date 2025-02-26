@@ -3,21 +3,45 @@ let countryData = {};
 let religionData = {};
 let familyInfoData = {};
 
+const centuryFiles = [
+    "DB/familyDatas/data_2000.json",
+    "DB/familyDatas/data_1900.json",
+    "DB/familyDatas/data_1800.json",
+    "DB/familyDatas/data_1700.json",
+    "DB/familyDatas/data_1600.json"
+];
+
+const fetchAllCenturies = async () => {
+    try {
+        const fetchPromises = centuryFiles.map(file => 
+            fetch(file).then(res => {
+                if (!res.ok) throw new Error(`Erreur de chargement ${file}`);
+                return res.json();
+            })
+        );
+        const centuryData = await Promise.all(fetchPromises);
+        return centuryData.flat(); // Fusionne toutes les données
+    } catch (error) {
+        console.error("Erreur lors de la récupération des siècles:", error);
+        return [];
+    }
+};
+
+
 async function loadExternalData() {
     try {
         const [familyRes, countryRes, religionRes, familyInfoRes] = await Promise.all([
-            fetch('DB/data.json'),
+            fetchAllCenturies(),
             fetch('DB/country.json'),
             fetch('DB/religion.json'),
             fetch('DB/family.json')
         ]);
   
-        if (!familyRes.ok) throw new Error('Erreur de chargement de data.json');
         if (!countryRes.ok) throw new Error('Erreur de chargement de country.json');
         if (!religionRes.ok) throw new Error('Erreur de chargement de religion.json');
         if (!familyInfoRes.ok) throw new Error('Erreur de chargement de family.json');
   
-        familyData = await familyRes.json();
+        familyData = familyRes;
         countryData = await countryRes.json();
         religionData = await religionRes.json();
         familyInfoData = await familyInfoRes.json();

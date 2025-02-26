@@ -1,0 +1,371 @@
+[
+    {
+        "id": "hendrick1700",
+        "name": "Hendrick Sipkes",
+        "born": "??/05/1700",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "grietje17xx"
+        ],
+        "fid": "sipke1669",
+        "mid": "geeske1670",
+        "children": [
+            "hiligjen1739",
+            "hiligjen1741",
+            "sipke1744",
+            "hillichien1749",
+            "klaas1752",
+            "geesijn1755",
+            "lijsabet1762"
+        ]
+    },
+    {
+        "id": "grietje17xx",
+        "name": "Grietje Klasens (klaasens)",
+        "born": "17??",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "hendrick1700"
+        ],
+        "children": [
+            "hiligjen1739",
+            "hiligjen1741",
+            "sipke1744",
+            "hillichien1749",
+            "klaas1752",
+            "geesijn1755",
+            "lijsabet1762"
+        ]
+    },
+    {
+        "id": "pieter17xx",
+        "name": "Pieter Meilis Zetstra",
+        "born": "17??",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": null,
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "jantje17xx"
+        ],
+        "children": [
+            "maayke1747"
+        ]
+    },
+    {
+        "id": "jantje17xx",
+        "name": "Jantje Mirks",
+        "born": "17??",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": null,
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "pieter17xx"
+        ],
+        "children": [
+            "maayke1747"
+        ]
+    },
+    {
+        "id": "sijtse1708",
+        "name": "Sitje Sipkes",
+        "born": "16/09/1708",
+        "death": "21/10/1780",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Sitje1708_Sipkes.jpg",
+        "gender": "male",
+        "pids": [
+            "hemke1724"
+        ],
+        "children": [
+            "jan1752"
+        ],
+        "fid": "sipke1669",
+        "mid": "geeske1670"
+    },
+    {
+        "id": "eltje1712",
+        "name": "Eltje Sipkes",
+        "born": "??/02/1712",
+        "death": "??/03/1807",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "sipke1669",
+        "mid": "geeske1670"
+    },
+    {
+        "id": "wipke1717",
+        "name": "Wipke Sipkes",
+        "born": "19/03/1717",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "sipke1669",
+        "mid": "geeske1670"
+    },
+    {
+        "id": "hemke1724",
+        "name": "Hemke Jans Daniels",
+        "born": "1724",
+        "death": "20/11/1781",
+        "religion": "p",
+        "country": "de1439",
+        "city": "Weener",
+        "img": "Images/Persons/Hemke1724_Jans_Daniels.jpg",
+        "gender": "male",
+        "pids": [
+            "sijtse1708"
+        ],
+        "children": [
+            "jan1752"
+        ]
+    },
+    {
+        "id": "hiligjen1739",
+        "name": "Hiligjen Hindriks",
+        "born": "1739",
+        "death": "1741",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "hendrick1700",
+        "mid": "grietje17xx"
+    },
+    {
+        "id": "hiligjen1741",
+        "name": "Hiligjen Hindriks",
+        "born": "1741",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "hendrick1700",
+        "mid": "grietje17xx"
+    },
+    {
+        "id": "hillichien1749",
+        "name": "Hillichien Hillegijn Hilligjen Hinderks Hindriks Van Der Pekela",
+        "born": "1741",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "hendrick1700",
+        "mid": "grietje17xx"
+    },
+    {
+        "id": "sipke1744",
+        "name": "Sipke Hindriks",
+        "born": "1744",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "hendrick1700",
+        "mid": "grietje17xx"
+    },
+    {
+        "id": "maayke1747",
+        "name": "Maayke Pieters Zetstra",
+        "born": "1747",
+        "death": "10/12/1824",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Franeker",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "jan1752"
+        ],
+        "children": [
+            "pieter1776"
+        ],
+        "fid": "pieter17xx",
+        "mid": "jantje17xx"
+    },
+    {
+        "id": "klaas1752",
+        "name": "Klaas Hindriks",
+        "born": "1752",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "hendrick1700",
+        "mid": "grietje17xx"
+    },
+    {
+        "id": "jan1752",
+        "name": "Jan Sytses Oosterhagen",
+        "born": "12/11/1752",
+        "death": "02/08/1829",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "maayke1747"
+        ],
+        "children": [
+            "pieter1776"
+        ],
+        "fid": "sijtse1708",
+        "mid": "hemke1724"
+    },
+    {
+        "id": "geesijn1755",
+        "name": "Geesijn Hindriks",
+        "born": "1755",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "hendrick1700",
+        "mid": "grietje17xx"
+    },
+    {
+        "id": "lijsabet1762",
+        "name": "Lijsabet Hindriks",
+        "born": "1762",
+        "death": null,
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Oude Pekela",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "hendrick1700",
+        "mid": "grietje17xx"
+    },
+    {
+        "id": "pieter1776",
+        "name": "Pieter Jans Oosterhaven",
+        "born": "1776",
+        "death": "15/11/1825",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "cornelia1783",
+            "jieskje"
+        ],
+        "children": [
+            "sytze1818",
+            "antje",
+            "paulus",
+            "janna",
+            "jan1855"
+        ],
+        "fid": "jan1752",
+        "mid": "maayke1747"
+    },
+    {
+        "id": "sytse1778",
+        "name": "Sytse Jans Oosterhagen",
+        "born": "1778",
+        "death": "1811",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "jan1752",
+        "mid": "maayke1747"
+    },
+    {
+        "id": "meile",
+        "name": "Meile Jans Oosterhagen",
+        "born": "1780",
+        "death": "1853",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "jan1752",
+        "mid": "maayke1747"
+    },
+    {
+        "id": "jacob",
+        "name": "Jacob Jans Oosterhagen",
+        "born": "1781",
+        "death": "1806",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "jan1752",
+        "mid": "maayke1747"
+    },
+    {
+        "id": "cornelia1783",
+        "name": "Cornelia Paulus Ennema",
+        "born": "1783",
+        "death": "18/04/1851",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Dongjum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "pieter1776"
+        ],
+        "children": [
+            "sytze1818",
+            "antje",
+            "paulus",
+            "janna"
+        ]
+    },
+    {
+        "id": "hendrik",
+        "name": "Hendrik Jans Oosterhagen",
+        "born": "1784",
+        "death": "1818",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Tzum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "jan1752",
+        "mid": "maayke1747"
+    }
+]
