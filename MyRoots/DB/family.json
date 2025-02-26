@@ -14,5 +14,17 @@
     "schaar": {
       "name": "Schaar (van der)",
       "icon": "Images/Blason/schaar.png"
+    },
+    "greydanus": {
+      "name": "Greydanus",
+      "icon": "Images/Blason/greydanus.png"
+    },
+    "nijdam": {
+      "name": "Nijdam",
+      "icon": "Images/Blason/nijdam.png"
+    },
+    "wynia": {
+      "name": "Wynia",
+      "icon": "Images/Blason/wynia.png"
     }
   }
