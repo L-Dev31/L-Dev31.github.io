@@ -917,11 +917,29 @@
         "death": "13/12/1908",
         "religion": "p",
         "country": "nl1815",
-        "city": "Dronrijp",
+        "city": "Workum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "trijntje1844"
+        ],
+        "children": [
+            "tetje"
+        ]
+    },
+    {
+        "id": "trijntje1844",
+        "name": "Trijntje (Tjeerds) Kikstra",
+        "family": "burhovenvietor",
+        "born": "29/04/1844",
+        "death": "12/05/1929",
+        "religion": "p",
+        "country": "nl1815",
+        "city": "Menaldumadeel",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
         "pids": [
-            "siebe1875"
+            "neno1838"
         ],
         "children": [
             "tetje"
@@ -1214,6 +1232,20 @@
         ]
     },
     {
+        "id": "ida1873",
+        "name": "Ida Burhoven Viëtor",
+        "family": "burhovenvietor",
+        "born": "23/02/1873",
+        "death": "26/11/1943",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Dronrijp",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "fid": "neno1838",
+        "mid": "trijntje1844"
+    },
+    {
         "id": "siebe1875",
         "name": "Siebe Van Der Schaar",
         "family": "schaar",
@@ -1221,14 +1253,19 @@
         "death": "11/01/1956",
         "religion": "p",
         "country": "nl1839",
-        "city": "Tzummarum",
+        "city": "Menaldumadeel",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
         "pids": [
             "tetje1875"
         ],
         "children": [
-            "sybren1901"
+            "trijntje1900",
+            "sybren1901",
+            "petrus1878",
+            "symon1880",
+            "gerhardus1882",
+            "(dab)vietor1885"
         ]
     },
     {
@@ -1248,8 +1285,13 @@
         "children": [
             "trijntje1900",
             "sybren1901",
-            ""
-        ]
+            "petrus1878",
+            "symon1880",
+            "gerhardus1882",
+            "(dab)vietor1885"
+        ],
+        "fid": "neno1838",
+        "mid": "trijntje1844"
     },
     {
         "id": "siebe1877",
@@ -1266,6 +1308,20 @@
         "mid": "cornelia1857"
     },
     {
+        "id": "petrus1878",
+        "name": "Petrus Adrianus Vietor",
+        "family": "burhovenvietor",
+        "born": "11/03/1878",
+        "death": "19/05/1951",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldumadeel",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "neno1838",
+        "mid": "trijntje1844"
+    },
+    {
         "id": "sijbrigje1878",
         "name": "Sijbrigje Greidanus",
         "family": "greydanus",
@@ -1278,6 +1334,20 @@
         "gender": "female",
         "fid": "lieuwe",
         "mid": "cornelia1857"
+    },
+    {
+        "id": "symon1880",
+        "name": "Symon Tjeerd Burhoven Vietor",
+        "family": "burhovenvietor",
+        "born": "16/08/1880",
+        "death": "04/05/1931",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldumadeel",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "neno1838",
+        "mid": "trijntje1844"
     },
     {
         "id": "sijtse1880",
@@ -1294,6 +1364,20 @@
         "mid": "cornelia1857"
     },
     {
+        "id": "gerhardus1882",
+        "name": "Gerhardus Burhoven Vietor",
+        "family": "burhovenvietor",
+        "born": "03/11/1882",
+        "death": "11/01/1883",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldumadeel",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "neno1838",
+        "mid": "trijntje1844"
+    },
+    {
         "id": "taeke1882",
         "name": "Taeke Lieuwes Greidanus",
         "family": "greydanus",
@@ -1308,8 +1392,22 @@
         "mid": "cornelia1857"
     },
     {
+        "id": "(dab)vietor1885",
+        "name": "[Mort à La Naissance]",
+        "family": "burhovenvietor",
+        "born": "17/03/1885",
+        "death": "17/03/1885",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldumadeel",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "fid": "neno1838",
+        "mid": "trijntje1844"
+    },
+    {
         "id": "(dab)greidanus1885",
-        "name": "[morte À La Naissance]",
+        "name": "[Morte à La Naissance]",
         "family": "greydanus",
         "born": "28/02/1885",
         "death": "26/01/1951",
@@ -1579,25 +1677,6 @@
         "fid": "astrit"
     },
     {
-        "id": "fatjon",
-        "name": "Fatjon Zenelaj",
-        "born": "1970",
-        "death": null,
-        "religion": "i",
-        "country": "al1946",
-        "city": null,
-        "img": "Images/Persons/Fatjon_Zenelaj.jpg",
-        "gender": "male",
-        "pids": [
-            "fatbardha1982"
-        ],
-        "children": [
-            "aleks",
-            "amelia",
-            "fabiola"
-        ]
-    },
-    {
         "id": "christianne",
         "name": "Christianne",
         "born": "19??",
@@ -1645,7 +1724,7 @@
     },
     {
         "id": "auke19xx",
-        "name": "Auke De-vries",
+        "name": "Auke De-Vries",
         "family": "devries",
         "born": "19??",
         "death": null,
@@ -1663,7 +1742,7 @@
     },
     {
         "id": "jorrit",
-        "name": "Jorrit De-vries",
+        "name": "Jorrit De-Vries",
         "family": "devries",
         "born": "19??",
         "death": null,
@@ -1676,7 +1755,7 @@
     },
     {
         "id": "jelmer",
-        "name": "Jelmer De-vries",
+        "name": "Jelmer De-Vries",
         "family": "devries",
         "born": "19??",
         "death": null,
@@ -1749,7 +1828,7 @@
     },
     {
         "id": "jelle",
-        "name": "Jelle De-vries",
+        "name": "Jelle De-Vries",
         "family": "devries",
         "born": "1900",
         "death": null,
@@ -2120,7 +2199,7 @@
     },
     {
         "id": "roelof",
-        "name": "Roelof De-vries",
+        "name": "Roelof De-Vries",
         "family": "devries",
         "born": "12/03/1918",
         "death": "16/10/1997",
@@ -2180,7 +2259,7 @@
     },
     {
         "id": "(dab)lanting1926",
-        "name": "[mort À La Naissance]",
+        "name": "[Mort à La Naissance]",
         "family": "lanting",
         "born": "19/10/1926",
         "death": "19/10/1926",
@@ -2376,7 +2455,7 @@
     },
     {
         "id": "jan1944",
-        "name": "Jan De-vries",
+        "name": "Jan De-Vries",
         "family": "devries",
         "born": "23/02/1944",
         "death": "2024",
@@ -2465,6 +2544,25 @@
         ]
     },
     {
+        "id": "fatjon",
+        "name": "Fatjon Zenelaj",
+        "born": "1970",
+        "death": null,
+        "religion": "i",
+        "country": "al1946",
+        "city": null,
+        "img": "Images/Persons/Fatjon_Zenelaj.jpg",
+        "gender": "male",
+        "pids": [
+            "fatbardha1982"
+        ],
+        "children": [
+            "aleks",
+            "amelia",
+            "fabiola"
+        ]
+    },
+    {
         "id": "lirije",
         "name": "Lirije Tosku",
         "born": "30/12/1971",
@@ -2479,7 +2577,7 @@
     },
     {
         "id": "george-andre",
-        "name": "George-andré Bouly",
+        "name": "George-André Bouly",
         "born": "1971",
         "death": null,
         "religion": "a",
@@ -2603,7 +2701,7 @@
     },
     {
         "id": "viviane",
-        "name": "Viviane Elizabeth De-vries",
+        "name": "Viviane Elizabeth De-Vries",
         "family": "devries",
         "born": "19/05/1987",
         "death": null,
@@ -2627,7 +2725,7 @@
     },
     {
         "id": "sandra",
-        "name": "Sandra De-vries",
+        "name": "Sandra De-Vries",
         "family": "devries",
         "born": "26/08/1994",
         "death": null,
@@ -2729,19 +2827,6 @@
         "fid": "fatjon"
     },
     {
-        "id": "amelia",
-        "name": "Amelia Zenelaj",
-        "born": "2015",
-        "death": null,
-        "religion": "i",
-        "country": "it1946",
-        "city": null,
-        "img": "Images/Persons/Amelia_Zenelaj.jpg",
-        "gender": "female",
-        "mid": "fatbardha1982",
-        "fid": "fatjon"
-    },
-    {
         "id": "leo",
         "name": "Léo Tosku",
         "family": "toskudevries",
@@ -2782,6 +2867,19 @@
         "gender": "female",
         "mid": "viviane",
         "fid": "besnik"
+    },
+    {
+        "id": "amelia",
+        "name": "Amelia Zenelaj",
+        "born": "2015",
+        "death": null,
+        "religion": "i",
+        "country": "it1946",
+        "city": null,
+        "img": "Images/Persons/Amelia_Zenelaj.jpg",
+        "gender": "female",
+        "mid": "fatbardha1982",
+        "fid": "fatjon"
     },
     {
         "id": "athena",
