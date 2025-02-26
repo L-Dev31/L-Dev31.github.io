@@ -26,5 +26,9 @@
     "wynia": {
       "name": "Wynia",
       "icon": "Images/Blason/wynia.png"
+    },
+    "burhovenvietor": {
+      "name": "Burhoven Viëtor",
+      "icon": "Images/Blason/burhovenvietor.png"
     }
   }
