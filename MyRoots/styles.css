@@ -32,7 +32,12 @@ body {
   border-radius: 35%;
 }
 
+.node {
+  overflow: visible!important;
+}
+
 .node rect {
+  box-shadow: 0 20px 10px rgba(0, 0, 0, 0.5)!important;
   fill: white!important;
   stroke-width: 2px;
 }
