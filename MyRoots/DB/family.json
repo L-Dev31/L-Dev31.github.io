@@ -34,5 +34,9 @@
     "tromp": {
       "name": "Tromp",
       "icon": "Images/Blason/tromp.png"
+    },
+    "nicolai": {
+      "name": "Nicolaï",
+      "icon": "Images/Blason/nicolai.png"
     }
   }
