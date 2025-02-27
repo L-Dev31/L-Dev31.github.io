@@ -30,5 +30,9 @@
     "vietor": {
       "name": "Viëtor",
       "icon": "Images/Blason/vietor.png"
+    },
+    "tromp": {
+      "name": "Tromp",
+      "icon": "Images/Blason/tromp.png"
     }
   }
