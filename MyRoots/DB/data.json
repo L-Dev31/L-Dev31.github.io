@@ -763,6 +763,24 @@
         ]
     },
     {
+        "id": "petrus1805",
+        "name": "Petrus Adrianus Schik Viëtor",
+        "family": "vietor",
+        "born": "23/11/1805",
+        "death": "05/07/1856",
+        "religion": "p",
+        "country": "nl1796",
+        "city": "Leeuwarden",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "ida1806"
+        ],
+        "children": [
+            "neno1838"
+        ]
+    },
+    {
         "id": "paulus",
         "name": "Paulus Pieters Oosterhaven",
         "born": "1806",
@@ -776,6 +794,23 @@
         "mid": "cornelia1783",
         "pids": [
             "klaaske"
+        ]
+    },
+    {
+        "id": "ida1806",
+        "name": "Ida Simons Stoffels",
+        "born": "01/12/1806",
+        "death": "13/08/1853",
+        "religion": "p",
+        "country": "nl1806",
+        "city": "Workum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "petrus1805"
+        ],
+        "children": [
+            "neno1838"
         ]
     },
     {
@@ -912,7 +947,7 @@
     {
         "id": "neno1838",
         "name": "Neno Burhoven Viëtor",
-        "family": "burhovenvietor",
+        "family": "vietor",
         "born": "18/02/1838",
         "death": "13/12/1908",
         "religion": "p",
@@ -929,8 +964,8 @@
     },
     {
         "id": "trijntje1844",
-        "name": "Trijntje (Tjeerds) Kikstra",
-        "family": "burhovenvietor",
+        "name": "Trijntje (tjeerds) Kikstra",
+        "family": "vietor",
         "born": "29/04/1844",
         "death": "12/05/1929",
         "religion": "p",
@@ -1232,9 +1267,23 @@
         ]
     },
     {
+        "id": "pieter1868",
+        "name": "Pieter Sipke Plat",
+        "born": "27/02/1868",
+        "death": "03/03/1950",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "ida1873"
+        ]
+    },
+    {
         "id": "ida1873",
         "name": "Ida Burhoven Viëtor",
-        "family": "burhovenvietor",
+        "family": "vietor",
         "born": "23/02/1873",
         "death": "26/11/1943",
         "religion": "p",
@@ -1243,7 +1292,10 @@
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
         "fid": "neno1838",
-        "mid": "trijntje1844"
+        "mid": "trijntje1844",
+        "pids": [
+            "pieter1868"
+        ]
     },
     {
         "id": "siebe1875",
@@ -1271,7 +1323,7 @@
     {
         "id": "tetje1875",
         "name": "Tetje Burhoven Viëtor",
-        "family": "burhovenvietor",
+        "family": "vietor",
         "born": "12/09/1875",
         "death": "29/05/1941",
         "religion": "p",
@@ -1310,7 +1362,7 @@
     {
         "id": "petrus1878",
         "name": "Petrus Adrianus Vietor",
-        "family": "burhovenvietor",
+        "family": "vietor",
         "born": "11/03/1878",
         "death": "19/05/1951",
         "religion": "p",
@@ -1338,7 +1390,7 @@
     {
         "id": "symon1880",
         "name": "Symon Tjeerd Burhoven Vietor",
-        "family": "burhovenvietor",
+        "family": "vietor",
         "born": "16/08/1880",
         "death": "04/05/1931",
         "religion": "p",
@@ -1366,7 +1418,7 @@
     {
         "id": "gerhardus1882",
         "name": "Gerhardus Burhoven Vietor",
-        "family": "burhovenvietor",
+        "family": "vietor",
         "born": "03/11/1882",
         "death": "11/01/1883",
         "religion": "p",
@@ -1393,8 +1445,8 @@
     },
     {
         "id": "(dab)vietor1885",
-        "name": "[Mort à La Naissance]",
-        "family": "burhovenvietor",
+        "name": "[mort À La Naissance]",
+        "family": "vietor",
         "born": "17/03/1885",
         "death": "17/03/1885",
         "religion": "p",
@@ -1407,7 +1459,7 @@
     },
     {
         "id": "(dab)greidanus1885",
-        "name": "[Morte à La Naissance]",
+        "name": "[morte À La Naissance]",
         "family": "greydanus",
         "born": "28/02/1885",
         "death": "26/01/1951",
@@ -2259,7 +2311,7 @@
     },
     {
         "id": "(dab)lanting1926",
-        "name": "[Mort à La Naissance]",
+        "name": "[mort À La Naissance]",
         "family": "lanting",
         "born": "19/10/1926",
         "death": "19/10/1926",
@@ -2803,7 +2855,7 @@
     {
         "id": "fabiola",
         "name": "Fabiola Zenelaj",
-        "born": "2005",
+        "born": "200?",
         "death": null,
         "religion": "i",
         "country": "al1991",
@@ -2816,13 +2868,26 @@
     {
         "id": "aleks",
         "name": "Aleks Zenelaj",
-        "born": "2007",
+        "born": "200?",
         "death": null,
         "religion": "i",
         "country": "al1991",
         "city": null,
         "img": "Images/Persons/Aleks_Zenelaj.jpg",
         "gender": "male",
+        "mid": "fatbardha1982",
+        "fid": "fatjon"
+    },
+    {
+        "id": "amelia",
+        "name": "Amelia Zenelaj",
+        "born": "20??",
+        "death": null,
+        "religion": "i",
+        "country": "it1946",
+        "city": null,
+        "img": "Images/Persons/Amelia_Zenelaj.jpg",
+        "gender": "female",
         "mid": "fatbardha1982",
         "fid": "fatjon"
     },
@@ -2867,19 +2932,6 @@
         "gender": "female",
         "mid": "viviane",
         "fid": "besnik"
-    },
-    {
-        "id": "amelia",
-        "name": "Amelia Zenelaj",
-        "born": "2015",
-        "death": null,
-        "religion": "i",
-        "country": "it1946",
-        "city": null,
-        "img": "Images/Persons/Amelia_Zenelaj.jpg",
-        "gender": "female",
-        "mid": "fatbardha1982",
-        "fid": "fatjon"
     },
     {
         "id": "athena",
