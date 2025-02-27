@@ -603,7 +603,7 @@
             "simon1770"
         ],
         "children": [
-            "neno1838"
+            "ida1806"
         ]
     },
     {
@@ -847,7 +847,8 @@
         "children": [
             "neno1838"
         ],
-        "fid": "simon1770"
+        "fid": "simon1770",
+        "mid": "janke1775"
     },
     {
         "id": "klaaske",
@@ -2583,7 +2584,7 @@
     },
     {
         "id": "marijke",
-        "name": "Geartsje, Marijke Lanting",
+        "name": "Geartsje Marijke Lanting",
         "family": "lanting",
         "born": "10/06/1954",
         "death": null,
@@ -2972,7 +2973,7 @@
     },
     {
         "id": "athena",
-        "name": "Athéna, Iris, Lilla Bouly",
+        "name": "Athéna Iris Lilla Bouly",
         "born": "25/02/2020",
         "death": null,
         "religion": "a",
