@@ -1483,7 +1483,7 @@
     },
     {
         "id": "(dab)vietor1885",
-        "name": "[mort À La Naissance]",
+        "name": "mort À La Naissance",
         "family": "vietor",
         "born": "17/03/1885",
         "death": "17/03/1885",
@@ -1497,7 +1497,7 @@
     },
     {
         "id": "(dab)greidanus1885",
-        "name": "[morte À La Naissance]",
+        "name": "morte À La Naissance",
         "family": "greydanus",
         "born": "28/02/1885",
         "death": "26/01/1951",
@@ -2179,7 +2179,7 @@
         "id": "geertje",
         "name": "Geertje Plat",
         "born": "11/02/1901",
-        "death": null,
+        "death": "26/02/2002",
         "religion": "p",
         "country": "nl1839",
         "city": "Slappeterp",
@@ -2349,7 +2349,7 @@
     },
     {
         "id": "(dab)lanting1926",
-        "name": "[mort À La Naissance]",
+        "name": "mort À La Naissance",
         "family": "lanting",
         "born": "19/10/1926",
         "death": "19/10/1926",
