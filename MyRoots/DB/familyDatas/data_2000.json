@@ -65,7 +65,7 @@
     {
         "id": "fabiola",
         "name": "Fabiola Zenelaj",
-        "born": "2005",
+        "born": "200?",
         "death": null,
         "religion": "i",
         "country": "al1991",
@@ -78,13 +78,26 @@
     {
         "id": "aleks",
         "name": "Aleks Zenelaj",
-        "born": "2007",
+        "born": "200?",
         "death": null,
         "religion": "i",
         "country": "al1991",
         "city": null,
         "img": "Images/Persons/Aleks_Zenelaj.jpg",
         "gender": "male",
+        "mid": "fatbardha1982",
+        "fid": "fatjon"
+    },
+    {
+        "id": "amelia",
+        "name": "Amelia Zenelaj",
+        "born": "20??",
+        "death": null,
+        "religion": "i",
+        "country": "it1946",
+        "city": null,
+        "img": "Images/Persons/Amelia_Zenelaj.jpg",
+        "gender": "female",
         "mid": "fatbardha1982",
         "fid": "fatjon"
     },
@@ -129,19 +142,6 @@
         "gender": "female",
         "mid": "viviane",
         "fid": "besnik"
-    },
-    {
-        "id": "amelia",
-        "name": "Amelia Zenelaj",
-        "born": "2015",
-        "death": null,
-        "religion": "i",
-        "country": "it1946",
-        "city": null,
-        "img": "Images/Persons/Amelia_Zenelaj.jpg",
-        "gender": "female",
-        "mid": "fatbardha1982",
-        "fid": "fatjon"
     },
     {
         "id": "athena",
