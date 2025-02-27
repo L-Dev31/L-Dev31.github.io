@@ -95,6 +95,24 @@
         ]
     },
     {
+        "id": "petrus1805",
+        "name": "Petrus Adrianus Schik Viëtor",
+        "family": "vietor",
+        "born": "23/11/1805",
+        "death": "05/07/1856",
+        "religion": "p",
+        "country": "nl1796",
+        "city": "Leeuwarden",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "ida1806"
+        ],
+        "children": [
+            "neno1838"
+        ]
+    },
+    {
         "id": "paulus",
         "name": "Paulus Pieters Oosterhaven",
         "born": "1806",
@@ -109,6 +127,25 @@
         "pids": [
             "klaaske"
         ]
+    },
+    {
+        "id": "ida1806",
+        "name": "Ida Simons Stoffels",
+        "born": "01/12/1806",
+        "death": "13/08/1853",
+        "religion": "p",
+        "country": "nl1806",
+        "city": "Workum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "petrus1805"
+        ],
+        "children": [
+            "neno1838"
+        ],
+        "fid": "simon1770",
+        "mid": "janke1775"
     },
     {
         "id": "klaaske",
@@ -239,41 +276,6 @@
         ],
         "children": [
             "riemke1866"
-        ]
-    },
-    {
-        "id": "petrus1805",
-        "name": "Petrus Adrianus Schik Viëtor",
-        "family": "vietor",
-        "born": "23/11/1805",
-        "death": "05/07/1856",
-        "religion": "p",
-        "country": "nl1796",
-        "city": "Leeuwarden",
-        "img": "Images/Persons/Unknown.jpg",
-        "gender": "male",
-        "pids": [
-            "ida1806"
-        ],
-        "children": [
-            "neno1838"
-        ]
-    },
-    {
-        "id": "ida1806",
-        "name": "Ida Simons Stoffels",
-        "born": "01/12/1806",
-        "death": "13/08/1853",
-        "religion": "p",
-        "country": "nl1806",
-        "city": "Workum",
-        "img": "Images/Persons/Unknown.jpg",
-        "gender": "female",
-        "pids": [
-            "petrus1805"
-        ],
-        "children": [
-            "neno1838"
         ]
     },
     {
@@ -600,6 +602,20 @@
         ]
     },
     {
+        "id": "pieter1868",
+        "name": "Pieter Sipke Plat",
+        "born": "27/02/1868",
+        "death": "03/03/1950",
+        "religion": "p",
+        "country": "nl1839",
+        "city": "Menaldum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "ida1873"
+        ]
+    },
+    {
         "id": "ida1873",
         "name": "Ida Burhoven Viëtor",
         "family": "vietor",
@@ -614,20 +630,6 @@
         "mid": "trijntje1844",
         "pids": [
             "pieter1868"
-        ]
-    },
-    {
-        "id": "pieter1868",
-        "name": "Pieter Sipke Plat",
-        "born": "27/02/1868",
-        "death": "03/03/1950",
-        "religion": "p",
-        "country": "nl1839",
-        "city": "Menaldum",
-        "img": "Images/Persons/Unknown.jpg",
-        "gender": "male",
-        "pids": [
-            "ida1873"
         ]
     },
     {

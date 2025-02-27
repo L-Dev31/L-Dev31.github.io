@@ -572,6 +572,41 @@
         "mid": "grietje17xx"
     },
     {
+        "id": "simon1770",
+        "name": "Simon Hendriks Stoffels",
+        "born": "18/11/1770",
+        "death": "04/09/1814",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Workum",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "janke1775"
+        ],
+        "children": [
+            "ida1806"
+        ]
+    },
+    {
+        "id": "janke1775",
+        "name": "Janke Tjittes Tromp",
+        "family": "tromp",
+        "born": "11/11/1775",
+        "death": "19/06/1859",
+        "religion": "p",
+        "country": "nl1596",
+        "city": "Woudsend",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "simon1770"
+        ],
+        "children": [
+            "neno1838"
+        ]
+    },
+    {
         "id": "pieter1776",
         "name": "Pieter Jans Oosterhaven",
         "born": "1776",
@@ -811,7 +846,8 @@
         ],
         "children": [
             "neno1838"
-        ]
+        ],
+        "fid": "simon1770"
     },
     {
         "id": "klaaske",
@@ -960,12 +996,13 @@
         ],
         "children": [
             "tetje"
-        ]
+        ],
+        "fid": "petrus1805",
+        "mid": "ida1806"
     },
     {
         "id": "trijntje1844",
         "name": "Trijntje (tjeerds) Kikstra",
-        "family": "vietor",
         "born": "29/04/1844",
         "death": "12/05/1929",
         "religion": "p",
