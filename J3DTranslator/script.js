@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Set language: "en" for English, "fr" for French.
+    let language = "en";
+
     const dropArea = document.getElementById('dropArea');
     const fileInput = document.getElementById('fileInput');
     const resultContainer = document.getElementById('resultContainer');
@@ -34,9 +37,10 @@ document.addEventListener('DOMContentLoaded', function() {
         modelErrors = modelData;
         openglErrors = openglData;
         pythonErrors = pythonData;
-        console.log("DB chargées");
-    }).catch(error => console.error("Erreur DB:", error));
+        console.log("Databases loaded");
+    }).catch(error => console.error("DB load error:", error));
 
+    // Toggle switches
     toggleUser.addEventListener('change', function() { userSection.classList.toggle('visible', this.checked); });
     toggleTexture.addEventListener('change', function() { textureSection.classList.toggle('visible', this.checked); });
     toggleModel.addEventListener('change', function() { modelSection.classList.toggle('visible', this.checked); });
@@ -74,10 +78,10 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleRawBtn.addEventListener('click', function() {
         if (rawLogSection.style.display === 'none') {
             rawLogSection.style.display = 'block';
-            this.innerHTML = '<span class="icon">⚙️</span>Hide Raw Log';
+            this.innerHTML = '<span class="icon">⚙️</span>' + (language === "en" ? "Hide Raw Log" : "Masquer le log brut");
         } else {
             rawLogSection.style.display = 'none';
-            this.innerHTML = '<span class="icon">⚙️</span>Show Raw Log';
+            this.innerHTML = '<span class="icon">⚙️</span>' + (language === "en" ? "Show Raw Log" : "Afficher le log brut");
         }
     });
 
@@ -86,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dropArea.style.display = 'flex';
         fileInput.value = '';
         rawLogSection.style.display = 'none';
-        toggleRawBtn.innerHTML = '<span class="icon">⚙️</span>Show Raw Log';
+        toggleRawBtn.innerHTML = '<span class="icon">⚙️</span>' + (language === "en" ? "Show Raw Log" : "Afficher le log brut");
         toggleUser.checked = true;
         toggleTexture.checked = false;
         toggleModel.checked = false;
@@ -99,30 +103,33 @@ document.addEventListener('DOMContentLoaded', function() {
         pythonSection.classList.remove('visible');
     });
 
+    // Extract environment info (includes OpenGL details)
     function extractEnvironmentInfo(content) {
-        // Infos classiques
         let sys = content.match(/System:\s*(.+)/i)?.[1].trim() || "Unknown System";
         let gpu = content.match(/GPU:\s*(.+)/i)?.[1].trim() || "Unknown GPU";
         let driver = content.match(/Driver:\s*(.+)/i)?.[1].trim() || "Unknown Driver";
         let version = content.match(/J3DView\s*v?(\d+\.\d+\.\d+)/i)?.[1].trim() || "Unknown Version";
-        // Infos OpenGL (viewer_widget)
         let glVendor = content.match(/OpenGL vendor:\s*(.+)/i)?.[1].trim() || "";
         let glRenderer = content.match(/OpenGL renderer:\s*(.+)/i)?.[1].trim() || "";
         let glVersion = content.match(/OpenGL version:\s*(.+)/i)?.[1].trim() || "";
         let glslVersion = content.match(/OpenGLSL version:\s*(.+)/i)?.[1].trim() || "";
-        // Autres infos
         let py = content.match(/Python version:\s*(.+)/i)?.[1].trim() || "";
         let np = content.match(/NumPy version:\s*(.+)/i)?.[1].trim() || "";
         let qt = content.match(/Qt version:\s*(.+)/i)?.[1].trim() || "";
         let pyqt = content.match(/PyQt version:\s*(.+)/i)?.[1].trim() || "";
         let ogl = content.match(/PyOpenGL version:\s*(.+)/i)?.[1].trim() || "";
 
-        let envHtml = ``;
-        if (glRenderer) envHtml += `<div class="info-item"><span class="info-label">Graphics Card:</span><span>${glRenderer}</span></div>`;
+        let envHtml = `
+            <div class="info-item"><span class="info-label">System:</span><span>${sys}</span></div>
+            <div class="info-item"><span class="info-label">Graphics Card:</span><span>${gpu}</span></div>
+            <div class="info-item"><span class="info-label">GPU Driver:</span><span>${driver}</span></div>
+            <div class="info-item"><span class="info-label">J3DView Version:</span><span>${version}</span></div>
+        `;
         if (glVendor) envHtml += `<div class="info-item"><span class="info-label">GL Vendor:</span><span>${glVendor}</span></div>`;
+        if (glRenderer) envHtml += `<div class="info-item"><span class="info-label">GL Renderer:</span><span>${glRenderer}</span></div>`;
         if (glVersion) envHtml += `<div class="info-item"><span class="info-label">GL Version:</span><span>${glVersion}</span></div>`;
         if (glslVersion) envHtml += `<div class="info-item"><span class="info-label">GLSL Version:</span><span>${glslVersion}</span></div>`;
-        if (py) envHtml += `<div class="info-item"><span class="info-label">Python Version:</span><span>${py}</span></div>`;
+        if (py) envHtml += `<div class="info-item"><span class="info-label">${language === "en" ? "Python Version:" : "Version Python:"}</span><span>${py}</span></div>`;
         if (np) envHtml += `<div class="info-item"><span class="info-label">NumPy Version:</span><span>${np}</span></div>`;
         if (qt) envHtml += `<div class="info-item"><span class="info-label">Qt Version:</span><span>${qt}</span></div>`;
         if (pyqt) envHtml += `<div class="info-item"><span class="info-label">PyQt Version:</span><span>${pyqt}</span></div>`;
@@ -130,6 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return envHtml;
     }
 
+    // Categorize errors based on JSON content
     function categorizeErrors(content) {
         const result = {
             hasTextureError: false,
@@ -183,6 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return result;
     }
 
+    // Update error sections (using JSON data directly)
     function updateErrorSections(content, errorInfo) {
         if (errorInfo.type === 'texture') {
             document.getElementById("errorTextureTitle").textContent = errorInfo.title;
@@ -209,45 +218,82 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function createSolutionsList(solutions) {
         if (!solutions || !Array.isArray(solutions) || solutions.length === 0)
-            return "<strong>Aucune solution spécifique.</strong>";
-        return `<strong>Solutions techniques:</strong><ul>${solutions.map(s => `<li>${s}</li>`).join('')}</ul>`;
+            return "<strong>" + (language === "en" ? "No specific solutions available." : "Aucune solution spécifique.") + "</strong>";
+        return `<strong>${language === "en" ? "Technical solutions:" : "Solutions techniques:"}</strong><ul>${solutions.map(s => `<li>${s}</li>`).join('')}</ul>`;
     }
 
+    // Generic user-friendly explanation using JSON error data if available
     function updateUserFriendlyExplanation(errorInfo) {
-        let title = "Model Cannot Be Displayed";
-        let explanation = "J3DView n'a pu afficher votre modèle à cause d'un problème non identifié.";
-        let solutions = [
-            "Vérifiez que votre modèle est au bon format pour SMG (J3D/BMD/BDL)",
-            "Essayez un autre modèle pour vérifier le bon fonctionnement de J3DView"
-        ];
-        if (errorInfo && errorInfo.id) {
-            title = errorInfo.title || title;
-            explanation = errorInfo.description || explanation;
-            solutions = errorInfo.solutions || solutions;
+        let title, explanation, solutions;
+        if (language === "en") {
+            title = "Model Cannot Be Displayed";
+            explanation = "J3DView was unable to display your model due to an unidentified issue.";
+            solutions = [
+                "Ensure your model is in the correct format for SMG (J3D/BMD/BDL)",
+                "Try a different model to verify J3DView's functionality"
+            ];
+            if (errorInfo && errorInfo.id) {
+                title = errorInfo.title || title;
+                explanation = errorInfo.description || explanation;
+                solutions = errorInfo.solutions || solutions;
+            } else {
+                if (errorInfo.type === 'texture') {
+                    title = "Texture Mapping Problem";
+                    explanation = "There is an issue with the texture mapping.";
+                    solutions = ["Check texture files", "Open the model in BrawlBox", "Review texture settings"];
+                } else if (errorInfo.type === 'model') {
+                    title = "Model Structure Problem";
+                    explanation = "The model appears to be corrupted or improperly exported.";
+                    solutions = ["Verify export settings", "Test with another tool", "Ensure the model is not corrupted"];
+                } else if (errorInfo.type === 'opengl') {
+                    title = "Graphics Rendering Problem";
+                    explanation = "An error occurred during OpenGL rendering.";
+                    solutions = ["Update your drivers", "Close other graphics apps", "Check GPU compatibility"];
+                } else if (errorInfo.type === 'python') {
+                    title = "Python Execution Error";
+                    explanation = "An error occurred in the Python environment.";
+                    solutions = ["Ensure required modules are installed (e.g., run `pip install module_name`)", "Use Python 3.7+",
+                                 "Reinstall J3DView following official instructions"];
+                }
+            }
         } else {
-            if (errorInfo.type === 'texture') {
-                title = "Problème de texture";
-                explanation = "Problème de mappage des textures.";
-                solutions = ["Vérifiez les fichiers de texture", "Ouvrez le modèle dans BrawlBox", "Revoyez les réglages de texture"];
-            } else if (errorInfo.type === 'model') {
-                title = "Problème de structure du modèle";
-                explanation = "Le modèle semble endommagé ou mal exporté.";
-                solutions = ["Vérifiez les paramètres d'export", "Testez avec un autre outil", "Assurez-vous que le modèle n'est pas corrompu"];
-            } else if (errorInfo.type === 'opengl') {
-                title = "Problème de rendu graphique";
-                explanation = "Erreur lors du rendu via OpenGL.";
-                solutions = ["Mettez à jour vos drivers", "Fermez les applis graphiques", "Vérifiez la compatibilité GPU"];
-            } else if (errorInfo.type === 'python') {
-                title = "Erreur d'exécution Python";
-                explanation = "Erreur dans l'environnement Python.";
-                solutions = ["Vérifiez les modules requis", "Utilisez Python 3.7+", "Réinstallez J3DView"];
+            title = "Model Cannot Be Displayed";
+            explanation = "J3DView n'a pu afficher votre modèle à cause d'un problème non identifié.";
+            solutions = [
+                "Vérifiez que votre modèle est au bon format pour SMG (J3D/BMD/BDL)",
+                "Essayez un autre modèle pour vérifier le bon fonctionnement de J3DView"
+            ];
+            if (errorInfo && errorInfo.id) {
+                title = errorInfo.title || title;
+                explanation = errorInfo.description || explanation;
+                solutions = errorInfo.solutions || solutions;
+            } else {
+                if (errorInfo.type === 'texture') {
+                    title = "Problème de texture";
+                    explanation = "Problème de mappage des textures.";
+                    solutions = ["Vérifiez les fichiers de texture", "Ouvrez le modèle dans BrawlBox", "Revoyez les réglages de texture"];
+                } else if (errorInfo.type === 'model') {
+                    title = "Problème de structure du modèle";
+                    explanation = "Le modèle semble endommagé ou mal exporté.";
+                    solutions = ["Vérifiez les paramètres d'export", "Testez avec un autre outil", "Assurez-vous que le modèle n'est pas corrompu"];
+                } else if (errorInfo.type === 'opengl') {
+                    title = "Problème de rendu graphique";
+                    explanation = "Erreur lors du rendu via OpenGL.";
+                    solutions = ["Mettez à jour vos drivers", "Fermez les applis graphiques", "Vérifiez la compatibilité GPU"];
+                } else if (errorInfo.type === 'python') {
+                    title = "Erreur d'exécution Python";
+                    explanation = "Erreur dans l'environnement Python.";
+                    solutions = ["Vérifiez les modules requis (par ex. exécutez `pip install module_name`)", "Utilisez Python 3.7+",
+                                 "Réinstallez J3DView"];
+                }
             }
         }
         document.getElementById("userTitle").textContent = title;
         document.getElementById("userExplanation").textContent = explanation;
-        document.getElementById("userSolution").innerHTML = `<strong>Essayez ces solutions:</strong><ul>${solutions.map(s => `<li>${s}</li>`).join('')}</ul>`;
+        document.getElementById("userSolution").innerHTML = `<strong>${language === "en" ? "Try these solutions:" : "Essayez ces solutions:"}</strong><ul>${solutions.map(s => `<li>${s}</li>`).join('')}</ul>`;
     }
 
+    // Extract raw error lines for a given type
     function extractRawErrorSection(content, type) {
         let regex;
         if (type === 'texture') {
@@ -262,25 +308,25 @@ document.addEventListener('DOMContentLoaded', function() {
             return "";
         }
         const matches = content.match(regex);
-        return matches ? matches.join('\n') : `Aucune info brute pour ${type}.`;
+        return matches ? matches.join('\n') : (language === "en" ? `No raw error info for ${type} errors.` : `Aucune info brute pour ${type}.`);
     }
 
     function createDetailedAnalysis(content, errorInfo) {
-        let errorMessage = errorInfo.message || (content.match(/error:.*$/mi)?.[0].trim() || "Aucun message d'erreur trouvé");
+        let errorMessage = errorInfo.message || (content.match(/error:.*$/mi)?.[0].trim() || (language === "en" ? "No error message found" : "Aucun message d'erreur trouvé"));
         let stackTrace = "";
         const stackMatch = content.match(/at\s+[\w\.$]+\s*\([\w\/\.:]+\)/gmi);
         if (stackMatch) stackTrace = `<div class="stack-trace">${stackMatch.join('<br>')}</div>`;
         let frequencyInfo = "";
         if (errorInfo.frequency) {
             let freqClass = errorInfo.frequency === "high" ? "freq-high" : errorInfo.frequency === "low" ? "freq-low" : "freq-medium";
-            frequencyInfo = `<div class="info-item"><span class="info-label">Frequency:</span><span class="${freqClass}">${errorInfo.frequency.toUpperCase()}</span><span class="freq-info">Occurence</span></div>`;
+            frequencyInfo = `<div class="info-item"><span class="info-label">Frequency:</span><span class="${freqClass}">${errorInfo.frequency.toUpperCase()}</span><span class="freq-info">${language === "en" ? "Occurrence" : "Occurence"}</span></div>`;
         }
         return `
-            <div class="info-item"><span class="info-label">Error Type:</span><span>${errorInfo.type ? errorInfo.type.toUpperCase() + " ERROR" : "Unknown Error Type"}</span></div>
+            <div class="info-item"><span class="info-label">Error Type:</span><span>${errorInfo.type ? errorInfo.type.toUpperCase() + " ERROR" : (language === "en" ? "Unknown Error Type" : "Type d'erreur inconnu")}</span></div>
             <div class="info-item"><span class="info-label">Error Message:</span><span>${errorMessage}</span></div>
             ${frequencyInfo}
             <div class="info-item"><span class="info-label">Error ID:</span><span>${errorInfo.id || "unidentified_error"}</span></div>
-            ${stackTrace ? `<div class="info-item"><span class="info-label">Call Stack:</span><span>Fonctions impliquées:</span>${stackTrace}</div>` : ''}
+            ${stackTrace ? `<div class="info-item"><span class="info-label">Call Stack:</span><span>${language === "en" ? "Functions involved:" : "Fonctions impliquées:"}</span>${stackTrace}</div>` : ''}
         `;
     }
 
