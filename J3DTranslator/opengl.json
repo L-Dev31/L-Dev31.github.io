@@ -1,0 +1,98 @@
+{
+    "errors": [
+      {
+        "id": "shader_compilation",
+        "title": "Erreur de compilation de shader",
+        "message": "Failed to compile shader",
+        "description": "J3DView n'a pas pu compiler le shader nécessaire pour afficher votre modèle. Cela peut être dû à une incompatibilité avec votre carte graphique ou à des limitations du pilote graphique.",
+        "solutions": [
+          "Mettez à jour les pilotes de votre carte graphique",
+          "Vérifiez si votre carte graphique prend en charge OpenGL 3.3 ou supérieur",
+          "Essayez de lancer J3DView avec des paramètres de qualité graphique réduits",
+          "Si votre modèle utilise des effets personnalisés, essayez de le simplifier"
+        ],
+        "frequency": "high",
+        "smg_specific": "Les modèles SMG utilisent parfois des effets spéciaux conçus spécifiquement pour le matériel Nintendo. Certains de ces effets peuvent ne pas se traduire correctement en OpenGL moderne."
+      },
+      {
+        "id": "uniform_error",
+        "title": "Erreur d'uniform OpenGL",
+        "message": "Failed to set uniform",
+        "description": "J3DView a rencontré un problème lors de la configuration des paramètres de shader (uniforms). Cela peut se produire lorsque le modèle utilise des paramètres de matériaux qui ne sont pas correctement interprétés.",
+        "solutions": [
+          "Vérifiez que votre modèle n'utilise pas de paramètres de matériaux trop complexes",
+          "Si vous avez modifié les matériaux, essayez de revenir aux paramètres par défaut",
+          "Mettez à jour vers la dernière version de J3DView qui pourrait mieux gérer ces cas"
+        ],
+        "frequency": "medium",
+        "smg_specific": "Les matériaux dans Super Mario Galaxy utilisent souvent des paramètres spéciaux pour créer des effets visuels uniques. Ces paramètres ne sont pas toujours compatibles avec les visualiseurs tiers."
+      },
+      {
+        "id": "buffer_allocation",
+        "title": "Erreur d'allocation de buffer",
+        "message": "Failed to allocate buffer object",
+        "description": "OpenGL n'a pas pu allouer un buffer pour stocker les données du modèle. Cela peut être dû à un manque de mémoire vidéo ou à un trop grand nombre d'objets chargés.",
+        "solutions": [
+          "Fermez d'autres applications qui utilisent la carte graphique",
+          "Réduisez la complexité du modèle si possible",
+          "Redémarrez J3DView pour libérer des ressources graphiques",
+          "Vérifiez si votre carte graphique dispose d'assez de VRAM"
+        ],
+        "frequency": "medium",
+        "smg_specific": "Certains modèles complexes de SMG, particulièrement ceux des niveaux entiers, peuvent nécessiter beaucoup de VRAM."
+      },
+      {
+        "id": "glsl_version",
+        "title": "Version GLSL incompatible",
+        "message": "GLSL version not supported",
+        "description": "La version de GLSL (langage de shader) requise par J3DView n'est pas prise en charge par votre système. Cela indique généralement que vos pilotes graphiques sont trop anciens.",
+        "solutions": [
+          "Mettez à jour vos pilotes graphiques vers la dernière version",
+          "Vérifiez si votre carte graphique prend en charge OpenGL 3.3+ et GLSL 330+",
+          "Sur les ordinateurs plus anciens, essayez d'utiliser une version antérieure de J3DView"
+        ],
+        "frequency": "high",
+        "smg_specific": "J3DView traduit les shaders TEV de GameCube/Wii en shaders GLSL modernes, ce qui nécessite une carte graphique relativement récente."
+      },
+      {
+        "id": "framebuffer_error",
+        "title": "Erreur de framebuffer",
+        "message": "Framebuffer incomplete",
+        "description": "J3DView n'a pas pu créer un framebuffer complet. Cela peut affecter le rendu correct des modèles, en particulier ceux qui utilisent des effets de post-traitement.",
+        "solutions": [
+          "Mettez à jour vos pilotes graphiques",
+          "Vérifiez les paramètres de résolution dans J3DView",
+          "Désactivez les effets de post-traitement si l'option est disponible",
+          "Essayez de lancer J3DView en mode fenêtré plutôt qu'en plein écran"
+        ],
+        "frequency": "low",
+        "smg_specific": "Les effets spéciaux comme la distorsion de l'eau dans SMG utilisent des techniques qui peuvent nécessiter un support de framebuffer avancé."
+      },
+      {
+        "id": "texture_format",
+        "title": "Format de texture non pris en charge",
+        "message": "Unsupported texture format",
+        "description": "OpenGL ne prend pas en charge le format de texture utilisé dans le modèle. Les formats de texture GameCube/Wii sont parfois difficiles à traduire en formats OpenGL modernes.",
+        "solutions": [
+          "Vérifiez si vos textures utilisent des formats standard (PNG, JPG) avant de les convertir",
+          "Si vous avez extrait les textures du jeu, essayez de les reconvertir avec des outils comme SuperBMD",
+          "Vérifiez si J3DView dispose de plugins ou d'options pour prendre en charge des formats spéciaux"
+        ],
+        "frequency": "medium",
+        "smg_specific": "SMG utilise des formats de texture propriétaires comme TPL qui peuvent parfois causer des problèmes lors de la conversion."
+      },
+      {
+        "id": "extension_missing",
+        "title": "Extension OpenGL manquante",
+        "message": "Required OpenGL extension not available",
+        "description": "Votre carte graphique ne dispose pas d'une extension OpenGL nécessaire pour afficher correctement le modèle. Cela limite les fonctionnalités disponibles dans J3DView.",
+        "solutions": [
+          "Mettez à jour vos pilotes graphiques vers la dernière version",
+          "Vérifiez la compatibilité de votre carte graphique avec OpenGL 3.3+",
+          "Sur les systèmes plus anciens, essayez des versions antérieures de J3DView"
+        ],
+        "frequency": "medium",
+        "smg_specific": "Certains effets avancés de SMG peuvent nécessiter des extensions OpenGL spécifiques pour être reproduits fidèlement."
+      }
+    ]
+  }

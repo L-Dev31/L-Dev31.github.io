@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J3DTranslator - Error Log Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="Images/logo.png" alt="J3DView Logo" class="logo">
+            <p class="subtitle">To understand whatever is J3DView yappin' about.</p>
+        </header>
+        
+        <div id="dropArea" class="drop-area">
+            <div class="drop-area-icon">📄</div>
+            <p class="drop-area-text">Drag and drop your errorlog.txt file here<br>or click to select</p>
+            <input type="file" id="fileInput" style="display: none;">
+        </div>
+        
+        <div id="resultContainer" class="result-container">
+            <div class="result-header">
+                <span id="fileName" class="file-name">errorlog.txt</span>
+                <div>
+                    <button id="resetBtn" class="btn">
+                        <span class="icon">↺</span>New Analysis
+                    </button>
+                    <button id="toggleRawBtn" class="btn toggle-btn">
+                        <span class="icon">⚙️</span>Show Raw Log
+                    </button>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">Error Type
+                    <div class="tooltip">ⓘ
+                        <span class="tooltip-text">Different error types are color-coded for easier identification</span>
+                    </div>
+                </h2>
+                <div class="toggle-container">
+                    <div class="toggle-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggleUser" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">User-Friendly Explanation</span>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggleTexture">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Texture Errors</span>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggleModel">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Model Structure Errors</span>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggleOpenGL">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">OpenGL Errors</span>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="togglePython">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Python Errors</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User-Friendly Explanation (Enabled by default) -->
+            <div id="userSection" class="section error-section visible">
+                <div class="error-summary">
+                    <h3 class="error-title" id="userTitle">Model Cannot Be Displayed</h3>
+                    <p class="error-explanation" id="userExplanation">
+                        J3DView couldn't display your model because of a problem with how textures are mapped onto it. 
+                        This usually happens when a model has unusual or incompatible texture settings.
+                    </p>
+                    <p class="error-explanation" id="userSolution">
+                        <strong>Try these solutions:</strong>
+                        <ul>
+                            <li>Check if your model is in the correct format for SMG (J3D/BMD/BDL)</li>
+                            <li>Try opening your model in BrawlBox or another 3D tool to check if it's valid</li>
+                            <li>If you created this model, review the texture settings in your 3D software</li>
+                            <li>Try a different model to check if J3DView is working correctly</li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Texture Error Section (Initially hidden) -->
+            <div id="textureSection" class="section error-section">
+                <div class="error-summary error-texture">
+                    <h3 class="error-title" id="errorTextureTitle">Texture Coordinate Generation Error</h3>
+                    <p class="error-explanation" id="errorTextureExplanation">
+                        The application encountered an error in the texture coordinate generation process. The error occurred in the
+                        vertex shader creation, specifically when trying to handle texture coordinate generation methods.
+                        This typically happens when the model has texture mapping parameters that J3DView cannot interpret correctly.
+                    </p>
+                    <p class="error-explanation" id="errorTextureSolution">
+                        <strong>Technical solutions:</strong>
+                        <ul>
+                            <li>Verify that texture coordinate generation settings (SRT, MTX, etc.) are properly configured</li>
+                            <li>Check for unsupported texture mapping modes in your model</li>
+                            <li>Examine if texture matrices have valid values</li>
+                            <li>Consider using standard texture projection methods instead of custom ones</li>
+                            <li>Check if your model has more texture layers than J3DView supports</li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Model Structure Error Section (Initially hidden) -->
+            <div id="modelSection" class="section error-section">
+                <div class="error-summary error-model">
+                    <h3 class="error-title" id="errorModelTitle">Model Structure Error</h3>
+                    <p class="error-explanation" id="errorModelExplanation">
+                        J3DView encountered an error related to the structural elements of your model. This could be related to
+                        polygon data, vertex attributes, skeletal structure, or material definitions that don't conform to the
+                        expected format.
+                    </p>
+                    <p class="error-explanation" id="errorModelSolution">
+                        <strong>Technical solutions:</strong>
+                        <ul>
+                            <li>Check if your model has valid mesh topology (no missing faces or broken normals)</li>
+                            <li>Verify that vertex attribute formats match what J3DView expects</li>
+                            <li>Examine if material references are correctly configured</li>
+                            <li>Check if bone weights and joints are properly assigned</li>
+                            <li>Ensure your model doesn't use features unsupported by the J3D format</li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- OpenGL Error Section (Initially hidden) -->
+            <div id="openglSection" class="section error-section">
+                <div class="error-summary error-opengl">
+                    <h3 class="error-title" id="errorOpenGLTitle">OpenGL Rendering Error</h3>
+                    <p class="error-explanation" id="errorOpenGLExplanation">
+                        The error occurred during the OpenGL rendering process. This typically indicates an issue with how
+                        J3DView is trying to create or use hardware resources to display your model. This could be related
+                        to your graphics drivers, hardware capabilities, or how the model data is being processed.
+                    </p>
+                    <p class="error-explanation" id="errorOpenGLSolution">
+                        <strong>Technical solutions:</strong>
+                        <ul>
+                            <li>Update your graphics drivers to the latest version</li>
+                            <li>Check if your GPU supports the OpenGL features J3DView is trying to use</li>
+                            <li>Look for potential resource limitations (VRAM, shaders, texture units)</li>
+                            <li>Try running J3DView with lower visual quality settings if available</li>
+                            <li>Check for conflicting OpenGL states or extensions</li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Python Error Section (Initially hidden) -->
+            <div id="pythonSection" class="section error-section">
+                <div class="error-summary error-python">
+                    <h3 class="error-title" id="errorPythonTitle">Python Runtime Error</h3>
+                    <p class="error-explanation" id="errorPythonExplanation">
+                        J3DView encountered a Python runtime error. This typically indicates an issue with the Python environment,
+                        missing dependencies, or problems with the application code itself.
+                    </p>
+                    <p class="error-explanation" id="errorPythonSolution">
+                        <strong>Technical solutions:</strong>
+                        <ul>
+                            <li>Check that all required Python modules are installed</li>
+                            <li>Verify you're using the correct Python version (3.7+ recommended)</li>
+                            <li>Ensure your virtual environment is properly set up if you're using one</li>
+                            <li>Try reinstalling J3DView following the official installation guide</li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">Environment Information</h2>
+                <div class="env-info" id="envInfo">
+                    <!-- Environment info will be injected here -->
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">Detailed Analysis</h2>
+                <div class="log-details" id="logDetails">
+                    <!-- Log details will be injected here -->
+                </div>
+            </div>
+            
+            <div class="section" id="rawLogSection" style="display: none;">
+                <h2 class="section-title">Raw Log</h2>
+                <div class="raw-log" id="rawLog">
+                    <!-- Raw log will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>J3DTranslator - Made by L-Dev</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
