@@ -1,0 +1,110 @@
+{
+    "errors": [
+      {
+        "id": "texture_missing",
+        "title": "Texture manquante",
+        "message": "Texture file not found",
+        "description": "J3DView ne trouve pas un fichier de texture référencé par le modèle. Cela se produit souvent lorsque les textures ne sont pas dans le même dossier que le modèle ou lorsqu'elles ont été renommées.",
+        "solutions": [
+          "Vérifiez que toutes les textures sont présentes dans le même dossier que votre modèle",
+          "Assurez-vous que les noms des fichiers textures correspondent exactement à ceux référencés par le modèle",
+          "Utilisez des outils comme BrawlBox pour vérifier quelles textures sont requises",
+          "Essayez de réexporter le modèle avec les textures intégrées si possible"
+        ],
+        "frequency": "very_high",
+        "smg_specific": "Les modèles SMG externes peuvent perdre leurs références de texture lors de l'exportation. Le jeu utilise une structure de dossiers spécifique pour les textures."
+      },
+      {
+        "id": "texture_coordinate_generation",
+        "title": "Erreur de génération de coordonnées de texture",
+        "message": "Invalid texture coordinate generation mode",
+        "description": "Le modèle utilise une méthode de génération de coordonnées de texture que J3DView ne peut pas interpréter correctement. Cela est courant avec les effets spéciaux des jeux Nintendo.",
+        "solutions": [
+          "Si vous créez un modèle personnalisé, utilisez des méthodes standard de mappage UV plutôt que des méthodes de génération spéciales",
+          "Pour les modèles existants, essayez d'utiliser SuperBMD pour normaliser les coordonnées de texture",
+          "Vérifiez si une mise à jour de J3DView pourrait mieux prendre en charge ce mode"
+        ],
+        "frequency": "high",
+        "smg_specific": "Super Mario Galaxy utilise fréquemment des modes de génération de coordonnées de texture complexes pour créer des effets comme la lave en mouvement, les reflets d'eau, et les distorsions atmosphériques."
+      },
+      {
+        "id": "texture_matrix",
+        "title": "Erreur de matrice de texture",
+        "message": "Invalid texture matrix",
+        "description": "J3DView a rencontré une erreur lors du traitement des matrices de texture. Ces matrices sont utilisées pour transformer les coordonnées de texture et créer des effets comme le défilement ou la rotation des textures.",
+        "solutions": [
+          "Vérifiez si les matrices de transformation de texture ont des valeurs valides (pas d'échelles nulles ou de valeurs extrêmes)",
+          "Si vous avez modifié les paramètres d'animation de texture, essayez de revenir aux valeurs par défaut",
+          "Pour les modèles personnalisés, utilisez des animations de texture standard"
+        ],
+        "frequency": "medium",
+        "smg_specific": "SMG utilise souvent des animations de texture contrôlées par matrice pour créer des effets comme l'eau en mouvement ou les panneaux clignotants."
+      },
+      {
+        "id": "texture_format_unsupported",
+        "title": "Format de texture non pris en charge",
+        "message": "Unsupported texture format",
+        "description": "Le format de la texture n'est pas reconnu ou pris en charge par J3DView. Les jeux Nintendo utilisent souvent des formats de texture propriétaires qui peuvent être difficiles à interpréter pour les applications tierces.",
+        "solutions": [
+          "Convertissez vos textures en formats standards comme PNG avant de les importer dans votre modèle",
+          "Utilisez des outils comme Wiimms SZS Tools ou SuperBMD pour convertir les formats de texture Nintendo",
+          "Vérifiez si J3DView dispose d'une mise à jour avec un meilleur support pour ce format"
+        ],
+        "frequency": "high",
+        "smg_specific": "SMG utilise principalement des formats de texture TPL et BTI qui sont spécifiques aux consoles Nintendo."
+      },
+      {
+        "id": "texture_too_large",
+        "title": "Texture trop grande",
+        "message": "Texture dimensions exceed maximum supported size",
+        "description": "La résolution de la texture dépasse les limites prises en charge par J3DView ou votre carte graphique. Les anciennes cartes graphiques peuvent avoir des limitations plus strictes.",
+        "solutions": [
+          "Réduisez la résolution de vos textures (idéalement à des puissances de 2, comme 512x512, 1024x1024)",
+          "Vérifiez les limitations de texture de votre carte graphique",
+          "Sur les modèles complexes, essayez d'optimiser l'utilisation des textures en réutilisant les mêmes textures pour différentes parties"
+        ],
+        "frequency": "medium",
+        "smg_specific": "Les textures dans SMG sont généralement optimisées pour les limitations de la Wii et ne dépassent pas 1024x1024. Si vous avez remplacé les textures par des versions haute résolution, cela peut causer des problèmes."
+      },
+      {
+        "id": "mipmaps_generation",
+        "title": "Erreur de génération de mipmaps",
+        "message": "Failed to generate mipmaps",
+        "description": "J3DView n'a pas pu générer les mipmaps pour la texture. Les mipmaps sont des versions réduites de la texture utilisées pour améliorer les performances et la qualité d'affichage à différentes distances.",
+        "solutions": [
+          "Vérifiez que vos textures ont des dimensions qui sont des puissances de 2 (128, 256, 512, etc.)",
+          "Assurez-vous que vos textures n'ont pas de problèmes de format ou de données corrompues",
+          "Essayez de pré-générer les mipmaps dans votre logiciel d'édition d'image avant d'importer les textures"
+        ],
+        "frequency": "low",
+        "smg_specific": "Les textures de SMG ont généralement des mipmaps pré-calculés. Si vous remplacez ces textures, vous devrez peut-être générer vos propres mipmaps."
+      },
+      {
+        "id": "texture_wrap_mode",
+        "title": "Erreur de mode de répétition de texture",
+        "message": "Invalid texture wrap mode",
+        "description": "Le mode de répétition de texture spécifié dans le modèle n'est pas correctement interprété par J3DView. Cela peut causer des problèmes d'affichage aux bords des textures.",
+        "solutions": [
+          "Vérifiez les paramètres de répétition de texture (wrap, clamp, mirror) dans votre modèle",
+          "Pour les textures qui doivent se répéter sans couture, assurez-vous qu'elles sont créées pour être tilables",
+          "Essayez de modifier les paramètres de répétition dans votre logiciel de modélisation avant d'exporter"
+        ],
+        "frequency": "low",
+        "smg_specific": "Certains effets environnementaux dans SMG utilisent des modes de répétition spéciaux pour créer des effets continus comme le ciel ou les fonds."
+      },
+      {
+        "id": "texture_layer_limit",
+        "title": "Limite de couches de texture dépassée",
+        "message": "Maximum texture layers exceeded",
+        "description": "Le modèle utilise plus de couches de texture que ce que J3DView ou votre carte graphique peut gérer. Les modèles Nintendo peuvent utiliser des techniques spéciales pour simuler plusieurs couches de texture même sur du matériel limité.",
+        "solutions": [
+          "Réduisez le nombre de couches de texture utilisées dans le modèle",
+          "Combinez plusieurs textures en une seule texture atlas si possible",
+          "Vérifiez si votre carte graphique prend en charge suffisamment d'unités de texture",
+          "Mettez à jour vos pilotes graphiques pour maximiser la prise en charge des unités de texture"
+        ],
+        "frequency": "medium",
+        "smg_specific": "Les effets visuels avancés dans SMG peuvent utiliser plusieurs couches de texture combinées de manière spécifique au matériel de la Wii."
+      }
+    ]
+  }

@@ -1,0 +1,160 @@
+{
+    "errors": [
+      {
+        "id": "invalid_bmh",
+        "title": "En-tête BMD/BDL invalide",
+        "message": "InvalidModelHeaderError: Invalid BMD/BDL header",
+        "description": "Le fichier du modèle a un en-tête invalide ou corrompu. Cela indique souvent un fichier endommagé ou un format incompatible.",
+        "solutions": [
+          "Vérifiez que votre fichier est un véritable modèle BMD/BDL de GameCube/Wii",
+          "Essayez de réexporter le modèle depuis votre logiciel 3D avec les bons paramètres",
+          "Utilisez SuperBMD ou un autre convertisseur fiable pour recréer le fichier",
+          "Si vous avez modifié le fichier manuellement, vérifiez que l'en-tête respecte le format J3D"
+        ],
+        "frequency": "high"
+      },
+      {
+        "id": "missing_sections",
+        "title": "Sections manquantes",
+        "message": "MissingSectionError: Required section not found",
+        "description": "Le modèle ne contient pas toutes les sections requises pour un fichier BMD/BDL valide. Les modèles SMG nécessitent plusieurs sections spécifiques pour fonctionner correctement.",
+        "solutions": [
+          "Vérifiez que votre modèle contient toutes les sections nécessaires (INF1, VTX1, EVP1, DRW1, JNT1, SHP1, MAT3)",
+          "Utilisez BrawlBox pour examiner la structure du modèle et identifier les sections manquantes",
+          "Si vous exportez depuis Blender, assurez-vous d'utiliser le bon addon d'exportation pour SMG",
+          "Consultez les guides de modding SMG pour connaître les exigences spécifiques des modèles"
+        ],
+        "frequency": "high"
+      },
+      {
+        "id": "vertex_format",
+        "title": "Format de vertex invalide",
+        "message": "InvalidVertexFormatError",
+        "description": "Le format des sommets du modèle est incompatible avec J3DView. Les modèles SMG utilisent des formats de vertex spécifiques qui doivent être respectés.",
+        "solutions": [
+          "Vérifiez que les attributs de vertex (position, normale, couleur, UV) sont au bon format",
+          "Assurez-vous que votre exportateur configure correctement les formats de données de vertex",
+          "Essayez de simplifier les attributs de vertex si vous avez utilisé des fonctionnalités avancées",
+          "Utilisez SuperBMD pour convertir vers un format de vertex compatible"
+        ],
+        "frequency": "medium"
+      },
+      {
+        "id": "mesh_topology",
+        "title": "Topologie de maillage incorrecte",
+        "message": "InvalidMeshTopologyError",
+        "description": "La structure du maillage est invalide ou incompatible. Cela peut être dû à des triangles non manifold, des normales inversées ou d'autres problèmes de géométrie.",
+        "solutions": [
+          "Vérifiez que votre modèle ne contient pas de géométrie non manifold",
+          "Recalculez les normales et assurez-vous qu'elles pointent dans la bonne direction",
+          "Triangulaire toute géométrie non triangulaire (SMG n'utilise que des triangles)",
+          "Utilisez les outils de nettoyage de maillage dans Blender ou 3DS Max avant l'exportation"
+        ],
+        "frequency": "high"
+      },
+      {
+        "id": "bone_hierarchy",
+        "title": "Hiérarchie d'os invalide",
+        "message": "InvalidBoneHierarchyError",
+        "description": "La hiérarchie des os/joints dans le modèle est invalide ou trop complexe pour J3DView. SMG a des limitations spécifiques pour les armatures.",
+        "solutions": [
+          "Limitez la profondeur de votre hiérarchie d'os (SMG fonctionne mieux avec des hiérarchies peu profondes)",
+          "Vérifiez qu'il n'y a pas de boucles dans la hiérarchie des os",
+          "Assurez-vous que tous les os ont des noms uniques",
+          "Simplifiez l'armature en combinant les os qui se déplacent ensemble"
+        ],
+        "frequency": "medium"
+      },
+      {
+        "id": "weight_limit",
+        "title": "Limite de poids dépassée",
+        "message": "TooManyWeightsError: Vertex influenced by too many bones",
+        "description": "Certains sommets sont influencés par trop d'os. SMG limite généralement le nombre d'influences par sommet.",
+        "solutions": [
+          "Limitez chaque sommet à un maximum de 2-3 influences d'os",
+          "Utilisez les outils de limitation de poids dans votre logiciel 3D",
+          "Transférez les poids excessifs vers les os les plus influents",
+          "Pour les modèles complexes, envisagez d'utiliser plus de segments avec moins d'influences"
+        ],
+        "frequency": "medium"
+      },
+      {
+        "id": "material_count",
+        "title": "Trop de matériaux",
+        "message": "TooManyMaterialsError",
+        "description": "Le modèle contient plus de matériaux que ce que J3DView ou SMG peuvent gérer efficacement. SMG a des limites sur le nombre de matériaux par modèle.",
+        "solutions": [
+          "Réduisez le nombre de matériaux en combinant ceux qui sont similaires",
+          "Limitez-vous à moins de 8-10 matériaux par modèle pour de meilleures performances",
+          "Utilisez des atlas de texture pour combiner plusieurs textures en une seule",
+          "Divisez les modèles complexes en plusieurs objets séparés si nécessaire"
+        ],
+        "frequency": "low"
+      },
+      {
+        "id": "texture_coords",
+        "title": "Coordonnées de texture invalides",
+        "message": "InvalidTextureCoordinateError",
+        "description": "Les coordonnées UV du modèle sont invalides ou utilisent des méthodes de génération incompatibles avec J3DView. SMG utilise des méthodes spécifiques pour générer et manipuler les UVs.",
+        "solutions": [
+          "Vérifiez que vos coordonnées UV sont dans la plage [0,1]",
+          "Évitez les méthodes de projection de texture complexes si possible",
+          "Pour les effets spéciaux, consultez les guides de modding SMG sur les techniques de texture",
+          "Essayez d'utiliser des mappage UV standard plutôt que des méthodes de génération procédurale"
+        ],
+        "frequency": "high"
+      },
+      {
+        "id": "animation_format",
+        "title": "Format d'animation incompatible",
+        "message": "InvalidAnimationFormatError",
+        "description": "Le format d'animation (BCK, BCA, etc.) est incompatible ou corrompu. SMG utilise des formats d'animation spécifiques qui doivent être respectés.",
+        "solutions": [
+          "Assurez-vous d'utiliser le bon format d'animation pour SMG (BCK pour les squelettes, BCA pour les matériaux)",
+          "Vérifiez que toutes les animations font référence à des noms d'os existants dans le modèle",
+          "Exportez à nouveau les animations en utilisant des outils compatibles avec SMG",
+          "Simplifiez les courbes d'animation complexes pour éviter les problèmes d'interpolation"
+        ],
+        "frequency": "medium"
+      },
+      {
+        "id": "polygon_limit",
+        "title": "Limite de polygones dépassée",
+        "message": "TooManyPolygonsError",
+        "description": "Le modèle contient trop de polygones pour être traité efficacement par J3DView ou SMG. Les jeux GameCube/Wii ont des limites de performances strictes.",
+        "solutions": [
+          "Réduisez le nombre de polygones en utilisant des outils de décimation",
+          "Remplacez les détails géométriques par des textures normal map",
+          "Divisez les modèles complexes en plusieurs objets qui peuvent être chargés séparément",
+          "Visez moins de 10 000 triangles pour les modèles principaux de personnages dans SMG"
+        ],
+        "frequency": "medium"
+      },
+      {
+        "id": "missing_textures",
+        "title": "Textures manquantes",
+        "message": "MissingTextureError: Referenced texture not found",
+        "description": "Le modèle fait référence à des textures qui ne sont pas disponibles. Cela peut causer des problèmes de rendu importants.",
+        "solutions": [
+          "Assurez-vous que toutes les textures référencées sont présentes dans le bon dossier",
+          "Vérifiez que les noms des textures correspondent exactement aux références dans le modèle",
+          "Utilisez BrawlBox pour identifier quelles textures sont manquantes",
+          "Si vous avez importé un modèle, assurez-vous d'avoir aussi importé toutes ses textures"
+        ],
+        "frequency": "high"
+      },
+      {
+        "id": "texture_format",
+        "title": "Format de texture incompatible",
+        "message": "InvalidTextureFormatError",
+        "description": "Les textures utilisent un format incompatible avec J3DView ou SMG. Les jeux GameCube/Wii utilisent des formats de texture spécifiques (TPL).",
+        "solutions": [
+          "Convertissez vos textures au format TPL en utilisant des outils comme TPLLib ou BrawlBox",
+          "Assurez-vous d'utiliser des dimensions de texture qui sont des puissances de 2 (ex: 128, 256, 512)",
+          "Vérifiez que vous utilisez un format de compression compatible (CMPR ou C8 pour SMG)",
+          "Réduisez la résolution des textures si elles sont trop grandes pour la Wii (max 1024x1024)"
+        ],
+        "frequency": "high"
+      }
+    ]
+  }
