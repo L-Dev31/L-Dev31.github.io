@@ -1,174 +1,174 @@
 {
-    "errors": [
-      {
-        "id": "import_error",
-        "title": "Erreur d'importation de module",
-        "message": "ImportError: No module named",
-        "description": "Python ne trouve pas un module nécessaire pour exécuter J3DView. Cela peut être dû à une installation incomplète ou à un environnement Python incorrect.",
-        "solutions": [
-          "Installez le module manquant en utilisant pip: `pip install nom_du_module`",
-          "Vérifiez que vous utilisez la bonne version de Python (3.7+ recommandé pour J3DView)",
-          "Si vous utilisez un environnement virtuel, assurez-vous qu'il est activé",
-          "Réinstallez J3DView en suivant précisément les instructions d'installation"
-        ],
-        "frequency": "high"
-      },
-      {
-        "id": "index_error",
-        "title": "Erreur d'index",
-        "message": "IndexError: list index out of range",
-        "description": "J3DView essaie d'accéder à un élément qui n'existe pas dans une liste. Cela se produit souvent avec des modèles qui ont une structure inattendue ou des données manquantes.",
-        "solutions": [
-          "Vérifiez que votre modèle est complet et non corrompu",
-          "Si vous avez modifié le modèle manuellement, assurez-vous que toutes les parties nécessaires sont présentes",
-          "Essayez de réexporter le modèle depuis votre logiciel 3D",
-          "Consultez les forums de modding SMG pour voir si ce modèle spécifique a des problèmes connus"
-        ],
-        "frequency": "medium"
-      },
-      {
-        "id": "attribute_error",
-        "title": "Erreur d'attribut",
-        "message": "AttributeError: object has no attribute",
-        "description": "J3DView tente d'accéder à une propriété ou une méthode qui n'existe pas sur un objet. Cela peut être causé par des versions incompatibles de modules ou par des modifications au format du modèle.",
-        "solutions": [
-          "Mettez à jour J3DView vers la dernière version",
-          "Vérifiez que le modèle est au format BMD/BDL compatible avec Super Mario Galaxy",
-          "Si vous avez modifié manuellement des fichiers, vérifiez que la structure des données est correcte",
-          "Essayez d'ouvrir le modèle dans BrawlBox pour vérifier sa validité"
-        ],
-        "frequency": "high"
-      },
-      {
-        "id": "type_error",
-        "title": "Erreur de type",
-        "message": "TypeError: ",
-        "description": "J3DView reçoit un type de données inattendu. Cela se produit souvent lorsque les formats de modèle sont incompatibles ou lorsque les données sont corrompues.",
-        "solutions": [
-          "Vérifiez que votre modèle est au format correct (J3D/BMD/BDL)",
-          "Essayez de reconvertir le modèle depuis son format source",
-          "Utilisez des outils officiels ou recommandés pour l'exportation des modèles",
-          "Si vous modifiez un modèle existant, assurez-vous de respecter la structure originale"
-        ],
-        "frequency": "medium"
-      },
-      {
-        "id": "value_error",
-        "title": "Erreur de valeur",
-        "message": "ValueError: ",
-        "description": "J3DView reçoit une valeur inattendue ou incorrecte. Cela peut être dû à des paramètres invalides dans le modèle ou à des données corrompues.",
-        "solutions": [
-          "Vérifiez que toutes les textures référencées par le modèle existent",
-          "Assurez-vous que les coordonnées UV sont valides (entre 0 et 1)",
-          "Si le modèle contient des animations, vérifiez qu'elles sont correctement formatées",
-          "Essayez d'utiliser SuperBMD ou autre convertisseur pour reformater le modèle"
-        ],
-        "frequency": "medium"
-      },
-      {
-        "id": "key_error",
-        "title": "Erreur de clé",
-        "message": "KeyError: ",
-        "description": "J3DView essaie d'accéder à une clé qui n'existe pas dans un dictionnaire. Cela arrive souvent avec des modèles qui manquent d'informations essentielles ou ont une structure inattendue.",
-        "solutions": [
-          "Vérifiez que tous les matériaux référencés dans le modèle sont définis",
-          "Assurez-vous que les noms des os/joints sont cohérents dans tout le modèle",
-          "Si vous avez fusionné des modèles, vérifiez que tous les éléments requis ont été inclus",
-          "Consultez la documentation de J3DView pour connaître les structures de données attendues"
-        ],
-        "frequency": "medium"
-      },
-      {
-        "id": "file_not_found",
-        "title": "Fichier non trouvé",
-        "message": "FileNotFoundError: No such file or directory",
-        "description": "Python ne trouve pas un fichier nécessaire. Cela peut être une texture, un shader, ou un fichier de configuration manquant.",
-        "solutions": [
-          "Vérifiez que toutes les textures référencées par le modèle sont présentes dans le dossier approprié",
-          "Assurez-vous que les chemins d'accès relatifs sont corrects",
-          "Essayez de déplacer tous les fichiers dans le même dossier que le modèle",
-          "Vérifiez les permissions des fichiers et dossiers"
-        ],
-        "frequency": "high"
-      },
-      {
-        "id": "zero_division",
-        "title": "Division par zéro",
-        "message": "ZeroDivisionError: division by zero",
-        "description": "J3DView tente de diviser par zéro. Cela peut se produire avec des modèles qui ont des valeurs de transformation invalides ou des paramètres d'animation extrêmes.",
-        "solutions": [
-          "Vérifiez que les échelles des objets ne sont pas à zéro",
-          "Examinez les transformations des os/joints pour des valeurs inhabituelles",
-          "Si vous avez appliqué des modificateurs, vérifiez qu'ils n'ont pas créé de géométrie invalide",
-          "Essayez de normaliser les coordonnées et les valeurs de transformation avant l'exportation"
-        ],
-        "frequency": "low"
-      },
-      {
-        "id": "memory_error",
-        "title": "Erreur de mémoire",
-        "message": "MemoryError",
-        "description": "Python n'a pas assez de mémoire pour charger ou traiter le modèle. Cela arrive généralement avec de très grands modèles ou lorsque de nombreux modèles sont chargés simultanément.",
-        "solutions": [
-          "Fermez d'autres applications pour libérer de la mémoire",
-          "Simplifiez le modèle en réduisant le nombre de polygones",
-          "Réduisez la résolution des textures",
-          "Segmentez le modèle en parties plus petites",
-          "Mettez à jour votre ordinateur avec plus de RAM si possible"
-        ],
-        "frequency": "low"
-      },
-      {
-        "id": "parsing_error",
-        "title": "Erreur d'analyse syntaxique",
-        "message": "SyntaxError: invalid syntax",
-        "description": "Une erreur de syntaxe a été détectée dans le code Python. Cela peut se produire si vous avez modifié les scripts de J3DView ou si l'installation est corrompue.",
-        "solutions": [
-          "Réinstallez J3DView depuis une source fiable",
-          "Si vous avez modifié des scripts, vérifiez votre syntaxe Python",
-          "Mettez à jour vers la dernière version de J3DView",
-          "Consultez les forums de modding SMG pour des correctifs spécifiques"
-        ],
-        "frequency": "low"
-      },
-      {
-        "id": "numpy_error",
-        "title": "Erreur NumPy",
-        "message": "numpy.core._exceptions._ArrayMemoryError",
-        "description": "NumPy ne peut pas allouer suffisamment de mémoire pour les opérations sur les tableaux. Cela se produit généralement avec de très grands modèles contenant de nombreux sommets ou matériaux.",
-        "solutions": [
-          "Réduisez la complexité du modèle (nombre de polygones, matériaux)",
-          "Fermez d'autres applications gourmandes en mémoire",
-          "Mettez à jour NumPy: `pip install numpy --upgrade`",
-          "Vérifiez si votre modèle n'a pas un nombre anormalement élevé de sommets ou de faces"
-        ],
-        "frequency": "medium"
-      },
-      {
-        "id": "recursion_error",
-        "title": "Erreur de récursion",
-        "message": "RecursionError: maximum recursion depth exceeded",
-        "description": "Python a atteint la limite de récursion. Cela peut se produire avec des modèles qui ont des hiérarchies très profondes ou des dépendances circulaires.",
-        "solutions": [
-          "Simplifiez la hiérarchie des os/joints du modèle",
-          "Vérifiez s'il existe des dépendances circulaires dans les matériaux ou les animations",
-          "Essayez d'aplatir la structure du modèle si possible",
-          "Consultez les forums de modding SMG pour des solutions spécifiques à ce type de modèle"
-        ],
-        "frequency": "low"
-      },
-      {
-        "id": "encoding_error",
-        "title": "Erreur d'encodage",
-        "message": "UnicodeDecodeError: ",
-        "description": "Python ne peut pas décoder correctement le texte. Cela peut se produire avec des modèles qui contiennent des caractères non-ASCII dans les noms ou les métadonnées.",
-        "solutions": [
-          "Évitez d'utiliser des caractères spéciaux ou non-ASCII dans les noms de fichiers ou d'objets",
-          "Renommez les éléments du modèle en utilisant uniquement des caractères alphanumériques",
-          "Si vous importez un modèle d'une autre région, vérifiez les problèmes d'encodage",
-          "Utilisez des outils comme SuperBMD pour réencoder correctement les chaînes de caractères"
-        ],
-        "frequency": "low"
-      }
-    ]
-  }
+  "errors": [
+    {
+      "id": "import_error",
+      "title": "Module Import Error",
+      "message": "ImportError: No module named",
+      "description": "Python cannot find a module required to run J3DView. This may be due to an incomplete installation or an incorrect Python environment.",
+      "solutions": [
+        "Install the missing module using pip: `pip install module_name`",
+        "Ensure you are using the correct Python version (3.7+ recommended for J3DView)",
+        "If using a virtual environment, make sure it is activated",
+        "Reinstall J3DView by following the installation instructions precisely"
+      ],
+      "frequency": "high"
+    },
+    {
+      "id": "index_error",
+      "title": "Index Error",
+      "message": "IndexError: list index out of range",
+      "description": "J3DView is trying to access an element that does not exist in a list. This often occurs with models that have unexpected structures or missing data.",
+      "solutions": [
+        "Ensure your model is complete and not corrupted",
+        "If you manually modified the model, make sure all necessary parts are present",
+        "Try re-exporting the model from your 3D software",
+        "Check SMG modding forums for known issues with this specific model"
+      ],
+      "frequency": "medium"
+    },
+    {
+      "id": "attribute_error",
+      "title": "Attribute Error",
+      "message": "AttributeError: object has no attribute",
+      "description": "J3DView is trying to access a property or method that does not exist on an object. This may be caused by incompatible module versions or modifications to the model format.",
+      "solutions": [
+        "Update J3DView to the latest version",
+        "Ensure the model is in a BMD/BDL format compatible with Super Mario Galaxy",
+        "If you manually modified files, verify that the data structure is correct",
+        "Try opening the model in BrawlBox to check its validity"
+      ],
+      "frequency": "high"
+    },
+    {
+      "id": "type_error",
+      "title": "Type Error",
+      "message": "TypeError: ",
+      "description": "J3DView received an unexpected data type. This often occurs when model formats are incompatible or data is corrupted.",
+      "solutions": [
+        "Ensure your model is in the correct format (J3D/BMD/BDL)",
+        "Try reconverting the model from its source format",
+        "Use official or recommended tools for model export",
+        "If modifying an existing model, ensure the original structure is respected"
+      ],
+      "frequency": "medium"
+    },
+    {
+      "id": "value_error",
+      "title": "Value Error",
+      "message": "ValueError: ",
+      "description": "J3DView received an unexpected or invalid value. This may be due to invalid parameters in the model or corrupted data.",
+      "solutions": [
+        "Ensure all textures referenced by the model exist",
+        "Make sure UV coordinates are valid (between 0 and 1)",
+        "If the model contains animations, verify they are properly formatted",
+        "Try using SuperBMD or another converter to reformat the model"
+      ],
+      "frequency": "medium"
+    },
+    {
+      "id": "key_error",
+      "title": "Key Error",
+      "message": "KeyError: ",
+      "description": "J3DView is trying to access a key that does not exist in a dictionary. This often happens with models missing essential information or having unexpected structures.",
+      "solutions": [
+        "Ensure all materials referenced in the model are defined",
+        "Make sure bone/joint names are consistent throughout the model",
+        "If you merged models, verify all required elements were included",
+        "Check J3DView documentation for expected data structures"
+      ],
+      "frequency": "medium"
+    },
+    {
+      "id": "file_not_found",
+      "title": "File Not Found",
+      "message": "FileNotFoundError: No such file or directory",
+      "description": "Python cannot find a required file. This may be a missing texture, shader, or configuration file.",
+      "solutions": [
+        "Ensure all textures referenced by the model are present in the correct folder",
+        "Verify that relative paths are correct",
+        "Try moving all files to the same folder as the model",
+        "Check file and folder permissions"
+      ],
+      "frequency": "high"
+    },
+    {
+      "id": "zero_division",
+      "title": "Division by Zero",
+      "message": "ZeroDivisionError: division by zero",
+      "description": "J3DView is trying to divide by zero. This can occur with models that have invalid transformation values or extreme animation parameters.",
+      "solutions": [
+        "Ensure object scales are not zero",
+        "Check bone/joint transformations for unusual values",
+        "If you applied modifiers, verify they did not create invalid geometry",
+        "Try normalizing coordinates and transformation values before exporting"
+      ],
+      "frequency": "low"
+    },
+    {
+      "id": "memory_error",
+      "title": "Memory Error",
+      "message": "MemoryError",
+      "description": "Python does not have enough memory to load or process the model. This usually happens with very large models or when many models are loaded simultaneously.",
+      "solutions": [
+        "Close other applications to free up memory",
+        "Simplify the model by reducing the number of polygons",
+        "Reduce texture resolution",
+        "Split the model into smaller parts",
+        "Upgrade your computer with more RAM if possible"
+      ],
+      "frequency": "low"
+    },
+    {
+      "id": "parsing_error",
+      "title": "Syntax Error",
+      "message": "SyntaxError: invalid syntax",
+      "description": "A syntax error was detected in the Python code. This may occur if you modified J3DView scripts or if the installation is corrupted.",
+      "solutions": [
+        "Reinstall J3DView from a reliable source",
+        "If you modified scripts, check your Python syntax",
+        "Update to the latest version of J3DView",
+        "Check SMG modding forums for specific fixes"
+      ],
+      "frequency": "low"
+    },
+    {
+      "id": "numpy_error",
+      "title": "NumPy Error",
+      "message": "numpy.core._exceptions._ArrayMemoryError",
+      "description": "NumPy cannot allocate enough memory for array operations. This usually happens with very large models containing many vertices or materials.",
+      "solutions": [
+        "Reduce model complexity (number of polygons, materials)",
+        "Close other memory-intensive applications",
+        "Update NumPy: `pip install numpy --upgrade`",
+        "Check if your model has an abnormally high number of vertices or faces"
+      ],
+      "frequency": "medium"
+    },
+    {
+      "id": "recursion_error",
+      "title": "Recursion Error",
+      "message": "RecursionError: maximum recursion depth exceeded",
+      "description": "Python has reached the recursion limit. This can happen with models that have very deep hierarchies or circular dependencies.",
+      "solutions": [
+        "Simplify the bone/joint hierarchy of the model",
+        "Check for circular dependencies in materials or animations",
+        "Try flattening the model structure if possible",
+        "Check SMG modding forums for solutions specific to this type of model"
+      ],
+      "frequency": "low"
+    },
+    {
+      "id": "encoding_error",
+      "title": "Encoding Error",
+      "message": "UnicodeDecodeError: ",
+      "description": "Python cannot correctly decode the text. This may occur with models containing non-ASCII characters in names or metadata.",
+      "solutions": [
+        "Avoid using special or non-ASCII characters in filenames or object names",
+        "Rename model elements using only alphanumeric characters",
+        "If importing a model from another region, check for encoding issues",
+        "Use tools like SuperBMD to correctly re-encode strings"
+      ],
+      "frequency": "low"
+    }
+  ]
+}
