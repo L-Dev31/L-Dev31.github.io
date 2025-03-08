@@ -100,6 +100,7 @@
             <!-- Texture Error Section (Initially hidden) -->
             <div id="textureSection" class="section error-section">
                 <div class="error-summary error-texture">
+
                     <h3 class="error-title" id="errorTextureTitle">Texture Coordinate Generation Error</h3>
                     <p class="error-explanation" id="errorTextureExplanation">
                         The application encountered an error in the texture coordinate generation process. The error occurred in the
@@ -116,6 +117,10 @@
                             <li>Check if your model has more texture layers than J3DView supports</li>
                         </ul>
                     </p>
+                    <div class="raw-error-message">
+                        <strong>📄 Raw Error:</strong>
+                        <code id="rawTextureError"></code>
+                    </div>
                 </div>
             </div>
             
@@ -138,6 +143,10 @@
                             <li>Ensure your model doesn't use features unsupported by the J3D format</li>
                         </ul>
                     </p>
+                    <div class="raw-error-message">
+                        <strong>📄 Raw Error:</strong>
+                        <code id="rawModelError"></code>
+                    </div>
                 </div>
             </div>
             
@@ -160,6 +169,10 @@
                             <li>Check for conflicting OpenGL states or extensions</li>
                         </ul>
                     </p>
+                    <div class="raw-error-message">
+                        <strong>📄 Raw Error:</strong>
+                        <code id="rawOpenGLError"></code>
+                    </div>
                 </div>
             </div>
             
@@ -180,6 +193,10 @@
                             <li>Try reinstalling J3DView following the official installation guide</li>
                         </ul>
                     </p>
+                    <div class="raw-error-message">
+                        <strong>📄 Raw Error:</strong>
+                        <code id="rawPythonError"></code>
+                    </div>
                 </div>
             </div>
             

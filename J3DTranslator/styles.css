@@ -22,6 +22,7 @@
     --error-generic-light: rgba(255, 183, 77, 0.1);
     --error-python: #38a690;
     --error-python-light: rgba(48, 163, 110, 0.1);
+    --error-raw: #999;
 }
 
 * {
@@ -416,4 +417,24 @@ footer {
         flex-direction: column;
         align-items: flex-start;
     }
+}
+
+/* styles.css */
+.raw-error-message {
+
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 0.8rem;
+    border-radius: 6px;
+    margin-top: 1.2rem;
+    font-family: monospace;
+    font-size: 0.9em;
+    color: var(--dark-brown);
+    border-left: 3px solid var(--error-raw);
+}
+
+.raw-error-message code {
+    display: block;
+    margin-top: 0.4rem;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
