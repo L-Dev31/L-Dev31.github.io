@@ -226,5 +226,11 @@
         "name": "République d'Italie",
         "nativeName": "Repubblica Italiana",
         "anthem": "Il Canto degli Italiani"
+    },
+
+    "ug1962": {
+        "name": "République d'Ouganda",
+        "nativeName": "Republic of Uganda",
+        "anthem": "Oh Uganda, Land of Beauty"
     }
 }
