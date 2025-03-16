@@ -47,8 +47,8 @@
         "anthem": ""
     },
     "nl1482": { 
-        "name": "Pays-Bas Habsbourgeois (Pays-Bas Espagnols)",
-        "nativeName": "Habsburgse Nederlanden (Spaans Nederland)",
+        "name": "Pays-Bas Habsbourgeois",
+        "nativeName": "Habsburgse Nederlanden",
         "anthem": "Marcha Real"
     },
     "nl1581": { 
@@ -198,7 +198,7 @@
     "al1939": { 
         "name": "Protectorat Italien du royaume d'Albanie",
         "nativeName": "Protettorato Italiano del Regno d'Albania",
-        "anthem": "Marcia Reale"
+        "anthem": "Marcia Reale d'Ordinanza"
     },
     "al1943": { 
         "name": "Etat-client Allemand du royaume d'Albanie",
