@@ -8,7 +8,8 @@ const centuryFiles = [
     "DB/familyDatas/data_1900.json",
     "DB/familyDatas/data_1800.json",
     "DB/familyDatas/data_1700.json",
-    "DB/familyDatas/data_1600.json"
+    "DB/familyDatas/data_1600.json",
+    "DB/familyDatas/data_1500.json",
 ];
 
 const fetchAllCenturies = async () => {

@@ -47,9 +47,9 @@
         "anthem": ""
     },
     "nl1482": { 
-        "name": "Pays-Bas Habsbourgeois",
-        "nativeName": "Habsburgse Nederlanden",
-        "anthem": ""
+        "name": "Pays-Bas Habsbourgeois (Pays-Bas Espagnols)",
+        "nativeName": "Habsburgse Nederlanden (Spaans Nederland)",
+        "anthem": "Marcha Real"
     },
     "nl1581": { 
         "name": "Provinces-Unies",
@@ -60,6 +60,11 @@
         "name": "Provinces-Unies",
         "nativeName": "Republiek der Zeven Verenigde Nederlanden",
         "anthem": "Wilhelmus va-han Na-hassouwe ben ick van Dui-huitschen bloet"
+    },
+    "nl1714": {
+        "name": "Pays-Bas autrichiens",
+        "nativeName": "Oostenrijkse Nederlanden",
+        "anthem": "Gott erhalte Franz den Kaiser" 
     },
     "nl1796": { 
         "name": "République Batave",
