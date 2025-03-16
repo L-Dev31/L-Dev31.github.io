@@ -271,18 +271,18 @@ body {
 }
 
 .info-icon {
-  min-width: 20px;
-  min-height: 20px;
+  min-width: 2vh;
+  min-height: 2vh;
   transform: translateY(25%);
   cursor: pointer;
   margin-left: 8px;
-  color: #4a90e2; 
+  color: #3E4A5A; 
   transition: all 0.3s ease;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)); 
 }
 
 .info-icon:hover {
-  color: #e26a8d; 
+  color: #4a90e2;
   transform: scale(1.1) translateY(25%);
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2)); 
 }
