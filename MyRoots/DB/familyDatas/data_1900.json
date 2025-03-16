@@ -97,7 +97,7 @@
     },
     {
         "id": "marigje",
-        "name": "Marigje, Catharina Edelenbos",
+        "name": "Marigje Catharina Edelenbos",
         "born": "19??",
         "death": "2015",
         "religion": "p",
@@ -853,13 +853,28 @@
         "gender": "male",
         "pids": [
             "marijke",
-            "marigje"
+            "marigje",
+            "elizabeth19xx"
         ],
         "fid": "roelof",
         "mid": "elizabeth",
         "children": [
             "viviane",
             "sandra"
+        ]
+    },
+    {
+        "id": "elizabeth19xx",
+        "name": "Elizabeth Kutya",
+        "born": null,
+        "death": null,
+        "religion": "?",
+        "country": "ug1962",
+        "city": "Kampala",
+        "img": "Images/Persons/Elizabeth19xx_Kutya.jpg",
+        "gender": "female",
+        "pids": [
+            "jan1944"
         ]
     },
     {
