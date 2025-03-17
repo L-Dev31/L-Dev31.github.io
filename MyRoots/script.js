@@ -93,8 +93,11 @@ function showPersonDetails(personId) {
     const religion = getReligionInfo(person.religion);
     const family = getFamilyInfo(person.family);
 
+    // Gestion des classes de genre et du statut de vie/décès
     infoPanel.classList.toggle('male', person.gender === 'male');
     infoPanel.classList.toggle('female', person.gender === 'female');
+    infoPanel.classList.toggle('deceased', person.death !== "vivant(e)");
+
 
     document.getElementById('infoPhoto').src = person.img || 'Images/Persons/Unknown.jpg';
     document.getElementById('infoName').textContent = person.name || 'Inconnu';
@@ -142,6 +145,7 @@ function showPersonDetails(personId) {
 
     infoPanel.style.display = 'block';
 }
+
 
 function showCountryPopup(countryCode) {
     const country = getCountryInfo(countryCode);
