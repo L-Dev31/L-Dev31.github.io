@@ -22,7 +22,6 @@
 ## 5. Pitch Deck
 - [Structure et Contenu](structure_contenu.md)
 - [Résumé Exécutif](resume_executif.md)
-- [Présentation HTML](pitch_deck.html)
 
 ## 6. Suivi du Projet
 - [Liste des Tâches](todo.md)
