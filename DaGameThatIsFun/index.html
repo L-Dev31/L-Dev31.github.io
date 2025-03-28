@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site en Construction</title>
+    <style>
+        @font-face {
+            font-family: 'Poppins';
+            src: url('fonts/Poppins.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #f43f5e, #a855f7, #3b82f6, #10b981);
+            padding: 1.5rem;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo {
+            max-width: 500px;
+            height: auto;
+        }
+
+        .container {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 3rem;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #f43f5e, #a855f7, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .construction-message {
+            color: #4b5563;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .warning-banner {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            color: black;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .warning-icon {
+            width: 2rem;
+            height: 2rem;
+            stroke: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="images/logo.png" alt="Party Game Logo" class="logo">
+    </div>
+    <div class="container">
+        <div class="warning-banner">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="warning-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <strong>Site en Construction</strong>
+        </div>
+        <h1 class="title">En Développement</h1>
+        <p class="construction-message">
+            Notre site web est actuellement en cours de développement. <br>
+            Revenez bientôt pour découvrir Les versions futures de <strong>DaGameThatIsFun</strong> !
+        </p>
+    </div>
+</body>
+</html>
