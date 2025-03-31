@@ -26,6 +26,11 @@
             <div id="infoFamily" style="display: none;">
                 <!-- Blason -->
             </div>
+            <div class="info-row" id="infoRegionRow" style="display: none;">
+                <span class="info-label">Région :</span>
+                <img class="info-flag" id="infoRegionFlag" src="" alt="">
+                <span id="infoRegion"></span>
+            </div>
             <div class="info-row">
                 <span class="info-label">Pays :</span>
                 <img class="info-flag" id="infoFlag" src="" alt="">
@@ -48,8 +53,34 @@
             <img class="country-popup-flag" src="" alt="">
             <h1 class="country-name"></h1>
             <p class="country-native-name"></p>
+            <div class="country-info">
+                <p class="country-capital"></p>
+            </div>
             <div class="country-gallery"></div>
             <div class="anthem-player">
+                <h3 class="anthem-title"></h3>
+                <audio controls>
+                    <source src="" type="audio/mpeg">
+                    Votre navigateur ne supporte pas l'élément audio.
+                </audio>
+            </div>
+            <button class="close-popup">&times;</button>
+        </div>
+    </div>
+    
+    <div id="regionPopup" class="popup-overlay">
+        <div class="region-popup">
+            <div class="banner-container">
+                <img class="country-banner" src="" alt="">
+                <div class="banner-fade"></div>
+            </div>
+            <img class="region-popup-flag" src="" alt="">
+            <h1 class="region-name"></h1>
+            <p class="region-native-name"></p>
+            <div class="region-info">
+                <p class="region-capital"></p>
+            </div>
+            <div class="anthem-player" id="regionAnthemPlayer">
                 <h3 class="anthem-title"></h3>
                 <audio controls>
                     <source src="" type="audio/mpeg">

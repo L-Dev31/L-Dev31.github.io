@@ -1,0 +1,152 @@
+{
+    "it-lom": {
+        "name": "Lombardie",
+        "nativeName": "Lombardia",
+        "anthem": "",
+        "capital": "Milan"
+    },
+    "it-pie": {
+        "name": "Piémont",
+        "nativeName": "Piemonte",
+        "anthem": "",
+        "capital": "Turin"
+    },
+    "it-ven": {
+        "name": "Vénétie",
+        "nativeName": "Veneto",
+        "anthem": "",
+        "capital": "Venise"
+    },
+    "it-tos": {
+        "name": "Toscane",
+        "nativeName": "Toscana",
+        "anthem": "",
+        "capital": "Florence"
+    },
+    "it-laz": {
+        "name": "Latium",
+        "nativeName": "Lazio",
+        "anthem": "",
+        "capital": "Rome"
+    },
+    "it-cam": {
+        "name": "Campanie",
+        "nativeName": "Campania",
+        "anthem": "",
+        "capital": "Naples"
+    },
+    "it-sic": {
+        "name": "Sicile",
+        "nativeName": "Sicilia",
+        "anthem": "",
+        "capital": "Palerme"
+    },
+    "al-tir": {
+        "name": "Tirana",
+        "nativeName": "Tiranë",
+        "anthem": "",
+        "capital": "Tirana"
+    },
+    "al-elb": {
+        "name": "Elbasan",
+        "nativeName": "Elbasan",
+        "anthem": "",
+        "capital": "Tirana"
+    },
+    "al-dur": {
+        "name": "Durrës",
+        "nativeName": "Durrës",
+        "anthem": "",
+        "capital": "Durrës"
+    },
+    "al-vlr": {
+        "name": "Vlorë",
+        "nativeName": "Vlorë",
+        "anthem": "",
+        "capital": "Vlorë"
+    },
+    "fr-pac": {
+        "name": "PACA",
+        "nativeName": "Provence-Alpes-Côte d'Azur",
+        "anthem": "Coupo Santo",
+        "capital": "Marseille"
+    },
+    "fr-brg": {
+        "name": "Bourgogne-Franche-Comté",
+        "nativeName": "Bourgogne-Franche-Comté",
+        "anthem": "La Bourguignone",
+        "capital": "Dijon"
+    },
+    "nl-fsl": {
+        "name": "Frise",
+        "nativeName": "Fryslân",
+        "anthem": "De Âlde Friezen",
+        "capital": "Leeuwarden"
+    },
+    "nl-gro": {
+        "name": "Groningue",
+        "nativeName": "Groningen",
+        "anthem": "",
+        "capital": "Groningue"
+    },
+    "nl-dre": {
+        "name": "Drenthe",
+        "nativeName": "Drenthe",
+        "anthem": "",
+        "capital": "Assen"
+    },
+    "nl-ovj": {
+        "name": "Overijssel",
+        "nativeName": "Overijssel",
+        "anthem": "Aan de rand van Hollands gouwen",
+        "capital": "Zwolle"
+    },
+    "nl-gel": {
+        "name": "Gueldre",
+        "nativeName": "Gelderland",
+        "anthem": "",
+        "capital": "Arnhem"
+    },
+    "nl-utr": {
+        "name": "Utrecht",
+        "nativeName": "Utrecht",
+        "anthem": "",
+        "capital": "Utrecht"
+    },
+    "nl-nho": {
+        "name": "Hollande-Septentrionale",
+        "nativeName": "Noord-Holland",
+        "anthem": "",
+        "capital": "Haarlem"
+    },
+    "nl-zho": {
+        "name": "Hollande-Méridionale",
+        "nativeName": "Zuid-Holland",
+        "anthem": "",
+        "capital": "La Haye"
+    },
+    "nl-zee": {
+        "name": "Zélande",
+        "nativeName": "Zeeland",
+        "anthem": "Zeeuws Volkslied",
+        "capital": "Middelbourg"
+    },
+    "nl-nbr": {
+        "name": "Brabant-Septentrional",
+        "nativeName": "Noord-Brabant",
+        "anthem": "",
+        "capital": "Bois-le-Duc"
+    },
+    "nl-lim": {
+        "name": "Limbourg",
+        "nativeName": "Limburg",
+        "anthem": "Limburgs Volkslied",
+        "capital": "Maastricht"
+    },
+    "ug-kam": {
+        "name": "District de Kampala",
+        "nativeName": "District of Kampala",
+        "anthem": "",
+        "capital": "Kampala"
+    }
+}
