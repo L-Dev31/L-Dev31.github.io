@@ -2,235 +2,280 @@
     "de1439": { 
         "name": "Saint-Empire Romain Germanique",
         "nativeName": "Heiliges Römisches Reich Deutscher Nation",
-        "anthem": "Gott erhalte Franz den Kaiser"
+        "anthem": "Gott erhalte Franz den Kaiser",
+        "capital": "Vienne"
     },
 
 
     "nl-X": { 
         "name": "Civilisations germaniques préhistoriques",
         "nativeName": "Prehistorische Germaanse beschavingen",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Inconnue"
     },
     "nl-250": { 
         "name": "Grande Germanie",
         "nativeName": "Magna Germania",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Inconnue"
     },
     "nl390": { 
         "name": "Royaume d'Alamanie",
         "nativeName": "Koninkrijk Alamannië",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Inconnue"
     },
     "nl481": { 
         "name": "Empire des Francs",
         "nativeName": "Frankische Rijk",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Tournai"
     },
     "nl855": { 
         "name": "Lotharingie",
         "nativeName": "Lotharingen",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Aix-la-Chapelle"
     },
     "nl870": { 
         "name": "Francie orientale",
         "nativeName": "Oost-Francië",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Ratisbonne"
     },
     "nl962": { 
         "name": "Saint-Empire Romain Germanique",
         "nativeName": "Heiliges Römisches Reich Deutscher Nation",
-        "anthem": "Heil dir im Siegerkranz"
+        "anthem": "Heil dir im Siegerkranz",
+        "capital": "Vienne"
     },
     "nl1384": { 
         "name": "Pays-Bas Bourguignons",
         "nativeName": "Bourgondische Nederlanden",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Dijon"
     },
     "nl1482": { 
         "name": "Pays-Bas Habsbourgeois",
         "nativeName": "Habsburgse Nederlanden",
-        "anthem": "Marcha Real"
+        "anthem": "Marcha Real",
+        "capital": "Bruxelles"
     },
     "nl1581": { 
         "name": "Provinces-Unies",
         "nativeName": "Republiek der Zeven Verenigde Nederlanden",
-        "anthem": "Wilhelmus va-han Na-hassouwe ben ick van Dui-huitschen bloet"
+        "anthem": "Wilhelmus va-han Na-hassouwe ben ick van Dui-huitschen bloet",
+        "capital": "La Haye"
     },
     "nl1596": { 
         "name": "Provinces-Unies",
         "nativeName": "Republiek der Zeven Verenigde Nederlanden",
-        "anthem": "Wilhelmus va-han Na-hassouwe ben ick van Dui-huitschen bloet"
+        "anthem": "Wilhelmus va-han Na-hassouwe ben ick van Dui-huitschen bloet",
+        "capital": "La Haye"
     },
     "nl1714": {
         "name": "Pays-Bas autrichiens",
         "nativeName": "Oostenrijkse Nederlanden",
-        "anthem": "Gott erhalte Franz den Kaiser" 
+        "anthem": "Gott erhalte Franz den Kaiser",
+        "capital": "Bruxelles"
     },
     "nl1796": { 
         "name": "République Batave",
         "nativeName": "Bataafse Republiek",
-        "anthem": "Le Chant du Départ"
+        "anthem": "Le Chant du Départ",
+        "capital": "La Haye"
     },
     "nl1806": { 
         "name": "Royaume de Hollande",
         "nativeName": "Koninkrijk Holland",
-        "anthem": "Het Wilhelmus"
+        "anthem": "Het Wilhelmus",
+        "capital": "Amsterdam"
     },
     "nl1810": { 
         "name": "Pays-Bas Français",
         "nativeName": "Franse Nederlanden",
-        "anthem": "La Marseillaise"
+        "anthem": "La Marseillaise",
+        "capital": "Amsterdam"
     },
     "nl1813": { 
         "name": "Principauté souveraine des Pays-Bas unis",
         "nativeName": "Soeverein Vorstendom der Verenigde Nederlanden",
-        "anthem": "Het Wilhelmus"
+        "anthem": "Het Wilhelmus",
+        "capital": "Amsterdam"
     },
     "nl1815": { 
         "name": "Royaumes-unis des Pays-Bas",
         "nativeName": "Verenigd Koninkrijk der Nederlanden",
-        "anthem": "Het Wilhelmus"
+        "anthem": "Het Wilhelmus",
+        "capital": "Amsterdam"
     },
     "nl1839": { 
         "name": "Royaume des Pays-Bas",
         "nativeName": "Koninkrijk der Nederlanden",
-        "anthem": "Het Wilhelmus"
+        "anthem": "Het Wilhelmus",
+        "capital": "Amsterdam"
     },
     "nl1940": { 
         "name": "Commissariat du Reich des Pays-Bas",
         "nativeName": "Reichskommissariat Niederlande",
-        "anthem": "Hort Wessel Lied"
+        "anthem": "Hort Wessel Lied",
+        "capital": "La Haye"
     },
     "nl1945": { 
         "name": "Royaume des Pays-Bas",
         "nativeName": "Koninkrijk der Nederlanden",
-        "anthem": "Het Wilhelmus"
+        "anthem": "Het Wilhelmus",
+        "capital": "Amsterdam"
     },
 
 
     "fr1946": { 
         "name": "4ème république Française",
         "nativeName": "Quatrième République française",
-        "anthem": "La Marseillaise"
+        "anthem": "La Marseillaise",
+        "capital": "Paris"
     },
     "fr1976": { 
         "name": "5ème république Française",
         "nativeName": "Cinquième République française",
-        "anthem": "La Marseillaise"
+        "anthem": "La Marseillaise",
+        "capital": "Paris"
     },
     "fr2020": { 
         "name": "5ème république Française",
         "nativeName": "Cinquième République française",
-        "anthem": "La Marseillaise"
+        "anthem": "La Marseillaise",
+        "capital": "Paris"
     },
 
 
     "al-3100": { 
         "name": "Civilisations balkaniques préhistoriques",
         "nativeName": "Parahistorike Ballkanike",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Inconnue"
     },
     "al-900": { 
         "name": "Grèce Antique",
         "nativeName": "Αρχαία Ελλάδα",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Athènes"
     },
     "al-338": { 
         "name": "Royaume de Macédoine",
         "nativeName": "Βασίλειο της Μακεδονίας",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Pella"
     },
     "al-147": { 
         "name": "République romaine",
         "nativeName": "Res Publica Romana",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Rome"
     },
     "al-27": { 
         "name": "Empire romain",
         "nativeName": "Imperium Romanum",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Rome"
     },
     "al395": { 
         "name": "Empire romain d'Orient (Empire byzantin)",
         "nativeName": "Ανατολική Ρωμαϊκή Αυτοκρατορία",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Constantinople"
     },
     "al888": { 
         "name": "Premier Empire bulgare",
         "nativeName": "Първа българска държава",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Pliska"
     },
     "al1018": { 
         "name": "Empire romain d'Orient (Empire byzantin)",
         "nativeName": "Ανατολική Ρωμαϊκή Αυτοκρατορία",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Constantinople"
     },
     "al1205": { 
         "name": "Despotat d'Épire",
         "nativeName": "Δεσποτάτο της Ηπείρου",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Arta"
     },
     "al1261": { 
         "name": "Empire romain d'Orient (Empire byzantin)",
         "nativeName": "Ανατολική Ρωμαϊκή Αυτοκρατορία",
-        "anthem": ""
+        "anthem": "",
+        "capital": "Constantinople"
     },
     "al1346": { 
         "name": "Empire Ottoman",
         "nativeName": "Osmanlı İmparatorluğu",
-        "anthem": "Mahmudiye Marşı"
+        "anthem": "Mahmudiye Marşı",
+        "capital": "Constantinople"
     },
     "al1844": { 
         "name": "Vilayet Ottoman de Shkodra",
         "nativeName": "İşkodra Vilayeti",
-        "anthem": "Reşadiye Marşı"
+        "anthem": "Reşadiye Marşı",
+        "capital": "Shkodër"
     },
     "al1925": { 
         "name": "République d'Albanie",
         "nativeName": "Republika e Shqipërisë",
-        "anthem": "Himni i Flamurit"
+        "anthem": "Himni i Flamurit",
+        "capital": "Tirana"
     },
     "al1928": { 
         "name": "Royaume d'Albanie",
         "nativeName": "Mbretëria Shqiptare",
-        "anthem": "Himni i Flamurit"
+        "anthem": "Himni i Flamurit",
+        "capital": "Tirana"
     },
     "al1939": { 
         "name": "Protectorat Italien du royaume d'Albanie",
         "nativeName": "Protettorato Italiano del Regno d'Albania",
-        "anthem": "Marcia Reale d'Ordinanza"
+        "anthem": "Marcia Reale d'Ordinanza",
+        "capital": "Tirana"
     },
     "al1943": { 
         "name": "Etat-client Allemand du royaume d'Albanie",
         "nativeName": "Deutscher Klientenstaat Albanien",
-        "anthem": "Horst-Wessel-Lied"
+        "anthem": "Horst-Wessel-Lied",
+        "capital": "Tirana"
     },
     "al1944": { 
         "name": "Gouvernement démocratique Albanais",
         "nativeName": "Qeveria Demokratike e Shqipërisë",
-        "anthem": "Himni i Flamurit"
+        "anthem": "Himni i Flamurit",
+        "capital": "Tirana"
     },
     "al1946": { 
         "name": "République populaire socialiste d'Albanie",
         "nativeName": "Republika Popullore Socialiste e Shqipërisë",
-        "anthem": "Himni i Flamurit"
+        "anthem": "Himni i Flamurit",
+        "capital": "Tirana"
     },
     "al1991": { 
         "name": "République d'Albanie",
         "nativeName": "Republika e Shqipërisë",
-        "anthem": "Himni i Flamurit"
+        "anthem": "Himni i Flamurit",
+        "capital": "Tirana"
     },
 
 
     "it1946": { 
         "name": "République d'Italie",
         "nativeName": "Repubblica Italiana",
-        "anthem": "Il Canto degli Italiani"
+        "anthem": "Il Canto degli Italiani",
+        "capital": "Rome"
     },
 
     "ug1962": {
         "name": "République d'Ouganda",
         "nativeName": "Republic of Uganda",
-        "anthem": "Oh Uganda, Land of Beauty"
+        "anthem": "Oh Uganda, Land of Beauty",
+        "capital": "Kampala"
     }
 }
