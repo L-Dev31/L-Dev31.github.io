@@ -42,28 +42,34 @@
         "capital": "Palerme"
     },
     "al-tir": {
-        "name": "Tirana",
-        "nativeName": "Tiranë",
+        "name": "District de Tirana",
+        "nativeName": "Prefectura Tiranës",
         "anthem": "",
         "capital": "Tirana"
     },
     "al-elb": {
-        "name": "Elbasan",
-        "nativeName": "Elbasan",
+        "name": "District d'Elbasan",
+        "nativeName": "Prefectura Elbasan",
         "anthem": "",
         "capital": "Tirana"
     },
     "al-dur": {
-        "name": "Durrës",
-        "nativeName": "Durrës",
+        "name": "District de Durrës",
+        "nativeName": "Prefectura Durrës",
         "anthem": "",
         "capital": "Durrës"
     },
     "al-vlr": {
-        "name": "Vlorë",
-        "nativeName": "Vlorë",
+        "name": "District de Vlorë",
+        "nativeName": "Prefectura Vlorës",
         "anthem": "",
         "capital": "Vlorë"
+    },
+    "al-shk": {
+        "name": "District de Shkodër",
+        "nativeName": "Prefectura Shkodërs",
+        "anthem": "",
+        "capital": "Shkodër"
     },
     "fr-pac": {
         "name": "PACA",

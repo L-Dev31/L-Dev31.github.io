@@ -625,12 +625,12 @@
         "id": "roelof",
         "name": "Roelof De-Vries",
         "family": "devries",
-        "born": "12/03/1918",
-        "death": "16/10/1997",
+        "born": null,
+        "death": null,
         "religion": "p",
         "country": "nl1839",
         "city": null,
-        "img": "Images/Persons/Roelof_De-Vries.jpg",
+        "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
         "pids": [
             "elizabeth"
