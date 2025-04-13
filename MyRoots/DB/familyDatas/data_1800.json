@@ -4,34 +4,36 @@
         "name": "Ali Tosku",
         "born": "18??",
         "death": null,
-        "religion": "?",
+        "religion": "i",
         "country": "al1844",
-        "city": null,
-        "img": "Images/Persons/Unknown.jpg",
+        "city": "Shkodër",
+        "img": "Images/Persons/Ali_Tosku.jpg",
         "gender": "male",
         "pids": [
             "file"
         ],
         "children": [
             "nuredin"
-        ]
+        ],
+        "region": "al-shk"
     },
     {
         "id": "file",
-        "name": "File",
+        "name": "File Memolla",
         "born": "18??",
         "death": null,
-        "religion": "?",
+        "religion": "i",
         "country": "al1844",
-        "city": null,
-        "img": "Images/Persons/Unknown.jpg",
+        "city": "Rroghozhinë",
+        "img": "Images/Persons/File_Memolla.jpg",
         "gender": "female",
         "pids": [
             "ali"
         ],
         "children": [
             "nuredin"
-        ]
+        ],
+        "region": "al-tir"
     },
     {
         "id": "melle",
