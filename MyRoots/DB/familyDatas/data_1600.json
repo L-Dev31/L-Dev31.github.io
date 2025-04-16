@@ -14,6 +14,23 @@
         ]
     },
     {
+        "id": "sipke16xx",
+        "name": "Sipke Sijbrandts",
+        "born": "16??",
+        "death": "1710",
+        "religion": "p",
+        "country": "nl1596",
+        "city": null,
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "martjen1625"
+        ],
+        "children": [
+            "sijtse1648"
+        ]
+    },
+    {
         "id": "pieter1605",
         "name": "Pieter Dercks",
         "born": "1605",
@@ -62,23 +79,6 @@
         "gender": "female",
         "pids": [
             "sipke16xx"
-        ],
-        "children": [
-            "sijtse1648"
-        ]
-    },
-    {
-        "id": "sipke16xx",
-        "name": "Sipke Sijbrandts",
-        "born": "16??",
-        "death": "1710",
-        "religion": "p",
-        "country": "nl1596",
-        "city": null,
-        "img": "Images/Persons/Unknown.jpg",
-        "gender": "male",
-        "pids": [
-            "martjen1625"
         ],
         "children": [
             "sijtse1648"

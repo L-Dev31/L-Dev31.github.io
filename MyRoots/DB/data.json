@@ -129,7 +129,7 @@
         "country": "nl1581",
         "city": null,
         "img": "Images/Persons/Unknown.jpg",
-        "gender": "male",
+        "gender": "female",
         "children": [
             "jantje1610"
         ]
@@ -146,6 +146,23 @@
         "gender": "male",
         "children": [
             "geeske1670"
+        ]
+    },
+    {
+        "id": "sipke16xx",
+        "name": "Sipke Sijbrandts",
+        "born": "16??",
+        "death": "1710",
+        "religion": "p",
+        "country": "nl1596",
+        "city": null,
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "martjen1625"
+        ],
+        "children": [
+            "sijtse1648"
         ]
     },
     {
@@ -189,31 +206,14 @@
         "id": "martjen1625",
         "name": "Martjen Hendricks",
         "born": "1625",
-        "death": "1643",
+        "death": "16??",
         "religion": "p",
         "country": "nl1596",
         "city": "Groningen",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
         "pids": [
-            "martjen1625"
-        ],
-        "children": [
-            "sijtse1648"
-        ]
-    },
-    {
-        "id": "sipke16xx",
-        "name": "Sipke Sijbrandts",
-        "born": "1648",
-        "death": "1710",
-        "religion": "p",
-        "country": "nl1596",
-        "city": null,
-        "img": "Images/Persons/Unknown.jpg",
-        "gender": "male",
-        "pids": [
-            "martjen1625"
+            "sipke16xx"
         ],
         "children": [
             "sijtse1648"
@@ -418,7 +418,7 @@
         "born": "19/03/1717",
         "death": null,
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Oude Pekela",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
@@ -434,7 +434,7 @@
         "country": "de1439",
         "city": "Weener",
         "img": "Images/Persons/Hemke1724_Jans_Daniels.jpg",
-        "gender": "male",
+        "gender": "female",
         "pids": [
             "sijtse1708"
         ],
@@ -448,7 +448,7 @@
         "born": "1739",
         "death": "1741",
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Oude Pekela",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
@@ -461,7 +461,7 @@
         "born": "1741",
         "death": null,
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Oude Pekela",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
@@ -474,7 +474,7 @@
         "born": "1741",
         "death": null,
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Oude Pekela",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
@@ -487,7 +487,7 @@
         "born": "1744",
         "death": null,
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Oude Pekela",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
@@ -500,7 +500,7 @@
         "born": "1747",
         "death": "10/12/1824",
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Franeker",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
@@ -519,7 +519,7 @@
         "born": "1752",
         "death": null,
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Oude Pekela",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
@@ -532,7 +532,7 @@
         "born": "12/11/1752",
         "death": "02/08/1829",
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Oude Pekela",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
@@ -551,7 +551,7 @@
         "born": "1755",
         "death": null,
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Oude Pekela",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
@@ -564,7 +564,7 @@
         "born": "1762",
         "death": null,
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Oude Pekela",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
@@ -577,7 +577,7 @@
         "born": "18/11/1770",
         "death": "04/09/1814",
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Workum",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
@@ -595,7 +595,7 @@
         "born": "11/11/1775",
         "death": "19/06/1859",
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Woudsend",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
@@ -612,7 +612,7 @@
         "born": "1776",
         "death": "15/11/1825",
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Tzum",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
@@ -636,7 +636,7 @@
         "born": "1778",
         "death": "1811",
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Tzum",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
@@ -649,7 +649,7 @@
         "born": "1780",
         "death": "1853",
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Tzum",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
@@ -662,7 +662,7 @@
         "born": "1781",
         "death": "1806",
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Tzum",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
@@ -675,7 +675,7 @@
         "born": "1783",
         "death": "18/04/1851",
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Dongjum",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
@@ -695,7 +695,7 @@
         "born": "1784",
         "death": "1818",
         "religion": "p",
-        "country": "nl1596",
+        "country": "nl1714",
         "city": "Tzum",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
@@ -707,34 +707,36 @@
         "name": "Ali Tosku",
         "born": "18??",
         "death": null,
-        "religion": "?",
+        "religion": "i",
         "country": "al1844",
-        "city": null,
-        "img": "Images/Persons/Unknown.jpg",
+        "city": "Shkodër",
+        "img": "Images/Persons/Ali_Tosku.jpg",
         "gender": "male",
         "pids": [
             "file"
         ],
         "children": [
             "nuredin"
-        ]
+        ],
+        "region": "al-shk"
     },
     {
         "id": "file",
-        "name": "File",
+        "name": "File Memola",
         "born": "18??",
         "death": null,
-        "religion": "?",
+        "religion": "i",
         "country": "al1844",
-        "city": null,
-        "img": "Images/Persons/Unknown.jpg",
+        "city": "Rroghozhinë",
+        "img": "Images/Persons/File_Memolla.jpg",
         "gender": "female",
         "pids": [
             "ali"
         ],
         "children": [
             "nuredin"
-        ]
+        ],
+        "region": "al-tir"
     },
     {
         "id": "melle",
@@ -1218,6 +1220,24 @@
         "mid": "sybrigje1825"
     },
     {
+        "id": "peter1863",
+        "name": "Peter Jans Edelenbos",
+        "born": "04/05/1863",
+        "death": "17/12/1938",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Vollenhove",
+        "img": "Images/Persons/Peter1863_Jans_Edelenbos.jpg",
+        "gender": "male",
+        "pids": [
+            "geertje1868"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "tiemen"
+        ]
+    },
+    {
         "id": "jan1865",
         "name": "Jan Noordmans",
         "born": "1865",
@@ -1319,6 +1339,24 @@
         ]
     },
     {
+        "id": "geertje1868",
+        "name": "Geertje Pieters Shuuring",
+        "born": "01/09/1870",
+        "death": "17/12/1938",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Vollenhove",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "peter1863"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "tiemen"
+        ]
+    },
+    {
         "id": "ida1873",
         "name": "Ida Burhoven Viëtor",
         "family": "vietor",
@@ -1333,6 +1371,24 @@
         "mid": "trijntje1844",
         "pids": [
             "pieter1868"
+        ]
+    },
+    {
+        "id": "marrigje1874",
+        "name": "Marrigje Catharina Rozeboom",
+        "born": "12/12/1874",
+        "death": "23/08/1952",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Vollenhove",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "steven"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "jantien"
         ]
     },
     {
@@ -1426,6 +1482,24 @@
         "mid": "cornelia1857"
     },
     {
+        "id": "steven",
+        "name": "Steven Oosten",
+        "born": "10/01/1879",
+        "death": "18/08/1941",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Vollenhove",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "marrigje1874"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "jantien"
+        ]
+    },
+    {
         "id": "symon1880",
         "name": "Symon Tjeerd Burhoven Vietor",
         "family": "vietor",
@@ -1483,7 +1557,7 @@
     },
     {
         "id": "(dab)vietor1885",
-        "name": "mort À La Naissance",
+        "name": "Mort À La Naissance",
         "family": "vietor",
         "born": "17/03/1885",
         "death": "17/03/1885",
@@ -1497,7 +1571,7 @@
     },
     {
         "id": "(dab)greidanus1885",
-        "name": "morte À La Naissance",
+        "name": "Morte À La Naissance",
         "family": "greydanus",
         "born": "28/02/1885",
         "death": "26/01/1951",
@@ -1706,7 +1780,7 @@
         "id": "merushe19xx",
         "name": "Merushe",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "al1939",
         "city": null,
@@ -1717,13 +1791,14 @@
         ],
         "children": [
             "astrit"
-        ]
+        ],
+        "region": null
     },
     {
         "id": "andi",
         "name": "Andi Tosku",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "al1991",
         "city": null,
@@ -1735,13 +1810,14 @@
         ],
         "children": [
             "chloe"
-        ]
+        ],
+        "region": null
     },
     {
         "id": "ariana",
         "name": "Ariana Buono",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "c",
         "country": "it1946",
         "city": "Gallarate",
@@ -1752,25 +1828,27 @@
         ],
         "children": [
             "chloe"
-        ]
+        ],
+        "region": "it-lom"
     },
     {
         "id": "merushe",
         "name": "Merushe Tosku",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "al1991",
         "city": null,
         "img": "Images/Persons/Merushe_Tosku.jpg",
         "gender": "female",
-        "fid": "astrit"
+        "fid": "astrit",
+        "region": null
     },
     {
         "id": "christianne",
         "name": "Christianne",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "a",
         "country": "fr1946",
         "city": null,
@@ -1778,13 +1856,14 @@
         "gender": "female",
         "children": [
             "george-andre"
-        ]
+        ],
+        "region": null
     },
     {
         "id": "elizabeth",
         "name": "Elizabeth Leffring",
         "born": "19??",
-        "death": null,
+        "death": "?",
         "religion": "p",
         "country": "nl1839",
         "city": null,
@@ -1796,28 +1875,43 @@
         "children": [
             "jan1944",
             "auke19xx"
-        ]
+        ],
+        "region": null
     },
     {
-        "id": "marigje",
-        "name": "Marigje, Catharina Edelenbos",
+        "id": "roel",
+        "name": "Roel De-Vries",
+        "family": "devries",
         "born": "19??",
-        "death": "2015",
-        "religion": "p",
-        "country": "nl1944",
-        "city": "Blokzijl",
+        "death": "vivant(e)",
+        "religion": "?",
+        "country": "nl1945",
+        "city": null,
+        "img": "Images/Persons/Roel_De-Vries.jpg",
+        "gender": "male",
+        "fid": "jan1944",
+        "mid": "marrigje1946"
+    },
+    {
+        "id": "janny",
+        "name": "Janny De-Vries",
+        "family": "devries",
+        "born": "19??",
+        "death": "vivant(e)",
+        "religion": "?",
+        "country": "nl1945",
+        "city": null,
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
-        "pids": [
-            "jan1944"
-        ]
+        "fid": "jan1944",
+        "mid": "marrigje1946"
     },
     {
         "id": "auke19xx",
         "name": "Auke De-Vries",
         "family": "devries",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1945",
         "city": "Appelscha",
@@ -1828,39 +1922,42 @@
         "children": [
             "jorrit",
             "jelmer"
-        ]
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "jorrit",
         "name": "Jorrit De-Vries",
         "family": "devries",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
         "img": "Images/Persons/Jorrit_De-Vries.jpg",
         "gender": "male",
-        "fid": "auke19xx"
+        "fid": "auke19xx",
+        "region": null
     },
     {
         "id": "jelmer",
         "name": "Jelmer De-Vries",
         "family": "devries",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
         "img": "Images/Persons/Jelmer_De-Vries.jpg",
         "gender": "male",
-        "fid": "auke19xx"
+        "fid": "auke19xx",
+        "region": null
     },
     {
         "id": "saapke",
         "name": "Saapke Dijkstra",
         "born": "1900",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Achlum",
@@ -1868,13 +1965,14 @@
         "gender": "female",
         "pids": [
             "dirk"
-        ]
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "anne",
         "name": "Anne Oosterhaven",
         "born": "20/03/1900",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Tzum",
@@ -1884,13 +1982,14 @@
         "mid": "minkje1868",
         "pids": [
             "cornelia1900"
-        ]
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "cornelia1900",
         "name": "Cornelia Noordmans",
         "born": "1900",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Spannum",
@@ -1898,13 +1997,14 @@
         "gender": "female",
         "pids": [
             "anne"
-        ]
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "lutgertje",
         "name": "Lutgertje Oosterhaven",
         "born": "08/08/1900",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Tzum",
@@ -1914,14 +2014,15 @@
         "mid": "minkje1868",
         "pids": [
             "jelle"
-        ]
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "jelle",
         "name": "Jelle De-Vries",
         "family": "devries",
         "born": "1900",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Gaast",
@@ -1929,7 +2030,8 @@
         "gender": "male",
         "pids": [
             "lutgertje"
-        ]
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "trijntje1900",
@@ -1943,28 +2045,30 @@
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
         "mid": "tetje1875",
-        "fid": "siebe1875"
+        "fid": "siebe1875",
+        "region": "nl-fsl"
     },
     {
         "id": "willem19xx",
         "name": "Willem Lanting",
         "family": "lanting",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": "St. Nikelsgea",
         "img": "Images/Persons/Willem19xx_Lanting.jpg",
         "gender": "male",
         "mid": "riemke",
-        "fid": "tjerk"
+        "fid": "tjerk",
+        "region": "nl-fsl"
     },
     {
         "id": "sybren",
         "name": "Sybren Lanting",
         "family": "lanting",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": "St. Nikelsgea",
@@ -1979,13 +2083,14 @@
         "children": [
             "arthur",
             "madelon"
-        ]
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "lida",
         "name": "Lida Vlaar",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
@@ -1997,13 +2102,14 @@
         "children": [
             "arthur",
             "madelon"
-        ]
+        ],
+        "region": null
     },
     {
         "id": "annemieke",
         "name": "Annemieke",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
@@ -2011,56 +2117,60 @@
         "gender": "female",
         "pids": [
             "sybren"
-        ]
+        ],
+        "region": null
     },
     {
         "id": "arthur",
         "name": "Arthur Lanting",
         "family": "lanting",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
         "img": "Images/Persons/Arthur_Lanting.jpg",
         "gender": "male",
         "mid": "lida",
-        "fid": "sybren"
+        "fid": "sybren",
+        "region": null
     },
     {
         "id": "madelon",
         "name": "Madelon Lanting",
         "family": "lanting",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
         "img": "Images/Persons/Madelon_Lanting.jpg",
         "gender": "female",
         "mid": "lida",
-        "fid": "sybren"
+        "fid": "sybren",
+        "region": null
     },
     {
         "id": "alicia",
         "name": "Alicia Lanting",
         "family": "lanting",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
         "mid": "lida",
-        "fid": "sybren"
+        "fid": "sybren",
+        "region": null
     },
     {
         "id": "rixt",
         "name": "Rixt Lanting",
         "family": "lanting",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": "St. Nikelsgea",
@@ -2076,13 +2186,14 @@
             "anna",
             "tim",
             "daan"
-        ]
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "gerard",
         "name": "Gerard Stratsmaar",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
@@ -2094,39 +2205,42 @@
         "children": [
             "tim",
             "daan"
-        ]
+        ],
+        "region": null
     },
     {
         "id": "tim",
         "name": "Tim",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
         "mid": "rixt",
-        "fid": "gerard"
+        "fid": "gerard",
+        "region": null
     },
     {
         "id": "daan",
         "name": "Daan",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
         "mid": "rixt",
-        "fid": "gerard"
+        "fid": "gerard",
+        "region": null
     },
     {
         "id": "maarten",
         "name": "Maarten",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
@@ -2137,20 +2251,37 @@
         ],
         "children": [
             "anna"
-        ]
+        ],
+        "region": null
     },
     {
         "id": "anna",
         "name": "Anna",
         "born": "19??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "nl1945",
         "city": null,
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
         "mid": "rixt",
-        "fid": "maarten"
+        "fid": "maarten",
+        "region": null
+    },
+    {
+        "id": "elizabeth19xx",
+        "name": "Elizabeth Kutya",
+        "born": "19??",
+        "death": "vivant(e)",
+        "religion": "?",
+        "country": "ug1962",
+        "city": "Kampala",
+        "img": "Images/Persons/Elizabeth19xx_Kutya.jpg",
+        "gender": "female",
+        "pids": [
+            "jan1944"
+        ],
+        "region": "ug-kam"
     },
     {
         "id": "sybren1901",
@@ -2173,7 +2304,8 @@
             "neno"
         ],
         "mid": "tetje1875",
-        "fid": "siebe1875"
+        "fid": "siebe1875",
+        "region": "nl-fsl"
     },
     {
         "id": "geertje",
@@ -2195,7 +2327,8 @@
             "neno"
         ],
         "fid": "auke1866",
-        "mid": "riemke1866"
+        "mid": "riemke1866",
+        "region": "nl-fsl"
     },
     {
         "id": "neno1905",
@@ -2212,7 +2345,8 @@
         "fid": "siebe1875",
         "pids": [
             "arendje1909"
-        ]
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "lipkje1908",
@@ -2226,7 +2360,28 @@
         "img": "Images/Persons/Lipkje1908_Van_Der_Schaar.jpg",
         "gender": "female",
         "mid": "tetje1875",
-        "fid": "siebe1875"
+        "fid": "siebe1875",
+        "region": "nl-fsl"
+    },
+    {
+        "id": "tiemen",
+        "name": "Tiemen Edelenbos",
+        "born": "03/05/1909",
+        "death": "1983",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Lonneker",
+        "img": "Images/Persons/Tiemen_Edelenbos.jpg",
+        "gender": "male",
+        "pids": [
+            "jantien"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "marrigje1946"
+        ],
+        "fid": "peter1863",
+        "mid": "geertje1868"
     },
     {
         "id": "arendje1909",
@@ -2240,7 +2395,8 @@
         "gender": "female",
         "pids": [
             "neno1905"
-        ]
+        ],
+        "region": null
     },
     {
         "id": "richtje1909",
@@ -2254,7 +2410,8 @@
         "img": "Images/Persons/Richtje1909_Van_Der_Schaar.jpg",
         "gender": "female",
         "mid": "tetje1875",
-        "fid": "siebe1875"
+        "fid": "siebe1875",
+        "region": "nl-fsl"
     },
     {
         "id": "jetske1911",
@@ -2268,7 +2425,28 @@
         "gender": "female",
         "pids": [
             "petrus1915"
-        ]
+        ],
+        "region": null
+    },
+    {
+        "id": "jantien",
+        "name": "Jantien Oosten",
+        "born": "23/06/1915",
+        "death": "20/11/1963",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Vollenhove",
+        "img": "Images/Persons/Jantien_Oosten.jpg",
+        "gender": "female",
+        "pids": [
+            "tiemen"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "marrigje1946"
+        ],
+        "fid": "steven",
+        "mid": "marrigje1874"
     },
     {
         "id": "petrus1915",
@@ -2285,53 +2463,38 @@
         "fid": "siebe1875",
         "pids": [
             "jetske1911"
-        ]
-    },
-    {
-        "id": "roelof",
-        "name": "Roelof De-Vries",
-        "family": "devries",
-        "born": "12/03/1918",
-        "death": "16/10/1997",
-        "religion": "p",
-        "country": "nl1839",
-        "city": null,
-        "img": "Images/Persons/Unknown.jpg",
-        "gender": "male",
-        "pids": [
-            "elizabeth"
         ],
-        "children": [
-            "jan1944"
-        ]
+        "region": "nl-fsl"
     },
     {
         "id": "harmen",
         "name": "Harmen Lanting",
         "family": "lanting",
         "born": "11/02/1922",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Tzum",
         "img": "Images/Persons/Harmen_Lanting.jpg",
         "gender": "male",
         "fid": "willem1898",
-        "mid": "sybrigje1898"
+        "mid": "sybrigje1898",
+        "region": "nl-fsl"
     },
     {
         "id": "sybren1923",
         "name": "Sybren Lanting",
         "family": "lanting",
         "born": "14/03/1923",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Tzum",
         "img": "Images/Persons/sybren1923_Lanting.jpg",
         "gender": "male",
         "fid": "willem1898",
-        "mid": "sybrigje1898"
+        "mid": "sybrigje1898",
+        "region": "nl-fsl"
     },
     {
         "id": "sybren1923",
@@ -2345,11 +2508,12 @@
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
         "fid": "willem1898",
-        "mid": "sybrigje1898"
+        "mid": "sybrigje1898",
+        "region": null
     },
     {
         "id": "(dab)lanting1926",
-        "name": "mort À La Naissance",
+        "name": "Mort À La Naissance",
         "family": "lanting",
         "born": "19/10/1926",
         "death": "19/10/1926",
@@ -2359,7 +2523,8 @@
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
         "fid": "willem1898",
-        "mid": "sybrigje1898"
+        "mid": "sybrigje1898",
+        "region": null
     },
     {
         "id": "nuredin",
@@ -2386,7 +2551,8 @@
             "robert",
             "fatbardha1982",
             "besnik"
-        ]
+        ],
+        "region": "al-tir"
     },
     {
         "id": "tjerk",
@@ -2409,7 +2575,8 @@
             "willem19xx",
             "sybren",
             "rixt"
-        ]
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "sytze1929",
@@ -2423,7 +2590,8 @@
         "img": "Images/Persons/Sytze1929_Lanting.jpg",
         "gender": "male",
         "fid": "willem1898",
-        "mid": "sybrigje1898"
+        "mid": "sybrigje1898",
+        "region": "nl-fsl"
     },
     {
         "id": "sytze1929",
@@ -2437,7 +2605,8 @@
         "img": "Images/Persons/Sytze1929_Lanting.jpg",
         "gender": "male",
         "fid": "willem1898",
-        "mid": "sybrigje1898"
+        "mid": "sybrigje1898",
+        "region": "nl-fsl"
     },
     {
         "id": "riemke",
@@ -2457,91 +2626,98 @@
             "marijke"
         ],
         "mid": "geertje",
-        "fid": "sybren1901"
+        "fid": "sybren1901",
+        "region": "nl-fsl"
     },
     {
         "id": "lybe",
         "name": "Lybe Van Der Schaar",
         "family": "schaar",
         "born": "14/05/1930",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Tzummarum",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
         "mid": "geertje",
-        "fid": "sybren1901"
+        "fid": "sybren1901",
+        "region": "nl-fsl"
     },
     {
         "id": "jelte",
         "name": "Jelte Lanting",
         "family": "lanting",
         "born": "11/09/1932",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Tzum",
         "img": "Images/Persons/Jelte_Lanting.jpg",
         "gender": "female",
         "fid": "willem1898",
-        "mid": "sybrigje1898"
+        "mid": "sybrigje1898",
+        "region": "nl-fsl"
     },
     {
         "id": "aafke",
         "name": "Aafke Tjitske Lanting",
         "family": "lanting",
         "born": "29/03/1932",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Tzum",
         "img": "Images/Persons/Aafke_Tjitske_Lanting.jpg",
         "gender": "female",
         "fid": "willem1898",
-        "mid": "sybrigje1898"
+        "mid": "sybrigje1898",
+        "region": "nl-fsl"
     },
     {
         "id": "auke1934",
         "name": "Auke Van Der Schaar",
         "family": "schaar",
         "born": "10/07/1934",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Tzummarum",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
         "mid": "geertje",
-        "fid": "sybren1901"
+        "fid": "sybren1901",
+        "region": "nl-fsl"
     },
     {
         "id": "neno",
         "name": "Neno Van Der Schaar",
         "family": "schaar",
         "born": "20/12/1935",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Tzummarum",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
         "mid": "geertje",
-        "fid": "sybren1901"
+        "fid": "sybren1901",
+        "region": "nl-fsl"
     },
     {
         "id": "minkje1937",
         "name": "Minkje Lanting",
         "family": "lanting",
         "born": "08/04/1937",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1839",
         "city": "Tzum",
         "img": "Images/Persons/Minkje1937_Lanting.jpg",
         "gender": "female",
         "fid": "willem1898",
-        "mid": "sybrigje1898"
+        "mid": "sybrigje1898",
+        "region": "nl-fsl"
     },
     {
         "id": "jan1944",
@@ -2550,20 +2726,24 @@
         "born": "23/02/1944",
         "death": "2024",
         "religion": "p",
-        "country": "nl1944",
+        "country": "nl1940",
         "city": "Appelscha",
         "img": "Images/Persons/Jan_De-Vries.jpg",
         "gender": "male",
         "pids": [
             "marijke",
-            "marigje"
+            "marrigje1946",
+            "elizabeth19xx"
         ],
         "fid": "roelof",
         "mid": "elizabeth",
         "children": [
             "viviane",
-            "sandra"
-        ]
+            "sandra",
+            "roel",
+            "janny"
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "haxhire",
@@ -2580,14 +2760,36 @@
         ],
         "children": [
             "besnik"
-        ]
+        ],
+        "region": "al-elb"
+    },
+    {
+        "id": "marrigje1946",
+        "name": "Marrigje Catharina Edelenbos",
+        "born": "30/11/1946",
+        "death": "28/05/2015",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Blokzijl",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "jan1944"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "roel",
+            "janny"
+        ],
+        "fid": "tiemen",
+        "mid": "jantien"
     },
     {
         "id": "marijke",
         "name": "Geartsje Marijke Lanting",
         "family": "lanting",
         "born": "10/06/1954",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "p",
         "country": "nl1945",
         "city": "St. Nikelsgea",
@@ -2601,26 +2803,28 @@
         "children": [
             "viviane",
             "sandra"
-        ]
+        ],
+        "region": "nl-fsl"
     },
     {
         "id": "astrit",
         "name": "Astrit Tosku",
         "born": "12/08/1963",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "i",
         "country": "al1946",
         "city": "Rroghozhinë",
         "img": "Images/Persons/Unknown.jpg",
         "gender": "male",
         "mid": "merushe19xx",
-        "fid": "nuredin"
+        "fid": "nuredin",
+        "region": "al-tir"
     },
     {
         "id": "ylli",
         "name": "Ylli Tosku",
         "born": "06/11/1969",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "al1946",
         "city": "Rroghozhinë",
@@ -2631,13 +2835,14 @@
         "children": [
             "britni",
             "alessia"
-        ]
+        ],
+        "region": "al-tir"
     },
     {
         "id": "fatjon",
         "name": "Fatjon Zenelaj",
         "born": "1970",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "i",
         "country": "al1946",
         "city": null,
@@ -2650,26 +2855,28 @@
             "aleks",
             "amelia",
             "fabiola"
-        ]
+        ],
+        "region": null
     },
     {
         "id": "lirije",
         "name": "Lirije Tosku",
         "born": "30/12/1971",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "i",
         "country": "al1946",
         "city": "Rroghozhinë",
         "img": "Images/Persons/Lirije_Tosku.jpg",
         "gender": "female",
         "mid": "haxhire",
-        "fid": "nuredin"
+        "fid": "nuredin",
+        "region": "al-tir"
     },
     {
         "id": "george-andre",
         "name": "George-André Bouly",
         "born": "1971",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "a",
         "country": "fr1946",
         "city": "Dijon",
@@ -2681,13 +2888,14 @@
         ],
         "children": [
             "athena"
-        ]
+        ],
+        "region": "fr-brg"
     },
     {
         "id": "dritan",
         "name": "Dritan Tosku",
         "born": "29/06/1973",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "c",
         "country": "al1946",
         "city": "Rroghozhinë",
@@ -2701,13 +2909,14 @@
         "children": [
             "giada",
             "roberto"
-        ]
+        ],
+        "region": "al-tir"
     },
     {
         "id": "paola",
         "name": "Paola Prigione",
         "born": "29/06/1973",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "c",
         "country": "it1946",
         "city": null,
@@ -2719,7 +2928,8 @@
         "children": [
             "giada",
             "roberto"
-        ]
+        ],
+        "region": null
     },
     {
         "id": "fatbardha1976",
@@ -2732,7 +2942,8 @@
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
         "mid": "haxhire",
-        "fid": "nuredin"
+        "fid": "nuredin",
+        "region": "al-tir"
     },
     {
         "id": "robert",
@@ -2745,13 +2956,14 @@
         "img": "Images/Persons/Robert_Tosku.jpg",
         "gender": "male",
         "mid": "haxhire",
-        "fid": "nuredin"
+        "fid": "nuredin",
+        "region": "al-tir"
     },
     {
         "id": "fatbardha1982",
         "name": "Fatbardha Tosku",
         "born": "05/02/1982",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "i",
         "country": "al1946",
         "city": "Rroghozhinë",
@@ -2766,13 +2978,14 @@
             "fabiola",
             "aleks",
             "amelia"
-        ]
+        ],
+        "region": "al-tir"
     },
     {
         "id": "besnik",
         "name": "Besnik Tosku",
         "born": "31/01/1984",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "a",
         "country": "al1946",
         "city": "Rroghozhinë",
@@ -2787,14 +3000,15 @@
             "leo",
             "bryan",
             "camelia"
-        ]
+        ],
+        "region": "al-tir"
     },
     {
         "id": "viviane",
         "name": "Viviane Elizabeth De-Vries",
         "family": "devries",
         "born": "19/05/1987",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "a",
         "country": "fr1976",
         "city": "Cannes",
@@ -2811,30 +3025,33 @@
             "bryan",
             "camelia",
             "athena"
-        ]
+        ],
+        "region": "fr-pac"
     },
     {
         "id": "sandra",
         "name": "Sandra De-Vries",
         "family": "devries",
         "born": "26/08/1994",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "a",
         "country": "fr1976",
         "city": "Cannes",
         "img": "Images/Persons/Sandra_De-Vries.jpg",
         "gender": "female",
         "mid": "marijke",
-        "fid": "jan1944"
+        "fid": "jan1944",
+        "region": "fr-pac"
     },
     {
         "id": "chloe",
         "name": "Chloe Tosku",
         "born": "20??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "it1946",
         "city": null,
+        "region": null,
         "img": "Images/Persons/Chloe_Tosku.jpg",
         "gender": "female",
         "fid": "andi",
@@ -2844,10 +3061,11 @@
         "id": "britni",
         "name": "Britni Tosku",
         "born": "20??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "it1946",
         "city": null,
+        "region": null,
         "img": "Images/Persons/Britni_Tosku.jpg",
         "gender": "female",
         "fid": "ylli"
@@ -2856,10 +3074,11 @@
         "id": "alessia",
         "name": "Alessia Tosku",
         "born": "20??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "?",
         "country": "it1946",
         "city": null,
+        "region": null,
         "img": "Images/Persons/Alessia_Tosku.jpg",
         "gender": "female",
         "fid": "ylli"
@@ -2868,10 +3087,11 @@
         "id": "giada",
         "name": "Giada Tosku",
         "born": "20??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "c",
         "country": "it1946",
         "city": null,
+        "region": null,
         "img": "Images/Persons/Giada_Tosku.jpg",
         "gender": "female",
         "fid": "dritan",
@@ -2881,10 +3101,11 @@
         "id": "roberto",
         "name": "Roberto Tosku",
         "born": "20??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "c",
         "country": "it1946",
         "city": null,
+        "region": null,
         "img": "Images/Persons/Roberto_Tosku.jpg",
         "gender": "male",
         "fid": "dritan",
@@ -2894,10 +3115,11 @@
         "id": "fabiola",
         "name": "Fabiola Zenelaj",
         "born": "200?",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "i",
         "country": "al1991",
         "city": null,
+        "region": null,
         "img": "Images/Persons/Fabiola_Zenelaj.jpg",
         "gender": "female",
         "mid": "fatbardha1982",
@@ -2907,10 +3129,11 @@
         "id": "aleks",
         "name": "Aleks Zenelaj",
         "born": "200?",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "i",
         "country": "al1991",
         "city": null,
+        "region": null,
         "img": "Images/Persons/Aleks_Zenelaj.jpg",
         "gender": "male",
         "mid": "fatbardha1982",
@@ -2920,10 +3143,11 @@
         "id": "amelia",
         "name": "Amelia Zenelaj",
         "born": "20??",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "i",
         "country": "it1946",
         "city": null,
+        "region": null,
         "img": "Images/Persons/Amelia_Zenelaj.jpg",
         "gender": "female",
         "mid": "fatbardha1982",
@@ -2934,10 +3158,11 @@
         "name": "Léo Tosku",
         "family": "toskudevries",
         "born": "31/10/2007",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "a",
         "country": "fr1976",
         "city": "Grasse",
+        "region": "fr-pac",
         "img": "Images/Persons/Leo_Tosku.jpg",
         "gender": "male",
         "mid": "viviane",
@@ -2948,10 +3173,11 @@
         "name": "Bryan Tosku",
         "family": "toskudevries",
         "born": "22/09/2011",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "a",
         "country": "fr1976",
         "city": "Grasse",
+        "region": "fr-pac",
         "img": "Images/Persons/Bryan_Tosku.jpg",
         "gender": "male",
         "mid": "viviane",
@@ -2962,10 +3188,11 @@
         "name": "Camélia, Stella Tosku",
         "family": "toskudevries",
         "born": "28/09/2013",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "a",
         "country": "fr1976",
         "city": "Grasse",
+        "region": "fr-pac",
         "img": "Images/Persons/Camelia_Tosku.jpg",
         "gender": "female",
         "mid": "viviane",
@@ -2975,13 +3202,33 @@
         "id": "athena",
         "name": "Athéna Iris Lilla Bouly",
         "born": "25/02/2020",
-        "death": null,
+        "death": "vivant(e)",
         "religion": "a",
         "country": "fr2020",
         "city": "Draguignan",
+        "region": "fr-pac",
         "img": "Images/Persons/Athena_Bouly.jpg",
         "gender": "female",
         "mid": "viviane",
         "fid": "george-andre"
+    },
+    {
+        "id": "roelof",
+        "name": "Roelof De-Vries",
+        "family": "devries",
+        "born": null,
+        "death": null,
+        "religion": "p",
+        "country": "nl1839",
+        "city": null,
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "elizabeth"
+        ],
+        "children": [
+            "jan1944"
+        ],
+        "region": null
     }
 ]
