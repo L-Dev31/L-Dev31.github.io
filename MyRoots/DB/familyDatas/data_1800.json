@@ -19,7 +19,7 @@
     },
     {
         "id": "file",
-        "name": "File Memolla",
+        "name": "File Memola",
         "born": "18??",
         "death": null,
         "religion": "i",
@@ -517,6 +517,24 @@
         "mid": "sybrigje1825"
     },
     {
+        "id": "peter1863",
+        "name": "Peter Jans Edelenbos",
+        "born": "04/05/1863",
+        "death": "17/12/1938",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Vollenhove",
+        "img": "Images/Persons/Peter1863_Jans_Edelenbos.jpg",
+        "gender": "male",
+        "pids": [
+            "geertje1868"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "tiemen"
+        ]
+    },
+    {
         "id": "jan1865",
         "name": "Jan Noordmans",
         "born": "1865",
@@ -618,6 +636,24 @@
         ]
     },
     {
+        "id": "geertje1868",
+        "name": "Geertje Pieters Shuuring",
+        "born": "01/09/1870",
+        "death": "17/12/1938",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Vollenhove",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "peter1863"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "tiemen"
+        ]
+    },
+    {
         "id": "ida1873",
         "name": "Ida Burhoven Viëtor",
         "family": "vietor",
@@ -632,6 +668,24 @@
         "mid": "trijntje1844",
         "pids": [
             "pieter1868"
+        ]
+    },
+    {
+        "id": "marrigje1874",
+        "name": "Marrigje Catharina Rozeboom",
+        "born": "12/12/1874",
+        "death": "23/08/1952",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Vollenhove",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "steven"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "jantien"
         ]
     },
     {
@@ -723,6 +777,24 @@
         "gender": "female",
         "fid": "lieuwe",
         "mid": "cornelia1857"
+    },
+    {
+        "id": "steven",
+        "name": "Steven Oosten",
+        "born": "10/01/1879",
+        "death": "18/08/1941",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Vollenhove",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "marrigje1874"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "jantien"
+        ]
     },
     {
         "id": "symon1880",

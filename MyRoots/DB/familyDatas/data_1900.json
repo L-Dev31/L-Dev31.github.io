@@ -87,7 +87,7 @@
         "name": "Elizabeth Leffring",
         "born": "19??",
         "death": "?",
-        "religion": "p",
+        "religion": "a",
         "country": "nl1839",
         "city": null,
         "img": "Images/Persons/Unknown.jpg",
@@ -102,19 +102,52 @@
         "region": null
     },
     {
-        "id": "marigje",
-        "name": "Marigje Catharina Edelenbos",
+        "id": "roelof",
+        "name": "Roelof De-Vries",
+        "family": "devries",
         "born": "19??",
-        "death": "2015",
-        "religion": "p",
-        "country": "nl1940",
-        "city": "Blokzijl",
+        "death": "?",
+        "religion": "a",
+        "country": "nl1839",
+        "city": null,
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "elizabeth"
+        ],
+        "children": [
+            "jan1944",
+            "auke19xx"
+        ],
+        "region": null
+    },
+    {
+        "id": "roel",
+        "name": "Roel De-Vries",
+        "family": "devries",
+        "born": "19??",
+        "death": "vivant(e)",
+        "religion": "?",
+        "country": "nl1945",
+        "city": null,
+        "img": "Images/Persons/Roel_De-Vries.jpg",
+        "gender": "male",
+        "fid": "jan1944",
+        "mid": "marrigje1946"
+    },
+    {
+        "id": "janny",
+        "name": "Janny De-Vries",
+        "family": "devries",
+        "born": "19??",
+        "death": "vivant(e)",
+        "religion": "?",
+        "country": "nl1945",
+        "city": null,
         "img": "Images/Persons/Unknown.jpg",
         "gender": "female",
-        "pids": [
-            "jan1944"
-        ],
-        "region": "nl-ovj"
+        "fid": "jan1944",
+        "mid": "marrigje1946"
     },
     {
         "id": "auke19xx",
@@ -479,6 +512,22 @@
         "region": null
     },
     {
+        "id": "elizabeth19xx",
+        "name": "Elizabeth Kutya",
+        "born": "19??",
+        "death": "vivant(e)",
+        "religion": "?",
+        "country": "ug1962",
+        "city": "Kampala",
+        "img": "Images/Persons/Elizabeth19xx_Kutya.jpg",
+        "gender": "female",
+        "pids": [
+            "jan1944",
+            "ben"
+        ],
+        "region": "ug-kam"
+    },
+    {
         "id": "sybren1901",
         "name": "Sybren Van Der Schaar",
         "family": "schaar",
@@ -559,6 +608,26 @@
         "region": "nl-fsl"
     },
     {
+        "id": "tiemen",
+        "name": "Tiemen Edelenbos",
+        "born": "03/05/1909",
+        "death": "1983",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Lonneker",
+        "img": "Images/Persons/Tiemen_Edelenbos.jpg",
+        "gender": "male",
+        "pids": [
+            "jantien"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "marrigje1946"
+        ],
+        "fid": "peter1863",
+        "mid": "geertje1868"
+    },
+    {
         "id": "arendje1909",
         "name": "Arendje Bakker",
         "born": "1909",
@@ -604,6 +673,26 @@
         "region": null
     },
     {
+        "id": "jantien",
+        "name": "Jantien Oosten",
+        "born": "23/06/1915",
+        "death": "20/11/1963",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Vollenhove",
+        "img": "Images/Persons/Jantien_Oosten.jpg",
+        "gender": "female",
+        "pids": [
+            "tiemen"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "marrigje1946"
+        ],
+        "fid": "steven",
+        "mid": "marrigje1874"
+    },
+    {
         "id": "petrus1915",
         "name": "Petrus Adrianus Van Der Schaar",
         "family": "schaar",
@@ -620,25 +709,6 @@
             "jetske1911"
         ],
         "region": "nl-fsl"
-    },
-    {
-        "id": "roelof",
-        "name": "Roelof De-Vries",
-        "family": "devries",
-        "born": null,
-        "death": null,
-        "religion": "p",
-        "country": "nl1839",
-        "city": null,
-        "img": "Images/Persons/Unknown.jpg",
-        "gender": "male",
-        "pids": [
-            "elizabeth"
-        ],
-        "children": [
-            "jan1944"
-        ],
-        "region": null
     },
     {
         "id": "harmen",
@@ -899,38 +969,26 @@
         "family": "devries",
         "born": "23/02/1944",
         "death": "2024",
-        "religion": "p",
+        "religion": "a",
         "country": "nl1940",
         "city": "Appelscha",
         "img": "Images/Persons/Jan_De-Vries.jpg",
         "gender": "male",
         "pids": [
             "marijke",
-            "marigje",
+            "marrigje1946",
             "elizabeth19xx"
         ],
         "fid": "roelof",
         "mid": "elizabeth",
         "children": [
             "viviane",
-            "sandra"
+            "sandra",
+            "roel",
+            "janny",
+            "ben"
         ],
         "region": "nl-fsl"
-    },
-    {
-        "id": "elizabeth19xx",
-        "name": "Elizabeth Kutya",
-        "born": "19??",
-        "death": "vivant(e)",
-        "religion": "?",
-        "country": "ug1962",
-        "city": "Kampala",
-        "img": "Images/Persons/Elizabeth19xx_Kutya.jpg",
-        "gender": "female",
-        "pids": [
-            "jan1944"
-        ],
-        "region": "ug-kam"
     },
     {
         "id": "haxhire",
@@ -949,6 +1007,27 @@
             "besnik"
         ],
         "region": "al-elb"
+    },
+    {
+        "id": "marrigje1946",
+        "name": "Marrigje Catharina Edelenbos",
+        "born": "30/11/1946",
+        "death": "28/05/2015",
+        "religion": "p",
+        "country": "nl1945",
+        "city": "Blokzijl",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "female",
+        "pids": [
+            "jan1944"
+        ],
+        "region": "nl-ovj",
+        "children": [
+            "roel",
+            "janny"
+        ],
+        "fid": "tiemen",
+        "mid": "jantien"
     },
     {
         "id": "marijke",

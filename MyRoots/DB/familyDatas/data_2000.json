@@ -167,5 +167,20 @@
         "gender": "female",
         "mid": "viviane",
         "fid": "george-andre"
+    },
+    {
+        "id": "ben",
+        "name": "(Illégitime) Ben Etonu De-Vries",
+        "family": "devries",
+        "born": "202?",
+        "death": "vivant(e)",
+        "religion": "?",
+        "country": "ug1962",
+        "city": "Kampala",
+        "region": "ug-kam",
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "mid": "elizabeth19xx",
+        "fid": "jan1944"
     }
 ]
