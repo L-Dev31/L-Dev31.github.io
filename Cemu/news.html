@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cemu - News</title>
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="news.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="gradient-overlay"></div>
+    <div class="banner-background">
+        <img src="assets/images/bgtest.png" alt="Background">
+    </div>
+    
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/images/cemu-logo.png" alt="Cemu Logo">
+                </a>
+            </div>
+            <div class="nav-overlay"></div>
+        </div>
+    </header>
+
+    <main>
+        <section class="news-section">
+            <div class="content-wrapper">
+                <div class="text-content news-content">
+                    <div class="news-header">
+                        <h1>Latest <span class="highlight">News</span></h1>
+                        <div class="news-categories">
+                            <div class="category-tags">
+                                <a href="#" class="category-tag active">
+                                    <i class="fa-solid fa-newspaper"></i>
+                                    All News
+                                </a>
+                                <a href="#" class="category-tag">
+                                    <i class="fa-solid fa-bullhorn"></i>
+                                    Announcements
+                                </a>
+                                <a href="#" class="category-tag">
+                                    <i class="fa-solid fa-code"></i>
+                                    Development
+                                </a>
+                                <a href="#" class="category-tag">
+                                    <i class="fa-solid fa-wrench"></i>
+                                    Updates
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="news-grid">
+                        <article class="news-card featured">
+                            <div class="news-image">
+                                <img src="assets/images/news1.png" alt="New Cemu Website">
+                                <div class="news-date">
+                                    <span class="day">25</span>
+                                    <span class="month">Dec</span>
+                                    <span class="year">2024</span>
+                                </div>
+                            </div>
+                            <div class="news-content">
+                                <div class="news-category">
+                                    <i class="fa-solid fa-newspaper"></i>
+                                    Announcement
+                                </div>
+                                <h2>A new website for Cemu</h2>
+                                <p>Cemu now has a new website with a fresh design, a new compatibility list and more.</p>
+                                <div class="news-meta">
+                                    <div class="author">
+                                        <img src="assets/images/team/crementif.jpg" alt="Crementif" class="author-avatar">
+                                        <span>By Crementif</span>
+                                    </div>
+                                    <a href="#" class="read-more">
+                                        Read More
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- Placeholder for future news articles -->
+                        <div class="news-placeholder">
+                            <i class="fa-solid fa-newspaper"></i>
+                            <p>More news coming soon!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-wave"></div>
+        <div class="footer-content">
+            <div class="footer-main">
+                <div class="footer-logo">
+                    <img src="assets/images/cemu-logo.png" alt="Cemu Logo">
+                    <p class="footer-tagline">Experience Wii U Games Like Never Before</p>
+                </div>
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#"><i class="fa-solid fa-book"></i> Getting Started</a></li>
+                            <li><a href="#"><i class="fa-solid fa-file-lines"></i> Wiki</a></li>
+                            <li><a href="#"><i class="fa-solid fa-circle-question"></i> Troubleshooting</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-group">
+                        <h4>Community</h4>
+                        <ul>
+                            <li><a href="#"><i class="fa-brands fa-discord"></i> Discord</a></li>
+                            <li><a href="#"><i class="fa-brands fa-reddit"></i> Reddit</a></li>
+                            <li><a href="#"><i class="fa-brands fa-github"></i> GitHub</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-group">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="#"><i class="fa-solid fa-shield-halved"></i> Privacy Policy</a></li>
+                            <li><a href="#"><i class="fa-solid fa-file-contract"></i> Terms of Use</a></li>
+                            <li><a href="#"><i class="fa-solid fa-gavel"></i> DMCA</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-divider"></div>
+            
+            <div class="footer-bottom">
+                <div class="copyright">
+                    <p>&copy; 2025 Cemu Team. All rights reserved. Cemu is not affiliated with Nintendo. Nintendo Wii U is a trademark of Nintendo.</p>
+                </div>
+                <div class="developer-signature">
+                    <a href="https://github.com/L-Dev31" target="_blank" class="developer-link">
+                        <span>Website by</span>
+                        <strong>L-Dev (Léo TOSKU)</strong>
+                        <div class="dev-avatar">
+                            <img src="assets/images/l-dev.png" alt="L-Dev">
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

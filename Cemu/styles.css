@@ -146,6 +146,27 @@ nav ul {
 
 .nav-link:hover::after, .nav-link.active::after { width: 100%; }
 
+.nav-link.external {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-link.external i {
+    font-size: 0.8rem;
+    transition: transform var(--transition-speed) ease;
+}
+
+.nav-link.external:hover i {
+    transform: translate(2px, -2px);
+}
+
+@media screen and (max-width: 768px) {
+    .nav-link.external {
+        justify-content: center;
+    }
+}
+
 .section {
     min-height: 100vh;
     padding: 120px 5% 80px;
