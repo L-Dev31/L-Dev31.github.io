@@ -1,0 +1,228 @@
+/* Wiki specific styles */
+.wiki-section {
+    padding: 120px 5% 80px;
+    min-height: 100vh;
+}
+
+.wiki-content {
+    max-width: none !important;
+    width: 100% !important;
+}
+
+.wiki-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.wiki-description {
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin: 1.5rem auto;
+    color: var(--text-light);
+}
+
+.wiki-stats {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.stat-badge, .contribute-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all var(--transition-speed) ease;
+}
+
+.stat-badge {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-light);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.contribute-badge {
+    background: var(--primary-gradient);
+    color: white;
+    cursor: pointer;
+}
+
+.contribute-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glow-shadow);
+}
+
+.wiki-grid {
+    display: grid;
+    gap: 3rem;
+    margin-top: 2rem;
+}
+
+.wiki-category h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.wiki-category h2 i {
+    font-size: 1.5rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.article-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.article-card {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all var(--transition-speed) ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.article-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--primary-gradient);
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+    z-index: 0;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.article-card:hover::before {
+    opacity: 0.05;
+}
+
+.article-icon {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    border-radius: 12px;
+    background: var(--primary-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+
+.article-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.article-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.article-content h3 {
+    color: var(--text-white);
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.article-content p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.article-card.featured {
+    background: linear-gradient(135deg, rgba(3, 169, 244, 0.1), transparent);
+    border-color: rgba(3, 169, 244, 0.2);
+}
+
+.article-card.featured .article-icon {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+}
+
+.update-badge {
+    display: inline-block;
+    margin-top: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(76, 175, 80, 0.1);
+    color: #4CAF50;
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+
+.article-card.wide {
+    grid-column: 1 / -1;
+}
+
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+    .wiki-section {
+        padding: 100px 1rem 2rem;
+    }
+
+    .wiki-header {
+        margin-bottom: 2rem;
+    }
+
+    .wiki-description {
+        font-size: 1rem;
+        margin: 1rem 0;
+    }
+
+    .wiki-grid {
+        gap: 2rem;
+    }
+
+    .wiki-category h2 {
+        font-size: 1.5rem;
+    }
+
+    .article-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .article-card {
+        padding: 1.25rem;
+    }
+
+    .article-icon {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+    }
+
+    .article-icon i {
+        font-size: 1.2rem;
+    }
+
+    .article-content h3 {
+        font-size: 1.1rem;
+    }
+
+    .wiki-stats {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
+}
