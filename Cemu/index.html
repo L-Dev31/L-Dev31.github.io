@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CemU - Nintendo WiiU Emulator</title>
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="CemU - Nintendo WiiU Emulator">
+    <meta property="og:description" content="Experience Wii U Games Like Never Before">
+    <meta property="og:image" content="https://l-dev31.github.io/Cemu/assets/images/banner.png"> 
+    <meta property="og:url" content="https://l-dev31.github.io/Cemu/"> 
+    <meta property="og:type" content="website">
+</head>
+<body>
+    <div class="gradient-overlay"></div>
+    <div class="banner-background">
+        
+        <img src="assets/images/bgtest.png" alt="Background">
+    </div>
+    
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="assets/images/CemU-logo.png" alt="CemU Logo"> <!-- Changé de .svg à .png -->
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home" class="nav-link active">Home</a></li>
+                    <li><a href="#download" class="nav-link">Download</a></li>
+                    <li><a href="#about" class="nav-link">About</a></li>
+                    <li><a href="#compatibility" class="nav-link">Compatibility</a></li>
+                    <li><a href="#faq" class="nav-link">FAQ</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="section">
+            <div class="content-wrapper">
+                <div class="text-content">
+                    <div class="hero-content">
+                        <h1>Experience Wii U Games<br><span class="highlight">Like Never Before</span></h1>
+                        <p class="hero-description">CEMU is a high-performance Nintendo Wii U emulator that offers stunning graphics, smooth gameplay, and extensive compatibility with the Wii U game library.</p>
+                        <div class="cta-buttons">
+                            <a href="#download" class="primary-button download-cta">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Download</span>
+                            </a>
+                            <a href="https://www.patreon.com/cemu" target="_blank" class="patreon-button">
+                                <i class="fab fa-patreon"></i>
+                                <span>Patreon</span>
+                            </a>
+                            <a href="#compatibility" class="secondary-button">
+                                <i class="fa-solid fa-gamepad"></i>
+                                <span>Compatibility</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-content">
+                    <div class="floating-image">
+                        <img src="assets/images/wiiu-console.png" alt="Nintendo Wii U Console" class="console-image">
+                        <div class="image-glow"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <div class="mouse">
+                    <div class="wheel"></div>
+                </div>
+                <div class="arrow"></div>
+            </div>
+        </section>
+
+        <section id="download" class="section section-wide">
+            <div class="content-wrapper">
+                <div class="text-content">
+                    <h2>Download <span class="highlight">CemU</span></h2>
+                    <p>Get the latest version of CemU and start enjoying your favorite Wii U games with enhanced performance and visuals.</p>
+                    
+                    <div class="download-options">
+                        <div class="download-card">
+                            <div class="download-icon">
+                                <img src="assets/images/windows-icon.png" alt="Windows Icon">
+                            </div>
+                            <h3>Windows</h3>
+                            <p>Version 2.6</p>
+                            <a href="https://github.com/cemu-project/Cemu/releases/download/v2.6/cemu-2.6-windows-x64.zip" class="download-button">Download</a>
+                        </div>
+                        
+                        <div class="download-card">
+                            <div class="download-icon">
+                                <img src="assets/images/linux-icon.png" alt="Ubuntu Icon">
+                            </div>
+                            <h3>Ubuntu</h3>
+                            <p>Version 2.6</p>
+                            <a href="https://github.com/cemu-project/Cemu/releases/download/v2.6/cemu-2.6-ubuntu-22.04-x64.zip" class="download-button">Download</a>
+                        </div>
+
+                        <div class="download-card">
+                            <div class="download-icon">
+                                <img src="assets/images/macos-icon.png" alt="macOS Icon">
+                            </div>
+                            <h3>macOS</h3>
+                            <p>Version 2.6</p>
+                            <a href="https://github.com/cemu-project/Cemu/releases/download/v2.6/cemu-2.6-macos-12-x64.dmg" class="download-button">Download</a>
+                        </div>
+                    </div>
+                    
+                    <div class="requirements">
+                        <h4>System Requirements</h4>
+                        <ul>
+                            <li><i class="fa-solid fa-computer"></i><strong>OS:</strong> Windows 10/11, Linux, or macOS</li>
+                            <li><i class="fa-solid fa-microchip"></i><strong>CPU:</strong> Intel or AMD Quad-core CPU</li>
+                            <li><i class="fa-solid fa-display"></i><strong>GPU:</strong> OpenGL 4.5 compatible GPU</li>
+                            <li><i class="fa-solid fa-memory"></i><strong>RAM:</strong> 8 GB+</li>
+                            <li><i class="fa-solid fa-hard-drive"></i><strong>Storage:</strong> 2 GB + game files</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="section section-wide">
+            <div class="content-wrapper">
+                <div class="text-content">
+                    <h2>About <span class="highlight">CemU</span></h2>
+                    <p>CemU is an experimental software to emulate Wii U applications on PC. Created with a focus on high performance and accuracy, CemU allows you to play your favorite Wii U titles with enhanced graphics and framerates.</p>
+                    
+                    <div class="features">
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-gauge-high"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h3>High Performance</h3>
+                                <p>Optimized codebase for smooth gameplay even on demanding titles.</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h3>Graphics Enhancements</h3>
+                                <p>Play at higher resolutions up to 4K with improved textures and effects.</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-gamepad"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h3>Controller Support</h3>
+                                <p>Compatible with a wide range of controllers including original Wii U peripherals.</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-code-branch"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h3>Active Development</h3>
+                                <p>Regularly updated with new features, optimizations, and compatibility improvements.</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-people-group"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h3>Active Community</h3>
+                                <p>Join our vibrant community for support, tips, and sharing experiences.</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h3>Safe & Secure</h3>
+                                <p>Open-source development ensures transparency and security.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="small-bottom-right">
+                        <img src="assets/images/about-icon.png" alt="About CemU Icon">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="compatibility" class="section">
+            <div class="content-wrapper">
+                <div class="text-content">
+                    <h2>Game <span class="highlight">Compatibility</span></h2>
+                    <p>CemU can run a wide range of Wii U titles with varying levels of compatibility. Our active development ensures that more games become playable with each release.</p>
+                    
+                    <div class="compatibility-stats">
+                        <div class="stat-card perfect">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-count">150+</div>
+                                <h3>Perfect</h3>
+                                <p>Games that run flawlessly at full speed</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card playable">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-gamepad"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-count">300+</div>
+                                <h3>Playable</h3>
+                                <p>Games with minor graphics or audio issues</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card developing">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-code"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-count">100+</div>
+                                <h3>In Progress</h3>
+                                <p>Games being actively improved</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cta-container">
+                        <a href="compatibility.html" class="primary-button compatibility-button">
+                            <i class="fa-solid fa-list-check"></i>
+                            View Full Compatibility List
+                        </a>
+                    </div>
+                </div>
+                <div class="image-content">
+                    <div class="floating-image">
+                        <img src="assets/images/game-boxes.png" alt="Game Compatibility" class="collage-image">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="section section-wide">
+            <div class="content-wrapper">
+                <div class="text-content">
+                    <h2>Frequently Asked <span class="highlight">Questions</span></h2>
+                    
+                    <div class="faq-container">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Is CemU legal to use?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>CemU itself is legal as an emulation software. However, you should only use game copies that you own legally. Downloading ROMs of games you don't own is illegal in most countries.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How do I improve performance?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Check our optimization guide for detailed instructions. Generally, using the latest GPU drivers, enabling threaded optimization, and adjusting graphics settings can help improve performance. For specific games, you may need to use custom graphic packs.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How can I contribute to CemU?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>You can contribute by reporting bugs, providing compatibility feedback, or supporting development financially through our Patreon page. If you're a developer, you can also contribute code by submitting pull requests on our GitHub repository.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Does CemU work with all Wii U games?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>CemU can run most Wii U games, but compatibility varies. Check our compatibility list to see how well specific games run. Our team is constantly working to improve compatibility with more titles.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>What controllers can I use with CemU?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>CemU supports a variety of controllers including original Wii U GamePads (with specific hardware), Xbox controllers, PlayStation controllers, and Nintendo Switch Pro controllers. Most USB and Bluetooth controllers are compatible.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How do I install games?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>See the official dumping guide.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>I updated from an older version of Cemu and some of my games disappeared?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>First off, double check all your settings. Especially the games and mlc folder path. If you are sure the paths are correct then it might be due to broken game files. Since Cemu 1.27.0 we no longer support so called "merged titles". Those are games where the update files have been copy&pasted over the base files. If you are affected then please reacquire unmerged files.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>I am getting an error when trying to run games in .wud or .wux format?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>These formats require the proper decryption key to be placed inside keys.txt. Since these keys are copyrighted we can't provide them with Cemu and it's up to the user to dump and set them up correctly. We recommend using games in .wua format which is much smaller and doesn't require keys.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Is there a games compatibility list?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>You can check the wiki for more information about compatibility and known problems with specific games.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How do I manually update/downgrade Cemu?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>If auto-updating isn't available (e.g. not using Windows or when going from 1.x.x to 2.0 experimental) you may want to update your existing Cemu installation manually. To do this, download the .zip of the version you want to use, and then extract all the files into your existing Cemu folder. When asked if you want to replace files click yes. Upgrading this way should keep your settings intact. We recommend making a backup copy of your Cemu folder first so that you can always easily restore it if something goes wrong.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How can I see the GamePad screen?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>The GamePad screen can be displayed by holding the Tab key or by mapping it to a controller button. You can also toggle between the screens by pressing Ctrl + Tab. Additionally, the GamePad view can be displayed in a second window.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Is there support for online functionality?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Cemu supports most online features and has experimental support for Pretendo (2.0 experimental releases only). In order to connect to official servers some system files must be dumped from a Wii U console. You can find a guide here.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>What are graphic packs?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Graphic packs are similar to game mods, which allow you to modify or customize various aspects of a game. Despite the name, they go well beyond just altering graphics. To use graphic packs, open the Graphic pack window via Options -> Graphic packs. Then hit the "Download latest community graphic packs" button in the bottom right corner of the window. After that you can configure and enable them.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How do I get the best performance?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>The default settings should give you a good starting point. For most games no further tweaks are necessary but we recommend using the Vulkan graphics API and enabling "Async shader compile" to reduce shader stutter. For a few games there are also graphic packs available which improve performance. For example Breath of the Wild has "FPS++" and Paper Mario Color Splash has an "Improve performance" pack.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Will ARM MacOS be supported? Will Metal API be supported?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Our experimental MacOS releases currently run on ARM via Rosetta emulation which comes at a performance cost. As a long term goal we plan on supporting ARM natively eventually. There are currently no plans to support Metal API directly.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Will Android support be added to Cemu?</h3>
+                                <div class="faq-toggle"></div>
+                            </div>
+                            <div class="faq-answer">
+                                <p>While Android is not on the roadmap, we are slowly moving towards supporting more platforms. If you find any websites advertising Cemu for Android ("Cemu APKs") be aware that it is a scam.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="small-bottom-right">
+                        <img src="assets/images/faq-icon.png" alt="FAQ Icon">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-wave"></div>
+        <div class="footer-content">
+            <div class="footer-main">
+                <div class="footer-logo">
+                    <img src="assets/images/CemU-logo.png" alt="CemU Logo">
+                    <p class="footer-tagline">Experience Wii U Games Like Never Before</p>
+                </div>
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#"><i class="fa-solid fa-book"></i> Getting Started</a></li>
+                            <li><a href="#"><i class="fa-solid fa-file-lines"></i> Wiki</a></li>
+                            <li><a href="#"><i class="fa-solid fa-circle-question"></i> Troubleshooting</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-group">
+                        <h4>Community</h4>
+                        <ul>
+                            <li><a href="#"><i class="fa-brands fa-discord"></i> Discord</a></li>
+                            <li><a href="#"><i class="fa-brands fa-reddit"></i> Reddit</a></li>
+                            <li><a href="#"><i class="fa-brands fa-github"></i> GitHub</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-group">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="#"><i class="fa-solid fa-shield-halved"></i> Privacy Policy</a></li>
+                            <li><a href="#"><i class="fa-solid fa-file-contract"></i> Terms of Use</a></li>
+                            <li><a href="#"><i class="fa-solid fa-gavel"></i> DMCA</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-divider"></div>
+            
+            <div class="footer-bottom">
+                <div class="copyright">
+                    <p>&copy; 2025 CemU Team. All rights reserved. CemU is not affiliated with Nintendo. Nintendo Wii U is a trademark of Nintendo.</p>
+                </div>
+                <div class="developer-signature">
+                    <a href="https://github.com/L-Dev31" target="_blank" class="developer-link">
+                        <span>Website by</span>
+                        <strong>L-Dev (Léo TOSKU)</strong>
+                        <div class="dev-avatar">
+                            <img src="assets/images/l-dev.png" alt="L-Dev">
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
