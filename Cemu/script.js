@@ -8,6 +8,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let isScrolling = false;
     let snapScrollEnabled = true;
+    
+    // Check if user is on mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    
+    // Disable snap scroll on mobile devices
+    if (isMobile) {
+        snapScrollEnabled = false;
+        // Remove scroll-snap CSS properties from sections
+        sections.forEach(section => {
+            section.style.scrollSnapAlign = "unset";
+            section.style.scrollSnapStop = "unset";
+        });
+    }
 
     // Navigation links click handler
     navLinks.forEach(link => {
@@ -41,6 +54,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let scrollTimeout;
 
     window.addEventListener('wheel', function(e) {
+        // Skip snap scrolling on mobile
+        if (isMobile) return;
+        
         // Check if we're past the compatibility section
         if (window.pageYOffset > (compatibilitySection?.offsetTop + compatibilitySection?.offsetHeight)) {
             snapScrollEnabled = false;
@@ -85,6 +101,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { passive: true });
 
     window.addEventListener('touchend', function(e) {
+        // Skip entirely on mobile devices
+        if (isMobile) return;
+        
         // Check if we're past the compatibility section
         if (window.pageYOffset > (compatibilitySection?.offsetTop + compatibilitySection?.offsetHeight)) {
             snapScrollEnabled = false;
@@ -183,6 +202,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+    }
+
+    // Hamburger menu functionality
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const nav = document.querySelector('nav');
+    const navOverlay = document.querySelector('.nav-overlay');
+    const body = document.body;
+
+    function toggleMenu() {
+        hamburgerMenu.classList.toggle('active');
+        nav.classList.toggle('active');
+        navOverlay.classList.toggle('active');
+        body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+    }
+
+    if (hamburgerMenu && nav && navOverlay) {
+        hamburgerMenu.addEventListener('click', toggleMenu);
+        navOverlay.addEventListener('click', toggleMenu);
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (nav.classList.contains('active')) {
+                    toggleMenu();
+                }
+            });
+        });
+
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && nav.classList.contains('active')) {
+                toggleMenu();
+            }
+        });
     }
 });
 
