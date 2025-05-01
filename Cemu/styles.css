@@ -180,7 +180,7 @@ nav ul {
     max-width: 600px;
     position: relative;
     z-index: 2;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
     padding: 2rem;
     border-radius: var(--border-radius);
     background: rgba(5, 6, 19, 0.5);
