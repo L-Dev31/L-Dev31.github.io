@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azahar - Modern Nintendo 3DS Emulator</title>
+    <meta name="description" content="Play your 3DS games on PC, Mac & Android with Azahar - a fast, accurate, and open-source Nintendo 3DS emulator.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="shortcut icon" href="favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <a href="#" class="logo">
+                    <img src="navlogo.png" alt="Azahar">
+                </a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#compatibility">Compatibility</a>
+                    <a href="#guides">Guides</a>
+                    <a href="#community">Community</a>
+                    <a href="blog.html">Blog <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                    <button id="downloadBtn" class="download-btn">
+                        <i class="fas fa-download"></i>
+                        <span id="downloadText">Download</span>
+                    </button>
+                </div>
+                <button class="menu-toggle"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container" style="height: 90vh; align-items: center; display: flex; flex-direction: column; justify-content: center; background-attachment: fixed;">
+                <img src="logo.png" alt="Azahar" style="width: 700px; margin-bottom: 50px;">
+                <p class="subtitle">Play your 3DS library on PC, Mac & Android</p>
+                <div class="cta-buttons">
+                    <button id="heroDownloadBtn" class="primary-btn">
+                        <i class="fas fa-download"></i>
+                        <span id="heroDownloadText">Download for Windows</span>
+                    </button>
+                    <a href="https://github.com/azahar-emulator" class="secondary-btn" target="_blank">
+                        <i class="fab fa-github"></i>
+                        <span>Star on GitHub</span>
+                        <span class="badge">3.2k</span>
+                    </a>
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value">95%</div>
+                        <div class="stat-label">Compatibility</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">2,500+</div>
+                        <div class="stat-label">Games Tested</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">60 FPS</div>
+                        <div class="stat-label">On Most Titles</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2>Why Choose Azahar?</h2>
+                <p class="section-subtitle">A modern, lightweight 3DS emulator focused on accuracy and performance</p>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <h3>Multi-Platform</h3>
+                        <p>Available on Windows, macOS, Linux, and Android devices</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-gamepad"></i></div>
+                        <h3>Controller Support</h3>
+                        <p>Seamless support for various game controllers and customizable controls</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <h3>Optimized Performance</h3>
+                        <p>Advanced rendering and optimization for smooth gameplay</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-code-branch"></i></div>
+                        <h3>Open Source</h3>
+                        <p>Free, transparent code that's constantly improved by the community</p>
+                    </div>
+                </div>
+                
+                <div class="special-feature">
+                    <div class="arctic-feature-content">
+                        <div class="arctic-image">
+                            <img src="https://raw.githubusercontent.com/azahar-emu/ArticBaseServer/refs/heads/main/images/logo.png" alt="Arctic Base Client">
+                        </div>
+                        <div class="arctic-description">
+                            <h3>Play Directly From Your 3DS with Arctic Base Client</h3>
+                            <p>Azahar features full Arctic Base protocol support, allowing you to broadcast games directly from your 3DS console to your PC - no game dumps required!</p>
+                            
+                            <div class="arctic-features-list">
+                                <div class="arctic-feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Play your physical and digital games without dumping</span>
+                                </div>
+                                <div class="arctic-feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Access the 3DS home menu and system apps</span>
+                                </div>
+                                <div class="arctic-feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Auto-sync save data between console and emulator</span>
+                                </div>
+                                <div class="arctic-feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Use your 3DS as an input controller</span>
+                                </div>
+                                <div class="arctic-feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>No need to dump encryption keys</span>
+                                </div>
+                                <div class="arctic-feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Enjoy your games in HD while preserving your console</span>
+                                </div>
+                            </div>
+                            
+                            <a href="#" class="arctic-learn-more">Learn how to use Arctic Base <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="compatibility" class="compatibility">
+            <div class="container">
+                <h2>Game Compatibility</h2>
+                <p class="section-subtitle">Extensive compatibility across the 3DS library</p>
+                <div class="game-grid">
+                    <div class="game-card">
+                        <img src="https://www.nintendo.com/eu/media/images/10_share_images/games_15/nintendo_3ds_25/SI_3DS_TheLegendOfZeldaALinkBetweenWorlds_image1600w.jpg" alt="Game Screenshot">
+                        <div class="game-info">
+                            <span class="status perfect"><i class="fas fa-check-circle"></i> Perfect</span>
+                            <span class="fps"><i class="fas fa-tachometer-alt"></i> 60 FPS</span>
+                            <h4>The Legend of Zelda: A Link Between Worlds</h4>
+                        </div>
+                    </div>
+                    <div class="game-card">
+                        <img src="https://www.nintendo.com/eu/media/images/10_share_images/games_15/nintendo_3ds_25/H2x1_3DS_SuperMario3DLand.jpg" alt="Game Screenshot">
+                        <div class="game-info">
+                            <span class="status perfect"><i class="fas fa-check-circle"></i> Perfect</span>
+                            <span class="fps"><i class="fas fa-tachometer-alt"></i> 60 FPS</span>
+                            <h4>Super Mario 3D Land</h4>
+                        </div>
+                    </div>
+                    <div class="game-card">
+                        <img src="https://www.nintendo.com/eu/media/images/10_share_images/games_15/nintendo_3ds_25/SI_3DS_FireEmblemAwakening.jpg" alt="Game Screenshot">
+                        <div class="game-info">
+                            <span class="status playable"><i class="fas fa-play-circle"></i> Playable</span>
+                            <span class="fps"><i class="fas fa-tachometer-alt"></i> 30-60 FPS</span>
+                            <h4>Fire Emblem Awakening</h4>
+                        </div>
+                    </div>
+                    <div class="game-card">
+                        <img src="https://www.nintendo.com/eu/media/images/10_share_images/games_15/nintendo_3ds_25/H2x1_3DS_PokemonSun_frFR.jpg" alt="Game Screenshot">
+                        <div class="game-info">
+                            <span class="status playable"><i class="fas fa-play-circle"></i> Playable</span>
+                            <span class="fps"><i class="fas fa-tachometer-alt"></i> 30 FPS</span>
+                            <h4>Pokémon Sun</h4>
+                        </div>
+                    </div>
+                    <div class="game-card">
+                        <img src="https://i.ytimg.com/vi/cbkgc5Mefrk/maxresdefault.jpg" alt="Game Screenshot">
+                        <div class="game-info">
+                            <span class="status playable"><i class="fas fa-play-circle"></i> Playable</span>
+                            <span class="fps"><i class="fas fa-tachometer-alt"></i> 30 FPS</span>
+                            <h4>New Super Mario Bros. 2</h4>
+                        </div>
+                    </div>
+                    <div class="game-card">
+                        <img src="https://www.nintendo.com/eu/media/images/10_share_images/games_15/nintendo_3ds_25/H2x1_3DS_AnimalCrossingNewLeaf_WelcomeAmiibo.jpg" alt="Game Screenshot">
+                        <div class="game-info">
+                            <span class="status playable"><i class="fas fa-play-circle"></i> Playable</span>
+                            <span class="fps"><i class="fas fa-tachometer-alt"></i> 30 FPS</span>
+                            <h4>Animal Crossing New Leaf</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="guides" class="guides">
+            <div class="container">
+                <h2>Quick Guides</h2>
+                <p class="section-subtitle">Everything you need to know to get started</p>
+                <div class="guides-grid">
+                    <a href="#" class="guide-card">
+                        <div class="guide-icon"><i class="fas fa-rocket"></i></div>
+                        <h3>Getting Started</h3>
+                        <p>Learn how to install and configure Azahar on your device</p>
+                    </a>
+                    <a href="#" class="guide-card">
+                        <div class="guide-icon"><i class="fas fa-download"></i></div>
+                        <h3>Dumping Your Games</h3>
+                        <p>Legally dump your 3DS games to use with Azahar</p>
+                    </a>
+                    <a href="#" class="guide-card">
+                        <div class="guide-icon"><i class="fas fa-gamepad"></i></div>
+                        <h3>Controller Setup</h3>
+                        <p>Configure controllers and customize button mappings</p>
+                    </a>
+                    <a href="#" class="guide-card">
+                        <div class="guide-icon"><i class="fas fa-bolt"></i></div>
+                        <h3>Performance Tips</h3>
+                        <p>Tips and tricks to get the best performance</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="community" class="discord-section">
+            <div class="discord-blobs">
+                <div class="blob blob-1"></div>
+                <div class="blob blob-2"></div>
+                <div class="blob blob-3"></div>
+            </div>
+            <div class="container">
+                <h2>Join Our Community</h2>
+                <p class="section-subtitle">Connect with other Azahar users, get help, and contribute to the project</p>
+                
+                <div class="discord-card">
+                    <div class="discord-header">
+                        <div class="discord-logo">
+                            <i class="fab fa-discord"></i>
+                        </div>
+                        <div class="discord-info">
+                            <h3>Azahar Discord Server</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="discord-preview">
+                        <div class="discord-channels">
+                            <div class="channel-category">
+                                <span><i class="fas fa-chevron-down"></i> AZAHAR</span>
+                                <div class="channel"><i class="fas fa-hashtag"></i> rules</div>
+                                <div class="channel"><i class="fas fa-hashtag"></i> news</div>
+                                <div class="channel"><i class="fas fa-hashtag"></i> announcements</div>
+                            </div>
+                            <div class="channel-category">
+                                <span><i class="fas fa-chevron-down"></i> General</span>
+                                <div class="channel"><i class="fas fa-hashtag"></i> chat</div>
+                                <div class="channel"><i class="fas fa-circle"></i> off-topic</div>
+                                <div class="channel"><i class="fas fa-hashtag"></i> content</div>
+                            </div>
+                            <div class="channel-category">
+                                <span><i class="fas fa-chevron-down"></i> Support</span>
+                                <div class="channel"><i class="fas fa-hashtag"></i> help</div>
+                                <div class="channel"><i class="fas fa-hashtag"></i> bugs</div>
+                            </div>
+                            <div class="channel-category">
+                                <span><i class="fas fa-chevron-down"></i> Development</span>
+                                <div class="channel"><i class="fas fa-hashtag"></i> github</div>
+                                <div class="channel"><i class="fas fa-hashtag"></i> dev-chat</div>
+                            </div>
+                        </div>
+                    
+                        <div class="discord-chat">
+                            <div class="chat-message">
+                                <div class="message-avatar">
+                                    <img src="https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg" alt="User Avatar">
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-header">
+                                        <span class="username">Unknown</span>
+                                        <span class="timestamp">Today at 10:25 AM</span>
+                                    </div>
+                                    <div class="message-text">Just got Zelda running at 60fps on my laptop! This emulator is amazing! 🎮</div>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-message">
+                                <div class="message-avatar">
+                                    <img src="https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg" alt="User Avatar">
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-header">
+                                        <span class="username">Unknown</span>
+                                        <span class="timestamp">Today at 10:26 AM</span>
+                                    </div>
+                                    <div class="message-text">Nice! Have you tried the new update? They fixed that audio bug in Pokémon.</div>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-message">
+                                <div class="message-avatar">
+                                    <img src="https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg" alt="User Avatar">
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-header">
+                                        <span class="username">Unknown</span>
+                                        <span class="timestamp">Today at 10:28 AM</span>
+                                    </div>
+                                    <div class="message-text">Glad to see you're enjoying the emulator! We're working on more performance improvements for the next release. 👍</div>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-message typing">
+                                <div class="typing-indicator">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <div class="typing-text">Unknown is typing...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="discord-footer">
+                        <div class="discord-features">
+                            <div class="discord-feature">
+                                <i class="fas fa-comments"></i>
+                                <span>24/7 Community Support</span>
+                            </div>
+                            <div class="discord-feature">
+                                <i class="fas fa-code"></i>
+                                <span>Developer Insights</span>
+                            </div>
+                            <div class="discord-feature">
+                                <i class="fas fa-gamepad"></i>
+                                <span>Game Setup Help</span>
+                            </div>
+                        </div>
+                        
+                        <a href="https://discord.com/invite/4ZjMpAp3M6" class="discord-join-btn" target="_blank">
+                            <i class="fab fa-discord"></i>
+                            Join Our Discord
+                        </a>
+                    </div>
+                </div>
+            </div>
+                
+                <div class="community-links">
+                    <a href="https://github.com/azahar-emulator" class="community-link github-link" target="_blank">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub Repository</span>
+                        <span class="community-link-description">Contribute code or report bugs</span>
+                    </a>
+                    <a href="https://patreon.com/azahar" class="community-link patreon-link" target="_blank">
+                        <i class="fab fa-patreon"></i>
+                        <span>Patreon</span>
+                        <span class="community-link-description">Support development and get perks</span>
+                    </a>
+                    <a href="#" class="community-link reddit-link" target="_blank">
+                        <i class="fab fa-reddit-alien"></i>
+                        <span>Reddit</span>
+                        <span class="community-link-description">Discussions and showcases</span>
+                    </a>
+                </div>
+        </section>
+
+        <section class="cta">
+            <div class="container">
+                <h2 class="credits-title">Credits</h2>
+                <div class="credits-grid">
+                    <!-- Première ligne -->
+                    <div class="credits-member">
+                        <div class="member-avatar" style="background-image: url('https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg')">
+                            <div class="member-outline director"></div>
+                        </div>
+                        <div class="member-info">
+                            <h4>Unknown</h4>
+                            <span class="role director">Director</span>
+                        </div>
+                    </div>
+                    <div class="credits-member">
+                        <div class="member-avatar" style="background-image: url('https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg')">
+                            <div class="member-outline lead-dev"></div>
+                        </div>
+                        <div class="member-info">
+                            <h4>Unknown</h4>
+                            <span class="role lead-dev">Lead Developer</span>
+                        </div>
+                    </div>
+                    <div class="credits-member">
+                        <div class="member-avatar" style="background-image: url('https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg')">
+                            <div class="member-outline core"></div>
+                        </div>
+                        <div class="member-info">
+                            <h4>Unknown</h4>
+                            <span class="role core">Core Engine</span>
+                        </div>
+                    </div>
+                    <!-- Deuxième ligne -->
+                    <div class="credits-member">
+                        <div class="member-avatar" style="background-image: url('https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg')">
+                            <div class="member-outline graphics"></div>
+                        </div>
+                        <div class="member-info">
+                            <h4>Unknown</h4>
+                            <span class="role graphics">Graphics</span>
+                        </div>
+                    </div>
+                    <div class="credits-member">
+                        <div class="member-avatar" style="background-image: url('https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg')">
+                            <div class="member-outline audio"></div>
+                        </div>
+                        <div class="member-info">
+                            <h4>Unknown</h4>
+                            <span class="role audio">Audio</span>
+                        </div>
+                    </div>
+                    <div class="credits-member">
+                        <div class="member-avatar" style="background-image: url('https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg')">
+                            <div class="member-outline ui-ux"></div>
+                        </div>
+                        <div class="member-info">
+                            <h4>Unknown</h4>
+                            <span class="role ui-ux">UI/UX</span>
+                        </div>
+                    </div>
+                    <!-- Troisième ligne -->
+                    <div class="credits-member">
+                        <div class="member-avatar" style="background-image: url('https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg')">
+                            <div class="member-outline community"></div>
+                        </div>
+                        <div class="member-info">
+                            <h4>Unknown</h4>
+                            <span class="role community">Researches</span>
+                        </div>
+                    </div>
+                    <div class="credits-member">
+                        <div class="member-avatar" style="background-image: url('https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg')">
+                            <div class="member-outline moderator"></div>
+                        </div>
+                        <div class="member-info">
+                            <h4>Unknown</h4>
+                            <span class="role moderator">Moderator</span>
+                        </div>
+                    </div>
+                    <div class="credits-member">
+                        <div class="member-avatar" style="background-image: url('https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg')">
+                            <div class="member-outline contributor"></div>
+                        </div>
+                        <div class="member-info">
+                            <h4>Unknown</h4>
+                            <span class="role contributor">Contributor</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Azahar</h3>
+                    <p>A modern, open-source Nintendo 3DS emulator focused on accuracy and performance.</p>
+                    <div class="social-links">
+                        <a href="https://discord.com/invite/4ZjMpAp3M6" target="_blank" class="social-link"><i class="fab fa-discord"></i></a>
+                        <a href="https://github.com/azahar-emu/azahar" target="_blank" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="https://patreon.com/azahar" target="_blank" class="social-link"><i class="fab fa-patreon"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Emulator</h4>
+                    <a href="#features"><i class="fas fa-chevron-right"></i> Features</a>
+                    <a href="#compatibility"><i class="fas fa-chevron-right"></i> Compatibility</a>
+                    <a href="#guides"><i class="fas fa-chevron-right"></i> Guides</a>
+                    <a href="#community"><i class="fas fa-chevron-right"></i> Community</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <a href="https://discord.com/invite/4ZjMpAp3M6"><i class="fab fa-discord"></i> Discord</a>
+                    <a href="https://github.com/azahar-emu/azahar"><i class="fab fa-github"></i> GitHub</a>
+                    <a href="https://patreon.com/azahar"><i class="fab fa-patreon"></i> Patreon</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a>
+                    <a href="https://github.com/azahar-emu/azahar/issues"><i class="fas fa-bug"></i> Report a Bug</a>
+                    <a href="mailto:contact@azahar-emu.org"><i class="fas fa-envelope"></i> Contact</a>
+                    <a href="#legal"><i class="fas fa-gavel"></i> Legal</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Azahar Emulator. All rights reserved.</p>
+                <p>Nintendo 3DS is a trademark of Nintendo Co., Ltd. Azahar is not affiliated with Nintendo in any way.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
