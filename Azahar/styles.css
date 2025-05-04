@@ -328,7 +328,9 @@ h2 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
     position: relative;
-    display: inline-block;
+    display: block;
+    text-align: center;
+    width: 100%;
 }
 
 h2::after {
@@ -922,12 +924,6 @@ footer {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.discord-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.4);
-}
-
 /* Discord Header */
 .discord-header {
     display: flex;
@@ -1288,6 +1284,8 @@ footer {
     align-items: center;
     margin-left: auto;
     margin-right: auto;
+    position: relative;
+    z-index: 5;
 }
 
 .community-link {
@@ -1300,12 +1298,7 @@ footer {
     align-items: center;
     text-align: center;
     transition: all 0.3s ease;
-}
-
-.community-link:hover {
-    transform: translateY(-5px);
-    background: rgba(0, 0, 0, 0.25);
-    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text);
 }
 
 .community-link i {
