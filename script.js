@@ -254,8 +254,7 @@ document.addEventListener('scroll', function() {
     galleryItems.forEach(item => {
         const img = item.querySelector('.gallery-img');
         if (!img) return;
-        // Calculate the offset for the parallax effect
-        const speed = 2; // You can adjust this value for more/less effect
+        const speed = 2;
         const offset = item.getBoundingClientRect().top + scrollPosition;
         const imgYOffset = (scrollPosition - offset) / speed;
         img.style.transform = `translateY(${imgYOffset}px)`;
