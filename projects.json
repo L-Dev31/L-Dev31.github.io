@@ -1,0 +1,60 @@
+{
+  "projects": [
+    {
+      "id": "azhr",
+      "title": "Azahar n3DS Emulator",
+      "creator": "PabloMK7 & Opensauce",
+      "category": "commission", 
+      "path": "Azahar",
+      "noPhone": false
+    },
+    {
+      "id": "cemu",
+      "title": "Cemu WiiU Emulator",
+      "creator": "Exzap",
+      "category": "commission",
+      "path": "Cemu",
+      "noPhone": false
+    },
+    {
+      "id": "j3dt",
+      "title": "J3D Translator",
+      "creator": "Léo Tosku",
+      "category": "personal-project",
+      "path": "J3DTranslator",
+      "noPhone": true
+    },
+    {
+      "id": "dssm",
+      "title": "DeepSeek Status Monitor",
+      "creator": "Léo Tosku",
+      "category": "personal-project",
+      "path": "DeepSeekStatusMonitor",
+      "noPhone": false
+    },
+    {
+      "id": "apmr",
+      "title": "Appartement Marina Royale",
+      "creator": "Viviane De-Vries",
+      "category": "commission",
+      "path": "AppartementMarinaRoyale",
+      "noPhone": false
+    },
+    {
+      "id": "smag",
+      "title": "Super Mario Another Galaxy",
+      "creator": "SMAG Team",
+      "category": "commission",
+      "path": "smag",
+      "noPhone": false
+    },
+    {
+      "id": "wlux",
+      "title": "Wine Lux (Fictif)",
+      "creator": "Léo Tosku",
+      "category": "personal-project",
+      "path": "winelux",
+      "noPhone": false
+    }
+  ]
+}
