@@ -2,740 +2,125 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rayon - Révolutionner le commerce en Outre-mer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rayon - Site en développement</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="Images/favicon.png">
-    <link rel="stylesheet" href="styles.css">
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://unpkg.com/three@0.132.2/build/three.module.js"
+    <link rel="icon" type="image/png" href="Images/favicon.png">    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+            text-align: center;
         }
-    }
-    </script>
+        
+        .development-notice {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            margin: 15px;
+        }          .logo {
+            max-width: 200px;
+            display: block;
+            margin: 0 auto 30px auto;
+            width: 100%;
+            height: auto;
+        }
+        
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2d3748;
+            font-size: 28px;
+        }
+        
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 30px;
+        }
+        
+        .status-badge {
+            background-color: #edf2f7;
+            color: #4299e1;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .contact {
+            font-size: 16px;
+            margin-top: 40px;
+            color: #718096;
+        }
+        
+        .contact a {
+            color: #4299e1;
+            text-decoration: none;
+        }
+          .contact a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive design */
+        @media screen and (max-width: 480px) {
+            .development-notice {
+                padding: 25px;
+                margin: 10px;
+                width: 95%;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+            
+            p {
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+            
+            .logo {
+                max-width: 160px;
+                margin-bottom: 20px;
+            }
+            
+            .status-badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+            
+            .contact {
+                font-size: 14px;
+                margin-top: 30px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <a href="#" class="nav-logo">
-                <img src="Images/logo.png" alt="Rayon Logo">
-            </a>
-            <div class="nav-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="#opportunity" class="nav-link">Opportunité</a></li>
-                <li><a href="#market" class="nav-link">Marché</a></li>
-                <li><a href="#financials" class="nav-link">Financier</a></li>
-                <li><a href="#vision" class="nav-link">Vision</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
+    <div class="development-notice">
+        <img src="Images/logo.png" alt="Rayon Logo" class="logo">
+        <span class="status-badge">En développement</span>
+        <h1>Site en cours de construction</h1>
+        <p>La page de présentation de Rayon est actuellement en cours de développement. Merci de votre patience.</p>
+        
+        <div class="contact">
+            Pour toute information, contactez : <a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <span class="status-badge">En développement</span>
-                <h1>L'économie circulaire adaptée aux <span class="accent">Outre-mer français</span></h1>
-                <p class="hero-subtitle">Rayon connecte vendeurs et acheteurs locaux dans les territoires ultramarins, répondant aux défis uniques de ces marchés avec une solution spécifiquement conçue.</p>
-                <div class="cta-group">
-                    <a href="#contact" class="btn btn-primary">Investir dans Rayon</a>
-                    <a href="#demo" class="btn btn-secondary">Explorer la solution</a>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="sphere-container">
-                    <canvas id="sphereCanvas"></canvas>
-                    <div class="glow-effect"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Partners Section -->
-    <section class="partners">
-        <div class="container">
-            <p class="partners-intro">En partenariat avec</p>
-            <div class="partners-grid">
-                <div class="partner-item">
-                    <img src="Images/svg/CID.svg" alt="CID">
-                </div>
-                <div class="partner-item">
-                    <img src="Images/svg/UFL.svg" alt="UpForLife">
-                </div>
-                <div class="partner-item">
-                    <img src="Images/svg/LA1.svg" alt="LA1">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Opportunity Section (For Investors) -->
-    <section id="opportunity" class="section opportunity">
-        <div class="container">
-            <div class="section-header">
-                <h2>Opportunité d'investissement</h2>
-                <p class="section-subtitle">Un marché de niche à fort potentiel de croissance</p>
-            </div>
-            
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="metric-content">
-                        <h3>1.12M</h3>
-                        <p>Marché adressable</p>
-                    </div>
-                </div>
-                
-                <div class="metric-card">
-                    <div class="metric-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="metric-content">
-                        <h3>150%</h3>
-                        <p>Croissance Y2</p>
-                    </div>
-                </div>
-                
-                <div class="metric-card">
-                    <div class="metric-icon">
-                        <i class="fas fa-coins"></i>
-                    </div>
-                    <div class="metric-content">
-                        <h3>531K€</h3>
-                        <p>Profit Y3</p>
-                    </div>
-                </div>
-                
-                <div class="metric-card">
-                    <div class="metric-icon">
-                        <i class="fas fa-percent"></i>
-                    </div>
-                    <div class="metric-content">
-                        <h3>500%</h3>
-                        <p>ROI à 5 ans</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="financials-preview">
-                <div class="financials-chart">
-                    <canvas id="revenueChart"></canvas>
-                </div>
-                <div class="financials-highlight">
-                    <h3>Modèle économique multicanal</h3>
-                    <ul class="highlighted-list">
-                        <li><span class="check-icon"></span>Abonnements pro à 2,99€/mois</li>
-                        <li><span class="check-icon"></span>Commission 8% sur transactions</li>
-                        <li><span class="check-icon"></span>Options de mise en avant (1,99€)</li>
-                        <li><span class="check-icon"></span>Partenariats locaux</li>
-                    </ul>
-                    <p>Seuil de rentabilité atteint dès le 16ème mois d'exploitation</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Market Analysis Section -->
-    <section id="market" class="section market-analysis">
-        <div class="container">
-            <div class="section-header">
-                <h2>Analyse de marché</h2>
-                <p class="section-subtitle">Les territoires d'Outre-mer, un écosystème unique</p>
-            </div>
-            
-            <div class="market-insights">
-                <div class="market-map">
-                    <div class="map-stat reunion">
-                        <span class="territory">La Réunion</span>
-                        <span class="population">860K</span>
-                    </div>
-                    <div class="map-stat martinique">
-                        <span class="territory">Martinique</span>
-                        <span class="population">360K</span>
-                    </div>
-                    <div class="map-stat guadeloupe">
-                        <span class="territory">Guadeloupe</span>
-                        <span class="population">390K</span>
-                    </div>
-                    <div class="map-stat guyane">
-                        <span class="territory">Guyane</span>
-                        <span class="population">290K</span>
-                    </div>
-                    <div class="map-stat polynesie">
-                        <span class="territory">Polynésie</span>
-                        <span class="population">280K</span>
-                    </div>
-                </div>
-                
-                <div class="market-facts">
-                    <div class="fact-card">
-                        <h3>2.8M</h3>
-                        <p>Population totale ultramarine</p>
-                    </div>
-                    <div class="fact-card">
-                        <h3>85%</h3>
-                        <p>Taux de pénétration internet</p>
-                    </div>
-                    <div class="fact-card">
-                        <h3>+15-45%</h3>
-                        <p>Surcoût moyen des produits</p>
-                    </div>
-                    <div class="fact-card">
-                        <h3>28%</h3>
-                        <p>Achats d'occasion en ligne</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="challenge-solution">
-                <div class="challenge-item">
-                    <h3>Défis spécifiques</h3>
-                    <ul>
-                        <li>Coût de la vie élevé</li>
-                        <li>Pouvoir d'achat limité</li>
-                        <li>Chaînes logistiques complexes</li>
-                        <li>Marchés fragmentés</li>
-                    </ul>
-                </div>
-                <div class="solution-item">
-                    <h3>Notre solution</h3>
-                    <p>Rayon est la première plateforme d'annonces pensée spécifiquement pour les territoires ultramarins, avec un système de points innovant favorisant l'engagement et la fidélisation.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Financial Projections Section -->
-    <section id="financials" class="section financials">
-        <div class="container">
-            <div class="section-header">
-                <h2>Projections financières</h2>
-                <p class="section-subtitle">Un modèle rentable avec forte croissance sur 3 ans</p>
-            </div>
-            
-            <div class="financial-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Indicateur</th>
-                            <th>Année 1</th>
-                            <th>Année 2</th>
-                            <th>Année 3</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Utilisateurs inscrits</td>
-                            <td>24 000</td>
-                            <td>60 000</td>
-                            <td>120 000</td>
-                        </tr>
-                        <tr>
-                            <td>Utilisateurs actifs mensuels</td>
-                            <td>14 400</td>
-                            <td>36 000</td>
-                            <td>72 000</td>
-                        </tr>
-                        <tr>
-                            <td>Volume de transactions (€)</td>
-                            <td>4.2M</td>
-                            <td>10.5M</td>
-                            <td>21.1M</td>
-                        </tr>
-                        <tr>
-                            <td>Total des revenus (€)</td>
-                            <td>480K</td>
-                            <td>1.2M</td>
-                            <td>2.45M</td>
-                        </tr>
-                        <tr>
-                            <td>Résultat net (€)</td>
-                            <td>-156K</td>
-                            <td>124K</td>
-                            <td>532K</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="funding-needs">
-                <h3>Besoin de financement</h3>
-                <div class="funding-chart">
-                    <canvas id="fundingChart"></canvas>
-                </div>
-                <div class="funding-breakdown">
-                    <div class="breakdown-item">
-                        <span class="breakdown-label">Développement initial</span>
-                        <span class="breakdown-value">120 000€</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span class="breakdown-label">Couverture pertes Y1</span>
-                        <span class="breakdown-value">160 000€</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span class="breakdown-label">Fonds de roulement</span>
-                        <span class="breakdown-value">20 000€</span>
-                    </div>
-                    <div class="breakdown-item total">
-                        <span class="breakdown-label">Total</span>
-                        <span class="breakdown-value">300 000€</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Vision and Product Section (For Collaborators) -->
-    <section id="vision" class="section vision">
-        <div class="container">
-            <div class="section-header">
-                <h2>Notre Vision</h2>
-                <p class="section-subtitle">Une plateforme adaptée aux spécificités ultramarines</p>
-            </div>
-            
-            <div class="vision-content">
-                <div class="vision-image">
-                    <div class="device-mockup">
-                        <div class="carousel">
-                            <div class="carousel-inner">
-                                <!-- Item 1 -->
-                                <div class="carousel-item active">
-                                    <img src="https://images.pexels.com/photos/3288100/pexels-photo-3288100.png" alt="Immobilier">
-                                    <div class="carousel-text">
-                                        <h2>Immobilier</h2>
-                                        <p>Trouvez votre logement idéal dans la région de vos rêves</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- Item 2 -->
-                                <div class="carousel-item">
-                                    <img src="https://images.pexels.com/photos/927022/pexels-photo-927022.jpeg" alt="Emploi">
-                                    <div class="carousel-text">
-                                        <h2>Emploi</h2>
-                                        <p>Des opportunités locales adaptées à vos compétences</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- Item 3 -->
-                                <div class="carousel-item">
-                                    <img src="https://images.pexels.com/photos/6197046/pexels-photo-6197046.jpeg" alt="Services">
-                                    <div class="carousel-text">
-                                        <h2>Services</h2>
-                                        <p>Offrez ou trouvez des services près de chez vous</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="carousel-controls">
-                                <button class="prev-btn">&larr;</button>
-                                <button class="next-btn">&rarr;</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="vision-features">
-                    <h3>Une approche innovante</h3>
-                    <div class="features-list">
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="feature-text">
-                                <h4>Système de points</h4>
-                                <p>Récompense l'engagement et favorise la fidélisation</p>
-                            </div>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-globe"></i>
-                            </div>
-                            <div class="feature-text">
-                                <h4>Focus local</h4>
-                                <p>100% dédié aux habitants et entreprises des Outre-mer</p>
-                            </div>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <div class="feature-text">
-                                <h4>Sécurité</h4>
-                                <p>Paiements sécurisés et système d'évaluation</p>
-                            </div>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-store"></i>
-                            </div>
-                            <div class="feature-text">
-                                <h4>Boutiques Pro</h4>
-                                <p>Fonctionnalités avancées pour les professionnels locaux</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="content-categories">
-                <h3>Catégories les plus recherchées</h3>
-                <div class="category-grid">
-                    <div class="category-item">
-                        <div class="category-icon"><i class="fas fa-laptop"></i></div>
-                        <h4>Électronique</h4>
-                        <p>22%</p>
-                    </div>
-                    
-                    <div class="category-item">
-                        <div class="category-icon"><i class="fas fa-couch"></i></div>
-                        <h4>Mobilier</h4>
-                        <p>18%</p>
-                    </div>
-                    
-                    <div class="category-item">
-                        <div class="category-icon"><i class="fas fa-tshirt"></i></div>
-                        <h4>Vêtements</h4>
-                        <p>15%</p>
-                    </div>
-                    
-                    <div class="category-item">
-                        <div class="category-icon"><i class="fas fa-blender"></i></div>
-                        <h4>Électroménager</h4>
-                        <p>12%</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- User Value Proposition Section -->
-    <section id="demo" class="section user-value">
-        <div class="container">
-            <div class="section-header">
-                <h2>Une solution pour tous</h2>
-                <p class="section-subtitle">Offres adaptées à chaque besoin</p>
-            </div>
-            
-            <div class="pricing-cards">
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3>Gratuit</h3>
-                        <p class="pricing-price">0€<span>/mois</span></p>
-                    </div>
-                    <div class="pricing-features">
-                        <ul>
-                            <li>5 annonces simultanées</li>
-                            <li>Messagerie intégrée</li>
-                            <li>Notifications de recherche</li>
-                            <li>Système de points basique</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="pricing-card featured">
-                    <div class="pricing-badge">Populaire</div>
-                    <div class="pricing-header">
-                        <h3>Premium</h3>
-                        <p class="pricing-price">1,99€<span>/mois</span></p>
-                    </div>
-                    <div class="pricing-features">
-                        <ul>
-                            <li>20 annonces simultanées</li>
-                            <li>Option "Urgent" prioritaire</li>
-                            <li>+30% de points gagnés</li>
-                            <li>Statistiques de vos annonces</li>
-                            <li>Support prioritaire</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3>Pro</h3>
-                        <p class="pricing-price">9,99€<span>/mois</span></p>
-                    </div>
-                    <div class="pricing-features">
-                        <ul>
-                            <li>Annonces illimitées</li>
-                            <li>Boutique personnalisable</li>
-                            <li>Statistiques avancées</li>
-                            <li>Commission réduite (-2%)</li>
-                            <li>API pour intégration</li>
-                            <li>Support dédié</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="testimonials">
-                <h3>Ce que nos testeurs en disent</h3>
-                <div class="testimonial-carousel">
-                    <div class="testimonial-item active">
-                        <div class="testimonial-content">
-                            <p>"Une solution qui répond parfaitement aux besoins des ultramarins. Le système de points est vraiment motivant!"</p>
-                        </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar"></div>
-                            <div class="author-info">
-                                <h4>Marie L.</h4>
-                                <p>La Réunion</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="testimonial-item">
-                        <div class="testimonial-content">
-                            <p>"Enfin une plateforme qui comprend les spécificités de nos territoires. Les options de livraison locales font toute la différence."</p>
-                        </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar"></div>
-                            <div class="author-info">
-                                <h4>Thomas D.</h4>
-                                <p>Martinique</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="testimonial-item">
-                        <div class="testimonial-content">
-                            <p>"L'abonnement Pro a transformé mon activité d'artisanat local. Les statistiques m'aident à mieux comprendre ma clientèle."</p>
-                        </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar"></div>
-                            <div class="author-info">
-                                <h4>Sophie M.</h4>
-                                <p>Polynésie française</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-dots">
-                    <span class="dot active"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="section faq">
-        <div class="container">
-            <div class="section-header">
-                <h2>Questions fréquentes</h2>
-                <p class="section-subtitle">Tout ce que vous devez savoir sur Rayon</p>
-            </div>
-            
-            <div class="faq-grid">
-                <!-- Question 1 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>Qu'est-ce que Rayon ?</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Rayon est une plateforme de petites annonces conçue spécifiquement pour les territoires d'Outre-mer français. Elle permet de publier, consulter et échanger des annonces dans divers domaines tels que l'immobilier, l'emploi, les services, le vestimentaire et bien plus encore.</p>
-                    </div>
-                </div>
-                
-                <!-- Question 2 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>Rayon sera-t-il gratuit ?</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Oui, Rayon est gratuit pour les utilisateurs particuliers. Notre modèle économique repose sur les comptes Premium (1,99€/mois) et Pro (9,99€/mois) qui offrent des fonctionnalités avancées, ainsi que sur les commissions sur transactions et options de mise en avant des annonces.</p>
-                    </div>
-                </div>
-
-                <!-- Question 3 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>Quand Rayon sera-t-il disponible ?</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Rayon est actuellement en phase de développement. Le lancement est prévu en plusieurs phases, en commençant par La Réunion, la Martinique et la Guadeloupe, avant de s'étendre progressivement à l'ensemble des territoires ultramarins.</p>
-                    </div>
-                </div>
-
-                <!-- Question 4 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>Comment fonctionne le système de points ?</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Le système de points Rayon récompense l'engagement des utilisateurs. Vous gagnez des points en vous connectant quotidiennement, en publiant des annonces, en réalisant des transactions, etc. Ces points peuvent être échangés contre des récompenses comme des mises en avant d'annonces, des réductions chez des partenaires locaux, ou encore des services premium temporaires.</p>
-                    </div>
-                </div>
-                
-                <!-- Question 5 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>Comment contacter l'équipe de Rayon ?</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Pour toute question concernant Rayon ou pour explorer des opportunités de collaboration ou d'investissement, vous pouvez contacter le fondateur, Léo Tosku, à l'adresse <a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a>.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="section contact">
-        <div class="container">
-            <div class="section-header">
-                <h2>Contactez-nous</h2>
-                <p class="section-subtitle">Investisseurs, partenaires et collaborateurs potentiels</p>
-            </div>
-            
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-method">
-                        <div class="contact-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div>
-                            <h3>Email</h3>
-                            <p><a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a></p>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-method">
-                        <div class="contact-icon">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div>
-                            <h3>Fondateur</h3>
-                            <p>Léo Tosku</p>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-pitch">
-                        <h3>Vous souhaitez investir ?</h3>
-                        <p>Nous recherchons actuellement un financement initial de 300 000€ pour assurer le développement et le lancement de Rayon dans les territoires d'Outre-mer français.</p>
-                        <a href="Files/business_plan.md" class="btn btn-outline" download>Télécharger le Business Plan</a>
-                    </div>
-                </div>
-                
-                <div class="contact-form">
-                    <form id="contactForm">
-                        <div class="form-group">
-                            <label for="name">Nom</label>
-                            <input type="text" id="name" placeholder="Votre nom">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" placeholder="Votre email">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="subject">Sujet</label>
-                            <select id="subject">
-                                <option value="investment">Investissement</option>
-                                <option value="partnership">Partenariat</option>
-                                <option value="career">Carrière</option>
-                                <option value="other">Autre</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="message">Message</label>
-                            <textarea id="message" placeholder="Votre message"></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Envoyer</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Participation Section -->
-    <section class="participation">
-        <div class="container">
-            <div class="section-header">
-                <h2>Participez à la révolution du commerce en ligne ultramarin</h2>
-                <p class="section-subtitle">Que vous soyez investisseur, développeur talentueux ou futur utilisateur, rejoignez l'aventure Rayon et contribuez à transformer l'écosystème commercial des territoires d'Outre-mer.</p>
-            </div>
-            <div class="participation-buttons">
-                <a href="#contact" class="btn btn-primary">Investir dans le projet</a>
-                <a href="#contact" class="btn btn-secondary">Rejoindre l'équipe</a>
-                <a href="#contact" class="btn btn-outline">Nous contacter</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <img src="Images/logo.png" alt="Rayon Logo">
-                    <p>Vos annonces partout en Outremers Françaises</p>
-                </div>
-                
-                <div class="footer-links">
-                    <div class="footer-column">
-                        <h4>Investisseurs</h4>
-                        <ul>
-                            <li><a href="#opportunity">Opportunité</a></li>
-                            <li><a href="#market">Marché</a></li>
-                            <li><a href="#financials">Projections</a></li>
-                            <li><a href="Files/business_plan.md" download>Business Plan</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer-column">
-                        <h4>Partenaires</h4>
-                        <ul>
-                            <li><a href="#vision">Notre vision</a></li>
-                            <li><a href="#demo">Solution</a></li>
-                            <li><a href="#contact">Collaboration</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer-column">
-                        <h4>Documents</h4>
-                        <ul>
-                            <li><a href="Files/resume_executif.md">Résumé exécutif</a></li>
-                            <li><a href="Files/analyse_marche.md">Analyse de marché</a></li>
-                            <li><a href="Files/tendances_consommation.md">Tendances</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2025 Rayon. Tous droits réservés.</p>
-                <div class="footer-social">
-                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
-    
-    <!-- Chart.js for financial charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
+    </div>
 </body>
 </html>
