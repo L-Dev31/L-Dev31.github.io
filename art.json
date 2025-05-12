@@ -1,0 +1,24 @@
+{
+  "artworks": [
+    {
+      "id": "sailing",
+      "title": "Sailing to the unkown",
+      "category": "3D"
+    },
+    {
+      "id": "winter",
+      "title": "Winter's last breath",
+      "category": "3D"
+    },
+    {
+      "id": "violin",
+      "title": "Melody of forgotten strings",
+      "category": "3D"
+    },
+    {
+      "id": "rain",
+      "title": "Rainy night on the hills",
+      "category": "3D"
+    }
+  ]
+}

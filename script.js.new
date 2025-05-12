@@ -1,4 +1,4 @@
-// Portfolio Script - Filtering & Gallery Logic
+// filepath: c:\Users\Leo\Documents\GitHub\L-Dev31.github.io\script.js
 function getTextWidth(text, font) {
     const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
     const context = canvas.getContext("2d");
@@ -11,14 +11,22 @@ async function loadProjects() {
     try {
         const response = await fetch('projects.json');
         if (!response.ok) throw new Error('Failed to fetch projects.json');
+        
         const data = await response.json();
         const gallery = document.getElementById('gallery');
+        
+        // Clear existing content
         gallery.innerHTML = '';
+
         data.projects.forEach(project => {
             const projectElement = document.createElement('div');
+            // Normalize the category to ensure consistent class names
             const category = project.category.toLowerCase().trim();
             projectElement.className = `gallery-item ${category}`;
-            if (project.noPhone) projectElement.className += ' no-phone';
+            if (project.noPhone) {
+                projectElement.className += ' no-phone';
+            }
+
             const logoPath = `Elements/image/${project.id}-logo.png`;
             const previewPath = `Elements/image/${project.id}.jpg`;
             projectElement.innerHTML = `
@@ -30,8 +38,11 @@ async function loadProjects() {
                     </div>
                 </a>
             `;
+
             gallery.appendChild(projectElement);
         });
+
+        // Show all items initially
         showAllItems();
     } catch (error) {
         console.error('Error loading projects:', error);
@@ -42,17 +53,22 @@ async function loadArtworks() {
     const response = await fetch('art.json');
     const data = await response.json();
     const artGallery = document.querySelector('.art-gallery-container');
-    artGallery.innerHTML = '';
+    
+    artGallery.innerHTML = ''; // Clear existing content
+    
     data.artworks.forEach(artwork => {
         const artElement = document.createElement('div');
         artElement.className = 'art-item';
+        
         const imagePath = `Elements/image/3D/${artwork.id}.jpg`;
+        
         artElement.innerHTML = `
             <img src="${imagePath}" class="art-img" alt="${artwork.title}">
             <div class="art-info">
                 <h3 class="art-title">"${artwork.title}"</h3>
             </div>
         `;
+        
         artGallery.appendChild(artElement);
     });
 }
@@ -60,57 +76,88 @@ async function loadArtworks() {
 document.addEventListener('DOMContentLoaded', function() {
     loadProjects();
     loadArtworks();
-    // Scrolling text
+
+    //Scrolling text
     const scrollingTexts = document.querySelectorAll('.scrolling-text p');
-    let speed = window.innerWidth < 768 ? 50 : 100;
+
+    //Speed in function of the device bc once again js is shitty as fuck
+    let speed;
+    if (window.innerWidth < 768) {  
+        speed = 50;
+    } else {
+        speed = 100;
+    }
+
     scrollingTexts.forEach(p => {
         const textContent = p.textContent.trim();
         const computedStyle = window.getComputedStyle(p);
         const font = `${computedStyle.fontSize} ${computedStyle.fontFamily}`;
         const textWidth = getTextWidth(textContent, font);
-        const repeatCount = 99;
+        const repeatCount = 99; //Temporary since the code's shitty
+
         let repeatedText = '';
-        for (let i = 0; i < repeatCount; i++) repeatedText += textContent + ' ';
+        for (let i = 0; i < repeatCount; i++) {
+            repeatedText += textContent + ' ';
+        }
+
         p.textContent = repeatedText.trim();
+        
         const totalWidth = textWidth * repeatCount;
         const animationDuration = totalWidth / speed;
+
         p.style.whiteSpace = 'nowrap';
         p.style.display = 'inline-block';
         p.style.animation = `scroll-left ${animationDuration}s linear infinite`;
     });
+
     const styleSheet = document.createElement("style");
     styleSheet.type = "text/css";
-    styleSheet.innerText = `@keyframes scroll-left {from {transform: translateX(0);}to {transform: translateX(-100%);}}`;
+    styleSheet.innerText = `
+    @keyframes scroll-left {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-100%);
+        }
+    }`;
     document.head.appendChild(styleSheet);
+
     // Cursor
     const cursor = document.createElement('div');
     cursor.classList.add('cursor');
     document.body.appendChild(cursor);
+
     document.addEventListener('mousemove', (e) => {
         const x = e.clientX + window.scrollX;
         const y = e.clientY + window.scrollY;
         cursor.style.transform = `translate(${x}px, ${y}px)`;
     });
+
     document.addEventListener('scroll', (e) => {
         const x = e.clientX + window.scrollX;
         const y = e.clientY + window.scrollY;
         cursor.style.transform = `translate(${x}px, ${y}px)`;
     });
-    // Navigation
+
     const personalProjectLink = document.getElementById('personal-project');
     const commissionsLink = document.getElementById('commissions');
     const everythingLink = document.getElementById('everything');
     const everythingLinkMobile = document.getElementById('everything-mobile');
     const infoLink = document.getElementById('info-link');
-    const infoLinkMobile = document.getElementById('info-link-mobile');
+    const infoLinkMobile = document.getElementById('info-link-mobile')
     const infosContainer = document.getElementById('infos');
     const headerContainer = document.getElementById('header');
     const art3dLink = document.getElementById('art-link');
     const art3dLinkMobile = document.getElementById('art-link-mobile');
     const art3dGallery = document.getElementById('art-gallery');
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // Initially show all gallery items after projects load
+    
     if (isMobile) {
         document.querySelectorAll('.no-phone').forEach(item => {
+            // Bloquer les liens ou masquer les éléments
             const link = item.querySelector('a');
             if (link) {
                 link.addEventListener('click', function (event) {
@@ -120,65 +167,90 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
     personalProjectLink.addEventListener('click', function(e) {
         e.preventDefault();
         filterItems('personal-project');
     });
+    
     commissionsLink.addEventListener('click', function(e) {
         e.preventDefault();
         filterItems('commission');
     });
+    
     everythingLink.addEventListener('click', function(e) {
         e.preventDefault();
         showAllItems();
     });
+
     everythingLinkMobile.addEventListener('click', function(e) {
         e.preventDefault();
         showAllItems();
     });
+    
     infoLink.addEventListener('click', function(e) {
         e.preventDefault();
         showInfoText();
     });
+
     infoLinkMobile.addEventListener('click', function(e) {
         e.preventDefault();
         showInfoText();
     });
+    
     art3dLink.addEventListener('click', function(e) {
         e.preventDefault();
         show3dArt();
     });
+    
     art3dLinkMobile.addEventListener('click', function(e) {
         e.preventDefault();
         show3dArt();
     });
+
     function show3dArt() {
         resetScrollPositions();
+        // Cacher tous les éléments
         document.querySelectorAll('.gallery-item').forEach(item => {
             item.style.display = 'none';
         });
         headerContainer.style.display = 'none';
         infosContainer.style.display = 'none';
         document.getElementById('gallery').style.display = 'none';
+        // Afficher la galerie 3D
         art3dGallery.style.display = 'block';
     }
+
     function showAllItems() {
         resetScrollPositions();
+        // Afficher la galerie principale
         const gallery = document.getElementById('gallery');
         gallery.style.display = 'flex';
+        
+        // Afficher tous les projets
         document.querySelectorAll('.gallery-item').forEach(item => {
             item.style.display = 'block';
         });
-        art3dGallery.style.display = 'none';
-        infosContainer.style.display = 'none';
-        headerContainer.style.display = 'block';
+
+        // Cacher les autres sections
+        art3dGallery.style.display = 'none'; 
+        infosContainer.style.display = 'none';  
+        headerContainer.style.display = 'block'; 
     }
+
     function filterItems(category) {
         resetScrollPositions();
+        // Afficher la galerie principale
         const gallery = document.getElementById('gallery');
         gallery.style.display = 'flex';
+        
+        // Récupérer les éléments après leur création
         const items = document.querySelectorAll('.gallery-item');
+        
+        // Convert category to lowercase for case-insensitive comparison
         const targetCategory = category.toLowerCase().trim();
+        
+        // Filtrer les projets
         items.forEach(item => {
             if (item.classList.contains(targetCategory)) {
                 item.style.display = 'block';
@@ -186,59 +258,84 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.style.display = 'none';
             }
         });
+
+        // Cacher les autres sections
         headerContainer.style.display = 'none';
         infosContainer.style.display = 'none';
         art3dGallery.style.display = 'none';
     }
+
     function showInfoText() {
         resetScrollPositions();
+        // Cache tous les éléments
         document.querySelectorAll('.gallery-item').forEach(item => {
             item.style.display = 'none';
         });
-        headerContainer.style.display = 'none';
-        art3dGallery.style.display = 'none';
-        document.getElementById('gallery').style.display = 'none';
-        infosContainer.style.display = 'block';
+        headerContainer.style.display = 'none';  // Cache le Header
+        art3dGallery.style.display = 'none';  // Cache la galerie d'art
+        document.getElementById('gallery').style.display = 'none';  // Cache la galerie de sites
+        infosContainer.style.display = 'block';  // Affiche les infos
     }
+
     function resetScrollPositions() {
-        window.scrollTo(0, 0);
+        window.scrollTo(0, 0);  // Reset the scroll position of the window
         document.querySelectorAll('.gallery-item').forEach(item => {
-            if (item.scrollTop) item.scrollTop = 0;
+            if (item.scrollTop) {
+                item.scrollTop = 0;  // Reset the scroll position of each gallery item
+            }
         });
     }
+
     const links = document.querySelectorAll('.link');
     const linksMobile = document.querySelectorAll('.link-mobile');
+
     links.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
+            // Remove 'clicked' class from all links
             links.forEach(l => l.classList.remove('clicked'));
             linksMobile.forEach(l => l.classList.remove('clicked'));
+            // Add 'clicked' class to the clicked link
             link.classList.add('clicked');
         });
     });
+
     linksMobile.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
+            // Remove 'clicked' class from all links
             links.forEach(l => l.classList.remove('clicked'));
             linksMobile.forEach(l => l.classList.remove('clicked'));
+            // Add 'clicked' class to the clicked link
             link.classList.add('clicked');
         });
     });
+
     const landingLogo = document.getElementById('landing-logo');
     const landingPage = document.querySelector('.landing-page');
     const body = document.body;
+
+    // Désactiver le défilement
     body.classList.add('no-scroll');
+
+    // Animer l'intro
     setTimeout(() => {
-        window.scrollTo(0, 0);
-        landingLogo.classList.add('shrink');
+        window.scrollTo(0, 0); // Ramène en haut de la page
+        landingLogo.classList.add('shrink'); // Ajoute une animation au logo
     }, 1000);
+
+    // Cacher la page d'intro
     setTimeout(() => {
-        landingPage.classList.add('hidden');
+        landingPage.classList.add('hidden'); // Cache l'intro
     }, 2000);
+
+    // Réactiver le défilement
     setTimeout(() => {
         body.classList.remove('no-scroll');
     }, 2750);
+
     var unavailableLinks = document.querySelectorAll('.unavailable a');
+
     unavailableLinks.forEach(function(link) {
         link.addEventListener('click', function(event) {
             event.preventDefault();
@@ -246,29 +343,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
 document.addEventListener('scroll', function() {
-    if (window.innerWidth < 768) return;
-    // Parallax effect for gallery images
-    const galleryItems = document.querySelectorAll('.gallery-item');
+    if (window.innerWidth < 768) {
+        return; 
+    }
+
+    const galleryItemsImg = document.querySelectorAll('.gallery-img');
     const scrollPosition = window.pageYOffset;
-    galleryItems.forEach(item => {
-        const img = item.querySelector('.gallery-img');
-        if (!img) return;
-        // Calculate the offset for the parallax effect
-        const speed = 2; // You can adjust this value for more/less effect
-        const offset = item.getBoundingClientRect().top + scrollPosition;
+
+    galleryItemsImg.forEach((img, index) => {
+        const imgParent = img.parentElement;
+        let speed = 5;
+        const offset = imgParent.getBoundingClientRect().top + scrollPosition;
         const imgYOffset = (scrollPosition - offset) / speed;
+
         img.style.transform = `translateY(${imgYOffset}px)`;
     });
 });
+
 document.addEventListener("DOMContentLoaded", function () {
-    if (window.innerWidth < 768) {
+    if (window.innerWidth < 768) { // Appliquer seulement sur mobile
         const items = document.querySelectorAll(".art-item, .gallery-item");
+
         function checkPosition() {
             let middleScreen = window.innerHeight / 2;
+
             items.forEach(item => {
                 let rect = item.getBoundingClientRect();
                 let itemCenter = rect.top + rect.height / 2;
+
                 if (Math.abs(middleScreen - itemCenter) < rect.height / 2) {
                     item.classList.add("active");
                 } else {
@@ -276,7 +380,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
         }
+
         window.addEventListener("scroll", checkPosition);
-        checkPosition();
+        checkPosition(); // Appel initial
     }
 });
