@@ -110,14 +110,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const art3dGallery = document.getElementById('art-gallery');
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (isMobile) {
+        // Bloque tout clic sur un projet no-phone
         document.querySelectorAll('.no-phone').forEach(item => {
-            const link = item.querySelector('a');
-            if (link) {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    alert("Ce site n'est pas accessible sur un téléphone.");
-                });
-            }
+            item.addEventListener('click', function (event) {
+                event.preventDefault();
+                alert("Ce site n'est pas accessible sur un téléphone.");
+            });
+            // Change le curseur pour indiquer l'inaccessibilité
+            item.style.cursor = 'not-allowed';
         });
     }
     personalProjectLink.addEventListener('click', function(e) {
