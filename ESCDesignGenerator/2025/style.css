@@ -1,0 +1,365 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+#grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+#gradientOverlay {
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.85) 100%);
+}
+#cornerLogo {
+  position: fixed;
+  right: 3vw;
+  bottom: 2vw;
+  width: 15vw;
+  z-index: 20;
+  opacity: 0.92;
+  transition: opacity 0.2s;
+}
+#settingsPanel {
+  outline: 2px solid white;
+  position: fixed;
+  left: 3vw;
+  bottom: 2vw;
+  width: 280px;
+  z-index: 30;
+  padding: 20px;
+  background: #FF0000;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  user-select: none;
+}
+@media (max-width: 600px) {
+  #settingsPanel {
+    width: 90vw;
+    left: 5vw;
+    bottom: 5vw;
+  }
+}
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+#settingsPanel h3 {
+  margin: 0 0 14px 0;
+  font-size: 3.5em;
+  letter-spacing: 0.05em;
+  color: #fff;
+  font-family: 'Eurotime', 'Times New Roman', Times, serif;
+  font-style: italic;
+  font-weight: 1000;
+}
+.setting-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95em;
+  margin-bottom: 0;
+  color: #fff;
+  height: 32px;
+}
+.setting-label span:first-child {
+  min-width: 90px;
+  color: #fff;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: capitalize;
+}
+.setting-label span:last-child {
+  min-width: 30px;
+  text-align: right;
+  color: #fff;
+  font-weight: 600;
+}
+.setting-label input[type="range"] {
+  flex: 1;
+  accent-color: #fff;
+  height: 4px;
+  margin: 0 4px;
+}
+.setting-label input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+.color-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+.color-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.color-control label {
+  color: #fff;
+  font-size: 1em;
+  font-weight: 500;
+  min-width: 90px;
+  letter-spacing: 0.03em;
+}
+.color-control input[type="color"] {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  outline: 2px solid #fff;
+  box-shadow: 0 0 0 2px #fff;
+  overflow: hidden;
+}
+.color-control input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.color-control input[type="color"]::-webkit-color-swatch {
+  border: none;
+}
+#videoInputGroup {
+  position: relative;
+  margin-top: 4px;
+}
+#videoInput {
+  display: none;
+}
+#importVideoBtn {
+  width: 100%;
+  outline: #fff 2px solid;
+  background: none;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 1.5em;
+  transition: all 0.2s;
+}
+#importVideoBtn:hover {
+  background: #fff;
+  color: #FF0000;
+  transform: translateY(-2px);
+}
+#exportVideoBtn {
+  width: 100%;
+  outline: #fff 2px solid;
+  background: none;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 1.5em;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+#exportVideoBtn:hover {
+  background: #fff;
+  color: #FF0000;
+  transform: translateY(-2px);
+}
+#screenshotBtn {
+  width: 100%;
+  outline: #fff 2px solid;
+  background: none;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 1.5em;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+#screenshotBtn:hover {
+  background: #fff;
+  color: #FF0000;
+  transform: translateY(-2px);
+}
+@font-face {
+  font-family: 'Eurotime';
+  src: url('times.ttf') format('truetype');
+  font-weight: 1000;
+  font-style: italic;
+}
+body {
+  padding-left: 0;
+}
+
+#exportStatus {
+  font-family: 'Eurotime', 'Times New Roman', Times, serif;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  background: #FF0000 !important;
+  color: white !important;
+  padding: 25px 35px !important;
+  border-radius: 0 !important;
+  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.6) !important;
+  outline: 2px solid white !important;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  font-size: 1.7em !important;
+  text-align: center;
+  min-width: 320px;
+  z-index: 99999 !important;
+  pointer-events: none !important;
+  white-space: pre-line !important;
+}
+#exportConfigOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.7);
+  z-index: 10000;
+  display: block;
+}
+
+#exportConfig {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #FF0000;
+  color: #fff;
+  outline: 2px solid white;
+  padding: 25px;
+  z-index: 10001;
+  min-width: 320px;
+  max-width: 90vw;
+  display: block;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+#exportConfig h3 {
+  margin: 0 0 18px 0;
+  font-size: 3.5em;
+  letter-spacing: 0.05em;
+  color: #fff;
+  font-family: 'Eurotime', 'Times New Roman', Times, serif;
+  font-style: italic;
+  font-weight: 1000;
+  text-transform: uppercase;
+}
+
+#exportConfig label {
+  display: block;
+  margin: 12px 0 4px 0;
+  font-size: 0.95em;
+  color: #fff;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: capitalize;
+}
+
+#exportConfig select {
+  width: 100%;
+  padding: 8px 12px;
+  outline: 2px solid #fff;
+  background: none;
+  color: #fff;
+  border: none;
+  font-size: 1.1em;
+  margin-bottom: 14px;
+  transition: all 0.2s;
+}
+#exportConfig select:focus {
+  background: rgba(255,255,255,0.1);
+}
+#exportConfig select option {
+  background: #FF0000;
+  color: #fff;
+}
+
+.export-config-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 25px;
+}
+
+#startExportBtn, #cancelExportBtn {
+  outline: #fff 2px solid;
+  background: none;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 1.5em;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+#startExportBtn:hover, #cancelExportBtn:hover {
+  background: #fff;
+  color: #FF0000;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 500px) {
+  #exportConfig {
+    min-width: 0;
+    width: 90vw;
+    padding: 20px 5vw 18px 5vw;
+  }
+  
+  #exportStatus {
+    width: 90vw;
+    min-width: 0;
+    padding: 20px 5vw !important;
+    font-size: 1.5em !important;
+    line-height: 1.4 !important;
+  }
+  
+  #startExportBtn, #cancelExportBtn {
+    font-size: 1.2em;
+    padding: 8px 6px;
+  }
+}
+
+#esc-credits-footer {
+  position: fixed;
+  left: 0;
+  bottom: 2vw;
+  width: 100vw;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  font-size: 1.1em;
+  font-family: 'Eurotime', 'Times New Roman', Times, serif;
+  letter-spacing: 0.05em;
+  z-index: 1000;
+}

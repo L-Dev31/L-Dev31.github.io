@@ -1,6 +1,14 @@
 {
   "projects": [
     {
+      "id": "escd",
+      "title": "Eurovision Song Contest Design Generator 2025",
+      "creator": "Léo Tosku",
+      "category": "commission", 
+      "path": "ESCDesignGenerator/2025",
+      "noPhone": true
+    },
+    {
       "id": "azhr",
       "title": "Azahar n3DS Emulator",
       "creator": "PabloMK7 & Opensauce",

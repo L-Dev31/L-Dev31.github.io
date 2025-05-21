@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ESC2025 Design Generator by Léo TOSKU</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="Images/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="Eurovision Song Contest 2025 Design Generator">
+    <meta property="og:description" content="Eurovision Song Contest 2025 Design Generator by Léo TOSKU">
+    <meta property="og:image" content="https://l-dev31.github.io/ESCDesignGenerator/2025/Images/preview.png">
+    <meta property="og:url" content="https://l-dev31.github.io/J3DTranslator/"> 
+    <meta property="og:type" content="website">
+</head>
+<body>
+    <video id="refVideo" style="display:none;" muted loop></video>
+    <canvas id="refCanvas" style="display:none;"></canvas>
+    <svg id="grid"></svg>
+    <div id="gradientOverlay"></div>
+    <img id="cornerLogo" src="Images/logo.png" alt="Logo" />
+    <div id="settingsPanel">
+      <div class="settings-content">
+        <h3>Settings</h3>
+        <div id="videoInputGroup">
+          <input type="file" id="videoInput" accept="video/*" />
+          <button id="importVideoBtn"><i class="fa-solid fa-file-import"></i> Import video</button>
+          <button id="exportVideoBtn"><i class="fa-solid fa-file-export"></i> Export video</button>
+          <button id="screenshotBtn"><i class="fa-solid fa-camera"></i> Screenshot</button>
+        </div>
+        <label class="setting-label">
+          <span>Contrast</span>
+          <input type="range" id="contrastSlider" min="-10" max="10" step="0.01" value="1" />
+          <span id="contrastValue">1</span>
+        </label>
+        <label class="setting-label">
+          <span>Spacing</span>
+          <input type="range" id="spacingSlider" min="0" max="40" step="1" value="0" />
+          <span id="spacingValue">0</span>
+        </label>
+        <label class="setting-label">
+          <span>Heart size</span>
+          <input type="range" id="itemSizeSlider" min="10" max="200" step="1" value="40" />
+          <span id="itemSizeValue">40</span>
+        </label>
+        <div class="color-controls">
+          <div class="color-control">
+            <label for="color1">Outer (Heart)</label>
+            <input type="color" id="color1" value="#F90900" />
+          </div>
+          <div class="color-control">
+            <label for="color2">Middle (Heart)</label>
+            <input type="color" id="color2" value="#07DED6" />
+          </div>
+          <div class="color-control">
+            <label for="color3">Center (Heart)</label>
+            <input type="color" id="color3" value="#F22FEB" />
+          </div>
+          <div class="color-control">
+            <label for="bgColor">Background color</label>
+            <input type="color" id="bgColor" value="#000000" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="exportConfigOverlay" style="display:none;"></div>
+    <div id="exportConfig" style="display:none;">
+      <div class="export-config-content">
+        <h3>Export</h3>
+        <label for="exportQuality">Quality:</label>
+        <select id="exportQuality">
+          <option value="ultra">Ultra (10 Mbps)</option>
+          <option value="high">High (8 Mbps)</option>
+          <option value="medium-high">Medium-High (6 Mbps)</option>
+          <option value="medium" selected>Medium (5 Mbps)</option>
+          <option value="medium-low">Medium-Low (4 Mbps)</option>
+          <option value="low">Low (2.5 Mbps)</option>
+          <option value="very-low">Very Low (1 Mbps)</option>
+        </select>
+        <label for="exportFps">FPS:</label>
+        <select id="exportFps">
+          <option value="60">60</option>
+          <option value="30" selected>30</option>
+          <option value="24">24</option>
+          <option value="15">15</option>
+        </select>
+        <div class="export-config-actions">
+          <button id="startExportBtn">Export</button>
+          <button id="cancelExportBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <footer id="esc-credits-footer">
+      ESC2025 Design Generator by Léo Tosku
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>
