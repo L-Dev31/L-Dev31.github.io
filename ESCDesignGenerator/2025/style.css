@@ -329,37 +329,58 @@ body {
   transform: translateY(-2px);
 }
 
-@media (max-width: 500px) {
-  #exportConfig {
-    min-width: 0;
-    width: 90vw;
-    padding: 20px 5vw 18px 5vw;
-  }
-  
-  #exportStatus {
-    width: 90vw;
-    min-width: 0;
-    padding: 20px 5vw !important;
-    font-size: 1.5em !important;
-    line-height: 1.4 !important;
-  }
-  
-  #startExportBtn, #cancelExportBtn {
-    font-size: 1.2em;
-    padding: 8px 6px;
-  }
+.setting-label input[type="checkbox"]#aspectRatioToggle {
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #fff;
+  border-radius: 0;
+  background: #ff0000;
+  position: relative;
+  transition: background 0.2s, border-color 0.2s;
+  cursor: pointer;
+  margin-left: 12px;
+  display: inline-block;
+  vertical-align: middle;
 }
-
+.setting-label input[type="checkbox"]#aspectRatioToggle:checked {
+  background: #fff;
+  border-color: #ff0000;
+}
+.setting-label input[type="checkbox"]#aspectRatioToggle::after {
+  content: '\f00c'; /* Font Awesome fa-check */
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 18px;
+  color: #ff0000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.setting-label input[type="checkbox"]#aspectRatioToggle:checked::after {
+  opacity: 1;
+}
 #esc-credits-footer {
   position: fixed;
   left: 0;
+  right: 0;
   bottom: 2vw;
-  width: 100vw;
   text-align: center;
   color: #fff;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-  font-size: 1.1em;
   font-family: 'Eurotime', 'Times New Roman', Times, serif;
-  letter-spacing: 0.05em;
-  z-index: 1000;
+  font-style: italic;
+  font-weight: 1000;
+  font-size: 1.5em;
+  letter-spacing: 0.07em;
+  z-index: 100;
+  pointer-events: none;
+  user-select: none;
 }
