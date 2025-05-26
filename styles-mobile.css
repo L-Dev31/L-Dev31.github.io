@@ -1,3 +1,44 @@
+/* Détection améliorée des smartphones haute résolution */
+@media (pointer: coarse) and (orientation: portrait),
+       (max-width: 1024px) and (orientation: portrait),
+       (max-device-width: 1440px) and (orientation: portrait),
+       screen and (max-device-width: 1440px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait),
+       screen and (max-device-width: 1440px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait) {
+    
+    /* Force les styles mobiles pour tous les smartphones */
+    .cursor {
+        display: none !important;
+    }
+    
+    .link {
+        visibility: hidden !important;
+    }
+    
+    .download {
+        visibility: hidden !important;
+    }
+    
+    .link-mobile, .download-mobile {
+        visibility: visible !important;
+    }
+}
+
+/* Force mobile via JavaScript */
+.force-mobile .cursor {
+    display: none !important;
+}
+
+.force-mobile .link,
+.force-mobile .download {
+    display: none !important;
+}
+
+.force-mobile .link-mobile,
+.force-mobile .download-mobile {
+    display: block !important;
+    visibility: visible !important;
+}
+
 /* Tablettes et écrans moyens */
 @media (max-width: 1080px) {
     .download {
@@ -42,8 +83,11 @@
     }
 }
 
-/* Mobile - Design complètement adapté */
-@media (max-width: 768px) {
+/* Mobile - Design complètement adapté pour smartphones */
+@media (max-width: 1024px) and (orientation: portrait), 
+       (max-width: 768px),
+       (pointer: coarse),
+       (max-width: 1400px) and (max-height: 900px) and (orientation: portrait) {
     /* Curseur et débordement */
     .cursor {
         display: none;
