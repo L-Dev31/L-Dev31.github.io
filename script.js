@@ -1,4 +1,63 @@
 // Portfolio Script - Filtering & Gallery Logic
+
+// Détection mobile améliorée
+function isMobileDevice() {
+    return (
+        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        ('ontouchstart' in window) ||
+        (navigator.maxTouchPoints > 0) ||
+        (navigator.msMaxTouchPoints > 0) ||
+        (window.innerWidth <= 1024 && window.orientation !== undefined)
+    );
+}
+
+// Force les styles mobiles sur les appareils tactiles
+function forceMobileStyles() {
+    if (isMobileDevice()) {
+        document.body.classList.add('force-mobile');
+        
+        // Cache les éléments desktop
+        const desktopElements = document.querySelectorAll('.link, .download');
+        desktopElements.forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        // Affiche les éléments mobiles
+        const mobileElements = document.querySelectorAll('.link-mobile, .download-mobile');
+        mobileElements.forEach(el => {
+            el.style.display = 'block';
+            el.style.visibility = 'visible';
+        });
+        
+        // Cache le curseur personnalisé
+        const cursor = document.querySelector('.cursor');
+        if (cursor) cursor.style.display = 'none';
+        
+        // Applique directement certains styles mobiles critiques
+        const body = document.body;
+        if (window.innerWidth <= 1024) {
+            body.style.marginTop = '8vh';
+            body.style.backgroundSize = '200%';
+            
+            // Ajuste la navbar
+            const logo = document.getElementById('logo');
+            if (logo) logo.style.width = '6vh';
+            
+            const textContainer = document.querySelector('.text-container');
+            if (textContainer) {
+                textContainer.style.fontSize = '1.8vh';
+                textContainer.style.top = '1.5vh';
+                textContainer.style.left = '9vh';
+            }
+        }
+        
+        console.log('Styles mobiles forcés pour:', navigator.userAgent);
+    }
+}
+
+// Applique la détection au chargement
+document.addEventListener('DOMContentLoaded', forceMobileStyles);
+
 function getTextWidth(text, font) {
     const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
     const context = canvas.getContext("2d");
