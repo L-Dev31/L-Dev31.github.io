@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L-Dev31</title>
+<head>    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>L-Dev31</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="styles-mobile.css">
     <link rel="icon" type="image/png" href="Elements/image/favicon.png">
@@ -52,21 +50,46 @@
                 <p>Digital Design • Programmation • Créations uniques • Modélisation 3D • Web Design • </p>
             </div>
         </div>
-    </div>
-    <div class="achievements" style="text-align: center; padding: 20px 0;">
-        <h2>Mes Réalisations</h2>
-        <div class="achievements-container" style="display: flex; justify-content: center; gap: 30px;">
-            <div class="achievement-item">
-                <i class="fas fa-trophy" style="font-size: 2em; color: #E94E1A;"></i>
-                <p>Prix spécial du jury "Trophées NSI" 2024-2025</p>
-            </div>
-            <div class="achievement-item">
-                <i class="fas fa-c" style="font-size: 2em; color: #2fe91a;"></i>
-                <p>Participant aux "Carribean Inovation Days" 2024</p>
-            </div>
-            <div class="achievement-item">
-                <i class="fas fa-wine-glass-empty" style="font-size: 2em; color: #AD3ECC;"></i>
-                <p>Participant aux "Up for Life" 2024-2025</p>
+    </div>    <div class="achievements">
+        <div class="achievements-header">
+            <h2 class="achievements-title">Mes Réalisations</h2>
+            <div class="achievements-subtitle">L'excellence reconnue par mes pairs</div>
+        </div>
+        <div class="achievements-container">            
+            <div class="achievement-item" data-achievement="trophy">
+                <div class="achievement-content">
+                    <div class="achievement-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h3 class="achievement-title">Prix Spécial du Jury</h3>
+                        <p class="achievement-description">Trophées NSI 2024-2025</p>
+                        <div class="achievement-badge">Excellence</div>
+                    </div>
+                </div>
+            </div>            
+            <div class="achievement-item" data-achievement="innovation">
+                <div class="achievement-content">
+                    <div class="achievement-icon">
+                        <i class="fas fa-c"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h3 class="achievement-title">Innovation Caribéenne</h3>
+                        <p class="achievement-description">Caribbean Innovation Days 2024</p>
+                        <div class="achievement-badge">Innovation</div>
+                    </div>
+                </div>
+            </div>              <div class="achievement-item" data-achievement="participation">
+                <div class="achievement-content">
+                    <div class="achievement-icon">
+                        <i class="fas fa-wine-glass-empty"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h3 class="achievement-title">Networking Professionnel</h3>
+                        <p class="achievement-description">Up for Life 2024-2025</p>
+                        <div class="achievement-badge">Business</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -89,8 +112,14 @@
 
 
 <!-- Website Gallery -->
-<div id="gallery" class="gallery">
-    <!-- Projects will be loaded dynamically -->
+<div class="projects-section">
+    <div class="projects-header">
+        <h2 class="projects-title">Mes Projets Web</h2>
+        <div class="projects-subtitle">Portfolio de créations digitales</div>
+    </div>
+    <div id="gallery" class="gallery">
+        <!-- Projects will be loaded dynamically -->
+    </div>
 </div>
 
 </div>

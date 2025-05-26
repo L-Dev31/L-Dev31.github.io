@@ -1,5 +1,6 @@
+/* Tablettes et écrans moyens */
 @media (max-width: 1080px) {
-    .download{
+    .download {
         visibility: hidden;
     }
 
@@ -18,160 +19,542 @@
     }
     
     .link-mobile {
-        margin-left: 2vh;
+        margin-right: 1vh;
         position: relative;
-        visibility:visible;
+        visibility: visible;
         margin-top: 10.5vh;
         right: 0;
     }
 
-    .links-container{
+    .links-container {
         gap: 2vh;
+    }
+
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2vh;
+        padding: 2vh;
+        width: 96%;
+    }
+
+    .gallery-item {
+        height: 50vh;
     }
 }
 
+/* Mobile - Design complètement adapté */
 @media (max-width: 768px) {
-
+    /* Curseur et débordement */
     .cursor {
         display: none;
     }
 
-    html{
+    html {
+        overflow-x: hidden;
+    }    /* Corps principal */
+    body {
+        margin-top: 8vh;
+        background-size: 200%;
+        background-position: center;
+        width: 100%;
+        max-width: 100vw;
+        box-sizing: border-box;
         overflow-x: hidden;
     }
 
-    body{
-        margin-top: 10vh;
-        background-size: 150%;
+    * {
+        box-sizing: border-box;
     }
 
-    .achievements h2 {
-        font-size: 4vh;
+    /* Bruit de fond adapté */
+    .bg {
+        background-size: 50%;
+        animation: bg-animation 0.3s infinite;
     }
 
-    .achievement-item {
-        font-size: 2vh;
+    /* Navigation mobile */
+    #logo {
+        width: 6vh;
+        top: 1vh;
+        margin-left: 2vh;
+    }
+    
+    .text-container {
+        font-size: 1.8vh;
+        top: 1.5vh;
+        left: 9vh;
     }
 
-    header{
-        margin-top: 10vh;
-        max-width:100%;
-        overflow: hidden;
+    .links-container {
+        gap: 1.5vh;
+        margin-right: 1vh;
     }
 
-    .band{
-        height: 5vh;
+    .link {
+        visibility: hidden;
+    }
+
+    .download {
+        visibility: hidden;
+    }
+
+    .link-mobile, .download-mobile {
+        margin-top: 2vh;
+        font-size: 3.5vh;
+        visibility: visible;
+        position: relative;
+    }
+
+    /* Header adapté */
+    header {
+        margin-top: 8vh;
+        padding: 3vh 0;
+        min-height: 40vh;
+    }
+
+    .header-content h1 {
+        font-size: 12vh;
+        text-shadow: 0 0 1.5vh #00000099;
+    }
+
+    /* Bandes défilantes mobiles */
+    .scrolling-bands {
+        width: 105%;
+        left: -2.5vh;
+        height: 8vh;
+    }
+
+    .band {
+        height: 7vh;
     }
 
     .band1 {
-        transform: rotateZ(-3deg);
-    }    
+        transform: rotate(-4deg);
+        top: 0;
+    }
 
-    .band2{
-        transform: translateY(-3.5vh) rotateZ(3deg);
+    .band2 {
+        transform: rotate(4deg);
+        top: 1vh;
     }
 
     .band1 .scrolling-text p, 
     .band2 .scrolling-text p {
-        font-size: 3.5vh;
+        font-size: 4vh;
     }
 
-    .landing-page{
-        visibility: hidden;
-    }
-
-    .achievements {
-        margin-top: 5vh;
-        flex-direction: column;
-        gap: 1vh;
-        font-size: smaller;
+    /* Section informations */
+    #infos {
+        margin-top: 8vh;
+        margin-left: 2vh;
+        margin-right: 2vh;
+        height: auto;
+        padding: 3vh 0;
     }
 
     #infos img {
-        visibility: hidden;
+        display: none;
     }
 
     .subtitle {
         margin-right: 0;
+        font-size: 2.2vh;
+        margin-top: 3vh;
+        text-align: left;
+    }
+
+    h1 {
+        font-size: 5.5vh;
+        margin: 0 0 2vh 0;
+    }
+
+    /* Lien Instagram adapté */
+    .Ig-link {
+        height: auto;
+        margin-right: 2vh;
+        margin-top: 2vh;
+        text-align: right;
+    }
+
+    .Ig-link a {
+        font-size: 2.5vh;
+    }    /* Section réalisations mobile */
+    .achievements {
+        margin: 8vh 1.5vh 0 1.5vh;
+        padding: 5vh 3vh;
+    }
+
+    .achievements-title {
+        font-size: 6vh;
+    }
+
+    .achievements-subtitle {
+        font-size: 2vh;
+        margin-top: 1.5vh;
+    }
+
+    .achievements-container {
+        grid-template-columns: 1fr;
+        gap: 3vh;
+        padding: 0;
+        max-width: 100%;
+    }
+
+    .achievement-item {
+        border-radius: 2vh;
+    }
+
+    .achievement-content {
+        padding: 3vh 2.5vh;
+    }
+
+    .achievement-icon {
+        width: 6vh;
+        height: 6vh;
+        margin-bottom: 2vh;
+    }
+
+    .achievement-icon i {
         font-size: 2.5vh;
     }
 
+    .achievement-title {
+        font-size: 2.5vh;
+    }
+
+    .achievement-description {
+        font-size: 1.9vh;
+        margin-bottom: 1.5vh;
+    }
+
+    .achievement-badge {
+        padding: 0.7vh 1.5vh;
+        font-size: 1.3vh;
+    }    /* Header projets mobile */
+    .projects-header {
+        margin: 8vh 1.5vh 0 1.5vh;
+        padding: 5vh 2vh;
+        margin-bottom: 2.5vh;
+        box-sizing: border-box;
+    }
+
+    .projects-section {
+        width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    .projects-title {
+        font-size: 6vh;
+    }
+
+    .projects-subtitle {
+        font-size: 2vh;
+        margin-top: 1.5vh;
+    }    /* Galerie projets mobile */
+    .gallery {
+        grid-template-columns: 1fr;
+        gap: 3vh;
+        padding: 1.5vh;
+        width: calc(100% - 3vh);
+        margin: 0 1.5vh;
+        box-sizing: border-box;
+    }
+
     .gallery-item {
-        transform: scale(0.95);
-        margin: 1em 0;
-        height: 25vh;
-        filter: brightness(1.1);
-        border-radius: 5vh;
+        height: 70vh;
+        margin-bottom: 0;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }    .card-info {
+        height: 18%;
+        padding: 1.5vh;
+        box-sizing: border-box;
+        width: 100%;
+    }
+    
+    .card-image {
+        height: 82%;
+        width: 100%;
+        overflow: hidden;
     }
 
-    .gallery .gallery-item:not(.active){
-        filter: brightness(0.8);
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
     }
-
-    .gallery .gallery-item.active {
-        transform: scale(1);
-    }   
-
-    .project-logo img {
-        visibility: hidden;
+    
+    .card-title {
+        font-size: 2.5vh;
+        line-height: 1.2;
     }
-
-    .gallery-item img{
-        min-height: 100%;
-    }
-
-    .gallery-item .overlay {
-        opacity: 1;
+    
+    .card-creator {
         font-size: 2vh;
-        background-color: #08080880
+        line-height: 1.2;
     }
 
-    .Ig-link{
-        height: 5vh;
+    .card-icon {
+        width: 15%;
+        flex-shrink: 0;
     }
 
-    .Ig-link a{
-        font-size: 2vh;
-        bottom: 0;
+    .card-text {
+        width: 85%;
+        padding-left: 1vh;
     }
 
-    .header-content h1 {
-        font-size: 8.5vh;
-    }
-
-    #infos{
-        margin-top: 13.5vh;
-        margin-left: 2.5vh;
-        height: 0%;
-    }
-
-    #infos img{
-        max-height: 0;
-    }
-
-    .download-mobile {
-        margin-left: 2vh;
-        position: relative;
-        visibility: visible;
-        margin-top: 10.5vh;
-    }
-
-    h1{
-        font-size: 4vh;
-    }
-
+    .card-icon img {
+        max-height: 75%;
+        max-width: 75%;
+        object-fit: contain;
+    }    /* Galerie d'art mobile */
     #art-gallery {
-        background-color: transparent;
-        backdrop-filter: none;
+        margin: 8vh 1.5vh 0 1.5vh;
+        padding: 5vh 2vh;
+        border-radius: 2vh;
+        box-sizing: border-box;
     }
 
-    .art-gallery-container .art-item:not(.active) {
-        filter: brightness(0.8);
+    #art-gallery h1 {
+        font-size: 6vh;
+        margin-bottom: 4vh;
     }
 
-    .art-gallery-container .art-item.active {
+    .art-gallery-container {
+        gap: 3vh;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+    }    .art-item {
+        width: calc(100% - 1vh);
+        max-width: none;
+        min-width: none;
+        padding: 2vh;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .art-img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        border-radius: 1vh;
+    }
+
+    .art-info {
+        width: 100%;
+        padding: 1.5vh;
+        box-sizing: border-box;
+    }
+
+    .art-title {
+        font-size: 2.5vh;
+        text-align: center;
+        word-wrap: break-word;
+    }
+
+    /* Page de zoom mobile */
+    .zoom-out-page h1 {
+        font-size: 8vh;
+        top: 20vh;
+        left: 5vh;
+        right: 5vh;
+        text-align: center;
+    }
+
+    /* Landing page mobile */
+    .landing-page {
+        display: none;
+    }
+
+    #landing-logo {
+        display: none;
+    }    /* Interactions mobiles */
+    .gallery-item:active {
+        transform: scale(0.98);
+    }
+
+    .achievement-item:active {
+        transform: scale(0.98);
+    }
+
+    .art-item:active {
+        transform: scale(0.98);
+    }
+
+    /* Désactivation des effets hover sur mobile */
+    .gallery-item:hover,
+    .gallery-item:hover .card-info,
+    .gallery-item:hover .card-icon img,
+    .gallery-item:hover .card-title,
+    .gallery-item:hover .card-image img,
+    .achievement-item:hover,
+    .achievement-item:hover::before,
+    .achievement-item:hover .achievement-icon,
+    .achievement-item:hover .achievement-icon::before,
+    .art-item:hover,
+    .art-gallery-container:hover .art-item:not(:hover) {
+        transform: none;
+        filter: none;
+        box-shadow: none;
+        background-color: initial;
+        border-color: initial;
+        opacity: 1;
+        scale: 1;
+    }    /* Classes pour les effets activés par JavaScript */
+    .gallery-item {
+        transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .gallery-item.center-active {
+        transform: scale(1.02);
+        filter: brightness(1.1);
+        box-shadow: 0 0 4vh 0.5vh rgba(255, 255, 255, 0.25);
+    }
+
+    .gallery-item .card-info {
+        transition: background-color 0.3s ease;
+    }
+
+    .gallery-item.center-active .card-info {
+        background-color: #1a1a1a;
+    }
+
+    .gallery-item .card-icon img {
+        transition: transform 0.3s ease;
+    }
+
+    .gallery-item.center-active .card-icon img {
+        transform: scale(1.1);
+    }
+
+    .gallery-item .card-title {
+        transition: transform 0.3s ease;
+    }
+
+    .gallery-item.center-active .card-title {
+        transform: translateX(3px);
+    }
+
+    .gallery-item .card-image img {
+        transition: transform 0.4s ease;
+    }
+
+    .gallery-item.center-active .card-image img {
         transform: scale(1.05);
+    }
+
+    .achievement-item {
+        transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .achievement-item.center-active {
+        transform: translateY(-0.5vh) scale(1.01);
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 1vh 2vh rgba(0, 0, 0, 0.3),
+                    0 0 3vh rgba(255, 255, 255, 0.1);
+    }
+
+    .achievement-item::before {
+        transition: opacity 0.3s ease;
+    }
+
+    .achievement-item.center-active::before {
+        opacity: 1;
+    }
+
+    .achievement-item .achievement-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .achievement-item.center-active .achievement-icon {
+        transform: scale(1.05) rotate(2deg);
+    }
+
+    .achievement-item .achievement-icon::before {
+        transition: opacity 0.3s ease;
+    }
+
+    .achievement-item.center-active .achievement-icon::before {
+        opacity: 1;
+    }
+
+    .art-item {
+        transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .art-item.center-active {
+        transform: scale(1.02);
+        filter: brightness(1.1);
         z-index: 2;
-        filter: brightness(1);
+    }
+
+    .art-gallery-container.has-center-active .art-item:not(.center-active) {
+        filter: brightness(0.8);
+        transform: scale(0.98);
+    }/* Optimisations tactiles */
+    .link-mobile, .download-mobile {
+        padding: 1vh;
+        border-radius: 1vh;
+        transition: background-color 0.2s ease;
+    }
+
+    .link-mobile:active, .download-mobile:active {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Maintenir les effets hover pour les éléments de navigation */
+    .link-mobile:hover, .download-mobile:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .Ig-link:active {
+        transform: translateY(0.2vh);
+    }
+
+    /* Espacement mobile optimisé */
+    .achievements::before {
+        background: radial-gradient(circle at 25% 25%, rgba(233, 78, 26, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 75% 75%, rgba(173, 62, 204, 0.05) 0%, transparent 50%);
+    }
+
+    .projects-header::before {
+        background: radial-gradient(circle at 25% 25%, rgba(233, 78, 26, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 75% 75%, rgba(173, 62, 204, 0.05) 0%, transparent 50%);
+    }
+
+    #art-gallery::before {
+        background: radial-gradient(circle at 25% 25%, rgba(233, 78, 26, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 75% 75%, rgba(173, 62, 204, 0.05) 0%, transparent 50%);
+    }    /* Scrollbar mobile */
+    *::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    /* Contraintes globales pour éviter débordement */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .gallery-item a {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Sécurité anti-débordement */
+    .projects-section,
+    .achievements,
+    #art-gallery,
+    #infos {
+        max-width: 100vw;
+        overflow-x: hidden;
     }
 }
