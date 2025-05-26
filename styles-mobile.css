@@ -286,15 +286,16 @@
         object-fit: cover;
         object-position: center;
     }
-    
-    .card-title {
+      .card-title {
         font-size: 2.5vh;
         line-height: 1.2;
+        text-align: left;
     }
     
     .card-creator {
         font-size: 2vh;
         line-height: 1.2;
+        text-align: left;
     }
 
     .card-icon {
@@ -431,14 +432,20 @@
 
     .gallery-item.center-active .card-icon img {
         transform: scale(1.1);
-    }
-
-    .gallery-item .card-title {
+    }    .gallery-item .card-title {
         transition: transform 0.3s ease;
     }
 
     .gallery-item.center-active .card-title {
-        transform: translateX(3px);
+        transform: translateX(5px);
+    }
+
+    .gallery-item .card-creator {
+        transition: transform 0.3s ease;
+    }
+
+    .gallery-item.center-active .card-creator {
+        transform: translateX(5px);
     }
 
     .gallery-item .card-image img {

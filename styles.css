@@ -255,6 +255,7 @@ strong {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    text-align: left;
 }
 
 .card-title {
@@ -263,17 +264,23 @@ strong {
     color: #ffffff;
     margin-bottom: 0.7vh;
     transition: transform 0.3s ease;
+    text-align: left;
 }
 
 .card-creator {
     font-family: 'Thin', sans-serif;
     font-size: 1.8vh;
     color: #e0e0e0;
-    transition: opacity 0.3s ease;
+    transition: transform 0.3s ease;
+    text-align: left;
 }
 
 .gallery-item:hover .card-title {
-    transform: translateX(3px);
+    transform: translateX(5px);
+}
+
+.gallery-item:hover .card-creator {
+    transform: translateX(5px);
 }
 
 .gallery-item a {
