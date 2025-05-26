@@ -7,6 +7,47 @@ function getTextWidth(text, font) {
     return metrics.width;
 }
 
+function showAllItems() {
+    resetScrollPositions();
+    const gallery = document.getElementById('gallery');
+    if (gallery) gallery.style.display = 'grid';
+    
+    document.querySelectorAll('.gallery-item').forEach(item => {
+        item.style.display = 'flex';
+    });
+    
+    const art3dGallery = document.getElementById('art-gallery');
+    const infosContainer = document.getElementById('infos');
+    const headerContainer = document.getElementById('header');
+    
+    if (art3dGallery) art3dGallery.style.display = 'none';
+    if (infosContainer) infosContainer.style.display = 'none';
+    if (headerContainer) headerContainer.style.display = 'block';
+    
+    updateProjectsTitle('Mes Projets Web', 'Portfolio de créations digitales');
+}
+
+function resetScrollPositions() {
+    window.scrollTo(0, 0);
+    document.querySelectorAll('.gallery-item').forEach(item => {
+        if (item.scrollTop) item.scrollTop = 0;
+    });
+}
+
+function updateProjectsTitle(title, subtitle) {
+    const projectsTitle = document.querySelector('.projects-title');
+    const projectsSubtitle = document.querySelector('.projects-subtitle');
+    const projectsHeader = document.querySelector('.projects-header');
+    
+    if (title && subtitle) {
+        if (projectsTitle) projectsTitle.textContent = title;
+        if (projectsSubtitle) projectsSubtitle.textContent = subtitle;
+        if (projectsHeader) projectsHeader.style.display = 'block';
+    } else {
+        if (projectsHeader) projectsHeader.style.display = 'none';
+    }
+}
+
 async function loadProjects() {
     try {
         const response = await fetch('projects.json');
@@ -19,20 +60,31 @@ async function loadProjects() {
             const category = project.category.toLowerCase().trim();
             projectElement.className = `gallery-item ${category}`;
             if (project.noPhone) projectElement.className += ' no-phone';
-            const logoPath = `Elements/image/${project.id}-logo.png`;
-            const previewPath = `Elements/image/${project.id}.jpg`;
+            const logoPath = `Elements/image/${project.id}-icon.png`;
+            const previewPath = `Elements/image/${project.id}-banner.png`;
             projectElement.innerHTML = `
                 <a href="${project.path}/index.html" target="_blank">
-                    <div class="project-logo"><img src="${logoPath}" alt="Logo"></div>
-                    <img src="${previewPath}" class="gallery-img" alt="${project.title}">
-                    <div class="overlay">
-                        <div class="overlay-text">${project.creator} - <strong>${project.title}</strong></div>
+                    <div class="card-image">
+                        <img src="${previewPath}" class="gallery-img" alt="${project.title}">
                     </div>
-                </a>
-            `;
+                    <div class="card-info">
+                        <div class="card-icon">
+                            <img src="${logoPath}" alt="Logo">
+                        </div>
+                        <div class="card-text">
+                            <div class="card-title">${project.title}</div>
+                            <div class="card-creator">${project.creator}</div>
+                        </div>
+                    </div>
+                </a>            `;
             gallery.appendChild(projectElement);
         });
         showAllItems();
+        
+        // Initialiser la détection du centre après le chargement des projets
+        if (window.innerWidth <= 768) {
+            setTimeout(() => initCenterDetection(), 100);
+        }
     } catch (error) {
         console.error('Error loading projects:', error);
     }
@@ -51,10 +103,14 @@ async function loadArtworks() {
             <img src="${imagePath}" class="art-img" alt="${artwork.title}">
             <div class="art-info">
                 <h3 class="art-title">"${artwork.title}"</h3>
-            </div>
-        `;
+            </div>        `;
         artGallery.appendChild(artElement);
     });
+    
+    // Initialiser la détection du centre après le chargement de l'art
+    if (window.innerWidth <= 768) {
+        setTimeout(() => initCenterDetection(), 100);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -147,11 +203,25 @@ document.addEventListener('DOMContentLoaded', function() {
     art3dLink.addEventListener('click', function(e) {
         e.preventDefault();
         show3dArt();
-    });
-    art3dLinkMobile.addEventListener('click', function(e) {
+    });    art3dLinkMobile.addEventListener('click', function(e) {
         e.preventDefault();
         show3dArt();
     });
+    
+    function updateProjectsTitle(title, subtitle) {
+        const projectsTitle = document.querySelector('.projects-title');
+        const projectsSubtitle = document.querySelector('.projects-subtitle');
+        const projectsHeader = document.querySelector('.projects-header');
+        
+        if (title && subtitle) {
+            projectsTitle.textContent = title;
+            projectsSubtitle.textContent = subtitle;
+            projectsHeader.style.display = 'block';
+        } else {
+            projectsHeader.style.display = 'none';
+        }
+    }
+
     function show3dArt() {
         resetScrollPositions();
         document.querySelectorAll('.gallery-item').forEach(item => {
@@ -159,29 +229,37 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         headerContainer.style.display = 'none';
         infosContainer.style.display = 'none';
-        document.getElementById('gallery').style.display = 'none';
-        art3dGallery.style.display = 'block';
+        document.getElementById('gallery').style.display = 'none';        art3dGallery.style.display = 'block';
+        updateProjectsTitle(null, null);
     }
-    function showAllItems() {
-        resetScrollPositions();
-        const gallery = document.getElementById('gallery');
-        gallery.style.display = 'flex';
-        document.querySelectorAll('.gallery-item').forEach(item => {
-            item.style.display = 'block';
-        });
-        art3dGallery.style.display = 'none';
-        infosContainer.style.display = 'none';
-        headerContainer.style.display = 'block';
-    }
+    
     function filterItems(category) {
         resetScrollPositions();
         const gallery = document.getElementById('gallery');
-        gallery.style.display = 'flex';
+        gallery.style.display = 'grid';
         const items = document.querySelectorAll('.gallery-item');
         const targetCategory = category.toLowerCase().trim();
+        
+        // Mettre à jour le titre selon la catégorie
+        let title, subtitle;
+        switch(targetCategory) {
+            case 'personal-project':
+                title = 'Mes Projets Personnels';
+                subtitle = 'Créations indépendantes et expérimentations';
+                break;
+            case 'commission':
+                title = 'Mes Commissions';
+                subtitle = 'Projets réalisés pour des clients';
+                break;
+            default:
+                title = 'Mes Projets Web';
+                subtitle = 'Portfolio de créations digitales';
+        }
+        updateProjectsTitle(title, subtitle);
+        
         items.forEach(item => {
             if (item.classList.contains(targetCategory)) {
-                item.style.display = 'block';
+                item.style.display = 'flex';
             } else {
                 item.style.display = 'none';
             }
@@ -199,12 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
         art3dGallery.style.display = 'none';
         document.getElementById('gallery').style.display = 'none';
         infosContainer.style.display = 'block';
-    }
-    function resetScrollPositions() {
-        window.scrollTo(0, 0);
-        document.querySelectorAll('.gallery-item').forEach(item => {
-            if (item.scrollTop) item.scrollTop = 0;
-        });
+        updateProjectsTitle(null, null);
     }
     const links = document.querySelectorAll('.link');
     const linksMobile = document.querySelectorAll('.link-mobile');
@@ -247,18 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 document.addEventListener('scroll', function() {
-    if (window.innerWidth < 768) return;
-    // Parallax effect for gallery images
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    const scrollPosition = window.pageYOffset;
-    galleryItems.forEach(item => {
-        const img = item.querySelector('.gallery-img');
-        if (!img) return;
-        const speed = 2;
-        const offset = item.getBoundingClientRect().top + scrollPosition;
-        const imgYOffset = (scrollPosition - offset) / speed;
-        img.style.transform = `translateY(${imgYOffset}px)`;
-    });
+    // Parallax effect removed
 });
 document.addEventListener("DOMContentLoaded", function () {
     if (window.innerWidth < 768) {
@@ -273,9 +335,105 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     item.classList.remove("active");
                 }
-            });
-        }
+            });        }
         window.addEventListener("scroll", checkPosition);
         checkPosition();
     }
+
+    // Détection des éléments au centre de l'écran sur mobile
+    if (window.innerWidth <= 768) {
+        initCenterDetection();
+    }
 });
+
+// Fonction pour détecter les éléments au centre de l'écran
+function initCenterDetection() {
+    // Rechercher tous les éléments à chaque appel pour inclure les éléments chargés dynamiquement
+    function getCenterElements() {
+        return {
+            galleryItems: document.querySelectorAll('.gallery-item'),
+            achievementItems: document.querySelectorAll('.achievement-item'),
+            artItems: document.querySelectorAll('.art-item'),
+            artContainer: document.querySelector('.art-gallery-container')
+        };
+    }
+
+    function isElementInCenter(element) {
+        if (!element || element.style.display === 'none') return false;
+        
+        const rect = element.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const elementCenter = rect.top + rect.height / 2;
+        const viewportCenter = viewportHeight / 2;
+        
+        // L'élément est considéré comme centré s'il est dans les 25% centraux de l'écran
+        const threshold = viewportHeight * 0.25;
+        return Math.abs(elementCenter - viewportCenter) < threshold;
+    }
+
+    function updateCenterElements() {
+        const elements = getCenterElements();
+        
+        // Gestion des items de la galerie
+        let hasActiveGallery = false;
+        elements.galleryItems.forEach(item => {
+            if (isElementInCenter(item)) {
+                item.classList.add('center-active');
+                hasActiveGallery = true;
+            } else {
+                item.classList.remove('center-active');
+            }
+        });
+
+        // Gestion des achievements
+        elements.achievementItems.forEach(item => {
+            if (isElementInCenter(item)) {
+                item.classList.add('center-active');
+            } else {
+                item.classList.remove('center-active');
+            }
+        });
+
+        // Gestion des items d'art
+        let hasActiveArt = false;
+        elements.artItems.forEach(item => {
+            if (isElementInCenter(item)) {
+                item.classList.add('center-active');
+                hasActiveArt = true;
+            } else {
+                item.classList.remove('center-active');
+            }
+        });
+
+        // Ajouter/retirer la classe sur le conteneur d'art
+        if (elements.artContainer) {
+            if (hasActiveArt) {
+                elements.artContainer.classList.add('has-center-active');
+            } else {
+                elements.artContainer.classList.remove('has-center-active');
+            }
+        }
+    }
+
+    // Écouteurs d'événements avec throttling pour de meilleures performances
+    let ticking = false;
+    function handleScroll() {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                updateCenterElements();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }
+
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', () => {
+        if (window.innerWidth <= 768) {
+            updateCenterElements();
+        }
+    });
+    
+    // Initialisation
+    updateCenterElements();
+}
