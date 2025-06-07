@@ -412,8 +412,7 @@ class UltraOptimizedLoader {
                     <div class="video-description">${video.channel || ''}</div>
                 </div>
             </div>
-        `;
-    }
+        `;    }
 
     // Génération ultra-optimisée des examens
     generateExamsSection() {
@@ -435,8 +434,10 @@ class UltraOptimizedLoader {
         `;
         
         this.currentData.exams.forEach(exam => {
+            const flagImg = exam.flag ? `<img src="../Images/${exam.flag}.jpg" class="exam-flag" alt="${exam.title}">` : '';
             html += `
                 <button class="pdf-button pdf-subject" onclick="window.UltraLoader.openPDF('${exam.file}')">
+                    ${flagImg}
                     <i class="fas fa-file-pdf"></i>
                     ${exam.title}
                 </button>
@@ -455,8 +456,10 @@ class UltraOptimizedLoader {
         `;
         
         this.currentData.exams.forEach(exam => {
+            const flagImg = exam.flag ? `<img src="../Images/${exam.flag}.jpg" class="exam-flag" alt="${exam.title}">` : '';
             html += `
                 <button class="pdf-button pdf-correction" onclick="window.UltraLoader.openPDF('${exam.correction}')">
+                    ${flagImg}
                     <i class="fas fa-file-pdf"></i>
                     ${exam.title}
                 </button>
