@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test MathJax - Flèches</title>
+    <script src="mathJax.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .formula {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #007acc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test MathJax - Symboles de flèches</h1>
+    
+    <div class="test-section">
+        <h3>Flèches simples</h3>
+        <div class="formula">
+            <strong>rightarrow:</strong> $f: x \rightarrow x^2$
+        </div>
+        <div class="formula">
+            <strong>leftarrow:</strong> $x \leftarrow y$
+        </div>
+        <div class="formula">
+            <strong>to (équivalent):</strong> $f: x \to x^2$
+        </div>
+        <div class="formula">
+            <strong>gets (équivalent):</strong> $x \gets y$
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Flèches doubles</h3>
+        <div class="formula">
+            <strong>Rightarrow:</strong> $P \Rightarrow Q$
+        </div>
+        <div class="formula">
+            <strong>Leftarrow:</strong> $P \Leftarrow Q$
+        </div>
+        <div class="formula">
+            <strong>Leftrightarrow:</strong> $P \Leftrightarrow Q$
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Flèches bidirectionnelles</h3>
+        <div class="formula">
+            <strong>leftrightarrow:</strong> $x \leftrightarrow y$
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Autres symboles mathématiques</h3>
+        <div class="formula">
+            <strong>Ensembles:</strong> $\mathbb{R}, \mathbb{N}, \mathbb{Z}, \mathbb{Q}, \mathbb{C}$
+        </div>
+        <div class="formula">
+            <strong>Vecteurs:</strong> $\vec{AB}, \overrightarrow{CD}$
+        </div>
+        <div class="formula">
+            <strong>Fractions:</strong> $\frac{a}{b}, \dfrac{x}{y}$
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Formules complexes avec flèches</h3>
+        <div class="formula">
+            <strong>Fonction:</strong> $f: \mathbb{R} \rightarrow \mathbb{R}, x \mapsto x^2$
+        </div>
+        <div class="formula">
+            <strong>Implication:</strong> $x > 0 \Rightarrow x^2 > 0$
+        </div>
+        <div class="formula">
+            <strong>Équivalence:</strong> $x = 0 \Leftrightarrow x^2 = 0$
+        </div>
+    </div>
+    
+    <script>
+        // Attendre que MathJax soit chargé
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                console.log('MathJax chargé, vérification des symboles...');
+                
+                // Vérifier si les symboles sont correctement rendus
+                const formulas = document.querySelectorAll('.formula');
+                formulas.forEach((formula, index) => {
+                    const hasError = formula.querySelector('.mjx-merror, .MathJax_Error, [data-mjx-error]');
+                    if (hasError) {
+                        console.warn(`Erreur détectée dans la formule ${index + 1}:`, formula.textContent);
+                    }
+                });
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

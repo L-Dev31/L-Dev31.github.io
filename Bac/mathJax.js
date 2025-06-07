@@ -1,7 +1,7 @@
 window.MathJax = {
     tex: {
-        inlineMath: [['$', '$']],
-        displayMath: [],
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
         packages: {'[+]': ['ams', 'base', 'color']},
         macros: {
             frac: ["\\dfrac{#1}{#2}", 2],
@@ -39,71 +39,15 @@ window.MathJax = {
                 displays.forEach(function(element) {
                     element.style.display = 'inline';
                     element.style.textAlign = 'inherit';
-                    element.style.margin = '0';
-                    element.style.padding = '0 0.2em';
                 });
-            }, function() {}]
-        }
-    },
-    loader: {
-        load: ['[tex]/ams', '[tex]/color']
-    },    startup: {
-        ready: function() {
-            MathJax.startup.defaultReady();
-            const style = document.createElement('style');
-            style.textContent = `
-                .MathJax_Display,
-                .mjx-display {
-                    display: inline !important;
-                    text-align: inherit !important;
-                    margin: 0 !important;
-                    padding: 0 0.2em !important;
-                }
-                
-                .MathJax,
-                .mjx-container {
-                    display: inline !important;
-                    margin: 0 !important;
-                }
-                
-                .mjx-math {
-                    display: inline !important;
-                }
-                
-                .MathJax,
-                .mjx-container,
-                .mjx-math,
-                .mjx-mrow,
-                .mjx-mi,
-                .mjx-mn,
-                .mjx-mo,
-                .mjx-mtext,
-                .mjx-mfrac,
-                .mjx-msup,
-                .mjx-msub,
-                .mjx-msubsup,
-                .mjx-mover,
-                .mjx-munder,
-                .mjx-munderover {
-                    font-weight: 400 !important;
-                    -webkit-font-smoothing: antialiased !important;
-                    -moz-osx-font-smoothing: grayscale !important;
-                }
-                
-                .mjx-c::before {
-                    font-weight: 400 !important;
-                }
-            `;
-            document.head.appendChild(style);
+            }]
         }
     }
 };
-
-(function() {
+(function () {
     var script = document.createElement('script');
-    script.id = 'MathJax-script';
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
     script.async = true;
-    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js';
     document.head.appendChild(script);
 })();
 
