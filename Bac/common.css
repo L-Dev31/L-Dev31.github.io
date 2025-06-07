@@ -337,7 +337,7 @@ mjx-container[display="true"]::before {
 }
 
 .page-break::after {
-  content: "— Saut de Page —";
+  content: "— SAUT DE PAGE —";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -345,9 +345,11 @@ mjx-container[display="true"]::before {
   background: var(--background-primary);
   color: var(--text-tertiary);
   font-size: var(--text-sm);
+  font-weight: 500;
   font-style: italic;
   letter-spacing: 2px;
   padding: 0 var(--spacing-md);
+  white-space: nowrap;
 }
 
 /* Styles pour les onglets - Navbar sticky en haut simplifiée */
@@ -2357,9 +2359,30 @@ mjx-container[display="true"]::before {
 /* SÉPARATEURS DE PAGE POUR L'IMPRESSION */
 .page-break {
     page-break-before: always;
-    border-top: 2px dashed #e2e8f0;
-    margin: 3rem 0;
-    padding-top: 3rem;
+    break-before: page; /* Propriété moderne */
+    margin: var(--spacing-3xl) 0;
+    text-align: center;
+    position: relative;
+    border-top: 2px solid var(--border-subtle);
+    height: 2px;
+    display: block !important;
+    clear: both;
+}
+
+.page-break::after {
+    content: "— SAUT DE PAGE —";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--background-primary);
+    color: var(--text-tertiary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    font-style: italic;
+    letter-spacing: 2px;
+    padding: 0 var(--spacing-md);
+    white-space: nowrap;
 }
 
 /* RESPONSIVE DESIGN - MOBILE */
