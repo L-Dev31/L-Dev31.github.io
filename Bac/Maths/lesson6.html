@@ -61,6 +61,42 @@
                 <p>Formellement : $\forall \epsilon > 0, \exists \delta > 0, \forall x \in D_f, 0 < |x - a| < \delta \implies |f(x) - L| < \epsilon$.</p>
                 <p><strong>Remarque :</strong> Si $f$ est définie en $a$, alors $\lim_{x \to a} f(x) = L$ équivaut à dire que $f$ est continue en $a$ avec $f(a)=L$. Pour les fonctions usuelles (polynômes, rationnelles, exp, ln, trigonométriques, racine) sur leur domaine de définition, la limite en un point $a$ est simplement $f(a)$.</p>
             </div>
+        </section>        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Limite infinie en un point</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Soit $f$ une fonction définie au voisinage d'un réel $a$ (sauf peut-être en $a$).</p>
+                <p>On dit que $f(x)$ tend vers $+\infty$ quand $x$ tend vers $a$, noté $\lim_{x \to a} f(x) = +\infty$, si tout intervalle de la forme $]A, +\infty[$ contient toutes les valeurs $f(x)$ dès que $x$ est suffisamment proche de $a$ (et $x \neq a$).</p>
+                <p>Définition analogue pour $\lim_{x \to a} f(x) = -\infty$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemples</h3>
+                <ul>
+                    <li>$\lim_{x \to 0^+} \frac{1}{x} = +\infty$ et $\lim_{x \to 0^-} \frac{1}{x} = -\infty$</li>
+                    <li>$\lim_{x \to 0} \frac{1}{x^2} = +\infty$</li>
+                    <li>$\lim_{x \to 0^+} \ln(x) = -\infty$</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">4. Limite finie en $\pm \infty$</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Soit $f$ une fonction définie sur un intervalle de la forme $[a, +\infty[$ et $L$ un réel.</p>
+                <p>On dit que $f(x)$ tend vers $L$ quand $x$ tend vers $+\infty$, noté $\lim_{x \to +\infty} f(x) = L$, si tout intervalle ouvert contenant $L$ contient toutes les valeurs $f(x)$ dès que $x$ est suffisamment grand.</p>
+                <p>Définition analogue pour $\lim_{x \to -\infty} f(x) = L$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemples de référence</h3>
+                <ul>
+                    <li>$\lim_{x \to +\infty} \frac{1}{x} = 0$</li>
+                    <li>$\lim_{x \to +\infty} \frac{1}{x^n} = 0$ (pour $n \in \mathbb{N}^*$)</li>
+                    <li>$\lim_{x \to -\infty} e^x = 0$</li>
+                </ul>
+            </div>
         </section>
 
         <div class="page-break"></div>
@@ -68,12 +104,11 @@
             <h2 class="lesson-subtitle">5. Opérations sur les limites</h2>
             <p>Les règles d'opérations (somme, produit, quotient, composition) sur les limites de fonctions sont analogues à celles des suites. Il faut être vigilant aux formes indéterminées.</p>
             <div class="summary-box">
-                <h3 class="box-title">Formes Indéterminées (FI)</h3>
-                <p>Les principales formes indéterminées sont :</p>
+                <h3 class="box-title">Formes Indéterminées (FI)</h3>                <p>Les principales formes indéterminées sont :</p>
                 <ul>
-                    <li>Somme : $ "+\infty - \infty" $</li>
-                    <li>Produit : $ "0 \times \infty" $</li>
-                    <li>Quotient : $ "\frac{0}{0}" $, $ "\frac{\infty}{\infty}" $</li>
+                    <li>Somme : $+\infty - \infty$</li>
+                    <li>Produit : $0 \times \infty$</li>
+                    <li>Quotient : $\frac{0}{0}$, $\frac{\infty}{\infty}$</li>
                 </ul>
                 <p>Pour lever une indétermination, on utilise diverses techniques : factorisation par le terme dominant, utilisation de l'expression conjuguée, reconnaissance de taux d'accroissement (limites liées à la dérivée), changement de variable, croissances comparées.</p>
             </div>

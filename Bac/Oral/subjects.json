@@ -7,8 +7,8 @@
       "file": "subject1.html"
     },    {
       "id": "subject2", 
-      "title": "Sujet 2 (Web)",
-      "name": "La programmation web moderne : HTML, CSS, JavaScript",
+      "title": "Sujet 2 (NSI)",
+      "name": "L'histoire des interfaces homme-machine (IHM)",
       "file": "subject2.html"
     }
   ]

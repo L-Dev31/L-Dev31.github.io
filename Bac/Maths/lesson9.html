@@ -52,9 +52,8 @@
         <section class="lesson-section">
             <h2 class="lesson-subtitle">2. Dérivée et propriétés avancées</h2>
             <div class="theorem-box">
-                <h3 class="box-title">Dérivée</h3>
-                <p>La fonction $\ln$ est dérivable sur $]0, +\infty[$ et sa dérivée est :</p>
-                <p>$(\ln(x))\' = \frac{1}{x}$</p>
+                <h3 class="box-title">Dérivée</h3>                <p>La fonction $\ln$ est dérivable sur $]0, +\infty[$ et sa dérivée est :</p>
+                <p>$(\ln(x))' = \frac{1}{x}$</p>
                 <p>Comme $\frac{1}{x} > 0$ pour $x > 0$, on retrouve que la fonction $\ln$ est strictement croissante sur $]0, +\infty[$.</p>
             </div>
             <div class="theorem-box">
@@ -70,8 +69,7 @@
                 <p>Pour tout entier $n \ge 1$ :</p>
                 <ul>
                     <li>$\lim_{x \to +\infty} \frac{\ln(x)}{x^n} = 0$ (La puissance l'emporte sur le logarithme en $+\infty$)</li>
-                    <li>$\lim_{x \to 0^+} x^n \ln(x) = 0$</li>
-                    <li>Limite liée au nombre dérivé en 1 : $\lim_{h \to 0} \frac{\ln(1+h)}{h} = (\ln)\'(1) = \frac{1}{1} = 1$.<br/>
+                    <li>$\lim_{x \to 0^+} x^n \ln(x) = 0$</li>                    <li>Limite liée au nombre dérivé en 1 : $\lim_{h \to 0} \frac{\ln(1+h)}{h} = (\ln)'(1) = \frac{1}{1} = 1$.<br/>
                         Ou encore : $\lim_{x \to 0} \frac{\ln(1+x)}{x} = 1$.</li>
                 </ul>
             </div>
@@ -91,7 +89,7 @@
                             <td>$+\infty$</td>
                         </tr>
                         <tr>
-                            <th>Signe de $\ln'(x) = 1/x$</th>
+                            <th>Signe de $\ln'(x) = \frac{1}{x}$</th>
                             <td style="border-right-style: double;"></td>
                             <td colspan="4">$+$</td>
                         </tr>
@@ -107,8 +105,8 @@
                     </table>
                     </div>
                 </p>
-                <p>La courbe $\mathcal{C}_{\ln}$ a une tangente horizontale en aucun point (car $1/x$ ne s'annule jamais). La tangente au point $(1, 0)$ a pour pente $\ln'(1)=1$ (équation $y=x-1$). La tangente au point $(e, 1)$ a pour pente $\ln'(e)=1/e$ (équation $y = \frac{1}{e}(x-e)+1 = \frac{x}{e}$).</p>
-                <p>La fonction $\ln$ est concave sur $]0, +\infty[$ car sa dérivée seconde $(\ln)\'\'(x) = (1/x)\' = -1/x^2$ est strictement négative.</p>
+                <p>La courbe $\mathcal{C}_{\ln}$ a une tangente horizontale en aucun point (car $\frac{1}{x}$ ne s'annule jamais). La tangente au point $(1, 0)$ a pour pente $\ln'(1)=1$ (équation $y=x-1$). La tangente au point $(e, 1)$ a pour pente $\ln'(e)=\frac{1}{e}$ (équation $y = \frac{1}{e}(x-e)+1 = \frac{x}{e}$).</p>
+                <p>La fonction $\ln$ est concave sur $]0, +\infty[$ car sa dérivée seconde $(\ln)''(x) = \left(\frac{1}{x}\right)' = -\frac{1}{x^2}$ est strictement négative.</p>
                 <!-- Image illustrative de la courbe peut être ajoutée ici -->
             </div>
         </section>
@@ -132,9 +130,9 @@
                     <li>$
                         \log(10^n) = n
                     $ pour tout entier $n$.</li>
-                    <li>Elle vérifie les mêmes propriétés algébriques que le logarithme népérien : $\log(ab) = \log(a) + \log(b)$, $\log(a/b) = \log(a) - \log(b)$, $\log(a^n) = n \log(a)$.</li>
+                    <li>Elle vérifie les mêmes propriétés algébriques que le logarithme népérien : $\log(ab) = \log(a) + \log(b)$, $\log\left(\frac{a}{b}\right) = \log(a) - \log(b)$, $\log(a^n) = n \log(a)$.</li>
                     <li>Elle est strictement croissante sur $]0, +\infty[$.</li>
-                    <li>Sa dérivée est $(\log(x))\' = \frac{1}{\ln(10)} \times \frac{1}{x}$.</li>
+                    <li>Sa dérivée est $(\log(x))' = \frac{1}{\ln(10)} \times \frac{1}{x}$.</li>
                 </ul>
                 <p>Le logarithme décimal est principalement utilisé en physique <span class="tex2jax_ignore">(pH, décibels)</span> et en chimie.</p>
             </div>
