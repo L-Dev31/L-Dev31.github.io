@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon 11 : Primitives, équations différentielles</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>    <script src="../mathJax.js"></script>
+    <script>
+        window.addEventListener('beforeprint', function() {
+            // Potentially add print-specific MathJax adjustments here if needed
+        });
+    </script>
+    <style>
+        /* Suggestion de saut de page avant les sections principales pour l'impression */
+        @media print {
+            .lesson-section {page-break-before: always;} 
+            .lesson-section:first-of-type {page-break-before: auto;}
+            h1.lesson-main-title {page-break-after: avoid;}
+        }
+        
+        @media (max-width: 768px) {
+            body {font-size: 14px;} 
+        }
+    </style>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>Ce chapitre introduit deux concepts liés à l'opération inverse de la dérivation : les primitives et les équations différentielles. Trouver une primitive d'une fonction revient à trouver une fonction dont elle est la dérivée. Les équations différentielles sont des équations dont l'inconnue est une fonction, et qui font intervenir ses dérivées. Nous nous concentrerons sur les équations différentielles linéaires du premier ordre.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Primitives d'une fonction</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Soit $f$ une fonction définie sur un intervalle $I$.</p>
+                <p>On appelle <strong>primitive</strong> de $f$ sur $I$, toute fonction $F$ dérivable sur $I$ telle que pour tout $x \in I$ :</p>
+                <p>$F\'(x) = f(x)$</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Existence de primitives</h3>
+                <p>Toute fonction continue sur un intervalle $I$ admet des primitives sur $I$.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Ensemble des primitives</h3>
+                <p>Si $F$ est une primitive de $f$ sur un intervalle $I$, alors l'ensemble de toutes les primitives de $f$ sur $I$ est l'ensemble des fonctions $G$ définies par :</p>
+                <p>$G(x) = F(x) + C$</p>
+                <p>où $C$ est une constante réelle quelconque.</p>
+                <p>Autrement dit, deux primitives d'une même fonction sur un intervalle différent d'une constante.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Primitive prenant une valeur donnée en un point</h3>
+                <p>Soit $f$ une fonction continue sur un intervalle $I$. Soit $x_0 \in I$ et $y_0 \in \mathbb{R}$.</p>
+                <p>Il existe une <strong>unique</strong> primitive $F$ de $f$ sur $I$ telle que $F(x_0) = y_0$.</p>
+            </div>
+
+        <div class="page-break"></div>
+            <div class="summary-box">
+                <h3 class="box-title">Primitives des fonctions usuelles</h3>
+                <p>Le tableau suivant donne une primitive pour les fonctions usuelles (à une constante près).</p>
+                 <div style="overflow-x:auto;">
+                <table border="1" style="width:90%; margin:auto; text-align:center;">
+                    <thead>
+                        <tr><th>Fonction $f(x)$</th><th>Une primitive $F(x)$</th><th>Intervalle $I$</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>$k$ (constante)</td><td>$kx$</td><td>$\mathbb{R}$</td></tr>
+                        <tr><td>$x^n$ <span class="tex2jax_ignore">(</span>$n \in \mathbb{N}$<span class="tex2jax_ignore">)</span></td><td>$\frac{x^{n+1}}{n+1}$</td><td>$\mathbb{R}$</td></tr>
+                        <tr><td>$x^r$ <span class="tex2jax_ignore">(</span>$r \in \mathbb{R}, r \neq -1$<span class="tex2jax_ignore">)</span></td><td>$\frac{x^{r+1}}{r+1}$</td><td>$]0, +\infty[$ <span class="tex2jax_ignore">(ou</span> $\mathbb{R}^*$ <span class="tex2jax_ignore">si</span> $r$ <span class="tex2jax_ignore">entier</span> $< -1$<span class="tex2jax_ignore">)</span></td></tr>
+                        <tr><td>$\frac{1}{x}$</td><td>$\ln(|x|)$</td><td>$]0, +\infty[$ ou $]-\infty, 0[$</td></tr>
+                        <tr><td>$\frac{1}{x^n}$ <span class="tex2jax_ignore">(</span>$n \in \mathbb{N}, n \ge 2$<span class="tex2jax_ignore">)</span></td><td>$-\frac{1}{(n-1)x^{n-1}}$</td><td>$]0, +\infty[$ ou $]-\infty, 0[$</td></tr>
+                        <tr><td>$\frac{1}{\sqrt{x}}$</td><td>$2\sqrt{x}$</td><td>$]0, +\infty[$</td></tr>
+                        <tr><td>$e^x$</td><td>$e^x$</td><td>$\mathbb{R}$</td></tr>
+                        <tr><td>$\cos(x)$</td><td>$\sin(x)$</td><td>$\mathbb{R}$</td></tr>
+                        <tr><td>$\sin(x)$</td><td>$-\cos(x)$</td><td>$\mathbb{R}$</td></tr>
+                        <tr><td>$1 + \tan^2(x) = \frac{1}{\cos^2(x)}$</td><td>$\tan(x)$</td><td>Intervalle où $\cos(x) \neq 0$</td></tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+        <div class="page-break"></div>
+            <div class="property-box">
+                <h3 class="box-title">Opérations sur les primitives</h3>
+                <p>Si $F$ est une primitive de $f$ et $G$ une primitive de $g$ sur $I$, et $k$ un réel :</p>
+                <ul>
+                    <li>$F+G$ est une primitive de $f+g$.</li>
+                    <li>$k F$ est une primitive de $k f$.</li>
+                </ul>
+                <p>Formules utilisant la dérivation de fonctions composées :</p>
+                 <div style="overflow-x:auto;">
+                 <table border="1" style="width:90%; margin:auto; text-align:center;">
+                    <thead>
+                        <tr><th>Fonction $f$</th><th>Une primitive $F$</th><th>Conditions</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>$u\' u^n$ <span class="tex2jax_ignore">(</span>$n \in \mathbb{N}$<span class="tex2jax_ignore">)</span></td><td>$\frac{u^{n+1}}{n+1}$</td><td></td></tr>
+                        <tr><td>$u\' u^r$ <span class="tex2jax_ignore">(</span>$r \in \mathbb{R}, r \neq -1$<span class="tex2jax_ignore">)</span></td><td>$\frac{u^{r+1}}{r+1}$</td><td>$u > 0$ si $r$ non entier</td></tr>
+                        <tr><td>$\frac{u\'}{u}$</td><td>$\ln(|u|)$</td><td>$u \neq 0$</td></tr>
+                        <tr><td>$\frac{u\'}{u^n}$ <span class="tex2jax_ignore">(</span>$n \in \mathbb{N}, n \ge 2$<span class="tex2jax_ignore">)</span></td><td>$-\frac{1}{(n-1)u^{n-1}}$</td><td>$u \neq 0$</td></tr>
+                        <tr><td>$\frac{u\'}{\sqrt{u}}$</td><td>$2\sqrt{u}$</td><td>$u > 0$</td></tr>
+                        <tr><td>$u\' e^u$</td><td>$e^u$</td><td></td></tr>
+                        <tr><td>$u\' \cos(u)$</td><td>$\sin(u)$</td><td></td></tr>
+                        <tr><td>$u\' \sin(u)$</td><td>$-\cos(u)$</td><td></td></tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemples de calcul de primitives</h3>
+                <ol>
+                    <li>$f(x) = 3x^2 - 2x + 5$. Une primitive est $F(x) = 3 \frac{x^3}{3} - 2 \frac{x^2}{2} + 5x = x^3 - x^2 + 5x$.</li>
+                    <li>$g(x) = \frac{2x}{x^2+1}$. C'est de la forme $\frac{u\'}{u}$ avec $u(x) = x^2+1$ <span class="tex2jax_ignore">(</span>$u\'(x)=2x$<span class="tex2jax_ignore">)</span>. Comme $u(x) > 0$, une primitive est $G(x) = \ln(x^2+1)$.</li>
+                    <li>$h(x) = (2x+1)e^{x^2+x}$. C'est de la forme $u\'e^u$ avec $u(x) = x^2+x$ <span class="tex2jax_ignore">(</span>$u\'(x)=2x+1$<span class="tex2jax_ignore">)</span>. Une primitive est $H(x) = e^{x^2+x}$.</li>
+                    <li>$k(x) = \cos(3x)$. On peut écrire $k(x) = \frac{1}{3} \times 3\cos(3x)$. C'est de la forme $\frac{1}{3} u\'\cos(u)$ avec $u(x)=3x$ <span class="tex2jax_ignore">(</span>$u\'(x)=3$<span class="tex2jax_ignore">)</span>. Une primitive est $K(x) = \frac{1}{3} \sin(u) = \frac{1}{3} \sin(3x)$.</li>
+                </ol>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Équations différentielles du type $y' = ay$</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Une équation différenielle est une équation où l'inconnue est une fonction (souvent notée $y$ ou $f$) et qui fait intervenir cette fonction et ses dérivées.</p>
+                <p>L'équation $y' = ay$, où $a$ est un réel donné, est une équation différenielle linéaire du premier ordre à coefficients constants, homogène.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Solutions de l'équation $y' = ay$</h3>
+                <p>Les solutions sur $\mathbb{R}$ de l'équation différenielle $y' = ay$ sont les fonctions $y$ définies par :</p>
+                <p>$y(x) = C e^{ax}$</p>
+                <p>où $C$ est une constante réelle quelconque.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Problème de Cauchy (Condition initiale)</h3>
+                <p>Pour tous réels $x_0$ et $y_0$, il existe une <strong>unique</strong> solution $y$ de l'équation $y' = ay$ vérifiant la condition initiale $y(x_0) = y_0$.</p>
+                <p>Cette solution est $y(x) = y_0 e^{a(x-x_0)}$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Résoudre l'équation différenielle $y' = -2y$ avec la condition initiale $y(1) = 3$.</p>
+                <p>1.  Solution générale : Les solutions de $y' = -2y$ sont de la forme $y(x) = C e^{-2x}$.</p>
+                <p>2.  Utilisation de la condition initiale : On veut $y(1) = 3$.</p>
+                <p>   $C e^{-2(1)} = 3 \implies C e^{-2} = 3 \implies C = 3 e^2$.</p>
+                <p>3.  Solution unique : La solution cherchée est $y(x) = (3e^2) e^{-2x} = 3 e^{2 - 2x} = 3 e^{-2(x-1)}$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Équations différentielles du type $y' = ay + b$</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>L'équation $y' = ay + b$, où $a$ et $b$ sont des réels donnés <span class="tex2jax_ignore">(</span>$a \neq 0$<span class="tex2jax_ignore">)</span>, est une équation différenielle linéaire du premier ordre à coefficients constants, avec second membre constant.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Solutions de l'équation $y' = ay + b$</h3>
+                <p>Les solutions sur $\mathbb{R}$ de l'équation différenielle $y' = ay + b$ <span class="tex2jax_ignore">(</span>$a \neq 0$<span class="tex2jax_ignore">)</span> sont les fonctions $y$ définies par :</p>
+                <p>$y(x) = C e^{ax} - \frac{b}{a}$</p>
+                <p>où $C$ est une constante réelle quelconque.</p>
+                <p><strong>Méthode de résolution :</strong></p>
+                <ol>
+                    <li>Trouver une solution particulière constante $y_p$. On cherche $y_p(x) = k$ (constante). Alors $y_p'(x) = 0$. L'équation devient $0 = ak + b$, soit $k = -b/a$. Donc $y_p(x) = -b/a$ est une solution particulière.</li>
+                    <li>Trouver la solution générale $y_h$ de l'équation homogène associée $y' = ay$. On sait que $y_h(x) = C e^{ax}$.</li>
+                    <li>La solution générale de l'équation complète est la somme de la solution générale de l'équation homogène et d'une solution particulière : $y(x) = y_h(x) + y_p(x) = C e^{ax} - \frac{b}{a}$.</li>
+                </ol>
+            </div>
+             <div class="theorem-box">
+                <h3 class="box-title">Problème de Cauchy (Condition initiale)</h3>
+                <p>Pour tous réels $x_0$ et $y_0$, il existe une <strong>unique</strong> solution $y$ de l'équation $y' = ay + b$ vérifiant la condition initiale $y(x_0) = y_0$.</p>
+            </div>
+            
+        <div class="page-break"></div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Résoudre l'équation différenielle $y' = 3y + 6$ avec la condition initiale $y(0) = 1$.</p>
+                <p>1.  Solution particulière constante : $y_p(x) = k$. $0 = 3k + 6 \implies k = -2$. Donc $y_p(x) = -2$.</p>
+                <p>2.  Solution générale de l'équation homogène $y' = 3y$ : $y_h(x) = C e^{3x}$.</p>
+                <p>3.  Solution générale de l'équation complète : $y(x) = y_h(x) + y_p(x) = C e^{3x} - 2$.</p>
+                <p>4.  Utilisation de la condition initiale $y(0) = 1$ :</p>
+                <p>   $C e^{3(0)} - 2 = 1 \implies C e^0 - 2 = 1 \implies C - 2 = 1 \implies C = 3$.</p>
+                <p>5.  Solution unique : La solution cherchée est $y(x) = 3 e^{3x} - 2$.</p>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
+
+
+

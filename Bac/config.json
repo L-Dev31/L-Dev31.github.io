@@ -1,0 +1,27 @@
+{
+  "student": {
+    "name": "Léo Tosku",
+    "year": "2025"
+  },
+  "subjects": {
+    "maths": {
+      "title": "Mathématiques - Spécialité Terminale",
+      "subtitle": "Programme officiel de spécialité",
+      "dataFile": "maths-data.json"
+    },
+    "philosophie": {
+      "title": "Philosophie - Terminale",
+      "subtitle": "Notions et méthodes",
+      "dataFile": "philosophie-data.json"
+    },
+    "oral": {
+      "title": "Grand Oral",
+      "subtitle": "Préparation et méthodologie",
+      "dataFile": "subjects.json"
+    },
+    "home": {
+      "title": "Révisions Baccalauréat",
+      "subtitle": "Programme complet"
+    }
+  }
+}

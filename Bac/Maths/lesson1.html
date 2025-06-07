@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Leçon 1 : Combinatoire et dénombrement</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">    <script src="../mathJax.js"></script>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>La combinatoire est une branche des mathématiques qui étudie les collections finies d'objets et les manières de les "combiner" ou de les "arranger". Le dénombrement, quant à lui, consiste à compter le nombre d'éléments de ces collections. Ces outils sont fondamentaux en probabilités, en algorithmique, et dans de nombreux autres domaines scientifiques.</p>
+            <p>Ce chapitre introduit les concepts clés de la combinatoire et du dénombrement nécessaires pour le programme de Terminale, en se concentrant sur les factorielles, les arrangements, les permutations et les combinaisons.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Factorielle d'un entier naturel</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Pour tout entier naturel non nul $n$, on appelle factorielle de $n$, notée $n!$, le produit de tous les entiers naturels de 1 à $n$.</p>
+                <p>$n! = n \times (n-1) \times (n-2) \times \dots \times 2 \times 1$</p>
+                <p>Par convention, on pose $0! = 1$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemples</h3>
+                <ul>
+                    <li>$1! = 1$</li>
+                    <li>$2! = 2 \times 1 = 2$</li>
+                    <li>$3! = 3 \times 2 \times 1 = 6$</li>
+                    <li>$4! = 4 \times 3 \times 2 \times 1 = 24$</li>
+                    <li>$5! = 5 \times 4 \times 3 \times 2 \times 1 = 120$</li>
+                </ul>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Propriété</h3>
+                <p>Pour tout entier naturel $n \ge 1$, on a la relation de récurrence :</p>
+                <p>$(n+1)! = (n+1) \times n!$</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <!--PAGEBREAK-->
+        
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Permutations</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Soit $E$ un ensemble fini de $n$ éléments <span class="tex2jax_ignore">(</span>$n \in \mathbb{N}^*$<span class="tex2jax_ignore">)</span>. Une permutation de $E$ est un arrangement ordonné de tous les éléments de $E$. C'est une façon d'ordonner les $n$ éléments de l'ensemble.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Théorème</h3>
+                <p>Le nombre de permutations d'un ensemble à $n$ éléments est égal à $n!$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>                <p>Considérons l'ensemble $E = \{a, b, c\}$. Les permutations de $E$ sont :</p>
+                <p>$(a, b, c)$, $(a, c, b)$, $(b, a, c)$, $(b, c, a)$, $(c, a, b)$, $(c, b, a)$</p>
+                <p>Il y a $3! = 6$ permutations possibles.</p>
+                <p>De combien de manières peut-on classer 5 coureurs à l'arrivée d'une course <span class="tex2jax_ignore">(sans ex æquo)</span> ? Il s'agit de trouver le nombre de permutations de l'ensemble des 5 coureurs, soit $5! = 120$ classements possibles.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Arrangements <span class="tex2jax_ignore">(k-permutations)</span></h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Soit $E$ un ensemble fini de $n$ éléments et $k$ un entier naturel tel que $1 \le k \le n$. Un arrangement de $k$ éléments de $E$ (ou une $k$-permutation de $E$) est une sélection ordonnée de $k$ éléments distincts de $E$. L'ordre des éléments compte.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Théorème</h3>
+                <p>Le nombre d'arrangements de $k$ éléments parmi $n$, noté $A_n^k$ <span class="tex2jax_ignore">(ou parfois</span> $P(n,k)$<span class="tex2jax_ignore">)</span>, est donné par :</p>
+                <p>$A_n^k = n \times (n-1) \times \dots \times (n-k+1) = \frac{n!}{(n-k)!}$</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>                <p>Dans une course avec 10 participants, combien y a-t-il de podiums possibles <span class="tex2jax_ignore">(les 3 premières places)</span> ?</p>
+                <p>Il s'agit de choisir 3 participants parmi 10, en tenant compte de l'ordre <span class="tex2jax_ignore">(1er, 2ème, 3ème)</span>. C'est donc un arrangement de 3 éléments parmi 10.</p>
+                <p>$A_{10}^3 = 10 \times 9 \times 8 = \frac{10!}{(10-3)!} = \frac{10!}{7!} = 720$</p>
+                <p>Il y a 720 podiums possibles.</p>
+            </div>
+            <div class="remark-box">
+                <h3 class="box-title">Remarque</h3>
+                <p>Une permutation est un cas particulier d'arrangement où $k=n$. On retrouve bien $A_n^n = \frac{n!}{n-n)!} = \frac{n!}{0!} = n!$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">4. Combinaisons</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Soit $E$ un ensemble fini de $n$ éléments et $k$ un entier naturel tel que $0 \le k \le n$. Une combinaison de $k$ éléments de $E$ est un sous-ensemble de $E$ contenant $k$ éléments. L'ordre des éléments ne compte pas.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Théorème (Coefficient Binomial)</h3>
+                <p>Le nombre de combinaisons de $k$ éléments parmi $n$, noté $\binom{n}{k}$ <span class="tex2jax_ignore">(lire "k parmi n", aussi noté</span> $C_n^k$<span class="tex2jax_ignore">)</span>, est donné par :</p>
+                <p>$\binom{n}{k} = \frac{A_n^k}{k!} = \frac{n!}{k!(n-k)!}$</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Dans une classe de 30 élèves, on veut former un comité de 4 élèves. Combien de comités différents peut-on former ?</p>
+                <p>L'ordre des élèves dans le comité n'a pas d'importance. Il s'agit donc de choisir une combinaison de 4 élèves parmi 30.</p>
+                <p>$\binom{30}{4} = \frac{30!}{4!(30-4)!} = \frac{30!}{4!26!} = \frac{30 \times 29 \times 28 \times 27}{4 \times 3 \times 2 \times 1} = 27405$</p>
+                <p>Il y a 27 405 comités possibles.</p>
+                <p>Au Loto, on tire 5 boules parmi 49. Combien de tirages différents sont possibles ?</p>
+                <p>$\binom{49}{5} = \frac{49!}{5!44!} = \frac{49 \times 48 \times 47 \times 46 \times 45}{5 \times 4 \times 3 \times 2 \times 1} = 1\,906\,884$</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Propriétés des coefficients binomiaux</h3>
+                <ul>
+                    <li>Symétrie : $\binom{n}{k} = \binom{n}{n-k}$ <span class="tex2jax_ignore">(Choisir</span> $k$ <span class="tex2jax_ignore">éléments revient à choisir les</span> $n-k$ <span class="tex2jax_ignore">éléments qu'on ne prend pas)</span>.</li>
+                    <li>Cas particuliers : $\binom{n}{0} = 1$, $\binom{n}{1} = n$, $\binom{n}{n} = 1$.</li>
+                    <li>Formule de Pascal : Pour $1 \le k \le n-1$, $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!--PAGEBREAK-->
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">5. Triangle de Pascal</h2>
+            <p>La formule de Pascal permet de construire le triangle de Pascal, où chaque coefficient binomial est la somme des deux coefficients situés juste au-dessus de lui.</p>
+            <div class="pascal-triangle">
+                <pre>
+n=0:       1
+n=1:      1 1
+n=2:     1 2 1
+n=3:    1 3 3 1
+n=4:   1 4 6 4 1
+n=5:  1 5 10 10 5 1
+...</pre>
+            </div>
+            <p>La valeur à la ligne $n$ et à la colonne $k$ (en commençant à 0) est $\binom{n}{k}$. Par exemple, $\binom{4}{2} = 6$.</p>
+        </section>
+
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">6. Binôme de Newton</h2>
+            <div class="theorem-box">
+                <h3 class="box-title">Formule du binôme de Newton</h3>
+                <p>Pour tous nombres réels (ou complexes) $a$ et $b$, et tout entier naturel $n$, on a :</p>
+                <p>$(a+b)^n = \sum_{k=0}^{n} \binom{n}{k} a^{n-k} b^k$</p>
+                <p>$= \binom{n}{0}a^n + \binom{n}{1}a^{n-1}b + \binom{n}{2}a^{n-2}b^2 + \dots + \binom{n}{n-1}ab^{n-1} + \binom{n}{n}b^n$</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Développer $(x+2)^4$ :</p>
+                <p>$(x+2)^4 = \binom{4}{0}x^4 2^0 + \binom{4}{1}x^3 2^1 + \binom{4}{2}x^2 2^2 + \binom{4}{3}x^1 2^3 + \binom{4}{4}x^0 2^4$</p>
+                <p>En utilisant les coefficients du triangle de Pascal (ligne n=4) : 1, 4, 6, 4, 1</p>
+                <p>$(x+2)^4 = 1 \cdot x^4 \cdot 1 + 4 \cdot x^3 \cdot 2 + 6 \cdot x^2 \cdot 4 + 4 \cdot x \cdot 8 + 1 \cdot 1 \cdot 16$</p>
+                <p>$(x+2)^4 = x^4 + 8x^3 + 24x^2 + 32x + 16$</p>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
+

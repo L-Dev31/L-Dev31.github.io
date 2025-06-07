@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon 14 : Probabilités conditionnelles, indépendance</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">    <script src="../mathJax.js"></script>
+    <style>
+        /* Suggestion de saut de page avant les sections principales - Media query d'impression supprimée */
+        @media print {
+            .lesson-section {
+                page-break-before: always;
+            }
+            .lesson-section:first-of-type {
+                page-break-before: avoid; /* Éviter un saut avant la première section */
+            }
+            h1.lesson-main-title {
+                page-break-before: avoid;
+                page-break-after: avoid;
+            }
+            h2.lesson-subtitle {
+                page-break-before: avoid; /* Éviter un saut juste avant un sous-titre */
+                page-break-after: avoid;
+            }            .definition-box, .theorem-box, .property-box, .example-box, .summary-box {
+                page-break-inside: avoid;
+            }
+            /* Spécifique pour les arbres de proba */
+            .proba-tree {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>Les probabilités conditionnelles permettent de calculer la probabilité d'un événement sachant qu'un autre événement s'est déjà réalisé. Cette notion est fondamentale pour analyser des situations où l'information évolue. L'indépendance de deux événements signifie que la réalisation de l'un n'influence pas la probabilité de l'autre. Ce chapitre explore ces concepts, introduit les arbres pondérés et la formule des probabilités totales.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Probabilité conditionnelle</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Soient $A$ et $B$ deux événements d'un univers $\Omega$ muni d'une probabilité $P$. On suppose que $P(A) \neq 0$.</p>
+                <p>La <strong>probabilité conditionnelle</strong> de l'événement $B$ sachant que l'événement $A$ est réalisé, notée $P_A(B)$ <span class="tex2jax_ignore">(ou</span> $P(B|A)$<span class="tex2jax_ignore">)</span>, est définie par :</p>
+                <p>$P_A(B) = \frac{P(A \cap B)}{P(A)}$</p>
+                <p>Intuitivement, on restreint l'univers à l'événement $A$ et on regarde la "proportion" de $B$ à l'intérieur de $A$.</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Conséquences</h3>
+                <ul>                    <li>$P(A \cap B) = P(A) \times P_A(B)$ <span class="tex2jax_ignore">(si</span> $P(A) \neq 0$<span class="tex2jax_ignore">)</span>.</li>
+                    <li>$P(A \cap B) = P(B) \times P_B(A)$ <span class="tex2jax_ignore">(si</span> $P(B) \neq 0$<span class="tex2jax_ignore">)</span>.</li>
+                    <li>$P_A(A) = \frac{P(A \cap A)}{P(A)} = \frac{P(A)}{P(A)} = 1$.</li>
+                    <li>Si $B$ et $C$ sont incompatibles <span class="tex2jax_ignore">(</span>$B \cap C = \emptyset$<span class="tex2jax_ignore">)</span>, alors $P_A(B \cup C) = P_A(B) + P_A(C)$.</li>
+                    <li>$P_A(\overline{B}) = 1 - P_A(B)$ <span class="tex2jax_ignore">(Probabilité de l'événement contraire sachant A)</span>.</li>
+                </ul>
+            </div>
+
+        <div class="page-break"></div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>On tire une carte au hasard dans un jeu de 32 cartes.</p>
+                <p>Soit $R$ l'événement "Tirer un roi" et $C$ l'événement "Tirer un cœur".</p>
+                <p>Calculer $P_R(C)$ : la probabilité de tirer un cœur sachant qu'on a tiré un roi.</p>
+                <p>Univers $\Omega$ : 32 cartes.</p>                <p>$P(R) = \frac{4}{32} = \frac{1}{8}$ <span class="tex2jax_ignore">(il y a 4 rois)</span>.</p>
+                <p>$R \cap C$ est l'événement "Tirer le roi de cœur". $P(R \cap C) = \frac{1}{32}$.</p>
+                <p>$P_R(C) = \frac{P(R \cap C)}{P(R)} = \frac{1/32}{4/32} = \frac{1}{4}$.</p>
+                <p>Interprétation : Parmi les 4 rois possibles, un seul est un cœur.</p>
+                <p>Calculer $P_C(R)$ : la probabilité de tirer un roi sachant qu'on a tiré un cœur.</p>
+                <p>$P(C) = \frac{8}{32} = \frac{1}{4}$ <span class="tex2jax_ignore">(il y a 8 cœurs)</span>.</p>
+                <p>$P_C(R) = \frac{P(C \cap R)}{P(C)} = \frac{1/32}{8/32} = \frac{1}{8}$.</p>
+                <p>Interprétation : Parmi les 8 cœurs possibles, un seul est un roi.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Arbres pondérés</h2>            <div class="summary-box proba-tree">
+                <h3 class="box-title">Représentation</h3>
+                <p>Les arbres pondérés sont très utiles pour visualiser et calculer des probabilités dans des situations impliquant des probabilités conditionnelles et des successions d'événements.</p>
+                <p><strong>Exemple complet avec deux événements $A$ et $B$ :</strong></p>                <div class="example-box">
+                    <h4>Arbre pondéré général</h4>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <img src="probatree.png" alt="Arbre de probabilité général" style="max-width: 100%; height: 300px;">
+                    </div>
+                </div>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Règles de calcul sur un arbre pondéré</h3>
+                <ol>
+                    <li><strong>Somme des probabilités issues d'un nœud :</strong> La somme des probabilités inscrites sur les branches issues d'un même nœud est égale à 1.<br/>
+                        Exemple : $P(A) + P(\overline{A}) = 1$ ; $P_A(B) + P_A(\overline{B}) = 1$.</li>
+                    <li><strong>Probabilité d'un chemin (intersection) :</strong> La probabilité d'un chemin (une succession de branches) est égale au produit des probabilités inscrites sur les branches de ce chemin.<br/>
+                        Exemple : $P(A \cap B) = P(A) \times P_A(B)$.</li>
+                    <li><strong>Probabilité d'un événement (Formule des probabilités totales) :</strong> La probabilité d'un événement est la somme des probabilités des chemins qui mènent à cet événement.<br/>
+                        Exemple : $P(B) = P(A \cap B) + P(\overline{A} \cap B) = P(A)P_A(B) + P(\overline{A})P_{\overline{A}}(B)$.</li>
+                </ol>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Formule des probabilités totales</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Partition de l'univers</h3>
+                <p>Une famille d'événements $(A_1, A_2, ..., A_n)$ forme une <strong>partition</strong> de l'univers $\Omega$ si :</p>
+                <ul>
+                    <li>Les événements sont deux à deux incompatibles : $A_i \cap A_j = \emptyset$ pour $i \neq j$.</li>
+                    <li>Leur réunion est l'univers entier : $A_1 \cup A_2 \cup ... \cup A_n = \Omega$.</li>
+                    <li>Chaque événement est de probabilité non nulle : $P(A_i) > 0$ pour tout $i$.</li>
+                </ul>
+                <p>Exemple simple de partition : $(A, \overline{A})$.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Formule des probabilités totales</h3>
+                <p>Soit $(A_1, A_2, ..., A_n)$ une partition de l'univers $\Omega$.</p>
+                <p>Pour tout événement $B$, on a :</p>
+                <p>$P(B) = P(A_1 \cap B) + P(A_2 \cap B) + ... + P(A_n \cap B)$</p>
+                <p>En utilisant les probabilités conditionnelles, cela s'écrit :</p>
+                <p>$P(B) = P(A_1)P_{A_1}(B) + P(A_2)P_{A_2}(B) + ... + P(A_n)P_{A_n}(B)$</p>
+                <p>$P(B) = \sum_{i=1}^{n} P(A_i) P_{A_i}(B)$</p>
+                <p>Cette formule permet de calculer la probabilité d'un événement $B$ en le décomposant selon les différents "cas" de la partition $(A_i)$.</p>
+            </div>
+
+        <div class="page-break"></div>            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Une usine fabrique des pièces avec trois machines M1, M2, M3.</p>
+                <ul>
+                    <li>M1 produit 50% des pièces, dont 2% sont défectueuses.</li>
+                    <li>M2 produit 30% des pièces, dont 3% sont défectueuses.</li>
+                    <li>M3 produit 20% des pièces, dont 4% sont défectueuses.</li>
+                </ul>
+                <p>On choisit une pièce au hasard dans la production. Quelle est la probabilité qu'elle soit défectueuse ?</p>
+                <p>Soit $M_1, M_2, M_3$ les événements "La pièce provient de la machine Mi". $(M_1, M_2, M_3)$ forme une partition de l'univers.</p>
+                <p>$P(M_1)=0.5$, $P(M_2)=0.3$, $P(M_3)=0.2$.</p>
+                <p>Soit $D$ l'événement "La pièce est défectueuse".</p>
+                <p>On connaît les probabilités conditionnelles :</p>
+                <p>$P_{M_1}(D) = 0.02$</p>
+                <p>$P_{M_2}(D) = 0.03$</p>
+                <p>$P_{M_3}(D) = 0.04$</p>                
+                
+                <div class="page-break"></div>
+                <div class="example-box">
+                    <h4>Exemple concret : Production de pièces</h4>
+                    <p>En appliquant la formule des probabilités totales à cet exemple :</p>
+                    <p><strong>Calculs des probabilités finales :</strong></p>
+                    <ul>
+                        <li>P(M₁ ∩ D) = 0.5 × 0.02 = 0.010</li>
+                        <li>P(M₁ ∩ D̄) = 0.5 × 0.98 = 0.490</li>
+                        <li>P(M₂ ∩ D) = 0.3 × 0.03 = 0.009</li>
+                        <li>P(M₂ ∩ D̄) = 0.3 × 0.97 = 0.291</li>
+                        <li>P(M₃ ∩ D) = 0.2 × 0.04 = 0.008</li>
+                        <li>P(M₃ ∩ D̄) = 0.2 × 0.96 = 0.192</li>
+                    </ul>
+                    <p><strong>Vérification :</strong> P(D) = 0.010 + 0.009 + 0.008 = 0.027</p>
+                </div>
+                
+                <p><strong>Calcul :</strong></p>
+                <p>D'après la formule des probabilités totales :</p>
+                <p>$P(D) = P(M_1)P_{M_1}(D) + P(M_2)P_{M_2}(D) + P(M_3)P_{M_3}(D)$</p>
+                <p>$P(D) = (0.5 \times 0.02) + (0.3 \times 0.03) + (0.2 \times 0.04)$</p>
+                <p>$P(D) = 0.010 + 0.009 + 0.008 = 0.027$.</p>
+                <p>La probabilité qu'une pièce choisie au hasard soit défectueuse est de <strong>2.7%</strong>.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">4. Indépendance de deux événements</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Deux événements $A$ et $B$ sont dits <strong>indépendants</strong> si la réalisation de l'un ne modifie pas la probabilité de réalisation de l'autre.</p>
+                <p>Mathématiquement, $A$ et $B$ sont indépendants si et seulement si :</p>
+                <p>$P(A \cap B) = P(A) \times P(B)$</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Caractérisation par les probabilités conditionnelles</h3>
+                <p>Si $P(A) \neq 0$ et $P(B) \neq 0$, alors $A$ et $B$ sont indépendants si et seulement si :</p>
+                <p>$P_A(B) = P(B)$ (Savoir que A est réalisé ne change pas la probabilité de B)</p>
+                <p>ou, de manière équivalente :</p>
+                <p>$P_B(A) = P(A)$ (Savoir que B est réalisé ne change pas la probabilité de A)</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Indépendance et événements contraires</h3>
+                <p>Si $A$ et $B$ sont indépendants, alors :</p>
+                <ul>
+                    <li>$A$ et $\overline{B}$ sont indépendants.</li>
+                    <li>$\overline{A}$ et $B$ sont indépendants.</li>
+                    <li>$\overline{A}$ et $\overline{B}$ sont indépendants.</li>
+                </ul>
+            </div>
+            
+        <div class="page-break"></div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>On lance deux fois un dé équilibré à 6 faces.</p>
+                <p>Soit $A$ l'événement "Le premier lancer donne 6". $P(A) = 1/6$.</p>
+                <p>Soit $B$ l'événement "Le deuxième lancer donne 6". $P(B) = 1/6$.</p>
+                <p>Soit $C$ l'événement "La somme des deux lancers est 12". $C$ correspond à l'issue (6, 6). $P(C) = 1/36$.</p>
+                <p>Les événements $A$ et $B$ sont-ils indépendants ?</p>
+                <p>$A \cap B$ est l'événement "Le premier lancer donne 6 ET le deuxième lancer donne 6", c'est l'événement $C$.</p>
+                <p>$P(A \cap B) = P(C) = 1/36$.</p>
+                <p>$P(A) \times P(B) = (1/6) \times (1/6) = 1/36$.</p>
+                <p>Comme $P(A \cap B) = P(A) \times P(B)$, les événements $A$ et $B$ sont indépendants (ce qui est intuitif pour des lancers successifs).</p>
+            </div>
+            <div class="remark-box">
+                <h3 class="box-title">Attention</h3>
+                <p>Ne pas confondre événements <strong>indépendants</strong> et événements <strong>incompatibles</strong>.</p>
+                <ul>
+                    <li>Incompatibles : $A \cap B = \emptyset$, $P(A \cap B) = 0$. La réalisation de l'un empêche la réalisation de l'autre.</li>
+                    <li>Indépendants : $P(A \cap B) = P(A)P(B)$. La réalisation de l'un n'influence pas la probabilité de l'autre.</li>
+                </ul>
+                <p>Si $A$ et $B$ sont incompatibles avec $P(A)>0$ et $P(B)>0$, alors ils ne peuvent pas être indépendants <span class="tex2jax_ignore">(car</span> $P(A \cap B)=0$ <span class="tex2jax_ignore">alors que</span> $P(A)P(B)>0$<span class="tex2jax_ignore">)</span>.</p>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

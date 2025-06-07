@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Leçon 9 : Fonction logarithme</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">
+      <script src="../mathJax.js"></script>
+    
+    <!-- Scripts spécifiques aux mathématiques -->
+    <script src="maths-specific-new.js"></script>
+    <script src="maths-enhanced-print.js"></script>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>La fonction logarithme népérien, notée $\ln$, est une fonction fondamentale en analyse, introduite comme la fonction réciproque de la fonction exponentielle. Elle permet de transformer les produits en sommes et les puissances en produits, simplifiant ainsi de nombreux calculs. Ce chapitre détaille ses propriétés, sa dérivée, ses limites et son lien avec la fonction exponentielle.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Définition et premières propriétés</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>La fonction exponentielle $x \mapsto e^x$ est continue et strictement croissante de $\mathbb{R}$ sur $]0, +\infty[$. Elle réalise donc une bijection de $\mathbb{R}$ sur $]0, +\infty[$.</p>
+                <p>On appelle <strong>fonction logarithme népérien</strong>, notée $\ln$, la fonction réciproque de la fonction exponentielle.</p>
+                <p>Elle est définie sur $]0, +\infty[$ et à valeurs dans $\mathbb{R}$.</p>
+                <p>Pour tout $x \in ]0, +\infty[$ et tout $y \in \mathbb{R}$ :</p>
+                <p>$y = \ln(x) \iff x = e^y$</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Conséquences immédiates</h3>
+                <ul>
+                    <li>Pour tout $x \in ]0, +\infty[$, $e^{\ln(x)} = x$.</li>
+                    <li>Pour tout $y \in \mathbb{R}$, $\ln(e^y) = y$.</li>
+                    <li>$
+                        \ln(1) = 0
+                    $ (car $e^0 = 1$).</li>
+                    <li>$
+                        \ln(e) = 1
+                    $ (car $e^1 = e$).</li>
+                    <li>La fonction $\ln$ est continue et strictement croissante sur $]0, +\infty[$.</li>
+                    <li>Pour tous réels $a, b > 0$ : $\ln(a) = \ln(b) \iff a = b$.</li>
+                    <li>Pour tous réels $a, b > 0$ : $\ln(a) < \ln(b) \iff a < b$.</li>
+                    <li>Signe : $\ln(x) > 0 \iff x > 1$ ; $\ln(x) < 0 \iff 0 < x < 1$.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Dérivée et propriétés avancées</h2>
+            <div class="theorem-box">
+                <h3 class="box-title">Dérivée</h3>
+                <p>La fonction $\ln$ est dérivable sur $]0, +\infty[$ et sa dérivée est :</p>
+                <p>$(\ln(x))\' = \frac{1}{x}$</p>
+                <p>Comme $\frac{1}{x} > 0$ pour $x > 0$, on retrouve que la fonction $\ln$ est strictement croissante sur $]0, +\infty[$.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Limites aux bornes</h3>
+                <ul>
+                    <li>$\lim_{x \to +\infty} \ln(x) = +\infty$</li>
+                    <li>$\lim_{x \to 0^+} \ln(x) = -\infty$</li>
+                </ul>
+                <p>La droite d'équation $x=0$ <span class="tex2jax_ignore">(l'axe des ordonnées)</span> est une asymptote verticale à la courbe représentative de la fonction $\ln$.</p>
+            </div>
+             <div class="theorem-box">
+                <h3 class="box-title">Limites liées <span class="tex2jax_ignore">(Croissances comparées)</span></h3>
+                <p>Pour tout entier $n \ge 1$ :</p>
+                <ul>
+                    <li>$\lim_{x \to +\infty} \frac{\ln(x)}{x^n} = 0$ (La puissance l'emporte sur le logarithme en $+\infty$)</li>
+                    <li>$\lim_{x \to 0^+} x^n \ln(x) = 0$</li>
+                    <li>Limite liée au nombre dérivé en 1 : $\lim_{h \to 0} \frac{\ln(1+h)}{h} = (\ln)\'(1) = \frac{1}{1} = 1$.<br/>
+                        Ou encore : $\lim_{x \to 0} \frac{\ln(1+x)}{x} = 1$.</li>
+                </ul>
+            </div>
+
+        <div class="page-break"></div>
+            <div class="summary-box">
+                <h3 class="box-title">Tableau de variations et courbe</h3>
+                <p>
+                    <div style="overflow-x:auto;">
+                    <table border="1" style="width:80%; margin:auto; text-align:center;">
+                        <tr>
+                            <th>$x$</th>
+                            <td>$0$</td>
+                            <td></td>
+                            <td>$1$</td>
+                            <td></td>
+                            <td>$+\infty$</td>
+                        </tr>
+                        <tr>
+                            <th>Signe de $\ln'(x) = 1/x$</th>
+                            <td style="border-right-style: double;"></td>
+                            <td colspan="4">$+$</td>
+                        </tr>
+                        <tr>
+                            <th>Variations de $\ln(x)$</th>
+                            <td style="border-right-style: double;"></td>
+                            <td>$-\infty$</td>
+                            <td style="text-align: right; vertical-align: bottom;">$\nearrow$</td>
+                            <td>$0$</td>
+                            <td style="text-align: right; vertical-align: bottom;">$\nearrow$</td>
+                            <td>$+\infty$</td>
+                        </tr>
+                    </table>
+                    </div>
+                </p>
+                <p>La courbe $\mathcal{C}_{\ln}$ a une tangente horizontale en aucun point (car $1/x$ ne s'annule jamais). La tangente au point $(1, 0)$ a pour pente $\ln'(1)=1$ (équation $y=x-1$). La tangente au point $(e, 1)$ a pour pente $\ln'(e)=1/e$ (équation $y = \frac{1}{e}(x-e)+1 = \frac{x}{e}$).</p>
+                <p>La fonction $\ln$ est concave sur $]0, +\infty[$ car sa dérivée seconde $(\ln)\'\'(x) = (1/x)\' = -1/x^2$ est strictement négative.</p>
+                <!-- Image illustrative de la courbe peut être ajoutée ici -->
+            </div>
+        </section>
+
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">4. Fonction logarithme décimal</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>La fonction <strong>logarithme décimal</strong>, notée $\log$ (ou $\log_{10}$), est définie sur $]0, +\infty[$ par :</p>
+                <p>$\log(x) = \frac{\ln(x)}{\ln(10)}$</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Propriétés</h3>
+                <ul>
+                    <li>$
+                        \log(1) = 0
+                    $</li>
+                    <li>$
+                        \log(10) = 1
+                    $</li>
+                    <li>$
+                        \log(10^n) = n
+                    $ pour tout entier $n$.</li>
+                    <li>Elle vérifie les mêmes propriétés algébriques que le logarithme népérien : $\log(ab) = \log(a) + \log(b)$, $\log(a/b) = \log(a) - \log(b)$, $\log(a^n) = n \log(a)$.</li>
+                    <li>Elle est strictement croissante sur $]0, +\infty[$.</li>
+                    <li>Sa dérivée est $(\log(x))\' = \frac{1}{\ln(10)} \times \frac{1}{x}$.</li>
+                </ul>
+                <p>Le logarithme décimal est principalement utilisé en physique <span class="tex2jax_ignore">(pH, décibels)</span> et en chimie.</p>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
+
+
+
+

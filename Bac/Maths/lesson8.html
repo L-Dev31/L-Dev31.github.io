@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon 8 : Continuité des fonctions d'une variable réelle</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">    <script src="../mathJax.js"></script>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>La notion de continuité traduit l'idée intuitive d'une fonction dont la courbe représentative peut être tracée "sans lever le crayon". C'est une propriété fondamentale en analyse, étroitement liée aux limites et à la dérivation. Ce chapitre définit la continuité et présente le théorème clé associé : le Théorème des Valeurs Intermédiaires <span class="tex2jax_ignore">(TVI)</span>.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Définition de la continuité</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Continuité en un point</h3>
+                <p>Soit $f$ une fonction définie sur un intervalle $I$ et $a$ un point de $I$.</p>
+                <p>On dit que $f$ est <strong>continue en $a$</strong> si $f$ admet une limite finie en $a$ et si cette limite est égale à $f(a)$.</p>
+                <p>$\lim_{x \to a} f(x) = f(a)$</p>
+            </div>
+            <div class="definition-box">
+                <h3 class="box-title">Continuité sur un intervalle</h3>
+                <p>Une fonction $f$ est dite <strong>continue sur un intervalle $I$</strong> si elle est continue en tout point $a$ de $I$.</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Propriétés <span class="tex2jax_ignore">(Fonctions usuelles)</span></h3>
+                <ul>
+                    <li>Les fonctions polynômes sont continues sur $\mathbb{R}$.</li>
+                    <li>Les fonctions rationnelles sont continues sur chaque intervalle de leur ensemble de définition.</li>
+                    <li>La fonction racine carrée est continue sur $[0, +\infty[$.</li>
+                    <li>Les fonctions sinus et cosinus sont continues sur $\mathbb{R}$.</li>
+                    <li>La fonction tangente est continue sur chaque intervalle de son ensemble de définition.</li>
+                    <li>La fonction exponentielle est continue sur $\mathbb{R}$.</li>
+                    <li>La fonction logarithme népérien est continue sur $]0, +\infty[$.</li>
+                </ul>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Lien avec la dérivabilité</h3>
+                <p>Si une fonction $f$ est dérivable en un point $a$ (ou sur un intervalle $I$), alors elle est continue en $a$ (ou sur $I$).</p>
+                <p><strong>Attention :</strong> La réciproque est fausse. Une fonction peut être continue en un point sans y être dérivable <span class="tex2jax_ignore">(exemple : la fonction valeur absolue</span> $x \mapsto |x|$ <span class="tex2jax_ignore">est continue en 0 mais pas dérivable en 0)</span>.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Propriétés et théorèmes</h2>
+            <div class="theorem-box">
+                <h3 class="box-title">Propriétés des opérations</h3>
+                <p>Soient $f$ et $g$ deux fonctions continues sur un intervalle $I$ et $k$ un réel.</p>
+                <ul>
+                    <li>La somme $f+g$ est continue sur $I$.</li>
+                    <li>Le produit $\lambda f$ est continu sur $I$.</li>
+                    <li>Le produit $f \times g$ est continu sur $I$.</li>
+                    <li>Si $g$ ne s'annule pas sur $I$, le quotient $f/g$ est continu sur $I$.</li>
+                    <li>La composée $g \circ f$ est continue sur $I$ (si les conditions de composition sont remplies et $g$ est continue sur l'intervalle image $f(I)$).</li>
+                </ul>
+                <p>Ces propriétés découlent directement des opérations sur les limites.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>La fonction $h(x) = \frac{e^x + 1}{x^2 + 1}$ est continue sur $\mathbb{R}$.</p>
+                <p>En effet :</p>
+                <ul>
+                    <li>$x \mapsto e^x$ est continue sur $\mathbb{R}$.</li>                    <li>$x \mapsto 1$ <span class="tex2jax_ignore">(fonction constante)</span> est continue sur $\mathbb{R}$.</li>
+                    <li>Donc $x \mapsto e^x + 1$ est continue sur $\mathbb{R}$ <span class="tex2jax_ignore">(somme)</span>.</li>
+                    <li>$x \mapsto x^2$ est continue sur $\mathbb{R}$ (polynôme).</li>
+                    <li>$x \mapsto 1$ est continue sur $\mathbb{R}$.</li>
+                    <li>Donc $x \mapsto x^2 + 1$ est continue sur $\mathbb{R}$ (somme).</li>
+                    <li>De plus, $x^2 + 1 \ge 1$ pour tout $x$, donc le dénominateur ne s'annule jamais sur $\mathbb{R}$.</li>
+                    <li>Par conséquent, $h(x)$ est continue sur $\mathbb{R}$ (quotient de fonctions continues dont le dénominateur ne s'annule pas).</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Théorème des Valeurs Intermédiaires (TVI)</h2>
+            <div class="theorem-box">
+                <h3 class="box-title">Énoncé du TVI</h3>
+                <p>Soit $f$ une fonction continue sur un intervalle fermé borné $[a, b]$.</p>
+                <p>Pour tout réel $k$ compris entre $f(a)$ et $f(b)$ (c'est-à-dire $k \in [\min(f(a), f(b)), \max(f(a), f(b))]$), il existe au moins un réel $c$ dans l'intervalle $[a, b]$ tel que $f(c) = k$.</p>
+                <p>Autrement dit, une fonction continue sur un segment prend toutes les valeurs intermédiaires entre les valeurs prises aux extrémités.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Corollaire (Cas des fonctions strictement monotones)</h3>
+                <p>Soit $f$ une fonction continue ET strictement monotone sur un intervalle $[a, b]$.</p>
+                <p>Pour tout réel $k$ compris entre $f(a)$ et $f(b)$, l'équation $f(x) = k$ admet une <strong>unique</strong> solution $c$ dans l'intervalle $[a, b]$.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Corollaire (Théorème de Bolzano - Recherche de zéros)</h3>
+                <p>Soit $f$ une fonction continue sur un intervalle $[a, b]$.</p>
+                <p>Si $f(a)$ et $f(b)$ sont de signes contraires (c'est-à-dire $f(a) \times f(b) < 0$), alors il existe au moins un réel $c$ dans l'intervalle ouvert $]a, b[$ tel que $f(c) = 0$.</p>
+                <p>Si de plus $f$ est strictement monotone sur $[a, b]$, alors ce réel $c$ est unique.</p>
+                <p>Ce corollaire est très utilisé pour prouver l'existence et l'unicité de solutions à des équations de la forme $f(x)=0$.</p>
+            </div>
+            <div class="example-box">
+                
+        <div class="page-break"></div>
+                <h3 class="box-title">Exemple d'application du TVI</h3>
+                <p>Montrer que l'équation $x^3 + x - 1 = 0$ admet au moins une solution dans l'intervalle $[0, 1]$.</p>
+                <p>Soit $f(x) = x^3 + x - 1$.</p>
+                <p>1.  Continuité : $f$ est une fonction polynôme, elle est donc continue sur $\mathbb{R}$, et en particulier sur $[0, 1]$.</p>
+                <p>2.  Valeurs aux bornes :</p>
+                <p>   $f(0) = 0^3 + 0 - 1 = -1$.</p>
+                <p>   $f(1) = 1^3 + 1 - 1 = 1$.</p>
+                <p>3.  Application du TVI (corollaire de Bolzano) :</p>
+                <p>   $f$ est continue sur $[0, 1]$.</p>
+                <p>   Le réel $k=0$ est compris entre $f(0)=-1$ et $f(1)=1$.</p>
+                <p>   Donc, d'après le théorème des valeurs intermédiaires, il existe au moins un réel $c \in [0, 1]$ tel que $f(c) = 0$.</p>
+                <p>   (Pour montrer l'unicité, on étudierait la monotonie : $f'(x) = 3x^2 + 1$. Comme $f'(x) > 0$ pour tout $x$, $f$ est strictement croissante sur $\mathbb{R}$. Donc la solution $c$ est unique).</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">4. Application aux suites du type $u_{n+1} = f(u_n)$</h2>
+            <div class="theorem-box">
+                <h3 class="box-title">Théorème du point fixe</h3>
+                <p>Soit $f$ une fonction continue sur un intervalle $I$ telle que $f(I) \subseteq I$.</p>
+                <p>Soit $(u_n)$ une suite définie par $u_0 \in I$ et $u_{n+1} = f(u_n)$.</p>
+                <p>Si la suite $(u_n)$ converge vers une limite finie $L$, alors cette limite $L$ appartient à $I$ et est un point fixe de $f$, c'est-à-dire :</p>
+                <p>$f(L) = L$</p>
+            </div>
+            <div class="remark-box">
+                <h3 class="box-title">Utilisation pratique</h3>
+                <p>Ce théorème est crucial pour déterminer la limite potentielle d'une suite récurrente convergente.</p>
+                <p>La démarche typique est :</p>
+                <ol>
+                    <li>Montrer que la suite est bien définie et que ses termes restent dans l'intervalle $I$ (souvent par récurrence).</li>
+                    <li>Montrer que la suite est convergente (par exemple, en montrant qu'elle est monotone et bornée).</li>
+                    <li>Identifier la fonction $f$ telle que $u_{n+1} = f(u_n)$ et vérifier qu'elle est continue sur $I$.</li>
+                    <li>Résoudre l'équation $f(x) = x$ pour trouver les points fixes potentiels.</li>
+                    <li>Utiliser les informations sur la suite (bornes, monotonie) pour déterminer laquelle des solutions est la limite $L$.</li>
+                </ol>
+                <p>(Voir l'exemple détaillé dans la section 4 du chapitre 5 sur les Suites).</p>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
+
+
+

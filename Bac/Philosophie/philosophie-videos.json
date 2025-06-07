@@ -1,0 +1,158 @@
+{
+  "metadata": {
+    "subject": "philosophie",
+    "version": "2.0",
+    "totalChapters": 4,
+    "totalVideos": 16
+  },
+  "chaptersVideos": [
+    {
+      "id": "le-sujet",
+      "title": "Le sujet",
+      "description": "Vidéos sur la conscience, la liberté, l'inconscient, le temps",
+      "videos": [
+        {
+          "id": 301,
+          "title": "La conscience et l'inconscient",
+          "url": "https://www.youtube.com/watch?v=pkeQzlskbwI",
+          "channel": "L'Antisèche"
+        },
+        {
+          "id": 303,
+          "title": "Le temps",
+          "url": "https://www.youtube.com/watch?v=oh-bFiqBXfc",
+          "channel": "L'Antisèche"
+        },
+        {
+          "id": 302,
+          "title": "La liberté",
+          "url": "https://www.youtube.com/watch?v=pvthG23DssI",
+          "channel": "L'Antisèche"
+        }
+      ]
+    },
+    {
+      "id": "la-culture",
+      "title": "La culture",
+      "description": "Vidéos sur la nature, le langage, la technique, la culture, le travail, la religion, l'art, le bonheur",
+      "videos": [
+        {
+          "id": 304,
+          "title": "La culture",
+          "url": "https://www.youtube.com/watch?v=slcnWVy712A",
+          "channel": "L'Antisèche"
+        },
+        {
+          "id": 305,
+          "title": "La nature",
+          "url": "https://www.youtube.com/watch?v=lyRHjKHKP5I",
+          "channel": "Lumni"
+        },
+        {
+          "id": 306,
+          "title": "Le langage",
+          "url": "https://www.youtube.com/watch?v=2UJKp-4BKi8",
+          "channel": "Lumni"
+        },
+        {
+          "id": 307,
+          "title": "La technique",
+          "url": "https://www.youtube.com/watch?v=oXfOIMwLIME",
+          "channel": "Lumni"
+        },
+        {
+          "id": 308,
+          "title": "Le travail",
+          "url": "https://www.youtube.com/watch?v=JXmDt18dtFM",
+          "channel": "L'Antisèche"
+        },
+        {
+          "id": 309,
+          "title": "La religion",
+          "url": "https://www.youtube.com/watch?v=xG9fJ9GG0zA",
+          "channel": "Lumni"
+        },
+        {
+          "id": 310,
+          "title": "L'art",
+          "url": "https://www.youtube.com/watch?v=5i0-DuxgfJY",
+          "channel": "L'Antisèche"
+        },
+        {
+          "id": 311,
+          "title": "Le bonheur",
+          "url": "https://www.youtube.com/watch?v=WMO0bQ8czUw",
+          "channel": "L'Antisèche"
+        }
+      ]
+    },
+    {
+      "id": "la-raison-et-le-reel",
+      "title": "La raison et le réel",
+      "description": "Vidéos sur la raison, la justice, la vérité, la science, l'État, le devoir",
+      "videos": [
+        {
+          "id": 312,
+          "title": "La raison",
+          "url": "https://www.youtube.com/watch?v=5cmk7muaXC8",
+          "channel": "Lumni"
+        },
+        {
+          "id": 313,
+          "title": "La justice",
+          "url": "https://www.youtube.com/watch?v=ZUtCBYJ1C2k",
+          "channel": "Lumni"
+        },
+        {
+          "id": 314,
+          "title": "La vérité",
+          "url": "https://www.youtube.com/watch?v=6oh_aRrKUsw",
+          "channel": "L'Antisèche"
+        },
+        {
+          "id": 315,
+          "title": "La science",
+          "url": "https://www.youtube.com/watch?v=fDtYyZdgD0c",
+          "channel": "Lumni"
+        },
+        {
+          "id": 316,
+          "title": "L’État",
+          "url": "https://www.youtube.com/watch?v=W42w_3N1wqo",
+          "channel": "Lumni"
+        },
+        {
+          "id": 317,
+          "title": "Le devoir",
+          "url": "https://www.youtube.com/watch?v=rqSOUByKfKo",
+          "channel": "Lumni"
+        }
+      ]
+    },
+    {
+      "id": "annexes",
+      "title": "Annexes méthodologiques",
+      "description": "Guides méthodologiques pour la dissertation et l'explication de texte",
+      "videos": [
+        {
+          "id": 405,
+          "title": "La dissertation",
+          "url": "https://www.youtube.com/watch?v=n5BpkETXrLM",
+          "channel": "L'Antisèche"
+        },
+        {
+          "id": 406,
+          "title": "Explication de texte",
+          "url": "https://www.youtube.com/watch?v=pvkw47tSyyI",
+          "channel": "L'Antisèche"
+        },
+        {
+          "id": 407,
+          "title": "Conseils ultimes pour le bac de Philo",
+          "url": "https://www.youtube.com/watch?v=2BWn22Bz8us",
+          "channel": "L'Antisèche"
+        }
+      ]
+    }
+  ]
+}

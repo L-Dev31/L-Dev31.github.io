@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Leçon 2 : Manipulation des vecteurs, droites et plans</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">    <script src="../mathJax.js"></script>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>L'étude de la géométrie dans l'espace est essentielle pour modéliser et comprendre le monde qui nous entoure. Ce chapitre se concentre sur les outils fondamentaux que sont les vecteurs, les droites et les plans. Nous allons revoir les opérations sur les vecteurs, introduire le produit scalaire et ses applications, et étudier les différentes représentations des droites et des plans ainsi que leurs positions relatives.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Vecteurs de l'espace</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Coordonnées et opérations</h3>
+                <p>Dans un repère orthonormé $(O; \vec{i}, \vec{j}, \vec{k})$ de l'espace, un vecteur $\vec{u}$ a pour coordonnées $(x, y, z)$, ce qu'on note $\vec{u}(x, y, z)$ ou $\vec{u} = x\vec{i} + y\vec{j} + z\vec{k}$.</p>
+                <p>Si $\vec{u}(x, y, z)$ et $\vec{v}(x', y', z')$, et $k$ est un réel :</p>
+                <ul>
+                    <li>$\vec{u} + \vec{v}$ a pour coordonnées $(x+x', y+y', z+z')$.</li>
+                    <li>$k \vec{u}$ a pour coordonnées $(k x, k y, k z)$.</li>
+                </ul>
+                <p>Si $A(x_A, y_A, z_A)$ et $B(x_B, y_B, z_B)$, le vecteur $\vec{AB}$ a pour coordonnées $(x_B - x_A, y_B - y_A, z_B - z_A)$.</p>
+                <p>La norme du vecteur $\vec{u}(x, y, z)$ est $\|\vec{u}\| = \sqrt{x^2 + y^2 + z^2}$.</p>
+                <p>La distance entre les points $A$ et $B$ est $AB = \|\vec{AB}\| = \sqrt{(x_B - x_A)^2 + (y_B - y_A)^2 + (z_B - z_A)^2}$.</p>
+            </div>
+            <div class="definition-box">
+                <h3 class="box-title">Colinéarité</h3>
+                <p>Deux vecteurs non nuls $\vec{u}$ et $\vec{v}$ sont colinéaires s'il existe un réel $k$ tel que $\vec{v} = k \vec{u}$.</p>
+                <p>Trois points $A$, $B$, $C$ sont alignés si et seulement si les vecteurs $\vec{AB}$ et $\vec{AC}$ sont colinéaires.</p>
+            </div>
+             <div class="definition-box">
+                <h3 class="box-title">Coplanarité</h3>
+                <p>Trois vecteurs $\vec{u}$, $\vec{v}$ et $\vec{w}$ sont coplanaires s'il existe deux réels $a$ et $b$ tels que $\vec{w} = a\vec{u} + b\vec{v}$.</p>
+                <p>Quatre points $A$, $B$, $C$, $D$ sont coplanaires si et seulement si les vecteurs $\vec{AB}$, $\vec{AC}$ et $\vec{AD}$ sont coplanaires.</p>
+                <p>Si $\vec{u}$ et $\vec{v}$ ne sont pas colinéaires, alors $(\vec{u}, \vec{v}, \vec{w})$ sont coplanaires si et seulement si $\vec{w}$ peut s'écrire comme combinaison linéaire de $\vec{u}$ et $\vec{v}$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Produit scalaire dans l'espace</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définitions</h3>
+                <p>Soient $\vec{u}$ et $\vec{v}$ deux vecteurs de l'espace.</p>
+                <ul>
+                    <li>Si $\vec{u} = \vec{0}$ ou $\vec{v} = \vec{0}$, alors $\vec{u} \cdot \vec{v} = 0$.</li>
+                    <li>Sinon, $\vec{u} \cdot \vec{v} = \|\vec{u}\| \times \|\vec{v}\| \times \cos(\theta)$, où $\theta$ est l'angle géométrique entre $\vec{u}$ et $\vec{v}$.</li>
+                    <li>Expression analytique : Si $\vec{u}(x, y, z)$ et $\vec{v}(x', y', z')$ dans un repère orthonormé, alors $\vec{u} \cdot \vec{v} = xx' + yy' + zz'$.</li>
+                    <li>Autre expression : $\vec{u} \cdot \vec{v} = \frac{1}{2} (||\vec{u} + \vec{v}||^2 - ||\vec{u}||^2 - ||\vec{v}||^2)$.</li>
+                    <li>Carré scalaire : $\vec{u} \cdot \vec{u} = ||\vec{u}||^2$.</li>
+                </ul>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Propriétés</h3>
+                <p>Pour tous vecteurs $\vec{u}, \vec{v}, \vec{w}$ et tout réel $k$ :</p>
+                <ul>
+                    <li>Symétrie : $\vec{u} \cdot \vec{v} = \vec{v} \cdot \vec{u}$</li>
+                    <li>Bilinéarité : 
+                        <ul>
+                            <li>$\vec{u} \cdot (\vec{v} + \vec{w}) = \vec{u} \cdot \vec{v} + \vec{u} \cdot \vec{w}$</li>
+                            <li>$(\vec{u} + \vec{v}) \cdot \vec{w} = \vec{u} \cdot \vec{w} + \vec{v} \cdot \vec{w}$</li>
+                            <li>$(k \vec{u}) \cdot \vec{v} = k (\vec{u} \cdot \vec{v})$</li>
+                            <li>$\vec{u} \cdot (k \vec{v}) = k (\vec{u} \cdot \vec{v})$</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Orthogonalité</h3>
+                <p>Deux vecteurs $\vec{u}$ et $\vec{v}$ sont orthogonaux si et seulement si leur produit scalaire est nul : $\vec{u} \cdot \vec{v} = 0$.</p>
+                <p>On note $\vec{u} \perp \vec{v}$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Soient $\vec{u}(1, 2, 3)$ et $\vec{v}(4, -5, 2)$ dans un repère orthonormé.</p>
+                <p>$\vec{u} \cdot \vec{v} = (1)(4) + (2)(-5) + (3)(2) = 4 - 10 + 6 = 0$.</p>
+                <p>Les vecteurs $\vec{u}$ et $\vec{v}$ sont orthogonaux.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Droites dans l'espace</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Représentation paramétrique</h3>
+                <p>Une droite $(d)$ passant par un point $A(x_A, y_A, z_A)$ et dirigée par un vecteur non nul $\vec{u}(a, b, c)$ est l'ensemble des points $M(x, y, z)$ tels que $\vec{AM} = t\vec{u}$, où $t$ est un paramètre réel.</p>
+                <p>Cela se traduit par le système d'équations paramétriques :</p>
+                <p>$\begin{cases} x = x_A + ta \\ y = y_A + tb \\ z = z_A + tc \end{cases}, t \in \mathbb{R}$</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Droite $(d)$ passant par $A(1, 0, -2)$ et de vecteur directeur $\vec{u}(2, -1, 3)$.</p>
+                <p>Une représentation paramétrique est :</p>
+                <p>$\begin{cases} x = 1 + 2t \\ y = 0 - t \\ z = -2 + 3t \end{cases}, t \in \mathbb{R}$</p>
+                <p>Le point $B(5, -2, 4)$ appartient-il à $(d)$ ?</p>
+                <p>On cherche $t$ tel que : $5 = 1+2t \implies 2t=4 \implies t=2$.</p>
+                <p>Vérifions pour les autres coordonnées : $y = -t = -2$ (OK), $z = -2 + 3t = -2 + 3(2) = 4$ (OK).</p>
+                <p>Donc $B$ appartient à $(d)$ <span class="tex2jax_ignore">(correspond au paramètre</span> $t=2$<span class="tex2jax_ignore">)</span>.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">4. Plans dans l'espace</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Représentation paramétrique</h3>
+                <p>Un plan $(P)$ passant par un point $A(x_A, y_A, z_A)$ et dirigé par deux vecteurs non colinéaires $\vec{u}(a, b, c)$ et $\vec{v}(a', b', c')$ est l'ensemble des points $M(x, y, z)$ tels que $\vec{AM} = t\vec{u} + s\vec{v}$, où $t$ et $s$ sont des paramètres réels.</p>
+                <p>Cela se traduit par le système d'équations paramétriques :</p>
+                <p>$\begin{cases} x = x_A + ta + sa' \\ y = y_A + tb + sb' \\ z = z_A + tc + sc' \end{cases}, (t, s) \in \mathbb{R}^2$</p>
+            </div>
+            <div class="definition-box">
+                <h3 class="box-title">Vecteur normal et équation cartésienne</h3>
+                <p>Un vecteur non nul $\vec{n}$ est dit normal à un plan $(P)$ s'il est orthogonal à tous les vecteurs directeurs de $(P)$ (ou de manière équivalente, s'il est orthogonal à deux vecteurs directeurs non colinéaires de $(P)$).</p>
+                <p>Un plan $(P)$ est entièrement déterminé par un point $A$ et un vecteur normal $\vec{n}(a, b, c)$.</p>
+                <p>Un point $M(x, y, z)$ appartient au plan $(P)$ si et seulement si $\vec{AM} \cdot \vec{n} = 0$.</p>
+                <p>Cela conduit à l'équation cartésienne du plan :</p>
+                <p>$a(x-x_A) + b(y-y_A) + c(z-z_A) = 0$</p>
+                <p>Qui peut s'écrire sous la forme générale :</p>
+                <p>$ax + by + cz + d = 0$</p>
+                <p>où $(a, b, c) \neq (0, 0, 0)$ sont les coordonnées d'un vecteur normal $\vec{n}$ au plan.</p>
+            </div>
+            
+        <div class="page-break"></div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Trouver une équation cartésienne du plan $(P)$ passant par $A(1, 2, 0)$ et de vecteur normal $\vec{n}(3, -1, 4)$.</p>
+                <p>Un point $M(x, y, z)$ appartient à $(P)$ si $\vec{AM} \cdot \vec{n} = 0$.</p>
+                <p>$\vec{AM}(x-1, y-2, z-0)$.</p>
+                <p>$(x-1)(3) + (y-2)(-1) + (z)(4) = 0$</p>
+                <p>$3x - 3 - y + 2 + 4z = 0$</p>
+                <p>$3x - y + 4z - 1 = 0$</p>
+                <p>C'est une équation cartésienne du plan $(P)$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">5. Positions relatives</h2>
+            <div class="summary-box">
+                <h3 class="box-title">Positions relatives de deux droites</h3>
+                <p>Soient $(d)$ de vecteur directeur $\vec{u}$ et $(d')$ de vecteur directeur $\vec{v}$.</p>
+                <ul>
+                    <li>Si $\vec{u}$ et $\vec{v}$ sont colinéaires : $(d)$ et $(d')$ sont parallèles. Elles sont confondues si elles ont un point commun, sinon elles sont strictement parallèles.</li>
+                    <li>Si $\vec{u}$ et $\vec{v}$ ne sont pas colinéaires : $(d)$ et $(d')$ sont sécantes si elles ont un point commun (leurs représentations paramétriques ont une solution unique), sinon elles sont non coplanaires.</li>
+                </ul>
+            </div>
+            <div class="summary-box">
+                <h3 class="box-title">Positions relatives d'une droite et d'un plan</h3>
+                <p>Soit $(d)$ de vecteur directeur $\vec{u}$ et $(P)$ de vecteur normal $\vec{n}$.</p>
+                <ul>
+                    <li>Si $\vec{u} \cdot \vec{n} = 0$ : $\vec{u}$ est orthogonal à $\vec{n}$, donc $\vec{u}$ est parallèle au plan $(P)$. La droite $(d)$ est parallèle au plan $(P)$. Elle est incluse dans $(P)$ si un point de $(d)$ appartient à $(P)$, sinon elle est strictement parallèle à $(P)$.</li>
+                    <li>Si $\vec{u} \cdot \vec{n} \neq 0$ : La droite $(d)$ est sécante au plan $(P)$ en un unique point.</li>
+                </ul>
+            </div>
+            <div class="summary-box">
+                <h3 class="box-title">Positions relatives de deux plans</h3>
+                <p>Soient $(P)$ de vecteur normal $\vec{n}(a, b, c)$ et $(P')$ de vecteur normal $\vec{n'}(a', b', c')$.</p>
+                <ul>
+                    <li>Si $\vec{n}$ et $\vec{n'}$ sont colinéaires (c'est-à-dire si les coefficients $(a,b,c)$ et $(a',b',c')$ sont proportionnels) : Les plans $(P)$ et $(P')$ sont parallèles. Ils sont confondus si leurs équations sont équivalentes, sinon ils sont strictement parallèles.</li>
+                    <li>Si $\vec{n}$ et $\vec{n'}$ ne sont pas colinéaires : Les plans $(P)$ et $(P')$ sont sécants selon une droite.</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
+
+

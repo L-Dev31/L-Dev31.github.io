@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon 4 : Représentations paramétriques et équations cartésiennes</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">    <script src="../mathJax.js"></script>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>Ce chapitre revient en détail sur les différentes manières de représenter les droites et les plans dans l'espace : les représentations paramétriques, qui décrivent l'ensemble des points à l'aide d'un ou deux paramètres, et les équations cartésiennes, qui caractérisent les points par une ou plusieurs équations liant leurs coordonnées. La maîtrise de ces représentations est essentielle pour résoudre des problèmes d'intersection, de parallélisme et d'orthogonalité.</p>
+            <p>Nous avons déjà introduit ces notions dans le chapitre 2, mais nous allons ici les consolider et explorer les passages entre les différentes représentations.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Droites dans l'espace</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Représentation paramétrique (Rappel)</h3>
+                <p>Une droite $(d)$ passant par un point $A(x_A, y_A, z_A)$ et dirigée par un vecteur non nul $\vec{u}(a, b, c)$ est l'ensemble des points $M(x, y, z)$ tels que $\vec{AM} = t\vec{u}$, où $t \in \mathbb{R}$.</p>
+                <p>Système d' équations paramétriques :</p>
+                <p>$\begin{cases} x = x_A + ta \\ y = y_A + tb \\ z = z_A + tc \end{cases}, t \in \mathbb{R}$</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Propriétés</h3>
+                <ul>
+                    <li>Un point $M$ appartient à la droite $(d)$ si et seulement s'il existe une unique valeur du paramètre $t$ telle que les coordonnées de $M$ vérifient le système.</li>
+                    <li>Une droite admet une infinité de représentations paramétriques (on peut changer le point $A$ ou le vecteur directeur $\vec{u}$ par un vecteur colinéaire).</li>
+                </ul>
+            </div>
+            <div class="definition-box">
+                <h3 class="box-title">Système d' équations cartésiennes</h3>
+                <p>Une droite dans l'espace peut également être définie comme l'intersection de deux plans secants. Elle est donc caractérisée par un système de deux équations cartésiennes de plans :</p>
+                <p>$\begin{cases} ax + by + cz + d = 0 \\ a'x + b'y + c'z + d' = 0 \end{cases}$</p>
+                <p>où les vecteurs normaux $\vec{n}(a, b, c)$ et $\vec{n'}(a', b', c')$ des deux plans ne sont pas colinéaires.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple : Passage de paramétrique à cartésienne</h3>
+                <p>Soit la droite $(d)$ : $\begin{cases} x = 1 + 2t \\ y = -t \\ z = 3 + t \end{cases}$.</p>
+                <p>On cherche à éliminer le paramètre $t$.</p>
+                <p>De la deuxième équation, $t = -y$.</p>
+                <p>En substituant dans la première : $x = 1 + 2(-y) \implies x = 1 - 2y \implies x + 2y - 1 = 0$. <span class="tex2jax_ignore">(Équation d'un premier plan contenant</span> $(d)$<span class="tex2jax_ignore">)</span>.</p>
+                <p>En substituant dans la troisième : $z = 3 + (-y) \implies z = 3 - y \implies y + z - 3 = 0$. <span class="tex2jax_ignore">(Équation d'un second plan contenant</span> $(d)$<span class="tex2jax_ignore">)</span>.</p>
+                <p>Un système d' équations cartésiennes de $(d)$ est donc :</p>
+                <p>$\begin{cases} x + 2y - 1 = 0 \\ y + z - 3 = 0 \end{cases}$</p>
+                <p>Vérification : Les vecteurs normaux $\vec{n}(1, 2, 0)$ et $\vec{n'}(0, 1, 1)$ ne sont pas colinéaires.</p>
+            </div>
+             <div class="example-box">
+                <h3 class="box-title">Exemple : Passage de cartésienne à paramétrique</h3>
+                <p>Soit la droite $(d)$ définie par $\begin{cases} x + y - z + 1 = 0 \\ 2x - y + z - 4 = 0 \end{cases}$.</p>
+                <p>1.  Trouver un point $A$ de la droite : On fixe une coordonnée, par exemple $z=0$. Le système devient $\begin{cases} x + y + 1 = 0 \\ 2x - y - 4 = 0 \end{cases}$.
+                    En additionnant les deux lignes : $3x - 3 = 0 \implies x = 1$.
+                    En substituant $x=1$ dans la première : $1 + y + 1 = 0 \implies y = -2$.
+                    Donc $A(1, -2, 0)$ est un point de $(d)$.</p>
+                <p>2.  Trouver un vecteur directeur $\vec{u}$ de la droite : $\vec{u}$ est orthogonal aux vecteurs normaux des deux plans, $\vec{n}(1, 1, -1)$ et $\vec{n'}(2, -1, 1)$.
+                    On cherche $\vec{u}(a, b, c)$ tel que $\vec{u} \cdot \vec{n} = 0$ et $\vec{u} \cdot \vec{n'} = 0$.
+                    $\begin{cases} a + b - c = 0 \\ 2a - b + c = 0 \end{cases}$.
+                    En additionnant : $3a = 0 \implies a = 0$.
+                    En substituant $a=0$ dans la première : $b - c = 0 \implies b = c$.
+                    On peut choisir $c=1$, alors $b=1$. Un vecteur directeur est $\vec{u}(0, 1, 1)$.</p>
+                <p>3.  Représentation paramétrique :</p>
+                <p>$\begin{cases} x = 1 + 0t = 1 \\ y = -2 + 1t = -2 + t \\ z = 0 + 1t = t \end{cases}, t \in \mathbb{R}$</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Plans dans l'espace</h2>
+            <!--PAGEBREAK-->
+            <div class="definition-box">
+                <h3 class="box-title">Représentation paramétrique (Rappel)</h3>
+                <p>Un plan $(P)$ passant par $A(x_A, y_A, z_A)$ et dirigé par deux vecteurs non colinéaires $\\vec{u}(a, b, c)$ et $\\vec{v}(a\', b\', c\')$ est l'ensemble des points $M(x, y, z)$ tels que $\\vec{AM} = t\\vec{u} + s\\vec{v}$, où $(t, s) \\in \\mathbb{R}^2$.</p>
+                <p>Système d' équations paramétriques :</p>
+                <p>$\begin{cases} x = x_A + ta + sa' \\ y = y_A + tb + sb' \\ z = z_A + tc + sc' \end{cases}, (t, s) \in \mathbb{R}^2$</p>
+            </div>
+            <div class="definition-box">
+                <h3 class="box-title">Équation cartésienne (Rappel)</h3>
+                <p>Un plan $(P)$ admet une équation cartésienne de la forme :</p>
+                <p>$ax + by + cz + d = 0$</p>
+                <p>où $\vec{n}(a, b, c)$ est un vecteur normal non nul au plan $(P)$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple : Passage de paramétrique à cartésienne</h3>
+                <p>Soit le plan $(P)$ défini par $A(1, 0, 1)$, $\\vec{u}(1, 1, 0)$ et $\\vec{v}(0, 1, -1)$.</p>
+                <p>Représentation paramétrique : $\begin{cases} x = 1 + t \\ y = t + s \\ z = 1 - s \end{cases}$.</p>
+                <p>Méthode 1 : Éliminer $s$ et $t$.</p>
+                <p>De la première, $t = x - 1$. De la troisième, $s = 1 - z$.</p>
+                <p>En substituant dans la deuxième : $y = (x - 1) + (1 - z) \\implies y = x - z$.</p>
+                <p>Soit l'équation cartésienne : $x - y - z = 0$. (Ici $d=0$ car le plan passe par l'origine après simplification, ce qui n'est pas le cas. Revoyons le calcul).</p>
+                <p>$y = (x-1) + (1-z) \\Rightarrow y = x - 1 + 1 - z \\Rightarrow y = x - z$. Donc $x - y - z = 0$. Vérifions si A(1,0,1) est dedans : $1 - 0 - 1 = 0$. Oui. Vérifions si $\\vec{u}$ et $\\vec{v}$ sont orthogonaux au vecteur normal $\\vec{n}(1, -1, -1)$ :</p>
+                <p>$\\vec{u} \\cdot \\vec{n} = 1(1) + 1(-1) + 0(-1) = 1 - 1 = 0$. OK.</p>
+                <p>$\\vec{v} \\cdot \\vec{n} = 0(1) + 1(-1) + (-1)(-1) = -1 + 1 = 0$. OK.</p>
+                <p>L'équation est donc $x - y - z = 0$.</p>
+
+                <p>Méthode 2 : Trouver un vecteur normal.</p>
+                <p>$\vec{n}(a, b, c)$ doit être orthogonal à $\vec{u}$ et $\vec{v}$.</p>
+                <p>$\begin{cases} \vec{n} \cdot \vec{u} = 0 \implies a + b = 0 \\ \vec{n} \cdot \vec{v} = 0 \implies b - c = 0 \end{cases}$.</p>
+                <p>De la deuxième, $b = c$. De la première, $a = -b = -c$.</p>
+                <p>On peut choisir $c = -1$. Alors $b = -1$ et $a = 1$. Donc $\vec{n}(1, -1, -1)$.</p>
+                <p>L' équation est de la forme $1x - 1y - 1z + d = 0$.</p>
+                <p>Comme le plan passe par $A(1, 0, 1)$ : $1(1) - 1(0) - 1(1) + d = 0 \implies 1 - 0 - 1 + d = 0 \implies d = 0$.</p>
+                <p>On retrouve l'équation $x - y - z = 0$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple : Passage de cartésienne à paramétrique</h3>
+                <p>Soit le plan $(P)$ d' équation $2x + y - 3z + 6 = 0$.</p>
+                <p>1.  Trouver un point $A$ du plan : On fixe deux coordonnées, par exemple $y=0, z=0$. L' équation devient $2x + 6 = 0 \implies x = -3$. Donc $A(-3, 0, 0)$ est un point de $(P)$.</p>
+                <p>2.  Trouver deux vecteurs directeurs non colinéaires $\vec{u}$ et $\vec{v}$ : Leurs coordonnées $(a, b, c)$ doivent vérifier $\vec{n} \cdot \vec{u} = 0$ (où $\vec{n}(2, 1, -3)$ est le vecteur normal). Soit $2a + b - 3c = 0$.</p>
+                <p>   - Choix 1 : Prenons $a=1, c=0$. Alors $2(1) + b - 3(0) = 0 \implies b = -2$. Donc $\vec{u}(1, -2, 0)$.</p>
+                <p>   - Choix 2 : Prenons $a=0, c=1$. Alors $2(0) + b - 3(1) = 0 \implies b = 3$. Donc $\vec{v}(0, 3, 1)$.</p>
+                <p>   Vérification : $\vec{u}$ et $\vec{v}$ ne sont pas colinéaires.</p>
+                <p>3.  Représentation paramétrique :</p>
+                <p>$\begin{cases} x = -3 + 1t + 0s = -3 + t \\ y = 0 - 2t + 3s = -2t + 3s \\ z = 0 + 0t + 1s = s \end{cases}, (t, s) \in \mathbb{R}^2$</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Applications : Intersections</h2>
+            <!--PAGEBREAK-->
+            <div class="summary-box">
+                <h3 class="box-title">Intersection de deux droites</h3>
+                <p>Données : $(d)$ et $(d')$ par leurs représentations paramétriques <span class="tex2jax_ignore">(avec des paramètres différents,</span> $t$ <span class="tex2jax_ignore">et</span> $k$<span class="tex2jax_ignore">)</span>.</p>
+                <p>Méthode : Égaler les expressions de $x, y, z$ pour obtenir un système de 3 équations à 2 inconnues ($t, k$).</p>
+                <p>$\begin{cases} x_A + ta = x_{A'} + ka' \\ y_A + tb = y_{A'} + kb' \\ z_A + tc = z_{A'} + kc' \end{cases}$</p>
+                <ul>
+                    <li>Si le système a une solution unique $(t_0, k_0)$ : Les droites sont sécantes. Le point d'intersection s'obtient en remplaçant $t_0$ dans l' équation de $(d)$ ou $k_0$ dans celle de $(d')$.</li>
+                    <li>Si le système a une infinité de solutions : Les droites sont confondues.</li>
+                    <li>Si le système n'a pas de solution : Les droites sont parallèles (si $\vec{u}, \vec{v}$ colinéaires) ou non coplanaires (si $\vec{u}, \vec{v}$ non colinéaires).</li>
+                </ul>
+            </div>
+            <div class="summary-box">
+                <h3 class="box-title">Intersection d'une droite et d'un plan</h3>
+                <p>Données : $(d)$ par sa représentation paramétrique et $(P)$ par son équation cartésienne.</p>
+                <p>Méthode : Substituer les expressions de $x, y, z$ de la droite <span class="tex2jax_ignore">(en fonction de</span> $t$<span class="tex2jax_ignore">)</span> dans l' équation du plan. On obtient une équation du premier degré en $t$.</p>
+                <ul>
+                    <li>Si l' équation a une solution unique $t_0$ : La droite coupe le plan en un point unique. On trouve ses coordonnées en remplaçant $t_0$ dans la représentation paramétrique de $(d)$.</li>
+                    <li>Si l' équation est du type $0t = 0$ (toujours vraie) : La droite est incluse dans le plan.</li>
+                    <li>Si l' équation est du type $0t = k$ (avec $k \neq 0$, impossible) : La droite est strictement parallèle au plan.</li>
+                </ul>
+            </div>
+            <div class="summary-box">
+                <h3 class="box-title">Intersection de deux plans</h3>
+                <p>Données : $(P)$ et $(P')$ par leurs équations cartésiennes.</p>
+                <p>Méthode : Résoudre le système formé par les deux équations cartésiennes.</p>
+                <ul>
+                    <li>Si les plans sont sécants (vecteurs normaux non colinéaires) : Le système admet une infinité de solutions dépendant d'un paramètre. L'ensemble des solutions est une droite, dont on peut trouver une représentation paramétrique en exprimant deux coordonnées en fonction de la troisième (ou d'un paramètre $t$).</li>
+                    <li>Si les plans sont parallèles (vecteurs normaux colinéaires) : Le système n'a pas de solution (parallèles stricts) ou une infinité de solutions dépendant de deux paramètres (confondus).</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
+
+
+
