@@ -263,23 +263,21 @@ class UltraOptimizedLoader {
         const completedClass = isCompleted ? 'lesson-completed' : '';
         
         return `
-            <div class="lesson-item ${completedClass}" data-lesson-id="${item.id}">
-                <div class="lesson-header" onclick="window.UltraLoader.toggleLesson(${item.id})">
-                    <div class="lesson-checkbox-container">
+            <div class="lesson-item ${completedClass}" data-lesson-id="${item.id}">                <div class="lesson-header" onclick="window.UltraLoader.toggleLesson(${item.id})">
+                    ${!item['no-check'] ? `<div class="lesson-checkbox-container">
                         <input type="checkbox" 
                                class="lesson-checkbox" 
                                id="checkbox-${item.id}"
                                ${isCompleted ? 'checked' : ''}
                                onclick="window.UltraLoader.toggleLessonCompletion(${item.id}, event)">
                         <label for="checkbox-${item.id}" class="checkbox-label"></label>
-                    </div>
+                    </div>` : '<div class="lesson-checkbox-container-placeholder"></div>'}
                     <div class="lesson-title-container">
                         <h3 class="lesson-title">${item.title}</h3>
-                    </div>
-                    <div class="lesson-actions">
-                        <button class="print-button" onclick="window.UltraLoader.printLesson(${item.id})">
+                    </div><div class="lesson-actions">
+                        ${!item['no-print'] ? `<button class="print-button" onclick="window.UltraLoader.printLesson(${item.id})">
                             <i class="fas fa-print"></i> Imprimer
-                        </button>
+                        </button>` : ''}
                     </div>
                 </div>
                 <div class="lesson-content" id="lesson-content-${item.id}">
@@ -747,9 +745,7 @@ class UltraOptimizedLoader {
         } else {
             lessonItem.classList.remove('lesson-completed');
         }
-    }
-
-    // Calcule le pourcentage de progression
+    }    // Calcule le pourcentage de progression
     calculateProgress() {
         if (!this.currentData || !this.currentData.themes) return 0;
         
@@ -759,15 +755,18 @@ class UltraOptimizedLoader {
         this.currentData.themes.forEach(theme => {
             const items = theme.lessons || theme.notions || [];
             items.forEach(item => {
-                totalLessons++;
-                if (this.getLessonCompletionStatus(item.id)) {
-                    completedLessons++;
+                // Exclure les leçons avec le flag "no-check"
+                if (!item['no-check']) {
+                    totalLessons++;
+                    if (this.getLessonCompletionStatus(item.id)) {
+                        completedLessons++;
+                    }
                 }
             });
         });
         
         return totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
-    }    // Ajoute la progress bar en haut de page
+    }// Ajoute la progress bar en haut de page
     addProgressBar() {
         // Supprimer l'ancienne progress bar si elle existe
         const existingBar = document.querySelector('.progress-bar-container');

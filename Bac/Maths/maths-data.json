@@ -139,13 +139,14 @@
       "id": "annexes",
       "title": "Annexes techniques",
       "color": "#6b7280",
-      "lessons": [
-        {
+      "lessons": [        {
           "id": 16,
           "title": "Guide de la calculatrice TI-83CE",
           "shortTitle": "TI-83CE",
           "file": "calculatrice-ti83ce.html",
-          "keywords": ["calculatrice", "TI-83CE", "fonctions", "graphiques", "statistiques"]
+          "keywords": ["calculatrice", "TI-83CE", "fonctions", "graphiques", "statistiques"],
+          "no-print": true,
+          "no-check": true
         }
       ],
       "videos": []

@@ -1,0 +1,583 @@
+/* ============================================================================
+   STYLES SPÉCIALISÉS POUR CALCULATRICE TI-83 PREMIUM CE
+   Design méthodique et authentique pour les guides de calculatrice
+   ============================================================================ */
+
+/* ============================================ */
+/* RÉINITIALISATION ET BASE */
+/* ============================================ */
+
+.calculator-guide * {
+    box-sizing: border-box;
+}
+
+.calculator-guide {
+    max-width: 950px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: #1e293b;
+    background: #ffffff;
+}
+
+/* ============================================ */
+/* TYPOGRAPHIE HIÉRARCHIQUE */
+/* ============================================ */
+
+.calculator-guide h1 {
+    text-align: center;
+    color: #1e293b;
+    margin-bottom: 3rem;
+    font-size: 2.75rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8, #059669);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calculator-guide h2 {
+    color: #1e293b;
+    border-bottom: 3px solid #3b82f6;
+    padding-bottom: 0.75rem;
+    margin: 3rem 0 2rem 0;
+    font-size: 1.85rem;
+    font-weight: 700;
+    position: relative;
+}
+
+.calculator-guide h2::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #059669, #3b82f6);
+    border-radius: 2px;
+}
+
+.calculator-guide h3 {
+    color: #374151;
+    margin: 2.5rem 0 1.25rem 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.calculator-guide h3::before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    color: #3b82f6;
+    font-size: 1rem;
+    transform: translateY(2px);
+}
+
+.calculator-guide p {
+    margin-bottom: 1.25rem;
+    line-height: 1.75;
+    color: #475569;
+}
+
+/* ============================================ */
+/* SYSTÈME AUTHENTIQUE DE BOUTONS TI-83 CE */
+/* ============================================ */
+
+.calc-key {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    margin: 0.15rem;
+    border-radius: 8px;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', 'Roboto Mono', monospace;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    vertical-align: middle;
+    line-height: 1.3;
+    min-width: 2.2rem;
+    text-align: center;
+    box-sizing: border-box;
+    cursor: default;
+    user-select: none;
+}
+
+/* Chiffres et opérateurs - authentique gris TI */
+.calc-key.number,
+.calc-key.operator {
+    background: linear-gradient(145deg, #e8e8e8, #ddd);
+    color: #000000;
+    border: 1px solid #bbb;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+}
+
+/* Touche 2nd - bleu TI authentique */
+.calc-key.second {
+    background: linear-gradient(145deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    border: 1px solid #1e40af;
+    font-weight: 700;
+    box-shadow: 0 3px 6px rgba(37, 99, 235, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Touche ALPHA - vert TI authentique */
+.calc-key.alpha {
+    background: linear-gradient(145deg, #059669, #047857);
+    color: #ffffff;
+    border: 1px solid #065f46;
+    font-weight: 700;
+    box-shadow: 0 3px 6px rgba(5, 150, 105, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Fonctions secondaires - texte bleu sur blanc */
+.calc-key.second-func {
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    color: #2563eb;
+    border: 1px solid #cbd5e1;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Fonctions ALPHA - texte vert sur blanc */
+.calc-key.alpha-func {
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    color: #059669;
+    border: 1px solid #cbd5e1;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Autres touches - style par défaut */
+.calc-key.default {
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    color: #000000;
+    border: 1px solid #d1d5db;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+/* Effets hover raffinés */
+.calc-key:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+}
+
+.calc-key.number:hover,
+.calc-key.operator:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.calc-key.second:hover {
+    box-shadow: 0 5px 12px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.calc-key.alpha:hover {
+    box-shadow: 0 5px 12px rgba(5, 150, 105, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================ */
+/* SÉQUENCES DE TOUCHES MÉTHODIQUES */
+/* ============================================ */
+
+.key-sequence {
+    line-height: 2.4;
+    margin: 2rem 0;
+    font-size: 1.05rem;
+    background: linear-gradient(145deg, #f8fafc, #f1f5f9);
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    border-left: 5px solid #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.12);
+    position: relative;
+    overflow: hidden;
+}
+
+.key-sequence::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #059669, #3b82f6);
+}
+
+.key-sequence::after {
+    content: '⌨️';
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 1.5rem;
+    opacity: 0.4;
+}
+
+.key-sequence strong {
+    color: #111827;
+    font-weight: 700;
+}
+
+/* ============================================ */
+/* INSTRUCTIONS ÉTAPE PAR ÉTAPE PROFESSIONNELLES */
+/* ============================================ */
+
+.step-by-step {
+    background: linear-gradient(145deg, #f8fafc, #f1f5f9);
+    border-radius: 20px;
+    padding: 2.5rem;
+    border: 1px solid #e2e8f0;
+    margin: 2.5rem 0;
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.step-by-step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8, #059669);
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    gap: 1.5rem;
+    position: relative;
+}
+
+.step:last-child {
+    margin-bottom: 0;
+}
+
+.step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 1.25rem;
+    top: 3rem;
+    width: 3px;
+    height: calc(100% + 1rem);
+    background: linear-gradient(to bottom, #cbd5e1 0%, #cbd5e1 70%, transparent 100%);
+    border-radius: 2px;
+}
+
+.step-number {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+    position: relative;
+    z-index: 2;
+    border: 3px solid #ffffff;
+}
+
+.step-content {
+    flex: 1;
+    line-height: 1.7;
+}
+
+.step-content p {
+    margin: 0.75rem 0;
+    color: #475569;
+}
+
+.step strong {
+    color: #111827;
+    font-weight: 700;
+}
+
+/* ============================================ */
+/* CONSEILS ET ALERTES VISUELLES */
+/* ============================================ */
+
+.tip {
+    background: linear-gradient(145deg, #f0f9ff, #e0f2fe);
+    border: 1px solid #bae6fd;
+    border-left: 5px solid #0ea5e9;
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
+    position: relative;
+}
+
+.tip::before {
+    content: '💡';
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.tip strong {
+    color: #0c4a6e;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.error {
+    background: linear-gradient(145deg, #fef2f2, #fee2e2);
+    border: 1px solid #fecaca;
+    border-left: 5px solid #ef4444;
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+    position: relative;
+}
+
+.error::before {
+    content: '⚠️';
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.error strong {
+    color: #991b1b;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.alert {
+    background: linear-gradient(145deg, #fffbeb, #fef3c7);
+    border: 1px solid #fed7aa;
+    border-left: 5px solid #f59e0b;
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+    position: relative;
+}
+
+.alert::before {
+    content: '📋';
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.alert strong {
+    color: #92400e;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+/* ============================================ */
+/* GROUPES DE FONCTIONS ORGANISÉS */
+/* ============================================ */
+
+.function-group {
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.function-group::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #64748b, #475569);
+}
+
+.function-group:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.function-group h3 {
+    margin: 0 0 1.5rem 0;
+    color: #1e293b;
+    font-size: 1.25rem;
+    font-weight: 700;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e2e8f0;
+    position: relative;
+    padding-left: 0;
+}
+
+.function-group h3::before {
+    content: '▶';
+    color: #64748b;
+    font-size: 1rem;
+    margin-right: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.function-group:hover h3::before {
+    transform: rotate(90deg);
+    color: #3b82f6;
+}
+
+/* ============================================ */
+/* RESPONSIVE ET IMPRESSION */
+/* ============================================ */
+
+@media (max-width: 768px) {
+    .calculator-guide {
+        padding: 1.5rem;
+    }
+    
+    .calculator-guide h1 {
+        font-size: 2.25rem;
+        margin-bottom: 2rem;
+    }
+    
+    .calculator-guide h2 {
+        font-size: 1.5rem;
+        margin: 2rem 0 1.5rem 0;
+    }
+    
+    .step-by-step {
+        padding: 1.5rem;
+    }
+    
+    .step {
+        gap: 1rem;
+    }
+    
+    .step-number {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.9rem;
+    }
+    
+    .calc-key {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.8rem;
+        margin: 0.1rem;
+    }
+}
+
+@media print {
+    .calculator-guide {
+        max-width: none;
+        padding: 1rem;
+        font-size: 11pt;
+        line-height: 1.4;
+    }
+    
+    .calculator-guide h1,
+    .calculator-guide h2,
+    .calculator-guide h3 {
+        color: #000 !important;
+        -webkit-text-fill-color: #000 !important;
+    }
+    
+    .step-by-step,
+    .function-group,
+    .tip,
+    .error,
+    .alert {
+        page-break-inside: avoid;
+        background: #f5f5f5 !important;
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+    }
+    
+    .calc-key {
+        border: 1px solid #666 !important;
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+    
+    .calc-key.second {
+        background: #e6f3ff !important;
+        color: #0066cc !important;
+    }
+    
+    .calc-key.alpha {
+        background: #e6ffe6 !important;
+        color: #006600 !important;
+    }
+    
+    .page-break {
+        page-break-before: always;
+        border-top: 1px solid #000;
+        margin: 2rem 0;
+        padding-top: 2rem;
+    }
+}
+
+/* ============================================ */
+/* ============================================ */
+/* ACCESSIBILITÉ */
+/* ============================================ */
+
+.calc-key:focus {
+    outline: 3px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Step number accessibility handled by screen readers naturally */
+
+/* Amélioration du contraste pour l'accessibilité */
+@media (prefers-contrast: high) {
+    .calc-key.second {
+        background: #1d4ed8;
+        border-color: #1e40af;
+    }
+    
+    .calc-key.alpha {
+        background: #047857;
+        border-color: #065f46;
+    }
+}
+
+/* Mode sombre pour les utilisateurs qui le préfèrent */
+@media (prefers-color-scheme: dark) {
+    .calculator-guide {
+        background: #0f172a;
+        color: #e2e8f0;
+    }
+    
+    .calculator-guide h1,
+    .calculator-guide h2,
+    .calculator-guide h3 {
+        color: #f8fafc;
+    }
+    
+    .step-by-step,
+    .function-group {
+        background: linear-gradient(145deg, #1e293b, #334155);
+        border-color: #475569;
+    }
+}

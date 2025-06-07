@@ -261,52 +261,6 @@
 }
 
 /* ============================== */
-/* ANIMATIONS ET TRANSITIONS AVANCÉES */
-/* ============================== */
-
-/* Animation d'apparition pour les boutons */
-.pdf-button {
-  animation: fadeInUp 0.3s ease-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Délai d'animation pour chaque bouton */
-.pdf-button:nth-child(1) { animation-delay: 0.1s; }
-.pdf-button:nth-child(2) { animation-delay: 0.2s; }
-.pdf-button:nth-child(3) { animation-delay: 0.3s; }
-.pdf-button:nth-child(4) { animation-delay: 0.4s; }
-
-/* Animation de survol pour les colonnes */
-.pdf-column {
-  animation: slideInFromBottom 0.4s ease-out;
-}
-
-@keyframes slideInFromBottom {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Délai d'animation pour les colonnes */
-.pdf-column:first-child { animation-delay: 0.1s; }
-.pdf-column:last-child { animation-delay: 0.2s; }
-
-/* ============================== */
 /* ACCESSIBILITÉ ET CONFORMITÉ */
 /* ============================== */
 
