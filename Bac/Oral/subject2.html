@@ -1,435 +1,301 @@
-<div class="section cs-section">
-  <h2 class="section-title section-title-large">Sujet détaillé : La programmation web moderne</h2>
+<div class="section math-section">  <h2 class="section-title section-title-large">Sujet : Les opérations mathématiques qui façonnent la 3D informatique</h2>
   <div class="highlight-box">
-    <strong>Problématique : « Comment les technologies web (HTML, CSS, JavaScript) s'articulent-elles pour créer des expériences utilisateur modernes et performantes ? »</strong>
+    <strong>Problématique : « Comment les opérations matricielles et les transformations géométriques permettent-elles de manipuler, animer et projeter des objets tridimensionnels dans l'univers numérique ? »</strong>
   </div>
 
   <h3>1. Mes motivations</h3>
   <p>
-    Ma passion pour la programmation web a commencé il y a quelques années quand j'ai voulu créer mes premiers sites personnels et comprendre comment fonctionnaient les sites que j'utilisais quotidiennement. Ce qui m'a fasciné, c'est cette capacité de transformer des idées en interfaces visuelles et interactives accessibles à tous via un navigateur. Aujourd'hui, je crée régulièrement des projets web personnels, et chaque projet me permet d'approfondir ma compréhension de ces technologies fondamentales.
+    Depuis l'âge de 10 ans, je crée des jeux vidéo. J'ai très vite appris à utiliser SketchUp à 12 ans, puis je suis rapidement passé à Blender, un autre logiciel de modélisation 3D. Aujourd'hui, après toutes ces années, je continue à créer en auto didacte des jeux vidéo et des designs grâce à la 3D. Cette passion m'a permis de comprendre à quel point les transformations géométriques sont essentielles pour donner vie à des univers virtuels, animer des personnages, ou concevoir des objets réalistes. La 3D ne se limite plus au divertissement : elle est partout ! Architecture, cinéma, médecine, ingénierie, réalité virtuelle, impression 3D… Les transformations géométriques sont le langage universel qui permet de manipuler, animer et visualiser des objets dans l'espace.
   </p>
   <p>
-    Ce qui me motive particulièrement, c'est l'aspect créatif du développement web : partir d'une page blanche et construire progressivement une expérience utilisateur complète. Chaque site web raconte une histoire, et les technologies web sont mes outils pour la raconter de la manière la plus efficace et élégante possible.
-  </p>  <div class="page-break"></div>
-  <h3>2. Fil conducteur : Créer un site web personnel</h3>
-  <p>
-    Pour illustrer concrètement l'articulation des technologies web, je vais vous présenter ma démarche habituelle quand je crée un site web personnel, de la conception à la mise en ligne.
-  </p>
-  
-  <h4><strong>Étape 1 : Planification et maquettage</strong></h4>
-  <p>
-    Tout commence par définir l'objectif du site : portfolio personnel, blog, site de présentation d'un projet... Cette phase me permet de définir l'architecture de l'information et de créer des maquettes (wireframes) qui guideront le développement.
+    Comprendre ces transformations, c'est comprendre comment un personnage se déplace dans un jeu ou bien un film, comment une pièce mécanique est simulée avant d'être fabriquée, ou comment un chirurgien peut s'entraîner sur un modèle virtuel. 
   </p>
 
-  <h4><strong>Étape 2 : Structure HTML - Les fondations</strong></h4>
+  <div class="page-break"></div>
+  <h3>2. Les matrices 3D</h3>
+  
   <p>
-    <strong>HTML (HyperText Markup Language)</strong> est le squelette de toute page web. Je commence toujours par créer une structure HTML sémantique, en utilisant les bonnes balises pour chaque type de contenu.
+    <strong>Imaginez que vous voulez déplacer une table dans votre salon.</strong> Vous pouvez faire 3 choses : 
+    la <em>pousser</em> (translation), la <em>faire tourner</em> (rotation), ou avec un peu de sorcellerie la <em>rétrécir/agrandir</em> (échelle). 
+    En 3D, c'est exactement pareil ! Pour chaque objet virtuel, l'ordinateur doit savoir comment le bouger dans l'espace.
   </p>
   
-  <p><strong>Exemple concret :</strong> Pour un portfolio personnel, je structure ainsi :</p>
-    <div class="code-block">
-    <pre><code>&lt;!DOCTYPE html&gt;
-&lt;html lang="fr"&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;Mon Portfolio - Léo Tosku&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;header&gt;
-        &lt;nav&gt;
-            &lt;ul&gt;
-                &lt;li&gt;&lt;a href="#accueil"&gt;Accueil&lt;/a&gt;&lt;/li&gt;
-                &lt;li&gt;&lt;a href="#projets"&gt;Projets&lt;/a&gt;&lt;/li&gt;
-                &lt;li&gt;&lt;a href="#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
-            &lt;/ul&gt;
-        &lt;/nav&gt;
-    &lt;/header&gt;
-    
-    &lt;main&gt;
-        &lt;section id="accueil"&gt;
-            &lt;h1&gt;Bienvenue sur mon portfolio&lt;/h1&gt;
-            &lt;p&gt;Découvrez mes projets de développement...&lt;/p&gt;
-        &lt;/section&gt;
-        
-        &lt;section id="projets"&gt;
-            &lt;h2&gt;Mes Projets&lt;/h2&gt;
-            &lt;article&gt;
-                &lt;h3&gt;Jeu vidéo en 3D&lt;/h3&gt;
-                &lt;p&gt;Un jeu créé avec Unity...&lt;/p&gt;
-            &lt;/article&gt;
-        &lt;/section&gt;
-    &lt;/main&gt;
-    
-    &lt;footer&gt;
-        &lt;p&gt;&copy; 2024 Léo Tosku&lt;/p&gt;
-    &lt;/footer&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
+  <p>
+    <strong>Une matrice, c'est comme une recette de cuisine :</strong> elle contient toutes les instructions pour transformer un objet d'un coup. 
+    Au lieu de dire "d'abord tourne-le, puis déplace-le, puis agrandis-le", on écrit tout dans une matrice (un tableau de 16 valeurs organisées en 4×4), 
+    et l'ordinateur applique toute la transformation instantanément à chaque point de l'objet.
+  </p>
+
+  <p>
+    <strong>Concrètement, voici comment ça marche :</strong> Prenons un cube simple dans Blender. Ce cube est défini par 8 points (ses sommets). 
+    Chaque point a des coordonnées (x, y, z). Si je veux faire tourner ce cube de 45°, l'ordinateur va multiplier les coordonnées de chaque point 
+    par la matrice de rotation. En une seule opération, tous les points bougent ensemble de façon cohérente.
+  </p>
+
+  <div class="page-break"></div>
+
+  <p>
+    <strong>Les trois transformations fondamentales avec leurs matrices :</strong>
+  </p>  <h4><strong>1. Translation :</strong></h4>
+  <p>Pour déplacer un objet de (dx, dy, dz) unités :</p>  <p>$$\begin{bmatrix}
+  1 & 0 & 0 & dx \\
+  0 & 1 & 0 & dy \\
+  0 & 0 & 1 & dz \\
+  0 & 0 & 0 & 1
+  \end{bmatrix}$$</p>
+  <p><em>Exemple :</em> Pour déplacer un objet de 5 unités vers la droite (axe X) :</p>
+  <p>$$\begin{bmatrix}
+  1 & 0 & 0 & 5 \\
+  0 & 1 & 0 & 0 \\
+  0 & 0 & 1 & 0 \\
+  0 & 0 & 0 & 1
+  \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} x+5 \\ y \\ z \\ 1 \end{bmatrix}$$</p><h4><strong>2. Rotation :</strong></h4>
+  <p>Pour faire tourner un objet d'un angle θ autour de l'axe Z :</p>
+  <div class="math-formula-container">
+    <p>$$\begin{bmatrix}
+    \cos\theta & -\sin\theta & 0 & 0 \\
+    \sin\theta & \cos\theta & 0 & 0 \\
+    0 & 0 & 1 & 0 \\
+    0 & 0 & 0 & 1
+    \end{bmatrix}$$</p>
+  </div>
+
+  <p><em>Exemple :</em> Pour une rotation de 45° (θ = π/4) :</p>
+  <div class="math-formula-container">
+    <p>$$\begin{bmatrix}
+    0.707 & -0.707 & 0 & 0 \\
+    0.707 & 0.707 & 0 & 0 \\
+    0 & 0 & 1 & 0 \\
+    0 & 0 & 0 & 1
+    \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} 0.707x - 0.707y \\ 0.707x + 0.707y \\ z \\ 1 \end{bmatrix}$$</p>
+  </div>
+  
+  <div class="page-break"></div>
+    <h4><strong>3. Échelle :</strong></h4>
+  <p>Pour changer la taille d'un objet par des facteurs (sx, sy, sz) :</p>
+  <div class="math-formula-container">
+    <p>$$\begin{bmatrix}
+    sx & 0 & 0 & 0 \\
+    0 & sy & 0 & 0 \\
+    0 & 0 & sz & 0 \\
+    0 & 0 & 0 & 1
+    \end{bmatrix}$$</p>
+  </div>
+
+  <p><em>Exemple :</em> Pour doubler la taille sur tous les axes (sx = sy = sz = 2) :</p>
+  <div class="math-formula-container">
+    <p>$$\begin{bmatrix}
+    2 & 0 & 0 & 0 \\
+    0 & 2 & 0 & 0 \\
+    0 & 0 & 2 & 0 \\
+    0 & 0 & 0 & 1
+    \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} 2x \\ 2y \\ 2z \\ 1 \end{bmatrix}$$</p>
   </div>
 
   <p>
-    Cette structure respecte la sémantique HTML5 : <code>&lt;header&gt;</code> pour l'en-tête, <code>&lt;nav&gt;</code> pour la navigation, <code>&lt;main&gt;</code> pour le contenu principal, <code>&lt;section&gt;</code> pour les sections logiques, et <code>&lt;footer&gt;</code> pour le pied de page. Cette approche améliore l'accessibilité et le référencement naturel (SEO).
+    <strong>Pourquoi 4×4 et pas 3×3 ?</strong> En 3D, nous avons effectivement x, y, z (3 dimensions), mais pour pouvoir inclure 
+    les déplacements dans la même "recette", on ajoute une 4ème coordonnée technique appelée coordonnée homogène. 
+    Cette astuce mathématique permet de combiner rotations, échelles ET déplacements dans une seule matrice 4×4.
+  </p>  <p>
+    <strong>La composition :</strong> Nous pouvons ainsi combiner ces transformations en multipliant les matrices pour creer des transformations complexes:
   </p>
-  <div class="page-break"></div>
-  <h4><strong>Étape 3 : Design CSS - L'habillage visuel</strong></h4>
-  <p>
-    <strong>CSS (Cascading Style Sheets)</strong> transforme ma structure HTML brute en une interface attrayante et fonctionnelle. Je procède par étapes : d'abord le layout global, puis les composants, et enfin les détails.
-  </p>
-  
-  <p><strong>Layout responsive avec CSS Grid et Flexbox :</strong></p>
-  
-  <div class="code-block">
-    <pre><code>/* Reset et variables CSS */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    --primary-color: #2c3e50;
-    --secondary-color: #e74c3c;
-    --text-color: #333;
-    --bg-color: #f8f9fa;
-}
-
-/* Layout principal */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background: var(--bg-color);
-}
-
-header {
-    background: var(--primary-color);
-    color: white;
-    padding: 1rem 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-nav ul {
-    display: flex;
-    justify-content: center;
-    list-style: none;
-    gap: 2rem;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-nav a:hover {
-    background-color: var(--secondary-color);
-}
-
-/* Responsive design - Media query supprimée */</code></pre>
+  <div class="math-formula-container">
+    <p>$$\text{Matrice finale} = \text{Translation} \times \text{Rotation} \times \text{Échelle}$$</p>
   </div>
 
   <p>
-    Cette approche CSS moderne utilise les variables CSS (custom properties) pour maintenir la cohérence, CSS Grid et Flexbox pour le layout, et les media queries pour le responsive design. Le site s'adapte automatiquement à tous les écrans.
+    <strong>L'avantage énorme :</strong> au lieu de faire trois opérations séparées (tourner, puis agrandir, puis déplacer), 
+    on peut tout combiner en une seule multiplication matricielle. Pour un jeu avec des milliers d'objets qui bougent 
+    60 fois par seconde, cette optimisation est cruciale !
   </p>
 
-  <h4><strong>Étape 4 : Interactivité JavaScript - La logique métier</strong></h4>
   <p>
-    <strong>JavaScript</strong> apporte la dynamicité au site. Je l'utilise pour gérer les interactions utilisateur, valider les formulaires, créer des animations, et communiquer avec des APIs.
+    <strong>En résumé,</strong> chaque matrice est un mode d'emploi mathématique qui dit à l'ordinateur exactement comment transformer 
+    chaque point d'un objet 3D de façon rapide et précise.
   </p>
-  
-  <p><strong>Exemple : Navigation fluide et validation de formulaire :</strong></p>
-  
-  <div class="code-block">
-    <pre><code>// Navigation fluide entre les sections
-document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        
-        const target = document.querySelector(this.getAttribute('href'));
-        target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-    });
-});
 
-// Validation du formulaire de contact
-const contactForm = document.getElementById('contact-form');
-contactForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    const email = formData.get('email');
-    const message = formData.get('message');
-    
-    // Validation simple
-    if (!isValidEmail(email)) {
-        showError('Veuillez entrer un email valide');
-        return;
-    }
-    
-    if (message.length < 10) {
-        showError('Le message doit contenir au moins 10 caractères');
-        return;
-    }
-    
-    // Envoi du formulaire
-    submitForm(formData);
-});
-
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-function showError(message) {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message';
-    errorDiv.textContent = message;
-    
-    // Affichage temporaire de l'erreur
-    document.body.appendChild(errorDiv);
-    setTimeout(() => errorDiv.remove(), 3000);
-}</code></pre>
-  </div>
   <div class="page-break"></div>
-  <h3>3. Technologies web modernes et bonnes pratiques</h3>
-  
-  <h4><strong>Performance et optimisation :</strong></h4>
+  <h3>3. Applications</h3>
   <p>
-    La performance web est cruciale pour l'expérience utilisateur. J'optimise systématiquement mes sites selon plusieurs axes :
+    Dans un jeu vidéo, chaque objet, personnage ou décor est défini par des milliers de points (sommets) dans l'espace. Pour animer un personnage, il faut appliquer des rotations à ses articulations ; pour déplacer une voiture, une translation ; pour zoomer sur une scène, une homothétie. Les moteurs 3D comme Unity ou Unreal Engine utilisent en permanence ces matrices pour calculer la position de chaque élément à chaque image (jusqu'à 60 fois par seconde !).
   </p>
-  <ul>
-    <li><strong>Images optimisées :</strong> Formats WebP/AVIF, lazy loading, responsive images</li>
-    <li><strong>CSS critique :</strong> Chargement du CSS essentiel en priorité</li>
-    <li><strong>JavaScript différé :</strong> Chargement non-bloquant des scripts</li>
-    <li><strong>Minification :</strong> Réduction de la taille des fichiers CSS/JS</li>
-    <li><strong>CDN :</strong> Distribution géographique des ressources</li>
-  </ul>
+  <p>
+    En réalité virtuelle, la position de la tête de l'utilisateur est suivie en temps réel : il faut recalculer toutes les transformations pour que l'image affichée corresponde exactement à ce que verrait l'œil humain. En architecture, on utilise ces outils pour visualiser un bâtiment avant même qu'il ne soit construit, en le faisant tourner, déplacer, agrandir à volonté.
+  </p>
+  <p>
+    Même dans la médecine, la 3D permet de reconstituer des organes à partir d'IRM, puis de les manipuler virtuellement pour préparer une opération.
+  </p>
 
-  <h4><strong>Accessibilité (a11y) :</strong></h4>
-  <p>
-    Un site web doit être accessible à tous, y compris aux personnes en situation de handicap. J'intègre systématiquement :
-  </p>
+  <h3>4. Défis et limites</h3>
+  <p>Les transformations géométriques 3D sont puissantes, mais elles posent aussi des défis :</p>
   <ul>
-    <li><strong>Attributs ARIA :</strong> Pour les lecteurs d'écran</li>
-    <li><strong>Contrastes suffisants :</strong> Ratio minimum de 4.5:1</li>
-    <li><strong>Navigation au clavier :</strong> Tous les éléments interactifs accessibles</li>
-    <li><strong>Textes alternatifs :</strong> Description des images pour les malvoyants</li>
+    <li>La précision numérique : en multipliant des matrices, de petites erreurs peuvent s'accumuler et déformer les objets.</li>
+    <li>La performance : pour des scènes très complexes, il faut optimiser les calculs pour ne pas ralentir l'affichage.</li>
+    <li>La compréhension humaine : il n'est pas toujours intuitif de prévoir le résultat d'une combinaison de transformations.</li>
   </ul>
+  <p>
+    Les recherches actuelles portent sur de nouveaux algorithmes pour rendre les transformations plus rapides et plus précises, sur l'intelligence artificielle pour automatiser certaines animations, et sur l'intégration de la 3D dans des domaines toujours plus variés (éducation, industrie, art…).
+  </p>
 
-  <h4><strong>SEO (référencement naturel) :</strong></h4>
-  <p>
-    Pour que le site soit bien référencé sur Google, j'applique les bonnes pratiques SEO :
-  </p>
-  <ul>
-    <li><strong>Balises meta :</strong> Title, description, mots-clés optimisés</li>
-    <li><strong>Structure Hn :</strong> Hiérarchie logique des titres</li>
-    <li><strong>URLs SEO-friendly :</strong> URLs descriptives et propres</li>
-    <li><strong>Schema.org :</strong> Données structurées pour les moteurs de recherche</li>
-    <li><strong>Sitemap XML :</strong> Plan du site pour les crawlers</li>
-  </ul>
-
-  <h4><strong>Sécurité web :</strong></h4>
-  <p>
-    La sécurité est primordiale, surtout pour les sites avec formulaires ou données sensibles :
-  </p>
-  <ul>
-    <li><strong>HTTPS obligatoire :</strong> Chiffrement des communications</li>
-    <li><strong>Validation côté serveur :</strong> Jamais de validation uniquement côté client</li>
-    <li><strong>Protection CSRF :</strong> Tokens anti-forgery sur les formulaires</li>
-    <li><strong>Sanitisation des données :</strong> Protection contre les injections XSS</li>
-    <li><strong>En-têtes sécurisés :</strong> CSP, HSTS, X-Frame-Options</li>
-  </ul>
   <div class="page-break"></div>
-  <h3>4. Évolution du développement web</h3>
+  <h3>5. Perspectives</h3>
+  <p>
+    Les transformations sont une base solide, mais pour se rapprocher d'un rendu
+    photoréaliste ou d'une expérience immersive, on ajoute des éléments comme
+    l'éclairage, les ombres, les textures et les shaders. Ces techniques simulent
+    de plus en plus fidèlement la façon dont la lumière interagit avec les objets,
+    et nécessitent souvent des calculs complexes optimisés par le GPU. On gère
+    aussi la physique pour les collisions et la gravité, afin de rendre les scènes
+    crédibles et naturelles aux yeux des utilisateurs.
+  </p>
   
-  <h4><strong>Frameworks et outils modernes :</strong></h4>
+  <h3>Conclusion</h3>
   <p>
-    Le développement web évolue rapidement avec de nouveaux outils qui améliorent la productivité :
-  </p>
-  <ul>
-    <li><strong>Frameworks CSS :</strong> Tailwind CSS pour un développement rapide</li>
-    <li><strong>Préprocesseurs :</strong> Sass/SCSS pour un CSS plus maintenable</li>
-    <li><strong>Build tools :</strong> Webpack, Vite pour l'automatisation</li>
-    <li><strong>Version control :</strong> Git pour le suivi des modifications</li>
-    <li><strong>Déploiement :</strong> Netlify, Vercel pour la mise en ligne automatisée</li>
-  </ul>
-
-  <h4><strong>Progressive Web Apps (PWA) :</strong></h4>
-  <p>
-    Les PWA représentent l'avenir du web mobile, combinant le meilleur du web et des applications natives :
-  </p>
-  <ul>
-    <li><strong>Service Workers :</strong> Fonctionnement hors ligne</li>
-    <li><strong>App Shell :</strong> Chargement instantané de l'interface</li>
-    <li><strong>Manifest :</strong> Installation sur l'écran d'accueil</li>
-    <li><strong>Push notifications :</strong> Engagement utilisateur</li>
-  </ul>
-
-  <h4><strong>Tendances actuelles :</strong></h4>
-  <ul>
-    <li><strong>Design mobile-first :</strong> Conception pour mobile en priorité</li>
-    <li><strong>Dark mode :</strong> Interfaces sombres pour le confort visuel</li>
-    <li><strong>Micro-interactions :</strong> Animations subtiles pour l'UX</li>
-    <li><strong>Glassmorphism :</strong> Effets de transparence modernes</li>
-    <li><strong>Performance budgets :</strong> Contraintes de poids et vitesse</li>
-  </ul>  <h3>Conclusion</h3>
-  <p>
-    La programmation web moderne est bien plus qu'un assemblage de technologies : c'est un art qui combine technique, créativité et expérience utilisateur. Chaque projet personnel me permet d'appliquer cette trilogie HTML-CSS-JavaScript de manière unique, en adaptant les solutions aux besoins spécifiques.
-  </p>
-  <p>
-    Ce qui me passionne dans ce domaine, c'est sa constante évolution. Les technologies web évoluent rapidement, mais les fondamentaux restent solides. Maîtriser HTML, CSS et JavaScript ouvre les portes vers des frameworks plus avancés comme React, Vue.js ou Angular, et permet de créer des expériences web toujours plus riches et performantes.
-  </p>
-  <p>
-    Cette expertise technique, combinée à ma créativité et ma curiosité, me positionne bien pour mes projets futurs et pour comprendre les enjeux du numérique dans notre société moderne.
+    Les transformations géométriques 3D sont le socle invisible de notre monde numérique moderne. Elles relient les mathématiques abstraites à des applications concrètes qui changent notre quotidien. Maîtriser ces outils, c'est ouvrir la porte à la création, à l'innovation et à la compréhension profonde de la réalité virtuelle et augmentée. C'est pourquoi ce sujet me passionne et me motive à poursuivre dans les sciences du numérique.
   </p>
   <p>
     Merci de votre attention, je suis prêt à répondre à vos questions.
   </p>
 </div>
 
-<!-- Références au programme - Sujet 2 -->
+<!-- Références au programme - Sujet 1 -->
 <div class="section program-section no-print">
   <h2 class="section-title">Liens avec les programmes</h2>
   
   <div class="program-links">
     <div class="program-section">
-      <h3><i class="fas fa-laptop-code"></i> NSI - Terminale</h3>
-      <ul>
-        <li><strong>Programmation :</strong> Algorithmes, paradigmes de programmation</li>
-        <li><strong>Web :</strong> Protocoles HTTP/HTTPS, architecture client-serveur</li>
-        <li><strong>Structures de données :</strong> Tableaux, objets JSON, DOM</li>
-        <li><strong>Bases de données :</strong> Stockage et récupération de données web</li>
-        <li><strong>Interfaces homme-machine :</strong> Ergonomie, accessibilité web</li>
-        <li><strong>Sécurité :</strong> Chiffrement, authentification, protection des données</li>
-      </ul>
-    </div>
-    
-    <div class="program-section">
       <h3><i class="fas fa-calculator"></i> Mathématiques - Terminale</h3>
       <ul>
-        <li><strong>Fonctions :</strong> Animations CSS, courbes de Bézier</li>
-        <li><strong>Géométrie :</strong> Positionnement CSS, transformations 2D</li>
-        <li><strong>Statistiques :</strong> Analytics web, mesure de performance</li>
-        <li><strong>Logique :</strong> Conditions JavaScript, algorithmes de validation</li>
+        <li><strong>Géométrie dans l'espace :</strong> Coordonnées, vecteurs, transformations</li>
+        <li><strong>Calcul matriciel :</strong> Opérations sur les matrices, déterminants</li>
+        <li><strong>Fonctions trigonométriques :</strong> Applications aux rotations</li>
+        <li><strong>Nombres complexes :</strong> Représentation des rotations planes</li>
+        <li><strong>Géométrie vectorielle :</strong> Produit scalaire, produit vectoriel</li>
       </ul>
     </div>
     
     <div class="program-section">
-      <h3><i class="fas fa-palette"></i> Design et ergonomie (notions)</h3>
+      <h3><i class="fas fa-laptop-code"></i> NSI - Terminale</h3>
       <ul>
-        <li><strong>Psychologie cognitive :</strong> Perception visuelle, charge cognitive</li>
-        <li><strong>Théorie des couleurs :</strong> Harmonie, contraste, accessibilité</li>
-        <li><strong>Typographie :</strong> Lisibilité, hiérarchie de l'information</li>
+        <li><strong>Programmation :</strong> Algorithmes de transformation géométrique</li>
+        <li><strong>Structures de données :</strong> Représentation des objets 3D (vertices, faces)</li>
+        <li><strong>Architectures matérielles :</strong> GPU et calcul parallèle pour le rendu</li>
+        <li><strong>Interfaces homme-machine :</strong> Interaction avec les objets 3D</li>
+        <li><strong>Modélisation :</strong> Simulation de phénomènes physiques</li>
+      </ul>
+    </div>
+    
+    <div class="program-section">
+      <h3><i class="fas fa-atom"></i> Physique-Chimie (notions)</h3>
+      <ul>
+        <li><strong>Mécanique :</strong> Mouvements dans l'espace 3D</li>
+        <li><strong>Ondes :</strong> Propagation de la lumière pour le rendu réaliste</li>
+        <li><strong>Optique :</strong> Projection perspective et géométrie de l'image</li>
       </ul>
     </div>
   </div>
 </div>
 
-<!-- Questions/Réponses anticipées - Sujet 2 -->
+<!-- Questions/Réponses anticipées - Sujet 1 -->
 <div class="section qna-section no-print">
   <h2 class="section-title">Questions/Réponses anticipées</h2>
 
   <div class="qna">
     <div class="question">
-      "Pourquoi commencer par HTML avant CSS et JavaScript ?"
+      "Pourquoi utilise-t-on des matrices 4×4 et non 3×3 pour les transformations 3D ?"
     </div>
     <div class="answer">
-      HTML est la fondation de toute page web, c'est comme construire les murs d'une maison avant de la décorer ! HTML structure le contenu et donne du sens aux informations (sémantique). CSS vient ensuite pour l'apparence, et JavaScript pour l'interactivité. Cette progression logique assure un site accessible et bien référencé. De plus, un HTML bien structuré facilite grandement le travail CSS et JavaScript qui suivront.
+      C'est comme avoir une télécommande universelle ! Une matrice 3×3 ne peut que faire tourner et agrandir/rétrécir un objet, mais pas le déplacer. En ajoutant une 4ème dimension (coordonnées homogènes), on peut tout faire d'un coup : tourner, agrandir ET déplacer. C'est comme avoir tous les boutons sur la même télécommande au lieu d'en avoir trois séparées !
     </div>
   </div>
 
   <div class="qna">
     <div class="question">
-      "Comment garantir qu'un site fonctionne sur tous les navigateurs ?"
+      "Comment optimise-t-on ces calculs pour obtenir 60 images par seconde en temps réel ?"
     </div>
     <div class="answer">
-      J'utilise plusieurs techniques : d'abord les standards web modernes qui sont supportés partout, puis des outils comme Autoprefixer pour ajouter automatiquement les préfixes CSS nécessaires (-webkit-, -moz-), et enfin des polyfills JavaScript pour les fonctionnalités récentes. Je teste systématiquement sur Chrome, Firefox, Safari et Edge. Pour les anciens navigateurs, j'applique le principe de "progressive enhancement" : le site fonctionne partout, mais offre plus de fonctionnalités sur les navigateurs modernes.
+      Plusieurs techniques d'optimisation sont cruciales. D'abord, le précalcul des matrices statiques qui ne changent pas entre les frames évite des calculs redondants. Ensuite, le Level of Detail (LOD) réduit automatiquement le nombre de polygones des objets distants - un personnage peut passer de 50 000 à 500 polygones selon sa distance. Le culling élimine les objets hors du champ de vision ou cachés derrière d'autres objets. Mais surtout, les GPU modernes permettent de calculer en parallèle sur des milliers de vertices simultanément, transformant ce qui prendrait des heures sur un CPU en quelques millisecondes.
     </div>
   </div>
 
   <div class="qna">
     <div class="question">
-      "Comment optimiser la vitesse de chargement d'un site web ?"
+      "Quel est le lien concret avec vos projets personnels de modélisation 3D ?"
     </div>
     <div class="answer">
-      La performance web suit la règle des 3 secondes : au-delà, les utilisateurs partent ! J'optimise à plusieurs niveaux : compression des images (WebP, lazy loading), minification CSS/JS, mise en cache navigateur, CDN pour distribuer les ressources, et CSS critique pour afficher le contenu important en premier. J'utilise aussi des outils comme Lighthouse pour mesurer et identifier les points d'amélioration. Chaque milliseconde gagnée améliore l'expérience utilisateur et le référencement Google.
+      Dans mes projets de modding de jeux vidéo, je travaille régulièrement avec des logiciels comme Blender qui manipulent ces transformations en arrière-plan. Quand je crée un nouveau bâtiment pour un environnement de jeu, je dois comprendre comment les matrices de transformation permettent un placement précis dans l'espace. Pour l'animation de personnages, les rotations matricielles créent des mouvements fluides des articulations. Cette compréhension théorique m'a permis d'optimiser mes modèles pour qu'ils s'intègrent parfaitement dans les moteurs de jeu existants.
     </div>
   </div>
 
   <div class="qna">
     <div class="question">
-      "Quelle est la différence entre design responsive et adaptive ?"
+      "Comment les matrices permettent-elles de combiner plusieurs transformations ?"
     </div>
     <div class="answer">
-      Le responsive design utilise une seule version du site qui s'adapte fluidement à toutes les tailles d'écran grâce aux media queries CSS et aux grilles flexibles. C'est comme un élastique qui s'étire ! L'adaptive design crée plusieurs versions fixes pour différentes tailles (mobile, tablette, desktop). Je privilégie le responsive car il est plus maintenant et couvre tous les appareils possibles, même ceux qui n'existaient pas lors du développement.
+      C'est la beauté des mathématiques ! Au lieu d'appliquer chaque transformation une par une (d'abord tourner, puis déplacer, puis agrandir), on peut multiplier les matrices entre elles pour créer une "super-matrice" qui fait tout d'un coup. Par exemple, si je veux faire tourner un cube de 45°, le déplacer de 5 unités à droite, puis le doubler de taille, je multiplie les trois matrices : Échelle × Translation × Rotation. Le résultat est une matrice unique qui transforme directement les coordonnées originales vers le résultat final en une seule opération.
     </div>
   </div>
+
   <div class="qna">
     <div class="question">
-      "Comment cette expertise web s'intègre-t-elle dans vos projets futurs ?"
+      "Quelles sont les limites actuelles de ces techniques et les perspectives d'évolution ?"
     </div>
     <div class="answer">
-      Maîtriser le développement web me donne une autonomie totale pour concrétiser mes idées ! Pour mes projets personnels comme un portfolio ou un site de présentation, je peux créer les interfaces utilisateur, gérer les interactions, et optimiser l'expérience. Cette expertise technique me permet aussi de comprendre comment fonctionnent les sites que j'utilise quotidiennement et m'ouvre des perspectives d'études supérieures en informatique, que ce soit en développement web, en design d'interfaces, ou même en création d'applications mobiles.
+      Les principales limites sont la puissance de calcul nécessaire pour des scènes très complexes, la difficulté de simuler parfaitement certains phénomènes physiques comme les fluides ou les tissus, et le défi du rendu photoréaliste en temps réel. Cependant, l'évolution est constante : l'arrivée du ray-tracing en temps réel révolutionne l'éclairage, l'IA optimise automatiquement les algorithmes, et les nouvelles architectures GPU permettent des calculs toujours plus complexes. La réalité virtuelle et les métavers poussent l'innovation vers des rendus encore plus immersifs.
     </div>
   </div>
 </div>
 
-<!-- Chapitres de Lycée utilisés - Sujet 2 -->
+<!-- Chapitres de Lycée utilisés - Sujet 1 -->
 <div class="section chapters-section no-print">
   <h2 class="section-title"><i class="fas fa-book"></i> Chapitres de Lycée utilisés</h2>
   
   <div class="chapters-grid">
     <div class="chapter-card">
-      <h3><i class="fas fa-laptop-code"></i> NSI</h3>
-      <ul>
-        <li>Programmation et algorithmique (Première/Terminale)</li>
-        <li>Structures de données (tableaux, objets) (Terminale)</li>
-        <li>Interfaces homme-machine (Terminale)</li>
-        <li>Architectures matérielles et réseaux (Terminale)</li>
-        <li>Web et bases de données (Première/Terminale)</li>
-        <li>Sécurité informatique (Terminale)</li>
-      </ul>
-    </div>
-    
-    <div class="chapter-card">
       <h3><i class="fas fa-calculator"></i> Mathématiques</h3>
       <ul>
-        <li>Fonctions et courbes (Première/Terminale)</li>
-        <li>Géométrie dans le plan (Première)</li>
-        <li>Statistiques et probabilités (Première/Terminale)</li>
-        <li>Logique et raisonnement (Première/Terminale)</li>
-        <li>Suites numériques (Terminale)</li>
-        <li>Optimisation et algorithmes (Terminale)</li>
+        <li>Géométrie dans l'espace (Première/Terminale)</li>
+        <li>Produit scalaire et applications (Première)</li>
+        <li>Trigonométrie et fonctions circulaires (Première/Terminale)</li>
+        <li>Calcul matriciel et systèmes linéaires (Terminale)</li>
+        <li>Géométrie vectorielle 3D (Terminale)</li>
+        <li>Nombres complexes et rotations (Terminale)</li>
       </ul>
     </div>
     
     <div class="chapter-card">
-      <h3><i class="fas fa-globe"></i> Technologies web</h3>
+      <h3><i class="fas fa-laptop-code"></i> NSI</h3>
       <ul>
-        <li>HTML5 sémantique et accessibilité</li>
-        <li>CSS3 et design responsive</li>
-        <li>JavaScript moderne (ES6+)</li>
-        <li>APIs web et communication serveur</li>
-        <li>Progressive Web Apps (PWA)</li>
-        <li>Performance et optimisation web</li>
+        <li>Algorithmique et programmation (Première/Terminale)</li>
+        <li>Structures de données linéaires (Première)</li>
+        <li>Programmation orientée objet (Terminale)</li>
+        <li>Modélisation et simulation (Terminale)</li>
+        <li>Architectures matérielles et GPU (Terminale)</li>
+        <li>Interfaces graphiques et interaction (Terminale)</li>
       </ul>
     </div>
-      <div class="chapter-card">
-      <h3><i class="fas fa-tools"></i> Expérience personnelle</h3>
+    
+    <div class="chapter-card">
+      <h3><i class="fas fa-cube"></i> Applications 3D</h3>
       <ul>
-        <li>Développement de sites personnels et portfolios</li>
-        <li>Projets scolaires et collaboratifs en NSI</li>
-        <li>Frameworks CSS (Bootstrap, Tailwind)</li>
-        <li>Outils de développement (VS Code, navigateurs)</li>
-        <li>Hébergement gratuit (GitHub Pages, Netlify)</li>
-        <li>Veille technologique et tutoriels en ligne</li>
+        <li>Matrices de transformation homogènes</li>
+        <li>Pipeline de rendu 3D</li>
+        <li>Coordonnées barycentriques</li>
+        <li>Optimisation des calculs géométriques</li>
+        <li>Structures de données spatiales (octrees, BSP)</li>
+        <li>Interpolation et animation (keyframes, splines)</li>
+      </ul>
+    </div>
+    
+    <div class="chapter-card">
+      <h3><i class="fas fa-gamepad"></i> Expérience personnelle</h3>
+      <ul>
+        <li>Modélisation 3D avec Blender (depuis 12 ans)</li>
+        <li>Développement de mods pour jeux vidéo</li>
+        <li>Création d'environnements virtuels</li>
+        <li>Programmation de shaders basiques</li>
+        <li>Optimisation de modèles pour le temps réel</li>
+        <li>Compréhension des moteurs 3D (Unity, Unreal)</li>
       </ul>
     </div>
   </div>
