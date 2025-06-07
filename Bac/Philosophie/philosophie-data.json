@@ -128,26 +128,61 @@
           "file": "notion20.html"
         }
       ]
-    }
-  ],
-  "exams": [
-    {
-      "id": "dissertation-1",
-      "title": "Dissertation - Sujet type 1",
-      "type": "dissertation",
-      "file": "dissertation-1.pdf"
+    }  ],  "exams": [    {
+      "id": "usa-2025",
+      "title": "Amérique du Nord 2025",
+      "type": "subject",
+      "file": "Bac/usa-2025.pdf",
+      "correction": "Bac/usa-2025-c.pdf",
+      "flag": "usa"
     },
     {
-      "id": "dissertation-2", 
-      "title": "Dissertation - Sujet type 2",
-      "type": "dissertation",
-      "file": "dissertation-2.pdf"
+      "id": "usa-2024",
+      "title": "Amérique du Nord 2024",
+      "type": "subject",
+      "file": "Bac/usa-2024.pdf",
+      "correction": "Bac/usa-2024-c.pdf",
+      "flag": "usa"
     },
     {
-      "id": "explication-texte-1",
-      "title": "Explication de texte - Kant",
-      "type": "explication",
-      "file": "explication-kant.pdf"
+      "id": "polynesie-2024",
+      "title": "Polynésie 2024",
+      "type": "subject",
+      "file": "Bac/polynesie-2024.pdf",
+      "correction": "Bac/polynesie-2024-c.pdf",
+      "flag": "polynesia"
+    },
+    {
+      "id": "france-2024",
+      "title": "France Métropole 2024",
+      "type": "subject",
+      "file": "Bac/france-2024.pdf",
+      "correction": "Bac/france-2024-c.pdf",
+      "flag": "france"
+    },
+    {
+      "id": "asie-2024",
+      "title": "Asie 2024",
+      "type": "subject",
+      "file": "Bac/asie-2024.pdf",
+      "correction": "Bac/asie-2024-c.pdf",
+      "flag": "asia"
+    },
+    {
+      "id": "antilles-2024",
+      "title": "Antilles Guyane 2024",
+      "type": "subject",
+      "file": "Bac/antilles-2024.pdf",
+      "correction": "Bac/antilles-2024-c.pdf",
+      "flag": "antilles"
+    },
+    {
+      "id": "afrique-2024",
+      "title": "Centres Étrangers Afrique 2024",
+      "type": "subject",
+      "file": "Bac/afrique-2024.pdf",
+      "correction": "Bac/afrique-2024-c.pdf",
+      "flag": "africa"
     }
   ]
 }

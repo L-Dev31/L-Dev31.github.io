@@ -149,77 +149,84 @@
         }
       ],
       "videos": []
-    }  ],
-  "exams": [
+    }  ],  "exams": [    {
+      "id": "usa-2025",
+      "title": "Amérique du Nord 2025 (Session 1)",
+      "type": "subject",
+      "file": "Bac/usa-2025.pdf",
+      "correction": "Bac/usa-2025-c.pdf",
+      "flag": "usa"
+    },
     {
       "id": "usa2-2025",
       "title": "Amérique du Nord 2025 (Session 2)",
       "type": "subject",
       "file": "Bac/usa2-2025.pdf",
-      "correction": "Bac/usa2-2025-c.pdf"
-    },
-    {
-      "id": "usa-2025",
-      "title": "Amérique du Nord 2025",
-      "type": "subject",
-      "file": "Bac/usa-2025.pdf",
-      "correction": "Bac/usa-2025-c.pdf"
+      "correction": "Bac/usa2-2025-c.pdf",
+      "flag": "usa"
     },
     {
       "id": "suede-2024",
       "title": "Centres Étrangers Suède 2024",
       "type": "subject",
       "file": "Bac/suede-2024.pdf",
-      "correction": "Bac/suede-2024-c.pdf"
+      "correction": "Bac/suede-2024-c.pdf",
+      "flag": "sweden"
+    },
+    {
+      "id": "polynesie-2024",
+      "title": "Polynésie 2024 (Session 1)",
+      "type": "subject",
+      "file": "Bac/polynesie-2024.pdf",
+      "correction": "Bac/polynesie-2024-c.pdf",
+      "flag": "polynesia"
     },
     {
       "id": "polynesie2-2024",
       "title": "Polynésie 2024 (Session 2)",
       "type": "subject",
       "file": "Bac/polynesie2-2024.pdf",
-      "correction": "Bac/polynesie2-2024-c.pdf"
-    },
-    {
-      "id": "polynesie-2024",
-      "title": "Polynésie 2024",
+      "correction": "Bac/polynesie2-2024-c.pdf",
+      "flag": "polynesia"
+    },    {
+      "id": "latin-2024",
+      "title": "Amérique du Sud 2024 (Session 1)",
       "type": "subject",
-      "file": "Bac/polynesie-2024.pdf",
-      "correction": "Bac/polynesie-2024-c.pdf"
+      "file": "Bac/latin-2024.pdf",
+      "correction": "Bac/latin-2024-c.pdf",
+      "flag": "latin"
     },
     {
       "id": "latin2-2024",
       "title": "Amérique du Sud 2024 (Session 2)",
       "type": "subject",
       "file": "Bac/latin2-2024.pdf",
-      "correction": "Bac/latin2-2024-c.pdf"
+      "correction": "Bac/latin2-2024-c.pdf",
+      "flag": "latin"
     },
     {
-      "id": "latin-2024",
-      "title": "Amérique du Sud 2024",
+      "id": "france-2024",
+      "title": "France Métropole 2024 (Session 1)",
       "type": "subject",
-      "file": "Bac/latin-2024.pdf",
-      "correction": "Bac/latin-2024-c.pdf"
+      "file": "Bac/france-2024.pdf",
+      "correction": "Bac/france-2024-c.pdf",
+      "flag": "france"
     },
     {
       "id": "france2-2024",
       "title": "France Métropole 2024 (Session 2)",
       "type": "subject",
       "file": "Bac/france2-2024.pdf",
-      "correction": "Bac/france2-2024-c.pdf"
-    },
-    {
-      "id": "france-2024",
-      "title": "France Métropole 2024",
-      "type": "subject",
-      "file": "Bac/france-2024.pdf",
-      "correction": "Bac/france-2024-c.pdf"
+      "correction": "Bac/france2-2024-c.pdf",
+      "flag": "france"
     },
     {
       "id": "asie-2024",
       "title": "Asie 2024",
       "type": "subject",
       "file": "Bac/asie-2024.pdf",
-      "correction": "Bac/asie-2024-c.pdf"
+      "correction": "Bac/asie-2024-c.pdf",
+      "flag": "asia"
     }
   ]
 }
