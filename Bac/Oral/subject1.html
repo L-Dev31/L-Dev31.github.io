@@ -1,7 +1,6 @@
-<div class="section math-section">
-  <h2 class="section-title section-title-large">Sujet : Comment les mathématiques créent la 3D en informatique ?</h2>
+<div class="section math-section">  <h2 class="section-title section-title-large">Sujet : Les opérations mathématiques qui façonnent la 3D informatique</h2>
   <div class="highlight-box">
-    <strong>Problématique : « Comment les mathématiques permettent-elles de représenter, manipuler et animer des objets en 3D sur un ordinateur ? »</strong>
+    <strong>Problématique : « Comment les opérations matricielles et les transformations géométriques permettent-elles de manipuler, animer et projeter des objets tridimensionnels dans l'univers numérique ? »</strong>
   </div>
 
   <h3>1. Mes motivations</h3>
@@ -37,68 +36,72 @@
 
   <p>
     <strong>Les trois transformations fondamentales avec leurs matrices :</strong>
-  </p>
-  <h4><strong>1. Translation :</strong></h4>
-  <p>Pour déplacer un objet de (dx, dy, dz) unités :</p>
-  <p>$$\begin{bmatrix}
+  </p>  <h4><strong>1. Translation :</strong></h4>
+  <p>Pour déplacer un objet de (dx, dy, dz) unités :</p>  <p>$$\begin{bmatrix}
   1 & 0 & 0 & dx \\
   0 & 1 & 0 & dy \\
   0 & 0 & 1 & dz \\
   0 & 0 & 0 & 1
   \end{bmatrix}$$</p>
-
   <p><em>Exemple :</em> Pour déplacer un objet de 5 unités vers la droite (axe X) :</p>
   <p>$$\begin{bmatrix}
   1 & 0 & 0 & 5 \\
   0 & 1 & 0 & 0 \\
   0 & 0 & 1 & 0 \\
   0 & 0 & 0 & 1
-  \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} x+5 \\ y \\ z \\ 1 \end{bmatrix}$$</p>
-  <h4><strong>2. Rotation :</strong></h4>
+  \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} x+5 \\ y \\ z \\ 1 \end{bmatrix}$$</p><h4><strong>2. Rotation :</strong></h4>
   <p>Pour faire tourner un objet d'un angle θ autour de l'axe Z :</p>
-  <p>$$\begin{bmatrix}
-  \cos\theta & -\sin\theta & 0 & 0 \\
-  \sin\theta & \cos\theta & 0 & 0 \\
-  0 & 0 & 1 & 0 \\
-  0 & 0 & 0 & 1
-  \end{bmatrix}$$</p>
+  <div class="math-formula-container">
+    <p>$$\begin{bmatrix}
+    \cos\theta & -\sin\theta & 0 & 0 \\
+    \sin\theta & \cos\theta & 0 & 0 \\
+    0 & 0 & 1 & 0 \\
+    0 & 0 & 0 & 1
+    \end{bmatrix}$$</p>
+  </div>
 
   <p><em>Exemple :</em> Pour une rotation de 45° (θ = π/4) :</p>
-  <p>$$\begin{bmatrix}
-  0.707 & -0.707 & 0 & 0 \\
-  0.707 & 0.707 & 0 & 0 \\
-  0 & 0 & 1 & 0 \\
-  0 & 0 & 0 & 1
-  \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} 0.707x - 0.707y \\ 0.707x + 0.707y \\ z \\ 1 \end{bmatrix}$$</p>
+  <div class="math-formula-container">
+    <p>$$\begin{bmatrix}
+    0.707 & -0.707 & 0 & 0 \\
+    0.707 & 0.707 & 0 & 0 \\
+    0 & 0 & 1 & 0 \\
+    0 & 0 & 0 & 1
+    \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} 0.707x - 0.707y \\ 0.707x + 0.707y \\ z \\ 1 \end{bmatrix}$$</p>
+  </div>
   
   <div class="page-break"></div>
-  
-  <h4><strong>3. Échelle :</strong></h4>
+    <h4><strong>3. Échelle :</strong></h4>
   <p>Pour changer la taille d'un objet par des facteurs (sx, sy, sz) :</p>
-  <p>$$\begin{bmatrix}
-  sx & 0 & 0 & 0 \\
-  0 & sy & 0 & 0 \\
-  0 & 0 & sz & 0 \\
-  0 & 0 & 0 & 1
-  \end{bmatrix}$$</p>
+  <div class="math-formula-container">
+    <p>$$\begin{bmatrix}
+    sx & 0 & 0 & 0 \\
+    0 & sy & 0 & 0 \\
+    0 & 0 & sz & 0 \\
+    0 & 0 & 0 & 1
+    \end{bmatrix}$$</p>
+  </div>
 
   <p><em>Exemple :</em> Pour doubler la taille sur tous les axes (sx = sy = sz = 2) :</p>
-  <p>$$\begin{bmatrix}
-  2 & 0 & 0 & 0 \\
-  0 & 2 & 0 & 0 \\
-  0 & 0 & 2 & 0 \\
-  0 & 0 & 0 & 1
-  \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} 2x \\ 2y \\ 2z \\ 1 \end{bmatrix}$$</p>
+  <div class="math-formula-container">
+    <p>$$\begin{bmatrix}
+    2 & 0 & 0 & 0 \\
+    0 & 2 & 0 & 0 \\
+    0 & 0 & 2 & 0 \\
+    0 & 0 & 0 & 1
+    \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} 2x \\ 2y \\ 2z \\ 1 \end{bmatrix}$$</p>
+  </div>
 
   <p>
     <strong>Pourquoi 4×4 et pas 3×3 ?</strong> En 3D, nous avons effectivement x, y, z (3 dimensions), mais pour pouvoir inclure 
     les déplacements dans la même "recette", on ajoute une 4ème coordonnée technique appelée coordonnée homogène. 
     Cette astuce mathématique permet de combiner rotations, échelles ET déplacements dans une seule matrice 4×4.
-  </p>
-  <p>
+  </p>  <p>
     <strong>La composition :</strong> Nous pouvons ainsi combiner ces transformations en multipliant les matrices pour creer des transformations complexes:
   </p>
-  <p>$$\text{Matrice finale} = \text{Translation} \times \text{Rotation} \times \text{Échelle}$$</p>
+  <div class="math-formula-container">
+    <p>$$\text{Matrice finale} = \text{Translation} \times \text{Rotation} \times \text{Échelle}$$</p>
+  </div>
 
   <p>
     <strong>L'avantage énorme :</strong> au lieu de faire trois opérations séparées (tourner, puis agrandir, puis déplacer), 
@@ -156,7 +159,7 @@
 </div>
 
 <!-- Références au programme - Sujet 1 -->
-<div class="section program-section">
+<div class="section program-section no-print">
   <h2 class="section-title">Liens avec les programmes</h2>
   
   <div class="program-links">
@@ -194,7 +197,7 @@
 </div>
 
 <!-- Questions/Réponses anticipées - Sujet 1 -->
-<div class="section qna-section">
+<div class="section qna-section no-print">
   <h2 class="section-title">Questions/Réponses anticipées</h2>
 
   <div class="qna">
@@ -244,7 +247,7 @@
 </div>
 
 <!-- Chapitres de Lycée utilisés - Sujet 1 -->
-<div class="section chapters-section">
+<div class="section chapters-section no-print">
   <h2 class="section-title"><i class="fas fa-book"></i> Chapitres de Lycée utilisés</h2>
   
   <div class="chapters-grid">
