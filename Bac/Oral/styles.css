@@ -1,2 +1,224 @@
 /* Styles spécifiques à la section Oral */
 @import url('../common.css');
+
+/* Styles pour les formules LaTeX - container avec fond gris */
+.math-formula-container {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 15px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.math-formula-container p {
+  margin: 8px 0;
+}
+
+/* Amélioration de la problématique - style simple */
+.highlight-box {
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.highlight-box strong {
+  color: #333;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+/* Titre principal - style professionnel simple */
+.section-title-large {
+  color: #333;
+  text-align: center;
+  font-size: 1.4em;
+  font-weight: bold;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* Styles d'impression spécifiques pour la section Oral */
+@media print {
+  /* Masquer spécifiquement les onglets de navigation */
+  .print-tabs,
+  .tab,
+  #subject-tabs,
+  .subject-tabs {
+    display: none !important;
+  }
+  
+  /* Masquer les éléments d'interface spécifiques à l'oral */
+  .timer-container,
+  .notes-toggle,
+  .quick-notes-panel,
+  .reading-progress,
+  .print-btn-sticky,
+  .notes-section {
+    display: none !important;
+  }
+  
+  /* Masquer les sections après la conclusion */
+  .program-section,
+  .qna-section,
+  .chapters-section {
+    display: none !important;
+  }
+  
+  /* S'assurer que le contenu principal est visible */
+  #main-content,
+  #dynamic-sections,
+  .main-content {
+    display: block !important;
+    background: white !important;
+    color: black !important;
+  }
+  
+  /* Configuration des sections pour l'impression */
+  .section {
+    background: white !important;
+    color: black !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 20pt !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Sections spécifiques (math, nsi, cs) */
+  .math-section,
+  .nsi-section,
+  .cs-section {
+    background: white !important;
+    color: black !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 20pt !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Titres des sections */
+  .section h1,
+  .section h2,
+  .section h3 {
+    color: black !important;
+    page-break-after: avoid !important;
+    margin-bottom: 10pt !important;
+  }
+  
+  /* Page breaks pour l'oral */
+  .page-break {
+    display: block !important;
+    page-break-before: always !important;
+    break-before: page !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    visibility: hidden !important;
+  }
+  
+  /* Timeline et éléments spéciaux */
+  .timeline-item,
+  .qna {
+    background: white !important;
+    border-left: 2pt solid #ccc !important;
+    padding-left: 10pt !important;
+    margin-bottom: 10pt !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Formules mathématiques dans l'oral */
+  .math,
+  .MathJax,
+  mjx-container {
+    background: #f8f8f8 !important;
+    border: 1pt solid #ccc !important;
+    padding: 4pt !important;
+    margin: 4pt 0 !important;
+    page-break-inside: avoid !important;
+    border-radius: 2pt !important;
+  }
+  
+  /* Containers de formules spécifiques à l'oral */
+  .math-formula-container {
+    background: #f5f5f5 !important;
+    border: 1pt solid #999 !important;
+    border-radius: 3pt !important;
+    padding: 8pt !important;
+    margin: 8pt 0 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    text-align: center !important;
+  }
+  
+  /* Matrices et équations display */
+  mjx-container[display="true"] {
+    background: #f8f8f8 !important;
+    border: 1pt solid #ccc !important;
+    padding: 6pt !important;
+    margin: 6pt auto !important;
+    page-break-inside: avoid !important;
+    text-align: center !important;
+    border-radius: 2pt !important;
+  }
+  
+  /* Assurer que les éléments MathJax complexes ne se coupent pas */
+  mjx-math, mjx-mrow, mjx-mtable, mjx-mtr, mjx-mtd {
+    page-break-inside: avoid !important;
+  }
+  
+  /* Formules inline dans le texte */
+  mjx-container:not([display="true"]) {
+    background: #f9f9f9 !important;
+    border: 0.5pt solid #ddd !important;
+    padding: 1pt 2pt !important;
+    border-radius: 1pt !important;
+    margin: 0 1pt !important;
+  }
+  
+  /* Adaptation des containers de formules pour l'impression */
+  .math-formula-container {
+    background: #f5f5f5 !important;
+    border: 1pt solid #ccc !important;
+    border-radius: 4pt !important;
+    padding: 10pt !important;
+    margin: 10pt 0 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Adaptation de la problématique pour l'impression */
+  .highlight-box {
+    background: #f8f8f8 !important;
+    color: black !important;
+    border: 1pt solid #ccc !important;
+    border-radius: 4pt !important;
+    padding: 15pt !important;
+    margin: 15pt 0 !important;
+    box-shadow: none !important;
+  }
+  
+  /* Adaptation du titre pour l'impression */
+  .section-title-large {
+    color: black !important;
+    border-bottom: 1pt solid #333 !important;
+    padding-bottom: 8pt !important;
+    margin-bottom: 15pt !important;
+  }
+  
+  /* Blocs de code */
+  .code-block,
+  pre,
+  code {
+    background: #f8f8f8 !important;
+    border: 1pt solid #ddd !important;
+    padding: 8pt !important;
+    margin: 8pt 0 !important;
+    page-break-inside: avoid !important;
+    font-family: 'Courier New', monospace !important;
+  }
+}

@@ -1058,7 +1058,9 @@ mjx-container[display="true"]::before {
   .back-button-container,
   .print-tabs,
   .print-btn,
-  .print-btn-sticky {
+  .print-btn-sticky,
+  .no-print,
+  .noprint {
     display: none !important;
   }
   

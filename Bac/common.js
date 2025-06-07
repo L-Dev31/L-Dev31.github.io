@@ -41,6 +41,12 @@ async function bulletproofPrint(contentHTML, title = 'Document', subject = '') {
             console.error('[PRINT] Impossible d\'ouvrir la fenêtre d\'impression (popup bloqué?)');
             alert('Impossible d\'ouvrir la fenêtre d\'impression. Vérifiez que les popups ne sont pas bloqués.');
             return;
+        }        // Déterminer la couleur de la matière
+        let subjectColor = '#e53e3e'; // Rouge par défaut (Maths)
+        if (subject.toLowerCase().includes('philosophie') || window.location.href.includes('/Philosophie/')) {
+            subjectColor = '#805ad5'; // Violet pour Philosophie
+        } else if (subject.toLowerCase().includes('oral') || window.location.href.includes('/Oral/')) {
+            subjectColor = '#ff7f00'; // Orange pour Oral
         }
         
         // Construction du document d'impression
@@ -50,38 +56,102 @@ async function bulletproofPrint(contentHTML, title = 'Document', subject = '') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${cleanTitle}</title>
-    <style>
+    <title>${cleanTitle}</title>    <style>
         /* Styles d'impression optimisés */
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; color: #333; max-width: 21cm; margin: 0 auto; padding: 1cm; background: white; }
         h1, h2, h3, h4, h5, h6 { color: #2d3748; margin-top: 1.5em; margin-bottom: 0.5em; page-break-inside: avoid; page-break-after: avoid; }
-        h1 { font-size: 1.8em; border-bottom: 2px solid #e53e3e; padding-bottom: 0.3em; }
-        h2 { font-size: 1.5em; color: #e53e3e; }
+        h1 { font-size: 1.8em; border-bottom: 2px solid ${subjectColor}; padding-bottom: 0.3em; }
+        h2 { font-size: 1.5em; color: ${subjectColor}; }
         h3 { font-size: 1.3em; color: #4a5568; }
         p, li { margin-bottom: 0.8em; orphans: 3; widows: 3; }
         ul, ol { padding-left: 1.5em; margin-bottom: 1em; }
-        .math, .MathJax { display: inline-block !important; margin: 0.2em; }
         .page-break, .pagebreak { page-break-before: always; height: 0; margin: 0; padding: 0; }
         .calculator-button { display: inline-block; padding: 4px 8px; margin: 1px; border: 1px solid #ccc; border-radius: 3px; font-size: 10px; background: #f0f0f0; }
-        .calculator-section { border: 1px solid #e53e3e; border-radius: 8px; padding: 1em; margin: 1em 0; page-break-inside: avoid; }
-        .function-group { background: #f8f9fa; padding: 0.8em; margin: 0.5em 0; border-left: 3px solid #e53e3e; }
-        @media print { body { margin: 0; padding: 0.5cm; } .page-break, .pagebreak { page-break-before: always; } .no-print { display: none !important; } }
-        @media (max-width: 768px) { body { font-size: 11pt !important; } .container { padding: 8pt !important; } h1 { font-size: 1.6em !important; } h2 { font-size: 1.4em !important; } h3 { font-size: 1.2em !important; } }
-        @page { margin: 1.5cm; size: A4; }
+        .calculator-section { border: 1px solid ${subjectColor}; border-radius: 8px; padding: 1em; margin: 1em 0; page-break-inside: avoid; }
+        .function-group { background: #f8f9fa; padding: 0.8em; margin: 0.5em 0; border-left: 3px solid ${subjectColor}; }
         
-        /* Rendre les formules MathJax moins bold à l'impression */
-        .MathJax, .mjx-math, mjx-container, .MathJax_Display, .mjx-display {
-          font-weight: 400 !important;
-          filter: contrast(0.85) brightness(1.05);
+        /* Styles LaTeX pour l'Oral - comme dans index.html */
+        .math-formula-container {
+            background: #f8f9fa !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 8px !important;
+            padding: 15px !important;
+            margin: 15px 0 !important;
+            text-align: center !important;
+            page-break-inside: avoid !important;
         }
-        /* Pour SVG (MathJax v3 SVG output) */
-        .MathJax_SVG, .mjx-svg {
-          font-weight: 400 !important;
-          filter: contrast(0.85) brightness(1.05);
+          /* Containers de formules LaTeX - pas de fond pour éviter le double container */
+        .MathJax, .mjx-container, mjx-container {
+            page-break-inside: avoid !important;
+            display: block !important;
         }
-    </style>
-    <script src="../mathJax.js"></script>
+        
+        /* Formules display (centrées) - sans fond pour éviter le conflit avec math-formula-container */
+        mjx-container[display="true"] {
+            text-align: center !important;
+            page-break-inside: avoid !important;
+        }
+        
+        /* Formules inline - styling minimal */
+        mjx-container:not([display="true"]) {
+            display: inline-block !important;
+        }
+        
+        @media print { 
+            body { margin: 0; padding: 0.5cm; } 
+            .page-break, .pagebreak { page-break-before: always; } 
+            .no-print { display: none !important; }
+            .math-formula-container, .MathJax, mjx-container { page-break-inside: avoid !important; }
+        }
+        @media (max-width: 768px) { body { font-size: 11pt !important; } .container { padding: 8pt !important; } h1 { font-size: 1.6em !important; } h2 { font-size: 1.4em !important; } h3 { font-size: 1.2em !important; } }
+        @page { margin: 1.5cm; size: A4; }    </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        // Configuration MathJax complète pour l'impression - Compatible avec mathJax.js
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']],
+                packages: {'[+]': ['ams', 'base', 'color']},
+                macros: {
+                    // Fraction en taille normale
+                    frac: ["\\\\dfrac{#1}{#2}", 2],
+                    // Vecteurs avec flèche
+                    vec: ["\\\\overrightarrow{#1}", 1],
+                    // Ensemble des réels, entiers, etc.
+                    R: "\\\\mathbb{R}",
+                    N: "\\\\mathbb{N}",
+                    Z: "\\\\mathbb{Z}",
+                    Q: "\\\\mathbb{Q}",
+                    C: "\\\\mathbb{C}",                    // Pas de macros récursives - utiliser les symboles LaTeX natifs
+                },
+                processEscapes: true,
+                processEnvironments: true
+            },
+            svg: {
+                fontCache: 'global',
+                displayAlign: 'center',
+                displayIndent: '0em'
+            },
+            chtml: {
+                displayAlign: 'center',
+                displayIndent: '0em'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                    console.log('[PRINT] MathJax configuration loaded');
+                }
+            }
+        };
+    </script>
 </head>
 <body>    <div class="print-header">
         <h1>${cleanTitle}</h1>
