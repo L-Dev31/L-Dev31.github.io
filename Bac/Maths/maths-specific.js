@@ -28,7 +28,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.reprocessMathJax) {
             setTimeout(window.reprocessMathJax, 100);
         }
+        // Nettoyer les erreurs LaTeX après rechargement
+        if (window.cleanLatexErrors) {
+            setTimeout(window.cleanLatexErrors, 200);
+        }
     });
+    
+    // Nettoyage périodique des erreurs LaTeX pour les maths
+    setInterval(function() {
+        if (window.cleanLatexErrors) {
+            window.cleanLatexErrors();
+        }
+    }, 5000);
 });
 
 // Configuration spécifique des formules mathématiques

@@ -1,52 +1,40 @@
-// Configuration MathJax standardisée pour tout le site
-// Ce fichier assure une configuration cohérente pour toutes les pages
-
 window.MathJax = {
     tex: {
-        // Utiliser uniquement les délimiteurs $...$ pour les formules inline
         inlineMath: [['$', '$']],
-        // Pas de formules display (centrées) - tableau vide
         displayMath: [],
-        // Packages LaTeX disponibles
         packages: {'[+]': ['ams', 'base', 'color']},
-        // Macros personnalisées pour des raccourcis LaTeX
         macros: {
-            // Fraction en taille normale (pas réduite)
             frac: ["\\dfrac{#1}{#2}", 2],
-            // Vecteurs avec flèche
             vec: ["\\overrightarrow{#1}", 1],
-            // Ensemble des réels, entiers, etc.
             R: "\\mathbb{R}",
             N: "\\mathbb{N}",
             Z: "\\mathbb{Z}",
             Q: "\\mathbb{Q}",
             C: "\\mathbb{C}"
         },
-        // Configuration avancée
-        tags: 'none',  // Pas de numérotation automatique des équations
-        processEscapes: true,  // Traiter les caractères d'échappement
-        processEnvironments: true
+        tags: 'none',
+        processEscapes: true,
+        processEnvironments: true,
+        formatError: (jax, err) => {
+            console.warn('[MathJax] Erreur LaTeX ignorée:', err);
+            jax.math = '\\text{[formule]}';
+            return jax;
+        }
     },
-    // Configuration du rendu SVG (meilleure qualité)
     svg: {
         fontCache: 'global',
-        displayAlign: 'left',  // Alignement à gauche pour le inline
-        displayIndent: '0em'   // Pas d'indentation
+        displayAlign: 'left',
+        displayIndent: '0em'
     },
-    // Configuration du rendu HTML+CSS (fallback)
     chtml: {
         displayAlign: 'left',
         displayIndent: '0em'
     },
-    // Options générales
     options: {
-        // Ignorer les erreurs de syntaxe LaTeX au lieu de planter
         ignoreHtmlClass: 'tex2jax_ignore',
         processHtmlClass: 'tex2jax_process',
         renderActions: {
-            // Action personnalisée pour forcer l'affichage inline
             forceInline: [200, function() {
-                // Force tous les éléments MathJax à s'afficher inline
                 const displays = document.querySelectorAll('.MathJax_Display, .mjx-display');
                 displays.forEach(function(element) {
                     element.style.display = 'inline';
@@ -57,19 +45,13 @@ window.MathJax = {
             }, function() {}]
         }
     },
-    // Configuration du chargement
     loader: {
         load: ['[tex]/ams', '[tex]/color']
-    },
-    // Configuration startup
-    startup: {
+    },    startup: {
         ready: function() {
             MathJax.startup.defaultReady();
-            
-            // CSS additionnels pour forcer l'affichage inline
             const style = document.createElement('style');
             style.textContent = `
-                /* Force tous les éléments MathJax à s'afficher inline */
                 .MathJax_Display,
                 .mjx-display {
                     display: inline !important;
@@ -78,16 +60,38 @@ window.MathJax = {
                     padding: 0 0.2em !important;
                 }
                 
-                /* Assure que les containers MathJax ne prennent pas toute la largeur */
                 .MathJax,
                 .mjx-container {
                     display: inline !important;
                     margin: 0 !important;
                 }
                 
-                /* Style pour les formules dans le texte */
                 .mjx-math {
                     display: inline !important;
+                }
+                
+                .MathJax,
+                .mjx-container,
+                .mjx-math,
+                .mjx-mrow,
+                .mjx-mi,
+                .mjx-mn,
+                .mjx-mo,
+                .mjx-mtext,
+                .mjx-mfrac,
+                .mjx-msup,
+                .mjx-msub,
+                .mjx-msubsup,
+                .mjx-mover,
+                .mjx-munder,
+                .mjx-munderover {
+                    font-weight: 400 !important;
+                    -webkit-font-smoothing: antialiased !important;
+                    -moz-osx-font-smoothing: grayscale !important;
+                }
+                
+                .mjx-c::before {
+                    font-weight: 400 !important;
                 }
             `;
             document.head.appendChild(style);
@@ -95,7 +99,6 @@ window.MathJax = {
     }
 };
 
-// Charger MathJax automatiquement
 (function() {
     var script = document.createElement('script');
     script.id = 'MathJax-script';
@@ -104,11 +107,9 @@ window.MathJax = {
     document.head.appendChild(script);
 })();
 
-// Fonction utilitaire pour retraiter MathJax après des modifications dynamiques
 function retypeMathJax() {
     if (window.MathJax && window.MathJax.typesetPromise) {
         window.MathJax.typesetPromise().then(function() {
-            // Force l'affichage inline après le retraitement
             const displays = document.querySelectorAll('.MathJax_Display, .mjx-display');
             displays.forEach(function(element) {
                 element.style.display = 'inline';
@@ -120,13 +121,73 @@ function retypeMathJax() {
     }
 }
 
-// Export de la fonction pour usage global
 window.retypeMathJax = retypeMathJax;
 
-// Configuration pour l'impression (optionnel)
 window.addEventListener('beforeprint', function() {
-    // Ajustements spécifiques pour l'impression si nécessaire
     document.querySelectorAll('.mjx-display').forEach(function(element) {
         element.style.display = 'inline';
     });
 });
+
+function cleanLatexErrors() {
+    const errorElements = document.querySelectorAll('.mjx-merror, .MathJax_Error, [data-mjx-error]');
+    errorElements.forEach(element => {
+        if (element.textContent.includes('\\') || element.textContent.includes("'")) {
+            element.style.color = 'inherit';
+            element.style.backgroundColor = 'transparent';
+            element.style.border = 'none';
+            if (element.textContent.trim() === '\\' || element.textContent.trim() === "'") {
+                element.textContent = '[formule]';
+            }
+        }
+    });
+    
+    const redSpans = document.querySelectorAll('span[style*="color"][style*="red"], span[style*="color:#FF0000"], span[style*="color: red"]');    redSpans.forEach(span => {
+        if (span.textContent.includes('\\') || span.textContent.includes("'") || span.textContent.includes('\u005C')) {
+            span.style.color = 'inherit';
+            span.style.backgroundColor = 'transparent';
+            span.style.border = 'none';
+            if (span.textContent.trim() === '\\' || span.textContent.trim() === "'") {
+                span.textContent = '';
+            }
+        }
+    });
+    
+    const errorChars = document.querySelectorAll('.mjx-char[style*="color: red"], .mjx-char[style*="color:#FF0000"]');
+    errorChars.forEach(char => {
+        char.style.color = 'inherit';
+        char.style.backgroundColor = 'transparent';
+    });
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+    const observer = new MutationObserver(function(mutations) {
+        let mathJaxChanged = false;
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1 && (
+                        node.classList.contains('MathJax') ||
+                        node.classList.contains('mjx-container') ||
+                        (node.querySelector && node.querySelector('.MathJax, .mjx-container'))
+                    )) {
+                        mathJaxChanged = true;
+                    }
+                });
+            }
+        });
+        
+        if (mathJaxChanged) {
+            setTimeout(cleanLatexErrors, 100);
+        }
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    setTimeout(cleanLatexErrors, 1000);
+});
+
+window.cleanLatexErrors = cleanLatexErrors;
