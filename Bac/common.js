@@ -105,53 +105,8 @@ async function bulletproofPrint(contentHTML, title = 'Document', subject = '') {
             .math-formula-container, .MathJax, mjx-container { page-break-inside: avoid !important; }
         }
         @media (max-width: 768px) { body { font-size: 11pt !important; } .container { padding: 8pt !important; } h1 { font-size: 1.6em !important; } h2 { font-size: 1.4em !important; } h3 { font-size: 1.2em !important; } }
-        @page { margin: 1.5cm; size: A4; }    </style>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>
-        // Configuration MathJax complète pour l'impression - Compatible avec mathJax.js
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$']],
-                displayMath: [['$$', '$$']],
-                packages: {'[+]': ['ams', 'base', 'color']},
-                macros: {
-                    // Fraction en taille normale
-                    frac: ["\\\\dfrac{#1}{#2}", 2],
-                    // Vecteurs avec flèche
-                    vec: ["\\\\overrightarrow{#1}", 1],
-                    // Ensemble des réels, entiers, etc.
-                    R: "\\\\mathbb{R}",
-                    N: "\\\\mathbb{N}",
-                    Z: "\\\\mathbb{Z}",
-                    Q: "\\\\mathbb{Q}",
-                    C: "\\\\mathbb{C}",                    // Pas de macros récursives - utiliser les symboles LaTeX natifs
-                },
-                processEscapes: true,
-                processEnvironments: true
-            },
-            svg: {
-                fontCache: 'global',
-                displayAlign: 'center',
-                displayIndent: '0em'
-            },
-            chtml: {
-                displayAlign: 'center',
-                displayIndent: '0em'
-            },
-            options: {
-                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-                ignoreHtmlClass: 'tex2jax_ignore',
-                processHtmlClass: 'tex2jax_process'
-            },
-            startup: {
-                ready: () => {
-                    MathJax.startup.defaultReady();
-                    console.log('[PRINT] MathJax configuration loaded');
-                }
-            }
-        };
-    </script>
+        @page { margin: 1.5cm; size: A4; }    </style>    <!-- Configuration MathJax centralisée -->
+    <script src="../mathJax.js"></script>
 </head>
 <body>    <div class="print-header">
         <h1>${cleanTitle}</h1>

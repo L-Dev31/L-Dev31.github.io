@@ -2130,12 +2130,7 @@ mjx-container[display="true"]::before {
   margin-left: 0 !important;
 }
 
-
-
-/* ============================== */
-/* EXAM FLAGS STYLING */
-/* ============================== */
-
+/* Styles pour les drapeaux d'examen */
 .exam-flag {
   width: 30px;
   height: 20px;
@@ -2144,13 +2139,45 @@ mjx-container[display="true"]::before {
   object-fit: cover;
   border: 1px solid var(--border-light);
   vertical-align: middle;
-  flex-shrink: 0;
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  transition: all var(--transition-quick);
 }
 
-.pdf-button:hover .exam-flag {
-  transform: scale(1.05);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+/* Masquer et corriger les erreurs LaTeX */
+.mjx-merror,
+.MathJax_Error,
+[data-mjx-error],
+span[style*="color: red"],
+span[style*="color:#FF0000"],
+.mjx-char[style*="color: red"] {
+  color: inherit !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+/* Masquer spécifiquement les backslashes d'erreur */
+span:contains("\\"),
+.mjx-char:contains("\\") {
+  color: inherit !important;
+}
+
+/* Si le contenu contient des backslashes d'erreur, le remplacer */
+.mjx-merror::before {
+  content: "[formule]";
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.mjx-merror * {
+  display: none !important;
+}
+
+/* Styles MathJax améliorés */
+.MathJax,
+.mjx-container {
+  color: inherit !important;
+  background: transparent !important;
+}
+
+/* Forcer l'héritage de couleur pour tous les éléments MathJax */
+.MathJax * {
+  color: inherit !important;
 }

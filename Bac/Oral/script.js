@@ -5,7 +5,11 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true,
     processEnvironments: true,
-    packages: {'[+]': ['ams', 'newcommand', 'configmacros']}
+    packages: {'[+]': ['ams', 'newcommand', 'configmacros']},
+    formatError: (jax, err) => {
+      console.warn('[MathJax Oral] Erreur LaTeX ignorée:', err);
+      return jax;
+    }
   },
   chtml: {
     scale: 1,
