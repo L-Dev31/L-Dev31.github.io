@@ -1,0 +1,436 @@
+<div class="section cs-section">
+  <h2 class="section-title section-title-large">Sujet détaillé : La programmation web moderne</h2>
+  <div class="highlight-box">
+    <strong>Problématique : « Comment les technologies web (HTML, CSS, JavaScript) s'articulent-elles pour créer des expériences utilisateur modernes et performantes ? »</strong>
+  </div>
+
+  <h3>1. Mes motivations</h3>
+  <p>
+    Ma passion pour la programmation web a commencé il y a quelques années quand j'ai voulu créer mes premiers sites personnels et comprendre comment fonctionnaient les sites que j'utilisais quotidiennement. Ce qui m'a fasciné, c'est cette capacité de transformer des idées en interfaces visuelles et interactives accessibles à tous via un navigateur. Aujourd'hui, je crée régulièrement des projets web personnels, et chaque projet me permet d'approfondir ma compréhension de ces technologies fondamentales.
+  </p>
+  <p>
+    Ce qui me motive particulièrement, c'est l'aspect créatif du développement web : partir d'une page blanche et construire progressivement une expérience utilisateur complète. Chaque site web raconte une histoire, et les technologies web sont mes outils pour la raconter de la manière la plus efficace et élégante possible.
+  </p>  <div class="page-break"></div>
+  <h3>2. Fil conducteur : Créer un site web personnel</h3>
+  <p>
+    Pour illustrer concrètement l'articulation des technologies web, je vais vous présenter ma démarche habituelle quand je crée un site web personnel, de la conception à la mise en ligne.
+  </p>
+  
+  <h4><strong>Étape 1 : Planification et maquettage</strong></h4>
+  <p>
+    Tout commence par définir l'objectif du site : portfolio personnel, blog, site de présentation d'un projet... Cette phase me permet de définir l'architecture de l'information et de créer des maquettes (wireframes) qui guideront le développement.
+  </p>
+
+  <h4><strong>Étape 2 : Structure HTML - Les fondations</strong></h4>
+  <p>
+    <strong>HTML (HyperText Markup Language)</strong> est le squelette de toute page web. Je commence toujours par créer une structure HTML sémantique, en utilisant les bonnes balises pour chaque type de contenu.
+  </p>
+  
+  <p><strong>Exemple concret :</strong> Pour un portfolio personnel, je structure ainsi :</p>
+    <div class="code-block">
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Mon Portfolio - Léo Tosku&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header&gt;
+        &lt;nav&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;a href="#accueil"&gt;Accueil&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#projets"&gt;Projets&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/nav&gt;
+    &lt;/header&gt;
+    
+    &lt;main&gt;
+        &lt;section id="accueil"&gt;
+            &lt;h1&gt;Bienvenue sur mon portfolio&lt;/h1&gt;
+            &lt;p&gt;Découvrez mes projets de développement...&lt;/p&gt;
+        &lt;/section&gt;
+        
+        &lt;section id="projets"&gt;
+            &lt;h2&gt;Mes Projets&lt;/h2&gt;
+            &lt;article&gt;
+                &lt;h3&gt;Jeu vidéo en 3D&lt;/h3&gt;
+                &lt;p&gt;Un jeu créé avec Unity...&lt;/p&gt;
+            &lt;/article&gt;
+        &lt;/section&gt;
+    &lt;/main&gt;
+    
+    &lt;footer&gt;
+        &lt;p&gt;&copy; 2024 Léo Tosku&lt;/p&gt;
+    &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <p>
+    Cette structure respecte la sémantique HTML5 : <code>&lt;header&gt;</code> pour l'en-tête, <code>&lt;nav&gt;</code> pour la navigation, <code>&lt;main&gt;</code> pour le contenu principal, <code>&lt;section&gt;</code> pour les sections logiques, et <code>&lt;footer&gt;</code> pour le pied de page. Cette approche améliore l'accessibilité et le référencement naturel (SEO).
+  </p>
+  <div class="page-break"></div>
+  <h4><strong>Étape 3 : Design CSS - L'habillage visuel</strong></h4>
+  <p>
+    <strong>CSS (Cascading Style Sheets)</strong> transforme ma structure HTML brute en une interface attrayante et fonctionnelle. Je procède par étapes : d'abord le layout global, puis les composants, et enfin les détails.
+  </p>
+  
+  <p><strong>Layout responsive avec CSS Grid et Flexbox :</strong></p>
+  
+  <div class="code-block">
+    <pre><code>/* Reset et variables CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #e74c3c;
+    --text-color: #333;
+    --bg-color: #f8f9fa;
+}
+
+/* Layout principal */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background: var(--bg-color);
+}
+
+header {
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    gap: 2rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Responsive design - Media query supprimée */</code></pre>
+  </div>
+
+  <p>
+    Cette approche CSS moderne utilise les variables CSS (custom properties) pour maintenir la cohérence, CSS Grid et Flexbox pour le layout, et les media queries pour le responsive design. Le site s'adapte automatiquement à tous les écrans.
+  </p>
+
+  <h4><strong>Étape 4 : Interactivité JavaScript - La logique métier</strong></h4>
+  <p>
+    <strong>JavaScript</strong> apporte la dynamicité au site. Je l'utilise pour gérer les interactions utilisateur, valider les formulaires, créer des animations, et communiquer avec des APIs.
+  </p>
+  
+  <p><strong>Exemple : Navigation fluide et validation de formulaire :</strong></p>
+  
+  <div class="code-block">
+    <pre><code>// Navigation fluide entre les sections
+document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        const target = document.querySelector(this.getAttribute('href'));
+        target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    });
+});
+
+// Validation du formulaire de contact
+const contactForm = document.getElementById('contact-form');
+contactForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const email = formData.get('email');
+    const message = formData.get('message');
+    
+    // Validation simple
+    if (!isValidEmail(email)) {
+        showError('Veuillez entrer un email valide');
+        return;
+    }
+    
+    if (message.length < 10) {
+        showError('Le message doit contenir au moins 10 caractères');
+        return;
+    }
+    
+    // Envoi du formulaire
+    submitForm(formData);
+});
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    
+    // Affichage temporaire de l'erreur
+    document.body.appendChild(errorDiv);
+    setTimeout(() => errorDiv.remove(), 3000);
+}</code></pre>
+  </div>
+  <div class="page-break"></div>
+  <h3>3. Technologies web modernes et bonnes pratiques</h3>
+  
+  <h4><strong>Performance et optimisation :</strong></h4>
+  <p>
+    La performance web est cruciale pour l'expérience utilisateur. J'optimise systématiquement mes sites selon plusieurs axes :
+  </p>
+  <ul>
+    <li><strong>Images optimisées :</strong> Formats WebP/AVIF, lazy loading, responsive images</li>
+    <li><strong>CSS critique :</strong> Chargement du CSS essentiel en priorité</li>
+    <li><strong>JavaScript différé :</strong> Chargement non-bloquant des scripts</li>
+    <li><strong>Minification :</strong> Réduction de la taille des fichiers CSS/JS</li>
+    <li><strong>CDN :</strong> Distribution géographique des ressources</li>
+  </ul>
+
+  <h4><strong>Accessibilité (a11y) :</strong></h4>
+  <p>
+    Un site web doit être accessible à tous, y compris aux personnes en situation de handicap. J'intègre systématiquement :
+  </p>
+  <ul>
+    <li><strong>Attributs ARIA :</strong> Pour les lecteurs d'écran</li>
+    <li><strong>Contrastes suffisants :</strong> Ratio minimum de 4.5:1</li>
+    <li><strong>Navigation au clavier :</strong> Tous les éléments interactifs accessibles</li>
+    <li><strong>Textes alternatifs :</strong> Description des images pour les malvoyants</li>
+  </ul>
+
+  <h4><strong>SEO (référencement naturel) :</strong></h4>
+  <p>
+    Pour que le site soit bien référencé sur Google, j'applique les bonnes pratiques SEO :
+  </p>
+  <ul>
+    <li><strong>Balises meta :</strong> Title, description, mots-clés optimisés</li>
+    <li><strong>Structure Hn :</strong> Hiérarchie logique des titres</li>
+    <li><strong>URLs SEO-friendly :</strong> URLs descriptives et propres</li>
+    <li><strong>Schema.org :</strong> Données structurées pour les moteurs de recherche</li>
+    <li><strong>Sitemap XML :</strong> Plan du site pour les crawlers</li>
+  </ul>
+
+  <h4><strong>Sécurité web :</strong></h4>
+  <p>
+    La sécurité est primordiale, surtout pour les sites avec formulaires ou données sensibles :
+  </p>
+  <ul>
+    <li><strong>HTTPS obligatoire :</strong> Chiffrement des communications</li>
+    <li><strong>Validation côté serveur :</strong> Jamais de validation uniquement côté client</li>
+    <li><strong>Protection CSRF :</strong> Tokens anti-forgery sur les formulaires</li>
+    <li><strong>Sanitisation des données :</strong> Protection contre les injections XSS</li>
+    <li><strong>En-têtes sécurisés :</strong> CSP, HSTS, X-Frame-Options</li>
+  </ul>
+  <div class="page-break"></div>
+  <h3>4. Évolution du développement web</h3>
+  
+  <h4><strong>Frameworks et outils modernes :</strong></h4>
+  <p>
+    Le développement web évolue rapidement avec de nouveaux outils qui améliorent la productivité :
+  </p>
+  <ul>
+    <li><strong>Frameworks CSS :</strong> Tailwind CSS pour un développement rapide</li>
+    <li><strong>Préprocesseurs :</strong> Sass/SCSS pour un CSS plus maintenable</li>
+    <li><strong>Build tools :</strong> Webpack, Vite pour l'automatisation</li>
+    <li><strong>Version control :</strong> Git pour le suivi des modifications</li>
+    <li><strong>Déploiement :</strong> Netlify, Vercel pour la mise en ligne automatisée</li>
+  </ul>
+
+  <h4><strong>Progressive Web Apps (PWA) :</strong></h4>
+  <p>
+    Les PWA représentent l'avenir du web mobile, combinant le meilleur du web et des applications natives :
+  </p>
+  <ul>
+    <li><strong>Service Workers :</strong> Fonctionnement hors ligne</li>
+    <li><strong>App Shell :</strong> Chargement instantané de l'interface</li>
+    <li><strong>Manifest :</strong> Installation sur l'écran d'accueil</li>
+    <li><strong>Push notifications :</strong> Engagement utilisateur</li>
+  </ul>
+
+  <h4><strong>Tendances actuelles :</strong></h4>
+  <ul>
+    <li><strong>Design mobile-first :</strong> Conception pour mobile en priorité</li>
+    <li><strong>Dark mode :</strong> Interfaces sombres pour le confort visuel</li>
+    <li><strong>Micro-interactions :</strong> Animations subtiles pour l'UX</li>
+    <li><strong>Glassmorphism :</strong> Effets de transparence modernes</li>
+    <li><strong>Performance budgets :</strong> Contraintes de poids et vitesse</li>
+  </ul>  <h3>Conclusion</h3>
+  <p>
+    La programmation web moderne est bien plus qu'un assemblage de technologies : c'est un art qui combine technique, créativité et expérience utilisateur. Chaque projet personnel me permet d'appliquer cette trilogie HTML-CSS-JavaScript de manière unique, en adaptant les solutions aux besoins spécifiques.
+  </p>
+  <p>
+    Ce qui me passionne dans ce domaine, c'est sa constante évolution. Les technologies web évoluent rapidement, mais les fondamentaux restent solides. Maîtriser HTML, CSS et JavaScript ouvre les portes vers des frameworks plus avancés comme React, Vue.js ou Angular, et permet de créer des expériences web toujours plus riches et performantes.
+  </p>
+  <p>
+    Cette expertise technique, combinée à ma créativité et ma curiosité, me positionne bien pour mes projets futurs et pour comprendre les enjeux du numérique dans notre société moderne.
+  </p>
+  <p>
+    Merci de votre attention, je suis prêt à répondre à vos questions.
+  </p>
+</div>
+
+<!-- Références au programme - Sujet 2 -->
+<div class="section program-section">
+  <h2 class="section-title">Liens avec les programmes</h2>
+  
+  <div class="program-links">
+    <div class="program-section">
+      <h3><i class="fas fa-laptop-code"></i> NSI - Terminale</h3>
+      <ul>
+        <li><strong>Programmation :</strong> Algorithmes, paradigmes de programmation</li>
+        <li><strong>Web :</strong> Protocoles HTTP/HTTPS, architecture client-serveur</li>
+        <li><strong>Structures de données :</strong> Tableaux, objets JSON, DOM</li>
+        <li><strong>Bases de données :</strong> Stockage et récupération de données web</li>
+        <li><strong>Interfaces homme-machine :</strong> Ergonomie, accessibilité web</li>
+        <li><strong>Sécurité :</strong> Chiffrement, authentification, protection des données</li>
+      </ul>
+    </div>
+    
+    <div class="program-section">
+      <h3><i class="fas fa-calculator"></i> Mathématiques - Terminale</h3>
+      <ul>
+        <li><strong>Fonctions :</strong> Animations CSS, courbes de Bézier</li>
+        <li><strong>Géométrie :</strong> Positionnement CSS, transformations 2D</li>
+        <li><strong>Statistiques :</strong> Analytics web, mesure de performance</li>
+        <li><strong>Logique :</strong> Conditions JavaScript, algorithmes de validation</li>
+      </ul>
+    </div>
+    
+    <div class="program-section">
+      <h3><i class="fas fa-palette"></i> Design et ergonomie (notions)</h3>
+      <ul>
+        <li><strong>Psychologie cognitive :</strong> Perception visuelle, charge cognitive</li>
+        <li><strong>Théorie des couleurs :</strong> Harmonie, contraste, accessibilité</li>
+        <li><strong>Typographie :</strong> Lisibilité, hiérarchie de l'information</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Questions/Réponses anticipées - Sujet 2 -->
+<div class="section qna-section">
+  <h2 class="section-title">Questions/Réponses anticipées</h2>
+
+  <div class="qna">
+    <div class="question">
+      "Pourquoi commencer par HTML avant CSS et JavaScript ?"
+    </div>
+    <div class="answer">
+      HTML est la fondation de toute page web, c'est comme construire les murs d'une maison avant de la décorer ! HTML structure le contenu et donne du sens aux informations (sémantique). CSS vient ensuite pour l'apparence, et JavaScript pour l'interactivité. Cette progression logique assure un site accessible et bien référencé. De plus, un HTML bien structuré facilite grandement le travail CSS et JavaScript qui suivront.
+    </div>
+  </div>
+
+  <div class="qna">
+    <div class="question">
+      "Comment garantir qu'un site fonctionne sur tous les navigateurs ?"
+    </div>
+    <div class="answer">
+      J'utilise plusieurs techniques : d'abord les standards web modernes qui sont supportés partout, puis des outils comme Autoprefixer pour ajouter automatiquement les préfixes CSS nécessaires (-webkit-, -moz-), et enfin des polyfills JavaScript pour les fonctionnalités récentes. Je teste systématiquement sur Chrome, Firefox, Safari et Edge. Pour les anciens navigateurs, j'applique le principe de "progressive enhancement" : le site fonctionne partout, mais offre plus de fonctionnalités sur les navigateurs modernes.
+    </div>
+  </div>
+
+  <div class="qna">
+    <div class="question">
+      "Comment optimiser la vitesse de chargement d'un site web ?"
+    </div>
+    <div class="answer">
+      La performance web suit la règle des 3 secondes : au-delà, les utilisateurs partent ! J'optimise à plusieurs niveaux : compression des images (WebP, lazy loading), minification CSS/JS, mise en cache navigateur, CDN pour distribuer les ressources, et CSS critique pour afficher le contenu important en premier. J'utilise aussi des outils comme Lighthouse pour mesurer et identifier les points d'amélioration. Chaque milliseconde gagnée améliore l'expérience utilisateur et le référencement Google.
+    </div>
+  </div>
+
+  <div class="qna">
+    <div class="question">
+      "Quelle est la différence entre design responsive et adaptive ?"
+    </div>
+    <div class="answer">
+      Le responsive design utilise une seule version du site qui s'adapte fluidement à toutes les tailles d'écran grâce aux media queries CSS et aux grilles flexibles. C'est comme un élastique qui s'étire ! L'adaptive design crée plusieurs versions fixes pour différentes tailles (mobile, tablette, desktop). Je privilégie le responsive car il est plus maintenant et couvre tous les appareils possibles, même ceux qui n'existaient pas lors du développement.
+    </div>
+  </div>
+  <div class="qna">
+    <div class="question">
+      "Comment cette expertise web s'intègre-t-elle dans vos projets futurs ?"
+    </div>
+    <div class="answer">
+      Maîtriser le développement web me donne une autonomie totale pour concrétiser mes idées ! Pour mes projets personnels comme un portfolio ou un site de présentation, je peux créer les interfaces utilisateur, gérer les interactions, et optimiser l'expérience. Cette expertise technique me permet aussi de comprendre comment fonctionnent les sites que j'utilise quotidiennement et m'ouvre des perspectives d'études supérieures en informatique, que ce soit en développement web, en design d'interfaces, ou même en création d'applications mobiles.
+    </div>
+  </div>
+</div>
+
+<!-- Chapitres de Lycée utilisés - Sujet 2 -->
+<div class="section chapters-section">
+  <h2 class="section-title"><i class="fas fa-book"></i> Chapitres de Lycée utilisés</h2>
+  
+  <div class="chapters-grid">
+    <div class="chapter-card">
+      <h3><i class="fas fa-laptop-code"></i> NSI</h3>
+      <ul>
+        <li>Programmation et algorithmique (Première/Terminale)</li>
+        <li>Structures de données (tableaux, objets) (Terminale)</li>
+        <li>Interfaces homme-machine (Terminale)</li>
+        <li>Architectures matérielles et réseaux (Terminale)</li>
+        <li>Web et bases de données (Première/Terminale)</li>
+        <li>Sécurité informatique (Terminale)</li>
+      </ul>
+    </div>
+    
+    <div class="chapter-card">
+      <h3><i class="fas fa-calculator"></i> Mathématiques</h3>
+      <ul>
+        <li>Fonctions et courbes (Première/Terminale)</li>
+        <li>Géométrie dans le plan (Première)</li>
+        <li>Statistiques et probabilités (Première/Terminale)</li>
+        <li>Logique et raisonnement (Première/Terminale)</li>
+        <li>Suites numériques (Terminale)</li>
+        <li>Optimisation et algorithmes (Terminale)</li>
+      </ul>
+    </div>
+    
+    <div class="chapter-card">
+      <h3><i class="fas fa-globe"></i> Technologies web</h3>
+      <ul>
+        <li>HTML5 sémantique et accessibilité</li>
+        <li>CSS3 et design responsive</li>
+        <li>JavaScript moderne (ES6+)</li>
+        <li>APIs web et communication serveur</li>
+        <li>Progressive Web Apps (PWA)</li>
+        <li>Performance et optimisation web</li>
+      </ul>
+    </div>
+      <div class="chapter-card">
+      <h3><i class="fas fa-tools"></i> Expérience personnelle</h3>
+      <ul>
+        <li>Développement de sites personnels et portfolios</li>
+        <li>Projets scolaires et collaboratifs en NSI</li>
+        <li>Frameworks CSS (Bootstrap, Tailwind)</li>
+        <li>Outils de développement (VS Code, navigateurs)</li>
+        <li>Hébergement gratuit (GitHub Pages, Netlify)</li>
+        <li>Veille technologique et tutoriels en ligne</li>
+      </ul>
+    </div>
+  </div>
+</div>

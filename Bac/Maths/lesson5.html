@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">                <p>Démontrer par récurrence que pour tout $n \in \mathbb{N}$, la somme des $n$ premiers entiers est $S_n = \sum_{i=0}^{n} i = \frac{n(n+1)}{2}$. <span class="tex2jax_ignore">(Ici</span> $n_0 = 0$<span class="tex2jax_ignore">)</span>.</p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Leçon 5 : Suites</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">    <script src="../mathJax.js"></script>
+    <style>
+        /* Media query d'impression supprimée */
+    </style>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>Les suites numériques sont des objets fondamentaux en analyse. Elles modélisent des phénomènes évoluant par étapes discrètes. Ce chapitre approfondit l'étude des suites abordée en Première, en se concentrant sur les limites, la convergence, les suites monotones, et le raisonnement par récurrence.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Raisonnement par récurrence</h2>
+            <div class="theorem-box">
+                <h3 class="box-title">Principe de récurrence</h3>
+                <p>Soit $P(n)$ une propriété dépendant d'un entier naturel $n$. Pour démontrer que $P(n)$ est vraie pour tout entier $n \ge n_0$ (où $n_0$ est un entier naturel donné), on procède en deux étapes :</p>
+                <ol>
+                    <li><strong>Initialisation :</strong> Vérifier que la propriété $P(n_0)$ est vraie.</li>
+                    <li><strong>Hérédité :</strong> Supposer que $P(k)$ est vraie pour un entier quelconque $k \ge n_0$ (hypothèse de récurrence), et démontrer qu'alors $P(k+1)$ est également vraie.</li>
+                </ol>
+                <p>Si ces deux étapes sont vérifiées, alors la propriété $P(n)$ est vraie pour tout entier $n \ge n_0$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Démontrer par récurrence que pour tout $n \in \mathbb{N}$, la somme des $n$ premiers entiers est $S_n = \sum_{i=0}^{n} i = \frac{n(n+1)}{2}$. <span class="tex2jax_ignore">(Ici</span> $n_0 = 0$<span class="tex2jax_ignore">)</span>.</p>
+                <p>Soit $P(n)$ la propriété : "$\\sum_{i=0}^{n} i = \\frac{n(n+1)}{2}$".</p>
+                <p>1.  <strong>Initialisation (n=0) :</strong>
+                    $
+                    \\sum_{i=0}^{0} i = 0$.
+                    $
+                    \\frac{0(0+1)}{2} = 0$.
+                    Donc $P(0)$ est vraie.</p>
+                <p>2.  <strong>Hérédité :</strong> Supposons que $P(k)$ est vraie pour un entier $k \\ge 0$, c'est-à-dire $\\sum_{i=0}^{k} i = \\frac{k(k+1)}{2}$ (Hypothèse de Récurrence - HR).
+                    Montrons que $P(k+1)$ est vraie, c'est-à-dire $\\sum_{i=0}^{k+1} i = \\frac{(k+1)(k+2)}{2}$.</p>
+                <p>   $\sum_{i=0}^{k+1} i = (\sum_{i=0}^{k} i) + (k+1)$</p>
+                <p>   En utilisant l'HR :</p>
+                <p>   $\\sum_{i=0}^{k+1} i = \\frac{k(k+1)}{2} + (k+1)$</p>
+                <p>   Mettons au même dénominateur :</p>
+                <p>   $\\sum_{i=0}^{k+1} i = \\frac{k(k+1) + 2(k+1)}{2}$</p>
+                <p>   Factorisons par $(k+1)$ :</p>
+                <p>   $\\sum_{i=0}^{k+1} i = \\frac{(k+1)(k+2)}{2}$</p>
+                <p>   C'est bien la formule attendue pour $P(k+1)$. L'hérédité est démontrée.</p>
+                <p><strong>Conclusion :</strong> Par le principe de récurrence, la propriété $P(n)$ est vraie pour tout entier naturel $n$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Limite d'une suite</h2>
+            <!--PAGEBREAK-->
+            <div class="definition-box">
+                <h3 class="box-title">Limite finie (Convergence)</h3>
+                <p>Une suite $(u_n)$ converge vers un réel $L$ si tout intervalle ouvert contenant $L$ contient tous les termes de la suite à partir d'un certain rang.</p>
+                <p>On note $\lim_{n \to +\infty} u_n = L$.</p>
+                <p>Formellement : $\forall \epsilon > 0, \exists N \in \mathbb{N}, \forall n \ge N, |u_n - L| < \epsilon$.</p>
+            </div>
+            <div class="definition-box">
+                <h3 class="box-title">Limite infinie (Divergence vers $\pm \infty$)</h3>
+                <ul>
+                    <li>Une suite $(u_n)$ diverge vers $+\infty$ si tout intervalle de la forme $]A, +\infty[$ (avec $A$ réel) contient tous les termes de la suite à partir d'un certain rang. On note $\lim_{n \to +\infty} u_n = +\infty$.</li>
+                    <li>Une suite $(u_n)$ diverge vers $-\infty$ si tout intervalle de la forme $]-\infty, B[$ (avec $B$ réel) contient tous les termes de la suite à partir d'un certain rang. On note $\lim_{n \to +\infty} u_n = -\infty$.</li>
+                </ul>
+            </div>
+            <div class="definition-box">
+                <h3 class="box-title">Divergence (sans limite)</h3>
+                <p>Une suite qui n'admet pas de limite (ni finie, ni infinie) est dite divergente. Exemple : $u_n = (-1)^n$.</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Unicité de la limite</h3>
+                <p>Si une suite admet une limite (finie ou infinie), cette limite est unique.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Limites usuelles (suites géométriques)</h3>
+                <p>Soit $q$ un réel.</p>
+                <ul>
+                    <li>Si $|q| < 1$ (i.e., $-1 < q < 1$), alors $\lim_{n \to +\infty} q^n = 0$.</li>
+                    <li>Si $q = 1$, alors $\lim_{n \to +\infty} q^n = 1$.</li>
+                    <li>Si $q > 1$, alors $\lim_{n \to +\infty} q^n = +\infty$.</li>
+                    <li>Si $q \le -1$, la suite $(q^n)$ n'a pas de limite (elle diverge).</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Opérations sur les limites</h2>
+            <p>Les règles d'opérations sur les limites de suites sont analogues à celles des fonctions.</p>
+            <div class="summary-box">
+                <h3 class="box-title">Limite d'une somme, produit, quotient</h3>
+                <p>Soient $(u_n)$ et $(v_n)$ deux suites admettant des limites $L$ et $L'$ (finies ou infinies).</p>
+                <ul>
+                    <li><strong>Somme :</strong> $\lim (u_n + v_n) = L + L'$, sauf formes indéterminées ($+\infty - \infty$).</li>
+                    <li><strong>Produit :</strong> $\lim (u_n \times v_n) = L \times L'$, sauf formes indéterminées ($0 \times \infty$).</li>
+                    <li><strong>Quotient :</strong> $\lim (u_n / v_n) = L / L'$ (si $L' \neq 0$), sauf formes indéterminées ($0/0$, $\infty/\infty$). Attention au signe pour les limites infinies au dénominateur.</li>
+                </ul>
+                <p>Consulter les tableaux détaillés des opérations sur les limites (analogues aux fonctions).</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Théorèmes de comparaison</h3>
+                <p>Soient $(u_n)$, $(v_n)$ et $(w_n)$ trois suites.</p>
+                <ul>
+                    <li>Si $u_n \le v_n$ à partir d'un certain rang, et si $\lim u_n = +\infty$, alors $\lim v_n = +\infty$.</li>
+                    <li>Si $u_n \le v_n$ à partir d'un certain rang, et si $\lim v_n = -\infty$, alors $\lim u_n = -\infty$.</li>
+                    <li><strong>Théorème des gendarmes :</strong> Si $v_n \le u_n \le w_n$ à partir d'un certain rang, et si $\lim v_n = \lim w_n = L$ (où $L$ est fini), alors $\lim u_n = L$.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">4. Suites monotones</h2>
+            <!--PAGEBREAK-->
+            <div class="definition-box">
+                <h3 class="box-title">Définitions</h3>
+                <ul>
+                    <li>Une suite $(u_n)$ est <strong>croissante</strong> si pour tout $n$, $u_{n+1} \ge u_n$.</li>
+                    <li>Une suite $(u_n)$ est <strong>décroissante</strong> si pour tout $n$, $u_{n+1} \le u_n$.</li>
+                    <li>Une suite $(u_n)$ est <strong>monotone</strong> si elle est croissante ou décroissante.</li>
+                    <li>Les inégalités sont strictes pour <strong>strictement</strong> croissante/décroissante.</li>
+                </ul>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Méthodes pour étudier la monotonie</h3>
+                <ul>
+                    <li>Étudier le signe de la différence $u_{n+1} - u_n$.</li>
+                    <li>Si la suite est à termes strictement positifs, comparer le quotient $u_{n+1} / u_n$ à 1.</li>
+                    <li>Si $u_n = f(n)$ où $f$ est une fonction, étudier les variations de la fonction $f$.</li>
+                </ul>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Théorème de convergence monotone</h3>
+                <ul>
+                    <li>Toute suite croissante et majorée est convergente. (Sa limite est $\le$ au majorant).</li>
+                    <li>Toute suite décroissante et minorée est convergente. (Sa limite est $\ge$ au minorant).</li>
+                    <li>Toute suite croissante non majorée diverge vers $+\infty$.</li>
+                    <li>Toute suite décroissante non minorée diverge vers $-\infty$.</li>
+                </ul>
+            </div>
+
+        <div class="page-break"></div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Soit la suite $(u_n)$ définie par $u_0 = 0$ et $u_{n+1} = \sqrt{u_n + 2}$.</p>
+                <p>1.  Montrons par récurrence que $0 \le u_n < 2$ pour tout $n$.</p>
+                <p>   - Initialisation (n=0) : $u_0 = 0$, donc $0 \le u_0 < 2$. Vrai.</p>
+                <p>   - Hérédité : Supposons $0 \le u_k < 2$ (HR). Montrons $0 \le u_{k+1} < 2$.</p>
+                <p>     $0 \le u_k < 2 \implies 2 \le u_k + 2 < 4$.</p>
+                <p>     Comme la fonction racine carrée est croissante sur $[0, +\infty[$ :</p>
+                <p>     $\sqrt{2} \le \sqrt{u_k + 2} < \sqrt{4} \implies \sqrt{2} \le u_{k+1} < 2$.</p>
+                <p>     Puisque $\sqrt{2} > 0$, on a bien $0 \le u_{k+1} < 2$. Hérédité prouvée.</p>
+                <p>   Conclusion : La suite est bornée (minorée par 0, majorée par 2).</p>
+                <p>2.  Étudions la monotonie : $u_{n+1} - u_n = \sqrt{u_n + 2} - u_n$.</p>
+                <p>   Considérons la fonction $f(x) = \sqrt{x+2} - x$ sur $[0, 2[$. Sa dérivée est $f'(x) = \frac{1}{2\sqrt{x+2}} - 1 = \frac{1 - 2\sqrt{x+2}}{2\sqrt{x+2}}$.</p>
+                <p>   Le signe dépend de $1 - 2\sqrt{x+2}$. $1 - 2\sqrt{x+2} < 0$ car $x \ge 0 \implies x+2 \ge 2 \implies \sqrt{x+2} \ge \sqrt{2} \implies 2\sqrt{x+2} \ge 2\sqrt{2} > 1$.</p>
+                <p>   Donc $f'(x) < 0$, $f$ est décroissante. Or $f(2) = \sqrt{2+2} - 2 = 0$. Donc $f(x) \ge 0$ sur $[0, 2]$ <span class="tex2jax_ignore">(puisque</span> $f(2)=0$ <span class="tex2jax_ignore">et</span> $f$ <span class="tex2jax_ignore">est décroissante,</span> $f(x) \ge f(2)$ <span class="tex2jax_ignore">pour</span> $x \le 2$<span class="tex2jax_ignore">)</span>.</p>
+                <p>   Ainsi, $u_{n+1} - u_n = f(u_n) \ge 0$ car $u_n \in [0, 2]$.</p>
+                <p>   La suite $(u_n)$ est croissante (non strictement si $u_n$ atteint 2, mais nous avons montré $u_n < 2$).</p>
+                <p>3.  Conclusion sur la convergence : $(u_n)$ est croissante et majorée (par 2). D'après le théorème de convergence monotone, $(u_n)$ converge vers une limite finie $L$.</p>
+                
+        <div class="page-break"></div>
+                
+                <p>4.  Détermination de la limite : Comme $u_{n+1} = f(u_n)$ avec $f(x) = \sqrt{x+2}$ continue sur $[0, 2]$, la limite $L$ vérifie $L = f(L)$.</p>
+                <p>   $L = \sqrt{L+2}$. Comme $L \ge u_0 = 0$, on peut élever au carré :</p>
+                <p>   $L^2 = L + 2 \implies L^2 - L - 2 = 0$.</p>
+                <p>   Équation du second degré. Discriminant $\Delta = (-1)^2 - 4(1)(-2) = 1 + 8 = 9$.</p>
+                <p>   Solutions : $L_1 = \frac{-(-1) - \sqrt{9}}{2(1)} = \frac{1 - 3}{2} = -1$ et $L_2 = \frac{1 + 3}{2} = 2$.</p>
+                <p>   Comme $u_n \ge 0$ pour tout $n$, la limite $L$ doit être $\ge 0$. Donc $L=2$.</p>
+                <p>   La suite $(u_n)$ converge vers 2.</p>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
+
+

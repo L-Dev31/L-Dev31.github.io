@@ -1,0 +1,2129 @@
+/* Simple Styles - Clean and Minimalist Design */
+
+/* Root variables - Simple color scheme */
+:root {
+  /* Couleurs minimalistes - Uniquement gris et blanc */
+  --gray-50: #FAFAFA;
+  --gray-100: #F5F5F5;
+  --gray-200: #EEEEEE;
+  --gray-300: #E0E0E0;
+  --gray-400: #BDBDBD;
+  --gray-500: #9E9E9E;
+  --gray-600: #757575;
+  --gray-700: #616161;
+  --gray-800: #424242;
+  --gray-900: #212121;
+  
+  /* Couleurs des matières pour la gamification */
+  --maths-color: #e53e3e;
+  --maths-color-light: #feb2b2;
+  --maths-color-bg: #fed7d7;
+  --philosophie-color: #805ad5;
+  --philosophie-color-light: #c3adf0;
+  --philosophie-color-bg: #e9d8fd;
+  --oral-color: #38a169;
+  --oral-color-light: #9ae6b4;
+  --oral-color-bg: #c6f6d5;
+  
+  /* Couleurs fonctionnelles */
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-600);
+  --text-tertiary: var(--gray-500);
+  --background-primary: #FFFFFF;
+  --background-secondary: var(--gray-50);
+  --background-tertiary: var(--gray-100);
+  --border-subtle: var(--gray-200);
+  --border-light: var(--gray-300);
+    /* Espacement optimisé - Plus compact et esthétique */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
+  --spacing-4xl: 64px;
+  
+  /* Rayons de bordure */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  
+  /* Ombres subtiles */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.08);
+  
+  /* Transitions */
+  --transition-quick: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Typographie */
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+  --font-mono: 'SF Mono', Consolas, 'Monaco', monospace;
+  
+  /* Tailles de police */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --text-4xl: 36px;
+  --text-5xl: 48px;
+}
+
+/* Reset CSS global commun */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Corps de page commun - Design équilibré */
+body {
+  font-family: var(--font-body);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--background-secondary);
+  font-size: var(--text-base);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-bottom: 80px;
+  padding-top: 80px; /* Espace pour la progress bar fixe */
+  letter-spacing: 0.005em;
+}
+
+/* Container principal commun - Équilibré */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-2xl);
+  min-height: unset;
+}
+
+/* Search container and search box styling */
+.search-container {
+  margin-bottom: var(--spacing-lg);
+  width: 100%;
+}
+
+.search-box-container {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) calc(var(--spacing-lg) + 20px);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  background-color: var(--background-primary);
+  transition: all var(--transition-smooth);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--gray-400);
+  box-shadow: var(--shadow-sm);
+}
+
+.search-icon {
+  position: absolute;
+  left: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  font-size: var(--text-lg);
+}
+
+/* Header commun - Compact et élégant */
+.header {
+  text-align: center;
+  margin-bottom: var(--spacing-3xl);
+  padding: var(--spacing-2xl) 0;
+  position: relative;
+}
+
+.main-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  letter-spacing: -0.015em;
+}
+
+.student-info {
+  margin-bottom: var(--spacing-xl);
+}
+
+.student-name {
+  font-size: 1.4rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+  letter-spacing: -0.005em;
+}
+
+.student-details {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  letter-spacing: 0.005em;
+  line-height: 1.4;
+}
+
+.back-button-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--background-primary);
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.back-button:hover {
+  background: var(--background-secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Sections communes - Design équilibré */
+.section {
+  background: var(--background-primary);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-2xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  padding: var(--spacing-2xl);
+}
+
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  letter-spacing: -0.005em;
+}
+
+.section-title-large {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.section-title i {
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+}
+
+/* Sections spécifiques Oral - Équilibrées */
+.math-section, .nsi-section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.math-section h3, .nsi-section h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: var(--spacing-2xl);
+  margin-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--border-subtle);
+  padding-bottom: var(--spacing-sm);
+  letter-spacing: -0.01em;
+}
+
+.math-section h4, .nsi-section h4 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
+  letter-spacing: -0.005em;
+}
+
+.math-section p, .nsi-section p {
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+}
+
+.highlight-box {
+  background: var(--background-tertiary);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-2xl);
+  margin: var(--spacing-2xl) 0;
+  text-align: center;
+}
+
+.highlight-box strong {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* LaTeX Styles - Clean look without borders or backgrounds */
+.MathJax, 
+.MathJax_Display,
+mjx-container[display="true"],
+mjx-container[jax="CHTML"][display="true"] {
+  margin: var(--spacing-md) auto !important;
+  position: relative !important;
+  overflow: hidden !important;
+  max-width: 100% !important;
+  text-align: center !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Container pour formules inline LaTeX */
+mjx-container[jax="CHTML"]:not([display="true"]) {
+  margin: 0 var(--spacing-xs) !important;
+  display: inline-block !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Enlever toute décoration sur MathJax */
+.MathJax::before,
+mjx-container[display="true"]::before {
+  display: none !important;
+}
+
+/* Saut de page pour impression - Texte centré sur la ligne */
+.page-break {
+  page-break-before: always !important;
+  break-before: page !important; /* Propriété moderne */
+  margin: var(--spacing-3xl) 0;
+  text-align: center;
+  position: relative;
+  border-top: 2px solid var(--border-subtle);
+  height: 2px;
+  display: block !important;
+  clear: both;
+}
+
+.page-break::after {
+  content: "— Saut de Page —";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--background-primary);
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  font-style: italic;
+  letter-spacing: 2px;
+  padding: 0 var(--spacing-md);
+}
+
+/* Styles pour les onglets - Navbar sticky en haut simplifiée */
+.print-tabs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-subtle);
+  gap: var(--spacing-xs);
+  z-index: 1001;
+  height: 40px;
+  align-items: center;
+}
+
+.print-tabs .tab {
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  transition: all var(--transition-quick);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.print-tabs .tab.active {
+  background: var(--gray-900);
+  color: white;
+  border-color: var(--gray-900);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+
+.print-tabs .tab:hover:not(.active) {
+  background: var(--background-tertiary);
+  color: var(--text-secondary);
+  border-color: var(--border-light);
+}
+
+/* Bouton d'impression - Design aéré */
+.print-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: var(--background-primary);
+  color: var(--text-primary);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  margin-top: var(--spacing-2xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.print-btn:hover {
+  background: var(--background-secondary);
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.print-btn i {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Styles spécifiques pour les sections Oral */
+.program-section {
+  background: var(--background-primary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-xl);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.program-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.program-section h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  border-bottom: 2px solid var(--border-subtle);
+  padding-bottom: var(--spacing-xs);
+}
+
+.program-section h3 i {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.program-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.program-section li {
+  padding: var(--spacing-xs) 0;
+  color: var(--text-primary);
+  line-height: 1.5;
+  border-bottom: 1px solid var(--background-secondary);
+}
+
+.program-section li:last-child {
+  border-bottom: none;
+}
+
+.program-section li strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Section Questions/Réponses */
+.qna-section {
+  background: var(--background-primary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-xl);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.qna {
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.qna:last-child {
+  margin-bottom: 0;
+}
+
+.question {
+  background: var(--background-secondary);
+  padding: var(--spacing-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+}
+
+.question::before {
+  content: "Q";
+  position: absolute;
+  left: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  background: var(--text-secondary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.question {
+  padding-left: calc(var(--spacing-lg) + 40px);
+}
+
+.answer {
+  background: var(--background-primary);
+  padding: var(--spacing-lg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  position: relative;
+}
+
+.answer::before {
+  content: "R";
+  position: absolute;
+  left: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  background: var(--text-primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.answer {
+  padding-left: calc(var(--spacing-lg) + 40px);
+}
+
+/* Section Chapitres de Lycée */
+.chapters-section {
+  background: var(--background-primary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-xl);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.chapters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.chapter-card {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  transition: all var(--transition-smooth);
+}
+
+.chapter-card:hover {
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border-light);
+}
+
+.chapter-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  border-bottom: 2px solid var(--border-subtle);
+  padding-bottom: var(--spacing-xs);
+}
+
+.chapter-card h3 i {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.chapter-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chapter-card li {
+  padding: var(--spacing-xs) 0;
+  color: var(--text-primary);
+  line-height: 1.4;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.chapter-card li:last-child {
+  border-bottom: none;
+}
+
+/* Timer sticky en bas à droite - Chiffres plus grands */
+.timer-container {
+    position: fixed;
+    bottom: 100px; /* Plus d'espace pour le bouton en dessous */
+    right: 24px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-md);
+    z-index: 1000;
+    min-width: 180px;
+    width: 180px; /* Largeur fixe pour alignement parfait */
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.timer-display {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    margin-bottom: var(--spacing-sm);
+    letter-spacing: 2px;
+}
+
+.timer-controls {
+    display: flex;
+    gap: var(--spacing-xs);
+    justify-content: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.timer-btn {
+    background: var(--background-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-quick);
+}
+
+.timer-btn:hover {
+    background: var(--background-primary);
+    color: var(--text-primary);
+}
+
+/* Bouton d'impression sticky sous le timer */
+.print-btn-sticky {
+    position: fixed;
+    bottom: 24px;
+    right: 24px; /* Même position que le timer */
+    width: 180px; /* Même largeur que le timer */
+    background: var(--gray-800);
+    color: white;
+    border: 2px solid var(--gray-700);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    z-index: 1000;
+    backdrop-filter: blur(12px);
+    box-sizing: border-box;
+}
+
+.print-btn-sticky:hover {
+    background: var(--gray-700);
+    border-color: var(--gray-600);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.print-btn-sticky i {
+    color: white;
+    font-size: 0.9rem;
+}
+
+/* Styles pour sections spécialisées - Liens programmes corrigés */
+.program-links, .chapters-used, .qa-section {
+    background: var(--background-primary);
+    border: 2px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-2xl);
+    margin: var(--spacing-2xl) 0;
+}
+
+/* Correction pour les liens programmes - Suppression du container en trop */
+.program-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.program-links > div {
+    background: var(--background-primary);
+    border: 2px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+}
+
+.program-links h4, .chapters-used h4, .qa-section h4 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--border-subtle);
+    padding-bottom: var(--spacing-sm);
+}
+
+.program-links h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    border-bottom: 2px solid var(--border-subtle);
+    padding-bottom: var(--spacing-sm);
+}
+
+.program-links h3 i {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.program-links ul, .chapters-used ul {
+    list-style: none;
+    padding: 0;
+}
+
+.program-links li, .chapters-used li {
+    background: var(--background-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    transition: all var(--transition-quick);
+}
+
+.program-links li:hover, .chapters-used li:hover {
+    background: var(--background-tertiary);
+    border-color: var(--border-light);
+}
+
+.program-links a {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.qa-section .question {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.qa-section .question strong {
+  color: var(--text-primary);
+  font-size: 1.05rem;
+}
+
+.qa-section .answer {
+  background: var(--background-tertiary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  margin-left: var(--spacing-md);
+}
+
+/* Animation de chargement pour changement de sujet */
+.subject-loading {
+  opacity: 0.3;
+  transition: opacity var(--transition-smooth);
+}
+
+/* Masquer le bouton de retour existant dans le header */
+.back-button-container {
+    display: none;
+}
+
+/* Bouton de retour minimaliste en sticky - Plus aéré */
+.home-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    max-height: 50px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-smooth);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.home-btn:hover {
+    background: white;
+    color: var(--text-primary);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-subtle);
+}
+
+.home-btn i {
+    font-size: 0.9rem;
+}
+
+/* ============================================================================
+   SYSTÈME DE CHARGEMENT DYNAMIQUE - STYLES
+   ============================================================================ */
+
+/* Placeholders de chargement principal */
+.loading-placeholder-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    background: var(--background-secondary);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-lg) 0;
+}
+
+.loading-placeholder-main i {
+    margin-right: var(--spacing-sm);
+    color: var(--accent-blue);
+}
+
+/* Indicateurs de difficulté */
+.lesson-difficulty {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: var(--spacing-sm);
+}
+
+.lesson-difficulty.easy {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.lesson-difficulty.medium {
+    background: rgba(255, 152, 0, 0.1);
+    color: #ff9800;
+    border: 1px solid rgba(255, 152, 0, 0.2);
+}
+
+.lesson-difficulty.hard {
+    background: rgba(244, 67, 54, 0.1);
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.2);
+}
+
+/* Indicateurs de durée */
+.lesson-duration {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: rgba(25, 118, 210, 0.1);
+    color: var(--accent-blue);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    margin-left: var(--spacing-sm);
+}
+
+.lesson-duration i {
+    margin-right: var(--spacing-xs);
+    font-size: 0.7rem;
+}
+
+/* Durée des vidéos */
+.video-duration {
+    position: absolute;
+    bottom: var(--spacing-sm);
+    right: var(--spacing-sm);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.video-item {
+    position: relative;
+}
+
+/* Messages d'erreur */
+.error-message {
+    background: rgba(244, 67, 54, 0.1);
+    border: 1px solid rgba(244, 67, 54, 0.2);
+    color: #d32f2f;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.error-message i {
+    color: #f44336;
+    font-size: 1.2rem;
+}
+
+/* Améliorations pour le conteneur de titre des leçons */
+.lesson-title-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    flex: 1;
+}
+
+.lesson-title-container .lesson-title {
+    margin: 0;
+    flex: 1;
+    min-width: 0; /* Permet la troncature si nécessaire */
+}
+
+/* Ajout padding pour le contenu déroulé des leçons */
+.lesson-content {
+  padding: 1.2rem 1.5rem !important;
+  background: var(--background-primary);
+  border-radius: var(--radius-md);
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* Responsive pour les indicateurs */
+@media (max-width: 768px) {
+    .lesson-difficulty,
+    .lesson-duration {
+        font-size: 0.7rem;
+        padding: var(--spacing-xs);
+        margin-left: var(--spacing-xs);
+    }
+    
+    .lesson-title-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+}
+
+/* Animation d'apparition pour le contenu dynamique */
+.dynamic-content {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.dynamic-content.loaded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Skeleton loading pour un effet plus moderne */
+.skeleton {
+    background: linear-gradient(90deg, 
+        var(--background-secondary) 25%, 
+        rgba(255,255,255,0.3) 50%, 
+        var(--background-secondary) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite ease-in-out;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-lesson {
+    height: 60px;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.skeleton-video {
+    height: 200px;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+}
+
+/* ============================== */
+/* RÈGLES D'IMPRESSION - Contenu principal uniquement */
+/* ============================== */
+
+@media print {
+  /* Masquer tous les éléments d'interface */
+  .timer-container,
+  .home-btn,
+  .back-button,
+  .back-button-container,
+  .print-tabs,
+  .print-btn,
+  .print-btn-sticky {
+    display: none !important;
+  }
+  
+  /* GARDER les page breaks visibles et fonctionnels */
+  .page-break {
+    display: block !important;
+    page-break-before: always !important;
+    break-before: page !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    visibility: hidden !important; /* Masquer visuellement mais garder fonctionnel */
+  }
+  
+  .page-break::after {
+    display: none !important; /* Masquer le texte "Saut de Page" à l'impression */
+  }
+
+  /* Masquer les sections annexes - Questions possibles, chapitres utilisés, etc. */
+  .program-links,
+  .chapters-used,
+  .qa-section,
+  .qna-section,
+  .chapters-section,
+  .program-section {
+    display: none !important;
+  }
+  /* Configuration de base pour l'impression */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html, body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Container principal pour impression */
+  .container {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 15mm !important;
+    background: white !important;
+    box-shadow: none !important;
+  }
+
+  /* Header simplifié pour impression */
+  .header {
+    text-align: center !important;
+    margin-bottom: 20pt !important;
+    padding: 0 !important;
+    background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .main-title {
+    font-size: 18pt !important;
+    font-weight: bold !important;
+    color: black !important;
+    margin-bottom: 10pt !important;
+    letter-spacing: normal !important;
+  }
+
+  .student-name {
+    font-size: 14pt !important;
+    color: #333 !important;
+    font-weight: 500 !important;
+    margin-bottom: 5pt !important;
+  }
+
+  .student-details {
+    font-size: 11pt !important;
+    color: #666 !important;
+  }
+
+  /* Sections principales - Seules celles-ci seront imprimées */
+  .section,
+  .math-section,
+  .nsi-section,
+  #main-content,
+  #dynamic-sections {
+    background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 15pt !important;
+    padding: 0 !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Titres des sections principales */
+  .section-title,
+  .section-title-large {
+    font-size: 14pt !important;
+    font-weight: bold !important;
+    color: black !important;
+    margin-bottom: 12pt !important;
+    margin-top: 15pt !important;
+    border-bottom: 1pt solid #ccc !important;
+    padding-bottom: 3pt !important;
+    page-break-after: avoid !important;
+  }
+
+  .math-section h3,
+  .nsi-section h3 {
+    font-size: 13pt !important;
+    font-weight: bold !important;
+    color: black !important;
+    margin-top: 12pt !important;
+    margin-bottom: 8pt !important;
+    border-bottom: 0.5pt solid #ddd !important;
+    padding-bottom: 2pt !important;
+    page-break-after: avoid !important;
+  }
+  .math-section h4,
+  .nsi-section h4 {
+    font-size: 12pt !important;
+    font-weight: 500 !important;
+    color: black !important;
+    margin-top: 10pt !important;
+    margin-bottom: 6pt !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Paragraphes du contenu principal */
+  .math-section p,
+  .nsi-section p,
+  .section p {
+    margin-bottom: 8pt !important;
+    color: black !important;
+    line-height: 1.4 !important;
+    font-size: 11pt !important;
+    text-align: justify !important;
+  }
+
+  /* Boîtes de mise en évidence */
+  .highlight-box {
+    background: #f8f8f8 !important;
+    border: 1pt solid #ccc !important;
+    border-radius: 3pt !important;
+    padding: 10pt !important;
+    margin: 10pt 0 !important;
+    text-align: center !important;
+    page-break-inside: avoid !important;
+  }
+
+  .highlight-box strong {
+    color: black !important;
+    font-size: 12pt !important;
+    font-weight: bold !important;
+  }
+
+  /* Formules LaTeX pour impression */
+  .MathJax,
+  .MathJax_Display,
+  mjx-container[display="true"],
+  mjx-container[jax="CHTML"][display="true"] {
+    background: #f5f5f5 !important;
+    border: 1pt solid #ddd !important;
+    border-radius: 2pt !important;
+    padding: 8pt !important;
+    margin: 8pt auto !important;
+    page-break-inside: avoid !important;
+    text-align: center !important;
+  }
+
+  mjx-container[jax="CHTML"]:not([display="true"]) {
+    background: #f0f0f0 !important;
+    border: 0.5pt solid #ddd !important;
+    border-radius: 1pt !important;
+    padding: 2pt 4pt !important;
+    margin: 0 2pt !important;
+  }
+
+  /* Masquer les icônes LaTeX à l'impression */
+  .MathJax::before,
+  mjx-container[display="true"]::before {
+    display: none !important;
+  }
+  /* Contrôle des sauts de page - Renforcement */
+  .page-break {
+    page-break-before: always !important;
+    break-before: page !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
+    orphans: 0 !important;
+    widows: 0 !important;
+  }
+  
+  /* Éviter les coupures dans les sections importantes */
+  .math-section,
+  .nsi-section {
+    page-break-before: avoid !important;
+    page-break-inside: avoid !important;
+    break-before: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  /* Forcer les sauts de page après certains éléments si nécessaire */
+  .math-section h3,
+  .nsi-section h3 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    orphans: 3 !important;
+    widows: 3 !important;
+  }
+
+  /* Masquer complètement le contenu JavaScript généré non essentiel */
+  .subject-loading {
+    opacity: 1 !important;
+  }
+
+  /* Assurer que seul le contenu essentiel est visible */
+  body > *:not(.container) {
+    display: none !important;
+  }
+}
+
+/* Responsive commun */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .header {
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .main-title {
+    font-size: 2rem;
+  }
+  
+  .back-button-container {
+    position: static;
+    text-align: left;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .home-btn {
+    top: 15px;
+    left: 15px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  
+  .lessons-grid, .notions-grid, .subjects-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+  
+  .nav-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+  }
+  
+  .content {
+    padding: var(--spacing-lg);
+    margin: var(--spacing-md);
+  }
+  
+  .content h1 {
+    font-size: 1.7rem;
+  }
+  
+  .content h2 {
+    font-size: 1.3rem;
+  }
+}
+
+/* ============================== */
+/* LESSON ITEMS - Compact and Beautiful Design */
+/* ============================== */
+
+/* Lesson theme titles */
+.lesson-theme-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: var(--spacing-xl) 0 var(--spacing-md) 0;
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 2px solid var(--border-subtle);
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Lessons container */
+.lessons-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Individual lesson item */
+.lesson-item {
+  background: var(--background-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-xs);
+  overflow: hidden;
+  transition: all var(--transition-smooth);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 1;  isolation: isolate;
+}
+
+.lesson-item:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-light);
+  z-index: 2;
+}
+
+.lesson-item.active {
+  border-color: var(--gray-400);
+  box-shadow: var(--shadow-lg);
+  z-index: 3;
+}
+
+.lesson-item.completed {
+  background: var(--background-tertiary);
+  opacity: 0.8;
+}
+
+.lesson-item.completed .lesson-title {
+  text-decoration: line-through;
+  color: var(--text-tertiary);
+}
+
+/* Lesson header - clickable part */
+.lesson-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  cursor: pointer;
+  transition: all var(--transition-quick);
+  background: var(--background-primary);
+  border: none;
+  min-height: 54px;
+}
+
+.lesson-header:hover {
+  background: var(--background-secondary);
+}
+
+.lesson-item.active .lesson-header {
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Lesson title container */
+.lesson-title-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.lesson-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+}
+
+/* Lesson checkbox (if present) */
+.lesson-checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-right: var(--spacing-sm);
+}
+
+.lesson-checkbox {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  cursor: pointer;
+  appearance: none;
+  border: 2px solid var(--gray-400);
+  border-radius: 4px;
+  background: white;
+  position: relative;
+  transition: all var(--transition-quick);
+  flex-shrink: 0;
+}
+
+.lesson-checkbox:checked {
+  background: var(--subject-color, var(--gray-600));
+  border-color: var(--subject-color, var(--gray-600));
+}
+
+.lesson-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.lesson-checkbox:hover {
+  border-color: var(--subject-color, var(--gray-600));
+  box-shadow: 0 0 0 2px var(--subject-color-light, var(--gray-200));
+}
+
+/* Lesson actions - right side */
+.lesson-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-left: auto;
+}
+
+/* Print button in lesson header */
+.print-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--background-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-quick);
+  text-decoration: none;
+}
+
+.print-button:hover {
+  background: var(--background-tertiary);
+  border-color: var(--border-light);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.print-button:active {
+  box-shadow: none;
+}
+
+.print-button i {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Lesson arrow indicator */
+.lesson-arrow, .exercise-arrow {
+  color: var(--text-tertiary);
+  font-size: 0.8rem;
+  transition: all var(--transition-quick);
+  margin-left: var(--spacing-sm);
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  position: relative;
+  z-index: 5; /* Higher than badges to prevent overlap */
+}
+
+.lesson-arrow:hover, .exercise-arrow:hover {
+  background: var(--background-secondary);
+  color: var(--text-secondary);
+}
+
+.lesson-item.active .lesson-arrow, .exercise-item.active .exercise-arrow {
+  transform: rotate(180deg);
+  color: var(--text-secondary);
+  background: var(--background-secondary);
+}
+
+/* Lesson content - expandable part */
+.lesson-content {
+  display: none;
+  padding: 1.2rem 1.5rem !important;
+  background: var(--background-primary);
+  border-radius: var(--radius-md);
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.lesson-item.active .lesson-content {
+  display: block;
+  animation: expandContent 0.3s ease-out;
+}
+
+@keyframes expandContent {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: none;
+  }
+}
+
+/* Lesson body - content container */
+.lesson-body {
+  padding: var(--spacing-lg);
+  background: var(--background-primary);
+}
+
+/* Loading and error states */
+.loading-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  color: var(--text-tertiary);
+  font-style: italic;
+  font-size: var(--text-sm);
+}
+
+.loading-placeholder i {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.error-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  color: #e74c3c;
+  font-size: var(--text-sm);
+  background: #fdf2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-md);
+  margin: var(--spacing-md);
+}
+
+/* Responsive adjustments for lesson items */
+@media (max-width: 768px) {
+  .lesson-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+    min-height: 48px;
+  }
+  
+  .lesson-title {
+    font-size: 0.9rem;
+  }
+  
+  .lesson-body {
+    padding: var(--spacing-md);
+  }
+  
+  .print-button {
+    padding: var(--spacing-xs);
+  }
+  
+  .print-button span {
+    display: none; /* Hide text on mobile, keep only icon */
+  }
+}
+
+/* ============================================================================
+   SYSTÈME DE GAMIFICATION - CHECKBOXES ET PROGRESSION
+   ============================================================================ */
+
+/* Checkbox de progression pour les leçons */
+.lesson-checkbox {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  cursor: pointer;
+  appearance: none;
+  border: 2px solid var(--gray-400);
+  border-radius: 4px;
+  background: white;
+  position: relative;
+  transition: all var(--transition-quick);
+  flex-shrink: 0;
+}
+
+.lesson-checkbox:checked {
+  background: var(--subject-color, var(--gray-600));
+  border-color: var(--subject-color, var(--gray-600));
+}
+
+.lesson-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.lesson-checkbox:hover {
+  border-color: var(--subject-color, var(--gray-600));
+  box-shadow: 0 0 0 2px var(--subject-color-light, var(--gray-200));
+}
+
+/* Style des leçons complétées */
+.lesson-item.completed {
+  background: var(--subject-color-bg, var(--gray-50));
+  border-left: 4px solid var(--subject-color, var(--gray-600));
+}
+
+.lesson-item.completed .lesson-title {
+  color: var(--subject-color, var(--gray-700));
+  opacity: 0.8;
+}
+
+/* Barre de progression en haut de page */
+.progress-bar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-bottom: 1px solid var(--border-light);
+  padding: 12px 20px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.progress-bar-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 60px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 10px;
+  margin-top: 10px;
+  background: var(--gray-200);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--subject-color, var(--gray-600));
+  transition: width var(--transition-smooth);
+  border-radius: 10px;
+}
+
+/* Désactive les couleurs dynamiques selon la progression */
+.progress-bar-fill[data-progress] {
+  background: var(--subject-color, var(--gray-600)) !important;
+  box-shadow: none !important;
+}
+
+/* Couleurs spécifiques par matière */
+.maths-page {
+  --subject-color: var(--maths-color);
+  --subject-color-light: var(--maths-color-light);
+  --subject-color-bg: var(--maths-color-bg);
+}
+
+.philosophie-page {
+  --subject-color: var(--philosophie-color);
+  --subject-color-light: var(--philosophie-color-light);
+  --subject-color-bg: var(--philosophie-color-bg);
+}
+
+.oral-page {
+  --subject-color: var(--oral-color);
+  --subject-color-light: var(--oral-color-light);
+  --subject-color-bg: var(--oral-color-bg);
+}
+
+/* ============================================================================
+   CENTRAGE DES VIDÉOS
+   ============================================================================ */
+
+.videos-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+}
+
+/* Styles pour les vidéos avec aspect ratio 16:9 */
+.videos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin: 1.5rem 0;
+}
+
+.video-item {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all var(--transition-smooth);
+  border: 1px solid var(--border-light);
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* Aspect ratio 16:9 */
+  overflow: hidden;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.video-title {
+  padding: 1rem 1.2rem 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.video-description {
+  padding: 0 1.2rem 1.2rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* Responsive pour les vidéos */
+@media (max-width: 768px) {
+  .videos-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .video-container {
+    padding-bottom: 56.25%; /* Maintenir l'aspect ratio sur mobile */
+  }
+}
+
+/* Espacement pour la barre de progression */
+.container {
+  padding-bottom: 80px;
+}
+
+/* ============================================================================
+   TI-83CE CALCULATOR BUTTONS STYLING
+   ============================================================================ */
+
+.calculator-button {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 2px;
+  border-radius: 6px;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 40px;
+  border: 1px solid transparent;
+  cursor: help;
+  transition: all var(--transition-quick);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Couleurs réalistes des boutons TI-83CE */
+.calc-blue {
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  color: white;
+  border-color: #2c5aa0;
+}
+
+.calc-green {
+  background: linear-gradient(135deg, #7ed321 0%, #5cb017 100%);
+  color: black;
+  border-color: #4a8b12;
+}
+
+.calc-yellow {
+  background: linear-gradient(135deg, #f5a623 0%, #d4841a 100%);
+  color: black;
+  border-color: #b8701a;
+}
+
+.calc-gray {
+  background: linear-gradient(135deg, #9b9b9b 0%, #6a6a6a 100%);
+  color: white;
+  border-color: #555555;
+}
+
+.calc-purple {
+  background: linear-gradient(135deg, #9013fe 0%, #6b0fb8 100%);
+  color: white;
+  border-color: #520a87;
+}
+
+.calc-orange {
+  background: linear-gradient(135deg, #ff6b35 0%, #cc4a20 100%);
+  color: white;
+  border-color: #a03419;
+}
+
+/* Boutons spéciaux */
+.calc-red {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  border-color: #9c2626;
+}
+
+.calc-dark {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  color: white;
+  border-color: #171923;
+}
+
+.calculator-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.1);
+}
+
+.calculator-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  filter: brightness(0.95);
+}
+
+/* ============================================================================ */
+/* TI-83CE CALCULATOR GUIDE STYLES */
+/* ============================================================================ */
+
+.calculator-section {
+    background: var(--background-secondary);
+    border: 2px solid var(--gray-400);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.calculator-section h2 {
+    color: #2d3748;
+    border-bottom: 3px solid #2d3748;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.function-group {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border-left: 4px solid var(--gray-400);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.function-group h3 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.key-sequence {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 1rem;
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+}
+
+.key-sequence code {
+    background: var(--maths-color, #dc2626);
+    color: white;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.step-by-step {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--maths-color, #dc2626);
+}
+
+.step-number {
+    background: var(--maths-color, #dc2626);
+    color: white;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.tips-list, .error-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.tip, .error {
+    background: #f0fff4;
+    border: 1px solid #9ae6b4;
+    border-radius: 6px;
+    padding: 1rem;
+    border-left: 4px solid #38a169;
+}
+
+.error {
+    background: #fff5f5;
+    border-color: #feb2b2;
+    border-left-color: #e53e3e;
+}
+
+/* Calculator button styling */
+.calculator-button {
+    background: linear-gradient(135deg, var(--maths-color, #dc2626), #b91c1c);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 0.5rem;
+    font-size: 1rem;
+}
+
+.calculator-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.calculator-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================================================
+   LESSON ITEMS - Différenciation vidéos vs leçons
+   ============================================================================ */
+
+/* Lessons normales avec checkboxes */
+.lesson-item .lesson-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  cursor: pointer;
+  transition: all var(--transition-quick);
+  background: var(--background-primary);
+  border: none;
+  min-height: 54px;
+}
+
+.lesson-item .lesson-title-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+/* Checkboxes UNIQUEMENT pour les leçons normales */
+.lesson-item .lesson-checkbox {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  cursor: pointer;
+  appearance: none;
+  border: 2px solid var(--gray-400);
+  border-radius: 4px;
+  background: white;
+  position: relative;
+  transition: all var(--transition-quick);
+  flex-shrink: 0;
+}
+
+.lesson-item .lesson-checkbox:checked {
+  background: var(--subject-color, var(--gray-600));
+  border-color: var(--subject-color, var(--gray-600));
+}
+
+.lesson-item .lesson-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Vidéos - PAS de checkboxes */
+.video-theme-item .lesson-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  cursor: pointer;
+  transition: all var(--transition-quick);
+  background: var(--background-primary);
+  border: none;
+  min-height: 54px;
+}
+
+.video-theme-item .lesson-title-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  /* PAS de margin-left pour checkbox */
+}
+
+/* Supprimer explicitement les checkboxes des sections vidéo */
+.video-theme-item .lesson-checkbox,
+.video-theme-item .lesson-checkbox-container {
+  display: none !important;
+}
+
+/* S'assurer que les vidéos n'ont pas de margin-left pour les checkboxes */
+.video-theme-item .lesson-title-container {
+  margin-left: 0 !important;
+}

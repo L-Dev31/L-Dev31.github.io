@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon 6 : Limites des fonctions</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">
+      <!-- Clean MathJax Configuration -->    <script src="../mathJax.js"></script>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>L'étude des limites de fonctions est fondamentale en analyse. Elle permet de comprendre le comportement d'une fonction lorsque la variable s'approche d'une valeur particulière (finie ou infinie). Les limites sont essentielles pour définir la continuité, la dérivabilité, et pour étudier les asymptotes aux courbes représentatives.</p>
+            <p>Ce chapitre présente les définitions et propriétés des limites de fonctions en $+\infty$, $-\infty$ et en un point fini, ainsi que les opérations et théorèmes permettant de les calculer.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Limite infinie en $\pm \infty$</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Soit $f$ une fonction définie sur un intervalle de la forme $[a, +\infty[$.</p>
+                <p>On dit que $f(x)$ tend vers $+\infty$ quand $x$ tend vers $+\infty$, noté $\lim_{x \to +\infty} f(x) = +\infty$, si tout intervalle de la forme $]A, +\infty[$ contient toutes les valeurs $f(x)$ dès que $x$ est suffisamment grand.</p>
+                <p>Formellement : $\forall A \in \mathbb{R}, \exists B \in \mathbb{R}, \forall x \ge B, f(x) > A$.</p>
+                <p>Définitions analogues pour $\lim_{x \to +\infty} f(x) = -\infty$, $\lim_{x \to -\infty} f(x) = +\infty$, $\lim_{x \to -\infty} f(x) = -\infty$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemples de référence</h3>
+                <ul>
+                    <li>$
+                        \lim_{x \to +\infty} x^n = +\infty
+                    $ (pour $n \in \mathbb{N}^*$)</li>
+                    <li>$
+                        \lim_{x \to -\infty} x^n = 
+                        \begin{cases} +\infty & \text{si } n \text{ est pair} \\ -\infty & \text{si } n \text{ est impair} \end{cases}
+                    $ (pour $n \in \mathbb{N}^*$)</li>
+                    <li>$
+                        \lim_{x \to +\infty} \sqrt{x} = +\infty
+                    $</li>
+                    <li>$
+                        \lim_{x \to +\infty} e^x = +\infty
+                    $</li>
+                     <li>$
+                        \lim_{x \to -\infty} e^x = 0
+                    $</li>
+                    <li>$
+                        \lim_{x \to +\infty} \ln(x) = +\infty
+                    $</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Limite finie en un point</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Soit $f$ une fonction définie au voisinage d'un réel $a$ (sauf peut-être en $a$) et $L$ un réel.</p>
+                <p>On dit que $f(x)$ tend vers $L$ quand $x$ tend vers $a$, noté $\lim_{x \to a} f(x) = L$, si tout intervalle ouvert contenant $L$ contient toutes les valeurs $f(x)$ dès que $x$ est suffisamment proche de $a$ (et $x \neq a$).</p>
+                <p>Formellement : $\forall \epsilon > 0, \exists \delta > 0, \forall x \in D_f, 0 < |x - a| < \delta \implies |f(x) - L| < \epsilon$.</p>
+                <p><strong>Remarque :</strong> Si $f$ est définie en $a$, alors $\lim_{x \to a} f(x) = L$ équivaut à dire que $f$ est continue en $a$ avec $f(a)=L$. Pour les fonctions usuelles (polynômes, rationnelles, exp, ln, trigonométriques, racine) sur leur domaine de définition, la limite en un point $a$ est simplement $f(a)$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">5. Opérations sur les limites</h2>
+            <p>Les règles d'opérations (somme, produit, quotient, composition) sur les limites de fonctions sont analogues à celles des suites. Il faut être vigilant aux formes indéterminées.</p>
+            <div class="summary-box">
+                <h3 class="box-title">Formes Indéterminées (FI)</h3>
+                <p>Les principales formes indéterminées sont :</p>
+                <ul>
+                    <li>Somme : $ "+\infty - \infty" $</li>
+                    <li>Produit : $ "0 \times \infty" $</li>
+                    <li>Quotient : $ "\frac{0}{0}" $, $ "\frac{\infty}{\infty}" $</li>
+                </ul>
+                <p>Pour lever une indétermination, on utilise diverses techniques : factorisation par le terme dominant, utilisation de l'expression conjuguée, reconnaissance de taux d'accroissement (limites liées à la dérivée), changement de variable, croissances comparées.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Limites de fonctions polynômes et rationnelles en $\pm \infty$</h3>
+                <ul>
+                    <li>La limite d'une fonction polynôme en $\pm \infty$ est égale à la limite de son terme de plus haut degré.</li>
+                    <li>La limite d'une fonction rationnelle (quotient de deux polynômes) en $\pm \infty$ est égale à la limite du quotient de ses termes de plus haut degré.</li>
+                </ul>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Limite d'une fonction composée</h3>
+                <p>Soient $f$ et $g$ deux fonctions telles que la composée $g \circ f$ soit définie.</p>
+                <p>Si $\lim_{x \to a} f(x) = b$ et $\lim_{y \to b} g(y) = c$ (où $a, b, c$ peuvent être finis ou infinis), alors :</p>
+                <p>$\lim_{x \to a} (g \circ f)(x) = \lim_{x \to a} g(f(x)) = c$</p>
+            </div>
+            
+        <div class="page-break"></div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple de composition</h3>
+                <p>Calculer $\lim_{x \to +\infty} e^{\frac{1}{x}}$.</p>
+                <p>Posons $f(x) = \frac{1}{x}$ et $g(y) = e^y$.</p>                <p>$
+                    \lim_{x \to +\infty} f(x) = \lim_{x \to +\infty} \frac{1}{x} = 0
+                $. <span class="tex2jax_ignore">(Soit</span> $b=0$<span class="tex2jax_ignore">)</span>.</p>                <p>$
+                    \lim_{y \to 0} g(y) = \lim_{y \to 0} e^y = e^0 = 1
+                $. <span class="tex2jax_ignore">(Soit</span> $c=1$<span class="tex2jax_ignore">)</span>.</p>
+                <p>Donc, par composition, $\lim_{x \to +\infty} e^{\frac{1}{x}} = 1$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">6. Théorèmes de comparaison et d'encadrement</h2>
+            <p>Ces théorèmes sont analogues à ceux vus pour les suites et sont très utiles pour déterminer des limites.</p>
+            <div class="theorem-box">
+                <h3 class="box-title">Théorèmes de comparaison</h3>
+                <p>Soient $f$ et $g$ deux fonctions définies au voisinage de $a$ (fini ou infini).</p>
+                <ul>
+                    <li>Si $f(x) \le g(x)$ au voisinage de $a$, et si $\lim_{x \to a} f(x) = +\infty$, alors $\lim_{x \to a} g(x) = +\infty$.</li>
+                    <li>Si $f(x) \le g(x)$ au voisinage de $a$, et si $\lim_{x \to a} g(x) = -\infty$, alors $\lim_{x \to a} f(x) = -\infty$.</li>
+                </ul>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Théorème d'encadrement (Théorème des gendarmes)</h3>
+                <p>Soient $f, g, h$ trois fonctions définies au voisinage de $a$ (fini ou infini).</p>
+                <p>Si $g(x) \le f(x) \le h(x)$ au voisinage de $a$, et si $\lim_{x \to a} g(x) = \lim_{x \to a} h(x) = L$ (où $L$ est fini), alors :</p>
+                <p>$\lim_{x \to a} f(x) = L$</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple (Gendarmes)</h3>
+                <p>Calculer $\lim_{x \to +\infty} \frac{\cos(x)}{x}$.</p>
+                <p>Pour tout $x > 0$, on sait que $-1 \le \cos(x) \le 1$.</p>
+                <p>En divisant par $x$ (qui est positif) :</p>
+                <p>$-\frac{1}{x} \le \frac{\cos(x)}{x} \le \frac{1}{x}$</p>
+                <p>Or, $\lim_{x \to +\infty} -\frac{1}{x} = 0$ et $\lim_{x \to +\infty} \frac{1}{x} = 0$.</p>
+                <p>Donc, d'après le théorème des gendarmes, $\lim_{x \to +\infty} \frac{\cos(x)}{x} = 0$.</p>
+            </div>
+        </section>
+        
+    </div>
+</body>
+</html>
+
+
+

@@ -1,0 +1,184 @@
+{
+  "metadata": {
+    "subject": "maths",
+    "version": "2.0",
+    "totalLessons": 16,
+    "totalVideos": 1
+  },
+  "themes": [
+    {
+      "id": "algebre-geometrie",
+      "title": "Algèbre et géométrie",
+      "color": "#1976d2",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Combinatoire et dénombrement",
+          "shortTitle": "Combinatoire",
+          "file": "lesson1.html",
+          "keywords": ["combinatoire", "dénombrement", "arrangements", "combinaisons"]
+        },
+        {
+          "id": 2,
+          "title": "Manipulation des vecteurs, droites et plans",
+          "shortTitle": "Vecteurs 3D",
+          "file": "lesson2.html",
+          "keywords": ["vecteurs", "géométrie", "espace", "plans"]
+        },
+        {
+          "id": 3,
+          "title": "Orthogonalité et distances dans l'espace",
+          "shortTitle": "Orthogonalité",
+          "file": "lesson3.html",
+          "keywords": ["orthogonalité", "distance", "produit scalaire"]
+        },
+        {
+          "id": 4,
+          "title": "Représentations paramétriques et équations cartésiennes",
+          "shortTitle": "Équations droites/plans",
+          "file": "lesson4.html",
+          "keywords": ["paramétrique", "cartésienne", "droites", "plans"]
+        }
+      ],
+      "videos": [
+      ]
+    },
+    {
+      "id": "analyse",
+      "title": "Analyse",
+      "color": "#388e3c",
+      "lessons": [
+        {
+          "id": 5,
+          "title": "Suites",
+          "shortTitle": "Suites",
+          "file": "lesson5.html",
+          "keywords": ["suites", "limite", "convergence", "récurrence"]
+        },
+        {
+          "id": 6,
+          "title": "Limites des fonctions",
+          "shortTitle": "Limites",
+          "file": "lesson6.html",
+          "keywords": ["limites", "fonctions", "continuité", "asymptotes"]
+        },
+        {
+          "id": 7,
+          "title": "Compléments sur la dérivation",
+          "shortTitle": "Dérivation",
+          "file": "lesson7.html",
+          "keywords": ["dérivation", "dérivée", "tangente", "variations"]
+        },
+        {
+          "id": 8,
+          "title": "Continuité des fonctions d'une variable réelle",
+          "shortTitle": "Continuité",
+          "file": "lesson8.html",
+          "keywords": ["continuité", "théorème", "valeurs intermédiaires"]
+        },
+        {
+          "id": 9,
+          "title": "Fonction logarithme",
+          "shortTitle": "Logarithme",
+          "file": "lesson9.html",
+          "keywords": ["logarithme", "exponentielle", "ln", "propriétés"]
+        },
+        {
+          "id": 10,
+          "title": "Fonctions sinus et cosinus",
+          "shortTitle": "Trigonométrie",
+          "file": "lesson10.html",
+          "keywords": ["sinus", "cosinus", "trigonométrie", "périodique"]
+        },
+        {
+          "id": 11,
+          "title": "Primitives, équations différentielles",
+          "shortTitle": "Primitives",
+          "file": "lesson11.html",
+          "keywords": ["primitives", "équations différentielles", "intégration"]
+        },
+        {
+          "id": 12,
+          "title": "Calcul intégral",
+          "shortTitle": "Intégrales",
+          "file": "lesson12.html",
+          "keywords": ["intégrales", "aire", "calcul", "primitives"]
+        }
+      ],
+      "videos": []
+    },
+    {
+      "id": "probabilites",
+      "title": "Probabilités",
+      "color": "#f57c00",
+      "lessons": [
+        {
+          "id": 13,
+          "title": "Succession d'épreuves indépendantes, schéma de Bernoulli",
+          "shortTitle": "Bernoulli",
+          "file": "lesson13.html",
+          "keywords": ["Bernoulli", "épreuves", "indépendance", "binomiale"]
+        },
+        {
+          "id": 14,
+          "title": "Probabilités conditionnelles et indépendance",
+          "shortTitle": "Prob. conditionnelles",
+          "file": "lesson14.html",
+          "keywords": ["conditionnelles", "indépendance", "Bayes", "arbres"]
+        },
+        {
+          "id": 15,
+          "title": "Concentration, loi des grands nombres",
+          "shortTitle": "Loi grands nombres",
+          "file": "lesson15.html",
+          "keywords": ["concentration", "grands nombres", "convergence", "statistiques"]
+        }
+      ],
+      "videos": []    },
+    {
+      "id": "annexes",
+      "title": "Annexes techniques",
+      "color": "#6b7280",
+      "lessons": [
+        {
+          "id": 16,
+          "title": "Guide de la calculatrice TI-83CE",
+          "shortTitle": "TI-83CE",
+          "file": "calculatrice-ti83ce.html",
+          "keywords": ["calculatrice", "TI-83CE", "fonctions", "graphiques", "statistiques"]
+        }
+      ],
+      "videos": []
+    }
+  ],
+  "exams": [
+    {
+      "id": "pondichery-2025",
+      "title": "Pondichéry 2025",
+      "type": "subject",
+      "file": "pondichery-2025.pdf",
+      "correction": "pondichery-2025-correction.pdf"
+    },
+    {
+      "id": "amerique-nord-2024",
+      "title": "Amérique du Nord 2024",
+      "type": "subject",
+      "file": "amerique-nord-2024.pdf",
+      "correction": "amerique-nord-2024-correction.pdf"
+    },
+    {
+      "id": "metropole-2024",
+      "title": "Métropole 2024",
+      "type": "subject",
+      "file": "metropole-2024.pdf",
+      "correction": "metropole-2024-correction.pdf"
+    },
+    {
+      "id": "liban-2024",
+      "title": "Liban 2024",
+      "type": "subject",
+      "file": "liban-2024.pdf",
+      "correction": "liban-2024-correction.pdf"
+    }
+  ]
+}

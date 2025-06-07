@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon 10 : Fonctions sinus et cosinus</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">    <script src="../mathJax.js"></script>
+    <style>
+        /* Suggestion de saut de page avant les sections principales pour l'impression */
+        @media print {
+            .lesson-section {
+                page-break-before: always;
+            }
+            .lesson-section:first-of-type {
+                 page-break-before: auto;
+            }
+            h1.lesson-main-title {
+                 page-break-after: avoid;
+            }
+        
+        @media (max-width: 768px) {body {font-size: 14px;}}
+    </style>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>Les fonctions trigonométriques sinus ($\\sin$) et cosinus ($\\cos$) sont fondamentales pour modéliser les phénomènes périodiques (oscillations, ondes, etc.). Ce chapitre rappelle leurs définitions, leurs propriétés de périodicité et de parité, étudie leurs dérivées et leurs variations.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Rappels de trigonométrie</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Cercle trigonométrique</h3>
+                <p>Dans un repère orthonormé $(O; \vec{i}, \vec{j})$, le cercle trigonométrique $\mathcal{C}$ est le cercle de centre $O$ et de rayon 1.</p>
+                <p>À tout réel $x$, on associe un unique point $M$ sur le cercle $\mathcal{C}$ tel que l'angle orienté $(\vec{i}, \vec{OM})$ ait pour mesure $x$ radians.</p>
+                <ul>
+                    <li>Le <strong>cosinus</strong> de $x$, noté $\cos(x)$, est l'abscisse du point $M$.</li>
+                    <li>Le <strong>sinus</strong> de $x$, noté $\sin(x)$, est l'ordonnée du point $M$.</li>
+                </ul>
+                <p>On a donc $M(\cos x, \sin x)$.</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Propriétés fondamentales</h3>
+                <ul>
+                    <li>Pour tout réel $x$, $\cos^2(x) + \sin^2(x) = 1$.</li>
+                    <li>Pour tout réel $x$, $-1 \le \cos(x) \le 1$ et $-1 \le \sin(x) \le 1$.</li>
+                    <li><strong>Périodicité :</strong> Pour tout réel $x$ et tout entier $k$,
+                        $\cos(x + 2k\pi) = \cos(x)$ et $\sin(x + 2k\pi) = \sin(x)$.
+                        Les fonctions $\cos$ et $\sin$ sont périodiques de période $2\pi$.</li>
+                    <li><strong>Parité :</strong>
+                        <ul>
+                            <li>La fonction cosinus est <strong>paire</strong> : $\cos(-x) = \cos(x)$.</li>
+                            <li>La fonction sinus est <strong>impaire</strong> : $\sin(-x) = -\sin(x)$.</li>
+                        </ul>
+                    </li>
+                    <li>Autres relations (angles associés) :
+                        <ul>
+                            <li>$\cos(\pi + x) = -\cos(x)$ ; $\sin(\pi + x) = -\sin(x)$</li>
+                            <li>$\cos(\pi - x) = -\cos(x)$ ; $\sin(\pi - x) = \sin(x)$</li>
+                            <li>$\cos(\frac{\pi}{2} + x) = -\sin(x)$ ; $\sin(\frac{\pi}{2} + x) = \cos(x)$</li>
+                            <li>$\cos(\frac{\pi}{2} - x) = \sin(x)$ ; $\sin(\frac{\pi}{2} - x) = \cos(x)$</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="summary-box">
+                <h3 class="box-title">Valeurs remarquables</h3>
+                 <div style="overflow-x:auto;">
+                <table border="1" style="width:80%; margin:auto; text-align:center;">
+                    <tr>
+                        <th>$x$</th>
+                        <td>$0$</td>
+                        <td>$\pi/6$</td>
+                        <td>$\pi/4$</td>
+                        <td>$\pi/3$</td>
+                        <td>$\pi/2$</td>
+                    </tr>
+                    <tr>
+                        <th>$\cos(x)$</th>
+                        <td>$1$</td>
+                        <td>$\sqrt{3}/2$</td>
+                        <td>$\sqrt{2}/2$</td>
+                        <td>$1/2$</td>
+                        <td>$0$</td>
+                    </tr>
+                    <tr>
+                        <th>$\sin(x)$</th>
+                        <td>$0$</td>
+                        <td>$1/2$</td>
+                        <td>$\sqrt{2}/2$</td>
+                        <td>$\sqrt{3}/2$</td>
+                        <td>$1$</td>
+                    </tr>
+                </table>
+                </div>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <!--PAGEBREAK--><h2 class="lesson-subtitle">2. Dérivées des fonctions sinus et cosinus</h2>
+            <div class="theorem-box">
+                <h3 class="box-title">Limites fondamentales</h3>
+                <p>Les limites suivantes sont essentielles pour établir les dérivées :</p>
+                <ul>
+                    <li>$\lim_{x \to 0} \frac{\sin(x)}{x} = 1$</li>
+                    <li>$\lim_{x \to 0} \frac{\cos(x) - 1}{x} = 0$</li>
+                </ul>
+                <p><span class="tex2jax_ignore">(Ces limites correspondent aux nombres dérivés de</span> $\sin$ <span class="tex2jax_ignore">et</span> $\cos$ <span class="tex2jax_ignore">en 0)</span>.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Formules de dérivation</h3>
+                <p>Les fonctions $\sin$ et $\cos$ sont dérivables sur $\mathbb{R}$ et :</p>
+                <ul>
+                    <li>$(\sin(x))\" = \cos(x)$</li>
+                    <li>$(\cos(x))\" = -\sin(x)$</li>
+                </ul>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Dérivées de fonctions composées (Rappel)</h3>
+                <p>Si $u$ est une fonction dérivable :</p>
+                <ul>
+                    <li>$(\sin(u))\" = u\" \cos(u)$</li>
+                    <li>$(\cos(u))\" = -u\" \sin(u)$</li>
+                </ul>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Soit $f(x) = \sin(3x + \pi/4)$.</p>
+                <p>C'est de la forme $\sin(u)$ avec $u(x) = 3x + \pi/4$. On a $u\"(x) = 3$.</p>
+                <p>$f\"(x) = u\" \cos(u) = 3 \cos(3x + \pi/4)$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Étude des fonctions sinus et cosinus</h2>
+            <p>Grâce à la périodicité ($2\pi$) et à la parité/imparité, on peut restreindre l'étude des fonctions $\cos$ et $\sin$ à un intervalle de longueur $\pi$, par exemple $[0, \pi]$.</p>
+            <div class="summary-box">
+                <h3 class="box-title">Étude de la fonction cosinus sur $[0, \pi]$</h3>
+                <ul>
+                    <li>Dérivée : $(\cos x)\" = -\sin x$.</li>
+                    <li>Signe de la dérivée : Sur $[0, \pi]$, $\sin x \ge 0$. Donc $-\sin x \le 0$.</li>
+                    <li>Variations : La fonction cosinus est décroissante sur $[0, \pi]$.</li>
+                    <li>Tableau de variations :
+                         <div style="overflow-x:auto;">
+                        <table border="1" style="width:80%; margin:auto; text-align:center;">
+                            <tr>
+                                <th>$x$</th>
+                                <td>$0$</td>
+                                <td></td>
+                                <td>$\pi$</td>
+                            </tr>
+                            <tr>
+                                <th>Signe de $(\cos x)\"$</th>
+                                <td></td>
+                                <td>$-$</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Variations de $\cos x$</th>
+                                <td>$1$</td>
+                                <td style="text-align: right; vertical-align: bottom;">$\searrow$</td>
+                                <td>$-1$</td>
+                            </tr>
+                        </table>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="summary-box">
+                <h3 class="box-title">Étude de la fonction sinus sur $[0, \pi]$</h3>
+                 <ul>
+                    <li>Dérivée : $(\sin x)\" = \cos x$.</li>
+                    <li>Signe de la dérivée : Sur $[0, \pi]$, $\cos x$ est positif sur $[0, \pi/2]$ et négatif sur $[\pi/2, \pi]$.</li>
+                    <li>Variations : La fonction sinus est croissante sur $[0, \pi/2]$ et décroissante sur $[\pi/2, \pi]$.</li>
+                    <li>Tableau de variations :
+                         <div style="overflow-x:auto;">
+                        <table border="1" style="width:80%; margin:auto; text-align:center;">
+                            <tr>
+                                <th>$x$</th>
+                                <td>$0$</td>
+                                <td></td>
+                                <td>$\pi/2$</td>
+                                <td></td>
+                                <td>$\pi$</td>
+                            </tr>
+                            <tr>
+                                <th>Signe de $(\sin x)\"$</th>
+                                <td></td>
+                                <td>$+$</td>
+                                <td>$0$</td>
+                                <td>$-$</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Variations de $\sin x$</th>
+                                <td>$0$</td>
+                                <td style="text-align: right; vertical-align: bottom;">$\nearrow$</td>
+                                <td>$1$</td>
+                                <td style="text-align: right; vertical-align: bottom;">$\searrow$</td>
+                                <td>$0$</td>
+                            </tr>
+                        </table>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="summary-box">
+                <h3 class="box-title">Courbes représentatives (Sinusoïdes)</h3>
+                <p>Les courbes représentatives des fonctions sinus et cosinus sont appelées des sinusoïdes. Elles sont obtenues en répétant le motif sur $[0, 2\pi]$ (ou $[-\pi, \pi]$) par translation de vecteur $2k\pi \vec{i}$.</p>
+                <p>La courbe de $\sin x$ s'obtient en translatant la courbe de $\cos x$ de $-\pi/2$ selon l'axe des abscisses (car $\sin(x) = \cos(x - \pi/2)$).</p>
+                <!-- Images illustratives des courbes peuvent être ajoutées ici -->
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">4. Équations trigonométriques</h2>
+            <div class="property-box">
+                <h3 class="box-title">Résolution d'équations fondamentales</h3>
+                <p>Soit $a$ un réel.</p>
+                <ul>
+                    <li><strong>$\cos(x) = \cos(a)$</strong>
+                        <p>Les solutions sont de la forme :</p>
+                        <p>$x = a + 2k\pi$ ou $x = -a + 2k\pi$, avec $k \in \mathbb{Z}$.</p>
+                    </li>
+                    <li><strong>$\sin(x) = \sin(a)$</strong>
+                        <p>Les solutions sont de la forme :</p>
+                        <p>$x = a + 2k\pi$ ou $x = \pi - a + 2k\pi$, avec $k \in \mathbb{Z}$.</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Résoudre dans $\mathbb{R}$ l'équation $\cos(x) = 1/2$.</p>
+                <p>On sait que $\cos(\pi/3) = 1/2$. L'équation est donc $\cos(x) = \cos(\pi/3)$.</p>
+                <p>Les solutions sont $x = \pi/3 + 2k\pi$ ou $x = -\pi/3 + 2k\pi$, avec $k \in \mathbb{Z}$.</p>
+                <p>Si on cherche les solutions dans $[0, 2\pi]$ :</p>
+                <ul>
+                    <li>Pour $k=0$, on a $x = \pi/3$ et $x = -\pi/3$. Seul $\pi/3$ est dans l'intervalle.</li>
+                    <li>Pour $k=1$, on a $x = \pi/3 + 2\pi$ (trop grand) et $x = -\pi/3 + 2\pi = 5\pi/3$. $5\pi/3$ est dans l'intervalle.</li>
+                    <li>Pour $k=-1$, on a $x = \pi/3 - 2\pi$ (trop petit) et $x = -\pi/3 - 2\pi$ (trop petit).</li>
+                </ul>
+                <p>Les solutions dans $[0, 2\pi]$ sont $\pi/3$ et $5\pi/3$.</p>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
+
+
+

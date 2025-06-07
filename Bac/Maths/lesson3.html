@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon 3 : Orthogonalité et distances dans l'espace</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">    <script src="../mathJax.js"></script>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>Après avoir étudié les vecteurs, droites et plans, nous abordons maintenant les notions d'orthogonalité et de distance dans l'espace. Le produit scalaire est l'outil clé pour caractériser l'orthogonalité entre vecteurs, droites et plans. Nous verrons comment définir une droite ou un plan orthogonal à un autre, et comment calculer des distances entre points, droites et plans.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Orthogonalité de deux droites</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Deux droites $(d)$ et $(d')$ de vecteurs directeurs respectifs $\vec{u}$ et $\vec{v}$ sont dites orthogonales si leurs vecteurs directeurs sont orthogonaux, c'est-à-dire si $\vec{u} \cdot \vec{v} = 0$.</p>
+            </div>
+            <div class="remark-box">
+                <h3 class="box-title">Remarques importantes</h3>
+                <ul>
+                    <li>Deux droites orthogonales ne sont pas nécessairement sécantes. Elles peuvent être non coplanaires.</li>
+                    <li>Deux droites sont dites perpendiculaires si elles sont orthogonales ET sécantes.</li>
+                </ul>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Soit $(d)$ passant par $A(1,0,1)$ de vecteur directeur $\vec{u}(1, 2, 1)$ et $(d')$ passant par $B(0,1,0)$ de vecteur directeur $\vec{v}(2, -1, 0)$.</p>
+                <p>Calculons le produit scalaire $\vec{u} \cdot \vec{v} = (1)(2) + (2)(-1) + (1)(0) = 2 - 2 + 0 = 0$.</p>
+                <p>Les vecteurs $\vec{u}$ et $\vec{v}$ sont orthogonaux, donc les droites $(d)$ et $(d')$ sont orthogonales.</p>
+                <p>Sont-elles perpendiculaires (sécantes) ? On chercherait une intersection en résolvant le système issu des représentations paramétriques. Si le système n'a pas de solution, elles sont orthogonales mais non coplanaires.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Orthogonalité d'une droite et d'un plan</h2>
+            <!--PAGEBREAK-->
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Une droite $(d)$ de vecteur directeur $\vec{u}$ est orthogonale à un plan $(P)$ si son vecteur directeur $\vec{u}$ est orthogonal À TOUS les vecteurs directeurs de $(P)$.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Théorème (Caractérisation par vecteur normal)</h3>
+                <p>Une droite $(d)$ de vecteur directeur $\vec{u}$ est orthogonale à un plan $(P)$ de vecteur normal $\vec{n}$ si et seulement si les vecteurs $\vec{u}$ et $\vec{n}$ sont colinéaires.</p>
+                <p><span class="tex2jax_ignore">(Autrement dit, le vecteur directeur de la droite est un vecteur normal au plan)</span>.</p>
+            </div>
+             <div class="theorem-box">
+                <h3 class="box-title">Théorème (Caractérisation par deux vecteurs directeurs)</h3>
+                <p>Une droite $(d)$ est orthogonale à un plan $(P)$ si et seulement si elle est orthogonale à deux droites sécantes contenues dans $(P)$.</p>
+                <p><span class="tex2jax_ignore">(Autrement dit, si</span> $\vec{u}$ <span class="tex2jax_ignore">est le vecteur directeur de</span> $(d)$<span class="tex2jax_ignore">, et</span> $\vec{v}, \vec{w}$ <span class="tex2jax_ignore">sont deux vecteurs directeurs non colinéaires de</span> $(P)$<span class="tex2jax_ignore">, alors</span> $(d) \perp (P) \iff \vec{u} \cdot \vec{v} = 0$ <span class="tex2jax_ignore">et</span> $\vec{u} \cdot \vec{w} = 0$<span class="tex2jax_ignore">)</span>.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Le plan $(P)$ a pour équation $2x - y + 3z - 1 = 0$. Un vecteur normal est $\vec{n}(2, -1, 3)$.</p>
+                <p>La droite $(d)$ a pour représentation paramétrique $\begin{cases} x = 1 + 4t \\ y = 5 - 2t \\ z = -2 + 6t \end{cases}$. Un vecteur directeur est $\vec{u}(4, -2, 6)$.</p>
+                <p>On remarque que $\vec{u} = 2\vec{n}$. Les vecteurs $\vec{u}$ et $\vec{n}$ sont colinéaires.</p>
+                <p>Donc, la droite $(d)$ est orthogonale au plan $(P)$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Plans perpendiculaires</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Deux plans $(P)$ et $(P')$ sont dits perpendiculaires (ou orthogonaux) si leurs vecteurs normaux respectifs $\vec{n}$ et $\vec{n'}$ sont orthogonaux.</p>
+                <p>C'est-à-dire, $(P) \perp (P') \iff \vec{n} \cdot \vec{n'} = 0$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>Soit $(P)$ d'équation $x + 2y - z + 4 = 0$ et $(P')$ d'équation $3x - y - z - 1 = 0$.</p>
+                <p>Un vecteur normal à $(P)$ est $\vec{n}(1, 2, -1)$.</p>
+                <p>Un vecteur normal à $(P')$ est $\vec{n'}(3, -1, -1)$.</p>
+                <p>Calculons $\vec{n} \cdot \vec{n'} = (1)(3) + (2)(-1) + (-1)(-1) = 3 - 2 + 1 = 2$.</p>
+                <p>Le produit scalaire n'est pas nul, donc les plans $(P)$ et $(P')$ ne sont pas perpendiculaires.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">4. Projection orthogonale</h2>
+            <!--PAGEBREAK-->
+            <div class="definition-box">
+                <h3 class="box-title">Projection orthogonale d'un point sur un plan</h3>
+                <p>Soit un plan $(P)$ et un point $M$ de l'espace. Le projeté orthogonal de $M$ sur le plan $(P)$ est le point d'intersection $H$ du plan $(P)$ et de la droite $(d)$ passant par $M$ et orthogonale à $(P)$.</p>
+                <p>Le vecteur $\vec{MH}$ est colinéaire au vecteur normal $\vec{n}$ du plan.</p>
+            </div>
+            <div class="definition-box">
+                <h3 class="box-title">Projection orthogonale d'un point sur une droite</h3>
+                <p>Soit une droite $(d)$ et un point $M$ de l'espace. Le projeté orthogonal de $M$ sur la droite $(d)$ est le point d'intersection $H$ de la droite $(d)$ et du plan $(P)$ passant par $M$ et orthogonal à $(d)$.</p>
+                <p>Le vecteur $\vec{MH}$ est orthogonal au vecteur directeur $\vec{u}$ de la droite.</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Propriété fondamentale</h3>
+                <p>Le projeté orthogonal $H$ d'un point $M$ sur un plan $(P)$ (ou sur une droite $(d)$) est le point de $(P)$ (ou de $(d)$) le plus proche de $M$. La distance $MH$ est la distance du point $M$ au plan $(P)$ (ou à la droite $(d)$).</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple : Projection sur un plan</h3>
+                <p>Trouver le projeté orthogonal $H$ du point $M(1, 3, 5)$ sur le plan $(P)$ d'équation $x + y + z - 3 = 0$.</p>
+                <p>1. Vecteur normal à $(P)$ : $\vec{n}(1, 1, 1)$.</p>
+                <p>2. Droite $(d)$ passant par $M$ et orthogonale à $(P)$ : vecteur directeur $\vec{n}$.
+                    Représentation paramétrique de $(d)$ : $\begin{cases} x = 1 + t \\ y = 3 + t \\ z = 5 + t \end{cases}$.</p>
+                <p>3. Trouver l'intersection $H$ entre $(d)$ et $(P)$ en substituant dans l'équation du plan :</p>
+                <p>$(1 + t) + (3 + t) + (5 + t) - 3 = 0$</p>
+                <p>$1 + t + 3 + t + 5 + t - 3 = 0$</p>
+                <p>$6 + 3t = 0$</p>
+                <p>$t = -2$</p>
+                <p>4. Donc $H(1-2, 3-2, 5-2) = H(-1, 1, 3)$.</p>
+                <p>5. Vérification : $H$ est-il dans le plan ? $(-1) + 1 + 3 - 3 = 0$ âœ“</p>
+                <p>6. Le vecteur $\vec{MH} = (-1-1, 1-3, 3-5) = (-2, -2, -2) = -2\vec{n}$ est bien colinéaire à $\vec{n}$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple : Projection sur une droite</h3>
+                <p>Trouver le projeté orthogonal $H$ du point $M(3, 4, 5)$ sur la droite $(d)$ passant par $A(1, 2, 3)$ et de vecteur directeur $\vec{u}(1, 1, 1)$.</p>
+                <p>1. Droite $(d)$ : représentation paramétrique $\begin{cases} x = 1 + t \\ y = 2 + t \\ z = 3 + t \end{cases}$.</p>
+                <p>2. Un point quelconque de $(d)$ est $H(1+t, 2+t, 3+t)$.</p>
+                <p>3. Pour que $H$ soit le projeté orthogonal de $M$ sur $(d)$, il faut que $\vec{MH} \perp \vec{u}$.</p>
+                <p>4. $\vec{MH} = (1+t-3, 2+t-4, 3+t-5) = (t-2, t-2, t-2)$.</p>
+                <p>5. Condition d'orthogonalité : $\vec{MH} \cdot \vec{u} = 0$.</p>
+                <p>$(t-2, t-2, t-2) \cdot (1, 1, 1) = (t-2) + (t-2) + (t-2) = 3(t-2) = 0$.</p>
+                <p>6. Donc $t = 2$, et $H(3, 4, 5)$.</p>
+                <p>7. Vérification : $\vec{MH} = (0, 0, 0)$, donc $M = H$, ce qui signifie que $M$ est déjà sur la droite $(d)$.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <!-- ... existing code ... -->
+    </footer>
+
+    <script>
+    // ... existing code ...
+    </script>
+</body>
+</html>
+
+
+

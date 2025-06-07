@@ -1,0 +1,15 @@
+{
+  "subjects": [
+    {
+      "id": "subject1",
+      "title": "Sujet 1 (Maths + NSI)",
+      "name": "Comment les mathématiques créent la 3D en informatique ?",
+      "file": "subject1.html"
+    },    {
+      "id": "subject2", 
+      "title": "Sujet 2 (Web)",
+      "name": "La programmation web moderne : HTML, CSS, JavaScript",
+      "file": "subject2.html"
+    }
+  ]
+}

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <m                 <p>L'événement <span class="tex2jax_ignore">(</span>$X=x_i$<span class="tex2jax_ignore">)</span> est l'ensemble des issues $\omega \in \Omega$ telles que $X(\omega) = x_i$.</p>              <p>Définir la <strong>loi de probabilité</strong> d'une variable aléatoire discrète $X$, c'est associer à chaque valeur $x_i$ prise par $X$ la probabilité de l'événement <span class="tex2jax_ignore">(</span>$X=x_i$<span class="tex2jax_ignore">)</span>, notée $p_i = P(X=x_i)$.</p>ta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon 15 : Variables aléatoires</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">    <script src="../mathJax.js"></script>
+    <style>
+        @media print {
+            .lesson-section:first-of-type {
+                 page-break-before: avoid; /* éviter un saut avant la première section */
+            }
+            h1.lesson-main-title {
+                 page-break-before: avoid;
+                 page-break-after: avoid;
+            }
+             h2.lesson-subtitle {
+                 page-break-before: avoid; /* éviter un saut juste avant un sous-titre */
+                 page-break-after: avoid;
+            }
+            .definition-box, .theorem-box, .property-box, .example-box, .summary-box {
+                 page-break-inside: avoid;
+            }
+            table {
+                 page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>Souvent, lors d'une expérience aléatoire, on ne s'intéresse pas directement à l'issue elle-même, mais à une valeur numérique qui lui est associée. Par exemple, lors d'un jeu de dés, on peut s'intéresser à la somme des points obtenus. Une <strong>variable aléatoire</strong> est une fonction qui associe une valeur numérique à chaque issue d'une expérience aléatoire. Ce chapitre se concentre sur les variables aléatoires discrètes, leur loi de probabilité, leur espérance et leur variance, avec un accent particulier sur les lois de Bernoulli et binomiale.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Variable aléatoire discrète</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Définition</h3>
+                <p>Soit $\Omega$ l'univers d'une expérience aléatoire.</p>
+                <p>Une <strong>variable aléatoire discrète</strong> $X$ est une fonction définie sur $\Omega$ qui prend un nombre fini <span class="tex2jax_ignore">(ou dénombrable)</span> de valeurs réelles $x_1, x_2, ..., x_n$.</p>
+                <p>L'ensemble des valeurs prises par $X$ est noté $X(\Omega) = \{x_1, x_2, ..., x_n\}$.</p>
+            </div>
+            <div class="definition-box">
+                <h3 class="box-title">Loi de probabilité</h3>
+                <p>Définir la <strong>loi de probabilité</strong> d'une variable aléatoire discrète $X$, c'est associer à chaque valeur $x_i$ prise par $X$ la probabilité de l'événement $(X=x_i)$, notée $p_i = P(X=x_i)$.</p>
+                <p>L'événement <span class="tex2jax_ignore">$(X=x_i)$</span> est l'ensemble des issues $\omega \in \Omega$ telles que $X(\omega) = x_i$.</p>
+                <p>La loi de probabilité est souvent présentée sous forme d'un tableau :</p>
+                 <div style="overflow-x:auto;">
+                <table border="1" style="width:80%; margin:auto; text-align:center;">
+                    <tr>
+                        <th>Valeur $x_i$</th>
+                        <td>$x_1$</td>
+                        <td>$x_2$</td>
+                        <td>...</td>
+                        <td>$x_n$</td>
+                    </tr>
+                    <tr>
+                        <th>Probabilité $P(X=x_i)$</th>
+                        <td>$p_1$</td>
+                        <td>$p_2$</td>
+                        <td>...</td>
+                        <td>$p_n$</td>
+                    </tr>
+                </table>
+                </div>
+                <p>Propriétés : Pour toute loi de probabilité, on a $p_i \ge 0$ pour tout $i$, et $\sum_{i=1}^{n} p_i = p_1 + p_2 + ... + p_n = 1$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple</h3>
+                <p>On lance un dé équilibré à 6 faces. Soit $X$ la variable aléatoire égale au numéro obtenu.</p>
+                <p>$X(\Omega) = \{1, 2, 3, 4, 5, 6\}$.</p>
+                <p>La loi de probabilité de $X$ est :</p>
+                 <div style="overflow-x:auto;">
+                 <table border="1" style="width:90%; margin:auto; text-align:center;">
+                    <tr>
+                        <th>$x_i$</th>
+                        <td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td>
+                    </tr>
+                    <tr>
+                        <th>$P(X=x_i)$</th>
+                        <td>1/6</td><td>1/6</td><td>1/6</td><td>1/6</td><td>1/6</td><td>1/6</td>
+                    </tr>
+                </table>
+                </div>
+                <p>On vérifie que $\sum p_i = 6 \times (1/6) = 1$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Espérance, Variance et écart-type</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Espérance mathématique</h3>
+                <p>L'<strong>espérance</strong> d'une variable aléatoire discrète $X$, notée $E(X)$, est la moyenne des valeurs prises par $X$, pondérée par leurs probabilités :</p>
+                <p>$E(X) = \sum_{i=1}^{n} x_i P(X=x_i) = x_1 p_1 + x_2 p_2 + ... + x_n p_n$</p>
+                <p>Interprétation : C'est la valeur moyenne que l'on peut espérer obtenir si l'on répète l'expérience un grand nombre de fois.</p>
+            </div>
+            <div class="definition-box">
+                <h3 class="box-title">Variance et écart-type</h3>
+                <p>La <strong>variance</strong> de $X$, notée $V(X)$, mesure la dispersion des valeurs de $X$ autour de son espérance. C'est la moyenne des carrés des écarts à l'espérance :</p>
+                <p>$V(X) = E[(X - E(X))^2] = \sum_{i=1}^{n} (x_i - E(X))^2 P(X=x_i)$</p>
+                <p>Formule de Koenig-Huygens <span class="tex2jax_ignore">(plus pratique pour le calcul)</span> :</p>
+                <p>$V(X) = E(X^2) - [E(X)]^2$</p>
+                <p>où $E(X^2) = \sum_{i=1}^{n} x_i^2 P(X=x_i)$ est l'espérance du carré de $X$.</p>
+                <p>L'<strong>écart-type</strong> de $X$, noté $\sigma(X)$, est la racine carrée de la variance :</p>
+                <p>$\sigma(X) = \sqrt{V(X)}$</p>
+                <p>L'écart-type a la même unité que $X$ et mesure également la dispersion.</p>
+            </div>
+            
+        <div class="page-break"></div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple (suite)</h3>
+                <p>Calculons l'espérance, la variance et l'écart-type pour le lancer de dé <span class="tex2jax_ignore">(</span>$X$<span class="tex2jax_ignore">)</span>.</p>
+                <p>$E(X) = 1(\frac{1}{6}) + 2(\frac{1}{6}) + 3(\frac{1}{6}) + 4(\frac{1}{6}) + 5(\frac{1}{6}) + 6(\frac{1}{6})$</p>
+                <p>$E(X) = \frac{1+2+3+4+5+6}{6} = \frac{21}{6} = 3.5$.</p>
+                <p>Calcul de $E(X^2)$ :</p>
+                <p>$E(X^2) = 1^2(\frac{1}{6}) + 2^2(\frac{1}{6}) + 3^2(\frac{1}{6}) + 4^2(\frac{1}{6}) + 5^2(\frac{1}{6}) + 6^2(\frac{1}{6})$</p>
+                <p>$E(X^2) = \frac{1+4+9+16+25+36}{6} = \frac{91}{6}$.</p>
+                <p>Calcul de la variance <span class="tex2jax_ignore">(Koenig-Huygens)</span> :</p>
+                <p>$V(X) = E(X^2) - [E(X)]^2 = \frac{91}{6} - (3.5)^2 = \frac{91}{6} - (\frac{7}{2})^2 = \frac{91}{6} - \frac{49}{4}$</p>
+                <p>$V(X) = \frac{182 - 147}{12} = \frac{35}{12} \approx 2.917$.</p>
+                <p>Calcul de l'écart-type :</p>
+                <p>$\sigma(X) = \sqrt{\frac{35}{12}} \approx 1.708$.</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Propriétés de l'espérance et de la variance</h3>
+                <p>Soit $X$ une variable aléatoire, et $a, b$ des réels.</p>
+                <ul>
+                    <li>$E(aX + b) = a E(X) + b$ <span class="tex2jax_ignore">(Linéarité de l'espérance)</span></li>
+                    <li>$V(aX + b) = a^2 V(X)$</li>
+                    <li>$\sigma(aX + b) = |a| \sigma(X)$</li>
+                </ul>
+                <p>Si $X$ et $Y$ sont deux variables aléatoires :</p>
+                 <ul>
+                    <li>$E(X+Y) = E(X) + E(Y)$</li>
+                    <li>Si $X$ et $Y$ sont <strong>indépendantes</strong> : $V(X+Y) = V(X) + V(Y)$. <span class="tex2jax_ignore">(Attention, cette propriété n'est vraie que pour des variables indépendantes)</span>.</li>
+                 </ul>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Lois discrètes usuelles</h2>
+            <div class="summary-box">
+                <h3 class="box-title">Loi de Bernoulli</h3>
+                <p>Une <strong>épreuve de Bernoulli</strong> est une expérience aléatoire n'ayant que deux issues possibles :</p>
+                <ul>
+                    <li>"Succès" (S), de probabilité $p$.</li>
+                    <li>"Échec" (E), de probabilité $1-p$.</li>
+                </ul>
+                <p>La variable aléatoire $X$ qui prend la valeur 1 en cas de succès et 0 en cas d'échec suit une <strong>loi de Bernoulli</strong> de paramètre $p$, notée $\mathcal{B}(p)$.</p>
+                <p>Loi de probabilité :</p>
+                 <div style="overflow-x:auto;">
+                 <table border="1" style="width:50%; margin:auto; text-align:center;">
+                    <tr><th>$x_i$</th><td>0</td><td>1</td></tr>
+                    <tr><th>$P(X=x_i)$</th><td>$1-p$</td><td>$p$</td></tr>
+                </table>
+                </div>
+                <p>Espérance : $E(X) = 0(1-p) + 1(p) = p$.</p>
+                <p>Variance : $V(X) = E(X^2) - [E(X)]^2 = (0^2(1-p) + 1^2(p)) - p^2 = p - p^2 = p(1-p)$.</p>
+            </div>
+            <div class="summary-box">
+                <h3 class="box-title">Loi Binomiale</h3>
+                <p>On considère la répétition de $n$ épreuves de Bernoulli identiques et indépendantes, chacune ayant une probabilité de succès $p$.</p>
+                <p>Un <strong>schéma de Bernoulli</strong> est la répétition de $n$ épreuves de Bernoulli identiques et indépendantes.</p>
+                <p>La variable aléatoire $X$ égale au nombre total de succès obtenus au cours des $n$ épreuves suit une <strong>loi binomiale</strong> de paramètres $n$ et $p$, notée $\mathcal{B}(n, p)$.</p>
+                <p>Les valeurs possibles pour $X$ sont les entiers $k$ de 0 à $n$.</p>
+                <p>Probabilité d'obtenir exactement $k$ succès :</p>
+                <p>$P(X=k) = \binom{n}{k} p^k (1-p)^{n-k}$</p>
+                <p>où $\binom{n}{k}$ est le coefficient binomial "k parmi n", qui compte le nombre de façons de placer les $k$ succès parmi les $n$ épreuves.</p>
+                <p>Espérance : $E(X) = np$.</p>
+                <p>Variance : $V(X) = np(1-p)$.</p>
+                <p>Écart-type : $\sigma(X) = \sqrt{np(1-p)}$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple (Loi Binomiale)</h3>
+                <p>On lance 5 fois une pièce de monnaie équilibrée. Soit $X$ le nombre de "Pile" obtenus.</p>
+                <p>Chaque lancer est une épreuve de Bernoulli avec $p = P(\text{Pile}) = 0.5$. Les lancers sont indépendants.</p>
+                <p>On répète $n=5$ épreuves.</p>
+                <p>Donc $X$ suit la loi binomiale $\mathcal{B}(5, 0.5)$.</p>
+                <p>a) Probabilité d'obtenir exactement 3 "Pile" <span class="tex2jax_ignore">(</span>$k=3$<span class="tex2jax_ignore">)</span> :</p>
+                <p>$P(X=3) = \binom{5}{3} (0.5)^3 (1-0.5)^{5-3} = \binom{5}{3} (0.5)^3 (0.5)^2 = \binom{5}{3} (0.5)^5$.</p>
+                <p>$\binom{5}{3} = \frac{5!}{3!2!} = \frac{5 \times 4}{2 \times 1} = 10$.</p>
+                <p>$P(X=3) = 10 \times (0.5)^5 = 10 \times 0.03125 = 0.3125$.</p>
+                <p>b) Probabilité d'obtenir au moins 4 "Pile" :</p>
+                <p>$P(X \ge 4) = P(X=4) + P(X=5)$.</p>
+                <p>$P(X=4) = \binom{5}{4} (0.5)^4 (0.5)^1 = 5 \times (0.5)^5 = 5 \times 0.03125 = 0.15625$.</p>
+                <p>$P(X=5) = \binom{5}{5} (0.5)^5 (0.5)^0 = 1 \times (0.5)^5 = 0.03125$.</p>
+                <p>$P(X \ge 4) = 0.15625 + 0.03125 = 0.1875$.</p>
+                <p>c) Espérance du nombre de "Pile" :</p>
+                <p>$E(X) = np = 5 \times 0.5 = 2.5$. <span class="tex2jax_ignore">(En moyenne, on obtient 2.5 Pile sur 5 lancers)</span>.</p>
+                <p>d) Écart-type :</p>
+                <p>$\sigma(X) = \sqrt{np(1-p)} = \sqrt{5 \times 0.5 \times 0.5} = \sqrt{1.25} \approx 1.118$.</p>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,202 @@
+/* Styles spécifiques à la section Philosophie */
+@import url('../common.css');
+@import url('../Maths/styles.css');
+
+/* Styles améliorés pour les notions de philosophie */
+:root {
+  --philo-primary: inherit;
+  --philo-secondary: inherit;
+  --philo-accent: inherit;
+  --philo-bg-light: white;
+  --philo-bg-dark: whitesmoke;
+  --philo-border: #e0e0e0;
+  --philo-text-dark: inherit;
+  --philo-text-medium: inherit;
+  --philo-text-light: inherit;
+  --philo-definition-bg: white;
+  --philo-citation-bg: white;
+  --philo-concept-bg: white;
+  --subject-color: var(--philosophie-color);
+}
+
+/* Styles pour les cours */
+.course-section {
+  background-color: var(--philo-bg-light);
+  border-radius: 8px;
+  border-left: 2px solid var(--philo-border);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  transition: all 0.2s ease;
+}
+
+.course-section h4 {
+  font-size: 1.4rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.course-section h5 {
+  font-size: 1.2rem;
+  border-bottom: 1px solid var(--philo-border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.course-section p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* Styles pour les exemples */
+.examples-section {
+  margin-bottom: 2rem;
+}
+
+.examples-section h4 {
+  font-size: 1.4rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.example {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid var(--philo-border);
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.example:hover {
+  border-color: var(--philo-border);
+}
+
+.example-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+/* Styles pour les définitions, citations et concepts clés */
+.definition {
+  background-color: var(--philo-definition-bg);
+  border-left: 1px solid var(--philo-border);
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.citation {
+  background-color: var(--philo-citation-bg);
+  border-left: 1px solid var(--philo-border);
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  border-radius: 0 4px 4px 0;
+  font-style: italic;
+}
+
+.key-concept {
+  background-color: var(--philo-concept-bg);
+  border: 1px solid var(--philo-border);
+  padding: 0.8rem 1.2rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+}
+
+.key-concept-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.course-section ul li, .example ul li {
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.comparison-table th {
+  background-color: var(--philo-bg-dark);
+  padding: 0.8rem 1rem;
+  text-align: left;
+  border: 1px solid var(--philo-border);
+}
+
+.comparison-table td {
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--philo-border);
+}
+
+.comparison-table tr:nth-child(even) {
+  background-color: white;
+}
+
+/* Sections vidéo sans checkboxes - styles épurés */
+.video-theme-item {
+  background: var(--background-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-sm);
+  overflow: hidden;
+  transition: all var(--transition-smooth);
+  box-shadow: var(--shadow-sm);
+}
+
+.video-theme-item .lesson-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  cursor: pointer;
+  transition: all var(--transition-quick);
+  background: var(--background-primary);
+  border: none;
+  min-height: 54px;
+  /* PAS de checkbox pour les vidéos */
+}
+
+.video-theme-item .lesson-header:hover {
+  background: var(--background-secondary);
+}
+
+.video-theme-item.active .lesson-header {
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.video-theme-item .lesson-title-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  /* PAS de margin pour checkbox inexistante */
+}
+
+.video-theme-item .lesson-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+}
+
+body.philosophie-mode {
+  --subject-color: #805ad5;
+}
+
+
