@@ -2,7 +2,7 @@
   "metadata": {
     "subject": "philosophie",
     "version": "2.0",
-    "totalNotions": 16,
+    "totalNotions": 17,
     "totalVideos": 0
   },
   "themes": [
@@ -24,16 +24,16 @@
           "file": "notion2.html"
         },
         {
-          "id": 6,
+          "id": 3,
           "title": "Le temps",
           "shortTitle": "Temps",
-          "file": "notion6.html"
+          "file": "notion3.html"
         },
         {
-          "id": 17,
+          "id": 4,
           "title": "La liberté",
           "shortTitle": "Liberté",
-          "file": "notion17.html"
+          "file": "notion4.html"
         }
       ]
     },
@@ -43,46 +43,46 @@
       "color": "#388e3c",
       "notions": [
         {
-          "id": 7,
+          "id": 5,
           "title": "L'art",
           "shortTitle": "Art",
+          "file": "notion5.html"
+        },
+        {
+          "id": 6,
+          "title": "Le travail",
+          "shortTitle": "Travail",
+          "file": "notion6.html"
+        },
+        {
+          "id": 7,
+          "title": "La religion",
+          "shortTitle": "Religion",
           "file": "notion7.html"
         },
         {
           "id": 8,
-          "title": "Le travail",
-          "shortTitle": "Travail",
+          "title": "La technique",
+          "shortTitle": "Technique",
           "file": "notion8.html"
         },
         {
           "id": 9,
-          "title": "La religion",
-          "shortTitle": "Religion",
+          "title": "La nature",
+          "shortTitle": "Nature",
           "file": "notion9.html"
         },
         {
           "id": 10,
-          "title": "La technique",
-          "shortTitle": "Technique",
+          "title": "Le bonheur",
+          "shortTitle": "Bonheur",
           "file": "notion10.html"
         },
         {
           "id": 11,
-          "title": "La nature",
-          "shortTitle": "Nature",
-          "file": "notion11.html"
-        },
-        {
-          "id": 12,
-          "title": "Le bonheur",
-          "shortTitle": "Bonheur",
-          "file": "notion12.html"
-        },
-        {
-          "id": 13,
           "title": "Le langage",
           "shortTitle": "Langage",
-          "file": "notion13.html"
+          "file": "notion11.html"
         }
       ]
     },
@@ -92,43 +92,46 @@
       "color": "#f57c00",
       "notions": [
         {
-          "id": 14,
+          "id": 12,
           "title": "La raison",
           "shortTitle": "Raison",
+          "file": "notion12.html"
+        },
+        {
+          "id": 13,
+          "title": "La justice",
+          "shortTitle": "Justice",
+          "file": "notion13.html"
+        },
+        {
+          "id": 14,
+          "title": "La vérité",
+          "shortTitle": "Vérité",
           "file": "notion14.html"
         },
         {
           "id": 15,
-          "title": "La justice",
-          "shortTitle": "Justice",
+          "title": "La science",
+          "shortTitle": "Science",
           "file": "notion15.html"
         },
         {
           "id": 16,
-          "title": "La vérité",
-          "shortTitle": "Vérité",
+          "title": "L'État",
+          "shortTitle": "État",
           "file": "notion16.html"
         },
         {
-          "id": 18,
-          "title": "La science",
-          "shortTitle": "Science",
-          "file": "notion18.html"
-        },
-        {
-          "id": 19,
-          "title": "L’État",
-          "shortTitle": "État",
-          "file": "notion19.html"
-        },
-        {
-          "id": 20,
+          "id": 17,
           "title": "Le devoir",
           "shortTitle": "Devoir",
-          "file": "notion20.html"
+          "file": "notion17.html"
         }
       ]
-    }  ],  "exams": [    {
+    }
+  ],
+  "exams": [
+    {
       "id": "usa-2025",
       "title": "Amérique du Nord 2025",
       "type": "subject",
