@@ -29,24 +29,21 @@
                 <p>Si ces deux étapes sont vérifiées, alors la propriété $P(n)$ est vraie pour tout entier $n \ge n_0$.</p>
             </div>
             <div class="example-box">
-                <h3 class="box-title">Exemple</h3>
-                <p>Démontrer par récurrence que pour tout $n \in \mathbb{N}$, la somme des $n$ premiers entiers est $S_n = \sum_{i=0}^{n} i = \frac{n(n+1)}{2}$. <span class="tex2jax_ignore">(Ici</span> $n_0 = 0$<span class="tex2jax_ignore">)</span>.</p>
-                <p>Soit $P(n)$ la propriété : "$\\sum_{i=0}^{n} i = \\frac{n(n+1)}{2}$".</p>
+                <h3 class="box-title">Exemple</h3>                <p>Démontrer par récurrence que pour tout $n \in \mathbb{N}$, la somme des $n$ premiers entiers est $S_n = \sum_{i=0}^{n} i = \frac{n(n+1)}{2}$. <span class="tex2jax_ignore">(Ici</span> $n_0 = 0$<span class="tex2jax_ignore">)</span>.</p>
+                <p>Soit $P(n)$ la propriété : "$\sum_{i=0}^{n} i = \frac{n(n+1)}{2}$".</p>
                 <p>1.  <strong>Initialisation (n=0) :</strong>
-                    $
-                    \\sum_{i=0}^{0} i = 0$.
-                    $
-                    \\frac{0(0+1)}{2} = 0$.
+                    $\sum_{i=0}^{0} i = 0$.
+                    $\frac{0(0+1)}{2} = 0$.
                     Donc $P(0)$ est vraie.</p>
-                <p>2.  <strong>Hérédité :</strong> Supposons que $P(k)$ est vraie pour un entier $k \\ge 0$, c'est-à-dire $\\sum_{i=0}^{k} i = \\frac{k(k+1)}{2}$ (Hypothèse de Récurrence - HR).
-                    Montrons que $P(k+1)$ est vraie, c'est-à-dire $\\sum_{i=0}^{k+1} i = \\frac{(k+1)(k+2)}{2}$.</p>
-                <p>   $\sum_{i=0}^{k+1} i = (\sum_{i=0}^{k} i) + (k+1)$</p>
+                <p>2.  <strong>Hérédité :</strong> Supposons que $P(k)$ est vraie pour un entier $k \ge 0$, c'est-à-dire $\sum_{i=0}^{k} i = \frac{k(k+1)}{2}$ (Hypothèse de Récurrence - HR).
+                    Montrons que $P(k+1)$ est vraie, c'est-à-dire $\sum_{i=0}^{k+1} i = \frac{(k+1)(k+2)}{2}$.</p>
+                <p>   $\sum_{i=0}^{k+1} i = \left(\sum_{i=0}^{k} i\right) + (k+1)$</p>
                 <p>   En utilisant l'HR :</p>
-                <p>   $\\sum_{i=0}^{k+1} i = \\frac{k(k+1)}{2} + (k+1)$</p>
+                <p>   $\sum_{i=0}^{k+1} i = \frac{k(k+1)}{2} + (k+1)$</p>
                 <p>   Mettons au même dénominateur :</p>
-                <p>   $\\sum_{i=0}^{k+1} i = \\frac{k(k+1) + 2(k+1)}{2}$</p>
+                <p>   $\sum_{i=0}^{k+1} i = \frac{k(k+1) + 2(k+1)}{2}$</p>
                 <p>   Factorisons par $(k+1)$ :</p>
-                <p>   $\\sum_{i=0}^{k+1} i = \\frac{(k+1)(k+2)}{2}$</p>
+                <p>   $\sum_{i=0}^{k+1} i = \frac{(k+1)(k+2)}{2}$</p>
                 <p>   C'est bien la formule attendue pour $P(k+1)$. L'hérédité est démontrée.</p>
                 <p><strong>Conclusion :</strong> Par le principe de récurrence, la propriété $P(n)$ est vraie pour tout entier naturel $n$.</p>
             </div>
@@ -99,7 +96,7 @@
                 <ul>
                     <li><strong>Somme :</strong> $\lim (u_n + v_n) = L + L'$, sauf formes indéterminées ($+\infty - \infty$).</li>
                     <li><strong>Produit :</strong> $\lim (u_n \times v_n) = L \times L'$, sauf formes indéterminées ($0 \times \infty$).</li>
-                    <li><strong>Quotient :</strong> $\lim (u_n / v_n) = L / L'$ (si $L' \neq 0$), sauf formes indéterminées ($0/0$, $\infty/\infty$). Attention au signe pour les limites infinies au dénominateur.</li>
+                    <li><strong>Quotient :</strong> $\lim (u_n \div v_n) = L \div L'$ (si $L' \neq 0$), sauf formes indéterminées ($\frac{0}{0}$, $\frac{\infty}{\infty}$). Attention au signe pour les limites infinies au dénominateur.</li>
                 </ul>
                 <p>Consulter les tableaux détaillés des opérations sur les limites (analogues aux fonctions).</p>
             </div>
@@ -131,7 +128,7 @@
                 <h3 class="box-title">Méthodes pour étudier la monotonie</h3>
                 <ul>
                     <li>Étudier le signe de la différence $u_{n+1} - u_n$.</li>
-                    <li>Si la suite est à termes strictement positifs, comparer le quotient $u_{n+1} / u_n$ à 1.</li>
+                    <li>Si la suite est à termes strictement positifs, comparer le quotient $\frac{u_{n+1}}{u_n}$ à 1.</li>
                     <li>Si $u_n = f(n)$ où $f$ est une fonction, étudier les variations de la fonction $f$.</li>
                 </ul>
             </div>

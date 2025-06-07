@@ -68,10 +68,9 @@
         <div class="page-break"></div>
         <section class="lesson-section">
             <h2 class="lesson-subtitle">2. Plans dans l'espace</h2>
-            <!--PAGEBREAK-->
-            <div class="definition-box">
+              <div class="definition-box">
                 <h3 class="box-title">Représentation paramétrique (Rappel)</h3>
-                <p>Un plan $(P)$ passant par $A(x_A, y_A, z_A)$ et dirigé par deux vecteurs non colinéaires $\\vec{u}(a, b, c)$ et $\\vec{v}(a\', b\', c\')$ est l'ensemble des points $M(x, y, z)$ tels que $\\vec{AM} = t\\vec{u} + s\\vec{v}$, où $(t, s) \\in \\mathbb{R}^2$.</p>
+                <p>Un plan $(P)$ passant par $A(x_A, y_A, z_A)$ et dirigé par deux vecteurs non colinéaires $\vec{u}(a, b, c)$ et $\vec{v}(a', b', c')$ est l'ensemble des points $M(x, y, z)$ tels que $\vec{AM} = t\vec{u} + s\vec{v}$, où $(t, s) \in \mathbb{R}^2$.</p>
                 <p>Système d' équations paramétriques :</p>
                 <p>$\begin{cases} x = x_A + ta + sa' \\ y = y_A + tb + sb' \\ z = z_A + tc + sc' \end{cases}, (t, s) \in \mathbb{R}^2$</p>
             </div>
@@ -82,16 +81,14 @@
                 <p>où $\vec{n}(a, b, c)$ est un vecteur normal non nul au plan $(P)$.</p>
             </div>
             <div class="example-box">
-                <h3 class="box-title">Exemple : Passage de paramétrique à cartésienne</h3>
-                <p>Soit le plan $(P)$ défini par $A(1, 0, 1)$, $\\vec{u}(1, 1, 0)$ et $\\vec{v}(0, 1, -1)$.</p>
+                <h3 class="box-title">Exemple : Passage de paramétrique à cartésienne</h3>                <p>Soit le plan $(P)$ défini par $A(1, 0, 1)$, $\vec{u}(1, 1, 0)$ et $\vec{v}(0, 1, -1)$.</p>
                 <p>Représentation paramétrique : $\begin{cases} x = 1 + t \\ y = t + s \\ z = 1 - s \end{cases}$.</p>
                 <p>Méthode 1 : Éliminer $s$ et $t$.</p>
-                <p>De la première, $t = x - 1$. De la troisième, $s = 1 - z$.</p>
-                <p>En substituant dans la deuxième : $y = (x - 1) + (1 - z) \\implies y = x - z$.</p>
-                <p>Soit l'équation cartésienne : $x - y - z = 0$. (Ici $d=0$ car le plan passe par l'origine après simplification, ce qui n'est pas le cas. Revoyons le calcul).</p>
-                <p>$y = (x-1) + (1-z) \\Rightarrow y = x - 1 + 1 - z \\Rightarrow y = x - z$. Donc $x - y - z = 0$. Vérifions si A(1,0,1) est dedans : $1 - 0 - 1 = 0$. Oui. Vérifions si $\\vec{u}$ et $\\vec{v}$ sont orthogonaux au vecteur normal $\\vec{n}(1, -1, -1)$ :</p>
-                <p>$\\vec{u} \\cdot \\vec{n} = 1(1) + 1(-1) + 0(-1) = 1 - 1 = 0$. OK.</p>
-                <p>$\\vec{v} \\cdot \\vec{n} = 0(1) + 1(-1) + (-1)(-1) = -1 + 1 = 0$. OK.</p>
+                <p>De la première, $t = x - 1$. De la troisième, $s = 1 - z$.</p>                <p>En substituant dans la deuxième : $y = (x - 1) + (1 - z) \Rightarrow y = x - z$.</p>
+                <p>Soit l'équation cartésienne : $x - y - z = 0$.</p>
+                <p>$y = (x-1) + (1-z) \Rightarrow y = x - 1 + 1 - z \Rightarrow y = x - z$. Donc $x - y - z = 0$. Vérifions si A(1,0,1) est dedans : $1 - 0 - 1 = 0$. Oui. Vérifions si $\vec{u}$ et $\vec{v}$ sont orthogonaux au vecteur normal $\vec{n}(1, -1, -1)$ :</p>
+                <p>$\vec{u} \cdot \vec{n} = 1(1) + 1(-1) + 0(-1) = 1 - 1 = 0$. OK.</p>
+                <p>$\vec{v} \cdot \vec{n} = 0(1) + 1(-1) + (-1)(-1) = -1 + 1 = 0$. OK.</p>
                 <p>L'équation est donc $x - y - z = 0$.</p>
 
                 <p>Méthode 2 : Trouver un vecteur normal.</p>
@@ -119,7 +116,7 @@
         <div class="page-break"></div>
         <section class="lesson-section">
             <h2 class="lesson-subtitle">3. Applications : Intersections</h2>
-            <!--PAGEBREAK-->
+            
             <div class="summary-box">
                 <h3 class="box-title">Intersection de deux droites</h3>
                 <p>Données : $(d)$ et $(d')$ par leurs représentations paramétriques <span class="tex2jax_ignore">(avec des paramètres différents,</span> $t$ <span class="tex2jax_ignore">et</span> $k$<span class="tex2jax_ignore">)</span>.</p>

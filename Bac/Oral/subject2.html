@@ -1,301 +1,191 @@
-<div class="section math-section">  <h2 class="section-title section-title-large">Sujet : Les opérations mathématiques qui façonnent la 3D informatique</h2>
+<div class="section ihm-section">
+  <h2 class="section-title section-title-large">Sujet : L'histoire des interfaces homme-machine (IHM)</h2>
   <div class="highlight-box">
-    <strong>Problématique : « Comment les opérations matricielles et les transformations géométriques permettent-elles de manipuler, animer et projeter des objets tridimensionnels dans l'univers numérique ? »</strong>
+    <strong>Problématique : « Comment l'évolution des interfaces homme-machine a-t-elle transformé notre rapport à l'informatique et à la société ? »</strong>
   </div>
 
-  <h3>1. Mes motivations</h3>
+  <h3>1. Introduction et motivations</h3>
   <p>
-    Depuis l'âge de 10 ans, je crée des jeux vidéo. J'ai très vite appris à utiliser SketchUp à 12 ans, puis je suis rapidement passé à Blender, un autre logiciel de modélisation 3D. Aujourd'hui, après toutes ces années, je continue à créer en auto didacte des jeux vidéo et des designs grâce à la 3D. Cette passion m'a permis de comprendre à quel point les transformations géométriques sont essentielles pour donner vie à des univers virtuels, animer des personnages, ou concevoir des objets réalistes. La 3D ne se limite plus au divertissement : elle est partout ! Architecture, cinéma, médecine, ingénierie, réalité virtuelle, impression 3D… Les transformations géométriques sont le langage universel qui permet de manipuler, animer et visualiser des objets dans l'espace.
-  </p>
-  <p>
-    Comprendre ces transformations, c'est comprendre comment un personnage se déplace dans un jeu ou bien un film, comment une pièce mécanique est simulée avant d'être fabriquée, ou comment un chirurgien peut s'entraîner sur un modèle virtuel. 
+    Aujourd'hui, nous utilisons tous les jours des ordinateurs, des smartphones, des tablettes, parfois même sans nous en rendre compte. Mais il y a une question essentielle : comment l'humain communique-t-il avec la machine ? C'est tout l'enjeu des interfaces homme-machine, ou IHM. Comprendre leur histoire, c'est comprendre comment l'informatique est devenue accessible à tous, et comment elle a changé notre quotidien. Ce sujet me passionne car il relie la technique, la créativité et l'humain, et il est au cœur de la spécialité NSI.
   </p>
 
   <div class="page-break"></div>
-  <h3>2. Les matrices 3D</h3>
-  
+  <h3>2. Les débuts : du binaire à la console</h3>
   <p>
-    <strong>Imaginez que vous voulez déplacer une table dans votre salon.</strong> Vous pouvez faire 3 choses : 
-    la <em>pousser</em> (translation), la <em>faire tourner</em> (rotation), ou avec un peu de sorcellerie la <em>rétrécir/agrandir</em> (échelle). 
-    En 3D, c'est exactement pareil ! Pour chaque objet virtuel, l'ordinateur doit savoir comment le bouger dans l'espace.
-  </p>
-  
-  <p>
-    <strong>Une matrice, c'est comme une recette de cuisine :</strong> elle contient toutes les instructions pour transformer un objet d'un coup. 
-    Au lieu de dire "d'abord tourne-le, puis déplace-le, puis agrandis-le", on écrit tout dans une matrice (un tableau de 16 valeurs organisées en 4×4), 
-    et l'ordinateur applique toute la transformation instantanément à chaque point de l'objet.
+    Au tout début de l'informatique, dans les années 1940-1950, il n'y avait pas d'écran, pas de souris, pas de clavier comme aujourd'hui. Les premiers ordinateurs étaient programmés à l'aide de cartes perforées ou de commutateurs. L'interface était donc très technique, réservée à une élite de scientifiques. On parlait le langage de la machine : le binaire. Puis, dans les années 1960, le terminal à écran et le clavier apparaissent. C'est la naissance de la console, où l'utilisateur tape des commandes textuelles. C'est déjà une révolution : on peut dialoguer avec l'ordinateur, mais il faut encore apprendre un langage spécifique, comme le shell ou le DOS.
   </p>
 
+  <h3>3. La révolution graphique : la souris et le bureau</h3>
   <p>
-    <strong>Concrètement, voici comment ça marche :</strong> Prenons un cube simple dans Blender. Ce cube est défini par 8 points (ses sommets). 
-    Chaque point a des coordonnées (x, y, z). Si je veux faire tourner ce cube de 45°, l'ordinateur va multiplier les coordonnées de chaque point 
-    par la matrice de rotation. En une seule opération, tous les points bougent ensemble de façon cohérente.
+    Dans les années 1970-1980, une nouvelle étape majeure : l'invention de l'interface graphique. C'est le Xerox PARC qui invente la métaphore du "bureau" : des fenêtres, des icônes, une souris pour pointer et cliquer. Apple popularise cette idée avec le Macintosh en 1984, puis Microsoft avec Windows. L'utilisateur n'a plus besoin de connaître des commandes compliquées : il peut manipuler des objets à l'écran, comme il le ferait dans la vraie vie. C'est l'arrivée du WYSIWYG : "What You See Is What You Get". L'informatique devient enfin accessible au grand public.
   </p>
 
   <div class="page-break"></div>
-
+  <h3>4. L'ère du tactile et du mobile</h3>
   <p>
-    <strong>Les trois transformations fondamentales avec leurs matrices :</strong>
-  </p>  <h4><strong>1. Translation :</strong></h4>
-  <p>Pour déplacer un objet de (dx, dy, dz) unités :</p>  <p>$$\begin{bmatrix}
-  1 & 0 & 0 & dx \\
-  0 & 1 & 0 & dy \\
-  0 & 0 & 1 & dz \\
-  0 & 0 & 0 & 1
-  \end{bmatrix}$$</p>
-  <p><em>Exemple :</em> Pour déplacer un objet de 5 unités vers la droite (axe X) :</p>
-  <p>$$\begin{bmatrix}
-  1 & 0 & 0 & 5 \\
-  0 & 1 & 0 & 0 \\
-  0 & 0 & 1 & 0 \\
-  0 & 0 & 0 & 1
-  \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} x+5 \\ y \\ z \\ 1 \end{bmatrix}$$</p><h4><strong>2. Rotation :</strong></h4>
-  <p>Pour faire tourner un objet d'un angle θ autour de l'axe Z :</p>
-  <div class="math-formula-container">
-    <p>$$\begin{bmatrix}
-    \cos\theta & -\sin\theta & 0 & 0 \\
-    \sin\theta & \cos\theta & 0 & 0 \\
-    0 & 0 & 1 & 0 \\
-    0 & 0 & 0 & 1
-    \end{bmatrix}$$</p>
-  </div>
-
-  <p><em>Exemple :</em> Pour une rotation de 45° (θ = π/4) :</p>
-  <div class="math-formula-container">
-    <p>$$\begin{bmatrix}
-    0.707 & -0.707 & 0 & 0 \\
-    0.707 & 0.707 & 0 & 0 \\
-    0 & 0 & 1 & 0 \\
-    0 & 0 & 0 & 1
-    \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} 0.707x - 0.707y \\ 0.707x + 0.707y \\ z \\ 1 \end{bmatrix}$$</p>
-  </div>
-  
-  <div class="page-break"></div>
-    <h4><strong>3. Échelle :</strong></h4>
-  <p>Pour changer la taille d'un objet par des facteurs (sx, sy, sz) :</p>
-  <div class="math-formula-container">
-    <p>$$\begin{bmatrix}
-    sx & 0 & 0 & 0 \\
-    0 & sy & 0 & 0 \\
-    0 & 0 & sz & 0 \\
-    0 & 0 & 0 & 1
-    \end{bmatrix}$$</p>
-  </div>
-
-  <p><em>Exemple :</em> Pour doubler la taille sur tous les axes (sx = sy = sz = 2) :</p>
-  <div class="math-formula-container">
-    <p>$$\begin{bmatrix}
-    2 & 0 & 0 & 0 \\
-    0 & 2 & 0 & 0 \\
-    0 & 0 & 2 & 0 \\
-    0 & 0 & 0 & 1
-    \end{bmatrix} \times \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} 2x \\ 2y \\ 2z \\ 1 \end{bmatrix}$$</p>
-  </div>
-
-  <p>
-    <strong>Pourquoi 4×4 et pas 3×3 ?</strong> En 3D, nous avons effectivement x, y, z (3 dimensions), mais pour pouvoir inclure 
-    les déplacements dans la même "recette", on ajoute une 4ème coordonnée technique appelée coordonnée homogène. 
-    Cette astuce mathématique permet de combiner rotations, échelles ET déplacements dans une seule matrice 4×4.
-  </p>  <p>
-    <strong>La composition :</strong> Nous pouvons ainsi combiner ces transformations en multipliant les matrices pour creer des transformations complexes:
-  </p>
-  <div class="math-formula-container">
-    <p>$$\text{Matrice finale} = \text{Translation} \times \text{Rotation} \times \text{Échelle}$$</p>
-  </div>
-
-  <p>
-    <strong>L'avantage énorme :</strong> au lieu de faire trois opérations séparées (tourner, puis agrandir, puis déplacer), 
-    on peut tout combiner en une seule multiplication matricielle. Pour un jeu avec des milliers d'objets qui bougent 
-    60 fois par seconde, cette optimisation est cruciale !
+    Dans les années 2000, une nouvelle révolution : l'écran tactile. Avec l'iPhone en 2007, on interagit directement avec ses doigts. Les gestes remplacent la souris : on glisse, on pince, on tape. Les interfaces deviennent plus intuitives, plus naturelles. Les applications mobiles sont pensées pour être simples, rapides, accessibles à tous, même aux enfants. C'est aussi l'explosion des objets connectés : montres, enceintes, voitures, tout devient interactif.
   </p>
 
+  <h3>5. Les IHM aujourd'hui et demain : voix, réalité virtuelle, IA</h3>
   <p>
-    <strong>En résumé,</strong> chaque matrice est un mode d'emploi mathématique qui dit à l'ordinateur exactement comment transformer 
-    chaque point d'un objet 3D de façon rapide et précise.
+    Aujourd'hui, les interfaces continuent d'évoluer. On parle à son téléphone grâce à la reconnaissance vocale, on utilise la réalité virtuelle pour s'immerger dans des mondes numériques, on contrôle des objets par la pensée dans certains laboratoires. L'intelligence artificielle permet d'adapter l'interface à chaque utilisateur : suggestions personnalisées, assistants intelligents, accessibilité pour les personnes en situation de handicap. Les IHM deviennent invisibles, intégrées partout, et posent de nouveaux défis : sécurité, vie privée, inclusion.
   </p>
 
   <div class="page-break"></div>
-  <h3>3. Applications</h3>
-  <p>
-    Dans un jeu vidéo, chaque objet, personnage ou décor est défini par des milliers de points (sommets) dans l'espace. Pour animer un personnage, il faut appliquer des rotations à ses articulations ; pour déplacer une voiture, une translation ; pour zoomer sur une scène, une homothétie. Les moteurs 3D comme Unity ou Unreal Engine utilisent en permanence ces matrices pour calculer la position de chaque élément à chaque image (jusqu'à 60 fois par seconde !).
-  </p>
-  <p>
-    En réalité virtuelle, la position de la tête de l'utilisateur est suivie en temps réel : il faut recalculer toutes les transformations pour que l'image affichée corresponde exactement à ce que verrait l'œil humain. En architecture, on utilise ces outils pour visualiser un bâtiment avant même qu'il ne soit construit, en le faisant tourner, déplacer, agrandir à volonté.
-  </p>
-  <p>
-    Même dans la médecine, la 3D permet de reconstituer des organes à partir d'IRM, puis de les manipuler virtuellement pour préparer une opération.
-  </p>
-
-  <h3>4. Défis et limites</h3>
-  <p>Les transformations géométriques 3D sont puissantes, mais elles posent aussi des défis :</p>
+  <h3>6. Liens avec le programme NSI</h3>
   <ul>
-    <li>La précision numérique : en multipliant des matrices, de petites erreurs peuvent s'accumuler et déformer les objets.</li>
-    <li>La performance : pour des scènes très complexes, il faut optimiser les calculs pour ne pas ralentir l'affichage.</li>
-    <li>La compréhension humaine : il n'est pas toujours intuitif de prévoir le résultat d'une combinaison de transformations.</li>
+    <li><strong>Programmation :</strong> Créer une interface graphique (par exemple avec Tkinter en Python) demande de comprendre les événements, les boucles, la gestion des entrées utilisateur.</li>
+    <li><strong>Architecture matérielle :</strong> Les périphériques d'entrée (clavier, souris, écran tactile) sont étudiés en NSI.</li>
+    <li><strong>Web :</strong> Les sites web sont des IHM : HTML, CSS, JavaScript permettent de concevoir des interfaces interactives.</li>
+    <li><strong>Accessibilité :</strong> Rendre une interface utilisable par tous est un enjeu majeur, abordé en NSI.</li>
   </ul>
-  <p>
-    Les recherches actuelles portent sur de nouveaux algorithmes pour rendre les transformations plus rapides et plus précises, sur l'intelligence artificielle pour automatiser certaines animations, et sur l'intégration de la 3D dans des domaines toujours plus variés (éducation, industrie, art…).
-  </p>
 
-  <div class="page-break"></div>
-  <h3>5. Perspectives</h3>
+  <h3>7. Conclusion</h3>
   <p>
-    Les transformations sont une base solide, mais pour se rapprocher d'un rendu
-    photoréaliste ou d'une expérience immersive, on ajoute des éléments comme
-    l'éclairage, les ombres, les textures et les shaders. Ces techniques simulent
-    de plus en plus fidèlement la façon dont la lumière interagit avec les objets,
-    et nécessitent souvent des calculs complexes optimisés par le GPU. On gère
-    aussi la physique pour les collisions et la gravité, afin de rendre les scènes
-    crédibles et naturelles aux yeux des utilisateurs.
-  </p>
-  
-  <h3>Conclusion</h3>
-  <p>
-    Les transformations géométriques 3D sont le socle invisible de notre monde numérique moderne. Elles relient les mathématiques abstraites à des applications concrètes qui changent notre quotidien. Maîtriser ces outils, c'est ouvrir la porte à la création, à l'innovation et à la compréhension profonde de la réalité virtuelle et augmentée. C'est pourquoi ce sujet me passionne et me motive à poursuivre dans les sciences du numérique.
-  </p>
-  <p>
-    Merci de votre attention, je suis prêt à répondre à vos questions.
+    L'histoire des interfaces homme-machine, c'est l'histoire de la démocratisation de l'informatique. À chaque étape, l'objectif a été de rendre la technologie plus accessible, plus intuitive, plus humaine. Aujourd'hui, les IHM sont partout, et leur évolution pose des questions passionnantes pour l'avenir : comment garder le contrôle sur la technologie ? Comment garantir l'inclusion et la sécurité ? C'est un domaine où la technique rencontre l'humain, et qui continuera d'évoluer avec la société. Merci de votre attention, je suis prêt à répondre à vos questions.
   </p>
 </div>
 
-<!-- Références au programme - Sujet 1 -->
+<!-- Références au programme - Sujet 2 -->
 <div class="section program-section no-print">
   <h2 class="section-title">Liens avec les programmes</h2>
   
   <div class="program-links">
     <div class="program-section">
-      <h3><i class="fas fa-calculator"></i> Mathématiques - Terminale</h3>
-      <ul>
-        <li><strong>Géométrie dans l'espace :</strong> Coordonnées, vecteurs, transformations</li>
-        <li><strong>Calcul matriciel :</strong> Opérations sur les matrices, déterminants</li>
-        <li><strong>Fonctions trigonométriques :</strong> Applications aux rotations</li>
-        <li><strong>Nombres complexes :</strong> Représentation des rotations planes</li>
-        <li><strong>Géométrie vectorielle :</strong> Produit scalaire, produit vectoriel</li>
-      </ul>
-    </div>
-    
-    <div class="program-section">
       <h3><i class="fas fa-laptop-code"></i> NSI - Terminale</h3>
       <ul>
-        <li><strong>Programmation :</strong> Algorithmes de transformation géométrique</li>
-        <li><strong>Structures de données :</strong> Représentation des objets 3D (vertices, faces)</li>
-        <li><strong>Architectures matérielles :</strong> GPU et calcul parallèle pour le rendu</li>
-        <li><strong>Interfaces homme-machine :</strong> Interaction avec les objets 3D</li>
-        <li><strong>Modélisation :</strong> Simulation de phénomènes physiques</li>
+        <li><strong>Programmation :</strong> Interfaces graphiques, gestion des événements, programmation orientée objet</li>
+        <li><strong>Web :</strong> HTML, CSS, JavaScript pour créer des interfaces interactives</li>
+        <li><strong>Architecture matérielle :</strong> Périphériques d'entrée/sortie, capteurs tactiles</li>
+        <li><strong>Réseaux :</strong> Protocoles d'interface, API REST pour applications mobiles</li>
+        <li><strong>Bases de données :</strong> Stockage des préférences utilisateur, personnalisation</li>
+        <li><strong>Algorithmes :</strong> Reconnaissance de formes, traitement du signal tactile</li>
       </ul>
     </div>
     
     <div class="program-section">
-      <h3><i class="fas fa-atom"></i> Physique-Chimie (notions)</h3>
+      <h3><i class="fas fa-history"></i> Histoire-Géographie</h3>
       <ul>
-        <li><strong>Mécanique :</strong> Mouvements dans l'espace 3D</li>
-        <li><strong>Ondes :</strong> Propagation de la lumière pour le rendu réaliste</li>
-        <li><strong>Optique :</strong> Projection perspective et géométrie de l'image</li>
+        <li><strong>Mutations des sociétés :</strong> Impact du numérique sur les modes de vie</li>
+        <li><strong>Mondialisation :</strong> Diffusion des technologies d'interface</li>
+        <li><strong>Géopolitique :</strong> Enjeux de souveraineté numérique</li>
+        <li><strong>Histoire contemporaine :</strong> Révolutions technologiques du XXe siècle</li>
+      </ul>
+    </div>
+    
+    <div class="program-section">
+      <h3><i class="fas fa-brain"></i> Philosophie (notions)</h3>
+      <ul>
+        <li><strong>Technique :</strong> Rapport de l'homme à la machine</li>
+        <li><strong>Société :</strong> Transformation des relations sociales</li>
+        <li><strong>Liberté :</strong> Autonomie vs dépendance technologique</li>
+        <li><strong>Travail :</strong> Évolution des métiers avec les IHM</li>
       </ul>
     </div>
   </div>
 </div>
 
-<!-- Questions/Réponses anticipées - Sujet 1 -->
+<!-- Questions/Réponses anticipées - Sujet 2 -->
 <div class="section qna-section no-print">
   <h2 class="section-title">Questions/Réponses anticipées</h2>
 
   <div class="qna">
     <div class="question">
-      "Pourquoi utilise-t-on des matrices 4×4 et non 3×3 pour les transformations 3D ?"
+      "Pourquoi les interfaces tactiles ont-elles eu autant de succès par rapport aux interfaces traditionnelles ?"
     </div>
     <div class="answer">
-      C'est comme avoir une télécommande universelle ! Une matrice 3×3 ne peut que faire tourner et agrandir/rétrécir un objet, mais pas le déplacer. En ajoutant une 4ème dimension (coordonnées homogènes), on peut tout faire d'un coup : tourner, agrandir ET déplacer. C'est comme avoir tous les boutons sur la même télécommande au lieu d'en avoir trois séparées !
+      C'est une question d'intuitivité ! Imaginez que vous appreniez à conduire : est-ce plus facile de tourner un volant ou de taper "tourner_gauche(45°)" ? Le tactile reproduit nos gestes naturels. Quand on veut agrandir une photo, on écarte instinctivement les doigts, c'est exactement le geste du "pinch to zoom". Cette interface exploite notre motricité naturelle, alors que la souris et le clavier demandent un apprentissage spécifique. C'est pourquoi même les enfants de 2 ans savent utiliser une tablette !
     </div>
   </div>
 
   <div class="qna">
     <div class="question">
-      "Comment optimise-t-on ces calculs pour obtenir 60 images par seconde en temps réel ?"
+      "Quels sont les défis actuels pour rendre les interfaces plus accessibles ?"
     </div>
     <div class="answer">
-      Plusieurs techniques d'optimisation sont cruciales. D'abord, le précalcul des matrices statiques qui ne changent pas entre les frames évite des calculs redondants. Ensuite, le Level of Detail (LOD) réduit automatiquement le nombre de polygones des objets distants - un personnage peut passer de 50 000 à 500 polygones selon sa distance. Le culling élimine les objets hors du champ de vision ou cachés derrière d'autres objets. Mais surtout, les GPU modernes permettent de calculer en parallèle sur des milliers de vertices simultanément, transformant ce qui prendrait des heures sur un CPU en quelques millisecondes.
+      L'accessibilité est un enjeu majeur ! Pour les personnes malvoyantes, on développe des interfaces vocales et à retour haptique (vibrations). Pour les personnes à mobilité réduite, on crée des interfaces contrôlées par le regard ou même la pensée. En NSI, on apprend les standards d'accessibilité web (WCAG) qui imposent des contrastes suffisants, des alternatives textuelles aux images, une navigation au clavier. Le défi est de concevoir des interfaces "universelles" dès le départ, plutôt que d'adapter après coup.
     </div>
   </div>
 
   <div class="qna">
     <div class="question">
-      "Quel est le lien concret avec vos projets personnels de modélisation 3D ?"
+      "Comment l'intelligence artificielle transforme-t-elle les interfaces actuelles ?"
     </div>
     <div class="answer">
-      Dans mes projets de modding de jeux vidéo, je travaille régulièrement avec des logiciels comme Blender qui manipulent ces transformations en arrière-plan. Quand je crée un nouveau bâtiment pour un environnement de jeu, je dois comprendre comment les matrices de transformation permettent un placement précis dans l'espace. Pour l'animation de personnages, les rotations matricielles créent des mouvements fluides des articulations. Cette compréhension théorique m'a permis d'optimiser mes modèles pour qu'ils s'intègrent parfaitement dans les moteurs de jeu existants.
+      L'IA révolutionne les IHM en les rendant "prédictives" et "adaptatives". Au lieu d'avoir une interface figée, l'IA analyse votre comportement pour vous proposer les bonnes actions au bon moment. Par exemple, votre smartphone suggère des applications selon l'heure, ou votre assistant vocal comprend le contexte de vos questions. En NSI, on étudie les algorithmes de recommandation et l'apprentissage automatique qui permettent cette personnalisation. L'interface devient un "partenaire intelligent" plutôt qu'un simple outil.
     </div>
   </div>
 
   <div class="qna">
     <div class="question">
-      "Comment les matrices permettent-elles de combiner plusieurs transformations ?"
+      "Quels sont les risques liés à l'évolution des interfaces ?"
     </div>
     <div class="answer">
-      C'est la beauté des mathématiques ! Au lieu d'appliquer chaque transformation une par une (d'abord tourner, puis déplacer, puis agrandir), on peut multiplier les matrices entre elles pour créer une "super-matrice" qui fait tout d'un coup. Par exemple, si je veux faire tourner un cube de 45°, le déplacer de 5 unités à droite, puis le doubler de taille, je multiplie les trois matrices : Échelle × Translation × Rotation. Le résultat est une matrice unique qui transforme directement les coordonnées originales vers le résultat final en une seule opération.
+      Plusieurs risques émergent. D'abord, la "dépendance technologique" : plus les interfaces sont intuitives, moins on comprend ce qui se passe "sous le capot". Ensuite, la "fracture numérique" : ceux qui ne maîtrisent pas les nouvelles interfaces sont exclus. Il y a aussi les questions de vie privée : les interfaces collectent énormément de données sur nos habitudes. Enfin, le risque de "bulle de filtres" : l'IA nous montre ce qu'elle pense qu'on veut voir, limitant notre ouverture d'esprit. C'est pourquoi il faut garder un esprit critique face à ces technologies.
     </div>
   </div>
 
   <div class="qna">
     <div class="question">
-      "Quelles sont les limites actuelles de ces techniques et les perspectives d'évolution ?"
+      "Comment programe-t-on concrètement une interface graphique en NSI ?"
     </div>
     <div class="answer">
-      Les principales limites sont la puissance de calcul nécessaire pour des scènes très complexes, la difficulté de simuler parfaitement certains phénomènes physiques comme les fluides ou les tissus, et le défi du rendu photoréaliste en temps réel. Cependant, l'évolution est constante : l'arrivée du ray-tracing en temps réel révolutionne l'éclairage, l'IA optimise automatiquement les algorithmes, et les nouvelles architectures GPU permettent des calculs toujours plus complexes. La réalité virtuelle et les métavers poussent l'innovation vers des rendus encore plus immersifs.
+      En NSI, on utilise souvent Python avec Tkinter pour créer des interfaces simples. On commence par créer une fenêtre, puis on ajoute des widgets (boutons, zones de texte, labels). L'aspect clé est la "programmation événementielle" : on définit des fonctions qui s'exécutent quand l'utilisateur clique, tape du texte, etc. Par exemple, `bouton.config(command=ma_fonction)` lie une fonction à un clic. Pour le web, on utilise JavaScript avec des "event listeners" comme `addEventListener('click', maFonction)`. C'est une approche très différente de la programmation séquentielle traditionnelle.
     </div>
   </div>
 </div>
 
-<!-- Chapitres de Lycée utilisés - Sujet 1 -->
+<!-- Chapitres de Lycée utilisés - Sujet 2 -->
 <div class="section chapters-section no-print">
   <h2 class="section-title"><i class="fas fa-book"></i> Chapitres de Lycée utilisés</h2>
   
   <div class="chapters-grid">
     <div class="chapter-card">
-      <h3><i class="fas fa-calculator"></i> Mathématiques</h3>
-      <ul>
-        <li>Géométrie dans l'espace (Première/Terminale)</li>
-        <li>Produit scalaire et applications (Première)</li>
-        <li>Trigonométrie et fonctions circulaires (Première/Terminale)</li>
-        <li>Calcul matriciel et systèmes linéaires (Terminale)</li>
-        <li>Géométrie vectorielle 3D (Terminale)</li>
-        <li>Nombres complexes et rotations (Terminale)</li>
-      </ul>
-    </div>
-    
-    <div class="chapter-card">
       <h3><i class="fas fa-laptop-code"></i> NSI</h3>
       <ul>
-        <li>Algorithmique et programmation (Première/Terminale)</li>
-        <li>Structures de données linéaires (Première)</li>
         <li>Programmation orientée objet (Terminale)</li>
-        <li>Modélisation et simulation (Terminale)</li>
-        <li>Architectures matérielles et GPU (Terminale)</li>
-        <li>Interfaces graphiques et interaction (Terminale)</li>
+        <li>Interfaces homme-machine (Terminale)</li>
+        <li>Architectures matérielles (Première/Terminale)</li>
+        <li>Programmation web : HTML, CSS, JavaScript (Terminale)</li>
+        <li>Gestion des événements et programmation événementielle (Terminale)</li>
+        <li>Réseaux et protocoles de communication (Terminale)</li>
+        <li>Accessibilité numérique et standards web (Terminale)</li>
       </ul>
     </div>
     
     <div class="chapter-card">
-      <h3><i class="fas fa-cube"></i> Applications 3D</h3>
+      <h3><i class="fas fa-history"></i> Histoire</h3>
       <ul>
-        <li>Matrices de transformation homogènes</li>
-        <li>Pipeline de rendu 3D</li>
-        <li>Coordonnées barycentriques</li>
-        <li>Optimisation des calculs géométriques</li>
-        <li>Structures de données spatiales (octrees, BSP)</li>
-        <li>Interpolation et animation (keyframes, splines)</li>
+        <li>Mutations des sociétés depuis 1945 (Terminale)</li>
+        <li>Histoire du numérique et de l'informatique</li>
+        <li>Mondialisation et diffusion technologique (Terminale)</li>
+        <li>Révolutions industrielles et technologiques</li>
+        <li>Histoire des sciences et techniques</li>
+        <li>Société de l'information (Première/Terminale)</li>
       </ul>
     </div>
     
     <div class="chapter-card">
-      <h3><i class="fas fa-gamepad"></i> Expérience personnelle</h3>
+      <h3><i class="fas fa-brain"></i> Philosophie</h3>
       <ul>
-        <li>Modélisation 3D avec Blender (depuis 12 ans)</li>
-        <li>Développement de mods pour jeux vidéo</li>
-        <li>Création d'environnements virtuels</li>
-        <li>Programmation de shaders basiques</li>
-        <li>Optimisation de modèles pour le temps réel</li>
-        <li>Compréhension des moteurs 3D (Unity, Unreal)</li>
+        <li>La technique (Terminale)</li>
+        <li>Le travail et les techniques (Terminale)</li>
+        <li>Société et échanges (Terminale)</li>
+        <li>La liberté et le déterminisme (Terminale)</li>
+        <li>L'art et la technique (Terminale)</li>
+        <li>Nature et culture (Terminale)</li>
+      </ul>
+    </div>
+    
+    <div class="chapter-card">
+      <h3><i class="fas fa-cogs"></i> Expérience pratique</h3>
+      <ul>
+        <li>Utilisation quotidienne d'interfaces diverses</li>
+        <li>Programmation d'interfaces en Python (Tkinter)</li>
+        <li>Développement web avec HTML/CSS/JavaScript</li>
+        <li>Analyse critique des applications mobiles</li>
+        <li>Observation de l'évolution des interfaces</li>
+        <li>Réflexion sur l'accessibilité et l'inclusion</li>
       </ul>
     </div>
   </div>

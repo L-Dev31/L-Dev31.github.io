@@ -38,7 +38,7 @@
                 <h3 class="box-title">Définition</h3>
                 <p>Soit $f$ une fonction définie sur un intervalle $I$.</p>
                 <p>On appelle <strong>primitive</strong> de $f$ sur $I$, toute fonction $F$ dérivable sur $I$ telle que pour tout $x \in I$ :</p>
-                <p>$F\'(x) = f(x)$</p>
+                <p>$F'(x) = f(x)$</p>
             </div>
             <div class="theorem-box">
                 <h3 class="box-title">Existence de primitives</h3>
@@ -96,15 +96,14 @@
                     <thead>
                         <tr><th>Fonction $f$</th><th>Une primitive $F$</th><th>Conditions</th></tr>
                     </thead>
-                    <tbody>
-                        <tr><td>$u\' u^n$ <span class="tex2jax_ignore">(</span>$n \in \mathbb{N}$<span class="tex2jax_ignore">)</span></td><td>$\frac{u^{n+1}}{n+1}$</td><td></td></tr>
-                        <tr><td>$u\' u^r$ <span class="tex2jax_ignore">(</span>$r \in \mathbb{R}, r \neq -1$<span class="tex2jax_ignore">)</span></td><td>$\frac{u^{r+1}}{r+1}$</td><td>$u > 0$ si $r$ non entier</td></tr>
-                        <tr><td>$\frac{u\'}{u}$</td><td>$\ln(|u|)$</td><td>$u \neq 0$</td></tr>
-                        <tr><td>$\frac{u\'}{u^n}$ <span class="tex2jax_ignore">(</span>$n \in \mathbb{N}, n \ge 2$<span class="tex2jax_ignore">)</span></td><td>$-\frac{1}{(n-1)u^{n-1}}$</td><td>$u \neq 0$</td></tr>
-                        <tr><td>$\frac{u\'}{\sqrt{u}}$</td><td>$2\sqrt{u}$</td><td>$u > 0$</td></tr>
-                        <tr><td>$u\' e^u$</td><td>$e^u$</td><td></td></tr>
-                        <tr><td>$u\' \cos(u)$</td><td>$\sin(u)$</td><td></td></tr>
-                        <tr><td>$u\' \sin(u)$</td><td>$-\cos(u)$</td><td></td></tr>
+                    <tbody>                        <tr><td>$u' u^n$ <span class="tex2jax_ignore">(</span>$n \in \mathbb{N}$<span class="tex2jax_ignore">)</span></td><td>$\frac{u^{n+1}}{n+1}$</td><td></td></tr>
+                        <tr><td>$u' u^r$ <span class="tex2jax_ignore">(</span>$r \in \mathbb{R}, r \neq -1$<span class="tex2jax_ignore">)</span></td><td>$\frac{u^{r+1}}{r+1}$</td><td>$u > 0$ si $r$ non entier</td></tr>
+                        <tr><td>$\frac{u'}{u}$</td><td>$\ln(|u|)$</td><td>$u \neq 0$</td></tr>
+                        <tr><td>$\frac{u'}{u^n}$ <span class="tex2jax_ignore">(</span>$n \in \mathbb{N}, n \ge 2$<span class="tex2jax_ignore">)</span></td><td>$-\frac{1}{(n-1)u^{n-1}}$</td><td>$u \neq 0$</td></tr>
+                        <tr><td>$\frac{u'}{\sqrt{u}}$</td><td>$2\sqrt{u}$</td><td>$u > 0$</td></tr>
+                        <tr><td>$u' e^u$</td><td>$e^u$</td><td></td></tr>
+                        <tr><td>$u' \cos(u)$</td><td>$\sin(u)$</td><td></td></tr>
+                        <tr><td>$u' \sin(u)$</td><td>$-\cos(u)$</td><td></td></tr>
                     </tbody>
                 </table>
                 </div>
@@ -112,10 +111,9 @@
             <div class="example-box">
                 <h3 class="box-title">Exemples de calcul de primitives</h3>
                 <ol>
-                    <li>$f(x) = 3x^2 - 2x + 5$. Une primitive est $F(x) = 3 \frac{x^3}{3} - 2 \frac{x^2}{2} + 5x = x^3 - x^2 + 5x$.</li>
-                    <li>$g(x) = \frac{2x}{x^2+1}$. C'est de la forme $\frac{u\'}{u}$ avec $u(x) = x^2+1$ <span class="tex2jax_ignore">(</span>$u\'(x)=2x$<span class="tex2jax_ignore">)</span>. Comme $u(x) > 0$, une primitive est $G(x) = \ln(x^2+1)$.</li>
-                    <li>$h(x) = (2x+1)e^{x^2+x}$. C'est de la forme $u\'e^u$ avec $u(x) = x^2+x$ <span class="tex2jax_ignore">(</span>$u\'(x)=2x+1$<span class="tex2jax_ignore">)</span>. Une primitive est $H(x) = e^{x^2+x}$.</li>
-                    <li>$k(x) = \cos(3x)$. On peut écrire $k(x) = \frac{1}{3} \times 3\cos(3x)$. C'est de la forme $\frac{1}{3} u\'\cos(u)$ avec $u(x)=3x$ <span class="tex2jax_ignore">(</span>$u\'(x)=3$<span class="tex2jax_ignore">)</span>. Une primitive est $K(x) = \frac{1}{3} \sin(u) = \frac{1}{3} \sin(3x)$.</li>
+                    <li>$f(x) = 3x^2 - 2x + 5$. Une primitive est $F(x) = 3 \frac{x^3}{3} - 2 \frac{x^2}{2} + 5x = x^3 - x^2 + 5x$.</li>                    <li>$g(x) = \frac{2x}{x^2+1}$. C'est de la forme $\frac{u'}{u}$ avec $u(x) = x^2+1$ <span class="tex2jax_ignore">(</span>$u'(x)=2x$<span class="tex2jax_ignore">)</span>. Comme $u(x) > 0$, une primitive est $G(x) = \ln(x^2+1)$.</li>
+                    <li>$h(x) = (2x+1)e^{x^2+x}$. C'est de la forme $u'e^u$ avec $u(x) = x^2+x$ <span class="tex2jax_ignore">(</span>$u'(x)=2x+1$<span class="tex2jax_ignore">)</span>. Une primitive est $H(x) = e^{x^2+x}$.</li>
+                    <li>$k(x) = \cos(3x)$. On peut écrire $k(x) = \frac{1}{3} \times 3\cos(3x)$. C'est de la forme $\frac{1}{3} u'\cos(u)$ avec $u(x)=3x$ <span class="tex2jax_ignore">(</span>$u'(x)=3$<span class="tex2jax_ignore">)</span>. Une primitive est $K(x) = \frac{1}{3} \sin(u) = \frac{1}{3} \sin(3x)$.</li>
                 </ol>
             </div>
         </section>
