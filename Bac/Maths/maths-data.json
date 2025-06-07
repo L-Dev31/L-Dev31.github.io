@@ -149,36 +149,77 @@
         }
       ],
       "videos": []
-    }
-  ],
+    }  ],
   "exams": [
     {
-      "id": "pondichery-2025",
-      "title": "Pondichéry 2025",
+      "id": "usa2-2025",
+      "title": "Amérique du Nord 2025 (Session 2)",
       "type": "subject",
-      "file": "pondichery-2025.pdf",
-      "correction": "pondichery-2025-correction.pdf"
+      "file": "Bac/usa2-2025.pdf",
+      "correction": "Bac/usa2-2025-c.pdf"
     },
     {
-      "id": "amerique-nord-2024",
-      "title": "Amérique du Nord 2024",
+      "id": "usa-2025",
+      "title": "Amérique du Nord 2025",
       "type": "subject",
-      "file": "amerique-nord-2024.pdf",
-      "correction": "amerique-nord-2024-correction.pdf"
+      "file": "Bac/usa-2025.pdf",
+      "correction": "Bac/usa-2025-c.pdf"
     },
     {
-      "id": "metropole-2024",
-      "title": "Métropole 2024",
+      "id": "suede-2024",
+      "title": "Centres Étrangers Suède 2024",
       "type": "subject",
-      "file": "metropole-2024.pdf",
-      "correction": "metropole-2024-correction.pdf"
+      "file": "Bac/suede-2024.pdf",
+      "correction": "Bac/suede-2024-c.pdf"
     },
     {
-      "id": "liban-2024",
-      "title": "Liban 2024",
+      "id": "polynesie2-2024",
+      "title": "Polynésie 2024 (Session 2)",
       "type": "subject",
-      "file": "liban-2024.pdf",
-      "correction": "liban-2024-correction.pdf"
+      "file": "Bac/polynesie2-2024.pdf",
+      "correction": "Bac/polynesie2-2024-c.pdf"
+    },
+    {
+      "id": "polynesie-2024",
+      "title": "Polynésie 2024",
+      "type": "subject",
+      "file": "Bac/polynesie-2024.pdf",
+      "correction": "Bac/polynesie-2024-c.pdf"
+    },
+    {
+      "id": "latin2-2024",
+      "title": "Amérique du Sud 2024 (Session 2)",
+      "type": "subject",
+      "file": "Bac/latin2-2024.pdf",
+      "correction": "Bac/latin2-2024-c.pdf"
+    },
+    {
+      "id": "latin-2024",
+      "title": "Amérique du Sud 2024",
+      "type": "subject",
+      "file": "Bac/latin-2024.pdf",
+      "correction": "Bac/latin-2024-c.pdf"
+    },
+    {
+      "id": "france2-2024",
+      "title": "France Métropole 2024 (Session 2)",
+      "type": "subject",
+      "file": "Bac/france2-2024.pdf",
+      "correction": "Bac/france2-2024-c.pdf"
+    },
+    {
+      "id": "france-2024",
+      "title": "France Métropole 2024",
+      "type": "subject",
+      "file": "Bac/france-2024.pdf",
+      "correction": "Bac/france-2024-c.pdf"
+    },
+    {
+      "id": "asie-2024",
+      "title": "Asie 2024",
+      "type": "subject",
+      "file": "Bac/asie-2024.pdf",
+      "correction": "Bac/asie-2024-c.pdf"
     }
   ]
 }
