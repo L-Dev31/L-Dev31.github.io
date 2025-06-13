@@ -731,24 +731,11 @@ class NewsManager {
                 });
             }, 150);
             
-        } catch (error) {
-            console.error('Erreur lors de la transition swipe unifiée:', error);
-            // Fallback sur l'ancienne méthode
-            this.displayCurrentArticle(direction);
+        } catch (error) {            console.error('Erreur lors de la transition swipe unifiée:', error);
+            // Fallback sur displayNewsWithAnimation
+            this.displayNewsWithAnimation(article, direction);
         }
-    }
-
-    displayCurrentArticle(direction = null) {
-        if (this.allArticles.length === 0) return;
-        
-        const article = this.allArticles[this.currentArticleIndex];
-        this.displayNewsWithAnimation(article, direction);
-        
-        // Animation de retour à la position centrale
-        setTimeout(() => {
-            this.rssContainer.style.transform = 'translateY(-50%) translateX(0)';
-        }, 50);
-    }    updateSwipeIndicators() {
+    }updateSwipeIndicators() {
         if (!this.swipeIndicators || this.newsFeeds.length <= 1) {
             if (this.swipeIndicators) {
                 this.swipeIndicators.style.display = 'none';
