@@ -364,48 +364,7 @@ class NewsManager {
         } else if (workingFeeds < this.newsFeeds.length / 2) {
             console.warn(`⚠️ Moins de 50% des flux RSS fonctionnent (${workingFeeds}/${this.newsFeeds.length})`);
         }
-    }    async initialize() {
-        this.rssContainer = document.getElementById('rssContainer');
-        this.swipeIndicators = document.getElementById('swipeIndicators');
-        
-        if (!this.rssContainer) {
-            console.error('Élément rssContainer non trouvé dans le DOM');
-        }
-        
-        await this.loadFeedsConfig();
-        this.setupSwipeListeners();
-        
-        // Précharger plusieurs articles
-        await this.preloadArticles();
-    }async fetchNews(maxRetries = 5) {
-        if (maxRetries <= 0) {
-            console.warn('⚠️ Tous les flux RSS ont échoué, arrêt de la récupération');
-            return null;
-        }
-
-        if (this.newsFeeds.length === 0) {
-            console.warn('⚠️ Aucun flux RSS configuré');
-            return null;
-        }
-
-        const feed = this.newsFeeds[this.currentFeedIndex];
-        
-        let article = await this.tryFetchFeed(feed.url, feed);
-        
-        // Si échec, essayer l'URL de backup
-        if (!article && feed.backup) {
-            article = await this.tryFetchFeed(feed.backup, feed);
-        }
-        
-        // Si toujours aucun article, passer au feed suivant
-        if (!article) {
-            this.moveToNextFeed();
-            return await this.fetchNews(maxRetries - 1); // Récursion avec limite réduite
-        }
-        
-        this.moveToNextFeed();
-        return article;
-    }    async tryFetchFeed(url, feed) {
+    }async tryFetchFeed(url, feed) {
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -437,45 +396,33 @@ class NewsManager {
             let items = xml.querySelectorAll("item");
             if (items.length === 0) {
                 items = xml.querySelectorAll("entry"); // Format Atom
-            }
+            }            if (items.length > 0) {
+                // Prendre le premier article disponible
+                const item = items[0];
+                
+                // Support RSS et Atom
+                const title = item.querySelector("title")?.textContent?.trim();
+                const description = item.querySelector("description")?.textContent?.trim() || 
+                                 item.querySelector("summary")?.textContent?.trim() ||
+                                 item.querySelector("content")?.textContent?.trim();
+                const link = item.querySelector("link")?.textContent?.trim() || 
+                           item.querySelector("link")?.getAttribute("href");
+                const pubDate = item.querySelector("pubDate")?.textContent?.trim() ||
+                              item.querySelector("published")?.textContent?.trim() ||
+                              item.querySelector("updated")?.textContent?.trim();
 
-            if (items.length > 0) {
-                // Chercher un article qui n'a pas encore été utilisé
-                for (let i = 0; i < Math.min(items.length, 10); i++) {
-                    const item = items[i];
-                    
-                    // Support RSS et Atom
-                    const title = item.querySelector("title")?.textContent?.trim();
-                    const description = item.querySelector("description")?.textContent?.trim() || 
-                                     item.querySelector("summary")?.textContent?.trim() ||
-                                     item.querySelector("content")?.textContent?.trim();
-                    const link = item.querySelector("link")?.textContent?.trim() || 
-                               item.querySelector("link")?.getAttribute("href");
-                    const pubDate = item.querySelector("pubDate")?.textContent?.trim() ||
-                                  item.querySelector("published")?.textContent?.trim() ||
-                                  item.querySelector("updated")?.textContent?.trim();
-
-                    if (title && !this.usedArticles.has(title)) {
-                        // Marquer comme utilisé
-                        this.usedArticles.add(title);
-                        
-                        // Nettoyer si trop d'articles stockés
-                        if (this.usedArticles.size > this.maxUsedArticles) {
-                            this.cleanUsedArticles();
-                        }
-
-                        return {
-                            title,
-                            description: description ? (description.length > 1500 ? description.substring(0, 1500) + "... [Lire la suite]" : description) : "",
-                            link: link || "#",
-                            pubDate: pubDate ? this.formatDate(pubDate) : "",
-                            feed
-                        };
-                    }
+                if (title) {
+                    return {
+                        title,
+                        description: description ? (description.length > 1500 ? description.substring(0, 1500) + "... [Lire la suite]" : description) : "",
+                        link: link || "#",
+                        pubDate: pubDate ? this.formatDate(pubDate) : "",
+                        feed
+                    };
                 }
             } else {
                 throw new Error('Aucun article trouvé dans le flux');
-            }        } catch (error) {
+            }} catch (error) {
             // Log plus silencieux pour les erreurs courantes
             if (error.message.includes('429') || error.message.includes('HTTP 429')) {
                 console.warn(`⚠️ ${feed.name}: Limite de débit atteinte`);
@@ -499,13 +446,8 @@ class NewsManager {
 
     moveToNextFeed() {
         this.currentFeedIndex = (this.currentFeedIndex + 1) % this.newsFeeds.length;
-    }
-
-    cleanUsedArticles() {
-        // Garder seulement les 25 derniers articles
-        const articlesArray = Array.from(this.usedArticles);
-        this.usedArticles.clear();
-        articlesArray.slice(-25).forEach(article => this.usedArticles.add(article));
+    }    cleanUsedArticles() {
+        // Cette méthode n'est plus nécessaire avec la nouvelle logique
     }
 
     formatDate(dateString) {
@@ -516,25 +458,6 @@ class NewsManager {
         } catch (error) {
             return dateString;
         }
-    }
-
-    // Précharger plusieurs articles pour le swipe
-    async preloadArticles() {
-        console.log('📰 Préchargement des articles...');
-        this.allArticles = [];
-        
-        const articlesToLoad = Math.min(this.newsFeeds.length * 2, 10); // Max 10 articles
-        
-        for (let i = 0; i < articlesToLoad; i++) {
-            const article = await this.fetchNews();
-            if (article) {
-                this.allArticles.push(article);
-            }
-        }
-        
-        console.log(`✅ ${this.allArticles.length} articles préchargés`);
-        this.isSwipeEnabled = this.allArticles.length > 1;
-        this.updateSwipeIndicators();
     }
 
     // Configuration des listeners de swipe
@@ -616,21 +539,34 @@ class NewsManager {
         const minVelocity = 0.3;
         if ((Math.abs(deltaX) > minDistance || velocity > minVelocity) && this.newsFeeds.length > 1) {
             if (deltaX > 0) {
-                this.showPreviousFeed('left');
+                // Swipe vers la droite -> flux précédent
+                this.showPreviousFeed();
             } else {
-                this.showNextFeed('right');
-            }
+                // Swipe vers la gauche -> flux suivant
+                this.showNextFeed();
+            }        } else {
+            // Retour à la position originale si le swipe n'est pas assez fort
+            this.resetSwipePosition();
         }
-    }    async showNextFeed(direction = 'right') {
+    }
+
+    resetSwipePosition() {
+        this.rssContainer.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out';
+        this.rssContainer.style.transform = 'translateY(-50%) translateX(0)';
+        this.rssContainer.style.opacity = '1';
+        this.rssContainer.style.filter = 'none';
+    }
+
+    async showNextFeed() {
         this.currentFeedIndex = (this.currentFeedIndex + 1) % this.newsFeeds.length;
-        await this.displayCurrentFeed(direction);
+        await this.displayCurrentFeed('left');
         this.updateSwipeIndicators();
         resetBackgroundTimer();
     }
 
-    async showPreviousFeed(direction = 'left') {
+    async showPreviousFeed() {
         this.currentFeedIndex = (this.currentFeedIndex - 1 + this.newsFeeds.length) % this.newsFeeds.length;
-        await this.displayCurrentFeed(direction);
+        await this.displayCurrentFeed('right');
         this.updateSwipeIndicators();
         resetBackgroundTimer();
     }
@@ -845,7 +781,7 @@ let backgroundChangeInterval = null; // Référence à l'intervalle de changemen
 function initializeManagers() {
     artDB = new ArtDatabase();
     newsManager = new NewsManager();
-    newsManager.initialize(); // Initialiser le conteneur RSS
+    newsManager.loadFeedsConfig(); // Initialiser les flux RSS
     background = document.getElementById('background');
     metadataDisplay = document.getElementById('metadata');
     
