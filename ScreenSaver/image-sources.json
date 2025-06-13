@@ -1,0 +1,51 @@
+{
+  "sources": {
+    "picsum": {
+      "name": "Picsum Photos",
+      "displayName": "Picsum Photos",
+      "baseUrl": "https://picsum.photos",
+      "type": "random",
+      "enabled": true,
+      "corsEnabled": true,
+      "categories": ["default"],
+      "config": {
+        "width": 1920,
+        "height": 1080,
+        "useRandomIds": true,
+        "idRange": [1, 300],
+        "urlPattern": "{baseUrl}/{width}/{height}?random={seed}"
+      }
+    },
+    "picsumid": {
+      "name": "Picsum ID",
+      "displayName": "Picsum ID",
+      "baseUrl": "https://picsum.photos/id",
+      "type": "id",
+      "enabled": true,
+      "corsEnabled": true,
+      "categories": ["default"],
+      "config": {
+        "width": 1920,
+        "height": 1080,
+        "idRange": [100, 300],
+        "urlPattern": "{baseUrl}/{id}/{width}/{height}"
+      }
+    }
+  },
+
+  "settings": {
+    "defaultDimensions": {
+      "width": 1920,
+      "height": 1080
+    },
+    "wallpapersPerCategory": 4,
+    "fallbackSource": "picsum",
+    "retryAttempts": 3,
+    "loadTimeout": 5000,
+    "metadata": {
+      "culture": "Photographie moderne",
+      "medium": "Photographie numérique HD",
+      "department": "Collection dynamique"
+    }
+ }
+}

@@ -1,0 +1,49 @@
+{
+  "feeds": [
+    {
+      "url": "https://api.allorigins.win/get?url=https://fetchrss.com/rss/684c9202221e064f3c0b3f73684c91e5f84770f5800b6842.xml",
+      "logo": "images/RSS/LMP.png",
+      "name": "Le Media Positif"
+    },
+    {
+      "url": "https://api.allorigins.win/get?url=https://www.lemonde.fr/rss/une.xml",
+      "logo": "images/RSS/LeMonde.png",
+      "name": "Le Monde"
+    },
+    {
+      "url": "https://api.allorigins.win/get?url=https://www.bfmtv.com/rss/info/flux-rss/flux-toutes-les-actualites/",
+      "logo": "images/RSS/BFMTV.png",
+      "name": "BFMTV"
+    },
+    {
+      "url": "https://api.allorigins.win/get?url=https://www.francetvinfo.fr/monde.rss",
+      "logo": "images/RSS/FranceInfo.png",
+      "name": "France Info"
+    },
+    {
+      "url": "https://api.allorigins.win/get?url=https://www.jeuxactu.com/rss/news.rss",
+      "logo": "images/RSS/JeuxActu.png",
+      "name": "JeuxActu"
+    },
+    {
+      "url": "https://api.allorigins.win/get?url=https://www.gamespot.com/feeds/game-news/",
+      "logo": "images/RSS/GameSpot.png",
+      "name": "GameSpot"
+    },
+    {
+      "url": "https://api.allorigins.win/get?url=https://www.gamekult.com/feed.xml",
+      "logo": "images/RSS/GameKult.png",
+      "name": "GameKult"
+    },
+    {
+      "url": "https://api.allorigins.win/get?url=https://gamergen.com/rss",
+      "logo": "images/RSS/GamerGen.png",
+      "name": "GAMERGEN"
+    },
+    {
+      "url": "https://api.allorigins.win/get?url=https://www.allocine.fr/rss/news.xml",
+      "logo": "images/RSS/AlloCine.png",
+      "name": "Allociné"
+    }
+  ]
+}
