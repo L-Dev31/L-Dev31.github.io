@@ -1,5 +1,3 @@
-/* ===== SUPPORTERS SECTION - MOBILE - IMAGES 2X PLUS GRANDES ===== */
-
 @media (max-width: 768px) {
   .supporters-section {
     background: #181818;
@@ -34,7 +32,7 @@
   }
 
   .supporter-img {
-    height: 72px; /* 2x plus grand que les 36px précédents */
+    height: 72px;
     width: auto;
     object-fit: contain;
     filter: grayscale(0.1) brightness(0.98);
@@ -74,7 +72,7 @@
   }
 
   .supporter-img {
-    height: 60px; /* 2.5x plus grand que les 24px précédents */
+    height: 60px;
   }
 
   .supporters-track {

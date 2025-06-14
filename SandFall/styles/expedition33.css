@@ -1,359 +1,351 @@
-/* Expedition 33 section styles */
 .expedition33-section {
-    position: relative;
-    overflow: hidden;
-    width: 100vw;
-    min-height: 120vh;
-    height: auto;
-    background: url('../images/coe33bg.png') center center / cover no-repeat fixed;
-    padding-bottom: 100px;
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+  min-height: 120vh;
+  height: auto;
+  background: url('../images/coe33bg.png') center center / cover no-repeat fixed;
+  padding-bottom: 100px;
 }
 
 .expedition33-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: url('../images/petal.png') center center / cover no-repeat;
-    z-index: 2;
-    pointer-events: none;
-    opacity: 1;
-    will-change: transform;
-    transition: opacity 0.3s;
-    transform: translateY(calc(240px + var(--petal-parallax, 0px)));
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: url('../images/petal.png') center center / cover no-repeat;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 1;
+  will-change: transform;
+  transition: opacity 0.3s;
+  transform: translateY(calc(240px + var(--petal-parallax, 0px)));
 }
 
 .expedition33-game-section {
-    width: 100vw;
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    position: relative;
-    z-index: 10;
-    padding: 60px 0;
+  width: 100vw;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  position: relative;
+  z-index: 10;
+  padding: 60px 0;
 }
 
 .expedition33-game-inner {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    max-width: 1100px;
-    gap: 15px;
-    min-height: unset;
-    height: unset;
-    opacity: 0;
-    transform: translateY(60px);
-    transition: opacity 0.8s cubic-bezier(.77,0,.18,1), transform 0.8s cubic-bezier(.77,0,.18,1);
-    margin-left: -60px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  max-width: 1100px;
+  gap: 15px;
+  min-height: unset;
+  height: unset;
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.8s cubic-bezier(.77,0,.18,1), transform 0.8s cubic-bezier(.77,0,.18,1);
+  margin-left: -60px;
 }
 
 .expedition33-game-inner.visible {
-    opacity: 1;
-    transform: none;
+  opacity: 1;
+  transform: none;
 }
 
 .expedition33-game-img {
-    display: flex;
-    align-items: stretch;
-    justify-content: flex-end;
-    height: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  height: 100%;
 }
 .expedition33-game-img img {
-    max-width: 410px;
-    object-fit: cover;
+  max-width: 410px;
+  object-fit: cover;
 }
 
 .expedition33-game-content {
-    height: 100%;
-    flex: 1 1 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: stretch;
-    color: #fff;
-    font-size: 1rem;
-    line-height: 1.5;
-    background: rgba(0,0,0,0.78);
-    padding: 28px 32px 22px 32px;
-    box-shadow: 0 8px 32px 0 rgba(33,33,33,0.18);
-    min-width: 320px;
-    max-width: 600px;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  height: 100%;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: stretch;
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.5;
+  background: rgba(0,0,0,0.78);
+  padding: 28px 32px 22px 32px;
+  box-shadow: 0 8px 32px 0 rgba(33,33,33,0.18);
+  min-width: 320px;
+  max-width: 600px;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
 }
 
 .expedition33-btn-row {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    margin-bottom: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .exp33-newsletter {
-    margin-top: 13px;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    align-items: center;
+  margin-top: 13px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
 }
 .exp33-newsletter label {
-    display: none;
+  display: none;
 }
 .exp33-newsletter input[type="email"] {
-    flex: 1 1 0;
-    margin-bottom: 0;
-    min-width: 0;
-}
-.exp33-newsletter button {
-    flex: 0 0 auto;
-    margin-left: 0;
-}
-
-.exp33-newsletter input[type="email"] {
-    padding: 0.9em 1.2em;
-    font-size: 1em;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-    background: #181818;
-    color: #fff;
-    border: 2px solid #fff;
-    outline: none;
-    box-shadow: none;
-    border-radius: 0;
-    transition: border 0.18s;
+  flex: 1 1 0;
+  margin-bottom: 0;
+  min-width: 0;
+  padding: 0.9em 1.2em;
+  font-size: 1em;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  background: #181818;
+  color: #fff;
+  border: 2px solid #fff;
+  outline: none;
+  box-shadow: none;
+  border-radius: 0;
+  transition: border 0.18s;
 }
 .exp33-newsletter input[type="email"]:focus {
-    border: 2px solid #bbb;
+  border: 2px solid #bbb;
 }
 .exp33-newsletter button {
-    padding: 0.9em 2em;
-    background: #fff;
-    color: #181818;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-    font-weight: 700;
-    font-size: 1em;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    box-shadow: none;
-    border-radius: 0;
-    transition: background 0.18s, color 0.18s;
+  flex: 0 0 auto;
+  margin-left: 0;
+  padding: 0.9em 2em;
+  background: #fff;
+  color: #181818;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  box-shadow: none;
+  border-radius: 0;
+  transition: background 0.18s, color 0.18s;
 }
 .exp33-newsletter button:hover {
-    background: #f2f2f2;
-    color: #181818;
+  background: #f2f2f2;
+  color: #181818;
 }
 
 .expedition33-logo-normal {
-    display: block;
-    margin: 100px auto auto 32px;
-    max-width: 340px;
-    width: 38vw;
-    height: auto;
-    pointer-events: none;
-    filter: drop-shadow(0 4px 24px rgba(33,33,33,0.22));
-    position: relative;
-    z-index: 11;
-    left: 0;
+  display: block;
+  margin: 100px auto auto 32px;
+  max-width: 340px;
+  width: 38vw;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 24px rgba(33,33,33,0.22));
+  position: relative;
+  z-index: 11;
+  left: 0;
 }
 
 .expedition33-logo-sticky {
-    position: fixed;
-    top: 100px;
-    left: 32px !important;
-    transform: none;
-    z-index: 11;
-    display: none;
-    margin: 0 0 32px 0;
-    max-width: 340px;
-    width: 38vw;
-    height: auto;
-    pointer-events: none;
-    filter: drop-shadow(0 4px 24px rgba(33,33,33,0.22));
-    transition: opacity 0.2s;
+  position: fixed;
+  top: 100px;
+  left: 32px !important;
+  transform: none;
+  z-index: 11;
+  display: none;
+  margin: 0 0 32px 0;
+  max-width: 340px;
+  width: 38vw;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 24px rgba(33,33,33,0.22));
+  transition: opacity 0.2s;
 }
 .expedition33-logo-sticky.visible {
-    display: block;
-    opacity: 1;
+  display: block;
+  opacity: 1;
 }
 
 .expedition33-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 50%, #000 100%);
-    z-index: 10;
-    pointer-events: none;
-    opacity: 1;
-    transition: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 50%, #000 100%);
+  z-index: 10;
+  pointer-events: none;
+  opacity: 1;
+  transition: none;
 }
 .expedition33-overlay.fixed {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
 }
 
 .expedition33-game-content h2 {
-    color: #E3BB70 !important;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-    font-size: 2em;
-    margin-bottom: 0.7em;
-    letter-spacing: 0.04em;
+  color: #E3BB70 !important;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-size: 2em;
+  margin-bottom: 0.7em;
+  letter-spacing: 0.04em;
 }
 
-/* --- Boutons premium différenciés, sobres et élégants --- */
 .expedition33-game-content .exp33-btn {
-    display: inline-block;
-    padding: 0.45em 1.2em;
-    font-size: 1em;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    border: none;
-    outline: none;
-    border-radius: 0;
-    margin-bottom: 0;
-    margin-right: 12px;
-    margin-top: 10px;    transition: background 0.18s, color 0.18s, border 0.18s;
-    cursor: pointer;
-    vertical-align: middle;
-    min-width: 110px;
-    text-decoration: none;
-    box-shadow: none;
+  display: inline-block;
+  padding: 0.45em 1.2em;
+  font-size: 1em;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border: none;
+  outline: none;
+  border-radius: 0;
+  margin-bottom: 0;
+  margin-right: 12px;
+  margin-top: 10px;
+  transition: background 0.18s, color 0.18s, border 0.18s;
+  cursor: pointer;
+  vertical-align: middle;
+  min-width: 110px;
+  text-decoration: none;
+  box-shadow: none;
 }
 .expedition33-game-content .exp33-btn.buy-now {
-    display: inline-block;
-    background: #E3BB70;
-    color: #181818;
-    border: 2px solid #E3BB70;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-    font-weight: 700;
-    font-size: 1.08em;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 0.6em 2em;
-    border-radius: 0;
-    margin: 14px 16px 0 0;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.18s, color 0.18s, border 0.18s;
-    box-shadow: none;
+  display: inline-block;
+  background: #E3BB70;
+  color: #181818;
+  border: 2px solid #E3BB70;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1.08em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.6em 2em;
+  border-radius: 0;
+  margin: 14px 16px 0 0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border 0.18s;
+  box-shadow: none;
 }
 .expedition33-game-content .exp33-btn.buy-now:hover {
-    background: #fff;
-    color: #181818;
-    border: 2px solid #E3BB70;
+  background: #fff;
+  color: #181818;
+  border: 2px solid #E3BB70;
 }
 .expedition33-game-content .exp33-btn.secondary {
-    background: transparent;
-    color: #E3BB70;
-    border: 1.5px solid #E3BB70;
-    position: relative;
-    padding-right: 2.8em;
-    box-shadow: none;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background: transparent;
+  color: #E3BB70;
+  border: 1.5px solid #E3BB70;
+  position: relative;
+  padding-right: 2.8em;
+  box-shadow: none;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .expedition33-game-content .exp33-btn.secondary:hover {
-    background: #E3BB70;
-    color: #181818;
-    border: 1.5px solid #E3BB70;
+  background: #E3BB70;
+  color: #181818;
+  border: 1.5px solid #E3BB70;
 }
-
 .expedition33-game-content .exp33-btn.secondary:hover::after {
-    transform: translateY(-50%) translateX(3px);
+  transform: translateY(-50%) translateX(3px);
 }
 .expedition33-game-content .exp33-btn.secondary::after {
-    content: '→';
-    font-family: inherit;
-    font-weight: normal;
-    position: absolute;
-    right: 0.8em;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.5rem;
-    transition: transform 0.3s;
+  content: '\2192';
+  font-family: inherit;
+  font-weight: normal;
+  position: absolute;
+  right: 0.8em;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+  transition: transform 0.3s;
 }
 
 .expedition33-game-content .exp33-btn:last-child {
-    margin-right: 0;
+  margin-right: 0;
 }
 .expedition33-game-content a.exp33-link {
-    color: #E3BB70;
-    text-decoration: underline;
-    font-weight: 600;
-    cursor: pointer;
-    transition: color 0.18s;
+  color: #E3BB70;
+  text-decoration: underline;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.18s;
 }
 .expedition33-game-content a.exp33-link:hover {
-    color: #fff;
-    text-decoration: underline;
+  color: #fff;
+  text-decoration: underline;
 }
 
-/* --- Section Trailer Premium --- */
 .expedition33-trailer-section {
-    width: 100vw;
-    padding: 80px 0 60px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    z-index: 5;
+  width: 100vw;
+  padding: 80px 0 60px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 5;
 }
 .expedition33-trailer-container {
-    max-width: 1200px;
-    width: 100%;
-    padding: 0 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-    opacity: 0;
-    transform: translateY(60px);
-    transition: opacity 0.8s cubic-bezier(.33,1,.68,1), transform 0.8s cubic-bezier(.33,1,.68,1);
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.8s cubic-bezier(.33,1,.68,1), transform 0.8s cubic-bezier(.33,1,.68,1);
 }
 .expedition33-trailer-container.visible {
-    opacity: 1;
-    transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 .expedition33-trailer-title {
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-    font-size: 2.5em;
-    color: #E3BB70;
-    text-align: center;
-    letter-spacing: 0.05em;
-    margin: 0;
-    text-transform: uppercase;
-    padding: 0.5em 2em;
-    border-radius: 2em;
-    background: rgba(20, 20, 20, 0.55);
-    box-shadow: 0 4px 32px 0 rgba(33,33,33,0.22), 0 1.5px 8px 0 rgba(33,33,33,0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1.5px solid #E3BB70;
-    display: inline-block;
-    font-weight: 600;
-    text-shadow: 0 2px 12px #000, 0 1px 0 #E3BB70;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-size: 2.5em;
+  color: #E3BB70;
+  text-align: center;
+  letter-spacing: 0.05em;
+  margin: 0;
+  text-transform: uppercase;
+  padding: 0.5em 2em;
+  border-radius: 2em;
+  background: rgba(20, 20, 20, 0.55);
+  box-shadow: 0 4px 32px 0 rgba(33,33,33,0.22), 0 1.5px 8px 0 rgba(33,33,33,0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid #E3BB70;
+  display: inline-block;
+  font-weight: 600;
+  text-shadow: 0 2px 12px #000, 0 1px 0 #E3BB70;
 }
 .expedition33-trailer-iframe {
-    width: 100%;
-    max-width: 1000px;
-    height: 562px;
-    border: none;
-    border-radius: 0;
-    box-shadow: 0 16px 64px 0 rgba(33,33,33,0.28), 0 4px 16px 0 rgba(33,33,33,0.18);
-    background: #000;
+  width: 100%;
+  max-width: 1000px;
+  height: 562px;
+  border: none;
+  border-radius: 0;
+  box-shadow: 0 16px 64px 0 rgba(33,33,33,0.28), 0 4px 16px 0 rgba(33,33,33,0.18);
+  background: #000;
 }

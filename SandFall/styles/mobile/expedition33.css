@@ -1,5 +1,3 @@
-/* ===== MOBILE EXPEDITION33 SECTION - IRREPROCHABLEMENT RESPONSIVE ===== */
-
 @media (max-width: 768px) {
   .expedition33-section {
     position: relative;
@@ -26,7 +24,8 @@
     will-change: transform;
     transition: opacity 0.3s;
   }
-    .expedition33-overlay {
+  
+  .expedition33-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -38,7 +37,6 @@
     opacity: 1;
   }
   
-  /* Logo avec z-index 15 comme demandé */
   .expedition33-logo-normal {
     display: block;
     width: 340px;
@@ -55,7 +53,6 @@
     display: none !important;
   }
   
-  /* --- Section Trailer Premium Mobile avec arrondis --- */
   .expedition33-trailer-section {
     width: 100vw;
     padding: 100px 0;
@@ -99,7 +96,6 @@
     text-overflow: ellipsis;
   }
   
-  /* Trailer arrondi comme demandé */
   .expedition33-trailer-iframe {
     width: 100% !important;
     height: auto !important;
@@ -113,7 +109,6 @@
     background: #000;
   }
   
-  /* --- Section Game Mobile Full Width --- */
   .expedition33-game-section {
     width: 100vw;
     min-height: auto;
@@ -142,6 +137,7 @@
     opacity: 1;
     transform: translateY(0);
   }
+  
   .expedition33-game-content {
     width: 100vw;
     max-width: 100vw;
@@ -164,7 +160,7 @@
     justify-content: center;
     text-align: center;
   }
-    /* Titres sur une ligne comme demandé */
+  
   .expedition33-game-content h2 {
     font-family: 'Raylig', 'Montserrat', sans-serif;
     font-size: 1.8rem;
@@ -179,7 +175,8 @@
     width: 100%;
     max-width: 90vw;
   }
-    .expedition33-game-content p {
+  
+  .expedition33-game-content p {
     font-family: 'Montserrat', sans-serif;
     font-size: 1rem;
     line-height: 1.6;
@@ -191,7 +188,7 @@
     margin-left: auto;
     margin-right: auto;
   }
-    /* Image jeu espacée et arrondie comme demandé */
+  
   .expedition33-game-img {
     width: 100%;
     order: 2;
@@ -323,7 +320,6 @@
   }
 }
 
-/* --- Responsive pour très petits écrans --- */
 @media (max-width: 480px) {
   .expedition33-logo-normal {
     width: 280px;
