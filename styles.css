@@ -346,25 +346,7 @@ name {
     top: 0;
 }
 
-.Ig-link{
-    text-align: right;
-    margin-right: 2vh;
-    height: 8vh;
-    pointer-events: none;
-    transition: transform 0.15s ease;
-}
-
-.Ig-link:hover{
-    transform: translateY(-0.3vh);
-}
-
-.Ig-link a{
-    pointer-events:all;
-    text-decoration: none;
-    position: relative;
-    color: #e0e0e0;
-    font-size: 3vh;
-}
+/* Instagram link removed */
 
 #infos{
     margin-left: 2.5vh;

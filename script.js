@@ -168,11 +168,20 @@ async function loadProjects() {
                             <div class="card-creator">${project.creator}</div>
                         </div>
                     </div>
-                </a>`;
-            gallery.appendChild(projectElement);
+                </a>`;            gallery.appendChild(projectElement);
         });
         if (isMobileDevice()) {
             setTimeout(performUpdateCenterElements, 200); 
+            // Handle .no-phone links on mobile after projects are loaded
+            document.querySelectorAll('.gallery-item.no-phone a').forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    alert("Ce site n'est pas accessible sur un téléphone.");
+                });
+                if (link.parentElement) {
+                    link.parentElement.style.cursor = 'not-allowed';
+                }
+            });
         }
     } catch (error) {
         console.error('Error loading projects:', error);
@@ -406,21 +415,8 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("Ce site n'est pas accessible pour l'instant");
         });
         link.style.cursor = 'not-allowed';
-    });
-
-    // Mobile-specific adjustments and event handlers
+    });    // Mobile-specific adjustments and event handlers
     if (isMobileDevice()) {
-        // Handle .no-phone links (mobile only)
-        document.querySelectorAll('.gallery-item.no-phone a').forEach(link => {
-            link.addEventListener('click', function (event) {
-                event.preventDefault();
-                alert("Ce site n'est pas accessible sur un téléphone.");
-            });
-            if (link.parentElement) {
-                link.parentElement.style.cursor = 'not-allowed';
-            }
-        });
-
         // Initial call for center detection after everything is potentially loaded/shown
         setTimeout(performUpdateCenterElements, 250);
     }
