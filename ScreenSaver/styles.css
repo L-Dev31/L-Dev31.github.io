@@ -113,6 +113,8 @@ body, html {
     touch-action: pan-x;
     will-change: transform, opacity;
     transform-origin: center;
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
 }
 
 #rssContainer:active {
@@ -121,7 +123,6 @@ body, html {
 
 .rss-card {
     background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(30px);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 20px;
     padding: 20px 50px 20px 24px;
@@ -184,15 +185,17 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 12px;
     min-width: 80px;
+    height: 100%;
 }
 
 .rss-logo {
     width: 64px;
     height: 64px;
     border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: none;
     transition: transform 0.3s ease;
     object-fit: cover;
 }
@@ -255,6 +258,11 @@ body, html {
     color: #93c5fd;
 }
 
+.rss-description strong {
+    font-size: 1em;
+    font-weight: 600;
+}
+
 /* Indicateurs de swipe */
 .swipe-indicators {
     position: absolute;
@@ -312,28 +320,4 @@ body, html {
     border-color: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px) scale(1.05);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-.rss-description img {
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    height: 180px;
-    width: auto;
-    margin: 8px 0;
-}
-
-.rss-description a {
-    color: #60a5fa;
-    font-weight: 600;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.rss-description a:hover {
-    color: #93c5fd;
-}
-
-.rss-description strong {
-    font-size: 1em;
-    font-weight: 600;
 }
