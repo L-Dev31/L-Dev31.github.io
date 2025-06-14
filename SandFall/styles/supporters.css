@@ -1,0 +1,91 @@
+/* Section fond sombre avec carrousel infini */
+.supporters-section {
+    background: #181818;
+    padding: 64px 0 64px 0;
+    color: #fff;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.supporters-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.supporters-title {
+    font-family: 'Raylig', 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-size: 2em;
+    color: #E3BB70;
+    margin-bottom: 2.5em;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+}
+
+.supporters-slider {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    height: 120px;
+    display: flex;
+    align-items: center;
+}
+
+.supporters-track {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    animation: supporters-scroll 30s linear infinite;
+    will-change: transform;
+    /* Largeur calculée pour permettre le loop seamless */
+    width: max-content;
+}
+
+.supporter-img {
+    height: 90px;
+    width: 200px;
+    object-fit: contain;
+    filter: grayscale(0.1) brightness(0.98);
+    opacity: 0.95;
+    transition: filter 0.2s;
+    background: transparent;
+    flex-shrink: 0;
+}
+
+.supporter-img:hover {
+    filter: none;
+    opacity: 1;
+}
+
+@keyframes supporters-scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(-3 * (200px + 60px)));
+    }
+}
+
+@media (max-width: 700px) {
+    .supporters-title {
+        font-size: 1.2em;
+    }
+    .supporters-slider {
+        height: 70px;
+    }
+    .supporter-img {
+        height: 45px;
+        width: 120px;
+    }
+    .supporters-track {
+        gap: 30px;
+    }
+    @keyframes supporters-scroll {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(calc(-3 * (120px + 30px)));
+        }
+    }
+}

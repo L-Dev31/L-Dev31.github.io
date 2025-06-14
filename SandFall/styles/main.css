@@ -1,0 +1,11 @@
+/* Main styles - imports all section styles */
+@import 'base.css';
+@import 'intro.css';
+@import 'navbar.css';
+@import 'hero.css';
+@import 'about.css';
+@import 'expedition33.css';
+@import 'team.css';
+@import 'contact.css';
+@import 'supporters.css';
+@import 'footer.css';

@@ -1,0 +1,272 @@
+/* Sandfall Team Section - Redesigned */
+.sandfall-team-section {
+    width: 100%;
+    min-height: 100vh;
+    background: #111;
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.sandfall-team-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 70%, rgba(227, 187, 112, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.sandfall-team-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.sandfall-team-title {
+    font-family: 'Raylig', 'Montserrat', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: #E3BB70;
+    text-align: center;
+    letter-spacing: 0.05em;
+    margin: 0 0 20px 0;
+    font-weight: 700;
+}
+
+.sandfall-team-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    text-align: center;
+    margin: 0 0 60px 0;
+    letter-spacing: 0.02em;
+    font-weight: 300;
+}
+
+.sandfall-team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.team-member {
+    background: rgba(15, 15, 15, 0.95);
+    border: 2px solid rgba(227, 187, 112, 0.3);
+    padding: 30px;
+    position: relative;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.team-member::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(227, 187, 112, 0.05) 0%, transparent 50%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.team-member-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid #E3BB70;
+    object-fit: cover;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+.team-member-name {
+    font-family: 'Raylig', 'Montserrat', sans-serif;
+    color: #E3BB70;
+    font-size: 1.4rem;
+    margin: 0 0 8px 0;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.team-member-role {
+    font-family: 'Montserrat', sans-serif;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    text-align: center;
+    margin: 0 0 15px 0;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.team-member-bio {
+    font-family: 'Montserrat', sans-serif;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-align: center;
+    margin: 0 0 20px 0;
+    font-weight: 300;
+}
+
+.team-member-favorites {
+    font-family: 'Montserrat', sans-serif;
+    color: rgba(227, 187, 112, 0.9);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-align: center;
+    margin: 15px 0 0 0;
+    font-weight: 400;
+    border-top: 1px solid rgba(227, 187, 112, 0.2);
+    padding-top: 15px;
+}
+
+.team-member-favorites span {
+    color: #E3BB70;
+    font-weight: 600;
+}
+
+.team-member-links {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.team-link {
+    color: #E3BB70;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: 1px solid rgba(227, 187, 112, 0.5);
+    transition: all 0.3s;
+    display: inline-block;
+    position: relative;
+    padding-right: 35px;
+}
+
+.team-link::after {
+    content: '→';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    transition: transform 0.3s;
+}
+
+.team-link:hover {
+    background: rgba(227, 187, 112, 0.1);
+    border-color: #E3BB70;
+    transform: translateY(-2px);
+}
+
+.team-link:hover::after {
+    transform: translateY(-50%) translateX(3px);
+}
+
+/* Bouton Discover all team members */
+.team-discover-section {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 40px;
+    border-top: 1px solid #333;
+}
+
+.team-discover-btn {
+    display: inline-block;
+    padding: 0.8em 2em;
+    background: transparent;
+    color: #E3BB70;
+    border: 2px solid #E3BB70;
+    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-size: 1.1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    text-decoration: none;
+    position: relative;
+}
+
+.team-discover-btn:hover {
+    background: #E3BB70;
+    color: #212121;
+    transform: translateY(-2px);
+}
+
+.team-discover-btn:hover::after {
+    transform: translateX(3px);
+}
+
+.team-discover-btn::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 8px;
+    transition: transform 0.3s;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .sandfall-team-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sandfall-team-section {
+        padding: 60px 0;
+    }
+    
+    .sandfall-team-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        padding: 0 10px;
+    }
+    
+    .team-member {
+        padding: 25px 20px;
+    }
+    
+    .sandfall-team-subtitle {
+        margin-bottom: 40px;
+    }
+    
+    .team-discover-section {
+        margin-top: 40px;
+        padding-top: 30px;
+    }
+    
+    .team-discover-btn {
+        font-size: 1em;
+        padding: 0.7em 1.5em;
+    }
+}
+
+@media (max-width: 480px) {
+    .sandfall-team-container {
+        padding: 0 15px;
+    }
+    
+    .team-member {
+        padding: 20px 15px;
+    }
+    
+    .team-member-photo {
+        width: 100px;
+        height: 100px;
+    }
+}

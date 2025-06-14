@@ -1,0 +1,43 @@
+/* Base styles - reset, fonts, global styles */
+
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #000;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* Font faces */
+@font-face {
+    font-family: 'Raylig';
+    src: url('../fonts/raylig.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../fonts/montserrat.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inria';
+    src: url('../fonts/inria.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Global utility classes */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
