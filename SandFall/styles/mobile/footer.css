@@ -1,0 +1,46 @@
+/* ===== FOOTER SECTION - MOBILE - MATCHING DESKTOP ===== */
+
+@media (max-width: 768px) {
+  .footer {
+    background: #111;
+    color: #ccc;
+    padding: 30px 12px;
+    text-align: center;
+    border-top: 1px solid #333;
+  }
+
+  .footer-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  .footer-copyright {
+    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-size: 0.8em;
+    margin-bottom: 8px;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .footer-legal {
+    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-size: 0.7em;
+    color: #888;
+    margin: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 20px 2vw;
+  }
+
+  .footer-copyright {
+    font-size: 0.75em;
+  }
+
+  .footer-legal {
+    font-size: 0.65em;
+  }
+}

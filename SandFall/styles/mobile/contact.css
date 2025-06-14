@@ -1,0 +1,88 @@
+/* ===== MOBILE CONTACT SECTION - FIDELE AU DESKTOP ===== */
+
+@media (max-width: 768px) {
+  .contact-section {
+    padding: 80px 0;
+    background: #E3BB70;
+    color: #181818;
+    height: auto;
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .contact-container {
+    max-width: 100%;
+    width: 100%;
+    padding: 0 20px;
+    text-align: center;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .contact-title {
+    font-family: 'Raylig', 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-size: 2rem;
+    color: #181818;
+    margin-bottom: 1.5em;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+  
+  .contact-text {
+    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #181818;
+    margin-bottom: 1.2em;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .contact-email {
+    margin-top: 2.5em;
+  }
+  
+  .contact-email a {
+    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-size: 1.1rem;
+    color: #181818;
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.8em 1.5em;
+    border: 2px solid #181818;
+    display: inline-block;
+    background: transparent;
+    transition: background 0.3s cubic-bezier(.25,.8,.25,1), color 0.3s cubic-bezier(.25,.8,.25,1);
+    box-shadow: none;
+    border-radius: 0;
+  }
+  
+  .contact-email a:hover {
+    background: #181818;
+    color: #E3BB70;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-section {
+    padding: 60px 0;
+  }
+  
+  .contact-title {
+    font-size: 1.8rem;
+  }
+  
+  .contact-text {
+    font-size: 0.95rem;
+  }
+  
+  .contact-email a {
+    font-size: 1rem;
+    padding: 0.7em 1.2em;
+  }
+}

@@ -28,7 +28,7 @@
 }
 
 .sandfall-team-title {
-    font-family: 'Raylig', 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: clamp(2.5rem, 5vw, 4rem);
     color: #E3BB70;
     text-align: center;
@@ -89,7 +89,7 @@
 }
 
 .team-member-name {
-    font-family: 'Raylig', 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     color: #E3BB70;
     font-size: 1.4rem;
     margin: 0 0 8px 0;
