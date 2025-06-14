@@ -6,12 +6,20 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="icon" href="images/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <header class="navbar">
-        <div class="navbar-logo">
-            <img src="images/svg/logo.svg" alt="Sandfall Logo" />
-        </div>        <nav>
+<body>    <header class="navbar">
+        <div class="navbar-inner">
+            <div class="navbar-logo">
+                <img src="images/svg/logo.svg" alt="Sandfall Logo" />
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav>
             <ul>
                 <li><a href="#home">Home</a></li>
                 <li><a href="#sandfall-team">Team</a></li>
@@ -23,6 +31,23 @@
             <a href="#" title="X"><i class="fab fa-x-twitter"></i></a>
             <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
             <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        </div>
+        
+        <!-- Mobile menu overlay -->
+        <div class="mobile-menu-overlay">
+            <div class="mobile-nav">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#sandfall-team">Team</a></li>
+                    <li><a href="#blog">Blog</a></li>
+                </ul>
+            </div>
+            <div class="mobile-social-icons">
+                <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" title="X"><i class="fab fa-x-twitter"></i></a>
+                <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            </div>
         </div>
     </header>
     <div class="navbar-underline"></div>
@@ -136,7 +161,6 @@
                     <div class="team-member-role">COO & Producer</div>
                     <p class="team-member-bio">François worked as Project Manager and Product Manager in tech companies, after graduating in management and creative industries. At Sandfall, he handles business & production.</p>
                     <div class="team-member-favorites">
-                        <span>Favorite games:</span> Disco Elysium, Celeste, Zelda Majora's Mask, Inside, Chrono Trigger
                     </div>
                 </div>
                 <!-- Jennifer Svedberg-Yen -->
@@ -222,5 +246,6 @@
     <script src="js/expedition33.js"></script>
     <script src="js/team.js"></script>
     <script src="js/contact.js"></script>
+    <script src="js/mobile-navbar.js"></script>
 </body>
 </html>

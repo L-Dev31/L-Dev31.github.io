@@ -1,8 +1,7 @@
 // JS pour la section Expedition 33
 // Sticky logo, overlay, fade-in, parallax, trailer/game fade-in
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Sticky logo & overlay
+document.addEventListener('DOMContentLoaded', function() {  // Sticky logo & overlay
   function updateExpedition33Elements() {
     const section = document.querySelector('.expedition33-section');
     const nextSection = document.querySelector('.sandfall-team-section');
@@ -10,6 +9,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoSticky = document.getElementById('exp33-logo-sticky');
     const logoNormal = document.querySelector('.expedition33-logo-normal');
     if (!section || !overlay || !logoSticky || !logoNormal || !nextSection) return;
+    
+    // Désactiver la logique sticky sur mobile
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      logoSticky.classList.remove('visible');
+      logoNormal.style.visibility = 'visible';
+      overlay.classList.remove('fixed');
+      overlay.style.position = 'absolute';
+      logoSticky.style.position = 'absolute';
+      return;
+    }
+    
     const rect = section.getBoundingClientRect();
     const nextRect = nextSection.getBoundingClientRect();
     if (rect.top <= 0 && rect.bottom > 0) {
@@ -82,13 +93,17 @@ document.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('scroll', handleExp33TrailerFadeIn);
   window.addEventListener('resize', handleExp33TrailerFadeIn);
   handleExp33TrailerFadeIn();
-
   // Parallax petal.png
   function updateExpedition33PetalParallax() {
     const section = document.querySelector('.expedition33-section');
     if (!section) return;
     const scrollY = window.scrollY || window.pageYOffset;
-    const parallaxY = (scrollY - section.offsetTop) * 0.5;
+    
+    // Vitesse parallax réduite sur mobile (2x moins rapide)
+    const isMobile = window.innerWidth <= 768;
+    const parallaxSpeed = isMobile ? 0.25 : 0.5;
+    
+    const parallaxY = (scrollY - section.offsetTop) * parallaxSpeed;
     section.style.setProperty('--petal-parallax', `${parallaxY}px`);
   }
   window.addEventListener('scroll', updateExpedition33PetalParallax);

@@ -1,0 +1,101 @@
+/* ===== MOBILE HERO SECTION - FIDELE AU DESKTOP ===== */
+
+@media (max-width: 768px) {
+  .hero {
+    height: 100vh;
+    background-color: #212121;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: cover;
+    z-index: 0;
+    filter: brightness(0.1);
+    pointer-events: none;
+  }
+  .hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    z-index: 1;
+    /* Compatibilité mask SVG mobile */
+    mask-image: url('../../images/svg/icon.svg');
+    mask-size: auto 100vh;
+    mask-position: center center;
+    mask-repeat: no-repeat;
+    -webkit-mask-image: url('../../images/svg/icon.svg');
+    -webkit-mask-size: auto 100vh;
+    -webkit-mask-position: center center;
+    -webkit-mask-repeat: no-repeat;
+    /* Fallback visuel si le mask ne marche pas */
+    background: #000;
+    display: block;
+    opacity: 1;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0) 50%, #000 100%);
+    z-index: 5;
+  }
+  .hero-svg-icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 100vh !important;
+    width: auto !important;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    pointer-events: none;
+    opacity: 1;
+    display: block;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 6;
+    text-align: center;
+  }
+
+  .hero-logo-img {
+    width: 450px;
+    max-width: 98vw;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 0 38px #000) drop-shadow(0 10px 38px #000);
+    z-index: 6;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-video {
+    mask-size: auto 100vh;
+    -webkit-mask-size: auto 100vh;
+  }
+  .hero-svg-icon {
+    height: 100vh !important;
+  }
+
+  .hero-logo-img {
+    width: 330px;
+    max-width: 98vw;
+    filter: drop-shadow(0 0 25px #000a) drop-shadow(0 6px 25px #000a);
+  }
+}

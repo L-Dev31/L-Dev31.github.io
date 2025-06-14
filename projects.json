@@ -6,7 +6,7 @@
       "creator": "SandFall Interactive",
       "category": "commission", 
       "path": "SandFall",
-      "noPhone": true
+      "noPhone": false
     },
     {
       "id": "escd",
@@ -14,7 +14,7 @@
       "creator": "Léo Tosku",
       "category": "personal-project", 
       "path": "ESCDesignGenerator/2025",
-      "noPhone": false
+      "noPhone": true
     },
     {
       "id": "azhr",

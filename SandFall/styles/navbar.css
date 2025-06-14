@@ -1,53 +1,53 @@
-/* Navigation bar styles */
-.navbar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0 50px;
-    background-color: #000;
-    position: fixed;
-    width: calc(100% - 100px);
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    height: 60px;
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.35);
-}
+/* Navigation bar styles - DESKTOP ONLY */
+@media (min-width: 769px) {
+  .navbar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 50px;
+      background-color: #000;
+      position: fixed;
+      width: calc(100% - 100px);
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      height: 60px;
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.35);
+  }
 
-.navbar nav ul {
-    list-style: none;
-    display: flex;
-    margin: 0;
-    padding: 0;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    font-family: 'Montserrat', 'Segoe UI', 'Arial', sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    font-size: 1.15em;
-}
+  .navbar nav ul {
+      list-style: none;
+      display: flex;
+      margin: 0;
+      padding: 0;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      font-family: 'Montserrat', 'Segoe UI', 'Arial', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      font-size: 1.15em;
+  }
 
-.navbar nav ul li {
-    margin-left: 20px;
-    margin-right: 20px;
-}
+  .navbar nav ul li {
+      margin-left: 20px;
+      margin-right: 20px;
+  }
 
-.navbar nav ul li a,
-.social-icons a {
-    color: #E3BB70 !important;
-    text-decoration: none !important;
-    transition: color 0.18s, transform 0.18s !important;
-    transform: none !important;
-}
+  .navbar nav ul li a,
+  .social-icons a {
+      color: #E3BB70 !important;
+      text-decoration: none !important;
+      transition: color 0.18s, transform 0.18s !important;
+      transform: none !important;
+  }
 
-.navbar nav ul li a:hover,
-.social-icons a:hover {
-    color: #fff !important;
-    transform: none !important;
-}
-
-.navbar .social-icons {
+  .navbar nav ul li a:hover,
+  .social-icons a:hover {
+      color: #fff !important;
+      transform: none !important;
+  }
+  .navbar .social-icons {
     position: absolute;
     right: 128px;
     top: 0;
@@ -55,71 +55,71 @@
     display: flex;
     align-items: center;
     gap: 18px;
-}
+  }
 
-.navbar .social-icons a {
-    color: #E3BB70;
-    font-size: 1.45em;
-    transition: color 0.2s, transform 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    width: 40px;
-    /* Remove any background and border-radius */
-    background: none !important;
-    background-color: transparent !important;
-    border-radius: 0 !important;
-    border: none !important;
-}
+  .navbar .social-icons a {
+      color: #E3BB70;
+      font-size: 1.45em;
+      transition: color 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      width: 40px;
+      /* Remove any background and border-radius */
+      background: none !important;
+      background-color: transparent !important;
+      border-radius: 0 !important;
+      border: none !important;
+  }
+  .navbar .social-icons a i {
+      font-size: 1.3em;
+      line-height: 1;
+  }
 
-.navbar .social-icons a i {
-    font-size: 1.3em;
-    line-height: 1;
-}
+  .navbar .social-icons a:hover {
+      color: #fff;
+      transform: scale(1.13);
+  }
 
-.navbar .social-icons a:hover {
-    color: #fff;
-    transform: scale(1.13);
-}
+  .navbar-underline {
+      width: 100vw;
+      height: 2px;
+      background: #E3BB70;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      z-index: 1001;
+      pointer-events: none;
+      overflow: hidden;
+  }
 
-.navbar-underline {
-    width: 100vw;
-    height: 2px;
-    background: #E3BB70;
-    position: fixed;
-    top: 60px;
-    left: 0;
-    z-index: 1001;
-    pointer-events: none;
-    overflow: hidden;
-}
+  .navbar-underline::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%;
+      height: 100%;
+      background: url('../images/decay.png') repeat-x center/cover;
+      mix-blend-mode: darken;
+      opacity: 0.95;
+      pointer-events: none;
+  }
 
-.navbar-underline::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    width: 100%;
-    height: 100%;
-    background: url('../images/decay.png') repeat-x center/cover;
-    mix-blend-mode: darken;
-    opacity: 0.95;
-    pointer-events: none;
-}
+  .navbar-logo {
+      position: absolute;
+      left: 128px;
+      top: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      z-index: 1002;
+  }
 
-.navbar-logo {
-    position: absolute;
-    left: 128px;
-    top: 0;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    z-index: 1002;
-}
-
-.navbar-logo img {
-    height: 40px;
-    width: auto;
-    display: block;
-    filter: drop-shadow(0 2px 8px rgba(33,33,33,0.18));
+  .navbar-logo img {
+      height: 40px;
+      width: auto;
+      display: block;
+      filter: drop-shadow(0 2px 8px rgba(33,33,33,0.18));
+  }
 }

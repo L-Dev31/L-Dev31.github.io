@@ -30,8 +30,8 @@
     object-fit: cover !important;
     object-position: -12.5vh 0 !important;
     z-index: 1;
-    mask: url('../images/svg/icon.svg');
-    -webkit-mask: url('../images/svg/icon.svg');
+    mask: url('/images/svg/icon.svg');
+    -webkit-mask: url('/images/svg/icon.svg');
     mask-size: auto 100vh;
     -webkit-mask-size: auto 100vh;
     mask-position: left top;

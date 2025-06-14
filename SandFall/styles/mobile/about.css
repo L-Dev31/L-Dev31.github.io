@@ -1,0 +1,133 @@
+/* Mobile About Section Styles */
+
+@media (max-width: 768px) {
+    .about-section {
+        height: auto;
+        min-height: 100vh;
+        width: 100vw;
+        background: #E3BB70;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #212121;
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+        padding: 80px 20px;
+    }
+
+    .about-content {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto 40px auto;
+        text-align: center;
+        padding: 0;
+        z-index: 2;
+    }
+
+    .about-content h2 {
+        font-size: 2.2rem;
+        color: #212121;
+        margin-bottom: 1.5rem;
+        letter-spacing: 0.08em;
+        font-weight: bold;
+    }
+
+    .about-content p {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 1.2rem;
+        color: #212121;
+        text-align: left;
+    }
+
+    .about-images {
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    .about-img {
+        width: 280px;
+        max-width: 70vw;
+        box-shadow: 0 12px 40px rgba(33,33,33,0.22);
+        position: absolute;
+        left: 50%;
+        transition: transform 0.3s;
+    }
+
+    .about-img.first {
+        top: 30%;
+        transform: translate(-65%, -50%) rotate(-6deg);
+        z-index: 2;
+    }
+
+    .about-img.second {
+        top: 70%;
+        transform: translate(-25%, -50%) rotate(8deg);
+        z-index: 1;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+        .about-section {
+            padding: 60px 15px;
+        }
+
+        .about-content h2 {
+            font-size: 1.8rem;
+        }
+
+        .about-content p {
+            font-size: 1rem;
+        }
+
+        .about-img {
+            width: 220px;
+        }
+
+        .about-images {
+            height: 250px;
+        }
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .about-section {
+        flex-direction: row;
+        padding: 80px 40px;
+        gap: 60px;
+        align-items: center;
+    }
+
+    .about-content {
+        width: 50%;
+        text-align: left;
+    }
+
+    .about-content h2 {
+        font-size: 2.8em;
+    }
+
+    .about-content p {
+        font-size: 1.2em;
+    }
+
+    .about-images {
+        width: 50%;
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .about-img {
+        width: 48%;
+        max-width: none;
+    }
+}
