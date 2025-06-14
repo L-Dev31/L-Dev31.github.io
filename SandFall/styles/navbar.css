@@ -66,6 +66,11 @@
     justify-content: center;
     height: 40px;
     width: 40px;
+    /* Remove any background and border-radius */
+    background: none !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    border: none !important;
 }
 
 .navbar .social-icons a i {
