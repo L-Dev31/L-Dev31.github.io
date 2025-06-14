@@ -14,7 +14,7 @@
       "creator": "Léo Tosku",
       "category": "personal-project", 
       "path": "ESCDesignGenerator/2025",
-      "noPhone": true
+      "noPhone": false
     },
     {
       "id": "azhr",
@@ -22,7 +22,7 @@
       "creator": "PabloMK7 & Opensauce",
       "category": "commission", 
       "path": "Azahar",
-      "noPhone": false
+      "noPhone": true
     },
     {
       "id": "cemu",
@@ -30,7 +30,7 @@
       "creator": "Exzap",
       "category": "commission",
       "path": "Cemu",
-      "noPhone": false
+      "noPhone": true
     },
     {
       "id": "j3dt",
