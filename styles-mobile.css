@@ -506,21 +506,20 @@
     .art-gallery-container.has-center-active .art-item:not(.center-active) {
         filter: brightness(0.8) !important;
         transform: scale(0.98) !important;
-    }/* Optimisations tactiles */
-    .link-mobile, .download-mobile {
+    }/* Optimisations tactiles */    .link-mobile, .download-mobile {
         padding: 1vh;
         border-radius: 1vh;
-        transition: background-color 0.2s ease;
+        /* transition: background-color 0.2s ease; */ /* Removed background transition */
     }
 
     .link-mobile:active, .download-mobile:active {
-        background-color: rgba(255, 255, 255, 0.1);
+        /* background-color: rgba(255, 255, 255, 0.1); */ /* Background removed */
     }
 
     /* Maintenir les effets hover pour les éléments de navigation */
     .link-mobile:hover, .download-mobile:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-    }    /* Instagram link removed */
+        /* background-color: rgba(255, 255, 255, 0.05); */ /* Background removed */
+    }/* Instagram link removed */
 
     /* Espacement mobile optimisé */
     .achievements::before {
