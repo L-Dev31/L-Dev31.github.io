@@ -210,19 +210,7 @@
     h1 {
         font-size: 5.5vh;
         margin: 0 0 2vh 0;
-    }
-
-    /* Lien Instagram adapté */
-    .Ig-link {
-        height: auto;
-        margin-right: 2vh;
-        margin-top: 2vh;
-        text-align: right;
-    }
-
-    .Ig-link a {
-        font-size: 2.5vh;
-    }    /* Section réalisations mobile */
+    }    /* Instagram link removed *//* Section réalisations mobile */
     .achievements {
         margin: 8vh 1.5vh 0 1.5vh;
         padding: 5vh 3vh;
@@ -395,6 +383,7 @@
         padding: 2vh;
         box-sizing: border-box;
         overflow: hidden;
+        background: transparent; /* Remove background on mobile */
     }
 
     .art-img {
@@ -408,6 +397,7 @@
         width: 100%;
         padding: 1.5vh;
         box-sizing: border-box;
+        background: transparent; /* Remove background on mobile */
     }
 
     .art-title {
@@ -443,12 +433,12 @@
 
     .art-item:active {
         transform: scale(0.98);
-    }
-
-    /* Désactivation des effets hover sur mobile */
+    }    /* Désactivation COMPLÈTE de TOUS les effets hover sur mobile, mais autoriser center-active */
     .gallery-item:hover,
+    .gallery-item:hover .card-info,
     .gallery-item:hover .card-icon img,
     .gallery-item:hover .card-title,
+    .gallery-item:hover .card-creator,
     .gallery-item:hover .card-image img,
     .achievement-item:hover,
     .achievement-item:hover::before,
@@ -456,106 +446,66 @@
     .achievement-item:hover .achievement-icon::before,
     .art-item:hover,
     .art-gallery-container:hover .art-item:not(:hover) {
-        transform: none;
-        filter: none;
-        /* box-shadow: none; */ /* Allow box-shadow for .center-active to override this */
-        opacity: 1;
-        scale: 1;
+        transform: none !important;
+        filter: none !important;
+        box-shadow: 0 0 2vh rgba(0, 0, 0, 0.4) !important; /* Keep base shadow only */
+        background-color: initial !important;
+        border-color: initial !important;
+        opacity: 1 !important;
+        scale: 1 !important;
     }
 
-    /* Specific overrides for background and border on hover for mobile to prevent desktop hover styles */
-    /* This ensures they revert to their base style instead of becoming 'initial' (transparent) */
+    /* Ensure card-info stays with base background on hover (not center-active) */
     .gallery-item:hover .card-info {
-        background-color: #111111; /* Base color from styles.css */
+        background-color: #111111 !important;
     }
 
-    .achievement-item:hover {
-        background: #1a1a1a;    /* Base background from styles.css */
-        border-color: #2a2a2a; /* Base border color from styles.css */
-        box-shadow: none; /* Ensure desktop hover shadow is removed if not covered by above group */
-    }
-    .achievement-item:hover .achievement-icon {
-        background-color: #222; /* Base background of icon from styles.css */
-    }
-    .achievement-item:hover::before { /* If this had a border or background to reset */
-        border-color: transparent; /* Example if it was a border glow */
-    }
-
-
-    .art-item:hover {
-        background-color: #1C1C1C; /* Base background from styles.css */
-        box-shadow: none; /* Ensure desktop hover shadow is removed */
-    }
-
-    /* Ensure .center-active styles correctly apply the 'active' (desktop hover like) appearance */
-    /* These were already mostly correct but ensure they are not affected by the hover disable changes */
-    
-    /* Main .center-active rule to match desktop hover exactly */
+    /* CENTER-ACTIVE styles - identical to desktop hover */
     .gallery-item {
         transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
     }
 
     .gallery-item.center-active {
-        transform: scale(1.03);
-        filter: brightness(1.15);
-        box-shadow: 0 0 5vh 1vh rgba(255, 255, 255, 0.35);
+        transform: scale(1.03) !important;
+        filter: brightness(1.15) !important;
+        box-shadow: 0 0 5vh 1vh rgba(255, 255, 255, 0.35) !important;
     }
 
     .gallery-item.center-active .card-info {
-        background-color: #1a1a1a;
-    }    .gallery-item.center-active .card-icon img {
-        /* Icon animation removed to match desktop hover behavior */
-    }
-    
-    /* .gallery-item.center-active .card-title {
-        transform: translateX(5px);
-    } */ /* Animation removed as per previous request */
-
-    .gallery-item .card-creator {
-        /* transition: transform 0.3s ease; */ /* Animation removed */
+        background-color: #1a1a1a !important;
     }
 
-    .gallery-item.center-active .card-creator {
-        /* transform: translateX(5px); */  /* Animation removed */
+    .gallery-item.center-active .card-image img {
+        transform: scale(1.08) !important;
     }
 
-    .gallery-item .card-image img {
-        transition: transform 0.4s ease;
-    }    .gallery-item.center-active .card-image img {
-        transform: scale(1.08);
-    }
-
+    /* Achievement center-active styles */
     .achievement-item {
-        transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
     }
 
     .achievement-item.center-active {
-        transform: scale(1.03);
-        filter: brightness(1.1);
-        box-shadow: 0 0 4vh 0.5vh rgba(255, 255, 255, 0.15);
-        background: #222; /* Mimics desktop hover */
-        border-color: #444; /* Mimics desktop hover */
+        transform: scale(1.03) !important;
+        filter: brightness(1.1) !important;
+        box-shadow: 0 0 4vh 0.5vh rgba(255, 255, 255, 0.15) !important;
+        background: #1a1a1a !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
     }
 
     .achievement-item.center-active .achievement-icon {
-        transform: scale(1.1);
-        background-color: #2e2e2e; /* Mimics desktop hover */
-    }
-    .achievement-item.center-active .achievement-icon::before {
-        /* Styles for the icon's ::before element when center-active, if any */
+        transform: scale(1.1) !important;
     }
 
-
+    /* Art center-active styles */
     .art-item.center-active {
-        transform: scale(1.03);
-        filter: brightness(1.05);
-        background-color: #282828; /* Mimics desktop hover */
-        box-shadow: 0 0 4vh 0.5vh rgba(255, 255, 255, 0.1);
+        transform: scale(1.03) !important;
+        filter: brightness(1.05) !important;
+        box-shadow: 0 0 4vh 0.5vh rgba(255, 255, 255, 0.1) !important;
     }
 
     .art-gallery-container.has-center-active .art-item:not(.center-active) {
-        filter: brightness(0.8);
-        transform: scale(0.98);
+        filter: brightness(0.8) !important;
+        transform: scale(0.98) !important;
     }/* Optimisations tactiles */
     .link-mobile, .download-mobile {
         padding: 1vh;
@@ -570,11 +520,7 @@
     /* Maintenir les effets hover pour les éléments de navigation */
     .link-mobile:hover, .download-mobile:hover {
         background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .Ig-link:active {
-        transform: translateY(0.2vh);
-    }
+    }    /* Instagram link removed */
 
     /* Espacement mobile optimisé */
     .achievements::before {
