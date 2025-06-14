@@ -1,7 +1,4 @@
-/* ===== MOBILE INTRO SECTION - REBUILD FROM DESKTOP ===== */
-
 @media (max-width: 768px) {
-  /* Intro overlay (animation loading screen) */
   #intro-overlay {
     position: fixed;
     top: 0;
@@ -19,7 +16,6 @@
     overflow: hidden;
   }
 
-  /* SVG Icon - EXACTEMENT COMME HERO */
   .intro-svg-icon {
     position: absolute;
     left: 50%;
@@ -33,7 +29,7 @@
     pointer-events: none;
     filter: none;
   }
-  /* Logo - EXACTEMENT comme hero-logo-img */
+
   .intro-logo {
     width: 450px;
     max-width: 98vw;
@@ -46,14 +42,12 @@
     transform: scale(0.9) translateY(20px);
   }
 
-  /* Content container */
   .intro-content {
     position: relative;
     z-index: 7;
     text-align: center;
   }
 
-  /* Gradient overlay */
   #gradient-overlay {
     position: absolute;
     top: 0;
@@ -65,13 +59,11 @@
     pointer-events: none;
   }
 
-  /* Prevent scroll during intro */
   body.intro-active,
   html.intro-active {
     overflow: hidden !important;
   }
 
-  /* Regular intro section (Who Are We) */
   .intro {
     padding: 48px 12px 32px 12px;
     text-align: center;
@@ -142,7 +134,6 @@
 }
 
 @media (max-width: 480px) {
-  /* Intro overlay adjustments for small screens */
   .intro-svg-icon {
     height: 50vh !important;
   }
@@ -153,7 +144,6 @@
     filter: drop-shadow(0 0 25px #000a) drop-shadow(0 6px 25px #000a);
   }
 
-  /* Regular intro section adjustments */
   .intro {
     padding: 28px 2vw 12px 2vw;
   }

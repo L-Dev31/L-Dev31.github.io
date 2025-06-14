@@ -1,32 +1,29 @@
-/* ===== FOOTER SECTION - MOBILE - MATCHING DESKTOP ===== */
-
 @media (max-width: 768px) {
   .footer {
     background: #111;
-    color: #ccc;
+    border-top: 1px solid #333;
     padding: 30px 12px;
     text-align: center;
-    border-top: 1px solid #333;
   }
 
   .footer-container {
-    max-width: 100%;
     margin: 0 auto;
+    max-width: 100%;
     padding: 0;
   }
 
   .footer-copyright {
+    color: #fff;
     font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
     font-size: 0.8em;
-    margin-bottom: 8px;
-    color: #fff;
     font-weight: 500;
+    margin-bottom: 8px;
   }
 
   .footer-legal {
+    color: #888;
     font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
     font-size: 0.7em;
-    color: #888;
     margin: 0;
   }
 }

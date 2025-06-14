@@ -1,6 +1,4 @@
-// JS pour la section about
-// Animation images about au scroll (ex-inlined)
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   function updateAboutImagesOnScroll() {
     const aboutSection = document.querySelector('.about-section');
     const img1 = document.querySelector('.about-img.first');
