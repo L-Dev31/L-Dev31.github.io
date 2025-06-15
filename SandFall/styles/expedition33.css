@@ -150,7 +150,7 @@
   width: 38vw;
   height: auto;
   pointer-events: none;
-  filter: drop-shadow(0 4px 24px rgba(33,33,33,0.22));
+  filter: drop-shadow(0 0 15px #000);
   position: relative;
   z-index: 11;
   left: 0;
@@ -168,7 +168,7 @@
   width: 38vw;
   height: auto;
   pointer-events: none;
-  filter: drop-shadow(0 4px 24px rgba(33,33,33,0.22));
+  filter: drop-shadow(0 0 15px #000);
   transition: opacity 0.2s;
 }
 .expedition33-logo-sticky.visible {
