@@ -1,4 +1,4 @@
-/* Main styles - imports all section styles */
+@import 'var.css';
 @import 'base.css';
 @import 'intro.css';
 @import 'navbar.css';
@@ -6,7 +6,8 @@
 @import 'about.css';
 @import 'expedition33.css';
 @import 'team.css';
+@import 'blog.css';
 @import 'contact.css';
 @import 'supporters.css';
 @import 'footer.css';
-@import 'mobile.css'; 
+@import 'mobile.css';

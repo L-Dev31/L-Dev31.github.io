@@ -5,14 +5,14 @@
       justify-content: center;
       align-items: center;
       padding: 0 50px;
-      background-color: #000;
+      background-color: var(--color-black);
       position: fixed;
       width: calc(100% - 100px);
       top: 0;
       left: 0;
       z-index: 1000;
       height: 60px;
-      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 10px 15px var(--color-overlay-darker); /* Adjusted for similar effect */
   }
 
   .navbar nav ul {
@@ -23,7 +23,7 @@
       justify-content: center;
       align-items: center;
       width: 100%;
-      font-family: 'Montserrat', 'Segoe UI', 'Arial', sans-serif;
+      font-family: var(--font-primary);
       font-weight: 600;
       letter-spacing: 0.04em;
       font-size: 1.15em;
@@ -36,15 +36,15 @@
 
   .navbar nav ul li a,
   .social-icons a {
-      color: #E3BB70 !important;
+      color: var(--color-primary-gold) !important;
       text-decoration: none !important;
-      transition: color 0.18s, transform 0.18s !important;
+      transition: color 0.18s, transform 0.18s !important; /* Consider var(--transition-fast) */
       transform: none !important;
   }
 
   .navbar nav ul li a:hover,
   .social-icons a:hover {
-      color: #fff !important;
+      color: var(--color-white) !important;
       transform: none !important;
   }
   .navbar .social-icons {
@@ -58,9 +58,9 @@
   }
 
   .navbar .social-icons a {
-      color: #E3BB70;
+      color: var(--color-primary-gold);
       font-size: 1.45em;
-      transition: color 0.2s, transform 0.2s;
+      transition: color 0.2s, transform 0.2s; /* Consider var(--transition-fast) */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -78,14 +78,14 @@
   }
 
   .navbar .social-icons a:hover {
-      color: #fff;
+      color: var(--color-white);
       transform: scale(1.13);
   }
 
   .navbar-underline {
       width: 100vw;
       height: 2px;
-      background: #E3BB70;
+      background: var(--color-primary-gold);
       position: fixed;
       top: 60px;
       left: 0;
@@ -120,6 +120,6 @@
       height: 40px;
       width: auto;
       display: block;
-      filter: drop-shadow(0 2px 8px rgba(33,33,33,0.18));
+      filter: drop-shadow(0 2px 8px var(--color-gold-transparent-light)); /* Adjusted for similar effect */
   }
 }
