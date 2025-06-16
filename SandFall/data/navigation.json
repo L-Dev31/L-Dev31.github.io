@@ -1,0 +1,56 @@
+{
+  "navigation": [
+    {
+      "id": "hero",
+      "label": "Home",
+      "href": "#home",
+      "external": false
+    },
+    {
+      "id": "about",
+      "label": "About", 
+      "href": "#about",
+      "external": false
+    },
+    {
+      "id": "sandfall-team",
+      "label": "Team",
+      "href": "#sandfall-team", 
+      "external": false
+    },
+    {
+      "id": "contact",
+      "label": "Contact",
+      "href": "#contact",
+      "external": false
+    },
+    {
+      "id": "blog",
+      "label": "Blog",
+      "href": "blog.html",
+      "external": true
+    }
+  ],
+  "social": [
+    {
+      "name": "LinkedIn",
+      "url": "https://www.linkedin.com/company/sandfall-interactive/",
+      "icon": "fab fa-linkedin-in"
+    },
+    {
+      "name": "X",
+      "url": "https://x.com/SandfallGames", 
+      "icon": "fab fa-x-twitter"
+    },
+    {
+      "name": "Instagram",
+      "url": "https://www.instagram.com/sandfallgames/",
+      "icon": "fab fa-instagram"
+    },
+    {
+      "name": "Facebook",
+      "url": "https://www.facebook.com/sandfallgames",
+      "icon": "fab fa-facebook-f"
+    }
+  ]
+}

@@ -1,68 +1,68 @@
 .about-section {
-  height: 100vh;
-  min-height: 100vh;
-  width: 100vw;
-  background: #E3BB70;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #212121;
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
+	height: 100vh;
+	min-height: 100vh;
+	width: 100vw;
+	background: var(--color-primary-gold);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #212121;
+	position: relative;
+	z-index: 1;
+	overflow: hidden;
 }
 
 .about-content {
-  flex: 1 1 0;
-  max-width: 600px;
-  margin: 0 0 0 7vw;
-  text-align: left;
-  padding: 40px 24px;
-  z-index: 2;
+	flex: 1 1 0;
+	max-width: 600px;
+	margin: 0 0 0 7vw;
+	text-align: left;
+	padding: 40px 24px;
+	z-index: 2;
 }
 
 .about-content h2 {
-  font-size: 2.8rem;
-  color: #212121;
-  margin-bottom: 2rem;
-  letter-spacing: 0.08em;
+	font-size: 2.8rem;
+	color: #212121;
+	margin-bottom: 2rem;
+	letter-spacing: 0.08em;
 }
 
 .about-content p {
-  font-size: 1.25rem;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
-  color: #212121;
+	font-size: 1.25rem;
+	line-height: 1.7;
+	margin-bottom: 1.5rem;
+	color: #212121;
 }
 
 .about-images {
-  flex: 1 1 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  position: relative;
-  margin-right: 7vw;
-  min-width: 320px;
+	flex: 1 1 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	position: relative;
+	margin-right: 7vw;
+	min-width: 320px;
 }
 
 .about-img {
-  width: 420px;
-  max-width: 70vw;
-  box-shadow: 0 12px 40px rgba(33, 33, 33, 0.22);
-  position: absolute;
-  left: 50%;
-  transition: transform 0.3s;
+	width: 420px;
+	max-width: 70vw;
+	box-shadow: 0 12px 40px rgba(33, 33, 33, 0.22);
+	position: absolute;
+	left: 50%;
+	transition: transform 0.3s;
 }
 
 .about-img.first {
-  top: 38%;
-  transform: translate(-60%, -50%) rotate(-4deg);
-  z-index: 2;
+	top: 38%;
+	transform: translate(-60%, -50%) rotate(-4deg);
+	z-index: 2;
 }
 
 .about-img.second {
-  top: 62%;
-  transform: translate(-30%, -50%) rotate(5deg);
-  z-index: 1;
+	top: 62%;
+	transform: translate(-30%, -50%) rotate(5deg);
+	z-index: 1;
 }

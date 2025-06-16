@@ -1,0 +1,58 @@
+{
+  "team": [
+    {
+      "id": 1,
+      "name": "Guillaume Broche",
+      "role": "CEO & Creative Director",
+      "bio": "Passionate gamer, sometimes even speed-runner, Guillaume worked as Associate Producer and Narrative Lead at Ubisoft on AAA titles before founding Sandfall Interactive.",
+      "image": "images/team/guillaume.png",
+      "favorites": "Favorite games: Persona 3, Devil May Cry, Demon's Souls, Journey, Final Fantasy VIII",
+      "links": null
+    },
+    {
+      "id": 2,
+      "name": "Tom Guillermin",
+      "role": "CTO & Lead Programmer",
+      "bio": "Tom worked as a Gameplay Programmer at Ubisoft and shipped multiple AAA games. He made multiple side-projects on his own to master the latest game tech.",
+      "image": "images/team/tom.png",
+      "favorites": "Favorite games: World of Warcraft, Zelda Ocarina Of Time, GTA: Vice City, The Witness, Golden Sun",
+      "links": null
+    },
+    {
+      "id": 3,
+      "name": "François Meurisse",
+      "role": "COO & Producer",
+      "bio": "François worked as Project Manager and Product Manager in tech companies, after graduating in management and creative industries. At Sandfall, he handles business & production.",
+      "image": "images/team/francois.png",
+      "favorites": null,
+      "links": null
+    },
+    {
+      "id": 4,
+      "name": "Jennifer Svedberg-Yen",
+      "role": "Lead Writer",
+      "bio": "Analog astronaut, teacher, science fiction writer... You name it, Jenn has done it. She is now writing the script of Project W.",
+      "image": "images/team/jennifer.png",
+      "favorites": "Favorite works: Wheel of Time, Murderbot, The Expanse, Battlestar Galactica<br/>Favorite games: Hollow Knight, God of War, Civilization VI, Elden Ring",
+      "links": null
+    },
+    {
+      "id": 5,
+      "name": "Nicholas Maxson-Francombe",
+      "role": "Art Director",
+      "bio": "Illustrator and Graphic Designer, Nicholas is also well-known online for his steampunk style paintings.",
+      "image": "images/team/nicholas.png",
+      "favorites": "Favorite games: Dishonored, League of Legends, The Order: 1886, Bioshock",
+      "links": "View Nicholas' ArtStation"
+    },
+    {
+      "id": 6,
+      "name": "Lorien Testard",
+      "role": "Music Composer",
+      "bio": "With love and care, Lorien composes the original music for Clair Obscur: Expedition 33",
+      "image": "images/team/lorien.png",
+      "favorites": "Favorite games: Zelda Majora's Mask, Xenoblade Chronicles, Nier Automata, Hollow Knight",
+      "links": "Listen to Lorien's Soundcloud"
+    }
+  ]
+}

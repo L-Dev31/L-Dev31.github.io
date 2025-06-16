@@ -14,9 +14,9 @@
 }
 
 .supporters-title {
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-family: var(--font-primary);
     font-size: 2em;
-    color: #E3BB70;
+    color: var(--color-primary-gold);
     margin-bottom: 2.5em;
     letter-spacing: 0.04em;
     font-weight: 600;

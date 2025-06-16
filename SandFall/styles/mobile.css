@@ -1,10 +1,10 @@
-/* ===== SANDFALL MOBILE STYLES ===== */
 @import 'mobile/base.css';
 @import 'mobile/navbar.css';
 @import 'mobile/hero.css';
 @import 'mobile/intro.css';
 @import 'mobile/about.css';
 @import 'mobile/team.css';
+@import 'mobile/blog.css';
 @import 'mobile/expedition33.css';
 @import 'mobile/supporters.css';
 @import 'mobile/contact.css';

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Blog - Sandfall Interactive</title>
+	<link rel="stylesheet" href="styles/main.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="icon" href="images/favicon.png" type="image/png">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+	<header class="navbar">
+		<div class="navbar-inner">
+			<div class="navbar-logo">
+				<img src="images/svg/logo.svg" alt="Sandfall Logo" />
+			</div>
+			<button class="mobile-menu-toggle" aria-label="Toggle menu">
+				<span class="hamburger-line"></span>
+				<span class="hamburger-line"></span>
+				<span class="hamburger-line"></span>
+			</button>
+		</div>
+		<nav>
+			<ul></ul>
+		</nav>
+		<div class="social-icons"></div>
+		<div class="mobile-menu-overlay">
+			<div class="mobile-nav">
+				<ul></ul>
+			</div>
+			<div class="mobile-social-icons"></div>
+		</div>
+	</header>
+	<div class="navbar-underline"></div>
+	<video autoplay muted loop class="hero-bg-video" id="bg-video">
+		<source src="images/video/bg.mp4" type="video/mp4">
+		Your browser does not support the video tag.
+	</video>
+	<div class="hero-overlay"></div>
+	<main class="blog-container">
+		<header class="blog-header">
+			<h1 class="blog-title">Blog</h1>
+			<p class="blog-subtitle">Discover our latest news</p>
+		</header>
+		<div class="blog-content">
+			<div class="blog-search">
+				<div class="search-container">
+					<input type="text" id="search-input" placeholder="Search articles..." class="search-input">
+					<select id="sort-select" class="sort-select">
+						<option value="newest">Most Recent</option>
+						<option value="oldest">Least Recent</option>
+					</select>
+					<button class="search-btn" id="search-btn">
+						<i class="fas fa-search"></i>
+					</button>
+				</div>
+			</div>
+			<div class="blog-grid" id="blog-posts">
+				<div class="loading-spinner">
+					<div class="spinner"></div>
+					<p>Loading articles...</p>
+				</div>
+			</div>
+			<div class="blog-pagination" id="pagination">
+				<button class="pagination-btn" id="prev-btn" disabled>Previous</button>
+				<div class="pagination-info">
+					<span id="page-info">Page 1 of 1</span>
+				</div>
+				<button class="pagination-btn" id="next-btn" disabled>Next</button>
+			</div>
+		</div>
+	</main>
+	<div class="post-modal" id="post-modal">
+		<div class="modal-overlay"></div>
+		<div class="modal-content">
+			<button class="modal-close">&times;</button>
+			<div class="modal-body" id="modal-body"></div>
+		</div>
+	</div>
+	<script src="js/navigation.js"></script>
+	<script src="js/mobile-navbar.js"></script>
+	<script src="js/blog.js"></script>
+</body>
+</html>
