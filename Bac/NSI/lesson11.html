@@ -1,0 +1,271 @@
+<div class="lesson-container">
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-layer-group"></i>
+                1. Le modèle TCP/IP
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Architecture en couches
+                </div>
+                <p>Le modèle TCP/IP organise les protocoles réseau en 4 couches, chacune ayant un rôle spécifique dans la communication.</p>
+            </div>
+
+            <div class="example-box">
+                <div class="example-title">
+                    <i class="fas fa-layer-group"></i>
+                    Les 4 couches du modèle TCP/IP
+                </div>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                    <tr style="background: var(--nsi-light);">
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Couche</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Rôle</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Protocoles</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);"><strong>Application</strong></td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Interface utilisateur</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">HTTP, HTTPS, FTP, SMTP</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);"><strong>Transport</strong></td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Communication de bout en bout</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">TCP, UDP</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);"><strong>Internet</strong></td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Routage des paquets</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">IP, ICMP</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);"><strong>Accès réseau</strong></td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Transmission physique</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Ethernet, WiFi</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="code-block">
+# Simulation simple d'un paquet réseau en Python
+class Paquet:
+    def __init__(self, source, destination, donnees):
+        self.source = source
+        self.destination = destination
+        self.donnees = donnees
+        self.taille = len(donnees)
+    
+    def afficher_entete(self):
+        print(f"Source: {self.source}")
+        print(f"Destination: {self.destination}")
+        print(f"Taille: {self.taille} octets")
+        print(f"Données: {self.donnees[:50]}...")
+
+# Simulation d'adresses IP
+class AdresseIP:
+    def __init__(self, ip):
+        self.ip = ip
+        self.octets = list(map(int, ip.split('.')))
+    
+    def est_valide(self):
+        return all(0 <= octet <= 255 for octet in self.octets)
+    
+    def classe_reseau(self):
+        premier_octet = self.octets[0]
+        if 1 <= premier_octet <= 126:
+            return "Classe A"
+        elif 128 <= premier_octet <= 191:
+            return "Classe B"
+        elif 192 <= premier_octet <= 223:
+            return "Classe C"
+        return "Autre"
+
+# Exemple d'utilisation
+ip1 = AdresseIP("192.168.1.1")
+ip2 = AdresseIP("10.0.0.1")
+
+paquet = Paquet(ip1.ip, ip2.ip, "Hello, World!")
+paquet.afficher_entete()
+
+print(f"IP source classe: {ip1.classe_reseau()}")
+            </code>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-globe"></i>
+                2. Le protocole HTTP
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    HyperText Transfer Protocol
+                </div>
+                <p>HTTP est le protocole de communication du Web, basé sur un modèle <strong>client-serveur</strong> utilisant des requêtes et des réponses.</p>
+            </div>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-cogs"></i>
+                    Méthodes HTTP principales
+                </div>
+                <ul>
+                    <li><strong>GET</strong> : récupérer des données du serveur</li>
+                    <li><strong>POST</strong> : envoyer des données au serveur</li>
+                    <li><strong>PUT</strong> : mettre à jour des données</li>
+                    <li><strong>DELETE</strong> : supprimer des données</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+# Exemple de requête HTTP avec Python (module requests)
+import requests
+import json
+
+# Requête GET simple
+response = requests.get('https://api.exemple.com/utilisateurs')
+if response.status_code == 200:
+    donnees = response.json()
+    print(f"Récupéré {len(donnees)} utilisateurs")
+
+# Requête POST avec données
+nouveau_utilisateur = {
+    'nom': 'Dupont',
+    'email': 'dupont@exemple.com'
+}
+
+response = requests.post(
+    'https://api.exemple.com/utilisateurs',
+    json=nouveau_utilisateur,
+    headers={'Content-Type': 'application/json'}
+)
+
+print(f"Code de statut: {response.status_code}")
+
+# Simulation d'un serveur HTTP simple
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import urllib.parse
+
+class ServeurSimple(BaseHTTPRequestHandler):
+    def do_GET(self):
+        # Analyser l'URL
+        parsed_path = urllib.parse.urlparse(self.path)
+        
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.end_headers()
+        
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head><title>Serveur NSI</title></head>
+        <body>
+            <h1>Bonjour depuis le serveur !</h1>
+            <p>Chemin demandé: {parsed_path.path}</p>
+            <p>Paramètres: {parsed_path.query}</p>
+        </body>
+        </html>
+        """
+        
+        self.wfile.write(html.encode())
+
+# Pour lancer le serveur (exemple)
+# serveur = HTTPServer(('localhost', 8000), ServeurSimple)
+# print("Serveur démarré sur http://localhost:8000")
+# serveur.serve_forever()
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-exchange-alt"></i>
+                3. Communication client-serveur
+            </h2>
+
+            <div class="example-box">
+                <div class="example-title">
+                    <i class="fas fa-comments"></i>
+                    Échange HTTP typique
+                </div>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.9rem;">
+                    <div style="color: #007bff; font-weight: bold;">1. Requête du client :</div>
+                    <div style="margin: 0.5rem 0;">
+                        GET /api/utilisateurs HTTP/1.1<br>
+                        Host: www.exemple.com<br>
+                        User-Agent: Mozilla/5.0<br>
+                        Accept: application/json
+                    </div>
+                    
+                    <div style="color: #28a745; font-weight: bold; margin-top: 1rem;">2. Réponse du serveur :</div>
+                    <div style="margin: 0.5rem 0;">
+                        HTTP/1.1 200 OK<br>
+                        Content-Type: application/json<br>
+                        Content-Length: 156<br>
+                        <br>
+                        {"utilisateurs": [{"id": 1, "nom": "Alice"}]}
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+# Implémentation d'un client HTTP simple
+import socket
+
+def client_http_simple(host, port, chemin):
+    # Créer une socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    try:
+        # Se connecter au serveur
+        sock.connect((host, port))
+        
+        # Construire la requête HTTP
+        requete = f"GET {chemin} HTTP/1.1\r\n"
+        requete += f"Host: {host}\r\n"
+        requete += "Connection: close\r\n"
+        requete += "\r\n"
+        
+        # Envoyer la requête
+        sock.send(requete.encode())
+        
+        # Recevoir la réponse
+        reponse = b""
+        while True:
+            data = sock.recv(1024)
+            if not data:
+                break
+            reponse += data
+        
+        return reponse.decode()
+    
+    finally:
+        sock.close()
+
+# Utilisation
+# reponse = client_http_simple("www.exemple.com", 80, "/")
+# print(reponse)
+
+# Analyse des codes de statut HTTP
+def interpreter_code_statut(code):
+    codes = {
+        200: "OK - Succès",
+        201: "Created - Ressource créée",
+        400: "Bad Request - Requête incorrecte",
+        401: "Unauthorized - Non autorisé",
+        403: "Forbidden - Accès interdit",
+        404: "Not Found - Ressource non trouvée",
+        500: "Internal Server Error - Erreur serveur"
+    }
+    
+    return codes.get(code, f"Code {code} - Statut inconnu")
+
+# Test
+print(interpreter_code_statut(404))  # Not Found - Ressource non trouvée            </div>
+        </div>
+    </div>

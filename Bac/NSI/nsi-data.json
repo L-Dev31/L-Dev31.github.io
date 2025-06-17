@@ -1,0 +1,180 @@
+{
+  "metadata": {
+    "subject": "nsi",
+    "version": "2.0",
+    "totalLessons": 12,
+    "totalVideos": 0
+  },
+  "themes": [
+    {
+      "id": "structures-donnees",
+      "title": "Structures de données",
+      "color": "#2196f3",
+      "lessons": [
+        {
+          "id": "lesson1",
+          "title": "Leçon 1 : Listes, tuples et dictionnaires",
+          "description": "Structures de données natives en Python",
+          "file": "lesson1.html",
+          "duration": "120",
+          "difficulty": "moyen"
+        },
+        {
+          "id": "lesson2", 
+          "title": "Leçon 2 : Piles et files",
+          "description": "Structures LIFO et FIFO",
+          "file": "lesson2.html",
+          "duration": "90",
+          "difficulty": "moyen"
+        },
+        {
+          "id": "lesson3",
+          "title": "Leçon 3 : Arbres binaires",
+          "description": "Structure hiérarchique de données",
+          "file": "lesson3.html", 
+          "duration": "150",
+          "difficulty": "difficile"
+        }
+      ],
+      "videos": []
+    },
+    {
+      "id": "algorithmes",
+      "title": "Algorithmique",
+      "color": "#2196f3",
+      "lessons": [
+        {
+          "id": "lesson4",
+          "title": "Leçon 4 : Algorithmes de tri",
+          "description": "Tri par insertion, sélection, fusion",
+          "file": "lesson4.html",
+          "duration": "120",
+          "difficulty": "moyen"
+        },
+        {
+          "id": "lesson5",
+          "title": "Leçon 5 : Algorithmes de recherche",
+          "description": "Recherche séquentielle et dichotomique",
+          "file": "lesson5.html",
+          "duration": "90",
+          "difficulty": "facile"
+        },
+        {
+          "id": "lesson6",
+          "title": "Leçon 6 : Récursivité",
+          "description": "Fonctions récursives et cas d'arrêt",
+          "file": "lesson6.html",
+          "duration": "105",
+          "difficulty": "difficile"
+        }
+      ],
+      "videos": []
+    },
+    {
+      "id": "programmation",
+      "title": "Programmation", 
+      "color": "#2196f3",
+      "lessons": [
+        {
+          "id": "lesson7",
+          "title": "Leçon 7 : Programmation orientée objet",
+          "description": "Classes, objets, encapsulation",
+          "file": "lesson7.html",
+          "duration": "135",
+          "difficulty": "moyen"
+        },
+        {
+          "id": "lesson8",
+          "title": "Leçon 8 : Modularité et interfaces",
+          "description": "Modules, fonctions, API",
+          "file": "lesson8.html",
+          "duration": "90",
+          "difficulty": "moyen"
+        }
+      ],
+      "videos": []
+    },
+    {
+      "id": "bases-donnees",
+      "title": "Bases de données",
+      "color": "#2196f3", 
+      "lessons": [
+        {
+          "id": "lesson9",
+          "title": "Leçon 9 : Modèle relationnel",
+          "description": "Tables, relations, clés",
+          "file": "lesson9.html",
+          "duration": "120",
+          "difficulty": "moyen"
+        },
+        {
+          "id": "lesson10",
+          "title": "Leçon 10 : Langage SQL",
+          "description": "Requêtes SELECT, INSERT, UPDATE, DELETE",
+          "file": "lesson10.html",
+          "duration": "105",
+          "difficulty": "facile"
+        }
+      ],
+      "videos": []
+    },
+    {
+      "id": "architectures-reseaux",
+      "title": "Architectures et réseaux",
+      "color": "#2196f3",
+      "lessons": [
+        {
+          "id": "lesson11",
+          "title": "Leçon 11 : Protocoles de communication",
+          "description": "TCP/IP, HTTP, protocoles réseaux",
+          "file": "lesson11.html",
+          "duration": "90",
+          "difficulty": "moyen"
+        }
+      ],
+      "videos": []
+    }
+  ],
+  "exams": [
+    {
+      "id": "france-2024",
+      "title": "France 2024",
+      "description": "Sujet du baccalauréat NSI France 2024",
+      "flag": "france",
+      "files": {
+        "subject": "Bac/france-2024.pdf",
+        "correction": "Bac/france-2024-c.pdf"
+      }
+    },
+    {
+      "id": "polynesia-2024", 
+      "title": "Polynésie 2024",
+      "description": "Sujet du baccalauréat NSI Polynésie 2024",
+      "flag": "polynesia",
+      "files": {
+        "subject": "Bac/polynesie-2024.pdf",
+        "correction": "Bac/polynesie-2024-c.pdf"
+      }
+    },
+    {
+      "id": "asia-2024",
+      "title": "Asie 2024", 
+      "description": "Sujet du baccalauréat NSI Asie 2024",
+      "flag": "asia",
+      "files": {
+        "subject": "Bac/asie-2024.pdf",
+        "correction": "Bac/asie-2024-c.pdf"
+      }
+    },
+    {
+      "id": "usa-2025",
+      "title": "USA 2025",
+      "description": "Sujet du baccalauréat NSI USA 2025", 
+      "flag": "usa",
+      "files": {
+        "subject": "Bac/usa-2025.pdf",
+        "correction": "Bac/usa-2025-c.pdf"
+      }
+    }
+  ]
+}

@@ -1,0 +1,201 @@
+<div class="lesson-container">
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-redo"></i>
+                1. Principe de la récursivité
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Définition
+                </div>
+                <p>La <strong>récursivité</strong> est une technique où une fonction s'appelle elle-même pour résoudre un problème plus petit du même type.</p>
+            </div>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-cogs"></i>
+                    Éléments essentiels
+                </div>
+                <ol>
+                    <li><strong>Cas de base</strong> : condition d'arrêt de la récursion</li>
+                    <li><strong>Cas récursif</strong> : appel de la fonction avec un problème plus petit</li>
+                    <li><strong>Convergence</strong> : chaque appel doit se rapprocher du cas de base</li>
+                </ol>
+            </div>
+
+            <div class="code-block">
+# Exemple classique : factorielle
+def factorielle(n):
+    # Cas de base
+    if n == 0 or n == 1:
+        return 1
+    
+    # Cas récursif
+    return n * factorielle(n - 1)
+
+# Utilisation
+print(factorielle(5))  # 5! = 5 × 4 × 3 × 2 × 1 = 120
+
+# Suivi des appels récursifs
+def factorielle_trace(n, niveau=0):
+    indent = "  " * niveau
+    print(f"{indent}factorielle({n})")
+    
+    if n == 0 or n == 1:
+        print(f"{indent}→ retourne 1")
+        return 1
+    
+    resultat = n * factorielle_trace(n - 1, niveau + 1)
+    print(f"{indent}→ retourne {n} × {resultat // n} = {resultat}")
+    return resultat
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-sitemap"></i>
+                2. Récursivité sur les structures de données
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Récursivité et listes
+                </div>
+                <p>La récursivité est naturelle pour traiter des structures comme les listes et les arbres.</p>
+            </div>
+
+            <div class="code-block">
+# Somme des éléments d'une liste
+def somme_recursive(liste):
+    # Cas de base : liste vide
+    if len(liste) == 0:
+        return 0
+    
+    # Cas récursif : premier élément + somme du reste
+    return liste[0] + somme_recursive(liste[1:])
+
+# Recherche dans une liste
+def recherche_recursive(liste, element):
+    # Cas de base : liste vide
+    if len(liste) == 0:
+        return False
+    
+    # Cas de base : élément trouvé
+    if liste[0] == element:
+        return True
+    
+    # Cas récursif : chercher dans le reste
+    return recherche_recursive(liste[1:], element)
+
+# Maximum d'une liste
+def maximum_recursive(liste):
+    # Cas de base : un seul élément
+    if len(liste) == 1:
+        return liste[0]
+    
+    # Cas récursif : max entre premier et max du reste
+    max_reste = maximum_recursive(liste[1:])
+    return liste[0] if liste[0] > max_reste else max_reste
+
+# Exemples
+nombres = [3, 7, 1, 9, 4]
+print(f"Somme: {somme_recursive(nombres)}")
+print(f"Maximum: {maximum_recursive(nombres)}")
+print(f"Contient 7: {recherche_recursive(nombres, 7)}")
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-tree"></i>
+                3. Applications avancées
+            </h2>
+
+            <div class="example-box">
+                <div class="example-title">
+                    <i class="fas fa-code"></i>
+                    Suite de Fibonacci
+                </div>
+                <div class="code-block">
+# Version naive (inefficace)
+def fibonacci_naive(n):
+    if n <= 1:
+        return n
+    return fibonacci_naive(n-1) + fibonacci_naive(n-2)
+
+# Version optimisée avec mémoïsation
+def fibonacci_memo(n, memo={}):
+    if n in memo:
+        return memo[n]
+    
+    if n <= 1:
+        return n
+    
+    memo[n] = fibonacci_memo(n-1, memo) + fibonacci_memo(n-2, memo)
+    return memo[n]
+
+# Comparaison des performances
+import time
+
+n = 35
+start = time.time()
+result1 = fibonacci_memo(n)
+time1 = time.time() - start
+
+print(f"Fibonacci({n}) = {result1}")
+print(f"Temps avec mémoïsation: {time1:.4f}s")
+                </div>
+            </div>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Avantages et inconvénients
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                    <div>
+                        <h4 style="color: #4caf50; margin-bottom: 0.5rem;">✓ Avantages</h4>
+                        <ul style="margin: 0; padding-left: 1rem; font-size: 0.9rem;">
+                            <li>Code élégant et lisible</li>
+                            <li>Naturel pour les structures récursives</li>
+                            <li>Facilite la résolution de problèmes complexes</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: #f44336; margin-bottom: 0.5rem;">✗ Inconvénients</h4>
+                        <ul style="margin: 0; padding-left: 1rem; font-size: 0.9rem;">
+                            <li>Consommation mémoire (pile d'appels)</li>
+                            <li>Risque de dépassement de pile</li>
+                            <li>Peut être moins efficace que l'itératif</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+# Tours de Hanoï - exemple classique
+def hanoi(n, source, destination, auxiliaire):
+    if n == 1:
+        print(f"Déplacer disque 1 de {source} vers {destination}")
+    else:
+        # Déplacer n-1 disques vers l'auxiliaire
+        hanoi(n-1, source, auxiliaire, destination)
+        
+        # Déplacer le plus grand disque
+        print(f"Déplacer disque {n} de {source} vers {destination}")
+        
+        # Déplacer n-1 disques de l'auxiliaire vers la destination
+        hanoi(n-1, auxiliaire, destination, source)
+
+# Résolution pour 3 disques
+print("Solution pour 3 disques:")
+hanoi(3, "A", "C", "B")
+            </div>        </div>
+    </div>

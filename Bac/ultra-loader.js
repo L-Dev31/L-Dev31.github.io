@@ -47,14 +47,14 @@ class UltraOptimizedLoader {
             console.error('[ULTRA-LOADER] ❌ Erreur détaillée:', error);
             console.error('[ULTRA-LOADER] ❌ Stack trace:', error.stack);
             this.showError(`Erreur de chargement ultra-optimisé: ${error.message}`);
-        }
-    }
+        }    }
 
     // Détection ultra-rapide du sujet
     detectCurrentSubject() {
         const path = window.location.pathname.toLowerCase();
         if (path.includes('/maths/')) this.currentSubject = 'maths';
         else if (path.includes('/philosophie/')) this.currentSubject = 'philosophie';
+        else if (path.includes('/nsi/')) this.currentSubject = 'nsi';
         else if (path.includes('/oral/')) this.currentSubject = 'oral';
         else this.currentSubject = 'home';
         
@@ -192,10 +192,8 @@ class UltraOptimizedLoader {
             console.warn('[ULTRA-LOADER] ⚠️ Pas de données pour generateMainContent');
             contentContainer.innerHTML = '<div class="error">Aucune donnée disponible</div>';
             return;
-        }
-
-        // Ajouter la classe spécifique au sujet sur le body
-        document.body.className = document.body.className.replace(/\b(maths|philosophie|oral)-page\b/g, '');
+        }        // Ajouter la classe spécifique au sujet sur le body
+        document.body.className = document.body.className.replace(/\b(maths|philosophie|nsi|oral)-page\b/g, '');
         document.body.classList.add(`${this.currentSubject}-page`);
 
         let html = '';
@@ -263,19 +261,18 @@ class UltraOptimizedLoader {
         const completedClass = isCompleted ? 'lesson-completed' : '';
         
         return `
-            <div class="lesson-item ${completedClass}" data-lesson-id="${item.id}">                <div class="lesson-header" onclick="window.UltraLoader.toggleLesson(${item.id})">
+            <div class="lesson-item ${completedClass}" data-lesson-id="${item.id}">                <div class="lesson-header" onclick="window.UltraLoader.toggleLesson('${item.id}')">
                     ${!item['no-check'] ? `<div class="lesson-checkbox-container">
                         <input type="checkbox" 
                                class="lesson-checkbox" 
                                id="checkbox-${item.id}"
                                ${isCompleted ? 'checked' : ''}
-                               onclick="window.UltraLoader.toggleLessonCompletion(${item.id}, event)">
+                               onclick="window.UltraLoader.toggleLessonCompletion('${item.id}', event)">
                         <label for="checkbox-${item.id}" class="checkbox-label"></label>
                     </div>` : '<div class="lesson-checkbox-container-placeholder"></div>'}
                     <div class="lesson-title-container">
                         <h3 class="lesson-title">${item.title}</h3>
-                    </div><div class="lesson-actions">
-                        ${!item['no-print'] ? `<button class="print-button" onclick="window.UltraLoader.printLesson(${item.id})">
+                    </div><div class="lesson-actions">                        ${!item['no-print'] ? `<button class="print-button" onclick="window.UltraLoader.printLesson('${item.id}')">
                             <i class="fas fa-print"></i> Imprimer
                         </button>` : ''}
                     </div>
@@ -388,8 +385,7 @@ class UltraOptimizedLoader {
     generateVideoItem(video) {
         return `
             <div class="lesson-item video-theme-item" data-video-id="${video.id}">
-                <div class="lesson-header">
-                    <div class="lesson-title-container" onclick="window.UltraLoader.toggleVideo(${video.id})">
+                <div class="lesson-header">                    <div class="lesson-title-container" onclick="window.UltraLoader.toggleVideo('${video.id}')">
                         <h3 class="lesson-title">
                             <i class="fas fa-video"></i>
                             ${video.title}

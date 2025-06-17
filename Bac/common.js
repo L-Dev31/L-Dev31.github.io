@@ -47,6 +47,8 @@ async function bulletproofPrint(contentHTML, title = 'Document', subject = '') {
             subjectColor = '#805ad5'; // Violet pour Philosophie
         } else if (subject.toLowerCase().includes('oral') || window.location.href.includes('/Oral/')) {
             subjectColor = '#ff7f00'; // Orange pour Oral
+        } else if (subject.toLowerCase().includes('nsi') || window.location.href.includes('/NSI/')) {
+            subjectColor = '#2196f3'; // Bleu pour NSI
         }
         
         // Construction du document d'impression
@@ -96,13 +98,55 @@ async function bulletproofPrint(contentHTML, title = 'Document', subject = '') {
         /* Formules inline - styling minimal */
         mjx-container:not([display="true"]) {
             display: inline-block !important;
+        }          /* Styles pour les blocs de code */
+        .code-block, pre, code {
+            background: #f8f9fa !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 4px !important;
+            padding: 12px !important;
+            margin: 12px 0 !important;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+            font-size: 11px !important;
+            line-height: 1.4 !important;
+            color: #000 !important;
+            white-space: pre-wrap !important;
+            word-wrap: break-word !important;
+            page-break-inside: avoid !important;
+            overflow: visible !important;
         }
         
-        @media print { 
+        .code-block {
+            border-left: 3px solid ${subjectColor} !important;
+        }
+        
+        /* Préserver les espaces et sauts de ligne dans le code */
+        .code-block *, pre *, code * {
+            white-space: pre-wrap !important;
+        }
+        
+        /* Styles pour les commentaires de code */
+        .code-block .comment {
+            color: #6a9955 !important;
+            font-style: italic !important;
+        }
+          @media print { 
             body { margin: 0; padding: 0.5cm; } 
             .page-break, .pagebreak { page-break-before: always; } 
             .no-print { display: none !important; }
             .math-formula-container, .MathJax, mjx-container { page-break-inside: avoid !important; }
+            .code-block, pre, code {
+                background: #f8f8f8 !important;
+                border: 1px solid #ccc !important;
+                page-break-inside: avoid !important;
+                white-space: pre-wrap !important;
+                font-size: 10px !important;
+                line-height: 1.3 !important;
+                word-wrap: break-word !important;
+            }
+            .code-block .comment {
+                color: #6a9955 !important;
+                font-style: italic !important;
+            }
         }
         @media (max-width: 768px) { body { font-size: 11pt !important; } .container { padding: 8pt !important; } h1 { font-size: 1.6em !important; } h2 { font-size: 1.4em !important; } h3 { font-size: 1.2em !important; } }
         @page { margin: 1.5cm; size: A4; }    </style>    <!-- Configuration MathJax centralisée -->
