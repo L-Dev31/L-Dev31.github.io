@@ -17,8 +17,12 @@
     height: 100vh !important;
     object-fit: cover;
     z-index: 0;
-    filter: brightness(0.1);
     pointer-events: none;
+}
+
+/* Specific brightness for the main hero section video */
+.hero > .hero-bg-video {
+    filter: brightness(0.1);
 }
 
 .hero-video {

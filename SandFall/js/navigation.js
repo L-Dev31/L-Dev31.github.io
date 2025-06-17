@@ -21,10 +21,10 @@ class NavigationManager {
 			throw error;
 		}
 	}
-
 	getCurrentPage() {
 		const path = window.location.pathname;
 		if (path.includes('blog.html')) return 'blog';
+		if (path.includes('team.html')) return 'team';
 		return 'index';
 	}
 
@@ -68,16 +68,19 @@ class NavigationManager {
 			if (container) container.innerHTML = socialHTML;
 		});
 	}
-
 	getHref(item) {
 		if (item.external) {
 			return this.currentPage === 'blog' && !item.href.startsWith('http') 
 				? item.href 
 				: item.href;
 		} else {
-			return this.currentPage === 'blog' 
-				? `index.html${item.href}` 
-				: item.href;
+			if (this.currentPage === 'blog') {
+				return `index.html${item.href}`;
+			} else if (this.currentPage === 'team') {
+				return `index.html${item.href}`;
+			} else {
+				return item.href;
+			}
 		}
 	}
 

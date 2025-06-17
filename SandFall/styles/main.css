@@ -1,11 +1,13 @@
 @import 'var.css';
 @import 'base.css';
+@import 'bg-video.css';
 @import 'intro.css';
 @import 'navbar.css';
 @import 'hero.css';
 @import 'about.css';
 @import 'expedition33.css';
 @import 'team.css';
+@import 'team-page.css';
 @import 'blog.css';
 @import 'contact.css';
 @import 'supporters.css';

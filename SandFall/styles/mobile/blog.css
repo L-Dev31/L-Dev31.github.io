@@ -190,10 +190,13 @@
     .like-btn.liked {
         background: var(--color-primary-gold);
         color: var(--color-black);
+    }    .like-btn .heart {
+        font-size: 1rem;
+        transition: transform 0.3s ease;
     }
 
-    .like-btn .heart {
-        font-size: 1rem;
+    .like-btn .heart.heart-animate {
+        transform: scale(1.4);
     }
 
     .read-time {
