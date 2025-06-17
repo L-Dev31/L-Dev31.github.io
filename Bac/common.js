@@ -186,10 +186,49 @@ async function bulletproofPrint(contentHTML, title = 'Document', subject = '') {
                 font-size: 10px !important;
                 line-height: 1.3 !important;
                 word-wrap: break-word !important;
-            }
-            .code-block .comment {
+            }            .code-block .comment {
                 color: #6a9955 !important;
                 font-style: italic !important;
+            }
+            
+            /* Styles d'impression pour les tableaux */
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                margin: 10px 0 !important;
+                page-break-inside: auto !important;
+                font-size: 10px !important;
+                line-height: 1.2 !important;
+            }
+            
+            th, td {
+                padding: 6px 8px !important;
+                border: 1px solid #666 !important;
+                text-align: left !important;
+                vertical-align: top !important;
+                page-break-inside: avoid !important;
+                word-wrap: break-word !important;
+            }
+            
+            th {
+                background-color: #f0f0f0 !important;
+                font-weight: bold !important;
+                color: #000 !important;
+                border-bottom: 2px solid #333 !important;
+            }
+            
+            tr {
+                page-break-inside: avoid !important;
+            }
+            
+            /* Gestion des très grandes tables */
+            table.large-table {
+                page-break-inside: auto !important;
+            }
+            
+            table.large-table th,
+            table.large-table td {
+                page-break-inside: avoid !important;
             }
         }
         @media (max-width: 768px) { body { font-size: 11pt !important; } .container { padding: 8pt !important; } h1 { font-size: 1.6em !important; } h2 { font-size: 1.4em !important; } h3 { font-size: 1.2em !important; } }
