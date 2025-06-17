@@ -12,7 +12,11 @@
     "philosophie": {
       "title": "Philosophie - Terminale",
       "subtitle": "Notions et méthodes",
-      "dataFile": "philosophie-data.json"
+      "dataFile": "philosophie-data.json"    },
+    "nsi": {
+      "title": "NSI - Numérique et Sciences Informatiques",
+      "subtitle": "Spécialité Terminale",
+      "dataFile": "nsi-data.json"
     },
     "oral": {
       "title": "Grand Oral",

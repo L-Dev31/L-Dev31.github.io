@@ -1,0 +1,176 @@
+<div class="lesson-container">
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-cube"></i>
+                1. Classes et objets
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Concepts fondamentaux
+                </div>
+                <p><strong>Classe</strong> : modèle/blueprint définissant les attributs et méthodes.<br>
+                <strong>Objet</strong> : instance d'une classe avec des valeurs spécifiques.</p>
+            </div>
+
+            <div class="code-block">
+class Personne:
+    """Classe représentant une personne"""
+    
+    # Constructeur
+    def __init__(self, nom, age):
+        self.nom = nom      # Attribut public
+        self.age = age      # Attribut public
+        self._id = None     # Attribut protégé (convention)
+        self.__secret = ""  # Attribut privé
+    
+    # Méthode
+    def se_presenter(self):
+        return f"Je m'appelle {self.nom} et j'ai {self.age} ans"
+    
+    # Méthode avec paramètre
+    def vieillir(self, annees=1):
+        self.age += annees
+    
+    # Getter et setter
+    def get_secret(self):
+        return self.__secret
+    
+    def set_secret(self, secret):
+        self.__secret = secret
+
+# Utilisation
+personne1 = Personne("Alice", 25)
+personne2 = Personne("Bob", 30)
+
+print(personne1.se_presenter())
+personne1.vieillir(2)
+print(f"Nouvel âge: {personne1.age}")
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-shield-alt"></i>
+                2. Encapsulation
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Principe d'encapsulation
+                </div>
+                <p>L'encapsulation consiste à cacher les détails internes d'un objet et à contrôler l'accès à ses données.</p>
+            </div>
+
+            <div class="code-block">
+class CompteBancaire:
+    def __init__(self, titulaire, solde_initial=0):
+        self.titulaire = titulaire
+        self.__solde = solde_initial  # Attribut privé
+        self.__historique = []
+    
+    # Getter pour le solde
+    @property
+    def solde(self):
+        return self.__solde
+    
+    # Méthodes publiques pour manipuler le solde
+    def deposer(self, montant):
+        if montant > 0:
+            self.__solde += montant
+            self.__historique.append(f"Dépôt: +{montant}")
+            return True
+        return False
+    
+    def retirer(self, montant):
+        if 0 < montant <= self.__solde:
+            self.__solde -= montant
+            self.__historique.append(f"Retrait: -{montant}")
+            return True
+        return False
+    
+    def afficher_historique(self):
+        for operation in self.__historique:
+            print(operation)
+
+# Utilisation
+compte = CompteBancaire("Alice", 1000)
+compte.deposer(500)
+compte.retirer(200)
+print(f"Solde: {compte.solde}€")
+# compte.__solde = 999999  # ERREUR ! Accès impossible
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-sitemap"></i>
+                3. Héritage
+            </h2>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-cogs"></i>
+                    Principe de l'héritage
+                </div>
+                <p>L'héritage permet de créer une nouvelle classe basée sur une classe existante, héritant de ses attributs et méthodes.</p>
+            </div>
+
+            <div class="code-block">
+# Classe parent (superclasse)
+class Vehicule:
+    def __init__(self, marque, modele):
+        self.marque = marque
+        self.modele = modele
+        self.vitesse = 0
+    
+    def accelerer(self, vitesse):
+        self.vitesse += vitesse
+        print(f"Vitesse: {self.vitesse} km/h")
+    
+    def freiner(self):
+        self.vitesse = 0
+        print("Véhicule arrêté")
+
+# Classe enfant (sous-classe)
+class Voiture(Vehicule):
+    def __init__(self, marque, modele, nb_portes):
+        super().__init__(marque, modele)  # Appeler le constructeur parent
+        self.nb_portes = nb_portes
+    
+    # Redéfinition de méthode (override)
+    def accelerer(self, vitesse):
+        if self.vitesse + vitesse <= 130:  # Limitation vitesse
+            super().accelerer(vitesse)
+        else:
+            print("Vitesse limitée à 130 km/h")
+    
+    # Nouvelle méthode spécifique
+    def klaxonner(self):
+        print("Bip bip!")
+
+class Moto(Vehicule):
+    def __init__(self, marque, modele, cylindree):
+        super().__init__(marque, modele)
+        self.cylindree = cylindree
+    
+    def faire_roue_arriere(self):
+        print("Wheelie!")
+
+# Utilisation
+voiture = Voiture("Peugeot", "308", 5)
+moto = Moto("Yamaha", "MT-07", 689)
+
+voiture.accelerer(50)
+voiture.klaxonner()
+
+moto.accelerer(80)
+moto.faire_roue_arriere()            </div>
+        </div>
+    </div>

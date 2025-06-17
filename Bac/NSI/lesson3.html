@@ -1,0 +1,145 @@
+<div class="lesson-container">
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-sitemap"></i>
+                1. Introduction aux arbres binaires
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Définition
+                </div>
+                <p>Un <strong>arbre binaire</strong> est une structure de données hiérarchique où chaque nœud a au maximum deux enfants : un enfant gauche et un enfant droit.</p>
+            </div>
+
+            <div class="code-block">
+# Implémentation d'un nœud d'arbre binaire
+class Noeud:
+    def __init__(self, valeur):
+        self.valeur = valeur
+        self.gauche = None
+        self.droit = None
+
+# Création d'un arbre simple
+racine = Noeud(10)
+racine.gauche = Noeud(5)
+racine.droit = Noeud(15)
+racine.gauche.gauche = Noeud(2)
+racine.gauche.droit = Noeud(7)
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-route"></i>
+                2. Parcours d'arbres binaires
+            </h2>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-cogs"></i>
+                    Parcours en profondeur
+                </div>
+                <ul>
+                    <li><strong>Préfixe</strong> (préordre) : Racine → Gauche → Droit</li>
+                    <li><strong>Infixe</strong> (en ordre) : Gauche → Racine → Droit</li>
+                    <li><strong>Postfixe</strong> (postordre) : Gauche → Droit → Racine</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+# Parcours préfixe (récursif)
+def parcours_prefixe(noeud):
+    if noeud is not None:
+        print(noeud.valeur)           # Traiter la racine
+        parcours_prefixe(noeud.gauche) # Parcourir à gauche
+        parcours_prefixe(noeud.droit)  # Parcourir à droite
+
+# Parcours infixe (récursif)
+def parcours_infixe(noeud):
+    if noeud is not None:
+        parcours_infixe(noeud.gauche)  # Parcourir à gauche
+        print(noeud.valeur)            # Traiter la racine
+        parcours_infixe(noeud.droit)   # Parcourir à droite
+
+# Parcours en largeur (avec une file)
+from collections import deque
+
+def parcours_largeur(racine):
+    if racine is None:
+        return
+    
+    file = deque([racine])
+    while file:
+        noeud = file.popleft()
+        print(noeud.valeur)
+        
+        if noeud.gauche:
+            file.append(noeud.gauche)
+        if noeud.droit:
+            file.append(noeud.droit)
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-search"></i>
+                3. Arbres binaires de recherche (ABR)
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Propriété de l'ABR
+                </div>
+                <p>Dans un ABR, pour chaque nœud : tous les éléments du sous-arbre gauche sont inférieurs à la valeur du nœud, et tous les éléments du sous-arbre droit sont supérieurs.</p>
+            </div>
+
+            <div class="code-block">
+# Recherche dans un ABR
+def rechercher(noeud, valeur):
+    if noeud is None or noeud.valeur == valeur:
+        return noeud
+    
+    if valeur < noeud.valeur:
+        return rechercher(noeud.gauche, valeur)
+    else:
+        return rechercher(noeud.droit, valeur)
+
+# Insertion dans un ABR
+def inserer(noeud, valeur):
+    if noeud is None:
+        return Noeud(valeur)
+    
+    if valeur < noeud.valeur:
+        noeud.gauche = inserer(noeud.gauche, valeur)
+    elif valeur > noeud.valeur:
+        noeud.droit = inserer(noeud.droit, valeur)
+    
+    return noeud
+
+# Utilisation
+abr = None
+abr = inserer(abr, 10)
+abr = inserer(abr, 5)
+abr = inserer(abr, 15)
+abr = inserer(abr, 3)
+            </div>
+
+            <div class="example-box">
+                <div class="example-title">
+                    <i class="fas fa-calculator"></i>
+                    Complexité des opérations
+                </div>
+                <ul>
+                    <li><strong>Recherche</strong> : O(log n) en moyenne, O(n) au pire cas</li>
+                    <li><strong>Insertion</strong> : O(log n) en moyenne, O(n) au pire cas</li>
+                    <li><strong>Suppression</strong> : O(log n) en moyenne, O(n) au pire cas</li>
+                    <li><strong>Parcours</strong> : O(n) toujours</li>
+                </ul>            </div>
+        </div>
+    </div>
