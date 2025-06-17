@@ -1,0 +1,246 @@
+/* Team Page Styles */
+.team-page-container {
+    width: 100%;
+    min-height: 100vh;
+    background: transparent;
+    padding: 80px 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Les styles de vidéo de fond sont maintenant dans bg-video.css */
+
+.team-page-header {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.team-page-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: #E3BB70;
+    text-align: center;
+    letter-spacing: 0.05em;
+    margin: 0;
+    font-weight: 700;
+}
+
+.team-page-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.team-category-section {
+    margin-bottom: 80px;
+}
+
+.team-category-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    color: #ffffff;
+    text-align: center;
+    letter-spacing: 0.05em;
+    margin: 0 0 40px 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    position: relative;
+}
+
+.team-category-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 2px;
+    background: #E3BB70;
+}
+
+.team-category-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.team-page-member {
+    background: rgba(24, 24, 24, 0.92);
+    border: 2px solid rgba(227, 187, 112, 0.3);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.18);
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 0;
+}
+
+.team-page-member:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 8px 32px 0 rgba(227,187,112,0.12);
+    border-color: rgba(227, 187, 112, 0.6);
+}
+
+.team-page-photo {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 2px solid #E3BB70;
+    object-fit: cover;
+    margin-bottom: 18px;
+}
+
+.team-page-info {
+    flex: 1;
+}
+
+.team-page-name {
+    font-family: 'Montserrat', sans-serif;
+    color: #E3BB70;
+    font-size: 1.25rem;
+    margin: 0 0 4px 0;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+
+.team-page-role {
+    font-family: 'Montserrat', sans-serif;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    margin: 0 0 10px 0;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+
+.team-page-favorites {
+    font-family: 'Montserrat', sans-serif;
+    color: rgba(227, 187, 112, 0.9);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.team-page-links {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.team-page-link {
+    color: #E3BB70;
+    text-decoration: underline;
+    font-size: 1rem;
+    transition: color 0.2s;
+}
+
+.team-page-link:hover {
+    color: #fff;
+}
+
+/* Centrage des membres de l'équipe sur la page team */
+.team-centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .team-centered {
+        align-items: stretch;
+    }
+}
+
+/* Loading spinner (same as blog page) */
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(227, 187, 112, 0.3);
+    border-top: 3px solid #E3BB70;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .team-category-grid {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .team-page-container {
+        padding: 60px 0;
+    }
+    
+    .team-page-header {
+        margin-bottom: 40px;
+    }
+    
+    .team-category-section {
+        margin-bottom: 60px;
+    }
+    
+    .team-category-grid {
+        justify-content: center;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .team-page-container {
+        padding: 40px 0;
+    }
+    
+    .team-page-header,
+    .team-page-content {
+        padding: 0 15px;
+    }
+    
+    .team-page-member {
+        padding: 15px;
+    }
+    
+    .team-page-photo {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .team-category-title::after {
+        width: 60px;
+    }
+}

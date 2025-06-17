@@ -199,32 +199,37 @@ class BlogManager {
 			});
 		});
 	}
-
 	toggleLike(postId, button) {
 		const isLiked = this.likes[postId] || false;
 		this.likes[postId] = !isLiked;
 		localStorage.setItem('blogLikes', JSON.stringify(this.likes));
 
-		const heart = button.querySelector('.heart');
-		const likeCount = button.querySelector('.like-count');
 		const post = this.posts.find(p => p.id === postId);
-
-		if (this.likes[postId]) {
-			button.classList.add('liked');
-			heart.textContent = '❤️';
-			likeCount.textContent = post.likes + 1;
-			this.animateHeart(heart);
-		} else {
-			button.classList.remove('liked');
-			heart.textContent = '🤍';
-			likeCount.textContent = post.likes;
-		}
+		this.updateAllLikeButtons(postId, this.likes[postId], post.likes);
 	}
 
+	updateAllLikeButtons(postId, isLiked, baseLikes) {
+		const allLikeButtons = document.querySelectorAll(`[data-post-id="${postId}"] .like-btn, .like-btn[data-post-id="${postId}"]`);
+		allLikeButtons.forEach(btn => {
+			const heart = btn.querySelector('.heart');
+			const likeCount = btn.querySelector('.like-count');
+			
+			if (isLiked) {
+				btn.classList.add('liked');
+				heart.textContent = '❤️';
+				likeCount.textContent = baseLikes + 1;
+				this.animateHeart(heart);
+			} else {
+				btn.classList.remove('liked');
+				heart.textContent = '🤍';
+				likeCount.textContent = baseLikes;
+			}
+		});
+	}
 	animateHeart(heart) {
-		heart.style.transform = 'scale(1.4)';
+		heart.classList.add('heart-animate');
 		setTimeout(() => {
-			heart.style.transform = 'scale(1)';
+			heart.classList.remove('heart-animate');
 		}, 200);
 	}
 

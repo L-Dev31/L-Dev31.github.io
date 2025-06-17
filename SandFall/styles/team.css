@@ -25,6 +25,9 @@
     padding: 0 20px;
     position: relative;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .sandfall-team-title {
@@ -48,11 +51,12 @@
 }
 
 .sandfall-team-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 40px;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -64,6 +68,8 @@
     position: relative;
     backdrop-filter: blur(10px);
     overflow: hidden;
+    width: 350px;
+    flex-shrink: 0;
 }
 
 .team-member::before {
@@ -221,7 +227,7 @@
 /* Responsive adjustments */
 @media (max-width: 1200px) {
     .sandfall-team-grid {
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        justify-content: center;
         gap: 30px;
     }
 }
@@ -232,13 +238,15 @@
     }
     
     .sandfall-team-grid {
-        grid-template-columns: 1fr;
+        justify-content: center;
         gap: 25px;
         padding: 0 10px;
     }
     
     .team-member {
         padding: 25px 20px;
+        width: 100%;
+        max-width: 400px;
     }
     
     .sandfall-team-subtitle {

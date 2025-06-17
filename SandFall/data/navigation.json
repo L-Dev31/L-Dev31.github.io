@@ -11,8 +11,7 @@
       "label": "About", 
       "href": "#about",
       "external": false
-    },
-    {
+    },    {
       "id": "sandfall-team",
       "label": "Team",
       "href": "#sandfall-team", 
