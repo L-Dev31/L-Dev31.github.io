@@ -123,13 +123,57 @@ async function bulletproofPrint(contentHTML, title = 'Document', subject = '') {
         .code-block *, pre *, code * {
             white-space: pre-wrap !important;
         }
-        
-        /* Styles pour les commentaires de code */
+          /* Styles pour les commentaires de code */
         .code-block .comment {
             color: #6a9955 !important;
             font-style: italic !important;
         }
-          @media print { 
+        
+        /* Styles pour les tableaux */
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 15px 0 !important;
+            page-break-inside: avoid !important;
+            font-size: 11px !important;
+        }
+        
+        th, td {
+            padding: 8px 12px !important;
+            border: 1px solid #dee2e6 !important;
+            text-align: left !important;
+            vertical-align: top !important;
+            page-break-inside: avoid !important;
+        }
+        
+        th {
+            background-color: #f8f9fa !important;
+            font-weight: bold !important;
+            color: #2d3748 !important;
+            border-bottom: 2px solid ${subjectColor} !important;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa !important;
+        }
+        
+        tr:hover {
+            background-color: #e8f4f8 !important;
+        }
+        
+        /* Variables CSS pour les tableaux NSI */
+        table th[style*="--nsi-light"], 
+        table th[style*="var(--nsi-light)"] {
+            background-color: #e3f2fd !important;
+        }
+        
+        table td[style*="--nsi-border"], 
+        table td[style*="var(--nsi-border)"],
+        table th[style*="--nsi-border"], 
+        table th[style*="var(--nsi-border)"] {
+            border-color: #2196f3 !important;
+        }
+          @media print {
             body { margin: 0; padding: 0.5cm; } 
             .page-break, .pagebreak { page-break-before: always; } 
             .no-print { display: none !important; }
