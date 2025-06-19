@@ -1,6 +1,6 @@
-if (document.referrer && document.referrer.includes('blog.html')) {
-	// Ne pas rejouer l'intro si on vient de blog.html
-} else if (!sessionStorage.getItem('introPlayed')) {
+if (document.referrer && (document.referrer.includes('blog.html') || document.referrer.includes('team.html'))) {
+	// Ne pas rejouer l'intro si on vient de blog.html ou team.html
+} else {
 	window.scrollTo(0, 0);
 	document.documentElement.scrollTop = 0;
 	document.body.scrollTop = 0;
@@ -61,6 +61,5 @@ if (document.referrer && document.referrer.includes('blog.html')) {
 				}, 1800);
 			}, 1000);
 		}, 5000);
-		sessionStorage.setItem('introPlayed', '1');
 	});
 }

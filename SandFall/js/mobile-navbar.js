@@ -38,4 +38,16 @@ document.addEventListener('DOMContentLoaded', function () {
 			body.classList.remove('mobile-menu-open');
 		}
 	});
+	// Close mobile menu when any link inside the mobile-nav is clicked (delegation)
+	const mobileNavContainer = document.querySelector('.mobile-nav');
+	if (mobileNavContainer) {
+		mobileNavContainer.addEventListener('click', function (e) {
+			const link = e.target.closest('a');
+			if (link) {
+				hamburger.classList.remove('active');
+				overlay.classList.remove('active');
+				body.classList.remove('mobile-menu-open');
+			}
+		});
+	}
 });
