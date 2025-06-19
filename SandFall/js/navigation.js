@@ -40,7 +40,8 @@ class NavigationManager {
 		const navItems = this.navigationData.navigation.map(item => {
 			const href = this.getHref(item);
 			const isActive = this.isActiveLink(item);
-			return `<li><a href="${href}" class="navbar-link${isActive ? ' active' : ''}">${item.label}</a></li>`;
+			const icon = item.external ? ' <i class="fas fa-external-link-alt"></i>' : '';
+			return `<li><a href="${href}" class="navbar-link${isActive ? ' active' : ''}">${item.label}${icon}</a></li>`;
 		}).join('');
 		navElement.innerHTML = navItems;
 	}
@@ -50,7 +51,8 @@ class NavigationManager {
 		if (!mobileNavElement || !this.navigationData) return;
 		const mobileNavItems = this.navigationData.navigation.map(item => {
 			const href = this.getHref(item);
-			return `<li><a href="${href}">${item.label}</a></li>`;
+			const icon = item.external ? ' <i class="fas fa-external-link-alt"></i>' : '';
+			return `<li><a href="${href}">${item.label}${icon}</a></li>`;
 		}).join('');
 		mobileNavElement.innerHTML = mobileNavItems;
 	}
