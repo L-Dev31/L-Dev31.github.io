@@ -9,7 +9,7 @@ class SupportersManager {
 		this.startPos = 0;
 		this.currentPos = 0;
 		this.animationId = null;
-		this.speed = 0.22; // 1.5x plus lent (0.33 / 1.5)
+		this.speed = 0.5
 		this.supportersWidth = 0;
 		this.originalCount = 0;
 
