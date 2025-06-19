@@ -190,7 +190,7 @@
 
 .team-discover-btn {
     display: inline-block;
-    padding: 0.8em 2em;
+    padding: 0.8em 3.5em 0.8em 2em;
     background: transparent;
     color: #E3BB70;
     border: 2px solid #E3BB70;
@@ -211,17 +211,20 @@
     transform: translateY(-2px);
 }
 
-.team-discover-btn:hover::after {
-    transform: translateX(3px);
+.team-discover-btn::after {
+    content: '\2192';
+    position: absolute;
+    top: 50%;
+    right: 1.2em;
+    transform: translateY(-50%);
+    font-size: 1.3rem;
+    font-family: inherit;
+    font-weight: normal;
+    transition: transform 0.3s;
 }
 
-.team-discover-btn::after {
-    content: '';
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 8px;
-    transition: transform 0.3s;
+.team-discover-btn:hover::after {
+    transform: translateY(-50%) translateX(3px);
 }
 
 /* Responsive adjustments */
