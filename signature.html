@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Leo Tosku</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+          body {
+            margin: 0;
+            padding: 20px;
+            background: #fff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            gap: 20px;
+        }
+        
+        .signature-container {
+            background: #fff;
+            color: #111;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            min-width: 100%;
+            backdrop-filter: none;
+            transition: none;
+        }
+        
+        .signature-container::before {
+            display: none;
+        }
+        
+        .signature-content {
+            position: relative;
+            z-index: 2;
+            padding: 28px 32px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 24px;
+            min-height: 100px;
+            background: none;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+          .logo-svg {
+            width: 100%;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .logo-svg svg {
+            width: 60px;
+            height: 60px;
+            filter: none;
+            fill: #111;
+            color: #111;
+            background: none;
+            transition: none;
+        }
+        
+        .info-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            line-height: 1.4;
+            min-width: 0;
+        }
+        
+        .name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 4px;
+            background: none;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: unset;
+            background-clip: unset;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        
+        .title {
+            font-size: 14px;
+            color: #444;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+            margin-bottom: 12px;
+        }
+          .contact-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            min-width: 0;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 0;
+            justify-content: flex-start;
+            width: 100%;
+        }
+        
+        .contact-item i {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #444;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .contact-item a {
+            color: #111;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 400;
+            white-space: nowrap;
+            position: relative;
+        }
+        
+        .contact-item a::after {
+            display: none;
+        }
+        
+        .website-link {
+            font-weight: 500 !important;
+            color: #111 !important;
+        }
+        
+        .website-link::after {
+            display: none !important;
+        }
+          /* Responsive Design */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .signature-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 24px 20px;
+                text-align: center;
+            }
+            
+            .info-section {
+                align-items: center;
+                text-align: center;
+            }
+            
+            .contact-section {
+                align-items: center;
+            }
+            
+            .contact-item a {
+                font-size: 14px;
+            }
+            
+            .name {
+                font-size: 20px;
+            }
+        }
+          @media (max-width: 480px) {
+            .signature-content {
+                padding: 20px 16px;
+            }
+            
+            .logo-svg {
+                width: 100%;
+                height: 64px;
+            }
+            
+            .logo-svg svg {
+                width: 36px;
+                height: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signature-container" id="signature">
+        <div class="signature-content">
+            <div class="logo-section">
+                <div class="logo-svg">
+                    <svg width="42" height="42" viewBox="0 0 473 473" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" xmlns="http://www.w3.org/2000/svg">
+                        <g><path style="opacity:0.959" fill="#000" d="M 198.5,11.5 C 217.006,9.94302 232.506,15.943 245,29.5C 265.272,57.4274 271.939,88.4274 265,122.5C 254.888,173.096 226.055,208.096 178.5,227.5C 175.44,255.86 165.607,281.526 149,304.5C 134.172,321.503 116.672,325.003 96.5,315C 81.8047,304.449 80.8047,292.782 93.5,280C 95.7173,278.725 98.0506,277.725 100.5,277C 118.129,275.752 135.795,275.086 153.5,275C 158.424,260.548 161.758,245.714 163.5,230.5C 128.601,237.698 99.1014,228.365 75,202.5C 60.4117,180.768 57.4117,157.434 66,132.5C 68.1634,128.492 71.3301,125.826 75.5,124.5C 73.7825,132.829 71.9491,141.162 70,149.5C 68.5,184.999 84.6667,208.166 118.5,219C 133.969,221.368 149.302,220.701 164.5,217C 165.393,181.236 165.393,145.403 164.5,109.5C 164.395,92.4705 164.895,75.4705 166,58.5C 167.153,41.6952 173.986,27.8619 186.5,17C 190.451,14.8548 194.451,13.0214 198.5,11.5 Z M 209.5,24.5 C 196.151,25.3293 187.651,32.3293 184,45.5C 180.433,61.7979 178.933,78.2979 179.5,95C 180.405,123.003 181.405,151.003 182.5,179C 182.186,188.85 182.02,198.683 182,208.5C 211.489,192.669 232.156,169.002 244,137.5C 255.211,109.114 255.211,80.7804 244,52.5C 237.96,36.2812 226.46,26.9479 209.5,24.5 Z M 116.5,289.5 C 110.299,290.237 103.966,291.071 97.5,292C 96.1279,293.242 95.1279,294.742 94.5,296.5C 97.2158,303.87 102.549,307.87 110.5,308.5C 122.966,305.859 133.299,299.693 141.5,290C 133.173,289.5 124.84,289.334 116.5,289.5 Z"/></g>
+                        <g><path style="opacity:0.958" fill="#000" d="M 293.5,130.5 C 299.314,130.234 303.314,132.734 305.5,138C 300.575,147.948 297.408,158.448 296,169.5C 290.411,206.649 286.578,243.983 284.5,281.5C 317.991,282.525 351.325,285.358 384.5,290C 387.284,292.112 389.284,294.779 390.5,298C 389.709,300.734 388.376,301.068 386.5,299C 352.258,295.266 317.925,292.766 283.5,291.5C 281.169,329.135 279.503,366.801 278.5,404.5C 278.556,421.181 279.056,437.847 280,454.5C 282.478,457.738 281.811,459.738 278,460.5C 272.691,459.191 269.357,455.857 268,450.5C 265.652,429.892 264.985,409.225 266,388.5C 267.487,355.83 268.987,323.164 270.5,290.5C 237.473,289.855 204.473,288.521 171.5,286.5C 173.406,283.36 174.74,280.027 175.5,276.5C 207.516,277.012 239.516,278.012 271.5,279.5C 274.136,234.531 279.303,189.865 287,145.5C 288.648,140.21 290.815,135.21 293.5,130.5 Z"/></g>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="name">Léo Tosku</div>
+                <div class="title">3D & Webdesign</div>
+            </div>
+            
+            <div class="contact-section">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:+590690936696">+590 690 93 66 96</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-globe"></i>
+                    <a href="https://l-dev31.github.io/" target="_blank" class="website-link">Portfolio</a>
+                </div>            </div>
+        </div>
+    </div>
+</body>
+</html>
