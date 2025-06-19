@@ -38,9 +38,8 @@ class TeamManager {
 					 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iODAiIHI9IjMwIiBmaWxsPSIjRTNCQjcwIi8+PHJlY3QgeD0iNzAiIHk9IjEzMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRTNCQjcwIi8+PC9zdmc+'" 
 					 loading="lazy" />
 				<h3 class="team-member-name">${member.name}</h3>
-				<div class="team-member-role">${member.role}</div>
-				${member.bio ? `<p class="team-member-bio">${member.bio}</p>` : ''}
-				${member.links ? `<div class="team-member-links"><a href="#" target="_blank" class="team-link">${member.links}</a></div>` : ''}
+				<div class="team-member-role">${member.role}</div>				${member.bio ? `<p class="team-member-bio">${member.bio}</p>` : ''}
+				${member.links ? `<div class="team-member-links"><a href="${member.links.url}" target="_blank" class="team-link">${member.links.text}</a></div>` : ''}
 				${member.favorites ? `<div class="team-member-favorites">${member.favorites}</div>` : '<div class="team-member-favorites"></div>'}
 			</div>
 		`).join('');
