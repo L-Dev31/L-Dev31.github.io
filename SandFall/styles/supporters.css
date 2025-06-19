@@ -31,6 +31,22 @@
     align-items: center;
 }
 
+.supporters-slider::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right, 
+        #181818 0%, 
+        transparent 15%, 
+        transparent 85%, 
+        #181818 100%);
+    pointer-events: none;
+    z-index: 2;
+}
+
 .supporters-track {
     display: flex;
     align-items: center;
@@ -39,6 +55,14 @@
     will-change: transform;
     /* Largeur calculée pour permettre le loop seamless */
     width: max-content;
+    position: relative;
+    z-index: 1;
+    cursor: grab;
+    user-select: none;
+}
+
+.supporters-track:active {
+    cursor: grabbing;
 }
 
 .supporter-img {
@@ -62,7 +86,7 @@
         transform: translateX(0);
     }
     100% {
-        transform: translateX(calc(-3 * (200px + 60px)));
+        transform: translateX(calc(-4 * (200px + 60px)));
     }
 }
 
@@ -85,7 +109,7 @@
             transform: translateX(0);
         }
         100% {
-            transform: translateX(calc(-3 * (120px + 30px)));
+            transform: translateX(calc(-4 * (120px + 30px)));
         }
     }
 }

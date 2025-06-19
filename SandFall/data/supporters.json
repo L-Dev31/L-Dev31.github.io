@@ -1,0 +1,20 @@
+{
+  "supporters": [
+    {
+      "id": "cnc",
+      "name": "CNC - Centre national du cinéma et de l'image animée"
+    },
+    {
+      "id": "emgr",
+      "name": "EPIC MegaGrants"
+    },
+    {
+      "id": "occitanie",
+      "name": "Région Occitanie"
+    },
+    {
+      "id": "kepler",
+      "name": "Kepler Interactive"
+    }
+  ]
+}
