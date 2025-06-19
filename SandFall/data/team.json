@@ -48,22 +48,26 @@
       "id": 5,
       "name": "Nicholas Maxson-Francombe",
       "role": "Art Director",
-      "roleCategory": "ART & ENVIRO",
-      "bio": "Illustrator and Graphic Designer, Nicholas is also well-known online for his steampunk style paintings.",
+      "roleCategory": "ART & ENVIRO",      "bio": "Illustrator and Graphic Designer, Nicholas is also well-known online for his steampunk style paintings.",
       "image": "images/team/nicholas.png",
       "favorites": "Favorite games: Dishonored, League of Legends, The Order: 1886, Bioshock",
-      "links": "View Nicholas' ArtStation",
+      "links": {
+        "text": "View Nicholas' ArtStation",
+        "url": "https://www.artstation.com/nicholas-maxson-francombe"
+      },
       "priority": true
     },
     {
       "id": 6,
       "name": "Lorien Testard",
       "role": "Music Composer",
-      "roleCategory": "AUDIO",
-      "bio": "With love and care, Lorien composes the original music for Clair Obscur: Expedition 33",
+      "roleCategory": "AUDIO",      "bio": "With love and care, Lorien composes the original music for Clair Obscur: Expedition 33",
       "image": "images/team/lorien.png",
       "favorites": "Favorite games: Zelda Majora's Mask, Xenoblade Chronicles, Nier Automata, Hollow Knight",
-      "links": "Listen to Lorien's Soundcloud",
+      "links": {
+        "text": "Listen to Lorien's Soundcloud",
+        "url": "https://soundcloud.com/lorien26"
+      },
       "priority": true
     },
     {
@@ -291,10 +295,12 @@
       "name": "Alice Duport-Percier",
       "role": "Singer & Vocal Composer",
       "roleCategory": "AUDIO",
-      "bio": "",
-      "image": "images/team/alice.png",
+      "bio": "",      "image": "images/team/alice.png",
       "favorites": "Favorite games: Mario Kart: Double Dash!!, Crash Bandicoot 3, Tintin in Tibet",
-      "links": "Official website",
+      "links": {
+        "text": "Official website",
+        "url": "https://www.aliceduportpercier.com/"
+      },
       "priority": false
     },
     {
