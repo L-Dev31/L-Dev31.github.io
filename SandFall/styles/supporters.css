@@ -51,7 +51,6 @@
     display: flex;
     align-items: center;
     gap: 60px;
-    animation: supporters-scroll 30s linear infinite;
     will-change: transform;
     /* Largeur calculée pour permettre le loop seamless */
     width: max-content;
@@ -81,15 +80,6 @@
     opacity: 1;
 }
 
-@keyframes supporters-scroll {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(calc(-4 * (200px + 60px)));
-    }
-}
-
 @media (max-width: 700px) {
     .supporters-title {
         font-size: 1.2em;
@@ -103,13 +93,5 @@
     }
     .supporters-track {
         gap: 30px;
-    }
-    @keyframes supporters-scroll {
-        0% {
-            transform: translateX(0);
-        }
-        100% {
-            transform: translateX(calc(-4 * (120px + 30px)));
-        }
     }
 }
