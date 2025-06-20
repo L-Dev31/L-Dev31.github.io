@@ -148,12 +148,11 @@ class BlogManager {
 		const startIndex = (this.currentPage - 1) * this.postsPerPage;
 		const endIndex = startIndex + this.postsPerPage;
 		const postsToShow = this.filteredPosts.slice(startIndex, endIndex);
-
 		container.innerHTML = postsToShow.map((post) => {
 			const isLiked = this.likes[post.id] || false;
 			const likeCount = post.likes + (isLiked ? 1 : 0);
 			return `
-				<article class="blog-post" data-post-id="${post.id}" data-aos>
+				<article class="blog-post" data-post-id="${post.id}" data-aos tabindex="0" role="button" aria-label="Read full article: ${post.title}">
 					<img src="${post.image}" alt="${post.title}" class="post-image" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI0UzQkI3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg=='">
 					<div class="post-content">
 						<div class="post-header">
@@ -167,7 +166,7 @@ class BlogManager {
 								<span>${post.views} views</span>
 							</div>
 							<div class="post-actions">
-								<button class="like-btn ${isLiked ? 'liked' : ''}" data-post-id="${post.id}">
+								<button class="like-btn ${isLiked ? 'liked' : ''}" data-post-id="${post.id}" aria-label="${isLiked ? 'Unlike' : 'Like'} this article" aria-pressed="${isLiked}">
 									<span class="heart">${isLiked ? '❤️' : '🤍'}</span>
 									<span class="like-count">${likeCount}</span>
 								</button>
@@ -180,13 +179,23 @@ class BlogManager {
 		this.attachPostListeners();
 		this.addScrollAnimations();
 	}
-
 	attachPostListeners() {
 		document.querySelectorAll('.blog-post').forEach(post => {
 			post.addEventListener('click', (e) => {
 				if (!e.target.closest('.like-btn')) {
 					const postId = parseInt(post.getAttribute('data-post-id'));
 					this.openModal(postId);
+				}
+			});
+			
+			// Keyboard accessibility
+			post.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					if (!e.target.closest('.like-btn')) {
+						const postId = parseInt(post.getAttribute('data-post-id'));
+						this.openModal(postId);
+					}
 				}
 			});
 		});
@@ -207,7 +216,6 @@ class BlogManager {
 		const post = this.posts.find(p => p.id === postId);
 		this.updateAllLikeButtons(postId, this.likes[postId], post.likes);
 	}
-
 	updateAllLikeButtons(postId, isLiked, baseLikes) {
 		const allLikeButtons = document.querySelectorAll(`[data-post-id="${postId}"] .like-btn, .like-btn[data-post-id="${postId}"]`);
 		allLikeButtons.forEach(btn => {
@@ -216,11 +224,15 @@ class BlogManager {
 			
 			if (isLiked) {
 				btn.classList.add('liked');
+				btn.setAttribute('aria-label', 'Unlike this article');
+				btn.setAttribute('aria-pressed', 'true');
 				heart.textContent = '❤️';
 				likeCount.textContent = baseLikes + 1;
 				this.animateHeart(heart);
 			} else {
 				btn.classList.remove('liked');
+				btn.setAttribute('aria-label', 'Like this article');
+				btn.setAttribute('aria-pressed', 'false');
 				heart.textContent = '🤍';
 				likeCount.textContent = baseLikes;
 			}

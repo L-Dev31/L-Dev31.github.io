@@ -46,44 +46,36 @@
     .blog-grid {
         gap: 25px;
         margin-bottom: 40px;
-    }
-
-    .blog-post {
+    }    .blog-post {
         margin: 0 5px;
         flex-direction: column;
-        min-height: auto;
-        overflow: visible;
+        min-height: 500px;
+        max-height: 600px;
+        overflow: hidden;
+        position: relative;
     }
 
     .post-image {
         width: 100%;
         min-width: auto;
-        height: 200px;
-        min-height: 200px;
+        height: 100%;
+        min-height: 100%;
         object-fit: cover;
         display: block;
-        transition: filter 0.3s ease;
-    }
-
-    .blog-post:hover .post-image,
-    .blog-post.active-post .post-image {
-        filter: brightness(0.6);
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
     }
 
     .post-content {
         width: 100%;
         padding: 25px;
-        background: rgba(0, 0, 0, 0.95);
-        transition: transform 0.3s ease;
-        transform: none !important;
-    }
-
-    .blog-post:hover .post-content,
-    .blog-post.active-post .post-content {
-        transform: none !important;
-    }
-
-    .post-header {
+        background: rgba(0, 0, 0, 0.85);
+        position: relative;
+        z-index: 2;
+        margin-top: auto;
+    }.post-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
@@ -91,23 +83,6 @@
         padding-bottom: 12px;
         border-bottom: 1px solid rgba(227, 187, 112, 0.3);
         position: relative;
-    }
-
-    .post-header::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: -2px;
-        width: 100%;
-        height: 2px;
-        background: var(--color-primary-gold);
-        transform: scaleX(0);
-        transition: transform 0.3s ease;
-    }
-
-    .blog-post:hover .post-header::after,
-    .blog-post.active-post .post-header::after {
-        transform: scaleX(1);
     }
 
     .post-date {
@@ -141,23 +116,6 @@
         position: relative;
     }
 
-    .post-footer::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: -2px;
-        width: 100%;
-        height: 2px;
-        background: var(--color-primary-gold);
-        transform: scaleX(0);
-        transition: transform 0.3s ease;
-    }
-
-    .blog-post:hover .post-footer::before,
-    .blog-post.active-post .post-footer::before {
-        transform: scaleX(1);
-    }
-
     .post-footer-stats {
         font-size: 0.8rem;
         color: var(--color-text-medium);
@@ -166,7 +124,7 @@
         gap: 15px;
         display: flex;
         align-items: center;
-    }.like-btn {
+    }    .like-btn {
         background: rgba(128, 128, 128, 0.3);
         border: none;
         border-radius: 90px !important; /* Full pill shape, force override */
@@ -175,22 +133,16 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        transition: var(--transition-medium);
         font-size: 0.85rem;
         padding: 8px 16px;
         font-weight: 600;
         outline: none;
     }
 
-    .like-btn:hover {
-        background: rgba(128, 128, 128, 0.5);
-        transform: scale(1.05);
-    }
-
     .like-btn.liked {
         background: var(--color-primary-gold);
         color: var(--color-black);
-    }    .like-btn .heart {
+    }.like-btn .heart {
         font-size: 1rem;
         transition: transform 0.3s ease;
     }

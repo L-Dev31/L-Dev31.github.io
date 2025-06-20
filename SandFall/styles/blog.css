@@ -130,13 +130,13 @@
     position: relative;
     display: flex;
     align-items: stretch;
-    min-height: 280px;
+    min-height: 380px;
 }
 
 .post-image {
     width: 50%;
     min-width: 50%;
-    height: 100%;
+    min-height: 100%;
     object-fit: cover;
     display: block;
     transition: filter 0.3s ease;
@@ -144,7 +144,7 @@
 
 .blog-post:hover .post-image,
 .blog-post.active-post .post-image {
-    filter: brightness(0.6);
+    filter: brightness(0.8);
 }
 
 .post-content {
@@ -159,14 +159,14 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: linear-gradient(to left, rgba(0, 0, 0, 0.95) 80%, transparent);
+    background: black;
     transition: width 0.3s ease, background 0s ease 0.3s;
 }
 
 .blog-post:hover .post-content,
 .blog-post.active-post .post-content {
     width: 55%;
-    background: rgba(0, 0, 0, 0.95);
+    background: black;
     transition: width 0.3s ease, background 0s;
 }
 
@@ -542,4 +542,52 @@
     opacity: 1;
     transform: translateY(0);
     transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Disable all hover effects on mobile */
+@media (max-width: 768px) {
+    .blog-post:hover .post-image,
+    .blog-post.active-post .post-image {
+        filter: none !important;
+    }
+    
+    .blog-post:hover .post-content,
+    .blog-post.active-post .post-content {
+        width: 50% !important;
+        background: linear-gradient(to left, rgba(0, 0, 0, 0.7) 80%, transparent) !important;
+    }
+    
+    .blog-post:hover .post-header::after,
+    .blog-post.active-post .post-header::after {
+        transform: scaleX(0) !important;
+    }
+    
+    .blog-post:hover .post-footer::before,
+    .blog-post.active-post .post-footer::before {
+        transform: scaleX(0) !important;
+    }
+    
+    .like-btn:hover {
+        background: rgba(128, 128, 128, 0.3) !important;
+        transform: none !important;
+    }
+    
+    .like-btn:hover .heart {
+        transform: none !important;
+    }
+    
+    .search-btn:hover {
+        color: var(--color-primary-gold) !important;
+        transform: none !important;
+    }
+    
+    .pagination-btn:not(:disabled):hover {
+        background: transparent !important;
+    }
+    
+    .modal-close:hover {
+        background: rgba(60, 60, 60, 0.85) !important;
+        color: var(--color-white) !important;
+        transform: none !important;
+    }
 }
