@@ -545,16 +545,37 @@
 }
 
 /* Disable all hover effects on mobile */
-@media (max-width: 768px) {
+@media (max-width: 768px) {    /* Ensure post content covers full container on mobile */
+    .blog-post .post-content {
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0, 0, 0, 0.85) !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 2 !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+    }
+    
     .blog-post:hover .post-image,
     .blog-post.active-post .post-image {
         filter: none !important;
-    }
-    
-    .blog-post:hover .post-content,
+    }      .blog-post:hover .post-content,
     .blog-post.active-post .post-content {
-        width: 50% !important;
-        background: linear-gradient(to left, rgba(0, 0, 0, 0.7) 80%, transparent) !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0, 0, 0, 0.85) !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 2 !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
     }
     
     .blog-post:hover .post-header::after,
