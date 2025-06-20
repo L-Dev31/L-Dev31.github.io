@@ -151,11 +151,14 @@
     font-weight: 600;
     outline: none;
     backdrop-filter: blur(5px);
+    transform: translateZ(0);
+    transition: background-color 0.2s ease;
   }
 
   .like-btn.liked {
-    background: var(--color-primary-gold);
+    background-color: var(--color-primary-gold) !important;
     color: var(--color-black);
+    backdrop-filter: none;
   }
 
   .like-btn .heart {
