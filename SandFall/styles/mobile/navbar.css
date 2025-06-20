@@ -8,6 +8,9 @@
 }
 
 @media (max-width: 768px) {
+  a {
+    text-decoration: none!important;
+  }
   .navbar nav,
   .navbar .social-icons {
     display: none !important;
@@ -73,7 +76,8 @@
   .mobile-menu-toggle.active .hamburger-line:nth-child(3) {
     transform: translateY(-8px) rotate(-45deg);
     background: #E3BB70;
-  }  .mobile-menu-overlay {
+  }  
+  .mobile-menu-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -114,7 +118,8 @@
   }
   .mobile-menu-overlay.active .mobile-nav {
     pointer-events: auto;
-  }  .mobile-nav ul {
+  }  
+  .mobile-nav ul {
     list-style: none !important;
     margin: 0 !important;
     padding: 0 !important;
