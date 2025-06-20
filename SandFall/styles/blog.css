@@ -346,23 +346,6 @@
     font-size: 1.1rem;
 }
 
-.loading-spinner {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 80px 20px;
-    color: #E3BB70;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(227, 187, 112, 0.3);
-    border-top: 3px solid #E3BB70;
-    border-radius: 50%;
-    margin: 0 auto 25px;
-    animation: spin 1s linear infinite;
-}
-
 .post-modal {
     position: fixed;
     top: 0;
@@ -428,10 +411,8 @@
 }
 
 .modal-close:hover {
-    background: var(--color-primary-gold);
-    color: var(--color-black);
-    transform: scale(1.1) rotate(90deg);
-    /* border-color: var(--color-primary-gold); */ /* No border to color */
+    background: rgba(80, 80, 80, 0.9);
+    color: var(--color-white);
 }
 
 .modal-body {
@@ -527,15 +508,9 @@
     }
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 .blog-post[data-aos] {
-    opacity: 0;
-    transform: translateY(60px);
+  opacity: 0;
+  transform: translateY(60px);
 }
 
 .blog-post[data-aos].aos-animate {
