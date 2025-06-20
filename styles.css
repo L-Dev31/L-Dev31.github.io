@@ -835,3 +835,38 @@ header {
         z-index: 2;
     }
 }
+
+/* Social Links Styles */
+.social-links {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 30px;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    transition: transform 0.2s;
+}
+
+.social-link:hover {
+    transform: translateY(-2.5px);
+}
+
+.social-link i {
+    font-size: 30px;
+}
+
+.social-label {
+    font-size: 24px;
+}
