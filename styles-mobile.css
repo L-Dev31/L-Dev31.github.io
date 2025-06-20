@@ -241,13 +241,12 @@
     }
 
     .achievement-icon {
-        width: 6vh;
-        height: 6vh;
-        margin-bottom: 2vh;
+        margin-bottom: 10px;
     }
 
-    .achievement-icon i {
-        font-size: 2.5vh;
+    .achievement-icon img {
+        width: 30px;
+        height: 30px;
     }
 
     .achievement-title {
@@ -512,14 +511,7 @@
         /* transition: background-color 0.2s ease; */ /* Removed background transition */
     }
 
-    .link-mobile:active, .download-mobile:active {
-        /* background-color: rgba(255, 255, 255, 0.1); */ /* Background removed */
-    }
-
-    /* Maintenir les effets hover pour les éléments de navigation */
-    .link-mobile:hover, .download-mobile:hover {
-        /* background-color: rgba(255, 255, 255, 0.05); */ /* Background removed */
-    }/* Instagram link removed */
+    /* Instagram link removed */
 
     /* Espacement mobile optimisé */
     .achievements::before {
