@@ -1,70 +1,67 @@
 @media (max-width: 768px) {
-    * {
-        box-sizing: border-box;
-    }
+  * {
+    box-sizing: border-box;
+    border-radius: 0 !important;
+  }
 
-    html, body {
-        overflow-x: hidden;
-        max-width: 100vw;
-        font-size: 14px;
-        line-height: 1.4;
-    }
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+    font-size: 14px;
+    line-height: 1.4;
+  }
 
-    * {
-        border-radius: 0 !important;
-    }
+  h1 {
+    font-size: 2.2em;
+    line-height: 1.2;
+  }
 
-    h1 {
-        font-size: 2.2em;
-        line-height: 1.2;
-    }
+  h2 {
+    font-size: 1.8em;
+    line-height: 1.3;
+  }
 
-    h2 {
-        font-size: 1.8em;
-        line-height: 1.3;
-    }
+  h3 {
+    font-size: 1.4em;
+    line-height: 1.3;
+  }
 
-    h3 {
-        font-size: 1.4em;
-        line-height: 1.3;
-    }
+  h4 {
+    font-size: 1.2em;
+    line-height: 1.4;
+  }
 
-    h4 {
-        font-size: 1.2em;
-        line-height: 1.4;
-    }
+  h5 {
+    font-size: 1.1em;
+    line-height: 1.4;
+  }
 
-    h5 {
-        font-size: 1.1em;
-        line-height: 1.4;
-    }
+  h6 {
+    font-size: 1em;
+    line-height: 1.4;
+  }
 
-    h6 {
-        font-size: 1em;
-        line-height: 1.4;
-    }
+  a, button {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    a, button {
-        min-height: 44px;
-        min-width: 44px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
 
-    img, video {
-        max-width: 100%;
-        height: auto;
-    }
+  input, textarea, select {
+    width: 100%;
+    max-width: 100%;
+    font-size: 16px;
+  }
 
-    input, textarea, select {
-        width: 100%;
-        max-width: 100%;
-        font-size: 16px; /* Prevents zoom on iOS */
-    }
-
-    .section {
-        padding: 20px;
-        margin: 0;
-    }
+  .section {
+    padding: 20px;
+    margin: 0;
+  }
 }
