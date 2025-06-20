@@ -561,4 +561,23 @@
         max-width: 100vw;
         overflow-x: hidden;
     }
+
+    /* Social Links Mobile */
+    .social-links {
+        padding: 15px 25px 15px 15px;
+        gap: 10px;
+    }
+    
+    .social-link {
+        font-size: 14px;
+        gap: 8px;
+    }
+    
+    .social-link i {
+        font-size: 18px;
+    }
+    
+    .social-label {
+        font-size: 14px;
+    }
 }
