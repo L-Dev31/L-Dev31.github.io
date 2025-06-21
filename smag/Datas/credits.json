@@ -1,0 +1,70 @@
+{
+  "credits": [
+    {
+      "role": "Project Leader",
+      "contributors": ["ldev"]
+    },
+    {
+      "role": "System Management",
+      "contributors": ["solargress"]
+    },
+    {
+      "role": "Music Composing",
+      "contributors": ["solargress"]
+    },
+    {
+      "role": "Music Management",
+      "contributors": ["solargress"]
+    },
+    {
+      "role": "3D Art",
+      "contributors": ["ldev", "floaty", "louis-miles"]
+    },
+    {
+      "role": "2D Art",
+      "contributors": ["hollow", "gareth48"]
+    },
+    {
+      "role": "Level Design",
+      "contributors": ["tetracold", "floaty"]
+    },
+    {
+      "role": "Level Creation",
+      "contributors": ["solargress", "floaty"]
+    },
+    {
+      "role": "Programming",
+      "contributors": ["super-hackio"]
+    },
+    {
+      "role": "Dialogs",
+      "contributors": ["ldev","solargress"]
+    },
+    {
+      "role": "Translations",
+      "contributors": ["ldev", "solargress"]
+    },
+    {
+      "role": "Website",
+      "contributors": ["ldev"]
+    }
+  ],
+  "special": [
+    {
+      "role": "Galaxy Level Engine",
+      "contributors": ["super-hackio"],
+      "class": "engine-credit"
+    },
+    {
+      "role": "Special Thanks",
+      "contributors": ["mixlas", "alexsmg", "zyphron-g"],
+      "class": "special-credit"
+    }
+  ],
+  "recruitment": {
+    "message": "We're currently in need of Playtesters!",
+    "contact": "You can contact on Discord",
+    "discord_users": ["ldev.", "solargress"],
+    "additional_text": "if interested."
+  }
+}

@@ -1,0 +1,218 @@
+<div class="lesson-container">
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-lock"></i>
+                1. Chiffrement et cryptographie
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Principes du chiffrement
+                </div>
+                <p>Le <strong>chiffrement</strong> transforme un message lisible (texte clair) en message illisible (texte chiffré) pour protéger la confidentialité des données.</p>
+            </div>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-cogs"></i>
+                    Types de chiffrement
+                </div>
+                <ul>
+                    <li><strong>Symétrique</strong> : même clé pour chiffrer et déchiffrer (AES, DES)</li>
+                    <li><strong>Asymétrique</strong> : paire clé publique/privée (RSA, ECC)</li>
+                    <li><strong>Hachage</strong> : fonction à sens unique (SHA-256, MD5)</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+# Exemple de chiffrement simple : César
+def chiffrement_cesar(message, decalage):
+    """Chiffre un message avec le chiffre de César"""
+    resultat = ""
+    for char in message:
+        if char.isalpha():
+            # Gérer majuscules et minuscules
+            base = ord('A') if char.isupper() else ord('a')
+            resultat += chr((ord(char) - base + decalage) % 26 + base)
+        else:
+            resultat += char
+    return resultat
+
+def dechiffrement_cesar(message_chiffre, decalage):
+    """Déchiffre un message avec le chiffre de César"""
+    return chiffrement_cesar(message_chiffre, -decalage)
+
+# Exemple d'utilisation
+message = "HELLO WORLD"
+decalage = 3
+chiffre = chiffrement_cesar(message, decalage)
+print(f"Message original: {message}")
+print(f"Message chiffré: {chiffre}")
+print(f"Message déchiffré: {dechiffrement_cesar(chiffre, decalage)}")
+
+# Chiffrement plus moderne avec hashlib
+import hashlib
+
+def hacher_mot_de_passe(mot_de_passe, sel=""):
+    """Hache un mot de passe avec SHA-256"""
+    message = (mot_de_passe + sel).encode()
+    return hashlib.sha256(message).hexdigest()
+
+# Exemple
+mdp = "monMotDePasse123"
+sel = "selAleatoire456"
+hash_mdp = hacher_mot_de_passe(mdp, sel)
+print(f"Mot de passe haché: {hash_mdp}")
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-user-check"></i>
+                2. Authentification et autorisation
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Authentification vs Autorisation
+                </div>
+                <p><strong>Authentification</strong> : vérifier l'identité (qui êtes-vous ?)<br>
+                <strong>Autorisation</strong> : vérifier les permissions (que pouvez-vous faire ?)</p>
+            </div>
+
+            <div class="code-block">
+# Système d'authentification simple
+import hashlib
+import secrets
+import time
+
+class SystemeAuth:
+    def __init__(self):
+        self.utilisateurs = {}
+        self.sessions = {}
+    
+    def generer_sel(self):
+        """Génère un sel aléatoire"""
+        return secrets.token_hex(16)
+    
+    def hacher_mdp(self, mot_de_passe, sel):
+        """Hache le mot de passe avec le sel"""
+        return hashlib.sha256((mot_de_passe + sel).encode()).hexdigest()
+    
+    def enregistrer_utilisateur(self, nom_utilisateur, mot_de_passe):
+        """Enregistre un nouvel utilisateur"""
+        if nom_utilisateur in self.utilisateurs:
+            return False
+        
+        sel = self.generer_sel()
+        hash_mdp = self.hacher_mdp(mot_de_passe, sel)
+        
+        self.utilisateurs[nom_utilisateur] = {
+            'hash_mdp': hash_mdp,
+            'sel': sel,
+            'role': 'utilisateur',
+            'actif': True
+        }
+        return True
+    
+    def authentifier(self, nom_utilisateur, mot_de_passe):
+        """Authentifie un utilisateur"""
+        if nom_utilisateur not in self.utilisateurs:
+            return None
+        
+        utilisateur = self.utilisateurs[nom_utilisateur]
+        if not utilisateur['actif']:
+            return None
+        
+        hash_test = self.hacher_mdp(mot_de_passe, utilisateur['sel'])
+        
+        if hash_test == utilisateur['hash_mdp']:
+            # Créer une session
+            token = secrets.token_urlsafe(32)
+            self.sessions[token] = {
+                'utilisateur': nom_utilisateur,
+                'creation': time.time(),
+                'derniere_activite': time.time()
+            }
+            return token
+        
+        return None
+    
+    def verifier_autorisation(self, token, action_requise):
+        """Vérifie les autorisations d'un utilisateur"""
+        if token not in self.sessions:
+            return False
+        
+        session = self.sessions[token]
+        nom_utilisateur = session['utilisateur']
+        utilisateur = self.utilisateurs[nom_utilisateur]
+        
+        # Logique d'autorisation simple
+        autorisations = {
+            'admin': ['lire', 'ecrire', 'supprimer', 'admin'],
+            'utilisateur': ['lire', 'ecrire']
+        }
+        
+        role = utilisateur['role']
+        return action_requise in autorisations.get(role, [])
+
+# Utilisation
+auth = SystemeAuth()
+
+# Enregistrement
+auth.enregistrer_utilisateur("alice", "motdepasse123")
+auth.enregistrer_utilisateur("admin", "adminpass")
+auth.utilisateurs["admin"]["role"] = "admin"
+
+# Authentification
+token_alice = auth.authentifier("alice", "motdepasse123")
+print(f"Token Alice: {token_alice}")
+
+# Vérification des autorisations
+peut_lire = auth.verifier_autorisation(token_alice, "lire")
+peut_admin = auth.verifier_autorisation(token_alice, "admin")
+print(f"Alice peut lire: {peut_lire}")
+print(f"Alice peut administrer: {peut_admin}")
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-bug"></i>
+                3. Vulnérabilités et bonnes pratiques
+            </h2>
+
+            <div class="example-box">
+                <div class="example-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Principales vulnérabilités
+                </div>
+                <ul>
+                    <li><strong>Injection SQL</strong> : insertion de code malveillant dans les requêtes</li>
+                    <li><strong>XSS</strong> : injection de scripts dans les pages web</li>
+                    <li><strong>CSRF</strong> : falsification de requêtes intersites</li>
+                    <li><strong>Brute force</strong> : tentatives répétées de connexion</li>
+                    <li><strong>Man-in-the-middle</strong> : interception des communications</li>
+                </ul>
+            </div>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-cogs"></i>
+                    Bonnes pratiques de sécurité
+                </div>
+                <ul>
+                    <li>Utiliser des mots de passe robustes</li>
+                    <li>Ne jamais stocker les mots de passe en clair</li>
+                    <li>Limiter le nombre de tentatives de connexion</li>
+                    <li>Valider et filtrer toutes les entrées utilisateur</li>
+                    <li>Mettre à jour régulièrement les logiciels</li>
+                </ul>            </div>
+        </div>
+    </div>
