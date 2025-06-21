@@ -1,0 +1,88 @@
+/* Mobile-specific overrides for SMAG website */
+
+body.no-scroll {
+  overflow: hidden !important;
+  position: fixed; /* To prevent background from jumping */
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .news-container { margin: 20px 3%; gap: 25px; }
+  .no-blogs-message { min-height: 200px; padding: 40px 15px; }
+  .no-blogs-content h3 { font-size: 24px; margin-bottom: 12px; }
+  .no-blogs-content p { font-size: 15px; line-height: 1.5; }
+  .news-article { flex-direction: column; min-height: auto; border-radius: 20px; }
+  .news-image { flex: none; height: 250px; width: 100%; }
+  .news-content { padding: 25px 20px 20px; position: relative; }
+  .news-date-badge { display: none !important; }
+  .news-header { margin-bottom: 20px; }
+  .news-title { font-size: 24px; line-height: 1.2; margin-bottom: 15px; }
+  .news-summary { font-size: 16px; line-height: 1.4; margin-bottom: 20px; letter-spacing: 0.5px; }
+  .news-meta { flex-direction: row; justify-content: space-between; align-items: center; gap: 10px; }
+  .author-avatar { width: 35px; height: 35px; }
+  .author-name { font-size: 16px; }
+  .read-time {
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+    text-align: left;
+    margin-right: 0;
+    background: none;
+    padding: 0;
+  }
+  .news-card-date {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+    background-color: #e0e0e0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    margin-left: 10px;
+    text-align: right;
+    display: inline-block;
+  }
+  .search-container {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 auto 20px auto !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0;
+  }
+  .search-input {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 100vw !important;
+    border-radius: 30px;
+    margin: 0;
+    box-sizing: border-box;
+    display: block;
+  }
+  .search-icon { right: 20px; font-size: 20px; }
+  .blog-popup { padding: 0; }
+  .blog-popup-content { padding: 30px 20px; margin: 0!important; border-radius: 0;}
+  .blog-popup-title { font-size: 28px; line-height: 1.2; }
+  .blog-popup-meta-line { flex-direction: row; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px; }
+  .blog-popup-date-info { align-self: auto; }
+  .blog-popup-content-text { font-size: 16px; line-height: 1.6; }
+  .blog-popup-content-text img { border-radius: 15px; margin: 15px 0; }
+  .credit h5 { margin: 20px ; width: auto; text-align: left;}
+  .carousel { max-width: 100%!important; height: auto!important;}
+}
+
+@media (max-width: 800px) {
+  .personal-card-popup {
+    padding: 0 !important;
+  } 
+
+  .personal-card-container {
+        width: 100% !important;
+  }
+
+  .blog-popup-close-btn {
+    top: 15px !important;
+  }
+}

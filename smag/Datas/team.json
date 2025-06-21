@@ -1,0 +1,88 @@
+{
+  "members": [
+    {
+      "id": "ldev",
+      "name": "L-DEV",
+      "avatar": "Images/pfp/ldev.png",
+      "country": "fr",
+      "description": "Project Leader and 3D Artist who oversees the development of SMAG. Self taught and passionate about everything, I also am known for my web-design skills."
+    },
+    {
+      "id": "solargress",
+      "name": "Solargress",
+      "avatar": "Images/pfp/solargress.png",
+      "country": "us",
+      "description": "Music Composer and System Manager, responsible for creating the beautiful soundtrack and managing technical systems."
+    },
+    {
+      "id": "smag-team",
+      "name": "SMAG Team",
+      "avatar": "Images/favicon.png",
+      "country": "international",
+      "description": "The collective SMAG development team working together to bring this amazing project to life."
+    },
+    {
+      "id": "floaty",
+      "name": "Floaty",
+      "avatar": "Images/pfp/floaty.png",
+      "country": "ca",
+      "description": "3D Artist and Level Designer who creates intricate level designs and contributes to the game's visual assets."
+    },
+    {
+      "id": "louis-miles",
+      "name": "Louis Miles",
+      "avatar": "Images/pfp/louis-miles.png",
+      "country": "de",
+      "description": "Talented 3D artist and mod creator. Creator of the famous mod Super Mario Gravity."
+    },
+    {
+      "id": "hollow",
+      "name": "Hollow",
+      "avatar": "Images/pfp/hollow.png",
+      "country": "es",
+      "description": "2D Artist specializing in creating beautiful artwork."
+    },
+    {
+      "id": "gareth48",
+      "name": "Gareth48",
+      "avatar": "Images/pfp/gareth48.png",
+      "country": "us",
+      "description": "2D Artist specializing in texture designs."
+    },
+    {
+      "id": "tetracold",
+      "name": "Tetracøłd",
+      "avatar": "Images/pfp/tetracold.png",
+      "country": "ro",
+      "description": "Creative Level Designer who crafts challenging and engaging gameplay experiences."
+    },
+    {
+      "id": "super-hackio",
+      "name": "Super Hackio",
+      "avatar": "Images/pfp/super-hackio.png",
+      "country": "ca",
+      "description": "Skilled Programmer and SMG modder. Creator of Super Mario Galaxy Zero and Galaxy Level Engine"
+    },
+    {
+      "id": "mixlas",
+      "name": "Mixlas",
+      "avatar": "Images/pfp/mixlas.png",
+      "country": "us",
+      "description": "Talented 3D artist. Helped on Pollen Highlands."
+    },
+    {
+      "id": "alexsmg",
+      "name": "AlexSMG",
+      "avatar": "Images/pfp/alexsmg.png",
+      "country": "ch",
+      "description": "World biggest SMG fan. Talented 3D artist and level designer who has contributed to various SMG projects. Creator of Super Mario Galaxy 63."
+    },
+    {
+      "id": "zyphron-g",
+      "name": "Zyphron.G",
+      "avatar": "Images/pfp/zyphron-g.png",
+      "country": "de",
+      "description": "Programmer and talented SMG modder. Helped with skyboxes and other technical aspects of the game."
+    }
+  ]
+}

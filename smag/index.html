@@ -6,6 +6,7 @@
     <title>Super Mario Another Galaxy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="mobile-styles.css">
     <link rel="icon" type="image/png" href="Images/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <meta content="Super Mario Another Galaxy" property="og:title" />
@@ -26,12 +27,12 @@
   </div>
     
   <!-- Navbar -->
-  <img src="Images/logo.png" height="300px" class="logo">
-  <nav>
+  <img src="Images/logo.png" height="300px" class="logo">  <nav>
     <ul class="navItems">
       <li><a href="#home" class="nav-link" data-section="home" style="text-decoration: underline;">Home</a></li>
       <li><a href="#music" class="nav-link" data-section="music">Music</a></li>
       <li><a href="#media" class="nav-link" data-section="media">Medias</a></li>
+      <li><a href="#blog" class="nav-link" data-section="blog">Blog</a></li>
       <li><a href="#credits" class="nav-link" data-section="credits">Credits</a></li>
     </ul>
   </nav>
@@ -42,18 +43,9 @@
     <section id="home" class="content-section active">
       <div class="container">
         <h2>Home</h2>
-        <h5 style="margin:30px 0">Screenshots</h5>
-
-        <div class="carousel">
+        <h5 style="margin:30px 0">Screenshots</h5>        <div class="carousel">
           <div class="pic-ctn">
-            <img src="Images/screenshots/11223.png" alt="Pollen Highlands' night celebration" class="pic">
-            <img src="Images/screenshots/30823.png" alt="Coconut Beach Galaxy" class="pic">
-            <img src="Images/screenshots/20823.png" alt="How did we get here?" class="pic">
-            <img src="Images/screenshots/25623.png" alt="Pollen Highlands is being redone" class="pic">
-            <img src="Images/screenshots/04723.png" alt="Making progress on the second star of Pollen Highlands" class="pic">
-            <img src="Images/screenshots/01423.png" alt="Mario disappeared from reality" class="pic">
-            <img src="Images/screenshots/02223.png" alt="New update on Coconut Beach Galaxy" class="pic">
-            <img src="Images/screenshots/02424.png" alt="Isn't the sky beautiful tonight?" class="pic">
+            <!-- Images will be loaded dynamically from JSON -->
           </div>
           <button class="carousel-btn prev-btn">&larr;</button>
           <button class="carousel-btn next-btn">&rarr;</button>
@@ -79,42 +71,8 @@
     <section id="music" class="content-section">
       <div class="container">
         <h2>Music</h2>
-        <h5 style="margin: 30px 0">Super Mario Another Galaxy's Official Soundtrack</h5>
-        <div class="boxart">
-          <div class="player">
-            <div class="imgbox">
-              <img src="Images/BoxartHUB.png" alt="HubWorld">
-            </div>
-            <audio id="audio1" src="Musics/HUB.mp3" type="audio/mp3" controls></audio>
-          </div>
-
-          <div class="player">
-            <div class="imgbox">
-              <img src="Images/BoxartHUB2.png" alt="HubWorld Small Planet">
-            </div>
-            <audio id="audio2" src="Musics/HUB2.mp3" type="audio/mp3" controls></audio>
-          </div>
-
-          <div class="player">
-            <div class="imgbox">
-              <img src="Images/BoxartPH.png" alt="Pollen Highlands Day">
-            </div>
-            <audio id="audio3" src="Musics/PH.mp3" type="audio/mp3" controls></audio>
-          </div>
-
-          <div class="player">
-            <div class="imgbox">
-              <img src="Images/BoxartPH2.png" alt="Pollen Highlands Night">
-            </div>
-            <audio id="audio4" src="Musics/PH2.mp3" type="audio/mp3" controls></audio>
-          </div>
-
-          <div class="player">
-            <div class="imgbox">
-              <img src="Images/BoxartCB.png" alt="Coconut Beach">
-            </div>
-            <audio id="audio5" src="Musics/CB.mp3" type="audio/mp3" controls></audio>
-          </div>
+        <h5 style="margin: 30px 0">Super Mario Another Galaxy's Official Soundtrack</h5>        <div class="boxart">
+          <!-- Music players will be loaded dynamically from JSON -->
         </div>
 
         <div class="text-box">
@@ -127,64 +85,45 @@
             <p>No Derivatives: You may be prohibited from creating derivative works based on the original song.</p>
           </li>
           <h3 style="margin-top: 50px;">Do you want your own professionally made songs ?</h3>
-          <li><p>You can support Solargress by committing songs for a fair price on his website: <a href="https://solargress.carrd.co/"><strong>https://solargress.carrd.co/</strong></a></p></li>
+          <li><p>You can support Solargress by committing songs for a fair price on his Ko-Fi page: <a href="https://ko-fi.com/solargress" style="text-decoration: none;"><strong>https://ko-fi.com/solargress</strong></a></p></li>
         </div>  
         <h4>© Copyright 2020-2025 SMAG Team</h4> 
       </div>
-    </section>
-
-    <!-- Media -->
+    </section>    <!-- Media -->
     <section id="media" class="content-section">
       <div class="container">
-        <h2>Medias</h2>
-        <h5 style="margin: 30px 0">Last publicly uploaded videos from SMAG</h5>
-
-        <h5><strong>SMAG Teaser Trailer (2025)</strong></h5>
-        <div class="trailer__player">
-          <figure class="video">
-            <iframe width="1280" height="720" src="https://www.youtube.com/embed/MMpBh_gVShs"></iframe>
-          </figure>
+        <h2>Medias</h2>        <h5 style="margin: 30px 0">Last publicly uploaded videos from SMAG</h5>
+        <div class="media-container">
+          <!-- Videos will be loaded dynamically from JSON -->
         </div>
 
-        <h5><strong>SMAG in GLE 2nd Anniversary at 2:28 (2023)</strong></h5>
-        <div class="trailer__player">
-          <figure class="video">
-            <iframe width="1280" height="720" src="https://www.youtube.com/embed/VMpaJVzLOGo"></iframe>
-          </figure>
+        <h4>© Copyright 2020-2025 SMAG Team</h4>
+      </div>    </section><!-- Blog -->
+    <section id="blog" class="content-section">
+      <div class="container">
+        <h2>Blog</h2>
+        <h5 style="margin: 30px 0">Latest updates from the SMAG Team</h5>
+        
+        <!-- Search bar -->
+        <div class="search-container">
+          <input type="text" id="blog-search" placeholder="Search blog posts..." class="search-input">
+          <i class="fas fa-search search-icon"></i>
         </div>
 
-        <h5><strong>SMAG Hubworld Teaser (2023)</strong></h5>
-        <div class="trailer__player">
-          <figure class="video">
-            <iframe width="1280" height="720" src="https://www.youtube.com/embed/S7PbdWTe97M"></iframe>
-          </figure>
-        </div>
-
-        <h5><strong>Pollen Highlands video showcase (2022)</strong></h5>
-        <div class="trailer__player">
-          <figure class="video">
-            <iframe width="1280" height="720" src="https://www.youtube.com/embed/K2hHQsIcJ-0"></iframe>
-          </figure>
+        <!-- Blog container -->
+        <div class="news-container">
+          <!-- Blog articles will be loaded dynamically from JSON -->
         </div>
 
         <h4>© Copyright 2020-2025 SMAG Team</h4>
       </div>
-    </section>
-
-    <!-- Credits -->
+    </section>    <!-- Credits -->
     <section id="credits" class="content-section">
       <div class="container credit">
         <h2>Credits</h2>
-        <h5>Galaxy Designer : <br><strong> Solargress, Floaty</strong></h5>
-        <h5>3D-Modeler : <br><strong>L-Dev, Louis Miles</strong></h5>
-        <h5>Programmer : <br><strong>Super Hackio</strong></h5>
-        <h5>Music Composer : <br><strong>Solargress</strong></h5>
-        <h5>Material & Texture Designer : <br><strong>Gareth, Tetracold</strong></h5>
-        <h5>Artwork : <br><strong>Hollow, Tetracold</strong></h5>
-        <h5>Scenario : <br><strong>L-DEV </strong></h5>
-        <h5 style="margin-top: 75px;" class="engine-credit">Galaxy Level Engine : <br><strong>Super Hackio </strong></h5>
-        <h5 style="margin-top: 75px;" class="special-credit">Special Thanks : <br><strong>Mixlas, AlexSMG, FloatySMG, Zyphro</strong></h5>
-        <h5 style="margin-top: 75px; font-weight: lighter; text-align: center; text-transform: initial;">We're currently in need of talentuous SMG level designers and modelers ! <br> You can contact on Discord <strong>ldev.</strong> or <strong>solargress</strong> if interested.</h5>
+        <div class="credits-container">
+          <!-- Credits will be loaded dynamically from JSON -->
+        </div>
         <h4>© Copyright 2020-2025 SMAG Team</h4>
       </div>
     </section>

@@ -1,0 +1,104 @@
+{
+  "tracks": [
+    {
+      "id": "hub",
+      "title": "HubWorld",
+      "src": "Musics/HUB.mp3",
+      "type": "audio/mp3",
+      "boxart": "Images/boxart/BoxartHUB.png",
+      "composer": "Solargress",
+      "description": "The main hub world theme of Super Mario Another Galaxy",
+      "released": true
+    },
+    {
+      "id": "hub2",
+      "title": "HubWorld Small Planet",
+      "src": "Musics/HUB2.mp3",
+      "type": "audio/mp3",
+      "boxart": "Images/boxart/BoxartHUB2.png",
+      "composer": "Solargress",
+      "description": "Alternative hub world theme for smaller planets",
+      "released": true
+    },
+    {
+      "id": "ph",
+      "title": "Pollen Highlands Day",
+      "src": "Musics/PH.mp3",
+      "type": "audio/mp3",
+      "boxart": "Images/boxart/BoxartPH.png",
+      "composer": "Solargress",
+      "description": "Daytime theme for Pollen Highlands Galaxy",
+      "released": true
+    },
+    {
+      "id": "ph2",
+      "title": "Pollen Highlands Night",
+      "src": "Musics/PH2.mp3",
+      "type": "audio/mp3",
+      "boxart": "Images/boxart/BoxartPH2.png",
+      "composer": "Solargress",
+      "description": "Nighttime theme for Pollen Highlands Galaxy",
+      "released": true
+    },
+    {
+      "id": "cb",
+      "title": "Coconut Beach",
+      "src": "Musics/CB.mp3",
+      "type": "audio/mp3",
+      "boxart": "Images/boxart/BoxartCB.png",
+      "composer": "Solargress",
+      "description": "Theme for Coconut Beach Galaxy",
+      "released": false
+    },
+    {
+      "id": "bb",
+      "title": "Bubble Blast",
+      "src": "Musics/BB.mp3",
+      "type": "audio/mp3",
+      "boxart": "Images/boxart/BoxartBB.png",
+      "composer": "Solargress",
+      "description": "Theme for Bubble Blast Galaxy",
+      "released": false
+    },
+    {
+      "id": "bi",
+      "title": "Bubble Islands",
+      "src": "Musics/BI.mp3",
+      "type": "audio/mp3",
+      "boxart": "Images/boxart/BoxartBI.png",
+      "composer": "Solargress",
+      "description": "Theme for Bubble Islands Galaxy",
+      "released": false
+    },
+    {
+      "id": "pt",
+      "title": "Pirate Tower",
+      "src": "Musics/PT.mp3",
+      "type": "audio/mp3",
+      "boxart": "Images/boxart/BoxartPT.png",
+      "composer": "Solargress",
+      "description": "Theme for Pirate Tower Galaxy",
+      "released": false
+    },
+    {
+      "id": "sp",
+      "title": "Space Port",
+      "src": "Musics/SP.mp3",
+      "type": "audio/mp3",
+      "boxart": "Images/boxart/BoxartSP.png",
+      "composer": "Solargress",
+      "description": "Theme for Space Port Galaxy",
+      "released": false
+    },
+    {
+      "id": "ur",
+      "title": "Underground Ruins",
+      "src": "Musics/UR.mp3",
+      "type": "audio/mp3",
+      "boxart": "Images/boxart/BoxartUR.png",
+      "composer": "Solargress",
+      "description": "Theme for Underground Ruins Galaxy",
+      "released": false
+    }
+  ]
+}
