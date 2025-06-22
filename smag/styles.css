@@ -766,6 +766,7 @@ h5{
   overflow-y: auto;
   width: auto;
   max-width: 850px;
+  min-width: 800px;
 }
 
 
