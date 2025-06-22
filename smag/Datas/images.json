@@ -1,42 +1,38 @@
 [
   {
-    "id": "screenshot1",
-    "src": "Images/screenshots/11223.png",
-    "alt": "Pollen Highlands' night celebration"
+    "id": "22625",
+    "src": "Images/screenshots/22625.png"
   },
   {
-    "id": "screenshot2",
-    "src": "Images/screenshots/30823.png",
-    "alt": "Coconut Beach Galaxy"
+    "id": "11223",
+    "src": "Images/screenshots/11223.png"
   },
   {
-    "id": "screenshot3",
-    "src": "Images/screenshots/20823.png",
-    "alt": "How did we get here?"
+    "id": "30823",
+    "src": "Images/screenshots/30823.png"
   },
   {
-    "id": "screenshot4",
-    "src": "Images/screenshots/25623.png",
-    "alt": "Pollen Highlands is being redone"
+    "id": "20823",
+    "src": "Images/screenshots/20823.png"
   },
   {
-    "id": "screenshot5",
-    "src": "Images/screenshots/04723.png",
-    "alt": "Making progress on the second star of Pollen Highlands"
+    "id": "25623",
+    "src": "Images/screenshots/25623.png"
   },
   {
-    "id": "screenshot6",
-    "src": "Images/screenshots/01423.png",
-    "alt": "Mario disappeared from reality"
+    "id": "04723",
+    "src": "Images/screenshots/04723.png"
   },
   {
-    "id": "screenshot7",
-    "src": "Images/screenshots/02223.png",
-    "alt": "New update on Coconut Beach Galaxy"
+    "id": "01423",
+    "src": "Images/screenshots/01423.png"
   },
   {
-    "id": "screenshot8",
-    "src": "Images/screenshots/02424.png",
-    "alt": "Isn't the sky beautiful tonight?"
+    "id": "02223",
+    "src": "Images/screenshots/02223.png"
+  },
+  {
+    "id": "02424",
+    "src": "Images/screenshots/02424.png"
   }
 ]
