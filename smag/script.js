@@ -400,7 +400,7 @@ function initializeCredits() {
 }
 
 // Initialize news with JSON data
-function initializeNews() {
+async function initializeNews() {
     const newsContainer = document.querySelector('.news-container');
     const searchInput = document.getElementById('blog-search');
     
@@ -408,9 +408,9 @@ function initializeNews() {
     showSectionLoading('.news-container', 'Loading blog posts...');
     
     // Use requestAnimationFrame for smoother initialization
-    requestAnimationFrame(() => {
+    requestAnimationFrame(async () => {
         // Create news articles from JSON data
-        displayNews(newsData.blogs, false);
+        await displayNews(newsData.blogs, false);
         
         // Setup search functionality
         setupNewsSearch();
@@ -425,7 +425,7 @@ function initializeNews() {
 }
 
 // Display news articles
-function displayNews(blogs, isSearchResult = false) {
+async function displayNews(blogs, isSearchResult = false) {
     const newsContainer = document.querySelector('.news-container');
     newsContainer.innerHTML = '';
 
@@ -461,7 +461,8 @@ function displayNews(blogs, isSearchResult = false) {
         return;
     }
 
-    sortedBlogs.forEach((blog, index) => {
+    // Create blog cards with read time calculation
+    const blogCards = await Promise.all(sortedBlogs.map(async (blog, index) => {
         const article = document.createElement('div');
         article.className = 'news-article';
         article.style.animationDelay = `${index * 0.1}s`;
@@ -479,7 +480,19 @@ function displayNews(blogs, isSearchResult = false) {
         const author = teamData.members.find(member => member.id === blog.authorId) || {
             name: 'Unknown',
             avatar: 'Images/favicon.png'
-        };        article.innerHTML = `
+        };
+
+        // Load HTML content and calculate read time
+        let readTime = 'Loading...';
+        try {
+            const htmlContent = await loadBlogContent(blog.id);
+            readTime = calculateReadTime(htmlContent);
+        } catch (error) {
+            console.error(`Error calculating read time for blog ${blog.id}:`, error);
+            readTime = '-- min read';
+        }
+
+        article.innerHTML = `
             <div class="news-image">
                 <!-- Image will be added via JavaScript -->
             </div>
@@ -499,7 +512,7 @@ function displayNews(blogs, isSearchResult = false) {
                         </div>
                     </div>
                     <div class="news-details">
-                        <span class="read-time">${blog.readTime}</span>
+                        <span class="read-time">${readTime}</span>
                         <span class="news-card-date">${formattedDate}</span>
                     </div>
                 </div>
@@ -509,14 +522,20 @@ function displayNews(blogs, isSearchResult = false) {
         // Add blog image using utility function
         const imageContainer = article.querySelector('.news-image');
         const blogImage = createBlogImage(blog.id, blog.title);
-        imageContainer.appendChild(blogImage);        // Add click handler to open popup
+        imageContainer.appendChild(blogImage);
+
+        // Add click handler to open popup
         article.addEventListener('click', (e) => {
             // Don't open blog popup if clicking on author (check if click is within author container)
             if (e.target.closest('.clickable-author')) {
                 return;
             }
             openBlogPopup(blog);
-        });        
+        });
+
+        return article;
+    }));    // Add all blog cards to the container
+    blogCards.forEach(article => {
         newsContainer.appendChild(article);
     });
     
@@ -541,7 +560,7 @@ async function loadBlogViewCounts() {
 }
 
 // Open blog popup
-function openBlogPopup(blog) {
+async function openBlogPopup(blog) {
     // Create popup if it doesn't exist
     let popup = document.getElementById('blog-popup');
     if (!popup) {
@@ -551,47 +570,88 @@ function openBlogPopup(blog) {
         document.body.appendChild(popup);
     }
     
-    // Format date
-    const date = new Date(blog.publishDate);
-    const formattedDate = date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    });
-    
-    // Get author info from team data
-    const author = teamData.members.find(member => member.id === blog.authorId) || {
-        name: 'Unknown',
-        avatar: 'Images/favicon.png'
-    };
-      // Create media content
-    let mediaContent = '';    popup.innerHTML = `
-        <button class="blog-close" onclick="closeBlogPopup()">&times;</button>        <div class="blog-popup-content">            <div class="blog-popup-header">
+    // Show loading state
+    popup.innerHTML = `
+        <button class="blog-close" onclick="closeBlogPopup()">&times;</button>
+        <div class="blog-popup-content">
+            <div class="blog-popup-header">
                 <h1 class="blog-popup-title">${blog.title}</h1>
-                <div class="blog-popup-meta-line">
-                    <div class="blog-popup-author clickable-author" onclick="openPersonalCard('${blog.authorId}')" title="Click to view ${author.name}'s profile">
-                        <img src="${author.avatar}" alt="${author.name}">
-                        <div class="blog-popup-author-info">
-                            <p>${author.name}</p>
+                <p>Loading...</p>
+            </div>
+        </div>
+    `;
+      // Show popup immediately
+    popup.style.display = 'flex';
+    lockScroll();
+    
+    try {
+        // Load HTML content
+        const htmlContent = await loadBlogContent(blog.id);
+        
+        // Calculate read time
+        const readTime = calculateReadTime(htmlContent);
+        
+        // Format date
+        const date = new Date(blog.publishDate);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        
+        // Get author info from team data
+        const author = teamData.members.find(member => member.id === blog.authorId) || {
+            name: 'Unknown',
+            avatar: 'Images/favicon.png'
+        };
+        
+        // Update popup with full content
+        popup.innerHTML = `
+            <button class="blog-close" onclick="closeBlogPopup()">&times;</button>
+            <div class="blog-popup-content">
+                <div class="blog-popup-header">
+                    <h1 class="blog-popup-title">${blog.title}</h1>
+                    <div class="blog-popup-meta-line">
+                        <div class="blog-popup-author clickable-author" onclick="openPersonalCard('${blog.authorId}')" title="Click to view ${author.name}'s profile">
+                            <img src="${author.avatar}" alt="${author.name}">
+                            <div class="blog-popup-author-info">
+                                <p>${author.name}</p>
+                            </div>
                         </div>
-                    </div>                    <div class="blog-popup-date-info">
-                        <div class="blog-popup-read-time">${blog.readTime}</div>
-                        <div class="blog-popup-date">${formattedDate}</div>
+                        <div class="blog-popup-date-info">
+                            <div class="blog-popup-read-time">${readTime}</div>
+                            <div class="blog-popup-date">${formattedDate}</div>
+                        </div>
                     </div>
+                    <div class="blog-popup-image">
+                        <!-- Image will be added via JavaScript -->
+                    </div>
+                    <hr class="blog-popup-separator">
                 </div>
-                <div class="blog-popup-image">
-                    <!-- Image will be added via JavaScript -->
+                <div class="blog-popup-content-text">
+                    ${htmlContent}
                 </div>
-                <hr class="blog-popup-separator">
             </div>
-            <div class="blog-popup-content-text">
-                ${blog.content}
+        `;
+          // Add blog image using utility function
+        const popupImageContainer = popup.querySelector('.blog-popup-image');
+        const popupBlogImage = createBlogImage(blog.id, blog.title);
+        popupImageContainer.appendChild(popupBlogImage);
+        
+    } catch (error) {
+        console.error('Error loading blog content:', error);
+        popup.innerHTML = `
+            <button class="blog-close" onclick="closeBlogPopup()">&times;</button>
+            <div class="blog-popup-content">
+                <div class="blog-popup-header">
+                    <h1 class="blog-popup-title">${blog.title}</h1>
+                    <p>Error loading blog content. Please try again later.</p>
+                </div>
             </div>
-        </div>    `;
-      // Add blog image using utility function
-    const popupImageContainer = popup.querySelector('.blog-popup-image');
-    const popupBlogImage = createBlogImage(blog.id, blog.title);
-    popupImageContainer.appendChild(popupBlogImage);    // Increment view count when blog is opened (only if not viewed before by this user)
+        `;
+    }
+
+    // Increment view count when blog is opened (only if not viewed before by this user)
     incrementBlogViewsOnce(blog.id).then(newViewCount => {
         // Update the view count in the blog list if visible
         const viewElement = document.querySelector(`.news-views-top[data-blog-id="${blog.id}"]`);
@@ -601,7 +661,8 @@ function openBlogPopup(blog) {
     }).catch(error => {
         console.error('Error incrementing blog views:', error);
     });
-      // Add click outside to close
+      
+    // Add click outside to close
     popup.addEventListener('click', (e) => {
         if (e.target === popup) {
             closeBlogPopup();
@@ -618,9 +679,7 @@ function openBlogPopup(blog) {
     document.addEventListener('keydown', handleKeyPress);
     
     // Store the event listener for cleanup
-    popup._keydownHandler = handleKeyPress;
-    
-    popup.classList.add('active');
+    popup._keydownHandler = handleKeyPress;    popup.classList.add('active');
     lockScroll();
 }
 
@@ -719,36 +778,27 @@ function makePersonClickable(personName, personId, additionalClass = '') {
 let savedScrollY = 0;
 
 function lockScroll() {
-    // Save current scroll position more precisely
+    // Save current scroll position
     savedScrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     
-    // Apply position fixed to body to prevent scrolling and maintain position
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${savedScrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.width = '100%';
-    
-    // Hide scrollbar on html element
+    // Simply hide overflow to prevent scrolling without changing position
+    document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
+    
+    // Prevent scrolling on mobile by disabling touch events
+    document.body.style.touchAction = 'none';
 }
 
 function unlockScroll() {
-    // Store the saved position before removing styles
-    const scrollY = savedScrollY;
-    
-    // Remove fixed positioning
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.width = '';
-    
-    // Restore scrollbar
+    // Restore scrolling
+    document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
+    document.body.style.touchAction = '';
     
-    // Restore scroll position immediately
-    window.scrollTo(0, scrollY);
+    // Ensure we're at the same scroll position (shouldn't be needed but just in case)
+    if (savedScrollY !== window.pageYOffset) {
+        window.scrollTo(0, savedScrollY);
+    }
 }
 
 // Close blog popup
@@ -770,25 +820,24 @@ function closeBlogPopup() {
 function setupNewsSearch() {
     const searchInput = document.getElementById('blog-search');
     const allArticles = document.querySelectorAll('.news-article');
-      searchInput.addEventListener('input', (e) => {
+      searchInput.addEventListener('input', async (e) => {
         const searchTerm = e.target.value.toLowerCase().trim();
         
         if (searchTerm === '') {
             // Show all articles
-            displayNews(newsData.blogs, false);
+            await displayNews(newsData.blogs, false);
         } else {
-            // Filter articles
+            // Filter articles (note: we'll need to load content for search, but for now we'll search title/summary/author only)
             const filteredBlogs = newsData.blogs.filter(blog => {
                 // Get author info for search
                 const author = teamData.members.find(member => member.id === blog.authorId) || { name: '' };
                 
                 return blog.title.toLowerCase().includes(searchTerm) ||
                        blog.summary.toLowerCase().includes(searchTerm) ||
-                       blog.content.toLowerCase().includes(searchTerm) ||
                        author.name.toLowerCase().includes(searchTerm);
             });
             
-            displayNews(filteredBlogs, true);
+            await displayNews(filteredBlogs, true);
         }
     });
 }
@@ -923,4 +972,43 @@ function formatViewCount(count) {
     const bValue = count / 1000000000;
     const formatted = bValue % 1 === 0 ? bValue.toString() : bValue.toFixed(1);
     return `${formatted}B views`;
+}
+
+// Calculate read time from HTML content
+function calculateReadTime(htmlContent) {
+    // Create a temporary element to strip HTML tags
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+    
+    // Get text content only
+    const textContent = tempDiv.textContent || tempDiv.innerText || '';
+    
+    // Count words (split by whitespace and filter out empty strings)
+    const words = textContent.trim().split(/\s+/).filter(word => word.length > 0);
+    const wordCount = words.length;
+    
+    // Count images (img tags and video tags)
+    const imageCount = tempDiv.querySelectorAll('img').length;
+    const videoCount = tempDiv.querySelectorAll('video').length;
+      // Calculate read time (average 200 words per minute, 5 seconds per image/video)
+    const wordTimeMinutes = wordCount / 200;
+    const mediaTimeMinutes = (imageCount + videoCount) * (5 / 60); // 5 seconds per image/video converted to minutes
+    
+    const totalTimeMinutes = Math.max(1, Math.ceil(wordTimeMinutes + mediaTimeMinutes));
+    
+    return `${totalTimeMinutes} min read`;
+}
+
+// Load HTML content from news folder
+async function loadBlogContent(blogId) {
+    try {
+        const response = await fetch(`Datas/news/${blogId}.html`);
+        if (!response.ok) {
+            throw new Error(`Failed to load blog content: ${response.status}`);
+        }
+        return await response.text();
+    } catch (error) {
+        console.error(`Error loading blog content for ID ${blogId}:`, error);
+        return '<p>Error loading blog content. Please try again later.</p>';
+    }
 }
