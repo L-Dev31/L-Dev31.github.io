@@ -1164,40 +1164,67 @@ h5{
 
 .blog-popup-content-text h1,
 .blog-popup-content-text h2,
-.blog-popup-content_text h3 {
+.blog-popup-content-text h3 {
   margin-top: 35px;
   margin-bottom: 20px;
   color: #333;
   text-align: left;
 }
 
-.blog-popup-content_text p {
+.blog-popup-content-text p {
   margin-bottom: 25px;
   text-align: left;
 }
 
-/* Blog post images: add border-radius for embedded images in blog content */
+/* Enhanced list styling for blog content */
+.blog-popup-content-text ul {
+  margin: 50px;
+  padding-left: 100px;
+  list-style-type: disc;
+}
+
+.blog-popup-content-text ul li {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+  line-height: 1.8;
+}
+
+/* Blog post images and videos: add border-radius for embedded media in blog content */
 .blog-popup-content-text img,
 .news-summary img {
   border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
-  margin: 20px 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  margin: 30px auto;
   max-width: 100%;
   height: auto;
   display: block;
 }
 
-/* Blog popup: make <strong> gray, not gradient */
+.blog-popup-content-text video {
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  margin: 30px auto;
+  max-width: 100%;
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  display: block;
+}
+
+/* Blog popup: make <strong> with solid purple color */
 .blog-popup-content-text strong {
   background: none !important;
   -webkit-background-clip: initial !important;
   -webkit-text-fill-color: initial !important;
   background-clip: initial !important;
-  color: #555 !important; 
+  color: #9A70E0 !important;
+  font-weight: 600;
 }
 
-/* Blog popup: make <em> (the quote) light gray */
+/* Blog popup: make <em> (the quote) with better styling */
 .blog-popup-content-text em {
-  color: #888 !important;
+  color: #7f8c8d !important;
   font-style: italic;
+  font-weight: 300;
 }

@@ -4,19 +4,22 @@
       "id": 1,
       "title": "Welcome to the Super Mario Another Galaxy Blog!",
       "summary": "Welcome to the official SMAG Blog, your source for news, updates, and developer stories from Super Mario Another Galaxy!",
-      "content": "<p>Welcome to the official <strong>Super Mario Another Galaxy Blog</strong>!<br>We’re thrilled to have you here among fans, creators, and fellow modders.<br><br>This is your go-to place for the latest news, updates, and behind-the-scenes stories from SMAG.<br>Expect developer insights, exclusive previews, community highlights, and more.<br><br>Stay tuned, share your thoughts, and be part of the adventure as we expand SMAG's universe together.<br><br>Thank you for joining us!",
       "authorId": "ldev",
-      "readTime": "1 min read",
       "publishDate": "2025-06-21"
     },
     {
       "id": 2,
       "title": "Space Port Galaxy: A Developer's Journey",
       "summary": "The backdoor development and evolution of Space Port Galaxy, a challenging SMAG level inspired by Dreadnought Galaxy.",
-      "content": "<p>Hey! Floaty here. You may know me as working on a few different mods for Super Mario Galaxy 2, Super Mario 3D World, and even Super Mario Odyssey. Today I'm proud to explain the backdoor development of my favorite SMAG level, <strong>Space Port Galaxy</strong>!<br><br>This level, which started all the way back in 2022, is a difficult stage inspired by Dreadnought Galaxy. In fact, the original version from back in the day took a lot of parts from the original Dreadnought.<br><br><img src=\"Images/screenshots/21625.png\" alt=\"Space Port old\"><br><br>Recently, I felt it was time to finally go back to Space Port Galaxy and give it the glow up it deserved. After making some quick concepts, I opened up Blender and started making the new and improved Space Port, and I was able to do everything from planning to final touches in just under 2 days! I'm very happy with how it turned out, and I hope you do too! <strong>Note:</strong> The model is still subject to change in the future.<br><br><img src=\"Images/screenshots/22625.png\" alt=\"Space Port now\"><br><br>As of now, not too much is done besides the main model, but there are many more plans I have with Space Port. A couple sections I have made are a section where you have to platform across rotating gears and yellow mechanical moving platforms in 2D, a section where you have to essentially play the game 'Hole In The Wall' from Minecraft, but with explosive missiles, and even a section involving a computer terminal!<br><br><img src=\"Images/screenshots/23625.png\" alt=\"Space Port 2D Gear Section\"><br><img src=\"Images/screenshots/24625.png\" alt=\"Space Port Avoid Missiles Section\"><br><img src=\"Images/screenshots/25625.png\" alt=\"Space Port Computer Terminal\"><br><br>That's all I have for today, be sure to join the discord for more updates! Floaty out!</p>",
       "authorId": "floaty",
-      "readTime": "2 min read",
       "publishDate": "2025-06-22"
+    },
+    {
+      "id": 3,
+      "title": "A (simplified) Journey Through My 3D Modeling Evolution",
+      "summary": "From complete beginner to nintendo level 3D artist, a walkthrough of all the canceled models and learning phases that shaped SMAG's development.",
+      "authorId": "ldev",
+      "publishDate": "2025-06-23"
     }
   ]
 }
