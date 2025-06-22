@@ -897,6 +897,30 @@ function formatViewCount(count) {
     if (count === 0) return '0 views';
     if (count === 1) return '1 view';
     if (count < 1000) return `${count} views`;
-    if (count < 1000000) return `${(count / 1000).toFixed(1)}k views`;
-    return `${(count / 1000000).toFixed(1)}M views`;
+    if (count < 1000000) {
+        // For thousands, show 1 decimal place but remove .0
+        const kValue = count / 1000;
+        const formatted = kValue % 1 === 0 ? kValue.toString() : kValue.toFixed(1);
+        return `${formatted}k views`;
+    }
+    if (count < 1000000000) {
+        // For millions, show 1-2 decimal places for precision but remove unnecessary zeros
+        const mValue = count / 1000000;
+        let formatted;
+        if (mValue >= 100) {
+            // 100M+ show no decimals
+            formatted = Math.round(mValue).toString();
+        } else if (mValue >= 10) {
+            // 10M-99M show 1 decimal
+            formatted = mValue % 1 === 0 ? mValue.toString() : mValue.toFixed(1);
+        } else {
+            // 1M-9M show 2 decimals for precision
+            formatted = mValue.toFixed(2).replace(/\.?0+$/, '');
+        }
+        return `${formatted}M views`;
+    }
+    // For billions (MD in some languages means billion)
+    const bValue = count / 1000000000;
+    const formatted = bValue % 1 === 0 ? bValue.toString() : bValue.toFixed(1);
+    return `${formatted}B views`;
 }
