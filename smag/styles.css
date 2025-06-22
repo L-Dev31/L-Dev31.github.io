@@ -105,28 +105,6 @@ html {
   font-weight: 500;
 }
 
-/* Popup scroll lock styles */
-body.popup-open {
-  overflow: hidden !important;
-}
-
-html.popup-open {
-  overflow: hidden !important;
-}
-
-html.scroll-locked,
-body.scroll-locked {
-  overflow: hidden !important;
-}
-
-body.no-scroll {
-  overflow: hidden !important;
-}
-
-html.no-scroll {
-  overflow: hidden !important;
-}
-
 .logo {
   display: block;
   margin: 0 auto;
@@ -655,19 +633,6 @@ h5{
   position: relative;
 }
 
-.news-date-badge {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background-color: #e0e0e0; /* Darker gray background */
-  color: #333;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  z-index: 10;
-}
-
 .news-header {
   flex: 1;
   display: flex;
@@ -737,11 +702,21 @@ h5{
 .news-details {
   display: flex;
   align-items: center;
+  gap: 15px;
 }
 
 .read-time {
   font-size: 18px;
   color: #555;
+  font-weight: 500;
+}
+
+.news-card-date {
+  background-color: #e0e0e0;
+  color: #333;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 14px;
   font-weight: 500;
 }
 

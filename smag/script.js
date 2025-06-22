@@ -484,7 +484,6 @@ function displayNews(blogs, isSearchResult = false) {
                 <!-- Image will be added via JavaScript -->
             </div>
             <div class="news-content">
-                <div class="news-date-badge">${formattedDate}</div>
                 <div class="news-header">
                     <h3 class="news-title">${blog.title}</h3>
                     <p class="news-summary">${blog.summary}</p>
@@ -688,14 +687,39 @@ function makePersonClickable(personName, personId, additionalClass = '') {
 }
 
 // Scroll lock utilities
+let savedScrollY = 0;
+
 function lockScroll() {
-    document.body.classList.add('no-scroll');
-    document.documentElement.classList.add('no-scroll');
+    // Save current scroll position more precisely
+    savedScrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    
+    // Apply position fixed to body to prevent scrolling and maintain position
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    
+    // Hide scrollbar on html element
+    document.documentElement.style.overflow = 'hidden';
 }
 
 function unlockScroll() {
-    document.body.classList.remove('no-scroll');
-    document.documentElement.classList.remove('no-scroll');
+    // Store the saved position before removing styles
+    const scrollY = savedScrollY;
+    
+    // Remove fixed positioning
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    
+    // Restore scrollbar
+    document.documentElement.style.overflow = '';
+    
+    // Restore scroll position immediately
+    window.scrollTo(0, scrollY);
 }
 
 // Close blog popup
