@@ -633,6 +633,26 @@ h5{
   position: relative;
 }
 
+.news-views-top {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  color: #666;
+  padding: 6px 10px;
+  border-radius: 15px;
+  font-size: 20px;
+  font-weight: 500;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.news-views-top i {
+  font-size: 18px;
+  color: #666;
+}
+
 .news-header {
   flex: 1;
   display: flex;
@@ -716,8 +736,7 @@ h5{
   color: #333;
   padding: 6px 12px;
   border-radius: 15px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 14px;  font-weight: 500;
 }
 
 /* Content Section Navigation */

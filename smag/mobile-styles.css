@@ -64,6 +64,28 @@
   .blog-popup-content-text img { border-radius: 15px; margin: 15px 0; }
   .credit h5 { margin: 20px ; width: auto; text-align: left;}
   .carousel { max-width: 100%!important; height: auto!important;}
+  
+  /* Mobile view count positioning */
+  .news-views-top {
+    position: static !important;
+    display: inline-block !important;
+    background: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    font-size: 14px !important;
+    margin-right: 10px !important;
+    order: -1;
+  }
+  
+  .news-views-top i {
+    font-size: 14px !important;
+  }
+  
+  .news-details {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+  }
 }
 
 @media (max-width: 800px) {
