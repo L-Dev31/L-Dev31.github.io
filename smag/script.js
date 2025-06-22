@@ -591,9 +591,8 @@ function openBlogPopup(blog) {
       // Add blog image using utility function
     const popupImageContainer = popup.querySelector('.blog-popup-image');
     const popupBlogImage = createBlogImage(blog.id, blog.title);
-    popupImageContainer.appendChild(popupBlogImage);
-      // Increment view count when blog is opened
-    incrementBlogViews(blog.id).then(newViewCount => {
+    popupImageContainer.appendChild(popupBlogImage);    // Increment view count when blog is opened (only if not viewed before by this user)
+    incrementBlogViewsOnce(blog.id).then(newViewCount => {
         // Update the view count in the blog list if visible
         const viewElement = document.querySelector(`.news-views-top[data-blog-id="${blog.id}"]`);
         if (viewElement) {
@@ -830,6 +829,36 @@ function createBlogImage(blogId, blogTitle, className = '') {
 
 // View counting utilities using Firebase Realtime Database
 const FIREBASE_URL = 'https://smag-blog-posts-default-rtdb.europe-west1.firebasedatabase.app';
+
+// Check if user has already viewed this blog post
+function hasUserViewedBlog(blogId) {
+    const viewedBlogs = JSON.parse(localStorage.getItem('smag_viewed_blogs') || '[]');
+    return viewedBlogs.includes(blogId);
+}
+
+// Mark blog as viewed by current user
+function markBlogAsViewed(blogId) {
+    const viewedBlogs = JSON.parse(localStorage.getItem('smag_viewed_blogs') || '[]');
+    if (!viewedBlogs.includes(blogId)) {
+        viewedBlogs.push(blogId);
+        localStorage.setItem('smag_viewed_blogs', JSON.stringify(viewedBlogs));
+        return true; // Blog was newly viewed
+    }
+    return false; // Blog was already viewed
+}
+
+// Increment blog views only if user hasn't viewed this blog before
+async function incrementBlogViewsOnce(blogId) {
+    // Check if user has already viewed this blog
+    if (hasUserViewedBlog(blogId)) {
+        // User has already viewed this blog, just return current count
+        return await getBlogViews(blogId);
+    }
+    
+    // Mark as viewed and increment count
+    markBlogAsViewed(blogId);
+    return await incrementBlogViews(blogId);
+}
 
 async function incrementBlogViews(blogId) {
     try {
