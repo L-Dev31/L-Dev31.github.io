@@ -1038,10 +1038,10 @@ h5{
   background-attachment: fixed;
 }
 
-.blog-close {
+#blog-close-btn {
   position: fixed !important;
   top: 30px !important;
-  right: 30px !important;
+  right: 50px !important;
   left: auto !important;
   bottom: auto !important;
   z-index: 99999 !important;
@@ -1057,18 +1057,19 @@ h5{
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   outline: 2px solid #fff;
   outline-offset: 2px;
   pointer-events: auto;
+  transform: none !important;
 }
 
-.blog-close:hover {
+#blog-close-btn:hover {
   background: rgba(30,30,30,0.95);
   color: #fff;
-  transform: scale(1.1);
+  transform: scale(1.1) !important;
 }
 
 .blog-popup-header {

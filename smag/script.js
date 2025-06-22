@@ -452,16 +452,26 @@ async function openBlogPopup(blog) {
         popup.className = 'blog-popup';
         document.body.appendChild(popup);
     }
+    
+    let closeButton = document.getElementById('blog-close-btn');
+    if (!closeButton) {
+        closeButton = document.createElement('button');
+        closeButton.id = 'blog-close-btn';
+        closeButton.className = 'blog-close';
+        closeButton.innerHTML = '&times;';
+        closeButton.onclick = closeBlogPopup;
+        document.body.appendChild(closeButton);
+    }
+    
     popup.innerHTML = `
-        <button class="blog-close" onclick="closeBlogPopup()">&times;</button>
         <div class="blog-popup-content">
             <div class="blog-popup-header">
                 <h1 class="blog-popup-title">${blog.title}</h1>
                 <p>Loading...</p>
             </div>
         </div>
-    `;
-    popup.style.display = 'flex';
+    `;    popup.style.display = 'flex';
+    closeButton.style.display = 'flex';
     lockScroll();
     try {
         const htmlContent = await loadBlogContent(blog.id);
@@ -475,9 +485,7 @@ async function openBlogPopup(blog) {
         const author = teamData.members.find(member => member.id === blog.authorId) || {
             name: 'Unknown',
             avatar: 'Images/favicon.png'
-        };
-        popup.innerHTML = `
-            <button class="blog-close" onclick="closeBlogPopup()">&times;</button>
+        };        popup.innerHTML = `
             <div class="blog-popup-content">
                 <div class="blog-popup-header">
                     <h1 class="blog-popup-title">${blog.title}</h1>
@@ -632,6 +640,7 @@ function unlockScroll() {
 
 function closeBlogPopup() {
     const popup = document.getElementById('blog-popup');
+    const closeButton = document.getElementById('blog-close-btn');
     if (popup) {
         popup.classList.remove('active');
         unlockScroll();
@@ -639,6 +648,9 @@ function closeBlogPopup() {
             document.removeEventListener('keydown', popup._keydownHandler);
             popup._keydownHandler = null;
         }
+    }
+    if (closeButton) {
+        closeButton.style.display = 'none';
     }
 }
 
