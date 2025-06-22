@@ -484,6 +484,9 @@ function displayNews(blogs, isSearchResult = false) {
                 <!-- Image will be added via JavaScript -->
             </div>
             <div class="news-content">
+                <div class="news-views-top" data-blog-id="${blog.id}">
+                    <i class="fas fa-eye"></i> Loading views...
+                </div>
                 <div class="news-header">
                     <h3 class="news-title">${blog.title}</h3>
                     <p class="news-summary">${blog.summary}</p>
@@ -513,10 +516,28 @@ function displayNews(blogs, isSearchResult = false) {
                 return;
             }
             openBlogPopup(blog);
-        });
-        
+        });        
         newsContainer.appendChild(article);
     });
+    
+    // Load view counts for all articles
+    loadBlogViewCounts();
+}
+
+// Load view counts for all displayed blog articles
+async function loadBlogViewCounts() {
+    const viewElements = document.querySelectorAll('.news-views-top[data-blog-id]');
+    
+    for (const element of viewElements) {
+        const blogId = element.dataset.blogId;
+        try {
+            const viewCount = await getBlogViews(blogId);
+            element.innerHTML = `<i class="fas fa-eye"></i> ${formatViewCount(viewCount)}`;
+        } catch (error) {
+            console.error(`Error loading views for blog ${blogId}:`, error);
+            element.innerHTML = '<i class="fas fa-eye"></i> 0 views';
+        }
+    }
 }
 
 // Open blog popup
@@ -567,11 +588,20 @@ function openBlogPopup(blog) {
                 ${blog.content}
             </div>
         </div>    `;
-    
-    // Add blog image using utility function
+      // Add blog image using utility function
     const popupImageContainer = popup.querySelector('.blog-popup-image');
     const popupBlogImage = createBlogImage(blog.id, blog.title);
     popupImageContainer.appendChild(popupBlogImage);
+      // Increment view count when blog is opened
+    incrementBlogViews(blog.id).then(newViewCount => {
+        // Update the view count in the blog list if visible
+        const viewElement = document.querySelector(`.news-views-top[data-blog-id="${blog.id}"]`);
+        if (viewElement) {
+            viewElement.innerHTML = `<i class="fas fa-eye"></i> ${formatViewCount(newViewCount)}`;
+        }
+    }).catch(error => {
+        console.error('Error incrementing blog views:', error);
+    });
       // Add click outside to close
     popup.addEventListener('click', (e) => {
         if (e.target === popup) {
@@ -796,4 +826,48 @@ function createBlogImage(blogId, blogTitle, className = '') {
     };
     
     return img;
+}
+
+// View counting utilities using Firebase Realtime Database
+const FIREBASE_URL = 'https://smag-blog-posts-default-rtdb.europe-west1.firebasedatabase.app';
+
+async function incrementBlogViews(blogId) {
+    try {
+        // Get current count
+        const response = await fetch(`${FIREBASE_URL}/blog_views/${blogId}.json`);
+        const currentViews = await response.json() || 0;
+        
+        // Increment by 1
+        const newViews = currentViews + 1;
+        
+        // Update in Firebase
+        await fetch(`${FIREBASE_URL}/blog_views/${blogId}.json`, {
+            method: 'PUT',
+            body: JSON.stringify(newViews)
+        });
+        
+        return newViews;
+    } catch (error) {
+        console.error('Error incrementing blog views:', error);
+        return 0;
+    }
+}
+
+async function getBlogViews(blogId) {
+    try {
+        const response = await fetch(`${FIREBASE_URL}/blog_views/${blogId}.json`);
+        const views = await response.json();
+        return views || 0;
+    } catch (error) {
+        console.error('Error fetching blog views:', error);
+        return 0;
+    }
+}
+
+function formatViewCount(count) {
+    if (count === 0) return '0 views';
+    if (count === 1) return '1 view';
+    if (count < 1000) return `${count} views`;
+    if (count < 1000000) return `${(count / 1000).toFixed(1)}k views`;
+    return `${(count / 1000000).toFixed(1)}M views`;
 }
