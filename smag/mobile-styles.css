@@ -121,8 +121,7 @@
         width: 100% !important;
         min-width: 10px!important;
   }
-
-  .blog-popup-close-btn {
+  #blog-close-btn {
     top: 15px !important;
   }
 }
