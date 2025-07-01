@@ -1,11 +1,6 @@
 {
   "feeds": [
     {
-      "url": "https://api.allorigins.win/get?url=https://fetchrss.com/rss/684c9202221e064f3c0b3f73684c91e5f84770f5800b6842.xml",
-      "logo": "images/RSS/LMP.png",
-      "name": "Le Media Positif"
-    },
-    {
       "url": "https://api.allorigins.win/get?url=https://www.lemonde.fr/rss/une.xml",
       "logo": "images/RSS/LeMonde.png",
       "name": "Le Monde"
