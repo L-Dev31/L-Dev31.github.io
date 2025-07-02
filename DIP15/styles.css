@@ -362,11 +362,17 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
     width: 80px;
+    height: 100px;
     cursor: pointer;
     padding: 8px;
     border-radius: 8px;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+    /* Grid snap properties */
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .desktop-item:hover {
@@ -921,4 +927,23 @@ body, html {
 
 #fadeOverlay.fade-to-black.active {
     opacity: 1;
+}
+
+/* Drag and drop styles */
+.desktop-item.dragging {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    transition: none !important;
+}
+
+.desktop-item {
+    cursor: grab;
+}
+
+.desktop-item:active {
+    cursor: grabbing;
+}
+
+.desktop-item.dragging {
+    cursor: grabbing;
 }
