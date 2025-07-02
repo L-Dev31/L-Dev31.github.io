@@ -16,7 +16,17 @@ let autoChangeInterval = null;
 let isLoginMode = false;
 let userProfile = null;
 
-// Known image filenames (fallback list)
+let currentGridConfig = null;
+let currentGridPositions = [];
+let dragState = {
+    isDragging: false,
+    element: null,
+    startX: 0,
+    startY: 0,
+    offsetX: 0,
+    offsetY: 0
+};
+
 const knownImages = [
     '1029604.jpg', '1146709.jpg', '15989756.jpg', '210186.jpg',
     '2187662.jpg', '219692.jpg', '247599.jpg', '3386540.jpg',
@@ -223,32 +233,137 @@ async function showDesktop() {
     }, 1000);
 }
 
+function calculateDesktopGrid() {
+    const cellWidth = 100;
+    const cellHeight = 120;
+    const padding = 20;
+    const taskbarHeight = 50;
+    const availableWidth = window.innerWidth - (padding * 2);
+    const availableHeight = window.innerHeight - taskbarHeight - (padding * 2);
+    
+    return {
+        cellWidth,
+        cellHeight,
+        padding,
+        rows: Math.floor(availableHeight / cellHeight),
+        cols: Math.floor(availableWidth / cellWidth)
+    };
+}
+
+function createGridPositions(gridConfig) {
+    const positions = [];
+    for (let row = 0; row < gridConfig.rows; row++) {
+        for (let col = 0; col < gridConfig.cols; col++) {
+            positions.push({
+                x: gridConfig.padding + (col * gridConfig.cellWidth),
+                y: gridConfig.padding + (row * gridConfig.cellHeight),
+                row,
+                col
+            });
+        }
+    }
+    return positions;
+}
+
+function findClosestGridPosition(x, y) {
+    if (!currentGridPositions.length) return null;
+    
+    let closest = currentGridPositions[0];
+    let minDistance = Infinity;
+    
+    currentGridPositions.forEach(pos => {
+        const distance = Math.sqrt(Math.pow(pos.x - x, 2) + Math.pow(pos.y - y, 2));
+        if (distance < minDistance) {
+            minDistance = distance;
+            closest = pos;
+        }
+    });
+    
+    return closest;
+}
+
+function loadIconPositions() {
+    try {
+        const saved = localStorage.getItem('desktop-icon-positions');
+        return saved ? JSON.parse(saved) : {};
+    } catch (error) {
+        return {};
+    }
+}
+
+function saveIconPositions() {
+    const positions = {};
+    const icons = document.querySelectorAll('.desktop-item');
+    
+    icons.forEach(icon => {
+        const name = icon.querySelector('span')?.textContent;
+        if (name) {
+            positions[name] = {
+                x: parseInt(icon.style.left),
+                y: parseInt(icon.style.top),
+                gridRow: parseInt(icon.dataset.gridRow),
+                gridCol: parseInt(icon.dataset.gridCol)
+            };
+        }
+    });
+    
+    try {
+        localStorage.setItem('desktop-icon-positions', JSON.stringify(positions));
+    } catch (error) {
+        console.error('Failed to save icon positions:', error);
+    }
+}
+
 async function loadDesktopItems() {
     try {
-        console.log('🖥️ Loading desktop items from server...');
         const homeItems = await fetchHomeItemsFromServer();
         if (!Array.isArray(homeItems) || !homeItems.length) {
             throw new Error('No desktop items returned from server.');
         }
-        console.log('🔍 Using fetched home items:', homeItems);
+        
         const desktopIcons = document.getElementById('desktopIcons');
         desktopIcons.innerHTML = '';
-        let x = 30;
-        let y = 30;
-        const itemWidth = 100;
-        const itemHeight = 100;
-        const maxItemsPerRow = Math.floor((window.innerWidth - 60) / itemWidth);
+        
+        const gridConfig = calculateDesktopGrid();
+        currentGridConfig = gridConfig;
+        const gridPositions = createGridPositions(gridConfig);
+        currentGridPositions = gridPositions;
+        
+        const savedPositions = loadIconPositions();
+        
         homeItems.forEach((item, index) => {
             const desktopItem = document.createElement('div');
             desktopItem.className = 'desktop-item';
-            const row = Math.floor(index / maxItemsPerRow);
-            const col = index % maxItemsPerRow;
-            desktopItem.style.left = `${x + (col * itemWidth)}px`;
-            desktopItem.style.top = `${y + (row * itemHeight)}px`;
+            
+            let positioned = false;
+            if (savedPositions[item.name]) {
+                const savedPos = savedPositions[item.name];
+                if (savedPos.x >= 0 && savedPos.y >= 0 && 
+                    savedPos.x < window.innerWidth && savedPos.y < window.innerHeight) {
+                    
+                    desktopItem.style.position = 'absolute';
+                    desktopItem.style.left = `${savedPos.x}px`;
+                    desktopItem.style.top = `${savedPos.y}px`;
+                    desktopItem.dataset.gridRow = savedPos.gridRow || 0;
+                    desktopItem.dataset.gridCol = savedPos.gridCol || 0;
+                    
+                    positioned = true;
+                }
+            }
+            
+            if (!positioned) {
+                const gridPos = gridPositions[index];
+                if (gridPos) {
+                    desktopItem.style.position = 'absolute';
+                    desktopItem.style.left = `${gridPos.x}px`;
+                    desktopItem.style.top = `${gridPos.y}px`;
+                    desktopItem.dataset.gridRow = gridPos.row;
+                    desktopItem.dataset.gridCol = gridPos.col;
+                }
+            }
+            
             let iconHtml;
-            // Icon selection: use type 'folder' to detect folders
-            if (item.type === 'folder') {
-                // Folder icon
+            if (item.isDirectory === true || item.type === 'folder') {
                 iconHtml = `<img src="images/folder.png" alt="${item.name}" class="folder-icon">`;
             } else if (item.type === 'app') {
                 iconHtml = `<img src="${item.icon}" alt="${item.name}" class="app-icon">`;
@@ -261,33 +376,47 @@ async function loadDesktopItems() {
                     iconHtml = `<div class="file-icon-fa"><i class="fas fa-file"></i></div>`;
                 }
             } else {
-                // Default fallback icon
                 iconHtml = `<div class="file-icon-fa"><i class="fas fa-question-circle"></i></div>`;
             }
-            desktopItem.innerHTML = `
-                ${iconHtml}
-                <span>${item.name}</span>
-            `;
-            desktopItem.addEventListener('click', () => {
-                if (item.isDirectory || item.type === 'folder') {
-                    window.appLauncher.launchApp('app1', { path: item.name });
-                } else if (item.type === 'app') {
-                    window.appLauncher.launchApp(item.appId);
-                } else if (item.name === 'Files') {
-                    window.appLauncher.launchApp('app1');
+            
+            desktopItem.innerHTML = `${iconHtml}<span>${item.name}</span>`;
+            
+            let clickTimeout = null;
+            desktopItem.addEventListener('click', (e) => {
+                if (dragState.isDragging) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
+                
+                if (clickTimeout) {
+                    clearTimeout(clickTimeout);
+                    clickTimeout = null;
+                    
+                    if (item.isDirectory || item.type === 'folder') {
+                        window.appLauncher.launchApp('app1', { path: item.name });
+                    } else if (item.type === 'app') {
+                        window.appLauncher.launchApp(item.appId);
+                    } else if (item.name === 'Files') {
+                        window.appLauncher.launchApp('app1');
+                    }
+                } else {
+                    clickTimeout = setTimeout(() => {
+                        clickTimeout = null;
+                    }, 300);
                 }
             });
+            
+            makeIconDraggable(desktopItem, item.name);
             desktopIcons.appendChild(desktopItem);
         });
+        
         window.desktopData = { desktopItems: homeItems };
-        console.log(`✅ Desktop items loaded: ${homeItems.length} items`);
     } catch (error) {
-        console.error('❌ Could not load desktop items from server:', error);
-        // No fallback, just fail
+        console.error('Could not load desktop items from server:', error);
     }
 }
 
-// New helper function to fetch directory items
 async function fetchHomeItemsFromServer() {
     try {
         // Use the DirectoryFetcher class from get-directory.js
@@ -770,6 +899,124 @@ function setupEventListeners() {
     }
 }
 
+// Visual grid snap indicator
+let snapIndicator = null;
+
+// Create snap indicator element
+function createSnapIndicator() {
+    if (snapIndicator) return snapIndicator;
+    
+    snapIndicator = document.createElement('div');
+    snapIndicator.style.cssText = `
+        position: absolute;
+        border: 2px dashed rgba(0, 150, 255, 0.8);
+        background-color: rgba(0, 150, 255, 0.1);
+        border-radius: 8px;
+        pointer-events: none;
+        z-index: 999;
+        display: none;
+        width: 80px;
+        height: 100px;
+        transition: all 0.1s ease;
+    `;
+    document.body.appendChild(snapIndicator);
+    return snapIndicator;
+}
+
+// Show snap indicator at grid position
+function showSnapIndicator(gridPos) {
+    const indicator = createSnapIndicator();
+    if (!indicator || !gridPos) return;
+    
+    indicator.style.left = `${gridPos.x}px`;
+    indicator.style.top = `${gridPos.y}px`;
+    indicator.style.display = 'block';
+}
+
+// Hide snap indicator
+function hideSnapIndicator() {
+    if (snapIndicator) {
+        snapIndicator.style.display = 'none';
+    }
+}
+
+// ======================================
+// DRAG-AND-DROP FOR DESKTOP ICONS
+// ======================================
+
+function makeIconDraggable(element, itemName) {
+    element.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        
+        dragState.element = element;
+        dragState.startX = e.clientX;
+        dragState.startY = e.clientY;
+        dragState.offsetX = e.clientX - element.offsetLeft;
+        dragState.offsetY = e.clientY - element.offsetTop;
+        dragState.isDragging = false;
+        
+        element.style.zIndex = '1000';
+        element.style.transition = 'none';
+    });
+}
+
+document.addEventListener('mousemove', (e) => {
+    if (!dragState.element) return;
+    
+    const deltaX = Math.abs(e.clientX - dragState.startX);
+    const deltaY = Math.abs(e.clientY - dragState.startY);
+    
+    if (!dragState.isDragging && (deltaX > 5 || deltaY > 5)) {
+        dragState.isDragging = true;
+        dragState.element.style.opacity = '0.8';
+    }
+    
+    if (dragState.isDragging) {
+        const x = e.clientX - dragState.offsetX;
+        const y = e.clientY - dragState.offsetY;
+        dragState.element.style.left = `${x}px`;
+        dragState.element.style.top = `${y}px`;
+    }
+});
+
+document.addEventListener('mouseup', (e) => {
+    if (!dragState.element) return;
+    
+    if (dragState.isDragging) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const x = e.clientX - dragState.offsetX;
+        const y = e.clientY - dragState.offsetY;
+        const closestPos = findClosestGridPosition(x, y);
+        
+        if (closestPos) {
+            dragState.element.style.left = `${closestPos.x}px`;
+            dragState.element.style.top = `${closestPos.y}px`;
+            dragState.element.dataset.gridRow = closestPos.row;
+            dragState.element.dataset.gridCol = closestPos.col;
+            
+            saveIconPositions();
+        }
+    }
+    
+    if (dragState.element) {
+        dragState.element.style.zIndex = '';
+        dragState.element.style.opacity = '';
+        dragState.element.style.transition = '';
+    }
+    
+    dragState = {
+        isDragging: false,
+        element: null,
+        startX: 0,
+        startY: 0,
+        offsetX: 0,
+        offsetY: 0
+    };
+});
+
+
 // ======================================
 // LOGOUT FUNCTION
 // ======================================
@@ -840,3 +1087,203 @@ document.addEventListener('DOMContentLoaded', async () => {
         background.innerHTML = '<div style="color: white; text-align: center; font-size: 1.2em;"><h2>No Images Found</h2><p>Please add images to the <strong>Images/BG/</strong> folder</p></div>';
     }
 });
+
+// Window resize handler to recalculate grid
+function handleWindowResize() {
+    // Debounce resize events
+    clearTimeout(window.resizeTimeout);
+    window.resizeTimeout = setTimeout(() => {
+        const newGridConfig = calculateDesktopGrid();
+        
+        // Only recalculate if grid dimensions changed significantly
+        if (!currentGridConfig || 
+            currentGridConfig.rows !== newGridConfig.rows || 
+            currentGridConfig.cols !== newGridConfig.cols) {
+            
+            console.log('🔄 Window resized, recalculating desktop grid...');
+            loadDesktopItems(); // Reload desktop with new grid
+        }
+    }, 250);
+}
+
+// Helper function to snap position to nearest grid cell
+function snapToGrid(x, y, gridConfig) {
+    // Calculate which grid cell the position falls into
+    const col = Math.max(0, Math.min(
+        Math.round((x - gridConfig.padding) / gridConfig.cellWidth),
+        gridConfig.cols - 1
+    ));
+    
+    const row = Math.max(0, Math.min(
+        Math.round((y - gridConfig.padding) / gridConfig.cellHeight),
+        gridConfig.rows - 1
+    ));
+    
+    return {
+        col: col,
+        row: row,
+        x: gridConfig.padding + (col * gridConfig.cellWidth),
+        y: gridConfig.padding + (row * gridConfig.cellHeight)
+    };
+}
+
+const ICON_POSITIONS_KEY = 'desktop-icon-positions';
+
+function loadIconPositions() {
+    try {
+        const saved = localStorage.getItem(ICON_POSITIONS_KEY);
+        return saved ? JSON.parse(saved) : {};
+    } catch (error) {
+        return {};
+    }
+}
+
+function saveIconPositions(positions) {
+    try {
+        localStorage.setItem(ICON_POSITIONS_KEY, JSON.stringify(positions));
+    } catch (error) {
+        console.error('Failed to save icon positions:', error);
+    }
+}
+
+function getCurrentIconPositions() {
+    const positions = {};
+    const icons = document.querySelectorAll('.desktop-item');
+    
+    icons.forEach(icon => {
+        const name = icon.querySelector('span')?.textContent;
+        if (name) {
+            positions[name] = {
+                x: parseInt(icon.style.left),
+                y: parseInt(icon.style.top),
+                gridRow: parseInt(icon.dataset.gridRow),
+                gridCol: parseInt(icon.dataset.gridCol)
+            };
+        }
+    });
+    
+    return positions;
+}
+
+let draggedIcon = null;
+let isDragging = false;
+let dragStarted = false;
+
+function makeIconDraggable(desktopItem, itemName) {
+    desktopItem.draggable = false;
+    
+    desktopItem.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        
+        dragStarted = false;
+        draggedIcon = desktopItem;
+        
+        const rect = desktopItem.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const offsetY = e.clientY - rect.top;
+        
+        const startX = e.clientX;
+        const startY = e.clientY;
+        
+        const handleMouseMove = (moveEvent) => {
+            const deltaX = Math.abs(moveEvent.clientX - startX);
+            const deltaY = Math.abs(moveEvent.clientY - startY);
+            
+            if (!dragStarted && (deltaX > 5 || deltaY > 5)) {
+                dragStarted = true;
+                isDragging = true;
+                desktopItem.style.zIndex = '1000';
+                desktopItem.style.opacity = '0.8';
+            }
+            
+            if (dragStarted) {
+                const newX = moveEvent.clientX - offsetX;
+                const newY = moveEvent.clientY - offsetY;
+                desktopItem.style.left = `${newX}px`;
+                desktopItem.style.top = `${newY}px`;
+            }
+        };
+        
+        const handleMouseUp = (upEvent) => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+            
+            if (dragStarted) {
+                const newX = upEvent.clientX - offsetX;
+                const newY = upEvent.clientY - offsetY;
+                
+                const targetPos = findBestGridPosition(newX, newY);
+                
+                desktopItem.style.left = `${targetPos.x}px`;
+                desktopItem.style.top = `${targetPos.y}px`;
+                desktopItem.dataset.gridRow = targetPos.row;
+                desktopItem.dataset.gridCol = targetPos.col;
+                
+                saveIconPositions(getCurrentIconPositions());
+            }
+            
+            desktopItem.style.zIndex = '';
+            desktopItem.style.opacity = '';
+            draggedIcon = null;
+            isDragging = false;
+            dragStarted = false;
+        };
+        
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+        e.preventDefault();
+    });
+    
+    desktopItem.addEventListener('click', (e) => {
+        if (dragStarted) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
+}
+
+function findBestGridPosition(x, y) {
+    if (!currentGridConfig) return { x: 20, y: 20, row: 0, col: 0 };
+    
+    const targetCol = Math.round((x - currentGridConfig.padding) / currentGridConfig.cellWidth);
+    const targetRow = Math.round((y - currentGridConfig.padding) / currentGridConfig.cellHeight);
+    
+    const clampedCol = Math.max(0, Math.min(targetCol, currentGridConfig.cols - 1));
+    const clampedRow = Math.max(0, Math.min(targetRow, currentGridConfig.rows - 1));
+    
+    if (!isPositionOccupied(clampedRow, clampedCol)) {
+        return getGridCoordinates(clampedRow, clampedCol);
+    }
+    
+    for (let radius = 1; radius <= Math.max(currentGridConfig.rows, currentGridConfig.cols); radius++) {
+        for (let row = Math.max(0, clampedRow - radius); row <= Math.min(currentGridConfig.rows - 1, clampedRow + radius); row++) {
+            for (let col = Math.max(0, clampedCol - radius); col <= Math.min(currentGridConfig.cols - 1, clampedCol + radius); col++) {
+                if (!isPositionOccupied(row, col)) {
+                    return getGridCoordinates(row, col);
+                }
+            }
+        }
+    }
+    
+    return getGridCoordinates(0, 0);
+}
+
+function isPositionOccupied(row, col) {
+    const icons = document.querySelectorAll('.desktop-item');
+    for (const icon of icons) {
+        if (icon === draggedIcon) continue;
+        if (parseInt(icon.dataset.gridRow) === row && parseInt(icon.dataset.gridCol) === col) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function getGridCoordinates(row, col) {
+    return {
+        x: currentGridConfig.padding + (col * currentGridConfig.cellWidth),
+        y: currentGridConfig.padding + (row * currentGridConfig.cellHeight),
+        row: row,
+        col: col
+    };
+}
