@@ -65,6 +65,7 @@ body, html {
     height: auto;
     margin-bottom: 16px;
     filter: drop-shadow(0 16px 48px rgba(0, 0, 0, 1));
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
   
 .date {
@@ -83,6 +84,7 @@ body, html {
     opacity: 0.8;
     text-align: right;
     z-index: 3;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #screen-mirror-btn, #music-btn {
@@ -129,6 +131,7 @@ body, html {
     display: flex;
     gap: 8px;
     z-index: 4;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .indicator-dot {
@@ -153,14 +156,1073 @@ body, html {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .image-indicators {
-        bottom: 20px;
+/* Login Screen */
+.login-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.login-screen.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    animation: loginSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-picture {
+    font-size: 6rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 8px;
+}
+
+.user-name {
+    font-size: 2rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 16px;
+}
+
+.login-form {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.password-input {
+    width: 280px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 0 20px;
+    font-size: 1rem;
+    color: white;
+    outline: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.password-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.password-input:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+}
+
+.password-input:invalid {
+    border-color: rgba(255, 100, 100, 0.6);
+}
+
+.submit-button {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.submit-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}
+
+.submit-button:active {
+    transform: scale(0.95);
+}
+
+/* Shake animation for login feedback */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+    20%, 40%, 60%, 80% { transform: translateX(8px); }
+}
+
+/* Additional login screen enhancements */
+.login-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Blur state for main content */
+.blur-mode .overlay {
+    filter: blur(20px);
+    transition: filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blur-mode .logo {
+    opacity: 0 !important;
+    transform: translateY(-30px);
+}
+
+.blur-mode .image-indicators {
+    opacity: 0 !important;
+    transform: translateX(-50%) translateY(-30px);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blur-mode #screen-mirror-btn,
+.blur-mode #music-btn,
+.blur-mode .metadata,
+.blur-mode #metadata {
+    opacity: 0 !important;
+    transform: translateY(-30px);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Login animation */
+@keyframes loginSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
     }
-    
-    .indicator-dot {
-        width: 6px;
-        height: 6px;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
+
+/* Windows 11 Desktop */
+.desktop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.8s ease-in-out;
+}
+
+.desktop.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Hide screensaver elements when desktop is active */
+.desktop.active ~ .overlay,
+.desktop.active ~ #screen-mirror-btn,
+.desktop.active ~ #music-btn,
+.desktop.active ~ #metadata {
+    display: none;
+}
+
+.desktop-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/wallpaper.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.desktop-icons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 48px);
+    padding: 20px;
+}
+
+.desktop-item {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.desktop-item:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+.desktop-item img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 4px;
+}
+
+.file-icon-fa {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.file-icon-fa i {
+    font-size: 24px;
+}
+
+/* Taskbar */
+.taskbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.75);
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    z-index: 20;
+}
+
+.taskbar-center {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+.taskbar-left {
+    position: absolute;
+    left: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.start-button {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.start-button:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+    transform: scale(1.05);
+}
+
+.start-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+    padding: 8px 16px;
+    width: 260px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-box i {
+    color: rgba(0, 0, 0, 0.6);
+    margin-right: 8px;
+    font-size: 0.9rem;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.85rem;
+    color: rgba(0, 0, 0, 0.8);
+    width: 100%;
+}
+
+.search-box input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.taskbar-apps {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.taskbar-app {
+    width: 40px;
+    height: 40px;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    object-fit: contain;
+}
+
+.taskbar-app:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+    transform: scale(1.05);
+}
+
+.taskbar-right {
+    position: absolute;
+    right: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.system-tray {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.8);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.time-display {
+    font-weight: 600;
+    line-height: 1;
+}
+
+.date-display {
+    font-weight: 400;
+    line-height: 1;
+    margin-top: 1px;
+}
+
+/* Fade transition overlay */
+.fade-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 1) 100%);
+    z-index: 25;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8);
+    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                visibility 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Login transition - zoom in effect */
+.fade-overlay.login-transition {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(0.8);
+}
+
+.fade-overlay.login-transition.zoom-in {
+    transform: scale(1);
+}
+
+/* Settings Panel */
+.settings-panel {
+    position: fixed;
+    width: 480px;
+    max-height: 600px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.95);
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.settings-panel.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.settings-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.9);
+    margin: 0;
+}
+
+.close-settings {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    color: rgba(0, 0, 0, 0.7);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.close-settings:hover {
+    background: rgba(0, 0, 0, 0.15);
+    color: rgba(0, 0, 0, 0.9);
+}
+
+.settings-content {
+    padding: 20px 24px 80px 24px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.recommended-apps {
+    margin-bottom: 32px;
+}
+
+.recommended-apps h4,
+.taskbar-settings h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.8);
+    margin: 0 0 16px 0;
+}
+
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.app-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app-item:hover {
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}
+
+.app-item img {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 6px;
+    object-fit: contain;
+}
+
+.app-item span {
+    font-size: 0.7rem;
+    color: rgba(0, 0, 0, 0.8);
+    text-align: center;
+    line-height: 1.2;
+}
+
+.taskbar-settings h4:not(:first-child) {
+    margin-top: 24px;
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.setting-group label {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.setting-group label:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.setting-group input[type="radio"] {
+    margin-right: 12px;
+    width: 16px;
+    height: 16px;
+    accent-color: #0078d4;
+}
+
+/* Taskbar position variations */
+.taskbar.position-top {
+    top: 0;
+    bottom: auto;
+}
+
+.taskbar.position-left {
+    left: 0;
+    right: auto;
+    width: 60px;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 16px 0;
+}
+
+.taskbar.position-right {
+    right: 0;
+    left: auto;
+    width: 60px;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 16px 0;
+}
+
+.taskbar.position-left .taskbar-center,
+.taskbar.position-right .taskbar-center {
+    flex-direction: column;
+    position: static;
+    width: 100%;
+}
+
+.taskbar.position-left .search-box,
+.taskbar.position-right .search-box {
+    display: none;
+}
+
+.taskbar.position-left .taskbar-apps,
+.taskbar.position-right .taskbar-apps {
+    flex-direction: column;
+}
+
+.taskbar.position-left .taskbar-right,
+.taskbar.position-right .taskbar-right {
+    position: static;
+    margin-top: auto;
+}
+
+.taskbar.align-start .taskbar-center {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+.taskbar.align-end .taskbar-center {
+    margin-left: auto;
+    margin-right: 80px;
+}
+
+/* Settings Panel Footer */
+.settings-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+.footer-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.footer-user-avatar {
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.footer-user-avatar i {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer-user-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.footer-logout-button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.footer-logout-button:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.8);
+}
+
+/* ======================================
+   OVERLAYS
+   ====================================== */
+
+#fadeOverlay {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0);
+    opacity: 0;
+    z-index: -1; /* Hidden by default */
+    transition: opacity 0.5s ease-in-out, background-color 0.5s ease-in-out;
+}
+
+#fadeOverlay.active {
+    opacity: 1;
+    z-index: 10000;
+}
+
+#fadeOverlay.white {
+    background-color: white;
+}
+
+#fadeOverlay.fade-to-black {
+    background-color: black;
+    opacity: 1;
+    z-index: 20000;
+    transition: opacity 2s ease-in-out;
+}
+
+/* Login transition - zoom in effect */
+#fadeOverlay.login-transition {
+    background-color: white;
+    opacity: 1;
+    z-index: 15000;
+    visibility: visible;
+    transform: scale(0.8);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#fadeOverlay.login-transition.zoom-in {
+    transform: scale(1);
+}
+
+#fadeOverlay.login-transition.fade-out {
+    opacity: 0;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#fadeOverlay.fade-to-black {
+    background-color: black;
+    opacity: 0;
+    z-index: 20000;
+    visibility: visible;
+    transition: opacity 2s ease-in-out;
+}
+
+#fadeOverlay.fade-to-black.active {
+    opacity: 1;
+}
+
+/* ======================================
+   FILE MANAGER
+   ====================================== */
+
+.file-manager {
+    position: fixed;
+    top: 100px;
+    left: 200px;
+    width: 800px;
+    height: 600px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.95);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    resize: both;
+    min-width: 400px;
+    min-height: 300px;
+}
+
+.file-manager.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.window-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: move;
+    user-select: none;
+}
+
+.window-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.window-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.window-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.minimize-btn {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ff9500;
+}
+
+.minimize-btn:hover {
+    background: rgba(255, 193, 7, 0.3);
+}
+
+.maximize-btn {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+}
+
+.maximize-btn:hover {
+    background: rgba(40, 167, 69, 0.3);
+}
+
+.close-btn {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+}
+
+.close-btn:hover {
+    background: rgba(220, 53, 69, 0.3);
+}
+
+.file-manager-toolbar {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.6);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    gap: 16px;
+}
+
+.toolbar-left,
+.toolbar-right {
+    display: flex;
+    gap: 4px;
+}
+
+.toolbar-center {
+    flex: 1;
+}
+
+.toolbar-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: rgba(0, 0, 0, 0.7);
+    transition: all 0.2s ease;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.9);
+}
+
+.toolbar-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.address-bar {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.path-segment {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.path-segment:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.path-segment.active {
+    font-weight: 500;
+    color: #0078d4;
+}
+
+.path-separator {
+    margin: 0 4px;
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.file-manager-content {
+    flex: 1;
+    overflow: auto;
+    padding: 16px;
+}
+
+.file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 16px;
+}
+
+.file-grid-empty-message {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 16px;
+}
+
+.file-grid-empty-message i {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.3;
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.file-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.file-item:hover {
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(1.02);
+}
+
+.file-item.selected {
+    background: rgba(0, 120, 212, 0.2);
+    border-color: rgba(0, 120, 212, 0.4);
+}
+
+.file-item-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+    object-fit: contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.file-item-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.file-item-name {
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.8);
+    text-align: center;
+    line-height: 1.2;
+    word-wrap: break-word;
+    max-width: 80px;
+}
+
+.file-manager-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.6);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.6);
+    position: relative;
+}
+
+.resize-handle {
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(-45deg, transparent 30%, rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0.2) 40%, transparent 40%, transparent 60%, rgba(0, 0, 0, 0.2) 60%, rgba(0, 0, 0, 0.2) 70%, transparent 70%);
+    cursor: nw-resize;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+/* List view styles */
+.file-grid.list-view {
+    grid-template-columns: 1fr;
+    gap: 2px;
+}
+
+.file-grid.list-view .file-item {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.file-grid.list-view .file-item-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 0;
+    margin-right: 12px;
+    font-size: 1.2rem;
+}
+
+.file-grid.list-view .file-item-name {
+    text-align: left;
+    max-width: none;
+}
+
+/* ======================================
+   SCREENSAVER
+   ====================================== */

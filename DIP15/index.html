@@ -22,6 +22,164 @@
     <div class="image-indicators" id="imageIndicators"></div>
   </div>
 
+  <!-- Login Screen -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-container">
+      <div class="profile-picture">
+        <i class="fa-regular fa-circle-user"></i>
+      </div>
+      <div class="user-name">Keira Mayhew</div>
+      <div class="login-form">
+        <input type="password" class="password-input" placeholder="Password" id="passwordInput">
+        <button class="submit-button" id="submitButton">
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Windows 11 Desktop -->
+  <div class="desktop" id="desktop">
+    <div class="desktop-background"></div>
+    <div class="desktop-icons" id="desktopIcons"></div>
+    
+    <!-- Taskbar -->
+    <div class="taskbar" id="taskbar">
+      <div class="taskbar-center" id="taskbarCenter">
+        <div class="start-button" id="startButton">
+          <img src="images/icon.png" alt="Start" class="start-icon">
+        </div>
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Type here to search">
+        </div>
+        <div class="taskbar-apps" id="taskbarApps">
+          <!-- Apps will be loaded dynamically from apps.json -->
+        </div>
+      </div>
+      
+      <div class="taskbar-right" id="taskbarRight">
+        <div class="system-tray">
+          <span class="time-display" id="desktopTime">12:00 PM</span>
+          <span class="date-display" id="desktopDate">1/7/2025</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Panel (moved outside desktop for proper z-index) -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <h3>Start Menu</h3>
+      <button class="close-settings" id="closeSettings">×</button>
+    </div>
+    
+    <div class="settings-content">
+      <div class="recommended-apps">
+        <h4>Recommended Apps</h4>
+        <div class="app-grid" id="appGrid">
+          <!-- Apps will be loaded dynamically from apps.json -->
+        </div>
+      </div>
+      
+      <div class="taskbar-settings">
+        <h4>Taskbar Position</h4>
+        <div class="setting-group">
+          <label><input type="radio" name="taskbarPosition" value="bottom" checked> Bottom</label>
+          <label><input type="radio" name="taskbarPosition" value="top"> Top</label>
+          <label><input type="radio" name="taskbarPosition" value="left"> Left</label>
+          <label><input type="radio" name="taskbarPosition" value="right"> Right</label>
+        </div>
+        
+        <h4>Taskbar Alignment</h4>
+        <div class="setting-group">
+          <label><input type="radio" name="taskbarAlignment" value="center" checked> Center</label>
+          <label><input type="radio" name="taskbarAlignment" value="start"> Start</label>
+          <label><input type="radio" name="taskbarAlignment" value="end"> End</label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Settings Panel Footer -->
+    <div class="settings-footer">
+      <div class="footer-user-info">
+        <div class="footer-user-avatar">👤</div>
+        <span class="footer-user-name">User</span>
+      </div>
+      <button type="button" class="footer-logout-button" id="logoutButton">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- File Manager Window -->
+  <div class="file-manager" id="fileManager">
+    <div class="window-header" id="fileManagerHeader">
+      <div class="window-title">
+        <i class="fas fa-folder"></i>
+        <span id="fileManagerTitle">Home</span>
+      </div>
+      <div class="window-controls">
+        <button class="window-btn minimize-btn" id="minimizeFileManager">
+          <i class="fas fa-minus"></i>
+        </button>
+        <button class="window-btn maximize-btn" id="maximizeFileManager">
+          <i class="fas fa-square"></i>
+        </button>
+        <button class="window-btn close-btn" id="closeFileManager">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div class="file-manager-toolbar">
+      <div class="toolbar-left">
+        <button class="toolbar-btn" id="backBtn" title="Back">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <button class="toolbar-btn" id="forwardBtn" title="Forward">
+          <i class="fas fa-arrow-right"></i>
+        </button>
+        <button class="toolbar-btn" id="upBtn" title="Up">
+          <i class="fas fa-arrow-up"></i>
+        </button>
+      </div>
+      
+      <div class="toolbar-center">
+        <div class="address-bar">
+          <span class="path-segment active" data-path="Home">
+            <i class="fas fa-home"></i> Home
+          </span>
+          <span class="path-separator">/</span>
+          <span class="path-segment" id="currentPath"></span>
+        </div>
+      </div>
+      
+      <div class="toolbar-right">
+        <button class="toolbar-btn" id="gridViewBtn" title="Grid View">
+          <i class="fas fa-th"></i>
+        </button>
+        <button class="toolbar-btn" id="listViewBtn" title="List View">
+          <i class="fas fa-list"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div class="file-manager-content" id="fileManagerContent">
+      <div class="file-grid" id="fileGrid">
+        <!-- Files and folders will be loaded here -->
+      </div>
+    </div>
+    
+    <div class="file-manager-status">
+      <span id="itemCount">0 items</span>
+      <div class="resize-handle" id="resizeHandle"></div>
+    </div>
+  </div>
+
+  <!-- Fade transition overlay -->
+  <div class="fade-overlay" id="fadeOverlay"></div>
+
   <a href="http://www.screenmirrorapp.com/" id="screen-mirror-btn">
     <i class="fas fa-desktop"></i>
   </a>
@@ -30,7 +188,8 @@
     <i class="fas fa-music"></i>  
   </a>
 
-  <div id="metadata" class="metadata"><i class="fa-regular fa-circle-user"></i> Kira Mayhew</div>
+  <div id="metadata" class="metadata"><i class="fa-regular fa-circle-user"></i> Keira Mayhew</div>
+  <script src="get-directory.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
