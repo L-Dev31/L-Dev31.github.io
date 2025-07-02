@@ -1,0 +1,315 @@
+/* ======================================
+   FILES APP - MODULAR CSS
+   ====================================== */
+
+.files-app {
+    position: fixed;
+    top: 100px;
+    left: 200px;
+    width: 800px;
+    height: 600px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.95);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    resize: none;
+    min-width: 400px;
+    min-height: 300px;
+}
+
+.files-app.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.files-app.maximized {
+    box-shadow: none;
+}
+
+/* Hide resize handle when maximized */
+.files-app.maximized .files-resize-handle {
+    display: none !important;
+}
+
+.files-window-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: move;
+    user-select: none;
+}
+
+.files-window-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.files-window-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.files-window-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.files-minimize-btn {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ff9500;
+}
+
+.files-minimize-btn:hover {
+    background: rgba(255, 193, 7, 0.3);
+}
+
+.files-maximize-btn {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+}
+
+.files-maximize-btn:hover {
+    background: rgba(40, 167, 69, 0.3);
+}
+
+.files-close-btn {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+}
+
+.files-close-btn:hover {
+    background: rgba(220, 53, 69, 0.3);
+}
+
+.files-toolbar {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.6);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    gap: 16px;
+}
+
+.files-toolbar-left,
+.files-toolbar-right {
+    display: flex;
+    gap: 4px;
+}
+
+.files-toolbar-center {
+    flex: 1;
+}
+
+.files-toolbar-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: rgba(0, 0, 0, 0.7);
+    transition: all 0.2s ease;
+}
+
+.files-toolbar-btn:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.9);
+}
+
+.files-toolbar-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.files-address-bar {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.files-path-segment {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.files-path-segment:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.files-path-segment.active {
+    font-weight: 500;
+    color: #0078d4;
+}
+
+.files-path-separator {
+    margin: 0 4px;
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.files-content {
+    flex: 1;
+    overflow: auto;
+    padding: 16px;
+}
+
+.files-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 16px;
+}
+
+.files-grid-empty-message {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 16px;
+}
+
+.files-grid-empty-message i {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.3;
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.files-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.files-item:hover {
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(1.02);
+}
+
+.files-item.selected {
+    background: rgba(0, 120, 212, 0.2);
+    border-color: rgba(0, 120, 212, 0.4);
+}
+
+.files-item-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+    object-fit: contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.files-item-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.files-item-name {
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.8);
+    text-align: center;
+    line-height: 1.2;
+    word-wrap: break-word;
+    max-width: 80px;
+}
+
+.files-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.6);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.6);
+    position: relative;
+}
+
+.files-resize-handle {
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(-45deg, transparent 30%, rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0.2) 40%, transparent 40%, transparent 60%, rgba(0, 0, 0, 0.2) 60%, rgba(0, 0, 0, 0.2) 70%, transparent 70%);
+    cursor: nw-resize;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+/* List view styles */
+.files-grid.list-view {
+    grid-template-columns: 1fr;
+    gap: 2px;
+}
+
+.files-grid.list-view .files-item {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.files-grid.list-view .files-item-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 0;
+    margin-right: 12px;
+    font-size: 1.2rem;
+}
+
+.files-grid.list-view .files-item-name {
+    text-align: left;
+    max-width: none;
+}

@@ -225,143 +225,80 @@ async function showDesktop() {
 
 async function loadDesktopItems() {
     try {
-        console.log('🖥️ Loading desktop items from home folder...');
-        
-        // Create a DirectoryFetcher to get real home contents
-        const directoryFetcher = new DirectoryFetcher();
-        
-        // Get all items from the home directory
-        const homeItems = await directoryFetcher.fetchDirectoryContents('');
-        
-        console.log('🔍 Raw home items from DirectoryFetcher:', homeItems);
-        
-        // Only add Files app if we specifically want it on desktop
-        // (comment this out if Files app shouldn't appear)
-        // homeItems.push({
-        //     name: 'Files',
-        //     type: 'app',
-        //     icon: 'images/app1.png'
-        // });
-        
+        console.log('🖥️ Loading desktop items from server...');
+        const homeItems = await fetchHomeItemsFromServer();
+        if (!Array.isArray(homeItems) || !homeItems.length) {
+            throw new Error('No desktop items returned from server.');
+        }
+        console.log('🔍 Using fetched home items:', homeItems);
         const desktopIcons = document.getElementById('desktopIcons');
         desktopIcons.innerHTML = '';
-        
-        // Position items in a grid layout
         let x = 30;
         let y = 30;
         const itemWidth = 100;
         const itemHeight = 100;
         const maxItemsPerRow = Math.floor((window.innerWidth - 60) / itemWidth);
-        
         homeItems.forEach((item, index) => {
             const desktopItem = document.createElement('div');
             desktopItem.className = 'desktop-item';
-            
-            // Calculate grid position
             const row = Math.floor(index / maxItemsPerRow);
             const col = index % maxItemsPerRow;
-            
             desktopItem.style.left = `${x + (col * itemWidth)}px`;
             desktopItem.style.top = `${y + (row * itemHeight)}px`;
-            
-            // Force correct icon paths based on item type
-            let iconSrc;
-            
-            console.log(`🎨 Processing icon for ${item.name}: type=${item.type}, original_icon=${item.icon}`);
-            
+            let iconHtml;
+            // Icon selection: use type 'folder' to detect folders
             if (item.type === 'folder') {
-                iconSrc = 'images/folder.png';  // Force folder icon
-                console.log(`📁 Folder icon set to: ${iconSrc}`);
+                // Folder icon
+                iconHtml = `<img src="images/folder.png" alt="${item.name}" class="folder-icon">`;
             } else if (item.type === 'app') {
-                iconSrc = item.icon;
-                console.log(`🚀 App icon assigned: ${iconSrc}`);
+                iconHtml = `<img src="${item.icon}" alt="${item.name}" class="app-icon">`;
             } else if (item.type === 'file') {
-                // For files, check if it's a FontAwesome class or image path
                 if (typeof item.icon === 'string' && item.icon.startsWith('fas ')) {
-                    iconSrc = null; // Will use FontAwesome
-                    console.log(`📄 File with FA icon: ${item.icon}`);
+                    iconHtml = `<div class="file-icon-fa"><i class="${item.icon}"></i></div>`;
+                } else if (item.icon) {
+                    iconHtml = `<img src="${item.icon}" alt="${item.name}" class="file-icon">`;
                 } else {
-                    iconSrc = item.icon;
-                    console.log(`📄 File with image icon: ${iconSrc}`);
+                    iconHtml = `<div class="file-icon-fa"><i class="fas fa-file"></i></div>`;
                 }
             } else {
-                iconSrc = 'images/folder.png'; // Default to folder icon
-                console.log(`❓ Unknown type, using folder icon: ${iconSrc}`);
+                // Default fallback icon
+                iconHtml = `<div class="file-icon-fa"><i class="fas fa-question-circle"></i></div>`;
             }
-            
-            // Create the desktop item HTML - always use img tag for folders
-            let iconHtml;
-            if (item.type === 'folder') {
-                iconHtml = `<img src="images/folder.png" alt="${item.name}">`;
-            } else if (iconSrc) {
-                iconHtml = `<img src="${iconSrc}" alt="${item.name}" onerror="this.style.display='none'">`;
-            } else if (item.type === 'file' && item.icon && item.icon.startsWith('fas ')) {
-                iconHtml = `<div class="file-icon-fa"><i class="${item.icon}"></i></div>`;
-            } else {
-                iconHtml = `<img src="images/folder.png" alt="${item.name}">`;
-            }
-            
             desktopItem.innerHTML = `
                 ${iconHtml}
                 <span>${item.name}</span>
             `;
-            
             desktopItem.addEventListener('click', () => {
-                console.log(`📁 Clicked on ${item.name}`);
-                
-                // Open file manager for folders and Files app
-                if (item.type === 'folder' || item.name === 'Files') {
-                    if (typeof fileManager !== 'undefined' && fileManager.open) {
-                        if (item.name === 'Files') {
-                            fileManager.open('Home');
-                        } else {
-                            fileManager.open(item.name);
-                        }
-                    }
+                if (item.isDirectory || item.type === 'folder') {
+                    window.appLauncher.launchApp('app1', { path: item.name });
+                } else if (item.type === 'app') {
+                    window.appLauncher.launchApp(item.appId);
+                } else if (item.name === 'Files') {
+                    window.appLauncher.launchApp('app1');
                 }
             });
-            
             desktopIcons.appendChild(desktopItem);
         });
-        
-        // Store the data globally for file manager use
         window.desktopData = { desktopItems: homeItems };
-        
         console.log(`✅ Desktop items loaded: ${homeItems.length} items`);
     } catch (error) {
-        console.warn('⚠️ Could not load desktop items from home folder:', error);
-        
-        // Fallback to static desktop items if dynamic loading fails
-        try {
-            const response = await fetch('desktop-items.json');
-            const data = await response.json();
-            const desktopIcons = document.getElementById('desktopIcons');
-            
-            desktopIcons.innerHTML = '';
-            
-            data.desktopItems.forEach(item => {
-                const desktopItem = document.createElement('div');
-                desktopItem.className = 'desktop-item';
-                desktopItem.style.left = `${item.position.x}px`;
-                desktopItem.style.top = `${item.position.y}px`;
-                
-                desktopItem.innerHTML = `
-                    <img src="${item.icon}" alt="${item.name}" onerror="this.style.display='none'">
-                    <span>${item.name}</span>
-                `;
-                
-                desktopItem.addEventListener('click', () => {
-                    console.log(`📁 Clicked on ${item.name}`);
-                });
-                
-                desktopIcons.appendChild(desktopItem);
-            });
-            
-            window.desktopData = data;
-            console.log('✅ Fallback desktop items loaded');
-        } catch (fallbackError) {
-            console.error('❌ Could not load fallback desktop items:', fallbackError);
-        }
+        console.error('❌ Could not load desktop items from server:', error);
+        // No fallback, just fail
+    }
+}
+
+// New helper function to fetch directory items
+async function fetchHomeItemsFromServer() {
+    try {
+        // Use the DirectoryFetcher class from get-directory.js
+        const fetcher = new DirectoryFetcher();
+        // We need to wait for the apps data to be loaded by the fetcher
+        await fetcher.loadAppsData();
+        // Fetch contents of the root of the home directory
+        return await fetcher.fetchDirectoryContents('');
+    } catch (error) {
+        console.error('❌ Failed to fetch or parse items:', error);
+        return [];
     }
 }
 
@@ -398,7 +335,8 @@ function loadTaskbarApps(apps) {
         appElement.title = app.name;
         
         appElement.addEventListener('click', () => {
-            console.log(`🚀 Launched ${app.name}`);
+            console.log(`🚀 Launched ${app.name} (${app.id})`);
+            window.appLauncher.launchApp(app.id);
         });
         
         taskbarApps.appendChild(appElement);
@@ -419,7 +357,8 @@ function loadSettingsApps(apps) {
         `;
         
         appItem.addEventListener('click', () => {
-            console.log(`🚀 Launched ${app.name} from settings`);
+            console.log(`🚀 Launched ${app.name} (${app.id}) from settings`);
+            window.appLauncher.launchApp(app.id);
             settingsManager.hideSettingsPanel();
         });
         
@@ -861,404 +800,6 @@ function logout() {
 }
 
 // ======================================
-// FILE MANAGER
-// ======================================
-
-const fileManager = {
-    isOpen: false,
-    currentPath: 'Home',
-    history: ['Home'],
-    historyIndex: 0,
-    isMaximized: false,
-    originalBounds: { top: 100, left: 200, width: 800, height: 600 },
-    directoryFetcher: null,
-    
-    // Fallback fileSystem for legacy methods
-    fileSystem: {
-        'Home': [],
-        'Documents': [],
-        'Pictures': [],
-        'Downloads': [],
-        'Projects': [],
-        'Music': [],
-        'Videos': []
-    },
-
-    init() {
-        this.directoryFetcher = new DirectoryFetcher();
-        this.setupEventListeners();
-        this.makeWindowDraggable();
-        this.makeWindowResizable();
-    },
-
-    setupEventListeners() {
-        // Desktop app clicks
-        document.addEventListener('click', (e) => {
-            const desktopItem = e.target.closest('.desktop-item');
-            if (desktopItem) {
-                const itemName = desktopItem.querySelector('span').textContent;
-                if (itemName === 'Files' || desktopItem.querySelector('img')?.src?.includes('app1.png')) {
-                    this.open('Home');
-                } else {
-                    // For any other desktop item (folders, apps), open the file manager with that path
-                    this.open(itemName);
-                }
-            }
-        });
-
-        // Taskbar app clicks
-        document.addEventListener('click', (e) => {
-            const taskbarApp = e.target.closest('.taskbar-app');
-            if (taskbarApp && taskbarApp.title === 'Files') {
-                this.open('Home');
-            }
-        });
-
-        // Window controls
-        document.getElementById('closeFileManager').addEventListener('click', () => this.close());
-        document.getElementById('minimizeFileManager').addEventListener('click', () => this.minimize());
-        document.getElementById('maximizeFileManager').addEventListener('click', () => this.toggleMaximize());
-
-        // Toolbar buttons
-        document.getElementById('backBtn').addEventListener('click', () => this.goBack());
-        document.getElementById('forwardBtn').addEventListener('click', () => this.goForward());
-        document.getElementById('upBtn').addEventListener('click', () => this.goUp());
-        document.getElementById('gridViewBtn').addEventListener('click', () => this.setView('grid'));
-        document.getElementById('listViewBtn').addEventListener('click', () => this.setView('list'));
-
-        // File item clicks
-        document.getElementById('fileGrid').addEventListener('click', async (e) => {
-            const fileItem = e.target.closest('.file-item');
-            if (fileItem) {
-                const itemName = fileItem.dataset.name;
-                const itemType = fileItem.dataset.type;
-                
-                if (itemType === 'folder') {
-                    await this.navigateTo(itemName);
-                }
-            }
-        });
-
-        // Path navigation
-        document.querySelector('.address-bar').addEventListener('click', async (e) => {
-            const pathSegment = e.target.closest('.path-segment');
-            if (pathSegment && pathSegment.dataset.path) {
-                await this.navigateTo(pathSegment.dataset.path);
-            }
-        });
-    },
-
-    async open(path = 'Home') {
-        if (this.isOpen) {
-            await this.navigateTo(path);
-            return;
-        }
-
-        this.isOpen = true;
-        this.currentPath = path;
-        this.history = [path];
-        this.historyIndex = 0;
-
-        const fileManagerEl = document.getElementById('fileManager');
-        fileManagerEl.classList.add('active');
-        
-        await this.updateContent();
-        this.updateNavigation();
-    },
-
-    close() {
-        this.isOpen = false;
-        const fileManagerEl = document.getElementById('fileManager');
-        fileManagerEl.classList.remove('active');
-    },
-
-    minimize() {
-        const fileManagerEl = document.getElementById('fileManager');
-        fileManagerEl.style.transform = 'scale(0.1)';
-        fileManagerEl.style.opacity = '0';
-        
-        setTimeout(() => {
-            fileManagerEl.style.display = 'none';
-        }, 300);
-    },
-
-    toggleMaximize() {
-        const fileManagerEl = document.getElementById('fileManager');
-        
-        if (!this.isMaximized) {
-            // Store original bounds
-            const rect = fileManagerEl.getBoundingClientRect();
-            this.originalBounds = {
-                top: rect.top,
-                left: rect.left,
-                width: rect.width,
-                height: rect.height
-            };
-            
-            // Maximize
-            fileManagerEl.style.top = '0';
-            fileManagerEl.style.left = '0';
-            fileManagerEl.style.width = '100vw';
-            fileManagerEl.style.height = '100vh';
-            fileManagerEl.style.borderRadius = '0';
-            
-            this.isMaximized = true;
-            document.getElementById('maximizeFileManager').innerHTML = '<i class="fas fa-clone"></i>';
-        } else {
-            // Restore
-            fileManagerEl.style.top = this.originalBounds.top + 'px';
-            fileManagerEl.style.left = this.originalBounds.left + 'px';
-            fileManagerEl.style.width = this.originalBounds.width + 'px';
-            fileManagerEl.style.height = this.originalBounds.height + 'px';
-            fileManagerEl.style.borderRadius = '12px';
-            
-            this.isMaximized = false;
-            document.getElementById('maximizeFileManager').innerHTML = '<i class="fas fa-square"></i>';
-        }
-    },
-
-    async navigateTo(path) {
-        if (this.currentPath !== path) {
-            // Add to history if navigating forward
-            if (this.historyIndex < this.history.length - 1) {
-                this.history = this.history.slice(0, this.historyIndex + 1);
-            }
-            this.history.push(path);
-            this.historyIndex = this.history.length - 1;
-            
-            this.currentPath = path;
-            await this.updateContent();
-            this.updateNavigation();
-        }
-    },
-
-    async goBack() {
-        if (this.historyIndex > 0) {
-            this.historyIndex--;
-            this.currentPath = this.history[this.historyIndex];
-            await this.updateContent();
-            this.updateNavigation();
-        }
-    },
-
-    async goForward() {
-        if (this.historyIndex < this.history.length - 1) {
-            this.historyIndex++;
-            this.currentPath = this.history[this.historyIndex];
-            await this.updateContent();
-            this.updateNavigation();
-        }
-    },
-
-    async goUp() {
-        if (this.currentPath !== 'Home') {
-            await this.navigateTo('Home');
-        }
-    },
-
-    setView(viewType) {
-        const fileGrid = document.getElementById('fileGrid');
-        const gridBtn = document.getElementById('gridViewBtn');
-        const listBtn = document.getElementById('listViewBtn');
-        
-        if (viewType === 'list') {
-            fileGrid.classList.add('list-view');
-            listBtn.style.background = 'rgba(0, 120, 212, 0.2)';
-            gridBtn.style.background = 'rgba(0, 0, 0, 0.05)';
-        } else {
-            fileGrid.classList.remove('list-view');
-            gridBtn.style.background = 'rgba(0, 120, 212, 0.2)';
-            listBtn.style.background = 'rgba(0, 0, 0, 0.05)';
-        }
-    },
-
-    async updateContent() {
-        const fileGrid = document.getElementById('fileGrid');
-        
-        // Show loading state
-        fileGrid.innerHTML = '<div style="padding: 20px; text-align: center; color: rgba(0,0,0,0.6);">Loading...</div>';
-        
-        try {
-            const items = await this.getFolderContent(this.currentPath);
-            
-            fileGrid.innerHTML = '';
-            
-            if (items.length === 0) {
-                fileGrid.innerHTML = '<div class="file-grid-empty-message"><i class="fas fa-folder-open"></i><div>This folder is empty</div></div>';
-            } else {
-                items.forEach(item => {
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'file-item';
-                    fileItem.dataset.name = item.name;
-                    fileItem.dataset.type = item.type;
-                    
-                    const iconHtml = item.icon.includes('images/') 
-                        ? `<img src="${item.icon}" alt="${item.name}">`
-                        : `<i class="${item.icon}"></i>`;
-                    
-                    fileItem.innerHTML = `
-                        <div class="file-item-icon">${iconHtml}</div>
-                        <div class="file-item-name">${item.name}</div>
-                    `;
-                    
-                    fileGrid.appendChild(fileItem);
-                });
-            }
-            
-            // Update item count
-            document.getElementById('itemCount').textContent = `${items.length} item${items.length !== 1 ? 's' : ''}`;
-            
-        } catch (error) {
-            console.error('Error loading folder content:', error);
-            fileGrid.innerHTML = '<div style="padding: 40px; text-align: center; color: rgba(255,0,0,0.6);"><i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i><br>Error loading folder contents</div>';
-        }
-        
-        // Update window title
-        document.getElementById('fileManagerTitle').textContent = this.currentPath;
-    },
-
-    async getFolderContent(folderName) {
-        if (folderName === 'Home') {
-            return this.getHomeContent();
-        }
-        
-        // Fetch real directory contents
-        try {
-            const items = await this.directoryFetcher.fetchDirectoryContents(folderName);
-            return items;
-        } catch (error) {
-            console.warn(`Could not fetch contents for ${folderName}:`, error);
-            return [];
-        }
-    },
-
-    getHomeContent() {
-        // Get desktop items from the loaded data and combine with real folders
-        const homeContent = [];
-        
-        // Add real folders that exist in the home directory
-        const realFolders = ['Documents', 'Pictures', 'Downloads', 'Projects', 'Music', 'Videos'];
-        realFolders.forEach(folderName => {
-            homeContent.push({
-                name: folderName,
-                type: 'folder',
-                icon: 'images/folder.png'
-            });
-        });
-        
-        // Add apps from desktop items (if any)
-        if (window.desktopData && window.desktopData.desktopItems) {
-            window.desktopData.desktopItems.forEach(item => {
-                if (item.type === 'app') {
-                    homeContent.push({
-                        name: item.name,
-                        type: item.type,
-                        icon: item.icon
-                    });
-                }
-            });
-        } else {
-            // Fallback apps
-            homeContent.push(
-                { name: 'Prism', type: 'app', icon: 'images/app5.png' },
-                { name: 'Scaffold', type: 'app', icon: 'images/app7.png' },
-                { name: 'Mango', type: 'app', icon: 'images/app9.png' },
-                { name: 'Avokadoo', type: 'app', icon: 'images/app10.png' }
-            );
-        }
-
-        return homeContent;
-    },
-
-    updateNavigation() {
-        // Update toolbar buttons
-        document.getElementById('backBtn').disabled = this.historyIndex <= 0;
-        document.getElementById('forwardBtn').disabled = this.historyIndex >= this.history.length - 1;
-        document.getElementById('upBtn').disabled = this.currentPath === 'Home';
-        
-        // Update address bar
-        const currentPathSpan = document.getElementById('currentPath');
-        if (this.currentPath === 'Home') {
-            currentPathSpan.textContent = '';
-            currentPathSpan.style.display = 'none';
-            document.querySelector('.path-separator').style.display = 'none';
-        } else {
-            currentPathSpan.textContent = this.currentPath;
-            currentPathSpan.style.display = 'inline';
-            document.querySelector('.path-separator').style.display = 'inline';
-        }
-    },
-
-    makeWindowDraggable() {
-        const header = document.getElementById('fileManagerHeader');
-        const fileManagerEl = document.getElementById('fileManager');
-        let isDragging = false;
-        let dragOffset = { x: 0, y: 0 };
-
-        header.addEventListener('mousedown', (e) => {
-            if (this.isMaximized) return;
-            
-            isDragging = true;
-            const rect = fileManagerEl.getBoundingClientRect();
-            dragOffset.x = e.clientX - rect.left;
-            dragOffset.y = e.clientY - rect.top;
-            
-            document.addEventListener('mousemove', handleDrag);
-            document.addEventListener('mouseup', stopDrag);
-            e.preventDefault();
-        });
-
-        const handleDrag = (e) => {
-            if (!isDragging) return;
-            
-            const newX = e.clientX - dragOffset.x;
-            const newY = e.clientY - dragOffset.y;
-            
-            fileManagerEl.style.left = Math.max(0, Math.min(newX, window.innerWidth - 200)) + 'px';
-            fileManagerEl.style.top = Math.max(0, Math.min(newY, window.innerHeight - 100)) + 'px';
-        };
-
-        const stopDrag = () => {
-            isDragging = false;
-            document.removeEventListener('mousemove', handleDrag);
-            document.removeEventListener('mouseup', stopDrag);
-        };
-    },
-
-    makeWindowResizable() {
-        const resizeHandle = document.getElementById('resizeHandle');
-        const fileManagerEl = document.getElementById('fileManager');
-        let isResizing = false;
-
-        resizeHandle.addEventListener('mousedown', (e) => {
-            if (this.isMaximized) return;
-            
-            isResizing = true;
-            document.addEventListener('mousemove', handleResize);
-            document.addEventListener('mouseup', stopResize);
-            e.preventDefault();
-        });
-
-        const handleResize = (e) => {
-            if (!isResizing) return;
-            
-            const rect = fileManagerEl.getBoundingClientRect();
-            const newWidth = e.clientX - rect.left;
-            const newHeight = e.clientY - rect.top;
-            
-            fileManagerEl.style.width = Math.max(400, newWidth) + 'px';
-            fileManagerEl.style.height = Math.max(300, newHeight) + 'px';
-        };
-
-        const stopResize = () => {
-            isResizing = false;
-            document.removeEventListener('mousemove', handleResize);
-            document.removeEventListener('mouseup', stopResize);
-        };
-    }
-};
-
-// ======================================
 // INITIALIZATION
 // ======================================
 
@@ -1266,6 +807,9 @@ const settingsManager = new SettingsManager();
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Starting application...');
+    
+    // Initialize app launcher
+    await window.appLauncher.init();
     
     // Load user profile first
     await loadUserProfile();
@@ -1277,9 +821,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         changeToImage(0);
         startAutoChange();
         setupEventListeners();
-        
-        // Initialize file manager
-        fileManager.init();
         
         // Update user interface elements
         updateUserInterface();

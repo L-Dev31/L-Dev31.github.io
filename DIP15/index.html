@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Screensaver</title>  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <title>The Idyll - Virtual Computer</title>  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="icon" href="images/favicon.png" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -112,70 +112,7 @@
     </div>
   </div>
 
-  <!-- File Manager Window -->
-  <div class="file-manager" id="fileManager">
-    <div class="window-header" id="fileManagerHeader">
-      <div class="window-title">
-        <i class="fas fa-folder"></i>
-        <span id="fileManagerTitle">Home</span>
-      </div>
-      <div class="window-controls">
-        <button class="window-btn minimize-btn" id="minimizeFileManager">
-          <i class="fas fa-minus"></i>
-        </button>
-        <button class="window-btn maximize-btn" id="maximizeFileManager">
-          <i class="fas fa-square"></i>
-        </button>
-        <button class="window-btn close-btn" id="closeFileManager">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
-    
-    <div class="file-manager-toolbar">
-      <div class="toolbar-left">
-        <button class="toolbar-btn" id="backBtn" title="Back">
-          <i class="fas fa-arrow-left"></i>
-        </button>
-        <button class="toolbar-btn" id="forwardBtn" title="Forward">
-          <i class="fas fa-arrow-right"></i>
-        </button>
-        <button class="toolbar-btn" id="upBtn" title="Up">
-          <i class="fas fa-arrow-up"></i>
-        </button>
-      </div>
-      
-      <div class="toolbar-center">
-        <div class="address-bar">
-          <span class="path-segment active" data-path="Home">
-            <i class="fas fa-home"></i> Home
-          </span>
-          <span class="path-separator">/</span>
-          <span class="path-segment" id="currentPath"></span>
-        </div>
-      </div>
-      
-      <div class="toolbar-right">
-        <button class="toolbar-btn" id="gridViewBtn" title="Grid View">
-          <i class="fas fa-th"></i>
-        </button>
-        <button class="toolbar-btn" id="listViewBtn" title="List View">
-          <i class="fas fa-list"></i>
-        </button>
-      </div>
-    </div>
-    
-    <div class="file-manager-content" id="fileManagerContent">
-      <div class="file-grid" id="fileGrid">
-        <!-- Files and folders will be loaded here -->
-      </div>
-    </div>
-    
-    <div class="file-manager-status">
-      <span id="itemCount">0 items</span>
-      <div class="resize-handle" id="resizeHandle"></div>
-    </div>
-  </div>
+  <!-- File Manager Window - REMOVED (now modular) -->
 
   <!-- Fade transition overlay -->
   <div class="fade-overlay" id="fadeOverlay"></div>
@@ -190,6 +127,7 @@
 
   <div id="metadata" class="metadata"><i class="fa-regular fa-circle-user"></i> Keira Mayhew</div>
   <script src="get-directory.js"></script>
+  <script src="app-launcher.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
