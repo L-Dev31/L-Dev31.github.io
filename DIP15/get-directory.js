@@ -179,6 +179,7 @@ class DirectoryFetcher {
                 items.push({
                     name: name,
                     type: 'folder',
+                    isDirectory: true,
                     icon: 'images/folder.png',
                     path: currentPath + '/' + name
                 });
@@ -192,6 +193,7 @@ class DirectoryFetcher {
                     items.push({
                         name: appData.name, // Use the app name from apps.json
                         type: 'app',
+                        isDirectory: false,
                         icon: appData.icon, // Use the app icon from apps.json
                         path: currentPath + '/' + name,
                         appId: appData.id
@@ -206,6 +208,7 @@ class DirectoryFetcher {
                         items.push({
                             name: name,
                             type: 'file',
+                            isDirectory: false,
                             icon: icon,
                             path: currentPath + '/' + name
                         });
@@ -217,6 +220,7 @@ class DirectoryFetcher {
                             items.push({
                                 name: name,
                                 type: 'file',
+                                isDirectory: false,
                                 icon: 'fas fa-file',
                                 path: currentPath + '/' + name
                             });
