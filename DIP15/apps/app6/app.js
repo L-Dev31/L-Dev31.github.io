@@ -1,125 +1,24 @@
 // ======================================
-// CALCULATOR APP - MODULAR JAVASCRIPT
+// CALCULATOR APP - UNIVERSAL WINDOW MANAGER
 // ======================================
 
-class CalculatorApp {
-    constructor() {
-        this.isOpen = false;
-        this.appElement = null;
-        this.currentValue = '0';
+// Avoid redeclaration if already defined
+if (typeof CalculatorApp === 'undefined') {
+    class CalculatorApp {
+        constructor() {
+            this.windowId = null;
+            this.windowManager = null;
+            this.appConfig = null;
+            this.display = '0';
         this.previousValue = null;
         this.operation = null;
+        this.waitingForOperand = false;
     }
 
-    async init() {
+    async init(options = {}) {
         try {
-            this.appElement = document.createElement('div');
-            this.appElement.className = 'calculator-app';
-            this.appElement.innerHTML = `
-                <div style="
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    width: 280px;
-                    height: 380px;
-                    background: rgba(255, 255, 255, 0.95);
-                    backdrop-filter: blur(20px);
-                    border-radius: 12px;
-                    border: 1px solid rgba(255, 255, 255, 0.3);
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-                    z-index: 1001;
-                    display: flex;
-                    flex-direction: column;
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                ">
-                    <div style="
-                        padding: 16px;
-                        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                    ">
-                        <h3 style="margin: 0; color: rgba(0, 0, 0, 0.8);">Calculator</h3>
-                        <button onclick="window.appLauncher.getLoadedApp('app6').close()" style="
-                            width: 28px;
-                            height: 28px;
-                            border: none;
-                            background: rgba(220, 53, 69, 0.2);
-                            color: #dc3545;
-                            border-radius: 6px;
-                            cursor: pointer;
-                        ">×</button>
-                    </div>
-                    <div style="flex: 1; padding: 16px;">
-                        <div id="calcDisplay" style="
-                            width: 100%;
-                            height: 60px;
-                            background: rgba(0, 0, 0, 0.05);
-                            border-radius: 8px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: flex-end;
-                            padding: 0 16px;
-                            font-size: 24px;
-                            font-weight: 500;
-                            margin-bottom: 16px;
-                            color: rgba(0, 0, 0, 0.8);
-                        ">0</div>
-                        <div style="
-                            display: grid;
-                            grid-template-columns: repeat(4, 1fr);
-                            gap: 8px;
-                            height: 240px;
-                        ">
-                            <button onclick="window.appLauncher.getLoadedApp('app6').clear()" class="calc-btn">C</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').clearEntry()" class="calc-btn">CE</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').backspace()" class="calc-btn">⌫</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').setOperation('/')" class="calc-btn">÷</button>
-                            
-                            <button onclick="window.appLauncher.getLoadedApp('app6').inputNumber('7')" class="calc-btn">7</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').inputNumber('8')" class="calc-btn">8</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').inputNumber('9')" class="calc-btn">9</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').setOperation('*')" class="calc-btn">×</button>
-                            
-                            <button onclick="window.appLauncher.getLoadedApp('app6').inputNumber('4')" class="calc-btn">4</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').inputNumber('5')" class="calc-btn">5</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').inputNumber('6')" class="calc-btn">6</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').setOperation('-')" class="calc-btn">−</button>
-                            
-                            <button onclick="window.appLauncher.getLoadedApp('app6').inputNumber('1')" class="calc-btn">1</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').inputNumber('2')" class="calc-btn">2</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').inputNumber('3')" class="calc-btn">3</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').setOperation('+')" class="calc-btn">+</button>
-                            
-                            <button onclick="window.appLauncher.getLoadedApp('app6').inputNumber('0')" class="calc-btn" style="grid-column: span 2;">0</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').inputDecimal()" class="calc-btn">.</button>
-                            <button onclick="window.appLauncher.getLoadedApp('app6').calculate()" class="calc-btn" style="background: #0078d4; color: white;">=</button>
-                        </div>
-                    </div>
-                </div>
-                <style>
-                    .calc-btn {
-                        border: none;
-                        background: rgba(255, 255, 255, 0.8);
-                        border-radius: 6px;
-                        cursor: pointer;
-                        font-size: 16px;
-                        font-weight: 500;
-                        color: rgba(0, 0, 0, 0.8);
-                        transition: background 0.2s ease;
-                    }
-                    .calc-btn:hover {
-                        background: rgba(255, 255, 255, 1);
-                    }
-                    .calc-btn:active {
-                        transform: scale(0.95);
-                    }
-                </style>
-            `;
-            
-            document.body.appendChild(this.appElement);
+            this.windowManager = options.windowManager;
+            this.appConfig = options.appConfig;
             
             console.log('✅ Calculator app initialized');
             return true;
@@ -129,105 +28,233 @@ class CalculatorApp {
         }
     }
 
-    open() {
-        this.isOpen = true;
-        const calcWindow = this.appElement.querySelector('div');
-        calcWindow.style.opacity = '1';
+    async open() {
+        if (this.windowId && this.windowManager) {
+            // Window already exists, just focus it
+            const windowObj = this.windowManager.getWindow(this.windowId);
+            if (windowObj) {
+                if (windowObj.isMinimized) {
+                    this.windowManager.restoreWindow(this.windowId);
+                } else {
+                    this.windowManager.focusWindow(this.windowId);
+                }
+                return;
+            }
+        }
+
+        // Create the main content
+        const content = this.createCalculatorContent();
+        
+        // Create window
+        const windowObj = this.windowManager.createWindow({
+            id: `calculator-${Date.now()}`,
+            title: 'Calculator',
+            icon: this.appConfig?.icon || 'images/app6.png',
+            appId: this.appConfig?.id || 'app6',
+            content: content,
+            footerText: 'Standard Calculator',
+            className: 'calculator-app-window'
+        });
+
+        this.windowId = windowObj.id;
+
+        // Setup app-specific event listeners
+        this.setupEventListeners();
+    }
+    
+    createCalculatorContent() {
+        return `
+            <div class="calculator-container">
+                <div class="calculator-display">
+                    <div id="calcDisplay">0</div>
+                </div>
+                <div class="calculator-buttons">
+                    <div class="calculator-row">
+                        <button class="calc-btn function-btn" data-action="clear">C</button>
+                        <button class="calc-btn function-btn" data-action="clearEntry">CE</button>
+                        <button class="calc-btn function-btn" data-action="backspace">⌫</button>
+                        <button class="calc-btn operator-btn" data-action="divide">÷</button>
+                    </div>
+                    <div class="calculator-row">
+                        <button class="calc-btn number-btn" data-number="7">7</button>
+                        <button class="calc-btn number-btn" data-number="8">8</button>
+                        <button class="calc-btn number-btn" data-number="9">9</button>
+                        <button class="calc-btn operator-btn" data-action="multiply">×</button>
+                    </div>
+                    <div class="calculator-row">
+                        <button class="calc-btn number-btn" data-number="4">4</button>
+                        <button class="calc-btn number-btn" data-number="5">5</button>
+                        <button class="calc-btn number-btn" data-number="6">6</button>
+                        <button class="calc-btn operator-btn" data-action="subtract">−</button>
+                    </div>
+                    <div class="calculator-row">
+                        <button class="calc-btn number-btn" data-number="1">1</button>
+                        <button class="calc-btn number-btn" data-number="2">2</button>
+                        <button class="calc-btn number-btn" data-number="3">3</button>
+                        <button class="calc-btn operator-btn" data-action="add">+</button>
+                    </div>
+                    <div class="calculator-row">
+                        <button class="calc-btn number-btn wide-btn" data-number="0">0</button>
+                        <button class="calc-btn number-btn" data-action="decimal">.</button>
+                        <button class="calc-btn operator-btn equals-btn" data-action="equals">=</button>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
-    close() {
-        this.isOpen = false;
-        const calcWindow = this.appElement.querySelector('div');
-        calcWindow.style.opacity = '0';
-        setTimeout(() => {
-            if (this.appElement && this.appElement.parentNode) {
-                this.appElement.parentNode.removeChild(this.appElement);
-            }
-        }, 300);
+    setupEventListeners() {
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window) return;
+
+        const element = window.element;
+
+        // Number buttons
+        element.querySelectorAll('.number-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (e.target.dataset.number) {
+                    this.inputNumber(e.target.dataset.number);
+                } else if (e.target.dataset.action === 'decimal') {
+                    this.inputDecimal();
+                }
+            });
+        });
+
+        // Operator buttons
+        element.querySelectorAll('.operator-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const action = e.target.dataset.action;
+                if (action === 'equals') {
+                    this.calculate();
+                } else if (['add', 'subtract', 'multiply', 'divide'].includes(action)) {
+                    this.setOperation(action);
+                }
+            });
+        });
+
+        // Function buttons
+        element.querySelectorAll('.function-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const action = e.target.dataset.action;
+                if (action === 'clear') {
+                    this.clear();
+                } else if (action === 'clearEntry') {
+                    this.clearEntry();
+                } else if (action === 'backspace') {
+                    this.backspace();
+                }
+            });
+        });
     }
 
     updateDisplay() {
-        const display = document.getElementById('calcDisplay');
-        if (display) {
-            display.textContent = this.currentValue;
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window) return;
+
+        const displayElement = window.element.querySelector('#calcDisplay');
+        if (displayElement) {
+            displayElement.textContent = this.display;
         }
     }
 
     inputNumber(num) {
-        if (this.currentValue === '0') {
-            this.currentValue = num;
+        if (this.waitingForOperand) {
+            this.display = num;
+            this.waitingForOperand = false;
         } else {
-            this.currentValue += num;
+            this.display = this.display === '0' ? num : this.display + num;
         }
         this.updateDisplay();
     }
 
     inputDecimal() {
-        if (!this.currentValue.includes('.')) {
-            this.currentValue += '.';
-            this.updateDisplay();
+        if (this.waitingForOperand) {
+            this.display = '0.';
+            this.waitingForOperand = false;
+        } else if (this.display.indexOf('.') === -1) {
+            this.display += '.';
         }
+        this.updateDisplay();
     }
 
-    setOperation(op) {
-        if (this.previousValue !== null && this.operation) {
-            this.calculate();
+    setOperation(nextOperation) {
+        const inputValue = parseFloat(this.display);
+
+        if (this.previousValue === null) {
+            this.previousValue = inputValue;
+        } else if (this.operation) {
+            const currentValue = this.previousValue || 0;
+            const newValue = this.performCalculation(currentValue, inputValue, this.operation);
+
+            this.display = String(newValue);
+            this.previousValue = newValue;
         }
-        this.previousValue = parseFloat(this.currentValue);
-        this.operation = op;
-        this.currentValue = '0';
+
+        this.waitingForOperand = true;
+        this.operation = nextOperation;
+        this.updateDisplay();
     }
 
     calculate() {
-        if (this.previousValue !== null && this.operation) {
-            const current = parseFloat(this.currentValue);
-            let result;
+        if (this.operation && this.previousValue !== null) {
+            const inputValue = parseFloat(this.display);
+            const newValue = this.performCalculation(this.previousValue, inputValue, this.operation);
             
-            switch (this.operation) {
-                case '+':
-                    result = this.previousValue + current;
-                    break;
-                case '-':
-                    result = this.previousValue - current;
-                    break;
-                case '*':
-                    result = this.previousValue * current;
-                    break;
-                case '/':
-                    result = this.previousValue / current;
-                    break;
-                default:
-                    return;
-            }
-            
-            this.currentValue = result.toString();
+            this.display = String(newValue);
             this.previousValue = null;
             this.operation = null;
+            this.waitingForOperand = true;
             this.updateDisplay();
+        }
+    }
+
+    performCalculation(firstOperand, secondOperand, operation) {
+        switch (operation) {
+            case 'add':
+                return firstOperand + secondOperand;
+            case 'subtract':
+                return firstOperand - secondOperand;
+            case 'multiply':
+                return firstOperand * secondOperand;
+            case 'divide':
+                return secondOperand !== 0 ? firstOperand / secondOperand : 0;
+            default:
+                return secondOperand;
         }
     }
 
     clear() {
-        this.currentValue = '0';
+        this.display = '0';
         this.previousValue = null;
         this.operation = null;
+        this.waitingForOperand = false;
         this.updateDisplay();
     }
 
     clearEntry() {
-        this.currentValue = '0';
+        this.display = '0';
         this.updateDisplay();
     }
 
     backspace() {
-        if (this.currentValue.length > 1) {
-            this.currentValue = this.currentValue.slice(0, -1);
+        if (this.display.length > 1) {
+            this.display = this.display.slice(0, -1);
         } else {
-            this.currentValue = '0';
+            this.display = '0';
         }
         this.updateDisplay();
+    }
+
+    close() {
+        if (this.windowId && this.windowManager) {
+            this.windowManager.closeWindow(this.windowId);
+            this.windowId = null;
+        }
     }
 }
 
 // Export for global use
 window.CalculatorApp = CalculatorApp;
+
+// Close the conditional block
+}

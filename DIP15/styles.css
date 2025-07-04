@@ -353,8 +353,7 @@ body, html {
     top: 0;
     left: 0;
     width: 100%;
-    height: calc(100% - 48px);
-    padding: 20px;
+    height: 100%;
 }
 
 .desktop-item {
@@ -465,11 +464,18 @@ body, html {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    position: relative;
+    z-index: 10001; /* Above everything else */
 }
 
 .start-button:hover {
     background-color: rgba(0, 0, 0, 0.08);
     transform: scale(1.05);
+}
+
+.start-button.active {
+    background-color: rgba(0, 120, 212, 0.15);
+    border: 1px solid rgba(0, 120, 212, 0.3);
 }
 
 .start-icon {
@@ -588,51 +594,127 @@ body, html {
     position: fixed;
     width: 480px;
     max-height: 600px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     opacity: 0;
     visibility: hidden;
-    transform: scale(0.95);
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 9999;
+    transform: translateY(100%) scale(0.88);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 10000; /* Higher than windows max z-index */
     overflow: hidden;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.15), 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        0 4px 16px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    padding: 25px;
+    filter: blur(3px);
+    will-change: transform, opacity, filter;
 }
 
 .settings-panel.active {
     opacity: 1;
     visibility: visible;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+/* Enhanced animation variations based on taskbar position */
+.settings-panel.position-bottom {
+    transform: translateY(120px) scale(0.85);
+    transform-origin: bottom center;
+}
+
+.settings-panel.position-top {
+    transform: translateY(-120px) scale(0.85);
+    transform-origin: top center;
+}
+
+.settings-panel.position-left {
+    transform: translateX(-120px) scale(0.85);
+    transform-origin: left center;
+}
+
+.settings-panel.position-right {
+    transform: translateX(120px) scale(0.85);
+    transform-origin: right center;
+}
+
+.settings-panel.position-bottom.active,
+.settings-panel.position-top.active,
+.settings-panel.position-left.active,
+.settings-panel.position-right.active {
+    transform: translateY(0) translateX(0) scale(1);
+}
+
+/* Add a subtle entrance animation for content */
+.settings-panel.active .settings-content {
+    animation: slideInContent 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both;
+}
+
+/* Add stagger animation for app items */
+.settings-panel.active .app-item {
+    animation: slideInAppItem 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.settings-panel.active .app-item:nth-child(1) { animation-delay: 0.1s; }
+.settings-panel.active .app-item:nth-child(2) { animation-delay: 0.15s; }
+.settings-panel.active .app-item:nth-child(3) { animation-delay: 0.2s; }
+.settings-panel.active .app-item:nth-child(4) { animation-delay: 0.25s; }
+.settings-panel.active .app-item:nth-child(5) { animation-delay: 0.3s; }
+.settings-panel.active .app-item:nth-child(6) { animation-delay: 0.35s; }
+.settings-panel.active .app-item:nth-child(7) { animation-delay: 0.4s; }
+.settings-panel.active .app-item:nth-child(8) { animation-delay: 0.45s; }
+
+@keyframes slideInContent {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInAppItem {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .settings-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px 16px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .settings-header h3 {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: rgba(0, 0, 0, 0.9);
     margin: 0;
 }
 
 .close-settings {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border: none;
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
     color: rgba(0, 0, 0, 0.7);
-    font-size: 1.2rem;
+    font-size: 1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -641,12 +723,12 @@ body, html {
 }
 
 .close-settings:hover {
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(0, 0, 0, 0.1);
     color: rgba(0, 0, 0, 0.9);
 }
 
 .settings-content {
-    padding: 20px 24px 80px 24px;
+    padding: 16px 20px 60px 20px;
     max-height: 500px;
     overflow-y: auto;
 }
@@ -674,17 +756,45 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 8px;
+    padding: 14px 10px;
     border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    background: rgba(255, 255, 255, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(15px) scale(0.9);
+}
+
+.app-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .app-item:hover {
-    background: rgba(255, 255, 255, 0.5);
-    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05) translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.app-item:hover::before {
+    opacity: 1;
+}
+
+.app-item:active {
+    transform: scale(0.98) translateY(0);
+    transition-duration: 0.1s;
 }
 
 .app-item img {
@@ -706,6 +816,7 @@ body, html {
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     font-weight: 500;
 }
@@ -723,10 +834,10 @@ body, html {
 .setting-group label {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.9rem;
@@ -734,7 +845,7 @@ body, html {
 }
 
 .setting-group label:hover {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .setting-group input[type="radio"] {
@@ -929,21 +1040,11 @@ body, html {
     opacity: 1;
 }
 
-/* Drag and drop styles */
-.desktop-item.dragging {
-    transform: scale(1.05);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    transition: none !important;
-}
 
-.desktop-item {
-    cursor: grab;
-}
 
-.desktop-item:active {
-    cursor: grabbing;
-}
+/* ======================================
+   CLOCK APP - DARK THEME INTEGRATION
+   ====================================== */
 
-.desktop-item.dragging {
-    cursor: grabbing;
-}
+/* Clock app styles are defined in apps/app8/style.css */
+/* This ensures the dark theme and white text display properly */

@@ -9,6 +9,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="window-styles.css">
+  <link rel="stylesheet" href="apps/app1/style.css">
+  <link rel="stylesheet" href="apps/app2/style.css">
+  <link rel="stylesheet" href="apps/app3/style.css">
+  <link rel="stylesheet" href="apps/app6/style.css">
+  <link rel="stylesheet" href="apps/app8/style.css">
 </head>
 <body>
   <div class="overlay">
@@ -81,23 +87,6 @@
           <!-- Apps will be loaded dynamically from apps.json -->
         </div>
       </div>
-      
-      <div class="taskbar-settings">
-        <h4>Taskbar Position</h4>
-        <div class="setting-group">
-          <label><input type="radio" name="taskbarPosition" value="bottom" checked> Bottom</label>
-          <label><input type="radio" name="taskbarPosition" value="top"> Top</label>
-          <label><input type="radio" name="taskbarPosition" value="left"> Left</label>
-          <label><input type="radio" name="taskbarPosition" value="right"> Right</label>
-        </div>
-        
-        <h4>Taskbar Alignment</h4>
-        <div class="setting-group">
-          <label><input type="radio" name="taskbarAlignment" value="center" checked> Center</label>
-          <label><input type="radio" name="taskbarAlignment" value="start"> Start</label>
-          <label><input type="radio" name="taskbarAlignment" value="end"> End</label>
-        </div>
-      </div>
     </div>
     
     <!-- Settings Panel Footer -->
@@ -128,6 +117,12 @@
   <div id="metadata" class="metadata"><i class="fa-regular fa-circle-user"></i> Keira Mayhew</div>
   <script src="get-directory.js"></script>
   <script src="app-launcher.js"></script>
+  <script src="window-manager.js"></script>
+  <script src="apps/app1/app.js"></script>
+  <script src="apps/app2/app.js"></script>
+  <script src="apps/app3/app.js"></script>
+  <script src="apps/app6/app.js"></script>
+  <script src="apps/app8/app.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

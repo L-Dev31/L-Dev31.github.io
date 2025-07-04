@@ -21,11 +21,30 @@ class AppLauncher {
 
     async launchApp(appId, options = {}) {
         try {
-            // Check if app is already loaded
+            // Check if app is already loaded and has a window
             if (this.loadedApps.has(appId)) {
                 const app = this.loadedApps.get(appId);
+                
+                // If the app has a window, focus it or restore if minimized
+                if (app.windowId && window.windowManager) {
+                    const windowObj = window.windowManager.getWindow(app.windowId);
+                    if (windowObj) {
+                        if (windowObj.isMinimized) {
+                            window.windowManager.restoreWindow(app.windowId);
+                        } else {
+                            window.windowManager.focusWindow(app.windowId);
+                        }
+                        
+                        // Pass options to the app if needed
+                        if (options.path && appId === 'app1' && app.navigate) {
+                            app.navigate(options.path);
+                        }
+                        return;
+                    }
+                }
+                
+                // If no window but app exists, open it
                 if (app.open) {
-                    // Pass options to the open method (especially useful for Files app)
                     if (options.path && appId === 'app1') {
                         app.open(options.path);
                     } else {
@@ -45,9 +64,13 @@ class AppLauncher {
             // Load app dynamically
             const appModule = await this.loadAppModule(appId);
             if (appModule) {
-                // Initialize the app
+                // Initialize the app with window manager integration
                 const appInstance = new appModule();
-                const success = await appInstance.init();
+                const success = await appInstance.init({ 
+                    windowManager: window.windowManager, 
+                    appConfig: appConfig,
+                    ...options 
+                });
                 
                 if (success) {
                     this.loadedApps.set(appId, appInstance);
