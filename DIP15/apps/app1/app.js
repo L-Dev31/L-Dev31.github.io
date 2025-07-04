@@ -1,45 +1,31 @@
 // ======================================
-// FILES APP - MODULAR JAVASCRIPT
+// FILES APP - MODERNIZED WITH WINDOW MANAGER
 // ======================================
 
-class FilesApp {
-    constructor() {
-        this.isOpen = false;
-        this.currentPath = 'Home';
-        this.history = ['Home'];
-        this.historyIndex = 0;
-        this.isMaximized = false;
-        this.originalBounds = { top: 100, left: 200, width: 800, height: 600 };
+// Avoid redeclaration if already defined
+if (typeof FilesApp === 'undefined') {
+    class FilesApp {
+        constructor() {
+            this.windowId = null;
+            this.currentPath = 'Home';
+            this.history = ['Home'];
+            this.historyIndex = 0;
         this.directoryFetcher = null;
-        this.appElement = null;
+        this.windowManager = null;
+        this.appConfig = null;
     }
 
-    async init() {
+    async init(options = {}) {
         try {
-            // Load HTML template
-            const templateResponse = await fetch('apps/app1/template.html');
-            const templateHTML = await templateResponse.text();
-            
-            // Load CSS
-            const cssLink = document.createElement('link');
-            cssLink.rel = 'stylesheet';
-            cssLink.href = 'apps/app1/style.css';
-            document.head.appendChild(cssLink);
-            
-            // Add HTML to body
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = templateHTML;
-            this.appElement = tempDiv.firstElementChild;
-            document.body.appendChild(this.appElement);
+            this.windowManager = options.windowManager;
+            this.appConfig = options.appConfig;
             
             // Initialize DirectoryFetcher
             this.directoryFetcher = new DirectoryFetcher();
+            await this.directoryFetcher.loadAppsData();
             
-            // Setup event listeners
-            this.setupEventListeners();
-            this.makeWindowDraggable();
-            this.makeWindowResizable();
-            this.setupWindowResizeListener();
+            // Open the window
+            await this.open(options.path || 'Home');
             
             console.log('✅ Files app initialized');
             return true;
@@ -49,147 +35,149 @@ class FilesApp {
         }
     }
 
+    async open(path = 'Home') {
+        if (this.windowId && this.windowManager) {
+            // Window already exists, just navigate
+            await this.navigate(path);
+            return;
+        }
+
+        // Create the main content
+        const content = await this.createFileManagerContent();
+        
+        // Create window
+        const windowObj = this.windowManager.createWindow({
+            id: `files-${Date.now()}`,
+            title: 'Files',
+            width: 900,
+            height: 600,
+            icon: this.appConfig?.icon || 'images/app1.png',
+            appId: this.appConfig?.id || 'app1',
+            content: content,
+            footerText: this.getFooterText(),
+            className: 'files-app-window'
+        });
+
+        this.windowId = windowObj.id;
+        this.currentPath = path;
+        this.history = [path];
+        this.historyIndex = 0;
+
+        // Setup app-specific event listeners
+        this.setupEventListeners();
+        
+        // Load initial content
+        await this.updateContent();
+    }
+
+    async createFileManagerContent() {
+        return `
+            <div class="files-container">
+                <!-- Toolbar -->
+                <div class="files-toolbar">
+                    <div class="files-nav-buttons">
+                        <button id="filesBackBtn" class="files-nav-btn" title="Back">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <button id="filesForwardBtn" class="files-nav-btn" title="Forward">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button id="filesUpBtn" class="files-nav-btn" title="Up">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="files-address-bar">
+                        <span class="files-path-segment" data-path="Home">Home</span>
+                    </div>
+                    
+                    <div class="files-view-buttons">
+                        <button id="filesGridViewBtn" class="files-view-btn active" title="Grid View">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button id="filesListViewBtn" class="files-view-btn" title="List View">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="files-content">
+                    <div id="filesGrid" class="files-grid">
+                        <!-- Files will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     setupEventListeners() {
-        // Window controls
-        document.getElementById('filesClose').addEventListener('click', () => this.close());
-        document.getElementById('filesMinimize').addEventListener('click', () => this.minimize());
-        document.getElementById('filesMaximize').addEventListener('click', () => this.toggleMaximize());
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window) return;
+
+        const element = window.element;
 
         // Toolbar buttons
-        document.getElementById('filesBackBtn').addEventListener('click', () => this.goBack());
-        document.getElementById('filesForwardBtn').addEventListener('click', () => this.goForward());
-        document.getElementById('filesUpBtn').addEventListener('click', () => this.goUp());
-        document.getElementById('filesGridViewBtn').addEventListener('click', () => this.setView('grid'));
-        document.getElementById('filesListViewBtn').addEventListener('click', () => this.setView('list'));
+        element.querySelector('#filesBackBtn')?.addEventListener('click', () => this.goBack());
+        element.querySelector('#filesForwardBtn')?.addEventListener('click', () => this.goForward());
+        element.querySelector('#filesUpBtn')?.addEventListener('click', () => this.goUp());
+        element.querySelector('#filesGridViewBtn')?.addEventListener('click', () => this.setView('grid'));
+        element.querySelector('#filesListViewBtn')?.addEventListener('click', () => this.setView('list'));
 
         // File item clicks
-        document.getElementById('filesGrid').addEventListener('click', async (e) => {
+        element.querySelector('#filesGrid')?.addEventListener('click', async (e) => {
             const fileItem = e.target.closest('.files-item');
             if (fileItem) {
                 const itemName = fileItem.dataset.name;
                 const itemType = fileItem.dataset.type;
                 
                 if (itemType === 'folder') {
-                    await this.navigateTo(itemName);
+                    await this.navigate(itemName);
+                }
+            }
+        });
+
+        // File item double-clicks
+        element.querySelector('#filesGrid')?.addEventListener('dblclick', async (e) => {
+            const fileItem = e.target.closest('.files-item');
+            if (fileItem) {
+                const itemName = fileItem.dataset.name;
+                const itemType = fileItem.dataset.type;
+                
+                if (itemType === 'file') {
+                    await this.openFile(itemName);
                 }
             }
         });
 
         // Path navigation
-        document.querySelector('.files-address-bar').addEventListener('click', async (e) => {
+        element.querySelector('.files-address-bar')?.addEventListener('click', async (e) => {
             const pathSegment = e.target.closest('.files-path-segment');
             if (pathSegment && pathSegment.dataset.path) {
-                await this.navigateTo(pathSegment.dataset.path);
+                await this.navigate(pathSegment.dataset.path);
             }
         });
     }
 
-    async open(path = 'Home') {
-        if (this.isOpen) {
-            await this.navigateTo(path);
-            return;
-        }
-
-        this.isOpen = true;
+    async navigate(path) {
         this.currentPath = path;
-        this.history = [path];
-        this.historyIndex = 0;
-
-        this.appElement.classList.add('active');
         
+        // Add to history if navigating forward
+        if (this.historyIndex < this.history.length - 1) {
+            this.history = this.history.slice(0, this.historyIndex + 1);
+        }
+        this.history.push(path);
+        this.historyIndex = this.history.length - 1;
+        
+        // Update content and navigation
         await this.updateContent();
         this.updateNavigation();
     }
 
     close() {
-        this.isOpen = false;
-        this.appElement.classList.remove('active');
-    }
-
-    minimize() {
-        this.appElement.style.transform = 'scale(0.1)';
-        this.appElement.style.opacity = '0';
-        
-        setTimeout(() => {
-            this.appElement.style.display = 'none';
-        }, 300);
-    }
-
-    toggleMaximize() {
-        if (!this.isMaximized) {
-            // Store original bounds
-            const rect = this.appElement.getBoundingClientRect();
-            this.originalBounds = {
-                top: rect.top,
-                left: rect.left,
-                width: rect.width,
-                height: rect.height
-            };
-            
-            // Get taskbar position and calculate available space
-            const taskbar = document.getElementById('taskbar');
-            const taskbarRect = taskbar ? taskbar.getBoundingClientRect() : null;
-            const taskbarPosition = taskbar ? Array.from(taskbar.classList).find(cls => cls.startsWith('position-')) : 'position-bottom';
-            
-            let top = 0, left = 0, width = window.innerWidth, height = window.innerHeight;
-            
-            if (taskbarRect) {
-                switch (taskbarPosition) {
-                    case 'position-top':
-                        top = taskbarRect.height;
-                        height = window.innerHeight - taskbarRect.height;
-                        break;
-                    case 'position-bottom':
-                    case undefined: // default to bottom
-                        height = window.innerHeight - taskbarRect.height;
-                        break;
-                    case 'position-left':
-                        left = taskbarRect.width;
-                        width = window.innerWidth - taskbarRect.width;
-                        break;
-                    case 'position-right':
-                        width = window.innerWidth - taskbarRect.width;
-                        break;
-                }
-            }
-            
-            // Maximize within available space
-            this.appElement.style.top = top + 'px';
-            this.appElement.style.left = left + 'px';
-            this.appElement.style.width = width + 'px';
-            this.appElement.style.height = height + 'px';
-            this.appElement.style.borderRadius = '0';
-            
-            // Add maximized class to remove shadow
-            this.appElement.classList.add('maximized');
-            
-            // Hide resize handle when maximized
-            const resizeHandle = document.getElementById('filesResizeHandle');
-            if (resizeHandle) {
-                resizeHandle.style.display = 'none';
-            }
-            
-            this.isMaximized = true;
-            document.getElementById('filesMaximize').innerHTML = '<i class="fas fa-clone"></i>';
-        } else {
-            // Restore
-            this.appElement.style.top = this.originalBounds.top + 'px';
-            this.appElement.style.left = this.originalBounds.left + 'px';
-            this.appElement.style.width = this.originalBounds.width + 'px';
-            this.appElement.style.height = this.originalBounds.height + 'px';
-            this.appElement.style.borderRadius = '12px';
-            
-            // Remove maximized class to restore shadow
-            this.appElement.classList.remove('maximized');
-            
-            // Show resize handle when not maximized
-            const resizeHandle = document.getElementById('filesResizeHandle');
-            if (resizeHandle) {
-                resizeHandle.style.display = 'block';
-            }
-            
-            this.isMaximized = false;
-            document.getElementById('filesMaximize').innerHTML = '<i class="fas fa-square"></i>';
+        if (this.windowId && this.windowManager) {
+            this.windowManager.closeWindow(this.windowId);
+            this.windowId = null;
         }
     }
 
@@ -233,9 +221,14 @@ class FilesApp {
     }
 
     setView(viewType) {
-        const filesGrid = document.getElementById('filesGrid');
-        const gridBtn = document.getElementById('filesGridViewBtn');
-        const listBtn = document.getElementById('filesListViewBtn');
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window) return;
+        
+        const filesGrid = window.element.querySelector('#filesGrid');
+        const gridBtn = window.element.querySelector('#filesGridViewBtn');
+        const listBtn = window.element.querySelector('#filesListViewBtn');
+        
+        if (!filesGrid || !gridBtn || !listBtn) return;
         
         if (viewType === 'list') {
             filesGrid.classList.add('list-view');
@@ -249,7 +242,11 @@ class FilesApp {
     }
 
     async updateContent() {
-        const filesGrid = document.getElementById('filesGrid');
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window) return;
+        
+        const filesGrid = window.element.querySelector('#filesGrid');
+        if (!filesGrid) return;
         
         // Show loading state
         filesGrid.innerHTML = '<div style="padding: 20px; text-align: center; color: rgba(0,0,0,0.6);">Loading...</div>';
@@ -281,16 +278,29 @@ class FilesApp {
                 });
             }
             
-            // Update item count
-            document.getElementById('filesItemCount').textContent = `${items.length} item${items.length !== 1 ? 's' : ''}`;
+            // Update footer with item count
+            if (this.windowManager) {
+                this.windowManager.updateFooter(this.windowId, this.getFooterText());
+            }
             
         } catch (error) {
             console.error('Error loading folder content:', error);
             filesGrid.innerHTML = '<div style="padding: 40px; text-align: center; color: rgba(255,0,0,0.6);"><i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i><br>Error loading folder contents</div>';
+            if (this.windowManager) {
+                this.windowManager.updateFooter(this.windowId, this.getFooterText());
+            }
         }
         
         // Update window title
-        document.getElementById('filesTitle').textContent = this.currentPath;
+        if (this.windowManager) {
+            const windowObj = this.windowManager.getWindow(this.windowId);
+            if (windowObj) {
+                const titleEl = windowObj.element.querySelector('.window-title');
+                if (titleEl) {
+                    titleEl.textContent = `Files - ${this.currentPath}`;
+                }
+            }
+        }
     }
 
     async getFolderContent(folderName) {
@@ -346,160 +356,96 @@ class FilesApp {
         return homeContent;
     }
 
-    updateNavigation() {
-        // Update toolbar buttons
-        document.getElementById('filesBackBtn').disabled = this.historyIndex <= 0;
-        document.getElementById('filesForwardBtn').disabled = this.historyIndex >= this.history.length - 1;
-        document.getElementById('filesUpBtn').disabled = this.currentPath === 'Home';
+    // Method to get footer text (required by WindowManager)
+    getFooterText() {
+        return this.updateFooterText();
+    }
+
+    // Method to update footer text with current directory info
+    updateFooterText() {
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window) return '';
         
-        // Update address bar
-        const currentPathSpan = document.getElementById('filesCurrentPath');
-        if (this.currentPath === 'Home') {
-            currentPathSpan.textContent = '';
-            currentPathSpan.style.display = 'none';
-            document.querySelector('.files-path-separator').style.display = 'none';
+        const container = window.element.querySelector('.files-grid');
+        if (!container) return '';
+        
+        const items = container.querySelectorAll('.files-item');
+        const itemCount = items.length;
+        
+        if (itemCount === 0) {
+            return 'Empty folder';
+        } else if (itemCount === 1) {
+            return '1 item';
         } else {
-            currentPathSpan.textContent = this.currentPath;
-            currentPathSpan.style.display = 'inline';
-            document.querySelector('.files-path-separator').style.display = 'inline';
+            return `${itemCount} items`;
         }
     }
 
-    makeWindowDraggable() {
-        const header = document.getElementById('filesHeader');
-        let isDragging = false;
-        let dragOffset = { x: 0, y: 0 };
-        let animationFrame = null;
-        let currentPosition = { x: 0, y: 0 };
+    updateNavigation() {
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window) return;
 
-        header.addEventListener('mousedown', (e) => {
-            if (this.isMaximized) return;
-            
-            isDragging = true;
-            const rect = this.appElement.getBoundingClientRect();
-            dragOffset.x = e.clientX - rect.left;
-            dragOffset.y = e.clientY - rect.top;
-            
-            // Add cursor style for better UX
-            document.body.style.cursor = 'move';
-            header.style.cursor = 'move';
-            
-            document.addEventListener('mousemove', handleDrag);
-            document.addEventListener('mouseup', stopDrag);
-            e.preventDefault();
-        });
-
-        const handleDrag = (e) => {
-            if (!isDragging) return;
-            
-            currentPosition.x = e.clientX - dragOffset.x;
-            currentPosition.y = e.clientY - dragOffset.y;
-            
-            // Cancel previous animation frame
-            if (animationFrame) {
-                cancelAnimationFrame(animationFrame);
+        // Update toolbar buttons
+        const backBtn = window.element.querySelector('#filesBackBtn');
+        const forwardBtn = window.element.querySelector('#filesForwardBtn');
+        const upBtn = window.element.querySelector('#filesUpBtn');
+        
+        if (backBtn) backBtn.disabled = this.historyIndex <= 0;
+        if (forwardBtn) forwardBtn.disabled = this.historyIndex >= this.history.length - 1;
+        if (upBtn) upBtn.disabled = this.currentPath === 'Home';
+        
+        // Update address bar
+        const addressBar = window.element.querySelector('.files-address-bar');
+        if (addressBar) {
+            if (this.currentPath === 'Home') {
+                addressBar.innerHTML = '<span class="files-path-segment active" data-path="Home">Home</span>';
+            } else {
+                addressBar.innerHTML = `
+                    <span class="files-path-segment" data-path="Home">Home</span>
+                    <span class="files-path-separator">/</span>
+                    <span class="files-path-segment active" data-path="${this.currentPath}">${this.currentPath}</span>
+                `;
             }
-            
-            // Use requestAnimationFrame for smooth movement
-            animationFrame = requestAnimationFrame(() => {
-                const newX = Math.max(0, Math.min(currentPosition.x, window.innerWidth - 200));
-                const newY = Math.max(0, Math.min(currentPosition.y, window.innerHeight - 100));
-                
-                this.appElement.style.left = newX + 'px';
-                this.appElement.style.top = newY + 'px';
-            });
-        };
-
-        const stopDrag = () => {
-            isDragging = false;
-            
-            // Reset cursor
-            document.body.style.cursor = '';
-            header.style.cursor = '';
-            
-            // Cancel any pending animation frame
-            if (animationFrame) {
-                cancelAnimationFrame(animationFrame);
-                animationFrame = null;
-            }
-            
-            document.removeEventListener('mousemove', handleDrag);
-            document.removeEventListener('mouseup', stopDrag);
-        };
+        }
     }
 
-    makeWindowResizable() {
-        const resizeHandle = document.getElementById('filesResizeHandle');
-        let isResizing = false;
-
-        resizeHandle.addEventListener('mousedown', (e) => {
-            // Resize handle should be invisible when maximized, but just in case
-            if (this.isMaximized) return;
-            
-            isResizing = true;
-            document.addEventListener('mousemove', handleResize);
-            document.addEventListener('mouseup', stopResize);
-            e.preventDefault();
-        });
-
-        const handleResize = (e) => {
-            if (!isResizing) return;
-            
-            const rect = this.appElement.getBoundingClientRect();
-            const newWidth = e.clientX - rect.left;
-            const newHeight = e.clientY - rect.top;
-            
-            this.appElement.style.width = Math.max(400, newWidth) + 'px';
-            this.appElement.style.height = Math.max(300, newHeight) + 'px';
-        };
-
-        const stopResize = () => {
-            isResizing = false;
-            document.removeEventListener('mousemove', handleResize);
-            document.removeEventListener('mouseup', stopResize);
-        };
-    }
-
-    setupWindowResizeListener() {
-        // Listen for window resize to exit maximized state
-        window.addEventListener('resize', () => {
-            if (this.isMaximized) {
-                // Get taskbar position and calculate new available space
-                const taskbar = document.getElementById('taskbar');
-                const taskbarRect = taskbar ? taskbar.getBoundingClientRect() : null;
-                const taskbarPosition = taskbar ? Array.from(taskbar.classList).find(cls => cls.startsWith('position-')) : 'position-bottom';
-                
-                let top = 0, left = 0, width = window.innerWidth, height = window.innerHeight;
-                
-                if (taskbarRect) {
-                    switch (taskbarPosition) {
-                        case 'position-top':
-                            top = taskbarRect.height;
-                            height = window.innerHeight - taskbarRect.height;
-                            break;
-                        case 'position-bottom':
-                        case undefined: // default to bottom
-                            height = window.innerHeight - taskbarRect.height;
-                            break;
-                        case 'position-left':
-                            left = taskbarRect.width;
-                            width = window.innerWidth - taskbarRect.width;
-                            break;
-                        case 'position-right':
-                            width = window.innerWidth - taskbarRect.width;
-                            break;
+    async openFile(fileName) {
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+        const textExtensions = ['txt', 'md', 'json', 'js', 'css', 'html', 'xml', 'log'];
+        
+        if (textExtensions.includes(fileExtension)) {
+            try {
+                // Launch Notes app with the file content
+                if (window.appLauncher) {
+                    // Read file content if it's a real file
+                    let content = '';
+                    try {
+                        const filePath = `home/${this.currentPath}/${fileName}`.replace('//', '/');
+                        const response = await fetch(filePath);
+                        if (response.ok) {
+                            content = await response.text();
+                        }
+                    } catch (error) {
+                        console.warn('Could not read file content:', error);
+                        content = `# ${fileName}\n\nFile content could not be loaded.`;
                     }
+                    
+                    await window.appLauncher.launchApp('app3', { 
+                        fileName: fileName,
+                        content: content 
+                    });
                 }
-                
-                // Update maximized window size to new available space
-                this.appElement.style.top = top + 'px';
-                this.appElement.style.left = left + 'px';
-                this.appElement.style.width = width + 'px';
-                this.appElement.style.height = height + 'px';
+            } catch (error) {
+                console.error('Error opening file:', error);
             }
-        });
+        } else {
+            console.log(`File type .${fileExtension} not supported for opening`);
+        }
     }
 }
 
 // Export for global use
 window.FilesApp = FilesApp;
+
+// Close the conditional block
+}

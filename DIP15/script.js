@@ -28,10 +28,8 @@ let dragState = {
 };
 
 const knownImages = [
-    '1029604.jpg', '1146709.jpg', '15989756.jpg', '210186.jpg',
-    '2187662.jpg', '219692.jpg', '247599.jpg', '3386540.jpg',
-    '3647545.jpg', '393773.jpg', '402028.jpg', '417173.jpg',
-    '7704801.jpg', '8957663.jpg'
+    '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg',
+    '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg'
 ];
 
 // ======================================
@@ -214,10 +212,18 @@ async function showDesktop() {
         }
         updateUserInterface();
         
+        // Load saved wallpaper from cache
+        loadSavedWallpaper();
+        
         updateDesktopTime();
         setInterval(updateDesktopTime, 1000);
         
         settingsManager.init();
+        setupTaskbarPositionWatcher();
+        
+        // Load and apply taskbar settings
+        loadTaskbarSettings();
+        
         desktop.classList.add('active');
         
         // Fade out the login transition smoothly
@@ -234,20 +240,50 @@ async function showDesktop() {
 }
 
 function calculateDesktopGrid() {
-    const cellWidth = 100;
-    const cellHeight = 120;
-    const padding = 20;
-    const taskbarHeight = 50;
-    const availableWidth = window.innerWidth - (padding * 2);
-    const availableHeight = window.innerHeight - taskbarHeight - (padding * 2);
+    const taskbar = document.getElementById('taskbar');
+    const taskbarRect = taskbar.getBoundingClientRect();
+    const taskbarPosition = getCurrentTaskbarPosition();
     
-    return {
+    const cellWidth = 110; // Icon width + padding
+    const cellHeight = 110; // Icon height + padding
+    
+    let availableWidth = window.innerWidth;
+    let availableHeight = window.innerHeight;
+    let startX = 20; // Default padding
+    let startY = 20; // Default padding
+    
+    switch (taskbarPosition) {
+        case 'bottom':
+            availableHeight -= taskbarRect.height;
+            break;
+        case 'top':
+            availableHeight -= taskbarRect.height;
+            startY = taskbarRect.height + 20;
+            break;
+        case 'left':
+            availableWidth -= taskbarRect.width;
+            startX = taskbarRect.width + 20;
+            break;
+        case 'right':
+            availableWidth -= taskbarRect.width;
+            break;
+    }
+    
+    // The grid area starts after the padding.
+    const gridAreaWidth = availableWidth - startX;
+    const gridAreaHeight = availableHeight - startY;
+
+    const result = {
         cellWidth,
         cellHeight,
-        padding,
-        rows: Math.floor(availableHeight / cellHeight),
-        cols: Math.floor(availableWidth / cellWidth)
+        padding: startX,
+        paddingY: startY,
+        rows: Math.floor(gridAreaHeight / cellHeight),
+        cols: Math.floor(gridAreaWidth / cellWidth),
+        taskbarPosition
     };
+    
+    return result;
 }
 
 function createGridPositions(gridConfig) {
@@ -256,12 +292,13 @@ function createGridPositions(gridConfig) {
         for (let col = 0; col < gridConfig.cols; col++) {
             positions.push({
                 x: gridConfig.padding + (col * gridConfig.cellWidth),
-                y: gridConfig.padding + (row * gridConfig.cellHeight),
+                y: gridConfig.paddingY + (row * gridConfig.cellHeight),
                 row,
                 col
             });
         }
     }
+    
     return positions;
 }
 
@@ -320,48 +357,89 @@ async function loadDesktopItems() {
         if (!Array.isArray(homeItems) || !homeItems.length) {
             throw new Error('No desktop items returned from server.');
         }
-        
         const desktopIcons = document.getElementById('desktopIcons');
         desktopIcons.innerHTML = '';
-        
         const gridConfig = calculateDesktopGrid();
         currentGridConfig = gridConfig;
         const gridPositions = createGridPositions(gridConfig);
         currentGridPositions = gridPositions;
-        
         const savedPositions = loadIconPositions();
+        // Track used grid slots
+        const usedSlots = new Set();
+        // Helper to get grid slot key
+        const slotKey = (row, col) => `${row},${col}`;
         
-        homeItems.forEach((item, index) => {
-            const desktopItem = document.createElement('div');
-            desktopItem.className = 'desktop-item';
+        // Validate all saved positions against current grid
+        const validatedItems = homeItems.map((item, index) => {
+            let pos = null;
+            let assigned = false;
             
-            let positioned = false;
             if (savedPositions[item.name]) {
                 const savedPos = savedPositions[item.name];
-                if (savedPos.x >= 0 && savedPos.y >= 0 && 
-                    savedPos.x < window.innerWidth && savedPos.y < window.innerHeight) {
+                
+                // Check if saved position is within current grid bounds
+                if (savedPos.gridRow !== undefined && savedPos.gridCol !== undefined) {
+                    const savedRow = parseInt(savedPos.gridRow);
+                    const savedCol = parseInt(savedPos.gridCol);
                     
-                    desktopItem.style.position = 'absolute';
-                    desktopItem.style.left = `${savedPos.x}px`;
-                    desktopItem.style.top = `${savedPos.y}px`;
-                    desktopItem.dataset.gridRow = savedPos.gridRow || 0;
-                    desktopItem.dataset.gridCol = savedPos.gridCol || 0;
-                    
-                    positioned = true;
+                    if (savedRow >= 0 && savedRow < gridConfig.rows && 
+                        savedCol >= 0 && savedCol < gridConfig.cols &&
+                        !usedSlots.has(slotKey(savedRow, savedCol))) {
+                        
+                        // Saved position is valid in current grid
+                        const gridPos = gridPositions.find(p => p.row === savedRow && p.col === savedCol);
+                        if (gridPos) {
+                            usedSlots.add(slotKey(savedRow, savedCol));
+                            pos = gridPos;
+                            assigned = true;
+                        }
+                    }
+                }
+                
+                // If grid position invalid, try to find closest available position
+                if (!assigned) {
+                    let closest = null;
+                    let minDist = Infinity;
+                    for (const gridPos of gridPositions) {
+                        const dist = Math.hypot(gridPos.x - savedPos.x, gridPos.y - savedPos.y);
+                        if (dist < minDist && !usedSlots.has(slotKey(gridPos.row, gridPos.col))) {
+                            minDist = dist;
+                            closest = gridPos;
+                        }
+                    }
+                    if (closest) {
+                        usedSlots.add(slotKey(closest.row, closest.col));
+                        pos = closest;
+                        assigned = true;
+                    }
                 }
             }
             
-            if (!positioned) {
-                const gridPos = gridPositions[index];
-                if (gridPos) {
-                    desktopItem.style.position = 'absolute';
-                    desktopItem.style.left = `${gridPos.x}px`;
-                    desktopItem.style.top = `${gridPos.y}px`;
-                    desktopItem.dataset.gridRow = gridPos.row;
-                    desktopItem.dataset.gridCol = gridPos.col;
+            // If still not assigned, use next available slot
+            if (!assigned) {
+                for (const gridPos of gridPositions) {
+                    if (!usedSlots.has(slotKey(gridPos.row, gridPos.col))) {
+                        usedSlots.add(slotKey(gridPos.row, gridPos.col));
+                        pos = gridPos;
+                        break;
+                    }
                 }
             }
             
+            return { item, pos };
+        });
+        
+        // Render icons with validated positions
+        validatedItems.forEach(({ item, pos }) => {
+            const desktopItem = document.createElement('div');
+            desktopItem.className = 'desktop-item';
+            if (pos) {
+                desktopItem.style.position = 'absolute';
+                desktopItem.style.left = `${pos.x}px`;
+                desktopItem.style.top = `${pos.y}px`;
+                desktopItem.dataset.gridRow = pos.row;
+                desktopItem.dataset.gridCol = pos.col;
+            }
             let iconHtml;
             if (item.isDirectory === true || item.type === 'folder') {
                 iconHtml = `<img src="images/folder.png" alt="${item.name}" class="folder-icon">`;
@@ -378,9 +456,7 @@ async function loadDesktopItems() {
             } else {
                 iconHtml = `<div class="file-icon-fa"><i class="fas fa-question-circle"></i></div>`;
             }
-            
             desktopItem.innerHTML = `${iconHtml}<span>${item.name}</span>`;
-            
             let clickTimeout = null;
             desktopItem.addEventListener('click', (e) => {
                 if (dragState.isDragging) {
@@ -388,11 +464,9 @@ async function loadDesktopItems() {
                     e.stopPropagation();
                     return;
                 }
-                
                 if (clickTimeout) {
                     clearTimeout(clickTimeout);
                     clickTimeout = null;
-                    
                     if (item.isDirectory || item.type === 'folder') {
                         window.appLauncher.launchApp('app1', { path: item.name });
                     } else if (item.type === 'app') {
@@ -406,11 +480,9 @@ async function loadDesktopItems() {
                     }, 300);
                 }
             });
-            
             makeIconDraggable(desktopItem, item.name);
             desktopIcons.appendChild(desktopItem);
         });
-        
         window.desktopData = { desktopItems: homeItems };
     } catch (error) {
         console.error('Could not load desktop items from server:', error);
@@ -600,23 +672,8 @@ class SettingsManager {
     }
 
     setupSettingControls() {
-        // Position settings
-        document.querySelectorAll('input[name="taskbarPosition"]').forEach(input => {
-            input.addEventListener('change', (e) => {
-                this.settings.taskbarPosition = e.target.value;
-                this.saveSettings();
-                this.applySettings();
-            });
-        });
-
-        // Alignment settings
-        document.querySelectorAll('input[name="taskbarAlignment"]').forEach(input => {
-            input.addEventListener('change', (e) => {
-                this.settings.taskbarAlignment = e.target.value;
-                this.saveSettings();
-                this.applySettings();
-            });
-        });
+        // Settings are now handled by the Settings app (app2)
+        // No need to setup controls here
     }
 
     applySettings() {
@@ -628,16 +685,6 @@ class SettingsManager {
         taskbar.classList.add(`position-${this.settings.taskbarPosition}`);
         taskbar.classList.add(`align-${this.settings.taskbarAlignment}`);
 
-        // Update desktop padding
-        const desktopIcons = document.getElementById('desktopIcons');
-        if (desktopIcons) {
-            const padding = this.settings.taskbarPosition === 'top' || this.settings.taskbarPosition === 'bottom' ? '68px' : '80px';
-            desktopIcons.style.paddingTop = this.settings.taskbarPosition === 'top' ? padding : '20px';
-            desktopIcons.style.paddingBottom = this.settings.taskbarPosition === 'bottom' ? padding : '20px';
-            desktopIcons.style.paddingLeft = this.settings.taskbarPosition === 'left' ? padding : '20px';
-            desktopIcons.style.paddingRight = this.settings.taskbarPosition === 'right' ? padding : '20px';
-        }
-
         // Update form inputs
         const positionInput = document.querySelector(`input[name="taskbarPosition"][value="${this.settings.taskbarPosition}"]`);
         const alignmentInput = document.querySelector(`input[name="taskbarAlignment"][value="${this.settings.taskbarAlignment}"]`);
@@ -645,29 +692,58 @@ class SettingsManager {
         if (positionInput) positionInput.checked = true;
         if (alignmentInput) alignmentInput.checked = true;
 
+        // Recalculate grid layout for new taskbar position
+        setTimeout(() => {
+            loadDesktopItems();
+        }, 50);
+
         // Reposition settings panel if open
         const settingsPanel = document.getElementById('settingsPanel');
         if (settingsPanel?.classList.contains('active')) {
-            setTimeout(() => this.positionSettingsPanel(), 50);
+            setTimeout(() => this.positionSettingsPanel(), 100);
         }
     }
 
     toggleSettingsPanel() {
         const settingsPanel = document.getElementById('settingsPanel');
+        const startButton = document.getElementById('startButton');
+        
         if (settingsPanel.classList.contains('active')) {
             this.hideSettingsPanel();
+            startButton?.classList.remove('active');
         } else {
             this.showSettingsPanel();
+            startButton?.classList.add('active');
         }
     }
 
     showSettingsPanel() {
         const settingsPanel = document.getElementById('settingsPanel');
+        const startButton = document.getElementById('startButton');
+        
         if (settingsPanel) {
+            // Remove any existing position classes
+            settingsPanel.classList.remove('position-bottom', 'position-top', 'position-left', 'position-right');
+            
+            // Add position class based on taskbar position
+            const taskbarPosition = this.settings.taskbarPosition || 'bottom';
+            settingsPanel.classList.add(`position-${taskbarPosition}`);
+            
             this.positionSettingsPanel();
             requestAnimationFrame(() => {
                 settingsPanel.classList.add('active');
+                startButton?.classList.add('active');
             });
+        }
+    }
+
+    hideSettingsPanel() {
+        const settingsPanel = document.getElementById('settingsPanel');
+        const startButton = document.getElementById('startButton');
+        
+        if (settingsPanel) {
+            settingsPanel.classList.remove('active');
+            startButton?.classList.remove('active');
         }
     }
 
@@ -732,12 +808,34 @@ class SettingsManager {
                 break;
         }
     }
+}
 
-    hideSettingsPanel() {
-        const settingsPanel = document.getElementById('settingsPanel');
-        if (settingsPanel) {
-            settingsPanel.classList.remove('active');
+// ======================================
+// TASKBAR SETTINGS FUNCTIONS
+// ======================================
+
+function loadTaskbarSettings() {
+    try {
+        const settings = JSON.parse(localStorage.getItem('desktop-settings')) || {};
+        const taskbar = document.getElementById('taskbar');
+        
+        if (taskbar) {
+            // Apply position
+            if (settings.taskbarPosition) {
+                taskbar.className = 'taskbar';
+                taskbar.classList.add(`position-${settings.taskbarPosition}`);
+            }
+            
+            // Apply alignment
+            if (settings.taskbarAlignment) {
+                taskbar.classList.remove('align-start', 'align-center', 'align-end');
+                taskbar.classList.add(`align-${settings.taskbarAlignment}`);
+            }
         }
+        
+        console.log('✅ Taskbar settings loaded:', settings);
+    } catch (error) {
+        console.warn('⚠️ Could not load taskbar settings:', error);
     }
 }
 
@@ -747,19 +845,51 @@ class SettingsManager {
 
 async function loadUserProfile() {
     try {
+        // Try to load from localStorage first (saved user data)
+        let userData = JSON.parse(localStorage.getItem('user-data'));
+        if (userData) {
+            userProfile = {
+                user: {
+                    name: userData.name,
+                    profilePicture: userData.profilePicture
+                }
+            };
+            console.log('✅ User profile loaded from localStorage:', userProfile.user.name);
+            return userProfile;
+        }
+        
+        // Fallback to JSON file
         const response = await fetch('user-profile.json');
         userProfile = await response.json();
-        console.log('✅ User profile loaded:', userProfile.user.name);
+        
+        // Save to localStorage for future use
+        const userDataToSave = {
+            name: userProfile.user.name,
+            profilePicture: userProfile.user.profilePicture,
+            password: '312007'
+        };
+        localStorage.setItem('user-data', JSON.stringify(userDataToSave));
+        
+        console.log('✅ User profile loaded from JSON and saved to localStorage:', userProfile.user.name);
         return userProfile;
     } catch (error) {
         console.warn('⚠️ Could not load user profile:', error);
         // Fallback profile
         userProfile = {
             user: {
-                name: 'User',
-                profilePicture: 'Images/profile.png'
+                name: 'Keira Mayhew',
+                profilePicture: 'images/profile.png'
             }
         };
+        
+        // Save fallback to localStorage
+        const fallbackData = {
+            name: 'Keira Mayhew',
+            profilePicture: 'images/profile.png',
+            password: '312007'
+        };
+        localStorage.setItem('user-data', JSON.stringify(fallbackData));
+        
         return userProfile;
     }
 }
@@ -845,6 +975,28 @@ function updateMetadata() {
 }
 
 // ======================================
+// WALLPAPER FUNCTIONS
+// ======================================
+
+function loadSavedWallpaper() {
+    const savedWallpaper = localStorage.getItem('desktop-wallpaper');
+    if (savedWallpaper) {
+        updateDesktopWallpaper(savedWallpaper);
+    } else {
+        // Use default wallpaper.jpg
+        updateDesktopWallpaper('images/wallpaper.jpg');
+    }
+}
+
+function updateDesktopWallpaper(wallpaperUrl) {
+    // Update the desktop background only (not the screensaver)
+    const desktopBackground = document.querySelector('.desktop-background');
+    if (desktopBackground) {
+        desktopBackground.style.backgroundImage = `url('${wallpaperUrl}')`;
+    }
+}
+
+// ======================================
 // EVENT LISTENERS
 // ======================================
 
@@ -899,46 +1051,7 @@ function setupEventListeners() {
     }
 }
 
-// Visual grid snap indicator
-let snapIndicator = null;
 
-// Create snap indicator element
-function createSnapIndicator() {
-    if (snapIndicator) return snapIndicator;
-    
-    snapIndicator = document.createElement('div');
-    snapIndicator.style.cssText = `
-        position: absolute;
-        border: 2px dashed rgba(0, 150, 255, 0.8);
-        background-color: rgba(0, 150, 255, 0.1);
-        border-radius: 8px;
-        pointer-events: none;
-        z-index: 999;
-        display: none;
-        width: 80px;
-        height: 100px;
-        transition: all 0.1s ease;
-    `;
-    document.body.appendChild(snapIndicator);
-    return snapIndicator;
-}
-
-// Show snap indicator at grid position
-function showSnapIndicator(gridPos) {
-    const indicator = createSnapIndicator();
-    if (!indicator || !gridPos) return;
-    
-    indicator.style.left = `${gridPos.x}px`;
-    indicator.style.top = `${gridPos.y}px`;
-    indicator.style.display = 'block';
-}
-
-// Hide snap indicator
-function hideSnapIndicator() {
-    if (snapIndicator) {
-        snapIndicator.style.display = 'none';
-    }
-}
 
 // ======================================
 // DRAG-AND-DROP FOR DESKTOP ICONS
@@ -1016,6 +1129,46 @@ document.addEventListener('mouseup', (e) => {
     };
 });
 
+
+// Surveiller les changements de position de la taskbar
+function setupTaskbarPositionWatcher() {
+    const taskbar = document.getElementById('taskbar');
+    if (!taskbar) return;
+    
+    let lastTaskbarPosition = getCurrentTaskbarPosition();
+    
+    // Utiliser MutationObserver pour détecter les changements de classe
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                const newPosition = getCurrentTaskbarPosition();
+                if (newPosition !== lastTaskbarPosition) {
+                    console.log(`🔄 Taskbar moved from ${lastTaskbarPosition} to ${newPosition}`);
+                    lastTaskbarPosition = newPosition;
+                    
+                    // Recalculer la grille et repositionner les icônes
+                    setTimeout(() => {
+                        loadDesktopItems();
+                    }, 100);
+                }
+            }
+        });
+    });
+    
+    observer.observe(taskbar, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+}
+
+function getCurrentTaskbarPosition() {
+    const taskbar = document.getElementById('taskbar');
+    if (!taskbar) return 'bottom';
+    
+    const classList = Array.from(taskbar.classList);
+    const positionClass = classList.find(cls => cls.startsWith('position-'));
+    return positionClass ? positionClass.replace('position-', '') : 'bottom';
+}
 
 // ======================================
 // LOGOUT FUNCTION
@@ -1246,26 +1399,57 @@ function findBestGridPosition(x, y) {
     if (!currentGridConfig) return { x: 20, y: 20, row: 0, col: 0 };
     
     const targetCol = Math.round((x - currentGridConfig.padding) / currentGridConfig.cellWidth);
-    const targetRow = Math.round((y - currentGridConfig.padding) / currentGridConfig.cellHeight);
+    const targetRow = Math.round((y - currentGridConfig.paddingY) / currentGridConfig.cellHeight);
     
     const clampedCol = Math.max(0, Math.min(targetCol, currentGridConfig.cols - 1));
     const clampedRow = Math.max(0, Math.min(targetRow, currentGridConfig.rows - 1));
     
-    if (!isPositionOccupied(clampedRow, clampedCol)) {
+    console.log(`🔧 Target: (${x},${y}) -> Grid(${targetRow},${targetCol}) -> Clamped(${clampedRow},${clampedCol}) | MaxRows: ${currentGridConfig.rows}, TaskbarPos: ${currentGridConfig.taskbarPosition}`);
+    
+    // Vérifier s'il y a une icône à cette position
+    const occupyingIcon = getIconAtPosition(clampedRow, clampedCol);
+    
+    if (occupyingIcon && occupyingIcon !== draggedIcon) {
+        // Échanger les positions
+        swapIconPositions(draggedIcon, occupyingIcon);
+        return getGridCoordinates(clampedRow, clampedCol);
+    } else if (!occupyingIcon) {
+        // Position libre, placer normalement
         return getGridCoordinates(clampedRow, clampedCol);
     }
     
-    for (let radius = 1; radius <= Math.max(currentGridConfig.rows, currentGridConfig.cols); radius++) {
-        for (let row = Math.max(0, clampedRow - radius); row <= Math.min(currentGridConfig.rows - 1, clampedRow + radius); row++) {
-            for (let col = Math.max(0, clampedCol - radius); col <= Math.min(currentGridConfig.cols - 1, clampedCol + radius); col++) {
-                if (!isPositionOccupied(row, col)) {
-                    return getGridCoordinates(row, col);
-                }
-            }
+    // Si c'est la même position, ne rien changer
+    return getGridCoordinates(clampedRow, clampedCol);
+}
+
+function getIconAtPosition(row, col) {
+    const icons = document.querySelectorAll('.desktop-item');
+    for (const icon of icons) {
+        if (icon === draggedIcon) continue;
+        if (parseInt(icon.dataset.gridRow) === row && parseInt(icon.dataset.gridCol) === col) {
+            return icon;
         }
     }
+    return null;
+}
+
+function swapIconPositions(icon1, icon2) {
+    // Sauvegarder les positions actuelles
+    const icon1Row = parseInt(icon1.dataset.gridRow);
+    const icon1Col = parseInt(icon1.dataset.gridCol);
+    const icon1Coords = getGridCoordinates(icon1Row, icon1Col);
     
-    return getGridCoordinates(0, 0);
+    const icon2Row = parseInt(icon2.dataset.gridRow);
+    const icon2Col = parseInt(icon2.dataset.gridCol);
+    const icon2Coords = getGridCoordinates(icon2Row, icon2Col);
+    
+    // Déplacer icon2 vers la position d'icon1
+    icon2.style.left = `${icon1Coords.x}px`;
+    icon2.style.top = `${icon1Coords.y}px`;
+    icon2.dataset.gridRow = icon1Row;
+    icon2.dataset.gridCol = icon1Col;
+    
+    // icon1 sera déplacé vers la position d'icon2 par l'appelant
 }
 
 function isPositionOccupied(row, col) {
@@ -1282,7 +1466,7 @@ function isPositionOccupied(row, col) {
 function getGridCoordinates(row, col) {
     return {
         x: currentGridConfig.padding + (col * currentGridConfig.cellWidth),
-        y: currentGridConfig.padding + (row * currentGridConfig.cellHeight),
+        y: currentGridConfig.paddingY + (row * currentGridConfig.cellHeight),
         row: row,
         col: col
     };
