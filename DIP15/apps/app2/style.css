@@ -82,6 +82,7 @@
     padding: 30px;
     overflow-y: auto;
     background: #ffffff;
+    height: 100%;
 }
 
 .settings-content::-webkit-scrollbar {
@@ -371,6 +372,44 @@
     color: #198754;
     font-weight: bold;
     font-size: 14px;
+}
+
+/* OS Info Styling */
+.os-info {
+    margin-bottom: 16px;
+}
+
+.os-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+}
+
+.os-icon {
+    font-size: 48px;
+    color: #0078d4;
+    width: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.os-details {
+    flex: 1;
+}
+
+.os-name {
+    font-size: 24px;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 4px;
+}
+
+.os-version {
+    font-size: 14px;
+    color: #6c757d;
+    opacity: 0.8;
 }
 
 /* Responsive Design */

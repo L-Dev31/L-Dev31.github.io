@@ -504,6 +504,52 @@ class WindowManager {
         return positionClass ? positionClass.replace('position-', '') : 'bottom';
     }
 
+    adjustMaximizedWindowsForTaskbar() {
+        // Find all maximized windows and re-calculate their dimensions
+        this.windows.forEach(windowObj => {
+            if (windowObj.isMaximized) {
+                const taskbar = document.querySelector('.taskbar');
+                const taskbarRect = taskbar ? taskbar.getBoundingClientRect() : null;
+                const taskbarPosition = this.getTaskbarPosition();
+                
+                let availableTop = 0;
+                let availableBottom = window.innerHeight;
+                let availableLeft = 0;
+                let availableRight = window.innerWidth;
+
+                // Adjust for taskbar
+                if (taskbarRect) {
+                    switch (taskbarPosition) {
+                        case 'top':
+                            availableTop = taskbarRect.height;
+                            break;
+                        case 'bottom':
+                            availableBottom = window.innerHeight - taskbarRect.height;
+                            break;
+                        case 'left':
+                            availableLeft = taskbarRect.width;
+                            break;
+                        case 'right':
+                            availableRight = window.innerWidth - taskbarRect.width;
+                            break;
+                    }
+                }
+
+                // Apply smooth transition
+                windowObj.element.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                windowObj.element.style.left = `${availableLeft}px`;
+                windowObj.element.style.top = `${availableTop}px`;
+                windowObj.element.style.width = `${availableRight - availableLeft}px`;
+                windowObj.element.style.height = `${availableBottom - availableTop}px`;
+
+                // Remove transition after animation
+                setTimeout(() => {
+                    windowObj.element.style.transition = '';
+                }, 300);
+            }
+        });
+    }
+
     closeWindow(windowId) {
         const windowObj = this.windows.get(windowId);
         if (!windowObj) return;
