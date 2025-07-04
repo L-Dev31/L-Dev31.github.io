@@ -116,32 +116,6 @@ if (typeof SettingsApp === 'undefined') {
                         </div>
                     </div>
                     
-                    <!-- Desktop Settings -->
-                    <div class="settings-section" id="desktop-panel">
-                        <h2>Desktop Settings</h2>
-                        
-                        <div class="settings-group">
-                            <h3>Desktop Layout</h3>
-                            <div class="settings-item">
-                                <label>
-                                    <input type="checkbox" id="snapToGrid" checked>
-                                    Snap icons to grid
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="settings-group">
-                            <h3>Desktop Background</h3>
-                            <div class="settings-item">
-                                <button id="autoChangeBtn" class="btn-primary">
-                                    <i class="fas fa-magic"></i>
-                                    Auto-change Background
-                                </button>
-                                <small>Cycle through available backgrounds every 30 seconds</small>
-                            </div>
-                        </div>
-                    </div>
-                    
                     <!-- Wallpaper Settings -->
                     <div class="settings-section" id="wallpaper-panel">
                         <h2>Wallpaper Settings</h2>
@@ -221,10 +195,16 @@ if (typeof SettingsApp === 'undefined') {
                         <h2>System Information</h2>
                         
                         <div class="settings-group">
-                            <h3>Desktop Environment</h3>
+                            <h3>Operating System</h3>
                             <div class="system-info-card">
-                                <div class="settings-item">
-                                    <strong>Version:</strong> DIP15 Virtual Desktop v1.0
+                                <div class="os-info">
+                                    <div class="os-header">
+                                        <i class="fab fa-windows os-icon"></i>
+                                        <div class="os-details">
+                                            <div class="os-name">DIP15 Desktop</div>
+                                            <div class="os-version">Virtual Desktop Environment v1.0</div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="settings-item">
                                     <strong>Screen Resolution:</strong> <span id="screenResolution">-</span>
@@ -279,24 +259,6 @@ if (typeof SettingsApp === 'undefined') {
                 this.updateTaskbarAlignment(e.target.value);
             });
         });
-
-        // Desktop settings
-        const snapToGrid = element.querySelector('#snapToGrid');
-        if (snapToGrid) {
-            snapToGrid.addEventListener('change', (e) => {
-                this.updateSnapToGrid(e.target.checked);
-            });
-        }
-
-        const autoChangeBtn = element.querySelector('#autoChangeBtn');
-        if (autoChangeBtn) {
-            autoChangeBtn.addEventListener('click', () => {
-                if (window.startAutoChange) {
-                    window.startAutoChange();
-                    this.showMessage('Auto-change background started!');
-                }
-            });
-        }
 
         const wallpaperInput = element.querySelector('#wallpaperInput');
         if (wallpaperInput) {
@@ -371,7 +333,6 @@ if (typeof SettingsApp === 'undefined') {
     getCategoryTitle(category) {
         const titles = {
             taskbar: 'Taskbar Configuration',
-            desktop: 'Desktop Layout',
             wallpaper: 'Wallpaper Settings',
             user: 'User Profile',
             about: 'System Information'
@@ -460,14 +421,6 @@ if (typeof SettingsApp === 'undefined') {
             let settings = JSON.parse(localStorage.getItem('desktop-settings')) || {};
             settings.taskbarAlignment = alignment;
             localStorage.setItem('desktop-settings', JSON.stringify(settings));
-        }
-    }
-
-    updateSnapToGrid(enabled) {
-        if (window.settingsManager) {
-            window.settingsManager.settings.snapToGrid = enabled;
-            window.settingsManager.saveSettings();
-            window.settingsManager.applySettings();
         }
     }
 
