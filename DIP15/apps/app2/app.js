@@ -383,44 +383,16 @@ if (typeof SettingsApp === 'undefined') {
     }
 
     updateTaskbarPosition(position) {
-        // Apply taskbar position directly
-        const taskbar = document.getElementById('taskbar');
-        if (taskbar) {
-            // Reset classes and apply new position
-            taskbar.className = 'taskbar';
-            taskbar.classList.add(`position-${position}`);
-            
-            // Save to localStorage
-            let settings = JSON.parse(localStorage.getItem('desktop-settings')) || {};
-            settings.taskbarPosition = position;
-            localStorage.setItem('desktop-settings', JSON.stringify(settings));
-            
-            // Adjust all maximized windows to new taskbar position
-            if (this.windowManager) {
-                this.windowManager.adjustMaximizedWindowsForTaskbar();
-            }
-            
-            // Trigger recalculation of desktop layout
-            setTimeout(() => {
-                if (window.loadDesktopItems) {
-                    window.loadDesktopItems();
-                }
-            }, 100);
+        // Use the global taskbarManager
+        if (window.taskbarManager) {
+            window.taskbarManager.updateTaskbarPosition(position);
         }
     }
 
     updateTaskbarAlignment(alignment) {
-        // Apply taskbar alignment directly
-        const taskbar = document.getElementById('taskbar');
-        if (taskbar) {
-            // Remove existing alignment classes
-            taskbar.classList.remove('align-start', 'align-center', 'align-end');
-            taskbar.classList.add(`align-${alignment}`);
-            
-            // Save to localStorage
-            let settings = JSON.parse(localStorage.getItem('desktop-settings')) || {};
-            settings.taskbarAlignment = alignment;
-            localStorage.setItem('desktop-settings', JSON.stringify(settings));
+        // Use the global taskbarManager
+        if (window.taskbarManager) {
+            window.taskbarManager.updateTaskbarAlignment(alignment);
         }
     }
 

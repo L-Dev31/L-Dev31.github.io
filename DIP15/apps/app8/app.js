@@ -7,39 +7,71 @@ if (typeof ClockApp === 'undefined') {
             this.updateInterval = null;
         }
 
-    static getInstance() {
-        if (!ClockApp.instance) {
-            ClockApp.instance = new ClockApp();
+        static getInstance() {
+            if (!ClockApp.instance) {
+                ClockApp.instance = new ClockApp();
+            }
+            return ClockApp.instance;
         }
-        return ClockApp.instance;
-    }
 
-    async open(options = {}) {
-        this.windowManager = options.windowManager;
-        this.appConfig = options.appConfig;
-        await this.initialize();
-        return true;
-    }
-
-    async initialize() {
-        try {
-            this.window = this.windowManager.createWindow({
-                title: 'Clock',
-                resizable: true,
-                icon: this.appConfig?.icon || 'images/app8.png',
-                appId: this.appConfig?.id || 'app8',
-                content: this.getClockContent(),
-                footerText: 'Digital & Analog Clock',
-                className: 'clock-app-window'
-            });
-
-            this.setupClockElements();
-            this.startClock();
-            this.setupEventListeners();
-        } catch (error) {
-            console.error('Failed to initialize Clock app:', error);
+        // Compatible avec app-launcher.js
+        async init() {
+            return await this.launch();
         }
-    }
+
+        async launch() {
+            try {
+                console.log('🕐 Launching Clock app...');
+                
+                this.window = window.windowManager.createWindow({
+                    id: `clock-${Date.now()}`,
+                    title: 'Clock',
+                    x: 150,
+                    y: 100,
+                    resizable: true,
+                    icon: 'images/app8.png',
+                    appId: 'app8',
+                    content: this.getClockContent(),
+                    footerText: 'Digital & Analog Clock',
+                    className: 'clock-app-window'
+                });
+
+                this.setupClockElements();
+                this.startClock();
+                
+                console.log('✅ Clock app launched successfully');
+                return this.window;
+            } catch (error) {
+                console.error('Failed to initialize Clock app:', error);
+            }
+        }
+
+        async open(options = {}) {
+            this.windowManager = options.windowManager;
+            this.appConfig = options.appConfig;
+            await this.initialize();
+            return true;
+        }
+
+        async initialize() {
+            try {
+                this.window = this.windowManager.createWindow({
+                    title: 'Clock',
+                    resizable: true,
+                    icon: this.appConfig?.icon || 'images/app8.png',
+                    appId: this.appConfig?.id || 'app8',
+                    content: this.getClockContent(),
+                    footerText: 'Digital & Analog Clock',
+                    className: 'clock-app-window'
+                });
+
+                this.setupClockElements();
+                this.startClock();
+                this.setupEventListeners();
+            } catch (error) {
+                console.error('Failed to initialize Clock app:', error);
+            }
+        }
 
     getClockContent() {
         return `

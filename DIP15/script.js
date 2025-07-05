@@ -28,8 +28,8 @@ let dragState = {
 };
 
 const knownImages = [
-    '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg',
-    '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg'
+    '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg',
+    '219692.jpg', '7704801.jpg', '8957663.jpg'
 ];
 
 // ======================================
@@ -218,7 +218,8 @@ async function showDesktop() {
         updateDesktopTime();
         setInterval(updateDesktopTime, 1000);
         
-        settingsManager.init();
+        // Initialize TaskbarManager
+        // (already initialized globally)
         setupTaskbarPositionWatcher();
         
         // Load and apply taskbar settings
@@ -534,6 +535,8 @@ function loadTaskbarApps(apps) {
         appElement.alt = app.name;
         appElement.className = 'taskbar-app';
         appElement.title = app.name;
+        appElement.dataset.appId = app.id; // Add app ID for window manager
+        appElement.dataset.pinned = 'true'; // Mark as pinned
         
         appElement.addEventListener('click', () => {
             console.log(`🚀 Launched ${app.name} (${app.id})`);
@@ -560,7 +563,9 @@ function loadSettingsApps(apps) {
         appItem.addEventListener('click', () => {
             console.log(`🚀 Launched ${app.name} (${app.id}) from settings`);
             window.appLauncher.launchApp(app.id);
-            settingsManager.hideSettingsPanel();
+            if (taskbarManager) {
+                taskbarManager.hideStartMenu();
+            }
         });
         
         appGrid.appendChild(appItem);
@@ -596,55 +601,65 @@ function updateDesktopTime() {
 }
 
 // ======================================
-// SETTINGS MANAGER
+// TASKBAR MANAGER - REBUILT FROM SCRATCH
 // ======================================
 
-class SettingsManager {
+class TaskbarManager {
     constructor() {
         this.settings = {
             taskbarPosition: 'bottom',
             taskbarAlignment: 'center'
         };
+        this.isStartMenuOpen = false;
         this.loadSettings();
+        this.init();
     }
 
     loadSettings() {
         try {
-            const saved = localStorage.getItem('desktopSettings');
+            const saved = localStorage.getItem('desktop-settings');
             if (saved) {
                 this.settings = { ...this.settings, ...JSON.parse(saved) };
             }
         } catch (error) {
-            console.warn('Failed to load settings:', error);
+            console.warn('Failed to load taskbar settings:', error);
         }
     }
 
     saveSettings() {
         try {
-            localStorage.setItem('desktopSettings', JSON.stringify(this.settings));
+            localStorage.setItem('desktop-settings', JSON.stringify(this.settings));
         } catch (error) {
-            console.error('Failed to save settings:', error);
+            console.error('Failed to save taskbar settings:', error);
         }
     }
 
     init() {
+        this.setupEventListeners();
+        this.applyTaskbarSettings();
+    }
+
+    setupEventListeners() {
         const startButton = document.getElementById('startButton');
         const closeButton = document.getElementById('closeSettings');
         const logoutButton = document.getElementById('logoutButton');
 
+        // Start button click
         if (startButton) {
             startButton.addEventListener('click', (e) => {
                 e.stopPropagation();
-                this.toggleSettingsPanel();
+                this.toggleStartMenu();
             });
         }
 
+        // Close button click
         if (closeButton) {
             closeButton.addEventListener('click', () => {
-                this.hideSettingsPanel();
+                this.hideStartMenu();
             });
         }
-        
+
+        // Logout button click
         if (logoutButton) {
             logoutButton.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -653,190 +668,185 @@ class SettingsManager {
             });
         }
 
-        // Close settings when clicking outside
+        // Click outside to close
         document.addEventListener('click', (e) => {
             const settingsPanel = document.getElementById('settingsPanel');
-            if (settingsPanel?.classList.contains('active') && 
+            const startButton = document.getElementById('startButton');
+            
+            if (this.isStartMenuOpen && 
+                settingsPanel && 
                 !settingsPanel.contains(e.target) && 
                 !startButton?.contains(e.target)) {
-                setTimeout(() => {
-                    if (settingsPanel?.classList.contains('active')) {
-                        this.hideSettingsPanel();
-                    }
-                }, 100);
+                this.hideStartMenu();
             }
         });
-
-        this.setupSettingControls();
-        this.applySettings();
     }
 
-    setupSettingControls() {
-        // Settings are now handled by the Settings app (app2)
-        // No need to setup controls here
-    }
-
-    applySettings() {
-        const taskbar = document.getElementById('taskbar');
-        if (!taskbar) return;
-
-        // Reset classes
-        taskbar.className = 'taskbar';
-        taskbar.classList.add(`position-${this.settings.taskbarPosition}`);
-        taskbar.classList.add(`align-${this.settings.taskbarAlignment}`);
-
-        // Update form inputs
-        const positionInput = document.querySelector(`input[name="taskbarPosition"][value="${this.settings.taskbarPosition}"]`);
-        const alignmentInput = document.querySelector(`input[name="taskbarAlignment"][value="${this.settings.taskbarAlignment}"]`);
-        
-        if (positionInput) positionInput.checked = true;
-        if (alignmentInput) alignmentInput.checked = true;
-
-        // Recalculate grid layout for new taskbar position
-        setTimeout(() => {
-            loadDesktopItems();
-        }, 50);
-
-        // Reposition settings panel if open
-        const settingsPanel = document.getElementById('settingsPanel');
-        if (settingsPanel?.classList.contains('active')) {
-            setTimeout(() => this.positionSettingsPanel(), 100);
-        }
-    }
-
-    toggleSettingsPanel() {
-        const settingsPanel = document.getElementById('settingsPanel');
-        const startButton = document.getElementById('startButton');
-        
-        if (settingsPanel.classList.contains('active')) {
-            this.hideSettingsPanel();
-            startButton?.classList.remove('active');
+    toggleStartMenu() {
+        if (this.isStartMenuOpen) {
+            this.hideStartMenu();
         } else {
-            this.showSettingsPanel();
+            this.showStartMenu();
+        }
+    }
+
+    showStartMenu() {
+        const settingsPanel = document.getElementById('settingsPanel');
+        const startButton = document.getElementById('startButton');
+        
+        if (!settingsPanel) return;
+
+        this.isStartMenuOpen = true;
+
+        // Remove any existing position classes
+        settingsPanel.classList.remove('position-bottom', 'position-top', 'position-left', 'position-right');
+        
+        // Add position class based on taskbar position
+        settingsPanel.classList.add(`position-${this.settings.taskbarPosition}`);
+        
+        // Position the start menu
+        this.positionStartMenu();
+        
+        // Show with animation
+        requestAnimationFrame(() => {
+            settingsPanel.classList.add('active');
             startButton?.classList.add('active');
-        }
+        });
     }
 
-    showSettingsPanel() {
+    hideStartMenu() {
         const settingsPanel = document.getElementById('settingsPanel');
         const startButton = document.getElementById('startButton');
         
-        if (settingsPanel) {
-            // Remove any existing position classes
-            settingsPanel.classList.remove('position-bottom', 'position-top', 'position-left', 'position-right');
-            
-            // Add position class based on taskbar position
-            const taskbarPosition = this.settings.taskbarPosition || 'bottom';
-            settingsPanel.classList.add(`position-${taskbarPosition}`);
-            
-            this.positionSettingsPanel();
-            requestAnimationFrame(() => {
-                settingsPanel.classList.add('active');
-                startButton?.classList.add('active');
-            });
-        }
-    }
+        if (!settingsPanel) return;
 
-    hideSettingsPanel() {
-        const settingsPanel = document.getElementById('settingsPanel');
-        const startButton = document.getElementById('startButton');
+        this.isStartMenuOpen = false;
         
-        if (settingsPanel) {
-            settingsPanel.classList.remove('active');
-            startButton?.classList.remove('active');
-        }
+        settingsPanel.classList.remove('active');
+        startButton?.classList.remove('active');
     }
 
-    positionSettingsPanel() {
+    positionStartMenu() {
         const startButton = document.getElementById('startButton');
         const taskbar = document.getElementById('taskbar');
-        const systemTray = document.getElementById('taskbarRight');
         const settingsPanel = document.getElementById('settingsPanel');
         
         if (!startButton || !taskbar || !settingsPanel) return;
         
         const startRect = startButton.getBoundingClientRect();
         const taskbarRect = taskbar.getBoundingClientRect();
-        const systemTrayRect = systemTray?.getBoundingClientRect();
-        const panelWidth = 480;
-        const panelHeight = 600;
         const spacing = 12;
         
         // Reset positioning
-        ['left', 'right', 'top', 'bottom'].forEach(prop => {
-            settingsPanel.style[prop] = '';
-        });
+        settingsPanel.style.left = '';
+        settingsPanel.style.right = '';
+        settingsPanel.style.top = '';
+        settingsPanel.style.bottom = '';
         
         switch (this.settings.taskbarPosition) {
             case 'bottom':
-                settingsPanel.style.bottom = (window.innerHeight - taskbarRect.top + spacing) + 'px';
-                let leftPos = startRect.left;
-                
-                // Avoid system tray overlap
-                if (this.settings.taskbarAlignment === 'end' && systemTrayRect) {
-                    const maxRight = systemTrayRect.left - spacing - 20;
-                    if (leftPos + panelWidth > maxRight) {
-                        leftPos = Math.max(20, maxRight - panelWidth);
-                    }
-                }
-                
-                settingsPanel.style.left = Math.max(20, Math.min(leftPos, window.innerWidth - panelWidth - 20)) + 'px';
+                settingsPanel.style.bottom = `${window.innerHeight - taskbarRect.top + spacing}px`;
+                settingsPanel.style.left = `${Math.max(20, startRect.left)}px`;
                 break;
                 
             case 'top':
-                settingsPanel.style.top = (taskbarRect.bottom + spacing) + 'px';
-                let leftPosTop = startRect.left;
-                
-                if (this.settings.taskbarAlignment === 'end' && systemTrayRect) {
-                    const maxRight = systemTrayRect.left - spacing - 20;
-                    if (leftPosTop + panelWidth > maxRight) {
-                        leftPosTop = Math.max(20, maxRight - panelWidth);
-                    }
-                }
-                
-                settingsPanel.style.left = Math.max(20, Math.min(leftPosTop, window.innerWidth - panelWidth - 20)) + 'px';
+                settingsPanel.style.top = `${taskbarRect.bottom + spacing}px`;
+                settingsPanel.style.left = `${Math.max(20, startRect.left)}px`;
                 break;
                 
             case 'left':
-                settingsPanel.style.left = (taskbarRect.right + spacing) + 'px';
-                settingsPanel.style.top = Math.max(20, Math.min(startRect.top, window.innerHeight - panelHeight - 20)) + 'px';
+                settingsPanel.style.left = `${taskbarRect.right + spacing}px`;
+                // Delay vertical alignment to ensure panel dimensions are available
+                requestAnimationFrame(() => {
+                    this.alignVerticalMenu(settingsPanel, startRect);
+                });
                 break;
                 
             case 'right':
-                settingsPanel.style.right = (window.innerWidth - taskbarRect.left + spacing) + 'px';
-                settingsPanel.style.top = Math.max(20, Math.min(startRect.top, window.innerHeight - panelHeight - 20)) + 'px';
+                settingsPanel.style.right = `${window.innerWidth - taskbarRect.left + spacing}px`;
+                // Delay vertical alignment to ensure panel dimensions are available
+                requestAnimationFrame(() => {
+                    this.alignVerticalMenu(settingsPanel, startRect);
+                });
                 break;
         }
     }
-}
 
+    alignVerticalMenu(panel, startRect) {
+        const alignment = this.settings.taskbarAlignment;
+        const panelRect = panel.getBoundingClientRect();
+        let topPosition;
+
+        switch (alignment) {
+            case 'center':
+                topPosition = startRect.top + (startRect.height / 2) - (panelRect.height / 2);
+                break;
+            case 'end':
+                topPosition = startRect.bottom - panelRect.height;
+                break;
+            case 'start':
+            default:
+                topPosition = startRect.top;
+                break;
+        }
+
+        // Ensure the menu doesn't go off-screen
+        const margin = 20;
+        topPosition = Math.max(margin, topPosition);
+        topPosition = Math.min(topPosition, window.innerHeight - panelRect.height - margin);
+
+        panel.style.top = `${topPosition}px`;
+    }
+
+    applyTaskbarSettings() {
+        const taskbar = document.getElementById('taskbar');
+        if (!taskbar) return;
+
+        // Reset taskbar classes
+        taskbar.className = 'taskbar';
+        taskbar.classList.add(`position-${this.settings.taskbarPosition}`);
+        taskbar.classList.add(`align-${this.settings.taskbarAlignment}`);
+
+        // Recalculate desktop grid
+        setTimeout(() => {
+            if (typeof loadDesktopItems === 'function') {
+                loadDesktopItems();
+            }
+        }, 50);
+
+        // Reposition start menu if open
+        if (this.isStartMenuOpen) {
+            setTimeout(() => this.positionStartMenu(), 100);
+        }
+
+        // Adjust maximized windows
+        if (window.windowManager) {
+            setTimeout(() => {
+                window.windowManager.adjustMaximizedWindowsForTaskbar();
+            }, 150);
+        }
+
+        // Save settings
+        this.saveSettings();
+    }
+
+    updateTaskbarPosition(position) {
+        this.settings.taskbarPosition = position;
+        this.applyTaskbarSettings();
+    }
+
+    updateTaskbarAlignment(alignment) {
+        this.settings.taskbarAlignment = alignment;
+        this.applyTaskbarSettings();
+    }
+}
 // ======================================
 // TASKBAR SETTINGS FUNCTIONS
 // ======================================
 
 function loadTaskbarSettings() {
-    try {
-        const settings = JSON.parse(localStorage.getItem('desktop-settings')) || {};
-        const taskbar = document.getElementById('taskbar');
-        
-        if (taskbar) {
-            // Apply position
-            if (settings.taskbarPosition) {
-                taskbar.className = 'taskbar';
-                taskbar.classList.add(`position-${settings.taskbarPosition}`);
-            }
-            
-            // Apply alignment
-            if (settings.taskbarAlignment) {
-                taskbar.classList.remove('align-start', 'align-center', 'align-end');
-                taskbar.classList.add(`align-${settings.taskbarAlignment}`);
-            }
-        }
-        
-        console.log('✅ Taskbar settings loaded:', settings);
-    } catch (error) {
-        console.warn('⚠️ Could not load taskbar settings:', error);
-    }
+    // This function is now handled by TaskbarManager
+    // Kept for backward compatibility
 }
 
 // ======================================
@@ -1203,7 +1213,8 @@ function logout() {
 // INITIALIZATION
 // ======================================
 
-const settingsManager = new SettingsManager();
+const taskbarManager = new TaskbarManager();
+window.taskbarManager = taskbarManager; // Make it globally accessible
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Starting application...');

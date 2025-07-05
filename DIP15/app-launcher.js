@@ -132,7 +132,6 @@ class AppLauncher {
             'app6': 'CalculatorApp',
             'app7': 'ScaffoldApp',
             'app8': 'ClockApp',
-            'app9': 'ManjarrowApp',
             'app10': 'AvokadooApp'
         };
         
