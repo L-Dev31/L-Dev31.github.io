@@ -436,7 +436,7 @@ body, html {
     align-items: center;
     justify-content: center;
     padding: 0 16px;
-    z-index: 20;
+    z-index: 15000; /* Always on top */
 }
 
 .taskbar-center {
@@ -465,7 +465,7 @@ body, html {
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
-    z-index: 10001; /* Above everything else */
+    z-index: 15001; /* Above everything else, including taskbar */
 }
 
 .start-button:hover {
@@ -597,8 +597,12 @@ body, html {
     opacity: 0;
     visibility: hidden;
     transform: translateY(100%) scale(0.88);
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    z-index: 10000; /* Higher than windows max z-index */
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                filter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                visibility 0s 0.4s, 
+                z-index 0s 0.4s;
+    z-index: 9999; /* Below taskbar (15000) but above windows */
     overflow: hidden;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(25px);
@@ -621,6 +625,10 @@ body, html {
     visibility: visible;
     transform: translateY(0) scale(1);
     filter: blur(0);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                filter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 14999; /* Just below taskbar during animation */
 }
 
 /* Enhanced animation variations based on taskbar position */
@@ -885,6 +893,15 @@ body, html {
     flex-direction: column;
     position: static;
     width: 100%;
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.taskbar.position-left .taskbar-left,
+.taskbar.position-right .taskbar-left {
+    position: static;
+    flex-direction: column;
 }
 
 .taskbar.position-left .search-box,
@@ -897,20 +914,26 @@ body, html {
     flex-direction: column;
 }
 
+/* Alignement vertical pour taskbars left/right */
+.taskbar.position-left.align-start .taskbar-center,
+.taskbar.position-right.align-start .taskbar-center {
+    justify-content: flex-start;
+}
+
+.taskbar.position-left.align-center .taskbar-center,
+.taskbar.position-right.align-center .taskbar-center {
+    justify-content: center;
+}
+
+.taskbar.position-left.align-end .taskbar-center,
+.taskbar.position-right.align-end .taskbar-center {
+    justify-content: flex-end;
+}
+
 .taskbar.position-left .taskbar-right,
 .taskbar.position-right .taskbar-right {
     position: static;
-    margin-top: auto;
-}
-
-.taskbar.align-start .taskbar-center {
-    margin-left: 0;
-    margin-right: auto;
-}
-
-.taskbar.align-end .taskbar-center {
-    margin-left: auto;
-    margin-right: 80px;
+    margin-top: 0;
 }
 
 .settings-footer {

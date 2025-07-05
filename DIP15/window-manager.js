@@ -7,7 +7,7 @@ class WindowManager {
         this.windows = new Map();
         this.activeWindow = null;
         this.zIndexCounter = 1000;
-        this.maxWindowZIndex = 9000; // Keep windows below start menu (9999)
+        this.maxWindowZIndex = 9000; // Keep windows below taskbar (15000)
         this.taskbarApps = new Map();
         this.snapZones = null;
         this.isDragging = false;
@@ -600,11 +600,19 @@ class WindowManager {
             // Use existing pinned icon and update it for the new window
             taskbarIcon.dataset.windowId = windowObj.id;
             
-            // Update click handler to handle the new window
-            const oldHandler = taskbarIcon.onclick;
-            taskbarIcon.onclick = null;
-            taskbarIcon.removeEventListener('click', oldHandler);
+            // Store original click handler if it's a pinned app
+            if (taskbarIcon.dataset.pinned === 'true' && !taskbarIcon.originalClickHandler) {
+                // Clone the existing event listeners
+                const originalHandler = taskbarIcon.cloneNode(true);
+                taskbarIcon.originalClickHandler = originalHandler.onclick;
+            }
             
+            // Remove existing click listeners
+            const newIcon = taskbarIcon.cloneNode(true);
+            taskbarIcon.parentNode.replaceChild(newIcon, taskbarIcon);
+            taskbarIcon = newIcon;
+            
+            // Add window-specific click handler
             taskbarIcon.addEventListener('click', () => {
                 this.handleTaskbarClick(windowObj.id);
             });
@@ -638,9 +646,8 @@ class WindowManager {
     removeFromTaskbar(windowObj) {
         const taskbarIcon = this.taskbarApps.get(windowObj.id);
         if (taskbarIcon) {
-            // Check if it's a pinned app by looking for data-app-id
-            const isPinned = taskbarIcon.hasAttribute('data-app-id') && 
-                            document.querySelector(`#taskbarApps [data-app-id="${windowObj.config.appId}"][data-pinned]`);
+            // Check if it's a pinned app
+            const isPinned = taskbarIcon.dataset.pinned === 'true';
             
             if (!isPinned) {
                 // Remove non-pinned app completely
@@ -649,11 +656,17 @@ class WindowManager {
                 // Reset pinned app state but keep the icon
                 taskbarIcon.classList.remove('active', 'minimized');
                 taskbarIcon.removeAttribute('data-window-id');
-                taskbarIcon.title = windowObj.config.title; // Reset tooltip
+                taskbarIcon.title = taskbarIcon.alt; // Reset tooltip to app name
                 
-                // Remove the click handler for this specific window
+                // Restore original click handler for pinned app
                 const newIcon = taskbarIcon.cloneNode(true);
                 taskbarIcon.parentNode.replaceChild(newIcon, taskbarIcon);
+                
+                // Re-add the original app launch functionality
+                newIcon.addEventListener('click', () => {
+                    console.log(`🚀 Launched ${taskbarIcon.alt} (${taskbarIcon.dataset.appId})`);
+                    window.appLauncher.launchApp(taskbarIcon.dataset.appId);
+                });
             }
             this.taskbarApps.delete(windowObj.id);
         }
@@ -747,7 +760,7 @@ class WindowManager {
             border: 2px solid rgba(0, 120, 212, 0.6);
             border-radius: 8px;
             pointer-events: none;
-            z-index: 10000;
+            z-index: 9998; /* Below taskbar */
             opacity: 1;
             transition: all 0.15s ease-in-out;
             backdrop-filter: blur(10px);
@@ -980,7 +993,7 @@ class WindowManager {
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 9500;
+            z-index: 9997; /* Below taskbar */
             display: none;
         `;
         document.body.appendChild(this.snapZones);
