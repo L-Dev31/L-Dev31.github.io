@@ -21,12 +21,21 @@ if (typeof WeatherApp === 'undefined') {
 
         // Compatible avec app-launcher.js
         async init() {
-            return await this.launch();
+            return await this.open();
         }
 
         // Method expected by app-launcher.js
         async open() {
-            return await this.launch();
+            // STRICT: Check if already launched
+            if (this.windowId && window.windowManager && window.windowManager.getWindow(this.windowId)) {
+                console.log('🌤️ Weather app already open, focusing existing window');
+                window.windowManager.focusWindow(this.windowId);
+                return true; // Prevent duplicate
+            }
+            
+            // Only launch if not already open
+            const result = await this.launch();
+            return result ? true : false;
         }
 
         async launch() {
@@ -99,6 +108,11 @@ if (typeof WeatherApp === 'undefined') {
                             <i class="fas fa-moon"></i>
                             <span>Sunset</span>
                             <span id="sunset">--:--</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-eye"></i>
+                            <span>Clouds</span>
+                            <span id="cloudCover">--%</span>
                         </div>
                     </div>
 
@@ -238,7 +252,8 @@ if (typeof WeatherApp === 'undefined') {
                     wind: 18,
                     uvIndex: 8,
                     sunrise: '06:15',
-                    sunset: '18:45'
+                    sunset: '18:45',
+                    cloudCover: 15
                 },
                 { 
                     condition: 'partly-cloudy', 
@@ -251,7 +266,8 @@ if (typeof WeatherApp === 'undefined') {
                     wind: 15,
                     uvIndex: 6,
                     sunrise: '06:20',
-                    sunset: '18:40'
+                    sunset: '18:40',
+                    cloudCover: 45
                 },
                 { 
                     condition: 'rainy', 
@@ -264,7 +280,8 @@ if (typeof WeatherApp === 'undefined') {
                     wind: 22,
                     uvIndex: 3,
                     sunrise: '06:25',
-                    sunset: '18:35'
+                    sunset: '18:35',
+                    cloudCover: 85
                 },
                 { 
                     condition: 'stormy', 
@@ -277,7 +294,8 @@ if (typeof WeatherApp === 'undefined') {
                     wind: 35,
                     uvIndex: 1,
                     sunrise: '06:18',
-                    sunset: '18:42'
+                    sunset: '18:42',
+                    cloudCover: 100
                 }
             ];
 
@@ -338,6 +356,7 @@ if (typeof WeatherApp === 'undefined') {
             document.getElementById('uvIndex').textContent = weather.uvIndex;
             document.getElementById('sunrise').textContent = weather.sunrise;
             document.getElementById('sunset').textContent = weather.sunset;
+            document.getElementById('cloudCover').textContent = `${weather.cloudCover}%`;
 
             // Update last updated time with auto-refresh indicator
             // Update last updated time
@@ -349,6 +368,7 @@ if (typeof WeatherApp === 'undefined') {
         // Method called when window is closed
         onWindowClose() {
             this.stopAutoRefresh();
+            this.windowId = null;
             console.log('🌤️ Weather app closed, auto-refresh stopped');
         }
 

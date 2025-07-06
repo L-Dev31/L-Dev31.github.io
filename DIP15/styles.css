@@ -436,7 +436,7 @@ body, html {
     align-items: center;
     justify-content: center;
     padding: 0 16px;
-    z-index: 15000; /* Always on top */
+    z-index: 999999; /* ALWAYS on top - highest priority */
 }
 
 .taskbar-center {
@@ -465,7 +465,7 @@ body, html {
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
-    z-index: 15001; /* Above everything else, including taskbar */
+    z-index: 999998; /* Just below taskbar (999999) but above everything else */
 }
 
 .start-button:hover {
@@ -628,7 +628,7 @@ body, html {
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
                 opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
                 filter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    z-index: 14999; /* Just below taskbar during animation */
+    z-index: 45000; /* Below taskbar but above overlays */
 }
 
 /* Enhanced animation variations based on taskbar position */
@@ -930,10 +930,25 @@ body, html {
     justify-content: flex-end;
 }
 
-.taskbar.position-left .taskbar-right,
-.taskbar.position-right .taskbar-right {
-    position: static;
-    margin-top: 0;
+/* Alignement horizontal pour taskbars bottom/top */
+.taskbar.position-bottom.align-start .taskbar-center,
+.taskbar.position-top.align-start .taskbar-center {
+    justify-content: flex-start;
+}
+
+.taskbar.position-bottom.align-center .taskbar-center,
+.taskbar.position-top.align-center .taskbar-center {
+    justify-content: center;
+}
+
+.taskbar.position-bottom.align-end .taskbar-center,
+.taskbar.position-top.align-end .taskbar-center {
+    justify-content: flex-end;
+}
+
+/* Alignement par défaut si pas de classe align spécifiée */
+.taskbar .taskbar-center {
+    justify-content: center; /* Par défaut au centre */
 }
 
 .settings-footer {
@@ -1019,7 +1034,7 @@ body, html {
 
 #fadeOverlay.active {
     opacity: 1;
-    z-index: 10000;
+    z-index: 50000; /* High but below taskbar (999999) */
 }
 
 #fadeOverlay.white {
@@ -1029,14 +1044,14 @@ body, html {
 #fadeOverlay.fade-to-black {
     background-color: black;
     opacity: 1;
-    z-index: 20000;
+    z-index: 50000; /* High but below taskbar (999999) */
     transition: opacity 2s ease-in-out;
 }
 
 #fadeOverlay.login-transition {
     background-color: white;
     opacity: 1;
-    z-index: 15000;
+    z-index: 50000; /* High but below taskbar (999999) */
     visibility: visible;
     transform: scale(0.8);
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1054,7 +1069,7 @@ body, html {
 #fadeOverlay.fade-to-black {
     background-color: black;
     opacity: 0;
-    z-index: 20000;
+    z-index: 50000; /* High but below taskbar (999999) */
     visibility: visible;
     transition: opacity 2s ease-in-out;
 }
@@ -1065,9 +1080,3 @@ body, html {
 
 
 
-/* ======================================
-   CLOCK APP - DARK THEME INTEGRATION
-   ====================================== */
-
-/* Clock app styles are defined in apps/app8/style.css */
-/* This ensures the dark theme and white text display properly */

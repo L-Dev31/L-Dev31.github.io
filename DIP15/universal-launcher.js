@@ -244,13 +244,18 @@ class UniversalLauncher {
             return { type: 'folder', name: data.name, ...data };
         }
 
-        // Handle app items
-        if (data.type === 'app' || data.appId) {
+        // Handle app items - check for appId or id first (stronger indicator of app)
+        if (data.appId || data.id || data.type === 'app') {
             return { type: 'app', appId: data.appId || data.id, ...data };
         }
 
-        // Handle file items
-        if (data.type === 'file' || data.name) {
+        // Handle explicit file items
+        if (data.type === 'file') {
+            return { type: 'file', name: data.name, ...data };
+        }
+
+        // If it has a name but no explicit type, and no app indicators, treat as file
+        if (data.name && !data.id && !data.appId) {
             return { type: 'file', name: data.name, ...data };
         }
 

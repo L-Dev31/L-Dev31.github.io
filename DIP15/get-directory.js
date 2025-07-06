@@ -88,17 +88,10 @@ class DirectoryFetcher {
 
         // Load apps data for app ID mapping
         this.appsData = null;
-        this.loadAppsData();
     }
 
-    async loadAppsData() {
-        try {
-            const response = await fetch('apps.json');
-            const data = await response.json();
-            this.appsData = data.apps;
-        } catch (error) {
-            console.warn('Could not load apps.json:', error);
-        }
+    setAppsData(appsData) {
+        this.appsData = appsData;
     }
 
     getAppByFileName(fileName) {
