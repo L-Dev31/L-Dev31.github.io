@@ -1,7 +1,3 @@
-// ======================================
-// MODULAR APP LAUNCHER SYSTEM
-// ======================================
-
 class AppLauncher {
     constructor() {
         this.loadedApps = new Map();
@@ -76,7 +72,16 @@ class AppLauncher {
             const appModule = await this.loadAppModule(appId);
             if (appModule) {
                 // Initialize the app with window manager integration
-                const appInstance = new appModule();
+                // Check if app uses singleton pattern
+                let appInstance;
+                if (appModule.getInstance && typeof appModule.getInstance === 'function') {
+                    // Use singleton instance for apps that support it
+                    appInstance = appModule.getInstance();
+                } else {
+                    // Create new instance for other apps
+                    appInstance = new appModule();
+                }
+                
                 const success = await appInstance.init({ 
                     windowManager: window.windowManager, 
                     appConfig: appConfig,

@@ -1,8 +1,3 @@
-// ======================================
-// SETTINGS APP - VIRTUAL DESKTOP CONFIGURATION
-// ======================================
-
-// Avoid redeclaration if already defined
 if (typeof SettingsApp === 'undefined') {
     class SettingsApp {
         constructor() {
@@ -26,10 +21,13 @@ if (typeof SettingsApp === 'undefined') {
     }
 
     async open() {
+        console.log('🔧 Opening Settings app...');
+        
         if (this.windowId && this.windowManager) {
             // Window already exists, just focus it
             const windowObj = this.windowManager.getWindow(this.windowId);
             if (windowObj) {
+                console.log('✅ Settings window already exists, focusing...');
                 if (windowObj.isMinimized) {
                     this.windowManager.restoreWindow(this.windowId);
                 } else {
@@ -39,26 +37,34 @@ if (typeof SettingsApp === 'undefined') {
             }
         }
 
-        // Create the main content
-        const content = this.createSettingsContent();
-        
-        // Create window
-        const windowObj = this.windowManager.createWindow({
-            id: `settings-${Date.now()}`,
-            title: 'Settings',
-            width: 800,
-            height: 600,
-            x: (window.innerWidth - 800) / 2,
-            y: (window.innerHeight - 600) / 2,
-            icon: this.appConfig?.icon || 'images/app2.png',
-            appId: 'app2',
-            content: content,
-            footerText: 'Settings • Taskbar Configuration'
-        });
+        try {
+            // Create the main content
+            const content = this.createSettingsContent();
+            
+            // Create window
+            const windowObj = this.windowManager.createWindow({
+                id: `settings-${Date.now()}`,
+                title: 'Settings',
+                width: 800,
+                height: 600,
+                x: (window.innerWidth - 800) / 2,
+                y: (window.innerHeight - 600) / 2,
+                icon: this.appConfig?.icon || 'images/app2.png',
+                appId: 'app2',
+                content: content,
+                footerText: 'Settings • Taskbar Configuration'
+            });
 
-        this.windowId = windowObj.id;
-        this.setupEventListeners();
-        this.loadCurrentSettings();
+            this.windowId = windowObj.id;
+            console.log('✅ Settings window created with ID:', this.windowId);
+            
+            this.setupEventListeners();
+            this.loadCurrentSettings();
+            
+            console.log('✅ Settings app opened successfully');
+        } catch (error) {
+            console.error('❌ Failed to open Settings app:', error);
+        }
     }
 
     createSettingsContent() {
@@ -180,7 +186,10 @@ if (typeof SettingsApp === 'undefined') {
                             <div class="settings-item">
                                 <label>New password:</label>
                                 <input type="password" id="newPasswordInput" placeholder="Enter new password">
-                                <button id="changePasswordBtn" class="btn-primary">Change Password</button>
+                                <button id="changePasswordBtn" class="btn-primary">
+                                    <i class="fas fa-key"></i>
+                                    Change Password
+                                </button>
                                 <small>Password is only used for screen lock simulation</small>
                             </div>
                         </div>
@@ -195,10 +204,10 @@ if (typeof SettingsApp === 'undefined') {
                             <div class="system-info-card">
                                 <div class="os-info">
                                     <div class="os-header">
-                                        <i class="fab fa-windows os-icon"></i>
+                                        <img src="images/icon.png" alt="DIP15 Icon" class="os-icon-img">
                                         <div class="os-details">
-                                            <div class="os-name">DIP15 Desktop</div>
-                                            <div class="os-version">Virtual Desktop Environment v1.0</div>
+                                            <div class="os-name">DIP15 Desktop Environment</div>
+                                            <div class="os-version">Professional Virtual Desktop v1.0</div>
                                         </div>
                                     </div>
                                 </div>
@@ -206,22 +215,54 @@ if (typeof SettingsApp === 'undefined') {
                                     <strong>Screen Resolution:</strong> <span id="screenResolution">-</span>
                                 </div>
                                 <div class="settings-item">
-                                    <strong>Browser:</strong> <span id="browserInfo">-</span>
+                                    <strong>Browser Engine:</strong> <span id="browserInfo">-</span>
+                                </div>
+                                <div class="settings-item">
+                                    <strong>Platform:</strong> <span id="platformInfo">-</span>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="settings-group">
-                            <h3>Features</h3>
+                            <h3>Technical Specifications</h3>
                             <div class="system-info-card">
-                                <ul class="feature-list">
-                                    <li>Universal window management system</li>
-                                    <li>Advanced window snapping (Windows 11 style)</li>
-                                    <li>Dynamic taskbar positioning</li>
-                                    <li>Customizable desktop layout</li>
-                                    <li>File management integration</li>
-                                    <li>Built-in productivity apps</li>
-                                </ul>
+                                <div class="tech-specs">
+                                    <div class="spec-item">
+                                        <strong>Architecture:</strong> Modern Web Technologies
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Rendering Engine:</strong> Hardware-Accelerated Graphics
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Window Management:</strong> Advanced Multi-Window System
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Memory Management:</strong> Optimized Resource Allocation
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>File System:</strong> Virtual File System with Real-time Access
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <h3>Development Information</h3>
+                            <div class="system-info-card">
+                                <div class="dev-info">
+                                    <div class="spec-item">
+                                        <strong>Version:</strong> 1.0.0 Professional
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Build Date:</strong> July 2025
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>License:</strong> Professional Desktop Environment
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Developer:</strong> L-Dev31 Technologies
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -342,18 +383,34 @@ if (typeof SettingsApp === 'undefined') {
 
         const element = window.element;
 
-        // Load current taskbar settings from localStorage
+        // Load current taskbar settings - try from taskbarManager first, then localStorage
         try {
-            const settings = JSON.parse(localStorage.getItem('desktop-settings')) || {};
+            let currentPosition = 'bottom';
+            let currentAlignment = 'center';
             
-            const currentPosition = settings.taskbarPosition || 'bottom';
-            const currentAlignment = settings.taskbarAlignment || 'center';
+            // Get current settings from taskbarManager if available
+            if (window.taskbarManager && window.taskbarManager.settings) {
+                currentPosition = window.taskbarManager.settings.taskbarPosition || 'bottom';
+                currentAlignment = window.taskbarManager.settings.taskbarAlignment || 'center';
+            } else {
+                // Fallback to localStorage
+                const settings = JSON.parse(localStorage.getItem('desktop-settings')) || {};
+                currentPosition = settings.taskbarPosition || 'bottom';
+                currentAlignment = settings.taskbarAlignment || 'center';
+            }
             
+            // Update radio buttons
             const positionInput = element.querySelector(`input[name="taskbarPosition"][value="${currentPosition}"]`);
             const alignmentInput = element.querySelector(`input[name="taskbarAlignment"][value="${currentAlignment}"]`);
             
-            if (positionInput) positionInput.checked = true;
-            if (alignmentInput) alignmentInput.checked = true;
+            if (positionInput) {
+                positionInput.checked = true;
+                console.log('✅ Loaded taskbar position:', currentPosition);
+            }
+            if (alignmentInput) {
+                alignmentInput.checked = true;
+                console.log('✅ Loaded taskbar alignment:', currentAlignment);
+            }
         } catch (error) {
             console.warn('Could not load taskbar settings:', error);
         }
@@ -382,6 +439,9 @@ if (typeof SettingsApp === 'undefined') {
         // Use the global taskbarManager
         if (window.taskbarManager) {
             window.taskbarManager.updateTaskbarPosition(position);
+            console.log('✅ Taskbar position updated to:', position);
+        } else {
+            console.warn('⚠️ TaskbarManager not available');
         }
     }
 
@@ -389,6 +449,9 @@ if (typeof SettingsApp === 'undefined') {
         // Use the global taskbarManager
         if (window.taskbarManager) {
             window.taskbarManager.updateTaskbarAlignment(alignment);
+            console.log('✅ Taskbar alignment updated to:', alignment);
+        } else {
+            console.warn('⚠️ TaskbarManager not available');
         }
     }
 
@@ -399,59 +462,109 @@ if (typeof SettingsApp === 'undefined') {
         reader.onload = (e) => {
             const imageUrl = e.target.result;
             
-            // Update desktop background
-            document.body.style.backgroundImage = `url(${imageUrl})`;
-            
-            // Update wallpaper preview
-            const preview = document.querySelector('#currentWallpaper');
-            if (preview) {
-                preview.src = imageUrl;
-            }
+            try {
+                // Update desktop background - try background element first, then body
+                const backgroundElement = document.querySelector('.background');
+                if (backgroundElement) {
+                    backgroundElement.style.backgroundImage = `url(${imageUrl})`;
+                    console.log('✅ Updated background element');
+                } else {
+                    document.body.style.backgroundImage = `url(${imageUrl})`;
+                    console.log('✅ Updated body background');
+                }
+                
+                // Update wallpaper preview in Settings
+                const preview = document.querySelector('#currentWallpaper');
+                if (preview) {
+                    preview.src = imageUrl;
+                }
 
-            // Save to localStorage
-            localStorage.setItem('customWallpaper', imageUrl);
-            
-            this.showMessage('Wallpaper updated successfully!');
+                // Save to localStorage
+                localStorage.setItem('customWallpaper', imageUrl);
+                
+                console.log('✅ Wallpaper updated and saved successfully');
+            } catch (error) {
+                console.error('❌ Error updating wallpaper:', error);
+            }
         };
+        
+        reader.onerror = () => {
+            console.error('❌ Error reading wallpaper file');
+        };
+        
         reader.readAsDataURL(file);
     }
 
     resetWallpaper() {
-        // Reset to default wallpaper
-        document.body.style.backgroundImage = `url(images/wallpaper.jpg)`;
-        
-        // Update preview
-        const preview = document.querySelector('#currentWallpaper');
-        if (preview) {
-            preview.src = 'images/wallpaper.jpg';
-        }
+        try {
+            // Reset to default wallpaper - try background element first, then body
+            const backgroundElement = document.querySelector('.background');
+            if (backgroundElement) {
+                backgroundElement.style.backgroundImage = `url(images/wallpaper.jpg)`;
+                console.log('✅ Reset background element to default');
+            } else {
+                document.body.style.backgroundImage = `url(images/wallpaper.jpg)`;
+                console.log('✅ Reset body background to default');
+            }
+            
+            // Update preview in Settings
+            const preview = document.querySelector('#currentWallpaper');
+            if (preview) {
+                preview.src = 'images/wallpaper.jpg';
+            }
 
-        // Remove from localStorage
-        localStorage.removeItem('customWallpaper');
-        
-        this.showMessage('Wallpaper reset to default!');
+            // Remove custom wallpaper from localStorage
+            localStorage.removeItem('customWallpaper');
+            
+            console.log('✅ Wallpaper reset to default successfully');
+        } catch (error) {
+            console.error('❌ Error resetting wallpaper:', error);
+        }
     }
 
     updateWallpaperPreview() {
         const preview = document.querySelector('#currentWallpaper');
-        if (preview) {
-            // Get actual computed background image
-            const computedStyle = window.getComputedStyle(document.body);
-            const currentBg = computedStyle.backgroundImage;
-            
-            if (currentBg && currentBg !== 'none') {
-                // Extract URL from CSS background-image property
-                const url = currentBg.match(/url\(["']?([^"']*)["']?\)/);
-                if (url && url[1]) {
-                    preview.src = url[1];
-                } else {
-                    // Fallback to default wallpaper
-                    preview.src = 'images/wallpaper.jpg';
-                }
-            } else {
-                // No background image, use default
-                preview.src = 'images/wallpaper.jpg';
+        if (!preview) return;
+        
+        try {
+            // First check if there's a custom wallpaper in localStorage
+            const customWallpaper = localStorage.getItem('customWallpaper');
+            if (customWallpaper) {
+                preview.src = customWallpaper;
+                console.log('✅ Using custom wallpaper from localStorage');
+                return;
             }
+            
+            // Get actual computed background image from the body or background element
+            const backgroundElement = document.querySelector('.background');
+            const bodyStyle = window.getComputedStyle(document.body);
+            const backgroundStyle = backgroundElement ? window.getComputedStyle(backgroundElement) : null;
+            
+            let currentBg = null;
+            
+            // Check background element first, then body
+            if (backgroundStyle && backgroundStyle.backgroundImage !== 'none') {
+                currentBg = backgroundStyle.backgroundImage;
+            } else if (bodyStyle.backgroundImage !== 'none') {
+                currentBg = bodyStyle.backgroundImage;
+            }
+            
+            if (currentBg) {
+                // Extract URL from CSS background-image property
+                const urlMatch = currentBg.match(/url\(["']?([^"']*)["']?\)/);
+                if (urlMatch && urlMatch[1]) {
+                    preview.src = urlMatch[1];
+                    console.log('✅ Using current background:', urlMatch[1]);
+                    return;
+                }
+            }
+            
+            // Final fallback to default wallpaper
+            preview.src = 'images/wallpaper.jpg';
+            console.log('✅ Using default wallpaper fallback');
+        } catch (error) {
+            console.warn('Error updating wallpaper preview:', error);
+            preview.src = 'images/wallpaper.jpg';
         }
     }
 
@@ -510,14 +623,29 @@ if (typeof SettingsApp === 'undefined') {
             if (window.userProfile) {
                 window.userProfile.user.name = userData.name;
                 window.userProfile.user.profilePicture = userData.profilePicture;
+                console.log('✅ Updated global userProfile');
                 
-                // Update UI interface
-                if (window.updateUserInterface) {
+                // Update UI interface - check if function exists
+                if (typeof window.updateUserInterface === 'function') {
                     window.updateUserInterface();
+                    console.log('✅ Called updateUserInterface');
                 }
             }
+            
+            // Update taskbar user info if it exists
+            const taskbarUser = document.querySelector('#userProfile');
+            if (taskbarUser) {
+                const userImg = taskbarUser.querySelector('img');
+                const userName = taskbarUser.querySelector('.user-name');
+                
+                if (userImg) userImg.src = userData.profilePicture;
+                if (userName) userName.textContent = userData.name;
+                console.log('✅ Updated taskbar user info');
+            }
+            
+            console.log('✅ User data saved successfully');
         } catch (error) {
-            console.error('Could not save user data:', error);
+            console.error('❌ Could not save user data:', error);
         }
     }
 
@@ -601,12 +729,20 @@ if (typeof SettingsApp === 'undefined') {
             const userAgent = navigator.userAgent;
             let browser = 'Unknown';
             
-            if (userAgent.includes('Chrome')) browser = 'Chrome';
-            else if (userAgent.includes('Firefox')) browser = 'Firefox';
-            else if (userAgent.includes('Safari')) browser = 'Safari';
-            else if (userAgent.includes('Edge')) browser = 'Edge';
+            if (userAgent.includes('Chrome')) browser = 'Chromium-based';
+            else if (userAgent.includes('Firefox')) browser = 'Gecko';
+            else if (userAgent.includes('Safari')) browser = 'WebKit';
+            else if (userAgent.includes('Edge')) browser = 'EdgeHTML/Chromium';
             
             browserInfo.textContent = browser;
+        }
+        
+        // Update platform info
+        const platformInfo = element.querySelector('#platformInfo');
+        if (platformInfo) {
+            const platform = navigator.platform || navigator.userAgentData?.platform || 'Unknown';
+            const arch = navigator.userAgentData?.brands?.[0]?.brand || 'Unknown Architecture';
+            platformInfo.textContent = `${platform} (${arch})`;
         }
     }
 
@@ -614,6 +750,7 @@ if (typeof SettingsApp === 'undefined') {
         if (this.windowId && this.windowManager) {
             this.windowManager.closeWindow(this.windowId);
             this.windowId = null;
+            console.log('✅ Settings window closed');
         }
     }
 }

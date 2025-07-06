@@ -1,8 +1,3 @@
-// ======================================
-// FILES APP - MODERNIZED WITH WINDOW MANAGER
-// ======================================
-
-// Avoid redeclaration if already defined
 if (typeof FilesApp === 'undefined') {
     class FilesApp {
         constructor() {

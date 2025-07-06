@@ -18,12 +18,21 @@ if (typeof ScheduleApp === 'undefined') {
 
         // Compatible avec app-launcher.js
         async init() {
-            return await this.launch();
+            return await this.open();
         }
 
         // Method expected by app-launcher.js
         async open() {
-            return await this.launch();
+            // STRICT: Check if already launched
+            if (this.windowId && window.windowManager && window.windowManager.getWindow(this.windowId)) {
+                console.log('📅 Schedule app already open, focusing existing window');
+                window.windowManager.focusWindow(this.windowId);
+                return true; // Prevent duplicate
+            }
+            
+            // Only launch if not already open
+            const result = await this.launch();
+            return result ? true : false;
         }
 
         async launch() {
@@ -258,10 +267,8 @@ if (typeof ScheduleApp === 'undefined') {
                      style="background-color: ${appointment.color};">
                     <div class="appointment-header">
                         <div class="appointment-title">${appointment.clientName}</div>
-                        <div class="appointment-duration">${appointment.duration}min</div>
                     </div>
                     <div class="appointment-type">${appointment.type}</div>
-                    <div class="appointment-time">${appointment.time}</div>
                     <div class="appointment-notes">${appointment.notes}</div>
                     <div class="appointment-status status-${appointment.status}">
                         ${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
@@ -285,6 +292,12 @@ if (typeof ScheduleApp === 'undefined') {
                 });
                 totalEl.textContent = weekAppointments.length;
             }
+        }
+
+        // Method called when window is closed
+        onWindowClose() {
+            this.windowId = null;
+            console.log('📅 Schedule app window closed');
         }
     }
 
