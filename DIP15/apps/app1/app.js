@@ -145,7 +145,36 @@ if (typeof FilesApp === 'undefined') {
                 const itemType = fileItem.dataset.type;
                 
                 if (itemType === 'file') {
-                    await this.openFile(itemName);
+                    // Use Universal Launcher for file opening
+                    if (window.universalLauncher) {
+                        const item = { name: itemName, type: 'file' };
+                        const launchItem = window.universalLauncher.createLaunchItem(item);
+                        await window.universalLauncher.launch(launchItem, { 
+                            basePath: 'home',
+                            currentPath: this.currentPath === 'Home' ? '' : this.currentPath
+                        });
+                    } else {
+                        // Fallback to old system
+                        await this.openFile(itemName);
+                    }
+                } else if (itemType === 'app') {
+                    // Use Universal Launcher for app opening
+                    if (window.universalLauncher) {
+                        // Find the app data from the current items
+                        const items = await this.getFolderContent(this.currentPath);
+                        const appItem = items.find(i => i.name === itemName);
+                        if (appItem) {
+                            const launchItem = window.universalLauncher.createLaunchItem(appItem);
+                            await window.universalLauncher.launch(launchItem);
+                        }
+                    } else {
+                        // Fallback - need to find app ID
+                        const items = await this.getFolderContent(this.currentPath);
+                        const appItem = items.find(i => i.name === itemName);
+                        if (appItem && (appItem.appId || appItem.id)) {
+                            window.appLauncher.launchApp(appItem.appId || appItem.id);
+                        }
+                    }
                 }
             }
         });

@@ -69,10 +69,6 @@ if (typeof SettingsApp === 'undefined') {
                         <i class="fas fa-tasks"></i>
                         <span>Taskbar</span>
                     </div>
-                    <div class="settings-category" data-category="desktop">
-                        <i class="fas fa-desktop"></i>
-                        <span>Desktop</span>
-                    </div>
                     <div class="settings-category" data-category="wallpaper">
                         <i class="fas fa-image"></i>
                         <span>Wallpaper</span>
@@ -439,13 +435,22 @@ if (typeof SettingsApp === 'undefined') {
     updateWallpaperPreview() {
         const preview = document.querySelector('#currentWallpaper');
         if (preview) {
-            const currentBg = document.body.style.backgroundImage;
-            if (currentBg) {
+            // Get actual computed background image
+            const computedStyle = window.getComputedStyle(document.body);
+            const currentBg = computedStyle.backgroundImage;
+            
+            if (currentBg && currentBg !== 'none') {
                 // Extract URL from CSS background-image property
                 const url = currentBg.match(/url\(["']?([^"']*)["']?\)/);
                 if (url && url[1]) {
                     preview.src = url[1];
+                } else {
+                    // Fallback to default wallpaper
+                    preview.src = 'images/wallpaper.jpg';
                 }
+            } else {
+                // No background image, use default
+                preview.src = 'images/wallpaper.jpg';
             }
         }
     }

@@ -19,6 +19,16 @@ class WindowManager {
     createWindow(options = {}) {
         const windowId = options.id || `window-${Date.now()}`;
         
+        // STRICT: Check if app already has a window open
+        if (options.appId) {
+            for (const [id, window] of this.windows) {
+                if (window.appId === options.appId) {
+                    console.log(`⛔ App ${options.appId} already has window ${id}, focusing existing window`);
+                    this.focusWindow(id);
+                    return window;
+                }
+            }
+        }
         const defaultOptions = {
             title: 'Untitled Window',
             x: 100,
@@ -560,6 +570,11 @@ class WindowManager {
         // Remove from taskbar
         this.removeFromTaskbar(windowObj);
         
+        // Cleanup app launcher
+        if (window.appLauncher && window.appLauncher.onWindowClosed) {
+            window.appLauncher.onWindowClosed(windowId);
+        }
+        
         // Remove from windows map
         this.windows.delete(windowId);
         
@@ -600,20 +615,19 @@ class WindowManager {
             // Use existing pinned icon and update it for the new window
             taskbarIcon.dataset.windowId = windowObj.id;
             
-            // Store original click handler if it's a pinned app
-            if (taskbarIcon.dataset.pinned === 'true' && !taskbarIcon.originalClickHandler) {
-                // Clone the existing event listeners
-                const originalHandler = taskbarIcon.cloneNode(true);
-                taskbarIcon.originalClickHandler = originalHandler.onclick;
-            }
-            
-            // Remove existing click listeners
+            // CRITICAL FIX: Remove ALL existing event listeners properly
+            // Clone node to completely remove all event listeners
             const newIcon = taskbarIcon.cloneNode(true);
-            taskbarIcon.parentNode.replaceChild(newIcon, taskbarIcon);
+            if (taskbarIcon.parentNode) {
+                taskbarIcon.parentNode.replaceChild(newIcon, taskbarIcon);
+            }
             taskbarIcon = newIcon;
             
-            // Add window-specific click handler
-            taskbarIcon.addEventListener('click', () => {
+            // Add ONLY the window-specific click handler (no more app launcher calls)
+            taskbarIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log(`🎯 Taskbar click for app ${windowObj.config.appId}, window ${windowObj.id}`);
                 this.handleTaskbarClick(windowObj.id);
             });
         }
@@ -660,13 +674,24 @@ class WindowManager {
                 
                 // Restore original click handler for pinned app
                 const newIcon = taskbarIcon.cloneNode(true);
-                taskbarIcon.parentNode.replaceChild(newIcon, taskbarIcon);
-                
-                // Re-add the original app launch functionality
-                newIcon.addEventListener('click', () => {
-                    console.log(`🚀 Launched ${taskbarIcon.alt} (${taskbarIcon.dataset.appId})`);
-                    window.appLauncher.launchApp(taskbarIcon.dataset.appId);
-                });
+                if (taskbarIcon.parentNode) {
+                    taskbarIcon.parentNode.replaceChild(newIcon, taskbarIcon);
+                    
+                    // Re-add the original app launch functionality using Universal Launcher
+                    newIcon.addEventListener('click', () => {
+                        const appId = newIcon.dataset.appId;
+                        console.log(`🚀 Launched ${newIcon.alt} (${appId}) from restored taskbar`);
+                        
+                        // Use Universal Launcher if available
+                        if (window.universalLauncher) {
+                            const launchItem = window.universalLauncher.createLaunchItem({ id: appId, appId: appId });
+                            window.universalLauncher.launch(launchItem);
+                        } else {
+                            // Fallback to app launcher
+                            window.appLauncher.launchApp(appId);
+                        }
+                    });
+                }
             }
             this.taskbarApps.delete(windowObj.id);
         }
