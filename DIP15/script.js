@@ -468,12 +468,35 @@ async function loadDesktopItems() {
                 if (clickTimeout) {
                     clearTimeout(clickTimeout);
                     clickTimeout = null;
-                    if (item.isDirectory || item.type === 'folder') {
-                        window.appLauncher.launchApp('app1', { path: item.name });
-                    } else if (item.type === 'app') {
-                        window.appLauncher.launchApp(item.appId);
-                    } else if (item.name === 'Files') {
-                        window.appLauncher.launchApp('app1');
+                    
+                    // Use Universal Launcher for all desktop items
+                    if (window.universalLauncher) {
+                        const launchItem = window.universalLauncher.createLaunchItem(item);
+                        window.universalLauncher.launch(launchItem, { basePath: 'home' });
+                    } else {
+                        // Fallback to old system
+                        if (item.isDirectory || item.type === 'folder') {
+                            window.appLauncher.launchApp('app1', { path: item.name });
+                        } else if (item.type === 'app') {
+                            window.appLauncher.launchApp(item.appId);
+                        } else if (item.name === 'Files') {
+                            window.appLauncher.launchApp('app1');
+                        } else if (item.type === 'file') {
+                            // Handle file opening based on extension
+                            const extension = item.name.split('.').pop().toLowerCase();
+                            if (['txt', 'md', 'markdown', 'json', 'js', 'css', 'html', 'xml', 'csv', 'log'].includes(extension)) {
+                                // Open text files in Notes app
+                                fetch(`home/${item.name}`)
+                                    .then(response => response.text())
+                                    .then(content => {
+                                        window.appLauncher.launchApp('app3', { fileName: item.name, content: content });
+                                    })
+                                    .catch(error => {
+                                        console.error('Failed to load file:', error);
+                                        window.appLauncher.launchApp('app3', { fileName: item.name, content: '' });
+                                    });
+                            }
+                        }
                     }
                 } else {
                     clickTimeout = setTimeout(() => {
@@ -540,7 +563,15 @@ function loadTaskbarApps(apps) {
         
         appElement.addEventListener('click', () => {
             console.log(`🚀 Launched ${app.name} (${app.id})`);
-            window.appLauncher.launchApp(app.id);
+            
+            // Use Universal Launcher for taskbar apps
+            if (window.universalLauncher) {
+                const launchItem = window.universalLauncher.createLaunchItem(app);
+                window.universalLauncher.launch(launchItem);
+            } else {
+                // Fallback to old system
+                window.appLauncher.launchApp(app.id);
+            }
         });
         
         taskbarApps.appendChild(appElement);
@@ -562,7 +593,15 @@ function loadSettingsApps(apps) {
         
         appItem.addEventListener('click', () => {
             console.log(`🚀 Launched ${app.name} (${app.id}) from settings`);
-            window.appLauncher.launchApp(app.id);
+            
+            // Use Universal Launcher for settings apps
+            if (window.universalLauncher) {
+                const launchItem = window.universalLauncher.createLaunchItem(app);
+                window.universalLauncher.launch(launchItem);
+            } else {
+                // Fallback to old system
+                window.appLauncher.launchApp(app.id);
+            }
             if (taskbarManager) {
                 taskbarManager.hideStartMenu();
             }

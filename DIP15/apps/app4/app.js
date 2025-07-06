@@ -4,7 +4,12 @@ if (typeof WeatherApp === 'undefined') {
         constructor() {
             this.windowId = null;
             this.weatherData = null;
-            this.currentLocation = 'Paris';
+            this.currentLocation = 'St.Marie';
+            this.apiKey = 'demo'; 
+            this.coordinates = {
+                lat: 16.3127,  
+                lon: -61.7947  
+            };
         }
 
         static getInstance() {
@@ -19,11 +24,16 @@ if (typeof WeatherApp === 'undefined') {
             return await this.launch();
         }
 
+        // Method expected by app-launcher.js
+        async open() {
+            return await this.launch();
+        }
+
         async launch() {
             try {
                 console.log('🌤️ Launching Weather app...');
                 
-                const window = window.windowManager.createWindow({
+                const weatherWindow = window.windowManager.createWindow({
                     id: `weather-${Date.now()}`,
                     title: 'Weather',
                     x: 200,
@@ -35,12 +45,11 @@ if (typeof WeatherApp === 'undefined') {
                     className: 'weather-app-window'
                 });
 
-                this.windowId = window.id;
+                this.windowId = weatherWindow.id;
                 this.setupWeatherElements();
-                await this.loadWeatherData();
                 
                 console.log('✅ Weather app launched successfully');
-                return window;
+                return weatherWindow;
             } catch (error) {
                 console.error('Failed to initialize Weather app:', error);
             }
@@ -72,32 +81,28 @@ if (typeof WeatherApp === 'undefined') {
 
                     <div class="weather-details">
                         <div class="detail-item">
-                            <i class="fas fa-eye"></i>
-                            <span>Visibility</span>
-                            <span id="visibility">-- km</span>
-                        </div>
-                        <div class="detail-item">
                             <i class="fas fa-wind"></i>
                             <span>Wind</span>
                             <span id="windSpeed">-- km/h</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span>Pressure</span>
-                            <span id="pressure">-- hPa</span>
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-thermometer-half"></i>
                             <span>UV Index</span>
                             <span id="uvIndex">--</span>
                         </div>
+                        <div class="detail-item">
+                            <i class="fas fa-sun"></i>
+                            <span>Sunrise</span>
+                            <span id="sunrise">--:--</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-moon"></i>
+                            <span>Sunset</span>
+                            <span id="sunset">--:--</span>
+                        </div>
                     </div>
 
                     <div class="weather-footer">
-                        <button class="refresh-btn" id="refreshBtn">
-                            <i class="fas fa-sync-alt"></i>
-                            Refresh
-                        </button>
                         <span class="last-updated" id="lastUpdated">Last updated: --</span>
                     </div>
                 </div>
@@ -105,95 +110,204 @@ if (typeof WeatherApp === 'undefined') {
         }
 
         setupWeatherElements() {
-            const refreshBtn = document.getElementById('refreshBtn');
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', () => this.loadWeatherData());
+            // Start automatic refresh every 5 minutes
+            this.startAutoRefresh();
+        }
+
+        startAutoRefresh() {
+            // Refresh immediately
+            this.loadWeatherData();
+            
+            // Then refresh every 5 minutes (300000 ms)
+            this.refreshInterval = setInterval(() => {
+                this.loadWeatherData();
+            }, 300000);
+        }
+
+        stopAutoRefresh() {
+            if (this.refreshInterval) {
+                clearInterval(this.refreshInterval);
+                this.refreshInterval = null;
             }
         }
 
         async loadWeatherData() {
             try {
-                // Simulate weather data (in a real app, you'd use a weather API)
-                const weatherConditions = [
-                    { 
-                        condition: 'sunny', 
-                        icon: 'fas fa-sun', 
-                        description: 'Sunny', 
-                        bg: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
-                        temp: 24,
-                        feelsLike: 27,
-                        humidity: 45,
-                        visibility: 15,
-                        wind: 12,
-                        pressure: 1013,
-                        uvIndex: 6
-                    },
-                    { 
-                        condition: 'cloudy', 
-                        icon: 'fas fa-cloud', 
-                        description: 'Cloudy', 
-                        bg: 'linear-gradient(135deg, #636e72 0%, #2d3436 100%)',
-                        temp: 18,
-                        feelsLike: 19,
-                        humidity: 65,
-                        visibility: 10,
-                        wind: 8,
-                        pressure: 1008,
-                        uvIndex: 3
-                    },
-                    { 
-                        condition: 'rainy', 
-                        icon: 'fas fa-cloud-rain', 
-                        description: 'Light Rain', 
-                        bg: 'linear-gradient(135deg, #81ecec 0%, #00b894 100%)',
-                        temp: 15,
-                        feelsLike: 13,
-                        humidity: 85,
-                        visibility: 8,
-                        wind: 15,
-                        pressure: 1005,
-                        uvIndex: 1
-                    },
-                    { 
-                        condition: 'stormy', 
-                        icon: 'fas fa-bolt', 
-                        description: 'Thunderstorm', 
-                        bg: 'linear-gradient(135deg, #2d3436 0%, #000000 100%)',
-                        temp: 22,
-                        feelsLike: 20,
-                        humidity: 90,
-                        visibility: 5,
-                        wind: 25,
-                        pressure: 998,
-                        uvIndex: 0
-                    },
-                    { 
-                        condition: 'snowy', 
-                        icon: 'fas fa-snowflake', 
-                        description: 'Snow', 
-                        bg: 'linear-gradient(135deg, #ddd6fe 0%, #a78bfa 100%)',
-                        temp: -2,
-                        feelsLike: -5,
-                        humidity: 75,
-                        visibility: 6,
-                        wind: 10,
-                        pressure: 1020,
-                        uvIndex: 2
-                    }
-                ];
-
-                // Simulate API call delay
-                await new Promise(resolve => setTimeout(resolve, 500));
+                // Afficher un état de chargement
+                this.showLoadingState();
                 
-                // Get random weather condition
-                const weather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+                // Essayer de récupérer les vraies données météo
+                let weather = await this.fetchRealWeatherData();
+                
+                // Si l'API échoue, utiliser des données simulées tropicales réalistes pour Deshaies
+                if (!weather) {
+                    weather = this.getFallbackWeatherData();
+                }
                 
                 this.updateWeatherDisplay(weather);
                 
             } catch (error) {
                 console.error('Failed to load weather data:', error);
-                this.showError();
+                // Utiliser des données de fallback en cas d'erreur
+                const fallbackWeather = this.getFallbackWeatherData();
+                this.updateWeatherDisplay(fallbackWeather);
             }
+        }
+
+        async fetchRealWeatherData() {
+            try {
+                // Use OpenWeatherMap API (free with limitations)
+                const url = `https://api.openweathermap.org/data/2.5/weather?lat=${this.coordinates.lat}&lon=${this.coordinates.lon}&appid=${this.apiKey}&units=metric&lang=en`;
+                
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Convert API data to our weather format
+                return this.convertApiDataToWeatherFormat(data);
+                
+            } catch (error) {
+                console.log('🌤️ Using demo weather data (API not configured):', error.message);
+                return null;
+            }
+        }
+
+        convertApiDataToWeatherFormat(apiData) {
+            // Map OpenWeatherMap weather codes to our icons
+            const weatherIconMap = {
+                '01d': { icon: 'fas fa-sun', condition: 'sunny', bg: 'linear-gradient(135deg, #FDB813 0%, #FF6B35 100%)' },
+                '01n': { icon: 'fas fa-moon', condition: 'clear', bg: 'linear-gradient(135deg, #2C3E50 0%, #4A6741 100%)' },
+                '02d': { icon: 'fas fa-cloud-sun', condition: 'partly-cloudy', bg: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)' },
+                '02n': { icon: 'fas fa-cloud-moon', condition: 'partly-cloudy', bg: 'linear-gradient(135deg, #636e72 0%, #2d3436 100%)' },
+                '03d': { icon: 'fas fa-cloud', condition: 'cloudy', bg: 'linear-gradient(135deg, #636e72 0%, #2d3436 100%)' },
+                '03n': { icon: 'fas fa-cloud', condition: 'cloudy', bg: 'linear-gradient(135deg, #636e72 0%, #2d3436 100%)' },
+                '04d': { icon: 'fas fa-cloud', condition: 'cloudy', bg: 'linear-gradient(135deg, #636e72 0%, #2d3436 100%)' },
+                '04n': { icon: 'fas fa-cloud', condition: 'cloudy', bg: 'linear-gradient(135deg, #636e72 0%, #2d3436 100%)' },
+                '09d': { icon: 'fas fa-cloud-rain', condition: 'rainy', bg: 'linear-gradient(135deg, #81ecec 0%, #00b894 100%)' },
+                '09n': { icon: 'fas fa-cloud-rain', condition: 'rainy', bg: 'linear-gradient(135deg, #81ecec 0%, #00b894 100%)' },
+                '10d': { icon: 'fas fa-cloud-sun-rain', condition: 'rainy', bg: 'linear-gradient(135deg, #81ecec 0%, #00b894 100%)' },
+                '10n': { icon: 'fas fa-cloud-rain', condition: 'rainy', bg: 'linear-gradient(135deg, #81ecec 0%, #00b894 100%)' },
+                '11d': { icon: 'fas fa-bolt', condition: 'stormy', bg: 'linear-gradient(135deg, #2d3436 0%, #000000 100%)' },
+                '11n': { icon: 'fas fa-bolt', condition: 'stormy', bg: 'linear-gradient(135deg, #2d3436 0%, #000000 100%)' },
+                '13d': { icon: 'fas fa-snowflake', condition: 'snowy', bg: 'linear-gradient(135deg, #ddd6fe 0%, #a78bfa 100%)' },
+                '13n': { icon: 'fas fa-snowflake', condition: 'snowy', bg: 'linear-gradient(135deg, #ddd6fe 0%, #a78bfa 100%)' },
+                '50d': { icon: 'fas fa-smog', condition: 'foggy', bg: 'linear-gradient(135deg, #636e72 0%, #2d3436 100%)' },
+                '50n': { icon: 'fas fa-smog', condition: 'foggy', bg: 'linear-gradient(135deg, #636e72 0%, #2d3436 100%)' }
+            };
+
+            const iconCode = apiData.weather[0].icon;
+            const weatherInfo = weatherIconMap[iconCode] || weatherIconMap['01d'];
+
+            return {
+                condition: weatherInfo.condition,
+                icon: weatherInfo.icon,
+                description: apiData.weather[0].description,
+                bg: weatherInfo.bg,
+                temp: Math.round(apiData.main.temp),
+                feelsLike: Math.round(apiData.main.feels_like),
+                humidity: apiData.main.humidity,
+                wind: Math.round(apiData.wind.speed * 3.6), // Convert m/s to km/h
+                uvIndex: 'N/A', // Basic API doesn't provide UV, requires separate call
+                sunrise: this.formatTime(new Date(apiData.sys.sunrise * 1000)),
+                sunset: this.formatTime(new Date(apiData.sys.sunset * 1000))
+            };
+        }
+
+        formatTime(date) {
+            return date.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+        }
+
+        getFallbackWeatherData() {
+            // Realistic weather data for Deshaies, Guadeloupe (tropical climate)
+            const tropicalWeatherConditions = [
+                { 
+                    condition: 'sunny', 
+                    icon: 'fas fa-sun', 
+                    description: 'Sunny', 
+                    bg: 'linear-gradient(135deg, #FDB813 0%, #FF6B35 100%)',
+                    temp: 29,
+                    feelsLike: 33,
+                    humidity: 75,
+                    wind: 18,
+                    uvIndex: 8,
+                    sunrise: '06:15',
+                    sunset: '18:45'
+                },
+                { 
+                    condition: 'partly-cloudy', 
+                    icon: 'fas fa-cloud-sun', 
+                    description: 'Partly Cloudy', 
+                    bg: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
+                    temp: 27,
+                    feelsLike: 31,
+                    humidity: 80,
+                    wind: 15,
+                    uvIndex: 6,
+                    sunrise: '06:20',
+                    sunset: '18:40'
+                },
+                { 
+                    condition: 'rainy', 
+                    icon: 'fas fa-cloud-rain', 
+                    description: 'Tropical Showers', 
+                    bg: 'linear-gradient(135deg, #81ecec 0%, #00b894 100%)',
+                    temp: 25,
+                    feelsLike: 28,
+                    humidity: 90,
+                    wind: 22,
+                    uvIndex: 3,
+                    sunrise: '06:25',
+                    sunset: '18:35'
+                },
+                { 
+                    condition: 'stormy', 
+                    icon: 'fas fa-bolt', 
+                    description: 'Tropical Storm', 
+                    bg: 'linear-gradient(135deg, #2d3436 0%, #000000 100%)',
+                    temp: 26,
+                    feelsLike: 29,
+                    humidity: 95,
+                    wind: 35,
+                    uvIndex: 1,
+                    sunrise: '06:18',
+                    sunset: '18:42'
+                }
+            ];
+
+            // Simulate a selection based on time for more realism
+            const hour = new Date().getHours();
+            let weatherIndex;
+            
+            if (hour >= 6 && hour <= 11) {
+                // Morning: often sunny
+                weatherIndex = Math.random() < 0.7 ? 0 : 1;
+            } else if (hour >= 12 && hour <= 16) {
+                // Afternoon: can be stormy (rainy season)
+                weatherIndex = Math.random() < 0.4 ? 0 : (Math.random() < 0.5 ? 2 : 3);
+            } else {
+                // Evening/night: generally calmer
+                weatherIndex = Math.random() < 0.6 ? 1 : 0;
+            }
+            
+            return tropicalWeatherConditions[weatherIndex];
+        }
+
+        showLoadingState() {
+            const container = document.getElementById('weatherContainer');
+            if (!container) return;
+
+            // Show loading state
+            document.getElementById('cityName').textContent = 'Loading...';
+            document.getElementById('countryName').textContent = 'Updating...';
+            document.getElementById('temperature').textContent = '--°';
+            document.getElementById('weatherCondition').textContent = 'Fetching data...';
         }
 
         updateWeatherDisplay(weather) {
@@ -205,7 +319,7 @@ if (typeof WeatherApp === 'undefined') {
 
             // Update city info
             document.getElementById('cityName').textContent = this.currentLocation;
-            document.getElementById('countryName').textContent = 'France';
+            document.getElementById('countryName').textContent = 'Lesser Antilles';
 
             // Update main weather icon
             const mainIcon = document.getElementById('mainWeatherIcon');
@@ -220,15 +334,22 @@ if (typeof WeatherApp === 'undefined') {
             document.getElementById('humidity').textContent = `Humidity: ${weather.humidity}%`;
 
             // Update details
-            document.getElementById('visibility').textContent = `${weather.visibility} km`;
             document.getElementById('windSpeed').textContent = `${weather.wind} km/h`;
-            document.getElementById('pressure').textContent = `${weather.pressure} hPa`;
             document.getElementById('uvIndex').textContent = weather.uvIndex;
+            document.getElementById('sunrise').textContent = weather.sunrise;
+            document.getElementById('sunset').textContent = weather.sunset;
 
+            // Update last updated time with auto-refresh indicator
             // Update last updated time
             const now = new Date();
             document.getElementById('lastUpdated').textContent = 
-                `Last updated: ${now.toLocaleTimeString()}`;
+                `Updated: ${now.toLocaleTimeString()}`;
+        }
+
+        // Method called when window is closed
+        onWindowClose() {
+            this.stopAutoRefresh();
+            console.log('🌤️ Weather app closed, auto-refresh stopped');
         }
 
         showError() {
