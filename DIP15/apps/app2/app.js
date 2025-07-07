@@ -181,43 +181,17 @@ if (typeof SettingsApp === 'undefined') {
                         </div>
                         
                         <div class="settings-group">
-                            <h3>Technical Specifications</h3>
-                            <div class="system-info-card">
-                                <div class="tech-specs">
-                                    <div class="spec-item">
-                                        <strong>Architecture:</strong> Modern Web Technologies
-                                    </div>
-                                    <div class="spec-item">
-                                        <strong>Rendering Engine:</strong> Hardware-Accelerated Graphics
-                                    </div>
-                                    <div class="spec-item">
-                                        <strong>Window Management:</strong> Advanced Multi-Window System
-                                    </div>
-                                    <div class="spec-item">
-                                        <strong>Memory Management:</strong> Optimized Resource Allocation
-                                    </div>
-                                    <div class="spec-item">
-                                        <strong>File System:</strong> Virtual File System with Real-time Access
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="settings-group">
                             <h3>Development Information</h3>
                             <div class="system-info-card">
                                 <div class="dev-info">
                                     <div class="spec-item">
-                                        <strong>Version:</strong> 1.0.0 Professional
+                                        <strong>Version:</strong> 0.7.0 DEV 
                                     </div>
                                     <div class="spec-item">
                                         <strong>Build Date:</strong> July 2025
                                     </div>
                                     <div class="spec-item">
-                                        <strong>License:</strong> Professional Desktop Environment
-                                    </div>
-                                    <div class="spec-item">
-                                        <strong>Developer:</strong> L-Dev31 Technologies
+                                        <strong>Developer:</strong> Léo TOSKU
                                     </div>
                                 </div>
                             </div>
