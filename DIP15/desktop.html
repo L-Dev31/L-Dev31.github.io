@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIP15 - Desktop Environment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" href="images/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="window-styles.css">
+    <link rel="stylesheet" href="apps/app1/style.css">
+    <link rel="stylesheet" href="apps/app2/style.css">
+    <link rel="stylesheet" href="apps/app3/style.css">
+    <link rel="stylesheet" href="apps/app4/style.css">
+    <link rel="stylesheet" href="apps/app6/style.css">
+    <link rel="stylesheet" href="apps/app8/style.css">
+    <link rel="stylesheet" href="apps/app9/style.css">
+</head>
+<body>
+    <!-- Desktop Background -->
+    <div class="desktop-background" id="desktopBackground"></div>
+    
+    <!-- Desktop -->
+    <div class="desktop active" id="desktop">
+        <!-- Desktop items will be loaded dynamically -->
+        <div class="desktop-icons" id="desktopIcons"></div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar" id="taskbar">
+        <div class="taskbar-center" id="taskbarCenter">
+            <div class="start-button" id="startButton">
+                <img src="images/icon.png" alt="Start" class="start-icon">
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Type here to search">
+            </div>
+            <div class="taskbar-apps" id="taskbarApps">
+                <!-- Apps will be loaded dynamically from apps.json -->
+            </div>
+        </div>
+        
+        <div class="taskbar-right" id="taskbarRight">
+            <div class="system-tray">
+                <span class="time-display" id="desktopTime">12:00 PM</span>
+                <span class="date-display" id="desktopDate">1/7/2025</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Panel (moved outside desktop for proper z-index) -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h3>Recommended</h3>
+            <button class="close-settings" id="closeSettings">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="settings-content">
+            <div class="recommended-apps">
+                <div class="app-grid" id="appGrid">
+                    <!-- Apps will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+        <div class="settings-footer">
+            <div class="footer-user-info">
+                <div class="footer-user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span class="footer-user-name" id="footerUserName">User</span>
+            </div>
+            <button class="footer-logout-button" id="logoutButton" title="Sign out">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Windows will be injected here by WindowManager -->
+    <div id="windows-container"></div>
+
+    <!-- Fade overlay for transitions -->
+    <div id="fadeOverlay"></div>
+
+    <!-- Background slideshow elements for desktop -->
+    <div class="image-indicators" id="imageIndicators" style="display: none;"></div>
+
+    <!-- Scripts -->
+    <script src="get-directory.js"></script>
+    <script src="window-manager.js"></script>
+    <script src="app-launcher.js"></script>
+    <script src="universal-launcher.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="apps/app1/app.js"></script>
+    <script src="apps/app2/app.js"></script>
+    <script src="apps/app3/app.js"></script>
+    <script src="apps/app4/app.js"></script>
+    <script src="apps/app6/app.js"></script>
+    <script src="apps/app8/app.js"></script>
+    <script src="apps/app9/app.js"></script>
+    
+    <!-- Main Desktop Script -->
+    <script src="script.js"></script>
+</body>
+</html>

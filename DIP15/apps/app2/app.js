@@ -79,10 +79,6 @@ if (typeof SettingsApp === 'undefined') {
                         <i class="fas fa-image"></i>
                         <span>Wallpaper</span>
                     </div>
-                    <div class="settings-category" data-category="user">
-                        <i class="fas fa-user"></i>
-                        <span>User Profile</span>
-                    </div>
                     <div class="settings-category" data-category="about">
                         <i class="fas fa-info-circle"></i>
                         <span>About</span>
@@ -135,7 +131,14 @@ if (typeof SettingsApp === 'undefined') {
                             <h3>Change Background</h3>
                             <div class="settings-item">
                                 <label>Upload custom wallpaper:</label>
-                                <input type="file" id="wallpaperInput" accept="image/*">
+                                <div class="file-input-container">
+                                    <input type="file" id="wallpaperInput" accept="image/*" class="hidden-file-input">
+                                    <button type="button" class="btn-file-upload" onclick="document.getElementById('wallpaperInput').click()">
+                                        <i class="fas fa-upload"></i>
+                                        Choose Wallpaper File
+                                    </button>
+                                    <span class="file-name" id="wallpaperFileName">No file selected</span>
+                                </div>
                                 <small>Supported formats: JPG, PNG, GIF, WebP</small>
                             </div>
                             
@@ -145,52 +148,6 @@ if (typeof SettingsApp === 'undefined') {
                                     Reset to Default
                                 </button>
                                 <small>Restore the original wallpaper.jpg</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- User Profile Settings -->
-                    <div class="settings-section" id="user-panel">
-                        <h2>User Profile</h2>
-                        
-                        <div class="settings-group">
-                            <h3>Account Information</h3>
-                            <div class="settings-item">
-                                <div class="user-profile-display">
-                                    <div class="user-avatar-large">
-                                        <img id="userProfileImage" src="images/profile.png" alt="Profile" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
-                                    </div>
-                                    <div class="user-info">
-                                        <h4 id="displayUsername">Keira Mayhew</h4>
-                                        <p>Administrator</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="settings-group">
-                            <h3>Personalization</h3>
-                            <div class="settings-item">
-                                <label>Display name:</label>
-                                <input type="text" id="usernameInput" placeholder="Enter your name" value="Keira Mayhew">
-                            </div>
-                            <div class="settings-item">
-                                <label>Profile picture:</label>
-                                <input type="file" id="profilePictureInput" accept="image/*">
-                                <small>Upload a new profile picture (JPG, PNG)</small>
-                            </div>
-                        </div>
-                        
-                        <div class="settings-group">
-                            <h3>Security</h3>
-                            <div class="settings-item">
-                                <label>New password:</label>
-                                <input type="password" id="newPasswordInput" placeholder="Enter new password">
-                                <button id="changePasswordBtn" class="btn-primary">
-                                    <i class="fas fa-key"></i>
-                                    Change Password
-                                </button>
-                                <small>Password is only used for screen lock simulation</small>
                             </div>
                         </div>
                     </div>
@@ -206,8 +163,8 @@ if (typeof SettingsApp === 'undefined') {
                                     <div class="os-header">
                                         <img src="images/icon.png" alt="DIP15 Icon" class="os-icon-img">
                                         <div class="os-details">
-                                            <div class="os-name">DIP15 Desktop Environment</div>
-                                            <div class="os-version">Professional Virtual Desktop v1.0</div>
+                                            <div class="os-name">The Idyll Desktop Environment</div>
+                                            <div class="os-version">Death in Paradise Season 15</div>
                                         </div>
                                     </div>
                                 </div>
@@ -301,6 +258,7 @@ if (typeof SettingsApp === 'undefined') {
         if (wallpaperInput) {
             wallpaperInput.addEventListener('change', (e) => {
                 this.updateWallpaper(e.target.files[0]);
+                this.updateFileName('wallpaperFileName', e.target.files[0]);
             });
         }
 
@@ -308,28 +266,12 @@ if (typeof SettingsApp === 'undefined') {
         if (resetWallpaper) {
             resetWallpaper.addEventListener('click', () => {
                 this.resetWallpaper();
-            });
-        }
-
-        // User profile settings
-        const usernameInput = element.querySelector('#usernameInput');
-        if (usernameInput) {
-            usernameInput.addEventListener('change', (e) => {
-                this.updateUsername(e.target.value);
-            });
-        }
-
-        const profilePictureInput = element.querySelector('#profilePictureInput');
-        if (profilePictureInput) {
-            profilePictureInput.addEventListener('change', (e) => {
-                this.updateProfilePicture(e.target.files[0]);
-            });
-        }
-
-        const changePasswordBtn = element.querySelector('#changePasswordBtn');
-        if (changePasswordBtn) {
-            changePasswordBtn.addEventListener('click', () => {
-                this.changePassword();
+                // Reset file input and filename display
+                const wallpaperInput = element.querySelector('#wallpaperInput');
+                if (wallpaperInput) {
+                    wallpaperInput.value = '';
+                    this.updateFileName('wallpaperFileName', null);
+                }
             });
         }
     }
@@ -362,8 +304,6 @@ if (typeof SettingsApp === 'undefined') {
             this.loadSystemInfo();
         } else if (categoryName === 'wallpaper') {
             this.updateWallpaperPreview();
-        } else if (categoryName === 'user') {
-            this.loadUserProfile();
         }
     }
 
@@ -371,7 +311,6 @@ if (typeof SettingsApp === 'undefined') {
         const titles = {
             taskbar: 'Taskbar Configuration',
             wallpaper: 'Wallpaper Settings',
-            user: 'User Profile',
             about: 'System Information'
         };
         return titles[category] || 'Settings';
@@ -414,9 +353,6 @@ if (typeof SettingsApp === 'undefined') {
         } catch (error) {
             console.warn('Could not load taskbar settings:', error);
         }
-
-        // Load user profile data
-        this.loadUserProfile();
     }
 
     getCurrentTaskbarPosition() {
@@ -450,6 +386,14 @@ if (typeof SettingsApp === 'undefined') {
         if (window.taskbarManager) {
             window.taskbarManager.updateTaskbarAlignment(alignment);
             console.log('✅ Taskbar alignment updated to:', alignment);
+            
+            // Debug: log taskbar classes
+            setTimeout(() => {
+                const taskbar = document.getElementById('taskbar');
+                if (taskbar) {
+                    console.log('🔍 Taskbar classes after alignment change:', taskbar.className);
+                }
+            }, 100);
         } else {
             console.warn('⚠️ TaskbarManager not available');
         }
@@ -463,33 +407,46 @@ if (typeof SettingsApp === 'undefined') {
             const imageUrl = e.target.result;
             
             try {
-                // Update desktop background - try background element first, then body
-                const backgroundElement = document.querySelector('.background');
-                if (backgroundElement) {
-                    backgroundElement.style.backgroundImage = `url(${imageUrl})`;
-                    console.log('✅ Updated background element');
+                // Update desktop background (the main desktop wallpaper)
+                const desktopBackground = document.querySelector('.desktop-background');
+                if (desktopBackground) {
+                    desktopBackground.style.backgroundImage = `url(${imageUrl})`;
+                    console.log('✅ Updated desktop background');
                 } else {
-                    document.body.style.backgroundImage = `url(${imageUrl})`;
-                    console.log('✅ Updated body background');
+                    // Fallback: create desktop-background style if not found
+                    const desktop = document.querySelector('.desktop');
+                    if (desktop) {
+                        desktop.style.backgroundImage = `url(${imageUrl})`;
+                        console.log('✅ Updated desktop with fallback');
+                    }
                 }
                 
                 // Update wallpaper preview in Settings
-                const preview = document.querySelector('#currentWallpaper');
-                if (preview) {
-                    preview.src = imageUrl;
+                const window = this.windowManager.getWindow(this.windowId);
+                if (window) {
+                    const preview = window.element.querySelector('#currentWallpaper');
+                    if (preview) {
+                        preview.src = imageUrl;
+                        console.log('✅ Updated wallpaper preview');
+                    }
                 }
 
                 // Save to localStorage
-                localStorage.setItem('customWallpaper', imageUrl);
+                localStorage.setItem('desktop-wallpaper', imageUrl);
                 
                 console.log('✅ Wallpaper updated and saved successfully');
+                
+                // Show feedback to user
+                this.showWallpaperFeedback('Wallpaper updated successfully!', 'success');
             } catch (error) {
                 console.error('❌ Error updating wallpaper:', error);
+                this.showWallpaperFeedback('Error updating wallpaper', 'error');
             }
         };
         
         reader.onerror = () => {
             console.error('❌ Error reading wallpaper file');
+            this.showWallpaperFeedback('Error reading file', 'error');
         };
         
         reader.readAsDataURL(file);
@@ -497,28 +454,40 @@ if (typeof SettingsApp === 'undefined') {
 
     resetWallpaper() {
         try {
-            // Reset to default wallpaper - try background element first, then body
-            const backgroundElement = document.querySelector('.background');
-            if (backgroundElement) {
-                backgroundElement.style.backgroundImage = `url(images/wallpaper.jpg)`;
-                console.log('✅ Reset background element to default');
+            // Reset to default wallpaper (desktop background)
+            const desktopBackground = document.querySelector('.desktop-background');
+            if (desktopBackground) {
+                desktopBackground.style.backgroundImage = `url(images/wallpaper.jpg)`;
+                console.log('✅ Reset desktop background to default');
             } else {
-                document.body.style.backgroundImage = `url(images/wallpaper.jpg)`;
-                console.log('✅ Reset body background to default');
+                // Fallback: reset desktop style if not found
+                const desktop = document.querySelector('.desktop');
+                if (desktop) {
+                    desktop.style.backgroundImage = `url(images/wallpaper.jpg)`;
+                    console.log('✅ Reset desktop with fallback');
+                }
             }
             
             // Update preview in Settings
-            const preview = document.querySelector('#currentWallpaper');
-            if (preview) {
-                preview.src = 'images/wallpaper.jpg';
+            const window = this.windowManager.getWindow(this.windowId);
+            if (window) {
+                const preview = window.element.querySelector('#currentWallpaper');
+                if (preview) {
+                    preview.src = 'images/wallpaper.jpg';
+                    console.log('✅ Reset wallpaper preview');
+                }
             }
 
             // Remove custom wallpaper from localStorage
-            localStorage.removeItem('customWallpaper');
+            localStorage.removeItem('desktop-wallpaper');
             
             console.log('✅ Wallpaper reset to default successfully');
+            
+            // Show feedback to user
+            this.showWallpaperFeedback('Wallpaper reset to default', 'success');
         } catch (error) {
             console.error('❌ Error resetting wallpaper:', error);
+            this.showWallpaperFeedback('Error resetting wallpaper', 'error');
         }
     }
 
@@ -528,25 +497,30 @@ if (typeof SettingsApp === 'undefined') {
         
         try {
             // First check if there's a custom wallpaper in localStorage
-            const customWallpaper = localStorage.getItem('customWallpaper');
+            const customWallpaper = localStorage.getItem('desktop-wallpaper');
             if (customWallpaper) {
                 preview.src = customWallpaper;
                 console.log('✅ Using custom wallpaper from localStorage');
                 return;
             }
             
-            // Get actual computed background image from the body or background element
-            const backgroundElement = document.querySelector('.background');
-            const bodyStyle = window.getComputedStyle(document.body);
-            const backgroundStyle = backgroundElement ? window.getComputedStyle(backgroundElement) : null;
+            // Get actual computed background image from the desktop
+            const desktopBackground = document.querySelector('.desktop-background');
+            const desktop = document.querySelector('.desktop');
             
             let currentBg = null;
             
-            // Check background element first, then body
-            if (backgroundStyle && backgroundStyle.backgroundImage !== 'none') {
-                currentBg = backgroundStyle.backgroundImage;
-            } else if (bodyStyle.backgroundImage !== 'none') {
-                currentBg = bodyStyle.backgroundImage;
+            // Check desktop-background first, then desktop element
+            if (desktopBackground) {
+                const backgroundStyle = window.getComputedStyle(desktopBackground);
+                if (backgroundStyle.backgroundImage !== 'none') {
+                    currentBg = backgroundStyle.backgroundImage;
+                }
+            } else if (desktop) {
+                const desktopStyle = window.getComputedStyle(desktop);
+                if (desktopStyle.backgroundImage !== 'none') {
+                    currentBg = desktopStyle.backgroundImage;
+                }
             }
             
             if (currentBg) {
@@ -554,7 +528,7 @@ if (typeof SettingsApp === 'undefined') {
                 const urlMatch = currentBg.match(/url\(["']?([^"']*)["']?\)/);
                 if (urlMatch && urlMatch[1]) {
                     preview.src = urlMatch[1];
-                    console.log('✅ Using current background:', urlMatch[1]);
+                    console.log('✅ Using current desktop background:', urlMatch[1]);
                     return;
                 }
             }
@@ -571,144 +545,6 @@ if (typeof SettingsApp === 'undefined') {
     showMessage(message, type = 'info') {
         // Notifications désactivées
         return;
-    }
-
-    loadUserProfile() {
-        const window = this.windowManager.getWindow(this.windowId);
-        if (!window) return;
-
-        const element = window.element;
-        
-        // Load user data from localStorage or defaults
-        let userData = this.getUserData();
-        
-        // Update display elements
-        const displayUsername = element.querySelector('#displayUsername');
-        const usernameInput = element.querySelector('#usernameInput');
-        const profileImage = element.querySelector('#userProfileImage');
-        
-        if (displayUsername) displayUsername.textContent = userData.name;
-        if (usernameInput) usernameInput.value = userData.name;
-        if (profileImage) profileImage.src = userData.profilePicture;
-    }
-
-    getUserData() {
-        try {
-            let userData = JSON.parse(localStorage.getItem('user-data'));
-            if (!userData) {
-                // Default user data from Keira Mayhew
-                userData = {
-                    name: 'Keira Mayhew',
-                    profilePicture: 'images/profile.png',
-                    password: '312007' // Default password
-                };
-                localStorage.setItem('user-data', JSON.stringify(userData));
-            }
-            return userData;
-        } catch (error) {
-            console.warn('Could not load user data:', error);
-            return {
-                name: 'Keira Mayhew',
-                profilePicture: 'images/profile.png',
-                password: '312007'
-            };
-        }
-    }
-
-    saveUserData(userData) {
-        try {
-            localStorage.setItem('user-data', JSON.stringify(userData));
-            
-            // Update global userProfile if it exists
-            if (window.userProfile) {
-                window.userProfile.user.name = userData.name;
-                window.userProfile.user.profilePicture = userData.profilePicture;
-                console.log('✅ Updated global userProfile');
-                
-                // Update UI interface - check if function exists
-                if (typeof window.updateUserInterface === 'function') {
-                    window.updateUserInterface();
-                    console.log('✅ Called updateUserInterface');
-                }
-            }
-            
-            // Update taskbar user info if it exists
-            const taskbarUser = document.querySelector('#userProfile');
-            if (taskbarUser) {
-                const userImg = taskbarUser.querySelector('img');
-                const userName = taskbarUser.querySelector('.user-name');
-                
-                if (userImg) userImg.src = userData.profilePicture;
-                if (userName) userName.textContent = userData.name;
-                console.log('✅ Updated taskbar user info');
-            }
-            
-            console.log('✅ User data saved successfully');
-        } catch (error) {
-            console.error('❌ Could not save user data:', error);
-        }
-    }
-
-    updateUsername(username) {
-        if (!username || username.trim() === '') return;
-        
-        let userData = this.getUserData();
-        userData.name = username.trim();
-        this.saveUserData(userData);
-        
-        // Update display
-        const window = this.windowManager.getWindow(this.windowId);
-        if (window) {
-            const displayUsername = window.element.querySelector('#displayUsername');
-            if (displayUsername) displayUsername.textContent = username.trim();
-        }
-        
-        console.log('✅ Username updated to:', username.trim());
-    }
-
-    updateProfilePicture(file) {
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const imageUrl = e.target.result;
-            
-            let userData = this.getUserData();
-            userData.profilePicture = imageUrl;
-            this.saveUserData(userData);
-            
-            // Update profile image display
-            const window = this.windowManager.getWindow(this.windowId);
-            if (window) {
-                const profileImage = window.element.querySelector('#userProfileImage');
-                if (profileImage) profileImage.src = imageUrl;
-            }
-            
-            console.log('✅ Profile picture updated');
-        };
-        reader.readAsDataURL(file);
-    }
-
-    changePassword() {
-        const window = this.windowManager.getWindow(this.windowId);
-        if (!window) return;
-
-        const element = window.element;
-        const newPasswordInput = element.querySelector('#newPasswordInput');
-        
-        if (newPasswordInput && newPasswordInput.value.trim()) {
-            let userData = this.getUserData();
-            userData.password = newPasswordInput.value.trim();
-            this.saveUserData(userData);
-            
-            // Also update global CONFIG if it exists
-            if (window.CONFIG) {
-                window.CONFIG.password = newPasswordInput.value.trim();
-            }
-            
-            newPasswordInput.value = '';
-            console.log('✅ Password changed successfully');
-        }
     }
 
     loadSystemInfo() {
@@ -751,6 +587,70 @@ if (typeof SettingsApp === 'undefined') {
             this.windowManager.closeWindow(this.windowId);
             this.windowId = null;
             console.log('✅ Settings window closed');
+        }
+    }
+
+    updateFileName(elementId, file) {
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window) return;
+
+        const element = window.element;
+        const fileNameElement = element.querySelector(`#${elementId}`);
+        
+        if (fileNameElement) {
+            if (file) {
+                // Validation du type de fichier
+                const isValidImage = file.type.startsWith('image/');
+                const validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                const isValidExtension = validExtensions.includes(fileExtension);
+                
+                if (isValidImage && isValidExtension) {
+                    fileNameElement.textContent = file.name;
+                    fileNameElement.classList.add('has-file');
+                    fileNameElement.classList.remove('invalid-file');
+                    console.log('✅ Valid file selected:', file.name);
+                } else {
+                    fileNameElement.textContent = `❌ Invalid file: ${file.name}`;
+                    fileNameElement.classList.remove('has-file');
+                    fileNameElement.classList.add('invalid-file');
+                    console.warn('⚠️ Invalid file type:', file.type);
+                }
+            } else {
+                fileNameElement.textContent = 'No file selected';
+                fileNameElement.classList.remove('has-file', 'invalid-file');
+            }
+        }
+    }
+
+    showWallpaperFeedback(message, type = 'info') {
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window) return;
+
+        const element = window.element;
+        
+        // Remove existing feedback
+        const existingFeedback = element.querySelector('.wallpaper-feedback');
+        if (existingFeedback) {
+            existingFeedback.remove();
+        }
+
+        // Create feedback element
+        const feedback = document.createElement('div');
+        feedback.className = `wallpaper-feedback ${type}`;
+        feedback.textContent = message;
+        
+        // Insert after the file input container
+        const fileContainer = element.querySelector('.file-input-container');
+        if (fileContainer) {
+            fileContainer.parentNode.insertBefore(feedback, fileContainer.nextSibling);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (feedback && feedback.parentNode) {
+                    feedback.remove();
+                }
+            }, 3000);
         }
     }
 }

@@ -326,17 +326,58 @@ class WindowManager {
         windowObj.element.style.transition = 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
         windowObj.element.style.opacity = '1';
         windowObj.element.style.transform = 'scale(1) translateY(0)';
+
         setTimeout(() => {
-            // Clean up animation styles
             windowObj.element.style.transition = '';
-            windowObj.element.style.transform = '';
             windowObj.element.style.transformOrigin = '';
-            // Focus the window
-            this.focusWindow(windowId);
         }, 250);
+
+        // Special handling for apps that need a layout refresh after restore
+        if (windowObj.config.appId === 'app1' && window.filesAppInstance) {
+            // DRASTIC MEASURES: Force absolute layout stability for Files app
+            setTimeout(() => {
+                try {
+                    // Multiple approaches to ensure layout stability
+                    window.filesAppInstance.forceLayoutRecalc();
+                    
+                    // Additional layout enforcement
+                    const filesContent = windowObj.element.querySelector('.files-content');
+                    if (filesContent) {
+                        // Force a complete layout recalculation
+                        const currentHeight = filesContent.offsetHeight;
+                        const currentWidth = filesContent.offsetWidth;
+                        
+                        // Temporarily fix dimensions to prevent shrinking
+                        filesContent.style.minHeight = `${Math.max(currentHeight, 300)}px`;
+                        filesContent.style.width = `${currentWidth}px`;
+                        
+                        // Force reflow
+                        void filesContent.offsetHeight;
+                        
+                        // Reset to flexible dimensions
+                        setTimeout(() => {
+                            filesContent.style.minHeight = '300px';
+                            filesContent.style.width = '';
+                        }, 100);
+                    }
+                    
+                    // Force a resize event to ensure all components re-layout
+                    setTimeout(() => {
+                        if (window.top && window.top.dispatchEvent) {
+                            window.top.dispatchEvent(new Event('resize'));
+                        }
+                    }, 150);
+                    
+                } catch (error) {
+                    console.warn("Error during Files app layout stabilization:", error);
+                }
+            }, 260);
+        }
+
         // Update taskbar
         this.updateTaskbarState(windowObj);
     }
+
     toggleMaximizeWindow(windowId) {
         const windowObj = this.windows.get(windowId);
         if (!windowObj) return;
