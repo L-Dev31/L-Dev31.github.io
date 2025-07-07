@@ -334,42 +334,85 @@ class WindowManager {
 
         // Special handling for apps that need a layout refresh after restore
         if (windowObj.config.appId === 'app1' && window.filesAppInstance) {
-            // DRASTIC MEASURES: Force absolute layout stability for Files app
-            setTimeout(() => {
+            // CRITICAL: Files app needs content refresh after restore
+            setTimeout(async () => {
                 try {
-                    // Multiple approaches to ensure layout stability
+                    console.log('🔧 Restoring Files app content after minimize/restore');
+                    
+                    // Force visibility of all Files app components FIRST
+                    const filesContainer = windowObj.element.querySelector('.files-container');
+                    const filesContent = windowObj.element.querySelector('.files-content');
+                    const filesGrid = windowObj.element.querySelector('#filesGrid');
+                    
+                    if (filesContainer) {
+                        filesContainer.style.display = 'flex';
+                        filesContainer.style.visibility = 'visible';
+                        filesContainer.style.opacity = '1';
+                        console.log("✅ Forced filesContainer visibility");
+                    }
+                    
+                    if (filesContent) {
+                        filesContent.style.display = 'flex';
+                        filesContent.style.flexDirection = 'column';
+                        filesContent.style.visibility = 'visible';
+                        filesContent.style.opacity = '1';
+                        console.log("✅ Forced filesContent visibility");
+                    }
+                    
+                    if (filesGrid) {
+                        filesGrid.style.display = 'grid';
+                        filesGrid.style.visibility = 'visible';
+                        filesGrid.style.opacity = '1';
+                        console.log("✅ Forced filesGrid visibility");
+                    }
+                    
+                    // **CRITICAL**: Reload the Files content after restore
+                    console.log('🔄 Reloading Files content to ensure visibility...');
+                    await window.filesAppInstance.updateContent();
+                    console.log('✅ Files content reloaded successfully');
+                    
+                    // Then call the layout recalc method
                     window.filesAppInstance.forceLayoutRecalc();
                     
-                    // Additional layout enforcement
-                    const filesContent = windowObj.element.querySelector('.files-content');
+                    // Store current state and force stable layout
                     if (filesContent) {
-                        // Force a complete layout recalculation
                         const currentHeight = filesContent.offsetHeight;
                         const currentWidth = filesContent.offsetWidth;
                         
-                        // Temporarily fix dimensions to prevent shrinking
+                        // Force stable dimensions temporarily
                         filesContent.style.minHeight = `${Math.max(currentHeight, 300)}px`;
                         filesContent.style.width = `${currentWidth}px`;
                         
-                        // Force reflow
+                        // Multiple reflows for stability
                         void filesContent.offsetHeight;
+                        if (filesContainer) void filesContainer.offsetHeight;
+                        if (filesGrid) void filesGrid.offsetHeight;
                         
-                        // Reset to flexible dimensions
+                        // Reset to flexible after stabilization
                         setTimeout(() => {
                             filesContent.style.minHeight = '300px';
                             filesContent.style.width = '';
-                        }, 100);
+                        }, 150);
                     }
                     
-                    // Force a resize event to ensure all components re-layout
+                    // Final stability check and content validation
                     setTimeout(() => {
+                        // Double-check that content is still there
+                        const filesGrid = windowObj.element.querySelector('#filesGrid');
+                        if (filesGrid && (!filesGrid.innerHTML || filesGrid.innerHTML.trim() === '')) {
+                            console.warn('⚠️ Files content is still empty after restore, attempting reload...');
+                            window.filesAppInstance.updateContent().catch(error => {
+                                console.error('❌ Failed to reload Files content:', error);
+                            });
+                        }
+                        
                         if (window.top && window.top.dispatchEvent) {
                             window.top.dispatchEvent(new Event('resize'));
                         }
-                    }, 150);
+                    }, 200);
                     
                 } catch (error) {
-                    console.warn("Error during Files app layout stabilization:", error);
+                    console.warn("Error during Files app intelligent layout stabilization:", error);
                 }
             }, 260);
         }

@@ -409,16 +409,23 @@ if (typeof SettingsApp === 'undefined') {
             try {
                 // Update desktop background (the main desktop wallpaper)
                 const desktopBackground = document.querySelector('.desktop-background');
+                const desktopBackgroundById = document.getElementById('desktopBackground');
+                
                 if (desktopBackground) {
                     desktopBackground.style.backgroundImage = `url(${imageUrl})`;
-                    console.log('✅ Updated desktop background');
-                } else {
-                    // Fallback: create desktop-background style if not found
-                    const desktop = document.querySelector('.desktop');
-                    if (desktop) {
-                        desktop.style.backgroundImage = `url(${imageUrl})`;
-                        console.log('✅ Updated desktop with fallback');
-                    }
+                    console.log('✅ Updated .desktop-background element');
+                }
+                
+                if (desktopBackgroundById) {
+                    desktopBackgroundById.style.backgroundImage = `url(${imageUrl})`;
+                    console.log('✅ Updated #desktopBackground element');
+                }
+                
+                // Fallback: also try to update the desktop element itself
+                const desktop = document.querySelector('.desktop');
+                if (desktop && !desktopBackground && !desktopBackgroundById) {
+                    desktop.style.backgroundImage = `url(${imageUrl})`;
+                    console.log('✅ Updated .desktop element as fallback');
                 }
                 
                 // Update wallpaper preview in Settings
@@ -456,16 +463,23 @@ if (typeof SettingsApp === 'undefined') {
         try {
             // Reset to default wallpaper (desktop background)
             const desktopBackground = document.querySelector('.desktop-background');
+            const desktopBackgroundById = document.getElementById('desktopBackground');
+            
             if (desktopBackground) {
                 desktopBackground.style.backgroundImage = `url(images/wallpaper.jpg)`;
-                console.log('✅ Reset desktop background to default');
-            } else {
-                // Fallback: reset desktop style if not found
-                const desktop = document.querySelector('.desktop');
-                if (desktop) {
-                    desktop.style.backgroundImage = `url(images/wallpaper.jpg)`;
-                    console.log('✅ Reset desktop with fallback');
-                }
+                console.log('✅ Reset .desktop-background element to default');
+            }
+            
+            if (desktopBackgroundById) {
+                desktopBackgroundById.style.backgroundImage = `url(images/wallpaper.jpg)`;
+                console.log('✅ Reset #desktopBackground element to default');
+            }
+            
+            // Fallback: reset desktop style if not found
+            const desktop = document.querySelector('.desktop');
+            if (desktop && !desktopBackground && !desktopBackgroundById) {
+                desktop.style.backgroundImage = `url(images/wallpaper.jpg)`;
+                console.log('✅ Reset .desktop element as fallback');
             }
             
             // Update preview in Settings
