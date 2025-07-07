@@ -17,7 +17,14 @@ if (typeof FilesApp === 'undefined') {
             
             // Initialize DirectoryFetcher
             this.directoryFetcher = new DirectoryFetcher();
-            await this.directoryFetcher.loadAppsData();
+            
+            // Set apps data if provided
+            if (options.appsData) {
+                this.directoryFetcher.setAppsData(options.appsData);
+            }
+            
+            // Store global reference for window manager
+            window.filesAppInstance = this;
             
             // Open the window
             await this.open(options.path || 'Home');
@@ -60,6 +67,9 @@ if (typeof FilesApp === 'undefined') {
 
         // Setup app-specific event listeners
         this.setupEventListeners();
+        
+        // Add refresh button
+        await this.toggleDetectionMode();
         
         // Load initial content
         await this.updateContent();
@@ -139,17 +149,21 @@ if (typeof FilesApp === 'undefined') {
                 const itemName = fileItem.dataset.name;
                 const itemType = fileItem.dataset.type;
                 
+                console.log(`🔍 Double-click on item: ${itemName} (type: ${itemType})`);
+                
                 if (itemType === 'file') {
                     // Use Universal Launcher for file opening
                     if (window.universalLauncher) {
                         const item = { name: itemName, type: 'file' };
                         const launchItem = window.universalLauncher.createLaunchItem(item);
+                        console.log('🚀 Launching file with Universal Launcher:', launchItem);
                         await window.universalLauncher.launch(launchItem, { 
                             basePath: 'home',
                             currentPath: this.currentPath === 'Home' ? '' : this.currentPath
                         });
                     } else {
                         // Fallback to old system
+                        console.log('🔧 Using fallback file opening system');
                         await this.openFile(itemName);
                     }
                 } else if (itemType === 'app') {
@@ -158,16 +172,36 @@ if (typeof FilesApp === 'undefined') {
                         // Find the app data from the current items
                         const items = await this.getFolderContent(this.currentPath);
                         const appItem = items.find(i => i.name === itemName);
+                        console.log('🔍 Found app item:', appItem);
                         if (appItem) {
                             const launchItem = window.universalLauncher.createLaunchItem(appItem);
+                            console.log('🚀 Launching app with Universal Launcher:', launchItem);
                             await window.universalLauncher.launch(launchItem);
+                        } else {
+                            console.warn('❌ App item not found in current folder content');
                         }
                     } else {
                         // Fallback - need to find app ID
+                        console.log('🔧 Using fallback app opening system');
                         const items = await this.getFolderContent(this.currentPath);
                         const appItem = items.find(i => i.name === itemName);
                         if (appItem && (appItem.appId || appItem.id)) {
+                            console.log('🚀 Launching app with fallback:', appItem.appId || appItem.id);
                             window.appLauncher.launchApp(appItem.appId || appItem.id);
+                        } else {
+                            console.warn('❌ App item not found or missing ID');
+                        }
+                    }
+                } else {
+                    console.log(`ℹ️ Unknown item type: ${itemType}, attempting to handle as generic item`);
+                    // Try to handle as generic item
+                    if (window.universalLauncher) {
+                        const items = await this.getFolderContent(this.currentPath);
+                        const item = items.find(i => i.name === itemName);
+                        if (item) {
+                            const launchItem = window.universalLauncher.createLaunchItem(item);
+                            console.log('🚀 Launching generic item with Universal Launcher:', launchItem);
+                            await window.universalLauncher.launch(launchItem);
                         }
                     }
                 }
@@ -201,8 +235,14 @@ if (typeof FilesApp === 'undefined') {
     close() {
         if (this.windowId && this.windowManager) {
             this.windowManager.closeWindow(this.windowId);
-            this.windowId = null;
         }
+        
+        // Clean up global reference
+        if (window.filesAppInstance === this) {
+            window.filesAppInstance = null;
+        }
+        
+        console.log('📁 Files app closed');
     }
 
     async navigateTo(path) {
@@ -325,6 +365,58 @@ if (typeof FilesApp === 'undefined') {
                 }
             }
         }
+        
+        // Force layout recalculation to prevent visual glitches
+        setTimeout(() => this.forceLayoutRecalc(), 50);
+    }
+
+    forceLayoutRecalc() {
+        console.log("Files app: Forcing layout recalc.");
+        const windowObj = this.windowManager.getWindow(this.windowId);
+        if (!windowObj || !windowObj.element) {
+            console.warn("Cannot force layout recalc, window element not found.");
+            return;
+        }
+
+        const filesContent = windowObj.element.querySelector('.files-content');
+        if (!filesContent) {
+            console.warn("Cannot force layout recalc, .files-content not found.");
+            return;
+        }
+
+        // DRASTIC MEASURES: Force absolute layout stability
+        try {
+            // Store current dimensions
+            const currentHeight = filesContent.offsetHeight;
+            const currentWidth = filesContent.offsetWidth;
+            
+            // Force reflow with absolutely stable dimensions
+            filesContent.style.minHeight = `${Math.max(currentHeight, 300)}px`;
+            filesContent.style.width = `${currentWidth}px`;
+            
+            // Force layout recalculation
+            filesContent.style.display = 'none';
+            void filesContent.offsetHeight; // Force synchronous reflow
+            filesContent.style.display = '';
+            
+            // Reset to flexible dimensions after forced reflow
+            setTimeout(() => {
+                filesContent.style.minHeight = '300px';
+                filesContent.style.width = '';
+            }, 50);
+            
+            // Dispatch resize event to ensure all components update
+            setTimeout(() => {
+                if (window.top && window.top.dispatchEvent) {
+                    window.top.dispatchEvent(new Event('resize'));
+                } else if (window.dispatchEvent) {
+                    window.dispatchEvent(new Event('resize'));
+                }
+            }, 100);
+            
+        } catch (error) {
+            console.warn("Error during layout recalc:", error);
+        }
     }
 
     async getFolderContent(folderName) {
@@ -396,13 +488,19 @@ if (typeof FilesApp === 'undefined') {
         const items = container.querySelectorAll('.files-item');
         const itemCount = items.length;
         
+        let footerText = '';
         if (itemCount === 0) {
-            return 'Empty folder';
+            footerText = 'Empty folder';
         } else if (itemCount === 1) {
-            return '1 item';
+            footerText = '1 item';
         } else {
-            return `${itemCount} items`;
+            footerText = `${itemCount} items`;
         }
+        
+        // Add detection mode indicator
+        footerText += ' • Auto-detection enabled';
+        
+        return footerText;
     }
 
     updateNavigation() {
@@ -464,6 +562,74 @@ if (typeof FilesApp === 'undefined') {
             }
         } else {
             console.log(`File type .${fileExtension} not supported for opening`);
+        }
+    }
+
+    // Method to refresh directory content with automatic detection
+    async refreshContent() {
+        console.log('🔄 Refreshing directory content...');
+        
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window) return;
+        
+        const refreshBtn = window.element.querySelector('#refreshBtn');
+        const filesGrid = window.element.querySelector('#filesGrid');
+        
+        // Show loading state
+        if (refreshBtn) {
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        }
+        
+        if (filesGrid) {
+            filesGrid.innerHTML = '<div style="padding: 20px; text-align: center; color: rgba(0,0,0,0.6);"><i class="fas fa-spinner fa-spin"></i><br>Auto-detecting files...</div>';
+        }
+        
+        try {
+            await this.updateContent();
+            this.forceLayoutRecalc();
+            
+            // Success feedback
+            if (refreshBtn) {
+                refreshBtn.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                    refreshBtn.disabled = false;
+                }, 1000);
+            }
+        } catch (error) {
+            console.error('Error refreshing content:', error);
+            
+            // Error feedback
+            if (refreshBtn) {
+                refreshBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                setTimeout(() => {
+                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                    refreshBtn.disabled = false;
+                }, 2000);
+            }
+        }
+    }
+
+    // Method to toggle between automatic detection and fallback
+    async toggleDetectionMode() {
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window) return;
+        
+        // Add a refresh button to the toolbar if it doesn't exist
+        const toolbar = window.element.querySelector('.files-toolbar');
+        if (toolbar && !toolbar.querySelector('#refreshBtn')) {
+            const refreshBtn = document.createElement('button');
+            refreshBtn.id = 'refreshBtn';
+            refreshBtn.className = 'files-nav-btn';
+            refreshBtn.title = 'Refresh (Auto-detect files)';
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+            refreshBtn.addEventListener('click', () => this.refreshContent());
+            
+            const navButtons = toolbar.querySelector('.files-nav-buttons');
+            if (navButtons) {
+                navButtons.appendChild(refreshBtn);
+            }
         }
     }
 }

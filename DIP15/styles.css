@@ -434,7 +434,7 @@ body, html {
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between; /* Espace entre center et right */
     padding: 0 16px;
     z-index: 999999; /* ALWAYS on top - highest priority */
 }
@@ -445,6 +445,10 @@ body, html {
     gap: 12px;
     padding: 4px 8px;
     border-radius: 12px;
+    flex: 1; /* Prend tout l'espace disponible */
+    justify-content: center; /* Centre par défaut */
+    min-height: 40px;
+    margin-right: 16px; /* Espace obligatoire avec taskbar-right */
 }
 
 .taskbar-left {
@@ -538,9 +542,13 @@ body, html {
 
 .taskbar-right {
     position: absolute;
-    right: 16px;
+    right: 0px; /* Collé au bord droit */
     display: flex;
     align-items: center;
+    min-width: 120px; /* Largeur minimale pour éviter le chevauchement */
+    flex-shrink: 0; /* Ne se compresse jamais */
+    z-index: 1; /* Au-dessus de taskbar-center */
+    padding-right: 16px; /* Padding interne pour l'espacement */
 }
 
 .system-tray {
@@ -917,38 +925,39 @@ body, html {
 /* Alignement vertical pour taskbars left/right */
 .taskbar.position-left.align-start .taskbar-center,
 .taskbar.position-right.align-start .taskbar-center {
-    justify-content: flex-start;
+    justify-content: flex-start !important;
 }
 
 .taskbar.position-left.align-center .taskbar-center,
 .taskbar.position-right.align-center .taskbar-center {
-    justify-content: center;
+    justify-content: center !important;
 }
 
 .taskbar.position-left.align-end .taskbar-center,
 .taskbar.position-right.align-end .taskbar-center {
-    justify-content: flex-end;
-}
-
-/* Alignement horizontal pour taskbars bottom/top */
-.taskbar.position-bottom.align-start .taskbar-center,
-.taskbar.position-top.align-start .taskbar-center {
-    justify-content: flex-start;
-}
-
-.taskbar.position-bottom.align-center .taskbar-center,
-.taskbar.position-top.align-center .taskbar-center {
-    justify-content: center;
-}
-
-.taskbar.position-bottom.align-end .taskbar-center,
-.taskbar.position-top.align-end .taskbar-center {
-    justify-content: flex-end;
+    justify-content: flex-end !important;
 }
 
 /* Alignement par défaut si pas de classe align spécifiée */
 .taskbar .taskbar-center {
     justify-content: center; /* Par défaut au centre */
+}
+
+/* Alignement horizontal pour taskbars bottom/top */
+.taskbar.position-bottom.align-start .taskbar-center,
+.taskbar.position-top.align-start .taskbar-center {
+    justify-content: flex-start !important;
+}
+
+.taskbar.position-bottom.align-center .taskbar-center,
+.taskbar.position-top.align-center .taskbar-center {
+    justify-content: center !important;
+}
+
+.taskbar.position-bottom.align-end .taskbar-center,
+.taskbar.position-top.align-end .taskbar-center {
+    justify-content: flex-end !important;
+    margin-right: 140px !important; /* Espace pour taskbar-right */
 }
 
 .settings-footer {

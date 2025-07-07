@@ -192,23 +192,8 @@ if (typeof ClockApp === 'undefined') {
     }
 
     setupEventListeners() {
-        this.window.onClose(() => {
-            if (this.updateInterval) {
-                clearInterval(this.updateInterval);
-                this.updateInterval = null;
-            }
-        });
-
-        this.window.onMinimize(() => {
-            // Continue updating even when minimized
-        });
-
-        this.window.onRestore(() => {
-            // Ensure clock is still updating
-            if (!this.updateInterval) {
-                this.startClock();
-            }
-        });
+        // Remove problematic window methods
+        // Cleanup will be handled by app lifecycle
     }
 
     show() {

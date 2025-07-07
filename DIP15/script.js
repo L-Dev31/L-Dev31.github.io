@@ -45,6 +45,10 @@ function imageExists(src) {
 }
 function createIndicators() {
     const indicators = document.getElementById('imageIndicators');
+    if (!indicators) {
+        console.warn('imageIndicators element not found');
+        return;
+    }
     indicators.innerHTML = '';
     localImages.forEach((_, index) => {
         const dot = document.createElement('div');
@@ -285,6 +289,10 @@ async function loadDesktopItems() {
             throw new Error('No desktop items returned from server.');
         }
         const desktopIcons = document.getElementById('desktopIcons');
+        if (!desktopIcons) {
+            console.error('desktopIcons element not found');
+            return;
+        }
         desktopIcons.innerHTML = '';
         const gridConfig = calculateDesktopGrid();
         currentGridConfig = gridConfig;
@@ -1094,37 +1102,61 @@ window.taskbarManager = taskbarManager; // Make it globally accessible
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Starting application...');
     
-    // Initialize taskbar manager properly
-    taskbarManager.loadSettings();
-    taskbarManager.init();
-    taskbarManager.enableZIndexProtection();
+    // Check if we're in desktop mode (has desktop element) or login mode (has login screen)
+    const isDesktopMode = document.getElementById('desktop') !== null;
+    const isLoginMode = document.getElementById('loginScreen') !== null;
     
-    // Initialize app launcher
-    await window.appLauncher.init();
-    // Load apps for taskbar and start menu AFTER app launcher is initialized
-    await loadApps();
-    // Load user profile first
-    await loadUserProfile();
-    const images = await loadImages();
-    if (images.length > 0) {
-        createIndicators();
-        changeToImage(0);
-        startAutoChange();
-        setupEventListeners();
+    if (isDesktopMode) {
+        // Desktop mode initialization
+        console.log('🖥️ Initializing desktop mode...');
+        
+        // Initialize taskbar manager properly
+        taskbarManager.loadSettings();
+        taskbarManager.init();
+        taskbarManager.enableZIndexProtection();
+        
+        // Initialize app launcher
+        await window.appLauncher.init();
+        // Load apps for taskbar and start menu AFTER app launcher is initialized
+        await loadApps();
+        // Load user profile first
+        await loadUserProfile();
+        
         // Update user interface elements
         updateUserInterface();
         // Start metadata updates
         updateMetadata();
         setInterval(updateMetadata, 1000);
-        console.log('✅ Application started successfully');
+        
+        // Load desktop items
+        await loadDesktopItems();
+        
+        console.log('✅ Desktop mode initialized successfully');
+        
+    } else if (isLoginMode) {
+        // Login mode initialization
+        console.log('🔐 Initializing login mode...');
+        
+        const images = await loadImages();
+        if (images.length > 0) {
+            createIndicators();
+            changeToImage(0);
+            startAutoChange();
+            setupEventListeners();
+            console.log('✅ Login mode initialized successfully');
+        } else {
+            console.error('❌ No images found!');
+            const background = document.getElementById('background');
+            if (background) {
+                background.style.backgroundColor = '#1a1a1a';
+                background.style.display = 'flex';
+                background.style.alignItems = 'center';
+                background.style.justifyContent = 'center';
+                background.innerHTML = '<div style="color: white; text-align: center; font-size: 1.2em;"><h2>No Images Found</h2><p>Please add images to the <strong>Images/BG/</strong> folder</p></div>';
+            }
+        }
     } else {
-        console.error('❌ No images found!');
-        const background = document.getElementById('background');
-        background.style.backgroundColor = '#1a1a1a';
-        background.style.display = 'flex';
-        background.style.alignItems = 'center';
-        background.style.justifyContent = 'center';
-        background.innerHTML = '<div style="color: white; text-align: center; font-size: 1.2em;"><h2>No Images Found</h2><p>Please add images to the <strong>Images/BG/</strong> folder</p></div>';
+        console.warn('⚠️ Unknown page context - neither desktop nor login mode detected');
     }
 });
 function handleWindowResize() {

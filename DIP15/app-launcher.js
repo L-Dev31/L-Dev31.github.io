@@ -82,11 +82,18 @@ class AppLauncher {
                     appInstance = new appModule();
                 }
                 
-                const success = await appInstance.init({ 
+                // Special handling for Files app - pass apps data
+                let initOptions = { 
                     windowManager: window.windowManager, 
                     appConfig: appConfig,
                     ...options 
-                });
+                };
+                
+                if (appId === 'app1' && this.appsData) {
+                    initOptions.appsData = this.appsData;
+                }
+                
+                const success = await appInstance.init(initOptions);
                 
                 if (success) {
                     this.loadedApps.set(appId, appInstance);

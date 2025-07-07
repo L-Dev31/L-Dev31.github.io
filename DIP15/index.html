@@ -3,20 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Idyll - Virtual Computer</title>  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <title>The Idyll - Virtual Computer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="icon" href="images/favicon.png" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="window-styles.css">
-  <link rel="stylesheet" href="apps/app1/style.css">
-  <link rel="stylesheet" href="apps/app2/style.css">
-  <link rel="stylesheet" href="apps/app3/style.css">
-  <link rel="stylesheet" href="apps/app4/style.css">
-  <link rel="stylesheet" href="apps/app6/style.css">
-  <link rel="stylesheet" href="apps/app8/style.css">
-  <link rel="stylesheet" href="apps/app9/style.css">
 </head>
 <body>
   <div class="overlay">
@@ -46,88 +39,139 @@
     </div>
   </div>
 
-  <!-- Windows 11 Desktop -->
-  <div class="desktop" id="desktop">
-    <div class="desktop-background"></div>
-    <div class="desktop-icons" id="desktopIcons"></div>
-    
-    <!-- Taskbar -->
-    <div class="taskbar" id="taskbar">
-      <div class="taskbar-center" id="taskbarCenter">
-        <div class="start-button" id="startButton">
-          <img src="images/icon.png" alt="Start" class="start-icon">
-        </div>
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Type here to search">
-        </div>
-        <div class="taskbar-apps" id="taskbarApps">
-          <!-- Apps will be loaded dynamically from apps.json -->
-        </div>
-      </div>
+  <!-- Transition Overlay -->
+  <div id="fadeOverlay"></div>
+
+  <script>
+    // Background slideshow
+    const backgrounds = [
+      'images/BG/1.jpg',
+      'images/BG/2.jpg', 
+      'images/BG/3.jpg',
+      'images/BG/4.jpg',
+      'images/BG/5.jpg',
+      'images/BG/6.jpg',
+      'images/BG/219692.jpg',
+      'images/BG/7704801.jpg',
+      'images/BG/8957663.jpg'
+    ];
+
+    let currentBgIndex = 0;
+    const backgroundElement = document.getElementById('background');
+    const indicatorsContainer = document.getElementById('imageIndicators');
+
+    // Wait for DOM to be loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      // Create indicators
+      if (indicatorsContainer) {
+        backgrounds.forEach((_, index) => {
+          const dot = document.createElement('div');
+          dot.className = `indicator-dot ${index === 0 ? 'active' : ''}`;
+          dot.addEventListener('click', () => changeBackground(index));
+          indicatorsContainer.appendChild(dot);
+        });
+      }
+
+      // Initialize first background
+      changeBackground(0);
       
-      <div class="taskbar-right" id="taskbarRight">
-        <div class="system-tray">
-          <span class="time-display" id="desktopTime">12:00 PM</span>
-          <span class="date-display" id="desktopDate">1/7/2025</span>
-        </div>
-      </div>
-    </div>
-  </div>
+      // Auto change every 10 seconds
+      setInterval(nextBackground, 10000);
 
-  <!-- Settings Panel (moved outside desktop for proper z-index) -->
-  <div class="settings-panel" id="settingsPanel">
-    <div class="settings-header">
-      <h3>Start Menu</h3>
-      <button class="close-settings" id="closeSettings">×</button>
-    </div>
-    
-    <div class="settings-content">
-      <div class="recommended-apps">
-        <h4>Recommended Apps</h4>
-        <div class="app-grid" id="appGrid">
-          <!-- Apps will be loaded dynamically from apps.json -->
-        </div>
-      </div>
-    </div>
-    
-    <!-- Settings Panel Footer -->
-    <div class="settings-footer">
-      <div class="footer-user-info">
-        <div class="footer-user-avatar">👤</div>
-        <span class="footer-user-name">User</span>
-      </div>
-      <button type="button" class="footer-logout-button" id="logoutButton">
-        <i class="fas fa-sign-out-alt"></i>
-      </button>
-    </div>
-  </div>
+      // Show login screen on click or after delay
+      document.addEventListener('click', showLoginScreen);
+      setTimeout(showLoginScreen, 5000);
+    });
 
-  <!-- File Manager Window - REMOVED (now modular) -->
+    function changeBackground(index) {
+      currentBgIndex = index;
+      if (backgroundElement) {
+        backgroundElement.style.backgroundImage = `url(${backgrounds[index]})`;
+      }
+      
+      // Update indicators
+      document.querySelectorAll('.indicator-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    }
 
-  <!-- Fade transition overlay -->
-  <div class="fade-overlay" id="fadeOverlay"></div>
+    // Auto slideshow
+    function nextBackground() {
+      currentBgIndex = (currentBgIndex + 1) % backgrounds.length;
+      changeBackground(currentBgIndex);
+    }
 
-  <a href="http://www.screenmirrorapp.com/" id="screen-mirror-btn">
-    <i class="fas fa-desktop"></i>
-  </a>
+    // Login functionality
+    const passwordInput = document.getElementById('passwordInput');
+    const submitButton = document.getElementById('submitButton');
+    const loginScreen = document.getElementById('loginScreen');
 
-  <a href="https://soundcloud.com/" id="music-btn">
-    <i class="fas fa-music"></i>  
-  </a>
+    function showLoginScreen() {
+      document.body.classList.add('blur-mode');
+      if (loginScreen) {
+        loginScreen.classList.add('active');
+        setTimeout(() => {
+          if (passwordInput) passwordInput.focus();
+        }, 500);
+      }
+    }
 
-  <div id="metadata" class="metadata"><i class="fa-regular fa-circle-user"></i> Keira Mayhew</div>
-  <script src="get-directory.js"></script>
-  <script src="universal-launcher.js"></script>
-  <script src="app-launcher.js"></script>
-  <script src="window-manager.js"></script>
-  <script src="apps/app1/app.js"></script>
-  <script src="apps/app2/app.js"></script>
-  <script src="apps/app3/app.js"></script>
-  <script src="apps/app4/app.js"></script>
-  <script src="apps/app6/app.js"></script>
-  <script src="apps/app8/app.js"></script>
-  <script src="apps/app9/app.js"></script>
-  <script src="script.js"></script>
+    function hideLoginScreen() {
+      if (loginScreen) {
+        loginScreen.classList.remove('active');
+      }
+      document.body.classList.remove('blur-mode');
+    }
+
+    function handleLogin() {
+      const password = passwordInput ? passwordInput.value : '';
+      
+      if (password === '312007' || password === '') {
+        console.log('✅ Login successful');
+        
+        const overlay = document.getElementById('fadeOverlay');
+        if (overlay) {
+          overlay.classList.add('login-transition');
+          
+          setTimeout(() => {
+            overlay.classList.add('zoom-in');
+          }, 100);
+        }
+        
+        setTimeout(() => {
+          window.location.href = 'desktop.html';
+        }, 1200);
+      } else {
+        // Wrong password animation
+        const loginContainer = document.querySelector('.login-container');
+        if (loginContainer) {
+          loginContainer.style.animation = 'shake 0.5s ease-in-out';
+          
+          setTimeout(() => {
+            loginContainer.style.animation = '';
+            if (passwordInput) {
+              passwordInput.value = '';
+              passwordInput.focus();
+            }
+          }, 500);
+        }
+      }
+    }
+
+    // Event listeners - wait for DOM
+    document.addEventListener('DOMContentLoaded', () => {
+      if (submitButton) {
+        submitButton.addEventListener('click', handleLogin);
+      }
+      
+      if (passwordInput) {
+        passwordInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            handleLogin();
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
