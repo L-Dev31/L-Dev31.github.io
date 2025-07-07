@@ -76,29 +76,40 @@
     font-size: 14px;
 }
 
-/* Content Area */
+/* Content Area - FORCE MAXIMUM HEIGHT */
 .settings-content {
     flex: 1;
     padding: 30px;
     overflow-y: auto;
     background: #ffffff;
+    /* FORCE maximum height regardless of window size */
     height: 100%;
-    /* Force the content to fill the available height regardless of window size */
     min-height: 0;
+    max-height: 100%;
     display: flex;
     flex-direction: column;
+    /* Ensure it takes all available space */
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
 }
 
 .settings-content > .settings-section {
     /* Each settings section should expand to fill the available space */
     flex: 1;
     display: none;
+    /* Ensure sections take full height */
+    min-height: 0;
+    height: 100%;
 }
 
 .settings-content > .settings-section.active {
     display: flex;
     flex-direction: column;
     animation: fadeIn 0.3s ease-out;
+    /* Force full height for active section */
+    flex: 1;
+    height: 100%;
 }
 
 @keyframes fadeIn {

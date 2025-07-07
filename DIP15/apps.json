@@ -32,8 +32,8 @@
       "id": "app5",
       "name": "Prism",
       "icon": "images/app5.png",
-      "showInTaskbar": false,
-      "available": false
+      "showInTaskbar": true,
+      "available": true
     },
     {
       "id": "app6",
@@ -46,8 +46,8 @@
       "id": "app7",
       "name": "Scaffold",
       "icon": "images/app7.png",
-      "showInTaskbar": false,
-      "available": false
+      "showInTaskbar": true,
+      "available": true
     },
     {
       "id": "app8",
@@ -60,15 +60,16 @@
       "id": "app9",
       "name": "Schedule",
       "icon": "images/app9.png",
-      "showInTaskbar": false,
+      "showInTaskbar": true,
       "available": true
     },
     {
       "id": "app10",
       "name": "Avokadoo",
       "icon": "images/app10.png",
-      "showInTaskbar": false,
-      "available": false
+      "showInTaskbar": true,
+      "available": true
     }
   ]
 }
+

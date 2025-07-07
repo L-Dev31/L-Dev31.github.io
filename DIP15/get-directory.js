@@ -118,270 +118,32 @@ class DirectoryFetcher {
     }
 
     async fetchDirectoryContents(path = '') {
-        try {
-            // For GitHub Pages, we need to check which files exist
-            return await this.detectRealDirectoryContents(path);
-        } catch (error) {
-            console.error('Error fetching directory contents:', error);
-            // Fallback to known structure
-            return this.getKnownDirectoryContents(path);
-        }
+        // Only use known structure, but keep automatic if fileStructure is updated
+        return this.getKnownDirectoryContents(path);
     }
 
     async detectRealDirectoryContents(path = '') {
-        const items = [];
-        
-        // Handle Home directory
-        if (path === '' || path === 'Home') {
-            // Check for known folders
-            const knownFolders = ['Documents', 'Pictures', 'Downloads', 'Projects', 'Music', 'Videos'];
-            
-            for (const folderName of knownFolders) {
-                try {
-                    const folderPath = `home/${folderName}/`;
-                    const response = await fetch(folderPath, { method: 'HEAD' });
-                    if (response.ok || response.status === 403) { // 403 often means directory exists but listing is disabled
-                        items.push({
-                            name: folderName,
-                            type: 'folder',
-                            isDirectory: true,
-                            icon: 'images/folder.png',
-                            path: folderPath
-                        });
-                    }
-                } catch (e) {
-                    // If HEAD request fails, try to access index or a known file
-                    try {
-                        const testResponse = await fetch(`home/${folderName}/index.html`, { method: 'HEAD' });
-                        if (testResponse.ok || testResponse.status === 403) {
-                            items.push({
-                                name: folderName,
-                                type: 'folder',
-                                isDirectory: true,
-                                icon: 'images/folder.png',
-                                path: `home/${folderName}/`
-                            });
-                        }
-                    } catch (e2) {
-                        // Folder doesn't exist, skip it
-                    }
-                }
-            }
-            
-            // Check for apps in home folder
-            const knownApps = ['app5', 'app7', 'app9', 'app10'];
-            for (const appName of knownApps) {
-                try {
-                    const response = await fetch(`home/${appName}`, { method: 'HEAD' });
-                    if (response.ok) {
-                        const appData = this.getAppByFileName(appName);
-                        if (appData) {
-                            items.push({
-                                name: appData.name,
-                                type: 'app',
-                                isDirectory: false,
-                                icon: appData.icon,
-                                path: `home/${appName}`,
-                                appId: appData.id
-                            });
-                        }
-                    }
-                } catch (e) {
-                    // App doesn't exist, skip it
-                }
-            }
-            
-            return items;
-        }
-        
-        // Handle specific directories - try to detect files automatically
-        const commonFiles = await this.detectFilesInDirectory(path);
-        return commonFiles;
+        // No longer used: all detection is now based on known structure only to avoid 404s
+        return this.getKnownDirectoryContents(path);
     }
 
     async detectFilesInDirectory(dirPath) {
-        const items = [];
-        const basePath = `home/${dirPath}/`;
-        
-        // Get common files based on directory type
-        let commonFiles = [];
-        switch (dirPath.toLowerCase()) {
-            case 'documents':
-                commonFiles = [
-                    'Sample Document.txt', 'SampleDocument.txt', 'README.md', 'document.pdf',
-                    'notes.txt', 'info.txt', 'readme.txt', 'test-auto-detect.txt', 'test-styles.css'
-                ];
-                break;
-            case 'pictures':
-                commonFiles = [
-                    'image.jpg', 'photo.png', 'picture.gif', 'screenshot.png',
-                    'img1.jpg', 'img2.jpg', 'img3.jpg', 'photo1.jpg', 'photo2.jpg'
-                ];
-                break;
-            case 'music':
-                commonFiles = [
-                    'sample.mp3', 'song.wav', 'audio.mp3', 'music.wav', 'sound.mp3',
-                    'track1.mp3', 'track2.mp3', 'song1.mp3', 'song2.mp3'
-                ];
-                break;
-            case 'videos':
-                commonFiles = [
-                    'video.mp4', 'movie.avi', 'clip.mp4', 'sample.mp4',
-                    'video1.mp4', 'video2.mp4', 'movie1.avi', 'movie2.avi'
-                ];
-                break;
-            case 'downloads':
-                commonFiles = [
-                    'download.zip', 'file.pdf', 'setup.exe', 'archive.rar',
-                    'installer.msi', 'package.deb', 'data.json'
-                ];
-                break;
-            case 'projects':
-                commonFiles = [
-                    'README.md', 'package.json', 'index.html', 'style.css',
-                    'script.js', 'app.js', 'main.py', 'requirements.txt'
-                ];
-                break;
-            default:
-                commonFiles = [
-                    'README.md', 'index.html', 'document.txt', 'file.pdf',
-                    'image.jpg', 'audio.mp3', 'video.mp4', 'data.json'
-                ];
-        }
-        
-        // Check files in batches to avoid overwhelming the server
-        const batchSize = 5;
-        for (let i = 0; i < commonFiles.length; i += batchSize) {
-            const batch = commonFiles.slice(i, i + batchSize);
-            const promises = batch.map(async (fileName) => {
-                try {
-                    const response = await fetch(basePath + fileName, { method: 'HEAD' });
-                    if (response.ok) {
-                        return {
-                            name: fileName,
-                            type: 'file',
-                            isDirectory: false,
-                            icon: this.getIconForFile(fileName),
-                            path: basePath + fileName
-                        };
-                    }
-                } catch (e) {
-                    // File doesn't exist or network error
-                    return null;
-                }
-                return null;
-            });
-            
-            const results = await Promise.all(promises);
-            results.forEach(item => {
-                if (item) items.push(item);
-            });
-            
-            // Small delay between batches to be gentle with the server
-            if (i + batchSize < commonFiles.length) {
-                await new Promise(resolve => setTimeout(resolve, 100));
-            }
-        }
-        
-        // Also check for common subdirectories
-        const commonSubdirs = ['New folder', 'Backup', 'Archive', 'Temp'];
-        for (const subdirName of commonSubdirs) {
-            try {
-                const response = await fetch(basePath + subdirName + '/', { method: 'HEAD' });
-                if (response.ok || response.status === 403) {
-                    items.push({
-                        name: subdirName,
-                        type: 'folder',
-                        isDirectory: true,
-                        icon: 'images/folder.png',
-                        path: basePath + subdirName + '/'
-                    });
-                }
-            } catch (e) {
-                // Subdirectory doesn't exist
-            }
-        }
-        
-        // Sort items: folders first, then files alphabetically
-        items.sort((a, b) => {
-            if (a.type === 'folder' && b.type !== 'folder') return -1;
-            if (a.type !== 'folder' && b.type === 'folder') return 1;
-            return a.name.localeCompare(b.name);
-        });
-        
-        return items;
+        // No longer used: all detection is now based on known structure only to avoid 404s
+        return [];
     }
 
     getKnownDirectoryContents(path) {
         const items = [];
         
-        // Handle Home directory
-        if (path === '' || path === 'Home') {
-            const homeData = this.fileStructure['Home'];
-            
-            // Add folders
-            if (homeData.folders) {
-                homeData.folders.forEach(folderName => {
-                    items.push({
-                        name: folderName,
-                        type: 'folder',
-                        isDirectory: true,
-                        icon: 'images/folder.png',
-                        path: `home/${folderName}/`
-                    });
-                });
-            }
-            
-            // Add apps
-            if (homeData.apps) {
-                homeData.apps.forEach(appName => {
-                    const appData = this.getAppByFileName(appName);
-                    if (appData) {
-                        items.push({
-                            name: appData.name,
-                            type: 'app',
-                            isDirectory: false,
-                            icon: appData.icon,
-                            path: `home/${appName}`,
-                            appId: appData.id
-                        });
-                    } else {
-                        items.push({
-                            name: appName,
-                            type: 'app',
-                            isDirectory: false,
-                            icon: 'fas fa-cog',
-                            path: `home/${appName}`,
-                            appId: appName
-                        });
-                    }
-                });
-            }
-            
-            return items;
-        }
-        
-        // Handle specific directories
-        const directoryData = this.fileStructure[path];
+        // Handle Home directory and all other directories the same way
+        const dirKey = (path === '' || path === 'Home') ? 'Home' : path;
+        const directoryData = this.fileStructure[dirKey];
         if (!directoryData) {
             // If no known data, return empty but log for debugging
             console.log(`No known directory data for: ${path}`);
             return items;
         }
-        
-        // Add files from known structure
-        if (directoryData.files) {
-            directoryData.files.forEach(fileName => {
-                items.push({
-                    name: fileName,
-                    type: 'file',
-                    isDirectory: false,
-                    icon: this.getIconForFile(fileName),
-                    path: `home/${path}/${fileName}`
-                });
-            });
-        }
-        
+
         // Add folders if any
         if (directoryData.folders) {
             directoryData.folders.forEach(folderName => {
@@ -390,11 +152,50 @@ class DirectoryFetcher {
                     type: 'folder',
                     isDirectory: true,
                     icon: 'images/folder.png',
-                    path: `home/${path}/${folderName}/`
+                    path: `home/${dirKey}/${folderName}/`
                 });
             });
         }
-        
+
+        // Add files from known structure
+        if (directoryData.files) {
+            directoryData.files.forEach(fileName => {
+                items.push({
+                    name: fileName,
+                    type: 'file',
+                    isDirectory: false,
+                    icon: this.getIconForFile(fileName),
+                    path: `home/${dirKey}/${fileName}`
+                });
+            });
+        }
+
+        // Add apps if any
+        if (directoryData.apps) {
+            directoryData.apps.forEach(appName => {
+                const appData = this.getAppByFileName(appName);
+                if (appData) {
+                    items.push({
+                        name: appData.name,
+                        type: 'app',
+                        isDirectory: false,
+                        icon: appData.icon,
+                        path: `home/${dirKey}/${appName}`,
+                        appId: appData.id
+                    });
+                } else {
+                    items.push({
+                        name: appName,
+                        type: 'app',
+                        isDirectory: false,
+                        icon: 'fas fa-cog',
+                        path: `home/${dirKey}/${appName}`,
+                        appId: appName
+                    });
+                }
+            });
+        }
+
         return items;
     }
 

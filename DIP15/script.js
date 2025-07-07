@@ -935,10 +935,31 @@ function loadSavedWallpaper() {
     }
 }
 function updateDesktopWallpaper(wallpaperUrl) {
+    console.log('🖼️ Updating desktop wallpaper to:', wallpaperUrl);
+    
     // Update the desktop background only (not the screensaver)
     const desktopBackground = document.querySelector('.desktop-background');
+    const desktopBackgroundById = document.getElementById('desktopBackground');
+    
     if (desktopBackground) {
         desktopBackground.style.backgroundImage = `url('${wallpaperUrl}')`;
+        console.log('✅ Updated .desktop-background element');
+    }
+    
+    if (desktopBackgroundById) {
+        desktopBackgroundById.style.backgroundImage = `url('${wallpaperUrl}')`;
+        console.log('✅ Updated #desktopBackground element');
+    }
+    
+    // Fallback: also try to update the desktop element itself
+    const desktop = document.querySelector('.desktop');
+    if (desktop && !desktopBackground && !desktopBackgroundById) {
+        desktop.style.backgroundImage = `url('${wallpaperUrl}')`;
+        console.log('✅ Updated .desktop element as fallback');
+    }
+    
+    if (!desktopBackground && !desktopBackgroundById && !desktop) {
+        console.warn('⚠️ No desktop background element found to update');
     }
 }
 function setupEventListeners() {
@@ -1130,6 +1151,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Load desktop items
         await loadDesktopItems();
+        
+        // FORCE wallpaper loading after everything is ready
+        setTimeout(() => {
+            loadSavedWallpaper();
+            console.log('🖼️ Forced wallpaper reload after desktop initialization');
+        }, 500);
         
         console.log('✅ Desktop mode initialized successfully');
         
