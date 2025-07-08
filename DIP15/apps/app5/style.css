@@ -1,5 +1,5 @@
 /* ======================================
-   PRISM APP - MUSIC PLAYER THEME
+   PRISM APP - SIMPLE LIGHT THEME
    Colors: Green #39A935, Yellow #FCEA0D, Orange #F8B100, Red #E20613
    ====================================== */
 
@@ -7,46 +7,44 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background-color: #f7f8fc;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    color: #212529;
+    color: #4a5568;
 }
 
 .prism-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px;
-    background: linear-gradient(135deg, #39A935 0%, #2e8b2e 100%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 2px 10px rgba(57, 169, 53, 0.3);
+    padding: 16px 20px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .prism-logo {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: white;
+    color: #2d3748;
 }
 
 .logo-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #FCEA0D 0%, #F8B100 100%);
-    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    background-color: #39A935;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
-    color: #212529;
-    box-shadow: 0 2px 8px rgba(252, 234, 13, 0.3);
+    font-size: 1rem;
+    color: #ffffff;
 }
 
 .prism-logo h1 {
     margin: 0;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
 }
 
 .prism-controls-mini {
@@ -55,69 +53,68 @@
 }
 
 .control-btn-mini {
-    width: 36px;
-    height: 36px;
-    border: none;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    color: white;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #cbd5e0;
+    background-color: #ffffff;
+    border-radius: 6px;
+    color: #718096;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.9rem;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
 }
 
 .control-btn-mini:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.05);
+    background-color: #f7fafc;
+    border-color: #a0aec0;
 }
 
 .control-btn-mini.active {
-    background: #FCEA0D;
-    color: #212529;
+    background-color: #FCEA0D;
+    color: #2d3748;
+    border-color: #FCEA0D;
 }
 
 .prism-main {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 24px;
-    gap: 24px;
+    padding: 20px;
+    gap: 20px;
     overflow-y: auto;
 }
 
 .now-playing-section {
     display: flex;
-    gap: 24px;
+    gap: 20px;
     align-items: center;
-    padding: 24px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
 }
 
 .album-art {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     flex-shrink: 0;
 }
 
 .album-art-placeholder {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #39A935 0%, #FCEA0D 50%, #F8B100 100%);
-    border-radius: 12px;
+    background-color: #edf2f7;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5rem;
-    color: white;
-    box-shadow: 0 4px 16px rgba(57, 169, 53, 0.3);
+    font-size: 2rem;
+    color: #a0aec0;
     position: relative;
     overflow: hidden;
 }
@@ -126,9 +123,9 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 20px;
-    height: 20px;
-    background: #212529;
+    width: 16px;
+    height: 16px;
+    background-color: #4a5568;
     border-radius: 50%;
     transform: translate(-50%, -50%);
 }
@@ -142,37 +139,37 @@
 
 #trackTitle {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    color: #212529;
+    color: #2d3748;
 }
 
 #trackArtist {
     margin: 0;
-    font-size: 1rem;
-    color: #6c757d;
+    font-size: 0.9rem;
+    color: #718096;
 }
 
 .track-progress {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-top: 16px;
+    margin-top: 12px;
 }
 
 .progress-bar {
     flex: 1;
     position: relative;
-    height: 6px;
-    background: #e9ecef;
-    border-radius: 3px;
+    height: 4px;
+    background-color: #e2e8f0;
+    border-radius: 2px;
     overflow: hidden;
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #39A935 0%, #FCEA0D 50%, #F8B100 100%);
-    border-radius: 3px;
+    background-color: #39A935;
+    border-radius: 2px;
     transition: width 0.1s ease;
     width: 0%;
 }
@@ -188,75 +185,77 @@
 }
 
 #currentTime, #duration {
-    font-size: 0.85rem;
-    color: #6c757d;
+    font-size: 0.8rem;
+    color: #718096;
     font-weight: 500;
-    min-width: 35px;
+    min-width: 32px;
 }
 
 .controls-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 16px 20px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
 }
 
 .main-controls {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     align-items: center;
 }
 
 .control-btn {
-    width: 48px;
-    height: 48px;
-    border: none;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #cbd5e0;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    background: #e9ecef;
-    color: #495057;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background-color: #ffffff;
+    color: #718096;
 }
 
 .control-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background-color: #f7fafc;
+    border-color: #a0aec0;
 }
 
 .control-btn.play-pause {
-    width: 56px;
-    height: 56px;
-    background: linear-gradient(135deg, #E20613 0%, #c70510 100%);
-    color: white;
-    font-size: 1.3rem;
+    width: 48px;
+    height: 48px;
+    background-color: #E20613;
+    color: #ffffff;
+    font-size: 1.2rem;
+    border-color: #E20613;
 }
 
 .control-btn.play-pause:hover {
-    background: linear-gradient(135deg, #c70510 0%, #a8040d 100%);
+    background-color: #c70510;
+    border-color: #c70510;
 }
 
 .volume-control {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: #6c757d;
+    color: #718096;
 }
 
 .volume-control i {
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .volume-slider {
-    width: 100px;
+    width: 80px;
     height: 4px;
-    background: #e9ecef;
+    background-color: #e2e8f0;
     border-radius: 2px;
     outline: none;
     cursor: pointer;
@@ -265,32 +264,30 @@
 
 .volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    background: #F8B100;
+    width: 12px;
+    height: 12px;
+    background-color: #F8B100;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(248, 177, 0, 0.3);
 }
 
 .volume-slider::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    background: #F8B100;
+    width: 12px;
+    height: 12px;
+    background-color: #F8B100;
     border-radius: 50%;
     cursor: pointer;
     border: none;
-    box-shadow: 0 2px 6px rgba(248, 177, 0, 0.3);
 }
 
 .playlist-section {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 16px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .playlist-header {
@@ -298,35 +295,35 @@
     justify-content: space-between;
     align-items: center;
     padding: 16px 20px;
-    background: rgba(57, 169, 53, 0.1);
-    border-bottom: 1px solid rgba(57, 169, 53, 0.2);
+    background-color: #f7fafc;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .playlist-header h3 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: #39A935;
+    color: #2d3748;
 }
 
 .load-music-btn {
     padding: 8px 16px;
-    border: none;
-    background: linear-gradient(135deg, #39A935 0%, #2e8b2e 100%);
-    color: white;
-    border-radius: 8px;
+    border: 1px solid #39A935;
+    background-color: #39A935;
+    color: #ffffff;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 500;
     display: flex;
     align-items: center;
     gap: 6px;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .load-music-btn:hover {
-    background: linear-gradient(135deg, #2e8b2e 0%, #267326 100%);
-    transform: translateY(-1px);
+    background-color: #2e8b2e;
+    border-color: #2e8b2e;
 }
 
 .playlist-container {
@@ -340,31 +337,38 @@
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 4px;
+    transition: all 0.2s ease;
+    margin-bottom: 2px;
 }
 
 .playlist-item:hover {
-    background: rgba(57, 169, 53, 0.1);
+    background-color: #f7fafc;
 }
 
 .playlist-item.active {
-    background: linear-gradient(135deg, rgba(57, 169, 53, 0.2) 0%, rgba(252, 234, 13, 0.2) 100%);
+    background-color: #f0fff4;
     border-left: 3px solid #39A935;
 }
 
 .track-icon {
-    width: 32px;
-    height: 32px;
-    background: linear-gradient(135deg, #FCEA0D 0%, #F8B100 100%);
-    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    background-color: #edf2f7;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.9rem;
-    color: #212529;
+    font-size: 0.8rem;
+    color: #718096;
+}
+
+.playlist-item.active .track-icon {
+    background-color: #FCEA0D;
+    border-color: #FCEA0D;
+    color: #2d3748;
 }
 
 .track-details {
@@ -377,24 +381,24 @@
 .track-name {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #212529;
+    color: #4a5568;
 }
 
 .track-artist {
     font-size: 0.8rem;
-    color: #6c757d;
+    color: #718096;
 }
 
 .track-duration {
     font-size: 0.8rem;
-    color: #6c757d;
+    color: #718096;
     font-weight: 500;
 }
 
 .playlist-empty {
     padding: 40px 20px;
     text-align: center;
-    color: #6c757d;
+    color: #718096;
     font-style: italic;
 }
 
@@ -415,40 +419,20 @@
 
 /* Scrollbar styling */
 .playlist-container::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
 
 .playlist-container::-webkit-scrollbar-track {
-    background: rgba(57, 169, 53, 0.1);
-    border-radius: 4px;
+    background-color: #f7fafc;
 }
 
 .playlist-container::-webkit-scrollbar-thumb {
-    background: rgba(57, 169, 53, 0.5);
-    border-radius: 4px;
+    background-color: #cbd5e0;
+    border-radius: 3px;
 }
 
 .playlist-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(57, 169, 53, 0.7);
-}
-
-/* Animations */
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
-
-.control-btn.play-pause.playing {
-    animation: pulse 2s infinite;
-}
-
-@keyframes rotate {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-.vinyl-effect.spinning {
-    animation: rotate 3s linear infinite;
+    background-color: #a0aec0;
 }
 
 /* Responsive design */
@@ -467,21 +451,3 @@
         order: -1;
     }
 }
-
-/* Light theme optimizations */
-.prism-container {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-}
-
-.now-playing-section,
-.controls-section,
-.playlist-section {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.playlist-header {
-    background: rgba(57, 169, 53, 0.05);
-    border-bottom: 1px solid rgba(57, 169, 53, 0.1);
-}
-

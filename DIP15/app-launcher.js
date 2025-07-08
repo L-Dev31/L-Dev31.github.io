@@ -159,7 +159,7 @@ class AppLauncher {
             'app7': 'ScaffoldApp',
             'app8': 'ClockApp',
             'app9': 'ScheduleApp',
-            'app10': 'AvokadooApp'
+            'app10': 'AvokaDoApp'
         };
         
         return appNames[appId] || `${appId.charAt(0).toUpperCase() + appId.slice(1)}App`;

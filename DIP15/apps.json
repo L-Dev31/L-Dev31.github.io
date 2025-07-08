@@ -32,7 +32,7 @@
       "id": "app5",
       "name": "Prism",
       "icon": "images/app5.png",
-      "showInTaskbar": true,
+      "showInTaskbar": false,
       "available": true
     },
     {
@@ -46,7 +46,7 @@
       "id": "app7",
       "name": "Scaffold",
       "icon": "images/app7.png",
-      "showInTaskbar": true,
+      "showInTaskbar": false,
       "available": true
     },
     {
@@ -65,9 +65,9 @@
     },
     {
       "id": "app10",
-      "name": "Avokadoo",
+      "name": "AvokaDo",
       "icon": "images/app10.png",
-      "showInTaskbar": true,
+      "showInTaskbar": false,
       "available": true
     }
   ]

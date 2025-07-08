@@ -334,10 +334,10 @@ class WindowManager {
 
         // Special handling for apps that need a layout refresh after restore
         if (windowObj.config.appId === 'app1' && window.filesAppInstance) {
-            // CRITICAL: Files app needs content refresh after restore
-            setTimeout(async () => {
+            // INTELLIGENT LAYOUT STABILIZATION for Files app
+            setTimeout(() => {
                 try {
-                    console.log('🔧 Restoring Files app content after minimize/restore');
+                    console.log('🔧 Applying intelligent layout stabilization for Files app');
                     
                     // Force visibility of all Files app components FIRST
                     const filesContainer = windowObj.element.querySelector('.files-container');
@@ -366,11 +366,6 @@ class WindowManager {
                         console.log("✅ Forced filesGrid visibility");
                     }
                     
-                    // **CRITICAL**: Reload the Files content after restore
-                    console.log('🔄 Reloading Files content to ensure visibility...');
-                    await window.filesAppInstance.updateContent();
-                    console.log('✅ Files content reloaded successfully');
-                    
                     // Then call the layout recalc method
                     window.filesAppInstance.forceLayoutRecalc();
                     
@@ -395,17 +390,8 @@ class WindowManager {
                         }, 150);
                     }
                     
-                    // Final stability check and content validation
+                    // Final stability check
                     setTimeout(() => {
-                        // Double-check that content is still there
-                        const filesGrid = windowObj.element.querySelector('#filesGrid');
-                        if (filesGrid && (!filesGrid.innerHTML || filesGrid.innerHTML.trim() === '')) {
-                            console.warn('⚠️ Files content is still empty after restore, attempting reload...');
-                            window.filesAppInstance.updateContent().catch(error => {
-                                console.error('❌ Failed to reload Files content:', error);
-                            });
-                        }
-                        
                         if (window.top && window.top.dispatchEvent) {
                             window.top.dispatchEvent(new Event('resize'));
                         }
