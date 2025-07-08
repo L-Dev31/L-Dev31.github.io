@@ -68,12 +68,7 @@ if (typeof PrismApp === 'undefined') {
             return `
                 <div class="prism-container">
                     <div class="prism-header">
-                        <div class="prism-logo">
-                            <div class="logo-icon">
-                                <i class="fas fa-music"></i>
-                            </div>
-                            <h1>Prism</h1>
-                        </div>
+                        <div class="prism-logo"></div>
                         <div class="prism-controls-mini">
                             <button id="shuffleBtn" class="control-btn-mini" title="Shuffle">
                                 <i class="fas fa-random"></i>
@@ -87,12 +82,11 @@ if (typeof PrismApp === 'undefined') {
                     <div class="prism-main">
                         <div class="now-playing-section">
                             <div class="album-art">
-                                <div class="album-art-placeholder">
-                                    <i class="fas fa-music"></i>
+                                <img id="coverImage" class="cover-image" src="" alt="Cover" style="display:none;" />
+                                <div class="album-art-placeholder" id="coverPlaceholder">
+                                    <!-- No icon -->
                                 </div>
-                                <div class="vinyl-effect"></div>
                             </div>
-                            
                             <div class="track-info">
                                 <h2 id="trackTitle">No track selected</h2>
                                 <p id="trackArtist">Unknown Artist</p>
@@ -119,7 +113,6 @@ if (typeof PrismApp === 'undefined') {
                                     <i class="fas fa-step-forward"></i>
                                 </button>
                             </div>
-                            
                             <div class="volume-control">
                                 <i class="fas fa-volume-up"></i>
                                 <input type="range" id="volumeSlider" min="0" max="100" value="70" class="volume-slider">
@@ -129,10 +122,6 @@ if (typeof PrismApp === 'undefined') {
                         <div class="playlist-section">
                             <div class="playlist-header">
                                 <h3>Playlist</h3>
-                                <button id="loadMusicBtn" class="load-music-btn">
-                                    <i class="fas fa-folder-open"></i>
-                                    Load Music
-                                </button>
                             </div>
                             <div id="playlistContainer" class="playlist-container">
                                 <!-- Playlist items will be loaded here -->
@@ -190,6 +179,7 @@ if (typeof PrismApp === 'undefined') {
                 this.setupAudioEvents();
                 this.updateTrackInfo();
                 this.updatePlayButton();
+                this.updateCoverImage();
 
                 // Add to playlist if not already there
                 const existingIndex = this.playlist.findIndex(track => track.path === filePath);
@@ -379,6 +369,7 @@ if (typeof PrismApp === 'undefined') {
 
             if (titleEl) titleEl.textContent = this.currentTrack.title;
             if (artistEl) artistEl.textContent = this.currentTrack.artist;
+            this.updateCoverImage();
         }
 
         updatePlayButton() {
@@ -467,6 +458,40 @@ if (typeof PrismApp === 'undefined') {
             }
             
             console.log('🎵 Prism app closed');
+    }
+
+    updateCoverImage() {
+        const window = this.windowManager.getWindow(this.windowId);
+        if (!window || !this.currentTrack) return;
+        const coverImg = window.element.querySelector('#coverImage');
+        const placeholder = window.element.querySelector('#coverPlaceholder');
+        let fileNameNoExt = this.currentTrack.name.replace(/\.[^/.]+$/, "");
+        // Encode for URL (spaces, special chars)
+        const encodedName = encodeURIComponent(fileNameNoExt);
+        const coverJpg = `covers/${encodedName}.jpg`;
+        const coverPng = `covers/${encodedName}.png`;
+        function setCover(src) {
+            coverImg.src = src;
+            coverImg.style.display = '';
+            if (placeholder) placeholder.style.display = 'none';
+        }
+        function hideCover() {
+            coverImg.src = '';
+            coverImg.style.display = 'none';
+            if (placeholder) placeholder.style.display = '';
+        }
+        // Preload image to check if it exists
+        const testImg = new window.Image();
+        testImg.onload = () => setCover(testImg.src);
+        testImg.onerror = () => {
+            // Try png if jpg failed
+            if (testImg.src.endsWith('.jpg')) {
+                testImg.src = coverPng;
+            } else {
+                hideCover();
+            }
+        };
+        testImg.src = coverJpg;
         }
     }
 

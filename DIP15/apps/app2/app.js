@@ -181,17 +181,20 @@ if (typeof SettingsApp === 'undefined') {
                         </div>
                         
                         <div class="settings-group">
-                            <h3>Development Information</h3>
+                            <h3>Copyright</h3>
                             <div class="system-info-card">
                                 <div class="dev-info">
                                     <div class="spec-item">
-                                        <strong>Version:</strong> 0.7.0 DEV 
+                                        <strong>&copy; 2025 Red Planet Pictures, BBC Studios. All rights reserved.</strong>
                                     </div>
                                     <div class="spec-item">
-                                        <strong>Build Date:</strong> July 2025
+                                        <strong>Fictional OS for:</strong> "The Idyll - Couples Therapy Retreat"
                                     </div>
                                     <div class="spec-item">
                                         <strong>Developer:</strong> Léo TOSKU
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Build Date:</strong> July 2025
                                     </div>
                                 </div>
                             </div>
