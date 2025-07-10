@@ -41,7 +41,7 @@ if (typeof ScheduleApp === 'undefined') {
                 
                 const scheduleWindow = window.windowManager.createWindow({
                     id: `schedule-${Date.now()}`,
-                    title: 'Schedule',
+                    title: 'Calendar',
                     x: 100,
                     y: 50,
                     width: 1000,
@@ -83,7 +83,7 @@ if (typeof ScheduleApp === 'undefined') {
                         </div>
                         
                         <div class="schedule-title">
-                            <h3>Keira Mayhew's Psychology Schedule</h3>
+                            <h3>Keira Mayhew's Schedule</h3>
                         </div>
                     </div>
 
@@ -104,21 +104,21 @@ if (typeof ScheduleApp === 'undefined') {
                     </span>
                     <div class="legend" style="display: flex; gap: 16px;">
                         <span class="legend-item" style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
-                            <span class="legend-color" style="background-color: #2196f3; width: 12px; height: 12px; border-radius: 2px; display: inline-block;"></span>
-                            Individual
-                        </span>
-                        <span class="legend-item" style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
-                            <span class="legend-color" style="background-color: #9c27b0; width: 12px; height: 12px; border-radius: 2px; display: inline-block;"></span>
-                            Couples
-                        </span>
-                        <span class="legend-item" style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
-                            <span class="legend-color" style="background-color: #4caf50; width: 12px; height: 12px; border-radius: 2px; display: inline-block;"></span>
-                            Family
-                        </span>
-                        <span class="legend-item" style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
-                            <span class="legend-color" style="background-color: #e91e63; width: 12px; height: 12px; border-radius: 2px; display: inline-block;"></span>
-                            Group
-                        </span>
+                        <span class="legend-color legend-individual"></span>
+                        individual
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-color legend-couples"></span>
+                        couples
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-color legend-classes"></span>
+                        classes
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-color legend-appointment"></span>
+                        appointment
+                    </span>
                     </div>
                 </div>
             `;
@@ -128,7 +128,33 @@ if (typeof ScheduleApp === 'undefined') {
             try {
                 const response = await fetch('schedule.json');
                 const data = await response.json();
-                this.appointments = data.appointments || [];
+                // Assign soft pastel color names to tasks, full saturation only for legend
+                this.appointments = (data.appointments || []).map(apt => {
+                    let color = 'honeydew'; // pastel green for appointment
+                    let status = 'confirmed';
+                    let notes = '';
+                    const type = (apt.type || '').toLowerCase();
+                    if (type === 'individual') {
+                        color = 'aliceblue'; 
+                        notes = '1:1 session';
+                    } else if (type === 'couples') {
+                        color = 'lavenderblush'; 
+                        notes = 'Relationship/couples session';
+                    } else if (type === 'classes') {
+                        color = '#FFF9E3'; 
+                        notes = 'Group/class session';
+                    } else if (type === 'appointment') {
+                        color = 'honeydew'; 
+                        notes = 'Appointment';
+                    }
+                    // Special: Trust Exercises (move one hour prior if found)
+                    if (apt.title && apt.title.toLowerCase().includes('trust exercises')) {
+                        let [h, m] = (apt.time || '00:00').split(':').map(Number);
+                        h = Math.max(0, h - 1);
+                        apt.time = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+                    }
+                    return { ...apt, color, status, notes };
+                });
                 console.log('✅ Schedule data loaded:', this.appointments.length, 'appointments');
             } catch (error) {
                 console.error('Failed to load schedule data:', error);
@@ -145,12 +171,13 @@ if (typeof ScheduleApp === 'undefined') {
         }
 
         formatCurrentPeriod() {
-            // Week view only
+            // Week view only, Monday to Sunday
             const startOfWeek = new Date(this.selectedDate);
-            startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+            const dayOfWeek = startOfWeek.getDay();
+            const diffToMonday = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
+            startOfWeek.setDate(startOfWeek.getDate() + diffToMonday);
             const endOfWeek = new Date(startOfWeek);
             endOfWeek.setDate(endOfWeek.getDate() + 6);
-            
             return `${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
         }
 
@@ -181,23 +208,25 @@ if (typeof ScheduleApp === 'undefined') {
         }
 
         renderWeekView() {
+            // Set startOfWeek to Monday
             const startOfWeek = new Date(this.selectedDate);
-            startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+            const dayOfWeek = startOfWeek.getDay();
+            const diffToMonday = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
+            startOfWeek.setDate(startOfWeek.getDate() + diffToMonday);
 
             let html = `
                 <div class="week-view">
-                    <div class="week-header">
+                    <div class="week-header" style="border-bottom: 1px solid #e0e0e0;">
                         <div class="time-column-header"></div>
             `;
 
-            // Day headers
+            // Day headers (Monday to Sunday)
             for (let i = 0; i < 7; i++) {
                 const day = new Date(startOfWeek);
                 day.setDate(day.getDate() + i);
                 const isToday = day.toDateString() === new Date().toDateString();
-                
                 html += `
-                    <div class="day-header ${isToday ? 'today' : ''}">
+                    <div class="day-header ${isToday ? 'today' : ''}" style="border-bottom: 1px solid #e0e0e0;">
                         <div class="day-name">${day.toLocaleDateString('en-US', { weekday: 'short' })}</div>
                         <div class="day-number">${day.getDate()}</div>
                     </div>
@@ -220,19 +249,38 @@ if (typeof ScheduleApp === 'undefined') {
                         <div class="time-label">${displayTime}</div>
                 `;
 
-                // Day columns
+                // Day columns (Monday to Sunday)
                 for (let i = 0; i < 7; i++) {
                     const day = new Date(startOfWeek);
                     day.setDate(day.getDate() + i);
                     const dayStr = day.toISOString().split('T')[0];
-                    
-                    const dayAppointments = this.appointments.filter(apt => 
-                        apt.date === dayStr && apt.time === timeSlot
-                    );
 
-                    html += `<div class="week-cell">`;
+
+                    // Find all appointments that overlap this time slot
+                    const dayAppointments = this.appointments.filter(apt => {
+                        if (apt.date !== dayStr) return false;
+                        // Parse start and end time
+                        const [startHour, startMin] = (apt.time || '00:00').split(':').map(Number);
+                        const start = startHour * 60 + startMin;
+                        const end = start + (apt.duration || 60);
+                        const slotHour = hour;
+                        const slotStart = slotHour * 60;
+                        const slotEnd = slotStart + 60;
+                        // Overlaps if appointment starts before slot ends and ends after slot starts
+                        return start < slotEnd && end > slotStart;
+                    });
+
+                    html += `<div class="week-cell" style="position:relative;">`;
+                    // Only render the appointment in the time slot where it starts
                     dayAppointments.forEach(apt => {
-                        html += this.renderAppointmentCard(apt, true);
+                        const [startHour, startMin] = (apt.time || '00:00').split(':').map(Number);
+                        if (startHour === hour) {
+                            const duration = apt.duration || 60;
+                            const heightMultiplier = Math.max(1, Math.round(duration / 60));
+                            html += `<div style="height:calc(100% * ${heightMultiplier}); min-height:40px; position:absolute; top:0; left:0; right:0; z-index:2; width:100%;">`;
+                            html += this.renderAppointmentCard(apt, true);
+                            html += `</div>`;
+                        }
                     });
                     html += `</div>`;
                 }
@@ -251,13 +299,16 @@ if (typeof ScheduleApp === 'undefined') {
         renderAppointmentCard(appointment, compact = false) {
             const statusClass = appointment.status === 'confirmed' ? 'confirmed' : 
                               appointment.status === 'pending' ? 'pending' : 'cancelled';
-            
+            // Use title as main label, fallback to clientName/type for legacy
+            const mainTitle = appointment.title || appointment.clientName || '';
+            const type = appointment.type || '';
+            const notes = appointment.notes || '';
             if (compact) {
                 return `
                     <div class="appointment-card compact ${statusClass}" 
                          style="background-color: ${appointment.color};">
-                        <div class="appointment-title">${appointment.clientName}</div>
-                        <div class="appointment-type">${appointment.type}</div>
+                        <div class="appointment-title" style="font-weight: normal;">${mainTitle}</div>
+                        <div class="appointment-type">${type}</div>
                     </div>
                 `;
             }
@@ -266,10 +317,10 @@ if (typeof ScheduleApp === 'undefined') {
                 <div class="appointment-card ${statusClass}" 
                      style="background-color: ${appointment.color};">
                     <div class="appointment-header">
-                        <div class="appointment-title">${appointment.clientName}</div>
+                        <div class="appointment-title" style="font-weight: normal;">${mainTitle}</div>
                     </div>
-                    <div class="appointment-type">${appointment.type}</div>
-                    <div class="appointment-notes">${appointment.notes}</div>
+                    <div class="appointment-type">${type}</div>
+                    <div class="appointment-notes">${notes}</div>
                     <div class="appointment-status status-${appointment.status}">
                         ${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
                     </div>
@@ -280,12 +331,13 @@ if (typeof ScheduleApp === 'undefined') {
         updateAppointmentCount() {
             const totalEl = document.getElementById('totalAppointments');
             if (totalEl) {
-                // Week view only
+                // Week view only, Monday to Sunday
                 const startOfWeek = new Date(this.selectedDate);
-                startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+                const dayOfWeek = startOfWeek.getDay();
+                const diffToMonday = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
+                startOfWeek.setDate(startOfWeek.getDate() + diffToMonday);
                 const endOfWeek = new Date(startOfWeek);
                 endOfWeek.setDate(endOfWeek.getDate() + 6);
-                
                 const weekAppointments = this.appointments.filter(apt => {
                     const aptDate = new Date(apt.date);
                     return aptDate >= startOfWeek && aptDate <= endOfWeek;
