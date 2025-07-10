@@ -1,5 +1,4 @@
-if (typeof PrismApp === 'undefined') {
-    class PrismApp {
+class PrismApp {
         constructor() {
             this.windowId = null;
             this.windowManager = null;
@@ -202,22 +201,18 @@ if (typeof PrismApp === 'undefined') {
 
         async loadDefaultPlaylist() {
             try {
-                // Dynamically list all audio files in home/Music (supported: mp3, wav, ogg, m4a, flac)
-                const supportedExts = ['mp3', 'wav', 'ogg', 'm4a', 'flac'];
-                // Hardcoded for now, but could be dynamic with backend or API
-                const musicFiles = [
-                    { name: 'Sounds of a Virtuose - Miller Harper.mp3', path: 'home/Music/Sounds of a Virtuose - Miller Harper.mp3' },
-                    { name: 'song.wav', path: 'home/Music/song.wav' }
-                ];
+                // Fetch music.json from the root
+                const response = await fetch('music.json');
+                if (!response.ok) throw new Error('music.json not found');
+                const tracks = await response.json();
+                if (!Array.isArray(tracks)) throw new Error('music.json is not an array');
 
-                this.playlist = musicFiles.filter(file => {
-                    const ext = file.name.split('.').pop().toLowerCase();
-                    return supportedExts.includes(ext);
-                }).map(file => ({
-                    name: file.name,
-                    path: file.path,
-                    title: file.name.replace(/\.[^/.]+$/, ""),
-                    artist: "Unknown Artist"
+                this.playlist = tracks.map(track => ({
+                    name: track.name,
+                    path: track.path,
+                    title: track.name.replace(/\.[^/.]+$/, ""),
+                    artist: track.artist || "Unknown Artist",
+                    cover: track.cover || null
                 }));
 
                 if (this.playlist.length > 0) {
@@ -228,6 +223,8 @@ if (typeof PrismApp === 'undefined') {
                 this.renderPlaylist();
             } catch (error) {
                 console.error('❌ Error loading default playlist:', error);
+                this.playlist = [];
+                this.renderPlaylist();
             }
         }
 
@@ -467,51 +464,26 @@ if (typeof PrismApp === 'undefined') {
 
         console.log('🎵 Prism app closed');
     }
-
-    updateCoverImage() {
-        const window = this.windowManager.getWindow(this.windowId);
-        if (!window || !this.currentTrack) return;
-        const coverImg = window.element.querySelector('#coverImage');
-        const placeholder = window.element.querySelector('#coverPlaceholder');
-        let fileNameNoExt = this.currentTrack.name.replace(/\.[^/.]+$/, "");
-        // For covers, replace all non-alphanumeric (except dash/underscore/space) with _ and trim spaces
-        let safeName = fileNameNoExt.trim().replace(/[^\w\d\- _]/g, '_').replace(/\s+/g, ' ');
-        // Try with spaces, then with underscores (for compatibility)
-        const coverJpg = `covers/${safeName}.jpg`;
-        const coverPng = `covers/${safeName}.png`;
-        const coverJpgAlt = `covers/${safeName.replace(/ /g, '_')}.jpg`;
-        const coverPngAlt = `covers/${safeName.replace(/ /g, '_')}.png`;
-        function setCover(src) {
-            coverImg.src = src;
-            coverImg.style.display = '';
-            if (placeholder) placeholder.style.display = 'none';
-        }
-        function hideCover() {
-            coverImg.src = '';
-            coverImg.style.display = 'none';
-            if (placeholder) placeholder.style.display = '';
-            // Show fallback message if no cover found
-            if (placeholder) {
-                placeholder.innerHTML = '<span style="font-size:0.9em;color:#bbb;text-align:center;">No cover found</span>';
-            }
-        }
-        // Preload image to check if it exists, try all variants
-        const trySources = [coverJpg, coverPng, coverJpgAlt, coverPngAlt];
-        let idx = 0;
-        const testImg = new window.Image();
-        testImg.onload = () => setCover(testImg.src);
-        testImg.onerror = () => {
-            idx++;
-            if (idx < trySources.length) {
-                testImg.src = trySources[idx];
+        updateCoverImage() {
+            const window = this.windowManager.getWindow(this.windowId);
+            if (!window || !this.currentTrack) return;
+            const coverImg = window.element.querySelector('#coverImage');
+            const placeholder = window.element.querySelector('#coverPlaceholder');
+            if (this.currentTrack.cover) {
+                coverImg.src = this.currentTrack.cover;
+                coverImg.style.display = '';
+                if (placeholder) placeholder.style.display = 'none';
             } else {
-                hideCover();
+                coverImg.src = '';
+                coverImg.style.display = 'none';
+                if (placeholder) placeholder.style.display = '';
             }
-        };
-        testImg.src = trySources[0];
+        }
     }
-    }
+}
 
+
+if (typeof window !== 'undefined' && typeof window.PrismApp === 'undefined') {
     window.PrismApp = PrismApp;
 }
 

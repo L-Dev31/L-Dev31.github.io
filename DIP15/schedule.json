@@ -16,7 +16,8 @@
     { "id": "11", "title": "Hartnells Session 4", "date": "2026-01-15", "time": "12:30", "duration": 60, "type": "couples" },
     { "id": "12", "title": "Warbers Session 4", "date": "2026-01-15", "time": "13:00", "duration": 60, "type": "couples" },
 
-    { "id": "13", "title": "A Hartnell 1:1", "date": "2026-01-16", "time": "09:30", "duration": 60, "type": "individual" },
-    { "id": "14", "title": "S Warber 1:1", "date": "2026-01-16", "time": "13:00", "duration": 60, "type": "individual" }
+    { "id": "13", "title": "Trust Exercises", "date": "2026-01-16", "time": "10:00", "duration": 60, "type": "classes" },
+    { "id": "14", "title": "S Warber 1:1", "date": "2026-01-16", "time": "14:00", "duration": 60, "type": "individual" },
+    { "id": "15", "title": "A Hartnell 1:1", "date": "2026-01-16", "time": "17:00", "duration": 60, "type": "individual" }
   ]
 }
