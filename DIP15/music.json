@@ -1,0 +1,16 @@
+{
+  "tracks": [
+    {
+      "name": "Sounds of a Virtuose - Miller Harper.mp3",
+      "artist": "Miller Harper",
+      "path": "home/Music/Sounds of a Virtuose - Miller Harper.mp3",
+      "cover": "covers/Sounds of a Virtuose - Miller Harper.jpg"
+    },
+    {
+      "name": "song.wav",
+      "artist": "Unknown Artist",
+      "path": "home/Music/song.wav",
+      "cover": "covers/song.jpg"
+    }
+  ]
+}

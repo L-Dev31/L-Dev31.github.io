@@ -1,3 +1,19 @@
+/* Prism footer controls */
+.prism-footer-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px 12px 20px;
+    min-height: 32px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.prism-footer-spacer {
+    flex: 1;
+}
+.prism-footer-controls .prism-controls-mini {
+    gap: 8px;
+}
 /* ======================================
    PRISM APP - SIMPLE LIGHT THEME
    Colors: Green #39A935, Yellow #FCEA0D, Orange #F8B100, Red #E20613
@@ -102,6 +118,14 @@
     width: 100px;
     height: 100px;
     flex-shrink: 0;
+}
+
+.cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
 }
 
 .album-art-placeholder {

@@ -58,7 +58,7 @@
     },
     {
       "id": "app9",
-      "name": "Schedule",
+      "name": "Calendar",
       "icon": "images/app9.png",
       "showInTaskbar": true,
       "available": true

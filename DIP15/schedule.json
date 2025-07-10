@@ -1,147 +1,22 @@
 {
   "appointments": [
-    {
-      "id": "1",
-      "clientName": "Sarah Johnson",
-      "type": "Individual Therapy",
-      "date": "2025-07-07",
-      "time": "09:00",
-      "duration": 60,
-      "status": "confirmed",
-      "color": "#e3f2fd",
-      "notes": "Anxiety management session"
-    },
-    {
-      "id": "2",
-      "clientName": "Michael Chen",
-      "type": "Couples Therapy",
-      "date": "2025-07-07",
-      "time": "10:30",
-      "duration": 90,
-      "status": "confirmed",
-      "color": "#f3e5f5",
-      "notes": "Communication workshop"
-    },
-    {
-      "id": "3",
-      "clientName": "Emma Rodriguez",
-      "type": "Family Therapy",
-      "date": "2025-07-07",
-      "time": "14:00",
-      "duration": 75,
-      "status": "confirmed",
-      "color": "#e8f5e8",
-      "notes": "Teen behavioral issues"
-    },
-    {
-      "id": "4",
-      "clientName": "David Thompson",
-      "type": "Individual Therapy",
-      "date": "2025-07-07",
-      "time": "15:30",
-      "duration": 60,
-      "status": "pending",
-      "color": "#e3f2fd",
-      "notes": "Depression treatment"
-    },
-    {
-      "id": "5",
-      "clientName": "Lisa Martinez",
-      "type": "Group Therapy",
-      "date": "2025-07-08",
-      "time": "09:00",
-      "duration": 120,
-      "status": "confirmed",
-      "color": "#fce4ec",
-      "notes": "Social anxiety support group"
-    },
-    {
-      "id": "6",
-      "clientName": "Robert Wilson",
-      "type": "Individual Therapy",
-      "date": "2025-07-08",
-      "time": "11:30",
-      "duration": 60,
-      "status": "confirmed",
-      "color": "#e3f2fd",
-      "notes": "PTSD counseling"
-    },
-    {
-      "id": "7",
-      "clientName": "Anna Schmidt",
-      "type": "Assessment",
-      "date": "2025-07-08",
-      "time": "14:00",
-      "duration": 90,
-      "status": "confirmed",
-      "color": "#f1f8e9",
-      "notes": "Initial psychological evaluation"
-    },
-    {
-      "id": "8",
-      "clientName": "James Brown",
-      "type": "Individual Therapy",
-      "date": "2025-07-09",
-      "time": "10:00",
-      "duration": 60,
-      "status": "confirmed",
-      "color": "#e3f2fd",
-      "notes": "Cognitive behavioral therapy"
-    },
-    {
-      "id": "9",
-      "clientName": "Maria Garcia",
-      "type": "Family Therapy",
-      "date": "2025-07-09",
-      "time": "13:00",
-      "duration": 90,
-      "status": "confirmed",
-      "color": "#e8f5e8",
-      "notes": "Divorce counseling"
-    },
-    {
-      "id": "10",
-      "clientName": "Alex Turner",
-      "type": "Individual Therapy",
-      "date": "2025-07-10",
-      "time": "09:30",
-      "duration": 60,
-      "status": "confirmed",
-      "color": "#e3f2fd",
-      "notes": "Addiction recovery session"
-    },
-    {
-      "id": "11",
-      "clientName": "Sophie Anderson",
-      "type": "Couples Therapy",
-      "date": "2025-07-10",
-      "time": "11:00",
-      "duration": 90,
-      "status": "cancelled",
-      "color": "#ffebee",
-      "notes": "Relationship counseling - CANCELLED"
-    },
-    {
-      "id": "12",
-      "clientName": "Kevin Miller",
-      "type": "Individual Therapy",
-      "date": "2025-07-11",
-      "time": "10:00",
-      "duration": 60,
-      "status": "confirmed",
-      "color": "#e3f2fd",
-      "notes": "Stress management techniques"
-    },
-    {
-      "id": "13",
-      "clientName": "Rachel Davis",
-      "type": "Group Therapy",
-      "date": "2025-07-11",
-      "time": "14:00",
-      "duration": 120,
-      "status": "confirmed",
-      "color": "#fce4ec",
-      "notes": "Women's support group"
-    }
+    { "id": "1", "title": "Communication classes", "date": "2026-01-12", "time": "08:00", "duration": 120, "type": "classes" },
+    { "id": "2", "title": "Hartnells Session 1", "date": "2026-01-12", "time": "11:00", "duration": 60, "type": "couples" },
+    { "id": "3", "title": "Warbers Session 1", "date": "2026-01-12", "time": "14:00", "duration": 60, "type": "couples" },
+
+    { "id": "4", "title": "Trust Exercises", "date": "2026-01-13", "time": "10:00", "duration": 120, "type": "classes" },
+    { "id": "5", "title": "Hartnells Session 2", "date": "2026-01-13", "time": "13:00", "duration": 120, "type": "couples" },
+    { "id": "6", "title": "Warbers Session 2", "date": "2026-01-13", "time": "15:00", "duration": 60, "type": "couples" },
+
+    { "id": "7", "title": "Hartnells Session 3", "date": "2026-01-14", "time": "08:30", "duration": 60, "type": "couples" },
+    { "id": "8", "title": "Warbers Session 3", "date": "2026-01-14", "time": "11:00", "duration": 60, "type": "couples" },
+    { "id": "9", "title": "M Hartnell 1:1", "date": "2026-01-14", "time": "13:30", "duration": 60, "type": "individual" },
+
+    { "id": "10", "title": "L Warber 1:1", "date": "2026-01-15", "time": "10:00", "duration": 60, "type": "individual" },
+    { "id": "11", "title": "Hartnells Session 4", "date": "2026-01-15", "time": "12:30", "duration": 60, "type": "couples" },
+    { "id": "12", "title": "Warbers Session 4", "date": "2026-01-15", "time": "13:00", "duration": 60, "type": "couples" },
+
+    { "id": "13", "title": "A Hartnell 1:1", "date": "2026-01-16", "time": "09:30", "duration": 60, "type": "individual" },
+    { "id": "14", "title": "S Warber 1:1", "date": "2026-01-16", "time": "13:00", "duration": 60, "type": "individual" }
   ]
 }

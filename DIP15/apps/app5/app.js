@@ -69,14 +69,6 @@ if (typeof PrismApp === 'undefined') {
                 <div class="prism-container">
                     <div class="prism-header">
                         <div class="prism-logo"></div>
-                        <div class="prism-controls-mini">
-                            <button id="shuffleBtn" class="control-btn-mini" title="Shuffle">
-                                <i class="fas fa-random"></i>
-                            </button>
-                            <button id="repeatBtn" class="control-btn-mini" title="Repeat">
-                                <i class="fas fa-redo"></i>
-                            </button>
-                        </div>
                     </div>
 
                     <div class="prism-main">
@@ -126,6 +118,17 @@ if (typeof PrismApp === 'undefined') {
                             <div id="playlistContainer" class="playlist-container">
                                 <!-- Playlist items will be loaded here -->
                             </div>
+                        </div>
+                    </div>
+                    <div class="prism-footer-controls">
+                        <div class="prism-footer-spacer"></div>
+                        <div class="prism-controls-mini">
+                            <button id="shuffleBtn" class="control-btn-mini" title="Shuffle">
+                                <i class="fas fa-random"></i>
+                            </button>
+                            <button id="repeatBtn" class="control-btn-mini" title="Repeat">
+                                <i class="fas fa-redo"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -199,17 +202,22 @@ if (typeof PrismApp === 'undefined') {
 
         async loadDefaultPlaylist() {
             try {
-                // Load sample music files
+                // Dynamically list all audio files in home/Music (supported: mp3, wav, ogg, m4a, flac)
+                const supportedExts = ['mp3', 'wav', 'ogg', 'm4a', 'flac'];
+                // Hardcoded for now, but could be dynamic with backend or API
                 const musicFiles = [
-                    { name: 'sample.mp3', path: 'home/Music/sample.mp3' },
+                    { name: 'Sounds of a Virtuose - Miller Harper.mp3', path: 'home/Music/Sounds of a Virtuose - Miller Harper.mp3' },
                     { name: 'song.wav', path: 'home/Music/song.wav' }
                 ];
 
-                this.playlist = musicFiles.map(file => ({
+                this.playlist = musicFiles.filter(file => {
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    return supportedExts.includes(ext);
+                }).map(file => ({
                     name: file.name,
                     path: file.path,
                     title: file.name.replace(/\.[^/.]+$/, ""),
-                    artist: "Sample Artist"
+                    artist: "Unknown Artist"
                 }));
 
                 if (this.playlist.length > 0) {
@@ -444,20 +452,20 @@ if (typeof PrismApp === 'undefined') {
         }
 
         close() {
-            if (this.audio) {
-                this.audio.pause();
-                this.audio = null;
-            }
+        if (this.audio) {
+            this.audio.pause();
+            this.audio = null;
+        }
 
-            if (this.windowId && this.windowManager) {
-                this.windowManager.closeWindow(this.windowId);
-            }
-            
-            if (window.prismAppInstance === this) {
-                window.prismAppInstance = null;
-            }
-            
-            console.log('🎵 Prism app closed');
+        if (this.windowId && this.windowManager) {
+            this.windowManager.closeWindow(this.windowId);
+        }
+
+        if (window.prismAppInstance === this) {
+            window.prismAppInstance = null;
+        }
+
+        console.log('🎵 Prism app closed');
     }
 
     updateCoverImage() {
@@ -466,10 +474,13 @@ if (typeof PrismApp === 'undefined') {
         const coverImg = window.element.querySelector('#coverImage');
         const placeholder = window.element.querySelector('#coverPlaceholder');
         let fileNameNoExt = this.currentTrack.name.replace(/\.[^/.]+$/, "");
-        // Encode for URL (spaces, special chars)
-        const encodedName = encodeURIComponent(fileNameNoExt);
-        const coverJpg = `covers/${encodedName}.jpg`;
-        const coverPng = `covers/${encodedName}.png`;
+        // For covers, replace all non-alphanumeric (except dash/underscore/space) with _ and trim spaces
+        let safeName = fileNameNoExt.trim().replace(/[^\w\d\- _]/g, '_').replace(/\s+/g, ' ');
+        // Try with spaces, then with underscores (for compatibility)
+        const coverJpg = `covers/${safeName}.jpg`;
+        const coverPng = `covers/${safeName}.png`;
+        const coverJpgAlt = `covers/${safeName.replace(/ /g, '_')}.jpg`;
+        const coverPngAlt = `covers/${safeName.replace(/ /g, '_')}.png`;
         function setCover(src) {
             coverImg.src = src;
             coverImg.style.display = '';
@@ -479,20 +490,26 @@ if (typeof PrismApp === 'undefined') {
             coverImg.src = '';
             coverImg.style.display = 'none';
             if (placeholder) placeholder.style.display = '';
+            // Show fallback message if no cover found
+            if (placeholder) {
+                placeholder.innerHTML = '<span style="font-size:0.9em;color:#bbb;text-align:center;">No cover found</span>';
+            }
         }
-        // Preload image to check if it exists
+        // Preload image to check if it exists, try all variants
+        const trySources = [coverJpg, coverPng, coverJpgAlt, coverPngAlt];
+        let idx = 0;
         const testImg = new window.Image();
         testImg.onload = () => setCover(testImg.src);
         testImg.onerror = () => {
-            // Try png if jpg failed
-            if (testImg.src.endsWith('.jpg')) {
-                testImg.src = coverPng;
+            idx++;
+            if (idx < trySources.length) {
+                testImg.src = trySources[idx];
             } else {
                 hideCover();
             }
         };
-        testImg.src = coverJpg;
-        }
+        testImg.src = trySources[0];
+    }
     }
 
     window.PrismApp = PrismApp;
