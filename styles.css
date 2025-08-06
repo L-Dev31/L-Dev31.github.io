@@ -59,7 +59,7 @@ body {
     background-size: 100%;
     background-image: url('Elements/image/BlackBG.jpg');
     margin: 0;
-    padding: 0;
+    padding: 0 0 10vh 0;
     color: #e0e0e0;
     background-color: #111111;
     z-index: 2;
@@ -198,10 +198,11 @@ strong {
     position: relative;
     justify-content: center;
     overflow: hidden;
-    height: 60vh;
+    height: auto;
     width: 100%;
     display: flex;
     flex-direction: column;
+    aspect-ratio: 4 / 5;
 }
 
 .gallery-img {
@@ -213,8 +214,10 @@ strong {
 }
 
 .card-image {
-    aspect-ratio: 1 / 1; 
+    aspect-ratio: 16 / 10; 
     overflow: hidden;
+    flex: 1;
+    min-height: 0;
 }
 
 .card-info {
@@ -350,17 +353,71 @@ name {
 
 #infos{
     margin-left: 2.5vh;
-    height: 85vh;
+    height: auto;
+    padding-bottom: 2.5vh;
 }
 
-#infos img {
-    position: absolute;
-    right: 2.5vh;
-    top: 30vh;
+.infos-container {
+    display: flex;
+    align-items: center;
+    gap: 5vh;
+    min-height: 100vh;
+    padding: 5vh 0;
+}
+
+.infos-content {
+    flex: 1;
+    max-width: 60%;
+}
+
+.info-img-container {
+    flex: 0 0 auto;
+}
+
+#infos .info-img {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
     width: 70vh;
     height: 90vh;
     box-shadow: 0 0 3vh #00000099;
     object-fit: cover;
+}
+
+/* Section Entreprises Simple */
+.companies-section {
+    margin-top: 5vh;
+    margin-right: 10vh;
+}
+
+.companies-section h2 {
+    font-size: 4vh;
+    margin-bottom: 3vh;
+    color: white;
+}
+
+.companies-logos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4vh;
+    align-items: center;
+}
+
+.company-logo {
+    height: 10vh;
+    width: auto;
+    object-fit: contain;
+    backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, rgba(139, 69, 69, 0.15), rgba(70, 85, 139, 0.15));
+    border-radius: 1.5vh;
+    padding: 2vh;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.company-logo.nintendo {
+    background: linear-gradient(135deg, rgba(220, 20, 60, 0.2), rgba(178, 34, 34, 0.15));
+    border: 1px solid rgba(220, 20, 60, 0.3);
 }
 
 h1{
@@ -369,7 +426,7 @@ h1{
 
 .subtitle {
     color: gray;
-    margin-right: 100vh;
+    margin-right: 10vh;
     font-size: 3vh;
     margin-top: 5vh;
 }
@@ -641,6 +698,7 @@ header {
 /* Projects Section Styles */
 .projects-section {
     text-align: center;
+    padding-bottom: 2.5vh;
 }
 
 .projects-header {
@@ -740,7 +798,7 @@ header {
     color: #ffffff;
     backdrop-filter: blur(3.5vh);
     margin: 15vh 7.5vh 0 7.5vh;
-    padding: 8vh 4vh;
+    padding: 8vh 4vh 15vh 4vh;
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -840,6 +898,7 @@ header {
     gap: 30px;
     padding: 25px;
     box-sizing: border-box;
+    margin-bottom: -10vh; /* Compense le padding-bottom du body */
 }
 
 .social-link {
