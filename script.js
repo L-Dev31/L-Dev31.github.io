@@ -1,3 +1,123 @@
+// Companies Manager - Gestionnaire des entreprises
+class CompaniesManager {
+    constructor() {
+        this.companies = [];
+        this.container = null;
+    }
+
+    // Charger les données des entreprises depuis le JSON
+    async loadCompanies() {
+        try {
+            const response = await fetch('companies.json');
+            const data = await response.json();
+            this.companies = data.companies;
+            return this.companies;
+        } catch (error) {
+            console.error('Erreur lors du chargement des entreprises:', error);
+            return [];
+        }
+    }
+
+    // Générer le CSS dynamique pour les entreprises
+    generateCSS() {
+        let css = '';
+        this.companies.forEach((company, index) => {
+            const cssClass = company.name.toLowerCase().replace(/\s+/g, '');
+            if (index > 0) { // Le premier (RPP) utilise le style par défaut
+                css += `
+                .company-logo.${cssClass} {
+                    background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]});
+                    border: 1px solid ${company.colors[2]};
+                }
+                
+                @media (max-width: 768px) {
+                    .company-logo.${cssClass} {
+                        background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]});
+                        border: 1px solid ${company.colors[2]};
+                    }
+                }`;
+            }
+        });
+        return css;
+    }
+
+    // Injecter le CSS dans la page
+    injectCSS() {
+        const css = this.generateCSS();
+        const styleElement = document.createElement('style');
+        styleElement.textContent = css;
+        document.head.appendChild(styleElement);
+    }
+
+    // Créer l'élément HTML pour une entreprise
+    createCompanyElement(company, index) {
+        const img = document.createElement('img');
+        img.src = company.logo;
+        img.alt = company.name;
+        const cssClass = company.name.toLowerCase().replace(/\s+/g, '');
+        img.className = index === 0 ? 'company-logo' : `company-logo ${cssClass}`;
+        img.setAttribute('data-company-name', company.name);
+        return img;
+    }
+
+    // Rendre toutes les entreprises dans le conteneur
+    renderCompanies(containerId = 'companies-logos') {
+        this.container = document.querySelector(`.${containerId}`);
+        if (!this.container) {
+            console.error(`Conteneur ${containerId} non trouvé`);
+            return;
+        }
+
+        // Vider le conteneur
+        this.container.innerHTML = '';
+
+        // Ajouter chaque entreprise
+        this.companies.forEach((company, index) => {
+            const element = this.createCompanyElement(company, index);
+            this.container.appendChild(element);
+        });
+    }
+
+    // Ajouter une nouvelle entreprise
+    addCompany(companyData) {
+        this.companies.push(companyData);
+        this.injectCSS(); // Re-générer le CSS
+        if (this.container) {
+            const element = this.createCompanyElement(companyData, this.companies.length - 1);
+            this.container.appendChild(element);
+        }
+    }
+
+    // Supprimer une entreprise
+    removeCompany(companyName) {
+        this.companies = this.companies.filter(c => c.name !== companyName);
+        const element = document.querySelector(`[data-company-name="${companyName}"]`);
+        if (element) {
+            element.remove();
+        }
+    }
+
+    // Initialiser le gestionnaire
+    async init() {
+        await this.loadCompanies();
+        this.injectCSS();
+        this.renderCompanies();
+    }
+
+    // Obtenir une entreprise par nom
+    getCompany(name) {
+        return this.companies.find(c => c.name === name);
+    }
+
+    // Obtenir toutes les entreprises
+    getAllCompanies() {
+        return this.companies;
+    }
+}
+
+// Instance globale du gestionnaire
+const companiesManager = new CompaniesManager();
+
 function isMobileDevice() {
     return (
         /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
@@ -228,7 +348,7 @@ function showAllItems() {
     if (art3dGallery) art3dGallery.style.display = 'none';
     if (infosContainer) infosContainer.style.display = 'none';
     if (headerContainer) headerContainer.style.display = 'block';
-    updateProjectsTitle('Mes Projets Web', 'Portfolio de créations digitales');
+    updateProjectsTitle('My Web Projects', 'Digital creations portfolio');
     if (isMobileDevice()) {
         setTimeout(performUpdateCenterElements, 50);
     }
@@ -243,16 +363,16 @@ function filterItems(category) {
     let title, subtitle;
     switch(targetCategory) {
         case 'personal-project':
-            title = 'Mes Projets Personnels';
-            subtitle = 'Créations indépendantes et expérimentations';
+            title = 'My Personal Projects';
+            subtitle = 'Independent creations and experiments';
             break;
         case 'commission':
-            title = 'Mes Commissions';
-            subtitle = 'Projets réalisés pour des clients';
+            title = 'My Commissions';
+            subtitle = 'Client projects and personal redesign initiatives';
             break;
         default:
-            title = 'Mes Projets Web';
-            subtitle = 'Portfolio de créations digitales';
+            title = 'My Web Projects';
+            subtitle = 'Digital creations portfolio';
     }
     updateProjectsTitle(title, subtitle);
     items.forEach(item => {
@@ -315,6 +435,7 @@ document.addEventListener('DOMContentLoaded', function() {
     forceMobileStyles(); 
     loadProjects(); 
     loadArtworks(); 
+    companiesManager.init(); // Initialiser le gestionnaire de companies
     initCenterDetection(); 
     const scrollingTexts = document.querySelectorAll('.scrolling-text p');
     let speed = isMobileDevice() ? 50 : 100; 

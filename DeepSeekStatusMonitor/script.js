@@ -2,11 +2,17 @@
 var stateHistory = {
     pings: [],
     usages: [],
+    isInitialized: false,
     add: function(ping, usage) {
         this.pings.push(ping);
         this.usages.push(usage);
         if (this.pings.length > 5) this.pings.shift();
         if (this.usages.length > 5) this.usages.shift();
+        
+        // Consider initialized after 3 measurements for better accuracy
+        if (this.pings.length >= 3) {
+            this.isInitialized = true;
+        }
     },
     getStableUsage: function() {
         if (this.usages.length === 0) return 0;
@@ -173,17 +179,45 @@ function measurePingAndUpdate() {
                     var finalPing = measurements[1];
                     var usage = mapPingToUsage(finalPing);
                     stateHistory.add(finalPing, usage);
-                    updateInterface(stateHistory.getStableUsage(), stateHistory.getAveragePing());
+                    
+                    // Only update interface if we have enough data for stability
+                    if (stateHistory.isInitialized) {
+                        updateInterface(stateHistory.getStableUsage(), stateHistory.getAveragePing());
+                    } else {
+                        // Show initialization progress
+                        updateInitializationInterface(stateHistory.pings.length);
+                    }
                 }
             };
 
             img.onerror = function() {
                 completed++;
                 if (completed === 3) {
-                    updateInterface(100, null);
+                    if (stateHistory.isInitialized) {
+                        updateInterface(100, null);
+                    } else {
+                        updateInitializationInterface(stateHistory.pings.length);
+                    }
                 }
             };
         })();
+    }
+}
+
+// Updates the UI during initialization phase
+function updateInitializationInterface(measurementCount) {
+    var progressBar = document.getElementById("progress-bar");
+    var statusTitle = document.getElementById("status-title");
+    var statusDescription = document.getElementById("status-description");
+    
+    if (progressBar && statusTitle && statusDescription) {
+        var initProgress = (measurementCount / 3) * 100; // Progress based on measurements needed
+        
+        progressBar.style.width = initProgress + "%";
+        progressBar.style.backgroundColor = "#4A90E2"; // Blue color during initialization
+        
+        statusTitle.textContent = "Initializing (" + measurementCount + "/3)";
+        statusDescription.innerHTML = "Collecting initial data for accurate status assessment. Please wait while we gather " + (3 - measurementCount) + " more measurements...";
     }
 }
 
@@ -207,5 +241,19 @@ function updateInterface(usage, averagePing) {
 }
 
 // Start measurements and repeat every 3 seconds
-measurePingAndUpdate();
-setInterval(measurePingAndUpdate, 3000);
+// First, do rapid initialization measurements (every 1 second) until initialized
+function startMonitoring() {
+    measurePingAndUpdate();
+    
+    var initializationInterval = setInterval(function() {
+        if (stateHistory.isInitialized) {
+            clearInterval(initializationInterval);
+            // Start normal monitoring every 3 seconds
+            setInterval(measurePingAndUpdate, 3000);
+        } else {
+            measurePingAndUpdate();
+        }
+    }, 1000); // Faster measurements during initialization
+}
+
+startMonitoring();

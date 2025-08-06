@@ -98,6 +98,7 @@
     }    /* Corps principal */
     body {
         margin-top: 8vh;
+        padding-bottom: 10vh;
         background-size: 200%;
         background-position: center;
         width: 100%;
@@ -196,7 +197,17 @@
         padding: 3vh 0;
     }
 
-    #infos img {
+    .infos-container {
+        display: block;
+        min-height: auto;
+        padding: 0;
+    }
+
+    .infos-content {
+        max-width: 100%;
+    }
+
+    #infos .info-img {
         display: none;
     }
 
@@ -205,6 +216,33 @@
         font-size: 2.2vh;
         margin-top: 3vh;
         text-align: left;
+    }
+
+    /* Section Entreprises Mobile */
+    .companies-section {
+        margin-top: 4vh;
+        margin-right: 0;
+    }
+
+    .companies-section h2 {
+        font-size: 3.5vh;
+        margin-bottom: 2.5vh;
+    }
+
+    .companies-logos {
+        gap: 3vh;
+        justify-content: flex-start;
+    }
+
+    .company-logo {
+        height: 8vh;
+        padding: 1.5vh;
+        border-radius: 1vh;
+    }
+
+    .company-logo.nintendo {
+        background: linear-gradient(135deg, rgba(220, 20, 60, 0.2), rgba(178, 34, 34, 0.15));
+        border: 1px solid rgba(220, 20, 60, 0.3);
     }
 
     h1 {
@@ -273,6 +311,7 @@
         width: 100%;
         box-sizing: border-box;
         overflow-x: hidden;
+        padding-bottom: 2.5vh;
     }
 
     .projects-title {
@@ -552,12 +591,14 @@
     #infos {
         max-width: 100vw;
         overflow-x: hidden;
+        padding-bottom: 2.5vh;
     }
 
     /* Social Links Mobile */
     .social-links {
         padding: 15px 25px 15px 15px;
         gap: 10px;
+        margin-bottom: -10vh; /* Compense le padding-bottom du body */
     }
     
     .social-link {
