@@ -18,19 +18,19 @@
     },
     {
       "role": "3D Art",
-      "contributors": ["ldev", "floaty", "louis-miles"]
+      "contributors": ["ldev"]
     },
     {
       "role": "2D Art",
-      "contributors": ["hollow", "gareth48"]
+      "contributors": ["gareth48"]
     },
     {
       "role": "Level Design",
-      "contributors": ["tetracold", "floaty"]
+      "contributors": ["tetracold"]
     },
     {
       "role": "Level Creation",
-      "contributors": ["solargress", "floaty"]
+      "contributors": ["solargress"]
     },
     {
       "role": "Programming",
@@ -57,7 +57,7 @@
     },
     {
       "role": "Special Thanks",
-      "contributors": ["mixlas", "alexsmg", "zyphron-g"],
+      "contributors": ["mixlas", "alexsmg", "zyphron-g", "floaty", "hollow"],
       "class": "special-credit"
     }
   ],
