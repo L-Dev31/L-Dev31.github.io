@@ -35,6 +35,25 @@
     "info_capacity_label": "席数",
     "info_capacity": "80席"
   },
+  "reservation": {
+    "map_notice": "地図を表示<br><small>IPアドレスがGoogle Mapsに送信されます。</small>",
+    "location": "ゴルフ・ジュアン",
+    "address": "24 Av. de la Gare, 06220 Vallauris",
+    "make_reservation": "ご予約<br>承ります",
+    "opening_hours": "営業<br>時間",
+    "payment_options": "利用可能な<br>お支払い方法",
+    "monday": "月曜日",
+    "tuesday": "火曜日",
+    "wednesday": "水曜日",
+    "thursday": "木曜日",
+    "friday": "金曜日",
+    "saturday": "土曜日",
+    "sunday": "日曜日",
+    "closed": "定休日",
+    "cash": "現金",
+    "contactless": "非接触決済",
+    "debit_card": "デビットカード"
+  },
   "menu": {
     "title": "メニュー",
     "show_more": "メニューをすべて表示",

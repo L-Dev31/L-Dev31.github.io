@@ -410,14 +410,14 @@ body {
 }
 
 .hero-video {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     filter: brightness(0.8);
-    z-index: -2;
+    z-index: -10;
     display: none;
 }
 
@@ -780,89 +780,106 @@ body {
 
 /* Reservation Section */
 .reservation-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 100px 0;
+    background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('images/booking-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    padding: 80px 0;
     position: relative;
-    overflow: hidden;
-}
-
-.reservation-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23000000" fill-opacity="0.02"><circle cx="30" cy="30" r="2"/></g></svg>') repeat;
-    pointer-events: none;
+    border-top: 3px solid #8B0000;
 }
 
 .reservation-container {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 40px;
     position: relative;
-    z-index: 2;
 }
 
 .reservation-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: start;
+    grid-template-areas: 
+        "map map"
+        "hours payment"
+        "phone phone";
+    gap: 40px;
+    align-items: stretch;
+}
+
+/* Left Column */
+.reservation-left {
+    display: contents;
+}
+
+/* Right Column */
+.reservation-right {
+    display: contents;
+}
+
+/* Reservation Cards - 4 Equal Parts */
+.reservation-item {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 2px solid #8B0000;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(139, 0, 0, 0.1);
+    overflow: hidden;
+    height: 100%;
 }
 
 /* Map Section */
 .reservation-map {
+    grid-area: map;
     background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
     overflow: hidden;
-    border: 3px solid #8B0000;
-    transition: transform 0.3s ease;
-}
-
-.reservation-map:hover {
-    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(139, 0, 0, 0.1);
+    border: 2px solid #8B0000;
+    height: 100%;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
 }
 
 .map-notice {
-    padding: 25px;
-    background: linear-gradient(135deg, #8B0000, #a00000);
+    padding: 20px;
+    background: #8B0000;
     color: white;
     text-align: center;
     font-family: 'Playfair', 'Georgia', 'Times New Roman', serif;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    font-weight: 600;
     letter-spacing: 1px;
 }
 
 .map-notice small {
-    font-size: 0.85rem;
-    opacity: 0.8;
+    display: block;
+    font-size: 0.8rem;
+    opacity: 0.85;
     font-style: italic;
+    font-weight: normal;
+    margin-top: 5px;
 }
 
 .map-container {
     position: relative;
     width: 100%;
-    height: 350px;
+    height: 400px;
     overflow: hidden;
+    flex: 1;
 }
 
 .map-container iframe {
     width: 100%;
     height: 100%;
     border: none;
-    filter: grayscale(20%) contrast(1.1);
-    transition: filter 0.3s ease;
-}
-
-.map-container:hover iframe {
-    filter: grayscale(0%) contrast(1.2);
+    filter: sepia(10%) contrast(1.1);
 }
 
 .address-info {
-    padding: 30px;
+    padding: 20px;
     background: white;
     text-align: center;
     border-top: 2px solid #f4c2a1;
@@ -870,36 +887,32 @@ body {
 
 .address-info h3 {
     font-family: 'Playfair', 'Georgia', 'Times New Roman', serif;
-    font-size: 1.8rem;
+    font-size: 1.3rem;
     color: #8B0000;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
     font-weight: 600;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
 }
 
 .address-info p {
     font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     color: #555;
-    line-height: 1.6;
+    line-height: 1.4;
 }
 
 /* Information Cards */
-.reservation-info {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-}
-
 .info-card {
     background: white;
-    border-radius: 15px;
-    padding: 35px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
+    padding: 30px 25px;
+    border: 2px solid #8B0000;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(139, 0, 0, 0.1);
     position: relative;
-    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
 }
 
 .info-card::before {
@@ -908,82 +921,108 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #8B0000, #f4c2a1);
-}
-
-.info-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
-    border-color: #f4c2a1;
+    height: 3px;
+    background: #8B0000;
+    border-radius: 8px 8px 0 0;
 }
 
 .card-icon {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
     text-align: center;
+    margin-bottom: 20px;
+}
+
+.card-icon i {
+    font-size: 2.5rem;
+    color: #8B0000;
+}
+
+/* Grid Area Assignments */
+.hours-card {
+    grid-area: hours;
+}
+
+.payment-card {
+    grid-area: payment;
+}
+
+.reservation-card {
+    grid-area: phone;
 }
 
 .info-card h3 {
     font-family: 'Playfair', 'Georgia', 'Times New Roman', serif;
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     color: #333;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     text-align: center;
     font-weight: 600;
     letter-spacing: 1px;
     line-height: 1.3;
+    flex-shrink: 0;
 }
 
 /* Reservation Card */
 .reservation-card .phone-number {
     font-family: 'Playfair', 'Georgia', 'Times New Roman', serif;
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: #8B0000;
     font-weight: 700;
     text-align: center;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     margin-top: 10px;
-    transition: color 0.3s ease;
 }
 
-.reservation-card:hover .phone-number {
-    color: #a00000;
-}
-
-/* Hours Card */
-.hours-grid {
+/* Hours Card - Calendar Style */
+.calendar-grid {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    border: 2px solid #8B0000;
+    background: white;
 }
 
 .day-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px dotted #ddd;
+    padding: 12px 20px;
+    border-bottom: 1px solid #ddd;
     font-family: 'Georgia', 'Times New Roman', serif;
+    background: white;
+}
+
+.day-row:nth-child(even) {
+    background: #f9f9f9;
 }
 
 .day-row:last-child {
     border-bottom: none;
 }
 
+.day-row:first-child {
+    background: #8B0000;
+    color: white;
+    font-weight: bold;
+}
+
+.day-row:first-child .day,
+.day-row:first-child .hours {
+    color: white;
+}
+
 .day {
     font-weight: 600;
     color: #333;
-    font-size: 1rem;
+    font-size: 0.95rem;
     letter-spacing: 0.5px;
+    min-width: 80px;
 }
 
 .hours {
     color: #8B0000;
     font-weight: 500;
     text-align: right;
-    line-height: 1.4;
-    font-size: 0.95rem;
+    line-height: 1.3;
+    font-size: 0.9rem;
 }
 
 .hours.closed {
@@ -995,40 +1034,50 @@ body {
 .payment-methods {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    border: 2px solid #8B0000;
+    background: white;
 }
 
 .payment-item {
     display: flex;
     align-items: center;
     gap: 15px;
-    padding: 12px 0;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
     font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #333;
-    transition: color 0.3s ease;
+    background: white;
+}
+
+.payment-item:nth-child(even) {
+    background: #f9f9f9;
 }
 
 .payment-item:last-child {
     border-bottom: none;
 }
 
-.payment-item:hover {
-    color: #8B0000;
+.payment-icon {
+    width: 25px;
+    text-align: center;
 }
 
-.payment-icon {
-    font-size: 1.5rem;
-    width: 30px;
-    text-align: center;
+.payment-icon i {
+    font-size: 1.3rem;
+    color: #8B0000;
 }
 
 /* Responsive Design for Reservation */
 @media (max-width: 1024px) {
     .reservation-content {
         grid-template-columns: 1fr;
-        gap: 60px;
+        grid-template-areas: 
+            "map"
+            "hours"
+            "payment"
+            "phone";
+        gap: 30px;
     }
     
     .reservation-container {
@@ -1046,7 +1095,16 @@ body {
     }
     
     .reservation-content {
-        gap: 40px;
+        gap: 25px;
+        grid-template-areas: 
+            "map"
+            "hours"
+            "payment"
+            "phone";
+    }
+    
+    .reservation-map {
+        min-height: 500px;
     }
     
     .info-card {
@@ -1054,15 +1112,15 @@ body {
     }
     
     .info-card h3 {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
     
     .reservation-card .phone-number {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
     }
     
     .map-container {
-        height: 250px;
+        height: 500px;
     }
     
     .address-info {
@@ -1070,17 +1128,22 @@ body {
     }
     
     .address-info h3 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
     
     .day-row {
         flex-direction: column;
         align-items: flex-start;
         gap: 5px;
+        padding: 10px 15px;
     }
     
     .hours {
         text-align: left;
+    }
+    
+    .payment-item {
+        padding: 12px 15px;
     }
 }
 

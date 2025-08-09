@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Les Saveurs de Provence - Restaurant 5 Étoiles</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -971,107 +972,6 @@
         </div>
     </section>
 
-    <!-- Reservation Section -->
-    <section class="reservation-section">
-        <div class="reservation-container">
-            <div class="reservation-content">
-                <!-- Map Section -->
-                <div class="reservation-map">
-                    <div class="map-notice" data-translate="reservation.map_notice">
-                        Afficher la carte<br>
-                        <small>Votre adresse IP sera envoyée à Google Maps.</small>
-                    </div>
-                    <div class="map-container">
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2890.123456789!2d7.0566!3d43.5667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDPCsDMzJzU5LjAiTiA3wrAwMycyNC4wIkU!5e0!3m2!1sfr!2sfr!4v1234567890"
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                    </div>
-                    <div class="address-info">
-                        <h3 data-translate="reservation.location">Golfe Juan</h3>
-                        <p data-translate="reservation.address">24 Avenue De La Gare, 06220 Vallauris, France</p>
-                    </div>
-                </div>
-
-                <!-- Information Cards -->
-                <div class="reservation-info">
-                    <!-- Reservation Card -->
-                    <div class="info-card reservation-card">
-                        <div class="card-icon">📞</div>
-                        <h3 data-translate="reservation.make_reservation">Faites votre<br>Réservation</h3>
-                        <p class="phone-number">+33422917748</p>
-                    </div>
-
-                    <!-- Opening Hours Card -->
-                    <div class="info-card hours-card">
-                        <div class="card-icon">🕐</div>
-                        <h3 data-translate="reservation.opening_hours">Nos<br>Horaires d'ouverture</h3>
-                        <div class="hours-grid">
-                            <div class="day-row">
-                                <span class="day" data-translate="reservation.monday">Lundi</span>
-                                <span class="hours closed" data-translate="reservation.closed">fermé</span>
-                            </div>
-                            <div class="day-row">
-                                <span class="day" data-translate="reservation.tuesday">Mardi</span>
-                                <span class="hours">09:00 – 14:00<br>18:00 – 22:00</span>
-                            </div>
-                            <div class="day-row">
-                                <span class="day" data-translate="reservation.wednesday">Mercredi</span>
-                                <span class="hours">09:00 – 14:00<br>18:00 – 22:00</span>
-                            </div>
-                            <div class="day-row">
-                                <span class="day" data-translate="reservation.thursday">Jeudi</span>
-                                <span class="hours">09:00 – 14:00<br>18:00 – 22:00</span>
-                            </div>
-                            <div class="day-row">
-                                <span class="day" data-translate="reservation.friday">Vendredi</span>
-                                <span class="hours">09:00 – 14:00<br>18:00 – 23:00</span>
-                            </div>
-                            <div class="day-row">
-                                <span class="day" data-translate="reservation.saturday">Samedi</span>
-                                <span class="hours">09:00 – 14:00<br>18:00 – 23:00</span>
-                            </div>
-                            <div class="day-row">
-                                <span class="day" data-translate="reservation.sunday">Dimanche</span>
-                                <span class="hours closed" data-translate="reservation.closed">fermé</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Payment Options Card -->
-                    <div class="info-card payment-card">
-                        <div class="card-icon">💳</div>
-                        <h3 data-translate="reservation.payment_options">Options de paiement<br>disponibles</h3>
-                        <div class="payment-methods">
-                            <div class="payment-item">
-                                <span class="payment-icon">💵</span>
-                                <span data-translate="reservation.cash">Espèces</span>
-                            </div>
-                            <div class="payment-item">
-                                <span class="payment-icon">📱</span>
-                                <span data-translate="reservation.contactless">Paiement sans contact</span>
-                            </div>
-                            <div class="payment-item">
-                                <span class="payment-icon">🟠</span>
-                                <span>MasterCard</span>
-                            </div>
-                            <div class="payment-item">
-                                <span class="payment-icon">🔵</span>
-                                <span>VISA</span>
-                            </div>
-                            <div class="payment-item">
-                                <span class="payment-icon">🔳</span>
-                                <span data-translate="reservation.debit_card">Carte de débit</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- About Section -->
     <section class="about-section">
         <!-- Conteneur des deux sections principales -->
@@ -1136,6 +1036,119 @@
                         <strong data-translate="about.info_capacity_label">Capacité</strong>
                         <span data-translate="about.info_capacity">80 couverts</span>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservation Section -->
+    <section class="reservation-section">
+        <div class="reservation-container">
+            <div class="reservation-content">
+                <!-- Map Section - Full Width -->
+                <div class="reservation-map">
+                    <div class="map-notice">
+                        <div data-translate="reservation.map_title">Afficher la carte</div>
+                        <small data-translate="reservation.map_notice">Votre adresse IP sera envoyée à Google Maps.</small>
+                    </div>
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2889.123456789!2d7.0123456!3d43.5123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDPCsDMwJzQ0LjQiTiA3wrAwMCc0NC40IkU!5e0!3m2!1sfr!2sfr!4v1234567890123!5m2!1sfr!2sfr"
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    <div class="address-info">
+                        <h3 data-translate="reservation.address_title">Golfe Juan</h3>
+                        <p data-translate="reservation.address">24 Avenue De La Gare, 06220 Vallauris, France</p>
+                    </div>
+                </div>
+
+                <!-- Hours Card -->
+                <div class="info-card hours-card">
+                    <div class="card-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 data-translate="reservation.hours_title">Nos Horaires d'ouverture</h3>
+                    <div class="calendar-grid">
+                        <div class="day-row">
+                            <span class="day" data-translate="reservation.monday">Lundi</span>
+                            <span class="hours closed" data-translate="reservation.closed">fermé</span>
+                        </div>
+                        <div class="day-row">
+                            <span class="day" data-translate="reservation.tuesday">Mardi</span>
+                            <span class="hours">09:00 – 14:00<br>18:00 – 22:00</span>
+                        </div>
+                        <div class="day-row">
+                            <span class="day" data-translate="reservation.wednesday">Mercredi</span>
+                            <span class="hours">09:00 – 14:00<br>18:00 – 22:00</span>
+                        </div>
+                        <div class="day-row">
+                            <span class="day" data-translate="reservation.thursday">Jeudi</span>
+                            <span class="hours">09:00 – 14:00<br>18:00 – 22:00</span>
+                        </div>
+                        <div class="day-row">
+                            <span class="day" data-translate="reservation.friday">Vendredi</span>
+                            <span class="hours">09:00 – 14:00<br>18:00 – 23:00</span>
+                        </div>
+                        <div class="day-row">
+                            <span class="day" data-translate="reservation.saturday">Samedi</span>
+                            <span class="hours">09:00 – 14:00<br>18:00 – 23:00</span>
+                        </div>
+                        <div class="day-row">
+                            <span class="day" data-translate="reservation.sunday">Dimanche</span>
+                            <span class="hours closed" data-translate="reservation.closed">fermé</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Card -->
+                <div class="info-card payment-card">
+                    <div class="card-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3 data-translate="reservation.payment_title">Options de paiement disponibles</h3>
+                    <div class="payment-methods">
+                        <div class="payment-item">
+                            <div class="payment-icon">
+                                <i class="fas fa-money-bills"></i>
+                            </div>
+                            <span data-translate="reservation.cash">Espèces</span>
+                        </div>
+                        <div class="payment-item">
+                            <div class="payment-icon">
+                                <i class="fas fa-wifi"></i>
+                            </div>
+                            <span data-translate="reservation.contactless">Paiement sans contact</span>
+                        </div>
+                        <div class="payment-item">
+                            <div class="payment-icon">
+                                <i class="fab fa-cc-mastercard"></i>
+                            </div>
+                            <span>MasterCard</span>
+                        </div>
+                        <div class="payment-item">
+                            <div class="payment-icon">
+                                <i class="fab fa-cc-visa"></i>
+                            </div>
+                            <span>VISA</span>
+                        </div>
+                        <div class="payment-item">
+                            <div class="payment-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <span data-translate="reservation.debit_card">Carte de débit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phone Section - Full Width Bottom -->
+                <div class="info-card reservation-card">
+                    <div class="card-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <h3 data-translate="reservation.booking_title">Faites votre Réservation</h3>
+                    <div class="phone-number" data-translate="reservation.phone">+33422917748</div>
                 </div>
             </div>
         </div>

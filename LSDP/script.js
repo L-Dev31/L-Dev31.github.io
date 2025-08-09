@@ -331,4 +331,39 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
     });
+
+    // Video stays in fixed position (no parallax)
+    // Parallax code commented out for fixed positioning
+    /*
+    const heroSection = document.querySelector('.hero.video-mode');
+    const heroVideo = document.querySelector('.hero-video');
+    const heroCopy = document.querySelector('.hero-content');
+
+    let ticking = false;
+    function applyParallax() {
+        if (!heroSection) return;
+        const y = window.scrollY || window.pageYOffset || 0;
+        // Move video slower than scroll
+        if (heroVideo) {
+            heroVideo.style.transform = `translateY(${y * 0.35}px)`;
+        }
+        // Subtle movement on copy for depth
+        if (heroCopy) {
+            heroCopy.style.transform = `translateY(${y * 0.15}px)`;
+        }
+    }
+
+    // Run once on load
+    applyParallax();
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                applyParallax();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+    */
 });

@@ -36,12 +36,13 @@
     "info_capacity": "80 Gedecke"
   },
   "reservation": {
-    "map_notice": "Karte anzeigen<br><small>Ihre IP-Adresse wird an Google Maps gesendet.</small>",
-    "location": "Golfe Juan",
-    "address": "24 Avenue De La Gare, 06220 Vallauris, Frankreich",
-    "make_reservation": "Machen Sie Ihre<br>Reservierung",
-    "opening_hours": "Unsere<br>Öffnungszeiten",
-    "payment_options": "Verfügbare<br>Zahlungsoptionen",
+    "map_title": "Karte anzeigen",
+    "map_notice": "Ihre IP-Adresse wird an Google Maps gesendet.",
+    "address_title": "Golfe Juan",
+    "address": "24 Av. de la Gare, 06220 Vallauris",
+    "booking_title": "Machen Sie Ihre<br>Reservierung",
+    "phone": "+33422917748",
+    "hours_title": "Unsere<br>Öffnungszeiten",
     "monday": "Montag",
     "tuesday": "Dienstag",
     "wednesday": "Mittwoch",
@@ -50,6 +51,7 @@
     "saturday": "Samstag",
     "sunday": "Sonntag",
     "closed": "geschlossen",
+    "payment_title": "Verfügbare<br>Zahlungsoptionen",
     "cash": "Bargeld",
     "contactless": "Kontaktlose Zahlung",
     "debit_card": "Debitkarte"

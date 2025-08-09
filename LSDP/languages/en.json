@@ -36,12 +36,13 @@
     "info_capacity": "80 covers"
   },
   "reservation": {
-    "map_notice": "Show map<br><small>Your IP address will be sent to Google Maps.</small>",
-    "location": "Golfe Juan",
-    "address": "24 Avenue De La Gare, 06220 Vallauris, France",
-    "make_reservation": "Make your<br>Reservation",
-    "opening_hours": "Our<br>Opening Hours",
-    "payment_options": "Available<br>Payment Options",
+    "map_title": "Show map",
+    "map_notice": "Your IP address will be sent to Google Maps.",
+    "address_title": "Golfe Juan",
+    "address": "24 Av. de la Gare, 06220 Vallauris",
+    "booking_title": "Make your Reservation",
+    "phone": "+33422917748",
+    "hours_title": "Our Opening Hours",
     "monday": "Monday",
     "tuesday": "Tuesday",
     "wednesday": "Wednesday",
@@ -50,6 +51,7 @@
     "saturday": "Saturday",
     "sunday": "Sunday",
     "closed": "closed",
+    "payment_title": "Available Payment Options",
     "cash": "Cash",
     "contactless": "Contactless payment",
     "debit_card": "Debit card"
