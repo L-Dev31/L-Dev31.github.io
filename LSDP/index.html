@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Saveurs de Provence - Restaurant 5 Étoiles</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="hamburger-menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        
+        <div class="nav-center">
+            <h1 class="logo">Les Saveurs de Provence</h1>
+        </div>
+        
+        <div class="nav-right">
+        </div>
+    </nav>
+
+    <!-- Language Selector (Independent) -->
+    <div class="language-selector">
+        <div class="language-current">
+            <img src="flags/fr.png" alt="Français" class="flag-icon">
+            <span class="language-name">Français</span>
+        </div>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="fr">
+                <img src="flags/fr.png" alt="Français">
+                <span>Français</span>
+            </div>
+            <div class="language-option" data-lang="es">
+                <img src="flags/es.png" alt="Español">
+                <span>Español</span>
+            </div>
+            <div class="language-option" data-lang="it">
+                <img src="flags/it.png" alt="Italiano">
+                <span>Italiano</span>
+            </div>
+            <div class="language-option" data-lang="de">
+                <img src="flags/de.png" alt="Deutsch">
+                <span>Deutsch</span>
+            </div>
+            <div class="language-option" data-lang="en">
+                <img src="flags/en.png" alt="English">
+                <span>English</span>
+            </div>
+            <div class="language-option" data-lang="pt">
+                <img src="flags/pt.png" alt="Português">
+                <span>Português</span>
+            </div>
+            <div class="language-option" data-lang="ru">
+                <img src="flags/ru.png" alt="Русский">
+                <span>Русский</span>
+            </div>
+            <div class="language-option" data-lang="ua">
+                <img src="flags/ua.png" alt="Українська">
+                <span>Українська</span>
+            </div>
+            <div class="language-option" data-lang="cn">
+                <img src="flags/cn.png" alt="中文">
+                <span>中文</span>
+            </div>
+            <div class="language-option" data-lang="jp">
+                <img src="flags/jp.png" alt="日本語">
+                <span>日本語</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Overlay -->
+    <div class="menu-overlay">
+        <div class="menu-content">
+            <div class="menu-left">
+                <ul class="menu-nav">
+                    <li><a href="#home" data-image="home" data-translate="nav.home">Accueil</a></li>
+                    <li><a href="#menu" data-image="menu" data-translate="nav.menu">Notre Menu</a></li>
+                    <li><a href="#about" data-image="about" data-translate="nav.about">À Propos</a></li>
+                    <li><a href="#reservation" data-image="booking" data-translate="nav.reservation">Réservation</a></li>
+                    <li><a href="#contact" data-image="contact" data-translate="nav.contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="menu-right">
+                <img src="images/home.png" alt="Accueil" class="menu-image active" data-tab="home">
+                <img src="images/menu.png" alt="Notre Menu" class="menu-image" data-tab="menu">
+                <img src="images/about.png" alt="À Propos" class="menu-image" data-tab="about">
+                <img src="images/booking.png" alt="Réservation" class="menu-image" data-tab="booking">
+                <img src="images/contact.png" alt="Contact" class="menu-image" data-tab="contact">
+                
+                <img src="images/display.png" alt="Display" class="png-display active" data-tab="home">
+                <img src="images/display.png" alt="Display" class="png-display" data-tab="menu">
+                <img src="images/display.png" alt="Display" class="png-display" data-tab="about">
+                <img src="images/display.png" alt="Display" class="png-display" data-tab="booking">
+                <img src="images/display.png" alt="Display" class="png-display" data-tab="contact">
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero video-mode">
+        <video class="hero-video" autoplay muted loop>
+            <source src="hero-bg.mp4" type="video/mp4">
+        </video>
+        
+        <!-- Noise Overlay -->
+        <div class="bg"></div>
+        
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <h1 class="hero-title" data-translate="hero.title">Gastronomie d'Exception</h1>
+            <p class="hero-subtitle" data-translate="hero.subtitle">Une expérience culinaire inoubliable au cœur de la Provence</p>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu-section">
+        <div class="menu-container">
+            <h2 class="menu-title" data-translate="menu.title">Notre Carte</h2>
+            
+            <!-- Menu du jour -->
+            <div class="menu-category">
+                <h3 class="category-title" data-translate="menu.daily_menu">Menu du Jour</h3>
+                <div class="menu-items">
+                    <div class="menu-item daily-special">
+                        <p class="menu-description" data-translate="menu.daily_description">
+                            Tous les jours à midi<br>
+                            du mardi au vendredi<br>
+                            (hors jours fériés)<br>
+                            notre restaurant vous propose<br>
+                            <strong>un plat du jour à 14,00 €</strong><br>
+                            ou une formule<br>
+                            <strong>plat du jour - dessert au choix* à 19,00 €</strong>
+                        </p>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <span class="item-name" data-translate="menu.kids_menu">Menu enfant :</span>
+                            <span class="item-price">10,90 €</span>
+                        </div>
+                        <p class="item-description" data-translate="menu.kids_description">
+                            Sirop au choix ou Diabolo<br>
+                            Boulettes de viande maison sauce tomate provençale<br>
+                            ou émincé de poulet à la crème<br>
+                            avec ses nouilles ou frites fraîches<br>
+                            Boule de glace au choix
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu complet (affiché par défaut) -->
+            <div class="full-menu">
+                
+                <!-- Boissons froides -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="cold-drinks" data-translate="menu.cold_drinks">Nos boissons froides :</h3>
+                    <div class="menu-items" data-category="cold-drinks">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.mineral_water">Eau minérale (50 cl)</span>
+                                <span class="item-price">3,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.sodas">Coca/ Coca Zero/ Orangina / Schweppes agrume(25 cl)</span>
+                                <span class="item-price">3,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.lemonade">Limonade (33 cl)</span>
+                                <span class="item-price">3,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.diabolo">Diabolo: fraise, grenadine, menthe, pêche, citron (33 cl)</span>
+                                <span class="item-price">3,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.syrup_water">Sirop à l'eau (25 cl)</span>
+                                <span class="item-price">2,00 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.fuse_tea">FuseTea pêche (25 cl)</span>
+                                <span class="item-price">3,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.fruit_juices">Jus de fruits: pomme, orange, abricot, tomate, multifruit, ananas (25 cl)</span>
+                                <span class="item-price">3,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.fresh_orange">Jus d'orange frais pressé (25 cl)</span>
+                                <span class="item-price">5,50 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.milkshake">Milkshake (Fraise/ framboise/ vanille/ chocolat/ caramel/ passion)</span>
+                                <span class="item-price">8,50 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Apéritifs -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="aperitifs" data-translate="menu.aperitifs">Nos apéritifs :</h3>
+                    <div class="menu-items" data-category="aperitifs">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.martini">Martini Blanc/ Rouge (6 cl)</span>
+                                <span class="item-price">5,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.prosecco">Coupe de Prosecco (12 cl)</span>
+                                <span class="item-price">5,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.kir">Kir (12 cl)</span>
+                                <span class="item-price">5,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.kir_royal">Kir royal au Prosecco(12 cl)</span>
+                                <span class="item-price">6,50 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.ricard">Ricard / Pastis (2 cl)</span>
+                                <span class="item-price">3,50 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.gin_tonic">Gin-Tonic Rose</span>
+                                <span class="item-price">8,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.spritz">Aperol Spritz /Limoncello Spritz</span>
+                                <span class="item-price">8,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.hugo">Hugo (Prosecco, liqueur de fleurs de sureau, eau gazeuse)</span>
+                                <span class="item-price">8,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.spritz_provencal">Spritz Provençal (Prosecco, Orange Colombo, Rinquinquin, eau gazeuse)</span>
+                                <span class="item-price">8,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.mojito">Mojito</span>
+                                <span class="item-price">8,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.moscow_mule">Cocktail Moscow Mule</span>
+                                <span class="item-price">11,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.champagne_glass">Coupe de Champagne Veuve Pelletier Brut</span>
+                                <span class="item-price">11,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.champagne_bottle">Champagne V. Pelletier Brut (Bouteille 75 cl)</span>
+                                <span class="item-price">59,00 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.champagne_tsarine">Champagne Tsarine Brut (Bouteille 75 cl)</span>
+                                <span class="item-price">99,00 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bières -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="beers" data-translate="menu.beers">Nos Bières :</h3>
+                    <div class="menu-items">
+                        <!-- Items toujours visibles -->
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.panache">Panaché/ Monaco(25 cl)</span>
+                                <span class="item-price">3,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.beer_1664">Bière 1664 blonde (25 cl)</span>
+                                <span class="item-price">3,90 €</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Items cachés par défaut -->
+                        <div class="category-items-hidden" data-category="beers">
+                            <div class="menu-item">
+                                <div class="item-header">
+                                    <span class="item-name" data-translate="menu.beer_fada">Bière Fada blonde/ blanche ou brune (33 cl)</span>
+                                    <span class="item-price">4,90 €</span>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <div class="item-header">
+                                    <span class="item-name" data-translate="menu.desperados">Desperados (33 cl)</span>
+                                    <span class="item-price">5,20 €</span>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <div class="item-header">
+                                    <span class="item-name" data-translate="menu.cynar">Cynar bière (25 cl)</span>
+                                    <span class="item-price">4,90 €</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- L'Apéro -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="apero" data-translate="menu.apero">L'Apéro :</h3>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.charcuterie_2">Planche de charcuterie pour 2 personnes</span>
+                                <span class="item-price">18,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.charcuterie_4">Planche de charcuterie pour 4 personnes</span>
+                                <span class="item-price">29,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.cheese_2">Planche de fromage pour 2 personnes</span>
+                                <span class="item-price">14,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.mix_2">Planche Mix fromage et charcuterie pour 2 personnes</span>
+                                <span class="item-price">24,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.seafood_platter">Planche de la mer (fruits de mer marinés à l'huile)</span>
+                                <span class="item-price">26,90 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Entrées -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="starters" data-translate="menu.starters">Nos Entrées :</h3>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.barbajuans">Barbajuans selon l'inspiration du Chef</span>
+                                <span class="item-price">8,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.chickpea_salad">Salade de pois chiches à la méditerranéenne</span>
+                                <span class="item-price">8,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.seafood_friture">Friture de la mer</span>
+                                <span class="item-price">9,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.small_nicoise">Petite Salade Niçoise</span>
+                                <span class="item-price">9,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.panisses_duo">Duo de panisses - natures et à la truffe</span>
+                                <span class="item-price">9,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.sea_salad">Salade de la mer</span>
+                                <span class="item-price">9,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.sea_salad_desc">(salade, fruits de mer marinés, tomates, oignons, citrons, huile d'olive)</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.pepper_salad">Salade de poivrons façon Méditerranéenne</span>
+                                <span class="item-price">9,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.pepper_salad_desc">(salade, poivrons et tomates sautés aux oignons, ail et fines herbes, œuf dur)</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.discovery_2">Assiette découverte pour 2 personnes</span>
+                                <span class="item-price">18,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.discovery_2_desc">(Barbajuans, friture de la mer, duo de panisses, salade de poivrons, salade de pois chiches)</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.discovery_4">Assiette découverte pour 4 personnes</span>
+                                <span class="item-price">29,90 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plats -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="main-dishes" data-translate="menu.main_dishes">Nos plats :</h3>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.provencal_burger">Burger à la provençale avec ses frites maison</span>
+                                <span class="item-price">18,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.provencal_burger_desc">(pain aux céréales, steak haché de bœuf 180 gr. env., aubergines grillées, tomates confites, tapenade, salade, oignons, fromage de brebis et sa sauce crème-tapenade)</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.beef_bavette">Bavette de bœuf grillée avec ses frites maison et salade</span>
+                                <span class="item-price">18,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.meat_balls">Boulettes de viande maison en sauce provençale aux fines herbes et ses tagliatelles</span>
+                                <span class="item-price">17,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.veal_steak">Steak haché de veau (maison) aux herbes de Provence et sauce aux cèpes</span>
+                                <span class="item-price">17,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.cordon_bleu">Cordon bleu de poulet (maison) au jambon supérieur et fromage de brebis</span>
+                                <span class="item-price">21,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.chicken_skewers">Brochettes de poulet à la provençale avec ses frites maison et salade</span>
+                                <span class="item-price">17,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.veal_skewers">Brochettes de veau à la provençale</span>
+                                <span class="item-price">18,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.beef_skewers">Brochettes de bœuf à la provençale</span>
+                                <span class="item-price">18,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.mixed_skewers">Mix de brochettes à la provençale avec ses frites maison et salade</span>
+                                <span class="item-price">23,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.aioli_cod">Aïoli de cabillaud avec ses légumes, œuf dur, crevettes, et bulots</span>
+                                <span class="item-price">21,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.salmon_fillet">Filet de saumon frais en sauce crème citron et aneth (avec ses légumes et riz)</span>
+                                <span class="item-price">18,90 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pâtes -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="pasta" data-translate="menu.pasta">Nos pâtes :</h3>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.gnocchi">Gnocchi artisanaux sauce crème basilic et parmesan</span>
+                                <span class="item-price">16,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.tagliatelle_provencal">Tagliatelles à la provençale aux tomates et poivrons légèrement relevés</span>
+                                <span class="item-price">14,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.linguine_seafood">Linguine aux fruits de mer tomates, vin blanc, fines herbes, ail</span>
+                                <span class="item-price">17,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.ravioli_daube">Ravioli à la daube dans sa sauce crème tapenade</span>
+                                <span class="item-price">18,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.ravioli_vegetarian">Ravioli végétarien en sauce provençale</span>
+                                <span class="item-price">18,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.tagliatelle_chicken">Tagliatelles au poulet en sauce crème basilic et parmesan</span>
+                                <span class="item-price">17,90 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accompagnements -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="sides" data-translate="menu.sides">Nos accompagnements :</h3>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.fresh_fries">Frites fraîches maison</span>
+                                <span class="item-price">5,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.vegetables">Légumes</span>
+                                <span class="item-price">5,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.tagliatelle_rice">Tagliatelles ou Riz</span>
+                                <span class="item-price">5,50 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.green_salad">Salade verte</span>
+                                <span class="item-price">3,50 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.mixed_salad">Salade composée</span>
+                                <span class="item-price">5,50 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grandes salades -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="large-salads" data-translate="menu.large_salads">Nos grandes salades :</h3>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.nicoise_large">Salade Niçoise</span>
+                                <span class="item-price">14,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.pepper_large">Salade de poivrons façon Méditerranéenne</span>
+                                <span class="item-price">14,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.pepper_large_desc">(salade, poivrons et tomates sautés aux oignons, ail et fines herbes, œuf dur)</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.saveurs_provence">Salade Saveurs de Provence</span>
+                                <span class="item-price">14,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.saveurs_provence_desc">(Salade verte, émincé de poulet tiède dans sa sauce crème basilic, légumes cuits, tomates cerises, sauce vinaigrette maison, graines de courge, vinaigrette maison)</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.chavignol_salad">Salade de Chavignol chaud aux herbes de Provence et son jambon sec</span>
+                                <span class="item-price">18,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.chavignol_salad_desc">(Salade verte, fromage Crottin de Chavignol tomates cerises, vinaigrette maison, oignons)</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.sea_large">Salade de la mer</span>
+                                <span class="item-price">16,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.sea_large_desc">(Salade, fruits de mer marinés, tomates, concombre, oignons, citrons, câpres, huile d'olive)</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.shrimp_salad">Salade aux crevettes</span>
+                                <span class="item-price">16,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.shrimp_salad_desc">(Salade, crevettes marinées, riz, tomates, concombre, oignons, citrons, œuf dur, vinaigrette maison)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wraps -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="wraps" data-translate="menu.wraps">Nos Wraps Fast & Good :</h3>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.wrap_nicoise">Wrap à la Niçoise</span>
+                                <span class="item-price">14,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.wrap_nicoise_desc">Galette fine (au blé), légumes, salade, thon, œuf dur, olives, salade verte<br>Servi avec une salade verte à la vinaigrette maison et frites fraîches maison</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.wrap_meat">Wrap à la viande hachée maison dans sa sauce provençale</span>
+                                <span class="item-price">14,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.wrap_meat_desc">Galette fine, viande hachée maison en sauce provençale, cornichons marinés, légumes, tomates, salade verte, oignons<br>Servi avec une salade verte à la vinaigrette maison et frites fraîches maison</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.wrap_chicken">Wrap au Poulet</span>
+                                <span class="item-price">14,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.wrap_chicken_desc">Galette fine, émincé de poulet à la crème et basilic, légumes, tomates, salade verte<br>Servi avec une salade verte à la vinaigrette maison et frites fraîches maison</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.wrap_vegetarian">Wrap Végétarien au fromage du Pays</span>
+                                <span class="item-price">14,90 €</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.wrap_vegetarian_desc">Galette fine, fromage de chèvre ou de brebis, légumes, tomates, salade verte<br>Servi avec une salade verte à la vinaigrette maison et frites fraîches maison</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desserts -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="desserts" data-translate="menu.desserts">Nos Desserts :</h3>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.apple_tart">Tartelette aux pommes</span>
+                                <span class="item-price">6,90 €*</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.chestnut_cream">Crème fouettée aux marrons</span>
+                                <span class="item-price">7,90 €*</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.creme_brulee">Crème brûlée</span>
+                                <span class="item-price">6,90 €*</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.brownie">Brownie moelleux -gâteau au chocolat avec sa boule de glace vanille et crème chantilly, coulis de chocolat et les amandes effilées</span>
+                                <span class="item-price">7,90 €*</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.panna_cotta">Panna cotta aux fruits rouges</span>
+                                <span class="item-price">7,90 €*</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.fromage_blanc">Fromage blanc coulis de fraise maison ou miel aux amandes</span>
+                                <span class="item-price">6,90 €*</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.ice_cream_cup">Coupe de glace: 3 boules de glace, crème chantilly</span>
+                                <span class="item-price">8,90 €*</span>
+                            </div>
+                            <p class="item-description" data-translate="menu.ice_cream_flavors">(parfums: vanille, chocolat, café, caramel, pistache, fraise, framboise, citron jaune, passion, rhum-raisin)</p>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.ice_cream_scoop">Boule de glace (Crème chantilly +1€)</span>
+                                <span class="item-price">2,90 €*</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.strawberry_melba">Fraise façon Melba (Glace de vanille, sorbet de fraise, crème chantilly, coulis de fraise maison)</span>
+                                <span class="item-price">10,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.saveurs_provence_cup">Coupe Saveur de Provence aux fruits rouges (Sorbet de fraise, framboise, citron crème chantilly, coulis de fraise maison)</span>
+                                <span class="item-price">10,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.meringues">Meringues glacées</span>
+                                <span class="item-price">9,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.liegeois">Café Liégeois/ Chocolat Liégeois</span>
+                                <span class="item-price">9,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.dame_blanche">Dame blanche (chocolat fondu maison)</span>
+                                <span class="item-price">9,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.colonel">Coupe Colonel (3 boules de sorbet de citron, vodka 4cl)</span>
+                                <span class="item-price">9,90 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boissons chaudes/froides -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="hot-cold-drinks" data-translate="menu.hot_cold_drinks">Nos boissons chaudes/ froides :</h3>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.espresso">Expresso</span>
+                                <span class="item-price">1,80 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.decaf">Déca</span>
+                                <span class="item-price">1,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.noisette">Noisette (Expresso à crème ou lait)</span>
+                                <span class="item-price">2,00 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.long_coffee">Café allongé</span>
+                                <span class="item-price">2,20 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.long_coffee_cream">Café allongé crème ou lait</span>
+                                <span class="item-price">2,70 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.double_espresso">Café double expresso</span>
+                                <span class="item-price">3,50 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.double_espresso_cream">Café double expresso crème</span>
+                                <span class="item-price">3,80 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.cappuccino">Cappuccino / Latte macchiato/ Chocolat Chaud</span>
+                                <span class="item-price">4,50 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.iced_coffee">Café glacé (Double Expresso, lait, boule de glace, glaçons, chantilly)</span>
+                                <span class="item-price">5,00 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.milk">Lait</span>
+                                <span class="item-price">2,20 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.black_tea">Thé noir classique à la Bergamote</span>
+                                <span class="item-price">3,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.herbal_tea">Tisane camomille/ tilleul / verveine</span>
+                                <span class="item-price">3,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.kusmi_anastasia">Kusmi tea Anastasia (thé noir à la bergamote et au citron, aromatisé fleur d'oranger)</span>
+                                <span class="item-price">4,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.kusmi_prince">Kusmi tea Prince Wladimir (thé aromatisé agrumes, vanille et épices)</span>
+                                <span class="item-price">4,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.kusmi_st_petersburg">Kusmi tea St. Petersbourg (thé noir. Earl Grey, agrumes, fruits rouges et caramel)</span>
+                                <span class="item-price">4,90 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digestifs -->
+                <div class="menu-category">
+                    <h3 class="category-title collapsed" data-category="digestifs" data-translate="menu.digestifs">Nos digestifs (4cl) :</h3>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.whisky_jb">Whisky JB</span>
+                                <span class="item-price">5,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.jb_coca">JB -Coca</span>
+                                <span class="item-price">7,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.whisky_ballantines">Whisky Ballantine's</span>
+                                <span class="item-price">5,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.jack_daniels">Whisky Jack Daniel's</span>
+                                <span class="item-price">7,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.cognac">Cognac Hennessy VS</span>
+                                <span class="item-price">8,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.vodka">Vodka</span>
+                                <span class="item-price">6,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.vodka_beluga">Vodka Beluga Noble</span>
+                                <span class="item-price">9,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.rum_diplomatico">Rhum Diplomatico Reserva Exclusiva</span>
+                                <span class="item-price">8,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.jagermeister">Jägermeister</span>
+                                <span class="item-price">4,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.baileys">Baileys Irish Crème</span>
+                                <span class="item-price">4,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.get_27">Get 27</span>
+                                <span class="item-price">4,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.gin_tonic_digestif">Gin-Tonic Rose</span>
+                                <span class="item-price">8,90 €</span>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-header">
+                                <span class="item-name" data-translate="menu.irish_coffee">Irish café/ Irish Baileys café</span>
+                                <span class="item-price">8,90 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- Bouton Show Less -->
+            <button class="show-less-btn" style="display: none;" data-translate="menu.show_less">Réduire la carte</button>
+        </div>
+    </section>
+
+    <!-- Reservation Section -->
+    <section class="reservation-section">
+        <div class="reservation-container">
+            <div class="reservation-content">
+                <!-- Map Section -->
+                <div class="reservation-map">
+                    <div class="map-notice" data-translate="reservation.map_notice">
+                        Afficher la carte<br>
+                        <small>Votre adresse IP sera envoyée à Google Maps.</small>
+                    </div>
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2890.123456789!2d7.0566!3d43.5667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDPCsDMzJzU5LjAiTiA3wrAwMycyNC4wIkU!5e0!3m2!1sfr!2sfr!4v1234567890"
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    <div class="address-info">
+                        <h3 data-translate="reservation.location">Golfe Juan</h3>
+                        <p data-translate="reservation.address">24 Avenue De La Gare, 06220 Vallauris, France</p>
+                    </div>
+                </div>
+
+                <!-- Information Cards -->
+                <div class="reservation-info">
+                    <!-- Reservation Card -->
+                    <div class="info-card reservation-card">
+                        <div class="card-icon">📞</div>
+                        <h3 data-translate="reservation.make_reservation">Faites votre<br>Réservation</h3>
+                        <p class="phone-number">+33422917748</p>
+                    </div>
+
+                    <!-- Opening Hours Card -->
+                    <div class="info-card hours-card">
+                        <div class="card-icon">🕐</div>
+                        <h3 data-translate="reservation.opening_hours">Nos<br>Horaires d'ouverture</h3>
+                        <div class="hours-grid">
+                            <div class="day-row">
+                                <span class="day" data-translate="reservation.monday">Lundi</span>
+                                <span class="hours closed" data-translate="reservation.closed">fermé</span>
+                            </div>
+                            <div class="day-row">
+                                <span class="day" data-translate="reservation.tuesday">Mardi</span>
+                                <span class="hours">09:00 – 14:00<br>18:00 – 22:00</span>
+                            </div>
+                            <div class="day-row">
+                                <span class="day" data-translate="reservation.wednesday">Mercredi</span>
+                                <span class="hours">09:00 – 14:00<br>18:00 – 22:00</span>
+                            </div>
+                            <div class="day-row">
+                                <span class="day" data-translate="reservation.thursday">Jeudi</span>
+                                <span class="hours">09:00 – 14:00<br>18:00 – 22:00</span>
+                            </div>
+                            <div class="day-row">
+                                <span class="day" data-translate="reservation.friday">Vendredi</span>
+                                <span class="hours">09:00 – 14:00<br>18:00 – 23:00</span>
+                            </div>
+                            <div class="day-row">
+                                <span class="day" data-translate="reservation.saturday">Samedi</span>
+                                <span class="hours">09:00 – 14:00<br>18:00 – 23:00</span>
+                            </div>
+                            <div class="day-row">
+                                <span class="day" data-translate="reservation.sunday">Dimanche</span>
+                                <span class="hours closed" data-translate="reservation.closed">fermé</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Options Card -->
+                    <div class="info-card payment-card">
+                        <div class="card-icon">💳</div>
+                        <h3 data-translate="reservation.payment_options">Options de paiement<br>disponibles</h3>
+                        <div class="payment-methods">
+                            <div class="payment-item">
+                                <span class="payment-icon">💵</span>
+                                <span data-translate="reservation.cash">Espèces</span>
+                            </div>
+                            <div class="payment-item">
+                                <span class="payment-icon">📱</span>
+                                <span data-translate="reservation.contactless">Paiement sans contact</span>
+                            </div>
+                            <div class="payment-item">
+                                <span class="payment-icon">🟠</span>
+                                <span>MasterCard</span>
+                            </div>
+                            <div class="payment-item">
+                                <span class="payment-icon">🔵</span>
+                                <span>VISA</span>
+                            </div>
+                            <div class="payment-item">
+                                <span class="payment-icon">🔳</span>
+                                <span data-translate="reservation.debit_card">Carte de débit</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <!-- Conteneur des deux sections principales -->
+        <div class="about-main">
+            <!-- Section gauche - fond sombre -->
+            <div class="about-left">
+                <div class="about-content">
+                    <h2 data-translate="about.history_title">Notre Histoire</h2>
+                    
+                    <p><span class="highlight" data-translate="about.history_highlight">Tradition & Excellence</span></p>
+                    
+                    <p data-translate="about.history_p1">Depuis notre création, nous nous sommes engagés à offrir une expérience culinaire d'exception. Notre équipe de chefs passionnés puise dans les traditions gastronomiques pour créer des plats uniques.</p>
+
+                    <h3 data-translate="about.history_h3_1">Philosophie culinaire</h3>
+                    
+                    <p data-translate="about.history_p2">Chaque plat raconte une histoire, chaque saveur évoque une émotion. Nous sélectionnons rigoureusement nos ingrédients auprès de producteurs locaux pour garantir fraîcheur et qualité.</p>
+
+                    <h3 data-translate="about.history_h3_2">Engagement qualité</h3>
+                    
+                    <p data-translate="about.history_p3">Notre cuisine allie techniques traditionnelles et innovations modernes. Nous créons des harmonies gustatives qui surprennent et enchantent nos convives dans un cadre élégant et raffiné.</p>
+                </div>
+            </div>
+
+            <!-- Section droite - fond bordeaux -->
+            <div class="about-right">
+                <div class="about-content">
+                    <h2 data-translate="about.services_title">Services</h2>
+                    
+                    <p><span class="highlight" data-translate="about.services_highlight">Expérience Personnalisée</span></p>
+                    
+                    <p data-translate="about.services_p1">Notre service irréprochable s'adapte à vos besoins. Que ce soit pour un dîner romantique, un repas d'affaires ou une célébration familiale, nous créons l'ambiance parfaite.</p>
+
+                    <h3 data-translate="about.services_h3_1">Événements privés</h3>
+                    
+                    <p data-translate="about.services_p2">Nous organisons vos événements sur mesure avec un service de haute qualité. Nos espaces privatisables offrent le cadre idéal pour vos moments importants.</p>
+
+                    <h3 data-translate="about.services_h3_2">Réservations</h3>
+                    
+                    <p data-translate="about.services_p3">Réservez votre table dès maintenant pour vivre une expérience gastronomique inoubliable. Notre équipe se tient à votre disposition pour personnaliser votre visite.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section informations en bas -->
+        <div class="about-info">
+            <div class="contact-info">
+                <h4 data-translate="about.info_title">Informations Pratiques</h4>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong data-translate="about.info_reservations_label">Réservations</strong>
+                        <span data-translate="about.info_reservations">Conseillées</span>
+                    </div>
+                    <div class="info-item">
+                        <strong data-translate="about.info_payments_label">Paiements</strong>
+                        <span data-translate="about.info_payments">Toutes cartes acceptées</span>
+                    </div>
+                    <div class="info-item">
+                        <strong data-translate="about.info_ambiance_label">Ambiance</strong>
+                        <span data-translate="about.info_ambiance">Raffinée & Élégante</span>
+                    </div>
+                    <div class="info-item">
+                        <strong data-translate="about.info_capacity_label">Capacité</strong>
+                        <span data-translate="about.info_capacity">80 couverts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
