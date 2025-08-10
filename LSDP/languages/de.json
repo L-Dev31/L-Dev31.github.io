@@ -38,10 +38,11 @@
   "reservation": {
     "map_title": "Karte anzeigen",
     "map_notice": "Ihre IP-Adresse wird an Google Maps gesendet.",
-    "address_title": "Golfe Juan",
+    "address_title": "Vallauris",
     "address": "24 Av. de la Gare, 06220 Vallauris",
+    "section_title": "Reservierung",
     "booking_title": "Machen Sie Ihre<br>Reservierung",
-    "phone": "+33422917748",
+    "phone": "+33 4 22 91 77 48",
     "hours_title": "Unsere<br>Öffnungszeiten",
     "monday": "Montag",
     "tuesday": "Dienstag",

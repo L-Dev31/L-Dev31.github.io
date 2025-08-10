@@ -49,8 +49,9 @@ function updatePageContent(translations) {
         const key = el.getAttribute('data-translate');
         const value = getNestedValue(translations, key);
         if (typeof value === 'string') {
-            // Menu strings may contain HTML (e.g., <br>, <strong>)
-            if (key.startsWith('menu.')) {
+            const containsHTML = /<\s*br\s*\/?\s*>|<\w+/i.test(value);
+            const allowHTML = key.startsWith('menu.') || key.startsWith('reservation.') || containsHTML;
+            if (allowHTML) {
                 el.innerHTML = value;
             } else {
                 el.textContent = value;
@@ -140,12 +141,53 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Add click event listeners to language options
     const languageOptions = document.querySelectorAll('.language-option');
+    const languageSelector = document.querySelector('.language-selector');
+    
     languageOptions.forEach(option => {
-        option.addEventListener('click', function() {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             const selectedLang = this.getAttribute('data-lang');
             switchLanguage(selectedLang);
+            
+            // Close the dropdown after selection
+            if (languageSelector) {
+                languageSelector.classList.remove('dropdown-open');
+            }
         });
     });
+    
+    // Language selector dropdown management
+    if (languageSelector) {
+        let isDropdownOpen = false;
+        
+        languageSelector.addEventListener('click', function(e) {
+            e.stopPropagation();
+            isDropdownOpen = !isDropdownOpen;
+            
+            if (isDropdownOpen) {
+                this.classList.add('dropdown-open');
+            } else {
+                this.classList.remove('dropdown-open');
+            }
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            if (isDropdownOpen) {
+                languageSelector.classList.remove('dropdown-open');
+                isDropdownOpen = false;
+            }
+        });
+        
+        // Handle mouse leave to close dropdown (for desktop)
+        languageSelector.addEventListener('mouseleave', function() {
+            if (isDropdownOpen) {
+                this.classList.remove('dropdown-open');
+                isDropdownOpen = false;
+            }
+        });
+    }
 
     // Hamburger menu functionality
     const hamburgerMenu = document.querySelector('.hamburger-menu');

@@ -36,12 +36,14 @@
     "info_capacity": "80 місць"
   },
   "reservation": {
-    "map_notice": "Показати карту<br><small>Ваша IP-адреса буде надіслана до Google Maps.</small>",
-    "location": "Гольф Жуан",
+    "map_title": "Показати карту",
+    "map_notice": "Ваша IP-адреса буде надіслана до Google Maps.",
+    "address_title": "Валоріс",
     "address": "24 Av. de la Gare, 06220 Vallauris",
-    "make_reservation": "Зробіть своє<br>Бронювання",
-    "opening_hours": "Наші<br>Години роботи",
-    "payment_options": "Доступні<br>способи оплати",
+    "section_title": "Бронювання",
+    "booking_title": "Зробіть своє<br>Бронювання",
+    "phone": "+33 4 22 91 77 48",
+    "hours_title": "Наші<br>Години роботи",
     "monday": "Понеділок",
     "tuesday": "Вівторок",
     "wednesday": "Середа",
@@ -50,6 +52,7 @@
     "saturday": "Субота",
     "sunday": "Неділя",
     "closed": "зачинено",
+    "payment_title": "Доступні<br>способи оплати",
     "cash": "Готівка",
     "contactless": "Безконтактна оплата",
     "debit_card": "Дебетова картка"

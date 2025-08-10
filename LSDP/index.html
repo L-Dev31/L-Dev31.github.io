@@ -18,7 +18,7 @@
         </div>
         
         <div class="nav-center">
-            <h1 class="logo">Les Saveurs de Provence</h1>
+            <h1 class="logo">LES SAVEURS DE PROVENCE</h1>
         </div>
         
         <div class="nav-right">
@@ -84,7 +84,6 @@
                     <li><a href="#menu" data-image="menu" data-translate="nav.menu">Notre Menu</a></li>
                     <li><a href="#about" data-image="about" data-translate="nav.about">À Propos</a></li>
                     <li><a href="#reservation" data-image="booking" data-translate="nav.reservation">Réservation</a></li>
-                    <li><a href="#contact" data-image="contact" data-translate="nav.contact">Contact</a></li>
                 </ul>
             </div>
             <div class="menu-right">
@@ -92,19 +91,17 @@
                 <img src="images/menu.png" alt="Notre Menu" class="menu-image" data-tab="menu">
                 <img src="images/about.png" alt="À Propos" class="menu-image" data-tab="about">
                 <img src="images/booking.png" alt="Réservation" class="menu-image" data-tab="booking">
-                <img src="images/contact.png" alt="Contact" class="menu-image" data-tab="contact">
                 
                 <img src="images/display.png" alt="Display" class="png-display active" data-tab="home">
                 <img src="images/display.png" alt="Display" class="png-display" data-tab="menu">
                 <img src="images/display.png" alt="Display" class="png-display" data-tab="about">
                 <img src="images/display.png" alt="Display" class="png-display" data-tab="booking">
-                <img src="images/display.png" alt="Display" class="png-display" data-tab="contact">
             </div>
         </div>
     </div>
 
     <!-- Hero Section -->
-    <section class="hero video-mode">
+    <section id="home" class="hero video-mode">
         <video class="hero-video" autoplay muted loop>
             <source src="hero-bg.mp4" type="video/mp4">
         </video>
@@ -120,9 +117,9 @@
     </section>
 
     <!-- Menu Section -->
-    <section class="menu-section">
+    <section id="menu" class="menu-section">
         <div class="menu-container">
-            <h2 class="menu-title" data-translate="menu.title">Notre Carte</h2>
+            <h2 class="menu-title" data-translate="menu.title">Notre Menu</h2>
             
             <!-- Menu du jour -->
             <div class="menu-category">
@@ -973,7 +970,7 @@
     </section>
 
     <!-- About Section -->
-    <section class="about-section">
+    <section id="about" class="about-section">
         <!-- Conteneur des deux sections principales -->
         <div class="about-main">
             <!-- Section gauche - fond sombre -->
@@ -1042,25 +1039,29 @@
     </section>
 
     <!-- Reservation Section -->
-    <section class="reservation-section">
+    <section id="reservation" class="reservation-section">
         <div class="reservation-container">
+            <h4 class="reservation-title" data-translate="reservation.section_title">Réservation</h4>
             <div class="reservation-content">
                 <!-- Map Section - Full Width -->
                 <div class="reservation-map">
-                    <div class="map-notice">
-                        <div data-translate="reservation.map_title">Afficher la carte</div>
-                        <small data-translate="reservation.map_notice">Votre adresse IP sera envoyée à Google Maps.</small>
-                    </div>
                     <div class="map-container">
                         <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2889.123456789!2d7.0123456!3d43.5123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDPCsDMwJzQ0LjQiTiA3wrAwMCc0NC40IkU!5e0!3m2!1sfr!2sfr!4v1234567890123!5m2!1sfr!2sfr"
+                            src="https://www.google.com/maps?q=24+Av.+de+la+Gare,+06220+Vallauris&output=embed"
                             loading="lazy" 
                             referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
                     </div>
                     <div class="address-info">
-                        <h3 data-translate="reservation.address_title">Golfe Juan</h3>
-                        <p data-translate="reservation.address">24 Avenue De La Gare, 06220 Vallauris, France</p>
+                        <h3>Les Saveurs de Provence</h3>
+                        <p>Vallauris</p>
+                        <p>24 Av. de la Gare, 06220 Vallauris</p>
+                        <p>
+                            Quartier: Centre / Proximité Gare SNCF<br>
+                            Ville: Vallauris Golfe-Juan (Alpes-Maritimes)<br>
+                            Code postal: 06220<br>
+                            Pays: France
+                        </p>
                     </div>
                 </div>
 
@@ -1148,11 +1149,54 @@
                         <i class="fas fa-phone"></i>
                     </div>
                     <h3 data-translate="reservation.booking_title">Faites votre Réservation</h3>
-                    <div class="phone-number" data-translate="reservation.phone">+33422917748</div>
+                    <div class="phone-number" data-translate="reservation.phone">+33 4 22 91 77 48</div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Footer -->
+    <footer class="site-footer" id="footer">
+        <div class="footer-container">
+            <div class="footer-col brand-col">
+                <h3 class="footer-logo">LES SAVEURS DE PROVENCE</h3>
+                <p class="footer-tagline">Gastronomie d'Exception</p>
+                <div class="footer-socials">
+                    <a href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/33422917748" target="_blank" rel="noopener" aria-label="WhatsApp" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col contact-col">
+                <h4 class="footer-title">Nous trouver</h4>
+                <address>
+                    Les Saveurs de Provence<br>
+                    24 Av. de la Gare<br>
+                    06220 Vallauris Golfe-Juan<br>
+                    France
+                </address>
+                <p class="footer-phone"><i class="fas fa-phone"></i> <a href="tel:+33422917748">+33 4 22 91 77 48</a></p>
+                <p class="footer-email"><i class="fas fa-envelope"></i> <a href="mailto:lessaveursdeprovence.resto@gmail.com">lessaveursdeprovence.resto@gmail.com</a></p>
+            </div>
+            <div class="footer-col links-col">
+                <h4 class="footer-title" data-translate="menu.title">Notre Menu</h4>
+                <ul class="footer-links">
+                    <li><a href="#home" data-translate="nav.home">Accueil</a></li>
+                    <li><a href="#menu" data-translate="nav.menu">Notre Menu</a></li>
+                    <li><a href="#about" data-translate="nav.about">À Propos</a></li>
+                    <li><a href="#reservation" data-translate="nav.reservation">Réservation</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Les Saveurs de Provence — Tous droits réservés.</p>
+            <p>
+                <a href="#" aria-label="Mentions légales">Mentions légales</a> ·
+                <a href="#" aria-label="Protection des données">Protection des données</a> ·
+                <a href="#" aria-label="Paramètres des cookies">Paramètres des cookies</a>
+            </p>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>

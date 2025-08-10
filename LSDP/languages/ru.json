@@ -36,12 +36,14 @@
     "info_capacity": "80 мест"
   },
   "reservation": {
-    "map_notice": "Показать карту<br><small>Ваш IP-адрес будет отправлен в Google Maps.</small>",
-    "location": "Гольф Жуан",
+    "map_title": "Показать карту",
+    "map_notice": "Ваш IP-адрес будет отправлен в Google Maps.",
+    "address_title": "Валлорис",
     "address": "24 Av. de la Gare, 06220 Vallauris",
-    "make_reservation": "Сделайте свой<br>Заказ столика",
-    "opening_hours": "Наши<br>Часы работы",
-    "payment_options": "Доступные<br>способы оплаты",
+    "section_title": "Бронирование",
+    "booking_title": "Сделайте свой<br>Заказ столика",
+    "phone": "+33 4 22 91 77 48",
+    "hours_title": "Наши<br>Часы работы",
     "monday": "Понедельник",
     "tuesday": "Вторник",
     "wednesday": "Среда",
@@ -50,6 +52,7 @@
     "saturday": "Суббота",
     "sunday": "Воскресенье",
     "closed": "закрыто",
+    "payment_title": "Доступные<br>способы оплаты",
     "cash": "Наличные",
     "contactless": "Бесконтактная оплата",
     "debit_card": "Дебетовая карта"
