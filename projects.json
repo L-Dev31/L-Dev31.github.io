@@ -41,14 +41,6 @@
       "noPhone": true
     },
     {
-      "id": "j3dt",
-      "title": "J3D Translator",
-      "creator": "Léo Tosku",
-      "category": "personal-project",
-      "path": "J3DTranslator",
-      "noPhone": true
-    },
-    {
       "id": "dssm",
       "title": "DeepSeek Status Monitor",
       "creator": "Léo Tosku",
