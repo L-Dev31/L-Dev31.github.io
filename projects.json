@@ -1,6 +1,14 @@
 {
   "projects": [
     {
+      "id": "lsdp",
+      "title": "Les Saveurs de Provence (Redesign)",
+      "creator": "",
+      "category": "commission", 
+      "path": "LSDP",
+      "noPhone": false
+    },
+    {
       "id": "sand",
       "title": "SandFall Interactive (Redesign)",
       "creator": "SandFall Interactive",
