@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SmartHome Store | Domotique pas chère, Premium & Livraison rapide</title>
+        <meta name="description" content="Boutique domotique premium à prix mini : ampoules connectées, assistants vocaux, livraison gratuite dès 20€, retours faciles. Achetez malin, vivez connecté !">
+        <meta name="keywords" content="domotique, maison intelligente, smart home, pas cher, premium, livraison gratuite, retour facile, assistant vocal, ampoule connectée, sécurité maison, objets connectés, Temu, Amazon, LED, Google Home, Alexa, Apple HomeKit">
+        <meta name="robots" content="index, follow">
+        <meta property="og:title" content="SmartHome Store - Domotique premium à prix mini">
+        <meta property="og:description" content="Découvrez la domotique accessible à tous : produits connectés, livraison offerte, retours 30j, garantie satisfait ou remboursé.">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://smarthome.fr/">
+        <meta property="og:image" content="images/smart_home_control.png">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="SmartHome Store - Domotique premium à prix mini">
+        <meta name="twitter:description" content="Boutique domotique premium à prix mini : ampoules connectées, assistants vocaux, livraison gratuite dès 20€, retours faciles.">
+        <meta name="twitter:image" content="images/smart_home_control.png">
+        <link rel="canonical" href="https://smarthome.fr/">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="style.css">
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Store",
+            "name": "SmartHome Store",
+            "image": "images/smart_home_control.png",
+            "url": "https://smarthome.fr/",
+            "description": "Boutique domotique premium à prix mini : ampoules connectées, assistants vocaux, livraison gratuite dès 20€, retours faciles.",
+            "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "FR"
+            },
+            "sameAs": [
+                "https://facebook.com/SmartHomeStore",
+                "https://instagram.com/SmartHomeStore"
+            ]
+        }
+        </script>
+</head>
+<body>
+
+
+    <div class="top-bar" role="region" aria-label="Bannières avantages">
+        <div class="top-bar-content">
+            <span class="top-bar-item" id="free-shipping">
+                <i class="fas fa-truck"></i>
+                <span class="top-bar-text">Livraison gratuite dès 20€</span>
+            </span>
+            <span class="top-bar-item" id="satisfaction-guarantee">
+                <i class="fas fa-money-bill"></i>
+                <span class="top-bar-text">Payez en plusieurs fois avec Stripe !</span>
+            </span>
+            <span class="top-bar-item" id="phone-contact">
+                <i class="fas fa-phone-alt"></i>
+                <span class="top-bar-text">04 51 68 09 90</span>
+            </span>
+        </div>
+    </div>
+
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <a href="#home"><img src="images/logo.png" alt="SmartHome Logo"></a>
+                </div>
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="search" id="search-bar" placeholder="Rechercher un produit...">
+                    <div class="search-suggestions" id="search-suggestions"></div>
+                </div>
+                <div class="cart-icon" onclick="toggleCart()">
+                    <span>🛒</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h2>Transformez votre maison en maison intelligente</h2>
+                <p>Découvrez notre gamme complète de produits domotiques pour une maison connectée et moderne</p>
+                <button class="cta-button" onclick="scrollToProducts()">Découvrir nos produits</button>
+            </div>
+            <div class="hero-image">
+                <img src="images/smart_home_control.png" alt="Contrôle maison intelligente">
+            </div>
+        </section>
+
+        <section id="products" class="products-section">
+            <h2>Nos Produits</h2>
+            <div class="products-layout">
+                <aside class="filters-sidebar">
+                    <h3>Catégories</h3>
+                    <div class="category-filters">
+                        <button class="filter-btn active" data-category="all">Tous les produits</button>
+                        <button class="filter-btn" data-category="led">Éclairage LED</button>
+                        <button class="filter-btn" data-category="assistant">Assistants vocaux</button>
+                        <button class="filter-btn" data-category="control">Contrôle & Hubs</button>
+                    </div>
+                </aside>
+                <div class="products-grid-container">
+                    <div class="products-grid" id="products-grid">
+                        <!-- Les produits seront générés par JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal pour les détails du produit -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Modale d'ajout au panier -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="cart-modal-body" class="cart-modal-body">
+                <div class="cart-modal-message">
+                    <i class="fas fa-check-circle"></i>
+                    <p id="modal-message">Produit ajouté au panier !</p>
+                </div>
+                <div class="cart-modal-product">
+                    <img id="modal-product-image" src="" alt="Aperçu du produit">
+                    <span id="modal-product-name"></span>
+                </div>
+                <div class="cart-modal-summary">
+                    <p>Votre panier : <strong id="modal-cart-count">0 article(s)</strong></p>
+                    <p>Total : <strong id="modal-cart-total">0.00€</strong></p>
+                </div>
+                <div class="cart-modal-actions">
+                    <button id="continue-shopping-btn" class="btn-secondary">Continuer les achats</button>
+                    <button id="checkout-modal-btn" class="btn-primary">Voir le panier & Payer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panier -->
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Panier</h3>
+            <span class="close-cart">&times;</span>
+        </div>
+        <div class="cart-items" id="cart-items"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <strong>Total: <span id="cart-total-sidebar">0€</span></strong>
+            </div>
+            <button class="checkout-btn">Commander</button>
+        </div>
+    </div>
+
+    <footer id="contact">
+        <div class="footer-container">
+            <div class="footer-about">
+                <img src="images/logo.png" alt="SmartHome Logo" class="footer-logo">
+                <p>Votre partenaire pour la piscine, le bien-être et la maison connectée.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Catégories</h3>
+                <ul>
+                    <li><a href="#">Piscine &amp; Extérieur</a></li>
+                    <li><a href="#">Robots &amp; Nettoyage</a></li>
+                    <li><a href="#">Maison connectée</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h3>Liens utiles</h3>
+                <ul>
+                    <li><a href="#">CGV</a></li>
+                    <li><a href="#">Mentions légales</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h3>Mon Compte</h3>
+                <ul>
+                    <li><a href="#">Connexion</a></li>
+                    <li><a href="#">Mes commandes</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SmartHome Store. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+/**
+ * @file script.js
+ * @description Gère l'ensemble de la logique interactive du site SmartHome Store.
+ * @version 4.0.0 (Final)
+ */
+
+// =================================================================
+// STATE MANAGEMENT
+// =================================================================
+
+let allProducts = [];
+let cart = [];
+
+// =================================================================
+// DOM ELEMENTS
+// =================================================================
+
+const DOM = {
+    body: document.body,
+    topBar: document.querySelector('.top-bar'),
+    navbar: document.querySelector('.navbar'),
+    searchBar: document.getElementById('search-bar'),
+    searchSuggestions: document.getElementById('search-suggestions'),
+    productGrid: document.getElementById('products-grid'),
+    categoryFiltersContainer: document.querySelector('.category-filters'),
+    cartIcon: document.querySelector('.cart-icon'),
+    cartCount: document.getElementById('cart-count'),
+    cartSidebar: document.getElementById('cart-sidebar'),
+    cartItems: document.getElementById('cart-items'),
+    cartTotal: document.getElementById('cart-total-sidebar'),
+    cartCloseBtn: document.querySelector('.close-cart'),
+    checkoutBtn: document.querySelector('#cart-sidebar .checkout-btn'),
+    cartModal: document.getElementById('cart-modal'),
+    cartModalMessage: document.getElementById('modal-message'),
+    cartModalImage: document.getElementById('modal-product-image'),
+    cartModalName: document.getElementById('modal-product-name'),
+    cartModalCount: document.getElementById('modal-cart-count'),
+    cartModalTotal: document.getElementById('modal-cart-total'),
+    continueShoppingBtn: document.getElementById('continue-shopping-btn'),
+    checkoutModalBtn: document.getElementById('checkout-modal-btn'),
+};
+
+// =================================================================
+// INITIALIZATION
+// =================================================================
+
+document.addEventListener('DOMContentLoaded', init);
+
+async function init() {
+    setupEventListeners();
+    await loadProducts();
+    adjustLayout();
+}
+
+// =================================================================
+// CORE LOGIC & DATA FETCHING
+// =================================================================
+
+async function loadProducts() {
+    try {
+        const response = await fetch('products.json');
+        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+        const productsFromJson = await response.json();
+        allProducts = productsFromJson.filter(p => p.stock > 0);
+        renderProducts(allProducts);
+        updateCartCount();
+    } catch (error) {
+        console.error("Impossible de charger les produits:", error);
+        if(DOM.productGrid) DOM.productGrid.innerHTML = `<p class="no-products-found">Erreur lors du chargement des produits.</p>`;
+    }
+}
+
+function addToCart(productId) {
+    const product = allProducts.find(p => p.id === productId);
+    if (!product) return;
+    const itemInCart = cart.find(item => item.id === productId);
+    if (itemInCart) {
+        if (itemInCart.quantity < product.stock) itemInCart.quantity++;
+        else { alert('Stock maximum atteint pour ce produit.'); return; }
+    } else {
+        cart.push({ ...product, quantity: 1 });
+    }
+    renderCart();
+    updateCartCount();
+    animateCartIcon();
+    showAddToCartModal(product);
+    renderProducts(getFilteredProducts(true));
+}
+
+function updateQuantity(productId, change) {
+    const item = cart.find(item => item.id === productId);
+    if (!item) return;
+    const product = allProducts.find(p => p.id === productId);
+    if (change > 0 && item.quantity >= product.stock) return;
+    item.quantity += change;
+    if (item.quantity <= 0) cart = cart.filter(i => i.id !== productId);
+    renderCart();
+    updateCartCount();
+    renderProducts(getFilteredProducts(true));
+}
+
+function getFilteredProducts(respectSearch = false) {
+    const activeFilterBtn = document.querySelector('.filter-btn.active');
+    if (!activeFilterBtn) return [];
+    const activeCategory = activeFilterBtn.dataset.category;
+    let products = activeCategory === 'all' ? allProducts : allProducts.filter(p => p.category === activeCategory);
+
+    if (respectSearch) {
+        const query = DOM.searchBar.value.toLowerCase();
+        if (query) {
+            products = products.filter(p => p.name.toLowerCase().includes(query));
+        }
+    }
+    return products;
+}
+
+// =================================================================
+// RENDER & UI FUNCTIONS
+// =================================================================
+
+function renderProducts(productsToRender) {
+    if (!DOM.productGrid) return;
+    if (productsToRender.length === 0) {
+        DOM.productGrid.innerHTML = `<p class="no-products-found">Aucun produit ne correspond à votre recherche.</p>`;
+        return;
+    }
+    DOM.productGrid.innerHTML = productsToRender.map(product => {
+        const itemInCart = cart.find(item => item.id === product.id);
+        const isStockReached = itemInCart && itemInCart.quantity >= product.stock;
+        return `
+        <div class="product-card" data-id="${product.id}">
+            <div class="card-header"><span class="stock-count">Stock: ${product.stock}</span></div>
+            <img src="${product.image}" alt="${product.name}" class="product-image">
+            <div class="product-info">
+                <h3 class="product-title">${product.name}</h3>
+                <p class="product-description">${product.description.substring(0, 80)}...</p>
+                <div class="price-container">
+                    <span class="product-price">${product.price}€</span>
+                    <span class="old-price">${product.old_price}€</span>
+                </div>
+                <button class="add-to-cart" data-id="${product.id}" ${isStockReached ? 'disabled' : ''}>${isStockReached ? 'Stock atteint' : 'Ajouter au panier'}</button>
+            </div>
+        </div>
+    `}).join('');
+}
+
+function renderCart() {
+    if (!DOM.cartItems) return;
+    if (cart.length === 0) {
+        DOM.cartItems.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">Votre panier est vide</p>';
+    } else {
+        DOM.cartItems.innerHTML = cart.map(item => {
+            const product = allProducts.find(p => p.id === item.id);
+            const isStockReached = item.quantity >= product.stock;
+            return `
+            <div class="cart-item">
+                <img src="${item.image}" alt="${item.name}">
+                <div class="cart-item-info">
+                    <div class="cart-item-title">${item.name}</div>
+                    <div class="cart-item-price">${item.price}€</div>
+                    <div class="quantity-controls" data-id="${item.id}">
+                        <button class="quantity-btn decrease">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="quantity-btn increase" ${isStockReached ? 'disabled' : ''}>+</button>
+                    </div>
+                </div>
+            </div>
+        `}).join('');
+    }
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    DOM.cartTotal.textContent = `${total.toFixed(2)}€`;
+}
+
+function updateCartCount() {
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    DOM.cartCount.textContent = count;
+}
+
+function showAddToCartModal(product) {
+    if (!DOM.cartModal) return;
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    DOM.cartModalMessage.textContent = `"${product.name}" a été ajouté à votre panier !`;
+    DOM.cartModalImage.src = product.image;
+    DOM.cartModalName.textContent = product.name;
+    DOM.cartModalCount.textContent = `${count} article(s)`;
+    DOM.cartModalTotal.textContent = `${total.toFixed(2)}€`;
+    DOM.cartModal.style.display = 'block';
+}
+
+function adjustLayout() {
+    if (!DOM.topBar || !DOM.navbar) return;
+    const topBarHeight = DOM.topBar.offsetHeight;
+    DOM.body.style.paddingTop = `${topBarHeight}px`;
+    DOM.navbar.style.top = `${topBarHeight}px`;
+}
+
+function animateCartIcon() {
+    DOM.cartIcon.style.transform = 'scale(1.2)';
+    setTimeout(() => { DOM.cartIcon.style.transform = 'scale(1)'; }, 300);
+}
+
+// =================================================================
+// EVENT LISTENERS & HANDLERS
+// =================================================================
+
+function setupEventListeners() {
+    DOM.productGrid?.addEventListener('click', e => {
+        const addToCartBtn = e.target.closest('.add-to-cart');
+        if (addToCartBtn) addToCart(parseInt(addToCartBtn.dataset.id, 10));
+    });
+
+    DOM.categoryFiltersContainer?.addEventListener('click', e => {
+        const filterBtn = e.target.closest('.filter-btn');
+        if (filterBtn) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            filterBtn.classList.add('active');
+            DOM.searchBar.value = '';
+            renderProducts(getFilteredProducts());
+        }
+    });
+
+    DOM.cartItems?.addEventListener('click', e => {
+        const controls = e.target.closest('.quantity-controls');
+        if (controls) {
+            const productId = parseInt(controls.dataset.id, 10);
+            if (e.target.classList.contains('increase')) updateQuantity(productId, 1);
+            if (e.target.classList.contains('decrease')) updateQuantity(productId, -1);
+        }
+    });
+
+    DOM.searchBar?.addEventListener('input', handleSearch);
+    DOM.searchSuggestions?.addEventListener('click', handleSuggestionClick);
+
+    document.addEventListener('click', e => {
+        if (e.target.matches('.modal') || e.target.matches('.close') || e.target.matches('#continue-shopping-btn')) {
+            if(DOM.productModal) DOM.productModal.style.display = 'none';
+            if(DOM.cartModal) DOM.cartModal.style.display = 'none';
+        }
+        if (!e.target.closest('.search-container')) {
+            if(DOM.searchSuggestions) DOM.searchSuggestions.style.display = 'none';
+        }
+    });
+
+    DOM.cartIcon?.addEventListener('click', () => DOM.cartSidebar.classList.add('open'));
+    DOM.cartCloseBtn?.addEventListener('click', () => DOM.cartSidebar.classList.remove('open'));
+    DOM.checkoutBtn?.addEventListener('click', () => alert('Fonctionnalité de paiement non implémentée.'));
+    DOM.checkoutModalBtn?.addEventListener('click', () => {
+        if(DOM.cartModal) DOM.cartModal.style.display = 'none';
+        DOM.cartSidebar.classList.add('open');
+    });
+
+    window.addEventListener('resize', adjustLayout);
+    window.addEventListener('scroll', handleScroll);
+}
+
+function handleSearch(event) {
+    const query = event.target.value.toLowerCase();
+    const productsToSearch = getFilteredProducts();
+    const finalProducts = productsToSearch.filter(p => p.name.toLowerCase().includes(query));
+    renderProducts(finalProducts);
+
+    if (query.length > 1 && finalProducts.length > 0) {
+        renderSuggestions(finalProducts.slice(0, 5));
+    } else {
+        if(DOM.searchSuggestions) DOM.searchSuggestions.style.display = 'none';
+    }
+}
+
+function handleSuggestionClick(event) {
+    const target = event.target.closest('.suggestion-item');
+    if (target) {
+        DOM.searchBar.value = target.textContent;
+        handleSearch({ target: DOM.searchBar });
+        if(DOM.searchSuggestions) DOM.searchSuggestions.style.display = 'none';
+    }
+}
+
+function renderSuggestions(suggestions) {
+    if (!DOM.searchSuggestions) return;
+    if (suggestions.length === 0) {
+        DOM.searchSuggestions.style.display = 'none';
+        return;
+    }
+    DOM.searchSuggestions.innerHTML = suggestions.map(s => `<div class="suggestion-item">${s.name}</div>`).join('');
+    DOM.searchSuggestions.style.display = 'block';
+}
+
+function handleScroll() {
+    if (!DOM.topBar || !DOM.navbar) return;
+    const isScrolled = window.scrollY > 10;
+    DOM.topBar.classList.toggle('hidden', isScrolled);
+    DOM.navbar.classList.toggle('top-bar-hidden', isScrolled);
+    if (window.scrollY > 50) {
+        DOM.navbar.classList.add('navbar-scrolled');
+    } else {
+        DOM.navbar.classList.remove('navbar-scrolled');
+    }
+}

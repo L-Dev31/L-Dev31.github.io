@@ -1,0 +1,52 @@
+[
+    {
+        "id": 1,
+        "name": "Ampoule LED Intelligente LEDVANCE",
+        "description": "Ampoule LED connectée Wi-Fi avec contrôle via smartphone. Compatible Alexa et Google Assistant.",
+        "price": 19.99,
+        "old_price": 24.99,
+        "image": "images/ledvance_smart_bulb.png",
+        "category": "led",
+        "stock": 15
+    },
+    {
+        "id": 2,
+        "name": "Ampoule LED Multicolore Sengled",
+        "description": "Ampoule LED intelligente 60W équivalent avec 16 millions de couleurs. Compatible Matter.",
+        "price": 29.99,
+        "old_price": 34.99,
+        "image": "images/sengled_smart_bulb.png",
+        "category": "led",
+        "stock": 8
+    },
+    {
+        "id": 3,
+        "name": "Ampoules Vintage Intelligentes",
+        "description": "Pack d'ampoules LED vintage connectées avec filament apparent. Ambiance chaleureuse.",
+        "price": 79.99,
+        "old_price": 89.99,
+        "image": "images/vintage_smart_bulbs.png",
+        "category": "led",
+        "stock": 0
+    },
+    {
+        "id": 4,
+        "name": "Google Nest Mini",
+        "description": "Assistant vocal intelligent pour contrôler votre maison connectée par la voix.",
+        "price": 49.99,
+        "old_price": 59.99,
+        "image": "images/google_nest_mini.png",
+        "category": "assistant",
+        "stock": 22
+    },
+    {
+        "id": 5,
+        "name": "Hub de Contrôle Intelligent",
+        "description": "Centre de contrôle pour tous vos appareils domotiques. Interface tactile intuitive.",
+        "price": 179.99,
+        "old_price": 199.99,
+        "image": "images/smart_home_control.png",
+        "category": "control",
+        "stock": 5
+    }
+]
