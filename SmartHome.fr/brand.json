@@ -1,0 +1,14 @@
+{
+  "1": {
+    "name": "AzurShield",
+    "logo": "images/brands/azurshield_logo.png",
+    "rating": 4.5,
+    "description": "Marque leader dans la sécurité domestique intelligente."
+  },
+  "2": {
+    "name": "ConnectHome",
+    "logo": "images/brands/connecthome_logo.png",
+    "rating": 4.2,
+    "description": "Solutions de domotique pour une maison plus intelligente."
+  }
+}

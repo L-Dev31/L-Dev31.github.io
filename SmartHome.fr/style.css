@@ -5,6 +5,11 @@
     --caribbean-current: #2c666eff;
 }
 
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -21,6 +26,8 @@ button:disabled {
     opacity: 0.6;
     cursor: not-allowed !important;
 }
+
+
 
 /* --- Top Bar --- */
 .top-bar {
@@ -65,6 +72,7 @@ button:disabled {
 /* --- Header & Navigation --- */
 .navbar {
     position: fixed;
+    top: 0;
     left: 0;
     width: 100%;
     background: transparent;
@@ -246,6 +254,71 @@ button:disabled {
     color: var(--midnight-green);
     margin-bottom: 3rem;
 }
+
+/* --- Product Detail Section --- */
+.product-detail-section {
+    padding: 4rem 2rem;
+    max-width: 1000px;
+    margin: 100px auto 0; /* Add margin top to account for fixed navbar */
+}
+
+.product-detail-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: flex-start;
+}
+
+.product-detail-image img {
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+}
+
+.product-detail-info .back-to-home {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: var(--caribbean-current);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.product-detail-info .back-to-home i {
+    margin-right: 0.5rem;
+}
+
+.product-detail-info h2 {
+    font-size: 2.5rem;
+    color: var(--midnight-green);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.product-detail-info .price-container {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.product-detail-info .stock-container {
+    margin-bottom: 1.5rem;
+}
+
+.product-detail-description {
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.product-detail-info .add-to-cart {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+}
+
+
 
 .products-layout {
     display: grid;
@@ -797,6 +870,14 @@ footer {
     .products-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .product-detail-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .product-detail-info h2 {
+        font-size: 2rem;
+    }
     
     .cart-sidebar {
         width: 100%;
@@ -807,6 +888,10 @@ footer {
         width: 95%;
         margin: 10% auto;
         padding: 1rem;
+    }
+
+    #carousel-modal .modal-content {
+        padding: 0;
     }
 
     .footer-container {

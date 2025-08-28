@@ -1,7 +1,7 @@
 /**
  * @file script.js
  * @description Gère l'ensemble de la logique interactive du site AzurShield.fr.
- * @version 9.0.0 (Visual Urgency)
+ * @version 12.0.0 (External Product Page & LocalStorage Cart)
  */
 
 // =================================================================
@@ -47,9 +47,24 @@ const DOM = {
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
+    loadCart();
     setupEventListeners();
     await loadProducts();
     adjustLayout();
+}
+
+// =================================================================
+// CART FUNCTIONS
+// =================================================================
+
+function loadCart() {
+    cart = JSON.parse(localStorage.getItem('azurShieldCart')) || [];
+    renderCart();
+    updateCartCount();
+}
+
+function saveCart() {
+    localStorage.setItem('azurShieldCart', JSON.stringify(cart));
 }
 
 // =================================================================
@@ -70,27 +85,15 @@ function sortProductsForFomo(products) {
         const aIsLowStock = a.stock <= lowStockThreshold;
         const bIsLowStock = b.stock <= lowStockThreshold;
 
-        if (aIsLowStock && !bIsLowStock) {
-            return -1; // a comes first
-        }
-        if (!aIsLowStock && bIsLowStock) {
-            return 1; // b comes first
-        }
+        if (aIsLowStock && !bIsLowStock) return -1;
+        if (!aIsLowStock && bIsLowStock) return 1;
 
-        // If both are in the same stock group, sort by discount
         const discountA = getDiscountPercent(a);
         const discountB = getDiscountPercent(b);
+        if (discountA !== discountB) return discountB - discountA;
 
-        if (discountA !== discountB) {
-            return discountB - discountA; // Higher discount first
-        }
+        if (b.price !== a.price) return b.price - a.price;
 
-        // If discounts are the same, sort by price (higher price first)
-        if (b.price !== a.price) {
-            return b.price - a.price;
-        }
-
-        // If prices are the same, sort by stock (lower stock first)
         return a.stock - b.stock;
     });
 
@@ -107,7 +110,7 @@ async function loadProducts() {
         let idCounter = 1;
         for (const category in productsByCategory) {
             productsByCategory[category].forEach(product => {
-                if (product.stock > 0) { // Only load products with stock > 0
+                if (product.stock > 0) {
                     loadedProducts.push({
                         ...product,
                         id: idCounter++,
@@ -119,9 +122,8 @@ async function loadProducts() {
                 }
             });
         }
-        allProducts = sortProductsForFomo(loadedProducts); // Sort here
+        allProducts = sortProductsForFomo(loadedProducts);
         renderProducts(allProducts);
-        updateCartCount();
     } catch (error) {
         console.error("Impossible de charger les produits:", error);
         if(DOM.productGrid) DOM.productGrid.innerHTML = `<p class="no-products-found">Erreur lors du chargement des produits.</p>`;
@@ -142,14 +144,10 @@ function addToCart(productId) {
             return;
         }
     } else {
-        if (product.stock > 0) {
-            cart.push({ ...product, quantity: 1 });
-        } else {
-            alert('Ce produit est en rupture de stock.');
-            return;
-        }
+        cart.push({ ...product, quantity: 1 });
     }
-
+    
+    saveCart();
     renderCart();
     updateCartCount();
     animateCartIcon();
@@ -166,7 +164,7 @@ function updateQuantity(productId, change) {
 
     const newQuantity = item.quantity + change;
 
-    if (newQuantity > product.stock) {
+    if (change > 0 && newQuantity > product.stock) {
         alert('Stock maximum atteint pour ce produit.');
         return;
     }
@@ -177,6 +175,7 @@ function updateQuantity(productId, change) {
         item.quantity = newQuantity;
     }
 
+    saveCart();
     renderCart();
     updateCartCount();
     renderProducts(getFilteredProducts(true));
@@ -218,21 +217,23 @@ function renderProducts(productsToRender) {
         
         return `
         <div class="product-card" data-id="${product.id}">
-            <div class="card-header">
-                <span class="${stockCountClass}">Stock: ${product.stock}</span>
-            </div>
-            <img src="${product.image}" alt="${product.name}" class="product-image">
-            <div class="product-info">
-                <h3 class="product-title">${product.name}</h3>
-                <p class="product-description">${product.description.substring(0, 80)}...</p>
-                <div class="price-container">
-                    <span class="product-price">${product.price.toFixed(2)}€</span>
-                    ${oldPriceHTML}
+            <a href="product.html?id=${product.id}" class="product-card-link">
+                <div class="card-header">
+                    <span class="${stockCountClass}">Stock: ${product.stock}</span>
                 </div>
-                <button class="add-to-cart" data-id="${product.id}" ${isStockReached ? 'disabled' : ''}>
-                    ${isStockReached ? 'Stock atteint' : 'Ajouter au panier'}
-                </button>
-            </div>
+                <img src="${product.image}" alt="${product.name}" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">${product.name}</h3>
+                    <p class="product-description">${product.description.substring(0, 80)}...</p>
+                    <div class="price-container">
+                        <span class="product-price">${product.price.toFixed(2)}€</span>
+                        ${oldPriceHTML}
+                    </div>
+                </div>
+            </a>
+            <button class="add-to-cart" data-id="${product.id}" ${isStockReached ? 'disabled' : ''}>
+                ${isStockReached ? 'Stock atteint' : 'Ajouter au panier'}
+            </button>
         </div>
     `}).join('');
 }
@@ -243,8 +244,8 @@ function renderCart() {
         DOM.cartItems.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">Votre panier est vide</p>';
     } else {
         DOM.cartItems.innerHTML = cart.map(item => {
-            const product = allProducts.find(p => p.id === item.id);
-            const isStockReached = product && item.quantity >= product.stock;
+            const product = allProducts.find(p => p.id === item.id) || item;
+            const isStockReached = item.quantity >= product.stock;
             return `
             <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}">
@@ -302,7 +303,6 @@ function scrollToProducts() {
 
 function scrollToProductsAndFilter(category) {
     scrollToProducts();
-    // Use a timeout to allow for smooth scrolling before filtering
     setTimeout(() => {
         const filterBtn = document.querySelector(`.filter-btn[data-category="${category}"]`);
         if (filterBtn) {
@@ -322,13 +322,14 @@ function scrollToProductsAndFilter(category) {
 function setupEventListeners() {
     DOM.productGrid?.addEventListener('click', e => {
         const addToCartBtn = e.target.closest('.add-to-cart');
-        if (addToCartBtn) addToCart(parseInt(addToCartBtn.dataset.id, 10));
+        if (addToCartBtn) {
+            addToCart(parseInt(addToCartBtn.dataset.id, 10));
+        }
     });
 
     DOM.filtersSidebar?.addEventListener('click', e => {
         const filterBtn = e.target.closest('.filter-btn');
         if (filterBtn) {
-            // Scroll smooth en haut de la section produits
             const productsSection = document.getElementById('products');
             if (productsSection) {
                 productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -354,7 +355,6 @@ function setupEventListeners() {
 
     document.addEventListener('click', e => {
         if (e.target.matches('.modal') || e.target.matches('.close') || e.target.matches('#continue-shopping-btn')) {
-            if(DOM.productModal) DOM.productModal.style.display = 'none';
             if(DOM.cartModal) DOM.cartModal.style.display = 'none';
         }
         if (!e.target.closest('.search-container')) {
