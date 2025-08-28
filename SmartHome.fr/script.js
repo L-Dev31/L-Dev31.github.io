@@ -214,14 +214,18 @@ function renderProducts(productsToRender) {
 
         const oldPriceHTML = product.old_price ? `<span class="old-price">${product.old_price.toFixed(2)}€</span>` : '';
         const stockCountClass = isLowStock ? 'stock-count is-low-stock' : 'stock-count';
-        
+        // Correction image principale :
+        let mainImage = product.image;
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            mainImage = product.images[0];
+        }
         return `
         <div class="product-card" data-id="${product.id}">
             <a href="product.html?id=${product.id}" class="product-card-link">
                 <div class="card-header">
                     <span class="${stockCountClass}">Stock: ${product.stock}</span>
                 </div>
-                <img src="${product.image}" alt="${product.name}" class="product-image">
+                <img src="${mainImage}" alt="${product.name}" class="product-image">
                 <div class="product-info">
                     <h3 class="product-title">${product.name}</h3>
                     <p class="product-description">${product.description.substring(0, 80)}...</p>
@@ -246,9 +250,13 @@ function renderCart() {
         DOM.cartItems.innerHTML = cart.map(item => {
             const product = allProducts.find(p => p.id === item.id) || item;
             const isStockReached = item.quantity >= product.stock;
+            let mainImage = item.image;
+            if (Array.isArray(item.images) && item.images.length > 0) {
+                mainImage = item.images[0];
+            }
             return `
             <div class="cart-item">
-                <img src="${item.image}" alt="${item.name}">
+                <img src="${mainImage}" alt="${item.name}">
                 <div class="cart-item-info">
                     <div class="cart-item-title">${item.name}</div>
                     <div class="cart-item-price">${item.price.toFixed(2)}€</div>
@@ -274,8 +282,14 @@ function showAddToCartModal(product) {
     if (!DOM.cartModal) return;
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    DOM.cartModalMessage.textContent = `"${product.name}" a été ajouté à votre panier !`;
-    DOM.cartModalImage.src = product.image;
+    // Message générique
+    DOM.cartModalMessage.textContent = 'Le produit suivant a été ajouté à votre panier :';
+    DOM.cartModalName.textContent = product.name;
+    let mainImage = product.image;
+    if (Array.isArray(product.images) && product.images.length > 0) {
+        mainImage = product.images[0];
+    }
+    DOM.cartModalImage.src = mainImage;
     DOM.cartModalName.textContent = product.name;
     DOM.cartModalCount.textContent = `${count} article(s)`;
     DOM.cartModalTotal.textContent = `${total.toFixed(2)}€`;

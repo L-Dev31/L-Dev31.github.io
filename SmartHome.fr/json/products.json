@@ -7,7 +7,25 @@
       "price": "34.99",
       "old_price": "69.99",
       "stock": 5,
-      "image": "images/products/cameras/camera_ptz_wifi_exterieure.webp"
+      "images": [
+        "images/products/cameras/camera_ptz_wifi_exterieure.webp",
+        "images/products/cameras/camera_ptz_wifi_exterieure_2.webp",
+        "images/products/cameras/camera_ptz_wifi_exterieure_3.webp"
+      ],
+      "brand": 1,
+      "model": "PTZ-360",
+      "reference": "PTZ-EXT-001",
+      "warranty": "2 ans",
+      "color": "Blanc",
+      "dimensions": "15x10x10cm",
+      "weight": "500g",
+      "connectivity": "WiFi 2.4GHz",
+      "power": "USB 5V",
+      "features": ["Vision nocturne couleur", "Détection humaine AI", "Audio bidirectionnel", "Panoramique 360°"],
+      "video_resolution": "1080p",
+      "audio": "Bidirectionnel",
+      "compatibility": ["iOS", "Android"],
+      "manual_url": null
     },
     {
       "name": "Caméra haute définition WiFi 2,4G 1080P",
@@ -15,7 +33,23 @@
       "price": "39.99",
       "old_price": "79.99",
       "stock": 15,
-      "image": "images/products/cameras/camera_hd_wifi_1080p.webp"
+      "images": [
+        "images/products/cameras/camera_hd_wifi_1080p.webp"
+      ],
+      "brand": 1,
+      "model": "HD-1080P",
+      "reference": "HD-CAM-002",
+      "warranty": "1 an",
+      "color": "Noir",
+      "dimensions": "12x8x8cm",
+      "weight": "350g",
+      "connectivity": "WiFi 2.4GHz",
+      "power": "USB 5V",
+      "features": ["Détection de mouvement", "Vision nocturne", "Audio bidirectionnel"],
+      "video_resolution": "1080p",
+      "audio": "Bidirectionnel",
+      "compatibility": ["iOS", "Android"],
+      "manual_url": null
     }
   ],
   "sonnettes": [
