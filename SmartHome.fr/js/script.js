@@ -102,7 +102,7 @@ function sortProductsForFomo(products) {
 
 async function loadProducts() {
     try {
-        const response = await fetch('products.json');
+    const response = await fetch('json/products.json');
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         const productsByCategory = await response.json();
         

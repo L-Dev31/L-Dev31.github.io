@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
-    fetch("footer.html")
+    fetch("layout/footer.html")
         .then(response => {
             if (!response.ok) {
-                console.error('Failed to fetch footer.html', response);
+                console.error('Failed to fetch layout/footer.html', response);
                 return;
             }
             return response.text();

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch('products.json');
+            const response = await fetch('json/products.json');
             if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
             const productsByCategory = await response.json();
             
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let brandData = null;
         if (product.brand) {
             try {
-                const brandRes = await fetch('brand.json');
+                const brandRes = await fetch('json/brand.json');
                 const brands = await brandRes.json();
                 brandData = brands[product.brand?.toString()];
             } catch (e) { brandData = null; }
