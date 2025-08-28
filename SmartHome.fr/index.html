@@ -3,37 +3,37 @@
 <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SmartHome Store | Domotique pas chère, Premium & Livraison rapide</title>
-        <meta name="description" content="Boutique domotique premium à prix mini : ampoules connectées, assistants vocaux, livraison gratuite dès 20€, retours faciles. Achetez malin, vivez connecté !">
-        <meta name="keywords" content="domotique, maison intelligente, smart home, pas cher, premium, livraison gratuite, retour facile, assistant vocal, ampoule connectée, sécurité maison, objets connectés, Temu, Amazon, LED, Google Home, Alexa, Apple HomeKit">
+        <title>AzurShield.fr | Sécurité & Domotique pour votre Maison</title>
+        <meta name="description" content="AzurShield.fr : Votre spécialiste en sécurité et domotique. Découvrez nos solutions de caméras de surveillance, alarmes, serrures connectées et plus encore.">
+        <meta name="keywords" content="sécurité maison, domotique, AzurShield, caméra de surveillance, alarme, serrure connectée, maison intelligente, protection, surveillance">
         <meta name="robots" content="index, follow">
-        <meta property="og:title" content="SmartHome Store - Domotique premium à prix mini">
-        <meta property="og:description" content="Découvrez la domotique accessible à tous : produits connectés, livraison offerte, retours 30j, garantie satisfait ou remboursé.">
+        <meta property="og:title" content="AzurShield.fr - Sécurité & Domotique">
+        <meta property="og:description" content="Protégez et connectez votre maison avec AzurShield.fr. Solutions de sécurité et de domotique de haute qualité.">
         <meta property="og:type" content="website">
-        <meta property="og:url" content="https://smarthome.fr/">
+        <meta property="og:url" content="https://azurshield.fr/">
         <meta property="og:image" content="images/smart_home_control.png">
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="SmartHome Store - Domotique premium à prix mini">
-        <meta name="twitter:description" content="Boutique domotique premium à prix mini : ampoules connectées, assistants vocaux, livraison gratuite dès 20€, retours faciles.">
+        <meta name="twitter:title" content="AzurShield.fr - Sécurité & Domotique">
+        <meta name="twitter:description" content="Protégez et connectez votre maison avec AzurShield.fr. Solutions de sécurité et de domotique de haute qualité.">
         <meta name="twitter:image" content="images/smart_home_control.png">
-        <link rel="canonical" href="https://smarthome.fr/">
+        <link rel="canonical" href="https://azurshield.fr/">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link rel="stylesheet" href="style.css">
         <script type="application/ld+json">
         {
             "@context": "https://schema.org",
             "@type": "Store",
-            "name": "SmartHome Store",
-            "image": "images/smart_home_control.png",
-            "url": "https://smarthome.fr/",
-            "description": "Boutique domotique premium à prix mini : ampoules connectées, assistants vocaux, livraison gratuite dès 20€, retours faciles.",
+            "name": "AzurShield.fr",
+            "image": "images/logo.png",
+            "url": "https://azurshield.fr/",
+            "description": "Votre spécialiste en sécurité et domotique. Découvrez nos solutions de caméras de surveillance, alarmes, serrures connectées et plus encore.",
             "address": {
                 "@type": "PostalAddress",
                 "addressCountry": "FR"
             },
             "sameAs": [
-                "https://facebook.com/SmartHomeStore",
-                "https://instagram.com/SmartHomeStore"
+                "https://facebook.com/AzurShield",
+                "https://instagram.com/AzurShield"
             ]
         }
         </script>
@@ -45,7 +45,7 @@
         <div class="top-bar-content">
             <span class="top-bar-item" id="free-shipping">
                 <i class="fas fa-truck"></i>
-                <span class="top-bar-text">Livraison gratuite dès 20€</span>
+                <span class="top-bar-text">Livraison gratuite dès 50€</span>
             </span>
             <span class="top-bar-item" id="satisfaction-guarantee">
                 <i class="fas fa-money-bill"></i>
@@ -62,15 +62,17 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="logo">
-                    <a href="#home"><img src="images/logo.png" alt="SmartHome Logo"></a>
+                    <a href="#home"><img src="images/logo.png" alt="AzurShield.fr Logo"></a>
                 </div>
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
                     <input type="search" id="search-bar" placeholder="Rechercher un produit...">
                     <div class="search-suggestions" id="search-suggestions"></div>
                 </div>
-                <div class="cart-icon" onclick="toggleCart()">
-                    <span>🛒</span>
+                <div class="cart-icon" onclick="toggleCart()">  
+                    <span class="cart-icon" id="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </span>
                     <span class="cart-count" id="cart-count">0</span>
                 </div>
             </div>
@@ -80,12 +82,12 @@
     <main>
         <section id="home" class="hero">
             <div class="hero-content">
-                <h2>Transformez votre maison en maison intelligente</h2>
-                <p>Découvrez notre gamme complète de produits domotiques pour une maison connectée et moderne</p>
-                <button class="cta-button" onclick="scrollToProducts()">Découvrir nos produits</button>
+                <h2>Protégez ce qui compte le plus avec AzurShield.fr</h2>
+                <p>Solutions de sécurité et de domotique pour une maison plus sûre et plus intelligente.</p>
+                <button class="cta-button" onclick="scrollToProducts()">Découvrir nos solutions</button>
             </div>
             <div class="hero-image">
-                <img src="images/smart_home_control.png" alt="Contrôle maison intelligente">
+                <img src="images/thumbnail.jpg" alt="Contrôle maison intelligente">
             </div>
         </section>
 
@@ -96,9 +98,13 @@
                     <h3>Catégories</h3>
                     <div class="category-filters">
                         <button class="filter-btn active" data-category="all">Tous les produits</button>
-                        <button class="filter-btn" data-category="led">Éclairage LED</button>
-                        <button class="filter-btn" data-category="assistant">Assistants vocaux</button>
-                        <button class="filter-btn" data-category="control">Contrôle & Hubs</button>
+                        <button class="filter-btn" data-category="cameras">Caméras</button>
+                        <button class="filter-btn" data-category="sonnettes">Sonnettes</button>
+                        <button class="filter-btn" data-category="serrures">Serrures</button>
+                        <button class="filter-btn" data-category="alarmes">Alarmes & Capteurs</button>
+                        <button class="filter-btn" data-category="prises">Prises</button>
+                        <button class="filter-btn" data-category="eclairage">Éclairage</button>
+                        <button class="filter-btn" data-category="thermostats">Thermostats</button>
                     </div>
                 </aside>
                 <div class="products-grid-container">
@@ -161,15 +167,15 @@
     <footer id="contact">
         <div class="footer-container">
             <div class="footer-about">
-                <img src="images/logo.png" alt="SmartHome Logo" class="footer-logo">
-                <p>Votre partenaire pour la piscine, le bien-être et la maison connectée.</p>
+                <img src="images/logo.png" alt="AzurShield.fr Logo" class="footer-logo">
+                <p>Votre expert en solutions de sécurité et domotique pour une maison protégée et connectée.</p>
             </div>
             <div class="footer-links">
                 <h3>Catégories</h3>
                 <ul>
-                    <li><a href="#">Piscine &amp; Extérieur</a></li>
-                    <li><a href="#">Robots &amp; Nettoyage</a></li>
-                    <li><a href="#">Maison connectée</a></li>
+                    <li><a href="#" onclick="scrollToProductsAndFilter('cameras')">Sécurité</a></li>
+                    <li><a href="#" onclick="scrollToProductsAndFilter('eclairage')">Domotique</a></li>
+                    <li><a href="#" onclick="scrollToProductsAndFilter('all')">Tous les produits</a></li>
                 </ul>
             </div>
             <div class="footer-links">
@@ -189,7 +195,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 SmartHome Store. Tous droits réservés.</p>
+            <p>&copy; 2025 AzurShield.fr. Tous droits réservés.</p>
         </div>
     </footer>
 

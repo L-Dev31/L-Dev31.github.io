@@ -1,52 +1,121 @@
-[
+{
+  "cameras": [
+
     {
-        "id": 1,
-        "name": "Ampoule LED Intelligente LEDVANCE",
-        "description": "Ampoule LED connectée Wi-Fi avec contrôle via smartphone. Compatible Alexa et Google Assistant.",
-        "price": 19.99,
-        "old_price": 24.99,
-        "image": "images/ledvance_smart_bulb.png",
-        "category": "led",
-        "stock": 15
+      "name": "Caméra de sécurité extérieure WiFi étanche PTZ suivi automatique",
+      "description": "Surveillance CCTV audio 360, vision nocturne couleur complète, détection humaine AI, audio bidirectionnel, vue panoramique à 360 degrés, caméra de sécurité sans fil 2.4 GHz, caméras de sécurité domestique.",
+      "price": "34.99",
+      "old_price": "69.99",
+      "stock": 5,
+      "image": "images/products/cameras/camera_ptz_wifi_exterieure.webp"
     },
     {
-        "id": 2,
-        "name": "Ampoule LED Multicolore Sengled",
-        "description": "Ampoule LED intelligente 60W équivalent avec 16 millions de couleurs. Compatible Matter.",
-        "price": 29.99,
-        "old_price": 34.99,
-        "image": "images/sengled_smart_bulb.png",
-        "category": "led",
-        "stock": 8
-    },
-    {
-        "id": 3,
-        "name": "Ampoules Vintage Intelligentes",
-        "description": "Pack d'ampoules LED vintage connectées avec filament apparent. Ambiance chaleureuse.",
-        "price": 79.99,
-        "old_price": 89.99,
-        "image": "images/vintage_smart_bulbs.png",
-        "category": "led",
-        "stock": 0
-    },
-    {
-        "id": 4,
-        "name": "Google Nest Mini",
-        "description": "Assistant vocal intelligent pour contrôler votre maison connectée par la voix.",
-        "price": 49.99,
-        "old_price": 59.99,
-        "image": "images/google_nest_mini.png",
-        "category": "assistant",
-        "stock": 22
-    },
-    {
-        "id": 5,
-        "name": "Hub de Contrôle Intelligent",
-        "description": "Centre de contrôle pour tous vos appareils domotiques. Interface tactile intuitive.",
-        "price": 179.99,
-        "old_price": 199.99,
-        "image": "images/smart_home_control.png",
-        "category": "control",
-        "stock": 5
+      "name": "Caméra haute définition WiFi 2,4G 1080P",
+      "description": "1 pièce, caméra de sécurité sans fil Wi-Fi 2,4 G, surveillance de bébé et d'animaux domestiques, surveillance automatique sans fil 1080 P, détection et suivi de mouvement, vision nocturne, audio bidirectionnel, haute sécurité.",
+      "price": "39.99",
+      "old_price": "79.99",
+      "stock": 15,
+      "image": "images/products/cameras/camera_hd_wifi_1080p.webp"
     }
-]
+  ],
+  "sonnettes": [
+    {
+      "name": "Sonnette vidéo sans fil avec caméra",
+      "description": "Grand angle intelligent visuel WiFi rechargeable, sonnette de sécurité pour porte, audio bidirectionnel, vision nocturne, compatible uniquement avec le Wifi 2.4G, sonnettes sans fil pour la maison, caméra de sécurité intérieure, système de sécurité pour la maison, conception compacte, sécurité moderne, construction durable, batterie rechargeable, audio bidirectionnel, sécurité pour les appartements, acheteurs conscients de la sécurité, système de caméra sans fil.",
+      "price": "69.99",
+      "old_price": "139.99",
+      "stock": 10,
+      "image": "images/products/sonnettes/sonnette_video_wifi.webp"
+    },    
+    {
+      "name": "Caméra de Sonnette Intelligente Sans Fil avec Batterie Rechargeable Incorporée",
+      "description": "Contrôle par Application, WiFi 2,4G, installation sans câblage, adapté à la sécurité domestique et au surveillance des portes d'entrée, design élégant, haute qualité audio-bidirectionnelle pour propriétaires, alarme par appareil mobile, dispositif moderne en forme de cloche d’entrée, détecteur, surveillance USB réutilisable.",
+      "price": "39.99",
+      "old_price": "79.99",
+      "stock": 7,
+      "image": "images/products/sonnettes/sonnette_video_ecran_hd.webp"
+    },
+    {
+      "name": "Sonnette de porte sans fil intelligente 304m",
+      "description": "1pc Sonnette de porte sans fil intelligente avec une portée de 304,8 mètres, 60 sonneries, 5 niveaux de volume, mode silencieux 110dB, indicateur LED, batterie non rechargeable, Plug-and-Play, prise européenne.",
+      "price": "44.99",
+      "old_price": "89.99",
+      "stock": 20,
+      "image": "images/products/sonnettes/sonnette_sansfil_304m.webp"
+    }
+  ],
+  "serrures": [
+    {
+      "name": "Protège-verrou en acier inoxydable",
+      "description": "Robuste et sécurisé, de qualité industrielle.",
+      "price": "9.99",
+      "old_price": "19.99",
+      "stock": 30,
+      "image": "images/products/serrures/protege_verrou_inox.webp"
+    },
+    {
+      "name": "Boîte de serrure murale étanche pour clés",
+      "description": "1 pc. Boîte de serrure murale étanche pour clés avec couvercle coulissant, contient jusqu'à 8 clés, construction en métal et plastique durable, verrouillage à mot de passe sécurisé pour usage domestique ou commerciale, design gris élégant pour accès facile et protection, porte-clé commercial, finition grise élégante, serrure en métal et plastique.",
+      "price": "19.99",
+      "old_price": "39.99",
+      "stock": 20,
+      "image": "images/products/serrures/boite_serrure_murale_grise.webp"
+    },
+    {
+      "name": "Cadenas Intelligent Compact à Empreinte Digitale",
+      "description": "Étanche, Sécurité Sans Clé, Rechargeable par USB, Aluminium Léger - Idéal pour Bagages, Valises & Sacs à Dos.",
+      "price": "39.99",
+      "old_price": "79.99",
+      "stock": 9,
+      "image": "images/products/serrures/cadenas_empreinte_digitale.webp"
+    }
+  ],
+  "alarmes": [
+    {
+      "name": "Capteur intelligent Tuya WiFi pour portes et fenêtres",
+      "description": "Alarme magnétique sans fil en temps réel, sécurité enfant pour piscine, détecteur pour animaux domestiques, compatible avec Alexa et Google Assistant, système de sécurité domestique sans fil. Accessoire moderne pour portes. Capteur magnétique sans fil, sécurité intelligente pour la maison.",
+      "price": "24.99",
+      "old_price": "49.99",
+      "stock": 25,
+      "image": "images/products/alarmes/capteur_tuya_wifi_portes_fenetres.webp"
+    }
+  ],
+  "prises": [
+    {
+      "name": "eWeLink WiFi Smart Socket 16A/20A EU",
+      "description": "Télécommande, minuterie, surveillance de l'alimentation, assistant vocal pour Google Home et Alexa. Automatisation de la maison, appareil de maison intelligente, design élégant, prise intelligente moderne, construction durable, performance fiable, prise intelligente Wifi, appareil contrôlé par la voix. Idéal pour technophiles et utilisateurs à domicile.",
+      "price": "24.99",
+      "old_price": "49.99",
+      "stock": 40,
+      "image": "images/products/prises/ewelink_wifi_smart_socket.webp"
+    }
+  ],
+  "eclairage": [
+    {
+      "name": "Lumière Sans Fil LED Sous Armoire Avec Capteur de Mouvement",
+      "description": "Bande magnétique ultra-mince, rechargeable par USB, corps de lampe en PVC, éclairage LED intérieur pour cuisine, escaliers, couloir, armoires. Idéal pour les cadeaux de Noël et de Thanksgiving.",
+      "price": "14.99",
+      "old_price": "29.99",
+      "stock": 60,
+      "image": "images/products/eclairage/led_sous_armoire_capteur.webp"
+    },
+    {
+      "name": "Guirlande Lumineuse 50/100 LED",
+      "description": "Guirlande lumineuse adaptée pour chambre à coucher, fête, mariage, Noël et décoration d'Halloween. Disponible en version 50 ou 100 LED, idéale pour créer une ambiance chaleureuse et festive.",
+      "price": "5.99",
+      "old_price": "11.99",
+      "stock": 100,
+      "image": "images/products/eclairage/guirlande_lumineuse.webp"
+    }
+  ],
+  "thermostats": [
+    {
+      "name": "Thermostat Mural Intelligent CONENTOOL pour Chauffage au Sol",
+      "description": "Programmation 7 jours, contrôle par smartphone, modes économiques d'énergie, minuterie 24H, installation facile, compatible avec systèmes de chauffage à l'eau. Disponible en blanc ou noir.",
+      "price": "59.99",
+      "old_price": "119.99",
+      "stock": 15,
+      "image": "images/products/thermostats/thermostat_conentool_chauffage_sol.webp"
+    }
+  ]
+}

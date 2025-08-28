@@ -1,7 +1,7 @@
 /**
  * @file script.js
- * @description Gère l'ensemble de la logique interactive du site SmartHome Store.
- * @version 4.0.0 (Final)
+ * @description Gère l'ensemble de la logique interactive du site AzurShield.fr.
+ * @version 9.0.0 (Visual Urgency)
  */
 
 // =================================================================
@@ -22,7 +22,7 @@ const DOM = {
     searchBar: document.getElementById('search-bar'),
     searchSuggestions: document.getElementById('search-suggestions'),
     productGrid: document.getElementById('products-grid'),
-    categoryFiltersContainer: document.querySelector('.category-filters'),
+    filtersSidebar: document.querySelector('.filters-sidebar'),
     cartIcon: document.querySelector('.cart-icon'),
     cartCount: document.getElementById('cart-count'),
     cartSidebar: document.getElementById('cart-sidebar'),
@@ -56,12 +56,70 @@ async function init() {
 // CORE LOGIC & DATA FETCHING
 // =================================================================
 
+function sortProductsForFomo(products) {
+    const lowStockThreshold = 10;
+
+    const getDiscountPercent = (product) => {
+        if (!product.old_price || product.old_price <= product.price) {
+            return 0;
+        }
+        return ((product.old_price - product.price) / product.old_price) * 100;
+    };
+
+    products.sort((a, b) => {
+        const aIsLowStock = a.stock <= lowStockThreshold;
+        const bIsLowStock = b.stock <= lowStockThreshold;
+
+        if (aIsLowStock && !bIsLowStock) {
+            return -1; // a comes first
+        }
+        if (!aIsLowStock && bIsLowStock) {
+            return 1; // b comes first
+        }
+
+        // If both are in the same stock group, sort by discount
+        const discountA = getDiscountPercent(a);
+        const discountB = getDiscountPercent(b);
+
+        if (discountA !== discountB) {
+            return discountB - discountA; // Higher discount first
+        }
+
+        // If discounts are the same, sort by price (higher price first)
+        if (b.price !== a.price) {
+            return b.price - a.price;
+        }
+
+        // If prices are the same, sort by stock (lower stock first)
+        return a.stock - b.stock;
+    });
+
+    return products;
+}
+
 async function loadProducts() {
     try {
         const response = await fetch('products.json');
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-        const productsFromJson = await response.json();
-        allProducts = productsFromJson.filter(p => p.stock > 0);
+        const productsByCategory = await response.json();
+        
+        let loadedProducts = [];
+        let idCounter = 1;
+        for (const category in productsByCategory) {
+            productsByCategory[category].forEach(product => {
+                if (product.stock > 0) { // Only load products with stock > 0
+                    loadedProducts.push({
+                        ...product,
+                        id: idCounter++,
+                        category: category,
+                        price: parseFloat(product.price),
+                        old_price: product.old_price ? parseFloat(product.old_price) : undefined,
+                        stock: parseInt(product.stock, 10)
+                    });
+                }
+            });
+        }
+        allProducts = sortProductsForFomo(loadedProducts); // Sort here
         renderProducts(allProducts);
         updateCartCount();
     } catch (error) {
@@ -73,13 +131,25 @@ async function loadProducts() {
 function addToCart(productId) {
     const product = allProducts.find(p => p.id === productId);
     if (!product) return;
+
     const itemInCart = cart.find(item => item.id === productId);
+
     if (itemInCart) {
-        if (itemInCart.quantity < product.stock) itemInCart.quantity++;
-        else { alert('Stock maximum atteint pour ce produit.'); return; }
+        if (itemInCart.quantity < product.stock) {
+            itemInCart.quantity++;
+        } else {
+            alert('Stock maximum atteint pour ce produit.');
+            return;
+        }
     } else {
-        cart.push({ ...product, quantity: 1 });
+        if (product.stock > 0) {
+            cart.push({ ...product, quantity: 1 });
+        } else {
+            alert('Ce produit est en rupture de stock.');
+            return;
+        }
     }
+
     renderCart();
     updateCartCount();
     animateCartIcon();
@@ -90,10 +160,23 @@ function addToCart(productId) {
 function updateQuantity(productId, change) {
     const item = cart.find(item => item.id === productId);
     if (!item) return;
+
     const product = allProducts.find(p => p.id === productId);
-    if (change > 0 && item.quantity >= product.stock) return;
-    item.quantity += change;
-    if (item.quantity <= 0) cart = cart.filter(i => i.id !== productId);
+    if (!product) return;
+
+    const newQuantity = item.quantity + change;
+
+    if (newQuantity > product.stock) {
+        alert('Stock maximum atteint pour ce produit.');
+        return;
+    }
+
+    if (newQuantity <= 0) {
+        cart = cart.filter(i => i.id !== productId);
+    } else {
+        item.quantity = newQuantity;
+    }
+
     renderCart();
     updateCartCount();
     renderProducts(getFilteredProducts(true));
@@ -126,19 +209,29 @@ function renderProducts(productsToRender) {
     }
     DOM.productGrid.innerHTML = productsToRender.map(product => {
         const itemInCart = cart.find(item => item.id === product.id);
-        const isStockReached = itemInCart && itemInCart.quantity >= product.stock;
+        const remainingStock = itemInCart ? product.stock - itemInCart.quantity : product.stock;
+        const isStockReached = remainingStock <= 0;
+        const isLowStock = product.stock <= 10;
+
+        const oldPriceHTML = product.old_price ? `<span class="old-price">${product.old_price.toFixed(2)}€</span>` : '';
+        const stockCountClass = isLowStock ? 'stock-count is-low-stock' : 'stock-count';
+        
         return `
         <div class="product-card" data-id="${product.id}">
-            <div class="card-header"><span class="stock-count">Stock: ${product.stock}</span></div>
+            <div class="card-header">
+                <span class="${stockCountClass}">Stock: ${product.stock}</span>
+            </div>
             <img src="${product.image}" alt="${product.name}" class="product-image">
             <div class="product-info">
                 <h3 class="product-title">${product.name}</h3>
                 <p class="product-description">${product.description.substring(0, 80)}...</p>
                 <div class="price-container">
-                    <span class="product-price">${product.price}€</span>
-                    <span class="old-price">${product.old_price}€</span>
+                    <span class="product-price">${product.price.toFixed(2)}€</span>
+                    ${oldPriceHTML}
                 </div>
-                <button class="add-to-cart" data-id="${product.id}" ${isStockReached ? 'disabled' : ''}>${isStockReached ? 'Stock atteint' : 'Ajouter au panier'}</button>
+                <button class="add-to-cart" data-id="${product.id}" ${isStockReached ? 'disabled' : ''}>
+                    ${isStockReached ? 'Stock atteint' : 'Ajouter au panier'}
+                </button>
             </div>
         </div>
     `}).join('');
@@ -151,13 +244,13 @@ function renderCart() {
     } else {
         DOM.cartItems.innerHTML = cart.map(item => {
             const product = allProducts.find(p => p.id === item.id);
-            const isStockReached = item.quantity >= product.stock;
+            const isStockReached = product && item.quantity >= product.stock;
             return `
             <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}">
                 <div class="cart-item-info">
                     <div class="cart-item-title">${item.name}</div>
-                    <div class="cart-item-price">${item.price}€</div>
+                    <div class="cart-item-price">${item.price.toFixed(2)}€</div>
                     <div class="quantity-controls" data-id="${item.id}">
                         <button class="quantity-btn decrease">-</button>
                         <span>${item.quantity}</span>
@@ -200,6 +293,28 @@ function animateCartIcon() {
     setTimeout(() => { DOM.cartIcon.style.transform = 'scale(1)'; }, 300);
 }
 
+function scrollToProducts() {
+    const productsSection = document.getElementById('products');
+    if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function scrollToProductsAndFilter(category) {
+    scrollToProducts();
+    // Use a timeout to allow for smooth scrolling before filtering
+    setTimeout(() => {
+        const filterBtn = document.querySelector(`.filter-btn[data-category="${category}"]`);
+        if (filterBtn) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            filterBtn.classList.add('active');
+            DOM.searchBar.value = '';
+            renderProducts(getFilteredProducts());
+        }
+    }, 300);
+}
+
+
 // =================================================================
 // EVENT LISTENERS & HANDLERS
 // =================================================================
@@ -210,9 +325,14 @@ function setupEventListeners() {
         if (addToCartBtn) addToCart(parseInt(addToCartBtn.dataset.id, 10));
     });
 
-    DOM.categoryFiltersContainer?.addEventListener('click', e => {
+    DOM.filtersSidebar?.addEventListener('click', e => {
         const filterBtn = e.target.closest('.filter-btn');
         if (filterBtn) {
+            // Scroll smooth en haut de la section produits
+            const productsSection = document.getElementById('products');
+            if (productsSection) {
+                productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             filterBtn.classList.add('active');
             DOM.searchBar.value = '';
