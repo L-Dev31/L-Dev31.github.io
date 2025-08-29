@@ -48,13 +48,22 @@ async function init() {
 function loadCart() {
     cart = JSON.parse(localStorage.getItem('azurShieldCart')) || [];
     // Par défaut, tout est sélectionné
-    cartSelection = cart.map(item => item.id);
+    let selection = JSON.parse(localStorage.getItem('azurShieldCartSelection'));
+    if (!selection || !Array.isArray(selection) || selection.length === 0) {
+        selection = cart.map(item => item.id);
+    }
+    cartSelection = selection;
     renderCart();
     updateCartCount();
 }
 
 function saveCart() {
     localStorage.setItem('azurShieldCart', JSON.stringify(cart));
+    // Toujours synchroniser la sélection avec le panier (tout coché par défaut)
+    if (!cartSelection || cartSelection.length === 0) {
+        cartSelection = cart.map(item => item.id);
+    }
+    localStorage.setItem('azurShieldCartSelection', JSON.stringify(cartSelection));
 }
 
 // =================================================================
@@ -136,7 +145,10 @@ function addToCart(productId) {
     } else {
         cart.push({ ...product, quantity: 1 });
     }
-    
+    // Toujours cocher le produit ajouté
+    if (!cartSelection.includes(productId)) {
+        cartSelection.push(productId);
+    }
     saveCart();
     renderCart();
     updateCartCount();
@@ -409,6 +421,8 @@ function setupEventListeners() {
             } else {
                 cartSelection = cartSelection.filter(cid => cid !== id);
             }
+            // Mise à jour du localStorage pour la sélection
+            localStorage.setItem('azurShieldCartSelection', JSON.stringify(cartSelection));
             // Si tout est coché, coche "Tout" sinon décoche
             const selectAll = document.getElementById('cart-select-all');
             if (selectAll) selectAll.checked = cartSelection.length === cart.length;
@@ -424,6 +438,8 @@ function setupEventListeners() {
         } else {
             cartSelection = [];
         }
+        // Mise à jour du localStorage pour la sélection
+        localStorage.setItem('azurShieldCartSelection', JSON.stringify(cartSelection));
         renderCart();
         updateCartCount();
     });

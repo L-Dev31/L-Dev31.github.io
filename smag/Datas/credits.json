@@ -26,7 +26,7 @@
     },
     {
       "role": "Level Design",
-      "contributors": ["tetracold"]
+      "contributors": ["ldev","solargress"]
     },
     {
       "role": "Level Creation",
@@ -62,7 +62,7 @@
     }
   ],
   "recruitment": {
-    "message": "We're currently in need of Playtesters!",
+    "message": "We're currently in need of 2D Artists!",
     "contact": "You can contact on Discord",
     "discord_users": ["ldev.", "solargress"],
     "additional_text": "if interested."
