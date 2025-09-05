@@ -6,6 +6,16 @@
   },
   {
     "type": "docs",
+    "title": "Presentation M&L",
+    "link": "prez.pdf"
+  },
+  {
+    "type": "docs",
+    "title": "Grille d'Evaluation",
+    "link": "eval.pdf"
+  },
+  {
+    "type": "docs",
     "title": "Document de projet",
     "link": "https://docs.google.com/document/d/1_W3jHsDIvUd7jmJjxhk8elr8O-G1uZB7w97zbWPUJaU/edit?usp=sharing"
   },
@@ -47,9 +57,8 @@
   },
   {
     "type": "sheets",
-    "title": "Budget du projet",
-    "link": "https://docs.google.com/spreadsheets/d/example/edit",
-    "disabled": true
+    "title": "Organisation des taches",
+    "link": "https://docs.google.com/spreadsheets/d/1VY4W0q9cH5w5x27jd4mJ9YpE3tCmGVPxAiCFf5fy_xg/edit?usp=sharing"
   },
   {
     "type": "presentation",
