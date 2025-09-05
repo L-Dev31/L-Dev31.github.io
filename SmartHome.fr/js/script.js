@@ -130,57 +130,99 @@ async function loadProducts() {
 }
 
 function addToCart(productId) {
-    const product = allProducts.find(p => p.id === productId);
-    if (!product) return;
+    if (DOM.cartLoader) {
+        DOM.cartLoader.classList.add('visible');
+    }
 
-    const itemInCart = cart.find(item => item.id === productId);
-
-    if (itemInCart) {
-        if (itemInCart.quantity < product.stock) {
-            itemInCart.quantity++;
-        } else {
-            alert('Stock maximum atteint pour ce produit.');
+    setTimeout(() => {
+        const product = allProducts.find(p => p.id === productId);
+        if (!product) {
+            if (DOM.cartLoader) {
+                DOM.cartLoader.classList.remove('visible');
+            }
             return;
         }
-    } else {
-        cart.push({ ...product, quantity: 1 });
-    }
-    // Toujours cocher le produit ajouté
-    if (!cartSelection.includes(productId)) {
-        cartSelection.push(productId);
-    }
-    saveCart();
-    renderCart();
-    updateCartCount();
-    animateCartIcon();
-    showAddToCartModal(product);
-    renderProducts(getFilteredProducts(true));
+
+        const itemInCart = cart.find(item => item.id === productId);
+
+        if (itemInCart) {
+            if (itemInCart.quantity < product.stock) {
+                itemInCart.quantity++;
+            } else {
+                alert('Stock maximum atteint pour ce produit.');
+                if (DOM.cartLoader) {
+                    DOM.cartLoader.classList.remove('visible');
+                }
+                return;
+            }
+        } else {
+            cart.push({ ...product, quantity: 1 });
+        }
+
+        if (!cartSelection.includes(productId)) {
+            cartSelection.push(productId);
+        }
+
+        saveCart();
+        renderCart();
+        updateCartCount();
+        animateCartIcon();
+        showAddToCartModal(product);
+        renderProducts(getFilteredProducts(true));
+        
+        if (DOM.cartLoader) {
+            DOM.cartLoader.classList.remove('visible');
+        }
+    }, 1000);
 }
 
 function updateQuantity(productId, change) {
-    const item = cart.find(item => item.id === productId);
-    if (!item) return;
-
-    const product = allProducts.find(p => p.id === productId);
-    if (!product) return;
-
-    const newQuantity = item.quantity + change;
-
-    if (change > 0 && newQuantity > product.stock) {
-        alert('Stock maximum atteint pour ce produit.');
-        return;
+    if (DOM.cartLoader) {
+        DOM.cartLoader.classList.add('visible');
     }
 
-    if (newQuantity <= 0) {
-        cart = cart.filter(i => i.id !== productId);
-    } else {
-        item.quantity = newQuantity;
-    }
+    setTimeout(() => {
+        const item = cart.find(item => item.id === productId);
+        if (!item) {
+            if (DOM.cartLoader) {
+                DOM.cartLoader.classList.remove('visible');
+            }
+            return;
+        }
 
-    saveCart();
-    renderCart();
-    updateCartCount();
-    renderProducts(getFilteredProducts(true));
+        const product = allProducts.find(p => p.id === productId);
+        if (!product) {
+            if (DOM.cartLoader) {
+                DOM.cartLoader.classList.remove('visible');
+            }
+            return;
+        }
+
+        const newQuantity = item.quantity + change;
+
+        if (change > 0 && newQuantity > product.stock) {
+            alert('Stock maximum atteint pour ce produit.');
+            if (DOM.cartLoader) {
+                DOM.cartLoader.classList.remove('visible');
+            }
+            return;
+        }
+
+        if (newQuantity <= 0) {
+            cart = cart.filter(i => i.id !== productId);
+        } else {
+            item.quantity = newQuantity;
+        }
+
+        saveCart();
+        renderCart();
+        updateCartCount();
+        renderProducts(getFilteredProducts(true));
+
+        if (DOM.cartLoader) {
+            DOM.cartLoader.classList.remove('visible');
+        }
+    }, 1000);
 }
 
 function getFilteredProducts(respectSearch = false) {
@@ -513,6 +555,7 @@ function refreshDOM() {
         continueShoppingBtn: document.getElementById('continue-shopping-btn'),
         checkoutModalBtn: document.getElementById('checkout-modal-btn'),
         cartShippingInfo: document.getElementById('cart-shipping-info'),
+        cartLoader: document.querySelector('#cart-sidebar .cart-loader'),
     };
 }
 
