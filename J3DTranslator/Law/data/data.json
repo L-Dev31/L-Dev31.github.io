@@ -1,0 +1,275 @@
+{
+  "levelTitles": [
+    "Novice",
+    "Apprenti juriste",
+    "Étudiant en droit",
+    "Stagiaire avocat",
+    "Juriste confirmé",
+    "Avocat expérimenté",
+    "Magistrat",
+    "Procureur",
+    "Juge d'instruction",
+    "Conseiller à la Cour",
+    "Maître du barreau suprême"
+  ],
+  "articles": [
+    {
+      "number": "Article 111-1",
+      "description": "Les infractions pénales sont classées, suivant leur gravité, en crimes, délits et contraventions.",
+      "situation": "Un tribunal doit déterminer la classification d'une infraction pour appliquer la procédure appropriée.",
+      "level": 0
+    },
+    {
+      "number": "Article 121-1",
+      "description": "Nul n'est responsable pénalement que de son propre fait.",
+      "situation": "Un parent ne peut être tenu responsable des actes délictueux commis par son enfant majeur.",
+      "level": 0
+    },
+    {
+      "number": "Article 121-3",
+      "description": "Il n'y a point de crime ou de délit sans intention de le commettre.",
+      "situation": "Une personne cause un accident sans avoir eu l'intention de nuire.",
+      "level": 0
+    },
+    {
+      "number": "Article 122-1",
+      "description": "N'est pas pénalement responsable la personne qui était atteinte, au moment des faits, d'un trouble psychique ou neuropsychique ayant aboli son discernement ou le contrôle de ses actes.",
+      "situation": "Une personne commet un délit pendant une crise psychotique grave.",
+      "level": 0
+    },
+    {
+      "number": "Article 122-5",
+      "description": "N'est pas pénalement responsable la personne qui, devant une atteinte injustifiée envers elle-même ou autrui, accomplit, dans le même temps, un acte commandé par la nécessité de la légitime défense d'elle-même ou d'autrui.",
+      "situation": "Une personne frappe un agresseur pour se défendre d'une agression imminente.",
+      "level": 0
+    },
+    {
+      "number": "Article 131-1",
+      "description": "Les peines principales encourues par les personnes physiques pour les crimes sont : la réclusion criminelle à perpétuité, la réclusion criminelle à temps.",
+      "situation": "Un tribunal doit prononcer une peine pour un crime de meurtre.",
+      "level": 1
+    },
+    {
+      "number": "Article 131-3",
+      "description": "Les peines principales encourues par les personnes physiques pour les délits sont : l'emprisonnement, l'amende, le jour-amende, le stage de citoyenneté, le travail d'intérêt général, les peines privatives ou restrictives de droits.",
+      "situation": "Un juge doit choisir une peine appropriée pour un délit de vol simple.",
+      "level": 1
+    },
+    {
+      "number": "Article 132-1",
+      "description": "Toute peine prononcée par la juridiction peut être assortie d'un sursis simple ou d'un sursis avec mise à l'épreuve.",
+      "situation": "Un tribunal accorde un sursis à un délinquant primaire pour favoriser sa réinsertion.",
+      "level": 1
+    },
+    {
+      "number": "Article 132-19",
+      "description": "En matière correctionnelle, le tribunal peut, au lieu de prononcer une peine d'emprisonnement, ordonner que le condamné accomplisse, pour une durée de vingt à quatre cents heures, un travail d'intérêt général non rémunéré.",
+      "situation": "Un juge propose des travaux d'intérêt général à la place d'une peine de prison.",
+      "level": 1
+    },
+    {
+      "number": "Article 221-1",
+      "description": "Le fait de donner volontairement la mort à autrui constitue un meurtre. Il est puni de trente ans de réclusion criminelle.",
+      "situation": "Une personne tue intentionnellement une autre personne lors d'une dispute.",
+      "level": 2
+    },
+    {
+      "number": "Article 221-2",
+      "description": "Le meurtre qui précède, accompagne ou suit un autre crime est puni de la réclusion criminelle à perpétuité.",
+      "situation": "Un cambrioleur tue le propriétaire de la maison qu'il était en train de cambrioler.",
+      "level": 2
+    },
+    {
+      "number": "Article 221-3",
+      "description": "Le meurtre commis avec préméditation constitue un assassinat. Il est puni de la réclusion criminelle à perpétuité.",
+      "situation": "Une personne planifie et exécute le meurtre de son voisin après plusieurs semaines de préparation.",
+      "level": 2
+    },
+    {
+      "number": "Article 221-4",
+      "description": "Le meurtre est puni de la réclusion criminelle à perpétuité lorsqu'il est commis sur un mineur de quinze ans.",
+      "situation": "Un adulte tue volontairement un enfant de 12 ans.",
+      "level": 2
+    },
+    {
+      "number": "Article 222-1",
+      "description": "Le fait de soumettre une personne à des tortures ou à des actes de barbarie est puni de quinze ans de réclusion criminelle.",
+      "situation": "Une personne inflige des sévices graves et répétés à une autre personne.",
+      "level": 3
+    },
+    {
+      "number": "Article 222-7",
+      "description": "Les violences ayant entraîné la mort sans intention de la donner sont punies de quinze ans de réclusion criminelle.",
+      "situation": "Lors d'une bagarre, une personne frappe si fort qu'elle cause la mort de son adversaire sans l'avoir voulu.",
+      "level": 3
+    },
+    {
+      "number": "Article 222-8",
+      "description": "Les violences ayant entraîné une mutilation ou une infirmité permanente sont punies de dix ans d'emprisonnement et de 150 000 euros d'amende.",
+      "situation": "Une agression cause la perte définitive de l'usage d'un membre de la victime.",
+      "level": 3
+    },
+    {
+      "number": "Article 222-11",
+      "description": "Les violences ayant entraîné une incapacité totale de travail pendant plus de huit jours sont punies de trois ans d'emprisonnement et de 45 000 euros d'amende.",
+      "situation": "Une personne agresse une autre et lui cause des blessures nécessitant 15 jours d'arrêt de travail.",
+      "level": 3
+    },
+    {
+      "number": "Article 222-13",
+      "description": "Les violences ayant entraîné une incapacité de travail inférieure ou égale à huit jours ou n'ayant entraîné aucune incapacité de travail sont punies de trois ans d'emprisonnement et de 45 000 euros d'amende.",
+      "situation": "Une gifle lors d'une dispute cause quelques jours d'incapacité de travail.",
+      "level": 3
+    },
+    {
+      "number": "Article 223-1",
+      "description": "Le fait d'exposer directement autrui à un risque immédiat de mort ou de blessures de nature à entraîner une mutilation ou une infirmité permanente par la violation manifestement délibérée d'une obligation particulière de sécurité ou de prudence imposée par la loi ou le règlement est puni d'un an d'emprisonnement et de 15 000 euros d'amende.",
+      "situation": "Un conducteur de bus ne respecte pas les règles de sécurité et met ses passagers en danger mortel.",
+      "level": 4
+    },
+    {
+      "number": "Article 223-6",
+      "description": "Quiconque pouvant empêcher par son action immédiate, sans risque pour lui ou pour les tiers, soit un crime, soit un délit contre l'intégrité corporelle de la personne s'abstient volontairement de le faire est puni de cinq ans d'emprisonnement et de 75 000 euros d'amende.",
+      "situation": "Une personne assiste à une agression sans intervenir alors qu'elle pourrait facilement appeler la police.",
+      "level": 4
+    },
+    {
+      "number": "Article 224-1",
+      "description": "Le fait, sans ordre des autorités constituées et hors les cas prévus par la loi, d'arrêter, d'enlever, de détenir ou de séquestrer une personne, est puni de vingt ans de réclusion criminelle.",
+      "situation": "Des individus enlèvent une personne et la retiennent contre sa volonté pendant plusieurs jours.",
+      "level": 4
+    },
+    {
+      "number": "Article 225-1",
+      "description": "Constitue une discrimination toute distinction opérée entre les personnes physiques sur le fondement de leur origine, de leur sexe, de leur situation de famille, de leur grossesse, de leur apparence physique, de la particulière vulnérabilité résultant de leur situation économique, apparente ou connue de son auteur, de leur patronyme, de leur lieu de résidence, de leur état de santé, de leur perte d'autonomie, de leur handicap, de leurs caractéristiques génétiques, de leurs mœurs, de leur orientation sexuelle, de leur identité de genre, de leur âge, de leurs opinions politiques, de leurs activités syndicales, de leur capacité à s'exprimer dans une langue autre que le français, de leur appartenance ou de leur non-appartenance, vraie ou supposée, à une ethnie, une nation, une prétendue race ou une religion déterminée.",
+      "situation": "Un employeur refuse d'embaucher une personne à cause de son origine ethnique.",
+      "level": 4
+    },
+    {
+      "number": "Article 226-1",
+      "description": "Est puni d'un an d'emprisonnement et de 45 000 euros d'amende le fait, au moyen d'un procédé quelconque, volontairement de porter atteinte à l'intimité de la vie privée d'autrui.",
+      "situation": "Une personne installe une caméra cachée dans l'appartement de son voisin.",
+      "level": 5
+    },
+    {
+      "number": "Article 226-4",
+      "description": "L'enregistrement ou la transmission, par quelque moyen que ce soit, de paroles prononcées à titre privé ou confidentiel, sans le consentement de leur auteur, est puni d'un an d'emprisonnement et de 45 000 euros d'amende.",
+      "situation": "Une personne enregistre secrètement une conversation privée avec son téléphone.",
+      "level": 5
+    },
+    {
+      "number": "Article 227-15",
+      "description": "Le fait, par un ascendant ou par toute autre personne exerçant à son égard l'autorité parentale ou ayant autorité sur un mineur de quinze ans, de priver celui-ci d'aliments ou de soins au point de compromettre sa santé, est puni de sept ans d'emprisonnement et de 100 000 euros d'amende.",
+      "situation": "Des parents négligent gravement l'alimentation et les soins de leur enfant de 10 ans.",
+      "level": 5
+    },
+    {
+      "number": "Article 311-1",
+      "description": "Le vol est la soustraction frauduleuse de la chose d'autrui.",
+      "situation": "Une personne prend le portefeuille d'une autre dans sa poche sans son consentement.",
+      "level": 6
+    },
+    {
+      "number": "Article 311-3",
+      "description": "Le vol est puni de trois ans d'emprisonnement et de 45 000 euros d'amende.",
+      "situation": "Une personne vole un objet dans un magasin.",
+      "level": 6
+    },
+    {
+      "number": "Article 311-4",
+      "description": "Le vol est puni de cinq ans d'emprisonnement et de 75 000 euros d'amende lorsqu'il est commis avec violence contre les personnes.",
+      "situation": "Un voleur agresse physiquement sa victime pour lui prendre son sac à main.",
+      "level": 6
+    },
+    {
+      "number": "Article 312-1",
+      "description": "L'extorsion est le fait d'obtenir par violence, menace de violences ou contrainte soit une signature, un engagement ou une renonciation, soit la révélation d'un secret, soit la remise de fonds, de valeurs ou d'un bien quelconque.",
+      "situation": "Des malfaiteurs menacent un commerçant pour qu'il leur donne de l'argent.",
+      "level": 6
+    },
+    {
+      "number": "Article 313-1",
+      "description": "L'escroquerie est le fait, soit par l'usage d'un faux nom ou d'une fausse qualité, soit par l'abus d'une qualité vraie, soit par l'emploi de manœuvres frauduleuses, de tromper une personne physique ou morale et de la déterminer ainsi, à son préjudice ou au préjudice d'un tiers, à remettre des fonds, des valeurs ou un bien quelconque, à fournir un service ou à consentir un acte opérant obligation ou décharge.",
+      "situation": "Une personne se fait passer pour un banquier pour soutirer de l'argent à des victimes crédules.",
+      "level": 6
+    },
+    {
+      "number": "Article 314-1",
+      "description": "L'abus de confiance est le fait par une personne de détourner, au préjudice d'autrui, des fonds, des valeurs ou un bien quelconque qui lui ont été remis et qu'elle a acceptés à charge de les rendre, de les représenter ou d'en faire un usage déterminé.",
+      "situation": "Un employé utilise l'argent de l'entreprise confié pour les achats à des fins personnelles.",
+      "level": 7
+    },
+    {
+      "number": "Article 321-1",
+      "description": "Le recel est le fait de dissimuler, de détenir ou de transmettre une chose, ou de faire office d'intermédiaire afin de la transmettre, en sachant que cette chose provient d'un crime ou d'un délit.",
+      "situation": "Une personne achète un objet en sachant qu'il a été volé.",
+      "level": 7
+    },
+    {
+      "number": "Article 322-1",
+      "description": "La destruction, la dégradation ou la détérioration d'un bien appartenant à autrui est punie de deux ans d'emprisonnement et de 30 000 euros d'amende.",
+      "situation": "Une personne casse volontairement les vitres de la voiture de son voisin.",
+      "level": 7
+    },
+    {
+      "number": "Article 431-3",
+      "description": "Constitue un attroupement tout rassemblement de personnes sur la voie publique ou dans un lieu public susceptible de troubler l'ordre public.",
+      "situation": "Un groupe de manifestants bloque une rue et perturbe la circulation.",
+      "level": 8
+    },
+    {
+      "number": "Article 432-1",
+      "description": "Le fait, par une personne dépositaire de l'autorité publique ou chargée d'une mission de service public, de prendre, recevoir ou conserver, directement ou indirectement, un intérêt quelconque dans une entreprise ou dans une opération dont elle a, au moment de l'acte, en tout ou partie, la charge d'assurer la surveillance, l'administration, la liquidation ou le paiement, est puni de cinq ans d'emprisonnement, de 500 000 euros d'amende et d'une peine d'interdiction des droits civiques.",
+      "situation": "Un maire investit dans une entreprise qui obtient des marchés publics de sa commune.",
+      "level": 8
+    },
+    {
+      "number": "Article 433-1",
+      "description": "Constitue un outrage puni de 7 500 euros d'amende le fait d'offenser un magistrat, un juré, un avocat, un officier public ou ministériel, un militaire de la gendarmerie nationale, un fonctionnaire de la police nationale, des douanes, de l'administration pénitentiaire ou toute autre personne chargée d'une mission de service public, dans l'exercice ou à l'occasion de l'exercice de ses fonctions, par paroles, écrits, gestes ou menaces.",
+      "situation": "Une personne insulte grossièrement un policier lors d'un contrôle routier.",
+      "level": 8
+    },
+    {
+      "number": "Article 434-1",
+      "description": "Le fait de modifier l'état des lieux d'un crime ou d'un délit soit dans le but de faire disparaître les preuves de l'infraction ou de ses suites, soit dans le but de nuire à la manifestation de la vérité, est puni de trois ans d'emprisonnement et de 45 000 euros d'amende.",
+      "situation": "Une personne nettoie une scène de crime pour effacer les traces de l'infraction.",
+      "level": 9
+    },
+    {
+      "number": "Article 441-1",
+      "description": "Constitue un faux toute altération frauduleuse de la vérité, de nature à causer un préjudice et accomplie par quelque moyen que ce soit, dans un écrit ou tout autre support d'expression de la pensée qui a pour objet ou qui peut avoir pour effet d'établir la preuve d'un droit ou d'un fait ayant des conséquences juridiques.",
+      "situation": "Une personne falsifie un diplôme pour obtenir un emploi.",
+      "level": 9
+    },
+    {
+      "number": "Article 450-1",
+      "description": "Constitue une association de malfaiteurs tout groupement formé ou entente établie en vue de la préparation, caractérisée par un ou plusieurs faits matériels, d'un ou plusieurs crimes ou d'un ou plusieurs délits punis d'au moins cinq ans d'emprisonnement.",
+      "situation": "Plusieurs personnes s'organisent pour commettre une série de cambriolages.",
+      "level": 9
+    }
+  ],
+  "modes": [
+    {
+      "id": 1,
+      "name": "Numéro → Description",
+      "description": "Devinez la description à partir du numéro de l'article"
+    },
+    {
+      "id": 2,
+      "name": "Description → Numéro", 
+      "description": "Trouvez le numéro de l'article correspondant à la description"
+    },
+    {
+      "id": 3,
+      "name": "Situation → Numéro",
+      "description": "Identifiez l'article applicable à une situation réelle"
+    },
+    {
+      "id": 4,
+      "name": "Numéro → Situation",
+      "description": "Trouvez la situation correspondant à l'article"
+    }
+  ]
+}
+
+

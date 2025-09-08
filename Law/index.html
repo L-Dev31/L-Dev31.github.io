@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Pénal Quiz</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+    
+        <!-- Menu principal -->
+        <div id="mainMenu" class="main-menu">
+            
+            <h1 class="main-title">Code Pénal Quiz</h1>
+            <button id="playButton" class="play-button">Jouer</button>
+        </div>
+
+        <!-- Sélection des modes -->
+        <div id="modeSelection" class="mode-selection">
+            <button class="back-button" onclick="showMainMenu()"><i class="fa-solid fa-chevron-left"></i></button>
+            <h2 class="section-title">Choisissez votre mode de jeu</h2>
+            <p class="section-subtitle">Quatre façons différentes de tester vos connaissances</p>
+            <div class="mode-grid">
+                <div class="mode-card" onclick="selectMode(1)">
+                    <div class="mode-icon"><i class="fa-solid fa-scroll"></i></div>
+                    <button class="mode-button">Numéro → Description</button>
+                </div>
+                <div class="mode-card" onclick="selectMode(2)">
+                    <div class="mode-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <button class="mode-button">Description → Numéro</button>
+                </div>
+                <div class="mode-card" onclick="selectMode(3)">
+                    <div class="mode-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <button class="mode-button">Situation → Numéro</button>
+                </div>
+                <div class="mode-card" onclick="selectMode(4)">
+                    <div class="mode-icon"><i class="fa-solid fa-landmark"></i></div>
+                    <button class="mode-button">Numéro → Situation</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sélection des niveaux -->
+        <div id="levelSelection" class="level-selection">
+            <button class="back-button" onclick="showModeSelection()"><i class="fa-solid fa-chevron-left"></i></button>
+            <h2 class="section-title" id="levelModeTitle">Choisissez votre niveau</h2>
+            <p class="section-subtitle">Du novice au maître du barreau suprême</p>
+            <div class="level-grid" id="levelGrid">
+                <!-- Les niveaux seront générés dynamiquement -->
+            </div>
+        </div>
+
+        <!-- Interface de quiz -->
+        <div id="quizContainer" class="quiz-container">
+            <div class="quiz-header">
+                <div class="quiz-progress" id="quizProgress">1/10</div>
+                <div class="quiz-timer" id="quizTimer">30s</div>
+                <div class="hearts" id="hearts">
+                    <div class="heart"></div>
+                    <div class="heart"></div>
+                    <div class="heart"></div>
+                </div>
+            </div>
+            <div class="question-text" id="questionText">Question apparaîtra ici</div>
+            <div class="options-grid" id="optionsGrid">
+                <!-- Les options seront générées dynamiquement -->
+            </div>
+        </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
+
