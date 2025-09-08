@@ -61,6 +61,12 @@
     "disabled": true
   },
   {
+    "type": "design",
+    "title": "Logo (Grand)",
+    "link": "logo-big.ai",
+    "disabled": true
+  },
+  {
     "type": "sheets",
     "title": "Organisation des taches",
     "link": "https://docs.google.com/spreadsheets/d/1VY4W0q9cH5w5x27jd4mJ9YpE3tCmGVPxAiCFf5fy_xg/edit?usp=sharing"
