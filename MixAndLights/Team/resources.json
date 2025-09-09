@@ -62,9 +62,14 @@
   },
   {
     "type": "design",
-    "title": "Logo (Grand)",
-    "link": "logo-big.ai",
+    "title": "Logo (petit)",
+    "link": "logo-small.ai",
     "disabled": true
+  },
+  {
+    "type": "design",
+    "title": "Logo (Grand)",
+    "link": "logo-big.ai"
   },
   {
     "type": "sheets",
