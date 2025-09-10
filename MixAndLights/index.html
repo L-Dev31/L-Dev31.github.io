@@ -6,8 +6,12 @@
     <title>Mix And Lights</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/style.css">
+    
 </head>
 <body>
+    <div id="loader">
+        <img src="images/logo-big.svg" alt="Loading...">
+    </div>
     <header>
         <div class="navbar-top-gradient"></div>
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
@@ -33,7 +37,7 @@
                 </div>
 
                 <a class="navbar-brand mx-auto" href="#">
-                    <img src="images/logo.png" alt="Logo">
+                    <img src="images/logo-big.svg" alt="Logo">
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavRight" aria-controls="navbarNavRight" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,57 +68,25 @@
     </header>
 
     <main>
-        <section class="hero">
-            <video playsinline autoplay muted loop id="bg-video">
-                <source src="images/bg.mp4" type="video/mp4">
-            </video>
-            <div class="parallax-scene">
-                <div class="parallax-layer layer-1">
-                    <img src="https://www.mixandlight.com/assets/_visual/Contact-2_2021-10-28-165058.jpg" alt="Layer 1 Image 1">
-                    <img src="https://www.mixandlight.com/assets/_visual/Contact-3_2021-10-28-165101.jpg" alt="Layer 1 Image 2">
-                    <img src="https://www.mixandlight.com/assets/_visual/Contact-4_2021-10-28-165104.jpg" alt="Layer 1 Image 3">
-                    <img src="https://www.mixandlight.com/assets/_visual/Danse-et-f%C3%AAte.jpg" alt="Layer 1 Image 4">
-                </div>
-                <div class="parallax-layer layer-2">
-                    <img src="https://www.mixandlight.com/assets/_visual/Eclairage-LED.JPG" alt="Layer 2 Image 1">
-                    <img src="https://www.mixandlight.com/assets/_visual/E%CC%81clairage-2.jpg" alt="Layer 2 Image 2">
-                    <img src="https://www.mixandlight.com/assets/_visual/F%C3%AAte-et-danse_2021-11-04-192117.jpg" alt="Layer 2 Image 3">
-                    <img src="https://www.mixandlight.com/assets/_visual/F%C3%AAte.jpg" alt="Layer 2 Image 4">
-                </div>
-                <div class="parallax-layer layer-3">
-                    <img src="https://www.mixandlight.com/assets/_visual/IMG_5899.jpg" alt="Layer 3 Image 1">
-                    <img src="https://www.mixandlight.com/assets/_visual/IMG_5991-4.jpg" alt="Layer 3 Image 2">
-                    <img src="https://www.mixandlight.com/assets/_visual/IMG_6108.jpg" alt="Layer 3 Image 3">
-                    <img src="https://www.mixandlight.com/assets/_visual/Love-lumi%C3%A8re.jpg" alt="Layer 3 Image 4">
-                </div>
-                <div class="parallax-layer layer-4">
-                    <img src="https://www.mixandlight.com/assets/_visual/ambiance-mariage-musiciens_2021-11-04-192025.jpg" alt="Layer 4 Image 1">
-                    <img src="https://www.mixandlight.com/assets/_visual/ciel-%C3%A9toil%C3%A9.jpg" alt="Layer 4 Image 2">
-                    <img src="https://www.mixandlight.com/assets/_visual/danseurs.jpg" alt="Layer 4 Image 3">
-                    <img src="https://www.mixandlight.com/assets/_visual/platines.jpeg" alt="Layer 4 Image 4">
-                </div>
-                <div class="parallax-layer layer-5">
-                    <img src="https://www.mixandlight.com/assets/_visual/scene.jpg" alt="Layer 5 Image 1">
-                    <img src="https://www.mixandlight.com/assets/_visual/Contact-2_2021-10-28-165058.jpg" alt="Layer 5 Image 2">
-                    <img src="https://www.mixandlight.com/assets/_visual/Contact-3_2021-10-28-165101.jpg" alt="Layer 5 Image 3">
-                    <img src="https://www.mixandlight.com/assets/_visual/Contact-4_2021-10-28-165104.jpg" alt="Layer 5 Image 4">
-                </div>
-            </div>
-            <div class="hero-overlay">
-                <h1 class="overlay-slogan">Votre événement, notre passion.</h1>
-            </div>
-            <div class="scroll-down-container">
-                <img src="images/greekcircle.png" alt="Scroll Down" class="rotating-circle">
-                <img src="images/chevron.png" class="scroll-down-arrow" alt="Down arrow">
-            </div>
-        </section>
-        <section style="height: 100vh; background-color: #000;">
-            <!-- Content here -->
-        </section>
+        <video id="circle-video" autoplay muted loop playsinline>
+            <source src="images/bg.mp4" type="video/mp4">
+        </video>
+        <div id="video-overlay"></div>
+        <div id="vignette-overlay"></div>
+        <img src="images/logo-big.svg" alt="Logo" id="circle-logo">
     </main>
 
+    <section id="scene2">
+        <div>
+            <h1 class="slogan">Shine Bright</h1>
+            <p class="description">Spécialistes de la musique, du son et de la lumière, nous mettons notre expertise au service de vos événements. De la conception lumière aux effets spéciaux, en passant par la sonorisation, nous créons des ambiances uniques et mémorables.</p>
+        </div>
+    </section>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="Scripts/loader.js"></script>
     <script src="Scripts/script.js"></script>
+    
 
 </body>
 </html>
