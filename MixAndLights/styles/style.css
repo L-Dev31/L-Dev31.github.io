@@ -1,3 +1,4 @@
+/* --- Base Styles --- */
 @font-face {
     font-family: 'Raustila';
     src: url('../fonts/Raustila.ttf') format('truetype');
@@ -36,7 +37,7 @@ body, html {
     background-color: var(--primary-color);
 }
 
-
+/* --- Video and Overlay Styles --- */
 #circle-video {
     position: fixed;
     top: 0;
@@ -126,6 +127,7 @@ body, html {
     will-change: transform, filter, opacity;
 }
 
+/* --- Scene 2 Styles --- */
 #scene2 {
     position: fixed;
     top: 0;
@@ -167,7 +169,7 @@ body, html {
 }
 
 .description {
-    font-family: sans-serif; /* Placeholder for Arcon */
+    font-family: sans-serif;
     font-size: 1.2rem;
     opacity: 0.6;
     color: white;
@@ -182,6 +184,7 @@ body, html {
     opacity: 0;
 }
 
+/* --- Navbar Styles --- */
 .navbar {
     background-color: transparent;
     transition: background-color 0.5s ease, backdrop-filter 0.5s ease, transform 0.5s ease, opacity 0.5s ease;
@@ -229,6 +232,7 @@ body, html {
 
 .nav-link, .dropdown-item { color: white !important; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); font-family: 'Regular', sans-serif; transition: background-color 0.3s ease; }
 
+/* --- Dropdown Styles --- */
 .dropdown .dropdown-menu {
     display: block;
     opacity: 0;
@@ -251,6 +255,7 @@ body, html {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* --- Site Overlay Styles --- */
 .site-overlay {
     position: fixed;
     top: 0;
@@ -271,7 +276,7 @@ body, html {
     visibility: visible;
 }
 
-/* Loader Styles */
+/* --- Loader Styles --- */
 #loader {
     position: fixed;
     top: 0;
@@ -287,8 +292,9 @@ body, html {
 }
 
 #loader img {
-    width: 250px; /* Adjust size as needed */
+    height: 332px;
     animation: pulse 1.5s infinite ease-in-out;
+    filter: brightness(100);
 }
 
 @keyframes pulse {
@@ -297,7 +303,7 @@ body, html {
         opacity: 0.8;
     }
     50% {
-        transform: scale(1.1);
+        transform: scale(0.9);
         opacity: 1;
     }
     100% {
@@ -309,6 +315,5 @@ body, html {
 /* Loader Hidden State */
 #loader.loader-hidden {
     opacity: 0;
-    transform: scale(1.5);
     pointer-events: none;
 }
