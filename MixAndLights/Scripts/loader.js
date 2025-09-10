@@ -1,4 +1,3 @@
-// New loader logic will go here
 const resourcesToLoad = [
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
     'styles/style.css',
@@ -8,8 +7,8 @@ const resourcesToLoad = [
     'images/bg.mp4',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
     'Scripts/script.js',
-    'fonts/Raustila.ttf', // Assuming these are loaded via CSS @font-face, but we'll try to load them directly for tracking
-    'fonts/Regular.otf', // Assuming these are loaded via CSS @font-face, but we'll try to load them directly for tracking
+    'fonts/Raustila.ttf',
+    'fonts/Regular.otf',
     'Team/favicon.png',
     'Team/logo.png',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
@@ -23,10 +22,10 @@ const counter = document.getElementById('counter');
 const completionBar = document.getElementById('completion-bar');
 
 function updateProgress() {
-    const percentage = (loadedCount / totalResources) * 100; // No Math.floor here
-    const displayedPercentage = percentage; // Use actual percentage
-    counter.textContent = `${Math.floor(displayedPercentage)}%`; // Floor for display, but not for rounding to 10s
-    completionBar.style.setProperty('--completion-width', `${displayedPercentage}%`); // Use actual percentage for bar
+    const percentage = (loadedCount / totalResources) * 100;
+    const displayedPercentage = percentage;
+    counter.textContent = `${Math.floor(displayedPercentage)}%`;
+    completionBar.style.setProperty('--completion-width', `${displayedPercentage}%`);
 
     console.log(`Progress: ${loadedCount}/${totalResources} (${percentage}%) - Displayed: ${Math.floor(displayedPercentage)}%`);
 
@@ -53,14 +52,13 @@ resourcesToLoad.forEach(url => {
     } else if (url.endsWith('.mp4')) {
         resource = document.createElement('video');
         resource.src = url;
-        resource.preload = 'auto'; // Start loading immediately
-        // Use loadeddata or canplaythrough for video
+        resource.preload = 'auto';
         resource.addEventListener('loadeddata', () => {
             loadedCount++;
             console.log(`Loaded (Video): ${url}`);
             updateProgress();
         });
-        resource.addEventListener('error', () => { // Also listen for error on video element
+        resource.addEventListener('error', () => {
             loadedCount++;
             console.log(`Error (Video): ${url}`);
             updateProgress();
@@ -86,8 +84,8 @@ resourcesToLoad.forEach(url => {
             updateProgress();
         };
         resource.send();
-    } else if (resource.tagName === 'VIDEO') { // Skip default onload/onerror for video, handled by event listeners
-        // Do nothing here, events are handled by addEventListener above
+    } else if (resource.tagName === 'VIDEO') {
+
     } else {
         resource.onload = () => {
             loadedCount++;
@@ -102,5 +100,4 @@ resourcesToLoad.forEach(url => {
     }
 });
 
-// Initial update for 0%
 updateProgress();
