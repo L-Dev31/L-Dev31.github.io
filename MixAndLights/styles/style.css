@@ -52,11 +52,11 @@ body, html {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #560d7b;
+    background: radial-gradient(circle, #ff0094 0%, #560d7b 25%, #0a0815 100%);
     mix-blend-mode: soft-light;
     z-index: 1; 
     opacity: 0.8;
-    backdrop-filter: grayscale(0.2) brightness(0.5) saturate(0.5);
+    backdrop-filter: grayscale(1) brightness(0.5) saturate(0.5);
     pointer-events: none;
     will-change: opacity;
 }
@@ -291,4 +291,13 @@ body, html {
 .site-overlay.active {
     opacity: 1;
     visibility: visible;
+}
+
+.flag-icon {
+    width: 20px; 
+    height: 20px;
+    object-fit: cover;
+    vertical-align: middle;
+    margin-right: 8px; 
+    border-radius: 100%; 
 }
