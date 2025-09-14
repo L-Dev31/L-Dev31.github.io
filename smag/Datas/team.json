@@ -17,7 +17,7 @@
     {
       "id": "smag-team",
       "name": "SMAG Team",
-      "avatar": "Images/favicon.png",
+      "avatar": "Images/pfp/smag.png",
       "country": "international",
       "description": "The collective SMAG development team working together to bring this amazing project to life."
     },
@@ -40,7 +40,7 @@
       "name": "Hollow",
       "avatar": "Images/pfp/hollow.png",
       "country": "es",
-      "description": "2D Artist specializing in creating beautiful artwork."
+      "description": "Helped with 2D art and textures."
     },
     {
       "id": "gareth48",
@@ -54,7 +54,7 @@
       "name": "Tetracøłd",
       "avatar": "Images/pfp/tetracold.png",
       "country": "ro",
-      "description": "Creative Level Designer who crafts challenging and engaging gameplay experiences."
+      "description": "Helped with 2D art and textures."
     },
     {
       "id": "super-hackio",
@@ -82,7 +82,7 @@
       "name": "Zyphron.G",
       "avatar": "Images/pfp/zyphron-g.png",
       "country": "de",
-      "description": "Programmer and talented SMG modder. Helped with skyboxes and other technical aspects of the game."
+      "description": "Helped with skyboxes and other technical aspects of the game."
     }
   ]
 }
