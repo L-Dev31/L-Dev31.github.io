@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ressources - Mix and Lights</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .logo-container {
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        .logo {
+            max-width: 300px;
+        }
+        #resources-container {
+            width: 100%;
+            max-width: 900px;
+        }
+        .resource-group {
+            margin-bottom: 80px;
+        }
+        .resource-group h2 {
+            font-family: 'Playfair Display', serif;
+            text-transform: capitalize;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #333;
+            text-align: center;
+        }
+        .resource-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+        .resource-button {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 0;
+            padding: 20px;
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            transition: box-shadow 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            max-width: 300px;
+        }
+        .resource-button:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .resource-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .resource-button i {
+            font-size: 2em;
+            margin-right: 20px;
+            width: 40px;
+            text-align: center;
+        }
+        .resource-button .title {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="logo.png" alt="Logo Mix and Lights" class="logo">
+    </div>
+
+    <div id="resources-container"></div>
+
+    <script>
+        const iconMap = {
+            docs: 'fa-solid fa-file-word',
+            wireframe: 'fa-solid fa-drafting-compass',
+            sheets: 'fa-solid fa-file-excel',
+            design: 'fa-solid fa-palette',
+            presentation: 'fa-solid fa-file-powerpoint',
+            trello: 'fa-brands fa-trello'
+        };
+
+        const groupTitles = {
+            docs: 'Documents',
+            wireframe: 'Wireframes',
+            sheets: 'Tableaux',
+            design: 'Design',
+            presentation: 'Présentations',
+            trello: 'Gestion de Projet'
+        };
+
+        fetch('resources.json')
+            .then(response => response.json())
+            .then(data => {
+                const resourcesContainer = document.getElementById('resources-container');
+                const groupedResources = data.reduce((acc, resource) => {
+                    (acc[resource.type] = acc[resource.type] || []).push(resource);
+                    return acc;
+                }, {});
+
+                for (const type in groupedResources) {
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'resource-group';
+
+                    const groupTitle = document.createElement('h2');
+                    groupTitle.textContent = groupTitles[type] || type;
+                    groupDiv.appendChild(groupTitle);
+
+                    const buttonsDiv = document.createElement('div');
+                    buttonsDiv.className = 'resource-buttons';
+
+                    groupedResources[type].forEach(resource => {
+                        const button = document.createElement('a');
+                        button.href = resource.link;
+                        button.className = 'resource-button';
+                        button.target = '_blank'; // Open in new tab
+
+                        if (resource.disabled) {
+                            button.classList.add('disabled');
+                            button.removeAttribute('href'); // Remove href to prevent navigation
+                        }
+
+                        const icon = document.createElement('i');
+                        icon.className = iconMap[type] || 'fa-solid fa-link';
+                        
+                        const title = document.createElement('span');
+                        title.className = 'title';
+                        title.textContent = resource.title;
+
+                        button.appendChild(icon);
+                        button.appendChild(title);
+                        buttonsDiv.appendChild(button);
+                    });
+
+                    groupDiv.appendChild(buttonsDiv);
+                    resourcesContainer.appendChild(groupDiv);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur de chargement des ressources:', error);
+                document.getElementById('resources-container').innerHTML = '<p>Impossible de charger les ressources.</p>';
+            });
+    </script>
+
+</body>
+</html>
