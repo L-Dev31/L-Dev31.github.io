@@ -92,6 +92,49 @@
             font-weight: 600;
             font-size: 1.1em;
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .logo {
+                max-height: 80px;
+            }
+            .resource-group h2 {
+                font-size: 1.8em;
+            }
+            .resource-buttons {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .logo-container {
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            .logo {
+                max-height: 60px;
+            }
+            .resource-group h2 {
+                font-size: 1.5em;
+            }
+            .resource-button {
+                padding: 15px;
+                max-width: none;
+            }
+            .resource-button i {
+                font-size: 1.8em;
+                margin-right: 15px;
+            }
+            .resource-button .title {
+                font-size: 1em;
+            }
+        }
     </style>
 </head>
 <body>
