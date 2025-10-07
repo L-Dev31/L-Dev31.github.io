@@ -275,7 +275,7 @@ async function loadProjects() {
             const logoPath = `Elements/image/${project.id}-icon.png`;
             const previewPath = `Elements/image/${project.id}-banner.png`;
             projectElement.innerHTML = `
-                <a href="${project.path}/index.html" target="_blank">
+                <a href="${project.path}" target="_blank">
                     <div class="card-image">
                         <img src="${previewPath}" class="gallery-img" alt="${project.title}">
                     </div>
