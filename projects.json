@@ -1,5 +1,13 @@
 {
-  "projects": [
+  "projects": [    
+    {
+      "id": "mxal",
+      "title": "Mix and Light (Redesign)",
+      "creator": "Mix and Light",
+      "category": "commission", 
+      "path": "https://www.ynov-sophia-projets.com/ymmersionB1325/",
+      "noPhone": false
+    },
     {
       "id": "lsdp",
       "title": "Les Saveurs de Provence (Redesign)",
