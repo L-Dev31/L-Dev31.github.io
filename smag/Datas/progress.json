@@ -1,0 +1,159 @@
+{
+  "galaxies": [
+    {
+      "name": "Asteroid Observatory",
+      "gradient": "linear-gradient(to right, #6a5acd, #8470ff)",
+      "stars": [
+        {
+          "id": 1,
+          "name": "Main Hub",
+          "progress": 80
+        },
+        {
+          "id": 2,
+          "name": "Minigame Hub",
+          "progress": 20
+        },
+        {
+          "id": 3,
+          "name": "NPC Hub",
+          "progress": 50
+        }
+      ]
+    },
+    {
+      "name": "Asteroid Garden Galaxy",
+      "gradient": "linear-gradient(to right, #228b22, #32cd32)",
+      "stars": [
+        {
+          "id": 1,
+          "name": "Star 1 + Secret Star",
+          "progress": 80
+        },
+        {
+          "id": 2,
+          "name": "Star 2",
+          "progress": 10
+        }
+      ]
+    },
+    {
+      "name": "Pollen Highlands Galaxy",
+      "gradient": "linear-gradient(to right, #ff69b4, #dc143c)",
+      "stars": [
+        {
+          "id": 1,
+          "name": "Star 1 + Secret Star",
+          "progress": 100
+        },
+        {
+          "id": 2,
+          "name": "Star 2",
+          "progress": 15
+        }
+      ]
+    },
+    {
+      "name": "Coconut Beach Galaxy",
+      "gradient": "linear-gradient(to right, #1e90ff, #40e0d0)",
+      "stars": [
+        {
+          "id": 1,
+          "name": "Star 1",
+          "progress": 100
+        },
+        {
+          "id": 2,
+          "name": "Star 2",
+          "progress": 100
+        },
+        {
+          "id": 3,
+          "name": "Star 3",
+          "progress": 2
+        }
+      ]
+    },
+    {
+      "name": "Up Down Ruins Galaxy",
+      "gradient": "linear-gradient(to right, #008b8b, #20b2aa)",
+      "stars": [
+        {
+          "id": 1,
+          "name": "Star 1 + Secret Star",
+          "progress": 5
+        }
+      ]
+    },
+    {
+      "name": "Pumpkin Town Galaxy",
+      "gradient": "linear-gradient(to right, #ff8c00, #ffa500)",
+      "stars": [
+        {
+          "id": 1,
+          "name": "Star 1",
+          "progress": 2
+        },
+        {
+          "id": 2,
+          "name": "Star 2",
+          "progress": 2
+        }
+      ]
+    },
+    {
+      "name": "Factory Fortress Galaxy",
+      "gradient": "linear-gradient(to right, #8b0000, #b22222)",
+      "stars": [
+        {
+          "id": 1,
+          "name": "Star 1",
+          "progress": 60
+        },
+        {
+          "id": 2,
+          "name": "Star 2",
+          "progress": 2
+        }
+      ]
+    },
+    {
+      "name": "Breathless Blizzard Galaxy",
+      "gradient": "linear-gradient(to right, #87ceeb, #add8e6)",
+      "stars": [
+        {
+          "id": 1,
+          "name": "Star 1",
+          "progress": 2
+        },
+        {
+          "id": 2,
+          "name": "Star 2",
+          "progress": 2
+        }
+      ]
+    },
+    {
+      "name": "Bowser's Galaxy Incinerator",
+      "gradient": "linear-gradient(to right, #ff8c00, #ff4500)",
+      "stars": [
+        {
+          "id": 1,
+          "name": "Star 1",
+          "progress": 2
+        }
+      ]
+    },
+    {
+      "name": "Intergalactic Champion Galaxy",
+      "gradient": "linear-gradient(to right, #4b0082, #8a2be2)",
+      "stars": [
+        {
+          "id": 1,
+          "name": "Star 1",
+          "progress": 0
+        }
+      ]
+    }
+  ]
+}

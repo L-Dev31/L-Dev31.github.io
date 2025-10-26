@@ -1240,3 +1240,217 @@ h5{
   transform: none !important;
   filter: none !important;
 }
+
+/* Progress Section Styles */
+.progress-container {
+  width: 1200px;
+  margin: 30px auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.galaxy-progress {
+  border-radius: 25px;
+  outline: #bbb solid 2px;
+  text-align: justify;
+  background-color: #ffffff50;
+  padding: 25px;
+}
+
+.galaxy-name {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.star-progress {
+  margin-bottom: 15px;
+}
+
+.star-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.star-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.star-percentage {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333 !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+  outline: #ccc solid 1px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.8s ease;
+}
+
+.completed-star-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/svg%3E") no-repeat center;
+  mask-size: contain;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/svg%3E") no-repeat center;
+  -webkit-mask-size: contain;
+}
+
+.total-progress {
+  margin-bottom: 40px;
+  padding: 30px;
+  border-radius: 25px;
+  outline: #bbb solid 2px;
+  background-color: #ffffff50;
+  text-align: center;
+  grid-column: span 2;
+}
+
+.total-progress-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.total-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333 !important;
+}
+
+.total-progress-bar {
+  width: 100%;
+  height: 20px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  outline: #ccc solid 1px;
+}
+
+.total-progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #c9baff, #ffb3ff, #ffbadf);
+  border-radius: 10px;
+  transition: width 1.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.total-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: rainbow-shimmer 3s infinite;
+}
+
+@keyframes rainbow-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.galaxies-subtitle {
+  grid-column: span 2;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.galaxies-subtitle h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+/* Progress Section Responsive */
+@media (max-width: 1250px) {
+  .progress-container {
+    width: 95%;
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .progress-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    width: 95%;
+    padding: 0 15px;
+  }
+  
+  .galaxy-progress {
+    padding: 20px;
+  }
+  
+  .galaxy-name {
+    font-size: 1.4rem;
+  }
+  
+  .star-name,
+  .star-percentage {
+    font-size: 1rem;
+  }
+  
+  .total-progress {
+    padding: 20px;
+    grid-column: span 1;
+  }
+  
+  .total-progress-title {
+    font-size: 1.6rem;
+  }
+  
+  .total-progress-info {
+    font-size: 1.1rem;
+  }
+  
+  .total-progress-bar {
+    height: 16px;
+  }
+  
+  .galaxies-subtitle {
+    grid-column: span 1;
+  }
+  
+  .galaxies-subtitle h3 {
+    font-size: 1.3rem;
+  }
+}

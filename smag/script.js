@@ -5,6 +5,7 @@ let creditsData = [];
 let newsData = [];
 let teamData = [];
 let countriesData = [];
+let progressData = [];
 
 let FORCE_LOADING_ERROR = false;
 
@@ -69,17 +70,18 @@ function hideSectionLoading(containerSelector) {
 async function loadData() {
     try {
         if (FORCE_LOADING_ERROR) throw new Error('Forced error for loading test');
-        const [imagesResponse, musicsResponse, mediasResponse, creditsResponse, newsResponse, teamResponse, countriesResponse] = await Promise.all([
+        const [imagesResponse, musicsResponse, mediasResponse, creditsResponse, newsResponse, teamResponse, countriesResponse, progressResponse] = await Promise.all([
             fetch('Datas/images.json'),
             fetch('Datas/musics.json'),
             fetch('Datas/medias.json'),
             fetch('Datas/credits.json'),
             fetch('Datas/news.json'),
             fetch('Datas/team.json'),
-            fetch('Datas/countries.json')
+            fetch('Datas/countries.json'),
+            fetch('Datas/progress.json')
         ]);
         if (!imagesResponse.ok || !musicsResponse.ok || !mediasResponse.ok || 
-            !creditsResponse.ok || !newsResponse.ok || !teamResponse.ok || !countriesResponse.ok) {
+            !creditsResponse.ok || !newsResponse.ok || !teamResponse.ok || !countriesResponse.ok || !progressResponse.ok) {
             throw new Error('Failed to fetch one or more JSON files');
         }
         imagesData = await imagesResponse.json();
@@ -89,11 +91,13 @@ async function loadData() {
         newsData = await newsResponse.json();
         teamData = await teamResponse.json();
         countriesData = await countriesResponse.json();
+        progressData = await progressResponse.json();
         initializeCarousel();
         initializeMusicPlayers();
         initializeMedias();
         initializeCredits();
         initializeNews();
+        initializeProgress();
     } catch (error) {
         console.error('Error loading JSON data:', error);
         showSectionLoading('.pic-ctn', 'Failed to load screenshots');
@@ -101,6 +105,7 @@ async function loadData() {
         showSectionLoading('.media-container', 'Failed to load videos');
         showSectionLoading('.credits-container', 'Failed to load credits');
         showSectionLoading('.news-container', 'Failed to load blog posts');
+        showSectionLoading('.progress-container', 'Failed to load progress data');
     }
 }
 
@@ -800,4 +805,179 @@ async function loadBlogContent(blogId) {
     } catch (error) {
         return '<p>Error loading blog content. Please try again later.</p>';
     }
+}
+
+// Progress functionality
+async function loadProgress() {
+    try {
+        showSectionLoading('.progress-container', 'Loading progress data...');
+        
+        if (FORCE_LOADING_ERROR) {
+            throw new Error("Forced error for testing");
+        }
+        
+        const response = await fetch('Datas/progress.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        progressData = await response.json();
+        displayProgress();
+    } catch (error) {
+        console.error('Error loading progress:', error);
+        showSectionError('.progress-container', 'Failed to load progress data');
+    }
+}
+
+function displayProgress() {
+    const container = document.querySelector('.progress-container');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // Calculate total progress first
+    let totalStars = 0;
+    let totalProgress = 0;
+    
+    progressData.galaxies.forEach(galaxy => {
+        galaxy.stars.forEach(star => {
+            totalStars++;
+            totalProgress += star.progress;
+        });
+    });
+    
+    // Calculate overall completion percentage
+    const overallProgress = Math.round(totalProgress / totalStars);
+    
+    // Create total progress section at the top
+    const totalProgressDiv = document.createElement('div');
+    totalProgressDiv.className = 'total-progress';
+    
+    const totalTitle = document.createElement('h2');
+    totalTitle.className = 'total-progress-title';
+    totalTitle.textContent = 'Global Completion';
+    totalProgressDiv.appendChild(totalTitle);
+    
+    const totalInfo = document.createElement('div');
+    totalInfo.className = 'total-progress-info';
+    
+    const totalLabel = document.createElement('span');
+    totalLabel.textContent = 'Overall Progress';
+    totalLabel.style.color = '#333';
+    
+    const totalPercentage = document.createElement('span');
+    totalPercentage.textContent = `${overallProgress}%`;
+    totalPercentage.style.color = '#333';
+    
+    totalInfo.appendChild(totalLabel);
+    totalInfo.appendChild(totalPercentage);
+    totalProgressDiv.appendChild(totalInfo);
+    
+    const totalProgressBar = document.createElement('div');
+    totalProgressBar.className = 'total-progress-bar';
+    
+    const totalProgressFill = document.createElement('div');
+    totalProgressFill.className = 'total-progress-fill';
+    
+    // Animate the total progress bar
+    setTimeout(() => {
+        totalProgressFill.style.width = `${overallProgress}%`;
+    }, 500);
+    
+    totalProgressBar.appendChild(totalProgressFill);
+    totalProgressDiv.appendChild(totalProgressBar);
+    
+    // Add total progress at the top
+    container.appendChild(totalProgressDiv);
+    
+    // Add subtitle for individual galaxies
+    const subtitleDiv = document.createElement('div');
+    subtitleDiv.className = 'galaxies-subtitle';
+    subtitleDiv.style.gridColumn = 'span 2';
+    subtitleDiv.style.textAlign = 'center';
+    subtitleDiv.style.marginBottom = '20px';
+    subtitleDiv.style.marginTop = '20px';
+    
+    const subtitleText = document.createElement('h3');
+    subtitleText.style.fontSize = '1.5rem';
+    subtitleText.style.fontWeight = '600';
+    subtitleText.style.color = '#555';
+    subtitleText.style.textTransform = 'uppercase';
+    subtitleText.style.letterSpacing = '1px';
+    subtitleText.textContent = 'Individual Galaxies';
+    
+    subtitleDiv.appendChild(subtitleText);
+    container.appendChild(subtitleDiv);
+    
+    // Then add all galaxy progress
+    progressData.galaxies.forEach(galaxy => {
+        const galaxyDiv = document.createElement('div');
+        galaxyDiv.className = 'galaxy-progress';
+        
+        const galaxyName = document.createElement('h3');
+        galaxyName.className = 'galaxy-name';
+        galaxyName.textContent = galaxy.name;
+        galaxyDiv.appendChild(galaxyName);
+        
+        galaxy.stars.forEach(star => {
+            const starDiv = document.createElement('div');
+            starDiv.className = 'star-progress';
+            
+            const starInfo = document.createElement('div');
+            starInfo.className = 'star-info';
+            
+            const starName = document.createElement('span');
+            starName.className = 'star-name';
+            starName.textContent = star.name;
+            
+            const starPercentage = document.createElement('span');
+            starPercentage.className = 'star-percentage';
+            
+            // Create percentage text
+            const percentageText = document.createElement('span');
+            percentageText.textContent = `${star.progress}%`;
+            percentageText.style.color = '#333';
+            starPercentage.appendChild(percentageText);
+            
+            // Add star icon for completed stars
+            if (star.progress === 100) {
+                const starIcon = document.createElement('span');
+                starIcon.className = 'completed-star-icon';
+                starIcon.style.background = galaxy.gradient || 'linear-gradient(to right, #4e54c8, #6a5acd)';
+                starPercentage.appendChild(starIcon);
+            }
+            
+            starInfo.appendChild(starName);
+            starInfo.appendChild(starPercentage);
+            
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar';
+            
+            const progressFill = document.createElement('div');
+            progressFill.className = 'progress-fill';
+            
+            // Apply galaxy gradient for all progress bars
+            progressFill.style.background = galaxy.gradient || 'linear-gradient(to right, #4e54c8, #6a5acd)';
+            
+            // Animate the progress bar
+            setTimeout(() => {
+                progressFill.style.width = `${star.progress}%`;
+            }, 100);
+            
+            progressBar.appendChild(progressFill);
+            
+            starDiv.appendChild(starInfo);
+            starDiv.appendChild(progressBar);
+            galaxyDiv.appendChild(starDiv);
+        });
+        
+        container.appendChild(galaxyDiv);
+    });
+}
+
+function initializeProgress() {
+    showSectionLoading('.progress-container', 'Loading progress data...');
+    requestAnimationFrame(() => {
+        displayProgress();
+    });
 }
