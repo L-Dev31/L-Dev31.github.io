@@ -1357,7 +1357,7 @@ h5{
 
 .total-progress-fill {
   height: 100%;
-  background: linear-gradient(to right, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #c9baff, #ffb3ff, #ffbadf);
+  background: linear-gradient(to right, #ffaab5, #ffd4b5, #ffffb5, #b5ffc4, #b5dcff, #c4b5ff, #ffb5ff, #ffb5da);
   border-radius: 10px;
   transition: width 1.2s ease;
   position: relative;
