@@ -893,17 +893,22 @@ function displayProgress() {
     // Add subtitle for individual galaxies
     const subtitleDiv = document.createElement('div');
     subtitleDiv.className = 'galaxies-subtitle';
-    subtitleDiv.style.gridColumn = 'span 2';
+    
+    // Check if mobile to adjust grid column
+    const isMobile = window.innerWidth <= 768;
+    subtitleDiv.style.gridColumn = isMobile ? 'span 1' : 'span 2';
     subtitleDiv.style.textAlign = 'center';
     subtitleDiv.style.marginBottom = '20px';
     subtitleDiv.style.marginTop = '20px';
+    subtitleDiv.style.width = '100%';
     
     const subtitleText = document.createElement('h3');
-    subtitleText.style.fontSize = '1.5rem';
+    subtitleText.style.fontSize = isMobile ? '1.3rem' : '1.5rem';
     subtitleText.style.fontWeight = '600';
     subtitleText.style.color = '#555';
     subtitleText.style.textTransform = 'uppercase';
     subtitleText.style.letterSpacing = '1px';
+    subtitleText.style.margin = '0';
     subtitleText.textContent = 'Individual Galaxies';
     
     subtitleDiv.appendChild(subtitleText);

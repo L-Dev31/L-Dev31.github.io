@@ -1410,7 +1410,7 @@ h5{
 
 @media (max-width: 768px) {
   .progress-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
     gap: 15px;
     width: 95%;
     padding: 0 15px;
@@ -1418,6 +1418,8 @@ h5{
   
   .galaxy-progress {
     padding: 20px;
+    margin: 0 auto;
+    width: 100%;
   }
   
   .galaxy-name {
@@ -1431,7 +1433,9 @@ h5{
   
   .total-progress {
     padding: 20px;
-    grid-column: span 1;
+    grid-column: span 1 !important;
+    width: 100%;
+    margin: 0 auto 30px auto;
   }
   
   .total-progress-title {
@@ -1447,10 +1451,53 @@ h5{
   }
   
   .galaxies-subtitle {
-    grid-column: span 1;
+    grid-column: span 1 !important;
+    width: 100%;
+    margin: 20px auto;
   }
   
   .galaxies-subtitle h3 {
     font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .progress-container {
+    padding: 0 10px;
+    gap: 12px;
+  }
+  
+  .galaxy-progress {
+    padding: 15px;
+  }
+  
+  .galaxy-name {
+    font-size: 1.2rem;
+  }
+  
+  .star-name,
+  .star-percentage {
+    font-size: 0.9rem;
+  }
+  
+  .total-progress {
+    padding: 15px;
+  }
+  
+  .total-progress-title {
+    font-size: 1.4rem;
+  }
+  
+  .total-progress-info {
+    font-size: 1rem;
+  }
+  
+  .galaxies-subtitle h3 {
+    font-size: 1.1rem;
+  }
+  
+  .progress-bar,
+  .total-progress-bar {
+    height: 14px;
   }
 }
