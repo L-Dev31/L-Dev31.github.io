@@ -34,8 +34,7 @@ const NAMED_TOKEN_ENTRIES = [
   [0x07, 'CLEAR'],    
 
   [0x00, 'GRAY'],    
-  [0x01, 'RED'],     
-  [0x02, 'WHITE'],    
+  [0x01, 'RED']  
 ];
 
 
@@ -749,10 +748,23 @@ function parseBmg(buffer) {
   
   if (midKind === 'ids' && midIds.length > 0) {
     // When MID contains IDs, scan DAT for unused strings
+    // Build a set of offsets used by INF1 entries and existing MID-related segments/pointers
     const usedOffsets = new Set();
     entries.forEach(entry => {
       if (typeof entry.offset === 'number') {
         usedOffsets.add(entry.offset);
+      }
+    });
+    // Also include offsets already recorded in datSegmentsMap (entries, mid refs, pointer segments)
+    datSegmentsMap.forEach((segment, offset) => {
+      if (!segment) return;
+      // If the segment is an INF entry or already associated with MID refs, mark its offset as used
+      if ((segment.entryIndices && segment.entryIndices.length > 0) ||
+          (segment.midRefs && segment.midRefs.length > 0) ||
+          segment.type === 'entry' ||
+          segment.type === 'mid' ||
+          segment.type === 'mid-id') {
+        usedOffsets.add(offset);
       }
     });
     
@@ -784,16 +796,17 @@ function parseBmg(buffer) {
       // Try to read a string at this position
       try {
         const info = safeReadBmgString(view, absolutePos, bytes.length);
+        console.log(`[DAT1 scan] offset 0x${formatHex(scanOffset,6)}: text="${info.text}" (length=${info.length})`);
         if (info && info.text && info.text.trim().length > 0 && info.length > 2) {
           // Found an unused string - create segment and MID entry for it
           const row = Math.floor(midStringIndex / midColumnCount);
           const column = midStringIndex % midColumnCount;
           const midId = midIds[midStringIndex] || 0;
-          
           // Create or get segment for this offset
           const segment = ensureDatSegment(scanOffset);
           if (!segment.bytes) {
-            segment.bytes = bytes.slice(absolutePos, absolutePos + info.length);
+            // FIX: Use info.byteLength for correct slicing
+            segment.bytes = bytes.slice(absolutePos, absolutePos + info.byteLength);
             segment.leadingNull = info.leadingNull;
             segment.text = info.text;
           }
@@ -801,10 +814,10 @@ function parseBmg(buffer) {
             segment.type = 'mid-id';
           }
           segment.midRefs.push({ row, column, flags: 0, raw: midId });
-          
           midStringIndex++;
         }
-        scanOffset += Math.max(2, info.length);
+        // FIX: Use info.byteLength for correct offset advancement
+        scanOffset += Math.max(2, info.byteLength);
       } catch (e) {
         scanOffset += 2;
       }
@@ -958,13 +971,14 @@ function findSection(bytes, tag) {
  */
 function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LENGTH) {
   if (pointer < 0 || pointer >= limit) {
-    return { text: '', length: 0, leadingNull: false };
+    return { text: '', length: 0, leadingNull: false, byteLength: 0 };
   }
   let pos = pointer;
   let length = 0;
   let hadLeadingNull = false;
   const parts = [];
   let unitCount = 0; // Counter for 16-bit units
+  const startPos = pos;
 
   if (pos + 1 < limit) {
     const maybeControl = safeGetUint16(view, pos, limit);
@@ -985,41 +999,36 @@ function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LEN
       break; // End of string
     }
     
+    // Check for newline (0x000A) - should NOT terminate the string
+    if (code === 0x000A) {
+      parts.push('\n');
+      continue;
+    }
+
     if (isSpecialControl(code)) {
       const paramCount = CONTROL_CODE_PARAMS.get(code) ?? 0;
+      // Debug logging to trace control codes and their params when parsing strings
+      // console.log(`Control code 0x${formatHex(code,2)} at offset 0x${formatHex(pos-2, 6)}, expects ${paramCount} params`);
       const params = [];
-      
-      // Peek at the parameter to detect corruption
-      let isCorrupted = false;
-      if (paramCount > 0 && pos + 1 < limit) {
-        const firstParam = safeGetUint16(view, pos, limit);
-        // If parameter looks like a printable ASCII letter (A-Z, a-z), treat as corrupted
-        if ((firstParam >= 0x0041 && firstParam <= 0x005A) || // A-Z
-            (firstParam >= 0x0061 && firstParam <= 0x007A)) { // a-z
-          isCorrupted = true;
-        }
+      // Normal control code processing: read the declared number of 16-bit params
+      if (pos + (paramCount * 2) > limit) {
+        // Not enough data for params, break loop to avoid error
+        // console.warn(`Control code 0x${formatHex(code,2)} at 0x${formatHex(pos-2, 6)} expects ${paramCount} params but buffer ended.`);
+        break;
       }
-      
-      if (isCorrupted) {
-        parts.push(encodeSpecialCode(code));
-      } else {
-        // Normal control code processing
-        if (pos + (paramCount * 2) > limit) {
-           // Not enough data for params, break loop to avoid error
-           console.warn(`Control code 0x${formatHex(code,2)} at 0x${formatHex(pos-2, 6)} expects ${paramCount} params but buffer ended.`);
-           break;
-        }
-        for (let i = 0; i < paramCount; i += 1) {
-          const param = safeGetUint16(view, pos, limit);
-          params.push(param);
-          pos += 2;
-          length += 2;
-        }
-        parts.push(encodeSpecialCode(code, params));
+      for (let i = 0; i < paramCount; i += 1) {
+        const param = safeGetUint16(view, pos, limit);
+        params.push(param);
+        pos += 2;
+        length += 2;
       }
-    } else {
-      parts.push(String.fromCodePoint(code));
+      parts.push(encodeSpecialCode(code, params));
+      continue;
     }
+    
+    // Fallback for other characters
+    const char = String.fromCharCode(code);
+    parts.push(char);
   }
   
   if (unitCount >= maxLength) {
@@ -1027,7 +1036,8 @@ function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LEN
   }
 
   const text = parts.join('');
-  return { text, length, leadingNull: hadLeadingNull };
+  const byteLength = pos - startPos;
+  return { text, length, leadingNull: hadLeadingNull, byteLength };
 }
 
 function renderEntries() {
@@ -1374,7 +1384,6 @@ function onEntryEdit(event) {
     event.target.value = normalized;
   }
   
-  // Si c'est un groupe scrolling, mettre à jour toutes les variations
   if (scrollingIdsStr && kind === 'mid') {
     const scrollingIds = JSON.parse(scrollingIdsStr);
     const variants = generateScrollingVariants(normalized);
@@ -1395,7 +1404,6 @@ function onEntryEdit(event) {
       }
     });
   } else {
-    // Logique normale pour message simple
     entry.text = normalized;
     entry.dirty = entry.text !== entry.originalText;
     
@@ -1420,28 +1428,14 @@ function onEntryEdit(event) {
     entry.text = previousText;
     entry.dirty = previousDirty;
     event.target.value = previousText;
-    if (card) {
-      const restoreHighlight = card.querySelector('.text-highlight');
-      if (restoreHighlight) {
-        updateTextHighlight(restoreHighlight, previousText);
-      }
-      card.classList.toggle('modified', entry.dirty);
-      const revertButton = card.querySelector('.revert');
-      if (revertButton) {
-        revertButton.disabled = !entry.dirty;
-      }
-    }
-    refreshEntryMetrics();
-    updateSaveButton();
     return;
   }
   
   card.classList.toggle('modified', entry.dirty);
-  const highlight = card.querySelector('.text-highlight');
-  highlight.dataset.entryKind = entry.kind;
-  highlight.dataset.entryColor = entry.color ?? 'default';
-  updateTextHighlight(highlight, entry.text);
-  card.querySelector('.revert').disabled = !entry.dirty;
+  const revertBtn = card.querySelector('.revert');
+  if (revertBtn) {
+    revertBtn.disabled = !entry.dirty;
+  }
   refreshEntryMetrics();
   updateSaveButton();
 }
