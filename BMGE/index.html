@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tomodachi Collection BMG Translator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="page-header">
+    <img src="logo.png" alt="Logo" style="height: 300px; width: auto; display: block; margin: 0 auto;">
+    <h1>Tomodachi Collection BMG Translator</h1>
+    <p class="tagline">Load a .bmg file, review each entry, adjust the text, and export a patched archive without breaking the original offsets.</p>
+  </header>
+  <main>
+    <section class="panel" id="loader-panel">
+      <div class="file-picker">
+        <label class="button" for="file-input">Select BMG file</label>
+        <input id="file-input" type="file" accept=".bmg" hidden>
+        <span id="file-label">No file selected</span>
+      </div>
+      <div class="meta" id="file-meta"></div>
+      <div class="controls">
+        <input id="search" type="search" placeholder="Filter by text, index, or offset" disabled>
+        <div class="filter-types">
+          <label class="filter-checkbox">
+            <input type="checkbox" id="filter-inf" checked>
+            <span>INF1</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" id="filter-mid" checked>
+            <span>MID1</span>
+          </label>
+        </div>
+        <div class="spacer"></div>
+        <div class="action-buttons">
+          <button id="import-json" class="ghost" type="button" disabled>Import JSON</button>
+          <button id="export-json" class="ghost" type="button" disabled>Export JSON</button>
+          <button id="download" type="button" disabled>Download BMG</button>
+        </div>
+      </div>
+      <input id="import-json-input" type="file" accept="application/json,.json" hidden>
+    </section>
+
+    <section class="panel" id="entries-panel">
+      <header class="panel-header">
+        <h2>Entries</h2>
+        <span id="entry-count">0 items</span>
+      </header>
+      <div id="entries"></div>
+    </section>
+  </main>
+
+  <template id="entry-template">
+    <article class="entry-card">
+      <header class="entry-heading">
+        <h3></h3>
+        <div class="badges"></div>
+      </header>
+      <label class="entry-editor">
+        <span>Text</span>
+        <div class="editor-shell">
+          <pre class="text-highlight" aria-hidden="true"></pre>
+          <textarea spellcheck="false"></textarea>
+        </div>
+        <div class="entry-actions">
+          <div class="entry-helper">
+            <span class="char-count"></span>
+            <span class="offset"></span>
+            <span class="attr"></span>
+          </div>
+          <button type="button" class="ghost revert" disabled>Revert</button>
+        </div>
+      </label>
+    </article>
+  </template>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
