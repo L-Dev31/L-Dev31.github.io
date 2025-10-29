@@ -342,6 +342,32 @@ button.ghost:not(:disabled):hover {
   color: #84aefc;
 }
 
+/* Green badge used for scrolling groups */
+.badge-success {
+  border-color: rgba(80, 200, 120, 0.6);
+  background: rgba(80, 200, 120, 0.18);
+  color: #7fe57e;
+}
+
+/* Backwards-compatible renamed variants */
+.badge-inf1 {
+  border-color: rgba(86, 148, 255, 0.6);
+  background: rgba(86, 148, 255, 0.2);
+  color: #84aefc;
+}
+
+.badge-mid1 {
+  border-color: rgba(255, 80, 80, 0.7);
+  background: rgba(255, 80, 80, 0.25);
+  color: #ff9a9a;
+}
+
+.badge-scrolling {
+  border-color: rgba(80, 200, 120, 0.6);
+  background: rgba(80, 200, 120, 0.18);
+  color: #7fe57e;
+}
+
 .badge-red {
   border-color: rgba(255, 60, 60, 0.7);
   background: rgba(255, 60, 60, 0.22);

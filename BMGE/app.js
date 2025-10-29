@@ -1008,11 +1008,7 @@ function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LEN
       }
       
       if (isCorrupted) {
-        // This logic was flawed and caused an infinite loop. The fix is to ignore
-        // the corrupted control code by adjusting the length and letting the parser
-        // continue with the next character. This aligns with the documentation.
-        length -= 2;
-        
+        parts.push(encodeSpecialCode(code));
       } else {
         // Normal control code processing
         if (pos + (paramCount * 2) > limit) {
@@ -1045,7 +1041,47 @@ function renderEntries() {
   els.entries.innerHTML = '';
   const fragment = document.createDocumentFragment();
   const all = allEntries();
-  const activeEntries = all.filter(matchesFilter);
+  
+  // Groupe les messages MID avec effet de défilement
+  const displayEntries = [];
+  const processed = new Set();
+  
+  all.forEach((entry, index) => {
+    if (processed.has(index)) return;
+    
+    if (entry.kind === 'mid') {
+      // Cherche si c'est le début d'un groupe scrolling
+      const group = [entry];
+      let j = index + 1;
+      let prevText = entry.text.replace(/\n/g, '');
+      
+      while (j < all.length && all[j].kind === 'mid') {
+        const nextText = all[j].text.replace(/\n/g, '');
+        if (nextText === prevText.slice(1) && nextText.length > 0) {
+          group.push(all[j]);
+          processed.add(j);
+          prevText = nextText;
+          j++;
+        } else {
+          break;
+        }
+      }
+      
+      // Ajoute le groupe (ou message simple)
+      displayEntries.push({
+        ...entry,
+        isScrollingGroup: group.length > 1,
+        scrollingIds: group.map(e => e.id),
+        scrollingCount: group.length
+      });
+    } else {
+      displayEntries.push(entry);
+    }
+    
+    processed.add(index);
+  });
+  
+  const activeEntries = displayEntries.filter(matchesFilter);
   activeEntries.forEach((entry) => {
     const card = buildEntryCard(entry);
     fragment.appendChild(card);
@@ -1184,16 +1220,40 @@ function buildEntryCard(entry) {
   card.dataset.color = entry.color ?? 'default';
   card.classList.toggle('modified', entry.dirty);
   card.classList.toggle('mid-entry', entry.kind === 'mid');
+  
   const title = card.querySelector('h3');
-  title.textContent = formatEntryTitle(entry);
+  let titleText = formatEntryTitle(entry);
+  
+  // Ajoute l'info du groupe scrolling
+  if (entry.isScrollingGroup) {
+    const first = entry.scrollingIds[0];
+    const last = entry.scrollingIds[entry.scrollingIds.length - 1];
+    titleText += ` (IDs ${first}-${last}, ${entry.scrollingCount} variants)`;
+  }
+  
+  title.textContent = titleText;
+  
   const badges = card.querySelector('.badges');
   updateBadges(badges, entry);
+  
+  // Ajoute un badge pour les groupes scrolling
+  if (entry.isScrollingGroup) {
+    const scrollBadge = makeBadge('Scrolling', 'scrolling');
+    badges.appendChild(scrollBadge);
+  }
+  
   card.querySelector('.offset').textContent = formatOffsetLabel(entry);
   card.querySelector('.attr').textContent = formatAttrLabel(entry);
   const textarea = card.querySelector('textarea');
   textarea.value = entry.text;
   textarea.dataset.kind = entry.kind;
   textarea.dataset.id = String(entry.id);
+  
+  // Si c'est un groupe scrolling, mettre les IDs du groupe en data attribute
+  if (entry.isScrollingGroup) {
+    textarea.dataset.scrollingIds = JSON.stringify(entry.scrollingIds);
+  }
+  
   textarea.addEventListener('input', onEntryEdit);
   const highlight = card.querySelector('.text-highlight');
   highlight.dataset.entryKind = entry.kind;
@@ -1202,6 +1262,12 @@ function buildEntryCard(entry) {
   const revertBtn = card.querySelector('.revert');
   revertBtn.dataset.kind = entry.kind;
   revertBtn.dataset.id = String(entry.id);
+  
+  // Si groupe scrolling, stocker aussi les IDs pour le revert
+  if (entry.isScrollingGroup) {
+    revertBtn.dataset.scrollingIds = JSON.stringify(entry.scrollingIds);
+  }
+  
   revertBtn.disabled = !entry.dirty;
   revertBtn.addEventListener('click', onEntryRevert);
   const charCount = card.querySelector('.char-count');
@@ -1265,63 +1331,96 @@ function updateTextHighlight(target, value) {
   target.replaceChildren(fragment);
 }
 
+function generateScrollingVariants(text) {
+  const variants = [text];
+  let current = text;
+  
+  while (current.length > 0) {
+    // Enlève le premier caractère (en respectant les sauts de ligne)
+    const lines = current.split('\n');
+    if (lines[0].length > 0) {
+      lines[0] = lines[0].slice(1);
+      current = lines.join('\n');
+    } else if (lines.length > 1) {
+      lines.shift();
+      current = lines.join('\n');
+    } else {
+      break;
+    }
+    
+    if (current.trim().length > 0) {
+      variants.push(current);
+    }
+  }
+  
+  return variants;
+}
+
 function onEntryEdit(event) {
   const kind = event.target.dataset.kind;
   const id = event.target.dataset.id;
+  const scrollingIdsStr = event.target.dataset.scrollingIds;
+  
   const entry = resolveEntry(kind, id);
-  if (!entry) {
-    return;
-  }
+  if (!entry) return;
   
   const previousText = entry.text;
   const previousDirty = entry.dirty;
-  const previousByteLength = entry.byteLength;
-  const previousCalculated = entry.calculatedOffset;
-  const isMid = entry.kind === 'mid';
-  const previousColor = entry.color;
-  const previousSegmentState = isMid && entry.segment
-    ? {
-        bytes: entry.segment.bytes,
-        text: entry.segment.text,
-        leadingNull: entry.segment.leadingNull
-      }
-    : null;
+  
   const normalized = normalizeInput(event.target.value);
   if (normalized !== event.target.value) {
     event.target.value = normalized;
   }
-  entry.text = normalized;
-  entry.dirty = entry.text !== entry.originalText;
-  if (isMid && entry.segment) {
-    const nextBytes = entry.dirty
-      ? encodeBmgString(entry.text, { leadingNull: entry.leadingNull })
-      : entry.originalBytes.slice();
-    entry.segment.bytes = nextBytes;
-    entry.segment.text = entry.text;
-    entry.segment.leadingNull = entry.leadingNull;
-    entry.byteLength = nextBytes.length;
+  
+  // Si c'est un groupe scrolling, mettre à jour toutes les variations
+  if (scrollingIdsStr && kind === 'mid') {
+    const scrollingIds = JSON.parse(scrollingIdsStr);
+    const variants = generateScrollingVariants(normalized);
+    
+    scrollingIds.forEach((variantId, index) => {
+      const variantEntry = state.midStrings.find(e => e.id === variantId);
+      if (variantEntry && variants[index] !== undefined) {
+        variantEntry.text = variants[index];
+        variantEntry.dirty = variantEntry.text !== variantEntry.originalText;
+        
+        if (variantEntry.segment) {
+          const nextBytes = encodeBmgString(variantEntry.text, { leadingNull: variantEntry.leadingNull });
+          variantEntry.segment.bytes = nextBytes;
+          variantEntry.segment.text = variantEntry.text;
+          variantEntry.segment.leadingNull = variantEntry.leadingNull;
+          variantEntry.byteLength = nextBytes.length;
+        }
+      }
+    });
   } else {
-    const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-    entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
+    // Logique normale pour message simple
+    entry.text = normalized;
+    entry.dirty = entry.text !== entry.originalText;
+    
+    if (entry.kind === 'mid' && entry.segment) {
+      const nextBytes = entry.dirty
+        ? encodeBmgString(entry.text, { leadingNull: entry.leadingNull })
+        : entry.originalBytes.slice();
+      entry.segment.bytes = nextBytes;
+      entry.segment.text = entry.text;
+      entry.segment.leadingNull = entry.leadingNull;
+      entry.byteLength = nextBytes.length;
+    } else {
+      const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+      entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
+    }
   }
+  
   const card = event.target.closest('.entry-card');
   const layout = updateCalculatedOffsets();
+  
   if (!layout) {
     entry.text = previousText;
     entry.dirty = previousDirty;
-    entry.byteLength = previousByteLength;
-    entry.calculatedOffset = previousCalculated;
-    entry.color = previousColor;
-    if (isMid && entry.segment && previousSegmentState) {
-      entry.segment.bytes = previousSegmentState.bytes;
-      entry.segment.text = previousSegmentState.text;
-      entry.segment.leadingNull = previousSegmentState.leadingNull;
-    }
     event.target.value = previousText;
     if (card) {
       const restoreHighlight = card.querySelector('.text-highlight');
       if (restoreHighlight) {
-        restoreHighlight.dataset.entryKind = entry.kind;
         updateTextHighlight(restoreHighlight, previousText);
       }
       card.classList.toggle('modified', entry.dirty);
@@ -1334,6 +1433,7 @@ function onEntryEdit(event) {
     updateSaveButton();
     return;
   }
+  
   card.classList.toggle('modified', entry.dirty);
   const highlight = card.querySelector('.text-highlight');
   highlight.dataset.entryKind = entry.kind;
@@ -1347,21 +1447,47 @@ function onEntryEdit(event) {
 function onEntryRevert(event) {
   const kind = event.currentTarget.dataset.kind;
   const id = event.currentTarget.dataset.id;
+  const scrollingIdsStr = event.currentTarget.dataset.scrollingIds;
+  
   const entry = resolveEntry(kind, id);
-  if (!entry) {
-    return;
-  }
-  entry.text = entry.originalText;
-  entry.leadingNull = entry.originalLeadingNull;
-  if (entry.kind === 'mid' && entry.segment) {
-    entry.segment.bytes = entry.originalBytes.slice();
-    entry.segment.text = entry.originalText;
-    entry.segment.leadingNull = entry.originalLeadingNull;
-    entry.byteLength = entry.originalBytes.length;
+  if (!entry) return;
+  
+  // Si c'est un groupe scrolling, restaurer toutes les variations
+  if (scrollingIdsStr && kind === 'mid') {
+    const scrollingIds = JSON.parse(scrollingIdsStr);
+    
+    scrollingIds.forEach((variantId) => {
+      const variantEntry = state.midStrings.find(e => e.id === variantId);
+      if (variantEntry) {
+        variantEntry.text = variantEntry.originalText;
+        variantEntry.leadingNull = variantEntry.originalLeadingNull;
+        variantEntry.dirty = false;
+        
+        if (variantEntry.segment) {
+          variantEntry.segment.bytes = variantEntry.originalBytes.slice();
+          variantEntry.segment.text = variantEntry.originalText;
+          variantEntry.segment.leadingNull = variantEntry.originalLeadingNull;
+          variantEntry.byteLength = variantEntry.originalBytes.length;
+        }
+      }
+    });
   } else {
-    entry.byteLength = entry.originalBytes.length;
+    // Logique normale pour message simple
+    entry.text = entry.originalText;
+    entry.leadingNull = entry.originalLeadingNull;
+    
+    if (entry.kind === 'mid' && entry.segment) {
+      entry.segment.bytes = entry.originalBytes.slice();
+      entry.segment.text = entry.originalText;
+      entry.segment.leadingNull = entry.originalLeadingNull;
+      entry.byteLength = entry.originalBytes.length;
+    } else {
+      entry.byteLength = entry.originalBytes.length;
+    }
+    
+    entry.dirty = false;
   }
-  entry.dirty = false;
+  
   updateCalculatedOffsets();
   const card = event.currentTarget.closest('.entry-card');
   const textarea = card.querySelector('textarea');
@@ -1422,7 +1548,6 @@ function updateMeta() {
   `.trim();
 
   if (state.message) {
-    // Style warning messages as red badge with emoji
     if (state.messageTone === 'warning') {
       html += ` <span class="status status-warning badge-red">⚠️ ${state.message}</span>`;
     } else if (state.messageTone === 'error') {
@@ -1469,17 +1594,55 @@ function handleDownload() {
 }
 
 function handleExportJson() {
+  // Détecte et groupe les messages avec effet de défilement
+  const groupedMessages = [];
+  const processed = new Set();
+  
+  const midStrings = state.midStrings || [];
+  
+  for (let i = 0; i < midStrings.length; i++) {
+    if (processed.has(i)) continue;
+    
+    const baseMsg = midStrings[i];
+    const baseText = baseMsg.text.replace(/\n/g, '');
+    
+    // Cherche les variations scrolling suivantes
+    let j = i + 1;
+    let prevText = baseText;
+    const groupIds = [baseMsg.id];
+    
+    while (j < midStrings.length) {
+      const nextText = midStrings[j].text.replace(/\n/g, '');
+      
+      // Vérifie si c'est une variation (texte précédent sans le premier char)
+      if (nextText === prevText.slice(1) && nextText.length > 0) {
+        groupIds.push(midStrings[j].id);
+        processed.add(j);
+        prevText = nextText;
+        j++;
+      } else {
+        break;
+      }
+    }
+    
+    // Ajoute seulement le message complet (pas les variations)
+    groupedMessages.push({
+      id: baseMsg.id,
+      message: baseMsg.text,
+      scrollingGroup: groupIds.length > 1 ? groupIds : undefined
+    });
+    
+    processed.add(i);
+  }
+  
   const payload = {
     inf1: state.entries.map((entry) => ({
       id: entry.index,
       message: entry.text
     })),
-    mid1: (state.midStrings || []).map((entry) => ({
-      id: entry.id,
-      message: entry.text,
-      midId: entry.midId
-    }))
+    mid1: groupedMessages
   };
+  
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
@@ -1519,17 +1682,12 @@ function handleImportJsonFile(event) {
         throw new Error('Invalid JSON format.');
       }
       
-      // Support multiple formats:
-      // 1. New format: { inf1: [...], mid1: [...] }
-      // 2. Old format with object: { entries: [...], midStrings: [...] }
-      // 3. Old format with array: [...]
+      // Support multiple formats
       let entries, midStrings;
       if (Array.isArray(data)) {
-        // Old format: array of entries only
         entries = data;
         midStrings = [];
       } else if (typeof data === 'object' && data !== null) {
-        // Check for new format (inf1/mid1) or old format (entries/midStrings)
         if (data.inf1) {
           entries = data.inf1;
           midStrings = data.mid1 || [];
@@ -1582,39 +1740,43 @@ function handleImportJsonFile(event) {
         entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
       });
       
-      // Apply MID string updates if present
+      // Apply MID string updates - avec support des groupes scrolling
       if (Array.isArray(midStrings) && midStrings.length > 0 && state.midStrings && state.midStrings.length > 0) {
-        if (midStrings.length !== state.midStrings.length) {
-          throw new Error(`JSON midStrings count (${midStrings.length}) does not match BMG midStrings count (${state.midStrings.length}).`);
-        }
-        
-        const midSeen = new Set();
-        const midMessages = new Array(state.midStrings.length);
-        midStrings.forEach((item, idx) => {
+        midStrings.forEach((item) => {
           if (typeof item !== 'object' || item === null) {
-            throw new Error(`MID string at index ${idx} is not an object.`);
+            return;
           }
-          const id = Number(item.id);
-          if (!Number.isInteger(id) || id < 0 || id >= state.midStrings.length) {
-            throw new Error(`Invalid MID string id at array index ${idx}.`);
+          
+          const baseId = Number(item.id);
+          const message = item.message;
+          const scrollingGroup = item.scrollingGroup;
+          
+          if (!Number.isInteger(baseId) || typeof message !== 'string') {
+            return;
           }
-          if (midSeen.has(id)) {
-            throw new Error(`Duplicate MID string id ${id} in JSON.`);
-          }
-          if (typeof item.message !== 'string') {
-            throw new Error(`MID string ${id} is missing a string "message" field.`);
-          }
-          midSeen.add(id);
-          midMessages[id] = normalizeInput(item.message);
-        });
-        
-        state.midStrings.forEach((entry, index) => {
-          const nextText = midMessages[index];
-          if (typeof nextText === 'string') {
-            entry.text = nextText;
-            const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-            entry.dirty = entry.text !== entry.originalText;
-            entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
+          
+          // Si c'est un groupe scrolling, générer les variations
+          if (Array.isArray(scrollingGroup) && scrollingGroup.length > 1) {
+            const variants = generateScrollingVariants(message);
+            
+            scrollingGroup.forEach((variantId, index) => {
+              const entry = state.midStrings.find(e => e.id === variantId);
+              if (entry && variants[index] !== undefined) {
+                entry.text = variants[index];
+                const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+                entry.dirty = entry.text !== entry.originalText;
+                entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
+              }
+            });
+          } else {
+            // Message simple
+            const entry = state.midStrings.find(e => e.id === baseId);
+            if (entry) {
+              entry.text = normalizeInput(message);
+              const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+              entry.dirty = entry.text !== entry.originalText;
+              entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
+            }
           }
         });
       }
@@ -2038,7 +2200,8 @@ function updateBadges(container, entry) {
   
   // Add section badge (INF1 or MID1)
   const sectionLabel = entry.kind === 'mid' ? 'MID1' : 'INF1';
-  const sectionVariant = entry.kind === 'mid' ? 'mid' : 'inf';
+  // Use renamed badge variants: 'mid1' and 'inf1'
+  const sectionVariant = entry.kind === 'mid' ? 'mid1' : 'inf1';
   const sectionBadge = makeBadge(sectionLabel, sectionVariant);
   container.appendChild(sectionBadge);
   
