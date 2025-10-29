@@ -49,7 +49,6 @@ const CONTROL_CODE_PARAMS = new Map([
   [0xff, 2]
 ]);
 
-const ENABLE_DEBUG_VERIFICATION = true;
 // Max string length (in 16-bit units) to read, prevents infinite loops on corrupt data
 const MAX_STRING_READ_LENGTH = 10000;
 
@@ -205,10 +204,6 @@ const state = {
   datSegments: [],
   lastLayout: null
 };
-
-function allEntries() {
-  return [...(state.entries ?? []), ...(state.midStrings ?? [])];
-}
 
 function resolveEntry(kind, id) {
   const index = Number(id);
@@ -472,11 +467,6 @@ function loadBuffer(buffer, name) {
   els.exportJson.disabled = false;
   els.importJson.disabled = false;
   updateCalculatedOffsets();
-  
-  if (ENABLE_DEBUG_VERIFICATION) {
-    verifyBmgIntegrity();
-  }
-  
   renderEntries();
   updateMeta();
   updateSaveButton();
@@ -939,7 +929,10 @@ function parseBmg(buffer) {
 }
 
 function findSection(bytes, tag) {
-  const pattern = asciiBytes(tag);
+  const pattern = new Uint8Array(tag.length);
+  for (let i = 0; i < tag.length; i += 1) {
+    pattern[i] = tag.charCodeAt(i);
+  }
   for (let i = 0; i <= bytes.length - pattern.length; i += 1) {
     let match = true;
     for (let j = 0; j < pattern.length; j += 1) {
@@ -1040,7 +1033,7 @@ function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LEN
 function renderEntries() {
   els.entries.innerHTML = '';
   const fragment = document.createDocumentFragment();
-  const all = allEntries();
+  const all = [...(state.entries ?? []), ...(state.midStrings ?? [])];
   
   // Groupe les messages MID avec effet de défilement
   const displayEntries = [];
@@ -1087,7 +1080,16 @@ function renderEntries() {
     fragment.appendChild(card);
   });
   els.entries.appendChild(fragment);
-  updateEntryCount(activeEntries.length);
+
+  // Compute visible count: scrolling groups represent multiple MID entries
+  const visibleCount = activeEntries.reduce((sum, entry) => {
+    if (entry.kind === 'mid' && entry.isScrollingGroup) {
+      return sum + (entry.scrollingCount || 1);
+    }
+    return sum + 1;
+  }, 0);
+
+  updateEntryCount(visibleCount);
 }
 
 function matchesFilter(entry) {
@@ -1510,10 +1512,7 @@ function onFilter(event) {
 function updateEntryCount(activeCount) {
   const extra = state.midStrings?.length ?? 0;
   const total = state.entryCount + extra;
-  let label = `${activeCount} / ${total} items`;
-  if (extra) {
-    label += ` (MID: ${extra})`;
-  }
+  const label = `${activeCount} / ${total} items`;
   els.entryCount.textContent = label;
 }
 
@@ -1793,63 +1792,6 @@ function handleImportJsonFile(event) {
     .finally(() => {
       event.target.value = '';
     });
-}
-
-// Fonction de vérification des offsets
-function verifyBmgIntegrity() {
-  if (!ENABLE_DEBUG_VERIFICATION) {
-    return;
-  }
-  console.log('=== VERIFICATION BMG ===');
-  try {
-    const layout = planDatLayout(state.entries);
-    let cursor = 0;
-    layout.chunks.forEach((chunk, chunkIndex) => {
-      if (chunk.offset !== cursor) {
-        console.warn(`⚠️ Chunk ${chunkIndex}: offset gap detected.`, {
-          expected: cursor,
-          actual: chunk.offset,
-          type: chunk.type
-        });
-      }
-      if (chunk.entryIndices.length) {
-        chunk.entryIndices.forEach((entryIndex) => {
-          const entry = state.entries[entryIndex];
-          if (!entry) {
-            return;
-          }
-          if (entry.calculatedOffset !== chunk.offset) {
-            console.error(`❌ Entry ${entryIndex}: Calculated offset desynchronised.`, {
-              expected: chunk.offset,
-              actual: entry.calculatedOffset
-            });
-          }
-          const encoded = encodeBmgString(entry.text, { leadingNull: entry.leadingNull });
-          const actualChunkLen = (chunk.bytes && typeof chunk.bytes.length === 'number') ? chunk.bytes.length : 0;
-          const isEmptyEncodedString = encoded.length === 2 && (!entry.text || entry.text === '');
-          if (actualChunkLen !== encoded.length) {
-            // suppress the known benign case where chunk is empty and encoded is 2 (empty string)
-            if (!(actualChunkLen === 0 && isEmptyEncodedString)) {
-              console.warn(`⚠️ Entry ${entryIndex}: Encoded length mismatch.`, {
-                expected: actualChunkLen,
-                actual: encoded.length
-              });
-            }
-          }
-        });
-      }
-      cursor = chunk.offset + chunk.bytes.length;
-    });
-    if (cursor !== layout.dataSize) {
-      console.warn('⚠️ DAT size mismatch detected.', {
-        planned: layout.dataSize,
-        traversed: cursor
-      });
-    }
-  } catch (error) {
-    console.error('Integrity verification failed.', error);
-  }
-  console.log('=== FIN VERIFICATION ===');
 }
 
 function buildBmg() {
@@ -2152,20 +2094,6 @@ function readAscii(bytes, start, length) {
   return out;
 }
 
-function writeAscii(bytes, start, text) {
-  for (let i = 0; i < text.length; i += 1) {
-    bytes[start + i] = text.charCodeAt(i);
-  }
-}
-
-function asciiBytes(tag) {
-  const result = new Uint8Array(tag.length);
-  for (let i = 0; i < tag.length; i += 1) {
-    result[i] = tag.charCodeAt(i);
-  }
-  return result;
-}
-
 function formatBytes(size) {
   if (size === 0) {
     return '0 B';
@@ -2211,11 +2139,6 @@ function updateBadges(container, entry) {
   }
 }
 
-function byteUsageLabel(entry) {
-  const bytes = entry.byteLength
-    ?? encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-  return `${bytes} bytes`;
-}
 
 function countVisibleCharacters(text) {
   const source = typeof text === 'string' ? text : '';
