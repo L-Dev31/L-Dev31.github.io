@@ -12,7 +12,8 @@ const els = {
   importJson: $('#import-json'),
   importJsonInput: $('#import-json-input'),
   filterInf: $('#filter-inf'),
-  filterMid: $('#filter-mid')
+  filterMid: $('#filter-mid'),
+  filterEmpty: $('#filter-empty')
 };
 
 const HEX_TOKEN_PATTERN = '[0-9A-F]{2}(?::[0-9A-F]{4}(?:,[0-9A-F]{4})*)?';
@@ -228,6 +229,7 @@ els.importJson.addEventListener('click', handleImportJsonClick);
 els.importJsonInput.addEventListener('change', handleImportJsonFile);
 els.filterInf.addEventListener('change', renderEntries);
 els.filterMid.addEventListener('change', renderEntries);
+els.filterEmpty.addEventListener('change', renderEntries);
 
 function planDatLayout(entries) {
   const segments = (state.datSegments ?? []).slice();
@@ -1060,6 +1062,10 @@ function matchesFilter(entry) {
   if (entry.kind !== 'mid' && !els.filterInf.checked) {
     return false;
   }
+  // Hide empty entries if "Empty" is unticked
+  if (!els.filterEmpty.checked && (!entry.text || entry.text.trim() === '')) {
+    return false;
+  }
   
   const query = state.filter.trim().toLowerCase();
   if (!query) {
@@ -1393,19 +1399,37 @@ function updateMeta() {
     return;
   }
   const encodingName = ENCODINGS[state.encoding] || `0x${formatHex(state.encoding, 2)}`;
-  const parts = [
-    `Entries: <strong>${state.entryCount}</strong>`,
-    `INF size: ${formatBytes(state.infSize)}`,
-    `DAT size: ${formatBytes(state.datDeclaredSize)}`,
-    `Preview DAT: ${formatBytes(state.previewDatSize + state.previewDatPadding + 8)}`,
-    `Encoding: ${encodingName}`
-  ];
-  if (state.midStrings?.length) {
-    parts.push(`MID texts: <strong>${state.midStrings.length}</strong>`);
-  }
-  let html = parts.join(' · ');
+  const infSize = formatBytes(state.infSize);
+  const datSize = formatBytes(state.datDeclaredSize);
+  const midSize = state.midSize ? formatBytes(state.midSize) : '0 B';
+  const infCount = state.entryCount;
+  const midCount = state.midStrings?.length ?? 0;
+  const totalCount = infCount + midCount;
+
+  // Section sizes (entry count before size)
+  const sizeLine = `<div class="meta-block"><strong>Section sizes</strong><br>INF1: <strong>${infCount}</strong> · ${infSize} &nbsp;·&nbsp; DAT1: <strong>${datSize}</strong> &nbsp;·&nbsp; MID1: <strong>${midCount}</strong> · ${midSize}</div>`;
+  // Entry counts
+  const countLine = `<div class="meta-block"><strong>Entry counts</strong><br>Total: <strong>${totalCount}</strong> · INF1: <strong>${infCount}</strong> · MID1: <strong>${midCount}</strong></div>`;
+  // Encoding/settings
+  const encodingLine = `<div class="meta-block"><strong>Encoding</strong><br>${encodingName}</div>`;
+
+  let html = `
+    <div class="meta-lines">
+      ${sizeLine}
+      ${countLine}
+      ${encodingLine}
+    </div>
+  `.trim();
+
   if (state.message) {
-    html += ` · <span class="status status-${state.messageTone}">${state.message}</span>`;
+    // Style warning messages as red badge with emoji
+    if (state.messageTone === 'warning') {
+      html += ` <span class="status status-warning badge-red">⚠️ ${state.message}</span>`;
+    } else if (state.messageTone === 'error') {
+      html += ` <span class="status status-error">❌ ${state.message}</span>`;
+    } else {
+      html += ` <span class="status status-${state.messageTone}">${state.message}</span>`;
+    }
   }
   els.fileMeta.innerHTML = html;
 }
@@ -1639,11 +1663,16 @@ function verifyBmgIntegrity() {
             });
           }
           const encoded = encodeBmgString(entry.text, { leadingNull: entry.leadingNull });
-          if (encoded.length !== chunk.bytes.length) {
-            console.warn(`⚠️ Entry ${entryIndex}: Encoded length mismatch.`, {
-              expected: chunk.bytes.length,
-              actual: encoded.length
-            });
+          const actualChunkLen = (chunk.bytes && typeof chunk.bytes.length === 'number') ? chunk.bytes.length : 0;
+          const isEmptyEncodedString = encoded.length === 2 && (!entry.text || entry.text === '');
+          if (actualChunkLen !== encoded.length) {
+            // suppress the known benign case where chunk is empty and encoded is 2 (empty string)
+            if (!(actualChunkLen === 0 && isEmptyEncodedString)) {
+              console.warn(`⚠️ Entry ${entryIndex}: Encoded length mismatch.`, {
+                expected: actualChunkLen,
+                actual: encoded.length
+              });
+            }
           }
         });
       }

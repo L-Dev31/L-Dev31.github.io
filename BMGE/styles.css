@@ -234,6 +234,39 @@ button.ghost:not(:disabled):hover {
   color: var(--text);
 }
 
+.meta-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin: 1.5rem 0;
+}
+
+.meta-block {
+  background: var(--panel-alt);
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--border);
+  margin-bottom: 0.1rem;
+  font-size: 0.97rem;
+  color: var(--text);
+  box-shadow: 0 1px 0 0 #181818;
+}
+
+.status-warning,
+.badge-red {
+  border-color: #ff4d4d !important;
+  background: rgba(255, 77, 77, 0.18) !important;
+  color: #ff4d4d !important;
+  font-weight: bold;
+}
+
+.status-error {
+  border-color: #ff4d4d !important;
+  background: rgba(255, 77, 77, 0.12) !important;
+  color: #ff4d4d !important;
+  font-weight: bold;
+}
+
 #entries {
   display: flex;
   flex-direction: column;
