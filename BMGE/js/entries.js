@@ -322,8 +322,8 @@ function detectMixedSequencedGroups(infEntries, midEntries) {
       const next = allEntries[j];
       const last = group[group.length - 1];
 
-      // Check for link tokens [1A:FF08] or [1A:0108] anywhere in the last entry's text
-      const linkPattern = /\[1A:(?:FF08|0108)\]/i;
+      // Check for link tokens [1A:FF08] or [1A:0108] at the end of the last entry's text
+      const linkPattern = /\[1A:(?:FF08|0108)\]\s*$/i;
       const hasLinkToken = linkPattern.test(last.entry.text);
 
       if (hasLinkToken) {
