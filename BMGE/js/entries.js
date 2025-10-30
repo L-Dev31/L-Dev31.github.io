@@ -35,26 +35,11 @@ function detectSequencedGroups(entries) {
       const last = group[group.length - 1];
 
       if (isMidCollection) {
-        // Pour MID : critères STRICTS
-        let isSequential = false;
+        // Pour MID : utiliser les mêmes règles que INF1 - tokens de liaison
+        const linkPattern = /\[1A:(?:FF08|0108)\]\s*$/i;
+        const hasLinkToken = linkPattern.test(last.text);
 
-        // Critère 1 : Offsets contigus (fin de l'un = début de l'autre)
-        if (typeof last.offset === 'number' && typeof next.offset === 'number') {
-          const lastEnd = last.offset + (last.byteLength || 0);
-          if (next.offset === lastEnd) {
-            isSequential = true;
-          }
-        }
-
-        // Critère 2 : Token de liaison explicite [1A:FF08] ou [1A:0108] à la fin
-        if (!isSequential) {
-          const linkPattern = /\[1A:(?:FF08|0108)\]\s*$/i;
-          if (linkPattern.test(last.text)) {
-            isSequential = true;
-          }
-        }
-
-        if (isSequential) {
+        if (hasLinkToken) {
           group.push(next);
           indices.push(j);
           processed.add(j);
@@ -303,4 +288,68 @@ function addMidGroupPair(a, b) {
   state.midGroups.push([a, b]);
 }
 
-export { resolveEntry, detectSequencedGroups, detectScrollingGroups, countVisibleCharacters, splitPreservingTokens, getMidGroupForId, addMidGroupPair, removeIdFromGroups, generateScrollingVariants };
+function detectMixedSequencedGroups(infEntries, midEntries) {
+  const groups = [];
+  const processed = new Set();
+  
+  if ((!infEntries || infEntries.length === 0) && (!midEntries || midEntries.length === 0)) return groups;
+  
+  // Combine and sort all entries by offset
+  const allEntries = [];
+  (infEntries || []).forEach((entry, index) => {
+    allEntries.push({ entry, originalIndex: index, kind: 'inf' });
+  });
+  (midEntries || []).forEach((entry, index) => {
+    allEntries.push({ entry, originalIndex: index, kind: 'mid' });
+  });
+  
+  allEntries.sort((a, b) => {
+    const aOffset = a.entry.offset || a.entry.originalOffset || 0;
+    const bOffset = b.entry.offset || b.entry.originalOffset || 0;
+    return aOffset - bOffset;
+  });
+
+  for (let i = 0; i < allEntries.length; i++) {
+    if (processed.has(i)) continue;
+
+    const current = allEntries[i];
+    const group = [current];
+    const indices = [{ kind: current.kind, index: current.originalIndex }];
+
+    for (let j = i + 1; j < allEntries.length; j++) {
+      if (processed.has(j)) continue;
+
+      const next = allEntries[j];
+      const last = group[group.length - 1];
+
+      // Check for link tokens [1A:FF08] or [1A:0108] anywhere in the last entry's text
+      const linkPattern = /\[1A:(?:FF08|0108)\]/i;
+      const hasLinkToken = linkPattern.test(last.entry.text);
+
+      if (hasLinkToken) {
+        group.push(next);
+        indices.push({ kind: next.kind, index: next.originalIndex });
+        processed.add(j);
+        continue;
+      }
+
+      // If no link token, stop the sequence
+      break;
+    }
+
+    if (group.length > 1) {
+      groups.push({
+        entries: group.map(item => item.entry),
+        indices: indices,
+        isMixedSequenced: true,
+        mixedTypes: [...new Set(group.map(item => item.kind))]
+      });
+    }
+
+    processed.add(i);
+  }
+
+  return groups;
+}
+
+export { resolveEntry, detectSequencedGroups, detectMixedSequencedGroups, detectScrollingGroups, countVisibleCharacters, splitPreservingTokens, getMidGroupForId, addMidGroupPair, removeIdFromGroups, generateScrollingVariants };

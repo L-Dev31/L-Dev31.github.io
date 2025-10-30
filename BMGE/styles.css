@@ -376,6 +376,19 @@ button.ghost:not(:disabled):hover {
   color: #FF99C9;
 }
 
+.badge-mixed {
+  background: linear-gradient(135deg, #4a90e2, #8e44ad, #e74c3c);
+  color: white;
+}
+
+.editor-shell-mid {
+  border-left: 4px solid #e74c3c;
+}
+
+.editor-shell-inf {
+  border-left: 4px solid #4a90e2;
+}
+
 .sequenced-entry {
   border-left: #FF66B2 2px solid;
   background-color: rgba(255, 102, 178, 0.05);

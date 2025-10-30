@@ -1,6 +1,6 @@
 import { state, els, ENCODINGS } from './state.js';
 import { formatHex, formatBytes, formatCharCount, formatOffsetLabel, formatAttrLabel, formatEntryTitle, makeBadge, normalizeInput, countVisibleCharacters, splitPreservingTokens } from './utils.js';
-import { resolveEntry, detectSequencedGroups, detectScrollingGroups, getMidGroupForId } from './entries.js';
+import { resolveEntry, detectSequencedGroups, detectMixedSequencedGroups, detectScrollingGroups, getMidGroupForId } from './entries.js';
 import { encodeBmgString } from './bmg-format.js';
 import { tokenRegex, parseSpecialToken, encodeSpecialCode } from './tokens.js';
 import { updateCalculatedOffsets } from './layout.js';
@@ -13,7 +13,7 @@ export function renderEntries() {
   const fragment = document.createDocumentFragment();
   
   
-  const displayEntries = [];
+  let displayEntries = [];
 
   
   (state.entries || []).forEach(e => displayEntries.push(e));
@@ -79,10 +79,38 @@ export function renderEntries() {
     }
   });
   
-  const infGroups = detectSequencedGroups(state.entries);
-  
   const finalEntries = [];
   const infProcessed = new Set();
+  
+  // Detect mixed INF1/MID1 sequenced groups
+  const mixedGroups = detectMixedSequencedGroups(state.entries, state.midStrings || []);
+  mixedGroups.forEach(group => {
+    if (group.isMixedSequenced) {
+      const firstEntry = group.entries[0];
+      finalEntries.push({
+        ...firstEntry,
+        isSequencedGroup: true,
+        sequencedEntries: group.entries,
+        sequencedIndices: group.entries.map(e => e.id),
+        sequencedCount: group.entries.length,
+        text: group.entries.map(e => e.text).join('')
+      });
+      group.entries.forEach(entry => infProcessed.add(entry.id));
+    }
+  });
+  
+  // Remove entries that are in mixed groups from displayEntries
+  const mixedEntryIds = new Set();
+  mixedGroups.forEach(group => {
+    if (group.isMixedSequenced) {
+      group.entries.forEach(entry => mixedEntryIds.add(entry.id));
+    }
+  });
+  displayEntries = displayEntries.filter(entry => !mixedEntryIds.has(entry.id));
+  
+  // Detect sequenced groups on remaining INF1 entries
+  const remainingInfEntries = state.entries.filter(entry => !infProcessed.has(entry.id));
+  const infGroups = detectSequencedGroups(remainingInfEntries);
   
   infGroups.forEach(group => {
     if (group.isSequenced) {
@@ -115,6 +143,14 @@ export function renderEntries() {
   });
   
   const activeEntries = finalEntries.filter(matchesFilter);
+  
+  // Sort entries by file offset for logical reading order
+  activeEntries.sort((a, b) => {
+    const aOffset = a.offset || a.originalOffset || 0;
+    const bOffset = b.offset || b.originalOffset || 0;
+    return aOffset - bOffset;
+  });
+  
   activeEntries.forEach((entry) => {
     const card = buildEntryCard(entry);
     fragment.appendChild(card);
@@ -343,16 +379,16 @@ export function buildEntryCard(entry) {
       
       entry.sequencedEntries.forEach((part) => {
         const shell = document.createElement('div');
-        shell.className = 'editor-shell';
+        shell.className = 'editor-shell ' + (part.kind === 'mid' ? 'editor-shell-mid' : 'editor-shell-inf');
 
         const pre = document.createElement('pre');
         pre.className = 'text-highlight';
-        pre.dataset.entryKind = 'mid';
+        pre.dataset.entryKind = part.kind;
         updateTextHighlight(pre, part.text);
 
         const ta = document.createElement('textarea');
         ta.value = part.text;
-        ta.dataset.kind = 'mid';
+        ta.dataset.kind = part.kind;
         ta.dataset.id = String(part.id);
         ta.addEventListener('input', onEntryEdit);
 
@@ -362,21 +398,25 @@ export function buildEntryCard(entry) {
       });
     } else {
       
-      const combined = entry.sequencedEntries.map(e => e.text).join('');
-      const textarea = document.createElement('textarea');
-      textarea.value = combined;
-      textarea.dataset.kind = entry.kind;
-      textarea.dataset.id = String(entry.id);
-      
-      textarea.dataset.sequencedIndices = JSON.stringify(entry.sequencedIndices);
-      textarea.addEventListener('input', onEntryEdit);
-      textareaContainer.appendChild(textarea);
+      entry.sequencedEntries.forEach((part) => {
+        const shell = document.createElement('div');
+        shell.className = 'editor-shell ' + (part.kind === 'mid' ? 'editor-shell-mid' : 'editor-shell-inf');
 
-      const highlight = document.createElement('div');
-      highlight.className = 'text-highlight';
-      highlight.dataset.entryKind = 'inf';
-      updateTextHighlight(highlight, combined);
-      textareaContainer.appendChild(highlight);
+        const pre = document.createElement('pre');
+        pre.className = 'text-highlight';
+        pre.dataset.entryKind = part.kind;
+        updateTextHighlight(pre, part.text);
+
+        const ta = document.createElement('textarea');
+        ta.value = part.text;
+        ta.dataset.kind = part.kind;
+        ta.dataset.id = String(part.id);
+        ta.addEventListener('input', onEntryEdit);
+
+        shell.appendChild(pre);
+        shell.appendChild(ta);
+        textareaContainer.appendChild(shell);
+      });
     }
   } else {
     {
@@ -620,10 +660,27 @@ export function updateBadges(container, entry) {
   }
   container.innerHTML = '';
   
-  const sectionLabel = entry.kind === 'mid' ? 'MID1' : 'INF1';
-  const sectionVariant = entry.kind === 'mid' ? 'mid1' : 'inf1';
-  const sectionBadge = makeBadge(sectionLabel, sectionVariant);
-  container.appendChild(sectionBadge);
+  // Check for mixed sequenced groups
+  let isMixed = false;
+  if (entry.isSequencedGroup && entry.sequencedEntries) {
+    const kinds = [...new Set(entry.sequencedEntries.map(e => e.kind))];
+    isMixed = kinds.length > 1;
+  }
+  
+  if (!isMixed) {
+    const sectionLabel = entry.kind === 'mid' ? 'MID1' : 'INF1';
+    const sectionVariant = entry.kind === 'mid' ? 'mid1' : 'inf1';
+    const sectionBadge = makeBadge(sectionLabel, sectionVariant);
+    container.appendChild(sectionBadge);
+  }
+  
+  if (isMixed) {
+    // Mixed group badge with improved gradient
+    const mixedBadge = document.createElement('span');
+    mixedBadge.className = 'badge badge-mixed';
+    mixedBadge.textContent = 'INF1+MID1';
+    container.appendChild(mixedBadge);
+  }
   
   if (entry.dirty) {
     container.appendChild(makeBadge('modified', 'warning'));
