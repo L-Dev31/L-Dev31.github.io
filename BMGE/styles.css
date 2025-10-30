@@ -284,6 +284,7 @@ button.ghost:not(:disabled):hover {
 }
 
 .entry-card.modified {
+  /* Highlight modified cards with the accent color. */
   border-color: var(--accent);
 }
 
@@ -368,6 +369,13 @@ button.ghost:not(:disabled):hover {
   color: #7fe57e;
 }
 
+/* Pink badge for sequenced groups */
+.badge-sequenced {
+  border-color: #FF66B2;
+  background: rgba(255, 102, 178, 0.12);
+  color: #FF99C9;
+}
+
 .badge-red {
   border-color: rgba(255, 60, 60, 0.7);
   background: rgba(255, 60, 60, 0.22);
@@ -407,7 +415,8 @@ button.ghost:not(:disabled):hover {
   background: var(--panel);
   color: var(--text);
   font-family: "Cascadia Code", Consolas, monospace;
-  font-size: 0.95rem;
+  /* match editor-shell font sizing exactly to avoid visual offset */
+  font-size: 15px;
   line-height: 1.5;
   resize: vertical;
 }
@@ -424,12 +433,21 @@ button.ghost:not(:disabled):hover {
 
 .editor-shell .text-highlight,
 .editor-shell textarea {
+  box-sizing: border-box;
   font-family: "Cascadia Code", Consolas, monospace;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  border-radius: 8px;
+  /* explicit pixel sizing to avoid rem rounding differences between preview and textarea */
+  font-size: 15px;
+  /* use explicit pixel line-height so wrapping/metrics are identical */
+  line-height: 20px;
   padding: 0.75rem;
   min-height: 120px;
+  /* disable ligatures and force consistent font smoothing for both layers */
+  font-variant-ligatures: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
 .editor-shell .text-highlight {
@@ -440,9 +458,12 @@ button.ghost:not(:disabled):hover {
   color: var(--text);
   border: 1px solid var(--border);
   pointer-events: none;
+  /* square corners for highlight preview */
+  border-radius: 0;
 }
 
 .editor-shell textarea {
+  box-sizing: border-box;
   position: absolute;
   inset: 0;
   width: 100%;
@@ -454,6 +475,8 @@ button.ghost:not(:disabled):hover {
   overflow: hidden;
   outline: none;
   caret-color: var(--accent);
+  /* rounded corners for the editable layer to match general UI */
+  border-radius: 8px;
 }
 
 .editor-shell textarea:focus {
@@ -465,14 +488,17 @@ button.ghost:not(:disabled):hover {
   box-shadow: 0 0 0 1px rgba(201, 178, 74, 0.2);
 }
 
+/* Debug overlay removed in production build. */
+
 .token-chip {
   display: inline-flex;
   align-items: center;
   border-radius: 6px;
   border: 1px solid rgba(201, 178, 74, 0.55);
   background: rgba(201, 178, 74, 0.2);
-  color: var(--accent)!important;
+  color: var(--accent) !important;
   font-weight: 600;
+  margin: 0 0.1rem;
 }
 
 .highlight-empty {

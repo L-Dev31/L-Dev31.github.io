@@ -21,22 +21,15 @@ const NAMED_TOKEN_PATTERN = '[A-Z][A-Z0-9_]{1,15}';
 const SPECIAL_TOKEN_PATTERN = `(?:${HEX_TOKEN_PATTERN}|${NAMED_TOKEN_PATTERN})`;
 const LEGACY_TOKEN_REGEX = /🔒([0-9a-fA-F]{2})/g;
 
-// Added suggested ENCODINGS map
 const ENCODINGS = {
-  0x00: 'cp1252',    // Latin-1 (often used for UTF-16LE in practice)
-  0x01: 'utf-16le',  // UTF-16 Little Endian
-  0x02: 'shift-jis'  // Japanese
+  0x00: 'cp1252',
+  0x01: 'utf-16le',
+  0x02: 'shift-jis'
 };
 
-// Added suggested FLOW_CONTROL_CODES
 const NAMED_TOKEN_ENTRIES = [
-  [0x06, 'WAIT'],     
-  [0x07, 'CLEAR'],    
-
-  [0x00, 'GRAY'],    
-  [0x01, 'RED']  
+  //[0x01, 'RED']
 ];
-
 
 const NAMED_TOKENS = new Map(NAMED_TOKEN_ENTRIES);
 const REVERSE_NAMED_TOKENS = new Map(
@@ -48,23 +41,12 @@ const CONTROL_CODE_PARAMS = new Map([
   [0xff, 2]
 ]);
 
-// Max string length (in 16-bit units) to read, prevents infinite loops on corrupt data
 const MAX_STRING_READ_LENGTH = 10000;
 
 function formatHex(value, width = 4) {
   return value.toString(16).toUpperCase().padStart(width, '0');
 }
 
-// --- Added Safe Reader Functions ---
-
-/**
- * Safely reads a Uint16 from a DataView, checking boundaries.
- * @param {DataView} view The DataView to read from.
- * @param {number} offset The offset to read at.
- * @param {number} limit The absolute byte limit of the buffer.
- * @returns {number} The Uint16 value.
- * @throws {Error} If the read is out of bounds.
- */
 function safeGetUint16(view, offset, limit) {
   if (offset + 2 > limit) {
     throw new Error(`Read beyond buffer at offset 0x${offset.toString(16)}`);
@@ -72,22 +54,12 @@ function safeGetUint16(view, offset, limit) {
   return view.getUint16(offset, true);
 }
 
-/**
- * Safely reads a Uint32 from a DataView, checking boundaries.
- * @param {DataView} view The DataView to read from.
- * @param {number} offset The offset to read at.
- * @param {number} limit The absolute byte limit of the buffer.
- * @returns {number} The Uint32 value.
- * @throws {Error} If the read is out of bounds.
- */
 function safeGetUint32(view, offset, limit) {
   if (offset + 4 > limit) {
     throw new Error(`Read beyond buffer at offset 0x${offset.toString(16)}`);
   }
   return view.getUint32(offset, true);
 }
-
-// --- End Safe Reader Functions ---
 
 function tokenRegex() {
   return new RegExp(`\\[(${SPECIAL_TOKEN_PATTERN})\\]`, 'gi');
@@ -115,10 +87,9 @@ function parseSpecialToken(label) {
   if (REVERSE_NAMED_TOKENS.has(upper)) {
     const code = REVERSE_NAMED_TOKENS.get(upper);
     const params = [];
-    // Check param count for named tokens
     const expected = CONTROL_CODE_PARAMS.get(code);
     if (typeof expected === 'number' && expected !== params.length) {
-      return null; // Or handle default params if needed
+      return null;
     }
     return { code, params };
   }
@@ -131,7 +102,6 @@ function parseSpecialToken(label) {
     return null;
   }
   if (!rest.length) {
-    // Check param count for hex codes with no params
     const expected = CONTROL_CODE_PARAMS.get(code);
     if (typeof expected === 'number' && expected !== 0) {
       return null;
@@ -157,7 +127,6 @@ function isSpecialControl(code) {
   if (CONTROL_CODE_PARAMS.has(code)) {
     return true;
   }
-  // Added named tokens to this check
   if (NAMED_TOKENS.has(code)) {
     return true;
   }
@@ -200,19 +169,22 @@ const state = {
   midIds: [],
   midKind: 'none',
   midStrings: [],
+  midGroups: [],
   datSegments: [],
   lastLayout: null
 };
 
 function resolveEntry(kind, id) {
-  const index = Number(id);
-  if (Number.isNaN(index) || index < 0) {
-    return null;
-  }
+  const num = Number(id);
+  if (Number.isNaN(num) || num < 0) return null;
   if (kind === 'mid') {
-    return state.midStrings?.[index] ?? null;
+    // Prefer lookup by the entry.id field; fall back to index-based access
+    const byId = (state.midStrings || []).find(e => e.id === num);
+    if (byId) return byId;
+    return state.midStrings?.[num] ?? null;
   }
-  return state.entries?.[index] ?? null;
+  // INF entries are indexed by position (index) in state.entries
+  return state.entries?.[num] ?? (state.entries || []).find(e => e.id === num) ?? null;
 }
 
 els.fileInput.addEventListener('change', handleFileSelection);
@@ -228,25 +200,20 @@ els.filterEmpty.addEventListener('change', renderEntries);
 function planDatLayout(entries) {
   const segments = (state.datSegments ?? []).slice();
   
-  // For ID mode, preserve EXACT absolute positions of ALL segments (including MID)
-  // The scanner finds unused strings at specific offsets, so we must preserve their positions
   if (state.midKind === 'ids' && state.midStrings && state.midStrings.length > 0) {
-    // Sort ALL segments by original offset (preserve the natural order in DAT)
     segments.sort((a, b) => a.originalOffset - b.originalOffset);
     
-    // Rebuild with padding to maintain absolute offsets
     const paddedSegments = [];
     let cursor = 0;
     
     segments.forEach((seg, idx) => {
       const targetOffset = seg.originalOffset;
       
-      // If this segment was originally after current cursor, add padding
       if (targetOffset > cursor) {
         const paddingSize = targetOffset - cursor;
         paddedSegments.push({
           originalOffset: cursor,
-          bytes: new Uint8Array(paddingSize).fill(0),  // null padding
+          bytes: new Uint8Array(paddingSize).fill(0),
           entryIndices: [],
           midRefs: [],
           leadingNull: false,
@@ -256,16 +223,13 @@ function planDatLayout(entries) {
         cursor = targetOffset;
       }
       
-      // Add the segment at its original position
       paddedSegments.push(seg);
       cursor += (seg.bytes?.length || 0);
     });
     
-    // Replace segments with padded version
     segments.length = 0;
     paddedSegments.forEach(s => segments.push(s));
   } else {
-    // Normal mode: sort all by original offset
     segments.sort((a, b) => a.originalOffset - b.originalOffset);
   }
   
@@ -281,7 +245,6 @@ function planDatLayout(entries) {
       .filter((entry) => entry !== undefined);
     let bytes = segment.bytes ?? new Uint8Array(0);
 
-    // Check if this is a MID segment
     const isMidSegment = segment.type === 'mid' || segment.type === 'mid-id';
     const midEntry = isMidSegment ? segment.midEntry : null;
 
@@ -305,7 +268,6 @@ function planDatLayout(entries) {
         bytes = encodeBmgString(canonical.text, { leadingNull: canonical.leadingNull });
       }
     } else if (midEntry && midEntry.dirty) {
-      // Handle dirty MID strings
       bytes = encodeBmgString(midEntry.text, { leadingNull: midEntry.leadingNull });
     }
 
@@ -425,18 +387,8 @@ function handleFileSelection(event) {
     .then((buffer) => {
       try {
         loadBuffer(buffer, file.name);
-        console.log('Total entries:', state.entries.length);
-        console.log('Total MID strings:', state.midStrings?.length ?? 0);
-        console.log('MID kind:', state.midKind);
-        console.log('Sample MID strings:', state.midStrings?.slice(0, 5).map((entry) => ({
-          id: entry.id,
-          text: entry.text.slice(0, 50),
-          offset: `0x${entry.offset.toString(16)}`
-        })) ?? []);
-        // Show file info message by default, warnings may overwrite this
         showMessage(`${file.name} • ${formatBytes(buffer.byteLength)}`, 'success');
         
-        // Check encoding and show warning if not UTF-16LE
         if (state.encoding !== 0x01) {
           const encodingName = ENCODINGS[state.encoding] || `Unknown (0x${formatHex(state.encoding, 2)})`;
           const message = `Warning: File encoding is ${encodingName}. This editor only supports UTF-16LE (0x01). Text may appear corrupt.`;
@@ -471,6 +423,116 @@ function loadBuffer(buffer, name) {
   updateSaveButton();
 }
 
+function detectSequencedGroups(entries) {
+  const groups = [];
+  const processed = new Set();
+
+  if (!entries || entries.length === 0) return groups;
+
+  // Detect whether this list is a collection of MID strings (conservative check)
+  const isMidCollection = entries.every(e => e && e.kind === 'mid') || (entries[0] && entries[0].kind === 'mid');
+
+  for (let i = 0; i < entries.length; i++) {
+    if (processed.has(i)) continue;
+
+    const entry = entries[i];
+    const group = [entry];
+    const indices = [i];
+
+    for (let j = i + 1; j < entries.length; j++) {
+      if (processed.has(j)) continue;
+
+      const next = entries[j];
+      const last = group[group.length - 1];
+
+      // MID-specific heuristics: offsets, insertion tokens like [1A:FF08] or [1A:0108], and punctuation
+      if (isMidCollection) {
+        const tokenLinkPattern = /\[1A:(?:FF08|0108)\]/i;
+        const hasControlCodes = hasSpecialTokens(last.text) || hasSpecialTokens(next.text) || tokenLinkPattern.test(last.text) || tokenLinkPattern.test(next.text);
+
+        let isSequential = false;
+
+        // Offsets consecutive: if next.offset equals last.offset + last.byteLength (exact adjacency)
+        if (typeof last.offset === 'number' && typeof next.offset === 'number') {
+          const lastEnd = last.offset + (last.byteLength || 0);
+          if (next.offset === lastEnd) {
+            isSequential = true;
+          } else if (Math.abs(next.offset - last.offset) <= 4) {
+            // small tolerance for alignment differences
+            isSequential = true;
+          }
+        }
+
+        // Token-based linking: insertion token at end of last + next starts with a token
+        if (!isSequential && hasControlCodes) {
+          const lastEndsWithInsert = /\[1A:(?:FF08|0108)\]\s*$/.test(last.text);
+          const nextStartsWithToken = /^\s*\[[0-9A-Fa-f]{2,}.*\]/.test(next.text) || /^\s*\[0[2-9]\]/.test(next.text) || /^\s*\[08\]/.test(next.text);
+          if (lastEndsWithInsert && nextStartsWithToken) {
+            isSequential = true;
+          }
+        }
+
+        // Fallback: punctuation / incomplete sentence heuristics
+        if (!isSequential) {
+          const lastWithoutCodes = (last.text || '').replace(tokenRegex(), '').trim();
+          const nextWithoutCodes = (next.text || '').replace(tokenRegex(), '').trim();
+          const lastEndsWithPunct = /[.!?。！？]$/.test(lastWithoutCodes);
+          if (!lastEndsWithPunct && lastWithoutCodes.length > 0 && nextWithoutCodes.length > 0) {
+            // If last looks like a fragment and next isn't punctuation-only, consider sequential
+            isSequential = true;
+          }
+        }
+
+        if (isSequential) {
+          group.push(next);
+          indices.push(j);
+          processed.add(j);
+          continue;
+        }
+
+        // if not matched by MID heuristics, skip to next candidate
+        continue;
+      }
+
+      // Original INF/GENERAL behavior preserved for non-MID entries
+      const hasControlCodes = hasSpecialTokens(last.text) || hasSpecialTokens(next.text);
+      if (!hasControlCodes) continue;
+
+      const lastWithoutCodes = last.text.replace(tokenRegex(), '');
+      const nextWithoutCodes = next.text.replace(tokenRegex(), '');
+
+      const isSequential = lastWithoutCodes.length > 0 &&
+                          nextWithoutCodes.length > 0 &&
+                          (lastWithoutCodes.endsWith(nextWithoutCodes) ||
+                           nextWithoutCodes.startsWith(lastWithoutCodes));
+
+      if (isSequential) {
+        group.push(next);
+        indices.push(j);
+        processed.add(j);
+      }
+    }
+
+    if (group.length > 1) {
+      groups.push({
+        entries: group,
+        indices: indices,
+        isSequenced: true
+      });
+    } else {
+      groups.push({
+        entries: [entry],
+        indices: [i],
+        isSequenced: false
+      });
+    }
+
+    processed.add(i);
+  }
+
+  return groups;
+}
+
 function parseBmg(buffer) {
   const bytes = new Uint8Array(buffer);
   const view = new DataView(buffer);
@@ -484,7 +546,7 @@ function parseBmg(buffer) {
   const bmgType = readAscii(bytes, 0, 8);
   const fileSize = safeGetUint32(view, 8, bufferLimit);
   const sectionsCount = safeGetUint32(view, 12, bufferLimit);
-  const encoding = view.getUint8(16); // No safeGetUint8, but it's fine
+  const encoding = view.getUint8(16);
   
   const infOffset = findSection(bytes, 'INF1');
   const datOffset = findSection(bytes, 'DAT1');
@@ -494,7 +556,6 @@ function parseBmg(buffer) {
     midOffset = findSection(bytes, 'MID1');
     midSize = safeGetUint32(view, midOffset + 4, bufferLimit);
   } catch (e) {
-    // MID1 section is optional
   }
   
   const infSize = safeGetUint32(view, infOffset + 4, bufferLimit);
@@ -507,11 +568,10 @@ function parseBmg(buffer) {
   const datDeclaredSize = safeGetUint32(view, datOffset + 4, bufferLimit);
   const datBase = datOffset + 8;
   const nextSectionOffset = midOffset >= 0 ? midOffset : bytes.length;
-  // DAT actual size should not extend beyond the next section (MID1)
   const datActualSize = midOffset >= 0 
     ? Math.min(datDeclaredSize, nextSectionOffset - datBase)
     : Math.max(datDeclaredSize, bytes.length - datBase);
-  const datLimit = bytes.length; // Use full file buffer
+  const datLimit = bytes.length;
   const datSegmentsMap = new Map();
 
   function ensureDatSegment(offset) {
@@ -573,9 +633,9 @@ function parseBmg(buffer) {
       attr1,
       attr2,
       extraFields,
-  attributeBytes,
-  attributeHex,
-  compositeId,
+      attributeBytes,
+      attributeHex,
+      compositeId,
       offset,
       originalOffset: offset,
       text,
@@ -609,16 +669,16 @@ function parseBmg(buffer) {
     if (midRowCount > 0 && midColumnCount > 0) {
       const usableCells = midRowCount * midColumnCount;
       midEntries = new Array(midRowCount);
-  let pointerCandidates = 0;
-  let pointerInvalid = 0;
+      let pointerCandidates = 0;
+      let pointerInvalid = 0;
       const midDataStart = midBase + 8;
 
       for (let row = 0; row < midRowCount; row += 1) {
         const midEntryBase = midDataStart + row * midEntrySize;
         if (midEntryBase + midEntrySize > bufferLimit) {
-           console.warn(`MID1 row ${row} read out of bounds. Stopping MID parse.`);
-           midRowCount = row; // Truncate row count
-           break;
+          console.warn(`MID1 row ${row} read out of bounds. Stopping MID parse.`);
+          midRowCount = row;
+          break;
         }
         const values = new Array(midColumnCount);
         for (let column = 0; column < midColumnCount; column += 1) {
@@ -637,14 +697,9 @@ function parseBmg(buffer) {
         midEntries[row] = values;
       }
 
-      console.log('MID pointer analysis:', {
-        pointerCandidates,
-        pointerInvalid,
-        midRowCount,
-        midColumnCount
-      });
+      // MID pointer analysis computed; suppressed verbose logging in production.
 
-  const pointerMode = pointerCandidates > 0 && pointerInvalid === 0;
+      const pointerMode = pointerCandidates > 0 && pointerInvalid === 0;
       if (pointerMode) {
         midKind = 'pointers';
         for (let row = 0; row < midRowCount; row += 1) {
@@ -683,12 +738,7 @@ function parseBmg(buffer) {
             const idValue = values[column];
             midIds[index] = idValue;
             
-            // Try to find and extract string for this ID
-            // The ID might be a composite messageId, so try to find matching strings in DAT
             if (idValue > 0) {
-              // Scan DAT section for this ID value (treat it as a potential message ID)
-              // Since we don't have a direct pointer, we'll mark segments as MID-referenced
-              // if they're not already used by INF entries
             }
           }
         }
@@ -747,18 +797,14 @@ function parseBmg(buffer) {
   const midStrings = [];
   
   if (midKind === 'ids' && midIds.length > 0) {
-    // When MID contains IDs, scan DAT for unused strings
-    // Build a set of offsets used by INF1 entries and existing MID-related segments/pointers
     const usedOffsets = new Set();
     entries.forEach(entry => {
       if (typeof entry.offset === 'number') {
         usedOffsets.add(entry.offset);
       }
     });
-    // Also include offsets already recorded in datSegmentsMap (entries, mid refs, pointer segments)
     datSegmentsMap.forEach((segment, offset) => {
       if (!segment) return;
-      // If the segment is an INF entry or already associated with MID refs, mark its offset as used
       if ((segment.entryIndices && segment.entryIndices.length > 0) ||
           (segment.midRefs && segment.midRefs.length > 0) ||
           segment.type === 'entry' ||
@@ -768,7 +814,6 @@ function parseBmg(buffer) {
       }
     });
     
-    // Scan DAT section for null-terminated strings not used by INF entries
     let scanOffset = 0;
     let midStringIndex = 0;
     
@@ -776,7 +821,6 @@ function parseBmg(buffer) {
       const absolutePos = datBase + scanOffset;
       if (absolutePos >= bytes.length) break;
       
-      // Skip if this offset is used by an INF entry
       if (usedOffsets.has(scanOffset)) {
         try {
           const info = safeReadBmgString(view, absolutePos, bytes.length);
@@ -787,25 +831,19 @@ function parseBmg(buffer) {
         continue;
       }
       
-      // Check for null-terminator pair
       if (absolutePos + 1 < bytes.length && bytes[absolutePos] === 0 && bytes[absolutePos + 1] === 0) {
         scanOffset += 2;
         continue;
       }
       
-      // Try to read a string at this position
       try {
-        const info = safeReadBmgString(view, absolutePos, bytes.length);
-        console.log(`[DAT1 scan] offset 0x${formatHex(scanOffset,6)}: text="${info.text}" (length=${info.length})`);
+  const info = safeReadBmgString(view, absolutePos, bytes.length);
         if (info && info.text && info.text.trim().length > 0 && info.length > 2) {
-          // Found an unused string - create segment and MID entry for it
           const row = Math.floor(midStringIndex / midColumnCount);
           const column = midStringIndex % midColumnCount;
           const midId = midIds[midStringIndex] || 0;
-          // Create or get segment for this offset
           const segment = ensureDatSegment(scanOffset);
           if (!segment.bytes) {
-            // FIX: Use info.byteLength for correct slicing
             segment.bytes = bytes.slice(absolutePos, absolutePos + info.byteLength);
             segment.leadingNull = info.leadingNull;
             segment.text = info.text;
@@ -816,14 +854,12 @@ function parseBmg(buffer) {
           segment.midRefs.push({ row, column, flags: 0, raw: midId });
           midStringIndex++;
         }
-        // FIX: Use info.byteLength for correct offset advancement
         scanOffset += Math.max(2, info.byteLength);
       } catch (e) {
         scanOffset += 2;
       }
     }
     
-    // Rebuild datSegments array to include newly added MID segments
     const updatedOffsets = [...datSegmentsMap.keys()].sort((a, b) => a - b);
     datSegments.length = 0;
     cursor = 0;
@@ -873,7 +909,6 @@ function parseBmg(buffer) {
     }
   }
   
-  // Extract strings from MID pointer segments and MID-ID segments
   datSegments.forEach((segment) => {
     if (segment.type !== 'mid' && segment.type !== 'mid-id') {
       return;
@@ -906,6 +941,25 @@ function parseBmg(buffer) {
     segment.midEntry = entry;
     midStrings.push(entry);
   });
+
+  // --- Vérification de complétude MID (diagnostic) ---
+  try {
+    const midSegmentCount = datSegments.filter(s => s.type === 'mid' || s.type === 'mid-id').length;
+    console.log(`Total MID segments found: ${midSegmentCount}`);
+    console.log(`Total MID strings created: ${midStrings.length}`);
+
+    if (midSegmentCount !== midStrings.length) {
+      console.error(`MISMATCH: ${midSegmentCount} segments but ${midStrings.length} strings`);
+      datSegments.forEach((seg) => {
+        if ((seg.type === 'mid' || seg.type === 'mid-id') && !seg.midEntry) {
+          console.error(`Segment at offset 0x${(seg.originalOffset||0).toString(16)} has no midEntry!`);
+        }
+      });
+    }
+  } catch (e) {
+    console.warn('MID completeness check failed:', e);
+  }
+  // --- end diagnostic ---
   
   return {
     originalBuffer: buffer,
@@ -961,14 +1015,6 @@ function findSection(bytes, tag) {
   throw new Error(`Section ${tag} not found.`);
 }
 
-/**
- * Renamed to safeReadBmgString and added maxLength check.
- * @param {DataView} view
- * @param {number} pointer
- * @param {number} limit
- * @param {number} [maxLength=10000]
- * @returns {{text: string, length: number, leadingNull: boolean}}
- */
 function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LENGTH) {
   if (pointer < 0 || pointer >= limit) {
     return { text: '', length: 0, leadingNull: false, byteLength: 0 };
@@ -977,7 +1023,7 @@ function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LEN
   let length = 0;
   let hadLeadingNull = false;
   const parts = [];
-  let unitCount = 0; // Counter for 16-bit units
+  let unitCount = 0;
   const startPos = pos;
 
   if (pos + 1 < limit) {
@@ -996,10 +1042,9 @@ function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LEN
     unitCount++;
     
     if (code === 0) {
-      break; // End of string
+      break;
     }
     
-    // Check for newline (0x000A) - should NOT terminate the string
     if (code === 0x000A) {
       parts.push('\n');
       continue;
@@ -1007,13 +1052,8 @@ function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LEN
 
     if (isSpecialControl(code)) {
       const paramCount = CONTROL_CODE_PARAMS.get(code) ?? 0;
-      // Debug logging to trace control codes and their params when parsing strings
-      // console.log(`Control code 0x${formatHex(code,2)} at offset 0x${formatHex(pos-2, 6)}, expects ${paramCount} params`);
       const params = [];
-      // Normal control code processing: read the declared number of 16-bit params
       if (pos + (paramCount * 2) > limit) {
-        // Not enough data for params, break loop to avoid error
-        // console.warn(`Control code 0x${formatHex(code,2)} at 0x${formatHex(pos-2, 6)} expects ${paramCount} params but buffer ended.`);
         break;
       }
       for (let i = 0; i < paramCount; i += 1) {
@@ -1026,7 +1066,6 @@ function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LEN
       continue;
     }
     
-    // Fallback for other characters
     const char = String.fromCharCode(code);
     parts.push(char);
   }
@@ -1043,58 +1082,104 @@ function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LEN
 function renderEntries() {
   els.entries.innerHTML = '';
   const fragment = document.createDocumentFragment();
-  const all = [...(state.entries ?? []), ...(state.midStrings ?? [])];
-  
-  // Groupe les messages MID avec effet de défilement
+  // Build display entries: INF entries handled via detectSequencedGroups below.
+  // For MID entries we want automatic grouping (but allow any user-defined groups to take precedence).
   const displayEntries = [];
-  const processed = new Set();
-  
-  all.forEach((entry, index) => {
-    if (processed.has(index)) return;
-    
-    if (entry.kind === 'mid') {
-      // Cherche si c'est le début d'un groupe scrolling
-      const group = [entry];
-      let j = index + 1;
-      let prevText = entry.text.replace(/\n/g, '');
-      
-      while (j < all.length && all[j].kind === 'mid') {
-        const nextText = all[j].text.replace(/\n/g, '');
-        if (nextText === prevText.slice(1) && nextText.length > 0) {
-          group.push(all[j]);
-          processed.add(j);
-          prevText = nextText;
-          j++;
-        } else {
-          break;
-        }
-      }
-      
-      // Ajoute le groupe (ou message simple)
+
+  // First, add INF entries placeholders (we'll replace with sequenced groups later)
+  (state.entries || []).forEach(e => displayEntries.push(e));
+
+  // Prepare MID entries honoring user-defined groups first
+  const midAll = state.midStrings || [];
+  const userGroups = state.midGroups || [];
+  const userMemberSet = new Set((userGroups.flat ? userGroups.flat() : []).filter(Boolean));
+
+  // Add user-defined group entries (leader only) and mark those members as handled
+  const handledMidIds = new Set();
+  userGroups.forEach((group) => {
+    if (!Array.isArray(group) || group.length === 0) return;
+    const leader = group[0];
+    const members = group.map(id => midAll.find(m => m.id === id)).filter(Boolean);
+    members.forEach(m => handledMidIds.add(m.id));
+    displayEntries.push({
+      kind: 'mid',
+      id: leader,
+      isUserMidGroup: true,
+      groupedIds: group.slice(),
+      groupedEntries: members,
+      text: members.map(m => m.text).join('')
+    });
+  });
+
+  // For remaining MID entries (not in user groups), attempt auto-detection for UI/display only.
+  // Export remains per-entry (lossless) elsewhere.
+  const autoPool = midAll.filter(m => !handledMidIds.has(m.id));
+  const midGroups = detectSequencedGroups(autoPool);
+  midGroups.forEach((group) => {
+    if (group.isSequenced) {
       displayEntries.push({
-        ...entry,
-        isScrollingGroup: group.length > 1,
-        scrollingIds: group.map(e => e.id),
-        scrollingCount: group.length
+        kind: 'mid',
+        id: group.entries[0].id,
+        isSequencedGroup: true,
+        sequencedEntries: group.entries,
+        // store sequencedIds (actual mid ids) for revert/edit handlers
+        sequencedIndices: group.entries.map(e => e.id),
+        sequencedCount: group.entries.length,
+        text: group.entries.map(e => e.text).join('')
       });
     } else {
-      displayEntries.push(entry);
+      displayEntries.push(group.entries[0]);
     }
-    
-    processed.add(index);
   });
   
-  const activeEntries = displayEntries.filter(matchesFilter);
+  const infGroups = detectSequencedGroups(state.entries);
+  
+  const finalEntries = [];
+  const infProcessed = new Set();
+  
+  infGroups.forEach(group => {
+    if (group.isSequenced) {
+      const firstEntry = group.entries[0];
+      finalEntries.push({
+        ...firstEntry,
+        isSequencedGroup: true,
+        sequencedEntries: group.entries,
+        sequencedIndices: group.indices,
+        sequencedCount: group.entries.length
+      });
+      group.indices.forEach(idx => infProcessed.add(idx));
+    } else {
+      if (!infProcessed.has(group.indices[0])) {
+        finalEntries.push(group.entries[0]);
+        infProcessed.add(group.indices[0]);
+      }
+    }
+  });
+  
+  displayEntries.forEach(entry => {
+    if (entry.kind !== 'mid') {
+      const idx = finalEntries.findIndex(e => e.id === entry.id && e.kind === entry.kind);
+      if (idx >= 0) {
+        finalEntries[idx] = entry;
+      }
+    } else {
+      finalEntries.push(entry);
+    }
+  });
+  
+  const activeEntries = finalEntries.filter(matchesFilter);
   activeEntries.forEach((entry) => {
     const card = buildEntryCard(entry);
     fragment.appendChild(card);
   });
   els.entries.appendChild(fragment);
 
-  // Compute visible count: scrolling groups represent multiple MID entries
   const visibleCount = activeEntries.reduce((sum, entry) => {
     if (entry.kind === 'mid' && entry.isScrollingGroup) {
       return sum + (entry.scrollingCount || 1);
+    }
+    if (entry.isSequencedGroup) {
+      return sum + (entry.sequencedCount || 1);
     }
     return sum + 1;
   }, 0);
@@ -1103,14 +1188,12 @@ function renderEntries() {
 }
 
 function matchesFilter(entry) {
-  // Check type filters first
   if (entry.kind === 'mid' && !els.filterMid.checked) {
     return false;
   }
   if (entry.kind !== 'mid' && !els.filterInf.checked) {
     return false;
   }
-  // Hide empty entries if "Empty" is unticked
   if (!els.filterEmpty.checked && (!entry.text || entry.text.trim() === '')) {
     return false;
   }
@@ -1120,11 +1203,13 @@ function matchesFilter(entry) {
     return true;
   }
   if (entry.kind === 'mid') {
-    const pointerHex = `0x${entry.offset.toString(16)}`.toLowerCase();
-    if (pointerHex.includes(query)) {
-      return true;
+    if (typeof entry.offset === 'number') {
+      const pointerHex = `0x${entry.offset.toString(16)}`.toLowerCase();
+      if (pointerHex.includes(query)) {
+        return true;
+      }
     }
-    const midLabel = `mid${entry.id + 1}`;
+    const midLabel = `mid${(typeof entry.id === 'number' ? entry.id + 1 : '')}`;
     if (midLabel.includes(query)) {
       return true;
     }
@@ -1134,14 +1219,14 @@ function matchesFilter(entry) {
     if (entry.references && entry.references.some((ref) => `row${ref.row}`.includes(query) || `col${ref.column}`.includes(query) || `${ref.row}:${ref.column}`.includes(query))) {
       return true;
     }
-    const text = entry.text.toLowerCase();
-    const original = entry.originalText.toLowerCase();
+    const text = (entry.text ?? '').toLowerCase();
+    const original = (entry.originalText ?? '').toLowerCase();
     return text.includes(query) || original.includes(query);
   }
   if (`${entry.index}`.includes(query)) {
     return true;
   }
-  if (`0x${entry.offset.toString(16)}`.toLowerCase().includes(query)) {
+  if (typeof entry.offset === 'number' && (`0x${entry.offset.toString(16)}`.toLowerCase().includes(query))) {
     return true;
   }
   if (typeof entry.messageId === 'number') {
@@ -1216,11 +1301,11 @@ function matchesFilter(entry) {
       return true;
     }
   }
-  if (`0x${entry.originalOffset.toString(16)}`.toLowerCase().includes(query)) {
+  if (typeof entry.originalOffset === 'number' && (`0x${entry.originalOffset.toString(16)}`.toLowerCase().includes(query))) {
     return true;
   }
-  const text = entry.text.toLowerCase();
-  const original = entry.originalText.toLowerCase();
+  const text = (entry.text ?? '').toLowerCase();
+  const original = (entry.originalText ?? '').toLowerCase();
   return text.includes(query) || original.includes(query);
 }
 
@@ -1230,60 +1315,185 @@ function buildEntryCard(entry) {
   card.dataset.kind = entry.kind;
   card.dataset.id = String(entry.id);
   card.dataset.color = entry.color ?? 'default';
-  card.classList.toggle('modified', entry.dirty);
+  // modified state for the card will be computed after building child textareas
   card.classList.toggle('mid-entry', entry.kind === 'mid');
+  card.classList.toggle('sequenced-entry', entry.isSequencedGroup === true);
   
   const title = card.querySelector('h3');
   let titleText = formatEntryTitle(entry);
   
-  // Ajoute l'info du groupe scrolling
   if (entry.isScrollingGroup) {
     const first = entry.scrollingIds[0];
     const last = entry.scrollingIds[entry.scrollingIds.length - 1];
     titleText += ` (IDs ${first}-${last}, ${entry.scrollingCount} variants)`;
   }
   
+  if (entry.isUserMidGroup) {
+    // Render one textarea per member for a user-defined MID group (preserve parts separately)
+    (entry.groupedEntries || []).forEach((part) => {
+      const shell = document.createElement('div');
+      shell.className = 'editor-shell';
+
+      const pre = document.createElement('pre');
+      pre.className = 'text-highlight';
+      pre.dataset.entryKind = 'mid';
+      pre.dataset.entryColor = part.color ?? 'default';
+      updateTextHighlight(pre, part.text);
+
+      const ta = document.createElement('textarea');
+      ta.value = part.text;
+      ta.dataset.kind = 'mid';
+      ta.dataset.id = String(part.id);
+      ta.addEventListener('input', onEntryEdit);
+
+      shell.appendChild(pre);
+      shell.appendChild(ta);
+      textareaContainer.appendChild(shell);
+    });
+  } else if (entry.isSequencedGroup) {
+    const first = entry.sequencedIndices[0];
+    const last = entry.sequencedIndices[entry.sequencedIndices.length - 1];
+    titleText += ` (Entries ${first}-${last}, ${entry.sequencedCount} parts)`;
+  }
+  
   title.textContent = titleText;
   
   const badges = card.querySelector('.badges');
   updateBadges(badges, entry);
+
+  // MID grouping controls (manual)
+  if (entry.kind === 'mid') {
+    const midGroup = getMidGroupForId(entry.id);
+    if (midGroup) {
+      const groupBadge = makeBadge(`Grouped (${midGroup.join(',')})`, 'warning');
+      badges.appendChild(groupBadge);
+    }
+  }
   
-  // Ajoute un badge pour les groupes scrolling
   if (entry.isScrollingGroup) {
     const scrollBadge = makeBadge('Scrolling', 'scrolling');
     badges.appendChild(scrollBadge);
   }
   
-  card.querySelector('.offset').textContent = formatOffsetLabel(entry);
-  card.querySelector('.attr').textContent = formatAttrLabel(entry);
-  const textarea = card.querySelector('textarea');
-  textarea.value = entry.text;
-  textarea.dataset.kind = entry.kind;
-  textarea.dataset.id = String(entry.id);
-  
-  // Si c'est un groupe scrolling, mettre les IDs du groupe en data attribute
-  if (entry.isScrollingGroup) {
-    textarea.dataset.scrollingIds = JSON.stringify(entry.scrollingIds);
+  if (entry.isSequencedGroup) {
+    const seqBadge = makeBadge('Sequenced', 'sequenced');
+    badges.appendChild(seqBadge);
   }
   
-  textarea.addEventListener('input', onEntryEdit);
-  const highlight = card.querySelector('.text-highlight');
-  highlight.dataset.entryKind = entry.kind;
-  highlight.dataset.entryColor = entry.color ?? 'default';
-  updateTextHighlight(highlight, entry.text);
+  card.querySelector('.offset').textContent = formatOffsetLabel(entry);
+  card.querySelector('.attr').textContent = formatAttrLabel(entry);
+  
+  const textareaContainer = card.querySelector('.textarea-container');
+  textareaContainer.innerHTML = '';
+
+  if (entry.isSequencedGroup) {
+    if (entry.kind === 'mid') {
+      // For automatically-detected MID sequences, render one textarea per sequenced part
+      entry.sequencedEntries.forEach((part) => {
+        const shell = document.createElement('div');
+        shell.className = 'editor-shell';
+
+        const pre = document.createElement('pre');
+        pre.className = 'text-highlight';
+        pre.dataset.entryKind = 'mid';
+        pre.dataset.entryColor = part.color ?? 'default';
+        updateTextHighlight(pre, part.text);
+
+        const ta = document.createElement('textarea');
+        ta.value = part.text;
+        ta.dataset.kind = 'mid';
+        ta.dataset.id = String(part.id);
+        ta.addEventListener('input', onEntryEdit);
+
+        shell.appendChild(pre);
+        shell.appendChild(ta);
+        textareaContainer.appendChild(shell);
+      });
+    } else {
+      // Render a single combined textarea for the whole sequenced group (INF behavior)
+      const combined = entry.sequencedEntries.map(e => e.text).join('');
+      const textarea = document.createElement('textarea');
+      textarea.value = combined;
+      textarea.dataset.kind = entry.kind;
+      textarea.dataset.id = String(entry.id);
+      // Store the indices of the sequenced parts so edits can be redistributed.
+      textarea.dataset.sequencedIndices = JSON.stringify(entry.sequencedIndices);
+      textarea.addEventListener('input', onEntryEdit);
+      textareaContainer.appendChild(textarea);
+
+      const highlight = document.createElement('div');
+      highlight.className = 'text-highlight';
+      highlight.dataset.entryKind = entry.kind;
+      highlight.dataset.entryColor = entry.color ?? 'default';
+      updateTextHighlight(highlight, combined);
+      textareaContainer.appendChild(highlight);
+    }
+  } else {
+    {
+      const shell = document.createElement('div');
+      shell.className = 'editor-shell';
+
+      const pre = document.createElement('pre');
+      pre.className = 'text-highlight';
+      pre.dataset.entryKind = entry.kind;
+      pre.dataset.entryColor = entry.color ?? 'default';
+      updateTextHighlight(pre, entry.text);
+
+      const ta = document.createElement('textarea');
+      ta.value = entry.text;
+      ta.dataset.kind = entry.kind;
+      ta.dataset.id = String(entry.id);
+      if (entry.isScrollingGroup) {
+        ta.dataset.scrollingIds = JSON.stringify(entry.scrollingIds);
+      }
+      ta.addEventListener('input', onEntryEdit);
+
+      shell.appendChild(pre);
+      shell.appendChild(ta);
+      textareaContainer.appendChild(shell);
+    }
+  }
+  
   const revertBtn = card.querySelector('.revert');
   revertBtn.dataset.kind = entry.kind;
   revertBtn.dataset.id = String(entry.id);
+
+  // Add MID group buttons in the actions area
+  if (entry.kind === 'mid') {
+    // Group/ungroup controls retired: MID grouping is handled automatically.
+  }
   
-  // Si groupe scrolling, stocker aussi les IDs pour le revert
   if (entry.isScrollingGroup) {
     revertBtn.dataset.scrollingIds = JSON.stringify(entry.scrollingIds);
+  }
+  
+  if (entry.isSequencedGroup) {
+    revertBtn.dataset.sequencedIndices = JSON.stringify(entry.sequencedIndices);
   }
   
   revertBtn.disabled = !entry.dirty;
   revertBtn.addEventListener('click', onEntryRevert);
   const charCount = card.querySelector('.char-count');
   charCount.textContent = formatCharCount(entry);
+  // Compute card-level modified state: if the main entry or any child part is dirty.
+  (function computeCardModified() {
+    let modified = !!entry.dirty;
+    const taList = card.querySelectorAll('textarea');
+    taList.forEach((ta) => {
+      const resolved = resolveEntry(ta.dataset.kind, ta.dataset.id);
+      if (resolved && resolved.dirty) modified = true;
+    });
+    card.classList.toggle('modified', modified);
+    // manage modified badge visibility
+    const existing = Array.from(badges.children).find(b => (b.textContent || '').toLowerCase() === 'modified');
+    if (modified && !existing) {
+      badges.appendChild(makeBadge('modified', 'warning'));
+    } else if (!modified && existing) {
+      existing.remove();
+    }
+    // enable revert when any part is modified
+    revertBtn.disabled = !modified;
+  })();
   return card;
 }
 
@@ -1348,7 +1558,6 @@ function generateScrollingVariants(text) {
   let current = text;
   
   while (current.length > 0) {
-    // Enlève le premier caractère (en respectant les sauts de ligne)
     const lines = current.split('\n');
     if (lines[0].length > 0) {
       lines[0] = lines[0].slice(1);
@@ -1372,6 +1581,8 @@ function onEntryEdit(event) {
   const kind = event.target.dataset.kind;
   const id = event.target.dataset.id;
   const scrollingIdsStr = event.target.dataset.scrollingIds;
+  const sequencedIndicesStr = event.target.dataset.sequencedIndices;
+  const sequencedIndex = event.target.dataset.sequencedIndex;
   
   const entry = resolveEntry(kind, id);
   if (!entry) return;
@@ -1403,6 +1614,100 @@ function onEntryEdit(event) {
         }
       }
     });
+  } else if (sequencedIndicesStr && kind !== 'mid') {
+    const sequencedIndices = JSON.parse(sequencedIndicesStr);
+    // If a specific sequencedIndex is provided (old UI with separate textareas), handle normally.
+    if (sequencedIndex !== undefined) {
+      const seqIdx = Number(sequencedIndex);
+      const targetIndex = sequencedIndices[seqIdx];
+      const targetEntry = state.entries[targetIndex];
+      if (targetEntry) {
+        targetEntry.text = normalized;
+        targetEntry.dirty = targetEntry.text !== targetEntry.originalText;
+        const encodedLength = encodeBmgString(targetEntry.text, { leadingNull: targetEntry.leadingNull }).length;
+        targetEntry.byteLength = targetEntry.dirty ? encodedLength : targetEntry.originalBytes.length;
+      }
+    } else {
+      // Combined textarea edited: distribute the full text across sequenced parts.
+      const fullText = normalized;
+      const targets = sequencedIndices.map(idx => state.entries[idx]).filter(Boolean);
+      if (targets.length) {
+        // Compute original visible lengths to determine proportionate split.
+        const origVis = targets.map(t => Math.max(1, countVisibleCharacters(t.originalText)));
+        const sumOrig = origVis.reduce((a, b) => a + b, 0) || targets.length;
+        const desired = origVis.map(v => Math.round((v / sumOrig) * countVisibleCharacters(fullText)));
+        // Adjust to ensure total equals full length
+        let totalDesired = desired.reduce((a, b) => a + b, 0);
+        const fullVis = countVisibleCharacters(fullText);
+        // Fix rounding drift
+        let i = 0;
+        while (totalDesired !== fullVis && i < desired.length) {
+          if (totalDesired < fullVis) {
+            desired[i] += 1;
+            totalDesired += 1;
+          } else if (totalDesired > fullVis && desired[i] > 0) {
+            desired[i] -= 1;
+            totalDesired -= 1;
+          }
+          i = (i + 1) % desired.length;
+        }
+        const parts = splitPreservingTokens(fullText, desired);
+        targets.forEach((targetEntry, idx) => {
+          const part = parts[idx] ?? '';
+          targetEntry.text = part;
+          targetEntry.dirty = targetEntry.text !== targetEntry.originalText;
+          if (targetEntry.kind === 'mid' && targetEntry.segment) {
+            const nextBytes = targetEntry.dirty
+              ? encodeBmgString(targetEntry.text, { leadingNull: targetEntry.leadingNull })
+              : targetEntry.originalBytes.slice();
+            targetEntry.segment.bytes = nextBytes;
+            targetEntry.segment.text = targetEntry.text;
+            targetEntry.segment.leadingNull = targetEntry.leadingNull;
+            targetEntry.byteLength = nextBytes.length;
+          } else {
+            const encodedLength = encodeBmgString(targetEntry.text, { leadingNull: targetEntry.leadingNull }).length;
+            targetEntry.byteLength = targetEntry.dirty ? encodedLength : targetEntry.originalBytes.length;
+          }
+        });
+      }
+    }
+  } else if (sequencedIndicesStr && kind === 'mid') {
+    // Combined MID group textarea edited: distribute across MID ids
+    const sequencedIds = JSON.parse(sequencedIndicesStr);
+    const fullText = normalized;
+    const targets = sequencedIds.map(id => state.midStrings.find(e => e.id === id)).filter(Boolean);
+    if (targets.length) {
+      const origVis = targets.map(t => Math.max(1, countVisibleCharacters(t.originalText)));
+      const sumOrig = origVis.reduce((a, b) => a + b, 0) || targets.length;
+      const fullVis = countVisibleCharacters(fullText);
+      const desired = origVis.map(v => Math.round((v / sumOrig) * fullVis));
+      // Fix rounding drift
+      let totalDesired = desired.reduce((a, b) => a + b, 0);
+      let idxFix = 0;
+      while (totalDesired !== fullVis && idxFix < desired.length) {
+        if (totalDesired < fullVis) { desired[idxFix] += 1; totalDesired += 1; }
+        else if (totalDesired > fullVis && desired[idxFix] > 0) { desired[idxFix] -= 1; totalDesired -= 1; }
+        idxFix = (idxFix + 1) % desired.length;
+      }
+      const parts = splitPreservingTokens(fullText, desired);
+      targets.forEach((targetEntry, idx) => {
+        const part = parts[idx] ?? '';
+        targetEntry.text = part;
+        targetEntry.dirty = targetEntry.text !== targetEntry.originalText;
+        if (targetEntry.segment) {
+          const nextBytes = targetEntry.dirty
+            ? encodeBmgString(targetEntry.text, { leadingNull: targetEntry.leadingNull })
+            : targetEntry.originalBytes.slice();
+          targetEntry.segment.bytes = nextBytes;
+          targetEntry.segment.text = targetEntry.text;
+          targetEntry.segment.leadingNull = targetEntry.leadingNull;
+          targetEntry.byteLength = nextBytes.length;
+        } else {
+          const encodedLength = encodeBmgString(targetEntry.text, { leadingNull: targetEntry.leadingNull }).length;
+          targetEntry.byteLength = targetEntry.dirty ? encodedLength : targetEntry.originalBytes.length;
+        }
+      });
+    }
   } else {
     entry.text = normalized;
     entry.dirty = entry.text !== entry.originalText;
@@ -1432,6 +1737,43 @@ function onEntryEdit(event) {
   }
   
   card.classList.toggle('modified', entry.dirty);
+  // Update the preview highlight for the specific textarea that was edited.
+  try {
+    const shell = event.target.closest('.editor-shell');
+    const hl = shell ? shell.querySelector('.text-highlight') : null;
+    if (hl) updateTextHighlight(hl, event.target.value);
+  } catch (e) {
+    // ignore
+  }
+  // Update card-level modified state when editing a part
+  try {
+    const card = event.target.closest('.entry-card');
+    if (card) {
+      let modified = false;
+      const taList = card.querySelectorAll('textarea');
+      taList.forEach((ta) => {
+        const resolved = resolveEntry(ta.dataset.kind, ta.dataset.id);
+        if (resolved && resolved.dirty) modified = true;
+      });
+      // also consider top-level entry.dirty
+      const topEntryKind = event.target.dataset.kind;
+      const topEntryId = event.target.dataset.id;
+      const topResolved = resolveEntry(topEntryKind, topEntryId);
+      if (topResolved && topResolved.dirty) modified = true;
+
+      card.classList.toggle('modified', modified);
+      const badges = card.querySelector('.badges');
+      const existing = badges ? Array.from(badges.children).find(b => (b.textContent || '').toLowerCase() === 'modified') : null;
+      if (badges) {
+        if (modified && !existing) badges.appendChild(makeBadge('modified', 'warning'));
+        else if (!modified && existing) existing.remove();
+      }
+      const revertBtn = card.querySelector('.revert');
+      if (revertBtn) revertBtn.disabled = !modified;
+    }
+  } catch (e) {
+    // ignore
+  }
   const revertBtn = card.querySelector('.revert');
   if (revertBtn) {
     revertBtn.disabled = !entry.dirty;
@@ -1444,11 +1786,11 @@ function onEntryRevert(event) {
   const kind = event.currentTarget.dataset.kind;
   const id = event.currentTarget.dataset.id;
   const scrollingIdsStr = event.currentTarget.dataset.scrollingIds;
+  const sequencedIndicesStr = event.currentTarget.dataset.sequencedIndices;
   
   const entry = resolveEntry(kind, id);
   if (!entry) return;
   
-  // Si c'est un groupe scrolling, restaurer toutes les variations
   if (scrollingIdsStr && kind === 'mid') {
     const scrollingIds = JSON.parse(scrollingIdsStr);
     
@@ -1467,8 +1809,18 @@ function onEntryRevert(event) {
         }
       }
     });
+  } else if (sequencedIndicesStr && kind !== 'mid') {
+    const sequencedIndices = JSON.parse(sequencedIndicesStr);
+    sequencedIndices.forEach((targetIndex) => {
+      const targetEntry = state.entries[targetIndex];
+      if (targetEntry) {
+        targetEntry.text = targetEntry.originalText;
+        targetEntry.leadingNull = targetEntry.originalLeadingNull;
+        targetEntry.byteLength = targetEntry.originalBytes.length;
+        targetEntry.dirty = false;
+      }
+    });
   } else {
-    // Logique normale pour message simple
     entry.text = entry.originalText;
     entry.leadingNull = entry.originalLeadingNull;
     
@@ -1483,15 +1835,65 @@ function onEntryRevert(event) {
     
     entry.dirty = false;
   }
-  
   updateCalculatedOffsets();
   const card = event.currentTarget.closest('.entry-card');
-  const textarea = card.querySelector('textarea');
-  textarea.value = entry.text;
-  const highlight = card.querySelector('.text-highlight');
-  highlight.dataset.entryKind = entry.kind;
-  highlight.dataset.entryColor = entry.color ?? 'default';
-  updateTextHighlight(highlight, entry.text);
+  const textareas = card.querySelectorAll('textarea');
+  if (sequencedIndicesStr) {
+    const sequencedIndices = JSON.parse(sequencedIndicesStr);
+    // If a single combined textarea is present, set its value to the concatenation of parts.
+    if (textareas.length === 1) {
+      let combined;
+      if (kind === 'mid') {
+        combined = sequencedIndices.map(i => (state.midStrings.find(e => e.id === i)?.text ?? '')).join('');
+      } else {
+        combined = sequencedIndices.map(i => (state.entries[i]?.text ?? '')).join('');
+      }
+      textareas[0].value = combined;
+      // find associated highlight (support shell-wrapped or adjacent highlight)
+      const shell0 = textareas[0].closest('.editor-shell');
+      const hl0 = (textareas[0].nextElementSibling && textareas[0].nextElementSibling.classList && textareas[0].nextElementSibling.classList.contains('text-highlight'))
+        ? textareas[0].nextElementSibling
+        : (shell0 ? shell0.querySelector('.text-highlight') : null);
+      if (hl0) updateTextHighlight(hl0, combined);
+    } else {
+      // multiple textareas for parts (legacy INF or auto MID groups)
+      textareas.forEach((textarea, idx) => {
+        const targetKey = sequencedIndices[idx];
+        if (kind === 'mid') {
+          const targetEntry = state.midStrings.find(e => e.id === targetKey);
+          if (targetEntry) {
+            textarea.value = targetEntry.text;
+            const shell = textarea.closest('.editor-shell');
+            const highlight = (textarea.nextElementSibling && textarea.nextElementSibling.classList && textarea.nextElementSibling.classList.contains('text-highlight'))
+              ? textarea.nextElementSibling
+              : (shell ? shell.querySelector('.text-highlight') : null);
+            if (highlight) updateTextHighlight(highlight, targetEntry.text);
+          }
+        } else {
+          const targetIndex = targetKey;
+          const targetEntry = state.entries[targetIndex];
+          if (targetEntry) {
+            textarea.value = targetEntry.text;
+            const shell = textarea.closest('.editor-shell');
+            const highlight = (textarea.nextElementSibling && textarea.nextElementSibling.classList && textarea.nextElementSibling.classList.contains('text-highlight'))
+              ? textarea.nextElementSibling
+              : (shell ? shell.querySelector('.text-highlight') : null);
+            if (highlight) updateTextHighlight(highlight, targetEntry.text);
+          }
+        }
+      });
+    }
+  } else {
+    textareas.forEach(textarea => {
+      textarea.value = entry.text;
+    });
+    const highlights = card.querySelectorAll('.text-highlight');
+    highlights.forEach(highlight => {
+      highlight.dataset.entryKind = entry.kind;
+      highlight.dataset.entryColor = entry.color ?? 'default';
+      updateTextHighlight(highlight, entry.text);
+    });
+  }
   card.classList.toggle('modified', entry.dirty);
   event.currentTarget.disabled = true;
   refreshEntryMetrics();
@@ -1519,17 +1921,14 @@ function updateMeta() {
   }
   const encodingName = ENCODINGS[state.encoding] || `0x${formatHex(state.encoding, 2)}`;
   const infSize = formatBytes(state.infSize);
-  const datSize = formatBytes(state.datDeclaredSize);
+const datSize = formatBytes(state.datDeclaredSize);
   const midSize = state.midSize ? formatBytes(state.midSize) : '0 B';
   const infCount = state.entryCount;
   const midCount = state.midStrings?.length ?? 0;
   const totalCount = infCount + midCount;
 
-  // Section sizes (entry count before size)
   const sizeLine = `<div class="meta-block"><strong>Section sizes</strong><br>INF1: <strong>${infCount}</strong> · ${infSize} &nbsp;·&nbsp; DAT1: <strong>${datSize}</strong> &nbsp;·&nbsp; MID1: <strong>${midCount}</strong> · ${midSize}</div>`;
-  // Entry counts
   const countLine = `<div class="meta-block"><strong>Entry counts</strong><br>Total: <strong>${totalCount}</strong> · INF1: <strong>${infCount}</strong> · MID1: <strong>${midCount}</strong></div>`;
-  // Encoding/settings
   const encodingLine = `<div class="meta-block"><strong>Encoding</strong><br>${encodingName}</div>`;
 
   let html = `
@@ -1587,52 +1986,83 @@ function handleDownload() {
 }
 
 function handleExportJson() {
-  // Détecte et groupe les messages avec effet de défilement
+  // Build MID grouped messages using improved detection (offsets/tokens heuristics)
   const groupedMessages = [];
-  const processed = new Set();
-  
   const midStrings = state.midStrings || [];
-  
-  for (let i = 0; i < midStrings.length; i++) {
-    if (processed.has(i)) continue;
-    
-    const baseMsg = midStrings[i];
-    const baseText = baseMsg.text.replace(/\n/g, '');
-    
-    // Cherche les variations scrolling suivantes
-    let j = i + 1;
-    let prevText = baseText;
-    const groupIds = [baseMsg.id];
-    
-    while (j < midStrings.length) {
-      const nextText = midStrings[j].text.replace(/\n/g, '');
-      
-      // Vérifie si c'est une variation (texte précédent sans le premier char)
-      if (nextText === prevText.slice(1) && nextText.length > 0) {
-        groupIds.push(midStrings[j].id);
-        processed.add(j);
-        prevText = nextText;
-        j++;
-      } else {
-        break;
-      }
-    }
-    
-    // Ajoute seulement le message complet (pas les variations)
-    groupedMessages.push({
-      id: baseMsg.id,
-      message: baseMsg.text,
-      scrollingGroup: groupIds.length > 1 ? groupIds : undefined
+
+  // DO NOT auto-detect MID groups for export. Export every MID entry separately so no fragments are lost.
+  if (midStrings.length) {
+    midStrings.forEach((entry) => {
+      groupedMessages.push({
+        id: entry.id,
+        message: entry.text
+      });
     });
-    
-    processed.add(i);
   }
+
+  // Include any user-defined MID groups (state.midGroups) in the export.
+  const userGroups = state.midGroups || [];
+  userGroups.forEach((group) => {
+    if (!Array.isArray(group) || group.length === 0) return;
+    const leader = group[0];
+    // Avoid duplicates: only add if not present already
+    if (groupedMessages.some((m) => m.id === leader)) return;
+    const combined = group.map(id => {
+      const s = midStrings.find(m => m.id === id);
+      return s ? s.text : '';
+    }).join('');
+
+    // Try to produce an explicit `messages` array matching sequenced ids so
+    // exported JSON keeps parts separate (lossless round-trip). Use
+    // token-preserving splitting based on the original visible lengths of
+    // each target entry where possible. Fall back to a single combined
+    // message if splitting isn't feasible.
+    const targets = group.map(id => midStrings.find(m => m.id === id)).filter(Boolean);
+    if (targets.length > 1) {
+      const normalizedFull = normalizeInput(combined);
+      // Compute visible char counts from originalText if available, else current text
+      const origVis = targets.map(t => Math.max(1, countVisibleCharacters(t.originalText ?? t.text ?? '')));
+      const sumOrig = origVis.reduce((a, b) => a + b, 0) || targets.length;
+      const fullVis = countVisibleCharacters(normalizedFull);
+      const desired = origVis.map(v => Math.round((v / sumOrig) * fullVis));
+      let totalDesired = desired.reduce((a, b) => a + b, 0);
+      let idxFix = 0;
+      while (totalDesired !== fullVis && idxFix < desired.length) {
+        if (totalDesired < fullVis) { desired[idxFix] += 1; totalDesired += 1; }
+        else if (totalDesired > fullVis && desired[idxFix] > 0) { desired[idxFix] -= 1; totalDesired -= 1; }
+        idxFix = (idxFix + 1) % desired.length;
+      }
+      const parts = splitPreservingTokens(normalizedFull, desired);
+      // Ensure parts array matches group length
+      while (parts.length < group.length) parts.push('');
+      groupedMessages.push({ id: leader, messages: parts, sequencedGroup: group.slice() });
+    } else {
+      // Fallback: export as single combined message
+      groupedMessages.push({ id: leader, message: combined, sequencedGroup: group.slice() });
+    }
+  });
+  
+  const infGroups = detectSequencedGroups(state.entries);
+  const groupedInfEntries = [];
+  
+  infGroups.forEach(group => {
+    if (group.isSequenced) {
+      groupedInfEntries.push({
+        id: group.entries[0].index,
+        messages: group.entries.map(e => e.text),
+        // Export canonical INF indices (entry.index) so imports map reliably by index
+        sequencedGroup: group.entries.map(e => e.index)
+      });
+    } else {
+      groupedInfEntries.push({
+        id: group.entries[0].index,
+        message: group.entries[0].text
+      });
+    }
+  });
   
   const payload = {
-    inf1: state.entries.map((entry) => ({
-      id: entry.index,
-      message: entry.text
-    })),
+    inf1: groupedInfEntries,
     mid1: groupedMessages
   };
   
@@ -1675,7 +2105,6 @@ function handleImportJsonFile(event) {
         throw new Error('Invalid JSON format.');
       }
       
-      // Support multiple formats
       let entries, midStrings;
       if (Array.isArray(data)) {
         entries = data;
@@ -1695,12 +2124,10 @@ function handleImportJsonFile(event) {
       if (!Array.isArray(entries)) {
         throw new Error('JSON "entries" must be an array.');
       }
-      if (entries.length !== state.entryCount) {
-        throw new Error(`JSON entry count (${entries.length}) does not match BMG entry count (${state.entryCount}).`);
-      }
       
       const seen = new Set();
-      const messages = new Array(state.entryCount);
+      const messages = new Map();
+      
       entries.forEach((item, idx) => {
         if (typeof item !== 'object' || item === null) {
           throw new Error(`Entry at index ${idx} is not an object.`);
@@ -1712,28 +2139,98 @@ function handleImportJsonFile(event) {
         if (seen.has(id)) {
           throw new Error(`Duplicate entry id ${id} in JSON.`);
         }
-        if (typeof item.message !== 'string') {
-          throw new Error(`Entry ${id} is missing a string "message" field.`);
+        // Accept either a single string `message` or an array `messages` when sequencedGroup present
+        const hasMessagesArray = Array.isArray(item.messages) && item.messages.every(m => typeof m === 'string');
+        const hasSingleMessage = typeof item.message === 'string';
+        if (!hasSingleMessage && !hasMessagesArray) {
+          throw new Error(`Entry ${id} must have either a string "message" or an array "messages".`);
         }
         seen.add(id);
-        messages[id] = normalizeInput(item.message);
-      });
-      for (let id = 0; id < state.entryCount; id += 1) {
-        if (typeof messages[id] !== 'string') {
-          throw new Error(`Missing message for entry id ${id}.`);
+
+        if (Array.isArray(item.sequencedGroup) && item.sequencedGroup.length > 1) {
+          // sequenced group: prefer explicit `messages` array; fall back to single combined `message` string
+          if (hasMessagesArray) {
+            messages.set(id, {
+              isSequenced: true,
+              indices: item.sequencedGroup,
+              messages: item.messages.map(m => normalizeInput(m))
+            });
+          } else {
+            messages.set(id, {
+              isSequenced: true,
+              indices: item.sequencedGroup,
+              // older form: one combined string, importer will split proportionally
+              message: normalizeInput(item.message)
+            });
+          }
+        } else {
+          // non-sequenced single message
+          messages.set(id, {
+            isSequenced: false,
+            message: normalizeInput(item.message ?? (Array.isArray(item.messages) ? item.messages[0] : ''))
+          });
         }
-      }
-      
-      // Apply INF entry updates
-      state.entries.forEach((entry, index) => {
-        const nextText = messages[index];
-        entry.text = nextText;
-        const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-        entry.dirty = entry.text !== entry.originalText;
-        entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
       });
       
-      // Apply MID string updates - avec support des groupes scrolling
+      // Apply provided entries/groups to INF entries. The JSON may provide group leaders
+      // (with sequencedGroup + messages[]) or single-entry items. Iterate the messages
+      // map and apply each item to the target entries.
+      messages.forEach((data, key) => {
+        const numericKey = Number(key);
+        if (!data || typeof data !== 'object') return;
+        if (!data.isSequenced) {
+          const entry = state.entries[numericKey];
+          if (!entry) return;
+          entry.text = normalizeInput(data.message ?? '');
+          const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+          entry.dirty = entry.text !== entry.originalText;
+          entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
+          return;
+        }
+
+        // Sequenced group: data.indices lists target INF indices. If an explicit
+        // `messages` array is provided, assign parts directly; otherwise fall back
+        // to splitting the combined `message` string proportionally.
+        const targetIndices = Array.isArray(data.indices) ? data.indices.map(Number) : [];
+        if (!targetIndices.length) return;
+
+        if (Array.isArray(data.messages) && data.messages.length > 0) {
+          targetIndices.forEach((tIdx, idx) => {
+            const targetEntry = state.entries[tIdx];
+            if (!targetEntry) return;
+            const part = normalizeInput(data.messages[idx] ?? '');
+            targetEntry.text = part;
+            const encodedLength = encodeBmgString(targetEntry.text, { leadingNull: targetEntry.leadingNull }).length;
+            targetEntry.dirty = targetEntry.text !== targetEntry.originalText;
+            targetEntry.byteLength = targetEntry.dirty ? encodedLength : targetEntry.originalBytes.length;
+          });
+        } else if (typeof data.message === 'string') {
+          const normalizedFull = normalizeInput(data.message);
+          const targets = targetIndices.map(i => state.entries[i]).filter(Boolean);
+          if (targets.length) {
+            const origVis = targets.map(t => Math.max(1, countVisibleCharacters(t.originalText)));
+            const sumOrig = origVis.reduce((a, b) => a + b, 0) || targets.length;
+            const fullVis = countVisibleCharacters(normalizedFull);
+            const desired = origVis.map(v => Math.round((v / sumOrig) * fullVis));
+            let totalDesired = desired.reduce((a, b) => a + b, 0);
+            let idxFix = 0;
+            while (totalDesired !== fullVis && idxFix < desired.length) {
+              if (totalDesired < fullVis) { desired[idxFix] += 1; totalDesired += 1; }
+              else if (totalDesired > fullVis && desired[idxFix] > 0) { desired[idxFix] -= 1; totalDesired -= 1; }
+              idxFix = (idxFix + 1) % desired.length;
+            }
+            const parts = splitPreservingTokens(normalizedFull, desired);
+            targets.forEach((targetEntry, idx) => {
+              const part = parts[idx] ?? '';
+              targetEntry.text = part;
+              targetEntry.dirty = targetEntry.text !== targetEntry.originalText;
+              const encodedLength = encodeBmgString(targetEntry.text, { leadingNull: targetEntry.leadingNull }).length;
+              targetEntry.byteLength = targetEntry.dirty ? encodedLength : targetEntry.originalBytes.length;
+            });
+          }
+        }
+      });
+      
       if (Array.isArray(midStrings) && midStrings.length > 0 && state.midStrings && state.midStrings.length > 0) {
         midStrings.forEach((item) => {
           if (typeof item !== 'object' || item === null) {
@@ -1742,16 +2239,16 @@ function handleImportJsonFile(event) {
           
           const baseId = Number(item.id);
           const message = item.message;
+          const messagesArr = Array.isArray(item.messages) ? item.messages : null;
           const scrollingGroup = item.scrollingGroup;
-          
-          if (!Number.isInteger(baseId) || typeof message !== 'string') {
+
+          if (!Number.isInteger(baseId) || (!messagesArr && typeof message !== 'string' && !Array.isArray(scrollingGroup))) {
             return;
           }
-          
-          // Si c'est un groupe scrolling, générer les variations
-          if (Array.isArray(scrollingGroup) && scrollingGroup.length > 1) {
+
+          if (Array.isArray(scrollingGroup) && scrollingGroup.length > 1 && typeof message === 'string') {
             const variants = generateScrollingVariants(message);
-            
+
             scrollingGroup.forEach((variantId, index) => {
               const entry = state.midStrings.find(e => e.id === variantId);
               if (entry && variants[index] !== undefined) {
@@ -1762,13 +2259,57 @@ function handleImportJsonFile(event) {
               }
             });
           } else {
-            // Message simple
-            const entry = state.midStrings.find(e => e.id === baseId);
-            if (entry) {
-              entry.text = normalizeInput(message);
-              const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-              entry.dirty = entry.text !== entry.originalText;
-              entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
+            // Support sequencedGroup for MID entries in import JSON
+            if (Array.isArray(item.sequencedGroup) && item.sequencedGroup.length > 1) {
+              const ids = item.sequencedGroup.map(Number);
+              // If explicit messages array is provided, assign parts directly
+              if (Array.isArray(messagesArr) && messagesArr.length > 0) {
+                ids.forEach((idVal, idx) => {
+                  const entry = state.midStrings.find(e => e.id === idVal);
+                  if (!entry) return;
+                  entry.text = normalizeInput(messagesArr[idx] ?? '');
+                  const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+                  entry.dirty = entry.text !== entry.originalText;
+                  entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
+                });
+              } else if (typeof message === 'string') {
+                const normalizedFull = normalizeInput(message);
+                const targets = ids.map(id => state.midStrings.find(e => e.id === id)).filter(Boolean);
+                if (targets.length) {
+                  const origVis = targets.map(t => Math.max(1, countVisibleCharacters(t.originalText)));
+                  const sumOrig = origVis.reduce((a, b) => a + b, 0) || targets.length;
+                  const fullVis = countVisibleCharacters(normalizedFull);
+                  const desired = origVis.map(v => Math.round((v / sumOrig) * fullVis));
+                  let totalDesired = desired.reduce((a, b) => a + b, 0);
+                  let idxFix = 0;
+                  while (totalDesired !== fullVis && idxFix < desired.length) {
+                    if (totalDesired < fullVis) { desired[idxFix] += 1; totalDesired += 1; }
+                    else if (totalDesired > fullVis && desired[idxFix] > 0) { desired[idxFix] -= 1; totalDesired -= 1; }
+                    idxFix = (idxFix + 1) % desired.length;
+                  }
+                  const parts = splitPreservingTokens(normalizedFull, desired);
+                  targets.forEach((entry, idx) => {
+                    const part = parts[idx] ?? '';
+                    entry.text = part;
+                    const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+                    entry.dirty = entry.text !== entry.originalText;
+                    entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
+                  });
+                }
+              }
+            } else {
+              const entry = state.midStrings.find(e => e.id === baseId);
+              if (entry) {
+                if (Array.isArray(messagesArr) && messagesArr.length > 0) {
+                  // If multiple messages were provided for a single baseId, use the first
+                  entry.text = normalizeInput(messagesArr[0] ?? '');
+                } else {
+                  entry.text = normalizeInput(message ?? '');
+                }
+                const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+                entry.dirty = entry.text !== entry.originalText;
+                entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
+              }
             }
           }
         });
@@ -1792,52 +2333,36 @@ function buildBmg() {
   const layout = planDatLayout(state.entries);
   const { chunks, chunkByEntry, chunkBySegment, dataSize, padding, offsetRemap } = layout;
   
-  // Extract the section BEFORE DAT1
   const before = state.bytes.slice(0, state.datOffset + 8);
   
-  // Extract everything AFTER DAT1 (MID1 section if it exists)
-  // CRITICAL: Use state.midOffset if MID1 exists, otherwise use file end
-  // This ensures MID1 is extracted from its EXACT position, not from a calculated offset
   const afterStart = state.midOffset >= 0 
     ? state.midOffset 
     : state.bytes.length;
   const after = state.bytes.slice(afterStart);
   
-  // Calculate new DAT1 size (content + padding, without the 8-byte header)
-  // CRITICAL: The original game format adds 8 extra bytes to DAT1 declared size
-  // This makes MID1 start 8 bytes "inside" the declared DAT1 zone
   const newDatSize = dataSize + padding + 8;
   
-  // Build the output buffer: before + new DAT1 content + padding + after (MID1)
-  // Note: We write (dataSize + padding) bytes, but declare (dataSize + padding + 8) in header
   const output = new Uint8Array(before.length + dataSize + padding + after.length);
   let pos = 0;
   
-  // Copy section before DAT1
   output.set(before, pos);
   pos += before.length;
   
-  // Write DAT1 content
   chunks.forEach((chunk) => {
     output.set(chunk.bytes, pos);
     pos += chunk.bytes.length;
   });
   
-  // Write padding to align to 4 bytes
   if (padding) {
     output.fill(0, pos, pos + padding);
     pos += padding;
   }
   
-  // Copy section after DAT1 (MID1)
-  const newMidOffset = pos;  // Store the new position of MID1
+  const newMidOffset = pos;
   output.set(after, pos);
 
-  // Update file headers
   const view = new DataView(output.buffer);
-  // Write new DAT1 size in DAT1 header
   view.setUint32(state.datOffset + 4, newDatSize, true);
-  // Update total file size in MESG header
   view.setUint32(8, output.length, true);
   const offsets = new Array(state.entryCount);
   state.entries.forEach((entry) => {
@@ -1850,8 +2375,7 @@ function buildBmg() {
   });
 
   if (state.midOffset >= 0 && state.midKind === 'pointers' && state.midRowCount > 0 && state.midColumnCount > 0) {
-    // In pointer mode, we need to update MID1 pointers to account for DAT size changes
-    const midBase = newMidOffset + 8;  // Use NEW position, not original
+    const midBase = newMidOffset + 8;
     const midDataStart = midBase + 8;
     for (let row = 0; row < state.midRowCount; row += 1) {
       const rowBase = midDataStart + row * state.midEntrySize;
@@ -1976,7 +2500,7 @@ function encodeBmgString(value, options = {}) {
   codes.push(0);
   const out = new Uint8Array(codes.length * 2);
   codes.forEach((code, index) => {
-    out[index * 2] = code & 0xff;         // Little-endian
+    out[index * 2] = code & 0xff;
     out[index * 2 + 1] = code >> 8;
   });
   return out;
@@ -2120,19 +2644,15 @@ function updateBadges(container, entry) {
   }
   container.innerHTML = '';
   
-  // Add section badge (INF1 or MID1)
   const sectionLabel = entry.kind === 'mid' ? 'MID1' : 'INF1';
-  // Use renamed badge variants: 'mid1' and 'inf1'
   const sectionVariant = entry.kind === 'mid' ? 'mid1' : 'inf1';
   const sectionBadge = makeBadge(sectionLabel, sectionVariant);
   container.appendChild(sectionBadge);
   
-  // Add modified badge if dirty
   if (entry.dirty) {
     container.appendChild(makeBadge('modified', 'warning'));
   }
 }
-
 
 function countVisibleCharacters(text) {
   const source = typeof text === 'string' ? text : '';
@@ -2195,3 +2715,143 @@ function resetUi() {
   updateSaveButton();
   updateMeta();
 }
+
+/**
+ * Split a full text into parts while preserving special token chunks (e.g. [02], [RED], hex tokens).
+ * desiredVisibleCounts is an array of integers representing how many visible characters (excluding tokens)
+ * each part should contain. Returns an array of strings (parts) of same length.
+ */
+function splitPreservingTokens(fullText, desiredVisibleCounts) {
+  // Tokenize fullText into segments: {type:'text'|'token', text}
+  const regex = tokenRegex();
+  let lastIndex = 0;
+  let match;
+  const segments = [];
+  while ((match = regex.exec(fullText)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ type: 'text', text: fullText.slice(lastIndex, match.index) });
+    }
+    segments.push({ type: 'token', text: match[0] });
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < fullText.length) {
+    segments.push({ type: 'text', text: fullText.slice(lastIndex) });
+  }
+
+  // Helper to consume N visible chars from segments, returning concatenated string and new cursor state
+  function consumeVisible(cursor, need) {
+    let { segIndex, charOffset } = cursor;
+    let out = '';
+    while (need > 0 && segIndex < segments.length) {
+      const seg = segments[segIndex];
+      if (seg.type === 'token') {
+        out += seg.text;
+        segIndex += 1;
+        charOffset = 0;
+        continue;
+      }
+      const text = seg.text;
+      const available = text.length - charOffset;
+      if (available <= 0) {
+        segIndex += 1;
+        charOffset = 0;
+        continue;
+      }
+      const take = Math.min(need, available);
+      out += text.slice(charOffset, charOffset + take);
+      need -= take;
+      charOffset += take;
+      if (charOffset >= text.length) {
+        segIndex += 1;
+        charOffset = 0;
+      }
+    }
+    // After consuming desired visible chars, also include any following tokens that immediately follow
+    while (segIndex < segments.length && segments[segIndex].type === 'token') {
+      out += segments[segIndex].text;
+      segIndex += 1;
+    }
+    return { out, cursor: { segIndex, charOffset } };
+  }
+
+  // Total parts
+  const parts = [];
+  let cursor = { segIndex: 0, charOffset: 0 };
+  for (let i = 0; i < desiredVisibleCounts.length; i += 1) {
+    const want = Math.max(0, desiredVisibleCounts[i] || 0);
+    const { out, cursor: next } = consumeVisible(cursor, want);
+    parts.push(out);
+    cursor = next;
+  }
+  // If anything remains, append to the last part
+  let remainder = '';
+  while (cursor.segIndex < segments.length) {
+    remainder += segments[cursor.segIndex].text.slice(cursor.charOffset);
+    cursor.segIndex += 1;
+    cursor.charOffset = 0;
+  }
+  if (remainder.length) {
+    if (parts.length === 0) parts.push(remainder); else parts[parts.length - 1] += remainder;
+  }
+  return parts;
+}
+
+// MID group management helpers
+function getMidGroupForId(id) {
+  const groups = state.midGroups || [];
+  for (let i = 0; i < groups.length; i += 1) {
+    if (groups[i].includes(id)) return groups[i];
+  }
+  return null;
+}
+
+function removeIdFromGroups(id) {
+  const groups = state.midGroups || [];
+  for (let i = groups.length - 1; i >= 0; i -= 1) {
+    const idx = groups[i].indexOf(id);
+    if (idx >= 0) {
+      groups[i].splice(idx, 1);
+      if (groups[i].length < 2) {
+        groups.splice(i, 1);
+      }
+    }
+  }
+}
+
+function addMidGroupPair(a, b) {
+  if (a === b) return;
+  state.midGroups = state.midGroups || [];
+  const ga = getMidGroupForId(a);
+  const gb = getMidGroupForId(b);
+  if (ga && gb) {
+    if (ga === gb) return; // already same group
+    // merge gb into ga
+    ga.push(...gb.filter(x => !ga.includes(x)));
+    // remove gb
+    state.midGroups = state.midGroups.filter(g => g !== gb);
+    return;
+  }
+  if (ga && !gb) {
+    if (!ga.includes(b)) ga.push(b);
+    return;
+  }
+  if (!ga && gb) {
+    if (!gb.includes(a)) gb.unshift(a);
+    return;
+  }
+  // neither in group: create new group with order [a,b]
+  state.midGroups.push([a, b]);
+}
+
+function onGroupWithNext(event) {
+  const id = Number(event.currentTarget.dataset.id);
+  const idx = state.midStrings.findIndex(e => e.id === id);
+  if (idx < 0) return showMessage('MID entry not found.', 'error');
+  const next = state.midStrings[idx + 1];
+  if (!next) return showMessage('No next MID entry to group with.', 'warning');
+  addMidGroupPair(id, next.id);
+  renderEntries();
+  showMessage(`Grouped MID ${id} with ${next.id}.`, 'success');
+}
+
+// onUngroup removed: MID grouping is automatic and controlled internally.
