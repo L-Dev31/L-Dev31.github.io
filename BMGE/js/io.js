@@ -136,24 +136,15 @@ function applyNewBuffer(buffer) {
 // ============================================================================
 
 export function handleExportJson() {
-  const infGroups = detectSequencedGroups(state.entries);
   const midGroups = detectSequencedGroups(state.midStrings || []);
   
-  // Build INF1 entries
+  // Build INF1 entries (always individual, no sequencing)
   const inf1 = [];
-  infGroups.forEach(group => {
-    if (group.isSequenced) {
-      inf1.push({
-        id: group.entries[0].index,
-        messages: group.entries.map(e => e.text),
-        sequencedGroup: group.indices
-      });
-    } else {
-      inf1.push({
-        id: group.entries[0].index,
-        message: group.entries[0].text
-      });
-    }
+  state.entries.forEach(entry => {
+    inf1.push({
+      id: entry.index,
+      message: entry.text
+    });
   });
   
   // Build MID1 entries
