@@ -6,12 +6,10 @@ function resolveEntry(kind, id) {
   const num = Number(id);
   if (Number.isNaN(num) || num < 0) return null;
   if (kind === 'mid') {
-    
     const byId = (state.midStrings || []).find(e => e.id === num);
     if (byId) return byId;
     return state.midStrings?.[num] ?? null;
   }
-  
   return state.entries?.[num] ?? (state.entries || []).find(e => e.id === num) ?? null;
 }
 
@@ -21,7 +19,6 @@ function detectSequencedGroups(entries) {
 
   if (!entries || entries.length === 0) return groups;
 
-  
   const isMidCollection = entries.every(e => e && e.kind === 'mid') || (entries[0] && entries[0].kind === 'mid');
 
   for (let i = 0; i < entries.length; i++) {
@@ -37,40 +34,22 @@ function detectSequencedGroups(entries) {
       const next = entries[j];
       const last = group[group.length - 1];
 
-      
       if (isMidCollection) {
-        const tokenLinkPattern = /\[1A:(?:FF08|0108)\]/i;
-        const hasControlCodes = hasSpecialTokens(last.text) || hasSpecialTokens(next.text) || tokenLinkPattern.test(last.text) || tokenLinkPattern.test(next.text);
-
+        // Pour MID : critères STRICTS
         let isSequential = false;
 
-        
+        // Critère 1 : Offsets contigus (fin de l'un = début de l'autre)
         if (typeof last.offset === 'number' && typeof next.offset === 'number') {
           const lastEnd = last.offset + (last.byteLength || 0);
           if (next.offset === lastEnd) {
             isSequential = true;
-          } else if (Math.abs(next.offset - last.offset) <= 4) {
-            
-            isSequential = true;
           }
         }
 
-        
-        if (!isSequential && hasControlCodes) {
-          const lastEndsWithInsert = /\[1A:(?:FF08|0108)\]\s*$/.test(last.text);
-          const nextStartsWithToken = /^\s*\[[0-9A-Fa-f]{2,}.*\]/.test(next.text) || /^\s*\[0[2-9]\]/.test(next.text) || /^\s*\[08\]/.test(next.text);
-          if (lastEndsWithInsert && nextStartsWithToken) {
-            isSequential = true;
-          }
-        }
-
-        
+        // Critère 2 : Token de liaison explicite [1A:FF08] ou [1A:0108] à la fin
         if (!isSequential) {
-          const lastWithoutCodes = (last.text || '').replace(tokenRegex(), '').trim();
-          const nextWithoutCodes = (next.text || '').replace(tokenRegex(), '').trim();
-          const lastEndsWithPunct = /[.!?。！？]$/.test(lastWithoutCodes);
-          if (!lastEndsWithPunct && lastWithoutCodes.length > 0 && nextWithoutCodes.length > 0) {
-            
+          const linkPattern = /\[1A:(?:FF08|0108)\]\s*$/i;
+          if (linkPattern.test(last.text)) {
             isSequential = true;
           }
         }
@@ -82,23 +61,19 @@ function detectSequencedGroups(entries) {
           continue;
         }
 
-        
+        // Pas de séquence, on continue
         continue;
       }
 
-      
+      // Pour INF1 : critères STRICTS aussi
       const hasControlCodes = hasSpecialTokens(last.text) || hasSpecialTokens(next.text);
       if (!hasControlCodes) continue;
 
-      const lastWithoutCodes = last.text.replace(tokenRegex(), '');
-      const nextWithoutCodes = next.text.replace(tokenRegex(), '');
+      // Vérifier si le dernier se termine par un token de liaison
+      const linkPattern = /\[1A:(?:FF08|0108)\]\s*$/i;
+      const endsWithLink = linkPattern.test(last.text);
 
-      const isSequential = lastWithoutCodes.length > 0 &&
-                          nextWithoutCodes.length > 0 &&
-                          (lastWithoutCodes.endsWith(nextWithoutCodes) ||
-                           nextWithoutCodes.startsWith(lastWithoutCodes));
-
-      if (isSequential) {
+      if (endsWithLink) {
         group.push(next);
         indices.push(j);
         processed.add(j);
@@ -136,7 +111,6 @@ function countVisibleCharacters(text) {
 }
 
 function splitPreservingTokens(fullText, desiredVisibleCounts) {
-  
   const regex = tokenRegex();
   let lastIndex = 0;
   let match;
@@ -152,7 +126,6 @@ function splitPreservingTokens(fullText, desiredVisibleCounts) {
     segments.push({ type: 'text', text: fullText.slice(lastIndex) });
   }
 
-  
   function consumeVisible(cursor, need) {
     let { segIndex, charOffset } = cursor;
     let out = '';
@@ -180,7 +153,6 @@ function splitPreservingTokens(fullText, desiredVisibleCounts) {
         charOffset = 0;
       }
     }
-    
     while (segIndex < segments.length && segments[segIndex].type === 'token') {
       out += segments[segIndex].text;
       segIndex += 1;
@@ -188,7 +160,6 @@ function splitPreservingTokens(fullText, desiredVisibleCounts) {
     return { out, cursor: { segIndex, charOffset } };
   }
 
-  
   const parts = [];
   let cursor = { segIndex: 0, charOffset: 0 };
   for (let i = 0; i < desiredVisibleCounts.length; i += 1) {
@@ -197,7 +168,6 @@ function splitPreservingTokens(fullText, desiredVisibleCounts) {
     parts.push(out);
     cursor = next;
   }
-  
   let remainder = '';
   while (cursor.segIndex < segments.length) {
     remainder += segments[cursor.segIndex].text.slice(cursor.charOffset);
@@ -205,7 +175,8 @@ function splitPreservingTokens(fullText, desiredVisibleCounts) {
     cursor.charOffset = 0;
   }
   if (remainder.length) {
-    if (parts.length === 0) parts.push(remainder); else parts[parts.length - 1] += remainder;
+    if (parts.length === 0) parts.push(remainder); 
+    else parts[parts.length - 1] += remainder;
   }
   return parts;
 }
@@ -237,10 +208,8 @@ function addMidGroupPair(a, b) {
   const ga = getMidGroupForId(a);
   const gb = getMidGroupForId(b);
   if (ga && gb) {
-    if (ga === gb) return; 
-    
+    if (ga === gb) return;
     ga.push(...gb.filter(x => !ga.includes(x)));
-    
     state.midGroups = state.midGroups.filter(g => g !== gb);
     return;
   }
@@ -252,7 +221,6 @@ function addMidGroupPair(a, b) {
     if (!gb.includes(a)) gb.unshift(a);
     return;
   }
-  
   state.midGroups.push([a, b]);
 }
 
