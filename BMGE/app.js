@@ -28,7 +28,7 @@ const ENCODINGS = {
 };
 
 const NAMED_TOKEN_ENTRIES = [
-  //[0x01, 'RED']
+  
 ];
 
 const NAMED_TOKENS = new Map(NAMED_TOKEN_ENTRIES);
@@ -178,12 +178,12 @@ function resolveEntry(kind, id) {
   const num = Number(id);
   if (Number.isNaN(num) || num < 0) return null;
   if (kind === 'mid') {
-    // Prefer lookup by the entry.id field; fall back to index-based access
+    
     const byId = (state.midStrings || []).find(e => e.id === num);
     if (byId) return byId;
     return state.midStrings?.[num] ?? null;
   }
-  // INF entries are indexed by position (index) in state.entries
+  
   return state.entries?.[num] ?? (state.entries || []).find(e => e.id === num) ?? null;
 }
 
@@ -350,7 +350,7 @@ function refreshEntryMetrics() {
     if (!entry) {
       return;
     }
-    card.dataset.color = entry.color ?? 'default';
+  card.dataset.color = 'default';
     const charCountEl = card.querySelector('.char-count');
     if (charCountEl) {
       charCountEl.textContent = formatCharCount(entry);
@@ -370,7 +370,7 @@ function refreshEntryMetrics() {
     const highlight = card.querySelector('.text-highlight');
     if (highlight) {
       highlight.dataset.entryKind = entry.kind;
-      highlight.dataset.entryColor = entry.color ?? 'default';
+      highlight.dataset.entryColor = 'default';
       updateTextHighlight(highlight, entry.text);
     }
   });
@@ -429,7 +429,7 @@ function detectSequencedGroups(entries) {
 
   if (!entries || entries.length === 0) return groups;
 
-  // Detect whether this list is a collection of MID strings (conservative check)
+  
   const isMidCollection = entries.every(e => e && e.kind === 'mid') || (entries[0] && entries[0].kind === 'mid');
 
   for (let i = 0; i < entries.length; i++) {
@@ -445,25 +445,25 @@ function detectSequencedGroups(entries) {
       const next = entries[j];
       const last = group[group.length - 1];
 
-      // MID-specific heuristics: offsets, insertion tokens like [1A:FF08] or [1A:0108], and punctuation
+      
       if (isMidCollection) {
         const tokenLinkPattern = /\[1A:(?:FF08|0108)\]/i;
         const hasControlCodes = hasSpecialTokens(last.text) || hasSpecialTokens(next.text) || tokenLinkPattern.test(last.text) || tokenLinkPattern.test(next.text);
 
         let isSequential = false;
 
-        // Offsets consecutive: if next.offset equals last.offset + last.byteLength (exact adjacency)
+        
         if (typeof last.offset === 'number' && typeof next.offset === 'number') {
           const lastEnd = last.offset + (last.byteLength || 0);
           if (next.offset === lastEnd) {
             isSequential = true;
           } else if (Math.abs(next.offset - last.offset) <= 4) {
-            // small tolerance for alignment differences
+            
             isSequential = true;
           }
         }
 
-        // Token-based linking: insertion token at end of last + next starts with a token
+        
         if (!isSequential && hasControlCodes) {
           const lastEndsWithInsert = /\[1A:(?:FF08|0108)\]\s*$/.test(last.text);
           const nextStartsWithToken = /^\s*\[[0-9A-Fa-f]{2,}.*\]/.test(next.text) || /^\s*\[0[2-9]\]/.test(next.text) || /^\s*\[08\]/.test(next.text);
@@ -472,13 +472,13 @@ function detectSequencedGroups(entries) {
           }
         }
 
-        // Fallback: punctuation / incomplete sentence heuristics
+        
         if (!isSequential) {
           const lastWithoutCodes = (last.text || '').replace(tokenRegex(), '').trim();
           const nextWithoutCodes = (next.text || '').replace(tokenRegex(), '').trim();
           const lastEndsWithPunct = /[.!?。！？]$/.test(lastWithoutCodes);
           if (!lastEndsWithPunct && lastWithoutCodes.length > 0 && nextWithoutCodes.length > 0) {
-            // If last looks like a fragment and next isn't punctuation-only, consider sequential
+            
             isSequential = true;
           }
         }
@@ -490,11 +490,11 @@ function detectSequencedGroups(entries) {
           continue;
         }
 
-        // if not matched by MID heuristics, skip to next candidate
+        
         continue;
       }
 
-      // Original INF/GENERAL behavior preserved for non-MID entries
+      
       const hasControlCodes = hasSpecialTokens(last.text) || hasSpecialTokens(next.text);
       if (!hasControlCodes) continue;
 
@@ -697,7 +697,7 @@ function parseBmg(buffer) {
         midEntries[row] = values;
       }
 
-      // MID pointer analysis computed; suppressed verbose logging in production.
+      
 
       const pointerMode = pointerCandidates > 0 && pointerInvalid === 0;
       if (pointerMode) {
@@ -920,7 +920,6 @@ function parseBmg(buffer) {
       flags: ref.flags ?? 0,
       raw: ref.raw ?? 0
     }));
-    const color = references.some((ref) => (ref.flags & 1) !== 0) ? 'red' : 'default';
     const entry = {
       kind: 'mid',
       id,
@@ -935,31 +934,11 @@ function parseBmg(buffer) {
       dirty: false,
       byteLength: segment.bytes.length,
       references,
-      color,
       segment
     };
     segment.midEntry = entry;
     midStrings.push(entry);
   });
-
-  // --- Vérification de complétude MID (diagnostic) ---
-  try {
-    const midSegmentCount = datSegments.filter(s => s.type === 'mid' || s.type === 'mid-id').length;
-    console.log(`Total MID segments found: ${midSegmentCount}`);
-    console.log(`Total MID strings created: ${midStrings.length}`);
-
-    if (midSegmentCount !== midStrings.length) {
-      console.error(`MISMATCH: ${midSegmentCount} segments but ${midStrings.length} strings`);
-      datSegments.forEach((seg) => {
-        if ((seg.type === 'mid' || seg.type === 'mid-id') && !seg.midEntry) {
-          console.error(`Segment at offset 0x${(seg.originalOffset||0).toString(16)} has no midEntry!`);
-        }
-      });
-    }
-  } catch (e) {
-    console.warn('MID completeness check failed:', e);
-  }
-  // --- end diagnostic ---
   
   return {
     originalBuffer: buffer,
@@ -1082,19 +1061,19 @@ function safeReadBmgString(view, pointer, limit, maxLength = MAX_STRING_READ_LEN
 function renderEntries() {
   els.entries.innerHTML = '';
   const fragment = document.createDocumentFragment();
-  // Build display entries: INF entries handled via detectSequencedGroups below.
-  // For MID entries we want automatic grouping (but allow any user-defined groups to take precedence).
+  
+  
   const displayEntries = [];
 
-  // First, add INF entries placeholders (we'll replace with sequenced groups later)
+  
   (state.entries || []).forEach(e => displayEntries.push(e));
 
-  // Prepare MID entries honoring user-defined groups first
+  
   const midAll = state.midStrings || [];
   const userGroups = state.midGroups || [];
   const userMemberSet = new Set((userGroups.flat ? userGroups.flat() : []).filter(Boolean));
 
-  // Add user-defined group entries (leader only) and mark those members as handled
+  
   const handledMidIds = new Set();
   userGroups.forEach((group) => {
     if (!Array.isArray(group) || group.length === 0) return;
@@ -1111,8 +1090,7 @@ function renderEntries() {
     });
   });
 
-  // For remaining MID entries (not in user groups), attempt auto-detection for UI/display only.
-  // Export remains per-entry (lossless) elsewhere.
+  
   const autoPool = midAll.filter(m => !handledMidIds.has(m.id));
   const midGroups = detectSequencedGroups(autoPool);
   midGroups.forEach((group) => {
@@ -1122,7 +1100,7 @@ function renderEntries() {
         id: group.entries[0].id,
         isSequencedGroup: true,
         sequencedEntries: group.entries,
-        // store sequencedIds (actual mid ids) for revert/edit handlers
+        
         sequencedIndices: group.entries.map(e => e.id),
         sequencedCount: group.entries.length,
         text: group.entries.map(e => e.text).join('')
@@ -1211,9 +1189,6 @@ function matchesFilter(entry) {
     }
     const midLabel = `mid${(typeof entry.id === 'number' ? entry.id + 1 : '')}`;
     if (midLabel.includes(query)) {
-      return true;
-    }
-    if ((entry.color ?? '').toLowerCase().includes(query)) {
       return true;
     }
     if (entry.references && entry.references.some((ref) => `row${ref.row}`.includes(query) || `col${ref.column}`.includes(query) || `${ref.row}:${ref.column}`.includes(query))) {
@@ -1314,8 +1289,8 @@ function buildEntryCard(entry) {
   const card = template.content.firstElementChild.cloneNode(true);
   card.dataset.kind = entry.kind;
   card.dataset.id = String(entry.id);
-  card.dataset.color = entry.color ?? 'default';
-  // modified state for the card will be computed after building child textareas
+  card.dataset.color = 'default';
+  
   card.classList.toggle('mid-entry', entry.kind === 'mid');
   card.classList.toggle('sequenced-entry', entry.isSequencedGroup === true);
   
@@ -1329,7 +1304,7 @@ function buildEntryCard(entry) {
   }
   
   if (entry.isUserMidGroup) {
-    // Render one textarea per member for a user-defined MID group (preserve parts separately)
+    
     (entry.groupedEntries || []).forEach((part) => {
       const shell = document.createElement('div');
       shell.className = 'editor-shell';
@@ -1337,7 +1312,6 @@ function buildEntryCard(entry) {
       const pre = document.createElement('pre');
       pre.className = 'text-highlight';
       pre.dataset.entryKind = 'mid';
-      pre.dataset.entryColor = part.color ?? 'default';
       updateTextHighlight(pre, part.text);
 
       const ta = document.createElement('textarea');
@@ -1361,7 +1335,7 @@ function buildEntryCard(entry) {
   const badges = card.querySelector('.badges');
   updateBadges(badges, entry);
 
-  // MID grouping controls (manual)
+  
   if (entry.kind === 'mid') {
     const midGroup = getMidGroupForId(entry.id);
     if (midGroup) {
@@ -1388,7 +1362,7 @@ function buildEntryCard(entry) {
 
   if (entry.isSequencedGroup) {
     if (entry.kind === 'mid') {
-      // For automatically-detected MID sequences, render one textarea per sequenced part
+      
       entry.sequencedEntries.forEach((part) => {
         const shell = document.createElement('div');
         shell.className = 'editor-shell';
@@ -1396,7 +1370,7 @@ function buildEntryCard(entry) {
         const pre = document.createElement('pre');
         pre.className = 'text-highlight';
         pre.dataset.entryKind = 'mid';
-        pre.dataset.entryColor = part.color ?? 'default';
+        pre.dataset.entryColor = 'default';
         updateTextHighlight(pre, part.text);
 
         const ta = document.createElement('textarea');
@@ -1410,13 +1384,13 @@ function buildEntryCard(entry) {
         textareaContainer.appendChild(shell);
       });
     } else {
-      // Render a single combined textarea for the whole sequenced group (INF behavior)
+      
       const combined = entry.sequencedEntries.map(e => e.text).join('');
       const textarea = document.createElement('textarea');
       textarea.value = combined;
       textarea.dataset.kind = entry.kind;
       textarea.dataset.id = String(entry.id);
-      // Store the indices of the sequenced parts so edits can be redistributed.
+      
       textarea.dataset.sequencedIndices = JSON.stringify(entry.sequencedIndices);
       textarea.addEventListener('input', onEntryEdit);
       textareaContainer.appendChild(textarea);
@@ -1424,7 +1398,6 @@ function buildEntryCard(entry) {
       const highlight = document.createElement('div');
       highlight.className = 'text-highlight';
       highlight.dataset.entryKind = entry.kind;
-      highlight.dataset.entryColor = entry.color ?? 'default';
       updateTextHighlight(highlight, combined);
       textareaContainer.appendChild(highlight);
     }
@@ -1436,7 +1409,6 @@ function buildEntryCard(entry) {
       const pre = document.createElement('pre');
       pre.className = 'text-highlight';
       pre.dataset.entryKind = entry.kind;
-      pre.dataset.entryColor = entry.color ?? 'default';
       updateTextHighlight(pre, entry.text);
 
       const ta = document.createElement('textarea');
@@ -1458,9 +1430,9 @@ function buildEntryCard(entry) {
   revertBtn.dataset.kind = entry.kind;
   revertBtn.dataset.id = String(entry.id);
 
-  // Add MID group buttons in the actions area
+  
   if (entry.kind === 'mid') {
-    // Group/ungroup controls retired: MID grouping is handled automatically.
+    
   }
   
   if (entry.isScrollingGroup) {
@@ -1475,7 +1447,7 @@ function buildEntryCard(entry) {
   revertBtn.addEventListener('click', onEntryRevert);
   const charCount = card.querySelector('.char-count');
   charCount.textContent = formatCharCount(entry);
-  // Compute card-level modified state: if the main entry or any child part is dirty.
+  
   (function computeCardModified() {
     let modified = !!entry.dirty;
     const taList = card.querySelectorAll('textarea');
@@ -1484,14 +1456,14 @@ function buildEntryCard(entry) {
       if (resolved && resolved.dirty) modified = true;
     });
     card.classList.toggle('modified', modified);
-    // manage modified badge visibility
+    
     const existing = Array.from(badges.children).find(b => (b.textContent || '').toLowerCase() === 'modified');
     if (modified && !existing) {
       badges.appendChild(makeBadge('modified', 'warning'));
     } else if (!modified && existing) {
       existing.remove();
     }
-    // enable revert when any part is modified
+    
     revertBtn.disabled = !modified;
   })();
   return card;
@@ -1518,8 +1490,7 @@ function updateTextHighlight(target, value) {
   }
   const hasTokens = hasSpecialTokens(value);
   target.dataset.hasTokens = hasTokens ? 'true' : 'false';
-  const color = target.dataset.entryColor ?? 'default';
-  target.dataset.highlightColor = color;
+  target.dataset.highlightColor = 'default';
   if (!value) {
     target.classList.add('highlight-empty');
     target.textContent = 'Empty';
@@ -1616,7 +1587,7 @@ function onEntryEdit(event) {
     });
   } else if (sequencedIndicesStr && kind !== 'mid') {
     const sequencedIndices = JSON.parse(sequencedIndicesStr);
-    // If a specific sequencedIndex is provided (old UI with separate textareas), handle normally.
+    
     if (sequencedIndex !== undefined) {
       const seqIdx = Number(sequencedIndex);
       const targetIndex = sequencedIndices[seqIdx];
@@ -1628,18 +1599,18 @@ function onEntryEdit(event) {
         targetEntry.byteLength = targetEntry.dirty ? encodedLength : targetEntry.originalBytes.length;
       }
     } else {
-      // Combined textarea edited: distribute the full text across sequenced parts.
+      
       const fullText = normalized;
       const targets = sequencedIndices.map(idx => state.entries[idx]).filter(Boolean);
       if (targets.length) {
-        // Compute original visible lengths to determine proportionate split.
+        
         const origVis = targets.map(t => Math.max(1, countVisibleCharacters(t.originalText)));
         const sumOrig = origVis.reduce((a, b) => a + b, 0) || targets.length;
         const desired = origVis.map(v => Math.round((v / sumOrig) * countVisibleCharacters(fullText)));
-        // Adjust to ensure total equals full length
+        
         let totalDesired = desired.reduce((a, b) => a + b, 0);
         const fullVis = countVisibleCharacters(fullText);
-        // Fix rounding drift
+        
         let i = 0;
         while (totalDesired !== fullVis && i < desired.length) {
           if (totalDesired < fullVis) {
@@ -1672,7 +1643,7 @@ function onEntryEdit(event) {
       }
     }
   } else if (sequencedIndicesStr && kind === 'mid') {
-    // Combined MID group textarea edited: distribute across MID ids
+    
     const sequencedIds = JSON.parse(sequencedIndicesStr);
     const fullText = normalized;
     const targets = sequencedIds.map(id => state.midStrings.find(e => e.id === id)).filter(Boolean);
@@ -1681,7 +1652,7 @@ function onEntryEdit(event) {
       const sumOrig = origVis.reduce((a, b) => a + b, 0) || targets.length;
       const fullVis = countVisibleCharacters(fullText);
       const desired = origVis.map(v => Math.round((v / sumOrig) * fullVis));
-      // Fix rounding drift
+      
       let totalDesired = desired.reduce((a, b) => a + b, 0);
       let idxFix = 0;
       while (totalDesired !== fullVis && idxFix < desired.length) {
@@ -1737,15 +1708,15 @@ function onEntryEdit(event) {
   }
   
   card.classList.toggle('modified', entry.dirty);
-  // Update the preview highlight for the specific textarea that was edited.
+  
   try {
     const shell = event.target.closest('.editor-shell');
     const hl = shell ? shell.querySelector('.text-highlight') : null;
     if (hl) updateTextHighlight(hl, event.target.value);
   } catch (e) {
-    // ignore
+    
   }
-  // Update card-level modified state when editing a part
+  
   try {
     const card = event.target.closest('.entry-card');
     if (card) {
@@ -1755,7 +1726,7 @@ function onEntryEdit(event) {
         const resolved = resolveEntry(ta.dataset.kind, ta.dataset.id);
         if (resolved && resolved.dirty) modified = true;
       });
-      // also consider top-level entry.dirty
+      
       const topEntryKind = event.target.dataset.kind;
       const topEntryId = event.target.dataset.id;
       const topResolved = resolveEntry(topEntryKind, topEntryId);
@@ -1772,7 +1743,7 @@ function onEntryEdit(event) {
       if (revertBtn) revertBtn.disabled = !modified;
     }
   } catch (e) {
-    // ignore
+    
   }
   const revertBtn = card.querySelector('.revert');
   if (revertBtn) {
@@ -1840,7 +1811,7 @@ function onEntryRevert(event) {
   const textareas = card.querySelectorAll('textarea');
   if (sequencedIndicesStr) {
     const sequencedIndices = JSON.parse(sequencedIndicesStr);
-    // If a single combined textarea is present, set its value to the concatenation of parts.
+    
     if (textareas.length === 1) {
       let combined;
       if (kind === 'mid') {
@@ -1849,14 +1820,14 @@ function onEntryRevert(event) {
         combined = sequencedIndices.map(i => (state.entries[i]?.text ?? '')).join('');
       }
       textareas[0].value = combined;
-      // find associated highlight (support shell-wrapped or adjacent highlight)
+      
       const shell0 = textareas[0].closest('.editor-shell');
       const hl0 = (textareas[0].nextElementSibling && textareas[0].nextElementSibling.classList && textareas[0].nextElementSibling.classList.contains('text-highlight'))
         ? textareas[0].nextElementSibling
         : (shell0 ? shell0.querySelector('.text-highlight') : null);
       if (hl0) updateTextHighlight(hl0, combined);
     } else {
-      // multiple textareas for parts (legacy INF or auto MID groups)
+      
       textareas.forEach((textarea, idx) => {
         const targetKey = sequencedIndices[idx];
         if (kind === 'mid') {
@@ -1890,7 +1861,6 @@ function onEntryRevert(event) {
     const highlights = card.querySelectorAll('.text-highlight');
     highlights.forEach(highlight => {
       highlight.dataset.entryKind = entry.kind;
-      highlight.dataset.entryColor = entry.color ?? 'default';
       updateTextHighlight(highlight, entry.text);
     });
   }
@@ -1986,60 +1956,45 @@ function handleDownload() {
 }
 
 function handleExportJson() {
-  // Build MID grouped messages using improved detection (offsets/tokens heuristics)
+  
   const groupedMessages = [];
   const midStrings = state.midStrings || [];
 
-  // DO NOT auto-detect MID groups for export. Export every MID entry separately so no fragments are lost.
   if (midStrings.length) {
-    midStrings.forEach((entry) => {
-      groupedMessages.push({
-        id: entry.id,
-        message: entry.text
-      });
+    
+    
+    
+    const midGroups = detectSequencedGroups(midStrings);
+    midGroups.forEach((group) => {
+      if (group.isSequenced) {
+        const sequencedIds = group.entries.map(e => e.id);
+        groupedMessages.push({
+          id: group.entries[0].id,
+          
+          messages: group.entries.map(e => e.text),
+          sequencedGroup: sequencedIds
+        });
+      } else {
+        groupedMessages.push({
+          id: group.entries[0].id,
+          message: group.entries[0].text
+        });
+      }
     });
   }
 
-  // Include any user-defined MID groups (state.midGroups) in the export.
+  
   const userGroups = state.midGroups || [];
   userGroups.forEach((group) => {
     if (!Array.isArray(group) || group.length === 0) return;
     const leader = group[0];
-    // Avoid duplicates: only add if not present already
+    
     if (groupedMessages.some((m) => m.id === leader)) return;
     const combined = group.map(id => {
       const s = midStrings.find(m => m.id === id);
       return s ? s.text : '';
     }).join('');
-
-    // Try to produce an explicit `messages` array matching sequenced ids so
-    // exported JSON keeps parts separate (lossless round-trip). Use
-    // token-preserving splitting based on the original visible lengths of
-    // each target entry where possible. Fall back to a single combined
-    // message if splitting isn't feasible.
-    const targets = group.map(id => midStrings.find(m => m.id === id)).filter(Boolean);
-    if (targets.length > 1) {
-      const normalizedFull = normalizeInput(combined);
-      // Compute visible char counts from originalText if available, else current text
-      const origVis = targets.map(t => Math.max(1, countVisibleCharacters(t.originalText ?? t.text ?? '')));
-      const sumOrig = origVis.reduce((a, b) => a + b, 0) || targets.length;
-      const fullVis = countVisibleCharacters(normalizedFull);
-      const desired = origVis.map(v => Math.round((v / sumOrig) * fullVis));
-      let totalDesired = desired.reduce((a, b) => a + b, 0);
-      let idxFix = 0;
-      while (totalDesired !== fullVis && idxFix < desired.length) {
-        if (totalDesired < fullVis) { desired[idxFix] += 1; totalDesired += 1; }
-        else if (totalDesired > fullVis && desired[idxFix] > 0) { desired[idxFix] -= 1; totalDesired -= 1; }
-        idxFix = (idxFix + 1) % desired.length;
-      }
-      const parts = splitPreservingTokens(normalizedFull, desired);
-      // Ensure parts array matches group length
-      while (parts.length < group.length) parts.push('');
-      groupedMessages.push({ id: leader, messages: parts, sequencedGroup: group.slice() });
-    } else {
-      // Fallback: export as single combined message
-      groupedMessages.push({ id: leader, message: combined, sequencedGroup: group.slice() });
-    }
+    groupedMessages.push({ id: leader, message: combined, sequencedGroup: group.slice() });
   });
   
   const infGroups = detectSequencedGroups(state.entries);
@@ -2050,8 +2005,7 @@ function handleExportJson() {
       groupedInfEntries.push({
         id: group.entries[0].index,
         messages: group.entries.map(e => e.text),
-        // Export canonical INF indices (entry.index) so imports map reliably by index
-        sequencedGroup: group.entries.map(e => e.index)
+        sequencedGroup: group.indices
       });
     } else {
       groupedInfEntries.push({
@@ -2139,79 +2093,47 @@ function handleImportJsonFile(event) {
         if (seen.has(id)) {
           throw new Error(`Duplicate entry id ${id} in JSON.`);
         }
-        // Accept either a single string `message` or an array `messages` when sequencedGroup present
-        const hasMessagesArray = Array.isArray(item.messages) && item.messages.every(m => typeof m === 'string');
-        const hasSingleMessage = typeof item.message === 'string';
-        if (!hasSingleMessage && !hasMessagesArray) {
-          throw new Error(`Entry ${id} must have either a string "message" or an array "messages".`);
+        if (typeof item.message !== 'string') {
+          throw new Error(`Entry ${id} is missing a string "message" field.`);
         }
         seen.add(id);
-
+        
         if (Array.isArray(item.sequencedGroup) && item.sequencedGroup.length > 1) {
-          // sequenced group: prefer explicit `messages` array; fall back to single combined `message` string
-          if (hasMessagesArray) {
-            messages.set(id, {
-              isSequenced: true,
-              indices: item.sequencedGroup,
-              messages: item.messages.map(m => normalizeInput(m))
-            });
-          } else {
-            messages.set(id, {
-              isSequenced: true,
-              indices: item.sequencedGroup,
-              // older form: one combined string, importer will split proportionally
-              message: normalizeInput(item.message)
-            });
-          }
+          messages.set(id, {
+            isSequenced: true,
+            indices: item.sequencedGroup,
+            message: item.message
+          });
         } else {
-          // non-sequenced single message
           messages.set(id, {
             isSequenced: false,
-            message: normalizeInput(item.message ?? (Array.isArray(item.messages) ? item.messages[0] : ''))
+            message: normalizeInput(item.message)
           });
         }
       });
       
-      // Apply provided entries/groups to INF entries. The JSON may provide group leaders
-      // (with sequencedGroup + messages[]) or single-entry items. Iterate the messages
-      // map and apply each item to the target entries.
-      messages.forEach((data, key) => {
-        const numericKey = Number(key);
-        if (!data || typeof data !== 'object') return;
-        if (!data.isSequenced) {
-          const entry = state.entries[numericKey];
-          if (!entry) return;
-          entry.text = normalizeInput(data.message ?? '');
-          const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-          entry.dirty = entry.text !== entry.originalText;
-          entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
-          return;
+      for (let id = 0; id < state.entryCount; id += 1) {
+        if (!messages.has(id)) {
+          throw new Error(`Missing message for entry id ${id}.`);
         }
-
-        // Sequenced group: data.indices lists target INF indices. If an explicit
-        // `messages` array is provided, assign parts directly; otherwise fall back
-        // to splitting the combined `message` string proportionally.
-        const targetIndices = Array.isArray(data.indices) ? data.indices.map(Number) : [];
-        if (!targetIndices.length) return;
-
-        if (Array.isArray(data.messages) && data.messages.length > 0) {
-          targetIndices.forEach((tIdx, idx) => {
-            const targetEntry = state.entries[tIdx];
-            if (!targetEntry) return;
-            const part = normalizeInput(data.messages[idx] ?? '');
-            targetEntry.text = part;
-            const encodedLength = encodeBmgString(targetEntry.text, { leadingNull: targetEntry.leadingNull }).length;
-            targetEntry.dirty = targetEntry.text !== targetEntry.originalText;
-            targetEntry.byteLength = targetEntry.dirty ? encodedLength : targetEntry.originalBytes.length;
-          });
-        } else if (typeof data.message === 'string') {
-          const normalizedFull = normalizeInput(data.message);
+      }
+      
+      state.entries.forEach((entry, index) => {
+        const data = messages.get(index);
+        if (!data) return;
+        
+        if (data.isSequenced) {
+          const targetIndices = data.indices;
+          const fullTextRaw = data.message;
+          const normalizedFull = normalizeInput(fullTextRaw);
           const targets = targetIndices.map(i => state.entries[i]).filter(Boolean);
           if (targets.length) {
+            
             const origVis = targets.map(t => Math.max(1, countVisibleCharacters(t.originalText)));
             const sumOrig = origVis.reduce((a, b) => a + b, 0) || targets.length;
             const fullVis = countVisibleCharacters(normalizedFull);
             const desired = origVis.map(v => Math.round((v / sumOrig) * fullVis));
+            
             let totalDesired = desired.reduce((a, b) => a + b, 0);
             let idxFix = 0;
             while (totalDesired !== fullVis && idxFix < desired.length) {
@@ -2223,11 +2145,16 @@ function handleImportJsonFile(event) {
             targets.forEach((targetEntry, idx) => {
               const part = parts[idx] ?? '';
               targetEntry.text = part;
-              targetEntry.dirty = targetEntry.text !== targetEntry.originalText;
               const encodedLength = encodeBmgString(targetEntry.text, { leadingNull: targetEntry.leadingNull }).length;
+              targetEntry.dirty = targetEntry.text !== targetEntry.originalText;
               targetEntry.byteLength = targetEntry.dirty ? encodedLength : targetEntry.originalBytes.length;
             });
           }
+        } else {
+          entry.text = data.message;
+          const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+          entry.dirty = entry.text !== entry.originalText;
+          entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
         }
       });
       
@@ -2239,16 +2166,15 @@ function handleImportJsonFile(event) {
           
           const baseId = Number(item.id);
           const message = item.message;
-          const messagesArr = Array.isArray(item.messages) ? item.messages : null;
           const scrollingGroup = item.scrollingGroup;
-
-          if (!Number.isInteger(baseId) || (!messagesArr && typeof message !== 'string' && !Array.isArray(scrollingGroup))) {
+          
+          if (!Number.isInteger(baseId) || typeof message !== 'string') {
             return;
           }
-
-          if (Array.isArray(scrollingGroup) && scrollingGroup.length > 1 && typeof message === 'string') {
+          
+          if (Array.isArray(scrollingGroup) && scrollingGroup.length > 1) {
             const variants = generateScrollingVariants(message);
-
+            
             scrollingGroup.forEach((variantId, index) => {
               const entry = state.midStrings.find(e => e.id === variantId);
               if (entry && variants[index] !== undefined) {
@@ -2259,58 +2185,41 @@ function handleImportJsonFile(event) {
               }
             });
           } else {
-            // Support sequencedGroup for MID entries in import JSON
-            if (Array.isArray(item.sequencedGroup) && item.sequencedGroup.length > 1) {
-              const ids = item.sequencedGroup.map(Number);
-              // If explicit messages array is provided, assign parts directly
-              if (Array.isArray(messagesArr) && messagesArr.length > 0) {
-                ids.forEach((idVal, idx) => {
-                  const entry = state.midStrings.find(e => e.id === idVal);
-                  if (!entry) return;
-                  entry.text = normalizeInput(messagesArr[idx] ?? '');
-                  const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-                  entry.dirty = entry.text !== entry.originalText;
-                  entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
-                });
-              } else if (typeof message === 'string') {
-                const normalizedFull = normalizeInput(message);
-                const targets = ids.map(id => state.midStrings.find(e => e.id === id)).filter(Boolean);
-                if (targets.length) {
-                  const origVis = targets.map(t => Math.max(1, countVisibleCharacters(t.originalText)));
-                  const sumOrig = origVis.reduce((a, b) => a + b, 0) || targets.length;
-                  const fullVis = countVisibleCharacters(normalizedFull);
-                  const desired = origVis.map(v => Math.round((v / sumOrig) * fullVis));
-                  let totalDesired = desired.reduce((a, b) => a + b, 0);
-                  let idxFix = 0;
-                  while (totalDesired !== fullVis && idxFix < desired.length) {
-                    if (totalDesired < fullVis) { desired[idxFix] += 1; totalDesired += 1; }
-                    else if (totalDesired > fullVis && desired[idxFix] > 0) { desired[idxFix] -= 1; totalDesired -= 1; }
-                    idxFix = (idxFix + 1) % desired.length;
+                
+                if (Array.isArray(item.sequencedGroup) && item.sequencedGroup.length > 1) {
+                  const ids = item.sequencedGroup.map(Number);
+                  const normalizedFull = normalizeInput(message);
+                  const targets = ids.map(id => state.midStrings.find(e => e.id === id)).filter(Boolean);
+                  if (targets.length) {
+                    const origVis = targets.map(t => Math.max(1, countVisibleCharacters(t.originalText)));
+                    const sumOrig = origVis.reduce((a, b) => a + b, 0) || targets.length;
+                    const fullVis = countVisibleCharacters(normalizedFull);
+                    const desired = origVis.map(v => Math.round((v / sumOrig) * fullVis));
+                    let totalDesired = desired.reduce((a, b) => a + b, 0);
+                    let idxFix = 0;
+                    while (totalDesired !== fullVis && idxFix < desired.length) {
+                      if (totalDesired < fullVis) { desired[idxFix] += 1; totalDesired += 1; }
+                      else if (totalDesired > fullVis && desired[idxFix] > 0) { desired[idxFix] -= 1; totalDesired -= 1; }
+                      idxFix = (idxFix + 1) % desired.length;
+                    }
+                    const parts = splitPreservingTokens(normalizedFull, desired);
+                    targets.forEach((entry, idx) => {
+                      const part = parts[idx] ?? '';
+                      entry.text = part;
+                      const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+                      entry.dirty = entry.text !== entry.originalText;
+                      entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
+                    });
                   }
-                  const parts = splitPreservingTokens(normalizedFull, desired);
-                  targets.forEach((entry, idx) => {
-                    const part = parts[idx] ?? '';
-                    entry.text = part;
+                } else {
+                  const entry = state.midStrings.find(e => e.id === baseId);
+                  if (entry) {
+                    entry.text = normalizeInput(message);
                     const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
                     entry.dirty = entry.text !== entry.originalText;
                     entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
-                  });
+                  }
                 }
-              }
-            } else {
-              const entry = state.midStrings.find(e => e.id === baseId);
-              if (entry) {
-                if (Array.isArray(messagesArr) && messagesArr.length > 0) {
-                  // If multiple messages were provided for a single baseId, use the first
-                  entry.text = normalizeInput(messagesArr[0] ?? '');
-                } else {
-                  entry.text = normalizeInput(message ?? '');
-                }
-                const encodedLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-                entry.dirty = entry.text !== entry.originalText;
-                entry.byteLength = entry.dirty ? encodedLength : entry.originalBytes.length;
-              }
-            }
           }
         });
       }
@@ -2427,7 +2336,6 @@ function applyNewBuffer(buffer) {
     entry.dirty = false;
     entry.byteLength = entry.originalBytes.length;
     entry.leadingNull = entry.originalLeadingNull;
-    entry.color = entry.color ?? ((entry.references ?? []).some((ref) => (ref.flags & 1) !== 0) ? 'red' : 'default');
     if (entry.segment) {
       entry.segment.bytes = entry.originalBytes.slice();
       entry.segment.text = entry.originalText;
@@ -2520,8 +2428,7 @@ function formatAttrLabel(entry) {
       return 'MID refs: none';
     }
     const parts = refs.slice(0, 3).map((ref) => {
-      const flagLabel = (ref.flags & 1) !== 0 ? 'red' : 'default';
-      return `row ${ref.row} · col ${ref.column} (${flagLabel})`;
+      return `row ${ref.row} · col ${ref.column}`;
     });
     if (refs.length > 3) {
       parts.push(`+${refs.length - 3} more`);
@@ -2716,13 +2623,9 @@ function resetUi() {
   updateMeta();
 }
 
-/**
- * Split a full text into parts while preserving special token chunks (e.g. [02], [RED], hex tokens).
- * desiredVisibleCounts is an array of integers representing how many visible characters (excluding tokens)
- * each part should contain. Returns an array of strings (parts) of same length.
- */
+
 function splitPreservingTokens(fullText, desiredVisibleCounts) {
-  // Tokenize fullText into segments: {type:'text'|'token', text}
+  
   const regex = tokenRegex();
   let lastIndex = 0;
   let match;
@@ -2738,7 +2641,7 @@ function splitPreservingTokens(fullText, desiredVisibleCounts) {
     segments.push({ type: 'text', text: fullText.slice(lastIndex) });
   }
 
-  // Helper to consume N visible chars from segments, returning concatenated string and new cursor state
+  
   function consumeVisible(cursor, need) {
     let { segIndex, charOffset } = cursor;
     let out = '';
@@ -2766,7 +2669,7 @@ function splitPreservingTokens(fullText, desiredVisibleCounts) {
         charOffset = 0;
       }
     }
-    // After consuming desired visible chars, also include any following tokens that immediately follow
+    
     while (segIndex < segments.length && segments[segIndex].type === 'token') {
       out += segments[segIndex].text;
       segIndex += 1;
@@ -2774,7 +2677,7 @@ function splitPreservingTokens(fullText, desiredVisibleCounts) {
     return { out, cursor: { segIndex, charOffset } };
   }
 
-  // Total parts
+  
   const parts = [];
   let cursor = { segIndex: 0, charOffset: 0 };
   for (let i = 0; i < desiredVisibleCounts.length; i += 1) {
@@ -2783,7 +2686,7 @@ function splitPreservingTokens(fullText, desiredVisibleCounts) {
     parts.push(out);
     cursor = next;
   }
-  // If anything remains, append to the last part
+  
   let remainder = '';
   while (cursor.segIndex < segments.length) {
     remainder += segments[cursor.segIndex].text.slice(cursor.charOffset);
@@ -2796,7 +2699,7 @@ function splitPreservingTokens(fullText, desiredVisibleCounts) {
   return parts;
 }
 
-// MID group management helpers
+
 function getMidGroupForId(id) {
   const groups = state.midGroups || [];
   for (let i = 0; i < groups.length; i += 1) {
@@ -2824,10 +2727,10 @@ function addMidGroupPair(a, b) {
   const ga = getMidGroupForId(a);
   const gb = getMidGroupForId(b);
   if (ga && gb) {
-    if (ga === gb) return; // already same group
-    // merge gb into ga
+    if (ga === gb) return; 
+    
     ga.push(...gb.filter(x => !ga.includes(x)));
-    // remove gb
+    
     state.midGroups = state.midGroups.filter(g => g !== gb);
     return;
   }
@@ -2839,7 +2742,7 @@ function addMidGroupPair(a, b) {
     if (!gb.includes(a)) gb.unshift(a);
     return;
   }
-  // neither in group: create new group with order [a,b]
+  
   state.midGroups.push([a, b]);
 }
 
@@ -2854,4 +2757,3 @@ function onGroupWithNext(event) {
   showMessage(`Grouped MID ${id} with ${next.id}.`, 'success');
 }
 
-// onUngroup removed: MID grouping is automatic and controlled internally.
