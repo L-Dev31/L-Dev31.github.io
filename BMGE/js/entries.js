@@ -65,19 +65,21 @@ function detectSequencedGroups(entries) {
         continue;
       }
 
-      // Pour INF1 : critères STRICTS aussi
-      const hasControlCodes = hasSpecialTokens(last.text) || hasSpecialTokens(next.text);
-      if (!hasControlCodes) continue;
-
+      // Pour INF1 : critères STRICTS corrigés
       // Vérifier si le dernier se termine par un token de liaison
       const linkPattern = /\[1A:(?:FF08|0108)\]\s*$/i;
       const endsWithLink = linkPattern.test(last.text);
 
+      // ✅ CORRECTION : On vérifie d'abord le token de liaison
       if (endsWithLink) {
         group.push(next);
         indices.push(j);
         processed.add(j);
+        continue; // Important : continuer à chercher d'autres entries liées
       }
+
+      // Si pas de token de liaison, on arrête la séquence pour ce groupe
+      break;
     }
 
     if (group.length > 1) {
