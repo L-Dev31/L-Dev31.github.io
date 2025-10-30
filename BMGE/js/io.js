@@ -24,11 +24,6 @@ export function handleFileSelection(event) {
       try {
         loadBuffer(buffer, file.name);
         showMessage(`${file.name} • ${formatBytes(buffer.byteLength)}`, 'success');
-        
-        if (state.encoding !== 0x01) {
-          const encodingName = ENCODINGS[state.encoding] || `Unknown (0x${formatHex(state.encoding, 2)})`;
-          showMessage(`Warning: File encoding is ${encodingName}. This editor only supports UTF-16LE (0x01).`, 'warning');
-        }
       } catch (error) {
         console.error(error);
         resetUi();

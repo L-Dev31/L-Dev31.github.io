@@ -454,7 +454,6 @@ export function updateMeta() {
       : '';
     return;
   }
-  const encodingName = ENCODINGS[state.encoding] || `0x${formatHex(state.encoding, 2)}`;
   const infSize = formatBytes(state.infSize);
 const datSize = formatBytes(state.datDeclaredSize);
   const midSize = state.midSize ? formatBytes(state.midSize) : '0 B';
@@ -464,13 +463,11 @@ const datSize = formatBytes(state.datDeclaredSize);
 
   const sizeLine = `<div class="meta-block"><strong>Section sizes</strong><br>INF1: <strong>${infCount}</strong> · ${infSize} &nbsp;·&nbsp; DAT1: <strong>${datSize}</strong> &nbsp;·&nbsp; MID1: <strong>${midCount}</strong> · ${midSize}</div>`;
   const countLine = `<div class="meta-block"><strong>Entry counts</strong><br>Total: <strong>${totalCount}</strong> · INF1: <strong>${infCount}</strong> · MID1: <strong>${midCount}</strong></div>`;
-  const encodingLine = `<div class="meta-block"><strong>Encoding</strong><br>${encodingName}</div>`;
 
   let html = `
     <div class="meta-lines">
       ${sizeLine}
       ${countLine}
-      ${encodingLine}
     </div>
   `.trim();
 
