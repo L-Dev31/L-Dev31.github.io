@@ -160,7 +160,6 @@ export function refreshEntryMetrics() {
     if (!entry) {
       return;
     }
-    card.dataset.color = 'default';
     const charCountEl = card.querySelector('.char-count');
     if (charCountEl) {
       charCountEl.textContent = formatCharCount(entry);
@@ -181,7 +180,6 @@ export function refreshEntryMetrics() {
     const highlight = card.querySelector('.text-highlight');
     if (highlight) {
       highlight.dataset.entryKind = entry.kind;
-      highlight.dataset.entryColor = 'default';
       // Note: updateTextHighlight is from ui.js, will be imported later
       // updateTextHighlight(highlight, entry.text);
     }

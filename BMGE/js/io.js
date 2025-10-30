@@ -2,7 +2,8 @@ import { state, els, ENCODINGS } from './state.js';
 import { formatHex, formatBytes, normalizeInput, countVisibleCharacters, splitPreservingTokens } from './utils.js';
 import { parseBmg, buildBmg, encodeBmgString } from './bmg-format.js';
 import { updateCalculatedOffsets } from './layout.js';
-import { updateMeta, renderEntries, updateSaveButton, showMessage, resetUi, generateScrollingVariants } from './ui.js';
+import { updateMeta, renderEntries, updateSaveButton, showMessage, resetUi } from './ui.js';
+import { generateScrollingVariants } from './entries.js';
 import { detectSequencedGroups } from './entries.js';
 
 // ============================================================================

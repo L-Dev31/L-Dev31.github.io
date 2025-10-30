@@ -1,6 +1,6 @@
 import { state, els, ENCODINGS } from './state.js';
 import { formatHex, formatBytes, formatCharCount, formatOffsetLabel, formatAttrLabel, formatEntryTitle, makeBadge, normalizeInput, countVisibleCharacters, splitPreservingTokens } from './utils.js';
-import { resolveEntry, detectSequencedGroups, getMidGroupForId } from './entries.js';
+import { resolveEntry, detectSequencedGroups, detectScrollingGroups, getMidGroupForId } from './entries.js';
 import { encodeBmgString } from './bmg-format.js';
 import { tokenRegex, parseSpecialToken, encodeSpecialCode } from './tokens.js';
 import { updateCalculatedOffsets } from './layout.js';
@@ -42,7 +42,26 @@ export function renderEntries() {
 
   
   const autoPool = midAll.filter(m => !handledMidIds.has(m.id));
-  const midGroups = detectSequencedGroups(autoPool);
+  
+  // Detect scrolling groups first (before sequenced groups)
+  const scrollingGroups = detectScrollingGroups(autoPool);
+  scrollingGroups.forEach((group) => {
+    if (group.isScrolling) {
+      displayEntries.push({
+        kind: 'mid',
+        id: group.entries[0].id,
+        isScrollingGroup: true,
+        scrollingEntries: group.entries,
+        scrollingIds: group.entries.map(e => e.id),
+        scrollingCount: group.entries.length,
+        text: group.entries[0].text // Use the first (longest) text
+      });
+    }
+  });
+  
+  // Detect sequenced groups on remaining entries
+  const remainingPool = autoPool.filter(m => !scrollingGroups.some(g => g.isScrolling && g.entries.includes(m)));
+  const midGroups = detectSequencedGroups(remainingPool);
   midGroups.forEach((group) => {
     if (group.isSequenced) {
       displayEntries.push({
@@ -247,10 +266,11 @@ export function buildEntryCard(entry) {
   const card = template.content.firstElementChild.cloneNode(true);
   card.dataset.kind = entry.kind;
   card.dataset.id = String(entry.id);
-  card.dataset.color = 'default';
   
   card.classList.toggle('mid-entry', entry.kind === 'mid');
+  card.classList.toggle('inf-entry', entry.kind === 'inf');
   card.classList.toggle('sequenced-entry', entry.isSequencedGroup === true);
+  card.classList.toggle('scrolling-entry', entry.isScrollingGroup === true);
   
   const title = card.querySelector('h3');
   let titleText = formatEntryTitle(entry);
@@ -328,7 +348,6 @@ export function buildEntryCard(entry) {
         const pre = document.createElement('pre');
         pre.className = 'text-highlight';
         pre.dataset.entryKind = 'mid';
-        pre.dataset.entryColor = 'default';
         updateTextHighlight(pre, part.text);
 
         const ta = document.createElement('textarea');
@@ -355,7 +374,7 @@ export function buildEntryCard(entry) {
 
       const highlight = document.createElement('div');
       highlight.className = 'text-highlight';
-      highlight.dataset.entryKind = entry.kind;
+      highlight.dataset.entryKind = 'inf';
       updateTextHighlight(highlight, combined);
       textareaContainer.appendChild(highlight);
     }
@@ -614,29 +633,6 @@ export function updateBadges(container, entry) {
   }
 }
 
-export function generateScrollingVariants(text) {
-  const variants = [text];
-  let current = text;
-  
-  while (current.length > 0) {
-    const lines = current.split('\n');
-    if (lines[0].length > 0) {
-      lines[0] = lines[0].slice(1);
-      current = lines.join('\n');
-    } else if (lines.length > 1) {
-      lines.shift();
-      current = lines.join('\n');
-    } else {
-      break;
-    }
-    
-    if (current.trim().length > 0) {
-      variants.push(current);
-    }
-  }
-  
-  return variants;
-}
 export function init() {
   // Initialize DOM element references
   els.fileInput = document.getElementById('file-input');

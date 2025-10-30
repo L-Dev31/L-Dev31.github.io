@@ -100,6 +100,83 @@ function detectSequencedGroups(entries) {
   return groups;
 }
 
+function detectScrollingGroups(entries) {
+  const groups = [];
+  const processed = new Set();
+
+  if (!entries || entries.length === 0) return groups;
+
+  // Only for MID entries
+  const midEntries = entries.filter(e => e && e.kind === 'mid');
+  if (midEntries.length < 2) return groups;
+
+  for (let i = 0; i < midEntries.length; i++) {
+    if (processed.has(i)) continue;
+
+    const entry = midEntries[i];
+    const variants = generateScrollingVariants(entry.text);
+    
+    if (variants.length < 2) continue;
+    
+    const group = [entry];
+    const indices = [entries.indexOf(entry)];
+    let matchedVariants = 1; // First variant is the original text
+    
+    // Check subsequent entries to see if they match the scrolling variants
+    for (let j = i + 1; j < midEntries.length && matchedVariants < variants.length; j++) {
+      if (processed.has(j)) continue;
+      
+      const nextEntry = midEntries[j];
+      const expectedVariant = variants[matchedVariants];
+      
+      if (nextEntry.text === expectedVariant) {
+        group.push(nextEntry);
+        indices.push(entries.indexOf(nextEntry));
+        processed.add(j);
+        matchedVariants++;
+      } else {
+        break; // Stop if the sequence doesn't match
+      }
+    }
+    
+    if (group.length > 1) {
+      groups.push({
+        entries: group,
+        indices: indices,
+        isScrolling: true
+      });
+    }
+    
+    processed.add(i);
+  }
+
+  return groups;
+}
+
+function generateScrollingVariants(text) {
+  const variants = [text];
+  let current = text;
+  
+  while (current.length > 0) {
+    const lines = current.split('\n');
+    if (lines[0].length > 0) {
+      lines[0] = lines[0].slice(1);
+      current = lines.join('\n');
+    } else if (lines.length > 1) {
+      lines.shift();
+      current = lines.join('\n');
+    } else {
+      break;
+    }
+    
+    if (current.trim().length > 0) {
+      variants.push(current);
+    }
+  }
+  
+  return variants;
+}
+
 function countVisibleCharacters(text) {
   const source = typeof text === 'string' ? text : '';
   const regex = tokenRegex();
@@ -224,4 +301,4 @@ function addMidGroupPair(a, b) {
   state.midGroups.push([a, b]);
 }
 
-export { resolveEntry, detectSequencedGroups, countVisibleCharacters, splitPreservingTokens, getMidGroupForId, addMidGroupPair, removeIdFromGroups };
+export { resolveEntry, detectSequencedGroups, detectScrollingGroups, countVisibleCharacters, splitPreservingTokens, getMidGroupForId, addMidGroupPair, removeIdFromGroups, generateScrollingVariants };

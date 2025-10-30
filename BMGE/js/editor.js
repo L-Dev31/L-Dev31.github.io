@@ -1,9 +1,9 @@
 import { state } from './state.js';
 import { normalizeInput, countVisibleCharacters, splitPreservingTokens, makeBadge } from './utils.js';
-import { resolveEntry } from './entries.js';
+import { resolveEntry, generateScrollingVariants } from './entries.js';
 import { encodeBmgString } from './bmg-format.js';
 import { updateCalculatedOffsets, refreshEntryMetrics } from './layout.js';
-import { updateSaveButton, updateTextHighlight, generateScrollingVariants, renderEntries } from './ui.js';
+import { updateSaveButton, updateTextHighlight, renderEntries } from './ui.js';
 
 // onEntryEdit function
 export function onEntryEdit(event) {
@@ -333,6 +333,12 @@ export function onEntryRevert(event) {
 
 // onFilter function
 export function onFilter(event) {
+  // Pour les checkboxes, on ne change pas state.filter, juste render
+  if (event.target.type === 'checkbox') {
+    renderEntries();
+    return;
+  }
+  // Pour le champ de recherche textuelle
   state.filter = event.target.value;
   renderEntries();
 }

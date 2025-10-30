@@ -246,7 +246,7 @@ function parseBmg(buffer) {
     }
     
     entries.push({
-      kind: 'entry',
+      kind: 'inf',
       id: index,
       index,
       messageId,

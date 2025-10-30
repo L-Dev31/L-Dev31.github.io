@@ -376,6 +376,26 @@ button.ghost:not(:disabled):hover {
   color: #FF99C9;
 }
 
+.sequenced-entry {
+  border-left: #FF66B2 2px solid;
+  background-color: rgba(255, 102, 178, 0.05);
+}
+
+.sequenced-entry .editor-shell .text-highlight {
+  background-color: transparent;
+  outline: 1px solid rgba(255, 102, 178, 0.2);
+}
+
+.scrolling-entry {
+  border-left: #50C878 2px solid;
+  background-color: rgba(80, 200, 120, 0.05);
+}
+
+.scrolling-entry .editor-shell .text-highlight {
+  background-color: transparent;
+  outline: 1px solid rgba(80, 200, 120, 0.2);
+}
+
 .badge-red {
   border-color: rgba(255, 60, 60, 0.7);
   background: rgba(255, 60, 60, 0.22);
