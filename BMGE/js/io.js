@@ -197,7 +197,8 @@ export function handleExportJson() {
 
   // Unified structure with display order numbering (0, 1, 2, 3...)
   const data = {
-    single: [],
+    inf1: [],
+    mid1: [],
     sequenced: [],
     scrolling: []
   };
@@ -232,7 +233,10 @@ export function handleExportJson() {
             id: groupDisplayIndices[0], // Use first display index as base
             message: groupInfo.entries[0].text,
             scrollingGroup: groupDisplayIndices,
-            variants: groupInfo.entries.map(e => e.text)
+            variants: groupInfo.entries.map(e => e.text),
+            // include actual messages per-bank inside the scrolling object
+            inf1: groupInfo.entries.map(e => (e.kind !== 'mid' ? e.text : null)),
+            mid1: groupInfo.entries.map(e => (e.kind === 'mid' ? e.text : null))
           });
 
           // Mark these entries as processed
@@ -245,9 +249,10 @@ export function handleExportJson() {
 
           data.sequenced.push({
             id: groupDisplayIndices[0], // Use first display index as base
-            messages: groupInfo.entries.map(e => e.text),
             sequencedGroup: groupDisplayIndices,
-            ...(groupInfo.mixedTypes ? { mixedTypes: groupInfo.mixedTypes } : {})
+            // include actual messages per-bank inside the sequenced object
+            inf1: groupInfo.entries.map(e => (e.kind !== 'mid' ? e.text : null)),
+            mid1: groupInfo.entries.map(e => (e.kind === 'mid' ? e.text : null))
           });
 
           // Mark these entries as processed
@@ -270,22 +275,18 @@ export function handleExportJson() {
     singleGroups.get(message).push(displayIndex);
   });
 
-  // Convert grouped single entries to compact format
-  singleGroups.forEach((ids, message) => {
-    if (ids.length === 1) {
-      // Single entry - use simple format
-      data.single.push({
-        id: ids[0],
-        message: message
-      });
+  // Build inf1/mid1 arrays for single entries (aligned to display order)
+  allEntries.forEach((entry, displayIndex) => {
+    if (sequencedEntries.has(displayIndex) || scrollingEntries.has(displayIndex)) return;
+    if (entry.kind === 'mid') {
+      data.inf1.push(null);
+      data.mid1.push(entry.text);
     } else {
-      // Multiple entries with same message - use compact format
-      data.single.push({
-        ids: ids,
-        message: message
-      });
+      data.inf1.push(entry.text);
+      data.mid1.push(null);
     }
   });
+
 
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -353,33 +354,73 @@ export function handleImportJsonFile(event) {
           scrolling: data.scrolling || [] 
         };
       }
-      
-      // Import single entries using display order indices
-      entries.single.forEach(item => {
-        if (item.ids && Array.isArray(item.ids) && typeof item.message === 'string') {
-          // New compact format: multiple IDs with same message
-          item.ids.forEach(displayIndex => {
-            const idx = Number(displayIndex);
-            if (!Number.isInteger(idx) || idx < 0 || idx >= allEntries.length) return;
 
-            const entry = allEntries[idx];
-            if (entry) {
-              entry.text = normalizeInput(item.message);
-              entry.dirty = entry.text !== entry.originalText;
-              entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-            }
-          });
-        } else if (item.id !== undefined && typeof item.message === 'string') {
-          // Legacy format: single ID with message
-          const displayIndex = Number(item.id);
-          if (!Number.isInteger(displayIndex) || displayIndex < 0 || displayIndex >= allEntries.length) return;
+      // Apply top-level inf1/mid1 for single entries
+      if (Array.isArray(data.inf1) || Array.isArray(data.mid1)) {
+        // Build sets of display indices used by sequenced/scrolling so we can find single indices.
+        const sequencedDisplaySet = new Set();
+        entries.sequenced.forEach(it => {
+          if (Array.isArray(it.sequencedGroup)) it.sequencedGroup.map(Number).forEach(n => sequencedDisplaySet.add(n));
+        });
 
+        const scrollingDisplaySet = new Set();
+        entries.scrolling.forEach(it => {
+          if (Array.isArray(it.scrollingGroup)) it.scrollingGroup.map(Number).forEach(n => scrollingDisplaySet.add(n));
+        });
+
+        const singleDisplayIndices = [];
+        allEntries.forEach((_, idx) => {
+          if (!sequencedDisplaySet.has(idx) && !scrollingDisplaySet.has(idx)) singleDisplayIndices.push(idx);
+        });
+
+        const infArr = Array.isArray(data.inf1) ? data.inf1 : null;
+        const midArr = Array.isArray(data.mid1) ? data.mid1 : null;
+
+        singleDisplayIndices.forEach((displayIndex, i) => {
           const entry = allEntries[displayIndex];
-          if (entry) {
-            entry.text = normalizeInput(item.message);
+          if (!entry) return;
+          let msg = undefined;
+          if (infArr && infArr[i] != null) msg = infArr[i];
+          else if (midArr && midArr[i] != null) msg = midArr[i];
+          if (msg !== undefined) {
+            entry.text = normalizeInput(msg);
             entry.dirty = entry.text !== entry.originalText;
             entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
           }
+        });
+      }
+
+
+      
+      // Build sets of display indices used by sequenced/scrolling so we can find single indices.
+      const sequencedDisplaySet = new Set();
+      entries.sequenced.forEach(it => {
+        if (Array.isArray(it.sequencedGroup)) it.sequencedGroup.map(Number).forEach(n => sequencedDisplaySet.add(n));
+      });
+
+      const scrollingDisplaySet = new Set();
+      entries.scrolling.forEach(it => {
+        if (Array.isArray(it.scrollingGroup)) it.scrollingGroup.map(Number).forEach(n => scrollingDisplaySet.add(n));
+      });
+
+      // Apply top-level inf1/mid1 to single entries (aligned to display order of single entries)
+      const infArr = Array.isArray(data.inf1) ? data.inf1 : null;
+      const midArr = Array.isArray(data.mid1) ? data.mid1 : null;
+      const singleDisplayIndices = [];
+      allEntries.forEach((_, idx) => {
+        if (!sequencedDisplaySet.has(idx) && !scrollingDisplaySet.has(idx)) singleDisplayIndices.push(idx);
+      });
+
+      singleDisplayIndices.forEach((displayIndex, i) => {
+        const entry = allEntries[displayIndex];
+        if (!entry) return;
+        let msg = undefined;
+        if (infArr && infArr[i] != null) msg = infArr[i];
+        else if (midArr && midArr[i] != null) msg = midArr[i];
+        if (msg !== undefined) {
+          entry.text = normalizeInput(msg);
+          entry.dirty = entry.text !== entry.originalText;
+          entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
         }
       });
       
@@ -391,13 +432,19 @@ export function handleImportJsonFile(event) {
         if (Array.isArray(item.sequencedGroup) && item.sequencedGroup.length > 0) {
           const displayIndices = item.sequencedGroup.map(Number);
           
-          if (Array.isArray(item.messages)) {
+          if (Array.isArray(item.inf1) || Array.isArray(item.mid1)) {
+            // Per-bank messages provided: inf1/mid1 arrays (may contain nulls)
             displayIndices.forEach((targetDisplayIndex, i) => {
-              if (targetDisplayIndex >= 0 && targetDisplayIndex < allEntries.length && item.messages[i] !== undefined) {
+              if (targetDisplayIndex >= 0 && targetDisplayIndex < allEntries.length) {
                 const entry = allEntries[targetDisplayIndex];
-                entry.text = normalizeInput(item.messages[i]);
-                entry.dirty = entry.text !== entry.originalText;
-                entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+                const msg = (Array.isArray(item.inf1) && item.inf1[i] != null) ? item.inf1[i]
+                          : (Array.isArray(item.mid1) && item.mid1[i] != null) ? item.mid1[i]
+                          : undefined;
+                if (msg !== undefined) {
+                  entry.text = normalizeInput(msg);
+                  entry.dirty = entry.text !== entry.originalText;
+                  entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+                }
               }
             });
           } else if (typeof item.message === 'string') {
@@ -406,7 +453,7 @@ export function handleImportJsonFile(event) {
               .map(idx => allEntries[idx])
               .filter(Boolean);
             const parts = splitTextProportionally(item.message, targets);
-            
+
             targets.forEach((entry, i) => {
               entry.text = parts[i];
               entry.dirty = entry.text !== entry.originalText;
@@ -421,8 +468,18 @@ export function handleImportJsonFile(event) {
         const baseDisplayIndex = Number(item.id);
         if (!Number.isInteger(baseDisplayIndex)) return;
         
-        if (Array.isArray(item.scrollingGroup) && item.scrollingGroup.length > 0) {
-          const variants = item.variants || generateScrollingVariants(item.message);
+          if (Array.isArray(item.scrollingGroup) && item.scrollingGroup.length > 0) {
+          // Build variants prioritizing inf1/mid1 arrays if provided
+          const generated = generateScrollingVariants(item.message);
+          const variants = (Array.isArray(item.inf1) || Array.isArray(item.mid1))
+            ? item.scrollingGroup.map((_, i) => {
+                if (Array.isArray(item.inf1) && item.inf1[i] != null) return item.inf1[i];
+                if (Array.isArray(item.mid1) && item.mid1[i] != null) return item.mid1[i];
+                if (Array.isArray(item.variants) && item.variants[i] != null) return item.variants[i];
+                return generated[i];
+              })
+            : (item.variants || generated);
+
           item.scrollingGroup.forEach((variantDisplayIndex, i) => {
             if (variantDisplayIndex >= 0 && variantDisplayIndex < allEntries.length && variants[i] !== undefined) {
               const entry = allEntries[variantDisplayIndex];
