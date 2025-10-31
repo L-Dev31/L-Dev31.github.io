@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>L-Dev's BMG Editor</title>
   <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
 
 </head>
@@ -23,8 +24,14 @@
       </div>
       <div id="file-warning"></div>
       <div class="meta" id="file-meta"></div>
-      <div class="controls">
-        <input id="search" type="search" placeholder="Filter by text, index, or offset" disabled>
+      <div class="search-container">
+        <div class="search-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input id="search" type="search" placeholder="Filter by text, index, or offset" disabled>
+          <i class="fas fa-times search-clear" style="display: none;"></i>
+        </div>
+      </div>
+      <div class="filters-container">
         <div class="filter-types">
           <label class="filter-checkbox">
             <input type="checkbox" id="filter-inf" checked>
@@ -41,6 +48,10 @@
           <label class="filter-checkbox">
             <input type="checkbox" id="filter-scrolling" checked>
             <span>Scrolling</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" id="filter-modified" checked>
+            <span>Modified</span>
           </label>
           <label class="filter-checkbox">
             <input type="checkbox" id="filter-empty">

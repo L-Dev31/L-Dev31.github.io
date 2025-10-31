@@ -256,6 +256,9 @@ function matchesFilter(entry) {
   if (!els.filterScrolling.checked && entry.isScrollingGroup) {
     return false;
   }
+  if (!els.filterModified.checked && entry.dirty) {
+    return false;
+  }
   
   const query = state.filter.trim().toLowerCase();
   if (!query) {
@@ -687,6 +690,7 @@ export function resetUi() {
     els.importJsonInput.value = '';
   }
   els.fileMeta.textContent = '';
+  updateSearchIcons();
   updateSaveButton();
   updateMeta();
 }
@@ -780,6 +784,13 @@ export function updateBadges(container, entry) {
   }
 }
 
+export function updateSearchIcons() {
+  const searchClear = document.querySelector('.search-clear');
+  if (searchClear) {
+    searchClear.style.display = els.search.value.trim() ? 'block' : 'none';
+  }
+}
+
 export function init() {
   // Initialize DOM element references
   els.fileInput = document.getElementById('file-input');
@@ -797,6 +808,7 @@ export function init() {
   els.filterEmpty = document.getElementById('filter-empty');
   els.filterSequenced = document.getElementById('filter-sequenced');
   els.filterScrolling = document.getElementById('filter-scrolling');
+  els.filterModified = document.getElementById('filter-modified');
 
   // Attach event listeners
   els.fileInput.addEventListener('change', handleFileSelection);
@@ -805,11 +817,24 @@ export function init() {
   els.importJson.addEventListener('click', handleImportJsonClick);
   els.importJsonInput.addEventListener('change', handleImportJsonFile);
   els.search.addEventListener('input', onFilter);
+  els.search.addEventListener('input', updateSearchIcons);
   els.filterInf.addEventListener('change', onFilter);
   els.filterMid.addEventListener('change', onFilter);
   els.filterEmpty.addEventListener('change', onFilter);
   els.filterSequenced.addEventListener('change', onFilter);
   els.filterScrolling.addEventListener('change', onFilter);
+  els.filterModified.addEventListener('change', onFilter);
+
+  // Add search clear functionality
+  const searchClear = document.querySelector('.search-clear');
+  if (searchClear) {
+    searchClear.addEventListener('click', () => {
+      els.search.value = '';
+      state.filter = '';
+      updateSearchIcons();
+      renderEntries();
+    });
+  }
 
   // Initialize UI state
   resetUi();
