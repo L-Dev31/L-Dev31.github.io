@@ -381,6 +381,12 @@ button.ghost:not(:disabled):hover {
   color: white;
 }
 
+.badge-content {
+  border-color: #FF6B35;
+  background: rgba(255, 107, 53, 0.15);
+  color: #FF6B35;
+}
+
 .editor-shell-mid {
   border-left: 4px solid #e74c3c;
 }

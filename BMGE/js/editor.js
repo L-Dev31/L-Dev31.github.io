@@ -9,6 +9,7 @@ import { updateSaveButton, updateTextHighlight, renderEntries } from './ui.js';
 export function onEntryEdit(event) {
   const kind = event.target.dataset.kind;
   const id = event.target.dataset.id;
+  const idsStr = event.target.dataset.ids;
   const scrollingIdsStr = event.target.dataset.scrollingIds;
   const sequencedIndicesStr = event.target.dataset.sequencedIndices;
   const sequencedIndex = event.target.dataset.sequencedIndex;
@@ -24,7 +25,40 @@ export function onEntryEdit(event) {
     event.target.value = normalized;
   }
   
-  if (scrollingIdsStr && kind === 'mid') {
+  // Helper function to update all entries sharing the same DAT segment
+  const updateSharedSegmentEntries = (targetEntry, newText) => {
+    if (targetEntry.kind !== 'inf') return; // Only INF1 entries share DAT segments
+    
+    const segment = (state.datSegments || []).find(seg => 
+      seg.entryIndices && seg.entryIndices.includes(targetEntry.index)
+    );
+    
+    if (segment && segment.entryIndices && segment.entryIndices.length > 1) {
+      segment.entryIndices.forEach(entryIndex => {
+        const sharedEntry = state.entries[entryIndex];
+        if (sharedEntry) {
+          sharedEntry.text = newText;
+          sharedEntry.dirty = sharedEntry.text !== sharedEntry.originalText;
+          const encodedLength = encodeBmgString(sharedEntry.text, { leadingNull: sharedEntry.leadingNull }).length;
+          sharedEntry.byteLength = sharedEntry.dirty ? encodedLength : sharedEntry.originalBytes.length;
+        }
+      });
+    }
+  };
+  
+  // Handle identical content groups
+  if (idsStr) {
+    const ids = JSON.parse(idsStr);
+    ids.forEach((entryId) => {
+      const groupEntry = state.entries.find(e => e.id === entryId);
+      if (groupEntry) {
+        groupEntry.text = normalized;
+        groupEntry.dirty = groupEntry.text !== groupEntry.originalText;
+        const encodedLength = encodeBmgString(groupEntry.text, { leadingNull: groupEntry.leadingNull }).length;
+        groupEntry.byteLength = groupEntry.dirty ? encodedLength : groupEntry.originalBytes.length;
+      }
+    });
+  } else if (scrollingIdsStr && kind === 'mid') {
     const scrollingIds = JSON.parse(scrollingIdsStr);
     const variants = generateScrollingVariants(normalized);
     
@@ -155,6 +189,9 @@ export function onEntryEdit(event) {
     }
   }
   
+  // Ensure all entries sharing the same DAT segment have identical text
+  updateSharedSegmentEntries(entry, normalized);
+  
   const card = event.target.closest('.entry-card');
   const layout = updateCalculatedOffsets();
   
@@ -181,14 +218,32 @@ export function onEntryEdit(event) {
       let modified = false;
       const taList = card.querySelectorAll('textarea');
       taList.forEach((ta) => {
-        const resolved = resolveEntry(ta.dataset.kind, ta.dataset.id);
-        if (resolved && resolved.dirty) modified = true;
+        if (ta.dataset.ids) {
+          // Handle identical content groups
+          const ids = JSON.parse(ta.dataset.ids);
+          ids.forEach((entryId) => {
+            const groupEntry = state.entries.find(e => e.id === entryId);
+            if (groupEntry && groupEntry.dirty) modified = true;
+          });
+        } else {
+          const resolved = resolveEntry(ta.dataset.kind, ta.dataset.id);
+          if (resolved && resolved.dirty) modified = true;
+        }
       });
       
       const topEntryKind = event.target.dataset.kind;
       const topEntryId = event.target.dataset.id;
-      const topResolved = resolveEntry(topEntryKind, topEntryId);
-      if (topResolved && topResolved.dirty) modified = true;
+      const topIdsStr = event.target.dataset.ids;
+      if (topIdsStr) {
+        const ids = JSON.parse(topIdsStr);
+        ids.forEach((entryId) => {
+          const groupEntry = state.entries.find(e => e.id === entryId);
+          if (groupEntry && groupEntry.dirty) modified = true;
+        });
+      } else {
+        const topResolved = resolveEntry(topEntryKind, topEntryId);
+        if (topResolved && topResolved.dirty) modified = true;
+      }
 
       card.classList.toggle('modified', modified);
       const badges = card.querySelector('.badges');
@@ -207,7 +262,17 @@ export function onEntryEdit(event) {
   }
   const revertBtn = card.querySelector('.revert');
   if (revertBtn) {
-    revertBtn.disabled = !entry.dirty;
+    let hasModified = false;
+    if (idsStr) {
+      const ids = JSON.parse(idsStr);
+      ids.forEach((entryId) => {
+        const groupEntry = state.entries.find(e => e.id === entryId);
+        if (groupEntry && groupEntry.dirty) hasModified = true;
+      });
+    } else {
+      hasModified = entry.dirty;
+    }
+    revertBtn.disabled = !hasModified;
   }
   refreshEntryMetrics();
   updateSaveButton();
@@ -217,13 +282,47 @@ export function onEntryEdit(event) {
 export function onEntryRevert(event) {
   const kind = event.currentTarget.dataset.kind;
   const id = event.currentTarget.dataset.id;
+  const idsStr = event.currentTarget.dataset.ids;
   const scrollingIdsStr = event.currentTarget.dataset.scrollingIds;
   const sequencedIndicesStr = event.currentTarget.dataset.sequencedIndices;
   
   const entry = resolveEntry(kind, id);
   if (!entry) return;
   
-  if (scrollingIdsStr && kind === 'mid') {
+  // Helper function to revert all entries sharing the same DAT segment
+  const revertSharedSegmentEntries = (targetEntry) => {
+    if (targetEntry.kind !== 'inf') return; // Only INF1 entries share DAT segments
+    
+    const segment = (state.datSegments || []).find(seg => 
+      seg.entryIndices && seg.entryIndices.includes(targetEntry.index)
+    );
+    
+    if (segment && segment.entryIndices && segment.entryIndices.length > 1) {
+      segment.entryIndices.forEach(entryIndex => {
+        const sharedEntry = state.entries[entryIndex];
+        if (sharedEntry) {
+          sharedEntry.text = sharedEntry.originalText;
+          sharedEntry.leadingNull = sharedEntry.originalLeadingNull;
+          sharedEntry.byteLength = sharedEntry.originalBytes.length;
+          sharedEntry.dirty = false;
+        }
+      });
+    }
+  };
+  
+  // Handle identical content groups
+  if (idsStr) {
+    const ids = JSON.parse(idsStr);
+    ids.forEach((entryId) => {
+      const groupEntry = state.entries.find(e => e.id === entryId);
+      if (groupEntry) {
+        groupEntry.text = groupEntry.originalText;
+        groupEntry.leadingNull = groupEntry.originalLeadingNull;
+        groupEntry.byteLength = groupEntry.originalBytes.length;
+        groupEntry.dirty = false;
+      }
+    });
+  } else if (scrollingIdsStr && kind === 'mid') {
     const scrollingIds = JSON.parse(scrollingIdsStr);
     
     scrollingIds.forEach((variantId) => {
@@ -267,10 +366,25 @@ export function onEntryRevert(event) {
     
     entry.dirty = false;
   }
+  
+  // Ensure all entries sharing the same DAT segment are reverted
+  revertSharedSegmentEntries(entry);
+  
   updateCalculatedOffsets();
   const card = event.currentTarget.closest('.entry-card');
   const textareas = card.querySelectorAll('textarea');
-  if (sequencedIndicesStr) {
+  if (idsStr) {
+    const ids = JSON.parse(idsStr);
+    const firstEntry = state.entries.find(e => e.id === ids[0]);
+    if (firstEntry && textareas.length > 0) {
+      textareas[0].value = firstEntry.text;
+      const shell = textareas[0].closest('.editor-shell');
+      const highlight = (textareas[0].nextElementSibling && textareas[0].nextElementSibling.classList && textareas[0].nextElementSibling.classList.contains('text-highlight'))
+        ? textareas[0].nextElementSibling
+        : (shell ? shell.querySelector('.text-highlight') : null);
+      if (highlight) updateTextHighlight(highlight, firstEntry.text);
+    }
+  } else if (sequencedIndicesStr) {
     const sequencedIndices = JSON.parse(sequencedIndicesStr);
     
     if (textareas.length === 1) {
@@ -325,7 +439,17 @@ export function onEntryRevert(event) {
       updateTextHighlight(highlight, entry.text);
     });
   }
-  card.classList.toggle('modified', entry.dirty);
+  let isModified = false;
+  if (idsStr) {
+    const ids = JSON.parse(idsStr);
+    ids.forEach((entryId) => {
+      const groupEntry = state.entries.find(e => e.id === entryId);
+      if (groupEntry && groupEntry.dirty) isModified = true;
+    });
+  } else {
+    isModified = entry.dirty;
+  }
+  card.classList.toggle('modified', isModified);
   event.currentTarget.disabled = true;
   refreshEntryMetrics();
   updateSaveButton();

@@ -205,7 +205,12 @@ export function handleExportJson() {
   // Track processed groups to avoid duplicates
   const processedGroups = new Set();
 
-  // Process each entry in display order and assign sequential IDs
+  // Group single entries by identical messages to reduce JSON size
+  const singleGroups = new Map();
+  const sequencedEntries = new Set();
+  const scrollingEntries = new Set();
+
+  // First pass: collect all entries that belong to groups
   allEntries.forEach((entry, displayIndex) => {
     const key = `${entry.kind}-${entry.id}`;
     const groupInfo = entryToGroupMap.get(key);
@@ -229,6 +234,9 @@ export function handleExportJson() {
             scrollingGroup: groupDisplayIndices,
             variants: groupInfo.entries.map(e => e.text)
           });
+
+          // Mark these entries as processed
+          groupDisplayIndices.forEach(idx => scrollingEntries.add(idx));
         } else if (groupInfo.type === 'sequenced') {
           // Find all display indices for this sequenced group
           const groupDisplayIndices = groupInfo.entries.map(e =>
@@ -241,13 +249,40 @@ export function handleExportJson() {
             sequencedGroup: groupDisplayIndices,
             ...(groupInfo.mixedTypes ? { mixedTypes: groupInfo.mixedTypes } : {})
           });
+
+          // Mark these entries as processed
+          groupDisplayIndices.forEach(idx => sequencedEntries.add(idx));
         }
       }
-    } else {
-      // This is a single entry
+    }
+  });
+
+  // Second pass: group single entries by identical messages
+  allEntries.forEach((entry, displayIndex) => {
+    if (sequencedEntries.has(displayIndex) || scrollingEntries.has(displayIndex)) {
+      return; // Already processed as part of a group
+    }
+
+    const message = entry.text;
+    if (!singleGroups.has(message)) {
+      singleGroups.set(message, []);
+    }
+    singleGroups.get(message).push(displayIndex);
+  });
+
+  // Convert grouped single entries to compact format
+  singleGroups.forEach((ids, message) => {
+    if (ids.length === 1) {
+      // Single entry - use simple format
       data.single.push({
-        id: displayIndex,
-        message: entry.text
+        id: ids[0],
+        message: message
+      });
+    } else {
+      // Multiple entries with same message - use compact format
+      data.single.push({
+        ids: ids,
+        message: message
       });
     }
   });
@@ -321,14 +356,30 @@ export function handleImportJsonFile(event) {
       
       // Import single entries using display order indices
       entries.single.forEach(item => {
-        const displayIndex = Number(item.id);
-        if (!Number.isInteger(displayIndex) || displayIndex < 0 || displayIndex >= allEntries.length) return;
-        
-        const entry = allEntries[displayIndex];
-        if (entry && typeof item.message === 'string') {
-          entry.text = normalizeInput(item.message);
-          entry.dirty = entry.text !== entry.originalText;
-          entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+        if (item.ids && Array.isArray(item.ids) && typeof item.message === 'string') {
+          // New compact format: multiple IDs with same message
+          item.ids.forEach(displayIndex => {
+            const idx = Number(displayIndex);
+            if (!Number.isInteger(idx) || idx < 0 || idx >= allEntries.length) return;
+
+            const entry = allEntries[idx];
+            if (entry) {
+              entry.text = normalizeInput(item.message);
+              entry.dirty = entry.text !== entry.originalText;
+              entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+            }
+          });
+        } else if (item.id !== undefined && typeof item.message === 'string') {
+          // Legacy format: single ID with message
+          const displayIndex = Number(item.id);
+          if (!Number.isInteger(displayIndex) || displayIndex < 0 || displayIndex >= allEntries.length) return;
+
+          const entry = allEntries[displayIndex];
+          if (entry) {
+            entry.text = normalizeInput(item.message);
+            entry.dirty = entry.text !== entry.originalText;
+            entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+          }
         }
       });
       

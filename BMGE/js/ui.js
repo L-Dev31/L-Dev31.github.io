@@ -9,8 +9,6 @@ import { onEntryEdit, onEntryRevert, onFilter } from './editor.js';
 
 export function renderEntries() {
   els.entries.innerHTML = '';
-  const fragment = document.createDocumentFragment();
-
 
   let displayEntries = [];
 
@@ -150,11 +148,86 @@ export function renderEntries() {
     return aOffset - bOffset;
   });
 
+  // Grouper les single entries par contenu identique pour refléter la structure JSON
+  const singleGroups = new Map();
+  const sequencedEntries = new Set();
+  const scrollingEntries = new Set();
+
+  // Marquer les entries qui sont dans des groupes
   activeEntries.forEach((entry, displayIndex) => {
-    // Use display order numbering (0, 1, 2, 3...) that matches JSON export format
+    if (entry.isSequencedGroup) {
+      entry.sequencedIndices.forEach(idx => sequencedEntries.add(idx));
+    }
+    if (entry.isScrollingGroup) {
+      entry.scrollingIds.forEach(id => scrollingEntries.add(id));
+    }
+  });
+
+  // Créer les cartes pour l'affichage
+  const fragment = document.createDocumentFragment();
+
+  // Collecter tous les éléments à afficher dans l'ordre
+  const itemsToDisplay = [];
+
+  // Ajouter les groupes sequenced et scrolling
+  activeEntries.forEach((entry, displayIndex) => {
+    if (entry.isSequencedGroup || entry.isScrollingGroup) {
+      itemsToDisplay.push({ entry, displayIndex });
+    }
+  });
+
+  // Grouper par segments DAT (offset partagé) directement depuis state.datSegments
+  const datGroups = new Map();
+  const segmentEntryMap = new Map();
+
+  // Construire une map des segments vers les entries
+  (state.datSegments || []).forEach(segment => {
+    const entryIndices = segment.entryIndices || [];
+    if (entryIndices.length > 1) {
+      const key = segment.originalOffset;
+      const entries = entryIndices
+        .map(idx => state.entries[idx])
+        .filter(e => e && activeEntries.includes(e))
+        .map(entry => ({ entry, displayIndex: activeEntries.indexOf(entry) }));
+      
+      if (entries.length > 1) {
+        datGroups.set(key, entries);
+        entries.forEach(({ entry }) => segmentEntryMap.set(entry, key));
+      }
+    }
+  });
+
+  // Traiter les groupes DAT
+  datGroups.forEach((entries, offset) => {
+    const firstEntry = entries[0].entry;
+    const displayIndices = entries.map(e => e.displayIndex);
+    const groupEntry = {
+      ...firstEntry,
+      isContentGroup: true,
+      contentGroupEntries: entries.map(e => e.entry),
+      contentGroupIndices: displayIndices,
+      contentGroupCount: entries.length
+    };
+    itemsToDisplay.push({ entry: groupEntry, displayIndex: displayIndices[0] });
+  });
+
+  // Ajouter les entries individuelles restantes
+  activeEntries.forEach((entry, displayIndex) => {
+    if (entry.isSequencedGroup || entry.isScrollingGroup) return;
+    if (segmentEntryMap.has(entry)) return; // Déjà traité dans un groupe DAT
+    
+    itemsToDisplay.push({ entry, displayIndex });
+  });
+
+  // Trier par displayIndex pour maintenir l'ordre
+  itemsToDisplay.sort((a, b) => a.displayIndex - b.displayIndex);
+
+  // Afficher dans l'ordre
+  itemsToDisplay.forEach(({ entry, displayIndex }) => {
     const card = buildEntryCard(entry, displayIndex);
     fragment.appendChild(card);
   });
+
   els.entries.appendChild(fragment);
 
   const visibleCount = activeEntries.reduce((sum, entry) => {
@@ -171,9 +244,6 @@ export function renderEntries() {
 }
 
 function matchesFilter(entry) {
-  if (entry.kind === 'mid' && !els.filterMid.checked) {
-    return false;
-  }
   if (entry.kind !== 'mid' && !els.filterInf.checked) {
     return false;
   }
@@ -336,10 +406,11 @@ export function buildEntryCard(entry, displayIndex = null) {
       shell.appendChild(ta);
       textareaContainer.appendChild(shell);
     });
-  } else if (entry.isSequencedGroup) {
-    const first = entry.sequencedIndices[0];
-    const last = entry.sequencedIndices[entry.sequencedIndices.length - 1];
-    titleText += ` (Entries ${first}-${last}, ${entry.sequencedCount} parts)`;
+  }
+  if (entry.isContentGroup) {
+    const first = entry.contentGroupIndices[0];
+    const last = entry.contentGroupIndices[entry.contentGroupIndices.length - 1];
+    titleText += ` (Entries ${first}-${last}, ${entry.contentGroupCount} identical)`;
   }
   
   title.textContent = titleText;
@@ -364,6 +435,11 @@ export function buildEntryCard(entry, displayIndex = null) {
   if (entry.isSequencedGroup) {
     const seqBadge = makeBadge('Sequenced', 'sequenced');
     badges.appendChild(seqBadge);
+  }
+
+  if (entry.isContentGroup) {
+    const contentBadge = makeBadge('Identical Pointers', 'content');
+    badges.appendChild(contentBadge);
   }
   
   card.querySelector('.offset').textContent = formatOffsetLabel(entry);
@@ -416,6 +492,26 @@ export function buildEntryCard(entry, displayIndex = null) {
         textareaContainer.appendChild(shell);
       });
     }
+  } else if (entry.isContentGroup) {
+    // Groupe d'entries avec même contenu - afficher un seul textarea
+    const shell = document.createElement('div');
+    shell.className = 'editor-shell';
+
+    const pre = document.createElement('pre');
+    pre.className = 'text-highlight';
+    pre.dataset.entryKind = entry.kind;
+    updateTextHighlight(pre, entry.text);
+
+    const ta = document.createElement('textarea');
+    ta.value = entry.text;
+    ta.dataset.kind = entry.kind;
+    ta.dataset.id = String(entry.id);
+    ta.dataset.ids = JSON.stringify(entry.contentGroupEntries.map(e => e.id));
+    ta.addEventListener('input', onEntryEdit);
+
+    shell.appendChild(pre);
+    shell.appendChild(ta);
+    textareaContainer.appendChild(shell);
   } else {
     {
       const shell = document.createElement('div');
@@ -456,6 +552,10 @@ export function buildEntryCard(entry, displayIndex = null) {
   
   if (entry.isSequencedGroup) {
     revertBtn.dataset.sequencedIndices = JSON.stringify(entry.sequencedIndices);
+  }
+
+  if (entry.isContentGroup) {
+    revertBtn.dataset.ids = JSON.stringify(entry.contentGroupEntries.map(e => e.id));
   }
   
   revertBtn.disabled = !entry.dirty;
