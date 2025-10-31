@@ -287,6 +287,19 @@ export function handleExportJson() {
     }
   });
 
+  // Group identical messages to reduce JSON size and include IDs
+  const groupMessages = (arr) => {
+    const grouped = {};
+    arr.forEach((msg, i) => {
+      if (msg != null) {
+        if (!grouped[msg]) grouped[msg] = [];
+        grouped[msg].push(i);
+      }
+    });
+    return grouped;
+  };
+  data.inf1 = groupMessages(data.inf1);
+  data.mid1 = groupMessages(data.mid1);
 
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -321,6 +334,15 @@ export function handleImportJsonFile(event) {
     .then(raw => {
       const data = JSON.parse(raw);
       
+      // Expand grouped messages back to arrays
+      const expandGrouped = (grouped, length) => {
+        const arr = new Array(length).fill(null);
+        for (const [msg, ids] of Object.entries(grouped)) {
+          ids.forEach(id => arr[id] = msg);
+        }
+        return arr;
+      };
+      
       // Get entries in display order (same sorting as export)
       const allEntries = [...state.entries];
       if (state.midStrings) {
@@ -333,6 +355,14 @@ export function handleImportJsonFile(event) {
         const bOffset = b.offset || b.calculatedOffset || 0;
         return aOffset - bOffset;
       });
+      
+      // Expand inf1 and mid1 if grouped
+      if (data.inf1 && typeof data.inf1 === 'object' && !Array.isArray(data.inf1)) {
+        data.inf1 = expandGrouped(data.inf1, allEntries.length);
+      }
+      if (data.mid1 && typeof data.mid1 === 'object' && !Array.isArray(data.mid1)) {
+        data.mid1 = expandGrouped(data.mid1, allEntries.length);
+      }
       
       // Handle both new unified format and legacy format
       let entries = { single: [], sequenced: [], scrolling: [] };
@@ -354,42 +384,6 @@ export function handleImportJsonFile(event) {
           scrolling: data.scrolling || [] 
         };
       }
-
-      // Apply top-level inf1/mid1 for single entries
-      if (Array.isArray(data.inf1) || Array.isArray(data.mid1)) {
-        // Build sets of display indices used by sequenced/scrolling so we can find single indices.
-        const sequencedDisplaySet = new Set();
-        entries.sequenced.forEach(it => {
-          if (Array.isArray(it.sequencedGroup)) it.sequencedGroup.map(Number).forEach(n => sequencedDisplaySet.add(n));
-        });
-
-        const scrollingDisplaySet = new Set();
-        entries.scrolling.forEach(it => {
-          if (Array.isArray(it.scrollingGroup)) it.scrollingGroup.map(Number).forEach(n => scrollingDisplaySet.add(n));
-        });
-
-        const singleDisplayIndices = [];
-        allEntries.forEach((_, idx) => {
-          if (!sequencedDisplaySet.has(idx) && !scrollingDisplaySet.has(idx)) singleDisplayIndices.push(idx);
-        });
-
-        const infArr = Array.isArray(data.inf1) ? data.inf1 : null;
-        const midArr = Array.isArray(data.mid1) ? data.mid1 : null;
-
-        singleDisplayIndices.forEach((displayIndex, i) => {
-          const entry = allEntries[displayIndex];
-          if (!entry) return;
-          let msg = undefined;
-          if (infArr && infArr[i] != null) msg = infArr[i];
-          else if (midArr && midArr[i] != null) msg = midArr[i];
-          if (msg !== undefined) {
-            entry.text = normalizeInput(msg);
-            entry.dirty = entry.text !== entry.originalText;
-            entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-          }
-        });
-      }
-
 
       
       // Build sets of display indices used by sequenced/scrolling so we can find single indices.
