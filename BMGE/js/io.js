@@ -197,8 +197,7 @@ export function handleExportJson() {
 
   // Unified structure with display order numbering (0, 1, 2, 3...)
   const data = {
-    inf1: [],
-    mid1: [],
+    single: null, // placeholder
     sequenced: [],
     scrolling: []
   };
@@ -276,14 +275,16 @@ export function handleExportJson() {
   });
 
   // Build inf1/mid1 arrays for single entries (aligned to display order)
+  const tempInf1 = [];
+  const tempMid1 = [];
   allEntries.forEach((entry, displayIndex) => {
     if (sequencedEntries.has(displayIndex) || scrollingEntries.has(displayIndex)) return;
     if (entry.kind === 'mid') {
-      data.inf1.push(null);
-      data.mid1.push(entry.text);
+      tempInf1.push(null);
+      tempMid1.push(entry.text);
     } else {
-      data.inf1.push(entry.text);
-      data.mid1.push(null);
+      tempInf1.push(entry.text);
+      tempMid1.push(null);
     }
   });
 
@@ -296,10 +297,12 @@ export function handleExportJson() {
         grouped[msg].push(i);
       }
     });
-    return grouped;
+    return Object.entries(grouped).map(([message, ids]) => ({ id: ids, message }));
   };
-  data.inf1 = groupMessages(data.inf1);
-  data.mid1 = groupMessages(data.mid1);
+  data.single = {
+    inf1: groupMessages(tempInf1),
+    mid1: groupMessages(tempMid1)
+  };
 
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -337,9 +340,9 @@ export function handleImportJsonFile(event) {
       // Expand grouped messages back to arrays
       const expandGrouped = (grouped, length) => {
         const arr = new Array(length).fill(null);
-        for (const [msg, ids] of Object.entries(grouped)) {
-          ids.forEach(id => arr[id] = msg);
-        }
+        grouped.forEach(item => {
+          item.id.forEach(id => arr[id] = item.message);
+        });
         return arr;
       };
       
@@ -356,12 +359,18 @@ export function handleImportJsonFile(event) {
         return aOffset - bOffset;
       });
       
-      // Expand inf1 and mid1 if grouped
-      if (data.inf1 && typeof data.inf1 === 'object' && !Array.isArray(data.inf1)) {
-        data.inf1 = expandGrouped(data.inf1, allEntries.length);
-      }
-      if (data.mid1 && typeof data.mid1 === 'object' && !Array.isArray(data.mid1)) {
-        data.mid1 = expandGrouped(data.mid1, allEntries.length);
+      // Handle new format with single section
+      if (data.single) {
+        data.inf1 = expandGrouped(data.single.inf1, allEntries.length);
+        data.mid1 = expandGrouped(data.single.mid1, allEntries.length);
+      } else {
+        // Expand inf1 and mid1 if grouped (old format)
+        if (data.inf1 && typeof data.inf1 === 'object' && !Array.isArray(data.inf1)) {
+          data.inf1 = expandGrouped(data.inf1, allEntries.length);
+        }
+        if (data.mid1 && typeof data.mid1 === 'object' && !Array.isArray(data.mid1)) {
+          data.mid1 = expandGrouped(data.mid1, allEntries.length);
+        }
       }
       
       // Handle both new unified format and legacy format
