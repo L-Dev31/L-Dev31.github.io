@@ -7,23 +7,22 @@ import { updateCalculatedOffsets } from './layout.js';
 import { handleFileSelection, handleDownload, handleExportJson, handleImportJsonClick, handleImportJsonFile } from './io.js';
 import { onEntryEdit, onEntryRevert, onFilter } from './editor.js';
 
-// renderEntries function
 export function renderEntries() {
   els.entries.innerHTML = '';
   const fragment = document.createDocumentFragment();
-  
-  
+
+
   let displayEntries = [];
 
-  
+
   (state.entries || []).forEach(e => displayEntries.push(e));
 
-  
+
   const midAll = state.midStrings || [];
   const userGroups = state.midGroups || [];
   const userMemberSet = new Set((userGroups.flat ? userGroups.flat() : []).filter(Boolean));
 
-  
+
   const handledMidIds = new Set();
   userGroups.forEach((group) => {
     if (!Array.isArray(group) || group.length === 0) return;
@@ -40,9 +39,9 @@ export function renderEntries() {
     });
   });
 
-  
+
   const autoPool = midAll.filter(m => !handledMidIds.has(m.id));
-  
+
   // Detect scrolling groups first (before sequenced groups)
   const scrollingGroups = detectScrollingGroups(autoPool);
   scrollingGroups.forEach((group) => {
@@ -58,7 +57,7 @@ export function renderEntries() {
       });
     }
   });
-  
+
   // Detect sequenced groups on remaining entries
   const remainingPool = autoPool.filter(m => !scrollingGroups.some(g => g.isScrolling && g.entries.includes(m)));
   const midGroups = detectSequencedGroups(remainingPool);
@@ -69,7 +68,7 @@ export function renderEntries() {
         id: group.entries[0].id,
         isSequencedGroup: true,
         sequencedEntries: group.entries,
-        
+
         sequencedIndices: group.entries.map(e => e.id),
         sequencedCount: group.entries.length,
         text: group.entries.map(e => e.text).join('')
@@ -78,10 +77,10 @@ export function renderEntries() {
       displayEntries.push(group.entries[0]);
     }
   });
-  
+
   const finalEntries = [];
   const infProcessed = new Set();
-  
+
   // Detect mixed INF1/MID1 sequenced groups
   const mixedGroups = detectMixedSequencedGroups(state.entries, state.midStrings || []);
   mixedGroups.forEach(group => {
@@ -98,7 +97,7 @@ export function renderEntries() {
       group.entries.forEach(entry => infProcessed.add(entry.id));
     }
   });
-  
+
   // Remove entries that are in mixed groups from displayEntries
   const mixedEntryIds = new Set();
   mixedGroups.forEach(group => {
@@ -107,11 +106,11 @@ export function renderEntries() {
     }
   });
   displayEntries = displayEntries.filter(entry => !mixedEntryIds.has(entry.id));
-  
+
   // Detect sequenced groups on remaining INF1 entries
   const remainingInfEntries = state.entries.filter(entry => !infProcessed.has(entry.id));
   const infGroups = detectSequencedGroups(remainingInfEntries);
-  
+
   infGroups.forEach(group => {
     if (group.isSequenced) {
       const firstEntry = group.entries[0];
@@ -130,7 +129,7 @@ export function renderEntries() {
       }
     }
   });
-  
+
   displayEntries.forEach(entry => {
     if (entry.kind !== 'mid') {
       const idx = finalEntries.findIndex(e => e.id === entry.id && e.kind === entry.kind);
@@ -141,18 +140,19 @@ export function renderEntries() {
       finalEntries.push(entry);
     }
   });
-  
+
   const activeEntries = finalEntries.filter(matchesFilter);
-  
+
   // Sort entries by file offset for logical reading order
   activeEntries.sort((a, b) => {
     const aOffset = a.offset || a.originalOffset || 0;
     const bOffset = b.offset || b.originalOffset || 0;
     return aOffset - bOffset;
   });
-  
-  activeEntries.forEach((entry) => {
-    const card = buildEntryCard(entry);
+
+  activeEntries.forEach((entry, displayIndex) => {
+    // Use display order numbering (0, 1, 2, 3...) that matches JSON export format
+    const card = buildEntryCard(entry, displayIndex);
     fragment.appendChild(card);
   });
   els.entries.appendChild(fragment);
@@ -170,7 +170,6 @@ export function renderEntries() {
   updateEntryCount(visibleCount);
 }
 
-// matchesFilter function
 function matchesFilter(entry) {
   if (entry.kind === 'mid' && !els.filterMid.checked) {
     return false;
@@ -296,8 +295,7 @@ function matchesFilter(entry) {
   return text.includes(query) || original.includes(query);
 }
 
-// buildEntryCard function
-export function buildEntryCard(entry) {
+export function buildEntryCard(entry, displayIndex = null) {
   const template = document.getElementById('entry-template');
   const card = template.content.firstElementChild.cloneNode(true);
   card.dataset.kind = entry.kind;
@@ -309,7 +307,7 @@ export function buildEntryCard(entry) {
   card.classList.toggle('scrolling-entry', entry.isScrollingGroup === true);
   
   const title = card.querySelector('h3');
-  let titleText = formatEntryTitle(entry);
+  let titleText = displayIndex !== null ? `Entry #${displayIndex}` : formatEntryTitle(entry);
   
   if (entry.isScrollingGroup) {
     const first = entry.scrollingIds[0];
@@ -486,7 +484,6 @@ export function buildEntryCard(entry) {
   return card;
 }
 
-// updateMeta function
 export function updateMeta() {
   if (!state.bytes) {
     els.fileMeta.innerHTML = state.message
@@ -523,7 +520,6 @@ const datSize = formatBytes(state.datDeclaredSize);
   els.fileMeta.innerHTML = html;
 }
 
-// updateEntryCount function
 export function updateEntryCount(activeCount) {
   const extra = state.midStrings?.length ?? 0;
   const total = state.entryCount + extra;
@@ -531,21 +527,18 @@ export function updateEntryCount(activeCount) {
   els.entryCount.textContent = label;
 }
 
-// updateSaveButton function
 export function updateSaveButton() {
   const hasChanges = state.entries.some((entry) => entry.dirty)
     || (state.midStrings?.some((entry) => entry.dirty) ?? false);
   els.download.disabled = !hasChanges;
 }
 
-// showMessage function
 export function showMessage(text, tone = 'info') {
   state.message = text;
   state.messageTone = tone;
   updateMeta();
 }
 
-// resetUi function
 export function resetUi() {
   state.fileName = '';
   state.originalBuffer = null;

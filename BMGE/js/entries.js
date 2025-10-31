@@ -36,7 +36,7 @@ function detectSequencedGroups(entries) {
 
       if (isMidCollection) {
         // Pour MID : utiliser les mêmes règles que INF1 - tokens de liaison
-        const linkPattern = /\[1A:(?:FF08|0108)\]\s*$/i;
+        const linkPattern = /\[1A:(?:FF08|0108)\]/i;
         const hasLinkToken = linkPattern.test(last.text);
 
         if (hasLinkToken) {
@@ -51,12 +51,12 @@ function detectSequencedGroups(entries) {
       }
 
       // Pour INF1 : critères STRICTS corrigés
-      // Vérifier si le dernier se termine par un token de liaison
-      const linkPattern = /\[1A:(?:FF08|0108)\]\s*$/i;
-      const endsWithLink = linkPattern.test(last.text);
+      // Vérifier si le dernier contient un token de liaison
+      const linkPattern = /\[1A:(?:FF08|0108)\]/i;
+      const hasLinkToken = linkPattern.test(last.text);
 
-      // ✅ CORRECTION : On vérifie d'abord le token de liaison
-      if (endsWithLink) {
+      // ✅ CORRECTION : On vérifie si le dernier contient un token de liaison
+      if (hasLinkToken) {
         group.push(next);
         indices.push(j);
         processed.add(j);
@@ -82,6 +82,38 @@ function detectSequencedGroups(entries) {
     }
 
     processed.add(i);
+  }
+
+  // Fusionner les groupes connectés
+  for (let i = 0; i < groups.length - 1; i++) {
+    const currentGroup = groups[i];
+
+    for (let j = i + 1; j < groups.length; j++) {
+      const nextGroup = groups[j];
+
+      // Vérifier si le dernier élément du groupe actuel contient un token de liaison
+      const lastEntry = currentGroup.entries[currentGroup.entries.length - 1];
+      const linkPattern = /\[1A:(?:FF08|0108)\]/i;
+      const hasLinkToken = linkPattern.test(lastEntry.text);
+
+      if (hasLinkToken) {
+        // Fusionner les groupes - le groupe actuel absorbe le groupe suivant
+        currentGroup.entries.push(...nextGroup.entries);
+        currentGroup.indices.push(...nextGroup.indices);
+        
+        // Marquer comme séquencé si ce n'était pas déjà le cas
+        if (currentGroup.entries.length > 1) {
+          currentGroup.isSequenced = true;
+        }
+        
+        // Supprimer le groupe fusionné
+        groups.splice(j, 1);
+        j--; // Ajuster l'index après suppression
+      } else {
+        // Si pas de token de liaison, arrêter la recherche pour ce groupe actuel
+        break;
+      }
+    }
   }
 
   return groups;
@@ -322,8 +354,8 @@ function detectMixedSequencedGroups(infEntries, midEntries) {
       const next = allEntries[j];
       const last = group[group.length - 1];
 
-      // Check for link tokens [1A:FF08] or [1A:0108] at the end of the last entry's text
-      const linkPattern = /\[1A:(?:FF08|0108)\]\s*$/i;
+      // Check for link tokens [1A:FF08] or [1A:0108] anywhere in the last entry's text
+      const linkPattern = /\[1A:(?:FF08|0108)\]/i;
       const hasLinkToken = linkPattern.test(last.entry.text);
 
       if (hasLinkToken) {

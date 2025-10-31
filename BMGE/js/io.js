@@ -4,11 +4,7 @@ import { parseBmg, buildBmg, encodeBmgString } from './bmg-format.js';
 import { updateCalculatedOffsets } from './layout.js';
 import { updateMeta, renderEntries, updateSaveButton, showMessage, resetUi } from './ui.js';
 import { generateScrollingVariants } from './entries.js';
-import { detectSequencedGroups } from './entries.js';
-
-// ============================================================================
-// FILE LOADING
-// ============================================================================
+import { detectSequencedGroups, detectScrollingGroups, detectMixedSequencedGroups } from './entries.js';
 
 export function handleFileSelection(event) {
   const file = event.target.files?.[0];
@@ -57,10 +53,6 @@ function loadBuffer(buffer, name) {
   updateMeta();
   updateSaveButton();
 }
-
-// ============================================================================
-// FILE SAVING
-// ============================================================================
 
 export function handleDownload() {
   const hasChanges = state.entries.some(e => e.dirty) || 
@@ -131,46 +123,140 @@ function applyNewBuffer(buffer) {
   updateSaveButton();
 }
 
-// ============================================================================
-// JSON EXPORT
-// ============================================================================
-
 export function handleExportJson() {
-  const midGroups = detectSequencedGroups(state.midStrings || []);
-  
-  // Build INF1 entries (always individual, no sequencing)
-  const inf1 = [];
-  state.entries.forEach(entry => {
-    inf1.push({
-      id: entry.index,
-      message: entry.text
-    });
+  // Get entries in display order (sorted by offset)
+  const allEntries = [...state.entries];
+  if (state.midStrings) {
+    allEntries.push(...state.midStrings);
+  }
+
+  // Sort by offset for consistent display order (same as renderEntries)
+  allEntries.sort((a, b) => {
+    const aOffset = a.offset || a.calculatedOffset || 0;
+    const bOffset = b.offset || b.calculatedOffset || 0;
+    return aOffset - bOffset;
   });
-  
-  // Build MID1 entries
-  const mid1 = [];
-  midGroups.forEach(group => {
-    if (group.isSequenced) {
-      mid1.push({
-        id: group.entries[0].id,
-        messages: group.entries.map(e => e.text),
-        sequencedGroup: group.entries.map(e => e.id)
-      });
-    } else {
-      mid1.push({
-        id: group.entries[0].id,
-        message: group.entries[0].text
+
+  const midGroups = detectSequencedGroups(state.midStrings || []);
+  const scrollingGroups = detectScrollingGroups(state.midStrings || []);
+  const mixedGroups = detectMixedSequencedGroups(state.entries, state.midStrings || []);
+
+  // Create maps to track which entries belong to which groups
+  const entryToGroupMap = new Map();
+  const processedEntries = new Set();
+
+  // Process mixed sequenced groups
+  mixedGroups.forEach(group => {
+    if (group.isMixedSequenced && group.entries.length > 0) {
+      group.entries.forEach(entry => {
+        const key = `${entry.kind}-${entry.id}`;
+        entryToGroupMap.set(key, {
+          type: 'sequenced',
+          group: group,
+          entries: group.entries,
+          mixedTypes: group.mixedTypes
+        });
+        processedEntries.add(key);
       });
     }
   });
-  
-  const payload = { inf1, mid1 };
-  
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+
+  // Process scrolling groups
+  scrollingGroups.forEach(group => {
+    if (group.isScrolling && group.entries.length > 0) {
+      group.entries.forEach(entry => {
+        const key = `${entry.kind}-${entry.id}`;
+        if (!processedEntries.has(key)) {
+          entryToGroupMap.set(key, {
+            type: 'scrolling',
+            group: group,
+            entries: group.entries
+          });
+          processedEntries.add(key);
+        }
+      });
+    }
+  });
+
+  // Process sequenced groups
+  midGroups.forEach(group => {
+    if (group.isSequenced && group.entries.length > 0) {
+      group.entries.forEach(entry => {
+        const key = `${entry.kind}-${entry.id}`;
+        if (!processedEntries.has(key)) {
+          entryToGroupMap.set(key, {
+            type: 'sequenced',
+            group: group,
+            entries: group.entries
+          });
+          processedEntries.add(key);
+        }
+      });
+    }
+  });
+
+  // Unified structure with display order numbering (0, 1, 2, 3...)
+  const data = {
+    single: [],
+    sequenced: [],
+    scrolling: []
+  };
+
+  // Track processed groups to avoid duplicates
+  const processedGroups = new Set();
+
+  // Process each entry in display order and assign sequential IDs
+  allEntries.forEach((entry, displayIndex) => {
+    const key = `${entry.kind}-${entry.id}`;
+    const groupInfo = entryToGroupMap.get(key);
+
+    if (groupInfo) {
+      // This entry belongs to a group
+      const groupKey = `${groupInfo.type}-${groupInfo.entries.map(e => `${e.kind}-${e.id}`).sort().join(',')}`;
+
+      if (!processedGroups.has(groupKey)) {
+        processedGroups.add(groupKey);
+
+        if (groupInfo.type === 'scrolling') {
+          // Find all display indices for this scrolling group
+          const groupDisplayIndices = groupInfo.entries.map(e =>
+            allEntries.findIndex(ee => ee.id === e.id && ee.kind === e.kind)
+          ).filter(idx => idx >= 0).sort((a, b) => a - b);
+
+          data.scrolling.push({
+            id: groupDisplayIndices[0], // Use first display index as base
+            message: groupInfo.entries[0].text,
+            scrollingGroup: groupDisplayIndices,
+            variants: groupInfo.entries.map(e => e.text)
+          });
+        } else if (groupInfo.type === 'sequenced') {
+          // Find all display indices for this sequenced group
+          const groupDisplayIndices = groupInfo.entries.map(e =>
+            allEntries.findIndex(ee => ee.id === e.id && ee.kind === e.kind)
+          ).filter(idx => idx >= 0).sort((a, b) => a - b);
+
+          data.sequenced.push({
+            id: groupDisplayIndices[0], // Use first display index as base
+            messages: groupInfo.entries.map(e => e.text),
+            sequencedGroup: groupDisplayIndices,
+            ...(groupInfo.mixedTypes ? { mixedTypes: groupInfo.mixedTypes } : {})
+          });
+        }
+      }
+    } else {
+      // This is a single entry
+      data.single.push({
+        id: displayIndex,
+        message: entry.text
+      });
+    }
+  });
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   const safeName = state.fileName ? state.fileName.replace(/\.bmg$/i, '') : 'messages';
-  
+
   anchor.href = url;
   anchor.download = `${safeName}.json`;
   document.body.appendChild(anchor);
@@ -178,10 +264,6 @@ export function handleExportJson() {
   anchor.remove();
   URL.revokeObjectURL(url);
 }
-
-// ============================================================================
-// JSON IMPORT
-// ============================================================================
 
 export function handleImportJsonClick() {
   if (els.importJson.disabled) return;
@@ -203,43 +285,75 @@ export function handleImportJsonFile(event) {
     .then(raw => {
       const data = JSON.parse(raw);
       
-      // Extract inf1 and mid1
-      let inf1 = [];
-      let mid1 = [];
-      
-      if (Array.isArray(data)) {
-        inf1 = data;
-      } else if (data.inf1) {
-        inf1 = data.inf1;
-        mid1 = data.mid1 || [];
-      } else if (data.entries) {
-        inf1 = data.entries;
-        mid1 = data.midStrings || [];
+      // Get entries in display order (same sorting as export)
+      const allEntries = [...state.entries];
+      if (state.midStrings) {
+        allEntries.push(...state.midStrings);
       }
       
-      // Import INF1 entries
-      inf1.forEach(item => {
-        const id = Number(item.id);
-        if (!Number.isInteger(id) || id < 0 || id >= state.entryCount) return;
+      // Sort by offset for consistent display order (same as export)
+      allEntries.sort((a, b) => {
+        const aOffset = a.offset || a.calculatedOffset || 0;
+        const bOffset = b.offset || b.calculatedOffset || 0;
+        return aOffset - bOffset;
+      });
+      
+      // Handle both new unified format and legacy format
+      let entries = { single: [], sequenced: [], scrolling: [] };
+      
+      if (data.inf1 || data.mid1) {
+        // Legacy format with separate inf1/mid1 sections
+        const inf1 = data.inf1 || { single: [], sequenced: [], scrolling: [] };
+        const mid1 = data.mid1 || { single: [], sequenced: [], scrolling: [] };
         
-        // Handle sequenced group
+        // Convert legacy format to unified structure
+        entries.single = [...(inf1.single || []), ...(mid1.single || [])];
+        entries.sequenced = [...(inf1.sequenced || []), ...(mid1.sequenced || [])];
+        entries.scrolling = [...(inf1.scrolling || []), ...(mid1.scrolling || [])];
+      } else {
+        // New unified format
+        entries = { 
+          single: data.single || [], 
+          sequenced: data.sequenced || [], 
+          scrolling: data.scrolling || [] 
+        };
+      }
+      
+      // Import single entries using display order indices
+      entries.single.forEach(item => {
+        const displayIndex = Number(item.id);
+        if (!Number.isInteger(displayIndex) || displayIndex < 0 || displayIndex >= allEntries.length) return;
+        
+        const entry = allEntries[displayIndex];
+        if (entry && typeof item.message === 'string') {
+          entry.text = normalizeInput(item.message);
+          entry.dirty = entry.text !== entry.originalText;
+          entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
+        }
+      });
+      
+      // Import sequenced entries using display order indices
+      entries.sequenced.forEach(item => {
+        const baseDisplayIndex = Number(item.id);
+        if (!Number.isInteger(baseDisplayIndex)) return;
+        
         if (Array.isArray(item.sequencedGroup) && item.sequencedGroup.length > 0) {
-          const indices = item.sequencedGroup;
+          const displayIndices = item.sequencedGroup.map(Number);
           
-          // If we have individual messages, apply them directly
           if (Array.isArray(item.messages)) {
-            indices.forEach((targetIndex, i) => {
-              const entry = state.entries[targetIndex];
-              if (entry && item.messages[i] !== undefined) {
+            displayIndices.forEach((targetDisplayIndex, i) => {
+              if (targetDisplayIndex >= 0 && targetDisplayIndex < allEntries.length && item.messages[i] !== undefined) {
+                const entry = allEntries[targetDisplayIndex];
                 entry.text = normalizeInput(item.messages[i]);
                 entry.dirty = entry.text !== entry.originalText;
                 entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
               }
             });
-          }
-          // Otherwise split single message
-          else if (typeof item.message === 'string') {
-            const targets = indices.map(i => state.entries[i]).filter(Boolean);
+          } else if (typeof item.message === 'string') {
+            const targets = displayIndices
+              .filter(idx => idx >= 0 && idx < allEntries.length)
+              .map(idx => allEntries[idx])
+              .filter(Boolean);
             const parts = splitTextProportionally(item.message, targets);
             
             targets.forEach((entry, i) => {
@@ -247,71 +361,25 @@ export function handleImportJsonFile(event) {
               entry.dirty = entry.text !== entry.originalText;
               entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
             });
-          }
-        }
-        // Handle single entry
-        else if (typeof item.message === 'string') {
-          const entry = state.entries[id];
-          if (entry) {
-            entry.text = normalizeInput(item.message);
-            entry.dirty = entry.text !== entry.originalText;
-            entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
           }
         }
       });
       
-      // Import MID1 entries
-      mid1.forEach(item => {
-        const baseId = Number(item.id);
-        if (!Number.isInteger(baseId)) return;
+      // Import scrolling entries using display order indices
+      entries.scrolling.forEach(item => {
+        const baseDisplayIndex = Number(item.id);
+        if (!Number.isInteger(baseDisplayIndex)) return;
         
-        // Handle sequenced group
-        if (Array.isArray(item.sequencedGroup) && item.sequencedGroup.length > 0) {
-          const ids = item.sequencedGroup.map(Number);
-          
-          // If we have individual messages, apply them directly
-          if (Array.isArray(item.messages)) {
-            ids.forEach((targetId, i) => {
-              const entry = state.midStrings.find(e => e.id === targetId);
-              if (entry && item.messages[i] !== undefined) {
-                entry.text = normalizeInput(item.messages[i]);
-                entry.dirty = entry.text !== entry.originalText;
-                entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-              }
-            });
-          }
-          // Otherwise split single message
-          else if (typeof item.message === 'string') {
-            const targets = ids.map(id => state.midStrings.find(e => e.id === id)).filter(Boolean);
-            const parts = splitTextProportionally(item.message, targets);
-            
-            targets.forEach((entry, i) => {
-              entry.text = parts[i];
-              entry.dirty = entry.text !== entry.originalText;
-              entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-            });
-          }
-        }
-        // Handle scrolling group
-        else if (Array.isArray(item.scrollingGroup) && item.scrollingGroup.length > 0) {
-          const variants = generateScrollingVariants(item.message);
-          item.scrollingGroup.forEach((variantId, i) => {
-            const entry = state.midStrings.find(e => e.id === variantId);
-            if (entry && variants[i] !== undefined) {
+        if (Array.isArray(item.scrollingGroup) && item.scrollingGroup.length > 0) {
+          const variants = item.variants || generateScrollingVariants(item.message);
+          item.scrollingGroup.forEach((variantDisplayIndex, i) => {
+            if (variantDisplayIndex >= 0 && variantDisplayIndex < allEntries.length && variants[i] !== undefined) {
+              const entry = allEntries[variantDisplayIndex];
               entry.text = variants[i];
               entry.dirty = entry.text !== entry.originalText;
               entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
             }
           });
-        }
-        // Handle single entry
-        else if (typeof item.message === 'string') {
-          const entry = state.midStrings.find(e => e.id === baseId);
-          if (entry) {
-            entry.text = normalizeInput(item.message);
-            entry.dirty = entry.text !== entry.originalText;
-            entry.byteLength = encodeBmgString(entry.text, { leadingNull: entry.leadingNull }).length;
-          }
         }
       });
       
@@ -332,10 +400,6 @@ export function handleImportJsonFile(event) {
       event.target.value = '';
     });
 }
-
-// ============================================================================
-// HELPERS
-// ============================================================================
 
 function splitTextProportionally(fullText, targets) {
   if (!targets.length) return [];
