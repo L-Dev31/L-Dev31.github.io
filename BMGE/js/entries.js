@@ -36,7 +36,7 @@ function detectSequencedGroups(entries) {
 
       if (isMidCollection) {
         // Pour MID : utiliser les mêmes règles que INF1 - tokens de liaison
-        const linkPattern = /\[1A:(?:FF08|0108)\]/i;
+        const linkPattern = /\[1A:(?:FF08|0108)\]\s*$/i;
         const hasLinkToken = linkPattern.test(last.text);
 
         if (hasLinkToken) {
@@ -51,11 +51,11 @@ function detectSequencedGroups(entries) {
       }
 
       // Pour INF1 : critères STRICTS corrigés
-      // Vérifier si le dernier contient un token de liaison
-      const linkPattern = /\[1A:(?:FF08|0108)\]/i;
+      // Vérifier si le dernier se termine par un token de liaison
+      const linkPattern = /\[1A:(?:FF08|0108)\]\s*$/i;
       const hasLinkToken = linkPattern.test(last.text);
 
-      // ✅ CORRECTION : On vérifie si le dernier contient un token de liaison
+      // ✅ CORRECTION : On vérifie d'abord le token de liaison
       if (hasLinkToken) {
         group.push(next);
         indices.push(j);
@@ -91,12 +91,13 @@ function detectSequencedGroups(entries) {
     for (let j = i + 1; j < groups.length; j++) {
       const nextGroup = groups[j];
 
-      // Vérifier si le dernier élément du groupe actuel contient un token de liaison
+      // Vérifier si le dernier élément du groupe actuel contient [1A:0108] et le premier du groupe suivant contient [1A:FF08]
       const lastEntry = currentGroup.entries[currentGroup.entries.length - 1];
-      const linkPattern = /\[1A:(?:FF08|0108)\]/i;
-      const hasLinkToken = linkPattern.test(lastEntry.text);
+      const firstEntry = nextGroup.entries[0];
+      const hasEndToken = /\[1A:0108\]/i.test(lastEntry.text);
+      const hasStartToken = /\[1A:FF08\]/i.test(firstEntry.text);
 
-      if (hasLinkToken) {
+      if (hasEndToken && hasStartToken) {
         // Fusionner les groupes - le groupe actuel absorbe le groupe suivant
         currentGroup.entries.push(...nextGroup.entries);
         currentGroup.indices.push(...nextGroup.indices);
@@ -110,13 +111,49 @@ function detectSequencedGroups(entries) {
         groups.splice(j, 1);
         j--; // Ajuster l'index après suppression
       } else {
-        // Si pas de token de liaison, arrêter la recherche pour ce groupe actuel
+        // Si pas de correspondance, arrêter la recherche pour ce groupe actuel
         break;
       }
     }
   }
 
-  return groups;
+  // 🔄 PHASE 2 : Fusionner les groupes connectés par [1A:0108] + [1A:FF08]
+  const mergedGroups = [];
+  let currentGroup = null;
+
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i];
+
+    if (!currentGroup) {
+      currentGroup = group;
+      continue;
+    }
+
+    // Vérifier si le dernier de currentGroup se termine par [1A:0108]
+    const lastEntry = currentGroup.entries[currentGroup.entries.length - 1];
+    const has0108 = /\[1A:0108\]\s*$/i.test(lastEntry.text);
+
+    // Vérifier si le premier de group commence par [1A:FF08]
+    const firstEntry = group.entries[0];
+    const startsWithFF08 = /^\s*\[1A:FF08\]/i.test(firstEntry.text);
+
+    if (has0108 && startsWithFF08) {
+      // Fusionner les groupes
+      currentGroup.entries.push(...group.entries);
+      currentGroup.indices.push(...group.indices);
+    } else {
+      // Pas de connexion, sauvegarder le groupe actuel et commencer un nouveau
+      mergedGroups.push(currentGroup);
+      currentGroup = group;
+    }
+  }
+
+  // Ajouter le dernier groupe
+  if (currentGroup) {
+    mergedGroups.push(currentGroup);
+  }
+
+  return mergedGroups;
 }
 
 function detectScrollingGroups(entries) {
