@@ -1,4 +1,4 @@
-const $ = (selector) => document.querySelector(selector);
+const $ = (selector) => (typeof document !== 'undefined') ? document.querySelector(selector) : null;
 
 const els = {
   fileInput: $('#file-input'),

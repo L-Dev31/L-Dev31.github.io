@@ -8,6 +8,7 @@ import { handleFileSelection, handleDownload, handleExportJson, handleImportJson
 import { onEntryEdit, onEntryRevert, onFilter } from './editor.js';
 
 export function renderEntries() {
+  console.log(`Starting renderEntries with ${state.entries.length} INF1 entries and ${state.midStrings?.length || 0} MID1 entries`);
   els.entries.innerHTML = '';
 
   let displayEntries = [];
@@ -141,6 +142,11 @@ export function renderEntries() {
 
   const activeEntries = finalEntries.filter(matchesFilter);
 
+  console.log(`Final entries count: ${finalEntries.length}, active entries count: ${activeEntries.length}`);
+  activeEntries.forEach(entry => {
+    console.log(`Active entry: kind=${entry.kind}, id=${entry.id}, text="${entry.text}", offset=${entry.offset}`);
+  });
+
   // Sort entries by file offset for logical reading order
   activeEntries.sort((a, b) => {
     const aOffset = a.offset || a.originalOffset || 0;
@@ -244,128 +250,169 @@ export function renderEntries() {
 }
 
 function matchesFilter(entry) {
-  if (entry.kind !== 'mid' && !els.filterInf.checked) {
+  console.log(`Checking filter for entry: kind=${entry.kind}, id=${entry.id}, text="${entry.text}", offset=${entry.offset}`);
+  if (entry.kind === 'inf' && !els.filterInf.checked) {
+    console.log(`Filter failed: INF1 filter not checked`);
+    return false;
+  }
+  if (entry.kind === 'mid' && !els.filterMid.checked) {
+    console.log(`Filter failed: MID1 filter not checked`);
     return false;
   }
   if (!els.filterEmpty.checked && (!entry.text || entry.text.trim() === '')) {
+    console.log(`Filter failed: Empty filter not checked and entry is empty`);
     return false;
   }
   if (!els.filterSequenced.checked && entry.isSequencedGroup) {
+    console.log(`Filter failed: Sequenced filter not checked and entry is sequenced`);
     return false;
   }
   if (!els.filterScrolling.checked && entry.isScrollingGroup) {
+    console.log(`Filter failed: Scrolling filter not checked and entry is scrolling`);
     return false;
   }
   if (!els.filterModified.checked && entry.dirty) {
+    console.log(`Filter failed: Modified filter not checked and entry is dirty`);
     return false;
   }
   
   const query = state.filter.trim().toLowerCase();
   if (!query) {
+    console.log(`Filter passed: no search query`);
     return true;
   }
   if (entry.kind === 'mid') {
     if (typeof entry.offset === 'number') {
       const pointerHex = `0x${entry.offset.toString(16)}`.toLowerCase();
       if (pointerHex.includes(query)) {
+        console.log(`Filter passed: pointer hex matches`);
         return true;
       }
     }
     const midLabel = `mid${(typeof entry.id === 'number' ? entry.id + 1 : '')}`;
     if (midLabel.includes(query)) {
+      console.log(`Filter passed: mid label matches`);
       return true;
     }
     if (entry.references && entry.references.some((ref) => `row${ref.row}`.includes(query) || `col${ref.column}`.includes(query) || `${ref.row}:${ref.column}`.includes(query))) {
+      console.log(`Filter passed: references match`);
       return true;
     }
     const text = (entry.text ?? '').toLowerCase();
     const original = (entry.originalText ?? '').toLowerCase();
-    return text.includes(query) || original.includes(query);
+    if (text.includes(query) || original.includes(query)) {
+      console.log(`Filter passed: text matches`);
+      return true;
+    }
+    console.log(`Filter failed: no match for mid entry`);
+    return false;
   }
   if (`${entry.index}`.includes(query)) {
+    console.log(`Filter passed: index matches`);
     return true;
   }
   if (typeof entry.offset === 'number' && (`0x${entry.offset.toString(16)}`.toLowerCase().includes(query))) {
+    console.log(`Filter passed: offset matches`);
     return true;
   }
   if (typeof entry.messageId === 'number') {
     const messageIdDec = entry.messageId.toString();
     if (messageIdDec.includes(query)) {
+      console.log(`Filter passed: messageId decimal matches`);
       return true;
     }
     const messageIdHex = `0x${formatHex(entry.messageId, 4)}`.toLowerCase();
     if (messageIdHex.includes(query)) {
+      console.log(`Filter passed: messageId hex matches`);
       return true;
     }
   }
   if (typeof entry.groupId === 'number') {
     const groupIdDec = entry.groupId.toString();
     if (groupIdDec.includes(query)) {
+      console.log(`Filter passed: groupId decimal matches`);
       return true;
     }
     const groupIdHex = `0x${formatHex(entry.groupId, 4)}`.toLowerCase();
     if (groupIdHex.includes(query)) {
+      console.log(`Filter passed: groupId hex matches`);
       return true;
     }
   }
   if (typeof entry.attr1 === 'number') {
     const attr1Dec = entry.attr1.toString();
     if (attr1Dec.includes(query)) {
+      console.log(`Filter passed: attr1 decimal matches`);
       return true;
     }
     const attr1Hex = `0x${formatHex(entry.attr1, 4)}`.toLowerCase();
     if (attr1Hex.includes(query)) {
+      console.log(`Filter passed: attr1 hex matches`);
       return true;
     }
   }
   if (typeof entry.attr2 === 'number') {
     const attr2Dec = entry.attr2.toString();
     if (attr2Dec.includes(query)) {
+      console.log(`Filter passed: attr2 decimal matches`);
       return true;
     }
     const attr2Hex = `0x${formatHex(entry.attr2, 4)}`.toLowerCase();
     if (attr2Hex.includes(query)) {
+      console.log(`Filter passed: attr2 hex matches`);
       return true;
     }
   }
   if (typeof entry.compositeId === 'bigint') {
     const compositeDec = entry.compositeId.toString();
     if (compositeDec.includes(query)) {
+      console.log(`Filter passed: compositeId decimal matches`);
       return true;
     }
     const compositeHex = `0x${entry.compositeId.toString(16)}`.toLowerCase();
     if (compositeHex.includes(query)) {
+      console.log(`Filter passed: compositeId hex matches`);
       return true;
     }
   }
   if (typeof entry.attributeHex === 'string' && entry.attributeHex.length) {
     const attrHexLower = entry.attributeHex.toLowerCase();
     if (attrHexLower.includes(query)) {
+      console.log(`Filter passed: attributeHex matches`);
       return true;
     }
     const attrHexPrefixed = `0x${attrHexLower}`;
     if (attrHexPrefixed.includes(query)) {
+      console.log(`Filter passed: prefixed attributeHex matches`);
       return true;
     }
   }
   if (Array.isArray(entry.extraFields) && entry.extraFields.length) {
     const extrasDecimal = entry.extraFields.some((value) => value.toString().includes(query));
     if (extrasDecimal) {
+      console.log(`Filter passed: extraFields decimal matches`);
       return true;
     }
     const extrasHex = entry.extraFields
       .map((value) => `0x${formatHex(value, 4)}`.toLowerCase())
       .some((label) => label.includes(query));
     if (extrasHex) {
+      console.log(`Filter passed: extraFields hex matches`);
       return true;
     }
   }
   if (typeof entry.originalOffset === 'number' && (`0x${entry.originalOffset.toString(16)}`.toLowerCase().includes(query))) {
+    console.log(`Filter passed: originalOffset matches`);
     return true;
   }
   const text = (entry.text ?? '').toLowerCase();
   const original = (entry.originalText ?? '').toLowerCase();
-  return text.includes(query) || original.includes(query);
+  if (text.includes(query) || original.includes(query)) {
+    console.log(`Filter passed: text matches`);
+    return true;
+  }
+  console.log(`Filter failed: no match`);
+  return false;
 }
 
 export function buildEntryCard(entry, displayIndex = null) {

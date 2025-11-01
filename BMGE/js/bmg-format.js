@@ -267,6 +267,8 @@ function parseBmg(buffer) {
       dirty: false,
       byteLength
     });
+
+    console.log(`Parsed INF1 entry ${index}: text="${text}", offset=${offset}, messageId=${messageId}, groupId=${groupId}`);
   }
 
   let midEntryCount = 0;
@@ -559,6 +561,8 @@ function parseBmg(buffer) {
     };
     segment.midEntry = entry;
     midStrings.push(entry);
+
+    console.log(`Parsed MID1 entry ${id}: text="${entry.text}", offset=${entry.offset}, references=${JSON.stringify(entry.references)}`);
   });
   
   return {
