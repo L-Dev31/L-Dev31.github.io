@@ -6,6 +6,7 @@
       "src": "Musics/HUB.mp3",
       "type": "audio/mp3",
       "boxart": "Images/boxart/BoxartHUB.png",
+      "discTexture": "Images/boxart/BoxartHUB.png",
       "composer": "Solargress",
       "description": "The main hub world theme of Super Mario Another Galaxy",
       "released": true
@@ -16,6 +17,7 @@
       "src": "Musics/HUB2.mp3",
       "type": "audio/mp3",
       "boxart": "Images/boxart/BoxartHUB2.png",
+      "discTexture": "Images/boxart/BoxartHUB2.png",
       "composer": "Solargress",
       "description": "Alternative hub world theme for smaller planets",
       "released": true
@@ -26,6 +28,7 @@
       "src": "Musics/PH.mp3",
       "type": "audio/mp3",
       "boxart": "Images/boxart/BoxartPH.png",
+      "discTexture": "Images/boxart/BoxartPH.png",
       "composer": "Solargress",
       "description": "Daytime theme for Pollen Highlands Galaxy",
       "released": true
@@ -36,9 +39,10 @@
       "src": "Musics/PH2.mp3",
       "type": "audio/mp3",
       "boxart": "Images/boxart/BoxartPH2.png",
+      "discTexture": "Images/boxart/BoxartPH2.png",
       "composer": "Solargress",
       "description": "Nighttime theme for Pollen Highlands Galaxy",
-      "released": false
+      "released": true
     },
     {
       "id": "cb",
@@ -46,6 +50,7 @@
       "src": "Musics/CB.mp3",
       "type": "audio/mp3",
       "boxart": "Images/boxart/BoxartCB.png",
+      "discTexture": "Images/boxart/BoxartCB.png",
       "composer": "Solargress",
       "description": "Theme for Coconut Beach Galaxy",
       "released": false
@@ -56,6 +61,7 @@
       "src": "Musics/BB.mp3",
       "type": "audio/mp3",
       "boxart": "Images/boxart/BoxartBB.png",
+      "discTexture": "Images/boxart/BoxartBB.png",
       "composer": "Solargress",
       "description": "Theme for Breathless Blizzard Galaxy",
       "released": false
@@ -66,6 +72,7 @@
       "src": "Musics/BI.mp3",
       "type": "audio/mp3",
       "boxart": "Images/boxart/BoxartBI.png",
+      "discTexture": "Images/boxart/BoxartBI.png",
       "composer": "Solargress",
       "description": "Theme for Bowser's Incinerator Galaxy",
       "released": false
@@ -76,6 +83,7 @@
       "src": "Musics/PT.mp3",
       "type": "audio/mp3",
       "boxart": "Images/boxart/BoxartPT.png",
+      "discTexture": "Images/boxart/BoxartPT.png",
       "composer": "Solargress",
       "description": "Theme for Pumpkin Town Galaxy",
       "released": true
@@ -86,6 +94,7 @@
       "src": "Musics/SP.mp3",
       "type": "audio/mp3",
       "boxart": "Images/boxart/BoxartSP.png",
+      "discTexture": "Images/boxart/BoxartSP.png",
       "composer": "Solargress",
       "description": "Theme for Space Port Galaxy",
       "released": false
@@ -96,6 +105,7 @@
       "src": "Musics/UR.mp3",
       "type": "audio/mp3",
       "boxart": "Images/boxart/BoxartUR.png",
+      "discTexture": "Images/boxart/BoxartUR.png",
       "composer": "Solargress",
       "description": "Theme for Up-Down Ruins Galaxy",
       "released": false

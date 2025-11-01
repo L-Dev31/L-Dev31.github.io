@@ -346,15 +346,150 @@ h5{
 .player .imgbox {
   position: relative;
   width: 100%;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+}
+
+.player .imgbox.playing::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  border-radius: 20px 20px 0 0;
+  pointer-events: none;
+}
+
+.player .imgbox .boxart-text {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  border-radius: 0 0 20px 20px;
+  text-align: center;
+  font-family: 'Delfino', 'Poppins', sans-serif;
+  z-index: 3;
 }
 
 .player .imgbox img{
+  display: block;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 20px 20px 0 0;
+}
+
+.disc-overlay {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  height: 250px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.player .imgbox.playing .disc-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+.disc {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 
+    0 0 20px rgba(0, 0, 0, 0.8),
+    0 0 0 2px rgba(255, 255, 255, 0.5),
+    inset 4px 4px 12px rgba(0, 0, 0, 0.4),
+    inset -4px -4px 12px rgba(255, 255, 255, 0.3);
+  mask-image: radial-gradient(circle, transparent 0%, transparent 15%, white 15%, white 21%, black 21%, black 100%);
+  -webkit-mask-image: radial-gradient(circle, transparent 0%, transparent 15%, white 15%, white 21%, black 21%, black 100%);
+  background: radial-gradient(circle, transparent 0%, transparent 15%, rgba(255, 255, 255, 0.5) 15%, rgba(255, 255, 255, 0.5) 21%, transparent 21%);
+}
+
+.disc::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-image: inherit;
+  background-size: cover;
+  background-position: center;
+  animation: spin 8s linear infinite;
+  z-index: 1;
+}
+
+/* Overlay de lighting réaliste avec gradient conique statique sur le disque */
+.disc {
+  position: relative;
+}
+
+.disc::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 45deg,
+    rgba(255, 255, 255, 0.8) 0deg,
+    rgba(255, 255, 255, 0.3) 60deg,
+    rgba(0, 0, 0, 0.2) 120deg,
+    rgba(255, 255, 255, 0.8) 180deg,
+    rgba(0, 0, 0, 0.2) 240deg,
+    rgba(255, 255, 255, 0.3) 300deg,
+    rgba(255, 255, 255, 0.8) 360deg
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Centre du disque */
+.disc-overlay::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: transparent;
+  border: 5px solid rgba(216, 216, 216, 0.7);
+  box-shadow: 
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.2);
+  z-index: 20;
+  pointer-events: none;
+}
+
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .player .imgbox .boxart-text {

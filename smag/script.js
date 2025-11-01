@@ -238,6 +238,9 @@ function initializeMusicPlayers() {
             playerDiv.innerHTML = `
                 <div class="imgbox">
                     <img src="Images/boxart/base.png" alt="${track.title}">
+                    <div class="disc-overlay">
+                        <div class="disc" style="background-image: url('${track.discTexture || track.boxart}')"></div>
+                    </div>
                     <div class="boxart-text">
                         <div class="galaxy-name">${track.title}</div>
                         <div class="composer">Composed by Solargress</div>
@@ -684,14 +687,34 @@ function setupNewsSearch() {
 
 function setupAudioControls() {
     const audioElements = document.querySelectorAll('audio');
-    audioElements.forEach(audio => {
+    audioElements.forEach((audio, index) => {
+        const playerDiv = audio.closest('.player');
+        const imgbox = playerDiv.querySelector('.imgbox');
+        const discOverlay = playerDiv.querySelector('.disc-overlay');
+        const disc = playerDiv.querySelector('.disc');
+        
         audio.addEventListener('play', () => {
+            // Darken the background and show the disc
+            imgbox.classList.add('playing');
+            
+            // Pause other audios
             audioElements.forEach(otherAudio => {
                 if (otherAudio !== audio && !otherAudio.paused) {
                     otherAudio.pause();
-                    otherAudio.currentTime = 0; 
+                    otherAudio.currentTime = 0;
+                    const otherPlayer = otherAudio.closest('.player');
+                    const otherImgbox = otherPlayer.querySelector('.imgbox');
+                    otherImgbox.classList.remove('playing');
                 }
             });
+        });
+        
+        audio.addEventListener('pause', () => {
+            imgbox.classList.remove('playing');
+        });
+        
+        audio.addEventListener('ended', () => {
+            imgbox.classList.remove('playing');
         });
     });
 }
