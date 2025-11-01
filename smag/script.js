@@ -237,7 +237,11 @@ function initializeMusicPlayers() {
             playerDiv.className = 'player';
             playerDiv.innerHTML = `
                 <div class="imgbox">
-                    <img src="${track.boxart}" alt="${track.title}">
+                    <img src="Images/boxart/base.png" alt="${track.title}">
+                    <div class="boxart-text">
+                        <div class="galaxy-name">${track.title}</div>
+                        <div class="composer">Composed by Solargress</div>
+                    </div>
                 </div>
                 <audio id="audio${index + 1}" src="${track.src}" type="${track.type}" controls></audio>
             `;
