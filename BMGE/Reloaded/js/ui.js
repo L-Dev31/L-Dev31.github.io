@@ -14,9 +14,6 @@ import {
  * Creates individual entry cards for each BmgMessage
  */
 
-/**
- * Initialize UI and attach event listeners
- */
 export function init() {
   // Get DOM element references
   els.fileInput = document.getElementById('file-input');

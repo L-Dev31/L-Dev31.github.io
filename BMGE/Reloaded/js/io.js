@@ -9,9 +9,6 @@ import { parseMessageSegments } from './group-segments.js';
  * Handles loading and saving BMG files
  */
 
-/**
- * Handle file selection from input
- */
 export async function handleFileSelection(event) {
   const file = event.target.files?.[0];
   if (!file) return;
@@ -39,9 +36,6 @@ export async function handleFileSelection(event) {
   }
 }
 
-/**
- * Handle download button - save modified BMG file
- */
 export function handleDownload() {
   if (!state.bmgFile) {
     showMessage('No file loaded', 'warning');

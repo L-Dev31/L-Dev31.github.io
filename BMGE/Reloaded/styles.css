@@ -300,12 +300,6 @@ button.ghost:not(:disabled):hover {
   color: var(--bg);
 }
 
-.hint {
-  margin-top: 0.75rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
 .status {
   display: inline-flex;
   align-items: center;
@@ -315,16 +309,6 @@ button.ghost:not(:disabled):hover {
   background: var(--panel-alt);
   color: var(--text);
   font-size: 0.85rem;
-}
-
-.status-success {
-  border-color: var(--accent);
-  color: var(--accent-muted);
-}
-
-.status-error {
-  border-color: #3a3a3a;
-  color: var(--text);
 }
 
 .meta-lines {
@@ -343,21 +327,6 @@ button.ghost:not(:disabled):hover {
   font-size: 0.97rem;
   color: var(--text);
   box-shadow: 0 1px 0 0 #181818;
-}
-
-.status-warning,
-.badge-red {
-  border-color: #ff4d4d !important;
-  background: rgba(255, 77, 77, 0.18) !important;
-  color: #ff4d4d !important;
-  font-weight: bold;
-}
-
-.status-error {
-  border-color: #ff4d4d !important;
-  background: rgba(255, 77, 77, 0.12) !important;
-  color: #ff4d4d !important;
-  font-weight: bold;
 }
 
 #entries {
@@ -418,18 +387,7 @@ button.ghost:not(:disabled):hover {
   color: var(--accent-muted);
 }
 
-.badge-info {
-  border-color: rgba(86, 148, 255, 0.45);
-  background: rgba(86, 148, 255, 0.15);
-  color: #84aefc;
-}
-
 /* Pink badge for sequenced groups */
-.badge-sequenced {
-  border-color: #FF66B2;
-  background: rgba(255, 102, 178, 0.12);
-  color: #FF99C9;
-}
 
 .sequenced-entry {
   border-left: #FF66B2 2px solid;
@@ -441,17 +399,8 @@ button.ghost:not(:disabled):hover {
 }
 
 /* Pink badge-info for sequenced entries */
-.sequenced-entry .badge-info {
-  border-color: #FF66B2;
-  background: rgba(255, 102, 178, 0.2);
-  color: #FF99C9;
-}
 
-.badge-red {
-  border-color: rgba(255, 60, 60, 0.7);
-  background: rgba(255, 60, 60, 0.22);
-  color: #ff9a9a;
-}
+
 
 .entry-helper {
   display: flex;
@@ -615,38 +564,7 @@ button.ghost:not(:disabled):hover {
   margin-top: 0.5rem;
 }
 
-.segment-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.25rem;
-}
 
-.group-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
-  background: var(--accent);
-  color: var(--bg);
-  font-weight: 600;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.tag-display {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
-  border: 1px solid rgba(201, 178, 74, 0.55);
-  background: rgba(201, 178, 74, 0.15);
-  color: var(--accent-muted);
-  font-size: 0.75rem;
-  font-family: "Cascadia Code", Consolas, monospace;
-}
 
 .segment-editor {
   margin-top: 0;

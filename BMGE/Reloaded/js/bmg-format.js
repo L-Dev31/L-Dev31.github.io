@@ -18,9 +18,6 @@ class BmgTag {
     this._originalBytes = null; // Store original bytes for bit-perfect rebuild
   }
 
-  /**
-   * Format tag to string representation: [GG:TT:ARGS] (compact hex format without @)
-   */
   toString() {
     const groupHex = this.groupId.toString(16).toUpperCase();
     const typeHex = this.typeId.toString(16).toUpperCase();
