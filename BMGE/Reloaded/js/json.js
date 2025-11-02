@@ -118,50 +118,27 @@ export async function handleImportJsonFile(event) {
             return (orig ? orig.text : '') !== imp;
           });
 
-        if (segmentsChanged) {
+        // Decide authoritative action based on full text equality rather than
+        // naive per-segment differences. If the joined imported segments equal
+        // the current full message text we only need to re-render the UI to
+        // reflect segmentation changes but we must NOT mark the message as
+        // modified (dirty) unless the full text actually differs from the
+        // original text.
+        const importedFullText = importedSegments.join('');
+        const currentFullText = dst.text || '';
+
+        // If the full text differs, we consider the message modified and
+        // replace the message text. If full text is identical but segment
+        // boundaries differ, update the text (same value) so renderEntries()
+        // will rebuild the correct number of segments without marking dirty.
+        if (currentFullText !== importedFullText) {
           entryModified = true;
-
-          // Update DOM textareas if card is present
-          if (card) {
-            const segContainers = Array.from(card.querySelectorAll('.segment-container'));
-            for (let s = 0; s < importedSegments.length; s++) {
-              const incoming = importedSegments[s];
-              const orig = currentSegments[s];
-              const display = (orig && orig.startTag) ? orig.startTag + incoming : incoming;
-
-              const container = segContainers[s];
-              if (container) {
-                const ta = container.querySelector('textarea');
-                const hl = container.querySelector('.text-highlight');
-                if (ta) ta.value = incoming;
-                if (hl) updateTextHighlight(hl, display);
-              }
-            }
-          }
-
-          // Reconstruct dst.text using original segment startTags
-          const reconstructed = [];
-          for (let s = 0; s < currentSegments.length; s++) {
-            const orig = currentSegments[s];
-            const incoming = (s < importedSegments.length) ? importedSegments[s] : null;
-            if (incoming === null) {
-              reconstructed.push(orig ? orig.text : '');
-            } else {
-              // If incoming starts with '[', it's already tagged, use as is
-              if (incoming.startsWith('[')) {
-                reconstructed.push(incoming);
-              } else {
-                reconstructed.push((orig && orig.startTag) ? orig.startTag + incoming : incoming);
-              }
-            }
-          }
-          if (importedSegments.length > currentSegments.length) {
-            for (let s = currentSegments.length; s < importedSegments.length; s++) {
-              reconstructed.push(importedSegments[s]);
-            }
-          }
-
-          dst.text = reconstructed.join('');
+          dst.text = importedFullText;
+        } else if (segmentsChanged) {
+          // Full text unchanged but segmentation changed: update dst.text to
+          // the same value to ensure the UI re-parses and re-creates
+          // textareas, but do not count this as a modification.
+          dst.text = importedFullText;
         }
       }
 

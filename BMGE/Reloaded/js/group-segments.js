@@ -17,8 +17,9 @@ export function parseMessageSegments(text) {
   const segments = [];
   let lastIndex = 0;
   let currentGroupId = null;
-  let currentStartTag = null;
   let matches = [];
+  // pendingTags collects consecutive tags encountered before the next text
+  let pendingTags = [];
   
   // Collecter tous les matches
   let match;
@@ -52,38 +53,42 @@ export function parseMessageSegments(text) {
   // Analyser les segments
   for (let i = 0; i < matches.length; i++) {
     const tagMatch = matches[i];
-    
-    // Texte avant ce tag (incluant le tag de début si présent)
+    // Si il y a du texte entre lastIndex et ce tag, émettre un segment qui
+    // contient tous les tags en attente (pendingTags) suivis de ce texte.
     if (tagMatch.index > lastIndex) {
       const textBefore = text.slice(lastIndex, tagMatch.index);
-      if (textBefore || currentGroupId !== null) {
-        // Inclure le tag de début dans le texte du segment
-        const segmentText = currentStartTag ? currentStartTag + textBefore : textBefore;
-        segments.push({
-          text: segmentText,
-          groupId: currentGroupId,
-          startTag: currentStartTag,
-          endTag: tagMatch.fullTag
-        });
-      }
+      const prefix = pendingTags.length ? pendingTags.join('') : '';
+      // Le groupId du segment est celui du dernier tag en attente (si existant)
+      const segGroupId = (pendingTags.length ? currentGroupId : null);
+      const segmentText = prefix + textBefore;
+      segments.push({
+        text: segmentText,
+        groupId: segGroupId,
+        startTag: prefix || null,
+        endTag: tagMatch.fullTag
+      });
+      // reset pending tags
+      pendingTags = [];
     }
-    
-    // Ce tag devient le début du prochain segment
-    currentGroupId = tagMatch.groupId;
-    currentStartTag = tagMatch.fullTag;
+
+    // Stocke ce tag comme en attente (pour être préfixé au prochain texte)
+    pendingTags.push(tagMatch.fullTag);
+    currentGroupId = tagMatch.groupId; // last tag's groupId
     lastIndex = tagMatch.index + tagMatch.length;
   }
   
   // Texte après le dernier tag (incluant le tag de début)
   if (lastIndex <= text.length) {
     const textAfter = text.slice(lastIndex);
-    const segmentText = currentStartTag ? currentStartTag + textAfter : textAfter;
+    const prefix = pendingTags.length ? pendingTags.join('') : '';
+    const segmentText = prefix + textAfter;
     segments.push({
       text: segmentText,
-      groupId: currentGroupId,
-      startTag: currentStartTag,
+      groupId: pendingTags.length ? currentGroupId : null,
+      startTag: prefix || null,
       endTag: null
     });
+    pendingTags = [];
   }
   
   return segments;

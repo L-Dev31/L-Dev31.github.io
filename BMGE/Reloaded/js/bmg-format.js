@@ -19,13 +19,13 @@ class BmgTag {
   }
 
   toString() {
+    // Format court, compact, tout en hex, sans espace, pour tous les tags
     const groupHex = this.groupId.toString(16).toUpperCase();
     const typeHex = this.typeId.toString(16).toUpperCase();
     let result = `[${groupHex}:${typeHex}`;
-    
-    if (this.argumentData.length > 0) {
-      const hex = this.argumentData.map(b => b.toString(16).toUpperCase()).join('');
-      result += `:${hex}`;
+    if (this.argumentData && this.argumentData.length > 0) {
+      const hex = this.argumentData.map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+      result += `${hex ? ':' + hex : ''}`;
     }
     result += ']';
     return result;

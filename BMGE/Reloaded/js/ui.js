@@ -137,6 +137,8 @@ function createEntryCard(message, displayIndex) {
   header.appendChild(badges);
   card.appendChild(header);
   
+  // (removed) full-message highlight — highlighting is per-segment only
+  
   // Parse message into segments based on group tokens
   const segments = parseMessageSegments(message.text);
   
@@ -180,8 +182,8 @@ function createEntryCard(message, displayIndex) {
       // Reconstruct full text from all segments
       message.text = reconstructTextFromSegments(segments);
       
-      // Update highlight
-      updateTextHighlight(highlight, e.target.value);
+  // Update highlight
+  updateTextHighlight(highlight, e.target.value);
       
       // Check if message is now dirty (text different from original)
       if (message.dirty && !card.classList.contains('modified')) {
@@ -301,37 +303,34 @@ function updateTextHighlight(element, text) {
   
   element.classList.remove('highlight-empty');
   
-  // Find and highlight BMG tags - support all formats:
-  // [FF:0:200] (new), [@FF:0:200] (old with @), {{@FF:0:0200}} (old hex), {{@255:0 0200}} (old decimal)
+  // Affiche tous les tags (tokens), même techniques, dans l'ordre du texte
   const tagRegex = /\[(@?)([0-9A-F]+):([0-9A-F]+)(?::([0-9A-F]+))?\]|\{\{@([0-9A-F]{1,2}):([0-9A-F]{1,4})(?::([0-9A-F]+))?\}\}|\{\{@?(\d+):(\d+)(?:\s+(?:arg=")?([a-fA-F0-9]+)"?)?\}\}/gi;
   let lastIndex = 0;
   const fragment = document.createDocumentFragment();
   let match;
-  
+
   while ((match = tagRegex.exec(text)) !== null) {
-    // Add text before tag
+    // Ajoute le texte avant le tag (s'il y en a)
     if (match.index > lastIndex) {
       const textNode = document.createTextNode(text.slice(lastIndex, match.index));
       fragment.appendChild(textNode);
     }
-    
-    // Create simple token chip
-    const tagSpan = document.createElement('span');
-    tagSpan.className = 'token-chip';
-    
-    // Use the matched text as-is (preserves original format)
+
+  // Affiche tous les tags comme des chips jaunes (token-chip)
+  const tagSpan = document.createElement('span');
+  tagSpan.className = 'token-chip jaune';
     tagSpan.textContent = match[0];
     fragment.appendChild(tagSpan);
-    
+
     lastIndex = match.index + match[0].length;
   }
-  
-  // Add remaining text
+
+  // Ajoute le texte restant après le dernier tag
   if (lastIndex < text.length) {
     const textNode = document.createTextNode(text.slice(lastIndex));
     fragment.appendChild(textNode);
   }
-  
+
   element.replaceChildren(fragment);
 }
 

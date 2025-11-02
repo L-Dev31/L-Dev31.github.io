@@ -1,4 +1,5 @@
 import { safeGetUint16, safeGetUint32 } from './utils.js';
+import { BmgTag } from './bmg-format.js';
 
 function findSection(bytes, tag) {
   const pattern = new Uint8Array(tag.length);
@@ -45,64 +46,42 @@ function findSection(bytes, tag) {
  * @returns {Uint8Array} Binary representation of the token
  */
 function encodeToken(tokenString, encodingType = 'UTF16') {
-    // Parse token: [GG:T:ARGS] or [GG:TTTT:ARGS] or [GG:TTTT] or [GG:T]
-    // Support both 1 digit and multiple digits for typeId
-    const match = /\[([0-9A-F]{1,2}):([0-9A-F]{1,4})(?::([0-9A-F]+))?\]/i.exec(tokenString);
-    
-    if (!match) {
+    // Use BmgTag.fromString to accept all supported token formats (legacy and new).
+    // This centralizes parsing logic and ensures encode is the proper inverse of parse.
+    const tag = BmgTag.fromString(tokenString);
+    if (!tag) {
         throw new Error(`Invalid token format: ${tokenString}`);
     }
-    
-    // Parse components - pad groupId to 2 digits if needed
-    const groupIdHex = match[1].padStart(2, '0');
-    const groupId = parseInt(groupIdHex, 16);
-    
-    // Parse typeId - can be 1 to 4 hex digits
-    const typeId = parseInt(match[2], 16);
-    
-    // Parse argument bytes (hex string to bytes)
-    const argsHex = match[3] || '';
-    const argData = [];
-    
-    if (argsHex) {
-        // Ensure even number of hex digits
-        const paddedHex = argsHex.length % 2 === 1 ? '0' + argsHex : argsHex;
-        for (let i = 0; i < paddedHex.length; i += 2) {
-            const byte = parseInt(paddedHex.substring(i, i + 2), 16);
-            if (!isNaN(byte)) {
-                argData.push(byte);
-            }
-        }
-    }
-    
+
+    // Argument bytes already in tag.argumentData (array of numbers)
+    const argData = Array.isArray(tag.argumentData) ? tag.argumentData.slice() : [];
+
     // Calculate tag length: groupId (1) + typeId (2) + args
     const tagLength = 3 + argData.length;
-    
-    // Build binary token
+
     const tokenBytes = [];
-    
-    // 1. Escape sequence depends on encoding width
+
+    // Escape sequence depends on encoding width
     if (encodingType === 'UTF16') {
       // UTF-16LE: escape is 0x001A => bytes 0x1A, 0x00
       tokenBytes.push(0x1A, 0x00);
     } else {
-      // Single-byte encodings: escape is 0x1A
       tokenBytes.push(0x1A);
     }
-    
-    // 2. Length byte (raw)
+
+    // Length byte
     tokenBytes.push(tagLength);
-    
-    // 3. Group ID (raw, 1 byte)
-    tokenBytes.push(groupId);
-    
-    // 4. Type ID (raw, 2 bytes, little-endian)
-    tokenBytes.push(typeId & 0xFF);        // Low byte
-    tokenBytes.push((typeId >> 8) & 0xFF); // High byte
-    
-    // 5. Arguments (raw bytes)
+
+    // Group ID
+    tokenBytes.push(tag.groupId & 0xFF);
+
+    // Type ID little-endian
+    tokenBytes.push(tag.typeId & 0xFF);
+    tokenBytes.push((tag.typeId >> 8) & 0xFF);
+
+    // Arguments
     tokenBytes.push(...argData);
-    
+
     return new Uint8Array(tokenBytes);
 }
 
@@ -155,12 +134,16 @@ function encodeText(text, encodingType) {
  * Handles:
  * - Regular text (encoded based on encodingType)
  * - BMG tokens in format [GG:TTTT:ARGS] or [GG:T:ARGS]
- * - Uses original token bytes from tagBytesMap for bit-perfect reconstruction
- * - Falls back to encoding if original bytes not available
+ * - NOTE: when available, the original raw token bytes from the parsed file
+ *   (provided in `tagBytesMap`) will be reused verbatim. This preserves the
+ *   exact escape sequence, grouping and padding used in the original file and
+ *   avoids corruption caused by re-encoding tokens differently. If the original
+ *   bytes are not available, the token is reconstructed from its textual form
+ *   via `encodeToken`.
  * 
  * @param {string} text - Message text with embedded tokens
  * @param {string} encodingType - Encoding type ('UTF16', 'UTF8', 'ShiftJIS', 'Latin1')
- * @param {Map<string, Uint8Array>} tagBytesMap - Map of token strings to original bytes
+ * @param {Map<string, Uint8Array>} tagBytesMap - (unused) Map of token strings to original bytes
  * @param {boolean} debugMode - Enable debug logging
  * @returns {Uint8Array} Binary representation of the message (without null terminator)
  */
@@ -189,35 +172,45 @@ function encodeMessageText(text, encodingType, tagBytesMap = null, debugMode = f
         }
       }
 
-        // Add the token
-        const tokenString = match[0];
-        
+    // Add the token. Prefer reusing the original raw bytes when present in
+    // `tagBytesMap` (bit-perfect rebuild). Fall back to reconstructing via
+    // `encodeToken` when original bytes are not available.
+    const tokenString = match[0];
+    if (debugMode) {
+      console.log('  Token found:', tokenString);
+    }
+
+    let tokenBytes = null;
+    if (tagBytesMap && tagBytesMap instanceof Map) {
+      const orig = tagBytesMap.get(tokenString);
+      if (orig && orig.length > 0) {
+        // Use a copy of the original bytes to avoid accidental mutation
+        tokenBytes = new Uint8Array(orig);
         if (debugMode) {
-            console.log('  Token found:', tokenString);
+          console.log('  Reusing original token bytes:', Array.from(tokenBytes).map(b => b.toString(16).padStart(2, '0')).join(' '));
         }
-        
-        // Try to use original bytes first (bit-perfect)
-        let tokenBytes = null;
-        if (tagBytesMap && tagBytesMap.has(tokenString)) {
-            tokenBytes = tagBytesMap.get(tokenString);
-            parts.push({ type: 'token', value: tokenBytes });
-            if (debugMode) {
-                console.log('  Using original bytes:', Array.from(tokenBytes).map(b => b.toString(16).padStart(2, '0')).join(' '));
-            }
-        } else {
-            // Fall back to encoding
+      }
+    }
+
+    if (!tokenBytes) {
+      // No original bytes available — reconstruct deterministically
+      if (debugMode) {
+        console.log('  Reconstructing token bytes (fallback)');
+      }
       try {
         tokenBytes = encodeToken(tokenString, encodingType);
-                parts.push({ type: 'token', value: tokenBytes });
-                if (debugMode) {
-                    console.log('  Encoded new token:', Array.from(tokenBytes).map(b => b.toString(16).padStart(2, '0')).join(' '));
-                }
-            } catch (error) {
-                console.warn(`Failed to encode token ${tokenString}:`, error);
-                // If token encoding fails, treat it as text
-                parts.push({ type: 'text', value: tokenString });
-            }
+        if (debugMode) {
+          console.log('  Encoded token (reconstructed):', Array.from(tokenBytes).map(b => b.toString(16).padStart(2, '0')).join(' '));
         }
+      } catch (error) {
+        console.warn(`Failed to encode token ${tokenString}:`, error);
+        // If token encoding fails, treat it as text
+        parts.push({ type: 'text', value: tokenString });
+        tokenBytes = null;
+      }
+    }
+
+    if (tokenBytes) parts.push({ type: 'token', value: tokenBytes });
         
         lastIndex = match.index + match[0].length;
     }
