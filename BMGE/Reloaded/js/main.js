@@ -1,7 +1,3 @@
-/**
- * Main entry point - Simplified following AeonMSBT architecture
- */
-
 import './state.js';
 import './utils.js';
 import './bmg-format.js';

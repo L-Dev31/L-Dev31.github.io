@@ -1,12 +1,5 @@
 import { state } from './state.js';
 
-/**
- * Utility functions for BMG Editor
- */
-
-/**
- * Format number as hex string
- */
 function formatHex(value, width = 2) {
   if (typeof value !== 'number' || isNaN(value)) {
     return '00'.repeat(width / 2);
@@ -14,9 +7,6 @@ function formatHex(value, width = 2) {
   return value.toString(16).toUpperCase().padStart(width, '0');
 }
 
-/**
- * Format byte size in human-readable format
- */
 function formatBytes(size) {
   if (size === 0) {
     return '0 B';
@@ -27,9 +17,6 @@ function formatBytes(size) {
   return `${value.toFixed(value >= 10 || exponent === 0 ? 0 : 1)} ${units[exponent]}`;
 }
 
-/**
- * Safely read 16-bit unsigned integer from DataView
- */
 function safeGetUint16(view, offset, limit) {
   if (offset + 2 > limit) {
     throw new Error(`Read beyond buffer at offset 0x${offset.toString(16)}`);
@@ -37,9 +24,6 @@ function safeGetUint16(view, offset, limit) {
   return view.getUint16(offset, true);
 }
 
-/**
- * Safely read 32-bit unsigned integer from DataView
- */
 function safeGetUint32(view, offset, limit) {
   if (offset + 4 > limit) {
     throw new Error(`Read beyond buffer at offset 0x${offset.toString(16)}`);
@@ -47,9 +31,6 @@ function safeGetUint32(view, offset, limit) {
   return view.getUint32(offset, true);
 }
 
-/**
- * Read ASCII string from byte array
- */
 function readAscii(bytes, start, length) {
   let out = '';
   for (let i = 0; i < length; i++) {
