@@ -1,6 +1,6 @@
 [
   {
-    "symbol": "2CRSI",
+    "symbol": "TCSIF",
     "ticker": "AL2SI.PA",
     "name": "2CRSI",
     "isin": "FR0013341781",
@@ -8,21 +8,17 @@
     "currency": "EUR",
     "type": "equity",
     "shares": 9,
-    "investment": 106.50,
-    "notes": "Position currently held",
-    "fetchIntervalMinutes": 15
+    "investment": 106.50
   },
   {
-    "symbol": "GOLD",
+    "symbol": "IUTCF",
     "ticker": "XAUUSD",
-    "name": "Gold Spot",
+    "name": "Global Gold",
     "isin": null,
     "country": "GLOBAL",
     "currency": "USD",
     "type": "commodity",
     "shares": 0,
-    "investment": 0.00,
-    "notes": "Reference only — no position placed",
-    "fetchIntervalMinutes": 15
+    "investment": 0.00
   }
 ]
