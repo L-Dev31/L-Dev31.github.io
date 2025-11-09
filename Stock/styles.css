@@ -1,0 +1,487 @@
+/* Minimal API status indicator (dot + small white text) fixed bottom-left */
+.api-status-indicator {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 9999;
+    background: transparent;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 8px 6px 0; /* space for dot handled by ::before */
+    border-radius: 8px;
+    box-shadow: none;
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.api-status-indicator::before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-left: 8px;
+    margin-right: 6px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+}
+
+.api-status-indicator.active::before {
+    background: #22c55e; /* green */
+    box-shadow: 0 0 8px rgba(34,197,94,0.9);
+}
+
+.api-status-indicator.inactive::before {
+    background: #ef4444; /* red */
+    box-shadow: 0 0 8px rgba(239,68,68,0.9);
+}
+
+.api-status-indicator { /* ensure text is white even on colored backgrounds */
+    color: #ffffff;
+}
+/* Period selector styles */
+.periods-group {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+    justify-content: flex-end;
+}
+
+.period-btn {
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: transparent;
+    color: #e8e9f3;
+    border: 1px solid rgba(168,162,255,0.12);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.period-btn.active {
+    background: #a8a2ff;
+    color: #0b1020;
+    border: none;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1a1d2e 0%, #16213e 100%);
+    color: #e8e9f3;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.tabs::-webkit-scrollbar {
+    height: 4px;
+}
+
+.tabs::-webkit-scrollbar-track {
+    background: rgba(168, 162, 255, 0.05);
+    border-radius: 2px;
+}
+
+.tabs::-webkit-scrollbar-thumb {
+    background: rgba(168, 162, 255, 0.2);
+    border-radius: 2px;
+}
+
+.tab {
+    background: rgba(26, 29, 46, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(168, 162, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: fit-content;
+    flex-shrink: 0;
+}
+
+.tab:hover {
+    border-color: rgba(168, 162, 255, 0.3);
+}
+
+.tab.active {
+    background: rgba(168, 162, 255, 0.15);
+    border-color: rgba(168, 162, 255, 0.4);
+}
+
+.tab-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1a1d2e;
+    overflow: hidden;
+}
+
+.tab-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.tab-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.tab-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e8e9f3;
+}
+
+.tab-shares {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.card {
+    background: rgba(26, 29, 46, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(168, 162, 255, 0.1);
+    margin-bottom: 20px;
+    display: none;
+}
+
+.card.active {
+    display: block;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.company-name {
+    font-size: 14px;
+    color: #a8a2ff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.price {
+    font-size: 56px;
+    font-weight: 300;
+    color: #e8e9f3;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px rgba(168, 162, 255, 0.3);
+}
+
+.change {
+    font-size: 18px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    display: inline-block;
+    font-weight: 500;
+}
+
+.change.positive {
+    background: rgba(134, 239, 172, 0.15);
+    color: #86efac;
+}
+
+.change.negative {
+    background: rgba(252, 165, 165, 0.15);
+    color: #fca5a5;
+}
+
+.change.neutral {
+    background: rgba(168, 162, 255, 0.15);
+    color: #a8a2ff;
+}
+
+.portfolio {
+    display: grid;
+    gap: 16px;
+}
+
+.stat {
+    background: rgba(168, 162, 255, 0.05);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(168, 162, 255, 0.1);
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #a8a2ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 300;
+    color: #e8e9f3;
+}
+
+.performance {
+    background: linear-gradient(135deg, rgba(168, 162, 255, 0.1) 0%, rgba(168, 162, 255, 0.05) 100%);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    border: 1px solid rgba(168, 162, 255, 0.2);
+}
+
+.performance-label {
+    font-size: 13px;
+    color: #a8a2ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.performance-value {
+    font-size: 48px;
+    font-weight: 300;
+}
+
+.performance-value.positive {
+    color: #86efac;
+    text-shadow: 0 0 20px rgba(134, 239, 172, 0.3);
+}
+
+.performance-value.negative {
+    color: #fca5a5;
+    text-shadow: 0 0 20px rgba(252, 165, 165, 0.3);
+}
+
+/* Neutral (zero) performance: pastel yellow */
+.performance-value.neutral {
+    color: #f7e7a9; /* pastel yellow */
+    text-shadow: 0 0 14px rgba(247, 231, 169, 0.22);
+}
+
+/* Profit cell states in the table */
+.profit-positive {
+    color: #86efac !important;
+}
+.profit-negative {
+    color: #fca5a5 !important;
+}
+.profit-neutral {
+    color: #f7e7a9 !important;
+}
+
+.chart-container {
+    /* Limite la hauteur du graphique pour éviter qu'il prenne trop d'espace.
+       Ajustez la valeur ci-dessous selon vos besoins (ex: 300px, 400px). */
+    max-height: 340px;
+    margin-top: 24px;
+    background: rgba(168, 162, 255, 0.05);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(168, 162, 255, 0.1);
+    overflow: hidden;
+}
+
+.chart-header {
+    font-size: 13px;
+    color: #a8a2ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.chart-canvas {
+    width: 100%;
+    /* Utiliser 100% de la hauteur du conteneur (qui a un max-height).
+       Chart.js est configuré avec maintainAspectRatio: false, donc
+       le canvas prendra la hauteur du parent. */
+    height: 260px;
+    max-height: 340px;
+    display: block;
+}
+
+
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.info-item {
+    background: rgba(26, 29, 46, 0.4);
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid rgba(168, 162, 255, 0.08);
+}
+
+.info-label {
+    font-size: 11px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    font-size: 16px;
+    color: #e8e9f3;
+    font-weight: 400;
+}
+
+.update-time {
+    text-align: center;
+    color: #6b7280;
+    font-size: 12px;
+    margin: 16px 0;
+}
+
+.add-position {
+    background: rgba(168, 162, 255, 0.1);
+    border: 2px dashed rgba(168, 162, 255, 0.3);
+    border-radius: 16px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: fit-content;
+    flex-shrink: 0;
+    color: #a8a2ff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.add-position:hover {
+    background: rgba(168, 162, 255, 0.15);
+    border-color: rgba(168, 162, 255, 0.5);
+}
+
+.loading {
+    text-align: center;
+    color: #a8a2ff;
+    font-size: 14px;
+    padding: 20px;
+}
+
+.general-row {
+    color: #a8a2ff;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.important-shares {
+    font-size: 18px;
+    font-weight: bold;
+    color: #a8a2ff;
+    font-family: 'Poppins', sans-serif;
+    background: rgba(168, 162, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.logo {
+    width: 250px;
+    height: auto;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Card sections */
+.card-logo-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.card-general-info {
+    margin-bottom: 20px;
+}
+
+.chart-container {
+    margin-bottom: 20px;
+}
+
+.performance {
+    margin-bottom: 20px;
+}
+
+.card-table-container {
+    margin-bottom: 20px;
+}
+
+.card-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(168, 162, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card-table-header {
+    background: rgba(168, 162, 255, 0.08);
+}
+
+.card-table-th {
+    padding: 10px;
+    color: #a8a2ff;
+    font-size: 13px;
+    text-align: left;
+}
+
+.card-table-td {
+    padding: 10px;
+    color: #e8e9f3;
+    font-size: 16px;
+}
+
+.flag-icon {
+    width: 16px;
+    height: auto;
+    margin-left: 4px;
+    vertical-align: middle;
+    border-radius: 2px;
+    outline: 1px solid #a8a2ff;
+}
