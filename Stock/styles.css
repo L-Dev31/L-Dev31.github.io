@@ -446,7 +446,7 @@ body {
 
 .performance {
     background:
-        linear-gradient(to top, rgba(168,162,255,0.01) 0%, rgba(153, 149, 219, 0.3) 100%);
+        linear-gradient(to top, rgba(168,162,255,0.01) 0%, rgba(153, 149, 219, 0.2) 100%);
     border-radius: 16px;
     padding: 24px;
     text-align: center;
@@ -509,7 +509,8 @@ body {
     height: 400px;
     margin-top: 24px;
     margin-bottom: 20px;
-    background: rgba(168, 162, 255, 0.05);
+    background:
+        linear-gradient(to top, rgba(168,162,255,0.01) 0%, rgba(153, 149, 219, 0.2) 100%);
     border-radius: 16px;
     padding: 20px;
     border: 1px solid rgba(168, 162, 255, 0.1);

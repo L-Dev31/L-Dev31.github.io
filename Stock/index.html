@@ -84,7 +84,7 @@
                         </tbody>
                     </table>
                 </div>
-                <h3 class="section-title">Cours de l'action</h3>
+                <h3 class="section-title" id="course-title-"></h3>
                 <div class="chart-container">
                     <div class="chart-header">Graphique</div>
                     <canvas class="chart-canvas" id=""></canvas>
@@ -94,6 +94,8 @@
                         <button class="period-btn" data-symbol="" data-period="1M">1M</button>
                         <button class="period-btn" data-symbol="" data-period="6M">6M</button>
                         <button class="period-btn" data-symbol="" data-period="1Y">1Y</button>
+                        <button class="period-btn" data-symbol="" data-period="3Y">3Y</button>
+                        <button class="period-btn" data-symbol="" data-period="5Y">5Y</button>
                     </div>
                 </div>
                 <div class="performance">
@@ -138,6 +140,7 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <script type="module" src="js/general.js"></script>
 </body>
 </html>

@@ -1,16 +1,19 @@
+import globalRateLimiter from '../rate-limiter.js';
+
 const periods = {
   "1D": { mult: 1, timespan: "minute", days: 2 },
   "1W": { mult: 5, timespan: "minute", days: 7 },
   "1M": { mult: 30, timespan: "minute", days: 31 },
   "6M": { mult: 2, timespan: "hour", days: 183 },
   "1Y": { mult: 1, timespan: "day", days: 365 },
+  "3Y": { mult: 1, timespan: "month", days: 1095 },
   "5Y": { mult: 1, timespan: "week", days: 1825 }
 };
 
 class RateLimiter {
   constructor(max = 5, window = 60000) { this.max = max; this.window = window; this.queue = []; this.pending = []; }
   async exec(fn) { return new Promise((resolve, reject) => { this.queue.push({ fn, resolve, reject }); if (this.queue.length === 1) this.process(); }); }
-  async process() { if (!this.queue.length) return; const now = Date.now(); this.pending = this.pending.filter(t => now - t < this.window); if (this.pending.length < this.max) { const { fn, resolve, reject } = this.queue.shift(); this.pending.push(now); try { resolve(await fn()); } catch (e) { reject(e); } if (this.queue.length) setTimeout(() => this.process(), 100); } else { const wait = this.window - (now - Math.min(...this.pending)) + 100; const seconds = Math.max(1, Math.round(wait/1000)); console.log(`⏳ Rate limit Polygon: ${this.pending.length}/${this.max} requêtes, attente ${seconds}s`); if (typeof window !== 'undefined' && window.startRateLimitCountdown) { window.startRateLimitCountdown(seconds); } setTimeout(() => this.process(), wait); } }
+  async process() { if (!this.queue.length) return; const now = Date.now(); this.pending = this.pending.filter(t => now - t < this.window); if (this.pending.length < this.max) { const { fn, resolve, reject } = this.queue.shift(); this.pending.push(now); try { resolve(await fn()); } catch (e) { reject(e); } if (this.queue.length) setTimeout(() => this.process(), 100); } else { const wait = this.window - (now - Math.min(...this.pending)) + 100; const seconds = Math.max(1, Math.round(wait/1000)); console.log(`⏳ Rate limit Polygon: ${this.pending.length}/${this.max} requêtes, attente ${seconds}s`); globalRateLimiter.setGlobalRateLimit(wait); setTimeout(() => this.process(), wait); } }
 }
 
 const limiter = new RateLimiter();
@@ -46,7 +49,10 @@ export async function fetchFromPolygon(ticker, period, symbol, _, name, signal, 
     const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(polygonTicker )}/range/${cfg.mult}/${cfg.timespan}/${fromDate}/${toDate}?adjusted=true&sort=asc&limit=50000&apiKey=${apiKey}`;
     
     console.log(`📡 Requête Polygon API: ${polygonTicker} du ${fromDate} au ${toDate}`);
-    const r = await limiter.exec(() => fetch(url, { signal }));
+    const r = await globalRateLimiter.executeIfNotLimited(
+      () => fetch(url, { signal }),
+      'Polygon'
+    );
     console.log(`📥 Réponse Polygon: ${r.status} ${r.statusText}`);
 
     if (r.status === 429) {

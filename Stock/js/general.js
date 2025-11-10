@@ -1,5 +1,8 @@
 import { fetchFromPolygon } from './api/polygon.js'
 import { fetchFromTwelveData } from './api/twelve.js'
+import { fetchFromMarketstack } from './api/marketstack.js'
+import { fetchFromAlphaVantage } from './api/alphavantage.js'
+import { initChart, updateChart } from './chart.js'
 
 async function selectApiFetch(apiName) {
   switch(apiName) {
@@ -7,6 +10,10 @@ async function selectApiFetch(apiName) {
       return fetchFromPolygon
     case 'twelvedata':
       return fetchFromTwelveData
+    case 'marketstack':
+      return fetchFromMarketstack
+    case 'alphavantage':
+      return fetchFromAlphaVantage
     default:
       return fetchFromPolygon
   }
@@ -26,7 +33,7 @@ async function loadApiConfig() {
     API_CONFIG = {
       apis: config,
       ui: {
-        defaultApi: 'massive',
+        defaultApi: 'alphavantage',
         validApis: enabledApis
       }
     };
@@ -36,7 +43,7 @@ async function loadApiConfig() {
   }
 }
 
-let selectedApi = 'massive'
+let selectedApi = 'alphavantage'
 const cacheKey = 'stockCache'
 let stockCache = JSON.parse(localStorage.getItem(cacheKey) || '{}')
 const lastApiBySymbol = {}
@@ -113,10 +120,6 @@ function stopFastPolling() {
 }
 
 function startRateLimitCountdown(seconds) {
-    if (rateLimitCountdownTimer) {
-        clearInterval(rateLimitCountdownTimer);
-        rateLimitCountdownTimer = null;
-    }
     
     setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true });
     
@@ -124,11 +127,16 @@ function startRateLimitCountdown(seconds) {
         const el = document.getElementById('api-status-indicator');
         if (el) {
             const spinner = el.querySelector('[data-role="spinner"]');
-            if (spinner) {
-                spinner.innerHTML = `<span class="api-spinner"></span><div class="countdown-text">Limite atteinte, veuillez patienter... (${seconds}s)</div>`;
+                if (spinner) {
+                // Only render the spinner here; the countdown text is managed
+                // by updateApiCountdown which creates a single wrapper inside
+                // the spinner row. Avoid injecting a second .countdown-text.
+                spinner.innerHTML = `<span class="api-spinner"></span>`;
             }
         }
         
+        // update the countdown text every second
+        updateApiCountdown(seconds);
         rateLimitCountdownTimer = setInterval(() => {
             const el = document.getElementById('api-status-indicator');
             if (el) {
@@ -137,9 +145,9 @@ function startRateLimitCountdown(seconds) {
                     let t = countdownText.textContent.match(/\((\d+)s\)/);
                     let s = t ? parseInt(t[1],10) : seconds;
                     if (s > 1) {
-                        countdownText.textContent = `Limite atteinte, veuillez patienter... (${s-1}s)`;
+                        updateApiCountdown(s-1);
                     } else {
-                        countdownText.textContent = 'Limite atteinte, veuillez patienter... (0s)';
+                        updateApiCountdown(0);
                         clearInterval(rateLimitCountdownTimer);
                         rateLimitCountdownTimer = null;
                     }
@@ -156,8 +164,130 @@ function stopRateLimitCountdown() {
     }
 }
 
+function startGlobalRateLimitCountdown() {
+    if (rateLimitCountdownTimer) {
+        clearInterval(rateLimitCountdownTimer);
+    }
+    
+    setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true, globalRateLimit: true });
+    
+    rateLimitCountdownTimer = setInterval(() => {
+        const el = document.getElementById('api-status-indicator');
+        if (el) {
+            const spinner = el.querySelector('[data-role="spinner"]');
+            if (spinner) {
+                // Importer le rate limiter pour obtenir le temps restant
+                import('./rate-limiter.js').then(module => {
+                    const remaining = module.default.getRemainingSeconds();
+                    if (remaining > 0) {
+                        updateApiCountdown(remaining);
+                    } else {
+                        spinner.innerHTML = `<span class="api-spinner"></span>`;
+                        clearInterval(rateLimitCountdownTimer);
+                        rateLimitCountdownTimer = null;
+                        setApiStatus(null, 'active', { api: selectedApi });
+                    }
+                });
+            }
+        }
+    }, 1000);
+}
+
+function stopGlobalRateLimitCountdown() {
+    if (rateLimitCountdownTimer) {
+        clearInterval(rateLimitCountdownTimer);
+        rateLimitCountdownTimer = null;
+    }
+}
+
+// Helper to update/create the countdown display under the status text
+function updateApiCountdown(seconds) {
+    const el = document.getElementById('api-status-indicator');
+    if (!el) return;
+
+    // ensure spinner exists
+    let spinner = el.querySelector('[data-role="spinner"]');
+    if (!spinner) {
+        // try to create a spinner area at the end of the indicator
+        spinner = document.createElement('div');
+        spinner.setAttribute('data-role', 'spinner');
+        spinner.style.display = 'flex';
+        el.appendChild(spinner);
+    }
+
+    // create or find the countdown wrapper placed below the status text
+    // prefer using the dedicated spinner row already present in the template
+    const spinnerRow = el.querySelector('[data-role="spinner"]');
+    if (spinnerRow) {
+        spinnerRow.style.display = 'flex';
+        spinnerRow.style.flexDirection = 'column';
+        spinnerRow.style.alignItems = 'center';
+        spinnerRow.style.gap = '6px';
+
+        // Clear existing spinner area to avoid duplicates, then create
+        // a single horizontal wrapper where the countdown text sits
+        // to the left and the spinner to the right.
+        spinnerRow.innerHTML = '';
+        let wrapper = document.createElement('div');
+        wrapper.className = 'api-countdown-wrapper';
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'row';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.gap = '8px';
+
+        const textElem = document.createElement('div');
+        textElem.className = 'countdown-text';
+        textElem.style.margin = '0';
+        textElem.textContent = `Limite atteinte, veuillez patienter... (${seconds}s)`;
+
+        const spinnerElem = document.createElement('div');
+        spinnerElem.className = 'api-spinner-wrapper';
+        spinnerElem.innerHTML = `<span class="api-spinner"></span>`;
+
+        // Append text first so spinner appears to the right
+        wrapper.appendChild(textElem);
+        wrapper.appendChild(spinnerElem);
+        spinnerRow.appendChild(wrapper);
+        return;
+    }
+
+    // fallback: append under the main element if spinner row missing
+    let wrapper = el.querySelector('.api-countdown-wrapper');
+    if (!wrapper) {
+        // Fallback: create a horizontal wrapper under the main element
+        wrapper = document.createElement('div');
+        wrapper.className = 'api-countdown-wrapper';
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'row';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.gap = '8px';
+        wrapper.style.marginTop = '6px';
+
+        const textElem = document.createElement('div');
+        textElem.className = 'countdown-text';
+        textElem.style.margin = '0';
+        textElem.textContent = `Limite atteinte, veuillez patienter... (${seconds}s)`;
+
+        const spinnerElem = document.createElement('div');
+        spinnerElem.className = 'api-spinner-wrapper';
+        spinnerElem.innerHTML = `<span class="api-spinner"></span>`;
+
+        wrapper.appendChild(textElem);
+        wrapper.appendChild(spinnerElem);
+        el.appendChild(wrapper);
+    } else {
+        const countdown = wrapper.querySelector('.countdown-text');
+        if (countdown) countdown.textContent = `Limite atteinte, veuillez patienter... (${seconds}s)`;
+    }
+}
+
 async function setApiStatus(symbol, status, opts = {}) {
     const config = await loadApiConfig();
+    // If an error code is provided, always show the 'noinfo' / error state
+    // so the UI displays "Err. {code}" instead of flipping to active.
+    if (opts && typeof opts.errorCode !== 'undefined' && opts.errorCode !== null) {
+        status = 'noinfo';
+    }
 
     let el = document.getElementById('api-status-indicator');
     if (!el) {
@@ -189,6 +319,17 @@ async function setApiStatus(symbol, status, opts = {}) {
             text.textContent = status === 'active' ? 'actif' : 'inactif';
         }
     }
+
+    // If a global rate limit is active, force indicator to fetching state and ensure countdown shows
+    try {
+        if (status === 'active' && typeof window !== 'undefined' && window.__globalRateLimitActive) {
+            status = 'fetching';
+            opts = Object.assign({}, opts, { globalRateLimit: true, loadingFallback: true });
+            const remainingMs = window.__globalRateLimitEndTime - Date.now();
+            const remainingSec = Math.max(0, Math.ceil(remainingMs / 1000));
+            updateApiCountdown(remainingSec);
+        }
+    } catch (e) { /* ignore */ }
     const expanded = content.querySelector('.api-expanded');
     if (expanded) {
         expanded.innerHTML = config.ui.validApis.map(api =>
@@ -197,8 +338,11 @@ async function setApiStatus(symbol, status, opts = {}) {
     }
     const spinner = content.querySelector('[data-role="spinner"]');
     if (spinner && opts.loadingFallback) {
-        if (!spinner.querySelector('.countdown-text')) {
-            spinner.style.display = 'flex';
+        // Ensure spinner area exists. Don't inject a countdown text here
+        // because updateApiCountdown handles creating/updating a single
+        // countdown element under the status text. This avoids duplicates.
+        spinner.style.display = 'flex';
+        if (!spinner.querySelector('.api-spinner')) {
             spinner.innerHTML = `<span class="api-spinner"></span>`;
         }
     }
@@ -206,6 +350,13 @@ async function setApiStatus(symbol, status, opts = {}) {
     el.appendChild(content);
     el.title = symbol || '';
     el.className = 'api-status-indicator ' + status;
+
+    // If global rate limit is active, always show the countdown below the status
+    if (typeof window !== 'undefined' && window.__globalRateLimitActive) {
+        const remainingMs = window.__globalRateLimitEndTime - Date.now();
+        const remainingSec = Math.max(0, Math.ceil(remainingMs / 1000));
+        updateApiCountdown(remainingSec);
+    }
 }
 
 document.addEventListener('click', e => {
@@ -224,94 +375,6 @@ function isMarketOpen() {
     const day = d.getDay()
     const h = d.getHours() + d.getMinutes()/60
     return day > 0 && day < 6 && h >= 9 && h <= 17.5
-}
-
-function initChart(symbol) {
-    const canvas = document.getElementById(`chart-${symbol}`)
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    const g = ctx.createLinearGradient(0,0,0,200)
-    g.addColorStop(0,'rgba(168,162,255,0.3)')
-    g.addColorStop(1,'rgba(168,162,255,0)')
-    if (!window.Chart) return
-    if (positions[symbol].chart) positions[symbol].chart.destroy()
-    positions[symbol].chart = new Chart(ctx,{
-        type:'line',
-        data:{
-            labels:[],
-            datasets:[{
-                label:'Prix',
-                data:[],
-                borderColor:'#a8a2ff',
-                backgroundColor:g,
-                borderWidth:2,
-                fill:true,
-                tension:0.4,
-                pointRadius:0,
-                pointHoverRadius:4
-            }]
-        },
-        options:{
-            responsive:true,
-            maintainAspectRatio:false,
-            layout:{ padding:{ top:10, bottom:75, left:10, right:10 }},
-            plugins:{
-                legend:{ display:false },
-                tooltip:{
-                    enabled:true,
-                    backgroundColor:'rgba(26,29,46,0.95)',
-                    titleColor:'#a8a2ff',
-                    bodyColor:'#e8e9f3',
-                    borderColor:'rgba(168,162,255,0.2)',
-                    borderWidth:1,
-                    cornerRadius:4,
-                    displayColors:false,
-                    padding:12,
-                    titleFont:{family:'Poppins', size:12, weight:'bold'},
-                    bodyFont:{family:'Poppins', size:12},
-                    callbacks:{
-                        title:function(ctx){
-                            return ctx[0].parsed.y.toFixed(2) + ' €'
-                        },
-                        label:function(ctx){
-                            const i = ctx.dataIndex
-                            const ts = ctx.chart.data.timestamps[i]
-                            const d = new Date(ts*1000)
-                            return [
-                                d.toLocaleDateString('fr-FR'),
-                                d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
-                            ]
-                        }
-                    }
-                }
-            },
-            scales:{
-                x:{
-                    grid:{ display:false },
-                    ticks:{ color:'#6b7280', font:{size:8}}
-                },
-                y:{
-                    position:'right',
-                    grid:{ color:'rgba(168,162,255,0.05)', drawBorder:false},
-                    ticks:{ color:'#6b7280', font:{size:8}, callback:v=>v.toFixed(1)+'€'}
-                }
-            },
-            interaction:{ intersect:false, mode:'index' }
-        }
-    })
-}
-
-function updateChart(symbol, timestamps, prices) {
-    const c = positions[symbol].chart
-    if (!c || !timestamps) return
-    const isLong = timestamps[timestamps.length-1]-timestamps[0] > 86400
-    c.data.labels = timestamps.map(ts=>{
-        const d = new Date(ts*1000)
-        return isLong ? d.toLocaleDateString('fr-FR') : d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
-    })
-    c.data.datasets[0].data = prices
-    c.data.timestamps = timestamps
-    c.update('none')
 }
 
 async function fetchActiveSymbol(force) {
@@ -347,8 +410,11 @@ async function fetchActiveSymbol(force) {
         
         let d = await fetchFunc(positions[symbol].ticker, p, symbol, null, name, signal, apiConfig.apiKey)
         
-        positions[symbol].lastFetch=Date.now()
-        positions[symbol].lastData=d
+        // Don't update cache/timestamps for globally throttled requests
+        if (!d.globallyThrottled) {
+            positions[symbol].lastFetch=Date.now()
+            positions[symbol].lastData=d
+        }
         updateUI(symbol,d)
         lastApiBySymbol[symbol]=d.source
         
@@ -412,8 +478,11 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     
     let d = await fetchFunc(positions[s].ticker, p, s, null, name, null, apiConfig.apiKey)
     
-    positions[s].lastFetch=Date.now()
-    positions[s].lastData=d
+    // Don't update cache/timestamps for globally throttled requests
+    if (!d.globallyThrottled) {
+        positions[s].lastFetch=Date.now()
+        positions[s].lastData=d
+    }
     updateUI(s,d)
     setApiStatus(s, d ? 'active' : 'inactive', { api: selectedApi });
     
@@ -422,6 +491,11 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
 
 function updateUI(symbol, data) {
     if (!data || data.error) {
+        if (data && data.globallyThrottled) {
+            // Global rate limit - don't update UI, just show status
+            setApiStatus(symbol, 'fetching', { api: data?.source, loadingFallback: true, errorCode: 429 });
+            return;
+        }
         if (data && data.errorCode === 429 && data.throttled) {
             setApiStatus(symbol, 'fetching', { api: data?.source, loadingFallback: true, errorCode: 429 });
             const el = document.getElementById('api-status-indicator');
@@ -436,7 +510,7 @@ function updateUI(symbol, data) {
     }
 
     if (data.timestamps && data.prices) {
-        updateChart(symbol, data.timestamps, data.prices);
+        updateChart(symbol, data.timestamps, data.prices, positions);
     }
 
     const openEl = document.getElementById(`open-${symbol}`);
@@ -503,7 +577,13 @@ function updateUI(symbol, data) {
 
     setApiStatus(symbol, 'active', { api: data.source });
 
-    updatePortfolioSummary()
+    updatePortfolioSummary();
+    
+    // Mettre à jour le titre du tab avec la nouvelle date
+    updateTabTitle(symbol);
+    
+    // Mettre à jour le titre de la carte avec la nouvelle date
+    updateCardTitle(symbol);
 }
 
 function resetSymbolDisplay(symbol) {
@@ -546,6 +626,47 @@ function resetSymbolDisplay(symbol) {
     if (updateEl) {
         updateEl.textContent = 'Dernière mise à jour : --'
     }
+}
+
+function getLastDataDate(symbol) {
+    const pos = positions[symbol];
+    if (!pos || !pos.lastData || !pos.lastData.timestamps || pos.lastData.timestamps.length === 0) {
+        return null;
+    }
+    
+    // Prendre le timestamp le plus récent
+    const latestTimestamp = Math.max(...pos.lastData.timestamps);
+    const date = new Date(latestTimestamp * 1000);
+    
+    // Formater en JJ/MM
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    return `${day}/${month}`;
+}
+
+function updateTabTitle(symbol) {
+    const dateStr = getLastDataDate(symbol);
+    if (!dateStr) return;
+    
+    const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
+    if (!tab) return;
+    
+    const nameEl = tab.querySelector('.tab-name');
+    if (!nameEl) return;
+    
+    const pos = positions[symbol];
+    const baseName = pos?.name || symbol;
+    nameEl.textContent = `${baseName} (${dateStr})`;
+}
+
+function updateCardTitle(symbol) {
+    const dateStr = getLastDataDate(symbol);
+    if (!dateStr) return;
+    
+    const titleEl = document.getElementById(`course-title-${symbol}`);
+    if (!titleEl) return;
+    
+    titleEl.textContent = `Cours de l'action (${dateStr})`;
 }
 
 function updatePortfolioSummary() {
@@ -640,7 +761,16 @@ async function loadStocks() {
         createCard(s);
     });
 
-    Object.keys(positions).forEach(sym => initChart(sym));
+    Object.keys(positions).forEach(sym => initChart(sym, positions));
+
+    // Mettre à jour les titres des tabs avec les données en cache si disponibles
+    Object.keys(positions).forEach(sym => {
+        if (stockCache[sym]) {
+            positions[sym].lastData = stockCache[sym];
+            updateTabTitle(sym);
+            updateCardTitle(sym);
+        }
+    });
 
     const first = document.querySelector('.sidebar .tab');
     if (first) {
@@ -670,6 +800,27 @@ window.addEventListener('load', async () => {
 
 window.startRateLimitCountdown = startRateLimitCountdown;
 window.stopRateLimitCountdown = stopRateLimitCountdown;
+window.startGlobalRateLimitCountdown = startGlobalRateLimitCountdown;
+window.stopGlobalRateLimitCountdown = stopGlobalRateLimitCountdown;
+
+// Listen for global rate limit events (fallback if rate-limiter dispatches events instead of calling functions)
+window.addEventListener('globalRateLimitStart', (e) => {
+    // ensure UI shows the global fetching state and start the countdown loop
+    try {
+        startGlobalRateLimitCountdown();
+    } catch (err) {
+        // best-effort: directly set status if helper missing
+        setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true, globalRateLimit: true });
+    }
+});
+
+window.addEventListener('globalRateLimitEnd', () => {
+    try {
+        stopGlobalRateLimitCountdown();
+    } catch (err) {
+        // nothing to do
+    }
+});
 
 function createTab(stock, type) {
     const t = document.getElementById('tab-template');
@@ -681,7 +832,12 @@ function createTab(stock, type) {
     img.src = `icon/${stock.symbol}.png`;
     img.alt = stock.symbol;
     img.onerror = function () { this.parentElement.innerHTML = stock.symbol.slice(0, 2); };
-    tab.querySelector('.tab-name').textContent = stock.name || stock.symbol;
+    
+    // Initialiser le titre avec le nom de base
+    const pos = positions[stock.symbol];
+    const baseName = pos?.name || stock.symbol;
+    tab.querySelector('.tab-name').textContent = baseName;
+    
     tab.querySelector('.tab-shares').textContent = stock.shares > 0 ? `(Actions possédées : ${stock.shares})` : '';
     const isPortfolio = stock.shares > 0;
     const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
@@ -749,6 +905,13 @@ function createCard(stock) {
     if (upd) {
         upd.id = `update-center-${stock.symbol}`
         upd.textContent = 'Dernière mise à jour : --'
+    }
+
+    // Initialiser le titre du cours
+    const courseTitle = document.getElementById('course-title-');
+    if (courseTitle) {
+        courseTitle.id = `course-title-${stock.symbol}`;
+        courseTitle.textContent = 'Cours de l\'action';
     }
 
     const tds = card.querySelectorAll('.card-table-td')

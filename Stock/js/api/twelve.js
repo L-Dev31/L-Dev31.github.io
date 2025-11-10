@@ -1,3 +1,5 @@
+import globalRateLimiter from '../rate-limiter.js';
+
 const periodMap = {
   "1D": { interval: "5min", days: 1, outputsize: 300 },
   "1W": { interval: "30min", days: 7, outputsize: 350 },
@@ -10,7 +12,7 @@ const periodMap = {
 class RateLimiter {
   constructor(max = 8, window = 60000) { this.max = max; this.window = window; this.queue = []; this.pending = []; }
   async exec(fn) { return new Promise((resolve, reject) => { this.queue.push({ fn, resolve, reject }); if (this.queue.length === 1) this.process(); }); }
-  async process() { if (!this.queue.length) return; const now = Date.now(); this.pending = this.pending.filter(t => now - t < this.window); if (this.pending.length < this.max) { const { fn, resolve, reject } = this.queue.shift(); this.pending.push(now); if (typeof window !== 'undefined' && window.stopRateLimitCountdown) { window.stopRateLimitCountdown(); } try { resolve(await fn()); } catch (e) { reject(e); } if (this.queue.length) setTimeout(() => this.process(), 100); } else { const wait = this.window - (now - Math.min(...this.pending)) + 100; const seconds = Math.max(1, Math.round(wait/1000)); console.log(`⏳ Rate limit Twelve Data: ${this.pending.length}/${this.max} requêtes, attente ${seconds}s`); if (typeof window !== 'undefined' && window.startRateLimitCountdown) { window.startRateLimitCountdown(seconds); } setTimeout(() => this.process(), wait); } }
+  async process() { if (!this.queue.length) return; const now = Date.now(); this.pending = this.pending.filter(t => now - t < this.window); if (this.pending.length < this.max) { const { fn, resolve, reject } = this.queue.shift(); this.pending.push(now); try { resolve(await fn()); } catch (e) { reject(e); } if (this.queue.length) setTimeout(() => this.process(), 100); } else { const wait = this.window - (now - Math.min(...this.pending)) + 100; const seconds = Math.max(1, Math.round(wait/1000)); console.log(`⏳ Rate limit Twelve Data: ${this.pending.length}/${this.max} requêtes, attente ${seconds}s`); globalRateLimiter.setGlobalRateLimit(wait); setTimeout(() => this.process(), wait); } }
 }
 
 const limiter = new RateLimiter();
@@ -48,7 +50,10 @@ export async function fetchFromTwelveData(ticker, period, symbol, _, name, signa
     const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(twelveTicker )}&interval=${cfg.interval}&outputsize=${cfg.outputsize}&apikey=${apiKey}`;
     
     console.log(`📡 Requête Twelve Data API: ${twelveTicker}`);
-    const r = await limiter.exec(() => fetch(url, { signal }));
+    const r = await globalRateLimiter.executeIfNotLimited(
+      () => fetch(url, { signal }),
+      'Twelve Data'
+    );
     console.log(`📥 Réponse Twelve Data: ${r.status} ${r.statusText}`);
     
     if (r.status === 429) {
