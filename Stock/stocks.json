@@ -31,5 +31,60 @@
     "type": "commodity",
     "shares": 0,
     "investment": 0.00
+  },
+  {
+    "symbol": "BTC",
+    "ticker": "BTCUSD",
+    "name": "Bitcoin",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto",
+    "shares": 0,
+    "investment": 0.00
+  },
+  {
+    "symbol": "ETH",
+    "ticker": "ETHUSD",
+    "name": "Ethereum",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto",
+    "shares": 0,
+    "investment": 0.00
+  },
+  {
+    "symbol": "SOL",
+    "ticker": "SOLUSD",
+    "name": "Solana",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto",
+    "shares": 0,
+    "investment": 0.00
+  },
+  {
+    "symbol": "XRP",
+    "ticker": "XRPUSD",
+    "name": "Ripple",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto",
+    "shares": 0,
+    "investment": 0.00
+  },
+  {
+    "symbol": "DOGE",
+    "ticker": "DOGEUSD",
+    "name": "Dogecoin",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto",
+    "shares": 0,
+    "investment": 0.00
   }
 ]

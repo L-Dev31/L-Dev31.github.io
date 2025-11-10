@@ -567,42 +567,94 @@ function updatePortfolioSummary() {
 async function loadStocks() {
     const config = await loadApiConfig();
 
-    const r=await fetch('stocks.json')
-    const list=await r.json()
+    const r = await fetch('stocks.json');
+    const list = await r.json();
 
-    list.forEach(s=>{
-        positions[s.symbol]={
-            symbol:s.symbol,
-            ticker:s.ticker,
-            name:s.name,
-            shares:s.shares||0,
-            investment:s.investment||0,
-            chart:null,
-            lastFetch:0,
-            lastData:null,
-            currentPeriod:'1D'
+    // Grouper par type
+    const byType = {};
+    list.forEach(s => {
+        if (!byType[s.type]) byType[s.type] = [];
+        byType[s.type].push(s);
+    });
+
+    // Nettoyer les tabs existants
+    document.getElementById('portfolio-tabs').innerHTML = '';
+    document.getElementById('general-tabs').innerHTML = '';
+
+    // Pour chaque type, créer un sous-titre et un conteneur
+    // Dictionnaire d'icônes Font Awesome par type
+    const typeIcons = {
+        equity: 'fa-solid fa-building-columns',
+        commodity: 'fa-solid fa-coins',
+        crypto: 'fa-brands fa-bitcoin',
+    };
+    Object.entries(byType).forEach(([type, stocks]) => {
+        // Ne crée la section que si au moins un stock de ce type existe dans la catégorie
+        const hasPortfolio = stocks.some(s => s.shares > 0);
+        const hasGeneral = stocks.some(s => !s.shares || s.shares === 0);
+        const typeLabel = {
+            equity: 'Actions',
+            commodity: 'Matières Premières',
+            crypto: 'Cryptos',
+        }[type] || type.charAt(0).toUpperCase() + type.slice(1);
+        const iconClass = typeIcons[type] || 'fa-solid fa-layer-group';
+
+        if (hasPortfolio) {
+            const portSection = document.createElement('div');
+            portSection.className = 'tab-type-section';
+            portSection.id = `portfolio-section-${type}`;
+            const portTitle = document.createElement('div');
+            portTitle.className = 'tab-type-title';
+            portTitle.innerHTML = `<i class="${iconClass}" style="margin-right:7px;"></i>${typeLabel}`;
+            portSection.appendChild(portTitle);
+            document.getElementById('portfolio-tabs').appendChild(portSection);
         }
-        if (stockCache[s.symbol]) positions[s.symbol].cachedData=stockCache[s.symbol]
-        lastApiBySymbol[s.symbol]=selectedApi
-        createTab(s)
-        createCard(s)
-    })
+        if (hasGeneral) {
+            const genSection = document.createElement('div');
+            genSection.className = 'tab-type-section';
+            genSection.id = `general-section-${type}`;
+            const genTitle = document.createElement('div');
+            genTitle.className = 'tab-type-title';
+            genTitle.innerHTML = `<i class="${iconClass}" style="margin-right:7px;"></i>${typeLabel}`;
+            genSection.appendChild(genTitle);
+            document.getElementById('general-tabs').appendChild(genSection);
+        }
+    });
 
-    Object.keys(positions).forEach(sym=>initChart(sym))
+    // Création des positions et des tabs/cards
+    list.forEach(s => {
+        positions[s.symbol] = {
+            symbol: s.symbol,
+            ticker: s.ticker,
+            name: s.name,
+            shares: s.shares || 0,
+            investment: s.investment || 0,
+            chart: null,
+            lastFetch: 0,
+            lastData: null,
+            currentPeriod: '1D'
+        };
+        if (stockCache[s.symbol]) positions[s.symbol].cachedData = stockCache[s.symbol];
+        lastApiBySymbol[s.symbol] = selectedApi;
+        createTab(s, s.type);
+        createCard(s);
+    });
 
-    const first=document.querySelector('.sidebar .tab')
+    Object.keys(positions).forEach(sym => initChart(sym));
+
+    const first = document.querySelector('.sidebar .tab');
     if (first) {
-        first.classList.add('active')
-        const sym=first.dataset.symbol
-        document.getElementById(`card-${sym}`).classList.add('active')
-        fetchActiveSymbol(true)
+        first.classList.add('active');
+        const sym = first.dataset.symbol;
+        document.getElementById(`card-${sym}`).classList.add('active');
+        fetchActiveSymbol(true);
     }
 
-    const open = Object.values(positions).find(p=>p.shares>0)
+    const open = Object.values(positions).find(p => p.shares > 0);
 
-    setApiStatus(null, 'active', {api: selectedApi})
+    setApiStatus(null, 'active', { api: selectedApi });
 
-    updatePortfolioSummary()
+    updatePortfolioSummary();
 }
 
 const font=document.createElement('link')
@@ -619,20 +671,21 @@ window.addEventListener('load', async () => {
 window.startRateLimitCountdown = startRateLimitCountdown;
 window.stopRateLimitCountdown = stopRateLimitCountdown;
 
-function createTab(stock) {
-    const t = document.getElementById('tab-template')
-    if (!t) return
-    const tab = t.content.firstElementChild.cloneNode(true)
-    tab.dataset.symbol = stock.symbol
-    tab.dataset.ticker = stock.ticker
-    const img = tab.querySelector('img')
-    img.src = `icon/${stock.symbol}.png`
-    img.alt = stock.symbol
-    img.onerror = function(){ this.parentElement.innerHTML = stock.symbol.slice(0,2) }
-    tab.querySelector('.tab-name').textContent = stock.name || stock.symbol
-    tab.querySelector('.tab-shares').textContent = `(${stock.shares})`
-    const id = stock.shares>0 ? 'portfolio-tabs' : 'general-tabs'
-    document.getElementById(id)?.appendChild(tab)
+function createTab(stock, type) {
+    const t = document.getElementById('tab-template');
+    if (!t) return;
+    const tab = t.content.firstElementChild.cloneNode(true);
+    tab.dataset.symbol = stock.symbol;
+    tab.dataset.ticker = stock.ticker;
+    const img = tab.querySelector('img');
+    img.src = `icon/${stock.symbol}.png`;
+    img.alt = stock.symbol;
+    img.onerror = function () { this.parentElement.innerHTML = stock.symbol.slice(0, 2); };
+    tab.querySelector('.tab-name').textContent = stock.name || stock.symbol;
+    tab.querySelector('.tab-shares').textContent = stock.shares > 0 ? `(Actions possédées : ${stock.shares})` : '';
+    const isPortfolio = stock.shares > 0;
+    const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
+    document.getElementById(sectionId)?.appendChild(tab);
 }
 
 function createCard(stock) {

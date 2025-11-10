@@ -1,3 +1,56 @@
+    .tabs.portfolio,
+    .tabs.general {
+        max-height: 340px;
+        overflow-y: auto;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+    }
+.tabs.portfolio::-webkit-scrollbar, .tabs.general::-webkit-scrollbar {
+    display: none;
+}
+/* Scrollbar pastel violet discret */
+::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #bcb6ff;
+    border-radius: 6px;
+    min-height: 40px;
+    opacity: 0.5;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a2ff;
+}
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+html {
+    scrollbar-color: #bcb6ff #23233b;
+    scrollbar-width: thin;
+}
+/* Sous-catégories de tabs (types d'actifs) */
+.tab-type-section {
+    margin-bottom: 12px;
+}
+.tab-type-title {
+    font-size: 12px;
+    font-weight: 400;
+    color: #7c7c8a;
+    margin: 10px 0 5px 8px;
+    letter-spacing: 0.5px;
+    width: fit-content;
+    background: none;
+}
+.tab-type-title i {
+    color: #7c7c8a !important;
+    opacity: 0.85;
+    filter: grayscale(1) brightness(0.8);
+    font-size: 1em;
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
+}
 /* ========== API Indicator Flex Layout (from general.js markup) ========== */
 .api-indicator-flex {
     display: flex;
@@ -19,8 +72,8 @@
     object-fit: contain;
 }
 .api-status-text {
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 .api-chevron {
     transition: transform 0.5s ease;
@@ -41,17 +94,20 @@
 /* Hide spinner row if not active (overridden inline for display:none) */
 /* ===================== API Indicator & Dropdown Styles ===================== */
 #api-status-indicator {
-    position: fixed;
-    left: 20px;
-    bottom: 20px;
-    z-index: 9999;
+    /* position: static par défaut */
+    margin: 0;
     color: #ffffff;
     padding: 12px 16px;
     border-radius: 12px;
     font-size: 13px;
     pointer-events: auto;
     display: inline-block;
-    max-width: 260px;
+    max-width: 100vw;
+    width: auto;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 #api-status-indicator img {
     filter: none;
@@ -62,7 +118,6 @@
 #api-status-indicator:hover,
 #api-status-indicator.dropdown-open {
     outline: 2px solid rgba(168, 162, 255, 0.6);
-    outline-offset: 2px;
     border-radius: 12px;
 }
 #api-status-indicator:hover .api-chevron,
@@ -185,6 +240,8 @@
     pointer-events: auto; /* allow interactions */
     display: inline-block;
     max-width: 260px;
+    background: linear-gradient(135deg, #1a1a1e 0%, #16161a 100%); /* Même fond que body */
+    box-shadow: 0 0 48px 24px rgba(26,26,30,0.55); /* Plus fondu, diffus */
 }
 #api-status-indicator img { filter: none; vertical-align: middle;}
 
@@ -387,7 +444,8 @@ body {
 
 
 .performance {
-    background: linear-gradient(135deg, rgba(168, 162, 255, 0.1) 0%, rgba(168, 162, 255, 0.05) 100%);
+    background:
+        linear-gradient(to top, rgba(168,162,255,0.01) 0%, rgba(153, 149, 219, 0.3) 100%);
     border-radius: 16px;
     padding: 24px;
     text-align: center;
@@ -559,8 +617,8 @@ body {
 }
 
 .logo {
-    width: 250px;
-    height: auto;
+    width: auto;
+    height: 70px;
 }
 
 .logo img {

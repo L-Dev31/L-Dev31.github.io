@@ -15,12 +15,27 @@ class RateLimiter {
 
 const limiter = new RateLimiter();
 const cache = new Map();
+const mappingCache = new Map();
 
 function resolveTwelveDataTicker(localTicker) {
-  if (/^[A-Z]{3,6}USD$/.test(localTicker)) { const crypto = localTicker.slice(0, -3); return `${crypto}/USD`; }
-  if (localTicker === 'XAUUSD') return 'XAU/USD';
-  if (localTicker === 'XAGUSD') return 'XAG/USD';
-  return localTicker;
+  if (mappingCache.has(localTicker)) return mappingCache.get(localTicker);
+
+  let twelveTicker = localTicker;
+  // Détection Crypto (ex: BTCUSD -> BTC/USD)
+  if (/^[A-Z]{3,6}USD$/.test(localTicker) && !/^XAU|XAG/.test(localTicker)) {
+    const crypto = localTicker.slice(0, -3);
+    twelveTicker = `${crypto}/USD`;
+  } 
+  // Détection Métaux (ex: XAUUSD -> XAU/USD)
+  else if (/^XAU|XAG/.test(localTicker)) {
+    const metal = localTicker.slice(0, 3);
+    twelveTicker = `${metal}/USD`;
+  }
+  // Pour les actions (US, EU), Twelve Data utilise le ticker tel quel (ex: AAPL, AL2SI.PA)
+
+  console.log(`[Twelve Data] Ticker local "${localTicker}" résolu en "${twelveTicker}"`);
+  mappingCache.set(localTicker, twelveTicker);
+  return twelveTicker;
 }
 
 export async function fetchFromTwelveData(ticker, period, symbol, _, name, signal, apiKey) {
@@ -32,13 +47,11 @@ export async function fetchFromTwelveData(ticker, period, symbol, _, name, signa
     const cfg = periodMap[period] || periodMap["1D"];
     const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(twelveTicker )}&interval=${cfg.interval}&outputsize=${cfg.outputsize}&apikey=${apiKey}`;
     
-    console.log(`📡 Requête Twelve Data API: ${twelveTicker} interval=${cfg.interval} outputsize=${cfg.outputsize}`);
-    
+    console.log(`📡 Requête Twelve Data API: ${twelveTicker}`);
     const r = await limiter.exec(() => fetch(url, { signal }));
-    console.log(`📥 Réponse: ${r.status} ${r.statusText}`);
+    console.log(`📥 Réponse Twelve Data: ${r.status} ${r.statusText}`);
     
     if (r.status === 429) {
-      if (typeof window !== 'undefined' && window.setApiStatus) { try { window.setApiStatus(symbol, 'fetching', { api: 'twelvedata', loadingFallback: true, errorCode: 429 }); } catch (e) {} }
       return { source: "twelvedata", error: true, errorCode: 429, throttled: true };
     }
     
@@ -46,14 +59,12 @@ export async function fetchFromTwelveData(ticker, period, symbol, _, name, signa
     
     if (j.status === 'error' || !j.values || !j.values.length) {
       const isPlanError = j.message && j.message.includes("plan");
-      const errorMessage = isPlanError ? `Accès non autorisé pour ${twelveTicker} (vérifiez votre plan d'abonnement).` : (j.message || 'Aucune donnée');
-      console.warn(`⚠️ Erreur ou aucun résultat pour ${twelveTicker}:`, errorMessage);
-      const err = { source: "twelvedata", error: true, errorCode: j.code || 404, errorMessage, twelveTicker };
-      cache.set(key, { data: err, ts: Date.now() });
-      return err;
+      const errorMessage = isPlanError ? `Accès non autorisé pour ${twelveTicker} (plan API).` : (j.message || 'Aucune donnée');
+      console.warn(`⚠️ Erreur Twelve Data pour ${twelveTicker}:`, errorMessage);
+      return { source: "twelvedata", error: true, errorCode: j.code || 404, errorMessage };
     }
     
-    console.log(`✅ ${j.values.length} points de données bruts récupérés pour ${twelveTicker}`);
+    console.log(`✅ ${j.values.length} points de données bruts récupérés de Twelve Data`);
     
     const values = j.values.reverse();
     
@@ -64,17 +75,14 @@ export async function fetchFromTwelveData(ticker, period, symbol, _, name, signa
     });
 
     if (filteredValues.length === 0) {
-        console.warn(`⚠️ Aucune donnée pour ${twelveTicker} dans la période ${period}.`);
         return { source: "twelvedata", error: true, errorCode: 404, errorMessage: `Pas de données sur ${period}.` };
     }
-    console.log(`ℹ️ ${filteredValues.length} points de données conservés pour la période ${period}`);
+    console.log(`ℹ️ ${filteredValues.length} points Twelve Data conservés pour la période ${period}`);
 
     const prices = filteredValues.map(v => parseFloat(v.close) || 0);
-    const timestamps = filteredValues.map(v => Math.floor(new Date(v.datetime).getTime() / 1000));
-    
     const data = {
       source: "twelvedata",
-      timestamps,
+      timestamps: filteredValues.map(v => Math.floor(new Date(v.datetime).getTime() / 1000)),
       prices,
       open: parseFloat(filteredValues[0]?.open) || prices[0] || null,
       high: Math.max(...prices),
@@ -90,14 +98,12 @@ export async function fetchFromTwelveData(ticker, period, symbol, _, name, signa
       data.change = 0;
     }
     
-    console.log(`💰 Prix: ${data.price?.toFixed(2)} USD (min: ${data.low?.toFixed(2)}, max: ${data.high?.toFixed(2)})`);
-    console.log(`📈 Performance: ${data.changePercent?.toFixed(2)}% (${data.change?.toFixed(2)} USD)`);
-    
+    console.log(`💰 Prix Twelve Data: ${data.price?.toFixed(2)} USD`);
     cache.set(key, { data, ts: Date.now() });
     return data;
     
   } catch (e) {
-    if (e.name === 'AbortError') { console.log(`🚫 Requête annulée pour ${ticker}`); throw e; }
+    if (e.name === 'AbortError') { console.log(`🚫 Requête Twelve Data annulée pour ${ticker}`); throw e; }
     console.error(`💥 Erreur Twelve Data pour ${ticker}:`, e.message);
     return { source: "twelvedata", error: true, errorCode: 500, errorMessage: e.message };
   }
