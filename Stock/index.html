@@ -10,133 +10,133 @@
 </head>
 <body>
     <div class="sidebar">
-        <div class="profile-header">
-            <img src="photo/leot.png" alt="Mr Léo TOSKU" class="profile-photo">
-            <div class="profile-info">
-                <h1>Mr Léo TOSKU</h1>
-                <p>Total actions possédées: <span id="total-shares">0</span></p>
-                <p>Investissement total: <span id="total-investment">-- €</span></p>
+            <div class="profile-header">
+                <img src="photo/leot.png" alt="Mr Léo TOSKU" class="profile-photo">
+                <div class="profile-info">
+                    <h1>Mr Léo TOSKU</h1>
+                    <p>Total actions possédées: <span id="total-shares">0</span></p>
+                    <p>Investissement total: <span id="total-investment">-- €</span></p>
+                </div>
             </div>
+            <h3 class="sidebar-section-title">Mon Portefeuille</h3>
+            <div class="tabs portfolio" id="portfolio-tabs"></div>
+            <h3 class="sidebar-section-title">Général</h3>
+            <div class="tabs general" id="general-tabs"></div>
+            <div id="api-status-indicator"></div>
         </div>
-        <h3 class="sidebar-section-title">Mon Portefeuille</h3>
-        <div class="tabs portfolio" id="portfolio-tabs"></div>
-        <h3 class="sidebar-section-title">Général</h3>
-        <div class="tabs general" id="general-tabs"></div>
-        <div id="api-status-indicator"></div>
-    </div>
-    <div class="container">
-        <!-- Tabs will be generated from stocks.json -->
-        <div class="tabs" id="tabs"></div>
+        <div class="container">
+            <!-- Tabs will be generated from stocks.json -->
+            <div class="tabs" id="tabs"></div>
 
-        <!-- Cards container: cards for each stock will be injected here -->
-        <div id="cards-container"></div>
-        <!-- Hidden templates for dynamic content -->
-        <template id="tab-template">
-            <div class="tab" data-symbol="">
-                <div class="tab-logo">
-                    <img src="" alt="" />
-                </div>
-                <div class="tab-info">
-                    <div class="tab-name"></div>
-                    <div class="tab-shares"></div>
-                </div>
-            </div>
-        </template>
-        <template id="card-template">
-            <div class="card" id="">
-                <div class="card-logo-section">
-                    <div class="logo">
-                        <img id="" data-symbol="" src="" alt="" />
+            <!-- Cards container: cards for each stock will be injected here -->
+            <div id="cards-container"></div>
+            <!-- Hidden templates for dynamic content -->
+            <template id="tab-template">
+                <div class="tab" data-symbol="">
+                    <div class="tab-logo">
+                        <img src="" alt="" />
+                    </div>
+                    <div class="tab-info">
+                        <div class="tab-name"></div>
+                        <div class="tab-shares"></div>
                     </div>
                 </div>
-                <h3 class="section-title">Infos générales</h3>
-                <div class="card-general-info">
-                    <div class="general-row"><strong>ISIN</strong> : <span id=""></span></div>
-                    <div class="general-row"><strong>Ticker</strong> : <span id=""></span></div>
-                    <div class="general-row"><strong>Symbole</strong> : <span id="symbol-info"></span></div>
-                    <div class="general-row card-country-row"><strong>Pays</strong> : <span class="country-name"></span><img id="" data-country="" src="" alt="" class="flag-icon"/></div>
-                </div>
-                <h3 class="section-title investment-title">Investissement personnel</h3>
-                <div class="card-table-container">
-                    <div class="general-row important-shares">Actions détenues : <span id=""></span></div>
-                    <table class="card-table">
-                        <thead class="card-table-header">
-                            <tr>
-                                <th class="card-table-th"></th>
-                                <th class="card-table-th">Investi</th>
-                                <th class="card-table-th">Valeur actuelle</th>
-                                <th class="card-table-th">Bénéfice/Déficit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="card-table-td card-table-type">Total</td>
-                                <td class="card-table-td" id=""></td>
-                                <td class="card-table-td" id=""></td>
-                                <td class="card-table-td" id=""></td>
-                            </tr>
-                            <tr>
-                                <td class="card-table-td card-table-type">Par action</td>
-                                <td class="card-table-td" id=""></td>
-                                <td class="card-table-td" id=""></td>
-                                <td class="card-table-td" id=""></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <h3 class="section-title" id="course-title-"></h3>
-                <div class="chart-container">
-                    <div class="chart-header">Graphique</div>
-                    <canvas class="chart-canvas" id=""></canvas>
-                    <div class="periods-group" id="">
-                        <button class="period-btn" data-symbol="" data-period="1D">1D</button>
-                        <button class="period-btn" data-symbol="" data-period="1W">1W</button>
-                        <button class="period-btn" data-symbol="" data-period="1M">1M</button>
-                        <button class="period-btn" data-symbol="" data-period="6M">6M</button>
-                        <button class="period-btn" data-symbol="" data-period="1Y">1Y</button>
-                        <button class="period-btn" data-symbol="" data-period="3Y">3Y</button>
-                        <button class="period-btn" data-symbol="" data-period="5Y">5Y</button>
+            </template>
+            <template id="card-template">
+                <div class="card" id="">
+                    <div class="card-logo-section">
+                        <div class="logo">
+                            <img id="" data-symbol="" src="" alt="" />
+                        </div>
                     </div>
-                </div>
-                <div class="performance">
-                    <div class="performance-label">Performance</div>
-                    <div class="performance-value" id=""></div>
-                </div>
-                <h3 class="section-title details-title">Details</h3>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label">Ouverture (Open)</div>
-                        <div class="info-value" id=""></div>
+                    <h3 class="section-title">Infos générales</h3>
+                    <div class="card-general-info">
+                        <div class="general-row"><strong>ISIN</strong> : <span id=""></span></div>
+                        <div class="general-row"><strong>Ticker</strong> : <span id=""></span></div>
+                        <div class="general-row"><strong>Symbole</strong> : <span id="symbol-info"></span></div>
+                        <div class="general-row card-country-row"><strong>Pays</strong> : <span class="country-name"></span><img id="" data-country="" src="" alt="" class="flag-icon"/></div>
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">Plus Haut (High)</div>
-                        <div class="info-value" id=""></div>
+                    <h3 class="section-title investment-title">Investissement personnel</h3>
+                    <div class="card-table-container">
+                        <div class="general-row important-shares">Actions détenues : <span id=""></span></div>
+                        <table class="card-table">
+                            <thead class="card-table-header">
+                                <tr>
+                                    <th class="card-table-th"></th>
+                                    <th class="card-table-th">Investi</th>
+                                    <th class="card-table-th">Valeur actuelle</th>
+                                    <th class="card-table-th">Bénéfice/Déficit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="card-table-td card-table-type">Total</td>
+                                    <td class="card-table-td" id=""></td>
+                                    <td class="card-table-td" id=""></td>
+                                    <td class="card-table-td" id=""></td>
+                                </tr>
+                                <tr>
+                                    <td class="card-table-td card-table-type">Par action</td>
+                                    <td class="card-table-td" id=""></td>
+                                    <td class="card-table-td" id=""></td>
+                                    <td class="card-table-td" id=""></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">Plus Bas (Low)</div>
-                        <div class="info-value" id=""></div>
+                    <h3 class="section-title" id="course-title-"></h3>
+                    <div class="chart-container">
+                        <div class="chart-header">Graphique</div>
+                        <canvas class="chart-canvas" id=""></canvas>
+                        <div class="periods-group" id="">
+                            <button class="period-btn" data-symbol="" data-period="1D">1D</button>
+                            <button class="period-btn" data-symbol="" data-period="1W">1W</button>
+                            <button class="period-btn" data-symbol="" data-period="1M">1M</button>
+                            <button class="period-btn" data-symbol="" data-period="6M">6M</button>
+                            <button class="period-btn" data-symbol="" data-period="1Y">1Y</button>
+                            <button class="period-btn" data-symbol="" data-period="3Y">3Y</button>
+                            <button class="period-btn" data-symbol="" data-period="5Y">5Y</button>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">Clôture (Close)</div>
-                        <div class="info-value" id=""></div>
+                    <div class="performance">
+                        <div class="performance-label">Performance</div>
+                        <div class="performance-value" id=""></div>
                     </div>
+                    <h3 class="section-title details-title">Details</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Ouverture (Open)</div>
+                            <div class="info-value" id=""></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Plus Haut (High)</div>
+                            <div class="info-value" id=""></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Plus Bas (Low)</div>
+                            <div class="info-value" id=""></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Clôture (Close)</div>
+                            <div class="info-value" id=""></div>
+                        </div>
+                    </div>
+                    <div class="update-center" id=""></div>
                 </div>
-                <div class="update-center" id=""></div>
-            </div>
-        </template>
-        <template id="api-indicator-template">
-            <div style="display:flex;flex-direction:column;align-items:flex-start;">
-                <div class="api-indicator-row" style="display:flex;align-items:center;">
-                    <span class="api-dot"></span>
-                    <img class="api-indicator-logo" src="" alt="">
-                    <span data-role="status-text" class="api-status-text"></span>
-                    <i class="fa-solid fa-chevron-down api-chevron"></i>
+            </template>
+            <template id="api-indicator-template">
+                <div style="display:flex;flex-direction:column;align-items:flex-start;">
+                    <div class="api-indicator-row" style="display:flex;align-items:center;">
+                        <span class="api-dot"></span>
+                        <img class="api-indicator-logo" src="" alt="">
+                        <span data-role="status-text" class="api-status-text"></span>
+                        <i class="fa-solid fa-chevron-down api-chevron"></i>
+                    </div>
+                    <div class="api-expanded" data-role="api-expanded"></div>
+                    <div data-role="spinner" class="api-indicator-spinner-row" style="display:none;"></div>
                 </div>
-                <div class="api-expanded" data-role="api-expanded"></div>
-                <div data-role="spinner" class="api-indicator-spinner-row" style="display:none;"></div>
-            </div>
-        </template>
-    </div>
+            </template>
+        </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>

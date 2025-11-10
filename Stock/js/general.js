@@ -40,7 +40,7 @@ async function loadApiConfig() {
     API_CONFIG = {
       apis: config,
       ui: {
-        defaultApi: 'alphavantage',
+        defaultApi: 'massive',
         validApis: enabledApis
       }
     };
@@ -50,7 +50,7 @@ async function loadApiConfig() {
   }
 }
 
-let selectedApi = 'alphavantage'
+let selectedApi = 'massive'
 const cacheKey = 'stockCache'
 let stockCache = JSON.parse(localStorage.getItem(cacheKey) || '{}')
 const lastApiBySymbol = {}
