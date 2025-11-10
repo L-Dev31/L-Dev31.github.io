@@ -372,6 +372,7 @@ body {
     min-width: fit-content;
     flex-shrink: 0;
     border-bottom: 1px solid rgba(168, 162, 255, 0.2);
+    position: relative;
 }
 
 .tab:last-child {

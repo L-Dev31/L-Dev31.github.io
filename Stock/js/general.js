@@ -715,7 +715,7 @@ function createCard(stock) {
     const tk = arr[1]
     if (tk) {
         tk.id = `ticker-${stock.symbol}`
-        tk.textContent = `${stock.ticker} · ${stock.symbol}`
+        tk.textContent = stock.ticker || stock.symbol
     }
 
     const symInfo = card.querySelector('#symbol-info')
