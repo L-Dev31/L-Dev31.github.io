@@ -13,7 +13,18 @@
   {
     "symbol": "IUTCF",
     "ticker": "XAUUSD",
-    "name": "Global Gold",
+    "name": "Global Gold Spot",
+    "isin": null,
+    "country": "GLOBAL",
+    "currency": "USD",
+    "type": "commodity",
+    "shares": 0,
+    "investment": 0.00
+  },
+  {
+    "symbol": "XAGUSD",
+    "ticker": "XAGUSD",
+    "name": "Global Silver Spot",
     "isin": null,
     "country": "GLOBAL",
     "currency": "USD",
