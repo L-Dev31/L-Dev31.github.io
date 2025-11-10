@@ -2,20 +2,27 @@ import { fetchFromPolygon } from './api/polygon.js'
 import { fetchFromTwelveData } from './api/twelve.js'
 import { fetchFromMarketstack } from './api/marketstack.js'
 import { fetchFromAlphaVantage } from './api/alphavantage.js'
+import { fetchFromFinnhub } from './api/finnhub.js'
+import { fetchFromYahoo } from './api/yahoo-finance.js'
+import rateLimiter from './rate-limiter.js'
 import { initChart, updateChart } from './chart.js'
 
-async function selectApiFetch(apiName) {
+async function selectApiFetch(apiName, position) {
   switch(apiName) {
     case 'massive':
-      return fetchFromPolygon
+      return { fetchFunc: fetchFromPolygon, apiName: 'massive' };
     case 'twelvedata':
-      return fetchFromTwelveData
+      return { fetchFunc: fetchFromTwelveData, apiName: 'twelvedata' };
     case 'marketstack':
-      return fetchFromMarketstack
+      return { fetchFunc: fetchFromMarketstack, apiName: 'marketstack' };
     case 'alphavantage':
-      return fetchFromAlphaVantage
+      return { fetchFunc: fetchFromAlphaVantage, apiName: 'alphavantage' };
+    case 'finnhub':
+      return { fetchFunc: fetchFromFinnhub, apiName: 'finnhub' };
+    case 'yahoo':
+      return { fetchFunc: fetchFromYahoo, apiName: 'yahoo' };
     default:
-      return fetchFromPolygon
+      return { fetchFunc: fetchFromPolygon, apiName: 'massive' };
   }
 }
 
@@ -110,7 +117,7 @@ function updateDropdownSelection() {
 
 function startFastPolling() {
     if (fastPollTimer) return
-    fastPollTimer = setInterval(() => fetchActiveSymbol(false), 5000)
+    fastPollTimer = setInterval(() => fetchActiveSymbol(false), 60000)
 }
 
 function stopFastPolling() {
@@ -169,7 +176,7 @@ function startGlobalRateLimitCountdown() {
         clearInterval(rateLimitCountdownTimer);
     }
     
-    setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true, globalRateLimit: true });
+    setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true, rateLimited: true });
     
     rateLimitCountdownTimer = setInterval(() => {
         const el = document.getElementById('api-status-indicator');
@@ -177,17 +184,15 @@ function startGlobalRateLimitCountdown() {
             const spinner = el.querySelector('[data-role="spinner"]');
             if (spinner) {
                 // Importer le rate limiter pour obtenir le temps restant
-                import('./rate-limiter.js').then(module => {
-                    const remaining = module.default.getRemainingSeconds();
-                    if (remaining > 0) {
-                        updateApiCountdown(remaining);
-                    } else {
-                        spinner.innerHTML = `<span class="api-spinner"></span>`;
-                        clearInterval(rateLimitCountdownTimer);
-                        rateLimitCountdownTimer = null;
-                        setApiStatus(null, 'active', { api: selectedApi });
-                    }
-                });
+                const remaining = rateLimiter.getRemainingSeconds(selectedApi);
+                if (remaining > 0) {
+                    updateApiCountdown(remaining);
+                } else {
+                    spinner.innerHTML = `<span class="api-spinner"></span>`;
+                    clearInterval(rateLimitCountdownTimer);
+                    rateLimitCountdownTimer = null;
+                    setApiStatus(null, 'active', { api: selectedApi });
+                }
             }
         }
     }, 1000);
@@ -320,14 +325,16 @@ async function setApiStatus(symbol, status, opts = {}) {
         }
     }
 
-    // If a global rate limit is active, force indicator to fetching state and ensure countdown shows
+    // If a rate limit is active for this API, force indicator to fetching state and ensure countdown shows
     try {
-        if (status === 'active' && typeof window !== 'undefined' && window.__globalRateLimitActive) {
-            status = 'fetching';
-            opts = Object.assign({}, opts, { globalRateLimit: true, loadingFallback: true });
-            const remainingMs = window.__globalRateLimitEndTime - Date.now();
-            const remainingSec = Math.max(0, Math.ceil(remainingMs / 1000));
-            updateApiCountdown(remainingSec);
+        const apiToCheck = opts.api || selectedApi;
+        if (rateLimiter.isRateLimited(apiToCheck)) {
+            if (status !== 'noinfo') {
+                status = 'fetching';
+            }
+            opts = Object.assign({}, opts, { rateLimited: true });
+            const remainingMs = rateLimiter.getRemainingSeconds(apiToCheck) * 1000;
+            updateApiCountdown(Math.ceil(remainingMs / 1000));
         }
     } catch (e) { /* ignore */ }
     const expanded = content.querySelector('.api-expanded');
@@ -338,9 +345,6 @@ async function setApiStatus(symbol, status, opts = {}) {
     }
     const spinner = content.querySelector('[data-role="spinner"]');
     if (spinner && opts.loadingFallback) {
-        // Ensure spinner area exists. Don't inject a countdown text here
-        // because updateApiCountdown handles creating/updating a single
-        // countdown element under the status text. This avoids duplicates.
         spinner.style.display = 'flex';
         if (!spinner.querySelector('.api-spinner')) {
             spinner.innerHTML = `<span class="api-spinner"></span>`;
@@ -351,10 +355,10 @@ async function setApiStatus(symbol, status, opts = {}) {
     el.title = symbol || '';
     el.className = 'api-status-indicator ' + status;
 
-    // If global rate limit is active, always show the countdown below the status
-    if (typeof window !== 'undefined' && window.__globalRateLimitActive) {
-        const remainingMs = window.__globalRateLimitEndTime - Date.now();
-        const remainingSec = Math.max(0, Math.ceil(remainingMs / 1000));
+    // If rate limit is active for the current API, always show the countdown below the status
+    const apiToCheck = opts.api || selectedApi;
+    if (rateLimiter.isRateLimited(apiToCheck)) {
+        const remainingSec = rateLimiter.getRemainingSeconds(apiToCheck);
         updateApiCountdown(remainingSec);
     }
 }
@@ -398,20 +402,20 @@ async function fetchActiveSymbol(force) {
         const p = positions[symbol].currentPeriod||'1D'
         const name = positions[symbol].name||null
         
-        let fetchFunc = await selectApiFetch(selectedApi)
+        let { fetchFunc, apiName } = await selectApiFetch(selectedApi, positions[symbol])
         
         const config = await loadApiConfig();
-        const apiConfig = config.apis[selectedApi];
+        const apiConfig = config.apis[apiName];
         
         if (!apiConfig || !apiConfig.enabled) {
             positions[symbol].isFetching=false
-            return { source: selectedApi, error: true, errorCode: 503, errorMessage: "API désactivée" };
+            return { source: apiName, error: true, errorCode: 503, errorMessage: "API désactivée" };
         }
         
-        let d = await fetchFunc(positions[symbol].ticker, p, symbol, null, name, signal, apiConfig.apiKey)
+        let d = await fetchFunc(positions[symbol].ticker, p, symbol, positions[symbol], name, signal, apiConfig.apiKey)
         
-        // Don't update cache/timestamps for globally throttled requests
-        if (!d.globallyThrottled) {
+        // Don't update cache/timestamps for throttled requests
+        if (!d.throttled) {
             positions[symbol].lastFetch=Date.now()
             positions[symbol].lastData=d
         }
@@ -421,10 +425,15 @@ async function fetchActiveSymbol(force) {
         if (d && d.error && d.source) {
             setApiStatus(symbol, 'noinfo', { api: d.source, errorCode: d.errorCode });
         } else {
-            setApiStatus(symbol, d ? 'active' : 'inactive', { api: selectedApi });
+            setApiStatus(symbol, d ? 'active' : 'inactive', { api: apiName });
         }
         
         updatePortfolioSummary()
+        
+        // Démarrer le polling automatique si les données ont été récupérées avec succès
+        if (d && !d.error && !d.throttled) {
+            startFastPolling();
+        }
     } catch(e){
         setApiStatus(symbol, 'inactive', { api: selectedApi });
     }
@@ -438,7 +447,7 @@ function getActiveSymbol() {
 
 function shouldFetch(symbol) {
     const last = positions[symbol].lastFetch||0
-    return Date.now()-last > 30000
+    return Date.now()-last > 55000
 }
 
 document.addEventListener('click', async e=>{
@@ -467,32 +476,32 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     b.classList.add('active')
     const name=positions[s].name||null
     
-    let fetchFunc = await selectApiFetch(selectedApi)
+    let { fetchFunc, apiName } = await selectApiFetch(selectedApi, positions[s])
     
     const config = await loadApiConfig();
-    const apiConfig = config.apis[selectedApi];
+    const apiConfig = config.apis[apiName];
     
     if (!apiConfig || !apiConfig.enabled) {
-        return { source: selectedApi, error: true, errorCode: 503, errorMessage: "API désactivée" };
+        return { source: apiName, error: true, errorCode: 503, errorMessage: "API désactivée" };
     }
     
-    let d = await fetchFunc(positions[s].ticker, p, s, null, name, null, apiConfig.apiKey)
+    let d = await fetchFunc(positions[s].ticker, p, s, positions[s], name, null, apiConfig.apiKey)
     
-    // Don't update cache/timestamps for globally throttled requests
-    if (!d.globallyThrottled) {
+    // Don't update cache/timestamps for throttled requests
+    if (!d.throttled) {
         positions[s].lastFetch=Date.now()
         positions[s].lastData=d
     }
     updateUI(s,d)
-    setApiStatus(s, d ? 'active' : 'inactive', { api: selectedApi });
+    setApiStatus(s, d ? 'active' : 'inactive', { api: apiName });
     
     updatePortfolioSummary()
 })
 
 function updateUI(symbol, data) {
     if (!data || data.error) {
-        if (data && data.globallyThrottled) {
-            // Global rate limit - don't update UI, just show status
+        if (data && data.throttled) {
+            // Rate limit - don't update UI, just show status
             setApiStatus(symbol, 'fetching', { api: data?.source, loadingFallback: true, errorCode: 429 });
             return;
         }
@@ -748,6 +757,7 @@ async function loadStocks() {
             symbol: s.symbol,
             ticker: s.ticker,
             name: s.name,
+            type: s.type,
             shares: s.shares || 0,
             investment: s.investment || 0,
             chart: null,
@@ -803,18 +813,18 @@ window.stopRateLimitCountdown = stopRateLimitCountdown;
 window.startGlobalRateLimitCountdown = startGlobalRateLimitCountdown;
 window.stopGlobalRateLimitCountdown = stopGlobalRateLimitCountdown;
 
-// Listen for global rate limit events (fallback if rate-limiter dispatches events instead of calling functions)
-window.addEventListener('globalRateLimitStart', (e) => {
-    // ensure UI shows the global fetching state and start the countdown loop
+// Listen for rate limit events (fallback if rate-limiter dispatches events instead of calling functions)
+window.addEventListener('rateLimitStart', (e) => {
+    // ensure UI shows the rate limit state and start the countdown loop
     try {
         startGlobalRateLimitCountdown();
     } catch (err) {
         // best-effort: directly set status if helper missing
-        setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true, globalRateLimit: true });
+        setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true, rateLimited: true });
     }
 });
 
-window.addEventListener('globalRateLimitEnd', () => {
+window.addEventListener('rateLimitEnd', (e) => {
     try {
         stopGlobalRateLimitCountdown();
     } catch (err) {

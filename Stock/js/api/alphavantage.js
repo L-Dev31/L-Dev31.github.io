@@ -54,9 +54,9 @@ export async function fetchFromAlphaVantage(ticker, period, symbol, _, name, sig
       const errorText = await response.text();
       console.warn(`⚠️ Erreur API Alpha Vantage:`, errorText);
       
-      // Si c'est une erreur 429, activer le rate limiter global
+      // Si c'est une erreur 429, activer le rate limiter pour cette API
       if (response.status === 429) {
-        globalRateLimiter.setGlobalRateLimit(60000); // 60 secondes par défaut
+        globalRateLimiter.setRateLimitForApi('alphavantage', 60000); // 60 secondes par défaut
       }
       
       return {
@@ -72,10 +72,10 @@ export async function fetchFromAlphaVantage(ticker, period, symbol, _, name, sig
     if (j['Error Message'] || j['Note']) {
       console.warn(`⚠️ Erreur Alpha Vantage:`, j['Error Message'] || j['Note']);
       
-      // Si c'est un message de rate limit, activer le rate limiter global
+      // Si c'est un message de rate limit, activer le rate limiter pour cette API
       const errorMsg = (j['Error Message'] || j['Note'] || '').toLowerCase();
       if (errorMsg.includes('rate limit') || errorMsg.includes('exceeded')) {
-        globalRateLimiter.setGlobalRateLimit(60000); // 60 secondes par défaut
+        globalRateLimiter.setRateLimitForApi('alphavantage', 60000); // 60 secondes par défaut
       }
       
       return {

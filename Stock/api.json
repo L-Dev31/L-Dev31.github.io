@@ -5,22 +5,34 @@
     "apiKey": "2f3a033998mshc5d3bac9ac9ada9p1cf7b3jsna8c890d30307",
     "enabled": true
   },
-  "twelvedata": {
-    "name": "Twelve Data",
-    "logo": "logo/twelvedata.png",
-    "apiKey": "06ecbe5facf94573b4b229d6d177710c",
-    "enabled": true
-  },
   "massive": {
     "name": "Massive API",
     "logo": "logo/massive.png",
     "apiKey": "qCYBOa_qaJxa3aWA42_NNPjb47QJk2iB",
     "enabled": true
   },
+  "finnhub": {
+    "name": "Finnhub",
+    "logo": "logo/finnhub.png",
+    "apiKey": "d495bhpr01qshn3ko2l0d495bhpr01qshn3ko2lg",
+    "enabled": false
+  },
+  "twelvedata": {
+    "name": "Twelve Data",
+    "logo": "logo/twelvedata.png",
+    "apiKey": "06ecbe5facf94573b4b229d6d177710c",
+    "enabled": true
+  },
   "marketstack": {
     "name": "Marketstack",
     "logo": "logo/marketstack.png",
-    "apiKey": "45264792920c31703b531d1c03bd042d",
+    "apiKey": "d495dfpr01qshn3kon40d495dfpr01qshn3kon4g",
     "enabled": true
+  },
+  "yahoo": {
+    "name": "Yahoo Finance",
+    "logo": "logo/yahoo-finance.png",
+    "apiKey": "",
+    "enabled": false
   }
 }

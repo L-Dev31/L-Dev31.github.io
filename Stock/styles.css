@@ -153,7 +153,7 @@ html {
     background: #a8a2ff22;
 }
 #api-status-indicator.dropdown-open .api-expanded {
-    max-height: 200px;
+    max-height: none;
 }
 
 /* API dot status */

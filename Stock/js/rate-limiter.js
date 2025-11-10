@@ -1,92 +1,106 @@
-class GlobalRateLimiter {
+class RateLimiter {
   constructor() {
-    if (GlobalRateLimiter.instance) {
-      return GlobalRateLimiter.instance;
+    if (RateLimiter.instance) {
+      return RateLimiter.instance;
     }
-    GlobalRateLimiter.instance = this;
-    this.isRateLimited = false;
-    this.rateLimitEndTime = 0;
-    this.timeoutId = null;
-    this.rejectQueue = [];
+    RateLimiter.instance = this;
+    this.rateLimiters = new Map(); // Map<apiName, {isRateLimited: boolean, rateLimitEndTime: number, timeoutId: number, rejectQueue: []}>
   }
 
-  isGloballyRateLimited() {
-    return this.isRateLimited;
+  getRateLimiter(apiName) {
+    if (!this.rateLimiters.has(apiName)) {
+      this.rateLimiters.set(apiName, {
+        isRateLimited: false,
+        rateLimitEndTime: 0,
+        timeoutId: null,
+        rejectQueue: []
+      });
+    }
+    return this.rateLimiters.get(apiName);
   }
 
-  getRemainingSeconds() {
-    if (!this.isRateLimited) return 0;
-    const remaining = Math.max(0, this.rateLimitEndTime - Date.now());
+  isRateLimited(apiName) {
+    const rl = this.getRateLimiter(apiName);
+    return rl.isRateLimited;
+  }
+
+  getRemainingSeconds(apiName) {
+    const rl = this.getRateLimiter(apiName);
+    if (!rl.isRateLimited) return 0;
+    const remaining = Math.max(0, rl.rateLimitEndTime - Date.now());
     return Math.ceil(remaining / 1000);
   }
 
-  setGlobalRateLimit(durationMs) {
-    if (this.isRateLimited) {
+  setRateLimitForApi(apiName, durationMs) {
+    const rl = this.getRateLimiter(apiName);
+    if (rl.isRateLimited) {
       const newEndTime = Date.now() + durationMs;
-      if (newEndTime > this.rateLimitEndTime) {
-        this.rateLimitEndTime = newEndTime;
-        this._resetTimeout();
+      if (newEndTime > rl.rateLimitEndTime) {
+        rl.rateLimitEndTime = newEndTime;
+        this._resetTimeout(apiName);
       }
       return;
     }
 
-    this.isRateLimited = true;
-    this.rateLimitEndTime = Date.now() + durationMs;
+    rl.isRateLimited = true;
+    rl.rateLimitEndTime = Date.now() + durationMs;
 
-    console.log(`🚫 GLOBAL RATE LIMIT ACTIVATED - All APIs blocked for ${Math.ceil(durationMs/1000)}s`);
+    console.log(`🚫 ${apiName} RATE LIMIT ACTIVATED - ${apiName} blocked for ${Math.ceil(durationMs/1000)}s`);
 
     // Notify UI: prefer direct function if present, otherwise dispatch an event
     if (typeof window !== 'undefined') {
       // expose quick properties for UI checks (load-order safe)
       try {
-        window.__globalRateLimitActive = true;
-        window.__globalRateLimitEndTime = this.rateLimitEndTime;
+        window.__rateLimitedApi = apiName;
+        window.__rateLimitEndTime = rl.rateLimitEndTime;
       } catch (e) { /* ignore */ }
-      if (typeof window.startGlobalRateLimitCountdown === 'function') {
-        try { window.startGlobalRateLimitCountdown(Math.ceil(durationMs/1000)); } catch(e) { /* ignore */ }
+      if (typeof window.startRateLimitCountdown === 'function') {
+        try { window.startRateLimitCountdown(Math.ceil(durationMs/1000)); } catch(e) { /* ignore */ }
       } else {
         try {
-          window.dispatchEvent(new CustomEvent('globalRateLimitStart', { detail: { seconds: Math.ceil(durationMs/1000) } }));
+          window.dispatchEvent(new CustomEvent('rateLimitStart', { detail: { apiName, seconds: Math.ceil(durationMs/1000) } }));
         } catch (e) { /* ignore */ }
       }
     }
 
-    this._resetTimeout();
+    this._resetTimeout(apiName);
   }
 
-  clearGlobalRateLimit() {
-    if (!this.isRateLimited) return;
+  clearRateLimitForApi(apiName) {
+    const rl = this.getRateLimiter(apiName);
+    if (!rl.isRateLimited) return;
 
-    this.isRateLimited = false;
-    this.rateLimitEndTime = 0;
+    rl.isRateLimited = false;
+    rl.rateLimitEndTime = 0;
 
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = null;
+    if (rl.timeoutId) {
+      clearTimeout(rl.timeoutId);
+      rl.timeoutId = null;
     }
 
-    console.log(`✅ GLOBAL RATE LIMIT CLEARED - APIs can resume requests`);
+    console.log(`✅ ${apiName} RATE LIMIT CLEARED - ${apiName} can resume requests`);
 
-    // notify UI that global rate limit ended and clear quick properties
+    // notify UI that rate limit ended and clear quick properties
     if (typeof window !== 'undefined') {
-      try { window.__globalRateLimitActive = false; window.__globalRateLimitEndTime = 0; } catch (e) { /* ignore */ }
-      if (typeof window.stopGlobalRateLimitCountdown === 'function') {
-        try { window.stopGlobalRateLimitCountdown(); } catch(e) { /* ignore */ }
+      try { window.__rateLimitedApi = null; window.__rateLimitEndTime = 0; } catch (e) { /* ignore */ }
+      if (typeof window.stopRateLimitCountdown === 'function') {
+        try { window.stopRateLimitCountdown(); } catch(e) { /* ignore */ }
       } else {
-        try { window.dispatchEvent(new CustomEvent('globalRateLimitEnd')); } catch (e) { /* ignore */ }
+        try { window.dispatchEvent(new CustomEvent('rateLimitEnd', { detail: { apiName } })); } catch (e) { /* ignore */ }
       }
     }
 
-    this._processRejectQueue();
+    this._processRejectQueue(apiName);
   }
 
   async executeIfNotLimited(fn, apiName = 'unknown') {
-    if (this.isRateLimited) {
-      const remaining = this.getRemainingSeconds();
-      console.log(`🚫 ${apiName} request BLOCKED by global rate limit (${remaining}s remaining)`);
+    const rl = this.getRateLimiter(apiName);
+    if (rl.isRateLimited) {
+      const remaining = this.getRemainingSeconds(apiName);
+      console.log(`🚫 ${apiName} request BLOCKED by rate limit (${remaining}s remaining)`);
 
       return new Promise((resolve, reject) => {
-        this.rejectQueue.push({
+        rl.rejectQueue.push({
           resolve,
           reject,
           apiName,
@@ -94,8 +108,8 @@ class GlobalRateLimiter {
             source: apiName,
             error: true,
             errorCode: 429,
-            errorMessage: `Global rate limit active (${remaining}s remaining)`,
-            globallyThrottled: true
+            errorMessage: `Rate limit active (${remaining}s remaining)`,
+            throttled: true
           }
         });
       });
@@ -104,44 +118,46 @@ class GlobalRateLimiter {
     try {
       return await fn();
     } catch (error) {
-      if (error?.errorCode === 429 || error?.throttled || error?.globallyThrottled) {
+      if (error?.errorCode === 429 || error?.throttled) {
         const waitTime = error?.retryAfter ? error.retryAfter * 1000 : 60000;
-        this.setGlobalRateLimit(waitTime);
+        this.setRateLimitForApi(apiName, waitTime);
       }
       throw error;
     }
   }
 
-  _resetTimeout() {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
+  _resetTimeout(apiName) {
+    const rl = this.getRateLimiter(apiName);
+    if (rl.timeoutId) {
+      clearTimeout(rl.timeoutId);
     }
 
-    const remaining = this.rateLimitEndTime - Date.now();
+    const remaining = rl.rateLimitEndTime - Date.now();
     if (remaining > 0) {
-      this.timeoutId = setTimeout(() => {
-        this.clearGlobalRateLimit();
+      rl.timeoutId = setTimeout(() => {
+        this.clearRateLimitForApi(apiName);
       }, remaining);
     } else {
-      this.clearGlobalRateLimit();
+      this.clearRateLimitForApi(apiName);
     }
   }
 
-  _processRejectQueue() {
-    const queue = [...this.rejectQueue];
-    this.rejectQueue = [];
+  _processRejectQueue(apiName) {
+    const rl = this.getRateLimiter(apiName);
+    const queue = [...rl.rejectQueue];
+    rl.rejectQueue = [];
 
     queue.forEach(({ reject, error }) => {
       reject(error);
     });
   }
 
-  forceClear() {
-    this.clearGlobalRateLimit();
+  forceClear(apiName) {
+    this.clearRateLimitForApi(apiName);
   }
 }
 
-const globalRateLimiter = new GlobalRateLimiter();
+const rateLimiter = new RateLimiter();
 
-export default globalRateLimiter;
-export { GlobalRateLimiter };
+export default rateLimiter;
+export { RateLimiter };

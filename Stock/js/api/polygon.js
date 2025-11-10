@@ -1,109 +1,159 @@
-import globalRateLimiter from '../rate-limiter.js';
-
 const periods = {
-  "1D": { mult: 1, timespan: "minute", days: 2 },
-  "1W": { mult: 5, timespan: "minute", days: 7 },
-  "1M": { mult: 30, timespan: "minute", days: 31 },
-  "6M": { mult: 2, timespan: "hour", days: 183 },
-  "1Y": { mult: 1, timespan: "day", days: 365 },
-  "3Y": { mult: 1, timespan: "month", days: 1095 },
-  "5Y": { mult: 1, timespan: "week", days: 1825 }
+  "1D": { multiplier: 1, timespan: "minute", days: 1 },
+  "1W": { multiplier: 5, timespan: "minute", days: 5 },
+  "1M": { multiplier: 15, timespan: "minute", days: 30 },
+  "6M": { multiplier: 1, timespan: "hour", days: 180 },
+  "1Y": { multiplier: 1, timespan: "day", days: 365 },
+  "3Y": { multiplier: 1, timespan: "week", days: 1095 },
+  "5Y": { multiplier: 1, timespan: "month", days: 1825 }
 };
 
-class RateLimiter {
-  constructor(max = 5, window = 60000) { this.max = max; this.window = window; this.queue = []; this.pending = []; }
-  async exec(fn) { return new Promise((resolve, reject) => { this.queue.push({ fn, resolve, reject }); if (this.queue.length === 1) this.process(); }); }
-  async process() { if (!this.queue.length) return; const now = Date.now(); this.pending = this.pending.filter(t => now - t < this.window); if (this.pending.length < this.max) { const { fn, resolve, reject } = this.queue.shift(); this.pending.push(now); try { resolve(await fn()); } catch (e) { reject(e); } if (this.queue.length) setTimeout(() => this.process(), 100); } else { const wait = this.window - (now - Math.min(...this.pending)) + 100; const seconds = Math.max(1, Math.round(wait/1000)); console.log(`⏳ Rate limit Polygon: ${this.pending.length}/${this.max} requêtes, attente ${seconds}s`); globalRateLimiter.setGlobalRateLimit(wait); setTimeout(() => this.process(), wait); } }
-}
+import globalRateLimiter from '../rate-limiter.js';
 
-const limiter = new RateLimiter();
-const cache = new Map();
-const mappingCache = new Map();
-
-function resolvePolygonTicker(localTicker) {
-  if (mappingCache.has(localTicker)) return mappingCache.get(localTicker);
-
-  let polygonTicker = localTicker;
-  // Détection Crypto ou Matière Première (ex: BTCUSD, XAUUSD)
-  if (/^[A-Z]{3,6}USD$/.test(localTicker) || /^XAU|XAG/.test(localTicker)) {
-    polygonTicker = `C:${localTicker}`;
+/**
+ * Formate le ticker pour Polygon selon le type d'asset
+ * @param {string} ticker - Le ticker brut
+ * @param {string} type - Le type d'asset (equity, crypto, commodity, forex)
+ * @returns {string} - Le ticker formaté pour Polygon
+ */
+function formatTickerForPolygon(ticker, type) {
+  // Si le ticker a déjà un préfixe, le retourner tel quel
+  if (ticker.includes(':')) {
+    return ticker;
   }
-  // Pour les actions (US, EU), Polygon utilise souvent le ticker tel quel (ex: AAPL, AL2SI.PA)
-  // Aucune autre transformation n'est nécessaire pour les cas que nous gérons.
 
-  console.log(`[Polygon] Ticker local "${localTicker}" résolu en "${polygonTicker}"`);
-  mappingCache.set(localTicker, polygonTicker);
-  return polygonTicker;
+  // Mapping des types vers les préfixes Polygon
+  const prefixMap = {
+    'crypto': 'X:',
+    'cryptocurrency': 'X:',
+    'commodity': 'C:',
+    'forex': 'C:',
+    'fx': 'C:',
+    'equity': '',
+    'stock': '',
+    'share': '',
+    'etf': '',
+    'fund': ''
+  };
+
+  const normalizedType = type?.toLowerCase() || 'equity';
+  const prefix = prefixMap[normalizedType] ?? '';
+  
+  return prefix ? `${prefix}${ticker}` : ticker;
 }
 
-export async function fetchFromPolygon(ticker, period, symbol, _, name, signal, apiKey) {
+export async function fetchFromPolygon(ticker, period, symbol, typeOrStock, name, signal, apiKey) {
   console.log(`\n🔍 === FETCH Polygon ${ticker} (${name}) période ${period} ===`);
-  const key = `${ticker}:${period}`;
-  try {
-    const polygonTicker = resolvePolygonTicker(ticker);
+  
+  // Le 4ème paramètre peut être soit un type (string), soit l'objet stock complet
+  let type = typeOrStock;
+  
+  // Si c'est un objet stock, extraire le type
+  if (typeof typeOrStock === 'object' && typeOrStock !== null) {
+    type = typeOrStock.type;
+    console.log(`📦 Objet stock reçu, type extrait: ${type}`);
+  }
+  
+  // Formatage du ticker selon le type fourni
+  if (!type) {
+    console.error(`❌ Type non fourni pour ${ticker}. Ajoutez le champ "type" dans stocks.json!`);
+    console.log(`   Exemples: "type": "equity" | "crypto" | "commodity" | "forex"`);
+  } else {
+    console.log(`📋 Type d'asset: ${type}`);
+  }
+  
+  const formattedTicker = formatTickerForPolygon(ticker, type);
+  if (formattedTicker !== ticker) {
+    console.log(`🔄 Ticker reformaté: ${ticker} → ${formattedTicker} (type: ${type})`);
+  }
+
+  const result = await globalRateLimiter.executeIfNotLimited(async () => {
     const cfg = periods[period] || periods["1D"];
+    
+    // End date: yesterday (to ensure data is available)
     const to = new Date();
-    const from = new Date(to.getTime() - (cfg.days * 24 * 60 * 60 * 1000));
-    const toDate = to.toISOString().split('T')[0];
-    const fromDate = from.toISOString().split('T')[0];
-    const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(polygonTicker )}/range/${cfg.mult}/${cfg.timespan}/${fromDate}/${toDate}?adjusted=true&sort=asc&limit=50000&apiKey=${apiKey}`;
+    to.setDate(to.getDate() - 1);
+    to.setHours(23, 59, 59, 999);
     
-    console.log(`📡 Requête Polygon API: ${polygonTicker} du ${fromDate} au ${toDate}`);
-    const r = await globalRateLimiter.executeIfNotLimited(
-      () => fetch(url, { signal }),
-      'Polygon'
-    );
-    console.log(`📥 Réponse Polygon: ${r.status} ${r.statusText}`);
-
-    if (r.status === 429) {
-      return { source: "massive", error: true, errorCode: 429, throttled: true };
-    }
-
-    const j = await r.json();
-    if (!j?.results?.length) {
-      console.warn(`⚠️ Aucun résultat Polygon pour ${polygonTicker}.`, j);
-      return { source: "massive", error: true, errorCode: 404, errorMessage: j.error || "Aucune donnée", raw: j };
-    }
-
-    console.log(`✅ ${j.results.length} points de données bruts récupérés de Polygon`);
+    // Start date: go back the configured number of days from yesterday
+    const from = new Date(to.getTime() - cfg.days * 24 * 60 * 60 * 1000);
+    from.setHours(0, 0, 0, 0);
     
-    let relevantResults = j.results;
-    if (period === "1D") {
-        const twentyFourHoursAgo = to.getTime() - (24 * 60 * 60 * 1000);
-        relevantResults = j.results.filter(k => k.t >= twentyFourHoursAgo);
-        console.log(`ℹ️ ${relevantResults.length} points Polygon conservés pour la période 1D.`);
-    }
+    const fromStr = from.toISOString().split('T')[0];
+    const toStr = to.toISOString().split('T')[0];
+    const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(formattedTicker)}/range/${cfg.multiplier}/${cfg.timespan}/${fromStr}/${toStr}?apiKey=${apiKey}`;
 
-    if (relevantResults.length === 0) {
-        return { source: "massive", error: true, errorCode: 404, errorMessage: "Pas de points de données pertinents" };
-    }
+    console.log(`📡 Requête Polygon API: ${formattedTicker} multiplier=${cfg.multiplier} timespan=${cfg.timespan} from=${fromStr} to=${toStr}`);
 
-    const prices = relevantResults.map(k => k.c || 0);
-    const data = {
-      source: "massive",
-      timestamps: relevantResults.map(k => Math.floor(k.t / 1000)),
-      prices,
-      open: prices[0] || null,
-      high: Math.max(...prices),
-      low: Math.min(...prices),
-      price: prices[prices.length - 1]
-    };
-    
-    if (data.open && data.price) {
+    try {
+      const r = await fetch(url, { signal });
+      console.log(`📥 Réponse Polygon: ${r.status} ${r.statusText}`);
+
+      if (r.status === 429) {
+        console.log(`⏳ Rate limit Polygon atteint (429)`);
+        globalRateLimiter.setRateLimitForApi('massive', 60000);
+        return { source: "massive", error: true, errorCode: 429, throttled: true };
+      }
+
+      if (!r.ok) {
+        const errorText = await r.text();
+        console.warn(`⚠️ Erreur API Polygon: ${errorText}`);
+        return { source: "massive", error: true, errorCode: r.status, errorMessage: errorText || "Erreur API" };
+      }
+
+      const j = await r.json();
+
+      if (j.error) {
+        console.log(`⚠️ Erreur dans la réponse JSON Polygon: ${j.error}`);
+        return { source: "massive", error: true, errorCode: 404, errorMessage: j.error };
+      }
+
+      if (!j.results || j.results.length === 0) {
+        console.log(`⚠️ Aucune donnée Polygon pour ${formattedTicker} (résultats vides)`);
+        console.log(`   Status: ${j.status}, Ticker: ${j.ticker || 'N/A'}, Count: ${j.resultsCount || 0}`);
+        return {
+          source: "massive",
+          error: true,
+          errorCode: 404,
+          errorMessage: "Aucune donnée disponible"
+        };
+      }
+
+      const results = j.results;
+      console.log(`✅ ${results.length} points de données bruts récupérés de Polygon`);
+
+      const timestamps = results.map(r => Math.floor(r.t / 1000));
+      const prices = results.map(r => r.c);
+
+      console.log(`ℹ️ Traitement des données: ${timestamps.length} timestamps, ${prices.length} prix`);
+
+      const data = {
+        source: "massive",
+        timestamps,
+        prices,
+        open: results[0].o,
+        high: Math.max(...results.map(r => r.h)),
+        low: Math.min(...results.map(r => r.l)),
+        price: results[results.length - 1].c
+      };
+
       data.changePercent = ((data.price - data.open) / data.open) * 100;
       data.change = data.price - data.open;
-    } else {
-      data.changePercent = 0;
-      data.change = 0;
-    }
-    
-    console.log(`💰 Prix Polygon: ${data.price?.toFixed(2)} USD`);
-    cache.set(key, { data, ts: Date.now() });
-    return data;
 
-  } catch (e) {
-    if (e.name === 'AbortError') { console.log(`🚫 Requête Polygon annulée pour ${ticker}`); throw e; }
-    console.error(`💥 Erreur Polygon pour ${ticker}:`, e.message);
-    return { source: "massive", error: true, errorCode: 500, errorMessage: e.message };
-  }
+      console.log(`✅ Données Polygon traitées: ${results.length} points conservés`);
+      console.log(`💰 Prix Polygon: ${data.price?.toFixed(2)} (variation: ${data.changePercent?.toFixed(2)}%)`);
+
+      return data;
+
+    } catch (e) {
+      if (e.name === 'AbortError') {
+        console.log(`🚫 Requête Polygon annulée pour ${formattedTicker}`);
+        throw e;
+      }
+      console.error(`💥 Erreur Polygon pour ${formattedTicker}:`, e.message);
+      return { source: "massive", error: true, errorCode: 500, errorMessage: e.message };
+    }
+  }, 'massive');
+
+  return result;
 }
