@@ -523,9 +523,21 @@ body {
     margin-top: 20px;
 }
 
-/* Global update fixed at bottom right */
-#global-update {
-    display: none;
+/* Informations économiques dans le profil */
+.profile-info p {
+    margin: 4px 0;
+    font-size: 13px;
+    color: #a8a2ff;
+}
+
+.profile-info p span.positive {
+    color: #86efac;
+    font-weight: 600;
+}
+
+.profile-info p span.negative {
+    color: #fca5a5;
+    font-weight: 600;
 }
 
 

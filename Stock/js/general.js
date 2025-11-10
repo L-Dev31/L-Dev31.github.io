@@ -1,5 +1,28 @@
 import { fetchFromPolygon } from './api/polygon.js'
-import { fetchFromFinnhub } from './api/finnhub.js'
+
+let API_CONFIG = null;
+
+async function loadApiConfig() {
+  if (API_CONFIG) return API_CONFIG;
+
+  try {
+    const response = await fetch('api.json');
+    const config = await response.json();
+
+    const enabledApis = Object.keys(config).filter(api => config[api].enabled);
+
+    API_CONFIG = {
+      apis: config,
+      ui: {
+        defaultApi: 'massive',
+        validApis: enabledApis
+      }
+    };
+    return API_CONFIG;
+  } catch (error) {
+    throw error;
+  }
+}
 
 let selectedApi = 'massive'
 const cacheKey = 'stockCache'
@@ -9,10 +32,31 @@ const positions = {}
 let fastPollTimer = null
 let initialFetchController = null
 let mainFetchController = null
+let rateLimitCountdownTimer = null
 
-function setSelectedApi(api) {
-    if (!['finnhub', 'massive'].includes(api)) return
+async function setSelectedApi(api) {
+    const config = await loadApiConfig();
+
+    if (!config.ui.validApis.includes(api)) return
+
+    if (mainFetchController) {
+        mainFetchController.abort()
+        mainFetchController = null
+    }
+    if (initialFetchController) {
+        initialFetchController.abort()
+        initialFetchController = null
+    }
+
+    stopFastPolling()
+
     selectedApi = api
+
+    const activeSymbol = getActiveSymbol()
+    if (activeSymbol) {
+        resetSymbolDisplay(activeSymbol)
+    }
+
     const indicator = document.getElementById('api-status-indicator');
     if (indicator) {
         const text = indicator.querySelector('[data-role="status-text"]');
@@ -23,11 +67,16 @@ function setSelectedApi(api) {
         }
         const logo = indicator.querySelector('.api-indicator-logo');
         if (logo) {
-            logo.src = api === 'finnhub' ? 'logo/finnhub.png' : 'logo/massive.png';
+            const apiConfig = config.apis[api];
+            logo.src = apiConfig.logo;
         }
     }
     updateDropdownSelection()
-    // Forcer la mise à jour des données avec la nouvelle API
+
+    if (activeSymbol) {
+        setApiStatus(activeSymbol, 'fetching', { api: selectedApi })
+    }
+
     fetchActiveSymbol(true)
 }
 
@@ -51,18 +100,66 @@ function stopFastPolling() {
     fastPollTimer = null
 }
 
-function setApiStatus(symbol, status, opts = {}) {
+function startRateLimitCountdown(seconds) {
+    // Arrêter le countdown précédent s'il existe
+    if (rateLimitCountdownTimer) {
+        clearInterval(rateLimitCountdownTimer);
+        rateLimitCountdownTimer = null;
+    }
+    
+    // Mettre l'indicateur en mode fetching avec spinner
+    setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true });
+    
+    // Attendre que setApiStatus ait terminé et ajouter le texte de countdown
+    setTimeout(() => {
+        const el = document.getElementById('api-status-indicator');
+        if (el) {
+            const spinner = el.querySelector('[data-role="spinner"]');
+            if (spinner) {
+                spinner.innerHTML = `<span class="api-spinner"></span><div class="countdown-text">Limite atteinte, veuillez patienter... (${seconds}s)</div>`;
+            }
+        }
+        
+        // Démarrer le countdown
+        rateLimitCountdownTimer = setInterval(() => {
+            const el = document.getElementById('api-status-indicator');
+            if (el) {
+                const countdownText = el.querySelector('.countdown-text');
+                if (countdownText) {
+                    let t = countdownText.textContent.match(/\((\d+)s\)/);
+                    let s = t ? parseInt(t[1],10) : seconds;
+                    if (s > 1) {
+                        countdownText.textContent = `Limite atteinte, veuillez patienter... (${s-1}s)`;
+                    } else {
+                        countdownText.textContent = 'Limite atteinte, veuillez patienter... (0s)';
+                        clearInterval(rateLimitCountdownTimer);
+                        rateLimitCountdownTimer = null;
+                    }
+                }
+            }
+        }, 1000);
+    }, 10);
+}
+
+function stopRateLimitCountdown() {
+    if (rateLimitCountdownTimer) {
+        clearInterval(rateLimitCountdownTimer);
+        rateLimitCountdownTimer = null;
+    }
+}
+
+async function setApiStatus(symbol, status, opts = {}) {
+    const config = await loadApiConfig();
+
     let el = document.getElementById('api-status-indicator');
     if (!el) {
         el = document.createElement('div');
         el.id = 'api-status-indicator';
         document.body.appendChild(el);
     }
-    // Clone the template
     const template = document.getElementById('api-indicator-template');
     if (!template) return;
     const content = template.content.cloneNode(true);
-    // Modify the content
     const dot = content.querySelector('.api-dot');
     if (dot) {
         dot.className = 'api-dot ' + (status === 'active' ? 'active' : (status === 'noinfo' ? 'noinfo' : (status === 'fetching' ? 'fetching' : 'inactive')));
@@ -70,8 +167,9 @@ function setApiStatus(symbol, status, opts = {}) {
     const logo = content.querySelector('.api-indicator-logo');
     if (logo) {
         let api = opts.api || selectedApi;
-        logo.src = api === 'finnhub' ? 'logo/finnhub.png' : 'logo/massive.png';
-        logo.alt = api === 'finnhub' ? 'Finnhub API' : 'Massive API';
+        const apiConfig = config.apis[api];
+        logo.src = apiConfig.logo;
+        logo.alt = apiConfig.name;
     }
     const text = content.querySelector('[data-role="status-text"]');
     if (text) {
@@ -85,15 +183,17 @@ function setApiStatus(symbol, status, opts = {}) {
     }
     const expanded = content.querySelector('.api-expanded');
     if (expanded) {
-        expanded.innerHTML = `
-            <div class="api-option" data-api="finnhub">Finnhub API</div>
-            <div class="api-option" data-api="massive">Massive API</div>
-        `;
+        expanded.innerHTML = config.ui.validApis.map(api =>
+            `<div class="api-option" data-api="${api}">${config.apis[api].name}</div>`
+        ).join('');
     }
     const spinner = content.querySelector('[data-role="spinner"]');
     if (spinner && opts.loadingFallback) {
-        spinner.style.display = 'flex';
-        spinner.innerHTML = `<span>loading new api</span><span class="api-spinner"></span>`;
+        // Ne pas remplacer le contenu si c'est déjà un countdown
+        if (!spinner.querySelector('.countdown-text')) {
+            spinner.style.display = 'flex';
+            spinner.innerHTML = `<span class="api-spinner"></span>`;
+        }
     }
     el.innerHTML = '';
     el.appendChild(content);
@@ -101,7 +201,6 @@ function setApiStatus(symbol, status, opts = {}) {
     el.className = 'api-status-indicator ' + status;
 }
 
-// Global click handler for the API indicator
 document.addEventListener('click', e => {
     const el = document.getElementById('api-status-indicator');
     if (!el || !el.contains(e.target)) return;
@@ -223,32 +322,32 @@ async function fetchActiveSymbol(force) {
 
     positions[symbol].isFetching=true
 
-    // Afficher l'état de chargement
-    setApiStatus(symbol, 'fetching', { api: selectedApi, loadingFallback: true })
+    setApiStatus(symbol, 'fetching', { api: selectedApi })
 
     try {
         const p = positions[symbol].currentPeriod||'1D'
         const name = positions[symbol].name||null
-        let fetchFunc = selectedApi === 'finnhub' ? fetchFromFinnhub : fetchFromPolygon;
+        let fetchFunc = async () => {
+            const config = await loadApiConfig();
+            const apiConfig = config.apis[selectedApi];
+            if (!apiConfig || !apiConfig.enabled) {
+                return { source: selectedApi, error: true, errorCode: 503, errorMessage: "API désactivée" };
+            }
+            return fetchFromPolygon(positions[symbol].ticker, p, symbol, null, name, signal, apiConfig.apiKey);
+        };
         let d = await fetchFunc(positions[symbol].ticker, p, symbol, null, name, signal)
-        
-        // If finnhub returns 403, automatically switch to polygon
-        if (d && d.error && d.errorCode === 403 && selectedApi === 'finnhub') {
-            selectedApi = 'massive'
-            fetchFunc = fetchFromPolygon
-            d = await fetchFunc(positions[symbol].ticker, p, symbol, null, name, signal)
-        }
         
         positions[symbol].lastFetch=Date.now()
         positions[symbol].lastData=d
         updateUI(symbol,d)
         lastApiBySymbol[symbol]=d.source
-        // Pass correct API for logo and status
         if (d && d.error && d.source) {
             setApiStatus(symbol, 'noinfo', { api: d.source, errorCode: d.errorCode });
         } else {
             setApiStatus(symbol, d ? 'active' : 'inactive', { api: selectedApi });
         }
+        
+        updatePortfolioSummary()
     } catch(e){
         setApiStatus(symbol, 'inactive', { api: selectedApi });
     }
@@ -290,46 +389,54 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     if (g) g.querySelectorAll('.period-btn').forEach(x=>x.classList.remove('active'))
     b.classList.add('active')
     const name=positions[s].name||null
-    let fetchFunc = selectedApi === 'finnhub' ? fetchFromFinnhub : fetchFromPolygon;
+    let fetchFunc = async () => {
+        const config = await loadApiConfig();
+        const apiConfig = config.apis[selectedApi];
+        if (!apiConfig || !apiConfig.enabled) {
+            return { source: selectedApi, error: true, errorCode: 503, errorMessage: "API désactivée" };
+        }
+        return fetchFromPolygon(positions[s].ticker,p,s,null,name, null, apiConfig.apiKey);
+    };
     let d=await fetchFunc(positions[s].ticker,p,s,null,name)
-    
-    // If finnhub returns 403, automatically switch to polygon
-    if (d && d.error && d.errorCode === 403 && selectedApi === 'finnhub') {
-        selectedApi = 'massive'
-        fetchFunc = fetchFromPolygon
-        d=await fetchFunc(positions[s].ticker,p,s,null,name)
-    }
     
     positions[s].lastFetch=Date.now()
     positions[s].lastData=d
     updateUI(s,d)
     setApiStatus(s, d ? 'active' : 'inactive', { api: selectedApi });
+    
+    updatePortfolioSummary()
 })
 
 function updateUI(symbol, data) {
     if (!data || data.error) {
-        // Afficher une erreur ou des données vides
+        // Si throttling, afficher loading + message explicite
+        if (data && data.errorCode === 429 && data.throttled) {
+            setApiStatus(symbol, 'fetching', { api: data?.source, loadingFallback: true, errorCode: 429 });
+            const el = document.getElementById('api-status-indicator');
+            if (el) {
+                const text = el.querySelector('[data-role="status-text"]');
+                if (text) text.textContent = 'Limite atteinte, veuillez patienter…';
+            }
+            return;
+        }
         setApiStatus(symbol, 'noinfo', { api: data?.source, errorCode: data?.errorCode });
         return;
     }
 
-    // Mettre à jour le graphique
     if (data.timestamps && data.prices) {
         updateChart(symbol, data.timestamps, data.prices);
     }
 
-    // Mettre à jour les informations OHLC
     const openEl = document.getElementById(`open-${symbol}`);
     const highEl = document.getElementById(`high-${symbol}`);
     const lowEl = document.getElementById(`low-${symbol}`);
-    const prevEl = document.getElementById(`prev-${symbol}`);
+    const closeEl = document.getElementById(`close-${symbol}`);
 
     if (openEl) openEl.textContent = data.open ? data.open.toFixed(2) + ' €' : '--';
     if (highEl) highEl.textContent = data.high ? data.high.toFixed(2) + ' €' : '--';
     if (lowEl) lowEl.textContent = data.low ? data.low.toFixed(2) + ' €' : '--';
-    if (prevEl) prevEl.textContent = data.previousClose ? data.previousClose.toFixed(2) + ' €' : '--';
+    if (closeEl) closeEl.textContent = data.price ? data.price.toFixed(2) + ' €' : '--';
 
-    // Mettre à jour la performance
     const perfEl = document.getElementById(`perf-${symbol}`);
     if (perfEl && data.changePercent !== undefined) {
         const changePercent = data.changePercent;
@@ -340,7 +447,6 @@ function updateUI(symbol, data) {
         perfEl.className = `performance-value ${isPositive ? 'positive' : 'negative'}`;
     }
 
-    // Mettre à jour les valeurs actuelles
     const valueEl = document.getElementById(`value-${symbol}`);
     const valuePerEl = document.getElementById(`value-per-${symbol}`);
     const profitEl = document.getElementById(`profit-${symbol}`);
@@ -350,36 +456,32 @@ function updateUI(symbol, data) {
         const currentPrice = data.price;
         const shares = positions[symbol].shares || 0;
         const investment = positions[symbol].investment || 0;
+        const isShortPosition = investment < 0;
 
-        // Valeur totale actuelle
         const totalValue = currentPrice * shares;
         if (valueEl) {
             valueEl.textContent = totalValue.toFixed(2) + ' €';
-            valueEl.className = totalValue >= investment ? 'positive' : 'negative';
+            valueEl.className = totalValue >= Math.abs(investment) ? 'positive' : 'negative';
         }
 
-        // Valeur par action actuelle
         if (valuePerEl) {
             valuePerEl.textContent = currentPrice.toFixed(2) + ' €';
-            valuePerEl.className = currentPrice >= (investment / shares) ? 'positive' : 'negative';
+            valuePerEl.className = currentPrice >= (Math.abs(investment) / shares) ? 'positive' : 'negative';
         }
 
-        // Profit total
-        const totalProfit = totalValue - investment;
+        const totalProfit = totalValue - Math.abs(investment);
         if (profitEl) {
             profitEl.textContent = `${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} €`;
             profitEl.className = totalProfit >= 0 ? 'positive' : 'negative';
         }
 
-        // Profit par action
-        const profitPerShare = currentPrice - (investment / shares);
+        const profitPerShare = currentPrice - (Math.abs(investment) / shares);
         if (profitPerEl) {
             profitPerEl.textContent = `${profitPerShare >= 0 ? '+' : ''}${profitPerShare.toFixed(2)} €`;
             profitPerEl.className = profitPerShare >= 0 ? 'positive' : 'negative';
         }
     }
 
-    // Mettre à jour la date de dernière mise à jour
     const updateEl = document.getElementById(`update-center-${symbol}`);
     if (updateEl) {
         const now = new Date();
@@ -387,11 +489,72 @@ function updateUI(symbol, data) {
         updateEl.textContent = `Dernière mise à jour : ${timeString}`;
     }
 
-    // Mettre à jour le statut de l'API
     setApiStatus(symbol, 'active', { api: data.source });
+
+    updatePortfolioSummary()
+}
+
+function resetSymbolDisplay(symbol) {
+    if (!positions[symbol]) return
+    
+    if (positions[symbol].chart) {
+        positions[symbol].chart.data.labels = []
+        positions[symbol].chart.data.datasets[0].data = []
+        positions[symbol].chart.data.timestamps = []
+        positions[symbol].chart.update('none')
+    }
+    
+    const openEl = document.getElementById(`open-${symbol}`);
+    const highEl = document.getElementById(`high-${symbol}`);
+    const lowEl = document.getElementById(`low-${symbol}`);
+    const closeEl = document.getElementById(`close-${symbol}`);
+    
+    if (openEl) openEl.textContent = '--'
+    if (highEl) highEl.textContent = '--'
+    if (lowEl) lowEl.textContent = '--'
+    if (closeEl) closeEl.textContent = '--'
+    
+    const perfEl = document.getElementById(`perf-${symbol}`);
+    if (perfEl) {
+        perfEl.textContent = '--'
+        perfEl.className = 'performance-value'
+    }
+    
+    const valueEl = document.getElementById(`value-${symbol}`);
+    const valuePerEl = document.getElementById(`value-per-${symbol}`);
+    const profitEl = document.getElementById(`profit-${symbol}`);
+    const profitPerEl = document.getElementById(`profit-per-${symbol}`);
+    
+    if (valueEl) valueEl.textContent = '--'
+    if (valuePerEl) valuePerEl.textContent = '--'
+    if (profitEl) profitEl.textContent = '--'
+    if (profitPerEl) profitPerEl.textContent = '--'
+    
+    const updateEl = document.getElementById(`update-center-${symbol}`);
+    if (updateEl) {
+        updateEl.textContent = 'Dernière mise à jour : --'
+    }
+}
+
+function updatePortfolioSummary() {
+    let totalShares = 0;
+    let totalInvestment = 0;
+
+    Object.values(positions).forEach(pos => {
+        totalShares += pos.shares || 0;
+        totalInvestment += Math.abs(pos.investment || 0);
+    });
+
+    const totalSharesEl = document.getElementById('total-shares');
+    const totalInvestmentEl = document.getElementById('total-investment');
+
+    if (totalSharesEl) totalSharesEl.textContent = totalShares;
+    if (totalInvestmentEl) totalInvestmentEl.textContent = totalInvestment.toFixed(2) + ' €';
 }
 
 async function loadStocks() {
+    const config = await loadApiConfig();
+
     const r=await fetch('stocks.json')
     const list=await r.json()
 
@@ -424,12 +587,10 @@ async function loadStocks() {
     }
 
     const open = Object.values(positions).find(p=>p.shares>0)
-    // No initial fetch since APIs are empty
 
-    // No polling since APIs are empty
-
-    // Create global API indicator by default
     setApiStatus(null, 'active', {api: selectedApi})
+
+    updatePortfolioSummary()
 }
 
 const font=document.createElement('link')
@@ -441,8 +602,11 @@ document.head.appendChild(font)
 window.addEventListener('load', async () => {
     await loadStocks();
     const active = getActiveSymbol();
-    // No polling since APIs are empty
 });
+
+// Exposer les fonctions pour polygon.js
+window.startRateLimitCountdown = startRateLimitCountdown;
+window.stopRateLimitCountdown = stopRateLimitCountdown;
 
 function createTab(stock) {
     const t = document.getElementById('tab-template')
@@ -526,13 +690,15 @@ function createCard(stock) {
     const tds = card.querySelectorAll('.card-table-td')
     if (tds.length===8) {
         tds[1].id=`invest-${stock.symbol}`
-        tds[1].textContent = (stock.investment||0).toFixed(2)+' €'
+        const displayInvestment = stock.investment < 0 ? Math.abs(stock.investment) : stock.investment;
+        tds[1].textContent = displayInvestment.toFixed(2)+' €'
         tds[2].id=`value-${stock.symbol}`
         tds[2].textContent='--'
         tds[3].id=`profit-${stock.symbol}`
         tds[3].textContent='--'
         tds[5].id=`invest-per-${stock.symbol}`
-        tds[5].textContent = stock.shares?(stock.investment/stock.shares).toFixed(2)+' €':'--'
+        const displayInvestPerShare = stock.shares ? (stock.investment < 0 ? Math.abs(stock.investment / stock.shares) : (stock.investment / stock.shares)) : 0;
+        tds[5].textContent = stock.shares ? displayInvestPerShare.toFixed(2)+' €' : '--'
         tds[6].id=`value-per-${stock.symbol}`
         tds[6].textContent='--'
         tds[7].id=`profit-per-${stock.symbol}`
@@ -550,7 +716,7 @@ function createCard(stock) {
         info[0].id=`open-${stock.symbol}`
         info[1].id=`high-${stock.symbol}`
         info[2].id=`low-${stock.symbol}`
-        info[3].id=`prev-${stock.symbol}`
+        info[3].id=`close-${stock.symbol}`
         info.forEach(el=>el.textContent='--')
     }
 

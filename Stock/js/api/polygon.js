@@ -1,214 +1,156 @@
-const API = "qCYBOa_qaJxa3aWA42_NNPjb47QJk2iB"
-
-// Rate limiter pour le plan gratuit (5 req/min)
-class RateLimiter {
-  constructor(maxRequests = 5, timeWindow = 60000) {
-    this.maxRequests = maxRequests
-    this.timeWindow = timeWindow
-    this.queue = []
-    this.pending = []
-  }
-
-  async execute(fn) {
-    return new Promise((resolve, reject) => {
-      this.queue.push({ fn, resolve, reject })
-      this.processQueue()
-    })
-  }
-
-  async processQueue() {
-    if (this.queue.length === 0) return
-    
-    // Nettoyer les anciennes requêtes
-    const now = Date.now()
-    this.pending = this.pending.filter(time => now - time < this.timeWindow)
-    
-    // Si on peut faire une requête
-    if (this.pending.length < this.maxRequests) {
-      const { fn, resolve, reject } = this.queue.shift()
-      this.pending.push(Date.now())
-      
-      try {
-        const result = await fn()
-        resolve(result)
-      } catch (error) {
-        reject(error)
-      }
-      
-      // Traiter la prochaine requête
-      if (this.queue.length > 0) {
-        setTimeout(() => this.processQueue(), 100)
-      }
-    } else {
-      // Attendre avant de réessayer
-      const oldestRequest = Math.min(...this.pending)
-      const waitTime = this.timeWindow - (now - oldestRequest) + 100
-      setTimeout(() => this.processQueue(), waitTime)
-    }
-  }
-}
-
-// Instance unique du rate limiter
-const rateLimiter = new RateLimiter(5, 60000) // 5 req/min
-
-function p(url, signal) {
-  return rateLimiter.execute(() =>
-    fetch(url, { signal })
-      .then(r => r.ok ? r.json() : null)
-      .catch(() => null)
-  )
-}
-
 const periods = {
-  "1D": { mult: 1, timespan: "day", days: 1 },
-  "5D": { mult: 1, timespan: "day", days: 5 },
+  "1D": { mult: 1, timespan: "minute", days: 1 },
+  "5D": { mult: 1, timespan: "hour", days: 5 },
   "1M": { mult: 1, timespan: "day", days: 30 },
   "6M": { mult: 1, timespan: "day", days: 182 },
   "1Y": { mult: 1, timespan: "day", days: 365 },
   "5Y": { mult: 1, timespan: "day", days: 1825 }
 }
 
-// Vérifier si c'est un ticker crypto/forex (non supporté en gratuit)
-function isCryptoOrForex(symbol, ticker) {
-  // Vérifier le symbol original (Yahoo Finance format)
-  const symbolPatterns = [
-    /=F$/,                  // Futures Yahoo (GC=F, CL=F)
-    /-USD$/,                // Crypto Yahoo (BTC-USD)
-    /^(BTC|ETH|XRP|ADA)/,  // Cryptos
-    /=X$/                   // Forex Yahoo (EURUSD=X)
-  ]
-  
-  // Vérifier le ticker Polygon
-  const tickerPatterns = [
-    /^X:[A-Z]+$/,           // Format Polygon crypto (X:BTCUSD)
-    /^C:[A-Z]+$/,           // Format Polygon forex (C:EURUSD)
-    /USD$/,                 // Paires vs USD
-    /EUR$/,                 // Paires vs EUR
-    /^(XAU|XAG|GC|SI|CL)/  // Métaux/commodités
-  ]
-  
-  return symbolPatterns.some(p => p.test(symbol)) || 
-         tickerPatterns.some(p => p.test(ticker))
-}
+class RateLimiter {
+  constructor(max = 5, window = 60000) {
+    this.max = max
+    this.window = window
+    this.queue = []
+    this.pending = []
+  }
 
-// Rechercher un ticker via le nom avec l'API Polygon
-async function searchTickerByName(name, signal) {
-  try {
-    const url = `https://api.polygon.io/v3/reference/tickers?search=${encodeURIComponent(name)}&active=true&limit=10&apiKey=${API}`
-    const r = await rateLimiter.execute(() => fetch(url, { signal }))
-    if (!r.ok) {
-      // Retourner l'erreur HTTP au lieu de null
-      return { error: true, errorCode: r.status }
+  async exec(fn) {
+    return new Promise((resolve, reject) => {
+      this.queue.push({ fn, resolve, reject })
+      if (this.queue.length === 1) this.process()
+    })
+  }
+
+  async process() {
+    if (!this.queue.length) return
+    const now = Date.now()
+    this.pending = this.pending.filter(t => now - t < this.window)
+    if (this.pending.length < this.max) {
+      const { fn, resolve, reject } = this.queue.shift()
+      this.pending.push(now)
+      try {
+        resolve(await fn())
+      } catch (e) {
+        reject(e)
+      }
+      if (this.queue.length) setTimeout(() => this.process(), 100)
+    } else {
+      const wait = this.window - (now - Math.min(...this.pending)) + 100
+      const seconds = Math.max(1, Math.round(wait/1000))
+      console.log(`⏳ Rate limit: ${this.pending.length}/${this.max} requêtes, attente ${seconds}s`)
+      
+      // Démarrer le countdown dans general.js
+      if (typeof window !== 'undefined' && window.startRateLimitCountdown) {
+        window.startRateLimitCountdown(seconds)
+      }
+      
+      setTimeout(() => this.process(), wait)
     }
-    
-    const j = await r.json()
-    if (!j.results || !j.results.length) return null
-    
-    // Retourner le premier résultat correspondant
-    return j.results[0].ticker
-  } catch (e) {
-    console.error('Erreur recherche ticker:', e)
-    return { error: true, errorCode: 500 }
   }
 }
 
-// Fallback: chercher le ticker via le nom
-async function fetchFromFallback(symbol, ticker, period, signal, name) {
+const limiter = new RateLimiter()
+const cache = new Map()
+const mappingCache = new Map()
+
+async function resolvePolygonTicker(localTicker, apiKey) {
+  if (mappingCache.has(localTicker)) return mappingCache.get(localTicker)
+  if (/^[CX]:/.test(localTicker)) {
+    mappingCache.set(localTicker, localTicker)
+    return localTicker
+  }
+  if (/^[A-Z]{3,6}USD$/.test(localTicker) || /^XAU|XAG/.test(localTicker)) {
+    const t = `C:${localTicker}`
+    mappingCache.set(localTicker, t)
+    return t
+  }
   try {
-    // Essayer de chercher le bon ticker via le nom
-    if (name) {
-      console.log(`Recherche du ticker pour "${name}"...`)
-      const result = await searchTickerByName(name, signal)
-      
-      // Si c'est un objet d'erreur, le retourner
-      if (result && typeof result === 'object' && result.error) {
-        return {
-          source: "massive",
-          error: true,
-          errorCode: result.errorCode,
-          message: `Erreur lors de la recherche de ticker pour "${name}"`
-        }
+    const refUrl = `https://api.polygon.io/v3/reference/tickers?ticker=${encodeURIComponent(localTicker)}&active=true&apiKey=${apiKey}`
+    const r = await fetch(refUrl)
+    if (r.ok) {
+      const j = await r.json()
+      if (j.results && j.results.length) {
+        const poly = j.results[0].ticker
+        mappingCache.set(localTicker, poly)
+        return poly
       }
-      
-      if (result && result !== ticker) {
-        console.log(`Ticker trouvé: ${result} au lieu de ${ticker}`)
-        // Réessayer avec le nouveau ticker trouvé
-        return fetchFromPolygon(result, period, symbol, null, name, signal)
-      }
-    }
-    
-    // Si pas trouvé, retourner une erreur
-    return {
-      source: "massive",
-      error: true,
-      errorCode: 404,
-      message: `Aucun ticker trouvé pour "${name || symbol}" sur Polygon.io`
     }
   } catch (e) {
-    return { source: "massive", error: true, errorCode: 500 }
+    console.warn('resolvePolygonTicker erreur:', e.message)
   }
+  mappingCache.set(localTicker, localTicker)
+  return localTicker
 }
 
-export async function fetchFromPolygon(ticker, period, symbol, setApiStatus, name, signal) {
+export async function fetchFromPolygon(ticker, period, symbol, _, name, signal, apiKey) {
+  console.log(`\n🔍 === FETCH ${ticker} (${name}) période ${period} ===`)
+  const key = `${ticker}:${period}`
   try {
-    // Vérifier si le ticker est supporté (utilise symbol ET ticker)
-    if (isCryptoOrForex(symbol, ticker)) {
-      console.warn(`${symbol} (${ticker}) non supporté en gratuit, tentative de fallback...`)
-      return await fetchFromFallback(symbol, ticker, period, signal, name)
-    }
-    
+    const polygonTicker = await resolvePolygonTicker(ticker, apiKey)
     const cfg = periods[period] || periods["1D"]
-    const to = new Date().toISOString()
-    const from = new Date(Date.now() - cfg.days * 86400 * 1000).toISOString()
-    const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(ticker)}/range/${cfg.mult}/${cfg.timespan}/${from}/${to}?adjusted=true&sort=asc&apiKey=${API}`
-    
-    // Utiliser le rate limiter
-    const r = await rateLimiter.execute(() => fetch(url, { signal }))
-    
-    if (!r.ok) {
-      // Si 400, probablement un ticker non supporté
-      if (r.status === 400) {
-        console.warn(`${ticker} retourne 400, tentative de fallback...`)
-        return await fetchFromFallback(symbol, ticker, period, signal, name)
+    const to = new Date().toISOString().split('T')[0]
+    const from = new Date(Date.now() - cfg.days * 86400000).toISOString().split('T')[0]
+    const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(polygonTicker)}/range/${cfg.mult}/${cfg.timespan}/${from}/${to}?adjusted=true&sort=asc&apiKey=${apiKey}`
+    console.log(`📡 Requête API (polygonTicker=${polygonTicker}): ${polygonTicker} du ${from} au ${to}`)
+    const r = await limiter.exec(() => fetch(url, { signal }))
+    console.log(`📥 Réponse: ${r.status} ${r.statusText}`)
+    if (r.status === 429) {
+      // Affiche le spinner et message rate limit
+      if (typeof window !== 'undefined' && window.setApiStatus) {
+        try {
+          window.setApiStatus(symbol, 'fetching', { api: 'massive', loadingFallback: true, errorCode: 429 })
+        } catch (e) {}
       }
-      // Si toujours 429, attendre plus longtemps
-      if (r.status === 429) {
-        await new Promise(resolve => setTimeout(resolve, 15000))
-        return fetchFromPolygon(ticker, period, symbol, setApiStatus, name, signal)
-      }
-      return { source: "massive", error: true, errorCode: r.status }
+      return { source: "massive", error: true, errorCode: 429, throttled: true }
     }
-    
     const j = await r.json()
-    if (!j || !j.results || !j.results.length) {
-      return { source: "massive", error: true, errorCode: 400 }
+    if (!j?.results?.length) {
+      // Si l'erreur est un rate limit, on ne met pas "aucun résultat"
+      if (j.status === 'ERROR' && r.status === 429) {
+        if (typeof window !== 'undefined' && window.setApiStatus) {
+          try {
+            window.setApiStatus(symbol, 'fetching', { api: 'massive', loadingFallback: true, errorCode: 429 })
+          } catch (e) {}
+        }
+        return { source: "massive", error: true, errorCode: 429, throttled: true }
+      }
+      console.warn(`⚠️ Aucun résultat pour ${polygonTicker}`, j)
+      const err = { source: "massive", error: true, errorCode: 404, polygonTicker, raw: j }
+      cache.set(key, { data: err, ts: Date.now() })
+      return err
     }
-    
-    const timestamps = j.results.map(k => Math.floor(k.t / 1000))
+    console.log(`✅ ${j.results.length} points de données récupérés pour ${polygonTicker}`)
     const prices = j.results.map(k => k.c || 0)
-    const open = prices[0] || null
-    const high = prices.length ? Math.max(...prices) : null
-    const low = prices.length ? Math.min(...prices) : null
-    const last = prices.length ? prices[prices.length - 1] : null
-    
-    let prev = null
-    try {
-      const qr = await p(`https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(ticker)}/prev?adjusted=true&apiKey=${API}`, signal)
-      if (qr && qr.results && qr.results[0]) prev = qr.results[0].c
-    } catch (e) { }
-    
-    return {
+    const data = {
       source: "massive",
-      timestamps,
+      timestamps: j.results.map(k => Math.floor(k.t / 1000)),
       prices,
-      open,
-      high,
-      low,
-      previousClose: prev,
-      price: last
+      open: prices[0] || null,
+      high: Math.max(...prices),
+      low: Math.min(...prices),
+      price: prices[prices.length - 1]
     }
+    
+    // Calculer la performance par rapport au prix d'ouverture
+    if (data.open && data.price) {
+      data.changePercent = ((data.price - data.open) / data.open) * 100
+      data.change = data.price - data.open
+    } else {
+      data.changePercent = 0
+      data.change = 0
+    }
+    
+    console.log(`💰 Prix: ${data.price?.toFixed(2)}€ (min: ${data.low?.toFixed(2)}, max: ${data.high?.toFixed(2)})`)
+    console.log(`📈 Performance: ${data.changePercent?.toFixed(2)}% (${data.change?.toFixed(2)}€)`)
+    cache.set(key, { data, ts: Date.now() })
+    return data
   } catch (e) {
-    if (e.name === 'AbortError') throw e
+    if (e.name === 'AbortError') {
+      console.log(`🚫 Requête annulée pour ${ticker}`)
+      throw e
+    }
+    console.error(`💥 Erreur pour ${ticker}:`, e.message)
     return { source: "massive", error: true, errorCode: 500 }
   }
 }
