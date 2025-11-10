@@ -1,4 +1,16 @@
 import { fetchFromPolygon } from './api/polygon.js'
+import { fetchFromTwelveData } from './api/twelve.js'
+
+async function selectApiFetch(apiName) {
+  switch(apiName) {
+    case 'massive':
+      return fetchFromPolygon
+    case 'twelvedata':
+      return fetchFromTwelveData
+    default:
+      return fetchFromPolygon
+  }
+}
 
 let API_CONFIG = null;
 
@@ -101,16 +113,13 @@ function stopFastPolling() {
 }
 
 function startRateLimitCountdown(seconds) {
-    // Arrêter le countdown précédent s'il existe
     if (rateLimitCountdownTimer) {
         clearInterval(rateLimitCountdownTimer);
         rateLimitCountdownTimer = null;
     }
     
-    // Mettre l'indicateur en mode fetching avec spinner
     setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true });
     
-    // Attendre que setApiStatus ait terminé et ajouter le texte de countdown
     setTimeout(() => {
         const el = document.getElementById('api-status-indicator');
         if (el) {
@@ -120,7 +129,6 @@ function startRateLimitCountdown(seconds) {
             }
         }
         
-        // Démarrer le countdown
         rateLimitCountdownTimer = setInterval(() => {
             const el = document.getElementById('api-status-indicator');
             if (el) {
@@ -189,7 +197,6 @@ async function setApiStatus(symbol, status, opts = {}) {
     }
     const spinner = content.querySelector('[data-role="spinner"]');
     if (spinner && opts.loadingFallback) {
-        // Ne pas remplacer le contenu si c'est déjà un countdown
         if (!spinner.querySelector('.countdown-text')) {
             spinner.style.display = 'flex';
             spinner.innerHTML = `<span class="api-spinner"></span>`;
@@ -327,20 +334,24 @@ async function fetchActiveSymbol(force) {
     try {
         const p = positions[symbol].currentPeriod||'1D'
         const name = positions[symbol].name||null
-        let fetchFunc = async () => {
-            const config = await loadApiConfig();
-            const apiConfig = config.apis[selectedApi];
-            if (!apiConfig || !apiConfig.enabled) {
-                return { source: selectedApi, error: true, errorCode: 503, errorMessage: "API désactivée" };
-            }
-            return fetchFromPolygon(positions[symbol].ticker, p, symbol, null, name, signal, apiConfig.apiKey);
-        };
-        let d = await fetchFunc(positions[symbol].ticker, p, symbol, null, name, signal)
+        
+        let fetchFunc = await selectApiFetch(selectedApi)
+        
+        const config = await loadApiConfig();
+        const apiConfig = config.apis[selectedApi];
+        
+        if (!apiConfig || !apiConfig.enabled) {
+            positions[symbol].isFetching=false
+            return { source: selectedApi, error: true, errorCode: 503, errorMessage: "API désactivée" };
+        }
+        
+        let d = await fetchFunc(positions[symbol].ticker, p, symbol, null, name, signal, apiConfig.apiKey)
         
         positions[symbol].lastFetch=Date.now()
         positions[symbol].lastData=d
         updateUI(symbol,d)
         lastApiBySymbol[symbol]=d.source
+        
         if (d && d.error && d.source) {
             setApiStatus(symbol, 'noinfo', { api: d.source, errorCode: d.errorCode });
         } else {
@@ -389,15 +400,17 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     if (g) g.querySelectorAll('.period-btn').forEach(x=>x.classList.remove('active'))
     b.classList.add('active')
     const name=positions[s].name||null
-    let fetchFunc = async () => {
-        const config = await loadApiConfig();
-        const apiConfig = config.apis[selectedApi];
-        if (!apiConfig || !apiConfig.enabled) {
-            return { source: selectedApi, error: true, errorCode: 503, errorMessage: "API désactivée" };
-        }
-        return fetchFromPolygon(positions[s].ticker,p,s,null,name, null, apiConfig.apiKey);
-    };
-    let d=await fetchFunc(positions[s].ticker,p,s,null,name)
+    
+    let fetchFunc = await selectApiFetch(selectedApi)
+    
+    const config = await loadApiConfig();
+    const apiConfig = config.apis[selectedApi];
+    
+    if (!apiConfig || !apiConfig.enabled) {
+        return { source: selectedApi, error: true, errorCode: 503, errorMessage: "API désactivée" };
+    }
+    
+    let d = await fetchFunc(positions[s].ticker, p, s, null, name, null, apiConfig.apiKey)
     
     positions[s].lastFetch=Date.now()
     positions[s].lastData=d
@@ -409,7 +422,6 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
 
 function updateUI(symbol, data) {
     if (!data || data.error) {
-        // Si throttling, afficher loading + message explicite
         if (data && data.errorCode === 429 && data.throttled) {
             setApiStatus(symbol, 'fetching', { api: data?.source, loadingFallback: true, errorCode: 429 });
             const el = document.getElementById('api-status-indicator');
@@ -604,7 +616,6 @@ window.addEventListener('load', async () => {
     const active = getActiveSymbol();
 });
 
-// Exposer les fonctions pour polygon.js
 window.startRateLimitCountdown = startRateLimitCountdown;
 window.stopRateLimitCountdown = stopRateLimitCountdown;
 

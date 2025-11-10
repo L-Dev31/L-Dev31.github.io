@@ -4,5 +4,11 @@
     "logo": "logo/massive.png",
     "apiKey": "qCYBOa_qaJxa3aWA42_NNPjb47QJk2iB",
     "enabled": true
+  },
+  "twelvedata": {
+    "name": "Twelve Data",
+    "logo": "logo/twelvedata.png",
+    "apiKey": "06ecbe5facf94573b4b229d6d177710c",
+    "enabled": true
   }
 }
