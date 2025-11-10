@@ -586,7 +586,7 @@ body {
 /* Informations économiques dans le profil */
 .profile-info p {
     margin: 4px 0;
-    font-size: 13px;
+    font-size: 11px;
     color: #a8a2ff;
 }
 
@@ -598,6 +598,10 @@ body {
 .profile-info p span.negative {
     color: #fca5a5;
     font-weight: 600;
+}
+
+#total-shares, #total-investment {
+    color: #e8e9f3;
 }
 
 
@@ -720,7 +724,7 @@ body {
 }
 
 .profile-info p {
-    font-size: 14px;
+    font-size: 11px;
     color: #a8a2ff;
 }
 
