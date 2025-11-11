@@ -1,5 +1,10 @@
 import globalRateLimiter from '../rate-limiter.js';
 
+// Utilise la valeur brute de api_mapping.twelve_data pour le symbole dans les fetchs
+export function getTwelveDataSymbol(stock) {
+  return stock.api_mapping.twelve_data;
+}
+
 const periodMap = {
   "1D": { interval: "5min", days: 1, outputsize: 300 },
   "1W": { interval: "30min", days: 7, outputsize: 350 },
@@ -17,41 +22,19 @@ class RateLimiter {
 
 const limiter = new RateLimiter();
 const cache = new Map();
-const mappingCache = new Map();
 
-function resolveTwelveDataTicker(localTicker) {
-  if (mappingCache.has(localTicker)) return mappingCache.get(localTicker);
-
-  let twelveTicker = localTicker;
-  // Détection Crypto (ex: BTCUSD -> BTC/USD)
-  if (/^[A-Z]{3,6}USD$/.test(localTicker) && !/^XAU|XAG/.test(localTicker)) {
-    const crypto = localTicker.slice(0, -3);
-    twelveTicker = `${crypto}/USD`;
-  } 
-  // Détection Métaux (ex: XAUUSD -> XAU/USD)
-  else if (/^XAU|XAG/.test(localTicker)) {
-    const metal = localTicker.slice(0, 3);
-    twelveTicker = `${metal}/USD`;
-  }
-  // Pour les actions (US, EU), Twelve Data utilise le ticker tel quel (ex: AAPL, AL2SI.PA)
-
-  console.log(`[Twelve Data] Ticker local "${localTicker}" résolu en "${twelveTicker}"`);
-  mappingCache.set(localTicker, twelveTicker);
-  return twelveTicker;
-}
-
-export async function fetchFromTwelveData(ticker, period, symbol, _, name, signal, apiKey) {
+export async function fetchFromTwelveData(ticker, period, symbol, typeOrStock, name, signal, apiKey) {
   console.log(`\n🔍 === FETCH Twelve Data ${ticker} (${name}) période ${period} ===`);
-  console.log(`🔑 API Key reçue: "${apiKey}"`);
   const key = `${ticker}:${period}`;
   
   try {
-    const twelveTicker = resolveTwelveDataTicker(ticker);
-    const cfg = periodMap[period] || periodMap["1D"];
-    const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(twelveTicker )}&interval=${cfg.interval}&outputsize=${cfg.outputsize}&apikey=${apiKey}`;
+    // Utiliser la valeur brute de api_mapping.twelve_data pour le fetch
+    const twelveSymbol = getTwelveDataSymbol(typeOrStock);
     
-    console.log(`📡 Requête Twelve Data API: ${twelveTicker}`);
-    console.log(`🔗 URL complète: ${url}`);
+    const cfg = periodMap[period] || periodMap["1D"];
+    const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(twelveSymbol)}&interval=${cfg.interval}&outputsize=${cfg.outputsize}&apikey=${apiKey}`;
+    
+    console.log(`📡 Requête Twelve Data API: ${twelveSymbol}`);
     const r = await globalRateLimiter.executeIfNotLimited(
       () => fetch(url, { signal }),
       'Twelve Data'
@@ -66,8 +49,8 @@ export async function fetchFromTwelveData(ticker, period, symbol, _, name, signa
     
     if (j.status === 'error' || !j.values || !j.values.length) {
       const isPlanError = j.message && j.message.includes("plan");
-      const errorMessage = isPlanError ? `Accès non autorisé pour ${twelveTicker} (plan API).` : (j.message || 'Aucune donnée');
-      console.warn(`⚠️ Erreur Twelve Data pour ${twelveTicker}:`, errorMessage);
+      const errorMessage = isPlanError ? `Accès non autorisé pour ${twelveSymbol} (plan API).` : (j.message || 'Aucune donnée');
+      console.warn(`⚠️ Erreur Twelve Data pour ${twelveSymbol}:`, errorMessage);
       return { source: "twelvedata", error: true, errorCode: j.code || 404, errorMessage };
     }
     
@@ -110,8 +93,8 @@ export async function fetchFromTwelveData(ticker, period, symbol, _, name, signa
     return data;
     
   } catch (e) {
-    if (e.name === 'AbortError') { console.log(`🚫 Requête Twelve Data annulée pour ${ticker}`); throw e; }
-    console.error(`💥 Erreur Twelve Data pour ${ticker}:`, e.message);
+    if (e.name === 'AbortError') { console.log(`🚫 Requête Twelve Data annulée pour ${twelveSymbol}`); throw e; }
+    console.error(`💥 Erreur Twelve Data pour ${twelveSymbol}:`, e.message);
     return { source: "twelvedata", error: true, errorCode: 500, errorMessage: e.message };
   }
 }

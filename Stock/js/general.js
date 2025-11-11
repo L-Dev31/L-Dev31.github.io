@@ -1,14 +1,16 @@
+import { fetchFromYahoo } from './api/yahoo-finance.js'
 import { fetchFromPolygon } from './api/polygon.js'
 import { fetchFromTwelveData } from './api/twelve.js'
 import { fetchFromMarketstack } from './api/marketstack.js'
 import { fetchFromAlphaVantage } from './api/alphavantage.js'
 import { fetchFromFinnhub } from './api/finnhub.js'
-import { fetchFromYahoo } from './api/yahoo-finance.js'
 import rateLimiter from './rate-limiter.js'
 import { initChart, updateChart } from './chart.js'
 
 async function selectApiFetch(apiName, position) {
   switch(apiName) {
+    case 'yahoo':
+      return { fetchFunc: fetchFromYahoo, apiName: 'yahoo' };
     case 'massive':
       return { fetchFunc: fetchFromPolygon, apiName: 'massive' };
     case 'twelvedata':
@@ -19,10 +21,8 @@ async function selectApiFetch(apiName, position) {
       return { fetchFunc: fetchFromAlphaVantage, apiName: 'alphavantage' };
     case 'finnhub':
       return { fetchFunc: fetchFromFinnhub, apiName: 'finnhub' };
-    case 'yahoo':
-      return { fetchFunc: fetchFromYahoo, apiName: 'yahoo' };
     default:
-      return { fetchFunc: fetchFromPolygon, apiName: 'massive' };
+      return { fetchFunc: fetchFromYahoo, apiName: 'yahoo' };
   }
 }
 
@@ -40,7 +40,7 @@ async function loadApiConfig() {
     API_CONFIG = {
       apis: config,
       ui: {
-        defaultApi: 'massive',
+        defaultApi: 'yahoo',
         validApis: enabledApis
       }
     };
@@ -50,15 +50,41 @@ async function loadApiConfig() {
   }
 }
 
-let selectedApi = 'massive'
-const cacheKey = 'stockCache'
-let stockCache = JSON.parse(localStorage.getItem(cacheKey) || '{}')
-const lastApiBySymbol = {}
-const positions = {}
-let fastPollTimer = null
-let initialFetchController = null
-let mainFetchController = null
-let rateLimitCountdownTimer = null
+let usdToEurRate = null;
+
+let positions = {};
+let selectedApi = 'yahoo';
+let lastApiBySymbol = {};
+let mainFetchController = null;
+let initialFetchController = null;
+let fastPollTimer = null;
+let rateLimitCountdownTimer = null;
+
+async function fetchUsdToEurRate() {
+  if (usdToEurRate !== null) return usdToEurRate;
+  
+  try {
+    const apiConfig = await loadApiConfig();
+    const api = apiConfig.apis['massive'];
+    if (!api || !api.enabled) return 1;
+    
+    const url = `https://api.polygon.io/v2/aggs/ticker/C:EURUSD/range/1/day/2025-11-01/2025-11-10?apiKey=${api.apiKey}`;
+    const r = await fetch(url);
+    if (r.ok) {
+      const j = await r.json();
+      if (j.results && j.results.length > 0) {
+        usdToEurRate = j.results[j.results.length - 1].c;
+        console.log(`💱 Taux USD/EUR récupéré: ${usdToEurRate}`);
+        return usdToEurRate;
+      }
+    }
+  } catch (e) {
+    console.warn('Erreur récupération taux USD/EUR:', e.message);
+  }
+  
+  usdToEurRate = 0.9; // fallback approximatif
+  return usdToEurRate;
+}
 
 async function setSelectedApi(api) {
     const config = await loadApiConfig();
@@ -385,10 +411,6 @@ async function fetchActiveSymbol(force) {
     const symbol = getActiveSymbol()
     if (!symbol || !positions[symbol]) return
     if (positions[symbol].isFetching) return
-    if (!force && !shouldFetch(symbol)) {
-        if (positions[symbol].lastData) updateUI(symbol,positions[symbol].lastData)
-        return
-    }
 
     if (mainFetchController) mainFetchController.abort()
     mainFetchController = new AbortController()
@@ -414,11 +436,8 @@ async function fetchActiveSymbol(force) {
         
         let d = await fetchFunc(positions[symbol].ticker, p, symbol, positions[symbol], name, signal, apiConfig.apiKey)
         
-        // Don't update cache/timestamps for throttled requests
-        if (!d.throttled) {
-            positions[symbol].lastFetch=Date.now()
-            positions[symbol].lastData=d
-        }
+        positions[symbol].lastFetch=Date.now()
+        positions[symbol].lastData=d
         updateUI(symbol,d)
         lastApiBySymbol[symbol]=d.source
         
@@ -443,11 +462,6 @@ async function fetchActiveSymbol(force) {
 function getActiveSymbol() {
     const t = document.querySelector('.tab.active')
     return t? t.dataset.symbol:null
-}
-
-function shouldFetch(symbol) {
-    const last = positions[symbol].lastFetch||0
-    return Date.now()-last > 55000
 }
 
 document.addEventListener('click', async e=>{
@@ -487,18 +501,15 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     
     let d = await fetchFunc(positions[s].ticker, p, s, positions[s], name, null, apiConfig.apiKey)
     
-    // Don't update cache/timestamps for throttled requests
-    if (!d.throttled) {
-        positions[s].lastFetch=Date.now()
-        positions[s].lastData=d
-    }
+    positions[s].lastFetch=Date.now()
+    positions[s].lastData=d
     updateUI(s,d)
     setApiStatus(s, d ? 'active' : 'inactive', { api: apiName });
     
     updatePortfolioSummary()
 })
 
-function updateUI(symbol, data) {
+async function updateUI(symbol, data) {
     if (!data || data.error) {
         if (data && data.throttled) {
             // Rate limit - don't update UI, just show status
@@ -517,6 +528,8 @@ function updateUI(symbol, data) {
         setApiStatus(symbol, 'noinfo', { api: data?.source, errorCode: data?.errorCode });
         return;
     }
+
+    // Conversion USD→EUR supprimée, désormais gérée dans polygon.js
 
     if (data.timestamps && data.prices) {
         updateChart(symbol, data.timestamps, data.prices, positions);
@@ -553,27 +566,56 @@ function updateUI(symbol, data) {
         const investment = positions[symbol].investment || 0;
         const isShortPosition = investment < 0;
 
-        const totalValue = currentPrice * shares;
-        if (valueEl) {
-            valueEl.textContent = totalValue.toFixed(2) + ' €';
-            valueEl.className = totalValue >= Math.abs(investment) ? 'positive' : 'negative';
+        // Vérifier si les données sont obsolètes
+        const purchaseDate = positions[symbol].purchaseDate;
+        let isOutdated = false;
+        if (purchaseDate && data.timestamps && data.timestamps.length > 0) {
+            const latestTimestamp = Math.max(...data.timestamps) * 1000; // convertir en millisecondes
+            const purchaseTime = new Date(purchaseDate).getTime();
+            isOutdated = latestTimestamp < purchaseTime;
         }
 
-        if (valuePerEl) {
-            valuePerEl.textContent = currentPrice.toFixed(2) + ' €';
-            valuePerEl.className = currentPrice >= (Math.abs(investment) / shares) ? 'positive' : 'negative';
-        }
+        if (isOutdated) {
+            // Données obsolètes - afficher le message au lieu des calculs
+            if (valueEl) {
+                valueEl.textContent = 'Données obsolètes';
+                valueEl.className = 'outdated';
+            }
+            if (valuePerEl) {
+                valuePerEl.textContent = 'Données obsolètes';
+                valuePerEl.className = 'outdated';
+            }
+            if (profitEl) {
+                profitEl.textContent = 'Données obsolètes';
+                profitEl.className = 'outdated';
+            }
+            if (profitPerEl) {
+                profitPerEl.textContent = 'Données obsolètes';
+                profitPerEl.className = 'outdated';
+            }
+        } else {
+            const totalValue = currentPrice * shares;
+            if (valueEl) {
+                valueEl.textContent = totalValue.toFixed(2) + ' €';
+                valueEl.className = totalValue >= Math.abs(investment) ? 'positive' : 'negative';
+            }
 
-        const totalProfit = totalValue - Math.abs(investment);
-        if (profitEl) {
-            profitEl.textContent = `${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} €`;
-            profitEl.className = totalProfit >= 0 ? 'positive' : 'negative';
-        }
+            if (valuePerEl) {
+                valuePerEl.textContent = currentPrice.toFixed(2) + ' €';
+                valuePerEl.className = currentPrice >= (Math.abs(investment) / shares) ? 'positive' : 'negative';
+            }
 
-        const profitPerShare = currentPrice - (Math.abs(investment) / shares);
-        if (profitPerEl) {
-            profitPerEl.textContent = `${profitPerShare >= 0 ? '+' : ''}${profitPerShare.toFixed(2)} €`;
-            profitPerEl.className = profitPerShare >= 0 ? 'positive' : 'negative';
+            const totalProfit = totalValue - Math.abs(investment);
+            if (profitEl) {
+                profitEl.textContent = `${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} €`;
+                profitEl.className = totalProfit >= 0 ? 'positive' : 'negative';
+            }
+
+            const profitPerShare = currentPrice - (Math.abs(investment) / shares);
+            if (profitPerEl) {
+                profitPerEl.textContent = `${profitPerShare >= 0 ? '+' : ''}${profitPerShare.toFixed(2)} €`;
+                profitPerEl.className = profitPerShare >= 0 ? 'positive' : 'negative';
+            }
         }
     }
 
@@ -593,6 +635,8 @@ function updateUI(symbol, data) {
     
     // Mettre à jour le titre de la carte avec la nouvelle date
     updateCardTitle(symbol);
+    // Mettre à jour les dates sous les sections (cours, investissement, details)
+    try { updateSectionDates(symbol); } catch (e) { /* ignore */ }
 }
 
 function resetSymbolDisplay(symbol) {
@@ -654,9 +698,6 @@ function getLastDataDate(symbol) {
 }
 
 function updateTabTitle(symbol) {
-    const dateStr = getLastDataDate(symbol);
-    if (!dateStr) return;
-    
     const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
     if (!tab) return;
     
@@ -665,7 +706,7 @@ function updateTabTitle(symbol) {
     
     const pos = positions[symbol];
     const baseName = pos?.name || symbol;
-    nameEl.textContent = `${baseName} (${dateStr})`;
+    nameEl.textContent = baseName;
 }
 
 function updateCardTitle(symbol) {
@@ -676,6 +717,53 @@ function updateCardTitle(symbol) {
     if (!titleEl) return;
     
     titleEl.textContent = `Cours de l'action (${dateStr})`;
+}
+
+// Return the best date to display under sections: only from API data, no fallback
+function getBestDataDate(symbol) {
+    const pos = positions[symbol];
+    if (!pos) return '';
+    // Only use lastData timestamps if valid
+    if (pos.lastData && Array.isArray(pos.lastData.timestamps) && pos.lastData.timestamps.length > 0) {
+        // Ensure there is at least one valid numeric timestamp
+        const numericTimestamps = pos.lastData.timestamps.filter(t => typeof t === 'number' && !isNaN(t) && t > 0);
+        if (numericTimestamps.length > 0) {
+            const latest = Math.max(...numericTimestamps);
+            const d = new Date(latest * 1000);
+            return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+    }
+
+    return '';
+}
+
+// Update the three section .section-date placeholders for a card
+function updateSectionDates(symbol) {
+    const dateStr = getBestDataDate(symbol);
+    // Course
+    const courseTitle = document.getElementById(`course-title-${symbol}`);
+    if (courseTitle) {
+        const courseDate = courseTitle.nextElementSibling;
+        if (courseDate && courseDate.classList.contains('section-date')) {
+            courseDate.textContent = dateStr ? `Données : ${dateStr}` : '';
+        }
+    }
+    // Investment
+    const invTitle = document.getElementById(`investment-title-${symbol}`);
+    if (invTitle) {
+        const invDate = invTitle.nextElementSibling;
+        if (invDate && invDate.classList.contains('section-date')) {
+            invDate.textContent = dateStr ? `Données : ${dateStr}` : '';
+        }
+    }
+    // Details
+    const detTitle = document.getElementById(`details-title-${symbol}`);
+    if (detTitle) {
+        const detDate = detTitle.nextElementSibling;
+        if (detDate && detDate.classList.contains('section-date')) {
+            detDate.textContent = dateStr ? `Données : ${dateStr}` : '';
+        }
+    }
 }
 
 function updatePortfolioSummary() {
@@ -720,8 +808,8 @@ async function loadStocks() {
     };
     Object.entries(byType).forEach(([type, stocks]) => {
         // Ne crée la section que si au moins un stock de ce type existe dans la catégorie
-        const hasPortfolio = stocks.some(s => s.shares > 0);
-        const hasGeneral = stocks.some(s => !s.shares || s.shares === 0);
+        const hasPortfolio = stocks.some(s => calculateStockValues(s).shares > 0);
+        const hasGeneral = stocks.some(s => calculateStockValues(s).shares === 0);
         const typeLabel = {
             equity: 'Actions',
             commodity: 'Matières Premières',
@@ -753,19 +841,23 @@ async function loadStocks() {
 
     // Création des positions et des tabs/cards
     list.forEach(s => {
+        const calculated = calculateStockValues(s);
         positions[s.symbol] = {
             symbol: s.symbol,
-            ticker: s.ticker,
+            ticker: s.ticker, // always raw ticker from stocks.json
             name: s.name,
             type: s.type,
-            shares: s.shares || 0,
-            investment: s.investment || 0,
+            currency: s.currency,
+            api_mapping: s.api_mapping,
+            shares: calculated.shares,
+            investment: calculated.investment,
+            purchaseDate: calculated.purchaseDate,
+            purchases: s.purchases || [],
             chart: null,
             lastFetch: 0,
             lastData: null,
             currentPeriod: '1D'
         };
-        if (stockCache[s.symbol]) positions[s.symbol].cachedData = stockCache[s.symbol];
         lastApiBySymbol[s.symbol] = selectedApi;
         createTab(s, s.type);
         createCard(s);
@@ -773,13 +865,9 @@ async function loadStocks() {
 
     Object.keys(positions).forEach(sym => initChart(sym, positions));
 
-    // Mettre à jour les titres des tabs avec les données en cache si disponibles
+    // Initialize section dates for all cards (use purchaseDate fallback when no API data yet)
     Object.keys(positions).forEach(sym => {
-        if (stockCache[sym]) {
-            positions[sym].lastData = stockCache[sym];
-            updateTabTitle(sym);
-            updateCardTitle(sym);
-        }
+        try { updateSectionDates(sym); } catch (e) {}
     });
 
     const first = document.querySelector('.sidebar .tab');
@@ -832,6 +920,65 @@ window.addEventListener('rateLimitEnd', (e) => {
     }
 });
 
+function updateCardDates(symbol) {
+    const pos = positions[symbol];
+    if (!pos || !pos.purchaseDate) return;
+
+    const dateStr = new Date(pos.purchaseDate).toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+
+    // Mettre à jour la date sous chaque titre de section
+    const titles = [
+        `course-title-${symbol}`,
+        `investment-title-${symbol}`,
+        `details-title-${symbol}`
+    ];
+
+    titles.forEach(titleId => {
+        const titleEl = document.getElementById(titleId);
+        if (titleEl) {
+            // Supprimer l'ancienne date si elle existe
+            const existingDate = titleEl.nextElementSibling;
+            if (existingDate && existingDate.classList.contains('section-date')) {
+                existingDate.remove();
+            }
+
+            // Ajouter la nouvelle date
+            const dateEl = document.createElement('div');
+            dateEl.className = 'section-date';
+            dateEl.textContent = `Du ${dateStr}`;
+            titleEl.insertAdjacentElement('afterend', dateEl);
+        }
+    });
+}
+
+function calculateStockValues(stock) {
+    let totalInvestment = stock.investment || 0;
+    let totalShares = stock.shares || 0;
+    let earliestPurchaseDate = stock.purchaseDate;
+    
+    if (stock.purchases && stock.purchases.length > 0) {
+        totalInvestment = stock.purchases.reduce((sum, p) => sum + (p.amount || 0), 0);
+        totalShares = stock.purchases.reduce((sum, p) => sum + (p.shares || 0), 0);
+        const dates = stock.purchases.map(p => p.date).filter(d => d).sort();
+        earliestPurchaseDate = dates.length > 0 ? dates[0] : null;
+    }
+
+    if (stock.sales && stock.sales.length > 0) {
+        totalInvestment += stock.sales.reduce((sum, s) => sum + (s.amount || 0), 0);
+        totalShares -= stock.sales.reduce((sum, s) => sum + (s.shares || 0), 0);
+    }
+    
+    return {
+        investment: totalInvestment,
+        shares: totalShares,
+        purchaseDate: earliestPurchaseDate
+    };
+}
+
 function createTab(stock, type) {
     const t = document.getElementById('tab-template');
     if (!t) return;
@@ -848,8 +995,9 @@ function createTab(stock, type) {
     const baseName = pos?.name || stock.symbol;
     tab.querySelector('.tab-name').textContent = baseName;
     
-    tab.querySelector('.tab-shares').textContent = stock.shares > 0 ? `(Actions possédées : ${stock.shares})` : '';
-    const isPortfolio = stock.shares > 0;
+    const calculated = calculateStockValues(stock);
+    tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `(Actions possédées : ${calculated.shares})` : '';
+    const isPortfolio = calculated.shares > 0;
     const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
     document.getElementById(sectionId)?.appendChild(tab);
 }
@@ -866,9 +1014,21 @@ function createCard(stock) {
     logo.src = `logo/${stock.symbol}.png`
     logo.onerror = function(){ this.parentElement.innerHTML = stock.symbol.slice(0,2) }
 
+    // Set id for general title
+    const generalTitle = card.querySelector('h3.section-title');
+    if (generalTitle) {
+        generalTitle.id = `general-title-${stock.symbol}`;
+        const genDate = generalTitle.nextElementSibling;
+        if (genDate && genDate.classList.contains('section-date')) {
+            genDate.id = `general-date-${stock.symbol}`;
+            genDate.textContent = '';
+        }
+    }
+
     const sh = card.querySelector('.important-shares span')
     sh.id = `shares-${stock.symbol}`
-    sh.textContent = stock.shares
+    const calculated = calculateStockValues(stock);
+    sh.textContent = calculated.shares
 
     const isin = card.querySelector('.general-row strong + span')
     if (isin) {
@@ -917,25 +1077,29 @@ function createCard(stock) {
         upd.textContent = 'Dernière mise à jour : --'
     }
 
-    // Initialiser le titre du cours
-    const courseTitle = document.getElementById('course-title-');
+    // Simple: set the course title id and populate the adjacent .section-date div if present
+    const courseTitle = card.querySelector('.course-title');
     if (courseTitle) {
         courseTitle.id = `course-title-${stock.symbol}`;
-        courseTitle.textContent = 'Cours de l\'action';
+        const courseDate = courseTitle.nextElementSibling;
+        if (courseDate && courseDate.classList.contains('section-date')) {
+            courseDate.id = `course-date-${stock.symbol}`;
+            courseDate.textContent = '';
+        }
     }
 
     const tds = card.querySelectorAll('.card-table-td')
     if (tds.length===8) {
         tds[1].id=`invest-${stock.symbol}`
-        const displayInvestment = stock.investment < 0 ? Math.abs(stock.investment) : stock.investment;
+        const displayInvestment = calculated.investment < 0 ? Math.abs(calculated.investment) : calculated.investment;
         tds[1].textContent = displayInvestment.toFixed(2)+' €'
         tds[2].id=`value-${stock.symbol}`
         tds[2].textContent='--'
         tds[3].id=`profit-${stock.symbol}`
         tds[3].textContent='--'
         tds[5].id=`invest-per-${stock.symbol}`
-        const displayInvestPerShare = stock.shares ? (stock.investment < 0 ? Math.abs(stock.investment / stock.shares) : (stock.investment / stock.shares)) : 0;
-        tds[5].textContent = stock.shares ? displayInvestPerShare.toFixed(2)+' €' : '--'
+        const displayInvestPerShare = calculated.shares ? (calculated.investment < 0 ? Math.abs(calculated.investment / calculated.shares) : (calculated.investment / calculated.shares)) : 0;
+        tds[5].textContent = calculated.shares ? displayInvestPerShare.toFixed(2)+' €' : '--'
         tds[6].id=`value-per-${stock.symbol}`
         tds[6].textContent='--'
         tds[7].id=`profit-per-${stock.symbol}`
@@ -943,10 +1107,28 @@ function createCard(stock) {
     }
 
     const table = card.querySelector('.card-table-container')
-    if (table && stock.shares===0) table.style.display='none'
+    if (table && calculated.shares===0) table.style.display='none'
 
     const invTitle = card.querySelector('.investment-title')
-    if (invTitle) invTitle.style.display = stock.shares===0 ? 'none' : ''
+    if (invTitle) {
+        invTitle.style.display = calculated.shares===0 ? 'none' : ''
+        invTitle.id = `investment-title-${stock.symbol}`;
+        const invDate = invTitle.nextElementSibling;
+        if (invDate && invDate.classList.contains('section-date')) {
+            invDate.id = `investment-date-${stock.symbol}`;
+            invDate.textContent = '';
+        }
+    }
+
+    const detailsTitle = card.querySelector('.details-title')
+    if (detailsTitle) {
+        detailsTitle.id = `details-title-${stock.symbol}`;
+        const detDate = detailsTitle.nextElementSibling;
+        if (detDate && detDate.classList.contains('section-date')) {
+            detDate.id = `details-date-${stock.symbol}`;
+            detDate.textContent = '';
+        }
+    }
 
     const info = card.querySelectorAll('.info-value')
     if (info.length===4) {
@@ -955,6 +1137,33 @@ function createCard(stock) {
         info[2].id=`low-${stock.symbol}`
         info[3].id=`close-${stock.symbol}`
         info.forEach(el=>el.textContent='--')
+    }
+
+    const transactionTitle = card.querySelector('.transaction-history-title')
+    if (transactionTitle) {
+        transactionTitle.id = `transaction-history-title-${stock.symbol}`;
+        transactionTitle.style.display = calculated.shares === 0 ? 'none' : '';
+        const tbody = card.querySelector('.transaction-history-body');
+        if (tbody && calculated.shares > 0) {
+            let transactions = [];
+            if (stock.purchases) {
+                stock.purchases.forEach(p => transactions.push({date: p.date, amount: p.amount, shares: p.shares, type: 'Achat'}));
+            }
+            if (stock.sales) {
+                stock.sales.forEach(s => transactions.push({date: s.date, amount: s.amount, shares: s.shares, type: 'Vente'}));
+            }
+            // Sort transactions by date desc
+            transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+            tbody.innerHTML = transactions.map(t => `
+                <tr class="${t.type === 'Achat' ? 'transaction-buy' : 'transaction-sell'}">
+                    <td>${new Date(t.date).toLocaleDateString('fr-FR')}</td>
+                    <td>${t.type}</td>
+                    <td>${Math.abs(t.amount).toFixed(2)} €</td>
+                    <td>${t.shares}</td>
+                    <td>${(Math.abs(t.amount) / t.shares).toFixed(2)} €</td>
+                </tr>
+            `).join('');
+        }
     }
 
     document.getElementById('cards-container')?.appendChild(card)

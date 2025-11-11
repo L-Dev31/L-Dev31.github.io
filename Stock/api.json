@@ -1,4 +1,11 @@
 ﻿{
+    
+  "yahoo": {
+    "name": "Yahoo Finance",
+    "logo": "logo/yahoo-finance.png",
+    "apiKey": "",
+    "enabled": true
+  },
   "massive": {
     "name": "Massive API",
     "logo": "logo/massive.png",
@@ -27,12 +34,6 @@
     "name": "Marketstack",
     "logo": "logo/marketstack.png",
     "apiKey": "d495dfpr01qshn3kon40d495dfpr01qshn3kon4g",
-    "enabled": false
-  },
-  "yahoo": {
-    "name": "Yahoo Finance",
-    "logo": "logo/yahoo-finance.png",
-    "apiKey": "",
     "enabled": false
   }
 }

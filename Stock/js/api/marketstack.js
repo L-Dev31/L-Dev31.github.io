@@ -1,5 +1,10 @@
 import globalRateLimiter from '../rate-limiter.js';
 
+// Utilise la valeur brute de api_mapping.marketstack pour le symbole dans les fetchs
+export function getMarketstackSymbol(stock) {
+  return stock.api_mapping.marketstack;
+}
+
 const periods = {
   "1D": { days: 1 },
   "1W": { days: 7 },
@@ -12,14 +17,14 @@ const periods = {
 
 const cache = new Map();
 
-export async function fetchFromMarketstack(ticker, period, symbol, _, name, signal, apiKey) {
+export async function fetchFromMarketstack(ticker, period, symbol, typeOrStock, name, signal, apiKey) {
   console.log(`\n🔍 === FETCH Marketstack ${ticker} (${name}) période ${period} ===`);
   const key = `${ticker}:${period}`;
 
   try {
-    const marketstackTicker = ticker.replace(/-([A-Z]+)$/, '.$1');
-    console.log(`[Marketstack] Ticker "${ticker}" transformé en "${marketstackTicker}"`);
-
+    // Utiliser la valeur brute de api_mapping.marketstack pour le fetch
+    const marketstackSymbol = getMarketstackSymbol(typeOrStock);
+    
     const cfg = periods[period] || periods["1D"];
     const to = new Date();
     const from = new Date(to.getTime() - (cfg.days * 24 * 60 * 60 * 1000));
@@ -31,13 +36,13 @@ export async function fetchFromMarketstack(ticker, period, symbol, _, name, sign
 
     if (period === "1D") {
       // Pour 1D → on récupère le dernier EOD connu
-      url = `https://api.marketstack.com/v1/${endpoint}/latest?access_key=${apiKey}&symbols=${encodeURIComponent(marketstackTicker)}`;
+      url = `https://api.marketstack.com/v1/${endpoint}/latest?access_key=${apiKey}&symbols=${encodeURIComponent(marketstackSymbol)}`;
     } else {
       // Autres périodes → plage de dates
-      url = `https://api.marketstack.com/v1/${endpoint}?access_key=${apiKey}&symbols=${encodeURIComponent(marketstackTicker)}&date_from=${fromDate}&date_to=${toDate}&limit=1000`;
+      url = `https://api.marketstack.com/v1/${endpoint}?access_key=${apiKey}&symbols=${encodeURIComponent(marketstackSymbol)}&date_from=${fromDate}&date_to=${toDate}&limit=1000`;
     }
 
-    console.log(`📡 Requête Marketstack API (EOD): ${marketstackTicker}`);
+    console.log(`📡 Requête Marketstack API (EOD): ${marketstackSymbol}`);
     const r = await globalRateLimiter.executeIfNotLimited(
       () => fetch(url, { signal }),
       'Marketstack'
@@ -59,7 +64,7 @@ export async function fetchFromMarketstack(ticker, period, symbol, _, name, sign
     const dataArray = j?.data ? j.data : Array.isArray(j) ? j : [j];
 
     if (!dataArray.length) {
-      console.warn(`⚠️ Aucun résultat Marketstack pour ${marketstackTicker}.`, j);
+      console.warn(`⚠️ Aucun résultat Marketstack pour ${marketstackSymbol}.`, j);
       return {
         source: "marketstack",
         error: true,
@@ -109,10 +114,10 @@ export async function fetchFromMarketstack(ticker, period, symbol, _, name, sign
 
   } catch (e) {
     if (e.name === 'AbortError') {
-      console.log(`🚫 Requête Marketstack annulée pour ${ticker}`);
+      console.log(`🚫 Requête Marketstack annulée pour ${marketstackSymbol}`);
       throw e;
     }
-    console.error(`💥 Erreur Marketstack pour ${ticker}:`, e.message);
+    console.error(`💥 Erreur Marketstack pour ${marketstackSymbol}:`, e.message);
     return {
       source: "marketstack",
       error: true,

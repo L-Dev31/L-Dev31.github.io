@@ -1,5 +1,10 @@
 // alphavantage.js - Alpha Vantage API integration for stock app
 
+// Utilise la valeur brute de api_mapping.alpha_vantage pour le symbole dans les fetchs
+export function getAlphaVantageSymbol(stock) {
+  return stock.api_mapping.alpha_vantage;
+}
+
 import globalRateLimiter from '../rate-limiter.js';
 
 const periods = {
@@ -14,27 +19,23 @@ const periods = {
 
 const cache = new Map();
 
-function resolveAlphaVantageTicker(localTicker) {
-  // Alpha Vantage utilise généralement les tickers US directement
-  // Pour les européens, on peut garder le format avec point
-  return localTicker;
-}
-
-export async function fetchFromAlphaVantage(ticker, period, symbol, _, name, signal, apiKey) {
+export async function fetchFromAlphaVantage(ticker, period, symbol, typeOrStock, name, signal, apiKey) {
   console.log(`\n🔍 === FETCH Alpha Vantage ${ticker} (${name}) période ${period} ===`);
   const key = `${ticker}:${period}`;
 
   try {
-    const alphaVantageTicker = resolveAlphaVantageTicker(ticker);
+    // Utiliser la valeur brute de api_mapping.alpha_vantage pour le fetch
+    const alphaVantageSymbol = getAlphaVantageSymbol(typeOrStock);
+    
     const cfg = periods[period] || periods["1D"];
 
     // Alpha Vantage a des limites: 5 appels/minute, 500/jour pour free tier
     // On utilise TIME_SERIES_DAILY qui donne les 100 derniers jours par défaut
     // Pour plus de données, il faudrait utiliser un endpoint premium
 
-    const url = `https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY&symbol=${encodeURIComponent(alphaVantageTicker)}&outputsize=compact&datatype=json`;
+    const url = `https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY&symbol=${encodeURIComponent(alphaVantageSymbol)}&outputsize=compact&datatype=json`;
 
-    console.log(`📡 Requête Alpha Vantage API: ${alphaVantageTicker}`);
+    console.log(`📡 Requête Alpha Vantage API: ${alphaVantageSymbol}`);
 
     const response = await globalRateLimiter.executeIfNotLimited(
       () => fetch(url, {
@@ -88,7 +89,7 @@ export async function fetchFromAlphaVantage(ticker, period, symbol, _, name, sig
     }
 
     if (!j['Time Series (Daily)']) {
-      console.warn(`⚠️ Aucune donnée Alpha Vantage pour ${alphaVantageTicker}.`, j);
+      console.warn(`⚠️ Aucune donnée Alpha Vantage pour ${alphaVantageSymbol}.`, j);
       return {
         source: "alphavantage",
         error: true,
@@ -168,11 +169,11 @@ export async function fetchFromAlphaVantage(ticker, period, symbol, _, name, sig
 
   } catch (e) {
     if (e.name === 'AbortError') {
-      console.log(`🚫 Requête Alpha Vantage annulée pour ${ticker}`);
+      console.log(`🚫 Requête Alpha Vantage annulée pour ${alphaVantageSymbol}`);
       throw e;
     }
     
-    console.error(`💥 Erreur Alpha Vantage pour ${ticker}:`, e.message);
+    console.error(`💥 Erreur Alpha Vantage pour ${alphaVantageSymbol}:`, e.message);
     return {
       source: "alphavantage",
       error: true,

@@ -1,3 +1,8 @@
+// Utilise la valeur brute de api_mapping.finnhub pour le symbole dans les fetchs
+export function getFinnhubSymbol(stock) {
+  return stock.api_mapping.finnhub;
+}
+
 const cache = new Map();
 
 const resMap = {
@@ -14,17 +19,20 @@ function toUnix(ts) { return Math.floor(ts/1000); }
 
 import globalRateLimiter from '../rate-limiter.js';
 
-export async function fetchFromFinnhub(ticker, period="1D", symbol, _, name, signal, apiKey){
+export async function fetchFromFinnhub(ticker, period="1D", symbol, typeOrStock, name, signal, apiKey){
   const key = `${ticker}:${period}`;
   if (cache.has(key)) return cache.get(key).data;
 
   const result = await globalRateLimiter.executeIfNotLimited(async () => {
     try {
+      // Utiliser la valeur brute de api_mapping.finnhub pour le fetch
+      const finnhubSymbol = getFinnhubSymbol(typeOrStock);
+      
       const cfg = resMap[period] || resMap["1D"];
       const to = new Date();
       const from = new Date(to.getTime() - cfg.days * 24*60*60*1000);
-      const url = `https://finnhub.io/api/v1/stock/candle?symbol=${encodeURIComponent(ticker)}&resolution=${cfg.res}&from=${toUnix(from)}&to=${toUnix(to)}&token=${apiKey}`;
-      console.log(`[Finnhub] req ${ticker} ${period} -> ${url}`);
+      const url = `https://finnhub.io/api/v1/stock/candle?symbol=${encodeURIComponent(finnhubSymbol)}&resolution=${cfg.res}&from=${toUnix(from)}&to=${toUnix(to)}&token=${apiKey}`;
+      console.log(`[Finnhub] req ${finnhubSymbol} ${period} -> ${url}`);
       const r = await fetch(url, { signal });
       console.log(`[Finnhub] status ${r.status}`);
       if (r.status === 429) {

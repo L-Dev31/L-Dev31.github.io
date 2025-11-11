@@ -1,5 +1,47 @@
 // chart.js - Chart.js chart initialization and update logic for stock app
 
+// chart.js - Chart.js chart initialization and update logic for stock app
+
+// Variable globale pour le tooltip Shift (un seul pour tous les charts)
+let globalShiftTooltip = null
+let globalShiftPressed = false
+
+// Enregistrer le plugin zoom si disponible
+if (typeof Chart !== 'undefined' && Chart.register) {
+    console.log('Chart.js available, checking for zoom plugin...')
+
+    // Vérifier ce qui est disponible dans le scope global
+    console.log('window.ChartZoom:', window.ChartZoom)
+    console.log('window.chartjsPluginZoom:', window.chartjsPluginZoom)
+    console.log('Available global keys:', Object.keys(window).filter(key => key.toLowerCase().includes('zoom')))
+
+    // Essayer d'enregistrer le plugin zoom depuis la CDN
+    if (window.ChartZoom) {
+        Chart.register(window.ChartZoom);
+        console.log('Chart.js zoom plugin registered from window.ChartZoom');
+    } else if (typeof chartjsPluginZoom !== 'undefined') {
+        Chart.register(chartjsPluginZoom);
+        console.log('Chart.js zoom plugin registered from chartjsPluginZoom');
+    } else if (window.chartjs && window.chartjs.plugins && window.chartjs.plugins.zoom) {
+        Chart.register(window.chartjs.plugins.zoom);
+        console.log('Chart.js zoom plugin registered from window.chartjs.plugins.zoom');
+    } else {
+        console.warn('Chart.js zoom plugin not found in global scope, trying direct registration');
+        // Essayer de charger le plugin directement depuis l'URL
+        import('https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js')
+            .then(zoomPlugin => {
+                console.log('Zoom plugin loaded:', zoomPlugin)
+                Chart.register(zoomPlugin.default || zoomPlugin);
+                console.log('Chart.js zoom plugin registered via dynamic import');
+            })
+            .catch(err => {
+                console.error('Failed to load zoom plugin:', err);
+            });
+    }
+} else {
+    console.warn('Chart.js not available for plugin registration');
+}
+
 export function initChart(symbol, positions) {
     const canvas = document.getElementById(`chart-${symbol}`)
     if (!canvas) return
@@ -22,7 +64,8 @@ export function initChart(symbol, positions) {
                 fill:true,
                 tension:0.4,
                 pointRadius:0,
-                pointHoverRadius:4
+                pointHoverRadius:4,
+                spanGaps: true
             }]
         },
         options:{
@@ -59,14 +102,10 @@ export function initChart(symbol, positions) {
                     }
                 },
                 zoom: {
-                    pan: {
-                        enabled: true,
-                        mode: 'x',
-                        modifierKey: 'ctrl'
-                    },
                     zoom: {
                         wheel: {
                             enabled: true,
+                            modifierKey: 'shift',
                             speed: 0.1
                         },
                         pinch: {
@@ -95,6 +134,14 @@ export function initChart(symbol, positions) {
         }
     })
 
+    // Gérer le changement de curseur pour ce canvas spécifique
+    const updateCursor = () => {
+        canvas.style.cursor = 'default'
+    }
+
+    // Mettre à jour le curseur initial
+    updateCursor()
+
     // Appliquer un zoom initial pour montrer les données les plus récentes
     setTimeout(() => {
         if (positions[symbol].chart && positions[symbol].chart.data.labels && positions[symbol].chart.data.labels.length > 10) {
@@ -105,9 +152,109 @@ export function initChart(symbol, positions) {
     }, 100)
 }
 
+// Fonctions globales pour gérer le tooltip Shift
+function showGlobalShiftTooltip() {
+    if (globalShiftTooltip) {
+        // Si le tooltip existe déjà, juste l'afficher
+        globalShiftTooltip.classList.add('show')
+        return
+    }
+
+    // Trouver le chart actif
+    const activeCard = document.querySelector('.card.active')
+    if (!activeCard) return
+
+    const chartContainer = activeCard.querySelector('.chart-canvas')?.parentElement
+    if (!chartContainer) return
+
+    // Créer un tooltip simple
+    globalShiftTooltip = document.createElement('div')
+    globalShiftTooltip.className = 'shift-tooltip'
+    globalShiftTooltip.innerHTML = `
+        <div>
+            <div class="shift-tooltip-content">
+                <div class="shift-tooltip-item">
+                    <i class="fas fa-search-plus"></i>
+                    <span>Scroll pour zoomer</span>
+                </div>
+            </div>
+        </div>
+    `
+
+    // Positionner dans le container du chart
+    globalShiftTooltip.style.position = 'absolute'
+    globalShiftTooltip.style.top = '10px'
+    globalShiftTooltip.style.right = '10px'
+    globalShiftTooltip.style.zIndex = '10'
+
+    chartContainer.style.position = 'relative'
+    chartContainer.appendChild(globalShiftTooltip)
+
+    // Animation d'apparition
+    setTimeout(() => {
+        globalShiftTooltip.classList.add('show')
+    }, 10)
+}
+
+function hideGlobalShiftTooltip() {
+    if (!globalShiftTooltip) return
+
+    globalShiftTooltip.classList.remove('show')
+    setTimeout(() => {
+        if (globalShiftTooltip && globalShiftTooltip.parentNode) {
+            globalShiftTooltip.parentNode.removeChild(globalShiftTooltip)
+        }
+        globalShiftTooltip = null
+    }, 300)
+}
+
+// Écouter les événements clavier globalement (une seule fois)
+if (typeof window !== 'undefined' && !window.shiftTooltipInitialized) {
+    window.shiftTooltipInitialized = true
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Shift' && !globalShiftPressed) {
+            globalShiftPressed = true
+            showGlobalShiftTooltip()
+        }
+    })
+
+    document.addEventListener('keyup', (e) => {
+        if (e.key === 'Shift' && globalShiftPressed) {
+            globalShiftPressed = false
+            hideGlobalShiftTooltip()
+        }
+    })
+
+    // Écouter les changements de tab pour repositionner le tooltip
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.tab')) {
+            if (globalShiftTooltip) {
+                hideGlobalShiftTooltip()
+            }
+            if (globalShiftPressed) {
+                setTimeout(showGlobalShiftTooltip, 100)
+            }
+        }
+    })
+}
+
 export function updateChart(symbol, timestamps, prices, positions) {
     const c = positions[symbol].chart
     if (!c || !timestamps) return
+
+    // Limiter à 300 points maximum pour éviter trop de labels
+    if (timestamps.length > 300) {
+        const step = Math.ceil(timestamps.length / 300);
+        const sampledTimestamps = [];
+        const sampledPrices = [];
+        for (let i = 0; i < timestamps.length; i += step) {
+            sampledTimestamps.push(timestamps[i]);
+            sampledPrices.push(prices[i]);
+        }
+        timestamps = sampledTimestamps;
+        prices = sampledPrices;
+    }
 
     console.log(`📊 Mise à jour chart ${symbol}: ${timestamps.length} timestamps, ${prices.length} prices`)
 

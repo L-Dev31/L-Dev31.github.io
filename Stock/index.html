@@ -50,6 +50,7 @@
                         </div>
                     </div>
                     <h3 class="section-title">Infos générales</h3>
+                    <div class="section-date"></div>
                     <div class="card-general-info">
                         <div class="general-row"><strong>ISIN</strong> : <span id=""></span></div>
                         <div class="general-row"><strong>Ticker</strong> : <span id=""></span></div>
@@ -57,6 +58,7 @@
                         <div class="general-row card-country-row"><strong>Pays</strong> : <span class="country-name"></span><img id="" data-country="" src="" alt="" class="flag-icon"/></div>
                     </div>
                     <h3 class="section-title investment-title">Investissement personnel</h3>
+                    <div class="section-date"></div>
                     <div class="card-table-container">
                         <div class="general-row important-shares">Actions détenues : <span id=""></span></div>
                         <table class="card-table">
@@ -84,7 +86,8 @@
                             </tbody>
                         </table>
                     </div>
-                    <h3 class="section-title" id="course-title-"></h3>
+                    <h3 class="section-title course-title">Cours de l'action</h3>
+                    <div class="section-date"></div>
                     <div class="chart-container">
                         <div class="chart-header">Graphique</div>
                         <canvas class="chart-canvas" id=""></canvas>
@@ -103,6 +106,7 @@
                         <div class="performance-value" id=""></div>
                     </div>
                     <h3 class="section-title details-title">Details</h3>
+                    <div class="section-date"></div>
                     <div class="info-grid">
                         <div class="info-item">
                             <div class="info-label">Ouverture (Open)</div>
@@ -122,6 +126,22 @@
                         </div>
                     </div>
                     <div class="update-center" id=""></div>
+                    <h3 class="section-title transaction-history-title">Historique des transactions</h3>
+                    <div class="transaction-history-container">
+                        <table class="transaction-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Montant (€)</th>
+                                    <th>Actions</th>
+                                    <th>Prix (€)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="transaction-history-body">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </template>
             <template id="api-indicator-template">
