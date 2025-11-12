@@ -783,6 +783,7 @@ function updateSectionDates(symbol) {
 function updatePortfolioSummary() {
     let totalShares = 0;
     let totalInvestment = 0;
+    let cashAccount = 224.26; // Valeur statique du compte titre
 
     Object.values(positions).forEach(pos => {
         totalShares += pos.shares || 0;
@@ -791,9 +792,11 @@ function updatePortfolioSummary() {
 
     const totalSharesEl = document.getElementById('total-shares');
     const totalInvestmentEl = document.getElementById('total-investment');
+    const cashAccountEl = document.getElementById('cash-account');
 
     if (totalSharesEl) totalSharesEl.textContent = totalShares;
     if (totalInvestmentEl) totalInvestmentEl.textContent = totalInvestment.toFixed(2) + ' €';
+    if (cashAccountEl) cashAccountEl.textContent = cashAccount.toFixed(2) + ' €';
 }
 
 async function loadStocks() {
@@ -837,8 +840,16 @@ async function loadStocks() {
     };
     Object.entries(byType).forEach(([type, stocks]) => {
         // Ne crée la section que si au moins un stock de ce type existe dans la catégorie
-        const hasPortfolio = stocks.some(s => calculateStockValues(s).shares > 0);
-        const hasGeneral = stocks.some(s => calculateStockValues(s).shares === 0);
+        const hasPortfolio = stocks.some(s => {
+            const calculated = calculateStockValues(s);
+            const hasTransactions = (s.purchases && s.purchases.length > 0) || (s.sales && s.sales.length > 0);
+            return calculated.shares > 0 || hasTransactions;
+        });
+        const hasGeneral = stocks.some(s => {
+            const calculated = calculateStockValues(s);
+            const hasTransactions = (s.purchases && s.purchases.length > 0) || (s.sales && s.sales.length > 0);
+            return calculated.shares === 0 && !hasTransactions;
+        });
         const typeLabel = {
             equity: 'Actions',
             commodity: 'Matières Premières',
@@ -1026,7 +1037,9 @@ function createTab(stock, type) {
     
     const calculated = calculateStockValues(stock);
     tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `(Actions possédées : ${calculated.shares})` : '';
-    const isPortfolio = calculated.shares > 0;
+    // Un stock va dans le portefeuille s'il possède des actions OU s'il a eu des transactions dans le passé
+    const hasTransactions = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
+    const isPortfolio = calculated.shares > 0 || hasTransactions;
     const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
     document.getElementById(sectionId)?.appendChild(tab);
 }
@@ -1150,10 +1163,27 @@ function createCard(stock) {
         tds[7].textContent='--'
     }
 
-    // Masquer toute la section investissement si pas d'actions possédées
+    // Masquer le tableau d'investissement si on ne possède plus d'actions
+    const cardTableContainer = card.querySelector('.card-table-container')
+    if (cardTableContainer) {
+        cardTableContainer.style.display = calculated.shares === 0 ? 'none' : '';
+    }
+
+    // Masquer le titre et la date de la section investissement si on ne possède plus d'actions
+    const investmentTitle = card.querySelector('.investment-title')
+    if (investmentTitle) {
+        investmentTitle.style.display = calculated.shares === 0 ? 'none' : '';
+        const investmentDate = investmentTitle.nextElementSibling;
+        if (investmentDate && investmentDate.classList.contains('section-date')) {
+            investmentDate.style.display = calculated.shares === 0 ? 'none' : '';
+        }
+    }
+
+    // Masquer toute la section investissement seulement s'il n'y a jamais eu de transactions
     const investmentSection = card.querySelector('.investment-section')
     if (investmentSection) {
-        investmentSection.style.display = calculated.shares === 0 ? 'none' : ''
+        const hasTransactions = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
+        investmentSection.style.display = hasTransactions ? '' : 'none';
     }
 
     const detailsTitle = card.querySelector('.details-title')
@@ -1178,15 +1208,17 @@ function createCard(stock) {
     const transactionTitle = card.querySelector('.transaction-history-title')
     if (transactionTitle) {
         transactionTitle.id = `transaction-history-title-${stock.symbol}`;
-        transactionTitle.style.display = calculated.shares === 0 ? 'none' : '';
+        const hasTransactions = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
+        transactionTitle.style.display = hasTransactions ? '' : 'none';
     }
 
-    // Masquer le conteneur complet du tableau des transactions si pas d'actions possédées
+    // Masquer le conteneur complet du tableau des transactions seulement s'il n'y a jamais eu de transactions
     const transactionContainer = card.querySelector('.transaction-history-container')
     if (transactionContainer) {
-        transactionContainer.style.display = calculated.shares === 0 ? 'none' : '';
+        const hasTransactions = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
+        transactionContainer.style.display = hasTransactions ? '' : 'none';
         const tbody = card.querySelector('.transaction-history-body');
-        if (tbody && calculated.shares > 0) {
+        if (tbody && hasTransactions) {
             let transactions = [];
             if (stock.purchases) {
                 stock.purchases.forEach(p => transactions.push({date: p.date, amount: p.amount, shares: p.shares, type: 'Achat'}));

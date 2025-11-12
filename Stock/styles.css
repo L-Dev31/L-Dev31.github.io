@@ -785,6 +785,10 @@ body {
     color: #a8a2ff;
 }
 
+#cash-account {
+    color: #e8e9f3 !important; /* Blanc */
+}
+
 /* Sidebar */
 .sidebar {
     position: fixed;
