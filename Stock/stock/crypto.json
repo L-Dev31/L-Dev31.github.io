@@ -1,0 +1,89 @@
+[
+  {
+    "symbol": "BTC",
+    "ticker": "BTC-USD",
+    "name": "Bitcoin",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto",
+    "shares": 0,
+    "investment": 0.00,
+    "purchaseDate": null,
+    "api_mapping": {
+      "yahoo": "BTC-USD",
+      "twelve_data": "BTC",
+      "polygon": "X:BTCUSD",
+      "alpha_vantage": "BTC"
+    }
+  },
+  {
+    "symbol": "ETH",
+    "ticker": "ETH-USD",
+    "name": "Ethereum",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto",
+    "shares": 0,
+    "investment": 0.00,
+    "purchaseDate": null,
+    "api_mapping": {
+      "yahoo": "ETH-USD",
+      "twelve_data": "ETH",
+      "polygon": "X:ETHUSD",
+      "alpha_vantage": "ETH"
+    }
+  },
+  {
+    "symbol": "SOL",
+    "ticker": "SOL-USD",
+    "name": "Solana",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto",
+    "shares": 0,
+    "investment": 0.00,
+    "purchaseDate": null,
+    "api_mapping": {
+      "yahoo": "SOL-USD",
+      "twelve_data": "SOL",
+      "polygon": "X:SOLUSD",
+      "alpha_vantage": "SOL"
+    }
+  },
+  {
+    "symbol": "XRP",
+    "ticker": "XRP-USD",
+    "name": "Ripple",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto",
+    "shares": 0,
+    "investment": 0.00,
+    "purchaseDate": null,
+    "api_mapping": {
+      "yahoo": "XRP-USD",
+      "twelve_data": "XRP",
+      "polygon": "X:XRPUSD",
+      "alpha_vantage": "XRP"
+    }
+  },
+  {
+    "symbol": "DOGE",
+    "ticker": "DOGE-USD",
+    "name": "Dogecoin",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto",
+    "api_mapping": {
+      "yahoo": "DOGE-USD",
+      "twelve_data": "DOGE",
+      "polygon": "X:DOGEUSD",
+      "alpha_vantage": "DOGE"
+    }
+  }
+]

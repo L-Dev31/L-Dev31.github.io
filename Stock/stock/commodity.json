@@ -1,0 +1,92 @@
+[
+  {
+    "symbol": "XAUUSD",
+    "ticker": "GC=F",
+    "name": "Global Gold Spot",
+    "isin": null,
+    "country": "GLOBAL",
+    "currency": "USD",
+    "type": "commodity",
+    "shares": 0,
+    "investment": 0.00,
+    "purchaseDate": null,
+    "api_mapping": {
+      "yahoo": "GC=F",
+      "twelve_data": "XAU/USD",
+      "polygon": "C:XAUUSD",
+      "alpha_vantage": "GOLD"
+    }
+  },
+  {
+    "symbol": "XAGUSD",
+    "ticker": "SI=F",
+    "name": "Global Silver Spot",
+    "isin": null,
+    "country": "GLOBAL",
+    "currency": "USD",
+    "type": "commodity",
+    "shares": 0,
+    "investment": 0.00,
+    "purchaseDate": null,
+    "api_mapping": {
+      "yahoo": "SI=F",
+      "twelve_data": "XAGUSD",
+      "polygon": "C:XAGUSD",
+      "alpha_vantage": "SILVER"
+    }
+  },
+  {
+    "symbol": "HG",
+    "ticker": "HG=F",
+    "name": "GLobal Copper Spot",
+    "isin": null,
+    "country": "GLOBAL",
+    "currency": "USD",
+    "type": "commodity",
+    "shares": 0,
+    "investment": 0.00,
+    "purchaseDate": null,
+    "api_mapping": {
+      "yahoo": "HG=F",
+      "twelve_data": "HG",
+      "polygon": "C:HG",
+      "alpha_vantage": "COPPER"
+    }
+  },
+  {
+    "symbol": "CL",
+    "ticker": "CL=F",
+    "name": "Crude Oil",
+    "isin": null,
+    "country": "GLOBAL",
+    "currency": "USD",
+    "type": "commodity",
+    "shares": 0,
+    "investment": 0.00,
+    "purchaseDate": null,
+    "api_mapping": {
+      "yahoo": "CL=F",
+      "twelve_data": "CL",
+      "polygon": "C:CL",
+      "alpha_vantage": "WTI"
+    }
+  },
+  {
+    "symbol": "NG",
+    "ticker": "NG=F",
+    "name": "Natural Gas",
+    "isin": null,
+    "country": "GLOBAL",
+    "currency": "USD",
+    "type": "commodity",
+    "shares": 0,
+    "investment": 0.00,
+    "purchaseDate": null,
+    "api_mapping": {
+      "yahoo": "NG=F",
+      "twelve_data": "NG",
+      "polygon": "NG",
+      "alpha_vantage": "NATURAL_GAS"
+    }
+  }
+]

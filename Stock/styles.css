@@ -796,6 +796,8 @@ body {
     gap: 20px;
     width: 300px;
     padding: 20px;
+    height: calc(100vh - 40px);
+    overflow-y: auto;
 }
 
 .sidebar-section-title {

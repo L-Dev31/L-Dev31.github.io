@@ -1,0 +1,22 @@
+[
+  {
+    "symbol": "TCSIF",
+    "ticker": "AL2SI.PA",
+    "name": "2CRSI",
+    "isin": "FR0013341781",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity",
+    "purchases": [
+      {"date": "2025-11-10", "amount": -107.27, "shares": 9},
+      {"date": "2025-11-11", "amount": -106.93, "shares": 8}
+    ],
+    "sales": [],
+    "api_mapping": {
+      "yahoo": "AL2SI.PA",
+      "twelve_data": "AL2SI:PAR",
+      "polygon": "AL2SI.PA",
+      "alpha_vantage": "AL2SI.PAR"
+    }
+  }
+]

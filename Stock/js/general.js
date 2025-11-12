@@ -621,8 +621,22 @@ async function updateUI(symbol, data) {
 
     const updateEl = document.getElementById(`update-center-${symbol}`);
     if (updateEl) {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        // Utiliser la date/heure des données de l'API au lieu de l'heure actuelle
+        let timeString = '--';
+        if (data.timestamps && data.timestamps.length > 0) {
+            const latestTimestamp = Math.max(...data.timestamps);
+            const dataDate = new Date(latestTimestamp * 1000);
+            const dateStr = dataDate.toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            const timeStr = dataDate.toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            timeString = `${dateStr} à ${timeStr}`;
+        }
         updateEl.textContent = `Dernière mise à jour : ${timeString}`;
     }
 
@@ -785,8 +799,23 @@ function updatePortfolioSummary() {
 async function loadStocks() {
     const config = await loadApiConfig();
 
-    const r = await fetch('stocks.json');
-    const list = await r.json();
+    // Charger tous les types d'actifs depuis le dossier stock
+    const types = ['equity', 'commodity', 'crypto'];
+    const list = [];
+
+    for (const type of types) {
+        try {
+            const response = await fetch(`stock/${type}.json`);
+            if (response.ok) {
+                const stocks = await response.json();
+                list.push(...stocks);
+            } else {
+                console.warn(`Impossible de charger stock/${type}.json`);
+            }
+        } catch (error) {
+            console.warn(`Erreur lors du chargement de stock/${type}.json:`, error);
+        }
+    }
 
     // Grouper par type
     const byType = {};
@@ -1088,36 +1117,43 @@ function createCard(stock) {
         }
     }
 
-    const tds = card.querySelectorAll('.card-table-td')
-    if (tds.length===8) {
-        tds[1].id=`invest-${stock.symbol}`
-        const displayInvestment = calculated.investment < 0 ? Math.abs(calculated.investment) : calculated.investment;
-        tds[1].textContent = displayInvestment.toFixed(2)+' €'
-        tds[2].id=`value-${stock.symbol}`
-        tds[2].textContent='--'
-        tds[3].id=`profit-${stock.symbol}`
-        tds[3].textContent='--'
-        tds[5].id=`invest-per-${stock.symbol}`
-        const displayInvestPerShare = calculated.shares ? (calculated.investment < 0 ? Math.abs(calculated.investment / calculated.shares) : (calculated.investment / calculated.shares)) : 0;
-        tds[5].textContent = calculated.shares ? displayInvestPerShare.toFixed(2)+' €' : '--'
-        tds[6].id=`value-per-${stock.symbol}`
-        tds[6].textContent='--'
-        tds[7].id=`profit-per-${stock.symbol}`
-        tds[7].textContent='--'
-    }
-
-    const table = card.querySelector('.card-table-container')
-    if (table && calculated.shares===0) table.style.display='none'
-
+    // Assigner les IDs pour la section investissement
     const invTitle = card.querySelector('.investment-title')
     if (invTitle) {
-        invTitle.style.display = calculated.shares===0 ? 'none' : ''
         invTitle.id = `investment-title-${stock.symbol}`;
         const invDate = invTitle.nextElementSibling;
         if (invDate && invDate.classList.contains('section-date')) {
             invDate.id = `investment-date-${stock.symbol}`;
-            invDate.textContent = '';
         }
+    }
+
+    // Assigner les IDs aux éléments de la table d'investissement
+    const tds = card.querySelectorAll('.card-table-td')
+    if (tds.length===8) {
+        tds[1].id=`invest-${stock.symbol}`
+        tds[2].id=`value-${stock.symbol}`
+        tds[3].id=`profit-${stock.symbol}`
+        tds[5].id=`invest-per-${stock.symbol}`
+        tds[6].id=`value-per-${stock.symbol}`
+        tds[7].id=`profit-per-${stock.symbol}`
+    }
+
+    // Remplir les valeurs si on possède des actions
+    if (calculated.shares > 0) {
+        const displayInvestment = calculated.investment < 0 ? Math.abs(calculated.investment) : calculated.investment;
+        tds[1].textContent = displayInvestment.toFixed(2)+' €'
+        tds[2].textContent='--'
+        tds[3].textContent='--'
+        const displayInvestPerShare = calculated.shares ? (calculated.investment < 0 ? Math.abs(calculated.investment / calculated.shares) : (calculated.investment / calculated.shares)) : 0;
+        tds[5].textContent = calculated.shares ? displayInvestPerShare.toFixed(2)+' €' : '--'
+        tds[6].textContent='--'
+        tds[7].textContent='--'
+    }
+
+    // Masquer toute la section investissement si pas d'actions possédées
+    const investmentSection = card.querySelector('.investment-section')
+    if (investmentSection) {
+        investmentSection.style.display = calculated.shares === 0 ? 'none' : ''
     }
 
     const detailsTitle = card.querySelector('.details-title')
@@ -1143,6 +1179,12 @@ function createCard(stock) {
     if (transactionTitle) {
         transactionTitle.id = `transaction-history-title-${stock.symbol}`;
         transactionTitle.style.display = calculated.shares === 0 ? 'none' : '';
+    }
+
+    // Masquer le conteneur complet du tableau des transactions si pas d'actions possédées
+    const transactionContainer = card.querySelector('.transaction-history-container')
+    if (transactionContainer) {
+        transactionContainer.style.display = calculated.shares === 0 ? 'none' : '';
         const tbody = card.querySelector('.transaction-history-body');
         if (tbody && calculated.shares > 0) {
             let transactions = [];
