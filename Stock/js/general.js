@@ -532,7 +532,7 @@ async function updateUI(symbol, data) {
     // Conversion USD→EUR supprimée, désormais gérée dans polygon.js
 
     if (data.timestamps && data.prices) {
-        updateChart(symbol, data.timestamps, data.prices, positions);
+        updateChart(symbol, data.timestamps, data.prices, positions, data.source);
     }
 
     const openEl = document.getElementById(`open-${symbol}`);

@@ -62,7 +62,7 @@ export function initChart(symbol, positions) {
                 backgroundColor:g,
                 borderWidth:2,
                 fill:true,
-                tension:0.4,
+                tension: 0,
                 pointRadius:0,
                 pointHoverRadius:4,
                 spanGaps: true
@@ -86,6 +86,10 @@ export function initChart(symbol, positions) {
                     padding:12,
                     titleFont:{family:'Poppins', size:12, weight:'bold'},
                     bodyFont:{family:'Poppins', size:12},
+                    filter: function(tooltipItem) {
+                        // Ne pas afficher le tooltip si les données sont null/undefined
+                        return tooltipItem.parsed.y != null && !isNaN(tooltipItem.parsed.y);
+                    },
                     callbacks:{
                         title:function(ctx){
                             return ctx[0].parsed.y.toFixed(2) + ' €'
@@ -239,12 +243,15 @@ if (typeof window !== 'undefined' && !window.shiftTooltipInitialized) {
     })
 }
 
-export function updateChart(symbol, timestamps, prices, positions) {
+export function updateChart(symbol, timestamps, prices, positions, source) {
     const c = positions[symbol].chart
     if (!c || !timestamps) return
 
-    // Limiter à 300 points maximum pour éviter trop de labels
-    if (timestamps.length > 300) {
+    // NE PAS filtrer les données - garder tous les points pour éviter les gaps étranges
+    // Les trous seront gérés dans l'affichage des labels
+
+    // Limiter à 300 points maximum pour éviter trop de labels, SAUF pour Yahoo Finance
+    if (source !== 'yahoo' && timestamps.length > 300) {
         const step = Math.ceil(timestamps.length / 300);
         const sampledTimestamps = [];
         const sampledPrices = [];
@@ -262,6 +269,11 @@ export function updateChart(symbol, timestamps, prices, positions) {
 
     // Logique d'affichage des labels selon la période
     c.data.labels = timestamps.map((ts, index) => {
+        // Si le timestamp ou le prix est null/undefined, retourner un label vide
+        if (ts == null || prices[index] == null || isNaN(prices[index])) {
+            return '';
+        }
+
         const d = new Date(ts * 1000)
 
         switch(period) {

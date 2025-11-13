@@ -54,9 +54,26 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
       const res = j.chart?.result?.[0];
       const q = res?.indicators?.quote?.[0];
 
-      if (!res || !q || !res.timestamp?.length) {
-        // Amélioration de la journalisation pour les réponses vides/incomplètes
-        console.error(`💥 Erreur 404/Réponse vide pour ${yahooSymbol}. Réponse JSON:`, JSON.stringify(j).substring(0, 200));
+      // Log détaillé pour le débogage
+      console.log(`🔍 Analyse réponse Yahoo pour ${yahooSymbol}:`);
+      console.log(`  - res existe:`, !!res);
+      console.log(`  - meta existe:`, !!res?.meta);
+      console.log(`  - indicators existe:`, !!res?.indicators);
+      console.log(`  - quote existe:`, !!res?.indicators?.quote);
+      console.log(`  - q (quote[0]) existe:`, !!q);
+      console.log(`  - timestamp length:`, res?.timestamp?.length || 0);
+      console.log(`  - close length:`, q?.close?.length || 0);
+
+      if (!res || !q || !res.timestamp?.length || !q.close?.length) {
+        // Vérifier si on a au moins les métadonnées (cas normal où le marché n'a pas encore ouvert)
+        if (res?.meta && (!res.timestamp?.length || !q?.close?.length)) {
+          console.log(`📊 ${yahooSymbol} - Le cours de l'action n'a pas encore démarré pour cette période (${period})`);
+          return { source: "yahoo", error: true, errorCode: "NO_DATA" };
+        }
+        
+        // Cas d'erreur réelle (pas de métadonnées ou structure complètement cassée)
+        console.error(`💥 Erreur réponse incomplète pour ${yahooSymbol}. res:`, !!res, 'q:', !!q, 'timestamp:', res?.timestamp?.length, 'close:', q?.close?.length);
+        console.error(`Réponse JSON:`, JSON.stringify(j).substring(0, 500));
         return { source: "yahoo", error: true, errorCode: 404 };
       }
 
