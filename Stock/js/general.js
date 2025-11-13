@@ -783,7 +783,7 @@ function updateSectionDates(symbol) {
 function updatePortfolioSummary() {
     let totalShares = 0;
     let totalInvestment = 0;
-    let cashAccount = 224.26; // Valeur statique du compte titre
+    let cashAccount = 116.31; // Valeur statique du compte titre
 
     Object.values(positions).forEach(pos => {
         totalShares += pos.shares || 0;
