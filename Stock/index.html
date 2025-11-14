@@ -105,11 +105,11 @@
                         </div>
                     </div>
                     <div class="performance">
-                        <div class="performance-label">Performance</div>
+                        <div class="performance-label">Performance du jour</div>
                         <div class="performance-value" id=""></div>
                     </div>
                     <div class="update-center" id=""></div>
-                    <h3 class="section-title details-title">Details</h3>
+                    <h3 class="section-title details-title">Détails techniques</h3>
                     <div class="section-date"></div>
                     <div class="info-grid">
                         <div class="info-item">
@@ -127,6 +127,38 @@
                         <div class="info-item">
                             <div class="info-label">Clôture (Close)</div>
                             <div class="info-value" id=""></div>
+                        </div>
+                    </div>
+                    <h3 class="section-title signal-title">Signal d'achat/vente</h3>
+                    <div class="section-date"></div>
+                    <div class="signal-container">
+                        <div class="signal-labels">
+                            <span class="signal-label sell-label">Vendre</span>
+                            <span class="signal-label hold-label">Garder</span>
+                            <span class="signal-label buy-label">Acheter</span>
+                        </div>
+                        <div class="signal-bar">
+                            <div class="signal-gradient"></div>
+                            <div class="signal-cursor" id="signal-cursor">
+                                <div class="signal-indicator"></div>
+                            </div>
+                        </div>
+                        <div class="signal-state-container">
+                            <div class="signal-state-title">Garder</div>
+                            <div class="signal-state-description">Position neutre - Attendre une meilleure opportunité</div>
+                            <div class="signal-explanation" style="display: none;">
+                                <div class="explanation-title">Pourquoi cette position ?</div>
+                                <div class="explanation-content">
+                                    <p><strong>Analyse technique équilibrée</strong> : Aucun indicateur ne domine clairement.</p>
+                                    <ul>
+                                        <li><strong>Performance vs ouverture</strong> (40%) : Prix actuel proche du prix d'ouverture</li>
+                                        <li><strong>RSI</strong> (30%) : Autour de 50 - équilibre acheteurs/vendeurs</li>
+                                        <li><strong>Tendance</strong> (20%) : Prix évolue autour de sa moyenne mobile</li>
+                                        <li><strong>Volatilité</strong> (10%) : Amplitude modérée des variations</li>
+                                    </ul>
+                                    <p><em>SignalScore entre -10 et +10 = Zone neutre d'indécision</em></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <h3 class="section-title transaction-history-title">Historique des transactions</h3>
@@ -164,6 +196,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script type="module" src="js/signal-bot.js"></script>
     <script type="module" src="js/general.js"></script>
 </body>
 </html>

@@ -6,6 +6,29 @@ import { fetchFromAlphaVantage } from './api/alphavantage.js'
 import { fetchFromFinnhub } from './api/finnhub.js'
 import rateLimiter from './rate-limiter.js'
 import { initChart, updateChart } from './chart.js'
+import { updateSignal } from './signal-bot.js'
+
+// Fonction utilitaire pour filtrer les points null/undefined/NaN dès la source
+export function filterNullDataPoints(timestamps, prices) {
+  if (!timestamps || !prices || timestamps.length !== prices.length) {
+    return { timestamps: [], prices: [] };
+  }
+
+  const validData = timestamps.map((ts, index) => ({
+    timestamp: ts,
+    price: prices[index]
+  })).filter(item =>
+    item.timestamp != null &&
+    item.price != null &&
+    !isNaN(item.price) &&
+    !isNaN(item.timestamp)
+  );
+
+  return {
+    timestamps: validData.map(item => item.timestamp),
+    prices: validData.map(item => item.price)
+  };
+}
 
 async function selectApiFetch(apiName, position) {
   switch(apiName) {
@@ -651,6 +674,9 @@ async function updateUI(symbol, data) {
     updateCardTitle(symbol);
     // Mettre à jour les dates sous les sections (cours, investissement, details)
     try { updateSectionDates(symbol); } catch (e) { /* ignore */ }
+
+    // Mettre à jour le signal d'achat/vente
+    updateSignal(symbol, data);
 }
 
 function resetSymbolDisplay(symbol) {
@@ -693,6 +719,18 @@ function resetSymbolDisplay(symbol) {
     if (updateEl) {
         updateEl.textContent = 'Dernière mise à jour : --'
     }
+
+    // Réinitialiser le signal
+    const signalCursor = document.getElementById(`signal-cursor-${symbol}`);
+    const signalValue = document.getElementById(`signal-value-${symbol}`);
+    const signalDescription = document.getElementById(`signal-description-${symbol}`);
+
+    if (signalCursor) signalCursor.style.left = '50%';
+    if (signalValue) {
+        signalValue.textContent = 'Neutre';
+        signalValue.style.color = '#a8a2ff';
+    }
+    if (signalDescription) signalDescription.textContent = 'Analyse technique en cours...';
 }
 
 function getLastDataDate(symbol) {
@@ -776,6 +814,14 @@ function updateSectionDates(symbol) {
         const detDate = detTitle.nextElementSibling;
         if (detDate && detDate.classList.contains('section-date')) {
             detDate.textContent = dateStr ? `Données : ${dateStr}` : '';
+        }
+    }
+    // Signal
+    const signalTitle = document.getElementById(`signal-title-${symbol}`);
+    if (signalTitle) {
+        const signalDate = signalTitle.nextElementSibling;
+        if (signalDate && signalDate.classList.contains('section-date')) {
+            signalDate.textContent = dateStr ? `Données : ${dateStr}` : '';
         }
     }
 }
@@ -1195,6 +1241,26 @@ function createCard(stock) {
             detDate.textContent = '';
         }
     }
+
+    // Assigner les IDs pour la section signal
+    const signalTitle = card.querySelector('.signal-title')
+    if (signalTitle) {
+        signalTitle.id = `signal-title-${stock.symbol}`;
+        const signalDate = signalTitle.nextElementSibling;
+        if (signalDate && signalDate.classList.contains('section-date')) {
+            signalDate.id = `signal-date-${stock.symbol}`;
+            signalDate.textContent = '';
+        }
+    }
+
+    // Assigner les IDs pour les éléments du signal
+    const signalCursor = card.querySelector('.signal-cursor');
+    const signalValue = card.querySelector('.signal-value');
+    const signalDescription = card.querySelector('.signal-description');
+
+    if (signalCursor) signalCursor.id = `signal-cursor-${stock.symbol}`;
+    if (signalValue) signalValue.id = `signal-value-${stock.symbol}`;
+    if (signalDescription) signalDescription.id = `signal-description-${stock.symbol}`;
 
     const info = card.querySelectorAll('.info-value')
     if (info.length===4) {

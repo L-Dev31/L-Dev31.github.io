@@ -16,6 +16,7 @@ const periods = {
 };
 
 import globalRateLimiter from '../rate-limiter.js';
+import { filterNullDataPoints } from '../general.js';
 
 export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal, apiKey) {
   console.log(`\n🔍 === FETCH Yahoo ${ticker} (${name}) période ${period} ===`);
@@ -80,20 +81,30 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
       const t = res.timestamp;
       const c = q.close;
 
+      // Filtrer les points null dès la source
+      const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(t, c);
+
+      console.log(`🔍 Données brutes: ${t.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
+
+      if (filteredTimestamps.length === 0) {
+        console.log(`📊 ${yahooSymbol} - Aucune donnée valide après filtrage des valeurs null`);
+        return { source: "yahoo", error: true, errorCode: "NO_VALID_DATA" };
+      }
+
       const data = {
         source: "yahoo",
-        timestamps: t,
-        prices: c,
-        open: c[0],
-        high: Math.max(...c),
-        low: Math.min(...c),
-        price: c[c.length - 1]
+        timestamps: filteredTimestamps,
+        prices: filteredPrices,
+        open: filteredPrices[0],
+        high: Math.max(...filteredPrices),
+        low: Math.min(...filteredPrices),
+        price: filteredPrices[filteredPrices.length - 1]
       };
 
       data.changePercent = ((data.price - data.open) / data.open) * 100;
       data.change = data.price - data.open;
 
-      console.log(`✅ ${t.length} points Yahoo récupérés via proxy`);
+      console.log(`✅ ${filteredTimestamps.length} points Yahoo valides récupérés via proxy`);
       console.log(`💰 Prix Yahoo: ${data.price}`);
 
       return data;

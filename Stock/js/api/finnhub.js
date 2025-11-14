@@ -18,6 +18,7 @@ const resMap = {
 function toUnix(ts) { return Math.floor(ts/1000); }
 
 import globalRateLimiter from '../rate-limiter.js';
+import { filterNullDataPoints } from '../general.js';
 
 export async function fetchFromFinnhub(ticker, period="1D", symbol, typeOrStock, name, signal, apiKey){
   const key = `${ticker}:${period}`;
@@ -42,14 +43,26 @@ export async function fetchFromFinnhub(ticker, period="1D", symbol, typeOrStock,
       const j = await r.json();
       if (j.s !== "ok" || !j.t?.length) return { source: "finnhub", error: true, errorCode: 404, raw: j, errorMessage: j.s || "no_data" };
       const prices = j.c;
+      const timestamps = j.t;
+
+      // Filtrer les points null dès la source
+      const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(timestamps, prices);
+
+      console.log(`🔍 Données brutes: ${timestamps.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
+
+      if (filteredTimestamps.length === 0) {
+        console.log(`📊 ${finnhubSymbol} - Aucune donnée valide après filtrage des valeurs null`);
+        return { source: "finnhub", error: true, errorCode: "NO_VALID_DATA" };
+      }
+
       const data = {
         source: "finnhub",
-        timestamps: j.t,
-        prices,
-        open: prices[0] ?? null,
-        high: Math.max(...prices),
-        low: Math.min(...prices),
-        price: prices[prices.length-1] ?? null
+        timestamps: filteredTimestamps,
+        prices: filteredPrices,
+        open: filteredPrices[0] ?? null,
+        high: Math.max(...filteredPrices),
+        low: Math.min(...filteredPrices),
+        price: filteredPrices[filteredPrices.length-1] ?? null
       };
       if (data.open && data.price) {
         data.change = data.price - data.open;

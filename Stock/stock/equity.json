@@ -31,7 +31,7 @@
     "currency": "EUR",
     "type": "equity",
     "purchases": [
-      {"date": "2025-11-12", "amount": -100.75, "shares": 65}
+      {"date": "2025-11-12", "amount": -104.52, "shares": 65}
     ],
     "sales": [],
     "api_mapping": {

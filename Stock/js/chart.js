@@ -197,7 +197,7 @@ function showGlobalShiftTooltip() {
     // Animation d'apparition
     setTimeout(() => {
         globalShiftTooltip.classList.add('show')
-    }, 10)
+    }, 50)
 }
 
 function hideGlobalShiftTooltip() {
@@ -209,7 +209,7 @@ function hideGlobalShiftTooltip() {
             globalShiftTooltip.parentNode.removeChild(globalShiftTooltip)
         }
         globalShiftTooltip = null
-    }, 300)
+    }, 450)
 }
 
 // Écouter les événements clavier globalement (une seule fois)
@@ -247,33 +247,29 @@ export function updateChart(symbol, timestamps, prices, positions, source) {
     const c = positions[symbol].chart
     if (!c || !timestamps) return
 
-    // NE PAS filtrer les données - garder tous les points pour éviter les gaps étranges
-    // Les trous seront gérés dans l'affichage des labels
+    // Les données sont déjà filtrées à la source, pas besoin de refiltrer
+    let finalTimestamps = timestamps
+    let finalPrices = prices
 
     // Limiter à 300 points maximum pour éviter trop de labels, SAUF pour Yahoo Finance
-    if (source !== 'yahoo' && timestamps.length > 300) {
-        const step = Math.ceil(timestamps.length / 300);
+    if (source !== 'yahoo' && finalTimestamps.length > 300) {
+        const step = Math.ceil(finalTimestamps.length / 300);
         const sampledTimestamps = [];
         const sampledPrices = [];
-        for (let i = 0; i < timestamps.length; i += step) {
-            sampledTimestamps.push(timestamps[i]);
-            sampledPrices.push(prices[i]);
+        for (let i = 0; i < finalTimestamps.length; i += step) {
+            sampledTimestamps.push(finalTimestamps[i]);
+            sampledPrices.push(finalPrices[i]);
         }
-        timestamps = sampledTimestamps;
-        prices = sampledPrices;
+        finalTimestamps = sampledTimestamps;
+        finalPrices = sampledPrices;
     }
 
-    console.log(`📊 Mise à jour chart ${symbol}: ${timestamps.length} timestamps, ${prices.length} prices`)
+    console.log(`📊 Mise à jour chart ${symbol}: ${finalTimestamps.length} timestamps (déjà filtrés), ${finalPrices.length} prices`)
 
     const period = positions[symbol].currentPeriod || '1D'
 
     // Logique d'affichage des labels selon la période
-    c.data.labels = timestamps.map((ts, index) => {
-        // Si le timestamp ou le prix est null/undefined, retourner un label vide
-        if (ts == null || prices[index] == null || isNaN(prices[index])) {
-            return '';
-        }
-
+    c.data.labels = finalTimestamps.map((ts, index) => {
         const d = new Date(ts * 1000)
 
         switch(period) {
@@ -307,8 +303,8 @@ export function updateChart(symbol, timestamps, prices, positions, source) {
         }
     })
 
-    c.data.datasets[0].data = prices
-    c.data.timestamps = timestamps
+    c.data.datasets[0].data = finalPrices
+    c.data.timestamps = finalTimestamps
     c.update('none')
     
     // Reset complètement le zoom lors du changement de période

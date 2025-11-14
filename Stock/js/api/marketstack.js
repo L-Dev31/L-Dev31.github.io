@@ -1,4 +1,5 @@
 import globalRateLimiter from '../rate-limiter.js';
+import { filterNullDataPoints } from '../general.js';
 
 // Utilise la valeur brute de api_mapping.marketstack pour le symbole dans les fetchs
 export function getMarketstackSymbol(stock) {
@@ -90,14 +91,24 @@ export async function fetchFromMarketstack(ticker, period, symbol, typeOrStock, 
       return baseTime + (16 * 60 * 60);
     });
 
+    // Filtrer les points null dès la source
+    const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(timestamps, prices);
+
+    console.log(`🔍 Données brutes: ${timestamps.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
+
+    if (filteredTimestamps.length === 0) {
+      console.log(`📊 ${marketstackSymbol} - Aucune donnée valide après filtrage des valeurs null`);
+      return { source: "marketstack", error: true, errorCode: "NO_VALID_DATA" };
+    }
+
     const data = {
       source: "marketstack",
-      timestamps,
-      prices,
-      open: sortedData[0]?.open || prices[0] || null,
-      high: Math.max(...sortedData.map(k => k.high || 0)),
-      low: Math.min(...sortedData.map(k => k.low || Infinity)),
-      price: prices[prices.length - 1],
+      timestamps: filteredTimestamps,
+      prices: filteredPrices,
+      open: filteredPrices[0],
+      high: Math.max(...filteredPrices),
+      low: Math.min(...filteredPrices),
+      price: filteredPrices[filteredPrices.length - 1],
       exchange: sortedData[0]?.exchange || null
     };
 

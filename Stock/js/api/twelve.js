@@ -1,4 +1,5 @@
 import globalRateLimiter from '../rate-limiter.js';
+import { filterNullDataPoints } from '../general.js';
 
 // Utilise la valeur brute de api_mapping.twelve_data pour le symbole dans les fetchs
 export function getTwelveDataSymbol(stock) {
@@ -70,14 +71,26 @@ export async function fetchFromTwelveData(ticker, period, symbol, typeOrStock, n
     console.log(`ℹ️ ${filteredValues.length} points Twelve Data conservés pour la période ${period}`);
 
     const prices = filteredValues.map(v => parseFloat(v.close) || 0);
+    const timestamps = filteredValues.map(v => Math.floor(new Date(v.datetime).getTime() / 1000));
+
+    // Filtrer les points null dès la source
+    const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(timestamps, prices);
+
+    console.log(`🔍 Données brutes: ${timestamps.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
+
+    if (filteredTimestamps.length === 0) {
+      console.log(`📊 ${twelveSymbol} - Aucune donnée valide après filtrage des valeurs null`);
+      return { source: "twelvedata", error: true, errorCode: "NO_VALID_DATA" };
+    }
+
     const data = {
       source: "twelvedata",
-      timestamps: filteredValues.map(v => Math.floor(new Date(v.datetime).getTime() / 1000)),
-      prices,
-      open: parseFloat(filteredValues[0]?.open) || prices[0] || null,
-      high: Math.max(...prices),
-      low: Math.min(...prices),
-      price: prices[prices.length - 1]
+      timestamps: filteredTimestamps,
+      prices: filteredPrices,
+      open: parseFloat(filteredValues[0]?.open) || filteredPrices[0] || null,
+      high: Math.max(...filteredPrices),
+      low: Math.min(...filteredPrices),
+      price: filteredPrices[filteredPrices.length - 1]
     };
     
     if (data.open && data.price) {

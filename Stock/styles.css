@@ -207,7 +207,7 @@ html {
     font-size: 17px;
     color: #a8a2ff;
     font-weight: 600;
-    margin: 40px 0 10px 0;
+    margin: 50px 0 10px 0;
     letter-spacing: 0.2px;
     border-left: 4px solid #a8a2ff;
     padding-left: 10px;
@@ -478,18 +478,15 @@ body {
 
 .performance-value.positive {
     color: #86efac;
-    text-shadow: 0 0 20px rgba(134, 239, 172, 0.3);
 }
 
 .performance-value.negative {
     color: #fca5a5;
-    text-shadow: 0 0 20px rgba(252, 165, 165, 0.3);
 }
 
 /* Neutral (zero) performance: pastel yellow */
 .performance-value.neutral {
     color: #f7e7a9; /* pastel yellow */
-    text-shadow: 0 0 14px rgba(247, 231, 169, 0.22);
 }
 
 /* Valeurs positives et négatives */
@@ -823,11 +820,13 @@ body {
     font-family: 'Poppins', sans-serif;
     user-select: none;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transform: translateY(-5px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .shift-tooltip.show {
     opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
 .shift-tooltip > div {
@@ -856,3 +855,286 @@ body {
     font-size: 10px !important;
     opacity: 0.8 !important;
 }
+
+/* ========== SIGNAL D'ACHAT/VENTE STYLES ========== */
+.signal-container {
+    margin: 20px 0;
+}
+
+.signal-bar {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.signal-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        #8b0000 0%,      /* Rouge foncé */
+        #ff4757 30%,     /* Rouge */
+        #ffd54f 50%,     /* Jaune au milieu */
+        #4caf50 70%,     /* Vert */
+        #1b5e20 100%     /* Vert foncé */
+    );
+    border-radius: 20px;
+}
+
+.signal-cursor {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 100%;
+    background: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    z-index: 2;
+    transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+}
+
+.signal-cursor:hover {
+    width: 3px;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 1);
+}
+
+.signal-cursor .signal-indicator {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid #ffffff;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.signal-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.signal-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.signal-label.sell-label {
+    color: #ff4757;
+}
+
+.signal-label.hold-label {
+    color: #ffd54f;
+}
+
+.signal-label.buy-label {
+    color: #4caf50;
+}
+
+.signal-value {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #a8a2ff;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.signal-description {
+    text-align: center;
+    font-size: 12px;
+    color: #e8e9f3;
+    opacity: 0.8;
+    font-style: italic;
+}
+
+/* ========== SIGNAL STATE CONTAINER ========== */
+.signal-state-container {
+    background: linear-gradient(to top, rgba(168,162,255,0.01) 0%, rgba(153, 149, 219, 0.2) 100%);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: left;
+    border: 1px solid rgba(168, 162, 255, 0.2);
+    border-left: 4px solid #ffd54f; /* Jaune pour l'état neutre/garder */
+    margin: 15px 0;
+}
+
+.signal-state-container.sell-state {
+    border-left-color: #ff4757; /* Rouge pour vendre */
+}
+
+.signal-state-container.buy-state {
+    border-left-color: #4caf50; /* Vert pour acheter */
+}
+
+.signal-state-container.insufficient-state {
+    border-left-color: #a8a2ff; /* Violet pastel pour données insuffisantes */
+}
+
+.signal-state-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffd54f;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.signal-state-container.sell-state .signal-state-title {
+    color: #ff4757;
+}
+
+.signal-state-container.buy-state .signal-state-title {
+    color: #4caf50;
+}
+
+.signal-state-container.insufficient-state .signal-state-title {
+    color: #a8a2ff;
+}
+
+.signal-state-description {
+    font-size: 14px;
+    color: #e8e9f3;
+    opacity: 0.9;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+.signal-explanation {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(168, 162, 255, 0.2);
+}
+
+.explanation-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    color: #a8a2ff; /* Violet pastel par défaut */
+}
+
+.explanation-content {
+    font-size: 12px;
+    color: #e8e9f3;
+    opacity: 0.8;
+    line-height: 1.5;
+}
+
+.explanation-content p {
+    margin-bottom: 8px;
+}
+
+.explanation-content ul {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.explanation-content li {
+    margin-bottom: 4px;
+}
+
+.explanation-content em {
+    font-style: italic;
+    opacity: 0.9;
+}
+
+/* Couleur des éléments em selon l'état du signal */
+.signal-state-container .explanation-content em {
+    color: #ffd54f; /* Couleur par défaut pour "Garder" */
+}
+
+.signal-state-container.sell-state .explanation-content em {
+    color: #ff4757; /* Rouge pour "Vendre" */
+}
+
+.signal-state-container.buy-state .explanation-content em {
+    color: #4caf50; /* Vert pour "Acheter" */
+}
+
+/* Animation du curseur */
+@keyframes signalPulse {
+    0% { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); }
+    50% { box-shadow: 0 4px 12px rgba(255, 255, 255, 0.4); }
+    100% { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); }
+}
+
+.signal-cursor.animated {
+    animation: signalPulse 2s infinite;
+}
+
+.signal-explanation-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(168, 162, 255, 0.2);
+}
+
+.signal-table-header {
+    padding: 10px;
+    color: #a8a2ff;
+    font-size: 13px;
+    text-align: left;
+    background: rgba(168, 162, 255, 0.08);
+    border-bottom: 1px solid rgba(168, 162, 255, 0.2);
+}
+
+.signal-table-cell {
+    padding: 10px;
+    color: #e8e9f3;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(168, 162, 255, 0.1);
+}
+
+.signal-explanation-table tbody tr:nth-child(odd) {
+    background: none;
+}
+
+.signal-explanation-table tbody tr:nth-child(even) {
+    background: none;
+}
+
+.signal-explanation-table tbody tr:last-child .signal-table-cell {
+    border-bottom: none;
+}
+
+/* Signal value cell colors based on signal state */
+.signal-value-buy {
+    color: #4caf50 !important; /* Green for buy signals */
+    font-weight: 600;
+}
+
+.signal-value-hold {
+    color: #ffd54f !important; /* Yellow for hold signals */
+    font-weight: 600;
+}
+
+.signal-value-sell {
+    color: #ff4757 !important; /* Red for sell signals */
+    font-weight: 600;
+}
+
+.signal-value-neutral {
+    color: #ffffff !important; /* White for neutral values that don't change status */
+    font-weight: 400;
+}
+
+/* Force cache refresh */

@@ -6,6 +6,7 @@ export function getAlphaVantageSymbol(stock) {
 }
 
 import globalRateLimiter from '../rate-limiter.js';
+import { filterNullDataPoints } from '../general.js';
 
 const periods = {
   "1D": { days: 1 },
@@ -134,14 +135,24 @@ export async function fetchFromAlphaVantage(ticker, period, symbol, typeOrStock,
     const prices = relevantDates.map(date => parseFloat(timeSeries[date]['4. close']) || 0);
     const timestamps = relevantDates.map(date => Math.floor(new Date(date).getTime() / 1000));
 
+    // Filtrer les points null dès la source
+    const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(timestamps, prices);
+
+    console.log(`🔍 Données brutes: ${timestamps.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
+
+    if (filteredTimestamps.length === 0) {
+      console.log(`📊 ${alphaVantageSymbol} - Aucune donnée valide après filtrage des valeurs null`);
+      return { source: "alphavantage", error: true, errorCode: "NO_VALID_DATA" };
+    }
+
     const data = {
       source: "alphavantage",
-      timestamps,
-      prices,
-      open: parseFloat(timeSeries[relevantDates[0]]['1. open']) || prices[0],
-      high: Math.max(...relevantDates.map(date => parseFloat(timeSeries[date]['2. high']) || 0)),
-      low: Math.min(...relevantDates.map(date => parseFloat(timeSeries[date]['3. low']) || Infinity)),
-      price: prices[prices.length - 1]
+      timestamps: filteredTimestamps,
+      prices: filteredPrices,
+      open: parseFloat(timeSeries[relevantDates[0]]['1. open']) || filteredPrices[0],
+      high: Math.max(...filteredPrices),
+      low: Math.min(...filteredPrices),
+      price: filteredPrices[filteredPrices.length - 1]
     };
 
     // Pour 1D avec un seul point, utiliser la même valeur pour open/high/low si pas disponible

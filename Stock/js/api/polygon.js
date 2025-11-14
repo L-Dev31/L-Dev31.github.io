@@ -14,6 +14,7 @@ const periods = {
 };
 
 import globalRateLimiter from '../rate-limiter.js';
+import { filterNullDataPoints } from '../general.js';
 
 export async function fetchFromPolygon(ticker, period, symbol, typeOrStock, name, signal, apiKey) {
   // Utilise symbol pour Polygon, sans formatage
@@ -99,16 +100,26 @@ export async function fetchFromPolygon(ticker, period, symbol, typeOrStock, name
       const timestamps = results.map(r => Math.floor(r.t / 1000));
       const prices = results.map(r => r.c);
 
-      console.log(`ℹ️ Traitement des données: ${timestamps.length} timestamps, ${prices.length} prix`);
+      // Filtrer les points null dès la source
+      const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(timestamps, prices);
+
+      console.log(`🔍 Données brutes: ${timestamps.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
+
+      if (filteredTimestamps.length === 0) {
+        console.log(`📊 ${polygonSymbol} - Aucune donnée valide après filtrage des valeurs null`);
+        return { source: "massive", error: true, errorCode: "NO_VALID_DATA" };
+      }
+
+      console.log(`ℹ️ Traitement des données: ${filteredTimestamps.length} timestamps, ${filteredPrices.length} prix`);
 
       let data = {
         source: "massive",
-        timestamps,
-        prices: [...prices],
-        open: results[0].o,
-        high: Math.max(...results.map(r => r.h)),
-        low: Math.min(...results.map(r => r.l)),
-        price: results[results.length - 1].c
+        timestamps: filteredTimestamps,
+        prices: [...filteredPrices],
+        open: filteredPrices[0],
+        high: Math.max(...filteredPrices),
+        low: Math.min(...filteredPrices),
+        price: filteredPrices[filteredPrices.length - 1]
       };
 
       // Currency management: if not USD, convert to EUR using eurRate
