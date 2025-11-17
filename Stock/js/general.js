@@ -548,9 +548,39 @@ async function updateUI(symbol, data) {
             }
             return;
         }
+        // No data for the selected period -> clear period-specific UI to avoid showing stale data
+        clearPeriodDisplay(symbol);
         setApiStatus(symbol, 'noinfo', { api: data?.source, errorCode: data?.errorCode });
         return;
     }
+
+    // Ensure details and signal sections are visible again when valid data arrives
+    try {
+        const cardRoot = document.getElementById(`card-${symbol}`);
+        if (cardRoot) {
+            const detailsTitle = cardRoot.querySelector('.details-title');
+            if (detailsTitle) {
+                detailsTitle.style.display = '';
+                const detDate = detailsTitle.nextElementSibling;
+                if (detDate && detDate.classList.contains('section-date')) detDate.style.display = '';
+            }
+            const infoGrid = cardRoot.querySelector('.info-grid');
+            if (infoGrid) infoGrid.style.display = '';
+
+            const signalTitle = cardRoot.querySelector('.signal-title');
+            if (signalTitle) {
+                signalTitle.style.display = '';
+                const sigDate = signalTitle.nextElementSibling;
+                if (sigDate && sigDate.classList.contains('section-date')) sigDate.style.display = '';
+            }
+            const signalContainer = cardRoot.querySelector('.signal-container');
+            if (signalContainer) signalContainer.style.display = '';
+            const labelsEl = cardRoot.querySelector('.signal-labels');
+            if (labelsEl) labelsEl.style.display = '';
+            const barEl = cardRoot.querySelector('.signal-bar');
+            if (barEl) barEl.style.display = '';
+        }
+    } catch (e) { /* ignore UI restore errors */ }
 
     // Conversion USD→EUR supprimée, désormais gérée dans polygon.js
 
@@ -1307,4 +1337,71 @@ function createCard(stock) {
     }
 
     document.getElementById('cards-container')?.appendChild(card)
+}
+
+function clearPeriodDisplay(symbol) {
+    if (!positions[symbol]) return;
+    // Clear chart data but keep chart instance
+    if (positions[symbol].chart) {
+        positions[symbol].chart.data.labels = [];
+        if (positions[symbol].chart.data.datasets && positions[symbol].chart.data.datasets[0]) {
+            positions[symbol].chart.data.datasets[0].data = [];
+        }
+        positions[symbol].chart.data.timestamps = [];
+        try { positions[symbol].chart.update('none'); } catch (e) { /* ignore */ }
+    }
+
+    // Clear basic price info
+    const openEl = document.getElementById(`open-${symbol}`);
+    const highEl = document.getElementById(`high-${symbol}`);
+    const lowEl = document.getElementById(`low-${symbol}`);
+    const closeEl = document.getElementById(`close-${symbol}`);
+    if (openEl) openEl.textContent = '--';
+    if (highEl) highEl.textContent = '--';
+    if (lowEl) lowEl.textContent = '--';
+    if (closeEl) closeEl.textContent = '--';
+
+    // Clear perf and update time
+    const perfEl = document.getElementById(`perf-${symbol}`);
+    if (perfEl) { perfEl.textContent = '--'; perfEl.className = 'performance-value'; }
+    const updateEl = document.getElementById(`update-center-${symbol}`);
+    if (updateEl) updateEl.textContent = 'Dernière mise à jour : --';
+
+    // Clear signal UI and hide explanation
+    const signalCursor = document.getElementById(`signal-cursor-${symbol}`);
+    const signalValue = document.getElementById(`signal-value-${symbol}`);
+    const signalDescription = document.getElementById(`signal-description-${symbol}`);
+    if (signalCursor) signalCursor.style.left = '50%';
+    if (signalValue) { signalValue.textContent = 'Neutre'; signalValue.style.color = '#a8a2ff'; }
+    if (signalDescription) signalDescription.textContent = 'Pas de données pour cette période';
+
+    const cardRoot = document.querySelector(`#card-${symbol}`);
+    if (cardRoot) {
+        const labelsEl = cardRoot.querySelector('.signal-labels');
+        const barEl = cardRoot.querySelector('.signal-bar');
+        const signalExplanation = cardRoot.querySelector('.signal-explanation');
+        const explanationContent = cardRoot.querySelector('.explanation-content');
+        if (labelsEl) labelsEl.style.display = 'none';
+        if (barEl) barEl.style.display = 'none';
+        if (signalExplanation) signalExplanation.style.display = 'none';
+        if (explanationContent) explanationContent.innerHTML = '';
+        // Hide the entire details and signal sections so they don't appear when no data
+        const detailsTitle = cardRoot.querySelector('.details-title');
+        if (detailsTitle) {
+            detailsTitle.style.display = 'none';
+            const detDate = detailsTitle.nextElementSibling;
+            if (detDate && detDate.classList.contains('section-date')) detDate.style.display = 'none';
+        }
+        const infoGrid = cardRoot.querySelector('.info-grid');
+        if (infoGrid) infoGrid.style.display = 'none';
+
+        const signalTitle = cardRoot.querySelector('.signal-title');
+        if (signalTitle) {
+            signalTitle.style.display = 'none';
+            const sigDate = signalTitle.nextElementSibling;
+            if (sigDate && sigDate.classList.contains('section-date')) sigDate.style.display = 'none';
+        }
+        const signalContainer = cardRoot.querySelector('.signal-container');
+        if (signalContainer) signalContainer.style.display = 'none';
+    }
 }

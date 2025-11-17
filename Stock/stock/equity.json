@@ -41,4 +41,39 @@
       "alpha_vantage": "ALUNT.PAR"
     }
   }
+  ,
+  {
+    "symbol": "BLC",
+    "ticker": "BLC",
+    "name": "Bastide Le Confort Médical",
+    "isin": "",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity",
+    "purchases": [],
+    "sales": [],
+    "api_mapping": {
+      "yahoo": "BLC.PA",
+      "twelve_data": "BLC:PAR",
+      "polygon": "BLC.PA",
+      "alpha_vantage": "BLC.PAR"
+    }
+  },
+  {
+    "symbol": "ALCAR",
+    "ticker": "ALCAR.PA",
+    "name": "Carmat SA",
+    "isin": "",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity",
+    "purchases": [],
+    "sales": [],
+    "api_mapping": {
+      "yahoo": "ALCAR.PA",
+      "twelve_data": "ALCAR:PAR",
+      "polygon": "ALCAR.PA",
+      "alpha_vantage": "ALCAR.PAR"
+    }
+  }
 ]
