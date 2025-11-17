@@ -184,10 +184,11 @@ function startRateLimitCountdown(seconds) {
         if (el) {
             const spinner = el.querySelector('[data-role="spinner"]');
                 if (spinner) {
-                // Only render the spinner here; the countdown text is managed
-                // by updateApiCountdown which creates a single wrapper inside
-                // the spinner row. Avoid injecting a second .countdown-text.
-                spinner.innerHTML = `<span class="api-spinner"></span>`;
+                    if (!spinner.querySelector('.api-spinner')) {
+                        const s = document.createElement('span');
+                        s.className = 'api-spinner';
+                        spinner.appendChild(s);
+                    }
             }
         }
         
@@ -237,7 +238,11 @@ function startGlobalRateLimitCountdown() {
                 if (remaining > 0) {
                     updateApiCountdown(remaining);
                 } else {
-                    spinner.innerHTML = `<span class="api-spinner"></span>`;
+                    if (!spinner.querySelector('.api-spinner')) {
+                        const s = document.createElement('span');
+                        s.className = 'api-spinner';
+                        spinner.appendChild(s);
+                    }
                     clearInterval(rateLimitCountdownTimer);
                     rateLimitCountdownTimer = null;
                     setApiStatus(null, 'active', { api: selectedApi });
@@ -265,7 +270,7 @@ function updateApiCountdown(seconds) {
         // try to create a spinner area at the end of the indicator
         spinner = document.createElement('div');
         spinner.setAttribute('data-role', 'spinner');
-        spinner.style.display = 'flex';
+        spinner.classList.add('api-indicator-spinner-row', 'column');
         el.appendChild(spinner);
     }
 
@@ -273,10 +278,7 @@ function updateApiCountdown(seconds) {
     // prefer using the dedicated spinner row already present in the template
     const spinnerRow = el.querySelector('[data-role="spinner"]');
     if (spinnerRow) {
-        spinnerRow.style.display = 'flex';
-        spinnerRow.style.flexDirection = 'column';
-        spinnerRow.style.alignItems = 'center';
-        spinnerRow.style.gap = '6px';
+        spinnerRow.classList.add('column');
 
         // Clear existing spinner area to avoid duplicates, then create
         // a single horizontal wrapper where the countdown text sits
@@ -284,19 +286,18 @@ function updateApiCountdown(seconds) {
         spinnerRow.innerHTML = '';
         let wrapper = document.createElement('div');
         wrapper.className = 'api-countdown-wrapper';
-        wrapper.style.display = 'flex';
-        wrapper.style.flexDirection = 'row';
-        wrapper.style.alignItems = 'center';
-        wrapper.style.gap = '8px';
 
         const textElem = document.createElement('div');
         textElem.className = 'countdown-text';
-        textElem.style.margin = '0';
         textElem.textContent = `Limite atteinte, veuillez patienter... (${seconds}s)`;
 
         const spinnerElem = document.createElement('div');
         spinnerElem.className = 'api-spinner-wrapper';
-        spinnerElem.innerHTML = `<span class="api-spinner"></span>`;
+        if (!spinnerElem.querySelector('.api-spinner')) {
+            const s = document.createElement('span');
+            s.className = 'api-spinner';
+            spinnerElem.appendChild(s);
+        }
 
         // Append text first so spinner appears to the right
         wrapper.appendChild(textElem);
@@ -311,20 +312,19 @@ function updateApiCountdown(seconds) {
         // Fallback: create a horizontal wrapper under the main element
         wrapper = document.createElement('div');
         wrapper.className = 'api-countdown-wrapper';
-        wrapper.style.display = 'flex';
-        wrapper.style.flexDirection = 'row';
-        wrapper.style.alignItems = 'center';
-        wrapper.style.gap = '8px';
-        wrapper.style.marginTop = '6px';
+        wrapper.classList.add('api-countdown-wrapper');
 
         const textElem = document.createElement('div');
         textElem.className = 'countdown-text';
-        textElem.style.margin = '0';
         textElem.textContent = `Limite atteinte, veuillez patienter... (${seconds}s)`;
 
         const spinnerElem = document.createElement('div');
         spinnerElem.className = 'api-spinner-wrapper';
-        spinnerElem.innerHTML = `<span class="api-spinner"></span>`;
+        if (!spinnerElem.querySelector('.api-spinner')) {
+            const s = document.createElement('span');
+            s.className = 'api-spinner';
+            spinnerElem.appendChild(s);
+        }
 
         wrapper.appendChild(textElem);
         wrapper.appendChild(spinnerElem);
@@ -388,15 +388,23 @@ async function setApiStatus(symbol, status, opts = {}) {
     } catch (e) { /* ignore */ }
     const expanded = content.querySelector('.api-expanded');
     if (expanded) {
-        expanded.innerHTML = config.ui.validApis.map(api =>
-            `<div class="api-option" data-api="${api}">${config.apis[api].name}</div>`
-        ).join('');
+        expanded.innerHTML = '';
+        const optTpl = document.getElementById('api-option-template');
+        config.ui.validApis.forEach(api => {
+            const opt = optTpl ? optTpl.content.firstElementChild.cloneNode(true) : document.createElement('div');
+            opt.classList.add('api-option');
+            opt.dataset.api = api;
+            opt.textContent = config.apis[api].name;
+            expanded.appendChild(opt);
+        });
     }
     const spinner = content.querySelector('[data-role="spinner"]');
     if (spinner && opts.loadingFallback) {
-        spinner.style.display = 'flex';
+        spinner.classList.remove('hidden-by-bot');
         if (!spinner.querySelector('.api-spinner')) {
-            spinner.innerHTML = `<span class="api-spinner"></span>`;
+            const s = document.createElement('span');
+            s.className = 'api-spinner';
+            spinner.appendChild(s);
         }
     }
     el.innerHTML = '';
@@ -939,7 +947,7 @@ async function loadStocks() {
             portSection.id = `portfolio-section-${type}`;
             const portTitle = document.createElement('div');
             portTitle.className = 'tab-type-title';
-            portTitle.innerHTML = `<i class="${iconClass}" style="margin-right:7px;"></i>${typeLabel}`;
+            portTitle.innerHTML = `<i class="${iconClass} type-icon"></i>${typeLabel}`;
             portSection.appendChild(portTitle);
             document.getElementById('portfolio-tabs').appendChild(portSection);
         }
@@ -949,7 +957,7 @@ async function loadStocks() {
             genSection.id = `general-section-${type}`;
             const genTitle = document.createElement('div');
             genTitle.className = 'tab-type-title';
-            genTitle.innerHTML = `<i class="${iconClass}" style="margin-right:7px;"></i>${typeLabel}`;
+            genTitle.innerHTML = `<i class="${iconClass} type-icon"></i>${typeLabel}`;
             genSection.appendChild(genTitle);
             document.getElementById('general-tabs').appendChild(genSection);
         }
@@ -1324,15 +1332,24 @@ function createCard(stock) {
             }
             // Sort transactions by date desc
             transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-            tbody.innerHTML = transactions.map(t => `
-                <tr class="${t.type === 'Achat' ? 'transaction-buy' : 'transaction-sell'}">
-                    <td>${new Date(t.date).toLocaleDateString('fr-FR')}</td>
-                    <td>${t.type}</td>
-                    <td>${Math.abs(t.amount).toFixed(2)} €</td>
-                    <td>${t.shares}</td>
-                    <td>${(Math.abs(t.amount) / t.shares).toFixed(2)} €</td>
-                </tr>
-            `).join('');
+            // Build table rows using the template instead of string concatenation
+            const rowTpl = document.getElementById('transaction-row-template');
+            tbody.innerHTML = '';
+            transactions.forEach(t => {
+                const row = rowTpl ? rowTpl.content.firstElementChild.cloneNode(true) : document.createElement('tr');
+                row.classList.add(t.type === 'Achat' ? 'transaction-buy' : 'transaction-sell');
+                const dateEl = row.querySelector('.trans-date');
+                const typeEl = row.querySelector('.trans-type');
+                const amountEl = row.querySelector('.trans-amount');
+                const sharesEl = row.querySelector('.trans-shares');
+                const priceEl = row.querySelector('.trans-price');
+                if (dateEl) dateEl.textContent = new Date(t.date).toLocaleDateString('fr-FR');
+                if (typeEl) typeEl.textContent = t.type;
+                if (amountEl) amountEl.textContent = Math.abs(t.amount).toFixed(2) + ' €';
+                if (sharesEl) sharesEl.textContent = t.shares;
+                if (priceEl) priceEl.textContent = (Math.abs(t.amount) / t.shares).toFixed(2) + ' €';
+                tbody.appendChild(row);
+            });
         }
     }
 

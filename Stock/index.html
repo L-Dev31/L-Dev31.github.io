@@ -179,18 +179,132 @@
                     </div>
                 </div>
             </template>
-            <template id="api-indicator-template">
-                <div style="display:flex;flex-direction:column;align-items:flex-start;">
-                    <div class="api-indicator-row" style="display:flex;align-items:center;">
-                        <span class="api-dot"></span>
-                        <img class="api-indicator-logo" src="" alt="">
-                        <span data-role="status-text" class="api-status-text"></span>
-                        <i class="fa-solid fa-chevron-down api-chevron"></i>
-                    </div>
-                    <div class="api-expanded" data-role="api-expanded"></div>
-                    <div data-role="spinner" class="api-indicator-spinner-row" style="display:none;"></div>
-                </div>
-            </template>
+                        <template id="api-indicator-template">
+                                <div class="api-indicator-root">
+                                        <div class="api-indicator-row">
+                                                <span class="api-dot"></span>
+                                                <img class="api-indicator-logo" src="" alt="">
+                                                <span data-role="status-text" class="api-status-text"></span>
+                                                <i class="fa-solid fa-chevron-down api-chevron"></i>
+                                        </div>
+                                        <div class="api-expanded" data-role="api-expanded"></div>
+                                        <div data-role="spinner" class="api-indicator-spinner-row hidden-by-bot"></div>
+                                </div>
+                        </template>
+
+                        <!-- Template for API option - to avoid building HTML strings in JS -->
+                        <template id="api-option-template">
+                                <div class="api-option" data-api=""></div>
+                        </template>
+
+                        <!-- Template for spinner + countdown area -->
+                        <template id="api-spinner-template">
+                                <div class="api-countdown-wrapper">
+                                        <div class="countdown-text">Limite atteinte, veuillez patienter... (0s)</div>
+                                        <div class="api-spinner-wrapper"><span class="api-spinner"></span></div>
+                                </div>
+                        </template>
+
+                        <!-- Template for the signal explanation table (use DOM clone instead of innerHTML in JS) -->
+                        <template id="signal-explanation-table-template">
+                                <table class="signal-explanation-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="signal-table-header">Indicateur</th>
+                                            <th class="signal-table-header">Valeur</th>
+                                            <th class="signal-table-header">Explication</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="signal-table-cell">RSI</td>
+                                            <td class="signal-table-cell rsi-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell rsi-desc">Mesure si l'actif est suracheté (>70) ou survendu (<30).</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">MACD Histogramme</td>
+                                            <td class="signal-table-cell macd-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell macd-desc">Compare deux moyennes mobiles.</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">SMA20</td>
+                                            <td class="signal-table-cell sma20-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell sma20-desc">Prix moyen des 20 dernières périodes</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">SMA50</td>
+                                            <td class="signal-table-cell sma50-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell sma50-desc">Prix moyen des 50 dernières périodes</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">SMA200</td>
+                                            <td class="signal-table-cell sma200-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell sma200-desc">Tendance long terme</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Momentum</td>
+                                            <td class="signal-table-cell momentum-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell momentum-desc">Vitesse du mouvement des prix</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Volume Ratio</td>
+                                            <td class="signal-table-cell volume-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell volume-desc">Volume actuel vs moyenne</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">ATR</td>
+                                            <td class="signal-table-cell atr-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell atr-desc">Mesure de la volatilité des prix</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Volatilité Multiplier</td>
+                                            <td class="signal-table-cell volatility-multiplier-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell volatility-desc">Réduction du signal en période volatile</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Signal Lissé</td>
+                                            <td class="signal-table-cell smoothed-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell smoothed-desc">Signal final après tous les calculs</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Taille Position</td>
+                                            <td class="signal-table-cell position-size-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell position-desc">Pourcentage du portefeuille à investir</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Stop Loss</td>
+                                            <td class="signal-table-cell stop-loss-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell stop-desc">Niveau de vente automatique pour limiter pertes</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Take Profit</td>
+                                            <td class="signal-table-cell take-profit-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell take-desc">Niveau de vente automatique pour prendre bénéfices</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                        </template>
+                        <template id="shift-tooltip-template">
+                            <div class="shift-tooltip" role="tooltip">
+                                <div>
+                                    <div class="shift-tooltip-content">
+                                        <div class="shift-tooltip-item">
+                                            <i class="fas fa-search-plus"></i>
+                                            <span>Scroll pour zoomer</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template id="transaction-row-template">
+                            <tr class="transaction-row">
+                                <td class="trans-date"></td>
+                                <td class="trans-type"></td>
+                                <td class="trans-amount"></td>
+                                <td class="trans-shares"></td>
+                                <td class="trans-price"></td>
+                            </tr>
+                        </template>
         </div>
 
 

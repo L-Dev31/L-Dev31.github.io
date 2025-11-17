@@ -63,6 +63,11 @@ html {
     align-items: center;
     cursor: pointer;
 }
+.api-indicator-root {
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+}
 .api-indicator-logo {
     width: 100px;
     height: auto;
@@ -90,6 +95,32 @@ html {
     display: flex;
     align-items: center;
     gap: 4px;
+}
+.api-indicator-spinner-row.column {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+.api-indicator-spinner-row.hidden-by-bot { display: none !important; }
+
+.api-countdown-wrapper {
+    display:flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items:center;
+}
+.api-countdown-wrapper { margin-top: 6px; }
+.api-spinner-wrapper { display:flex; align-items:center; }
+.api-spinner-wrapper .api-spinner { margin-left: 0; }
+.type-icon { margin-right: 7px; }
+
+.signal-disclaimer-root {
+    margin-top: 25px;
+    font-size: 10px;
+    color: #fff;
+    opacity: 0.5;
+    line-height: 1.4;
+    text-align: left;
 }
 /* Hide spinner row if not active (overridden inline for display:none) */
 /* ===================== API Indicator & Dropdown Styles ===================== */

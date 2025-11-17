@@ -434,90 +434,46 @@ function updateSignalUI(symbol, signalResult) {
           default: return 'signal-value-neutral';
         }
       };
-      explanationContent.innerHTML = `
-        <table class="signal-explanation-table">
-          <thead>
-            <tr>
-              <th class="signal-table-header">Indicateur</th>
-              <th class="signal-table-header">Valeur</th>
-              <th class="signal-table-header">Explication</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="signal-table-cell">RSI</td>
-              <td class="signal-table-cell ${getValueColor('rsi', e.rsi)}">${e.rsi.toFixed(2)}</td>
-              <td class="signal-table-cell">Mesure si l'actif est suracheté (>70) ou survendu (<30). ${e.rsi < 30 ? 'Survendu / Zone d\'achat' : e.rsi > 70 ? 'Suracheté / Zone de vente' : 'Neutre'}</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">MACD Histogramme</td>
-              <td class="signal-table-cell ${getValueColor('macd', e.macdHistogram)}">${e.macdHistogram.toFixed(4)}</td>
-              <td class="signal-table-cell">Compare deux moyennes mobiles. ${e.macdHistogram > 0 ? 'Tendance haussière' : 'Tendance baissière'}</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">SMA20</td>
-              <td class="signal-table-cell ${getValueColor('sma20', e.sma20)}">${e.sma20.toFixed(2)}</td>
-              <td class="signal-table-cell">Prix moyen des 20 dernières périodes</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">SMA50</td>
-              <td class="signal-table-cell ${getValueColor('sma50', e.sma50)}">${e.sma50.toFixed(2)}</td>
-              <td class="signal-table-cell">Prix moyen des 50 dernières périodes</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">SMA200</td>
-              <td class="signal-table-cell ${getValueColor('sma200', e.sma200)}">${e.sma200.toFixed(2)}${e.sma200Fallback ? ' (fallback)' : ''}</td>
-              <td class="signal-table-cell">Tendance long terme${e.sma200Fallback ? ' (calculée sur moins de 200 unités)' : ''}</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">Momentum</td>
-              <td class="signal-table-cell ${getValueColor('momentum', e.momentum)}">${e.momentum.toFixed(2)}%</td>
-              <td class="signal-table-cell">Vitesse du mouvement des prix</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">Volume Ratio</td>
-              <td class="signal-table-cell ${getValueColor('volume', e.volumeRatio)}">${e.volumeRatio.toFixed(2)}</td>
-              <td class="signal-table-cell">Volume actuel vs moyenne</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">ATR</td>
-              <td class="signal-table-cell ${getValueColor('atr', e.atr)}">${e.atr.toFixed(4)}</td>
-              <td class="signal-table-cell">Mesure de la volatilité des prix</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">Volatilité Multiplier</td>
-              <td class="signal-table-cell ${getValueColor('volatilityMultiplier', e.volatilityMultiplier)}">${e.volatilityMultiplier.toFixed(4)}</td>
-              <td class="signal-table-cell">Réduction du signal en période volatile</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">Signal Lissé</td>
-              <td class="signal-table-cell ${getValueColor('smoothed', e.smoothed)}">${e.smoothed.toFixed(4)}</td>
-              <td class="signal-table-cell">Signal final après tous les calculs</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">Taille Position</td>
-              <td class="signal-table-cell ${getValueColor('positionSize', e.positionSize)}">${(e.positionSize * 100).toFixed(2)}%</td>
-              <td class="signal-table-cell">Pourcentage du portefeuille à investir</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">Stop Loss</td>
-              <td class="signal-table-cell signal-value-neutral">${e.stopLoss.toFixed(4)}</td>
-              <td class="signal-table-cell">Niveau de vente automatique pour limiter pertes</td>
-            </tr>
-            <tr>
-              <td class="signal-table-cell">Take Profit</td>
-              <td class="signal-table-cell signal-value-neutral">${e.takeProfit.toFixed(4)}</td>
-              <td class="signal-table-cell">Niveau de vente automatique pour prendre bénéfices</td>
-            </tr>
-          </tbody>
-        </table>
+      // Use the signal explanation table template instead of building an innerHTML string
+      explanationContent.innerHTML = '';
+      const tpl = document.getElementById('signal-explanation-table-template');
+      if (tpl) {
+        const tableClone = tpl.content.cloneNode(true);
+        const setValue = (selector, value, colorClass) => {
+          const el = tableClone.querySelector(selector);
+          if (el) {
+            el.textContent = value;
+            if (colorClass) {
+              el.classList.remove('signal-value-buy','signal-value-sell','signal-value-neutral');
+              el.classList.add(colorClass);
+            }
+          }
+        };
+        // Fill values with colors
+        setValue('.rsi-value', e.rsi.toFixed(2), getValueColor('rsi', e.rsi));
+        setValue('.macd-value', e.macdHistogram.toFixed(4), getValueColor('macd', e.macdHistogram));
+        setValue('.sma20-value', e.sma20.toFixed(2), getValueColor('sma20', e.sma20));
+        setValue('.sma50-value', e.sma50.toFixed(2), getValueColor('sma50', e.sma50));
+        setValue('.sma200-value', `${e.sma200.toFixed(2)}${e.sma200Fallback ? ' (fallback)' : ''}`, getValueColor('sma200', e.sma200));
+        setValue('.momentum-value', `${e.momentum.toFixed(2)}%`, getValueColor('momentum', e.momentum));
+        setValue('.volume-value', e.volumeRatio.toFixed(2), getValueColor('volume', e.volumeRatio));
+        setValue('.atr-value', e.atr.toFixed(4), getValueColor('atr', e.atr));
+        setValue('.volatility-multiplier-value', e.volatilityMultiplier.toFixed(4), getValueColor('volatilityMultiplier', e.volatilityMultiplier));
+        setValue('.smoothed-value', e.smoothed.toFixed(4), getValueColor('smoothed', e.smoothed));
+        setValue('.position-size-value', `${(e.positionSize * 100).toFixed(2)}%`, getValueColor('positionSize', e.positionSize));
+        setValue('.stop-loss-value', e.stopLoss.toFixed(4), 'signal-value-neutral');
+        setValue('.take-profit-value', e.takeProfit.toFixed(4), 'signal-value-neutral');
 
-        <div style="margin-top:25px;font-size:10px;color:#fff;opacity:0.5;line-height:1.4;text-align:left;">
-          Disclaimer : Ce signal est fourni à titre informatif uniquement et ne constitue pas un conseil en investissement. Investissez uniquement ce que vous pouvez vous permettre de perdre.
-        </div>
-      `;
-      const card = document.querySelector(`#card-${symbol}`);
-      if (card) { const oldDisclaimer = card.querySelector('.signal-disclaimer-root'); if (oldDisclaimer) oldDisclaimer.remove(); }
+        explanationContent.appendChild(tableClone);
+      }
+
+      // Add a disclaimer below the table
+      if (cardRoot) { const oldDisclaimer = cardRoot.querySelector('.signal-disclaimer-root'); if (oldDisclaimer) oldDisclaimer.remove(); }
+      const disclaimer = document.createElement('div');
+      disclaimer.className = 'signal-disclaimer-root';
+      disclaimer.textContent = 'Disclaimer : Ce signal est fourni à titre informatif uniquement et ne constitue pas un conseil en investissement. Investissez uniquement ce que vous pouvez vous permettre de perdre.';
+      explanationContent.appendChild(disclaimer);
+      if (cardRoot) { const oldDisclaimer = cardRoot.querySelector('.signal-disclaimer-root'); if (oldDisclaimer) oldDisclaimer.remove(); }
     }
   }
   signalCursor.classList.add('animated');

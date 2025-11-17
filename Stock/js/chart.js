@@ -171,27 +171,19 @@ function showGlobalShiftTooltip() {
     const chartContainer = activeCard.querySelector('.chart-canvas')?.parentElement
     if (!chartContainer) return
 
-    // Créer un tooltip simple
-    globalShiftTooltip = document.createElement('div')
-    globalShiftTooltip.className = 'shift-tooltip'
-    globalShiftTooltip.innerHTML = `
-        <div>
-            <div class="shift-tooltip-content">
-                <div class="shift-tooltip-item">
-                    <i class="fas fa-search-plus"></i>
-                    <span>Scroll pour zoomer</span>
-                </div>
-            </div>
-        </div>
-    `
+    // Créer un tooltip simple à partir du template pour garder l'HTML dans index.html
+    const tpl = document.getElementById('shift-tooltip-template');
+    if (tpl) {
+        const clone = tpl.content.firstElementChild.cloneNode(true);
+        globalShiftTooltip = clone;
+    } else {
+        globalShiftTooltip = document.createElement('div');
+        globalShiftTooltip.className = 'shift-tooltip';
+    }
 
-    // Positionner dans le container du chart
-    globalShiftTooltip.style.position = 'absolute'
-    globalShiftTooltip.style.top = '10px'
-    globalShiftTooltip.style.right = '10px'
-    globalShiftTooltip.style.zIndex = '10'
+        // Positionner dans le container du chart — handled by CSS (.shift-tooltip and .chart-container)
 
-    chartContainer.style.position = 'relative'
+    // chart container position handled by CSS
     chartContainer.appendChild(globalShiftTooltip)
 
     // Animation d'apparition
