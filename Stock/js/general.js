@@ -560,25 +560,25 @@ async function updateUI(symbol, data) {
         if (cardRoot) {
             const detailsTitle = cardRoot.querySelector('.details-title');
             if (detailsTitle) {
-                detailsTitle.style.display = '';
+                detailsTitle.classList.remove('hidden-by-bot');
                 const detDate = detailsTitle.nextElementSibling;
-                if (detDate && detDate.classList.contains('section-date')) detDate.style.display = '';
+                if (detDate && detDate.classList.contains('section-date')) detDate.classList.remove('hidden-by-bot');
             }
             const infoGrid = cardRoot.querySelector('.info-grid');
-            if (infoGrid) infoGrid.style.display = '';
+            if (infoGrid) infoGrid.classList.remove('hidden-by-bot');
 
             const signalTitle = cardRoot.querySelector('.signal-title');
             if (signalTitle) {
-                signalTitle.style.display = '';
+                signalTitle.classList.remove('hidden-by-bot');
                 const sigDate = signalTitle.nextElementSibling;
-                if (sigDate && sigDate.classList.contains('section-date')) sigDate.style.display = '';
+                if (sigDate && sigDate.classList.contains('section-date')) sigDate.classList.remove('hidden-by-bot');
             }
             const signalContainer = cardRoot.querySelector('.signal-container');
-            if (signalContainer) signalContainer.style.display = '';
+            if (signalContainer) signalContainer.classList.remove('hidden-by-bot');
             const labelsEl = cardRoot.querySelector('.signal-labels');
-            if (labelsEl) labelsEl.style.display = '';
+            if (labelsEl) labelsEl.classList.remove('hidden-by-bot');
             const barEl = cardRoot.querySelector('.signal-bar');
-            if (barEl) barEl.style.display = '';
+            if (barEl) barEl.classList.remove('hidden-by-bot');
         }
     } catch (e) { /* ignore UI restore errors */ }
 
@@ -1381,27 +1381,27 @@ function clearPeriodDisplay(symbol) {
         const barEl = cardRoot.querySelector('.signal-bar');
         const signalExplanation = cardRoot.querySelector('.signal-explanation');
         const explanationContent = cardRoot.querySelector('.explanation-content');
-        if (labelsEl) labelsEl.style.display = 'none';
-        if (barEl) barEl.style.display = 'none';
-        if (signalExplanation) signalExplanation.style.display = 'none';
+        if (labelsEl) labelsEl.classList.add('hidden-by-bot');
+        if (barEl) barEl.classList.add('hidden-by-bot');
+        if (signalExplanation) signalExplanation.classList.add('hidden-by-bot');
         if (explanationContent) explanationContent.innerHTML = '';
         // Hide the entire details and signal sections so they don't appear when no data
         const detailsTitle = cardRoot.querySelector('.details-title');
         if (detailsTitle) {
-            detailsTitle.style.display = 'none';
+            detailsTitle.classList.add('hidden-by-bot');
             const detDate = detailsTitle.nextElementSibling;
-            if (detDate && detDate.classList.contains('section-date')) detDate.style.display = 'none';
+            if (detDate && detDate.classList.contains('section-date')) detDate.classList.add('hidden-by-bot');
         }
         const infoGrid = cardRoot.querySelector('.info-grid');
-        if (infoGrid) infoGrid.style.display = 'none';
+        if (infoGrid) infoGrid.classList.add('hidden-by-bot');
 
         const signalTitle = cardRoot.querySelector('.signal-title');
         if (signalTitle) {
-            signalTitle.style.display = 'none';
+            signalTitle.classList.add('hidden-by-bot');
             const sigDate = signalTitle.nextElementSibling;
-            if (sigDate && sigDate.classList.contains('section-date')) sigDate.style.display = 'none';
+            if (sigDate && sigDate.classList.contains('section-date')) sigDate.classList.add('hidden-by-bot');
         }
         const signalContainer = cardRoot.querySelector('.signal-container');
-        if (signalContainer) signalContainer.style.display = 'none';
+        if (signalContainer) signalContainer.classList.add('hidden-by-bot');
     }
 }

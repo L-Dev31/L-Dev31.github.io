@@ -1,13 +1,24 @@
 const SIGNAL_HISTORY = [];
 
+const DEFAULT_OPTIONS = {
+  accountCapital: 10000,
+  accountRisk: 0.02,
+  maxPosition: 0.2,
+  divergenceWeight: 0.25,
+  minLength: 30,
+  weights: { rsi: 0.18, macd: 0.26, sma: 0.26, momentum: 0.12, volume: 0.08 }
+};
+
 function safeArray(arr) {
   return Array.isArray(arr) ? arr : [];
 }
 
-function validateData(data) {
+function validateData(data, options = {}) {
   if (!data) return false;
   const prices = safeArray(data.prices);
-  if (prices.length < 5) return false;
+  // Require enough points for RSI(14) and MACD(slow=26) calculations as a sensible minimum
+  const minRequired = Math.max(15, options.minLength || 15);
+  if (prices.length < minRequired) return false;
   return true;
 }
 
@@ -38,8 +49,9 @@ function calculateEMA(prices, period) {
   if (p.length === 0) return 0;
   if (p.length < period) return p.reduce((s, v) => s + v, 0) / p.length;
   const k = 2 / (period + 1);
-  let ema = p[0];
-  for (let i = 1; i < p.length; i++) ema = p[i] * k + ema * (1 - k);
+  // seed EMA with SMA of first 'period' values for more stable start
+  let ema = p.slice(0, period).reduce((s, v) => s + v, 0) / period;
+  for (let i = period; i < p.length; i++) ema = p[i] * k + ema * (1 - k);
   return ema;
 }
 
@@ -56,8 +68,8 @@ function calculateMACD(prices, fast = 12, slow = 26, signal = 9) {
   const macdHistory = [];
   const kf = 2 / (fast + 1);
   const ks = 2 / (slow + 1);
-  let emaFast = p[0];
-  let emaSlow = p[0];
+  let emaFast = p.length >= fast ? p.slice(0, fast).reduce((s, v) => s + v, 0) / fast : p[0];
+  let emaSlow = p.length >= slow ? p.slice(0, slow).reduce((s, v) => s + v, 0) / slow : p[0];
   for (let i = 1; i < p.length; i++) {
     emaFast = p[i] * kf + emaFast * (1 - kf);
     emaSlow = p[i] * ks + emaSlow * (1 - ks);
@@ -78,8 +90,9 @@ function calculateATR(highs, lows, closes, period = 14) {
   const trs = [];
   for (let i = 1; i < n; i++) trs.push(Math.max(h[i] - l[i], Math.abs(h[i] - c[i - 1]), Math.abs(l[i] - c[i - 1])));
   if (trs.length < period) return trs.reduce((s, v) => s + v, 0) / trs.length;
-  let atr = trs.slice(0, period - 1).reduce((s, v) => s + v, 0) / (period - 1);
-  for (let i = period - 1; i < trs.length; i++) atr = (atr * (period - 1) + trs[i]) / period;
+  // moyenne initiale sur les 'period' premiers TR
+  let atr = trs.slice(0, period).reduce((s, v) => s + v, 0) / period;
+  for (let i = period; i < trs.length; i++) atr = (atr * (period - 1) + trs[i]) / period;
   return atr;
 }
 
@@ -109,7 +122,8 @@ function calculateStdDev(values, period = 20) {
 
 function normalizeRSI(rsi) {
   if (isNaN(rsi)) return 0;
-  return clamp((50 - rsi) / 20, -1, 1) * -1;
+  // RSI bas -> valeur positive (achat), RSI haut -> valeur négative (vente)
+  return clamp((50 - rsi) / 20, -1, 1);
 }
 
 function normalizeMACD(macd, stddev) {
@@ -137,8 +151,27 @@ function detectDivergence(prices, indicator, lookback = 14) {
   const ind = safeArray(indicator);
   const n = Math.min(p.length, ind.length);
   if (n < lookback + 2) return 0;
-  function isPeak(arr, i) { return arr[i] > arr[i - 1] && arr[i] > arr[i + 1]; }
-  function isTrough(arr, i) { return arr[i] < arr[i - 1] && arr[i] < arr[i + 1]; }
+  const window = 3; // look around index for local extrema
+  const minSeparation = 3; // min index distance between peaks/troughs
+  const indStd = calculateStdDev(ind, lookback) || 1;
+  const indMin = Math.min(...ind.slice(Math.max(0, n - lookback), n));
+  const indMax = Math.max(...ind.slice(Math.max(0, n - lookback), n));
+  const indRange = Math.max(1e-6, indMax - indMin);
+  const prominenceFactor = 0.02; // threshold as fraction of range
+  function isPeak(arr, i) {
+    if (i - window < 0 || i + window >= arr.length) return false;
+    const leftMax = Math.max(...arr.slice(i - window, i));
+    const rightMax = Math.max(...arr.slice(i + 1, i + 1 + window));
+    const peakProm = arr[i] - Math.max(leftMax, rightMax);
+    return arr[i] > leftMax && arr[i] > rightMax && peakProm >= (indRange * prominenceFactor);
+  }
+  function isTrough(arr, i) {
+    if (i - window < 0 || i + window >= arr.length) return false;
+    const leftMin = Math.min(...arr.slice(i - window, i));
+    const rightMin = Math.min(...arr.slice(i + 1, i + 1 + window));
+    const troughProm = Math.min(leftMin, rightMin) - arr[i];
+    return arr[i] < leftMin && arr[i] < rightMin && troughProm >= (indRange * prominenceFactor);
+  }
   let pricePeaks = [], priceTroughs = [], indPeaks = [], indTroughs = [];
   for (let i = 1; i < n - 1; i++) {
     if (isPeak(p, i)) pricePeaks.push({ idx: i, val: p[i] });
@@ -151,20 +184,51 @@ function detectDivergence(prices, indicator, lookback = 14) {
   const recentPriceTroughs = priceTroughs.filter(tr => tr.idx >= n - lookback);
   const recentIndTroughs = indTroughs.filter(tr => tr.idx >= n - lookback);
   if (recentPricePeaks.length >= 2 && recentIndPeaks.length >= 2) {
-    const lastPP = recentPricePeaks[recentPricePeaks.length - 1].val;
-    const prevPP = recentPricePeaks[recentPricePeaks.length - 2].val;
+    const l = recentPricePeaks.length - 1;
+    const lastPP = recentPricePeaks[l].val;
+    const prevPP = recentPricePeaks[l - 1].val;
     const lastIP = recentIndPeaks[recentIndPeaks.length - 1].val;
     const prevIP = recentIndPeaks[recentIndPeaks.length - 2].val;
-    if (lastPP > prevPP && lastIP < prevIP) return -0.8;
+    const idxGap = Math.abs(recentPricePeaks[l].idx - recentPricePeaks[l - 1].idx);
+    if (idxGap >= minSeparation && lastPP > prevPP && lastIP < prevIP) {
+      const mag = clamp((prevIP - lastIP) / indStd, -0.5, 0.5);
+      return -mag;
+    }
   }
   if (recentPriceTroughs.length >= 2 && recentIndTroughs.length >= 2) {
-    const lastPT = recentPriceTroughs[recentPriceTroughs.length - 1].val;
-    const prevPT = recentPriceTroughs[recentPriceTroughs.length - 2].val;
+    const l = recentPriceTroughs.length - 1;
+    const lastPT = recentPriceTroughs[l].val;
+    const prevPT = recentPriceTroughs[l - 1].val;
     const lastIT = recentIndTroughs[recentIndTroughs.length - 1].val;
     const prevIT = recentIndTroughs[recentIndTroughs.length - 2].val;
-    if (lastPT < prevPT && lastIT > prevIT) return 0.8;
+    const idxGap = Math.abs(recentPriceTroughs[l].idx - recentPriceTroughs[l - 1].idx);
+    if (idxGap >= minSeparation && lastPT < prevPT && lastIT > prevIT) {
+      const mag = clamp((lastIT - prevIT) / indStd, -0.5, 0.5);
+      return mag;
+    }
   }
   return 0;
+}
+
+function calculateRSISeries(prices, period = 14) {
+  const p = safeArray(prices);
+  const res = new Array(p.length).fill(50);
+  if (p.length < period + 1) return res;
+  let avgGain = 0;
+  let avgLoss = 0;
+  for (let i = 1; i <= period; i++) {
+    const change = p[i] - p[i - 1];
+    if (change > 0) avgGain += change; else avgLoss += Math.abs(change);
+  }
+  avgGain /= period; avgLoss /= period;
+  res[period] = 100 - (100 / (1 + (avgLoss === 0 ? Infinity : avgGain / avgLoss)));
+  for (let i = period + 1; i < p.length; i++) {
+    const change = p[i] - p[i - 1];
+    avgGain = (avgGain * (period - 1) + (change > 0 ? change : 0)) / period;
+    avgLoss = (avgLoss * (period - 1) + (change < 0 ? Math.abs(change) : 0)) / period;
+    res[i] = 100 - (100 / (1 + (avgLoss === 0 ? Infinity : avgGain / avgLoss)));
+  }
+  return res;
 }
 
 function emaSmooth(value, prev, alpha = 0.2) { return typeof prev === 'number' ? prev * (1 - alpha) + value * alpha : value; }
@@ -173,9 +237,31 @@ function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
 function computeVolatilityMultiplier(atr, price) { if (price <= 0) return 1; const atrNorm = atr / price; return clamp(1 / (1 + 5 * atrNorm), 0.3, 1); }
 
-function computePositionSizing(signalValue, accountRisk = 0.02, maxPosition = 0.2) { const target = (signalValue - 50) / 50; return clamp(target * maxPosition, -maxPosition, maxPosition); }
+function computePositionSizing(signalValue, currentPrice, stopLoss, accountCapital = 10000, accountRisk = 0.02, maxPosition = 0.2) {
+  // signalValue: 0..100 -> target ratio -1..1
+  const targetRatio = (signalValue - 50) / 50;
+  const direction = Math.sign(targetRatio) || 1;
+  const riskPerUnit = Math.abs(currentPrice - stopLoss);
+  if (!currentPrice || riskPerUnit <= 0) {
+    console.warn('computePositionSizing: invalid currentPrice or riskPerUnit:', currentPrice, riskPerUnit);
+    return 0;
+  }
+  const riskAmount = accountCapital * accountRisk;
+  const units = Math.floor(riskAmount / riskPerUnit);
+  const positionValue = units * currentPrice;
+  const positionPct = positionValue / accountCapital;
+  const signedPct = clamp(positionPct, 0, maxPosition) * direction;
+  if (Math.abs(signedPct) <= 0) console.warn('computePositionSizing: computed 0 positionPct, riskAmount or riskPerUnit too small', positionPct, units, riskAmount, riskPerUnit);
+  return signedPct;
+}
 
-function computeStops(currentPrice, atr, slMult = 1.5, tpMult = 2.5) { const direction = currentPrice > 0 ? 1 : -1; const sl = currentPrice - direction * slMult * atr; const tp = currentPrice + direction * tpMult * atr; return { stopLoss: Math.max(0, sl), takeProfit: Math.max(0, tp) }; }
+function computeStops(currentPrice, atr, direction = 1, slMult = 1.5, tpMult = 2.5) {
+  // direction must be ±1 - compute stops based on final signal direction
+  const sl = currentPrice - direction * slMult * atr;
+  const tp = currentPrice + direction * tpMult * atr;
+  if (sl <= 0) console.warn('computeStops: calculated stopLoss <= 0 (sl, currentPrice, atr):', sl, currentPrice, atr);
+  return { stopLoss: Math.max(0, sl), takeProfit: Math.max(0, tp) };
+}
 
 function mergeTimeframesShortLong(data) { const shortPrices = safeArray(data.prices); const longPrices = safeArray(data.longPrices || data.prices); return { shortPrices, longPrices }; }
 
@@ -184,7 +270,8 @@ function calculateCompositeScore(parts, weights) { let sum = 0; let wsum = 0; fo
 function recordSignal(symbol, result) { SIGNAL_HISTORY.push({ timestamp: Date.now(), symbol, result }); if (SIGNAL_HISTORY.length > 5000) SIGNAL_HISTORY.shift(); }
 
 function calculateBotSignal(data, options = {}) {
-  if (!validateData(data)) {
+  options = Object.assign({}, DEFAULT_OPTIONS, options || {});
+  if (!validateData(data, options)) {
     let reasonMsg = '';
     if (!data) reasonMsg = 'Aucune donnée reçue pour ce symbole.';
     else {
@@ -219,12 +306,14 @@ function calculateBotSignal(data, options = {}) {
   const sma20 = calculateSMA(shortPrices, 20);
   const sma50 = calculateSMA(longPrices, 50);
   const sma200 = calculateSMA(longPrices, 200);
+  const sma200Fallback = longPrices.length < 200;
   const momentum = calculateMomentum(shortPrices);
   const volumeRatio = calculateVolumeRatio(volumes);
   const atr = calculateATR(highs, lows, closes);
   const stddev = calculateStdDev(shortPrices);
   const divergenceMACD = detectDivergence(shortPrices, macdShort.macdHistory);
-  const divergenceRSI = detectDivergence(shortPrices, shortPrices.map((_, i) => calculateRSI(shortPrices.slice(0, i + 1))));
+  const rsiSeries = calculateRSISeries(shortPrices);
+  const divergenceRSI = detectDivergence(shortPrices, rsiSeries);
 
   const rsiScore = normalizeRSI(rsiShort) * 0.9 + normalizeRSI(rsiLong) * 0.1;
   const macdScore = normalizeMACD(macdShort, stddev) * 0.9 + normalizeMACD(macdLong, stddev) * 0.1;
@@ -233,16 +322,18 @@ function calculateBotSignal(data, options = {}) {
   const volumeScore = normalizeVolume(volumeRatio);
 
   const indicatorParts = { rsi: rsiScore, macd: macdScore, sma: smaScore, momentum: momentumScore, volume: volumeScore };
-  const weights = options.weights || { rsi: 0.18, macd: 0.26, sma: 0.26, momentum: 0.12, volume: 0.08 };
+  const weights = options.weights;
   let weightedScore = calculateCompositeScore(indicatorParts, weights);
-  weightedScore += divergenceMACD + divergenceRSI;
+  const divergenceWeight = options.divergenceWeight;
+  weightedScore += divergenceWeight * (divergenceMACD + divergenceRSI);
   const volMultiplier = computeVolatilityMultiplier(atr, currentPrice);
   weightedScore *= volMultiplier;
   const smoothed = emaSmooth(weightedScore, options.prevSmoothed, 0.15);
   const finalScore = clamp(smoothed, -1, 1);
   const signalValue = Math.round(50 + finalScore * 50);
-  const positionSize = computePositionSizing(signalValue, options.accountRisk, options.maxPosition);
-  const stops = computeStops(currentPrice, atr, options.slMult, options.tpMult);
+  const direction = Math.sign(finalScore) || 1;
+  const stops = computeStops(currentPrice, atr, direction, options.slMult, options.tpMult);
+  const positionSize = computePositionSizing(signalValue, currentPrice, stops.stopLoss, options.accountCapital || 10000, options.accountRisk || 0.02, options.maxPosition || 0.2);
 
   let signalTitle = 'Garder';
   let signalDesc = 'Position neutre - Attendre';
@@ -253,7 +344,7 @@ function calculateBotSignal(data, options = {}) {
   else if (signalValue <= 35) { signalTitle = 'Vendre'; signalDesc = 'Vente confirmée'; }
   else if (signalValue <= 45) { signalTitle = 'Vendre'; signalDesc = 'Vente modérée'; }
 
-  const explanation = { rsi: rsiShort, macdHistogram: macdShort.histogram, sma20, sma50, sma200, momentum, volumeRatio, atr, stddev, divergenceMACD, divergenceRSI, weightedScore, volatilityMultiplier: volMultiplier, smoothed, positionSize, stopLoss: stops.stopLoss, takeProfit: stops.takeProfit };
+  const explanation = { rsi: rsiShort, macdHistogram: macdShort.histogram, sma20, sma50, sma200, sma200Fallback, momentum, volumeRatio, atr, stddev, divergenceMACD, divergenceRSI, weightedScore, volatilityMultiplier: volMultiplier, smoothed, positionSize, stopLoss: stops.stopLoss, takeProfit: stops.takeProfit };
 
   const result = {
     symbol,
@@ -314,16 +405,21 @@ function updateSignalUI(symbol, signalResult) {
   if (cardRoot) {
     const labelsEl = cardRoot.querySelector('.signal-labels');
     const barEl = cardRoot.querySelector('.signal-bar');
-    const display = signalResult.signalDesc === 'Données insuffisantes' ? 'none' : '';
-    if (labelsEl) labelsEl.style.display = display;
-    if (barEl) barEl.style.display = display;
+    const hide = signalResult.signalDesc === 'Données insuffisantes';
+    if (labelsEl) {
+      if (hide) labelsEl.classList.add('hidden-by-bot'); else labelsEl.classList.remove('hidden-by-bot');
+    }
+    if (barEl) {
+      if (hide) barEl.classList.add('hidden-by-bot'); else barEl.classList.remove('hidden-by-bot');
+    }
   }
   const signalExplanation = document.querySelector(`#card-${symbol} .signal-explanation`);
   const explanationContent = document.querySelector(`#card-${symbol} .explanation-content`);
   if (signalExplanation && explanationContent) {
-    if (signalResult.signalDesc === 'Données insuffisantes') signalExplanation.style.display = 'none';
-    else {
-      signalExplanation.style.display = 'block';
+    if (signalResult.signalDesc === 'Données insuffisantes') {
+      signalExplanation.classList.add('hidden-by-bot');
+    } else {
+      signalExplanation.classList.remove('hidden-by-bot');
       const e = signalResult.explanation;
       const getValueColor = (indicator, value) => {
         switch (indicator) {
@@ -351,7 +447,7 @@ function updateSignalUI(symbol, signalResult) {
             <tr>
               <td class="signal-table-cell">RSI</td>
               <td class="signal-table-cell ${getValueColor('rsi', e.rsi)}">${e.rsi.toFixed(2)}</td>
-              <td class="signal-table-cell">Mesure si l'actif est suracheté (>70) ou survendu (<30). ${e.rsi < 45 ? 'Zone d\'achat' : e.rsi > 55 ? 'Zone de vente' : 'Neutre'}</td>
+              <td class="signal-table-cell">Mesure si l'actif est suracheté (>70) ou survendu (<30). ${e.rsi < 30 ? 'Survendu / Zone d\'achat' : e.rsi > 70 ? 'Suracheté / Zone de vente' : 'Neutre'}</td>
             </tr>
             <tr>
               <td class="signal-table-cell">MACD Histogramme</td>
@@ -370,8 +466,8 @@ function updateSignalUI(symbol, signalResult) {
             </tr>
             <tr>
               <td class="signal-table-cell">SMA200</td>
-              <td class="signal-table-cell ${getValueColor('sma200', e.sma200)}">${e.sma200.toFixed(2)}</td>
-              <td class="signal-table-cell">Tendance long terme</td>
+              <td class="signal-table-cell ${getValueColor('sma200', e.sma200)}">${e.sma200.toFixed(2)}${e.sma200Fallback ? ' (fallback)' : ''}</td>
+              <td class="signal-table-cell">Tendance long terme${e.sma200Fallback ? ' (calculée sur moins de 200 unités)' : ''}</td>
             </tr>
             <tr>
               <td class="signal-table-cell">Momentum</td>
@@ -433,4 +529,4 @@ function updateSignalUI(symbol, signalResult) {
 
 function updateSignal(symbol, data, options = {}) { const signalResult = calculateBotSignal({ ...data, symbol }, options); updateSignalUI(symbol, signalResult); return signalResult; }
 
-export { calculateBotSignal, updateSignal, updateSignalUI, SIGNAL_HISTORY };
+export { calculateBotSignal, updateSignal, updateSignalUI, SIGNAL_HISTORY, calculateRSI, calculateEMA, calculateATR, computeStops, computePositionSizing };

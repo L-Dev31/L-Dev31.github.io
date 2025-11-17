@@ -1138,3 +1138,14 @@ body {
 }
 
 /* Force cache refresh */
+/* Helper class to hide elements via class toggling (used by JS to avoid inline style toggles) */
+.hidden-by-bot {
+    display: none !important;
+}
+
+.hidden-by-bot-transition {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transition: opacity 0.25s ease, height 0.25s ease;
+}
