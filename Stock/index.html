@@ -19,10 +19,21 @@
                     <p>Compte titre: <span id="cash-account">-- €</span></p>
                 </div>
             </div>
-            <h3 class="sidebar-section-title">Mon Portefeuille</h3>
-            <div class="tabs portfolio" id="portfolio-tabs"></div>
-            <h3 class="sidebar-section-title">Général</h3>
-            <div class="tabs general" id="general-tabs"></div>
+            <div class="sidebar-scroll">
+                <div class="sidebar-section" id="sidebar-portfolio">
+                    <h3 class="sidebar-section-title">Mon Portefeuille
+                        <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs"><i class="fa-solid fa-chevron-down"></i></button>
+                    </h3>
+                    <div class="tabs portfolio" id="portfolio-tabs"></div>
+                </div>
+
+                <div class="sidebar-section" id="sidebar-general">
+                    <h3 class="sidebar-section-title">Général
+                        <button class="section-toggle" aria-expanded="true" aria-controls="general-tabs"><i class="fa-solid fa-chevron-down"></i></button>
+                    </h3>
+                    <div class="tabs general" id="general-tabs"></div>
+                </div>
+            </div>
             <div id="api-status-indicator"></div>
         </div>
         <div class="container">

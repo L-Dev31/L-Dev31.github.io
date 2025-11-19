@@ -449,7 +449,7 @@ async function fetchActiveSymbol(force) {
 
     positions[symbol].isFetching=true
 
-    setApiStatus(symbol, 'fetching', { api: selectedApi })
+        setApiStatus(symbol, 'fetching', { api: selectedApi, loadingFallback: true })
 
     try {
         const p = positions[symbol].currentPeriod||'1D'
@@ -544,7 +544,7 @@ async function updateUI(symbol, data) {
     if (!data || data.error) {
         if (data && data.throttled) {
             // Rate limit - don't update UI, just show status
-            setApiStatus(symbol, 'fetching', { api: data?.source, loadingFallback: true, errorCode: 429 });
+                setApiStatus(symbol, 'fetching', { api: data?.source, loadingFallback: true });
             return;
         }
         if (data && data.errorCode === 429 && data.throttled) {
@@ -658,21 +658,25 @@ async function updateUI(symbol, data) {
             const totalValue = currentPrice * shares;
             if (valueEl) {
                 valueEl.textContent = totalValue.toFixed(2) + ' €';
-                valueEl.className = totalValue >= Math.abs(investment) ? 'positive' : 'negative';
+                const costBasis = Math.abs(positions[symbol].costBasis || positions[symbol].investment || 0);
+                valueEl.className = totalValue >= costBasis ? 'positive' : 'negative';
             }
 
             if (valuePerEl) {
                 valuePerEl.textContent = currentPrice.toFixed(2) + ' €';
-                valuePerEl.className = currentPrice >= (Math.abs(investment) / shares) ? 'positive' : 'negative';
+                const costBasis = Math.abs(positions[symbol].costBasis || positions[symbol].investment || 0);
+                const perShareCost = shares ? costBasis / shares : 0;
+                valuePerEl.className = currentPrice >= perShareCost ? 'positive' : 'negative';
             }
 
-            const totalProfit = totalValue - Math.abs(investment);
+            const costBasis = Math.abs(positions[symbol].costBasis || positions[symbol].investment || 0);
+            const totalProfit = totalValue - costBasis;
             if (profitEl) {
                 profitEl.textContent = `${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} €`;
                 profitEl.className = totalProfit >= 0 ? 'positive' : 'negative';
             }
 
-            const profitPerShare = currentPrice - (Math.abs(investment) / shares);
+            const profitPerShare = currentPrice - (shares ? (costBasis / shares) : 0);
             if (profitPerEl) {
                 profitPerEl.textContent = `${profitPerShare >= 0 ? '+' : ''}${profitPerShare.toFixed(2)} €`;
                 profitPerEl.className = profitPerShare >= 0 ? 'positive' : 'negative';
@@ -704,6 +708,23 @@ async function updateUI(symbol, data) {
     setApiStatus(symbol, 'active', { api: data.source });
 
     updatePortfolioSummary();
+    // Update investment cells so the table stays consistent when data arrives
+    try {
+        const investEl = document.getElementById(`invest-${symbol}`);
+        const investPerEl = document.getElementById(`invest-per-${symbol}`);
+        if (investEl) {
+            const inv = positions[symbol].costBasis || Math.abs(positions[symbol].investment || 0);
+            investEl.textContent = `${inv.toFixed(2)} €`;
+            // Leave the invest total neutral (no positive/negative color)
+            investEl.classList.remove('positive');
+            investEl.classList.remove('negative');
+        }
+        if (investPerEl) {
+            const costBasis = positions[symbol].costBasis || Math.abs(positions[symbol].investment || 0);
+            const invPer = (positions[symbol].shares && positions[symbol].shares > 0) ? (costBasis / positions[symbol].shares) : 0;
+            investPerEl.textContent = positions[symbol].shares ? `${invPer.toFixed(2)} €` : '--';
+        }
+    } catch(e) { /* ignore if cells missing */ }
     
     // Mettre à jour le titre du tab avec la nouvelle date
     updateTabTitle(symbol);
@@ -871,7 +892,8 @@ function updatePortfolioSummary() {
 
     Object.values(positions).forEach(pos => {
         totalShares += pos.shares || 0;
-        totalInvestment += Math.abs(pos.investment || 0);
+        // Prefer costBasis (sum of unchecked purchases left) as the invested capital for currently held shares
+        totalInvestment += Math.abs(pos.costBasis || pos.investment || 0);
     });
 
     const totalSharesEl = document.getElementById('total-shares');
@@ -975,6 +997,7 @@ async function loadStocks() {
             api_mapping: s.api_mapping,
             shares: calculated.shares,
             investment: calculated.investment,
+            costBasis: calculated.costBasis || 0,
             purchaseDate: calculated.purchaseDate,
             purchases: s.purchases || [],
             chart: null,
@@ -1018,6 +1041,54 @@ document.head.appendChild(font)
 window.addEventListener('load', async () => {
     await loadStocks();
     const active = getActiveSymbol();
+    // Initialize section toggles for sidebar collapsible sections
+    try {
+        document.querySelectorAll('.section-toggle').forEach(btn => {
+            const section = btn.closest('.sidebar-section');
+            if (!section) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const expanded = btn.getAttribute('aria-expanded') === 'true';
+                btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+                section.classList.toggle('collapsed', expanded);
+                const tabsEl = section.querySelector('.tabs');
+                if (tabsEl) tabsEl.setAttribute('aria-hidden', expanded ? 'true' : 'false');
+                // Persist collapsed state in localStorage
+                try { localStorage.setItem(`sidebar:${section.id}:collapsed`, expanded ? '1' : '0'); } catch (err) { /* ignore */ }
+            });
+            // Make title clickable as well
+            const title = section.querySelector('.sidebar-section-title');
+            if (title) {
+                title.addEventListener('click', (ev) => {
+                    // If click landed on the toggle button itself, ignore (already handled)
+                    if (ev.target.closest('.section-toggle')) return;
+                    btn.click();
+                });
+                // Keyboard accessibility for the title
+                title.addEventListener('keydown', (ev) => {
+                    if (ev.key === 'Enter' || ev.key === ' ') {
+                        ev.preventDefault();
+                        btn.click();
+                    }
+                });
+            }
+        });
+    } catch (e) { /* ignore if sidebar not yet in DOM */ }
+
+    // Restore collapsed state from localStorage
+    try {
+        document.querySelectorAll('.sidebar-section').forEach(section => {
+            const key = `sidebar:${section.id}:collapsed`;
+            const val = localStorage.getItem(key);
+            if (val === '1') {
+                section.classList.add('collapsed');
+                const btn = section.querySelector('.section-toggle');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+                const tabsEl = section.querySelector('.tabs');
+                if (tabsEl) tabsEl.setAttribute('aria-hidden', 'true');
+            }
+        });
+    } catch (err) { /* ignore storage errors */ }
 });
 
 window.startRateLimitCountdown = startRateLimitCountdown;
@@ -1083,22 +1154,59 @@ function calculateStockValues(stock) {
     let totalInvestment = stock.investment || 0;
     let totalShares = stock.shares || 0;
     let earliestPurchaseDate = stock.purchaseDate;
+    let costBasis = 0; // cost basis for currently held shares (positive number)
     
     if (stock.purchases && stock.purchases.length > 0) {
         totalInvestment = stock.purchases.reduce((sum, p) => sum + (p.amount || 0), 0);
         totalShares = stock.purchases.reduce((sum, p) => sum + (p.shares || 0), 0);
         const dates = stock.purchases.map(p => p.date).filter(d => d).sort();
         earliestPurchaseDate = dates.length > 0 ? dates[0] : null;
+        // Build FIFO lots from purchases (ascending date)
+        const purchaseLots = stock.purchases.slice().sort((a,b)=> new Date(a.date) - new Date(b.date)).map(p => ({
+            shares: p.shares || 0,
+            amount: Math.abs(p.amount || 0),
+            perShare: ((Math.abs(p.amount || 0)) / (p.shares || 1))
+        }));
+        // compute initial cost basis = sum of all purchase amounts
+        costBasis = purchaseLots.reduce((sum, l) => sum + l.amount, 0);
+
+        // We'll reduce cost basis as we process sales below (FIFO)
+        // Store intermediate lots to be reduced
+        var lots = purchaseLots;
     }
 
     if (stock.sales && stock.sales.length > 0) {
         totalInvestment += stock.sales.reduce((sum, s) => sum + (s.amount || 0), 0);
         totalShares -= stock.sales.reduce((sum, s) => sum + (s.shares || 0), 0);
+        // Process sales FIFO to reduce lots and cost basis
+        const salesSorted = stock.sales.slice().sort((a,b)=> new Date(a.date) - new Date(b.date));
+        let remainingToRemove = 0;
+        salesSorted.forEach(s => {
+            remainingToRemove = s.shares || 0;
+            while (remainingToRemove > 0 && lots && lots.length > 0) {
+                const lot = lots[0];
+                if (lot.shares <= remainingToRemove) {
+                    // Remove entire lot
+                    remainingToRemove -= lot.shares;
+                    costBasis -= lot.amount;
+                    lots.shift();
+                } else {
+                    // Remove part of lot
+                    const removedShares = remainingToRemove;
+                    const removedAmount = lot.perShare * removedShares;
+                    lot.shares -= removedShares;
+                    lot.amount -= removedAmount;
+                    costBasis -= removedAmount;
+                    remainingToRemove = 0;
+                }
+            }
+        });
     }
     
     return {
         investment: totalInvestment,
         shares: totalShares,
+        costBasis: Math.max(0, costBasis),
         purchaseDate: earliestPurchaseDate
     };
 }
@@ -1237,14 +1345,17 @@ function createCard(stock) {
 
     // Remplir les valeurs si on possède des actions
     if (calculated.shares > 0) {
-        const displayInvestment = calculated.investment < 0 ? Math.abs(calculated.investment) : calculated.investment;
-        tds[1].textContent = displayInvestment.toFixed(2)+' €'
-        tds[2].textContent='--'
-        tds[3].textContent='--'
-        const displayInvestPerShare = calculated.shares ? (calculated.investment < 0 ? Math.abs(calculated.investment / calculated.shares) : (calculated.investment / calculated.shares)) : 0;
-        tds[5].textContent = calculated.shares ? displayInvestPerShare.toFixed(2)+' €' : '--'
-        tds[6].textContent='--'
-        tds[7].textContent='--'
+        // Show the invested amount (cost basis) that corresponds to currently held shares
+        const displayInvestment = typeof calculated.costBasis === 'number' ? calculated.costBasis : Math.abs(calculated.investment || 0);
+        tds[1].textContent = `${displayInvestment.toFixed(2)} €`;
+        // Keep 'Investi' total neutral (no color class): do not apply positive/negative classes here
+        tds[2].textContent = '--';
+        tds[3].textContent = '--';
+        // Per-share investment should be displayed as a positive number (money spent per share)
+        const displayInvestPerShare = calculated.shares ? (displayInvestment / calculated.shares) : 0;
+        tds[5].textContent = calculated.shares ? `${displayInvestPerShare.toFixed(2)} €` : '--';
+        tds[6].textContent = '--';
+        tds[7].textContent = '--';
     }
 
     // Masquer le tableau d'investissement si on ne possède plus d'actions
