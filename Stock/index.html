@@ -6,6 +6,7 @@
     <title>Portfolio Tracker</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -17,8 +18,10 @@
                     <p>Total actions possédées: <span id="total-shares">0</span></p>
                     <p>Investissement total: <span id="total-investment">-- €</span></p>
                     <p>Compte titre: <span id="cash-account">-- €</span></p>
+                    <!-- removed profile actions from header; actions will be rendered below -->
                 </div>
             </div>
+            <!-- Previously: quick action buttons now inside Outils section -->
             <div class="sidebar-scroll">
                 <div class="sidebar-section" id="sidebar-portfolio">
                     <h3 class="sidebar-section-title">Mon Portefeuille
@@ -27,11 +30,22 @@
                     <div class="tabs portfolio" id="portfolio-tabs"></div>
                 </div>
 
-                <div class="sidebar-section" id="sidebar-general">
-                    <h3 class="sidebar-section-title">Général
+                <div class="sidebar-section" id="sidebar-market">
+                    <h3 class="sidebar-section-title">Marché
                         <button class="section-toggle" aria-expanded="true" aria-controls="general-tabs"><i class="fa-solid fa-chevron-down"></i></button>
                     </h3>
                     <div class="tabs general" id="general-tabs"></div>
+                </div>
+
+                <div class="sidebar-section" id="sidebar-tools">
+                    <h3 class="sidebar-section-title">Outils
+                        <button class="section-toggle" aria-expanded="true" aria-controls="tools-actions"><i class="fa-solid fa-chevron-down"></i></button>
+                    </h3>
+                    <div class="tabs tools" id="tools-actions" style="padding: 8px 0; display:flex; flex-direction:column; gap:0;">
+                        <button id="open-terminal-btn" class="profile-action-btn tool-tab"><i class="fa-solid fa-terminal"></i>Terminal</button>
+                        <button id="open-news-feed" class="profile-action-btn tool-tab"><i class="fa-solid fa-newspaper"></i>News</button>
+                        <button id="open-alerts" class="profile-action-btn tool-tab"><i class="fa-solid fa-bell"></i>Alertes</button>
+                    </div>
                 </div>
             </div>
             <div id="api-status-indicator"></div>
@@ -41,7 +55,21 @@
             <div class="tabs" id="tabs"></div>
 
             <!-- Cards container: cards for each stock will be injected here -->
-            <div id="cards-container"></div>
+            <div id="cards-container">
+                <!-- Terminal Card (styled like a regular card) -->
+                <div class="card terminal-card" id="card-terminal" role="document" aria-hidden="true">
+                    <div class="section-date"></div>
+                    <div class="terminal-body">
+                        <div class="terminal-header" id="terminal-header" aria-hidden="false"></div>
+                        <div class="terminal-output" id="terminal-output" aria-live="polite"></div>
+                        <div class="terminal-input-row" aria-hidden="false">
+                            <span class="terminal-prompt">USER&gt;</span>
+                            <input id="terminal-input" class="terminal-input" type="text" aria-label="Terminal input" autocomplete="off" />
+                        </div>
+                    </div>
+                    <!-- no close button on terminal; terminal is always available -->
+                </div>
+            </div>
             <!-- Hidden templates for dynamic content -->
             <template id="tab-template">
                 <div class="tab" data-symbol="">
@@ -188,6 +216,11 @@
                             </tbody>
                         </table>
                     </div>
+                    <!-- NEWS SECTION (POC) -->
+                    <div class="news-section">
+                        <h3 class="section-title">Dernières actualités</h3>
+                        <div class="news-list" id="news-list-" aria-live="polite"></div>
+                    </div>
                 </div>
             </template>
                         <template id="api-indicator-template">
@@ -323,5 +356,21 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <script type="module" src="js/signal-bot.js"></script>
     <script type="module" src="js/general.js"></script>
+    <script type="module" src="js/terminal.js"></script>
+    <!-- Command bar for quick symbol commands / NEWS / GO (fullscreen modal) -->
+    <!-- Terminal card moved into cards container -->
+
+    <!-- News overlay (fullscreen) -->
+    <div class="news-overlay" id="news-overlay" aria-hidden="true">
+        <div class="news-overlay-inner">
+            <div class="news-overlay-header">
+                <h2>Fil d'actualités</h2>
+                <button id="close-news-overlay" class="close-btn" aria-label="Fermer">×</button>
+            </div>
+            <div class="news-overlay-body">
+                <div id="news-feed-list" class="news-feed-list"></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -5,6 +5,7 @@ import { fetchFromMarketstack } from './api/marketstack.js'
 import { fetchFromAlphaVantage } from './api/alphavantage.js'
 import { fetchFromFinnhub } from './api/finnhub.js'
 import rateLimiter from './rate-limiter.js'
+import { fetchNews } from './api/news.js'
 import { initChart, updateChart } from './chart.js'
 import { updateSignal } from './signal-bot.js'
 
@@ -84,75 +85,25 @@ let fastPollTimer = null;
 let rateLimitCountdownTimer = null;
 
 async function fetchUsdToEurRate() {
-  if (usdToEurRate !== null) return usdToEurRate;
-  
-  try {
-    const apiConfig = await loadApiConfig();
-    const api = apiConfig.apis['massive'];
-    if (!api || !api.enabled) return 1;
-    
-    const url = `https://api.polygon.io/v2/aggs/ticker/C:EURUSD/range/1/day/2025-11-01/2025-11-10?apiKey=${api.apiKey}`;
-    const r = await fetch(url);
-    if (r.ok) {
-      const j = await r.json();
-      if (j.results && j.results.length > 0) {
-        usdToEurRate = j.results[j.results.length - 1].c;
-        console.log(`💱 Taux USD/EUR récupéré: ${usdToEurRate}`);
-        return usdToEurRate;
-      }
-    }
-  } catch (e) {
-    console.warn('Erreur récupération taux USD/EUR:', e.message);
-  }
-  
-  usdToEurRate = 0.9; // fallback approximatif
-  return usdToEurRate;
-}
-
-async function setSelectedApi(api) {
-    const config = await loadApiConfig();
-
-    if (!config.ui.validApis.includes(api)) return
-
-    if (mainFetchController) {
-        mainFetchController.abort()
-        mainFetchController = null
-    }
-    if (initialFetchController) {
-        initialFetchController.abort()
-        initialFetchController = null
-    }
-
-    stopFastPolling()
-
-    selectedApi = api
-
-    const activeSymbol = getActiveSymbol()
-    if (activeSymbol) {
-        resetSymbolDisplay(activeSymbol)
-    }
-
-    const indicator = document.getElementById('api-status-indicator');
-    if (indicator) {
-        const text = indicator.querySelector('[data-role="status-text"]');
-        if (text) text.textContent = 'loading...';
-        const dot = indicator.querySelector('.api-dot');
-        if (dot) {
-            dot.className = 'api-dot fetching';
+    if (usdToEurRate !== null) return usdToEurRate;
+    try {
+        const config = await loadApiConfig();
+        const api = config?.apis?.massive;
+        if (!api || !api.enabled || !api.apiKey) return 1;
+        const url = `https://api.polygon.io/v2/aggs/ticker/C:EURUSD/range/1/day/2025-11-01/2025-11-10?apiKey=${api.apiKey}`;
+        const r = await fetch(url);
+        if (r.ok) {
+            const j = await r.json();
+            if (j && j.results && j.results.length > 0) {
+                usdToEurRate = j.results[j.results.length - 1].c;
+                console.log(`💱 Taux USD/EUR récupéré: ${usdToEurRate}`);
+                return usdToEurRate;
+            }
         }
-        const logo = indicator.querySelector('.api-indicator-logo');
-        if (logo) {
-            const apiConfig = config.apis[api];
-            logo.src = apiConfig.logo;
-        }
+    } catch (err) {
+        console.warn('fetchUsdToEurRate error', err);
     }
-    updateDropdownSelection()
-
-    if (activeSymbol) {
-        setApiStatus(activeSymbol, 'fetching', { api: selectedApi })
-    }
-
-    fetchActiveSymbol(true)
+    return 1;
 }
 
 function updateDropdownSelection() {
@@ -484,6 +435,8 @@ async function fetchActiveSymbol(force) {
         if (d && !d.error && !d.throttled) {
             startFastPolling();
         }
+        // Also fetch news for the card (POC)
+        try { fetchCardNews(symbol).catch(e=>{}); } catch(e) { /* ignore */ }
     } catch(e){
         setApiStatus(symbol, 'inactive', { api: selectedApi });
     }
@@ -501,11 +454,18 @@ document.addEventListener('click', async e=>{
         if (initialFetchController) initialFetchController.abort()
         if (mainFetchController) mainFetchController.abort()
         document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'))
-        document.querySelectorAll('.card').forEach(x=>x.classList.remove('active'))
+        // Deactivate any active tool buttons when switching to a market tab
+        try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
+        // Close all cards including terminal when switching tabs
+        document.querySelectorAll('.card').forEach(x => x.classList.remove('active'))
         t.classList.add('active')
         const sym=t.dataset.symbol
         const cd=document.getElementById(`card-${sym}`)
-        if (cd) cd.classList.add('active')
+        if (cd) {
+            cd.classList.add('active')
+            // Ensure the terminal card is closed when switching to another card
+            try { if (cd.id !== 'card-terminal' && typeof closeTerminalCard === 'function') closeTerminalCard(); } catch (e) {}
+        }
         fetchActiveSymbol(true)
     }
 })
@@ -1000,6 +960,8 @@ async function loadStocks() {
             costBasis: calculated.costBasis || 0,
             purchaseDate: calculated.purchaseDate,
             purchases: s.purchases || [],
+            news: [],
+            lastNewsFetch: 0,
             chart: null,
             lastFetch: 0,
             lastData: null,
@@ -1030,6 +992,7 @@ async function loadStocks() {
     setApiStatus(null, 'active', { api: selectedApi });
 
     updatePortfolioSummary();
+    // Terminal should not open automatically; it opens only when user clicks Terminal or presses Ctrl/Cmd+K
 }
 
 const font=document.createElement('link')
@@ -1091,10 +1054,98 @@ window.addEventListener('load', async () => {
     } catch (err) { /* ignore storage errors */ }
 });
 
+// Command bar & terminal POC
+function openTerminalCard(prefill = '') {
+    const card = document.getElementById('card-terminal');
+    const input = document.getElementById('terminal-input');
+    if (!card || !input) return;
+    // Deactivate any active card
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    // Deactivate active tab selection so terminal acts like a tab
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    // Deactivate active tool buttons
+    try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
+    card.classList.add('active');
+    card.setAttribute('aria-hidden', 'false');
+    // Highlight the terminal button like a tab
+    try { document.getElementById('open-terminal-btn')?.classList.add('active'); } catch(e) {}
+    // hide news overlay when opening terminal
+    try { document.getElementById('news-overlay')?.setAttribute('aria-hidden', 'true'); } catch(e) {}
+    input.value = prefill;
+    // Ensure that visibility is controlled by CSS classes - clear inline style
+    card.style.display = '';
+    // do not clear terminal output on open; we want the initial header preserved
+    // opened
+    input.focus();
+    // put caret at end
+    input.setSelectionRange(input.value.length, input.value.length);
+    try { const out = document.getElementById('terminal-output'); if (out) out.scrollTop = out.scrollHeight; } catch(e) {}
+}
+
+function closeTerminalCard() {
+    const card = document.getElementById('card-terminal');
+    if (!card) return;
+    card.classList.remove('active');
+    // Ensure inline display flag not blocking CSS
+    card.style.display = '';
+    card.setAttribute('aria-hidden', 'true');
+    // closed
+    try { document.getElementById('open-terminal-btn')?.classList.remove('active'); } catch(e) {}
+}
+
+// Command parsing moved to `js/terminal.js` to keep terminal module isolated
+
+// Keyboard-driven terminal open/close and input managed by `js/terminal.js`
+
+document.getElementById('open-terminal-btn')?.addEventListener('click', e => {
+    openTerminalCard();
+});
+// Alerts button: close terminal and open alerts panel (if implemented)
+document.getElementById('open-alerts')?.addEventListener('click', e => {
+    // Close all cards (terminal included) and focus alerts UI if present
+    document.querySelectorAll('.card').forEach(x => x.classList.remove('active'));
+    // Mark alerts button active and clear other tool active states
+    try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
+    try { document.getElementById('open-alerts')?.classList.add('active'); } catch(e) {}
+    // Future: open alerts panel or overlay here
+});
+document.getElementById('open-news-feed')?.addEventListener('click', async e => {
+    // open news overlay only; do not open the terminal
+    const a = getActiveSymbol();
+    openNewsOverlay(a);
+    // Highlight the news widget button
+    try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
+    try { document.getElementById('open-news-feed')?.classList.add('active'); } catch(e) {}
+});
+
+// Close terminal card toolbar button
+// close button removed from markup per UX decision (terminal always available)
+
+// Close news overlay
+document.getElementById('close-news-overlay')?.addEventListener('click', e => {
+    const overlay = document.getElementById('news-overlay');
+    if (overlay) overlay.setAttribute('aria-hidden', 'true');
+    try { document.getElementById('open-news-feed')?.classList.remove('active'); } catch(e) {}
+});
+
+// Terminal input now handled in `js/terminal.js` (new module)
+
+// Do not auto-close the terminal card on blur or click outside (card behavior)
+
 window.startRateLimitCountdown = startRateLimitCountdown;
 window.stopRateLimitCountdown = stopRateLimitCountdown;
 window.startGlobalRateLimitCountdown = startGlobalRateLimitCountdown;
 window.stopGlobalRateLimitCountdown = stopGlobalRateLimitCountdown;
+
+// Expose a minimal public API for the terminal module
+window.fetchCardNews = fetchCardNews;
+window.fetchActiveSymbol = fetchActiveSymbol;
+window.getActiveSymbol = getActiveSymbol;
+window.openTerminalCard = openTerminalCard;
+window.openNewsOverlay = openNewsOverlay;
+window.terminalLogGlobal = terminalLogGlobal;
+window.positions = positions;
+window.closeTerminalCard = closeTerminalCard;
 
 // Listen for rate limit events (fallback if rate-limiter dispatches events instead of calling functions)
 window.addEventListener('rateLimitStart', (e) => {
@@ -1464,7 +1515,60 @@ function createCard(stock) {
         }
     }
 
+    // Assign news list id for this card (will be used by updateNewsUI)
+    const nl = card.querySelector('.news-list');
+    if (nl) nl.id = `news-list-${stock.symbol}`;
+
     document.getElementById('cards-container')?.appendChild(card)
+}
+
+async function fetchCardNews(symbol, force = false, limit = 5) {
+    if (!positions[symbol]) return;
+    const now = Date.now();
+    // cache for 10 minutes by default
+    if (!force && positions[symbol].lastNewsFetch && (now - positions[symbol].lastNewsFetch) < 10 * 60 * 1000) {
+        return positions[symbol].news;
+    }
+    try {
+        const config = await loadApiConfig();
+        const r = await fetchNews(symbol, config);
+        if (r && !r.error && Array.isArray(r.items)) {
+            positions[symbol].news = r.items;
+            positions[symbol].lastNewsFetch = now;
+            updateNewsUI(symbol, r.items);
+            return r.items;
+        }
+    } catch (e) { console.warn('fetchCardNews error:', e.message || e); }
+    return [];
+}
+
+function updateNewsUI(symbol, items) {
+    const el = document.getElementById(`news-list-${symbol}`);
+    if (!el) return;
+    el.innerHTML = '';
+    if (!items || items.length === 0) {
+        el.textContent = 'Aucune actualité récente.';
+        return;
+    }
+    items.forEach(i => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'news-item';
+        const title = document.createElement('div');
+        title.className = 'news-title';
+        const a = document.createElement('a');
+        a.href = i.url || '#';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.textContent = i.title || '—';
+        title.appendChild(a);
+        const meta = document.createElement('div');
+        meta.className = 'news-meta';
+        const date = new Date(i.publishedAt || new Date());
+        meta.textContent = `${i.source || ''} • ${date.toLocaleString('fr-FR')}`;
+        itemEl.appendChild(title);
+        itemEl.appendChild(meta);
+        el.appendChild(itemEl);
+    });
 }
 
 function clearPeriodDisplay(symbol) {
@@ -1532,4 +1636,87 @@ function clearPeriodDisplay(symbol) {
         const signalContainer = cardRoot.querySelector('.signal-container');
         if (signalContainer) signalContainer.classList.add('hidden-by-bot');
     }
+}
+
+// Global helper to append to terminal output (can be used by any function)
+function terminalLogGlobal(msg) {
+    try {
+        const out = document.getElementById('terminal-output');
+        if (!out) return;
+        const el = document.createElement('div');
+        el.className = 'terminal-log';
+        el.textContent = msg;
+        out.appendChild(el);
+        out.scrollTop = out.scrollHeight;
+    } catch (e) { /* ignore */ }
+}
+
+function updateNewsFeedList(items) {
+    const el = document.getElementById('news-feed-list');
+    if (!el) return;
+    el.innerHTML = '';
+    if (!items || items.length === 0) {
+        el.textContent = 'Aucune actualité récente.';
+        return;
+    }
+    items.forEach(i => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'news-item';
+        const title = document.createElement('div');
+        title.className = 'news-title';
+        const a = document.createElement('a');
+        a.href = i.url || '#';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.textContent = i.title || '—';
+        title.appendChild(a);
+        const meta = document.createElement('div');
+        meta.className = 'news-meta';
+        const date = new Date(i.publishedAt || new Date());
+        meta.textContent = `${i.source || ''} • ${date.toLocaleString('fr-FR')}`;
+        itemEl.appendChild(title);
+        itemEl.appendChild(meta);
+        if (i.summary) {
+            const summary = document.createElement('div');
+            summary.className = 'news-summary';
+            summary.textContent = i.summary;
+            itemEl.appendChild(summary);
+        }
+        el.appendChild(itemEl);
+    });
+}
+
+async function openNewsOverlay(symbol) {
+    const overlay = document.getElementById('news-overlay');
+    const el = document.getElementById('news-feed-list');
+    if (!overlay || !el) return;
+    // Close any active card including the terminal (terminal must act like a card)
+    try { document.querySelectorAll('.card').forEach(x => x.classList.remove('active')); } catch(e) {}
+    overlay.setAttribute('aria-hidden', 'false');
+    // Highlight the news button like a tab, and clear other tool buttons
+    try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
+    try { document.getElementById('open-news-feed')?.classList.add('active'); } catch(e) {}
+    // If a symbol is specified, fetch its news. Else fetch a couple of top symbols' news
+    try {
+        const config = await loadApiConfig();
+        if (symbol) {
+            const r = await fetchNews(symbol, config);
+            if (r && Array.isArray(r.items)) updateNewsFeedList(r.items);
+        } else {
+            // Aggregated feed: fetch for first 6 positions
+            const syms = Object.keys(positions).slice(0, 6);
+            let allItems = [];
+            for (const s of syms) {
+                try {
+                    const r = await fetchNews(s, config);
+                    if (r && r.items) {
+                        allItems = allItems.concat(r.items.map(it => ({...it, symbol: s}))); 
+                    }
+                } catch(e) {}
+            }
+            // Sort by date desc
+            allItems.sort((a,b)=> new Date(b.publishedAt) - new Date(a.publishedAt));
+            updateNewsFeedList(allItems.slice(0, 20));
+        }
+    } catch (err) { console.warn('openNewsOverlay err', err); }
 }

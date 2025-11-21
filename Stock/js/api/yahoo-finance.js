@@ -121,3 +121,112 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
 
   return result;
 }
+
+// Fetch company summary/profile and description
+export async function fetchYahooSummary(ticker, signal) {
+  const yahooSymbol = ticker;
+  const url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(yahooSymbol)}?modules=assetProfile,summaryProfile,price`;
+  const proxy = `${YAHOO_PROXY_BASE_URL}?${url}`;
+  try {
+    const r = await fetch(proxy, { signal });
+    console.log(`fetchYahooSummary ${ticker} => status ${r.status}`);
+    if (!r.ok) return { error: true, errorCode: r.status };
+    const j = await r.json();
+    console.log('fetchYahooSummary raw:', j);
+    const res = j.quoteSummary?.result?.[0];
+    return {
+      source: 'yahoo',
+      summary: res?.assetProfile || res?.summaryProfile || null,
+      price: res?.price || null
+    };
+  } catch (e) { return { source: 'yahoo', error: true, errorCode: 500, errorMessage: e.message }; }
+}
+
+// Fetch financial statements and related data
+export async function fetchYahooFinancials(ticker, signal) {
+  const yahooSymbol = ticker;
+  const modules = 'financialData,balanceSheetHistory,cashflowStatementHistory,earnings';
+  const url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(yahooSymbol)}?modules=${modules}`;
+  const proxy = `${YAHOO_PROXY_BASE_URL}?${url}`;
+  try {
+    const r = await fetch(proxy, { signal });
+    if (!r.ok) return { error: true, errorCode: r.status };
+    const j = await r.json();
+    const res = j.quoteSummary?.result?.[0];
+    return { source: 'yahoo', financials: res || null };
+  } catch (e) { return { source: 'yahoo', error: true, errorCode: 500, errorMessage: e.message }; }
+}
+
+export async function fetchYahooEarnings(ticker, signal) {
+  const yahooSymbol = ticker;
+  const url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(yahooSymbol)}?modules=earnings`;
+  const proxy = `${YAHOO_PROXY_BASE_URL}?${url}`;
+  try {
+    const r = await fetch(proxy, { signal });
+    if (!r.ok) return { error: true, errorCode: r.status };
+    const j = await r.json();
+    const res = j.quoteSummary?.result?.[0];
+    return { source: 'yahoo', earnings: res?.earnings || null };
+  } catch (e) { return { source: 'yahoo', error: true, errorCode: 500, errorMessage: e.message }; }
+}
+
+export async function fetchYahooDividends(ticker, from, to, signal) {
+  const yahooSymbol = ticker;
+  const start = from || '2000-01-01';
+  const end = to || new Date().toISOString().slice(0,10);
+  const period1 = Math.floor(new Date(start).getTime() / 1000);
+  const period2 = Math.floor(new Date(end).getTime() / 1000);
+  const url = `https://query1.finance.yahoo.com/v7/finance/download/${encodeURIComponent(yahooSymbol)}?period1=${period1}&period2=${period2}&interval=1d&events=div`;
+  const proxy = `${YAHOO_PROXY_BASE_URL}?${url}`;
+  try {
+    const r = await fetch(proxy, { signal });
+    if (!r.ok) return { error: true, errorCode: r.status };
+    const text = await r.text();
+    // CSV: Date,Dividends
+    const lines = text.trim().split('\n').slice(1);
+    const items = lines.map(l => {
+      const cols = l.split(',');
+      return { date: cols[0], dividend: parseFloat(cols[1]) };
+    });
+    return { source: 'yahoo', dividends: items };
+  } catch (e) { return { source: 'yahoo', error: true, errorCode: 500, errorMessage: e.message }; }
+}
+
+export async function fetchYahooOptions(ticker, date, signal) {
+  const yahooSymbol = ticker;
+  const url = `https://query2.finance.yahoo.com/v7/finance/options/${encodeURIComponent(yahooSymbol)}${date ? `?date=${date}` : ''}`;
+  const proxy = `${YAHOO_PROXY_BASE_URL}?${url}`;
+  try {
+    const r = await fetch(proxy, { signal });
+    if (!r.ok) return { error: true, errorCode: r.status };
+    const j = await r.json();
+    return { source: 'yahoo', options: j.optionChain || j.option || j }; // raw return
+  } catch (e) { return { source: 'yahoo', error: true, errorCode: 500, errorMessage: e.message }; }
+}
+
+export async function fetchYahooAnalysis(ticker, signal) {
+  const yahooSymbol = ticker;
+  const url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(yahooSymbol)}?modules=recommendationTrend,upgradeDowngradeHistory`;
+  const proxy = `${YAHOO_PROXY_BASE_URL}?${url}`;
+  try {
+    const r = await fetch(proxy, { signal });
+    if (!r.ok) return { error: true, errorCode: r.status };
+    const j = await r.json();
+    const res = j.quoteSummary?.result?.[0];
+    return { source: 'yahoo', analysis: res || null };
+  } catch (e) { return { source: 'yahoo', error: true, errorCode: 500, errorMessage: e.message }; }
+}
+
+export async function fetchYahooNews(ticker, limit = 10, signal) {
+  const yahooSymbol = ticker;
+  // Use search endpoint to retrieve news
+  const url = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(yahooSymbol)}&newsCount=${limit}`;
+  const proxy = `${YAHOO_PROXY_BASE_URL}?${url}`;
+  try {
+    const r = await fetch(proxy, { signal });
+    if (!r.ok) return { error: true, errorCode: r.status, items: [] };
+    const j = await r.json();
+    const items = (j?.news || []).slice(0, limit).map(i => ({ id: i.uuid || i.link, title: i.title, url: i.link, publisher: i.publisher, publishedAt: i.providerPublishTime || i.unixTimeMs || Date.now(), summary: i.summary || '' }));
+    return { source: 'yahoo', items };
+  } catch (e) { return { source: 'yahoo', error: true, errorCode: 500, errorMessage: e.message, items: [] }; }
+}
