@@ -5,21 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mars</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="mars.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="images/mars.png">
 </head>
 <body>
+    <nav class="navbar">
+        <img src="images/mars.png" id="logo" alt="Logo">
+        <a href="index.html">TERRE</a>
+        <a href="#">MARS</a>
+        <a href="jupiter.html">JUPITER</a>
+        <a href="saturn.html">SATURNE</a>
+        <a href="sun.html">SOLEIL</a>
+    </nav>
+
     <header>
-        <nav>
-            <img src="mars.png" id="logo" alt="Logo">
-            <a href="index.html">TERRE</a>
-            <a href="#">MARS</a>
-            <a href="jupiter.html">JUPITER</a>
-            <a href="saturn.html">SATURNE</a>
-            <a href="sun.html">SOLEIL</a>
-        </nav>
         <video autoplay loop muted>
-            <source src="mars.mp4" type="video/mp4">
+            <source src="video/mars.mp4" type="video/mp4">
         </video>
         <h1>Mars</h1>
         <p class="brief-description">Mars, la quatrième planète, rouge et aride, intrigue les scientifiques pour son histoire géologique. Bien que non propice à la vie, elle demeure une destination captivante pour la recherche et l'exploration.</p>
@@ -29,23 +30,106 @@
 
     <section id="description">
         <h2>Mars</h2>
-        <p>Mars, la quatrième planète du système solaire, est connue depuis la préhistoire en raison de sa brillance distinctive dans le ciel nocturne.</p>
+        
+        <h3>Orbite et Rotation</h3>
         <p>Elle complète une révolution autour du Soleil en 686 jours et effectue une rotation sur elle-même en 24 heures et 37 minutes.</p>
-        <p>Mars possède deux petits satellites, Phobos et Deïmos, découverts en 1877.</p>
-        <p>Son atmosphère est principalement composée de gaz carbonique, d'azote et d'argon, avec une pression au niveau du sol environ 1000 fois plus faible que sur Terre.</p>
-        <p>La géologie de Mars est fascinante, présentant des hauts plateaux de 10 km, des volcans de 400 km de diamètre et 20 km de hauteur, dont l'Olympus Mons, la plus haute montagne du système solaire.</p>
-        <p>Une énorme faille, Valles Marineris, s'étend sur 2500 km, avec une largeur de 120 km et une profondeur de 6 km.</p>
+        
+        <h3>Satellites</h3>
+        <p>Mars possède deux petits satellites :</p>
+        <ul>
+            <li>Phobos</li>
+            <li>Deïmos</li>
+        </ul>
+        <p>Découverts en 1877.</p>
+        
+        <h3>Atmosphère</h3>
+        <p>Son atmosphère est principalement composée de :</p>
+        <table>
+            <tr>
+                <th>Gaz</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>Gaz carbonique</td>
+                <td>Principal composant</td>
+            </tr>
+            <tr>
+                <td>Azote</td>
+                <td>Présent</td>
+            </tr>
+            <tr>
+                <td>Argon</td>
+                <td>Présent</td>
+            </tr>
+        </table>
+        <p>Avec une pression au niveau du sol environ 1000 fois plus faible que sur Terre.</p>
+        
+        <h3>Géologie</h3>
+        <p>La géologie de Mars est fascinante, présentant :</p>
+        <ul>
+            <li>Des hauts plateaux de 10 km</li>
+            <li>Des volcans de 400 km de diamètre et 20 km de hauteur, dont l'Olympus Mons, la plus haute montagne du système solaire</li>
+            <li>Une énorme faille, Valles Marineris, s'étendant sur 2500 km, avec une largeur de 120 km et une profondeur de 6 km</li>
+        </ul>
         <p>Des découvertes importantes ont été faites par les sondes Viking, montrant des vallées ressemblant à des lits de rivières, indiquant que l'eau a autrefois coulé sur Mars.</p>
-        <p>L'orbite elliptique de Mars entraîne des variations de température considérables, allant d'environ -133°C en hiver à -3°C en été, avec une température moyenne de -63°C.</p>
-        <p>Le premier vaisseau spatial à avoir visité Mars était Mariner 4 en 1965, suivi des sondes Viking 1 et 2 en 1976, et de Mars Pathfinder en 1997.</p>
+        
+        <h3>Températures</h3>
+        <p>L'orbite elliptique de Mars entraîne des variations de température considérables :</p>
+        <ul>
+            <li>Allant d'environ -133°C en hiver</li>
+            <li>À -3°C en été</li>
+            <li>Avec une température moyenne de -63°C</li>
+        </ul>
+        
+        <h3>Explorations</h3>
+        <p>Le premier vaisseau spatial à avoir visité Mars était Mariner 4 en 1965, suivi des sondes :</p>
+        <ul>
+            <li>Viking 1 et 2 en 1976</li>
+            <li>Mars Pathfinder en 1997</li>
+        </ul>
         <p>Les observations ont mis fin aux croyances antérieures sur la présence d'eau liquide à la surface de Mars et de formes de vie similaires à celles de la Terre.</p>
+        
+        <h3>Composition</h3>
         <p>Le noyau de Mars est composé d'un alliage métallique principalement de fer et de nickel, avec un manteau riche en olivine et pyroxènes, et une croûte épaisse de roches cristallines.</p>
+        
+        <h3>Structure Interne</h3>
+        <div class="structure-container">
+            <svg width="300" height="300" viewBox="0 0 300 300" class="structure-svg">
+                <circle cx="150" cy="150" r="120" fill="#8B4513" class="layer" data-layer="crust">
+                    <title>Croûte</title>
+                </circle>
+                <circle cx="150" cy="150" r="80" fill="#FFA500" class="layer" data-layer="mantle">
+                    <title>Manteau</title>
+                </circle>
+                <circle cx="150" cy="150" r="40" fill="#FF4500" class="layer" data-layer="core">
+                    <title>Noyau</title>
+                </circle>
+            </svg>
+            <div class="description-panel">
+                <div id="crust-desc" class="layer-desc">
+                    <h4>Croûte</h4>
+                    <p>Épaisse couche de roches cristallines à la surface.</p>
+                </div>
+                <div id="mantle-desc" class="layer-desc">
+                    <h4>Manteau</h4>
+                    <p>Riche en olivine et pyroxènes, formant la majeure partie de la planète.</p>
+                </div>
+                <div id="core-desc" class="layer-desc">
+                    <h4>Noyau</h4>
+                    <p>Alliage métallique principalement de fer et de nickel.</p>
+                </div>
+            </div>
+        </div>
+        
+        <h3>Étymologie</h3>
         <p>Le nom Mars est dérivé du dieu romain de la guerre, la couleur rouge de sa surface évoquant le sang des champs de bataille.</p>
     </section>
 
     <footer>
         <p>Léo Tosku 2024 - Vidéo par Pexels</p>
     </footer>
+
+    <script src="script.js"></script>
 
 </body>
 </html>

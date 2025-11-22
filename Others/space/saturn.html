@@ -5,22 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saturne</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="saturn.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="images/saturn.png">
 </head>
 <body>
 
+    <nav class="navbar">
+        <img src="images/saturn.png" id="logo" alt="Logo">
+        <a href="index.html">TERRE</a>
+        <a href="mars.html">MARS</a>
+        <a href="jupiter.html">JUPITER</a>
+        <a href="#">SATURNE</a>
+        <a href="sun.html">SOLEIL</a>
+    </nav>
+
     <header>
-        <nav>
-            <img src="saturn.png" id="logo" alt="Logo">
-            <a href="index.html">TERRE</a>
-            <a href="mars.html">MARS</a>
-            <a href="jupiter.html">JUPITER</a>
-            <a href="#">SATURNE</a>
-            <a href="sun.html">SOLEIL</a>
-        </nav>
         <video autoplay loop muted>
-            <source src="saturn.mp4" type="video/mp4">
+            <source src="video/saturn.mp4" type="video/mp4">
         </video>
         <h1>Saturne</h1>
         <p class="brief-description">Saturne, la sixième planète, est célèbre pour ses anneaux spectaculaires. En tant que géante gazeuse, elle intrigue malgré son inhospitalité pour la vie.</p>
@@ -30,21 +31,95 @@
 
     <section id="description">
         <h2>Saturne</h2>
-        <p>Saturne, la sixième planète du système solaire, est célèbre pour ses magnifiques anneaux qui en font l'une des destinations les plus fascinantes à observer dans le ciel nocturne.</p>
+        
+        <h3>Orbite</h3>
         <p>En orbite à une distance moyenne d'environ 1,4 milliard de kilomètres du Soleil, Saturne fait une révolution complète autour de notre étoile en environ 29 années terrestres.</p>
-        <p>La planète géante gazeuse est composée principalement d'hydrogène (75%) et d'hélium (25%), avec des traces de gaz et de glace.</p>
-        <p>La caractéristique la plus distinctive de Saturne est son système d'anneaux, constitué de milliards de petits fragments de glace et de roche en orbite autour de la planète.</p>
-        <p>Ces anneaux, larges et fins, ajoutent une dimension spectaculaire à la beauté de Saturne, bien qu'ils soient extrêmement minces par rapport à leur étendue.</p>
-        <p>La composition atmosphérique de Saturne comprend des nuages de gaz hélium et d'hydrogène, ainsi que des traces de méthane, éthylène et phosphine.</p>
+        
+        <h3>Composition</h3>
+        <p>La planète géante gazeuse est composée principalement de :</p>
+        <table>
+            <tr>
+                <th>Gaz</th>
+                <th>Pourcentage</th>
+            </tr>
+            <tr>
+                <td>Hydrogène</td>
+                <td>75%</td>
+            </tr>
+            <tr>
+                <td>Hélium</td>
+                <td>25%</td>
+            </tr>
+            <tr>
+                <td>Gaz et glace</td>
+                <td>Traces</td>
+            </tr>
+        </table>
+        
+        <h3>Anneaux</h3>
+        <p>La caractéristique la plus distinctive de Saturne est son système d'anneaux, constitué de milliards de petits fragments de glace et de roche en orbite autour de la planète. Ces anneaux, larges et fins, ajoutent une dimension spectaculaire à la beauté de Saturne, bien qu'ils soient extrêmement minces par rapport à leur étendue.</p>
+        
+        <h3>Atmosphère</h3>
+        <p>La composition atmosphérique de Saturne comprend :</p>
+        <ul>
+            <li>Des nuages de gaz hélium et d'hydrogène</li>
+            <li>Des traces de méthane</li>
+            <li>Éthylène</li>
+            <li>Phosphine</li>
+        </ul>
+        
+        <h3>Tempêtes</h3>
         <p>Les célèbres tempêtes atmosphériques de Saturne, y compris la célèbre tempête hexagonale près de son pôle nord, sont des phénomènes saisissants observés par les télescopes spatiaux et terrestres.</p>
+        
+        <h3>Lunes</h3>
         <p>Saturne possède également un système complexe de plus de 80 lunes connues, dont la plus grande, Titan, est la seule lune du système solaire avec une atmosphère significative.</p>
+        
+        <h3>Explorations</h3>
         <p>Grâce aux missions spatiales telles que Cassini-Huygens, notre compréhension de Saturne et de ses lunes a considérablement progressé, révélant des détails fascinants sur cette planète majestueuse.</p>
         <p>Avec sa beauté unique et ses caractéristiques intrigantes, Saturne reste l'un des joyaux du système solaire, continuant à inspirer la curiosité et l'émerveillement.</p>
+        
+        <h3>Structure Interne</h3>
+        <div class="structure-container">
+            <svg width="300" height="300" viewBox="0 0 300 300" class="structure-svg">
+                <circle cx="150" cy="150" r="140" fill="#FFD700" class="layer" data-layer="atmosphere">
+                    <title>Atmosphère</title>
+                </circle>
+                <circle cx="150" cy="150" r="110" fill="#87CEEB" class="layer" data-layer="molecular">
+                    <title>Hydrogène Moléculaire</title>
+                </circle>
+                <circle cx="150" cy="150" r="80" fill="#FFD700" class="layer" data-layer="metallic">
+                    <title>Hydrogène Métallique</title>
+                </circle>
+                <circle cx="150" cy="150" r="50" fill="#FF4500" class="layer" data-layer="core">
+                    <title>Noyau</title>
+                </circle>
+            </svg>
+            <div class="description-panel">
+                <div id="atmosphere-desc" class="layer-desc">
+                    <h4>Atmosphère</h4>
+                    <p>Couche externe gazeuse avec des tempêtes hexagonales.</p>
+                </div>
+                <div id="molecular-desc" class="layer-desc">
+                    <h4>Hydrogène Moléculaire</h4>
+                    <p>Région d'hydrogène moléculaire.</p>
+                </div>
+                <div id="metallic-desc" class="layer-desc">
+                    <h4>Hydrogène Métallique</h4>
+                    <p>Couche d'hydrogène métallique liquide.</p>
+                </div>
+                <div id="core-desc" class="layer-desc">
+                    <h4>Noyau</h4>
+                    <p>Noyau rocheux central.</p>
+                </div>
+            </div>
+        </div>
     </section>
 
     <footer>
         <p>Léo Tosku 2024 - Vidéo par Nasa</p>
     </footer>
+
+    <script src="script.js"></script>
 
 </body>
 </html>

@@ -62,7 +62,7 @@ export function initChart(symbol, positions) {
                 backgroundColor:g,
                 borderWidth:2,
                 fill:true,
-                tension: 0,
+                tension: 0.4, // courbe arrondie
                 pointRadius:0,
                 pointHoverRadius:4,
                 spanGaps: true

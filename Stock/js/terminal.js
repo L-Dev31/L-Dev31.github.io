@@ -54,9 +54,9 @@ function showHelp(target = null) {
         appendOutput('<span class="term-cmd">SYMBOL</span> - Ouvrir/sélectionner un onglet par symbole (ex: AAPL, BTC).', 'terminal-help', true);
         appendOutput('<span class="term-cmd">NEWS</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> - Ouvrir l\'overlay d\'actualités pour le symbole', 'terminal-help', true);
         appendOutput('<span class="term-cmd">DES</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> - Afficher la description (Summary/Profile)', 'terminal-help', true);
-        appendOutput('<span class="term-cmd">GP</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> [PERIOD] - Ouvrir graphique historique', 'terminal-help', true);
+        appendOutput('<span class="term-cmd">GP</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> <span class="term-cmd">[PERIOD]</span> - Ouvrir graphique historique', 'terminal-help', true);
         appendOutput('<span class="term-cmd">GIP</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> - Démarrer streaming intraday (CTRL+C pour arrêter)', 'terminal-help', true);
-        appendOutput('<span class="term-cmd">HDS</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> [PERIOD] - Afficher données historiques', 'terminal-help', true);
+        appendOutput('<span class="term-cmd">HDS</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> <span class="term-cmd">[PERIOD]</span> - Afficher données historiques', 'terminal-help', true);
         appendOutput('<span class="term-cmd">FA</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> - Afficher états financiers', 'terminal-help', true);
         appendOutput('<span class="term-cmd">ANR</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> - Avis analystes', 'terminal-help', true);
         appendOutput('<span class="term-cmd">ERN</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> - Résultats (earnings)', 'terminal-help', true);
@@ -78,7 +78,7 @@ function showHelp(target = null) {
             break;
         case 'NEWS':
                     case 'GP':
-                        appendOutput('<span class="term-cmd">GP</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> [PERIOD] - Ouvre le graphique historique pour le symbole', 'terminal-help', true);
+                        appendOutput('<span class="term-cmd">GP</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> <span class="term-cmd">[PERIOD]</span> - Ouvre le graphique historique pour le symbole', 'terminal-help', true);
                         appendOutput('Ex: <span class="term-cmd">GP AAPL 1Y</span>', 'terminal-help', true);
                         break;
                     case 'GIP':
@@ -86,7 +86,7 @@ function showHelp(target = null) {
                         appendOutput('Ex: <span class="term-cmd">GIP AAPL</span>', 'terminal-help', true);
                         break;
                     case 'HDS':
-                        appendOutput('<span class="term-cmd">HDS</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> [PERIOD] - Données historiques', 'terminal-help', true);
+                        appendOutput('<span class="term-cmd">HDS</span> <span class="term-cmd">&lt;SYMBOL&gt;</span> <span class="term-cmd">[PERIOD]</span> - Données historiques', 'terminal-help', true);
                         appendOutput('Ex: <span class="term-cmd">HDS AAPL 5Y</span>', 'terminal-help', true);
                         break;
                     case 'FA':

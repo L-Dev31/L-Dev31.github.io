@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
     <div class="sidebar">
@@ -147,9 +147,6 @@
                         <div class="performance-label">Performance du jour</div>
                         <div class="performance-value" id=""></div>
                     </div>
-                    <div class="update-center" id=""></div>
-                    <h3 class="section-title details-title">Détails techniques</h3>
-                    <div class="section-date"></div>
                     <div class="info-grid">
                         <div class="info-item">
                             <div class="info-label">Ouverture (Open)</div>
@@ -168,6 +165,7 @@
                             <div class="info-value" id=""></div>
                         </div>
                     </div>
+                    <div class="update-center" id=""></div>
                     <h3 class="section-title signal-title">Signal d'achat/vente</h3>
                     <div class="section-date"></div>
                     <div class="signal-container">
@@ -200,6 +198,11 @@
                             </div>
                         </div>
                     </div>
+                    <!-- NEWS SECTION (POC) -->
+                    <div class="news-section">
+                        <h3 class="section-title">Dernières actualités</h3>
+                        <div class="news-list" id="news-list-" aria-live="polite"></div>
+                    </div>
                     <h3 class="section-title transaction-history-title">Historique des transactions</h3>
                     <div class="transaction-history-container">
                         <table class="transaction-history-table">
@@ -215,11 +218,6 @@
                             <tbody class="transaction-history-body">
                             </tbody>
                         </table>
-                    </div>
-                    <!-- NEWS SECTION (POC) -->
-                    <div class="news-section">
-                        <h3 class="section-title">Dernières actualités</h3>
-                        <div class="news-list" id="news-list-" aria-live="polite"></div>
                     </div>
                 </div>
             </template>
@@ -355,6 +353,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <script type="module" src="js/signal-bot.js"></script>
+    <script type="module" src="js/news.js"></script>
     <script type="module" src="js/general.js"></script>
     <script type="module" src="js/terminal.js"></script>
     <!-- Command bar for quick symbol commands / NEWS / GO (fullscreen modal) -->

@@ -8,6 +8,7 @@ import rateLimiter from './rate-limiter.js'
 import { fetchNews } from './api/news.js'
 import { initChart, updateChart } from './chart.js'
 import { updateSignal } from './signal-bot.js'
+import { fetchCardNews, updateNewsUI, updateNewsFeedList, openNewsOverlay, closeNewsOverlay, setPositions } from './news.js'
 
 // Fonction utilitaire pour filtrer les points null/undefined/NaN dès la source
 export function filterNullDataPoints(timestamps, prices) {
@@ -52,7 +53,7 @@ async function selectApiFetch(apiName, position) {
 
 let API_CONFIG = null;
 
-async function loadApiConfig() {
+export async function loadApiConfig() {
   if (API_CONFIG) return API_CONFIG;
 
   try {
@@ -847,13 +848,13 @@ function updateSectionDates(symbol) {
 
 function updatePortfolioSummary() {
     let totalShares = 0;
-    let totalInvestment = 0;
-    let cashAccount = 116.31; // Valeur statique du compte titre
+    let totalInvestment = 223.52; // Valeur mise à jour de l'investissement total
+    let cashAccount = -0.15; // Valeur mise à jour du compte titre
 
     Object.values(positions).forEach(pos => {
         totalShares += pos.shares || 0;
         // Prefer costBasis (sum of unchecked purchases left) as the invested capital for currently held shares
-        totalInvestment += Math.abs(pos.costBasis || pos.investment || 0);
+        // totalInvestment += Math.abs(pos.costBasis || pos.investment || 0); // Commenté car valeur fixe
     });
 
     const totalSharesEl = document.getElementById('total-shares');
@@ -1003,6 +1004,7 @@ document.head.appendChild(font)
 
 window.addEventListener('load', async () => {
     await loadStocks();
+    setPositions(positions);
     const active = getActiveSymbol();
     // Initialize section toggles for sidebar collapsible sections
     try {
@@ -1123,9 +1125,7 @@ document.getElementById('open-news-feed')?.addEventListener('click', async e => 
 
 // Close news overlay
 document.getElementById('close-news-overlay')?.addEventListener('click', e => {
-    const overlay = document.getElementById('news-overlay');
-    if (overlay) overlay.setAttribute('aria-hidden', 'true');
-    try { document.getElementById('open-news-feed')?.classList.remove('active'); } catch(e) {}
+    closeNewsOverlay();
 });
 
 // Terminal input now handled in `js/terminal.js` (new module)
@@ -1143,6 +1143,7 @@ window.fetchActiveSymbol = fetchActiveSymbol;
 window.getActiveSymbol = getActiveSymbol;
 window.openTerminalCard = openTerminalCard;
 window.openNewsOverlay = openNewsOverlay;
+window.closeNewsOverlay = closeNewsOverlay;
 window.terminalLogGlobal = terminalLogGlobal;
 window.positions = positions;
 window.closeTerminalCard = closeTerminalCard;
@@ -1522,55 +1523,6 @@ function createCard(stock) {
     document.getElementById('cards-container')?.appendChild(card)
 }
 
-async function fetchCardNews(symbol, force = false, limit = 5) {
-    if (!positions[symbol]) return;
-    const now = Date.now();
-    // cache for 10 minutes by default
-    if (!force && positions[symbol].lastNewsFetch && (now - positions[symbol].lastNewsFetch) < 10 * 60 * 1000) {
-        return positions[symbol].news;
-    }
-    try {
-        const config = await loadApiConfig();
-        const r = await fetchNews(symbol, config);
-        if (r && !r.error && Array.isArray(r.items)) {
-            positions[symbol].news = r.items;
-            positions[symbol].lastNewsFetch = now;
-            updateNewsUI(symbol, r.items);
-            return r.items;
-        }
-    } catch (e) { console.warn('fetchCardNews error:', e.message || e); }
-    return [];
-}
-
-function updateNewsUI(symbol, items) {
-    const el = document.getElementById(`news-list-${symbol}`);
-    if (!el) return;
-    el.innerHTML = '';
-    if (!items || items.length === 0) {
-        el.textContent = 'Aucune actualité récente.';
-        return;
-    }
-    items.forEach(i => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'news-item';
-        const title = document.createElement('div');
-        title.className = 'news-title';
-        const a = document.createElement('a');
-        a.href = i.url || '#';
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.textContent = i.title || '—';
-        title.appendChild(a);
-        const meta = document.createElement('div');
-        meta.className = 'news-meta';
-        const date = new Date(i.publishedAt || new Date());
-        meta.textContent = `${i.source || ''} • ${date.toLocaleString('fr-FR')}`;
-        itemEl.appendChild(title);
-        itemEl.appendChild(meta);
-        el.appendChild(itemEl);
-    });
-}
-
 function clearPeriodDisplay(symbol) {
     if (!positions[symbol]) return;
     // Clear chart data but keep chart instance
@@ -1649,74 +1601,4 @@ function terminalLogGlobal(msg) {
         out.appendChild(el);
         out.scrollTop = out.scrollHeight;
     } catch (e) { /* ignore */ }
-}
-
-function updateNewsFeedList(items) {
-    const el = document.getElementById('news-feed-list');
-    if (!el) return;
-    el.innerHTML = '';
-    if (!items || items.length === 0) {
-        el.textContent = 'Aucune actualité récente.';
-        return;
-    }
-    items.forEach(i => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'news-item';
-        const title = document.createElement('div');
-        title.className = 'news-title';
-        const a = document.createElement('a');
-        a.href = i.url || '#';
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.textContent = i.title || '—';
-        title.appendChild(a);
-        const meta = document.createElement('div');
-        meta.className = 'news-meta';
-        const date = new Date(i.publishedAt || new Date());
-        meta.textContent = `${i.source || ''} • ${date.toLocaleString('fr-FR')}`;
-        itemEl.appendChild(title);
-        itemEl.appendChild(meta);
-        if (i.summary) {
-            const summary = document.createElement('div');
-            summary.className = 'news-summary';
-            summary.textContent = i.summary;
-            itemEl.appendChild(summary);
-        }
-        el.appendChild(itemEl);
-    });
-}
-
-async function openNewsOverlay(symbol) {
-    const overlay = document.getElementById('news-overlay');
-    const el = document.getElementById('news-feed-list');
-    if (!overlay || !el) return;
-    // Close any active card including the terminal (terminal must act like a card)
-    try { document.querySelectorAll('.card').forEach(x => x.classList.remove('active')); } catch(e) {}
-    overlay.setAttribute('aria-hidden', 'false');
-    // Highlight the news button like a tab, and clear other tool buttons
-    try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
-    try { document.getElementById('open-news-feed')?.classList.add('active'); } catch(e) {}
-    // If a symbol is specified, fetch its news. Else fetch a couple of top symbols' news
-    try {
-        const config = await loadApiConfig();
-        if (symbol) {
-            const r = await fetchNews(symbol, config);
-            if (r && Array.isArray(r.items)) updateNewsFeedList(r.items);
-        } else {
-            // Aggregated feed: fetch for first 6 positions
-            const syms = Object.keys(positions).slice(0, 6);
-            let allItems = [];
-            for (const s of syms) {
-                try {
-                    const r = await fetchNews(s, config);
-                    if (r && r.items) {
-                        allItems = allItems.concat(r.items.map(it => ({...it, symbol: s}))); 
-                    }
-                } catch(e) {}
-            }
-            // Sort by date desc
-            allItems.sort((a,b)=> new Date(b.publishedAt) - new Date(a.publishedAt));
-            updateNewsFeedList(allItems.slice(0, 20));
-        }
-    } catch (err) { console.warn('openNewsOverlay err', err); }
 }

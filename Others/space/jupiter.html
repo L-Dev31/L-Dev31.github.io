@@ -5,22 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jupiter</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="jupiter.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="images/jupiter.png">
 </head>
 <body>
 
+    <nav class="navbar">
+        <img src="images/jupiter.png" id="logo" alt="Logo">
+        <a href="index.html">TERRE</a>
+        <a href="mars.html">MARS</a>
+        <a href="#">JUPITER</a>
+        <a href="saturn.html">SATURNE</a>
+        <a href="sun.html">SOLEIL</a>
+    </nav>
+
     <header>
-        <nav>
-            <img src="jupiter.png" id="logo" alt="Logo">
-            <a href="index.html">TERRE</a>
-            <a href="mars.html">MARS</a>
-            <a href="#">JUPITER</a>
-            <a href="saturn.html">SATURNE</a>
-            <a href="sun.html">SOLEIL</a>
-        </nav>
         <video autoplay loop muted>
-            <source src="jupiter.mp4" type="video/mp4">
+            <source src="video/jupiter.mp4" type="video/mp4">
         </video>
         <h1>Jupiter</h1>
         <p class="brief-description">Jupiter, la cinquième planète, géante gazeuse, fascine par son immensité et ses tempêtes tourbillonnantes. Bien que peu propice à la vie, elle demeure un objet d'étude passionnant pour les scientifiques.</p>
@@ -30,21 +31,110 @@
 
     <section id="description">
         <h2>Jupiter</h2>
-        <p>Jupiter, la cinquième planète du système solaire, est une géante gazeuse aux dimensions impressionnantes, avec une masse deux fois et demie celle de toutes les autres planètes réunies.</p>
+        
+        <h3>Orbite</h3>
         <p>Située à une distance moyenne d'environ 778 millions de kilomètres du Soleil, Jupiter accomplit une orbite complète en environ 12 années terrestres.</p>
-        <p>La composition atmosphérique de Jupiter est principalement constituée d'hydrogène (90%) et d'hélium (10%), avec des traces de méthane, d'ammoniac, de vapeur d'eau et d'autres composés chimiques.</p>
+        
+        <h3>Composition Atmosphérique</h3>
+        <p>La composition atmosphérique de Jupiter est principalement constituée de :</p>
+        <table>
+            <tr>
+                <th>Gaz</th>
+                <th>Pourcentage</th>
+            </tr>
+            <tr>
+                <td>Hydrogène</td>
+                <td>90%</td>
+            </tr>
+            <tr>
+                <td>Hélium</td>
+                <td>10%</td>
+            </tr>
+            <tr>
+                <td>Méthane</td>
+                <td>Traces</td>
+            </tr>
+            <tr>
+                <td>Ammoniac</td>
+                <td>Traces</td>
+            </tr>
+            <tr>
+                <td>Vapeur d'eau</td>
+                <td>Traces</td>
+            </tr>
+            <tr>
+                <td>Autres composés chimiques</td>
+                <td>Traces</td>
+            </tr>
+        </table>
+        
+        <h3>Caractéristiques</h3>
         <p>La caractéristique la plus emblématique de Jupiter est sa gigantesque tache rouge, une tempête anticyclonique massive qui dure depuis des siècles.</p>
+        
+        <h3>Anneaux</h3>
         <p>Le système d'anneaux de Jupiter est moins imposant que celui de Saturne mais reste présent, composé de poussières et de petits fragments.</p>
-        <p>Jupiter possède également un vaste ensemble de lunes, parmi lesquelles les quatre plus grandes, appelées les lunes galiléennes (Io, Europa, Ganymède et Callisto), sont particulièrement étudiées en raison de leurs caractéristiques uniques.</p>
+        
+        <h3>Lunes</h3>
+        <p>Jupiter possède également un vaste ensemble de lunes, parmi lesquelles les quatre plus grandes, appelées les lunes galiléennes, sont particulièrement étudiées en raison de leurs caractéristiques uniques :</p>
+        <ul>
+            <li>Io</li>
+            <li>Europa</li>
+            <li>Ganymède</li>
+            <li>Callisto</li>
+        </ul>
+        
+        <h3>Tempêtes</h3>
         <p>La Grande Tache Rouge, une immense tempête anticyclonique, est un phénomène mystérieux qui a captivé les astronomes depuis des siècles.</p>
+        
+        <h3>Explorations</h3>
         <p>Grâce à des missions spatiales telles que Galileo et Juno, nous avons pu explorer Jupiter de plus près, révélant des détails sur son atmosphère complexe, son champ magnétique puissant et d'autres aspects intrigants de cette planète géante.</p>
+        
+        <h3>Rôle dans le Système Solaire</h3>
         <p>Jupiter joue un rôle crucial dans la dynamique du système solaire en agissant comme un "nettoyeur" gravitationnel, influençant l'orbite des autres planètes et des petits objets célestes.</p>
         <p>Avec sa présence majestueuse et ses mystères fascinants, Jupiter reste une planète clé dans notre exploration de l'univers.</p>
+        
+        <h3>Structure Interne</h3>
+        <div class="structure-container">
+            <svg width="300" height="300" viewBox="0 0 300 300" class="structure-svg">
+                <circle cx="150" cy="150" r="140" fill="#FFD700" class="layer" data-layer="atmosphere">
+                    <title>Atmosphère</title>
+                </circle>
+                <circle cx="150" cy="150" r="110" fill="#87CEEB" class="layer" data-layer="molecular">
+                    <title>Hydrogène Moléculaire</title>
+                </circle>
+                <circle cx="150" cy="150" r="80" fill="#FFD700" class="layer" data-layer="metallic">
+                    <title>Hydrogène Métallique</title>
+                </circle>
+                <circle cx="150" cy="150" r="50" fill="#FF4500" class="layer" data-layer="core">
+                    <title>Noyau</title>
+                </circle>
+            </svg>
+            <div class="description-panel">
+                <div id="atmosphere-desc" class="layer-desc">
+                    <h4>Atmosphère</h4>
+                    <p>Couche externe gazeuse composée principalement d'hydrogène et d'hélium.</p>
+                </div>
+                <div id="molecular-desc" class="layer-desc">
+                    <h4>Hydrogène Moléculaire</h4>
+                    <p>Région où l'hydrogène est sous forme moléculaire.</p>
+                </div>
+                <div id="metallic-desc" class="layer-desc">
+                    <h4>Hydrogène Métallique</h4>
+                    <p>Couche d'hydrogène métallique liquide sous haute pression.</p>
+                </div>
+                <div id="core-desc" class="layer-desc">
+                    <h4>Noyau</h4>
+                    <p>Noyau solide rocheux entouré de glace et de roches.</p>
+                </div>
+            </div>
+        </div>
     </section>
 
     <footer>
         <p>Léo Tosku 2024 - Vidéo par Pexels</p>
     </footer>
+
+    <script src="script.js"></script>
 
 </body>
 </html>

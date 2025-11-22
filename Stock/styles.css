@@ -1,4 +1,4 @@
-.sidebar-actions .profile-action-btn i.fa-solid {
+.profile-action-btn i.fa-solid {
     font-size: 1em;
     width: 1.1em;
     min-width: 1em;
@@ -6,12 +6,9 @@
     line-height: 1em;
     vertical-align: middle;
 }
-.terminal-log { font-family: "JetBrains Mono", monospace; background: rgba(0,0,0,0.15); padding:6px 8px; border-radius:6px; color:#dbeafe; margin-bottom:6px; font-size:1rem; }
-.terminal-help { font-family: "JetBrains Mono", monospace; background: rgba(168,162,255,0.04); padding:6px 8px; border-radius:6px; color:inherit; margin-bottom:6px; font-size:0.95rem; }
+.terminal-log { font-family: "JetBrains Mono", monospace; padding:6px 8px; border-radius:6px; color:#dbeafe; margin-bottom:6px; font-size:1rem; }
+.terminal-help { font-family: "JetBrains Mono", monospace; padding:6px 8px; border-radius:6px; color: #fff; margin-bottom:6px; font-size:0.95rem; }
 .term-cmd { color: #a8a2ff; font-weight: 700; }
-.term-arg { color: #dbeafe; opacity: 0.9; }
-.terminal-help { color: #fff; }
-.term-example { color: #dbeafe; opacity: 0.75; font-style: italic; }
 
     .tabs.portfolio,
         .tabs.general {
@@ -24,22 +21,21 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #bcb6ff;
+    background: rgba(255,255,255,0.12);
     border-radius: 6px;
     min-height: 40px;
     opacity: 0.5;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #a8a2ff;
+    background: rgba(255,255,255,0.25);
 }
 ::-webkit-scrollbar-corner {
     background: transparent;
 }
 html {
-    scrollbar-color: #bcb6ff #23233b;
+    scrollbar-color: rgba(255,255,255,0.12) #23233b;
     scrollbar-width: thin;
 }
-/* Sous-catégories de tabs (types d'actifs) */
 .tab-type-section {
     margin-bottom: 12px;
 }
@@ -61,31 +57,8 @@ html {
     width: 1em;
     height: 1em;
 }
- 
-.api-indicator-flex {
-    display: flex;
-    flex-direction: column; 
-    align-items: flex-start;
-    position: relative;
-}
-.api-indicator-row {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-.api-indicator-root {
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-}
-.api-indicator-logo {
-    width: 100px;
-    height: auto;
-    margin: 0 4px 0 8px;
-    vertical-align: middle;
-    display: inline-block;
-    object-fit: contain;
-}
+
+    
 .api-status-text {
     margin-left: 15px;
     margin-right: 15px;
@@ -132,8 +105,8 @@ html {
     line-height: 1.4;
     text-align: left;
 }
-/* Hide spinner row if not active (overridden inline for display:none) */
- 
+
+
 #api-status-indicator {
     margin: 0;
     color: #ffffff;
@@ -163,7 +136,6 @@ html {
 
 #api-status-indicator { visibility: hidden !important; }
 
-/* Indicator hover/active outline and chevron color */
 #api-status-indicator:hover,
 #api-status-indicator.dropdown-open {
     outline: 2px solid rgba(168, 162, 255, 0.6);
@@ -174,13 +146,13 @@ html {
     color: #fff;
 }
 
-/* Expanded indicator (shows options when the indicator has .dropdown-open) */
+
 .api-expanded {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.5s ease;
     width: 100%;
-    margin-top: 10px; /* space between options and main line */
+    margin-top: 10px;
 }
 .api-expanded .api-option {
     display: block;
@@ -205,14 +177,14 @@ html {
     max-height: 400px;
 }
 
- 
+
 
 .card-general-info .general-row span,
 .card-general-info .general-row .country-name {
     font-weight: 400;
     color: #fff;
 }
- 
+
 .section-title {
     font-size: 17px;
     color: #a8a2ff;
@@ -247,7 +219,7 @@ html {
     margin-left: 4px;
     margin-right: 4px;
 }
- 
+
 
 .api-spinner {
     display: inline-block;
@@ -355,7 +327,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0;
-    /* No background, border, or shadow */
+
     background: none;
     border: none;
     box-shadow: none;
@@ -430,7 +402,7 @@ body {
     color: #6b7280;
 }
 
-/* Make sure `.card` entries don't default to full viewport height; use /container/ specificity to override other rules */
+
 .container .card {
     background: rgba(30, 30, 36, 0.8);
     backdrop-filter: blur(10px);
@@ -441,15 +413,14 @@ body {
     display: none;
     position: relative;
     outline: 1px solid rgba(168, 162, 255, 0.2);
-    height: auto; /* don't force exact height; use min-height below */
-    min-height: calc(100vh - 120px) !important; /* ensure cards leave room for top bar etc. */
+    height: auto;
+    min-height: calc(100vh - 120px) !important;
     overflow-y: auto;
 }
 
 .card.active {
     display: block;
 }
-
 
 .performance {
     background:
@@ -482,12 +453,12 @@ body {
     color: #fca5a5;
 }
 
-/* Neutral (zero) performance: pastel yellow */
+
 .performance-value.neutral {
-    color: #f7e7a9; /* pastel yellow */
+    color: #f7e7a9;
 }
 
-/* Valeurs positives et négatives */
+
 .positive {
     color: #86efac !important;
 }
@@ -501,20 +472,10 @@ body {
     font-style: italic;
 }
 
-/* Profit cell states in the table */
-.profit-positive {
-    color: #86efac !important;
-}
-.profit-negative {
-    color: #fca5a5 !important;
-}
-.profit-neutral {
-    color: #f7e7a9 !important;
-}
+ 
 
 .chart-container {
-    /* Limite la hauteur du graphique pour éviter qu'il prenne trop d'espace.
-       Ajustez la valeur ci-dessous selon vos besoins (ex: 300px, 400px). */
+
     height: 400px;
     margin-top: 24px;
     margin-bottom: 20px;
@@ -537,15 +498,11 @@ body {
 
 .chart-canvas {
     width: 100%;
-    /* Utiliser 100% de la hauteur du conteneur (qui a un max-height).
-       Chart.js est configuré avec maintainAspectRatio: false, donc
-       le canvas prendra la hauteur du parent. */
+
     height: 360px;
     max-height: 400px;
     display: block;
 }
-
-
 
 .info-grid {
     display: grid;
@@ -582,36 +539,26 @@ body {
     margin-top: 16px;
 }
 
-.update-time {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    text-align: center;
-    color: #6b7280;
-    font-size: 12px;
-    margin-top: 20px;
-}
+ 
 
-/* Informations économiques dans le profil */
 .profile-info p {
     margin: 4px 0;
     font-size: 11px;
     color: #a8a2ff;
 }
 
-.sidebar-actions, .tabs.tools { display:flex; gap:8px; margin-top:10px; flex-direction: column; }
-.profile-action-btn, .sidebar-actions .profile-action-btn { width:100%; display:block; padding:10px 12px; background:#2a2540; border:1px solid rgba(168,162,255,0.12); color:#a8a2ff; border-radius:6px; cursor:pointer; font-size:13px; text-align:left; }
+.tabs.tools { display:flex; gap:8px; margin-top:10px; flex-direction: column; }
+.profile-action-btn { width:100%; display:block; padding:10px 12px; background:#2a2540; border:1px solid rgba(168,162,255,0.12); color:#a8a2ff; border-radius:6px; cursor:pointer; font-size:13px; text-align:left; }
 .profile-action-btn:hover { background:#3d375a; }
 
-/* Ensure Font Awesome icons inside profile-action-btn scale consistently (used by sidebar tool buttons) */
-.profile-action-btn i.fa-solid { font-size: 0.9em; margin-right: 8px; vertical-align: middle; width:auto; height:auto; }
 
-/* Make Outils action buttons appear like market tabs */
+
+
 .profile-action-btn.tool-tab {
-    /* match .tab layout */
+
     background: none;
     border-radius: 0;
-    border: none; /* tabs don't have rounded button borders */
+    border: none;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -644,7 +591,7 @@ body {
 }
 .profile-action-btn.tool-tab { font-weight: 600; color: #e8e9f3; }
 
-/* Don't show bottom border for the last tool in the tools list (matches .tab behavior) */
+
 #tools-actions .profile-action-btn.tool-tab:last-child { border-bottom: none; }
 
 .profile-info p span.positive {
@@ -660,7 +607,6 @@ body {
 #total-shares, #total-investment {
     color: #e8e9f3;
 }
-
 
 .general-row {
     color: #a8a2ff;
@@ -690,7 +636,6 @@ body {
     object-fit: contain;
 }
 
-/* Card sections */
 .card-logo-section {
     display: flex;
     flex-direction: column;
@@ -701,8 +646,6 @@ body {
 .card-general-info {
     margin-bottom: 20px;
 }
-
-
 
 .performance {
     margin-bottom: 20px;
@@ -751,7 +694,6 @@ body {
     margin-bottom: 20px;
 }
 
-/* News section (POC) */
 .news-section { margin-top: 20px; }
 .news-list { display:flex; flex-direction:column; gap:12px; }
 .news-item { background: rgba(40,40,48,0.5); padding:12px; border-radius:10px; border:1px solid rgba(168,162,255,0.06); }
@@ -760,11 +702,11 @@ body {
 .news-item a { color: #a8a2ff; text-decoration:none; }
 .news-item a:hover { text-decoration:underline; }
 
- 
+
 .card.terminal-card { display: none; padding: 18px; background: #000000; border-radius: 6px; border: 1px solid rgba(0,0,0,0.6); color: #ffffff; box-sizing: border-box; min-width: 400px; }
 .card.terminal-card.active { display: flex; flex-direction: column; height: 100vh; padding-bottom: 100px; }
 .terminal-card .terminal-body { margin: 12px 0; display:flex; flex-direction:column; gap:6px; }
-.terminal-card .terminal-output { width: 100%; border-radius: 0; background: #000000; border: none; color: #ffffff; font-family: "JetBrains Mono", monospace; display:flex; flex-direction:column; gap:6px; white-space: pre-wrap; word-break: break-word; flex: 1 1 auto; overflow-y: auto; padding-right: 8px; }
+.terminal-card .terminal-output { width: 100%; border-radius: 0; background: #000000; border: none; color: #ffffff; font-family: "JetBrains Mono", monospace; display:flex; flex-direction:column; gap:6px; white-space: pre-wrap; word-break: break-word; flex: 1 1 auto; overflow-y: auto; padding-right: 8px; scrollbar-width: thin; scrollbar-color: #ffffff #000000 !important; }
 .terminal-card .terminal-output .terminal-log { color: #ffffff; }
 .terminal-card .terminal-output .terminal-cmd { color: #9ca3b3; font-style: italic; }
 .terminal-input-row { display: flex; width: 100%; max-width: 100%; box-sizing: border-box; overflow: hidden; z-index: 3; background: inherit; padding: 6px 8px; min-height: 40px; align-items: center; }
@@ -774,12 +716,6 @@ body {
 .terminal-input::placeholder { color: rgba(255,255,255,0.2); }
 .close-btn { background: transparent; border: none; color: #fff; font-size: 28px; line-height: 28px; cursor: pointer; padding: 6px 8px; display: none; }
 
-/* Custom scrollbar for terminal output: white on black, no border-radius */
-.terminal-card .terminal-output {
-    /* Firefox */
-    scrollbar-width: thin;
-    scrollbar-color: #ffffff #000000 !important; /* thumb, track */
-}
 .terminal-card .terminal-output::-webkit-scrollbar {
     width: 10px !important;
 }
@@ -788,16 +724,16 @@ body {
 }
 .terminal-card .terminal-output::-webkit-scrollbar-thumb {
     background: #ffffff !important;
-    border-radius: 0 !important; /* no rounded corners */
+    border-radius: 0 !important;
     border: none !important;
     box-shadow: none !important;
     -webkit-appearance: none !important;
 }
 .terminal-card .terminal-output::-webkit-scrollbar-thumb:hover {
-    background: #ffffff !important; /* keep white on hover */
+    background: #ffffff !important;
 }
 
-/* Extra high specificity rule to override any global scrollbar styling */
+
 .card.terminal-card.active .terminal-output::-webkit-scrollbar-thumb {
     background: #ffffff !important;
     border-radius: 0 !important;
@@ -807,7 +743,7 @@ body {
     width: 10px !important;
 }
 
-/* Super-specific override to ensure terminal scrollbar is white across all rules */
+
 html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-thumb {
     background: #ffffff !important;
     border-radius: 0 !important;
@@ -817,7 +753,7 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
     background: #000000 !important;
 }
 
-/* News overlay styles */
+
 .news-overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(8,8,12,0.9); z-index: 10000; }
 .news-overlay[aria-hidden="false"], .news-overlay.visible { display:flex; }
 .news-overlay-inner { width: min(1200px, 98%); max-height: 90vh; background: rgba(18,18,24,0.96); border-radius: 10px; border: 1px solid rgba(168,162,255,0.06); padding: 20px; overflow-y: auto; box-shadow: 0 10px 60px rgba(0,0,0,0.6); }
@@ -857,11 +793,11 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
 }
 
 .transaction-buy {
-    border-left: 4px solid #22c55e; /* green for buy */
+    border-left: 4px solid #22c55e;
 }
 
 .transaction-sell {
-    border-left: 4px solid #ef4444; /* red for sell */
+    border-left: 4px solid #ef4444;
 }
 
 .flag-icon {
@@ -873,12 +809,12 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
     outline: 1px solid #a8a2ff;
 }
 
-/* Profile header */
+
 .profile-header {
     display: flex;
     align-items: center;
     gap: 15px;
-    /* No background, border, or shadow */
+
     background: none;
     border: none;
     box-shadow: none;
@@ -904,10 +840,10 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
 }
 
 #cash-account {
-    color: #e8e9f3 !important; /* Blanc */
+    color: #e8e9f3 !important;
 }
 
-/* Sidebar */
+
 .sidebar {
     position: fixed;
     left: 20px;
@@ -921,11 +857,11 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
     box-sizing: border-box;
 }
 
-/* Sidebar scroll moved to .sidebar-scroll - hide its scrollbar for cleaner UI */
+
 .sidebar-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 .sidebar-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
-/* Sidebar content area: use a column flex with gap so sections don't overlap */
+
 .sidebar-scroll { flex: 1 1 auto; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 6px; }
 
 .sidebar-section-title {
@@ -937,15 +873,15 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
     letter-spacing: 0.5px;
 }
 
-/* Collapse/expand toggle on sections */
+
 .sidebar-section { display:flex; flex-direction: column; gap: 8px; }
 .sidebar-section .section-toggle {
-    margin-left: auto; /* push to right within the title */
+    margin-left: auto;
     width: 28px;
     height: 28px;
-    border-radius: 0; /* remove border-radius */
-    background: none; /* remove background */
-    border: none; /* remove border */
+    border-radius: 0;
+    background: none;
+    border: none;
     color: #a8a2ff;
     cursor: pointer;
     display: inline-flex;
@@ -958,20 +894,20 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
 .sidebar-section .tabs { transition: none; max-height: none; opacity: 1; overflow: visible; }
 .sidebar-section.collapsed .tabs { max-height: 0 !important; opacity: 0; overflow: hidden; }
 
-/* Make the whole title area clickable */
+
 .sidebar-section .sidebar-section-title {
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    /* Add a comfortable padding to increase the clickable area of the title */
+
     padding: 8px 12px;
 }
 
 .sidebar-section-title:hover { background: rgba(168,162,255,0.03); border-radius: 6px; }
 .sidebar-section .section-toggle:focus { outline: none; box-shadow: none; }
 
-/* ========== SHIFT TOOLTIP STYLES ========== */
+
 .shift-tooltip {
     position: absolute !important;
     top: 10px !important;
@@ -1017,7 +953,7 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
     opacity: 0.8 !important;
 }
 
-/* ========== SIGNAL D'ACHAT/VENTE STYLES ========== */
+
 .signal-container {
     margin: 20px 0;
 }
@@ -1039,11 +975,11 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg,
-        #8b0000 0%,      /* Rouge foncé */
-        #ff4757 30%,     /* Rouge */
-        #ffd54f 50%,     /* Jaune au milieu */
-        #4caf50 70%,     /* Vert */
-        #1b5e20 100%     /* Vert foncé */
+        #8b0000 0%,
+        #ff4757 30%,
+        #ffd54f 50%,
+        #4caf50 70%,
+        #1b5e20 100%
     );
     border-radius: 20px;
 }
@@ -1125,27 +1061,27 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
     font-style: italic;
 }
 
-/* ========== SIGNAL STATE CONTAINER ========== */
+
 .signal-state-container {
     background: linear-gradient(to top, rgba(168,162,255,0.01) 0%, rgba(153, 149, 219, 0.2) 100%);
     border-radius: 16px;
     padding: 20px;
     text-align: left;
     border: 1px solid rgba(168, 162, 255, 0.2);
-    border-left: 4px solid #ffd54f; /* Jaune pour l'état neutre/garder */
+    border-left: 4px solid #ffd54f;
     margin: 15px 0;
 }
 
 .signal-state-container.sell-state {
-    border-left-color: #ff4757; /* Rouge pour vendre */
+    border-left-color: #ff4757;
 }
 
 .signal-state-container.buy-state {
-    border-left-color: #4caf50; /* Vert pour acheter */
+    border-left-color: #4caf50;
 }
 
 .signal-state-container.insufficient-state {
-    border-left-color: #a8a2ff; /* Violet pastel pour données insuffisantes */
+    border-left-color: #a8a2ff;
 }
 
 .signal-state-title {
@@ -1189,7 +1125,7 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 8px;
-    color: #a8a2ff; /* Violet pastel par défaut */
+    color: #a8a2ff;
 }
 
 .explanation-content {
@@ -1217,20 +1153,18 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
     opacity: 0.9;
 }
 
-/* Couleur des éléments em selon l'état du signal */
 .signal-state-container .explanation-content em {
-    color: #ffd54f; /* Couleur par défaut pour "Garder" */
+    color: #ffd54f;
 }
 
 .signal-state-container.sell-state .explanation-content em {
-    color: #ff4757; /* Rouge pour "Vendre" */
+    color: #ff4757;
 }
 
 .signal-state-container.buy-state .explanation-content em {
-    color: #4caf50; /* Vert pour "Acheter" */
+    color: #4caf50;
 }
 
-/* Animation du curseur */
 @keyframes signalPulse {
     0% { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); }
     50% { box-shadow: 0 4px 12px rgba(255, 255, 255, 0.4); }
@@ -1277,36 +1211,53 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
     border-bottom: none;
 }
 
-/* Signal value cell colors based on signal state */
 .signal-value-buy {
-    color: #4caf50 !important; /* Green for buy signals */
+    color: #4caf50 !important;
     font-weight: 600;
 }
 
-.signal-value-hold {
-    color: #ffd54f !important; /* Yellow for hold signals */
-    font-weight: 600;
-}
+ 
 
 .signal-value-sell {
-    color: #ff4757 !important; /* Red for sell signals */
+    color: #ff4757 !important;
     font-weight: 600;
 }
 
 .signal-value-neutral {
-    color: #ffffff !important; /* White for neutral values that don't change status */
+    color: #ffffff !important;
     font-weight: 400;
 }
 
-/* Force cache refresh */
-/* Helper class to hide elements via class toggling (used by JS to avoid inline style toggles) */
 .hidden-by-bot {
     display: none !important;
 }
 
-.hidden-by-bot-transition {
-    opacity: 0;
-    height: 0;
-    overflow: hidden;
-    transition: opacity 0.25s ease, height 0.25s ease;
+.signal-summary-root {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.02);
+    border-left: 3px solid rgba(168,162,255,0.25);
+    border-radius: 6px;
+    font-size: 13px;
+    color: #e8e9f3;
 }
+
+.signal-summary-root .signal-summary-header {
+    color: #a8a2ff;
+}
+.signal-summary-root ul {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+.signal-summary-root .signal-summary-volnote {
+    color: #ffd54f;
+}
+.signal-summary-eli5 {
+    font-size: 14px;
+    color: #e8e9f3;
+    background: rgba(255,255,255,0.01);
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.02);
+}
+ 
