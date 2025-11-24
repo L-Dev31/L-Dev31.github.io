@@ -2,7 +2,7 @@
   "projects": [    
     {
       "id": "bmge",
-      "title": "L-Dev's BMG Editor",
+      "title": "L-DEV's BMG Editor",
       "creator": "Léo Tosku",
       "category": "personal-project", 
       "path": "BMGE",
