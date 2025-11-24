@@ -2,7 +2,7 @@ import { state, els } from './state.js';
 import { parseBmg } from './bmg-format.js';
 import { buildBmg } from './build-bmg.js';
 import { renderEntries, updateMeta, showMessage, updateSaveButton } from './ui.js';
-import { parseMessageSegments } from './group-segments.js';
+// ...existing code...
 
 /**
  * File I/O Module - Following AeonMSBT architecture

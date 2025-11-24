@@ -1,6 +1,31 @@
+// --- Game config loader logic (moved from game-config-loader.js) ---
+let currentGameConfig = null;
+export async function loadGameConfig(gameName) {
+  if (!gameName) {
+    currentGameConfig = null;
+    return null;
+  }
+  // Expect gameName to be like 'tomodachicollection'
+  try {
+    const mod = await import(`../game/${gameName}/${gameName}.js`);
+    currentGameConfig = mod;
+    return mod;
+  } catch (e) {
+    currentGameConfig = null;
+    return null;
+  }
+}
+export function getCurrentGameConfig() {
+  return currentGameConfig;
+}
 import { state, els } from './state.js';
 import { BmgMessage } from './bmg-format.js';
-import { parseMessageSegments, reconstructTextFromSegments } from './group-segments.js';
+// getSpecialTokenInfo is set by game config loader
+let getSpecialTokenInfo = () => null;
+export function setSpecialTokenApi(fn) {
+  getSpecialTokenInfo = fn || (() => null);
+}
+// ...existing code...
 import {
   handleFileSelection,
   handleDownload,
@@ -23,14 +48,12 @@ export function init() {
   els.filterEmpty = document.getElementById('filter-empty');
   els.filterModified = document.getElementById('filter-modified');
   els.filterSingle = document.getElementById('filter-single');
-  els.filterSequenced = document.getElementById('filter-sequenced');
 
   if (els.fileInput) els.fileInput.addEventListener('change', handleFileSelection);
   if (els.search) els.search.addEventListener('input', handleFilter);
   if (els.filterEmpty) els.filterEmpty.addEventListener('change', () => renderEntries());
   if (els.filterModified) els.filterModified.addEventListener('change', () => renderEntries());
   if (els.filterSingle) els.filterSingle.addEventListener('change', () => renderEntries());
-  if (els.filterSequenced) els.filterSequenced.addEventListener('change', () => renderEntries());
   if (els.download) els.download.addEventListener('click', handleDownload);
   if (els.exportJson) els.exportJson.addEventListener('click', handleExportJson);
   if (els.importJson) els.importJson.addEventListener('click', handleImportJsonClick);
@@ -85,9 +108,8 @@ function createEntryCard(message, displayIndex) {
   header.appendChild(badges);
   card.appendChild(header);
 
-  const segments = parseMessageSegments(message.text);
-  if (segments.length >= 2) card.classList.add('sequenced-entry');
-
+  // Treat the entire message.text as a single unsegmented entry
+  const segments = [{ text: message.text, groupId: null }];
   segments.forEach((segment, segmentIndex) => {
     const segmentContainer = document.createElement('div');
     segmentContainer.className = 'segment-container';
@@ -109,11 +131,11 @@ function createEntryCard(message, displayIndex) {
     textarea.value = segment.text;
     textarea.dataset.index = message._index;
     textarea.dataset.segmentIndex = segmentIndex;
-    textarea.rows = Math.max(2, segment.text.split('\n').length);
+    textarea.rows = Math.max(2, (segment.text || '').split('\n').length);
 
     textarea.addEventListener('input', (e) => {
-      segments[segmentIndex].text = e.target.value;
-      message.text = reconstructTextFromSegments(segments);
+      // Update whole message text directly (no segments)
+      message.text = e.target.value;
       updateTextHighlight(highlight, e.target.value);
 
       if (message.dirty && !card.classList.contains('modified')) {
@@ -222,7 +244,17 @@ function updateTextHighlight(element, text) {
     }
 
     const tagSpan = document.createElement('span');
-    tagSpan.className = 'token-chip jaune';
+    tagSpan.className = 'token-chip';
+
+    // Use special token helper to mark known special tokens (e.g., 0x0200)
+    const specialInfo = getSpecialTokenInfo(match[0]);
+    if (specialInfo) {
+      tagSpan.classList.add('special');
+      if (specialInfo.cls) tagSpan.classList.add(specialInfo.cls);
+      tagSpan.title = specialInfo.name || specialInfo.argHex || match[0];
+    } else {
+      tagSpan.classList.add('jaune');
+    }
     tagSpan.textContent = match[0];
     fragment.appendChild(tagSpan);
 
@@ -287,14 +319,8 @@ function handleRevert(message, textarea, highlight, card) {
 }
 
 function matchesFilter(message) {
-  const segments = parseMessageSegments(message.text);
-  const isSequenced = segments.length >= 2;
-
-  const filterSingle = els.filterSingle ? els.filterSingle.checked : true;
-  const filterSequenced = els.filterSequenced ? els.filterSequenced.checked : true;
-
-  if (isSequenced && !filterSequenced) return false;
-  if (!isSequenced && !filterSingle) return false;
+  // No segmentation: ignore sequenced filtering. Use the existing filters only.
+  const filterSingle = true;
 
   const showEmpty = els.filterEmpty ? els.filterEmpty.checked : false;
   if (!showEmpty && (!message.text || message.text.trim() === '')) return false;

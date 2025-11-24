@@ -1,5 +1,5 @@
 import { state, els } from './state.js';
-import { parseMessageSegments } from './group-segments.js';
+// ...existing code...
 import { updateTextHighlight, updateSaveButton, renderEntries, showMessage } from './ui.js';
 
 // Simple helpers
@@ -35,12 +35,10 @@ export function handleExportJson() {
       const msg = state.bmgFile.messages[idx];
       if (!msg) continue;
 
-      const segments = parseMessageSegments(msg.text || '').map(seg => seg.text);
-
-      layout.push({
-        index: idx,
-        segments
-      });
+        layout.push({
+          index: idx,
+          text: msg.text || ''
+        });
     }
 
     const out = { layout };
@@ -106,38 +104,16 @@ export async function handleImportJsonFile(event) {
 
       let entryModified = false;
 
-      // Compare and update segments
-      if (Array.isArray(entry.segments)) {
-        const currentSegments = parseMessageSegments(dst.text || '');
-        const importedSegments = entry.segments.map(s => typeof s === 'string' ? s : (s && s.text ? s.text : ''));
-
-        // Check if segments differ
-        const segmentsChanged = currentSegments.length !== importedSegments.length ||
-          currentSegments.some((orig, i) => {
-            const imp = importedSegments[i] || '';
-            return (orig ? orig.text : '') !== imp;
-          });
-
-        // Decide authoritative action based on full text equality rather than
-        // naive per-segment differences. If the joined imported segments equal
-        // the current full message text we only need to re-render the UI to
-        // reflect segmentation changes but we must NOT mark the message as
-        // modified (dirty) unless the full text actually differs from the
-        // original text.
-        const importedFullText = importedSegments.join('');
-        const currentFullText = dst.text || '';
-
-        // If the full text differs, we consider the message modified and
-        // replace the message text. If full text is identical but segment
-        // boundaries differ, update the text (same value) so renderEntries()
-        // will rebuild the correct number of segments without marking dirty.
-        if (currentFullText !== importedFullText) {
+      // Compare and update text property. Accept `text` or `segments` fields
+      let importedFullText = null;
+      if (typeof entry.text === 'string') {
+        importedFullText = entry.text;
+      } else if (Array.isArray(entry.segments)) {
+        importedFullText = entry.segments.map(s => typeof s === 'string' ? s : (s && s.text ? s.text : '')).join('');
+      }
+      if (importedFullText !== null) {
+        if (dst.text !== importedFullText) {
           entryModified = true;
-          dst.text = importedFullText;
-        } else if (segmentsChanged) {
-          // Full text unchanged but segmentation changed: update dst.text to
-          // the same value to ensure the UI re-parses and re-creates
-          // textareas, but do not count this as a modification.
           dst.text = importedFullText;
         }
       }

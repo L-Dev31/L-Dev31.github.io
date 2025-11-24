@@ -1,3 +1,135 @@
+/* Game config content styles */
+.game-config-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 2em;
+}
+/* Game config loader section inside loader panel */
+.game-config-loader {
+  position: relative;
+  width: 100%;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 2;
+  border: 1px solid #444;
+  border-radius: 18px;
+  margin: 50px 0;
+}
+.game-config-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top right, rgb(29, 29, 29), rgba(29, 29, 29, 0.8)), var(--game-bg-url, none) center/cover no-repeat;
+  opacity: 0.95;
+  z-index: 1;
+  pointer-events: none;
+  transition: background-image 0.4s;
+}
+
+/* Game config dropdown styles */
+.game-config-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  margin: 1.5em 0 2em 0;
+}
+.game-config-label {
+  font-weight: 600;
+  font-size: 1.05em;
+  color: var(--accent);
+}
+.game-config-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.game-config-select {
+  padding: 0.35em 2.2em 0.35em 0.7em;
+  font-size: 1em;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  appearance: none;
+  outline: none;
+  font-weight: 500;
+  min-width: 12em;
+}
+.game-config-select option {
+  color: #222;
+}
+.gamepad-icon {
+  position: absolute;
+  right: 0.5em;
+  width: 2.5em;
+  height: 2.5em;
+  pointer-events: none;
+  top: 50%;
+  transform: translateY(-50%);
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.12));
+  background: transparent;
+  border-radius: 4px;
+  z-index: 1;
+}
+.gamepad-icon {
+  position: absolute;
+  right: 0.5em;
+  width: 1.5em;
+  height: 1.5em;
+  pointer-events: none;
+  top: 50%;
+  transform: translateY(-50%);
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.12));
+  background: transparent;
+  border-radius: 4px;
+}
+/* Game config dropdown styles */
+.game-config-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  margin: 0.5em 0 1em 0;
+}
+.game-config-label {
+  font-weight: 600;
+  font-size: 1.05em;
+  color: var(--accent);
+}
+.game-config-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.game-config-select {
+  padding: 0.35em 2.2em 0.35em 0.7em;
+  font-size: 1em;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  appearance: none;
+  outline: none;
+  font-weight: 500;
+}
+.gamepad-icon {
+  position: absolute;
+  right: 0.5em;
+  width: 1.5em;
+  height: 1.5em;
+  pointer-events: none;
+  top: 50%;
+  transform: translateY(-50%);
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.12));
+}
 :root {
   --bg: #111;
   --panel: #181818;
@@ -226,10 +358,6 @@ main {
   accent-color: #9a9a9a;
 }
 
-.filter-checkbox:has(#filter-sequenced) input[type="checkbox"] {
-  accent-color: #FF99C9;
-}
-
 .filter-checkbox:has(#filter-empty) input[type="checkbox"] {
   accent-color: #808080;
 }
@@ -244,16 +372,12 @@ main {
 }
 
 /* Color-coded filter checkboxes */
+/* duplicate 'filter-single' styles removed */
+
 .filter-checkbox:has(#filter-single:checked),
 .filter-checkbox:has(#filter-single) {
   border-color: rgba(154, 154, 154, 0.6);
   background: rgba(154, 154, 154, 0.1);
-}
-
-.filter-checkbox:has(#filter-sequenced:checked),
-.filter-checkbox:has(#filter-sequenced) {
-  border-color: #FF66B2;
-  background: rgba(255, 102, 178, 0.12);
 }
 
 .filter-checkbox:has(#filter-empty:checked),
@@ -386,21 +510,6 @@ button.ghost:not(:disabled):hover {
   background: rgba(201, 178, 74, 0.15);
   color: var(--accent-muted);
 }
-
-/* Pink badge for sequenced groups */
-
-.sequenced-entry {
-  border-left: #FF66B2 2px solid;
-  background-color: rgba(255, 102, 178, 0.05);
-}
-
-.sequenced-entry .editor-shell .text-highlight {
-  background-color: transparent;
-}
-
-/* Pink badge-info for sequenced entries */
-
-
 
 .entry-helper {
   display: flex;

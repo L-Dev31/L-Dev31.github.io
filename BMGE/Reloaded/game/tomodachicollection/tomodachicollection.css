@@ -1,0 +1,20 @@
+.token-chip.special-0200 {
+  border: 1px solid rgba(255, 76, 76, 0.55) !important;
+  background: rgba(255, 76, 76, 0.2) !important;
+  color: #FF4C4C !important;
+  font-weight: 600 !important;
+}
+
+.token-chip.special-0800 {
+  border: 1px solid rgba(120, 120, 120, 0.55) !important;
+  background: rgba(120, 120, 120, 0.12) !important;
+  color: rgba(80, 80, 80, 0.95) !important;
+  font-weight: 600 !important;
+}
+
+.token-chip.special-0700 {
+  border: 1.5px solid #19d9b3 !important;
+  background: rgba(25, 217, 179, 0.16) !important;
+  color: #00bfa3 !important;
+  font-weight: 700 !important;
+}
