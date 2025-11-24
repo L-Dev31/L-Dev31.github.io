@@ -7,7 +7,7 @@ body {
 
 header {
     position: relative;
-    height: 100vh; 
+    height: 90vh; 
     color: white;
     display: flex;
     flex-direction: column;
@@ -171,6 +171,14 @@ section {
     color: #000;
 }
 
+#description {
+    padding: 50px;
+}
+
+#placeImg {
+    padding: 0;
+}
+
 .rounded-button {
     background-color: #0000002c;
     backdrop-filter: blur(20px); 
@@ -247,85 +255,99 @@ footer {
 
 /* New styles for alternating continent layout */
 .continents {
-    max-width: 1100px;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 28px;
-    padding: 30px 20px;
+    gap: 40px;
+    padding: 0;
     align-items: stretch;
 }
 .continent {
     display: flex;
-    gap: 24px;
+    gap: 30px;
     align-items: center;
     background-color: #fff;
-    border-radius: 0;
+    border-radius: 16px 16px 16px 0;
     overflow: hidden;
-    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: none;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.continent:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 .continent.reverse {
     flex-direction: row-reverse;
 }
 .continent-link {
     display: flex;
-    gap: 24px;
+    gap: 30px;
     align-items: center;
     text-decoration: none;
     color: inherit;
     width: 100%;
-    padding: 20px;
+    padding: 30px;
 }
 .cont-img {
-    flex: 0 0 45%;
-    max-width: 520px;
+    flex: 0 0 40%;
+    max-width: 500px;
 }
+.cont-img img {
     width: 100%;
     height: auto;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 8px;
 }
 .cont-text {
     flex: 1;
 }
 .cont-text h3 {
-    margin: 0 0 10px 0;
-    color: #111;
+    margin: 0 0 15px 0;
+    color: #222;
+    font-size: 1.5em;
+    font-weight: 600;
 }
 .cont-text p {
     margin: 0;
-    color: #444;
+    color: #555;
+    line-height: 1.6;
+    font-size: 1em;
 }
 
-.continent {
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-.continent:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-}
 .continent-link:focus {
-    outline: 3px solid rgba(0,0,0,0.08);
+    outline: 3px solid rgba(0,0,0,0.2);
 }
 .continent-link .cont-img img {
     transition: filter 0.3s ease;
 }
 .continent-link:hover .cont-img img {
-    filter: brightness(0.95);
+    filter: brightness(0.9);
 }
 
 @media (max-width: 880px) {
+    .continents {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 40px 20px;
+    }
     .continent {
         flex-direction: column;
         align-items: stretch;
+        gap: 20px;
     }
     .cont-img {
         flex-basis: 100%;
+        order: 1;
     }
-
-    /* Keep alternation on mobile by swapping order when .reverse applied */
-    .continent .cont-img { order: 1; }
-    .continent .cont-text { order: 2; }
-    .continent.reverse .cont-img { order: 2; }
-    .continent.reverse .cont-text { order: 1; }
+    .cont-text {
+        order: 2;
+    }
+    .continent.reverse .cont-img {
+        order: 2;
+    }
+    .continent.reverse .cont-text {
+        order: 1;
+    }
 }

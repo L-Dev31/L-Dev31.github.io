@@ -49,14 +49,6 @@
       "noPhone": true
     },
     {
-      "id": "dssm",
-      "title": "DeepSeek Status Monitor",
-      "creator": "Léo Tosku",
-      "category": "personal-project",
-      "path": "DeepSeekStatusMonitor",
-      "noPhone": false
-    },
-    {
       "id": "apmr",
       "title": "Appartement Marina Royale",
       "creator": "Viviane De-Vries",
@@ -70,14 +62,6 @@
       "creator": "SMAG Team",
       "category": "commission",
       "path": "smag",
-      "noPhone": false
-    },
-    {
-      "id": "wlux",
-      "title": "Wine Lux (Fictif)",
-      "creator": "Léo Tosku",
-      "category": "personal-project",
-      "path": "winelux",
       "noPhone": false
     }
   ]

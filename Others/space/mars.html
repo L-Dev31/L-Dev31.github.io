@@ -95,28 +95,56 @@
         <h3>Structure Interne</h3>
         <div class="structure-container">
             <svg width="300" height="300" viewBox="0 0 300 300" class="structure-svg">
-                <circle cx="150" cy="150" r="120" fill="#8B4513" class="layer" data-layer="crust">
+                <circle cx="150" cy="150" r="140" fill="#FFB6C1" class="layer" data-layer="atmosphere">
+                    <title>Atmosphère</title>
+                </circle>
+                <circle cx="150" cy="150" r="120" fill="#FF6347" class="layer" data-layer="crust">
                     <title>Croûte</title>
                 </circle>
-                <circle cx="150" cy="150" r="80" fill="#FFA500" class="layer" data-layer="mantle">
-                    <title>Manteau</title>
+                <circle cx="150" cy="150" r="100" fill="#FF4500" class="layer" data-layer="lithosphere">
+                    <title>Lithosphère</title>
                 </circle>
-                <circle cx="150" cy="150" r="40" fill="#FF4500" class="layer" data-layer="core">
+                <circle cx="150" cy="150" r="80" fill="#DC143C" class="layer" data-layer="asthenosphere">
+                    <title>Asthénosphère</title>
+                </circle>
+                <circle cx="150" cy="150" r="60" fill="#B22222" class="layer" data-layer="upper-mantle">
+                    <title>Manteau supérieur</title>
+                </circle>
+                <circle cx="150" cy="150" r="40" fill="#8B0000" class="layer" data-layer="lower-mantle">
+                    <title>Manteau inférieur</title>
+                </circle>
+                <circle cx="150" cy="150" r="20" fill="#654321" class="layer" data-layer="core">
                     <title>Noyau</title>
                 </circle>
             </svg>
             <div class="description-panel">
+                <div id="atmosphere-desc" class="layer-desc">
+                    <h4>Atmosphère</h4>
+                    <p>Couche gazeuse ténue composée principalement de CO2.</p>
+                </div>
                 <div id="crust-desc" class="layer-desc">
                     <h4>Croûte</h4>
-                    <p>Épaisse couche de roches cristallines à la surface.</p>
+                    <p>Épaisse couche de roches cristallines à la surface, riche en basaltes.</p>
                 </div>
-                <div id="mantle-desc" class="layer-desc">
-                    <h4>Manteau</h4>
-                    <p>Riche en olivine et pyroxènes, formant la majeure partie de la planète.</p>
+                <div id="lithosphere-desc" class="layer-desc">
+                    <h4>Lithosphère</h4>
+                    <p>Couche rigide comprenant la croûte et la partie supérieure du manteau.</p>
+                </div>
+                <div id="asthenosphere-desc" class="layer-desc">
+                    <h4>Asthénosphère</h4>
+                    <p>Couche ductile où les roches peuvent se déformer plastiquement.</p>
+                </div>
+                <div id="upper-mantle-desc" class="layer-desc">
+                    <h4>Manteau supérieur</h4>
+                    <p>Région du manteau avec convection thermique.</p>
+                </div>
+                <div id="lower-mantle-desc" class="layer-desc">
+                    <h4>Manteau inférieur</h4>
+                    <p>Partie profonde du manteau sous haute pression.</p>
                 </div>
                 <div id="core-desc" class="layer-desc">
                     <h4>Noyau</h4>
-                    <p>Alliage métallique principalement de fer et de nickel.</p>
+                    <p>Noyau solide composé d'un alliage de fer et nickel.</p>
                 </div>
             </div>
         </div>

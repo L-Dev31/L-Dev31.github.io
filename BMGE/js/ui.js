@@ -333,8 +333,6 @@ function matchesFilter(message) {
 
   if (message.text.toLowerCase().includes(query)) return true;
   if (message.label && message.label.toLowerCase().includes(query)) return true;
-  if (message.id.toString().includes(query)) return true;
-  if (message._index.toString().includes(query)) return true;
 
   return false;
 }
