@@ -57,31 +57,26 @@ async function setupGameConfigDropdown() {
 	}
 
 	select.addEventListener('change', async () => {
-		const gameName = select.value;
-		// Update icon based on selected option's data-icon
 		const selectedOption = select.options[select.selectedIndex];
-		const iconPath = selectedOption.getAttribute('data-icon');
-		if (iconPath) {
-			try {
-				const res = await fetch(iconPath, { method: 'HEAD' });
-				if (res.ok) {
-					icon.src = iconPath;
-					icon.alt = selectedOption.textContent;
-				} else {
-					throw new Error('Not found');
-				}
-			} catch (err) {
-				// fallback to embedded svg
-				icon.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'><rect fill='%23F4C542' rx='4' width='24' height='24'></rect><path fill='%23000' d='M7 7h2v2H7zM7 11h2v2H7zM17 7h-2v2h2zM17 11h-2v2h2z'/></svg>";
-				icon.alt = selectedOption.textContent || 'Game';
+		const gameName = selectedOption.value;
+		// Icon logic: show icon if found, hide if not
+		const iconPath = `game/${gameName}/icon.png`;
+		try {
+			const res = await fetch(iconPath, { method: 'HEAD' });
+			if (res.ok) {
+				icon.src = iconPath;
+				icon.alt = selectedOption.textContent;
+				icon.style.display = 'inline-block';
+			} else {
+				icon.src = '';
+				icon.alt = '';
+				icon.style.display = 'none';
 			}
+		} catch {
+			icon.src = '';
+			icon.alt = '';
+			icon.style.display = 'none';
 		}
-		// Fallback if icon fails to load (prevent a 404 from breaking the UI)
-		icon.onerror = () => {
-			icon.onerror = null;
-			icon.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'><rect fill='%23F4C542' rx='4' width='24' height='24'></rect><path fill='%23000' d='M7 7h2v2H7zM7 11h2v2H7zM17 7h-2v2h2zM17 11h-2v2h2z'/></svg>";
-			icon.alt = selectedOption.textContent || 'Game';
-		};
 		// Load game CSS
 		loadGameCss(gameName);
 		// Set loader background per game
@@ -94,30 +89,28 @@ async function setupGameConfigDropdown() {
 
 	// Load default on startup
 	const selectedOption = select.options[select.selectedIndex];
-	const iconPath = selectedOption.getAttribute('data-icon');
-	if (iconPath) {
-		try {
-			const res = await fetch(iconPath, { method: 'HEAD' });
-			if (res.ok) {
-				icon.src = iconPath;
-				icon.alt = selectedOption.textContent;
-			} else {
-				throw new Error('Not found');
-			}
-		} catch (err) {
-			icon.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'><rect fill='%23F4C542' rx='4' width='24' height='24'></rect><path fill='%23000' d='M7 7h2v2H7zM7 11h2v2H7zM17 7h-2v2h2zM17 11h-2v2h2z'/></svg>";
-			icon.alt = selectedOption.textContent || 'Game';
+	const gameName = selectedOption.value;
+	// Icon logic: show icon if found, hide if not
+	const iconPath = `game/${gameName}/icon.png`;
+	try {
+		const res = await fetch(iconPath, { method: 'HEAD' });
+		if (res.ok) {
+			icon.src = iconPath;
+			icon.alt = selectedOption.textContent;
+			icon.style.display = 'inline-block';
+		} else {
+			icon.src = '';
+			icon.alt = '';
+			icon.style.display = 'none';
 		}
+	} catch {
+		icon.src = '';
+		icon.alt = '';
+		icon.style.display = 'none';
 	}
-	icon.onerror = () => {
-		icon.onerror = null;
-		icon.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'><rect fill='%23F4C542' rx='4' width='24' height='24'></rect><path fill='%23000' d='M7 7h2v2H7zM7 11h2v2H7zM17 7h-2v2h2zM17 11h-2v2h2z'/></svg>";
-		icon.alt = selectedOption.textContent || 'Game';
-	};
 	// Load game CSS for default
-	loadGameCss(select.value);
-	setGameBg(select.value);
-	const gameName = select.value;
+	loadGameCss(gameName);
+	setGameBg(gameName);
 	const gameConfig = await loadGameConfig(gameName);
 	if (gameConfig && gameConfig.getSpecialTokenInfo) {
 		setSpecialTokenApi(gameConfig.getSpecialTokenInfo);

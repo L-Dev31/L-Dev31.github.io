@@ -1,3 +1,10 @@
+/* Game icon for game config dropdown */
+.game-icon {
+  height: 2.2em;
+  width: auto;
+  margin-left: 5px;
+  display: none;
+}
 :root {
   --bg: #111;
   --panel: #181818;
