@@ -22,23 +22,6 @@
         <input id="file-input" type="file" accept=".bmg" hidden>
         <span id="file-label">No file selected</span>
       </div>
-      <div id="game-config-loader" class="game-config-loader">
-        <div class="game-config-bg"></div>
-        <div class="game-config-content">
-          <div class="game-config-dropdown">
-            <div style="display: flex; flex-direction: column; gap: 0.3em; width: max-content;">
-              <label for="game-config-select" class="game-config-label">Game config:</label>
-              <div class="game-config-select-wrapper">
-                <select id="game-config-select" class="game-config-select">
-                  <option value="tomodachicollection">Tomodachi Collection</option>
-                  <!-- <option value="newsupermariobros">New Super Mario Bros.</option> -->
-                </select>
-                <img id="game-config-icon" class="game-icon" alt="" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div id="file-warning"></div>
       <div class="meta" id="file-meta"></div>
       <div class="search-container">
@@ -51,17 +34,28 @@
       <div class="filters-container">
         <div class="filter-types">
           <label class="filter-checkbox">
-            <input type="checkbox" id="filter-single" checked>
-            <span>Single Entries</span>
+            <input type="checkbox" id="filter-inf" checked>
+            <span>INF1</span>
           </label>
-          <!-- Sequenced entries filter removed (no longer needed) -->
+          <label class="filter-checkbox">
+            <input type="checkbox" id="filter-mid" checked>
+            <span>MID1</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" id="filter-sequenced" checked>
+            <span>Sequenced</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" id="filter-scrolling" checked>
+            <span>Scrolling</span>
+          </label>
           <label class="filter-checkbox">
             <input type="checkbox" id="filter-modified" checked>
-            <span>Show Modified</span>
+            <span>Modified</span>
           </label>
           <label class="filter-checkbox">
             <input type="checkbox" id="filter-empty">
-            <span>Show Empty</span>
+            <span>Empty</span>
           </label>
         </div>
         <div class="spacer"></div>
@@ -91,7 +85,7 @@
       </header>
       <label class="entry-editor">
         <span>Text</span>
-        <div class="editor-shell">
+        <div class="textarea-container">
           <pre class="text-highlight" aria-hidden="true"></pre>
           <textarea spellcheck="false"></textarea>
         </div>
