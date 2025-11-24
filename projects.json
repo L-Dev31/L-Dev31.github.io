@@ -1,6 +1,14 @@
 {
   "projects": [    
     {
+      "id": "bmge",
+      "title": "L-Dev's BMG Editor",
+      "creator": "Léo Tosku",
+      "category": "personal-project", 
+      "path": "BMGE",
+      "noPhone": false
+    },
+    {
       "id": "mxal",
       "title": "Mix and Light (Redesign)",
       "creator": "Mix and Light",
