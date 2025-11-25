@@ -171,7 +171,7 @@ async function processCommand(raw) {
             try {
                 const r = await window.fetchCardNews(internalSym, true, 20);
                 appendOutput(`Actualités récupérées pour ${internalSym} (${(r||[]).length || 0} items)`);
-                window.openNewsOverlay(internalSym);
+                window.openNewsPage(internalSym);
             } catch (err) { appendOutput(`Erreur: ${formatApiError(err)}`); }
         } else {
             // fallback: try fetching yahoo news with ticker
@@ -180,7 +180,7 @@ async function processCommand(raw) {
                 const config = await loadApiConfig();
                 const r = await fetchNews(yahooTicker, config);
                 appendOutput(`Actualités récupérées pour ${yahooTicker} (${(r?.items||[]).length || 0} items)`);
-                window.openNewsOverlay(internalSym || null);
+                window.openNewsPage(internalSym || null);
             } catch (err) { appendOutput(`Erreur: ${formatApiError(err)}`); }
         }
             // keep input prompt in the input control (no log prompt appended)
@@ -533,6 +533,31 @@ function initTerminal() {
             }
         }
     });
+
+    // Focus input when clicking anywhere inside the terminal card (except interactive elements)
+    // This makes it easier for users to click anywhere in the terminal to begin typing.
+    const terminalCard = document.getElementById('card-terminal');
+    if (terminalCard) {
+        terminalCard.addEventListener('click', (e) => {
+            // Only care about primary (left) clicks
+            try {
+                if (e.button && e.button !== 0) return;
+            } catch (err) { /* ignore */ }
+            // If the clicked element or an ancestor is an interactive element, don't steal focus
+            let el = e.target;
+            if (!el) return;
+            if (!(el instanceof Element)) el = el.parentElement;
+            try {
+                if (el && el.closest && el.closest('a, button, input, textarea, select, [contenteditable], .copy-btn')) return;
+            } catch (err) {}
+            // Otherwise, focus and select the input so the user can type immediately
+            try {
+                input.focus();
+                // If there's existing text, select it so it can be quickly replaced
+                if (typeof input.select === 'function') input.select();
+            } catch (err) { /* ignore */ }
+        });
+    }
 
 }
 

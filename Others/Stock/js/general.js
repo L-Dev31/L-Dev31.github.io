@@ -8,7 +8,7 @@ import rateLimiter from './rate-limiter.js'
 import { fetchNews } from './api/news.js'
 import { initChart, updateChart } from './chart.js'
 import { updateSignal } from './signal-bot.js'
-import { fetchCardNews, updateNewsUI, updateNewsFeedList, openNewsOverlay, closeNewsOverlay, setPositions } from './news.js'
+import { fetchCardNews, updateNewsUI, updateNewsFeedList, openNewsOverlay, closeNewsOverlay, setPositions, openNewsPage, closeNewsPage, updateNewsPageList, updateNewsTrending } from './news.js'
 
 // Global helper to append to terminal output (can be used by any function)
 function terminalLogGlobal(msg) {
@@ -92,6 +92,12 @@ let usdToEurRate = null;
 
 let positions = {};
 let selectedApi = 'yahoo';
+function setSelectedApi(api) {
+    if (!api) return;
+    selectedApi = api;
+    try { setApiStatus(null, 'active', { api: selectedApi }); } catch (e) { /* ignore */ }
+    try { window.selectedApi = selectedApi; } catch(e) { /* ignore */ }
+}
 let lastApiBySymbol = {};
 let mainFetchController = null;
 let initialFetchController = null;
@@ -1127,9 +1133,9 @@ document.getElementById('open-alerts')?.addEventListener('click', e => {
     // Future: open alerts panel or overlay here
 });
 document.getElementById('open-news-feed')?.addEventListener('click', async e => {
-    // open news overlay only; do not open the terminal
+    // Open dedicated news page (not overlay)
     const a = getActiveSymbol();
-    openNewsOverlay(a);
+    try { openNewsPage(a); } catch (err) { /* fallback */ openNewsOverlay(a); }
     // Highlight the news widget button
     try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
     try { document.getElementById('open-news-feed')?.classList.add('active'); } catch(e) {}
@@ -1141,6 +1147,23 @@ document.getElementById('open-news-feed')?.addEventListener('click', async e => 
 // Close news overlay
 document.getElementById('close-news-overlay')?.addEventListener('click', e => {
     closeNewsOverlay();
+});
+
+// Close dedicated news page
+document.getElementById('close-news-page')?.addEventListener('click', e => {
+    try { closeNewsPage(); } catch (e) { /* ignore */ }
+});
+
+// Global Escape key: close news page when visible
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        try {
+            const card = document.getElementById('card-news');
+            if (card && card.classList.contains('active')) {
+                closeNewsPage();
+            }
+        } catch (err) {}
+    }
 });
 
 // Terminal input now handled in `js/terminal.js` (new module)
@@ -1158,11 +1181,15 @@ window.fetchActiveSymbol = fetchActiveSymbol;
 window.getActiveSymbol = getActiveSymbol;
 window.openTerminalCard = openTerminalCard;
 window.openNewsOverlay = openNewsOverlay;
+window.openNewsPage = openNewsPage;
 window.closeNewsOverlay = closeNewsOverlay;
 window.terminalLogGlobal = terminalLogGlobal;
 window.positions = positions;
 window.closeTerminalCard = closeTerminalCard;
 window.openCustomSymbol = openCustomSymbol;
+window.getSelectedApi = () => selectedApi;
+window.setSelectedApi = setSelectedApi;
+window.selectedApi = selectedApi;
 
 // Listen for rate limit events (fallback if rate-limiter dispatches events instead of calling functions)
 window.addEventListener('rateLimitStart', (e) => {

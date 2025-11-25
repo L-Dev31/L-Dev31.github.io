@@ -26,11 +26,13 @@ export async function fetchNewsFinnhub(symbol, apiKey, limit = 5, days = 7) {
     }
 }
 
-export async function fetchNews(symbol, config) {
+export async function fetchNews(symbol, config, limit = 8, days = 7, apiName = null) {
     // config should contain mapping of providers + apiKeys. Keep it minimal for now.
     if (!config) return { error: true, items: [] };
-    if (config.apis && config.apis.finnhub && config.apis.finnhub.enabled) {
-        return fetchNewsFinnhub(symbol, config.apis.finnhub.apiKey, 8, 7);
+    const apiToUse = apiName || (config.ui && config.ui.defaultApi) || 'finnhub';
+    // For now only implemented: finnhub
+    if (apiToUse === 'finnhub' && config.apis && config.apis.finnhub && config.apis.finnhub.enabled) {
+        return fetchNewsFinnhub(symbol, config.apis.finnhub.apiKey, limit, days);
     }
     // Fallback: return empty
     return { source: 'none', items: [] };

@@ -1,434 +1,386 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nemeris</title></head><body>OK</body></html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Nemeris</title>
-    <link rel="icon" href="icon/favicon.png" type="image/png" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  </body>
-  </html>
-        <img src="photo/leot.png" alt="Mr Léo TOSKU" class="profile-photo" />
-        <div class="profile-info">
-          <h1>Mr Léo TOSKU</h1>
-          <p>Total actions possédées: <span id="total-shares">0</span></p>
-          <p>Investissement total: <span id="total-investment">-- €</span></p>
-          <p>Compte titre: <span id="cash-account">-- €</span></p>
-        </div>
-      </div>
-      <div class="sidebar-scroll">
-        <section class="sidebar-section" id="sidebar-tools">
-          <h3 class="sidebar-section-title">Outils
-            <button class="section-toggle" aria-expanded="true" aria-controls="tools-actions"><i class="fa-solid fa-chevron-down"></i></button>
-          </h3>
-          <div class="tabs tools" id="tools-actions">
-            <button id="open-terminal-btn" class="profile-action-btn tool-tab"><i class="fa-solid fa-terminal"></i>Terminal</button>
-            <button id="open-news-feed" class="profile-action-btn tool-tab"><i class="fa-solid fa-newspaper"></i>News</button>
-            <button id="open-alerts" class="profile-action-btn tool-tab"><i class="fa-solid fa-bell"></i>Alertes</button>
-          </div>
-        </section>
-        <section class="sidebar-section" id="sidebar-portfolio">
-          <h3 class="sidebar-section-title">Mon Portefeuille
-            <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs"><i class="fa-solid fa-chevron-down"></i></button>
-          </h3>
-          <div class="tabs portfolio" id="portfolio-tabs"></div>
-        </section>
-        <section class="sidebar-section" id="sidebar-market">
-          <h3 class="sidebar-section-title">Marché
-            <button class="section-toggle" aria-expanded="true" aria-controls="general-tabs"><i class="fa-solid fa-chevron-down"></i></button>
-          </h3>
-          <div class="tabs general" id="general-tabs"></div>
-        </section>
-      </div>
-      <div id="api-status-indicator"></div>
-    </aside>
-
-    <main class="container">
-      <div id="tabs" class="tabs"></div>
-      <div id="cards-container"></div>
-    </main>
-
-    <div class="news-overlay" id="news-overlay" aria-hidden="true">
-      <div class="news-overlay-inner">
-        <div class="news-overlay-header">
-          <h2>Fil d'actualités</h2>
-          <button id="close-news-overlay" class="close-btn" aria-label="Fermer">×</button>
-        </div>
-        <div class="news-overlay-body">
-          <div class="news-feed-list" id="news-feed-list"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card terminal-card" id="card-terminal" role="document" aria-hidden="true">
-      <div class="terminal-body">
-        <div id="terminal-header" class="terminal-header"></div>
-        <div id="terminal-output" class="terminal-output" aria-live="polite"></div>
-        <div class="terminal-input-row">
-          <span class="terminal-prompt">USER&gt;</span>
-          <input id="terminal-input" class="terminal-input" type="text" aria-label="Terminal input" autocomplete="off" />
-        </div>
-      </div>
-    </div>
-
-    <template id="tab-template">
-      <div class="tab" data-symbol="" data-ticker="">
-        <div class="tab-logo"><img src="" alt=""/></div>
-        <div class="tab-info"><div class="tab-name"></div><div class="tab-shares"></div></div>
-      </div>
-    </template>
-
-    <template id="card-template">
-      <div class="card" id="">
-        <div class="card-logo-section"><div class="logo"><img id="" data-symbol="" src="" alt=""/></div></div>
-        <h3 class="section-title">Infos générales</h3>
-        <div class="section-date"></div>
-        <div class="card-general-info">
-          <div class="general-row"><strong>ISIN</strong> : <span id=""></span></div>
-          <div class="general-row"><strong>Ticker</strong> : <span id=""></span></div>
-          <div class="general-row"><strong>Symbole</strong> : <span id="symbol-info"></span></div>
-          <div class="general-row card-country-row"><strong>Pays</strong> : <span class="country-name"></span><img id="" data-country="" src="" alt="" class="flag-icon"/></div>
-        </div>
-        <div class="investment-section">
-          <h3 class="section-title investment-title">Investissement personnel</h3>
-          <div class="section-date"></div>
-          <div class="card-table-container">
-            <div class="general-row important-shares">Actions détenues : <span id=""></span></div>
-            <table class="card-table"><thead class="card-table-header"><tr><th class="card-table-th"></th><th class="card-table-th">Investi</th><th class="card-table-th">Valeur actuelle</th><th class="card-table-th">Bénéfice/Déficit</th></tr></thead><tbody><tr><td class="card-table-td card-table-type">Total</td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td></tr><tr><td class="card-table-td card-table-type">Par action</td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td></tr></tbody></table>
-          </div>
-        </div>
-        <h3 class="section-title course-title">Cours de l'action</h3>
-        <div class="section-date"></div>
-        <div class="chart-container">
-          <div class="chart-header">Graphique</div>
-          <canvas class="chart-canvas" id=""></canvas>
-          <div class="periods-group" id="periods-">
-            <button class="period-btn" data-symbol="" data-period="1D">1D</button>
-            <button class="period-btn" data-symbol="" data-period="1W">1W</button>
-            <button class="period-btn" data-symbol="" data-period="1M">1M</button>
-            <button class="period-btn" data-symbol="" data-period="6M">6M</button>
-            <button class="period-btn" data-symbol="" data-period="1Y">1Y</button>
-            <button class="period-btn" data-symbol="" data-period="3Y">3Y</button>
-            <button class="period-btn" data-symbol="" data-period="5Y">5Y</button>
-            <button class="period-btn" data-symbol="" data-period="MAX">MAX</button>
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <template id="api-indicator-template">
-      <div class="api-indicator-root">
-        <div class="api-indicator-row">
-          <span class="api-dot"></span>
-          <img class="api-indicator-logo" src="" alt="">
-          <span data-role="status-text" class="api-status-text"></span>
-          <i class="fa-solid fa-chevron-down api-chevron"></i>
-        </div>
-        <div class="api-expanded" data-role="api-expanded"></div>
-        <div data-role="spinner" class="api-indicator-spinner-row hidden-by-bot"></div>
-      </div>
-    </template>
-
-    <template id="api-option-template"><div class="api-option" data-api=""></div></template>
-    <template id="api-spinner-template"><div class="api-countdown-wrapper"><div class="countdown-text">Limite atteinte, veuillez patienter... (0s)</div><div class="api-spinner-wrapper"><span class="api-spinner"></span></div></div></template>
-    <template id="signal-explanation-table-template"><table class="signal-explanation-table"></table></template>
-    <template id="shift-tooltip-template"><div class="shift-tooltip" role="tooltip"><div><div class="shift-tooltip-content"><div class="shift-tooltip-item"><i class="fas fa-search-plus"></i><span>Scroll pour zoomer</span></div></div></div></div></template>
-    <template id="transaction-row-template"><tr class="transaction-row"><td class="trans-date"></td><td class="trans-type"></td><td class="trans-amount"></td><td class="trans-shares"></td><td class="trans-price"></td></tr></template>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
-    <script type="module" src="js/general.js"></script>
-    <script type="module" src="js/signal-bot.js"></script>
-    <script type="module" src="js/news.js"></script>
-    <script type="module" src="js/terminal.js"></script>
-  </body>
-</html>
-<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Nemeris</title>
-    <link rel="icon" href="icon/favicon.png" type="image/png" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <aside class="sidebar">
-      <div class="profile-header">
-        <img src="photo/leot.png" alt="Mr Léo TOSKU" class="profile-photo" />
-        <div class="profile-info">
-          <h1>Mr Léo TOSKU</h1>
-          <p>Total actions possédées: <span id="total-shares">0</span></p>
-          <p>Investissement total: <span id="total-investment">-- €</span></p>
-          <p>Compte titre: <span id="cash-account">-- €</span></p>
-        </div>
-      </div>
-      <div class="sidebar-scroll">
-        <section class="sidebar-section" id="sidebar-tools">
-          <h3 class="sidebar-section-title">Outils
-            <button class="section-toggle" aria-expanded="true" aria-controls="tools-actions"><i class="fa-solid fa-chevron-down"></i></button>
-          </h3>
-          <div class="tabs tools" id="tools-actions">
-            <button id="open-terminal-btn" class="profile-action-btn tool-tab"><i class="fa-solid fa-terminal"></i>Terminal</button>
-            <button id="open-news-feed" class="profile-action-btn tool-tab"><i class="fa-solid fa-newspaper"></i>News</button>
-            <button id="open-alerts" class="profile-action-btn tool-tab"><i class="fa-solid fa-bell"></i>Alertes</button>
-          </div>
-        </section>
-        <section class="sidebar-section" id="sidebar-portfolio">
-          <h3 class="sidebar-section-title">Mon Portefeuille
-            <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs"><i class="fa-solid fa-chevron-down"></i></button>
-          </h3>
-          <div class="tabs portfolio" id="portfolio-tabs"></div>
-        </section>
-        <section class="sidebar-section" id="sidebar-market">
-          <h3 class="sidebar-section-title">Marché
-            <button class="section-toggle" aria-expanded="true" aria-controls="general-tabs"><i class="fa-solid fa-chevron-down"></i></button>
-          </h3>
-          <div class="tabs general" id="general-tabs"></div>
-        </section>
-      </div>
-      <div id="api-status-indicator"></div>
-    </aside>
-
-    <main class="container">
-      <div id="tabs" class="tabs"></div>
-      <div id="cards-container"></div>
-    </main>
-
-    <div class="news-overlay" id="news-overlay" aria-hidden="true">
-      <div class="news-overlay-inner">
-        <div class="news-overlay-header">
-          <h2>Fil d'actualités</h2>
-          <button id="close-news-overlay" class="close-btn" aria-label="Fermer">×</button>
-        </div>
-        <div class="news-overlay-body">
-          <div class="news-feed-list" id="news-feed-list"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card terminal-card" id="card-terminal" role="document" aria-hidden="true">
-      <div class="terminal-body">
-        <div id="terminal-header" class="terminal-header"></div>
-        <div id="terminal-output" class="terminal-output" aria-live="polite"></div>
-        <div class="terminal-input-row">
-          <span class="terminal-prompt">USER&gt;</span>
-          <input id="terminal-input" class="terminal-input" type="text" aria-label="Terminal input" autocomplete="off" />
-        </div>
-      </div>
-    </div>
-
-    <template id="tab-template">
-      <div class="tab" data-symbol="" data-ticker="">
-        <div class="tab-logo"><img src="" alt=""/></div>
-        <div class="tab-info"><div class="tab-name"></div><div class="tab-shares"></div></div>
-      </div>
-    </template>
-
-    <template id="card-template">
-      <div class="card" id="">
-        <div class="card-logo-section"><div class="logo"><img id="" data-symbol="" src="" alt=""/></div></div>
-        <h3 class="section-title">Infos générales</h3>
-        <div class="section-date"></div>
-        <div class="card-general-info">
-          <div class="general-row"><strong>ISIN</strong> : <span id=""></span></div>
-          <div class="general-row"><strong>Ticker</strong> : <span id=""></span></div>
-          <div class="general-row"><strong>Symbole</strong> : <span id="symbol-info"></span></div>
-          <div class="general-row card-country-row"><strong>Pays</strong> : <span class="country-name"></span><img id="" data-country="" src="" alt="" class="flag-icon"/></div>
-        </div>
-        <div class="investment-section">
-          <h3 class="section-title investment-title">Investissement personnel</h3>
-          <div class="section-date"></div>
-          <div class="card-table-container">
-            <div class="general-row important-shares">Actions détenues : <span id=""></span></div>
-            <table class="card-table"><thead class="card-table-header"><tr><th class="card-table-th"></th><th class="card-table-th">Investi</th><th class="card-table-th">Valeur actuelle</th><th class="card-table-th">Bénéfice/Déficit</th></tr></thead><tbody><tr><td class="card-table-td card-table-type">Total</td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td></tr><tr><td class="card-table-td card-table-type">Par action</td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td></tr></tbody></table>
-          </div>
-        </div>
-        <h3 class="section-title course-title">Cours de l'action</h3>
-        <div class="section-date"></div>
-        <div class="chart-container">
-          <div class="chart-header">Graphique</div>
-          <canvas class="chart-canvas" id=""></canvas>
-          <div class="periods-group" id="periods-">
-            <button class="period-btn" data-symbol="" data-period="1D">1D</button>
-            <button class="period-btn" data-symbol="" data-period="1W">1W</button>
-            <button class="period-btn" data-symbol="" data-period="1M">1M</button>
-            <button class="period-btn" data-symbol="" data-period="6M">6M</button>
-            <button class="period-btn" data-symbol="" data-period="1Y">1Y</button>
-            <button class="period-btn" data-symbol="" data-period="3Y">3Y</button>
-            <button class="period-btn" data-symbol="" data-period="5Y">5Y</button>
-            <button class="period-btn" data-symbol="" data-period="MAX">MAX</button>
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <template id="api-indicator-template">
-      <div class="api-indicator-root">
-        <div class="api-indicator-row">
-          <span class="api-dot"></span>
-          <img class="api-indicator-logo" src="" alt="">
-          <span data-role="status-text" class="api-status-text"></span>
-          <i class="fa-solid fa-chevron-down api-chevron"></i>
-        </div>
-        <div class="api-expanded" data-role="api-expanded"></div>
-        <div data-role="spinner" class="api-indicator-spinner-row hidden-by-bot"></div>
-      </div>
-    </template>
-
-    <template id="api-option-template"><div class="api-option" data-api=""></div></template>
-    <template id="api-spinner-template"><div class="api-countdown-wrapper"><div class="countdown-text">Limite atteinte, veuillez patienter... (0s)</div><div class="api-spinner-wrapper"><span class="api-spinner"></span></div></div></template>
-    <template id="signal-explanation-table-template"><table class="signal-explanation-table"></table></template>
-    <template id="shift-tooltip-template"><div class="shift-tooltip" role="tooltip"><div><div class="shift-tooltip-content"><div class="shift-tooltip-item"><i class="fas fa-search-plus"></i><span>Scroll pour zoomer</span></div></div></div></div></template>
-    <template id="transaction-row-template"><tr class="transaction-row"><td class="trans-date"></td><td class="trans-type"></td><td class="trans-amount"></td><td class="trans-shares"></td><td class="trans-price"></td></tr></template>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
-    <script type="module" src="js/general.js"></script>
-    <script type="module" src="js/signal-bot.js"></script>
-    <script type="module" src="js/news.js"></script>
-    <script type="module" src="js/terminal.js"></script>
-  </body>
-</html>
-<!doctype html>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nemeris</title>
-    <link rel="icon" href="icon/favicon.png" type="image/png" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="icon/favicon.png" type="image/png">
 </head>
 <body>
-    <aside class="sidebar">
-        <div class="profile-header">
-            <img src="photo/leot.png" alt="Mr Léo TOSKU" class="profile-photo" />
-            <div class="profile-info">
-                <h1>Mr Léo TOSKU</h1>
-                <p>Total actions possédées: <span id="total-shares">0</span></p>
-                <p>Investissement total: <span id="total-investment">-- €</span></p>
-                <p>Compte titre: <span id="cash-account">-- €</span></p>
-            </div>
-        </div>
-        <div class="sidebar-scroll">
-            <section class="sidebar-section" id="sidebar-tools">
-                <h3 class="sidebar-section-title">Outils
-                    <button class="section-toggle" aria-expanded="true" aria-controls="tools-actions"><i class="fa-solid fa-chevron-down"></i></button>
-                </h3>
-                <div class="tabs tools" id="tools-actions">
-                    <button id="open-terminal-btn" class="profile-action-btn tool-tab"><i class="fa-solid fa-terminal"></i>Terminal</button>
-                    <button id="open-news-feed" class="profile-action-btn tool-tab"><i class="fa-solid fa-newspaper"></i>News</button>
-                    <button id="open-alerts" class="profile-action-btn tool-tab"><i class="fa-solid fa-bell"></i>Alertes</button>
-                </div>
-            </section>
-            <section class="sidebar-section" id="sidebar-portfolio">
-                <h3 class="sidebar-section-title">Mon Portefeuille
-                    <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs"><i class="fa-solid fa-chevron-down"></i></button>
-                </h3>
-                <div class="tabs portfolio" id="portfolio-tabs"></div>
-            </section>
-            <section class="sidebar-section" id="sidebar-market">
-                <h3 class="sidebar-section-title">Marché
-                    <button class="section-toggle" aria-expanded="true" aria-controls="general-tabs"><i class="fa-solid fa-chevron-down"></i></button>
-                </h3>
-                <div class="tabs general" id="general-tabs"></div>
-            </section>
-        </div>
-        <div id="api-status-indicator"></div>
-    </aside>
-    <main class="container">
-        <div id="tabs" class="tabs"></div>
-        <div id="cards-container"></div>
-    </main>
-    <div class="news-overlay" id="news-overlay" aria-hidden="true">
-        <div class="news-overlay-inner">
-            <div class="news-overlay-header">
-                <h2>Fil d'actualités</h2>
-                <button id="close-news-overlay" class="close-btn" aria-label="Fermer">×</button>
-            </div>
-            <div class="news-overlay-body">
-                <div class="news-feed-list" id="news-feed-list"></div>
-            </div>
-        </div>
-    </div>
-    <div class="card terminal-card" id="card-terminal" role="document" aria-hidden="true">
-        <div class="terminal-body">
-            <div id="terminal-header" class="terminal-header"></div>
-            <div id="terminal-output" class="terminal-output" aria-live="polite"></div>
-            <div class="terminal-input-row">
-                <span class="terminal-prompt">USER&gt;</span>
-                <input id="terminal-input" class="terminal-input" type="text" aria-label="Terminal input" autocomplete="off" />
-            </div>
-        </div>
-    </div>
-    <template id="tab-template">
-        <div class="tab" data-symbol="" data-ticker="">
-            <div class="tab-logo"><img src="" alt=""/></div>
-            <div class="tab-info"><div class="tab-name"></div><div class="tab-shares"></div></div>
-        </div>
-    </template>
-    <template id="card-template">
-        <div class="card" id="">
-            <div class="card-logo-section"><div class="logo"><img id="" data-symbol="" src="" alt=""/></div></div>
-            <h3 class="section-title">Infos générales</h3>
-            <div class="section-date"></div>
-            <div class="card-general-info">
-                <div class="general-row"><strong>ISIN</strong> : <span id=""></span></div>
-                <div class="general-row"><strong>Ticker</strong> : <span id=""></span></div>
-                <div class="general-row"><strong>Symbole</strong> : <span id="symbol-info"></span></div>
-                <div class="general-row card-country-row"><strong>Pays</strong> : <span class="country-name"></span><img id="" data-country="" src="" alt="" class="flag-icon"/></div>
-            </div>
-            <div class="investment-section">
-                <h3 class="section-title investment-title">Investissement personnel</h3>
-                <div class="section-date"></div>
-                <div class="card-table-container">
-                    <div class="general-row important-shares">Actions détenues : <span id=""></span></div>
-                    <table class="card-table"><thead class="card-table-header"><tr><th class="card-table-th"></th><th class="card-table-th">Investi</th><th class="card-table-th">Valeur actuelle</th><th class="card-table-th">Bénéfice/Déficit</th></tr></thead><tbody><tr><td class="card-table-td card-table-type">Total</td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td></tr><tr><td class="card-table-td card-table-type">Par action</td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td><td class="card-table-td" id=""></td></tr></tbody></table>
+    <div class="sidebar">
+            <div class="profile-header">
+                <img src="photo/leot.png" alt="Mr Léo TOSKU" class="profile-photo">
+                <div class="profile-info">
+                    <h1>Mr Léo TOSKU</h1>
+                    <p>Total actions possédées: <span id="total-shares">0</span></p>
+                    <p>Investissement total: <span id="total-investment">-- €</span></p>
+                    <p>Compte titre: <span id="cash-account">-- €</span></p>
                 </div>
             </div>
-            <h3 class="section-title course-title">Cours de l'action</h3>
-            <div class="section-date"></div>
-            <div class="chart-container">
-                <div class="chart-header">Graphique</div>
-                <canvas class="chart-canvas" id=""></canvas>
-                <div class="periods-group" id="periods-">
-                    <button class="period-btn" data-symbol="" data-period="1D">1D</button>
-                    <button class="period-btn" data-symbol="" data-period="1W">1W</button>
-                    <button class="period-btn" data-symbol="" data-period="1M">1M</button>
-                    <button class="period-btn" data-symbol="" data-period="6M">6M</button>
-                    <button class="period-btn" data-symbol="" data-period="1Y">1Y</button>
-                    <button class="period-btn" data-symbol="" data-period="3Y">3Y</button>
-                    <button class="period-btn" data-symbol="" data-period="5Y">5Y</button>
-                    <button class="period-btn" data-symbol="" data-period="MAX">MAX</button>
+            <div class="sidebar-scroll">
+                <div class="sidebar-section" id="sidebar-tools">
+                    <h3 class="sidebar-section-title">Outils
+                        <button class="section-toggle" aria-expanded="true" aria-controls="tools-actions"><i class="fa-solid fa-chevron-down"></i></button>
+                    </h3>
+                    <div class="tabs tools" id="tools-actions">
+                        <button id="open-terminal-btn" class="profile-action-btn tool-tab"><i class="fa-solid fa-terminal"></i>Terminal</button>
+                        <button id="open-news-feed" class="profile-action-btn tool-tab"><i class="fa-solid fa-newspaper"></i>News</button>
+                        <button id="open-alerts" class="profile-action-btn tool-tab"><i class="fa-solid fa-bell"></i>Alertes</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-section" id="sidebar-portfolio">
+                    <h3 class="sidebar-section-title">Mon Portefeuille
+                        <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs"><i class="fa-solid fa-chevron-down"></i></button>
+                    </h3>
+                    <div class="tabs portfolio" id="portfolio-tabs"></div>
+                </div>
+
+                <div class="sidebar-section" id="sidebar-market">
+                    <h3 class="sidebar-section-title">Marché
+                        <button class="section-toggle" aria-expanded="true" aria-controls="general-tabs"><i class="fa-solid fa-chevron-down"></i></button>
+                    </h3>
+                    <div class="tabs general" id="general-tabs"></div>
                 </div>
             </div>
+            <div id="api-status-indicator"></div>
         </div>
-    </template>
-    <template id="api-indicator-template"><div class="api-indicator-root"><div class="api-indicator-row"><span class="api-dot"></span><img class="api-indicator-logo" src="" alt=""><span data-role="status-text" class="api-status-text"></span><i class="fa-solid fa-chevron-down api-chevron"></i></div><div class="api-expanded" data-role="api-expanded"></div><div data-role="spinner" class="api-indicator-spinner-row hidden-by-bot"></div></div></template>
-    <template id="api-option-template"><div class="api-option" data-api=""></div></template>
-    <template id="api-spinner-template"><div class="api-countdown-wrapper"><div class="countdown-text">Limite atteinte, veuillez patienter... (0s)</div><div class="api-spinner-wrapper"><span class="api-spinner"></span></div></div></template>
-    <template id="signal-explanation-table-template"><table class="signal-explanation-table"></table></template>
-    <template id="shift-tooltip-template"><div class="shift-tooltip" role="tooltip"><div><div class="shift-tooltip-content"><div class="shift-tooltip-item"><i class="fas fa-search-plus"></i><span>Scroll pour zoomer</span></div></div></div></div></template>
-    <template id="transaction-row-template"><tr class="transaction-row"><td class="trans-date"></td><td class="trans-type"></td><td class="trans-amount"></td><td class="trans-shares"></td><td class="trans-price"></td></tr></template>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
-    <script type="module" src="js/general.js"></script>
-    <script type="module" src="js/signal-bot.js"></script>
-    <script type="module" src="js/news.js"></script>
-    <script type="module" src="js/terminal.js"></script>
-</body>
-</html>
+        <div class="container">
+            <div class="tabs" id="tabs"></div>
+
+            <!-- Cards container: cards for each stock will be injected here -->
+            <div id="cards-container">
+                <!-- Terminal Card (styled like a regular card) -->
+                <div class="card terminal-card" id="card-terminal" role="document" aria-hidden="true">
+                    <div class="section-date"></div>
+                    <div class="terminal-body">
+                        <div class="terminal-header" id="terminal-header" aria-hidden="false"></div>
+                        <div class="terminal-output" id="terminal-output" aria-live="polite"></div>
+                        <div class="terminal-input-row" aria-hidden="false">
+                            <span class="terminal-prompt">USER&gt;</span>
+                            <input id="terminal-input" class="terminal-input" type="text" aria-label="Terminal input" autocomplete="off" />
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <!-- News Card (dedicated page, full-size) -->
+                <div class="card news-card" id="card-news" role="document" aria-hidden="true">
+                    <div class="news-page">
+                        <div class="news-page-header">
+                            <div class="news-page-header-left">
+                                <h2 class="section-title">Fil d'actualités <small id="news-page-count" class="news-page-count" style="font-weight:400; opacity:0.8; margin-left:8px; font-size: 0.9rem;">—</small></h2>
+                                <div class="news-page-search">
+                                    <input id="news-page-search-input" class="news-search-input" type="search" placeholder="Rechercher un symbole, un mot-clé, ou une source..." aria-label="Rechercher des actualités" />
+                                    <button id="news-page-search-btn" class="news-search-btn">Rechercher</button>
+                                </div>
+                            </div>
+                            <div class="news-page-header-right">
+                                <button id="close-news-page" class="close-btn" aria-label="Fermer">×</button>
+                                <div class="news-page-actions">
+                                    <div id="news-source-label" class="news-source-label">API: <span id="news-source-value">--</span></div>
+                                    <select id="news-time-filter" class="news-filter">
+                                        <option value="24h">24h</option>
+                                        <option value="72h">72h</option>
+                                        <option value="7d" selected>7j</option>
+                                        <option value="30d">30j</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="news-page-periods">
+                            <div class="periods-group news-periods" id="news-periods">
+                                <button class="period-btn" data-period="1D">1D</button>
+                                <button class="period-btn" data-period="1W">1W</button>
+                                <button class="period-btn" data-period="1M">1M</button>
+                                <button class="period-btn" data-period="6M">6M</button>
+                                <button class="period-btn" data-period="1Y">1Y</button>
+                                <button class="period-btn" data-period="3Y">3Y</button>
+                                <button class="period-btn" data-period="5Y">5Y</button>
+                                <button class="period-btn" data-period="MAX">MAX</button>
+                            </div>
+                        </div>
+                        <div class="news-page-body">
+                            <div class="news-page-main">
+                                <div id="news-page-feed-list" class="news-list news-page-list" aria-live="polite"></div>
+                            </div>
+                            <aside class="news-page-sidebar">
+                                <div class="news-card-widget">
+                                    <h3 class="news-widget-title">Titres en vogue</h3>
+                                    <div id="news-page-trending" class="news-trending-list"></div>
+                                </div>
+                                <div class="news-card-widget">
+                                    <h3 class="news-widget-title">Filtres rapides</h3>
+                                    <div class="news-quick-filters">
+                                        <button class="quick-filter">Dividendes</button>
+                                        <button class="quick-filter">Résultats</button>
+                                        <button class="quick-filter">Fusions & Acq.</button>
+                                        <button class="quick-filter">Utilité</button>
+                                    </div>
+                                </div>
+                            </aside>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Hidden templates for dynamic content -->
+            <template id="tab-template">
+                <div class="tab" data-symbol="">
+                    <div class="tab-logo">
+                        <img src="" alt="" />
+                    </div>
+                    <div class="tab-info">
+                        <div class="tab-name"></div>
+                        <div class="tab-shares"></div>
+                    </div>
+                </div>
+            </template>
+            <template id="card-template">
+                <div class="card" id="">
+                    <div class="card-logo-section">
+                        <div class="logo">
+                            <img id="" data-symbol="" src="" alt="" />
+                        </div>
+                    </div>
+                    <h3 class="section-title">Infos générales</h3>
+                    <div class="section-date"></div>
+                    <div class="card-general-info">
+                        <div class="general-row"><strong>ISIN</strong> : <span id=""></span></div>
+                        <div class="general-row"><strong>Ticker</strong> : <span id=""></span></div>
+                        <div class="general-row"><strong>Symbole</strong> : <span id="symbol-info"></span></div>
+                        <div class="general-row card-country-row"><strong>Pays</strong> : <span class="country-name"></span><img id="" data-country="" src="" alt="" class="flag-icon"/></div>
+                    </div>
+                    <div class="investment-section">
+                        <h3 class="section-title investment-title">Investissement personnel</h3>
+                        <div class="section-date"></div>
+                        <div class="card-table-container">
+                            <div class="general-row important-shares">Actions détenues : <span id=""></span></div>
+                            <table class="card-table">
+                                <thead class="card-table-header">
+                                    <tr>
+                                        <th class="card-table-th"></th>
+                                        <th class="card-table-th">Investi</th>
+                                        <th class="card-table-th">Valeur actuelle</th>
+                                        <th class="card-table-th">Bénéfice/Déficit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="card-table-td card-table-type">Total</td>
+                                        <td class="card-table-td" id=""></td>
+                                        <td class="card-table-td" id=""></td>
+                                        <td class="card-table-td" id=""></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="card-table-td card-table-type">Par action</td>
+                                        <td class="card-table-td" id=""></td>
+                                        <td class="card-table-td" id=""></td>
+                                        <td class="card-table-td" id=""></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <h3 class="section-title course-title">Cours de l'action</h3>
+                    <div class="section-date"></div>
+                    <div class="chart-container">
+                        <div class="chart-header">Graphique</div>
+                        <canvas class="chart-canvas" id=""></canvas>
+                        <div class="periods-group" id="">
+                            <button class="period-btn" data-symbol="" data-period="1D">1D</button>
+                            <button class="period-btn" data-symbol="" data-period="1W">1W</button>
+                            <button class="period-btn" data-symbol="" data-period="1M">1M</button>
+                            <button class="period-btn" data-symbol="" data-period="6M">6M</button>
+                            <button class="period-btn" data-symbol="" data-period="1Y">1Y</button>
+                            <button class="period-btn" data-symbol="" data-period="3Y">3Y</button>
+                            <button class="period-btn" data-symbol="" data-period="5Y">5Y</button>
+                            <button class="period-btn" data-symbol="" data-period="MAX">MAX</button>
+                        </div>
+                    </div>
+                    <div class="performance">
+                        <div class="performance-label">Performance du jour</div>
+                        <div class="performance-value" id=""></div>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Ouverture (Open)</div>
+                            <div class="info-value" id=""></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Plus Haut (High)</div>
+                            <div class="info-value" id=""></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Plus Bas (Low)</div>
+                            <div class="info-value" id=""></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Clôture (Close)</div>
+                            <div class="info-value" id=""></div>
+                        </div>
+                    </div>
+                    <div class="update-center" id=""></div>
+                    <h3 class="section-title signal-title">Signal d'achat/vente</h3>
+                    <div class="section-date"></div>
+                    <div class="signal-container">
+                        <div class="signal-labels">
+                            <span class="signal-label sell-label">Vendre</span>
+                            <span class="signal-label hold-label">Garder</span>
+                            <span class="signal-label buy-label">Acheter</span>
+                        </div>
+                        <div class="signal-bar">
+                            <div class="signal-gradient"></div>
+                            <div class="signal-cursor" id="signal-cursor">
+                                <div class="signal-indicator"></div>
+                            </div>
+                        </div>
+                        <div class="signal-state-container">
+                            <div class="signal-state-title">Garder</div>
+                            <div class="signal-state-description">Position neutre - Attendre une meilleure opportunité</div>
+                            <div class="signal-explanation hidden-by-bot">
+                                <div class="explanation-title">Pourquoi cette position ?</div>
+                                <div class="explanation-content">
+                                    <p><strong>Analyse technique équilibrée</strong> : Aucun indicateur ne domine clairement.</p>
+                                    <ul>
+                                        <li><strong>Performance vs ouverture</strong> (40%) : Prix actuel proche du prix d'ouverture</li>
+                                        <li><strong>RSI</strong> (30%) : Autour de 50 - équilibre acheteurs/vendeurs</li>
+                                        <li><strong>Tendance</strong> (20%) : Prix évolue autour de sa moyenne mobile</li>
+                                        <li><strong>Volatilité</strong> (10%) : Amplitude modérée des variations</li>
+                                    </ul>
+                                    <p><em>SignalScore entre -10 et +10 = Zone neutre d'indécision</em></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- NEWS SECTION (POC) -->
+                    <div class="news-section">
+                        <h3 class="section-title">Dernières actualités</h3>
+                        <div class="news-list" id="news-list-" aria-live="polite"></div>
+                    </div>
+                    <h3 class="section-title transaction-history-title">Historique des transactions</h3>
+                    <div class="transaction-history-container">
+                        <table class="transaction-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Montant (€)</th>
+                                    <th>Actions</th>
+                                    <th>Prix (€)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="transaction-history-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </template>
+                        <template id="api-indicator-template">
+                                <div class="api-indicator-root">
+                                        <div class="api-indicator-row">
+                                                <span class="api-dot"></span>
+                                                <img class="api-indicator-logo" src="" alt="">
+                                                <span data-role="status-text" class="api-status-text"></span>
+                                                <i class="fa-solid fa-chevron-down api-chevron"></i>
+                                        </div>
+                                        <div class="api-expanded" data-role="api-expanded"></div>
+                                        <div data-role="spinner" class="api-indicator-spinner-row hidden-by-bot"></div>
+                                </div>
+                        </template>
+
+                        <!-- Template for API option - to avoid building HTML strings in JS -->
+                        <template id="api-option-template">
+                                <div class="api-option" data-api=""></div>
+                        </template>
+
+                        <!-- Template for spinner + countdown area -->
+                        <template id="api-spinner-template">
+                                <div class="api-countdown-wrapper">
+                                        <div class="countdown-text">Limite atteinte, veuillez patienter... (0s)</div>
+                                        <div class="api-spinner-wrapper"><span class="api-spinner"></span></div>
+                                </div>
+                        </template>
+
+                        <!-- Template for the signal explanation table (use DOM clone instead of innerHTML in JS) -->
+                        <template id="signal-explanation-table-template">
+                                <table class="signal-explanation-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="signal-table-header">Indicateur</th>
+                                            <th class="signal-table-header">Valeur</th>
+                                            <th class="signal-table-header">Explication</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="signal-table-cell">RSI</td>
+                                            <td class="signal-table-cell rsi-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell rsi-desc">Mesure si l'actif est suracheté (>70) ou survendu (<30).</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">MACD Histogramme</td>
+                                            <td class="signal-table-cell macd-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell macd-desc">Compare deux moyennes mobiles.</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">SMA20</td>
+                                            <td class="signal-table-cell sma20-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell sma20-desc">Prix moyen des 20 dernières périodes</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">SMA50</td>
+                                            <td class="signal-table-cell sma50-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell sma50-desc">Prix moyen des 50 dernières périodes</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">SMA200</td>
+                                            <td class="signal-table-cell sma200-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell sma200-desc">Tendance long terme</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Momentum</td>
+                                            <td class="signal-table-cell momentum-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell momentum-desc">Vitesse du mouvement des prix</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Volume Ratio</td>
+                                            <td class="signal-table-cell volume-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell volume-desc">Volume actuel vs moyenne</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">ATR</td>
+                                            <td class="signal-table-cell atr-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell atr-desc">Mesure de la volatilité des prix</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Volatilité Multiplier</td>
+                                            <td class="signal-table-cell volatility-multiplier-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell volatility-desc">Réduction du signal en période volatile</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Signal Lissé</td>
+                                            <td class="signal-table-cell smoothed-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell smoothed-desc">Signal final après tous les calculs</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Taille Position</td>
+                                            <td class="signal-table-cell position-size-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell position-desc">Pourcentage du portefeuille à investir</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Stop Loss</td>
+                                            <td class="signal-table-cell stop-loss-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell stop-desc">Niveau de vente automatique pour limiter pertes</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="signal-table-cell">Take Profit</td>
+                                            <td class="signal-table-cell take-profit-value signal-value-neutral"></td>
+                                            <td class="signal-table-cell take-desc">Niveau de vente automatique pour prendre bénéfices</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                         </template>
                         <template id="shift-tooltip-template">

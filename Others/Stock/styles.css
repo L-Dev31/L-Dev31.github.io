@@ -755,6 +755,48 @@ body {
 .terminal-input::placeholder { color: rgba(255,255,255,0.5); }
 .close-btn { background: transparent; border: none; color: var(--text-white); font-size: 28px; line-height: 28px; cursor: pointer; padding: 6px 8px; display: none; }
 
+/* News page card */
+.card.news-card { display: none; padding: 22px; background: rgba(10,11,14,0.9); border: 1px solid rgba(168,162,255,0.06); color: var(--text-light); box-sizing: border-box; min-width: 600px; }
+.card.news-card.active { display: block; }
+.news-page { display: flex; flex-direction: column; gap: 16px; }
+.news-page-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.news-page-header-left { display:flex; align-items:center; gap:12px; }
+.news-page-header-right { display:flex; align-items:center; gap:12px; }
+.news-page-search { display:flex; gap:8px; align-items:center; }
+.news-search-input { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.02); color: var(--text-light); padding: 8px 10px; border-radius: 6px; min-width: 320px; }
+.news-search-btn { padding: 8px 12px; background: var(--primary-purple); border: none; color: #0b1020; font-weight: 700; border-radius: 6px; cursor:pointer; }
+.news-filter { padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.02); color: var(--text-light); }
+.news-source-label { padding: 6px 10px; border-radius: 6px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.02); color: var(--text-light); font-weight:600; }
+.news-source-label #news-source-value { color: var(--primary-purple); margin-left:6px; font-weight: 700; }
+.news-page-periods { margin-top:8px; }
+.news-periods .period-btn { padding: 6px 10px; border-radius:6px; background: transparent; border: 1px solid rgba(255,255,255,0.02); color:var(--text-light); cursor:pointer; }
+.news-periods .period-btn.active { background: var(--primary-purple); color: #0b1020; }
+.news-page-body { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items:start; }
+.news-page-main { display:flex; flex-direction:column; gap:12px; }
+.news-page-list { display:flex; flex-direction:column; gap:12px; }
+.news-item { background: rgba(24,24,30,0.6); padding:12px; border-radius:10px; border: 1px solid rgba(168,162,255,0.04); }
+.news-item .news-title a { font-weight: 700; color: var(--text-light); text-decoration: none; }
+.news-item .news-title a:hover { color: var(--primary-purple); text-decoration: underline; }
+.news-item .news-meta { font-size: 12px; color: #9ca3b3; margin-top: 8px; }
+.news-item .news-summary { margin-top: 10px; font-size: 13px; color: var(--text-light); opacity: 0.9; }
+.news-page-sidebar { display:flex; flex-direction:column; gap:16px; }
+.news-card-widget { background: rgba(28, 28, 34, 0.6); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.02); }
+.news-widget-title { font-size: 13px; color: var(--primary-purple); font-weight: 700; margin-bottom: 8px; }
+.news-symbol-tag { display:inline-block; padding: 4px 8px; border-radius: 6px; background: rgba(168,162,255,0.06); color: var(--primary-purple); font-size:12px; }
+.news-trending-list { display:flex; flex-direction:column; gap:8px; }
+.news-trending-list .trending-item { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px; border-radius:6px; background: rgba(255,255,255,0.02); }
+.news-trending-list .trending-item .ticker { font-weight:700; color:var(--text-light); }
+.news-quick-filters { display:flex; flex-direction:column; gap:8px; }
+.quick-filter { padding:8px 10px; border-radius:6px; background: transparent; border:1px solid rgba(255,255,255,0.02); color:var(--text-light); cursor:pointer; }
+.quick-filter:hover { background: var(--primary-purple); color: #0b1020; border-color: transparent; }
+
+/* Smaller screen adjustments */
+@media (max-width: 900px) {
+    .news-page-body { grid-template-columns: 1fr; }
+    .news-search-input { min-width: 200px; }
+    .news-trending-list { flex-direction:row; overflow-x:auto; gap:12px; }
+}
+
 .terminal-card .terminal-output::-webkit-scrollbar {
     width: 10px !important;
 }
