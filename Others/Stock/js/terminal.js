@@ -169,7 +169,23 @@ async function processCommand(raw) {
         if (internalSym && window.positions && window.positions[internalSym]) {
             appendOutput(`Récupération des actualités pour ${internalSym} ...`);
             try {
-                const r = await window.fetchCardNews(internalSym, true, 20);
+                function periodToDays(period) {
+                    switch ((period||'').toUpperCase()) {
+                        case '1D': return 1;
+                        case '1W': return 7;
+                        case '1M': return 30;
+                        case '6M': return 180;
+                        case '1Y': return 365;
+                        case '3Y': return 365 * 3;
+                        case '5Y': return 365 * 5;
+                        case 'MAX': return 36500;
+                        default: return 7;
+                    }
+                }
+                const period = window.positions[internalSym].currentPeriod || '1D';
+                const days = periodToDays(period);
+                const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
+                const r = await window.fetchCardNews(internalSym, true, 20, days, apiToUse);
                 appendOutput(`Actualités récupérées pour ${internalSym} (${(r||[]).length || 0} items)`);
                 window.openNewsPage(internalSym);
             } catch (err) { appendOutput(`Erreur: ${formatApiError(err)}`); }
@@ -178,7 +194,8 @@ async function processCommand(raw) {
             appendOutput(`Récupération des actualités pour ${yahooTicker} ...`);
             try {
                 const config = await loadApiConfig();
-                const r = await fetchNews(yahooTicker, config);
+                const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
+                const r = await fetchNews(yahooTicker, config, 50, 7, apiToUse);
                 appendOutput(`Actualités récupérées pour ${yahooTicker} (${(r?.items||[]).length || 0} items)`);
                 window.openNewsPage(internalSym || null);
             } catch (err) { appendOutput(`Erreur: ${formatApiError(err)}`); }

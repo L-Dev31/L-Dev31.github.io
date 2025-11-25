@@ -4,6 +4,9 @@
     --text-light: #e8e9f3;
     --text-dark: #6b7280;
     --bg-black: #000000;
+    /* News page variables */
+    --news-sidebar-width: 320px;
+    --news-gap: 12px;
 }
 
 .profile-action-btn i.fa-solid {
@@ -48,6 +51,7 @@ html {
 .tab-type-section {
     margin-bottom: 12px;
 }
+/* placeholder left intentionally empty */
 .tab-type-title {
     font-size: 12px;
     font-weight: 400;
@@ -254,16 +258,17 @@ html {
     vertical-align: middle;
     box-shadow: 0 0 8px rgba(0,0,0,0.2);
     content: none !important;
+:root {
+    --news-sidebar-width: 320px;
+    --news-gap: 18px;
+    --news-periods-height: 56px;
 }
-.api-dot.active {
-    background: #22c55e;
-    box-shadow: 0 0 8px rgba(34,197,94,0.9);
 }
-.api-dot.inactive {
+.news-page-body { display: grid; grid-template-columns: 1fr var(--news-sidebar-width); gap: var(--news-gap); align-items:start; overflow-y: auto; min-height: 0; height: 100%; }
     background: #ef4444;
-    box-shadow: 0 0 8px rgba(239,68,68,0.9);
+.card.news-card .news-periods { position: absolute; left: 22px; bottom: 22px; right: auto; display: flex; gap: 6px; z-index: 20; height: var(--news-periods-height); }
 }
-.api-dot.noinfo {
+.news-page-main { display:grid; grid-auto-rows: min-content; gap: var(--news-gap); min-height: 0; height: 100%; padding-bottom: calc(var(--news-periods-height) + 8px); }
     background: #efb744;
     box-shadow: 0 0 8px rgba(239,183,68,0.7);
 }
@@ -754,23 +759,24 @@ body {
 .terminal-input:focus { outline: none; }
 .terminal-input::placeholder { color: rgba(255,255,255,0.5); }
 .close-btn { background: transparent; border: none; color: var(--text-white); font-size: 28px; line-height: 28px; cursor: pointer; padding: 6px 8px; display: none; }
+.card.news-card .close-btn { display:inline-flex; color: var(--text-light); }
 
 /* News page card */
-.card.news-card { display: none; padding: 22px; background: rgba(10,11,14,0.9); border: 1px solid rgba(168,162,255,0.06); color: var(--text-light); box-sizing: border-box; min-width: 600px; }
+.card.news-card { display: none; padding: 28px; background: rgba(10,11,14,0.9); border: 1px solid rgba(168,162,255,0.06); color: var(--text-light); box-sizing: border-box; min-width: 600px; }
 .card.news-card.active { display: block; }
 .news-page { display: flex; flex-direction: column; gap: 16px; }
 .news-page-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
 .news-page-header-left { display:flex; align-items:center; gap:12px; }
 .news-page-header-right { display:flex; align-items:center; gap:12px; }
 .news-page-search { display:flex; gap:8px; align-items:center; }
-.news-search-input { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.02); color: var(--text-light); padding: 8px 10px; border-radius: 6px; min-width: 320px; }
+.news-search-input { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.02); color: var(--text-light); padding: 8px 10px; border-radius: 6px; min-width: 220px; max-width: 420px; width: 320px; }
+/* Reduce vertical spacing produced by default section title for the news header */
+.news-page-header .section-title { margin: 0; padding-left: 8px; border-left-width: 3px; }
+/* Make the search input have a controlled width when inside the content area */
+.news-page-search .news-search-input { width: auto; flex: 0 0 320px; }
 .news-search-btn { padding: 8px 12px; background: var(--primary-purple); border: none; color: #0b1020; font-weight: 700; border-radius: 6px; cursor:pointer; }
 .news-filter { padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.02); color: var(--text-light); }
-.news-source-label { padding: 6px 10px; border-radius: 6px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.02); color: var(--text-light); font-weight:600; }
-.news-source-label #news-source-value { color: var(--primary-purple); margin-left:6px; font-weight: 700; }
 .news-page-periods { margin-top:8px; }
-.news-periods .period-btn { padding: 6px 10px; border-radius:6px; background: transparent; border: 1px solid rgba(255,255,255,0.02); color:var(--text-light); cursor:pointer; }
-.news-periods .period-btn.active { background: var(--primary-purple); color: #0b1020; }
 .news-page-body { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items:start; }
 .news-page-main { display:flex; flex-direction:column; gap:12px; }
 .news-page-list { display:flex; flex-direction:column; gap:12px; }
@@ -789,12 +795,102 @@ body {
 .news-quick-filters { display:flex; flex-direction:column; gap:8px; }
 .quick-filter { padding:8px 10px; border-radius:6px; background: transparent; border:1px solid rgba(255,255,255,0.02); color:var(--text-light); cursor:pointer; }
 .quick-filter:hover { background: var(--primary-purple); color: #0b1020; border-color: transparent; }
+/* News page card (refactored layout) */
+:root {
+    --news-sidebar-width: 320px;
+    --news-gap: 18px;
+}
+.card.news-card {
+    display: none;
+    padding: 28px;
+    background: linear-gradient(180deg, rgba(14,14,18,0.95), rgba(8,8,10,0.95));
+    border: 1px solid rgba(168,162,255,0.06);
+    color: var(--text-light);
+    box-sizing: border-box;
+    min-width: 560px;
+    /* Make the news card occupy full viewport height (minus global padding) */
+    height: calc(100vh - 40px);
+    /* override the container-wide min-height forcing a smaller size */
+    min-height: 0 !important;
+}
+.card.news-card.active { display: grid; grid-template-rows: auto 1fr; gap: var(--news-gap); }
+    .card.news-card {
+        display: none;
+        padding: 28px;
+        background: rgba(30, 30, 36, 0.8); /* same bg as other cards */
+        border: 1px solid rgba(168,162,255,0.06);
+        color: var(--text-light);
+        box-sizing: border-box;
+        min-width: 560px;
+        /* prefer fixed height instead of min-height to avoid bottom gap */
+        height: calc(100vh - 40px) !important;
+        min-height: 0 !important;
+        overflow: hidden;
+        /* ensure absolutely positioned children are relative to the news card */
+        position: relative;
+    }
+    .card.news-card.active { display: grid; grid-template-rows: auto 1fr; gap: var(--news-gap); /* make the card fixed to cover viewport without bottom gap */ position: fixed; top: 0; left: 320px; right: 0; bottom: 0; height: auto !important; z-index: 1000; padding: 28px; border-radius: 0; }
+.news-page { display: contents; }
+.news-page-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding: 4px 0; }
+.news-page-header-left { display:flex; align-items:center; gap:14px; min-width:0; }
+.news-page-header-right { display:flex; align-items:center; gap:12px; }
+/* Ensure news periods are positioned bottom-left for the news card */
+.card.news-card .news-periods { position: absolute; left: 22px; bottom: 22px; right: auto; display: flex; gap: 6px; z-index: 20; }
+.news-page-search { display:flex; gap:8px; align-items:center; flex: 1 1 auto; min-width: 0; }
+.news-search-input { flex: 1 1 420px; min-width: 140px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.02); color: var(--text-light); padding: 10px 12px; border-radius: 8px; }
+.news-search-btn { padding: 8px 12px; background: var(--primary-purple); border: none; color: #0b1020; font-weight: 700; border-radius: 8px; cursor:pointer; }
+.news-page-periods { display:flex; justify-content:flex-start; gap:8px; align-items:center; flex-wrap:wrap; }
+.period-btn { padding: 6px 10px; border-radius: 6px; background: transparent; border: 1px solid rgba(255,255,255,0.05); color: var(--text-light); cursor:pointer; font-size: 12px; }
+.period-btn.active { background: var(--primary-purple); color: #0b1020; border-color: transparent; }
 
-/* Smaller screen adjustments */
-@media (max-width: 900px) {
+/* Hide the count next to the News title as per user request */
+.news-page-count { display: none !important; }
+.news-page-body { display: grid; grid-template-columns: 1fr var(--news-sidebar-width); gap: var(--news-gap); align-items:start; overflow-y: auto; min-height: 0; }
+/* Scroll the news body while the header remains in place */
+.card.news-card .news-page-body { overflow: hidden; }
+.news-page-main { display:grid; grid-auto-rows: min-content; gap: var(--news-gap); min-height: 0; }
+.news-page-list { display:grid; grid-template-columns: 1fr; gap: 12px; min-height: 0; }
+.news-item { background: rgba(23,23,30,0.65); padding: 16px; border-radius:12px; border: 1px solid rgba(168,162,255,0.04); display:flex; flex-direction:column; gap:8px; min-height: 64px; max-width: 900px; width: 100%; box-sizing: border-box; margin: 0 auto; }
+.news-item .news-title { display:flex; align-items:center; gap:8px; }
+.news-item .news-title a { font-weight: 700; color: var(--text-light); text-decoration: none; font-size: 15px; line-height: 1.3; display:block; max-width:100%; overflow:hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; white-space: normal; line-clamp: 2; overflow-wrap: anywhere; word-break: break-word; }
+.news-item .news-title a:hover { color: var(--primary-purple); text-decoration: underline; }
+.news-item .news-meta { font-size: 12px; color: #9ca3b3; margin-top: 0; }
+.news-item .news-summary { margin-top: 6px; font-size: 13px; color: var(--text-light); opacity: 0.92; display:-webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-break: loose; -webkit-line-break: after-white-space; /* fallback line-clamp for modern browsers */
+    -webkit-box-orient: vertical; /* ensure WebKit opacity */
+    line-clamp: 3; /* standard if supported */
+}
+.news-page-sidebar { display:flex; flex-direction:column; gap:12px; align-items:stretch; }
+/* Keep the news sidebar visible while scrolling the news main area */
+.card.news-card .news-page-sidebar { position: static; top: auto; align-self: start; z-index: 1; max-height: none; overflow: visible; padding-bottom: 12px; }
+.news-card-widget { background: rgba(20, 20, 26, 0.5); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.02); }
+.news-widget-title { font-size: 13px; color: var(--primary-purple); font-weight: 700; margin-bottom: 8px; }
+.news-symbol-tag { display:inline-block; padding: 6px 10px; border-radius: 8px; background: rgba(168,162,255,0.06); color: var(--primary-purple); font-size:12px; }
+.news-trending-list { display:flex; flex-direction:column; gap:8px; }
+.news-trending-list .trending-item { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px; border-radius:8px; background: rgba(255,255,255,0.02); }
+.news-trending-list .trending-item .ticker { font-weight:700; color:var(--text-light); }
+.news-trending-list .trending-item .trending-symbol-wrapper { display:flex; flex-direction:column; gap:4px; align-items:flex-start; }
+.news-trending-list .trending-item .ticker-count { font-size:12px; color:#9ca3b3; opacity:0.85; margin-top:2px; }
+.news-quick-filters { display:flex; flex-direction:column; gap:8px; }
+.quick-filter { padding:8px 10px; border-radius:8px; background: transparent; border:1px solid rgba(255,255,255,0.02); color:var(--text-light); cursor:pointer; text-align:left; }
+.quick-filter:hover { background: var(--primary-purple); color: #0b1020; border-color: transparent; }
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .card.news-card.active { position: static !important; height: auto; }
     .news-page-body { grid-template-columns: 1fr; }
-    .news-search-input { min-width: 200px; }
+    .news-search-input { min-width: 120px; flex: 1 1 auto; }
     .news-trending-list { flex-direction:row; overflow-x:auto; gap:12px; }
+    .news-page-sidebar { order: 2; }
+    /* On smaller screens, don't use sticky positioning */
+    .card.news-card .news-page-sidebar { position: static; top: auto; max-height: none; overflow: visible; }
+
+    /* Make the news main area the only scrollable container inside the card */
+    .card.news-card .news-page-main { overflow-y: auto; overflow-x: hidden; padding-right: 8px; min-height: 0; }
+    .news-page-main { order: 1; }
+    /* On smaller screens, show periods inline with the header (no absolute positioning) */
+    .card.news-card .news-periods { position: static; left: auto; bottom: auto; padding-top: 6px; }
+    /* Make the search input full width within the flow on smaller screens */
+    .news-page-search .news-search-input { flex: 1 1 auto; width: 100%; }
 }
 
 .terminal-card .terminal-output::-webkit-scrollbar {
@@ -898,6 +994,7 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
 
     background: none;
     border: none;
+.news-page-header-left { display:flex; flex-direction:column; align-items:flex-start; gap:8px; min-width:0; }
     box-shadow: none;
 }
 
@@ -968,6 +1065,7 @@ html body .card.terminal-card.active .terminal-output::-webkit-scrollbar-track {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+/* close button for news removed */
     font-size: 12px;
 }
 .sidebar-section .section-toggle i { transition: transform 0.25s ease; pointer-events:none; }

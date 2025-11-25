@@ -97,6 +97,7 @@ function setSelectedApi(api) {
     selectedApi = api;
     try { setApiStatus(null, 'active', { api: selectedApi }); } catch (e) { /* ignore */ }
     try { window.selectedApi = selectedApi; } catch(e) { /* ignore */ }
+    // No UI source label — news uses active API internally only
 }
 let lastApiBySymbol = {};
 let mainFetchController = null;
@@ -455,8 +456,26 @@ async function fetchActiveSymbol(force) {
         if (d && !d.error && !d.throttled) {
             startFastPolling();
         }
-        // Also fetch news for the card (POC)
-        try { fetchCardNews(symbol).catch(e=>{}); } catch(e) { /* ignore */ }
+        // Also fetch news for the card (POC) with same period/api
+        try {
+            const p = positions[symbol].currentPeriod || '1D';
+            function periodToDays(period) {
+                switch ((period||'').toUpperCase()) {
+                    case '1D': return 1;
+                    case '1W': return 7;
+                    case '1M': return 30;
+                    case '6M': return 180;
+                    case '1Y': return 365;
+                    case '3Y': return 365 * 3;
+                    case '5Y': return 365 * 5;
+                    case 'MAX': return 36500;
+                    default: return 7;
+                }
+            }
+            const days = periodToDays(p);
+            const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
+            fetchCardNews(symbol, false, 8, days, apiToUse).catch(e=>{});
+        } catch(e) { /* ignore */ }
     } catch(e){
         setApiStatus(symbol, 'inactive', { api: selectedApi });
     }
@@ -518,6 +537,20 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     setApiStatus(s, d ? 'active' : 'inactive', { api: apiName });
     
     updatePortfolioSummary()
+    // Update news for this symbol using the same period and active API, if news page open for this symbol
+    try {
+        const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
+        const days = (function(period){ switch((period||'').toUpperCase()){ case '1D': return 1; case '1W': return 7; case '1M': return 30; case '6M': return 180; case '1Y': return 365; case '3Y': return 365*3; case '5Y': return 365*5; case 'MAX': return 36500; default: return 7; }})(positions[s].currentPeriod || '1D');
+        try { fetchCardNews(s, true, 20, days, apiToUse).catch(()=>{}); } catch(e) {}
+        const cardNews = document.getElementById('card-news');
+        if (cardNews && cardNews.classList.contains('active')) {
+            // If the card-news is open and it's for this symbol, refresh it
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab && activeTab.dataset.symbol === s) {
+                try { openNewsPage(s); } catch(e) {}
+            }
+        }
+    } catch(e) { /* ignore news update errors */ }
 })
 
 async function updateUI(symbol, data) {
@@ -1150,9 +1183,7 @@ document.getElementById('close-news-overlay')?.addEventListener('click', e => {
 });
 
 // Close dedicated news page
-document.getElementById('close-news-page')?.addEventListener('click', e => {
-    try { closeNewsPage(); } catch (e) { /* ignore */ }
-});
+// close-news-page removed: news page is directly closable through card toggles
 
 // Global Escape key: close news page when visible
 document.addEventListener('keydown', (e) => {

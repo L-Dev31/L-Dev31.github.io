@@ -5,8 +5,23 @@ import { loadApiConfig } from './general.js';
 let positions = {};
 let lastPageNews = [];
 
+// Helper to map period code to days
+export function periodToDays(period) {
+    switch ((period || '').toUpperCase()) {
+        case '1D': return 1;
+        case '1W': return 7;
+        case '1M': return 30;
+        case '6M': return 180;
+        case '1Y': return 365;
+        case '3Y': return 365 * 3;
+        case '5Y': return 365 * 5;
+        case 'MAX': return 36500;
+        default: return 7;
+    }
+}
+
 // Function to fetch news for a card
-export async function fetchCardNews(symbol, force = false, limit = 5) {
+export async function fetchCardNews(symbol, force = false, limit = 5, days = 7, apiName = null) {
     if (!positions[symbol]) return;
     const now = Date.now();
     // cache for 10 minutes by default
@@ -15,7 +30,11 @@ export async function fetchCardNews(symbol, force = false, limit = 5) {
     }
     try {
         const config = await loadApiConfig();
-        const r = await fetchNews(symbol, config);
+        
+        // Determine API and map symbol to provider ticker if available
+        const apiToUse = apiName || ((window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi) || (config.ui && config.ui.defaultApi) || 'finnhub';
+        const mappedSymbol = (positions[symbol] && positions[symbol].api_mapping && positions[symbol].api_mapping[apiToUse]) ? positions[symbol].api_mapping[apiToUse] : (positions[symbol] && positions[symbol].ticker) ? positions[symbol].ticker : symbol;
+        const r = await fetchNews(mappedSymbol, config, limit, days, apiToUse);
         if (r && !r.error && Array.isArray(r.items)) {
             positions[symbol].news = r.items;
             positions[symbol].lastNewsFetch = now;
@@ -76,6 +95,8 @@ export function updateNewsFeedList(items) {
         el.textContent = 'Aucune actualité récente.';
         return;
     }
+    // Sort aggregated feeds most recent first
+    try { items = (Array.isArray(items) ? items.slice() : []).sort((a,b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0)); } catch(e) {}
     items.forEach(i => {
         const itemEl = document.createElement('div');
         itemEl.className = 'news-item';
@@ -126,16 +147,33 @@ export async function openNewsOverlay(symbol) {
     // If a symbol is specified, fetch its news. Else fetch a couple of top symbols' news
     try {
         const config = await loadApiConfig();
-        if (symbol) {
-            const r = await fetchNews(symbol, config);
-            if (r && Array.isArray(r.items)) updateNewsFeedList(r.items);
+        const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : (window.selectedApi || (config.ui && config.ui.defaultApi) || 'finnhub');
+        function periodToDays(period) {
+            switch ((period||'').toUpperCase()) {
+                case '1D': return 1;
+                case '1W': return 7;
+                case '1M': return 30;
+                case '6M': return 180;
+                case '1Y': return 365;
+                case '3Y': return 365 * 3;
+                case '5Y': return 365 * 5;
+                case 'MAX': return 36500;
+                default: return 7;
+            }
+        }
+            const days = (symbol && positions[symbol] && positions[symbol].currentPeriod) ? periodToDays(positions[symbol].currentPeriod) : periodToDays('1D');
+            if (symbol) {
+            const mappedSymbol = (positions[symbol] && positions[symbol].api_mapping && positions[symbol].api_mapping[apiToUse]) ? positions[symbol].api_mapping[apiToUse] : (positions[symbol] && positions[symbol].ticker) ? positions[symbol].ticker : symbol;
+            const r = await fetchNews(mappedSymbol, config, 50, days, apiToUse);
+            if (r && Array.isArray(r.items)) { updateNewsFeedList(r.items); updateNewsTrending(r.items); }
         } else {
-            // Aggregated feed: fetch for first 6 positions
-            const syms = Object.keys(positions).slice(0, 6);
+            // Aggregated feed: fetch for all positions (from stock JSONs)
+            const syms = Object.keys(positions);
             let allItems = [];
             for (const s of syms) {
+                const mapped = (positions[s] && positions[s].api_mapping && positions[s].api_mapping[apiToUse]) ? positions[s].api_mapping[apiToUse] : (positions[s] && positions[s].ticker) ? positions[s].ticker : s;
                 try {
-                    const r = await fetchNews(s, config);
+                    const r = await fetchNews(mapped, config, 50, days, apiToUse);
                     if (r && r.items) {
                         allItems = allItems.concat(r.items.map(it => ({...it, symbol: s}))); 
                     }
@@ -143,7 +181,8 @@ export async function openNewsOverlay(symbol) {
             }
             // Sort by date desc
             allItems.sort((a,b)=> new Date(b.publishedAt) - new Date(a.publishedAt));
-            updateNewsFeedList(allItems.slice(0, 20));
+            updateNewsFeedList(allItems);
+            updateNewsTrending(allItems);
         }
     } catch (err) { console.warn('openNewsOverlay err', err); }
 }
@@ -156,7 +195,7 @@ export function closeNewsOverlay() {
 }
 
 // Function to set positions (called from general.js)
-            const r = await fetchNews(symbol, config, 50, days, apiToUse);
+export function setPositions(pos) {
     positions = pos;
 }
 
@@ -165,20 +204,45 @@ export function updateNewsTrending(items) {
     const el = document.getElementById('news-page-trending');
     if (!el) return;
     el.innerHTML = '';
-    const list = items || Object.keys(positions || {}).slice(0, 8);
-    list.slice(0, 8).forEach(i => {
+    // If items provided (aggregated list), compute counts per ticker in provided period
+    let counts = {};
+    if (Array.isArray(items) && items.length > 0) {
+        items.forEach(it => {
+            const s = (it && it.symbol) ? it.symbol : (it && it.ticker) ? it.ticker : null;
+            if (!s) return;
+            counts[s] = (counts[s] || 0) + 1;
+        });
+    } else {
+        // if no items given, use positions with zero counts
+        Object.keys(positions || {}).forEach(k => counts[k] = 0);
+    }
+    // Convert counts to list and sort descending
+    const sorted = Object.keys(counts).map(k=>({symbol:k, count: counts[k]})).sort((a,b)=>b.count - a.count);
+    // Keep top 5
+    const top = sorted.slice(0,5);
+    top.forEach(entry => {
+        if (!entry || !entry.symbol) return;
+        const symbol = entry.symbol;
+        const pos = positions[symbol] || {};
+        const ticker = pos.ticker || symbol;
+        const name = pos.name || '';
         const t = document.createElement('div');
         t.className = 'trending-item';
-        const symbolSpan = document.createElement('span');
-        symbolSpan.className = 'ticker';
-        symbolSpan.textContent = typeof i === 'string' ? i : (i.symbol || i.ticker || i);
-        const count = document.createElement('span');
-        count.className = 'ticker-count';
-        count.textContent = '—';
-        t.appendChild(symbolSpan);
-        t.appendChild(count);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'trending-symbol-wrapper';
+        const symbolLine = document.createElement('span');
+        symbolLine.className = 'ticker';
+        symbolLine.textContent = `(${ticker}) ${name}`;
+        wrapper.appendChild(symbolLine);
+        const c = document.createElement('span');
+        c.className = 'ticker-count';
+        c.textContent = `${entry.count} article${entry.count>1?'s':''}`;
+        wrapper.appendChild(c);
+        t.appendChild(wrapper);
+        // clicking trending item should open news for this symbol
+        t.addEventListener('click', ()=>{ try { openNewsPage(symbol); } catch(e){} });
         el.appendChild(t);
-    });
+    })
 }
 
 // Update the dedicated news page list
@@ -190,6 +254,8 @@ export function updateNewsPageList(items) {
         el.textContent = 'Aucune actualité récente.';
         return;
     }
+    // Ensure items are sorted from most recent to oldest by published date
+    try { items = (Array.isArray(items) ? items.slice() : []).sort((a,b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0)); } catch(e) {}
     items.forEach(i => {
         const itemEl = document.createElement('div');
         itemEl.className = 'news-item';
@@ -217,7 +283,6 @@ export function updateNewsPageList(items) {
     });
     // keep a copy for client-side filtering and search
     lastPageNews = Array.isArray(items) ? items.slice(0) : [];
-    try { const c = document.getElementById('news-page-count'); if (c) c.textContent = `${lastPageNews.length}`; } catch(e) {}
 }
 
 function filterNewsItems(items, query, sourceFilter, timeFilter, quickFilterKeyword) {
@@ -267,25 +332,39 @@ export async function openNewsPage(symbol) {
     try { document.getElementById('open-news-feed')?.classList.add('active'); } catch(e) {}
     try {
         const config = await loadApiConfig();
+        const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : (window.selectedApi || (config.ui && config.ui.defaultApi) || 'finnhub');
+        const defaultDays = periodToDays('1D');
+        // Default period selection: use symbol currentPeriod or 1D
+        const periodValue = (symbol && positions[symbol] && positions[symbol].currentPeriod) ? positions[symbol].currentPeriod : '1D';
+        try { document.querySelectorAll('#news-periods .period-btn').forEach(x => x.classList.remove('active')); } catch(e){}
+        try { const activeBtn = document.querySelector(`#news-periods .period-btn[data-period="${periodValue}"]`); if (activeBtn) activeBtn.classList.add('active'); } catch(e){}
         if (symbol) {
-            const r = await fetchNews(symbol, config);
-            if (r && Array.isArray(r.items)) {
+            const p = (positions[symbol] && positions[symbol].currentPeriod) ? positions[symbol].currentPeriod : '1D';
+            const days = periodToDays(p);
+            const mappedSymbol = (positions[symbol] && positions[symbol].api_mapping && positions[symbol].api_mapping[apiToUse]) ? positions[symbol].api_mapping[apiToUse] : (positions[symbol] && positions[symbol].ticker) ? positions[symbol].ticker : symbol;
+            const r = await fetchNews(mappedSymbol, config, 50, days, apiToUse);
+                if (r && Array.isArray(r.items)) {
                 r.items.forEach(it => { if (!it.symbol) it.symbol = symbol; });
                 updateNewsPageList(r.items);
+                // Update trending using the same items list to calculate counts for the period
+                updateNewsTrending(r.items);
             }
         } else {
-            const syms = Object.keys(positions).slice(0, 8);
+            const syms = Object.keys(positions);
             let allItems = [];
             for (const s of syms) {
                 try {
-                    const r = await fetchNews(s, config);
+                    const mapped = (positions[s] && positions[s].api_mapping && positions[s].api_mapping[apiToUse]) ? positions[s].api_mapping[apiToUse] : (positions[s] && positions[s].ticker) ? positions[s].ticker : s;
+                    const r = await fetchNews(mapped, config, 50, defaultDays, apiToUse);
                     if (r && r.items) {
                         allItems = allItems.concat(r.items.map(it => ({ ...it, symbol: s }))); 
                     }
                 } catch(e) {}
             }
             allItems.sort((a,b)=> new Date(b.publishedAt) - new Date(a.publishedAt));
-            updateNewsPageList(allItems.slice(0, 50));
+            updateNewsPageList(allItems);
+            // Pass aggregated items so trending can be computed from them
+            updateNewsTrending(allItems);
         }
     } catch(err) { console.warn('openNewsPage err', err); }
     // update trending with top positions as a simple summary
@@ -295,21 +374,20 @@ export async function openNewsPage(symbol) {
     try {
         const searchInput = document.getElementById('news-page-search-input');
         const searchBtn = document.getElementById('news-page-search-btn');
-        const sourceSel = document.getElementById('news-source-filter');
-        const timeSel = document.getElementById('news-time-filter');
+        const sourceSel = document.getElementById('news-page-source-select');
+        const timeSel = null;
         const quickButtons = document.querySelectorAll('.quick-filter');
         const applyFilters = () => {
             const q = searchInput?.value || '';
-            const src = sourceSel?.value || 'all';
-            const time = timeSel?.value || '7d';
             const activeQuick = Array.from(quickButtons || []).find(b => b.classList.contains('active'))?.textContent || null;
-            const filtered = filterNewsItems(lastPageNews, q, src, time, activeQuick);
+            // For filtering, we only apply text and quick filters; period buttons control the fetch period.
+            const filtered = filterNewsItems(lastPageNews, q, null, null, activeQuick);
             updateNewsPageList(filtered);
         };
         if (searchBtn) searchBtn.onclick = applyFilters;
         if (searchInput) searchInput.onkeydown = (e)=>{ if (e.key === 'Enter') applyFilters(); };
         if (sourceSel) sourceSel.onchange = applyFilters;
-        if (timeSel) timeSel.onchange = applyFilters;
+        // time selector removed - period buttons control fetch timeframe
         quickButtons.forEach(b=>{
             b.onclick = (e)=>{
                 quickButtons.forEach(x=>x.classList.remove('active'));
@@ -332,17 +410,25 @@ export async function openNewsPage(symbol) {
                     try {
                         const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
                         if (symbol) {
-                            const r = await fetchNews(symbol, await loadApiConfig(), 50, daysNum, apiToUse);
+                            const mapped = (positions[symbol] && positions[symbol].api_mapping && positions[symbol].api_mapping[apiToUse]) ? positions[symbol].api_mapping[apiToUse] : (positions[symbol] && positions[symbol].ticker) ? positions[symbol].ticker : symbol;
+                            const r = await fetchNews(mapped, await loadApiConfig(), 50, daysNum, apiToUse);
                             if (r && Array.isArray(r.items)) updateNewsPageList(r.items);
+                            try {
+                                // Also update the chart period to match (if symbol in positions)
+                                if (positions && positions[symbol]) {
+                                    positions[symbol].currentPeriod = p;
+                                    if (window.fetchActiveSymbol) window.fetchActiveSymbol(true);
+                                }
+                            } catch(e) {}
                         } else {
-                            const syms = Object.keys(positions).slice(0, 8);
+                            const syms = Object.keys(positions);
                             let allItems = [];
                             const config = await loadApiConfig();
                             for (const s of syms) {
-                                try { const r = await fetchNews(s, config, 50, daysNum, apiToUse); if (r && r.items) allItems = allItems.concat(r.items.map(it => ({...it, symbol: s}))); } catch(e) {}
+                                try { const mapped = (positions[s] && positions[s].api_mapping && positions[s].api_mapping[apiToUse]) ? positions[s].api_mapping[apiToUse] : (positions[s] && positions[s].ticker) ? positions[s].ticker : s; const r = await fetchNews(mapped, config, 50, daysNum, apiToUse); if (r && r.items) allItems = allItems.concat(r.items.map(it => ({...it, symbol: s}))); } catch(e) {}
                             }
                             allItems.sort((a,b)=> new Date(b.publishedAt) - new Date(a.publishedAt));
-                            updateNewsPageList(allItems.slice(0, 50));
+                            updateNewsPageList(allItems);
                         }
                     } catch(e) { console.warn('news period fetch error', e); }
                 };

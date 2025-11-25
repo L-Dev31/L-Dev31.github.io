@@ -72,39 +72,30 @@
                     <div class="news-page">
                         <div class="news-page-header">
                             <div class="news-page-header-left">
-                                <h2 class="section-title">Fil d'actualités <small id="news-page-count" class="news-page-count" style="font-weight:400; opacity:0.8; margin-left:8px; font-size: 0.9rem;">—</small></h2>
-                                <div class="news-page-search">
+                                <h2 class="section-title">News <small id="news-page-count" class="news-page-count" style="font-weight:400; opacity:0.8; margin-left:8px; font-size: 0.9rem;">—</small></h2>
+                            </div>
+                            <div class="news-page-header-right">
+                                <div class="news-page-actions">
+                                    <div class="periods-group news-periods" id="news-periods">
+                                        <button class="period-btn active" data-period="1D">1D</button>
+                                        <button class="period-btn" data-period="1W">1W</button>
+                                        <button class="period-btn" data-period="1M">1M</button>
+                                        <button class="period-btn" data-period="6M">6M</button>
+                                        <button class="period-btn" data-period="1Y">1Y</button>
+                                        <button class="period-btn" data-period="3Y">3Y</button>
+                                        <button class="period-btn" data-period="5Y">5Y</button>
+                                        <button class="period-btn" data-period="MAX">MAX</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- The search will be placed in the main column so the sidebar aligns with its top -->
+                        <div class="news-page-body">
+                            <div class="news-page-main">
+                                <div class="news-page-search" style="margin-bottom: 8px;">
                                     <input id="news-page-search-input" class="news-search-input" type="search" placeholder="Rechercher un symbole, un mot-clé, ou une source..." aria-label="Rechercher des actualités" />
                                     <button id="news-page-search-btn" class="news-search-btn">Rechercher</button>
                                 </div>
-                            </div>
-                            <div class="news-page-header-right">
-                                <button id="close-news-page" class="close-btn" aria-label="Fermer">×</button>
-                                <div class="news-page-actions">
-                                    <div id="news-source-label" class="news-source-label">API: <span id="news-source-value">--</span></div>
-                                    <select id="news-time-filter" class="news-filter">
-                                        <option value="24h">24h</option>
-                                        <option value="72h">72h</option>
-                                        <option value="7d" selected>7j</option>
-                                        <option value="30d">30j</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="news-page-periods">
-                            <div class="periods-group news-periods" id="news-periods">
-                                <button class="period-btn" data-period="1D">1D</button>
-                                <button class="period-btn" data-period="1W">1W</button>
-                                <button class="period-btn" data-period="1M">1M</button>
-                                <button class="period-btn" data-period="6M">6M</button>
-                                <button class="period-btn" data-period="1Y">1Y</button>
-                                <button class="period-btn" data-period="3Y">3Y</button>
-                                <button class="period-btn" data-period="5Y">5Y</button>
-                                <button class="period-btn" data-period="MAX">MAX</button>
-                            </div>
-                        </div>
-                        <div class="news-page-body">
-                            <div class="news-page-main">
                                 <div id="news-page-feed-list" class="news-list news-page-list" aria-live="polite"></div>
                             </div>
                             <aside class="news-page-sidebar">
@@ -420,7 +411,7 @@
     <div class="news-overlay" id="news-overlay" aria-hidden="true">
         <div class="news-overlay-inner">
             <div class="news-overlay-header">
-                <h2>Fil d'actualités</h2>
+                <h2>News</h2>
                 <button id="close-news-overlay" class="close-btn" aria-label="Fermer">×</button>
             </div>
             <div class="news-overlay-body">
