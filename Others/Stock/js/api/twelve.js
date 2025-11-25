@@ -2,8 +2,11 @@ import globalRateLimiter from '../rate-limiter.js';
 import { filterNullDataPoints } from '../general.js';
 
 // Utilise la valeur brute de api_mapping.twelve_data pour le symbole dans les fetchs
-export function getTwelveDataSymbol(stock) {
-  return stock.api_mapping.twelve_data;
+export function getTwelveDataSymbol(stockOrTicker) {
+  if (!stockOrTicker) return null;
+  if (typeof stockOrTicker === 'string') return stockOrTicker;
+  if (stockOrTicker.api_mapping && stockOrTicker.api_mapping.twelve_data) return stockOrTicker.api_mapping.twelve_data;
+  return stockOrTicker.ticker || null;
 }
 
 const periodMap = {
@@ -12,7 +15,8 @@ const periodMap = {
   "1M": { interval: "2h", days: 31, outputsize: 400 },
   "6M": { interval: "1day", days: 183, outputsize: 200 },
   "1Y": { interval: "1day", days: 365, outputsize: 400 },
-  "5Y": { interval: "1week", days: 1825, outputsize: 300 }
+  "5Y": { interval: "1week", days: 1825, outputsize: 300 },
+  "MAX": { interval: "1month", days: 7300, outputsize: 300 }
 };
 
 class RateLimiter {
@@ -30,7 +34,7 @@ export async function fetchFromTwelveData(ticker, period, symbol, typeOrStock, n
   
   try {
     // Utiliser la valeur brute de api_mapping.twelve_data pour le fetch
-    const twelveSymbol = getTwelveDataSymbol(typeOrStock);
+    const twelveSymbol = getTwelveDataSymbol(typeOrStock) || ticker;
     
     const cfg = periodMap[period] || periodMap["1D"];
     const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(twelveSymbol)}&interval=${cfg.interval}&outputsize=${cfg.outputsize}&apikey=${apiKey}`;

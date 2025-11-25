@@ -1,6 +1,9 @@
 // Utilise la valeur brute de api_mapping.yahoo pour le symbole dans les fetchs
-export function getYahooSymbol(stock) {
-  return stock.api_mapping.yahoo;
+export function getYahooSymbol(stockOrTicker) {
+  if (!stockOrTicker) return null;
+  if (typeof stockOrTicker === 'string') return stockOrTicker;
+  if (stockOrTicker.api_mapping && stockOrTicker.api_mapping.yahoo) return stockOrTicker.api_mapping.yahoo;
+  return stockOrTicker.ticker || null;
 }
 
 const YAHOO_PROXY_BASE_URL = 'https://corsproxy.io/'; 
@@ -12,7 +15,8 @@ const periods = {
   "6M": { interval: "1h", range: "6mo" },
   "1Y": { interval: "1d", range: "1y" },
   "3Y": { interval: "1wk", range: "3y" },
-  "5Y": { interval: "1wk", range: "5y" }
+  "5Y": { interval: "1wk", range: "5y" },
+  "MAX": { interval: "1mo", range: "max" }
 };
 
 import globalRateLimiter from '../rate-limiter.js';
@@ -21,7 +25,7 @@ import { filterNullDataPoints } from '../general.js';
 export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal, apiKey) {
   console.log(`\n🔍 === FETCH Yahoo ${ticker} (${name}) période ${period} ===`);
 
-  const yahooSymbol = getYahooSymbol(stock);
+  const yahooSymbol = getYahooSymbol(stock) || ticker;
   console.log(`📈 Utilisation du symbole Yahoo: ${yahooSymbol}`);
 
   const result = await globalRateLimiter.executeIfNotLimited(async () => {

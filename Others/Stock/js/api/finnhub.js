@@ -1,6 +1,9 @@
 // Utilise la valeur brute de api_mapping.finnhub pour le symbole dans les fetchs
-export function getFinnhubSymbol(stock) {
-  return stock.api_mapping.finnhub;
+export function getFinnhubSymbol(stockOrTicker) {
+  if (!stockOrTicker) return null;
+  if (typeof stockOrTicker === 'string') return stockOrTicker;
+  if (stockOrTicker.api_mapping && stockOrTicker.api_mapping.finnhub) return stockOrTicker.api_mapping.finnhub;
+  return stockOrTicker.ticker || null;
 }
 
 const cache = new Map();
@@ -12,7 +15,8 @@ const resMap = {
   "6M": { res: "60", days: 183 },
   "1Y": { res: "D", days: 365 },
   "3Y": { res: "W", days: 1095 },
-  "5Y": { res: "M", days: 1825 }
+  "5Y": { res: "M", days: 1825 },
+  "MAX": { res: "M", days: 7300 }
 };
 
 function toUnix(ts) { return Math.floor(ts/1000); }
@@ -27,7 +31,7 @@ export async function fetchFromFinnhub(ticker, period="1D", symbol, typeOrStock,
   const result = await globalRateLimiter.executeIfNotLimited(async () => {
     try {
       // Utiliser la valeur brute de api_mapping.finnhub pour le fetch
-      const finnhubSymbol = getFinnhubSymbol(typeOrStock);
+      const finnhubSymbol = getFinnhubSymbol(typeOrStock) || ticker || symbol;
       
       const cfg = resMap[period] || resMap["1D"];
       const to = new Date();

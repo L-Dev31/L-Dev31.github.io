@@ -1,8 +1,11 @@
 // alphavantage.js - Alpha Vantage API integration for stock app
 
 // Utilise la valeur brute de api_mapping.alpha_vantage pour le symbole dans les fetchs
-export function getAlphaVantageSymbol(stock) {
-  return stock.api_mapping.alpha_vantage;
+export function getAlphaVantageSymbol(stockOrTicker) {
+  if (!stockOrTicker) return null;
+  if (typeof stockOrTicker === 'string') return stockOrTicker;
+  if (stockOrTicker.api_mapping && stockOrTicker.api_mapping.alpha_vantage) return stockOrTicker.api_mapping.alpha_vantage;
+  return stockOrTicker.ticker || null;
 }
 
 import globalRateLimiter from '../rate-limiter.js';
@@ -15,7 +18,8 @@ const periods = {
   "6M": { days: 183 },
   "1Y": { days: 365 },
   "3Y": { days: 1095 },
-  "5Y": { days: 1825 }
+  "5Y": { days: 1825 },
+  "MAX": { days: 7300 }
 };
 
 const cache = new Map();
@@ -26,7 +30,7 @@ export async function fetchFromAlphaVantage(ticker, period, symbol, typeOrStock,
 
   try {
     // Utiliser la valeur brute de api_mapping.alpha_vantage pour le fetch
-    const alphaVantageSymbol = getAlphaVantageSymbol(typeOrStock);
+    const alphaVantageSymbol = getAlphaVantageSymbol(typeOrStock) || ticker || symbol;
     
     const cfg = periods[period] || periods["1D"];
 

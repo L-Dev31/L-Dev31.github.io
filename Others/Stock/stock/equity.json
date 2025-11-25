@@ -80,4 +80,22 @@
       "alpha_vantage": "ALCAR.PAR"
     }
   }
+  ,
+  {
+    "symbol": "AAPL",
+    "ticker": "AAPL",
+    "name": "Apple Inc.",
+    "isin": "US0378331005",
+    "country": "US",
+    "currency": "USD",
+    "type": "equity",
+    "purchases": [],
+    "sales": [],
+    "api_mapping": {
+      "yahoo": "AAPL",
+      "twelve_data": "AAPL",
+      "polygon": "AAPL",
+      "alpha_vantage": "AAPL"
+    }
+  }
 ]

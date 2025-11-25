@@ -10,6 +10,19 @@ import { initChart, updateChart } from './chart.js'
 import { updateSignal } from './signal-bot.js'
 import { fetchCardNews, updateNewsUI, updateNewsFeedList, openNewsOverlay, closeNewsOverlay, setPositions } from './news.js'
 
+// Global helper to append to terminal output (can be used by any function)
+function terminalLogGlobal(msg) {
+    try {
+        const out = document.getElementById('terminal-output');
+        if (!out) return;
+        const el = document.createElement('div');
+        el.className = 'terminal-log';
+        el.textContent = msg;
+        out.appendChild(el);
+        out.scrollTop = out.scrollHeight;
+    } catch (e) { /* ignore */ }
+}
+
 // Fonction utilitaire pour filtrer les points null/undefined/NaN dès la source
 export function filterNullDataPoints(timestamps, prices) {
   if (!timestamps || !prices || timestamps.length !== prices.length) {
@@ -666,9 +679,11 @@ async function updateUI(symbol, data) {
         updateEl.textContent = `Dernière mise à jour : ${timeString}`;
     }
 
-    setApiStatus(symbol, 'active', { api: data.source });
-
-    updatePortfolioSummary();
+    // Update position name if available from API
+    if (data && data.name && positions[symbol] && positions[symbol].name === symbol) {
+        positions[symbol].name = data.name;
+        updateTabTitle(symbol);
+    }
     // Update investment cells so the table stays consistent when data arrives
     try {
         const investEl = document.getElementById(`invest-${symbol}`);
@@ -1147,6 +1162,7 @@ window.closeNewsOverlay = closeNewsOverlay;
 window.terminalLogGlobal = terminalLogGlobal;
 window.positions = positions;
 window.closeTerminalCard = closeTerminalCard;
+window.openCustomSymbol = openCustomSymbol;
 
 // Listen for rate limit events (fallback if rate-limiter dispatches events instead of calling functions)
 window.addEventListener('rateLimitStart', (e) => {
@@ -1272,7 +1288,22 @@ function createTab(stock, type) {
     const img = tab.querySelector('img');
     img.src = `icon/${stock.symbol}.png`;
     img.alt = stock.symbol;
-    img.onerror = function () { this.parentElement.innerHTML = stock.symbol.slice(0, 2); };
+    img.onerror = function () {
+        const parent = this.parentElement;
+        const ticker = (stock.ticker || stock.symbol || '').toUpperCase();
+        parent.innerHTML = '';
+        const fallback = document.createElement('div');
+        fallback.className = 'tab-logo-fallback';
+        fallback.textContent = ticker;
+        fallback.title = ticker;
+        // Auto-adjust font size to fit the ticker within boundaries
+        let fontSize = 12;
+        if (ticker.length > 4) {
+            fontSize = Math.max(6, 12 - (ticker.length - 4) * 2);
+        }
+        fallback.style.fontSize = fontSize + 'px';
+        parent.appendChild(fallback);
+    };
     
     // Initialiser le titre avec le nom de base
     const pos = positions[stock.symbol];
@@ -1298,7 +1329,23 @@ function createCard(stock) {
     logo.id = `logo-${stock.symbol}`
     logo.dataset.symbol = stock.symbol
     logo.src = `logo/${stock.symbol}.png`
-    logo.onerror = function(){ this.parentElement.innerHTML = stock.symbol.slice(0,2) }
+    logo.onerror = function(){
+        try {
+            const parent = this.parentElement;
+            parent.innerHTML = '';
+            const name = stock.name || stock.symbol;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'logo-fallback';
+            const nEl = document.createElement('div');
+            nEl.className = 'logo-name';
+            nEl.textContent = name;
+            nEl.title = name;
+            wrapper.appendChild(nEl);
+            parent.appendChild(wrapper);
+        } catch(e) { this.parentElement.innerHTML = stock.symbol.slice(0,2); }
+    }
+
+    // (Card title will be appended when logo fails to load in the onerror handler)
 
     // Set id for general title
     const generalTitle = card.querySelector('h3.section-title');
@@ -1590,15 +1637,102 @@ function clearPeriodDisplay(symbol) {
     }
 }
 
-// Global helper to append to terminal output (can be used by any function)
-function terminalLogGlobal(msg) {
-    try {
-        const out = document.getElementById('terminal-output');
-        if (!out) return;
-        const el = document.createElement('div');
-        el.className = 'terminal-log';
-        el.textContent = msg;
-        out.appendChild(el);
-        out.scrollTop = out.scrollHeight;
-    } catch (e) { /* ignore */ }
+// Function to open a custom symbol not in JSON
+export async function openCustomSymbol(symbol, type = 'equity') {
+    if (positions[symbol]) {
+        // Already exists, just switch to it
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
+        if (tab) {
+            tab.classList.add('active');
+            const card = document.getElementById(`card-${symbol}`);
+            if (card) card.classList.add('active');
+        }
+        fetchActiveSymbol(true);
+        return;
+    }
+
+    // Create minimal stock object
+    const stock = {
+        symbol: symbol,
+        ticker: symbol,
+        name: symbol, // Will be updated if API provides name
+        type: type,
+        currency: 'USD',
+        api_mapping: {},
+        purchases: [],
+        sales: []
+    };
+
+    // Create position
+    positions[symbol] = {
+        symbol: symbol,
+        ticker: symbol,
+        name: symbol,
+        type: type,
+        currency: 'USD',
+        api_mapping: {},
+        shares: 0,
+        investment: 0,
+        costBasis: 0,
+        purchaseDate: null,
+        purchases: [],
+        news: [],
+        lastNewsFetch: 0,
+        chart: null,
+        lastFetch: 0,
+        lastData: null,
+        currentPeriod: '1D'
+    };
+
+    lastApiBySymbol[symbol] = selectedApi;
+
+    // Create tab in general section
+    const hasGeneral = true; // Assume general for custom
+    if (hasGeneral) {
+        let genSection = document.getElementById(`general-section-${type}`);
+        if (!genSection) {
+            // Create section if not exists
+            genSection = document.createElement('div');
+            genSection.className = 'tab-type-section';
+            genSection.id = `general-section-${type}`;
+            const genTitle = document.createElement('div');
+            genTitle.className = 'tab-type-title';
+            const typeIcons = {
+                equity: 'fa-solid fa-building-columns',
+                commodity: 'fa-solid fa-coins',
+                crypto: 'fa-brands fa-bitcoin',
+            };
+            const iconClass = typeIcons[type] || 'fa-solid fa-layer-group';
+            const typeLabel = {
+                equity: 'Actions',
+                commodity: 'Matières Premières',
+                crypto: 'Cryptos',
+            }[type] || type.charAt(0).toUpperCase() + type.slice(1);
+            genTitle.innerHTML = `<i class="${iconClass} type-icon"></i>${typeLabel}`;
+            genSection.appendChild(genTitle);
+            document.getElementById('general-tabs').appendChild(genSection);
+        }
+        createTab(stock, type);
+    }
+
+    // Create card
+    createCard(stock);
+
+    // Init chart
+    initChart(symbol, positions);
+
+    // Switch to it
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
+    if (tab) {
+        tab.classList.add('active');
+        const card = document.getElementById(`card-${symbol}`);
+        if (card) card.classList.add('active');
+    }
+
+    // Fetch data
+    fetchActiveSymbol(true);
 }

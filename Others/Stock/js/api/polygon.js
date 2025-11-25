@@ -1,6 +1,9 @@
 // Utilise la valeur brute de api_mapping.polygon pour le symbole dans les fetchs
-export function getPolygonSymbol(stock) {
-  return stock.api_mapping.polygon;
+export function getPolygonSymbol(stockOrTicker) {
+  if (!stockOrTicker) return null;
+  if (typeof stockOrTicker === 'string') return stockOrTicker;
+  if (stockOrTicker.api_mapping && stockOrTicker.api_mapping.polygon) return stockOrTicker.api_mapping.polygon;
+  return stockOrTicker.ticker || null;
 }
 
 const periods = {
@@ -10,7 +13,8 @@ const periods = {
   "6M": { multiplier: 1, timespan: "hour", days: 180 },
   "1Y": { multiplier: 1, timespan: "day", days: 365 },
   "3Y": { multiplier: 1, timespan: "week", days: 1095 },
-  "5Y": { multiplier: 1, timespan: "month", days: 1825 }
+  "5Y": { multiplier: 1, timespan: "month", days: 1825 },
+  "MAX": { multiplier: 1, timespan: "month", days: 7300 }
 };
 
 import globalRateLimiter from '../rate-limiter.js';
@@ -40,7 +44,7 @@ export async function fetchFromPolygon(ticker, period, symbol, typeOrStock, name
   }
 
   // Utiliser la valeur brute de api_mapping.polygon pour le fetch
-  const polygonSymbol = getPolygonSymbol(typeOrStock);
+  const polygonSymbol = getPolygonSymbol(typeOrStock) || symbol || ticker;
 
   const result = await globalRateLimiter.executeIfNotLimited(async () => {
     const cfg = periods[period] || periods["1D"];

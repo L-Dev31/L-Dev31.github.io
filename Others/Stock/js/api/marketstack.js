@@ -2,8 +2,11 @@ import globalRateLimiter from '../rate-limiter.js';
 import { filterNullDataPoints } from '../general.js';
 
 // Utilise la valeur brute de api_mapping.marketstack pour le symbole dans les fetchs
-export function getMarketstackSymbol(stock) {
-  return stock.api_mapping.marketstack;
+export function getMarketstackSymbol(stockOrTicker) {
+  if (!stockOrTicker) return null;
+  if (typeof stockOrTicker === 'string') return stockOrTicker;
+  if (stockOrTicker.api_mapping && stockOrTicker.api_mapping.marketstack) return stockOrTicker.api_mapping.marketstack;
+  return stockOrTicker.ticker || null;
 }
 
 const periods = {
@@ -13,7 +16,8 @@ const periods = {
   "6M": { days: 183 },
   "1Y": { days: 365 },
   "3Y": { days: 1095 },
-  "5Y": { days: 1825 }
+  "5Y": { days: 1825 },
+  "MAX": { days: 7300 }
 };
 
 const cache = new Map();
@@ -24,7 +28,7 @@ export async function fetchFromMarketstack(ticker, period, symbol, typeOrStock, 
 
   try {
     // Utiliser la valeur brute de api_mapping.marketstack pour le fetch
-    const marketstackSymbol = getMarketstackSymbol(typeOrStock);
+    const marketstackSymbol = getMarketstackSymbol(typeOrStock) || symbol || ticker;
     
     const cfg = periods[period] || periods["1D"];
     const to = new Date();
