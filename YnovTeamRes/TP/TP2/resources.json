@@ -1,0 +1,54 @@
+{
+  "lists": [
+    {
+      "id": "creatif-artistique",
+      "name": "Créatif",
+      "color": "#28a745",
+      "icon": "fa-solid fa-paint-brush",
+      "tasks": [
+        { "id": "c1", "title": "Moodboard & Inspiration", "desc": "Collect references for the project", "status": "todo" },
+        { "id": "c2", "title": "Illustrations", "desc": "Sketch and finalize illustrations", "status": "todo" }
+      ]
+    },
+    {
+      "id": "systeme-dev",
+      "name": "Système Dev",
+      "color": "#0d6efd",
+      "icon": "fa-solid fa-code",
+      "tasks": [
+        { "id": "s1", "title": "Setup repo", "desc": "Initialize repository and CI", "status": "todo" },
+        { "id": "s2", "title": "API Design", "desc": "Define endpoints and authentication", "status": "doing" }
+      ]
+    },
+    {
+      "id": "audiovisuel-marketing",
+      "name": "AMC",
+      "color": "#fd7e14",
+      "icon": "fa-solid fa-bullhorn",
+      "tasks": [
+        { "id": "a1", "title": "Promo video", "desc": "Short trailer for social media", "status": "doing" },
+        { "id": "a2", "title": "Copy & CTA", "desc": "Write marketing copy and CTAs", "status": "todo" }
+      ]
+    },
+    {
+      "id": "3d-animation",
+      "name": "3D Animation",
+      "color": "#6f42c1",
+      "icon": "fa-solid fa-cube",
+      "tasks": [
+        { "id": "d1", "title": "Modeling", "desc": "Model main assets in Blender", "status": "doing" },
+        { "id": "d2", "title": "Rigging", "desc": "Rig characters for animation", "status": "todo" }
+      ]
+    }
+    ,
+    {
+      "id": "administration",
+      "name": "Administration",
+      "color": "#6c757d",
+      "icon": "fa-solid fa-cog",
+      "tasks": [
+        { "id": "ad1", "title": "Add team roles", "desc": "Define roles and permissions", "status": "todo" }
+      ]
+    }
+  ]
+}

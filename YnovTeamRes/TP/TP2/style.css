@@ -1,0 +1,729 @@
+.modal-body p { color: var(--text-color); line-height: 1.36; margin-bottom: 0; }
+.modal-body .small.text-muted { color: var(--text-color-dark); }
+.modal-footer .btn { border-radius: 8px; padding: 8px 14px; }
+.modal-footer .btn-secondary { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.04); }
+
+/* Assignee tag / preview */
+.assignee-tag {
+    display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background: rgba(255,255,255,0.06); color: var(--text-color); font-size: 0.85rem; margin-right:6px; padding: 2px 5px;
+}
+.assignee-preview { background: rgba(255,255,255,0.02); padding:3px 8px; border-radius: 10px; }
+.due-preview { color: rgba(255,255,255,0.5); }
+.attachment-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.attachment-row a { color: var(--text-color); text-decoration: underline; }
+.file-count { color: rgba(255,255,255,0.6); }
+
+
+
+/* Assignee multiselect styling */
+.assignee-select { display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding:6px; border-radius:8px; border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02); position: relative; }
+.assignee-select .assignee-input { border: none; background: transparent; box-shadow: none; padding: 6px; min-width: 140px; }
+.assignee-dropdown { position: absolute; background: rgba(10,10,16,0.95); border: 1px solid rgba(255,255,255,0.05); margin-top: 6px; z-index: 999; padding: 6px; border-radius: 8px; min-width: 160px; }
+.assignee-dropdown .item { padding: 8px 10px; cursor:pointer; border-radius: 6px; }
+.assignee-dropdown .item:hover { background: rgba(255,255,255,0.02); }
+.selected-tags { display:flex; gap:6px; align-items:center; }
+.assignee-tag { display:inline-flex; align-items:center; justify-content:center; padding: 4px 8px; border-radius: 12px; background: rgba(255,255,255,0.03); color: var(--text-color); }
+.assignee-tag .remove { margin-left: 8px; color: rgba(255,255,255,0.6); cursor: pointer; }
+:root {
+    --background-color: #0a0a10;
+    --card-color: rgba(20, 20, 35, 0.6);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --text-color: #e8e8e8;
+    --text-color-dark: #9090a0;
+    --nav-width: 240px;
+    --orb-color: #36B4A9;
+    --orb-color-rgb: 54, 180, 169;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.15; /* More discreet */
+    background-color: var(--orb-color);
+}
+
+.shape-1 {
+    width: 300px;
+    height: 300px;
+    animation: move 35s infinite alternate;
+}
+
+.shape-2 {
+    width: 400px;
+    height: 400px;
+    animation: move 45s infinite alternate-reverse;
+}
+
+.shape-3 {
+    width: 250px;
+    height: 250px;
+    animation: move 25s infinite alternate;
+}
+
+@keyframes move {
+  0% { transform: translate(10vw, -10vh) scale(1); }
+  25% { transform: translate(40vw, 80vh) scale(0.8); }
+  50% { transform: translate(90vw, 20vh) scale(1.2); }
+  75% { transform: translate(60vw, 60vh) scale(0.9); }
+  100% { transform: translate(-10vw, 30vh) scale(1.1); }
+}
+
+
+.page-wrapper {
+    display: flex;
+    height: 90vh; /* Adjust height as needed */
+    width: 90vw; /* Adjust width as needed */
+    background-color: rgba(10, 10, 16, 0.3);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 40px var(--shadow-color);
+    border-radius: 20px;
+}
+
+.poles-nav {
+    width: var(--nav-width);
+    flex-shrink: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+}
+
+.pole-button {
+    padding: 15px 20px;
+    border-radius: 15px;
+    border: 1px solid transparent;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(to bottom right, rgba(var(--pole-color-rgb, 0,0,0), 0.4) 0%, transparent 70%);
+    transition: none; /* No transition time */
+}
+
+.pole-button:hover {
+    background: linear-gradient(to bottom right, rgba(var(--pole-color-rgb, 0,0,0), 0.5) 0%, transparent 60%);
+}
+
+.pole-button.active {
+    background: linear-gradient(to bottom right, rgba(var(--pole-color-rgb, 0,0,0), 0.6) 0%, transparent 50%);
+    border-color: rgba(var(--pole-color-rgb, 0,0,0), 0.5);
+}
+
+.pole-icon {
+    width: auto;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-right: 6px; /* space between icon and text */
+}
+
+.nav-logo {
+    max-width: 80%;
+    margin-bottom: 20px;
+    align-self: center;
+}
+
+.ydays-logo {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 80px; /* smaller */
+    opacity: 0.4;
+    filter: grayscale(1);
+    transition: all 0.3s;
+}
+
+.ydays-logo:hover {
+    opacity: 1;
+    filter: grayscale(0);
+}
+
+.content-wrapper {
+    flex-grow: 1;
+    padding: 0 40px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.btn {
+    border-radius: 0;
+    border: 1px solid var(--border-color);
+    background-color: transparent;
+    color: var(--text-color);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: none; /* No transition time */
+    font-weight: 500;
+}
+
+#importBtn:hover {
+    outline: 1px solid var(--orb-color);
+}
+
+#clearBtn:hover {
+    outline: 1px solid red;
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+/* Make modal save button match the orb color on hover */
+#taskSave {
+    border-color: var(--orb-color);
+    color: var(--text-color);
+    background: transparent; /* keep initial transparent */
+}
+#taskSave:hover, #taskSave:focus {
+    background-color: var(--orb-color) !important;
+    border-color: var(--orb-color) !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+#selectedPoleName {
+    display: inline-flex; /* Show the selected pole title */
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.list-col {
+    background-color: var(--card-color);
+    border-radius: 0;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.lists {
+    display: flex;
+    gap: 20px;
+    flex-grow: 1;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    align-items: flex-start; /* Do not stretch children; columns can have independent heights */
+}
+
+.list-col {
+    min-width: 320px;
+    flex: 0 0 auto; /* do not force equal heights; width can still grow auto */
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start; /* keep this column sized to its content */
+}
+
+.list-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.list-body {
+    /* Allow list-body to size to its content; but cap height to avoid overflow beyond viewport */
+    overflow-y: auto;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* ensure flex children can scroll correctly */
+    max-height: calc(80vh); /* prevents a single column from growing beyond viewport */
+}
+
+.card-task {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 0;
+    border-left: 5px solid transparent;
+    padding: 15px;
+    margin-bottom: 12px;
+    cursor: grab;
+    transition: all 0.18s ease-in-out;
+}
+
+.card-task:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Add button at bottom of each list body */
+/* Default add button: placed at bottom by margin-top:auto when list has content */
+.add-card-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px; /* slightly larger padding */
+    margin-top: 12px;
+    border-radius: 18px; /* bigger radius */
+    border: 2px dashed rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.12); /* Same as the outline */
+    cursor: pointer;
+    user-select: none;
+    background: transparent;
+    width: 100%; /* Take the full width of the list */
+    box-sizing: border-box; /* Include padding/border within width */
+}
+.add-card-btn i { margin-right: 8px; font-size: 14px; color: inherit; }
+.add-card-btn span { color: inherit; }
+.add-card-btn:hover { background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.18); }
+
+/* When list-body has no tasks, center the add button vertically */
+.list-body.no-tasks { justify-content: center; align-items: center; }
+.list-body:not(.no-tasks) .add-card-btn { margin-top: auto; }
+
+
+/* Status outlines */
+/* Column list outlines by status (applies to the list columns, not the card contents) */
+.list-col[data-status="todo"] {
+    /* Subtle neutral background for TODO */
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+}
+.list-col[data-status="doing"] {
+    /* Soft yellow tint for DOING lists */
+    background: linear-gradient(180deg, rgba(255,193,7,0.06), rgba(255,193,7,0.02));
+}
+.list-col[data-status="done"] {
+    /* Soft green tint for DONE lists */
+    background: linear-gradient(180deg, rgba(40,167,69,0.06), rgba(40,167,69,0.02));
+}
+
+/* Slightly color the header/border to visually match column tint */
+.list-col[data-status="doing"] .list-header {
+    border-bottom-color: rgba(255,193,7,0.18);
+}
+.list-col[data-status="done"] .list-header {
+    border-bottom-color: rgba(40,167,69,0.18);
+}
+
+/* Visual cue when dragging an item over a list */
+.list-col.drop-target {
+    border-style: dashed; /* outline the list in dashes */
+    border-width: 2px;
+    border-color: rgba(255,255,255,0.18); /* subtle highlight */
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+}
+
+.modal-content {
+    /* base modal content styles - we will override per modal type */
+    background-color: rgba(15, 15, 26, 0.95);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+
+/* View modal (slightly larger for content) */
+.modal-view .modal-content {
+    max-width: 720px;
+}
+.modal-view .modal-dialog { max-width: 720px; width: 100%; }
+.modal-view .modal-header { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); background: transparent; }
+.modal-view .modal-body { padding: 18px 20px; }
+.modal-view .modal-footer { padding: 12px 20px; border-top: none; }
+
+/* Unified header style */
+.modal-header .modal-title { font-weight: 700; font-size: 1.05rem; color: var(--text-color); }
+.modal-header .btn-close { opacity: 0.9; filter: invert(1) grayscale(1); }
+
+
+
+/* Footer actions align right but simple */
+.modal-footer { justify-content: flex-end; gap: 8px; }
+/* Primary button uses orb color with subtle hover */
+.modal-footer .btn-primary { border-color: var(--orb-color); background: transparent; }
+.modal-footer .btn-primary:hover { background: var(--orb-color); color: #fff; }
+
+/* Ensure Bootstrap modals are vertically centered and their content scrolls if too tall */
+.modal.show {
+    display: flex !important;
+    align-items: center; /* vertically center dialog */
+    justify-content: center; /* horizontally center dialog */
+}
+.modal-dialog { margin: 0; }
+.modal-content { max-height: calc(100vh - 4rem); overflow-y: auto; }
+
+/* Remove transitions/animations on Bootstrap modals and backdrops for immediate open/close */
+.modal, .modal-dialog, .modal-backdrop, .modal-content {
+    transition: none !important;
+    animation: none !important;
+}
+.modal-backdrop {
+    opacity: 0.45; /* keep backdrop visible but no transition */
+}
+
+.form-control, .form-select {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 0;
+}
+
+.form-control::placeholder {
+    color: var(--text-color-dark);
+}
+
+.text-muted{
+    color: var(--text-color-dark) !important;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Confetti simple styles */
+.confetti-container {
+    pointer-events: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    z-index: 9999;
+}
+.confetti-piece {
+    position: fixed;
+    width: 8px;
+    height: 12px;
+    display: block;
+    border-radius: 2px;
+    transform-origin: center;
+    will-change: transform, opacity;
+    opacity: 0.95;
+    animation-name: confetti-fall;
+    animation-timing-function: cubic-bezier(.2,.8,.2,1);
+}
+@keyframes confetti-fall {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translate3d(var(--tx, 0px), var(--ty, 250px), 0) rotate(360deg) scale(0.9); opacity: 0; }
+}
+
+/* Futuristic Modal Styling */
+.futuristic-modal .modal-dialog {
+    max-width: 700px;
+    width: 100%;
+}
+
+.futuristic-modal .modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 1.5rem;
+}
+
+.futuristic-modal .modal-title {
+    color: #e8e8e8;
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.futuristic-modal .btn-close {
+    filter: invert(1) grayscale(1);
+}
+
+.futuristic-form {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group-inline {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.futuristic-form .form-label {
+    color: #a0a0b0;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.futuristic-form .form-control {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e8e8e8;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.futuristic-form .form-control::placeholder {
+    color: #6c757d;
+}
+
+.futuristic-form .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--orb-color);
+    box-shadow: none;
+}
+
+.assignee-select {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.5rem;
+}
+
+.file-chooser {
+    background-color: transparent;
+    border: 1px solid var(--orb-color);
+    color: var(--orb-color);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.file-chooser:hover {
+    background-color: var(--orb-color);
+    color: #fff;
+}
+
+#taskFilesList {
+    font-size: 0.85rem;
+}
+
+.futuristic-modal .modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.futuristic-modal .btn-secondary {
+    background-color: transparent;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+}
+
+.futuristic-modal .btn-secondary:hover {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.futuristic-modal .btn-primary {
+    background-color: var(--orb-color);
+    border: 1px solid var(--orb-color);
+    color: #fff;
+}
+
+.futuristic-modal .btn-primary:hover {
+    opacity: 0.8;
+}
+
+/* Assignee Selection */
+.assignees-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.assignee-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.assignee-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.assignee-item.selected {
+    background-color: rgba(var(--orb-color-rgb), 0.2);
+}
+
+.assignee-pfp {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.assignee-name {
+    flex-grow: 1;
+    color: #e8e8e8;
+}
+
+.assignee-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.assignee-item.selected .assignee-checkbox {
+    background-color: var(--orb-color);
+    border-color: var(--orb-color);
+}
+
+.assignee-checkbox::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 12px;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.assignee-item.selected .assignee-checkbox::after {
+    opacity: 1;
+}
+.futuristic-form .form-control[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+/* Card Assignees */
+.card-assignees {
+    display: flex;
+    align-items: center;
+}
+
+.assignee-pfp-small {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--card-color);
+    margin-left: -8px;
+    transition: transform 0.2s;
+}
+
+.assignee-pfp-small:first-child {
+    margin-left: 0;
+}
+
+.assignee-pfp-small:hover {
+    transform: translateY(-2px);
+    z-index: 1;
+}
+
+.card-task {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    cursor: grab;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-task:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.card-desc {
+    font-size: 0.875rem;
+    color: var(--text-color-dark);
+    line-height: 1.4;
+}
+
+.card-meta {
+    margin-top: 1rem;
+    align-items: center;
+}
+
+.due-preview, .file-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-color-dark);
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+}
+.btn-icon {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0.5rem !important;
+    font-size: 1rem;
+    line-height: 1;
+    width: 1.5em;
+    height: 1.5em;
+}
+
+.btn-icon:hover, .btn-icon:focus, .btn-icon:active {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
