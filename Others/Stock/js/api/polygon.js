@@ -18,7 +18,7 @@ const periods = {
 };
 
 import globalRateLimiter from '../rate-limiter.js';
-import { filterNullDataPoints } from '../general.js';
+import { filterNullDataPoints, filterNullOHLCDataPoints } from '../general.js';
 
 export async function fetchFromPolygon(ticker, period, symbol, typeOrStock, name, signal, apiKey) {
   // Utilise symbol pour Polygon, sans formatage
@@ -102,10 +102,14 @@ export async function fetchFromPolygon(ticker, period, symbol, typeOrStock, name
       console.log(`✅ ${results.length} points de données bruts récupérés de Polygon`);
 
       const timestamps = results.map(r => Math.floor(r.t / 1000));
-      const prices = results.map(r => r.c);
+      const opens = results.map(r => r.o);
+      const highs = results.map(r => r.h);
+      const lows = results.map(r => r.l);
+      const closes = results.map(r => r.c);
 
       // Filtrer les points null dès la source
-      const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(timestamps, prices);
+      const { timestamps: filteredTimestamps, opens: filteredOpens, highs: filteredHighs, lows: filteredLows, closes: filteredCloses } = filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes);
+      const filteredPrices = filteredCloses;
 
       console.log(`🔍 Données brutes: ${timestamps.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
 
@@ -120,9 +124,13 @@ export async function fetchFromPolygon(ticker, period, symbol, typeOrStock, name
         source: "massive",
         timestamps: filteredTimestamps,
         prices: [...filteredPrices],
-        open: filteredPrices[0],
-        high: Math.max(...filteredPrices),
-        low: Math.min(...filteredPrices),
+        opens: filteredOpens,
+        highs: filteredHighs,
+        lows: filteredLows,
+        closes: filteredCloses,
+        open: filteredOpens[0],
+        high: Math.max(...filteredHighs),
+        low: Math.min(...filteredLows),
         price: filteredPrices[filteredPrices.length - 1]
       };
 
@@ -133,6 +141,10 @@ export async function fetchFromPolygon(ticker, period, symbol, typeOrStock, name
         data.high = data.high * eurRate;
         data.low = data.low * eurRate;
         data.prices = data.prices.map(p => p * eurRate);
+        data.opens = data.opens.map(p => p * eurRate);
+        data.highs = data.highs.map(p => p * eurRate);
+        data.lows = data.lows.map(p => p * eurRate);
+        data.closes = data.closes.map(p => p * eurRate);
         console.log(`💶 Conversion USD→EUR appliquée (rate: ${eurRate})`);
       }
 

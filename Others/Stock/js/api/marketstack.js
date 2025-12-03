@@ -1,5 +1,5 @@
 import globalRateLimiter from '../rate-limiter.js';
-import { filterNullDataPoints } from '../general.js';
+import { filterNullDataPoints, filterNullOHLCDataPoints } from '../general.js';
 
 // Utilise la valeur brute de api_mapping.marketstack pour le symbole dans les fetchs
 export function getMarketstackSymbol(stockOrTicker) {
@@ -94,9 +94,14 @@ export async function fetchFromMarketstack(ticker, period, symbol, typeOrStock, 
       // Pour EOD, utiliser l'heure de clôture (16h)
       return baseTime + (16 * 60 * 60);
     });
+    const opens = sortedData.map(k => k.open || 0);
+    const highs = sortedData.map(k => k.high || 0);
+    const lows = sortedData.map(k => k.low || 0);
+    const closes = sortedData.map(k => k.close || 0);
 
     // Filtrer les points null dès la source
-    const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(timestamps, prices);
+    const { timestamps: filteredTimestamps, opens: filteredOpens, highs: filteredHighs, lows: filteredLows, closes: filteredCloses } = filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes);
+    const filteredPrices = filteredCloses;
 
     console.log(`🔍 Données brutes: ${timestamps.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
 
@@ -109,9 +114,13 @@ export async function fetchFromMarketstack(ticker, period, symbol, typeOrStock, 
       source: "marketstack",
       timestamps: filteredTimestamps,
       prices: filteredPrices,
-      open: filteredPrices[0],
-      high: Math.max(...filteredPrices),
-      low: Math.min(...filteredPrices),
+      opens: filteredOpens,
+      highs: filteredHighs,
+      lows: filteredLows,
+      closes: filteredCloses,
+      open: filteredOpens[0],
+      high: Math.max(...filteredHighs),
+      low: Math.min(...filteredLows),
       price: filteredPrices[filteredPrices.length - 1],
       exchange: sortedData[0]?.exchange || null
     };

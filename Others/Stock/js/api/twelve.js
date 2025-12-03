@@ -1,5 +1,5 @@
 import globalRateLimiter from '../rate-limiter.js';
-import { filterNullDataPoints } from '../general.js';
+import { filterNullDataPoints, filterNullOHLCDataPoints } from '../general.js';
 
 // Utilise la valeur brute de api_mapping.twelve_data pour le symbole dans les fetchs
 export function getTwelveDataSymbol(stockOrTicker) {
@@ -76,9 +76,14 @@ export async function fetchFromTwelveData(ticker, period, symbol, typeOrStock, n
 
     const prices = filteredValues.map(v => parseFloat(v.close) || 0);
     const timestamps = filteredValues.map(v => Math.floor(new Date(v.datetime).getTime() / 1000));
+    const opens = filteredValues.map(v => parseFloat(v.open) || 0);
+    const highs = filteredValues.map(v => parseFloat(v.high) || 0);
+    const lows = filteredValues.map(v => parseFloat(v.low) || 0);
+    const closes = filteredValues.map(v => parseFloat(v.close) || 0);
 
     // Filtrer les points null dès la source
-    const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(timestamps, prices);
+    const { timestamps: filteredTimestamps, opens: filteredOpens, highs: filteredHighs, lows: filteredLows, closes: filteredCloses } = filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes);
+    const filteredPrices = filteredCloses;
 
     console.log(`🔍 Données brutes: ${timestamps.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
 
@@ -91,9 +96,13 @@ export async function fetchFromTwelveData(ticker, period, symbol, typeOrStock, n
       source: "twelvedata",
       timestamps: filteredTimestamps,
       prices: filteredPrices,
-      open: parseFloat(filteredValues[0]?.open) || filteredPrices[0] || null,
-      high: Math.max(...filteredPrices),
-      low: Math.min(...filteredPrices),
+      opens: filteredOpens,
+      highs: filteredHighs,
+      lows: filteredLows,
+      closes: filteredCloses,
+      open: filteredOpens[0],
+      high: Math.max(...filteredHighs),
+      low: Math.min(...filteredLows),
       price: filteredPrices[filteredPrices.length - 1]
     };
     

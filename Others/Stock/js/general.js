@@ -8,7 +8,7 @@ import rateLimiter from './rate-limiter.js'
 import { fetchNews } from './api/news.js'
 import { initChart, updateChart } from './chart.js'
 import { updateSignal } from './signal-bot.js'
-import { fetchCardNews, updateNewsUI, updateNewsFeedList, openNewsOverlay, closeNewsOverlay, setPositions, openNewsPage, closeNewsPage, updateNewsPageList, updateNewsTrending } from './news.js'
+import { fetchCardNews, updateNewsUI, updateNewsFeedList, openNewsOverlay, closeNewsOverlay, setPositions, openNewsPage, closeNewsPage, updateNewsPageList, updateNewsTrending, setupNewsSearch } from './news.js'
 
 // Global helper to append to terminal output (can be used by any function)
 function terminalLogGlobal(msg) {
@@ -42,6 +42,39 @@ export function filterNullDataPoints(timestamps, prices) {
   return {
     timestamps: validData.map(item => item.timestamp),
     prices: validData.map(item => item.price)
+  };
+}
+
+// Fonction utilitaire pour filtrer les points null/undefined/NaN pour OHLC
+export function filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes) {
+  if (!timestamps || !opens || !highs || !lows || !closes || 
+      timestamps.length !== opens.length || 
+      timestamps.length !== highs.length || 
+      timestamps.length !== lows.length || 
+      timestamps.length !== closes.length) {
+    return { timestamps: [], opens: [], highs: [], lows: [], closes: [] };
+  }
+
+  const validData = timestamps.map((ts, index) => ({
+    timestamp: ts,
+    open: opens[index],
+    high: highs[index],
+    low: lows[index],
+    close: closes[index]
+  })).filter(item =>
+    item.timestamp != null && !isNaN(item.timestamp) &&
+    item.open != null && !isNaN(item.open) &&
+    item.high != null && !isNaN(item.high) &&
+    item.low != null && !isNaN(item.low) &&
+    item.close != null && !isNaN(item.close)
+  );
+
+  return {
+    timestamps: validData.map(item => item.timestamp),
+    opens: validData.map(item => item.open),
+    highs: validData.map(item => item.high),
+    lows: validData.map(item => item.low),
+    closes: validData.map(item => item.close)
   };
 }
 
@@ -474,7 +507,7 @@ async function fetchActiveSymbol(force) {
             }
             const days = periodToDays(p);
             const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
-            fetchCardNews(symbol, false, 8, days, apiToUse).catch(e=>{});
+            fetchCardNews(symbol, false, 50, days, apiToUse).catch(e=>{});
         } catch(e) { /* ignore */ }
     } catch(e){
         setApiStatus(symbol, 'inactive', { api: selectedApi });
@@ -509,6 +542,31 @@ document.addEventListener('click', async e=>{
     }
 })
 
+// Card Tabs Logic
+document.addEventListener('click', e => {
+    const btn = e.target.closest('.card-tab-btn');
+    if (!btn) return;
+
+    const card = btn.closest('.card');
+    if (!card) return;
+
+    // Remove active class from all buttons in this card
+    card.querySelectorAll('.card-tab-btn').forEach(b => b.classList.remove('active'));
+    // Add active class to clicked button
+    btn.classList.add('active');
+
+    const targetPaneId = btn.dataset.target;
+    
+    // Hide all panes
+    card.querySelectorAll('.card-tab-pane').forEach(p => p.classList.remove('active'));
+    
+    // Show target pane
+    const targetPane = card.querySelector(`.card-tab-pane[data-pane="${targetPaneId}"]`);
+    if (targetPane) {
+        targetPane.classList.add('active');
+    }
+});
+
 document.getElementById('cards-container')?.addEventListener('click', async e=>{
     const b=e.target.closest('.period-btn')
     if (!b) return
@@ -541,7 +599,7 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     try {
         const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
         const days = (function(period){ switch((period||'').toUpperCase()){ case '1D': return 1; case '1W': return 7; case '1M': return 30; case '6M': return 180; case '1Y': return 365; case '3Y': return 365*3; case '5Y': return 365*5; case 'MAX': return 36500; default: return 7; }})(positions[s].currentPeriod || '1D');
-        try { fetchCardNews(s, true, 20, days, apiToUse).catch(()=>{}); } catch(e) {}
+        try { fetchCardNews(s, true, 50, days, apiToUse).catch(()=>{}); } catch(e) {}
         const cardNews = document.getElementById('card-news');
         if (cardNews && cardNews.classList.contains('active')) {
             // If the card-news is open and it's for this symbol, refresh it
@@ -606,7 +664,7 @@ async function updateUI(symbol, data) {
     // Conversion USD→EUR supprimée, désormais gérée dans polygon.js
 
     if (data.timestamps && data.prices) {
-        updateChart(symbol, data.timestamps, data.prices, positions, data.source);
+        updateChart(symbol, data.timestamps, data.prices, positions, data.source, data);
     }
 
     const openEl = document.getElementById(`open-${symbol}`);
@@ -1500,6 +1558,15 @@ function createCard(stock) {
         tds[7].id=`profit-per-${stock.symbol}`
     }
 
+    // Vérifier si l'utilisateur a déjà investi sur cette action
+    const hasEverInvested = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
+
+    // Masquer l'onglet Investissement si jamais investi
+    const investmentTabBtn = card.querySelector('.card-tab-btn[data-target="investment"]');
+    if (investmentTabBtn) {
+        investmentTabBtn.style.display = hasEverInvested ? '' : 'none';
+    }
+
     // Remplir les valeurs si on possède des actions
     if (calculated.shares > 0) {
         // Show the invested amount (cost basis) that corresponds to currently held shares
@@ -1513,29 +1580,36 @@ function createCard(stock) {
         tds[5].textContent = calculated.shares ? `${displayInvestPerShare.toFixed(2)} €` : '--';
         tds[6].textContent = '--';
         tds[7].textContent = '--';
+    } else {
+        // Si pas d'actions, afficher 0 ou --
+        tds[1].textContent = '0.00 €';
+        tds[2].textContent = '--';
+        tds[3].textContent = '--';
+        tds[5].textContent = '--';
+        tds[6].textContent = '--';
+        tds[7].textContent = '--';
     }
 
-    // Masquer le tableau d'investissement si on ne possède plus d'actions
+    // Ne plus masquer le tableau d'investissement même si on ne possède plus d'actions
     const cardTableContainer = card.querySelector('.card-table-container')
     if (cardTableContainer) {
-        cardTableContainer.style.display = calculated.shares === 0 ? 'none' : '';
+        cardTableContainer.style.display = '';
     }
 
-    // Masquer le titre et la date de la section investissement si on ne possède plus d'actions
+    // Ne plus masquer le titre et la date de la section investissement
     const investmentTitle = card.querySelector('.investment-title')
     if (investmentTitle) {
-        investmentTitle.style.display = calculated.shares === 0 ? 'none' : '';
+        investmentTitle.style.display = '';
         const investmentDate = investmentTitle.nextElementSibling;
         if (investmentDate && investmentDate.classList.contains('section-date')) {
-            investmentDate.style.display = calculated.shares === 0 ? 'none' : '';
+            investmentDate.style.display = '';
         }
     }
 
-    // Masquer toute la section investissement seulement s'il n'y a jamais eu de transactions
+    // Ne plus masquer la section investissement
     const investmentSection = card.querySelector('.investment-section')
     if (investmentSection) {
-        const hasTransactions = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
-        investmentSection.style.display = hasTransactions ? '' : 'none';
+        investmentSection.style.display = '';
     }
 
     const detailsTitle = card.querySelector('.details-title')
@@ -1580,16 +1654,16 @@ function createCard(stock) {
     const transactionTitle = card.querySelector('.transaction-history-title')
     if (transactionTitle) {
         transactionTitle.id = `transaction-history-title-${stock.symbol}`;
-        const hasTransactions = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
-        transactionTitle.style.display = hasTransactions ? '' : 'none';
+        // Toujours afficher le titre de l'historique
+        transactionTitle.style.display = '';
     }
 
-    // Masquer le conteneur complet du tableau des transactions seulement s'il n'y a jamais eu de transactions
+    // Toujours afficher le conteneur de l'historique
     const transactionContainer = card.querySelector('.transaction-history-container')
     if (transactionContainer) {
-        const hasTransactions = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
-        transactionContainer.style.display = hasTransactions ? '' : 'none';
+        transactionContainer.style.display = '';
         const tbody = card.querySelector('.transaction-history-body');
+        const hasTransactions = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
         if (tbody && hasTransactions) {
             let transactions = [];
             if (stock.purchases) {
@@ -1626,6 +1700,9 @@ function createCard(stock) {
     if (nl) nl.id = `news-list-${stock.symbol}`;
 
     document.getElementById('cards-container')?.appendChild(card)
+    
+    // Setup news search listener
+    setupNewsSearch(stock.symbol);
 }
 
 function clearPeriodDisplay(symbol) {

@@ -20,7 +20,7 @@ const periods = {
 };
 
 import globalRateLimiter from '../rate-limiter.js';
-import { filterNullDataPoints } from '../general.js';
+import { filterNullDataPoints, filterNullOHLCDataPoints } from '../general.js';
 
 export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal, apiKey) {
   console.log(`\n🔍 === FETCH Yahoo ${ticker} (${name}) période ${period} ===`);
@@ -84,9 +84,13 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
 
       const t = res.timestamp;
       const c = q.close;
+      const o = q.open;
+      const h = q.high;
+      const l = q.low;
 
       // Filtrer les points null dès la source
-      const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(t, c);
+      const { timestamps: filteredTimestamps, opens, highs, lows, closes } = filterNullOHLCDataPoints(t, o, h, l, c);
+      const filteredPrices = closes; // Alias pour compatibilité
 
       console.log(`🔍 Données brutes: ${t.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
 
@@ -99,9 +103,13 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
         source: "yahoo",
         timestamps: filteredTimestamps,
         prices: filteredPrices,
-        open: filteredPrices[0],
-        high: Math.max(...filteredPrices),
-        low: Math.min(...filteredPrices),
+        opens: opens,
+        highs: highs,
+        lows: lows,
+        closes: closes,
+        open: opens[0],
+        high: Math.max(...highs),
+        low: Math.min(...lows),
         price: filteredPrices[filteredPrices.length - 1]
       };
 
@@ -230,7 +238,15 @@ export async function fetchYahooNews(ticker, limit = 10, signal) {
     const r = await fetch(proxy, { signal });
     if (!r.ok) return { error: true, errorCode: r.status, items: [] };
     const j = await r.json();
-    const items = (j?.news || []).slice(0, limit).map(i => ({ id: i.uuid || i.link, title: i.title, url: i.link, publisher: i.publisher, publishedAt: i.providerPublishTime || i.unixTimeMs || Date.now(), summary: i.summary || '' }));
+    const items = (j?.news || []).slice(0, limit).map(i => ({
+      id: i.uuid || i.link,
+      title: i.title,
+      url: i.link,
+      publisher: i.publisher,
+      publishedAt: i.providerPublishTime || i.unixTimeMs || Date.now(),
+      summary: i.summary || '',
+      relatedTickers: Array.isArray(i.relatedTickers) ? i.relatedTickers : []
+    }));
     return { source: 'yahoo', items };
   } catch (e) { return { source: 'yahoo', error: true, errorCode: 500, errorMessage: e.message, items: [] }; }
 }

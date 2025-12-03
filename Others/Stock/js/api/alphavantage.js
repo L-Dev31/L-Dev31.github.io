@@ -9,7 +9,7 @@ export function getAlphaVantageSymbol(stockOrTicker) {
 }
 
 import globalRateLimiter from '../rate-limiter.js';
-import { filterNullDataPoints } from '../general.js';
+import { filterNullDataPoints, filterNullOHLCDataPoints } from '../general.js';
 
 const periods = {
   "1D": { days: 1 },
@@ -136,11 +136,15 @@ export async function fetchFromAlphaVantage(ticker, period, symbol, typeOrStock,
     }
 
     // Créer les tableaux de données
-    const prices = relevantDates.map(date => parseFloat(timeSeries[date]['4. close']) || 0);
     const timestamps = relevantDates.map(date => Math.floor(new Date(date).getTime() / 1000));
+    const opens = relevantDates.map(date => parseFloat(timeSeries[date]['1. open']) || 0);
+    const highs = relevantDates.map(date => parseFloat(timeSeries[date]['2. high']) || 0);
+    const lows = relevantDates.map(date => parseFloat(timeSeries[date]['3. low']) || 0);
+    const closes = relevantDates.map(date => parseFloat(timeSeries[date]['4. close']) || 0);
 
     // Filtrer les points null dès la source
-    const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(timestamps, prices);
+    const { timestamps: filteredTimestamps, opens: filteredOpens, highs: filteredHighs, lows: filteredLows, closes: filteredCloses } = filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes);
+    const filteredPrices = filteredCloses;
 
     console.log(`🔍 Données brutes: ${timestamps.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
 
@@ -153,9 +157,13 @@ export async function fetchFromAlphaVantage(ticker, period, symbol, typeOrStock,
       source: "alphavantage",
       timestamps: filteredTimestamps,
       prices: filteredPrices,
-      open: parseFloat(timeSeries[relevantDates[0]]['1. open']) || filteredPrices[0],
-      high: Math.max(...filteredPrices),
-      low: Math.min(...filteredPrices),
+      opens: filteredOpens,
+      highs: filteredHighs,
+      lows: filteredLows,
+      closes: filteredCloses,
+      open: filteredOpens[0],
+      high: Math.max(...filteredHighs),
+      low: Math.min(...filteredLows),
       price: filteredPrices[filteredPrices.length - 1]
     };
 

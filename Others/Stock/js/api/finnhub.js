@@ -22,7 +22,7 @@ const resMap = {
 function toUnix(ts) { return Math.floor(ts/1000); }
 
 import globalRateLimiter from '../rate-limiter.js';
-import { filterNullDataPoints } from '../general.js';
+import { filterNullDataPoints, filterNullOHLCDataPoints } from '../general.js';
 
 export async function fetchFromFinnhub(ticker, period="1D", symbol, typeOrStock, name, signal, apiKey){
   const key = `${ticker}:${period}`;
@@ -48,9 +48,14 @@ export async function fetchFromFinnhub(ticker, period="1D", symbol, typeOrStock,
       if (j.s !== "ok" || !j.t?.length) return { source: "finnhub", error: true, errorCode: 404, raw: j, errorMessage: j.s || "no_data" };
       const prices = j.c;
       const timestamps = j.t;
+      const opens = j.o;
+      const highs = j.h;
+      const lows = j.l;
+      const closes = j.c;
 
       // Filtrer les points null dès la source
-      const { timestamps: filteredTimestamps, prices: filteredPrices } = filterNullDataPoints(timestamps, prices);
+      const { timestamps: filteredTimestamps, opens: filteredOpens, highs: filteredHighs, lows: filteredLows, closes: filteredCloses } = filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes);
+      const filteredPrices = filteredCloses;
 
       console.log(`🔍 Données brutes: ${timestamps.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
 
@@ -63,9 +68,13 @@ export async function fetchFromFinnhub(ticker, period="1D", symbol, typeOrStock,
         source: "finnhub",
         timestamps: filteredTimestamps,
         prices: filteredPrices,
-        open: filteredPrices[0] ?? null,
-        high: Math.max(...filteredPrices),
-        low: Math.min(...filteredPrices),
+        opens: filteredOpens,
+        highs: filteredHighs,
+        lows: filteredLows,
+        closes: filteredCloses,
+        open: filteredOpens[0] ?? null,
+        high: Math.max(...filteredHighs),
+        low: Math.min(...filteredLows),
         price: filteredPrices[filteredPrices.length-1] ?? null
       };
       if (data.open && data.price) {

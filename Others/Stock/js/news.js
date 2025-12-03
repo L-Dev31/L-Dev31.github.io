@@ -4,6 +4,8 @@ import { loadApiConfig } from './general.js';
 // Global positions object (will be passed or accessed)
 let positions = {};
 let lastPageNews = [];
+let currentNewsSymbol = null;
+let currentNewsPeriod = '1D';
 
 // Helper to map period code to days
 export function periodToDays(period) {
@@ -21,11 +23,13 @@ export function periodToDays(period) {
 }
 
 // Function to fetch news for a card
-export async function fetchCardNews(symbol, force = false, limit = 5, days = 7, apiName = null) {
+export async function fetchCardNews(symbol, force = false, limit = 50, days = 7, apiName = null) {
     if (!positions[symbol]) return;
     const now = Date.now();
     // cache for 10 minutes by default
     if (!force && positions[symbol].lastNewsFetch && (now - positions[symbol].lastNewsFetch) < 10 * 60 * 1000) {
+        // Re-render UI to ensure any existing search filter is applied
+        updateNewsUI(symbol, positions[symbol].news);
         return positions[symbol].news;
     }
     try {
@@ -36,53 +40,89 @@ export async function fetchCardNews(symbol, force = false, limit = 5, days = 7, 
         const mappedSymbol = (positions[symbol] && positions[symbol].api_mapping && positions[symbol].api_mapping[apiToUse]) ? positions[symbol].api_mapping[apiToUse] : (positions[symbol] && positions[symbol].ticker) ? positions[symbol].ticker : symbol;
         const r = await fetchNews(mappedSymbol, config, limit, days, apiToUse);
         if (r && !r.error && Array.isArray(r.items)) {
-            positions[symbol].news = r.items;
+            const enriched = r.items.map(item => ({
+                ...item,
+                symbol: symbol
+            }));
+            const filteredForSymbol = filterItemsBySymbol(enriched, symbol);
+            positions[symbol].news = filteredForSymbol;
             positions[symbol].lastNewsFetch = now;
-            updateNewsUI(symbol, r.items);
+            updateNewsUI(symbol, filteredForSymbol);
             // If the dedicated news page is open (and showing this symbol), update it too
-            try { const card = document.getElementById('card-news'); if (card && card.classList.contains('active')) updateNewsPageList(r.items); } catch(e) {}
-            return r.items;
+            try {
+                const card = document.getElementById('card-news');
+                if (card && card.classList.contains('active') && currentNewsSymbol === symbol) {
+                    updateNewsPageList(filteredForSymbol);
+                }
+            } catch(e) {}
+            return filteredForSymbol;
         }
     } catch (e) { console.warn('fetchCardNews error:', e.message || e); }
     return [];
 }
 
 // Function to update news UI in the card
-export function updateNewsUI(symbol, items) {
+export function updateNewsUI(symbol, items, filterText = null) {
     const el = document.getElementById(`news-list-${symbol}`);
     if (!el) return;
+    
+    // If filterText is not provided, try to get it from the input
+    if (filterText === null) {
+        const input = document.querySelector(`#card-${symbol} .news-search-input`);
+        if (input) filterText = input.value;
+    }
+
     el.innerHTML = '';
-    if (!items || items.length === 0) {
-        el.textContent = 'Aucune actualité récente.';
+    
+    let displayItems = items || [];
+    
+    if (filterText) {
+        const lowerFilter = filterText.toLowerCase();
+        displayItems = displayItems.filter(i => 
+            (i.title && i.title.toLowerCase().includes(lowerFilter)) ||
+            (i.summary && i.summary.toLowerCase().includes(lowerFilter)) ||
+            (i.source && i.source.toLowerCase().includes(lowerFilter))
+        );
+    }
+
+    if (!displayItems || displayItems.length === 0) {
+        el.textContent = filterText ? 'Aucun résultat.' : 'Aucune actualité récente.';
         return;
     }
-    items.forEach(i => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'news-item';
+    displayItems.forEach(i => {
+        const itemEl = document.createElement('a');
+        itemEl.className = 'news-item news-item-link';
+        itemEl.href = i.url || '#';
+        itemEl.target = '_blank';
+        itemEl.rel = 'noopener noreferrer';
         const title = document.createElement('div');
         title.className = 'news-title';
-        if (i.symbol) {
-            const s = document.createElement('span');
-            s.className = 'news-symbol-tag';
-            s.textContent = i.symbol;
-            s.style.marginRight = '8px';
-            s.style.fontWeight = '700';
-            s.style.color = 'var(--primary-purple)';
-            title.appendChild(s);
-        }
-        const a = document.createElement('a');
-        a.href = i.url || '#';
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.textContent = i.title || '—';
-        title.appendChild(a);
+        const titleText = document.createElement('span');
+        titleText.className = 'news-title-text';
+        titleText.textContent = i.title || '—';
+        title.appendChild(titleText);
+        itemEl.appendChild(title);
         const meta = document.createElement('div');
         meta.className = 'news-meta';
         const date = new Date(i.publishedAt || new Date());
         meta.textContent = `${i.source || ''} • ${date.toLocaleString('fr-FR')}`;
-        itemEl.appendChild(title);
         itemEl.appendChild(meta);
         el.appendChild(itemEl);
+    });
+}
+
+export function setupNewsSearch(symbol) {
+    const input = document.querySelector(`#card-${symbol} .news-search-input`);
+    if (!input) return;
+    
+    // Remove existing listeners to avoid duplicates if called multiple times (though cloning usually strips them, better safe)
+    const newInput = input.cloneNode(true);
+    input.parentNode.replaceChild(newInput, input);
+    
+    newInput.addEventListener('input', (e) => {
+        const filterText = e.target.value;
+        const news = positions[symbol]?.news || [];
+        updateNewsUI(symbol, news, filterText);
     });
 }
 
@@ -102,26 +142,17 @@ export function updateNewsFeedList(items) {
         itemEl.className = 'news-item';
         const title = document.createElement('div');
         title.className = 'news-title';
-        if (i.symbol) {
-            const s = document.createElement('span');
-            s.className = 'news-symbol-tag';
-            s.textContent = i.symbol;
-            s.style.marginRight = '8px';
-            s.style.fontWeight = '700';
-            s.style.color = 'var(--primary-purple)';
-            title.appendChild(s);
-        }
         const a = document.createElement('a');
         a.href = i.url || '#';
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
         a.textContent = i.title || '—';
         title.appendChild(a);
+        itemEl.appendChild(title);
         const meta = document.createElement('div');
         meta.className = 'news-meta';
         const date = new Date(i.publishedAt || new Date());
         meta.textContent = `${i.source || ''} • ${date.toLocaleString('fr-FR')}`;
-        itemEl.appendChild(title);
         itemEl.appendChild(meta);
         if (i.summary) {
             const summary = document.createElement('div');
@@ -246,27 +277,35 @@ export function updateNewsTrending(items) {
 }
 
 // Update the dedicated news page list
-export function updateNewsPageList(items) {
+export function updateNewsPageList(items, options = {}) {
+    const { replaceCache = true, skipSort = false, totalCount = null } = options;
     const el = document.getElementById('news-page-feed-list');
     if (!el) return;
     el.innerHTML = '';
     if (!items || items.length === 0) {
         el.textContent = 'Aucune actualité récente.';
+        updateNewsPageCount(0, totalCount ?? (replaceCache ? 0 : (lastPageNews.length || 0)));
+        if (replaceCache) lastPageNews = [];
         return;
     }
-    // Ensure items are sorted from most recent to oldest by published date
-    try { items = (Array.isArray(items) ? items.slice() : []).sort((a,b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0)); } catch(e) {}
-    items.forEach(i => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'news-item';
+    let workingItems = Array.isArray(items) ? items.slice() : [];
+    if (!skipSort) {
+        try {
+            workingItems.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+        } catch (e) {}
+    }
+    workingItems.forEach(i => {
+        const itemEl = document.createElement('a');
+        itemEl.className = 'news-item news-item-link';
+        itemEl.href = i.url || '#';
+        itemEl.target = '_blank';
+        itemEl.rel = 'noopener noreferrer';
         const title = document.createElement('div');
         title.className = 'news-title';
-        const a = document.createElement('a');
-        a.href = i.url || '#';
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.textContent = i.title || '—';
-        title.appendChild(a);
+        const titleText = document.createElement('span');
+        titleText.className = 'news-title-text';
+        titleText.textContent = i.title || '—';
+        title.appendChild(titleText);
         const meta = document.createElement('div');
         meta.className = 'news-meta';
         const date = new Date(i.publishedAt || new Date());
@@ -281,15 +320,13 @@ export function updateNewsPageList(items) {
         }
         el.appendChild(itemEl);
     });
-    // keep a copy for client-side filtering and search
-    lastPageNews = Array.isArray(items) ? items.slice(0) : [];
 }
 
 function filterNewsItems(items, query, sourceFilter, timeFilter, quickFilterKeyword) {
     if (!items || items.length === 0) return [];
     let q = (query || '').trim().toLowerCase();
     let now = Date.now();
-    let threshold = 1000 * 60 * 60 * 24 * 7; // default 7d
+    let threshold = null;
     if (timeFilter === '24h') threshold = 1000 * 60 * 60 * 24;
     else if (timeFilter === '72h') threshold = 1000 * 60 * 60 * 24 * 3;
     else if (timeFilter === '30d') threshold = 1000 * 60 * 60 * 24 * 30;
@@ -307,7 +344,7 @@ function filterNewsItems(items, query, sourceFilter, timeFilter, quickFilterKeyw
             const s = (i.summary || '').toLowerCase();
             if (!(t.includes(quickFilterKeyword.toLowerCase()) || s.includes(quickFilterKeyword.toLowerCase()))) return false;
         }
-        if (i.publishedAt) {
+        if (threshold && i.publishedAt) {
             const p = new Date(i.publishedAt).getTime();
             if (isNaN(p)) return false;
             if ((now - p) > threshold) return false;
@@ -321,6 +358,8 @@ export async function openNewsPage(symbol) {
     const card = document.getElementById('card-news');
     const feedEl = document.getElementById('news-page-feed-list');
     if (!card || !feedEl) return;
+    currentNewsSymbol = symbol || null;
+    updateNewsPageContextLabel(currentNewsSymbol);
     // Close other cards
     try { document.querySelectorAll('.card').forEach(x => x.classList.remove('active')); } catch(e) {}
     // Hide overlay if shown
@@ -336,6 +375,7 @@ export async function openNewsPage(symbol) {
         const defaultDays = periodToDays('1D');
         // Default period selection: use symbol currentPeriod or 1D
         const periodValue = (symbol && positions[symbol] && positions[symbol].currentPeriod) ? positions[symbol].currentPeriod : '1D';
+        currentNewsPeriod = periodValue;
         try { document.querySelectorAll('#news-periods .period-btn').forEach(x => x.classList.remove('active')); } catch(e){}
         try { const activeBtn = document.querySelector(`#news-periods .period-btn[data-period="${periodValue}"]`); if (activeBtn) activeBtn.classList.add('active'); } catch(e){}
         if (symbol) {
@@ -343,11 +383,11 @@ export async function openNewsPage(symbol) {
             const days = periodToDays(p);
             const mappedSymbol = (positions[symbol] && positions[symbol].api_mapping && positions[symbol].api_mapping[apiToUse]) ? positions[symbol].api_mapping[apiToUse] : (positions[symbol] && positions[symbol].ticker) ? positions[symbol].ticker : symbol;
             const r = await fetchNews(mappedSymbol, config, 50, days, apiToUse);
-                if (r && Array.isArray(r.items)) {
-                r.items.forEach(it => { if (!it.symbol) it.symbol = symbol; });
-                updateNewsPageList(r.items);
-                // Update trending using the same items list to calculate counts for the period
-                updateNewsTrending(r.items);
+            if (r && Array.isArray(r.items)) {
+                const enriched = r.items.map(it => ({ ...it, symbol }));
+                const filteredItems = filterItemsBySymbol(enriched, symbol);
+                updateNewsPageList(filteredItems);
+                updateNewsTrending(filteredItems);
             }
         } else {
             const syms = Object.keys(positions);
@@ -377,21 +417,34 @@ export async function openNewsPage(symbol) {
         const sourceSel = document.getElementById('news-page-source-select');
         const timeSel = null;
         const quickButtons = document.querySelectorAll('.quick-filter');
+        let activeQuickFilter = null;
         const applyFilters = () => {
-            const q = searchInput?.value || '';
-            const activeQuick = Array.from(quickButtons || []).find(b => b.classList.contains('active'))?.textContent || null;
-            // For filtering, we only apply text and quick filters; period buttons control the fetch period.
-            const filtered = filterNewsItems(lastPageNews, q, null, null, activeQuick);
-            updateNewsPageList(filtered);
+            const q = (searchInput?.value || '').trim();
+            const baseItems = Array.isArray(lastPageNews) ? lastPageNews : [];
+            if (!q && !activeQuickFilter) {
+                updateNewsPageList(baseItems, { replaceCache: false, totalCount: baseItems.length, skipSort: true });
+                return;
+            }
+            const filtered = filterNewsItems(baseItems, q, null, null, activeQuickFilter);
+            updateNewsPageList(filtered, { replaceCache: false, totalCount: baseItems.length, skipSort: true });
         };
         if (searchBtn) searchBtn.onclick = applyFilters;
-        if (searchInput) searchInput.onkeydown = (e)=>{ if (e.key === 'Enter') applyFilters(); };
+        if (searchInput) {
+            searchInput.onkeydown = (e)=>{ if (e.key === 'Enter') applyFilters(); };
+            searchInput.oninput = () => { if (!searchInput.value) applyFilters(); };
+        }
         if (sourceSel) sourceSel.onchange = applyFilters;
         // time selector removed - period buttons control fetch timeframe
         quickButtons.forEach(b=>{
-            b.onclick = (e)=>{
-                quickButtons.forEach(x=>x.classList.remove('active'));
-                b.classList.add('active');
+            b.onclick = ()=>{
+                if (b.classList.contains('active')) {
+                    b.classList.remove('active');
+                    activeQuickFilter = null;
+                } else {
+                    quickButtons.forEach(x=>x.classList.remove('active'));
+                    b.classList.add('active');
+                    activeQuickFilter = (b.dataset.keyword || b.textContent || '').trim();
+                }
                 applyFilters();
             };
         });
@@ -406,13 +459,18 @@ export async function openNewsPage(symbol) {
                     periodsGroup.querySelectorAll('.period-btn').forEach(x=>x.classList.remove('active'));
                     btn.classList.add('active');
                     const daysNum = periodToDays(p);
+                    currentNewsPeriod = p;
                     // Re-fetch items (symbol or aggregated)
                     try {
                         const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
                         if (symbol) {
                             const mapped = (positions[symbol] && positions[symbol].api_mapping && positions[symbol].api_mapping[apiToUse]) ? positions[symbol].api_mapping[apiToUse] : (positions[symbol] && positions[symbol].ticker) ? positions[symbol].ticker : symbol;
                             const r = await fetchNews(mapped, await loadApiConfig(), 50, daysNum, apiToUse);
-                            if (r && Array.isArray(r.items)) updateNewsPageList(r.items);
+                            if (r && Array.isArray(r.items)) {
+                                const enriched = r.items.map(it => ({ ...it, symbol }));
+                                const filtered = filterItemsBySymbol(enriched, symbol);
+                                updateNewsPageList(filtered);
+                            }
                             try {
                                 // Also update the chart period to match (if symbol in positions)
                                 if (positions && positions[symbol]) {
@@ -442,4 +500,75 @@ export function closeNewsPage() {
     card.classList.remove('active');
     card.setAttribute('aria-hidden', 'true');
     try { document.getElementById('open-news-feed')?.classList.remove('active'); } catch(e) {}
+    currentNewsSymbol = null;
+    updateNewsPageContextLabel(null);
+}
+
+function buildSymbolTickers(symbol) {
+    if (!symbol) return [];
+    const pos = positions && positions[symbol] ? positions[symbol] : null;
+    const tickers = new Set();
+    const push = (value) => {
+        if (typeof value === 'string' && value.trim()) {
+            // Normalize: uppercase, remove exchange suffix like .PA
+            let normalized = value.trim().toUpperCase();
+            tickers.add(normalized);
+            // Also add without exchange suffix
+            const dotIndex = normalized.lastIndexOf('.');
+            if (dotIndex > 0) {
+                tickers.add(normalized.substring(0, dotIndex));
+            }
+        }
+    };
+    push(symbol);
+    if (pos) {
+        push(pos.ticker);
+        if (pos.api_mapping) {
+            Object.values(pos.api_mapping).forEach(push);
+        }
+    }
+    return Array.from(tickers);
+}
+
+function filterItemsBySymbol(items, symbol) {
+    if (!symbol) return Array.isArray(items) ? items : [];
+    const tickers = buildSymbolTickers(symbol);
+    if (!Array.isArray(items) || !items.length || !tickers.length) return Array.isArray(items) ? items : [];
+    
+    const filtered = items.filter(item => {
+        // Use relatedTickers from Yahoo API if available
+        if (Array.isArray(item.relatedTickers) && item.relatedTickers.length > 0) {
+            const relatedUppercase = item.relatedTickers.map(t => t.toUpperCase());
+            return tickers.some(ticker => relatedUppercase.includes(ticker));
+        }
+        // Fallback: no relatedTickers, keep the item if it was fetched for this symbol
+        return item.symbol === symbol;
+    });
+    return filtered;
+}
+
+function updateNewsPageContextLabel(symbol) {
+    const ctx = document.getElementById('news-page-context');
+    if (!ctx) return;
+    if (symbol && positions[symbol]) {
+        const pos = positions[symbol];
+        const tickerSuffix = pos.ticker ? ` (${pos.ticker})` : '';
+        ctx.textContent = `${pos.name || symbol}${tickerSuffix}`;
+    } else {
+        ctx.textContent = 'Portefeuille complet';
+    }
+}
+
+function updateNewsPageCount(displayed, total = null) {
+    const countEl = document.getElementById('news-page-count');
+    if (!countEl) return;
+    if (typeof displayed !== 'number' || displayed < 0) {
+        countEl.textContent = '—';
+        return;
+    }
+    if (typeof total === 'number' && total >= 0 && total !== displayed) {
+        countEl.textContent = `${displayed}/${total} actus`;
+    } else {
+        countEl.textContent = `${displayed} actus`;
+    }
 }
