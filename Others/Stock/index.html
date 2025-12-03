@@ -68,24 +68,21 @@
                     </div>
                     </div>
                 </div>
-                <!-- News Card - Minimaliste -->
+                <!-- News Card -->
                 <div class="card news-card" id="card-news" role="document" aria-hidden="true">
-                    <header class="news-header">
-                        <div class="news-header-left">
-                            <span class="news-title-brand">📰 News</span>
-                            <span id="news-page-context" class="news-context">Tout</span>
+                    <!-- Header sticky -->
+                    <div class="news-header">
+                        <h3 class="section-title">Actualités du marché</h3>
+                        <div class="section-date">Dernière mise à jour : <span id="news-last-update">—</span></div>
+                        <div class="news-filters-row">
+                            <select id="news-ticker-select" class="news-select">
+                                <option value="">Tous les actifs</option>
+                            </select>
+                            <input id="news-article-search" class="news-input" type="search" placeholder="Rechercher dans les articles..." />
                         </div>
-                        <div class="news-header-right">
-                            <input id="news-page-search-input" class="news-search" type="search" placeholder="Rechercher..." />
-                            <div class="news-periods" id="news-periods">
-                                <button class="period-btn active" data-period="1D">24h</button>
-                                <button class="period-btn" data-period="1W">7j</button>
-                                <button class="period-btn" data-period="1M">30j</button>
-                            </div>
-                            <button class="news-close-btn" onclick="closeNewsPage()">✕</button>
-                        </div>
-                    </header>
-                    <div id="news-page-feed-list" class="news-feed"></div>
+                    </div>
+                    <!-- Liste des news -->
+                    <div id="news-page-feed-list" class="news-list"></div>
                 </div>
             </div>
             <!-- Hidden templates for dynamic content -->

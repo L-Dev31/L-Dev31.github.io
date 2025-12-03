@@ -1271,6 +1271,7 @@ window.getActiveSymbol = getActiveSymbol;
 window.openTerminalCard = openTerminalCard;
 window.openNewsOverlay = openNewsOverlay;
 window.openNewsPage = openNewsPage;
+window.closeNewsPage = closeNewsPage;
 window.closeNewsOverlay = closeNewsOverlay;
 window.terminalLogGlobal = terminalLogGlobal;
 window.positions = positions;

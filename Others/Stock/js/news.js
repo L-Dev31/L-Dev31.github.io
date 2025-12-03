@@ -4,7 +4,6 @@ import { loadApiConfig } from './general.js';
 // Global positions object (will be passed or accessed)
 let positions = {};
 let lastPageNews = [];
-let currentNewsSymbol = null;
 let currentNewsPeriod = '1D';
 
 // Helper to map period code to days
@@ -13,6 +12,7 @@ export function periodToDays(period) {
         case '1D': return 1;
         case '1W': return 7;
         case '1M': return 30;
+        case '3M': return 90;
         case '6M': return 180;
         case '1Y': return 365;
         case '3Y': return 365 * 3;
@@ -278,40 +278,59 @@ export function updateNewsTrending(items) {
 
 // Update the dedicated news page list
 export function updateNewsPageList(items, options = {}) {
-    const { replaceCache = true, skipSort = false, totalCount = null } = options;
+    const { replaceCache = true, skipSort = false } = options;
     const el = document.getElementById('news-page-feed-list');
     if (!el) return;
     el.innerHTML = '';
+    
     if (!items || items.length === 0) {
-        el.textContent = 'Aucune actualité récente.';
-        updateNewsPageCount(0, totalCount ?? (replaceCache ? 0 : (lastPageNews.length || 0)));
+        el.innerHTML = '<div class="news-empty">Aucune actualité trouvée</div>';
         if (replaceCache) lastPageNews = [];
         return;
     }
+    
     let workingItems = Array.isArray(items) ? items.slice() : [];
     if (!skipSort) {
         try {
             workingItems.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
         } catch (e) {}
     }
+    if (replaceCache) lastPageNews = workingItems;
+    
     workingItems.forEach(i => {
         const itemEl = document.createElement('a');
-        itemEl.className = 'news-item news-item-link';
+        itemEl.className = 'news-item';
         itemEl.href = i.url || '#';
         itemEl.target = '_blank';
         itemEl.rel = 'noopener noreferrer';
+        
         const title = document.createElement('div');
         title.className = 'news-title';
-        const titleText = document.createElement('span');
-        titleText.className = 'news-title-text';
-        titleText.textContent = i.title || '—';
-        title.appendChild(titleText);
+        title.textContent = i.title || '—';
+        
         const meta = document.createElement('div');
         meta.className = 'news-meta';
         const date = new Date(i.publishedAt || new Date());
-        meta.textContent = `${i.source || ''} • ${date.toLocaleString('fr-FR')}`;
+        
+        const sourceSpan = document.createElement('span');
+        sourceSpan.className = 'news-source';
+        sourceSpan.textContent = i.source || 'Source';
+        meta.appendChild(sourceSpan);
+        
+        meta.appendChild(document.createTextNode(` • ${date.toLocaleString('fr-FR')}`));
+        
+        // Ajouter le ticker si disponible
+        if (i.symbol) {
+            const tickerTag = document.createElement('span');
+            tickerTag.className = 'news-ticker-tag';
+            const pos = positions[i.symbol];
+            tickerTag.textContent = pos?.ticker || i.symbol;
+            meta.appendChild(tickerTag);
+        }
+        
         itemEl.appendChild(title);
         itemEl.appendChild(meta);
+        
         if (i.summary) {
             const summary = document.createElement('div');
             summary.className = 'news-summary';
@@ -320,6 +339,12 @@ export function updateNewsPageList(items, options = {}) {
         }
         el.appendChild(itemEl);
     });
+    
+    // Update timestamp
+    const updateEl = document.getElementById('news-last-update');
+    if (updateEl) {
+        updateEl.textContent = new Date().toLocaleTimeString('fr-FR');
+    }
 }
 
 function filterNewsItems(items, query, sourceFilter, timeFilter, quickFilterKeyword) {
@@ -353,145 +378,175 @@ function filterNewsItems(items, query, sourceFilter, timeFilter, quickFilterKeyw
     });
 }
 
-// Open the dedicated news page (instead of overlay)
+// Setup scroll listener for sticky header
+function setupHeaderScroll(card) {
+    const header = card.querySelector('.news-header');
+    if (!header) return;
+    
+    // Remove old listener if any
+    card.onscroll = null;
+    
+    card.onscroll = () => {
+        if (card.scrollTop > 10) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    };
+    
+    // Reset state
+    header.classList.remove('scrolled');
+}
+
+// Open the dedicated news page
 export async function openNewsPage(symbol) {
     const card = document.getElementById('card-news');
     const feedEl = document.getElementById('news-page-feed-list');
     if (!card || !feedEl) return;
-    currentNewsSymbol = symbol || null;
-    updateNewsPageContextLabel(currentNewsSymbol);
+    
     // Close other cards
     try { document.querySelectorAll('.card').forEach(x => x.classList.remove('active')); } catch(e) {}
-    // Hide overlay if shown
     try { document.getElementById('news-overlay')?.setAttribute('aria-hidden', 'true'); } catch(e) {}
+    
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
-    // Highlight the news button like a tab
+    
+    // Setup scroll listener for sticky header effect
+    setupHeaderScroll(card);
+    
+    // Highlight the news button
     try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
     try { document.getElementById('open-news-feed')?.classList.add('active'); } catch(e) {}
+    
+    // Populate ticker select from positions
+    populateTickerSelect();
+    
+    // If a symbol was passed, pre-select it
+    const tickerSelect = document.getElementById('news-ticker-select');
+    if (symbol && tickerSelect) {
+        tickerSelect.value = symbol;
+    }
+    
+    // Setup event listeners
+    setupNewsFilters();
+    
+    // Initial load
+    await loadNews();
+}
+
+// Populate the ticker dropdown from positions
+function populateTickerSelect() {
+    const select = document.getElementById('news-ticker-select');
+    if (!select) return;
+    
+    // Keep first option (Tous)
+    select.innerHTML = '<option value="">Tous les actifs</option>';
+    
+    Object.keys(positions).forEach(sym => {
+        const pos = positions[sym];
+        const opt = document.createElement('option');
+        opt.value = sym;
+        opt.textContent = `${pos.ticker || sym} - ${pos.name || sym}`;
+        select.appendChild(opt);
+    });
+}
+
+// Setup filter event listeners
+function setupNewsFilters() {
+    const tickerSelect = document.getElementById('news-ticker-select');
+    const articleSearch = document.getElementById('news-article-search');
+    const periodsGroup = document.getElementById('news-periods');
+    
+    // Ticker select change
+    if (tickerSelect) {
+        tickerSelect.onchange = () => loadNews();
+    }
+    
+    // Article search (filter existing results)
+    if (articleSearch) {
+        articleSearch.oninput = () => {
+            const q = (articleSearch.value || '').trim().toLowerCase();
+            if (!q) {
+                updateNewsPageList(lastPageNews, { replaceCache: false, skipSort: true });
+                return;
+            }
+            const filtered = lastPageNews.filter(i => 
+                (i.title && i.title.toLowerCase().includes(q)) ||
+                (i.summary && i.summary.toLowerCase().includes(q)) ||
+                (i.source && i.source.toLowerCase().includes(q))
+            );
+            updateNewsPageList(filtered, { replaceCache: false, skipSort: true });
+        };
+    }
+    
+    // Period buttons
+    if (periodsGroup) {
+        periodsGroup.querySelectorAll('.period-btn').forEach(btn => {
+            btn.onclick = () => {
+                periodsGroup.querySelectorAll('.period-btn').forEach(x => x.classList.remove('active'));
+                btn.classList.add('active');
+                currentNewsPeriod = btn.dataset.period;
+                loadNews();
+            };
+        });
+    }
+}
+
+// Load news based on current filters
+async function loadNews() {
+    const feedEl = document.getElementById('news-page-feed-list');
+    const tickerSelect = document.getElementById('news-ticker-select');
+    
+    if (!feedEl) return;
+    
+    // Show loading
+    feedEl.innerHTML = '<div class="news-loading">Chargement des actualités</div>';
+    
     try {
         const config = await loadApiConfig();
         const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : (window.selectedApi || (config.ui && config.ui.defaultApi) || 'finnhub');
-        const defaultDays = periodToDays('1D');
-        // Default period selection: use symbol currentPeriod or 1D
-        const periodValue = (symbol && positions[symbol] && positions[symbol].currentPeriod) ? positions[symbol].currentPeriod : '1D';
-        currentNewsPeriod = periodValue;
-        try { document.querySelectorAll('#news-periods .period-btn').forEach(x => x.classList.remove('active')); } catch(e){}
-        try { const activeBtn = document.querySelector(`#news-periods .period-btn[data-period="${periodValue}"]`); if (activeBtn) activeBtn.classList.add('active'); } catch(e){}
-        if (symbol) {
-            const p = (positions[symbol] && positions[symbol].currentPeriod) ? positions[symbol].currentPeriod : '1D';
-            const days = periodToDays(p);
-            const mappedSymbol = (positions[symbol] && positions[symbol].api_mapping && positions[symbol].api_mapping[apiToUse]) ? positions[symbol].api_mapping[apiToUse] : (positions[symbol] && positions[symbol].ticker) ? positions[symbol].ticker : symbol;
-            const r = await fetchNews(mappedSymbol, config, 50, days, apiToUse);
-            if (r && Array.isArray(r.items)) {
-                const enriched = r.items.map(it => ({ ...it, symbol }));
-                const filteredItems = filterItemsBySymbol(enriched, symbol);
-                updateNewsPageList(filteredItems);
-                updateNewsTrending(filteredItems);
-            }
+        const days = periodToDays(currentNewsPeriod);
+        
+        // Determine which ticker(s) to fetch
+        let tickersToFetch = [];
+        
+        // Dropdown selection or all portfolio
+        if (tickerSelect?.value) {
+            const sym = tickerSelect.value;
+            const pos = positions[sym];
+            const mapped = pos?.api_mapping?.[apiToUse] || pos?.ticker || sym;
+            tickersToFetch = [{ symbol: sym, ticker: mapped }];
         } else {
-            const syms = Object.keys(positions);
-            let allItems = [];
-            for (const s of syms) {
-                try {
-                    const mapped = (positions[s] && positions[s].api_mapping && positions[s].api_mapping[apiToUse]) ? positions[s].api_mapping[apiToUse] : (positions[s] && positions[s].ticker) ? positions[s].ticker : s;
-                    const r = await fetchNews(mapped, config, 50, defaultDays, apiToUse);
-                    if (r && r.items) {
-                        allItems = allItems.concat(r.items.map(it => ({ ...it, symbol: s }))); 
-                    }
-                } catch(e) {}
-            }
-            allItems.sort((a,b)=> new Date(b.publishedAt) - new Date(a.publishedAt));
-            updateNewsPageList(allItems);
-            // Pass aggregated items so trending can be computed from them
-            updateNewsTrending(allItems);
-        }
-    } catch(err) { console.warn('openNewsPage err', err); }
-    // update trending with top positions as a simple summary
-    try { updateNewsTrending(); } catch (e) {}
-
-    // Wire search / filters once
-    try {
-        const searchInput = document.getElementById('news-page-search-input');
-        const searchBtn = document.getElementById('news-page-search-btn');
-        const sourceSel = document.getElementById('news-page-source-select');
-        const timeSel = null;
-        const quickButtons = document.querySelectorAll('.quick-filter');
-        let activeQuickFilter = null;
-        const applyFilters = () => {
-            const q = (searchInput?.value || '').trim();
-            const baseItems = Array.isArray(lastPageNews) ? lastPageNews : [];
-            if (!q && !activeQuickFilter) {
-                updateNewsPageList(baseItems, { replaceCache: false, totalCount: baseItems.length, skipSort: true });
-                return;
-            }
-            const filtered = filterNewsItems(baseItems, q, null, null, activeQuickFilter);
-            updateNewsPageList(filtered, { replaceCache: false, totalCount: baseItems.length, skipSort: true });
-        };
-        if (searchBtn) searchBtn.onclick = applyFilters;
-        if (searchInput) {
-            searchInput.onkeydown = (e)=>{ if (e.key === 'Enter') applyFilters(); };
-            searchInput.oninput = () => { if (!searchInput.value) applyFilters(); };
-        }
-        if (sourceSel) sourceSel.onchange = applyFilters;
-        // time selector removed - period buttons control fetch timeframe
-        quickButtons.forEach(b=>{
-            b.onclick = ()=>{
-                if (b.classList.contains('active')) {
-                    b.classList.remove('active');
-                    activeQuickFilter = null;
-                } else {
-                    quickButtons.forEach(x=>x.classList.remove('active'));
-                    b.classList.add('active');
-                    activeQuickFilter = (b.dataset.keyword || b.textContent || '').trim();
-                }
-                applyFilters();
-            };
-        });
-    } catch(e) {}
-        // Period button handler: simple re-fetch using selected API and set active class
-        const periodsGroup = document.getElementById('news-periods');
-        if (periodsGroup) {
-            periodsGroup.querySelectorAll('.period-btn').forEach(btn => {
-                btn.onclick = async (e) => {
-                    const p = btn.dataset.period;
-                    // Toggle active class
-                    periodsGroup.querySelectorAll('.period-btn').forEach(x=>x.classList.remove('active'));
-                    btn.classList.add('active');
-                    const daysNum = periodToDays(p);
-                    currentNewsPeriod = p;
-                    // Re-fetch items (symbol or aggregated)
-                    try {
-                        const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
-                        if (symbol) {
-                            const mapped = (positions[symbol] && positions[symbol].api_mapping && positions[symbol].api_mapping[apiToUse]) ? positions[symbol].api_mapping[apiToUse] : (positions[symbol] && positions[symbol].ticker) ? positions[symbol].ticker : symbol;
-                            const r = await fetchNews(mapped, await loadApiConfig(), 50, daysNum, apiToUse);
-                            if (r && Array.isArray(r.items)) {
-                                const enriched = r.items.map(it => ({ ...it, symbol }));
-                                const filtered = filterItemsBySymbol(enriched, symbol);
-                                updateNewsPageList(filtered);
-                            }
-                            try {
-                                // Also update the chart period to match (if symbol in positions)
-                                if (positions && positions[symbol]) {
-                                    positions[symbol].currentPeriod = p;
-                                    if (window.fetchActiveSymbol) window.fetchActiveSymbol(true);
-                                }
-                            } catch(e) {}
-                        } else {
-                            const syms = Object.keys(positions);
-                            let allItems = [];
-                            const config = await loadApiConfig();
-                            for (const s of syms) {
-                                try { const mapped = (positions[s] && positions[s].api_mapping && positions[s].api_mapping[apiToUse]) ? positions[s].api_mapping[apiToUse] : (positions[s] && positions[s].ticker) ? positions[s].ticker : s; const r = await fetchNews(mapped, config, 50, daysNum, apiToUse); if (r && r.items) allItems = allItems.concat(r.items.map(it => ({...it, symbol: s}))); } catch(e) {}
-                            }
-                            allItems.sort((a,b)=> new Date(b.publishedAt) - new Date(a.publishedAt));
-                            updateNewsPageList(allItems);
-                        }
-                    } catch(e) { console.warn('news period fetch error', e); }
-                };
+            tickersToFetch = Object.keys(positions).map(sym => {
+                const pos = positions[sym];
+                const mapped = pos?.api_mapping?.[apiToUse] || pos?.ticker || sym;
+                return { symbol: sym, ticker: mapped };
             });
         }
+        
+        // Fetch news
+        let allItems = [];
+        for (const t of tickersToFetch) {
+            try {
+                const r = await fetchNews(t.ticker, config, 30, days, apiToUse);
+                if (r && Array.isArray(r.items)) {
+                    const enriched = r.items.map(it => ({ ...it, symbol: t.symbol }));
+                    const filtered = filterItemsBySymbol(enriched, t.symbol);
+                    allItems = allItems.concat(filtered);
+                }
+            } catch (e) {
+                console.warn('News fetch error for', t.ticker, e);
+            }
+        }
+        
+        // Sort and display
+        allItems.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+        updateNewsPageList(allItems);
+        
+    } catch (err) {
+        console.warn('loadNews error', err);
+        feedEl.innerHTML = '<div class="news-empty">Erreur de chargement</div>';
+    }
 }
 
 export function closeNewsPage() {
@@ -500,8 +555,6 @@ export function closeNewsPage() {
     card.classList.remove('active');
     card.setAttribute('aria-hidden', 'true');
     try { document.getElementById('open-news-feed')?.classList.remove('active'); } catch(e) {}
-    currentNewsSymbol = null;
-    updateNewsPageContextLabel(null);
 }
 
 function buildSymbolTickers(symbol) {
@@ -547,28 +600,4 @@ function filterItemsBySymbol(items, symbol) {
     return filtered;
 }
 
-function updateNewsPageContextLabel(symbol) {
-    const ctx = document.getElementById('news-page-context');
-    if (!ctx) return;
-    if (symbol && positions[symbol]) {
-        const pos = positions[symbol];
-        const tickerSuffix = pos.ticker ? ` (${pos.ticker})` : '';
-        ctx.textContent = `${pos.name || symbol}${tickerSuffix}`;
-    } else {
-        ctx.textContent = 'Portefeuille complet';
-    }
-}
-
-function updateNewsPageCount(displayed, total = null) {
-    const countEl = document.getElementById('news-page-count');
-    if (!countEl) return;
-    if (typeof displayed !== 'number' || displayed < 0) {
-        countEl.textContent = '—';
-        return;
-    }
-    if (typeof total === 'number' && total >= 0 && total !== displayed) {
-        countEl.textContent = `${displayed}/${total} actus`;
-    } else {
-        countEl.textContent = `${displayed} actus`;
-    }
-}
+// Supprimé - plus nécessaire avec la nouvelle interface
