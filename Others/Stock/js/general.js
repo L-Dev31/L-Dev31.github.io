@@ -8,7 +8,7 @@ import rateLimiter from './rate-limiter.js'
 import { fetchNews } from './api/news.js'
 import { initChart, updateChart } from './chart.js'
 import { updateSignal } from './signal-bot.js'
-import { fetchCardNews, updateNewsUI, updateNewsFeedList, openNewsOverlay, closeNewsOverlay, setPositions, openNewsPage, closeNewsPage, updateNewsPageList, updateNewsTrending, setupNewsSearch } from './news.js'
+import { fetchCardNews, updateNewsUI, updateNewsFeedList, openNewsOverlay, closeNewsOverlay, setPositions, openNewsPage, closeNewsPage, updateNewsPageList, updateNewsTrending, setupNewsSearch, startCardNewsAutoRefresh, stopCardNewsAutoRefresh } from './news.js'
 
 // Global helper to append to terminal output (can be used by any function)
 function terminalLogGlobal(msg) {
@@ -527,7 +527,7 @@ document.addEventListener('click', async e=>{
         if (mainFetchController) mainFetchController.abort()
         document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'))
         // Deactivate any active tool buttons when switching to a market tab
-        try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
+        try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch(e) {}
         // Close all cards including terminal when switching tabs
         document.querySelectorAll('.card').forEach(x => x.classList.remove('active'))
         t.classList.add('active')
@@ -564,6 +564,17 @@ document.addEventListener('click', e => {
     const targetPane = card.querySelector(`.card-tab-pane[data-pane="${targetPaneId}"]`);
     if (targetPane) {
         targetPane.classList.add('active');
+    }
+
+    // Get the symbol from the card
+    const symbol = card.id?.replace('card-', '');
+    if (symbol) {
+        // Manage auto-refresh for news tab
+        if (targetPaneId === 'news') {
+            startCardNewsAutoRefresh(symbol);
+        } else {
+            stopCardNewsAutoRefresh(symbol);
+        }
     }
 });
 
@@ -1178,7 +1189,7 @@ function openTerminalCard(prefill = '') {
     // Deactivate active tab selection so terminal acts like a tab
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     // Deactivate active tool buttons
-    try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
+    try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch(e) {}
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
     // Highlight the terminal button like a tab
@@ -1214,21 +1225,12 @@ function closeTerminalCard() {
 document.getElementById('open-terminal-btn')?.addEventListener('click', e => {
     openTerminalCard();
 });
-// Alerts button: close terminal and open alerts panel (if implemented)
-document.getElementById('open-alerts')?.addEventListener('click', e => {
-    // Close all cards (terminal included) and focus alerts UI if present
-    document.querySelectorAll('.card').forEach(x => x.classList.remove('active'));
-    // Mark alerts button active and clear other tool active states
-    try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
-    try { document.getElementById('open-alerts')?.classList.add('active'); } catch(e) {}
-    // Future: open alerts panel or overlay here
-});
 document.getElementById('open-news-feed')?.addEventListener('click', async e => {
     // Open dedicated news page (not overlay)
     const a = getActiveSymbol();
     try { openNewsPage(a); } catch (err) { /* fallback */ openNewsOverlay(a); }
     // Highlight the news widget button
-    try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
+    try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch(e) {}
     try { document.getElementById('open-news-feed')?.classList.add('active'); } catch(e) {}
 });
 

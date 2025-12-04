@@ -8,7 +8,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="card-tabs.css" />
+    <link rel="stylesheet" href="styles/sidebar.css" />
+    <link rel="stylesheet" href="styles/card-tabs.css" />
+    <link rel="stylesheet" href="styles/terminal.css" />
+    <link rel="stylesheet" href="styles/signals.css" />
+    <link rel="stylesheet" href="styles/api.css" />
+    <link rel="stylesheet" href="styles/overlay.css" />
+    <link rel="stylesheet" href="styles/news.css" />
     <link rel="icon" href="icon/favicon.png" type="image/png">
 </head>
 <body>
@@ -22,18 +28,11 @@
                     <p>Compte titre: <span id="cash-account">-- €</span></p>
                 </div>
             </div>
+            <div class="tools-bar" id="tools-actions">
+                <button id="open-terminal-btn" class="tool-btn"><i class="fa-solid fa-terminal"></i>Terminal</button>
+                <button id="open-news-feed" class="tool-btn"><i class="fa-solid fa-newspaper"></i>News</button>
+            </div>
             <div class="sidebar-scroll">
-                <div class="sidebar-section" id="sidebar-tools">
-                    <h3 class="sidebar-section-title">Outils
-                        <button class="section-toggle" aria-expanded="true" aria-controls="tools-actions"><i class="fa-solid fa-chevron-down"></i></button>
-                    </h3>
-                    <div class="tabs tools" id="tools-actions">
-                        <button id="open-terminal-btn" class="profile-action-btn tool-tab"><i class="fa-solid fa-terminal"></i>Terminal</button>
-                        <button id="open-news-feed" class="profile-action-btn tool-tab"><i class="fa-solid fa-newspaper"></i>News</button>
-                        <button id="open-alerts" class="profile-action-btn tool-tab"><i class="fa-solid fa-bell"></i>Alertes</button>
-                    </div>
-                </div>
-
                 <div class="sidebar-section" id="sidebar-portfolio">
                     <h3 class="sidebar-section-title">Mon Portefeuille
                         <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs"><i class="fa-solid fa-chevron-down"></i></button>
@@ -74,11 +73,20 @@
                     <div class="news-header">
                         <h3 class="section-title">Actualités du marché</h3>
                         <div class="section-date">Dernière mise à jour : <span id="news-last-update">—</span></div>
-                        <div class="news-filters-row">
-                            <select id="news-ticker-select" class="news-select">
-                                <option value="">Tous les actifs</option>
-                            </select>
-                            <input id="news-article-search" class="news-input" type="search" placeholder="Rechercher dans les articles..." />
+                        <div class="news-filters-column">
+                            <div class="news-filters-row">
+                                <div class="news-filter-group news-ticker-group">
+                                    <label for="news-ticker-search" class="news-label">Ticker</label>
+                                    <input id="news-ticker-search" class="news-input news-ticker-search" type="text" placeholder="Ex: AAPL, BTC" autocomplete="off" />
+                                    <div id="ticker-suggestions" class="ticker-suggestions"></div>
+                                </div>
+                            </div>
+                            <div class="news-filters-row">
+                                <div class="news-filter-group">
+                                    <label for="news-article-search" class="news-label">Rechercher</label>
+                                    <input id="news-article-search" class="news-input news-articles-input" type="search" placeholder="Rechercher dans les articles..." />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- Liste des news -->
@@ -206,8 +214,10 @@
                         <div class="card-tab-pane" data-pane="news">
                             <div class="news-section">
                                 <h3 class="section-title">Dernières actualités</h3>
-                                <div class="news-search-container" style="margin-bottom: 12px;">
-                                    <input type="text" class="news-search-input" placeholder="Rechercher dans les actualités..." style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-family: 'Poppins', sans-serif; font-size: 0.9rem;">
+                                <div class="section-date">Dernière mise à jour : <span class="news-last-update">—</span></div>
+                                <div class="news-filter-group">
+                                    <label class="news-label">Rechercher</label>
+                                    <input type="text" class="news-input news-search-input" placeholder="Rechercher dans les actualités..." />
                                 </div>
                                 <div class="news-list" id="news-list-" aria-live="polite"></div>
                             </div>

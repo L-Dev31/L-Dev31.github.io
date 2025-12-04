@@ -1,0 +1,91 @@
+#api-status-indicator {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    z-index: 9999;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    max-width: 240px;
+    background: #18181c;
+    visibility: hidden !important;
+}
+
+#api-status-indicator img { vertical-align: middle; }
+#api-status-indicator:hover { outline: 2px solid rgba(168,162,255,0.5); }
+#api-status-indicator:hover .api-chevron { transform: rotate(180deg); }
+
+.api-status-text { margin: 0 12px; }
+.api-chevron { transition: transform 0.2s; font-size: 11px; }
+
+.api-indicator-spinner-row {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.api-indicator-spinner-row.column { flex-direction: column; gap: 6px; }
+.api-indicator-spinner-row.hidden-by-bot { display: none !important; }
+
+.api-countdown-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.api-spinner-wrapper { display: flex; align-items: center; }
+
+.api-expanded {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+#api-status-indicator.dropdown-open .api-expanded { max-height: 350px; }
+
+.api-expanded .api-option {
+    display: block;
+    padding: 8px 10px;
+    color: var(--primary-purple);
+    background: rgba(24,24,30,0.5);
+    border-radius: 4px;
+    margin: 4px 0;
+    cursor: pointer;
+}
+
+.api-expanded .api-option.selected { background: rgba(168,162,255,0.3); color: var(--text-white); }
+.api-expanded .api-option:hover { background: rgba(168,162,255,0.15); }
+
+.api-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--text-white);
+    border-top-color: var(--primary-purple);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.api-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.api-dot.cached { background: #a855f7; }
+.api-dot.error { background: #ef4444; }
+.api-dot.fetching { background: #f59e0b; }

@@ -1,0 +1,48 @@
+.news-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(8,8,12,0.9);
+    z-index: 10000;
+}
+
+.news-overlay[aria-hidden="false"],
+.news-overlay.visible { display: flex; }
+
+.news-overlay-inner {
+    width: min(1100px, 96%);
+    max-height: 88vh;
+    background: rgba(20,20,26,0.98);
+    border-radius: 8px;
+    border: 1px solid rgba(168,162,255,0.08);
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.news-overlay-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.news-overlay-body { display: flex; flex-direction: column; gap: 10px; }
+.news-feed-list { display: flex; flex-direction: column; gap: 10px; }
+.news-overlay .news-item { padding: 12px 14px; }
+
+.shift-tooltip {
+    position: absolute !important;
+    bottom: 10px !important;
+    left: 10px !important;
+    z-index: 10;
+    pointer-events: none;
+    display: none;
+}
+
+.shift-tooltip.show { display: block; }
+.shift-tooltip > div { color: var(--primary-purple) !important; padding: 4px 8px !important; font-size: 10px !important; }
+.shift-tooltip .shift-tooltip-content { display: flex !important; gap: 10px !important; white-space: nowrap !important; }
+.shift-tooltip .shift-tooltip-item { display: flex !important; align-items: center !important; gap: 4px !important; font-size: 10px !important; opacity: 0.85 !important; }

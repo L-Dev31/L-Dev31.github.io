@@ -5,6 +5,10 @@ import { loadApiConfig } from './general.js';
 let positions = {};
 let lastPageNews = [];
 let currentNewsPeriod = '1D';
+let currentNewsSymbol = null;
+let lastActiveSymbolBeforeNews = null;
+let newsRefreshInterval = null;
+let cardNewsRefreshIntervals = {};
 
 // Helper to map period code to days
 export function periodToDays(period) {
@@ -61,10 +65,41 @@ export async function fetchCardNews(symbol, force = false, limit = 50, days = 7,
     return [];
 }
 
+// Start auto-refresh for a stock card news tab
+export function startCardNewsAutoRefresh(symbol) {
+    // Clear existing interval for this symbol
+    if (cardNewsRefreshIntervals[symbol]) {
+        clearInterval(cardNewsRefreshIntervals[symbol]);
+    }
+    
+    // Set up new interval
+    cardNewsRefreshIntervals[symbol] = setInterval(() => {
+        const card = document.getElementById(`card-${symbol}`);
+        const newsPane = card?.querySelector('[data-pane="news"]');
+        if (card && card.classList.contains('active') && newsPane && newsPane.classList.contains('active')) {
+            fetchCardNews(symbol, true);
+        }
+    }, 60000); // 60 seconds
+}
+
+// Stop auto-refresh for a stock card news tab
+export function stopCardNewsAutoRefresh(symbol) {
+    if (cardNewsRefreshIntervals[symbol]) {
+        clearInterval(cardNewsRefreshIntervals[symbol]);
+        delete cardNewsRefreshIntervals[symbol];
+    }
+}
+
 // Function to update news UI in the card
 export function updateNewsUI(symbol, items, filterText = null) {
     const el = document.getElementById(`news-list-${symbol}`);
     if (!el) return;
+    
+    // Update last update timestamp
+    const updateEl = document.querySelector(`#card-${symbol} .news-last-update`);
+    if (updateEl) {
+        updateEl.textContent = new Date().toLocaleTimeString('fr-FR');
+    }
     
     // If filterText is not provided, try to get it from the input
     if (filterText === null) {
@@ -173,7 +208,7 @@ export async function openNewsOverlay(symbol) {
     try { document.querySelectorAll('.card').forEach(x => x.classList.remove('active')); } catch(e) {}
     overlay.setAttribute('aria-hidden', 'false');
     // Highlight the news button like a tab, and clear other tool buttons
-    try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
+    try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch(e) {}
     try { document.getElementById('open-news-feed')?.classList.add('active'); } catch(e) {}
     // If a symbol is specified, fetch its news. Else fetch a couple of top symbols' news
     try {
@@ -378,91 +413,134 @@ function filterNewsItems(items, query, sourceFilter, timeFilter, quickFilterKeyw
     });
 }
 
-// Setup scroll listener for sticky header
-function setupHeaderScroll(card) {
-    const header = card.querySelector('.news-header');
-    if (!header) return;
-    
-    // Remove old listener if any
-    card.onscroll = null;
-    
-    card.onscroll = () => {
-        if (card.scrollTop > 10) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    };
-    
-    // Reset state
-    header.classList.remove('scrolled');
-}
-
 // Open the dedicated news page
 export async function openNewsPage(symbol) {
     const card = document.getElementById('card-news');
     const feedEl = document.getElementById('news-page-feed-list');
     if (!card || !feedEl) return;
+    const activeTab = document.querySelector('.tab.active');
+    lastActiveSymbolBeforeNews = activeTab?.dataset.symbol || null;
+
+    // Remember current active tab before we deactivate it
+    try {
+        const activeTab = document.querySelector('.tab.active');
+        lastActiveSymbolBeforeNews = activeTab ? activeTab.dataset.symbol : null;
+    } catch (e) {
+        lastActiveSymbolBeforeNews = null;
+    }
     
-    // Close other cards
+    // Close other cards / tabs
     try { document.querySelectorAll('.card').forEach(x => x.classList.remove('active')); } catch(e) {}
+    try { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); } catch(e) {}
     try { document.getElementById('news-overlay')?.setAttribute('aria-hidden', 'true'); } catch(e) {}
     
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
     
-    // Setup scroll listener for sticky header effect
-    setupHeaderScroll(card);
-    
     // Highlight the news button
-    try { document.querySelectorAll('.profile-action-btn.tool-tab').forEach(b => b.classList.remove('active')); } catch(e) {}
+    try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch(e) {}
     try { document.getElementById('open-news-feed')?.classList.add('active'); } catch(e) {}
     
-    // Populate ticker select from positions
-    populateTickerSelect();
+    // Populate ticker suggestions from positions
+    populateTickerSuggestions();
     
-    // If a symbol was passed, pre-select it
-    const tickerSelect = document.getElementById('news-ticker-select');
-    if (symbol && tickerSelect) {
-        tickerSelect.value = symbol;
-    }
+    const tickerSearch = document.getElementById('news-ticker-search');
+    
+    if (tickerSearch) tickerSearch.value = '';
+    
+    // Don't set ticker value by default to show all news
     
     // Setup event listeners
     setupNewsFilters();
     
     // Initial load
     await loadNews();
+    
+    // Setup auto-refresh every 1 minute
+    if (newsRefreshInterval) {
+        clearInterval(newsRefreshInterval);
+    }
+    newsRefreshInterval = setInterval(() => {
+        const newsCard = document.getElementById('card-news');
+        if (newsCard && newsCard.classList.contains('active')) {
+            loadNews();
+        }
+    }, 60000); // 60 seconds
 }
 
-// Populate the ticker dropdown from positions
-function populateTickerSelect() {
-    const select = document.getElementById('news-ticker-select');
-    if (!select) return;
+// Populate the ticker suggestions dropdown from positions
+function populateTickerSuggestions() {
+    const suggestionsEl = document.getElementById('ticker-suggestions');
+    if (!suggestionsEl) return;
     
-    // Keep first option (Tous)
-    select.innerHTML = '<option value="">Tous les actifs</option>';
+    suggestionsEl.innerHTML = '';
     
     Object.keys(positions).forEach(sym => {
         const pos = positions[sym];
-        const opt = document.createElement('option');
-        opt.value = sym;
-        opt.textContent = `${pos.ticker || sym} - ${pos.name || sym}`;
-        select.appendChild(opt);
+        const item = document.createElement('div');
+        item.className = 'ticker-suggestion-item';
+        item.dataset.symbol = sym;
+        item.innerHTML = `<span class="ticker-symbol">${pos.ticker || sym}</span>${pos.name || ''}`;
+        item.addEventListener('click', () => {
+            const tickerSearch = document.getElementById('news-ticker-search');
+            if (tickerSearch) {
+                tickerSearch.value = sym;
+                suggestionsEl.classList.remove('active');
+                loadNews();
+            }
+        });
+        suggestionsEl.appendChild(item);
     });
 }
 
 // Setup filter event listeners
 function setupNewsFilters() {
-    const tickerSelect = document.getElementById('news-ticker-select');
+    const tickerSearch = document.getElementById('news-ticker-search');
     const articleSearch = document.getElementById('news-article-search');
-    const periodsGroup = document.getElementById('news-periods');
+    const suggestionsEl = document.getElementById('ticker-suggestions');
     
-    // Ticker select change
-    if (tickerSelect) {
-        tickerSelect.onchange = () => loadNews();
+    if (tickerSearch && suggestionsEl) {
+        tickerSearch.addEventListener('focus', () => {
+            suggestionsEl.classList.add('active');
+        });
+        
+        tickerSearch.addEventListener('blur', (e) => {
+            // Delay to allow click on suggestion
+            setTimeout(() => {
+                suggestionsEl.classList.remove('active');
+            }, 150);
+        });
+        
+        tickerSearch.addEventListener('input', (e) => {
+            const val = (e.target.value || '').trim().toUpperCase();
+            // Filter suggestions
+            const items = suggestionsEl.querySelectorAll('.ticker-suggestion-item');
+            items.forEach(item => {
+                const sym = item.dataset.symbol.toUpperCase();
+                const text = item.textContent.toUpperCase();
+                if (!val || sym.includes(val) || text.includes(val)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            suggestionsEl.classList.add('active');
+            
+            if (!val) {
+                loadNews();
+            }
+        });
+        
+        tickerSearch.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                tickerSearch.value = (tickerSearch.value || '').trim().toUpperCase();
+                suggestionsEl.classList.remove('active');
+                loadNews();
+            }
+        });
     }
     
-    // Article search (filter existing results)
     if (articleSearch) {
         articleSearch.oninput = () => {
             const q = (articleSearch.value || '').trim().toLowerCase();
@@ -478,24 +556,12 @@ function setupNewsFilters() {
             updateNewsPageList(filtered, { replaceCache: false, skipSort: true });
         };
     }
-    
-    // Period buttons
-    if (periodsGroup) {
-        periodsGroup.querySelectorAll('.period-btn').forEach(btn => {
-            btn.onclick = () => {
-                periodsGroup.querySelectorAll('.period-btn').forEach(x => x.classList.remove('active'));
-                btn.classList.add('active');
-                currentNewsPeriod = btn.dataset.period;
-                loadNews();
-            };
-        });
-    }
 }
 
 // Load news based on current filters
 async function loadNews() {
     const feedEl = document.getElementById('news-page-feed-list');
-    const tickerSelect = document.getElementById('news-ticker-select');
+    const tickerSearch = document.getElementById('news-ticker-search');
     
     if (!feedEl) return;
     
@@ -509,19 +575,24 @@ async function loadNews() {
         
         // Determine which ticker(s) to fetch
         let tickersToFetch = [];
+        const manualTicker = (tickerSearch?.value || '').trim().toUpperCase();
         
-        // Dropdown selection or all portfolio
-        if (tickerSelect?.value) {
-            const sym = tickerSelect.value;
-            const pos = positions[sym];
-            const mapped = pos?.api_mapping?.[apiToUse] || pos?.ticker || sym;
-            tickersToFetch = [{ symbol: sym, ticker: mapped }];
+        if (manualTicker) {
+            tickersToFetch = [{ symbol: manualTicker, ticker: manualTicker }];
+            currentNewsSymbol = manualTicker;
         } else {
             tickersToFetch = Object.keys(positions).map(sym => {
                 const pos = positions[sym];
                 const mapped = pos?.api_mapping?.[apiToUse] || pos?.ticker || sym;
                 return { symbol: sym, ticker: mapped };
-            });
+            }).filter(Boolean);
+            currentNewsSymbol = null;
+        }
+
+        if (!tickersToFetch.length) {
+            feedEl.innerHTML = '<div class="news-empty">Ajoutez des actifs au portefeuille ou recherchez un ticker pour afficher les actualités.</div>';
+            lastPageNews = [];
+            return;
         }
         
         // Fetch news
@@ -554,7 +625,24 @@ export function closeNewsPage() {
     if (!card) return;
     card.classList.remove('active');
     card.setAttribute('aria-hidden', 'true');
+    currentNewsSymbol = null;
+    
+    // Clear auto-refresh interval
+    if (newsRefreshInterval) {
+        clearInterval(newsRefreshInterval);
+        newsRefreshInterval = null;
+    }
+    
     try { document.getElementById('open-news-feed')?.classList.remove('active'); } catch(e) {}
+    if (lastActiveSymbolBeforeNews) {
+        try {
+            const tabToRestore = document.querySelector(`.tab[data-symbol="${lastActiveSymbolBeforeNews}"]`);
+            const cardToRestore = document.getElementById(`card-${lastActiveSymbolBeforeNews}`);
+            if (tabToRestore) tabToRestore.classList.add('active');
+            if (cardToRestore) cardToRestore.classList.add('active');
+        } catch (e) {}
+        lastActiveSymbolBeforeNews = null;
+    }
 }
 
 function buildSymbolTickers(symbol) {
