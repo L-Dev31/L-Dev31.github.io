@@ -303,11 +303,6 @@
             const seen = new Set();
             items = items.filter(i => i.symbol && !seen.has(i.symbol) && seen.add(i.symbol));
 
-            for (let i = items.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [items[i], items[j]] = [items[j], items[i]];
-            }
-
             if (period !== '1D' && items.length > 0) {
                 showLoadingProgress(0, `Calcul ${PERIOD_LABELS[period]}...`);
                 const changes = await fetchPeriodChanges(items.map(i => i.symbol), period, (done, total) => {
@@ -335,7 +330,13 @@
                 case 'volume': open.sort((a, b) => b.volume - a.volume); break;
                 case 'signal': open.sort((a, b) => b.score - a.score); break;
                 case 'name': open.sort((a, b) => a.name.localeCompare(b.name)); break;
-                default: open.sort((a, b) => b.score - a.score); break;
+                default: 
+                    // Shuffle for trending/default view to mix markets
+                    for (let i = open.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [open[i], open[j]] = [open[j], open[i]];
+                    }
+                    break;
             }
             closed.sort((a, b) => a.name.localeCompare(b.name));
 
