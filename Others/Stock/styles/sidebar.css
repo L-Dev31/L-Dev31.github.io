@@ -181,6 +181,7 @@
     border-radius: 6px;
     margin-bottom: 2px;
     transition: all 0.2s ease;
+    position: relative;
 }
 
 .tab:last-child { border-bottom: none; }
@@ -193,6 +194,59 @@
     background: linear-gradient(90deg, rgba(168,162,255,0.15) 0%, rgba(168,162,255,0.05) 100%);
     border-left: 3px solid var(--primary-purple);
     padding-left: 18px;
+}
+
+/* Tabs pour actions suspendues/délistées */
+.tab.suspended {
+    opacity: 0.45;
+    order: 999; /* Toujours à la fin */
+    background: rgba(107, 114, 128, 0.08) !important;
+    border-left-color: #6b7280 !important;
+}
+
+.tab.suspended:hover {
+    background: rgba(107, 114, 128, 0.12) !important;
+    opacity: 0.6;
+}
+
+.tab.suspended.active {
+    background: rgba(107, 114, 128, 0.15) !important;
+    border-left: 3px solid #6b7280 !important;
+    opacity: 0.55;
+}
+
+.tab.suspended .tab-name {
+    text-decoration: line-through;
+    color: #6b7280 !important;
+}
+
+.tab.suspended .tab-shares {
+    color: #6b7280 !important;
+}
+
+.tab.suspended .tab-logo {
+    filter: grayscale(100%);
+    opacity: 0.5;
+}
+
+.tab.suspended .tab-logo-fallback {
+    color: #6b7280 !important;
+    background: #3a3a4a !important;
+}
+
+.tab.suspended::after {
+    content: 'Suspendu';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 9px;
+    color: #6b7280;
+    background: rgba(107, 114, 128, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
 }
 
 .tab-logo {
@@ -215,7 +269,11 @@
 .tab-info { display: flex; flex-direction: column; gap: 2px; }
 .tab-name { font-size: 12px; font-weight: 600; color: var(--text-light); }
 .tab-shares { font-size: 9px; color: var(--text-dark); }
-.tab-type-section { margin-bottom: 10px; }
+.tab-type-section { 
+    margin-bottom: 10px; 
+    display: flex;
+    flex-direction: column;
+}
 
 .tab-type-title {
     font-size: 11px;

@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="styles/api.css" />
     <link rel="stylesheet" href="styles/overlay.css" />
     <link rel="stylesheet" href="styles/news.css" />
+    <link rel="stylesheet" href="styles/explorer.css" />
     <link rel="icon" href="icon/favicon.png" type="image/png">
 </head>
 <body>
@@ -31,6 +32,7 @@
             <div class="tools-bar" id="tools-actions">
                 <button id="open-terminal-btn" class="tool-btn"><i class="fa-solid fa-terminal"></i>Terminal</button>
                 <button id="open-news-feed" class="tool-btn"><i class="fa-solid fa-newspaper"></i>News</button>
+                <button id="open-explorer" class="tool-btn"><i class="fa-solid fa-magnifying-glass-chart"></i>Explorer</button>
             </div>
             <div class="sidebar-scroll">
                 <div class="sidebar-section" id="sidebar-portfolio">
@@ -71,7 +73,7 @@
                 <div class="card news-card" id="card-news" role="document" aria-hidden="true">
                     <!-- Header sticky -->
                     <div class="news-header">
-                        <h3 class="section-title">Actualités du marché</h3>
+                        <h3 class="section-title"><i class="fa-solid fa-newspaper"></i> Actualités du marché</h3>
                         <div class="section-date">Dernière mise à jour : <span id="news-last-update">—</span></div>
                         <div class="news-filters-column">
                             <div class="news-filters-row">
@@ -91,6 +93,84 @@
                     </div>
                     <!-- Liste des news -->
                     <div id="news-page-feed-list" class="news-list"></div>
+                </div>
+                <!-- Explorer Card -->
+                <div class="card explorer-card" id="card-explorer" role="document" aria-hidden="true">
+                    <div class="explorer-header">
+                        <h3 class="section-title"><i class="fa-solid fa-magnifying-glass-chart"></i> Explorer les marchés</h3>
+                        <div class="section-date">Découvrez les opportunités</div>
+                        <div class="explorer-filters">
+                            <div class="explorer-filters-row">
+                                <div class="explorer-filter-group">
+                                    <label class="explorer-label">Rechercher</label>
+                                    <input id="explorer-search" class="explorer-input" type="text" placeholder="Ticker, nom..." autocomplete="off" />
+                                </div>
+                                <div class="explorer-filter-group">
+                                    <label class="explorer-label">Marché</label>
+                                    <select id="explorer-market" class="explorer-select">
+                                        <option value="">Tous</option>
+                                        <option value="nasdaq">NASDAQ</option>
+                                        <option value="nyse">NYSE</option>
+                                        <option value="euronext">Euronext</option>
+                                        <option value="crypto">Crypto</option>
+                                    </select>
+                                </div>
+                                <div class="explorer-filter-group">
+                                    <label class="explorer-label">Éligibilité</label>
+                                    <select id="explorer-eligibility" class="explorer-select">
+                                        <option value="">Tous</option>
+                                        <option value="pea">PEA</option>
+                                        <option value="pea-pme">PEA-PME</option>
+                                        <option value="cto">CTO uniquement</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="explorer-filters-row">
+                                <div class="explorer-filter-group">
+                                    <label class="explorer-label">Trier par</label>
+                                    <select id="explorer-sort" class="explorer-select">
+                                        <option value="trending">Tendance</option>
+                                        <option value="gainers">Top hausses</option>
+                                        <option value="losers">Top baisses</option>
+                                        <option value="volume">Volume</option>
+                                        <option value="signal">Signal achat</option>
+                                        <option value="name">Nom A-Z</option>
+                                    </select>
+                                </div>
+                                <div class="explorer-filter-group">
+                                    <label class="explorer-label">Période</label>
+                                    <select id="explorer-period" class="explorer-select">
+                                        <option value="1D">1 Jour</option>
+                                        <option value="1W">1 Semaine</option>
+                                        <option value="1M">1 Mois</option>
+                                        <option value="3M">3 Mois</option>
+                                        <option value="6M">6 Mois</option>
+                                        <option value="1Y">1 An</option>
+                                        <option value="YTD">YTD</option>
+                                    </select>
+                                </div>
+                                <div class="explorer-filter-group">
+                                    <label class="explorer-label">Secteur</label>
+                                    <select id="explorer-sector" class="explorer-select">
+                                        <option value="">Tous</option>
+                                        <option value="technology">Technologie</option>
+                                        <option value="healthcare">Santé</option>
+                                        <option value="finance">Finance</option>
+                                        <option value="energy">Énergie</option>
+                                        <option value="consumer">Consommation</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="explorer-list" class="explorer-list">
+                        <div class="explorer-loading"><i class="fa-solid fa-spinner fa-spin"></i> Chargement...</div>
+                    </div>
+                    <div class="explorer-pagination">
+                        <button id="explorer-prev" class="explorer-page-btn" disabled><i class="fa-solid fa-chevron-left"></i></button>
+                        <span id="explorer-page-info" class="explorer-page-info">Page 1</span>
+                        <button id="explorer-next" class="explorer-page-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
                 </div>
             </div>
             <!-- Hidden templates for dynamic content -->
@@ -412,6 +492,7 @@
     <script type="module" src="js/signal-bot.js"></script>
     <script type="module" src="js/news.js"></script>
     <script type="module" src="js/terminal.js"></script>
+    <script src="js/explorer.js"></script>
     <!-- Command bar for quick symbol commands / NEWS / GO (fullscreen modal) -->
     <!-- Terminal card moved into cards container -->
 

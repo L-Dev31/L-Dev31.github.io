@@ -626,6 +626,33 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     } catch(e) { /* ignore news update errors */ }
 })
 
+// Marquer un tab comme suspendu (ticker mort/délisté)
+function markTabAsSuspended(symbol) {
+    const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
+    if (!tab || tab.classList.contains('suspended')) return;
+    
+    tab.classList.add('suspended');
+    
+    // Stocker dans positions pour mémoire
+    if (positions[symbol]) {
+        positions[symbol].suspended = true;
+    }
+    
+    console.log(`📛 Tab ${symbol} marqué comme suspendu`);
+}
+
+// Enlever le statut suspendu d'un tab (si données reçues avec succès)
+function unmarkTabAsSuspended(symbol) {
+    const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
+    if (!tab || !tab.classList.contains('suspended')) return;
+    
+    tab.classList.remove('suspended');
+    
+    if (positions[symbol]) {
+        positions[symbol].suspended = false;
+    }
+}
+
 async function updateUI(symbol, data) {
     if (!data || data.error) {
         if (data && data.throttled) {
@@ -642,11 +669,21 @@ async function updateUI(symbol, data) {
             }
             return;
         }
+        
+        // Détecter les tickers morts (404, NO_DATA, NO_VALID_DATA)
+        const deadErrorCodes = [404, 'NO_DATA', 'NO_VALID_DATA'];
+        if (data && deadErrorCodes.includes(data.errorCode)) {
+            markTabAsSuspended(symbol);
+        }
+        
         // No data for the selected period -> clear period-specific UI to avoid showing stale data
         clearPeriodDisplay(symbol);
         setApiStatus(symbol, 'noinfo', { api: data?.source, errorCode: data?.errorCode });
         return;
     }
+    
+    // Données reçues avec succès - s'assurer que le tab n'est pas marqué suspendu
+    unmarkTabAsSuspended(symbol);
 
     // Ensure details and signal sections are visible again when valid data arrives
     try {
@@ -1120,7 +1157,101 @@ async function loadStocks() {
     setApiStatus(null, 'active', { api: selectedApi });
 
     updatePortfolioSummary();
+    
+    // Vérifier les tickers morts en arrière-plan (après un délai pour ne pas bloquer)
+    setTimeout(() => checkSuspendedTickers(), 2000);
+    
     // Terminal should not open automatically; it opens only when user clicks Terminal or presses Ctrl/Cmd+K
+}
+
+// Vérifier tous les tickers pour détecter ceux qui sont morts/suspendus
+async function checkSuspendedTickers() {
+    const YAHOO_PROXY = 'https://corsproxy.io/?';
+    const symbols = Object.keys(positions);
+    
+    console.log(`🔍 Vérification de ${symbols.length} tickers pour détecter les suspendus...`);
+    
+    // Traiter en batches de 5 pour éviter trop de requêtes simultanées
+    const batchSize = 5;
+    for (let i = 0; i < symbols.length; i += batchSize) {
+        const batch = symbols.slice(i, i + batchSize);
+        
+        await Promise.all(batch.map(async (symbol) => {
+            try {
+                const pos = positions[symbol];
+                if (!pos) return;
+                
+                // Utiliser le symbole Yahoo
+                const yahooSymbol = pos.api_mapping?.yahoo || pos.ticker || symbol;
+                const url = `${YAHOO_PROXY}https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?range=1d&interval=1m`;
+                
+                const r = await fetch(url);
+                if (!r.ok) {
+                    if (r.status === 404) {
+                        markTabAsSuspended(symbol);
+                    }
+                    return;
+                }
+                
+                const data = await r.json();
+                const result = data.chart?.result?.[0];
+                
+                if (!result) {
+                    markTabAsSuspended(symbol);
+                    return;
+                }
+                
+                const meta = result.meta || {};
+                const closes = result.indicators?.quote?.[0]?.close || [];
+                const volumes = result.indicators?.quote?.[0]?.volume || [];
+                
+                // Vérifier si le ticker est mort
+                const validCloses = closes.filter(c => c !== null && c !== undefined);
+                const hasNoData = validCloses.length === 0;
+                
+                const tradeable = meta.tradeable !== false;
+                const regularMarketTime = meta.regularMarketTime || 0;
+                const now = Math.floor(Date.now() / 1000);
+                const daysSinceLastTrade = regularMarketTime > 0 ? (now - regularMarketTime) / (60 * 60 * 24) : 999;
+                
+                // Volume total
+                let totalVolume = 0;
+                for (const v of volumes) {
+                    if (v) totalVolume += v;
+                }
+                const volume = meta.regularMarketVolume || totalVolume;
+                
+                // Prix actuel
+                const price = meta.regularMarketPrice || 0;
+                const prevClose = meta.chartPreviousClose || meta.previousClose || 0;
+                const changePercent = prevClose ? ((price - prevClose) / prevClose) * 100 : 0;
+                
+                const hasNoVolume = volume === 0;
+                const hasNoChange = Math.abs(changePercent) < 0.001;
+                const noActivity = hasNoVolume && hasNoChange;
+                
+                const isSuspended = !tradeable || 
+                                   hasNoData ||
+                                   (noActivity && daysSinceLastTrade > 3) ||
+                                   daysSinceLastTrade > 7;
+                
+                if (isSuspended) {
+                    markTabAsSuspended(symbol);
+                }
+                
+            } catch (e) {
+                // Erreur réseau - ne pas marquer comme suspendu
+                console.log(`⚠️ Erreur vérification ${symbol}:`, e.message);
+            }
+        }));
+        
+        // Petit délai entre les batches
+        if (i + batchSize < symbols.length) {
+            await new Promise(r => setTimeout(r, 200));
+        }
+    }
+    
+    console.log(`✅ Vérification des tickers terminée`);
 }
 
 const font=document.createElement('link')
@@ -1286,6 +1417,33 @@ window.openCustomSymbol = openCustomSymbol;
 window.getSelectedApi = () => selectedApi;
 window.setSelectedApi = setSelectedApi;
 window.selectedApi = selectedApi;
+window.setupNewsSearch = setupNewsSearch;
+
+// Register dynamic position from explorer
+window.registerDynamicPosition = function(posData) {
+    if (!posData || !posData.symbol) return;
+    positions[posData.symbol] = posData;
+};
+
+// Activate stock and fetch data (called from explorer)
+window.activateStock = function(symbol) {
+    if (!symbol || !positions[symbol]) return;
+    
+    // Initialize chart if not exists
+    const chartCanvas = document.getElementById(`chart-${symbol}`);
+    if (chartCanvas && !positions[symbol].chart) {
+        initChart(symbol, positions);
+    }
+    
+    // Fetch data for this symbol
+    setTimeout(() => {
+        // Make sure this card is the active one
+        const card = document.getElementById(`card-${symbol}`);
+        if (card && card.classList.contains('active')) {
+            fetchActiveSymbol(true);
+        }
+    }, 100);
+};
 
 // Listen for rate limit events (fallback if rate-limiter dispatches events instead of calling functions)
 window.addEventListener('rateLimitStart', (e) => {
@@ -1412,6 +1570,12 @@ function createTab(stock, type) {
     const tab = t.content.firstElementChild.cloneNode(true);
     tab.dataset.symbol = stock.symbol;
     tab.dataset.ticker = stock.ticker;
+    
+    // Marquer comme suspendu si le stock l'est
+    if (stock.suspended) {
+        tab.classList.add('suspended');
+    }
+    
     const img = tab.querySelector('img');
     img.src = `icon/${stock.symbol}.png`;
     img.alt = stock.symbol;

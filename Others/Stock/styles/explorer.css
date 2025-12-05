@@ -1,0 +1,294 @@
+/* ========================================
+   EXPLORER CARD STYLES
+   ======================================== */
+
+:root {
+    --explorer-bg: #1e1e24;
+    --explorer-muted: #6b7280;
+}
+
+.container .card.explorer-card {
+    padding: 0;
+    display: none;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.container .card.explorer-card.active { display: flex; }
+
+.card.explorer-card .explorer-header {
+    position: sticky;
+    top: 0;
+    padding: 20px 28px 14px;
+    background: var(--explorer-bg);
+    z-index: 2;
+}
+
+.card.explorer-card .explorer-header .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 6px;
+}
+
+.card.explorer-card .explorer-header .section-title i {
+    color: var(--primary-purple);
+}
+
+.card.explorer-card .explorer-header .section-date {
+    margin-bottom: 16px;
+    color: var(--explorer-muted);
+}
+
+/* Filters */
+.card.explorer-card .explorer-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.card.explorer-card .explorer-filters-row {
+    display: flex;
+    gap: 12px;
+}
+
+.card.explorer-card .explorer-filter-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.card.explorer-card .explorer-label {
+    font-size: 11px;
+    color: var(--primary-purple);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.card.explorer-card .explorer-input,
+.card.explorer-card .explorer-select {
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(168,162,255,0.1);
+    background: rgba(255,255,255,0.02);
+    color: var(--text-white);
+    font-size: 13px;
+    outline: none;
+}
+
+.card.explorer-card .explorer-input:focus,
+.card.explorer-card .explorer-select:focus {
+    border-color: rgba(168,162,255,0.3);
+}
+
+.card.explorer-card .explorer-select {
+    cursor: pointer;
+}
+
+.card.explorer-card .explorer-select option {
+    background: var(--explorer-bg);
+    color: var(--text-white);
+}
+
+/* List */
+.card.explorer-card .explorer-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 28px;
+}
+
+.card.explorer-card .explorer-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 200px;
+    color: var(--explorer-muted);
+    font-size: 13px;
+}
+
+.card.explorer-card .explorer-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--explorer-muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+/* Ticker Item */
+.card.explorer-card .explorer-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(168, 162, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.card.explorer-card .explorer-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.card.explorer-card .explorer-item-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(168, 162, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--primary-purple);
+    overflow: hidden;
+}
+
+.card.explorer-card .explorer-item-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.card.explorer-card .explorer-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.card.explorer-card .explorer-item-ticker {
+    font-weight: 600;
+    color: var(--text-white);
+    font-size: 13px;
+}
+
+.card.explorer-card .explorer-item-name {
+    color: var(--explorer-muted);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card.explorer-card .explorer-item-price {
+    text-align: right;
+}
+
+.card.explorer-card .explorer-item-current {
+    font-weight: 600;
+    color: var(--text-white);
+    font-size: 13px;
+}
+
+.card.explorer-card .explorer-item-change {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.card.explorer-card .explorer-item-change.positive {
+    color: var(--color-positive);
+}
+
+.card.explorer-card .explorer-item-change.negative {
+    color: var(--color-negative);
+}
+
+.card.explorer-card .explorer-period-label {
+    font-size: 9px;
+    opacity: 0.6;
+    margin-left: 2px;
+}
+
+.card.explorer-card .explorer-item-signal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 55px;
+}
+
+.card.explorer-card .explorer-signal-badge {
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.card.explorer-card .explorer-signal-badge.buy {
+    background: rgba(74, 222, 128, 0.12);
+    color: var(--color-positive);
+}
+
+.card.explorer-card .explorer-signal-badge.sell {
+    background: rgba(248, 113, 113, 0.12);
+    color: var(--color-negative);
+}
+
+.card.explorer-card .explorer-signal-badge.hold {
+    background: rgba(251, 191, 36, 0.12);
+    color: #fbbf24;
+}
+
+.card.explorer-card .explorer-signal-badge.closed {
+    background: rgba(107, 114, 128, 0.12);
+    color: #6b7280;
+}
+
+.card.explorer-card .explorer-signal-badge.suspended {
+    background: rgba(107, 114, 128, 0.12);
+    color: #6b7280;
+}
+
+.card.explorer-card .explorer-signal-score {
+    font-size: 10px;
+    color: var(--explorer-muted);
+}
+
+/* Pagination */
+.card.explorer-card .explorer-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 14px 28px;
+    border-top: 1px solid rgba(168, 162, 255, 0.08);
+    background: var(--explorer-bg);
+}
+
+.card.explorer-card .explorer-page-btn {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(168, 162, 255, 0.1);
+    border-radius: 6px;
+    color: var(--primary-purple);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.card.explorer-card .explorer-page-btn:hover:not(:disabled) {
+    background: rgba(168, 162, 255, 0.1);
+}
+
+.card.explorer-card .explorer-page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.card.explorer-card .explorer-page-info {
+    color: var(--explorer-muted);
+    font-size: 12px;
+    min-width: 70px;
+    text-align: center;
+}

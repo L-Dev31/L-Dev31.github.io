@@ -1,170 +1,78 @@
-// Utilise la valeur brute de api_mapping.polygon pour le symbole dans les fetchs
-export function getPolygonSymbol(stockOrTicker) {
-  if (!stockOrTicker) return null;
-  if (typeof stockOrTicker === 'string') return stockOrTicker;
-  if (stockOrTicker.api_mapping && stockOrTicker.api_mapping.polygon) return stockOrTicker.api_mapping.polygon;
-  return stockOrTicker.ticker || null;
-}
+import globalRateLimiter from '../rate-limiter.js';
+import { filterNullOHLCDataPoints } from '../general.js';
 
-const periods = {
-  "1D": { multiplier: 1, timespan: "minute", days: 1 },
-  "1W": { multiplier: 5, timespan: "minute", days: 5 },
-  "1M": { multiplier: 15, timespan: "minute", days: 30 },
-  "6M": { multiplier: 1, timespan: "hour", days: 180 },
-  "1Y": { multiplier: 1, timespan: "day", days: 365 },
-  "3Y": { multiplier: 1, timespan: "week", days: 1095 },
-  "5Y": { multiplier: 1, timespan: "month", days: 1825 },
-  "MAX": { multiplier: 1, timespan: "month", days: 7300 }
+const PERIODS = {
+    '1D': { multiplier: 1, timespan: 'minute', days: 1 },
+    '1W': { multiplier: 5, timespan: 'minute', days: 5 },
+    '1M': { multiplier: 15, timespan: 'minute', days: 30 },
+    '6M': { multiplier: 1, timespan: 'hour', days: 180 },
+    '1Y': { multiplier: 1, timespan: 'day', days: 365 },
+    '3Y': { multiplier: 1, timespan: 'week', days: 1095 },
+    '5Y': { multiplier: 1, timespan: 'month', days: 1825 },
+    'MAX': { multiplier: 1, timespan: 'month', days: 7300 }
 };
 
-import globalRateLimiter from '../rate-limiter.js';
-import { filterNullDataPoints, filterNullOHLCDataPoints } from '../general.js';
+export function getPolygonSymbol(stock) {
+    if (!stock) return null;
+    if (typeof stock === 'string') return stock;
+    return stock.api_mapping?.polygon || stock.ticker || null;
+}
 
-export async function fetchFromPolygon(ticker, period, symbol, typeOrStock, name, signal, apiKey) {
-  // Utilise symbol pour Polygon, sans formatage
-  console.log(`\n🔍 === FETCH Polygon ${symbol} (${name}) période ${period} ===`);
+export async function fetchFromPolygon(ticker, period, symbol, stock, name, signal, apiKey) {
+    const polygonSymbol = getPolygonSymbol(stock) || symbol || ticker;
+    const type = typeof stock === 'object' ? stock?.type : stock;
+    const currency = stock?.currency || 'USD';
+    const eurRate = stock?.eurRate || 1;
 
-  // Le 4ème paramètre peut être soit un type (string), soit l'objet stock complet
-  let type = typeOrStock;
-  let currency = 'USD';
-  let eurRate = 1;
-  if (typeof typeOrStock === 'object' && typeOrStock !== null) {
-    type = typeOrStock.type;
-    currency = typeOrStock.currency || 'USD';
-    if (typeof typeOrStock.eurRate === 'number') {
-      eurRate = typeOrStock.eurRate;
-    }
-    console.log(`📦 Objet stock reçu, type extrait: ${type}, currency: ${currency}`);
-  }
-  if (!type) {
-    console.error(`❌ Type non fourni pour ${symbol}. Ajoutez le champ "type" dans stocks.json!`);
-    console.log(`   Exemples: "type": "equity" | "crypto" | "commodity" | "forex"`);
-  } else {
-    console.log(`📋 Type d'asset: ${type}`);
-  }
+    return globalRateLimiter.executeIfNotLimited(async () => {
+        try {
+            const cfg = PERIODS[period] || PERIODS['1D'];
+            const to = new Date();
+            to.setDate(to.getDate() - 1);
+            const from = new Date(to.getTime() - cfg.days * 86400000);
+            
+            const r = await fetch(`https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(polygonSymbol)}/range/${cfg.multiplier}/${cfg.timespan}/${from.toISOString().split('T')[0]}/${to.toISOString().split('T')[0]}?apiKey=${apiKey}`, { signal });
 
-  // Utiliser la valeur brute de api_mapping.polygon pour le fetch
-  const polygonSymbol = getPolygonSymbol(typeOrStock) || symbol || ticker;
+            if (r.status === 429) {
+                globalRateLimiter.setRateLimitForApi('massive', 60000);
+                return { source: 'massive', error: true, errorCode: 429, throttled: true };
+            }
+            if (!r.ok) return { source: 'massive', error: true, errorCode: r.status };
 
-  const result = await globalRateLimiter.executeIfNotLimited(async () => {
-    const cfg = periods[period] || periods["1D"];
-    
-    // End date: yesterday (to ensure data is available)
-    const to = new Date();
-    to.setDate(to.getDate() - 1);
-    to.setHours(23, 59, 59, 999);
-    
-    // Start date: go back the configured number of days from yesterday
-    const from = new Date(to.getTime() - cfg.days * 24 * 60 * 60 * 1000);
-    from.setHours(0, 0, 0, 0);
-    
-    const fromStr = from.toISOString().split('T')[0];
-    const toStr = to.toISOString().split('T')[0];
-    const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(polygonSymbol)}/range/${cfg.multiplier}/${cfg.timespan}/${fromStr}/${toStr}?apiKey=${apiKey}`;
+            const j = await r.json();
+            if (j.error || !j.results?.length) return { source: 'massive', error: true, errorCode: 404 };
 
-    console.log(`📡 Requête Polygon API: ${polygonSymbol} multiplier=${cfg.multiplier} timespan=${cfg.timespan} from=${fromStr} to=${toStr}`);
+            const results = j.results;
+            const { timestamps, opens, highs, lows, closes } = filterNullOHLCDataPoints(
+                results.map(x => Math.floor(x.t / 1000)),
+                results.map(x => x.o),
+                results.map(x => x.h),
+                results.map(x => x.l),
+                results.map(x => x.c)
+            );
+            if (!timestamps.length) return { source: 'massive', error: true, errorCode: 'NO_VALID_DATA' };
 
-    try {
-      const r = await fetch(url, { signal });
-      console.log(`📥 Réponse Polygon: ${r.status} ${r.statusText}`);
+            const convert = (type === 'commodity' || type === 'crypto') && currency === 'EUR' && eurRate !== 1;
+            const rate = convert ? eurRate : 1;
 
-      if (r.status === 429) {
-        console.log(`⏳ Rate limit Polygon atteint (429)`);
-        globalRateLimiter.setRateLimitForApi('massive', 60000);
-        return { source: "massive", error: true, errorCode: 429, throttled: true };
-      }
-
-      if (!r.ok) {
-        const errorText = await r.text();
-        console.warn(`⚠️ Erreur API Polygon: ${errorText}`);
-        return { source: "massive", error: true, errorCode: r.status, errorMessage: errorText || "Erreur API" };
-      }
-
-      const j = await r.json();
-
-      if (j.error) {
-        console.log(`⚠️ Erreur dans la réponse JSON Polygon: ${j.error}`);
-        return { source: "massive", error: true, errorCode: 404, errorMessage: j.error };
-      }
-
-      if (!j.results || j.results.length === 0) {
-        console.log(`⚠️ Aucune donnée Polygon pour ${polygonSymbol} (résultats vides)`);
-        console.log(`   Status: ${j.status}, Ticker: ${j.ticker || 'N/A'}, Count: ${j.resultsCount || 0}`);
-        return {
-          source: "massive",
-          error: true,
-          errorCode: 404,
-          errorMessage: "Aucune donnée disponible"
-        };
-      }
-
-      const results = j.results;
-      console.log(`✅ ${results.length} points de données bruts récupérés de Polygon`);
-
-      const timestamps = results.map(r => Math.floor(r.t / 1000));
-      const opens = results.map(r => r.o);
-      const highs = results.map(r => r.h);
-      const lows = results.map(r => r.l);
-      const closes = results.map(r => r.c);
-
-      // Filtrer les points null dès la source
-      const { timestamps: filteredTimestamps, opens: filteredOpens, highs: filteredHighs, lows: filteredLows, closes: filteredCloses } = filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes);
-      const filteredPrices = filteredCloses;
-
-      console.log(`🔍 Données brutes: ${timestamps.length} points, après filtrage: ${filteredTimestamps.length} points valides`);
-
-      if (filteredTimestamps.length === 0) {
-        console.log(`📊 ${polygonSymbol} - Aucune donnée valide après filtrage des valeurs null`);
-        return { source: "massive", error: true, errorCode: "NO_VALID_DATA" };
-      }
-
-      console.log(`ℹ️ Traitement des données: ${filteredTimestamps.length} timestamps, ${filteredPrices.length} prix`);
-
-      let data = {
-        source: "massive",
-        timestamps: filteredTimestamps,
-        prices: [...filteredPrices],
-        opens: filteredOpens,
-        highs: filteredHighs,
-        lows: filteredLows,
-        closes: filteredCloses,
-        open: filteredOpens[0],
-        high: Math.max(...filteredHighs),
-        low: Math.min(...filteredLows),
-        price: filteredPrices[filteredPrices.length - 1]
-      };
-
-      // Currency management: if not USD, convert to EUR using eurRate
-      if ((type === 'commodity' || type === 'crypto') && currency === 'EUR' && eurRate && eurRate !== 1) {
-        data.price = data.price * eurRate;
-        data.open = data.open * eurRate;
-        data.high = data.high * eurRate;
-        data.low = data.low * eurRate;
-        data.prices = data.prices.map(p => p * eurRate);
-        data.opens = data.opens.map(p => p * eurRate);
-        data.highs = data.highs.map(p => p * eurRate);
-        data.lows = data.lows.map(p => p * eurRate);
-        data.closes = data.closes.map(p => p * eurRate);
-        console.log(`💶 Conversion USD→EUR appliquée (rate: ${eurRate})`);
-      }
-
-      data.changePercent = ((data.price - data.open) / data.open) * 100;
-      data.change = data.price - data.open;
-
-      console.log(`✅ Données Polygon traitées: ${results.length} points conservés`);
-      console.log(`💰 Prix Polygon: ${data.price?.toFixed(2)} (variation: ${data.changePercent?.toFixed(2)}%)`);
-
-      return data;
-
-    } catch (e) {
-      if (e.name === 'AbortError') {
-        console.log(`🚫 Requête Polygon annulée pour ${polygonSymbol}`);
-        throw e;
-      }
-      console.error(`💥 Erreur Polygon pour ${polygonSymbol}:`, e.message);
-      return { source: "massive", error: true, errorCode: 500, errorMessage: e.message };
-    }
-  }, 'massive');
-
-  return result;
+            const data = {
+                source: 'massive', timestamps,
+                prices: closes.map(p => p * rate),
+                opens: opens.map(p => p * rate),
+                highs: highs.map(p => p * rate),
+                lows: lows.map(p => p * rate),
+                closes: closes.map(p => p * rate),
+                open: opens[0] * rate,
+                high: Math.max(...highs) * rate,
+                low: Math.min(...lows) * rate,
+                price: closes[closes.length - 1] * rate
+            };
+            data.change = data.price - data.open;
+            data.changePercent = (data.change / data.open) * 100;
+            return data;
+        } catch (e) {
+            if (e.name === 'AbortError') throw e;
+            return { source: 'massive', error: true, errorCode: 500 };
+        }
+    }, 'massive');
 }

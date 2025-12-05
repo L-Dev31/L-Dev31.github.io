@@ -21,7 +21,8 @@
     z-index: 2;
 }
 
-.card.news-card .news-header .section-title { margin: 0 0 6px; }
+.card.news-card .news-header .section-title { margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
+.card.news-card .news-header .section-title i { color: var(--primary-purple); }
 .card.news-card .news-header .section-date { margin-bottom: 16px; color: var(--news-muted); }
 
 .card.news-card .news-filters-column {
