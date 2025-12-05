@@ -36,7 +36,7 @@
       {"date": "2025-11-12", "amount": -104.52, "shares": 65}
     ],
     "sales": [
-      {"date": "2025-11-21", "amount": 6085.95, "shares": 65}
+      {"date": "2025-11-21", "amount": 93.63, "shares": 65}
     ],
     "api_mapping": {
       "yahoo": "ALUNT.PA",

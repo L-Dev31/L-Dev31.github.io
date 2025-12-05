@@ -587,6 +587,10 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     const g=document.getElementById(`periods-${s}`)
     if (g) g.querySelectorAll('.period-btn').forEach(x=>x.classList.remove('active'))
     b.classList.add('active')
+    // Update performance label with current period
+    const card = document.getElementById(`card-${s}`)
+    const periodLabel = card?.querySelector('.performance-period')
+    if (periodLabel) periodLabel.textContent = p
     const name=positions[s].name||null
     
     let { fetchFunc, apiName } = await selectApiFetch(selectedApi, positions[s])
@@ -1390,11 +1394,15 @@ function calculateStockValues(stock) {
         });
     }
     
+    // If no shares remaining, investment should be 0 (realized P/L is separate)
+    const displayInvestment = totalShares > 0 ? totalInvestment : 0;
+    
     return {
-        investment: totalInvestment,
+        investment: displayInvestment,
         shares: totalShares,
         costBasis: Math.max(0, costBasis),
-        purchaseDate: earliestPurchaseDate
+        purchaseDate: earliestPurchaseDate,
+        realizedPL: totalShares === 0 ? totalInvestment : 0 // Track realized profit/loss when position closed
     };
 }
 
@@ -1481,6 +1489,12 @@ function createCard(stock) {
     sh.id = `shares-${stock.symbol}`
     const calculated = calculateStockValues(stock);
     sh.textContent = calculated.shares
+
+    // Hide investment section if no shares owned
+    const investmentSection = card.querySelector('.investment-section');
+    if (investmentSection) {
+        investmentSection.style.display = calculated.shares > 0 ? '' : 'none';
+    }
 
     const isin = card.querySelector('.general-row strong + span')
     if (isin) {
@@ -1607,12 +1621,6 @@ function createCard(stock) {
         if (investmentDate && investmentDate.classList.contains('section-date')) {
             investmentDate.style.display = '';
         }
-    }
-
-    // Ne plus masquer la section investissement
-    const investmentSection = card.querySelector('.investment-section')
-    if (investmentSection) {
-        investmentSection.style.display = '';
     }
 
     const detailsTitle = card.querySelector('.details-title')
