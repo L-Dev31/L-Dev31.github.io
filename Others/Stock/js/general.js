@@ -860,7 +860,8 @@ async function updateUI(symbol, data) {
     try { updateSectionDates(symbol); } catch (e) { /* ignore */ }
 
     // Mettre à jour le signal d'achat/vente
-    updateSignal(symbol, data);
+    const currentPeriod = positions[symbol]?.currentPeriod || '1D';
+    updateSignal(symbol, data, { period: currentPeriod });
 }
 
 function resetSymbolDisplay(symbol) {
@@ -1423,6 +1424,7 @@ window.setupNewsSearch = setupNewsSearch;
 window.registerDynamicPosition = function(posData) {
     if (!posData || !posData.symbol) return;
     positions[posData.symbol] = posData;
+    setPositions(positions);
 };
 
 // Activate stock and fetch data (called from explorer)
@@ -1810,8 +1812,8 @@ function createCard(stock) {
 
     // Assigner les IDs pour les éléments du signal
     const signalCursor = card.querySelector('.signal-cursor');
-    const signalValue = card.querySelector('.signal-value');
-    const signalDescription = card.querySelector('.signal-description');
+    const signalValue = card.querySelector('.signal-state-title');
+    const signalDescription = card.querySelector('.signal-state-description');
 
     if (signalCursor) signalCursor.id = `signal-cursor-${stock.symbol}`;
     if (signalValue) signalValue.id = `signal-value-${stock.symbol}`;

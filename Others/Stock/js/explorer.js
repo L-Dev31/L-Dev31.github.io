@@ -321,26 +321,35 @@
             if (search) items = items.filter(i => i.symbol.toLowerCase().includes(search) || i.name.toLowerCase().includes(search));
             if (sector) items = items.filter(i => i.sector === sector);
 
-            const open = items.filter(i => !i.isClosed);
-            const closed = items.filter(i => i.isClosed);
+            if (sort === 'trending') {
+                // Tri par "Tendance" : Combinaison de Volume et Volatilité (Changement absolu)
+                // On cherche les actifs qui bougent beaucoup et qui sont très échangés.
+                items.sort((a, b) => {
+                    // Score A
+                    const volA = a.volume || 0;
+                    const changeA = Math.abs(a.changePercent || 0);
+                    // On utilise log10 pour le volume pour éviter que les méga-caps écrasent tout
+                    // On ajoute 1 pour éviter log(0)
+                    const scoreA = changeA * Math.log10(volA + 1);
 
-            switch (sort) {
-                case 'gainers': open.sort((a, b) => b.changePercent - a.changePercent); break;
-                case 'losers': open.sort((a, b) => a.changePercent - b.changePercent); break;
-                case 'volume': open.sort((a, b) => b.volume - a.volume); break;
-                case 'signal': open.sort((a, b) => b.score - a.score); break;
-                case 'name': open.sort((a, b) => a.name.localeCompare(b.name)); break;
-                default: 
-                    // Shuffle for trending/default view to mix markets
-                    for (let i = open.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [open[i], open[j]] = [open[j], open[i]];
-                    }
-                    break;
+                    // Score B
+                    const volB = b.volume || 0;
+                    const changeB = Math.abs(b.changePercent || 0);
+                    const scoreB = changeB * Math.log10(volB + 1);
+
+                    return scoreB - scoreA; // Décroissant
+                });
+            } else {
+                switch (sort) {
+                    case 'gainers': items.sort((a, b) => b.changePercent - a.changePercent); break;
+                    case 'losers': items.sort((a, b) => a.changePercent - b.changePercent); break;
+                    case 'volume': items.sort((a, b) => b.volume - a.volume); break;
+                    case 'signal': items.sort((a, b) => b.score - a.score); break;
+                    case 'name': items.sort((a, b) => a.name.localeCompare(b.name)); break;
+                }
             }
-            closed.sort((a, b) => a.name.localeCompare(b.name));
 
-            currentResults = [...open, ...closed];
+            currentResults = items;
             totalResults = currentResults.length;
             currentPage = 1;
             render();
@@ -502,6 +511,18 @@
             if (invDate?.classList.contains('section-date')) invDate.id = `investment-date-${symbol}`;
         }
 
+        const detailsTitle = card.querySelector('.details-title');
+        if (detailsTitle) {
+            detailsTitle.id = `details-title-${symbol}`;
+            const detDate = detailsTitle.nextElementSibling;
+            if (detDate?.classList.contains('section-date')) detDate.id = `details-date-${symbol}`;
+        }
+
+        const transactionTitle = card.querySelector('.transaction-history-title');
+        if (transactionTitle) {
+            transactionTitle.id = `transaction-history-title-${symbol}`;
+        }
+
         const tds = card.querySelectorAll('.card-table-td');
         if (tds.length >= 8) {
             tds[1].id = `invest-${symbol}`; tds[2].id = `value-${symbol}`; tds[3].id = `profit-${symbol}`;
@@ -516,8 +537,8 @@
         }
 
         const signalCursor = card.querySelector('.signal-cursor');
-        const signalValue = card.querySelector('.signal-value');
-        const signalDescription = card.querySelector('.signal-description');
+        const signalValue = card.querySelector('.signal-state-title');
+        const signalDescription = card.querySelector('.signal-state-description');
         if (signalCursor) signalCursor.id = `signal-cursor-${symbol}`;
         if (signalValue) signalValue.id = `signal-value-${symbol}`;
         if (signalDescription) signalDescription.id = `signal-description-${symbol}`;

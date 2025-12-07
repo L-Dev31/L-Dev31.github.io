@@ -151,12 +151,21 @@
     overflow: hidden;
 }
 
-.card.news-card .news-empty,
-.card.news-card .news-loading {
+.card.news-card .news-empty {
     text-align: center;
     padding: 40px;
     color: var(--news-muted);
     font-size: 12px;
+}
+
+.card.news-card .news-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 200px;
+    color: var(--news-muted);
+    font-size: 13px;
 }
 
 @media (max-width: 900px) {

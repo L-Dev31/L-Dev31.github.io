@@ -151,68 +151,8 @@
     line-height: 1.5;
 }
 
-.explanation-content p { margin-bottom: 6px; }
-.explanation-content ul { margin: 6px 0; padding-left: 18px; }
-.explanation-content li { margin-bottom: 3px; }
-.explanation-content em { font-style: italic; }
-.signal-state-container .explanation-content em { color: #ffd54f; }
-.signal-state-container.sell-state .explanation-content em { color: var(--color-negative); }
-.signal-state-container.buy-state .explanation-content em { color: var(--color-positive); }
-
-.signal-explanation-table {
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid rgba(168,162,255,0.1);
-}
-
-.signal-table-header {
-    padding: 8px;
-    color: var(--primary-purple);
-    font-size: 12px;
-    text-align: left;
-    background: rgba(168,162,255,0.06);
-}
-
-.signal-table-cell {
-    padding: 8px;
-    color: var(--text-light);
-    font-size: 13px;
-    border-bottom: 1px solid rgba(168,162,255,0.06);
-}
-
-.signal-explanation-table tbody tr:last-child .signal-table-cell { border-bottom: none; }
-.signal-value-buy { color: var(--color-positive) !important; font-weight: 600; }
-.signal-value-sell { color: var(--color-negative) !important; font-weight: 600; }
-.signal-value-neutral { color: var(--text-white) !important; }
-
-.signal-summary-root {
-    margin-top: 10px;
-    padding: 10px;
-    background: rgba(255,255,255,0.02);
-    border-left: 3px solid rgba(168,162,255,0.2);
-    border-radius: 4px;
-    font-size: 12px;
-    color: var(--text-light);
-}
-
-.signal-summary-root .signal-summary-header { color: var(--primary-purple); }
-.signal-summary-root ul { margin: 6px 0; }
-.signal-summary-root .signal-summary-volnote { color: #ffd54f; }
-
-.signal-summary-eli5 {
-    font-size: 13px;
-    color: var(--text-light);
-    background: rgba(255,255,255,0.01);
-    padding: 8px;
-    border-radius: 4px;
-}
-
-.signal-disclaimer-root {
-    margin-top: 20px;
-    font-size: 9px;
-    color: #fff;
-    opacity: 0.4;
-    line-height: 1.4;
-}
+/* Utility Colors */
+.positive { color: var(--color-positive) !important; }
+.negative { color: var(--color-negative) !important; }
+.warning { color: #fbbf24 !important; }
+.neutral { color: var(--text-light) !important; }

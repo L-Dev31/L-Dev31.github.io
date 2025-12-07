@@ -64,23 +64,54 @@ export function updateNewsUI(symbol, items, filter = null) {
     let list = items || [];
     if (filter) { const q = filter.toLowerCase(); list = list.filter(i => (i.title || '').toLowerCase().includes(q) || (i.summary || '').toLowerCase().includes(q) || (i.source || '').toLowerCase().includes(q)); }
     if (!list.length) { el.textContent = filter ? 'Aucun résultat.' : 'Aucune actualité récente.'; return; }
+    
+    list.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+
     list.forEach(i => {
         const a = document.createElement('a');
         a.className = 'news-item news-item-link';
         a.href = i.url || '#';
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
+
         const t = document.createElement('div');
         t.className = 'news-title';
-        const s = document.createElement('span');
-        s.className = 'news-title-text';
-        s.textContent = i.title || '—';
-        t.appendChild(s);
+        t.textContent = i.title || '—';
         a.appendChild(t);
+
         const m = document.createElement('div');
         m.className = 'news-meta';
-        m.textContent = `${i.source || ''} • ${new Date(i.publishedAt || new Date()).toLocaleString('fr-FR')}`;
+        
+        const src = document.createElement('span');
+        src.className = 'news-source';
+        src.textContent = i.source || 'Source';
+        m.appendChild(src);
+        
+        m.appendChild(document.createTextNode(` • ${new Date(i.publishedAt || new Date()).toLocaleString('fr-FR')}`));
+
+        const uniqueTags = new Set();
+        if (i.symbol) uniqueTags.add(positions[i.symbol]?.ticker || i.symbol);
+        if (i.symbols) i.symbols.forEach(s => uniqueTags.add(positions[s]?.ticker || s));
+        if (i.relatedTickers) i.relatedTickers.forEach(s => uniqueTags.add(positions[s]?.ticker || s));
+
+        if (uniqueTags.size > 0) {
+            Array.from(uniqueTags).slice(0, 4).forEach(label => {
+                const tag = document.createElement('span');
+                tag.className = 'news-ticker-tag';
+                tag.textContent = label;
+                m.appendChild(tag);
+            });
+        }
+
         a.appendChild(m);
+
+        if (i.summary) { 
+            const s = document.createElement('div'); 
+            s.className = 'news-summary'; 
+            s.textContent = i.summary; 
+            a.appendChild(s); 
+        }
+
         el.appendChild(a);
     });
 }
@@ -206,7 +237,25 @@ export function updateNewsPageList(items, opts = {}) {
         src.textContent = i.source || 'Source';
         m.appendChild(src);
         m.appendChild(document.createTextNode(` • ${new Date(i.publishedAt || new Date()).toLocaleString('fr-FR')}`));
-        if (i.symbol) { const tag = document.createElement('span'); tag.className = 'news-ticker-tag'; tag.textContent = positions[i.symbol]?.ticker || i.symbol; m.appendChild(tag); }
+        
+        const symbolsToShow = i.symbols || (i.symbol ? [i.symbol] : []);
+        if (symbolsToShow.length > 0) {
+            // Filter to show only relevant tickers (either in positions or related)
+            // We limit to 3 tags to avoid clutter
+            const uniqueTags = new Set();
+            symbolsToShow.forEach(s => {
+                const label = positions[s]?.ticker || s;
+                uniqueTags.add(label);
+            });
+            
+            Array.from(uniqueTags).slice(0, 4).forEach(label => {
+                const tag = document.createElement('span');
+                tag.className = 'news-ticker-tag';
+                tag.textContent = label;
+                m.appendChild(tag);
+            });
+        }
+        
         a.appendChild(t);
         a.appendChild(m);
         if (i.summary) { const s = document.createElement('div'); s.className = 'news-summary'; s.textContent = i.summary; a.appendChild(s); }
@@ -247,7 +296,7 @@ function populateSuggestions() {
         d.className = 'ticker-suggestion-item';
         d.dataset.symbol = sym;
         d.innerHTML = `<span class="ticker-symbol">${pos.ticker || sym}</span>${pos.name || ''}`;
-        d.addEventListener('click', () => { const inp = document.getElementById('news-ticker-search'); if (inp) { inp.value = sym; el.classList.remove('active'); loadNews(); } });
+        d.addEventListener('click', () => { const inp = document.getElementById('news-ticker-search'); if (inp) { inp.value = pos.ticker || sym; el.classList.remove('active'); loadNews(); } });
         el.appendChild(d);
     });
 }
@@ -274,7 +323,7 @@ async function loadNews() {
     const el = document.getElementById('news-page-feed-list');
     const inp = document.getElementById('news-ticker-search');
     if (!el) return;
-    el.innerHTML = '<div class="news-loading">Chargement des actualités</div>';
+    el.innerHTML = '<div class="news-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="news-loading-text">Chargement des actualités...</span></div>';
     try {
         const config = await loadApiConfig();
         const api = window.getSelectedApi?.() || window.selectedApi || config.ui?.defaultApi || 'finnhub';
@@ -285,7 +334,33 @@ async function loadNews() {
         else { tickers = Object.keys(positions).map(s => ({ symbol: s, ticker: positions[s]?.api_mapping?.[api] || positions[s]?.ticker || s })); currentNewsSymbol = null; }
         if (!tickers.length) { el.innerHTML = '<div class="news-empty">Ajoutez des actifs ou recherchez un ticker.</div>'; lastPageNews = []; return; }
         let all = [];
-        for (const t of tickers) { try { const r = await fetchNews(t.ticker, config, 30, days, api); if (r?.items) all = all.concat(filterBySymbol(r.items.map(i => ({ ...i, symbol: t.symbol })), t.symbol)); } catch (e) {} }
+        let completed = 0;
+        const updateProgress = () => { const t = document.getElementById('news-loading-text'); if (t) t.textContent = `Chargement... ${completed}/${tickers.length}`; };
+        if (tickers.length > 1) updateProgress();
+
+        const uniqueItems = new Map();
+
+        for (const t of tickers) {
+            try {
+                const r = await fetchNews(t.ticker, config, 30, days, api);
+                if (r?.items) {
+                    const filtered = filterBySymbol(r.items.map(i => ({ ...i, symbol: t.symbol })), t.symbol);
+                    filtered.forEach(item => {
+                        const key = item.url || item.title;
+                        if (!uniqueItems.has(key)) {
+                            uniqueItems.set(key, { ...item, symbols: new Set() });
+                        }
+                        const stored = uniqueItems.get(key);
+                        stored.symbols.add(t.symbol);
+                        if (item.relatedTickers) item.relatedTickers.forEach(rt => stored.symbols.add(rt));
+                    });
+                }
+            } catch (e) {}
+            completed++;
+            if (tickers.length > 1) updateProgress();
+        }
+        
+        all = Array.from(uniqueItems.values()).map(i => ({ ...i, symbols: Array.from(i.symbols) }));
         all.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
         updateNewsPageList(all);
     } catch (e) { el.innerHTML = '<div class="news-empty">Erreur de chargement</div>'; }
