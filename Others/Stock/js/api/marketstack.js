@@ -1,5 +1,5 @@
 import globalRateLimiter from '../rate-limiter.js';
-import { filterNullOHLCDataPoints } from '../general.js';
+import { filterNullOHLCDataPoints } from '../utils.js';
 
 const PERIODS = {
     '1D': 1, '1W': 7, '1M': 31, '6M': 183, '1Y': 365, '3Y': 1095, '5Y': 1825, 'MAX': 7300

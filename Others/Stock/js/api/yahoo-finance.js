@@ -1,5 +1,5 @@
 import globalRateLimiter from '../rate-limiter.js';
-import { filterNullOHLCDataPoints } from '../general.js';
+import { filterNullOHLCDataPoints } from '../utils.js';
 
 const PROXY = 'https://corsproxy.io/?';
 const PERIODS = {

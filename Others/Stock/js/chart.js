@@ -106,6 +106,44 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
         c.data = { labels, datasets: [{ label: 'Mèche', data: lows.map((l, i) => [l, highs[i]]), backgroundColor: '#ffffff', borderColor: '#ffffff', borderWidth: 1, barThickness: 1, grouped: false, order: 2 }, { label: 'Corps', data: opens.map((o, i) => [Math.min(o, closes[i]), Math.max(o, closes[i])]), backgroundColor: colors, borderColor: colors, borderWidth: 0, barPercentage: 1.0, categoryPercentage: 1.0, minBarLength: 2, grouped: false, order: 1 }] };
         c.options.plugins.tooltip.callbacks.title = ctx => closes[ctx[0].dataIndex].toFixed(2) + ' €';
         c.options.plugins.tooltip.callbacks.label = ctx => { if (ctx.datasetIndex === 0) return null; const i = ctx.dataIndex, d = new Date(ts[i] * 1000); return [d.toLocaleDateString('fr-FR'), d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }), '', `O: ${opens[i].toFixed(2)}`, `H: ${highs[i].toFixed(2)}`, `L: ${lows[i].toFixed(2)}`, `C: ${closes[i].toFixed(2)}`]; };
+    } else if (type === 'baseline') {
+        const baselineValue = p[0];
+        const posColor = getComputedStyle(document.documentElement).getPropertyValue('--color-positive').trim() || '#4caf50';
+        const negColor = getComputedStyle(document.documentElement).getPropertyValue('--color-negative').trim() || '#ef4444';
+        
+        c.config.type = 'line';
+        c.data = {
+            labels,
+            datasets: [{
+                label: 'Prix',
+                data: p,
+                borderColor: (context) => {
+                    const chart = context.chart;
+                    const { ctx, chartArea, scales } = chart;
+                    if (!chartArea) return null;
+                    const yPixel = scales.y.getPixelForValue(baselineValue);
+                    const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                    const stop = Math.max(0, Math.min(1, (yPixel - chartArea.top) / (chartArea.bottom - chartArea.top)));
+                    gradient.addColorStop(0, posColor);
+                    gradient.addColorStop(stop, posColor);
+                    gradient.addColorStop(stop, negColor);
+                    gradient.addColorStop(1, negColor);
+                    return gradient;
+                },
+                fill: {
+                    target: { value: baselineValue },
+                    above: hexToRgba(posColor, 0.2),
+                    below: hexToRgba(negColor, 0.2)
+                },
+                borderWidth: 2,
+                tension: 0.4,
+                pointRadius: 0,
+                pointHoverRadius: 4,
+                spanGaps: true
+            }]
+        };
+        c.options.plugins.tooltip.callbacks.title = ctx => ctx[0].parsed.y.toFixed(2) + ' €';
+        c.options.plugins.tooltip.callbacks.label = ctx => { const i = ctx.dataIndex, d = new Date(ts[i] * 1000), lines = [d.toLocaleDateString('fr-FR'), d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })]; if (opens && highs && lows && closes) lines.push('', `O: ${opens[i].toFixed(2)}`, `H: ${highs[i].toFixed(2)}`, `L: ${lows[i].toFixed(2)}`, `C: ${closes[i].toFixed(2)}`); return lines; };
     } else {
         let line = getComputedStyle(document.documentElement).getPropertyValue('--color-line-default').trim() || '#a8a2ff', gs = 'rgba(168,162,255,0.3)', ge = 'rgba(168,162,255,0)';
         if (p?.length) { const isPos = p[p.length - 1] >= p[0]; const col = getComputedStyle(document.documentElement).getPropertyValue(isPos ? '--color-positive' : '--color-negative').trim() || (isPos ? '#65d981' : '#f87171'); line = col; gs = hexToRgba(col, 0.3) || gs; ge = hexToRgba(col, 0) || ge; }
