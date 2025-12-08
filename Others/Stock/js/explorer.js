@@ -12,6 +12,9 @@
     let isLoading = false;
     let currentPeriod = '1D';
 
+    let cachedItems = null;
+    let lastParams = null;
+
     const PERIOD_LABELS = { '1D': '1J', '1W': '1S', '1M': '1M', '3M': '3M', '6M': '6M', '1Y': '1A', 'YTD': 'YTD' };
     const PERIOD_CONFIG = {
         '1D': { range: '1d', interval: '1m' },
@@ -66,7 +69,13 @@
 
     async function fetchScreener(scrIds, offset = 0, count = SCREENER_BATCH_SIZE) {
         try {
-            const r = await fetch(`${YAHOO_PROXY}https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?scrIds=${scrIds}&count=${count}&offset=${offset}`);
+            const r = await fetch(`${YAHOO_PROXY}https://query2.finance.yahoo.com/v1/finance/screener/predefined/saved?scrIds=${scrIds}&count=${count}&offset=${offset}`, {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'Origin': 'https://finance.yahoo.com',
+                    'Referer': 'https://finance.yahoo.com/'
+                }
+            });
             if (!r.ok) return { quotes: [], total: 0 };
             const j = await r.json();
             const result = j.finance?.result?.[0];
@@ -162,7 +171,13 @@
 
     async function fetchEuronextStock(symbol) {
         try {
-            const r = await fetch(`${YAHOO_PROXY}https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=1m`);
+            const r = await fetch(`${YAHOO_PROXY}https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=1m`, {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'Origin': 'https://finance.yahoo.com',
+                    'Referer': 'https://finance.yahoo.com/'
+                }
+            });
             if (!r.ok) return null;
             const data = await r.json();
             const result = data.chart?.result?.[0];
@@ -231,35 +246,88 @@
     }
 
     async function fetchPeriodChanges(symbols, period, onProgress) {
-        if (!symbols.length || period === '1D') return {};
-        const config = PERIOD_CONFIG[period];
+        if (!symbols.length) return {};
+        const config = PERIOD_CONFIG[period] || PERIOD_CONFIG['1D'];
         const changes = {};
         let completed = 0;
-        const batchSize = 10;
+        
+        // "Retire les protections" : Vitesse plus élevée
+        const BATCH_SIZE = 12;          
+        const STEP_DELAY = 150;         
+        
+        // Reload API tous les 400 tickers
+        const RELOAD_THRESHOLD = 400;
+        
+        // On commence par query2, puis on alternera
+        let currentBase = 'https://query2.finance.yahoo.com';
 
-        for (let i = 0; i < symbols.length; i += batchSize) {
-            const batch = symbols.slice(i, i + batchSize);
-            const results = await Promise.allSettled(batch.map(async sym => {
-                try {
-                    const r = await fetch(`${YAHOO_PROXY}https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?range=${config.range}&interval=${config.interval}`);
-                    if (!r.ok) return null;
-                    const data = await r.json();
-                    const closes = data.chart?.result?.[0]?.indicators?.quote?.[0]?.close;
-                    if (!closes || closes.length < 2) return null;
+        for (let chunkStart = 0; chunkStart < symbols.length; chunkStart += RELOAD_THRESHOLD) {
+            const chunkSymbols = symbols.slice(chunkStart, chunkStart + RELOAD_THRESHOLD);
+            
+            // Si ce n'est pas le premier bloc, on simule un "Reload API"
+            if (chunkStart > 0) {
+                if (onProgress) onProgress(completed, symbols.length, true, "Reloading API (20s)...");
+                // Pause significative pour laisser retomber la pression (20s selon recherche)
+                await new Promise(r => setTimeout(r, 20000));
+                // Rotation du endpoint
+                currentBase = currentBase.includes('query2') ? 'https://query1.finance.yahoo.com' : 'https://query2.finance.yahoo.com';
+            }
 
-                    let firstClose = null, lastClose = null;
-                    for (let j = 0; j < closes.length; j++) if (closes[j] !== null) { firstClose = closes[j]; break; }
-                    for (let j = closes.length - 1; j >= 0; j--) if (closes[j] !== null) { lastClose = closes[j]; break; }
-                    if (!firstClose || !lastClose || firstClose === 0) return null;
+            for (let i = 0; i < chunkSymbols.length; i += BATCH_SIZE) {
+                const batch = chunkSymbols.slice(i, i + BATCH_SIZE);
+                const results = await Promise.allSettled(batch.map(async sym => {
+                    try {
+                        const r = await fetch(`${YAHOO_PROXY}${currentBase}/v8/finance/chart/${encodeURIComponent(sym)}?range=${config.range}&interval=${config.interval}`, {
+                            headers: {
+                                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                                'Origin': 'https://finance.yahoo.com',
+                                'Referer': 'https://finance.yahoo.com/'
+                            }
+                        });
+                        
+                        if (r.status === 403 || r.status === 429) return { error: 'limit' };
+                        if (!r.ok) return null;
+                        
+                        const data = await r.json();
+                        const res = data.chart?.result?.[0];
+                        const quote = res?.indicators?.quote?.[0];
+                        const closes = quote?.close;
+                        
+                        if (!closes || closes.length < 2) return null;
 
-                    return { change: lastClose - firstClose, changePercent: ((lastClose - firstClose) / firstClose) * 100 };
-                } catch (e) { return null; }
-            }));
+                        const cleanData = { prices: [], highs: [], lows: [], volumes: [] };
+                        for(let k=0; k<closes.length; k++) {
+                            if (closes[k] !== null) {
+                                cleanData.prices.push(closes[k]);
+                                cleanData.highs.push(quote.high?.[k] || closes[k]);
+                                cleanData.lows.push(quote.low?.[k] || closes[k]);
+                                cleanData.volumes.push(quote.volume?.[k] || 0);
+                            }
+                        }
 
-            results.forEach((r, idx) => { if (r.status === 'fulfilled' && r.value) changes[batch[idx]] = r.value; });
-            completed += batch.length;
-            if (onProgress) onProgress(completed, symbols.length);
-            if (i + batchSize < symbols.length) await new Promise(r => setTimeout(r, 50));
+                        if (cleanData.prices.length === 0) return null;
+                        const firstClose = cleanData.prices[0];
+                        const lastClose = cleanData.prices[cleanData.prices.length - 1];
+                        
+                        return { 
+                            change: lastClose - firstClose, 
+                            changePercent: ((lastClose - firstClose) / firstClose) * 100,
+                            history: cleanData 
+                        };
+                    } catch (e) { return null; }
+                }));
+
+                results.forEach((r, idx) => { 
+                    if (r.status === 'fulfilled' && r.value && !r.value.error) {
+                        changes[batch[idx]] = r.value; 
+                    }
+                });
+
+                completed += batch.length;
+                if (onProgress) onProgress(completed, symbols.length, false);
+                
+                if (i + BATCH_SIZE < chunkSymbols.length) await new Promise(r => setTimeout(r, STEP_DELAY));
+            }
         }
         return changes;
     }
@@ -269,96 +337,136 @@
 
         const search = document.getElementById('explorer-search')?.value.trim().toLowerCase() || '';
         const sort = document.getElementById('explorer-sort')?.value || 'trending';
-        const market = document.getElementById('explorer-market')?.value || '';
+        const market = document.getElementById('explorer-market')?.value || 'nasdaq';
         const sector = document.getElementById('explorer-sector')?.value || '';
         const eligibility = document.getElementById('explorer-eligibility')?.value || '';
         const period = document.getElementById('explorer-period')?.value || '1D';
         currentPeriod = period;
 
-        isLoading = true;
-        showLoading(true);
+        const currentParams = JSON.stringify({ market, sector, eligibility, period, search });
+        let items = [];
 
-        try {
-            let items = [];
+        if (cachedItems && lastParams === currentParams) {
+            items = [...cachedItems];
+        } else {
+            isLoading = true;
+            showLoading(true);
 
-            if (eligibility === 'pea-pme') {
-                items = await fetchEuronextStocks(EURONEXT_PME, 'pea-pme');
-            } else if (eligibility === 'pea') {
-                items = await fetchEuronextStocks([...EURONEXT_CAC40, ...EURONEXT_PME], 'pea');
-            } else if (market === 'euronext') {
-                items = await fetchEuronextStocks([...EURONEXT_CAC40, ...EURONEXT_PME], 'pea');
-            } else if (market === 'crypto') {
-                items = (await fetchAllScreenerResults('all_cryptocurrencies_us')).map(mapQuoteToItem);
-            } else if (market === 'nasdaq') {
-                items = (await fetchMultipleScreeners()).map(mapQuoteToItem).filter(i => i.market === 'nasdaq');
+            try {
+                if (eligibility === 'pea-pme') {
+                    items = await fetchEuronextStocks(EURONEXT_PME, 'pea-pme');
+                } else if (eligibility === 'pea') {
+                    items = await fetchEuronextStocks([...EURONEXT_CAC40, ...EURONEXT_PME], 'pea');
+                } else if (market === 'euronext') {
+                    items = await fetchEuronextStocks([...EURONEXT_CAC40, ...EURONEXT_PME], 'pea');
+                } else if (market === 'crypto') {
+                    items = (await fetchAllScreenerResults('all_cryptocurrencies_us')).map(mapQuoteToItem);
+                } else if (market === 'nasdaq') {
+                    items = (await fetchMultipleScreeners()).map(mapQuoteToItem).filter(i => i.market === 'nasdaq');
             } else if (market === 'nyse') {
                 items = (await fetchMultipleScreeners()).map(mapQuoteToItem).filter(i => i.market === 'nyse');
-            } else {
-                const usItems = (await fetchMultipleScreeners()).map(mapQuoteToItem);
-                const euItems = await fetchEuronextStocks([...EURONEXT_CAC40, ...EURONEXT_PME], 'pea');
-                const cryptoItems = (await fetchAllScreenerResults('all_cryptocurrencies_us')).map(mapQuoteToItem);
-                items = [...usItems, ...euItems, ...cryptoItems];
             }
+                const seen = new Set();
+                items = items.filter(i => i.symbol && !seen.has(i.symbol) && seen.add(i.symbol));
 
-            const seen = new Set();
-            items = items.filter(i => i.symbol && !seen.has(i.symbol) && seen.add(i.symbol));
+                if (search) items = items.filter(i => i.symbol.toLowerCase().includes(search) || i.name.toLowerCase().includes(search));
+                if (sector) items = items.filter(i => i.sector === sector);
 
-            if (period !== '1D' && items.length > 0) {
-                showLoadingProgress(0, `Calcul ${PERIOD_LABELS[period]}...`);
-                const changes = await fetchPeriodChanges(items.map(i => i.symbol), period, (done, total) => {
-                    showLoadingProgress(done, `${PERIOD_LABELS[period]} ${done}/${total}`);
-                });
-                items = items.map(item => {
-                    const pd = changes[item.symbol];
-                    if (pd) {
-                        const score = Math.max(0, Math.min(100, 50 + pd.changePercent * 3 + Math.min(item.volume / 50000000, 15)));
-                        return { ...item, change: pd.change, changePercent: pd.changePercent, score: Math.round(score), signal: score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold' };
-                    }
-                    return item;
-                });
-            }
+                if (items.length > 0) {
+                    showLoadingProgress(0, `Analyse ${PERIOD_LABELS[period]}...`);
+                    const changes = await fetchPeriodChanges(items.map(i => i.symbol), period, (done, total, isPaused, msg) => {
+                        if (msg) showLoadingProgress(done, `${msg} ${done}/${total}`);
+                        else if (isPaused) showLoadingProgress(done, `Pause API (Protection)... ${done}/${total}`);
+                        else showLoadingProgress(done, `Analyse ${done}/${total}`);
+                    });
+                    
+                    items = items.map(item => {
+                        const pd = changes[item.symbol];
+                        let score = item.score;
+                        let signal = item.signal;
+                        let riskScore = 1;
 
-            if (search) items = items.filter(i => i.symbol.toLowerCase().includes(search) || i.name.toLowerCase().includes(search));
-            if (sector) items = items.filter(i => i.sector === sector);
+                        if (pd) {
+                            item.change = pd.change;
+                            item.changePercent = pd.changePercent;
 
-            if (sort === 'trending') {
-                // Tri par "Tendance" : Combinaison de Volume et Volatilité (Changement absolu)
-                // On cherche les actifs qui bougent beaucoup et qui sont très échangés.
-                items.sort((a, b) => {
-                    // Score A
-                    const volA = a.volume || 0;
-                    const changeA = Math.abs(a.changePercent || 0);
-                    // On utilise log10 pour le volume pour éviter que les méga-caps écrasent tout
-                    // On ajoute 1 pour éviter log(0)
-                    const scoreA = changeA * Math.log10(volA + 1);
+                            if (window.SignalBot && pd.history) {
+                                const botResult = window.SignalBot.calculateBotSignal({
+                                    symbol: item.symbol,
+                                    prices: pd.history.prices,
+                                    highs: pd.history.highs,
+                                    lows: pd.history.lows,
+                                    volumes: pd.history.volumes
+                                }, { period: currentPeriod });
 
-                    // Score B
-                    const volB = b.volume || 0;
-                    const changeB = Math.abs(b.changePercent || 0);
-                    const scoreB = changeB * Math.log10(volB + 1);
-
-                    return scoreB - scoreA; // Décroissant
-                });
-            } else {
-                switch (sort) {
-                    case 'gainers': items.sort((a, b) => b.changePercent - a.changePercent); break;
-                    case 'losers': items.sort((a, b) => a.changePercent - b.changePercent); break;
-                    case 'volume': items.sort((a, b) => b.volume - a.volume); break;
-                    case 'signal': items.sort((a, b) => b.score - a.score); break;
-                    case 'name': items.sort((a, b) => a.name.localeCompare(b.name)); break;
+                                score = botResult.signalValue;
+                                riskScore = botResult.risk ? botResult.risk.score : 1;
+                                
+                                if (score >= 60) signal = 'buy';
+                                else if (score <= 40) signal = 'sell';
+                                else signal = 'hold';
+                                
+                                if (riskScore >= 9) signal = 'sell'; 
+                            } else {
+                                score = Math.max(0, Math.min(100, 50 + pd.changePercent * 3 + Math.min(item.volume / 50000000, 15)));
+                                signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
+                            }
+                        }
+                        
+                        return { ...item, score: Math.round(score), signal, riskScore };
+                    });
                 }
-            }
 
-            currentResults = items;
-            totalResults = currentResults.length;
-            currentPage = 1;
-            render();
-        } catch (e) {
-            showError('Erreur de chargement');
-        } finally {
-            isLoading = false;
-            showLoading(false);
+                cachedItems = items;
+                lastParams = currentParams;
+            } catch (e) {
+                showError('Erreur de chargement');
+                isLoading = false;
+                showLoading(false);
+                return;
+            } finally {
+                isLoading = false;
+                showLoading(false);
+            }
         }
+
+        // Calcul du score pour tous les items (pour affichage)
+        items.forEach(item => {
+            const vol = item.volume || 0;
+            const change = Math.abs(item.changePercent || 0);
+            
+            let riskPenalty = 1;
+            if ((item.riskScore || 1) >= 9) riskPenalty = 0.01;
+            else if ((item.riskScore || 1) >= 7) riskPenalty = 0.2;
+
+            // Nouvelle formule : Base sur le volume + Bonus volatilité amorti
+            // Evite les scores de 0 pour les actions stables à fort volume
+            const volumeScore = Math.log10(vol + 1);
+            const volatilityScore = Math.sqrt(change) + 1;
+            
+            item.trendingScore = (volumeScore * volatilityScore * 10) * riskPenalty;
+        });
+
+        if (sort === 'trending') {
+            items.sort((a, b) => {
+                if (a.isSuspended && !b.isSuspended) return 1;
+                if (!a.isSuspended && b.isSuspended) return -1;
+                return (b.trendingScore || 0) - (a.trendingScore || 0);
+            });
+        } else {
+            switch (sort) {
+                case 'gainers': items.sort((a, b) => b.changePercent - a.changePercent); break;
+                case 'losers': items.sort((a, b) => a.changePercent - b.changePercent); break;
+                case 'volume': items.sort((a, b) => b.volume - a.volume); break;
+                case 'signal': items.sort((a, b) => b.score - a.score); break; // Score intelligent
+                case 'name': items.sort((a, b) => a.name.localeCompare(b.name)); break;
+            }
+        }
+
+        currentResults = items;
+        totalResults = currentResults.length;
+        currentPage = 1;
+        render();
     }
 
     function showLoading(show) {
@@ -691,10 +799,28 @@
         const signalText = item.isSuspended ? 'Suspendu' : item.isClosed ? 'Fermé' : item.signal === 'buy' ? 'Achat' : item.signal === 'sell' ? 'Vente' : 'Neutre';
         const formatPrice = p => p >= 1000 ? p.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : p >= 1 ? p.toFixed(2) : p.toFixed(4);
         const curr = item.currency === 'EUR' ? '€' : item.currency === 'GBP' ? '£' : '$';
+        
+        // Indicateur de risque visuel
+        let riskIcon = '';
+        if (item.riskScore >= 9) riskIcon = '<i class="fa-solid fa-skull-crossbones" style="color:#ef4444;margin-left:5px;" title="Risque Extrême (Shitcoin)"></i>';
+        else if (item.riskScore >= 7) riskIcon = '<i class="fa-solid fa-triangle-exclamation" style="color:#f97316;margin-left:5px;" title="Risque Élevé"></i>';
 
-        return `<div class="explorer-item" data-symbol="${item.symbol}">
+        const formatVolume = v => {
+            if (v >= 1e9) return (v / 1e9).toFixed(2) + 'B';
+            if (v >= 1e6) return (v / 1e6).toFixed(2) + 'M';
+            if (v >= 1e3) return (v / 1e3).toFixed(2) + 'k';
+            return v;
+        };
+        
+        const trendInfo = `<div style="font-size:0.75rem;opacity:0.6;margin-top:2px;">Score: ${Math.round(item.trendingScore || 0)} • Vol: ${formatVolume(item.volume)}</div>`;
+
+        return `<div class="explorer-item ${item.isSuspended ? 'suspended' : ''}" data-symbol="${item.symbol}">
             <div class="explorer-item-logo">${item.symbol.slice(0, 2).toUpperCase()}</div>
-            <div class="explorer-item-info"><div class="explorer-item-ticker">${item.symbol}</div><div class="explorer-item-name">${item.name}</div></div>
+            <div class="explorer-item-info">
+                <div class="explorer-item-name">${item.name}</div>
+                <div class="explorer-item-ticker">${item.symbol}${riskIcon}</div>
+                ${trendInfo}
+            </div>
             <div class="explorer-item-price"><div class="explorer-item-current">${formatPrice(item.price)} ${curr}</div><div class="explorer-item-change ${changeClass}">${changeSign}${item.changePercent.toFixed(2)}% <span class="explorer-period-label">${PERIOD_LABELS[currentPeriod]}</span></div></div>
             <div class="explorer-item-signal"><span class="explorer-signal-badge ${signalClass}">${signalText}</span><span class="explorer-signal-score">${item.score}/100</span></div>
         </div>`;

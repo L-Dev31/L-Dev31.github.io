@@ -20,7 +20,14 @@ export function getYahooSymbol(stock) {
 }
 
 async function yahooFetch(url, signal) {
-    const r = await fetch(`${PROXY}${url}`, { signal });
+    const r = await fetch(`${PROXY}${url}`, { 
+        signal,
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Origin': 'https://finance.yahoo.com',
+            'Referer': 'https://finance.yahoo.com/'
+        }
+    });
     if (r.status === 429) {
         globalRateLimiter.setRateLimitForApi('yahoo', 60000);
         return { error: true, errorCode: 429, throttled: true };
@@ -34,7 +41,7 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
     return globalRateLimiter.executeIfNotLimited(async () => {
         try {
             const cfg = PERIODS[period] || PERIODS['1D'];
-            const j = await yahooFetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?interval=${cfg.interval}&range=${cfg.range}`, signal);
+            const j = await yahooFetch(`https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?interval=${cfg.interval}&range=${cfg.range}`, signal);
             if (j.error) return { source: 'yahoo', ...j };
             
             const res = j.chart?.result?.[0];
@@ -89,7 +96,14 @@ export async function fetchYahooDividends(ticker, from, to, signal) {
     try {
         const p1 = Math.floor(new Date(from || '2000-01-01').getTime() / 1000);
         const p2 = Math.floor(new Date(to || new Date().toISOString().slice(0, 10)).getTime() / 1000);
-        const r = await fetch(`${PROXY}?https://query1.finance.yahoo.com/v7/finance/download/${encodeURIComponent(ticker)}?period1=${p1}&period2=${p2}&interval=1d&events=div`, { signal });
+        const r = await fetch(`${PROXY}?https://query2.finance.yahoo.com/v7/finance/download/${encodeURIComponent(ticker)}?period1=${p1}&period2=${p2}&interval=1d&events=div`, { 
+            signal,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Origin': 'https://finance.yahoo.com',
+                'Referer': 'https://finance.yahoo.com/'
+            }
+        });
         if (!r.ok) return { error: true, errorCode: r.status };
         const text = await r.text();
         const items = text.trim().split('\n').slice(1).map(l => {
@@ -118,7 +132,7 @@ export async function fetchYahooAnalysis(ticker, signal) {
 
 export async function fetchYahooNews(ticker, limit = 10, signal) {
     try {
-        const j = await yahooFetch(`https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(ticker)}&newsCount=${limit}`, signal);
+        const j = await yahooFetch(`https://query2.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(ticker)}&newsCount=${limit}`, signal);
         if (j.error) return { source: 'yahoo', items: [], ...j };
         const items = (j?.news || []).slice(0, limit).map(i => ({
             id: i.uuid || i.link,

@@ -216,7 +216,7 @@
 }
 
 .tab.suspended .tab-name {
-    text-decoration: line-through;
+    text-decoration: none;
     color: #6b7280 !important;
 }
 

@@ -1184,9 +1184,15 @@ async function checkSuspendedTickers() {
                 
                 // Utiliser le symbole Yahoo
                 const yahooSymbol = pos.api_mapping?.yahoo || pos.ticker || symbol;
-                const url = `${YAHOO_PROXY}https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?range=1d&interval=1m`;
+                const url = `${YAHOO_PROXY}https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?range=1d&interval=1m`;
                 
-                const r = await fetch(url);
+                const r = await fetch(url, {
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'Origin': 'https://finance.yahoo.com',
+                        'Referer': 'https://finance.yahoo.com/'
+                    }
+                });
                 if (!r.ok) {
                     if (r.status === 404) {
                         markTabAsSuspended(symbol);

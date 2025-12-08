@@ -206,6 +206,34 @@ function calculateBotSignal(data, options = {}) {
     const momVal = calculateMomentum(prices, 10);
     const atrVal = calculateATR(highs, lows, prices, 14);
 
+    // 3b. Analyse du Risque (Shitcoin Detector - Échelle 1 à 10)
+    const volatilityPct = (atrVal / currentPrice) * 100;
+    let riskLevel = '';
+    let riskDesc = '';
+    let riskScore = 1;
+
+    if (currentPrice < 0.001 || volatilityPct > 20) {
+        riskScore = 10; riskLevel = 'Extrême ☠️'; riskDesc = 'Shitcoin / Danger Mortel';
+    } else if (currentPrice < 0.01 || volatilityPct > 15) {
+        riskScore = 9; riskLevel = 'Critique ⚠️'; riskDesc = 'Ultra Spéculatif';
+    } else if (currentPrice < 0.1 || volatilityPct > 10) {
+        riskScore = 8; riskLevel = 'Très Élevé'; riskDesc = 'Penny Stock / Volatil';
+    } else if (volatilityPct > 7) {
+        riskScore = 7; riskLevel = 'Élevé'; riskDesc = 'Forte Volatilité';
+    } else if (volatilityPct > 5) {
+        riskScore = 6; riskLevel = 'Soutenu'; riskDesc = 'Mouvements Brusques';
+    } else if (volatilityPct > 3.5) {
+        riskScore = 5; riskLevel = 'Moyen'; riskDesc = 'Volatilité Standard Crypto';
+    } else if (volatilityPct > 2) {
+        riskScore = 4; riskLevel = 'Modéré'; riskDesc = 'Standard Bourse';
+    } else if (volatilityPct > 1) {
+        riskScore = 3; riskLevel = 'Faible'; riskDesc = 'Stable';
+    } else if (volatilityPct > 0.5) {
+        riskScore = 2; riskLevel = 'Très Faible'; riskDesc = 'Très Stable';
+    } else {
+        riskScore = 1; riskLevel = 'Nul'; riskDesc = 'Quasi-Immobile';
+    }
+
     // 4. Calcul du Score Composite (-1 à 1)
     
     // Score RSI (Inverse: <30 est haussier, >70 est baissier)
@@ -235,6 +263,13 @@ function calculateBotSignal(data, options = {}) {
         momScore * w.momentum
     );
 
+    // Intégration du Risque dans le Score Global
+    // Si le risque est élevé (>4), on pénalise le score
+    if (riskScore > 4) {
+        const penalty = (riskScore - 4) * 0.15; // Pénalité forte pour les shitcoins
+        totalScore -= penalty;
+    }
+
     // Limiter entre -1 et 1
     totalScore = Math.max(-1, Math.min(1, totalScore));
 
@@ -259,10 +294,11 @@ function calculateBotSignal(data, options = {}) {
 
     return {
         symbol: data.symbol,
-        period: options.period, // Ajout de la période
+        period: options.period,
         signalValue: signalValue,
         signalTitle: title,
         signalDesc: desc,
+        risk: { level: riskLevel, desc: riskDesc, score: riskScore, volatility: volatilityPct },
         explanation: {
             rsi: rsiVal,
             macdHistogram: macdVal.hist,
@@ -313,6 +349,8 @@ function updateSignalUI(symbol, result) {
             '3M': 'sur 3 mois',
             '6M': 'sur 6 mois',
             '1Y': 'sur 1 an',
+            '3Y': 'sur 3 ans',
+            '5Y': 'sur 5 ans',
             'YTD': 'depuis le début de l\'année',
             'MAX': 'sur le long terme'
         };
@@ -402,19 +440,31 @@ function updateSignalUI(symbol, result) {
         let horizonDesc = 'Swing Trading (Semaines)';
         const p = result.period;
         
-        if (p === '1D') {
-            horizonLabel = 'Court Terme';
-            horizonDesc = 'Intraday / Scalping';
-        } else if (p === '1W' || p === '1M') {
-            horizonLabel = 'Moyen Terme';
-            horizonDesc = 'Swing Trading (Semaines)';
-        } else if (p === '3M' || p === '6M') {
-            horizonLabel = 'Moyen/Long Terme';
-            horizonDesc = 'Tendance de fond (Mois)';
-        } else { // 1Y, YTD, MAX
-            horizonLabel = 'Long Terme';
-            horizonDesc = 'Investissement (Années)';
+        const horizonMap = {
+            '1D': { label: 'Court Terme', desc: 'Intraday (24h)' },
+            '1W': { label: 'Court Terme', desc: 'Swing (1 Semaine)' },
+            '1M': { label: 'Moyen Terme', desc: 'Swing (1 Mois)' },
+            '3M': { label: 'Moyen Terme', desc: 'Tendance (3 Mois)' },
+            '6M': { label: 'Moyen/Long Terme', desc: 'Tendance (6 Mois)' },
+            '1Y': { label: 'Long Terme', desc: 'Investissement (1 An)' },
+            '3Y': { label: 'Long Terme', desc: 'Investissement (3 Ans)' },
+            '5Y': { label: 'Long Terme', desc: 'Investissement (5 Ans)' },
+            'YTD': { label: 'Année en cours', desc: 'Depuis le 1er Janvier' },
+            'MAX': { label: 'Très Long Terme', desc: 'Historique Complet' }
+        };
+
+        if (horizonMap[p]) {
+            horizonLabel = horizonMap[p].label;
+            horizonDesc = horizonMap[p].desc;
         }
+
+        // Helper pour la couleur du risque (1-10)
+        const getRiskColorClass = (s) => {
+            if (s >= 9) return 'negative'; // Rouge vif (Critique/Extrême)
+            if (s >= 7) return 'negative'; // Rouge (Élevé)
+            if (s >= 4) return 'warning';  // Orange/Jaune (Moyen/Modéré)
+            return 'positive';             // Vert (Faible)
+        };
 
         const html = `
             <div class="transaction-history-container" style="margin: 0;">
@@ -451,6 +501,11 @@ function updateSignalUI(symbol, result) {
                             <td>Horizon</td>
                             <td class="neutral">${horizonLabel}</td>
                             <td>${horizonDesc}</td>
+                        </tr>
+                        <tr>
+                            <td>Risque</td>
+                            <td class="${getRiskColorClass(result.risk.score)}">${result.risk.level} (${result.risk.score}/10)</td>
+                            <td>${result.risk.desc}</td>
                         </tr>
                         <tr>
                             <td>Stop Loss</td>
@@ -496,4 +551,11 @@ export {
     calculateSMA,
     calculateEMA,
     calculateMACD
+};
+
+// Exposition globale pour les scripts non-modules (comme explorer.js)
+window.SignalBot = {
+    calculateBotSignal,
+    updateSignal,
+    updateSignalUI
 };

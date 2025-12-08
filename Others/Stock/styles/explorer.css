@@ -161,24 +161,30 @@
 .card.explorer-card .explorer-item-info {
     flex: 1;
     min-width: 0;
-}
-
-.card.explorer-card .explorer-item-ticker {
-    font-weight: 600;
-    color: var(--text-white);
-    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .card.explorer-card .explorer-item-name {
-    color: var(--explorer-muted);
-    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-white);
+    font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.2;
 }
 
-.card.explorer-card .explorer-item-price {
-    text-align: right;
+.card.explorer-card .explorer-item-ticker {
+    color: var(--explorer-muted);
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+.card.explorer-card .explorer-item.suspended .explorer-item-ticker {
+    text-decoration: none;
 }
 
 .card.explorer-card .explorer-item-current {
