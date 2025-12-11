@@ -3,40 +3,32 @@ import { createTab, createCard, updateSectionDates, setApiStatus, initChart } fr
 import { fetchActiveSymbol } from './general.js'; 
 
 export function calculateStockValues(stock) {
-    let totalInvestment = stock.investment || 0;
-    let totalShares = stock.shares || 0;
     let earliestPurchaseDate = stock.purchaseDate;
-    let costBasis = 0;
-    var lots = [];
-
+    let lots = [];
+    let initialInvestment = stock.investment || 0;
+    
+    // 1. Establish initial lots and cost basis
     if (stock.purchases && stock.purchases.length > 0) {
-        totalInvestment = stock.purchases.reduce((sum, p) => sum + (p.amount || 0), 0);
-        totalShares = stock.purchases.reduce((sum, p) => sum + (p.shares || 0), 0);
         const dates = stock.purchases.map(p => p.date).filter(d => d).sort();
         earliestPurchaseDate = dates.length > 0 ? dates[0] : null;
-        const purchaseLots = stock.purchases.slice().sort((a,b)=> new Date(a.date) - new Date(b.date)).map(p => ({
+        lots = stock.purchases.slice().sort((a,b)=> new Date(a.date) - new Date(b.date)).map(p => ({
             shares: p.shares || 0,
             amount: Math.abs(p.amount || 0),
             perShare: ((Math.abs(p.amount || 0)) / (p.shares || 1))
         }));
-        costBasis = purchaseLots.reduce((sum, l) => sum + l.amount, 0);
-        lots = purchaseLots;
-    } else {
-        // If no purchase history, the cost basis is the initial investment for the initial shares.
-        costBasis = Math.abs(totalInvestment);
-        if (totalShares > 0) {
-            lots.push({ shares: totalShares, amount: costBasis, perShare: costBasis / totalShares });
-        }
+    } else if (stock.shares > 0) {
+        const initialCost = Math.abs(initialInvestment);
+        lots.push({ shares: stock.shares || 0, amount: initialCost, perShare: initialCost / (stock.shares || 1) });
     }
 
+    let costBasis = lots.reduce((sum, l) => sum + l.amount, 0);
+
+    // 2. Process sales
     if (stock.sales && stock.sales.length > 0) {
-        totalInvestment += stock.sales.reduce((sum, s) => sum + (s.amount || 0), 0);
-        totalShares -= stock.sales.reduce((sum, s) => sum + (s.shares || 0), 0);
         const salesSorted = stock.sales.slice().sort((a,b)=> new Date(a.date) - new Date(b.date));
-        let remainingToRemove = 0;
         salesSorted.forEach(s => {
-            remainingToRemove = s.shares || 0;
-            while (remainingToRemove > 0 && lots && lots.length > 0) {
+            let remainingToRemove = s.shares || 0;
+            while (remainingToRemove > 0 && lots.length > 0) {
                 const lot = lots[0];
                 if (lot.shares <= remainingToRemove) {
                     remainingToRemove -= lot.shares;
@@ -54,14 +46,27 @@ export function calculateStockValues(stock) {
         });
     }
 
+    // 3. Calculate final totals from remaining lots and transactions
+    const totalShares = lots.reduce((sum, l) => sum + l.shares, 0);
+    
+    let totalInvestment = 0;
+    if (stock.purchases && stock.purchases.length > 0) {
+        totalInvestment += stock.purchases.reduce((sum, p) => sum + (p.amount || 0), 0);
+    } else {
+        totalInvestment += initialInvestment;
+    }
+    if (stock.sales && stock.sales.length > 0) {
+        totalInvestment += stock.sales.reduce((sum, s) => sum + (s.amount || 0), 0);
+    }
+    
     const displayInvestment = totalShares > 0 ? totalInvestment : 0;
-
+    
     return {
         investment: displayInvestment,
         shares: totalShares,
         costBasis: Math.max(0, costBasis),
         purchaseDate: earliestPurchaseDate,
-        realizedPL: totalShares === 0 ? totalInvestment : 0
+        realizedPL: totalShares === 0 ? totalInvestment : 0 
     };
 }
 
