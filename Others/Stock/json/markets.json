@@ -1,0 +1,150 @@
+[
+    {
+        "id": "nasdaq",
+        "name": "NASDAQ",
+        "logo": "market/nasdaq.svg",
+        "type": "screener",
+        "tvRegion": "america",
+        "tvExchange": "NASDAQ",
+        "screeners": ["day_gainers", "day_losers", "most_actives", "undervalued_growth_stocks", "growth_technology_stocks", "undervalued_large_caps", "aggressive_small_caps", "small_cap_gainers"],
+        "filterMarket": "nasdaq",
+        "exchanges": ["NMS", "NGS", "NCM", "NASDAQ"]
+    },
+    {
+        "id": "nyse",
+        "name": "NYSE",
+        "logo": "market/nyse.svg",
+        "type": "screener",
+        "tvRegion": "america",
+        "tvExchange": "NYSE",
+        "screeners": ["day_gainers", "day_losers", "most_actives", "undervalued_growth_stocks", "growth_technology_stocks", "undervalued_large_caps", "aggressive_small_caps", "small_cap_gainers"],
+        "filterMarket": "nyse",
+        "exchanges": ["NYQ", "NYSE", "NYS", "PCX", "ASE"]
+    },
+    {
+        "id": "sse",
+        "name": "Shanghai Stock Exchange",
+        "logo": "market/sse.png",
+        "type": "list",
+        "tvRegion": "china",
+        "tvExchange": "SSE",
+        "exchanges": ["SHH", "SS"]
+    },
+    {
+        "id": "tse",
+        "name": "Tokyo Stock Exchange",
+        "logo": "market/tse.svg",
+        "type": "list",
+        "tvRegion": "japan",
+        "tvExchange": "TSE",
+        "exchanges": ["JPX", "TOK", "T"]
+    },
+    {
+        "id": "hkex",
+        "name": "Hong Kong Stock Exchange",
+        "logo": "market/hkex.svg",
+        "type": "list",
+        "tvRegion": "hongkong",
+        "tvExchange": "HKEX",
+        "exchanges": ["HKG", "HK"]
+    },
+    {
+        "id": "euronext",
+        "name": "Euronext",
+        "logo": "market/euronext.svg",
+        "type": "list",
+        "tvRegion": "france",
+        "tvExchange": "EURONEXT",
+        "exchanges": ["PAR", "EPA", "AMS", "BRU", "LIS"]
+    },
+    {
+        "id": "nse",
+        "name": "National Stock Exchange of India",
+        "logo": "market/nse.svg",
+        "type": "list",
+        "tvRegion": "india",
+        "tvExchange": "NSE",
+        "exchanges": ["NSI", "NS"]
+    },
+    {
+        "id": "bse",
+        "name": "Bombay Stock Exchange",
+        "logo": "market/bse.svg",
+        "type": "list",
+        "tvRegion": "india",
+        "tvExchange": "BSE",
+        "exchanges": ["BSE", "BO"]
+    },
+    {
+        "id": "szse",
+        "name": "Shenzhen Stock Exchange",
+        "logo": "market/szse.svg",
+        "type": "list",
+        "tvRegion": "china",
+        "tvExchange": "SZSE",
+        "exchanges": ["SHZ", "SZ"]
+    },
+    {
+        "id": "tsx",
+        "name": "Toronto Stock Exchange",
+        "logo": "market/tsx.svg",
+        "type": "list",
+        "tvRegion": "canada",
+        "tvExchange": "TSX",
+        "exchanges": ["TOR", "TO", "CNQ"]
+    },
+    {
+        "id": "lse",
+        "name": "London Stock Exchange",
+        "logo": "market/lse.svg",
+        "type": "list",
+        "tvRegion": "uk",
+        "tvExchange": "LSE",
+        "exchanges": ["LSE", "LON", "L"]
+    },
+    {
+        "id": "xetra",
+        "name": "Deutsche Börse",
+        "logo": "market/xetra.svg",
+        "type": "list",
+        "tvRegion": "germany",
+        "tvExchange": "XETR",
+        "exchanges": ["GER", "FRA", "BER", "MUN", "STU", "HAM", "HAN", "DUS", "XETRA", "DE"]
+    },
+    {
+        "id": "six",
+        "name": "SIX Swiss Exchange",
+        "logo": "market/six.svg",
+        "type": "list",
+        "tvRegion": "switzerland",
+        "tvExchange": "SIX",
+        "exchanges": ["SWI", "SW"]
+    },
+    {
+        "id": "asx",
+        "name": "Australian Securities Exchange",
+        "logo": "market/asx.png",
+        "type": "list",
+        "tvRegion": "australia",
+        "tvExchange": "ASX",
+        "exchanges": ["ASX", "AX"]
+    },
+    {
+        "id": "krx",
+        "name": "Korea Exchange",
+        "logo": "market/krx.svg",
+        "type": "list",
+        "tvRegion": "korea",
+        "tvExchange": "KRX",
+        "exchanges": ["KSC", "KOE", "KS", "KQ"]
+    },
+    {
+        "id": "crypto",
+        "name": "Crypto",
+        "logo": "market/crypto.png",
+        "type": "screener",
+        "screeners": ["all_cryptocurrencies_us"],
+        "filterMarket": "crypto",
+        "exchanges": ["CCC", "CCY"]
+    }
+]

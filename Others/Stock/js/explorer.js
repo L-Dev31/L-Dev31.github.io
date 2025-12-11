@@ -1,4 +1,5 @@
-(function() {
+// Removed IIFE wrapper
+{
     'use strict';
 
     const YAHOO_PROXY = 'https://corsproxy.io/?';
@@ -27,32 +28,112 @@
     };
 
     const YAHOO_SCREENERS = ['day_gainers', 'day_losers', 'most_actives', 'undervalued_growth_stocks', 'growth_technology_stocks', 'undervalued_large_caps', 'aggressive_small_caps', 'small_cap_gainers'];
-    const EURONEXT_CAC40 = ['MC.PA', 'OR.PA', 'RMS.PA', 'TTE.PA', 'SAN.PA', 'AI.PA', 'AIR.PA', 'SU.PA', 'BNP.PA', 'CS.PA', 'DG.PA', 'SAF.PA', 'RI.PA', 'CAP.PA', 'BN.PA', 'DSY.PA', 'ENGI.PA', 'VIE.PA', 'SGO.PA', 'ACA.PA', 'LR.PA', 'PUB.PA', 'STMPA.PA', 'ORA.PA', 'GLE.PA', 'ML.PA', 'VIV.PA', 'EN.PA', 'WLN.PA', 'TEP.PA', 'URW.PA', 'HO.PA', 'MT.PA', 'ALO.PA', 'ERA.PA'];
-    const EURONEXT_PME = ['ALUNT.PA', 'AL2SI.PA', 'ALCAR.PA', 'ALNEV.PA', 'ALTHE.PA', 'ALMII.PA', 'ALDRV.PA', 'ALMDG.PA', 'ALMOU.PA', 'ALGBE.PA', 'ALNXT.PA', 'ALVU.PA', 'ALSEN.PA', 'ALVDM.PA', 'ALTXC.PA', 'ALDBL.PA'];
+
+    const MARKET_CONFIG = {
+        australia: { suffix: '.AX', country: 'AU' },
+        uk: { suffix: '.L', country: 'GB' },
+        germany: { suffix: '.DE', country: 'DE' },
+        france: { suffix: '.PA', country: 'FR' },
+        switzerland: { suffix: '.SW', country: 'CH' },
+        japan: { suffix: '.T', country: 'JP' },
+        canada: { suffix: '.TO', country: 'CA', transform: t => t.replace('.', '-').toUpperCase() },
+        india: { country: 'IN', resolve: (t, e) => e === 'BSE' ? `${t}.BO` : `${t}.NS` },
+        china: { country: 'CN', resolve: (t, e) => e === 'SZSE' ? `${t}.SZ` : `${t}.SS` },
+        hongkong: { country: 'HK', resolve: t => `${t.padStart(4, '0')}.HK` },
+        korea: { country: 'KR', resolve: (t, e) => e === 'KOSDAQ' ? `${t}.KQ` : `${t}.KS` },
+        // Market ID mappings
+        euronext: { country: 'FR' }, lse: { country: 'GB' }, xetra: { country: 'DE' },
+        asx: { country: 'AU' }, tsx: { country: 'CA' }, six: { country: 'CH' },
+        tse: { country: 'JP' }, hkex: { country: 'HK' }, sse: { country: 'CN' },
+        szse: { country: 'CN' }, nse: { country: 'IN' }, bse: { country: 'IN' }, krx: { country: 'KR' }
+    };
 
     let stockIconMap = {};
     let yahooToJsonSymbol = {};
+    let cryptoSymbols = new Set();
+
+    let marketsData = [];
+
+    async function loadMarkets() {
+        try {
+            const r = await fetch('json/markets.json');
+            if (r.ok) {
+                marketsData = await r.json();
+                renderMarketSelect();
+            }
+        } catch (e) { console.error('Failed to load markets', e); }
+    }
+
+    function renderMarketSelect() {
+        const select = document.getElementById('explorer-market');
+        if (!select) return;
+        select.innerHTML = '<option value="">Sélectionner...</option>';
+        marketsData.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m.id;
+            opt.textContent = m.name;
+            select.appendChild(opt);
+        });
+
+        // Initialize visibility
+        const eligibilitySelect = document.getElementById('explorer-eligibility');
+        if (eligibilitySelect && eligibilitySelect.parentElement) {
+            eligibilitySelect.parentElement.style.display = 'none';
+        }
+    }
+
+    function selectMarket(marketId) {
+        const select = document.getElementById('explorer-market');
+        if (select) {
+            select.value = marketId;
+            
+            const eligibilitySelect = document.getElementById('explorer-eligibility');
+            if (eligibilitySelect && eligibilitySelect.parentElement) {
+                const marketDef = marketsData.find(m => m.id === marketId);
+                const hasLists = marketDef && marketDef.type === 'list' && marketDef.lists && Object.keys(marketDef.lists).length > 0;
+                
+                if (hasLists) {
+                    // Dynamic population from JSON
+                    eligibilitySelect.innerHTML = '<option value="">Tous</option>';
+                    Object.keys(marketDef.lists).forEach(listKey => {
+                        const opt = document.createElement('option');
+                        opt.value = listKey;
+                        // Simple capitalization for label
+                        opt.textContent = listKey.charAt(0).toUpperCase() + listKey.slice(1); 
+                        eligibilitySelect.appendChild(opt);
+                    });
+                    eligibilitySelect.parentElement.style.display = 'flex';
+                } else {
+                    eligibilitySelect.parentElement.style.display = 'none';
+                    eligibilitySelect.value = '';
+                }
+            }
+
+            loadData();
+        }
+    }
 
     async function init() {
+        await loadMarkets();
         await loadStockMappings();
         bindEvents();
     }
 
     async function loadStockMappings() {
-        for (const file of ['stock/equity.json', 'stock/crypto.json', 'stock/commodity.json']) {
-            try {
-                const r = await fetch(file);
-                if (!r.ok) continue;
-                const stocks = await r.json();
-                stocks.forEach(s => {
-                    if (s.ticker) stockIconMap[s.ticker] = s.symbol;
-                    if (s.symbol) stockIconMap[s.symbol] = s.symbol;
-                    if (s.api_mapping?.yahoo) yahooToJsonSymbol[s.api_mapping.yahoo] = s.symbol;
-                    if (s.ticker) yahooToJsonSymbol[s.ticker] = s.symbol;
-                    if (s.symbol) yahooToJsonSymbol[s.symbol] = s.symbol;
-                });
-            } catch (e) {}
-        }
+        const files = ['stock/equity.json', 'stock/crypto.json', 'stock/commodity.json'];
+        const results = await Promise.allSettled(files.map(f => fetch(f).then(r => r.json())));
+        
+        results.forEach((res, i) => {
+            if (res.status !== 'fulfilled') return;
+            const isCrypto = files[i].includes('crypto');
+            res.value.forEach(s => {
+                const sym = s.symbol;
+                if (s.ticker) { stockIconMap[s.ticker] = sym; yahooToJsonSymbol[s.ticker] = sym; }
+                if (sym) { stockIconMap[sym] = sym; yahooToJsonSymbol[sym] = sym; }
+                if (s.api_mapping?.yahoo) yahooToJsonSymbol[s.api_mapping.yahoo] = sym;
+                if (isCrypto && sym) cryptoSymbols.add(sym);
+            });
+        });
     }
 
     function getJsonSymbol(sym) {
@@ -64,7 +145,16 @@
     function getIconSymbol(sym) {
         if (stockIconMap[sym]) return stockIconMap[sym];
         const base = sym.split('.')[0].split('-')[0];
-        return stockIconMap[base] || null;
+        const mapped = stockIconMap[base];
+        
+        if (mapped) {
+            // Prevent regional stocks (with dot suffix) from matching crypto symbols (e.g. SOL.AX -> SOL)
+            if (sym.includes('.') && cryptoSymbols.has(mapped)) {
+                return null;
+            }
+            return mapped;
+        }
+        return null;
     }
 
     async function fetchScreener(scrIds, offset = 0, count = SCREENER_BATCH_SIZE) {
@@ -101,10 +191,10 @@
         return allQuotes;
     }
 
-    async function fetchMultipleScreeners() {
+    async function fetchMultipleScreeners(screenerIds = YAHOO_SCREENERS) {
         const allQuotes = [];
         const seen = new Set();
-        for (const scrId of YAHOO_SCREENERS) {
+        for (const scrId of screenerIds) {
             showLoadingProgress(allQuotes.length, `${scrId}...`);
             try {
                 const quotes = await fetchAllScreenerResults(scrId);
@@ -130,13 +220,24 @@
         const symbol = q.symbol || '';
 
         let market = 'other';
-        if (['NMS', 'NGS', 'NCM', 'NASDAQ'].includes(exchange)) market = 'nasdaq';
-        else if (['NYQ', 'NYSE', 'NYS', 'PCX', 'ASE'].includes(exchange)) market = 'nyse';
-        else if (exchange === 'PAR' || exchange === 'EPA' || symbol.endsWith('.PA')) market = 'euronext';
-        else if (exchange === 'CCC' || q.quoteType === 'CRYPTOCURRENCY') market = 'crypto';
-        else if (fullExchange.includes('nasdaq')) market = 'nasdaq';
-        else if (fullExchange.includes('nyse') || fullExchange.includes('new york')) market = 'nyse';
-        else if (fullExchange.includes('paris') || fullExchange.includes('euronext')) market = 'euronext';
+        
+        // Dynamic market detection from marketsData
+        const foundMarket = marketsData.find(m => 
+            (m.exchanges && m.exchanges.includes(exchange))
+        );
+
+        if (foundMarket) {
+            market = foundMarket.id;
+        } else {
+            // Fallbacks
+            if (['NMS', 'NGS', 'NCM', 'NASDAQ'].includes(exchange)) market = 'nasdaq';
+            else if (['NYQ', 'NYSE', 'NYS', 'PCX', 'ASE'].includes(exchange)) market = 'nyse';
+            else if (exchange === 'PAR' || exchange === 'EPA' || symbol.endsWith('.PA')) market = 'euronext';
+            else if (exchange === 'CCC' || q.quoteType === 'CRYPTOCURRENCY') market = 'crypto';
+            else if (fullExchange.includes('nasdaq')) market = 'nasdaq';
+            else if (fullExchange.includes('nyse') || fullExchange.includes('new york')) market = 'nyse';
+            else if (fullExchange.includes('paris') || fullExchange.includes('euronext')) market = 'euronext';
+        }
 
         const yahooSector = (q.sector || q.industry || '').toLowerCase();
         let sector = 'other';
@@ -169,72 +270,78 @@
         };
     }
 
-    async function fetchEuronextStock(symbol) {
-        try {
-            const r = await fetch(`${YAHOO_PROXY}https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=1m`, {
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                    'Origin': 'https://finance.yahoo.com',
-                    'Referer': 'https://finance.yahoo.com/'
-                }
-            });
-            if (!r.ok) return null;
-            const data = await r.json();
-            const result = data.chart?.result?.[0];
-            if (!result) return null;
+    async function fetchStockDetails(symbol, marketId = 'euronext', defaultEligibility = 'cto') {
+        const fetchOne = async (sym) => {
+            try {
+                const r = await fetch(`${YAHOO_PROXY}https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?range=1d&interval=1m`, {
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'Origin': 'https://finance.yahoo.com',
+                        'Referer': 'https://finance.yahoo.com/'
+                    }
+                });
+                if (!r.ok) return null;
+                const data = await r.json();
+                const result = data.chart?.result?.[0];
+                if (!result) return null;
 
-            const meta = result.meta || {};
-            const closes = result.indicators?.quote?.[0]?.close || [];
-            const volumes = result.indicators?.quote?.[0]?.volume || [];
+                const meta = result.meta || {};
+                const closes = result.indicators?.quote?.[0]?.close || [];
+                const volumes = result.indicators?.quote?.[0]?.volume || [];
 
-            let price = meta.regularMarketPrice || 0;
-            if (!price) for (let i = closes.length - 1; i >= 0; i--) if (closes[i] !== null) { price = closes[i]; break; }
+                let price = meta.regularMarketPrice || 0;
+                if (!price) for (let i = closes.length - 1; i >= 0; i--) if (closes[i] !== null) { price = closes[i]; break; }
 
-            const prevClose = meta.chartPreviousClose || meta.previousClose || 0;
-            const change = prevClose ? price - prevClose : 0;
-            const changePercent = prevClose ? ((price - prevClose) / prevClose) * 100 : 0;
+                const prevClose = meta.chartPreviousClose || meta.previousClose || 0;
+                const change = prevClose ? price - prevClose : 0;
+                const changePercent = prevClose ? ((price - prevClose) / prevClose) * 100 : 0;
 
-            let totalVolume = volumes.reduce((a, v) => a + (v || 0), 0);
-            const volume = meta.regularMarketVolume || totalVolume;
+                let totalVolume = volumes.reduce((a, v) => a + (v || 0), 0);
+                const volume = meta.regularMarketVolume || totalVolume;
 
-            const tradeable = meta.tradeable !== false;
-            const regularMarketTime = meta.regularMarketTime || 0;
-            const now = Math.floor(Date.now() / 1000);
-            const daysSinceLastTrade = regularMarketTime > 0 ? (now - regularMarketTime) / 86400 : 999;
+                const tradeable = meta.tradeable !== false;
+                const regularMarketTime = meta.regularMarketTime || 0;
+                const now = Math.floor(Date.now() / 1000);
+                const daysSinceLastTrade = regularMarketTime > 0 ? (now - regularMarketTime) / 86400 : 999;
 
-            const validCloses = closes.filter(c => c !== null);
-            const noActivity = volume === 0 && Math.abs(changePercent) < 0.001;
-            const isSuspended = !tradeable || validCloses.length === 0 || (noActivity && daysSinceLastTrade > 3) || daysSinceLastTrade > 7;
+                const validCloses = closes.filter(c => c !== null);
+                const noActivity = volume === 0 && Math.abs(changePercent) < 0.001;
+                const isSuspended = !tradeable || validCloses.length === 0 || (noActivity && daysSinceLastTrade > 3) || daysSinceLastTrade > 7;
 
-            let score = Math.max(0, Math.min(100, 50 + changePercent * 3 + Math.min(volume / 50000000, 15)));
-            let signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
+                let score = Math.max(0, Math.min(100, 50 + changePercent * 3 + Math.min(volume / 50000000, 15)));
+                let signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
 
-            return {
-                symbol, name: meta.shortName || meta.longName || symbol.replace('.PA', ''),
-                price, change, changePercent, volume,
-                market: 'euronext', sector: 'other', eligibility: 'pea',
-                currency: meta.currency || 'EUR', marketCap: 0, industry: '',
-                isClosed: isSuspended, isSuspended,
-                daysSinceLastTrade: Math.round(daysSinceLastTrade),
-                score: Math.round(score), signal
-            };
-        } catch (e) {
-            return null;
+                return {
+                    symbol: sym, name: meta.shortName || meta.longName || sym.replace(/\.[A-Z]+$/, ''),
+                    price, change, changePercent, volume,
+                    market: marketId, sector: 'other', eligibility: defaultEligibility,
+                    currency: meta.currency || 'USD', marketCap: 0, industry: '',
+                    isClosed: isSuspended, isSuspended,
+                    daysSinceLastTrade: Math.round(daysSinceLastTrade),
+                    score: Math.round(score), signal
+                };
+            } catch (e) { return null; }
+        };
+
+        let data = await fetchOne(symbol);
+        // Fallback: if failed and symbol has a suffix, try raw symbol
+        if (!data && symbol.includes('.')) {
+            data = await fetchOne(symbol.split('.')[0]);
         }
+        return data;
     }
 
-    async function fetchEuronextStocks(symbols, defaultEligibility = 'pea') {
+    async function fetchStocksBatch(symbols, defaultEligibility = 'pea', marketId = 'euronext') {
         const items = [];
         let completed = 0;
-        showLoadingProgress(0, `Euronext (${symbols.length})...`);
+        showLoadingProgress(0, `Loading (${symbols.length})...`);
 
         const batchSize = 10;
         for (let i = 0; i < symbols.length; i += batchSize) {
             const batch = symbols.slice(i, i + batchSize);
-            const results = await Promise.allSettled(batch.map(s => fetchEuronextStock(s)));
+            const results = await Promise.allSettled(batch.map(s => fetchStockDetails(s, marketId, defaultEligibility)));
             results.forEach((r, idx) => {
                 if (r.status === 'fulfilled' && r.value) {
-                    r.value.eligibility = EURONEXT_PME.includes(batch[idx]) ? 'pea-pme' : 'pea';
                     items.push(r.value);
                 }
             });
@@ -332,16 +439,82 @@
         return changes;
     }
 
+    async function fetchTradingViewStocks(region, exchangeFilter) {
+        try {
+            const r = await fetch(`${YAHOO_PROXY}https://scanner.tradingview.com/${region}/scan`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    filter: [{ left: "type", operation: "in_range", right: ["stock", "dr", "fund"] }],
+                    options: { lang: "en" },
+                    columns: ["name", "exchange", "description"],
+                    sort: { sortBy: "market_cap_basic", sortOrder: "desc" },
+                    range: [0, 40]
+                })
+            });
+            if (!r.ok) return [];
+            const data = await r.json();
+            
+            return data.data.map(d => {
+                const [exch, ticker] = d.s.split(':');
+                if (exchangeFilter && exch !== exchangeFilter && !exchangeFilter.includes(exch)) return null;
+
+                const config = MARKET_CONFIG[region];
+                if (!config) return ticker;
+
+                if (config.resolve) return config.resolve(ticker, exch);
+                if (config.transform) return config.transform(ticker) + (config.suffix || '');
+                return ticker + (config.suffix || '');
+            }).filter(s => s);
+        } catch (e) { return []; }
+    }
+
     async function loadData() {
         if (isLoading) return;
 
         const search = document.getElementById('explorer-search')?.value.trim().toLowerCase() || '';
         const sort = document.getElementById('explorer-sort')?.value || 'trending';
-        const market = document.getElementById('explorer-market')?.value || 'nasdaq';
+        const market = document.getElementById('explorer-market')?.value || '';
         const sector = document.getElementById('explorer-sector')?.value || '';
         const eligibility = document.getElementById('explorer-eligibility')?.value || '';
         const period = document.getElementById('explorer-period')?.value || '1D';
         currentPeriod = period;
+
+        if (!market) {
+            const list = document.getElementById('explorer-list');
+            const pagination = document.getElementById('explorer-pagination');
+            if (pagination) pagination.style.display = 'none';
+            
+            if (list) {
+                list.innerHTML = '';
+                const emptyState = document.createElement('div');
+                emptyState.className = 'explorer-market-grid';
+                
+                marketsData.forEach(m => {
+                    const btn = document.createElement('button');
+                    btn.className = 'market-grid-btn';
+                    btn.title = m.name;
+                    btn.onclick = () => selectMarket(m.id);
+                    
+                    const img = document.createElement('img');
+                    img.src = m.logo;
+                    img.alt = m.name;
+                    img.onerror = function() {
+                        this.style.display = 'none';
+                        const fallback = document.createElement('div');
+                        fallback.className = 'market-fallback-name';
+                        fallback.textContent = m.name;
+                        this.parentElement.appendChild(fallback);
+                    };
+                    
+                    btn.appendChild(img);
+                    emptyState.appendChild(btn);
+                });
+                
+                list.appendChild(emptyState);
+            }
+            return;
+        }
 
         const currentParams = JSON.stringify({ market, sector, eligibility, period, search });
         let items = [];
@@ -353,19 +526,64 @@
             showLoading(true);
 
             try {
-                if (eligibility === 'pea-pme') {
-                    items = await fetchEuronextStocks(EURONEXT_PME, 'pea-pme');
-                } else if (eligibility === 'pea') {
-                    items = await fetchEuronextStocks([...EURONEXT_CAC40, ...EURONEXT_PME], 'pea');
-                } else if (market === 'euronext') {
-                    items = await fetchEuronextStocks([...EURONEXT_CAC40, ...EURONEXT_PME], 'pea');
-                } else if (market === 'crypto') {
-                    items = (await fetchAllScreenerResults('all_cryptocurrencies_us')).map(mapQuoteToItem);
-                } else if (market === 'nasdaq') {
-                    items = (await fetchMultipleScreeners()).map(mapQuoteToItem).filter(i => i.market === 'nasdaq');
-            } else if (market === 'nyse') {
-                items = (await fetchMultipleScreeners()).map(mapQuoteToItem).filter(i => i.market === 'nyse');
-            }
+                const marketDef = marketsData.find(m => m.id === market);
+                
+                if (marketDef) {
+                    if (marketDef.tvRegion) {
+                        // TradingView Dynamic Fetch
+                        showLoadingProgress(0, `Fetching from TradingView (${marketDef.tvRegion})...`);
+                        const tvSymbols = await fetchTradingViewStocks(marketDef.tvRegion, marketDef.tvExchange);
+                        
+                        if (tvSymbols.length > 0) {
+                            items = await fetchStocksBatch(tvSymbols, 'cto', marketDef.id);
+                        } else {
+                            // Fallback to lists if TV fails
+                            if (marketDef.lists) {
+                                const allLists = Object.values(marketDef.lists);
+                                const allSymbols = [].concat(...allLists);
+                                items = await fetchStocksBatch([...new Set(allSymbols)], 'cto', marketDef.id);
+                            }
+                        }
+                    } else if (marketDef.type === 'list' && marketDef.lists) {
+                        let symbolsToFetch = [];
+                        let currentEligibility = 'pea'; // Default
+
+                        // If eligibility is selected and exists in lists, use it
+                        if (eligibility && marketDef.lists[eligibility]) {
+                            symbolsToFetch = marketDef.lists[eligibility];
+                            currentEligibility = eligibility;
+                        } else {
+                            // Otherwise fetch all lists combined
+                            const allLists = Object.values(marketDef.lists);
+                            const allSymbols = [].concat(...allLists);
+                            symbolsToFetch = [...new Set(allSymbols)]; // Unique symbols
+                        }
+
+                        items = await fetchStocksBatch(symbolsToFetch, currentEligibility, marketDef.id);
+                        
+                        // Post-process eligibility if we fetched multiple lists
+                        if (!eligibility && marketDef.lists) {
+                            items.forEach(item => {
+                                // Try to find which list this symbol belongs to
+                                for (const [listName, symbols] of Object.entries(marketDef.lists)) {
+                                    if (symbols.includes(item.symbol)) {
+                                        item.eligibility = listName;
+                                        break;
+                                    }
+                                }
+                            });
+                        }
+
+                    } else {
+                        // Screener type
+                        const screeners = marketDef.screeners || YAHOO_SCREENERS;
+                        items = (await fetchMultipleScreeners(screeners)).map(mapQuoteToItem).filter(i => i.market === market);
+                    }
+                } else {
+                    // Fallback for unknown markets or if marketDef not found (shouldn't happen if select populated from json)
+                    items = []; 
+                }
+
                 const seen = new Set();
                 items = items.filter(i => i.symbol && !seen.has(i.symbol) && seen.add(i.symbol));
 
@@ -487,7 +705,7 @@
     function bindEvents() {
         document.getElementById('open-explorer')?.addEventListener('click', openExplorer);
         document.getElementById('explorer-search')?.addEventListener('input', debounce(() => { currentPage = 1; loadData(); }, 500));
-        document.getElementById('explorer-market')?.addEventListener('change', () => { currentPage = 1; loadData(); });
+        document.getElementById('explorer-market')?.addEventListener('change', (e) => { currentPage = 1; selectMarket(e.target.value); });
         document.getElementById('explorer-sort')?.addEventListener('change', () => { currentPage = 1; loadData(); });
         document.getElementById('explorer-sector')?.addEventListener('change', () => { currentPage = 1; loadData(); });
         document.getElementById('explorer-eligibility')?.addEventListener('change', () => { currentPage = 1; loadData(); });
@@ -541,8 +759,17 @@
         card.id = `card-${symbol}`;
 
         let country = 'US';
-        if (itemData.market === 'euronext' || symbol.endsWith('.PA')) country = 'FR';
-        else if (itemData.currency === 'GBP') country = 'GB';
+        const m = itemData.market;
+        
+        // Try to find country from config based on market ID
+        if (MARKET_CONFIG[m]?.country) country = MARKET_CONFIG[m].country;
+        // Or try to find by suffix
+        else {
+             const suffix = symbol.includes('.') ? '.' + symbol.split('.').pop() : '';
+             const region = Object.values(MARKET_CONFIG).find(c => c.suffix === suffix);
+             if (region) country = region.country;
+             else if (itemData.currency === 'GBP') country = 'GB';
+        }
 
         const iconSymbol = getIconSymbol(symbol);
         const logo = card.querySelector('.logo img');
@@ -758,6 +985,7 @@
 
     function render() {
         const list = document.getElementById('explorer-list');
+        const pagination = document.getElementById('explorer-pagination');
         if (!list) return;
 
         const totalPages = Math.ceil(totalResults / ITEMS_PER_PAGE) || 1;
@@ -766,9 +994,11 @@
 
         if (!pageData.length) {
             list.innerHTML = '<div class="explorer-empty"><i class="fa-solid fa-chart-line" style="font-size:2rem;margin-bottom:10px;opacity:0.3"></i><br>Aucun résultat trouvé</div>';
+            if (pagination) pagination.style.display = 'none';
         } else {
             list.innerHTML = pageData.map(renderItem).join('');
             loadItemIcons();
+            if (pagination) pagination.style.display = 'flex';
         }
 
         document.getElementById('explorer-page-info').textContent = `Page ${currentPage} / ${totalPages}`;
@@ -835,4 +1065,4 @@
     else init();
 
     window.explorerModule = { openExplorer, loadData };
-})();
+}

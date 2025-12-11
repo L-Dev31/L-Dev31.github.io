@@ -99,6 +99,7 @@
                     <div class="explorer-header">
                         <h3 class="section-title"><i class="fa-solid fa-magnifying-glass-chart"></i> Explorer les marchés</h3>
                         <div class="section-date">Découvrez les opportunités</div>
+                        
                         <div class="explorer-filters">
                             <div class="explorer-filters-row">
                                 <div class="explorer-filter-group">
@@ -108,10 +109,7 @@
                                 <div class="explorer-filter-group">
                                     <label class="explorer-label">Marché</label>
                                     <select id="explorer-market" class="explorer-select">
-                                        <option value="nasdaq">NASDAQ</option>
-                                        <option value="nyse">NYSE</option>
-                                        <option value="euronext">Euronext</option>
-                                        <option value="crypto">Crypto</option>
+                                        <option value="">Sélectionner...</option>
                                     </select>
                                 </div>
                                 <div class="explorer-filter-group">
@@ -165,7 +163,7 @@
                     <div id="explorer-list" class="explorer-list">
                         <div class="explorer-loading"><i class="fa-solid fa-spinner fa-spin"></i> Chargement...</div>
                     </div>
-                    <div class="explorer-pagination">
+                    <div id="explorer-pagination" class="explorer-pagination" style="display: none;">
                         <button id="explorer-prev" class="explorer-page-btn" disabled><i class="fa-solid fa-chevron-left"></i></button>
                         <span id="explorer-page-info" class="explorer-page-info">Page 1</span>
                         <button id="explorer-next" class="explorer-page-btn"><i class="fa-solid fa-chevron-right"></i></button>
@@ -491,7 +489,7 @@
     <script type="module" src="js/signal-bot.js"></script>
     <script type="module" src="js/news.js"></script>
     <script type="module" src="js/terminal.js"></script>
-    <script src="js/explorer.js"></script>
+    <script type="module" src="js/explorer.js"></script>
     <!-- Command bar for quick symbol commands / NEWS / GO (fullscreen modal) -->
     <!-- Terminal card moved into cards container -->
 
