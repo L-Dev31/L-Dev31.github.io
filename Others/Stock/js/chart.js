@@ -84,12 +84,15 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
 
     if (source !== 'yahoo' && ts.length > 300) {
         const step = Math.ceil(ts.length / 300);
-        ts = ts.filter((_, i) => i % step === 0);
-        p = p.filter((_, i) => i % step === 0);
-        if (opens) opens = opens.filter((_, i) => i % step === 0);
-        if (highs) highs = highs.filter((_, i) => i % step === 0);
-        if (lows) lows = lows.filter((_, i) => i % step === 0);
-        if (closes) closes = closes.filter((_, i) => i % step === 0);
+        const lastIdx = ts.length - 1;
+        const filterFn = (_, i) => i % step === 0 || i === lastIdx;
+        
+        ts = ts.filter(filterFn);
+        p = p.filter(filterFn);
+        if (opens) opens = opens.filter(filterFn);
+        if (highs) highs = highs.filter(filterFn);
+        if (lows) lows = lows.filter(filterFn);
+        if (closes) closes = closes.filter(filterFn);
     }
 
     const period = positions[symbol].currentPeriod || '1D', chartType = positions[symbol].chartType || 'line';
@@ -103,7 +106,33 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
         const neg = getComputedStyle(document.documentElement).getPropertyValue('--color-negative').trim() || '#ef4444';
         const colors = opens.map((o, i) => closes[i] >= o ? pos : neg);
         c.config.type = 'bar';
-        c.data = { labels, datasets: [{ label: 'Mèche', data: lows.map((l, i) => [l, highs[i]]), backgroundColor: '#ffffff', borderColor: '#ffffff', borderWidth: 1, barThickness: 1, grouped: false, order: 2 }, { label: 'Corps', data: opens.map((o, i) => [Math.min(o, closes[i]), Math.max(o, closes[i])]), backgroundColor: colors, borderColor: colors, borderWidth: 0, barPercentage: 1.0, categoryPercentage: 1.0, minBarLength: 2, grouped: false, order: 1 }] };
+        c.data = {
+            labels,
+            datasets: [
+                {
+                    label: 'Mèche',
+                    data: lows.map((l, i) => [l, highs[i]]),
+                    backgroundColor: colors,
+                    borderColor: colors,
+                    borderWidth: 0,
+                    barThickness: 2,
+                    grouped: false,
+                    order: 2
+                },
+                {
+                    label: 'Corps',
+                    data: opens.map((o, i) => [Math.min(o, closes[i]), Math.max(o, closes[i])]),
+                    backgroundColor: colors,
+                    borderColor: colors,
+                    borderWidth: 0,
+                    barPercentage: 0.8,
+                    categoryPercentage: 0.8,
+                    minBarLength: 2,
+                    grouped: false,
+                    order: 1
+                }
+            ]
+        };
         c.options.plugins.tooltip.callbacks.title = ctx => closes[ctx[0].dataIndex].toFixed(2) + ' €';
         c.options.plugins.tooltip.callbacks.label = ctx => { if (ctx.datasetIndex === 0) return null; const i = ctx.dataIndex, d = new Date(ts[i] * 1000); return [d.toLocaleDateString('fr-FR'), d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }), '', `O: ${opens[i].toFixed(2)}`, `H: ${highs[i].toFixed(2)}`, `L: ${lows[i].toFixed(2)}`, `C: ${closes[i].toFixed(2)}`]; };
     } else if (type === 'baseline') {
@@ -153,6 +182,52 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
         c.options.plugins.tooltip.callbacks.title = ctx => ctx[0].parsed.y.toFixed(2) + ' €';
         c.options.plugins.tooltip.callbacks.label = ctx => { const i = ctx.dataIndex, d = new Date(ts[i] * 1000), lines = [d.toLocaleDateString('fr-FR'), d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })]; if (opens && highs && lows && closes) lines.push('', `O: ${opens[i].toFixed(2)}`, `H: ${highs[i].toFixed(2)}`, `L: ${lows[i].toFixed(2)}`, `C: ${closes[i].toFixed(2)}`); return lines; };
     }
+
+    const posColor = getComputedStyle(document.documentElement).getPropertyValue('--color-positive').trim() || '#4caf50';
+    const negColor = getComputedStyle(document.documentElement).getPropertyValue('--color-negative').trim() || '#ef4444';
+
+    c.options.plugins.tooltip.callbacks.footer = ctx => {
+        const calc = positions[symbol].calculated;
+        if (calc && calc.shares > 0) {
+            const i = ctx[0].dataIndex;
+            let price;
+            if (type === 'candle' && closes) {
+                price = closes[i];
+            } else {
+                price = p[i];
+            }
+            
+            const value = calc.shares * price;
+            const pl = value - calc.costBasis;
+            const plPercent = calc.costBasis > 0 ? (pl / calc.costBasis) * 100 : 0;
+            const sign = pl >= 0 ? '+' : '';
+            const avgPrice = calc.costBasis / calc.shares;
+
+            return [
+                '',
+                `P/L: ${sign}${pl.toFixed(2)} € (${sign}${plPercent.toFixed(2)}%)`
+            ];
+        }
+        return [];
+    };
+
+    c.options.plugins.tooltip.footerColor = ctx => {
+        const calc = positions[symbol].calculated;
+        if (calc && calc.shares > 0 && ctx.tooltip.dataPoints.length) {
+             const i = ctx.tooltip.dataPoints[0].dataIndex;
+             let price;
+             if (type === 'candle' && closes) {
+                 price = closes[i];
+             } else {
+                 price = p[i];
+             }
+             const value = calc.shares * price;
+             const pl = value - calc.costBasis;
+             return pl >= 0 ? posColor : negColor;
+        }
+        return '#e8e9f3';
+    };
+    c.options.plugins.tooltip.footerFont = { weight: 'bold' };
 
     c.data.timestamps = ts;
     c.update('none');

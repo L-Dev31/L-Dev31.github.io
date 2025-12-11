@@ -40,7 +40,9 @@ export function createTab(stock, type) {
     
     const pos = positions[stock.symbol];
     const baseName = pos?.name || stock.symbol;
-    tab.querySelector('.tab-name').textContent = baseName;
+    
+    const tabNameEl = tab.querySelector('.tab-name');
+    tabNameEl.textContent = baseName;
     
     const calculated = calculateStockValues(stock);
     tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `(Actions possédées : ${calculated.shares})` : '';
@@ -352,6 +354,7 @@ export function updateUI(symbol, data) {
     } catch (e) { /* ignore UI restore errors */ }
 
     if (data.timestamps && data.prices) {
+        positions[symbol].calculated = calculateStockValues(positions[symbol]);
         updateChart(symbol, data.timestamps, data.prices, positions, data.source, data);
     }
 
@@ -401,20 +404,19 @@ export function updateUI(symbol, data) {
             if (profitPerEl) { profitPerEl.textContent = 'Données obsolètes'; profitPerEl.className = 'outdated'; }
         } else {
             const totalValue = currentPrice * shares;
+            const costBasis = positions[symbol].costBasis || 0;
+
             if (valueEl) {
                 valueEl.textContent = totalValue.toFixed(2) + ' €';
-                const costBasis = Math.abs(positions[symbol].costBasis || positions[symbol].investment || 0);
                 valueEl.className = totalValue >= costBasis ? 'positive' : 'negative';
             }
 
             if (valuePerEl) {
                 valuePerEl.textContent = currentPrice.toFixed(2) + ' €';
-                const costBasis = Math.abs(positions[symbol].costBasis || positions[symbol].investment || 0);
                 const perShareCost = shares ? costBasis / shares : 0;
                 valuePerEl.className = currentPrice >= perShareCost ? 'positive' : 'negative';
             }
 
-            const costBasis = Math.abs(positions[symbol].costBasis || positions[symbol].investment || 0);
             const totalProfit = totalValue - costBasis;
             if (profitEl) {
                 profitEl.textContent = `${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} €`;

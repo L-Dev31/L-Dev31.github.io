@@ -266,8 +266,32 @@
 
 .tab-logo-fallback { font-weight: 800; font-size: 11px; color: #1a1d2e; text-align: center; width: 100%; }
 .tab-logo img { width: 100%; height: 100%; object-fit: contain; }
-.tab-info { display: flex; flex-direction: column; gap: 2px; }
-.tab-name { font-size: 12px; font-weight: 600; color: var(--text-light); }
+.tab-info { display: flex; flex-direction: column; gap: 2px; flex: 1; overflow: hidden; }
+.tab-name { 
+    font-size: 12px; 
+    font-weight: 600; 
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+.tab-name-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+.tab-trend-info {
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    margin-left: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
 .tab-shares { font-size: 9px; color: var(--text-dark); }
 .tab-type-section { 
     margin-bottom: 10px; 

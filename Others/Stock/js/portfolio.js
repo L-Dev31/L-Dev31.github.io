@@ -6,8 +6,9 @@ export function calculateStockValues(stock) {
     let totalInvestment = stock.investment || 0;
     let totalShares = stock.shares || 0;
     let earliestPurchaseDate = stock.purchaseDate;
-    let costBasis = 0; 
-    
+    let costBasis = 0;
+    var lots = [];
+
     if (stock.purchases && stock.purchases.length > 0) {
         totalInvestment = stock.purchases.reduce((sum, p) => sum + (p.amount || 0), 0);
         totalShares = stock.purchases.reduce((sum, p) => sum + (p.shares || 0), 0);
@@ -19,7 +20,13 @@ export function calculateStockValues(stock) {
             perShare: ((Math.abs(p.amount || 0)) / (p.shares || 1))
         }));
         costBasis = purchaseLots.reduce((sum, l) => sum + l.amount, 0);
-        var lots = purchaseLots;
+        lots = purchaseLots;
+    } else {
+        // If no purchase history, the cost basis is the initial investment for the initial shares.
+        costBasis = Math.abs(totalInvestment);
+        if (totalShares > 0) {
+            lots.push({ shares: totalShares, amount: costBasis, perShare: costBasis / totalShares });
+        }
     }
 
     if (stock.sales && stock.sales.length > 0) {
@@ -46,15 +53,15 @@ export function calculateStockValues(stock) {
             }
         });
     }
-    
+
     const displayInvestment = totalShares > 0 ? totalInvestment : 0;
-    
+
     return {
         investment: displayInvestment,
         shares: totalShares,
         costBasis: Math.max(0, costBasis),
         purchaseDate: earliestPurchaseDate,
-        realizedPL: totalShares === 0 ? totalInvestment : 0 
+        realizedPL: totalShares === 0 ? totalInvestment : 0
     };
 }
 
