@@ -163,6 +163,32 @@ select:focus {
     border-color: var(--accent);
 }
 
+/* Floating fullscreen button (desktop only) */
+.floating-btn {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    z-index: 1200;
+    background: #fff;
+    border: 1px solid #e6efe6;
+    color: var(--accent);
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(2,10,6,0.08);
+    cursor: pointer;
+}
+.floating-btn i { font-size: 16px; }
+.floating-btn:hover { background: #f8fff8; box-shadow: 0 8px 26px rgba(2,10,6,0.12); }
+.floating-btn.fullscreen { background: var(--accent); color:#fff; box-shadow: 0 8px 30px rgba(11,107,58,0.18); }
+
+@media (max-width: 1024px) {
+    .floating-btn { display: none !important; }
+}
+
 /* Prevent horizontal overflow and ensure containers can shrink on small screens */
 html, body {
     overflow-x: hidden;

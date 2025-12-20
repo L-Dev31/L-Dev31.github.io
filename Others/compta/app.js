@@ -859,3 +859,46 @@ if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirme
     });
   }
 })();
+
+// Fullscreen toggle setup
+(function setupFullscreen(){
+  const btn = document.getElementById('fullscreenBtn');
+  if(!btn) return;
+  // Hide button if Fullscreen API unsupported
+  if(!document.documentElement.requestFullscreen){ btn.style.display = 'none'; return; }
+
+  function updateIcon(){
+    if(document.fullscreenElement){
+      btn.classList.add('fullscreen');
+      btn.title = 'Quitter le plein écran (F)';
+      btn.innerHTML = '<i class="fa-solid fa-compress" aria-hidden="true"></i>';
+    } else {
+      btn.classList.remove('fullscreen');
+      btn.title = 'Plein écran (F)';
+      btn.innerHTML = '<i class="fa-solid fa-expand" aria-hidden="true"></i>';
+    }
+  }
+
+  btn.addEventListener('click', async function(){
+    try{
+      if(!document.fullscreenElement) await document.documentElement.requestFullscreen();
+      else await document.exitFullscreen();
+    }catch(e){}
+  });
+
+  document.addEventListener('fullscreenchange', updateIcon);
+
+  // Keyboard shortcut: F (when not typing)
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'f' || e.key === 'F'){
+      const active = document.activeElement;
+      if(active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
+      e.preventDefault();
+      if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+      else document.exitFullscreen().catch(()=>{});
+    }
+  });
+
+  // initial icon state
+  updateIcon();
+})();
