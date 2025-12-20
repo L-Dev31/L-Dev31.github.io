@@ -2,6 +2,7 @@ const STORAGE_ROWS = 'compta_rows';
 const STORAGE_LAST = 'compta_last';
 const STORAGE_SORT = 'compta_sort';
 let rows = JSON.parse(localStorage.getItem(STORAGE_ROWS) || '[]');
+try{ rows = (rows||[]).map(r => { if(r && r.client_name) r.client_name = toTitleCase(r.client_name); return r; }); }catch(e){}
 const $ = (s, r = document) => r.querySelector(s);
 function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 function todayIso(){ const d=new Date(); const mm=('0'+(d.getMonth()+1)).slice(-2); const dd=('0'+d.getDate()).slice(-2); return `${d.getFullYear()}-${mm}-${dd}` }
@@ -44,6 +45,7 @@ function invoiceCompare(a,b){
 }
 function formatPrice(n){ return (Number(n||0).toFixed(2)).replace('.',',') + ' €' }
 function initials(name){ if(!name) return '?'; const parts = name.trim().split(/\s+/).filter(Boolean); if(parts.length===0) return '?'; if(parts.length===1) return parts[0].slice(0,2).toUpperCase(); return (parts[0][0]+(parts[1][0]||'')).toUpperCase(); }
+function toTitleCase(s){ if(!s) return ''; return s.toString().trim().split(/\s+/).map(part => part.split('-').map(p => p ? (p[0].toUpperCase() + p.slice(1).toLowerCase()) : '').join('-')).join(' '); }
 function hashString(s){ let h=5381; for(let i=0;i<s.length;i++) h = ((h<<5)+h) + s.charCodeAt(i); return h >>> 0 }
 function nameToPastel(name){ const key=(name||'').toString(); const h=hashString(key||String(Math.random())); const hue=h%360; const sat = 20 + (h%16); const light = 72 + (h%16); return { bg: `hsl(${hue}, ${sat}%, ${light}%)`, light}; }
 function setPfpInitials(el, name){ if(!el) return; const info = nameToPastel(name||''); el.style.backgroundImage=''; el.style.background = info.bg; el.textContent = initials(name||''); const textColor = (info.light && info.light > 70) ? '#072010' : '#ffffff'; el.style.color = textColor; el.style.fontWeight = '700'; }
@@ -54,7 +56,7 @@ function getFormData(){ const select = document.getElementById('service_type'); 
   return {
     invoice_number: invoice,
     invoice_date: invoice_date,
-    client_name: (document.getElementById('client_name')||{value:''}).value.trim(),
+    client_name: toTitleCase((document.getElementById('client_name')||{value:''}).value.trim()),
     client_email: (document.getElementById('client_email')||{value:''}).value.trim(),
     service_type: prestationLabel,
     payment_method: paymentMethodFinal,
@@ -259,7 +261,7 @@ function performImport(imported){
     rows = [];
     try{ localStorage.removeItem(STORAGE_ROWS); sessionStorage.removeItem(STORAGE_ROWS + '_cache'); }catch(e){}
   }
-  imported.forEach(r=>rows.push(r)); try{ ensureRowIds(); }catch(e){}
+  imported.forEach(r=>{ if(r && r.client_name) r.client_name = toTitleCase(r.client_name); rows.push(r); }); try{ ensureRowIds(); }catch(e){}
     saveRows(); updateListPreview(); updatePreview();
     return true;
   }catch(e){ return false; }
