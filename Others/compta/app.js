@@ -153,6 +153,8 @@ function startEdit(id){ try{ const idx = rows.findIndex(r=>r && r._id === id); i
     document.getElementById('invoice_date').value = r.invoice_date || todayIso();
     document.getElementById('client_name').value = r.client_name || '';
     document.getElementById('client_email').value = r.client_email || '';
+    document.getElementById('service_quantity').value = r.quantity || '1';
+
     // payment method: try to match existing option, otherwise set to Autre and fill other field
     const pm = document.getElementById('payment_method'); const pmOther = document.getElementById('payment_method_other'); const pmOtherLabel = document.getElementById('payment_method_other_label'); if(pm){ let found=false; for(let i=0;i<pm.options.length;i++){ if(pm.options[i].value === r.payment_method){ pm.value = pm.options[i].value; found = true; break; } } if(!found){ pm.value = 'Autre'; if(pmOther) pmOther.style.display = ''; if(pmOtherLabel) pmOtherLabel.style.display = ''; pmOther.value = r.payment_method || ''; } else { if(pmOther) pmOther.style.display = 'none'; if(pmOtherLabel) pmOtherLabel.style.display = 'none'; pmOther.value = ''; } }
     document.getElementById('payment_note').value = r.payment_note || '';
@@ -163,16 +165,45 @@ function startEdit(id){ try{ const idx = rows.findIndex(r=>r && r._id === id); i
     const addBtn = document.getElementById('addBtn'); if(addBtn) addBtn.innerHTML = '<i class="fa-solid fa-save" aria-hidden="true"></i>Mettre à jour';
     const cancelBtn = document.getElementById('cancelEditBtn'); if(cancelBtn) cancelBtn.style.display='';
     try{ document.querySelectorAll('.card.editing').forEach(el=>el.classList.remove('editing')); const cardEl = document.querySelector('[data-id="'+id+'"]'); if(cardEl) cardEl.classList.add('editing'); }catch(e){}
+    try{ 
+      const formContainer = document.getElementById('form-container');
+      if (formContainer) formContainer.classList.add('editing-mode');
+    }catch(e){}
+    try{
+      // If mobile tabs are visible, switch to form view
+      const tabBtnForm = document.getElementById('tab-btn-form');
+      if (tabBtnForm && window.getComputedStyle(tabBtnForm.parentElement).display !== 'none') {
+        tabBtnForm.click();
+      }
+    } catch(e){}
     try{ updateFormTitle(); }catch(e){}
-    updatePreview(); updateControls(); document.getElementById('client_name').focus();
+    updatePreview(); updateControls();
+    
+    // Scroll and focus
+    setTimeout(() => {
+      try {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('client_name').focus();
+      } catch(e) {}
+    }, 50);
+
   }catch(e){}
 }
 
 function updateFormTitle(){ try{ const t = document.getElementById('formTitle'); if(!t) return; if(window._editingId){ const r = (rows||[]).find(x=>x && x._id === window._editingId) || null; const inv = r ? (r.invoice_number || '—') : (document.getElementById('invoice_number')||{value:'—'}).value || '—'; t.textContent = `Mettre à jour la facture N° ${inv}`; } else { t.textContent = 'Nouvelle facture'; } }catch(e){} }
 
 function cancelEdit(){ try{ window._editingId = null; const addBtn = document.getElementById('addBtn'); if(addBtn) addBtn.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i>Entrer'; const cancelBtn = document.getElementById('cancelEditBtn'); if(cancelBtn) cancelBtn.style.display='none'; // reset form partially
-    try{ document.querySelectorAll('.card.editing').forEach(el=>el.classList.remove('editing')); }catch(e){}
-    document.getElementById('rowForm').reset(); document.getElementById('autre_seance_zone').style.display='none'; document.getElementById('payment_method_other').style.display='none'; updateFormTitle(); updatePreview(); updateControls(); }catch(e){}
+  try{ document.querySelectorAll('.card.editing').forEach(el=>el.classList.remove('editing')); }catch(e){}
+  try{ 
+    const formContainer = document.getElementById('form-container');
+    if (formContainer) formContainer.classList.remove('editing-mode');
+  }catch(e){}
+  // reset the form and ensure invoice number & date are reset to sensible defaults
+  try{ document.getElementById('rowForm').reset(); }catch(e){}
+  try{ const dateEl = document.getElementById('invoice_date'); if(dateEl) dateEl.value = todayIso(); }catch(e){}
+  try{ const numEl = document.getElementById('invoice_number'); if(numEl) numEl.value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){}
+  try{ document.getElementById('autre_seance_zone').style.display='none'; document.getElementById('payment_method_other').style.display='none'; }catch(e){}
+  updateFormTitle(); updatePreview(); updateControls(); }catch(e){}
 }
 try{ updateFormTitle(); }catch(e){}
 
@@ -345,39 +376,7 @@ function downloadCSVRows(rowsToExport){
 }
 
 // Show a styled CSV preview (in French, uppercase headers)
-function showCSVPreview(rowsToExport){
-  const container = document.getElementById('csvPreviewContainer');
-  const preview = document.getElementById('csvPreview');
-  if(!container || !preview) return;
-  const csv = generateCleanCSV(rowsToExport);
-  if(!csv){ alert('Aucune ligne à prévisualiser'); return; }
-
-  // Build table
-  const lines = csv.trim().split(/\n/);
-  const headers = lines.shift().split(';');
-  const table = document.createElement('table');
-  const thead = document.createElement('thead');
-  const trh = document.createElement('tr');
-  headers.forEach(h => { const th = document.createElement('th'); th.textContent = h.toUpperCase(); trh.appendChild(th); });
-  thead.appendChild(trh); table.appendChild(thead);
-  const tbody = document.createElement('tbody');
-  lines.forEach((ln, idx) => {
-    const tr = document.createElement('tr');
-    const cols = ln.split(';');
-    cols.forEach(c => { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); });
-    tbody.appendChild(tr);
-  });
-  table.appendChild(tbody);
-  preview.innerHTML = '';
-  preview.appendChild(table);
-  container.style.display = '';
-
-  // hook download and close
-  const dl = document.getElementById('csvDownloadBtn');
-  const closeBtn = document.getElementById('csvCloseBtn');
-  if(dl){ dl.onclick = ()=> downloadCSVRows(rowsToExport); }
-  if(closeBtn){ closeBtn.onclick = ()=> { container.style.display='none'; preview.innerHTML=''; } }
-}
+// CSV preview removed: users download CSV directly via the Export button.
 function showToast(text){ const t=document.querySelector('.toast'); if(!t) return; t.textContent=text; t.style.display='block'; setTimeout(()=>t.style.display='none',1400); }
 document.getElementById('rowForm').addEventListener('input', function(){ updatePreview(); updateControls(); });
 const sortSel = document.getElementById('sortOrder'); if(sortSel){ sortSel.addEventListener('change', function(){ localStorage.setItem(STORAGE_SORT, this.value); updateListPreview(); }); }
@@ -660,9 +659,7 @@ if(importBtn && importInput){
     reader.readAsText(f,'utf-8'); importInput.value='';
   });
 }
-if(exportBtn){ exportBtn.addEventListener('click', function(){ if((rows||[]).length===0){ alert('Aucune ligne à exporter'); return } showCSVPreview(rows); }); }
-const previewCsvBtn = document.getElementById('previewCsvBtn');
-if(previewCsvBtn){ previewCsvBtn.addEventListener('click', function(){ if((rows||[]).length===0){ alert('Aucune ligne à prévisualiser'); return } showCSVPreview(rows); }); }
+if(exportBtn){ exportBtn.addEventListener('click', function(){ if((rows||[]).length===0){ alert('Aucune ligne à exporter'); return } downloadCSVRows(rows); }); }
 // wipe handler (see enhanced handler below that also resets invoice and totals)
 if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirmer : vider la table en mémoire ?')) return; rows = []; try{ localStorage.removeItem(STORAGE_ROWS); sessionStorage.removeItem(STORAGE_ROWS + '_cache'); }catch(e){} updateListPreview(); try{ document.getElementById('invoice_number').value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){} showToast('Table vidée ✅'); }); }
 
@@ -686,4 +683,30 @@ if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirme
   try{ window.addEventListener('beforeunload', saveRows); }catch(e){}
   // attach cancel edit handler
   const cancelBtn = document.getElementById('cancelEditBtn'); if(cancelBtn){ cancelBtn.addEventListener('click', function(){ cancelEdit(); }); }
+
+  // Mobile tab switching
+  const tabBtnPreview = document.getElementById('tab-btn-preview');
+  const tabBtnForm = document.getElementById('tab-btn-form');
+  const previewContainer = document.getElementById('preview-container');
+  const formContainer = document.getElementById('form-container');
+
+  if (tabBtnPreview && tabBtnForm && previewContainer && formContainer) {
+    tabBtnPreview.addEventListener('click', () => {
+      tabBtnPreview.classList.add('active');
+      tabBtnPreview.setAttribute('aria-selected', 'true');
+      tabBtnForm.classList.remove('active');
+      tabBtnForm.setAttribute('aria-selected', 'false');
+      previewContainer.style.display = 'block';
+      formContainer.style.display = 'none';
+    });
+
+    tabBtnForm.addEventListener('click', () => {
+      tabBtnForm.classList.add('active');
+      tabBtnForm.setAttribute('aria-selected', 'true');
+      tabBtnPreview.classList.remove('active');
+      tabBtnPreview.setAttribute('aria-selected', 'false');
+      formContainer.style.display = 'block';
+      previewContainer.style.display = 'none';
+    });
+  }
 })();

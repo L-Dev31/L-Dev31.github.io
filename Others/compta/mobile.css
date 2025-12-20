@@ -1,0 +1,174 @@
+/* Responsive styles for tablets and mobile devices */
+
+/* Tablet layout */
+@media (max-width: 1024px) {
+    .split {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .split > .container {
+        height: auto;
+        min-height: auto;
+        border-radius: 0;
+        border-left: 0;
+        border-bottom: 1px solid #eef7ee;
+        padding: 28px;
+    }
+
+    .split > .container:first-child {
+        justify-content: flex-start;
+        padding: 28px;
+    }
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+    body {
+        -webkit-text-size-adjust: 100%; /* Prevent font scaling in landscape mode */
+    }
+
+    .split > .container,
+    .split > .container:first-child {
+        padding: 20px;
+    }
+
+    .grid {
+        gap: 0;
+    }
+
+    .grid > div[style*="gap"],
+    #rowForm > div[style*="gap"] {
+        flex-direction: column !important;
+        gap: 10px !important;
+        align-items: stretch !important;
+    }
+
+    #rowForm > div[style*="gap"] > div[style*="width"] {
+        display: none !important;
+    }
+
+    h1 {
+        font-size: 18px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 14px;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .controls button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .controls button[style*="margin-left"] {
+        margin-left: 0 !important;
+    }
+
+    .preview .actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .preview .actions .smallSelect {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .preview .actions > div[style*="margin-left"] {
+        margin-left: 0 !important;
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+    
+    .preview .actions > div[style*="margin-left"] button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .card .info {
+        width: 100%;
+    }
+
+    .card .row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .card .amount {
+        align-self: flex-end;
+        font-size: 18px;
+        margin-top: 4px;
+    }
+    
+    #priceBig {
+        font-size: 22px;
+    }
+    
+    .toast {
+        width: 90%;
+        left: 5%;
+        transform: translateX(0);
+        bottom: 10px;
+        text-align: center;
+    }
+}
+
+/* Tab navigation for mobile */
+.mobile-tabs {
+    display: none; /* Hidden by default on desktop */
+    width: 100%;
+    background-color: #f0f5f0;
+    border-bottom: 1px solid #cfe7cf;
+}
+
+.mobile-tabs button {
+    flex: 1;
+    padding: 12px 10px;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+}
+
+.mobile-tabs button.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+
+@media (max-width: 1024px) {
+    .mobile-tabs {
+        display: flex;
+    }
+    /* By default, show preview and hide form on mobile */
+    #form-container {
+        display: none;
+    }
+    #preview-container {
+        display: block;
+    }
+}
+

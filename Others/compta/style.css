@@ -15,19 +15,35 @@ body{font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);color:#07
 .split > .container + .container{border-left:0}
 /* Preview container background: very light clean green */
 .split > .container + .container{background: linear-gradient(to bottom, #f8fff8 0%, #f3fff3 100%); border:1px solid #ecf8ec}
-.container{max-width:1000px;margin:28px auto;background:#fff;padding:22px;border:1px solid #eef7ee;border-radius:10px}
+.container{max-width:1000px;margin:28px auto;background:#fff;padding:22px;border:1px solid #eef7ee;border-radius:10px; transition: background-color 0.3s ease;}
+#form-container.editing-mode {
+  background-color: #fffbeb; /* A light yellow to indicate editing */
+}
 h1{margin:0 0 14px;color:var(--accent);font-size:20px;font-weight:700}
 .split > .container label{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:4px}
 .grid{display:block;gap:6px}
 .grid > *{display:block;margin-bottom:10px}
 .grid .full{display:block;width:100%}
 .full{grid-column:1/-1}
-input[type="text"], input[type="email"], input[type="date"], input[type="number"], select{width:100%;padding:10px;border:1px solid #e6efe6;background:#fff;color:#072010;font-size:15px;border-radius:6px}
+input[type="text"], input[type="email"], input[type="date"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e6efe6;
+    background: #fff;
+    color: #072010;
+    font-size: 15px;
+    border-radius: 6px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
 input[type="text"]::placeholder, input[type="email"]::placeholder{color:#a9bfb0}
 textarea{min-height:70px;padding:12px;border:1px solid #e6efe6}
 .controls{display:flex;gap:10px;margin-top:14px}
-button{padding:8px 12px;border:0;background:var(--accent);color:#fff;cursor:pointer;font-weight:700;border-radius:6px}
+button{padding:8px 12px;border:0;background:var(--accent);color:#fff;cursor:pointer;font-weight:700;border-radius:6px; transition: background-color 0.2s ease, opacity 0.2s ease;}
 button.secondary{background:#fff;border:1px solid #cfe7cf;color:var(--accent);font-weight:600;border-radius:6px}
+button.secondary:hover {
+  background-color: #f8fdf8;
+  border-color: #b8d6b8;
+}
 button:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color:var(--muted);border:1px solid #e9efe9}
 button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(--muted);opacity:0.6}
 .controls button{display:inline-flex;align-items:center;gap:10px}
@@ -75,11 +91,4 @@ button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;background:#0b6b3a;color:#fff;padding:10px 16px;display:none}
 
 /* CSV preview styles */
-.csv-preview-box{border:1px solid #dfeadc;border-radius:8px;padding:12px;background:#fbfffb}
-.csv-preview-header{background:linear-gradient(90deg,#e6f6e9,#f8fff9);padding:8px;border-radius:6px;margin-bottom:8px;color:#0a5f2a}
-.csv-preview table{width:100%;border-collapse:collapse;font-size:13px}
-.csv-preview th{background:#0f8a3f;color:#fff;padding:8px;text-align:left;text-transform:uppercase;font-weight:700;border-bottom:2px solid rgba(0,0,0,0.05)}
-.csv-preview td{padding:8px;border-bottom:1px solid #eee}
-.csv-preview tr:nth-child(even) td{background:#eef9ec}
-.csv-preview tr:nth-child(odd) td{background:#ffffff}
-.csv-preview .col-header{font-weight:800;text-transform:uppercase;color:#0b6c34}
+/* CSV preview removed */

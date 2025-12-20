@@ -4,17 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Axonis — Comptabilité</title>
-  <link rel="icon" href="./favicon.png" />
+  <link rel="icon" href="favicon.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
-  <!-- jsPDF + AutoTable for PDF generation -->
+  <link rel="stylesheet" href="mobile.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
 </head>
 <body>
+  <div class="mobile-tabs" role="tablist">
+    <button id="tab-btn-preview" role="tab" aria-selected="true" aria-controls="preview-container" class="active">Aperçu</button>
+    <button id="tab-btn-form" role="tab" aria-selected="false" aria-controls="form-container">Formulaire</button>
+  </div>
   <div class="split">
-    <div class="container">
+    <div class="container" id="form-container">
     
     <form id="rowForm" autocomplete="off">
       <h1 id="formTitle">Nouvelle facture</h1>
@@ -110,7 +114,7 @@
   </div>
 
   
-    <div class="container" id="previewContainer">
+    <div class="container" id="preview-container">
     <div class="preview">
       <h2>Aperçu</h2>
       <div class="actions small">
@@ -122,24 +126,11 @@
         <div style="margin-left:12px;display:flex;gap:8px;align-items:center">
           <button id="importCsvBtn" type="button" class="secondary">Importer CSV</button>
           <button id="exportCsvBtn" type="button" class="secondary">Exporter CSV</button>
-          <button id="previewCsvBtn" type="button" class="secondary" style="margin-left:8px">Prévisualiser CSV</button>
           <button id="wipeBtn" type="button" class="secondary">Vider la table</button>
           <input id="importCsvInput" type="file" accept=".csv,text/csv" style="display:none" />
         </div>
       </div>
-      <!-- CSV preview area -->
-      <div id="csvPreviewContainer" style="margin-top:16px;display:none">
-        <div class="csv-preview-box">
-          <div class="csv-preview-header">
-            <strong>PRÉVISUALISATION CSV</strong>
-            <div style="float:right">
-              <button id="csvDownloadBtn" class="secondary">Télécharger CSV</button>
-              <button id="csvCloseBtn" class="secondary" style="margin-left:8px">Fermer</button>
-            </div>
-          </div>
-          <div id="csvPreview" class="csv-preview"></div>
-        </div>
-      </div>
+      
       <div id="cardsContainer" class="cards">
         
         <div id="previewCard" class="card">
