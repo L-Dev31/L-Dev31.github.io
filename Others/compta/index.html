@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Créer une ligne — Comptabilité</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <!-- jsPDF + AutoTable for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+  <div class="split">
+    <div class="container">
+    <form id="rowForm" autocomplete="off">
+      <h1 id="formTitle">Nouvelle facture</h1>
+      <div class="grid">
+        <div style="display: flex; gap: 12px; align-items: end;">
+          <div style="flex:1; display: flex; flex-direction: column; gap: 6px;">
+            <label for="invoice_number" style="margin-bottom:2px;">Numéro de facture</label>
+            <input type="text" id="invoice_number" placeholder="Ex. 2025-1" required style="min-width:0;">
+          </div>
+          <div style="width:24px;"></div>
+          <div style="flex:1; display: flex; flex-direction: column; gap: 6px;">
+            <label for="invoice_date" style="margin-bottom:2px;">Date de la facture</label>
+            <input type="date" id="invoice_date" placeholder="Date facture" title="Date de la facture" style="min-width:0;">
+          
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:end;">
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+              <label for="client_name">Nom et prénom du client</label>
+              <input type="text" id="client_name" placeholder="Nom Prénom" required>
+            </div>
+          <div style="width:12px;"></div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+            <label for="client_email">Email</label>
+            <input type="email" id="client_email" placeholder="email@exemple.com">
+            <div id="client_email_error" class="field-error" style="display:none">Adresse e-mail invalide</div>
+          </div>
+        </div>
+        <div class="full">
+          <label for="payment_method">Mode de règlement</label>
+            <select id="payment_method" name="payment_method" required>
+              <option value="" disabled selected>Sélectionner</option>
+              <option value="Espèces">Espèces</option>
+              <option value="Chèque">Chèque</option>
+              <option value="Virement bancaire">Virement bancaire</option>
+              <option value="Carte bancaire">Carte bancaire</option>
+              <option value="Autre">Autre</option>
+          </select>
+          <input type="text" id="payment_method_other" placeholder="Précisez le mode de règlement..." style="display:none;margin-top:8px;" />
+          <label for="payment_note" style="margin-top:8px;display:block">Référence / note paiement</label>
+          <input type="text" id="payment_note" placeholder="Ex: virement le 02/08/24, ch 7185423" style="margin-top:6px;" />
+          
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:end;">
+          <div style="flex:2;display:flex;flex-direction:column;gap:6px;">
+            <label for="service_type">Type de séance</label>
+            <select id="service_type" aria-label="Type de séance">
+              <option value="" disabled selected>Sélectionner un type de séance…</option>
+              <option value="70">1 séance d'ostéopathie (45min) — 70€</option>
+              <option value="70">1 massage bien-être (60min) — 70€</option>
+              <option value="90">1 massage bien-être (90min) — 90€</option>
+              <option value="100">Pack gommage + massage — 100€</option>
+              <option value="autre">Autre…</option>
+            </select>
+            <div id="autre_seance_zone" style="display:none; margin-top:8px; gap:8px; align-items:end;">
+              <input type="text" id="autre_seance_desc" placeholder="Description de la séance" style="flex:2;" />
+              <input type="number" id="autre_seance_prix" placeholder="Prix (€)" min="0" step="0.01" style="flex:1;" />
+            </div>
+          
+          </div>
+          <div style="width:12px"></div>
+          <div style="width:140px;display:flex;flex-direction:column;gap:6px;">
+            <label for="service_quantity">Quantité</label>
+            <input type="number" id="service_quantity" min="1" step="1" value="1" style="padding:10px;border:1px solid #e6efe6;border-radius:6px" />
+          </div>
+        </div>
+
+        <div class="full" style="text-align:right">
+          <div class="small">Total</div>
+          <div id="priceBig" style="font-size:26px;color:var(--accent);font-weight:800">0 €</div>
+        </div>
+
+        <div class="full">
+        </div>
+
+        <div class="full small" style="display:flex;justify-content:space-between;align-items:center">
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="addBtn" type="submit" disabled><i class="fa-solid fa-plus" aria-hidden="true"></i>Entrer</button>
+        <button id="downloadBtn" type="button" disabled style="margin-left:8px"><i class="fa-solid fa-download" aria-hidden="true"></i>Télécharger</button>
+        <button id="sendBtn" type="button" disabled style="margin-left:8px"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i>Envoyer</button>
+        <button id="cancelEditBtn" type="button" class="secondary" style="display:none;margin-left:8px">Annuler</button>
+      </div>
+    </form>
+
+    
+
+    
+  </div>
+
+  
+    <div class="container" id="previewContainer">
+    <div class="preview">
+      <h2>Aperçu</h2>
+      <div class="actions small">
+        <div id="clientsCount" class="small" style="margin-left:12px;margin-right:8px">0 clients enregistrés</div>
+        <select id="sortOrder" class="smallSelect" title="Ordre d'affichage">
+          <option value="desc">Plus récentes en haut</option>
+          <option value="asc">Plus anciennes en haut</option>
+        </select>
+        <div style="margin-left:12px;display:flex;gap:8px;align-items:center">
+          <button id="importCsvBtn" type="button" class="secondary">Importer CSV</button>
+          <button id="exportCsvBtn" type="button" class="secondary">Exporter CSV</button>
+          <button id="wipeBtn" type="button" class="secondary">Vider la table</button>
+          <input id="importCsvInput" type="file" accept=".csv,text/csv" style="display:none" />
+        </div>
+      </div>
+      <div id="cardsContainer" class="cards">
+        
+        <div id="previewCard" class="card">
+          <div class="pfp" id="previewPfp">?</div>
+          <div class="info">
+            <div class="row">
+                  <div>
+                    <strong id="previewClient">Nom Prénom</strong>
+                    <div class="meta" id="previewService">Prestation</div>
+                    <div class="meta" id="previewEmail" style="color:var(--muted);font-size:13px">&nbsp;</div>
+                  </div>
+              <div class="amount" id="previewTotal">0 €</div>
+            </div>
+            <div class="row">
+              <div class="meta" id="previewInvoice">N° — • —</div>
+              <div class="meta" id="previewPayment">Mode paiement</div>
+            </div>
+          </div>
+        </div>
+        <div id="cardsHeader" class="small" style="display:none;margin-top:8px;margin-bottom:6px"></div>
+        <div id="cardsTotals" style="margin-bottom:8px"></div>
+        <div id="cardsList"></div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite">&nbsp;</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
