@@ -338,8 +338,8 @@ function updateListPreview() {
 function updateClientsCount(){ const set = new Set((rows||[]).map(r=>r.client_name).filter(Boolean)); const clientsCountEl = document.getElementById('clientsCount'); if(clientsCountEl){ const size = set.size || 0; if(size === 0) clientsCountEl.textContent = '0 clients enregistrés'; else if(size === 1) clientsCountEl.textContent = '1 client enregistré'; else clientsCountEl.textContent = size + ' clients enregistrés'; } }
 function addCurrentToList() {
   const d = getFormData();
-  if (!d.invoice_number || !d.invoice_date || !d.client_name) {
-    alert('Remplissez: Numéro, Date et Nom');
+  if (!d.invoice_number || !d.invoice_date || !d.client_name || !d.service_type) {
+    alert('Remplissez : Numéro, Date, Nom et Type de séance');
     return false;
   }
   const editingId = window._editingId || null;

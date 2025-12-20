@@ -92,6 +92,9 @@ button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(
 .smallSelect:focus{outline:none;box-shadow:0 0 0 4px rgba(11,107,58,0.12);border-color:var(--accent)}
 .smallSelect:focus-visible{outline:none;box-shadow:0 0 0 4px rgba(11,107,58,0.18)}
 
+/* Required field star */
+.requiredStar{color:#e05a4f;font-weight:700;font-size:12px;margin-left:6px}
+
 /* Small search input to match the dropdown */
 .smallSearch{font-size:13px;padding:6px 8px 6px 34px;border-radius:8px;border:1px solid #cfe7cf;background:transparent;color:#072010;width:100%;max-width:360px;box-sizing:border-box;margin-left:0;margin-right:12px;transition:box-shadow .18s ease, border-color .15s ease}
 .smallSearch:focus{outline:none;box-shadow:0 0 0 4px rgba(11,107,58,0.12);border-color:var(--accent)}

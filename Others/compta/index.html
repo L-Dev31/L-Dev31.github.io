@@ -25,19 +25,19 @@
       <div class="grid">
         <div style="display: flex; gap: 12px; align-items: end;">
           <div style="flex:1; display: flex; flex-direction: column; gap: 6px;">
-            <label for="invoice_number" style="margin-bottom:2px;">Numéro de facture</label>
+            <label for="invoice_number" style="margin-bottom:2px;">Numéro de facture <span class="requiredStar" aria-hidden="true">*</span></label>
             <input type="text" id="invoice_number" placeholder="Ex. 2025-1" required style="min-width:0;">
           </div>
           <div style="width:24px;"></div>
           <div style="flex:1; display: flex; flex-direction: column; gap: 6px;">
-            <label for="invoice_date" style="margin-bottom:2px;">Date de la facture <span style="font-weight:600;color:var(--muted);font-size:12px">(optionnel)</span></label>
-            <input type="date" id="invoice_date" placeholder="Date facture" title="Date de la facture" style="min-width:0;">
+            <label for="invoice_date" style="margin-bottom:2px;">Date de la facture <span class="requiredStar" aria-hidden="true">*</span></label>
+            <input type="date" id="invoice_date" placeholder="Date facture" title="Date de la facture" style="min-width:0;" required>  
           
           </div>
         </div>
         <div style="display:flex;gap:12px;align-items:end;">
           <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
-              <label for="client_name">Nom et prénom du client</label>
+              <label for="client_name">Nom et prénom du client <span class="requiredStar" aria-hidden="true">*</span></label>
               <input type="text" id="client_name" placeholder="Nom Prénom" required>
             </div>
           <div style="width:12px;"></div>
@@ -48,7 +48,7 @@
           </div>
         </div>
         <div class="full">
-          <label for="payment_method">Mode de règlement</label>
+          <label for="payment_method">Mode de règlement <span class="requiredStar" aria-hidden="true">*</span></label>
             <select id="payment_method" name="payment_method" required>
               <option value="" disabled selected>Sélectionner</option>
               <option value="Espèces">Espèces</option>
@@ -66,8 +66,8 @@
 
         <div style="display:flex;gap:12px;align-items:end;">
           <div style="flex:2;display:flex;flex-direction:column;gap:6px;">
-            <label for="service_type">Type de séance <span style="font-weight:600;color:var(--muted);font-size:12px">(optionnel)</span></label>
-            <select id="service_type" aria-label="Type de séance">
+            <label for="service_type">Type de séance <span class="requiredStar" aria-hidden="true">*</span></label>
+            <select id="service_type" aria-label="Type de séance" required>
               <option value="" disabled selected>Sélectionner un type de séance…</option>
               <option value="70">1 séance d'ostéopathie (45min) — 70€</option>
               <option value="70">1 massage bien-être (60min) — 70€</option>
@@ -83,8 +83,8 @@
           </div>
           <div style="width:12px"></div>
           <div style="width:140px;display:flex;flex-direction:column;gap:6px;">
-            <label for="service_quantity">Quantité</label>
-            <input type="number" id="service_quantity" min="1" step="1" value="1" style="padding:10px;border:1px solid #e6efe6;border-radius:6px" />
+            <label for="service_quantity">Quantité <span class="requiredStar" aria-hidden="true">*</span></label>
+            <input type="number" id="service_quantity" min="1" step="1" value="1" required style="padding:10px;border:1px solid #e6efe6;border-radius:6px" />
           </div>
         </div>
 
