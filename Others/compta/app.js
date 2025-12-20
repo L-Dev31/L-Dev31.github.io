@@ -383,17 +383,33 @@ function showToast(text, duration = 2000){
   if(!t) return;
   t.textContent = text;
   
+  // Show immediately, restarting animation if already visible
   if (toastTimeout) {
     clearTimeout(toastTimeout);
+    // If we were in the middle of fading out, cancel it
+    t.classList.remove('hide');
+    // restart the entrance animation
     t.classList.remove('show');
-    // We need a small delay to restart the animation
-    setTimeout(() => t.classList.add('show'), 50);
+    void t.offsetWidth; // force reflow
+    t.classList.add('show');
   } else {
+    // If a previous fade-out animation is still running (no timeout), ensure it's cancelled
+    if (t.classList.contains('hide')) t.classList.remove('hide');
     t.classList.add('show');
   }
 
+  // Schedule hide: add .hide which runs fadeOut while keeping .show; remove .show only after animation ends
   toastTimeout = setTimeout(() => {
-    t.classList.remove('show');
+    // If already hiding, ignore
+    if (t.classList.contains('hide')) { toastTimeout = null; return; }
+    t.classList.add('hide');
+    const onAnimEnd = (ev) => {
+      if (ev && ev.animationName && ev.animationName.indexOf('fadeOut') === -1) return;
+      try { t.classList.remove('show'); } catch(e) {}
+      try { t.classList.remove('hide'); } catch(e) {}
+      t.removeEventListener('animationend', onAnimEnd);
+    };
+    t.addEventListener('animationend', onAnimEnd);
     toastTimeout = null;
   }, duration);
 }

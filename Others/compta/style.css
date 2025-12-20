@@ -89,41 +89,53 @@ button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(
 .options{display:none;margin-top:8px;gap:8px;flex-direction:column}
 .toggleOptions{background:transparent;border:0;color:var(--muted);cursor:pointer}
 
+
+/* Toast notifications (single source of truth) */
 .toast {
   position: fixed;
   left: 50%;
   bottom: 30px;
-  transform: translateX(-50%);
-  background-color: #2c3e50;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateX(-50%) translateY(10px);
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 16px;
+  min-width: 220px;
+  max-width: 94%;
+  /* stronger, smoother shadow for better elevation */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  border-radius: 0;
   font-size: 14px;
   font-weight: 600;
   z-index: 1000;
   visibility: hidden;
   opacity: 0;
-  transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+  transition: opacity .28s ease, transform .28s ease, visibility .28s;
 }
 
 .toast.show {
   visibility: visible;
   opacity: 1;
   transform: translateX(-50%) translateY(0);
-  animation: fadeIn 0.3s ease-out forwards;
+  animation: fadeIn .28s ease-out forwards;
+}
+
+/* Optional class to explicitly run the fade-out animation */
+.toast.hide {
+  animation: fadeOut .28s ease-in forwards;
 }
 
 @keyframes fadeIn {
-  from {
-    transform: translateX(-50%) translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0);  opacity: 1; }
 }
+
+@keyframes fadeOut {
+  from { transform: translateX(-50%) translateY(0);  opacity: 1; }
+  to   { transform: translateX(-50%) translateY(10px); opacity: 0; visibility: hidden; }
+}
+
+.toast.success { background: var(--accent); color: #fff; }
+.toast.error   { background: #e74c3c; color: #fff; }
 
 input[type="text"]:focus,
 input[type="email"]:focus,
