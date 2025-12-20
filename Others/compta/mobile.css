@@ -1,6 +1,3 @@
-/* Responsive styles for tablets and mobile devices */
-
-/* Tablet layout */
 @media (max-width: 1024px) {
     body {
         display: flex;
@@ -33,7 +30,6 @@
         display: flex;
         flex-shrink: 0;
     }
-    /* By default, show preview and hide form on mobile */
     #form-container {
         display: none;
     }
@@ -42,15 +38,14 @@
     }
 }
 
-/* Mobile layout */
 @media (max-width: 768px) {
     body {
-        -webkit-text-size-adjust: 100%; /* Prevent font scaling in landscape mode */
+        -webkit-text-size-adjust: 100%;
     }
 
     .split > .container,
     .split > .container:first-child {
-        padding: 20px;
+        padding: 24px;
     }
 
     .grid {
@@ -69,7 +64,7 @@
     }
 
     h1 {
-        font-size: 18px;
+        font-size: 20px;
     }
 
     input[type="text"],
@@ -78,7 +73,7 @@
     input[type="number"],
     select,
     textarea {
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .controls {
@@ -121,7 +116,7 @@
     /* Ensure cards fit on small screens */
     .card {
         width: 100%;
-        padding: 12px;
+        padding: 14px;
         box-sizing: border-box;
         border-radius: 6px;
         gap: 8px;
@@ -172,15 +167,15 @@
     }
 
     .card .row:nth-of-type(2) .actions button {
-        min-width: 38px !important;
-        padding: 6px 8px !important;
+        min-width: 40px !important;
+        padding: 8px 10px !important;
         white-space: nowrap !important;
         flex: 0 0 auto !important;
     }
 
     .card .amount {
         align-self: flex-end;
-        font-size: 16px;
+        font-size: 18px;
         margin-top: 6px;
         white-space: nowrap;
         overflow: hidden;
@@ -194,7 +189,7 @@
 
     .card h3,
     .card .title {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     /* Keep an accessible focus for keyboard users */
@@ -220,13 +215,12 @@
     }
     
     #priceBig {
-        font-size: 22px;
+        font-size: 24px;
     }
 }
 
-/* Tab navigation for mobile */
 .mobile-tabs {
-    display: none; /* Hidden by default on desktop */
+    display: none;
     width: 100%;
     background-color: #f0f5f0;
     border-bottom: 1px solid #cfe7cf;
@@ -254,7 +248,6 @@
     .mobile-tabs {
         display: flex;
     }
-    /* By default, show preview and hide form on mobile */
     #form-container {
         display: none;
     }
@@ -263,5 +256,5 @@
     }
 }
 
-    /* Toast styles are centralized in style.css (no duplicate definitions here) */
+
 
