@@ -174,6 +174,15 @@ function createCardElement(r){
         };
         await sendPdfToAppsScript(email, pdfBase64, cardSendBtn, meta);
       }catch(ex){ console.error(ex); alert('Erreur envoi PDF'); } })(); });
+    // disable send button for cards without email
+    try{
+      if(!(r.client_email && r.client_email.toString().trim())){
+        cardSendBtn.disabled = true;
+        cardSendBtn.title = "Aucune adresse e-mail";
+        cardSendBtn.style.opacity = '0.6';
+        cardSendBtn.style.cursor = 'not-allowed';
+      }
+    }catch(e){}
     const editBtn = document.createElement('button'); editBtn.type='button'; editBtn.className='secondary'; editBtn.title='Modifier'; editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
     editBtn.addEventListener('click', function(e){ e.stopPropagation(); if(r && r._id) startEdit(r._id); });
     const delBtn = document.createElement('button'); delBtn.type='button'; delBtn.className='secondary'; delBtn.title='Supprimer'; delBtn.style.borderColor = '#e76b6b'; delBtn.style.color = '#b30000'; delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
