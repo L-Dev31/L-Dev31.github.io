@@ -150,12 +150,13 @@ function updateControls(){
   const canEnter = formOk && !(emailProvided && !emailValid);
   if(addBtn) addBtn.disabled = !canEnter;
 
-  // send button removed from UI — no action here
   // enable/disable the download button: same conditions as Entrer (form valid)
   const downloadBtn = document.getElementById('downloadBtn');
-  if(downloadBtn){
-    downloadBtn.disabled = !canEnter;
-  }
+  if(downloadBtn){ downloadBtn.disabled = !canEnter; }
+
+  // enable/disable the send button: require form valid + a provided valid email
+  const sendBtn = document.getElementById('sendBtn');
+  if(sendBtn){ sendBtn.disabled = !(formOk && emailProvided && emailValid); }
 }
 function createCardElement(r){
   const card = document.createElement('div');
@@ -181,13 +182,24 @@ function createCardElement(r){
     // per-card Download
     const cardDownloadBtn = document.createElement('button'); cardDownloadBtn.type='button'; cardDownloadBtn.className='secondary'; cardDownloadBtn.title='Télécharger cette facture'; cardDownloadBtn.innerHTML = '<i class="fa-solid fa-download"></i>';
     cardDownloadBtn.addEventListener('click', function(e){ e.stopPropagation(); (async function(){ try{ const doc = await buildInvoiceDoc(r); const filename = `facture_${(r.invoice_number||'facture').replace(/[^0-9A-Za-z-_\.]/g,'_')}.pdf`; doc.save(filename); showToast('Téléchargement facture...'); }catch(ex){ console.error(ex); alert('Erreur génération PDF'); } })(); });
-    // per-card Send removed (button omitted)
+    // per-card Send button
+    const cardSendBtn = document.createElement('button'); cardSendBtn.type='button'; cardSendBtn.className='secondary'; cardSendBtn.title='Envoyer par e-mail'; cardSendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>';
+    cardSendBtn.addEventListener('click', function(e){ e.stopPropagation(); (async function(){ try{
+        let email = (r.client_email||'').toString().trim();
+        if(!email){ email = prompt('Adresse e-mail du destinataire :'); if(!email) { showToast('Envoi annulé'); return; } }
+        const doc = await buildInvoiceDoc(r);
+        const pdfBase64 = doc.output('datauristring');
+        await sendPdfToAppsScript(email, pdfBase64, cardSendBtn);
+      }catch(ex){ console.error(ex); alert('Erreur envoi PDF'); } })(); });
     const editBtn = document.createElement('button'); editBtn.type='button'; editBtn.className='secondary'; editBtn.title='Modifier'; editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
     editBtn.addEventListener('click', function(e){ e.stopPropagation(); if(r && r._id) startEdit(r._id); });
     const delBtn = document.createElement('button'); delBtn.type='button'; delBtn.className='secondary'; delBtn.title='Supprimer'; delBtn.style.borderColor = '#e76b6b'; delBtn.style.color = '#b30000'; delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
     delBtn.addEventListener('click', function(e){ e.stopPropagation(); if(r && r._id) deleteRow(r._id); });
-    // append in chosen order: download, edit, delete
-    actionsDiv.appendChild(cardDownloadBtn); actionsDiv.appendChild(editBtn); actionsDiv.appendChild(delBtn);
+    // append in chosen order: download, send, edit, delete
+    actionsDiv.appendChild(cardDownloadBtn);
+    actionsDiv.appendChild(cardSendBtn);
+    actionsDiv.appendChild(editBtn);
+    actionsDiv.appendChild(delBtn);
     row2.appendChild(actionsDiv);
   }catch(e){}
   info.appendChild(row1); info.appendChild(row2); card.appendChild(pfp); card.appendChild(info); return card }
@@ -382,50 +394,113 @@ function addCurrentToList() {
   document.getElementById('invoice_number').value = computeNextInvoiceFromRows(getCurrentYear());
   return true;
 }
-// Generate a cleaned CSV string with French uppercase headers and formatted values
-function generateCleanCSV(rowsToExport){
-  if(!rowsToExport || rowsToExport.length===0) return null;
-  // French headers (MAJUSCULES)
-  const headers = ['NUMÉRO DE FACTURE','DATE','CLIENT','EMAIL','PRESTATION','PRIX UNITAIRE','QUANTITÉ','MODE DE PAIEMENT','NOTE DE PAIEMENT','MONTANT TOTAL'];
+// Build and download a real XLSX file (UTF-8 by default) with styled headers and formatted numbers/dates
+async function downloadXLSXRows(rowsToExport){
+  if(!rowsToExport || rowsToExport.length===0){ alert('Aucune ligne à exporter'); return; }
 
+  const headers = ['NUMÉRO DE FACTURE','DATE','CLIENT','EMAIL','PRESTATION','PRIX UNITAIRE','QUANTITÉ','MODE DE PAIEMENT','NOTE DE PAIEMENT','MONTANT TOTAL'];
   const keys = ['invoice_number','invoice_date','client_name','client_email','service_type','unit_price','quantity','payment_method','payment_note','total_amount'];
 
-  const lines = [headers.join(';')];
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = 'Compta';
+  workbook.created = new Date();
+  const sheet = workbook.addWorksheet('Compta');
+
+  // define columns by header + key; widths will be calculated dynamically below for a clean auto width behavior
+  sheet.columns = headers.map((h, idx) => ({ header: h, key: keys[idx] }));
+
+
+  // Header styling (green theme)
+  const headerRow = sheet.getRow(1);
+  headerRow.height = 22;
+  headerRow.eachCell((cell) => {
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2E7D32' } }; // green background (Material Green 700)
+    cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 12 };
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  });
+
+  // Add rows
   rowsToExport.forEach(r => {
-    // Clean and format each field
-    const vals = keys.map(k => {
-      let v = (r[k] ?? '').toString().trim();
+    const rowObj = {};
+    keys.forEach(k => {
+      let v = r[k] ?? '';
       if(k === 'invoice_date' && v){
-        try{ const dt = new Date(v); if(!isNaN(dt)) v = ('0'+dt.getDate()).slice(-2) + '/' + ('0'+(dt.getMonth()+1)).slice(-2) + '/' + dt.getFullYear(); }catch(e){}
+        const dt = new Date(v);
+        if(!isNaN(dt)) v = dt;
       }
       if(k === 'unit_price' || k === 'total_amount'){
-        let n = parseFloat(String(v).replace(/[€ ]/g,''));
+        let n = parseFloat(String(v).replace(/[€ ]/g,'').replace(',','.'));
         if(isNaN(n)) n = 0;
-        // French formatting: comma decimal separator
-        v = n.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2});
+        v = n;
       }
       if(k === 'quantity'){
-        v = (v === '') ? '' : Number(v).toString();
+        v = Number(v) || 0;
       }
-      // replace any semicolons (CSV delimiter) with commas to avoid breaking CSV
-      v = v.replace(/;/g, ',');
-      return v;
+      rowObj[k] = v;
     });
-    lines.push(vals.join(';'));
+    sheet.addRow(rowObj);
   });
-  return lines.join('\n') + '\n';
+
+  // Format columns
+  sheet.getColumn('unit_price').numFmt = '#,##0.00 €';
+  sheet.getColumn('total_amount').numFmt = '#,##0.00 €';
+  sheet.getColumn('quantity').numFmt = '0';
+  sheet.getColumn('invoice_date').numFmt = 'dd/mm/yyyy';
+
+  // Auto-calc column widths from the longest cell (header + data) — clamp to [8, 50]
+  const minWidth = 8;
+  const maxWidth = 50;
+  const paddingChars = 2; // few extra chars for readability
+
+  // start with header lengths
+  const maxLens = headers.map(h => Math.min(Math.max(String(h).length + paddingChars, minWidth), maxWidth));
+
+  // scan data rows and update maximum lengths per column
+  rowsToExport.forEach(r => {
+    keys.forEach((k, j) => {
+      let v = r[k] ?? '';
+      if(k === 'invoice_date' && v){ const dt = new Date(v); if(!isNaN(dt)) v = ('0'+dt.getDate()).slice(-2) + '/' + ('0'+(dt.getMonth()+1)).slice(-2) + '/' + dt.getFullYear(); }
+      if(k === 'unit_price' || k === 'total_amount'){ let n = parseFloat(String(v).replace(/[€ ]/g,'').replace(',','.')); if(isNaN(n)) n = 0; v = n.toFixed(2) + ' €'; }
+      const len = Math.min(Math.max(String(v).length + paddingChars, minWidth), maxWidth);
+      if(len > maxLens[j]) maxLens[j] = len;
+    });
+  });
+
+  // apply computed widths
+  maxLens.forEach((w, i) => {
+    const col = sheet.getColumn(i + 1);
+    col.width = w;
+  });
+
+  // Apply borders and alternating row colors (white / green pastel)
+  sheet.eachRow({ includeEmpty:false }, function(row, rowNumber){
+    if(rowNumber >= 1){
+      row.eachCell({ includeEmpty:true }, function(cell){
+        cell.border = { top: {style:'thin', color:{argb:'FFECECEC'} }, left:{style:'thin', color:{argb:'FFECECEC'} }, bottom:{style:'thin', color:{argb:'FFECECEC'} }, right:{style:'thin', color:{argb:'FFECECEC'} } };
+      });
+      if(rowNumber > 1){
+        if(rowNumber % 2 === 0){
+          // pastel green for even rows
+          row.eachCell({ includeEmpty:true }, function(cell){
+            cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb: 'FFEFF7EE' } };
+          });
+        } else {
+          // ensure white background for odd rows
+          row.eachCell({ includeEmpty:true }, function(cell){
+            cell.fill = null;
+          });
+        }
+      }
+    }
+  });
+
+  const filename = 'compta_rows_' + new Date().toISOString().replace(/[:.]/g,'-') + '.xlsx';
+  const buf = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buf], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  saveAs(blob, filename);
 }
 
-function downloadCSVRows(rowsToExport){
-  const csv = generateCleanCSV(rowsToExport);
-  if(!csv){ alert('Aucune ligne à exporter'); return; }
-  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-  const filename = 'compta_rows_' + new Date().toISOString().replace(/[:.]/g,'-') + '.csv';
-  const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = filename; document.body.appendChild(link); link.click(); link.remove();
-}
-
-// Show a styled CSV preview (in French, uppercase headers)
-// CSV preview removed: users download CSV directly via the Export button.
+// Preview removed: users import/export via XLSX (or CSV fallback) using the Importer/Exporter buttons.
 let toastTimeout;
 function showToast(text, duration = 2000){
   const t = document.querySelector('.toast');
@@ -695,6 +770,89 @@ async function generateInvoicePDF(d){
   return filename;
 }
 
+// URL for Google Apps Script that accepts {email, pdf}
+const SEND_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkCySeYHtajGTFncECAFrL5Q9twHxLgMZa3CLPszD1ESWzVoAZgc1otXgvc0ZKo0wo/exec';
+
+// send a PDF data URI to the Apps Script (mode:no-cors)
+async function sendPdfToAppsScript(email, pdfDataUri, btn){
+  if(!email) throw new Error('Email manquant');
+  // normalize button reference
+  const el = btn || document.getElementById('sendBtn');
+  // guard against concurrent sends
+  if(el && el.dataset && el.dataset.sending === '1'){ showToast('Envoi déjà en cours...'); return; }
+  let originalHtml = null;
+  try{
+    if(el){
+      el.dataset.sending = '1';
+      originalHtml = el.innerHTML;
+      el.disabled = true;
+      el.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Envoi...';
+    }
+
+    let resp = await fetch(SEND_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      cache: 'no-cache',
+      body: JSON.stringify({ email: email, pdf: pdfDataUri })
+    });
+
+    // note: with mode:'no-cors' the response is opaque; treat as success if no exception
+    showToast('E-mail envoyé avec succès !');
+    success = true;
+  }catch(e){
+    console.error('Erreur envoi PDF', e);
+    // prefer toast for non-blocking UX
+    showToast('Erreur : impossible d\'envoyer le message');
+    success = false;
+  }finally{
+    if(el){
+      el.disabled = false;
+      try{ el.dataset.sending = '0'; }catch(e){}
+      if(originalHtml !== null) el.innerHTML = originalHtml;
+    }
+    return success;
+  }
+}
+
+// Generate and send PDF from the current form data
+async function genererEtEnvoyerPDFFromForm(){
+  const d = getFormData();
+  if(!d || !d.invoice_number){ alert('Numéro de facture requis pour envoyer'); return; }
+  const email = (d.client_email||'').toString().trim();
+  if(!email){ alert('Veuillez entrer l\'email du destinataire'); return; }
+  try{
+    const doc = await buildInvoiceDoc(d);
+    const pdfBase64 = doc.output('datauristring');
+    const btn = document.getElementById('sendBtn');
+    const ok = await sendPdfToAppsScript(email, pdfBase64, btn);
+    if(ok){
+      // After successful send, add current form as a row (behave like Entrer)
+      try{ if(!window._editingId){ addCurrentToList(); showToast('Enregistré dans le tableau ✅'); } else { /* if editing, update existing entry */ addCurrentToList(); showToast('Mise à jour enregistrée ✅'); } }catch(e){ console.error('Erreur ajout après envoi', e); }
+    }
+  }catch(e){ console.error(e); alert('Erreur lors de la génération/envoi'); }
+}
+// Backwards compatible alias (user-provided name)
+async function genererEtEnvoyerPDF(){ return genererEtEnvoyerPDFFromForm(); }
+
+// Handler callable from HTML inline onclick
+async function handleMainSend(){
+  const data = getFormData();
+  if(!data.client_email || !validateEmailValue(data.client_email)){
+    alert("Veuillez entrer une adresse email valide.");
+    return;
+  }
+  try{
+    const doc = await buildInvoiceDoc(data);
+    const pdfBase64 = doc.output('datauristring');
+    const sendBtn = document.getElementById('sendBtn');
+    const ok = await sendPdfToAppsScript(data.client_email, pdfBase64, sendBtn);
+    if(ok){
+      try{ if(!window._editingId){ addCurrentToList(); showToast('Envoyé et enregistré ✅'); } else { addCurrentToList(); showToast('Envoyé et mise à jour enregistrée ✅'); } }catch(e){ console.error('Erreur ajout après envoi', e); }
+    }
+  }catch(e){ console.error(e); alert('Erreur lors de la génération ou de l\'envoi.'); }
+}
+window.handleMainSend = handleMainSend;
+
 if(downloadBtn){
   downloadBtn.addEventListener('click', function(){
     const d = getFormData();
@@ -702,7 +860,11 @@ if(downloadBtn){
     generateInvoicePDF(d);
     showToast('Facture PDF générée');
   });
-}
+} 
+
+// wire the form-level send button
+const sendBtnEl = document.getElementById('sendBtn');
+if(sendBtnEl){ sendBtnEl.addEventListener('click', handleMainSend); }
 
 const importBtn = document.getElementById('importCsvBtn');
 const importInput = document.getElementById('importCsvInput');
@@ -729,6 +891,106 @@ if(importBtn && importInput){
   importBtn.addEventListener('click', function(){ importInput.click(); });
   importInput.addEventListener('change', function(e){
     const f = e.target.files && e.target.files[0]; if(!f) return;
+    const filename = (f.name || '').toLowerCase();
+
+    const handleImportedArray = function(imported){
+      if(imported.length === 0){ showToast('Aucun enregistrement trouvé'); return; }
+      if (performImport(imported)) {
+        showToast(`Importation réussie: ${imported.length} lignes chargées.`);
+      }
+    };
+
+    // reusable mapping
+    const headerMapping = {
+        'NUMÉRO DE FACTURE': 'invoice_number',
+        'DATE': 'invoice_date',
+        'CLIENT': 'client_name',
+        'EMAIL': 'client_email',
+        'PRESTATION': 'service_type',
+        'PRIX UNITAIRE': 'unit_price',
+        'QUANTITÉ': 'quantity',
+        'MODE DE PAIEMENT': 'payment_method',
+        'NOTE DE PAIEMENT': 'payment_note',
+        'MONTANT TOTAL': 'total_amount'
+    };
+
+    const priceStringToFloat = (s) => {
+        if (typeof s !== 'string') s = String(s || '0');
+        return parseFloat(s.replace(/[^0-9,-]+/g, '').replace(',', '.'));
+    };
+
+    // XLSX import
+    if(filename.endsWith('.xlsx') || filename.endsWith('.xls')){
+      const reader = new FileReader();
+      reader.onload = async function(){
+        try{
+          const arrayBuffer = reader.result;
+          const workbook = new ExcelJS.Workbook();
+          await workbook.xlsx.load(arrayBuffer);
+          const ws = workbook.worksheets[0];
+          if(!ws){ showToast('Aucune feuille trouvée'); return; }
+
+          const headers = (ws.getRow(1).values || []).slice(1).map(h => String(h||'').trim().toUpperCase());
+          const imported = [];
+
+          for(let i = 2; i <= ws.rowCount; i++){
+            const row = ws.getRow(i);
+            if(!row || row.actualCellCount === 0) continue;
+            const rawObj = {};
+            headers.forEach((h, idx)=>{
+              const cell = row.getCell(idx+1);
+              let v = cell.value;
+              if(v && typeof v === 'object'){
+                if(v.text) v = v.text;
+                else if(v.richText) v = v.richText.map(t=>t.text).join('');
+                else if(v.result) v = v.result;
+              }
+              rawObj[h] = v !== undefined && v !== null ? String(v).trim() : '';
+            });
+
+            const obj = {};
+            for (const frenchHeader in headerMapping) {
+                const jsKey = headerMapping[frenchHeader];
+                obj[jsKey] = rawObj[frenchHeader] || '';
+            }
+
+            if (obj.invoice_date) {
+                const parsed = Date.parse(obj.invoice_date);
+                if(!isNaN(parsed)){
+                  const dt = new Date(parsed);
+                  obj.invoice_date = `${dt.getFullYear()}-${('0'+(dt.getMonth()+1)).slice(-2)}-${('0'+dt.getDate()).slice(-2)}`;
+                } else {
+                  const parts = String(obj.invoice_date).split('/');
+                  if(parts.length === 3){ const [dd, mm, yyyy] = parts; if(dd && mm && yyyy) obj.invoice_date = `${yyyy}-${mm}-${dd}`; }
+                }
+            }
+
+            obj.unit_price = priceStringToFloat(obj.unit_price);
+            if (isNaN(obj.unit_price)) obj.unit_price = 0;
+
+            obj.total_amount = priceStringToFloat(obj.total_amount);
+            if (isNaN(obj.total_amount)) obj.total_amount = 0;
+
+            obj.quantity = parseInt(obj.quantity || '1', 10) || 1;
+
+            if (obj.total_amount === 0 && obj.unit_price > 0) {
+                obj.total_amount = obj.unit_price * obj.quantity;
+            } else if (obj.unit_price === 0 && obj.total_amount > 0) {
+                obj.unit_price = obj.total_amount / obj.quantity;
+            }
+
+            imported.push(obj);
+          }
+
+          handleImportedArray(imported);
+        }catch(ex){ showToast('Erreur import XLSX'); console.error(ex); }
+      };
+      reader.readAsArrayBuffer(f);
+      importInput.value='';
+      return;
+    }
+
+    // fallback: CSV import
     const reader = new FileReader();
     reader.onload = function(){
       try{
@@ -739,19 +1001,6 @@ if(importBtn && importInput){
         const headerLine = lines[0];
         const separator = headerLine.includes(';') ? ';' : ',';
         const headers = headerLine.split(separator).map(h=>h.trim().toUpperCase());
-
-        const headerMapping = {
-            'NUMÉRO DE FACTURE': 'invoice_number',
-            'DATE': 'invoice_date',
-            'CLIENT': 'client_name',
-            'EMAIL': 'client_email',
-            'PRESTATION': 'service_type',
-            'PRIX UNITAIRE': 'unit_price',
-            'QUANTITÉ': 'quantity',
-            'MODE DE PAIEMENT': 'payment_method',
-            'NOTE DE PAIEMENT': 'payment_note',
-            'MONTANT TOTAL': 'total_amount'
-        };
 
         const imported = [];
         for(let i = 1; i < lines.length; i++){
@@ -777,11 +1026,6 @@ if(importBtn && importInput){
               }
           }
 
-          const priceStringToFloat = (s) => {
-              if (typeof s !== 'string') s = String(s || '0');
-              return parseFloat(s.replace(/[^0-9,-]+/g, '').replace(',', '.'));
-          };
-
           obj.unit_price = priceStringToFloat(obj.unit_price);
           if (isNaN(obj.unit_price)) obj.unit_price = 0;
 
@@ -799,16 +1043,13 @@ if(importBtn && importInput){
           imported.push(obj);
         }
 
-        if(imported.length === 0){ showToast('Aucun enregistrement trouvé'); return; }
-        if (performImport(imported)) {
-          showToast(`Importation réussie: ${imported.length} lignes chargées.`);
-        }
+        handleImportedArray(imported);
       }catch(ex){ showToast('Erreur import CSV'); console.error(ex); }
     };
     reader.readAsText(f,'utf-8'); importInput.value='';
   });
 }
-if(exportBtn){ exportBtn.addEventListener('click', function(){ if((rows||[]).length===0){ alert('Aucune ligne à exporter'); return } downloadCSVRows(rows); }); }
+if(exportBtn){ exportBtn.addEventListener('click', function(){ if((rows||[]).length===0){ alert('Aucune ligne à exporter'); return } downloadXLSXRows(rows); }); }
 // wipe handler (see enhanced handler below that also resets invoice and totals)
 if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirmer : vider la table en mémoire ?')) return; rows = []; try{ localStorage.removeItem(STORAGE_ROWS); sessionStorage.removeItem(STORAGE_ROWS + '_cache'); }catch(e){} updateListPreview(); try{ document.getElementById('invoice_number').value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){} showToast('Table vidée ✅'); }); }
 

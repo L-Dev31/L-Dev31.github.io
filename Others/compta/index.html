@@ -103,7 +103,7 @@
       <div class="controls">
         <button id="addBtn" type="submit" disabled><i class="fa-solid fa-plus" aria-hidden="true"></i>Entrer</button>
         <button id="downloadBtn" type="button" disabled style="margin-left:8px"><i class="fa-solid fa-download" aria-hidden="true"></i>Télécharger</button>
-        <!-- send button removed -->
+        <button id="sendBtn" type="button" class="secondary" disabled style="margin-left:8px" title="Envoyer et Entrer (envoie le PDF puis ajoute la ligne au tableau)"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i>Envoyer et Entrer</button>
         <button id="cancelEditBtn" type="button" class="secondary" style="display:none;margin-left:8px">Annuler</button>
       </div>
     </form>
@@ -119,10 +119,10 @@
       <h2>Aperçu</h2>
       <div class="actions small">
         <div style="margin-left:12px;display:flex;gap:8px;align-items:center">
-          <button id="importCsvBtn" type="button" class="secondary">Importer CSV</button>
-          <button id="exportCsvBtn" type="button" class="secondary">Exporter CSV</button>
+          <button id="importCsvBtn" type="button" class="secondary">Importer XLSX</button>
+          <button id="exportCsvBtn" type="button" class="secondary">Exporter XLSX</button>
           <button id="wipeBtn" type="button" class="secondary">Vider la table</button>
-          <input id="importCsvInput" type="file" accept=".csv,text/csv" style="display:none" />
+          <input id="importCsvInput" type="file" accept=".csv,text/csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none" />
         </div>
       </div>
       
@@ -167,6 +167,8 @@
 
   <div class="toast" role="status" aria-live="polite">&nbsp;</div>
 
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
