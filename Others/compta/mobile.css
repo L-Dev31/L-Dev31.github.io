@@ -46,6 +46,11 @@
     }
 }
 
+/* Hide preview placeholder on tablets in portrait mode (≤1024px) */
+@media (max-width: 1024px) and (orientation: portrait) {
+    #previewCard { display: none !important; }
+}
+
 @media (max-width: 768px) {
     body {
         -webkit-text-size-adjust: 100%;
