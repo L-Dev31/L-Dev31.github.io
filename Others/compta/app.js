@@ -377,7 +377,26 @@ function downloadCSVRows(rowsToExport){
 
 // Show a styled CSV preview (in French, uppercase headers)
 // CSV preview removed: users download CSV directly via the Export button.
-function showToast(text){ const t=document.querySelector('.toast'); if(!t) return; t.textContent=text; t.style.display='block'; setTimeout(()=>t.style.display='none',1400); }
+let toastTimeout;
+function showToast(text, duration = 2000){
+  const t = document.querySelector('.toast');
+  if(!t) return;
+  t.textContent = text;
+  
+  if (toastTimeout) {
+    clearTimeout(toastTimeout);
+    t.classList.remove('show');
+    // We need a small delay to restart the animation
+    setTimeout(() => t.classList.add('show'), 50);
+  } else {
+    t.classList.add('show');
+  }
+
+  toastTimeout = setTimeout(() => {
+    t.classList.remove('show');
+    toastTimeout = null;
+  }, duration);
+}
 document.getElementById('rowForm').addEventListener('input', function(){ updatePreview(); updateControls(); });
 const sortSel = document.getElementById('sortOrder'); if(sortSel){ sortSel.addEventListener('change', function(){ localStorage.setItem(STORAGE_SORT, this.value); updateListPreview(); }); }
 document.getElementById('service_type').addEventListener('change', function(){ const zone = document.getElementById('autre_seance_zone'); if(this.value === 'autre'){ zone.style.display = 'flex'; } else { zone.style.display = 'none'; document.getElementById('autre_seance_desc').value = ''; document.getElementById('autre_seance_prix').value = ''; } updatePreview(); updateControls(); });
