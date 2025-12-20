@@ -47,8 +47,7 @@ function initials(name){ if(!name) return '?'; const parts = name.trim().split(/
 function hashString(s){ let h=5381; for(let i=0;i<s.length;i++) h = ((h<<5)+h) + s.charCodeAt(i); return h >>> 0 }
 function nameToPastel(name){ const key=(name||'').toString(); const h=hashString(key||String(Math.random())); const hue=h%360; const sat = 20 + (h%16); const light = 72 + (h%16); return { bg: `hsl(${hue}, ${sat}%, ${light}%)`, light}; }
 function setPfpInitials(el, name){ if(!el) return; const info = nameToPastel(name||''); el.style.backgroundImage=''; el.style.background = info.bg; el.textContent = initials(name||''); const textColor = (info.light && info.light > 70) ? '#072010' : '#ffffff'; el.style.color = textColor; el.style.fontWeight = '700'; }
-function getFormData(){ const select = document.getElementById('service_type'); let unitPrice=0; let prestationLabel=''; if(select){ if(select.value === 'autre'){ unitPrice = parseFloat((document.getElementById('autre_seance_prix')||{value:'0'}).value || '0') || 0; prestationLabel = (document.getElementById('autre_seance_desc')||{value:''}).value.trim() || 'Autre séance'; } else { unitPrice = parseFloat(select.value || '0') || 0; const opt = select.options[select.selectedIndex] || null; // Do not treat the placeholder option as a valid service label; require a non-empty value
-    prestationLabel = (select.value && select.value !== '') ? (opt && opt.text ? opt.text.split('—')[0].trim() : '') : ''; } }
+function getFormData(){ const select = document.getElementById('service_type'); let unitPrice=0; let prestationLabel=''; if(select){ if(select.value === 'autre'){ unitPrice = parseFloat((document.getElementById('autre_seance_prix')||{value:'0'}).value || '0') || 0; prestationLabel = (document.getElementById('autre_seance_desc')||{value:''}).value.trim() || 'Autre séance'; } else { unitPrice = parseFloat(select.value || '0') || 0; const opt = select.options[select.selectedIndex] || null; prestationLabel = (select.value && select.value !== '') ? (opt && opt.text ? opt.text.split('—')[0].trim() : '') : ''; } }
   const pm = (document.getElementById('payment_method')||{value:''}).value.trim(); const paymentMethodFinal = (pm === 'Autre') ? (document.getElementById('payment_method_other')||{value:''}).value.trim() : pm;
   const invoice = (document.getElementById('invoice_number')||{value:''}).value.trim(); const invoice_date = (document.getElementById('invoice_date')||{value:todayIso()}).value || todayIso();
   const quantity = parseInt((document.getElementById('service_quantity')||{value:'1'}).value || '1',10) || 1;
@@ -72,39 +71,25 @@ function updatePreview(){
   const totalEl = document.getElementById('previewTotal');
   const invoiceEl = document.getElementById('previewInvoice');
   const paymentEl = document.getElementById('previewPayment');
-
-  // PFP: show '?' with neutral background when no client provided
   if(pfp){
     if(d.client_name && d.client_name.trim()){
       pfp.textContent = initials(d.client_name);
       setPfpInitials(pfp, d.client_name);
     } else {
       pfp.textContent = '?';
-      // neutral light green background similar to other pfps
       pfp.style.background = 'linear-gradient(135deg,#e6f2ea,#dff4e6)';
       pfp.style.color = 'var(--accent)';
       pfp.style.fontWeight = '700';
     }
   }
-
-  // Client name
   if(clientEl) clientEl.textContent = d.client_name || 'Nom Prénom';
-
-  // Service line: show explicit placeholder and quantity
   const qtyPart = (d.quantity != null) ? (' • x' + d.quantity) : '';
   if(serviceEl) serviceEl.textContent = (d.service_type && d.service_type.trim()) ? (d.service_type + qtyPart) : ('[type de seance]' + (qtyPart || ' • x1'));
-
-  // Email (optional): do not prefill placeholder when empty
   const emailEl = document.getElementById('previewEmail');
   if(emailEl){ emailEl.textContent = d.client_email || ''; emailEl.className = d.client_email ? 'meta email' : 'meta'; }
-
-  // Totals
   if(totalEl) totalEl.textContent = (d.total_amount ? d.total_amount.toFixed(2) : '0.00') + ' €';
-
-  // Invoice & date: default to next invoice and today when empty
   if(invoiceEl) invoiceEl.textContent = `N° ${d.invoice_number || computeNextInvoiceFromRows(getCurrentYear())} • ${d.invoice_date || todayIso()}`;
   if(paymentEl) paymentEl.textContent = d.payment_method || 'Mode paiement';
-
   document.getElementById('priceBig').textContent = (d.total_amount ? d.total_amount.toFixed(2) : '0.00') + ' €';
   updateControls();
 }
@@ -121,7 +106,6 @@ function isFormValid(){
     const prix = parseFloat((document.getElementById('autre_seance_prix')||{value:'0'}).value || '0');
     if(!desc || isNaN(prix) || prix <= 0) return false;
   }
-  // require payment method to be selected and if 'Autre' then require the other field
   const pm = (document.getElementById('payment_method')||{value:''}).value;
   if(!pm) return false;
   if(pm === 'Autre'){
@@ -137,7 +121,6 @@ function updateControls(){
   const emailValid = validateEmailValue(emailVal);
   const emailInput = document.getElementById('client_email');
   const emailError = document.getElementById('client_email_error');
-
   if(emailProvided && !emailValid){
     if(emailInput) emailInput.classList.add('invalid');
     if(emailError) emailError.style.display = '';
@@ -145,16 +128,11 @@ function updateControls(){
     if(emailInput) emailInput.classList.remove('invalid');
     if(emailError) emailError.style.display = 'none';
   }
-
   const formOk = isFormValid();
   const canEnter = formOk && !(emailProvided && !emailValid);
   if(addBtn) addBtn.disabled = !canEnter;
-
-  // enable/disable the download button: same conditions as Entrer (form valid)
   const downloadBtn = document.getElementById('downloadBtn');
   if(downloadBtn){ downloadBtn.disabled = !canEnter; }
-
-  // enable/disable the send button: require form valid + a provided valid email
   const sendBtn = document.getElementById('sendBtn');
   if(sendBtn){ sendBtn.disabled = !(formOk && emailProvided && emailValid); }
 }
@@ -179,23 +157,25 @@ function createCardElement(r){
   row2.appendChild(inv); row2.appendChild(pay);
   try{
     const actionsDiv = document.createElement('div'); actionsDiv.className = 'actions';
-    // per-card Download
     const cardDownloadBtn = document.createElement('button'); cardDownloadBtn.type='button'; cardDownloadBtn.className='secondary'; cardDownloadBtn.title='Télécharger cette facture'; cardDownloadBtn.innerHTML = '<i class="fa-solid fa-download"></i>';
     cardDownloadBtn.addEventListener('click', function(e){ e.stopPropagation(); (async function(){ try{ const doc = await buildInvoiceDoc(r); const filename = `facture_${(r.invoice_number||'facture').replace(/[^0-9A-Za-z-_\.]/g,'_')}.pdf`; doc.save(filename); showToast('Téléchargement facture...'); }catch(ex){ console.error(ex); alert('Erreur génération PDF'); } })(); });
-    // per-card Send button
     const cardSendBtn = document.createElement('button'); cardSendBtn.type='button'; cardSendBtn.className='secondary'; cardSendBtn.title='Envoyer par e-mail'; cardSendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>';
     cardSendBtn.addEventListener('click', function(e){ e.stopPropagation(); (async function(){ try{
         let email = (r.client_email||'').toString().trim();
         if(!email){ email = prompt('Adresse e-mail du destinataire :'); if(!email) { showToast('Envoi annulé'); return; } }
         const doc = await buildInvoiceDoc(r);
         const pdfBase64 = doc.output('datauristring');
-        await sendPdfToAppsScript(email, pdfBase64, cardSendBtn);
+        const meta = {
+          subject: `Votre facture N° ${r.invoice_number}`,
+          message: `Bonjour ${r.client_name || ''},\n\nVeuillez trouver votre facture n° ${r.invoice_number} en pièce jointe.\n\nCordialement,`,
+          footer: '<small style="color:#777;font-size:10px">Mail envoyé par Axonis — Léo Tosku</small>'
+        };
+        await sendPdfToAppsScript(email, pdfBase64, cardSendBtn, meta);
       }catch(ex){ console.error(ex); alert('Erreur envoi PDF'); } })(); });
     const editBtn = document.createElement('button'); editBtn.type='button'; editBtn.className='secondary'; editBtn.title='Modifier'; editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
     editBtn.addEventListener('click', function(e){ e.stopPropagation(); if(r && r._id) startEdit(r._id); });
     const delBtn = document.createElement('button'); delBtn.type='button'; delBtn.className='secondary'; delBtn.title='Supprimer'; delBtn.style.borderColor = '#e76b6b'; delBtn.style.color = '#b30000'; delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
     delBtn.addEventListener('click', function(e){ e.stopPropagation(); if(r && r._id) deleteRow(r._id); });
-    // append in chosen order: download, send, edit, delete
     actionsDiv.appendChild(cardDownloadBtn);
     actionsDiv.appendChild(cardSendBtn);
     actionsDiv.appendChild(editBtn);
@@ -291,7 +271,6 @@ function updateTotals() {
   const totalAmount = rows.reduce((sum, row) => sum + (row.total_amount || 0), 0);
 
   if (rows.length > 0) {
-    // Render the total as a styled card to match the other entries (no pfp)
     totals.innerHTML = `
       <div class="card total-card">
         <div class="info">
@@ -317,7 +296,6 @@ function updateListPreview() {
 
   container.innerHTML = '';
   const sort = localStorage.getItem(STORAGE_SORT) || 'desc';
-  // apply search filter (by client name or invoice number)
   const raw = (rows||[]).slice();
   const searchVal = ((document.getElementById('searchInput')||{value:''}).value || '').toString().trim().toLowerCase();
   let filtered = raw;
@@ -329,7 +307,6 @@ function updateListPreview() {
     });
   }
 
-  // sort by invoice number (ascending) so that e.g. 2025-1 appears before 2025-2 regardless of creation time
   let list = filtered.sort(invoiceCompare);
 
   if (sort === 'desc') {
@@ -341,8 +318,6 @@ function updateListPreview() {
     frag.appendChild(createCardElement(r));
   });
   container.appendChild(frag);
-
-  // cardsHeader removed — showing totals and clients count only
 
   updateTotals();
   updateClientsCount();
@@ -406,20 +381,16 @@ async function downloadXLSXRows(rowsToExport){
   workbook.created = new Date();
   const sheet = workbook.addWorksheet('Compta');
 
-  // define columns by header + key; widths will be calculated dynamically below for a clean auto width behavior
   sheet.columns = headers.map((h, idx) => ({ header: h, key: keys[idx] }));
 
-
-  // Header styling (green theme)
   const headerRow = sheet.getRow(1);
   headerRow.height = 22;
   headerRow.eachCell((cell) => {
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2E7D32' } }; // green background (Material Green 700)
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2E7D32' } };
     cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 12 };
     cell.alignment = { vertical: 'middle', horizontal: 'center' };
   });
 
-  // Add rows
   rowsToExport.forEach(r => {
     const rowObj = {};
     keys.forEach(k => {
@@ -441,21 +412,17 @@ async function downloadXLSXRows(rowsToExport){
     sheet.addRow(rowObj);
   });
 
-  // Format columns
   sheet.getColumn('unit_price').numFmt = '#,##0.00 €';
   sheet.getColumn('total_amount').numFmt = '#,##0.00 €';
   sheet.getColumn('quantity').numFmt = '0';
   sheet.getColumn('invoice_date').numFmt = 'dd/mm/yyyy';
 
-  // Auto-calc column widths from the longest cell (header + data) — clamp to [8, 50]
   const minWidth = 8;
   const maxWidth = 50;
-  const paddingChars = 2; // few extra chars for readability
+  const paddingChars = 2;
 
-  // start with header lengths
   const maxLens = headers.map(h => Math.min(Math.max(String(h).length + paddingChars, minWidth), maxWidth));
 
-  // scan data rows and update maximum lengths per column
   rowsToExport.forEach(r => {
     keys.forEach((k, j) => {
       let v = r[k] ?? '';
@@ -466,13 +433,11 @@ async function downloadXLSXRows(rowsToExport){
     });
   });
 
-  // apply computed widths
   maxLens.forEach((w, i) => {
     const col = sheet.getColumn(i + 1);
     col.width = w;
   });
 
-  // Apply borders and alternating row colors (white / green pastel)
   sheet.eachRow({ includeEmpty:false }, function(row, rowNumber){
     if(rowNumber >= 1){
       row.eachCell({ includeEmpty:true }, function(cell){
@@ -480,12 +445,10 @@ async function downloadXLSXRows(rowsToExport){
       });
       if(rowNumber > 1){
         if(rowNumber % 2 === 0){
-          // pastel green for even rows
           row.eachCell({ includeEmpty:true }, function(cell){
             cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb: 'FFEFF7EE' } };
           });
         } else {
-          // ensure white background for odd rows
           row.eachCell({ includeEmpty:true }, function(cell){
             cell.fill = null;
           });
@@ -500,31 +463,24 @@ async function downloadXLSXRows(rowsToExport){
   saveAs(blob, filename);
 }
 
-// Preview removed: users import/export via XLSX (or CSV fallback) using the Importer/Exporter buttons.
 let toastTimeout;
 function showToast(text, duration = 2000){
   const t = document.querySelector('.toast');
   if(!t) return;
   t.textContent = text;
-  
-  // Show immediately, restarting animation if already visible
+
   if (toastTimeout) {
     clearTimeout(toastTimeout);
-    // If we were in the middle of fading out, cancel it
     t.classList.remove('hide');
-    // restart the entrance animation
     t.classList.remove('show');
-    void t.offsetWidth; // force reflow
+    void t.offsetWidth;
     t.classList.add('show');
   } else {
-    // If a previous fade-out animation is still running (no timeout), ensure it's cancelled
     if (t.classList.contains('hide')) t.classList.remove('hide');
     t.classList.add('show');
   }
 
-  // Schedule hide: add .hide which runs fadeOut while keeping .show; remove .show only after animation ends
   toastTimeout = setTimeout(() => {
-    // If already hiding, ignore
     if (t.classList.contains('hide')) { toastTimeout = null; return; }
     t.classList.add('hide');
     const onAnimEnd = (ev) => {
@@ -539,11 +495,9 @@ function showToast(text, duration = 2000){
 }
 document.getElementById('rowForm').addEventListener('input', function(){ updatePreview(); updateControls(); });
 const sortSel = document.getElementById('sortOrder'); if(sortSel){ sortSel.addEventListener('change', function(){ localStorage.setItem(STORAGE_SORT, this.value); updateListPreview(); }); }
-// wire up search input to filter list by client name or invoice number
 const searchInput = document.getElementById('searchInput'); if(searchInput){ searchInput.addEventListener('input', function(){ updateListPreview(); }); }
 document.getElementById('service_type').addEventListener('change', function(){ const zone = document.getElementById('autre_seance_zone'); if(this.value === 'autre'){ zone.style.display = 'flex'; } else { zone.style.display = 'none'; document.getElementById('autre_seance_desc').value = ''; document.getElementById('autre_seance_prix').value = ''; } updatePreview(); updateControls(); });
 document.getElementById('payment_method').addEventListener('change', function(){ var ta = document.getElementById('payment_method_other'); if(this.value === 'Autre'){ ta.style.display = ''; } else { ta.style.display = 'none'; ta.value = ''; } updatePreview(); updateControls(); });
-// re-evaluate controls when the 'other' payment method field is edited
 var _pmOther = document.getElementById('payment_method_other'); if(_pmOther){ _pmOther.addEventListener('input', function(){ updatePreview(); updateControls(); }); }
 document.getElementById('invoice_date').addEventListener('change', function(){ updatePreview(); updateControls(); });
 document.getElementById('rowForm').addEventListener('submit', function(e){
@@ -553,7 +507,6 @@ document.getElementById('rowForm').addEventListener('submit', function(e){
   const wasEditing = !!window._editingId;
   const ok = addCurrentToList();
   if (ok && !wasEditing) {
-    // Reset form then set sensible defaults (invoice number & date) and refresh preview/controls
     document.getElementById('rowForm').reset();
     try{ const dateEl = document.getElementById('invoice_date'); if(dateEl) dateEl.value = todayIso(); }catch(e){}
     try{ const numEl = document.getElementById('invoice_number'); if(numEl) numEl.value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){}
@@ -568,7 +521,6 @@ document.getElementById('client_name').addEventListener('keydown', function(e){
     const wasEditing = !!window._editingId;
     const ok = addCurrentToList();
     if (ok && !wasEditing) {
-      // Reset form then set defaults and update preview
       document.getElementById('rowForm').reset();
       try{ const dateEl = document.getElementById('invoice_date'); if(dateEl) dateEl.value = todayIso(); }catch(e){}
       try{ const numEl = document.getElementById('invoice_number'); if(numEl) numEl.value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){}
@@ -577,34 +529,14 @@ document.getElementById('client_name').addEventListener('keydown', function(e){
     }
   }
 });
-
-// send test email to client using mailto: (opens user's mail client) -- removed
-
-// Initialize EmailJS
-// Email sending functionality removed from UI per request.
-
-// NOTE FOR EMAILJS USERS:
-// EmailJS free plans have a size limit for API calls (around 2-3MB).
-// If the generated PDF (including images) is too large, EmailJS will return a 413 "Payload Too Large" error.
-// To fix this, you can either:
-// 1. Reduce the size of the PDF by using smaller images or less complex content.
-// 2. Upgrade your EmailJS plan to allow for larger attachments.
-// EmailJS sending helper removed — sending via UI disabled per request.
-
-// Send via UI has been removed; use Download to get the PDF and send manually.
-
-// Download the current invoice as an HTML file
 const downloadBtn = document.getElementById('downloadBtn');
 function formatDateShort(iso){ if(!iso) return ''; try{ const dt = new Date(iso); const dd = ('0'+dt.getDate()).slice(-2); const mm = ('0'+(dt.getMonth()+1)).slice(-2); const yyyy = dt.getFullYear(); return `${dd}/${mm}/${yyyy}`; }catch(e){ return iso; } }
-
 async function loadImageDataURL(url, options = {}){
   const { compress = false, compressionQuality = 0.75 } = options;
   try{
     if(!url) return null;
-    // support special #file: prefix meaning local file path (strip prefix)
     if(url.startsWith('#file:')) url = url.slice(6);
     let res = await fetch(url);
-    // if not found, try common fallback locations (images/ subfolder, root, etc.)
     if(!res.ok){
       const fallbacks = [];
       if(!url.includes('/')){
@@ -622,65 +554,50 @@ async function loadImageDataURL(url, options = {}){
     const blob = await res.blob();
     let dataUrl = await new Promise((resolve)=>{ const fr = new FileReader(); fr.onload = ()=> resolve(fr.result); fr.onerror = ()=> resolve(null); fr.readAsDataURL(blob); });
     if(!dataUrl) return null;
-    // create image to obtain natural dimensions
     const img = await new Promise((resolve)=>{ const im = new Image(); im.onload = ()=> resolve(im); im.onerror = ()=> resolve(null); im.src = dataUrl; });
     if(!img) return { dataUrl };
-
     if (compress) {
       const canvas = document.createElement('canvas');
       canvas.width = img.naturalWidth;
       canvas.height = img.naturalHeight;
       const ctx = canvas.getContext('2d');
-      // Fill background with white since JPEG doesn't support transparency
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0);
       dataUrl = canvas.toDataURL('image/jpeg', compressionQuality);
     }
-
     return { dataUrl, width: img.naturalWidth || null, height: img.naturalHeight || null, isJpeg: compress };
   }catch(e){ return null; }
 }
-
 async function buildInvoiceDoc(d){
   if(!window.jspdf || !window.jspdf.jsPDF){ throw new Error('Bibliothèque PDF non chargée'); }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({unit: 'pt', format: 'a4'});
   const left = 40; let y = 40; const pageWidth = doc.internal.pageSize.getWidth();
-
-  // Header area (logo left, business title to the right)
   doc.setTextColor('#072010');
-
-  // try to load logo (local file: logo.png) and stamp (/images/stamp.png)
   const logoImg = await loadImageDataURL('images/logo.png', { compress: true });
   const stampImg = await loadImageDataURL('/images/stamp.png', { compress: true });
-
-  // Top-left: logo (if available) and business title to the right
   let headerBottom = y;
   let rightX = left;
   if(logoImg && logoImg.dataUrl){
     const lw = logoImg.width || 80; const lh = logoImg.height || 80;
-    const maxW = 200; const maxH = 120; // allow larger logo
+    const maxW = 200; const maxH = 120;
     const ratio = Math.min(1, maxW / lw, maxH / lh);
     const drawW = (lw * ratio);
     const drawH = (lh * ratio);
     const imgType = logoImg.isJpeg ? 'JPEG' : (logoImg.dataUrl.indexOf('image/png') >= 0 ? 'PNG' : 'JPEG');
     doc.addImage(logoImg.dataUrl, imgType, left, y, drawW, drawH);
-    rightX = left + drawW + 18; // start text to the right of logo
+    rightX = left + drawW + 18;
     headerBottom = y + drawH;
   } else {
     rightX = left;
     headerBottom = y;
   }
-
-  // Business title to the right of logo
   const titleTop = y + 2;
   doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor('#072010');
   doc.text('Viviane de Vries', rightX, titleTop);
   doc.setFontSize(11); doc.setTextColor('#0b6b3a'); doc.setFont('helvetica','normal');
   doc.text('Ostéopathe Exclusif', rightX, titleTop + 18);
-
-  // Business address block under the title (use muted color)
   doc.setFontSize(10); doc.setTextColor('#6b7b6b');
   let addrY = titleTop + 36;
   const lines = [
@@ -773,11 +690,9 @@ async function generateInvoicePDF(d){
 // URL for Google Apps Script that accepts {email, pdf}
 const SEND_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwKaQ3er-DSLx5r9pBePb3s40p-gDlI1dbebpDrg3NMx1CN7Bsuvr57gwQLrLqiBNiZ/exec';
 
-async function sendPdfToAppsScript(email, pdfDataUri, btn){
+async function sendPdfToAppsScript(email, pdfDataUri, btn, meta = {}){
   if(!email) throw new Error('Email manquant');
-  // normalize button reference
   const el = btn || document.getElementById('sendBtn');
-  // guard against concurrent sends
   if(el && el.dataset && el.dataset.sending === '1'){ showToast('Envoi déjà en cours...'); return; }
   let originalHtml = null;
   try{
@@ -788,11 +703,12 @@ async function sendPdfToAppsScript(email, pdfDataUri, btn){
       el.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Envoi...';
     }
 
+    const payload = Object.assign({ email: email, pdf: pdfDataUri }, meta);
     let resp = await fetch(SEND_SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
       cache: 'no-cache',
-      body: JSON.stringify({ email: email, pdf: pdfDataUri })
+      body: JSON.stringify(payload)
     });
 
     // note: with mode:'no-cors' the response is opaque; treat as success if no exception
@@ -813,7 +729,6 @@ async function sendPdfToAppsScript(email, pdfDataUri, btn){
   }
 }
 
-// Generate and send PDF from the current form data
 async function genererEtEnvoyerPDFFromForm(){
   const d = getFormData();
   if(!d || !d.invoice_number){ alert('Numéro de facture requis pour envoyer'); return; }
@@ -823,13 +738,16 @@ async function genererEtEnvoyerPDFFromForm(){
     const doc = await buildInvoiceDoc(d);
     const pdfBase64 = doc.output('datauristring');
     const btn = document.getElementById('sendBtn');
-    const ok = await sendPdfToAppsScript(email, pdfBase64, btn);
+    const meta = {
+      subject: `Votre facture N° ${d.invoice_number}`,
+      message: `Bonjour ${d.client_name || ''},\n\nVeuillez trouver votre facture n° ${d.invoice_number} en pièce jointe.\n\nCordialement,`,
+      footer: '<small style="color:#777;font-size:10px">Mail envoyé par Axonis — Léo Tosku</small>'
+    };
+    const ok = await sendPdfToAppsScript(email, pdfBase64, btn, meta);
     if(ok){
       try{
         if(!window._editingId){
-          // behave exactly like Entrer: add row and reset form
           addCurrentToList();
-          // reset the form and set sensible defaults (invoice number & date)
           try{ document.getElementById('rowForm').reset(); }catch(e){}
           try{ const dateEl = document.getElementById('invoice_date'); if(dateEl) dateEl.value = todayIso(); }catch(e){}
           try{ const numEl = document.getElementById('invoice_number'); if(numEl) numEl.value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){}
@@ -837,7 +755,6 @@ async function genererEtEnvoyerPDFFromForm(){
           updatePreview(); updateControls();
           showToast('Envoyé et enregistré ✅');
         } else {
-          // editing flow: update existing row and leave form in edit mode cleared
           addCurrentToList();
           cancelEdit();
           showToast('Envoyé et mise à jour enregistrée ✅');
@@ -860,7 +777,12 @@ async function handleMainSend(){
     const doc = await buildInvoiceDoc(data);
     const pdfBase64 = doc.output('datauristring');
     const sendBtn = document.getElementById('sendBtn');
-    const ok = await sendPdfToAppsScript(data.client_email, pdfBase64, sendBtn);
+    const meta = {
+      subject: `Votre facture N° ${data.invoice_number}`,
+      message: `Bonjour ${data.client_name || ''},\n\nVeuillez trouver votre facture n° ${data.invoice_number} en pièce jointe.\n\nCordialement,`,
+      footer: '<small style="color:#777;font-size:10px">Mail envoyé par Axonis — Léo Tosku</small>'
+    };
+    const ok = await sendPdfToAppsScript(data.client_email, pdfBase64, sendBtn, meta);
     if(ok){
       try{
         if(!window._editingId){
@@ -891,7 +813,6 @@ if(downloadBtn){
   });
 } 
 
-// wire the form-level send button
 const sendBtnEl = document.getElementById('sendBtn');
 if(sendBtnEl){ sendBtnEl.addEventListener('click', handleMainSend); }
 
@@ -899,7 +820,6 @@ const importBtn = document.getElementById('importCsvBtn');
 const importInput = document.getElementById('importCsvInput');
 const exportBtn = document.getElementById('exportCsvBtn');
 
-// Show/hide "Précisez le mode de règlement" input & label when selecting 'Autre'
 const paymentMethodSelect = document.getElementById('payment_method');
 const paymentMethodOtherInput = document.getElementById('payment_method_other');
 const paymentMethodOtherLabel = document.getElementById('payment_method_other_label');
@@ -929,7 +849,6 @@ if(importBtn && importInput){
       }
     };
 
-    // reusable mapping
     const headerMapping = {
         'NUMÉRO DE FACTURE': 'invoice_number',
         'DATE': 'invoice_date',
@@ -1079,22 +998,17 @@ if(importBtn && importInput){
   });
 }
 if(exportBtn){ exportBtn.addEventListener('click', function(){ if((rows||[]).length===0){ alert('Aucune ligne à exporter'); return } downloadXLSXRows(rows); }); }
-// wipe handler (see enhanced handler below that also resets invoice and totals)
 if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirmer : vider la table en mémoire ?')) return; rows = []; try{ localStorage.removeItem(STORAGE_ROWS); sessionStorage.removeItem(STORAGE_ROWS + '_cache'); }catch(e){} updateListPreview(); try{ document.getElementById('invoice_number').value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){} showToast('Table vidée ✅'); }); }
 
 (function init(){
   document.getElementById('autre_seance_zone').style.display = 'none';
   const dateEl = document.getElementById('invoice_date'); if(!dateEl.value) dateEl.value = todayIso();
   const numEl = document.getElementById('invoice_number'); if(!numEl.value) numEl.value = computeNextInvoiceFromRows(getCurrentYear());
-  // Removed logic that sets payment_method and service_type from last saved values to allow HTML defaults
-  // ensure payment method is enabled and hide the 'other' field by default
   try{
     const pm = document.getElementById('payment_method'); if(pm) pm.disabled = false;
     const pmOther = document.getElementById('payment_method_other'); if(pmOther) pmOther.style.display = 'none';
   }catch(e){}
-  // removed logic that forced a default for service_type; now respects HTML default
   try{ if((rows||[]).length === 0){ const cache = sessionStorage.getItem(STORAGE_ROWS + '_cache'); if(cache){ rows = JSON.parse(cache || '[]'); } } }catch(e){}
-    // ensure all rows have stable ids for edit/delete
     try{ ensureRowIds(); }catch(e){}
   try{ if(!localStorage.getItem(STORAGE_SORT)) localStorage.setItem(STORAGE_SORT,'desc'); }catch(e){}
   try{ document.getElementById('invoice_number').value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){}
