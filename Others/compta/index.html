@@ -3,17 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Créer une ligne — Comptabilité</title>
+  <title>Axonis — Comptabilité</title>
+  <link rel="icon" href="./favicon.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
   <!-- jsPDF + AutoTable for PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
 </head>
 <body>
   <div class="split">
     <div class="container">
+    
     <form id="rowForm" autocomplete="off">
       <h1 id="formTitle">Nouvelle facture</h1>
       <div class="grid">
@@ -24,7 +26,7 @@
           </div>
           <div style="width:24px;"></div>
           <div style="flex:1; display: flex; flex-direction: column; gap: 6px;">
-            <label for="invoice_date" style="margin-bottom:2px;">Date de la facture</label>
+            <label for="invoice_date" style="margin-bottom:2px;">Date de la facture <span style="font-weight:600;color:var(--muted);font-size:12px">(optionnel)</span></label>
             <input type="date" id="invoice_date" placeholder="Date facture" title="Date de la facture" style="min-width:0;">
           
           </div>
@@ -36,7 +38,7 @@
             </div>
           <div style="width:12px;"></div>
           <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
-            <label for="client_email">Email</label>
+            <label for="client_email">Email <span style="font-weight:600;color:var(--muted);font-size:12px">(optionnel)</span></label>
             <input type="email" id="client_email" placeholder="email@exemple.com">
             <div id="client_email_error" class="field-error" style="display:none">Adresse e-mail invalide</div>
           </div>
@@ -51,15 +53,16 @@
               <option value="Carte bancaire">Carte bancaire</option>
               <option value="Autre">Autre</option>
           </select>
-          <input type="text" id="payment_method_other" placeholder="Précisez le mode de règlement..." style="display:none;margin-top:8px;" />
-          <label for="payment_note" style="margin-top:8px;display:block">Référence / note paiement</label>
+          <label for="payment_method_other" style="margin-top:8px;display:none" id="payment_method_other_label">Précisez le mode de règlement <span style="font-weight:600;color:var(--muted);font-size:12px">(optionnel)</span></label>
+          <input type="text" id="payment_method_other" placeholder="Précisez le mode de règlement... (optionnel)" style="display:none;margin-top:8px;" />
+          <label for="payment_note" style="margin-top:8px;display:block">Référence / note paiement <span style="font-weight:600;color:var(--muted);font-size:12px">(optionnel)</span></label>
           <input type="text" id="payment_note" placeholder="Ex: virement le 02/08/24, ch 7185423" style="margin-top:6px;" />
           
         </div>
 
         <div style="display:flex;gap:12px;align-items:end;">
           <div style="flex:2;display:flex;flex-direction:column;gap:6px;">
-            <label for="service_type">Type de séance</label>
+            <label for="service_type">Type de séance <span style="font-weight:600;color:var(--muted);font-size:12px">(optionnel)</span></label>
             <select id="service_type" aria-label="Type de séance">
               <option value="" disabled selected>Sélectionner un type de séance…</option>
               <option value="70">1 séance d'ostéopathie (45min) — 70€</option>
@@ -69,8 +72,8 @@
               <option value="autre">Autre…</option>
             </select>
             <div id="autre_seance_zone" style="display:none; margin-top:8px; gap:8px; align-items:end;">
-              <input type="text" id="autre_seance_desc" placeholder="Description de la séance" style="flex:2;" />
-              <input type="number" id="autre_seance_prix" placeholder="Prix (€)" min="0" step="0.01" style="flex:1;" />
+              <input type="text" id="autre_seance_desc" placeholder="Description de la séance (optionnel)" style="flex:2;" />
+              <input type="number" id="autre_seance_prix" placeholder="Prix (€) (optionnel)" min="0" step="0.01" style="flex:1;" />
             </div>
           
           </div>
@@ -96,7 +99,7 @@
       <div class="controls">
         <button id="addBtn" type="submit" disabled><i class="fa-solid fa-plus" aria-hidden="true"></i>Entrer</button>
         <button id="downloadBtn" type="button" disabled style="margin-left:8px"><i class="fa-solid fa-download" aria-hidden="true"></i>Télécharger</button>
-        <button id="sendBtn" type="button" disabled style="margin-left:8px"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i>Envoyer</button>
+        <!-- send button removed -->
         <button id="cancelEditBtn" type="button" class="secondary" style="display:none;margin-left:8px">Annuler</button>
       </div>
     </form>
@@ -119,8 +122,22 @@
         <div style="margin-left:12px;display:flex;gap:8px;align-items:center">
           <button id="importCsvBtn" type="button" class="secondary">Importer CSV</button>
           <button id="exportCsvBtn" type="button" class="secondary">Exporter CSV</button>
+          <button id="previewCsvBtn" type="button" class="secondary" style="margin-left:8px">Prévisualiser CSV</button>
           <button id="wipeBtn" type="button" class="secondary">Vider la table</button>
           <input id="importCsvInput" type="file" accept=".csv,text/csv" style="display:none" />
+        </div>
+      </div>
+      <!-- CSV preview area -->
+      <div id="csvPreviewContainer" style="margin-top:16px;display:none">
+        <div class="csv-preview-box">
+          <div class="csv-preview-header">
+            <strong>PRÉVISUALISATION CSV</strong>
+            <div style="float:right">
+              <button id="csvDownloadBtn" class="secondary">Télécharger CSV</button>
+              <button id="csvCloseBtn" class="secondary" style="margin-left:8px">Fermer</button>
+            </div>
+          </div>
+          <div id="csvPreview" class="csv-preview"></div>
         </div>
       </div>
       <div id="cardsContainer" class="cards">

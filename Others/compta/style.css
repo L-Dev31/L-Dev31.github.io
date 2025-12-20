@@ -73,3 +73,13 @@ button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(
 .options{display:none;margin-top:8px;gap:8px;flex-direction:column}
 .toggleOptions{background:transparent;border:0;color:var(--muted);cursor:pointer}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;background:#0b6b3a;color:#fff;padding:10px 16px;display:none}
+
+/* CSV preview styles */
+.csv-preview-box{border:1px solid #dfeadc;border-radius:8px;padding:12px;background:#fbfffb}
+.csv-preview-header{background:linear-gradient(90deg,#e6f6e9,#f8fff9);padding:8px;border-radius:6px;margin-bottom:8px;color:#0a5f2a}
+.csv-preview table{width:100%;border-collapse:collapse;font-size:13px}
+.csv-preview th{background:#0f8a3f;color:#fff;padding:8px;text-align:left;text-transform:uppercase;font-weight:700;border-bottom:2px solid rgba(0,0,0,0.05)}
+.csv-preview td{padding:8px;border-bottom:1px solid #eee}
+.csv-preview tr:nth-child(even) td{background:#eef9ec}
+.csv-preview tr:nth-child(odd) td{background:#ffffff}
+.csv-preview .col-header{font-weight:800;text-transform:uppercase;color:#0b6c34}

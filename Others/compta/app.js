@@ -103,11 +103,7 @@ function updateControls(){
   const canEnter = formOk && !(emailProvided && !emailValid);
   if(addBtn) addBtn.disabled = !canEnter;
 
-  // enable/disable the send button: only when the form can be entered AND email is present & valid
-  const sendBtn = document.getElementById('sendBtn');
-  if(sendBtn){
-    sendBtn.disabled = !(canEnter && emailProvided && emailValid);
-  }
+  // send button removed from UI — no action here
   // enable/disable the download button: same conditions as Entrer (form valid)
   const downloadBtn = document.getElementById('downloadBtn');
   if(downloadBtn){
@@ -138,21 +134,13 @@ function createCardElement(r){
     // per-card Download
     const cardDownloadBtn = document.createElement('button'); cardDownloadBtn.type='button'; cardDownloadBtn.className='secondary'; cardDownloadBtn.title='Télécharger cette facture'; cardDownloadBtn.innerHTML = '<i class="fa-solid fa-download"></i>';
     cardDownloadBtn.addEventListener('click', function(e){ e.stopPropagation(); (async function(){ try{ const doc = await buildInvoiceDoc(r); const filename = `facture_${(r.invoice_number||'facture').replace(/[^0-9A-Za-z-_\.]/g,'_')}.pdf`; doc.save(filename); showToast('Téléchargement facture...'); }catch(ex){ console.error(ex); alert('Erreur génération PDF'); } })(); });
-    // per-card Send (enabled only if valid email available)
-    const cardSendBtn = document.createElement('button'); cardSendBtn.type='button'; cardSendBtn.className='secondary'; cardSendBtn.title='Envoyer cette facture'; cardSendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>';
-    try{ 
-      const sendDisabled = !validateEmailValue(r.client_email||'');
-      cardSendBtn.disabled = sendDisabled;
-      cardSendBtn.setAttribute('aria-disabled', sendDisabled ? 'true' : 'false');
-      cardSendBtn.title = sendDisabled ? 'Envoyer (email manquant ou invalide)' : 'Envoyer cette facture';
-    }catch(e){ cardSendBtn.disabled = true; cardSendBtn.setAttribute('aria-disabled','true'); cardSendBtn.title = 'Envoyer (email manquant ou invalide)'; }
-    cardSendBtn.addEventListener('click', function(e){ e.stopPropagation(); (async function(){ const email = (r.client_email||'').toString().trim(); if(!validateEmailValue(email)){ alert('E-mail invalide'); return; } try{ const doc = await buildInvoiceDoc(r); const blob = doc.output('blob'); await sendEmailWithAttachment(r.client_email, r.client_name, r.invoice_number, blob); }catch(ex){ console.error(ex); alert('Impossible de générer ou d\'envoyer le PDF'); } })(); });
+    // per-card Send removed (button omitted)
     const editBtn = document.createElement('button'); editBtn.type='button'; editBtn.className='secondary'; editBtn.title='Modifier'; editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
     editBtn.addEventListener('click', function(e){ e.stopPropagation(); if(r && r._id) startEdit(r._id); });
     const delBtn = document.createElement('button'); delBtn.type='button'; delBtn.className='secondary'; delBtn.title='Supprimer'; delBtn.style.borderColor = '#e76b6b'; delBtn.style.color = '#b30000'; delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
     delBtn.addEventListener('click', function(e){ e.stopPropagation(); if(r && r._id) deleteRow(r._id); });
-    // append in chosen order: download, send, edit, delete
-    actionsDiv.appendChild(cardDownloadBtn); actionsDiv.appendChild(cardSendBtn); actionsDiv.appendChild(editBtn); actionsDiv.appendChild(delBtn);
+    // append in chosen order: download, edit, delete
+    actionsDiv.appendChild(cardDownloadBtn); actionsDiv.appendChild(editBtn); actionsDiv.appendChild(delBtn);
     row2.appendChild(actionsDiv);
   }catch(e){}
   info.appendChild(row1); info.appendChild(row2); card.appendChild(pfp); card.appendChild(info); return card }
@@ -166,7 +154,7 @@ function startEdit(id){ try{ const idx = rows.findIndex(r=>r && r._id === id); i
     document.getElementById('client_name').value = r.client_name || '';
     document.getElementById('client_email').value = r.client_email || '';
     // payment method: try to match existing option, otherwise set to Autre and fill other field
-    const pm = document.getElementById('payment_method'); const pmOther = document.getElementById('payment_method_other'); if(pm){ let found=false; for(let i=0;i<pm.options.length;i++){ if(pm.options[i].value === r.payment_method){ pm.value = pm.options[i].value; found = true; break; } } if(!found){ pm.value = 'Autre'; pmOther.style.display = ''; pmOther.value = r.payment_method || ''; } else { pmOther.style.display = 'none'; pmOther.value = ''; } }
+    const pm = document.getElementById('payment_method'); const pmOther = document.getElementById('payment_method_other'); const pmOtherLabel = document.getElementById('payment_method_other_label'); if(pm){ let found=false; for(let i=0;i<pm.options.length;i++){ if(pm.options[i].value === r.payment_method){ pm.value = pm.options[i].value; found = true; break; } } if(!found){ pm.value = 'Autre'; if(pmOther) pmOther.style.display = ''; if(pmOtherLabel) pmOtherLabel.style.display = ''; pmOther.value = r.payment_method || ''; } else { if(pmOther) pmOther.style.display = 'none'; if(pmOtherLabel) pmOtherLabel.style.display = 'none'; pmOther.value = ''; } }
     document.getElementById('payment_note').value = r.payment_note || '';
     // service type: try to match by label text; fallback to 'autre'
     const st = document.getElementById('service_type'); if(st){ let matched=false; for(let i=0;i<st.options.length;i++){ const optLabel = (st.options[i].text || '').split('—')[0].trim(); if(optLabel === r.service_type){ st.value = st.options[i].value; document.getElementById('autre_seance_zone').style.display = 'none'; matched=true; break; } } if(!matched){ st.value = 'autre'; document.getElementById('autre_seance_zone').style.display = 'flex'; document.getElementById('autre_seance_desc').value = r.service_type || ''; document.getElementById('autre_seance_prix').value = (r.unit_price != null)? r.unit_price : ''; } }
@@ -314,7 +302,82 @@ function addCurrentToList() {
   document.getElementById('invoice_number').value = computeNextInvoiceFromRows(getCurrentYear());
   return true;
 }
-function downloadCSVRows(rowsToExport){ if(!rowsToExport || rowsToExport.length===0){ alert('Aucune ligne à exporter'); return } const headers = ['invoice_number','invoice_date','client_name','client_email','service_type','unit_price','quantity','payment_method','payment_note','total_amount']; const lines = [headers.join(';')]; rowsToExport.forEach(r=>{ const vals = headers.map(h => (r[h] ?? '').toString().replace(/;/g,',')); lines.push(vals.join(';')); }); const csv = lines.join('\n') + '\n'; const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'}); const filename = 'compta_rows_' + new Date().toISOString().replace(/[:.]/g,'-') + '.csv'; const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = filename; document.body.appendChild(link); link.click(); link.remove(); }
+// Generate a cleaned CSV string with French uppercase headers and formatted values
+function generateCleanCSV(rowsToExport){
+  if(!rowsToExport || rowsToExport.length===0) return null;
+  // French headers (MAJUSCULES)
+  const headers = ['NUMÉRO DE FACTURE','DATE','CLIENT','EMAIL','PRESTATION','PRIX UNITAIRE','QUANTITÉ','MODE DE PAIEMENT','NOTE DE PAIEMENT','MONTANT TOTAL'];
+
+  const keys = ['invoice_number','invoice_date','client_name','client_email','service_type','unit_price','quantity','payment_method','payment_note','total_amount'];
+
+  const lines = [headers.join(';')];
+  rowsToExport.forEach(r => {
+    // Clean and format each field
+    const vals = keys.map(k => {
+      let v = (r[k] ?? '').toString().trim();
+      if(k === 'invoice_date' && v){
+        try{ const dt = new Date(v); if(!isNaN(dt)) v = ('0'+dt.getDate()).slice(-2) + '/' + ('0'+(dt.getMonth()+1)).slice(-2) + '/' + dt.getFullYear(); }catch(e){}
+      }
+      if(k === 'unit_price' || k === 'total_amount'){
+        let n = parseFloat(String(v).replace(/[€ ]/g,''));
+        if(isNaN(n)) n = 0;
+        // French formatting: comma decimal separator
+        v = n.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2});
+      }
+      if(k === 'quantity'){
+        v = (v === '') ? '' : Number(v).toString();
+      }
+      // replace any semicolons (CSV delimiter) with commas to avoid breaking CSV
+      v = v.replace(/;/g, ',');
+      return v;
+    });
+    lines.push(vals.join(';'));
+  });
+  return lines.join('\n') + '\n';
+}
+
+function downloadCSVRows(rowsToExport){
+  const csv = generateCleanCSV(rowsToExport);
+  if(!csv){ alert('Aucune ligne à exporter'); return; }
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  const filename = 'compta_rows_' + new Date().toISOString().replace(/[:.]/g,'-') + '.csv';
+  const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = filename; document.body.appendChild(link); link.click(); link.remove();
+}
+
+// Show a styled CSV preview (in French, uppercase headers)
+function showCSVPreview(rowsToExport){
+  const container = document.getElementById('csvPreviewContainer');
+  const preview = document.getElementById('csvPreview');
+  if(!container || !preview) return;
+  const csv = generateCleanCSV(rowsToExport);
+  if(!csv){ alert('Aucune ligne à prévisualiser'); return; }
+
+  // Build table
+  const lines = csv.trim().split(/\n/);
+  const headers = lines.shift().split(';');
+  const table = document.createElement('table');
+  const thead = document.createElement('thead');
+  const trh = document.createElement('tr');
+  headers.forEach(h => { const th = document.createElement('th'); th.textContent = h.toUpperCase(); trh.appendChild(th); });
+  thead.appendChild(trh); table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  lines.forEach((ln, idx) => {
+    const tr = document.createElement('tr');
+    const cols = ln.split(';');
+    cols.forEach(c => { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  preview.innerHTML = '';
+  preview.appendChild(table);
+  container.style.display = '';
+
+  // hook download and close
+  const dl = document.getElementById('csvDownloadBtn');
+  const closeBtn = document.getElementById('csvCloseBtn');
+  if(dl){ dl.onclick = ()=> downloadCSVRows(rowsToExport); }
+  if(closeBtn){ closeBtn.onclick = ()=> { container.style.display='none'; preview.innerHTML=''; } }
+}
 function showToast(text){ const t=document.querySelector('.toast'); if(!t) return; t.textContent=text; t.style.display='block'; setTimeout(()=>t.style.display='none',1400); }
 document.getElementById('rowForm').addEventListener('input', function(){ updatePreview(); updateControls(); });
 const sortSel = document.getElementById('sortOrder'); if(sortSel){ sortSel.addEventListener('change', function(){ localStorage.setItem(STORAGE_SORT, this.value); updateListPreview(); }); }
@@ -347,13 +410,10 @@ document.getElementById('client_name').addEventListener('keydown', function(e){
   }
 });
 
-// send test email to client using mailto: (opens user's mail client)
-const sendBtn = document.getElementById('sendBtn');
+// send test email to client using mailto: (opens user's mail client) -- removed
 
 // Initialize EmailJS
-(function() {
-    emailjs.init('DQTOip7j1zf0_57YO');
-})();
+// Email sending functionality removed from UI per request.
 
 // NOTE FOR EMAILJS USERS:
 // EmailJS free plans have a size limit for API calls (around 2-3MB).
@@ -361,58 +421,9 @@ const sendBtn = document.getElementById('sendBtn');
 // To fix this, you can either:
 // 1. Reduce the size of the PDF by using smaller images or less complex content.
 // 2. Upgrade your EmailJS plan to allow for larger attachments.
-async function sendEmailWithAttachment(to_email, to_name, invoice_number, pdf_blob) {
-    showToast('Envoi en cours...');
-    // Read the PDF as a full data URL (data:application/pdf;base64,....)
-    const pdf_dataurl = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(pdf_blob);
-    });
+// EmailJS sending helper removed — sending via UI disabled per request.
 
-    // Provide a sane default filename for the attachment
-    const pdf_filename = `facture_${(invoice_number||'facture').toString().replace(/[^0-9A-Za-z-_\.]/g,'_')}.pdf`;
-
-    const templateParams = {
-      to_email: to_email,
-      to_name: to_name,
-      invoice_number: invoice_number,
-      // EmailJS expects either a full data URL (data:...;base64,...) or plain base64
-      // when the template attachment is of type "Variable Attachment" and the
-      // parameter name matches this key (see EMAILJS template Attachments tab).
-      pdf_attachment: pdf_dataurl,
-      pdf_filename: pdf_filename,
-      from_name: "Viviane de Vries",
-    };
-
-    try {
-        await emailjs.send('service_e6fyu9r', 'template_kcemrbw', templateParams);
-        showToast('Email envoyé avec succès ✅');
-    } catch (err) {
-        console.error('EmailJS error:', err);
-        alert('Erreur lors de l\'envoi de l\'email. Consultez la console pour plus de détails.');
-        showToast('Échec de l\'envoi de l\'email ❌');
-    }
-}
-
-if(sendBtn){
-  sendBtn.addEventListener('click', function(){
-    (async function(){
-      const d = getFormData(); const email = (document.getElementById('client_email')||{value:''}).value.trim();
-      if(!email){ alert('Aucune adresse e-mail fournie'); return; }
-      if(!validateEmailValue(email)){ alert('Adresse e-mail invalide'); return; }
-      try{
-        const doc = await buildInvoiceDoc(d);
-        const blob = doc.output('blob');
-        
-        // Send email with attachment via EmailJS
-        await sendEmailWithAttachment(d.client_email, d.client_name, d.invoice_number, blob);
-
-      }catch(err){ console.error(err); alert('Erreur lors de la génération/envoi du PDF'); }
-    })();
-  });
-}
+// Send via UI has been removed; use Download to get the PDF and send manually.
 
 // Download the current invoice as an HTML file
 const downloadBtn = document.getElementById('downloadBtn');
@@ -603,6 +614,23 @@ if(downloadBtn){
 const importBtn = document.getElementById('importCsvBtn');
 const importInput = document.getElementById('importCsvInput');
 const exportBtn = document.getElementById('exportCsvBtn');
+
+// Show/hide "Précisez le mode de règlement" input & label when selecting 'Autre'
+const paymentMethodSelect = document.getElementById('payment_method');
+const paymentMethodOtherInput = document.getElementById('payment_method_other');
+const paymentMethodOtherLabel = document.getElementById('payment_method_other_label');
+if(paymentMethodSelect){
+  paymentMethodSelect.addEventListener('change', function(){
+    if(this.value === 'Autre'){
+      if(paymentMethodOtherInput) paymentMethodOtherInput.style.display = '';
+      if(paymentMethodOtherLabel) paymentMethodOtherLabel.style.display = '';
+    } else {
+      if(paymentMethodOtherInput) paymentMethodOtherInput.style.display = 'none';
+      if(paymentMethodOtherLabel) paymentMethodOtherLabel.style.display = 'none';
+      if(paymentMethodOtherInput) paymentMethodOtherInput.value = '';
+    }
+  });
+}
 const wipeBtn = document.getElementById('wipeBtn');
 if(importBtn && importInput){
   importBtn.addEventListener('click', function(){ importInput.click(); });
@@ -632,7 +660,9 @@ if(importBtn && importInput){
     reader.readAsText(f,'utf-8'); importInput.value='';
   });
 }
-if(exportBtn){ exportBtn.addEventListener('click', function(){ if((rows||[]).length===0){ alert('Aucune ligne à exporter'); return } downloadCSVRows(rows); }); }
+if(exportBtn){ exportBtn.addEventListener('click', function(){ if((rows||[]).length===0){ alert('Aucune ligne à exporter'); return } showCSVPreview(rows); }); }
+const previewCsvBtn = document.getElementById('previewCsvBtn');
+if(previewCsvBtn){ previewCsvBtn.addEventListener('click', function(){ if((rows||[]).length===0){ alert('Aucune ligne à prévisualiser'); return } showCSVPreview(rows); }); }
 // wipe handler (see enhanced handler below that also resets invoice and totals)
 if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirmer : vider la table en mémoire ?')) return; rows = []; try{ localStorage.removeItem(STORAGE_ROWS); sessionStorage.removeItem(STORAGE_ROWS + '_cache'); }catch(e){} updateListPreview(); try{ document.getElementById('invoice_number').value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){} showToast('Table vidée ✅'); }); }
 
