@@ -262,10 +262,8 @@ function performImport(imported){
   if(!imported || imported.length === 0) return false;
   try{
   if((rows||[]).length > 0){
-    const proceed = confirm('Attention : l\'import va remplacer le tableau actuel. Continuer ?');
+    const proceed = confirm('Attention : cela va remplacer le tableau actuel. Continuer ?');
     if(!proceed) return;
-    const downloadBefore = confirm('Voulez-vous télécharger le tableau actuel avant d\'importer ? OK = Télécharger puis importer, Annuler = Importer sans télécharger.');
-    if(downloadBefore){ try{ downloadCSVRows(rows); }catch(e){} }
     rows = [];
     try{ localStorage.removeItem(STORAGE_ROWS); sessionStorage.removeItem(STORAGE_ROWS + '_cache'); }catch(e){}
   }
