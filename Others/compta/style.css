@@ -24,7 +24,7 @@ body {
 .split > .container:first-child input.invalid{border-color:#e05a4f;box-shadow:0 0 0 4px rgba(224,90,79,0.06)}
 .split > .container + .container{border-left:0}
 .split > .container + .container{background: linear-gradient(to bottom, #f8fff8 0%, #f3fff3 100%); border:1px solid #ecf8ec}
-.container{max-width:1000px;margin:28px auto;background:#fff;padding:22px;border:1px solid #eef7ee;border-radius:10px; transition: background-color 0.3s ease;}
+.container{max-width:1000px;margin:28px auto;background:#fff;padding:22px;border:1px solid #eef7ee;border-radius:14px; transition: background-color 0.3s ease;}
 #form-container.editing-mode {
   background-color: #fffbeb;
 }
@@ -41,14 +41,14 @@ input[type="text"], input[type="email"], input[type="date"], input[type="number"
     background: #fff;
     color: #072010;
     font-size: 15px;
-    border-radius: 6px;
+    border-radius: 8px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 input[type="text"]::placeholder, input[type="email"]::placeholder{color:#a9bfb0}
 textarea{min-height:70px;padding:12px;border:1px solid #e6efe6}
 .controls{display:flex;gap:10px;margin-top:14px}
-button{padding:8px 12px;border:0;background:var(--accent);color:#fff;cursor:pointer;font-weight:700;border-radius:6px; transition: background-color 0.2s ease, opacity 0.2s ease;}
-button.secondary{background:#fff;border:1px solid #cfe7cf;color:var(--accent);font-weight:600;border-radius:6px}
+button{padding:8px 12px;border:0;background:var(--accent);color:#fff;cursor:pointer;font-weight:700;border-radius:8px; transition: background-color 0.2s ease, opacity 0.2s ease;}
+button.secondary{background:#fff;border:1px solid #cfe7cf;color:var(--accent);font-weight:600;border-radius:8px}
 button.secondary:hover {
   background-color: #f8fdf8;
   border-color: #b8d6b8;
@@ -58,7 +58,7 @@ button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(
 .controls button{display:inline-flex;align-items:center;gap:10px}
 .controls .fa{font-size:14px;vertical-align:middle}
 .preview .actions .secondary{padding:6px 8px;font-size:13px}
-#wipeBtn{background:transparent;border:1px solid #e76b6b;color:#b30000;font-weight:700;border-radius:6px;padding:6px 8px}
+#wipeBtn{background:transparent;border:1px solid #e76b6b;color:#b30000;font-weight:700;border-radius:8px;padding:6px 8px}
 #wipeBtn:hover{background:#fff0f0}
 #wipeBtn:active{background:#ffeaea}
 .preview{margin-top:18px}
@@ -66,7 +66,7 @@ button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(
 .split > .container, #cardsList, #previewContainer{scrollbar-width:thin; scrollbar-color: #cfe7cf transparent}
 .split > .container::-webkit-scrollbar, #cardsList::-webkit-scrollbar, #previewContainer::-webkit-scrollbar{width:8px;height:8px}
 .split > .container::-webkit-scrollbar-track, #cardsList::-webkit-scrollbar-track, #previewContainer::-webkit-scrollbar-track{background:transparent}
-.split > .container::-webkit-scrollbar-thumb, #cardsList::-webkit-scrollbar-thumb, #previewContainer::-webkit-scrollbar-thumb{background:#cfe7cf;border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+.split > .container::-webkit-scrollbar-thumb, #cardsList::-webkit-scrollbar-thumb, #previewContainer::-webkit-scrollbar-thumb{background:#cfe7cf;border-radius:10px;border:2px solid transparent;background-clip:padding-box}
 #cardsList{display:flex;flex-direction:column;gap:10px}
 #cardsTotals{display:block}
 #cardsTotals .card {
@@ -74,7 +74,7 @@ button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(
 	border: none;
 	border-radius: 0;
 }
-.card{display:flex;gap:12px;padding:12px;border:1px solid #eef7ee;border-radius:8px;align-items:center;background:#fff}
+.card{display:flex;gap:12px;padding:12px;border:1px solid #eef7ee;border-radius:10px;align-items:center;background:#fff}
 .card .pfp{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#e6f2ea,#dff4e6);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);font-size:16px}
 .card .pfp{background-size:cover;background-position:center}
 .card .info{flex:1;display:flex;flex-direction:column;gap:6px}
@@ -88,7 +88,7 @@ button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(
 .note{margin-top:12px;color:var(--muted);font-size:13px}
 .small{font-size:13px;color:var(--muted)}
 .field-error{color:#e05a4f;font-size:13px;margin-top:6px}
-.smallSelect{font-size:13px;padding:6px;border-radius:6px;border:1px solid transparent;background:transparent;color:#072010;width:180px;margin-left:12px}
+.smallSelect{font-size:13px;padding:6px;border-radius:8px;border:1px solid transparent;background:transparent;color:#072010;width:180px;margin-left:12px}
 .smallSelect:focus{outline:none;box-shadow:none;border-color:transparent}
 .actions{display:flex;gap:8px;align-items:center}
 .card .actions .secondary{padding:6px 8px;font-size:13px}
@@ -109,7 +109,7 @@ button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(
   min-width: 220px;
   max-width: 94%;
   box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-  border-radius: 0;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   z-index: 1000;

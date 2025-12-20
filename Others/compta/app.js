@@ -676,20 +676,75 @@ if(importBtn && importInput){
         const text = reader.result || '';
         const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
         if(lines.length < 1){ showToast('Fichier vide'); return; }
-        const headers = lines[0].split(/;|,/).map(h=>h.trim());
+
+        const headerLine = lines[0];
+        const separator = headerLine.includes(';') ? ';' : ',';
+        const headers = headerLine.split(separator).map(h=>h.trim().toUpperCase());
+
+        const headerMapping = {
+            'NUMÉRO DE FACTURE': 'invoice_number',
+            'DATE': 'invoice_date',
+            'CLIENT': 'client_name',
+            'EMAIL': 'client_email',
+            'PRESTATION': 'service_type',
+            'PRIX UNITAIRE': 'unit_price',
+            'QUANTITÉ': 'quantity',
+            'MODE DE PAIEMENT': 'payment_method',
+            'NOTE DE PAIEMENT': 'payment_note',
+            'MONTANT TOTAL': 'total_amount'
+        };
+
         const imported = [];
         for(let i = 1; i < lines.length; i++){
-          const cols = lines[i].split(/;|,/).map(c=>c.trim()); if(cols.length === 0) continue;
+          const cols = lines[i].split(separator).map(c=>c.trim());
+          if(cols.length < headers.length) continue;
+
+          const rawObj = {};
+          headers.forEach((h,idx)=>{ rawObj[h]=cols[idx]||''; });
+
           const obj = {};
-          headers.forEach((h,idx)=>{ obj[h]=cols[idx]||''; });
-          obj.unit_price = parseFloat(obj.unit_price||obj.total_amount||'0')||0;
-          obj.quantity = parseInt(obj.quantity||'1',10) || 1;
-          obj.total_amount = parseFloat(obj.total_amount|| (obj.unit_price * obj.quantity) || '0')||0;
+          for (const frenchHeader in headerMapping) {
+              const jsKey = headerMapping[frenchHeader];
+              obj[jsKey] = rawObj[frenchHeader] || '';
+          }
+
+          if (obj.invoice_date) {
+              const parts = obj.invoice_date.split('/');
+              if (parts.length === 3) {
+                  const [dd, mm, yyyy] = parts;
+                  if (dd && mm && yyyy && dd.length === 2 && mm.length === 2 && yyyy.length === 4) {
+                      obj.invoice_date = `${yyyy}-${mm}-${dd}`;
+                  }
+              }
+          }
+
+          const priceStringToFloat = (s) => {
+              if (typeof s !== 'string') s = String(s || '0');
+              return parseFloat(s.replace(/[^0-9,-]+/g, '').replace(',', '.'));
+          };
+
+          obj.unit_price = priceStringToFloat(obj.unit_price);
+          if (isNaN(obj.unit_price)) obj.unit_price = 0;
+
+          obj.total_amount = priceStringToFloat(obj.total_amount);
+          if (isNaN(obj.total_amount)) obj.total_amount = 0;
+
+          obj.quantity = parseInt(obj.quantity || '1', 10) || 1;
+
+          if (obj.total_amount === 0 && obj.unit_price > 0) {
+              obj.total_amount = obj.unit_price * obj.quantity;
+          } else if (obj.unit_price === 0 && obj.total_amount > 0) {
+              obj.unit_price = obj.total_amount / obj.quantity;
+          }
+
           imported.push(obj);
         }
+
         if(imported.length === 0){ showToast('Aucun enregistrement trouvé'); return; }
-        performImport(imported);
-      }catch(ex){ showToast('Erreur import CSV'); }
+        if (performImport(imported)) {
+          showToast(`Importation réussie: ${imported.length} lignes chargées.`);
+        }
+      }catch(ex){ showToast('Erreur import CSV'); console.error(ex); }
     };
     reader.readAsText(f,'utf-8'); importInput.value='';
   });
