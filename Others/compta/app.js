@@ -771,9 +771,8 @@ async function generateInvoicePDF(d){
 }
 
 // URL for Google Apps Script that accepts {email, pdf}
-const SEND_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkCySeYHtajGTFncECAFrL5Q9twHxLgMZa3CLPszD1ESWzVoAZgc1otXgvc0ZKo0wo/exec';
+const SEND_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwKaQ3er-DSLx5r9pBePb3s40p-gDlI1dbebpDrg3NMx1CN7Bsuvr57gwQLrLqiBNiZ/exec';
 
-// send a PDF data URI to the Apps Script (mode:no-cors)
 async function sendPdfToAppsScript(email, pdfDataUri, btn){
   if(!email) throw new Error('Email manquant');
   // normalize button reference
@@ -826,8 +825,24 @@ async function genererEtEnvoyerPDFFromForm(){
     const btn = document.getElementById('sendBtn');
     const ok = await sendPdfToAppsScript(email, pdfBase64, btn);
     if(ok){
-      // After successful send, add current form as a row (behave like Entrer)
-      try{ if(!window._editingId){ addCurrentToList(); showToast('Enregistré dans le tableau ✅'); } else { /* if editing, update existing entry */ addCurrentToList(); showToast('Mise à jour enregistrée ✅'); } }catch(e){ console.error('Erreur ajout après envoi', e); }
+      try{
+        if(!window._editingId){
+          // behave exactly like Entrer: add row and reset form
+          addCurrentToList();
+          // reset the form and set sensible defaults (invoice number & date)
+          try{ document.getElementById('rowForm').reset(); }catch(e){}
+          try{ const dateEl = document.getElementById('invoice_date'); if(dateEl) dateEl.value = todayIso(); }catch(e){}
+          try{ const numEl = document.getElementById('invoice_number'); if(numEl) numEl.value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){}
+          try{ document.getElementById('client_name').focus(); }catch(e){}
+          updatePreview(); updateControls();
+          showToast('Envoyé et enregistré ✅');
+        } else {
+          // editing flow: update existing row and leave form in edit mode cleared
+          addCurrentToList();
+          cancelEdit();
+          showToast('Envoyé et mise à jour enregistrée ✅');
+        }
+      }catch(e){ console.error('Erreur ajout/après envoi', e); }
     }
   }catch(e){ console.error(e); alert('Erreur lors de la génération/envoi'); }
 }
@@ -847,7 +862,21 @@ async function handleMainSend(){
     const sendBtn = document.getElementById('sendBtn');
     const ok = await sendPdfToAppsScript(data.client_email, pdfBase64, sendBtn);
     if(ok){
-      try{ if(!window._editingId){ addCurrentToList(); showToast('Envoyé et enregistré ✅'); } else { addCurrentToList(); showToast('Envoyé et mise à jour enregistrée ✅'); } }catch(e){ console.error('Erreur ajout après envoi', e); }
+      try{
+        if(!window._editingId){
+          addCurrentToList();
+          try{ document.getElementById('rowForm').reset(); }catch(e){}
+          try{ const dateEl = document.getElementById('invoice_date'); if(dateEl) dateEl.value = todayIso(); }catch(e){}
+          try{ const numEl = document.getElementById('invoice_number'); if(numEl) numEl.value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){}
+          try{ document.getElementById('client_name').focus(); }catch(e){}
+          updatePreview(); updateControls();
+          showToast('Envoyé et enregistré ✅');
+        } else {
+          addCurrentToList();
+          cancelEdit();
+          showToast('Envoyé et mise à jour enregistrée ✅');
+        }
+      }catch(e){ console.error('Erreur ajout après envoi', e); }
     }
   }catch(e){ console.error(e); alert('Erreur lors de la génération ou de l\'envoi.'); }
 }
