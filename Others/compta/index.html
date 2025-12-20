@@ -118,11 +118,6 @@
     <div class="preview">
       <h2>Aperçu</h2>
       <div class="actions small">
-        <div id="clientsCount" class="small" style="margin-left:12px;margin-right:8px">0 clients enregistrés</div>
-        <select id="sortOrder" class="smallSelect" title="Ordre d'affichage">
-          <option value="desc">Plus récentes en haut</option>
-          <option value="asc">Plus anciennes en haut</option>
-        </select>
         <div style="margin-left:12px;display:flex;gap:8px;align-items:center">
           <button id="importCsvBtn" type="button" class="secondary">Importer CSV</button>
           <button id="exportCsvBtn" type="button" class="secondary">Exporter CSV</button>
@@ -150,7 +145,19 @@
             </div>
           </div>
         </div>
-        <div id="cardsHeader" class="small" style="display:none;margin-top:8px;margin-bottom:6px"></div>
+        <!-- Sort dropdown moved here so it sits directly under the preview card -->
+        <div class="previewControls" style="margin-top:10px; margin-bottom:6px; display:flex; gap:8px; align-items:center; justify-content:space-between">
+          <select id="sortOrder" class="smallSelect" title="Ordre d'affichage" style="flex:0 0 auto">
+            <option value="desc">Plus récentes en haut</option>
+            <option value="asc">Plus anciennes en haut</option>
+          </select>
+          <!-- Search (same visual style as dropdown) with FontAwesome magnifier -->
+          <div class="searchWrap">
+            <i class="fa-solid fa-magnifying-glass searchIcon" aria-hidden="true"></i>
+            <input id="searchInput" class="smallSearch" type="search" placeholder="Rechercher (nom ou n° facture)" aria-label="Recherche par nom ou numéro" />
+          </div>
+          <div id="clientsCount" class="small" style="margin-left:12px; white-space:nowrap">0 clients enregistrés</div>
+        </div>
         <div id="cardsTotals" style="margin-bottom:8px"></div>
         <div id="cardsList"></div>
       </div>

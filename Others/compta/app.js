@@ -20,12 +20,35 @@ function computeNextInvoiceFromRows(year){
   });
   return `${year}-${max+1}`
 }
+
+// Parse invoice like "2025-12" into a comparable key
+function parseInvoiceKey(inv){
+  const s = (inv||'').toString().trim();
+  const m = s.match(/^(\d{4})-(\d+)$/);
+  if(m){ return { year: parseInt(m[1],10), num: parseInt(m[2],10), raw: s }; }
+  const m2 = s.match(/^(\d{4})/);
+  if(m2){ return { year: parseInt(m2[1],10), num: NaN, raw: s }; }
+  return { year: NaN, num: NaN, raw: s };
+}
+
+// Compare two rows by invoice number (ascending)
+function invoiceCompare(a,b){
+  const ai = parseInvoiceKey((a&&a.invoice_number)||'');
+  const bi = parseInvoiceKey((b&&b.invoice_number)||'');
+  const aiValid = Number.isFinite(ai.year) && Number.isFinite(ai.num);
+  const biValid = Number.isFinite(bi.year) && Number.isFinite(bi.num);
+  if(aiValid && biValid){ if(ai.year !== bi.year) return ai.year - bi.year; return ai.num - bi.num; }
+  if(aiValid && !biValid) return -1; if(!aiValid && biValid) return 1;
+  // fallback to locale string compare
+  return (ai.raw||'').localeCompare(bi.raw||'');
+}
 function formatPrice(n){ return (Number(n||0).toFixed(2)).replace('.',',') + ' €' }
 function initials(name){ if(!name) return '?'; const parts = name.trim().split(/\s+/).filter(Boolean); if(parts.length===0) return '?'; if(parts.length===1) return parts[0].slice(0,2).toUpperCase(); return (parts[0][0]+(parts[1][0]||'')).toUpperCase(); }
 function hashString(s){ let h=5381; for(let i=0;i<s.length;i++) h = ((h<<5)+h) + s.charCodeAt(i); return h >>> 0 }
 function nameToPastel(name){ const key=(name||'').toString(); const h=hashString(key||String(Math.random())); const hue=h%360; const sat = 20 + (h%16); const light = 72 + (h%16); return { bg: `hsl(${hue}, ${sat}%, ${light}%)`, light}; }
 function setPfpInitials(el, name){ if(!el) return; const info = nameToPastel(name||''); el.style.backgroundImage=''; el.style.background = info.bg; el.textContent = initials(name||''); const textColor = (info.light && info.light > 70) ? '#072010' : '#ffffff'; el.style.color = textColor; el.style.fontWeight = '700'; }
-function getFormData(){ const select = document.getElementById('service_type'); let unitPrice=0; let prestationLabel=''; if(select){ if(select.value === 'autre'){ unitPrice = parseFloat((document.getElementById('autre_seance_prix')||{value:'0'}).value || '0') || 0; prestationLabel = (document.getElementById('autre_seance_desc')||{value:''}).value.trim() || 'Autre séance'; } else { unitPrice = parseFloat(select.value || '0') || 0; const opt = select.options[select.selectedIndex] || null; prestationLabel = opt && opt.text ? opt.text.split('—')[0].trim() : ''; } }
+function getFormData(){ const select = document.getElementById('service_type'); let unitPrice=0; let prestationLabel=''; if(select){ if(select.value === 'autre'){ unitPrice = parseFloat((document.getElementById('autre_seance_prix')||{value:'0'}).value || '0') || 0; prestationLabel = (document.getElementById('autre_seance_desc')||{value:''}).value.trim() || 'Autre séance'; } else { unitPrice = parseFloat(select.value || '0') || 0; const opt = select.options[select.selectedIndex] || null; // Do not treat the placeholder option as a valid service label; require a non-empty value
+    prestationLabel = (select.value && select.value !== '') ? (opt && opt.text ? opt.text.split('—')[0].trim() : '') : ''; } }
   const pm = (document.getElementById('payment_method')||{value:''}).value.trim(); const paymentMethodFinal = (pm === 'Autre') ? (document.getElementById('payment_method_other')||{value:''}).value.trim() : pm;
   const invoice = (document.getElementById('invoice_number')||{value:''}).value.trim(); const invoice_date = (document.getElementById('invoice_date')||{value:todayIso()}).value || todayIso();
   const quantity = parseInt((document.getElementById('service_quantity')||{value:'1'}).value || '1',10) || 1;
@@ -49,15 +72,39 @@ function updatePreview(){
   const totalEl = document.getElementById('previewTotal');
   const invoiceEl = document.getElementById('previewInvoice');
   const paymentEl = document.getElementById('previewPayment');
-  if(pfp) pfp.textContent = initials(d.client_name);
-  setPfpInitials(pfp, d.client_name);
-  if(clientEl) clientEl.textContent = d.client_name || '—';
-  if(serviceEl) serviceEl.textContent = (d.service_type || '—') + (d.quantity ? (' • x' + d.quantity) : '');
+
+  // PFP: show '?' with neutral background when no client provided
+  if(pfp){
+    if(d.client_name && d.client_name.trim()){
+      pfp.textContent = initials(d.client_name);
+      setPfpInitials(pfp, d.client_name);
+    } else {
+      pfp.textContent = '?';
+      // neutral light green background similar to other pfps
+      pfp.style.background = 'linear-gradient(135deg,#e6f2ea,#dff4e6)';
+      pfp.style.color = 'var(--accent)';
+      pfp.style.fontWeight = '700';
+    }
+  }
+
+  // Client name
+  if(clientEl) clientEl.textContent = d.client_name || 'Nom Prénom';
+
+  // Service line: show explicit placeholder and quantity
+  const qtyPart = (d.quantity != null) ? (' • x' + d.quantity) : '';
+  if(serviceEl) serviceEl.textContent = (d.service_type && d.service_type.trim()) ? (d.service_type + qtyPart) : ('[type de seance]' + (qtyPart || ' • x1'));
+
+  // Email (optional): do not prefill placeholder when empty
   const emailEl = document.getElementById('previewEmail');
   if(emailEl){ emailEl.textContent = d.client_email || ''; emailEl.className = d.client_email ? 'meta email' : 'meta'; }
+
+  // Totals
   if(totalEl) totalEl.textContent = (d.total_amount ? d.total_amount.toFixed(2) : '0.00') + ' €';
-  if(invoiceEl) invoiceEl.textContent = `N° ${d.invoice_number || '—'} • ${d.invoice_date || '—'}`;
-  if(paymentEl) paymentEl.textContent = d.payment_method || '—';
+
+  // Invoice & date: default to next invoice and today when empty
+  if(invoiceEl) invoiceEl.textContent = `N° ${d.invoice_number || computeNextInvoiceFromRows(getCurrentYear())} • ${d.invoice_date || todayIso()}`;
+  if(paymentEl) paymentEl.textContent = d.payment_method || 'Mode paiement';
+
   document.getElementById('priceBig').textContent = (d.total_amount ? d.total_amount.toFixed(2) : '0.00') + ' €';
   updateControls();
 }
@@ -120,7 +167,7 @@ function createCardElement(r){
   const row1 = document.createElement('div'); row1.className='row';
   const left = document.createElement('div');
   const strong = document.createElement('strong'); strong.innerHTML = escapeHtml(r.client_name || '—');
-  const meta = document.createElement('div'); meta.className='meta'; meta.innerHTML = escapeHtml(r.service_type || '—') + (r.quantity ? (' • x' + escapeHtml(String(r.quantity))) : '');
+  const meta = document.createElement('div'); meta.className='meta'; meta.innerHTML = escapeHtml(r.service_type || 'Type de séance') + (r.quantity ? (' • x' + escapeHtml(String(r.quantity))) : '');
   const emailMeta = document.createElement('div'); emailMeta.className='meta email'; emailMeta.innerHTML = escapeHtml(r.client_email || '');
   left.appendChild(strong); left.appendChild(meta); if(emailMeta && emailMeta.innerHTML) left.appendChild(emailMeta);
   const amount = document.createElement('div'); amount.className='amount'; amount.textContent = ((parseFloat(r.total_amount)||0).toFixed(2)) + ' €';
@@ -260,7 +307,20 @@ function updateListPreview() {
 
   container.innerHTML = '';
   const sort = localStorage.getItem(STORAGE_SORT) || 'desc';
-  let list = rows.slice();
+  // apply search filter (by client name or invoice number)
+  const raw = (rows||[]).slice();
+  const searchVal = ((document.getElementById('searchInput')||{value:''}).value || '').toString().trim().toLowerCase();
+  let filtered = raw;
+  if(searchVal){
+    filtered = raw.filter(r => {
+      try{
+        return ((r.client_name||'').toString().toLowerCase().indexOf(searchVal) !== -1) || ((r.invoice_number||'').toString().toLowerCase().indexOf(searchVal) !== -1);
+      }catch(e){return false}
+    });
+  }
+
+  // sort by invoice number (ascending) so that e.g. 2025-1 appears before 2025-2 regardless of creation time
+  let list = filtered.sort(invoiceCompare);
 
   if (sort === 'desc') {
     list.reverse();
@@ -272,16 +332,7 @@ function updateListPreview() {
   });
   container.appendChild(frag);
 
-  const header = document.getElementById('cardsHeader');
-  if (header) {
-    if (rows.length > 0) {
-      header.style.display = 'block';
-      header.textContent = rows.length + (rows.length > 1 ? ' lignes en mémoire' : ' ligne en mémoire');
-    } else {
-      header.style.display = 'none';
-      header.textContent = '';
-    }
-  }
+  // cardsHeader removed — showing totals and clients count only
 
   updateTotals();
   updateClientsCount();
@@ -415,6 +466,8 @@ function showToast(text, duration = 2000){
 }
 document.getElementById('rowForm').addEventListener('input', function(){ updatePreview(); updateControls(); });
 const sortSel = document.getElementById('sortOrder'); if(sortSel){ sortSel.addEventListener('change', function(){ localStorage.setItem(STORAGE_SORT, this.value); updateListPreview(); }); }
+// wire up search input to filter list by client name or invoice number
+const searchInput = document.getElementById('searchInput'); if(searchInput){ searchInput.addEventListener('input', function(){ updateListPreview(); }); }
 document.getElementById('service_type').addEventListener('change', function(){ const zone = document.getElementById('autre_seance_zone'); if(this.value === 'autre'){ zone.style.display = 'flex'; } else { zone.style.display = 'none'; document.getElementById('autre_seance_desc').value = ''; document.getElementById('autre_seance_prix').value = ''; } updatePreview(); updateControls(); });
 document.getElementById('payment_method').addEventListener('change', function(){ var ta = document.getElementById('payment_method_other'); if(this.value === 'Autre'){ ta.style.display = ''; } else { ta.style.display = 'none'; ta.value = ''; } updatePreview(); updateControls(); });
 // re-evaluate controls when the 'other' payment method field is edited
@@ -427,8 +480,12 @@ document.getElementById('rowForm').addEventListener('submit', function(e){
   const wasEditing = !!window._editingId;
   const ok = addCurrentToList();
   if (ok && !wasEditing) {
+    // Reset form then set sensible defaults (invoice number & date) and refresh preview/controls
     document.getElementById('rowForm').reset();
+    try{ const dateEl = document.getElementById('invoice_date'); if(dateEl) dateEl.value = todayIso(); }catch(e){}
+    try{ const numEl = document.getElementById('invoice_number'); if(numEl) numEl.value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){}
     document.getElementById('client_name').focus();
+    updatePreview(); updateControls();
   }
 });
 document.getElementById('client_name').addEventListener('keydown', function(e){
@@ -438,8 +495,12 @@ document.getElementById('client_name').addEventListener('keydown', function(e){
     const wasEditing = !!window._editingId;
     const ok = addCurrentToList();
     if (ok && !wasEditing) {
+      // Reset form then set defaults and update preview
       document.getElementById('rowForm').reset();
+      try{ const dateEl = document.getElementById('invoice_date'); if(dateEl) dateEl.value = todayIso(); }catch(e){}
+      try{ const numEl = document.getElementById('invoice_number'); if(numEl) numEl.value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){}
       document.getElementById('client_name').focus();
+      updatePreview(); updateControls();
     }
   }
 });

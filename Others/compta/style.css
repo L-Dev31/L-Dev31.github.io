@@ -88,8 +88,18 @@ button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(
 .note{margin-top:12px;color:var(--muted);font-size:13px}
 .small{font-size:13px;color:var(--muted)}
 .field-error{color:#e05a4f;font-size:13px;margin-top:6px}
-.smallSelect{font-size:13px;padding:6px;border-radius:8px;border:1px solid transparent;background:transparent;color:#072010;width:180px;margin-left:12px}
-.smallSelect:focus{outline:none;box-shadow:none;border-color:transparent}
+.smallSelect{font-size:13px;padding:6px;border-radius:8px;border:1px solid #cfe7cf;background:transparent;color:#072010;width:180px;margin-left:0;margin-right:12px;transition:box-shadow .18s ease, border-color .15s ease}
+.smallSelect:focus{outline:none;box-shadow:0 0 0 4px rgba(11,107,58,0.12);border-color:var(--accent)}
+.smallSelect:focus-visible{outline:none;box-shadow:0 0 0 4px rgba(11,107,58,0.18)}
+
+/* Small search input to match the dropdown */
+.smallSearch{font-size:13px;padding:6px 8px 6px 34px;border-radius:8px;border:1px solid #cfe7cf;background:transparent;color:#072010;width:100%;max-width:360px;box-sizing:border-box;margin-left:0;margin-right:12px;transition:box-shadow .18s ease, border-color .15s ease}
+.smallSearch:focus{outline:none;box-shadow:0 0 0 4px rgba(11,107,58,0.12);border-color:var(--accent)}
+.smallSearch:focus-visible{outline:none;box-shadow:0 0 0 4px rgba(11,107,58,0.18)}
+
+/* wrapper and icon for the small search */
+.searchWrap{position:relative;flex:1 1 auto;max-width:360px}
+.searchWrap .searchIcon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
 .actions{display:flex;gap:8px;align-items:center}
 .card .actions .secondary{padding:6px 8px;font-size:13px}
 .card .actions button:disabled{opacity:0.55;cursor:not-allowed;background:transparent;border-color:#f0f0f0;color:var(--muted);filter:grayscale(100%)}
@@ -151,4 +161,22 @@ select:focus {
     outline: none;
     box-shadow: none;
     border-color: var(--accent);
+}
+
+/* Prevent horizontal overflow and ensure containers can shrink on small screens */
+html, body {
+    overflow-x: hidden;
+}
+.split {
+    min-height: 100vh;
+}
+.split > .container {
+    min-width: 0;
+    max-height: 100vh;
+}
+/* Allow long invoice numbers and meta text to wrap without creating horizontal scroll */
+.card .meta,
+.card .info {
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
