@@ -115,12 +115,12 @@ function updatePreview(){
     }
   }
   if(clientEl) clientEl.textContent = d.client_name || 'Nom Prénom';
-  const qtyPart = (d.quantity != null) ? (' • x' + d.quantity) : '';
-  if(serviceEl) serviceEl.textContent = (d.service_type && d.service_type.trim()) ? (d.service_type + qtyPart) : ('[type de seance]' + (qtyPart || ' • x1'));
+  const qtyPart = (d.quantity != null && Number(d.quantity) > 1) ? (' • x' + d.quantity) : '';
+  if(serviceEl) serviceEl.textContent = (d.service_type && d.service_type.trim()) ? (d.service_type + qtyPart) : ('[type de seance]' + (qtyPart || ''));
   const emailEl = document.getElementById('previewEmail');
   if(emailEl){ emailEl.textContent = d.client_email || ''; emailEl.className = d.client_email ? 'meta email' : 'meta'; }
   if(totalEl) totalEl.textContent = (d.total_amount ? d.total_amount.toFixed(2) : '0.00') + ' €';
-  if(invoiceEl) invoiceEl.textContent = `N° ${d.invoice_number || computeNextInvoiceFromRows(getCurrentYear())} • ${d.invoice_date || todayIso()}`;
+  if(invoiceEl) invoiceEl.textContent = `N° ${d.invoice_number || computeNextInvoiceFromRows(getCurrentYear())} • ${formatDateShort(d.invoice_date || todayIso())}`;
   if(paymentEl) paymentEl.textContent = d.payment_method || 'Mode paiement';
   document.getElementById('priceBig').textContent = (d.total_amount ? d.total_amount.toFixed(2) : '0.00') + ' €';
   updateControls();
@@ -178,13 +178,13 @@ function createCardElement(r){
   const row1 = document.createElement('div'); row1.className='row';
   const left = document.createElement('div');
   const strong = document.createElement('strong'); strong.innerHTML = escapeHtml(r.client_name || '—');
-  const meta = document.createElement('div'); meta.className='meta'; meta.innerHTML = escapeHtml(r.service_type || 'Type de séance') + (r.quantity ? (' • x' + escapeHtml(String(r.quantity))) : '');
+  const meta = document.createElement('div'); meta.className='meta'; meta.innerHTML = escapeHtml(r.service_type || 'Type de séance') + ((r.quantity && Number(r.quantity) > 1) ? (' • x' + escapeHtml(String(r.quantity))) : '');
   const emailMeta = document.createElement('div'); emailMeta.className='meta email'; emailMeta.innerHTML = escapeHtml(r.client_email || '');
   left.appendChild(strong); left.appendChild(meta); if(emailMeta && emailMeta.innerHTML) left.appendChild(emailMeta);
   const amount = document.createElement('div'); amount.className='amount'; amount.textContent = ((parseFloat(r.total_amount)||0).toFixed(2)) + ' €';
   row1.appendChild(left); row1.appendChild(amount);
   const row2 = document.createElement('div'); row2.className='row';
-  const inv = document.createElement('div'); inv.className='meta'; inv.textContent = `N° ${r.invoice_number || '—'} • ${r.invoice_date || '—'}`;
+  const inv = document.createElement('div'); inv.className='meta'; inv.textContent = `N° ${r.invoice_number || '—'} • ${formatDateShort(r.invoice_date || '—')}`;
   const pay = document.createElement('div'); pay.className='meta'; pay.textContent = (r.payment_method || '') + (r.payment_note ? ' • ' + r.payment_note : '');
   row2.appendChild(inv); row2.appendChild(pay);
   try{

@@ -123,8 +123,8 @@ button#sendBtn:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color
 .smallSelect:focus{outline:3px solid rgba(15,118,110,0.12);border-color:var(--accent)}
 .smallSelect:focus-visible{outline:3px solid rgba(15,118,110,0.12);box-shadow:none} 
 
-/* Required field star */
-.requiredStar{color:#e05a4f;font-weight:700;font-size:12px;margin-left:6px}
+/* Required field star (hidden visually) */
+.requiredStar{display: none !important; /* removed per request */}
 
 /* Small search input to match the dropdown */
 .smallSearch{font-size:13px;padding:6px 8px 6px 34px;border-radius:8px;border:1px solid #cfe7cf;background:transparent;color:#072010;width:100%;max-width:360px;box-sizing:border-box;margin-left:0;margin-right:12px;transition: border-color .15s ease}
