@@ -1,5 +1,40 @@
 const STORAGE_ROWS = 'compta_rows';
 const STORAGE_SORT = 'compta_sort';
+
+// Company information used in PDFs and headers
+const COMPANY_INFO = {
+  name: 'Viviane de Vries',
+  profession: 'Ostéopathe Exclusif',
+  logo: 'images/logo.png',
+  stamp: 'images/stamp.png',
+  addressLines: [
+    'Cabinet « Villa DREAM »',
+    '156 chemin de la Batterie',
+    '97126 DESHAIES'
+  ],
+  phone: '06.20.76.70.80',
+  siret: '53900011700041',
+  rpps: '10010075736'
+};
+
+// runtime company object (can be overridden by localStorage or external JSON)
+let company = JSON.parse(JSON.stringify(COMPANY_INFO));
+async function loadCompany(){
+  // Load company data only from company.json, fallback to embedded defaults
+  try{
+    const r = await fetch('company.json');
+    if(r && r.ok){
+      const j = await r.json();
+      company = Object.assign({}, COMPANY_INFO, j || {});
+      return company;
+    }
+  }catch(e){}
+  company = JSON.parse(JSON.stringify(COMPANY_INFO));
+  return company;
+}
+
+// Expose loadCompany for debugging/consumption
+window.loadCompany = loadCompany;
 let rows = JSON.parse(localStorage.getItem(STORAGE_ROWS) || '[]');
 try{ rows = (rows||[]).map(r => { if(r && r.client_name) r.client_name = toTitleCase(r.client_name); return r; }); }catch(e){}
 function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
@@ -578,8 +613,9 @@ async function buildInvoiceDoc(d){
   const doc = new jsPDF({unit: 'pt', format: 'a4'});
   const left = 40; let y = 40; const pageWidth = doc.internal.pageSize.getWidth();
   doc.setTextColor('#0D0C22');
-  const logoImg = await loadImageDataURL('images/logo.png', { compress: true });
-  const stampImg = await loadImageDataURL('/images/stamp.png', { compress: true });
+  const logoImg = await loadImageDataURL(company.logo, { compress: true });
+  const stampImg = await loadImageDataURL(company.stamp, { compress: true });
+  const axImg = await loadImageDataURL('images/axonis.png', { compress: true });
   let headerBottom = y;
   let rightX = left;
   if(logoImg && logoImg.dataUrl){
@@ -598,20 +634,17 @@ async function buildInvoiceDoc(d){
   }
   const titleTop = y + 2;
   doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor('#0D0C22');
-  doc.text('Viviane de Vries', rightX, titleTop);
+  doc.text(company.name || '—', rightX, titleTop);
   doc.setFontSize(11); doc.setTextColor('#0f766e'); doc.setFont('helvetica','normal');
-  doc.text('Ostéopathe Exclusif', rightX, titleTop + 18);
+  doc.text(company.profession || '—', rightX, titleTop + 18);
   doc.setFontSize(10); doc.setTextColor('#6E6D7A');
   let addrY = titleTop + 36;
-  const lines = [
-    'Cabinet « Villa DREAM »',
-    '156 chemin de la Batterie',
-    '97126 DESHAIES',
-    '',
-    'Tél : 06.20.76.70.80',
-    'N° SIRET : 53900011700041',
-    'Identifiant RPPS : 10010075736'
-  ];
+  const lines = [];
+  (company.addressLines || []).forEach(l => lines.push(l));
+  lines.push('');
+  if(company.phone) lines.push('Tél : ' + company.phone);
+  if(company.siret) lines.push('N° SIRET : ' + company.siret);
+  if(company.rpps) lines.push('Identifiant RPPS : ' + company.rpps);
   lines.forEach(l => { doc.text(l, rightX, addrY); addrY += 12; });
   headerBottom = Math.max(headerBottom, addrY);
   y = headerBottom + 18;
@@ -676,10 +709,37 @@ async function buildInvoiceDoc(d){
     doc.setTextColor('#6E6D7A');
     const factureDate = formatDateShort(d.invoice_date || todayIso());
     doc.text(`Fait à Deshaies le ${factureDate}`, left, afterY + 40);
-    doc.setFontSize(9);
-    doc.setTextColor('#6E6D7A');
-    const bottomY = doc.internal.pageSize.getHeight() - 36;
-    doc.text('TVA non applicable, Article 293 B du CGI', pageWidth / 2, bottomY, { align: 'center' });
+
+    // TVA line centered under the date (in guillemets), no logo beside it
+    try{
+      const tvaText = '«TVA non applicable, Article 293 B du CGI»';
+      doc.setFontSize(9);
+      doc.setTextColor('#6E6D7A');
+      const tvaY = afterY + 56;
+      doc.text(tvaText, left, tvaY);
+    }catch(e){}
+
+    // Centered credit at very bottom: "Facture générée avec" + logo
+    try{
+      const creditText = 'Facture générée avec';
+      const fontSizeCredit = 8;
+      doc.setFontSize(fontSizeCredit);
+      doc.setTextColor('#0D0C22');
+      const bottomY = doc.internal.pageSize.getHeight() - 36;
+      const textWidth2 = (typeof doc.getTextWidth === 'function') ? doc.getTextWidth(creditText) : Math.round(creditText.length * 4);
+      const imgW2 = 32; // slightly larger
+      const spacing2 = 4; // reduced spacing for tighter layout
+      const hasAx2 = (axImg && axImg.dataUrl);
+      const totalW2 = textWidth2 + (hasAx2 ? imgW2 + spacing2 : 0);
+      const startX2 = Math.round((pageWidth / 2) - (totalW2 / 2));
+      doc.text(creditText, startX2, bottomY);
+      if(hasAx2){
+        const imgH2 = Math.round(imgW2 * ((axImg.height || imgW2) / (axImg.width || imgW2)));
+        const imgY2 = Math.round(bottomY - (fontSizeCredit / 2) - (imgH2 / 2) + 2);
+        doc.addImage(axImg.dataUrl, (axImg.isJpeg ? 'JPEG' : (axImg.dataUrl.indexOf('image/png') >= 0 ? 'PNG' : 'JPEG')), startX2 + textWidth2 + spacing2, imgY2, imgW2, imgH2);
+      }
+    }catch(e){}
+
   } catch(e){}
 
   return doc;
@@ -1013,6 +1073,16 @@ if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirme
   updateListPreview(); updatePreview(); updateControls(); document.getElementById('client_name').focus();
   try{ window.addEventListener('beforeunload', saveRows); }catch(e){}
   const cancelBtn = document.getElementById('cancelEditBtn'); if(cancelBtn){ cancelBtn.addEventListener('click', function(){ cancelEdit(); }); }
+
+  // company settings button + modal handlers
+  try{
+
+    // Ensure company is loaded at startup; keep site logo as axonis.png
+    loadCompany().then(()=>{
+      try{ const el = document.getElementById('siteLogo'); if(el) el.src = 'images/axonis.png'; }catch(e){}
+    });
+  }catch(e){}
+
 
 
   const tabBtnPreview = document.getElementById('tab-btn-preview');
