@@ -599,7 +599,7 @@ async function buildInvoiceDoc(d){
   const titleTop = y + 2;
   doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor('#0D0C22');
   doc.text('Viviane de Vries', rightX, titleTop);
-  doc.setFontSize(11); doc.setTextColor('#5A55D9'); doc.setFont('helvetica','normal');
+  doc.setFontSize(11); doc.setTextColor('#0f766e'); doc.setFont('helvetica','normal');
   doc.text('Ostéopathe Exclusif', rightX, titleTop + 18);
   doc.setFontSize(10); doc.setTextColor('#6E6D7A');
   let addrY = titleTop + 36;
@@ -626,7 +626,7 @@ async function buildInvoiceDoc(d){
   doc.text("Note d’honoraire", pageWidth / 2, titleY, { align: 'center' });
   doc.setFontSize(11); doc.setFont('helvetica','normal');
   const refY = titleY + 14; 
-  doc.setTextColor('#5A55D9');
+  doc.setTextColor('#0f766e');
   doc.text(ref, pageWidth / 2, refY, { align: 'center' });
   doc.setTextColor('#0D0C22');
   const body = [
@@ -645,10 +645,16 @@ async function buildInvoiceDoc(d){
     theme: 'grid',
     styles: { halign: 'left', valign: 'middle', font: 'helvetica', fontSize: 13, textColor: '#000' },
     columnStyles: { 0: {cellWidth: 140, fillColor: [255,255,255]}, 1: {cellWidth: pageWidth - left*2 - 140} },
-    tableLineColor: [90,85,217],
+    tableLineColor: [15,118,110],
     tableLineWidth: 0.6,
     didParseCell: function(data){
-      if(data.row.index % 2 === 1){ data.cell.styles.fillColor = [247,247,253]; }
+      if(data.section === 'body'){
+        if (data.row && (data.row.index % 2 === 1)){
+          data.cell.styles.fillColor = [243,255,243];
+        } else {
+          data.cell.styles.fillColor = [255,255,255];
+        }
+      }
     }
   });
 
@@ -668,7 +674,12 @@ async function buildInvoiceDoc(d){
   try {
     doc.setFontSize(10);
     doc.setTextColor('#6E6D7A');
-    doc.text('Merci de votre confiance.', left, afterY + 40);
+    const factureDate = formatDateShort(d.invoice_date || todayIso());
+    doc.text(`Fait à Deshaies le ${factureDate}`, left, afterY + 40);
+    doc.setFontSize(9);
+    doc.setTextColor('#6E6D7A');
+    const bottomY = doc.internal.pageSize.getHeight() - 36;
+    doc.text('TVA non applicable, Article 293 B du CGI', pageWidth / 2, bottomY, { align: 'center' });
   } catch(e){}
 
   return doc;
@@ -1002,6 +1013,7 @@ if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirme
   updateListPreview(); updatePreview(); updateControls(); document.getElementById('client_name').focus();
   try{ window.addEventListener('beforeunload', saveRows); }catch(e){}
   const cancelBtn = document.getElementById('cancelEditBtn'); if(cancelBtn){ cancelBtn.addEventListener('click', function(){ cancelEdit(); }); }
+
 
   const tabBtnPreview = document.getElementById('tab-btn-preview');
   const tabBtnForm = document.getElementById('tab-btn-form');

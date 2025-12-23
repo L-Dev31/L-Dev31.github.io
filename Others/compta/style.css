@@ -58,12 +58,17 @@ input[type="text"]:focus, input[type="email"]:focus, textarea:focus, select:focu
 input[type="text"]::placeholder, input[type="email"]::placeholder{color:#a9bfb0}
 textarea{min-height:70px;padding:12px;border:1px solid #e6efe6}
 .controls{display:flex;gap:10px;margin-top:14px}
-button{padding:10px 14px;border:0;background: linear-gradient(180deg,var(--accent), #0b5a48);color:#fff;cursor:pointer;font-weight:700;border-radius:10px; box-shadow: none; transition: opacity 0.18s ease;}
-button:hover{opacity:0.96;background: linear-gradient(180deg,#0b5a48,var(--accent));} 
+button{padding:10px 14px;border:0;background: var(--accent);color:#fff;cursor:pointer;font-weight:700;border-radius:10px; box-shadow: none; transition: opacity 0.18s ease;}
+button:hover{opacity:0.96;background: #0b5a48;} 
 button.secondary{background:transparent;border:1px solid var(--border);color:var(--accent);font-weight:600;border-radius:10px;padding:8px 12px}
 button.secondary:hover {background: rgba(15,118,110,0.04);border-color: rgba(15,118,110,0.12);}  
 button:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color:var(--muted);border:1px solid #e9efe9}
 button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(--muted);opacity:0.6}
+
+/* Make "Envoyer et Entrer" match primary (Entrer / Télécharger) */
+button#sendBtn{background:var(--accent);color:#fff;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+button#sendBtn:hover{background:#0b5a48;opacity:0.96}
+button#sendBtn:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color:var(--muted);border:1px solid #e9efe9}
 .controls button{display:inline-flex;align-items:center;gap:10px}
 .controls .fa{font-size:14px;vertical-align:middle}
 .preview .actions .secondary{padding:6px 8px;font-size:13px}
@@ -92,9 +97,9 @@ button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(
 .card .meta{font-size:13px;color:var(--muted)}
 .card .meta.email{font-weight:700;color:#072010}
 .card .amount{font-weight:800;color:var(--accent)}
-.card.editing{box-shadow:none;border-color: rgba(15,118,110,0.12)}
+.card.editing{box-shadow:none;border-color: rgba(255,195,0,0.16); background: #fff9e6; transition: background 0.18s ease, border-color 0.18s ease;}
 .card.recent{box-shadow:none;border-color: rgba(15,118,110,0.12);animation:recentFlash 1.6s ease}
-.card.editing{box-shadow:none;border-color: rgba(11,107,58,0.12)}
+.card.editing{box-shadow:none;border-color: rgba(255,195,0,0.16); background: #fff9e6; transition: background 0.18s ease, border-color 0.18s ease;}
 @keyframes recentFlash{0%{background:#fff7e6}50%{background:#fffdef}100%{background:#fff}}
 .note{margin-top:12px;color:var(--muted);font-size:13px}
 .small{font-size:13px;color:var(--muted)}
@@ -197,3 +202,20 @@ html, body {
     overflow-wrap: anywhere;
     word-break: break-word;
 }
+
+/* Discreet site watermark/logo */
+#siteLogo{
+    position: fixed;
+    left: 12px;
+    bottom: 12px;
+    width: 80px;
+    height: auto;
+    opacity: 0.25;
+    pointer-events: none;
+    z-index: 40;
+    filter: grayscale(40%);
+    transition: opacity 0.12s ease;
+} 
+@media (max-width: 480px){
+    #siteLogo{ display: none; }
+} 
