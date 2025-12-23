@@ -311,17 +311,8 @@ function updateTotals() {
 
   if (rows.length > 0) {
     totals.innerHTML = `
-      <div class="card total-card">
-        <div class="info">
-          <div class="row">
-            <div>
-              <strong>Total</strong>
-            </div>
-            <div class="amount">${formatPrice(totalAmount)}</div>
-          </div>
-        </div>
-      </div>
-    `;
+      <div class="total-line"><strong>Total:</strong>&nbsp;<span class="total-amount">${formatPrice(totalAmount)}</span></div>
+    `; 
     totals.style.display = 'block';
   } else {
     totals.innerHTML = '';
@@ -1077,10 +1068,8 @@ if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirme
   // company settings button + modal handlers
   try{
 
-    // Ensure company is loaded at startup; keep site logo as axonis.png
-    loadCompany().then(()=>{
-      try{ const el = document.getElementById('siteLogo'); if(el) el.src = 'images/axonis.png'; }catch(e){}
-    });
+    // Ensure company is loaded at startup
+    loadCompany();
   }catch(e){}
 
 

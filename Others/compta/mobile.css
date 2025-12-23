@@ -232,6 +232,9 @@
         max-width: 48%;
     }
 
+    /* Ensure totals single-line stays aligned on mobile */
+    #cardsTotals .total-line { text-align: left !important; }
+
     .card .info {
         width: 100%;
     }
@@ -310,10 +313,7 @@
     }
 }
 
-/* On small screens hide the site logo by changing visibility (preserve layout if needed) */
-@media (max-width: 480px) {
-    #siteLogo { visibility: hidden !important; }
-} 
+ 
 
 
 

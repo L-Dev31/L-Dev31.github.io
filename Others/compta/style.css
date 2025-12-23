@@ -83,16 +83,22 @@ button#sendBtn:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color
 .split > .container::-webkit-scrollbar-thumb, #cardsList::-webkit-scrollbar-thumb, #previewContainer::-webkit-scrollbar-thumb{background:#cfe7cf;border-radius:10px;border:2px solid transparent;background-clip:padding-box}
 #cardsList{display:flex;flex-direction:column;gap:10px}
 #cardsTotals{display:block}
-#cardsTotals .card {
-	background: transparent;
-	border: none;
-	border-radius: 0;
+#cardsTotals .total-line {
+    text-align: left;
+    font-size: 16px;
+    color: #000;
+    font-weight: 800;
+    padding: 6px 0;
 }
+#cardsTotals .total-line strong { font-weight: 700; color: inherit; }
+#cardsTotals .total-line .total-amount { color: var(--accent); font-weight: 800; margin-left: 8px; }
 .card{display:flex;gap:12px;padding:14px;border:1px solid var(--border);border-radius:12px;align-items:center;background:var(--surface);box-shadow: none;transition: box-shadow 160ms ease;}
 
 @media (min-width: 769px){
   /* Subtle lift on hover for desktop */
   .card:hover{ box-shadow: 0 10px 24px rgba(15,118,110,0.08); }
+  /* Prevent the preview card from lifting on hover */
+  #previewCard:hover{ box-shadow: none !important; }
   /* Respect reduced motion preference */
   @media (prefers-reduced-motion: reduce){
     .card{ transition: none; }
@@ -220,20 +226,4 @@ html, body {
 .modal .modal-content input[type="text"], .modal .modal-content textarea{width:100%;padding:8px;border:1px solid var(--border);border-radius:8px}
 
 
-/* Discreet site watermark/logo */
-#siteLogo{
-    position: fixed;
-    left: 12px;
-    top: 12px;
-    width: auto;
-    max-width: 80px;
-    height: auto;
-    opacity: 0.15;
-    pointer-events: none;
-    z-index: 40;
-    filter: grayscale(40%);
-    transition: opacity 0.12s ease;
-} 
-@media (max-width: 480px){
-    #siteLogo{ visibility: hidden; }
-} 
+ 
