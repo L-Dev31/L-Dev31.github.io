@@ -88,7 +88,16 @@ button#sendBtn:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color
 	border: none;
 	border-radius: 0;
 }
-.card{display:flex;gap:12px;padding:14px;border:1px solid var(--border);border-radius:12px;align-items:center;background:var(--surface);box-shadow: none;transition: none}
+.card{display:flex;gap:12px;padding:14px;border:1px solid var(--border);border-radius:12px;align-items:center;background:var(--surface);box-shadow: none;transition: box-shadow 160ms ease;}
+
+@media (min-width: 769px){
+  /* Subtle lift on hover for desktop */
+  .card:hover{ box-shadow: 0 10px 24px rgba(15,118,110,0.08); }
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce){
+    .card{ transition: none; }
+  }
+}
 
 .card .pfp{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#e6f2ea,#dff4e6);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);font-size:16px}
 .card .pfp{background-size:cover;background-position:center}
@@ -215,16 +224,16 @@ html, body {
 #siteLogo{
     position: fixed;
     left: 12px;
-    bottom: 12px;
+    top: 12px;
     width: auto;
     max-width: 80px;
     height: auto;
-    opacity: 0.25;
+    opacity: 0.15;
     pointer-events: none;
     z-index: 40;
     filter: grayscale(40%);
     transition: opacity 0.12s ease;
 } 
 @media (max-width: 480px){
-    #siteLogo{ display: none; }
+    #siteLogo{ visibility: hidden; }
 } 

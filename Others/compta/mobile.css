@@ -310,5 +310,10 @@
     }
 }
 
+/* On small screens hide the site logo by changing visibility (preserve layout if needed) */
+@media (max-width: 480px) {
+    #siteLogo { visibility: hidden !important; }
+} 
+
 
 
