@@ -1,9 +1,7 @@
 const STORAGE_ROWS = 'compta_rows';
-const STORAGE_LAST = 'compta_last';
 const STORAGE_SORT = 'compta_sort';
 let rows = JSON.parse(localStorage.getItem(STORAGE_ROWS) || '[]');
 try{ rows = (rows||[]).map(r => { if(r && r.client_name) r.client_name = toTitleCase(r.client_name); return r; }); }catch(e){}
-const $ = (s, r = document) => r.querySelector(s);
 function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 function todayIso(){ const d=new Date(); const mm=('0'+(d.getMonth()+1)).slice(-2); const dd=('0'+d.getDate()).slice(-2); return `${d.getFullYear()}-${mm}-${dd}` }
 function getCurrentYear(){ return String((new Date()).getFullYear()); }
@@ -22,7 +20,6 @@ function computeNextInvoiceFromRows(year){
   return `${year}-${max+1}`
 }
 
-// Parse invoice like "2025-12" into a comparable key
 function parseInvoiceKey(inv){
   const s = (inv||'').toString().trim();
   const m = s.match(/^(\d{4})-(\d+)$/);
@@ -32,7 +29,6 @@ function parseInvoiceKey(inv){
   return { year: NaN, num: NaN, raw: s };
 }
 
-// Compare two rows by invoice number (ascending)
 function invoiceCompare(a,b){
   const ai = parseInvoiceKey((a&&a.invoice_number)||'');
   const bi = parseInvoiceKey((b&&b.invoice_number)||'');
@@ -40,7 +36,6 @@ function invoiceCompare(a,b){
   const biValid = Number.isFinite(bi.year) && Number.isFinite(bi.num);
   if(aiValid && biValid){ if(ai.year !== bi.year) return ai.year - bi.year; return ai.num - bi.num; }
   if(aiValid && !biValid) return -1; if(!aiValid && biValid) return 1;
-  // fallback to locale string compare
   return (ai.raw||'').localeCompare(bi.raw||'');
 }
 function formatPrice(n){ return (Number(n||0).toFixed(2)).replace('.',',') + ' €' }
@@ -174,7 +169,6 @@ function createCardElement(r){
         };
         await sendPdfToAppsScript(email, pdfBase64, cardSendBtn, meta);
       }catch(ex){ console.error(ex); alert('Erreur envoi PDF'); } })(); });
-    // disable send button for cards without email
     try{
       if(!(r.client_email && r.client_email.toString().trim())){
         cardSendBtn.disabled = true;
@@ -195,22 +189,21 @@ function createCardElement(r){
   }catch(e){}
   info.appendChild(row1); info.appendChild(row2); card.appendChild(pfp); card.appendChild(info); return card }
 
-// ensure every row has a stable _id used for editing/deleting
 function ensureRowIds(){ try{ rows = (rows||[]).map(r => { if(r._id) return r; r._id = 'id_' + (hashString(JSON.stringify(r) + String(Math.random()))); return r; }); }catch(e){} }
 
-function startEdit(id){ try{ const idx = rows.findIndex(r=>r && r._id === id); if(idx === -1) return; const r = rows[idx]; // populate form
+function startEdit(id){ try{ const idx = rows.findIndex(r=>r && r._id === id); if(idx === -1) return; const r = rows[idx];
     document.getElementById('invoice_number').value = r.invoice_number || '';
     document.getElementById('invoice_date').value = r.invoice_date || todayIso();
     document.getElementById('client_name').value = r.client_name || '';
     document.getElementById('client_email').value = r.client_email || '';
     document.getElementById('service_quantity').value = r.quantity || '1';
 
-    // payment method: try to match existing option, otherwise set to Autre and fill other field
+
     const pm = document.getElementById('payment_method'); const pmOther = document.getElementById('payment_method_other'); const pmOtherLabel = document.getElementById('payment_method_other_label'); if(pm){ let found=false; for(let i=0;i<pm.options.length;i++){ if(pm.options[i].value === r.payment_method){ pm.value = pm.options[i].value; found = true; break; } } if(!found){ pm.value = 'Autre'; if(pmOther) pmOther.style.display = ''; if(pmOtherLabel) pmOtherLabel.style.display = ''; pmOther.value = r.payment_method || ''; } else { if(pmOther) pmOther.style.display = 'none'; if(pmOtherLabel) pmOtherLabel.style.display = 'none'; pmOther.value = ''; } }
     document.getElementById('payment_note').value = r.payment_note || '';
-    // service type: try to match by label text; fallback to 'autre'
+
     const st = document.getElementById('service_type'); if(st){ let matched=false; for(let i=0;i<st.options.length;i++){ const optLabel = (st.options[i].text || '').split('—')[0].trim(); if(optLabel === r.service_type){ st.value = st.options[i].value; document.getElementById('autre_seance_zone').style.display = 'none'; matched=true; break; } } if(!matched){ st.value = 'autre'; document.getElementById('autre_seance_zone').style.display = 'flex'; document.getElementById('autre_seance_desc').value = r.service_type || ''; document.getElementById('autre_seance_prix').value = (r.unit_price != null)? r.unit_price : ''; } }
-    // mark editing state
+
     window._editingId = id;
     const addBtn = document.getElementById('addBtn'); if(addBtn) addBtn.innerHTML = '<i class="fa-solid fa-save" aria-hidden="true"></i>Mettre à jour';
     const cancelBtn = document.getElementById('cancelEditBtn'); if(cancelBtn) cancelBtn.style.display='';
@@ -220,7 +213,7 @@ function startEdit(id){ try{ const idx = rows.findIndex(r=>r && r._id === id); i
       if (formContainer) formContainer.classList.add('editing-mode');
     }catch(e){}
     try{
-      // If mobile tabs are visible, switch to form view
+
       const tabBtnForm = document.getElementById('tab-btn-form');
       if (tabBtnForm && window.getComputedStyle(tabBtnForm.parentElement).display !== 'none') {
         tabBtnForm.click();
@@ -229,7 +222,7 @@ function startEdit(id){ try{ const idx = rows.findIndex(r=>r && r._id === id); i
     try{ updateFormTitle(); }catch(e){}
     updatePreview(); updateControls();
     
-    // Scroll and focus
+
     setTimeout(() => {
       try {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -242,13 +235,13 @@ function startEdit(id){ try{ const idx = rows.findIndex(r=>r && r._id === id); i
 
 function updateFormTitle(){ try{ const t = document.getElementById('formTitle'); if(!t) return; if(window._editingId){ const r = (rows||[]).find(x=>x && x._id === window._editingId) || null; const inv = r ? (r.invoice_number || '—') : (document.getElementById('invoice_number')||{value:'—'}).value || '—'; t.textContent = `Mettre à jour la facture N° ${inv}`; } else { t.textContent = 'Nouvelle facture'; } }catch(e){} }
 
-function cancelEdit(){ try{ window._editingId = null; const addBtn = document.getElementById('addBtn'); if(addBtn) addBtn.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i>Entrer'; const cancelBtn = document.getElementById('cancelEditBtn'); if(cancelBtn) cancelBtn.style.display='none'; // reset form partially
+function cancelEdit(){ try{ window._editingId = null; const addBtn = document.getElementById('addBtn'); if(addBtn) addBtn.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i>Entrer'; const cancelBtn = document.getElementById('cancelEditBtn'); if(cancelBtn) cancelBtn.style.display='none';
   try{ document.querySelectorAll('.card.editing').forEach(el=>el.classList.remove('editing')); }catch(e){}
   try{ 
     const formContainer = document.getElementById('form-container');
     if (formContainer) formContainer.classList.remove('editing-mode');
   }catch(e){}
-  // reset the form and ensure invoice number & date are reset to sensible defaults
+
   try{ document.getElementById('rowForm').reset(); }catch(e){}
   try{ const dateEl = document.getElementById('invoice_date'); if(dateEl) dateEl.value = todayIso(); }catch(e){}
   try{ const numEl = document.getElementById('invoice_number'); if(numEl) numEl.value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){}
@@ -380,7 +373,6 @@ function addCurrentToList() {
   document.getElementById('invoice_number').value = computeNextInvoiceFromRows(getCurrentYear());
   return true;
 }
-// Build and download a real XLSX file (UTF-8 by default) with styled headers and formatted numbers/dates
 async function downloadXLSXRows(rowsToExport){
   if(!rowsToExport || rowsToExport.length===0){ alert('Aucune ligne à exporter'); return; }
 
@@ -397,7 +389,7 @@ async function downloadXLSXRows(rowsToExport){
   const headerRow = sheet.getRow(1);
   headerRow.height = 22;
   headerRow.eachCell((cell) => {
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2E7D32' } };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF5A55D9' } };
     cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 12 };
     cell.alignment = { vertical: 'middle', horizontal: 'center' };
   });
@@ -457,7 +449,7 @@ async function downloadXLSXRows(rowsToExport){
       if(rowNumber > 1){
         if(rowNumber % 2 === 0){
           row.eachCell({ includeEmpty:true }, function(cell){
-            cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb: 'FFEFF7EE' } };
+            cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb: 'FFF7F7FD' } };
           });
         } else {
           row.eachCell({ includeEmpty:true }, function(cell){
@@ -585,7 +577,7 @@ async function buildInvoiceDoc(d){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({unit: 'pt', format: 'a4'});
   const left = 40; let y = 40; const pageWidth = doc.internal.pageSize.getWidth();
-  doc.setTextColor('#072010');
+  doc.setTextColor('#0D0C22');
   const logoImg = await loadImageDataURL('images/logo.png', { compress: true });
   const stampImg = await loadImageDataURL('/images/stamp.png', { compress: true });
   let headerBottom = y;
@@ -605,11 +597,11 @@ async function buildInvoiceDoc(d){
     headerBottom = y;
   }
   const titleTop = y + 2;
-  doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor('#072010');
+  doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor('#0D0C22');
   doc.text('Viviane de Vries', rightX, titleTop);
-  doc.setFontSize(11); doc.setTextColor('#0b6b3a'); doc.setFont('helvetica','normal');
+  doc.setFontSize(11); doc.setTextColor('#5A55D9'); doc.setFont('helvetica','normal');
   doc.text('Ostéopathe Exclusif', rightX, titleTop + 18);
-  doc.setFontSize(10); doc.setTextColor('#6b7b6b');
+  doc.setFontSize(10); doc.setTextColor('#6E6D7A');
   let addrY = titleTop + 36;
   const lines = [
     'Cabinet « Villa DREAM »',
@@ -622,26 +614,21 @@ async function buildInvoiceDoc(d){
   ];
   lines.forEach(l => { doc.text(l, rightX, addrY); addrY += 12; });
   headerBottom = Math.max(headerBottom, addrY);
-  y = headerBottom + 18; // add extra vertical spacing after header
-  doc.setTextColor('#072010');
+  y = headerBottom + 18;
+  doc.setTextColor('#0D0C22');
 
-  // Reference value (will be placed under the centered title above the table)
   const ref = 'G.' + (d.invoice_number || '—');
   doc.setFontSize(12); doc.setFont('helvetica','normal');
 
-  // Table with green outline and alternating row backgrounds
-  // ensure extra spacing above the table so the centered title and left ref fit cleanly
   const tableStartY = Math.max(y + 100, 360);
-  // place the title centered horizontally above the table with a generous gap
   doc.setFontSize(14); doc.setFont('helvetica','bold');
   const titleY = tableStartY - 36;
   doc.text("Note d’honoraire", pageWidth / 2, titleY, { align: 'center' });
-  // put the reference centered just below the title and style it in the same green as the subtitle
   doc.setFontSize(11); doc.setFont('helvetica','normal');
-  const refY = titleY + 14; // center under the title
-  doc.setTextColor('#0b6b3a');
+  const refY = titleY + 14; 
+  doc.setTextColor('#5A55D9');
   doc.text(ref, pageWidth / 2, refY, { align: 'center' });
-  doc.setTextColor('#072010');
+  doc.setTextColor('#0D0C22');
   const body = [
     ['Nom Prénom', d.client_name || '—'],
     ['Date', formatDateShort(d.invoice_date || todayIso())],
@@ -658,39 +645,35 @@ async function buildInvoiceDoc(d){
     theme: 'grid',
     styles: { halign: 'left', valign: 'middle', font: 'helvetica', fontSize: 13, textColor: '#000' },
     columnStyles: { 0: {cellWidth: 140, fillColor: [255,255,255]}, 1: {cellWidth: pageWidth - left*2 - 140} },
-    tableLineColor: [11,107,58],
+    tableLineColor: [90,85,217],
     tableLineWidth: 0.6,
     didParseCell: function(data){
-      if(data.row.index % 2 === 1){ data.cell.styles.fillColor = [243,255,243]; }
+      if(data.row.index % 2 === 1){ data.cell.styles.fillColor = [247,247,253]; }
     }
   });
 
-  // After table: place/date and notes
-  const afterY = (doc.lastAutoTable && doc.lastAutoTable.finalY ? doc.lastAutoTable.finalY : (tableStartY + 140)) + 30;
-  doc.setFontSize(11); doc.setFont('helvetica','normal');
-  doc.text(`A Deshaies, le ${formatDateShort(d.invoice_date || todayIso())}`, left, afterY);
+  const afterY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY : (tableStartY + (body.length * 18) + 20);
 
-  // stamp image on the right if available (height auto / maintain aspect ratio)
-  if(stampImg && stampImg.dataUrl){
-    const sw = stampImg.width || 90; const sh = stampImg.height || 90;
-    const targetW = 110; // target width; height will be auto
-    const ratioS = targetW / sw;
-    const drawW = sw * ratioS;
-    const drawH = sh * ratioS;
-    const imgType = stampImg.isJpeg ? 'JPEG' : (stampImg.dataUrl.indexOf('image/png') >= 0 ? 'PNG' : 'JPEG');
-    doc.addImage(stampImg.dataUrl, imgType, pageWidth - left - drawW, afterY - 8, drawW, drawH);
+  if (stampImg && stampImg.dataUrl) {
+    try {
+      const sw = stampImg.width || 120; const sh = stampImg.height || 120;
+      const maxW = 120; const maxH = 120;
+      const ratio = Math.min(1, maxW / sw, maxH / sh);
+      const drawW = sw * ratio; const drawH = sh * ratio;
+      const imgType = stampImg.isJpeg ? 'JPEG' : (stampImg.dataUrl.indexOf('image/png') >= 0 ? 'PNG' : 'JPEG');
+      doc.addImage(stampImg.dataUrl, imgType, pageWidth - left - drawW, afterY + 20, drawW, drawH);
+    } catch(e) {}
   }
 
-  // Footer: center TVA note and signature at bottom of page
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const footerY = pageHeight - 56; // 56pt above bottom
-  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor('#6b7b6b');
-  doc.text('« TVA non applicable, Article 293 B du CGI »', pageWidth / 2, footerY, { align: 'center' });
+  try {
+    doc.setFontSize(10);
+    doc.setTextColor('#6E6D7A');
+    doc.text('Merci de votre confiance.', left, afterY + 40);
+  } catch(e){}
 
   return doc;
 }
 
-// helper to build and save PDF
 async function generateInvoicePDF(d){
   const doc = await buildInvoiceDoc(d);
   const filename = `facture_${(d.invoice_number||'facture').replace(/[^0-9A-Za-z-_\.]/g,'_')}.pdf`;
@@ -698,14 +681,13 @@ async function generateInvoicePDF(d){
   return filename;
 }
 
-// URL for Google Apps Script that accepts {email, pdf}
 const SEND_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwKaQ3er-DSLx5r9pBePb3s40p-gDlI1dbebpDrg3NMx1CN7Bsuvr57gwQLrLqiBNiZ/exec';
 
 async function sendPdfToAppsScript(email, pdfDataUri, btn, meta = {}){
   if(!email) throw new Error('Email manquant');
   const el = btn || document.getElementById('sendBtn');
   if(el && el.dataset && el.dataset.sending === '1'){ showToast('Envoi déjà en cours...'); return; }
-  let originalHtml = null;
+  let originalHtml = null; let success = false;
   try{
     if(el){
       el.dataset.sending = '1';
@@ -715,19 +697,17 @@ async function sendPdfToAppsScript(email, pdfDataUri, btn, meta = {}){
     }
 
     const payload = Object.assign({ email: email, pdf: pdfDataUri }, meta);
-    let resp = await fetch(SEND_SCRIPT_URL, {
+    await fetch(SEND_SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
       cache: 'no-cache',
       body: JSON.stringify(payload)
     });
 
-    // note: with mode:'no-cors' the response is opaque; treat as success if no exception
     showToast('E-mail envoyé avec succès !');
     success = true;
   }catch(e){
     console.error('Erreur envoi PDF', e);
-    // prefer toast for non-blocking UX
     showToast('Erreur : impossible d\'envoyer le message');
     success = false;
   }finally{
@@ -774,10 +754,8 @@ async function genererEtEnvoyerPDFFromForm(){
     }
   }catch(e){ console.error(e); alert('Erreur lors de la génération/envoi'); }
 }
-// Backwards compatible alias (user-provided name)
 async function genererEtEnvoyerPDF(){ return genererEtEnvoyerPDFFromForm(); }
 
-// Handler callable from HTML inline onclick
 async function handleMainSend(){
   const data = getFormData();
   if(!data.client_email || !validateEmailValue(data.client_email)){
@@ -878,7 +856,6 @@ if(importBtn && importInput){
         return parseFloat(s.replace(/[^0-9,-]+/g, '').replace(',', '.'));
     };
 
-    // XLSX import
     if(filename.endsWith('.xlsx') || filename.endsWith('.xls')){
       const reader = new FileReader();
       reader.onload = async function(){
@@ -949,7 +926,6 @@ if(importBtn && importInput){
       return;
     }
 
-    // fallback: CSV import
     const reader = new FileReader();
     reader.onload = function(){
       try{
@@ -1025,10 +1001,8 @@ if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirme
   try{ document.getElementById('invoice_number').value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){}
   updateListPreview(); updatePreview(); updateControls(); document.getElementById('client_name').focus();
   try{ window.addEventListener('beforeunload', saveRows); }catch(e){}
-  // attach cancel edit handler
   const cancelBtn = document.getElementById('cancelEditBtn'); if(cancelBtn){ cancelBtn.addEventListener('click', function(){ cancelEdit(); }); }
 
-  // Mobile tab switching
   const tabBtnPreview = document.getElementById('tab-btn-preview');
   const tabBtnForm = document.getElementById('tab-btn-form');
   const previewContainer = document.getElementById('preview-container');

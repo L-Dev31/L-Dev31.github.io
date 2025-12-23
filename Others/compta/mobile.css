@@ -37,12 +37,11 @@
         display: block;
     }
 
-    /* Show wipe button hover background on touch devices (phones & tablets) */
     #wipeBtn {
-        background: #fff0f0;
+        background: transparent;
     }
     #wipeBtn:hover {
-        background: #fff0f0;
+        background: rgba(231,107,107,0.04);
     }
 }
 
@@ -244,8 +243,9 @@
 
     /* Keep an accessible focus for keyboard users */
     :focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+        outline: 3px solid rgba(15,118,110,0.12);
+        box-shadow: none;
+        border-radius: var(--radius);
     }
 
     .card {
@@ -272,8 +272,8 @@
 .mobile-tabs {
     display: none;
     width: 100%;
-    background-color: #f0f5f0;
-    border-bottom: 1px solid #cfe7cf;
+    background-color: rgba(15,118,110,0.04);
+    border-bottom: 1px solid var(--border);
 }
 
 .mobile-tabs button {
@@ -286,14 +286,14 @@
     color: var(--muted);
     cursor: pointer;
     border-bottom: 2px solid transparent;
-    transition: color .15s ease, background .12s ease, box-shadow .12s ease, border-bottom-color .12s ease;
+    transition: color .15s ease, background .12s ease, border-bottom-color .12s ease;
 }
 
 .mobile-tabs button.active {
     color: var(--accent);
-    background: rgba(11,107,58,0.06);
+    background: rgba(15,118,110,0.08);
     border-bottom-color: var(--accent);
-    box-shadow: inset 0 -3px 0 rgba(11,107,58,0.08);
+    box-shadow: none;
     border-radius: 0;
 }
 
