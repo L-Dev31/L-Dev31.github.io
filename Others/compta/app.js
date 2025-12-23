@@ -389,7 +389,7 @@ async function downloadXLSXRows(rowsToExport){
   const headerRow = sheet.getRow(1);
   headerRow.height = 22;
   headerRow.eachCell((cell) => {
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF5A55D9' } };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0F766E' } }; 
     cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 12 };
     cell.alignment = { vertical: 'middle', horizontal: 'center' };
   });
@@ -444,12 +444,12 @@ async function downloadXLSXRows(rowsToExport){
   sheet.eachRow({ includeEmpty:false }, function(row, rowNumber){
     if(rowNumber >= 1){
       row.eachCell({ includeEmpty:true }, function(cell){
-        cell.border = { top: {style:'thin', color:{argb:'FFECECEC'} }, left:{style:'thin', color:{argb:'FFECECEC'} }, bottom:{style:'thin', color:{argb:'FFECECEC'} }, right:{style:'thin', color:{argb:'FFECECEC'} } };
+        cell.border = { top: {style:'thin', color:{argb:'FFE6F3EC'} }, left:{style:'thin', color:{argb:'FFE6F3EC'} }, bottom:{style:'thin', color:{argb:'FFE6F3EC'} }, right:{style:'thin', color:{argb:'FFE6F3EC'} } };
       });
       if(rowNumber > 1){
         if(rowNumber % 2 === 0){
           row.eachCell({ includeEmpty:true }, function(cell){
-            cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb: 'FFF7F7FD' } };
+            cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb: 'FFF3FFF3' } }; 
           });
         } else {
           row.eachCell({ includeEmpty:true }, function(cell){
