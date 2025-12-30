@@ -7,7 +7,7 @@
     --radius: 12px;
     --shadow: none;
 }
-html,body{height:100%}
+html,body{height:auto;overflow-x:hidden}
 body {
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -16,9 +16,11 @@ body {
     color: #072010;
     margin: 0;
     padding: 0;
+    min-height: 100vh;
 }
-.split{display:flex;width:100%;height:100vh;gap:0}
-.split > .container{flex:1;max-width:none;margin:0;border-radius:0;height:100vh;overflow:auto;min-height:0;box-sizing:border-box}
+.split{display:flex;width:100%;gap:0}
+/* Use min-height so mobile/tablet can scroll naturally; enable smooth touch scrolling */
+.split > .container{flex:1;max-width:none;margin:0;border-radius:0;min-height:0;overflow:visible;box-sizing:border-box;-webkit-overflow-scrolling:touch;touch-action:auto}
 .split > .container:first-child{display:flex;flex-direction:column;justify-content:center;padding:48px}
 .split > .container:first-child > form{width:100%;max-width:760px;margin:0 auto}
 .split > .container:first-child input[type="text"],
@@ -30,7 +32,86 @@ body {
 .split > .container:first-child input.invalid{border-color:#e05a4f} 
 .split > .container + .container{border-left:0}
 .split > .container + .container{background: linear-gradient(to bottom, #f8fff8 0%, #f3fff3 100%); border:1px solid #ecf8ec}
-.container{max-width:1000px;margin:28px auto;background:var(--surface);padding:22px;border:1px solid var(--border);border-radius:var(--radius); box-shadow: none; transition: background-color 0.3s ease;} 
+.container{max-width:1000px;margin:0 auto;background:var(--surface);padding:22px;border:1px solid var(--border);border-radius:var(--radius); box-shadow: none; transition: background-color 0.3s ease;} 
+/* ensure split children don't add extra vertical margin that creates double scrollbars */
+.split > .container{margin:0}
+
+/* Desktop navigation (simple Windows-like top bar) */
+.desktop-nav{display:block}
+
+/* Backdrop used behind navs (sits behind nav and dropdown but above page content) */
+.backdrop{
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,0.36);
+  opacity:0;
+  visibility:hidden;
+  transition: opacity .18s ease, visibility .18s ease;
+  z-index:1150; /* below nav (1200) and dropdown (1300) */
+  pointer-events:none;
+}
+.backdrop.open{ opacity:1; visibility:visible; pointer-events:auto; }
+@media (min-width: 1025px){
+  /* Fixed desktop navbar so it always stays visible */
+  .desktop-nav{display:block;position:fixed;top:0;left:0;right:0;z-index:1200;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:0 4px 10px rgba(0,0,0,0.04);}
+  /* add top offset to page content so it isn't hidden behind the fixed navbar */
+  body{padding-top:56px}
+  /* make the nav full-width and keep comfortable side padding; set explicit height */
+  .desktop-nav-inner{max-width:100%;margin:0;padding:0 50px;display:flex;align-items:center;gap:12px;height:56px}
+  .desktop-nav .brand img{height:22px;width:auto;opacity:0.96}
+  /* remove extra left spacing before the menu */
+  .desktop-nav .menu{margin-left:0}
+  .menu-item{position:relative;cursor:pointer;padding:8px 10px;border-radius:6px;font-weight:600;color:var(--muted);user-select:none}
+  .menu-item:hover{background: rgba(15,118,110,0.08);border-radius:8px}
+  .menu-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:200px;background:var(--surface);border:1px solid var(--border);box-shadow:0 8px 20px rgba(0,0,0,0.06);border-radius:8px;display:none;flex-direction:column;padding:6px;z-index:1300}
+  .menu-dropdown .menu-action{
+    background:transparent;
+    border:0;
+    padding:10px 12px;
+    text-align:left;
+    width:100%;
+    font-size:14px;
+    cursor:pointer;
+    color:#000;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .menu-dropdown .menu-action i{ width:18px; text-align:center; color:var(--muted); }
+  .menu-dropdown .menu-action:hover{background:rgba(15,118,110,0.04)}
+  /* Warning style for destructive action */
+  .menu-dropdown .menu-action.warning{ color:#b30000 }
+  .menu-dropdown .menu-action.warning i{ color:#b30000 }
+  .menu-dropdown .menu-action.warning:hover{ background: rgba(231,107,107,0.06); color:#b30000 }
+  .menu-item.open .menu-dropdown{display:flex}
+} 
+/* Mobile / Tablet: show and adapt the top desktop navbar above the mobile tabs */
+@media (max-width: 1024px) {
+  .desktop-nav{position:fixed;top:0;left:0;right:0;z-index:1200;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:0 4px 10px rgba(0,0,0,0.04);}
+  /* slightly smaller top offset on small screens */
+  body{padding-top:48px}
+  /* more compact padding for mobile */
+  .desktop-nav-inner{max-width:100%;margin:0;padding:0 12px;display:flex;align-items:center;gap:8px;height:48px}
+  .desktop-nav .brand img{height:18px}
+  /* hide the desktop inline menu on mobile and show the hamburger */
+  .menu{display:none}
+  .mobile-nav-toggle{display:inline-flex;margin-left:auto;align-items:center;background:transparent !important;border:0 !important;color:var(--muted) !important;font-size:18px;padding:8px;border-radius:8px;box-shadow:none !important}
+  .mobile-nav-toggle i{display:inline-block}
+  /* Ensure no background on any interaction states (hover/active/expanded) */
+  .mobile-nav-toggle:hover,
+  .mobile-nav-toggle:active,
+  .mobile-nav-toggle[aria-expanded="true"]{
+    background:transparent !important;
+    box-shadow:none !important;
+    border:0 !important;
+    color:var(--muted) !important;
+  }
+  .mobile-nav-toggle:focus{ outline: none; box-shadow: 0 0 0 4px rgba(15,118,110,0.06); border-radius:8px; }
+  .menu-item{padding:6px 8px}
+
+  /* On mobile we keep the desktop dropdown behavior (absolute positioned) */
+  /* No overrides — the .menu-item.open .menu-dropdown rule from the desktop styles applies */
+}
 #form-container.editing-mode {
   background-color: #fffbeb;
 }
@@ -137,7 +218,22 @@ button#sendBtn:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color
 .searchWrap{position:relative;flex:1 1 auto;max-width:360px}
 .searchWrap .searchIcon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
 .actions{display:flex;gap:8px;align-items:center}
-.card .actions .secondary{padding:6px 8px;font-size:13px}
+/* Make action buttons compact and square on cards */
+.card .actions button{
+  width:32px;
+  height:32px;
+  min-width:32px;
+  padding:0;
+  box-sizing:border-box;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:6px;
+  font-size:12px;
+  line-height:1;
+}
+.card .actions .secondary{padding:0;font-size:12px;line-height:1}
+.card .actions button i{font-size:12px;line-height:1;display:inline-block}
 .card .actions button:hover{background: rgba(15,118,110,0.04);border-color: rgba(15,118,110,0.06);opacity:0.98} 
 .card .actions button:disabled{opacity:0.55;cursor:not-allowed;background:transparent;border-color:#f0f0f0;color:var(--muted);filter:grayscale(100%)}
 .card .actions button:disabled i{opacity:0.6}

@@ -16,9 +16,38 @@
 
 </head>
 <body>
+  <div class="desktop-nav" aria-hidden="false">
+    <div class="desktop-nav-inner">
+      <div class="brand"><img src="images/icon.png" alt="Axonis" /></div>
+      <div class="menu">
+        <div class="menu-item" id="fileMenuBtn" tabindex="0" aria-haspopup="true" aria-expanded="false">Fichier
+          <div class="menu-dropdown" id="fileMenu" role="menu" aria-hidden="true">
+            <button type="button" class="menu-action" id="menuExport"><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i><span>Exporter XLSX</span></button>
+            <button type="button" class="menu-action" id="menuImport"><i class="fa-solid fa-file-import" aria-hidden="true"></i><span>Importer XLSX</span></button>
+            <button type="button" class="menu-action warning" id="menuWipe"><i class="fa-solid fa-trash" aria-hidden="true"></i><span>Vider la table</span></button>
+          </div>
+        </div>
+      </div>
+      <!-- Mobile nav toggle (hamburger) -->
+      <button id="mobileNavToggle" class="mobile-nav-toggle" aria-controls="mobileNavPanel" aria-expanded="false" aria-label="Menu"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <!-- Mobile navigation panel (hidden by default) -->
+  <div id="mobileNavPanel" class="mobile-nav-panel" aria-hidden="true">
+    <div class="mobile-nav-inner">
+      <button type="button" id="mobileImportBtn" class="menu-action"><i class="fa-solid fa-file-import" aria-hidden="true"></i><span>Importer XLSX</span></button>
+      <button type="button" id="mobileExportBtn" class="menu-action"><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i><span>Exporter XLSX</span></button>
+      <button type="button" id="mobileWipeBtn" class="menu-action warning"><i class="fa-solid fa-trash" aria-hidden="true"></i><span>Vider la table</span></button>
+    </div>
+  </div>
+
+  <div id="backdrop" class="backdrop" aria-hidden="true"></div>
+  <!-- Hidden import input for menu triggers (kept in DOM) -->
+  <input id="importCsvInput" type="file" accept=".csv,text/csv,.xlsx,application/vnd.openxmlformats-officedocument-spreadsheetml.sheet" style="display:none" />
   <div class="mobile-tabs" role="tablist">
-    <button id="tab-btn-preview" role="tab" aria-selected="true" aria-controls="preview-container" class="active">Aperçu</button>
-    <button id="tab-btn-form" role="tab" aria-selected="false" aria-controls="form-container">Formulaire</button>
+    <button id="tab-btn-form" role="tab" aria-selected="true" aria-controls="form-container" class="active">Formulaire</button>
+    <button id="tab-btn-preview" role="tab" aria-selected="false" aria-controls="preview-container">Aperçu</button>
   </div>
   <div class="split">
     <div class="container" id="form-container">
@@ -121,14 +150,7 @@
     <div class="container" id="preview-container">
     <div class="preview">
       <h2>Aperçu</h2>
-      <div class="actions small">
-        <div style="display:flex;gap:8px;align-items:center">
-          <button id="importCsvBtn" type="button" class="secondary">Importer XLSX</button>
-          <button id="exportCsvBtn" type="button" class="secondary">Exporter XLSX</button>
-          <button id="wipeBtn" type="button" class="secondary">Vider la table</button>
-          <input id="importCsvInput" type="file" accept=".csv,text/csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none" />
-        </div>
-      </div>
+      <!-- Preview action buttons removed (moved to top toolbar / File menu) -->
       
       <div id="cardsContainer" class="cards">
         

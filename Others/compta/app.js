@@ -295,19 +295,13 @@ function updateControlsBottomBehavior(){
     const controls = document.querySelector('.controls');
     if(!controls) return;
     const threshold = 8;
-    const setBodyPadding = () => {
-      const h = controls.offsetHeight || 0;
-      document.body.style.paddingBottom = h + 'px';
-    };
     const check = () => {
       const atBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - threshold);
       controls.classList.toggle('no-shadow', atBottom);
-      setBodyPadding();
     };
     window.addEventListener('scroll', check, { passive: true });
     window.addEventListener('resize', check);
     window.addEventListener('orientationchange', check);
-    document.addEventListener('focusin', setBodyPadding);
     // initial
     setTimeout(check, 40);
   }catch(e){}
@@ -356,9 +350,7 @@ function updateTotals(list){
     const sum = (arr||[]).reduce((s,r)=> s + (parseFloat(r && r.total_amount) || 0), 0);
     const avg = count ? (sum / count) : 0;
     const lines = [];
-    lines.push(`<div class="total-line"><span>Entrées affichées</span><strong class="total-amount">${count}</strong></div>`);
     lines.push(`<div class="total-line"><span>Total</span><strong class="total-amount">${formatPrice(sum)}</strong></div>`);
-    if(count > 0){ lines.push(`<div class="total-line"><span>Moyenne par entrée</span><strong class="total-amount">${formatPrice(avg)}</strong></div>`); }
     el.innerHTML = lines.join('');
   }catch(e){ console.error('updateTotals error', e); }
 }
@@ -897,6 +889,7 @@ if(paymentMethodSelect){
   });
 }
 const wipeBtn = document.getElementById('wipeBtn');
+
 if(importBtn && importInput){
   importBtn.addEventListener('click', function(){ importInput.click(); });
   importInput.addEventListener('change', function(e){
@@ -1109,70 +1102,51 @@ if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirme
     });
   }
 
-  // Defensive fix: ensure scrolling is enabled (clear accidental overflow styles, enable touch scrolling)
+  // Scroll-fix removed: interfering with native touch/scroll on some mobile devices. Leaving scrolling behavior to the browser.
+
+  // Desktop "File" menu: toggle dropdown and reuse existing handlers
   try{
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
-    document.querySelectorAll('.split > .container').forEach(c => {
-      try{ c.style.overflowY = 'auto'; c.style.webkitOverflowScrolling = 'touch'; c.style.touchAction = 'pan-y'; }catch(e){}
-    });
+    const fileMenuBtn = document.getElementById('fileMenuBtn');
+    const fileMenu = document.getElementById('fileMenu');
+    const backdrop = document.getElementById('backdrop');
+    if(fileMenuBtn && fileMenu){
+      fileMenuBtn.addEventListener('click', function(e){ e.stopPropagation(); const open = fileMenuBtn.classList.toggle('open'); fileMenuBtn.setAttribute('aria-expanded', String(open)); fileMenu.setAttribute('aria-hidden', open ? 'false' : 'true'); if(backdrop){ if(open){ backdrop.classList.add('open'); backdrop.setAttribute('aria-hidden','false'); } else { backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } } });
+      const menuExport = document.getElementById('menuExport');
+      const menuImport = document.getElementById('menuImport');
+      const menuWipe = document.getElementById('menuWipe');
+      if(menuExport){ menuExport.addEventListener('click', ()=>{ if((rows||[]).length === 0){ alert('Aucune ligne à exporter'); return; } downloadXLSXRows(rows); fileMenuBtn.classList.remove('open'); fileMenuBtn.setAttribute('aria-expanded','false'); fileMenu.setAttribute('aria-hidden','true'); if(backdrop){ backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } }); }
+      if(menuImport){ menuImport.addEventListener('click', ()=>{ const origInput = document.getElementById('importCsvInput'); if(origInput) origInput.click(); fileMenuBtn.classList.remove('open'); fileMenuBtn.setAttribute('aria-expanded','false'); fileMenu.setAttribute('aria-hidden','true'); if(backdrop){ backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } }); }
+      if(menuWipe){ menuWipe.addEventListener('click', ()=>{ if(!confirm('Confirmer : vider la table en mémoire ?')) return; rows = []; try{ localStorage.removeItem(STORAGE_ROWS); sessionStorage.removeItem(STORAGE_ROWS + '_cache'); }catch(e){} updateListPreview(); try{ document.getElementById('invoice_number').value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){} showToast('Table vidée ✅'); fileMenuBtn.classList.remove('open'); fileMenuBtn.setAttribute('aria-expanded','false'); fileMenu.setAttribute('aria-hidden','true'); if(backdrop){ backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } }); }
+      document.addEventListener('click', (e)=>{ if(!fileMenuBtn.contains(e.target)){ fileMenuBtn.classList.remove('open'); fileMenuBtn.setAttribute('aria-expanded','false'); fileMenu.setAttribute('aria-hidden','true'); if(backdrop){ backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } }});
+      document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ fileMenuBtn.classList.remove('open'); fileMenuBtn.setAttribute('aria-expanded','false'); fileMenu.setAttribute('aria-hidden','true'); if(backdrop){ backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } }});
 
-    // Detect and optionally disable full-screen overlays that may block touch scrolling
-    function detectAndDisableCoverings(){
-      try{
-        const coverings = Array.from(document.querySelectorAll('body *')).filter(el=>{
-          try{
-            const cs = getComputedStyle(el);
-            if(cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity||1) < 0.02) return false;
-            if(!(cs.position === 'fixed' || cs.position === 'absolute')) return false;
-            const r = el.getBoundingClientRect();
-            // element must cover a large portion of the viewport
-            if(r.width < window.innerWidth * 0.6 || r.height < window.innerHeight * 0.6) return false;
-            // Accept it
-            return true;
-          }catch(e){ return false; }
-        });
+      /* Mobile nav toggle and handlers */
+      const mobileNavToggle = document.getElementById('mobileNavToggle');
+      const mobileNavPanel = document.getElementById('mobileNavPanel');
+      const mobileImportBtn = document.getElementById('mobileImportBtn');
+      const mobileExportBtn = document.getElementById('mobileExportBtn');
+      const mobileWipeBtn = document.getElementById('mobileWipeBtn');
+      if(mobileNavToggle && mobileNavPanel){
+        mobileNavToggle.addEventListener('click', function(e){ e.stopPropagation(); const open = mobileNavPanel.classList.toggle('open'); mobileNavPanel.setAttribute('aria-hidden', open ? 'false' : 'true'); mobileNavToggle.setAttribute('aria-expanded', String(open)); if(backdrop){ if(open){ backdrop.classList.add('open'); backdrop.setAttribute('aria-hidden','false'); } else { backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } } });
+        document.addEventListener('click',(e)=>{ if(!mobileNavPanel.contains(e.target) && !mobileNavToggle.contains(e.target)){ mobileNavPanel.classList.remove('open'); mobileNavPanel.setAttribute('aria-hidden','true'); mobileNavToggle.setAttribute('aria-expanded','false'); if(backdrop){ backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } }});
+        document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ mobileNavPanel.classList.remove('open'); mobileNavPanel.setAttribute('aria-hidden','true'); mobileNavToggle.setAttribute('aria-expanded','false'); if(backdrop){ backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } }});
+      }
+      if(mobileImportBtn){ mobileImportBtn.addEventListener('click', function(){ const inp=document.getElementById('importCsvInput'); if(inp) inp.click(); mobileNavPanel.classList.remove('open'); mobileNavPanel.setAttribute('aria-hidden','true'); mobileNavToggle.setAttribute('aria-expanded','false'); if(backdrop){ backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } }); }
+      if(mobileExportBtn){ mobileExportBtn.addEventListener('click', function(){ if((rows||[]).length === 0){ alert('Aucune ligne à exporter'); return; } downloadXLSXRows(rows); mobileNavPanel.classList.remove('open'); mobileNavPanel.setAttribute('aria-hidden','true'); mobileNavToggle.setAttribute('aria-expanded','false'); if(backdrop){ backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } }); }
+      if(mobileWipeBtn){ mobileWipeBtn.addEventListener('click', function(){ if(!confirm('Confirmer : vider la table en mémoire ?')) return; const orig = document.getElementById('wipeBtn'); if(orig) orig.click(); mobileNavPanel.classList.remove('open'); mobileNavPanel.setAttribute('aria-hidden','true'); mobileNavToggle.setAttribute('aria-expanded','false'); if(backdrop){ backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); } }); }
 
-        const applied = [];
-        coverings.forEach(el=>{
-          try{
-            if(el.classList && el.classList.contains('toast')) return; // keep toast
-            if(el.id && (el.id === 'preview-container' || el.id === 'form-container')) return;
-            // skip overlays that contain interactive controls (buttons, inputs) — they are likely legitimate modals
-            if(el.querySelector('a,button,input,select,textarea,[tabindex]')) return;
-            el._oldPointer = el.style.pointerEvents || '';
-            el.style.pointerEvents = 'none';
-            el.dataset._scrollFixApplied = '1';
-            applied.push(el);
-            console.log('Scroll-fix: disabled pointer-events on', el);
-          }catch(e){}
-        });
-        if(applied.length){
-          window._scrollFixCoverings = applied;
-          // add a small restore button
-          if(!document.getElementById('scrollFixRestore')){
-            const restore = document.createElement('button');
-            restore.id = 'scrollFixRestore'; restore.textContent = 'Restaurer overlays';
-            Object.assign(restore.style, {position:'fixed', right:'12px', bottom:'12px', zIndex:99999, padding:'8px 10px', borderRadius:'10px', background:'#fff', border:'1px solid rgba(0,0,0,0.06)', boxShadow:'0 6px 18px rgba(0,0,0,0.12)', fontWeight:'700'});
-            restore.addEventListener('click', ()=>{
-              try{ window._scrollFixCoverings.forEach(el=>{ el.style.pointerEvents = el._oldPointer || ''; delete el.dataset._scrollFixApplied; }); if(restore) restore.remove(); delete window._scrollFixCoverings; }catch(e){console.error(e);} 
-            });
-            document.body.appendChild(restore);
+      if(backdrop){
+        backdrop.addEventListener('click', function(){
+          if(mobileNavPanel && mobileNavPanel.classList.contains('open')){
+            mobileNavPanel.classList.remove('open'); mobileNavPanel.setAttribute('aria-hidden','true'); if(mobileNavToggle) mobileNavToggle.setAttribute('aria-expanded','false');
           }
-        }
-        return coverings;
-      }catch(e){ console.error('detectAndDisableCoverings error', e); return []; }
+          if(fileMenuBtn && fileMenuBtn.classList.contains('open')){
+            fileMenuBtn.classList.remove('open'); fileMenuBtn.setAttribute('aria-expanded','false'); if(fileMenu) fileMenu.setAttribute('aria-hidden','true');
+          }
+          backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true');
+        });
+      }
     }
-
-    // Run detection after a short delay (allow layout to settle)
-    setTimeout(()=>{ try{ detectAndDisableCoverings(); }catch(e){} }, 350);
-
-    // re-check on resize/orientation changes
-    try{ window.addEventListener('resize', detectAndDisableCoverings); window.addEventListener('orientationchange', detectAndDisableCoverings); }catch(e){}
-
-    // expose for manual use
-    window.detectAndDisableCoverings = detectAndDisableCoverings;
-
   }catch(e){}
 
 
