@@ -289,38 +289,32 @@ try{ updateFormTitle(); }catch(e){}
 function deleteRow(id){ try{ if(!confirm('Confirmer : supprimer cette entrée ?')) return; const idx = rows.findIndex(r=>r && r._id === id); if(idx === -1) return; rows.splice(idx,1); saveRows(); updateListPreview(); try{ document.getElementById('invoice_number').value = computeNextInvoiceFromRows(getCurrentYear()); }catch(e){} showToast('Entrée supprimée'); if(window._editingId === id) cancelEdit(); }catch(e){} }
 function saveRows(){ try{ localStorage.setItem(STORAGE_ROWS, JSON.stringify(rows)); }catch(e){} try{ sessionStorage.setItem(STORAGE_ROWS + '_cache', JSON.stringify(rows)); }catch(e){} }
 
-function performImport(imported){
-  if(!imported || imported.length === 0) return false;
+// Manage controls width and box-shadow when user reaches the page bottom (mobile)
+function updateControlsBottomBehavior(){
   try{
-  if((rows||[]).length > 0){
-    const proceed = confirm('Attention : cela va remplacer le tableau actuel. Continuer ?');
-    if(!proceed) return;
-    rows = [];
-    try{ localStorage.removeItem(STORAGE_ROWS); sessionStorage.removeItem(STORAGE_ROWS + '_cache'); }catch(e){}
-  }
-  imported.forEach(r=>{ if(r && r.client_name) r.client_name = toTitleCase(r.client_name); rows.push(r); }); try{ ensureRowIds(); }catch(e){}
-    saveRows(); updateListPreview(); updatePreview();
-    return true;
-  }catch(e){ return false; }
+    const controls = document.querySelector('.controls');
+    if(!controls) return;
+    const threshold = 8;
+    const setBodyPadding = () => {
+      const h = controls.offsetHeight || 0;
+      document.body.style.paddingBottom = h + 'px';
+    };
+    const check = () => {
+      const atBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - threshold);
+      controls.classList.toggle('no-shadow', atBottom);
+      setBodyPadding();
+    };
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    window.addEventListener('orientationchange', check);
+    document.addEventListener('focusin', setBodyPadding);
+    // initial
+    setTimeout(check, 40);
+  }catch(e){}
 }
-function updateTotals() {
-  const totals = document.getElementById('cardsTotals');
-  if (!totals) return;
+try{ updateControlsBottomBehavior(); }catch(e){}
 
-  const totalAmount = rows.reduce((sum, row) => sum + (row.total_amount || 0), 0);
-
-  if (rows.length > 0) {
-    totals.innerHTML = `
-      <div class="total-line"><strong>Total:</strong>&nbsp;<span class="total-amount">${formatPrice(totalAmount)}</span></div>
-    `; 
-    totals.style.display = 'block';
-  } else {
-    totals.innerHTML = '';
-    totals.style.display = 'none';
-  }
-}
-
-function updateListPreview() {
+function updateListPreview(){
   const container = document.getElementById('cardsList');
   if (!container) return;
 
@@ -349,8 +343,24 @@ function updateListPreview() {
   });
   container.appendChild(frag);
 
-  updateTotals();
+  updateTotals(list);
   updateClientsCount();
+}
+
+function updateTotals(list){
+  try{
+    const el = document.getElementById('cardsTotals');
+    if(!el) return;
+    const arr = Array.isArray(list) ? list : (rows||[]);
+    const count = (arr||[]).length;
+    const sum = (arr||[]).reduce((s,r)=> s + (parseFloat(r && r.total_amount) || 0), 0);
+    const avg = count ? (sum / count) : 0;
+    const lines = [];
+    lines.push(`<div class="total-line"><span>Entrées affichées</span><strong class="total-amount">${count}</strong></div>`);
+    lines.push(`<div class="total-line"><span>Total</span><strong class="total-amount">${formatPrice(sum)}</strong></div>`);
+    if(count > 0){ lines.push(`<div class="total-line"><span>Moyenne par entrée</span><strong class="total-amount">${formatPrice(avg)}</strong></div>`); }
+    el.innerHTML = lines.join('');
+  }catch(e){ console.error('updateTotals error', e); }
 }
 function updateClientsCount(){ const set = new Set((rows||[]).map(r=>r.client_name).filter(Boolean)); const clientsCountEl = document.getElementById('clientsCount'); if(clientsCountEl){ const size = set.size || 0; if(size === 0) clientsCountEl.textContent = '0 clients enregistrés'; else if(size === 1) clientsCountEl.textContent = '1 client enregistré'; else clientsCountEl.textContent = size + ' clients enregistrés'; } }
 function addCurrentToList() {
@@ -1098,4 +1108,72 @@ if(wipeBtn){ wipeBtn.addEventListener('click', function(){ if(!confirm('Confirme
       previewContainer.style.display = 'none';
     });
   }
+
+  // Defensive fix: ensure scrolling is enabled (clear accidental overflow styles, enable touch scrolling)
+  try{
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+    document.querySelectorAll('.split > .container').forEach(c => {
+      try{ c.style.overflowY = 'auto'; c.style.webkitOverflowScrolling = 'touch'; c.style.touchAction = 'pan-y'; }catch(e){}
+    });
+
+    // Detect and optionally disable full-screen overlays that may block touch scrolling
+    function detectAndDisableCoverings(){
+      try{
+        const coverings = Array.from(document.querySelectorAll('body *')).filter(el=>{
+          try{
+            const cs = getComputedStyle(el);
+            if(cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity||1) < 0.02) return false;
+            if(!(cs.position === 'fixed' || cs.position === 'absolute')) return false;
+            const r = el.getBoundingClientRect();
+            // element must cover a large portion of the viewport
+            if(r.width < window.innerWidth * 0.6 || r.height < window.innerHeight * 0.6) return false;
+            // Accept it
+            return true;
+          }catch(e){ return false; }
+        });
+
+        const applied = [];
+        coverings.forEach(el=>{
+          try{
+            if(el.classList && el.classList.contains('toast')) return; // keep toast
+            if(el.id && (el.id === 'preview-container' || el.id === 'form-container')) return;
+            // skip overlays that contain interactive controls (buttons, inputs) — they are likely legitimate modals
+            if(el.querySelector('a,button,input,select,textarea,[tabindex]')) return;
+            el._oldPointer = el.style.pointerEvents || '';
+            el.style.pointerEvents = 'none';
+            el.dataset._scrollFixApplied = '1';
+            applied.push(el);
+            console.log('Scroll-fix: disabled pointer-events on', el);
+          }catch(e){}
+        });
+        if(applied.length){
+          window._scrollFixCoverings = applied;
+          // add a small restore button
+          if(!document.getElementById('scrollFixRestore')){
+            const restore = document.createElement('button');
+            restore.id = 'scrollFixRestore'; restore.textContent = 'Restaurer overlays';
+            Object.assign(restore.style, {position:'fixed', right:'12px', bottom:'12px', zIndex:99999, padding:'8px 10px', borderRadius:'10px', background:'#fff', border:'1px solid rgba(0,0,0,0.06)', boxShadow:'0 6px 18px rgba(0,0,0,0.12)', fontWeight:'700'});
+            restore.addEventListener('click', ()=>{
+              try{ window._scrollFixCoverings.forEach(el=>{ el.style.pointerEvents = el._oldPointer || ''; delete el.dataset._scrollFixApplied; }); if(restore) restore.remove(); delete window._scrollFixCoverings; }catch(e){console.error(e);} 
+            });
+            document.body.appendChild(restore);
+          }
+        }
+        return coverings;
+      }catch(e){ console.error('detectAndDisableCoverings error', e); return []; }
+    }
+
+    // Run detection after a short delay (allow layout to settle)
+    setTimeout(()=>{ try{ detectAndDisableCoverings(); }catch(e){} }, 350);
+
+    // re-check on resize/orientation changes
+    try{ window.addEventListener('resize', detectAndDisableCoverings); window.addEventListener('orientationchange', detectAndDisableCoverings); }catch(e){}
+
+    // expose for manual use
+    window.detectAndDisableCoverings = detectAndDisableCoverings;
+
+  }catch(e){}
+
+
 })();

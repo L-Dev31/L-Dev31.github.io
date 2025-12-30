@@ -1,9 +1,50 @@
+/* Mobile-first baseline */
+:root {
+    --touch-size: 48px;
+    --base-font-size: 16px;
+    --input-padding: 12px;
+    --control-gap: 10px;
+}
+
+html {
+    font-size: var(--base-font-size);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: 16px;
+}
+
+button, .controls button, .preview .actions button {
+    min-height: var(--touch-size);
+    padding: 10px 14px;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="date"],
+input[type="number"],
+select,
+textarea {
+    padding: var(--input-padding);
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ensure disabled controls are visibly disabled */
+button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; }
+
 @media (max-width: 1024px) {
     body {
         display: flex;
         flex-direction: column;
-        height: 100vh; /* Full viewport height */
-        overflow: hidden; /* Prevent body from scrolling */
+        min-height: 100vh; /* Fill viewport but allow scrolling with virtual keyboard */
+        /* avoid global overflow hidden to allow keyboard to push content */
     }
     .split {
         flex-direction: column;
@@ -12,13 +53,17 @@
     }
 
     .split > .container {
-        height: 100%;
+        /* Allow content to grow and scroll within viewport without blocking page scroll */
+        height: auto;
+        max-height: 100vh;
         min-height: 0;
         border-radius: 0;
         border-left: 0;
         border-bottom: 0;
         padding: 28px;
         overflow-y: auto; /* Allow panel to scroll */
+        -webkit-overflow-scrolling: touch; /* smooth momentum scroll on iOS */
+        touch-action: pan-y; /* allow vertical scrolling gestures */
     }
 
     .split > .container:first-child {
@@ -36,6 +81,10 @@
     #preview-container {
         display: block;
     }
+
+    /* Defensive: ensure page-level scrolling remains enabled on mobile */
+    html, body { height: auto !important; overflow: auto !important; -webkit-overflow-scrolling: touch; }
+
 
     #wipeBtn {
         background: transparent;
@@ -91,15 +140,48 @@
     .controls {
         flex-direction: column;
         gap: 8px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        background: var(--bg, #fff);
+        padding: 12px;
+        box-shadow: 0 -8px 20px rgba(0,0,0,0.06);
+        z-index: 999;
+        border-radius: 0;
+    }
+
+    .controls.no-shadow {
+        box-shadow: none !important;
     }
 
     .controls button {
         width: 100%;
         justify-content: center;
+        min-height: var(--touch-size);
+        padding: 12px 14px;
+        font-size: 16px;
     }
 
     .controls button[style*="margin-left"] {
         margin-left: 0 !important;
+    }
+
+    .controls button#addBtn {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+    }
+
+    .controls button.secondary {
+        background: transparent;
+        border: 1px solid var(--border);
+    }
+
+    button:disabled, .controls button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
     }
 
     .preview .actions {
@@ -277,6 +359,13 @@
     width: 100%;
     background-color: rgba(15,118,110,0.04);
     border-bottom: 1px solid var(--border);
+    position: -webkit-sticky; /* iOS */
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+    height: 48px;
+    align-items: center;
+    backdrop-filter: blur(4px);
 }
 
 .mobile-tabs button {
@@ -305,6 +394,9 @@
     .mobile-tabs {
         display: flex;
     }
+    /* Ensure content does not sit under the sticky tab bar */
+    .split > .container { padding-top: calc(28px + 48px); }
+
     #form-container {
         display: none;
     }
