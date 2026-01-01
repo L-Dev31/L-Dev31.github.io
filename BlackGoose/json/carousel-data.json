@@ -1,0 +1,88 @@
+{
+  "carouselItems": [
+    {
+      "id": 1,
+      "title": "Iconic II",
+      "description": "Édition limitée (50) · 42 mm · automatique Seiko NH70.",
+      "descriptionLong": "L’Iconic II est une évolution sportive inspirée des jantes Fuchs des années 80. Réalisée dans l’atelier niçois de Black Goose, elle associe un cadran en aluminium brossé noir mat à un mouvement automatique Seiko NH70 (réserve d’environ 40 h). Avec son diamètre de 42 mm, elle est limitée à 50 pièces numérotées et produite à la commande (délai annoncé d’environ 2 semaines).",
+      "price": "850€",
+      "font": "Remarcle",
+      "label": "Édition limitée",
+      "colors": [
+        {
+          "name": "Noir",
+          "colorImage": "watches/iconic2/black.png",
+          "image": "watches/iconic2/1.png"
+        },
+        {
+          "name": "Marron",
+          "colorImage": "watches/iconic2/brown.png",
+          "image": "watches/iconic2/2.png"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Miami 67",
+      "description": "Collab Michel Disdier · NH70 squelette · 50 pièces numérotées.",
+      "descriptionLong": "Édition Black Goose x Michel Disdier (pilote NASCAR), pensée comme une montre de pilote et un objet de collection. Ultra-limitée à 50 pièces numérotées, elle est sculptée à la main à l’atelier de Nice. Son cadran intègre les codes et couleurs associés à Michel Disdier (dont un “Miami Pink”). Elle embarque un mouvement squelette automatique Seiko NH70 (réserve d’environ 41 h) et est livrée avec un certificat d’authenticité signé.",
+      "price": "900€",
+      "font": "Vipnagorgialla",
+      "label": "Ultra-limitée",
+      "colors": [
+        {
+          "name": "Default",
+          "colorImage": "watches/miami67/default.png",
+          "image": "watches/miami67/1.png"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Veloce II",
+      "description": "Chronographe mécaquartz Seiko VK64 · 100 pièces · Made in France.",
+      "descriptionLong": "Évolution de la Veloce, cette montre combine un design classique et des détails destinés aux passionnés. Elle embarque un mouvement mécaquartz Seiko VK64 (module chronographe mécanique + affichage heures/minutes quartz). Produite en France, elle est annoncée en série de 100 exemplaires.",
+      "price": "450€",
+      "font": "Nunito",
+      "label": "Édition limitée",
+      "colors": [
+        {
+          "name": "Default",
+          "colorImage": "watches/veloce2/default.png",
+          "image": "watches/veloce2/1.png"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "GT France - Riviera",
+      "description": "Chronographe quartz Citizen-Miyota OS21 · esprit Riviera.",
+      "descriptionLong": "La GT France – Édition Riviera s’inspire de l’élégance des années 50 sur la Côte d’Azur (cabriolets, yachting et style “vintage sportif”). Elle est équipée d’un mouvement quartz japonais Citizen‑Miyota OS21 avec complication chronographe et affichage 24 h.",
+      "price": "450€",
+      "font": "Nunito",
+      "colors": [
+        {
+          "name": "Default",
+          "colorImage": "watches/gtfrance/default.png",
+          "image": "watches/gtfrance/1.png"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Heritage",
+      "description": "Chronographe mécaquartz Seiko VK64 · 100 pièces · Made in France.",
+      "descriptionLong": "HERITAGE revisite un style classique “anglais” autour d’un cadran vert profond et de détails inspirés de l’univers Jaguar. C’est une évolution du modèle Spitfir, annoncée en série limitée de 100 exemplaires et réalisée en France. Elle embarque un mouvement mécaquartz Seiko VK64 (chronographe à module mécanique + base quartz), avec un détail gravé au dos.",
+      "price": "450€",
+      "font": "Nunito",
+      "label": "Édition limitée",
+      "colors": [
+        {
+          "name": "Default",
+          "colorImage": "watches/heritage/default.png",
+          "image": "watches/heritage/1.png"
+        }
+      ]
+    }
+  ]
+}
