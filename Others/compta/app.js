@@ -95,7 +95,35 @@ function getFormData(){ const select = document.getElementById('service_type'); 
     quantity: quantity,
     total_amount: parseFloat((unitPrice * quantity).toFixed(2))
   } }
+
+const PAYMENT_METHOD_LOGOS = {
+  'Espèces': 'images/payments/especes.png',
+  'Chèque': 'images/payments/cheque.png',
+  'Virement bancaire': 'images/payments/virement.png',
+  'Carte bancaire': 'images/payments/carte.png',
+  'Wero': 'images/payments/wero.png',
+  'SumUp': 'images/payments/sumup.png'
+};
+
+function updatePaymentMethodLogo(){
+  const select = document.getElementById('payment_method');
+  const logo = document.getElementById('payment_method_logo');
+  if(!select || !logo) return;
+  const value = (select.value || '').toString().trim();
+  if(!value || value === 'Autre'){
+    logo.hidden = true;
+    return;
+  }
+  const src = PAYMENT_METHOD_LOGOS[value];
+  if(!src){
+    logo.hidden = true;
+    return;
+  }
+  if(logo.getAttribute('src') !== src) logo.setAttribute('src', src);
+  logo.hidden = false;
+}
 function updatePreview(){
+  updatePaymentMethodLogo();
   const d = getFormData();
   const pfp = document.getElementById('previewPfp');
   const clientEl = document.getElementById('previewClient');
@@ -234,7 +262,32 @@ function startEdit(id){ try{ const idx = rows.findIndex(r=>r && r._id === id); i
     document.getElementById('service_quantity').value = r.quantity || '1';
 
 
-    const pm = document.getElementById('payment_method'); const pmOther = document.getElementById('payment_method_other'); const pmOtherLabel = document.getElementById('payment_method_other_label'); if(pm){ let found=false; for(let i=0;i<pm.options.length;i++){ if(pm.options[i].value === r.payment_method){ pm.value = pm.options[i].value; found = true; break; } } if(!found){ pm.value = 'Autre'; if(pmOther) pmOther.style.display = ''; if(pmOtherLabel) pmOtherLabel.style.display = ''; pmOther.value = r.payment_method || ''; } else { if(pmOther) pmOther.style.display = 'none'; if(pmOtherLabel) pmOtherLabel.style.display = 'none'; pmOther.value = ''; } }
+    const pm = document.getElementById('payment_method');
+    const pmOther = document.getElementById('payment_method_other');
+    const pmOtherLabel = document.getElementById('payment_method_other_label');
+
+    if(pm){
+      let found = false;
+      for(let i = 0; i < pm.options.length; i++){
+        if(pm.options[i].value === r.payment_method){
+          pm.value = pm.options[i].value;
+          found = true;
+          break;
+        }
+      }
+      if(!found){
+        pm.value = 'Autre';
+        if(pmOther) pmOther.style.display = '';
+        if(pmOtherLabel) pmOtherLabel.style.display = '';
+        if(pmOther) pmOther.value = r.payment_method || '';
+      }else{
+        if(pmOther) pmOther.style.display = 'none';
+        if(pmOtherLabel) pmOtherLabel.style.display = 'none';
+        if(pmOther) pmOther.value = '';
+      }
+    }
+
+    updatePaymentMethodLogo();
     document.getElementById('payment_note').value = r.payment_note || '';
 
     const st = document.getElementById('service_type'); if(st){ let matched=false; for(let i=0;i<st.options.length;i++){ const optLabel = (st.options[i].text || '').split('—')[0].trim(); if(optLabel === r.service_type){ st.value = st.options[i].value; document.getElementById('autre_seance_zone').style.display = 'none'; matched=true; break; } } if(!matched){ st.value = 'autre'; document.getElementById('autre_seance_zone').style.display = 'flex'; document.getElementById('autre_seance_desc').value = r.service_type || ''; document.getElementById('autre_seance_prix').value = (r.unit_price != null)? r.unit_price : ''; } }
@@ -528,7 +581,18 @@ document.getElementById('rowForm').addEventListener('input', function(){ updateP
 const sortSel = document.getElementById('sortOrder'); if(sortSel){ sortSel.addEventListener('change', function(){ localStorage.setItem(STORAGE_SORT, this.value); updateListPreview(); }); }
 const searchInput = document.getElementById('searchInput'); if(searchInput){ searchInput.addEventListener('input', function(){ updateListPreview(); }); }
 document.getElementById('service_type').addEventListener('change', function(){ const zone = document.getElementById('autre_seance_zone'); if(this.value === 'autre'){ zone.style.display = 'flex'; } else { zone.style.display = 'none'; document.getElementById('autre_seance_desc').value = ''; document.getElementById('autre_seance_prix').value = ''; } updatePreview(); updateControls(); });
-document.getElementById('payment_method').addEventListener('change', function(){ var ta = document.getElementById('payment_method_other'); if(this.value === 'Autre'){ ta.style.display = ''; } else { ta.style.display = 'none'; ta.value = ''; } updatePreview(); updateControls(); });
+document.getElementById('payment_method').addEventListener('change', function(){
+  var ta = document.getElementById('payment_method_other');
+  if(this.value === 'Autre'){
+    ta.style.display = '';
+  } else {
+    ta.style.display = 'none';
+    ta.value = '';
+  }
+  updatePaymentMethodLogo();
+  updatePreview();
+  updateControls();
+});
 var _pmOther = document.getElementById('payment_method_other'); if(_pmOther){ _pmOther.addEventListener('input', function(){ updatePreview(); updateControls(); }); }
 document.getElementById('invoice_date').addEventListener('change', function(){ updatePreview(); updateControls(); });
 document.getElementById('rowForm').addEventListener('submit', function(e){

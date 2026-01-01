@@ -409,6 +409,29 @@ textarea {
   margin-top: 14px;
 }
 
+.payment-method-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.payment-method-row select {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.payment-method-logo {
+  width: 64px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  object-fit: contain;
+  object-position: center;
+  box-shadow: none;
+  outline: none;
+}
+
 button {
   padding: 10px 14px;
   border: 0;

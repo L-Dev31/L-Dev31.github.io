@@ -82,6 +82,8 @@
         </div>
         <div class="full">
           <label for="payment_method">Mode de règlement <span class="requiredStar" aria-hidden="true">*</span></label>
+          <div class="payment-method-row">
+            <img id="payment_method_logo" class="payment-method-logo" alt="" aria-hidden="true" hidden>
             <select id="payment_method" name="payment_method" required>
               <option value="" disabled selected>Sélectionner</option>
               <option value="Espèces">Espèces</option>
@@ -91,7 +93,8 @@
               <option value="Wero">Wero</option>
               <option value="SumUp">SumUp</option>
               <option value="Autre">Autre</option>
-          </select>
+            </select>
+          </div>
           <label for="payment_method_other" style="margin-top:8px;display:none" id="payment_method_other_label">Précisez le mode de règlement <span style="font-weight:600;color:var(--muted);font-size:12px">(optionnel)</span></label>
           <input type="text" id="payment_method_other" placeholder="Précisez le mode de règlement... (optionnel)" style="display:none;margin-top:8px;" />
           <label for="payment_note" style="margin-top:8px;display:block">Référence / note paiement <span style="font-weight:600;color:var(--muted);font-size:12px">(optionnel)</span></label>
