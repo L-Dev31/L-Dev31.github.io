@@ -1,4 +1,3 @@
-/* Mobile-first baseline */
 :root {
     --touch-size: 48px;
     --base-font-size: 16px;
@@ -36,34 +35,33 @@ textarea {
     box-sizing: border-box;
 }
 
-/* ensure disabled controls are visibly disabled */
 button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; }
 
 @media (max-width: 1024px) {
     body {
         display: flex;
         flex-direction: column;
-        min-height: 100vh; /* Fill viewport but allow scrolling with virtual keyboard */
-        /* avoid global overflow hidden to allow keyboard to push content */
+        min-height: 100vh;
+
     }
     .split {
         flex-direction: column;
-        flex: 1; /* Allow split to fill available space */
-        min-height: 0; /* Prevent flexbox overflow */
+        flex: 1;
+        min-height: 0;
     }
 
     .split > .container {
-        /* Allow content to grow and scroll within viewport without blocking page scroll */
+
         height: auto;
         max-height: 100vh;
         min-height: 0;
         border-radius: 0;
         border-left: 0;
         border-bottom: 0;
-        padding: 28px;/* ensure UI controls and bottom spacing on mobile/tablet */
-        overflow-y: auto; /* Allow panel to scroll */
-        -webkit-overflow-scrolling: touch; /* smooth momentum scroll on iOS */
-        touch-action: pan-y; /* allow vertical scrolling gestures */
+        padding: 28px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
     }
 
     .split > .container:first-child {
@@ -75,7 +73,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
         display: flex;
         flex-shrink: 0;
     }
-    /* Show form first on mobile */
     #form-container {
         display: block;
     }
@@ -83,10 +80,8 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
         display: none;
     }
 
-    /* Defensive: ensure page-level scrolling remains enabled on mobile */
     html, body { height: auto !important; overflow: auto !important; -webkit-overflow-scrolling: touch; }
-    /* ensure large bottom padding on mobile/tablet so controls don't overlap content */
-    body { padding-bottom: 50px !important; }
+    body { padding-bottom: 0 !important; }
 
 
     #wipeBtn {
@@ -97,7 +92,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
     }
 }
 
-/* Hide preview placeholder on tablets in portrait mode (≤1024px) */
 @media (max-width: 1024px) and (orientation: portrait) {
     #previewCard { display: none !important; }
 }
@@ -143,21 +137,14 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
     .controls {
         flex-direction: column;
         gap: 8px;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
+        position: static;
         width: 100%;
         background: var(--bg, #fff);
         padding: 12px;
-        box-shadow: 0 -8px 20px rgba(0,0,0,0.06);
-        z-index: 999;
         border-radius: 0;
     }
 
-    .controls.no-shadow {
-        box-shadow: none !important;
-    }
+
 
     .controls button {
         width: 100%;
@@ -198,14 +185,12 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
         width: 100%;
     }
 
-    /* On phones: put dropdown, search and clients count on separate lines */
     .preview .previewControls {
         flex-direction: column !important;
         align-items: stretch !important;
         gap: 8px !important;
     }
 
-    /* Force every child to take a full line and behave as block */
     .preview .previewControls > * {
         flex: 0 0 100% !important;
         width: 100% !important;
@@ -222,7 +207,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
         text-align: right;
     }
 
-    /* Keep total label and price on the same line on phones */
     .totalRow {
         display: flex !important;
         align-items: center !important;
@@ -231,7 +215,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
     }
     .totalRow #priceBig { font-size: 20px !important; }
 
-    /* Hide preview placeholder on small screens (useless on phones) */
     #previewCard {
         display: none !important;
     }
@@ -247,7 +230,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
         justify-content: center;
     }
 
-    /* Ensure cards fit on small screens */
     .card {
         width: 100%;
         padding: 14px;
@@ -263,7 +245,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
         align-items: stretch;
     }
 
-    /* Keep the service + quantity row horizontal on small screens */
     .grid > div[style*="gap"]:has(#service_quantity) {
         flex-direction: row !important;
         align-items: flex-end !important;
@@ -271,7 +252,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
         flex-wrap: nowrap !important;
     }
 
-    /* Tweak the quantity column so it stays compact and right-aligned */
     .grid > div[style*="gap"]:has(#service_quantity) > div[style*="width:140px"] {
         width: auto !important;
         flex: 0 0 110px !important;
@@ -284,27 +264,11 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
         box-sizing: border-box;
     }
 
-    /* Ensure the second row in a card stays horizontal and actions are inline */
     .card .row:nth-of-type(2) {
         flex-direction: row !important;
         justify-content: space-between !important;
         align-items: center !important;
         gap: 8px !important;
-    }
-
-    .card .row:nth-of-type(2) .actions {
-        display: flex !important;
-        flex-direction: row !important;
-        gap: 8px !important;
-        justify-content: flex-end !important;
-        align-items: center !important;
-    }
-
-    .card .row:nth-of-type(2) .actions button {
-        min-width: 40px !important;
-        padding: 8px 10px !important;
-        white-space: nowrap !important;
-        flex: 0 0 auto !important;
     }
 
     .card .amount {
@@ -317,7 +281,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
         max-width: 48%;
     }
 
-    /* Ensure totals single-line stays aligned on mobile */
     #cardsTotals .total-line { text-align: left !important; }
 
     .card .info {
@@ -329,7 +292,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
         font-size: 15px;
     }
 
-    /* Keep an accessible focus for keyboard users */
     :focus-visible {
         outline: 3px solid rgba(15,118,110,0.12);
         box-shadow: none;
@@ -357,7 +319,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
     }
 }
 
-/* On narrow phones, place dropdown to the left and make the searchbar a tall pill */
 @media (max-width: 420px) {
   .preview .previewControls {
     flex-direction: row !important;
@@ -365,7 +326,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
     gap: 8px !important;
     flex-wrap: wrap !important;
   }
-  /* allow the select to be compact on the left */
   .preview .previewControls > * { flex: 0 0 auto !important; width: auto !important; max-width: none !important; display: block !important; margin-left: 0 !important; }
   .preview .previewControls .smallSelect {
     flex: 0 0 72px !important;
@@ -395,11 +355,9 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
     font-size: 15px !important;
     box-sizing: border-box;
   }
-  /* clients count below the search on phones */
   .preview .previewControls #clientsCount { flex: 0 0 100% !important; width:100% !important; order: 2 !important; text-align: right !important; margin-left: 0 !important; }
 }
 
-/* Tablet: make dropdown left + pill searchbar on same row, but force clients count onto its own line below */
 @media (min-width: 421px) and (max-width: 1024px) {
   .preview .previewControls {
     flex-direction: row !important;
@@ -432,24 +390,20 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
     font-size: 15px !important;
     box-sizing: border-box;
   }
-  /* clients count forced below */
   .preview .previewControls #clientsCount { flex: 0 0 100% !important; width:100% !important; order: 2 !important; text-align: right !important; margin-left: 0 !important; }
 }
 
-/* Restore desktop dropdown visuals on small screens: keep dropdown absolute and small under the button */
 @media (max-width: 1024px) {
-  /* Tabs fixed below navbar */
   .mobile-tabs{ position:fixed; top:48px; left:0; right:0; z-index:1190; height:48px; display:flex; }
 
-  /* Dropdown fixed and placed below the tabs (so they are in the same stacking flow) */
   .menu-dropdown{
     position:fixed;
-    top:calc(48px + 48px); /* navbar + tabs */
+    top:calc(48px + 48px);
     left:12px;
     min-width:200px;
     background:var(--surface);
     border:1px solid var(--border);
-    box-shadow:none; /* remove shadow on mobile/tablet */
+    box-shadow:none;
     border-radius:6px;
     display:none;
     flex-direction:column;
@@ -460,7 +414,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
   .menu-dropdown .menu-action:hover{background:rgba(15,118,110,0.04)}
   .menu-item.open .menu-dropdown{display:flex}
 
-  /* Mobile nav panel styles with slide + fade animation and full-width buttons (placed below tabs) */
   .mobile-nav-panel{
     position:fixed;
     top:calc(48px + 48px);
@@ -468,7 +421,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
     right:0;
     background:var(--surface);
     border-bottom:1px solid var(--border);
-    /* shadow only downwards: larger offset + negative spread to avoid top glow */
     box-shadow: 0 12px 24px -8px rgba(0,0,0,0.08);
     max-height:0;
     overflow:hidden;
@@ -508,18 +460,17 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
   .mobile-nav-close{position:absolute;top:10px;right:12px;background:transparent;border:0;color:var(--muted);font-size:18px}
 }
 
-..mobile-tabs {
+.mobile-tabs {
     display: none;
     width: 100%;
-    background: var(--surface); /* opaque background for readability */
+    background: var(--surface);
     border-bottom: 1px solid var(--border);
-    position: -webkit-sticky; /* iOS */
+    position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 1100;
     height: 48px;
     align-items: center;
-    /* removed backdrop blur for better contrast on mobile */
     box-shadow: 0 1px 0 rgba(0,0,0,0.03);
 }  
 
@@ -549,19 +500,17 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
     .mobile-tabs {
         display: flex;
         position: fixed;
-        top: 48px; /* below the navbar */
+        top: 48px;
         left: 0;
         right: 0;
         z-index: 1190;
-        background: var(--surface); /* opaque to match nav */
+        background: var(--surface);
         border-bottom: 1px solid var(--border);
         box-shadow: 0 1px 0 rgba(0,0,0,0.03);
     }
-    /* Ensure content does not sit under the fixed navbar + tabs — enforce with !important to avoid overrides */
     .split > .container,
     .split > .container:first-child { padding: 75px 25px !important; }
 
-    /* Show form first on mobile */
     #form-container {
         display: block;
     }

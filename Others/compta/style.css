@@ -1,45 +1,97 @@
 :root {
-    --accent: #0f766e;
-    --muted: #64757a;
-    --bg: #fbfdfb;
-    --surface: #ffffff;
-    --border: #e6f3ec;
-    --radius: 12px;
-    --shadow: none;
+  --accent: #0f766e;
+  --muted: #64757a;
+  --bg: #fbfdfb;
+  --surface: #ffffff;
+  --border: #e6f3ec;
+  --radius: 12px;
+  --shadow: none;
 }
-html,body{height:auto;overflow-x:hidden}
-body {
-    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background: var(--bg);
-    color: #072010;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-}
-.split{display:flex;width:100%;gap:0}
-/* Use min-height so mobile/tablet can scroll naturally; enable smooth touch scrolling */
-.split > .container{flex:1;max-width:none;margin:0;border-radius:0;min-height:0;overflow:visible;box-sizing:border-box;-webkit-overflow-scrolling:touch;touch-action:auto}
-.split > .container:first-child{display:flex;flex-direction:column;justify-content:center;padding:48px}
-.split > .container:first-child > form{width:100%;max-width:760px;margin:0 auto}
-.split > .container:first-child input[type="text"],
-.split > .container:first-child input[type="email"],
-.split > .container:first-child input[type="date"],
-.split > .container:first-child input[type="number"],
-.split > .container:first-child select,
-.split > .container:first-child textarea{box-sizing:border-box;max-width:100%}
-.split > .container:first-child input.invalid{border-color:#e05a4f} 
-.split > .container + .container{border-left:0}
-.split > .container + .container{background: linear-gradient(to bottom, #f8fff8 0%, #f3fff3 100%); border:1px solid #ecf8ec}
-.container{max-width:1000px;margin:0 auto;background:var(--surface);padding:22px;border:1px solid var(--border);border-radius:var(--radius); box-shadow: none; transition: background-color 0.3s ease;} 
-/* ensure split children don't add extra vertical margin that creates double scrollbars */
-.split > .container{margin:0}
 
-/* Desktop navigation (simple Windows-like top bar) */
+html, body {
+  height: auto;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
+  color: #072010;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.split {
+  display: flex;
+  width: 100%;
+  gap: 0;
+}
+
+.split > .container {
+  flex: 1;
+  max-width: none;
+  margin: 0;
+  border-radius: 0;
+  min-height: 0;
+  overflow: visible;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  touch-action: auto;
+}
+
+.split > .container:first-child {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px;
+}
+
+.split > .container:first-child > form {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.split > .container:first-child input[type='text'],
+.split > .container:first-child input[type='email'],
+.split > .container:first-child input[type='date'],
+.split > .container:first-child input[type='number'],
+.split > .container:first-child select,
+.split > .container:first-child textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.split > .container:first-child input.invalid {
+  border-color: #e05a4f;
+}
+
+.split > .container + .container {
+  border-left: 0;
+  background: linear-gradient(to bottom, #f8fff8 0%, #f3fff3 100%);
+  border: 1px solid #ecf8ec;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--surface);
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: none;
+  transition: background-color 0.3s ease;
+}
+
+.split > .container {
+  margin: 0;
+} 
+
 .desktop-nav{display:block}
 
-/* Backdrop used behind navs (sits behind nav and dropdown but above page content) */
 .backdrop{
   position:fixed;
   inset:0;
@@ -47,19 +99,15 @@ body {
   opacity:0;
   visibility:hidden;
   transition: opacity .18s ease, visibility .18s ease;
-  z-index:1150; /* below nav (1200) and dropdown (1300) */
+  z-index:1150;
   pointer-events:none;
 }
 .backdrop.open{ opacity:1; visibility:visible; pointer-events:auto; }
 @media (min-width: 1025px){
-  /* Fixed desktop navbar so it always stays visible */
   .desktop-nav{display:block;position:fixed;top:0;left:0;right:0;z-index:1200;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:0 4px 10px rgba(0,0,0,0.04);}
-  /* add top offset to page content so it isn't hidden behind the fixed navbar */
   body{padding-top:56px}
-  /* make the nav full-width and keep comfortable side padding; set explicit height */
   .desktop-nav-inner{max-width:100%;margin:0;padding:0 50px;display:flex;align-items:center;gap:12px;height:56px}
   .desktop-nav .brand img{height:22px;width:auto;opacity:0.96}
-  /* remove extra left spacing before the menu */
   .desktop-nav .menu{margin-left:0}
   .menu-item{position:relative;cursor:pointer;padding:8px 10px;border-radius:6px;font-weight:600;color:var(--muted);user-select:none}
   .menu-item:hover{background: rgba(15,118,110,0.08);border-radius:8px}
@@ -79,38 +127,22 @@ body {
   }
   .menu-dropdown .menu-action i{ width:18px; text-align:center; color:var(--muted); }
   .menu-dropdown .menu-action:hover{background:rgba(15,118,110,0.04)}
-  /* Warning style for destructive action */
   .menu-dropdown .menu-action.warning{ color:#b30000 }
   .menu-dropdown .menu-action.warning i{ color:#b30000 }
   .menu-dropdown .menu-action.warning:hover{ background: rgba(231,107,107,0.06); color:#b30000 }
   .menu-item.open .menu-dropdown{display:flex}
-} 
-/* Mobile / Tablet: show and adapt the top desktop navbar above the mobile tabs */
+}
 @media (max-width: 1024px) {
   .desktop-nav{position:fixed;top:0;left:0;right:0;z-index:1200;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:0 4px 10px rgba(0,0,0,0.04);}
-  /* slightly smaller top offset on small screens */
   body{padding-top:48px}
-  /* more compact padding for mobile */
   .desktop-nav-inner{max-width:100%;margin:0;padding:0 12px;display:flex;align-items:center;gap:8px;height:48px}
   .desktop-nav .brand img{height:18px}
-  /* hide the desktop inline menu on mobile and show the hamburger */
   .menu{display:none}
   .mobile-nav-toggle{display:inline-flex;margin-left:auto;align-items:center;background:transparent !important;border:0 !important;color:var(--muted) !important;font-size:18px;padding:8px;border-radius:8px;box-shadow:none !important}
   .mobile-nav-toggle i{display:inline-block}
-  /* Ensure no background on any interaction states (hover/active/expanded) */
-  .mobile-nav-toggle:hover,
-  .mobile-nav-toggle:active,
-  .mobile-nav-toggle[aria-expanded="true"]{
-    background:transparent !important;
-    box-shadow:none !important;
-    border:0 !important;
-    color:var(--muted) !important;
-  }
+  .mobile-nav-toggle:hover,.mobile-nav-toggle:active,.mobile-nav-toggle[aria-expanded="true"]{background:transparent !important;box-shadow:none !important;border:0 !important;color:var(--muted) !important}
   .mobile-nav-toggle:focus{ outline: none; box-shadow: 0 0 0 4px rgba(15,118,110,0.06); border-radius:8px; }
   .menu-item{padding:6px 8px}
-
-  /* On mobile we keep the desktop dropdown behavior (absolute positioned) */
-  /* No overrides — the .menu-item.open .menu-dropdown rule from the desktop styles applies */
 }
 #form-container.editing-mode {
   background-color: #fffbeb;
@@ -146,7 +178,6 @@ button.secondary:hover {background: rgba(15,118,110,0.04);border-color: rgba(15,
 button:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color:var(--muted);border:1px solid #e9efe9}
 button.secondary:disabled{background:transparent;border-color:#f0f0f0;color:var(--muted);opacity:0.6}
 
-/* Make "Envoyer et Entrer" match primary (Entrer / Télécharger) */
 button#sendBtn{background:var(--accent);color:#fff;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
 button#sendBtn:hover{background:#0b5a48;opacity:0.96}
 button#sendBtn:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color:var(--muted);border:1px solid #e9efe9}
@@ -176,11 +207,8 @@ button#sendBtn:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color
 .card{display:flex;gap:12px;padding:14px;border:1px solid var(--border);border-radius:12px;align-items:center;background:var(--surface);box-shadow: none;transition: box-shadow 160ms ease;}
 
 @media (min-width: 769px){
-  /* Subtle lift on hover for desktop */
   .card:hover{ box-shadow: 0 10px 24px rgba(15,118,110,0.08); }
-  /* Prevent the preview card from lifting on hover */
   #previewCard:hover{ box-shadow: none !important; }
-  /* Respect reduced motion preference */
   @media (prefers-reduced-motion: reduce){
     .card{ transition: none; }
   }
@@ -204,21 +232,17 @@ button#sendBtn:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color
 .smallSelect:focus{outline:3px solid rgba(15,118,110,0.12);border-color:var(--accent)}
 .smallSelect:focus-visible{outline:3px solid rgba(15,118,110,0.12);box-shadow:none} 
 
-/* Required field star (hidden visually) */
-.requiredStar{display: none !important; /* removed per request */}
+.requiredStar{display: none !important;} 
 
-/* Small search input to match the dropdown */
-.smallSearch{font-size:13px;padding:6px 8px 6px 34px;border-radius:8px;border:1px solid #cfe7cf;background:transparent;color:#072010;width:100%;max-width:360px;box-sizing:border-box;margin-left:0;margin-right:12px;transition: border-color .15s ease}
+.smallSearch{font-size:13px;padding:6px 8px 6px 34px;border-radius:8px;border:1px solid #cfe7cf;background:transparent;color:#072010;width:100%;max-width:360px;box-sizing:border-box;margin-left:0;margin-right:12px;transition: border-color .15s ease} 
 .smallSearch:focus{outline:3px solid rgba(15,118,110,0.12);border-color:var(--accent)}
 .smallSearch:hover{border-color:var(--accent)}
 .smallSelect:hover{border-color:var(--accent)}
 .smallSearch:focus-visible{outline:3px solid rgba(15,118,110,0.12);box-shadow:none} 
 
-/* wrapper and icon for the small search */
 .searchWrap{position:relative;flex:1 1 auto;max-width:360px}
-.searchWrap .searchIcon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
+.searchWrap .searchIcon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none} 
 .actions{display:flex;gap:8px;align-items:center}
-/* Make action buttons compact and square on cards */
 .card .actions button{
   width:32px;
   height:32px;
@@ -231,7 +255,7 @@ button#sendBtn:disabled{opacity:0.55;cursor:not-allowed;background:#f1f5f1;color
   border-radius:6px;
   font-size:12px;
   line-height:1;
-}
+} 
 .card .actions .secondary{padding:0;font-size:12px;line-height:1}
 .card .actions button i{font-size:12px;line-height:1;display:inline-block}
 .card .actions button:hover{background: rgba(15,118,110,0.04);border-color: rgba(15,118,110,0.06);opacity:0.98} 
@@ -296,7 +320,6 @@ select:focus {
     border-color: var(--accent);
 }
 
-/* Prevent horizontal overflow and ensure containers can shrink on small screens */
 html, body {
     overflow-x: hidden;
 }
@@ -306,20 +329,43 @@ html, body {
 .split > .container {
     min-width: 0;
     max-height: 100vh;
-}
-/* Allow long invoice numbers and meta text to wrap without creating horizontal scroll */
+} 
 .card .meta,
 .card .info {
     overflow-wrap: anywhere;
     word-break: break-word;
 }
 
-/* Modal styles */
 .modal{position:fixed;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(12,18,12,0.34);z-index:2000}
 .modal .modal-content{background:var(--surface);padding:18px;border-radius:10px;max-width:560px;width:94%;box-shadow:none;border:1px solid var(--border)}
 .modal .modal-content h3{margin:0 0 12px}
 .modal .modal-content label{display:block;margin-bottom:8px;font-size:13px}
 .modal .modal-content input[type="text"], .modal .modal-content textarea{width:100%;padding:8px;border:1px solid var(--border);border-radius:8px}
 
+@media (min-width: 1025px) {
+  .mobile-nav-toggle,
+  .mobile-nav-panel,
+  .mobile-tabs,
+  #mobileNavPanel,
+  #mobileNavToggle,
+  #mobileImportBtn,
+  #mobileExportBtn,
+  #mobileWipeBtn {
+    display: none !important;
+  }
+
+  .menu {
+    display: block !important;
+  }
+
+  .menu-dropdown {
+    position: absolute;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  }
+
+  body {
+    padding-bottom: 0 !important;
+  }
+}
 
  
