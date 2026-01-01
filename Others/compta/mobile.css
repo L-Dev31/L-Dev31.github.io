@@ -23,6 +23,19 @@ button, .controls button, .preview .actions button {
     box-sizing: border-box;
 }
 
+.card .actions button {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    line-height: 1;
+}
+
 input[type="text"],
 input[type="email"],
 input[type="date"],
@@ -394,8 +407,6 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
 }
 
 @media (max-width: 1024px) {
-  .mobile-tabs{ position:fixed; top:48px; left:0; right:0; z-index:1190; height:48px; display:flex; }
-
   .menu-dropdown{
     position:fixed;
     top:calc(48px + 48px);
@@ -410,9 +421,21 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
     padding:6px;
     z-index:1400;
   }
-  .menu-dropdown .menu-action{background:transparent;border:0;padding:10px 12px;text-align:left;width:auto;font-size:14px;cursor:pointer;color:#000;display:flex;align-items:center;gap:10px}
-  .menu-dropdown .menu-action:hover{background:rgba(15,118,110,0.04)}
-  .menu-item.open .menu-dropdown{display:flex}
+    .menu-dropdown .menu-action{
+        background:transparent;
+        border:0;
+        padding:10px 12px;
+        text-align:left;
+        width:auto;
+        font-size:14px;
+        cursor:pointer;
+        color:#000;
+        display:flex;
+        align-items:center;
+        gap:10px;
+    }
+    .menu-dropdown .menu-action:hover{background:rgba(15,118,110,0.04)}
+    .menu-item.open .menu-dropdown{display:flex}
 
   .mobile-nav-panel{
     position:fixed;
@@ -457,7 +480,15 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
   .mobile-nav-panel .menu-action:hover{ background: rgba(15,118,110,0.04); }
   .mobile-nav-panel .menu-action i{ width:20px; text-align:center; color:currentColor; display:inline-block; }
   .mobile-nav-panel .menu-action.warning{ color:#b30000; border-color: rgba(179,0,0,0.06); }
-  .mobile-nav-close{position:absolute;top:10px;right:12px;background:transparent;border:0;color:var(--muted);font-size:18px}
+    .mobile-nav-close{
+        position:absolute;
+        top:10px;
+        right:12px;
+        background:transparent;
+        border:0;
+        color:var(--muted);
+        font-size:18px;
+    }
 }
 
 .mobile-tabs {
