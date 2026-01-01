@@ -6,10 +6,11 @@
   --border: #e6f3ec;
   --radius: 12px;
   --shadow: none;
+  --nav-height: 56px;
 }
 
 html, body {
-  height: auto;
+  height: 100%;
   overflow-x: hidden;
 }
 
@@ -21,8 +22,7 @@ body {
   color: #072010;
   margin: 0;
   padding: 0;
-  min-height: 100vh;
-}
+} 
 
 .split {
   display: flex;
@@ -104,8 +104,11 @@ body {
 }
 .backdrop.open{ opacity:1; visibility:visible; pointer-events:auto; }
 @media (min-width: 1025px){
+  html{height:100vh;overflow:hidden}
+  body{height:100vh;box-sizing:border-box;padding-top:0;overflow:hidden}
+  .split{height:100vh;box-sizing:border-box;padding-top:var(--nav-height)}
+  .split > .container{max-height:none;overflow-y:auto;min-height:0}
   .desktop-nav{display:block;position:fixed;top:0;left:0;right:0;z-index:1200;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:0 4px 10px rgba(0,0,0,0.04);}
-  body{padding-top:56px}
   .desktop-nav-inner{max-width:100%;margin:0;padding:0 50px;display:flex;align-items:center;gap:12px;height:56px}
   .desktop-nav .brand img{height:22px;width:auto;opacity:0.96}
   .desktop-nav .menu{margin-left:0}
@@ -133,6 +136,7 @@ body {
   .menu-item.open .menu-dropdown{display:flex}
 }
 @media (max-width: 1024px) {
+  :root { --nav-height: 48px; }
   .desktop-nav{position:fixed;top:0;left:0;right:0;z-index:1200;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:0 4px 10px rgba(0,0,0,0.04);}
   body{padding-top:48px}
   .desktop-nav-inner{max-width:100%;margin:0;padding:0 12px;display:flex;align-items:center;gap:8px;height:48px}
@@ -321,14 +325,17 @@ select:focus {
 }
 
 html, body {
-    overflow-x: hidden;
+  height: 100%;
+  overflow-x: hidden;
 }
 .split {
-    min-height: 100vh;
+  height: 100%;
 }
 .split > .container {
-    min-width: 0;
-    max-height: 100vh;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
 } 
 .card .meta,
 .card .info {
