@@ -129,6 +129,15 @@ section:not(.no-effect):not(:first-of-type) {
     z-index: 10;
     transition: background 0.12s linear;
 }
+
+.dimming-disabled .sticky-panel {
+    --panel-dim: 0 !important;
+    --panel-scale: 1 !important;
+}
+
+.dimming-disabled .sticky-panel::before {
+    background: rgba(0, 0, 0, 0) !important;
+}
 .sticky-panel.hidden::before {
     background: rgba(0, 0, 0, 0);
 }

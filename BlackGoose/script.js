@@ -377,8 +377,36 @@ function setupEventListeners() {
 
             selectedItem = item;
             lastFocusedElement = document.activeElement;
+            document.body.classList.add('dimming-disabled');
             document.body.style.overflow = 'hidden';
             document.documentElement.style.overflow = 'hidden';
+
+            // Position the page so the card + purchase panel sit fully in view
+            window.scrollTo({ top: 0, behavior: 'auto' });
+
+            // Make sure the selected card is fully visible (in case any fade-out state lingers)
+            item.classList.remove('fade-out');
+            item.style.opacity = '1';
+            item.style.visibility = 'visible';
+
+            // Ensure a visible background image exists
+            let activeImg = getActiveBgImage(item);
+            const fallbackSrc = getCoverImage(itemData) || IMAGE_FALLBACK_SRC;
+            if (!activeImg) {
+                activeImg = document.createElement('img');
+                activeImg.className = 'bg-image';
+                activeImg.dataset.active = 'true';
+                activeImg.alt = '';
+                activeImg.setAttribute('draggable', 'false');
+                attachImageFallback(activeImg);
+                activeImg.src = fallbackSrc;
+                item.insertAdjacentElement('afterbegin', activeImg);
+            } else if (!activeImg.getAttribute('src')) {
+                activeImg.src = fallbackSrc;
+            }
+            activeImg.style.opacity = '1';
+            activeImg.style.visibility = 'visible';
+            activeImg.style.display = 'block';
 
             lockCarouselContainerHeight(carouselContainer);
 
@@ -517,8 +545,13 @@ function setupEventListeners() {
             lastFocusedElement = document.activeElement;
             const itemData = carouselData.carouselItems.find(data => data.id == item.dataset.itemId);
 
+            document.body.classList.add('dimming-disabled');
+
             const collectionPanel = document.querySelector('.collection-panel');
+            let restoreCollectionTransition = '';
             if (collectionPanel) {
+                restoreCollectionTransition = collectionPanel.style.transition;
+                collectionPanel.style.transition = 'none';
                 collectionPanel.classList.add('no-transform');
             }
             
@@ -543,6 +576,7 @@ function setupEventListeners() {
             // Appliquer les positions fixes immédiatement
             carouselItems.forEach((currentItem, index) => {
                 const pos = positions[index];
+                currentItem.style.transition = 'none';
                 currentItem.style.position = 'fixed';
                 currentItem.style.top = pos.top + 'px';
                 currentItem.style.left = pos.left + 'px';
@@ -550,11 +584,15 @@ function setupEventListeners() {
                 currentItem.style.height = pos.height + 'px';
                 currentItem.style.minWidth = pos.width + 'px';
                 currentItem.style.zIndex = currentItem === item ? '1000' : '10';
-                currentItem.style.transition = 'none';
             });
 
             // Forcer un reflow
             item.offsetHeight;
+
+            // Réactiver la transition éventuelle du panneau collection une fois figé
+            if (collectionPanel) {
+                collectionPanel.style.transition = restoreCollectionTransition;
+            }
 
             document.querySelector('.carousel-container').classList.add('no-scroll');
             item.classList.add('text-slide-out');
@@ -646,6 +684,7 @@ function resetCarousel() {
     togglePageChrome(false);
     
     // Restaurer les scrolls
+    document.body.classList.remove('dimming-disabled');
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
     
@@ -657,6 +696,22 @@ function resetCarousel() {
         item.style = '';
         item.classList.remove('fade-out');
         delete item.dataset.colorIndex;
+
+        // Réafficher le contenu et les images comme avant ouverture
+        const content = item.querySelector('.content');
+        if (content) {
+            content.style.display = '';
+            content.style.opacity = '';
+        }
+
+        item.querySelectorAll('.bg-image').forEach((img, index) => {
+            img.style.opacity = '';
+            img.style.visibility = '';
+            img.style.display = '';
+            if (index > 0) {
+                img.remove();
+            }
+        });
     });
 
     const collectionPanel = document.querySelector('.collection-panel');
