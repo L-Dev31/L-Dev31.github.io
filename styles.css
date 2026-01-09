@@ -547,8 +547,9 @@ header {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at 25% 25%, rgba(233, 78, 26, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, rgba(173, 62, 204, 0.1) 0%, transparent 50%);
+    background: radial-gradient(circle at 15% 50%, rgba(233, 78, 26, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(76, 255, 76, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 95% 50%, rgba(0,255,255, 0.1) 0%, transparent 50%);
     z-index: -1;
 }
 
@@ -652,7 +653,7 @@ header {
     border-color: rgba(76, 255, 76, 0.5);
 }
 
-.achievement-item[data-achievement="participation"] .achievement-icon {
+.achievement-item[data-achievement="upforlife"] .achievement-icon {
     background: linear-gradient(135deg, rgba(186, 85, 211, 0.35), rgba(186, 85, 211, 0.2));
     border-color: rgba(186, 85, 211, 0.5);
 }
