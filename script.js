@@ -439,16 +439,20 @@ document.addEventListener('DOMContentLoaded', function() {
     initCenterDetection(); 
     const scrollingTexts = document.querySelectorAll('.scrolling-text p');
     let speed = isMobileDevice() ? 50 : 100; 
+    // Use only two copies of the content for a seamless loop without huge DOM strings
     scrollingTexts.forEach(p => {
+        if (p.dataset.scrollingInitialized) return;
+        p.dataset.scrollingInitialized = '1';
+
         const textContent = p.textContent.trim();
         const computedStyle = window.getComputedStyle(p);
         const font = `${computedStyle.fontSize} ${computedStyle.fontFamily}`;
-        const textWidth = getTextWidth(textContent, font);
-        const repeatCount = Math.ceil(window.innerWidth / textWidth) + 2; 
-        let repeatedText = '';
-        for (let i = 0; i < repeatCount; i++) repeatedText += textContent + ' ';
-        p.textContent = repeatedText.trim();
-        const animationDuration = (textWidth * repeatCount) / speed; 
+        const textWidth = Math.max(getTextWidth(textContent, font), 1);
+
+        // duplicate content twice for smooth continuous scroll
+        p.innerHTML = `<span class="scroll-part">${textContent}&nbsp;</span><span class="scroll-part">${textContent}&nbsp;</span>`;
+
+        const animationDuration = (textWidth) / speed; // distance = one copy width
         p.style.whiteSpace = 'nowrap';
         p.style.display = 'inline-block'; 
         p.style.animation = `scroll-left ${animationDuration}s linear infinite`;
@@ -457,7 +461,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const styleSheet = document.createElement("style");
         styleSheet.id = 'scroll-left-keyframes';
         styleSheet.type = "text/css";
-        styleSheet.innerText = `@keyframes scroll-left {from {transform: translateX(0);}to {transform: translateX(-100%);}}`;
+        // Move from 0 to -50% because the content is duplicated twice
+        styleSheet.innerText = `@keyframes scroll-left {from {transform: translateX(0);}to {transform: translateX(-50%);}}`;
         document.head.appendChild(styleSheet);
     }
     if (!isMobileDevice()) {
