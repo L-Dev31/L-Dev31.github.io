@@ -354,35 +354,6 @@ name {
   box-shadow: 0 0 3vh #00000099;
   object-fit: cover
 }
-.companies-section {
-  margin-top: 5vh;
-  margin-right: 10vh
-}
-.companies-section h2 {
-  font-size: 4vh;
-  margin-bottom: 3vh;
-  color: #fff
-}
-.companies-logos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4vh;
-  align-items: center
-}
-.company-logo {
-  height: 10vh;
-  width: auto;
-  object-fit: contain;
-  backdrop-filter: blur(10px);
-  background: linear-gradient(135deg,rgba(139,69,69,.15),rgba(70,85,139,.15));
-  border-radius: 1.5vh;
-  padding: 2vh;
-  border: 1px solid rgba(255,255,255,.2)
-}
-.company-logo.nintendo {
-  background: linear-gradient(135deg,rgba(220,20,60,.2),rgba(178,34,34,.15));
-  border: 1px solid rgba(220,20,60,.3)
-}
 .infos-content div {
   margin-top: 3vh
 }
@@ -394,6 +365,11 @@ name {
   font-size: 2vh;
   color: gray
 }
+.infos-content a {
+  font-weight: bold;
+  color: #fff;
+}
+
 .infos-content p {
   font-size: 2.5vh;
   color: #fff;
