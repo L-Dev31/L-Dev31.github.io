@@ -248,7 +248,9 @@
     h1 {
         font-size: 5.5vh;
         margin: 0 0 2vh 0;
-    }    /* Instagram link removed *//* Section réalisations mobile */
+    }
+
+    /* Section réalisations mobile (Instagram link removed) */
     .achievements {
         margin: 8vh 1.5vh 0 1.5vh;
         padding: 5vh 3vh;
@@ -310,7 +312,6 @@
     .projects-section {
         width: 100%;
         box-sizing: border-box;
-        overflow-x: hidden;
         padding-bottom: 2.5vh;
     }
 
@@ -336,11 +337,12 @@
         /* aspect-ratio: 1 / 1; */ /* Ensure the item itself can be square if needed, or adjust as per content */
     }
 
-    /* Add this new rule for card images specifically in mobile view */
     .card-image {
         aspect-ratio: 1 / 1;
-        height: auto; /* Ensure height is determined by aspect ratio */
-        width: 100%; /* Ensure it fills the card-image container */
+        width: 100%;
+        height: 82%;
+        overflow: hidden;
+        box-sizing: border-box;
     }
 
     .gallery-img {
@@ -350,17 +352,12 @@
         object-position: center;
         display: block;
     }
+
     .card-info {
         height: 18%;
         padding: 1.5vh;
         box-sizing: border-box;
         width: 100%;
-    }
-    
-    .card-image {
-        height: 82%;
-        width: 100%;
-        overflow: hidden;
     }
 
     .card-image img {
@@ -590,7 +587,6 @@
     #art-gallery,
     #infos {
         max-width: 100vw;
-        overflow-x: hidden;
         padding-bottom: 2.5vh;
     }
 
@@ -613,4 +609,58 @@
     .social-label {
         font-size: 14px;
     }
+}
+
+
+  @media (min-width: 768px) {
+    .gallery-item:hover{
+        transform: scale(1.03);
+        filter: brightness(1.15);
+    }
+
+    .art-gallery-container:hover .art-item:not(:hover) {
+        filter: brightness(0.8);
+    }
+
+    .art-item:hover {
+        filter: brightness(1);
+        transform: scale(1.05);
+        z-index: 2;
+    }
+}
+
+/* Social Links Styles */
+.social-links {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 30px;
+    padding: 25px;
+    box-sizing: border-box;
+    margin-bottom: -10vh; /* Compense le padding-bottom du body */
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    transition: transform 0.2s;
+}
+
+.social-link:hover {
+    transform: translateY(-2.5px);
+}
+
+.social-link i {
+    font-size: 30px;
+}
+
+.social-label {
+    font-size: 24px;
 }

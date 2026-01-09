@@ -1,11 +1,11 @@
-// Companies Manager - Gestionnaire des entreprises
+// Companies: class that loads company data, generates CSS and renders logos
 class CompaniesManager {
     constructor() {
         this.companies = [];
         this.container = null;
     }
 
-    // Charger les données des entreprises depuis le JSON
+    // Load companies JSON data into memory
     async loadCompanies() {
         try {
             const response = await fetch('companies.json');
@@ -13,17 +13,17 @@ class CompaniesManager {
             this.companies = data.companies;
             return this.companies;
         } catch (error) {
-            console.error('Erreur lors du chargement des entreprises:', error);
+            console.error('Error loading companies:', error);
             return [];
         }
     }
 
-    // Générer le CSS dynamique pour les entreprises
+    // CSS generation: build theme CSS for each company logo
     generateCSS() {
         let css = '';
         this.companies.forEach((company, index) => {
             const cssClass = company.name.toLowerCase().replace(/\s+/g, '');
-            if (index > 0) { // Le premier (RPP) utilise le style par défaut
+            if (index > 0) {
                 css += `
                 .company-logo.${cssClass} {
                     background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]});
@@ -41,7 +41,7 @@ class CompaniesManager {
         return css;
     }
 
-    // Injecter le CSS dans la page
+    // Inject: append generated CSS to <head>
     injectCSS() {
         const css = this.generateCSS();
         const styleElement = document.createElement('style');
@@ -49,7 +49,7 @@ class CompaniesManager {
         document.head.appendChild(styleElement);
     }
 
-    // Créer l'élément HTML pour une entreprise
+    // Create DOM element representing a company logo
     createCompanyElement(company, index) {
         const img = document.createElement('img');
         img.src = company.logo;
@@ -60,64 +60,55 @@ class CompaniesManager {
         return img;
     }
 
-    // Rendre toutes les entreprises dans le conteneur
+    // Render: populate the companies container with logo elements
     renderCompanies(containerId = 'companies-logos') {
         this.container = document.querySelector(`.${containerId}`);
         if (!this.container) {
-            console.error(`Conteneur ${containerId} non trouvé`);
+            console.error(`Container ${containerId} not found`);
             return;
         }
 
-        // Vider le conteneur
         this.container.innerHTML = '';
 
-        // Ajouter chaque entreprise
         this.companies.forEach((company, index) => {
             const element = this.createCompanyElement(company, index);
             this.container.appendChild(element);
         });
     }
 
-    // Ajouter une nouvelle entreprise
+    // Add: push new company, regenerate CSS and append to DOM
     addCompany(companyData) {
         this.companies.push(companyData);
-        this.injectCSS(); // Re-générer le CSS
+        this.injectCSS();
         if (this.container) {
             const element = this.createCompanyElement(companyData, this.companies.length - 1);
             this.container.appendChild(element);
         }
     }
 
-    // Supprimer une entreprise
+    // Remove: delete company from state and remove its DOM element
     removeCompany(companyName) {
         this.companies = this.companies.filter(c => c.name !== companyName);
         const element = document.querySelector(`[data-company-name="${companyName}"]`);
-        if (element) {
-            element.remove();
-        }
+        if (element) element.remove();
     }
 
-    // Initialiser le gestionnaire
+    // Init: load companies, inject CSS and render
     async init() {
         await this.loadCompanies();
         this.injectCSS();
         this.renderCompanies();
     }
 
-    // Obtenir une entreprise par nom
-    getCompany(name) {
-        return this.companies.find(c => c.name === name);
-    }
-
-    // Obtenir toutes les entreprises
-    getAllCompanies() {
-        return this.companies;
-    }
+    // Getters: small helpers to query loaded companies
+    getCompany(name) { return this.companies.find(c => c.name === name); }
+    getAllCompanies() { return this.companies; }
 }
 
-// Instance globale du gestionnaire
+// Companies instance: single global manager used by the page
 const companiesManager = new CompaniesManager();
 
+// Device detection: heuristics for touch devices and small screens
 function isMobileDevice() {
     return (
         /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
@@ -155,10 +146,11 @@ function forceMobileStyles() {
                 textContainer.style.left = '9vh';
             }
         }
-        console.log('Styles mobiles forcés pour:', navigator.userAgent);
+        console.log('Mobile styles applied for:', navigator.userAgent);
     }
 }
 
+// Center detection: find items near the viewport center for mobile highlighting
 function getCenterElementsForDetection() {
     return {
         galleryItems: document.querySelectorAll('.gallery-item'),
@@ -234,6 +226,7 @@ function initCenterDetection() {
     setTimeout(performUpdateCenterElements, 100); 
 }
 
+// Utility helpers: measure text width and reset scroll position
 function getTextWidth(text, font) {
     const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
     const context = canvas.getContext("2d");
@@ -291,16 +284,14 @@ async function loadProjects() {
                 </a>`;            gallery.appendChild(projectElement);
         });
         if (isMobileDevice()) {
-            setTimeout(performUpdateCenterElements, 200); 
-            // Handle .no-phone links on mobile after projects are loaded
+            setTimeout(performUpdateCenterElements, 200);
+            // No-phone: block navigation for projects marked .no-phone on mobile and show alert
             document.querySelectorAll('.gallery-item.no-phone a').forEach(link => {
                 link.addEventListener('click', function (event) {
                     event.preventDefault();
                     alert("Ce site n'est pas accessible sur un téléphone.");
                 });
-                if (link.parentElement) {
-                    link.parentElement.style.cursor = 'not-allowed';
-                }
+                if (link.parentElement) link.parentElement.style.cursor = 'not-allowed';
             });
         }
     } catch (error) {
@@ -431,50 +422,48 @@ function showInfoText() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    forceMobileStyles(); 
-    loadProjects(); 
-    loadArtworks(); 
-    companiesManager.init(); // Initialiser le gestionnaire de companies
-    initCenterDetection(); 
+// Scrolling text setup: create duplicated spans and keyframes for marquee effect
+function initScrollingTexts() {
     const scrollingTexts = document.querySelectorAll('.scrolling-text p');
-    let speed = isMobileDevice() ? 50 : 100; 
-    // Use only two copies of the content for a seamless loop without huge DOM strings
+    let speed = isMobileDevice() ? 50 : 100;
     scrollingTexts.forEach(p => {
         if (p.dataset.scrollingInitialized) return;
         p.dataset.scrollingInitialized = '1';
-
         const textContent = p.textContent.trim();
         const computedStyle = window.getComputedStyle(p);
         const font = `${computedStyle.fontSize} ${computedStyle.fontFamily}`;
         const textWidth = Math.max(getTextWidth(textContent, font), 1);
-
-        // duplicate content twice for smooth continuous scroll
         p.innerHTML = `<span class="scroll-part">${textContent}&nbsp;</span><span class="scroll-part">${textContent}&nbsp;</span>`;
-
-        const animationDuration = (textWidth) / speed; // distance = one copy width
+        const animationDuration = (textWidth) / speed;
         p.style.whiteSpace = 'nowrap';
-        p.style.display = 'inline-block'; 
+        p.style.display = 'inline-block';
         p.style.animation = `scroll-left ${animationDuration}s linear infinite`;
     });
     if (!document.getElementById('scroll-left-keyframes')) {
         const styleSheet = document.createElement("style");
         styleSheet.id = 'scroll-left-keyframes';
         styleSheet.type = "text/css";
-        // Move from 0 to -50% because the content is duplicated twice
         styleSheet.innerText = `@keyframes scroll-left {from {transform: translateX(0);}to {transform: translateX(-50%);}}`;
         document.head.appendChild(styleSheet);
     }
+}
+
+// Cursor: create custom cursor element and track mouse on desktop
+function initCursorIfDesktop() {
     if (!isMobileDevice()) {
         const cursor = document.createElement('div');
         cursor.classList.add('cursor');
         document.body.appendChild(cursor);
         document.addEventListener('mousemove', (e) => {
-             const x = e.clientX + window.scrollX;             const y = e.clientY + window.scrollY;             cursor.style.transform = `translate(${x}px, ${y}px)`;
-        });
-         document.addEventListener('scroll', (e) => { 
+            const x = e.clientX + window.scrollX;
+            const y = e.clientY + window.scrollY;
+            cursor.style.transform = `translate(${x}px, ${y}px)`;
         });
     }
+}
+
+// Navigation handlers: bind links to filter/show sections and mark active link
+function initNavHandlers() {
     const personalProjectLink = document.getElementById('personal-project');
     const commissionsLink = document.getElementById('commissions');
     const everythingLink = document.getElementById('everything');
@@ -483,6 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const infoLinkMobile = document.getElementById('info-link-mobile');
     const art3dLink = document.getElementById('art-link');
     const art3dLinkMobile = document.getElementById('art-link-mobile');
+
     if(personalProjectLink) personalProjectLink.addEventListener('click', function(e) { e.preventDefault(); filterItems('personal-project'); });
     if(commissionsLink) commissionsLink.addEventListener('click', function(e) { e.preventDefault(); filterItems('commission'); });
     if(everythingLink) everythingLink.addEventListener('click', function(e) { e.preventDefault(); showAllItems(); });
@@ -491,18 +481,46 @@ document.addEventListener('DOMContentLoaded', function() {
     if(infoLinkMobile) infoLinkMobile.addEventListener('click', function(e) { e.preventDefault(); showInfoText(); });
     if(art3dLink) art3dLink.addEventListener('click', function(e) { e.preventDefault(); show3dArt(); });
     if(art3dLinkMobile) art3dLinkMobile.addEventListener('click', function(e) { e.preventDefault(); show3dArt(); });
+
     const allNavLinks = document.querySelectorAll('.link, .link-mobile');
     allNavLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             allNavLinks.forEach(l => l.classList.remove('clicked'));
             link.classList.add('clicked');
         });
-    });    const landingLogo = document.getElementById('landing-logo');
+    });
+}
+
+// Unavailable links: prevent navigation for elements marked unavailable and style cursor
+function initUnavailableLinks() {
+    document.querySelectorAll('.unavailable a').forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            alert("Ce site n'est pas accessible pour l'instant");
+        });
+        const unavailableAncestor = link.closest('.unavailable');
+        if (unavailableAncestor) {
+            unavailableAncestor.style.cursor = 'not-allowed';
+        } else {
+            link.style.cursor = 'not-allowed';
+        }
+    });
+
+    document.querySelectorAll('a.unavailable').forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            alert("Ce site n'est pas accessible pour l'instant");
+        });
+        link.style.cursor = 'not-allowed';
+    });
+}
+
+// Landing animation: show intro shrink animation on desktop and remove no-scroll on mobile
+function initLandingAnimation() {
+    const landingLogo = document.getElementById('landing-logo');
     const landingPage = document.querySelector('.landing-page');
     const body = document.body;
-    
-    // Only run intro animation on desktop, skip completely on mobile
-    if (!isMobileDevice() && landingLogo && landingPage) { 
+    if (!isMobileDevice() && landingLogo && landingPage) {
         body.classList.add('no-scroll');
         setTimeout(() => {
             window.scrollTo(0, 0);
@@ -515,35 +533,23 @@ document.addEventListener('DOMContentLoaded', function() {
             body.classList.remove('no-scroll');
         }, 2750);
     } else if (isMobileDevice()) {
-        // On mobile, immediately ensure no-scroll is not applied
         body.classList.remove('no-scroll');
     }
+}
 
-    // Handle .unavailable links (globally for all devices)
-    // When .unavailable is on an ancestor of <a>
-    document.querySelectorAll('.unavailable a').forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            alert("Ce site n'est pas accessible pour l'instant");
-        });
-        const unavailableAncestor = link.closest('.unavailable');
-        if (unavailableAncestor) {
-            unavailableAncestor.style.cursor = 'not-allowed';
-        } else {
-            link.style.cursor = 'not-allowed'; // Fallback if <a> itself is not .unavailable
-        }
-    });
+// Init
+document.addEventListener('DOMContentLoaded', function() {
+    forceMobileStyles();
+    loadProjects();
+    loadArtworks();
+    companiesManager.init();
+    initCenterDetection();
 
-    // When <a> itself has .unavailable
-    document.querySelectorAll('a.unavailable').forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            alert("Ce site n'est pas accessible pour l'instant");
-        });
-        link.style.cursor = 'not-allowed';
-    });    // Mobile-specific adjustments and event handlers
-    if (isMobileDevice()) {
-        // Initial call for center detection after everything is potentially loaded/shown
-        setTimeout(performUpdateCenterElements, 250);
-    }
+    initScrollingTexts();
+    initCursorIfDesktop();
+    initNavHandlers();
+    initUnavailableLinks();
+    initLandingAnimation();
+
+    if (isMobileDevice()) setTimeout(performUpdateCenterElements, 250);
 });

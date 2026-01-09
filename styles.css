@@ -188,7 +188,7 @@ strong {
 .gallery {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 2.5vh;
+    gap: 1vh;
     padding: 3vh;
     width: 92%;
     margin: 0 auto;
@@ -280,8 +280,8 @@ strong {
 }
 
 .gallery-item {
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 0 2vh rgba(0, 0, 0, 0.4); /* Base shadow */
+    transition: all 0.5s cubic-bezier(0.15, 0.85, 0.25, 1.25);
+    box-shadow: none;
     will-change: transform, box-shadow;
 }
 
@@ -289,6 +289,12 @@ strong {
     box-shadow: 0 0 5vh 1vh rgba(255, 255, 255, 0.35);
     transform: scale(1.03);
     filter: brightness(1.15);
+    z-index: 1;
+}
+
+.gallery:hover .gallery-item:not(:hover) {
+    filter: brightness(0.75);
+    z-index: 0;
 }
 
 .card-image {
@@ -744,7 +750,6 @@ header {
     padding: 8vh 4vh 6vh 4vh;
     text-align: center;
     position: relative;
-    overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 8vh rgba(0, 0, 0, 0.5);
 }
@@ -911,56 +916,3 @@ header {
     margin: 0;
   }
 
-
-  @media (min-width: 768px) {
-    .gallery-item:hover{
-        transform: scale(1.03);
-        filter: brightness(1.15);
-    }
-
-    .art-gallery-container:hover .art-item:not(:hover) {
-        filter: brightness(0.8);
-    }
-
-    .art-item:hover {
-        filter: brightness(1);
-        transform: scale(1.05);
-        z-index: 2;
-    }
-}
-
-/* Social Links Styles */
-.social-links {
-    width: 100%;
-    max-width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 30px;
-    padding: 25px;
-    box-sizing: border-box;
-    margin-bottom: -10vh; /* Compense le padding-bottom du body */
-}
-
-.social-link {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #fff;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 500;
-    transition: transform 0.2s;
-}
-
-.social-link:hover {
-    transform: translateY(-2.5px);
-}
-
-.social-link i {
-    font-size: 30px;
-}
-
-.social-label {
-    font-size: 24px;
-}
