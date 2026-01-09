@@ -1,6 +1,14 @@
 {
   "projects": [    
     {
+      "id": "cmck",
+      "title": "Portfolio",
+      "creator": "Charlie McKenzie",
+      "category": "commission", 
+      "path": "http://www.charliemckenziemusic.com/",
+      "noPhone": false
+    },
+    {
       "id": "bmge",
       "title": "L-DEV's BMG Editor",
       "creator": "Léo Tosku",
