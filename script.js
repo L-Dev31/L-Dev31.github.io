@@ -18,24 +18,33 @@ class CompaniesManager {
         }
     }
 
-    // CSS generation: build theme CSS for each company logo
+    // CSS generation: build theme CSS for each company logo and experience item
     generateCSS() {
         let css = '';
         this.companies.forEach((company, index) => {
             const cssClass = company.name.toLowerCase().replace(/\s+/g, '');
             if (index > 0) {
+                // logo styling
                 css += `
                 .company-logo.${cssClass} {
                     background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]});
                     border: 1px solid ${company.colors[2]};
                 }
-                
+                `;
+                // experience item styling (use a class on the item instead of inline styles)
+                css += `
+                .experience-item.company-${cssClass} {
+                    background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]});
+                    border-color: ${company.colors[2]};
+                }
+                `;
+                // mobile variants
+                css += `
                 @media (max-width: 768px) {
-                    .company-logo.${cssClass} {
-                        background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]});
-                        border: 1px solid ${company.colors[2]};
-                    }
-                }`;
+                    .company-logo.${cssClass} { background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]}); border: 1px solid ${company.colors[2]}; }
+                    .experience-item.company-${cssClass} { background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]}); border-color: ${company.colors[2]}; }
+                }
+                `;
             }
         });
         return css;
@@ -237,6 +246,21 @@ function getTextWidth(text, font) {
 
 function resetScrollPositions() {
     window.scrollTo(0, 0);
+}
+
+// Age: compute and insert ages from spans with data-dob
+function computeAndInsertAges() {
+    document.querySelectorAll('span[data-dob]').forEach(span => {
+        const dobStr = span.getAttribute('data-dob');
+        if (!dobStr) return;
+        const dob = new Date(dobStr + 'T00:00:00'); // ensure consistent parsing
+        if (isNaN(dob)) return;
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+        span.textContent = age >= 0 ? age : '0';
+    });
 }
 
 function updateProjectsTitle(title, subtitle) {
@@ -537,12 +561,55 @@ function initLandingAnimation() {
     }
 }
 
+// Render experiences from companies.json
+function renderExperienceFromCompanies() {
+    const list = document.querySelector('.experience-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const companies = companiesManager.getAllCompanies();
+    companies.forEach(company => {
+        const item = document.createElement('div');
+        item.className = 'experience-item';
+        item.setAttribute('data-company', company.name);
+
+        const img = document.createElement('img');
+        img.className = 'experience-logo';
+        img.src = company.logo || '';
+        img.alt = company.name || '';
+
+        const text = document.createElement('div');
+        text.className = 'experience-text';
+
+        const h3 = document.createElement('h3');
+        h3.textContent = company.role ? `${company.name} — ${company.role}` : company.name;
+
+        const date = document.createElement('div');
+        date.className = 'experience-date';
+        date.textContent = company.period || '';
+
+        text.appendChild(h3);
+        text.appendChild(date);
+
+        item.appendChild(img);
+        item.appendChild(text);
+
+        // Apply company class to let CSS handle colors (no inline borderColor)
+        const slug = company.name.toLowerCase().replace(/\s+/g, '');
+        item.classList.add(`company-${slug}`);
+
+        list.appendChild(item);
+    });
+    if (isMobileDevice()) setTimeout(performUpdateCenterElements, 50);
+}
+
 // Init
 document.addEventListener('DOMContentLoaded', function() {
     forceMobileStyles();
     loadProjects();
     loadArtworks();
-    companiesManager.init();
+    companiesManager.init().then(() => {
+        renderExperienceFromCompanies();
+    });
     initCenterDetection();
 
     initScrollingTexts();
@@ -550,6 +617,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initNavHandlers();
     initUnavailableLinks();
     initLandingAnimation();
+
+    // Age: compute and insert ages from spans with data-dob
+    computeAndInsertAges();
 
     if (isMobileDevice()) setTimeout(performUpdateCenterElements, 250);
 });

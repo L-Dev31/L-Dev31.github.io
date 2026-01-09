@@ -2,8 +2,9 @@
   "companies": [
     {
       "name": "Red Planet Pictures",
-      "logo": "Elements/image/companies/rpp.svg",
-      "colors": ["rgba(139, 69, 69, 0.15)", "rgba(70, 85, 139, 0.15)", "rgba(255, 255, 255, 0.2)"]
+      "logo": "Elements/image/companies/rpp.png",
+      "role": "Graphic Designer Assistant",
+      "period": "2025 (2 months)"
     }
   ]
 }
