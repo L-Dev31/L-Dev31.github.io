@@ -41,30 +41,6 @@
       "noPhone": false
     },
     {
-      "id": "escd",
-      "title": "Eurovision Song Contest Design Generator 2025",
-      "creator": "Léo Tosku",
-      "category": "personal-project", 
-      "path": "ESCDesignGenerator/2025",
-      "noPhone": true
-    },
-    {
-      "id": "azhr",
-      "title": "Azahar n3DS Emulator (Redesign)",
-      "creator": "PabloMK7 & Opensauce",
-      "category": "commission", 
-      "path": "Azahar",
-      "noPhone": true
-    },
-    {
-      "id": "apmr",
-      "title": "Appartement Marina Royale",
-      "creator": "Viviane De-Vries",
-      "category": "commission",
-      "path": "AppartementMarinaRoyale",
-      "noPhone": false
-    },
-    {
       "id": "smag",
       "title": "Super Mario Another Galaxy",
       "creator": "SMAG Team",
