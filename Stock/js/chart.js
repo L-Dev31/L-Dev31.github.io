@@ -57,24 +57,7 @@ export function initChart(symbol, positions) {
     setTimeout(() => { if (positions[symbol].chart?.data.labels?.length > 10) positions[symbol].chart.zoom(Math.max(1, positions[symbol].chart.data.labels.length / (positions[symbol].chart.data.labels.length * 0.3))); }, 100);
 }
 
-function showGlobalShiftTooltip() {
-    if (globalShiftTooltip) { globalShiftTooltip.classList.add('show'); return; }
-    const card = document.querySelector('.card.active'), container = card?.querySelector('.chart-canvas')?.parentElement;
-    if (!container) return;
-    const tpl = document.getElementById('shift-tooltip-template');
-    globalShiftTooltip = tpl ? tpl.content.firstElementChild.cloneNode(true) : Object.assign(document.createElement('div'), { className: 'shift-tooltip' });
-    container.appendChild(globalShiftTooltip);
-    globalShiftTooltip.classList.add('show');
-}
 
-function hideGlobalShiftTooltip() { if (globalShiftTooltip) { globalShiftTooltip.classList.remove('show'); globalShiftTooltip.parentNode?.removeChild(globalShiftTooltip); globalShiftTooltip = null; } }
-
-if (typeof window !== 'undefined' && !window.shiftTooltipInitialized) {
-    window.shiftTooltipInitialized = true;
-    document.addEventListener('keydown', e => { if (e.key === 'Shift' && !globalShiftPressed) { globalShiftPressed = true; showGlobalShiftTooltip(); } });
-    document.addEventListener('keyup', e => { if (e.key === 'Shift' && globalShiftPressed) { globalShiftPressed = false; hideGlobalShiftTooltip(); } });
-    document.addEventListener('click', e => { if (e.target.closest('.tab')) { hideGlobalShiftTooltip(); if (globalShiftPressed) setTimeout(showGlobalShiftTooltip, 100); } });
-}
 
 export function updateChart(symbol, timestamps, prices, positions, source, fullData) {
     const c = positions[symbol].chart;
@@ -134,7 +117,26 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
             ]
         };
         c.options.plugins.tooltip.callbacks.title = ctx => closes[ctx[0].dataIndex].toFixed(2) + ' €';
-        c.options.plugins.tooltip.callbacks.label = ctx => { if (ctx.datasetIndex === 0) return null; const i = ctx.dataIndex, d = new Date(ts[i] * 1000); return [d.toLocaleDateString('fr-FR'), d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }), '', `O: ${opens[i].toFixed(2)}`, `H: ${highs[i].toFixed(2)}`, `L: ${lows[i].toFixed(2)}`, `C: ${closes[i].toFixed(2)}`]; };
+        c.options.plugins.tooltip.callbacks.label = ctx => {
+            if (ctx.datasetIndex === 0) return null;
+            const i = ctx.dataIndex;
+            const d = new Date(ts[i] * 1000);
+            const shares = positions[symbol]?.shares || 0;
+            const costBasis = positions[symbol]?.costBasis || 0;
+            const avgBuy = shares > 0 ? costBasis / shares : 0;
+            const gain = shares > 0 ? (closes[i] - avgBuy) * shares : 0;
+            const gainStr = `Gain/Perte: ${(gain >= 0 ? '+' : '') + gain.toFixed(2)}€`;
+            return [
+                d.toLocaleDateString('fr-FR'),
+                d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                '',
+                `O: ${opens[i].toFixed(2)}`,
+                `H: ${highs[i].toFixed(2)}`,
+                `L: ${lows[i].toFixed(2)}`,
+                `C: ${closes[i].toFixed(2)}`,
+                gainStr
+            ];
+        };
     } else if (type === 'baseline') {
         const baselineValue = p[0];
         const posColor = getComputedStyle(document.documentElement).getPropertyValue('--color-positive').trim() || '#4caf50';
@@ -172,7 +174,22 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
             }]
         };
         c.options.plugins.tooltip.callbacks.title = ctx => ctx[0].parsed.y.toFixed(2) + ' €';
-        c.options.plugins.tooltip.callbacks.label = ctx => { const i = ctx.dataIndex, d = new Date(ts[i] * 1000), lines = [d.toLocaleDateString('fr-FR'), d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })]; if (opens && highs && lows && closes) lines.push('', `O: ${opens[i].toFixed(2)}`, `H: ${highs[i].toFixed(2)}`, `L: ${lows[i].toFixed(2)}`, `C: ${closes[i].toFixed(2)}`); return lines; };
+        c.options.plugins.tooltip.callbacks.label = ctx => {
+            const i = ctx.dataIndex;
+            const d = new Date(ts[i] * 1000);
+            const shares = positions[symbol]?.shares || 0;
+            const costBasis = positions[symbol]?.costBasis || 0;
+            const avgBuy = shares > 0 ? costBasis / shares : 0;
+            const gain = shares > 0 ? (p[i] - avgBuy) * shares : 0;
+            const gainStr = `Gain/Perte: ${(gain >= 0 ? '+' : '') + gain.toFixed(2)}€`;
+            const lines = [
+                d.toLocaleDateString('fr-FR'),
+                d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+            ];
+            if (opens && highs && lows && closes) lines.push('', `O: ${opens[i].toFixed(2)}`, `H: ${highs[i].toFixed(2)}`, `L: ${lows[i].toFixed(2)}`, `C: ${closes[i].toFixed(2)}`);
+            lines.push(gainStr);
+            return lines;
+        };
     } else {
         let line = getComputedStyle(document.documentElement).getPropertyValue('--color-line-default').trim() || '#a8a2ff', gs = 'rgba(168,162,255,0.3)', ge = 'rgba(168,162,255,0)';
         if (p?.length) { const isPos = p[p.length - 1] >= p[0]; const col = getComputedStyle(document.documentElement).getPropertyValue(isPos ? '--color-positive' : '--color-negative').trim() || (isPos ? '#65d981' : '#f87171'); line = col; gs = hexToRgba(col, 0.3) || gs; ge = hexToRgba(col, 0) || ge; }
@@ -180,54 +197,28 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
         c.config.type = 'line';
         c.data = { labels, datasets: [{ label: 'Prix', data: p, borderColor: line, backgroundColor: g, borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 4, spanGaps: true }] };
         c.options.plugins.tooltip.callbacks.title = ctx => ctx[0].parsed.y.toFixed(2) + ' €';
-        c.options.plugins.tooltip.callbacks.label = ctx => { const i = ctx.dataIndex, d = new Date(ts[i] * 1000), lines = [d.toLocaleDateString('fr-FR'), d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })]; if (opens && highs && lows && closes) lines.push('', `O: ${opens[i].toFixed(2)}`, `H: ${highs[i].toFixed(2)}`, `L: ${lows[i].toFixed(2)}`, `C: ${closes[i].toFixed(2)}`); return lines; };
+        c.options.plugins.tooltip.callbacks.label = ctx => {
+            const i = ctx.dataIndex;
+            const d = new Date(ts[i] * 1000);
+            const shares = positions[symbol]?.shares || 0;
+            const costBasis = positions[symbol]?.costBasis || 0;
+            const avgBuy = shares > 0 ? costBasis / shares : 0;
+            const gain = shares > 0 ? (p[i] - avgBuy) * shares : 0;
+            const gainStr = `Gain/Perte: ${(gain >= 0 ? '+' : '') + gain.toFixed(2)}€`;
+            const lines = [
+                d.toLocaleDateString('fr-FR'),
+                d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+            ];
+            if (opens && highs && lows && closes) lines.push('', `O: ${opens[i].toFixed(2)}`, `H: ${highs[i].toFixed(2)}`, `L: ${lows[i].toFixed(2)}`, `C: ${closes[i].toFixed(2)}`);
+            lines.push(gainStr);
+            return lines;
+        };
     }
 
     const posColor = getComputedStyle(document.documentElement).getPropertyValue('--color-positive').trim() || '#4caf50';
     const negColor = getComputedStyle(document.documentElement).getPropertyValue('--color-negative').trim() || '#ef4444';
 
-    c.options.plugins.tooltip.callbacks.footer = ctx => {
-        const calc = positions[symbol].calculated;
-        if (calc && calc.shares > 0) {
-            const i = ctx[0].dataIndex;
-            let price;
-            if (type === 'candle' && closes) {
-                price = closes[i];
-            } else {
-                price = p[i];
-            }
-            
-            const value = calc.shares * price;
-            const pl = value - calc.costBasis;
-            const plPercent = calc.costBasis > 0 ? (pl / calc.costBasis) * 100 : 0;
-            const sign = pl >= 0 ? '+' : '';
-            const avgPrice = calc.costBasis / calc.shares;
 
-            return [
-                '',
-                `P/L: ${sign}${pl.toFixed(2)} € (${sign}${plPercent.toFixed(2)}%)`
-            ];
-        }
-        return [];
-    };
-
-    c.options.plugins.tooltip.footerColor = ctx => {
-        const calc = positions[symbol].calculated;
-        if (calc && calc.shares > 0 && ctx.tooltip.dataPoints.length) {
-             const i = ctx.tooltip.dataPoints[0].dataIndex;
-             let price;
-             if (type === 'candle' && closes) {
-                 price = closes[i];
-             } else {
-                 price = p[i];
-             }
-             const value = calc.shares * price;
-             const pl = value - calc.costBasis;
-             return pl >= 0 ? posColor : negColor;
-        }
-        return '#e8e9f3';
-    };
-    c.options.plugins.tooltip.footerFont = { weight: 'bold' };
 
     c.data.timestamps = ts;
     c.update('none');
