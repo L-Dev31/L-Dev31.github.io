@@ -164,8 +164,7 @@ function getCenterElementsForDetection() {
     return {
         galleryItems: document.querySelectorAll('.gallery-item'),
         achievementItems: document.querySelectorAll('.achievement-item'),
-        artItems: document.querySelectorAll('.art-item'),
-        artContainer: document.querySelector('.art-gallery-container')
+        // art-related elements removed (gallery-only detection)
     };
 }
 
@@ -200,22 +199,7 @@ function performUpdateCenterElements() {
             item.classList.remove('center-active');
         }
     });
-    let hasActiveArt = false;
-    elements.artItems.forEach(item => {
-        if (isElementInCenterForDetection(item)) {
-            item.classList.add('center-active');
-            hasActiveArt = true;
-        } else {
-            item.classList.remove('center-active');
-        }
-    });
-    if (elements.artContainer) {
-        if (hasActiveArt) {
-            elements.artContainer.classList.add('has-center-active');
-        } else {
-            elements.artContainer.classList.remove('has-center-active');
-        }
-    }
+    // art-item detection removed
 }
 
 function initCenterDetection() {
@@ -323,33 +307,6 @@ async function loadProjects() {
     }
 }
 
-async function loadArtworks() {
-    try {
-        const response = await fetch('art.json');
-        if (!response.ok) throw new Error('Failed to fetch art.json');
-        const data = await response.json();
-        const artGalleryContainer = document.querySelector('.art-gallery-container');
-        if (!artGalleryContainer) return;
-        artGalleryContainer.innerHTML = ''; 
-        data.artworks.forEach(artwork => {
-            const artElement = document.createElement('div');
-            artElement.className = 'art-item';
-            const imagePath = `Elements/image/3D/${artwork.id}.jpg`;
-            artElement.innerHTML = `
-                <img src="${imagePath}" class="art-img" alt="${artwork.title}">
-                <div class="art-info">
-                    <h3 class="art-title">"${artwork.title}"</h3>
-                </div>`;
-            artGalleryContainer.appendChild(artElement);
-        });
-        if (isMobileDevice()) {
-            setTimeout(performUpdateCenterElements, 200); 
-        }
-    } catch (error) {
-        console.error('Error loading artworks:', error);
-    }
-}
-
 function showAllItems() {
     resetScrollPositions();
     const gallery = document.getElementById('gallery');
@@ -357,10 +314,8 @@ function showAllItems() {
     document.querySelectorAll('.gallery-item').forEach(item => {
         item.style.display = 'flex';
     });
-    const art3dGallery = document.getElementById('art-gallery');
     const infosContainer = document.getElementById('infos');
     const headerContainer = document.getElementById('header');
-    if (art3dGallery) art3dGallery.style.display = 'none';
     if (infosContainer) infosContainer.style.display = 'none';
     if (headerContainer) headerContainer.style.display = 'block';
     updateProjectsTitle('My Web Projects', 'Digital creations portfolio');
@@ -399,33 +354,13 @@ function filterItems(category) {
     });
     const headerContainer = document.getElementById('header');
     const infosContainer = document.getElementById('infos');
-    const art3dGallery = document.getElementById('art-gallery');
     if(headerContainer) headerContainer.style.display = 'none'; 
     if(infosContainer) infosContainer.style.display = 'none';
-    if(art3dGallery) art3dGallery.style.display = 'none';
     if (isMobileDevice()) {
         setTimeout(performUpdateCenterElements, 50);
     }
 }
 
-function show3dArt() {
-    resetScrollPositions();
-    document.querySelectorAll('.gallery-item').forEach(item => {
-        item.style.display = 'none';
-    });
-    const headerContainer = document.getElementById('header');
-    const infosContainer = document.getElementById('infos');
-    const gallery = document.getElementById('gallery');
-    const art3dGallery = document.getElementById('art-gallery');
-    if(headerContainer) headerContainer.style.display = 'none';
-    if(infosContainer) infosContainer.style.display = 'none';
-    if(gallery) gallery.style.display = 'none';
-    if(art3dGallery) art3dGallery.style.display = 'block';
-    updateProjectsTitle(null, null);
-    if (isMobileDevice()) {
-        setTimeout(performUpdateCenterElements, 50);
-    }
-}
 
 function showInfoText() {
     resetScrollPositions();
@@ -433,11 +368,9 @@ function showInfoText() {
         item.style.display = 'none';
     });
     const headerContainer = document.getElementById('header');
-    const art3dGallery = document.getElementById('art-gallery');
     const gallery = document.getElementById('gallery');
     const infosContainer = document.getElementById('infos');
     if(headerContainer) headerContainer.style.display = 'none';
-    if(art3dGallery) art3dGallery.style.display = 'none';
     if(gallery) gallery.style.display = 'none';
     if(infosContainer) infosContainer.style.display = 'block';
     updateProjectsTitle(null, null);
@@ -494,8 +427,6 @@ function initNavHandlers() {
     const everythingLinkMobile = document.getElementById('everything-mobile');
     const infoLink = document.getElementById('info-link');
     const infoLinkMobile = document.getElementById('info-link-mobile');
-    const art3dLink = document.getElementById('art-link');
-    const art3dLinkMobile = document.getElementById('art-link-mobile');
 
     if(personalProjectLink) personalProjectLink.addEventListener('click', function(e) { e.preventDefault(); filterItems('personal-project'); });
     if(commissionsLink) commissionsLink.addEventListener('click', function(e) { e.preventDefault(); filterItems('commission'); });
@@ -503,8 +434,6 @@ function initNavHandlers() {
     if(everythingLinkMobile) everythingLinkMobile.addEventListener('click', function(e) { e.preventDefault(); showAllItems(); });
     if(infoLink) infoLink.addEventListener('click', function(e) { e.preventDefault(); showInfoText(); });
     if(infoLinkMobile) infoLinkMobile.addEventListener('click', function(e) { e.preventDefault(); showInfoText(); });
-    if(art3dLink) art3dLink.addEventListener('click', function(e) { e.preventDefault(); show3dArt(); });
-    if(art3dLinkMobile) art3dLinkMobile.addEventListener('click', function(e) { e.preventDefault(); show3dArt(); });
 
     const allNavLinks = document.querySelectorAll('.link, .link-mobile');
     allNavLinks.forEach(link => {
@@ -606,7 +535,6 @@ function renderExperienceFromCompanies() {
 document.addEventListener('DOMContentLoaded', function() {
     forceMobileStyles();
     loadProjects();
-    loadArtworks();
     companiesManager.init().then(() => {
         renderExperienceFromCompanies();
     });

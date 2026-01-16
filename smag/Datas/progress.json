@@ -59,18 +59,13 @@
       "stars": [
         {
           "id": 1,
-          "name": "Star 1",
+          "name": "Star 1 + Secret Star",
           "progress": 100
         },
         {
           "id": 2,
           "name": "Star 2",
           "progress": 100
-        },
-        {
-          "id": 3,
-          "name": "Star 3",
-          "progress": 2
         }
       ]
     },
@@ -108,12 +103,7 @@
         {
           "id": 1,
           "name": "Star 1",
-          "progress": 80
-        },
-        {
-          "id": 2,
-          "name": "Star 2",
-          "progress": 2
+          "progress": 70
         }
       ]
     },
