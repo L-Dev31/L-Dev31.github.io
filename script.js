@@ -247,174 +247,23 @@ function computeAndInsertAges() {
     });
 }
 
-function updateProjectsTitle(title, subtitle) {
-    const projectsTitle = document.querySelector('.projects-title');
-    const projectsSubtitle = document.querySelector('.projects-subtitle');
-    const projectsHeader = document.querySelector('.projects-header');
-    if (title && subtitle) {
-        if (projectsTitle) projectsTitle.textContent = title;
-        if (projectsSubtitle) projectsSubtitle.textContent = subtitle;
-        if (projectsHeader) projectsHeader.style.display = 'block';
-    } else {
-        if (projectsHeader) projectsHeader.style.display = 'none';
-    }
-}
 
-async function loadProjects() {
-    try {
-        const response = await fetch('projects.json');
-        if (!response.ok) throw new Error('Failed to fetch projects.json');
-        const data = await response.json();
-        const gallery = document.getElementById('gallery');
-        if (!gallery) return;
-        gallery.innerHTML = ''; 
-        data.projects.forEach(project => {
-            const projectElement = document.createElement('div');
-            const category = project.category.toLowerCase().trim();
-            projectElement.className = `gallery-item ${category}`;
-            if (project.noPhone) projectElement.className += ' no-phone';
-            const logoPath = `Elements/image/${project.id}-icon.png`;
-            const previewPath = `Elements/image/${project.id}-banner.png`;
-            projectElement.innerHTML = `
-                <a href="${project.path}" target="_blank">
-                    <div class="card-image">
-                        <img src="${previewPath}" class="gallery-img" alt="${project.title}">
-                    </div>
-                    <div class="card-info">
-                        <div class="card-icon">
-                            <img src="${logoPath}" alt="Logo">
-                        </div>
-                        <div class="card-text">
-                            <div class="card-title">${project.title}</div>
-                            <div class="card-creator">${project.creator}</div>
-                        </div>
-                    </div>
-                </a>`;            gallery.appendChild(projectElement);
-        });
-        if (isMobileDevice()) {
-            setTimeout(performUpdateCenterElements, 200);
-            // No-phone: block navigation for projects marked .no-phone on mobile and show alert
-            document.querySelectorAll('.gallery-item.no-phone a').forEach(link => {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    alert("Ce site n'est pas accessible sur un téléphone.");
-                });
-                if (link.parentElement) link.parentElement.style.cursor = 'not-allowed';
-            });
-        }
-    } catch (error) {
-        console.error('Error loading projects:', error);
-    }
-}
-
-function showAllItems() {
-    resetScrollPositions();
-    const gallery = document.getElementById('gallery');
-    if (gallery) gallery.style.display = 'grid';
-    document.querySelectorAll('.gallery-item').forEach(item => {
-        item.style.display = 'flex';
-    });
-    const infosContainer = document.getElementById('infos');
-    const headerContainer = document.getElementById('header');
-    if (infosContainer) infosContainer.style.display = 'none';
-    if (headerContainer) headerContainer.style.display = 'block';
-    updateProjectsTitle('My Web Projects', 'Digital creations portfolio');
-    if (isMobileDevice()) {
-        setTimeout(performUpdateCenterElements, 50);
-    }
-}
-
-function filterItems(category) {
-    resetScrollPositions();
-    const gallery = document.getElementById('gallery');
-    if (gallery) gallery.style.display = 'grid';
-    const items = document.querySelectorAll('.gallery-item');
-    const targetCategory = category.toLowerCase().trim();
-    let title, subtitle;
-    switch(targetCategory) {
-        case 'personal-project':
-            title = 'My Personal Projects';
-            subtitle = 'Independent creations and experiments';
-            break;
-        case 'commission':
-            title = 'My Commissions';
-            subtitle = 'Client projects and personal redesign initiatives';
-            break;
-        default:
-            title = 'My Web Projects';
-            subtitle = 'Digital creations portfolio';
-    }
-    updateProjectsTitle(title, subtitle);
-    items.forEach(item => {
-        if (item.classList && item.classList.contains(targetCategory)) {
-            item.style.display = 'flex';
-        } else {
-            item.style.display = 'none';
-        }
-    });
-    const headerContainer = document.getElementById('header');
-    const infosContainer = document.getElementById('infos');
-    if(headerContainer) headerContainer.style.display = 'none'; 
-    if(infosContainer) infosContainer.style.display = 'none';
-    if (isMobileDevice()) {
-        setTimeout(performUpdateCenterElements, 50);
-    }
-}
-
-
-function showInfoText() {
-    resetScrollPositions();
-    document.querySelectorAll('.gallery-item').forEach(item => {
-        item.style.display = 'none';
-    });
-    const headerContainer = document.getElementById('header');
-    const gallery = document.getElementById('gallery');
-    const infosContainer = document.getElementById('infos');
-    if(headerContainer) headerContainer.style.display = 'none';
-    if(gallery) gallery.style.display = 'none';
-    if(infosContainer) infosContainer.style.display = 'block';
-    updateProjectsTitle(null, null);
-    if (isMobileDevice()) {
-        setTimeout(performUpdateCenterElements, 50);
-    }
-}
-
-// Scrolling text setup: create duplicated spans and keyframes for marquee effect
-function initScrollingTexts() {
-    const scrollingTexts = document.querySelectorAll('.scrolling-text p');
-    let speed = isMobileDevice() ? 50 : 100;
-    scrollingTexts.forEach(p => {
-        if (p.dataset.scrollingInitialized) return;
-        p.dataset.scrollingInitialized = '1';
-        const textContent = p.textContent.trim();
-        const computedStyle = window.getComputedStyle(p);
-        const font = `${computedStyle.fontSize} ${computedStyle.fontFamily}`;
-        const textWidth = Math.max(getTextWidth(textContent, font), 1);
-        p.innerHTML = `<span class="scroll-part">${textContent}&nbsp;</span><span class="scroll-part">${textContent}&nbsp;</span>`;
-        const animationDuration = (textWidth) / speed;
-        p.style.whiteSpace = 'nowrap';
-        p.style.display = 'inline-block';
-        p.style.animation = `scroll-left ${animationDuration}s linear infinite`;
-    });
-    if (!document.getElementById('scroll-left-keyframes')) {
-        const styleSheet = document.createElement("style");
-        styleSheet.id = 'scroll-left-keyframes';
-        styleSheet.type = "text/css";
-        styleSheet.innerText = `@keyframes scroll-left {from {transform: translateX(0);}to {transform: translateX(-50%);}}`;
-        document.head.appendChild(styleSheet);
-    }
-}
-
-// Cursor: create custom cursor element and track mouse on desktop
 function initCursorIfDesktop() {
     if (!isMobileDevice()) {
         const cursor = document.createElement('div');
         cursor.classList.add('cursor');
         document.body.appendChild(cursor);
+        let cursorScale = 1;
         document.addEventListener('mousemove', (e) => {
             const x = e.clientX + window.scrollX;
             const y = e.clientY + window.scrollY;
-            cursor.style.transform = `translate(${x}px, ${y}px)`;
+            cursor.style.transform = `translate(${x}px, ${y}px) scale(${cursorScale})`;
+        });
+        // Shrink cursor on clickable elements
+        const clickableElements = document.querySelectorAll('a, button, input[type="submit"], [onclick]');
+        clickableElements.forEach(el => {
+            el.addEventListener('mouseenter', () => { cursorScale = 0.5; });
+            el.addEventListener('mouseleave', () => { cursorScale = 1; });
         });
     }
 }
@@ -425,15 +274,11 @@ function initNavHandlers() {
     const commissionsLink = document.getElementById('commissions');
     const everythingLink = document.getElementById('everything');
     const everythingLinkMobile = document.getElementById('everything-mobile');
-    const infoLink = document.getElementById('info-link');
-    const infoLinkMobile = document.getElementById('info-link-mobile');
 
     if(personalProjectLink) personalProjectLink.addEventListener('click', function(e) { e.preventDefault(); filterItems('personal-project'); });
     if(commissionsLink) commissionsLink.addEventListener('click', function(e) { e.preventDefault(); filterItems('commission'); });
     if(everythingLink) everythingLink.addEventListener('click', function(e) { e.preventDefault(); showAllItems(); });
     if(everythingLinkMobile) everythingLinkMobile.addEventListener('click', function(e) { e.preventDefault(); showAllItems(); });
-    if(infoLink) infoLink.addEventListener('click', function(e) { e.preventDefault(); showInfoText(); });
-    if(infoLinkMobile) infoLinkMobile.addEventListener('click', function(e) { e.preventDefault(); showInfoText(); });
 
     const allNavLinks = document.querySelectorAll('.link, .link-mobile');
     allNavLinks.forEach(link => {
@@ -468,27 +313,10 @@ function initUnavailableLinks() {
     });
 }
 
-// Landing animation: show intro shrink animation on desktop and remove no-scroll on mobile
-function initLandingAnimation() {
-    const landingLogo = document.getElementById('landing-logo');
-    const landingPage = document.querySelector('.landing-page');
-    const body = document.body;
-    if (!isMobileDevice() && landingLogo && landingPage) {
-        body.classList.add('no-scroll');
-        setTimeout(() => {
-            window.scrollTo(0, 0);
-            landingLogo.classList.add('shrink');
-        }, 1000);
-        setTimeout(() => {
-            landingPage.classList.add('hidden');
-        }, 2000);
-        setTimeout(() => {
-            body.classList.remove('no-scroll');
-        }, 2750);
-    } else if (isMobileDevice()) {
-        body.classList.remove('no-scroll');
-    }
-}
+// initBottomFixedSections removed: behaviour disabled
+function initBottomFixedSections() { /* disabled */ }
+
+
 
 // Render experiences from companies.json
 function renderExperienceFromCompanies() {
@@ -531,23 +359,67 @@ function renderExperienceFromCompanies() {
     if (isMobileDevice()) setTimeout(performUpdateCenterElements, 50);
 }
 
+function updateBlurOnScroll() {
+    const scrollY = window.scrollY;
+    const maxScroll = 750; 
+    const maxBlur = 10; 
+    const blurAmount = Math.min(scrollY / maxScroll, 1) * maxBlur;
+    const brightness = 1 - Math.min(scrollY / maxScroll, 1) * 0.8; // From 1 to 0.2
+    document.documentElement.style.setProperty('--blur-amount', `${blurAmount}px`);
+    document.documentElement.style.setProperty('--brightness', brightness);
+}
+
+function updateCityTime() {
+  const el = document.getElementById('header-hour');
+  if (!el) return;
+  const now = new Date();
+  try {
+    const fmt = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', hour: 'numeric', minute: '2-digit', hour12: true });
+    el.textContent = fmt.format(now).toUpperCase();
+  } catch (e) {
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const parisOffset = 1;
+    const paris = new Date(utc + (3600000 * parisOffset));
+    let hours = paris.getHours();
+    const mins = paris.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    el.textContent = `${hours}:${mins.toString().padStart(2,'0')} ${ampm}`;
+  }
+}
+
 // Init
 document.addEventListener('DOMContentLoaded', function() {
     forceMobileStyles();
-    loadProjects();
-    companiesManager.init().then(() => {
-        renderExperienceFromCompanies();
-    });
+    // companiesManager.init().then(() => {
+    //     renderExperienceFromCompanies();
+    // });
     initCenterDetection();
 
-    initScrollingTexts();
     initCursorIfDesktop();
     initNavHandlers();
     initUnavailableLinks();
-    initLandingAnimation();
 
     // Age: compute and insert ages from spans with data-dob
     computeAndInsertAges();
 
+    // City time
+    updateCityTime();
+    setInterval(updateCityTime, 15000);
+
+    // Optimized blur effect on scroll (throttled with rAF)
+    let blurTicking = false;
+    window.addEventListener('scroll', () => {
+        if (!blurTicking) {
+            requestAnimationFrame(() => {
+                updateBlurOnScroll();
+                blurTicking = false;
+            });
+            blurTicking = true;
+        }
+    }, { passive: true });
+
     if (isMobileDevice()) setTimeout(performUpdateCenterElements, 250);
+
+
 });

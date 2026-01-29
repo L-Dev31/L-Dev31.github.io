@@ -128,34 +128,19 @@ screen and (max-device-width:1440px) and (-webkit-device-pixel-ratio:3) and (ori
     position: relative
   }
   header {
-    margin-top: 8vh;
-    padding: 3vh 0;
-    min-height: 40vh
+    margin-top: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   .header-content h1 {
     font-size: 12vh;
     text-shadow: 0 0 1.5vh #00000099
   }
-  .scrolling-bands {
-    width: 105%;
-    left: -2.5vh;
-    height: 8vh
-  }
-  .band {
-    height: 7vh
-  }
-  .band1 {
-    transform: rotate(-4deg);
-    top: 0
-  }
-  .band2 {
-    transform: rotate(4deg);
-    top: 1vh
-  }
-  .band1 .scrolling-text p,
-  .band2 .scrolling-text p {
-    font-size: 4vh
-  }
+
   #infos {
     margin-top: 8vh;
     margin-left: 2vh;
@@ -247,8 +232,8 @@ screen and (max-device-width:1440px) and (-webkit-device-pixel-ratio:3) and (ori
     font-size: 1.3vh
   }
   .projects-header {
-    margin: 8vh 1.5vh 0 1.5vh;
-    padding: 5vh 2vh;
+    margin: 0 1.5vh;
+    padding: 2vh 2vh;
     margin-bottom: 2.5vh;
     box-sizing: border-box
   }
@@ -367,13 +352,7 @@ screen and (max-device-width:1440px) and (-webkit-device-pixel-ratio:3) and (ori
     text-align: center;
     word-wrap: break-word
   }
-  .zoom-out-page h1 {
-    font-size: 8vh;
-    top: 20vh;
-    left: 5vh;
-    right: 5vh;
-    text-align: center
-  }
+
   .landing-page {
     display: none
   }
@@ -418,7 +397,7 @@ screen and (max-device-width:1440px) and (-webkit-device-pixel-ratio:3) and (ori
   .gallery-item.center-active {
     transform: scale(1.03)!important;
     filter: brightness(1.15)!important;
-    box-shadow: 0 0 5vh 1vh rgba(255,255,255,.35)!important
+    box-shadow: 0 0 5vh 1vh var(--shadow-light)!important
   }
   .gallery-item.center-active .card-info {
     background-color: #1a1a1a!important
@@ -432,9 +411,9 @@ screen and (max-device-width:1440px) and (-webkit-device-pixel-ratio:3) and (ori
   .achievement-item.center-active {
     transform: scale(1.03)!important;
     filter: brightness(1.1)!important;
-    box-shadow: 0 0 4vh .5vh rgba(255,255,255,.15)!important;
+    box-shadow: 0 0 4vh .5vh var(--shadow-mid)!important;
     background: #1a1a1a!important;
-    border-color: rgba(255,255,255,.2)!important
+    border-color: var(--border-strong)!important
   }
   .achievement-item.center-active .achievement-icon {
     transform: scale(1.1)!important
@@ -442,7 +421,7 @@ screen and (max-device-width:1440px) and (-webkit-device-pixel-ratio:3) and (ori
   .art-item.center-active {
     transform: scale(1.03)!important;
     filter: brightness(1.05)!important;
-    box-shadow: 0 0 4vh .5vh rgba(255,255,255,.1)!important
+    box-shadow: 0 0 4vh .5vh var(--shadow-soft)!important
   }
   .art-gallery-container.has-center-active .art-item:not(.center-active) {
     filter: brightness(.8)!important;
@@ -527,7 +506,7 @@ screen and (max-device-width:1440px) and (-webkit-device-pixel-ratio:3) and (ori
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #fff;
+  color: var(--white);
   text-decoration: none;
   font-size: 18px;
   font-weight: 500;

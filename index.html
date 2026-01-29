@@ -8,175 +8,55 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
-<body class="no-scroll">
+<body>
     
 <div class="navbar">
     <div class="brand">
         <img src="Elements/image/logo.svg" alt="Logo">
-        <div class="brand-name">Léo Tosku</div>
+        <div class="brand-name"></div>
     </div>
     <div class="links-container">
         <!--Desktop-->
         <a href="#" class="link" id="everything">All</a>
         <a href="#" class="link" id="personal-project">Personal Projects</a>
         <a href="#" class="link" id="commissions">Commissions</a>
-        <!-- <a href="#" class="link" id="art-link">Art</a> -->
-        <a href="#" class="link" id="info-link">About</a>
-        <a href="#" class="link" style="pointer-events: none;">|</a>
-        <a href="Elements/image/CV.pdf" target="_blank" class="link">CV<span class="material-symbols-outlined">download</span></a>
+        <a href="info.html" class="link">About</a>
+
+
         <!--Mobile-->
         <a href="#" class="link-mobile" id="everything-mobile"><span class="material-symbols-outlined" style="font-size: 3.5vh;">dashboard</span></a>
         <!-- <a href="#" class="link-mobile" id="art-link-mobile"><span class="material-symbols-outlined" style="font-size: 3.5vh;">landscape_2</span></a> -->
-        <a href="#" class="link-mobile" id="info-link-mobile"><span class="material-symbols-outlined" style="font-size: 3.5vh;">info</span></a>
+        <a href="info.html" class="link-mobile"><span class="material-symbols-outlined" style="font-size: 3.5vh;">info</span></a>
         <a href="Elements/image/CV.pdf" class="link-mobile" target="_blank"><span class="material-symbols-outlined" style="font-size: 3.5vh;">Description</span></a>
     </div>
 </div>
 
 <div class="bg"></div>
 
-<header id="header">
+<section id="header">
     <div class="header-content">
-        <h1>ELEGANCE AND <br> SIMPLICITY</h1>
-    </div>
-    <div class="scrolling-bands">
-        <div class="band band1">
-            <div class="scrolling-text">
-                <p>Web Design • Modeling • Unique Creations • Programming • Digital Design • </p>
-            </div>
-        </div>
-        <div class="band band2">
-            <div class="scrolling-text">
-                <p>Digital Design • Programming • Unique Creations • Modeling • Web Design • </p>
-            </div>
-        </div>
-    </div>    
-    
-    <!-- Achievements Section -->
-    <div class="achievements">
-        <div class="achievements-header">
-            <h2 class="achievements-title">My Achievements</h2>
-            <div class="achievements-subtitle">Excellence recognized by my peers</div>
-        </div>
-        <div class="achievements-container">            
-            <div class="achievement-item" data-achievement="trophy">
-                <div class="achievement-content">
-                    <div class="achievement-icon">
-                        <img src="Elements/image/svg/tnsi.svg" alt="Trophée NSI">
-                    </div>
-                    <div class="achievement-info">
-                        <h3 class="achievement-title">Prix Spécial du Jury</h3>
-                        <p class="achievement-description">Trophées NSI 2024-2025</p>
-                        <div class="achievement-badge">Excellence</div>
-                    </div>
+        <h1>Léo TOSKU</h1>
+                <div class="header-subtitles">
+                    <span class="city">CANNES</span>
+                    <span class="header-hour" id="header-hour">--:--</span>
                 </div>
-            </div>            
-            <div class="achievement-item" data-achievement="innovation">
-                <div class="achievement-content">
-                    <div class="achievement-icon">
-                        <img src="Elements/image/svg/cid.svg" alt="Caribbean Innovation Days">
-                    </div>
-                    <div class="achievement-info">
-                        <h3 class="achievement-title">Caribbean Innovation</h3>
-                        <p class="achievement-description">Caribbean Innovation Days 2024</p>
-                        <div class="achievement-badge">Innovation</div>
-                    </div>
-                </div>
-            </div>     
+        </div>
+</section>
 
-            <!-- UpForLife
-            <div class="achievement-item" data-achievement="upforlife">
-                <div class="achievement-content">
-                    <div class="achievement-icon">
-                        <img src="Elements/image/svg/ufl.svg" alt="Up for Life">
-                    </div>
-                    <div class="achievement-info">
-                        <h3 class="achievement-title">Professional Networking</h3>
-                        <p class="achievement-description">Up for Life 2024-2025</p>
-                        <div class="achievement-badge">Business</div>
-                    </div>
-                </div>
-            </div>
-            -->
 
-            <div class="achievement-item" data-achievement="agile">
-                <div class="achievement-content">
-                    <div class="achievement-icon">
-                        <img src="Elements/image/svg/at.svg" alt="Up for Life">
-                    </div>
-                    <div class="achievement-info">
-                        <h3 class="achievement-title">Professional Networking</h3>
-                        <p class="achievement-description">Agile Tour Sophia Antipolis 2025</p>
-                        <div class="achievement-badge">Business</div>
-                    </div>
-                </div>
-            </div>   
+<!-- About Me Section -->
+<section id="about-me" class="about-me-section">
+    <div class="about-me-container">
+        <div class="about-me-text">
+            <span>As a <strong>graphic designer</strong>, I help brands and projects create unique digital experiences</span>
+            <span>where <strong>creativity</strong>, <strong>precision</strong>, and <strong>functionality</strong> come together</span>
+            <span>to make a lasting impact.</span>
+        </div>
+        <div class="about-me-image">
+            <img src="Elements/image/LéoTosku.jpg" alt="Léo Tosku portrait" />
         </div>
     </div>
-</header>
-
-
-<!-- Infos Section -->
-    <div id="infos" style="display:none;">
-        <div class="infos-container">
-            <div class="infos-content">
-                <h1>Who am I ?</h1>
-                <h2>Bio</h2>
-                <p class="description">Léo Tosku, <span class="age" data-dob="2007-10-31">—</span> years old, living in Cannes, France.<br> 
-                <p class="description"><br>Born in France, I spent part of my life in the Caribbean before returning to Cannes to pursue my studies. I am currently studying Graphic Design at Ynov Sophia Campus, working towards a Bachelor's degree in Digital Project Leadership (Chef de Projet Digital, RNCP 6).</p></p>
-                <p class="description"><br>Passionate about digital creation, I specialize myself in graphic design. I enjoy crafting unique experiences that blend creativity and functionality.</p>
-                <p class="description"><br>In addition to my studies, I am actively involved in various projects, both personal and collaborative, that allow me to apply my skills and explore new horizons in diverse fields.</p>
-                <p class="description"><br>I value creativity, functionality over speed. My perfectionist nature ensures that every project I undertake is of the highest quality. <br><br> For more information, please contact me on <a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a>.</p>
-
-                <div class="experience-section">
-                    <h2>Experiences</h2>
-                    <div class="experience-list">
-                        <!-- Populated automatically from companies.json -->
-                    </div>
-                </div>
-
-                <div class="interests-section">
-                    <h2>Interests</h2>
-                    <p>Creative development • Open source • Digital development • Finance</p>
-                </div>
-            </div>
-            
-            <div class="info-img-container">
-                <img src="Elements/image/LéoTosku.jpg" alt="Profile Image" class="info-img">
-            </div>
-        </div>
-    </div>
-
-<!-- Website Gallery -->
-<div class="projects-section">
-    <div class="projects-header">
-        <h2 class="projects-title">My Web Projects</h2>
-        <div class="projects-subtitle">Digital creations portfolio</div>
-    </div>
-    <div id="gallery" class="gallery">
-        <!-- Projects will be loaded dynamically -->
-    </div>
-</div>
-
-</div>
-
-<div class="landing-page">
-    <img id="landing-logo" src="Elements/image/logo.svg" alt="Logo">
-</div>
-
-<div class="zoom-out-page">
-    <h1>Why are you zooming out so much? 🤨</h1>
-</div>
-
-<div class="social-links">
-    <a href="https://www.instagram.com/leotosku/" target="_blank" class="social-link">
-        <i class="fab fa-instagram"></i>
-        <span class="social-label">Instagram</span>
-    </a>
-    <a href="https://www.linkedin.com/in/l%C3%A9o-tosku-8432242a0/" target="_blank" class="social-link">
-        <i class="fab fa-linkedin"></i>
-        <span class="social-label">LinkedIn</span>
-    </a>
-</div>
+</section>
 
 <!-- Script -->
 <script src="script.js"></script>
