@@ -1,7 +1,14 @@
 import globalRateLimiter from '../rate-limiter.js';
 import { filterNullOHLCDataPoints } from '../utils.js';
 
-const PROXY = 'https://corsproxy.io/?';
+const PROXIES = [        
+    'https://corsproxy.io/?',                            
+    'https://api.allorigins.win/raw?url=',          
+    'https://proxy.cors.sh/',           
+    'https://api.codetabs.com/v1/proxy?quest=',           
+    'https://thingproxy.freeboard.io/fetch/',     
+];
+let currentProxyIndex = 0;
 
 const PERIODS = {
     '1D': { interval: '1m', range: '1d' },
@@ -21,25 +28,41 @@ export function getYahooSymbol(stock) {
 }
 
 async function yahooFetch(targetUrl, signal) {
-    const finalUrl = `${PROXY}${encodeURIComponent(targetUrl)}`;
-    try {
-        const r = await fetch(finalUrl, { signal });
-        if (r.status === 429) {
-            globalRateLimiter.setRateLimitForApi('yahoo', 60000);
-            return { error: true, errorCode: 429, throttled: true };
-        }
-        if (!r.ok) {
-            return { error: true, errorCode: r.status };
-        }
-        const text = await r.text();
+    let lastError = null;
+
+    for (let i = 0; i < PROXIES.length; i++) {
+        const proxyIndex = (currentProxyIndex + i) % PROXIES.length;
+        const proxy = PROXIES[proxyIndex];
+        const finalUrl = `${proxy}${targetUrl}`;
+
         try {
-            return JSON.parse(text);
-        } catch (jsonError) {
-            return { error: true, errorCode: 'INVALID_JSON' };
+            const r = await fetch(finalUrl, { signal });
+
+            if (r.status === 429) {
+                globalRateLimiter.setRateLimitForApi('yahoo', 60000);
+                lastError = { error: true, errorCode: 429, throttled: true, proxy: proxy };
+                continue; // Try next proxy
+            }
+
+            if (!r.ok) {
+                lastError = { error: true, errorCode: r.status, proxy: proxy };
+                continue; // Try next proxy
+            }
+
+            currentProxyIndex = proxyIndex;
+
+            const text = await r.text();
+            try {
+                return JSON.parse(text);
+            } catch (jsonError) {
+                lastError = { error: true, errorCode: 'INVALID_JSON', proxy: proxy };
+                continue;
+            }
+        } catch (networkError) {
+            lastError = { error: true, errorCode: 500, message: networkError.message, proxy: proxy };
         }
-    } catch (networkError) {
-        return { error: true, errorCode: 500, message: networkError.message };
     }
+    return lastError || { error: true, errorCode: 'ALL_PROXIES_FAILED' };
 }
 
 export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal) {
@@ -151,22 +174,42 @@ export async function fetchYahooEarnings(ticker, signal) {
 }
 
 export async function fetchYahooDividends(ticker, from, to, signal) {
-    try {
-        const p1 = Math.floor(new Date(from || '2000-01-01').getTime() / 1000);
-        const p2 = Math.floor(new Date(to || new Date().toISOString().slice(0, 10)).getTime() / 1000);
-        const targetUrl = `https://query2.finance.yahoo.com/v7/finance/download/${encodeURIComponent(ticker)}?period1=${p1}&period2=${p2}&interval=1d&events=div`;
-        const r = await fetch(`${PROXY}${encodeURIComponent(targetUrl)}`, { signal });
+    const p1 = Math.floor(new Date(from || '2000-01-01').getTime() / 1000);
+    const p2 = Math.floor(new Date(to || new Date().toISOString().slice(0, 10)).getTime() / 1000);
+    const targetUrl = `https://query2.finance.yahoo.com/v7/finance/download/${encodeURIComponent(ticker)}?period1=${p1}&period2=${p2}&interval=1d&events=div`;
+    
+    let lastError = null;
+    
+    for (let i = 0; i < PROXIES.length; i++) {
+        const proxyIndex = (currentProxyIndex + i) % PROXIES.length;
+        const proxy = PROXIES[proxyIndex];
         
-        if (!r.ok) return { error: true, errorCode: r.status };
-        const text = await r.text();
-        if (text.startsWith('<')) return { source: 'yahoo', error: true, errorCode: 'PROXY_HTML' };
+        try {
+            const r = await fetch(`${proxy}${targetUrl}`, { signal });
+            if (!r.ok) {
+                lastError = { error: true, errorCode: r.status };
+                continue;
+            }
+            
+            currentProxyIndex = proxyIndex;
+            
+            const text = await r.text();
+            if (text.startsWith('<')) {
+                lastError = { source: 'yahoo', error: true, errorCode: 'PROXY_HTML' };
+                continue;
+            }
 
-        const items = text.trim().split('\n').slice(1).map(l => {
-            const [date, div] = l.split(',');
-            return { date, dividend: parseFloat(div) };
-        });
-        return { source: 'yahoo', dividends: items };
-    } catch (e) { return { source: 'yahoo', error: true, errorCode: 500 }; }
+            const items = text.trim().split('\n').slice(1).map(l => {
+                const [date, div] = l.split(',');
+                return { date, dividend: parseFloat(div) };
+            });
+            return { source: 'yahoo', dividends: items };
+        } catch(e) {
+            lastError = { source: 'yahoo', error: true, errorCode: 500 };
+        }
+    }
+    
+    return lastError || { source: 'yahoo', error: true, errorCode: 'ALL_PROXIES_FAILED' };
 }
 
 export async function fetchYahooOptions(ticker, date, signal) {
