@@ -1,425 +1,298 @@
-// Companies: class that loads company data, generates CSS and renders logos
-class CompaniesManager {
-    constructor() {
-        this.companies = [];
-        this.container = null;
-    }
+const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1024;
+let originalTextContent = null;
+let resizeTimeout;
+let projectPreviewImg, previewTargetX = 0, previewTargetY = 0, previewCurrentX = 0, previewCurrentY = 0, previewAnimFrame;
 
-    // Load companies JSON data into memory
-    async loadCompanies() {
-        try {
-            const response = await fetch('companies.json');
-            const data = await response.json();
-            this.companies = data.companies;
-            return this.companies;
-        } catch (error) {
-            console.error('Error loading companies:', error);
-            return [];
-        }
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    initTime();
+    initCursor();
+    initBlurScroll();
+    initTextSplitter();
+    initParallax();
+    loadFeaturedProjects();
+    initTitleAnimation();
+    
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(initTextSplitter, 150);
+    });
+});
 
-    // CSS generation: build theme CSS for each company logo and experience item
-    generateCSS() {
-        let css = '';
-        this.companies.forEach((company, index) => {
-            const cssClass = company.name.toLowerCase().replace(/\s+/g, '');
-            if (index > 0) {
-                // logo styling
-                css += `
-                .company-logo.${cssClass} {
-                    background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]});
-                    border: 1px solid ${company.colors[2]};
-                }
-                `;
-                // experience item styling (use a class on the item instead of inline styles)
-                css += `
-                .experience-item.company-${cssClass} {
-                    background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]});
-                    border-color: ${company.colors[2]};
-                }
-                `;
-                // mobile variants
-                css += `
-                @media (max-width: 768px) {
-                    .company-logo.${cssClass} { background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]}); border: 1px solid ${company.colors[2]}; }
-                    .experience-item.company-${cssClass} { background: linear-gradient(135deg, ${company.colors[0]}, ${company.colors[1]}); border-color: ${company.colors[2]}; }
-                }
-                `;
-            }
-        });
-        return css;
-    }
-
-    // Inject: append generated CSS to <head>
-    injectCSS() {
-        const css = this.generateCSS();
-        const styleElement = document.createElement('style');
-        styleElement.textContent = css;
-        document.head.appendChild(styleElement);
-    }
-
-    // Create DOM element representing a company logo
-    createCompanyElement(company, index) {
-        const img = document.createElement('img');
-        img.src = company.logo;
-        img.alt = company.name;
-        const cssClass = company.name.toLowerCase().replace(/\s+/g, '');
-        img.className = index === 0 ? 'company-logo' : `company-logo ${cssClass}`;
-        img.setAttribute('data-company-name', company.name);
-        return img;
-    }
-
-    // Render: populate the companies container with logo elements
-    renderCompanies(containerId = 'companies-logos') {
-        this.container = document.querySelector(`.${containerId}`);
-        if (!this.container) {
-            console.error(`Container ${containerId} not found`);
-            return;
-        }
-
-        this.container.innerHTML = '';
-
-        this.companies.forEach((company, index) => {
-            const element = this.createCompanyElement(company, index);
-            this.container.appendChild(element);
-        });
-    }
-
-    // Add: push new company, regenerate CSS and append to DOM
-    addCompany(companyData) {
-        this.companies.push(companyData);
-        this.injectCSS();
-        if (this.container) {
-            const element = this.createCompanyElement(companyData, this.companies.length - 1);
-            this.container.appendChild(element);
-        }
-    }
-
-    // Remove: delete company from state and remove its DOM element
-    removeCompany(companyName) {
-        this.companies = this.companies.filter(c => c.name !== companyName);
-        const element = document.querySelector(`[data-company-name="${companyName}"]`);
-        if (element) element.remove();
-    }
-
-    // Init: load companies, inject CSS and render
-    async init() {
-        await this.loadCompanies();
-        this.injectCSS();
-        this.renderCompanies();
-    }
-
-    // Getters: small helpers to query loaded companies
-    getCompany(name) { return this.companies.find(c => c.name === name); }
-    getAllCompanies() { return this.companies; }
-}
-
-// Companies instance: single global manager used by the page
-const companiesManager = new CompaniesManager();
-
-// Device detection: heuristics for touch devices and small screens
-function isMobileDevice() {
-    return (
-        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-        ('ontouchstart' in window) ||
-        (navigator.maxTouchPoints > 0) ||
-        (navigator.msMaxTouchPoints > 0) ||
-        (window.innerWidth <= 1024 && window.orientation !== undefined)
-    );
-}
-
-function forceMobileStyles() {
-    if (isMobileDevice()) {
-        document.body.classList.add('force-mobile');
-        const desktopElements = document.querySelectorAll('.link, .download');
-        desktopElements.forEach(el => {
-            el.style.display = 'none';
-        });
-        const mobileElements = document.querySelectorAll('.link-mobile, .download-mobile');
-        mobileElements.forEach(el => {
-            el.style.display = 'block';
-            el.style.visibility = 'visible';
-        });
-        const cursor = document.querySelector('.cursor');
-        if (cursor) cursor.style.display = 'none';
-        const body = document.body;
-        if (window.innerWidth <= 1024) { 
-            body.style.marginTop = '8vh';
-            body.style.backgroundSize = '200%';
-            const logo = document.getElementById('logo');
-            if (logo) logo.style.width = '6vh';
-            const textContainer = document.querySelector('.text-container');
-            if (textContainer) {
-                textContainer.style.fontSize = '1.8vh';
-                textContainer.style.top = '1.5vh';
-                textContainer.style.left = '9vh';
-            }
-        }
-        console.log('Mobile styles applied for:', navigator.userAgent);
-    }
-}
-
-// Center detection: find items near the viewport center for mobile highlighting
-function getCenterElementsForDetection() {
-    return {
-        galleryItems: document.querySelectorAll('.gallery-item'),
-        achievementItems: document.querySelectorAll('.achievement-item'),
-        // art-related elements removed (gallery-only detection)
+function initTime() {
+    const el = document.getElementById('header-hour');
+    if(!el) return;
+    const update = () => {
+        const now = new Date();
+        el.textContent = new Intl.DateTimeFormat('en-US', { 
+            timeZone: 'Europe/Paris', 
+            hour: 'numeric', 
+            minute: '2-digit', 
+            hour12: true 
+        }).format(now).toUpperCase();
     };
+    update();
+    setInterval(update, 15000);
 }
 
-function isElementInCenterForDetection(element) {
-    if (!element || getComputedStyle(element).display === 'none') {
-        return false;
-    }
-    const rect = element.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const elementCenter = rect.top + rect.height / 2;
-    const viewportCenter = viewportHeight / 2;
-    const thresholdPercentage = 0.25; 
-    const detectionZoneTop = viewportCenter - (viewportHeight * thresholdPercentage);
-    const detectionZoneBottom = viewportCenter + (viewportHeight * thresholdPercentage);
-    return elementCenter >= detectionZoneTop && elementCenter <= detectionZoneBottom;
-}
-
-function performUpdateCenterElements() {
-    if (!isMobileDevice()) return; 
-    const elements = getCenterElementsForDetection();
-    elements.galleryItems.forEach(item => {
-        if (isElementInCenterForDetection(item)) {
-            item.classList.add('center-active');
-        } else {
-            item.classList.remove('center-active');
-        }
+function initCursor() {
+    if (isMobile) return;
+    const cursor = document.createElement('div');
+    cursor.className = 'cursor';
+    document.body.appendChild(cursor);
+    
+    // Update transform each mousemove but include current scale state from class
+    document.addEventListener('mousemove', e => {
+        const scale = cursor.classList.contains('cursor--small') ? ' scale(0.5)' : '';
+        cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)${scale}`;
     });
-    elements.achievementItems.forEach(item => {
-        if (isElementInCenterForDetection(item)) {
-            item.classList.add('center-active');
-        } else {
-            item.classList.remove('center-active');
-        }
-    });
-    // art-item detection removed
-}
 
-function initCenterDetection() {
-    if (!isMobileDevice()) return;
+    const clickableSelector = 'a, button, .clickable';
+    document.querySelectorAll(clickableSelector).forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('cursor--small'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor--small'));
+        // keyboard accessibility: focus/blur should also toggle size
+        el.addEventListener('focus', () => cursor.classList.add('cursor--small'));
+        el.addEventListener('blur', () => cursor.classList.remove('cursor--small'));
+    });
+} 
+
+function initBlurScroll() {
     let ticking = false;
-    function handleScrollResize() { 
+
+    // Créer l'overlay s'il n'existe pas
+    let overlay = document.querySelector('.header-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'header-overlay';
+        document.body.appendChild(overlay);
+    }
+
+    const header = document.getElementById('header');
+    const getHeaderHeight = () => header ? header.offsetHeight : window.innerHeight;
+
+    window.addEventListener('scroll', () => {
         if (!ticking) {
-            requestAnimationFrame(() => {
-                performUpdateCenterElements();
+            window.requestAnimationFrame(() => {
+                const scrolled = window.scrollY;
+                const headerH = getHeaderHeight();
+                // Progression 0 -> 1 sur une fraction de la hauteur du header (apparaît plus tôt en scroll)
+                const progress = Math.min(1, Math.max(0, scrolled / (headerH * 0.5)));
+
+                const maxDark = 1; // opacité maximale du dark overlay (opaque)
+                const maxBlur = 8; // px maximal pour le blur
+
+                overlay.style.background = `rgba(0,0,0,${progress * maxDark})`;
+                overlay.style.backdropFilter = `blur(${progress * maxBlur}px)`;
+                overlay.style.opacity = progress;
+
+                // Restreindre l'overlay à la hauteur du header pour qu'il cache uniquement le header
+                overlay.style.height = `${headerH}px`;
+                overlay.style.top = `${header.offsetTop}px`;
+
                 ticking = false;
             });
             ticking = true;
         }
-    }
-    window.addEventListener('scroll', handleScrollResize);
-    window.addEventListener('resize', handleScrollResize); 
-    setTimeout(performUpdateCenterElements, 100); 
+    }, { passive: true });
 }
 
-// Utility helpers: measure text width and reset scroll position
-function getTextWidth(text, font) {
-    const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
-    const context = canvas.getContext("2d");
-    context.font = font;
-    const metrics = context.measureText(text);
-    return metrics.width;
-}
+function initTextSplitter() {
+    const container = document.getElementById('split-text');
+    if (!container) return;
 
-function resetScrollPositions() {
-    window.scrollTo(0, 0);
-}
-
-// Age: compute and insert ages from spans with data-dob
-function computeAndInsertAges() {
-    document.querySelectorAll('span[data-dob]').forEach(span => {
-        const dobStr = span.getAttribute('data-dob');
-        if (!dobStr) return;
-        const dob = new Date(dobStr + 'T00:00:00'); // ensure consistent parsing
-        if (isNaN(dob)) return;
-        const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const m = today.getMonth() - dob.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-        span.textContent = age >= 0 ? age : '0';
-    });
-}
-
-
-function initCursorIfDesktop() {
-    if (!isMobileDevice()) {
-        const cursor = document.createElement('div');
-        cursor.classList.add('cursor');
-        document.body.appendChild(cursor);
-        let cursorScale = 1;
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX + window.scrollX;
-            const y = e.clientY + window.scrollY;
-            cursor.style.transform = `translate(${x}px, ${y}px) scale(${cursorScale})`;
-        });
-        // Shrink cursor on clickable elements
-        const clickableElements = document.querySelectorAll('a, button, input[type="submit"], [onclick]');
-        clickableElements.forEach(el => {
-            el.addEventListener('mouseenter', () => { cursorScale = 0.5; });
-            el.addEventListener('mouseleave', () => { cursorScale = 1; });
-        });
-    }
-}
-
-// Navigation handlers: bind links to filter/show sections and mark active link
-function initNavHandlers() {
-    const personalProjectLink = document.getElementById('personal-project');
-    const commissionsLink = document.getElementById('commissions');
-    const everythingLink = document.getElementById('everything');
-    const everythingLinkMobile = document.getElementById('everything-mobile');
-
-    if(personalProjectLink) personalProjectLink.addEventListener('click', function(e) { e.preventDefault(); filterItems('personal-project'); });
-    if(commissionsLink) commissionsLink.addEventListener('click', function(e) { e.preventDefault(); filterItems('commission'); });
-    if(everythingLink) everythingLink.addEventListener('click', function(e) { e.preventDefault(); showAllItems(); });
-    if(everythingLinkMobile) everythingLinkMobile.addEventListener('click', function(e) { e.preventDefault(); showAllItems(); });
-
-    const allNavLinks = document.querySelectorAll('.link, .link-mobile');
-    allNavLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            allNavLinks.forEach(l => l.classList.remove('clicked'));
-            link.classList.add('clicked');
-        });
-    });
-}
-
-// Unavailable links: prevent navigation for elements marked unavailable and style cursor
-function initUnavailableLinks() {
-    document.querySelectorAll('.unavailable a').forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            alert("Ce site n'est pas accessible pour l'instant");
-        });
-        const unavailableAncestor = link.closest('.unavailable');
-        if (unavailableAncestor) {
-            unavailableAncestor.style.cursor = 'not-allowed';
-        } else {
-            link.style.cursor = 'not-allowed';
+    if (!originalTextContent) originalTextContent = container.innerHTML;
+    
+    // Nettoyage préalable pour éviter les duplications lors du resize
+    container.innerHTML = originalTextContent.replace(/<div class="text-line.*?>/g, '').replace(/<\/div>/g, '');
+    
+    // Création des spans pour chaque mot
+    const allNodes = Array.from(container.childNodes);
+    const wordSpans = [];
+    container.innerHTML = '';
+    
+    allNodes.forEach(node => {
+        if(node.nodeType === 3) { // Texte
+            node.textContent.split(' ').forEach(txt => {
+                if(!txt.trim()) return;
+                const s = document.createElement('span');
+                s.textContent = txt + ' ';
+                s.style.display = 'inline-block';
+                container.appendChild(s);
+                wordSpans.push(s);
+            });
+        } else { // Élément (ex: strong)
+            const s = document.createElement('span');
+            s.innerHTML = node.outerHTML + ' ';
+            s.style.display = 'inline-block';
+            container.appendChild(s);
+            wordSpans.push(s);
         }
     });
 
-    document.querySelectorAll('a.unavailable').forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            alert("Ce site n'est pas accessible pour l'instant");
+    // Regroupement par lignes visuelles
+    let lines = [];
+    let currentLine = [];
+    let lastTop = wordSpans[0].offsetTop;
+
+    wordSpans.forEach(span => {
+        if (span.offsetTop > lastTop + 5) {
+            lines.push(currentLine);
+            currentLine = [];
+            lastTop = span.offsetTop;
+        }
+        currentLine.push(span);
+    });
+    lines.push(currentLine);
+
+    // Injection du HTML structuré
+    container.innerHTML = '';
+    lines.forEach((line, i) => {
+        const div = document.createElement('div');
+        div.className = 'text-line';
+        // Petit délai incrémental pour fluidité, mais l'apparition dépend surtout du scroll
+        div.style.transitionDelay = `${i * 0.05}s`; 
+        line.forEach(s => div.innerHTML += s.innerHTML);
+        container.appendChild(div);
+    });
+
+    // Observer configuré pour couper à 50% du viewport
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            e.target.classList.toggle('visible', e.isIntersecting);
         });
-        link.style.cursor = 'not-allowed';
+    }, { 
+        threshold: 0,
+        rootMargin: "0px 0px -25% 0px"
     });
+    
+    document.querySelectorAll('.text-line').forEach(l => obs.observe(l));
 }
 
-// initBottomFixedSections removed: behaviour disabled
-function initBottomFixedSections() { /* disabled */ }
+function initParallax() {
+    if(isMobile) return;
+    const section = document.querySelector('.about-me-section');
+    const text = document.querySelector('.about-me-text');
+    const img = document.querySelector('.about-me-image');
 
+    if(!section || !text || !img) return;
 
-
-// Render experiences from companies.json
-function renderExperienceFromCompanies() {
-    const list = document.querySelector('.experience-list');
-    if (!list) return;
-    list.innerHTML = '';
-    const companies = companiesManager.getAllCompanies();
-    companies.forEach(company => {
-        const item = document.createElement('div');
-        item.className = 'experience-item';
-        item.setAttribute('data-company', company.name);
-
-        const img = document.createElement('img');
-        img.className = 'experience-logo';
-        img.src = company.logo || '';
-        img.alt = company.name || '';
-
-        const text = document.createElement('div');
-        text.className = 'experience-text';
-
-        const h3 = document.createElement('h3');
-        h3.textContent = company.role ? `${company.name} — ${company.role}` : company.name;
-
-        const date = document.createElement('div');
-        date.className = 'experience-date';
-        date.textContent = company.period || '';
-
-        text.appendChild(h3);
-        text.appendChild(date);
-
-        item.appendChild(img);
-        item.appendChild(text);
-
-        // Apply company class to let CSS handle colors (no inline borderColor)
-        const slug = company.name.toLowerCase().replace(/\s+/g, '');
-        item.classList.add(`company-${slug}`);
-
-        list.appendChild(item);
-    });
-    if (isMobileDevice()) setTimeout(performUpdateCenterElements, 50);
-}
-
-function updateBlurOnScroll() {
-    const scrollY = window.scrollY;
-    const maxScroll = 750; 
-    const maxBlur = 10; 
-    const blurAmount = Math.min(scrollY / maxScroll, 1) * maxBlur;
-    const brightness = 1 - Math.min(scrollY / maxScroll, 1) * 0.8; // From 1 to 0.2
-    document.documentElement.style.setProperty('--blur-amount', `${blurAmount}px`);
-    document.documentElement.style.setProperty('--brightness', brightness);
-}
-
-function updateCityTime() {
-  const el = document.getElementById('header-hour');
-  if (!el) return;
-  const now = new Date();
-  try {
-    const fmt = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', hour: 'numeric', minute: '2-digit', hour12: true });
-    el.textContent = fmt.format(now).toUpperCase();
-  } catch (e) {
-    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-    const parisOffset = 1;
-    const paris = new Date(utc + (3600000 * parisOffset));
-    let hours = paris.getHours();
-    const mins = paris.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12 || 12;
-    el.textContent = `${hours}:${mins.toString().padStart(2,'0')} ${ampm}`;
-  }
-}
-
-// Init
-document.addEventListener('DOMContentLoaded', function() {
-    forceMobileStyles();
-    // companiesManager.init().then(() => {
-    //     renderExperienceFromCompanies();
-    // });
-    initCenterDetection();
-
-    initCursorIfDesktop();
-    initNavHandlers();
-    initUnavailableLinks();
-
-    // Age: compute and insert ages from spans with data-dob
-    computeAndInsertAges();
-
-    // City time
-    updateCityTime();
-    setInterval(updateCityTime, 15000);
-
-    // Optimized blur effect on scroll (throttled with rAF)
-    let blurTicking = false;
+    let ticking = false;
     window.addEventListener('scroll', () => {
-        if (!blurTicking) {
-            requestAnimationFrame(() => {
-                updateBlurOnScroll();
-                blurTicking = false;
+        if(!ticking) {
+            window.requestAnimationFrame(() => {
+                const rect = section.getBoundingClientRect();
+                const viewH = window.innerHeight;
+                
+                // Active l'effet seulement quand la section est visible
+                if(rect.top < viewH && rect.bottom > 0) {
+                    const center = (rect.top + rect.height/2) - viewH/2;
+                    text.style.transform = `translateY(${center * 0.1}px)`;
+                    img.style.transform = `translateY(${center * -0.15}px)`;
+                }
+                ticking = false;
             });
-            blurTicking = true;
+            ticking = true;
         }
     }, { passive: true });
+}
 
-    if (isMobileDevice()) setTimeout(performUpdateCenterElements, 250);
+function initTitleAnimation() {
+    const el = document.getElementById('site-title');
+    if (!el) return;
+    // Prevent double init
+    if (el.dataset._init) return; el.dataset._init = '1';
 
+    const text = el.textContent;
+    el.innerHTML = '';
+    const chars = Array.from(text);
+    const spans = chars.map((ch, i) => {
+        const s = document.createElement('span');
+        s.className = 'site-title-letter';
+        s.textContent = ch === ' ' ? '\u00A0' : ch;
+        // give each letter a small delay via inline style (fallback)
+        s.style.transitionDelay = `${i * 0.06}s`;
+        el.appendChild(s);
+        return s;
+    });
 
-});
+    // Stagger the activation so letters slide up one after another
+    spans.forEach((s, i) => {
+        setTimeout(() => s.classList.add('visible'), i * 60 + 50);
+    });
+
+    // No color fill — keep title color as inverted mix-blend-mode throughout
+    // (no-op)
+}
+
+function animateProjectPreview() {
+  if (!projectPreviewImg || projectPreviewImg.style.display !== 'block') return;
+  previewCurrentX += (previewTargetX - previewCurrentX) * 0.18;
+  previewCurrentY += (previewTargetY - previewCurrentY) * 0.18;
+  projectPreviewImg.style.left = previewCurrentX + 'px';
+  projectPreviewImg.style.top = previewCurrentY + 'px';
+  previewAnimFrame = requestAnimationFrame(animateProjectPreview);
+}
+
+function showProjectPreview(imgUrl, x, y) {
+  if (!projectPreviewImg) {
+    projectPreviewImg = document.createElement('img');
+    projectPreviewImg.className = 'project-preview-img';
+    document.body.appendChild(projectPreviewImg);
+  }
+  projectPreviewImg.src = imgUrl;
+  projectPreviewImg.style.display = 'block';
+  // Décalage de 10vh à droite, centré verticalement sur le curseur
+  const size = 20 * window.innerHeight / 100; // 20vh en px
+  previewTargetX = x + (10 * window.innerHeight / 100);
+  previewTargetY = y - size / 2;
+  if (!previewAnimFrame) animateProjectPreview();
+}
+
+function hideProjectPreview() {
+  if (projectPreviewImg) projectPreviewImg.style.display = 'none';
+  cancelAnimationFrame(previewAnimFrame);
+  previewAnimFrame = null;
+}
+
+function loadFeaturedProjects() {
+  fetch('projects.json')
+    .then(res => res.json())
+    .then(data => {
+      const list = document.querySelector('.featured-list');
+      if (!list) return;
+      list.innerHTML = '';
+      data.projects.forEach(project => {
+        const a = document.createElement('a');
+        a.className = 'featured-project';
+        a.textContent = project.title;
+        if (project.path && !project.path.startsWith('http')) {
+          a.href = project.path + '/';
+        } else {
+          a.href = project.path;
+        }
+        a.target = '_blank';
+        if (project.creator && project.creator.trim()) {
+          const author = document.createElement('span');
+          author.className = 'featured-author';
+          author.textContent = ` ${project.creator}`;
+          a.appendChild(author);
+        }
+        // Image de hover automatique selon l'id
+        const imgPath = `Elements/image/${project.id}-banner.png`;
+        a.addEventListener('mouseenter', e => {
+          showProjectPreview(imgPath, e.clientX, e.clientY);
+          document.querySelector('.cursor')?.classList.add('cursor--small');
+        });
+        a.addEventListener('mousemove', e => {
+          showProjectPreview(imgPath, e.clientX, e.clientY);
+        });
+        a.addEventListener('mouseleave', e => {
+          hideProjectPreview();
+          document.querySelector('.cursor')?.classList.remove('cursor--small');
+        });
+        a.addEventListener('focus', () => document.querySelector('.cursor')?.classList.add('cursor--small'));
+        a.addEventListener('blur', () => document.querySelector('.cursor')?.classList.remove('cursor--small'));
+        list.appendChild(a);
+      });
+    });
+}

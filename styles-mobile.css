@@ -87,7 +87,7 @@ screen and (max-device-width:1440px) and (-webkit-device-pixel-ratio:3) and (ori
   * {
     box-sizing: border-box
   }
-  .bg {
+  .noise {
     background-size: 50%;
     animation: bg-animation .3s infinite
   }
