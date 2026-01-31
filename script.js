@@ -210,14 +210,14 @@ function initTitleAnimation() {
         s.className = 'site-title-letter';
         s.textContent = ch === ' ' ? '\u00A0' : ch;
         // give each letter a small delay via inline style (fallback)
-        s.style.transitionDelay = `${i * 0.06}s`;
+        s.style.transitionDelay = `${i * 0.03}s`;
         el.appendChild(s);
         return s;
     });
 
     // Stagger the activation so letters slide up one after another
     spans.forEach((s, i) => {
-        setTimeout(() => s.classList.add('visible'), i * 60 + 50);
+        setTimeout(() => s.classList.add('visible'), i * 30 + 50);
     });
 
     // No color fill — keep title color as inverted mix-blend-mode throughout

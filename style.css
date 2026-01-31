@@ -201,9 +201,9 @@ section {
 
 .site-title-letter {
     display: inline-block;
-    transform: translateY(100%);
+    transform: translateY(50px);
     opacity: 0;
-    transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 300ms ease-in-out, opacity 300ms ease-in-out;
     will-change: transform, opacity;
 }
 
@@ -356,13 +356,12 @@ section {
 
 .project-preview-img {
     position: fixed;
-    z-index: 20000;
-    width: 20vh;
+    z-index: 3;
+    width: auto;
     height: 20vh;
     object-fit: cover;
     pointer-events: none;
     border-radius: 0;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
     background: #222;
     display: none;
     transition: opacity 0.15s;
