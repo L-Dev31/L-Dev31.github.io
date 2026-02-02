@@ -31,6 +31,8 @@
 
 <div class="noise"></div>
 
+<video class="bg-video" src="Elements/image/bg.mp4" autoplay loop muted playsinline data-parallax-speed="25"></video>
+
 <section id="header">
     <div class="header-content">
         <h1 id="site-title">Léo TOSKU</h1>
@@ -46,21 +48,38 @@
         <div class="about-me-text" id="split-text">
             As a <strong>graphic designer</strong>, I help brands and projects create unique digital experiences where <strong>creativity</strong>, <strong>precision</strong>, and <strong>functionality</strong> come together to make a lasting impact.
         </div>
-        <div class="about-me-image">
-            <img src="Elements/image/LéoTosku.jpg" alt="Léo Tosku portrait" />
+        <div class="about-me-image" data-parallax-speed="90">
+            <img src="Elements/image/LéoTosku.jpg" data-parallax-speed="80" alt="Léo Tosku portrait" />
         </div>
     </div>
 </section>
 
 <div class="experience-list" id="companies-logos"></div>
 
-<video class="bg-video" src="Elements/image/bg.mp4" autoplay loop muted playsinline></video>
-
 <section id="featured-projects" class="featured-projects-section">
-  <h2 class="featured-title">Featured Projects</h2>
+  <h2 class="title">Featured Projects</h2>
   <div class="featured-list">
     <!-- Les projets seront injectés ici par JS -->
   </div>
+</section>
+
+<section id="footer">
+    <div class="footer-content">
+    </div>
+    <div class="footer-right">
+        <ul class="footer-nav">
+            <li><a href="#about-me">About Me</a></li>
+            <li><a href="#featured-projects">Featured Projects</a></li>
+            <li><a href="info.html">Info</a></li>
+            <li><a href="#">Legal</a></li>
+        </ul>
+        <div class="social-links">
+            <a href="#" class="social-link" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="#" class="social-link" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="#" class="social-link" target="_blank"><i class="fab fa-behance"></i></a>
+        </div>
+    </div>
 </section>
 
 <script src="script.js"></script>
