@@ -663,23 +663,98 @@ function getBestDataDate(symbol) {
     return '';
 }
 
+const TYPE_ICONS = {
+    equity: 'fa-solid fa-building-columns',
+    commodity: 'fa-solid fa-coins',
+    crypto: 'fa-brands fa-bitcoin',
+};
+
+const TYPE_LABELS = {
+    equity: 'Actions',
+    commodity: 'Matières Premières',
+    crypto: 'Cryptos',
+};
+
+function ensureSection(containerId, type) {
+    const container = document.getElementById(containerId);
+    if (!container) return null;
+    
+    // Expected section ID based on container ID
+    const prefix = containerId.replace('tabs', 'section');
+    const sectionId = `${prefix}-${type}`;
+    
+    let section = document.getElementById(sectionId);
+    if (!section) {
+        section = document.createElement('div');
+        section.className = 'tab-type-section';
+        section.id = sectionId;
+        
+        const label = TYPE_LABELS[type] || type.charAt(0).toUpperCase() + type.slice(1);
+        const iconClass = TYPE_ICONS[type] || 'fa-solid fa-layer-group';
+        
+        const title = document.createElement('div');
+        title.className = 'tab-type-title';
+        title.innerHTML = `<i class="${iconClass} type-icon"></i>${label}`;
+        
+        section.appendChild(title);
+        container.appendChild(section);
+    }
+    return section;
+}
+
 export function markTabAsSuspended(symbol) {
     const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
-    if (!tab || tab.classList.contains('suspended')) return;
-    tab.classList.add('suspended');
+    if (!tab) return;
+    
     if (positions[symbol]) {
         positions[symbol].suspended = true;
     }
+    
+    // Always call this to ensure we move it if it's not in the right place
+    const inSuspended = tab.closest('#suspended-tabs');
+    if (tab.classList.contains('suspended') && inSuspended) return;
+
+    tab.classList.add('suspended');
     console.log(`📛 Tab ${symbol} marqué comme suspendu`);
+
+    const pos = positions[symbol];
+    if (!pos) return;
+
+    const calculated = calculateStockValues(pos);
+    const hasTransactions = (pos.purchases && pos.purchases.length > 0) || (pos.sales && pos.sales.length > 0);
+    const isPortfolio = calculated.shares > 0 || hasTransactions;
+
+    if (isPortfolio) return;
+
+    const type = pos.type || 'equity';
+    const section = ensureSection('suspended-tabs', type);
+    if (section) section.appendChild(tab);
 }
 
 export function unmarkTabAsSuspended(symbol) {
     const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
-    if (!tab || !tab.classList.contains('suspended')) return;
-    tab.classList.remove('suspended');
+    if (!tab) return;
+
     if (positions[symbol]) {
         positions[symbol].suspended = false;
     }
+
+    if (!tab.classList.contains('suspended') && !tab.closest('#suspended-tabs')) return;
+
+    tab.classList.remove('suspended');
+    console.log(`✅ Tab ${symbol} rétabli (non suspendu)`);
+
+    // Move back to original section
+    const pos = positions[symbol];
+    if (!pos) return;
+
+    const calculated = calculateStockValues(pos);
+    const hasTransactions = (pos.purchases && pos.purchases.length > 0) || (pos.sales && pos.sales.length > 0);
+    const isPortfolio = calculated.shares > 0 || hasTransactions;
+    
+    const containerId = isPortfolio ? 'portfolio-tabs' : 'general-tabs';
+    const section = ensureSection(containerId, pos.type);
+    if (section) section.appendChild(tab);
 }
 
 export async function setApiStatus(symbol, status, opts = {}) {

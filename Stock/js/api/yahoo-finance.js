@@ -1,14 +1,13 @@
 import globalRateLimiter from '../rate-limiter.js';
 import { filterNullOHLCDataPoints } from '../utils.js';
 
-const PROXIES = [        
-    'https://corsproxy.io/?',                            
-    'https://api.allorigins.win/raw?url=',          
-    'https://proxy.cors.sh/',           
-    'https://api.codetabs.com/v1/proxy?quest=',           
-    'https://thingproxy.freeboard.io/fetch/',     
+const PROXIES = [
+    'https://corsproxy.io/?',
+    'https://api.codetabs.com/v1/proxy?quest='
 ];
 let currentProxyIndex = 0;
+const BASES = ['https://query1.finance.yahoo.com', 'https://query2.finance.yahoo.com'];
+let baseIndex = 0;
 
 const PERIODS = {
     '1D': { interval: '1m', range: '1d' },
@@ -41,12 +40,13 @@ async function yahooFetch(targetUrl, signal) {
             if (r.status === 429) {
                 globalRateLimiter.setRateLimitForApi('yahoo', 60000);
                 lastError = { error: true, errorCode: 429, throttled: true, proxy: proxy };
-                continue; // Try next proxy
+                await new Promise(r => setTimeout(r, 1200 + Math.random() * 900));
+                continue;
             }
 
             if (!r.ok) {
                 lastError = { error: true, errorCode: r.status, proxy: proxy };
-                continue; // Try next proxy
+                continue;
             }
 
             currentProxyIndex = proxyIndex;
@@ -210,6 +210,133 @@ export async function fetchYahooDividends(ticker, from, to, signal) {
     }
     
     return lastError || { source: 'yahoo', error: true, errorCode: 'ALL_PROXIES_FAILED' };
+}
+
+export function normalizeYahooSymbol(sym) {
+    const upper = (sym || '').toUpperCase();
+    const classMatch = upper.match(/^([A-Z]+)\.([A-Z])$/);
+    if (classMatch) return `${classMatch[1]}-${classMatch[2]}`;
+    const prefMatch = upper.match(/^([A-Z]+)\/P([A-Z]+)$/);
+    if (prefMatch) return `${prefMatch[1]}-P${prefMatch[2]}`;
+    if (upper.includes('/')) return upper.replaceAll('/', '-');
+    return upper;
+}
+
+export function isYahooSparkFriendly(sym) {
+    if (!sym) return false;
+    const upper = sym.toUpperCase();
+    if (!/^[A-Z0-9.-]{1,24}$/.test(upper)) return false;
+    if (upper.includes('--') || upper.includes('..')) return false;
+    return true;
+}
+
+function getNextBase() {
+    const base = BASES[baseIndex % BASES.length];
+    baseIndex += 1;
+    return base;
+}
+
+export async function fetchYahooScreener(scrIds, offset = 0, count = 200, signal) {
+    const url = `https://query2.finance.yahoo.com/v1/finance/screener/predefined/saved?scrIds=${scrIds}&count=${count}&offset=${offset}`;
+    const j = await yahooFetch(url, signal);
+    const result = j?.finance?.result?.[0];
+    return { quotes: result?.quotes || [], total: result?.total || 0 };
+}
+
+export async function fetchYahooChartSnapshot(symbol, range = '1d', interval = '1m', signal) {
+    const norm = normalizeYahooSymbol(symbol);
+    const base = getNextBase();
+    const url = `${base}/v8/finance/chart/${encodeURIComponent(norm)}?range=${range}&interval=${interval}`;
+    const j = await yahooFetch(url, signal);
+    if (j?.error) return null;
+    return j?.chart?.result?.[0] || null;
+}
+
+export async function fetchYahooSparkBatch(symbols, range = '1d', interval = '1m', signal) {
+    const base = getNextBase();
+    const url = `${base}/v7/finance/spark?symbols=${symbols.join(',')}&range=${range}&interval=${interval}&includePrePost=false`;
+    const j = await yahooFetch(url, signal);
+    if (j?.error) return null;
+    return j?.spark?.result || [];
+}
+
+export async function fetchYahooPeriodChanges(symbols, range, interval, onProgress) {
+    if (!symbols.length) return {};
+    const changes = {};
+    const safeSymbols = symbols.filter(isYahooSparkFriendly);
+    const batchSize = 20;
+    const stepDelay = 600;
+    let completed = 0;
+
+    const parseChartPayload = (payload, symbolKey) => {
+        const resp = payload?.response?.[0];
+        const quote = resp?.indicators?.quote?.[0];
+        const closes = quote?.close;
+        if (!closes || closes.length < 2) return null;
+
+        const cleanData = { prices: [], highs: [], lows: [], volumes: [] };
+        for (let k = 0; k < closes.length; k++) {
+            if (closes[k] !== null) {
+                cleanData.prices.push(closes[k]);
+                cleanData.highs.push(quote.high?.[k] || closes[k]);
+                cleanData.lows.push(quote.low?.[k] || closes[k]);
+                cleanData.volumes.push(quote.volume?.[k] || 0);
+            }
+        }
+
+        if (cleanData.prices.length === 0) return null;
+        const firstClose = cleanData.prices[0];
+        const lastClose = cleanData.prices[cleanData.prices.length - 1];
+
+        return {
+            change: lastClose - firstClose,
+            changePercent: ((lastClose - firstClose) / firstClose) * 100,
+            history: cleanData,
+            symbol: symbolKey
+        };
+    };
+
+    const fetchSingleChart = async (sym) => {
+        const res = await fetchYahooChartSnapshot(sym, range, interval);
+        if (!res) return;
+        const parsed = parseChartPayload({ response: [res] }, sym);
+        if (parsed) changes[sym] = parsed;
+    };
+
+    for (let i = 0; i < safeSymbols.length; i += batchSize) {
+        const batch = safeSymbols.slice(i, i + batchSize);
+        let sparkFailed = false;
+
+        try {
+            const results = await fetchYahooSparkBatch(batch, range, interval);
+            if (!results) {
+                sparkFailed = true;
+            } else {
+                results.forEach(entry => {
+                    const parsed = parseChartPayload(entry, entry.symbol);
+                    if (parsed) changes[entry.symbol] = parsed;
+                });
+            }
+        } catch (e) {
+            sparkFailed = true;
+        }
+
+        if (sparkFailed) {
+            for (const sym of batch) {
+                await fetchSingleChart(sym);
+                await new Promise(r => setTimeout(r, 120));
+            }
+        }
+
+        completed += batch.length;
+        if (onProgress) onProgress(completed, safeSymbols.length, false);
+
+        if (i + batchSize < safeSymbols.length) {
+            await new Promise(r => setTimeout(r, stepDelay));
+        }
+    }
+
+    return changes;
 }
 
 export async function fetchYahooOptions(ticker, date, signal) {

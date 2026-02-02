@@ -48,6 +48,14 @@
                     </h3>
                     <div class="tabs general" id="general-tabs"></div>
                 </div>
+
+                <div class="sidebar-section" id="sidebar-suspended">
+                    <h3 class="sidebar-section-title">Suspendus
+                        <button class="section-toggle" aria-expanded="true" aria-controls="suspended-tabs"><i class="fa-solid fa-chevron-down"></i></button>
+                    </h3>
+                    <div class="tabs suspended" id="suspended-tabs"></div>
+                </div>
+                
             </div>
             <div id="api-status-indicator"></div>
         </div>
@@ -157,6 +165,18 @@
                                         <option value="consumer">Consommation</option>
                                     </select>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="explorer-limit-control">
+                            <div class="explorer-limit-label">
+                                <span>Max tickers à fetch</span>
+                                <span id="explorer-limit-value">300</span>
+                            </div>
+                            <input id="explorer-max-tickers" class="explorer-limit-range" type="range" min="50" max="600" step="50" value="300" />
+                            <div class="explorer-limit-scale">
+                                <span class="explorer-limit-safe">OK</span>
+                                <span class="explorer-limit-danger">Limite Yahoo ~200</span>
                             </div>
                         </div>
                     </div>

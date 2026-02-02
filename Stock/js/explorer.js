@@ -1,11 +1,22 @@
+import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } from './api/yahoo-finance.js';
+
 // Removed IIFE wrapper
 {
     'use strict';
-
-    const YAHOO_PROXY = 'https://corsproxy.io/?';
+    // Ordered by reliability; keep the list short to reduce CORS issues
+    const PROXIES = [
+        'https://corsproxy.io/?',
+        'https://api.codetabs.com/v1/proxy?quest='
+    ];
+    let currentProxyIndex = 0;
     const ITEMS_PER_PAGE = 10;
     const SCREENER_BATCH_SIZE = 250;
-    const MAX_TOTAL_RESULTS = 1000;
+    const HARD_MAX_RESULTS = 1000;
+    const YAHOO_SAFE_LIMIT = 200;
+    const MAX_TICKERS_MIN = 50;
+    const MAX_TICKERS_MAX = 600;
+    const DEFAULT_MAX_TICKERS = 300;
+    let maxFetchTickers = DEFAULT_MAX_TICKERS;
 
     let currentPage = 1;
     let currentResults = [];
@@ -53,6 +64,49 @@
     let cryptoSymbols = new Set();
 
     let marketsData = [];
+
+
+    async function fetchJsonWithProxy(targetUrl, options = {}, expect = 'json') {
+        let lastError = null;
+        const preparedBody = options.body;
+
+        for (let i = 0; i < PROXIES.length; i++) {
+            const proxyIndex = (currentProxyIndex + i) % PROXIES.length;
+            const proxy = PROXIES[proxyIndex];
+            const finalOptions = preparedBody ? { ...options, body: preparedBody } : { ...options };
+
+            try {
+                const proxiedUrl = `${proxy}${encodeURIComponent(targetUrl)}`;
+                const res = await fetch(proxiedUrl, {
+                    ...finalOptions,
+                    cache: 'no-store'
+                });
+
+                if (res.status === 403 || res.status === 429) {
+                    // soften bursts before trying next proxy
+                    await new Promise(r => setTimeout(r, 1600 + Math.random() * 700));
+                    lastError = new Error(`HTTP_${res.status}`);
+                    continue;
+                }
+
+                if (!res.ok) {
+                    lastError = new Error(`HTTP_${res.status}`);
+                    continue;
+                }
+
+                currentProxyIndex = proxyIndex;
+
+                if (expect === 'text') return await res.text();
+                return await res.json();
+            } catch (e) {
+                // network/CORS issues: brief pause then rotate
+                await new Promise(r => setTimeout(r, 350));
+                lastError = e;
+            }
+        }
+
+        throw lastError || new Error('ALL_PROXIES_FAILED');
+    }
 
     async function loadMarkets() {
         try {
@@ -157,19 +211,35 @@
         return null;
     }
 
+    function buildOnlineIconCandidates(symbol, market) {
+        const candidates = [];
+        const seen = new Set();
+        const upper = (symbol || '').toUpperCase();
+        const base = upper.split('.')[0].split('-')[0].split('/')[0];
+        const isCrypto = market === 'crypto' || cryptoSymbols.has(base) || upper.endsWith('-USD');
+
+        const add = (url) => {
+            if (url && !seen.has(url)) {
+                seen.add(url);
+                candidates.push(url);
+            }
+        };
+
+        if (isCrypto) {
+            const lower = base.toLowerCase();
+            add(`https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/${lower}.png`);
+            add(`https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/black/${lower}.png`);
+        } else {
+            const variants = [upper, upper.replace('.', '-'), upper.split('.')[0], base].filter(Boolean);
+            variants.forEach(v => add(`https://storage.googleapis.com/iex/api/logos/${v}.png`));
+        }
+
+        return candidates;
+    }
+
     async function fetchScreener(scrIds, offset = 0, count = SCREENER_BATCH_SIZE) {
         try {
-            const r = await fetch(`${YAHOO_PROXY}https://query2.finance.yahoo.com/v1/finance/screener/predefined/saved?scrIds=${scrIds}&count=${count}&offset=${offset}`, {
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                    'Origin': 'https://finance.yahoo.com',
-                    'Referer': 'https://finance.yahoo.com/'
-                }
-            });
-            if (!r.ok) return { quotes: [], total: 0 };
-            const j = await r.json();
-            const result = j.finance?.result?.[0];
-            return { quotes: result?.quotes || [], total: result?.total || 0 };
+            return await fetchYahooScreener(scrIds, offset, count);
         } catch (e) {
             return { quotes: [], total: 0 };
         }
@@ -180,14 +250,16 @@
         const first = await fetchScreener(scrIds, 0, SCREENER_BATCH_SIZE);
         allQuotes = first.quotes;
         let total = first.total;
+        const maxTotal = Math.min(maxFetchTickers, HARD_MAX_RESULTS);
 
-        while (allQuotes.length < total && allQuotes.length < MAX_TOTAL_RESULTS && first.quotes.length === SCREENER_BATCH_SIZE) {
-            showLoadingProgress(allQuotes.length, Math.min(total, MAX_TOTAL_RESULTS));
+        while (allQuotes.length < total && allQuotes.length < maxTotal && first.quotes.length === SCREENER_BATCH_SIZE) {
+            showLoadingProgress(allQuotes.length, Math.min(total, maxTotal));
             const batch = await fetchScreener(scrIds, allQuotes.length, SCREENER_BATCH_SIZE);
             if (batch.quotes.length === 0) break;
             allQuotes = allQuotes.concat(batch.quotes);
             if (batch.quotes.length < SCREENER_BATCH_SIZE) break;
         }
+        if (allQuotes.length > maxTotal) allQuotes = allQuotes.slice(0, maxTotal);
         return allQuotes;
     }
 
@@ -273,16 +345,7 @@
     async function fetchStockDetails(symbol, marketId = 'euronext', defaultEligibility = 'cto') {
         const fetchOne = async (sym) => {
             try {
-                const r = await fetch(`${YAHOO_PROXY}https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?range=1d&interval=1m`, {
-                    headers: {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                        'Origin': 'https://finance.yahoo.com',
-                        'Referer': 'https://finance.yahoo.com/'
-                    }
-                });
-                if (!r.ok) return null;
-                const data = await r.json();
-                const result = data.chart?.result?.[0];
+                const result = await fetchYahooChartSnapshot(sym, '1d', '1m');
                 if (!result) return null;
 
                 const meta = result.meta || {};
@@ -336,137 +399,89 @@
         let completed = 0;
         showLoadingProgress(0, `Loading (${symbols.length})...`);
 
-        const batchSize = 10;
-        for (let i = 0; i < symbols.length; i += batchSize) {
-            const batch = symbols.slice(i, i + batchSize);
+        const BATCH_SIZE = 6;
+        const STEP_DELAY = 150;
+        const COOLDOWN_EVERY = 200;
+        const COOLDOWN_MS = 1200;
+
+        for (let i = 0; i < symbols.length; i += BATCH_SIZE) {
+            const batch = symbols.slice(i, i + BATCH_SIZE);
             const results = await Promise.allSettled(batch.map(s => fetchStockDetails(s, marketId, defaultEligibility)));
-            results.forEach((r, idx) => {
+            results.forEach((r) => {
                 if (r.status === 'fulfilled' && r.value) {
                     items.push(r.value);
                 }
             });
             completed += batch.length;
             showLoadingProgress(completed, symbols.length);
-            if (i + batchSize < symbols.length) await new Promise(r => setTimeout(r, 100));
+
+            if (completed < symbols.length) {
+                if (completed % COOLDOWN_EVERY === 0) {
+                    await new Promise(r => setTimeout(r, COOLDOWN_MS));
+                } else {
+                    await new Promise(r => setTimeout(r, STEP_DELAY));
+                }
+            }
         }
         return items;
     }
 
-    async function fetchPeriodChanges(symbols, period, onProgress) {
-        if (!symbols.length) return {};
-        const config = PERIOD_CONFIG[period] || PERIOD_CONFIG['1D'];
-        const changes = {};
-        let completed = 0;
-        
-        // "Retire les protections" : Vitesse plus élevée
-        const BATCH_SIZE = 12;          
-        const STEP_DELAY = 150;         
-        
-        // Reload API tous les 400 tickers
-        const RELOAD_THRESHOLD = 400;
-        
-        // On commence par query2, puis on alternera
-        let currentBase = 'https://query2.finance.yahoo.com';
-
-        for (let chunkStart = 0; chunkStart < symbols.length; chunkStart += RELOAD_THRESHOLD) {
-            const chunkSymbols = symbols.slice(chunkStart, chunkStart + RELOAD_THRESHOLD);
-            
-            // Si ce n'est pas le premier bloc, on simule un "Reload API"
-            if (chunkStart > 0) {
-                if (onProgress) onProgress(completed, symbols.length, true, "Reloading API (20s)...");
-                // Pause significative pour laisser retomber la pression (20s selon recherche)
-                await new Promise(r => setTimeout(r, 20000));
-                // Rotation du endpoint
-                currentBase = currentBase.includes('query2') ? 'https://query1.finance.yahoo.com' : 'https://query2.finance.yahoo.com';
-            }
-
-            for (let i = 0; i < chunkSymbols.length; i += BATCH_SIZE) {
-                const batch = chunkSymbols.slice(i, i + BATCH_SIZE);
-                const results = await Promise.allSettled(batch.map(async sym => {
-                    try {
-                        const r = await fetch(`${YAHOO_PROXY}${currentBase}/v8/finance/chart/${encodeURIComponent(sym)}?range=${config.range}&interval=${config.interval}`, {
-                            headers: {
-                                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                                'Origin': 'https://finance.yahoo.com',
-                                'Referer': 'https://finance.yahoo.com/'
-                            }
-                        });
-                        
-                        if (r.status === 403 || r.status === 429) return { error: 'limit' };
-                        if (!r.ok) return null;
-                        
-                        const data = await r.json();
-                        const res = data.chart?.result?.[0];
-                        const quote = res?.indicators?.quote?.[0];
-                        const closes = quote?.close;
-                        
-                        if (!closes || closes.length < 2) return null;
-
-                        const cleanData = { prices: [], highs: [], lows: [], volumes: [] };
-                        for(let k=0; k<closes.length; k++) {
-                            if (closes[k] !== null) {
-                                cleanData.prices.push(closes[k]);
-                                cleanData.highs.push(quote.high?.[k] || closes[k]);
-                                cleanData.lows.push(quote.low?.[k] || closes[k]);
-                                cleanData.volumes.push(quote.volume?.[k] || 0);
-                            }
-                        }
-
-                        if (cleanData.prices.length === 0) return null;
-                        const firstClose = cleanData.prices[0];
-                        const lastClose = cleanData.prices[cleanData.prices.length - 1];
-                        
-                        return { 
-                            change: lastClose - firstClose, 
-                            changePercent: ((lastClose - firstClose) / firstClose) * 100,
-                            history: cleanData 
-                        };
-                    } catch (e) { return null; }
-                }));
-
-                results.forEach((r, idx) => { 
-                    if (r.status === 'fulfilled' && r.value && !r.value.error) {
-                        changes[batch[idx]] = r.value; 
-                    }
-                });
-
-                completed += batch.length;
-                if (onProgress) onProgress(completed, symbols.length, false);
-                
-                if (i + BATCH_SIZE < chunkSymbols.length) await new Promise(r => setTimeout(r, STEP_DELAY));
-            }
-        }
-        return changes;
-    }
 
     async function fetchTradingViewStocks(region, exchangeFilter) {
-        try {
-            const r = await fetch(`${YAHOO_PROXY}https://scanner.tradingview.com/${region}/scan`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    filter: [{ left: "type", operation: "in_range", right: ["stock", "dr", "fund"] }],
-                    options: { lang: "en" },
-                    columns: ["name", "exchange", "description"],
-                    sort: { sortBy: "market_cap_basic", sortOrder: "desc" },
-                    range: [0, 40]
-                })
-            });
-            if (!r.ok) return [];
-            const data = await r.json();
-            
-            return data.data.map(d => {
+        const symbols = [];
+        const seen = new Set();
+        const batchSize = 200;
+        const maxTotal = Math.min(maxFetchTickers, 1200);
+
+        const basePayload = {
+            filter: [{ left: 'type', operation: 'in_range', right: ['stock', 'dr', 'fund'] }],
+            options: { lang: 'en' },
+            columns: ['name', 'exchange', 'description'],
+            sort: { sortBy: 'market_cap_basic', sortOrder: 'desc' }
+        };
+
+        for (let offset = 0; offset < maxTotal; offset += batchSize) {
+            const payload = { ...basePayload, range: [offset, offset + batchSize] };
+
+            let data;
+            try {
+                data = await fetchJsonWithProxy(`https://scanner.tradingview.com/${region}/scan`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) {
+                // If the first request fails, bail out; otherwise keep what we already fetched
+                if (symbols.length === 0) return [];
+                break;
+            }
+
+            const rows = data?.data || [];
+            if (!rows.length) break;
+
+            rows.forEach(d => {
                 const [exch, ticker] = d.s.split(':');
-                if (exchangeFilter && exch !== exchangeFilter && !exchangeFilter.includes(exch)) return null;
+                if (exchangeFilter && exch !== exchangeFilter && !exchangeFilter.includes(exch)) return;
 
                 const config = MARKET_CONFIG[region];
-                if (!config) return ticker;
+                let resolved = ticker;
 
-                if (config.resolve) return config.resolve(ticker, exch);
-                if (config.transform) return config.transform(ticker) + (config.suffix || '');
-                return ticker + (config.suffix || '');
-            }).filter(s => s);
-        } catch (e) { return []; }
+                if (config) {
+                    if (config.resolve) resolved = config.resolve(ticker, exch);
+                    else if (config.transform) resolved = config.transform(ticker) + (config.suffix || '');
+                    else resolved = ticker + (config.suffix || '');
+                }
+
+                if (!seen.has(resolved)) {
+                    seen.add(resolved);
+                    symbols.push(resolved);
+                }
+            });
+
+            if (rows.length < batchSize) break;
+        }
+
+        return symbols;
     }
 
     async function loadData() {
@@ -559,6 +574,8 @@
                             symbolsToFetch = [...new Set(allSymbols)]; // Unique symbols
                         }
 
+                        const maxTotal = Math.min(maxFetchTickers, HARD_MAX_RESULTS);
+                        symbolsToFetch = symbolsToFetch.slice(0, maxTotal);
                         items = await fetchStocksBatch(symbolsToFetch, currentEligibility, marketDef.id);
                         
                         // Post-process eligibility if we fetched multiple lists
@@ -592,7 +609,8 @@
 
                 if (items.length > 0) {
                     showLoadingProgress(0, `Analyse ${PERIOD_LABELS[period]}...`);
-                    const changes = await fetchPeriodChanges(items.map(i => i.symbol), period, (done, total, isPaused, msg) => {
+                    const config = PERIOD_CONFIG[period] || PERIOD_CONFIG['1D'];
+                    const changes = await fetchYahooPeriodChanges(items.map(i => i.symbol), config.range, config.interval, (done, total, isPaused, msg) => {
                         if (msg) showLoadingProgress(done, `${msg} ${done}/${total}`);
                         else if (isPaused) showLoadingProgress(done, `Pause API (Protection)... ${done}/${total}`);
                         else showLoadingProgress(done, `Analyse ${done}/${total}`);
@@ -716,6 +734,34 @@
             const item = e.target.closest('.explorer-item');
             if (item?.dataset.symbol) openStock(item.dataset.symbol);
         });
+        setupMaxTickerControl();
+    }
+
+    function setupMaxTickerControl() {
+        const slider = document.getElementById('explorer-max-tickers');
+        const valueEl = document.getElementById('explorer-limit-value');
+        if (!slider || !valueEl) return;
+
+        const applyValue = (raw) => {
+            const numeric = Number(raw) || DEFAULT_MAX_TICKERS;
+            const clamped = Math.min(MAX_TICKERS_MAX, Math.max(MAX_TICKERS_MIN, numeric));
+            maxFetchTickers = clamped;
+            slider.value = clamped;
+            valueEl.textContent = clamped;
+
+            const range = MAX_TICKERS_MAX - MAX_TICKERS_MIN;
+            const safePos = Math.max(0, Math.min(100, ((YAHOO_SAFE_LIMIT - MAX_TICKERS_MIN) / range) * 100));
+            slider.style.background = `linear-gradient(90deg, var(--color-positive) 0%, var(--color-positive) ${safePos}%, var(--color-negative) ${safePos}%, var(--color-negative) 100%)`;
+        };
+
+        slider.min = MAX_TICKERS_MIN;
+        slider.max = MAX_TICKERS_MAX;
+        slider.step = 50;
+        applyValue(slider.value);
+
+        slider.addEventListener('input', (e) => {
+            applyValue(e.target.value);
+        });
     }
 
     async function openStock(yahooSymbol) {
@@ -776,10 +822,11 @@
         if (logo) {
             logo.id = `logo-${symbol}`;
             logo.dataset.symbol = symbol;
-            logo.src = iconSymbol ? `icon/${iconSymbol}.png` : `logo/${symbol}.png`;
             logo.onerror = function() {
+                this.onerror = null;
                 this.parentElement.innerHTML = `<div class="logo-fallback"><div class="logo-name" title="${itemData.name || symbol}">${itemData.name || symbol}</div></div>`;
             };
+            logo.src = iconSymbol ? `icon/${iconSymbol}.png` : `logo/${symbol}.png`;
         }
 
         const generalTitle = card.querySelector('h3.section-title');
@@ -939,23 +986,34 @@
         const tabLogo = document.createElement('div');
         tabLogo.className = 'tab-logo';
         const iconSymbol = getIconSymbol(yahooSymbol);
+        const candidates = buildOnlineIconCandidates(yahooSymbol, itemData.market);
 
-        if (iconSymbol) {
-            const img = document.createElement('img');
-            img.src = `icon/${iconSymbol}.png`;
-            img.alt = yahooSymbol;
-            img.onerror = function() {
-                this.parentElement.innerHTML = `<div class="tab-logo-fallback" title="${yahooSymbol}">${yahooSymbol.slice(0, 4).toUpperCase()}</div>`;
-            };
-            tabLogo.appendChild(img);
-        } else {
+        const img = document.createElement('img');
+        img.alt = yahooSymbol;
+        img.onerror = function() {
+            if (candidates.length > 0) {
+                this.src = candidates.shift();
+                return;
+            }
+            this.onerror = null;
             const ticker = yahooSymbol.split('.')[0].toUpperCase();
             const fallback = document.createElement('div');
             fallback.className = 'tab-logo-fallback';
             fallback.textContent = ticker.length > 4 ? ticker.slice(0, 4) : ticker;
             fallback.title = yahooSymbol;
             fallback.style.fontSize = ticker.length > 4 ? Math.max(6, 12 - (ticker.length - 4) * 2) + 'px' : '12px';
-            tabLogo.appendChild(fallback);
+            this.parentElement.innerHTML = '';
+            this.parentElement.appendChild(fallback);
+        };
+
+        if (iconSymbol) {
+            img.src = `icon/${iconSymbol}.png`;
+            tabLogo.appendChild(img);
+        } else if (candidates.length > 0) {
+            img.src = candidates.shift();
+            tabLogo.appendChild(img);
+        } else {
+            img.onerror();
         }
 
         const tabInfo = document.createElement('div');
@@ -1011,13 +1069,27 @@
             const ticker = el.parentElement.dataset.symbol;
             if (!ticker) return;
             const iconSymbol = getIconSymbol(ticker);
+            const item = currentResults.find(i => i.symbol === ticker);
+            const candidates = buildOnlineIconCandidates(ticker, item?.market);
+
+            const img = new Image();
+            const setFallbackText = () => { el.innerHTML = ticker.slice(0, 2).toUpperCase(); };
+
+            img.onload = () => { el.innerHTML = `<img src="${img.src}" alt="${ticker}" />`; };
+            img.onerror = () => {
+                if (candidates.length > 0) {
+                    img.src = candidates.shift();
+                } else {
+                    setFallbackText();
+                }
+            };
+
             if (iconSymbol) {
-                const img = new Image();
-                img.onload = () => { el.innerHTML = `<img src="icon/${iconSymbol}.png" alt="${ticker}" />`; };
-                img.onerror = () => { el.innerHTML = ticker.slice(0, 2).toUpperCase(); };
                 img.src = `icon/${iconSymbol}.png`;
+            } else if (candidates.length > 0) {
+                img.src = candidates.shift();
             } else {
-                el.innerHTML = ticker.slice(0, 2).toUpperCase();
+                setFallbackText();
             }
         });
     }
@@ -1025,8 +1097,10 @@
     function renderItem(item) {
         const changeClass = item.changePercent >= 0 ? 'positive' : 'negative';
         const changeSign = item.changePercent >= 0 ? '+' : '';
-        const signalClass = item.isSuspended ? 'suspended' : item.isClosed ? 'closed' : item.signal;
-        const signalText = item.isSuspended ? 'Suspendu' : item.isClosed ? 'Fermé' : item.signal === 'buy' ? 'Achat' : item.signal === 'sell' ? 'Vente' : 'Neutre';
+        const isCrypto = item.market === 'crypto';
+        const isSuspended = item.isSuspended && !isCrypto;
+        const signalClass = isCrypto ? 'crypto' : isSuspended ? 'suspended' : item.isClosed ? 'closed' : item.signal;
+        const signalText = isCrypto ? 'Crypto' : isSuspended ? 'Suspendu' : item.isClosed ? 'Fermé' : item.signal === 'buy' ? 'Achat' : item.signal === 'sell' ? 'Vente' : 'Neutre';
         const formatPrice = p => p >= 1000 ? p.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : p >= 1 ? p.toFixed(2) : p.toFixed(4);
         const curr = item.currency === 'EUR' ? '€' : item.currency === 'GBP' ? '£' : '$';
         
@@ -1044,7 +1118,7 @@
         
         const trendInfo = `<div style="font-size:0.75rem;opacity:0.6;margin-top:2px;">Score: ${Math.round(item.trendingScore || 0)} • Vol: ${formatVolume(item.volume)}</div>`;
 
-        return `<div class="explorer-item ${item.isSuspended ? 'suspended' : ''}" data-symbol="${item.symbol}">
+        return `<div class="explorer-item ${isSuspended ? 'suspended' : ''}" data-symbol="${item.symbol}">
             <div class="explorer-item-logo">${item.symbol.slice(0, 2).toUpperCase()}</div>
             <div class="explorer-item-info">
                 <div class="explorer-item-name">${item.name}</div>

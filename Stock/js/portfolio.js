@@ -1,5 +1,5 @@
 import { positions, loadApiConfig, selectedApi, lastApiBySymbol, setPositions } from './state.js';
-import { createTab, createCard, updateSectionDates, setApiStatus, initChart } from './ui.js';
+import { createTab, createCard, updateSectionDates, setApiStatus, initChart, markTabAsSuspended } from './ui.js';
 import { fetchActiveSymbol } from './general.js'; 
 import { isYahooTickerSuspended } from './api/yahoo-finance.js';
 
@@ -195,11 +195,4 @@ export async function checkSuspendedTickers() {
         }));
         if (i + batchSize < symbols.length) await new Promise(r => setTimeout(r, 1500));
     }
-}
-
-function markTabAsSuspended(symbol) {
-    const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
-    if (!tab || tab.classList.contains('suspended')) return;
-    tab.classList.add('suspended');
-    if (positions[symbol]) positions[symbol].suspended = true;
 }
