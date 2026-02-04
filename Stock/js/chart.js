@@ -6,6 +6,81 @@ if (typeof Chart !== 'undefined' && Chart.register) {
     else if (window.chartjs?.plugins?.zoom) Chart.register(window.chartjs.plugins.zoom);
 }
 
+const DEFAULT_LINE_COLOR = '#a8a2ff';
+
+const hexToRgba = (hex, a) => {
+    if (!hex?.startsWith('#')) return null;
+    let r = 0, g = 0, b = 0;
+    if (hex.length === 4) {
+        r = parseInt(hex[1] + hex[1], 16);
+        g = parseInt(hex[2] + hex[2], 16);
+        b = parseInt(hex[3] + hex[3], 16);
+    } else if (hex.length === 7) {
+        r = parseInt(hex.slice(1, 3), 16);
+        g = parseInt(hex.slice(3, 5), 16);
+        b = parseInt(hex.slice(5, 7), 16);
+    }
+    return `rgba(${r},${g},${b},${a})`;
+};
+
+const resolveCssColor = (name, fallback) =>
+    getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+
+const buildLabel = (ts, period) => {
+    const d = new Date(ts * 1000);
+    switch (period) {
+        case '1D':
+            return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        case '1W':
+        case '1M':
+            return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+        case '6M':
+        case '1Y':
+            return d.toLocaleDateString('fr-FR', { month: '2-digit', year: '2-digit' });
+        case '5Y':
+            return d.getFullYear().toString();
+        default:
+            return d.toLocaleDateString('fr-FR');
+    }
+};
+
+const downsampleData = (ts, prices, opens, highs, lows, closes, maxPoints) => {
+    if (ts.length <= maxPoints) return { ts, prices, opens, highs, lows, closes };
+    const step = Math.ceil(ts.length / maxPoints);
+    const lastIdx = ts.length - 1;
+    const keep = (_, i) => i % step === 0 || i === lastIdx;
+
+    return {
+        ts: ts.filter(keep),
+        prices: prices.filter(keep),
+        opens: opens ? opens.filter(keep) : null,
+        highs: highs ? highs.filter(keep) : null,
+        lows: lows ? lows.filter(keep) : null,
+        closes: closes ? closes.filter(keep) : null
+    };
+};
+
+const buildGainLines = ({ ts, index, positions, symbol, price, opens, highs, lows, closes }) => {
+    const d = new Date(ts[index] * 1000);
+    const shares = positions[symbol]?.shares || 0;
+    const costBasis = positions[symbol]?.costBasis || 0;
+    const avgBuy = shares > 0 ? costBasis / shares : 0;
+    const gain = shares > 0 ? (price - avgBuy) * shares : 0;
+    const gainStr = `Gain/Perte: ${(gain >= 0 ? '+' : '') + gain.toFixed(2)}€`;
+
+    const lines = [
+        d.toLocaleDateString('fr-FR'),
+        d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    ];
+
+    if (opens && highs && lows && closes) {
+        lines.push('', `O: ${opens[index].toFixed(2)}`, `H: ${highs[index].toFixed(2)}`, `L: ${lows[index].toFixed(2)}`, `C: ${closes[index].toFixed(2)}`);
+    }
+
+    lines.push(gainStr);
+    return lines;
+};
+
 export function initChart(symbol, positions) {
     const canvas = document.getElementById(`chart-${symbol}`);
     if (!canvas) return;
@@ -63,30 +138,19 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
     const c = positions[symbol].chart;
     if (!c || !timestamps) return;
 
-    let ts = timestamps, p = prices, opens = fullData?.opens, highs = fullData?.highs, lows = fullData?.lows, closes = fullData?.closes;
+    const { ts, prices: p, opens, highs, lows, closes } =
+        source !== 'yahoo' ? downsampleData(timestamps, prices, fullData?.opens, fullData?.highs, fullData?.lows, fullData?.closes, 300)
+            : { ts: timestamps, prices, opens: fullData?.opens, highs: fullData?.highs, lows: fullData?.lows, closes: fullData?.closes };
 
-    if (source !== 'yahoo' && ts.length > 300) {
-        const step = Math.ceil(ts.length / 300);
-        const lastIdx = ts.length - 1;
-        const filterFn = (_, i) => i % step === 0 || i === lastIdx;
-        
-        ts = ts.filter(filterFn);
-        p = p.filter(filterFn);
-        if (opens) opens = opens.filter(filterFn);
-        if (highs) highs = highs.filter(filterFn);
-        if (lows) lows = lows.filter(filterFn);
-        if (closes) closes = closes.filter(filterFn);
-    }
-
-    const period = positions[symbol].currentPeriod || '1D', chartType = positions[symbol].chartType || 'line';
-    const labels = ts.map(t => { const d = new Date(t * 1000); switch (period) { case '1D': return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); case '1W': case '1M': return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }); case '6M': case '1Y': return d.toLocaleDateString('fr-FR', { month: '2-digit', year: '2-digit' }); case '5Y': return d.getFullYear().toString(); default: return d.toLocaleDateString('fr-FR'); } });
+    const period = positions[symbol].currentPeriod || '1D';
+    const chartType = positions[symbol].chartType || 'line';
+    const labels = ts.map(t => buildLabel(t, period));
 
     const type = (chartType === 'candle' && (!opens || !highs || !lows || !closes)) ? 'line' : chartType;
-    const hexToRgba = (hex, a) => { if (!hex?.startsWith('#')) return null; let r = 0, g = 0, b = 0; if (hex.length === 4) { r = parseInt(hex[1] + hex[1], 16); g = parseInt(hex[2] + hex[2], 16); b = parseInt(hex[3] + hex[3], 16); } else if (hex.length === 7) { r = parseInt(hex.slice(1, 3), 16); g = parseInt(hex.slice(3, 5), 16); b = parseInt(hex.slice(5, 7), 16); } return `rgba(${r},${g},${b},${a})`; };
 
     if (type === 'candle') {
-        const pos = getComputedStyle(document.documentElement).getPropertyValue('--color-positive').trim() || '#4caf50';
-        const neg = getComputedStyle(document.documentElement).getPropertyValue('--color-negative').trim() || '#ef4444';
+        const pos = resolveCssColor('--color-positive', '#4caf50');
+        const neg = resolveCssColor('--color-negative', '#ef4444');
         const colors = opens.map((o, i) => closes[i] >= o ? pos : neg);
         c.config.type = 'bar';
         c.data = {
@@ -119,28 +183,22 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
         c.options.plugins.tooltip.callbacks.title = ctx => closes[ctx[0].dataIndex].toFixed(2) + ' €';
         c.options.plugins.tooltip.callbacks.label = ctx => {
             if (ctx.datasetIndex === 0) return null;
-            const i = ctx.dataIndex;
-            const d = new Date(ts[i] * 1000);
-            const shares = positions[symbol]?.shares || 0;
-            const costBasis = positions[symbol]?.costBasis || 0;
-            const avgBuy = shares > 0 ? costBasis / shares : 0;
-            const gain = shares > 0 ? (closes[i] - avgBuy) * shares : 0;
-            const gainStr = `Gain/Perte: ${(gain >= 0 ? '+' : '') + gain.toFixed(2)}€`;
-            return [
-                d.toLocaleDateString('fr-FR'),
-                d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                '',
-                `O: ${opens[i].toFixed(2)}`,
-                `H: ${highs[i].toFixed(2)}`,
-                `L: ${lows[i].toFixed(2)}`,
-                `C: ${closes[i].toFixed(2)}`,
-                gainStr
-            ];
+            return buildGainLines({
+                ts,
+                index: ctx.dataIndex,
+                positions,
+                symbol,
+                price: closes[ctx.dataIndex],
+                opens,
+                highs,
+                lows,
+                closes
+            });
         };
     } else if (type === 'baseline') {
         const baselineValue = p[0];
-        const posColor = getComputedStyle(document.documentElement).getPropertyValue('--color-positive').trim() || '#4caf50';
-        const negColor = getComputedStyle(document.documentElement).getPropertyValue('--color-negative').trim() || '#ef4444';
+        const posColor = resolveCssColor('--color-positive', '#4caf50');
+        const negColor = resolveCssColor('--color-negative', '#ef4444');
         
         c.config.type = 'line';
         c.data = {
@@ -174,51 +232,46 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
             }]
         };
         c.options.plugins.tooltip.callbacks.title = ctx => ctx[0].parsed.y.toFixed(2) + ' €';
-        c.options.plugins.tooltip.callbacks.label = ctx => {
-            const i = ctx.dataIndex;
-            const d = new Date(ts[i] * 1000);
-            const shares = positions[symbol]?.shares || 0;
-            const costBasis = positions[symbol]?.costBasis || 0;
-            const avgBuy = shares > 0 ? costBasis / shares : 0;
-            const gain = shares > 0 ? (p[i] - avgBuy) * shares : 0;
-            const gainStr = `Gain/Perte: ${(gain >= 0 ? '+' : '') + gain.toFixed(2)}€`;
-            const lines = [
-                d.toLocaleDateString('fr-FR'),
-                d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-            ];
-            if (opens && highs && lows && closes) lines.push('', `O: ${opens[i].toFixed(2)}`, `H: ${highs[i].toFixed(2)}`, `L: ${lows[i].toFixed(2)}`, `C: ${closes[i].toFixed(2)}`);
-            lines.push(gainStr);
-            return lines;
-        };
+        c.options.plugins.tooltip.callbacks.label = ctx => buildGainLines({
+            ts,
+            index: ctx.dataIndex,
+            positions,
+            symbol,
+            price: p[ctx.dataIndex],
+            opens,
+            highs,
+            lows,
+            closes
+        });
     } else {
-        let line = getComputedStyle(document.documentElement).getPropertyValue('--color-line-default').trim() || '#a8a2ff', gs = 'rgba(168,162,255,0.3)', ge = 'rgba(168,162,255,0)';
-        if (p?.length) { const isPos = p[p.length - 1] >= p[0]; const col = getComputedStyle(document.documentElement).getPropertyValue(isPos ? '--color-positive' : '--color-negative').trim() || (isPos ? '#65d981' : '#f87171'); line = col; gs = hexToRgba(col, 0.3) || gs; ge = hexToRgba(col, 0) || ge; }
-        const g = c.ctx.createLinearGradient(0, 0, 0, 200); g.addColorStop(0, gs); g.addColorStop(1, ge);
+        let line = resolveCssColor('--color-line-default', DEFAULT_LINE_COLOR);
+        let gs = 'rgba(168,162,255,0.3)';
+        let ge = 'rgba(168,162,255,0)';
+        if (p?.length) {
+            const isPos = p[p.length - 1] >= p[0];
+            const col = resolveCssColor(isPos ? '--color-positive' : '--color-negative', isPos ? '#65d981' : '#f87171');
+            line = col;
+            gs = hexToRgba(col, 0.3) || gs;
+            ge = hexToRgba(col, 0) || ge;
+        }
+        const g = c.ctx.createLinearGradient(0, 0, 0, 200);
+        g.addColorStop(0, gs);
+        g.addColorStop(1, ge);
         c.config.type = 'line';
         c.data = { labels, datasets: [{ label: 'Prix', data: p, borderColor: line, backgroundColor: g, borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 4, spanGaps: true }] };
         c.options.plugins.tooltip.callbacks.title = ctx => ctx[0].parsed.y.toFixed(2) + ' €';
-        c.options.plugins.tooltip.callbacks.label = ctx => {
-            const i = ctx.dataIndex;
-            const d = new Date(ts[i] * 1000);
-            const shares = positions[symbol]?.shares || 0;
-            const costBasis = positions[symbol]?.costBasis || 0;
-            const avgBuy = shares > 0 ? costBasis / shares : 0;
-            const gain = shares > 0 ? (p[i] - avgBuy) * shares : 0;
-            const gainStr = `Gain/Perte: ${(gain >= 0 ? '+' : '') + gain.toFixed(2)}€`;
-            const lines = [
-                d.toLocaleDateString('fr-FR'),
-                d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-            ];
-            if (opens && highs && lows && closes) lines.push('', `O: ${opens[i].toFixed(2)}`, `H: ${highs[i].toFixed(2)}`, `L: ${lows[i].toFixed(2)}`, `C: ${closes[i].toFixed(2)}`);
-            lines.push(gainStr);
-            return lines;
-        };
+        c.options.plugins.tooltip.callbacks.label = ctx => buildGainLines({
+            ts,
+            index: ctx.dataIndex,
+            positions,
+            symbol,
+            price: p[ctx.dataIndex],
+            opens,
+            highs,
+            lows,
+            closes
+        });
     }
-
-    const posColor = getComputedStyle(document.documentElement).getPropertyValue('--color-positive').trim() || '#4caf50';
-    const negColor = getComputedStyle(document.documentElement).getPropertyValue('--color-negative').trim() || '#ef4444';
-
-
 
     c.data.timestamps = ts;
     c.update('none');

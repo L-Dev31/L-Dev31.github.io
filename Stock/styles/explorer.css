@@ -99,21 +99,54 @@
     cursor: pointer;
 }
 
-.card.explorer-card .explorer-limit-scale {
+.card.explorer-card .explorer-limit-ticks {
     display: flex;
     justify-content: space-between;
     font-size: 10px;
     color: var(--explorer-muted);
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
-.card.explorer-card .explorer-limit-safe {
-    color: var(--color-positive);
+.card.explorer-card .explorer-limit-tick {
+    padding: 2px 6px;
+    border-radius: 999px;
+    border: 1px solid transparent;
     font-weight: 600;
+    opacity: 0.6;
 }
 
-.card.explorer-card .explorer-limit-danger {
-    color: var(--color-negative);
-    font-weight: 600;
+.card.explorer-card .explorer-limit-tick.safe { color: var(--color-positive); }
+.card.explorer-card .explorer-limit-tick.danger { color: var(--color-negative); }
+
+.card.explorer-card .explorer-limit-tick.active {
+    opacity: 1;
+    border-color: rgba(168,162,255,0.35);
+    background: rgba(255,255,255,0.06);
+}
+
+.card.explorer-card .explorer-limit-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+.card.explorer-card .explorer-limit-toggle input {
+    accent-color: var(--primary-purple);
+    width: 14px;
+    height: 14px;
+}
+
+.card.explorer-card .explorer-limit-range:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.card.explorer-card .explorer-limit-ticks.disabled {
+    opacity: 0.4;
 }
 
 .card.explorer-card .explorer-filters-row {

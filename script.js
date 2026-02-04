@@ -1,11 +1,15 @@
-const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1024;
+﻿const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1024;
 
 class ScrollObserver {
     constructor(element) {
-        this.element = typeof element === 'string' ? document.querySelector(element) : element;
+        this.element = typeof element == 'string' ? document.querySelector(element) : element;
         this.observer = new IntersectionObserver(entries => {
             entries.forEach(e => {
-                e.target.classList.toggle('visible', e.isIntersecting);
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                } else if (e.boundingClientRect.top > 0) {
+                    e.target.classList.remove('visible');
+                }
             });
         }, {
             threshold: 0,
@@ -76,6 +80,7 @@ class SplitTextReveal extends ScrollObserver {
         lines.forEach((line, i) => {
             const div = document.createElement('div');
             div.className = 'text-line';
+            if (i === lines.length - 1) div.classList.add('last-line');
             div.style.transitionDelay = `${i * 0.05}s`;
             line.forEach(s => div.innerHTML += s.innerHTML);
             this.element.appendChild(div);
@@ -90,18 +95,6 @@ class ElementReveal extends ScrollObserver {
         document.querySelectorAll(selector).forEach(el => this.observe(el));
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    new TimeManager();
-    new CursorManager();
-    new BlurScrollHeader();
-    new SplitTextReveal(document.getElementById('split-text'));
-    new ElementReveal('.title');
-    new ParallaxEffect();
-    new FeaturedProjects();
-    new HeroTitleAnimation();
-    new SmoothScroll();
-});
 
 class TimeManager {
     constructor() {
@@ -136,7 +129,7 @@ class CursorManager {
     init() {
         document.addEventListener('mousemove', e => {
             const scale = this.cursor.classList.contains('cursor--small') ? ' scale(0.5)' : '';
-            this.cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)${scale}`;
+            this.cursor.style.transform = `translate(` + e.clientX + `px, ` + e.clientY + `px)` + scale;
         });
 
         const clickableSelector = 'a, button, .clickable';
@@ -152,7 +145,7 @@ class CursorManager {
 class BlurScrollHeader {
     constructor() {
         this.ticking = false;
-        this.video = document.querySelector('.bg-video');
+        this.video = document.querySelector('.header-bg-video');
         this.header = document.getElementById('header');
         this.init();
     }
@@ -171,17 +164,11 @@ class BlurScrollHeader {
         const scrolled = window.scrollY;
         const headerH = this.header.offsetHeight;
         const threshold = headerH * 0.35;
-        
-        // 0 to 1 progress based on scroll up to threshold
         const progress = Math.min(1, Math.max(0, scrolled / threshold));
-        
-        // Update CSS variable on video
         this.video.style.setProperty('--video-prog', progress);
-        
         this.ticking = false;
     }
 }
-
 
 class ParallaxEffect {
     constructor() {
@@ -202,11 +189,7 @@ class ParallaxEffect {
         }));
 
         this.cachePositions();
-        
-        window.addEventListener('resize', () => {
-            this.cachePositions();
-        }, { passive: true });
-
+        window.addEventListener('resize', () => this.cachePositions(), { passive: true });
         window.addEventListener('scroll', () => {
             if (!this.ticking) {
                 window.requestAnimationFrame(() => this.update());
@@ -218,7 +201,7 @@ class ParallaxEffect {
     }
 
     cachePositions() {
-        const scrollTop = window.scrollY || window.pageYOffset;
+        const scrollTop = window.pageYOffset;
         this.elements.forEach(item => {
             const rect = item.el.getBoundingClientRect();
             item.baseTop = rect.top + scrollTop;
@@ -234,14 +217,44 @@ class ParallaxEffect {
             const elCenter = item.baseTop + (item.el.offsetHeight / 2);
             const diff = elCenter - viewCenter;
             const factor = (item.speed - 100) / 100;
-
             if (factor === 0) return;
-
             const y = diff * factor;
-            item.el.style.transform = `translateY(${y}px)`;
+            item.el.style.transform = `translateY(` + y + `px)`;
         });
 
         this.ticking = false;
+    }
+}
+
+class SmoothScroll {
+    constructor() {
+        if (isMobile) return;
+        this.target = window.scrollY;
+        this.current = window.scrollY;
+        this.ease = 0.1;
+        this.onWheel = this.onWheel.bind(this);
+        this.update = this.update.bind(this);
+        
+        window.addEventListener('wheel', this.onWheel, { passive: false });
+        this.maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        window.addEventListener('resize', () => {
+            this.maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        });
+        
+        this.update();
+    }
+
+    onWheel(e) {
+        e.preventDefault();
+        this.target += Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 100) * 0.75;
+        this.target = Math.max(0, Math.min(this.target, this.maxScroll));
+    }
+
+    update() {
+        this.current += (this.target - this.current) * this.ease;
+        if (Math.abs(this.target - this.current) < 0.1) this.current = this.target;
+        window.scrollTo(0, this.current);
+        requestAnimationFrame(this.update);
     }
 }
 
@@ -262,7 +275,7 @@ class HeroTitleAnimation {
             const s = document.createElement('span');
             s.className = 'site-title-letter';
             s.textContent = ch === ' ' ? '\u00A0' : ch;
-            s.style.transitionDelay = `${i * 0.03}s`;
+            s.style.transitionDelay = `s`;
             this.el.appendChild(s);
             return s;
         });
@@ -275,7 +288,9 @@ class HeroTitleAnimation {
 
 class ProjectPreview {
     constructor() {
+        this.container = null;
         this.img = null;
+        this.desc = null;
         this.targetX = 0;
         this.targetY = 0;
         this.currentX = 0;
@@ -283,32 +298,43 @@ class ProjectPreview {
         this.animFrame = null;
     }
 
-    show(imgUrl, x, y) {
-        if (!this.img) {
+    show(imgUrl, description, x, y) {
+        if (!this.container) {
+            this.container = document.createElement('div');
+            this.container.className = 'project-preview-container';
             this.img = document.createElement('img');
             this.img.className = 'project-preview-img';
-            document.body.appendChild(this.img);
+            this.container.appendChild(this.img);
+            this.desc = document.createElement('div');
+            this.desc.className = 'project-preview-desc';
+            this.container.appendChild(this.desc);
+            document.body.appendChild(this.container);
         }
+        
         this.img.src = imgUrl;
-        this.img.style.display = 'block';
+        this.desc.textContent = description || '';
+        this.container.style.display = 'flex';
+        
         const size = 20 * window.innerHeight / 100;
-        this.targetX = x + (10 * window.innerHeight / 100);
+        const offset = 5 * window.innerHeight / 100;
+
+        this.targetX = x + offset;
         this.targetY = y - size / 2;
         if (!this.animFrame) this.animate();
     }
 
     hide() {
-        if (this.img) this.img.style.display = 'none';
+        if (this.container) this.container.style.display = 'none';
         cancelAnimationFrame(this.animFrame);
         this.animFrame = null;
     }
 
     animate() {
-        if (!this.img || this.img.style.display !== 'block') return;
-        this.currentX += (this.targetX - this.currentX) * 0.18;
-        this.currentY += (this.targetY - this.currentY) * 0.18;
-        this.img.style.left = this.currentX + 'px';
-        this.img.style.top = this.currentY + 'px';
+        if (!this.container || this.container.style.display !== 'flex') return;
+        this.currentX += (this.targetX - this.currentX) * 0.10;
+        this.currentY += (this.targetY - this.currentY) * 0.10;
+        this.container.style.left = this.currentX + 'px';
+        this.container.style.top = this.currentY + 'px';
         this.animFrame = requestAnimationFrame(() => this.animate());
     }
 }
@@ -330,74 +356,56 @@ class FeaturedProjects {
                     const a = document.createElement('a');
                     a.className = 'featured-project';
                     a.textContent = project.title;
-                    if (project.path && !project.path.startsWith('http')) {
-                        a.href = project.path + '/';
-                    } else {
-                        a.href = project.path;
-                    }
+                    a.href = project.path.startsWith('http') ? project.path : project.path + '/';
                     a.target = '_blank';
-                    if (project.creator && project.creator.trim()) {
+                    
+                    if (project.creator?.trim()) {
                         const author = document.createElement('span');
                         author.className = 'featured-author';
-                        author.textContent = ` ${project.creator}`;
+                        author.textContent = ` ` + project.creator;
                         a.appendChild(author);
                     }
-                    const imgPath = `Elements/image/${project.id}-banner.png`;
+
+                    const imgPath = `Elements/image/` + project.id + `-banner.png`;
                     a.addEventListener('mouseenter', e => {
-                        this.preview.show(imgPath, e.clientX, e.clientY);
+                        this.preview.show(imgPath, project.description, e.clientX, e.clientY);
                         document.querySelector('.cursor')?.classList.add('cursor--small');
                     });
-                    a.addEventListener('mousemove', e => {
-                        this.preview.show(imgPath, e.clientX, e.clientY);
-                    });
-                    a.addEventListener('mouseleave', e => {
+                    a.addEventListener('mousemove', e => this.preview.show(imgPath, project.description, e.clientX, e.clientY));
+                    a.addEventListener('mouseleave', () => {
                         this.preview.hide();
                         document.querySelector('.cursor')?.classList.remove('cursor--small');
                     });
-                    a.addEventListener('focus', () => document.querySelector('.cursor')?.classList.add('cursor--small'));
-                    a.addEventListener('blur', () => document.querySelector('.cursor')?.classList.remove('cursor--small'));
                     list.appendChild(a);
                 });
             });
     }
 }
 
-class SmoothScroll {
-    constructor() {
-        if (isMobile) return;
-        this.target = window.scrollY;
-        this.current = window.scrollY;
-        this.ease = 0.1;
-        this.isScrolling = false;
-        
-        this.onWheel = this.onWheel.bind(this);
-        this.update = this.update.bind(this);
-        
-        window.addEventListener('wheel', this.onWheel, { passive: false });
-        
-        // Handle window resize or refresh
-        this.maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        window.addEventListener('resize', () => {
-            this.maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        });
-        
-        this.update();
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = {
+        time: new TimeManager(),
+        cursor: new CursorManager(),
+        header: new BlurScrollHeader(),
+        elements: new ElementReveal('.title'),
+        parallax: new ParallaxEffect(),
+        projects: new FeaturedProjects(),
+        hero: new HeroTitleAnimation(),
+        scroll: new SmoothScroll()
+    };
 
-    onWheel(e) {
-        e.preventDefault();
-        this.target += Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 100) * 0.75;
-        this.target = Math.max(0, Math.min(this.target, this.maxScroll));
-    }
+    const initTextReveal = () => {
+        window.app.textReveal = [
+            new SplitTextReveal(document.getElementById('split-text')),
+            ...Array.from(document.querySelectorAll('.story-paragraph')).map(el => new SplitTextReveal(el)),
+            ...Array.from(document.querySelectorAll('.story-text h3')).map(el => new SplitTextReveal(el))
+        ];
+    };
 
-    update() {
-        this.current += (this.target - this.current) * this.ease;
-        
-        if (Math.abs(this.target - this.current) < 0.1) {
-            this.current = this.target;
-        }
-        
-        window.scrollTo(0, this.current);
-        requestAnimationFrame(this.update);
+    if (document.fonts) {
+        document.fonts.ready.then(initTextReveal);
+    } else {
+        window.addEventListener('load', initTextReveal);
     }
-}
+});
+

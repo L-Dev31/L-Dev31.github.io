@@ -12,6 +12,39 @@ const DEFAULT_OPTIONS = {
     weights: { rsi: 0.20, macd: 0.25, sma: 0.30, momentum: 0.15, volume: 0.10 }
 };
 
+const PERIOD_LABELS = {
+    '1D': 'sur 1 jour',
+    '1W': 'sur 1 semaine',
+    '1M': 'sur 1 mois',
+    '3M': 'sur 3 mois',
+    '6M': 'sur 6 mois',
+    '1Y': 'sur 1 an',
+    '3Y': 'sur 3 ans',
+    '5Y': 'sur 5 ans',
+    'YTD': 'depuis le début de l\'année',
+    'MAX': 'sur le long terme'
+};
+
+const HORIZON_MAP = {
+    '1D': { label: 'Court Terme', desc: 'Intraday (24h)' },
+    '1W': { label: 'Court Terme', desc: 'Swing (1 Semaine)' },
+    '1M': { label: 'Moyen Terme', desc: 'Swing (1 Mois)' },
+    '3M': { label: 'Moyen Terme', desc: 'Tendance (3 Mois)' },
+    '6M': { label: 'Moyen/Long Terme', desc: 'Tendance (6 Mois)' },
+    '1Y': { label: 'Long Terme', desc: 'Investissement (1 An)' },
+    '3Y': { label: 'Long Terme', desc: 'Investissement (3 Ans)' },
+    '5Y': { label: 'Long Terme', desc: 'Investissement (5 Ans)' },
+    'YTD': { label: 'Année en cours', desc: 'Depuis le 1er Janvier' },
+    'MAX': { label: 'Très Long Terme', desc: 'Historique Complet' }
+};
+
+const getRiskColorClass = (score) => {
+    if (score >= 9) return 'negative';
+    if (score >= 7) return 'negative';
+    if (score >= 4) return 'warning';
+    return 'positive';
+};
+
 // --- Utilitaires ---
 
 const safeArray = (arr) => Array.isArray(arr) ? arr : [];
@@ -342,19 +375,7 @@ function updateSignalUI(symbol, result) {
     
     if (valueEl) {
         // Formatage de la période pour l'affichage
-        const periodMap = {
-            '1D': 'sur 1 jour',
-            '1W': 'sur 1 semaine',
-            '1M': 'sur 1 mois',
-            '3M': 'sur 3 mois',
-            '6M': 'sur 6 mois',
-            '1Y': 'sur 1 an',
-            '3Y': 'sur 3 ans',
-            '5Y': 'sur 5 ans',
-            'YTD': 'depuis le début de l\'année',
-            'MAX': 'sur le long terme'
-        };
-        const periodText = periodMap[result.period] || '';
+        const periodText = PERIOD_LABELS[result.period] || '';
         
         valueEl.textContent = result.signalTitle + (periodText ? ` ${periodText}` : '');
         
@@ -438,33 +459,11 @@ function updateSignalUI(symbol, result) {
         // Logique d'Horizon dynamique
         let horizonLabel = 'Moyen Terme';
         let horizonDesc = 'Swing Trading (Semaines)';
-        const p = result.period;
-        
-        const horizonMap = {
-            '1D': { label: 'Court Terme', desc: 'Intraday (24h)' },
-            '1W': { label: 'Court Terme', desc: 'Swing (1 Semaine)' },
-            '1M': { label: 'Moyen Terme', desc: 'Swing (1 Mois)' },
-            '3M': { label: 'Moyen Terme', desc: 'Tendance (3 Mois)' },
-            '6M': { label: 'Moyen/Long Terme', desc: 'Tendance (6 Mois)' },
-            '1Y': { label: 'Long Terme', desc: 'Investissement (1 An)' },
-            '3Y': { label: 'Long Terme', desc: 'Investissement (3 Ans)' },
-            '5Y': { label: 'Long Terme', desc: 'Investissement (5 Ans)' },
-            'YTD': { label: 'Année en cours', desc: 'Depuis le 1er Janvier' },
-            'MAX': { label: 'Très Long Terme', desc: 'Historique Complet' }
-        };
-
-        if (horizonMap[p]) {
-            horizonLabel = horizonMap[p].label;
-            horizonDesc = horizonMap[p].desc;
+        const horizon = HORIZON_MAP[result.period];
+        if (horizon) {
+            horizonLabel = horizon.label;
+            horizonDesc = horizon.desc;
         }
-
-        // Helper pour la couleur du risque (1-10)
-        const getRiskColorClass = (s) => {
-            if (s >= 9) return 'negative'; // Rouge vif (Critique/Extrême)
-            if (s >= 7) return 'negative'; // Rouge (Élevé)
-            if (s >= 4) return 'warning';  // Orange/Jaune (Moyen/Modéré)
-            return 'positive';             // Vert (Faible)
-        };
 
         const html = `
             <div class="transaction-history-container" style="margin: 0;">

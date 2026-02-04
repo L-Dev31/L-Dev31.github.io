@@ -3,6 +3,27 @@ import { createTab, createCard, updateSectionDates, setApiStatus, initChart, mar
 import { fetchActiveSymbol } from './general.js'; 
 import { isYahooTickerSuspended } from './api/yahoo-finance.js';
 
+const TYPE_ORDER = ['equity', 'commodity', 'crypto'];
+const TYPE_LABELS = {
+    equity: 'Actions',
+    commodity: 'Matières Premières',
+    crypto: 'Cryptos'
+};
+const TYPE_ICONS = {
+    equity: 'fa-solid fa-building-columns',
+    commodity: 'fa-solid fa-coins',
+    crypto: 'fa-brands fa-bitcoin'
+};
+const DEFAULT_TOTAL_INVESTMENT = 223.52;
+const DEFAULT_CASH_ACCOUNT = -0.15;
+
+const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+};
+
+const hasTransactions = stock => (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
+
 export function calculateStockValues(stock) {
     let earliestPurchaseDate = stock.purchaseDate;
     let lots = [];
@@ -64,22 +85,18 @@ export function calculateStockValues(stock) {
 
 export function updatePortfolioSummary() {
     let totalShares = 0;
-    let totalInvestment = 223.52;
-    let cashAccount = -0.15;
+    let totalInvestment = DEFAULT_TOTAL_INVESTMENT;
+    let cashAccount = DEFAULT_CASH_ACCOUNT;
     for (const pos of Object.values(positions)) totalShares += pos.shares || 0;
-    const totalSharesEl = document.getElementById('total-shares');
-    const totalInvestmentEl = document.getElementById('total-investment');
-    const cashAccountEl = document.getElementById('cash-account');
-    if (totalSharesEl) totalSharesEl.textContent = totalShares;
-    if (totalInvestmentEl) totalInvestmentEl.textContent = totalInvestment.toFixed(2) + ' €';
-    if (cashAccountEl) cashAccountEl.textContent = cashAccount.toFixed(2) + ' €';
+    setText('total-shares', totalShares);
+    setText('total-investment', totalInvestment.toFixed(2) + ' €');
+    setText('cash-account', cashAccount.toFixed(2) + ' €');
 }
 
 export async function loadStocks() {
     const config = await loadApiConfig();
-    const types = ['equity', 'commodity', 'crypto'];
     const list = [];
-    for (const type of types) {
+    for (const type of TYPE_ORDER) {
         try {
             const response = await fetch(`stock/${type}.json`);
             if (response.ok) list.push(...(await response.json()));
@@ -92,28 +109,17 @@ export async function loadStocks() {
     }
     document.getElementById('portfolio-tabs').innerHTML = '';
     document.getElementById('general-tabs').innerHTML = '';
-    const typeIcons = {
-        equity: 'fa-solid fa-building-columns',
-        commodity: 'fa-solid fa-coins',
-        crypto: 'fa-brands fa-bitcoin',
-    };
     for (const [type, stocks] of Object.entries(byType)) {
         const hasPortfolio = stocks.some(s => {
             const calculated = calculateStockValues(s);
-            const hasTransactions = (s.purchases && s.purchases.length > 0) || (s.sales && s.sales.length > 0);
-            return calculated.shares > 0 || hasTransactions;
+            return calculated.shares > 0 || hasTransactions(s);
         });
         const hasGeneral = stocks.some(s => {
             const calculated = calculateStockValues(s);
-            const hasTransactions = (s.purchases && s.purchases.length > 0) || (s.sales && s.sales.length > 0);
-            return calculated.shares === 0 && !hasTransactions;
+            return calculated.shares === 0 && !hasTransactions(s);
         });
-        const typeLabel = {
-            equity: 'Actions',
-            commodity: 'Matières Premières',
-            crypto: 'Cryptos',
-        }[type] || type.charAt(0).toUpperCase() + type.slice(1);
-        const iconClass = typeIcons[type] || 'fa-solid fa-layer-group';
+        const typeLabel = TYPE_LABELS[type] || type.charAt(0).toUpperCase() + type.slice(1);
+        const iconClass = TYPE_ICONS[type] || 'fa-solid fa-layer-group';
         if (hasPortfolio) {
             const portSection = document.createElement('div');
             portSection.className = 'tab-type-section';
@@ -169,7 +175,7 @@ export async function loadStocks() {
     if (first) {
         first.classList.add('active');
         const sym = first.dataset.symbol;
-        document.getElementById(`card-${sym}`).classList.add('active');
+        document.getElementById(`card-${sym}`)?.classList.add('active');
         fetchActiveSymbol(true);
     }
     setApiStatus(null, 'active', { api: selectedApi });

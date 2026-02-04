@@ -1,5 +1,6 @@
 import { fetchNews } from './api/news.js';
 import { loadApiConfig } from './general.js';
+import { periodToDays } from './utils.js';
 
 let positions = {};
 let lastPageNews = [];
@@ -9,9 +10,112 @@ let lastActiveSymbol = null;
 let newsRefreshInterval = null;
 let cardRefreshIntervals = {};
 
-const PERIOD_DAYS = { '1D': 1, '1W': 7, '1M': 30, '3M': 90, '6M': 180, '1Y': 365, '3Y': 1095, '5Y': 1825, 'MAX': 36500 };
+const formatNewsDate = value => new Date(value || new Date()).toLocaleString('fr-FR');
+const sortNewsItems = items => items.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+const normalizeQuery = q => (q || '').trim().toLowerCase();
 
-export function periodToDays(p) { return PERIOD_DAYS[(p || '').toUpperCase()] || 7; }
+const getTickerLabel = symbol => positions[symbol]?.ticker || symbol;
+
+const appendTagElements = (metaEl, labels, limit = 4) => {
+    if (!labels?.length) return;
+    const unique = new Set();
+    labels.filter(Boolean).forEach(label => unique.add(label));
+    Array.from(unique).slice(0, limit).forEach(label => {
+        const tag = document.createElement('span');
+        tag.className = 'news-ticker-tag';
+        tag.textContent = label;
+        metaEl.appendChild(tag);
+    });
+};
+
+const buildNewsAnchorItem = (item, { className, includeSummary = true, tagLabels = [] }) => {
+    const a = document.createElement('a');
+    a.className = className;
+    a.href = item.url || '#';
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+
+    const t = document.createElement('div');
+    t.className = 'news-title';
+    t.textContent = item.title || '—';
+    a.appendChild(t);
+
+    const m = document.createElement('div');
+    m.className = 'news-meta';
+    const src = document.createElement('span');
+    src.className = 'news-source';
+    src.textContent = item.source || 'Source';
+    m.appendChild(src);
+    m.appendChild(document.createTextNode(` • ${formatNewsDate(item.publishedAt)}`));
+
+    appendTagElements(m, tagLabels);
+    a.appendChild(m);
+
+    if (includeSummary && item.summary) {
+        const s = document.createElement('div');
+        s.className = 'news-summary';
+        s.textContent = item.summary;
+        a.appendChild(s);
+    }
+
+    return a;
+};
+
+const buildNewsFeedItem = item => {
+    const d = document.createElement('div');
+    d.className = 'news-item';
+
+    const t = document.createElement('div');
+    t.className = 'news-title';
+    const a = document.createElement('a');
+    a.href = item.url || '#';
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = item.title || '—';
+    t.appendChild(a);
+    d.appendChild(t);
+
+    const m = document.createElement('div');
+    m.className = 'news-meta';
+    m.textContent = `${item.source || ''} • ${formatNewsDate(item.publishedAt)}`;
+    d.appendChild(m);
+
+    if (item.summary) {
+        const s = document.createElement('div');
+        s.className = 'news-summary';
+        s.textContent = item.summary;
+        d.appendChild(s);
+    }
+
+    return d;
+};
+
+const filterNewsItems = (items, query) => {
+    const q = normalizeQuery(query);
+    if (!q) return items;
+    return items.filter(i =>
+        (i.title || '').toLowerCase().includes(q) ||
+        (i.summary || '').toLowerCase().includes(q) ||
+        (i.source || '').toLowerCase().includes(q)
+    );
+};
+
+const collectCardTags = item => {
+    const tags = new Set();
+    if (item.symbol) tags.add(getTickerLabel(item.symbol));
+    if (item.symbols) item.symbols.forEach(s => tags.add(getTickerLabel(s)));
+    if (item.relatedTickers) item.relatedTickers.forEach(s => tags.add(getTickerLabel(s)));
+    return Array.from(tags);
+};
+
+const collectPageTags = item => {
+    const symbols = item.symbols || (item.symbol ? [item.symbol] : []);
+    const labels = new Set();
+    symbols.forEach(s => labels.add(getTickerLabel(s)));
+    return Array.from(labels);
+};
+
+export { periodToDays };
 
 export function setPositions(pos) { positions = pos; }
 
@@ -59,60 +163,18 @@ export function updateNewsUI(symbol, items, filter = null) {
     if (!el) return;
     const upd = document.querySelector(`#card-${symbol} .news-last-update`);
     if (upd) upd.textContent = new Date().toLocaleTimeString('fr-FR');
-    if (filter === null) { const inp = document.querySelector(`#card-${symbol} .news-search-input`); if (inp) filter = inp.value; }
+    if (filter === null) {
+        const inp = document.querySelector(`#card-${symbol} .news-search-input`);
+        if (inp) filter = inp.value;
+    }
     el.innerHTML = '';
     let list = items || [];
-    if (filter) { const q = filter.toLowerCase(); list = list.filter(i => (i.title || '').toLowerCase().includes(q) || (i.summary || '').toLowerCase().includes(q) || (i.source || '').toLowerCase().includes(q)); }
+    list = filterNewsItems(list, filter);
     if (!list.length) { el.textContent = filter ? 'Aucun résultat.' : 'Aucune actualité récente.'; return; }
-    
-    list.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
 
-    list.forEach(i => {
-        const a = document.createElement('a');
-        a.className = 'news-item news-item-link';
-        a.href = i.url || '#';
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-
-        const t = document.createElement('div');
-        t.className = 'news-title';
-        t.textContent = i.title || '—';
-        a.appendChild(t);
-
-        const m = document.createElement('div');
-        m.className = 'news-meta';
-        
-        const src = document.createElement('span');
-        src.className = 'news-source';
-        src.textContent = i.source || 'Source';
-        m.appendChild(src);
-        
-        m.appendChild(document.createTextNode(` • ${new Date(i.publishedAt || new Date()).toLocaleString('fr-FR')}`));
-
-        const uniqueTags = new Set();
-        if (i.symbol) uniqueTags.add(positions[i.symbol]?.ticker || i.symbol);
-        if (i.symbols) i.symbols.forEach(s => uniqueTags.add(positions[s]?.ticker || s));
-        if (i.relatedTickers) i.relatedTickers.forEach(s => uniqueTags.add(positions[s]?.ticker || s));
-
-        if (uniqueTags.size > 0) {
-            Array.from(uniqueTags).slice(0, 4).forEach(label => {
-                const tag = document.createElement('span');
-                tag.className = 'news-ticker-tag';
-                tag.textContent = label;
-                m.appendChild(tag);
-            });
-        }
-
-        a.appendChild(m);
-
-        if (i.summary) { 
-            const s = document.createElement('div'); 
-            s.className = 'news-summary'; 
-            s.textContent = i.summary; 
-            a.appendChild(s); 
-        }
-
-        el.appendChild(a);
+    sortNewsItems(list).forEach(item => {
+        const tagLabels = collectCardTags(item);
+        el.appendChild(buildNewsAnchorItem(item, { className: 'news-item news-item-link', tagLabels }));
     });
 }
 
@@ -129,25 +191,8 @@ export function updateNewsFeedList(items) {
     if (!el) return;
     el.innerHTML = '';
     if (!items?.length) { el.textContent = 'Aucune actualité récente.'; return; }
-    items.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
-    items.forEach(i => {
-        const d = document.createElement('div');
-        d.className = 'news-item';
-        const t = document.createElement('div');
-        t.className = 'news-title';
-        const a = document.createElement('a');
-        a.href = i.url || '#';
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.textContent = i.title || '—';
-        t.appendChild(a);
-        d.appendChild(t);
-        const m = document.createElement('div');
-        m.className = 'news-meta';
-        m.textContent = `${i.source || ''} • ${new Date(i.publishedAt || new Date()).toLocaleString('fr-FR')}`;
-        d.appendChild(m);
-        if (i.summary) { const s = document.createElement('div'); s.className = 'news-summary'; s.textContent = i.summary; d.appendChild(s); }
-        el.appendChild(d);
+    sortNewsItems(items).forEach(item => {
+        el.appendChild(buildNewsFeedItem(item));
     });
 }
 
@@ -219,47 +264,11 @@ export function updateNewsPageList(items, opts = {}) {
     el.innerHTML = '';
     if (!items?.length) { el.innerHTML = '<div class="news-empty">Aucune actualité trouvée</div>'; if (replaceCache) lastPageNews = []; return; }
     let list = items.slice();
-    if (!skipSort) list.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+    if (!skipSort) sortNewsItems(list);
     if (replaceCache) lastPageNews = list;
-    list.forEach(i => {
-        const a = document.createElement('a');
-        a.className = 'news-item';
-        a.href = i.url || '#';
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        const t = document.createElement('div');
-        t.className = 'news-title';
-        t.textContent = i.title || '—';
-        const m = document.createElement('div');
-        m.className = 'news-meta';
-        const src = document.createElement('span');
-        src.className = 'news-source';
-        src.textContent = i.source || 'Source';
-        m.appendChild(src);
-        m.appendChild(document.createTextNode(` • ${new Date(i.publishedAt || new Date()).toLocaleString('fr-FR')}`));
-        
-        const symbolsToShow = i.symbols || (i.symbol ? [i.symbol] : []);
-        if (symbolsToShow.length > 0) {
-            // Filter to show only relevant tickers (either in positions or related)
-            // We limit to 3 tags to avoid clutter
-            const uniqueTags = new Set();
-            symbolsToShow.forEach(s => {
-                const label = positions[s]?.ticker || s;
-                uniqueTags.add(label);
-            });
-            
-            Array.from(uniqueTags).slice(0, 4).forEach(label => {
-                const tag = document.createElement('span');
-                tag.className = 'news-ticker-tag';
-                tag.textContent = label;
-                m.appendChild(tag);
-            });
-        }
-        
-        a.appendChild(t);
-        a.appendChild(m);
-        if (i.summary) { const s = document.createElement('div'); s.className = 'news-summary'; s.textContent = i.summary; a.appendChild(s); }
-        el.appendChild(a);
+    list.forEach(item => {
+        const tagLabels = collectPageTags(item);
+        el.appendChild(buildNewsAnchorItem(item, { className: 'news-item', tagLabels }));
     });
     const upd = document.getElementById('news-last-update');
     if (upd) upd.textContent = new Date().toLocaleTimeString('fr-FR');
@@ -316,7 +325,13 @@ function setupNewsFilters() {
         });
         inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inp.value = (inp.value || '').trim().toUpperCase(); sug.classList.remove('active'); loadNews(); } });
     }
-    if (art) art.oninput = () => { const q = (art.value || '').trim().toLowerCase(); if (!q) updateNewsPageList(lastPageNews, { replaceCache: false, skipSort: true }); else updateNewsPageList(lastPageNews.filter(i => (i.title || '').toLowerCase().includes(q) || (i.summary || '').toLowerCase().includes(q) || (i.source || '').toLowerCase().includes(q)), { replaceCache: false, skipSort: true }); };
+    if (art) {
+        art.oninput = () => {
+            const q = normalizeQuery(art.value);
+            if (!q) updateNewsPageList(lastPageNews, { replaceCache: false, skipSort: true });
+            else updateNewsPageList(filterNewsItems(lastPageNews, q), { replaceCache: false, skipSort: true });
+        };
+    }
 }
 
 async function loadNews() {

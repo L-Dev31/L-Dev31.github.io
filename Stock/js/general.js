@@ -11,7 +11,7 @@ import { initChart, updateChart } from './chart.js'
 import { updateSignal } from './signal-bot.js'
 import { initTerminal, processCommand } from './terminal.js'
 
-import { filterNullDataPoints, filterNullOHLCDataPoints, isMarketOpen } from './utils.js'
+import { filterNullDataPoints, filterNullOHLCDataPoints, isMarketOpen, periodToDays } from './utils.js'
 import { API_CONFIG, loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, mainFetchController, setMainFetchController, initialFetchController, setInitialFetchController, fastPollTimer, setFastPollTimer, rateLimitCountdownTimer, setRateLimitCountdownTimer, fetchUsdToEurRate } from './state.js'
 import { calculateStockValues, updatePortfolioSummary, loadStocks, checkSuspendedTickers } from './portfolio.js'
 import { createTab, createCard, updateUI, resetSymbolDisplay, updateTabTitle, updateCardTitle, updateSectionDates, clearPeriodDisplay, setApiStatus, updateApiCountdown, updateDropdownSelection, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js'
@@ -154,19 +154,6 @@ async function fetchActiveSymbol(force) {
         }
         try {
             const p = positions[symbol].currentPeriod || '1D';
-            function periodToDays(period) {
-                switch ((period||'').toUpperCase()) {
-                    case '1D': return 1;
-                    case '1W': return 7;
-                    case '1M': return 30;
-                    case '6M': return 180;
-                    case '1Y': return 365;
-                    case '3Y': return 365 * 3;
-                    case '5Y': return 365 * 5;
-                    case 'MAX': return 36500;
-                    default: return 7;
-                }
-            }
             const days = periodToDays(p);
             const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
             fetchCardNews(symbol, false, 50, days, apiToUse).catch(e=>{});
@@ -248,7 +235,7 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     updatePortfolioSummary()
     try {
         const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
-        const days = (function(period){ switch((period||'').toUpperCase()){ case '1D': return 1; case '1W': return 7; case '1M': return 30; case '6M': return 180; case '1Y': return 365; case '3Y': return 365*3; case '5Y': return 365*5; case 'MAX': return 36500; default: return 7; }})(positions[s].currentPeriod || '1D');
+        const days = periodToDays(positions[s].currentPeriod || '1D');
         try { fetchCardNews(s, true, 50, days, apiToUse).catch(()=>{}); } catch(e) {}
         const cardNews = document.getElementById('card-news');
         if (cardNews && cardNews.classList.contains('active')) {

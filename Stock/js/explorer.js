@@ -1,4 +1,4 @@
-import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } from './api/yahoo-finance.js';
+import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart } from './api/yahoo-finance.js';
 
 // Removed IIFE wrapper
 {
@@ -12,20 +12,20 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
     const ITEMS_PER_PAGE = 10;
     const SCREENER_BATCH_SIZE = 250;
     const HARD_MAX_RESULTS = 1000;
-    const YAHOO_SAFE_LIMIT = 200;
+    const YAHOO_SAFE_LIMIT = 250;
     const MAX_TICKERS_MIN = 50;
     const MAX_TICKERS_MAX = 600;
-    const DEFAULT_MAX_TICKERS = 300;
-    let maxFetchTickers = DEFAULT_MAX_TICKERS;
-
-    let currentPage = 1;
-    let currentResults = [];
-    let totalResults = 0;
-    let isLoading = false;
-    let currentPeriod = '1D';
-
-    let cachedItems = null;
-    let lastParams = null;
+    const DEFAULT_MAX_TICKERS = YAHOO_SAFE_LIMIT;
+    const state = {
+        maxFetchTickers: DEFAULT_MAX_TICKERS,
+        currentPage: 1,
+        results: [],
+        total: 0,
+        isLoading: false,
+        currentPeriod: '1D',
+        cachedItems: null,
+        lastParams: null
+    };
 
     const PERIOD_LABELS = { '1D': '1J', '1W': '1S', '1M': '1M', '3M': '3M', '6M': '6M', '1Y': '1A', 'YTD': 'YTD' };
     const PERIOD_CONFIG = {
@@ -58,6 +58,8 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
         tse: { country: 'JP' }, hkex: { country: 'HK' }, sse: { country: 'CN' },
         szse: { country: 'CN' }, nse: { country: 'IN' }, bse: { country: 'IN' }, krx: { country: 'KR' }
     };
+
+    const getMaxAllowed = () => Math.min(state.maxFetchTickers, HARD_MAX_RESULTS);
 
     let stockIconMap = {};
     let yahooToJsonSymbol = {};
@@ -250,7 +252,7 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
         const first = await fetchScreener(scrIds, 0, SCREENER_BATCH_SIZE);
         allQuotes = first.quotes;
         let total = first.total;
-        const maxTotal = Math.min(maxFetchTickers, HARD_MAX_RESULTS);
+        const maxTotal = getMaxAllowed();
 
         while (allQuotes.length < total && allQuotes.length < maxTotal && first.quotes.length === SCREENER_BATCH_SIZE) {
             showLoadingProgress(allQuotes.length, Math.min(total, maxTotal));
@@ -270,19 +272,20 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
             showLoadingProgress(allQuotes.length, `${scrId}...`);
             try {
                 const quotes = await fetchAllScreenerResults(scrId);
-                quotes.forEach(q => {
+                quotes.filter(Boolean).forEach(q => {
                     if (!seen.has(q.symbol)) {
                         seen.add(q.symbol);
                         allQuotes.push(q);
                     }
                 });
-                if (allQuotes.length >= MAX_TOTAL_RESULTS) break;
+                if (allQuotes.length >= getMaxAllowed()) break;
             } catch (e) {}
         }
         return allQuotes;
     }
 
     function mapQuoteToItem(q) {
+        if (!q) return null;
         const price = q.regularMarketPrice || q.price || 0;
         const change = q.regularMarketChange || 0;
         const changePercent = q.regularMarketChangePercent || 0;
@@ -322,12 +325,10 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
         let eligibility = 'cto';
         if (market === 'euronext') eligibility = q.marketCap && q.marketCap < 1e9 ? 'pea-pme' : 'pea';
 
-        const tradeable = q.tradeable !== false;
         const regularMarketTime = q.regularMarketTime || 0;
         const now = Math.floor(Date.now() / 1000);
-        const daysSinceLastTrade = (now - regularMarketTime) / 86400;
-        const noActivity = volume === 0 && Math.abs(changePercent) < 0.001;
-        const isSuspended = !tradeable || (noActivity && daysSinceLastTrade > 3) || daysSinceLastTrade > 7;
+        const daysSinceLastTrade = regularMarketTime > 0 ? (now - regularMarketTime) / 86400 : 999;
+        const isSuspended = !isYahooTickerActiveFromQuote(q);
 
         let score = Math.max(0, Math.min(100, 50 + changePercent * 3 + Math.min(volume / 50000000, 15)));
         let signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
@@ -362,14 +363,7 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
                 let totalVolume = volumes.reduce((a, v) => a + (v || 0), 0);
                 const volume = meta.regularMarketVolume || totalVolume;
 
-                const tradeable = meta.tradeable !== false;
-                const regularMarketTime = meta.regularMarketTime || 0;
-                const now = Math.floor(Date.now() / 1000);
-                const daysSinceLastTrade = regularMarketTime > 0 ? (now - regularMarketTime) / 86400 : 999;
-
-                const validCloses = closes.filter(c => c !== null);
-                const noActivity = volume === 0 && Math.abs(changePercent) < 0.001;
-                const isSuspended = !tradeable || validCloses.length === 0 || (noActivity && daysSinceLastTrade > 3) || daysSinceLastTrade > 7;
+                const isSuspended = !isYahooTickerActiveFromChart(meta, closes, volumes);
 
                 let score = Math.max(0, Math.min(100, 50 + changePercent * 3 + Math.min(volume / 50000000, 15)));
                 let signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
@@ -431,7 +425,7 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
         const symbols = [];
         const seen = new Set();
         const batchSize = 200;
-        const maxTotal = Math.min(maxFetchTickers, 1200);
+        const maxTotal = Math.min(state.maxFetchTickers, 1200);
 
         const basePayload = {
             filter: [{ left: 'type', operation: 'in_range', right: ['stock', 'dr', 'fund'] }],
@@ -484,224 +478,278 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
         return symbols;
     }
 
-    async function loadData() {
-        if (isLoading) return;
+    function deriveFilters() {
+        return {
+            search: document.getElementById('explorer-search')?.value.trim().toLowerCase() || '',
+            sort: document.getElementById('explorer-sort')?.value || 'trending',
+            market: document.getElementById('explorer-market')?.value || '',
+            sector: document.getElementById('explorer-sector')?.value || '',
+            eligibility: document.getElementById('explorer-eligibility')?.value || '',
+            period: document.getElementById('explorer-period')?.value || '1D'
+        };
+    }
 
-        const search = document.getElementById('explorer-search')?.value.trim().toLowerCase() || '';
-        const sort = document.getElementById('explorer-sort')?.value || 'trending';
-        const market = document.getElementById('explorer-market')?.value || '';
-        const sector = document.getElementById('explorer-sector')?.value || '';
-        const eligibility = document.getElementById('explorer-eligibility')?.value || '';
-        const period = document.getElementById('explorer-period')?.value || '1D';
-        currentPeriod = period;
+    function renderMarketChooser() {
+        const list = document.getElementById('explorer-list');
+        const pagination = document.getElementById('explorer-pagination');
+        if (pagination) pagination.style.display = 'none';
+        if (!list) return;
 
-        if (!market) {
-            const list = document.getElementById('explorer-list');
-            const pagination = document.getElementById('explorer-pagination');
-            if (pagination) pagination.style.display = 'none';
-            
-            if (list) {
-                list.innerHTML = '';
-                const emptyState = document.createElement('div');
-                emptyState.className = 'explorer-market-grid';
-                
-                marketsData.forEach(m => {
-                    const btn = document.createElement('button');
-                    btn.className = 'market-grid-btn';
-                    btn.title = m.name;
-                    btn.onclick = () => selectMarket(m.id);
-                    
-                    const img = document.createElement('img');
-                    img.src = m.logo;
-                    img.alt = m.name;
-                    img.onerror = function() {
-                        this.style.display = 'none';
-                        const fallback = document.createElement('div');
-                        fallback.className = 'market-fallback-name';
-                        fallback.textContent = m.name;
-                        this.parentElement.appendChild(fallback);
-                    };
-                    
-                    btn.appendChild(img);
-                    emptyState.appendChild(btn);
-                });
-                
-                list.appendChild(emptyState);
-            }
-            return;
+        list.innerHTML = '';
+        const emptyState = document.createElement('div');
+        emptyState.className = 'explorer-market-grid';
+
+        marketsData.forEach(m => {
+            const btn = document.createElement('button');
+            btn.className = 'market-grid-btn';
+            btn.title = m.name;
+            btn.onclick = () => selectMarket(m.id);
+
+            const img = document.createElement('img');
+            img.src = m.logo;
+            img.alt = m.name;
+            img.onerror = function() {
+                this.style.display = 'none';
+                const fallback = document.createElement('div');
+                fallback.className = 'market-fallback-name';
+                fallback.textContent = m.name;
+                this.parentElement.appendChild(fallback);
+            };
+
+            btn.appendChild(img);
+            emptyState.appendChild(btn);
+        });
+
+        list.appendChild(emptyState);
+    }
+
+    function dedupeItems(items) {
+        const seen = new Set();
+        return items.filter(i => {
+            if (!i.symbol || seen.has(i.symbol)) return false;
+            seen.add(i.symbol);
+            return true;
+        });
+    }
+
+    function applyFilters(items, filters) {
+        let result = items;
+        if (filters.search) {
+            const needle = filters.search;
+            result = result.filter(i => (i.symbol || '').toLowerCase().includes(needle) || (i.name || '').toLowerCase().includes(needle));
         }
+        if (filters.sector) result = result.filter(i => i.sector === filters.sector);
+        return result;
+    }
 
-        const currentParams = JSON.stringify({ market, sector, eligibility, period, search });
-        let items = [];
-
-        if (cachedItems && lastParams === currentParams) {
-            items = [...cachedItems];
-        } else {
-            isLoading = true;
-            showLoading(true);
-
-            try {
-                const marketDef = marketsData.find(m => m.id === market);
-                
-                if (marketDef) {
-                    if (marketDef.tvRegion) {
-                        // TradingView Dynamic Fetch
-                        showLoadingProgress(0, `Fetching from TradingView (${marketDef.tvRegion})...`);
-                        const tvSymbols = await fetchTradingViewStocks(marketDef.tvRegion, marketDef.tvExchange);
-                        
-                        if (tvSymbols.length > 0) {
-                            items = await fetchStocksBatch(tvSymbols, 'cto', marketDef.id);
-                        } else {
-                            // Fallback to lists if TV fails
-                            if (marketDef.lists) {
-                                const allLists = Object.values(marketDef.lists);
-                                const allSymbols = [].concat(...allLists);
-                                items = await fetchStocksBatch([...new Set(allSymbols)], 'cto', marketDef.id);
-                            }
-                        }
-                    } else if (marketDef.type === 'list' && marketDef.lists) {
-                        let symbolsToFetch = [];
-                        let currentEligibility = 'pea'; // Default
-
-                        // If eligibility is selected and exists in lists, use it
-                        if (eligibility && marketDef.lists[eligibility]) {
-                            symbolsToFetch = marketDef.lists[eligibility];
-                            currentEligibility = eligibility;
-                        } else {
-                            // Otherwise fetch all lists combined
-                            const allLists = Object.values(marketDef.lists);
-                            const allSymbols = [].concat(...allLists);
-                            symbolsToFetch = [...new Set(allSymbols)]; // Unique symbols
-                        }
-
-                        const maxTotal = Math.min(maxFetchTickers, HARD_MAX_RESULTS);
-                        symbolsToFetch = symbolsToFetch.slice(0, maxTotal);
-                        items = await fetchStocksBatch(symbolsToFetch, currentEligibility, marketDef.id);
-                        
-                        // Post-process eligibility if we fetched multiple lists
-                        if (!eligibility && marketDef.lists) {
-                            items.forEach(item => {
-                                // Try to find which list this symbol belongs to
-                                for (const [listName, symbols] of Object.entries(marketDef.lists)) {
-                                    if (symbols.includes(item.symbol)) {
-                                        item.eligibility = listName;
-                                        break;
-                                    }
-                                }
-                            });
-                        }
-
-                    } else {
-                        // Screener type
-                        const screeners = marketDef.screeners || YAHOO_SCREENERS;
-                        items = (await fetchMultipleScreeners(screeners)).map(mapQuoteToItem).filter(i => i.market === market);
-                    }
-                } else {
-                    // Fallback for unknown markets or if marketDef not found (shouldn't happen if select populated from json)
-                    items = []; 
-                }
-
-                const seen = new Set();
-                items = items.filter(i => i.symbol && !seen.has(i.symbol) && seen.add(i.symbol));
-
-                if (search) items = items.filter(i => i.symbol.toLowerCase().includes(search) || i.name.toLowerCase().includes(search));
-                if (sector) items = items.filter(i => i.sector === sector);
-
-                if (items.length > 0) {
-                    showLoadingProgress(0, `Analyse ${PERIOD_LABELS[period]}...`);
-                    const config = PERIOD_CONFIG[period] || PERIOD_CONFIG['1D'];
-                    const changes = await fetchYahooPeriodChanges(items.map(i => i.symbol), config.range, config.interval, (done, total, isPaused, msg) => {
-                        if (msg) showLoadingProgress(done, `${msg} ${done}/${total}`);
-                        else if (isPaused) showLoadingProgress(done, `Pause API (Protection)... ${done}/${total}`);
-                        else showLoadingProgress(done, `Analyse ${done}/${total}`);
-                    });
-                    
-                    items = items.map(item => {
-                        const pd = changes[item.symbol];
-                        let score = item.score;
-                        let signal = item.signal;
-                        let riskScore = 1;
-
-                        if (pd) {
-                            item.change = pd.change;
-                            item.changePercent = pd.changePercent;
-
-                            if (window.SignalBot && pd.history) {
-                                const botResult = window.SignalBot.calculateBotSignal({
-                                    symbol: item.symbol,
-                                    prices: pd.history.prices,
-                                    highs: pd.history.highs,
-                                    lows: pd.history.lows,
-                                    volumes: pd.history.volumes
-                                }, { period: currentPeriod });
-
-                                score = botResult.signalValue;
-                                riskScore = botResult.risk ? botResult.risk.score : 1;
-                                
-                                if (score >= 60) signal = 'buy';
-                                else if (score <= 40) signal = 'sell';
-                                else signal = 'hold';
-                                
-                                if (riskScore >= 9) signal = 'sell'; 
-                            } else {
-                                score = Math.max(0, Math.min(100, 50 + pd.changePercent * 3 + Math.min(item.volume / 50000000, 15)));
-                                signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
-                            }
-                        }
-                        
-                        return { ...item, score: Math.round(score), signal, riskScore };
-                    });
-                }
-
-                cachedItems = items;
-                lastParams = currentParams;
-            } catch (e) {
-                showError('Erreur de chargement');
-                isLoading = false;
-                showLoading(false);
-                return;
-            } finally {
-                isLoading = false;
-                showLoading(false);
-            }
-        }
-
-        // Calcul du score pour tous les items (pour affichage)
-        items.forEach(item => {
+    function computeTrendingScores(items) {
+        return items.map(item => {
             const vol = item.volume || 0;
             const change = Math.abs(item.changePercent || 0);
-            
+
             let riskPenalty = 1;
             if ((item.riskScore || 1) >= 9) riskPenalty = 0.01;
             else if ((item.riskScore || 1) >= 7) riskPenalty = 0.2;
 
-            // Nouvelle formule : Base sur le volume + Bonus volatilité amorti
-            // Evite les scores de 0 pour les actions stables à fort volume
             const volumeScore = Math.log10(vol + 1);
             const volatilityScore = Math.sqrt(change) + 1;
-            
-            item.trendingScore = (volumeScore * volatilityScore * 10) * riskPenalty;
-        });
 
+            return { ...item, trendingScore: (volumeScore * volatilityScore * 10) * riskPenalty };
+        });
+    }
+
+    function sortItems(items, sort) {
+        const sorted = [...items];
         if (sort === 'trending') {
-            items.sort((a, b) => {
+            sorted.sort((a, b) => {
                 if (a.isSuspended && !b.isSuspended) return 1;
                 if (!a.isSuspended && b.isSuspended) return -1;
                 return (b.trendingScore || 0) - (a.trendingScore || 0);
             });
+            return sorted;
+        }
+
+        switch (sort) {
+            case 'gainers': sorted.sort((a, b) => b.changePercent - a.changePercent); break;
+            case 'losers': sorted.sort((a, b) => a.changePercent - b.changePercent); break;
+            case 'volume': sorted.sort((a, b) => b.volume - a.volume); break;
+            case 'signal': sorted.sort((a, b) => b.score - a.score); break;
+            case 'name': sorted.sort((a, b) => a.name.localeCompare(b.name)); break;
+            default: break;
+        }
+        return sorted;
+    }
+
+    async function enrichWithPeriodChanges(items, period) {
+        if (!items.length) return items;
+        let changes = {};
+
+        try {
+            showLoadingProgress(0, `Analyse ${PERIOD_LABELS[period]}...`);
+            const config = PERIOD_CONFIG[period] || PERIOD_CONFIG['1D'];
+            changes = await fetchYahooPeriodChanges(
+                items.map(i => i.symbol),
+                config.range,
+                config.interval,
+                (done, total, isPaused, msg) => {
+                    if (msg) showLoadingProgress(done, `${msg} ${done}/${total}`);
+                    else if (isPaused) showLoadingProgress(done, `Pause API (Protection)... ${done}/${total}`);
+                    else showLoadingProgress(done, `Analyse ${done}/${total}`);
+                }
+            );
+        } catch (e) {
+            changes = {};
+        }
+
+        return items.map(item => {
+            const pd = changes[item.symbol];
+            let score = item.score;
+            let signal = item.signal;
+            let riskScore = 1;
+
+            if (pd) {
+                const vol = Number.isFinite(item.volume) ? item.volume : 0;
+                const fallbackScore = Math.max(0, Math.min(100, 50 + pd.changePercent * 3 + Math.min(vol / 50000000, 15)));
+
+                item.change = pd.change;
+                item.changePercent = pd.changePercent;
+
+                if (window.SignalBot && pd.history) {
+                    try {
+                        const botResult = window.SignalBot.calculateBotSignal({
+                            symbol: item.symbol,
+                            prices: pd.history.prices,
+                            highs: pd.history.highs,
+                            lows: pd.history.lows,
+                            volumes: pd.history.volumes
+                        }, { period: state.currentPeriod });
+
+                        score = botResult.signalValue;
+                        riskScore = botResult.risk ? botResult.risk.score : 1;
+                        
+                        if (score >= 60) signal = 'buy';
+                        else if (score <= 40) signal = 'sell';
+                        else signal = 'hold';
+                        
+                        if (riskScore >= 9) signal = 'sell';
+                    } catch (e) {
+                        score = fallbackScore;
+                        signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
+                    }
+                } else {
+                    score = fallbackScore;
+                    signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
+                }
+            }
+            
+            return { ...item, score: Math.round(score), signal, riskScore };
+        });
+    }
+
+    async function resolveMarketItems(filters, marketDef) {
+        if (!marketDef) return [];
+
+        if (marketDef.tvRegion) {
+            showLoadingProgress(0, `Fetching from TradingView (${marketDef.tvRegion})...`);
+            const tvSymbols = await fetchTradingViewStocks(marketDef.tvRegion, marketDef.tvExchange);
+            if (tvSymbols.length > 0) return fetchStocksBatch(tvSymbols, 'cto', marketDef.id);
+
+            if (marketDef.lists) {
+                const allLists = Object.values(marketDef.lists);
+                const allSymbols = [].concat(...allLists);
+                return fetchStocksBatch([...new Set(allSymbols)], 'cto', marketDef.id);
+            }
+            return [];
+        }
+
+        if (marketDef.type === 'list' && marketDef.lists) {
+            let symbolsToFetch = [];
+            let currentEligibility = 'pea';
+
+            if (filters.eligibility && marketDef.lists[filters.eligibility]) {
+                symbolsToFetch = marketDef.lists[filters.eligibility];
+                currentEligibility = filters.eligibility;
+            } else {
+                const allLists = Object.values(marketDef.lists);
+                const allSymbols = [].concat(...allLists);
+                symbolsToFetch = [...new Set(allSymbols)];
+            }
+
+            symbolsToFetch = symbolsToFetch.slice(0, getMaxAllowed());
+            const fetched = await fetchStocksBatch(symbolsToFetch, currentEligibility, marketDef.id);
+
+            if (!filters.eligibility && marketDef.lists) {
+                fetched.forEach(item => {
+                    for (const [listName, symbols] of Object.entries(marketDef.lists)) {
+                        if (symbols.includes(item.symbol)) {
+                            item.eligibility = listName;
+                            break;
+                        }
+                    }
+                });
+            }
+
+            return fetched;
+        }
+
+        const screeners = marketDef.screeners || YAHOO_SCREENERS;
+        return (await fetchMultipleScreeners(screeners)).map(mapQuoteToItem).filter(i => i && i.market === filters.market);
+    }
+
+    async function loadData() {
+        if (state.isLoading) return;
+
+        const filters = deriveFilters();
+        state.currentPeriod = filters.period;
+
+        if (!filters.market) {
+            state.results = [];
+            state.total = 0;
+            state.currentPage = 1;
+            renderMarketChooser();
+            return;
+        }
+
+        const paramsKey = JSON.stringify({
+            market: filters.market,
+            sector: filters.sector,
+            eligibility: filters.eligibility,
+            period: filters.period,
+            search: filters.search
+        });
+        let items = [];
+
+        if (state.cachedItems && state.lastParams === paramsKey) {
+            items = [...state.cachedItems];
         } else {
-            switch (sort) {
-                case 'gainers': items.sort((a, b) => b.changePercent - a.changePercent); break;
-                case 'losers': items.sort((a, b) => a.changePercent - b.changePercent); break;
-                case 'volume': items.sort((a, b) => b.volume - a.volume); break;
-                case 'signal': items.sort((a, b) => b.score - a.score); break; // Score intelligent
-                case 'name': items.sort((a, b) => a.name.localeCompare(b.name)); break;
+            state.isLoading = true;
+            showLoading(true);
+
+            try {
+                const marketDef = marketsData.find(m => m.id === filters.market);
+                items = await resolveMarketItems(filters, marketDef);
+                items = dedupeItems(items);
+                items = applyFilters(items, filters);
+                items = items.slice(0, getMaxAllowed());
+                items = await enrichWithPeriodChanges(items, filters.period);
+                items = computeTrendingScores(items);
+
+                state.cachedItems = items;
+                state.lastParams = paramsKey;
+            } catch (e) {
+                console.error('Explorer load failed', e);
+                showError('Erreur de chargement');
+                return;
+            } finally {
+                state.isLoading = false;
+                showLoading(false);
             }
         }
 
-        currentResults = items;
-        totalResults = currentResults.length;
-        currentPage = 1;
+        items = applyFilters(items, filters);
+        state.results = sortItems(items, filters.sort);
+        state.total = state.results.length;
+        state.currentPage = 1;
         render();
     }
 
@@ -722,12 +770,12 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
 
     function bindEvents() {
         document.getElementById('open-explorer')?.addEventListener('click', openExplorer);
-        document.getElementById('explorer-search')?.addEventListener('input', debounce(() => { currentPage = 1; loadData(); }, 500));
-        document.getElementById('explorer-market')?.addEventListener('change', (e) => { currentPage = 1; selectMarket(e.target.value); });
-        document.getElementById('explorer-sort')?.addEventListener('change', () => { currentPage = 1; loadData(); });
-        document.getElementById('explorer-sector')?.addEventListener('change', () => { currentPage = 1; loadData(); });
-        document.getElementById('explorer-eligibility')?.addEventListener('change', () => { currentPage = 1; loadData(); });
-        document.getElementById('explorer-period')?.addEventListener('change', () => { currentPage = 1; loadData(); });
+        document.getElementById('explorer-search')?.addEventListener('input', debounce(() => { state.currentPage = 1; loadData(); }, 500));
+        document.getElementById('explorer-market')?.addEventListener('change', (e) => { state.currentPage = 1; selectMarket(e.target.value); });
+        document.getElementById('explorer-sort')?.addEventListener('change', () => { state.currentPage = 1; loadData(); });
+        document.getElementById('explorer-sector')?.addEventListener('change', () => { state.currentPage = 1; loadData(); });
+        document.getElementById('explorer-eligibility')?.addEventListener('change', () => { state.currentPage = 1; loadData(); });
+        document.getElementById('explorer-period')?.addEventListener('change', () => { state.currentPage = 1; loadData(); });
         document.getElementById('explorer-prev')?.addEventListener('click', () => changePage(-1));
         document.getElementById('explorer-next')?.addEventListener('click', () => changePage(1));
         document.getElementById('explorer-list')?.addEventListener('click', e => {
@@ -739,33 +787,71 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
 
     function setupMaxTickerControl() {
         const slider = document.getElementById('explorer-max-tickers');
-        const valueEl = document.getElementById('explorer-limit-value');
-        if (!slider || !valueEl) return;
+        const ticksEl = document.getElementById('explorer-limit-ticks');
+        const allToggle = document.getElementById('explorer-max-all');
+        if (!slider || !ticksEl || !allToggle) return;
+
+        const renderTicks = () => {
+            ticksEl.innerHTML = '';
+            for (let v = MAX_TICKERS_MIN; v <= MAX_TICKERS_MAX; v += 50) {
+                const tick = document.createElement('span');
+                tick.className = `explorer-limit-tick ${v <= YAHOO_SAFE_LIMIT ? 'safe' : 'danger'}`;
+                tick.dataset.value = String(v);
+                tick.textContent = String(v);
+                ticksEl.appendChild(tick);
+            }
+        };
 
         const applyValue = (raw) => {
             const numeric = Number(raw) || DEFAULT_MAX_TICKERS;
             const clamped = Math.min(MAX_TICKERS_MAX, Math.max(MAX_TICKERS_MIN, numeric));
-            maxFetchTickers = clamped;
+            state.maxFetchTickers = clamped;
             slider.value = clamped;
-            valueEl.textContent = clamped;
+            state.cachedItems = null;
+            state.lastParams = null;
+
+            ticksEl.querySelectorAll('.explorer-limit-tick').forEach(t => {
+                const v = Number(t.dataset.value || 0);
+                t.classList.toggle('active', v === clamped);
+            });
 
             const range = MAX_TICKERS_MAX - MAX_TICKERS_MIN;
             const safePos = Math.max(0, Math.min(100, ((YAHOO_SAFE_LIMIT - MAX_TICKERS_MIN) / range) * 100));
             slider.style.background = `linear-gradient(90deg, var(--color-positive) 0%, var(--color-positive) ${safePos}%, var(--color-negative) ${safePos}%, var(--color-negative) 100%)`;
         };
 
+        const applyAllMode = (enabled) => {
+            slider.disabled = enabled;
+            ticksEl.classList.toggle('disabled', enabled);
+            if (enabled) {
+                state.maxFetchTickers = HARD_MAX_RESULTS;
+                state.cachedItems = null;
+                state.lastParams = null;
+                ticksEl.querySelectorAll('.explorer-limit-tick').forEach(t => t.classList.remove('active'));
+            } else {
+                applyValue(slider.value);
+            }
+        };
+
         slider.min = MAX_TICKERS_MIN;
         slider.max = MAX_TICKERS_MAX;
         slider.step = 50;
+        slider.value = state.maxFetchTickers;
+        renderTicks();
         applyValue(slider.value);
+        applyAllMode(allToggle.checked);
 
         slider.addEventListener('input', (e) => {
             applyValue(e.target.value);
         });
+
+        allToggle.addEventListener('change', (e) => {
+            applyAllMode(e.target.checked);
+        });
     }
 
     async function openStock(yahooSymbol) {
-        const itemData = currentResults.find(i => i.symbol === yahooSymbol);
+        const itemData = state.results.find(i => i.symbol === yahooSymbol);
         if (!itemData) return;
 
         const jsonSymbol = getJsonSymbol(yahooSymbol);
@@ -1002,16 +1088,17 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
             fallback.textContent = ticker.length > 4 ? ticker.slice(0, 4) : ticker;
             fallback.title = yahooSymbol;
             fallback.style.fontSize = ticker.length > 4 ? Math.max(6, 12 - (ticker.length - 4) * 2) + 'px' : '12px';
-            this.parentElement.innerHTML = '';
-            this.parentElement.appendChild(fallback);
+            const parent = this.parentElement || tabLogo;
+            if (!parent) return;
+            parent.innerHTML = '';
+            parent.appendChild(fallback);
         };
 
+        tabLogo.appendChild(img);
         if (iconSymbol) {
             img.src = `icon/${iconSymbol}.png`;
-            tabLogo.appendChild(img);
         } else if (candidates.length > 0) {
             img.src = candidates.shift();
-            tabLogo.appendChild(img);
         } else {
             img.onerror();
         }
@@ -1036,9 +1123,9 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
     }
 
     function changePage(delta) {
-        const totalPages = Math.ceil(totalResults / ITEMS_PER_PAGE) || 1;
-        const newPage = currentPage + delta;
-        if (newPage >= 1 && newPage <= totalPages) { currentPage = newPage; render(); }
+        const totalPages = Math.ceil(state.total / ITEMS_PER_PAGE) || 1;
+        const newPage = state.currentPage + delta;
+        if (newPage >= 1 && newPage <= totalPages) { state.currentPage = newPage; render(); }
     }
 
     function render() {
@@ -1046,9 +1133,9 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
         const pagination = document.getElementById('explorer-pagination');
         if (!list) return;
 
-        const totalPages = Math.ceil(totalResults / ITEMS_PER_PAGE) || 1;
-        const start = (currentPage - 1) * ITEMS_PER_PAGE;
-        const pageData = currentResults.slice(start, start + ITEMS_PER_PAGE);
+        const totalPages = Math.ceil(state.total / ITEMS_PER_PAGE) || 1;
+        const start = (state.currentPage - 1) * ITEMS_PER_PAGE;
+        const pageData = state.results.slice(start, start + ITEMS_PER_PAGE);
 
         if (!pageData.length) {
             list.innerHTML = '<div class="explorer-empty"><i class="fa-solid fa-chart-line" style="font-size:2rem;margin-bottom:10px;opacity:0.3"></i><br>Aucun résultat trouvé</div>';
@@ -1059,9 +1146,9 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
             if (pagination) pagination.style.display = 'flex';
         }
 
-        document.getElementById('explorer-page-info').textContent = `Page ${currentPage} / ${totalPages}`;
-        document.getElementById('explorer-prev').disabled = currentPage <= 1;
-        document.getElementById('explorer-next').disabled = currentPage >= totalPages;
+        document.getElementById('explorer-page-info').textContent = `Page ${state.currentPage} / ${totalPages}`;
+        document.getElementById('explorer-prev').disabled = state.currentPage <= 1;
+        document.getElementById('explorer-next').disabled = state.currentPage >= totalPages;
     }
 
     function loadItemIcons() {
@@ -1069,7 +1156,7 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
             const ticker = el.parentElement.dataset.symbol;
             if (!ticker) return;
             const iconSymbol = getIconSymbol(ticker);
-            const item = currentResults.find(i => i.symbol === ticker);
+            const item = state.results.find(i => i.symbol === ticker);
             const candidates = buildOnlineIconCandidates(ticker, item?.market);
 
             const img = new Image();
@@ -1095,12 +1182,13 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
     }
 
     function renderItem(item) {
-        const changeClass = item.changePercent >= 0 ? 'positive' : 'negative';
-        const changeSign = item.changePercent >= 0 ? '+' : '';
-        const isCrypto = item.market === 'crypto';
-        const isSuspended = item.isSuspended && !isCrypto;
-        const signalClass = isCrypto ? 'crypto' : isSuspended ? 'suspended' : item.isClosed ? 'closed' : item.signal;
-        const signalText = isCrypto ? 'Crypto' : isSuspended ? 'Suspendu' : item.isClosed ? 'Fermé' : item.signal === 'buy' ? 'Achat' : item.signal === 'sell' ? 'Vente' : 'Neutre';
+        const changePercent = Number.isFinite(item.changePercent) ? item.changePercent : 0;
+        const priceValue = Number.isFinite(item.price) ? item.price : 0;
+        const changeClass = changePercent >= 0 ? 'positive' : 'negative';
+        const changeSign = changePercent >= 0 ? '+' : '';
+        const isSuspended = !!item.isSuspended;
+        const signalClass = isSuspended ? 'suspended' : item.isClosed ? 'closed' : item.signal;
+        const signalText = isSuspended ? 'Suspendu' : item.isClosed ? 'Fermé' : item.signal === 'buy' ? 'Achat' : item.signal === 'sell' ? 'Vente' : 'Neutre';
         const formatPrice = p => p >= 1000 ? p.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : p >= 1 ? p.toFixed(2) : p.toFixed(4);
         const curr = item.currency === 'EUR' ? '€' : item.currency === 'GBP' ? '£' : '$';
         
@@ -1125,7 +1213,7 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges } 
                 <div class="explorer-item-ticker">${item.symbol}${riskIcon}</div>
                 ${trendInfo}
             </div>
-            <div class="explorer-item-price"><div class="explorer-item-current">${formatPrice(item.price)} ${curr}</div><div class="explorer-item-change ${changeClass}">${changeSign}${item.changePercent.toFixed(2)}% <span class="explorer-period-label">${PERIOD_LABELS[currentPeriod]}</span></div></div>
+            <div class="explorer-item-price"><div class="explorer-item-current">${formatPrice(priceValue)} ${curr}</div><div class="explorer-item-change ${changeClass}">${changeSign}${changePercent.toFixed(2)}% <span class="explorer-period-label">${PERIOD_LABELS[state.currentPeriod]}</span></div></div>
             <div class="explorer-item-signal"><span class="explorer-signal-badge ${signalClass}">${signalText}</span><span class="explorer-signal-score">${item.score}/100</span></div>
         </div>`;
     }

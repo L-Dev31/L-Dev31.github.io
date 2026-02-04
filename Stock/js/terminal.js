@@ -2,6 +2,7 @@ import { fetchYahooFinancials, fetchYahooEarnings, fetchYahooDividends, fetchYah
 import { fetchNews } from './api/news.js';
 import { calculateBotSignal } from './signal-bot.js';
 import { loadApiConfig } from './general.js';
+import { periodToDays } from './utils.js';
 
 const INPUT_ID = 'terminal-input';
 const OUTPUT_ID = 'terminal-output';
@@ -38,8 +39,6 @@ function fmtErr(e) {
     if (c === 429) return '429 Too Many Requests';
     return e.message || e.errorMessage || JSON.stringify(e);
 }
-
-function periodToDays(p) { return { '1D': 1, '1W': 7, '1M': 30, '6M': 180, '1Y': 365, '3Y': 1095, '5Y': 1825, 'MAX': 36500 }[(p || '').toUpperCase()] || 7; }
 
 function getTarget(parts) {
     const raw = (parts[1] || '').toUpperCase();

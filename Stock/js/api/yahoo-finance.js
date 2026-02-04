@@ -116,36 +116,68 @@ export async function isYahooTickerSuspended(ticker) {
         const meta = result.meta || {};
         const closes = result.indicators?.quote?.[0]?.close || [];
         const volumes = result.indicators?.quote?.[0]?.volume || [];
-        
-        const validCloses = closes.filter(c => c !== null && c !== undefined);
-        const hasNoData = validCloses.length === 0;
-        
-        const tradeable = meta.tradeable !== false;
-        const regularMarketTime = meta.regularMarketTime || 0;
-        const now = Math.floor(Date.now() / 1000);
-        const daysSinceLastTrade = regularMarketTime > 0 ? (now - regularMarketTime) / (60 * 60 * 24) : 999;
-        
-        let totalVolume = 0;
-        for (const v of volumes) if (v) totalVolume += v;
-        const volume = meta.regularMarketVolume || totalVolume;
-        
-        const price = meta.regularMarketPrice || 0;
-        const prevClose = meta.chartPreviousClose || meta.previousClose || 0;
-        const changePercent = prevClose ? ((price - prevClose) / prevClose) * 100 : 0;
-        
-        const hasNoVolume = volume === 0;
-        const hasNoChange = Math.abs(changePercent) < 0.001;
-        const noActivity = hasNoVolume && hasNoChange;
-        
-        if (!tradeable) return true;
-        if (hasNoData) return true;
-        if (noActivity && daysSinceLastTrade > 3) return true;
-        if (daysSinceLastTrade > 7) return true;
-
-        return false;
+        return !isYahooTickerActiveFromChart(meta, closes, volumes);
     } catch (e) {
         return false;
     }
+}
+
+export function isYahooTickerActiveFromChart(meta = {}, closes = [], volumes = []) {
+    const validCloses = closes.filter(c => c !== null && c !== undefined);
+    const hasData = validCloses.length > 0;
+    const isCrypto = meta.instrumentType === 'CRYPTOCURRENCY' || meta.quoteType === 'CRYPTOCURRENCY' || meta.currency === 'CRYPTO';
+    const price = meta.regularMarketPrice || validCloses[validCloses.length - 1] || 0;
+
+    if (isCrypto) return price > 0 && hasData;
+
+    const tradeable = meta.tradeable !== false;
+    const regularMarketTime = meta.regularMarketTime || 0;
+    const now = Math.floor(Date.now() / 1000);
+    const daysSinceLastTrade = regularMarketTime > 0 ? (now - regularMarketTime) / 86400 : 999;
+    
+    let totalVolume = 0;
+    for (const v of volumes) if (v) totalVolume += v;
+    const volume = meta.regularMarketVolume || totalVolume;
+    const prevClose = meta.chartPreviousClose || meta.previousClose || 0;
+    const changePercent = prevClose ? ((price - prevClose) / prevClose) * 100 : 0;
+    const hasNoVolume = volume === 0;
+    const hasNoChange = Math.abs(changePercent) < 0.001;
+    const noActivity = hasNoVolume && hasNoChange;
+
+    if (!tradeable) return false;
+    if (!hasData) return false;
+    if (noActivity && daysSinceLastTrade > 3) return false;
+    if (daysSinceLastTrade > 7) return false;
+    return true;
+}
+
+export function isYahooTickerActiveFromQuote(q = {}) {
+    const exchange = (q.exchange || '').toUpperCase();
+    const isCrypto = q.quoteType === 'CRYPTOCURRENCY' || exchange === 'CCC' || q.currency === 'CRYPTO';
+
+    const price = q.regularMarketPrice || q.price || 0;
+    const changePercent = q.regularMarketChangePercent || 0;
+    const volume = q.regularMarketVolume || 0;
+    const regularMarketTime = q.regularMarketTime || 0;
+    const now = Math.floor(Date.now() / 1000);
+    const daysSinceLastTrade = regularMarketTime > 0 ? (now - regularMarketTime) / 86400 : 999;
+    const tradeable = q.tradeable !== false;
+
+    if (isCrypto) {
+        if (!Number.isFinite(price) || price <= 0) return false;
+        
+        if (q.cryptoTradeable === false && volume < 50000) return false;
+        
+        return true;
+    }
+
+    const noActivity = volume === 0 && Math.abs(changePercent) < 0.001;
+
+    if (!tradeable) return false;
+    if (noActivity && daysSinceLastTrade > 3) return false;
+    if (daysSinceLastTrade > 7) return false;
+
+    return true;
 }
 
 export async function fetchYahooSummary(ticker, signal) {

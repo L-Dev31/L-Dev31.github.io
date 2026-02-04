@@ -5,6 +5,17 @@ class RateLimiter {
         this.limiters = new Map();
     }
 
+    _emit(name, detail) {
+        try { window.dispatchEvent(new CustomEvent(name, { detail })); } catch (e) {}
+    }
+
+    _setWindowState(api, endTime) {
+        try {
+            window.__rateLimitedApi = api;
+            window.__rateLimitEndTime = endTime || 0;
+        } catch (e) {}
+    }
+
     get(api) {
         if (!this.limiters.has(api)) this.limiters.set(api, { limited: false, endTime: 0, timeout: null, queue: [] });
         return this.limiters.get(api);
@@ -26,8 +37,10 @@ class RateLimiter {
         if (l.limited) { if (end > l.endTime) { l.endTime = end; this._reset(api); } return; }
         l.limited = true;
         l.endTime = end;
-        try { window.__rateLimitedApi = api; window.__rateLimitEndTime = l.endTime; } catch(e) {}
-        try { window.startRateLimitCountdown?.(Math.ceil(ms/1000)) || window.dispatchEvent(new CustomEvent('rateLimitStart', { detail: { apiName: api, seconds: Math.ceil(ms/1000) } })); } catch(e) {}
+        this._setWindowState(api, l.endTime);
+        try {
+            window.startRateLimitCountdown?.(Math.ceil(ms / 1000)) || this._emit('rateLimitStart', { apiName: api, seconds: Math.ceil(ms / 1000) });
+        } catch (e) {}
         this._reset(api);
     }
 
@@ -37,8 +50,8 @@ class RateLimiter {
         l.limited = false;
         l.endTime = 0;
         if (l.timeout) { clearTimeout(l.timeout); l.timeout = null; }
-        try { window.__rateLimitedApi = null; window.__rateLimitEndTime = 0; } catch(e) {}
-        try { window.stopRateLimitCountdown?.() || window.dispatchEvent(new CustomEvent('rateLimitEnd', { detail: { apiName: api } })); } catch(e) {}
+        this._setWindowState(null, 0);
+        try { window.stopRateLimitCountdown?.() || this._emit('rateLimitEnd', { apiName: api }); } catch (e) {}
         l.queue.splice(0).forEach(({ reject, error }) => reject(error));
     }
 

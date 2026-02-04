@@ -75,8 +75,8 @@
                             <input id="terminal-input" class="terminal-input" type="text" aria-label="Terminal input" autocomplete="off" />
                         </div>
                     </div>
-                    </div>
                 </div>
+
                 <!-- News Card -->
                 <div class="card news-card" id="card-news" role="document" aria-hidden="true">
                     <!-- Header sticky -->
@@ -102,6 +102,7 @@
                     <!-- Liste des news -->
                     <div id="news-page-feed-list" class="news-list"></div>
                 </div>
+                
                 <!-- Explorer Card -->
                 <div class="card explorer-card" id="card-explorer" role="document" aria-hidden="true">
                     <div class="explorer-header">
@@ -171,13 +172,13 @@
                         <div class="explorer-limit-control">
                             <div class="explorer-limit-label">
                                 <span>Max tickers à fetch</span>
-                                <span id="explorer-limit-value">300</span>
                             </div>
-                            <input id="explorer-max-tickers" class="explorer-limit-range" type="range" min="50" max="600" step="50" value="300" />
-                            <div class="explorer-limit-scale">
-                                <span class="explorer-limit-safe">OK</span>
-                                <span class="explorer-limit-danger">Limite Yahoo ~200</span>
-                            </div>
+                            <input id="explorer-max-tickers" class="explorer-limit-range" type="range" min="50" max="600" step="50" value="250" />
+                            <div id="explorer-limit-ticks" class="explorer-limit-ticks"></div>
+                            <label class="explorer-limit-toggle">
+                                <input id="explorer-max-all" type="checkbox" />
+                                <span>Tout afficher</span>
+                            </label>
                         </div>
                     </div>
                     <div id="explorer-list" class="explorer-list">
@@ -203,10 +204,10 @@
                 </div>
             </template>
             <template id="card-template">
-                <div class="card" id="">
+                <div class="card">
                     <div class="card-logo-section">
                         <div class="logo">
-                            <img id="" data-symbol="" src="" alt="" />
+                            <img data-symbol="" src="" alt="" />
                         </div>
                     </div>
 
@@ -222,10 +223,10 @@
                             <h3 class="section-title">Infos générales</h3>
                             <div class="section-date"></div>
                             <div class="card-general-info">
-                                <div class="general-row"><strong>ISIN</strong> : <span id=""></span></div>
-                                <div class="general-row"><strong>Ticker</strong> : <span id=""></span></div>
+                                <div class="general-row"><strong>ISIN</strong> : <span></span></div>
+                                <div class="general-row"><strong>Ticker</strong> : <span></span></div>
                                 <div class="general-row"><strong>Symbole</strong> : <span id="symbol-info"></span></div>
-                                <div class="general-row card-country-row"><strong>Pays</strong> : <span class="country-name"></span><img id="" data-country="" src="" alt="" class="flag-icon"/></div>
+                                <div class="general-row card-country-row"><strong>Pays</strong> : <span class="country-name"></span><img data-country="" src="" alt="" class="flag-icon"/></div>
                             </div>
                             
                             <h3 class="section-title course-title">Cours de l'action</h3>
@@ -239,8 +240,8 @@
                                         <button class="chart-type-btn" data-type="candle" title="Bougies"><i class="fa-solid fa-chart-simple"></i></button>
                                     </div>
                                 </div>
-                                <canvas class="chart-canvas" id=""></canvas>
-                                <div class="periods-group" id="">
+                                <canvas class="chart-canvas"></canvas>
+                                <div class="periods-group">
                                     <button class="period-btn" data-symbol="" data-period="1D">1D</button>
                                     <button class="period-btn" data-symbol="" data-period="1W">1W</button>
                                     <button class="period-btn" data-symbol="" data-period="1M">1M</button>
@@ -253,27 +254,27 @@
                             </div>
                             <div class="performance">
                                 <div class="performance-label">Performance sur <span class="performance-period">1D</span></div>
-                                <div class="performance-value" id=""></div>
+                                <div class="performance-value"></div>
                             </div>
                             <div class="info-grid">
                                 <div class="info-item">
                                     <div class="info-label">Ouverture (Open)</div>
-                                    <div class="info-value" id=""></div>
+                                    <div class="info-value"></div>
                                 </div>
                                 <div class="info-item">
                                     <div class="info-label">Plus Haut (High)</div>
-                                    <div class="info-value" id=""></div>
+                                    <div class="info-value"></div>
                                 </div>
                                 <div class="info-item">
                                     <div class="info-label">Plus Bas (Low)</div>
-                                    <div class="info-value" id=""></div>
+                                    <div class="info-value"></div>
                                 </div>
                                 <div class="info-item">
                                     <div class="info-label">Clôture (Close)</div>
-                                    <div class="info-value" id=""></div>
+                                    <div class="info-value"></div>
                                 </div>
                             </div>
-                            <div class="update-center" id=""></div>
+                            <div class="update-center"></div>
                             <h3 class="section-title signal-title">Signal d'achat/vente</h3>
                             <div class="section-date"></div>
                             <div class="signal-container">
@@ -316,7 +317,7 @@
                                     <label class="news-label">Rechercher</label>
                                     <input type="text" class="news-input news-search-input" placeholder="Rechercher dans les actualités..." />
                                 </div>
-                                <div class="news-list" id="news-list-" aria-live="polite"></div>
+                                <div class="news-list" aria-live="polite"></div>
                             </div>
                         </div>
 
@@ -326,7 +327,7 @@
                                 <h3 class="section-title investment-title">Investissement personnel</h3>
                                 <div class="section-date"></div>
                                 <div class="card-table-container">
-                                    <div class="general-row important-shares">Actions détenues : <span id=""></span></div>
+                                    <div class="general-row important-shares">Actions détenues : <span></span></div>
                                     <table class="card-table">
                                         <thead class="card-table-header">
                                             <tr>
@@ -339,15 +340,15 @@
                                         <tbody>
                                             <tr>
                                                 <td class="card-table-td card-table-type">Total</td>
-                                                <td class="card-table-td" id=""></td>
-                                                <td class="card-table-td" id=""></td>
-                                                <td class="card-table-td" id=""></td>
+                                                <td class="card-table-td"></td>
+                                                <td class="card-table-td"></td>
+                                                <td class="card-table-td"></td>
                                             </tr>
                                             <tr>
                                                 <td class="card-table-td card-table-type">Par action</td>
-                                                <td class="card-table-td" id=""></td>
-                                                <td class="card-table-td" id=""></td>
-                                                <td class="card-table-td" id=""></td>
+                                                <td class="card-table-td"></td>
+                                                <td class="card-table-td"></td>
+                                                <td class="card-table-td"></td>
                                             </tr>
                                         </tbody>
                                     </table>

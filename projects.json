@@ -3,6 +3,7 @@
     {
       "id": "cmck",
       "title": "Portfolio",
+      "description": "Showcasing the musical journey and works of Charlie McKenzie.",
       "creator": "Charlie McKenzie",
       "category": "commission", 
       "path": "http://www.charliemckenziemusic.com/",
@@ -11,6 +12,7 @@
     {
       "id": "bmge",
       "title": "L-DEV's BMG Editor",
+      "description": "A comprehensive editor for BMG files, enhancing game modding workflows.",
       "creator": "Léo Tosku",
       "category": "personal-project", 
       "path": "BMGE",
@@ -19,6 +21,7 @@
     {
       "id": "mxal",
       "title": "Mix and Light (Redesign)",
+      "description": "A modern redesign for Mix and Light, giving a new fresh look from ground up.",
       "creator": "Mix and Light",
       "category": "commission", 
       "path": "https://www.ynov-sophia-projets.com/ymmersionB1325/",
@@ -27,6 +30,7 @@
     {
       "id": "lsdp",
       "title": "Les Saveurs de Provence (Redesign)",
+      "description": "Bringing the flavors of Provence to life with a fresh web design.",
       "creator": "",
       "category": "commission", 
       "path": "LSDP",
@@ -35,6 +39,7 @@
     {
       "id": "sand",
       "title": "SandFall Interactive (Redesign)",
+      "description": "Website redesign for SandFall Interactive Studio, enhancing user experience and brand identity.",
       "creator": "SandFall Interactive",
       "category": "commission", 
       "path": "SandFall",
@@ -43,6 +48,7 @@
     {
       "id": "smag",
       "title": "Super Mario Another Galaxy",
+      "description": "A fan-mod project of Super Mario Galaxy 2, exploring new galaxies.",
       "creator": "SMAG Team",
       "category": "personal-project",
       "path": "smag",
