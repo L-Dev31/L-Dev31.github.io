@@ -18,3 +18,15 @@
   color: #00bfa3 !important;
   font-weight: 700 !important;
 }
+
+.editor-shell .text-highlight .special-text-0200 {
+  color: #FF4C4C !important;
+}
+
+.editor-shell .text-highlight .special-text-0800 {
+  color: #FFFFFF !important;
+}
+
+.editor-shell .text-highlight .special-text-0700 {
+  color: #00BFA3 !important;
+}

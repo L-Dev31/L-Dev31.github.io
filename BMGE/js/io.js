@@ -2,12 +2,7 @@ import { state, els } from './state.js';
 import { parseBmg } from './bmg-format.js';
 import { buildBmg } from './build-bmg.js';
 import { renderEntries, updateMeta, showMessage, updateSaveButton } from './ui.js';
-// ...existing code...
 
-/**
- * File I/O Module - Following AeonMSBT architecture
- * Handles loading and saving BMG files
- */
 
 export async function handleFileSelection(event) {
   const file = event.target.files?.[0];
@@ -64,9 +59,6 @@ export function handleDownload() {
   }
 }
 
-/**
- * UI wrapper: click hidden file input to import JSON
- */
 export function handleImportJsonClick() {
   const input = document.getElementById('import-json-input');
   if (!input) return;

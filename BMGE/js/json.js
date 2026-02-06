@@ -1,8 +1,6 @@
 import { state, els } from './state.js';
-// ...existing code...
 import { updateTextHighlight, updateSaveButton, renderEntries, showMessage } from './ui.js';
 
-// Simple helpers
 function downloadStringAsFile(str, filename, mime = 'application/json') {
   const blob = new Blob([str], { type: mime });
   const url = URL.createObjectURL(blob);
@@ -18,10 +16,6 @@ function attributeToHex(attr) {
   return Array.from(attr).map(b => b.toString(16).padStart(2, '0')).join(' ').toUpperCase();
 }
 
-/**
- * Export the current layout: only entries currently rendered in the UI.
- * Each exported entry contains: index, id, label, segments[] (plain editable strings).
- */
 export function handleExportJson() {
   if (!state.bmgFile) {
     showMessage('No file loaded', 'warning');
@@ -62,12 +56,6 @@ export function handleImportJsonClick() {
   input.click();
 }
 
-/**
- * Import layout JSON and apply to visible entry cards.
- * Behavior: for each imported entry, find the card by data-index and update its textareas
- * with the provided `segments` strings. Reconstruct message.text using original startTags
- * so tags are preserved. Update UI highlights, char counts and modified badges.
- */
 export async function handleImportJsonFile(event) {
   const file = event?.target?.files?.[0];
   if (!file) return;
@@ -104,7 +92,6 @@ export async function handleImportJsonFile(event) {
 
       let entryModified = false;
 
-      // Compare and update text property. Accept `text` or `segments` fields
       let importedFullText = null;
       if (typeof entry.text === 'string') {
         importedFullText = entry.text;
@@ -120,7 +107,6 @@ export async function handleImportJsonFile(event) {
 
       if (entryModified) {
         modified++;
-        // Update UI small parts
         if (card) {
           const charCount = card.querySelector('.char-count');
           if (charCount) charCount.textContent = `${dst.text.length} chars`;

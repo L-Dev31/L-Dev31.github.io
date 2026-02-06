@@ -14,7 +14,6 @@ const els = {
   filterEmpty: null,
   filterModified: null,
   filterSingle: null,
-  // filterSequenced retired; sequencing no longer used
 };
 
 const state = {

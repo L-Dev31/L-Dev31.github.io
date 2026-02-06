@@ -12,10 +12,8 @@ async function setupGameConfigDropdown() {
 	const icon = document.getElementById('game-config-icon');
 	if (!select || !icon) return;
 
-	// Helper to load/unload game CSS
 	let currentGameCss = null;
 	function loadGameCss(gameName) {
-		// Remove previous
 		if (currentGameCss) {
 			currentGameCss.remove();
 			currentGameCss = null;
@@ -32,19 +30,15 @@ async function setupGameConfigDropdown() {
 		currentGameCss = link;
 	}
 
-	// Helper to set the loader background per game
 	function setGameBg(gameName) {
 		const bgDiv = document.querySelector('.game-config-bg');
 		if (!bgDiv) return;
-		// Try png first, fallback to jpg
 		const bgPng = `game/${gameName}/bg.png`;
 		const bgJpg = `game/${gameName}/bg.jpg`;
-		// Try to check if png exists
 		fetch(bgPng, { method: 'HEAD' }).then(res => {
 			if (res.ok) {
 				bgDiv.style.setProperty('--game-bg-url', `url('${bgPng}')`);
 			} else {
-				// fallback to jpg
 				fetch(bgJpg, { method: 'HEAD' }).then(res2 => {
 					if (res2.ok) {
 						bgDiv.style.setProperty('--game-bg-url', `url('${bgJpg}')`);
@@ -59,7 +53,6 @@ async function setupGameConfigDropdown() {
 	select.addEventListener('change', async () => {
 		const selectedOption = select.options[select.selectedIndex];
 		const gameName = selectedOption.value;
-		// Icon logic: show icon if found, hide if not
 		const iconPath = `game/${gameName}/icon.png`;
 		try {
 			const res = await fetch(iconPath, { method: 'HEAD' });
@@ -77,9 +70,7 @@ async function setupGameConfigDropdown() {
 			icon.alt = '';
 			icon.style.display = 'none';
 		}
-		// Load game CSS
 		loadGameCss(gameName);
-		// Set loader background per game
 		setGameBg(gameName);
 		const gameConfig = await loadGameConfig(gameName);
 		if (gameConfig && gameConfig.getSpecialTokenInfo) {
@@ -87,10 +78,8 @@ async function setupGameConfigDropdown() {
 		}
 	});
 
-	// Load default on startup
 	const selectedOption = select.options[select.selectedIndex];
 	const gameName = selectedOption.value;
-	// Icon logic: show icon if found, hide if not
 	const iconPath = `game/${gameName}/icon.png`;
 	try {
 		const res = await fetch(iconPath, { method: 'HEAD' });
@@ -108,7 +97,6 @@ async function setupGameConfigDropdown() {
 		icon.alt = '';
 		icon.style.display = 'none';
 	}
-	// Load game CSS for default
 	loadGameCss(gameName);
 	setGameBg(gameName);
 	const gameConfig = await loadGameConfig(gameName);

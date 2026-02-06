@@ -1,11 +1,9 @@
-// --- Game config loader logic (moved from game-config-loader.js) ---
 let currentGameConfig = null;
 export async function loadGameConfig(gameName) {
   if (!gameName) {
     currentGameConfig = null;
     return null;
   }
-  // Expect gameName to be like 'tomodachicollection'
   try {
     const mod = await import(`../game/${gameName}/${gameName}.js`);
     currentGameConfig = mod;
@@ -20,12 +18,10 @@ export function getCurrentGameConfig() {
 }
 import { state, els } from './state.js';
 import { BmgMessage } from './bmg-format.js';
-// getSpecialTokenInfo is set by game config loader
 let getSpecialTokenInfo = () => null;
 export function setSpecialTokenApi(fn) {
   getSpecialTokenInfo = fn || (() => null);
 }
-// ...existing code...
 import {
   handleFileSelection,
   handleDownload,
@@ -108,7 +104,6 @@ function createEntryCard(message, displayIndex) {
   header.appendChild(badges);
   card.appendChild(header);
 
-  // Treat the entire message.text as a single unsegmented entry
   const segments = [{ text: message.text, groupId: null }];
   segments.forEach((segment, segmentIndex) => {
     const segmentContainer = document.createElement('div');
@@ -134,7 +129,6 @@ function createEntryCard(message, displayIndex) {
     textarea.rows = Math.max(2, (segment.text || '').split('\n').length);
 
     textarea.addEventListener('input', (e) => {
-      // Update whole message text directly (no segments)
       message.text = e.target.value;
       updateTextHighlight(highlight, e.target.value);
 
@@ -234,24 +228,41 @@ function updateTextHighlight(element, text) {
 
   const tagRegex = /\[(@?)([0-9A-F]+):([0-9A-F]+)(?::([0-9A-F]+))?\]|\{\{@([0-9A-F]{1,2}):([0-9A-F]{1,4})(?::([0-9A-F]+))?\}\}|\{\{@?(\d+):(\d+)(?:\s+(?:arg=")?([a-fA-F0-9]+)"?)?\}\}/gi;
   let lastIndex = 0;
+  let activeTextClass = '';
   const fragment = document.createDocumentFragment();
   let match;
 
+  const appendTextSegment = (segmentText) => {
+    if (!segmentText) return;
+    if (activeTextClass) {
+      const span = document.createElement('span');
+      span.className = activeTextClass;
+      span.textContent = segmentText;
+      fragment.appendChild(span);
+    } else {
+      const textNode = document.createTextNode(segmentText);
+      fragment.appendChild(textNode);
+    }
+  };
+
   while ((match = tagRegex.exec(text)) !== null) {
     if (match.index > lastIndex) {
-      const textNode = document.createTextNode(text.slice(lastIndex, match.index));
-      fragment.appendChild(textNode);
+      appendTextSegment(text.slice(lastIndex, match.index));
     }
 
     const tagSpan = document.createElement('span');
     tagSpan.className = 'token-chip';
 
-    // Use special token helper to mark known special tokens (e.g., 0x0200)
     const specialInfo = getSpecialTokenInfo(match[0]);
     if (specialInfo) {
       tagSpan.classList.add('special');
       if (specialInfo.cls) tagSpan.classList.add(specialInfo.cls);
       tagSpan.title = specialInfo.name || specialInfo.argHex || match[0];
+      if (specialInfo.textCls) {
+        activeTextClass = specialInfo.textCls;
+      } else {
+        activeTextClass = '';
+      }
     } else {
       tagSpan.classList.add('jaune');
     }
@@ -262,8 +273,7 @@ function updateTextHighlight(element, text) {
   }
 
   if (lastIndex < text.length) {
-    const textNode = document.createTextNode(text.slice(lastIndex));
-    fragment.appendChild(textNode);
+    appendTextSegment(text.slice(lastIndex));
   }
 
   element.replaceChildren(fragment);
@@ -319,7 +329,6 @@ function handleRevert(message, textarea, highlight, card) {
 }
 
 function matchesFilter(message) {
-  // No segmentation: ignore sequenced filtering. Use the existing filters only.
   const filterSingle = true;
 
   const showEmpty = els.filterEmpty ? els.filterEmpty.checked : false;
