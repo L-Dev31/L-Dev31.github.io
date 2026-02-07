@@ -21,24 +21,75 @@ const App = (() => {
         if (el) observer.observe(el);
     };
 
-    const setupTitleReveal = () => {
-        document.querySelectorAll('.title').forEach(observe);
-    };
+    const setupHeaderAndText = () => {
+        const hourEl = document.getElementById('header-hour');
+        if (hourEl) {
+            const update = () => {
+                const now = new Date();
+                hourEl.textContent = new Intl.DateTimeFormat('en-US', {
+                    timeZone: 'Europe/Paris',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                }).format(now).toUpperCase();
+            };
+            update();
+            setInterval(update, 15000);
+        }
 
-    const setupTime = () => {
-        const el = document.getElementById('header-hour');
-        if (!el) return;
-        const update = () => {
-            const now = new Date();
-            el.textContent = new Intl.DateTimeFormat('en-US', {
-                timeZone: 'Europe/Paris',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            }).format(now).toUpperCase();
+        const titleEl = document.getElementById('site-title');
+        if (titleEl && !titleEl.dataset._init) {
+            titleEl.dataset._init = '1';
+
+            const text = titleEl.textContent;
+            titleEl.innerHTML = '';
+            const chars = Array.from(text);
+            const spans = chars.map(ch => {
+                const s = document.createElement('span');
+                s.className = 'site-title-letter';
+                s.textContent = ch === ' ' ? '\u00A0' : ch;
+                s.style.transitionDelay = `s`;
+                titleEl.appendChild(s);
+                return s;
+            });
+
+            spans.forEach((s, i) => {
+                setTimeout(() => s.classList.add('visible'), i * 30 + 50);
+            });
+        }
+
+        document.querySelectorAll('.title').forEach(observe);
+
+        const waitForStoryImages = () => {
+            const imgs = Array.from(document.querySelectorAll('.story-image img'));
+            if (!imgs.length) return Promise.resolve();
+            return Promise.all(imgs.map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.addEventListener('load', resolve, { once: true });
+                    img.addEventListener('error', resolve, { once: true });
+                });
+            }));
         };
-        update();
-        setInterval(update, 15000);
+
+        const initTextReveal = () => {
+            const targets = [
+                document.getElementById('split-text'),
+                ...Array.from(document.querySelectorAll('.story-paragraph')),
+                ...Array.from(document.querySelectorAll('.story-text h3'))
+            ];
+            targets.forEach(splitText);
+        };
+
+        const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+        Promise.all([fontsReady, waitForStoryImages()]).then(() => {
+            requestAnimationFrame(() => requestAnimationFrame(initTextReveal));
+        });
+
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(initTextReveal, 150);
+        });
     };
 
     const setupCursor = () => {
@@ -58,28 +109,6 @@ const App = (() => {
             el.addEventListener('mouseleave', () => cursor.classList.remove('cursor--small'));
             el.addEventListener('focus', () => cursor.classList.add('cursor--small'));
             el.addEventListener('blur', () => cursor.classList.remove('cursor--small'));
-        });
-    };
-
-    const setupHeroTitle = () => {
-        const el = document.getElementById('site-title');
-        if (!el || el.dataset._init) return;
-        el.dataset._init = '1';
-
-        const text = el.textContent;
-        el.innerHTML = '';
-        const chars = Array.from(text);
-        const spans = chars.map(ch => {
-            const s = document.createElement('span');
-            s.className = 'site-title-letter';
-            s.textContent = ch === ' ' ? '\u00A0' : ch;
-            s.style.transitionDelay = `s`;
-            el.appendChild(s);
-            return s;
-        });
-
-        spans.forEach((s, i) => {
-            setTimeout(() => s.classList.add('visible'), i * 30 + 50);
         });
     };
 
@@ -317,47 +346,11 @@ const App = (() => {
         });
     };
 
-    const setupTextReveal = () => {
-        const waitForStoryImages = () => {
-            const imgs = Array.from(document.querySelectorAll('.story-image img'));
-            if (!imgs.length) return Promise.resolve();
-            return Promise.all(imgs.map(img => {
-                if (img.complete) return Promise.resolve();
-                return new Promise(resolve => {
-                    img.addEventListener('load', resolve, { once: true });
-                    img.addEventListener('error', resolve, { once: true });
-                });
-            }));
-        };
-
-        const initTextReveal = () => {
-            const targets = [
-                document.getElementById('split-text'),
-                ...Array.from(document.querySelectorAll('.story-paragraph')),
-                ...Array.from(document.querySelectorAll('.story-text h3'))
-            ];
-            targets.forEach(splitText);
-        };
-
-        const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
-        Promise.all([fontsReady, waitForStoryImages()]).then(() => {
-            requestAnimationFrame(() => requestAnimationFrame(initTextReveal));
-        });
-
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(initTextReveal, 150);
-        });
-    };
-
     const init = () => {
-        setupTime();
         setupCursor();
-        setupHeroTitle();
         setupFeaturedProjects();
-        setupTitleReveal();
         setupScrollEffects();
-        setupTextReveal();
+        setupHeaderAndText();
     };
 
     return { init };
