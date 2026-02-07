@@ -1,45 +1,274 @@
 ﻿const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1024;
 
-class ScrollObserver {
-    constructor(element) {
-        this.element = typeof element == 'string' ? document.querySelector(element) : element;
-        this.observer = new IntersectionObserver(entries => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    e.target.classList.add('visible');
-                } else if (e.boundingClientRect.top > 0) {
-                    e.target.classList.remove('visible');
-                }
+const App = (() => {
+    const splitTextState = new Map();
+    let resizeTimer = null;
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+            } else if (e.boundingClientRect.top > 0) {
+                e.target.classList.remove('visible');
+            }
+        });
+    }, {
+        threshold: 0,
+        rootMargin: "0px 0px -25% 0px"
+    });
+
+    const observe = el => {
+        if (el) observer.observe(el);
+    };
+
+    const setupTitleReveal = () => {
+        document.querySelectorAll('.title').forEach(observe);
+    };
+
+    const setupTime = () => {
+        const el = document.getElementById('header-hour');
+        if (!el) return;
+        const update = () => {
+            const now = new Date();
+            el.textContent = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Europe/Paris',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            }).format(now).toUpperCase();
+        };
+        update();
+        setInterval(update, 15000);
+    };
+
+    const setupCursor = () => {
+        if (isMobile) return;
+        const cursor = document.createElement('div');
+        cursor.className = 'cursor';
+        document.body.appendChild(cursor);
+
+        document.addEventListener('mousemove', e => {
+            const scale = cursor.classList.contains('cursor--small') ? ' scale(0.5)' : '';
+            cursor.style.transform = `translate(` + e.clientX + `px, ` + e.clientY + `px)` + scale;
+        });
+
+        const clickableSelector = 'a, button, .clickable';
+        document.querySelectorAll(clickableSelector).forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('cursor--small'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('cursor--small'));
+            el.addEventListener('focus', () => cursor.classList.add('cursor--small'));
+            el.addEventListener('blur', () => cursor.classList.remove('cursor--small'));
+        });
+    };
+
+    const setupHeroTitle = () => {
+        const el = document.getElementById('site-title');
+        if (!el || el.dataset._init) return;
+        el.dataset._init = '1';
+
+        const text = el.textContent;
+        el.innerHTML = '';
+        const chars = Array.from(text);
+        const spans = chars.map(ch => {
+            const s = document.createElement('span');
+            s.className = 'site-title-letter';
+            s.textContent = ch === ' ' ? '\u00A0' : ch;
+            s.style.transitionDelay = `s`;
+            el.appendChild(s);
+            return s;
+        });
+
+        spans.forEach((s, i) => {
+            setTimeout(() => s.classList.add('visible'), i * 30 + 50);
+        });
+    };
+
+    const setupFeaturedProjects = () => {
+        const list = document.querySelector('.featured-list');
+        if (!list) return;
+
+        let container = null;
+        let img = null;
+        let desc = null;
+        let targetX = 0;
+        let targetY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        let animFrame = null;
+
+        const ensurePreview = () => {
+            if (container) return;
+            container = document.createElement('div');
+            container.className = 'project-preview-container';
+            img = document.createElement('img');
+            img.className = 'project-preview-img';
+            container.appendChild(img);
+            desc = document.createElement('div');
+            desc.className = 'project-preview-desc';
+            container.appendChild(desc);
+            document.body.appendChild(container);
+        };
+
+        const animate = () => {
+            if (!container || container.style.display !== 'flex') return;
+            currentX += (targetX - currentX) * 0.10;
+            currentY += (targetY - currentY) * 0.10;
+            container.style.left = currentX + 'px';
+            container.style.top = currentY + 'px';
+            animFrame = requestAnimationFrame(animate);
+        };
+
+        const showPreview = (imgUrl, description, x, y) => {
+            ensurePreview();
+            img.src = imgUrl;
+            desc.textContent = description || '';
+            container.style.display = 'flex';
+
+            const size = 20 * window.innerHeight / 100;
+            const offset = 5 * window.innerHeight / 100;
+
+            targetX = x + offset;
+            targetY = y - size / 2;
+            if (!animFrame) animate();
+        };
+
+        const hidePreview = () => {
+            if (container) container.style.display = 'none';
+            cancelAnimationFrame(animFrame);
+            animFrame = null;
+        };
+
+        fetch('projects.json')
+            .then(res => res.json())
+            .then(data => {
+                list.innerHTML = '';
+                data.projects.forEach(project => {
+                    const a = document.createElement('a');
+                    a.className = 'featured-project';
+                    a.textContent = project.title;
+                    a.href = project.path.startsWith('http') ? project.path : project.path + '/';
+                    a.target = '_blank';
+
+                    if (project.creator?.trim()) {
+                        const author = document.createElement('span');
+                        author.className = 'featured-author';
+                        author.textContent = ` ` + project.creator;
+                        a.appendChild(author);
+                    }
+
+                    const imgPath = `Elements/image/` + project.id + `-banner.png`;
+                    a.addEventListener('mouseenter', e => {
+                        showPreview(imgPath, project.description, e.clientX, e.clientY);
+                        document.querySelector('.cursor')?.classList.add('cursor--small');
+                    });
+                    a.addEventListener('mousemove', e => showPreview(imgPath, project.description, e.clientX, e.clientY));
+                    a.addEventListener('mouseleave', () => {
+                        hidePreview();
+                        document.querySelector('.cursor')?.classList.remove('cursor--small');
+                    });
+                    list.appendChild(a);
+                });
             });
-        }, {
-            threshold: 0,
-            rootMargin: "0px 0px -25% 0px"
-        });
-    }
+    };
 
-    observe(el) {
-        if (el) this.observer.observe(el);
-    }
-}
+    const setupScrollEffects = () => {
+        let ticking = false;
+        const header = document.getElementById('header');
+        const video = document.querySelector('.header-bg-video');
 
-class SplitTextReveal extends ScrollObserver {
-    constructor(elementSelector) {
-        super(elementSelector);
-        if (!this.element) return;
-        this.originalContent = this.element.innerHTML;
-        this.resizeTimeout = null;
-        this.init();
-        window.addEventListener('resize', () => {
-            clearTimeout(this.resizeTimeout);
-            this.resizeTimeout = setTimeout(() => this.init(), 150);
-        });
-    }
+        const parallaxItems = isMobile
+            ? []
+            : Array.from(document.querySelectorAll('[data-parallax-speed]')).map(el => ({
+                el: el,
+                speed: parseFloat(el.dataset.parallaxSpeed) || 100,
+                baseTop: 0
+            }));
 
-    init() {
-        this.element.innerHTML = this.originalContent.replace(/<div class="text-line.*?>/g, '').replace(/<\/div>/g, '');
-        const allNodes = Array.from(this.element.childNodes);
+        const cacheParallaxPositions = () => {
+            const scrollTop = window.pageYOffset;
+            parallaxItems.forEach(item => {
+                const rect = item.el.getBoundingClientRect();
+                item.baseTop = rect.top + scrollTop;
+            });
+        };
+
+        const update = () => {
+            if (video && header) {
+                const scrolled = window.scrollY;
+                const headerH = header.offsetHeight;
+                const threshold = headerH * 0.35;
+                const progress = Math.min(1, Math.max(0, scrolled / threshold));
+                video.style.setProperty('--video-prog', progress);
+            }
+
+            if (parallaxItems.length) {
+                const viewH = window.innerHeight;
+                const scrolled = window.scrollY;
+                const viewCenter = scrolled + viewH / 2;
+
+                parallaxItems.forEach(item => {
+                    const elCenter = item.baseTop + (item.el.offsetHeight / 2);
+                    const diff = elCenter - viewCenter;
+                    const factor = (item.speed - 100) / 100;
+                    if (factor === 0) return;
+                    const y = diff * factor;
+                    item.el.style.transform = `translateY(` + y + `px)`;
+                });
+            }
+
+            ticking = false;
+        };
+
+        const onScroll = () => {
+            if (!ticking) {
+                window.requestAnimationFrame(update);
+                ticking = true;
+            }
+        };
+
+        if (video || parallaxItems.length) {
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('resize', () => cacheParallaxPositions(), { passive: true });
+            cacheParallaxPositions();
+            update();
+        }
+
+        if (!isMobile) {
+            let target = window.scrollY;
+            let current = window.scrollY;
+            const ease = 0.1;
+            let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+
+            const onWheel = e => {
+                e.preventDefault();
+                target += Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 100) * 0.75;
+                target = Math.max(0, Math.min(target, maxScroll));
+            };
+
+            const updateSmooth = () => {
+                current += (target - current) * ease;
+                if (Math.abs(target - current) < 0.1) current = target;
+                window.scrollTo(0, current);
+                requestAnimationFrame(updateSmooth);
+            };
+
+            window.addEventListener('wheel', onWheel, { passive: false });
+            window.addEventListener('resize', () => {
+                maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            });
+            updateSmooth();
+        }
+    };
+
+    const splitText = el => {
+        if (!el) return;
+        const original = splitTextState.get(el) || el.innerHTML;
+        splitTextState.set(el, original);
+
+        el.innerHTML = original.replace(/<div class="text-line.*?>/g, '').replace(/<\/div>/g, '');
+        const allNodes = Array.from(el.childNodes);
         const wordSpans = [];
-        this.element.innerHTML = '';
+        el.innerHTML = '';
 
         allNodes.forEach(node => {
             if (node.nodeType === 3) {
@@ -48,21 +277,21 @@ class SplitTextReveal extends ScrollObserver {
                     const s = document.createElement('span');
                     s.textContent = txt + ' ';
                     s.style.display = 'inline-block';
-                    this.element.appendChild(s);
+                    el.appendChild(s);
                     wordSpans.push(s);
                 });
             } else {
                 const s = document.createElement('span');
                 s.innerHTML = node.outerHTML + ' ';
                 s.style.display = 'inline-block';
-                this.element.appendChild(s);
+                el.appendChild(s);
                 wordSpans.push(s);
             }
         });
 
-        if (wordSpans.length === 0) return;
+        if (!wordSpans.length) return;
 
-        let lines = [];
+        const lines = [];
         let currentLine = [];
         let lastTop = wordSpans[0].offsetTop;
 
@@ -76,336 +305,63 @@ class SplitTextReveal extends ScrollObserver {
         });
         lines.push(currentLine);
 
-        this.element.innerHTML = '';
+        el.innerHTML = '';
         lines.forEach((line, i) => {
             const div = document.createElement('div');
             div.className = 'text-line';
             if (i === lines.length - 1) div.classList.add('last-line');
             div.style.transitionDelay = `${i * 0.05}s`;
             line.forEach(s => div.innerHTML += s.innerHTML);
-            this.element.appendChild(div);
-            this.observe(div);
+            el.appendChild(div);
+            observe(div);
         });
-    }
-}
+    };
 
-class ElementReveal extends ScrollObserver {
-    constructor(selector) {
-        super();
-        document.querySelectorAll(selector).forEach(el => this.observe(el));
-    }
-}
-
-class TimeManager {
-    constructor() {
-        this.el = document.getElementById('header-hour');
-        if (this.el) this.init();
-    }
-
-    init() {
-        const update = () => {
-            const now = new Date();
-            this.el.textContent = new Intl.DateTimeFormat('en-US', {
-                timeZone: 'Europe/Paris',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            }).format(now).toUpperCase();
-        };
-        update();
-        setInterval(update, 15000);
-    }
-}
-
-class CursorManager {
-    constructor() {
-        if (isMobile) return;
-        this.cursor = document.createElement('div');
-        this.cursor.className = 'cursor';
-        document.body.appendChild(this.cursor);
-        this.init();
-    }
-
-    init() {
-        document.addEventListener('mousemove', e => {
-            const scale = this.cursor.classList.contains('cursor--small') ? ' scale(0.5)' : '';
-            this.cursor.style.transform = `translate(` + e.clientX + `px, ` + e.clientY + `px)` + scale;
-        });
-
-        const clickableSelector = 'a, button, .clickable';
-        document.querySelectorAll(clickableSelector).forEach(el => {
-            el.addEventListener('mouseenter', () => this.cursor.classList.add('cursor--small'));
-            el.addEventListener('mouseleave', () => this.cursor.classList.remove('cursor--small'));
-            el.addEventListener('focus', () => this.cursor.classList.add('cursor--small'));
-            el.addEventListener('blur', () => this.cursor.classList.remove('cursor--small'));
-        });
-    }
-} 
-
-class BlurScrollHeader {
-    constructor() {
-        this.ticking = false;
-        this.video = document.querySelector('.header-bg-video');
-        this.header = document.getElementById('header');
-        this.init();
-    }
-
-    init() {
-        if (!this.video || !this.header) return;
-        window.addEventListener('scroll', () => {
-            if (!this.ticking) {
-                window.requestAnimationFrame(() => this.update());
-                this.ticking = true;
-            }
-        }, { passive: true });
-    }
-
-    update() {
-        const scrolled = window.scrollY;
-        const headerH = this.header.offsetHeight;
-        const threshold = headerH * 0.35;
-        const progress = Math.min(1, Math.max(0, scrolled / threshold));
-        this.video.style.setProperty('--video-prog', progress);
-        this.ticking = false;
-    }
-}
-
-class ParallaxEffect {
-    constructor() {
-        if (isMobile) return;
-        this.elements = [];
-        this.ticking = false;
-        this.init();
-    }
-
-    init() {
-        const els = document.querySelectorAll('[data-parallax-speed]');
-        if (!els.length) return;
-
-        this.elements = Array.from(els).map(el => ({
-            el: el,
-            speed: parseFloat(el.dataset.parallaxSpeed) || 100,
-            baseTop: 0
-        }));
-
-        this.cachePositions();
-        window.addEventListener('resize', () => this.cachePositions(), { passive: true });
-        window.addEventListener('scroll', () => {
-            if (!this.ticking) {
-                window.requestAnimationFrame(() => this.update());
-                this.ticking = true;
-            }
-        }, { passive: true });
-
-        this.update();
-    }
-
-    cachePositions() {
-        const scrollTop = window.pageYOffset;
-        this.elements.forEach(item => {
-            const rect = item.el.getBoundingClientRect();
-            item.baseTop = rect.top + scrollTop;
-        });
-    }
-
-    update() {
-        const viewH = window.innerHeight;
-        const scrolled = window.scrollY;
-        const viewCenter = scrolled + viewH / 2;
-
-        this.elements.forEach(item => {
-            const elCenter = item.baseTop + (item.el.offsetHeight / 2);
-            const diff = elCenter - viewCenter;
-            const factor = (item.speed - 100) / 100;
-            if (factor === 0) return;
-            const y = diff * factor;
-            item.el.style.transform = `translateY(` + y + `px)`;
-        });
-
-        this.ticking = false;
-    }
-}
-
-class SmoothScroll {
-    constructor() {
-        if (isMobile) return;
-        this.target = window.scrollY;
-        this.current = window.scrollY;
-        this.ease = 0.1;
-        this.onWheel = this.onWheel.bind(this);
-        this.update = this.update.bind(this);
-        
-        window.addEventListener('wheel', this.onWheel, { passive: false });
-        this.maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        window.addEventListener('resize', () => {
-            this.maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        });
-        
-        this.update();
-    }
-
-    onWheel(e) {
-        e.preventDefault();
-        this.target += Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 100) * 0.75;
-        this.target = Math.max(0, Math.min(this.target, this.maxScroll));
-    }
-
-    update() {
-        this.current += (this.target - this.current) * this.ease;
-        if (Math.abs(this.target - this.current) < 0.1) this.current = this.target;
-        window.scrollTo(0, this.current);
-        requestAnimationFrame(this.update);
-    }
-}
-
-class HeroTitleAnimation {
-    constructor() {
-        this.el = document.getElementById('site-title');
-        if (this.el && !this.el.dataset._init) {
-            this.el.dataset._init = '1';
-            this.init();
-        }
-    }
-
-    init() {
-        const text = this.el.textContent;
-        this.el.innerHTML = '';
-        const chars = Array.from(text);
-        const spans = chars.map((ch, i) => {
-            const s = document.createElement('span');
-            s.className = 'site-title-letter';
-            s.textContent = ch === ' ' ? '\u00A0' : ch;
-            s.style.transitionDelay = `s`;
-            this.el.appendChild(s);
-            return s;
-        });
-
-        spans.forEach((s, i) => {
-            setTimeout(() => s.classList.add('visible'), i * 30 + 50);
-        });
-    }
-}
-
-class ProjectPreview {
-    constructor() {
-        this.container = null;
-        this.img = null;
-        this.desc = null;
-        this.targetX = 0;
-        this.targetY = 0;
-        this.currentX = 0;
-        this.currentY = 0;
-        this.animFrame = null;
-    }
-
-    show(imgUrl, description, x, y) {
-        if (!this.container) {
-            this.container = document.createElement('div');
-            this.container.className = 'project-preview-container';
-            this.img = document.createElement('img');
-            this.img.className = 'project-preview-img';
-            this.container.appendChild(this.img);
-            this.desc = document.createElement('div');
-            this.desc.className = 'project-preview-desc';
-            this.container.appendChild(this.desc);
-            document.body.appendChild(this.container);
-        }
-        
-        this.img.src = imgUrl;
-        this.desc.textContent = description || '';
-        this.container.style.display = 'flex';
-        
-        const size = 20 * window.innerHeight / 100;
-        const offset = 5 * window.innerHeight / 100;
-
-        this.targetX = x + offset;
-        this.targetY = y - size / 2;
-        if (!this.animFrame) this.animate();
-    }
-
-    hide() {
-        if (this.container) this.container.style.display = 'none';
-        cancelAnimationFrame(this.animFrame);
-        this.animFrame = null;
-    }
-
-    animate() {
-        if (!this.container || this.container.style.display !== 'flex') return;
-        this.currentX += (this.targetX - this.currentX) * 0.10;
-        this.currentY += (this.targetY - this.currentY) * 0.10;
-        this.container.style.left = this.currentX + 'px';
-        this.container.style.top = this.currentY + 'px';
-        this.animFrame = requestAnimationFrame(() => this.animate());
-    }
-}
-
-class FeaturedProjects {
-    constructor() {
-        this.preview = new ProjectPreview();
-        this.load();
-    }
-
-    load() {
-        fetch('projects.json')
-            .then(res => res.json())
-            .then(data => {
-                const list = document.querySelector('.featured-list');
-                if (!list) return;
-                list.innerHTML = '';
-                data.projects.forEach(project => {
-                    const a = document.createElement('a');
-                    a.className = 'featured-project';
-                    a.textContent = project.title;
-                    a.href = project.path.startsWith('http') ? project.path : project.path + '/';
-                    a.target = '_blank';
-                    
-                    if (project.creator?.trim()) {
-                        const author = document.createElement('span');
-                        author.className = 'featured-author';
-                        author.textContent = ` ` + project.creator;
-                        a.appendChild(author);
-                    }
-
-                    const imgPath = `Elements/image/` + project.id + `-banner.png`;
-                    a.addEventListener('mouseenter', e => {
-                        this.preview.show(imgPath, project.description, e.clientX, e.clientY);
-                        document.querySelector('.cursor')?.classList.add('cursor--small');
-                    });
-                    a.addEventListener('mousemove', e => this.preview.show(imgPath, project.description, e.clientX, e.clientY));
-                    a.addEventListener('mouseleave', () => {
-                        this.preview.hide();
-                        document.querySelector('.cursor')?.classList.remove('cursor--small');
-                    });
-                    list.appendChild(a);
+    const setupTextReveal = () => {
+        const waitForStoryImages = () => {
+            const imgs = Array.from(document.querySelectorAll('.story-image img'));
+            if (!imgs.length) return Promise.resolve();
+            return Promise.all(imgs.map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.addEventListener('load', resolve, { once: true });
+                    img.addEventListener('error', resolve, { once: true });
                 });
-            });
-    }
-}
+            }));
+        };
 
-document.addEventListener('DOMContentLoaded', () => {
-    window.app = {
-        time: new TimeManager(),
-        cursor: new CursorManager(),
-        header: new BlurScrollHeader(),
-        elements: new ElementReveal('.title'),
-        parallax: new ParallaxEffect(),
-        projects: new FeaturedProjects(),
-        hero: new HeroTitleAnimation(),
-        scroll: new SmoothScroll()
+        const initTextReveal = () => {
+            const targets = [
+                document.getElementById('split-text'),
+                ...Array.from(document.querySelectorAll('.story-paragraph')),
+                ...Array.from(document.querySelectorAll('.story-text h3'))
+            ];
+            targets.forEach(splitText);
+        };
+
+        const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+        Promise.all([fontsReady, waitForStoryImages()]).then(() => {
+            requestAnimationFrame(() => requestAnimationFrame(initTextReveal));
+        });
+
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(initTextReveal, 150);
+        });
     };
 
-    const initTextReveal = () => {
-        window.app.textReveal = [
-            new SplitTextReveal(document.getElementById('split-text')),
-            ...Array.from(document.querySelectorAll('.story-paragraph')).map(el => new SplitTextReveal(el)),
-            ...Array.from(document.querySelectorAll('.story-text h3')).map(el => new SplitTextReveal(el))
-        ];
+    const init = () => {
+        setupTime();
+        setupCursor();
+        setupHeroTitle();
+        setupFeaturedProjects();
+        setupTitleReveal();
+        setupScrollEffects();
+        setupTextReveal();
     };
 
-    if (document.fonts) {
-        document.fonts.ready.then(initTextReveal);
-    } else {
-        window.addEventListener('load', initTextReveal);
-    }
-});
+    return { init };
+})();
+
+document.addEventListener('DOMContentLoaded', App.init);
 

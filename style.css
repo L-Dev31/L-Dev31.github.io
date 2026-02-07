@@ -441,14 +441,14 @@ section {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 15vh;
+    gap: clamp(48px, 8vw, 140px);
 }
 
 .story-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 5vh;
+    gap: clamp(16px, 4vw, 64px);
 }
 
 .story-row.reverse {
@@ -459,19 +459,22 @@ section {
     width: 55%;
     font-family: 'Thin', sans-serif;
     color: var(--text);
+    min-width: 0;
 }
 
 .story-text h3 {
     font-family: 'Playfair Display', serif;
-    font-size: 4vh;
+    font-size: clamp(24px, 2.6vw, 40px);
     color: var(--white);
     margin-bottom: 2vh;
+    text-wrap: balance;
 }
 
 .story-text p,
 .story-text .story-paragraph {
-    font-size: 2.5vh;
-    line-height: 1.4;
+    font-size: clamp(16px, 1.3vw, 22px);
+    line-height: 1.5;
+    text-wrap: balance;
 }
 
 .about-me-text .text-line,
@@ -512,13 +515,14 @@ section {
     width: 50%;
     position: relative;
     overflow: hidden;
-    height: 60vh; 
+    height: 70vh; 
     display: flex;
     justify-content: center;
+    min-width: 0;
 }
 
 .story-row.reverse .story-image {
-    height: 50vh; 
+    height: 40vh; 
 }
 
 .story-image img {
