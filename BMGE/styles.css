@@ -1,10 +1,4 @@
-/* Game icon for game config dropdown */
-.game-icon {
-  height: 2.2em;
-  width: auto;
-  margin-left: 5px;
-  display: none;
-}
+/* === Variables === */
 :root {
   --bg: #111;
   --panel: #181818;
@@ -17,9 +11,8 @@
   font-size: 16px;
 }
 
-* {
-  box-sizing: border-box;
-}
+/* === Reset & Base === */
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -38,6 +31,7 @@ code {
   color: var(--accent-muted);
 }
 
+/* === Layout === */
 header.page-header {
   max-width: 960px;
   margin: 0 auto;
@@ -65,6 +59,7 @@ main {
   gap: 1rem;
 }
 
+/* === Panels === */
 .panel {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -89,6 +84,7 @@ main {
   font-size: 0.9rem;
 }
 
+/* === File Picker === */
 .file-picker {
   display: flex;
   align-items: center;
@@ -111,10 +107,42 @@ main {
   cursor: not-allowed;
 }
 
-#file-label {
-  color: var(--muted);
+#file-label { color: var(--muted); }
+
+/* === Meta & Status === */
+.meta { margin-top: 1.5rem; }
+
+.meta-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
 }
 
+.meta-block {
+  background: var(--panel-alt);
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--border);
+  margin-bottom: 0.1rem;
+  font-size: 0.97rem;
+  color: var(--text);
+  box-shadow: 0 1px 0 0 #181818;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+#status-info { margin-top: 1.5rem; }
+
+/* === Search === */
 .search-container {
   width: 100%;
   margin-top: 1rem;
@@ -125,35 +153,31 @@ main {
   width: 100%;
 }
 
-.search-wrapper .search-icon {
+.search-wrapper .search-icon,
+.search-wrapper .search-clear {
   position: absolute;
-  left: 1rem;
   top: 50%;
   transform: translateY(-50%);
   color: white;
   font-size: 1rem;
-  pointer-events: none;
   z-index: 2;
 }
 
+.search-wrapper .search-icon {
+  left: 1rem;
+  pointer-events: none;
+}
+
 .search-wrapper .search-clear {
-  position: absolute;
   right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: white;
-  font-size: 1rem;
   cursor: pointer;
-  z-index: 2;
   opacity: 0.7;
   transition: opacity 0.2s;
 }
 
-.search-wrapper .search-clear:hover {
-  opacity: 1;
-}
+.search-wrapper .search-clear:hover { opacity: 1; }
 
-.search-container #search {
+#search {
   width: 100%;
   padding: 0.75rem 3rem;
   border-radius: 8px;
@@ -161,24 +185,16 @@ main {
   background: var(--panel-alt);
   color: var(--text);
   font-size: 1rem;
-  /* Disable browser's default search clear button */
-  -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
+  -webkit-appearance: none;
 }
 
-.search-container #search::-webkit-search-cancel-button {
-  display: none;
-}
+#search::-webkit-search-cancel-button,
+#search::-moz-search-cancel-button { display: none; }
 
-.search-container #search::-moz-search-cancel-button {
-  display: none;
-}
+#search:focus { outline: 1px solid var(--accent); }
 
-.search-container #search:focus {
-  outline: 1px solid var(--accent);
-}
-
+/* === Filters === */
 .filters-container {
   display: flex;
   align-items: center;
@@ -188,9 +204,7 @@ main {
   width: 100%;
 }
 
-.filters-container .spacer {
-  flex: 1 1 auto;
-}
+.filters-container .spacer { flex: 1 1 auto; }
 
 .filters-container .action-buttons {
   display: flex;
@@ -217,9 +231,7 @@ main {
   transition: all 0.2s;
 }
 
-.filter-checkbox:hover {
-  border-color: var(--accent);
-}
+.filter-checkbox:hover { border-color: var(--accent); }
 
 .filter-checkbox input[type="checkbox"] {
   width: 16px;
@@ -228,45 +240,31 @@ main {
   accent-color: var(--accent);
 }
 
-/* Color-coded checkbox accents */
-.filter-checkbox:has(#filter-single) input[type="checkbox"] {
-  accent-color: #9a9a9a;
-}
-
-.filter-checkbox:has(#filter-empty) input[type="checkbox"] {
-  accent-color: #808080;
-}
-
-.filter-checkbox:has(#filter-modified) input[type="checkbox"] {
-  accent-color: var(--accent-muted);
-}
-
 .filter-checkbox span {
   font-size: 0.85rem;
   font-weight: 500;
 }
 
 /* Color-coded filter checkboxes */
-/* duplicate 'filter-single' styles removed */
-
-.filter-checkbox:has(#filter-single:checked),
 .filter-checkbox:has(#filter-single) {
   border-color: rgba(154, 154, 154, 0.6);
   background: rgba(154, 154, 154, 0.1);
 }
+.filter-checkbox:has(#filter-single) input { accent-color: #9a9a9a; }
 
-.filter-checkbox:has(#filter-empty:checked),
 .filter-checkbox:has(#filter-empty) {
   border-color: rgba(128, 128, 128, 0.6);
   background: rgba(128, 128, 128, 0.1);
 }
+.filter-checkbox:has(#filter-empty) input { accent-color: #808080; }
 
-.filter-checkbox:has(#filter-modified:checked),
 .filter-checkbox:has(#filter-modified) {
   border-color: rgba(201, 178, 74, 0.6);
   background: rgba(201, 178, 74, 0.15);
 }
+.filter-checkbox:has(#filter-modified) input { accent-color: var(--accent-muted); }
 
+/* === Buttons === */
 button {
   background: var(--accent);
   color: var(--bg);
@@ -283,9 +281,7 @@ button:disabled {
   opacity: 0.5;
 }
 
-button:not(:disabled):hover {
-  background: var(--accent-muted);
-}
+button:not(:disabled):hover { background: var(--accent-muted); }
 
 button.ghost {
   background: transparent;
@@ -299,35 +295,15 @@ button.ghost:not(:disabled):hover {
   color: var(--bg);
 }
 
-.status {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.6rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--panel-alt);
-  color: var(--text);
-  font-size: 0.85rem;
+button.danger {
+  background: #e05050;
+  color: white;
+  border: none;
 }
 
-.meta-lines {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  margin: 1.5rem 0;
-}
+button.danger:hover { background: #c73e3e; }
 
-.meta-block {
-  background: var(--panel-alt);
-  border-radius: 8px;
-  padding: 0.5rem 0.9rem;
-  border: 1px solid var(--border);
-  margin-bottom: 0.1rem;
-  font-size: 0.97rem;
-  color: var(--text);
-  box-shadow: 0 1px 0 0 #181818;
-}
-
+/* === Entries === */
 #entries {
   display: flex;
   flex-direction: column;
@@ -342,7 +318,8 @@ button.ghost:not(:disabled):hover {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  transition: opacity 0.35s ease, transform 0.35s ease, max-height 0.35s ease, margin 0.35s ease, padding 0.35s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease,
+              max-height 0.35s ease, margin 0.35s ease, padding 0.35s ease;
 }
 
 .entry-card.removing {
@@ -357,11 +334,9 @@ button.ghost:not(:disabled):hover {
   pointer-events: none;
 }
 
-.entry-card.modified {
-  /* Highlight modified cards with the accent color. */
-  border-color: var(--accent);
-}
+.entry-card.modified { border-color: var(--accent); }
 
+/* === Entry Header & Badges === */
 .entry-heading {
   display: flex;
   align-items: center;
@@ -399,42 +374,27 @@ button.ghost:not(:disabled):hover {
   color: var(--accent-muted);
 }
 
-.entry-helper {
+/* === Entry Editor === */
+.segment-container {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem;
-  color: var(--muted);
-  font-size: 0.85rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  margin-top: 0.5rem;
 }
 
-.entry-helper span {
-  color: inherit;
+.segment-container:has(textarea:focus) {
+  outline: 1px solid var(--accent);
+  outline-offset: -2px;
 }
 
 .entry-editor {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-.entry-editor textarea {
-  width: 100%;
-  min-height: 120px;
-  padding: 0.75rem;
-  border-radius: 8px;
-  background: var(--panel);
-  color: var(--text);
-  font-family: "Cascadia Code", Consolas, monospace;
-  /* match editor-shell font sizing exactly to avoid visual offset */
-  font-size: 15px;
-  line-height: 1.5;
-  resize: vertical;
-}
-
-.entry-editor textarea:focus {
-  outline: 1px solid var(--accent);
-  border-color: var(--accent);
 }
 
 .editor-shell {
@@ -446,13 +406,10 @@ button.ghost:not(:disabled):hover {
 .editor-shell textarea {
   box-sizing: border-box;
   font-family: "Cascadia Code", Consolas, monospace;
-  /* explicit pixel sizing to avoid rem rounding differences between preview and textarea */
   font-size: 15px;
-  /* use explicit pixel line-height so wrapping/metrics are identical */
   line-height: 20px;
   padding: 0.75rem;
   min-height: 120px;
-  /* disable ligatures and force consistent font smoothing for both layers */
   font-variant-ligatures: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -471,7 +428,6 @@ button.ghost:not(:disabled):hover {
 }
 
 .editor-shell textarea {
-  box-sizing: border-box;
   position: absolute;
   inset: 0;
   width: 100%;
@@ -479,27 +435,14 @@ button.ghost:not(:disabled):hover {
   background: transparent;
   color: transparent;
   border: none;
+  border-radius: 8px;
   resize: none;
   overflow: hidden;
   outline: none;
   caret-color: var(--accent);
-  /* rounded corners for the editable layer to match general UI */
-  border-radius: 8px;
 }
 
-.editor-shell textarea:focus {
-  outline: none;
-}
-
-/* Focus on segment container instead of editor-shell */
-.segment-container:has(textarea:focus) {
-  outline: 1px solid var(--accent);
-  outline-offset: -2px;
-}
-
-/* Debug overlay removed in production build. */
-
-
+/* === Token Chips === */
 .token-chip {
   display: inline-flex;
   align-items: center;
@@ -509,13 +452,12 @@ button.ghost:not(:disabled):hover {
   color: var(--accent) !important;
   font-weight: 600;
   margin: 0 0.1rem;
-  font-size: 0.95em!important;
+  font-size: 0.95em !important;
 }
 
-.highlight-empty {
-  opacity: 0.45;
-}
+.highlight-empty { opacity: 0.45; }
 
+/* === Entry Actions === */
 .entry-actions {
   display: flex;
   align-items: center;
@@ -525,115 +467,15 @@ button.ghost:not(:disabled):hover {
   font-size: 0.85rem;
 }
 
-@media (max-width: 640px) {
-  header.page-header {
-    padding-top: 1.5rem;
-  }
-
-  main {
-    padding-bottom: 2rem;
-  }
-
-  .entry-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
-  }
-
-  .entry-helper {
-    justify-content: space-between;
-  }
-}
-
-/* Segment containers for grouped tokens */
-.segment-container {
+.entry-helper {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-  margin-top: 0.5rem;
-}
-
-
-
-.segment-editor {
-  margin-top: 0;
-}
-
-/* Game config content styles */
-.game-config-content {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  max-width: 960px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 2em;
-}
-/* Game config loader section inside loader panel */
-.game-config-loader {
-  position: relative;
-  width: 100%;
-  min-height: 180px;
-  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  z-index: 2;
-  border: 1px solid #444;
-  border-radius: 18px;
-  margin: 50px 0;
-}
-.game-config-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to right, rgb(30, 30, 30), rgba(30, 30, 30, 0.8)), var(--game-bg-url, none) center/cover no-repeat;
-  opacity: 0.95;
-  z-index: 1;
-  pointer-events: none;
-  transition: background-image 0.4s;
+  gap: 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
-/* Game config dropdown styles */
-.game-config-dropdown {
-  display: flex;
-  align-items: center;
-  gap: 0.7em;
-  margin: 0.5em 0 1em 0;
-}
-.game-config-label {
-  font-weight: 600;
-  font-size: 1.05em;
-  color: var(--accent);
-}
-.game-config-select-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.game-config-select {
-  padding: 0.35em 2.2em 0.35em 0.7em;
-  font-size: 1em;
-  border-radius: 6px;
-  border: 1px solid #fff8;
-  background: transparent;
-  color: var(--text);
-  appearance: none;
-  outline: none;
-  font-weight: 500;
-  max-width: fit-content;
-}
-.game-config-select option {
-  color: #222;
-}
-
-/* --- Entry button group --- */
 .entry-btn-group {
   display: flex;
   gap: 0.5rem;
@@ -651,7 +493,88 @@ button.ghost:not(:disabled):hover {
   color: var(--panel);
 }
 
-/* --- Floating toolbar (bottom-right) --- */
+/* === Game Config === */
+#game-config-loader { margin: 1.5rem 0; }
+
+.game-config-loader {
+  position: relative;
+  width: 100%;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 2;
+  border: 1px solid #444;
+  border-radius: 18px;
+}
+
+.game-config-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgb(30, 30, 30), rgba(30, 30, 30, 0.8)),
+              var(--game-bg-url, none) center/cover no-repeat;
+  opacity: 0.95;
+  z-index: 1;
+  pointer-events: none;
+  transition: background-image 0.4s;
+}
+
+.game-config-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 2em;
+}
+
+.game-config-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  margin: 0.5em 0 1em;
+}
+
+.game-config-label {
+  font-weight: 600;
+  font-size: 1.05em;
+  color: var(--accent);
+}
+
+.game-config-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.game-config-select {
+  padding: 0.35em 2.2em 0.35em 0.7em;
+  font-size: 1em;
+  border-radius: 6px;
+  border: 1px solid #fff8;
+  background: transparent;
+  color: var(--text);
+  appearance: none;
+  outline: none;
+  font-weight: 500;
+  max-width: fit-content;
+}
+
+.game-config-select option { color: #222; }
+
+.game-icon {
+  height: 2.2em;
+  width: auto;
+  margin-left: 5px;
+  display: none;
+}
+
+/* === Floating Toolbar === */
 .floating-toolbar {
   position: fixed;
   bottom: 1.5rem;
@@ -663,7 +586,7 @@ button.ghost:not(:disabled):hover {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 0.5rem;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
 }
 
 .floating-toolbar button {
@@ -678,8 +601,6 @@ button.ghost:not(:disabled):hover {
   background: var(--panel-alt);
   color: var(--text);
   border: 1px solid var(--border);
-  cursor: pointer;
-  transition: all 0.15s;
 }
 
 .floating-toolbar button:not(:disabled):hover {
@@ -688,17 +609,14 @@ button.ghost:not(:disabled):hover {
   border-color: var(--accent);
 }
 
-.floating-toolbar button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
+.floating-toolbar button:disabled { opacity: 0.35; }
 
-/* --- Modal overlay --- */
+/* === Modals === */
 .modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -722,14 +640,12 @@ button.ghost:not(:disabled):hover {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
   transform: translateY(12px);
   transition: transform 0.2s;
 }
 
-.modal-overlay.open .modal-card {
-  transform: translateY(0);
-}
+.modal-overlay.open .modal-card { transform: translateY(0); }
 
 .modal-card h3 {
   margin: 0;
@@ -756,9 +672,7 @@ button.ghost:not(:disabled):hover {
   transition: border-color 0.15s;
 }
 
-.modal-card input:focus {
-  border-color: var(--accent);
-}
+.modal-card input:focus { border-color: var(--accent); }
 
 .modal-error {
   color: #e05050;
@@ -775,19 +689,23 @@ button.ghost:not(:disabled):hover {
   margin-top: 0.25rem;
 }
 
-button.danger {
-  background: #e05050;
-  color: white;
-  border: none;
-}
-
-button.danger:hover {
-  background: #c73e3e;
-}
-
 .modal-danger h3 {
   color: #e05050;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+/* === Responsive === */
+@media (max-width: 640px) {
+  header.page-header { padding-top: 1.5rem; }
+  main { padding-bottom: 2rem; }
+
+  .entry-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .entry-helper { justify-content: space-between; }
 }

@@ -40,6 +40,7 @@ export function init() {
   els.importJson = document.getElementById('import-json');
   els.importJsonInput = document.getElementById('import-json-input');
   els.fileMeta = document.getElementById('file-meta');
+  els.statusInfo = document.getElementById('status-info');
   els.filterEmpty = document.getElementById('filter-empty');
   els.filterModified = document.getElementById('filter-modified');
   els.filterSingle = document.getElementById('filter-single');
@@ -342,9 +343,7 @@ export function updateSaveButton() {
 
 export function updateMeta() {
   if (!state.bmgFile) {
-    els.fileMeta.innerHTML = state.message
-      ? `<span class="status status-${state.messageTone}">${state.message}</span>`
-      : '';
+    els.fileMeta.innerHTML = '';
     return;
   }
 
@@ -353,7 +352,7 @@ export function updateMeta() {
   const hasMid1 = state.bmgFile.hasMid1 ? 'Yes' : 'No';
   const hasStr1 = state.bmgFile.hasStr1 ? 'Yes' : 'No';
 
-  let html = `
+  els.fileMeta.innerHTML = `
     <div class="meta-lines">
       <div class="meta-block">
         <strong>Messages:</strong> ${messageCount} &nbsp;|&nbsp;
@@ -363,16 +362,16 @@ export function updateMeta() {
       </div>
     </div>
   `.trim();
-
-  if (state.message) html += ` <span class="status status-${state.messageTone}">${state.message}</span>`;
-
-  els.fileMeta.innerHTML = html;
 }
 
 export function showMessage(text, tone = 'info') {
   state.message = text;
   state.messageTone = tone;
-  updateMeta();
+  if (els.statusInfo) {
+    els.statusInfo.innerHTML = text
+      ? `<span class="status status-${tone}">${text}</span>`
+      : '';
+  }
 }
 
 export function resetUi() {
@@ -391,6 +390,7 @@ export function resetUi() {
   els.exportJson.disabled = true;
   els.importJson.disabled = true;
   els.fileMeta.innerHTML = '';
+  if (els.statusInfo) els.statusInfo.innerHTML = '';
 
   if (els.filterEmpty) els.filterEmpty.checked = true;
   if (els.filterModified) els.filterModified.checked = true;
