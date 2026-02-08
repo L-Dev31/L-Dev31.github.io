@@ -168,7 +168,12 @@ function createEntryCard(message, displayIndex) {
     });
     textarea.addEventListener('blur', () => {
       if (message.text !== editStartText) {
-        pushUndo({ type: 'edit', index: message._index, oldText: editStartText, newText: message.text });
+        const oldT = editStartText, newT = message.text, bmg = state.bmgFile, idx = message._index;
+        const refresh = () => { if (state.bmgFile === bmg) { renderEntries(); updateSaveButton(); } };
+        pushUndo({
+          undo: () => { const m = bmg?.messages[idx]; if (m) { m.text = oldT; refresh(); } },
+          redo: () => { const m = bmg?.messages[idx]; if (m) { m.text = newT; refresh(); } }
+        });
         editStartText = message.text;
       }
     });
@@ -435,51 +440,17 @@ function confirmDelete() {
   }
 }
 
-// --- Undo / Redo system ---
-function pushUndo(action) {
+// --- Undo / Redo system (unified: each action = { undo, redo }) ---
+export function pushUndo(action) {
   state.undoStack.push(action);
   state.redoStack.length = 0;
   updateUndoRedoButtons();
 }
 
-function applyAction(action, reverse) {
-  if (!state.bmgFile) return;
-  const msgs = state.bmgFile.messages;
-  if (action.type === 'delete') {
-    if (reverse) {
-      // Undo delete = re-insert
-      msgs.splice(action.index, 0, action.message);
-    } else {
-      // Redo delete = remove again
-      const idx = msgs.findIndex(m => m === action.message);
-      if (idx !== -1) msgs.splice(idx, 1);
-    }
-  } else if (action.type === 'create') {
-    if (reverse) {
-      // Undo create = remove
-      const idx = msgs.findIndex(m => m === action.message);
-      if (idx !== -1) msgs.splice(idx, 1);
-    } else {
-      // Redo create = re-insert
-      msgs.splice(action.index, 0, action.message);
-    }
-  } else if (action.type === 'edit') {
-    // Undo/redo text edit
-    const msg = msgs[action.index];
-    if (msg) {
-      msg.text = reverse ? action.oldText : action.newText;
-    }
-  }
-  reindexMessages();
-  renderEntries();
-  updateSaveButton();
-  updateMeta();
-}
-
 export function undo() {
   const action = state.undoStack.pop();
   if (!action) return;
-  applyAction(action, true);
+  action.undo();
   state.redoStack.push(action);
   updateUndoRedoButtons();
 }
@@ -487,12 +458,12 @@ export function undo() {
 export function redo() {
   const action = state.redoStack.pop();
   if (!action) return;
-  applyAction(action, false);
+  action.redo();
   state.undoStack.push(action);
   updateUndoRedoButtons();
 }
 
-function updateUndoRedoButtons() {
+export function updateUndoRedoButtons() {
   const undoBtn = document.getElementById('toolbar-undo');
   const redoBtn = document.getElementById('toolbar-redo');
   if (undoBtn) undoBtn.disabled = state.undoStack.length === 0;
@@ -504,9 +475,14 @@ function deleteMessage(index) {
   if (!state.bmgFile) return;
   const msg = state.bmgFile.messages[index];
   if (!msg) return;
-  state.bmgFile.messages.splice(index, 1);
+  const bmg = state.bmgFile;
+  bmg.messages.splice(index, 1);
   reindexMessages();
-  pushUndo({ type: 'delete', index, message: msg });
+  const refresh = () => { reindexMessages(); renderEntries(); updateSaveButton(); updateMeta(); };
+  pushUndo({
+    undo: () => { bmg.messages.splice(index, 0, msg); refresh(); },
+    redo: () => { const i = bmg.messages.indexOf(msg); if (i !== -1) bmg.messages.splice(i, 1); refresh(); }
+  });
   renderEntries();
   updateSaveButton();
   updateMeta();
@@ -589,7 +565,12 @@ export function confirmNewMessage() {
   };
   msgs.splice(insertIndex, 0, msg);
   reindexMessages();
-  pushUndo({ type: 'create', index: insertIndex, message: msg });
+  const bmg = state.bmgFile;
+  const refresh = () => { reindexMessages(); renderEntries(); updateSaveButton(); updateMeta(); };
+  pushUndo({
+    undo: () => { const i = bmg.messages.indexOf(msg); if (i !== -1) bmg.messages.splice(i, 1); refresh(); },
+    redo: () => { bmg.messages.splice(insertIndex, 0, msg); refresh(); }
+  });
   closeNewMessageModal();
   renderEntries();
   updateSaveButton();

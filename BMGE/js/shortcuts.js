@@ -1,6 +1,7 @@
 import { state, els } from './state.js';
 import { handleDownload, handleExportJson, handleImportJsonClick } from './io.js';
 import { downloadFolderZip } from './folder.js';
+import { undo, redo } from './ui.js';
 
 export function initShortcuts() {
   document.addEventListener('keydown', (e) => {
@@ -39,6 +40,20 @@ export function initShortcuts() {
     if (!ctrl && e.shiftKey && key === 's') {
       e.preventDefault();
       downloadFolderZip();
+      return;
+    }
+
+    // Ctrl+Z → Undo
+    if (ctrl && !e.shiftKey && key === 'z') {
+      e.preventDefault();
+      undo();
+      return;
+    }
+
+    // Ctrl+Shift+Z → Redo
+    if (ctrl && e.shiftKey && key === 'z') {
+      e.preventDefault();
+      redo();
       return;
     }
   });

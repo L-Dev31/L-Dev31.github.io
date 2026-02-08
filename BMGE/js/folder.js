@@ -1,7 +1,7 @@
 import { state, els } from './state.js';
 import { parseBmg } from './bmg-format.js';
 import { buildBmg } from './build-bmg.js';
-import { renderEntries, updateMeta, showMessage, updateSaveButton } from './ui.js';
+import { renderEntries, updateMeta, showMessage, updateSaveButton, pushUndo, updateUndoRedoButtons } from './ui.js';
 
 let folderFiles = [], folderName = '', activeFile = null, ctxMenu = null;
 const byId = i => document.getElementById(i);
@@ -32,7 +32,8 @@ async function loadBmgFromFolder(idx) {
   try {
     showMessage('Loading...', 'info');
     state.bmgFile = parseBmg(await entry.file.arrayBuffer());
-    Object.assign(state, { fileName: entry.name, undoStack: [], redoStack: [] });
+    state.fileName = entry.name;
+    updateUndoRedoButtons();
 
     els.fileLabel.textContent = entry.name;
     ['search', 'exportJson', 'importJson'].forEach(k => els[k].disabled = false);
@@ -171,10 +172,19 @@ function startRename(idx) {
 
   const save = () => {
     const val = inp.value.trim(), name = val ? (val.toLowerCase().endsWith('.bmg') ? val : val+'.bmg') : ent.name;
-    ent.name = name; ent.file = new File([ent.file], name, {type: ent.file.type});
-    ent.path = ent.path.includes('/') ? ent.path.replace(/[^/]+$/, name) : name;
-    if (activeFile === idx) { state.fileName = name; els.fileLabel.textContent = name; }
-    renderSidebar();
+    const oldName = ent.name;
+    if (name !== oldName) {
+      const applyName = (n) => {
+        ent.name = n; ent.file = new File([ent.file], n, {type: ent.file.type});
+        ent.path = ent.path.includes('/') ? ent.path.replace(/[^/]+$/, n) : n;
+        if (activeFile === idx) { state.fileName = n; els.fileLabel.textContent = n; }
+        renderSidebar();
+      };
+      applyName(name);
+      pushUndo({ undo: () => applyName(oldName), redo: () => applyName(name) });
+    } else {
+      renderSidebar();
+    }
   };
   inp.onblur = save;
   inp.onkeydown = e => { if(e.key === 'Enter') inp.blur(); if(e.key === 'Escape') renderSidebar(); };
@@ -186,11 +196,33 @@ const openDelModal = i => { delIdx = i; const m = byId('delete-file-modal'); if(
 const closeDelModal = () => { delIdx = null; byId('delete-file-modal')?.classList.remove('open'); };
 const confirmDelete = () => {
   if (delIdx === null) return closeDelModal();
-  const wasAct = activeFile === delIdx;
-  folderFiles.splice(delIdx, 1);
+  const idx = delIdx, wasAct = activeFile === idx;
+  const savedFile = { ...folderFiles[idx] };
+  
+  folderFiles.splice(idx, 1);
   if (!folderFiles.length) return closeFolder(), showMessage('Folder closed', 'info');
   
-  if (wasAct) { activeFile = null; loadBmgFromFolder(Math.min(delIdx, folderFiles.length-1)); }
-  else { if (activeFile > delIdx) activeFile--; renderSidebar(); updateActiveItem(); }
+  if (wasAct) { activeFile = null; loadBmgFromFolder(Math.min(idx, folderFiles.length-1)); }
+  else { if (activeFile > idx) activeFile--; renderSidebar(); updateActiveItem(); }
+  
+  pushUndo({
+    undo: () => {
+      folderFiles.splice(idx, 0, savedFile);
+      document.body.classList.add('sidebar-open');
+      renderSidebar();
+      if (wasAct) loadBmgFromFolder(idx);
+      else updateActiveItem();
+      showMessage('Delete undone', 'info');
+    },
+    redo: () => {
+      folderFiles.splice(idx, 1);
+      if (!folderFiles.length) return closeFolder();
+      renderSidebar();
+      if (wasAct) { activeFile = null; loadBmgFromFolder(Math.min(idx, folderFiles.length-1)); }
+      else { if (activeFile > idx) activeFile--; updateActiveItem(); }
+      showMessage('File deleted', 'info');
+    }
+  });
+  
   closeDelModal(); showMessage('File deleted', 'info');
 };
