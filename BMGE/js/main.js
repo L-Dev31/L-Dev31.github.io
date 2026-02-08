@@ -2,27 +2,6 @@ import { init, setSpecialTokenApi, loadGameConfig, initToolbar } from './ui.js';
 import { initShortcuts } from './shortcuts.js';
 import { initFolder, closeFolder } from './folder.js';
 
-function initThemeToggle() {
-	const btn = document.getElementById('theme-toggle');
-	if (!btn) return;
-	const icon = btn.querySelector('i');
-	const saved = localStorage.getItem('bmge-theme');
-	if (saved) document.documentElement.setAttribute('data-theme', saved);
-	const update = () => {
-		const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-		icon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
-	};
-	update();
-	btn.addEventListener('click', () => {
-		const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-		const next = isLight ? 'dark' : 'light';
-		if (next === 'dark') document.documentElement.removeAttribute('data-theme');
-		else document.documentElement.setAttribute('data-theme', next);
-		localStorage.setItem('bmge-theme', next);
-		update();
-	});
-}
-
 async function setupGameConfigDropdown() {
 	const select = document.getElementById('game-config-select');
 	const icon = document.getElementById('game-config-icon');
@@ -75,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	initShortcuts();
 	initFolder();
 	setupGameConfigDropdown();
-	initThemeToggle();
 
 	// Mobile sidebar overlay: tap to close
 	const overlay = document.getElementById('folder-sidebar-overlay');
