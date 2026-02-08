@@ -225,6 +225,17 @@ function createEntryCard(message, displayIndex) {
   deleteBtn.addEventListener('click', () => openDeleteConfirmModal(message._index));
   btnGroup.appendChild(deleteBtn);
 
+  const editBtn = document.createElement('button');
+  editBtn.type = 'button';
+  editBtn.className = 'ghost edit-msg';
+  editBtn.innerHTML = '<i class="fas fa-pen"></i>';
+  editBtn.title = 'Edit message';
+  editBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    showEditDropdown(editBtn, message._index);
+  });
+  btnGroup.appendChild(editBtn);
+
   const revertBtn = document.createElement('button');
   revertBtn.type = 'button';
   revertBtn.className = 'ghost revert';
@@ -508,6 +519,21 @@ export function openNewMessageModal() {
 
   error.textContent = '';
   error.style.display = 'none';
+
+  // Set defaults for text and attribute fields
+  const textInput = document.getElementById('new-msg-text-input');
+  const attrInput = document.getElementById('new-msg-attr-input');
+  const attrSizeInput = document.getElementById('new-msg-attr-size');
+  const attrError = document.getElementById('new-msg-attr-error');
+  const defaultAttrSize = 8;
+  if (textInput) textInput.value = '';
+  if (attrSizeInput) attrSizeInput.value = defaultAttrSize;
+  if (attrInput) {
+    attrInput.value = Array(defaultAttrSize).fill('00').join(' ');
+    attrInput.placeholder = Array(defaultAttrSize).fill('00').join(' ');
+  }
+  if (attrError) { attrError.textContent = ''; attrError.style.display = 'none'; }
+
   modal.classList.add('open');
   input.focus();
   input.select();
@@ -542,13 +568,16 @@ export function confirmNewMessage() {
     if (msgs[i].id > id) { insertIndex = i; break; }
   }
 
-  // Build a new BmgMessage-like object (always dirty so buildBmg encodes it)
-  const attrSize = Math.max(0, (state.bmgFile.entrySize || 8) - 4);
-  // Copy attribute from nearest neighbor (previous message, or next, or zeros)
-  const neighbor = msgs[insertIndex - 1] || msgs[insertIndex];
-  const attribute = neighbor?.attribute?.length === attrSize
-    ? new Uint8Array(neighbor.attribute)
-    : new Uint8Array(attrSize);
+  // Read text from modal
+  const textInput = document.getElementById('new-msg-text-input');
+  const messageText = textInput ? textInput.value : '';
+
+  // Read attribute from modal (default to zeros)
+  const attrSizeInput = document.getElementById('new-msg-attr-size');
+  const attrInput = document.getElementById('new-msg-attr-input');
+  const attrSize = attrSizeInput ? parseInt(attrSizeInput.value, 10) || 8 : 8;
+  const attribute = parseHexAttribute(attrInput ? attrInput.value : '', attrSize);
+
   // Place after all existing DAT1 data
   const newOffset = state.bmgFile._dat1DataSize || 0;
   state.bmgFile._dat1DataSize = newOffset + 4;
@@ -556,7 +585,7 @@ export function confirmNewMessage() {
     id,
     label: '',
     attribute,
-    text: '',
+    text: messageText,
     _originalText: null,
     _offset: newOffset,
     _index: 0,
@@ -582,6 +611,196 @@ export function confirmNewMessage() {
     const card = els.entries?.querySelector(`.entry-card[data-index="${msg._index}"]`);
     if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
+}
+
+// --- Hex attribute helpers ---
+function parseHexAttribute(hexStr, size) {
+  const raw = hexStr.replace(/[^0-9a-fA-F]/g, '');
+  const bytes = new Uint8Array(size);
+  for (let i = 0; i < size; i++) {
+    const hex = raw.slice(i * 2, i * 2 + 2);
+    bytes[i] = hex.length === 2 ? parseInt(hex, 16) : 0;
+  }
+  return bytes;
+}
+
+function formatHexField(input, maxBytes) {
+  const pos = input.selectionStart;
+  const oldVal = input.value;
+  let hexBeforeCursor = 0;
+  for (let i = 0; i < pos && i < oldVal.length; i++) {
+    if (/[0-9a-fA-F]/i.test(oldVal[i])) hexBeforeCursor++;
+  }
+  const raw = oldVal.replace(/[^0-9a-fA-F]/g, '').slice(0, maxBytes * 2).toUpperCase();
+  const formatted = raw.match(/.{1,2}/g)?.join(' ') || '';
+  input.value = formatted;
+  let newPos = 0, count = 0;
+  for (let i = 0; i < formatted.length; i++) {
+    if (/[0-9a-fA-F]/i.test(formatted[i])) {
+      count++;
+      if (count >= hexBeforeCursor) { newPos = i + 1; break; }
+    }
+  }
+  if (count < hexBeforeCursor) newPos = formatted.length;
+  input.setSelectionRange(newPos, newPos);
+}
+
+function setupHexAutoFormat(inputId, sizeInputId) {
+  const input = document.getElementById(inputId);
+  const sizeInput = document.getElementById(sizeInputId);
+  if (!input || !sizeInput) return;
+  input.addEventListener('input', () => {
+    const maxBytes = parseInt(sizeInput.value, 10) || 8;
+    formatHexField(input, maxBytes);
+  });
+  sizeInput.addEventListener('input', () => {
+    const maxBytes = parseInt(sizeInput.value, 10) || 8;
+    formatHexField(input, maxBytes);
+    input.placeholder = Array(maxBytes).fill('00').join(' ');
+  });
+}
+
+// --- Edit dropdown ---
+function showEditDropdown(anchor, messageIndex) {
+  document.querySelectorAll('.edit-dropdown').forEach(d => d.remove());
+  const dropdown = document.createElement('div');
+  dropdown.className = 'edit-dropdown';
+
+  const changeIdBtn = document.createElement('button');
+  changeIdBtn.className = 'edit-dropdown-item';
+  changeIdBtn.innerHTML = '<i class="fas fa-hashtag"></i> Change ID';
+  changeIdBtn.addEventListener('click', () => { dropdown.remove(); openEditIdModal(messageIndex); });
+
+  const changeAttrBtn = document.createElement('button');
+  changeAttrBtn.className = 'edit-dropdown-item';
+  changeAttrBtn.innerHTML = '<i class="fas fa-sliders-h"></i> Change Attribute';
+  changeAttrBtn.addEventListener('click', () => { dropdown.remove(); openEditAttrModal(messageIndex); });
+
+  dropdown.appendChild(changeIdBtn);
+  dropdown.appendChild(changeAttrBtn);
+
+  anchor.parentElement.style.position = 'relative';
+  anchor.parentElement.appendChild(dropdown);
+
+  const closeHandler = (e) => {
+    if (!dropdown.contains(e.target) && e.target !== anchor) {
+      dropdown.remove();
+      document.removeEventListener('click', closeHandler);
+    }
+  };
+  setTimeout(() => document.addEventListener('click', closeHandler), 0);
+}
+
+// --- Edit ID modal ---
+let pendingEditIdIndex = null;
+
+function openEditIdModal(index) {
+  if (!state.bmgFile) return;
+  const msg = state.bmgFile.messages[index];
+  if (!msg) return;
+  pendingEditIdIndex = index;
+  const modal = document.getElementById('edit-id-modal');
+  const input = document.getElementById('edit-id-input');
+  const error = document.getElementById('edit-id-error');
+  const confirmBtn = document.getElementById('edit-id-confirm');
+  if (!modal) return;
+  input.value = String(msg.id);
+  error.textContent = '';
+  error.style.display = 'none';
+  if (confirmBtn) confirmBtn.disabled = false;
+  modal.classList.add('open');
+  input.focus();
+  input.select();
+}
+
+function closeEditIdModal() {
+  pendingEditIdIndex = null;
+  const modal = document.getElementById('edit-id-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function confirmEditId() {
+  if (pendingEditIdIndex === null || !state.bmgFile) return;
+  const msg = state.bmgFile.messages[pendingEditIdIndex];
+  if (!msg) return;
+  const input = document.getElementById('edit-id-input');
+  const error = document.getElementById('edit-id-error');
+  const raw = input.value.trim();
+  if (!/^\d+$/.test(raw)) {
+    error.textContent = 'ID must be a positive integer.';
+    error.style.display = 'block';
+    return;
+  }
+  const newId = parseInt(raw, 10);
+  if (newId !== msg.id && state.bmgFile.messages.some(m => m.id === newId)) {
+    error.textContent = `ID ${newId} already exists.`;
+    error.style.display = 'block';
+    return;
+  }
+  const oldId = msg.id;
+  msg.id = newId;
+  const refresh = () => { reindexMessages(); renderEntries(); updateSaveButton(); updateMeta(); };
+  pushUndo({
+    undo: () => { msg.id = oldId; refresh(); },
+    redo: () => { msg.id = newId; refresh(); }
+  });
+  closeEditIdModal();
+  renderEntries();
+  updateSaveButton();
+  showMessage(`Message ID changed from ${oldId} to ${newId}`, 'info');
+}
+
+// --- Edit Attribute modal ---
+let pendingEditAttrIndex = null;
+
+function openEditAttrModal(index) {
+  if (!state.bmgFile) return;
+  const msg = state.bmgFile.messages[index];
+  if (!msg) return;
+  pendingEditAttrIndex = index;
+  const modal = document.getElementById('edit-attr-modal');
+  const input = document.getElementById('edit-attr-input');
+  const sizeInput = document.getElementById('edit-attr-size');
+  const error = document.getElementById('edit-attr-error');
+  if (!modal) return;
+  const currentAttrSize = msg.attribute.length || 8;
+  if (sizeInput) sizeInput.value = currentAttrSize;
+  if (input) {
+    const hexStr = Array.from(msg.attribute).map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
+    input.value = hexStr;
+    input.placeholder = Array(currentAttrSize).fill('00').join(' ');
+  }
+  if (error) { error.textContent = ''; error.style.display = 'none'; }
+  modal.classList.add('open');
+  if (input) { input.focus(); input.select(); }
+}
+
+function closeEditAttrModal() {
+  pendingEditAttrIndex = null;
+  const modal = document.getElementById('edit-attr-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function confirmEditAttr() {
+  if (pendingEditAttrIndex === null || !state.bmgFile) return;
+  const msg = state.bmgFile.messages[pendingEditAttrIndex];
+  if (!msg) return;
+  const input = document.getElementById('edit-attr-input');
+  const sizeInput = document.getElementById('edit-attr-size');
+  const attrSize = sizeInput ? parseInt(sizeInput.value, 10) || 8 : msg.attribute.length;
+  const newAttribute = parseHexAttribute(input ? input.value : '', attrSize);
+  const oldAttribute = new Uint8Array(msg.attribute);
+  msg.attribute = newAttribute;
+  const idx = pendingEditAttrIndex;
+  const refresh = () => { renderEntries(); updateSaveButton(); };
+  pushUndo({
+    undo: () => { msg.attribute = oldAttribute; refresh(); },
+    redo: () => { msg.attribute = newAttribute; refresh(); }
+  });
+  closeEditAttrModal();
+  renderEntries();
+  updateSaveButton();
+  showMessage(`Attribute updated for message ${idx}`, 'info');
 }
 
 function reindexMessages() {
@@ -613,19 +832,23 @@ export function initToolbar() {
     // Live validation
     input.addEventListener('input', () => {
       const error = document.getElementById('new-msg-id-error');
+      const confirmBtn = document.getElementById('new-msg-confirm');
       const raw = input.value.trim();
-      if (!raw) { error.style.display = 'none'; return; }
+      if (!raw) { error.style.display = 'none'; if (confirmBtn) confirmBtn.disabled = false; return; }
       if (!/^\d+$/.test(raw)) {
         error.textContent = 'ID must be a positive integer.';
         error.style.display = 'block';
+        if (confirmBtn) confirmBtn.disabled = true;
         return;
       }
       const id = parseInt(raw, 10);
       if (state.bmgFile && state.bmgFile.messages.some(m => m.id === id)) {
         error.textContent = `ID ${id} already exists.`;
         error.style.display = 'block';
+        if (confirmBtn) confirmBtn.disabled = true;
       } else {
         error.style.display = 'none';
+        if (confirmBtn) confirmBtn.disabled = false;
       }
     });
   }
@@ -638,6 +861,56 @@ export function initToolbar() {
   if (deleteModalCancel) deleteModalCancel.addEventListener('click', closeDeleteConfirmModal);
   if (deleteModalConfirm) deleteModalConfirm.addEventListener('click', confirmDelete);
   if (deleteModalOverlay) deleteModalOverlay.addEventListener('click', (e) => { if (e.target === deleteModalOverlay) closeDeleteConfirmModal(); });
+
+  // Edit ID modal events
+  const editIdCancel = document.getElementById('edit-id-cancel');
+  const editIdConfirm = document.getElementById('edit-id-confirm');
+  const editIdOverlay = document.getElementById('edit-id-modal');
+  const editIdInput = document.getElementById('edit-id-input');
+  if (editIdCancel) editIdCancel.addEventListener('click', closeEditIdModal);
+  if (editIdConfirm) editIdConfirm.addEventListener('click', confirmEditId);
+  if (editIdOverlay) editIdOverlay.addEventListener('click', (e) => { if (e.target === editIdOverlay) closeEditIdModal(); });
+  if (editIdInput) {
+    editIdInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmEditId(); if (e.key === 'Escape') closeEditIdModal(); });
+    editIdInput.addEventListener('input', () => {
+      const error = document.getElementById('edit-id-error');
+      const confirm = document.getElementById('edit-id-confirm');
+      const raw = editIdInput.value.trim();
+      if (!raw) { error.style.display = 'none'; if (confirm) confirm.disabled = false; return; }
+      if (!/^\d+$/.test(raw)) {
+        error.textContent = 'ID must be a positive integer.';
+        error.style.display = 'block';
+        if (confirm) confirm.disabled = true;
+        return;
+      }
+      const id = parseInt(raw, 10);
+      const currentMsg = pendingEditIdIndex !== null ? state.bmgFile?.messages[pendingEditIdIndex] : null;
+      if (state.bmgFile && state.bmgFile.messages.some(m => m.id === id && m !== currentMsg)) {
+        error.textContent = `ID ${id} already exists.`;
+        error.style.display = 'block';
+        if (confirm) confirm.disabled = true;
+      } else {
+        error.style.display = 'none';
+        if (confirm) confirm.disabled = false;
+      }
+    });
+  }
+
+  // Edit Attribute modal events
+  const editAttrCancel = document.getElementById('edit-attr-cancel');
+  const editAttrConfirm = document.getElementById('edit-attr-confirm');
+  const editAttrOverlay = document.getElementById('edit-attr-modal');
+  const editAttrInput = document.getElementById('edit-attr-input');
+  if (editAttrCancel) editAttrCancel.addEventListener('click', closeEditAttrModal);
+  if (editAttrConfirm) editAttrConfirm.addEventListener('click', confirmEditAttr);
+  if (editAttrOverlay) editAttrOverlay.addEventListener('click', (e) => { if (e.target === editAttrOverlay) closeEditAttrModal(); });
+  if (editAttrInput) {
+    editAttrInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmEditAttr(); if (e.key === 'Escape') closeEditAttrModal(); });
+  }
+
+  // Setup hex auto-format for attribute inputs
+  setupHexAutoFormat('new-msg-attr-input', 'new-msg-attr-size');
+  setupHexAutoFormat('edit-attr-input', 'edit-attr-size');
 
   updateUndoRedoButtons();
 }

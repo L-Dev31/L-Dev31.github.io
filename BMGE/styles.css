@@ -308,8 +308,6 @@ button:disabled {
   opacity: 0.5;
 }
 
-button:not(:disabled):hover { background: var(--accent-muted); }
-
 button.ghost {
   background: transparent;
   border: 1px solid var(--border);
@@ -509,9 +507,9 @@ button.danger:hover { background: #c73e3e; }
 }
 
 .entry-btn-group .delete-msg:not(:disabled):hover {
-  background: #e05050;
-  border-color: #e05050;
-  color: var(--panel);
+  background: var(--panel-alt);
+  border-color: var(--panel-alt);
+  color: #e05050;
 }
 
 /* === Game Config === */
@@ -715,6 +713,121 @@ button.danger:hover { background: #c73e3e; }
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+/* Modal extensions */
+.modal-card.modal-wide {
+  max-width: 480px;
+}
+
+.modal-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.modal-textarea {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: "Cascadia Code", Consolas, monospace;
+  outline: none;
+  resize: vertical;
+  min-height: 60px;
+  transition: border-color 0.15s;
+}
+
+.modal-textarea:focus { border-color: var(--accent); }
+
+.modal-attr-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.modal-attr-row input[type="text"] {
+  flex: 1;
+  font-family: "Cascadia Code", Consolas, monospace;
+  letter-spacing: 0.05em;
+}
+
+.modal-attr-row input[type="number"] {
+  width: 64px;
+  text-align: center;
+  padding: 0.65rem 0.4rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.modal-attr-row input[type="number"]::-webkit-inner-spin-button,
+.modal-attr-row input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.modal-attr-row input[type="number"]:focus { border-color: var(--accent); }
+
+/* Edit dropdown */
+.edit-dropdown {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 4px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.35rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  min-width: 170px;
+}
+
+.edit-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.edit-dropdown-item:hover {
+  background: var(--panel-alt);
+}
+
+/* Edit button in entry button group */
+.entry-btn-group .edit-msg {
+  color: var(--text);
+  border-color: var(--border);
+  padding: 0.55rem 0.7rem;
+}
+
+.entry-btn-group .edit-msg:not(:disabled):hover {
+  background: var(--panel-alt);
+  border-color: var(--panel-alt);
+  color: var(--text);
 }
 
 /* === Folder Sidebar === */

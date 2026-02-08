@@ -134,11 +134,20 @@
 
   <!-- New message modal -->
   <div class="modal-overlay" id="new-msg-modal">
-    <div class="modal-card">
+    <div class="modal-card modal-wide">
       <h3>New Message <span style="opacity: 0.6;">(Experimental)</span></h3>
-      <p class="modal-desc">Enter the ID for the new message.</p>
+      <p class="modal-desc">Configure the new message.</p>
+      <label class="modal-label">Message ID</label>
       <input id="new-msg-id-input" type="text" inputmode="numeric" placeholder="Message ID" autocomplete="off">
       <span id="new-msg-id-error" class="modal-error"></span>
+      <label class="modal-label">Message Text</label>
+      <textarea id="new-msg-text-input" class="modal-textarea" placeholder="Message text (optional)" rows="3" spellcheck="false"></textarea>
+      <label class="modal-label">Attribute</label>
+      <div class="modal-attr-row">
+        <input id="new-msg-attr-input" type="text" placeholder="00 00 00 00 00 00 00 00" autocomplete="off" spellcheck="false">
+        <input id="new-msg-attr-size" type="number" min="0" max="255" value="8" title="Attribute size (bytes)">
+      </div>
+      <span id="new-msg-attr-error" class="modal-error"></span>
       <div class="modal-actions">
         <button id="new-msg-cancel" type="button" class="ghost">Cancel</button>
         <button id="new-msg-confirm" type="button">Create</button>
@@ -166,6 +175,38 @@
       <div class="modal-actions">
         <button id="delete-file-cancel" type="button" class="ghost">Cancel</button>
         <button id="delete-file-confirm" type="button" class="danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit ID modal -->
+  <div class="modal-overlay" id="edit-id-modal">
+    <div class="modal-card">
+      <h3>Change ID</h3>
+      <p class="modal-desc">Enter the new ID for this message.</p>
+      <input id="edit-id-input" type="text" inputmode="numeric" placeholder="New Message ID" autocomplete="off">
+      <span id="edit-id-error" class="modal-error"></span>
+      <div class="modal-actions">
+        <button id="edit-id-cancel" type="button" class="ghost">Cancel</button>
+        <button id="edit-id-confirm" type="button">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Attribute modal -->
+  <div class="modal-overlay" id="edit-attr-modal">
+    <div class="modal-card modal-wide">
+      <h3>Change Attribute</h3>
+      <p class="modal-desc">Edit the attribute for this message.</p>
+      <label class="modal-label">Attribute</label>
+      <div class="modal-attr-row">
+        <input id="edit-attr-input" type="text" placeholder="00 00 00 00 00 00 00 00" autocomplete="off" spellcheck="false">
+        <input id="edit-attr-size" type="number" min="0" max="255" value="8" title="Attribute size (bytes)">
+      </div>
+      <span id="edit-attr-error" class="modal-error"></span>
+      <div class="modal-actions">
+        <button id="edit-attr-cancel" type="button" class="ghost">Cancel</button>
+        <button id="edit-attr-confirm" type="button">Save</button>
       </div>
     </div>
   </div>
