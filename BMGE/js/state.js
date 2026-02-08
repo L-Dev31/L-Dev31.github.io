@@ -1,5 +1,3 @@
-const $ = (selector) => (typeof document !== 'undefined') ? document.querySelector(selector) : null;
-
 const els = {
   fileInput: null,
   fileLabel: null,
@@ -27,4 +25,4 @@ const state = {
   redoStack: []
 };
 
-export { $, els, state };
+export { els, state };

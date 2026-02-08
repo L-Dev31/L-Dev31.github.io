@@ -11,6 +11,7 @@
 </head>
 <body>
   <header class="page-header">
+    <button id="theme-toggle" type="button" class="theme-toggle" title="Toggle light/dark mode"><i class="fas fa-moon"></i></button>
     <img src="logo.png" alt="Logo" style="height: 300px; width: auto; display: block; margin: 0 auto;">
     <h1>BMG Editor</h1>
     <p class="tagline">Load a .bmg file, review each entry, adjust the text, and export a patched archive without breaking the original offsets.</p>
@@ -20,6 +21,8 @@
       <div class="file-picker">
         <label class="button" for="file-input">Select BMG file</label>
         <input id="file-input" type="file" accept=".bmg" hidden>
+        <button id="open-folder-btn" class="button ghost" type="button"><i class="fas fa-folder-open"></i> Open Folder</button>
+        <input id="folder-input" type="file" webkitdirectory hidden>
         <span id="file-label">No file selected</span>
       </div>
       <div class="meta" id="file-meta"></div>
@@ -108,6 +111,21 @@
     </article>
   </template>
 
+  <!-- Folder sidebar -->
+  <div class="folder-sidebar-overlay" id="folder-sidebar-overlay"></div>
+  <aside class="folder-sidebar" id="folder-sidebar">
+    <div class="folder-sidebar-header">
+      <h3 id="folder-name">Folder</h3>
+      <div class="folder-sidebar-actions">
+        <button id="folder-zip-btn" type="button" title="Download folder as ZIP"><i class="fas fa-file-archive"></i></button>
+        <button id="folder-close-btn" type="button" title="Close folder"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="folder-file-list" id="folder-file-list"></div>
+  </aside>
+  <button id="folder-minimize-btn" class="folder-sidebar-tab" type="button" title="Minimize sidebar"><i class="fas fa-chevron-left"></i></button>
+  <button id="folder-reopen-btn" class="folder-sidebar-tab" type="button" title="Open sidebar"><i class="fas fa-chevron-right"></i></button>
+
   <!-- Fixed bottom-right toolbar -->
   <div class="floating-toolbar" id="floating-toolbar">
     <button id="toolbar-new" type="button" title="New message"><i class="fas fa-plus"></i></button>
@@ -137,6 +155,18 @@
       <div class="modal-actions">
         <button id="delete-confirm-cancel" type="button" class="ghost">Cancel</button>
         <button id="delete-confirm-confirm" type="button" class="danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete file confirmation modal -->
+  <div class="modal-overlay" id="delete-file-modal">
+    <div class="modal-card modal-danger">
+      <h3><i class="fas fa-exclamation-triangle"></i> Delete File</h3>
+      <p class="modal-desc" id="delete-file-desc">Are you sure you want to delete this file? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button id="delete-file-cancel" type="button" class="ghost">Cancel</button>
+        <button id="delete-file-confirm" type="button" class="danger">Delete</button>
       </div>
     </div>
   </div>

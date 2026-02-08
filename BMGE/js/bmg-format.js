@@ -1,4 +1,4 @@
-import { safeGetUint16, safeGetUint32, readAscii } from './utils.js';
+import { safeGetUint16, safeGetUint32, readAscii, findSection } from './utils.js';
 
 const toHexByte = (b) => b.toString(16).padStart(2, '0').toUpperCase();
 
@@ -130,29 +130,11 @@ class BmgFile {
   }
 }
 
-// Search for an ASCII section tag in a byte array
-function findSection(bytes, tag) {
-  const len = tag.length;
-  outer:
-  for (let i = 0, end = bytes.length - len; i <= end; i++) {
-    for (let j = 0; j < len; j++) {
-      if (bytes[i + j] !== tag.charCodeAt(j)) continue outer;
-    }
-    return i;
-  }
-  return -1;
-}
-
 const ENCODING_MAP = { UTF16: 'utf-16le', UTF8: 'utf-8', ShiftJIS: 'shift_jis' };
 
 function decodeText(buffer, encodingType) {
   try { return new TextDecoder(ENCODING_MAP[encodingType] || 'windows-1252').decode(buffer); }
   catch { return ''; }
-}
-
-function encodeText(text, encodingType) {
-  try { return new TextEncoder(ENCODING_MAP[encodingType] || 'windows-1252').encode(text); }
-  catch { return new TextEncoder().encode(text); }
 }
 
 // Parse message text from buffer, extracting inline BMG tags

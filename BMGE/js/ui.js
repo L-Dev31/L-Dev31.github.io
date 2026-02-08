@@ -1,4 +1,15 @@
+import { state, els } from './state.js';
+import {
+  handleFileSelection,
+  handleDownload,
+  handleExportJson,
+  handleImportJsonClick,
+  handleImportJsonFile
+} from './io.js';
+
 let currentGameConfig = null;
+let getSpecialTokenInfo = () => null;
+
 export async function loadGameConfig(gameName) {
   if (!gameName) {
     currentGameConfig = null;
@@ -13,21 +24,14 @@ export async function loadGameConfig(gameName) {
     return null;
   }
 }
+
 export function getCurrentGameConfig() {
   return currentGameConfig;
 }
-import { state, els } from './state.js';
-let getSpecialTokenInfo = () => null;
+
 export function setSpecialTokenApi(fn) {
   getSpecialTokenInfo = fn || (() => null);
 }
-import {
-  handleFileSelection,
-  handleDownload,
-  handleExportJson,
-  handleImportJsonClick,
-  handleImportJsonFile
-} from './io.js';
 
 export function init() {
   els.fileInput = document.getElementById('file-input');
@@ -54,16 +58,6 @@ export function init() {
   if (els.exportJson) els.exportJson.addEventListener('click', handleExportJson);
   if (els.importJson) els.importJson.addEventListener('click', handleImportJsonClick);
   if (els.importJsonInput) els.importJsonInput.addEventListener('change', handleImportJsonFile);
-
-  // Ctrl+S to download BMG
-  document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-      e.preventDefault();
-      if (state.bmgFile && !els.download.disabled) {
-        handleDownload();
-      }
-    }
-  });
 
   resetUi();
 }
@@ -315,8 +309,6 @@ function updateTextHighlight(element, text) {
 }
 
 function matchesFilter(message) {
-  const filterSingle = true;
-
   const showEmpty = els.filterEmpty ? els.filterEmpty.checked : false;
   if (!showEmpty && (!message.text || message.text.trim() === '')) return false;
 

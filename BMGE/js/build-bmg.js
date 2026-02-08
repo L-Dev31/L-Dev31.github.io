@@ -1,18 +1,5 @@
-import { safeGetUint16, safeGetUint32 } from './utils.js';
+import { safeGetUint16, safeGetUint32, findSection } from './utils.js';
 import { BmgTag } from './bmg-format.js';
-
-// Find section offset by ASCII tag name (labeled-continue pattern)
-function findSection(bytes, tag) {
-  const len = tag.length;
-  outer:
-  for (let i = 0, end = bytes.length - len; i <= end; i++) {
-    for (let j = 0; j < len; j++) {
-      if (bytes[i + j] !== tag.charCodeAt(j)) continue outer;
-    }
-    return i;
-  }
-  return -1;
-}
 
 // Convert a token string to its binary escape sequence
 function encodeToken(tokenString, encodingType = 'UTF16') {

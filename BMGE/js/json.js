@@ -23,11 +23,10 @@ export function handleExportJson() {
     for (let idx = 0; idx < state.bmgFile.messages.length; idx++) {
       const msg = state.bmgFile.messages[idx];
       if (!msg) continue;
-
-        layout.push({
-          index: idx,
-          text: msg.text || ''
-        });
+      layout.push({
+        index: idx,
+        text: msg.text || '',
+      });
     }
 
     const out = { layout };
@@ -83,45 +82,16 @@ export async function handleImportJsonFile(event) {
       const dst = state.bmgFile.messages[idx];
       if (!dst) continue;
 
-      const card = (els && els.entries) ? els.entries.querySelector(`.entry-card[data-index="${idx}"]`) : document.querySelector(`.entry-card[data-index="${idx}"]`);
-
-      let entryModified = false;
-
       let importedFullText = null;
       if (typeof entry.text === 'string') {
         importedFullText = entry.text;
       } else if (Array.isArray(entry.segments)) {
-        importedFullText = entry.segments.map(s => typeof s === 'string' ? s : (s && s.text ? s.text : '')).join('');
-      }
-      if (importedFullText !== null) {
-        if (dst.text !== importedFullText) {
-          entryModified = true;
-          dst.text = importedFullText;
-        }
+        importedFullText = entry.segments.map(s => typeof s === 'string' ? s : (s?.text ?? '')).join('');
       }
 
-      if (entryModified) {
+      if (importedFullText !== null && dst.text !== importedFullText) {
+        dst.text = importedFullText;
         modified++;
-        if (card) {
-          const charCount = card.querySelector('.char-count');
-          if (charCount) charCount.textContent = `${dst.text.length} chars`;
-
-          const isDirty = dst.text !== dst._originalText;
-          card.classList.toggle('modified', isDirty);
-          const badges = card.querySelector('.badges');
-          if (badges) {
-            const existing = badges.querySelector('.badge-warning');
-            if (isDirty && !existing) {
-              const mod = document.createElement('span');
-              mod.className = 'badge badge-warning';
-              mod.textContent = 'Modified';
-              badges.insertBefore(mod, badges.firstChild);
-            } else if (!isDirty && existing) existing.remove();
-          }
-
-          const revertBtn = card.querySelector('.revert');
-          if (revertBtn) revertBtn.disabled = !isDirty;
-        }
       }
 
       applied++;
