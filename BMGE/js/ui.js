@@ -55,6 +55,16 @@ export function init() {
   if (els.importJson) els.importJson.addEventListener('click', handleImportJsonClick);
   if (els.importJsonInput) els.importJsonInput.addEventListener('change', handleImportJsonFile);
 
+  // Ctrl+S to download BMG
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      if (state.bmgFile && !els.download.disabled) {
+        handleDownload();
+      }
+    }
+  });
+
   resetUi();
 }
 
