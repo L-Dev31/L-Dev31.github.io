@@ -1,32 +1,29 @@
-.token-chip.special-0200 {
-  border: 1px solid rgba(255, 76, 76, 0.55) !important;
+.token-chip.special-2 {
+  border-color: rgba(255, 76, 76, 0.55) !important;
   background: rgba(255, 76, 76, 0.2) !important;
   color: #FF4C4C !important;
-  font-weight: 600 !important;
 }
 
-.token-chip.special-0800 {
-  border: 1px solid rgba(120, 120, 120, 0.55) !important;
-  background: rgba(120, 120, 120, 0.12) !important;
-  color: rgba(80, 80, 80, 0.95) !important;
-  font-weight: 600 !important;
-}
-
-.token-chip.special-0700 {
-  border: 1.5px solid #19d9b3 !important;
-  background: rgba(25, 217, 179, 0.16) !important;
-  color: #00bfa3 !important;
-  font-weight: 700 !important;
-}
-
-.editor-shell .text-highlight .special-text-0200 {
+.editor-shell .text-highlight .special-text-2 {
   color: #FF4C4C !important;
 }
 
-.editor-shell .text-highlight .special-text-0800 {
-  color: #FFFFFF !important;
+.token-chip.special-8 {
+  border-color: rgba(120, 120, 120, 0.55) !important;
+  background: rgba(120, 120, 120, 0.12) !important;
+  color: rgba(80, 80, 80, 0.95) !important;
 }
 
-.editor-shell .text-highlight .special-text-0700 {
+.editor-shell .text-highlight .special-text-8 {
+  color: var(--text) !important;
+}
+
+.token-chip.special-7 {
+  border-color: #19d9b3 !important;
+  background: rgba(25, 217, 179, 0.16) !important;
+  color: #00bfa3 !important;
+}
+
+.editor-shell .text-highlight .special-text-7 {
   color: #00BFA3 !important;
 }

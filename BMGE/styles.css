@@ -405,11 +405,6 @@ button.ghost:not(:disabled):hover {
   gap: 0.5rem;
 }
 
-.entry-editor span {
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
 .entry-editor textarea {
   width: 100%;
   min-height: 120px;

@@ -59,11 +59,4 @@ export function handleDownload() {
   }
 }
 
-export function handleImportJsonClick() {
-  const input = document.getElementById('import-json-input');
-  if (!input) return;
-  input.value = '';
-  input.click();
-}
-
-export { handleExportJson, handleImportJsonFile } from './json.js';
+export { handleExportJson, handleImportJsonFile, handleImportJsonClick } from './json.js';

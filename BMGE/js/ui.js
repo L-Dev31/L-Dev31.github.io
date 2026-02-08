@@ -17,7 +17,6 @@ export function getCurrentGameConfig() {
   return currentGameConfig;
 }
 import { state, els } from './state.js';
-import { BmgMessage } from './bmg-format.js';
 let getSpecialTokenInfo = () => null;
 export function setSpecialTokenApi(fn) {
   getSpecialTokenInfo = fn || (() => null);
@@ -226,7 +225,7 @@ function updateTextHighlight(element, text) {
 
   element.classList.remove('highlight-empty');
 
-  const tagRegex = /\[(@?)([0-9A-F]+):([0-9A-F]+)(?::([0-9A-F]+))?\]|\{\{@([0-9A-F]{1,2}):([0-9A-F]{1,4})(?::([0-9A-F]+))?\}\}|\{\{@?(\d+):(\d+)(?:\s+(?:arg=")?([a-fA-F0-9]+)"?)?\}\}/gi;
+  const tagRegex = /\[Color:[0-9A-F]+\]|\[(@?)([0-9A-F]+):([0-9A-F]+)(?::([0-9A-F]+))?\]|\{\{@([0-9A-F]{1,2}):([0-9A-F]{1,4})(?::([0-9A-F]+))?\}\}|\{\{@?(\d+):(\d+)(?:\s+(?:arg=")?([a-fA-F0-9]+)"?)?\}\}/gi;
   let lastIndex = 0;
   let activeTextClass = '';
   const fragment = document.createDocumentFragment();
@@ -266,7 +265,7 @@ function updateTextHighlight(element, text) {
     } else {
       tagSpan.classList.add('jaune');
     }
-    tagSpan.textContent = match[0];
+    tagSpan.textContent = specialInfo && specialInfo.label ? specialInfo.label : match[0];
     fragment.appendChild(tagSpan);
 
     lastIndex = match.index + match[0].length;
@@ -277,55 +276,6 @@ function updateTextHighlight(element, text) {
   }
 
   element.replaceChildren(fragment);
-}
-
-function handleTextEdit(event, message) {
-  const newText = event.target.value;
-  message.text = newText;
-
-  const card = event.target.closest('.entry-card');
-  const highlight = card.querySelector('.text-highlight');
-  updateTextHighlight(highlight, newText);
-
-  const isDirty = message.dirty;
-  card.classList.toggle('modified', isDirty);
-
-  const badges = card.querySelector('.badges');
-  const existingModifiedBadge = badges.querySelector('.badge-warning');
-
-  if (isDirty && !existingModifiedBadge) {
-    badges.appendChild(createBadge('Modified', 'warning'));
-  } else if (!isDirty && existingModifiedBadge) {
-    existingModifiedBadge.remove();
-  }
-
-  const revertBtn = card.querySelector('.revert');
-  revertBtn.disabled = !isDirty;
-
-  const charCount = card.querySelector('.char-count');
-  charCount.textContent = `${newText.length} chars`;
-
-  updateSaveButton();
-}
-
-function handleRevert(message, textarea, highlight, card) {
-  message.text = message._originalText;
-  textarea.value = message._originalText;
-  updateTextHighlight(highlight, message._originalText);
-
-  card.classList.remove('modified');
-
-  const badges = card.querySelector('.badges');
-  const modifiedBadge = badges.querySelector('.badge-warning');
-  if (modifiedBadge) modifiedBadge.remove();
-
-  const revertBtn = card.querySelector('.revert');
-  revertBtn.disabled = true;
-
-  const charCount = card.querySelector('.char-count');
-  charCount.textContent = `${message._originalText.length} chars`;
-
-  updateSaveButton();
 }
 
 function matchesFilter(message) {

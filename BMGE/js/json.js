@@ -1,5 +1,5 @@
 import { state, els } from './state.js';
-import { updateTextHighlight, updateSaveButton, renderEntries, showMessage } from './ui.js';
+import { updateSaveButton, renderEntries, showMessage } from './ui.js';
 
 function downloadStringAsFile(str, filename, mime = 'application/json') {
   const blob = new Blob([str], { type: mime });
@@ -9,11 +9,6 @@ function downloadStringAsFile(str, filename, mime = 'application/json') {
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
-}
-
-function attributeToHex(attr) {
-  if (!attr) return '';
-  return Array.from(attr).map(b => b.toString(16).padStart(2, '0')).join(' ').toUpperCase();
 }
 
 export function handleExportJson() {
@@ -142,5 +137,3 @@ export async function handleImportJsonFile(event) {
     if (event && event.target) event.target.value = '';
   }
 }
-
-export default { handleExportJson, handleImportJsonClick, handleImportJsonFile };
