@@ -112,6 +112,7 @@ class BmgFile {
     this.bigEndian = false;
     this.bigEndianLabels = false;
     this.encodingType = 'Latin1';
+    this.entrySize = 8;
     this.fileId = 0;
     this.defaultColor = 0;
     this.hasMid1 = false;
@@ -121,6 +122,7 @@ class BmgFile {
     this.messages = [];
     
     this._rawData = null;
+    this._dat1DataSize = 0;
     this._inf1Data = null;
     this._dat1Data = null;
     this._mid1Data = null;
@@ -241,7 +243,7 @@ function parseDat1Section(buffer, messageInfo, encoding, bigEndian) {
     const msgBuf = bytes.slice(bufferStart, Math.min(sectionStart + msgEnd, buffer.byteLength));
     content[index] = parseMessageText(msgBuf, encodingWidth, tagDecoder, encoding, bigEndian);
   }
-  return content;
+  return { content, dataSize: sectionSize - 8 };
 }
 
 function parseInf1Section(buffer, bigEndian) {
@@ -263,7 +265,7 @@ function parseInf1Section(buffer, bigEndian) {
     if (base + entrySize > buffer.byteLength) throw new Error(`INF1 Entry #${i} out of bounds`);
     messageInfo.push({ offset: safeGetUint32(view, base, buffer.byteLength), attribute: bytes.slice(base + 4, base + entrySize) });
   }
-  return { messageInfo, fileId, defaultColor };
+  return { messageInfo, fileId, defaultColor, entrySize };
 }
 
 function parseMid1Section(buffer, bigEndian) {
@@ -327,11 +329,13 @@ function parseBmg(buffer) {
   bmgFile.encodingType = encodingType;
   bmgFile._rawData = buffer;
 
-  const { messageInfo, fileId, defaultColor } = parseInf1Section(buffer, bigEndian);
+  const { messageInfo, fileId, defaultColor, entrySize } = parseInf1Section(buffer, bigEndian);
   bmgFile.fileId = fileId;
   bmgFile.defaultColor = defaultColor;
+  bmgFile.entrySize = entrySize;
 
-  const content = parseDat1Section(buffer, messageInfo, encodingType, bigEndian);
+  const { content, dataSize: dat1DataSize } = parseDat1Section(buffer, messageInfo, encodingType, bigEndian);
+  bmgFile._dat1DataSize = dat1DataSize;
 
   const { ids, midFormat } = parseMid1Section(buffer, bigEndian);
   bmgFile.hasMid1 = ids.length > 0;

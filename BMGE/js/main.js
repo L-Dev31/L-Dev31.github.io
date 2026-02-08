@@ -1,4 +1,4 @@
-import { init, setSpecialTokenApi, loadGameConfig } from './ui.js';
+import { init, setSpecialTokenApi, loadGameConfig, initToolbar } from './ui.js';
 
 async function setupGameConfigDropdown() {
 	const select = document.getElementById('game-config-select');
@@ -48,5 +48,6 @@ async function setupGameConfigDropdown() {
 
 document.addEventListener('DOMContentLoaded', () => {
 	init();
+	initToolbar();
 	setupGameConfigDropdown();
 });

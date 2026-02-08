@@ -22,7 +22,9 @@ const state = {
   filter: '',
   message: '',
   messageTone: 'info',
-  modifiedEntries: new Set()
+  modifiedEntries: new Set(),
+  undoStack: [],
+  redoStack: []
 };
 
 export { $, els, state };

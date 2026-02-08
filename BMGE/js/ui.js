@@ -96,7 +96,7 @@ function createEntryCard(message, displayIndex) {
   badges.className = 'badges';
 
   if (message.dirty) badges.appendChild(createBadge('Modified', 'warning'));
-  if (state.bmgFile.hasMid1 && message.id !== 0) badges.appendChild(createBadge(`ID: ${message.id}`, 'info'));
+  if (state.bmgFile.hasMid1) badges.appendChild(createBadge(`ID: ${message.id}`, 'info'));
   if (state.bmgFile.hasStr1 && message.label) badges.appendChild(createBadge(`Label: ${message.label}`, 'info'));
 
   header.appendChild(title);
@@ -156,6 +156,18 @@ function createEntryCard(message, displayIndex) {
       highlight.scrollLeft = e.target.scrollLeft;
     });
 
+    // Track edits for undo/redo
+    let editStartText = segment.text;
+    textarea.addEventListener('focus', () => {
+      editStartText = message.text;
+    });
+    textarea.addEventListener('blur', () => {
+      if (message.text !== editStartText) {
+        pushUndo({ type: 'edit', index: message._index, oldText: editStartText, newText: message.text });
+        editStartText = message.text;
+      }
+    });
+
     textareaContainer.appendChild(highlight);
     textareaContainer.appendChild(textarea);
     label.appendChild(textareaContainer);
@@ -192,17 +204,30 @@ function createEntryCard(message, displayIndex) {
 
   actions.appendChild(helper);
 
+  const btnGroup = document.createElement('div');
+  btnGroup.className = 'entry-btn-group';
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.type = 'button';
+  deleteBtn.className = 'ghost delete-msg';
+  deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+  deleteBtn.title = 'Delete message';
+  deleteBtn.addEventListener('click', () => openDeleteConfirmModal(message._index));
+  btnGroup.appendChild(deleteBtn);
+
   const revertBtn = document.createElement('button');
   revertBtn.type = 'button';
   revertBtn.className = 'ghost revert';
   revertBtn.textContent = 'Revert';
   revertBtn.disabled = !message.dirty;
   revertBtn.addEventListener('click', () => {
-    message.text = message._originalText;
+    message.text = message._originalText || '';
     const newCard = createEntryCard(message, message._index + 1);
     card.replaceWith(newCard);
   });
-  actions.appendChild(revertBtn);
+  btnGroup.appendChild(revertBtn);
+
+  actions.appendChild(btnGroup);
 
   card.appendChild(actions);
 
@@ -312,8 +337,7 @@ export function updateSaveButton() {
     return;
   }
 
-  const hasChanges = state.bmgFile.messages.some(msg => msg.dirty);
-  els.download.disabled = !hasChanges;
+  els.download.disabled = false;
 }
 
 export function updateMeta() {
@@ -368,8 +392,271 @@ export function resetUi() {
   els.importJson.disabled = true;
   els.fileMeta.innerHTML = '';
 
-  if (els.filterEmpty) els.filterEmpty.checked = false;
+  if (els.filterEmpty) els.filterEmpty.checked = true;
   if (els.filterModified) els.filterModified.checked = true;
+}
+
+// --- Delete confirmation modal ---
+let pendingDeleteIndex = null;
+
+function openDeleteConfirmModal(index) {
+  pendingDeleteIndex = index;
+  const modal = document.getElementById('delete-confirm-modal');
+  if (modal) modal.classList.add('open');
+}
+
+function closeDeleteConfirmModal() {
+  pendingDeleteIndex = null;
+  const modal = document.getElementById('delete-confirm-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function confirmDelete() {
+  if (pendingDeleteIndex !== null) {
+    const idx = pendingDeleteIndex;
+    closeDeleteConfirmModal();
+    // Find the card in the DOM and animate it out
+    const card = els.entries?.querySelector(`.entry-card[data-index="${idx}"]`);
+    if (card) {
+      card.style.maxHeight = card.offsetHeight + 'px';
+      // Force reflow then add class
+      void card.offsetHeight;
+      card.classList.add('removing');
+      card.addEventListener('transitionend', () => {
+        deleteMessage(idx);
+      }, { once: true });
+    } else {
+      deleteMessage(idx);
+    }
+  } else {
+    closeDeleteConfirmModal();
+  }
+}
+
+// --- Undo / Redo system ---
+function pushUndo(action) {
+  state.undoStack.push(action);
+  state.redoStack.length = 0;
+  updateUndoRedoButtons();
+}
+
+function applyAction(action, reverse) {
+  if (!state.bmgFile) return;
+  const msgs = state.bmgFile.messages;
+  if (action.type === 'delete') {
+    if (reverse) {
+      // Undo delete = re-insert
+      msgs.splice(action.index, 0, action.message);
+    } else {
+      // Redo delete = remove again
+      const idx = msgs.findIndex(m => m === action.message);
+      if (idx !== -1) msgs.splice(idx, 1);
+    }
+  } else if (action.type === 'create') {
+    if (reverse) {
+      // Undo create = remove
+      const idx = msgs.findIndex(m => m === action.message);
+      if (idx !== -1) msgs.splice(idx, 1);
+    } else {
+      // Redo create = re-insert
+      msgs.splice(action.index, 0, action.message);
+    }
+  } else if (action.type === 'edit') {
+    // Undo/redo text edit
+    const msg = msgs[action.index];
+    if (msg) {
+      msg.text = reverse ? action.oldText : action.newText;
+    }
+  }
+  reindexMessages();
+  renderEntries();
+  updateSaveButton();
+  updateMeta();
+}
+
+export function undo() {
+  const action = state.undoStack.pop();
+  if (!action) return;
+  applyAction(action, true);
+  state.redoStack.push(action);
+  updateUndoRedoButtons();
+}
+
+export function redo() {
+  const action = state.redoStack.pop();
+  if (!action) return;
+  applyAction(action, false);
+  state.undoStack.push(action);
+  updateUndoRedoButtons();
+}
+
+function updateUndoRedoButtons() {
+  const undoBtn = document.getElementById('toolbar-undo');
+  const redoBtn = document.getElementById('toolbar-redo');
+  if (undoBtn) undoBtn.disabled = state.undoStack.length === 0;
+  if (redoBtn) redoBtn.disabled = state.redoStack.length === 0;
+}
+
+// --- Delete message ---
+function deleteMessage(index) {
+  if (!state.bmgFile) return;
+  const msg = state.bmgFile.messages[index];
+  if (!msg) return;
+  state.bmgFile.messages.splice(index, 1);
+  reindexMessages();
+  pushUndo({ type: 'delete', index, message: msg });
+  renderEntries();
+  updateSaveButton();
+  updateMeta();
+  showMessage(`Message ${index} deleted`, 'info');
+}
+
+// --- Create message (via modal) ---
+export function openNewMessageModal() {
+  if (!state.bmgFile) {
+    showMessage('Load a BMG file first', 'warning');
+    return;
+  }
+  const modal = document.getElementById('new-msg-modal');
+  const input = document.getElementById('new-msg-id-input');
+  const error = document.getElementById('new-msg-id-error');
+  if (!modal) return;
+
+  // Pre-fill with smallest available ID
+  const usedIds = new Set(state.bmgFile.messages.map(m => m.id));
+  let nextId = 0;
+  while (usedIds.has(nextId)) nextId++;
+  input.value = String(nextId);
+
+  error.textContent = '';
+  error.style.display = 'none';
+  modal.classList.add('open');
+  input.focus();
+  input.select();
+}
+
+export function closeNewMessageModal() {
+  const modal = document.getElementById('new-msg-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+export function confirmNewMessage() {
+  const input = document.getElementById('new-msg-id-input');
+  const error = document.getElementById('new-msg-id-error');
+  const raw = input.value.trim();
+
+  if (!/^\d+$/.test(raw)) {
+    error.textContent = 'ID must be a positive integer.';
+    error.style.display = 'block';
+    return;
+  }
+  const id = parseInt(raw, 10);
+  if (state.bmgFile.messages.some(m => m.id === id)) {
+    error.textContent = `ID ${id} already exists.`;
+    error.style.display = 'block';
+    return;
+  }
+
+  // Insert at the correct position sorted by ID
+  const msgs = state.bmgFile.messages;
+  let insertIndex = msgs.length;
+  for (let i = 0; i < msgs.length; i++) {
+    if (msgs[i].id > id) { insertIndex = i; break; }
+  }
+
+  // Build a new BmgMessage-like object (always dirty so buildBmg encodes it)
+  const attrSize = Math.max(0, (state.bmgFile.entrySize || 8) - 4);
+  // Copy attribute from nearest neighbor (previous message, or next, or zeros)
+  const neighbor = msgs[insertIndex - 1] || msgs[insertIndex];
+  const attribute = neighbor?.attribute?.length === attrSize
+    ? new Uint8Array(neighbor.attribute)
+    : new Uint8Array(attrSize);
+  // Place after all existing DAT1 data
+  const newOffset = state.bmgFile._dat1DataSize || 0;
+  state.bmgFile._dat1DataSize = newOffset + 4;
+  const msg = {
+    id,
+    label: '',
+    attribute,
+    text: '',
+    _originalText: null,
+    _offset: newOffset,
+    _index: 0,
+    _tagBytesMap: new Map(),
+    get dirty() { return true; }
+  };
+  msgs.splice(insertIndex, 0, msg);
+  reindexMessages();
+  pushUndo({ type: 'create', index: insertIndex, message: msg });
+  closeNewMessageModal();
+  renderEntries();
+  updateSaveButton();
+  updateMeta();
+  showMessage(`Message created (ID: ${id})`, 'info');
+
+  // Scroll to the new message card
+  requestAnimationFrame(() => {
+    const card = els.entries?.querySelector(`.entry-card[data-index="${msg._index}"]`);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
+function reindexMessages() {
+  if (!state.bmgFile) return;
+  state.bmgFile.messages.forEach((m, i) => { m._index = i; });
+}
+
+// --- Toolbar init ---
+export function initToolbar() {
+  const undoBtn = document.getElementById('toolbar-undo');
+  const redoBtn = document.getElementById('toolbar-redo');
+  const newBtn = document.getElementById('toolbar-new');
+
+  if (undoBtn) undoBtn.addEventListener('click', undo);
+  if (redoBtn) redoBtn.addEventListener('click', redo);
+  if (newBtn) newBtn.addEventListener('click', openNewMessageModal);
+
+  // Modal events
+  const modalCancel = document.getElementById('new-msg-cancel');
+  const modalConfirm = document.getElementById('new-msg-confirm');
+  const overlay = document.getElementById('new-msg-modal');
+  const input = document.getElementById('new-msg-id-input');
+
+  if (modalCancel) modalCancel.addEventListener('click', closeNewMessageModal);
+  if (modalConfirm) modalConfirm.addEventListener('click', confirmNewMessage);
+  if (overlay) overlay.addEventListener('click', (e) => { if (e.target === overlay) closeNewMessageModal(); });
+  if (input) {
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmNewMessage(); if (e.key === 'Escape') closeNewMessageModal(); });
+    // Live validation
+    input.addEventListener('input', () => {
+      const error = document.getElementById('new-msg-id-error');
+      const raw = input.value.trim();
+      if (!raw) { error.style.display = 'none'; return; }
+      if (!/^\d+$/.test(raw)) {
+        error.textContent = 'ID must be a positive integer.';
+        error.style.display = 'block';
+        return;
+      }
+      const id = parseInt(raw, 10);
+      if (state.bmgFile && state.bmgFile.messages.some(m => m.id === id)) {
+        error.textContent = `ID ${id} already exists.`;
+        error.style.display = 'block';
+      } else {
+        error.style.display = 'none';
+      }
+    });
+  }
+
+  // Delete confirmation modal events
+  const deleteModalCancel = document.getElementById('delete-confirm-cancel');
+  const deleteModalConfirm = document.getElementById('delete-confirm-confirm');
+  const deleteModalOverlay = document.getElementById('delete-confirm-modal');
+
+  if (deleteModalCancel) deleteModalCancel.addEventListener('click', closeDeleteConfirmModal);
+  if (deleteModalConfirm) deleteModalConfirm.addEventListener('click', confirmDelete);
+  if (deleteModalOverlay) deleteModalOverlay.addEventListener('click', (e) => { if (e.target === deleteModalOverlay) closeDeleteConfirmModal(); });
+
+  updateUndoRedoButtons();
 }
 
 export { createEntryCard, createBadge, updateTextHighlight };

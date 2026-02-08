@@ -60,7 +60,7 @@
             <span>Show Modified</span>
           </label>
           <label class="filter-checkbox">
-            <input type="checkbox" id="filter-empty">
+            <input type="checkbox" id="filter-empty" checked>
             <span>Show Empty</span>
           </label>
         </div>
@@ -106,6 +106,39 @@
       </label>
     </article>
   </template>
+
+  <!-- Fixed bottom-right toolbar -->
+  <div class="floating-toolbar" id="floating-toolbar">
+    <button id="toolbar-new" type="button" title="New message"><i class="fas fa-plus"></i></button>
+    <button id="toolbar-undo" type="button" title="Undo" disabled><i class="fas fa-undo"></i></button>
+    <button id="toolbar-redo" type="button" title="Redo" disabled><i class="fas fa-redo"></i></button>
+  </div>
+
+  <!-- New message modal -->
+  <div class="modal-overlay" id="new-msg-modal">
+    <div class="modal-card">
+      <h3>New Message <span style="opacity: 0.6;">(Experimental)</span></h3>
+      <p class="modal-desc">Enter the ID for the new message.</p>
+      <input id="new-msg-id-input" type="text" inputmode="numeric" placeholder="Message ID" autocomplete="off">
+      <span id="new-msg-id-error" class="modal-error"></span>
+      <div class="modal-actions">
+        <button id="new-msg-cancel" type="button" class="ghost">Cancel</button>
+        <button id="new-msg-confirm" type="button">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirmation modal -->
+  <div class="modal-overlay" id="delete-confirm-modal">
+    <div class="modal-card modal-danger">
+      <h3><i class="fas fa-exclamation-triangle"></i> Delete Message <span style="opacity: 0.6;">(Experimental)</span></h3>
+      <p class="modal-desc">Are you sure you want to delete this message? This action can be undone.</p>
+      <div class="modal-actions">
+        <button id="delete-confirm-cancel" type="button" class="ghost">Cancel</button>
+        <button id="delete-confirm-confirm" type="button" class="danger">Delete</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="js/main.js"></script>
 </body>

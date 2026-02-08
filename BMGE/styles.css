@@ -342,6 +342,19 @@ button.ghost:not(:disabled):hover {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  transition: opacity 0.35s ease, transform 0.35s ease, max-height 0.35s ease, margin 0.35s ease, padding 0.35s ease;
+}
+
+.entry-card.removing {
+  opacity: 0;
+  transform: translateY(-16px) scale(0.98);
+  max-height: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .entry-card.modified {
@@ -618,4 +631,163 @@ button.ghost:not(:disabled):hover {
 }
 .game-config-select option {
   color: #222;
+}
+
+/* --- Entry button group --- */
+.entry-btn-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.entry-btn-group .delete-msg {
+  color: #e05050;
+  border-color: rgba(224, 80, 80, 0.4);
+  padding: 0.55rem 0.7rem;
+}
+
+.entry-btn-group .delete-msg:not(:disabled):hover {
+  background: #e05050;
+  border-color: #e05050;
+  color: var(--panel);
+}
+
+/* --- Floating toolbar (bottom-right) --- */
+.floating-toolbar {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 900;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.5rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+
+.floating-toolbar button {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 1rem;
+  padding: 0;
+  background: var(--panel-alt);
+  color: var(--text);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.floating-toolbar button:not(:disabled):hover {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.floating-toolbar button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* --- Modal overlay --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.75rem;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  transform: translateY(12px);
+  transition: transform 0.2s;
+}
+
+.modal-overlay.open .modal-card {
+  transform: translateY(0);
+}
+
+.modal-card h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.modal-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.modal-card input {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.modal-card input:focus {
+  border-color: var(--accent);
+}
+
+.modal-error {
+  color: #e05050;
+  font-size: 0.82rem;
+  font-weight: 500;
+  min-height: 1.2em;
+  display: none;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+button.danger {
+  background: #e05050;
+  color: white;
+  border: none;
+}
+
+button.danger:hover {
+  background: #c73e3e;
+}
+
+.modal-danger h3 {
+  color: #e05050;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
