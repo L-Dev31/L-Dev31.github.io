@@ -2,6 +2,9 @@ import globalRateLimiter from '../rate-limiter.js';
 import { filterNullOHLCDataPoints } from '../utils.js';
 
 const PROXIES = [
+    'https://api.allorigins.win/raw?url=',
+    'https://corsproxy.org/?',
+    'https://proxy.cors.sh/',
     'https://corsproxy.io/?',
     'https://api.codetabs.com/v1/proxy?quest='
 ];
@@ -32,7 +35,9 @@ async function yahooFetch(targetUrl, signal) {
     for (let i = 0; i < PROXIES.length; i++) {
         const proxyIndex = (currentProxyIndex + i) % PROXIES.length;
         const proxy = PROXIES[proxyIndex];
-        const finalUrl = `${proxy}${targetUrl}`;
+        // Certains proxies nécessitent l'encodage URL, d'autres non
+        const needsEncoding = proxy.includes('?url=') || proxy.includes('?quest=');
+        const finalUrl = `${proxy}${needsEncoding ? encodeURIComponent(targetUrl) : targetUrl}`;
 
         try {
             const r = await fetch(finalUrl, { signal });

@@ -5,6 +5,9 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, i
     'use strict';
     // Ordered by reliability; keep the list short to reduce CORS issues
     const PROXIES = [
+        'https://api.allorigins.win/raw?url=',
+        'https://corsproxy.org/?',
+        'https://proxy.cors.sh/',
         'https://corsproxy.io/?',
         'https://api.codetabs.com/v1/proxy?quest='
     ];
@@ -78,7 +81,9 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, i
             const finalOptions = preparedBody ? { ...options, body: preparedBody } : { ...options };
 
             try {
-                const proxiedUrl = `${proxy}${encodeURIComponent(targetUrl)}`;
+                // Certains proxies nécessitent l'encodage URL, d'autres non
+                const needsEncoding = proxy.includes('?url=') || proxy.includes('?quest=');
+                const proxiedUrl = `${proxy}${needsEncoding ? encodeURIComponent(targetUrl) : targetUrl}`;
                 const res = await fetch(proxiedUrl, {
                     ...finalOptions,
                     cache: 'no-store'
