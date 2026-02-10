@@ -2,18 +2,8 @@ import { positions, loadApiConfig, selectedApi, lastApiBySymbol, setPositions } 
 import { createTab, createCard, updateSectionDates, setApiStatus, initChart, markTabAsSuspended } from './ui.js';
 import { fetchActiveSymbol } from './general.js'; 
 import { isYahooTickerSuspended } from './api/yahoo-finance.js';
+import { TYPE_ORDER, TYPE_LABELS, TYPE_ICONS, hasTransactions, typeLabel, typeIcon } from './constants.js';
 
-const TYPE_ORDER = ['equity', 'commodity', 'crypto'];
-const TYPE_LABELS = {
-    equity: 'Actions',
-    commodity: 'Matières Premières',
-    crypto: 'Cryptos'
-};
-const TYPE_ICONS = {
-    equity: 'fa-solid fa-building-columns',
-    commodity: 'fa-solid fa-coins',
-    crypto: 'fa-brands fa-bitcoin'
-};
 const DEFAULT_TOTAL_INVESTMENT = 223.52;
 const DEFAULT_CASH_ACCOUNT = -0.15;
 
@@ -21,8 +11,6 @@ const setText = (id, value) => {
     const el = document.getElementById(id);
     if (el) el.textContent = value;
 };
-
-const hasTransactions = stock => (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
 
 export function calculateStockValues(stock) {
     let earliestPurchaseDate = stock.purchaseDate;
@@ -118,15 +106,15 @@ export async function loadStocks() {
             const calculated = calculateStockValues(s);
             return calculated.shares === 0 && !hasTransactions(s);
         });
-        const typeLabel = TYPE_LABELS[type] || type.charAt(0).toUpperCase() + type.slice(1);
-        const iconClass = TYPE_ICONS[type] || 'fa-solid fa-layer-group';
+        const label = typeLabel(type);
+        const icon = typeIcon(type);
         if (hasPortfolio) {
             const portSection = document.createElement('div');
             portSection.className = 'tab-type-section';
             portSection.id = `portfolio-section-${type}`;
             const portTitle = document.createElement('div');
             portTitle.className = 'tab-type-title';
-            portTitle.innerHTML = `<i class="${iconClass} type-icon"></i>${typeLabel}`;
+            portTitle.innerHTML = `<i class="${icon} type-icon"></i>${label}`;
             portSection.appendChild(portTitle);
             document.getElementById('portfolio-tabs').appendChild(portSection);
         }
@@ -136,7 +124,7 @@ export async function loadStocks() {
             genSection.id = `general-section-${type}`;
             const genTitle = document.createElement('div');
             genTitle.className = 'tab-type-title';
-            genTitle.innerHTML = `<i class="${iconClass} type-icon"></i>${typeLabel}`;
+            genTitle.innerHTML = `<i class="${icon} type-icon"></i>${label}`;
             genSection.appendChild(genTitle);
             document.getElementById('general-tabs').appendChild(genSection);
         }

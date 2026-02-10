@@ -1,4 +1,5 @@
 import { positions, selectedApi, loadApiConfig, setSelectedApi, lastApiBySymbol } from './state.js';
+import { hasTransactions, typeLabel, typeIcon } from './constants.js';
 import { calculateStockValues } from './portfolio.js';
 import { fetchActiveSymbol } from './general.js';
 import rateLimiter from './rate-limiter.js';
@@ -46,8 +47,7 @@ export function createTab(stock, type) {
     
     const calculated = calculateStockValues(stock);
     tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `(Actions possédées : ${calculated.shares})` : '';
-    const hasTransactions = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
-    const isPortfolio = calculated.shares > 0 || hasTransactions;
+    const isPortfolio = calculated.shares > 0 || hasTransactions(stock);
     const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
     document.getElementById(sectionId)?.appendChild(tab);
 }
@@ -174,7 +174,7 @@ export function createCard(stock) {
         tds[7].id=`profit-per-${stock.symbol}`
     }
 
-    const hasEverInvested = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
+    const hasEverInvested = hasTransactions(stock);
 
     const investmentTabBtn = card.querySelector('.card-tab-btn[data-target="investment"]');
     if (investmentTabBtn) {
@@ -260,8 +260,8 @@ export function createCard(stock) {
     if (transactionContainer) {
         transactionContainer.style.display = '';
         const tbody = card.querySelector('.transaction-history-body');
-        const hasTransactions = (stock.purchases && stock.purchases.length > 0) || (stock.sales && stock.sales.length > 0);
-        if (tbody && hasTransactions) {
+        const hasTransactionsLocal = hasTransactions(stock);
+        if (tbody && hasTransactionsLocal) {
             let transactions = [];
             if (stock.purchases) {
                 stock.purchases.forEach(p => transactions.push({date: p.date, amount: p.amount, shares: p.shares, type: 'Achat'}));
@@ -314,17 +314,10 @@ export function updateUI(symbol, data) {
             return;
         }
         
-        const deadErrorCodes = [404, 'NO_DATA', 'NO_VALID_DATA'];
-        if (data && deadErrorCodes.includes(data.errorCode)) {
-            markTabAsSuspended(symbol);
-        }
-        
         clearPeriodDisplay(symbol);
         setApiStatus(symbol, 'noinfo', { api: data?.source, errorCode: data?.errorCode });
         return;
     }
-    
-    unmarkTabAsSuspended(symbol);
 
     try {
         const cardRoot = document.getElementById(`card-${symbol}`);
@@ -663,23 +656,10 @@ function getBestDataDate(symbol) {
     return '';
 }
 
-const TYPE_ICONS = {
-    equity: 'fa-solid fa-building-columns',
-    commodity: 'fa-solid fa-coins',
-    crypto: 'fa-brands fa-bitcoin',
-};
-
-const TYPE_LABELS = {
-    equity: 'Actions',
-    commodity: 'Matières Premières',
-    crypto: 'Cryptos',
-};
-
 function ensureSection(containerId, type) {
     const container = document.getElementById(containerId);
     if (!container) return null;
     
-    // Expected section ID based on container ID
     const prefix = containerId.replace('tabs', 'section');
     const sectionId = `${prefix}-${type}`;
     
@@ -689,12 +669,9 @@ function ensureSection(containerId, type) {
         section.className = 'tab-type-section';
         section.id = sectionId;
         
-        const label = TYPE_LABELS[type] || type.charAt(0).toUpperCase() + type.slice(1);
-        const iconClass = TYPE_ICONS[type] || 'fa-solid fa-layer-group';
-        
         const title = document.createElement('div');
         title.className = 'tab-type-title';
-        title.innerHTML = `<i class="${iconClass} type-icon"></i>${label}`;
+        title.innerHTML = `<i class="${typeIcon(type)} type-icon"></i>${typeLabel(type)}`;
         
         section.appendChild(title);
         container.appendChild(section);
@@ -721,8 +698,7 @@ export function markTabAsSuspended(symbol) {
     if (!pos) return;
 
     const calculated = calculateStockValues(pos);
-    const hasTransactions = (pos.purchases && pos.purchases.length > 0) || (pos.sales && pos.sales.length > 0);
-    const isPortfolio = calculated.shares > 0 || hasTransactions;
+    const isPortfolio = calculated.shares > 0 || hasTransactions(pos);
 
     if (isPortfolio) return;
 
@@ -749,8 +725,7 @@ export function unmarkTabAsSuspended(symbol) {
     if (!pos) return;
 
     const calculated = calculateStockValues(pos);
-    const hasTransactions = (pos.purchases && pos.purchases.length > 0) || (pos.sales && pos.sales.length > 0);
-    const isPortfolio = calculated.shares > 0 || hasTransactions;
+    const isPortfolio = calculated.shares > 0 || hasTransactions(pos);
     
     const containerId = isPortfolio ? 'portfolio-tabs' : 'general-tabs';
     const section = ensureSection(containerId, pos.type);
@@ -964,32 +939,8 @@ export async function openCustomSymbol(symbol, type = 'equity') {
 
     lastApiBySymbol[symbol] = selectedApi;
 
-    const hasGeneral = true; 
-    if (hasGeneral) {
-        let genSection = document.getElementById(`general-section-${type}`);
-        if (!genSection) {
-            genSection = document.createElement('div');
-            genSection.className = 'tab-type-section';
-            genSection.id = `general-section-${type}`;
-            const genTitle = document.createElement('div');
-            genTitle.className = 'tab-type-title';
-            const typeIcons = {
-                equity: 'fa-solid fa-building-columns',
-                commodity: 'fa-solid fa-coins',
-                crypto: 'fa-brands fa-bitcoin',
-            };
-            const iconClass = typeIcons[type] || 'fa-solid fa-layer-group';
-            const typeLabel = {
-                equity: 'Actions',
-                commodity: 'Matières Premières',
-                crypto: 'Cryptos',
-            }[type] || type.charAt(0).toUpperCase() + type.slice(1);
-            genTitle.innerHTML = `<i class="${iconClass} type-icon"></i>${typeLabel}`;
-            genSection.appendChild(genTitle);
-            document.getElementById('general-tabs').appendChild(genSection);
-        }
-        createTab(stock, type);
-    }
+    ensureSection('general-tabs', type);
+    createTab(stock, type);
 
     createCard(stock);
     initChart(symbol, positions);

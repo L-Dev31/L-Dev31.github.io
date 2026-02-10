@@ -1,17 +1,10 @@
-import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart } from './api/yahoo-finance.js';
+import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade } from './api/yahoo-finance.js';
+import { typeLabel, typeIcon, debounce } from './constants.js';
+import { fetchAllTradingViewRows } from './api/tradingview.js';
 
 // Removed IIFE wrapper
 {
     'use strict';
-    // Ordered by reliability; keep the list short to reduce CORS issues
-    const PROXIES = [
-        'https://api.allorigins.win/raw?url=',
-        'https://corsproxy.org/?',
-        'https://proxy.cors.sh/',
-        'https://corsproxy.io/?',
-        'https://api.codetabs.com/v1/proxy?quest='
-    ];
-    let currentProxyIndex = 0;
     const ITEMS_PER_PAGE = 10;
     const SCREENER_BATCH_SIZE = 250;
     const HARD_MAX_RESULTS = 1000;
@@ -69,51 +62,6 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, i
     let cryptoSymbols = new Set();
 
     let marketsData = [];
-
-
-    async function fetchJsonWithProxy(targetUrl, options = {}, expect = 'json') {
-        let lastError = null;
-        const preparedBody = options.body;
-
-        for (let i = 0; i < PROXIES.length; i++) {
-            const proxyIndex = (currentProxyIndex + i) % PROXIES.length;
-            const proxy = PROXIES[proxyIndex];
-            const finalOptions = preparedBody ? { ...options, body: preparedBody } : { ...options };
-
-            try {
-                // Certains proxies nécessitent l'encodage URL, d'autres non
-                const needsEncoding = proxy.includes('?url=') || proxy.includes('?quest=');
-                const proxiedUrl = `${proxy}${needsEncoding ? encodeURIComponent(targetUrl) : targetUrl}`;
-                const res = await fetch(proxiedUrl, {
-                    ...finalOptions,
-                    cache: 'no-store'
-                });
-
-                if (res.status === 403 || res.status === 429) {
-                    // soften bursts before trying next proxy
-                    await new Promise(r => setTimeout(r, 1600 + Math.random() * 700));
-                    lastError = new Error(`HTTP_${res.status}`);
-                    continue;
-                }
-
-                if (!res.ok) {
-                    lastError = new Error(`HTTP_${res.status}`);
-                    continue;
-                }
-
-                currentProxyIndex = proxyIndex;
-
-                if (expect === 'text') return await res.text();
-                return await res.json();
-            } catch (e) {
-                // network/CORS issues: brief pause then rotate
-                await new Promise(r => setTimeout(r, 350));
-                lastError = e;
-            }
-        }
-
-        throw lastError || new Error('ALL_PROXIES_FAILED');
-    }
 
     async function loadMarkets() {
         try {
@@ -330,9 +278,7 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, i
         let eligibility = 'cto';
         if (market === 'euronext') eligibility = q.marketCap && q.marketCap < 1e9 ? 'pea-pme' : 'pea';
 
-        const regularMarketTime = q.regularMarketTime || 0;
-        const now = Math.floor(Date.now() / 1000);
-        const daysSinceLastTrade = regularMarketTime > 0 ? (now - regularMarketTime) / 86400 : 999;
+        const daysSinceLastTrade = computeDaysSinceLastTrade(q.regularMarketTime);
         const isSuspended = !isYahooTickerActiveFromQuote(q);
 
         let score = Math.max(0, Math.min(100, 50 + changePercent * 3 + Math.min(volume / 50000000, 15)));
@@ -369,6 +315,7 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, i
                 const volume = meta.regularMarketVolume || totalVolume;
 
                 const isSuspended = !isYahooTickerActiveFromChart(meta, closes, volumes);
+                const daysSinceLastTrade = computeDaysSinceLastTrade(meta.regularMarketTime);
 
                 let score = Math.max(0, Math.min(100, 50 + changePercent * 3 + Math.min(volume / 50000000, 15)));
                 let signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
@@ -427,58 +374,29 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, i
 
 
     async function fetchTradingViewStocks(region, exchangeFilter) {
+        const maxTotal = Math.min(state.maxFetchTickers, 1200);
+        const rows = await fetchAllTradingViewRows(region, maxTotal);
+
         const symbols = [];
         const seen = new Set();
-        const batchSize = 200;
-        const maxTotal = Math.min(state.maxFetchTickers, 1200);
+        rows.forEach(d => {
+            const [exch, ticker] = d.s.split(':');
+            if (exchangeFilter && exch !== exchangeFilter && !exchangeFilter.includes(exch)) return;
 
-        const basePayload = {
-            filter: [{ left: 'type', operation: 'in_range', right: ['stock', 'dr', 'fund'] }],
-            options: { lang: 'en' },
-            columns: ['name', 'exchange', 'description'],
-            sort: { sortBy: 'market_cap_basic', sortOrder: 'desc' }
-        };
+            const config = MARKET_CONFIG[region];
+            let resolved = ticker;
 
-        for (let offset = 0; offset < maxTotal; offset += batchSize) {
-            const payload = { ...basePayload, range: [offset, offset + batchSize] };
-
-            let data;
-            try {
-                data = await fetchJsonWithProxy(`https://scanner.tradingview.com/${region}/scan`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-            } catch (e) {
-                // If the first request fails, bail out; otherwise keep what we already fetched
-                if (symbols.length === 0) return [];
-                break;
+            if (config) {
+                if (config.resolve) resolved = config.resolve(ticker, exch);
+                else if (config.transform) resolved = config.transform(ticker) + (config.suffix || '');
+                else resolved = ticker + (config.suffix || '');
             }
 
-            const rows = data?.data || [];
-            if (!rows.length) break;
-
-            rows.forEach(d => {
-                const [exch, ticker] = d.s.split(':');
-                if (exchangeFilter && exch !== exchangeFilter && !exchangeFilter.includes(exch)) return;
-
-                const config = MARKET_CONFIG[region];
-                let resolved = ticker;
-
-                if (config) {
-                    if (config.resolve) resolved = config.resolve(ticker, exch);
-                    else if (config.transform) resolved = config.transform(ticker) + (config.suffix || '');
-                    else resolved = ticker + (config.suffix || '');
-                }
-
-                if (!seen.has(resolved)) {
-                    seen.add(resolved);
-                    symbols.push(resolved);
-                }
-            });
-
-            if (rows.length < batchSize) break;
-        }
+            if (!seen.has(resolved)) {
+                seen.add(resolved);
+                symbols.push(resolved);
+            }
+        });
 
         return symbols;
     }
@@ -1060,11 +978,9 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, i
             section = document.createElement('div');
             section.className = 'tab-type-section';
             section.id = `general-section-${type}`;
-            const typeLabels = { crypto: 'Cryptos', equity: 'Actions', commodity: 'Matières Premières' };
-            const typeIcons = { crypto: 'fa-brands fa-bitcoin', equity: 'fa-solid fa-building-columns', commodity: 'fa-solid fa-coins' };
             const title = document.createElement('div');
             title.className = 'tab-type-title';
-            title.innerHTML = `<i class="${typeIcons[type] || 'fa-solid fa-layer-group'} type-icon"></i> ${typeLabels[type] || 'Autre'}`;
+            title.innerHTML = `<i class="${typeIcon(type)} type-icon"></i> ${typeLabel(type)}`;
             section.appendChild(title);
             generalTabs.appendChild(section);
         }
@@ -1221,11 +1137,6 @@ import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, i
             <div class="explorer-item-price"><div class="explorer-item-current">${formatPrice(priceValue)} ${curr}</div><div class="explorer-item-change ${changeClass}">${changeSign}${changePercent.toFixed(2)}% <span class="explorer-period-label">${PERIOD_LABELS[state.currentPeriod]}</span></div></div>
             <div class="explorer-item-signal"><span class="explorer-signal-badge ${signalClass}">${signalText}</span><span class="explorer-signal-score">${item.score}/100</span></div>
         </div>`;
-    }
-
-    function debounce(fn, delay) {
-        let timeout;
-        return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => fn.apply(this, args), delay); };
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

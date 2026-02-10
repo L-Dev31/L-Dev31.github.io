@@ -115,8 +115,6 @@ const collectPageTags = item => {
     return Array.from(labels);
 };
 
-export { periodToDays };
-
 export function setPositions(pos) { positions = pos; }
 
 export async function fetchCardNews(symbol, force = false, limit = 50, days = 7, apiName = null) {

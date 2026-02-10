@@ -17,20 +17,22 @@ export function filterNullDataPoints(timestamps, prices) {
   };
 }
 
-export function filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes) {
+export function filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes, volumes) {
   if (!timestamps || !opens || !highs || !lows || !closes ||
       timestamps.length !== opens.length ||
       timestamps.length !== highs.length ||
       timestamps.length !== lows.length ||
       timestamps.length !== closes.length) {
-    return { timestamps: [], opens: [], highs: [], lows: [], closes: [] };
+    return { timestamps: [], opens: [], highs: [], lows: [], closes: [], volumes: [] };
   }
+  const hasVolumes = Array.isArray(volumes) && volumes.length === timestamps.length;
   const validData = timestamps.map((ts, index) => ({
     timestamp: ts,
     open: opens[index],
     high: highs[index],
     low: lows[index],
-    close: closes[index]
+    close: closes[index],
+    volume: hasVolumes ? (volumes[index] || 0) : 0
   })).filter(item =>
     item.timestamp != null && !isNaN(item.timestamp) &&
     item.open != null && !isNaN(item.open) &&
@@ -43,7 +45,8 @@ export function filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes)
     opens: validData.map(item => item.open),
     highs: validData.map(item => item.high),
     lows: validData.map(item => item.low),
-    closes: validData.map(item => item.close)
+    closes: validData.map(item => item.close),
+    volumes: validData.map(item => item.volume)
   };
 }
 
@@ -75,13 +78,10 @@ export function dateCutoff(days) {
 }
 
 export function normalizeSymbol(sym) {
-  const upper = (sym || '').toUpperCase();
-  const classMatch = upper.match(/^([A-Z0-9]+)\.([A-Z])$/);
-  if (classMatch) return `${classMatch[1]}-${classMatch[2]}`;
-  const prefMatch = upper.match(/^([A-Z0-9]+)\/P([A-Z0-9]+)$/);
-  if (prefMatch) return `${prefMatch[1]}-P${prefMatch[2]}`;
-  if (upper.includes('/')) return upper.replaceAll('/', '-');
-  return upper;
+  return (sym || '').toUpperCase()
+    .replace(/^([A-Z0-9]+)\.([A-Z])$/, '$1-$2')
+    .replace(/^([A-Z0-9]+)\/P([A-Z0-9]+)$/, '$1-P$2')
+    .replaceAll('/', '-');
 }
 
 export function isMarketOpen() {

@@ -1,5 +1,7 @@
 import { makeOhlcAdapter } from './adapter.js';
 
+const POLYGON_BASE = 'https://api.polygon.io';
+
 const PERIODS = {
     '1D': { multiplier: 1, timespan: 'minute', days: 1 },
     '1W': { multiplier: 5, timespan: 'minute', days: 5 },
@@ -36,7 +38,7 @@ export const fetchFromPolygon = makeOhlcAdapter({
         const to = new Date();
         to.setDate(to.getDate() - 1);
         const from = new Date(to.getTime() - cfg.days * 86400000);
-        return `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(providerSymbol)}/range/${cfg.multiplier}/${cfg.timespan}/${from.toISOString().split('T')[0]}/${to.toISOString().split('T')[0]}?apiKey=${apiKey}`;
+        return `${POLYGON_BASE}/v2/aggs/ticker/${encodeURIComponent(providerSymbol)}/range/${cfg.multiplier}/${cfg.timespan}/${from.toISOString().split('T')[0]}/${to.toISOString().split('T')[0]}?apiKey=${apiKey}`;
     },
     parse: parsePolygon,
     transform: (data, ctx) => {
@@ -64,3 +66,16 @@ export const fetchFromPolygon = makeOhlcAdapter({
     },
     apiName: 'massive'
 });
+
+// Fetch latest EUR/USD closing rate from Polygon forex aggregates
+export async function fetchPolygonForexRate(apiKey) {
+    const now = new Date();
+    const to = now.toISOString().slice(0, 10);
+    const from = new Date(now - 10 * 864e5).toISOString().slice(0, 10);
+    const url = `${POLYGON_BASE}/v2/aggs/ticker/C:EURUSD/range/1/day/${from}/${to}?apiKey=${apiKey}`;
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    const j = await r.json();
+    if (j?.results?.length > 0) return j.results[j.results.length - 1].c;
+    return null;
+}

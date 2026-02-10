@@ -1,14 +1,7 @@
 import globalRateLimiter from '../rate-limiter.js';
-import { filterNullOHLCDataPoints } from '../utils.js';
+import { filterNullOHLCDataPoints, normalizeSymbol } from '../utils.js';
+import { proxyFetchSafe, proxyFetch } from '../proxy-fetch.js';
 
-const PROXIES = [
-    'https://api.allorigins.win/raw?url=',
-    'https://corsproxy.org/?',
-    'https://proxy.cors.sh/',
-    'https://corsproxy.io/?',
-    'https://api.codetabs.com/v1/proxy?quest='
-];
-let currentProxyIndex = 0;
 const BASES = ['https://query1.finance.yahoo.com', 'https://query2.finance.yahoo.com'];
 let baseIndex = 0;
 
@@ -30,44 +23,11 @@ export function getYahooSymbol(stock) {
 }
 
 async function yahooFetch(targetUrl, signal) {
-    let lastError = null;
-
-    for (let i = 0; i < PROXIES.length; i++) {
-        const proxyIndex = (currentProxyIndex + i) % PROXIES.length;
-        const proxy = PROXIES[proxyIndex];
-        // Certains proxies nécessitent l'encodage URL, d'autres non
-        const needsEncoding = proxy.includes('?url=') || proxy.includes('?quest=');
-        const finalUrl = `${proxy}${needsEncoding ? encodeURIComponent(targetUrl) : targetUrl}`;
-
-        try {
-            const r = await fetch(finalUrl, { signal });
-
-            if (r.status === 429) {
-                globalRateLimiter.setRateLimitForApi('yahoo', 60000);
-                lastError = { error: true, errorCode: 429, throttled: true, proxy: proxy };
-                await new Promise(r => setTimeout(r, 1200 + Math.random() * 900));
-                continue;
-            }
-
-            if (!r.ok) {
-                lastError = { error: true, errorCode: r.status, proxy: proxy };
-                continue;
-            }
-
-            currentProxyIndex = proxyIndex;
-
-            const text = await r.text();
-            try {
-                return JSON.parse(text);
-            } catch (jsonError) {
-                lastError = { error: true, errorCode: 'INVALID_JSON', proxy: proxy };
-                continue;
-            }
-        } catch (networkError) {
-            lastError = { error: true, errorCode: 500, message: networkError.message, proxy: proxy };
-        }
+    const j = await proxyFetchSafe(targetUrl, signal);
+    if (j.error && j.errorCode === 429) {
+        globalRateLimiter.setRateLimitForApi('yahoo', 60000);
     }
-    return lastError || { error: true, errorCode: 'ALL_PROXIES_FAILED' };
+    return j;
 }
 
 export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal) {
@@ -87,12 +47,12 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
                 return { source: 'yahoo', error: true, errorCode: res?.meta ? 'NO_DATA' : 404 };
             }
 
-            const { timestamps, opens, highs, lows, closes } = filterNullOHLCDataPoints(res.timestamp, q.open, q.high, q.low, q.close);
+            const { timestamps, opens, highs, lows, closes, volumes } = filterNullOHLCDataPoints(res.timestamp, q.open, q.high, q.low, q.close, q.volume);
             
             if (!timestamps.length) return { source: 'yahoo', error: true, errorCode: 'NO_VALID_DATA' };
 
             const data = {
-                source: 'yahoo', timestamps, prices: closes, opens, highs, lows, closes,
+                source: 'yahoo', timestamps, prices: closes, opens, highs, lows, closes, volumes,
                 open: opens[0], high: Math.max(...highs), low: Math.min(...lows), price: closes[closes.length - 1]
             };
             data.change = data.price - data.open;
@@ -127,6 +87,15 @@ export async function isYahooTickerSuspended(ticker) {
     }
 }
 
+/**
+ * Compute daysSinceLastTrade from a regularMarketTime unix timestamp.
+ * Exported so consumers never need to recompute this.
+ */
+export function computeDaysSinceLastTrade(regularMarketTime) {
+    if (!regularMarketTime || regularMarketTime <= 0) return 999;
+    return (Math.floor(Date.now() / 1000) - regularMarketTime) / 86400;
+}
+
 export function isYahooTickerActiveFromChart(meta = {}, closes = [], volumes = []) {
     const validCloses = closes.filter(c => c !== null && c !== undefined);
     const hasData = validCloses.length > 0;
@@ -136,9 +105,7 @@ export function isYahooTickerActiveFromChart(meta = {}, closes = [], volumes = [
     if (isCrypto) return price > 0 && hasData;
 
     const tradeable = meta.tradeable !== false;
-    const regularMarketTime = meta.regularMarketTime || 0;
-    const now = Math.floor(Date.now() / 1000);
-    const daysSinceLastTrade = regularMarketTime > 0 ? (now - regularMarketTime) / 86400 : 999;
+    const daysSinceLastTrade = computeDaysSinceLastTrade(meta.regularMarketTime);
     
     let totalVolume = 0;
     for (const v of volumes) if (v) totalVolume += v;
@@ -163,9 +130,7 @@ export function isYahooTickerActiveFromQuote(q = {}) {
     const price = q.regularMarketPrice || q.price || 0;
     const changePercent = q.regularMarketChangePercent || 0;
     const volume = q.regularMarketVolume || 0;
-    const regularMarketTime = q.regularMarketTime || 0;
-    const now = Math.floor(Date.now() / 1000);
-    const daysSinceLastTrade = regularMarketTime > 0 ? (now - regularMarketTime) / 86400 : 999;
+    const daysSinceLastTrade = computeDaysSinceLastTrade(q.regularMarketTime);
     const tradeable = q.tradeable !== false;
 
     if (isCrypto) {
@@ -215,49 +180,24 @@ export async function fetchYahooDividends(ticker, from, to, signal) {
     const p2 = Math.floor(new Date(to || new Date().toISOString().slice(0, 10)).getTime() / 1000);
     const targetUrl = `https://query2.finance.yahoo.com/v7/finance/download/${encodeURIComponent(ticker)}?period1=${p1}&period2=${p2}&interval=1d&events=div`;
     
-    let lastError = null;
-    
-    for (let i = 0; i < PROXIES.length; i++) {
-        const proxyIndex = (currentProxyIndex + i) % PROXIES.length;
-        const proxy = PROXIES[proxyIndex];
+    try {
+        const text = await proxyFetch(targetUrl, { signal, expect: 'text' });
         
-        try {
-            const r = await fetch(`${proxy}${targetUrl}`, { signal });
-            if (!r.ok) {
-                lastError = { error: true, errorCode: r.status };
-                continue;
-            }
-            
-            currentProxyIndex = proxyIndex;
-            
-            const text = await r.text();
-            if (text.startsWith('<')) {
-                lastError = { source: 'yahoo', error: true, errorCode: 'PROXY_HTML' };
-                continue;
-            }
-
-            const items = text.trim().split('\n').slice(1).map(l => {
-                const [date, div] = l.split(',');
-                return { date, dividend: parseFloat(div) };
-            });
-            return { source: 'yahoo', dividends: items };
-        } catch(e) {
-            lastError = { source: 'yahoo', error: true, errorCode: 500 };
+        if (text.startsWith('<')) {
+            return { source: 'yahoo', error: true, errorCode: 'PROXY_HTML' };
         }
+
+        const items = text.trim().split('\n').slice(1).map(l => {
+            const [date, div] = l.split(',');
+            return { date, dividend: parseFloat(div) };
+        });
+        return { source: 'yahoo', dividends: items };
+    } catch (e) {
+        return { source: 'yahoo', error: true, errorCode: 500 };
     }
-    
-    return lastError || { source: 'yahoo', error: true, errorCode: 'ALL_PROXIES_FAILED' };
 }
 
-export function normalizeYahooSymbol(sym) {
-    const upper = (sym || '').toUpperCase();
-    const classMatch = upper.match(/^([A-Z]+)\.([A-Z])$/);
-    if (classMatch) return `${classMatch[1]}-${classMatch[2]}`;
-    const prefMatch = upper.match(/^([A-Z]+)\/P([A-Z]+)$/);
-    if (prefMatch) return `${prefMatch[1]}-P${prefMatch[2]}`;
-    if (upper.includes('/')) return upper.replaceAll('/', '-');
-    return upper;
-}
+export const normalizeYahooSymbol = normalizeSymbol;
 
 export function isYahooSparkFriendly(sym) {
     if (!sym) return false;

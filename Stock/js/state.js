@@ -1,3 +1,5 @@
+import { fetchPolygonForexRate } from './api/polygon.js';
+
 export let API_CONFIG = null;
 export let positions = {};
 export let selectedApi = 'yahoo';
@@ -63,15 +65,10 @@ export async function fetchUsdToEurRate() {
         const config = await loadApiConfig();
         const api = config?.apis?.massive;
         if (!api || !api.enabled || !api.apiKey) return 1;
-        const url = `https://api.polygon.io/v2/aggs/ticker/C:EURUSD/range/1/day/2025-11-01/2025-11-10?apiKey=${api.apiKey}`;
-        const r = await fetch(url);
-        if (r.ok) {
-            const j = await r.json();
-            if (j && j.results && j.results.length > 0) {
-                usdToEurRate = j.results[j.results.length - 1].c;
-                console.log(`💱 Taux USD/EUR récupéré: ${usdToEurRate}`);
-                return usdToEurRate;
-            }
+        const rate = await fetchPolygonForexRate(api.apiKey);
+        if (rate !== null) {
+            usdToEurRate = rate;
+            return usdToEurRate;
         }
     } catch (err) {
         console.warn('fetchUsdToEurRate error', err);

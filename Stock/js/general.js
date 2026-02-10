@@ -12,8 +12,9 @@ import { updateSignal } from './signal-bot.js'
 import { initTerminal, processCommand } from './terminal.js'
 
 import { filterNullDataPoints, filterNullOHLCDataPoints, isMarketOpen, periodToDays } from './utils.js'
+import { DEAD_ERROR_CODES } from './constants.js'
 import { API_CONFIG, loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, mainFetchController, setMainFetchController, initialFetchController, setInitialFetchController, fastPollTimer, setFastPollTimer, rateLimitCountdownTimer, setRateLimitCountdownTimer, fetchUsdToEurRate } from './state.js'
-import { calculateStockValues, updatePortfolioSummary, loadStocks, checkSuspendedTickers } from './portfolio.js'
+import { calculateStockValues, updatePortfolioSummary, loadStocks } from './portfolio.js'
 import { createTab, createCard, updateUI, resetSymbolDisplay, updateTabTitle, updateCardTitle, updateSectionDates, clearPeriodDisplay, setApiStatus, updateApiCountdown, updateDropdownSelection, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js'
 
 // Re-export for other modules
@@ -32,16 +33,18 @@ function terminalLogGlobal(msg) {
     } catch (e) { /* ignore */ }
 }
 
-async function selectApiFetch(apiName, position) {
-  switch(apiName) {
-    case 'yahoo': return { fetchFunc: fetchFromYahoo, apiName: 'yahoo' };
-    case 'massive': return { fetchFunc: fetchFromPolygon, apiName: 'massive' };
-    case 'twelvedata': return { fetchFunc: fetchFromTwelveData, apiName: 'twelvedata' };
-    case 'marketstack': return { fetchFunc: fetchFromMarketstack, apiName: 'marketstack' };
-    case 'alphavantage': return { fetchFunc: fetchFromAlphaVantage, apiName: 'alphavantage' };
-    case 'finnhub': return { fetchFunc: fetchFromFinnhub, apiName: 'finnhub' };
-    default: return { fetchFunc: fetchFromYahoo, apiName: 'yahoo' };
-  }
+const API_FETCHERS = {
+    yahoo: fetchFromYahoo,
+    massive: fetchFromPolygon,
+    twelvedata: fetchFromTwelveData,
+    marketstack: fetchFromMarketstack,
+    alphavantage: fetchFromAlphaVantage,
+    finnhub: fetchFromFinnhub
+};
+
+function selectApiFetch(apiName) {
+    const fetchFunc = API_FETCHERS[apiName] || fetchFromYahoo;
+    return { fetchFunc, apiName: API_FETCHERS[apiName] ? apiName : 'yahoo' };
 }
 
 function startFastPolling() {
@@ -80,10 +83,9 @@ function startRateLimitCountdown(seconds) {
 }
 
 function stopRateLimitCountdown() {
-    if (rateLimitCountdownTimer) {
-        clearInterval(rateLimitCountdownTimer);
-        setRateLimitCountdownTimer(null);
-    }
+    if (!rateLimitCountdownTimer) return;
+    clearInterval(rateLimitCountdownTimer);
+    setRateLimitCountdownTimer(null);
 }
 
 function startGlobalRateLimitCountdown() {
@@ -101,12 +103,7 @@ function startGlobalRateLimitCountdown() {
     }, 1000));
 }
 
-function stopGlobalRateLimitCountdown() {
-    if (rateLimitCountdownTimer) {
-        clearInterval(rateLimitCountdownTimer);
-        setRateLimitCountdownTimer(null);
-    }
-}
+const stopGlobalRateLimitCountdown = stopRateLimitCountdown;
 
 async function fetchActiveSymbol(force) {
     const symbol = getActiveSymbol()
@@ -124,7 +121,7 @@ async function fetchActiveSymbol(force) {
         const p = positions[symbol].currentPeriod||'1D'
         const name = positions[symbol].name||null
         
-        let { fetchFunc, apiName } = await selectApiFetch(selectedApi, positions[symbol])
+        let { fetchFunc, apiName } = selectApiFetch(selectedApi)
         
         const config = await loadApiConfig();
         const apiConfig = config.apis[apiName];
@@ -138,6 +135,13 @@ async function fetchActiveSymbol(force) {
         
         positions[symbol].lastFetch=Date.now()
         positions[symbol].lastData=d
+        
+        if (d && d.error && DEAD_ERROR_CODES.includes(d.errorCode)) {
+            markTabAsSuspended(symbol);
+        } else if (d && !d.error) {
+            unmarkTabAsSuspended(symbol);
+        }
+        
         updateUI(symbol,d)
         lastApiBySymbol[symbol]=d.source
         
@@ -216,7 +220,7 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     if (periodLabel) periodLabel.textContent = p
     const name=positions[s].name||null
     
-    let { fetchFunc, apiName } = await selectApiFetch(selectedApi, positions[s])
+    let { fetchFunc, apiName } = selectApiFetch(selectedApi)
     
     const config = await loadApiConfig();
     const apiConfig = config.apis[apiName];
@@ -229,6 +233,13 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     
     positions[s].lastFetch=Date.now()
     positions[s].lastData=d
+    
+    if (d && d.error && DEAD_ERROR_CODES.includes(d.errorCode)) {
+        markTabAsSuspended(s);
+    } else if (d && !d.error) {
+        unmarkTabAsSuspended(s);
+    }
+    
     updateUI(s,d)
     setApiStatus(s, d ? 'active' : 'inactive', { api: apiName });
     

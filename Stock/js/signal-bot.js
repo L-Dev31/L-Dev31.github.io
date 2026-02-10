@@ -1,6 +1,4 @@
 
-const SIGNAL_HISTORY = [];
-
 const DEFAULT_OPTIONS = {
     accountCapital: 10000,
     accountRisk: 0.02,
@@ -38,6 +36,22 @@ const HORIZON_MAP = {
     'MAX': { label: 'Très Long Terme', desc: 'Historique Complet' }
 };
 
+// Adaptive indicator config per candle granularity
+// sma: [short, mid, long], volScale: ATR→daily normalizer
+const PERIOD_INDICATOR_CONFIG = {
+    '1D':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
+    '1W':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
+    '1M':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
+    '3M':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.008, volScale: 1.2 },
+    '6M':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.008, volScale: 1.5 },
+    '1Y':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.01,  volScale: 2 },
+    'YTD': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.01,  volScale: 2 },
+    '3Y':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 104], momentumPeriod: 8,  atrPeriod: 14, macdNormFactor: 0.02,  volScale: 3 },
+    '5Y':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 104], momentumPeriod: 8,  atrPeriod: 14, macdNormFactor: 0.02,  volScale: 4 },
+    'MAX': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [12, 36, 60],  momentumPeriod: 6,  atrPeriod: 14, macdNormFactor: 0.04,  volScale: 6 }
+};
+const DEFAULT_INDICATOR_CONFIG = PERIOD_INDICATOR_CONFIG['1D'];
+
 const getRiskColorClass = (score) => {
     if (score >= 9) return 'negative';
     if (score >= 7) return 'negative';
@@ -48,7 +62,6 @@ const getRiskColorClass = (score) => {
 // --- Utilitaires ---
 
 const safeArray = (arr) => Array.isArray(arr) ? arr : [];
-const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
 function validateData(data, opts = {}) {
     const prices = safeArray(data?.prices);
@@ -57,11 +70,7 @@ function validateData(data, opts = {}) {
 
 // --- Indicateurs Techniques (Explicites) ---
 
-/**
- * Relative Strength Index (RSI)
- * Mesure la vitesse et le changement des mouvements de prix.
- * @returns {number} 0-100
- */
+// RSI — 0 to 100
 function calculateRSI(prices, period = 14) {
     const p = safeArray(prices);
     if (p.length < period + 1) return 50;
@@ -87,10 +96,7 @@ function calculateRSI(prices, period = 14) {
     return 100 - (100 / (1 + rs));
 }
 
-/**
- * Moyenne Mobile Exponentielle (EMA)
- * Donne plus de poids aux prix récents.
- */
+// EMA
 function calculateEMA(prices, period) {
     const p = safeArray(prices);
     if (p.length === 0) return 0;
@@ -106,9 +112,7 @@ function calculateEMA(prices, period) {
     return ema;
 }
 
-/**
- * Moyenne Mobile Simple (SMA)
- */
+// SMA
 function calculateSMA(prices, period) {
     const p = safeArray(prices);
     if (p.length === 0) return 0;
@@ -116,10 +120,7 @@ function calculateSMA(prices, period) {
     return p.slice(-period).reduce((a, b) => a + b, 0) / period;
 }
 
-/**
- * MACD (Moving Average Convergence Divergence)
- * Indicateur de tendance et de momentum.
- */
+// MACD
 function calculateMACD(prices, fast = 12, slow = 26, signal = 9) {
     const p = safeArray(prices);
     if (p.length < slow) return { line: 0, signal: 0, hist: 0, series: [] };
@@ -134,16 +135,8 @@ function calculateMACD(prices, fast = 12, slow = 26, signal = 9) {
     const macdLineSeries = [];
 
     for (let i = 1; i < p.length; i++) {
-        // Mise à jour des EMAs à chaque pas (approximation simplifiée pour la boucle)
-        // Note: Pour être précis, il faudrait recalculer depuis le début, mais ici on simule le flux
-        // Correction: On applique la formule EMA standard sur toute la série
-        // Pour simplifier la lecture, on utilise une logique itérative simple ici
-        // (La version précédente était correcte mathématiquement, on la garde lisible)
-        
-        // Recalcul propre pour l'itération courante si on avait l'historique complet des EMAs
-        // Ici on simplifie en supposant que emaFast/Slow sont mis à jour
         if (i >= fast) emaFast = p[i] * kFast + emaFast * (1 - kFast);
-        else emaFast = (emaFast * i + p[i]) / (i + 1); // SMA progressive au début
+        else emaFast = (emaFast * i + p[i]) / (i + 1);
 
         if (i >= slow) emaSlow = p[i] * kSlow + emaSlow * (1 - kSlow);
         else emaSlow = (emaSlow * i + p[i]) / (i + 1);
@@ -164,10 +157,7 @@ function calculateMACD(prices, fast = 12, slow = 26, signal = 9) {
     };
 }
 
-/**
- * Average True Range (ATR)
- * Mesure la volatilité.
- */
+// ATR
 function calculateATR(highs, lows, closes, period = 14) {
     const h = safeArray(highs);
     const l = safeArray(lows);
@@ -194,10 +184,7 @@ function calculateATR(highs, lows, closes, period = 14) {
     return atr;
 }
 
-/**
- * Momentum
- * Différence de prix sur N périodes.
- */
+// Momentum
 function calculateMomentum(prices, period = 10) {
     const p = safeArray(prices);
     if (p.length < period + 1) return 0;
@@ -230,17 +217,20 @@ function calculateBotSignal(data, options = {}) {
     const volumes = safeArray(data.volumes);
     const currentPrice = prices[prices.length - 1];
 
-    // 3. Calcul des indicateurs
-    const rsiVal = calculateRSI(prices, 14);
-    const macdVal = calculateMACD(prices);
-    const sma20 = calculateSMA(prices, 20);
-    const sma50 = calculateSMA(prices, 50);
-    const sma200 = calculateSMA(prices, 200);
-    const momVal = calculateMomentum(prices, 10);
-    const atrVal = calculateATR(highs, lows, prices, 14);
+    // 3. Calcul des indicateurs (paramètres adaptés à la période)
+    const ic = PERIOD_INDICATOR_CONFIG[options.period] || DEFAULT_INDICATOR_CONFIG;
+    const rsiVal = calculateRSI(prices, ic.rsiPeriod);
+    const macdVal = calculateMACD(prices, ic.macdFast, ic.macdSlow, ic.macdSignal);
+    const sma20 = calculateSMA(prices, ic.sma[0]);
+    const sma50 = calculateSMA(prices, ic.sma[1]);
+    const sma200 = calculateSMA(prices, ic.sma[2]);
+    const momVal = calculateMomentum(prices, ic.momentumPeriod);
+    const atrVal = calculateATR(highs, lows, prices, ic.atrPeriod);
 
     // 3b. Analyse du Risque (Shitcoin Detector - Échelle 1 à 10)
-    const volatilityPct = (atrVal / currentPrice) * 100;
+    // Normaliser la volatilité par l'échelle temporelle des bougies
+    const rawVolatilityPct = (atrVal / currentPrice) * 100;
+    const volatilityPct = rawVolatilityPct / ic.volScale;
     let riskLevel = '';
     let riskDesc = '';
     let riskScore = 1;
@@ -276,7 +266,7 @@ function calculateBotSignal(data, options = {}) {
     else rsiScore = -((rsiVal - 50) / 20); // Linéaire entre les deux
 
     // Score MACD (Histogramme positif = haussier)
-    const macdScore = Math.max(-1, Math.min(1, macdVal.hist / (currentPrice * 0.005))); // Normalisé approximativement
+    const macdScore = Math.max(-1, Math.min(1, macdVal.hist / (currentPrice * ic.macdNormFactor)));
 
     // Score Tendance (SMA)
     let trendScore = 0;
@@ -287,14 +277,15 @@ function calculateBotSignal(data, options = {}) {
     // Score Momentum
     const momScore = Math.max(-1, Math.min(1, momVal / 5));
 
-    // Pondération finale
+    // Pondération finale (normalisée par la somme des poids utilisés)
     const w = options.weights;
+    const usedWeight = w.rsi + w.macd + w.sma + w.momentum;
     let totalScore = (
         rsiScore * w.rsi +
         macdScore * w.macd +
         trendScore * w.sma +
         momScore * w.momentum
-    );
+    ) / (usedWeight || 1);
 
     // Intégration du Risque dans le Score Global
     // Si le risque est élevé (>4), on pénalise le score
@@ -336,8 +327,11 @@ function calculateBotSignal(data, options = {}) {
             rsi: rsiVal,
             macdHistogram: macdVal.hist,
             sma20, sma50, sma200,
+            smaConfig: ic.sma,
+            indicatorConfig: ic,
             momentum: momVal,
             atr: atrVal,
+            rawVolatility: rawVolatilityPct,
             weightedScore: totalScore,
             stopLoss,
             takeProfit,
@@ -366,7 +360,6 @@ function updateSignalUI(symbol, result) {
     const cursor = document.getElementById(`signal-cursor-${symbol}`);
     const valueEl = document.getElementById(`signal-value-${symbol}`);
     const descEl = document.getElementById(`signal-description-${symbol}`);
-    const bar = card.querySelector('.signal-bar');
     const explanationContainer = card.querySelector('.signal-explanation');
     const explanationContent = card.querySelector('.explanation-content');
     const stateContainer = card.querySelector('.signal-state-container');
@@ -477,7 +470,7 @@ function updateSignalUI(symbol, result) {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>RSI (14)</td>
+                            <td>RSI (${e.indicatorConfig?.rsiPeriod || 14})</td>
                             <td class="${rsiClass}">${e.rsi.toFixed(1)}</td>
                             <td>${rsiText}</td>
                         </tr>
@@ -489,7 +482,7 @@ function updateSignalUI(symbol, result) {
                         <tr>
                             <td>Tendance</td>
                             <td class="${trendClass}">${trendText}</td>
-                            <td>vs SMA200 (${e.sma200.toFixed(2)})</td>
+                            <td>vs SMA${e.smaConfig?.[2] || 200} (${e.sma200.toFixed(2)})</td>
                         </tr>
                         <tr>
                             <td>Momentum</td>
