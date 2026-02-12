@@ -4,6 +4,11 @@ import { proxyFetchSafe, proxyFetch } from '../proxy-fetch.js';
 
 const BASES = ['https://query1.finance.yahoo.com', 'https://query2.finance.yahoo.com'];
 let baseIndex = 0;
+const YAHOO_RATE_LIMIT_MS = 120000;
+const CHART_SNAPSHOT_TTL_MS = 45000;
+const CHART_SNAPSHOT_ERROR_TTL_MS = 12000;
+const chartSnapshotCache = new Map();
+const chartSnapshotInflight = new Map();
 
 const PERIODS = {
     '1D': { interval: '1m', range: '1d' },
@@ -23,9 +28,26 @@ export function getYahooSymbol(stock) {
 }
 
 async function yahooFetch(targetUrl, signal) {
+    const remaining = globalRateLimiter.getRemainingSeconds('yahoo');
+    if (remaining > 0) {
+        return {
+            error: true,
+            errorCode: 429,
+            throttled: true,
+            retryAfter: remaining,
+            message: `YAHOO_RATE_LIMIT_ACTIVE_${remaining}s`
+        };
+    }
+
     const j = await proxyFetchSafe(targetUrl, signal);
-    if (j.error && j.errorCode === 429) {
-        globalRateLimiter.setRateLimitForApi('yahoo', 60000);
+    if (j.error && (j.errorCode === 429 || j.errorCode === 403)) {
+        globalRateLimiter.setRateLimitForApi('yahoo', YAHOO_RATE_LIMIT_MS);
+        return {
+            ...j,
+            errorCode: 429,
+            throttled: true,
+            retryAfter: Math.ceil(YAHOO_RATE_LIMIT_MS / 1000)
+        };
     }
     return j;
 }
@@ -222,11 +244,44 @@ export async function fetchYahooScreener(scrIds, offset = 0, count = 200, signal
 
 export async function fetchYahooChartSnapshot(symbol, range = '1d', interval = '1m', signal) {
     const norm = normalizeYahooSymbol(symbol);
-    const base = getNextBase();
-    const url = `${base}/v8/finance/chart/${encodeURIComponent(norm)}?range=${range}&interval=${interval}`;
-    const j = await yahooFetch(url, signal);
-    if (j?.error) return null;
-    return j?.chart?.result?.[0] || null;
+    const cacheKey = `${norm}|${range}|${interval}`;
+    const now = Date.now();
+
+    const cached = chartSnapshotCache.get(cacheKey);
+    if (cached && cached.expiresAt > now) {
+        return cached.data;
+    }
+
+    if (chartSnapshotInflight.has(cacheKey)) {
+        return chartSnapshotInflight.get(cacheKey);
+    }
+
+    const run = (async () => {
+        const base = getNextBase();
+        const url = `${base}/v8/finance/chart/${encodeURIComponent(norm)}?range=${range}&interval=${interval}`;
+        const j = await yahooFetch(url, signal);
+        if (j?.error) {
+            chartSnapshotCache.set(cacheKey, {
+                expiresAt: Date.now() + CHART_SNAPSHOT_ERROR_TTL_MS,
+                data: null
+            });
+            return null;
+        }
+
+        const parsed = j?.chart?.result?.[0] || null;
+        chartSnapshotCache.set(cacheKey, {
+            expiresAt: Date.now() + CHART_SNAPSHOT_TTL_MS,
+            data: parsed
+        });
+        return parsed;
+    })();
+
+    chartSnapshotInflight.set(cacheKey, run);
+    try {
+        return await run;
+    } finally {
+        chartSnapshotInflight.delete(cacheKey);
+    }
 }
 
 export async function fetchYahooSparkBatch(symbols, range = '1d', interval = '1m', signal) {
@@ -241,8 +296,9 @@ export async function fetchYahooPeriodChanges(symbols, range, interval, onProgre
     if (!symbols.length) return {};
     const changes = {};
     const safeSymbols = symbols.filter(isYahooSparkFriendly);
-    const batchSize = 20;
-    const stepDelay = 600;
+    const batchSize = 12;
+    const stepDelay = 900;
+    const singleFallbackCap = 4;
     let completed = 0;
 
     const parseChartPayload = (payload, symbolKey) => {
@@ -280,7 +336,17 @@ export async function fetchYahooPeriodChanges(symbols, range, interval, onProgre
         if (parsed) changes[sym] = parsed;
     };
 
+    const waitForYahooCooldownIfNeeded = async () => {
+        const remaining = globalRateLimiter.getRemainingSeconds('yahoo');
+        if (remaining <= 0) return false;
+        if (onProgress) onProgress(completed, safeSymbols.length, true, `API Yahoo limitée (${remaining}s)`);
+        await new Promise(r => setTimeout(r, remaining * 1000));
+        return true;
+    };
+
     for (let i = 0; i < safeSymbols.length; i += batchSize) {
+        await waitForYahooCooldownIfNeeded();
+
         const batch = safeSymbols.slice(i, i + batchSize);
         let sparkFailed = false;
 
@@ -289,19 +355,27 @@ export async function fetchYahooPeriodChanges(symbols, range, interval, onProgre
             if (!results) {
                 sparkFailed = true;
             } else {
-                results.forEach(entry => {
-                    const parsed = parseChartPayload(entry, entry.symbol);
-                    if (parsed) changes[entry.symbol] = parsed;
-                });
+                for (const entry of results) {
+                    const symbolKey = entry?.symbol;
+                    if (!symbolKey) continue;
+                    const parsed = parseChartPayload(entry, symbolKey);
+                    if (parsed) changes[symbolKey] = parsed;
+                }
             }
         } catch (e) {
             sparkFailed = true;
         }
 
         if (sparkFailed) {
-            for (const sym of batch) {
+            if (await waitForYahooCooldownIfNeeded()) {
+                continue;
+            }
+            for (const sym of batch.slice(0, singleFallbackCap)) {
+                if (await waitForYahooCooldownIfNeeded()) {
+                    break;
+                }
                 await fetchSingleChart(sym);
-                await new Promise(r => setTimeout(r, 120));
+                await new Promise(r => setTimeout(r, 180));
             }
         }
 

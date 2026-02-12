@@ -10,7 +10,7 @@ const DEFAULT_PAYLOAD = {
 };
 
 export async function fetchTradingViewScanPage(region, offset, count, payload = DEFAULT_PAYLOAD) {
-    const body = { ...payload, range: [offset, offset + count] };
+    const body = { ...payload, range: [offset, offset + count - 1] };
     return proxyFetch(`${TV_SCANNER_BASE}/${region}/scan`, {
         fetchOptions: {
             method: 'POST',
@@ -32,7 +32,10 @@ export async function fetchAllTradingViewRows(region, maxTotal = 600, batchSize 
         }
         const rows = data?.data || [];
         if (!rows.length) break;
-        allRows.push(...rows);
+        const remaining = Math.max(0, maxTotal - allRows.length);
+        if (!remaining) break;
+        allRows.push(...rows.slice(0, remaining));
+        if (allRows.length >= maxTotal) break;
         if (rows.length < batchSize) break;
     }
     return allRows;

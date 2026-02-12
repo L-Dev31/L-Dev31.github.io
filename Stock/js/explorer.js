@@ -8,9 +8,10 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
     const ITEMS_PER_PAGE = 10;
     const SCREENER_BATCH_SIZE = 250;
     const HARD_MAX_RESULTS = 1000;
-    const YAHOO_SAFE_LIMIT = 250;
+    const YAHOO_SAFE_LIMIT = 150;
     const MAX_TICKERS_MIN = 50;
     const MAX_TICKERS_MAX = 600;
+    const PERIOD_ENRICH_MAX = 120;
     const DEFAULT_MAX_TICKERS = YAHOO_SAFE_LIMIT;
     const state = {
         maxFetchTickers: DEFAULT_MAX_TICKERS,
@@ -204,15 +205,17 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
         let allQuotes = [];
         const first = await fetchScreener(scrIds, 0, SCREENER_BATCH_SIZE);
         allQuotes = first.quotes;
-        let total = first.total;
+        const total = Number(first.total) || 0;
         const maxTotal = getMaxAllowed();
+        let lastBatchCount = first.quotes.length;
 
-        while (allQuotes.length < total && allQuotes.length < maxTotal && first.quotes.length === SCREENER_BATCH_SIZE) {
+        while (allQuotes.length < total && allQuotes.length < maxTotal && lastBatchCount === SCREENER_BATCH_SIZE) {
             showLoadingProgress(allQuotes.length, Math.min(total, maxTotal));
             const batch = await fetchScreener(scrIds, allQuotes.length, SCREENER_BATCH_SIZE);
-            if (batch.quotes.length === 0) break;
+            lastBatchCount = batch.quotes.length;
+            if (lastBatchCount === 0) break;
             allQuotes = allQuotes.concat(batch.quotes);
-            if (batch.quotes.length < SCREENER_BATCH_SIZE) break;
+            if (lastBatchCount < SCREENER_BATCH_SIZE) break;
         }
         if (allQuotes.length > maxTotal) allQuotes = allQuotes.slice(0, maxTotal);
         return allQuotes;
@@ -221,20 +224,21 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
     async function fetchMultipleScreeners(screenerIds = YAHOO_SCREENERS) {
         const allQuotes = [];
         const seen = new Set();
+        const maxAllowed = getMaxAllowed();
         for (const scrId of screenerIds) {
             showLoadingProgress(allQuotes.length, `${scrId}...`);
             try {
                 const quotes = await fetchAllScreenerResults(scrId);
-                quotes.filter(Boolean).forEach(q => {
-                    if (!seen.has(q.symbol)) {
+                for (const q of quotes.filter(Boolean)) {
+                    if (!q?.symbol || seen.has(q.symbol)) continue;
                         seen.add(q.symbol);
                         allQuotes.push(q);
-                    }
-                });
-                if (allQuotes.length >= getMaxAllowed()) break;
+                    if (allQuotes.length >= maxAllowed) break;
+                }
+                if (allQuotes.length >= maxAllowed) break;
             } catch (e) {}
         }
-        return allQuotes;
+        return allQuotes.slice(0, maxAllowed);
     }
 
     function mapQuoteToItem(q) {
@@ -332,26 +336,24 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
             } catch (e) { return null; }
         };
 
-        let data = await fetchOne(symbol);
-        // Fallback: if failed and symbol has a suffix, try raw symbol
-        if (!data && symbol.includes('.')) {
-            data = await fetchOne(symbol.split('.')[0]);
-        }
-        return data;
+        return fetchOne(symbol);
     }
 
     async function fetchStocksBatch(symbols, defaultEligibility = 'pea', marketId = 'euronext') {
+        const uniqueSymbols = [...new Set((symbols || []).filter(Boolean))];
+        const limitedSymbols = uniqueSymbols.slice(0, getMaxAllowed());
         const items = [];
         let completed = 0;
-        showLoadingProgress(0, `Loading (${symbols.length})...`);
+        showLoadingProgress(0, `Loading (${limitedSymbols.length})...`);
+        if (!limitedSymbols.length) return items;
 
-        const BATCH_SIZE = 6;
-        const STEP_DELAY = 150;
-        const COOLDOWN_EVERY = 200;
-        const COOLDOWN_MS = 1200;
+        const BATCH_SIZE = 3;
+        const STEP_DELAY = 320;
+        const COOLDOWN_EVERY = 60;
+        const COOLDOWN_MS = 3000;
 
-        for (let i = 0; i < symbols.length; i += BATCH_SIZE) {
-            const batch = symbols.slice(i, i + BATCH_SIZE);
+        for (let i = 0; i < limitedSymbols.length; i += BATCH_SIZE) {
+            const batch = limitedSymbols.slice(i, i + BATCH_SIZE);
             const results = await Promise.allSettled(batch.map(s => fetchStockDetails(s, marketId, defaultEligibility)));
             results.forEach((r) => {
                 if (r.status === 'fulfilled' && r.value) {
@@ -359,9 +361,9 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
                 }
             });
             completed += batch.length;
-            showLoadingProgress(completed, symbols.length);
+            showLoadingProgress(completed, limitedSymbols.length);
 
-            if (completed < symbols.length) {
+            if (completed < limitedSymbols.length) {
                 if (completed % COOLDOWN_EVERY === 0) {
                     await new Promise(r => setTimeout(r, COOLDOWN_MS));
                 } else {
@@ -374,14 +376,26 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
 
 
     async function fetchTradingViewStocks(region, exchangeFilter) {
-        const maxTotal = Math.min(state.maxFetchTickers, 1200);
-        const rows = await fetchAllTradingViewRows(region, maxTotal);
+        const maxTotal = getMaxAllowed();
+        if (maxTotal <= 0) return [];
+
+        const allowedExchanges = Array.isArray(exchangeFilter)
+            ? exchangeFilter.filter(Boolean)
+            : (exchangeFilter ? [exchangeFilter] : []);
+
+        const rawFetchTarget = exchangeFilter
+            ? Math.min(HARD_MAX_RESULTS, Math.max(maxTotal, maxTotal * 4))
+            : maxTotal;
+        const rows = await fetchAllTradingViewRows(region, rawFetchTarget);
 
         const symbols = [];
         const seen = new Set();
-        rows.forEach(d => {
-            const [exch, ticker] = d.s.split(':');
-            if (exchangeFilter && exch !== exchangeFilter && !exchangeFilter.includes(exch)) return;
+        for (const d of rows) {
+            const pair = (d?.s || '').split(':');
+            const exch = pair[0];
+            const ticker = pair[1];
+            if (!ticker) continue;
+            if (allowedExchanges.length && !allowedExchanges.includes(exch)) continue;
 
             const config = MARKET_CONFIG[region];
             let resolved = ticker;
@@ -396,7 +410,9 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
                 seen.add(resolved);
                 symbols.push(resolved);
             }
-        });
+
+            if (symbols.length >= maxTotal) break;
+        }
 
         return symbols;
     }
@@ -506,12 +522,32 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
     async function enrichWithPeriodChanges(items, period) {
         if (!items.length) return items;
         let changes = {};
+        let cooldownTimer = null;
+        const enrichItems = items.slice(0, PERIOD_ENRICH_MAX);
+
+        const startYahooCooldownLoader = () => {
+            if (cooldownTimer) return;
+            cooldownTimer = setInterval(() => {
+                const activeApi = window.__rateLimitedApi;
+                const endTime = Number(window.__rateLimitEndTime || 0);
+                if (activeApi !== 'yahoo' || endTime <= Date.now()) return;
+                const remaining = Math.max(1, Math.ceil((endTime - Date.now()) / 1000));
+                showLoadingProgress(0, `API Yahoo limitée, reprise dans ${remaining}s...`);
+            }, 1000);
+        };
+
+        const stopYahooCooldownLoader = () => {
+            if (!cooldownTimer) return;
+            clearInterval(cooldownTimer);
+            cooldownTimer = null;
+        };
 
         try {
             showLoadingProgress(0, `Analyse ${PERIOD_LABELS[period]}...`);
+            startYahooCooldownLoader();
             const config = PERIOD_CONFIG[period] || PERIOD_CONFIG['1D'];
             changes = await fetchYahooPeriodChanges(
-                items.map(i => i.symbol),
+                enrichItems.map(i => i.symbol),
                 config.range,
                 config.interval,
                 (done, total, isPaused, msg) => {
@@ -522,6 +558,8 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
             );
         } catch (e) {
             changes = {};
+        } finally {
+            stopYahooCooldownLoader();
         }
 
         return items.map(item => {
@@ -575,12 +613,14 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
         if (marketDef.tvRegion) {
             showLoadingProgress(0, `Fetching from TradingView (${marketDef.tvRegion})...`);
             const tvSymbols = await fetchTradingViewStocks(marketDef.tvRegion, marketDef.tvExchange);
-            if (tvSymbols.length > 0) return fetchStocksBatch(tvSymbols, 'cto', marketDef.id);
+            const limitedTvSymbols = tvSymbols.slice(0, getMaxAllowed());
+            if (limitedTvSymbols.length > 0) return fetchStocksBatch(limitedTvSymbols, 'cto', marketDef.id);
 
             if (marketDef.lists) {
                 const allLists = Object.values(marketDef.lists);
                 const allSymbols = [].concat(...allLists);
-                return fetchStocksBatch([...new Set(allSymbols)], 'cto', marketDef.id);
+                const limitedSymbols = [...new Set(allSymbols)].slice(0, getMaxAllowed());
+                return fetchStocksBatch(limitedSymbols, 'cto', marketDef.id);
             }
             return [];
         }
