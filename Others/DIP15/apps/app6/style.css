@@ -197,25 +197,3 @@
     background: linear-gradient(135deg, #6e7681 0%, #545d68 100%);
     color: #f0f6fc;
 }
-
-/* Responsive design */
-@media (max-width: 320px) {
-    .calculator-buttons {
-        gap: 8px;
-    }
-    
-    .calc-btn {
-        font-size: 16px;
-        min-height: 48px;
-    }
-    
-    #calcDisplay {
-        font-size: 28px;
-        padding: 16px;
-    }
-    
-    .calculator-display {
-        padding: 16px;
-        margin-bottom: 16px;
-    }
-}
