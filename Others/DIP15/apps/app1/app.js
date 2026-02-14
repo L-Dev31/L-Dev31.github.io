@@ -379,87 +379,30 @@ if (typeof FilesApp === 'undefined') {
     }
 
     forceLayoutRecalc() {
-        console.log("Files app: Forcing layout recalc.");
         const windowObj = this.windowManager.getWindow(this.windowId);
-        if (!windowObj || !windowObj.element) {
-            console.warn("Cannot force layout recalc, window element not found.");
-            return;
-        }
+        if (!windowObj?.element) return;
 
         const filesContent = windowObj.element.querySelector('.files-content');
         const filesContainer = windowObj.element.querySelector('.files-container');
         const filesGrid = windowObj.element.querySelector('#filesGrid');
-        
-        if (!filesContent) {
-            console.warn("Cannot force layout recalc, .files-content not found.");
-            return;
-        }
 
-        // DRASTIC MEASURES: Force absolute layout stability AND visibility
-        try {
-            // Store current dimensions
-            const currentHeight = filesContent.offsetHeight;
-            const currentWidth = filesContent.offsetWidth;
-            
-            // Force visibility and display for all components
-            if (filesContainer) {
-                filesContainer.style.display = 'flex';
-                filesContainer.style.visibility = 'visible';
-                filesContainer.style.opacity = '1';
+        // Ensure visibility of all components
+        [filesContainer, filesContent, filesGrid].forEach(el => {
+            if (el) {
+                el.style.visibility = 'visible';
+                el.style.opacity = '1';
             }
-            
-            filesContent.style.display = 'flex';
-            filesContent.style.flexDirection = 'column';
-            filesContent.style.visibility = 'visible';
-            filesContent.style.opacity = '1';
-            
-            if (filesGrid) {
-                filesGrid.style.display = 'grid';
-                filesGrid.style.visibility = 'visible';
-                filesGrid.style.opacity = '1';
-            }
-            
-            // Force reflow with absolutely stable dimensions
-            filesContent.style.minHeight = `${Math.max(currentHeight, 300)}px`;
-            filesContent.style.width = `${currentWidth}px`;
-            
-            // Force layout recalculation
-            void filesContent.offsetHeight; // Force synchronous reflow
-            
-            // Reset to flexible dimensions after forced reflow
-            setTimeout(() => {
-                filesContent.style.minHeight = '300px';
-                filesContent.style.width = '';
-                
-                // Ensure content is still visible
-                filesContent.style.display = 'flex';
-                filesContent.style.flexDirection = 'column';
-                filesContent.style.visibility = 'visible';
-                filesContent.style.opacity = '1';
-                
-                console.log("✅ Layout recalc completed, content should be visible");
-            }, 50);
-            
-            // Dispatch resize event to ensure all components update
-            setTimeout(() => {
-                if (window.top && window.top.dispatchEvent) {
-                    window.top.dispatchEvent(new Event('resize'));
-                } else if (window.dispatchEvent) {
-                    window.dispatchEvent(new Event('resize'));
-                }
-            }, 100);
-            
-        } catch (error) {
-            console.warn("Error during layout recalc:", error);
-        }
+        });
+
+        // Force reflow
+        if (filesContent) void filesContent.offsetHeight;
     }
 
     async getFolderContent(folderName) {
         if (folderName === 'Home') {
             return this.getHomeContent();
         }
-        
-        // Fetch real directory contents
+
         try {
             const items = await this.directoryFetcher.fetchDirectoryContents(folderName);
             return items;
@@ -470,10 +413,8 @@ if (typeof FilesApp === 'undefined') {
     }
 
     getHomeContent() {
-        // Get desktop items from the loaded data and combine with real folders
         const homeContent = [];
-        
-        // Add real folders that exist in the home directory
+
         const realFolders = ['Documents', 'Pictures', 'Downloads', 'Projects', 'Music', 'Videos'];
         realFolders.forEach(folderName => {
             homeContent.push({
@@ -482,8 +423,7 @@ if (typeof FilesApp === 'undefined') {
                 icon: 'images/folder.png'
             });
         });
-        
-        // Add apps from desktop items (if any)
+
         if (window.desktopData && window.desktopData.desktopItems) {
             window.desktopData.desktopItems.forEach(item => {
                 if (item.type === 'app') {
@@ -495,12 +435,9 @@ if (typeof FilesApp === 'undefined') {
                 }
             });
         } else {
-            // Fallback apps
             homeContent.push(
                 { name: 'Prism', type: 'app', icon: 'images/app5.png' },
-                { name: 'Scaffold', type: 'app', icon: 'images/app7.png' },
-                { name: 'Mango', type: 'app', icon: 'images/app9.png' },
-                { name: 'AvokaDo', type: 'app', icon: 'images/app10.png' }
+                { name: 'Calendar', type: 'app', icon: 'images/app9.png' }
             );
         }
 

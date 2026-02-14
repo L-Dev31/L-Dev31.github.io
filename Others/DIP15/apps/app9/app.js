@@ -17,36 +17,33 @@ if (typeof ScheduleApp === 'undefined') {
         }
 
         // Compatible avec app-launcher.js
-        async init() {
-            return await this.open();
+        async init(options = {}) {
+            this.windowManager = options.windowManager || window.windowManager;
+            this.appConfig = options.appConfig;
+            return true;
         }
 
         // Method expected by app-launcher.js
         async open() {
-            // STRICT: Check if already launched
-            if (this.windowId && window.windowManager && window.windowManager.getWindow(this.windowId)) {
-                console.log('📅 Schedule app already open, focusing existing window');
-                window.windowManager.focusWindow(this.windowId);
-                return true; // Prevent duplicate
+            if (this.windowId && this.windowManager?.getWindow(this.windowId)) {
+                const win = this.windowManager.getWindow(this.windowId);
+                win.isMinimized
+                    ? this.windowManager.restoreWindow(this.windowId)
+                    : this.windowManager.focusWindow(this.windowId);
+                return true;
             }
-            
-            // Only launch if not already open
-            const result = await this.launch();
-            return result ? true : false;
+            return !!(await this.launch());
         }
 
         async launch() {
             try {
-                console.log('📅 Launching Schedule app...');
-                
-                const scheduleWindow = window.windowManager.createWindow({
-                    id: `schedule-${Date.now()}`,
+                const scheduleWindow = this.windowManager.createWindow({
                     title: 'Calendar',
                     x: 100,
                     y: 50,
                     width: 1000,
                     height: 700,
-                    icon: 'images/app9.png',
+                    icon: this.appConfig?.icon || 'images/app9.png',
                     appId: 'app9',
                     content: this.getScheduleContent(),
                     footerText: this.getScheduleFooter(),

@@ -18,12 +18,9 @@
     <div class="info">
       <img src="images/logo.png" alt="Logo" class="logo" id="logo">
     </div>
-    
-    <!-- Image indicators -->
     <div class="image-indicators" id="imageIndicators"></div>
   </div>
 
-  <!-- Login Screen -->
   <div class="login-screen" id="loginScreen">
     <div class="login-container">
       <div class="profile-picture">
@@ -36,14 +33,15 @@
           <i class="fas fa-arrow-right"></i>
         </button>
       </div>
+      <button class="back-to-desktop" id="backToDesktop">
+        <i class="fas fa-arrow-left"></i> Back to Desktop
+      </button>
     </div>
   </div>
 
-  <!-- Transition Overlay -->
   <div id="fadeOverlay"></div>
 
   <script>
-    // Background slideshow
     const backgrounds = [
       'images/BG/1.jpg',
       'images/BG/2.jpg', 
@@ -59,10 +57,9 @@
     let currentBgIndex = 0;
     const backgroundElement = document.getElementById('background');
     const indicatorsContainer = document.getElementById('imageIndicators');
+    let loginShown = false;
 
-    // Wait for DOM to be loaded
     document.addEventListener('DOMContentLoaded', () => {
-      // Create indicators
       if (indicatorsContainer) {
         backgrounds.forEach((_, index) => {
           const dot = document.createElement('div');
@@ -72,14 +69,9 @@
         });
       }
 
-      // Initialize first background
       changeBackground(0);
-      
-      // Auto change every 10 seconds
       setInterval(nextBackground, 10000);
-
-      // Show login screen on click or after delay
-      document.addEventListener('click', showLoginScreen);
+      document.addEventListener('click', showLoginScreen, { once: true });
       setTimeout(showLoginScreen, 5000);
     });
 
@@ -89,24 +81,23 @@
         backgroundElement.style.backgroundImage = `url(${backgrounds[index]})`;
       }
       
-      // Update indicators
       document.querySelectorAll('.indicator-dot').forEach((dot, i) => {
         dot.classList.toggle('active', i === index);
       });
     }
 
-    // Auto slideshow
     function nextBackground() {
       currentBgIndex = (currentBgIndex + 1) % backgrounds.length;
       changeBackground(currentBgIndex);
     }
 
-    // Login functionality
     const passwordInput = document.getElementById('passwordInput');
     const submitButton = document.getElementById('submitButton');
     const loginScreen = document.getElementById('loginScreen');
 
     function showLoginScreen() {
+      if (loginShown) return;
+      loginShown = true;
       document.body.classList.add('blur-mode');
       if (loginScreen) {
         loginScreen.classList.add('active');
@@ -126,23 +117,20 @@
     function handleLogin() {
       const password = passwordInput ? passwordInput.value : '';
       
-      if (password === '312007' || password === '') {
-        console.log('✅ Login successful');
-        
+      if (password === '312007') {
+        // Mark session as authenticated
+        sessionStorage.setItem('authenticated', 'true');
+
         const overlay = document.getElementById('fadeOverlay');
         if (overlay) {
           overlay.classList.add('login-transition');
-          
-          setTimeout(() => {
-            overlay.classList.add('zoom-in');
-          }, 100);
+          setTimeout(() => overlay.classList.add('zoom-in'), 100);
         }
         
         setTimeout(() => {
           window.location.href = 'desktop.html';
         }, 1200);
       } else {
-        // Wrong password animation
         const loginContainer = document.querySelector('.login-container');
         if (loginContainer) {
           loginContainer.style.animation = 'shake 0.5s ease-in-out';
@@ -158,17 +146,25 @@
       }
     }
 
-    // Event listeners - wait for DOM
     document.addEventListener('DOMContentLoaded', () => {
       if (submitButton) {
         submitButton.addEventListener('click', handleLogin);
       }
       
       if (passwordInput) {
-        passwordInput.addEventListener('keypress', (e) => {
+        passwordInput.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') {
             handleLogin();
           }
+        });
+      }
+
+      // If user was previously authenticated (came from logout), show back button
+      const backBtn = document.getElementById('backToDesktop');
+      if (sessionStorage.getItem('authenticated') === 'true' && backBtn) {
+        backBtn.style.display = 'inline-block';
+        backBtn.addEventListener('click', () => {
+          window.location.href = 'desktop.html';
         });
       }
     });

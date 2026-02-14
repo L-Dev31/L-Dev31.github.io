@@ -6,11 +6,9 @@ class AppLauncher {
 
     async init() {
         try {
-            // Load apps configuration
             const response = await fetch('apps.json');
             this.appsData = await response.json();
             
-            // Initialize Universal Launcher
             if (window.universalLauncher) {
                 window.universalLauncher.init(this);
             }
@@ -23,66 +21,66 @@ class AppLauncher {
 
     async launchApp(appId, options = {}) {
         try {
-            // STRICT: Check if app is already loaded - prevent any double opening
             if (this.loadedApps.has(appId)) {
                 const app = this.loadedApps.get(appId);
+                let resolvedWindowId = app?.windowId;
+
+                if (!resolvedWindowId && window.windowManager?.windows) {
+                    for (const [id, windowObj] of window.windowManager.windows.entries()) {
+                        if (windowObj?.config?.appId === appId) {
+                            resolvedWindowId = id;
+                            app.windowId = id;
+                            break;
+                        }
+                    }
+                }
                 
-                // If the app has a window, focus it or restore if minimized
-                if (app.windowId && window.windowManager) {
-                    const windowObj = window.windowManager.getWindow(app.windowId);
+                if (resolvedWindowId && window.windowManager) {
+                    const windowObj = window.windowManager.getWindow(resolvedWindowId);
                     if (windowObj) {
                         console.log(`🔍 App ${appId} already open, focusing existing window`);
                         if (windowObj.isMinimized) {
-                            window.windowManager.restoreWindow(app.windowId);
+                            window.windowManager.restoreWindow(resolvedWindowId);
                         } else {
-                            window.windowManager.focusWindow(app.windowId);
+                            window.windowManager.focusWindow(resolvedWindowId);
                         }
                         
-                        // Pass options to the app if needed
                         if (options.path && appId === 'app1' && app.navigate) {
                             app.navigate(options.path);
+                        } else if ((options.fileName || options.content) && appId === 'app3' && app.open) {
+                            await app.open(options);
                         }
                         return;
                     } else {
-                        // Window doesn't exist anymore, cleanup the app
                         console.log(`🧹 Cleaning up stale app ${appId} (window no longer exists)`);
                         this.loadedApps.delete(appId);
                     }
                 } else {
-                    // App exists but no window, prevent re-opening
-                    console.log(`⛔ App ${appId} already loaded, preventing duplicate launch`);
-                    return;
+                    console.log(`🧹 Cleaning up stale app ${appId} (no valid window reference)`);
+                    this.loadedApps.delete(appId);
                 }
             }
 
-            // Find app configuration
             const appConfig = this.appsData?.apps?.find(app => app.id === appId);
             if (!appConfig) {
                 console.error(`App ${appId} not found in configuration`);
                 return;
             }
 
-            // Check if app is available
             if (appConfig.available === false) {
                 this.showUnavailableAppDialog(appConfig);
                 return;
             }
 
-            // Load app dynamically
             const appModule = await this.loadAppModule(appId);
             if (appModule) {
-                // Initialize the app with window manager integration
-                // Check if app uses singleton pattern
                 let appInstance;
                 if (appModule.getInstance && typeof appModule.getInstance === 'function') {
-                    // Use singleton instance for apps that support it
                     appInstance = appModule.getInstance();
                 } else {
-                    // Create new instance for other apps
                     appInstance = new appModule();
                 }
                 
-                // Special handling for Files app - pass apps data
                 let initOptions = { 
                     windowManager: window.windowManager, 
                     appConfig: appConfig,
@@ -97,14 +95,14 @@ class AppLauncher {
                 
                 if (success) {
                     this.loadedApps.set(appId, appInstance);
-                    // Pass options to the open method
                     if (options.path && appId === 'app1') {
-                        appInstance.open(options.path);
+                        await appInstance.open(options.path);
                     } else if ((options.fileName || options.content) && appId === 'app3') {
-                        // Pass file options to Notes app
-                        appInstance.open(options);
+                        await appInstance.open(options);
+                    } else if (appId === 'app5' && (options.fileName || options.filePath)) {
+                        await appInstance.open(options.fileName, options.filePath);
                     } else {
-                        appInstance.open();
+                        await appInstance.open();
                     }
                     console.log(`✅ App ${appConfig.name} launched successfully`);
                 } else {
@@ -117,38 +115,18 @@ class AppLauncher {
     }
 
     async loadAppModule(appId) {
-        try {
-            // Load the app's JavaScript module
-            const script = document.createElement('script');
-            script.src = `apps/${appId}/app.js`;
-            
-            return new Promise((resolve, reject) => {
-                script.onload = () => {
-                    // Get the app class from window
-                    const appClassName = this.getAppClassName(appId);
-                    const AppClass = window[appClassName];
-                    
-                    if (AppClass) {
-                        resolve(AppClass);
-                    } else {
-                        reject(new Error(`App class ${appClassName} not found`));
-                    }
-                };
-                
-                script.onerror = () => {
-                    reject(new Error(`Failed to load app script: apps/${appId}/app.js`));
-                };
-                
-                document.head.appendChild(script);
-            });
-        } catch (error) {
-            console.error(`Failed to load app module ${appId}:`, error);
-            return null;
-        }
+        const name = this.getAppClassName(appId);
+        if (window[name]) return window[name];
+        return await new Promise((resolve) => {
+            const s = document.createElement('script');
+            s.src = `apps/${appId}/app.js`;
+            s.onload = () => resolve(window[name] || null);
+            s.onerror = () => resolve(null);
+            document.head.appendChild(s);
+        });
     }
 
     getAppClassName(appId) {
-        // Convert app ID to class name (e.g., app1 -> FilesApp, app2 -> SettingsApp)
         const appNames = {
             'app1': 'FilesApp',
             'app2': 'SettingsApp',
@@ -156,10 +134,8 @@ class AppLauncher {
             'app4': 'WeatherApp',
             'app5': 'PrismApp',
             'app6': 'CalculatorApp',
-            'app7': 'ScaffoldApp',
             'app8': 'ClockApp',
-            'app9': 'ScheduleApp',
-            'app10': 'AvokaDoApp'
+            'app9': 'ScheduleApp'
         };
         
         return appNames[appId] || `${appId.charAt(0).toUpperCase() + appId.slice(1)}App`;
@@ -177,20 +153,19 @@ class AppLauncher {
         return this.loadedApps.get(appId);
     }
 
-    // Cleanup method called when a window is closed
     onWindowClosed(windowId) {
-        // Remove app from loaded apps if its window was closed
-        for (const [appId, app] of this.loadedApps.entries()) {
-            if (app.windowId === windowId) {
-                this.loadedApps.delete(appId);
-                console.log(`🗑️ Cleaned up app ${appId} after window close`);
-                break;
+        for (const [id, app] of this.loadedApps.entries()) {
+            const appWinId = app.windowId || app.window?.id;
+            if (appWinId === windowId) {
+                if (app.constructor?.instance) app.constructor.instance = null;
+                this.loadedApps.delete(id);
+                console.log(`🗑️ Cleaned up app ${id}`);
+                return;
             }
         }
     }
 
     showUnavailableAppDialog(appConfig) {
-        // Create overlay
         const overlay = document.createElement('div');
         overlay.className = 'unavailable-app-overlay';
         overlay.style.cssText = `
@@ -207,7 +182,6 @@ class AppLauncher {
             backdrop-filter: blur(2px);
         `;
 
-        // Create dialog
         const dialog = document.createElement('div');
         dialog.className = 'unavailable-app-dialog';
         dialog.style.cssText = `
@@ -250,14 +224,12 @@ class AppLauncher {
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
 
-        // Close on overlay click
         overlay.addEventListener('click', (e) => {
             if (e.target === overlay) {
                 overlay.remove();
             }
         });
 
-        // Close on Escape key
         const handleEscape = (e) => {
             if (e.key === 'Escape') {
                 overlay.remove();
@@ -268,5 +240,4 @@ class AppLauncher {
     }
 }
 
-// Global app launcher instance
 window.appLauncher = new AppLauncher();

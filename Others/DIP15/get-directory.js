@@ -80,26 +80,17 @@ class DirectoryFetcher {
         // Real file structure based on actual files that exist
         this.fileStructure = {
             'Home': {
-                folders: ['Documents', 'Pictures', 'Downloads', 'Projects', 'Music', 'Videos'],
-                apps: ['app5', 'app7', 'app9', 'app10'] // Only apps that actually exist
+                folders: ['Documents', 'Projects', 'Music'],
+                apps: ['app5', 'app9']
             },
             'Documents': {
-                files: ['Sample Document.txt', 'SampleDocument.txt'] // Only files that actually exist
+                files: ['credit.txt']
             },
             'Music': {
-                files: ['sample.mp3', 'song.wav'] // Only files that actually exist
-            },
-            'Pictures': {
-                files: [] // Add files here when they actually exist
-            },
-            'Downloads': {
-                files: [] // Add files here when they actually exist
-            },
-            'Videos': {
-                files: [] // Add files here when they actually exist
+                files: []
             },
             'Projects': {
-                files: [] // Add files here when they actually exist
+                files: ['README.md']
             }
         };
 
@@ -134,7 +125,7 @@ class DirectoryFetcher {
         // Handle Home directory
         if (path === '' || path === 'Home') {
             // Check for known folders
-            const knownFolders = ['Documents', 'Pictures', 'Downloads', 'Projects', 'Music', 'Videos'];
+            const knownFolders = this.fileStructure.Home.folders || [];
             
             for (const folderName of knownFolders) {
                 try {
@@ -169,7 +160,7 @@ class DirectoryFetcher {
             }
             
             // Check for apps in home folder
-            const knownApps = ['app5', 'app7', 'app9', 'app10'];
+            const knownApps = this.fileStructure.Home.apps || [];
             for (const appName of knownApps) {
                 try {
                     const response = await fetch(`home/${appName}`, { method: 'HEAD' });
@@ -204,49 +195,14 @@ class DirectoryFetcher {
         const basePath = `home/${dirPath}/`;
         
         // Get common files based on directory type
-        let commonFiles = [];
-        switch (dirPath.toLowerCase()) {
-            case 'documents':
-                commonFiles = [
-                    'Sample Document.txt', 'SampleDocument.txt', 'README.md', 'document.pdf',
-                    'notes.txt', 'info.txt', 'readme.txt', 'test-auto-detect.txt', 'test-styles.css'
-                ];
-                break;
-            case 'pictures':
-                commonFiles = [
-                    'image.jpg', 'photo.png', 'picture.gif', 'screenshot.png',
-                    'img1.jpg', 'img2.jpg', 'img3.jpg', 'photo1.jpg', 'photo2.jpg'
-                ];
-                break;
-            case 'music':
-                commonFiles = [
-                    'sample.mp3', 'song.wav', 'audio.mp3', 'music.wav', 'sound.mp3',
-                    'track1.mp3', 'track2.mp3', 'song1.mp3', 'song2.mp3'
-                ];
-                break;
-            case 'videos':
-                commonFiles = [
-                    'video.mp4', 'movie.avi', 'clip.mp4', 'sample.mp4',
-                    'video1.mp4', 'video2.mp4', 'movie1.avi', 'movie2.avi'
-                ];
-                break;
-            case 'downloads':
-                commonFiles = [
-                    'download.zip', 'file.pdf', 'setup.exe', 'archive.rar',
-                    'installer.msi', 'package.deb', 'data.json'
-                ];
-                break;
-            case 'projects':
-                commonFiles = [
-                    'README.md', 'package.json', 'index.html', 'style.css',
-                    'script.js', 'app.js', 'main.py', 'requirements.txt'
-                ];
-                break;
-            default:
-                commonFiles = [
-                    'README.md', 'index.html', 'document.txt', 'file.pdf',
-                    'image.jpg', 'audio.mp3', 'video.mp4', 'data.json'
-                ];
+        const normalizedPath = dirPath.toLowerCase();
+        const directoryKey = Object.keys(this.fileStructure).find(
+            key => key.toLowerCase() === normalizedPath
+        );
+        const commonFiles = directoryKey ? (this.fileStructure[directoryKey].files || []) : [];
+
+        if (!commonFiles.length) {
+            return items;
         }
         
         // Check files in batches to avoid overwhelming the server
@@ -277,28 +233,8 @@ class DirectoryFetcher {
                 if (item) items.push(item);
             });
             
-            // Small delay between batches to be gentle with the server
             if (i + batchSize < commonFiles.length) {
                 await new Promise(resolve => setTimeout(resolve, 100));
-            }
-        }
-        
-        // Also check for common subdirectories
-        const commonSubdirs = ['New folder', 'Backup', 'Archive', 'Temp'];
-        for (const subdirName of commonSubdirs) {
-            try {
-                const response = await fetch(basePath + subdirName + '/', { method: 'HEAD' });
-                if (response.ok || response.status === 403) {
-                    items.push({
-                        name: subdirName,
-                        type: 'folder',
-                        isDirectory: true,
-                        icon: 'images/folder.png',
-                        path: basePath + subdirName + '/'
-                    });
-                }
-            } catch (e) {
-                // Subdirectory doesn't exist
             }
         }
         

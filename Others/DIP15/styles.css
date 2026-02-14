@@ -1050,13 +1050,6 @@ body, html {
     background-color: white;
 }
 
-#fadeOverlay.fade-to-black {
-    background-color: black;
-    opacity: 1;
-    z-index: 50000; /* High but below taskbar (999999) */
-    transition: opacity 2s ease-in-out;
-}
-
 #fadeOverlay.login-transition {
     background-color: white;
     opacity: 1;
@@ -1087,5 +1080,23 @@ body, html {
     opacity: 1;
 }
 
+/* Back to desktop button on login screen */
+.back-to-desktop {
+    display: none;
+    margin-top: 16px;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
 
-
+.back-to-desktop:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+}

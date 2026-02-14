@@ -1,12 +1,10 @@
-/* ======================================
-   ====================================== */
 .snap-preview {
     position: fixed;
     background: rgba(0, 120, 212, 0.15);
     border: 2px solid rgba(0, 120, 212, 0.5);
     border-radius: 8px;
     pointer-events: none;
-    z-index: 8000; /* Below taskbar but above windows */
+    z-index: 8000;
     opacity: 0;
     transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
     backdrop-filter: blur(15px);
@@ -41,8 +39,6 @@
         transform: scale(1.02);
     }
 }
-/* ======================================
-   ====================================== */
 .app-window {
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -54,7 +50,6 @@
     display: flex;
     flex-direction: column;
     font-family: 'Poppins', sans-serif;
-    /* Prevent visual glitches during animations */
     will-change: transform, opacity;
     transform-style: preserve-3d;
     backface-visibility: hidden;
@@ -67,7 +62,6 @@
     border-radius: 0 !important;
     box-shadow: none !important;
 }
-/* Snapped window state */
 .app-window.snapped {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: none !important;
@@ -84,14 +78,9 @@
 .app-window.maximized .window-resize-handle {
     display: none !important;
 }
-/* Snapped window state */
-.app-window.snapped {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 .app-window.snapped .window-resize-handle {
-    display: none; /* Hide resize handle when snapped */
+    display: none;
 }
-/* Window Header */
 .window-header {
     display: flex;
     align-items: center;
@@ -179,7 +168,6 @@
     box-shadow: 0 4px 12px rgba(40, 202, 66, 0.4);
     border-color: #28ca42;
 }
-/* Window Content */
 .window-content {
     flex: 1;
     overflow: auto;
@@ -187,7 +175,6 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
-/* Window Footer */
 .window-footer {
     display: flex;
     align-items: center;
@@ -230,7 +217,6 @@
 .window-resize-handle:hover {
     opacity: 1;
 }
-/* Taskbar App States */
 .taskbar-app {
     position: relative;
     transition: all 0.2s ease;
@@ -267,7 +253,6 @@
     background: rgba(0, 120, 212, 0.2);
     opacity: 0.9;
 }
-/* Window Animation */
 .app-window {
     animation: windowFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform, opacity;
@@ -282,11 +267,9 @@
         transform: scale(1) translateY(0);
     }
 }
-/* Smooth maximize/restore animation */
 .app-window.animating {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .app-window {
         left: 10px !important;
@@ -302,8 +285,6 @@
         height: 24px;
     }
 }
-/* ======================================
-   ====================================== */
 .app-window.resizing {
     transition: none !important;
     user-select: none;

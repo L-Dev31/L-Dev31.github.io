@@ -3,14 +3,14 @@
     {
       "name": "Sounds of a Virtuose - Miller Harper.mp3",
       "artist": "Miller Harper",
-      "path": "home/Music/sound-of-a-virtuose.mp3",
-      "cover": "covers/sound-of-a-virtuose.mp3.jpg"
+      "path": "home/Music/sound-of-a-virtuose.mp3.mp3",
+      "cover": "covers/sound-of-a-virtuose.mp3.png"
     },
     {
       "name": "song.wav",
       "artist": "Unknown Artist",
       "path": "home/Music/song.wav",
-      "cover": "covers/song.jpg"
+      "cover": null
     }
   ]
 }

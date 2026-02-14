@@ -10,14 +10,6 @@ let isLoginMode = false;
 let userProfile = null;
 let currentGridConfig = null;
 let currentGridPositions = [];
-let dragState = {
-    isDragging: false,
-    element: null,
-    startX: 0,
-    startY: 0,
-    offsetX: 0,
-    offsetY: 0
-};
 const knownImages = [
     '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg',
     '219692.jpg', '7704801.jpg', '8957663.jpg'
@@ -254,34 +246,6 @@ function findClosestGridPosition(x, y) {
     });
     return closest;
 }
-function loadIconPositions() {
-    try {
-        const saved = localStorage.getItem('desktop-icon-positions');
-        return saved ? JSON.parse(saved) : {};
-    } catch (error) {
-        return {};
-    }
-}
-function saveIconPositions() {
-    const positions = {};
-    const icons = document.querySelectorAll('.desktop-item');
-    icons.forEach(icon => {
-        const name = icon.querySelector('span')?.textContent;
-        if (name) {
-            positions[name] = {
-                x: parseInt(icon.style.left),
-                y: parseInt(icon.style.top),
-                gridRow: parseInt(icon.dataset.gridRow),
-                gridCol: parseInt(icon.dataset.gridCol)
-            };
-        }
-    });
-    try {
-        localStorage.setItem('desktop-icon-positions', JSON.stringify(positions));
-    } catch (error) {
-        console.error('Failed to save icon positions:', error);
-    }
-}
 async function loadDesktopItems() {
     try {
         const homeItems = await fetchHomeItemsFromServer();
@@ -385,7 +349,7 @@ async function loadDesktopItems() {
             desktopItem.innerHTML = `${iconHtml}<span>${item.name}</span>`;
             let clickTimeout = null;
             desktopItem.addEventListener('click', (e) => {
-                if (dragState.isDragging) {
+                if (typeof isDragging !== 'undefined' && isDragging) {
                     e.preventDefault();
                     e.stopPropagation();
                     return;
@@ -741,7 +705,7 @@ class TaskbarManager {
         // Vérification périodique du z-index de la taskbar
         this.zIndexProtectionInterval = setInterval(() => {
             this.enforceTaskbarZIndex();
-        }, 1000); // Vérification chaque seconde
+        }, 5000);
         
         // Observer des mutations pour détecter les changements de style
         if (window.MutationObserver) {
@@ -770,35 +734,11 @@ class TaskbarManager {
     }
     enforceTaskbarZIndex() {
         if (!this.taskbarElement) return;
-        
         const computedStyle = window.getComputedStyle(this.taskbarElement);
         const currentZIndex = parseInt(computedStyle.zIndex) || 0;
-        
-        // S'assurer que la taskbar a le z-index maximum
         if (currentZIndex < 999999) {
             this.taskbarElement.style.zIndex = '999999';
-            console.log('⚠️ Taskbar z-index corrected to 999999');
         }
-        
-        // Vérifier que d'autres éléments ne dépassent pas la taskbar
-        this.ensureNoElementsAboveTaskbar();
-    }
-    ensureNoElementsAboveTaskbar() {
-        const allElements = document.querySelectorAll('*');
-        const taskbarZIndex = 999999;
-        
-        allElements.forEach(element => {
-            const style = window.getComputedStyle(element);
-            const zIndex = parseInt(style.zIndex) || 0;
-            
-            // Si un élément a un z-index supérieur ou égal à la taskbar et ce n'est pas la taskbar
-            if (zIndex >= taskbarZIndex && element.id !== 'taskbar' && !element.closest('#taskbar')) {
-                // Réduire son z-index pour le maintenir sous la taskbar
-                const newZIndex = Math.min(zIndex, taskbarZIndex - 1);
-                element.style.zIndex = newZIndex;
-                console.log(`⚠️ Element z-index reduced from ${zIndex} to ${newZIndex}:`, element);
-            }
-        });
     }
     disableZIndexProtection() {
         if (this.zIndexProtectionInterval) {
@@ -809,8 +749,9 @@ class TaskbarManager {
     }
 }
 function loadTaskbarSettings() {
-    // This function is now handled by TaskbarManager
-    // Kept for backward compatibility
+    if (window.taskbarManager && typeof window.taskbarManager.loadSettings === 'function') {
+        window.taskbarManager.loadSettings();
+    }
 }
 async function loadUserProfile() {
     try {
@@ -997,75 +938,8 @@ function setupEventListeners() {
             }
         });
     }
-    // Logout button
-    const logoutButton = document.getElementById('logoutButton');
-    if (logoutButton) {
-        logoutButton.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent any default action
-            e.stopPropagation(); // Stop event bubbling
-            logout();
-        });
-    }
+    // Logout is handled by TaskbarManager; no global handler here.
 }
-// DRAG-AND-DROP FOR DESKTOP ICONS
-function makeIconDraggable(element, itemName) {
-    element.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        dragState.element = element;
-        dragState.startX = e.clientX;
-        dragState.startY = e.clientY;
-        dragState.offsetX = e.clientX - element.offsetLeft;
-        dragState.offsetY = e.clientY - element.offsetTop;
-        dragState.isDragging = false;
-        element.style.zIndex = '1000';
-        element.style.transition = 'none';
-    });
-}
-document.addEventListener('mousemove', (e) => {
-    if (!dragState.element) return;
-    const deltaX = Math.abs(e.clientX - dragState.startX);
-    const deltaY = Math.abs(e.clientY - dragState.startY);
-    if (!dragState.isDragging && (deltaX > 5 || deltaY > 5)) {
-        dragState.isDragging = true;
-        dragState.element.style.opacity = '0.8';
-    }
-    if (dragState.isDragging) {
-        const x = e.clientX - dragState.offsetX;
-        const y = e.clientY - dragState.offsetY;
-        dragState.element.style.left = `${x}px`;
-        dragState.element.style.top = `${y}px`;
-    }
-});
-document.addEventListener('mouseup', (e) => {
-    if (!dragState.element) return;
-    if (dragState.isDragging) {
-        e.preventDefault();
-        e.stopPropagation();
-        const x = e.clientX - dragState.offsetX;
-        const y = e.clientY - dragState.offsetY;
-        const closestPos = findClosestGridPosition(x, y);
-        if (closestPos) {
-            dragState.element.style.left = `${closestPos.x}px`;
-            dragState.element.style.top = `${closestPos.y}px`;
-            dragState.element.dataset.gridRow = closestPos.row;
-            dragState.element.dataset.gridCol = closestPos.col;
-            saveIconPositions();
-        }
-    }
-    if (dragState.element) {
-        dragState.element.style.zIndex = '';
-        dragState.element.style.opacity = '';
-        dragState.element.style.transition = '';
-    }
-    dragState = {
-        isDragging: false,
-        element: null,
-        startX: 0,
-        startY: 0,
-        offsetX: 0,
-        offsetY: 0
-    };
-});
 function setupTaskbarPositionWatcher() {
     const taskbar = document.getElementById('taskbar');
     if (!taskbar) return;
@@ -1102,20 +976,26 @@ function logout() {
     console.log('🚪 Logging out...');
     const fadeOverlay = document.getElementById('fadeOverlay');
     const settingsPanel = document.getElementById('settingsPanel');
-    // 1. Hide the settings panel if it's open
-    if (settingsPanel) {
-        settingsPanel.classList.remove('active');
+
+    // Close start menu
+    if (settingsPanel) settingsPanel.classList.remove('active');
+
+    // Close all open windows
+    if (window.windowManager) {
+        for (const [id] of window.windowManager.windows) {
+            window.windowManager.closeWindow(id);
+        }
     }
-    // 2. Start the fade to black animation
+
+    // Mark session as logged-out so index.html knows to show login
+    sessionStorage.removeItem('authenticated');
+
+    // Fade to black then redirect
     fadeOverlay.className = 'fade-to-black';
-    // 3. Trigger the fade animation
+    setTimeout(() => fadeOverlay.classList.add('active'), 50);
     setTimeout(() => {
-        fadeOverlay.classList.add('active');
-    }, 50);
-    // 4. Refresh the page after 2 seconds
-    setTimeout(() => {
-        location.reload();
-    }, 2000);
+        window.location.href = 'index.html';
+    }, 1500);
 }
 const taskbarManager = new TaskbarManager();
 window.taskbarManager = taskbarManager; // Make it globally accessible
@@ -1145,9 +1025,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Update user interface elements
         updateUserInterface();
-        // Start metadata updates
-        updateMetadata();
-        setInterval(updateMetadata, 1000);
+        // Start time updates
+        updateDesktopTime();
+        setInterval(updateDesktopTime, 1000);
         
         // Load desktop items
         await loadDesktopItems();
@@ -1199,23 +1079,6 @@ function handleWindowResize() {
             loadDesktopItems(); // Reload desktop with new grid
         }
     }, 250);
-}
-function snapToGrid(x, y, gridConfig) {
-    // Calculate which grid cell the position falls into
-    const col = Math.max(0, Math.min(
-        Math.round((x - gridConfig.padding) / gridConfig.cellWidth),
-        gridConfig.cols - 1
-    ));
-    const row = Math.max(0, Math.min(
-        Math.round((y - gridConfig.padding) / gridConfig.cellHeight),
-        gridConfig.rows - 1
-    ));
-    return {
-        col: col,
-        row: row,
-        x: gridConfig.padding + (col * gridConfig.cellWidth),
-        y: gridConfig.padding + (row * gridConfig.cellHeight)
-    };
 }
 const ICON_POSITIONS_KEY = 'desktop-icon-positions';
 function loadIconPositions() {

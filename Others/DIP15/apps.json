@@ -43,13 +43,6 @@
       "available": true
     },
     {
-      "id": "app7",
-      "name": "Scaffold",
-      "icon": "images/app7.png",
-      "showInTaskbar": false,
-      "available": true
-    },
-    {
       "id": "app8",
       "name": "Clock",
       "icon": "images/app8.png",
@@ -61,13 +54,6 @@
       "name": "Calendar",
       "icon": "images/app9.png",
       "showInTaskbar": true,
-      "available": true
-    },
-    {
-      "id": "app10",
-      "name": "AvokaDo",
-      "icon": "images/app10.png",
-      "showInTaskbar": false,
       "available": true
     }
   ]

@@ -3,6 +3,7 @@ if (typeof NotesApp === 'undefined') {
     class NotesApp {
         constructor() {
             this.window = null;
+            this.windowId = null;
             this.textarea = null;
             this.wordCount = 0;
             this.charCount = 0;
@@ -27,7 +28,38 @@ if (typeof NotesApp === 'undefined') {
             const { fileName, content } = options;
             
             try {
-                // Set filename if provided
+                const existingWindow = this.windowId ? this.windowManager?.getWindow(this.windowId) : null;
+
+                if (existingWindow) {
+                    this.window = existingWindow;
+                    this.setupElements();
+
+                    if (fileName) {
+                        this.fileName = fileName;
+                    }
+
+                    if (typeof content === 'string' && this.textarea) {
+                        this.textarea.value = content;
+                    }
+
+                    this.isModified = false;
+                    this.updateWindowTitle();
+                    this.updateStats();
+
+                    if (this.windowManager) {
+                        if (existingWindow.isMinimized) {
+                            this.windowManager.restoreWindow(this.windowId);
+                        } else {
+                            this.windowManager.focusWindow(this.windowId);
+                        }
+                    }
+
+                    if (this.textarea) {
+                        this.textarea.focus();
+                    }
+                    return;
+                }
+
                 if (fileName) {
                     this.fileName = fileName;
                 }
@@ -41,6 +73,7 @@ if (typeof NotesApp === 'undefined') {
                     footerText: this.getFooterText(),
                     className: 'notes-app-window'
                 });
+                this.windowId = this.window?.id || null;
 
                 this.setupElements();
                 this.setupEventListeners();

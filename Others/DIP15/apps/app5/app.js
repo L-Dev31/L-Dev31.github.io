@@ -19,10 +19,7 @@ class PrismApp {
             try {
                 this.windowManager = options.windowManager;
                 this.appConfig = options.appConfig;
-                
                 window.prismAppInstance = this;
-                await this.open(options.fileName, options.filePath);
-                console.log('✅ Prism app initialized');
                 return true;
             } catch (error) {
                 console.error('❌ Failed to initialize Prism app:', error);
@@ -170,7 +167,12 @@ class PrismApp {
                     this.audio = null;
                 }
 
-                this.audio = new Audio(filePath);
+                // Create audio element safely (encode URI, preload metadata)
+                this.audio = new Audio();
+                this.audio.preload = 'metadata';
+                this.audio.crossOrigin = 'anonymous';
+                this.audio.src = encodeURI(filePath);
+
                 this.currentTrack = {
                     name: fileName,
                     path: filePath,
@@ -204,8 +206,9 @@ class PrismApp {
                 // Fetch music.json from the root
                 const response = await fetch('music.json');
                 if (!response.ok) throw new Error('music.json not found');
-                const tracks = await response.json();
-                if (!Array.isArray(tracks)) throw new Error('music.json is not an array');
+                const payload = await response.json();
+                const tracks = Array.isArray(payload) ? payload : payload?.tracks;
+                if (!Array.isArray(tracks)) throw new Error('music.json must be an array or contain a tracks array');
 
                 this.playlist = tracks.map(track => ({
                     name: track.name,
@@ -242,7 +245,17 @@ class PrismApp {
             this.audio.addEventListener('ended', () => this.onTrackEnded());
             this.audio.addEventListener('loadedmetadata', () => this.onTrackLoaded());
             this.audio.addEventListener('error', (e) => {
-                console.error('Audio error:', e);
+                console.error('Audio error event:', e, 'src=', this.audio?.src, 'mediaError=', this.audio?.error);
+                // Attempt a quick fetch to diagnose network/404 issues (best-effort)
+                try {
+                    fetch(this.audio.src, { method: 'HEAD' }).then(res => {
+                        console.warn('Audio HEAD response', res.status, res.statusText);
+                    }).catch(err => {
+                        console.warn('Audio HEAD failed:', err);
+                    });
+                } catch (err) {
+                    console.warn('Audio diagnostic fetch failed:', err);
+                }
                 this.onTrackError();
             });
         }
@@ -359,10 +372,23 @@ class PrismApp {
             }
         }
 
-        onTrackError() {
-            console.error('Failed to load audio track');
+        async onTrackError() {
+            console.error('Failed to load audio track — src=', this.audio?.src, 'mediaError=', this.audio?.error);
             this.isPlaying = false;
             this.updatePlayButton();
+
+            // Try to provide actionable diagnosis in UI console (keeps UI resilient)
+            const window = this.windowManager.getWindow(this.windowId);
+            if (window) {
+                const playlistContainer = window.element.querySelector('#playlistContainer');
+                if (playlistContainer) {
+                    const errNotice = document.createElement('div');
+                    errNotice.className = 'playlist-error';
+                    errNotice.textContent = 'Failed to load current audio — check path or format (see console)';
+                    playlistContainer.prepend(errNotice);
+                    setTimeout(() => errNotice.remove(), 5000);
+                }
+            }
         }
 
         updateTrackInfo() {
@@ -480,7 +506,6 @@ class PrismApp {
             }
         }
     }
-}
 
 
 if (typeof window !== 'undefined' && typeof window.PrismApp === 'undefined') {

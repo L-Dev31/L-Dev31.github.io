@@ -20,34 +20,31 @@ if (typeof WeatherApp === 'undefined') {
         }
 
         // Compatible avec app-launcher.js
-        async init() {
-            return await this.open();
+        async init(options = {}) {
+            this.windowManager = options.windowManager || window.windowManager;
+            this.appConfig = options.appConfig;
+            return true;
         }
 
         // Method expected by app-launcher.js
         async open() {
-            // STRICT: Check if already launched
-            if (this.windowId && window.windowManager && window.windowManager.getWindow(this.windowId)) {
-                console.log('🌤️ Weather app already open, focusing existing window');
-                window.windowManager.focusWindow(this.windowId);
-                return true; // Prevent duplicate
+            if (this.windowId && this.windowManager?.getWindow(this.windowId)) {
+                const win = this.windowManager.getWindow(this.windowId);
+                win.isMinimized
+                    ? this.windowManager.restoreWindow(this.windowId)
+                    : this.windowManager.focusWindow(this.windowId);
+                return true;
             }
-            
-            // Only launch if not already open
-            const result = await this.launch();
-            return result ? true : false;
+            return !!(await this.launch());
         }
 
         async launch() {
             try {
-                console.log('🌤️ Launching Weather app...');
-                
-                const weatherWindow = window.windowManager.createWindow({
-                    id: `weather-${Date.now()}`,
+                const weatherWindow = this.windowManager.createWindow({
                     title: 'Weather',
                     x: 200,
                     y: 150,
-                    icon: 'images/app4.png',
+                    icon: this.appConfig?.icon || 'images/app4.png',
                     appId: 'app4',
                     content: this.getWeatherContent(),
                     footerText: 'Live Weather Information',
