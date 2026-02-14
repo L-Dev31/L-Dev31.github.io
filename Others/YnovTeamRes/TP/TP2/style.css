@@ -496,6 +496,35 @@ body {
 .list-table tbody tr { cursor: pointer; }
 .list-table tbody tr:hover { background: rgba(255,255,255,0.02); }
 
+/* WBS (List view) specific styles */
+.wbs-code {
+    width: 6ch;
+    text-align: center;
+    font-weight: 700;
+    color: var(--text-color-dark);
+    white-space: nowrap;
+}
+.wbs-title-cell { vertical-align: middle; }
+.wbs-title { display: inline-block; font-weight: 700; color: var(--text-color); }
+.wbs-type { color: var(--text-color-dark); font-size: 0.85rem; }
+.wbs-assignees .assignee-pill {
+    display: inline-block;
+    background: rgba(255,255,255,0.03);
+    color: var(--text-color);
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-right: 6px;
+    font-size: 0.78rem;
+}
+.badge.status-todo { background: #6c757d; }
+.badge.status-doing { background: #0d6efd; }
+.badge.status-verify { background: #fd7e14; }
+.badge.status-done { background: #28a745; }
+.wbs-row-task:hover { background: rgba(54,180,169,0.04); cursor: pointer; }
+.wbs-caret { display: inline-block; width: 14px; text-align: center; margin-right: 8px; color: rgba(255,255,255,0.6); transition: transform 0.15s ease; }
+.wbs-caret.rotated { transform: rotate(-90deg); color: rgba(255,255,255,0.75); }
+.wbs-title-text { vertical-align: middle; }
+
 /* Footer add button for List/Gantt views */
 .view-add-footer { display:flex; justify-content:center; margin-top:14px; }
 .view-add-btn {

@@ -3,39 +3,64 @@
     {
       "id": "sprint-bureau",
       "name": "Sprint Bureau",
+      "parties": [
+        {
+          "id": "partie-preprod",
+          "name": "Pré-production",
+          "children": [
+            { "id": "partie-recherche", "name": "Recherche", "children": [] },
+            { "id": "partie-planification", "name": "Planification", "children": [] }
+          ]
+        },
+        {
+          "id": "partie-production",
+          "name": "Production",
+          "children": [
+            {
+              "id": "partie-creation",
+              "name": "Création",
+              "children": [
+                { "id": "partie-illustration", "name": "Illustration", "children": [] }
+              ]
+            },
+            { "id": "partie-technique", "name": "Technique", "children": [] }
+          ]
+        },
+        { "id": "partie-marketing", "name": "Marketing", "children": [] }
+      ],
       "poles": [
         {
           "id": "creatif-artistique",
           "tasks": [
-            { "id": "c1", "title": "Moodboard & Inspiration", "desc": "Collect references for the project", "status": "todo", "sub_tasks": ["Concept art Jacob Derby"] },
-            { "id": "c2", "title": "Illustrations", "desc": "Sketch and finalize illustrations", "status": "todo", "sub_tasks": [] }
+            { "id": "c1", "title": "Moodboard & Inspiration", "desc": "Collect references for the project", "status": "todo", "partieId": "partie-recherche", "sub_tasks": ["Concept art Jacob Derby"] },
+            { "id": "c2", "title": "Illustrations", "desc": "Sketch and finalize illustrations", "status": "todo", "partieId": "partie-illustration", "sub_tasks": [] }
           ]
         },
         {
           "id": "systeme-dev",
           "tasks": [
-            { "id": "s1", "title": "Setup repo", "desc": "Initialize repository and CI", "status": "todo", "sub_tasks": [] },
-            { "id": "s2", "title": "API Design", "desc": "Define endpoints and authentication", "status": "doing", "sub_tasks": [] }
+            { "id": "s1", "title": "Setup repo", "desc": "Initialize repository and CI", "status": "todo", "partieId": "partie-technique", "sub_tasks": [] },
+            { "id": "s2", "title": "API Design", "desc": "Define endpoints and authentication", "status": "doing", "partieId": "partie-technique", "sub_tasks": [] }
           ]
         },
         {
           "id": "audiovisuel-marketing",
           "tasks": [
-            { "id": "a1", "title": "Promo video", "desc": "Short trailer for social media", "status": "doing", "sub_tasks": [] },
-            { "id": "a2", "title": "Copy & CTA", "desc": "Write marketing copy and CTAs", "status": "todo", "sub_tasks": [] }
+            { "id": "a1", "title": "Promo video", "desc": "Short trailer for social media", "status": "doing", "partieId": "partie-marketing", "sub_tasks": [] },
+            { "id": "a2", "title": "Copy & CTA", "desc": "Write marketing copy and CTAs", "status": "todo", "partieId": "partie-marketing", "sub_tasks": [] }
           ]
         },
         {
           "id": "3d-animation",
           "tasks": [
-            { "id": "d1", "title": "Modeling", "desc": "Model main assets in Blender", "status": "doing", "sub_tasks": [] },
-            { "id": "d2", "title": "Rigging", "desc": "Rig characters for animation", "status": "todo", "sub_tasks": [] }
+            { "id": "d1", "title": "Modeling", "desc": "Model main assets in Blender", "status": "doing", "partieId": "partie-creation", "sub_tasks": [] },
+            { "id": "d2", "title": "Rigging", "desc": "Rig characters for animation", "status": "todo", "partieId": "partie-creation", "sub_tasks": [] }
           ]
         },
         {
           "id": "administration",
           "tasks": [
-            { "id": "ad1", "title": "Add team roles", "desc": "Define roles and permissions", "status": "todo", "sub_tasks": [] }
+            { "id": "ad1", "title": "Add team roles", "desc": "Define roles and permissions", "status": "todo", "partieId": "partie-planification", "sub_tasks": [] }
           ]
         }
       ]
@@ -43,6 +68,9 @@
     {
       "id": "sprint-quai",
       "name": "Sprint Quai",
+      "parties": [
+        { "id": "pq-setup", "name": "Préparations quai", "children": [ { "id": "pq-logistique", "name": "Logistique", "children": [] } ] }
+      ],
       "poles": [
         { "id": "creatif-artistique", "tasks": [] },
         { "id": "systeme-dev", "tasks": [] },

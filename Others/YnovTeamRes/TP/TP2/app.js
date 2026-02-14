@@ -24,7 +24,7 @@ function updateViewButtons(){
 const STORAGE_KEY = 'ynov_board_v1';
 const STATUSES = ['todo','doing','verify','done'];
 let boardData = { sprints: [] };
-let viewMode = localStorage.getItem('viewMode') || 'kanban';
+let viewMode = localStorage.getItem('viewMode') || 'list';
 let selectedSprintId = null;
 let selectedPoleId = null;
 let modalFiles = [];
@@ -32,6 +32,7 @@ let modalImages = [];
 let modalAssignees = [];
 let editingTaskId = null;
 let pendingAddStatus = null;
+let wbsOnlyPoleView = true; // par défaut : afficher le WBS pour le pôle sélectionné
 
 const DEFAULT_POLES = [
   { id: 'creatif-artistique', name: 'Créatif', color: '#28a745', icon: 'fa-solid fa-paint-brush' },
@@ -208,9 +209,117 @@ function renderKanbanView(){
 }
 
 function renderListView(){
-  // simple fallback: show number of tasks
   const listsContainer = document.getElementById('lists'); if (!listsContainer) return;
-  listsContainer.innerHTML = '<div class="list-table"><em>Vue liste — en construction</em></div>';
+  const sprint = boardData.sprints.find(s => s.id === selectedSprintId) || (boardData.sprints[0] || null);
+  if (!sprint) { listsContainer.innerHTML = '<div class="list-table"><em>Aucun sprint sélectionné</em></div>'; return; }
+
+  const rows = [];
+  const sprintIndex = (boardData.sprints || []).findIndex(s => s.id === sprint.id) + 1 || 1;
+  rows.push({ code: `${sprintIndex}`, level: 0, title: sprint.name || sprint.id, type: 'Sprint' });
+
+  // if sprint defines parties, render hierarchical parties -> tasks (tasks assigned via task.partieId)
+  if (sprint.parties && sprint.parties.length){
+    const addPartyNode = (party, parentCode, level) => {
+      rows.push({ code: parentCode, level, title: party.name, type: 'Partie', partyId: party.id });
+      // combine children parties and tasks assigned to this party
+      const childParties = (party.children || []);
+      const tasksAssigned = getTasksForParty(sprint, party.id);
+      const combined = [ ...childParties.map(p => ({ kind: 'party', item: p })), ...tasksAssigned.map(t => ({ kind: 'task', item: t })) ];
+      for (let i = 0; i < combined.length; i++){
+        const node = combined[i];
+        const code = `${parentCode}.${i+1}`;
+        if (node.kind === 'party') addPartyNode(node.item, code, level+1);
+        else {
+          const task = node.item;
+          rows.push({ code, level: level+1, title: task.title || '(sans titre)', type: 'Tâche', status: task.status || 'todo', assignees: task.assignees || [], taskId: task.id, desc: task.desc || '' });
+        }
+      }
+    };
+
+    // top-level parties
+    (sprint.parties || []).forEach((p, idx) => addPartyNode(p, `${sprintIndex}.${idx+1}`, 1));
+
+    // catch-all: tasks without partie -> show under "Sans partie"
+    const unassigned = [];
+    (sprint.poles || []).forEach(p => (p.tasks || []).forEach(t => { if (!t.partieId) unassigned.push(t); }));
+    if (unassigned.length){
+      const base = `${sprintIndex}.${(sprint.parties || []).length + 1}`;
+      rows.push({ code: base, level: 1, title: 'Sans partie', type: 'Partie' });
+      unassigned.forEach((t, i) => rows.push({ code: `${base}.${i+1}`, level: 2, title: t.title, type: 'Tâche', status: t.status, assignees: t.assignees || [], taskId: t.id, desc: t.desc || '' }));
+    }
+  } else {
+    // fallback: render by poles (backwards compatible)
+    (sprint.poles || []).forEach((pole, pIdx) => {
+      const poleIndex = pIdx + 1;
+      const poleLabel = pole.name || (DEFAULT_POLES.find(d => d.id === pole.id) || {}).name || pole.id;
+      rows.push({ code: `${sprintIndex}.${poleIndex}`, level: 1, title: poleLabel, type: 'Pôle', poleId: pole.id });
+      (pole.tasks || []).forEach((task, tIdx) => {
+        const tIdx1 = tIdx + 1;
+        rows.push({ code: `${sprintIndex}.${poleIndex}.${tIdx1}`, level: 2, title: task.title || '(sans titre)', type: 'Tâche', status: task.status || 'todo', assignees: task.assignees || [], taskId: task.id, desc: task.desc || '' });
+      });
+    });
+  }
+
+  // compute hasChildren and render table (same as before)
+  rows.forEach((r, i) => { r.hasChildren = !!rows[i+1] && rows[i+1].level > r.level; });
+  let html = '<table class="list-table">';
+  html += '<thead><tr><th>WBS</th><th>Titre</th><th>Type</th><th>Statut</th><th>Assignés</th></tr></thead>';
+  html += '<tbody>';
+  rows.forEach((r, idx) => {
+    const indent = r.level * 18;
+    const caret = r.hasChildren ? `<i class="wbs-caret fa fa-chevron-down" data-row-index="${idx}"></i>` : '';
+    const titleHtml = `<div class="wbs-title" style="padding-left:${indent}px">${caret}<span class=\"wbs-title-text\">${escapeHtml(r.title)}</span></div>`;
+    const descHtml = r.desc ? `<div class="small text-muted">${escapeHtml(r.desc)}</div>` : '';
+    const statusHtml = r.status ? `<span class="badge status-${r.status}">${escapeHtml(r.status)}</span>` : '';
+    const assigneesHtml = (r.assignees && r.assignees.length) ? r.assignees.map(a => `<span class="assignee-pill">${escapeHtml(a)}</span>`).join(' ') : '';
+    const extraAttr = r.taskId ? `data-task-id="${r.taskId}"` : '';
+    html += `<tr data-row-index="${idx}" data-level="${r.level}" ${extraAttr} class="wbs-row">` +
+            `<td class="wbs-code">${r.code}</td>` +
+            `<td class="wbs-title-cell">${titleHtml}${descHtml}</td>` +
+            `<td class="wbs-type">${escapeHtml(r.type || '')}</td>` +
+            `<td class="wbs-status">${statusHtml}</td>` +
+            `<td class="wbs-assignees">${assigneesHtml}</td>` +
+            `</tr>`;
+  });
+  html += '</tbody></table>';
+  listsContainer.innerHTML = html;
+
+  const tbodyEl = listsContainer.querySelector('tbody'); if (!tbodyEl) return;
+  tbodyEl.querySelectorAll('tr').forEach(tr => {
+    const rowIndex = parseInt(tr.getAttribute('data-row-index'), 10);
+    const level = parseInt(tr.getAttribute('data-level'), 10) || 0;
+    const taskId = tr.getAttribute('data-task-id');
+    if (taskId) tr.onclick = () => openEditModal(taskId);
+    const caretEl = tr.querySelector('.wbs-caret');
+    if (caretEl) {
+      caretEl.style.cursor = 'pointer';
+      caretEl.onclick = (ev) => {
+        ev.stopPropagation();
+        const isCollapsed = tr.classList.toggle('collapsed');
+        for (let i = rowIndex + 1; i < rows.length; i++){
+          const r = rows[i];
+          const rowEl = tbodyEl.querySelector(`tr[data-row-index="${i}"]`);
+          if (!rowEl) continue;
+          if (r.level <= level) break;
+          rowEl.style.display = isCollapsed ? 'none' : '';
+        }
+        caretEl.classList.toggle('rotated', isCollapsed);
+      };
+    }
+  });
+
+  // WBS footer: scope toggle + export + hint
+  const footer = document.getElementById('viewFooter');
+  if (footer) {
+    footer.innerHTML = `\n      <div class="d-flex gap-2 align-items-center">\n        <button id="wbsScopeBtn" class="view-add-btn btn-sm" title="Basculer portée WBS">${wbsOnlyPoleView ? '<i class="fa-solid fa-filter"></i> Pôle uniquement' : '<i class="fa-solid fa-sitemap"></i> Sprint entier'}</button>\n        <button id="exportWbsBtn" class="view-add-btn btn-sm"><i class="fa-solid fa-file-export"></i> Exporter WBS (JSON)</button>\n      </div>\n    `;
+    const scopeBtn = document.getElementById('wbsScopeBtn'); if (scopeBtn) scopeBtn.onclick = () => { wbsOnlyPoleView = !wbsOnlyPoleView; renderView(); };
+    const exportBtn = document.getElementById('exportWbsBtn'); if (exportBtn) exportBtn.onclick = () => { const blob = new Blob([JSON.stringify(rows, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${sprint.id}_wbs.json`; a.click(); URL.revokeObjectURL(url); };
+  }
+}
+// small HTML-escape helper to avoid accidental injection from task titles/descriptions
+function escapeHtml(str){
+  if (!str && str !== 0) return '';
+  return String(str).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[ch]));
 }
 
 function renderGanttView(){
@@ -347,8 +456,50 @@ function normalizeBoardIcons(bd){
       p.tasks = p.tasks || [];
       p.tasks.forEach(t => { t.assignees = t.assignees || []; });
     });
+    // ensure parties array exists for new format compatibility
+    s.parties = s.parties || [];
   });
 }
+
+// Flatten parties for select / traversal (pre-order)
+function flattenParties(parties, level = 0, out = []){
+  (parties || []).forEach(p => {
+    out.push({ id: p.id, name: p.name, level });
+    if (p.children && p.children.length) flattenParties(p.children, level+1, out);
+  });
+  return out;
+}
+
+// return tasks (from all poles) assigned to a party id for a given sprint
+function getTasksForParty(sprint, partieId){
+  const list = [];
+  if (!sprint) return list;
+  (sprint.poles || []).forEach(p => (p.tasks || []).forEach(t => { if (t.partieId === partieId) list.push(Object.assign({}, t, { _poleId: p.id })); }));
+  return list;
+}
+
+// populate the partie selector in the task modal (or hide if no parties)
+function renderPartiesSelect(sprint, selectedId){
+  const group = document.getElementById('taskPartieGroup');
+  const sel = document.getElementById('taskPartieSelect');
+  if (!sel || !group) return;
+  const flat = flattenParties((sprint && sprint.parties) || []);
+  if (!flat || flat.length === 0) {
+    group.style.display = 'none';
+    sel.innerHTML = '<option value="">— Aucune —</option>';
+    return;
+  }
+  group.style.display = 'block';
+  sel.innerHTML = '<option value="">— Aucune —</option>' + flat.map(p => `<option value="${p.id}">${'\u00A0'.repeat(p.level*2)}${escapeHtml(p.name)}</option>`).join('');
+  if (selectedId) sel.value = selectedId; else sel.value = '';
+}
+
+// find a party by id (recursive)
+function findPartyById(list, id){
+  if (!list) return null;
+  for (const p of list){ if (p.id === id) return p; const found = findPartyById(p.children, id); if (found) return found; }
+  return null;
+} 
 
 // Build a list of available members from tasks and render the assignee selector
 function buildAvailableMembers(){
@@ -438,14 +589,16 @@ function saveModalTask() {
   const assignees = modalAssignees.slice();
   const dueDateInput = document.getElementById('taskDueDate');
   const dueDate = dueDateInput && dueDateInput.value ? new Date(dueDateInput.value).toISOString() : null;
+  const partieSelect = document.getElementById('taskPartieSelect');
+  const partieId = partieSelect && partieSelect.value ? partieSelect.value : null;
 
   if (editingTaskId) {
-    updateTask(editingTaskId, title, desc, assignees, dueDate, modalImages);
+    updateTask(editingTaskId, title, desc, assignees, dueDate, modalImages, partieId);
   } else {
-    createTask(title, desc, assignees, dueDate, modalImages);
+    createTask(title, desc, assignees, dueDate, modalImages, partieId);
   }
   finishSave();
-}
+} 
 
 function finishSave() {
   saveData();
@@ -463,7 +616,7 @@ function finishSave() {
   renderPoleTabs();
 }
 
-function createTask(title, desc, assignees, dueDate, images) {
+function createTask(title, desc, assignees, dueDate, images, partieId) {
   const status = pendingAddStatus || 'todo';
   const sprint = boardData.sprints.find(s => s.id === selectedSprintId);
   const pole = sprint ? sprint.poles.find(p => p.id === selectedPoleId) : null;
@@ -476,16 +629,16 @@ function createTask(title, desc, assignees, dueDate, images) {
   
   const existingTitles = pole.tasks.map(t => t.title);
   const uniqueTitle = makeUniqueName(title, existingTitles);
-  const taskObj = { id, title: uniqueTitle, desc, status, assignees, dueDate, files: modalFiles.slice(), images };
+  const taskObj = { id, title: uniqueTitle, desc, status, assignees, dueDate, files: modalFiles.slice(), images, partieId: partieId || null };
   // If user provided a dueDate but no explicit start/end, set them to the dueDate so Gantt shows it
   if (dueDate && !taskObj.startDate && !taskObj.endDate) {
     taskObj.startDate = dueDate;
     taskObj.endDate = dueDate;
   }
   pole.tasks.push(taskObj);
-}
+} 
 
-function updateTask(taskId, title, desc, assignees, dueDate, images) {
+function updateTask(taskId, title, desc, assignees, dueDate, images, partieId) {
   const sprint = boardData.sprints.find(s => s.id === selectedSprintId);
   if (!sprint) return;
   for (const pole of sprint.poles) {
@@ -496,6 +649,7 @@ function updateTask(taskId, title, desc, assignees, dueDate, images) {
       task.desc = desc;
       task.assignees = assignees;
       task.dueDate = dueDate;
+      task.partieId = partieId || null;
       // Ensure Gantt dates are set when dueDate is provided and start/end are missing
       if (dueDate && !task.startDate && !task.endDate) {
         task.startDate = dueDate;
@@ -506,7 +660,7 @@ function updateTask(taskId, title, desc, assignees, dueDate, images) {
       return;
     }
   }
-}
+} 
 
 function openEditModal(taskId) {
   const sprint = boardData.sprints.find(s => s.id === selectedSprintId);
@@ -543,6 +697,10 @@ function openEditModal(taskId) {
   document.getElementById('taskTitle').value = task.title;
   document.getElementById('taskDesc').value = task.desc || '';
   document.getElementById('taskDueDate').value = task.dueDate ? task.dueDate.split('T')[0] : '';
+
+  // parties selector (if sprint defines parties)
+  const sprintForEdit = boardData.sprints.find(s => s.id === selectedSprintId);
+  renderPartiesSelect(sprintForEdit, task.partieId || null);
   
   
 
@@ -624,6 +782,10 @@ function openTaskModal(status) {
   modalFiles = [];
   modalAssignees = [];
   modalImages = [];
+
+  // populate parties selector for new task
+  const sprintForNew = boardData.sprints.find(s => s.id === selectedSprintId);
+  renderPartiesSelect(sprintForNew, null); 
 
   const modal = new bootstrap.Modal(document.getElementById('taskModal'));
   modal.show();
