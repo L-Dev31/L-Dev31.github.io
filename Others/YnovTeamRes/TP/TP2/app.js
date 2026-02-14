@@ -32,6 +32,7 @@ let modalImages = [];
 let modalAssignees = [];
 let editingTaskId = null;
 let pendingAddStatus = null;
+let pendingAddPartieId = null;
 let wbsOnlyPoleView = true; // par défaut : afficher le WBS pour le pôle sélectionné
 
 const DEFAULT_POLES = [
@@ -86,7 +87,7 @@ function renderBoard(){
 
   selectedSprintId = sprint.id;
 
-  const pole = sprint.poles.find(p => p.id === selectedPoleId) || (sprint.poles[0] || null);
+  const pole = (selectedPoleId === 'all-poles') ? (sprint.poles[0] || null) : (sprint.poles.find(p => p.id === selectedPoleId) || (sprint.poles[0] || null));
 
   if (!pole) {
     if (poleNameHeader) poleNameHeader.textContent = 'Sélectionnez un pôle';
@@ -96,24 +97,30 @@ function renderBoard(){
     return;
   }
 
-  selectedPoleId = pole.id;
+  // preserve special 'all-poles' selection; otherwise keep selected pole id
+  if (selectedPoleId !== 'all-poles') selectedPoleId = pole.id;
 
   if (poleNameHeader) {
     // prefer values from pole; fall back to DEFAULT_POLES definitions when missing
     const def = DEFAULT_POLES.find(d => d.id === (pole && pole.id)) || {};
     const headerIcon = (pole && pole.icon) || def.icon || 'fa-solid fa-circle';
     const headerColor = (pole && pole.color) || def.color || '#666';
-    const headerName = (pole && pole.name) || def.name || (pole && pole.id) || 'Pôle';
+    const headerName = (selectedPoleId === 'all-poles') ? 'Tous les pôles' : ((pole && pole.name) || def.name || (pole && pole.id) || 'Pôle');
     poleNameHeader.innerHTML = `<i class="pole-icon ${headerIcon}" style="color: ${headerColor}"></i> ${headerName}`;
   }
 
-  // count tasks
-  let tasksCount = (pole.tasks || []).length;
+  // count tasks (sum across poles when viewing "all-poles")
+  let tasksCount = (selectedPoleId === 'all-poles') ? (sprint.poles || []).reduce((acc,p)=> acc + ((p.tasks||[]).length), 0) : (pole.tasks || []).length;
   if (countEl) countEl.textContent = `${tasksCount} ressources`;
 
   // render pole tabs
   renderPoleTabs();
   renderView();
+
+  // Ensure pole-only is the visible default and remove obsolete WBS footer controls if present
+  wbsOnlyPoleView = true;
+  const scopeBtn = document.getElementById('wbsScopeBtn'); if (scopeBtn) scopeBtn.remove();
+  const exportBtn = document.getElementById('exportWbsBtn'); if (exportBtn) exportBtn.remove();
 }
 
 function renderPoleTabs(){
@@ -176,15 +183,24 @@ function renderKanbanView(){
       container.classList.remove('no-tasks');
       filtered.forEach(task => {
         const card = document.createElement('div'); card.className = 'card-task'; card.draggable = true;
+        card.setAttribute('data-task-id', task.id);
         card.ondragstart = (e) => { try { e.dataTransfer.setData('text/plain', task.id); } catch (err){} };
         const title = document.createElement('div'); title.className = 'card-title'; title.textContent = task.title;
         const meta = document.createElement('div'); meta.className = 'card-meta small text-muted'; meta.textContent = task.desc || '';
         card.appendChild(title); card.appendChild(meta);
         card.onclick = () => openEditModal(task.id);
+        // right-click on card -> edit / delete
+        card.oncontextmenu = (ev) => { ev.preventDefault(); showContextMenu([
+          { label: 'Modifier la tâche', onClick: () => openEditModal(task.id) },
+          { label: 'Supprimer la tâche', onClick: () => { if (confirm('Supprimer cette tâche ?')) deleteTask(task.id); } }
+        ], ev.pageX, ev.pageY); };
         container.appendChild(card);
       });
     }
-    // 'Ajouter' button removed — add via right-click on column instead
+    // Right-click on column -> add task (replaces 'Ajouter' button)
+    container.oncontextmenu = (ev) => { ev.preventDefault(); showContextMenu([
+      { label: 'Ajouter une tâche', onClick: () => { pendingAddStatus = status; openTaskModal(status); } }
+    ], ev.pageX, ev.pageY); };
 
     // Drag helpers on the full column (use a counter to avoid flicker when moving over child elements)
     const col = container.parentElement;
@@ -227,11 +243,12 @@ function renderListView(){
 
   // if sprint defines parties, render hierarchical parties -> tasks (tasks assigned via task.partieId)
   if (sprint.parties && sprint.parties.length){
+    const poleFilter = (selectedPoleId && selectedPoleId !== 'all-poles') ? selectedPoleId : null;
     const addPartyNode = (party, parentCode, level) => {
       rows.push({ code: parentCode, level, title: party.name, type: 'Partie', partyId: party.id });
-      // combine children parties and tasks assigned to this party
+      // combine children parties and tasks assigned to this party (respect pole filter)
       const childParties = (party.children || []);
-      const tasksAssigned = getTasksForParty(sprint, party.id);
+      const tasksAssigned = getTasksForParty(sprint, party.id, poleFilter);
       const combined = [ ...childParties.map(p => ({ kind: 'party', item: p })), ...tasksAssigned.map(t => ({ kind: 'task', item: t })) ];
       for (let i = 0; i < combined.length; i++){
         const node = combined[i];
@@ -248,7 +265,6 @@ function renderListView(){
     (sprint.parties || []).forEach((p, idx) => addPartyNode(p, `${sprintIndex}.${idx+1}`, 1));
 
     // catch-all: tasks without partie -> show under "Sans partie" (respect selected pole)
-    const poleFilter = (selectedPoleId && selectedPoleId !== 'all-poles') ? selectedPoleId : null;
     const unassigned = [];
     (sprint.poles || []).forEach(p => (p.tasks || []).forEach(t => { if (!t.partieId && (!poleFilter || p.id === poleFilter)) unassigned.push(t); }));
     if (unassigned.length){
@@ -301,7 +317,35 @@ function renderListView(){
     const rowIndex = parseInt(tr.getAttribute('data-row-index'), 10);
     const level = parseInt(tr.getAttribute('data-level'), 10) || 0;
     const taskId = tr.getAttribute('data-task-id');
+    const partyId = tr.getAttribute('data-party-id');
+
+    // left-click: only tasks open edit modal (parties are not clickable)
     if (taskId) tr.onclick = () => openEditModal(taskId);
+
+    // right-click (context menu) handling
+    tr.oncontextmenu = (ev) => {
+      ev.preventDefault();
+      const x = ev.pageX, y = ev.pageY;
+      if (partyId) {
+        showContextMenu([
+          { label: 'Ajouter une tâche', onClick: () => { pendingAddPartieId = partyId; pendingAddStatus = 'todo'; openTaskModal('todo'); } },
+          { label: 'Modifier la partie', onClick: () => {
+            const current = tr.querySelector('.wbs-title-text')?.textContent || '';
+            const v = prompt('Nouveau nom de la partie', current);
+            if (v && v.trim()) { renamePartyById(sprint.parties || [], partyId, v.trim()); saveData(); renderBoard(); }
+          } },
+          { label: 'Supprimer la partie (avec enfants)', onClick: () => {
+            if (confirm('Supprimer cette partie et toutes ses sous‑parties ?')){ deletePartyAndUnassignTasks(sprint, partyId); renderBoard(); }
+          } }
+        ], x, y);
+      } else if (taskId) {
+        showContextMenu([
+          { label: 'Modifier la tâche', onClick: () => openEditModal(taskId) },
+          { label: 'Supprimer la tâche', onClick: () => { if (confirm('Supprimer cette tâche ?')) deleteTask(taskId); } }
+        ], x, y);
+      }
+    };
+
     const caretEl = tr.querySelector('.wbs-caret');
     if (caretEl) {
       caretEl.style.cursor = 'pointer';
@@ -310,7 +354,7 @@ function renderListView(){
         const isCollapsed = tr.classList.toggle('collapsed');
         for (let i = rowIndex + 1; i < rows.length; i++){
           const r = rows[i];
-          const rowEl = tbodyEl.querySelector(`tr[data-row-index="${i}"]`);
+          const rowEl = tbodyEl.querySelector(`tr[data-row-index=\"${i}\"]`);
           if (!rowEl) continue;
           if (r.level <= level) break;
           rowEl.style.display = isCollapsed ? 'none' : '';
@@ -339,6 +383,45 @@ function renderGanttView(){
   listsContainer.innerHTML = '<div class="gantt-empty-note">Diagramme de Gantt non implémenté (placeholder)</div>';
 }
 
+
+// --- Context menu helpers (created once) ---
+let __contextMenuEl = null;
+function ensureContextMenu(){
+  if (__contextMenuEl) return __contextMenuEl;
+  const el = document.createElement('div'); el.id = 'contextMenu'; el.className = 'context-menu'; el.style.display = 'none'; document.body.appendChild(el); __contextMenuEl = el;
+  document.addEventListener('click', () => { el.style.display = 'none'; });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') el.style.display = 'none'; });
+  return el;
+}
+function showContextMenu(items, x, y){
+  const menu = ensureContextMenu();
+  menu.innerHTML = items.map((it, i) => `<div class=\"context-menu-item\" data-idx=\"${i}\">${it.label}</div>`).join('');
+  menu.style.left = (x + 2) + 'px'; menu.style.top = (y + 2) + 'px'; menu.style.display = 'block';
+  menu.querySelectorAll('.context-menu-item').forEach(el => { el.onclick = () => { const idx = Number(el.getAttribute('data-idx')); menu.style.display = 'none'; try{ items[idx].onClick(); } catch(e){ console.error(e); } }; });
+}
+function hideContextMenu(){ if (__contextMenuEl) __contextMenuEl.style.display = 'none'; }
+
+// party utilities: collect/remove/rename
+function collectPartyIds(node, out){ out.push(node.id); (node.children||[]).forEach(c => collectPartyIds(c, out)); }
+function removePartyById(list, id){
+  for (let i = 0; i < list.length; i++){
+    if (list[i].id === id) { const removed = []; collectPartyIds(list[i], removed); list.splice(i,1); return removed; }
+    const child = removePartyById(list[i].children||[], id);
+    if (child) return child;
+  }
+  return null;
+}
+function renamePartyById(list, id, newName){
+  for (const p of list){ if (p.id === id){ p.name = newName; return true; } if (p.children && renamePartyById(p.children, id, newName)) return true; }
+  return false;
+}
+function deletePartyAndUnassignTasks(sprint, partyId){
+  const removed = removePartyById(sprint.parties || [], partyId);
+  if (!removed) return false;
+  (sprint.poles || []).forEach(p => (p.tasks || []).forEach(t => { if (t.partieId && removed.indexOf(t.partieId) !== -1) t.partieId = null; }));
+  saveData();
+  return true;
+}
 
 function moveTaskToList(taskId, dest){
   const sprint = boardData.sprints.find(s => s.id === selectedSprintId);
@@ -795,9 +878,10 @@ function openTaskModal(status) {
   modalAssignees = [];
   modalImages = [];
 
-  // populate parties selector for new task
+  // populate parties selector for new task (support right-click preselect)
   const sprintForNew = boardData.sprints.find(s => s.id === selectedSprintId);
-  renderPartiesSelect(sprintForNew, null); 
+  renderPartiesSelect(sprintForNew, pendingAddPartieId || null);
+  pendingAddPartieId = null; 
 
   const modal = new bootstrap.Modal(document.getElementById('taskModal'));
   modal.show();

@@ -525,6 +525,33 @@ body {
 .wbs-caret.rotated { transform: rotate(-90deg); color: rgba(255,255,255,0.75); }
 .wbs-title-text { vertical-align: middle; }
 
+/* Context menu (right-click) */
+.context-menu {
+  position: absolute;
+  background: rgba(10,10,16,0.95);
+  border: 1px solid rgba(255,255,255,0.04);
+  color: var(--text-color);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  z-index: 99999;
+  padding: 6px 6px;
+  min-width: 180px;
+  font-size: 0.92rem;
+  overflow: hidden;
+}
+.context-menu-item {
+  padding: 8px 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: var(--text-color);
+}
+.context-menu-item:hover { background: rgba(255,255,255,0.02); color: #fff; }
+
+/* Make party rows only clickable via caret (clear pointer) */
+.wbs-row[data-party-id] { cursor: default; }
+.wbs-row[data-party-id] .wbs-title-text { font-weight: 700; }
+
+
 /* Footer add button for List/Gantt views */
 .view-add-footer { display:flex; justify-content:center; margin-top:14px; }
 .view-add-btn {
