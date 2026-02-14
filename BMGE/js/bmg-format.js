@@ -97,10 +97,31 @@ class BmgMessage {
   
   storeTagBytes(tagString, bytes) {
     this._tagBytesMap.set(tagString, bytes);
+    const colorMatch = /^\[Color:([0-9A-F]+)\]$/i.exec(tagString);
+    const ffMatch = /^\[FF:0:([0-9A-F]+)\]$/i.exec(tagString);
+    if (colorMatch) {
+      const hex = colorMatch[1].padStart(4, '0').toUpperCase();
+      this._tagBytesMap.set(`[FF:0:${hex}]`, bytes);
+    } else if (ffMatch) {
+      const hex = ffMatch[1].padStart(4, '0').toUpperCase();
+      this._tagBytesMap.set(`[Color:${hex}]`, bytes);
+    }
   }
   
   getTagBytes(tagString) {
-    return this._tagBytesMap.get(tagString);
+    const v = this._tagBytesMap.get(tagString);
+    if (v) return v;
+    const colorMatch = /^\[Color:([0-9A-F]+)\]$/i.exec(tagString);
+    const ffMatch = /^\[FF:0:([0-9A-F]+)\]$/i.exec(tagString);
+    if (colorMatch) {
+      const hex = colorMatch[1].padStart(4, '0').toUpperCase();
+      return this._tagBytesMap.get(`[FF:0:${hex}]`) || null;
+    }
+    if (ffMatch) {
+      const hex = ffMatch[1].padStart(4, '0').toUpperCase();
+      return this._tagBytesMap.get(`[Color:${hex}]`) || null;
+    }
+    return null;
   }
 
   toString() {
@@ -182,7 +203,13 @@ function parseMessageText(buffer, encodingWidth, tagDecoder, encodingType, bigEn
 
     const tag = new BmgTag(groupId, typeId, argData);
     const tagString = tag.toString();
-    tagBytesMap.set(tagString, new Uint8Array(buffer.slice(j, j + encodingWidth + 4 + argLength)));
+    const rawTagBytes = new Uint8Array(buffer.slice(j, j + encodingWidth + 4 + argLength));
+    tagBytesMap.set(tagString, rawTagBytes);
+    // Also add a human-friendly Color alias so editor input like [Color:0200] can reuse original bytes
+    if (tag.groupId === 0xFF && tag.typeId === 0x0000 && tag.argumentData?.length) {
+      const colorHex = tag.argumentData.map(toHexByte).join('').padStart(4, '0');
+      tagBytesMap.set(`[Color:${colorHex}]`, rawTagBytes);
+    }
     parts.push(tagString);
 
     j += 4 + argLength;

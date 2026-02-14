@@ -33,6 +33,18 @@ export function setSpecialTokenApi(fn) {
   getSpecialTokenInfo = fn || (() => null);
 }
 
+// Convert internal tag forms (e.g. [FF:0:0200]) to the user-facing display form ([Color:0200])
+function normalizeTagForDisplay(tag) {
+  const m = /^\[FF:0:([0-9A-F]{1,4})\]$/i.exec(tag);
+  if (m) return `[Color:${m[1].toUpperCase().padStart(4, '0')}]`;
+  return tag;
+}
+
+function formatForDisplay(text) {
+  if (!text) return text;
+  return String(text).replace(/\[FF:0:([0-9A-F]{1,4})\]/gi, (_, h) => `[Color:${h.toUpperCase().padStart(4, '0')}]`);
+}
+
 export function init() {
   els.fileInput = document.getElementById('file-input');
   els.fileLabel = document.getElementById('file-label');
@@ -102,13 +114,13 @@ function createEntryCard(message, displayIndex) {
 
   if (message.dirty) badges.appendChild(createBadge('Modified', 'warning'));
   if (state.bmgFile.hasMid1) badges.appendChild(createBadge(`ID: ${message.id}`, 'info'));
-  if (state.bmgFile.hasStr1 && message.label) badges.appendChild(createBadge(`Label: ${message.label}`, 'info'));
+  if (state.bmgFile.hasStr1 && message.label) badges.appendChild(createBadge(`Label: ${formatForDisplay(message.label)}`, 'info'));
 
   header.appendChild(title);
   header.appendChild(badges);
   card.appendChild(header);
 
-  const segments = [{ text: message.text, groupId: null }];
+  const segments = [{ text: formatForDisplay(message.text || ''), groupId: null }];
   segments.forEach((segment, segmentIndex) => {
     const segmentContainer = document.createElement('div');
     segmentContainer.className = 'segment-container';
@@ -194,7 +206,7 @@ function createEntryCard(message, displayIndex) {
 
   const charCount = document.createElement('span');
   charCount.className = 'char-count';
-  charCount.textContent = `${message.text.length} chars`;
+  charCount.textContent = `${formatForDisplay(message.text || '').length} chars`;
   helper.appendChild(charCount);
 
   const offset = document.createElement('span');
@@ -298,11 +310,12 @@ function updateTextHighlight(element, text) {
     const tagSpan = document.createElement('span');
     tagSpan.className = 'token-chip';
 
-    const specialInfo = getSpecialTokenInfo(match[0]);
+      const displayToken = normalizeTagForDisplay(match[0]);
+    const specialInfo = getSpecialTokenInfo(displayToken);
     if (specialInfo) {
       tagSpan.classList.add('special');
       if (specialInfo.cls) tagSpan.classList.add(specialInfo.cls);
-      tagSpan.title = specialInfo.name || specialInfo.argHex || match[0];
+      tagSpan.title = specialInfo.name || specialInfo.argHex || displayToken;
       if (specialInfo.textCls) {
         activeTextClass = specialInfo.textCls;
       } else {
@@ -311,7 +324,7 @@ function updateTextHighlight(element, text) {
     } else {
       tagSpan.classList.add('jaune');
     }
-    tagSpan.textContent = specialInfo && specialInfo.label ? specialInfo.label : match[0];
+    tagSpan.textContent = specialInfo && specialInfo.label ? specialInfo.label : displayToken;
     fragment.appendChild(tagSpan);
 
     lastIndex = match.index + match[0].length;
@@ -334,8 +347,10 @@ function matchesFilter(message) {
   const query = state.filter.trim().toLowerCase();
   if (!query) return true;
 
-  if (message.text.toLowerCase().includes(query)) return true;
-  if (message.label && message.label.toLowerCase().includes(query)) return true;
+  const dispText = formatForDisplay(message.text || '');
+  if (dispText.toLowerCase().includes(query)) return true;
+  const dispLabel = formatForDisplay(message.label || '');
+  if (dispLabel && dispLabel.toLowerCase().includes(query)) return true;
 
   return false;
 }
