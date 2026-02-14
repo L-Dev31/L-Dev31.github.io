@@ -141,6 +141,14 @@ function renderPoleTabs(){
 
     nav.appendChild(btn);
   });
+
+  // Add "Tous les pôles" button at the end (merges all poles)
+  const allBtn = document.createElement('button');
+  allBtn.className = 'btn btn-sm pole-tab-button all-poles-button';
+  allBtn.innerHTML = `<i class="fa-solid fa-layer-group" style="color: #adb5bd"></i> Tous les pôles`;
+  allBtn.onclick = () => { selectedPoleId = 'all-poles'; renderBoard(); };
+  if (selectedPoleId === 'all-poles') allBtn.classList.add('active');
+  nav.appendChild(allBtn);
 } 
 
 
@@ -176,7 +184,7 @@ function renderKanbanView(){
         container.appendChild(card);
       });
     }
-    const addBtn = document.createElement('button'); addBtn.className = 'btn btn-sm add-card-btn'; addBtn.textContent = 'Ajouter'; addBtn.onclick = () => openTaskModal(status); container.appendChild(addBtn);
+    // 'Ajouter' button removed — add via right-click on column instead
 
     // Drag helpers on the full column (use a counter to avoid flicker when moving over child elements)
     const col = container.parentElement;
@@ -239,9 +247,10 @@ function renderListView(){
     // top-level parties
     (sprint.parties || []).forEach((p, idx) => addPartyNode(p, `${sprintIndex}.${idx+1}`, 1));
 
-    // catch-all: tasks without partie -> show under "Sans partie"
+    // catch-all: tasks without partie -> show under "Sans partie" (respect selected pole)
+    const poleFilter = (selectedPoleId && selectedPoleId !== 'all-poles') ? selectedPoleId : null;
     const unassigned = [];
-    (sprint.poles || []).forEach(p => (p.tasks || []).forEach(t => { if (!t.partieId) unassigned.push(t); }));
+    (sprint.poles || []).forEach(p => (p.tasks || []).forEach(t => { if (!t.partieId && (!poleFilter || p.id === poleFilter)) unassigned.push(t); }));
     if (unassigned.length){
       const base = `${sprintIndex}.${(sprint.parties || []).length + 1}`;
       rows.push({ code: base, level: 1, title: 'Sans partie', type: 'Partie' });
@@ -272,9 +281,12 @@ function renderListView(){
     const descHtml = r.desc ? `<div class="small text-muted">${escapeHtml(r.desc)}</div>` : '';
     const statusHtml = r.status ? `<span class="badge status-${r.status}">${escapeHtml(r.status)}</span>` : '';
     const assigneesHtml = (r.assignees && r.assignees.length) ? r.assignees.map(a => `<span class="assignee-pill">${escapeHtml(a)}</span>`).join(' ') : '';
-    const extraAttr = r.taskId ? `data-task-id="${r.taskId}"` : '';
-    html += `<tr data-row-index="${idx}" data-level="${r.level}" ${extraAttr} class="wbs-row">` +
-            `<td class="wbs-code">${r.code}</td>` +
+    const attrs = [];
+    if (r.taskId) attrs.push(`data-task-id=\"${r.taskId}\"`);
+    if (r.partyId) attrs.push(`data-party-id=\"${r.partyId}\"`);
+    const extraAttr = attrs.length ? attrs.join(' ') : '';
+    html += `<tr data-row-index=\"${idx}\" data-level=\"${r.level}\" ${extraAttr} class=\"wbs-row\">` +
+            `<td class=\"wbs-code\">${r.code}</td>` +
             `<td class="wbs-title-cell">${titleHtml}${descHtml}</td>` +
             `<td class="wbs-type">${escapeHtml(r.type || '')}</td>` +
             `<td class="wbs-status">${statusHtml}</td>` +
@@ -471,10 +483,10 @@ function flattenParties(parties, level = 0, out = []){
 }
 
 // return tasks (from all poles) assigned to a party id for a given sprint
-function getTasksForParty(sprint, partieId){
+function getTasksForParty(sprint, partieId, poleFilter){
   const list = [];
   if (!sprint) return list;
-  (sprint.poles || []).forEach(p => (p.tasks || []).forEach(t => { if (t.partieId === partieId) list.push(Object.assign({}, t, { _poleId: p.id })); }));
+  (sprint.poles || []).forEach(p => (p.tasks || []).forEach(t => { if (t.partieId === partieId && (!poleFilter || p.id === poleFilter)) list.push(Object.assign({}, t, { _poleId: p.id })); }));
   return list;
 }
 
