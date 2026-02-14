@@ -542,6 +542,25 @@ async function loadData(){
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       boardData = JSON.parse(raw);
+      // try to merge missing `parties` from the bundled resources.json so new feature appears
+      try {
+        const respDefault = await fetch('resources.json');
+        if (respDefault.ok) {
+          const defaultData = await respDefault.json();
+          (defaultData.sprints || []).forEach(defSprint => {
+            const localSprint = (boardData.sprints || []).find(s => s.id === defSprint.id);
+            if (localSprint) {
+              // only copy parties if missing or empty in local data
+              if ((!localSprint.parties || localSprint.parties.length === 0) && defSprint.parties && defSprint.parties.length) {
+                localSprint.parties = JSON.parse(JSON.stringify(defSprint.parties));
+              }
+            }
+          });
+        }
+      } catch (e) {
+        // non-fatal: keep local boardData as-is
+        console.warn('Could not merge default parties:', e);
+      }
     } else {
       const resp = await fetch('resources.json');
       if (resp.ok) {

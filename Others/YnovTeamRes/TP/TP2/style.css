@@ -547,9 +547,11 @@ body {
 }
 .context-menu-item:hover { background: rgba(255,255,255,0.02); color: #fff; }
 
-/* Make party rows only clickable via caret (clear pointer) */
+/* Party rows: top-level should be flush-left; children remain indented */
 .wbs-row[data-party-id] { cursor: pointer; }
 .wbs-row[data-party-id] .wbs-title-text { font-weight: 700; }
+.wbs-row[data-level="0"] .wbs-title { padding-left: 0 !important; }
+.wbs-row[data-level="0"] .wbs-code-inline { width: 4ch; margin-right: 10px; opacity: 0.95; }
 
 /* inline WBS code that follows title indentation */
 .wbs-code-inline {
