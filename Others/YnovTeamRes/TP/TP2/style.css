@@ -551,6 +551,22 @@ body {
 .wbs-row[data-party-id] { cursor: default; }
 .wbs-row[data-party-id] .wbs-title-text { font-weight: 700; }
 
+/* inline WBS code that follows title indentation */
+.wbs-code-inline {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+  display: inline-block;
+  width: 5.2ch;
+  color: var(--text-color-dark);
+  margin-right: 8px;
+  text-align: right;
+  opacity: 0.9;
+}
+
+/* increase tappable area for collapse: allow clicking the whole row */
+.wbs-row { cursor: pointer; }
+.wbs-row.collapsed { opacity: 0.9; }
+.wbs-row[data-task-id] { cursor: pointer; }
+
 
 /* Footer add button for List/Gantt views */
 .view-add-footer { display:flex; justify-content:center; margin-top:14px; }

@@ -188,7 +188,7 @@ function renderKanbanView(){
         const title = document.createElement('div'); title.className = 'card-title'; title.textContent = task.title;
         const meta = document.createElement('div'); meta.className = 'card-meta small text-muted'; meta.textContent = task.desc || '';
         card.appendChild(title); card.appendChild(meta);
-        card.onclick = () => openEditModal(task.id);
+        card.onclick = () => openPreviewModal(task.id);
         // right-click on card -> edit / delete
         card.oncontextmenu = (ev) => { ev.preventDefault(); showContextMenu([
           { label: 'Modifier la tâche', onClick: () => openEditModal(task.id) },
@@ -291,9 +291,10 @@ function renderListView(){
   html += '<thead><tr><th>WBS</th><th>Titre</th><th>Type</th><th>Statut</th><th>Assignés</th></tr></thead>';
   html += '<tbody>';
   rows.forEach((r, idx) => {
-    const indent = r.level * 18;
+    const indent = r.level * 26;
     const caret = r.hasChildren ? `<i class="wbs-caret fa fa-chevron-down" data-row-index="${idx}"></i>` : '';
-    const titleHtml = `<div class="wbs-title" style="padding-left:${indent}px">${caret}<span class=\"wbs-title-text\">${escapeHtml(r.title)}</span></div>`;
+    const codeInline = `<span class=\"wbs-code-inline\">${escapeHtml(r.code)}</span>`;
+    const titleHtml = `<div class=\"wbs-title\" style=\"padding-left:${indent}px\">${codeInline}${caret}<span class=\\"wbs-title-text\\">${escapeHtml(r.title)}</span></div>`;
     const descHtml = r.desc ? `<div class="small text-muted">${escapeHtml(r.desc)}</div>` : '';
     const statusHtml = r.status ? `<span class="badge status-${r.status}">${escapeHtml(r.status)}</span>` : '';
     const assigneesHtml = (r.assignees && r.assignees.length) ? r.assignees.map(a => `<span class="assignee-pill">${escapeHtml(a)}</span>`).join(' ') : '';
@@ -302,7 +303,7 @@ function renderListView(){
     if (r.partyId) attrs.push(`data-party-id=\"${r.partyId}\"`);
     const extraAttr = attrs.length ? attrs.join(' ') : '';
     html += `<tr data-row-index=\"${idx}\" data-level=\"${r.level}\" ${extraAttr} class=\"wbs-row\">` +
-            `<td class=\"wbs-code\">${r.code}</td>` +
+            `<td class=\"wbs-code\"></td>` +
             `<td class="wbs-title-cell">${titleHtml}${descHtml}</td>` +
             `<td class="wbs-type">${escapeHtml(r.type || '')}</td>` +
             `<td class="wbs-status">${statusHtml}</td>` +
@@ -312,6 +313,9 @@ function renderListView(){
   html += '</tbody></table>';
   listsContainer.innerHTML = html;
 
+  // ensure footer stays empty (visual buttons removed)
+  const footerOverride = document.getElementById('viewFooter'); if (footerOverride) footerOverride.innerHTML = '';
+
   const tbodyEl = listsContainer.querySelector('tbody'); if (!tbodyEl) return;
   tbodyEl.querySelectorAll('tr').forEach(tr => {
     const rowIndex = parseInt(tr.getAttribute('data-row-index'), 10);
@@ -319,8 +323,28 @@ function renderListView(){
     const taskId = tr.getAttribute('data-task-id');
     const partyId = tr.getAttribute('data-party-id');
 
-    // left-click: only tasks open edit modal (parties are not clickable)
-    if (taskId) tr.onclick = () => openEditModal(taskId);
+    // left-click: rows with children toggle collapse; tasks open PREVIEW (edit only via context menu)
+    tr.onclick = (ev) => {
+      const rowData = rows[rowIndex] || {};
+      // if row has children toggle collapse for the whole row
+      if (rowData.hasChildren) {
+        const isCollapsed = tr.classList.toggle('collapsed');
+        for (let i = rowIndex + 1; i < rows.length; i++){
+          const r = rows[i];
+          const rowEl = tbodyEl.querySelector(`tr[data-row-index=\"${i}\"]`);
+          if (!rowEl) continue;
+          if (r.level <= rowData.level) break;
+          rowEl.style.display = isCollapsed ? 'none' : '';
+        }
+        const caret = tr.querySelector('.wbs-caret'); if (caret) caret.classList.toggle('rotated', isCollapsed);
+        return;
+      }
+
+      // otherwise if it's a task open preview modal (no inline edit)
+      if (taskId) {
+        openPreviewModal(taskId);
+      }
+    };
 
     // right-click (context menu) handling
     tr.oncontextmenu = (ev) => {
@@ -849,6 +873,34 @@ function openEditModal(taskId) {
   });
   
   const modal = new bootstrap.Modal(document.getElementById('taskModal'));
+  modal.show();
+}
+
+// open preview (view) modal for a task (left-click behaviour)
+function openPreviewModal(taskId){
+  const sprint = boardData.sprints.find(s => s.id === selectedSprintId);
+  if (!sprint) return;
+  let task = null; let parentPole = null;
+  for (const pole of sprint.poles){ task = pole.tasks.find(t=>t.id===taskId); if (task){ parentPole = pole; break; } }
+  if (!task) return;
+
+  const titleEl = document.getElementById('viewModalTitle'); if (titleEl) titleEl.textContent = task.title;
+  document.querySelectorAll('#viewList').forEach(el => { el.textContent = parentPole ? `${parentPole.id} · ${task.id}` : task.id; });
+  const dueEl = document.getElementById('viewDueDate'); if (dueEl) dueEl.textContent = task.dueDate ? `Date limite : ${new Date(task.dueDate).toLocaleDateString()}` : '';
+
+  const assEl = document.getElementById('viewAssignees'); if (assEl){ assEl.innerHTML = ''; (task.assignees||[]).forEach(a=>{ const img = document.createElement('img'); img.className = 'assignee-pfp me-2'; img.src = `https://i.pravatar.cc/32?u=${encodeURIComponent(a)}`; const span = document.createElement('span'); span.className = 'assignee-name me-3 small text-muted'; span.textContent = a; assEl.appendChild(img); assEl.appendChild(span); }); }
+
+  const descEl = document.getElementById('viewDesc'); if (descEl) descEl.textContent = task.desc || '';
+
+  const imgPreview = document.getElementById('viewImagePreview'); if (imgPreview){ imgPreview.innerHTML = ''; (task.images||[]).forEach(src=>{ const i = document.createElement('img'); i.src = src; i.className = 'img-fluid mb-2'; imgPreview.appendChild(i); }); const carousel = document.getElementById('viewImageCarousel'); if (carousel) carousel.style.display = (task.images && task.images.length) ? 'flex' : 'none'; }
+
+  const filesEl = document.getElementById('viewFiles'); if (filesEl){ filesEl.innerHTML = ''; (task.files||[]).forEach(f=>{ const a = document.createElement('a'); a.href = '#'; a.textContent = f.name; a.className = 'd-block small'; filesEl.appendChild(a); }); }
+
+  // wire preview buttons (edit via context menu only; preview's Edit opens edit modal)
+  const editBtn = document.getElementById('taskEdit'); if (editBtn) editBtn.onclick = () => { const m = bootstrap.Modal.getInstance(document.getElementById('viewModal')); if (m) m.hide(); openEditModal(taskId); };
+  const delBtn = document.getElementById('taskDelete'); if (delBtn) delBtn.onclick = () => { if (confirm('Supprimer cette tâche ?')){ deleteTask(taskId); const m = bootstrap.Modal.getInstance(document.getElementById('viewModal')); if (m) m.hide(); } };
+
+  const modal = new bootstrap.Modal(document.getElementById('viewModal'));
   modal.show();
 }
 
