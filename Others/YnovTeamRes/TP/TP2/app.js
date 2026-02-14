@@ -238,12 +238,11 @@ function renderListView(){
   if (!sprint) { listsContainer.innerHTML = '<div class="list-table"><em>Aucun sprint sélectionné</em></div>'; return; }
 
   const rows = [];
-  const sprintIndex = (boardData.sprints || []).findIndex(s => s.id === sprint.id) + 1 || 1;
-  rows.push({ code: `${sprintIndex}`, level: 0, title: sprint.name || sprint.id, type: 'Sprint' });
+  // show ONLY parties/tasks for the selected pole (or all poles when 'all-poles' selected)
+  const poleFilter = (selectedPoleId && selectedPoleId !== 'all-poles') ? selectedPoleId : null;
 
   // if sprint defines parties, render hierarchical parties -> tasks (tasks assigned via task.partieId)
   if (sprint.parties && sprint.parties.length){
-    const poleFilter = (selectedPoleId && selectedPoleId !== 'all-poles') ? selectedPoleId : null;
     const addPartyNode = (party, parentCode, level) => {
       rows.push({ code: parentCode, level, title: party.name, type: 'Partie', partyId: party.id });
       // combine children parties and tasks assigned to this party (respect pole filter)
@@ -261,28 +260,32 @@ function renderListView(){
       }
     };
 
-    // top-level parties
-    (sprint.parties || []).forEach((p, idx) => addPartyNode(p, `${sprintIndex}.${idx+1}`, 1));
+    // top-level parties (start numbering at 1 and level 0) — DO NOT show sprint/pole as headers
+    (sprint.parties || []).forEach((p, idx) => addPartyNode(p, `${idx+1}`, 0));
 
     // catch-all: tasks without partie -> show under "Sans partie" (respect selected pole)
     const unassigned = [];
     (sprint.poles || []).forEach(p => (p.tasks || []).forEach(t => { if (!t.partieId && (!poleFilter || p.id === poleFilter)) unassigned.push(t); }));
     if (unassigned.length){
-      const base = `${sprintIndex}.${(sprint.parties || []).length + 1}`;
-      rows.push({ code: base, level: 1, title: 'Sans partie', type: 'Partie' });
-      unassigned.forEach((t, i) => rows.push({ code: `${base}.${i+1}`, level: 2, title: t.title, type: 'Tâche', status: t.status, assignees: t.assignees || [], taskId: t.id, desc: t.desc || '' }));
+      const base = `${(sprint.parties || []).length + 1}`;
+      rows.push({ code: base, level: 0, title: 'Sans partie', type: 'Partie' });
+      unassigned.forEach((t, i) => rows.push({ code: `${base}.${i+1}`, level: 1, title: t.title, type: 'Tâche', status: t.status, assignees: t.assignees || [], taskId: t.id, desc: t.desc || '' }));
     }
   } else {
-    // fallback: render by poles (backwards compatible)
-    (sprint.poles || []).forEach((pole, pIdx) => {
-      const poleIndex = pIdx + 1;
-      const poleLabel = pole.name || (DEFAULT_POLES.find(d => d.id === pole.id) || {}).name || pole.id;
-      rows.push({ code: `${sprintIndex}.${poleIndex}`, level: 1, title: poleLabel, type: 'Pôle', poleId: pole.id });
+    // No parties defined: show tasks directly for the selected pole (or merged when 'all-poles') — do NOT render pole headers
+    if (poleFilter) {
+      const pole = sprint.poles.find(p => p.id === poleFilter) || { tasks: [] };
       (pole.tasks || []).forEach((task, tIdx) => {
-        const tIdx1 = tIdx + 1;
-        rows.push({ code: `${sprintIndex}.${poleIndex}.${tIdx1}`, level: 2, title: task.title || '(sans titre)', type: 'Tâche', status: task.status || 'todo', assignees: task.assignees || [], taskId: task.id, desc: task.desc || '' });
+        rows.push({ code: `${tIdx+1}`, level: 0, title: task.title || '(sans titre)', type: 'Tâche', status: task.status || 'todo', assignees: task.assignees || [], taskId: task.id, desc: task.desc || '' });
       });
-    });
+    } else {
+      // all poles: merge tasks sequentially
+      let counter = 0;
+      (sprint.poles || []).forEach(p => (p.tasks || []).forEach(task => {
+        counter++;
+        rows.push({ code: `${counter}`, level: 0, title: task.title || '(sans titre)', type: 'Tâche', status: task.status || 'todo', assignees: task.assignees || [], taskId: task.id, desc: task.desc || '' });
+      }));
+    }
   }
 
   // compute hasChildren and render table (same as before)
@@ -316,7 +319,22 @@ function renderListView(){
   // ensure footer stays empty (visual buttons removed)
   const footerOverride = document.getElementById('viewFooter'); if (footerOverride) footerOverride.innerHTML = '';
 
+  // DEFAULT: collapse all parent nodes (hide their descendants)
   const tbodyEl = listsContainer.querySelector('tbody'); if (!tbodyEl) return;
+  for (let i = 0; i < rows.length; i++) {
+    if (rows[i].hasChildren) {
+      const parentRow = tbodyEl.querySelector(`tr[data-row-index="${i}"]`);
+      if (!parentRow) continue;
+      parentRow.classList.add('collapsed');
+      const lvl = rows[i].level;
+      for (let j = i + 1; j < rows.length; j++) {
+        if (rows[j].level <= lvl) break;
+        const childRow = tbodyEl.querySelector(`tr[data-row-index="${j}"]`);
+        if (childRow) childRow.style.display = 'none';
+      }
+      const caret = parentRow.querySelector('.wbs-caret'); if (caret) caret.classList.add('rotated');
+    }
+  }
   tbodyEl.querySelectorAll('tr').forEach(tr => {
     const rowIndex = parseInt(tr.getAttribute('data-row-index'), 10);
     const level = parseInt(tr.getAttribute('data-level'), 10) || 0;
@@ -896,9 +914,9 @@ function openPreviewModal(taskId){
 
   const filesEl = document.getElementById('viewFiles'); if (filesEl){ filesEl.innerHTML = ''; (task.files||[]).forEach(f=>{ const a = document.createElement('a'); a.href = '#'; a.textContent = f.name; a.className = 'd-block small'; filesEl.appendChild(a); }); }
 
-  // wire preview buttons (edit via context menu only; preview's Edit opens edit modal)
-  const editBtn = document.getElementById('taskEdit'); if (editBtn) editBtn.onclick = () => { const m = bootstrap.Modal.getInstance(document.getElementById('viewModal')); if (m) m.hide(); openEditModal(taskId); };
-  const delBtn = document.getElementById('taskDelete'); if (delBtn) delBtn.onclick = () => { if (confirm('Supprimer cette tâche ?')){ deleteTask(taskId); const m = bootstrap.Modal.getInstance(document.getElementById('viewModal')); if (m) m.hide(); } };
+  // preview is VIEW-ONLY by default: hide edit/delete buttons (edit via context menu only)
+  const editBtn = document.getElementById('taskEdit'); if (editBtn) { editBtn.style.display = 'none'; editBtn.onclick = null; }
+  const delBtn = document.getElementById('taskDelete'); if (delBtn) { delBtn.style.display = 'none'; delBtn.onclick = null; }
 
   const modal = new bootstrap.Modal(document.getElementById('viewModal'));
   modal.show();
@@ -1134,7 +1152,7 @@ window.onload = () => {
   initAssigneeSelector();
   
   const viewModalEl = document.getElementById('viewModal');
-  if (viewModalEl) viewModalEl.addEventListener('hidden.bs.modal', () => { const db = document.getElementById('taskDelete'); if (db) db.style.display = ''; });
+  if (viewModalEl) viewModalEl.addEventListener('hidden.bs.modal', () => { const edit = document.getElementById('taskEdit'); if (edit) edit.style.display = 'none'; const db = document.getElementById('taskDelete'); if (db) db.style.display = 'none'; });
 
   const taskModalEl = document.getElementById('taskModal');
   if (taskModalEl) {

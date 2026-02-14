@@ -548,7 +548,7 @@ body {
 .context-menu-item:hover { background: rgba(255,255,255,0.02); color: #fff; }
 
 /* Make party rows only clickable via caret (clear pointer) */
-.wbs-row[data-party-id] { cursor: default; }
+.wbs-row[data-party-id] { cursor: pointer; }
 .wbs-row[data-party-id] .wbs-title-text { font-weight: 700; }
 
 /* inline WBS code that follows title indentation */
