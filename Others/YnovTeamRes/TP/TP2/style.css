@@ -264,47 +264,10 @@ body {
 }
 
 
-#addSubpartBtn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: transparent;
-    border: 1px dashed rgba(255,255,255,0.22);
-    color: rgba(255,255,255,0.7);
-    font-weight: 600;
-    transition: all 0.15s ease;
-}
-
-.empty-subpart-container {
-    display: flex;
-    flex: 1 1 auto;
-    align-items: center;
-    justify-content: center;
-    min-height: 220px;
-}
-.empty-subpart-message {
-    text-align: center;
-    color: var(--text-color-dark);
-    background: transparent;
-    border: none;
-    box-shadow: none;
-}
-.empty-subpart-message h5 {
-    margin-bottom: 6px;
-    color: var(--text-color);
-}
-.empty-subpart-message p { margin: 0; }
-
-#addSubpartBtn:hover {
-    background: rgba(255,255,255,0.04);
-    border-color: rgba(255,255,255,0.42);
-    color: rgba(255,255,255,0.95);
-}
 
 
-.poles-nav {
+.poles-nav,
+.sprints-nav {
     width: var(--nav-width);
     flex-shrink: 0;
     padding: 20px;
@@ -315,9 +278,40 @@ body {
     overflow-y: auto;
 }
 
-.pole-button {
-    padding: 15px 20px;
-    border-radius: 15px;
+/* Sprints column: more opaque background + subtle blur */
+.sprints-nav {
+    background-color: #14142333;
+    backdrop-filter: blur(10px);
+    border-right: 1px solid #ffffff08;
+}
+
+.sprints-logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 8px;
+}
+.sprints-logo img {
+    width: 168px; /* 2x larger */
+    height: auto;
+    display: block;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 28px rgba(0,0,0,0.35));
+    border-radius: 10px;
+}
+
+.sprints-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.sprint-button {
+    padding: 12px 14px;
+    border-radius: 12px;
     border: 1px solid transparent;
     color: #fff;
     font-weight: 600;
@@ -325,17 +319,53 @@ body {
     text-align: left;
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: linear-gradient(to bottom right, rgba(var(--pole-color-rgb, 0,0,0), 0.4) 0%, transparent 70%);
+    gap: 10px;
+    background: linear-gradient(to bottom right, rgba(255,255,255,0.03) 0%, transparent 70%);
+    width: 100%;              /* uniform width (fill nav) */
+    box-sizing: border-box;
+    min-width: 140px;         /* avoid too small */
+    max-width: 100%;          /* never exceed nav */
 }
 
-.pole-button:hover {
-    background: linear-gradient(to bottom right, rgba(var(--pole-color-rgb, 0,0,0), 0.5) 0%, transparent 60%);
+.sprint-button:hover {
+    background: linear-gradient(to bottom right, rgba(255,255,255,0.06) 0%, transparent 60%);
 }
 
-.pole-button.active {
-    background: linear-gradient(to bottom right, rgba(var(--pole-color-rgb, 0,0,0), 0.6) 0%, transparent 50%);
-    border-color: rgba(var(--pole-color-rgb, 0,0,0), 0.5);
+.sprint-button.active {
+    background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+    border-color: rgba(255,255,255,0.12);
+}
+
+.pole-tab-button {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #fff;
+    font-weight: 600;
+    padding: .35rem .6rem;
+    border-radius: .375rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.pole-tab-button:hover {
+    background: rgba(255,255,255,0.02);
+}
+
+.pole-tab-button.absent {
+    opacity: 0.45;
+    filter: grayscale(40%);
+    pointer-events: none;
+    background: transparent !important;
+    border-color: rgba(255,255,255,0.04);
+}
+
+.pole-tab-button.active {
+    background: linear-gradient(135deg, rgba(var(--pole-color-rgb, 0,0,0), 0.65) 0%, rgba(255,255,255,0.02) 100%) !important;
+    border-color: rgba(var(--pole-color-rgb, 0,0,0), 0.35) !important;
+    box-shadow: 0 10px 30px rgba(var(--pole-color-rgb, 0,0,0), 0.12);
+    transform: translateY(-2px);
+    color: #fff;
 }
 
 .pole-icon {
@@ -657,8 +687,11 @@ body {
 .list-col.drop-target {
     border-style: dashed;
     border-width: 2px;
-    border-color: rgba(255,255,255,0.18);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    border-color: rgba(255,255,255,0.45);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.45), inset 0 0 0 4px rgba(255,255,255,0.01);
+    background-color: rgba(255, 255, 255, 0.06);
+    transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    transform: translateZ(0);
 }
 
 .modal-content {

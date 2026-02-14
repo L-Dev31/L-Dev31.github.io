@@ -35,8 +35,6 @@ function encodeText(text, encodingType) {
   catch { return new TextEncoder().encode(text); }
 }
 
-// Encode message text with inline tags back to binary.
-// Reuses original tag bytes from tagBytesMap when available (bit-perfect rebuild).
 function encodeMessageText(text, encodingType, tagBytesMap = null) {
   const tokenRegex = /\[(?:[0-9A-F]{1,2}):(?:[0-9A-F]{1,4})(?::(?:[0-9A-F]+))?|Color:[0-9A-F]+\]/gi;
   const parts = [];

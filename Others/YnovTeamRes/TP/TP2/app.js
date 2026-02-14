@@ -6,6 +6,11 @@ function showErrorMessage(message) {
   setTimeout(() => { try { errorDiv.classList.remove('show'); } catch(e){} }, 6000);
 }
 
+function hexToRgb(hex) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0,0,0';
+}
+
 function updateViewButtons(){
     const elMap = { kanban: 'viewBtnKanban', list: 'viewBtnList', gantt: 'viewBtnGantt' };
     Object.keys(elMap).forEach(m => {
@@ -18,15 +23,23 @@ function updateViewButtons(){
 // --- App-wide constants & minimal state (added to ensure missing symbols exist) ---
 const STORAGE_KEY = 'ynov_board_v1';
 const STATUSES = ['todo','doing','verify','done'];
-let boardData = { lists: [] };
+let boardData = { sprints: [] };
 let viewMode = localStorage.getItem('viewMode') || 'kanban';
+let selectedSprintId = null;
 let selectedPoleId = null;
-let selectedSubpartId = null;
 let modalFiles = [];
 let modalImages = [];
 let modalAssignees = [];
 let editingTaskId = null;
 let pendingAddStatus = null;
+
+const DEFAULT_POLES = [
+  { id: 'creatif-artistique', name: 'Créatif', color: '#28a745', icon: 'fa-solid fa-paint-brush' },
+  { id: 'systeme-dev', name: 'Système Dev', color: '#0d6efd', icon: 'fa-solid fa-code' },
+  { id: 'audiovisuel-marketing', name: 'AMC', color: '#fd7e14', icon: 'fa-solid fa-bullhorn' },
+  { id: '3d-animation', name: '3D Animation', color: '#6f42c1', icon: 'fa-solid fa-cube' },
+  { id: 'administration', name: 'Administration', color: '#6c757d', icon: 'fa-solid fa-cog' }
+];
 
 // Minimal safe stubs for rendering functions (restored so init() can run)
 function setViewMode(m) { viewMode = m; localStorage.setItem('viewMode', viewMode); updateViewButtons(); renderView(); }
@@ -37,108 +50,119 @@ function renderView(){
   return renderKanbanView();
 }
 
-function renderBoard(){ renderView(); renderSubpartTabs && renderSubpartTabs(); }
+function renderBoard(){ renderView(); renderPoleTabs && renderPoleTabs(); }
 
-// Render the left/top navigation of poles
-function renderPolesNav(){
-  const nav = document.getElementById('poles-nav'); if (!nav) return;
-  nav.innerHTML = '';
-  boardData.lists.forEach(pole => {
+// Render the left navigation of sprints
+function renderSprintsNav(){
+  const nav = document.getElementById('sprints-nav'); if (!nav) return;
+  const list = nav.querySelector('.sprints-list') || nav;
+  list.innerHTML = '';
+  boardData.sprints.forEach(sprint => {
     const btn = document.createElement('button');
-    btn.className = 'pole-button btn btn-sm';
-    btn.innerHTML = `<i class="pole-icon ${pole.icon}" style="color: ${pole.color}"></i> ${pole.name}`;
-    btn.onclick = () => { selectedPoleId = pole.id; selectedSubpartId = null; renderBoard(); };
-    if (selectedPoleId === pole.id) btn.classList.add('active');
-    nav.appendChild(btn);
+    btn.className = 'sprint-button btn btn-sm';
+    btn.textContent = sprint.name;
+    btn.onclick = () => { selectedSprintId = sprint.id; selectedPoleId = null; renderBoard(); };
+    if (selectedSprintId === sprint.id) btn.classList.add('active');
+    list.appendChild(btn);
   });
 }
 
-// Improved renderBoard: update header, count, subpart button visibility and then render view
+// Improved renderBoard: update header, count, and then render view
 function renderBoard(){
-  renderPolesNav();
+  renderSprintsNav();
 
-  const pole = boardData.lists.find(l => l.id === selectedPoleId) || (boardData.lists[0] || null);
+  const sprint = boardData.sprints.find(s => s.id === selectedSprintId) || (boardData.sprints[0] || null);
   const poleNameHeader = document.getElementById('selectedPoleName');
   const countEl = document.getElementById('selectedCount');
-  const addSubpartBtn = document.getElementById('addSubpartBtn');
 
-  if (!pole) {
-    if (poleNameHeader) poleNameHeader.textContent = 'Sélectionnez un pôle';
+  if (!sprint) {
+    if (poleNameHeader) poleNameHeader.textContent = 'Sélectionnez un sprint';
     if (countEl) countEl.textContent = '';
-    if (addSubpartBtn) addSubpartBtn.style.display = 'none';
     // clear lists
     ['todo','doing','verify','done'].forEach(s => { const el = document.getElementById(s+'-list'); if (el) el.innerHTML=''; });
     return;
   }
 
+  selectedSprintId = sprint.id;
+
+  const pole = sprint.poles.find(p => p.id === selectedPoleId) || (sprint.poles[0] || null);
+
+  if (!pole) {
+    if (poleNameHeader) poleNameHeader.textContent = 'Sélectionnez un pôle';
+    if (countEl) countEl.textContent = '';
+    // clear lists
+    ['todo','doing','verify','done'].forEach(s => { const el = document.getElementById(s+'-list'); if (el) el.innerHTML=''; });
+    return;
+  }
+
+  selectedPoleId = pole.id;
+
   if (poleNameHeader) {
-    const headerIcon = pole.icon || 'fa-solid fa-circle';
-    poleNameHeader.innerHTML = `<i class="pole-icon ${headerIcon}" style="color: ${pole.color}"></i> ${pole.name}`;
+    // prefer values from pole; fall back to DEFAULT_POLES definitions when missing
+    const def = DEFAULT_POLES.find(d => d.id === (pole && pole.id)) || {};
+    const headerIcon = (pole && pole.icon) || def.icon || 'fa-solid fa-circle';
+    const headerColor = (pole && pole.color) || def.color || '#666';
+    const headerName = (pole && pole.name) || def.name || (pole && pole.id) || 'Pôle';
+    poleNameHeader.innerHTML = `<i class="pole-icon ${headerIcon}" style="color: ${headerColor}"></i> ${headerName}`;
   }
 
   // count tasks
-  let tasksCount = 0;
-  if (pole.subparts) {
-    pole.subparts.forEach(s => { tasksCount += (s.tasks || []).length; });
-  }
+  let tasksCount = (pole.tasks || []).length;
   if (countEl) countEl.textContent = `${tasksCount} ressources`;
 
-  if (addSubpartBtn) addSubpartBtn.style.display = 'inline-flex';
-
-  // ensure a selected subpart exists
-  if (!selectedSubpartId && pole.subparts && pole.subparts.length > 0) selectedSubpartId = pole.subparts[0].id;
-
-  // render subparts and the current view
-  renderSubpartTabs();
+  // render pole tabs
+  renderPoleTabs();
   renderView();
 }
 
-function renderSubpartTabs(){
+function renderPoleTabs(){
   const nav = document.getElementById('sub-poles-nav');
   if (!nav) return;
   nav.innerHTML = '';
-  const pole = boardData.lists.find(l => l.id === selectedPoleId);
-  if (!pole || !pole.subparts) return;
-  pole.subparts.forEach(subpart => {
-    const btnGroup = document.createElement('div'); btnGroup.className = 'btn-group me-2';
-    const button = document.createElement('button');
-    button.type = 'button'; button.className = 'btn btn-sm sub-pole-button'; button.textContent = subpart.name;
-    button.dataset.subpartId = subpart.id; button.onclick = () => selectSubpart(subpart.id);
-    btnGroup.appendChild(button);
-    nav.appendChild(btnGroup);
-  });
-  updateActiveSubpartButton && updateActiveSubpartButton();
-}
+  const sprint = boardData.sprints.find(s => s.id === selectedSprintId) || null;
 
-function selectSubpart(subpartId) {
-  selectedSubpartId = subpartId;
-  renderView();
-  updateActiveSubpartButton && updateActiveSubpartButton();
-}
+  // Render only poles that are present in the current sprint; use DEFAULT_POLES for visual defaults.
+  DEFAULT_POLES.forEach(def => {
+    const present = sprint && sprint.poles && sprint.poles.find(p => p.id === def.id);
+    if (!present) return; // invisible when not included in sprint
 
-function updateActiveSubpartButton() {
-  document.querySelectorAll('#sub-poles-nav .btn').forEach(btn => {
-    const sid = btn.dataset.subpartId || null;
-    const isActive = sid && selectedSubpartId === sid;
-    btn.classList.toggle('active', !!isActive);
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-sm pole-tab-button';
+
+    const color = present.color || def.color;
+    const icon = present.icon || def.icon || '';
+    btn.style.setProperty('--pole-color-rgb', hexToRgb(color || '#666'));
+
+    btn.innerHTML = `<i class="pole-icon ${icon}" style="color: ${color}"></i> ${def.name}`;
+
+    btn.onclick = () => { selectedPoleId = def.id; renderBoard(); };
+    if (selectedPoleId === def.id) btn.classList.add('active');
+
+    nav.appendChild(btn);
   });
-}
+} 
+
+
 
 // Basic Kanban renderer: populates the four status columns with simple cards (draggable)
 function renderKanbanView(){
-  const pole = boardData.lists.find(l => l.id === selectedPoleId) || (boardData.lists[0] || null);
+  const sprint = boardData.sprints.find(s => s.id === selectedSprintId);
+  const pole = sprint ? sprint.poles.find(p => p.id === selectedPoleId) : null;
   if (!pole) return;
   if (!selectedPoleId) selectedPoleId = pole.id;
   STATUSES.forEach(status => {
     const container = document.getElementById(`${status}-list`);
     if (!container) return;
     container.innerHTML = '';
-    // gather tasks from subparts
-    const tasks = pole.subparts ? pole.subparts.flatMap(s => s.tasks || []) : [];
+    // gather tasks from pole
+    const tasks = pole.tasks || [];
     const filtered = tasks.filter(t => (t.status || 'todo') === status);
     if (filtered.length === 0) {
       container.classList.add('no-tasks');
-      const addBtn = document.createElement('button'); addBtn.className = 'btn btn-sm add-card-btn'; addBtn.textContent = 'Ajouter'; addBtn.onclick = () => openTaskModal(status); container.appendChild(addBtn);
+      const placeholder = document.createElement('div');
+      placeholder.className = 'empty-placeholder small text-muted';
+      placeholder.textContent = 'Aucune tâche';
+      container.appendChild(placeholder);
     } else {
       container.classList.remove('no-tasks');
       filtered.forEach(task => {
@@ -153,10 +177,33 @@ function renderKanbanView(){
     }
     const addBtn = document.createElement('button'); addBtn.className = 'btn btn-sm add-card-btn'; addBtn.textContent = 'Ajouter'; addBtn.onclick = () => openTaskModal(status); container.appendChild(addBtn);
 
-    // Drag enter/leave visual helpers
-    container.ondragenter = (e) => { container.classList.add('drop-target'); };
-    container.ondragleave = (e) => { container.classList.remove('drop-target'); };
-    container.ondrop = (e) => { container.classList.remove('drop-target'); drop(e); };
+    // Drag helpers on the full column (use a counter to avoid flicker when moving over child elements)
+    const col = container.parentElement;
+    // ensure the column accepts drops across its whole area
+    col.ondragover = (e) => { e.preventDefault(); };
+
+    // dragenter/leave counter to prevent rapid flicker when traversing child nodes
+    if (!col.__dragCounter) col.__dragCounter = 0;
+    col.ondragenter = (e) => {
+      e.preventDefault();
+      col.__dragCounter = (col.__dragCounter || 0) + 1;
+      col.classList.add('drop-target');
+    };
+    col.ondragleave = (e) => {
+      col.__dragCounter = (col.__dragCounter || 1) - 1;
+      if (col.__dragCounter <= 0) {
+        col.classList.remove('drop-target');
+        col.__dragCounter = 0;
+      }
+    };
+
+    // accept drops on the column (clear counter & class)
+    col.ondrop = (e) => {
+      e.preventDefault();
+      col.__dragCounter = 0;
+      col.classList.remove('drop-target');
+      drop(e);
+    };
   });
 }
 
@@ -173,51 +220,42 @@ function renderGanttView(){
 
 
 function moveTaskToList(taskId, dest){
+  const sprint = boardData.sprints.find(s => s.id === selectedSprintId);
+  if (!sprint) return;
+
   if (STATUSES.includes(dest)){
-    
-    for (const pole of boardData.lists){
-      for (const subpart of (pole.subparts || [])){
-        const t = subpart.tasks.find(x => x.id === taskId);
-        if (t){ t.status = dest; saveData(); renderView(); renderSubpartTabs(); return; }
-      }
+    for (const pole of sprint.poles){
+      const t = pole.tasks.find(x => x.id === taskId);
+      if (t){ t.status = dest; saveData(); renderView(); renderPoleTabs(); return; }
     }
     return;
   }
   
-  
-  let found = null; let foundSubpart = null;
-  for (const p of boardData.lists){
-    for (const sp of (p.subparts || [])){
-      const idx = sp.tasks.findIndex(x => x.id === taskId);
-      if (idx !== -1){ found = p; foundSubpart = { subpart: sp, index: idx }; break; }
-    }
-    if (found) break;
+  // move to another pole
+  let foundPole = null; let taskIndex = -1;
+  for (const p of sprint.poles){
+    taskIndex = p.tasks.findIndex(x => x.id === taskId);
+    if (taskIndex !== -1){ foundPole = p; break; }
   }
-  if (!found || !foundSubpart) return;
-  const [task] = foundSubpart.subpart.tasks.splice(foundSubpart.index, 1);
-  const destPole = boardData.lists.find(l=>l.id===dest);
+  if (!foundPole) return;
+  const [task] = foundPole.tasks.splice(taskIndex, 1);
+  const destPole = sprint.poles.find(p => p.id === dest);
   if (!destPole) return;
-  
-  if (!destPole.subparts) destPole.subparts = [];
-  if (destPole.subparts.length === 0){
-    const newId = `subpart-${Date.now().toString(36)}${Math.random().toString(36).substr(2,5)}`;
-    destPole.subparts.push({ id: newId, name: 'General', tasks: [] });
-  }
-  destPole.subparts[0].tasks.push(task);
-  saveData(); renderBoard(); renderSubpartTabs();
+  destPole.tasks.push(task);
+  saveData(); renderBoard(); renderPoleTabs();
 }
 
 function deleteTask(taskId){
-  for (const pole of boardData.lists){
-    for (const subpart of pole.subparts){
-      const idx = subpart.tasks.findIndex(t => t.id === taskId);
-      if (idx !== -1){
-        subpart.tasks.splice(idx,1);
-        saveData();
-        renderView();
-        renderSubpartTabs();
-        return;
-      }
+  const sprint = boardData.sprints.find(s => s.id === selectedSprintId);
+  if (!sprint) return;
+  for (const pole of sprint.poles){
+    const idx = pole.tasks.findIndex(t => t.id === taskId);
+    if (idx !== -1){
+      pole.tasks.splice(idx,1);
+      saveData();
+      renderView();
+      renderPoleTabs();
+      return;
     }
   }
 }
@@ -263,34 +301,59 @@ async function loadData(){
       if (resp.ok) {
         boardData = await resp.json();
       } else {
-        boardData = { lists: [] };
+        boardData = { sprints: [] };
       }
     }
   } catch (e) {
     console.error('Error loading data', e);
-    boardData = { lists: [] };
+    boardData = { sprints: [] };
   }
-  if (!boardData.lists) boardData.lists = [];
+  if (!boardData.sprints) boardData.sprints = [];
   normalizeBoardIcons(boardData);
-  if (!selectedPoleId && boardData.lists.length > 0) selectedPoleId = boardData.lists[0].id;
+
+  // --- migrate / sanitize board data (fix localStorage stale state) ---
+  const migrateBoardData = () => {
+    // ensure sprint-quai contains all DEFAULT_POLES (no tasks)
+    const quai = boardData.sprints.find(s => s.id === 'sprint-quai');
+    if (quai) {
+      quai.poles = DEFAULT_POLES.map(p => ({ id: p.id, tasks: [] }));
+    }
+    // remove legacy lists property if exists
+    if (boardData.lists) delete boardData.lists;
+  };
+  migrateBoardData();
+
+  // persist migration so localStorage stays consistent
+  try { saveData(); } catch(e) { /* non-fatal */ }
+
+  // ensure selected sprint/pole are valid after migration
+  if (!selectedSprintId && boardData.sprints.length > 0) selectedSprintId = boardData.sprints[0].id;
+  const currentSprint = boardData.sprints.find(s => s.id === selectedSprintId) || boardData.sprints[0] || null;
+  if (currentSprint && (!selectedPoleId || !currentSprint.poles.find(p => p.id === selectedPoleId))) {
+    selectedPoleId = (currentSprint.poles && currentSprint.poles.length > 0) ? currentSprint.poles[0].id : null;
+  }
+
   // build members list for modal
   buildAvailableMembers();
 }
 
 function normalizeBoardIcons(bd){
-  bd.lists = bd.lists || [];
-  bd.lists.forEach(l => {
-    if (!l.icon) l.icon = 'fa-solid fa-circle';
-    if (!l.color) l.color = '#666';
-    l.subparts = l.subparts || [];
-    l.subparts.forEach(s => { s.tasks = s.tasks || []; s.tasks.forEach(t => { t.assignees = t.assignees || []; }); });
+  bd.sprints = bd.sprints || [];
+  bd.sprints.forEach(s => {
+    s.poles = s.poles || [];
+    s.poles.forEach(p => {
+      if (!p.icon) p.icon = 'fa-solid fa-circle';
+      if (!p.color) p.color = '#666';
+      p.tasks = p.tasks || [];
+      p.tasks.forEach(t => { t.assignees = t.assignees || []; });
+    });
   });
 }
 
 // Build a list of available members from tasks and render the assignee selector
 function buildAvailableMembers(){
   const set = new Set();
-  boardData.lists.forEach(l => (l.subparts || []).forEach(s => (s.tasks || []).forEach(t => (t.assignees || []).forEach(a => set.add(a)))));
+  boardData.sprints.forEach(s => (s.poles || []).forEach(p => (p.tasks || []).forEach(t => (t.assignees || []).forEach(a => set.add(a)))));
   const members = Array.from(set).sort();
   window.availableMembers = members;
   const container = document.getElementById('taskAssigneesContainer');
@@ -397,25 +460,21 @@ function finishSave() {
   modalFiles = [];
   modalImages = [];
   renderView();
-  renderSubpartTabs();
+  renderPoleTabs();
 }
 
 function createTask(title, desc, assignees, dueDate, images) {
   const status = pendingAddStatus || 'todo';
-  const pole = boardData.lists.find(l => l.id === selectedPoleId);
+  const sprint = boardData.sprints.find(s => s.id === selectedSprintId);
+  const pole = sprint ? sprint.poles.find(p => p.id === selectedPoleId) : null;
   if (!pole) {
     alert('Aucun pôle sélectionné');
-    return;
-  }
-  const subpart = pole.subparts.find(s => s.id === selectedSubpartId);
-  if (!subpart) {
-    alert('Aucune sous-partie sélectionnée pour ajouter la tâche.');
     return;
   }
 
   const id = `t${Date.now().toString(36)}${Math.floor(Math.random() * 999)}`;
   
-  const existingTitles = subpart.tasks.map(t => t.title);
+  const existingTitles = pole.tasks.map(t => t.title);
   const uniqueTitle = makeUniqueName(title, existingTitles);
   const taskObj = { id, title: uniqueTitle, desc, status, assignees, dueDate, files: modalFiles.slice(), images };
   // If user provided a dueDate but no explicit start/end, set them to the dueDate so Gantt shows it
@@ -423,47 +482,43 @@ function createTask(title, desc, assignees, dueDate, images) {
     taskObj.startDate = dueDate;
     taskObj.endDate = dueDate;
   }
-  subpart.tasks.push(taskObj);
+  pole.tasks.push(taskObj);
 }
 
 function updateTask(taskId, title, desc, assignees, dueDate, images) {
-  
-  for (const pole of boardData.lists) {
-    for (const subpart of pole.subparts) {
-      const task = subpart.tasks.find(t => t.id === taskId);
-      if (task) {
-        
-        const otherTitles = subpart.tasks.filter(t => t.id !== taskId).map(t => t.title);
-        task.title = makeUniqueName(title, otherTitles);
-        task.desc = desc;
-        task.assignees = assignees;
-        task.dueDate = dueDate;
-        // Ensure Gantt dates are set when dueDate is provided and start/end are missing
-        if (dueDate && !task.startDate && !task.endDate) {
-          task.startDate = dueDate;
-          task.endDate = dueDate;
-        }
-        task.files = modalFiles.slice();
-        task.images = images;
-            
-        return;
+  const sprint = boardData.sprints.find(s => s.id === selectedSprintId);
+  if (!sprint) return;
+  for (const pole of sprint.poles) {
+    const task = pole.tasks.find(t => t.id === taskId);
+    if (task) {
+      const otherTitles = pole.tasks.filter(t => t.id !== taskId).map(t => t.title);
+      task.title = makeUniqueName(title, otherTitles);
+      task.desc = desc;
+      task.assignees = assignees;
+      task.dueDate = dueDate;
+      // Ensure Gantt dates are set when dueDate is provided and start/end are missing
+      if (dueDate && !task.startDate && !task.endDate) {
+        task.startDate = dueDate;
+        task.endDate = dueDate;
       }
+      task.files = modalFiles.slice();
+      task.images = images;
+      return;
     }
   }
 }
 
 function openEditModal(taskId) {
+  const sprint = boardData.sprints.find(s => s.id === selectedSprintId);
+  if (!sprint) return;
   let task = null;
   let parentPole = null;
-  for (const pole of boardData.lists) {
-    for (const subpart of pole.subparts) {
-      task = subpart.tasks.find(t => t.id === taskId);
-      if (task) {
-        parentPole = pole;
-        break;
-      }
+  for (const pole of sprint.poles) {
+    task = pole.tasks.find(t => t.id === taskId);
+    if (task) {
+      parentPole = pole;
+      break;
     }
-    if (task) break;
   }
   if (!task) return;
 
@@ -614,8 +669,7 @@ window.onload = () => {
       if (mode === 'signup') pfpWrapper.classList.remove('d-none'); else pfpWrapper.classList.add('d-none');
     }
   }
-  document.getElementById('loginBtn').onclick = () => { prepareAuthModal('login'); loginModal.show(); };
-  document.getElementById('signupBtn').onclick = () => { prepareAuthModal('signup'); loginModal.show(); };
+  document.getElementById('downloadJsonBtn').onclick = () => { exportJSON(); };
 
   document.getElementById('loginSubmit').onclick = () => {
     const username = (document.getElementById('usernameInput').value || '').trim();
@@ -624,7 +678,7 @@ window.onload = () => {
       if (username === 'admin' && password === 'admin') {
         loginModal.hide();
         const adminBtn = document.getElementById('admin-buttons'); if (adminBtn) adminBtn.style.display = 'flex';
-        const loginBtnEl = document.getElementById('loginBtn'); if (loginBtnEl) loginBtnEl.style.display = 'none';
+        const downloadJsonBtnEl = document.getElementById('downloadJsonBtn'); if (downloadJsonBtnEl) downloadJsonBtnEl.style.display = 'none';
       } else {
         alert('Nom d\'utilisateur ou mot de passe incorrect');
       }
@@ -781,118 +835,9 @@ window.onload = () => {
       });
   }
 
-  
-  document.getElementById('addSubpartBtn').onclick = openAddSubpartModal;
-  document.getElementById('saveNewSubpartBtn').onclick = addSubpart;
-  document.getElementById('saveEditedSubpartBtn').onclick = editSubpart;
-  document.getElementById('confirmDeleteSubpartBtn').onclick = deleteSubpart;
+
 };
 
 window.drop = drop;
 
  
-function findSubpartById(subpartId) {
-  const pole = boardData.lists.find(l => l.id === selectedPoleId);
-  if (pole && pole.subparts) {
-    return pole.subparts.find(s => s.id === subpartId);
-  }
-  return null;
-}
-
- 
-function openAddSubpartModal() {
-  const addSubpartModal = new bootstrap.Modal(document.getElementById('addSubpartModal'));
-  document.getElementById('newSubpartName').value = '';
-  addSubpartModal.show();
-}
-
- 
-function addSubpart() {
-  const subpartName = document.getElementById('newSubpartName').value.trim();
-  if (!subpartName) {
-    alert("Veuillez entrer un nom pour la sous-partie.");
-    return;
-  }
-
-  const pole = boardData.lists.find(l => l.id === selectedPoleId);
-  if (pole) {
-    
-    const existingNames = pole.subparts.map(s => s.name);
-    const uniqueName = makeUniqueName(subpartName, existingNames);
-    
-    const newSubpartId = `subpart-${Date.now().toString(36)}${Math.random().toString(36).substr(2, 5)}`;
-    pole.subparts.push({ id: newSubpartId, name: uniqueName, tasks: [] });
-    saveData();
-    renderSubpartTabs();
-    selectSubpart(newSubpartId);
-    const addSubpartModal = bootstrap.Modal.getInstance(document.getElementById('addSubpartModal'));
-    if (addSubpartModal) addSubpartModal.hide();
-  }
-}
-
- 
-function openEditSubpartModal(subpartId) {
-  const subpart = findSubpartById(subpartId);
-  if (subpart) {
-    const editSubpartModal = new bootstrap.Modal(document.getElementById('editSubpartModal'));
-    document.getElementById('editSubpartName').value = subpart.name;
-    document.getElementById('editSubpartId').value = subpart.id;
-    editSubpartModal.show();
-  }
-}
-
- 
-function editSubpart() {
-  const subpartId = document.getElementById('editSubpartId').value;
-  const newSubpartName = document.getElementById('editSubpartName').value.trim();
-
-  if (!newSubpartName) {
-    alert("Veuillez entrer un nom pour la sous-partie.");
-    return;
-  }
-
-  const subpart = findSubpartById(subpartId);
-  if (subpart) {
-    
-    const pole = boardData.lists.find(l => l.id === selectedPoleId);
-    const existingNames = (pole && pole.subparts) ? pole.subparts.filter(s => s.id !== subpartId).map(s => s.name) : [];
-    subpart.name = makeUniqueName(newSubpartName, existingNames);
-    saveData();
-    renderSubpartTabs();
-    const editSubpartModal = bootstrap.Modal.getInstance(document.getElementById('editSubpartModal'));
-    if (editSubpartModal) editSubpartModal.hide();
-    selectSubpart(subpartId);
-  }
-}
-
- 
-function openDeleteSubpartConfirmModal(subpartId) {
-  const subpart = findSubpartById(subpartId);
-  if (subpart) {
-    const deleteSubpartConfirmModal = new bootstrap.Modal(document.getElementById('deleteSubpartConfirmModal'));
-    document.getElementById('deleteSubpartId').value = subpart.id;
-    deleteSubpartConfirmModal.show();
-  }
-}
-
- 
-function deleteSubpart() {
-  const subpartId = document.getElementById('deleteSubpartId').value;
-  const pole = boardData.lists.find(l => l.id === selectedPoleId);
-  if (pole) {
-    const initialSubpartCount = pole.subparts.length;
-    pole.subparts = pole.subparts.filter(s => s.id !== subpartId);
-    if (pole.subparts.length < initialSubpartCount) {
-      saveData();
-      renderSubpartTabs();
-      
-      if (pole.subparts.length > 0) {
-        selectSubpart(pole.subparts[0].id);
-      } else {
-        selectSubpart(null);
-      }
-    }
-    const deleteSubpartConfirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteSubpartConfirmModal'));
-    if (deleteSubpartConfirmModal) deleteSubpartConfirmModal.hide();
-  }
-}

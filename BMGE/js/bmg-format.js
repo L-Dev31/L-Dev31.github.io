@@ -23,7 +23,8 @@ class BmgTag {
 
   toString() {
     if (this.groupId === 0xFF && this.typeId === 0x0000 && this.argumentData?.length) {
-      return `[Color:${this.argumentData.map(toHexByte).join('').padStart(4, '0')}]`;
+      const argHex = this.argumentData.map(toHexByte).join('').padStart(4, '0');
+      return `[FF:0:${argHex}]`;
     }
     const g = this.groupId.toString(16).toUpperCase();
     const t = this.typeId.toString(16).toUpperCase();
@@ -35,7 +36,7 @@ class BmgTag {
     const colorMatch = /^\[Color:([0-9A-F]+)\]$/i.exec(str);
     if (colorMatch) {
       const hex = colorMatch[1].padStart(4, '0');
-      return new BmgTag(0xFF, 0x0000, [parseInt(hex.substring(2, 4), 16), parseInt(hex.substring(0, 2), 16)]);
+      return new BmgTag(0xFF, 0x0000, parseArgHex(hex));
     }
 
     const hexMatch = [

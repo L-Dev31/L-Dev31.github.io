@@ -16,8 +16,13 @@
     </div>
     
     <div class="page-wrapper">
-        <nav id="poles-nav" class="poles-nav">
-            <!-- Pole buttons will be populated here -->
+        <nav id="sprints-nav" class="sprints-nav">
+            <div class="sprints-logo">
+                <img src="image/synapsis.png" alt="Synapsis" />
+            </div>
+            <div class="sprints-list" role="navigation" aria-label="Sprints">
+                <!-- Sprint buttons will be populated here -->
+            </div>
         </nav>
 
         <div class="content-wrapper">
@@ -29,8 +34,7 @@
                           <button id="viewBtnList" type="button" class="btn btn-outline-secondary" title="Liste"><i class="fa-solid fa-list"></i></button>
                           <button id="viewBtnGantt" type="button" class="btn btn-outline-secondary" title="Gantt"><i class="fa-solid fa-chart-gantt"></i></button>
                         </div>
-                        <button id="signupBtn" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-user-plus"></i> Créer un compte</button>
-                        <button id="loginBtn" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-sign-in-alt"></i> Se connecter</button>
+                        <button id="downloadJsonBtn" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-download"></i> Télécharge le JSON</button>
                   </div>
               </div>
             </header>
@@ -44,7 +48,6 @@
                   </div>
                   <div id="sub-poles-nav" class="sub-poles-nav mt-2 d-flex align-items-center gap-2">
                     <!-- Subpart tabs will be rendered here -->
-                    <button id="addSubpartBtn" class="btn btn-sm btn-outline-secondary" style="display: none;"><i class="fa-solid fa-plus"></i> Ajouter une sous-partie</button>
                   </div>
                 </div>
                 <div id="lists" class="lists d-flex gap-3">
@@ -213,69 +216,7 @@
       </div>
     </div>
 
-    <!-- Add Subpart Modal -->
-    <div class="modal futuristic-modal" id="addSubpartModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Ajouter une sous-partie</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <form id="addSubpartForm" class="modal-body futuristic-form">
-            <div class="form-group">
-              <label for="newSubpartName" class="form-label">Nom de la sous-partie</label>
-              <input type="text" class="form-control" id="newSubpartName" placeholder="Nom de la sous-partie" required>
-            </div>
-          </form>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <button type="button" class="btn btn-primary" id="saveNewSubpartBtn">Ajouter</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Edit Subpart Modal -->
-    <div class="modal futuristic-modal" id="editSubpartModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Modifier la sous-partie</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <form id="editSubpartForm" class="modal-body futuristic-form">
-            <div class="form-group">
-              <label for="editSubpartName" class="form-label">Nom de la sous-partie</label>
-              <input type="text" class="form-control" id="editSubpartName" placeholder="Nom de la sous-partie" required>
-            </div>
-            <input type="hidden" id="editSubpartId">
-          </form>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <button type="button" class="btn btn-primary" id="saveEditedSubpartBtn">Enregistrer</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Delete Subpart Confirmation Modal -->
-    <div class="modal" id="deleteSubpartConfirmModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Confirmer la suppression de la sous-partie</h5>
-          </div>
-          <div class="modal-body">
-            <p>Êtes-vous sûr de vouloir supprimer cette sous-partie ? Toutes les tâches qu'elle contient seront également supprimées.</p>
-            <input type="hidden" id="deleteSubpartId">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <button id="confirmDeleteSubpartBtn" type="button" class="btn btn-danger">Supprimer</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Login Modal -->
     <div class="modal futuristic-modal" id="loginModal" tabindex="-1" aria-hidden="true">

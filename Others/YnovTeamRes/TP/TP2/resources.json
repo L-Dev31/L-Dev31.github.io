@@ -1,82 +1,54 @@
 {
-  "lists": [
+  "sprints": [
     {
-      "id": "creatif-artistique",
-      "name": "Créatif",
-      "color": "#28a745",
-      "icon": "fa-solid fa-paint-brush",
-      "subparts": [
+      "id": "sprint-bureau",
+      "name": "Sprint Bureau",
+      "poles": [
         {
-          "id": "subpart-creatif-1",
-          "name": "General Creative Board",
+          "id": "creatif-artistique",
           "tasks": [
             { "id": "c1", "title": "Moodboard & Inspiration", "desc": "Collect references for the project", "status": "todo", "sub_tasks": ["Concept art Jacob Derby"] },
             { "id": "c2", "title": "Illustrations", "desc": "Sketch and finalize illustrations", "status": "todo", "sub_tasks": [] }
           ]
-        }
-      ]
-    },
-    {
-      "id": "systeme-dev",
-      "name": "Système Dev",
-      "color": "#0d6efd",
-      "icon": "fa-solid fa-code",
-      "subparts": [
+        },
         {
-          "id": "subpart-dev-1",
-          "name": "Backend Development",
+          "id": "systeme-dev",
           "tasks": [
             { "id": "s1", "title": "Setup repo", "desc": "Initialize repository and CI", "status": "todo", "sub_tasks": [] },
             { "id": "s2", "title": "API Design", "desc": "Define endpoints and authentication", "status": "doing", "sub_tasks": [] }
           ]
-        }
-      ]
-    },
-    {
-      "id": "audiovisuel-marketing",
-      "name": "AMC",
-      "color": "#fd7e14",
-      "icon": "fa-solid fa-bullhorn",
-      "subparts": [
+        },
         {
-          "id": "subpart-amc-1",
-          "name": "Marketing Campaigns",
+          "id": "audiovisuel-marketing",
           "tasks": [
             { "id": "a1", "title": "Promo video", "desc": "Short trailer for social media", "status": "doing", "sub_tasks": [] },
             { "id": "a2", "title": "Copy & CTA", "desc": "Write marketing copy and CTAs", "status": "todo", "sub_tasks": [] }
           ]
-        }
-      ]
-    },
-    {
-      "id": "3d-animation",
-      "name": "3D Animation",
-      "color": "#6f42c1",
-      "icon": "fa-solid fa-cube",
-      "subparts": [
+        },
         {
-          "id": "subpart-3d-1",
-          "name": "Character & Asset Production",
+          "id": "3d-animation",
           "tasks": [
             { "id": "d1", "title": "Modeling", "desc": "Model main assets in Blender", "status": "doing", "sub_tasks": [] },
             { "id": "d2", "title": "Rigging", "desc": "Rig characters for animation", "status": "todo", "sub_tasks": [] }
           ]
-        }
-      ]
-    },
-    {
-      "id": "administration",
-      "name": "Administration",
-      "color": "#6c757d",
-      "icon": "fa-solid fa-cog",
-      "subparts": [
+        },
         {
-          "id": "subpart-admin-1",
-          "name": "General Admin Tasks",
+          "id": "administration",
           "tasks": [
             { "id": "ad1", "title": "Add team roles", "desc": "Define roles and permissions", "status": "todo", "sub_tasks": [] }
           ]
         }
+      ]
+    },
+    {
+      "id": "sprint-quai",
+      "name": "Sprint Quai",
+      "poles": [
+        { "id": "creatif-artistique", "tasks": [] },
+        { "id": "systeme-dev", "tasks": [] },
+        { "id": "audiovisuel-marketing", "tasks": [] },
+        { "id": "3d-animation", "tasks": [] },
+        { "id": "administration", "tasks": [] }
       ]
     }
   ]
