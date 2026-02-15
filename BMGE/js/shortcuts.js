@@ -43,8 +43,13 @@ export function initShortcuts() {
       return;
     }
 
-    // Ctrl+Z → Undo
+    // Ctrl+Z → Undo (respect native input undo)
     if (ctrl && !e.shiftKey && key === 'z') {
+      const active = document.activeElement;
+      const tag = active && active.tagName ? active.tagName.toLowerCase() : '';
+      const isEditable = active && (tag === 'input' || tag === 'textarea' || active.isContentEditable);
+      // If an editable element is focused, let the browser handle undo (preserve native per-message undo)
+      if (isEditable) return;
       e.preventDefault();
       undo();
       return;
