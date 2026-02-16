@@ -11,6 +11,8 @@ const POLES_DEF = [
 let boardData = { sprints: [] };
 let viewState = { mode: 'list', sprintId: null, poleId: 'all', collapsed: {} };
 let currentModalTask = null;
+let currentPreviewTask = null;
+let newTaskDefaultStatus = 'todo';
 
 // --- INITIALIZATION ---
 const init = async () => {
@@ -38,6 +40,13 @@ const bindEvents = () => {
     document.getElementById('importJsonBtn').onclick = importJSON;
     document.getElementById('saveTaskBtn').onclick = saveTask;
     document.getElementById('taskImgInput').onchange = handleImageUpload;
+    document.getElementById('newTaskBtn').onclick = () => openTaskModalForNew();
+    document.getElementById('previewEditBtn').onclick = () => {
+        if (currentPreviewTask) {
+            bootstrap.Modal.getInstance(document.getElementById('previewModal'))?.hide();
+            openTaskModal(currentPreviewTask);
+        }
+    };
 };
 
 // --- DATA HELPERS ---
@@ -97,7 +106,18 @@ const render = () => {
     renderHeader();
     const container = document.getElementById('mainView');
     container.innerHTML = '';
-    
+    const sprint = getSprint();
+    if (!sprint) {
+        if (boardData.sprints.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state text-center py-5 text-muted">
+                    <i class="fa-solid fa-inbox fa-3x mb-3" style="opacity:0.5"></i>
+                    <p class="mb-2">Aucun sprint.</p>
+                    <p class="small">Importez un fichier .json contenant des sprints pour commencer.</p>
+                </div>`;
+        }
+        return;
+    }
     if (viewState.mode === 'list') renderWBS(container);
     else if (viewState.mode === 'kanban') renderKanban(container);
     else renderGantt(container);
@@ -161,6 +181,17 @@ const renderHeader = () => {
 const renderWBS = (container) => {
     const sprint = getSprint();
     if(!sprint) return;
+
+    const filteredTasks = getFilteredTasks();
+    if (filteredTasks.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state text-center py-5 text-muted">
+                <i class="fa-solid fa-folder-open fa-3x mb-3" style="opacity:0.5"></i>
+                <p class="mb-2">Aucune tâche dans cette vue.</p>
+                <p class="small">Utilisez «&nbsp;Nouvelle tâche&nbsp;» pour en ajouter, ou changez de pôle.</p>
+            </div>`;
+        return;
+    }
 
     const table = document.createElement('table');
     table.className = 'wbs-table';
@@ -335,6 +366,12 @@ const renderKanban = (container) => {
             `;
             body.appendChild(card);
         });
+        const addCard = document.createElement('button');
+        addCard.className = 'kanban-add-card';
+        addCard.type = 'button';
+        addCard.innerHTML = '<i class="fa-solid fa-plus me-1"></i> Ajouter une tâche';
+        addCard.onclick = () => openTaskModalForNew(status);
+        body.appendChild(addCard);
         board.appendChild(col);
     });
     container.appendChild(board);
@@ -347,14 +384,17 @@ let kanbanLastDrag = null;
 
 const removePlaceholder = (body) => {
     if (!body) return;
-    // hide overlay if present
     if (body.__overlay) {
         body.__overlay.style.opacity = '0';
         body.__overlay.style.transform = 'translateY(-10000px)';
         delete body.__lastOverlayPos;
     }
+    body.querySelector('.kanban-placeholder')?.remove();
     body.classList.remove('drag-over');
-    // cancel any pending RAF for this body
+    delete body.__kanbanPrevInsertBefore;
+    delete body.__kanbanLastInsertBefore;
+    delete body.__kanbanStableCount;
+    delete body.__kanbanLastChangeTime;
     kanbanLastDrag = null;
     if (kanbanDragRaf) {
         cancelAnimationFrame(kanbanDragRaf);
@@ -363,14 +403,18 @@ const removePlaceholder = (body) => {
 };
 
 const removeAllPlaceholders = () => {
-    // hide overlays and remove classes
     document.querySelectorAll('.kanban-body').forEach(b => {
         if (b.__overlay) {
             b.__overlay.style.opacity = '0';
             b.__overlay.style.transform = 'translateY(-10000px)';
             delete b.__lastOverlayPos;
         }
+        b.querySelector('.kanban-placeholder')?.remove();
         b.classList.remove('drag-over');
+        delete b.__kanbanPrevInsertBefore;
+        delete b.__kanbanLastInsertBefore;
+        delete b.__kanbanStableCount;
+        delete b.__kanbanLastChangeTime;
     });
     kanbanLastDrag = null;
     if (kanbanDragRaf) {
@@ -416,52 +460,80 @@ const clearKanbanCardPositions = () => {
     });
 };
 
+const KANBAN_HYST_PX = 12;
+const KANBAN_TOP_SWITCH_PX = 2;
+const KANBAN_STABLE_FRAMES = 1;
+const KANBAN_DEBOUNCE_MS = 0;
+
 const processKanbanDragOver = () => {
     kanbanDragRaf = null;
     const args = kanbanLastDrag;
     if (!args || !args.body) return;
     const { clientY, body } = args;
 
+    document.querySelectorAll('.kanban-body').forEach(b => {
+        if (b !== body) {
+            b.querySelector('.kanban-placeholder')?.remove();
+            b.classList.remove('drag-over');
+            delete b.__kanbanPrevInsertBefore;
+            delete b.__kanbanLastInsertBefore;
+            delete b.__kanbanStableCount;
+            delete b.__kanbanLastChangeTime;
+        }
+    });
     body.classList.add('drag-over');
 
-    // Prefer cached positions (built on dragstart) to avoid layout reads during drag
-    const cached = body.__kanbanCardPos;
-    let insertBeforeTid = '';
+    const existingPh = body.querySelector('.kanban-placeholder');
+    const existingBefore = (existingPh && existingPh.dataset.insertBefore) || '';
 
-    if (Array.isArray(cached) && cached.length) {
-        for (const pos of cached) {
-            if (clientY < pos.mid) { insertBeforeTid = pos.tid; break; }
-        }
-    } else {
-        // fallback: measure live DOM
-        const cards = Array.from(body.querySelectorAll('.kanban-card:not(.dragging)'));
-        for (const card of cards) {
-            const r = card.getBoundingClientRect();
-            if (clientY < r.top + r.height / 2) { insertBeforeTid = card.dataset.tid; break; }
+    const cards = Array.from(body.querySelectorAll('.kanban-card:not(.dragging)'));
+    let insertBeforeTid = '';
+    for (const card of cards) {
+        const r = card.getBoundingClientRect();
+        const top = r.top;
+        const tid = card.dataset.tid;
+        const isCurrent = (tid === existingBefore);
+        const threshold = isCurrent ? (top + KANBAN_HYST_PX) : (top + KANBAN_TOP_SWITCH_PX);
+        if (clientY < threshold) {
+            insertBeforeTid = tid;
+            break;
         }
     }
+    const normalized = insertBeforeTid || '';
 
-    const existingPh = body.querySelector('.kanban-placeholder');
-    const existingBefore = existingPh ? existingPh.dataset.insertBefore || '' : '';
+    if (body.__kanbanLastInsertBefore !== normalized) {
+        body.__kanbanStableCount = 0;
+        body.__kanbanLastChangeTime = Date.now();
+    }
+    body.__kanbanPrevInsertBefore = body.__kanbanLastInsertBefore;
+    body.__kanbanLastInsertBefore = normalized;
+    const stableCount = (body.__kanbanStableCount = (body.__kanbanStableCount || 0) + 1);
+    const firstInColumn = !existingPh;
+    const now = Date.now();
+    const debounceOk = firstInColumn || !body.__kanbanLastChangeTime || (now - body.__kanbanLastChangeTime >= KANBAN_DEBOUNCE_MS);
+    const stableEnough = (stableCount >= KANBAN_STABLE_FRAMES) || firstInColumn;
 
-    // If placeholder already at the correct spot, do nothing (prevents flicker)
-    if (existingPh && existingBefore === (insertBeforeTid || '')) return;
-
-    // Remove existing placeholder before inserting a new one
-    if (existingPh) existingPh.remove();
+    if (!stableEnough || !debounceOk) return;
+    if (existingPh && existingBefore === normalized) return;
+    existingPh?.remove();
 
     const ph = document.createElement('div');
     ph.className = 'kanban-placeholder';
-    ph.dataset.insertBefore = insertBeforeTid || '';
+    ph.dataset.insertBefore = normalized;
 
     if (insertBeforeTid) {
         const insertBeforeCard = body.querySelector(`.kanban-card[data-tid="${insertBeforeTid}"]`);
-        const height = insertBeforeCard ? Math.max(insertBeforeCard.getBoundingClientRect().height, 48) : 56;
-        ph.style.height = height + 'px';
-        body.insertBefore(ph, insertBeforeCard);
+        if (insertBeforeCard) {
+            body.insertBefore(ph, insertBeforeCard);
+        } else {
+            const addCardEl = body.querySelector('.kanban-add-card');
+            if (addCardEl) body.insertBefore(ph, addCardEl);
+            else body.appendChild(ph);
+        }
     } else {
-        ph.style.height = '56px';
-        body.appendChild(ph);
+        const addCardEl = body.querySelector('.kanban-add-card');
+        if (addCardEl) body.insertBefore(ph, addCardEl);
+        else body.appendChild(ph);
     }
 };
 
@@ -474,8 +546,18 @@ const handleDragOver = (e, status, body) => {
 
 // --- GANTT VIEW (Simplifié) ---
 const renderGantt = (container) => {
-    const tasks = getFilteredTasks().filter(t => t.dueDate);
-    if(tasks.length === 0) { container.innerHTML = '<div class="text-center mt-5 text-muted">Aucune tâche datée</div>'; return; }
+    const allFiltered = getFilteredTasks();
+    const tasks = allFiltered.filter(t => t.dueDate);
+    const undatedCount = allFiltered.length - tasks.length;
+    if(tasks.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state text-center py-5 text-muted">
+                <i class="fa-solid fa-chart-gantt fa-3x mb-3" style="opacity:0.5"></i>
+                <p class="mb-2">Aucune tâche avec date limite.</p>
+                ${undatedCount > 0 ? `<p class="small">${undatedCount} tâche(s) sans date — ajoutez une date pour les afficher ici.</p>` : '<p class="small">Ajoutez des dates aux tâches pour les voir dans le Gantt.</p>'}
+            </div>`;
+        return;
+    }
     
     const dates = tasks.map(t => new Date(t.dueDate).getTime());
     const minDate = Math.min(...dates) - 86400000 * 3;
@@ -540,44 +622,54 @@ const renderGantt = (container) => {
 
 // --- INTERACTIONS ---
 
+// Drop Kanban — comportement pas à pas :
+// 1. Lire la position du placeholder (beforeTid = id de la carte SOUS la ligne, ou '' si fin de colonne).
+// 2. Retirer la tâche de son pôle et lui mettre le bon status.
+// 3. Colonne visuelle = getFilteredTasks().filter(status) (déjà sans la tâche retirée), même ordre que le rendu.
+// 4. visualInsertIndex = index de beforeTid dans cette liste (= position « entre deux tâches » où insérer).
+// 5. samePoleCountBefore = nombre de tâches du même pôle avant cette position (dans la colonne visuelle).
+// 6. Dans pole.tasks, insérer avant la (samePoleCountBefore+1)-ième tâche de ce status → la tâche atterrit exactement à la position du placeholder.
 const handleDrop = (e, status, body) => {
     e.preventDefault();
-    const data = JSON.parse(e.dataTransfer.getData('text/json'));
+    const ph = body.querySelector('.kanban-placeholder');
+    const beforeTid = ph ? (ph.dataset.insertBefore || '') : '';
+
+    let data;
+    try {
+        data = JSON.parse(e.dataTransfer.getData('text/json'));
+    } catch (_) { return; }
     const sprint = getSprint();
-    const pole = sprint.poles.find(p => p.id === data.pid);
+    if (!sprint || !data?.pid || !data?.tid) return;
+    const pole = sprint.poles?.find(p => p.id === data.pid);
+    if (!pole || !pole.tasks) return;
     const taskIndex = pole.tasks.findIndex(t => t.id === data.tid);
     if (taskIndex === -1) return;
 
-    // Remove the task from its current position
     const [task] = pole.tasks.splice(taskIndex, 1);
     task.status = status;
 
-    // Determine insertion index based on placeholder (if any)
-    const ph = body.querySelector('.kanban-placeholder');
-    let insertAt = -1; // -1 means append at end
-    if (ph) {
-        const beforeTid = ph.dataset.insertBefore;
-        if (beforeTid) {
-            insertAt = pole.tasks.findIndex(t => t.id === beforeTid);
-            if (insertAt === -1) insertAt = pole.tasks.length; // fallback
-        } else {
-            // append after last task with matching status
-            let lastIdx = -1;
-            for (let i = 0; i < pole.tasks.length; i++) {
-                if (pole.tasks[i].status === status) lastIdx = i;
-            }
-            insertAt = lastIdx + 1;
+    // Colonne visuelle SANS la tâche qu'on vient de retirer (ordre = ordre d'affichage)
+    const columnTasksWithoutDragged = getFilteredTasks().filter(t => t.status === status);
+    const visualInsertIndex = beforeTid
+        ? (() => { const i = columnTasksWithoutDragged.findIndex(t => t.id === beforeTid); return i >= 0 ? i : columnTasksWithoutDragged.length; })()
+        : columnTasksWithoutDragged.length;
+    const samePoleCountBefore = columnTasksWithoutDragged
+        .slice(0, visualInsertIndex)
+        .filter(t => t._poleId === data.pid).length;
+
+    // insertAt = index où insérer pour que la tâche soit à la position visuelle (entre les tâches)
+    // On insère AVANT la (samePoleCountBefore+1)-ième tâche de ce statut dans pole.tasks
+    let insertAt = pole.tasks.length;
+    let sameStatusCount = 0;
+    for (let i = 0; i < pole.tasks.length; i++) {
+        if (pole.tasks[i].status !== status) continue;
+        sameStatusCount++;
+        if (sameStatusCount === samePoleCountBefore + 1) {
+            insertAt = i;
+            break;
         }
-    } else {
-        // no placeholder — append at end of same-status tasks
-        let lastIdx = -1;
-        for (let i = 0; i < pole.tasks.length; i++) {
-            if (pole.tasks[i].status === status) lastIdx = i;
-        }
-        insertAt = lastIdx + 1;
     }
 
-    // Insert task at computed index within pole.tasks
     pole.tasks.splice(insertAt, 0, task);
 
     // Fire confetti only when moved to `done`
@@ -603,20 +695,20 @@ const handleDrop = (e, status, body) => {
 // old openTaskPreview removed — replaced by openTaskPreviewModal
 
 const openTaskPreviewModal = (task) => {
+    currentPreviewTask = task;
     document.getElementById('previewTitle').textContent = task.title || 'Aperçu tâche';
     document.getElementById('previewDescription').textContent = task.desc || '';
-    // Put status badge next to title in header
     const headerStatusEl = document.getElementById('previewHeaderStatus');
     if(headerStatusEl) headerStatusEl.innerHTML = `<span class="status-badge badge-${task.status}">${task.status}</span>`;
     document.getElementById('previewAssignees').innerHTML = (task.assignees || []).map(a => `<img src="https://ui-avatars.com/api/?name=${encodeURIComponent(a)}" class="avatar" title="${a}">`).join('');
     const poleDef = getPoleDef(task._poleId) || { icon: 'fa-circle', name: 'Non défini', color: '#888' };
     document.getElementById('previewPole').innerHTML = `<i class="fa-solid ${poleDef.icon}" style="color:${poleDef.color}"></i> <span style="color:${poleDef.color}">${poleDef.name}</span>`;
-    const partiePath = findPartyPath(getSprint().parties, task.partieId);
+    const sprint = getSprint();
+    const partiePath = sprint && sprint.parties ? findPartyPath(sprint.parties, task.partieId) : null;
     document.getElementById('previewPartie').textContent = partiePath ? `${partiePath.code} — ${partiePath.namePath}` : '';
     document.getElementById('previewDueDate').textContent = task.dueDate || '';
     document.getElementById('previewImages').innerHTML = (task.images || []).map(src => `<img src="${src}" alt="preview">`).join('');
 
-    // Hide sections if no content
     document.getElementById('previewImagesSection').style.display = (task.images && task.images.length > 0) ? 'block' : 'none';
     document.getElementById('previewDescriptionSection').style.display = task.desc ? 'block' : 'none';
     document.getElementById('previewAssigneesSection').style.display = (task.assignees && task.assignees.length > 0) ? 'block' : 'none';
@@ -626,16 +718,76 @@ const openTaskPreviewModal = (task) => {
     new bootstrap.Modal(document.getElementById('previewModal')).show();
 };
 
-const openTaskModal = (task) => {
-    currentModalTask = task;
-    document.getElementById('taskId').value = task.id;
-    document.getElementById('taskTitle').value = task.title;
-    document.getElementById('taskDesc').value = task.desc || '';
-    document.getElementById('taskDate').value = task.dueDate || '';
-    
-    // Populate Parties Select
+const openTaskModalForNew = (defaultStatus = 'todo') => {
+    const sprint = getSprint();
+    if (!sprint) { alert('Aucun sprint sélectionné.'); return; }
+    newTaskDefaultStatus = defaultStatus;
+    currentModalTask = { assignees: [], images: [] };
+    document.getElementById('modalTitle').textContent = 'Nouvelle tâche';
+    document.getElementById('taskId').value = '';
+    document.getElementById('taskTitle').value = '';
+    document.getElementById('taskDesc').value = '';
+    document.getElementById('taskDate').value = '';
+    document.getElementById('taskStatus').value = defaultStatus;
+
+    const poleGroup = document.getElementById('taskPoleGroup');
+    const poleSelect = document.getElementById('taskPole');
+    poleGroup.style.display = 'block';
+    poleSelect.innerHTML = '';
+    (sprint.poles || []).forEach(p => {
+        const def = getPoleDef(p.id);
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = def.name;
+        poleSelect.appendChild(opt);
+    });
+    if (viewState.poleId !== 'all' && sprint.poles?.some(p => p.id === viewState.poleId))
+        poleSelect.value = viewState.poleId;
+
     const pSelect = document.getElementById('taskPartie');
     pSelect.innerHTML = '<option value="">-- Aucune --</option>';
+    const traverse = (p, level=0) => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = '\u00A0'.repeat(level*3) + p.name;
+        pSelect.appendChild(opt);
+        if(p.children) p.children.forEach(c => traverse(c, level+1));
+    };
+    if(sprint.parties) sprint.parties.forEach(p => traverse(p));
+
+    const aCont = document.getElementById('assigneesContainer');
+    aCont.innerHTML = '';
+    ['Alice', 'Bob', 'Charlie', 'David'].forEach(u => {
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-secondary';
+        badge.style.cursor = 'pointer';
+        badge.textContent = u;
+        badge.onclick = () => {
+            if(!currentModalTask.assignees) currentModalTask.assignees = [];
+            if(currentModalTask.assignees.includes(u)) currentModalTask.assignees = currentModalTask.assignees.filter(x => x!==u);
+            else currentModalTask.assignees.push(u);
+            badge.className = `badge ${currentModalTask.assignees.includes(u) ? 'bg-primary' : 'bg-secondary'}`;
+        };
+        aCont.appendChild(badge);
+    });
+    document.getElementById('imgPreview').innerHTML = '';
+
+    new bootstrap.Modal(document.getElementById('taskModal')).show();
+};
+
+const openTaskModal = (task) => {
+    currentModalTask = task;
+    document.getElementById('modalTitle').textContent = 'Tâche';
+    document.getElementById('taskPoleGroup').style.display = 'none';
+    document.getElementById('taskId').value = task.id;
+    document.getElementById('taskTitle').value = task.title || '';
+    document.getElementById('taskDesc').value = task.desc || '';
+    document.getElementById('taskDate').value = task.dueDate || '';
+    document.getElementById('taskStatus').value = task.status || 'todo';
+
+    const pSelect = document.getElementById('taskPartie');
+    pSelect.innerHTML = '<option value="">-- Aucune --</option>';
+    const sprint = getSprint();
     const traverse = (p, level=0) => {
         const opt = document.createElement('option');
         opt.value = p.id;
@@ -644,14 +796,11 @@ const openTaskModal = (task) => {
         pSelect.appendChild(opt);
         if(p.children) p.children.forEach(c => traverse(c, level+1));
     };
-    if(getSprint().parties) getSprint().parties.forEach(p => traverse(p));
-    
-    // Assignees
+    if(sprint?.parties) sprint.parties.forEach(p => traverse(p));
+
     const aCont = document.getElementById('assigneesContainer');
     aCont.innerHTML = '';
-    // Mock assignees
-    const users = ['Alice', 'Bob', 'Charlie', 'David'];
-    users.forEach(u => {
+    ['Alice', 'Bob', 'Charlie', 'David'].forEach(u => {
         const badge = document.createElement('span');
         badge.className = `badge ${task.assignees?.includes(u) ? 'bg-primary' : 'bg-secondary'}`;
         badge.style.cursor = 'pointer';
@@ -665,21 +814,53 @@ const openTaskModal = (task) => {
         aCont.appendChild(badge);
     });
 
-    // Images
-    const imgPrev = document.getElementById('imgPreview');
-    imgPrev.innerHTML = (task.images || []).map(src => `<img src="${src}" style="height:60px; border-radius:4px; border:1px solid #555">`).join('');
+    document.getElementById('imgPreview').innerHTML = (task.images || []).map(src => `<img src="${src}" style="height:60px; border-radius:4px; border:1px solid #555">`).join('');
 
-    const modal = new bootstrap.Modal(document.getElementById('taskModal'));
-    modal.show();
+    new bootstrap.Modal(document.getElementById('taskModal')).show();
 };
 
+const generateTaskId = () => 'task-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
+
 const saveTask = () => {
-    if(!currentModalTask) return;
-    currentModalTask.title = document.getElementById('taskTitle').value;
-    currentModalTask.desc = document.getElementById('taskDesc').value;
-    currentModalTask.partieId = document.getElementById('taskPartie').value;
-    currentModalTask.dueDate = document.getElementById('taskDate').value;
-    bootstrap.Modal.getInstance(document.getElementById('taskModal')).hide();
+    const title = (document.getElementById('taskTitle').value || '').trim();
+    if (!title) {
+        alert('Le titre est obligatoire.');
+        return;
+    }
+    const taskId = document.getElementById('taskId').value;
+    const isNew = !taskId;
+
+    if (isNew) {
+        const sprint = getSprint();
+        if (!sprint) return;
+        const poleId = document.getElementById('taskPole').value;
+        if (!poleId) {
+            alert('Veuillez choisir un pôle.');
+            return;
+        }
+        const pole = sprint.poles?.find(p => p.id === poleId);
+        if (!pole) return;
+        if (!pole.tasks) pole.tasks = [];
+        const newTask = {
+            id: generateTaskId(),
+            title,
+            desc: document.getElementById('taskDesc').value || '',
+            status: document.getElementById('taskStatus').value || 'todo',
+            partieId: document.getElementById('taskPartie').value || '',
+            dueDate: document.getElementById('taskDate').value || '',
+            assignees: currentModalTask?.assignees || [],
+            images: currentModalTask?.images || []
+        };
+        pole.tasks.push(newTask);
+    } else {
+        if (!currentModalTask) return;
+        currentModalTask.title = title;
+        currentModalTask.desc = document.getElementById('taskDesc').value || '';
+        currentModalTask.status = document.getElementById('taskStatus').value || 'todo';
+        currentModalTask.partieId = document.getElementById('taskPartie').value || '';
+        currentModalTask.dueDate = document.getElementById('taskDate').value || '';
+    }
+    bootstrap.Modal.getInstance(document.getElementById('taskModal'))?.hide();
     render();
 };
 
@@ -699,24 +880,16 @@ const showTeamModal = () => {
     const tasks = getFilteredTasks();
     const workload = {};
     tasks.forEach(t => (t.assignees||[]).forEach(u => workload[u] = (workload[u]||0) + 1));
-    
-    const body = document.querySelector('#taskModal .modal-body'); // Reuse modal for simplicity or create new
-    const originalContent = body.innerHTML;
-    const originalTitle = document.getElementById('modalTitle').textContent;
-    const originalFooter = document.querySelector('#taskModal .modal-footer').innerHTML;
-    
-    // Quick switch to team view in same modal container
-    document.getElementById('modalTitle').textContent = "Charge de Travail";
-    document.querySelector('#taskModal .modal-footer').innerHTML = '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>';
-    
+    const maxTasks = Math.max(1, ...Object.values(workload));
+    const body = document.getElementById('teamWorkloadBody');
     body.innerHTML = Object.entries(workload).map(([name, count]) => {
-        const pct = Math.min((count / 5) * 100, 100); // 5 tasks = 100%
+        const pct = Math.min((count / maxTasks) * 100, 100);
         const color = pct > 80 ? '#dc3545' : pct > 50 ? '#fd7e14' : '#28a745';
         return `
             <div class="mb-3">
                 <div class="d-flex justify-content-between mb-1">
-                    <span><img src="https://ui-avatars.com/api/?name=${name}" class="avatar me-2">${name}</span>
-                    <small class="text-muted">${count} tâches</small>
+                    <span><img src="https://ui-avatars.com/api/?name=${encodeURIComponent(name)}" class="avatar me-2">${name}</span>
+                    <small class="text-muted">${count} tâche(s)</small>
                 </div>
                 <div class="workload-bar-bg">
                     <div class="workload-bar-fill" style="width:${pct}%; background:${color}"></div>
@@ -724,20 +897,7 @@ const showTeamModal = () => {
             </div>
         `;
     }).join('') || '<div class="text-center text-muted p-4">Aucune affectation active</div>';
-    
-    const modalEl = document.getElementById('taskModal');
-    const modal = new bootstrap.Modal(modalEl);
-    modal.show();
-    
-    modalEl.addEventListener('hidden.bs.modal', () => {
-        // Restore modal for tasks
-        setTimeout(() => {
-            body.innerHTML = originalContent;
-            document.getElementById('modalTitle').textContent = originalTitle;
-            document.querySelector('#taskModal .modal-footer').innerHTML = originalFooter;
-            document.getElementById('saveTaskBtn').onclick = saveTask; // rebind
-        }, 200);
-    }, {once:true});
+    new bootstrap.Modal(document.getElementById('teamWorkloadModal')).show();
 };
 
 const fireConfetti = (x, y) => {
@@ -795,13 +955,26 @@ const exportJSON = () => {
 const importJSON = () => {
     const input = document.createElement('input');
     input.type = 'file';
+    input.accept = '.json,application/json';
     input.onchange = e => {
+        const file = e.target.files?.[0];
+        if (!file) return;
         const r = new FileReader();
         r.onload = ev => {
-            try { boardData = JSON.parse(ev.target.result); viewState.sprintId = boardData.sprints[0].id; render(); }
-            catch(err) { alert('JSON Invalide'); }
+            try {
+                const parsed = JSON.parse(ev.target.result);
+                if (!parsed || !Array.isArray(parsed.sprints)) {
+                    alert('JSON invalide : structure attendue { "sprints": [ ... ] }');
+                    return;
+                }
+                boardData = parsed;
+                viewState.sprintId = parsed.sprints.length > 0 ? parsed.sprints[0].id : null;
+                render();
+            } catch (err) {
+                alert('JSON invalide : ' + (err.message || 'erreur de parsing'));
+            }
         };
-        r.readAsText(e.target.files[0]);
+        r.readAsText(file);
     };
     input.click();
 };

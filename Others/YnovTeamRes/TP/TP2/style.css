@@ -333,19 +333,43 @@ body {
     transform: translateY(-2px);
 }
 
-/* placeholder shown while dragging to indicate insertion point */
+/* indicateur = ligne de tirets uniquement (position de dépôt) */
 .kanban-placeholder {
-    border-radius: 8px;
-    margin: 4px 0;
-    box-sizing: border-box;
-    background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    border: 2px dashed rgba(255,255,255,0.06);
-    transition: opacity 120ms ease, background-color 120ms ease; /* avoid layout transitions */
+    flex-shrink: 0;
+    height: 0;
+    min-height: 0;
+    margin: 2px 0;
+    padding: 0;
+    border: none;
+    border-top: 3px dashed rgba(255,255,255,0.35);
+    border-radius: 0;
+    background: transparent;
     opacity: 1;
     pointer-events: none;
+    box-sizing: border-box;
 }
-.kanban-body.drag-over { outline: 2px dashed rgba(255,255,255,0.03); }
+.kanban-body.drag-over {
+    outline: none;
+}
 
+.kanban-add-card {
+    margin-top: 4px;
+    padding: 10px 12px;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+    text-align: left;
+}
+.kanban-add-card:hover {
+    border-color: rgba(255,255,255,0.25);
+    color: var(--text);
+    background: rgba(255,255,255,0.05);
+}
 
 /* Gantt */
 .gantt-container {

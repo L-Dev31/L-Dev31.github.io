@@ -145,8 +145,19 @@ function createEntryCard(message, displayIndex) {
     textarea.rows = Math.max(2, (segment.text || '').split('\n').length);
 
     textarea.addEventListener('input', (e) => {
-      message.text = e.target.value;
-      updateTextHighlight(highlight, e.target.value);
+      // record per-entry undo action (previous -> next) so Ctrl+Z inside this entry walks this message's history
+      const prev = message.text;
+      const next = e.target.value;
+      if (prev !== next) {
+        const msgRef = message;
+        pushEntryAction(message._index, {
+          undo: () => { const m = state.bmgFile?.messages.find(x => x === msgRef); if (m) { m.text = prev; renderEntries(); updateSaveButton(); } },
+          redo: () => { const m = state.bmgFile?.messages.find(x => x === msgRef); if (m) { m.text = next; renderEntries(); updateSaveButton(); } }
+        });
+      }
+
+      message.text = next;
+      updateTextHighlight(highlight, next);
 
       if (message.dirty && !card.classList.contains('modified')) {
         card.classList.add('modified');
@@ -179,15 +190,9 @@ function createEntryCard(message, displayIndex) {
       editStartText = message.text;
     });
     textarea.addEventListener('blur', () => {
-      if (message.text !== editStartText) {
-        const oldT = editStartText, newT = message.text, bmg = state.bmgFile, idx = message._index;
-        const refresh = () => { if (state.bmgFile === bmg) { renderEntries(); updateSaveButton(); } };
-        pushUndo({
-          undo: () => { const m = bmg?.messages[idx]; if (m) { m.text = oldT; refresh(); } },
-          redo: () => { const m = bmg?.messages[idx]; if (m) { m.text = newT; refresh(); } }
-        });
-        editStartText = message.text;
-      }
+      // keep editStartText in sync; per-entry history is recorded on input events so
+      // we no longer push a global undo action for text edits here.
+      editStartText = message.text;
     });
 
     textareaContainer.appendChild(highlight);
@@ -254,7 +259,14 @@ function createEntryCard(message, displayIndex) {
   revertBtn.textContent = 'Revert';
   revertBtn.disabled = !message.dirty;
   revertBtn.addEventListener('click', () => {
-    message.text = message._originalText || '';
+    const prev = message.text;
+    const next = message._originalText || '';
+    const msgRef = message;
+    pushEntryAction(message._index, {
+      undo: () => { const m = state.bmgFile?.messages.find(x => x === msgRef); if (m) { m.text = prev; renderEntries(); updateSaveButton(); } },
+      redo: () => { const m = state.bmgFile?.messages.find(x => x === msgRef); if (m) { m.text = next; renderEntries(); updateSaveButton(); } }
+    });
+    message.text = next;
     const newCard = createEntryCard(message, message._index + 1);
     card.replaceWith(newCard);
   });
@@ -494,6 +506,48 @@ export function updateUndoRedoButtons() {
   const redoBtn = document.getElementById('toolbar-redo');
   if (undoBtn) undoBtn.disabled = state.undoStack.length === 0;
   if (redoBtn) redoBtn.disabled = state.redoStack.length === 0;
+}
+
+// --- Per-entry (message) undo/redo ---
+// Each message keeps its own stack of actions ({ undo, redo }).
+const MAX_ENTRY_HISTORY = 300;
+
+function ensureEntryHistory(msg) {
+  if (!msg) return;
+  if (!msg._entryUndo) msg._entryUndo = [];
+  if (!msg._entryRedo) msg._entryRedo = [];
+}
+
+export function pushEntryAction(index, action) {
+  if (!state.bmgFile) return;
+  const msg = state.bmgFile.messages[index];
+  if (!msg) return;
+  ensureEntryHistory(msg);
+  msg._entryUndo.push(action);
+  if (msg._entryUndo.length > MAX_ENTRY_HISTORY) msg._entryUndo.shift();
+  msg._entryRedo.length = 0;
+}
+
+export function entryUndo(index) {
+  if (!state.bmgFile) return;
+  const msg = state.bmgFile.messages[index];
+  if (!msg || !msg._entryUndo || msg._entryUndo.length === 0) return;
+  const action = msg._entryUndo.pop();
+  action.undo?.();
+  msg._entryRedo.push(action);
+  renderEntries();
+  updateSaveButton();
+}
+
+export function entryRedo(index) {
+  if (!state.bmgFile) return;
+  const msg = state.bmgFile.messages[index];
+  if (!msg || !msg._entryRedo || msg._entryRedo.length === 0) return;
+  const action = msg._entryRedo.pop();
+  action.redo?.();
+  msg._entryUndo.push(action);
+  renderEntries();
+  updateSaveButton();
 }
 
 // --- Delete message ---
@@ -755,9 +809,10 @@ function confirmEditId() {
   const oldId = msg.id;
   msg.id = newId;
   const refresh = () => { reindexMessages(); renderEntries(); updateSaveButton(); updateMeta(); };
-  pushUndo({
-    undo: () => { msg.id = oldId; refresh(); },
-    redo: () => { msg.id = newId; refresh(); }
+  // per-entry undo for ID change
+  pushEntryAction(pendingEditIdIndex, {
+    undo: () => { const m = state.bmgFile?.messages[pendingEditIdIndex]; if (m) { m.id = oldId; refresh(); } },
+    redo: () => { const m = state.bmgFile?.messages[pendingEditIdIndex]; if (m) { m.id = newId; refresh(); } }
   });
   closeEditIdModal();
   renderEntries();
@@ -808,9 +863,10 @@ function confirmEditAttr() {
   msg.attribute = newAttribute;
   const idx = pendingEditAttrIndex;
   const refresh = () => { renderEntries(); updateSaveButton(); };
-  pushUndo({
-    undo: () => { msg.attribute = oldAttribute; refresh(); },
-    redo: () => { msg.attribute = newAttribute; refresh(); }
+  // per-entry undo for attribute change
+  pushEntryAction(pendingEditAttrIndex, {
+    undo: () => { const m = state.bmgFile?.messages[pendingEditAttrIndex]; if (m) { m.attribute = oldAttribute; refresh(); } },
+    redo: () => { const m = state.bmgFile?.messages[pendingEditAttrIndex]; if (m) { m.attribute = newAttribute; refresh(); } }
   });
   closeEditAttrModal();
   renderEntries();

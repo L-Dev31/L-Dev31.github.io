@@ -1,7 +1,7 @@
 import { state, els } from './state.js';
 import { handleDownload, handleExportJson, handleImportJsonClick } from './io.js';
 import { downloadFolderZip } from './folder.js';
-import { undo, redo } from './ui.js';
+import { undo, redo, entryUndo, entryRedo } from './ui.js';
 
 export function initShortcuts() {
   document.addEventListener('keydown', (e) => {
@@ -43,20 +43,41 @@ export function initShortcuts() {
       return;
     }
 
-    // Ctrl+Z → Undo (respect native input undo)
+    // Ctrl+Z → Undo (per-entry when focus is inside an editable element)
     if (ctrl && !e.shiftKey && key === 'z') {
       const active = document.activeElement;
       const tag = active && active.tagName ? active.tagName.toLowerCase() : '';
       const isEditable = active && (tag === 'input' || tag === 'textarea' || active.isContentEditable);
-      // If an editable element is focused, let the browser handle undo (preserve native per-message undo)
-      if (isEditable) return;
+      if (isEditable) {
+        // try per-entry undo using dataset.index on the focused textarea/input
+        const idx = active && active.dataset && active.dataset.index ? parseInt(active.dataset.index, 10) : null;
+        if (idx !== null && !Number.isNaN(idx)) {
+          e.preventDefault();
+          entryUndo(idx);
+          return;
+        }
+        // fallback: let browser handle it
+        return;
+      }
       e.preventDefault();
       undo();
       return;
     }
 
-    // Ctrl+Shift+Z → Redo
+    // Ctrl+Shift+Z → Redo (per-entry when editable)
     if (ctrl && e.shiftKey && key === 'z') {
+      const active = document.activeElement;
+      const tag = active && active.tagName ? active.tagName.toLowerCase() : '';
+      const isEditable = active && (tag === 'input' || tag === 'textarea' || active.isContentEditable);
+      if (isEditable) {
+        const idx = active && active.dataset && active.dataset.index ? parseInt(active.dataset.index, 10) : null;
+        if (idx !== null && !Number.isNaN(idx)) {
+          e.preventDefault();
+          entryRedo(idx);
+          return;
+        }
+        return;
+      }
       e.preventDefault();
       redo();
       return;
