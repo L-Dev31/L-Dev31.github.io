@@ -16,8 +16,9 @@
     "sales": [
       {"date": "2025-11-11", "amount": 90.45, "shares": 7},
       {"date": "2025-11-12", "amount": 130.95, "shares": 10},
-      {"date": "2026-1-30", "amount": 71.35, "shares": 4},
-      {"date": "2026-2-11", "amount": 106.63, "shares": 6}
+      {"date": "2026-01-30", "amount": 71.35, "shares": 5},
+      {"date": "2026-02-11", "amount": 106.63, "shares": 6},
+      {"date": "2026-02-18", "amount": 160.00, "shares": 8}
     ],
     "api_mapping": {
       "yahoo": "AL2SI.PA",

@@ -5,7 +5,7 @@ import { isYahooTickerSuspended } from './api/yahoo-finance.js';
 import { TYPE_ORDER, TYPE_LABELS, TYPE_ICONS, hasTransactions, typeLabel, typeIcon } from './constants.js';
 
 const DEFAULT_TOTAL_INVESTMENT = 223.52;
-const DEFAULT_CASH_ACCOUNT = -0.15;
+const DEFAULT_CASH_ACCOUNT = 356.10;
 
 const setText = (id, value) => {
     const el = document.getElementById(id);
@@ -73,9 +73,12 @@ export function calculateStockValues(stock) {
 
 export function updatePortfolioSummary() {
     let totalShares = 0;
-    let totalInvestment = DEFAULT_TOTAL_INVESTMENT;
+    let totalInvestment = 0;
     let cashAccount = DEFAULT_CASH_ACCOUNT;
-    for (const pos of Object.values(positions)) totalShares += pos.shares || 0;
+    for (const pos of Object.values(positions)) {
+        totalShares += pos.shares || 0;
+        if (typeof pos.investment === 'number') totalInvestment += pos.investment;
+    }
     setText('total-shares', totalShares);
     setText('total-investment', totalInvestment.toFixed(2) + ' €');
     setText('cash-account', cashAccount.toFixed(2) + ' €');
