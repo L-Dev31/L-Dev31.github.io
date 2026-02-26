@@ -22,20 +22,7 @@ const App = (() => {
     };
 
     const setupHeaderAndText = () => {
-        const hourEl = document.getElementById('header-hour');
-        if (hourEl) {
-            const update = () => {
-                const now = new Date();
-                hourEl.textContent = new Intl.DateTimeFormat('en-US', {
-                    timeZone: 'Europe/Paris',
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true
-                }).format(now).toUpperCase();
-            };
-            update();
-            setInterval(update, 15000);
-        }
+        // Suppression de l'affichage de l'heure
 
         const titleEl = document.getElementById('site-title');
         if (titleEl && !titleEl.dataset._init) {
