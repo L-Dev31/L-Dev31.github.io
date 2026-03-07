@@ -5,7 +5,8 @@
       "title": "Portfolio",
       "description": "Showcasing the musical journey and works of Charlie McKenzie.",
       "creator": "Charlie McKenzie",
-      "category": "commission", 
+      "category": "web", 
+      "type": "commission",
       "path": "http://www.charliemckenziemusic.com/",
       "noPhone": false
     },
@@ -14,7 +15,8 @@
       "title": "L-DEV's BMG Editor",
       "description": "A comprehensive editor for BMG files, enhancing game modding workflows.",
       "creator": "Léo Tosku",
-      "category": "personal-project", 
+      "category": "web",
+      "type": "personal-project", 
       "path": "BMGE",
       "noPhone": false
     },
@@ -23,7 +25,8 @@
       "title": "Mix and Light (Redesign)",
       "description": "A modern redesign for Mix and Light, giving a new fresh look from ground up.",
       "creator": "Mix and Light",
-      "category": "commission", 
+      "category": "web",
+      "type": "commission", 
       "path": "https://www.ynov-sophia-projets.com/ymmersionB1325/",
       "noPhone": false
     },
@@ -32,7 +35,8 @@
       "title": "Les Saveurs de Provence (Redesign)",
       "description": "Bringing the flavors of Provence to life with a fresh web design.",
       "creator": "",
-      "category": "commission", 
+      "category": "web",
+      "type": "commission", 
       "path": "LSDP",
       "noPhone": false
     },
@@ -41,9 +45,41 @@
       "title": "SandFall Interactive (Redesign)",
       "description": "Website redesign for SandFall Interactive Studio, enhancing user experience and brand identity.",
       "creator": "SandFall Interactive",
-      "category": "commission", 
+      "category": "web",
+      "type": "commission", 
       "path": "SandFall",
       "noPhone": false
+    },
+
+
+
+    {
+      "id": "mego",
+      "title": "Megoteur",
+      "creator": "Remi Astier",
+      "category": "featured",
+      "path": "https://megoteur.com/"
+    },
+    {
+      "id": "feat-mxal",
+      "title": "Mix and Light",
+      "creator": "Mix and Light",
+      "category": "featured",
+      "path": "https://megoteur.com/"
+    },
+    {
+      "id": "ogfm",
+      "title": "L'Oreille qui Gratte",
+      "creator": null,
+      "category": "featured",
+      "path": "https://megoteur.com/"
+    },
+    {
+      "id": "feat-lsdp",
+      "title": "Les Saveurs de Provence",
+      "creator": null,
+      "category": "featured",
+      "path": "https://megoteur.com/"
     }
   ]
 }

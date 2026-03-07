@@ -26,6 +26,49 @@ const App = (() => {
         }
     };
 
+    const splitIntoLines = el => {
+        if (!el || el.dataset._split) return;
+        el.dataset._split = '1';
+
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        const textNodes = [];
+        while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+        textNodes.forEach(node => {
+            const parts = node.textContent.split(/(\s+)/);
+            const frag = document.createDocumentFragment();
+            parts.forEach(part => {
+                if (!part) return;
+                if (/^\s+$/.test(part)) {
+                    frag.appendChild(document.createTextNode(part));
+                } else {
+                    const span = document.createElement('span');
+                    span.className = 'split-word';
+                    span.textContent = part;
+                    frag.appendChild(span);
+                }
+            });
+            node.parentNode.replaceChild(frag, node);
+        });
+
+        const words = el.querySelectorAll('.split-word');
+        if (!words.length) return;
+
+        let lineIndex = 0;
+        let lastTop = words[0].getBoundingClientRect().top;
+
+        words.forEach(w => {
+            const top = w.getBoundingClientRect().top;
+            if (Math.abs(top - lastTop) > 2) {
+                lineIndex++;
+                lastTop = top;
+            }
+            w.style.transitionDelay = `${lineIndex * 0.12}s`;
+        });
+
+        el.classList.add('split-animated');
+    };
+
     const fetchJson = path => {
         return fetch(path, { cache: 'no-store' }).then(response => {
             if (!response.ok) {
@@ -82,6 +125,7 @@ const App = (() => {
 
         const aboutText = document.getElementById('split-text');
         if (aboutText) {
+            splitIntoLines(aboutText);
             observe(aboutText);
         }
 
@@ -89,10 +133,11 @@ const App = (() => {
             const h3 = storyText.querySelector('h3');
             const para = storyText.querySelector('.story-paragraph');
             if (h3) {
+                splitIntoLines(h3);
                 observe(h3);
             }
             if (para) {
-                para.style.transitionDelay = '0.15s';
+                splitIntoLines(para);
                 observe(para);
             }
         });
@@ -125,61 +170,62 @@ const App = (() => {
         });
     };
 
+    /* ── CTA Cursor ──
+     *  Usage:  CTACursor.attach(element)   — adds hover see-more effect
+     *          CTACursor.detach(element)   — removes it
+     *          CTACursor.show() / .hide()  — manual control
+     *          CTACursor.move(x, y)        — update position
+     */
+    const CTACursor = (() => {
+        const el = document.querySelector('.cta-cursor');
+        if (!el || isMobile || prefersReducedMotion) return null;
+
+        let x = 0, y = 0, tx = 0, ty = 0;
+        const defaultCursor = () => document.querySelector('.cursor');
+
+        (function loop() {
+            x += (tx - x) * 0.15;
+            y += (ty - y) * 0.15;
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+            requestAnimationFrame(loop);
+        })();
+
+        let customText = 'See more';
+        const textEl = el.querySelector('.cta-cursor-text');
+        
+        const api = {
+            show()  { el.classList.add('active'); const c = defaultCursor(); if (c) c.style.opacity = '0'; },
+            hide()  { el.classList.remove('active'); const c = defaultCursor(); if (c) c.style.opacity = '1'; },
+            move(cx, cy) { tx = cx; ty = cy; },
+            setText(text) { customText = text; if (textEl) textEl.textContent = text; },
+            attach(target, text) {
+                target.addEventListener('mouseenter', e => { if (text) api.setText(text); api.move(e.clientX, e.clientY); api.show(); });
+                target.addEventListener('mousemove',  e => { api.move(e.clientX, e.clientY); });
+                target.addEventListener('mouseleave', () => { api.hide(); });
+            },
+            detach(target) {
+                target.replaceWith(target.cloneNode(true));
+            }
+        };
+        return api;
+    })();
+
     const setupFeaturedProjects = () => {
         const list = document.querySelector('.featured-list');
-        if (!list) {
-            return;
-        }
+        const previewContainer = document.querySelector('.project-preview-container');
+        const previewImage = document.querySelector('.project-preview-img');
+        const previewDesc = document.querySelector('.project-preview-desc');
+        
+        if (!list || !previewContainer || !previewImage || !previewDesc) return;
 
-        let previewContainer = null;
-        let previewImage = null;
-        let previewDesc = null;
-        let targetX = 0;
-        let targetY = 0;
-        let currentX = 0;
-        let currentY = 0;
-        let animationFrame = null;
         let projects = [];
-
-        const filters = {
-            all: document.getElementById('everything'),
-            personal: document.getElementById('personal-project'),
-            commissions: document.getElementById('commissions'),
-            mobileAll: document.getElementById('everything-mobile')
-        };
-
-        const setActiveFilter = filterName => {
-            [filters.all, filters.personal, filters.commissions].forEach(link => {
-                if (!link) {
-                    return;
-                }
-                link.classList.toggle('active', link.dataset.filter === filterName);
-            });
-        };
-
-        const ensurePreview = () => {
-            if (previewContainer || isMobile || prefersReducedMotion) {
-                return;
-            }
-            previewContainer = document.createElement('div');
-            previewContainer.className = 'project-preview-container';
-
-            previewImage = document.createElement('img');
-            previewImage.className = 'project-preview-img';
-            previewContainer.appendChild(previewImage);
-
-            previewDesc = document.createElement('div');
-            previewDesc.className = 'project-preview-desc';
-            previewContainer.appendChild(previewDesc);
-
-            document.body.appendChild(previewContainer);
-        };
+        let targetX = 0, targetY = 0;
+        let currentX = 0, currentY = 0;
+        let animationFrame = null;
 
         const animatePreview = () => {
-            if (!previewContainer || previewContainer.style.display !== 'flex') {
-                return;
-            }
-
+            if (previewContainer.style.display !== 'flex') return;
             currentX += (targetX - currentX) * 0.1;
             currentY += (targetY - currentY) * 0.1;
             previewContainer.style.left = `${currentX}px`;
@@ -188,30 +234,21 @@ const App = (() => {
         };
 
         const showPreview = (imageUrl, description, x, y) => {
-            ensurePreview();
-            if (!previewContainer || !previewImage || !previewDesc) {
-                return;
-            }
-
+            if (isMobile || prefersReducedMotion) return;
             previewImage.src = imageUrl;
             previewDesc.textContent = description || '';
             previewContainer.style.display = 'flex';
-
+            
             const size = (20 * window.innerHeight) / 100;
             const offset = (5 * window.innerHeight) / 100;
-
             targetX = x + offset;
             targetY = y - size / 2;
-
-            if (!animationFrame) {
-                animatePreview();
-            }
+            
+            if (!animationFrame) animatePreview();
         };
 
         const hidePreview = () => {
-            if (previewContainer) {
-                previewContainer.style.display = 'none';
-            }
+            previewContainer.style.display = 'none';
             cancelAnimationFrame(animationFrame);
             animationFrame = null;
         };
@@ -232,69 +269,112 @@ const App = (() => {
             }
 
             const imagePath = `Elements/image/${project.id}-banner.png`;
-            link.addEventListener('mouseenter', event => {
-                showPreview(imagePath, project.description, event.clientX, event.clientY);
-                document.querySelector('.cursor')?.classList.add('cursor--small');
+            link.addEventListener('mouseenter', e => {
+                showPreview(imagePath, project.description, e.clientX, e.clientY);
             });
-            link.addEventListener('mousemove', event => {
-                showPreview(imagePath, project.description, event.clientX, event.clientY);
+            link.addEventListener('mousemove', e => {
+                showPreview(imagePath, project.description, e.clientX, e.clientY);
             });
             link.addEventListener('mouseleave', () => {
                 hidePreview();
-                document.querySelector('.cursor')?.classList.remove('cursor--small');
             });
 
             return link;
         };
 
-        const renderProjects = filterName => {
-            setActiveFilter(filterName);
-
-            const allowed = projects.filter(project => {
-                if (isMobile && project.noPhone === true) {
-                    return false;
-                }
-                if (filterName === 'all') {
-                    return true;
-                }
-                return project.category === filterName;
-            });
+        const renderProjects = () => {
+            const webProjects = projects.filter(p => p.category === 'web');
+            const allowed = webProjects.filter(p => !(isMobile && p.noPhone === true));
 
             list.innerHTML = '';
             if (!allowed.length) {
-                list.innerHTML = '<p class="projects-empty">No project available for this filter.</p>';
+                list.innerHTML = '<p class="projects-empty">No project available.</p>';
                 return;
             }
-
-            allowed.forEach(project => {
-                list.appendChild(buildProjectLink(project));
-            });
+            allowed.forEach(project => list.appendChild(buildProjectLink(project)));
         };
-
-        const bindFilter = (el, filterName) => {
-            if (!el) {
-                return;
-            }
-            el.dataset.filter = filterName;
-            el.addEventListener('click', event => {
-                event.preventDefault();
-                renderProjects(filterName);
-            });
-        };
-
-        bindFilter(filters.all, 'all');
-        bindFilter(filters.personal, 'personal-project');
-        bindFilter(filters.commissions, 'commission');
-        bindFilter(filters.mobileAll, 'all');
 
         fetchJson('projects.json')
             .then(data => {
                 projects = Array.isArray(data.projects) ? data.projects : [];
-                renderProjects('all');
+                renderProjects();
             })
             .catch(error => {
                 console.error('Failed to load projects:', error);
                 list.innerHTML = '<p class="projects-empty">Unable to load projects for now.</p>';
+            });
+    };
+
+    const setupBentoProjects = () => {
+        const bentoGrid = document.querySelector('.bento-grid');
+        if (!bentoGrid) return;
+
+        /* ── Build bento items ── */
+        const buildBentoItem = project => {
+            const link = document.createElement('a');
+            link.className = 'bento-item';
+            if (project.category === 'featured') {
+                link.classList.add('featured');
+            }
+            link.href = project.path.startsWith('http') ? project.path : `${project.path}`;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+
+            const img = document.createElement('img');
+            img.src = project.image || (project.category === 'featured' ? `Elements/image/${project.id}.jpg` : `Elements/image/${project.id}-banner.png`);
+            img.alt = project.title;
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            if (project.category !== 'featured') {
+                img.setAttribute('data-parallax-speed', '70');
+            }
+            link.appendChild(img);
+
+            // Only add info section for web projects
+            if (project.category !== 'featured') {
+                const info = document.createElement('div');
+                info.className = 'bento-item-info';
+
+                const title = document.createElement('div');
+                title.className = 'bento-item-title';
+                title.textContent = project.title;
+                info.appendChild(title);
+
+                if (project.creator) {
+                    const creator = document.createElement('div');
+                    creator.className = 'bento-item-creator';
+                    creator.textContent = `by ${project.creator}`;
+                    info.appendChild(creator);
+                }
+
+                link.appendChild(info);
+            }
+
+            // Attach CTA cursor with custom text for featured projects
+            if (CTACursor) {
+                if (project.category === 'featured') {
+                    CTACursor.attach(link, project.title);
+                } else {
+                    CTACursor.attach(link);
+                }
+            }
+
+            return link;
+        };
+
+        fetchJson('projects.json')
+            .then(data => {
+                const all = Array.isArray(data.projects) ? data.projects : [];
+                const featured = all.filter(p => p.category === 'featured');
+                if (!featured.length) {
+                    bentoGrid.innerHTML = '<p class="projects-empty">No featured projects yet.</p>';
+                } else {
+                    featured.forEach(p => bentoGrid.appendChild(buildBentoItem(p)));
+                }
+            })
+            .catch(err => {
+                console.error('Failed to load featured projects:', err);
+                bentoGrid.innerHTML = '<p class="projects-empty">Unable to load featured projects.</p>';
             });
     };
 
@@ -365,13 +445,25 @@ const App = (() => {
             let target = window.scrollY;
             let current = window.scrollY;
             const ease = 0.1;
-            let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+
+            const getMaxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
 
             const onWheel = event => {
                 event.preventDefault();
                 target += Math.sign(event.deltaY) * Math.min(Math.abs(event.deltaY), 100) * 0.75;
-                target = Math.max(0, Math.min(target, maxScroll));
+                target = Math.max(0, Math.min(target, getMaxScroll()));
             };
+
+            // Intercept anchor clicks so the smooth scroll knows where to go
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', e => {
+                    const id = anchor.getAttribute('href').slice(1);
+                    const dest = document.getElementById(id);
+                    if (!dest) return;
+                    e.preventDefault();
+                    target = Math.max(0, Math.min(dest.getBoundingClientRect().top + window.scrollY, getMaxScroll()));
+                });
+            });
 
             const updateSmoothScroll = () => {
                 current += (target - current) * ease;
@@ -383,9 +475,6 @@ const App = (() => {
             };
 
             window.addEventListener('wheel', onWheel, { passive: false });
-            window.addEventListener('resize', () => {
-                maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-            });
             updateSmoothScroll();
         }
     };
@@ -395,6 +484,7 @@ const App = (() => {
         setupAge();
         setupCursor();
         setupFeaturedProjects();
+        setupBentoProjects();
         setupScrollEffects();
         setupHeaderAndText();
     };
