@@ -73,7 +73,7 @@ a, button, input, [onclick] {
     inset: -50%;
     width: 200%;
     height: 200%;
-    background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
+    background: transparent url('https://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
     animation: bg-animation .2s infinite;
     pointer-events: none;
     z-index: 1000;
@@ -153,6 +153,10 @@ a, button, input, [onclick] {
 }
 
 .link:hover {
+    background-color: var(--white-06);
+}
+
+.link.active {
     background-color: var(--white-06);
 }
 
@@ -279,8 +283,7 @@ section {
     color: var(--white);
 }
 
-.about-me-text .text-line {
-    display: block;
+.about-me-text {
     opacity: 0;
     transform: translateY(30px) skewY(2deg);
     filter: blur(10px);
@@ -288,10 +291,10 @@ section {
     will-change: transform, opacity, filter;
 }
 
-.about-me-text .text-line.visible {
+.about-me-text.visible {
     opacity: 1;
-    transform: translateY(0) skewY(0);
-    filter: blur(0);
+    transform: none;
+    filter: none;
 }
 
 .about-me-image {
@@ -355,6 +358,13 @@ section {
     gap: 0;
     width: 100%;
     max-width: 700px;
+}
+
+.projects-empty {
+    font-size: 2.2vh;
+    color: var(--muted);
+    text-align: center;
+    padding: 4vh 2vh;
 }
 
 .featured-project {
@@ -429,6 +439,49 @@ section {
     font-weight: 500;
 }
 
+.experience-list {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    padding: 0 5%;
+    box-sizing: border-box;
+}
+
+.company-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid var(--border-strong);
+    background: var(--glass-05);
+}
+
+.company-logo {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.company-text {
+    min-width: 0;
+}
+
+.company-name {
+    margin: 0;
+    color: var(--white);
+    font-size: 1.05rem;
+    font-family: 'Thin', sans-serif;
+}
+
+.company-meta {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
 .my-story-section {
     width: 100%;
     padding: 10vh 0;
@@ -477,11 +530,8 @@ section {
     text-wrap: balance;
 }
 
-.about-me-text .text-line,
-.story-text .story-paragraph .text-line,
-.story-text h3 .text-line {
-    display: block;
-    width: 100%;
+.story-text .story-paragraph,
+.story-text h3 {
     opacity: 0;
     transform: translateY(30px) skewY(2deg);
     filter: blur(10px);
@@ -489,22 +539,11 @@ section {
     will-change: transform, opacity, filter;
 }
 
-.about-me-text .text-line.last-line,
-.story-text .story-paragraph .text-line.last-line,
-.story-text h3 .text-line.last-line {
-    text-align-last: left;
-}
-
-.story-container > .story-row:nth-child(odd) .story-text .text-line.last-line {
-    text-align-last: right;
-}
-
-.about-me-text .text-line.visible,
-.story-text .story-paragraph .text-line.visible,
-.story-text h3 .text-line.visible {
+.story-text .story-paragraph.visible,
+.story-text h3.visible {
     opacity: 1;
-    transform: translateY(0) skewY(0);
-    filter: blur(0);
+    transform: none;
+    filter: none;
 }
 
 .story-container > .story-row:nth-child(odd) .story-text {
@@ -658,4 +697,19 @@ section {
 .social-labeled-links i {
     width: 20px; 
     text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .noise {
+        animation: none !important;
+    }
 }

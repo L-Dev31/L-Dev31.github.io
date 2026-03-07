@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>L-Dev31</title>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="Elements/image/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -23,9 +26,9 @@
         <a href="#" class="link" id="commissions">Commissions</a>
         <a href="info.html" class="link">About</a>
 
-        <a href="#" class="link-mobile" id="everything-mobile"><span class="material-symbols-outlined">dashboard</span></a>
-        <a href="info.html" class="link-mobile"><span class="material-symbols-outlined">info</span></a>
-        <a href="Elements/image/CV.pdf" class="link-mobile" target="_blank"><span class="material-symbols-outlined">Description</span></a>
+        <a href="#" class="link-mobile" id="everything-mobile" aria-label="All projects"><span class="material-symbols-outlined">dashboard</span></a>
+        <a href="info.html" class="link-mobile" aria-label="About"><span class="material-symbols-outlined">info</span></a>
+        <a href="Elements/image/CV.pdf" class="link-mobile" target="_blank" rel="noopener noreferrer" aria-label="Open resume PDF"><span class="material-symbols-outlined">description</span></a>
     </div>
 </div>
 
@@ -45,15 +48,13 @@
 <section id="about-me" class="about-me-section">
     <div class="about-me-container">
         <div class="about-me-text" id="split-text">
-            As a <strong>graphic designer</strong>, I help brands and projects create unique digital experiences where <strong>creativity</strong>, <strong>precision</strong>, and <strong>functionality</strong> come together to make a lasting impact.
+            As a <strong>graphic designer</strong> with an <strong>innovative</strong> mindset, I help brands and projects build digital experiences where <strong>creativity</strong>, <strong>bold ideas</strong>, and <strong>functionality</strong> come together to make a lasting impact.
         </div>
         <div class="about-me-image" data-parallax-speed="95">
-            <img src="Elements/image/LéoTosku.png" data-parallax-speed="70" alt="Léo Tosku portrait" />
+            <img src="Elements/image/LéoTosku.png" data-parallax-speed="70" alt="Léo Tosku portrait" loading="lazy" decoding="async" />
         </div>
     </div>
 </section>
-
-<div class="experience-list" id="companies-logos"></div>
 
 <section id="web-projects" class="web-projects-section">
     <h2 class="title">Website Projects</h2>
@@ -72,7 +73,7 @@
                 <div class="story-paragraph">Born in Grasse to Albanian and Dutch parents. Inspired by my grandmother, I taught myself art and coding from age 10.</div>
             </div>
             <div class="story-image">
-                <img src="Elements/image/story1.jpg" data-parallax-speed="90" alt="Caribbean Era">
+                <img src="Elements/image/story1.jpg" data-parallax-speed="90" alt="Caribbean Era" loading="lazy" decoding="async">
             </div>
         </div>
 
@@ -82,7 +83,7 @@
                 <div class="story-paragraph">At age 14, I moved to Guadeloupe. By 17, I founded "Rayon," a community marketplace for buying and selling products and real estate across the French Caribbean islands, applying my self-taught skills to real-world business.</div>
             </div>
             <div class="story-image">
-                <img src="Elements/image/story2.jpg" data-parallax-speed="90" alt="Back to Cannes">
+                <img src="Elements/image/story2.jpg" data-parallax-speed="90" alt="Back to Cannes" loading="lazy" decoding="async">
             </div>
         </div>
 
@@ -92,7 +93,7 @@
                 <div class="story-paragraph">In 2025, I decided to return to the French Riviera to formalize my expertise. I am currently pursuing my studies in Digital Project Management and Graphic Design at Sophia Ynov Campus.</div>
             </div>
             <div class="story-image">
-                <img src="Elements/image/story3.jpg" data-parallax-speed="90" alt="Graphic Design">
+                <img src="Elements/image/story3.jpg" data-parallax-speed="90" alt="Graphic Design" loading="lazy" decoding="async">
             </div>
         </div>
     </div>
@@ -110,7 +111,7 @@
             <h3>Navigation</h3>
             <ul class="footer-links">
                 <li><a href="#header">Home</a></li>
-                <li><a href="#featured-projects">Work</a></li>
+                <li><a href="#web-projects">Work</a></li>
                 <li><a href="#about-me">About</a></li>
                 <li><a href="info.html">Contact</a></li>
             </ul>
@@ -119,9 +120,9 @@
         <div class="footer-col">
             <h3>Socials</h3>
             <ul class="footer-links social-labeled-links">
-                <li><a href="#" target="_blank"><i class="fab fa-instagram"></i> <span>Instagram</span></a></li>
-                <li><a href="#" target="_blank"><i class="fab fa-linkedin"></i> <span>LinkedIn</span></a></li>
-                <li><a href="#" target="_blank"><i class="fab fa-github"></i> <span>GitHub</span></a></li>
+                <li><a href="#"><i class="fab fa-instagram"></i> <span>Instagram</span></a></li>
+                <li><a href="#"><i class="fab fa-linkedin"></i> <span>LinkedIn</span></a></li>
+                <li><a href="#"><i class="fab fa-github"></i> <span>GitHub</span></a></li>
             </ul>
         </div>
 
@@ -135,6 +136,6 @@
     </div>
 </section>
 
-<script src="script.js"></script>
+<script src="script.js" defer></script>
 </body>
 </html>
