@@ -49,7 +49,7 @@
         {
           "name": "Default",
           "colorImage": "watches/veloce2/default.png",
-          "image": "watches/veloce2/1.png"
+          "image": "watches/veloce2/default.png"
         }
       ]
     },
@@ -64,7 +64,7 @@
         {
           "name": "Default",
           "colorImage": "watches/gtfrance/default.png",
-          "image": "watches/gtfrance/1.png"
+          "image": "watches/gtfrance/default.png"
         }
       ]
     },
@@ -80,7 +80,7 @@
         {
           "name": "Default",
           "colorImage": "watches/heritage/default.png",
-          "image": "watches/heritage/1.png"
+          "image": "watches/heritage/default.png"
         }
       ]
     }

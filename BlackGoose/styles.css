@@ -1,3 +1,12 @@
+
+@keyframes band-scroll {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 200vw 0;
+    }
+}
 @font-face {
     font-family: 'Remarcle';
     src: url('fonts/Remarcle.ttf') format('truetype');
@@ -84,9 +93,11 @@ section {
     padding-block: 100px;
 }
 
-section:not(.no-effect):not(:first-of-type) {
-    margin-top: 750px;
-    min-height: 100vh;
+/* Scroll runway only between consecutive sticky panels.
+   The last sticky panel before non-sticky content gets NO extra margin,
+   preventing visible empty space between collection and press sections. */
+section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect)) {
+    margin-bottom: 750px;
 }
 
 /* Classe commune pour toutes les sections avec effets sticky + darkening */
@@ -95,15 +106,18 @@ section:not(.no-effect):not(:first-of-type) {
     top: var(--sticky-top, 0);
     --panel-dim: 0;
     --sticky-top: 0;
-    --panel-scale: 2;
+    --panel-scale: 1;
     transform: scale(var(--panel-scale));
     transform-origin: top center;
     transition: transform 0.25s ease-out;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .sticky-panel.no-transform {
     --panel-scale: 1;
     transform: none !important;
+    will-change: auto;
 }
 
 .sticky-panel.is-non-sticky {
@@ -129,15 +143,6 @@ section:not(.no-effect):not(:first-of-type) {
     z-index: 10;
     transition: background 0.12s linear;
 }
-
-.dimming-disabled .sticky-panel {
-    --panel-dim: 0 !important;
-    --panel-scale: 1 !important;
-}
-
-.dimming-disabled .sticky-panel::before {
-    background: rgba(0, 0, 0, 0) !important;
-}
 .sticky-panel.hidden::before {
     background: rgba(0, 0, 0, 0);
 }
@@ -147,7 +152,7 @@ section:not(.no-effect):not(:first-of-type) {
 }
 
 .presentation-panel {
-    z-index: 2;
+    z-index: 3;
     min-height: 100vh;
     background: #333;
     display: flex;
@@ -159,15 +164,11 @@ section:not(.no-effect):not(:first-of-type) {
    ===================== */
 
 .new-product-section {
-    background:linear-gradient(to top right, #bbb, white, white, #bbb);
+    background: linear-gradient(to top right, #bbb, white, white, #bbb);
     min-height: 100vh;
     display: flex;
     align-items: center;
     padding: 100px 0;
-    position: sticky;
-    top: var(--sticky-top, 0);
-    --panel-dim: 0;
-    --sticky-top: 0;
     z-index: 2;
     overflow: hidden;
 }
@@ -175,6 +176,8 @@ section:not(.no-effect):not(:first-of-type) {
 .new-product-section::after {
     content: attr(data-background-text);
     position: absolute;
+    top: 0;
+    bottom: 0;
     right: -50px;
     display: flex;
     align-items: center;
@@ -272,8 +275,9 @@ section:not(.no-effect):not(:first-of-type) {
     width: 100vw;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--bordeaux-color);
+    background: linear-gradient(100deg, var(--bordeaux-color), var(--bordeaux-hover), var(--bordeaux-color));
     z-index: 0;
+    animation: band-scroll 5s linear infinite;
 }
 
 .new-product-title-band .new-product-title {
@@ -307,12 +311,14 @@ section:not(.no-effect):not(:first-of-type) {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
 }
 
-.new-product-video iframe {
+.new-product-video iframe,
+.new-product-video video {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    object-fit: cover;
 }
 
 @media (max-width: 1024px) {
@@ -348,20 +354,22 @@ section:not(.no-effect):not(:first-of-type) {
 }
 
 /* =====================
-   PRESENTATION PANEL
+   COLLECTION PANEL
    ===================== */
 
 .collection-panel {
-    z-index: 3;
+    z-index: 4;
     min-height: 100vh;
     background: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding: clamp(36px, 6vh, 72px) 0;
 }
 
 .collection-panel .main-header {
-    margin-bottom: 30px;
+    margin-bottom: 18px;
+    padding: 10px 12px;
 }
 
 .carousel-status {
@@ -380,12 +388,12 @@ section:not(.no-effect):not(:first-of-type) {
 
 .main-header {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 28px;
     max-width: 800px;
     flex-shrink: 0;
     margin-left: auto;
     margin-right: auto;
-    padding: 20px;
+    padding: 14px 16px;
 }
 
 .hero {
@@ -504,13 +512,13 @@ section:not(.no-effect):not(:first-of-type) {
 
 .main-title {
     font-family: 'Nunito', sans-serif;
-    font-size: 3rem;
+    font-size: 2.4rem;
     font-weight: 100;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     line-height: 1.2;
     color: #333;
-    margin-bottom: 30px;
+    margin-bottom: 14px;
 }
 
 .hero-subtitle {
@@ -529,12 +537,18 @@ section:not(.no-effect):not(:first-of-type) {
     padding: 12px 30px;
     font-family: 'Nunito', sans-serif;
     font-size: 0.9rem;
-    font-weight: 300;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
     cursor: pointer;
-    font-weight: bold;
     border-radius: 50px;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+}
+
+.collection-panel .cta-button {
+    padding: 9px 22px;
+    font-size: 0.85rem;
+    border-width: 1.5px;
 }
 
 .cta-button:hover {
@@ -919,12 +933,12 @@ section:not(.no-effect):not(:first-of-type) {
     }
 
     .main-header {
-        margin-bottom: 30px;
-        padding: 16px;
+        margin-bottom: 18px;
+        padding: 12px 14px;
     }
 
     .main-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
 
     .brand {
@@ -1000,7 +1014,8 @@ section:not(.no-effect):not(:first-of-type) {
     background: var(--bordeaux-color);
     color: white;
     position: relative;
-    z-index: 4;
+    z-index: 5;
+    margin-top: 500px;
 }
 
 .press-inner {
@@ -1117,7 +1132,7 @@ section:not(.no-effect):not(:first-of-type) {
     color: #e5e5e5;
     padding: 80px 0 0;
     position: relative;
-    z-index: 5;
+    z-index: 6;
     transition: opacity 0.2s ease, visibility 0s linear;
 }
 
