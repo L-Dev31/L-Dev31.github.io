@@ -123,7 +123,7 @@ if (typeof ScheduleApp === 'undefined') {
 
         async loadScheduleData() {
             try {
-                const response = await fetch('schedule.json');
+                const response = await fetch('Datas/schedule.json');
                 const data = await response.json();
                 // Assign soft pastel color names to tasks, full saturation only for legend
                 this.appointments = (data.appointments || []).map(apt => {
