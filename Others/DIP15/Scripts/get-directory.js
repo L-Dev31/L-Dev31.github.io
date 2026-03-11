@@ -25,7 +25,7 @@ class DirectoryFetcher {
         this.fileStructure = {
             'Home': { folders: ['Documents', 'Music'], apps: ['app5', 'app9'] },
             'Documents': { files: ['credit.txt'] },
-            'Music': { files: ['song.wav', 'sound-of-a-virtuose.mp3.mp3'] }
+            'Music': { files: ['song.wav', 'sound-of-a-virtuose.mp3'] }
         };
         this.appsData = null;
     }

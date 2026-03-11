@@ -34,7 +34,7 @@
         </button>
       </div>
       <button class="back-to-desktop" id="backToDesktop">
-        <i class="fas fa-arrow-left"></i> Back to Desktop
+        <i class="fas fa-arrow-left"></i> Return
       </button>
     </div>
   </div>
@@ -112,6 +112,10 @@
         loginScreen.classList.remove('active');
       }
       document.body.classList.remove('blur-mode');
+      loginShown = false;
+      setTimeout(() => {
+        document.addEventListener('click', showLoginScreen, { once: true });
+      }, 10);
     }
 
     function handleLogin() {
@@ -159,12 +163,13 @@
         });
       }
 
-      // If user was previously authenticated (came from logout), show back button
+      // Show back button for development/testing, or if authenticated
       const backBtn = document.getElementById('backToDesktop');
-      if (sessionStorage.getItem('authenticated') === 'true' && backBtn) {
+      if (backBtn) {
         backBtn.style.display = 'inline-block';
-        backBtn.addEventListener('click', () => {
-          window.location.href = 'desktop.html';
+        backBtn.addEventListener('click', (e) => {
+          e.stopPropagation(); // prevent immediate click propagation
+          hideLoginScreen();
         });
       }
     });

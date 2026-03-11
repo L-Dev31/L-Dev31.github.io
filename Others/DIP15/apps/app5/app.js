@@ -173,11 +173,14 @@ class PrismApp {
                 this.audio.crossOrigin = 'anonymous';
                 this.audio.src = encodeURI(filePath);
 
-                this.currentTrack = {
+                const existingTrack = this.playlist.find(track => track.path === filePath);
+                
+                this.currentTrack = existingTrack || {
                     name: fileName,
                     path: filePath,
                     title: fileName.replace(/\.[^/.]+$/, ""),
-                    artist: "Unknown Artist"
+                    artist: "Unknown Artist",
+                    cover: null
                 };
 
                 this.setupAudioEvents();
