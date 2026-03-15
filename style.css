@@ -127,6 +127,7 @@ a, button, input, [onclick] {
     font-size: 3vh;
     color: var(--white);
     mix-blend-mode: difference;
+    pointer-events: auto;
 }
 
 .brand {
