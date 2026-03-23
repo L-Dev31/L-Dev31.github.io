@@ -268,7 +268,7 @@ const App = (() => {
                 link.appendChild(author);
             }
 
-            const imagePath = `Elements/image/${project.id}-banner.png`;
+            const imagePath = `Elements/image/website/${project.id}.png`;
             link.addEventListener('mouseenter', e => {
                 showPreview(imagePath, project.description, e.clientX, e.clientY);
             });
@@ -321,7 +321,7 @@ const App = (() => {
             link.rel = 'noopener noreferrer';
 
             const img = document.createElement('img');
-            img.src = project.image || (project.category === 'featured' ? `Elements/image/${project.id}.jpg` : `Elements/image/${project.id}-banner.png`);
+            img.src = project.image || (project.category === 'featured' ? `Elements/image/project/${project.id}.png` : `Elements/image/${project.id}-banner.png`);
             img.alt = project.title;
             img.loading = 'lazy';
             img.decoding = 'async';
@@ -441,42 +441,7 @@ const App = (() => {
             update();
         }
 
-        if (!isMobile && !prefersReducedMotion) {
-            let target = window.scrollY;
-            let current = window.scrollY;
-            const ease = 0.1;
-
-            const getMaxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
-
-            const onWheel = event => {
-                event.preventDefault();
-                target += Math.sign(event.deltaY) * Math.min(Math.abs(event.deltaY), 100) * 0.75;
-                target = Math.max(0, Math.min(target, getMaxScroll()));
-            };
-
-            // Intercept anchor clicks so the smooth scroll knows where to go
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', e => {
-                    const id = anchor.getAttribute('href').slice(1);
-                    const dest = document.getElementById(id);
-                    if (!dest) return;
-                    e.preventDefault();
-                    target = Math.max(0, Math.min(dest.getBoundingClientRect().top + window.scrollY, getMaxScroll()));
-                });
-            });
-
-            const updateSmoothScroll = () => {
-                current += (target - current) * ease;
-                if (Math.abs(target - current) < 0.1) {
-                    current = target;
-                }
-                window.scrollTo(0, current);
-                requestAnimationFrame(updateSmoothScroll);
-            };
-
-            window.addEventListener('wheel', onWheel, { passive: false });
-            updateSmoothScroll();
-        }
+        // Smooth scroll custom désactivé pour améliorer la fluidité du scroll global.
     };
 
 
