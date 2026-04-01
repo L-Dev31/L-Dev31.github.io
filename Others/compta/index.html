@@ -102,28 +102,12 @@
           
         </div>
 
-        <div style="display:flex;gap:12px;align-items:end;">
-          <div style="flex:2;display:flex;flex-direction:column;gap:6px;">
-            <label for="service_type">Type de séance <span class="requiredStar" aria-hidden="true">*</span></label>
-            <select id="service_type" aria-label="Type de séance" required>
-              <option value="" disabled selected>Sélectionner un type de séance…</option>
-              <option value="70">Séance d'ostéopathie (45min) — 70€</option>
-              <option value="70">Massage bien-être (60min) — 70€</option>
-              <option value="90">Massage bien-être (90min) — 90€</option>
-              <option value="100">Pack gommage + massage — 100€</option>
-              <option value="autre">Autre…</option>
-            </select>
-            <div id="autre_seance_zone" style="display:none; margin-top:8px; gap:8px; align-items:end;">
-              <input type="text" id="autre_seance_desc" placeholder="Description de la séance (optionnel)" style="flex:2;" />
-              <input type="number" id="autre_seance_prix" placeholder="Prix (€) (optionnel)" min="0" step="0.01" style="flex:1;" />
-            </div>
-          
-          </div>
-          <div style="width:12px"></div>
-          <div style="width:140px;display:flex;flex-direction:column;gap:6px;">
-            <label for="service_quantity">Quantité <span class="requiredStar" aria-hidden="true">*</span></label>
-            <input type="number" id="service_quantity" min="1" step="1" value="1" required style="padding:10px;border:1px solid #e6efe6;border-radius:6px" />
-          </div>
+        <div style="display:flex;flex-direction:column;gap:12px;" id="servicesContainer">
+          <!-- Lignes de prestation insérées dynamiquement via JS -->
+        </div>
+
+        <div style="margin-top:8px;">
+          <button type="button" id="addServiceLineBtn" class="secondary" style="font-size:14px;padding:6px 12px;"><i class="fa-solid fa-plus"></i> Ajouter une prestation</button>
         </div>
 
         <div class="full totalRow" style="text-align:right">

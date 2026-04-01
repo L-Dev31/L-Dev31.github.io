@@ -258,23 +258,45 @@ button:disabled, .controls button:disabled { opacity: 0.6; cursor: not-allowed; 
         align-items: stretch;
     }
 
-    .grid > div[style*="gap"]:has(#service_quantity) {
+    .service-line > div[style*="display:flex"] {
         flex-direction: row !important;
         align-items: flex-end !important;
         gap: 8px !important;
         flex-wrap: nowrap !important;
     }
 
-    .grid > div[style*="gap"]:has(#service_quantity) > div[style*="width:140px"] {
+    .service-line > div[style*="display:flex"] > div[style*="min-width:210px"] {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
         width: auto !important;
-        flex: 0 0 110px !important;
-        min-width: 80px !important;
     }
 
-    #service_quantity {
-        max-width: 110px;
-        width: 100%;
-        box-sizing: border-box;
+    .service-line > div[style*="display:flex"] > div[style*="width:100px"] {
+        flex: 0 0 88px !important;
+        width: 88px !important;
+        min-width: 88px !important;
+    }
+
+    .service-line .remove-service-line-btn {
+        flex: 0 0 var(--touch-size) !important;
+        width: var(--touch-size) !important;
+        min-width: var(--touch-size) !important;
+        min-height: var(--touch-size) !important;
+        padding: 0 !important;
+        display: inline-flex;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .service-line .remove-service-line-btn[style*="display: none"] {
+        display: none !important;
+    }
+
+    .service-line input[type="number"],
+    .service-line select,
+    .service-line input[type="text"] {
+        width: 100% !important;
+        max-width: 100% !important;
     }
 
     .card .row:nth-of-type(2) {

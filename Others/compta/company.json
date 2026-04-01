@@ -10,5 +10,11 @@
   ],
   "phone": "06.20.76.70.80",
   "siret": "53900011700041",
-  "rpps": "10010075736"
+  "rpps": "10010075736",
+  "services": [
+    { "label": "Séance d'ostéopathie (45min)", "price": 70 },
+    { "label": "Massage bien-être (60min)", "price": 70 },
+    { "label": "Massage bien-être (90min)", "price": 90 },
+    { "label": "Pack gommage + massage", "price": 100 }
+  ]
 }
