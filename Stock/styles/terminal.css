@@ -54,6 +54,68 @@
 .terminal-card .terminal-output .terminal-cmd { color: var(--primary-purple); font-style: italic; }
 .terminal-command { color: var(--primary-purple) !important; }
 
+.terminal-panel {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 8px;
+    margin: 4px 0;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.terminal-panel-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--primary-purple);
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.terminal-mini-table,
+.terminal-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+}
+
+.terminal-mini-table th,
+.terminal-mini-table td,
+.terminal-data-table th,
+.terminal-data-table td {
+    padding: 4px 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: left;
+    vertical-align: top;
+}
+
+.terminal-mini-table th,
+.terminal-data-table th {
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 600;
+}
+
+.terminal-data-table thead th {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.terminal-mini-table tr:last-child th,
+.terminal-mini-table tr:last-child td,
+.terminal-data-table tr:last-child th,
+.terminal-data-table tr:last-child td {
+    border-bottom: none;
+}
+
+.terminal-help-table td:first-child,
+.terminal-help-table th:first-child {
+    width: 48%;
+}
+
+.terminal-muted { color: rgba(255, 255, 255, 0.55); }
+.terminal-pos { color: #22c55e; font-weight: 700; }
+.terminal-neg { color: #ef4444; font-weight: 700; }
+
 .terminal-input-row {
     display: flex;
     width: 100%;

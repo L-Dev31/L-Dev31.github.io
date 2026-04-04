@@ -514,15 +514,15 @@
     <!-- Terminal card moved into cards container -->
 
     <!-- News overlay (fullscreen) -->
-    <div class="news-overlay" id="news-overlay" aria-hidden="true">
+    <div class="news-overlay" id="news-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="news-overlay-title" tabindex="-1">
         <div class="news-overlay-inner">
             <div class="news-overlay-header">
-                <h2>News</h2>
+                <h2 id="news-overlay-title">News</h2>
                 <button id="close-news-overlay" class="close-btn" aria-label="Fermer">×</button>
             </div>
             <div class="news-overlay-body">
-                <div id="news-feed-list" class="news-feed-list"></div>
+                <div id="news-feed-list" class="news-feed-list" role="region" aria-label="Flux d'actualités"></div>
             </div>
         </div>
     </div>
-</body>
+</body>

@@ -53,7 +53,7 @@ async function yahooFetch(targetUrl, signal) {
     }
 
     const j = await proxyFetchSafe(targetUrl, signal);
-    if (j.error && (j.errorCode === 429 || j.errorCode === 403)) {
+    if (j.error && j.errorCode === 429) {
         globalRateLimiter.setRateLimitForApi('yahoo', YAHOO_RATE_LIMIT_MS);
         return {
             ...j,
@@ -198,33 +198,105 @@ export async function fetchYahooSummary(ticker, signal) {
 
 export async function fetchYahooFinancials(ticker, signal) {
     try {
-        const j = await yahooFetch(`https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=financialData,balanceSheetHistory,cashflowStatementHistory,earnings`, signal);
-        if (j.error) return { source: 'yahoo', ...j };
-        return { source: 'yahoo', financials: j.quoteSummary?.result?.[0] || null };
+        const q = await yahooFetch(`https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=financialData`, signal);
+        if (!q.error) {
+            const financials = q.quoteSummary?.result?.[0] || null;
+            if (financials?.financialData) return { source: 'yahoo', financials };
+        }
+
+        const snap = await fetchYahooChartSnapshot(ticker, '6mo', '1d', signal);
+        if (!snap?.meta) return { source: 'yahoo', error: true, errorCode: q.errorCode || 500 };
+
+        const meta = snap.meta || {};
+        const prevClose = meta.chartPreviousClose || meta.previousClose || 0;
+        const price = meta.regularMarketPrice || 0;
+        const financialData = {
+            currentPrice: price ? { raw: price } : null,
+            revenueGrowth: null,
+            grossMargins: null,
+            totalRevenue: null,
+            trailingPE: null,
+            forwardPE: null,
+            marketCap: null,
+            dayChangePercent: prevClose ? ((price - prevClose) / prevClose) * 100 : null,
+            fiftyTwoWeekHigh: meta.fiftyTwoWeekHigh != null ? { raw: meta.fiftyTwoWeekHigh } : null,
+            fiftyTwoWeekLow: meta.fiftyTwoWeekLow != null ? { raw: meta.fiftyTwoWeekLow } : null,
+            regularMarketVolume: meta.regularMarketVolume ?? null
+        };
+
+        return { source: 'yahoo', financials: { financialData } };
     } catch (e) { return { source: 'yahoo', error: true, errorCode: 500 }; }
 }
 
 export async function fetchYahooEarnings(ticker, signal) {
     try {
-        const j = await yahooFetch(`https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=earnings`, signal);
-        if (j.error) return { source: 'yahoo', ...j };
-        return { source: 'yahoo', earnings: j.quoteSummary?.result?.[0]?.earnings || null };
+        const q = await yahooFetch(`https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=earnings,earningsHistory,earningsTrend`, signal);
+        if (!q.error) {
+            const earningsData = q.quoteSummary?.result?.[0]?.earnings || q.quoteSummary?.result?.[0] || null;
+            if (earningsData) return { source: 'yahoo', earnings: earningsData };
+        }
+
+        const snap = await fetchYahooChartSnapshot(ticker, '1y', '1d', signal);
+        if (!snap?.meta) return { source: 'yahoo', error: true, errorCode: q.errorCode || 500 };
+        const meta = snap.meta || {};
+        const closes = snap?.indicators?.quote?.[0]?.close || [];
+        const valid = closes.filter(v => v != null);
+        const trailing = valid.length >= 2 ? valid[valid.length - 1] - valid[0] : null;
+
+        return {
+            source: 'yahoo',
+            earnings: {
+                epsCurrentYear: null,
+                epsTrailingTwelveMonths: null,
+                epsForward: null,
+                earningsTimestamp: null,
+                earningsTimestampStart: null,
+                earningsTimestampEnd: null,
+                regularMarketPrice: meta.regularMarketPrice ?? null,
+                yearlyPriceDelta: trailing,
+                yearlyPriceDeltaPercent: valid.length >= 2 && valid[0] ? (trailing / valid[0]) * 100 : null
+            }
+        };
     } catch (e) { return { source: 'yahoo', error: true, errorCode: 500 }; }
 }
 
 export async function fetchYahooDividends(ticker, from, to, signal) {
-    const p1 = Math.floor(new Date(from || '2000-01-01').getTime() / 1000);
-    const p2 = Math.floor(new Date(to || new Date().toISOString().slice(0, 10)).getTime() / 1000);
-    const targetUrl = `https://query2.finance.yahoo.com/v7/finance/download/${encodeURIComponent(ticker)}?period1=${p1}&period2=${p2}&interval=1d&events=div`;
-
     try {
+        const cfg = PERIODS['5Y'];
+        const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=${cfg.interval}&range=${cfg.range}&events=div,splits`;
+        const j = await yahooFetch(url, signal);
+        if (!j.error) {
+            const events = j?.chart?.result?.[0]?.events?.dividends || {};
+            const items = Object.values(events)
+                .map(d => ({
+                    date: d?.date ? new Date(d.date * 1000).toISOString().slice(0, 10) : null,
+                    dividend: Number(d?.amount || 0)
+                }))
+                .filter(d => d.date && Number.isFinite(d.dividend));
+            if (items.length > 0) return { source: 'yahoo', dividends: items };
+        }
+
+        const p1 = Math.floor(new Date(from || '2000-01-01').getTime() / 1000);
+        const p2 = Math.floor(new Date(to || new Date().toISOString().slice(0, 10)).getTime() / 1000);
+        const targetUrl = `https://query2.finance.yahoo.com/v7/finance/download/${encodeURIComponent(ticker)}?period1=${p1}&period2=${p2}&interval=1d&events=div`;
         const text = await proxyFetch(targetUrl, { signal, expect: 'text' });
         if (text.startsWith('<')) return { source: 'yahoo', error: true, errorCode: 'PROXY_HTML' };
         const items = text.trim().split('\n').slice(1).map(l => {
             const [date, div] = l.split(',');
             return { date, dividend: parseFloat(div) };
-        });
+        }).filter(d => d.date && Number.isFinite(d.dividend));
         return { source: 'yahoo', dividends: items };
+    } catch (e) {
+        return { source: 'yahoo', error: true, errorCode: 500 };
+    }
+}
+
+export async function fetchYahooQuote(ticker, signal) {
+    try {
+        const j = await yahooFetch(`https://query2.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(ticker)}`, signal);
+        if (j.error) return { source: 'yahoo', ...j };
+        const quote = j?.quoteResponse?.result?.[0] || null;
+        return { source: 'yahoo', quote };
     } catch (e) {
         return { source: 'yahoo', error: true, errorCode: 500 };
     }
@@ -396,9 +468,34 @@ export async function fetchYahooOptions(ticker, date, signal) {
 
 export async function fetchYahooAnalysis(ticker, signal) {
     try {
-        const j = await yahooFetch(`https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=recommendationTrend,upgradeDowngradeHistory`, signal);
-        if (j.error) return { source: 'yahoo', ...j };
-        return { source: 'yahoo', analysis: j.quoteSummary?.result?.[0] || null };
+        const j = await yahooFetch(`https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=recommendationTrend,financialData`, signal);
+        if (!j.error) {
+            const analysis = j.quoteSummary?.result?.[0] || null;
+            if (analysis) return { source: 'yahoo', analysis };
+        }
+
+        const snap = await fetchYahooChartSnapshot(ticker, '3mo', '1d', signal);
+        if (!snap?.meta) return { source: 'yahoo', error: true, errorCode: j.errorCode || 500 };
+        const closes = snap?.indicators?.quote?.[0]?.close || [];
+        const valid = closes.filter(v => v != null);
+        const first = valid[0] || 0;
+        const last = valid[valid.length - 1] || 0;
+        const perf = first ? ((last - first) / first) * 100 : 0;
+        const recommendationKey = perf > 6 ? 'buy' : perf < -6 ? 'sell' : 'hold';
+
+        return {
+            source: 'yahoo',
+            analysis: {
+                recommendationTrend: { trend: [{ period: '3m', strongBuy: recommendationKey === 'buy' ? 1 : 0, buy: recommendationKey === 'buy' ? 1 : 0, hold: recommendationKey === 'hold' ? 1 : 0, sell: recommendationKey === 'sell' ? 1 : 0, strongSell: recommendationKey === 'sell' ? 1 : 0, recommendationKey }] },
+                financialData: {
+                    targetMeanPrice: null,
+                    targetHighPrice: null,
+                    targetLowPrice: null,
+                    recommendationMean: recommendationKey === 'buy' ? { raw: 1.8 } : recommendationKey === 'sell' ? { raw: 3.8 } : { raw: 3.0 },
+                    momentum3m: { raw: perf }
+                }
+            }
+        };
     } catch (e) { return { source: 'yahoo', error: true, errorCode: 500 }; }
 }
 

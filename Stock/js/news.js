@@ -1,6 +1,6 @@
-import { fetchNews } from './yahoo-finance.js';
-import { loadApiConfig } from './general.js';
+import { loadApiConfig } from './state.js';
 import { periodToDays } from './utils.js';
+import { fetchTickerNewsItems, fetchSymbolNewsItems } from './command/news.js';
 
 let positions = {};
 let lastPageNews = [];
@@ -127,10 +127,15 @@ export async function fetchCardNews(symbol, force = false, limit = 50, days = 7,
     try {
         const config = await loadApiConfig();
         const api = apiName || window.getSelectedApi?.() || window.selectedApi || 'yahoo';
-        const mapped = positions[symbol]?.api_mapping?.[api] || positions[symbol]?.ticker || symbol;
-        const r = await fetchNews(mapped, config, limit, days, api);
-        if (r && !r.error && Array.isArray(r.items)) {
-            const enriched = r.items.map(i => ({ ...i, symbol }));
+        const enriched = await fetchSymbolNewsItems({
+            symbol,
+            positions,
+            config,
+            limit,
+            days,
+            apiName: api
+        });
+        if (Array.isArray(enriched)) {
             const filtered = filterBySymbol(enriched, symbol);
             positions[symbol].news = filtered;
             positions[symbol].lastNewsFetch = now;
@@ -206,14 +211,15 @@ export async function openNewsOverlay(symbol) {
         const api = window.getSelectedApi?.() || window.selectedApi || 'yahoo';
         const days = symbol && positions[symbol]?.currentPeriod ? periodToDays(positions[symbol].currentPeriod) : 1;
         if (symbol) {
-            const mapped = positions[symbol]?.api_mapping?.[api] || positions[symbol]?.ticker || symbol;
-            const r = await fetchNews(mapped, config, 50, days, api);
-            if (r?.items) { updateNewsFeedList(r.items); updateNewsTrending(r.items); }
+            const items = await fetchSymbolNewsItems({ symbol, positions, config, limit: 50, days, apiName: api });
+            if (items?.length) { updateNewsFeedList(items); updateNewsTrending(items); }
         } else {
             let all = [];
             for (const s of Object.keys(positions)) {
-                const mapped = positions[s]?.api_mapping?.[api] || positions[s]?.ticker || s;
-                try { const r = await fetchNews(mapped, config, 50, days, api); if (r?.items) all = all.concat(r.items.map(i => ({ ...i, symbol: s }))); } catch (e) {}
+                try {
+                    const items = await fetchSymbolNewsItems({ symbol: s, positions, config, limit: 50, days, apiName: api });
+                    if (items?.length) all = all.concat(items);
+                } catch (e) {}
             }
             all.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
             updateNewsFeedList(all);
@@ -272,7 +278,7 @@ export function updateNewsPageList(items, opts = {}) {
     if (upd) upd.textContent = new Date().toLocaleTimeString('fr-FR');
 }
 
-export async function openNewsPage(symbol) {
+export async function openNewsPage(symbol, options = {}) {
     const card = document.getElementById('card-news');
     if (!card) return;
     const activeTab = document.querySelector('.tab.active');
@@ -286,7 +292,7 @@ export async function openNewsPage(symbol) {
     document.getElementById('open-news-feed')?.classList.add('active');
     populateSuggestions();
     const inp = document.getElementById('news-ticker-search');
-    if (inp) inp.value = '';
+    if (inp) inp.value = (options.search || '').trim().toUpperCase();
     setupNewsFilters();
     await loadNews();
     if (newsRefreshInterval) clearInterval(newsRefreshInterval);
@@ -335,14 +341,14 @@ function setupNewsFilters() {
 async function loadNews() {
     const el = document.getElementById('news-page-feed-list');
     const inp = document.getElementById('news-ticker-search');
+    const manual = (inp?.value || '').trim().toUpperCase();
     if (!el) return;
-    el.innerHTML = '<div class="news-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="news-loading-text">Chargement des actualités...</span></div>';
+    el.innerHTML = '<div class="news-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="news-loading-text">Chargement des actualités en cours...</span></div>';
     try {
         const config = await loadApiConfig();
         const api = window.getSelectedApi?.() || window.selectedApi || 'yahoo';
         const days = periodToDays(currentNewsPeriod);
         let tickers = [];
-        const manual = (inp?.value || '').trim().toUpperCase();
         if (manual) { tickers = [{ symbol: manual, ticker: manual }]; currentNewsSymbol = manual; }
         else { tickers = Object.keys(positions).map(s => ({ symbol: s, ticker: positions[s]?.api_mapping?.[api] || positions[s]?.ticker || s })); currentNewsSymbol = null; }
         if (!tickers.length) { el.innerHTML = '<div class="news-empty">Ajoutez des actifs ou recherchez un ticker.</div>'; lastPageNews = []; return; }
@@ -355,9 +361,9 @@ async function loadNews() {
 
         for (const t of tickers) {
             try {
-                const r = await fetchNews(t.ticker, config, 30, days, api);
-                if (r?.items) {
-                    const filtered = filterBySymbol(r.items.map(i => ({ ...i, symbol: t.symbol })), t.symbol);
+                const items = await fetchTickerNewsItems({ ticker: t.ticker, config, limit: 30, days, apiName: api });
+                if (items?.length) {
+                    const filtered = filterBySymbol(items.map(i => ({ ...i, symbol: t.symbol })), t.symbol);
                     filtered.forEach(item => {
                         const key = item.url || item.title;
                         if (!uniqueItems.has(key)) {
@@ -374,9 +380,16 @@ async function loadNews() {
         }
         
         all = Array.from(uniqueItems.values()).map(i => ({ ...i, symbols: Array.from(i.symbols) }));
+        if (manual && !all.length) {
+            el.innerHTML = `<div class="news-empty">Ticker introuvable ou aucune actualité trouvée pour ${manual}</div>`;
+            lastPageNews = [];
+            return;
+        }
         all.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
         updateNewsPageList(all);
-    } catch (e) { el.innerHTML = '<div class="news-empty">Erreur de chargement</div>'; }
+    } catch (e) {
+        el.innerHTML = `<div class="news-empty">Impossible de charger les actualités${manual ? ` pour ${manual}` : ''}.</div>`;
+    }
 }
 
 export function closeNewsPage() {

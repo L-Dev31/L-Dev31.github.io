@@ -33,6 +33,11 @@
 .news-feed-list { display: flex; flex-direction: column; gap: 10px; }
 .news-overlay .news-item { padding: 12px 14px; }
 
+.news-overlay .close-btn:focus-visible {
+    outline: 2px solid #f59e0b;
+    outline-offset: 2px;
+}
+
 .shift-tooltip {
     position: absolute !important;
     bottom: 10px !important;

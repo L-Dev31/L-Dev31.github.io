@@ -1,7 +1,6 @@
-import { fetchYahooFinancials, fetchYahooEarnings, fetchYahooDividends, fetchYahooOptions, fetchYahooAnalysis, fetchFromYahoo, fetchNews } from './yahoo-finance.js';
-import { calculateBotSignal } from './signal-bot.js';
-import { loadApiConfig } from './general.js';
-import { periodToDays } from './utils.js';
+import { runNewsCommand } from './command/news.js';
+import { goToTicker } from './command/go.js';
+import { runFaCommand, runAnrCommand, runErnCommand, runDvdCommand, runRvCommand } from './command/market-data.js';
 
 const INPUT_ID = 'terminal-input';
 const OUTPUT_ID = 'terminal-output';
@@ -58,15 +57,27 @@ function getTarget(parts) {
 
 function showHelp(cmd) {
     const cmds = [
-        { c: 'GO &lt;SYM&gt; [P]', d: 'Ouvre onglet' }, { c: 'NEWS &lt;SYM&gt;', d: 'Actualités' }, { c: 'GIP &lt;SYM&gt;', d: 'Streaming' },
-        { c: 'HDS &lt;SYM&gt; [P]', d: 'Historique' }, { c: 'FA &lt;SYM&gt;', d: 'Financiers' }, { c: 'ANR &lt;SYM&gt;', d: 'Analystes' },
-        { c: 'ERN &lt;SYM&gt;', d: 'Résultats' }, { c: 'DVD &lt;SYM&gt;', d: 'Dividendes' }, { c: 'OMON &lt;SYM&gt;', d: 'Options' },
+        { c: 'GO &lt;SYM&gt; [P]', d: 'Ouvre onglet' }, { c: 'NEWS &lt;SYM&gt;', d: 'Actualités' },
+        { c: 'FA &lt;SYM&gt;', d: 'Financiers' }, { c: 'ANR &lt;SYM&gt;', d: 'Analystes' },
+        { c: 'ERN &lt;SYM&gt;', d: 'Résultats' }, { c: 'DVD &lt;SYM&gt;', d: 'Dividendes' },
         { c: 'RV T1 T2...', d: 'Comparaison' }, { c: 'CLEAR', d: 'Effacer' }, { c: 'HELP [CMD]', d: 'Aide' }
     ];
-    if (!cmd) { out('Commandes:<br>' + cmds.map(x => `<span class="terminal-command">${x.c}</span> ${x.d}`).join('<br>'), 'terminal-log', true); return; }
+
+    if (!cmd) {
+        const rows = cmds
+            .map(x => `<tr><td><span class="terminal-command">${x.c}</span></td><td>${x.d}</td></tr>`)
+            .join('');
+        const html = `<div class="terminal-panel"><div class="terminal-panel-title">Commandes</div><table class="terminal-data-table terminal-help-table"><thead><tr><th>Commande</th><th>Description</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        out(html, 'terminal-log', true);
+        return;
+    }
+
     const c = cmd.toUpperCase();
     const found = cmds.find(x => x.c.startsWith(c));
-    if (found) out(`<span class="terminal-command">${found.c}</span> ${found.d}`, 'terminal-log', true);
+    if (found) {
+        const html = `<div class="terminal-panel"><div class="terminal-panel-title">Aide</div><table class="terminal-mini-table"><tbody><tr><th>Commande</th><td><span class="terminal-command">${found.c}</span></td></tr><tr><th>Description</th><td>${found.d}</td></tr></tbody></table></div>`;
+        out(html, 'terminal-log', true);
+    }
     else out(`Inconnu: ${c}`);
 }
 
@@ -76,22 +87,7 @@ async function exec(raw) {
     const cmd = parts[0].toUpperCase();
 
     if (cmd === 'NEWS') {
-        const t = getTarget(parts);
-        if (!t) { out('Usage: NEWS <SYMBOL>'); return; }
-        out(`Actualités ${t.ticker}...`);
-        try {
-            if (t.symbol && window.positions?.[t.symbol]) {
-                const period = window.positions[t.symbol].currentPeriod || '1D';
-                const r = await window.fetchCardNews(t.symbol, true, 20, periodToDays(period), window.getSelectedApi?.() || window.selectedApi);
-                out(`${(r || []).length} articles`);
-                window.openNewsPage(t.symbol);
-            } else {
-                const cfg = await loadApiConfig();
-                const r = await fetchNews(t.ticker, cfg, 50, 7, window.getSelectedApi?.() || window.selectedApi);
-                out(`${(r?.items || []).length} articles`);
-                window.openNewsPage(t.symbol);
-            }
-        } catch (e) { out(`Erreur: ${fmtErr(e)}`); }
+        await runNewsCommand({ parts, getTarget, out, fmtErr });
         return;
     }
 
@@ -102,155 +98,34 @@ async function exec(raw) {
         const raw = (parts[1] || '').toUpperCase();
         const period = (parts[2] || '1D').toUpperCase();
         if (!raw) { out('Usage: GO <SYMBOL> [PERIOD]'); return; }
-        const t = getTarget(parts);
-        let tab = t?.symbol ? document.querySelector(`.tab[data-symbol="${t.symbol}"]`) : null;
-        if (!tab) tab = document.querySelector(`.tab[data-ticker="${t?.ticker || raw}"]`);
-        const sym = t?.symbol || tab?.dataset.symbol;
-        if (sym && window.positions?.[sym]) {
-            window.positions[sym].currentPeriod = period;
-            const g = document.getElementById(`periods-${sym}`);
-            if (g) { g.querySelectorAll('.period-btn').forEach(x => x.classList.remove('active')); g.querySelector(`.period-btn[data-period="${period}"]`)?.classList.add('active'); }
-        }
-        if (tab) { tab.click(); out(`Ouvert: ${tab.dataset.symbol || t.ticker} ${period}`); await window.fetchActiveSymbol?.(true); }
+        const result = await goToTicker({ symbol: raw, period });
+        if (result?.ok) out(`Ouvert: ${result.symbol || raw} ${period}`);
         else out(`Non trouvé: ${raw}`);
         return;
     }
 
-    if (cmd === 'GIP') {
-        const t = getTarget(parts);
-        if (!t?.ticker) { out('Usage: GIP <SYMBOL>'); return; }
-        if (currentTask) { out('Streaming actif. CTRL+C pour stopper.'); return; }
-        if (!t.symbol || !window.positions?.[t.symbol]) { out(`Non trouvé: ${t.ticker}`); return; }
-        window.positions[t.symbol].currentPeriod = '1D';
-        document.querySelector(`.tab[data-symbol="${t.symbol}"]`)?.click();
-        out(`Streaming ${t.ticker}. CTRL+C pour arrêter.`);
-        const ac = new AbortController();
-        currentTask = { type: 'stream', abortController: ac };
-        await window.fetchActiveSymbol?.(true);
-        currentTask.intervalId = setInterval(async () => { if (!currentTask) return; try { await window.fetchActiveSymbol?.(true); } catch (e) { out(`Erreur: ${e?.message}`); clearInterval(currentTask.intervalId); currentTask = null; } }, 5000);
-        return;
-    }
-
-    if (cmd === 'HDS') {
-        const t = getTarget(parts);
-        if (!t?.ticker) { out('Usage: HDS <SYMBOL> [PERIOD]'); return; }
-        const period = (parts[2] || '5Y').toUpperCase();
-        if (t.symbol && window.positions?.[t.symbol]) {
-            window.positions[t.symbol].currentPeriod = period;
-            document.querySelector(`.tab[data-symbol="${t.symbol}"]`)?.click();
-            out(`Historique ${t.ticker} ${period}`);
-            await window.fetchActiveSymbol?.(true);
-        } else { out(`Non trouvé: ${t.ticker}`); try { await fetchFromYahoo(t.ticker, period, t.ticker, null, null, null); out('Données récupérées.'); } catch (e) { out(`Erreur: ${e?.message}`); } }
-        return;
-    }
-
     if (cmd === 'FA') {
-        const t = getTarget(parts);
-        if (!t?.ticker) { out('Usage: FA <SYMBOL>'); return; }
-        out(`Financiers ${t.ticker}...`);
-        try {
-            const r = await fetchYahooFinancials(t.ticker, null);
-            if (r && !r.error) {
-                const fd = r.financials?.financialData || {};
-                const o = [];
-                if (fd.revenueGrowth) o.push(`CA: ${(fd.revenueGrowth * 100).toFixed(2)}%`);
-                if (fd.grossMargins) o.push(`Marges: ${fd.grossMargins}`);
-                if (fd.currentPrice?.raw) o.push(`Prix: ${fd.currentPrice.raw}`);
-                out(o.join(' | ') || 'Aucune donnée', 'terminal-log', true);
-            } else out(`Aucune donnée FA`);
-        } catch (e) { out(`Erreur: ${fmtErr(e)}`); }
+        await runFaCommand({ parts, getTarget, out, fmtErr });
         return;
     }
 
     if (cmd === 'ANR') {
-        const t = getTarget(parts);
-        if (!t?.ticker) { out('Usage: ANR <SYMBOL>'); return; }
-        out(`Analystes ${t.ticker}...`);
-        try {
-            const r = await fetchYahooAnalysis(t.ticker, null);
-            if (r && !r.error) {
-                const rt = r.analysis?.recommendationTrend?.trend || r.analysis?.recommendationTrend;
-                if (rt?.length) out(`Trend: ${JSON.stringify(rt[0])}`, 'terminal-log', true);
-                else out('Aucun avis');
-            } else out('Aucune donnée ANR');
-        } catch (e) { out(`Erreur: ${fmtErr(e)}`); }
+        await runAnrCommand({ parts, getTarget, out, fmtErr });
         return;
     }
 
     if (cmd === 'ERN') {
-        const t = getTarget(parts);
-        if (!t?.ticker) { out('Usage: ERN <SYMBOL>'); return; }
-        out(`Résultats ${t.ticker}...`);
-        try {
-            const r = await fetchYahooEarnings(t.ticker, null);
-            if (r && !r.error) out(`Earnings: ${JSON.stringify(r.earnings || {})}`, 'terminal-log', true);
-            else out('Aucune donnée ERN');
-        } catch (e) { out(`Erreur: ${fmtErr(e)}`); }
+        await runErnCommand({ parts, getTarget, out, fmtErr });
         return;
     }
 
     if (cmd === 'DVD') {
-        const t = getTarget(parts);
-        if (!t?.ticker) { out('Usage: DVD <SYMBOL>'); return; }
-        out(`Dividendes ${t.ticker}...`);
-        try {
-            const r = await fetchYahooDividends(t.ticker, null, null, null);
-            if (r && !r.error) {
-                const last = (r.dividends || []).slice(-5).reverse();
-                if (last.length) out(`Derniers: ${last.map(d => `${d.date} ${d.dividend}`).join(' | ')}`, 'terminal-log', true);
-                else out('Aucun dividende');
-            } else out('Aucune donnée DVD');
-        } catch (e) { out(`Erreur: ${fmtErr(e)}`); }
-        return;
-    }
-
-    if (cmd === 'OMON') {
-        const t = getTarget(parts);
-        if (!t?.ticker) { out('Usage: OMON <SYMBOL>'); return; }
-        out(`Options ${t.ticker}...`);
-        try {
-            const r = await fetchYahooOptions(t.ticker, null, null);
-            if (r && !r.error) out(`Expirations: ${JSON.stringify(r.options?.result?.[0]?.expirationDates?.slice(0, 5) || [])}`, 'terminal-log', true);
-            else out('Aucune donnée OMON');
-        } catch (e) { out(`Erreur: ${fmtErr(e)}`); }
-        return;
-    }
-
-    if (cmd === 'GFTT') {
-        const t = getTarget(parts);
-        if (!t?.ticker) { out('Usage: GFTT <SYMBOL>'); return; }
-        out(`Analyse ${t.ticker}...`);
-        try {
-            if (t.symbol && window.positions?.[t.symbol]) {
-                window.positions[t.symbol].currentPeriod = '1D';
-                document.querySelector(`.tab[data-symbol="${t.symbol}"]`)?.click();
-                await window.fetchActiveSymbol?.(true);
-                const d = window.positions[t.symbol].lastData;
-                if (!d || d.error) { out('Pas de données.'); return; }
-                const sig = calculateBotSignal({ ...d, symbol: t.symbol });
-                out(`Signal: ${sig.signalValue}% - ${sig.signalTitle} - ${sig.signalDesc}`, 'terminal-log', true);
-            } else out(`Non trouvé: ${t.ticker}`);
-        } catch (e) { out(`Erreur: ${fmtErr(e)}`); }
+        await runDvdCommand({ parts, getTarget, out, fmtErr });
         return;
     }
 
     if (cmd === 'RV') {
-        const targets = parts.slice(1).map(s => s.toUpperCase()).filter(Boolean);
-        if (targets.length < 2) { out('Usage: RV T1 T2... (min 2)'); return; }
-        out(`Comparaison: ${targets.join(', ')}`);
-        try {
-            const res = [];
-            for (const t of targets) {
-                let ticker = t;
-                if (window.positions?.[t]) ticker = window.positions[t].api_mapping?.yahoo || window.positions[t].ticker || ticker;
-                const r = await fetchYahooFinancials(ticker, null);
-                if (r && !r.error && r.financials?.financialData) {
-                    const fd = r.financials.financialData;
-                    res.push({ ticker: t, pe: fd.trailingPE || fd.forwardPE, revenue: fd.totalRevenue?.raw || fd.totalRevenue });
-                } else res.push({ ticker: t, pe: null, revenue: null });
-            }
-            out(`Résultats: ${JSON.stringify(res)}`, 'terminal-log', true);
-        } catch (e) { out(`Erreur: ${fmtErr(e)}`); }
+        await runRvCommand({ parts, out, fmtErr });
         return;
     }
 

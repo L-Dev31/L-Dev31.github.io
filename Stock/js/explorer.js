@@ -1,5 +1,7 @@
 import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade } from './yahoo-finance.js';
 import { typeLabel, typeIcon, debounce } from './constants.js';
+import { goToTicker } from './command/go.js';
+import { initChart } from './chart.js';
 
 // Removed IIFE wrapper
 {
@@ -60,6 +62,7 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
     let stockIconMap = {};
     let yahooToJsonSymbol = {};
     let cryptoSymbols = new Set();
+    let localSymbolsByMarket = new Map();
 
     let marketsData = [];
 
@@ -77,7 +80,7 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
         const select = document.getElementById('explorer-market');
         if (!select) return;
         select.innerHTML = '<option value="">Sélectionner...</option>';
-        marketsData.forEach(m => {
+        marketsData.filter(m => !m.disabled).forEach(m => {
             const opt = document.createElement('option');
             opt.value = m.id;
             opt.textContent = m.name;
@@ -94,11 +97,15 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
     function selectMarket(marketId) {
         const select = document.getElementById('explorer-market');
         if (select) {
+            const marketDef = marketsData.find(m => m.id === marketId);
+            if (marketDef?.disabled) {
+                select.value = '';
+                return;
+            }
             select.value = marketId;
             
             const eligibilitySelect = document.getElementById('explorer-eligibility');
             if (eligibilitySelect && eligibilitySelect.parentElement) {
-                const marketDef = marketsData.find(m => m.id === marketId);
                 const hasLists = marketDef && marketDef.type === 'list' && marketDef.lists && Object.keys(marketDef.lists).length > 0;
                 
                 if (hasLists) {
@@ -131,6 +138,7 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
     async function loadStockMappings() {
         const files = ['json/equity.json', 'json/crypto.json', 'json/commodity.json'];
         const results = await Promise.allSettled(files.map(f => fetch(f).then(r => r.json())));
+        localSymbolsByMarket = new Map();
         
         results.forEach((res, i) => {
             if (res.status !== 'fulfilled') return;
@@ -141,8 +149,55 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
                 if (sym) { stockIconMap[sym] = sym; yahooToJsonSymbol[sym] = sym; }
                 if (s.api_mapping?.yahoo) yahooToJsonSymbol[s.api_mapping.yahoo] = sym;
                 if (isCrypto && sym) cryptoSymbols.add(sym);
+
+                const marketId = inferMarketFromLocalSymbol(s);
+                const yahooSymbol = (s.api_mapping?.yahoo || s.ticker || s.symbol || '').toUpperCase();
+                if (marketId && yahooSymbol) {
+                    if (!localSymbolsByMarket.has(marketId)) localSymbolsByMarket.set(marketId, new Set());
+                    localSymbolsByMarket.get(marketId).add(yahooSymbol);
+                }
             });
         });
+    }
+
+    function inferMarketFromLocalSymbol(stock) {
+        const yahoo = (stock?.api_mapping?.yahoo || stock?.ticker || stock?.symbol || '').toUpperCase();
+        const country = (stock?.country || '').toUpperCase();
+
+        if (yahoo.endsWith('.PA') || yahoo.endsWith('.EPA')) return 'euronext';
+        if (yahoo.endsWith('.L')) return 'lse';
+        if (yahoo.endsWith('.DE')) return 'xetra';
+        if (yahoo.endsWith('.SW')) return 'six';
+        if (yahoo.endsWith('.AX')) return 'asx';
+        if (yahoo.endsWith('.TO')) return 'tsx';
+        if (yahoo.endsWith('.HK')) return 'hkex';
+        if (yahoo.endsWith('.NS')) return 'nse';
+        if (yahoo.endsWith('.BO')) return 'bse';
+        if (yahoo.endsWith('.SZ')) return 'szse';
+        if (yahoo.endsWith('.SS')) return 'sse';
+        if (yahoo.endsWith('.T')) return 'tse';
+        if (yahoo.endsWith('.KS') || yahoo.endsWith('.KQ')) return 'krx';
+        if (yahoo.endsWith('-USD') || stock?.type === 'crypto') return 'crypto';
+
+        if (country === 'FR') return 'euronext';
+        if (country === 'GB') return 'lse';
+        if (country === 'DE') return 'xetra';
+        if (country === 'CH') return 'six';
+        if (country === 'AU') return 'asx';
+        if (country === 'CA') return 'tsx';
+        if (country === 'JP') return 'tse';
+        if (country === 'HK') return 'hkex';
+        if (country === 'IN') return 'nse';
+        if (country === 'CN') return 'sse';
+        if (country === 'KR') return 'krx';
+
+        return null;
+    }
+
+    function getLocalSymbolsForMarket(marketId) {
+        const set = localSymbolsByMarket.get(marketId);
+        if (!set) return [];
+        return [...set].slice(0, getMaxAllowed());
     }
 
     function getJsonSymbol(sym) {
@@ -396,7 +451,7 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
         const emptyState = document.createElement('div');
         emptyState.className = 'explorer-market-grid';
 
-        marketsData.forEach(m => {
+        marketsData.filter(m => !m.disabled).forEach(m => {
             const btn = document.createElement('button');
             btn.className = 'market-grid-btn';
             btn.title = m.name;
@@ -568,16 +623,7 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
     async function resolveMarketItems(filters, marketDef) {
         if (!marketDef) return [];
 
-        if (marketDef.tvRegion) {
-            if (marketDef.lists) {
-                const allSymbols = [].concat(...Object.values(marketDef.lists));
-                const limitedSymbols = [...new Set(allSymbols)].slice(0, getMaxAllowed());
-                return fetchStocksBatch(limitedSymbols, 'cto', marketDef.id);
-            }
-            return [];
-        }
-
-        if (marketDef.type === 'list' && marketDef.lists) {
+        if (marketDef.type === 'list' && marketDef.lists && Object.keys(marketDef.lists).length > 0) {
             let symbolsToFetch = [];
             let currentEligibility = 'pea';
 
@@ -607,8 +653,18 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
             return fetched;
         }
 
+        if (marketDef.type === 'list') {
+            const localSymbols = getLocalSymbolsForMarket(marketDef.id);
+            if (localSymbols.length > 0) {
+                return fetchStocksBatch(localSymbols, 'cto', marketDef.id);
+            }
+        }
+
         const screeners = marketDef.screeners || YAHOO_SCREENERS;
-        return (await fetchMultipleScreeners(screeners)).map(mapQuoteToItem).filter(i => i && i.market === filters.market);
+        const targetMarket = marketDef.filterMarket || filters.market;
+        return (await fetchMultipleScreeners(screeners))
+            .map(mapQuoteToItem)
+            .filter(i => i && (!targetMarket || i.market === targetMarket));
     }
 
     async function loadData() {
@@ -616,6 +672,15 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
 
         const filters = deriveFilters();
         state.currentPeriod = filters.period;
+
+        const selectedMarket = marketsData.find(m => m.id === filters.market);
+        if (selectedMarket?.disabled) {
+            state.results = [];
+            state.total = 0;
+            state.currentPage = 1;
+            renderMarketChooser();
+            return;
+        }
 
         if (!filters.market) {
             state.results = [];
@@ -670,12 +735,12 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
 
     function showLoading(show) {
         const list = document.getElementById('explorer-list');
-        if (list && show) list.innerHTML = '<div class="explorer-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="explorer-loading-text">Chargement...</span></div>';
+        if (list && show) list.innerHTML = '<div class="explorer-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="explorer-loading-text">Chargement des données...</span></div>';
     }
 
     function showLoadingProgress(loaded, totalOrText) {
         const text = document.getElementById('explorer-loading-text');
-        if (text) text.textContent = typeof totalOrText === 'string' ? totalOrText : `Chargement... ${loaded}/${totalOrText}`;
+        if (text) text.textContent = typeof totalOrText === 'string' ? totalOrText : `Chargement des données... ${loaded}/${totalOrText}`;
     }
 
     function showError(msg) {
@@ -765,33 +830,25 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
         });
     }
 
-    async function openStock(yahooSymbol) {
-        const itemData = state.results.find(i => i.symbol === yahooSymbol);
-        if (!itemData) return;
+    async function openOrCreateTicker(yahooSymbol, itemDataInput = null) {
+        const itemData = itemDataInput || state.results.find(i => i.symbol === yahooSymbol);
+        if (!itemData) return { ok: false, reason: 'not-in-explorer-results' };
 
         const jsonSymbol = getJsonSymbol(yahooSymbol);
         let card = document.getElementById(`card-${yahooSymbol}`) || (jsonSymbol && document.getElementById(`card-${jsonSymbol}`));
-        const isExisting = !!card;
 
         if (!card) {
             card = await createDynamicCard(itemData);
-            if (!card) return;
+            if (!card) return { ok: false, reason: 'card-create-failed' };
         }
 
-        document.querySelectorAll('.card').forEach(x => { x.classList.remove('active'); x.setAttribute('aria-hidden', 'true'); });
-        card.classList.add('active');
-        card.setAttribute('aria-hidden', 'false');
-        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        return { ok: true, symbol: jsonSymbol || yahooSymbol };
+    }
 
-        const tab = document.querySelector(`.tab[data-symbol="${jsonSymbol || yahooSymbol}"]`) || document.querySelector(`.tab[data-symbol="${yahooSymbol}"]`);
-        if (tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            tab.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-
-        if (isExisting) window.fetchActiveSymbol?.(true);
-        else window.activateStock?.(yahooSymbol);
+    async function openStock(yahooSymbol) {
+        const itemData = state.results.find(i => i.symbol === yahooSymbol);
+        const period = state.currentPeriod || '1D';
+        await goToTicker({ symbol: yahooSymbol, period, itemData });
     }
 
     async function createDynamicCard(itemData) {
@@ -952,6 +1009,9 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
 
         createDynamicTab(itemData);
         window.setupNewsSearch?.(symbol);
+        if (window.positions?.[symbol]) {
+            try { initChart(symbol, window.positions); } catch (e) { /* ignore chart init fallback */ }
+        }
 
         return card;
     }
@@ -1022,7 +1082,8 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
 
         tab.appendChild(tabLogo);
         tab.appendChild(tabInfo);
-        tab.addEventListener('click', () => openStock(yahooSymbol));
+        // Keep dynamic tabs aligned with native tabs: activation is handled
+        // centrally by the delegated .tab click handler in general.js.
         section.appendChild(tab);
     }
 
@@ -1134,5 +1195,5 @@ import { typeLabel, typeIcon, debounce } from './constants.js';
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 
-    window.explorerModule = { openExplorer, loadData };
+    window.explorerModule = { openExplorer, loadData, openOrCreateTicker };
 }

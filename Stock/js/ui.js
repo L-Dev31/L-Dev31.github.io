@@ -6,6 +6,7 @@ import rateLimiter from './rate-limiter.js';
 import { updateChart, initChart } from './chart.js';
 import { updateSignal } from './signal-bot.js';
 import { setupNewsSearch, startCardNewsAutoRefresh, stopCardNewsAutoRefresh, openNewsOverlay, openNewsPage, closeNewsPage } from './news.js';
+import { resolveTickerDetails } from './ticker-catalog.js';
 
 export { initChart }; // Re-export for portfolio.js
 
@@ -21,7 +22,8 @@ export function createTab(stock, type) {
     }
     
     const img = tab.querySelector('img');
-    img.src = `img/icon/${stock.symbol}.png`;
+    const iconSymbol = stock.iconSymbol || stock.symbol;
+    img.src = `img/icon/${iconSymbol}.png`;
     img.alt = stock.symbol;
     img.onerror = function () {
         const parent = this.parentElement;
@@ -61,7 +63,7 @@ export function createCard(stock) {
     const logo = card.querySelector('.logo img')
     logo.id = `logo-${stock.symbol}`
     logo.dataset.symbol = stock.symbol
-    logo.src = `img/logo/${stock.symbol}.png`
+    logo.src = stock.iconSymbol ? `img/icon/${stock.iconSymbol}.png` : `img/logo/${stock.symbol}.png`
     logo.onerror = function(){
         try {
             const parent = this.parentElement;
@@ -692,7 +694,6 @@ export function markTabAsSuspended(symbol) {
     if (tab.classList.contains('suspended') && inSuspended) return;
 
     tab.classList.add('suspended');
-    console.log(`📛 Tab ${symbol} marqué comme suspendu`);
 
     const pos = positions[symbol];
     if (!pos) return;
@@ -718,7 +719,6 @@ export function unmarkTabAsSuspended(symbol) {
     if (!tab.classList.contains('suspended') && !tab.closest('#suspended-tabs')) return;
 
     tab.classList.remove('suspended');
-    console.log(`✅ Tab ${symbol} rétabli (non suspendu)`);
 
     // Move back to original section
     const pos = positions[symbol];
@@ -884,7 +884,7 @@ export function closeTerminalCard() {
     try { document.getElementById('open-terminal-btn')?.classList.remove('active'); } catch(e) {}
 }
 
-export async function openCustomSymbol(symbol, type = 'equity') {
+export async function openCustomSymbol(symbol, type = 'equity', itemData = null) {
     if (positions[symbol]) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
@@ -898,24 +898,31 @@ export async function openCustomSymbol(symbol, type = 'equity') {
         return;
     }
 
+    const resolved = itemData || await resolveTickerDetails(symbol, { type });
+
     const stock = {
-        symbol: symbol,
-        ticker: symbol,
-        name: symbol,
-        type: type,
-        currency: 'USD',
-        api_mapping: {},
+        symbol,
+        ticker: resolved.ticker || symbol,
+        name: resolved.name || symbol,
+        type: resolved.type || type,
+        currency: resolved.currency || 'USD',
+        country: resolved.country || '',
+        isin: resolved.isin || '',
+        api_mapping: resolved.api_mapping || { yahoo: resolved.ticker || symbol },
+        iconSymbol: resolved.iconSymbol || null,
         purchases: [],
         sales: []
     };
 
     positions[symbol] = {
         symbol: symbol,
-        ticker: symbol,
-        name: symbol,
-        type: type,
-        currency: 'USD',
-        api_mapping: {},
+        ticker: stock.ticker,
+        name: stock.name,
+        type: stock.type,
+        currency: stock.currency,
+        country: stock.country,
+        isin: stock.isin,
+        api_mapping: stock.api_mapping,
         shares: 0,
         investment: 0,
         costBasis: 0,
@@ -932,7 +939,7 @@ export async function openCustomSymbol(symbol, type = 'equity') {
     lastApiBySymbol[symbol] = selectedApi;
 
     ensureSection('general-tabs', type);
-    createTab(stock, type);
+    createTab(stock, stock.type);
 
     createCard(stock);
     initChart(symbol, positions);

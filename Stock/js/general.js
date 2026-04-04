@@ -351,20 +351,6 @@ window.registerDynamicPosition = function(posData) {
     setNewsPositions(positions);
 };
 
-window.activateStock = function(symbol) {
-    if (!symbol || !positions[symbol]) return;
-    const chartCanvas = document.getElementById(`chart-${symbol}`);
-    if (chartCanvas && !positions[symbol].chart) {
-        initChart(symbol, positions);
-    }
-    setTimeout(() => {
-        const card = document.getElementById(`card-${symbol}`);
-        if (card && card.classList.contains('active')) {
-            fetchActiveSymbol(true);
-        }
-    }, 100);
-};
-
 window.addEventListener('rateLimitStart', (e) => {
     try {
         startGlobalRateLimitCountdown();
