@@ -1,8 +1,29 @@
 // PROXY CONFIG
-const WORKER_URL = 'https://nemeris.leotoskuepro.workers.dev';
+const PROXY_STORAGE_KEY = 'nemeris_proxy_url';
+const DEFAULT_WORKER_URL = 'https://nemeris.leotoskuepro.workers.dev';
+
+function getProxyBaseUrl() {
+    try {
+        const saved = localStorage.getItem(PROXY_STORAGE_KEY)?.trim();
+        if (saved) return saved;
+    } catch (e) {
+        // localStorage may be unavailable in some contexts; fallback to default.
+    }
+    return DEFAULT_WORKER_URL;
+}
 
 function buildProxiedUrl(targetUrl) {
-    return `${WORKER_URL}?url=${encodeURIComponent(targetUrl)}`;
+    const baseUrl = getProxyBaseUrl();
+
+    if (!baseUrl) throw new Error('PROXY_NOT_CONFIGURED');
+
+    // Support advanced worker patterns like: https://worker.dev/?target={url}
+    if (baseUrl.includes('{url}')) {
+        return baseUrl.replace('{url}', encodeURIComponent(targetUrl));
+    }
+
+    const separator = baseUrl.includes('?') ? '&' : '?';
+    return `${baseUrl}${separator}url=${encodeURIComponent(targetUrl)}`;
 }
 
 // FETCH

@@ -30,13 +30,6 @@ export function cacheSet(key, data, ttlMs) {
     }
 }
 
-// CLEAR
-export function cacheClear() {
-    try {
-        Object.keys(localStorage).filter(k => k.startsWith(PREFIX)).forEach(k => localStorage.removeItem(k));
-    } catch { /* ignore */ }
-}
-
 // EVICTION
 function evictOldest() {
     try {

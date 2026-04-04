@@ -50,14 +50,6 @@ export function filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes,
   };
 }
 
-export function computeChange(open, price) {
-  const safeOpen = Number.isFinite(open) ? open : 0;
-  const safePrice = Number.isFinite(price) ? price : 0;
-  const change = safePrice - safeOpen;
-  const changePercent = safeOpen ? (change / safeOpen) * 100 : 0;
-  return { change, changePercent };
-}
-
 export function periodToDays(period) {
   switch ((period || '').toUpperCase()) {
     case '1D': return 1;
@@ -71,10 +63,6 @@ export function periodToDays(period) {
     case 'MAX': return 36500;
     default: return 7;
   }
-}
-
-export function dateCutoff(days) {
-  return Math.floor((Date.now() - (days || 0) * 86400000) / 1000);
 }
 
 export function normalizeSymbol(sym) {
