@@ -90,12 +90,30 @@
 
 .terminal-mini-table th,
 .terminal-data-table th {
-    color: rgba(255, 255, 255, 0.75);
     font-weight: 600;
 }
 
+.terminal-mini-table thead th,
 .terminal-data-table thead th {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.terminal-mini-table tbody th,
+.terminal-data-table tbody th {
+    color: var(--primary-purple);
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.terminal-mini-table td,
+.terminal-data-table td {
+    color: var(--text-white);
+}
+
+.terminal-data-table thead th {
+    color: rgba(255, 255, 255, 0.55);
     font-weight: 700;
     border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 }
@@ -110,6 +128,10 @@
 .terminal-help-table td:first-child,
 .terminal-help-table th:first-child {
     width: 48%;
+}
+
+.terminal-help-table tbody td:first-child {
+    color: var(--primary-purple);
 }
 
 .terminal-muted { color: rgba(255, 255, 255, 0.55); }

@@ -1,7 +1,5 @@
 import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade } from './yahoo-finance.js';
-import { typeLabel, typeIcon, debounce } from './constants.js';
-import { goToTicker } from './command/go.js';
-import { initChart } from './chart.js';
+import { debounce } from './constants.js';
 
 // Removed IIFE wrapper
 {
@@ -834,257 +832,52 @@ import { initChart } from './chart.js';
         const itemData = itemDataInput || state.results.find(i => i.symbol === yahooSymbol);
         if (!itemData) return { ok: false, reason: 'not-in-explorer-results' };
 
-        const jsonSymbol = getJsonSymbol(yahooSymbol);
-        let card = document.getElementById(`card-${yahooSymbol}`) || (jsonSymbol && document.getElementById(`card-${jsonSymbol}`));
-
-        if (!card) {
-            card = await createDynamicCard(itemData);
-            if (!card) return { ok: false, reason: 'card-create-failed' };
+        const existingSymbol = getJsonSymbol(yahooSymbol) || yahooSymbol;
+        const existingCard = document.getElementById(`card-${existingSymbol}`);
+        if (existingCard || window.positions?.[existingSymbol]) {
+            return { ok: true, symbol: existingSymbol };
         }
 
-        return { ok: true, symbol: jsonSymbol || yahooSymbol };
+        if (typeof window.openCustomSymbol !== 'function') {
+            return { ok: false, reason: 'missing-open-custom-symbol' };
+        }
+
+        const type = itemData.market === 'crypto' ? 'crypto' : 'equity';
+        const resolved = {
+            ticker: yahooSymbol,
+            name: itemData.name || yahooSymbol,
+            type,
+            currency: itemData.currency || 'USD',
+            country: getCountryForExplorerSymbol(yahooSymbol, itemData.market, itemData.currency),
+            api_mapping: { yahoo: yahooSymbol },
+            iconSymbol: getIconSymbol(yahooSymbol)
+        };
+
+        await window.openCustomSymbol(yahooSymbol, type, resolved);
+        if (itemData.isSuspended) window.markTabAsSuspended?.(yahooSymbol);
+
+        return { ok: true, symbol: yahooSymbol };
+    }
+
+    function getCountryForExplorerSymbol(symbol, market, currency) {
+        let country = 'US';
+
+        if (market && MARKET_CONFIG[market]?.country) return MARKET_CONFIG[market].country;
+
+        const suffix = symbol.includes('.') ? `.${symbol.split('.').pop()}` : '';
+        const bySuffix = Object.values(MARKET_CONFIG).find(c => c.suffix === suffix);
+        if (bySuffix?.country) return bySuffix.country;
+
+        if (currency === 'GBP') country = 'GB';
+        return country;
     }
 
     async function openStock(yahooSymbol) {
         const itemData = state.results.find(i => i.symbol === yahooSymbol);
         const period = state.currentPeriod || '1D';
-        await goToTicker({ symbol: yahooSymbol, period, itemData });
-    }
-
-    async function createDynamicCard(itemData) {
-        const jsonSymbol = getJsonSymbol(itemData.symbol);
-        if (jsonSymbol) return document.getElementById(`card-${jsonSymbol}`);
-
-        const template = document.getElementById('card-template');
-        if (!template) return null;
-
-        const symbol = itemData.symbol;
-        const card = template.content.firstElementChild.cloneNode(true);
-        card.id = `card-${symbol}`;
-
-        let country = 'US';
-        const m = itemData.market;
-        
-        // Try to find country from config based on market ID
-        if (MARKET_CONFIG[m]?.country) country = MARKET_CONFIG[m].country;
-        // Or try to find by suffix
-        else {
-             const suffix = symbol.includes('.') ? '.' + symbol.split('.').pop() : '';
-             const region = Object.values(MARKET_CONFIG).find(c => c.suffix === suffix);
-             if (region) country = region.country;
-             else if (itemData.currency === 'GBP') country = 'GB';
+        if (typeof window.goToTicker === 'function') {
+            await window.goToTicker({ symbol: yahooSymbol, period, itemData });
         }
-
-        const iconSymbol = getIconSymbol(symbol);
-        const logo = card.querySelector('.logo img');
-        if (logo) {
-            logo.id = `logo-${symbol}`;
-            logo.dataset.symbol = symbol;
-            logo.onerror = function() {
-                this.onerror = null;
-                this.parentElement.innerHTML = `<div class="logo-fallback"><div class="logo-name" title="${itemData.name || symbol}">${itemData.name || symbol}</div></div>`;
-            };
-            logo.src = iconSymbol ? `img/icon/${iconSymbol}.png` : `img/logo/${symbol}.png`;
-        }
-
-        const generalTitle = card.querySelector('h3.section-title');
-        if (generalTitle) {
-            generalTitle.id = `general-title-${symbol}`;
-            const genDate = generalTitle.nextElementSibling;
-            if (genDate?.classList.contains('section-date')) genDate.id = `general-date-${symbol}`;
-        }
-
-        const sharesEl = card.querySelector('.important-shares span');
-        if (sharesEl) { sharesEl.id = `shares-${symbol}`; sharesEl.textContent = '0'; }
-
-        const investmentSection = card.querySelector('.investment-section');
-        if (investmentSection) investmentSection.style.display = 'none';
-
-        card.querySelectorAll('.general-row').forEach(row => {
-            const strong = row.querySelector('strong');
-            const span = row.querySelector('span');
-            if (!strong || !span) return;
-            const label = strong.textContent.trim().toLowerCase();
-            if (label.includes('isin')) { span.id = `isin-${symbol}`; span.textContent = ''; row.style.display = 'none'; }
-            else if (label.includes('ticker') || label.includes('symbole')) { span.id = `ticker-${symbol}`; span.textContent = symbol; }
-        });
-
-        const countryName = card.querySelector('.country-name');
-        const flagIcon = card.querySelector('.flag-icon');
-        if (countryName) countryName.textContent = country;
-        if (flagIcon) { flagIcon.id = `flag-${symbol}`; flagIcon.dataset.country = country; flagIcon.src = `img/flag/${country.toLowerCase()}.png`; }
-
-        const periodsGroup = card.querySelector('.periods-group');
-        if (periodsGroup) {
-            periodsGroup.id = `periods-${symbol}`;
-            periodsGroup.querySelectorAll('.period-btn').forEach(btn => {
-                btn.dataset.symbol = symbol;
-                if (btn.dataset.period === '1D') btn.classList.add('active');
-            });
-        }
-
-        const chartCanvas = card.querySelector('.chart-canvas');
-        if (chartCanvas) chartCanvas.id = `chart-${symbol}`;
-
-        const perfValue = card.querySelector('.performance-value');
-        if (perfValue) {
-            perfValue.id = `perf-${symbol}`;
-            const cp = itemData.changePercent || 0;
-            perfValue.textContent = `${cp >= 0 ? '+' : ''}${cp.toFixed(2)}%`;
-            perfValue.className = `performance-value ${cp >= 0 ? 'positive' : 'negative'}`;
-        }
-
-        const updateCenter = card.querySelector('.update-center');
-        if (updateCenter) { updateCenter.id = `update-center-${symbol}`; updateCenter.textContent = 'Dernière mise à jour : --'; }
-
-        const courseTitle = card.querySelector('.course-title');
-        if (courseTitle) {
-            courseTitle.id = `course-title-${symbol}`;
-            const courseDate = courseTitle.nextElementSibling;
-            if (courseDate?.classList.contains('section-date')) courseDate.id = `course-date-${symbol}`;
-        }
-
-        const invTitle = card.querySelector('.investment-title');
-        if (invTitle) {
-            invTitle.id = `investment-title-${symbol}`;
-            const invDate = invTitle.nextElementSibling;
-            if (invDate?.classList.contains('section-date')) invDate.id = `investment-date-${symbol}`;
-        }
-
-        const detailsTitle = card.querySelector('.details-title');
-        if (detailsTitle) {
-            detailsTitle.id = `details-title-${symbol}`;
-            const detDate = detailsTitle.nextElementSibling;
-            if (detDate?.classList.contains('section-date')) detDate.id = `details-date-${symbol}`;
-        }
-
-        const transactionTitle = card.querySelector('.transaction-history-title');
-        if (transactionTitle) {
-            transactionTitle.id = `transaction-history-title-${symbol}`;
-        }
-
-        const tds = card.querySelectorAll('.card-table-td');
-        if (tds.length >= 8) {
-            tds[1].id = `invest-${symbol}`; tds[2].id = `value-${symbol}`; tds[3].id = `profit-${symbol}`;
-            tds[5].id = `invest-per-${symbol}`; tds[6].id = `value-per-${symbol}`; tds[7].id = `profit-per-${symbol}`;
-        }
-
-        const signalTitle = card.querySelector('.signal-title');
-        if (signalTitle) {
-            signalTitle.id = `signal-title-${symbol}`;
-            const signalDate = signalTitle.nextElementSibling;
-            if (signalDate?.classList.contains('section-date')) signalDate.id = `signal-date-${symbol}`;
-        }
-
-        const signalCursor = card.querySelector('.signal-cursor');
-        const signalValue = card.querySelector('.signal-state-title');
-        const signalDescription = card.querySelector('.signal-state-description');
-        if (signalCursor) signalCursor.id = `signal-cursor-${symbol}`;
-        if (signalValue) signalValue.id = `signal-value-${symbol}`;
-        if (signalDescription) signalDescription.id = `signal-description-${symbol}`;
-
-        const infoValues = card.querySelectorAll('.info-value');
-        if (infoValues.length === 4) {
-            infoValues[0].id = `open-${symbol}`; infoValues[1].id = `high-${symbol}`;
-            infoValues[2].id = `low-${symbol}`; infoValues[3].id = `close-${symbol}`;
-        }
-
-        const investmentTabBtn = card.querySelector('.card-tab-btn[data-target="investment"]');
-        if (investmentTabBtn) investmentTabBtn.style.display = 'none';
-
-        document.getElementById('cards-container')?.appendChild(card);
-
-        window.registerDynamicPosition?.({
-            symbol, ticker: symbol, name: itemData.name,
-            type: itemData.market === 'crypto' ? 'crypto' : 'equity',
-            currency: itemData.currency || 'USD',
-            api_mapping: { yahoo: symbol },
-            shares: 0, investment: 0, costBasis: 0,
-            purchases: [], sales: [], news: [],
-            lastNewsFetch: 0, chart: null, lastFetch: 0, lastData: null, currentPeriod: '1D'
-        });
-
-        const newsList = card.querySelector('.news-list');
-        if (newsList) newsList.id = `news-list-${symbol}`;
-
-        createDynamicTab(itemData);
-        window.setupNewsSearch?.(symbol);
-        if (window.positions?.[symbol]) {
-            try { initChart(symbol, window.positions); } catch (e) { /* ignore chart init fallback */ }
-        }
-
-        return card;
-    }
-
-    function createDynamicTab(itemData) {
-        const yahooSymbol = itemData.symbol;
-        const type = itemData.market === 'crypto' ? 'crypto' : 'equity';
-
-        if (getJsonSymbol(yahooSymbol)) return;
-        if (document.querySelector(`.tab[data-symbol="${yahooSymbol}"]`)) return;
-
-        let section = document.getElementById(`general-section-${type}`);
-        if (!section) {
-            const generalTabs = document.getElementById('general-tabs');
-            if (!generalTabs) return;
-            section = document.createElement('div');
-            section.className = 'tab-type-section';
-            section.id = `general-section-${type}`;
-            const title = document.createElement('div');
-            title.className = 'tab-type-title';
-            title.innerHTML = `<i class="${typeIcon(type)} type-icon"></i> ${typeLabel(type)}`;
-            section.appendChild(title);
-            generalTabs.appendChild(section);
-        }
-
-        const tab = document.createElement('div');
-        tab.className = itemData.isSuspended ? 'tab suspended' : 'tab';
-        tab.dataset.symbol = yahooSymbol;
-        tab.dataset.ticker = yahooSymbol;
-
-        const tabLogo = document.createElement('div');
-        tabLogo.className = 'tab-logo';
-        const iconSymbol = getIconSymbol(yahooSymbol);
-        const candidates = buildOnlineIconCandidates(yahooSymbol, itemData.market);
-
-        const img = document.createElement('img');
-        img.alt = yahooSymbol;
-        img.onerror = function() {
-            if (candidates.length > 0) {
-                this.src = candidates.shift();
-                return;
-            }
-            this.onerror = null;
-            const ticker = yahooSymbol.split('.')[0].toUpperCase();
-            const fallback = document.createElement('div');
-            fallback.className = 'tab-logo-fallback';
-            fallback.textContent = ticker.length > 4 ? ticker.slice(0, 4) : ticker;
-            fallback.title = yahooSymbol;
-            fallback.style.fontSize = ticker.length > 4 ? Math.max(6, 12 - (ticker.length - 4) * 2) + 'px' : '12px';
-            const parent = this.parentElement || tabLogo;
-            if (!parent) return;
-            parent.innerHTML = '';
-            parent.appendChild(fallback);
-        };
-
-        tabLogo.appendChild(img);
-        if (iconSymbol) {
-            img.src = `img/icon/${iconSymbol}.png`;
-        } else if (candidates.length > 0) {
-            img.src = candidates.shift();
-        } else {
-            img.onerror();
-        }
-
-        const tabInfo = document.createElement('div');
-        tabInfo.className = 'tab-info';
-        tabInfo.innerHTML = `<div class="tab-name">${itemData.name || yahooSymbol}</div><div class="tab-shares"></div>`;
-
-        tab.appendChild(tabLogo);
-        tab.appendChild(tabInfo);
-        // Keep dynamic tabs aligned with native tabs: activation is handled
-        // centrally by the delegated .tab click handler in general.js.
-        section.appendChild(tab);
     }
 
     function openExplorer() {

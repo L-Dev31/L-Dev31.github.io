@@ -35,13 +35,11 @@ export async function goToTicker(options = {}) {
 
     if (!symbol) return { ok: false, reason: 'invalid-symbol' };
 
-    // Fast path: symbol already exists in runtime positions.
     if (window.positions?.[symbol]) {
         applyPeriodToSymbol(symbol, period);
         return activateTabAndRefresh(symbol);
     }
 
-    // Preferred path for explorer-driven symbols: create rich dynamic card/tab.
     if (window.explorerModule?.openOrCreateTicker) {
         const created = await window.explorerModule.openOrCreateTicker(symbol, itemData);
         if (created?.ok && created.symbol) {
@@ -50,7 +48,6 @@ export async function goToTicker(options = {}) {
         }
     }
 
-    // Fallback path: create a minimal custom symbol card/tab.
     if (window.openCustomSymbol) {
         const resolved = itemData || await resolveTickerDetails(symbol, {
             quoteType: options.quoteType,
@@ -64,4 +61,22 @@ export async function goToTicker(options = {}) {
     }
 
     return { ok: false, reason: 'no-create-strategy' };
+}
+
+export async function runGoCommand({ parts, out, fmtErr }) {
+    const raw = (parts[1] || '').toUpperCase();
+    const period = (parts[2] || '1D').toUpperCase();
+
+    if (!raw) {
+        out('Usage: GO <SYMBOL> [PERIOD]');
+        return;
+    }
+
+    try {
+        const result = await goToTicker({ symbol: raw, period });
+        if (result?.ok) out(`Ouvert: ${result.symbol || raw} ${period}`);
+        else out(`Non trouvé: ${raw}`);
+    } catch (error) {
+        out(`Erreur: ${fmtErr(error)}`);
+    }
 }

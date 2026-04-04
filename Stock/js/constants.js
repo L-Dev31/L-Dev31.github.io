@@ -34,3 +34,18 @@ export function typeLabel(type) {
 export function typeIcon(type) {
     return TYPE_ICONS[type] || 'fa-solid fa-layer-group';
 }
+
+export function periodToDays(period) {
+    switch ((period || '').toUpperCase()) {
+        case '1D': return 1;
+        case '1W': return 7;
+        case '1M': return 30;
+        case '3M': return 90;
+        case '6M': return 180;
+        case '1Y': return 365;
+        case '3Y': return 1095;
+        case '5Y': return 1825;
+        case 'MAX': return 36500;
+        default: return 7;
+    }
+}

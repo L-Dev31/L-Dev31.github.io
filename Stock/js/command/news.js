@@ -1,6 +1,6 @@
 import { fetchNews } from '../yahoo-finance.js';
 import { loadApiConfig } from '../state.js';
-import { periodToDays } from '../utils.js';
+import { periodToDays } from '../constants.js';
 
 export async function fetchTickerNewsItems({ ticker, config, limit = 50, days = 7, apiName = null }) {
     const api = apiName || window.getSelectedApi?.() || window.selectedApi || 'yahoo';

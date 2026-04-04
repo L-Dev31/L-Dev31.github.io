@@ -1,11 +1,11 @@
-import { positions, selectedApi, loadApiConfig, setSelectedApi, lastApiBySymbol } from './state.js';
+import { positions, selectedApi, loadApiConfig, lastApiBySymbol } from './state.js';
 import { hasTransactions, typeLabel, typeIcon } from './constants.js';
 import { calculateStockValues } from './portfolio.js';
 import { fetchActiveSymbol } from './general.js';
 import rateLimiter from './rate-limiter.js';
 import { updateChart, initChart } from './chart.js';
 import { updateSignal } from './signal-bot.js';
-import { setupNewsSearch, startCardNewsAutoRefresh, stopCardNewsAutoRefresh, openNewsOverlay, openNewsPage, closeNewsPage } from './news.js';
+import { setupNewsSearch } from './news.js';
 import { resolveTickerDetails } from './ticker-catalog.js';
 
 export { initChart }; // Re-export for portfolio.js
@@ -467,47 +467,38 @@ export function updateUI(symbol, data) {
     updateSignal(symbol, data, { period: currentPeriod });
 }
 
-export function resetSymbolDisplay(symbol) {
-    if (!positions[symbol]) return
-    
-    if (positions[symbol].chart) {
-        positions[symbol].chart.data.labels = []
-        positions[symbol].chart.data.datasets[0].data = []
-        positions[symbol].chart.data.timestamps = []
-        positions[symbol].chart.update('none')
+function clearChartData(symbol) {
+    if (!positions[symbol]?.chart) return;
+    positions[symbol].chart.data.labels = [];
+    if (positions[symbol].chart.data.datasets && positions[symbol].chart.data.datasets[0]) {
+        positions[symbol].chart.data.datasets[0].data = [];
     }
-    
+    positions[symbol].chart.data.timestamps = [];
+    try { positions[symbol].chart.update('none'); } catch (e) { /* ignore */ }
+}
+
+function resetPricePerformanceAndUpdate(symbol) {
     const openEl = document.getElementById(`open-${symbol}`);
     const highEl = document.getElementById(`high-${symbol}`);
     const lowEl = document.getElementById(`low-${symbol}`);
     const closeEl = document.getElementById(`close-${symbol}`);
-    
-    if (openEl) openEl.textContent = '--'
-    if (highEl) highEl.textContent = '--'
-    if (lowEl) lowEl.textContent = '--'
-    if (closeEl) closeEl.textContent = '--'
-    
+
+    if (openEl) openEl.textContent = '--';
+    if (highEl) highEl.textContent = '--';
+    if (lowEl) lowEl.textContent = '--';
+    if (closeEl) closeEl.textContent = '--';
+
     const perfEl = document.getElementById(`perf-${symbol}`);
     if (perfEl) {
-        perfEl.textContent = '--'
-        perfEl.className = 'performance-value'
-    }
-    
-    const valueEl = document.getElementById(`value-${symbol}`);
-    const valuePerEl = document.getElementById(`value-per-${symbol}`);
-    const profitEl = document.getElementById(`profit-${symbol}`);
-    const profitPerEl = document.getElementById(`profit-per-${symbol}`);
-    
-    if (valueEl) valueEl.textContent = '--'
-    if (valuePerEl) valuePerEl.textContent = '--'
-    if (profitEl) profitEl.textContent = '--'
-    if (profitPerEl) profitPerEl.textContent = '--'
-    
-    const updateEl = document.getElementById(`update-center-${symbol}`);
-    if (updateEl) {
-        updateEl.textContent = 'Dernière mise à jour : --'
+        perfEl.textContent = '--';
+        perfEl.className = 'performance-value';
     }
 
+    const updateEl = document.getElementById(`update-center-${symbol}`);
+    if (updateEl) updateEl.textContent = 'Dernière mise à jour : --';
+}
+
+function resetSignalDisplay(symbol, description) {
     const signalCursor = document.getElementById(`signal-cursor-${symbol}`);
     const signalValue = document.getElementById(`signal-value-${symbol}`);
     const signalDescription = document.getElementById(`signal-description-${symbol}`);
@@ -517,40 +508,33 @@ export function resetSymbolDisplay(symbol) {
         signalValue.textContent = 'Neutre';
         signalValue.style.color = '#a8a2ff';
     }
-    if (signalDescription) signalDescription.textContent = 'Analyse technique en cours...';
+    if (signalDescription) signalDescription.textContent = description;
+}
+
+export function resetSymbolDisplay(symbol) {
+    if (!positions[symbol]) return
+
+    clearChartData(symbol);
+    resetPricePerformanceAndUpdate(symbol);
+
+    const valueEl = document.getElementById(`value-${symbol}`);
+    const valuePerEl = document.getElementById(`value-per-${symbol}`);
+    const profitEl = document.getElementById(`profit-${symbol}`);
+    const profitPerEl = document.getElementById(`profit-per-${symbol}`);
+
+    if (valueEl) valueEl.textContent = '--'
+    if (valuePerEl) valuePerEl.textContent = '--'
+    if (profitEl) profitEl.textContent = '--'
+    if (profitPerEl) profitPerEl.textContent = '--'
+
+    resetSignalDisplay(symbol, 'Analyse technique en cours...');
 }
 
 export function clearPeriodDisplay(symbol) {
     if (!positions[symbol]) return;
-    if (positions[symbol].chart) {
-        positions[symbol].chart.data.labels = [];
-        if (positions[symbol].chart.data.datasets && positions[symbol].chart.data.datasets[0]) {
-            positions[symbol].chart.data.datasets[0].data = [];
-        }
-        positions[symbol].chart.data.timestamps = [];
-        try { positions[symbol].chart.update('none'); } catch (e) { /* ignore */ }
-    }
-
-    const openEl = document.getElementById(`open-${symbol}`);
-    const highEl = document.getElementById(`high-${symbol}`);
-    const lowEl = document.getElementById(`low-${symbol}`);
-    const closeEl = document.getElementById(`close-${symbol}`);
-    if (openEl) openEl.textContent = '--';
-    if (highEl) highEl.textContent = '--';
-    if (lowEl) lowEl.textContent = '--';
-    if (closeEl) closeEl.textContent = '--';
-
-    const perfEl = document.getElementById(`perf-${symbol}`);
-    if (perfEl) { perfEl.textContent = '--'; perfEl.className = 'performance-value'; }
-    const updateEl = document.getElementById(`update-center-${symbol}`);
-    if (updateEl) updateEl.textContent = 'Dernière mise à jour : --';
-
-    const signalCursor = document.getElementById(`signal-cursor-${symbol}`);
-    const signalValue = document.getElementById(`signal-value-${symbol}`);
-    const signalDescription = document.getElementById(`signal-description-${symbol}`);
-    if (signalCursor) signalCursor.style.left = '50%';
-    if (signalValue) { signalValue.textContent = 'Neutre'; signalValue.style.color = '#a8a2ff'; }
-    if (signalDescription) signalDescription.textContent = 'Pas de données pour cette période';
+    clearChartData(symbol);
+    resetPricePerformanceAndUpdate(symbol);
+    resetSignalDisplay(symbol, 'Pas de données pour cette période');
 
     const cardRoot = document.querySelector(`#card-${symbol}`);
     if (cardRoot) {

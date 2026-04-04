@@ -1,5 +1,4 @@
 import globalRateLimiter from './rate-limiter.js';
-import { filterNullOHLCDataPoints, normalizeSymbol } from './utils.js';
 import { proxyFetchSafe, proxyFetch } from './proxy-fetch.js';
 import { cacheGet, cacheSet, ohlcKey, newsKey, TTL } from './cache.js';
 
@@ -33,6 +32,48 @@ const PERIODS = {
     '5Y': { interval: '1wk', range: '5y' },
     'MAX': { interval: '1mo', range: 'max' }
 };
+
+function filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes, volumes) {
+    if (!timestamps || !opens || !highs || !lows || !closes ||
+        timestamps.length !== opens.length ||
+        timestamps.length !== highs.length ||
+        timestamps.length !== lows.length ||
+        timestamps.length !== closes.length) {
+        return { timestamps: [], opens: [], highs: [], lows: [], closes: [], volumes: [] };
+    }
+
+    const hasVolumes = Array.isArray(volumes) && volumes.length === timestamps.length;
+    const validData = timestamps.map((ts, index) => ({
+        timestamp: ts,
+        open: opens[index],
+        high: highs[index],
+        low: lows[index],
+        close: closes[index],
+        volume: hasVolumes ? (volumes[index] || 0) : 0
+    })).filter(item =>
+        item.timestamp != null && !isNaN(item.timestamp) &&
+        item.open != null && !isNaN(item.open) &&
+        item.high != null && !isNaN(item.high) &&
+        item.low != null && !isNaN(item.low) &&
+        item.close != null && !isNaN(item.close)
+    );
+
+    return {
+        timestamps: validData.map(item => item.timestamp),
+        opens: validData.map(item => item.open),
+        highs: validData.map(item => item.high),
+        lows: validData.map(item => item.low),
+        closes: validData.map(item => item.close),
+        volumes: validData.map(item => item.volume)
+    };
+}
+
+function normalizeSymbol(sym) {
+    return (sym || '').toUpperCase()
+        .replace(/^([A-Z0-9]+)\.([A-Z])$/, '$1-$2')
+        .replace(/^([A-Z0-9]+)\/P([A-Z0-9]+)$/, '$1-P$2')
+        .replaceAll('/', '-');
+}
 
 export function getYahooSymbol(stock) {
     if (!stock) return null;

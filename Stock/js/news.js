@@ -1,5 +1,5 @@
 import { loadApiConfig } from './state.js';
-import { periodToDays } from './utils.js';
+import { periodToDays } from './constants.js';
 import { fetchTickerNewsItems, fetchSymbolNewsItems } from './command/news.js';
 
 let positions = {};

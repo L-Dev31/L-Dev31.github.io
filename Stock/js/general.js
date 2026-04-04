@@ -1,15 +1,12 @@
 import { fetchFromYahoo } from './yahoo-finance.js'
 import rateLimiter from './rate-limiter.js'
 import { setPositions as setNewsPositions, setupNewsSearch, startCardNewsAutoRefresh, stopCardNewsAutoRefresh, openNewsOverlay, closeNewsOverlay, openNewsPage, closeNewsPage, fetchCardNews } from './news.js'
-import { initChart, updateChart } from './chart.js'
-import { updateSignal } from './signal-bot.js'
-import { initTerminal, processCommand } from './terminal.js'
+import './terminal.js'
 
-import { filterNullDataPoints, filterNullOHLCDataPoints, isMarketOpen, periodToDays } from './utils.js'
-import { DEAD_ERROR_CODES } from './constants.js'
-import { API_CONFIG, loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, mainFetchController, setMainFetchController, initialFetchController, setInitialFetchController, fastPollTimer, setFastPollTimer, rateLimitCountdownTimer, setRateLimitCountdownTimer } from './state.js'
-import { calculateStockValues, updatePortfolioSummary, loadStocks } from './portfolio.js'
-import { createTab, createCard, updateUI, resetSymbolDisplay, updateTabTitle, updateCardTitle, updateSectionDates, clearPeriodDisplay, setApiStatus, updateApiCountdown, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js'
+import { DEAD_ERROR_CODES, periodToDays } from './constants.js'
+import { loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, mainFetchController, setMainFetchController, initialFetchController, fastPollTimer, setFastPollTimer, rateLimitCountdownTimer, setRateLimitCountdownTimer } from './state.js'
+import { updatePortfolioSummary, loadStocks } from './portfolio.js'
+import { updateUI, clearPeriodDisplay, setApiStatus, updateApiCountdown, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js'
 
 // Re-export for other modules
 export { loadApiConfig, fetchActiveSymbol };

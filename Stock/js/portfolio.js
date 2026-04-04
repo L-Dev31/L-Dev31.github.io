@@ -1,10 +1,9 @@
-import { positions, loadApiConfig, selectedApi, lastApiBySymbol, setPositions } from './state.js';
+import { positions, loadApiConfig, selectedApi, lastApiBySymbol } from './state.js';
 import { createTab, createCard, updateSectionDates, setApiStatus, initChart, markTabAsSuspended } from './ui.js';
 import { fetchActiveSymbol } from './general.js'; 
 import { isYahooTickerSuspended } from './yahoo-finance.js';
-import { TYPE_ORDER, TYPE_LABELS, TYPE_ICONS, hasTransactions, typeLabel, typeIcon } from './constants.js';
+import { TYPE_ORDER, hasTransactions, typeLabel, typeIcon } from './constants.js';
 
-const DEFAULT_TOTAL_INVESTMENT = 223.52;
 const DEFAULT_CASH_ACCOUNT = 356.10;
 
 const setText = (id, value) => {

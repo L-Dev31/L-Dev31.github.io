@@ -1,6 +1,10 @@
 import { runNewsCommand } from './command/news.js';
-import { goToTicker } from './command/go.js';
-import { runFaCommand, runAnrCommand, runErnCommand, runDvdCommand, runRvCommand } from './command/market-data.js';
+import { runGoCommand, goToTicker } from './command/go.js';
+import { runFaCommand } from './command/fa.js';
+import { runAnrCommand } from './command/anr.js';
+import { runErnCommand } from './command/ern.js';
+import { runDvdCommand } from './command/dvd.js';
+import { runRvCommand } from './command/rv.js';
 
 const INPUT_ID = 'terminal-input';
 const OUTPUT_ID = 'terminal-output';
@@ -67,7 +71,8 @@ function showHelp(cmd) {
         const rows = cmds
             .map(x => `<tr><td><span class="terminal-command">${x.c}</span></td><td>${x.d}</td></tr>`)
             .join('');
-        const html = `<div class="terminal-panel"><div class="terminal-panel-title">Commandes</div><table class="terminal-data-table terminal-help-table"><thead><tr><th>Commande</th><th>Description</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        out('Commandes terminal:');
+        const html = `<div class="terminal-panel"><table class="terminal-data-table terminal-help-table"><thead><tr><th>COMMANDE</th><th>DESCRIPTION</th></tr></thead><tbody>${rows}</tbody></table></div>`;
         out(html, 'terminal-log', true);
         return;
     }
@@ -75,57 +80,34 @@ function showHelp(cmd) {
     const c = cmd.toUpperCase();
     const found = cmds.find(x => x.c.startsWith(c));
     if (found) {
-        const html = `<div class="terminal-panel"><div class="terminal-panel-title">Aide</div><table class="terminal-mini-table"><tbody><tr><th>Commande</th><td><span class="terminal-command">${found.c}</span></td></tr><tr><th>Description</th><td>${found.d}</td></tr></tbody></table></div>`;
+        out(`Aide ${c}:`);
+        const html = `<div class="terminal-panel"><table class="terminal-mini-table terminal-help-table"><thead><tr><th>COMMANDE</th><th>DESCRIPTION</th></tr></thead><tbody><tr><td><span class="terminal-command">${found.c}</span></td><td>${found.d}</td></tr></tbody></table></div>`;
         out(html, 'terminal-log', true);
     }
     else out(`Inconnu: ${c}`);
 }
+
+const COMMAND_HANDLERS = {
+    GO: runGoCommand,
+    NEWS: runNewsCommand,
+    FA: runFaCommand,
+    ANR: runAnrCommand,
+    ERN: runErnCommand,
+    DVD: runDvdCommand,
+    RV: runRvCommand
+};
 
 async function exec(raw) {
     if (!raw?.trim()) return;
     const parts = raw.trim().split(/\s+/);
     const cmd = parts[0].toUpperCase();
 
-    if (cmd === 'NEWS') {
-        await runNewsCommand({ parts, getTarget, out, fmtErr });
-        return;
-    }
-
     if (cmd === 'CLEAR') { document.getElementById(OUTPUT_ID).innerHTML = ''; out('Terminal v0.1'); cancelTask(); return; }
     if (cmd === 'HELP' || cmd === '?') { showHelp(parts[1]); return; }
 
-    if (cmd === 'GO') {
-        const raw = (parts[1] || '').toUpperCase();
-        const period = (parts[2] || '1D').toUpperCase();
-        if (!raw) { out('Usage: GO <SYMBOL> [PERIOD]'); return; }
-        const result = await goToTicker({ symbol: raw, period });
-        if (result?.ok) out(`Ouvert: ${result.symbol || raw} ${period}`);
-        else out(`Non trouvé: ${raw}`);
-        return;
-    }
-
-    if (cmd === 'FA') {
-        await runFaCommand({ parts, getTarget, out, fmtErr });
-        return;
-    }
-
-    if (cmd === 'ANR') {
-        await runAnrCommand({ parts, getTarget, out, fmtErr });
-        return;
-    }
-
-    if (cmd === 'ERN') {
-        await runErnCommand({ parts, getTarget, out, fmtErr });
-        return;
-    }
-
-    if (cmd === 'DVD') {
-        await runDvdCommand({ parts, getTarget, out, fmtErr });
-        return;
-    }
-
-    if (cmd === 'RV') {
-        await runRvCommand({ parts, out, fmtErr });
+    const handler = COMMAND_HANDLERS[cmd];
+    if (handler) {
+        await handler({ parts, getTarget, out, fmtErr });
         return;
     }
 
@@ -181,5 +163,7 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+window.goToTicker = goToTicker;
 
 export { init as initTerminal, exec as processCommand };
