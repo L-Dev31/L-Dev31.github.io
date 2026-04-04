@@ -2,7 +2,7 @@
     {
         "id": "nasdaq",
         "name": "NASDAQ",
-        "logo": "market/nasdaq.svg",
+        "logo": "img/market/nasdaq.svg",
         "type": "screener",
         "tvRegion": "america",
         "tvExchange": "NASDAQ",
@@ -13,7 +13,7 @@
     {
         "id": "nyse",
         "name": "NYSE",
-        "logo": "market/nyse.svg",
+        "logo": "img/market/nyse.svg",
         "type": "screener",
         "tvRegion": "america",
         "tvExchange": "NYSE",
@@ -24,7 +24,7 @@
     {
         "id": "sse",
         "name": "Shanghai Stock Exchange",
-        "logo": "market/sse.png",
+        "logo": "img/market/sse.png",
         "type": "list",
         "tvRegion": "china",
         "tvExchange": "SSE",
@@ -33,7 +33,7 @@
     {
         "id": "tse",
         "name": "Tokyo Stock Exchange",
-        "logo": "market/tse.svg",
+        "logo": "img/market/tse.svg",
         "type": "list",
         "tvRegion": "japan",
         "tvExchange": "TSE",
@@ -42,7 +42,7 @@
     {
         "id": "hkex",
         "name": "Hong Kong Stock Exchange",
-        "logo": "market/hkex.svg",
+        "logo": "img/market/hkex.svg",
         "type": "list",
         "tvRegion": "hongkong",
         "tvExchange": "HKEX",
@@ -51,7 +51,7 @@
     {
         "id": "euronext",
         "name": "Euronext",
-        "logo": "market/euronext.svg",
+        "logo": "img/market/euronext.svg",
         "type": "list",
         "tvRegion": "france",
         "tvExchange": "EURONEXT",
@@ -60,7 +60,7 @@
     {
         "id": "nse",
         "name": "National Stock Exchange of India",
-        "logo": "market/nse.svg",
+        "logo": "img/market/nse.svg",
         "type": "list",
         "tvRegion": "india",
         "tvExchange": "NSE",
@@ -69,7 +69,7 @@
     {
         "id": "bse",
         "name": "Bombay Stock Exchange",
-        "logo": "market/bse.svg",
+        "logo": "img/market/bse.svg",
         "type": "list",
         "tvRegion": "india",
         "tvExchange": "BSE",
@@ -78,7 +78,7 @@
     {
         "id": "szse",
         "name": "Shenzhen Stock Exchange",
-        "logo": "market/szse.svg",
+        "logo": "img/market/szse.svg",
         "type": "list",
         "tvRegion": "china",
         "tvExchange": "SZSE",
@@ -87,7 +87,7 @@
     {
         "id": "tsx",
         "name": "Toronto Stock Exchange",
-        "logo": "market/tsx.svg",
+        "logo": "img/market/tsx.svg",
         "type": "list",
         "tvRegion": "canada",
         "tvExchange": "TSX",
@@ -96,7 +96,7 @@
     {
         "id": "lse",
         "name": "London Stock Exchange",
-        "logo": "market/lse.svg",
+        "logo": "img/market/lse.svg",
         "type": "list",
         "tvRegion": "uk",
         "tvExchange": "LSE",
@@ -105,7 +105,7 @@
     {
         "id": "xetra",
         "name": "Deutsche Börse",
-        "logo": "market/xetra.svg",
+        "logo": "img/market/xetra.svg",
         "type": "list",
         "tvRegion": "germany",
         "tvExchange": "XETR",
@@ -114,7 +114,7 @@
     {
         "id": "six",
         "name": "SIX Swiss Exchange",
-        "logo": "market/six.svg",
+        "logo": "img/market/six.svg",
         "type": "list",
         "tvRegion": "switzerland",
         "tvExchange": "SIX",
@@ -123,7 +123,7 @@
     {
         "id": "asx",
         "name": "Australian Securities Exchange",
-        "logo": "market/asx.png",
+        "logo": "img/market/asx.png",
         "type": "list",
         "tvRegion": "australia",
         "tvExchange": "ASX",
@@ -132,7 +132,7 @@
     {
         "id": "krx",
         "name": "Korea Exchange",
-        "logo": "market/krx.svg",
+        "logo": "img/market/krx.svg",
         "type": "list",
         "tvRegion": "korea",
         "tvExchange": "KRX",
@@ -141,7 +141,7 @@
     {
         "id": "crypto",
         "name": "Crypto",
-        "logo": "market/crypto.png",
+        "logo": "img/market/crypto.png",
         "type": "screener",
         "screeners": ["all_cryptocurrencies_us"],
         "filterMarket": "crypto",

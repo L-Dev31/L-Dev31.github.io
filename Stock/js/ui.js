@@ -21,7 +21,7 @@ export function createTab(stock, type) {
     }
     
     const img = tab.querySelector('img');
-    img.src = `icon/${stock.symbol}.png`;
+    img.src = `img/icon/${stock.symbol}.png`;
     img.alt = stock.symbol;
     img.onerror = function () {
         const parent = this.parentElement;
@@ -61,7 +61,7 @@ export function createCard(stock) {
     const logo = card.querySelector('.logo img')
     logo.id = `logo-${stock.symbol}`
     logo.dataset.symbol = stock.symbol
-    logo.src = `logo/${stock.symbol}.png`
+    logo.src = `img/logo/${stock.symbol}.png`
     logo.onerror = function(){
         try {
             const parent = this.parentElement;
@@ -122,7 +122,7 @@ export function createCard(stock) {
     if (flag) {
         flag.id = `flag-${stock.symbol}`
         flag.dataset.country = stock.country || ''
-        flag.src = `flag/${(stock.country||'').toLowerCase()}.png`
+        flag.src = `img/flag/${(stock.country||'').toLowerCase()}.png`
     }
 
     const group = card.querySelector('.periods-group')
@@ -851,14 +851,6 @@ export function updateApiCountdown(seconds) {
     }
 }
 
-export function updateDropdownSelection() {
-    const el = document.getElementById('api-status-indicator')
-    if (!el) return
-    const opts = el.querySelectorAll('.api-option')
-    opts.forEach(o => o.classList.remove('active'))
-    const active = el.querySelector(`[data-api="${selectedApi}"]`)
-    if (active) active.classList.add('active')
-}
 
 export function getActiveSymbol() {
     const t = document.querySelector('.tab.active')

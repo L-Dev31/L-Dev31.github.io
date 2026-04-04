@@ -1,5 +1,4 @@
-import { fetchYahooFinancials, fetchYahooEarnings, fetchYahooDividends, fetchYahooOptions, fetchYahooAnalysis, fetchFromYahoo } from './api/yahoo-finance.js';
-import { fetchNews } from './api/news.js';
+import { fetchYahooFinancials, fetchYahooEarnings, fetchYahooDividends, fetchYahooOptions, fetchYahooAnalysis, fetchFromYahoo, fetchNews } from './yahoo-finance.js';
 import { calculateBotSignal } from './signal-bot.js';
 import { loadApiConfig } from './general.js';
 import { periodToDays } from './utils.js';

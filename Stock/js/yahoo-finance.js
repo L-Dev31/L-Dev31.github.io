@@ -1,12 +1,25 @@
-import globalRateLimiter from '../rate-limiter.js';
-import { filterNullOHLCDataPoints, normalizeSymbol } from '../utils.js';
-import { proxyFetchSafe, proxyFetch } from '../proxy-fetch.js';
+import globalRateLimiter from './rate-limiter.js';
+import { filterNullOHLCDataPoints, normalizeSymbol } from './utils.js';
+import { proxyFetchSafe, proxyFetch } from './proxy-fetch.js';
+import { cacheGet, cacheSet, ohlcKey, newsKey, TTL } from './cache.js';
 
 const BASES = ['https://query1.finance.yahoo.com', 'https://query2.finance.yahoo.com'];
 let baseIndex = 0;
 const YAHOO_RATE_LIMIT_MS = 120000;
 const CHART_SNAPSHOT_TTL_MS = 45000;
 const CHART_SNAPSHOT_ERROR_TTL_MS = 12000;
+
+// OHLC CACHE TTL BY PERIOD
+const PERIOD_TTL_MS = {
+    '1D': TTL.OHLC_INTRA,
+    '1W': 10 * 60 * 1000,
+    '1M': 15 * 60 * 1000,
+    '6M': TTL.OHLC_DAILY,
+    '1Y': TTL.OHLC_DAILY,
+    '3Y': TTL.OHLC_DAILY,
+    '5Y': TTL.OHLC_DAILY,
+    'MAX': TTL.OHLC_DAILY,
+};
 const chartSnapshotCache = new Map();
 const chartSnapshotInflight = new Map();
 
@@ -54,23 +67,29 @@ async function yahooFetch(targetUrl, signal) {
 
 export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal) {
     const yahooSymbol = getYahooSymbol(stock) || ticker;
+
+    // CHECK PERSISTENT CACHE
+    const ck = ohlcKey(yahooSymbol, period);
+    const cached = cacheGet(ck);
+    if (cached) return cached;
+
     return globalRateLimiter.executeIfNotLimited(async () => {
         try {
             const cfg = PERIODS[period] || PERIODS['1D'];
             const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?interval=${cfg.interval}&range=${cfg.range}`;
             const j = await yahooFetch(url, signal);
-            
+
             if (j.error) return { source: 'yahoo', ...j };
-            
+
             const res = j.chart?.result?.[0];
             const q = res?.indicators?.quote?.[0];
-            
+
             if (!res || !q || !res.timestamp || res.timestamp.length === 0 || !q.close || q.close.length === 0) {
                 return { source: 'yahoo', error: true, errorCode: res?.meta ? 'NO_DATA' : 404 };
             }
 
             const { timestamps, opens, highs, lows, closes, volumes } = filterNullOHLCDataPoints(res.timestamp, q.open, q.high, q.low, q.close, q.volume);
-            
+
             if (!timestamps.length) return { source: 'yahoo', error: true, errorCode: 'NO_VALID_DATA' };
 
             const data = {
@@ -79,6 +98,8 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
             };
             data.change = data.price - data.open;
             data.changePercent = (data.change / data.open) * 100;
+
+            cacheSet(ck, data, PERIOD_TTL_MS[period] || TTL.OHLC_INTRA);
             return data;
         } catch (e) {
             if (e.name === 'AbortError') throw e;
@@ -91,7 +112,7 @@ export async function isYahooTickerSuspended(ticker) {
     try {
         const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=1d&interval=1m`;
         const j = await yahooFetch(url);
-        
+
         if (j.error) {
             if (j.errorCode === 404) return true;
             return false;
@@ -109,10 +130,6 @@ export async function isYahooTickerSuspended(ticker) {
     }
 }
 
-/**
- * Compute daysSinceLastTrade from a regularMarketTime unix timestamp.
- * Exported so consumers never need to recompute this.
- */
 export function computeDaysSinceLastTrade(regularMarketTime) {
     if (!regularMarketTime || regularMarketTime <= 0) return 999;
     return (Math.floor(Date.now() / 1000) - regularMarketTime) / 86400;
@@ -128,7 +145,7 @@ export function isYahooTickerActiveFromChart(meta = {}, closes = [], volumes = [
 
     const tradeable = meta.tradeable !== false;
     const daysSinceLastTrade = computeDaysSinceLastTrade(meta.regularMarketTime);
-    
+
     let totalVolume = 0;
     for (const v of volumes) if (v) totalVolume += v;
     const volume = meta.regularMarketVolume || totalVolume;
@@ -157,9 +174,7 @@ export function isYahooTickerActiveFromQuote(q = {}) {
 
     if (isCrypto) {
         if (!Number.isFinite(price) || price <= 0) return false;
-        
         if (q.cryptoTradeable === false && volume < 50000) return false;
-        
         return true;
     }
 
@@ -201,14 +216,10 @@ export async function fetchYahooDividends(ticker, from, to, signal) {
     const p1 = Math.floor(new Date(from || '2000-01-01').getTime() / 1000);
     const p2 = Math.floor(new Date(to || new Date().toISOString().slice(0, 10)).getTime() / 1000);
     const targetUrl = `https://query2.finance.yahoo.com/v7/finance/download/${encodeURIComponent(ticker)}?period1=${p1}&period2=${p2}&interval=1d&events=div`;
-    
+
     try {
         const text = await proxyFetch(targetUrl, { signal, expect: 'text' });
-        
-        if (text.startsWith('<')) {
-            return { source: 'yahoo', error: true, errorCode: 'PROXY_HTML' };
-        }
-
+        if (text.startsWith('<')) return { source: 'yahoo', error: true, errorCode: 'PROXY_HTML' };
         const items = text.trim().split('\n').slice(1).map(l => {
             const [date, div] = l.split(',');
             return { date, dividend: parseFloat(div) };
@@ -248,31 +259,20 @@ export async function fetchYahooChartSnapshot(symbol, range = '1d', interval = '
     const now = Date.now();
 
     const cached = chartSnapshotCache.get(cacheKey);
-    if (cached && cached.expiresAt > now) {
-        return cached.data;
-    }
+    if (cached && cached.expiresAt > now) return cached.data;
 
-    if (chartSnapshotInflight.has(cacheKey)) {
-        return chartSnapshotInflight.get(cacheKey);
-    }
+    if (chartSnapshotInflight.has(cacheKey)) return chartSnapshotInflight.get(cacheKey);
 
     const run = (async () => {
         const base = getNextBase();
         const url = `${base}/v8/finance/chart/${encodeURIComponent(norm)}?range=${range}&interval=${interval}`;
         const j = await yahooFetch(url, signal);
         if (j?.error) {
-            chartSnapshotCache.set(cacheKey, {
-                expiresAt: Date.now() + CHART_SNAPSHOT_ERROR_TTL_MS,
-                data: null
-            });
+            chartSnapshotCache.set(cacheKey, { expiresAt: Date.now() + CHART_SNAPSHOT_ERROR_TTL_MS, data: null });
             return null;
         }
-
         const parsed = j?.chart?.result?.[0] || null;
-        chartSnapshotCache.set(cacheKey, {
-            expiresAt: Date.now() + CHART_SNAPSHOT_TTL_MS,
-            data: parsed
-        });
+        chartSnapshotCache.set(cacheKey, { expiresAt: Date.now() + CHART_SNAPSHOT_TTL_MS, data: parsed });
         return parsed;
     })();
 
@@ -367,13 +367,9 @@ export async function fetchYahooPeriodChanges(symbols, range, interval, onProgre
         }
 
         if (sparkFailed) {
-            if (await waitForYahooCooldownIfNeeded()) {
-                continue;
-            }
+            if (await waitForYahooCooldownIfNeeded()) continue;
             for (const sym of batch.slice(0, singleFallbackCap)) {
-                if (await waitForYahooCooldownIfNeeded()) {
-                    break;
-                }
+                if (await waitForYahooCooldownIfNeeded()) break;
                 await fetchSingleChart(sym);
                 await new Promise(r => setTimeout(r, 180));
             }
@@ -407,6 +403,11 @@ export async function fetchYahooAnalysis(ticker, signal) {
 }
 
 export async function fetchYahooNews(ticker, limit = 10, signal) {
+    // CHECK PERSISTENT CACHE
+    const ck = newsKey(ticker);
+    const cached = cacheGet(ck);
+    if (cached) return { source: 'yahoo', items: cached };
+
     try {
         const j = await yahooFetch(`https://query2.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(ticker)}&newsCount=${limit}`, signal);
         if (j.error) return { source: 'yahoo', items: [], ...j };
@@ -419,6 +420,31 @@ export async function fetchYahooNews(ticker, limit = 10, signal) {
             summary: i.summary || '',
             relatedTickers: i.relatedTickers || []
         }));
+        cacheSet(ck, items, TTL.NEWS);
         return { source: 'yahoo', items };
     } catch (e) { return { source: 'yahoo', error: true, errorCode: 500, items: [] }; }
+}
+
+// FETCH NEWS
+export async function fetchNews(symbol, config, limit = 8, days = 7) {
+    if (!config) return { error: true, items: [] };
+    try {
+        const r = await fetchYahooNews(symbol, limit);
+        if (!r?.items?.length) return { source: 'yahoo', items: [] };
+        const cutoff = Date.now() - days * 86400000;
+        const items = r.items.map(i => ({
+            id: i.id,
+            title: i.title,
+            url: i.url,
+            source: i.publisher || 'yahoo',
+            publishedAt: (() => {
+                const n = Number(i.publishedAt);
+                const ts = n && n < 1e12 ? n * 1000 : n;
+                const d = new Date(ts);
+                return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+            })(),
+            summary: i.summary || ''
+        })).filter(i => new Date(i.publishedAt).getTime() >= cutoff);
+        return { source: 'yahoo', items: items.slice(0, limit) };
+    } catch (e) { return { source: 'yahoo', error: true, items: [] }; }
 }

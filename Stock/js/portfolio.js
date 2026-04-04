@@ -1,7 +1,7 @@
 import { positions, loadApiConfig, selectedApi, lastApiBySymbol, setPositions } from './state.js';
 import { createTab, createCard, updateSectionDates, setApiStatus, initChart, markTabAsSuspended } from './ui.js';
 import { fetchActiveSymbol } from './general.js'; 
-import { isYahooTickerSuspended } from './api/yahoo-finance.js';
+import { isYahooTickerSuspended } from './yahoo-finance.js';
 import { TYPE_ORDER, TYPE_LABELS, TYPE_ICONS, hasTransactions, typeLabel, typeIcon } from './constants.js';
 
 const DEFAULT_TOTAL_INVESTMENT = 223.52;
@@ -89,7 +89,7 @@ export async function loadStocks() {
     const list = [];
     for (const type of TYPE_ORDER) {
         try {
-            const response = await fetch(`stock/${type}.json`);
+            const response = await fetch(`json/${type}.json`);
             if (response.ok) list.push(...(await response.json()));
         } catch (error) {}
     }

@@ -1,11 +1,5 @@
-import { fetchFromYahoo } from './api/yahoo-finance.js'
-import { fetchFromPolygon } from './api/polygon.js'
-import { fetchFromTwelveData } from './api/twelve.js'
-import { fetchFromMarketstack } from './api/marketstack.js'
-import { fetchFromAlphaVantage } from './api/alphavantage.js'
-import { fetchFromFinnhub } from './api/finnhub.js'
+import { fetchFromYahoo } from './yahoo-finance.js'
 import rateLimiter from './rate-limiter.js'
-import { fetchNews } from './api/news.js'
 import { setPositions as setNewsPositions, setupNewsSearch, startCardNewsAutoRefresh, stopCardNewsAutoRefresh, openNewsOverlay, closeNewsOverlay, openNewsPage, closeNewsPage, fetchCardNews } from './news.js'
 import { initChart, updateChart } from './chart.js'
 import { updateSignal } from './signal-bot.js'
@@ -13,9 +7,9 @@ import { initTerminal, processCommand } from './terminal.js'
 
 import { filterNullDataPoints, filterNullOHLCDataPoints, isMarketOpen, periodToDays } from './utils.js'
 import { DEAD_ERROR_CODES } from './constants.js'
-import { API_CONFIG, loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, mainFetchController, setMainFetchController, initialFetchController, setInitialFetchController, fastPollTimer, setFastPollTimer, rateLimitCountdownTimer, setRateLimitCountdownTimer, fetchUsdToEurRate } from './state.js'
+import { API_CONFIG, loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, mainFetchController, setMainFetchController, initialFetchController, setInitialFetchController, fastPollTimer, setFastPollTimer, rateLimitCountdownTimer, setRateLimitCountdownTimer } from './state.js'
 import { calculateStockValues, updatePortfolioSummary, loadStocks } from './portfolio.js'
-import { createTab, createCard, updateUI, resetSymbolDisplay, updateTabTitle, updateCardTitle, updateSectionDates, clearPeriodDisplay, setApiStatus, updateApiCountdown, updateDropdownSelection, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js'
+import { createTab, createCard, updateUI, resetSymbolDisplay, updateTabTitle, updateCardTitle, updateSectionDates, clearPeriodDisplay, setApiStatus, updateApiCountdown, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js'
 
 // Re-export for other modules
 export { loadApiConfig, fetchActiveSymbol };
@@ -33,18 +27,8 @@ function terminalLogGlobal(msg) {
     } catch (e) { /* ignore */ }
 }
 
-const API_FETCHERS = {
-    yahoo: fetchFromYahoo,
-    massive: fetchFromPolygon,
-    twelvedata: fetchFromTwelveData,
-    marketstack: fetchFromMarketstack,
-    alphavantage: fetchFromAlphaVantage,
-    finnhub: fetchFromFinnhub
-};
-
-function selectApiFetch(apiName) {
-    const fetchFunc = API_FETCHERS[apiName] || fetchFromYahoo;
-    return { fetchFunc, apiName: API_FETCHERS[apiName] ? apiName : 'yahoo' };
+function selectApiFetch() {
+    return { fetchFunc: fetchFromYahoo, apiName: 'yahoo' };
 }
 
 function startFastPolling() {
@@ -121,7 +105,7 @@ async function fetchActiveSymbol(force) {
         const p = positions[symbol].currentPeriod||'1D'
         const name = positions[symbol].name||null
         
-        let { fetchFunc, apiName } = selectApiFetch(selectedApi)
+        let { fetchFunc, apiName } = selectApiFetch()
         
         const config = await loadApiConfig();
         const apiConfig = config.apis[apiName];
@@ -220,7 +204,7 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     if (periodLabel) periodLabel.textContent = p
     const name=positions[s].name||null
     
-    let { fetchFunc, apiName } = selectApiFetch(selectedApi)
+    let { fetchFunc, apiName } = selectApiFetch()
     
     const config = await loadApiConfig();
     const apiConfig = config.apis[apiName];
@@ -258,17 +242,6 @@ document.getElementById('cards-container')?.addEventListener('click', async e=>{
     } catch(e) { /* ignore */ }
 })
 
-document.addEventListener('click', e => {
-    const el = document.getElementById('api-status-indicator');
-    if (!el || !el.contains(e.target)) return;
-    if (e.target.classList.contains('api-option')) {
-        setSelectedApi(e.target.dataset.api);
-        updateDropdownSelection();
-        el.classList.remove('dropdown-open');
-    } else {
-        el.classList.toggle('dropdown-open');
-    }
-});
 
 const font=document.createElement('link')
 font.id='poppins-font'
@@ -367,7 +340,7 @@ window.positions = positions;
 window.closeTerminalCard = closeTerminalCard;
 window.openCustomSymbol = openCustomSymbol;
 window.getSelectedApi = () => selectedApi;
-window.setSelectedApi = (api) => { setSelectedApi(api); updateDropdownSelection(); };
+window.setSelectedApi = (api) => { setSelectedApi(api); };
 window.selectedApi = selectedApi;
 window.setupNewsSearch = setupNewsSearch;
 

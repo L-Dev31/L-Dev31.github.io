@@ -1,4 +1,4 @@
-import { fetchNews } from './api/news.js';
+import { fetchNews } from './yahoo-finance.js';
 import { loadApiConfig } from './general.js';
 import { periodToDays } from './utils.js';
 
@@ -126,7 +126,7 @@ export async function fetchCardNews(symbol, force = false, limit = 50, days = 7,
     }
     try {
         const config = await loadApiConfig();
-        const api = apiName || window.getSelectedApi?.() || window.selectedApi || config.ui?.defaultApi || 'finnhub';
+        const api = apiName || window.getSelectedApi?.() || window.selectedApi || 'yahoo';
         const mapped = positions[symbol]?.api_mapping?.[api] || positions[symbol]?.ticker || symbol;
         const r = await fetchNews(mapped, config, limit, days, api);
         if (r && !r.error && Array.isArray(r.items)) {
@@ -203,7 +203,7 @@ export async function openNewsOverlay(symbol) {
     document.getElementById('open-news-feed')?.classList.add('active');
     try {
         const config = await loadApiConfig();
-        const api = window.getSelectedApi?.() || window.selectedApi || config.ui?.defaultApi || 'finnhub';
+        const api = window.getSelectedApi?.() || window.selectedApi || 'yahoo';
         const days = symbol && positions[symbol]?.currentPeriod ? periodToDays(positions[symbol].currentPeriod) : 1;
         if (symbol) {
             const mapped = positions[symbol]?.api_mapping?.[api] || positions[symbol]?.ticker || symbol;
@@ -339,7 +339,7 @@ async function loadNews() {
     el.innerHTML = '<div class="news-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="news-loading-text">Chargement des actualités...</span></div>';
     try {
         const config = await loadApiConfig();
-        const api = window.getSelectedApi?.() || window.selectedApi || config.ui?.defaultApi || 'finnhub';
+        const api = window.getSelectedApi?.() || window.selectedApi || 'yahoo';
         const days = periodToDays(currentNewsPeriod);
         let tickers = [];
         const manual = (inp?.value || '').trim().toUpperCase();

@@ -1,6 +1,5 @@
-import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade } from './api/yahoo-finance.js';
+import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade } from './yahoo-finance.js';
 import { typeLabel, typeIcon, debounce } from './constants.js';
-import { fetchAllTradingViewRows } from './api/tradingview.js';
 
 // Removed IIFE wrapper
 {
@@ -130,7 +129,7 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
     }
 
     async function loadStockMappings() {
-        const files = ['stock/equity.json', 'stock/crypto.json', 'stock/commodity.json'];
+        const files = ['json/equity.json', 'json/crypto.json', 'json/commodity.json'];
         const results = await Promise.allSettled(files.map(f => fetch(f).then(r => r.json())));
         
         results.forEach((res, i) => {
@@ -375,47 +374,6 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
     }
 
 
-    async function fetchTradingViewStocks(region, exchangeFilter) {
-        const maxTotal = getMaxAllowed();
-        if (maxTotal <= 0) return [];
-
-        const allowedExchanges = Array.isArray(exchangeFilter)
-            ? exchangeFilter.filter(Boolean)
-            : (exchangeFilter ? [exchangeFilter] : []);
-
-        const rawFetchTarget = exchangeFilter
-            ? Math.min(HARD_MAX_RESULTS, Math.max(maxTotal, maxTotal * 4))
-            : maxTotal;
-        const rows = await fetchAllTradingViewRows(region, rawFetchTarget);
-
-        const symbols = [];
-        const seen = new Set();
-        for (const d of rows) {
-            const pair = (d?.s || '').split(':');
-            const exch = pair[0];
-            const ticker = pair[1];
-            if (!ticker) continue;
-            if (allowedExchanges.length && !allowedExchanges.includes(exch)) continue;
-
-            const config = MARKET_CONFIG[region];
-            let resolved = ticker;
-
-            if (config) {
-                if (config.resolve) resolved = config.resolve(ticker, exch);
-                else if (config.transform) resolved = config.transform(ticker) + (config.suffix || '');
-                else resolved = ticker + (config.suffix || '');
-            }
-
-            if (!seen.has(resolved)) {
-                seen.add(resolved);
-                symbols.push(resolved);
-            }
-
-            if (symbols.length >= maxTotal) break;
-        }
-
-        return symbols;
-    }
 
     function deriveFilters() {
         return {
@@ -611,14 +569,8 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
         if (!marketDef) return [];
 
         if (marketDef.tvRegion) {
-            showLoadingProgress(0, `Fetching from TradingView (${marketDef.tvRegion})...`);
-            const tvSymbols = await fetchTradingViewStocks(marketDef.tvRegion, marketDef.tvExchange);
-            const limitedTvSymbols = tvSymbols.slice(0, getMaxAllowed());
-            if (limitedTvSymbols.length > 0) return fetchStocksBatch(limitedTvSymbols, 'cto', marketDef.id);
-
             if (marketDef.lists) {
-                const allLists = Object.values(marketDef.lists);
-                const allSymbols = [].concat(...allLists);
+                const allSymbols = [].concat(...Object.values(marketDef.lists));
                 const limitedSymbols = [...new Set(allSymbols)].slice(0, getMaxAllowed());
                 return fetchStocksBatch(limitedSymbols, 'cto', marketDef.id);
             }
@@ -875,7 +827,7 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
                 this.onerror = null;
                 this.parentElement.innerHTML = `<div class="logo-fallback"><div class="logo-name" title="${itemData.name || symbol}">${itemData.name || symbol}</div></div>`;
             };
-            logo.src = iconSymbol ? `icon/${iconSymbol}.png` : `logo/${symbol}.png`;
+            logo.src = iconSymbol ? `img/icon/${iconSymbol}.png` : `img/logo/${symbol}.png`;
         }
 
         const generalTitle = card.querySelector('h3.section-title');
@@ -903,7 +855,7 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
         const countryName = card.querySelector('.country-name');
         const flagIcon = card.querySelector('.flag-icon');
         if (countryName) countryName.textContent = country;
-        if (flagIcon) { flagIcon.id = `flag-${symbol}`; flagIcon.dataset.country = country; flagIcon.src = `flag/${country.toLowerCase()}.png`; }
+        if (flagIcon) { flagIcon.id = `flag-${symbol}`; flagIcon.dataset.country = country; flagIcon.src = `img/flag/${country.toLowerCase()}.png`; }
 
         const periodsGroup = card.querySelector('.periods-group');
         if (periodsGroup) {
@@ -1057,7 +1009,7 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
 
         tabLogo.appendChild(img);
         if (iconSymbol) {
-            img.src = `icon/${iconSymbol}.png`;
+            img.src = `img/icon/${iconSymbol}.png`;
         } else if (candidates.length > 0) {
             img.src = candidates.shift();
         } else {
@@ -1133,7 +1085,7 @@ import { fetchAllTradingViewRows } from './api/tradingview.js';
             };
 
             if (iconSymbol) {
-                img.src = `icon/${iconSymbol}.png`;
+                img.src = `img/icon/${iconSymbol}.png`;
             } else if (candidates.length > 0) {
                 img.src = candidates.shift();
             } else {
