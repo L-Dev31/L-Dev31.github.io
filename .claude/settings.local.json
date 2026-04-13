@@ -6,7 +6,11 @@
       "WebFetch(domain:medium.com)",
       "Bash(python -m http.server 8080)",
       "Bash(echo \"Server PID: $!\")",
-      "Bash(start http://localhost:8080)"
+      "Bash(start http://localhost:8080)",
+      "Bash(python3 -c ':*)",
+      "Bash(powershell -Command 'Get-ChildItem '\\\\''Elements/image/project/*.png'\\\\'' | ForEach-Object { Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\($_.FullName\\); Write-Host \"$\\($_.Name\\): $\\($img.Width\\)x$\\($img.Height\\), $\\([math]::Round\\($_.Length/1024\\)\\)KB\"; $img.Dispose\\(\\) }')",
+      "Bash(where magick:*)",
+      "Bash(where convert:*)"
     ]
   }
 }

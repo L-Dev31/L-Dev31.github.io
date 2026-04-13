@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
     <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" defer></script>
     <script src="script.js" defer></script>
     <link rel="icon" type="image/png" href="Elements/image/favicon.png">
@@ -27,13 +28,22 @@
         <a href="#web-projects" class="link">Web Projects</a>
         <a href="#featured-projects" class="link">Featured Projects</a>
         <a href="#my-story" class="link">My Story</a>
-
-
-        <a href="#featured-projects" class="link-mobile" aria-label="Featured projects"><span class="material-symbols-outlined">dashboard</span></a>
-        <a href="info.html" class="link-mobile" aria-label="About"><span class="material-symbols-outlined">info</span></a>
-        <a href="Elements/image/CV.pdf" class="link-mobile" target="_blank" rel="noopener noreferrer" aria-label="Open resume PDF"><span class="material-symbols-outlined">description</span></a>
+        <button class="hamburger" aria-label="Open menu" aria-expanded="false">
+            <i class="fa fa-bars"></i>
+        </button>
     </div>
 </nav>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu" aria-hidden="true">
+    <nav class="mobile-menu-links" aria-label="Mobile navigation">
+        <a href="#web-projects" class="mobile-menu-link">Web Projects</a>
+        <a href="#featured-projects" class="mobile-menu-link">Featured Projects</a>
+        <a href="#my-story" class="mobile-menu-link">My Story</a>
+        <a href="info.html" class="mobile-menu-link">About</a>
+        <a href="Elements/image/CV.pdf" class="mobile-menu-link" target="_blank" rel="noopener noreferrer">Résumé</a>
+    </nav>
+</div>
 
 <!-- Noise -->
 <div class="noise"></div>

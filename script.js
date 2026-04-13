@@ -39,6 +39,41 @@ function resolveProjectHref(path) {
 }
 
 /* ══════════════════════════════════════════
+   Mobile Menu
+   ══════════════════════════════════════════ */
+
+function setupMobileMenu() {
+    const btn   = document.querySelector('.hamburger');
+    const menu  = document.querySelector('.mobile-menu');
+    const icon  = btn?.querySelector('i');
+    if (!btn || !menu) return;
+
+    function open() {
+        menu.classList.add('open');
+        menu.setAttribute('aria-hidden', 'false');
+        btn.setAttribute('aria-expanded', 'true');
+        icon.classList.replace('fa-bars', 'fa-times');
+        if (lenis) lenis.stop();
+    }
+
+    function close() {
+        menu.classList.remove('open');
+        menu.setAttribute('aria-hidden', 'true');
+        btn.setAttribute('aria-expanded', 'false');
+        icon.classList.replace('fa-times', 'fa-bars');
+        if (lenis) lenis.start();
+    }
+
+    btn.addEventListener('click', () => {
+        menu.classList.contains('open') ? close() : open();
+    });
+
+    menu.querySelectorAll('.mobile-menu-link').forEach(a => {
+        a.addEventListener('click', close);
+    });
+}
+
+/* ══════════════════════════════════════════
    Lenis Smooth Scroll
    ══════════════════════════════════════════ */
 
@@ -484,16 +519,8 @@ function setupFeaturedProjects() {
 
         if (!featured.length) { container.innerHTML = '<p class="projects-empty">No featured projects yet.</p>'; return; }
 
-        container.innerHTML = '';
-        const columnCount = 4;
-        const columns = Array.from({ length: columnCount }, () => {
-            const col = document.createElement('div');
-            col.className = 'scatter-column';
-            container.appendChild(col);
-            return col;
-        });
-
-        featured.forEach((p, index) => {
+        /* Build scatter-item elements once (kept in memory for re-layout) */
+        const items = featured.map(p => {
             const a = document.createElement('a');
             a.className = 'scatter-item';
 
@@ -507,16 +534,59 @@ function setupFeaturedProjects() {
                 a.setAttribute('aria-disabled', 'true');
             }
 
-            const image = document.createElement('img');
-            image.src = p.image || `Elements/image/project/${p.id}.png`;
+            const image = new Image();
             image.alt = p.title;
             image.loading = 'lazy';
             image.decoding = 'async';
+
+            function reveal() { image.classList.add('loaded'); }
+            image.addEventListener('load', () => {
+                if (image.decode) {
+                    image.decode().then(reveal).catch(reveal);
+                } else {
+                    reveal();
+                }
+            });
+            image.addEventListener('error', reveal);
+
+            image.src = p.image || `Elements/image/project/${p.id}.png`;
             a.appendChild(image);
 
             if (CTACursor) CTACursor.attach(a, p.title, { showArrow: hasPath });
-            columns[index % columnCount].appendChild(a);
+            return a;
         });
+
+        /* Responsive column count — matches CSS grid-template-columns */
+        function getColumnCount() {
+            const w = window.innerWidth;
+            if (w <= 480)  return 2;
+            if (w <= 1024) return 3;
+            return 4;
+        }
+
+        let currentCols = 0;
+
+        function layoutColumns() {
+            const cols = getColumnCount();
+            if (cols === currentCols) return;
+            currentCols = cols;
+
+            container.innerHTML = '';
+            container.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+
+            const columns = Array.from({ length: cols }, () => {
+                const col = document.createElement('div');
+                col.className = 'scatter-column';
+                container.appendChild(col);
+                return col;
+            });
+
+            items.forEach((a, i) => columns[i % cols].appendChild(a));
+            pendingParallaxRefresh?.();
+        }
+
+        layoutColumns();
+        window.addEventListener('resize', layoutColumns, { passive: true });
 
         if (document.readyState === 'complete') {
             pendingParallaxRefresh?.();
@@ -583,7 +653,6 @@ function setupScrollEffects() {
 
 /* ══════════════════════════════════════════
    Liquify — WebGL ping-pong FBO
-   Add class="liquify" to any <img> or <video>
    ══════════════════════════════════════════ */
 
 function setupLiquifyAll() {
@@ -796,6 +865,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
 
     setupLenis();
+    setupMobileMenu();
     setupCursor();
     setupCTACursor();
     setupHeader();
