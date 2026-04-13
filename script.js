@@ -6,12 +6,36 @@ const isMobile = window.matchMedia('(pointer: coarse)').matches || window.innerW
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let pendingParallaxRefresh = null;
 let lenis = null;
+let projectsDataPromise = null;
 
 function fetchJson(path) {
     return fetch(path).then(r => {
         if (!r.ok) throw new Error(`${path} (${r.status})`);
         return r.json();
     });
+}
+
+function getProjectsData() {
+    if (!projectsDataPromise) {
+        projectsDataPromise = fetchJson('projects.json').catch(err => {
+            projectsDataPromise = null;
+            throw err;
+        });
+    }
+    return projectsDataPromise;
+}
+
+function resolveProjectHref(path) {
+    if (typeof path !== 'string') return null;
+
+    const trimmed = path.trim();
+    if (!trimmed) return null;
+
+    if (/^(?:https?:)?\/\//i.test(trimmed) || /^[a-z][a-z\d+.-]*:/i.test(trimmed)) {
+        return trimmed;
+    }
+
+    return `${trimmed.replace(/\/+$/, '')}/`;
 }
 
 /* ══════════════════════════════════════════
@@ -405,7 +429,7 @@ function setupWebProjects() {
         raf = null;
     }
 
-    fetchJson('projects.json').then(data => {
+    getProjectsData().then(data => {
         const projects = (data.projects || []).filter(p => p.category === 'web' && !(isMobile && p.noPhone));
 
         if (!projects.length) { list.innerHTML = '<p class="projects-empty">No project available.</p>'; return; }
@@ -414,9 +438,17 @@ function setupWebProjects() {
             const a = document.createElement('a');
             a.className = 'featured-project';
             a.textContent = p.title;
-            a.href = p.path.startsWith('http') ? p.path : `${p.path}/`;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
+
+            const href = resolveProjectHref(p.path);
+            if (href) {
+                a.href = href;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+            } else {
+                a.classList.add('featured-project--disabled');
+                a.setAttribute('aria-disabled', 'true');
+                a.tabIndex = -1;
+            }
 
             if (p.creator?.trim()) {
                 const s = document.createElement('span');
@@ -426,9 +458,12 @@ function setupWebProjects() {
             }
 
             const src = `Elements/image/website/${p.id}.png`;
-            a.addEventListener('mouseenter', e => show(src, p.description, e.clientX, e.clientY));
-            a.addEventListener('mousemove',  e => updatePosition(e.clientX, e.clientY));
-            a.addEventListener('mouseleave', hide);
+            if (href) {
+                a.addEventListener('mouseenter', e => show(src, p.description, e.clientX, e.clientY));
+                a.addEventListener('mousemove',  e => updatePosition(e.clientX, e.clientY));
+                a.addEventListener('mouseleave', hide);
+            }
+
             list.appendChild(a);
         });
     }).catch(() => {
@@ -444,7 +479,7 @@ function setupFeaturedProjects() {
     const container = document.querySelector('.featured-scatter');
     if (!container) return;
 
-    fetchJson('projects.json').then(data => {
+    getProjectsData().then(data => {
         const featured = (data.projects || []).filter(p => p.category === 'featured');
 
         if (!featured.length) { container.innerHTML = '<p class="projects-empty">No featured projects yet.</p>'; return; }
@@ -462,9 +497,10 @@ function setupFeaturedProjects() {
             const a = document.createElement('a');
             a.className = 'scatter-item';
 
-            const hasPath = typeof p.path === 'string' && p.path.trim().length > 0;
+            const href = resolveProjectHref(p.path);
+            const hasPath = Boolean(href);
             if (hasPath) {
-                a.href = p.path;
+                a.href = href;
                 a.target = '_blank';
                 a.rel = 'noopener noreferrer';
             } else {
@@ -482,7 +518,11 @@ function setupFeaturedProjects() {
             columns[index % columnCount].appendChild(a);
         });
 
-        window.addEventListener('load', () => pendingParallaxRefresh?.());
+        if (document.readyState === 'complete') {
+            pendingParallaxRefresh?.();
+        } else {
+            window.addEventListener('load', () => pendingParallaxRefresh?.(), { once: true });
+        }
 
     }).catch(() => {
         container.innerHTML = '<p class="projects-empty">Unable to load featured projects.</p>';
@@ -509,7 +549,8 @@ function setupScrollEffects() {
             const cssVar = getComputedStyle(el).getPropertyValue('--parallax-speed').trim();
             const speed  = cssVar ? parseFloat(cssVar) : (parseFloat(el.dataset.parallaxSpeed) || 100);
             const baseTop = el.getBoundingClientRect().top + scrollTop;
-            return { el, speed, baseTop };
+            const halfHeight = el.offsetHeight / 2;
+            return { el, speed, baseTop, halfHeight };
         });
     }
 
@@ -519,10 +560,10 @@ function setupScrollEffects() {
             header.style.setProperty('--hero-progress', progress.toFixed(4));
         }
         const viewCenter = window.scrollY + window.innerHeight / 2;
-        items.forEach(({ el, speed, baseTop }) => {
+        items.forEach(({ el, speed, baseTop, halfHeight }) => {
             const factor = (speed - 100) / 100;
             if (factor === 0) return;
-            el.style.transform = `translateY(${(baseTop + el.offsetHeight / 2 - viewCenter) * factor}px)`;
+            el.style.transform = `translateY(${(baseTop + halfHeight - viewCenter) * factor}px)`;
         });
         ticking = false;
     }
@@ -617,7 +658,13 @@ function setupLiquifyAll() {
         };
 
         const DS = 128;
-        const neutral = new Uint8Array(DS*DS*4).fill(0).map((_,i)=>i%4<2?128:(i%4===3?255:0));
+        const neutral = new Uint8Array(DS * DS * 4);
+        for (let i = 0; i < neutral.length; i += 4) {
+            neutral[i] = 128;
+            neutral[i + 1] = 128;
+            neutral[i + 2] = 0;
+            neutral[i + 3] = 255;
+        }
         let dR = mkTex(DS,DS,neutral), dW = mkTex(DS,DS,neutral);
         let fR = mkFBO(dR), fW = mkFBO(dW);
         const srcTex = mkTex(1,1,new Uint8Array([0,0,0,255]));

@@ -232,8 +232,13 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    align-self: stretch;
+    /* Force every title to span the full viewport width so the
+       lines are always the same length regardless of the parent
+       container's max-width constraint */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding: 0 5%;
     box-sizing: border-box;
 }
 
@@ -490,6 +495,12 @@ section {
     color: var(--color-on-light);
 }
 
+.featured-project--disabled {
+    opacity: 0.55;
+    pointer-events: none;
+    border-bottom-color: var(--white-06);
+}
+
 .featured-author {
     color: var(--text);
     font-style: italic;
@@ -538,8 +549,9 @@ section {
    ══════════════════════════════════════════ */
 
 #featured-projects {
-    padding: clamp(48px, 8vh, 96px) 5% clamp(120px, 18vh, 220px);
+    padding: clamp(48px, 8vh, 96px) 0 clamp(120px, 18vh, 220px);
 }
+
 
 .featured-scatter {
     position: relative;
@@ -549,6 +561,8 @@ section {
     --featured-gap: 5px;
     gap: var(--featured-gap);
     overflow: visible;
+    padding: 0 5%;
+    box-sizing: border-box;
 }
 
 .scatter-column {
@@ -663,7 +677,6 @@ section {
     padding: 20vh;
     box-sizing: border-box;
     overflow: hidden;
-    isolation: isolate;
 }
 
 .footer-bg-video {
@@ -680,18 +693,15 @@ section {
 
 .footer-title-mask {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
+    inset: 0;
     z-index: 1;
-    mix-blend-mode: multiply;
     display: flex;
     align-items: flex-end;
     justify-content: center;
     pointer-events: none;
     overflow: hidden;
+    background: #111;
+    mix-blend-mode: multiply;
     font-weight: bold;
 }
 
@@ -781,4 +791,3 @@ html.lenis, html.lenis body {
 .lenis.lenis-stopped {
     overflow: hidden;
 }
-
