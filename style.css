@@ -34,7 +34,7 @@
 
 :root {
     --white: #fff;
-    --text: #999;
+    --text: #aaa;
     --color-on-light: #111;
     --font-body: 'Thin', sans-serif;
     --font-display: 'Lux', serif;
@@ -233,6 +233,8 @@ section {
     align-items: center;
     justify-content: center;
     width: 100%;
+    align-self: stretch;
+    box-sizing: border-box;
 }
 
 .title::before,
@@ -367,10 +369,15 @@ section {
 }
 
 #about-me > .about-me-container,
-#web-projects > .featured-list,
 #featured-projects > .featured-scatter,
 #my-story > .story-container {
     width: min(1200px, 100%);
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+#web-projects > .featured-list {
+    width: min(800px, 100%);
     margin: 0 auto;
     box-sizing: border-box;
 }
