@@ -336,8 +336,7 @@ section {
 
 #header {
     height: 100vh;
-    position: sticky;
-    top: 0;
+    position: relative;
     pointer-events: none;
     overflow: hidden;
     z-index: 0;
