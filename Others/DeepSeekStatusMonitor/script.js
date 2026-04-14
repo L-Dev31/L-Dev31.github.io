@@ -1,4 +1,3 @@
-// State history: tracks last 5 measurements and make an average for stability
 var stateHistory = {
     pings: [],
     usages: [],
@@ -9,7 +8,6 @@ var stateHistory = {
         if (this.pings.length > 5) this.pings.shift();
         if (this.usages.length > 5) this.usages.shift();
         
-        // Consider initialized after 3 measurements for better accuracy
         if (this.pings.length >= 3) {
             this.isInitialized = true;
         }
@@ -24,7 +22,6 @@ var stateHistory = {
     }
 };
 
-// Maps ping (ms) to a usage percentage
 function mapPingToUsage(ping) {
     if (ping <= 50) return 0;
     if (ping >= 750) return 100;
@@ -71,7 +68,6 @@ function mapPingToUsage(ping) {
     }
 }
 
-// Interpolates color based on usage percentage
 function getInterpolatedColor(value) {
     var r, g, b, ratio;
     if (value <= 16) {
@@ -103,7 +99,6 @@ function getInterpolatedColor(value) {
     return 'rgb(' + r + ', ' + g + ', ' + b + ')';
 }
 
-// Determines status text with full descriptions and advices
 function getStatusText(usage) {
     var currentStatus = window.lastKnownStatus || { usage: 0 };
     var newStatus, description;
@@ -150,7 +145,6 @@ function getStatusText(usage) {
         </ul>`;
     }
 
-    // Only update status if difference is significant or persists
     if (!currentStatus.title || Math.abs(usage - currentStatus.usage) > 15 || newStatus === currentStatus.title) {
         window.lastKnownStatus = { title: newStatus, usage: usage, description: description };
     }
@@ -158,12 +152,10 @@ function getStatusText(usage) {
     return window.lastKnownStatus;
 }
 
-// Measures ping using 3 requests for stability (cuz else it just moves back and forth between normal and critical)
 function measurePingAndUpdate() {
     var measurements = [];
     var completed = 0;
 
-    // Take 3 quick measurements
     for (var i = 0; i < 3; i++) {
         (function() {
             var img = new Image();
@@ -174,17 +166,14 @@ function measurePingAndUpdate() {
                 measurements.push(performance.now() - start);
                 completed++;
                 if (completed === 3) {
-                    // Use median value to filter outliers
                     measurements.sort(function(a, b) { return a - b; });
                     var finalPing = measurements[1];
                     var usage = mapPingToUsage(finalPing);
                     stateHistory.add(finalPing, usage);
                     
-                    // Only update interface if we have enough data for stability
                     if (stateHistory.isInitialized) {
                         updateInterface(stateHistory.getStableUsage(), stateHistory.getAveragePing());
                     } else {
-                        // Show initialization progress
                         updateInitializationInterface(stateHistory.pings.length);
                     }
                 }
@@ -204,24 +193,22 @@ function measurePingAndUpdate() {
     }
 }
 
-// Updates the UI during initialization phase
 function updateInitializationInterface(measurementCount) {
     var progressBar = document.getElementById("progress-bar");
     var statusTitle = document.getElementById("status-title");
     var statusDescription = document.getElementById("status-description");
     
     if (progressBar && statusTitle && statusDescription) {
-        var initProgress = (measurementCount / 3) * 100; // Progress based on measurements needed
+        var initProgress = (measurementCount / 3) * 100;
         
         progressBar.style.width = initProgress + "%";
-        progressBar.style.backgroundColor = "#4A90E2"; // Blue color during initialization
+        progressBar.style.backgroundColor = "#4A90E2";
         
         statusTitle.textContent = "Initializing (" + measurementCount + "/3)";
         statusDescription.innerHTML = "Collecting initial data for accurate status assessment. Please wait while we gather " + (3 - measurementCount) + " more measurements...";
     }
 }
 
-// Updates the UI
 function updateInterface(usage, averagePing) {
     var progressBar = document.getElementById("progress-bar");
     if (progressBar) {
@@ -240,20 +227,17 @@ function updateInterface(usage, averagePing) {
     }
 }
 
-// Start measurements and repeat every 3 seconds
-// First, do rapid initialization measurements (every 1 second) until initialized
 function startMonitoring() {
     measurePingAndUpdate();
     
     var initializationInterval = setInterval(function() {
         if (stateHistory.isInitialized) {
             clearInterval(initializationInterval);
-            // Start normal monitoring every 3 seconds
             setInterval(measurePingAndUpdate, 3000);
         } else {
             measurePingAndUpdate();
         }
-    }, 1000); // Faster measurements during initialization
+    }, 1000);
 }
 
 startMonitoring();
