@@ -63,6 +63,7 @@ body {
     margin: 0;
     color: var(--text);
     cursor: none !important;
+    overflow-x: hidden;
 }
 
 a, button, input, [onclick] {
@@ -70,33 +71,30 @@ a, button, input, [onclick] {
 }
 
 /* ══════════════════════════════════════════
-   Noise Overlay
+   Skip Link (Accessibility)
    ══════════════════════════════════════════ */
 
-.noise {
+.skip-link {
     position: fixed;
-    inset: -50%;
-    width: 200%;
-    height: 200%;
-    background: transparent url('https://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
-    animation: bg-animation .2s infinite;
-    pointer-events: none;
-    z-index: 1000;
+    top: -100%;
+    left: var(--pad-edge);
+    z-index: 10001;
+    background: var(--white);
+    color: var(--color-on-light);
+    font-family: var(--font-body);
+    font-size: clamp(14px, 1.4vw, 18px);
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 0 0 8px 8px;
+    transition: top 0.2s ease;
 }
 
-@keyframes bg-animation {
-    0%   { transform: translate(0, 0); }
-    10%  { transform: translate(-5%, -5%); }
-    20%  { transform: translate(-10%, 5%); }
-    30%  { transform: translate(5%, -10%); }
-    40%  { transform: translate(-5%, 15%); }
-    50%  { transform: translate(-10%, 5%); }
-    60%  { transform: translate(15%, 0); }
-    70%  { transform: translate(0, 10%); }
-    80%  { transform: translate(-15%, 0); }
-    90%  { transform: translate(10%, 5%); }
-    100% { transform: translate(5%, 0); }
+.skip-link:focus {
+    top: 0;
+    outline: 2px solid var(--white);
+    outline-offset: 2px;
 }
+
 
 /* ══════════════════════════════════════════
    Custom Cursor
@@ -167,7 +165,7 @@ a, button, input, [onclick] {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: clamp(12px, 3vh, 32px);
+    padding: clamp(12px, 2.5vh, 28px) var(--pad-edge);
     z-index: 999;
     box-sizing: border-box;
     font-size: clamp(14px, 2.4vw, 24px);
@@ -306,9 +304,9 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
     padding: 0 var(--pad-edge);
     box-sizing: border-box;
 }
@@ -447,6 +445,7 @@ section {
 #web-projects > .featured-list {
     width: min(800px, 100%);
     margin: 0 auto;
+    padding: 0 var(--pad-edge);
     box-sizing: border-box;
 }
 
@@ -636,7 +635,6 @@ section {
     gap: var(--featured-gap);
     padding: 0 var(--pad-edge);
     box-sizing: border-box;
-    overflow: hidden;
 }
 
 .scatter-column {
@@ -758,7 +756,7 @@ section {
    ══════════════════════════════════════════ */
 
 #footer {
-    height: 100vh;
+    min-height: 100dvh;
     position: relative;
     display: flex;
     flex-direction: column;
