@@ -36,20 +36,15 @@
     --white: #fff;
     --text: #aaa;
     --black: #000;
-    --surface-900: #111;
-    --surface-800: #222;
-    --surface-700: #333;
-    --surface-650: #202020;
     --color-on-light: #111;
     --font-body: 'Thin', sans-serif;
     --font-display: 'Lux', serif;
     --white-06: rgba(255, 255, 255, 0.06);
-    --black-45: rgba(0, 0, 0, 0.45);
     --border-strong: rgba(255, 255, 255, 0.2);
     --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.3);
     --pad-section: clamp(40px, 10vh, 120px);
     --pad-edge: clamp(16px, 5%, 80px);
-    --section-gradient: radial-gradient(circle at 50% 100%, var(--surface-700) 0%, var(--surface-650) 30%, var(--black) 80%);
+    --section-gradient: radial-gradient(circle at 50% 100%, #333 0%, #202020 30%, var(--black) 80%);
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -189,10 +184,6 @@ a, button, input, [onclick] {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
     border-radius: 30px;
-}
-
-.cta-cursor-text {
-    transition: none;
 }
 
 /* ══════════════════════════════════════════
@@ -421,8 +412,8 @@ section {
 .title::after {
     content: '';
     flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+    height: .8px;
+    background: var(--text);
     margin: 0 clamp(12px, 2.5vw, 28px);
     transform: scaleX(0);
     transition: transform 1.5s var(--ease-out);
