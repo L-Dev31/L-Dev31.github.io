@@ -4,19 +4,24 @@
 
 /* ── Tablet & below ── */
 @media (max-width: 1024px) {
-
-    /* Keep the same overlap ratio as desktop */
     .about-me-image {
         width: 65%;
         margin-left: -18vw;
+    }
+
+    .status-badge {
+        font-size: 10px;
+        padding: 4px 10px 4px 8px;
     }
 }
 
 /* ── Phone landscape / small tablet ── */
 @media (max-width: 768px) {
+    .link:not(.link--cta) {
+        display: none;
+    }
 
-    /* Navbar: hide desktop links, show hamburger */
-    .link {
+    .link--cta {
         display: none;
     }
 
@@ -24,7 +29,10 @@
         display: block;
     }
 
-    /* About: same overlap, slightly smaller image */
+    .navbar-center {
+        display: none;
+    }
+
     .about-me-text {
         text-align: left;
     }
@@ -34,7 +42,6 @@
         margin-left: -28vw;
     }
 
-    /* Story: stack rows vertically */
     .story-row,
     .story-row.reverse {
         flex-direction: column;
@@ -49,14 +56,21 @@
         text-align: left;
     }
 
-    /* Footer: stack columns & reduce padding */
     #footer {
-        padding: clamp(24px, 8vh, 80px) var(--pad-edge);
+        padding: clamp(24px, 8vh, 80px) var(--pad-edge) clamp(16px, 4vh, 32px);
     }
 
     .footer-top-links {
         flex-direction: column;
         gap: clamp(24px, 6vw, 40px);
+    }
+
+    .hero-scroll-hint {
+        display: none;
+    }
+
+    .featured-meta {
+        display: none;
     }
 }
 

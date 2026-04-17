@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Léo TOSKU — UI/UX &amp; Graphic Designer</title>
+    <meta name="description" content="Léo Tosku — PM &amp; Designer Student. UI/UX, Graphic Design, and Digital Product creation from the French Riviera.">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,17 +18,34 @@
 </head>
 <body>
 
+<!-- Page Load Overlay -->
+<div class="page-loader" aria-hidden="true">
+    <div class="page-loader-bar"></div>
+</div>
+
+<!-- Noise Overlay -->
+<div class="noise" aria-hidden="true"></div>
+
+<!-- Custom Cursor -->
+<div class="cursor" aria-hidden="true"></div>
+
 <!-- Navbar -->
 <nav class="navbar" aria-label="Main navigation">
     <div class="brand">
-        <a href="#header" aria-label="L-Dev31 — Back to top">
+        <a href="#header" aria-label="Léo TOSKU — Back to top">
             <img src="Elements/image/logo.svg" alt="L-Dev31 logo">
         </a>
     </div>
+    <div class="navbar-center">
+        <span class="status-badge" aria-label="Currently available for work">
+            Available for work
+        </span>
+    </div>
     <div class="links-container">
-        <a href="#web-projects" class="link">Web Projects</a>
-        <a href="#featured-projects" class="link">Featured Projects</a>
-        <a href="#my-story" class="link">My Story</a>
+        <a href="#web-projects" class="link">Work</a>
+        <a href="#featured-projects" class="link">Projects</a>
+        <a href="#my-story" class="link">Story</a>
+        <a href="info.html" class="link link--cta">Contact</a>
         <button class="hamburger" aria-label="Open menu" aria-expanded="false">
             <i class="fa fa-bars"></i>
         </button>
@@ -37,22 +55,30 @@
 <!-- Mobile Menu Overlay -->
 <div class="mobile-menu" aria-hidden="true">
     <nav class="mobile-menu-links" aria-label="Mobile navigation">
-        <a href="#web-projects" class="mobile-menu-link">Web Projects</a>
-        <a href="#featured-projects" class="mobile-menu-link">Featured Projects</a>
-        <a href="#my-story" class="mobile-menu-link">My Story</a>
+        <a href="#web-projects" class="mobile-menu-link">Work</a>
+        <a href="#featured-projects" class="mobile-menu-link">Projects</a>
+        <a href="#my-story" class="mobile-menu-link">Story</a>
+        <a href="info.html" class="mobile-menu-link">Contact</a>
     </nav>
+    <div class="mobile-menu-footer">
+        <span>Léo TOSKU</span>
+        <span>&copy; 2025</span>
+    </div>
 </div>
 
 <!-- Header -->
 <header id="header" role="banner">
     <canvas id="hero-canvas"></canvas>
-    <video id="hero-video" src="Elements/image/bg.mp4" autoplay loop muted playsinline aria-hidden="true">
-    </video>
+    <video id="hero-video" src="Elements/image/bg.mp4" autoplay loop muted playsinline aria-hidden="true"></video>
     <div class="header-content">
         <h1 id="site-title">Léo TOSKU</h1>
         <div class="header-subtitles">
             <span>PM & Designer Student</span>
         </div>
+    </div>
+    <div class="hero-scroll-hint" aria-hidden="true">
+        <span class="hero-scroll-label">Scroll</span>
+        <div class="hero-scroll-line"></div>
     </div>
 </header>
 
@@ -63,7 +89,7 @@
 <section id="about-me">
     <div class="about-me-container">
         <div class="about-me-text scrubbing-text" id="split-text">
-            Digital PM & Designer student dedicated to service above self.<br> I bridge user needs and business goals through Design Thinking, iterating fast, learning faster, and creating solutions for everyone, everywhere.
+            Digital PM & Designer dedicated to service above self.<br> I bridge user needs and business goals through deep Design Thinking, creating solutions for everyone, everywhere.
         </div>
         <div class="about-me-image" data-parallax-speed="90">
             <img src="Elements/image/LéoTosku.png" data-parallax-speed="80" alt="Léo Tosku portrait" loading="lazy" decoding="async">
@@ -107,8 +133,8 @@
     <div class="story-container">
         <div class="story-row reverse">
             <div class="story-text">
-                <h3 class="scrubbing-text">Early Life</h3>
-                <div class="story-paragraph scrubbing-text">Born in Grasse to Albanian-Dutch parents, I am a bilingual creator merging design and code since age 10. With 8+ years of self-taught experience, I treat webdesign as my canvas to bring solutions for everyone, everywhere.</div>
+<h3 class="scrubbing-text">Early Life</h3>
+                <div class="story-paragraph scrubbing-text">Born in Grasse to Albanian-Dutch parents, I am a bilingual creator merging design and code since age 10. With 8+ years of self-taught experience, I treat web design as my canvas to bring solutions for everyone, everywhere.</div>
             </div>
             <div class="story-image">
                 <img src="Elements/image/story1.jpg" data-parallax-speed="90" alt="Caribbean Era" loading="lazy" decoding="async">
@@ -117,8 +143,8 @@
 
         <div class="story-row">
             <div class="story-text">
-                <h3 class="scrubbing-text">Caribbean Entrepreneurship</h3>
-                <div class="story-paragraph scrubbing-text">At 14, I moved to Guadeloupe. At 17, I founded Rayon, the first community marketplace for products and real estate in the French West Indies. As the region's youngest tech entrepreneur, I’ve scaled a platform that connects thousands of users across 4 islands, bridging the gap in a $15B+ regional market.</div>
+<h3 class="scrubbing-text">Caribbean Entrepreneurship</h3>
+                <div class="story-paragraph scrubbing-text">At 14, I moved to Guadeloupe. At 17, I founded Rayon (Formerly Rayon), the community marketplace for products and real estate in the French West Indies. As the region's youngest tech entrepreneur, I scaled a platform connecting users across islands, bridging a $15B+ regional market.</div>
             </div>
             <div class="story-image">
                 <img src="Elements/image/story2.jpg" data-parallax-speed="90" alt="Back to Cannes" loading="lazy" decoding="async">
@@ -128,7 +154,7 @@
         <div class="story-row reverse">
             <div class="story-text">
                 <h3 class="scrubbing-text">Professional Development</h3>
-                <div class="story-paragraph scrubbing-text">In 2025, I returned to the French Riviera to formalize my 8+ years of field experience. I am currently sharpening my expertise in Digital Project Management and Graphic Design at Sophia Ynov Campus.</div>
+                <div class="story-paragraph scrubbing-text">In 2025, I returned to the French Riviera to formalize 8+ years of field experience. I am currently sharpening my expertise in Digital Project Management and Graphic Design at Sophia Ynov Campus.</div>
             </div>
             <div class="story-image">
                 <img src="Elements/image/story3.jpg" data-parallax-speed="90" alt="Graphic Design" loading="lazy" decoding="async">

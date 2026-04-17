@@ -2,17 +2,33 @@
    Globals
    ══════════════════════════════════════════ */
 
-const isMobile = window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 1024;
+const MOBILE_BREAKPOINT = 1024;
+const REQUEST_TIMEOUT_MS = 8000;
+const isMobile = window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= MOBILE_BREAKPOINT;
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let pendingParallaxRefresh = null;
 let lenis = null;
 let projectsDataPromise = null;
 
-function fetchJson(path) {
-    return fetch(path).then(r => {
-        if (!r.ok) throw new Error(`${path} (${r.status})`);
-        return r.json();
-    });
+function fetchJson(path, { timeoutMs = REQUEST_TIMEOUT_MS } = {}) {
+    const supportsAbortController = typeof AbortController === 'function';
+    const controller = supportsAbortController ? new AbortController() : null;
+    const timeoutId = setTimeout(() => controller?.abort(), timeoutMs);
+
+    return fetch(path, controller ? { signal: controller.signal } : undefined)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Unable to load ${path} (${response.status} ${response.statusText})`);
+            }
+            return response.json();
+        })
+        .catch(error => {
+            if (error?.name === 'AbortError') {
+                throw new Error(`Request timeout while loading ${path} (${timeoutMs}ms)`);
+            }
+            throw error;
+        })
+        .finally(() => clearTimeout(timeoutId));
 }
 
 function getProjectsData() {
@@ -39,6 +55,43 @@ function resolveProjectHref(path) {
 }
 
 /* ══════════════════════════════════════════
+   Page Load Overlay
+   ══════════════════════════════════════════ */
+
+function setupPageLoader() {
+    const loader = document.querySelector('.page-loader');
+    const bar    = document.querySelector('.page-loader-bar');
+    if (!loader || !bar) return;
+
+    let didFinish = false;
+    let safetyTimeoutId = null;
+
+    // Animate the bar to near-complete on DOM ready
+    requestAnimationFrame(() => {
+        bar.style.width = '85%';
+    });
+
+    function finish() {
+        if (didFinish) return;
+        didFinish = true;
+        if (safetyTimeoutId) clearTimeout(safetyTimeoutId);
+
+        bar.style.width = '100%';
+        setTimeout(() => {
+            loader.classList.add('done');
+        }, 350);
+    }
+
+    if (document.readyState === 'complete') {
+        finish();
+    } else {
+        window.addEventListener('load', finish, { once: true });
+        // Safety timeout: finish after 2s even if load never fires
+        safetyTimeoutId = setTimeout(finish, 2000);
+    }
+}
+
+/* ══════════════════════════════════════════
    Mobile Menu
    ══════════════════════════════════════════ */
 
@@ -48,21 +101,28 @@ function setupMobileMenu() {
     const icon  = btn?.querySelector('i');
     if (!btn || !menu) return;
 
+    const setMenuState = isOpen => {
+        menu.setAttribute('aria-hidden', String(!isOpen));
+        btn.setAttribute('aria-expanded', String(isOpen));
+        if (icon) {
+            icon.classList.toggle('fa-bars', !isOpen);
+            icon.classList.toggle('fa-times', isOpen);
+        }
+    };
+
     function open() {
         menu.classList.add('open');
-        menu.setAttribute('aria-hidden', 'false');
-        btn.setAttribute('aria-expanded', 'true');
-        icon.classList.replace('fa-bars', 'fa-times');
+        setMenuState(true);
         if (lenis) lenis.stop();
     }
 
     function close() {
         menu.classList.remove('open');
-        menu.setAttribute('aria-hidden', 'true');
-        btn.setAttribute('aria-expanded', 'false');
-        icon.classList.replace('fa-times', 'fa-bars');
+        setMenuState(false);
         if (lenis) lenis.start();
     }
+
+    setMenuState(menu.classList.contains('open'));
 
     btn.addEventListener('click', () => {
         menu.classList.contains('open') ? close() : open();
@@ -78,9 +138,9 @@ function setupMobileMenu() {
    ══════════════════════════════════════════ */
 
 function setupLenis() {
-    if (prefersReducedMotion || typeof Lenis === 'undefined') return;
+    if (prefersReducedMotion || typeof window.Lenis === 'undefined') return;
 
-    lenis = new Lenis({
+    lenis = new window.Lenis({
         duration: 1.2,
         easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         touchMultiplier: 2,
@@ -117,7 +177,6 @@ function setupMagneticLinks() {
     });
 }
 
-
 /* ══════════════════════════════════════════
    Smooth Anchor Scroll
    ══════════════════════════════════════════ */
@@ -140,18 +199,28 @@ function setupSmoothAnchors() {
     });
 }
 
+
 /* ══════════════════════════════════════════
    Scroll Reveal
    ══════════════════════════════════════════ */
 
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        if (e.isIntersecting) e.target.classList.add('visible');
-        else if (e.boundingClientRect.top > 0) e.target.classList.remove('visible');
-    });
-}, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
+const observer = typeof window.IntersectionObserver === 'function'
+    ? new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('visible');
+            else if (e.boundingClientRect.top > 0) e.target.classList.remove('visible');
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' })
+    : null;
 
-const observe = el => el && observer.observe(el);
+const observe = el => {
+    if (!el) return;
+    if (!observer) {
+        el.classList.add('visible');
+        return;
+    }
+    observer.observe(el);
+};
 
 /* ══════════════════════════════════════════
    Text Split (word-by-line reveal)
@@ -310,9 +379,8 @@ function setupScrubbingText() {
 function setupCursor() {
     if (isMobile || prefersReducedMotion) return;
 
-    const cursor = document.createElement('div');
-    cursor.className = 'cursor';
-    document.body.appendChild(cursor);
+    const cursor = document.querySelector('.cursor');
+    if (!cursor) return;
 
     document.addEventListener('mousemove', e => {
         const scale = cursor.classList.contains('cursor--small') ? ' scale(0.5)' : '';
@@ -363,7 +431,10 @@ function setupCTACursor() {
             if (rafId && activeTargets === 0) { cancelAnimationFrame(rafId); rafId = null; }
         },
         move(cx, cy) { tx = cx; ty = cy; },
-        setText(t)   { if (textEl) textEl.textContent = t; },
+        setText(t) {
+            if (!textEl || textEl.textContent === t) return;
+            textEl.textContent = t;
+        },
         setArrow(visible) { if (arrowEl) arrowEl.style.display = visible ? '' : 'none'; },
         attach(target, text, { showArrow = true } = {}) {
             target.addEventListener('mouseenter', e => {
@@ -425,6 +496,7 @@ function setupTextReveal() {
    Web Projects
    ══════════════════════════════════════════ */
 
+
 function setupWebProjects() {
     const list    = document.querySelector('.featured-list');
     const preview = document.querySelector('.project-preview-container');
@@ -472,7 +544,6 @@ function setupWebProjects() {
         projects.forEach(p => {
             const a = document.createElement('a');
             a.className = 'featured-project';
-            a.textContent = p.title;
 
             const href = resolveProjectHref(p.path);
             if (href) {
@@ -485,12 +556,38 @@ function setupWebProjects() {
                 a.tabIndex = -1;
             }
 
-            if (p.creator?.trim()) {
-                const s = document.createElement('span');
-                s.className = 'featured-author';
-                s.textContent = ` ${p.creator}`;
-                a.appendChild(s);
+            // Title span
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'featured-project-title';
+            titleSpan.textContent = p.title;
+            a.appendChild(titleSpan);
+
+            // Right-side slot: author + arrow overlap in the same position
+            const meta = document.createElement('span');
+            meta.className = 'featured-meta';
+
+            if (p.creator?.trim() || href) {
+                const slot = document.createElement('span');
+                slot.className = 'featured-slot';
+
+                if (p.creator?.trim()) {
+                    const authorEl = document.createElement('span');
+                    authorEl.className = 'featured-author';
+                    authorEl.textContent = p.creator;
+                    slot.appendChild(authorEl);
+                }
+
+                if (href) {
+                    const arrow = document.createElement('span');
+                    arrow.className = 'featured-arrow';
+                    arrow.innerHTML = `<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+                    slot.appendChild(arrow);
+                }
+
+                meta.appendChild(slot);
             }
+
+            a.appendChild(meta);
 
             const src = `Elements/image/website/${p.id}.png`;
             if (href) {
@@ -519,7 +616,6 @@ function setupFeaturedProjects() {
 
         if (!featured.length) { container.innerHTML = '<p class="projects-empty">No featured projects yet.</p>'; return; }
 
-        /* Build scatter-item elements once (kept in memory for re-layout) */
         const items = featured.map(p => {
             const a = document.createElement('a');
             a.className = 'scatter-item';
@@ -556,7 +652,6 @@ function setupFeaturedProjects() {
             return a;
         });
 
-        /* Responsive column count — matches CSS grid-template-columns */
         function getColumnCount() {
             const w = window.innerWidth;
             if (w <= 480)  return 2;
@@ -565,6 +660,7 @@ function setupFeaturedProjects() {
         }
 
         let currentCols = 0;
+        let resizeRafId = null;
 
         function layoutColumns() {
             const cols = getColumnCount();
@@ -585,8 +681,16 @@ function setupFeaturedProjects() {
             pendingParallaxRefresh?.();
         }
 
+        function onResize() {
+            if (resizeRafId) return;
+            resizeRafId = requestAnimationFrame(() => {
+                resizeRafId = null;
+                layoutColumns();
+            });
+        }
+
         layoutColumns();
-        window.addEventListener('resize', layoutColumns, { passive: true });
+        window.addEventListener('resize', onResize);
 
         if (document.readyState === 'complete') {
             pendingParallaxRefresh?.();
@@ -864,17 +968,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.scrollTo(0, 0);
 
-    setupLenis();
-    setupMobileMenu();
-    setupCursor();
-    setupCTACursor();
-    setupHeader();
-    setupScrubbingText();
-    setupTextReveal();
-    setupWebProjects();
-    setupFeaturedProjects();
-    setupScrollEffects();
-    setupLiquifyAll();
-    setupMagneticLinks();
-    setupSmoothAnchors();
+    const setupTasks = [
+        ['page loader', setupPageLoader],
+        ['lenis', setupLenis],
+        ['mobile menu', setupMobileMenu],
+        ['cursor', setupCursor],
+        ['cta cursor', setupCTACursor],
+        ['header', setupHeader],
+        ['text scrubbing', setupScrubbingText],
+        ['text reveal', setupTextReveal],
+        ['web projects', setupWebProjects],
+        ['featured projects', setupFeaturedProjects],
+        ['scroll effects', setupScrollEffects],
+        ['liquify', setupLiquifyAll],
+        ['magnetic links', setupMagneticLinks],
+        ['smooth anchors', setupSmoothAnchors]
+    ];
+
+    setupTasks.forEach(([name, task]) => {
+        try {
+            task();
+        } catch (error) {
+            console.error(`[init] ${name} failed`, error);
+        }
+    });
+
 });
