@@ -581,7 +581,7 @@ function setupWebProjects() {
                 if (href) {
                     const arrow = document.createElement('span');
                     arrow.className = 'featured-arrow';
-                    arrow.innerHTML = `<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+                    arrow.innerHTML = `<span class="icon-arrow"></span>`;
                     slot.appendChild(arrow);
                 }
 
@@ -757,7 +757,7 @@ function setupScrollEffects() {
 }
 
 /* ══════════════════════════════════════════
-   Liquify — WebGL ping-pong FBO
+   Liquify  -  WebGL ping-pong FBO
    ══════════════════════════════════════════ */
 
 function setupLiquifyAll() {

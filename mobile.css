@@ -4,11 +4,6 @@
 
 /* ── Tablet & below ── */
 @media (max-width: 1024px) {
-    .about-me-image {
-        width: 65%;
-        margin-left: -18vw;
-    }
-
     .status-badge {
         font-size: 10px;
         padding: 4px 10px 4px 8px;
@@ -31,15 +26,6 @@
 
     .navbar-center {
         display: none;
-    }
-
-    .about-me-text {
-        text-align: left;
-    }
-
-    .about-me-image {
-        width: 65%;
-        margin-left: -28vw;
     }
 
     .story-row,
@@ -77,15 +63,6 @@
 /* ── Small phones ── */
 @media (max-width: 480px) {
 
-    .about-me-image {
-        width: 55%;
-        margin-left: -20vw;
-    }
-
-    .about-me-image img {
-        width: 100%;
-    }
-
     .big-name {
         font-size: clamp(60px, 30vw, 200px);
     }
@@ -93,9 +70,25 @@
 
 /* ── About Page ── */
 @media (max-width: 1024px) {
-    .story-container--prose {
-        grid-template-columns: 1fr;
-        gap: clamp(32px, 6vw, 64px);
+    .story-container--catch {
+        flex-direction: column-reverse;
+        text-align: center;
+        gap: 32px;
+    }
+
+    .story-prose--catch {
+        text-align: center;
+        margin-right: 0;
+        mix-blend-mode: normal; /* Blend mode can be messy on some mobile browsers over flat colors */
+    }
+
+    .catch-statement {
+        text-align: center;
+    }
+
+    .story-portrait--catch {
+        flex: 1;
+        max-width: 100%;
     }
 
     .story-portrait {
@@ -105,10 +98,6 @@
 }
 
 @media (max-width: 768px) {
-    .about-hero-title {
-        font-size: clamp(40px, 11vw, 72px);
-    }
-
     .exp-block,
     .skill-band {
         grid-template-columns: 1fr;
@@ -128,10 +117,6 @@
     .exp-list,
     .exp-facts {
         grid-column: 1;
-    }
-
-    .story-dropcap::first-letter {
-        font-size: clamp(42px, 11vw, 64px);
     }
 
     .skills-aside {
