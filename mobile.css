@@ -90,3 +90,62 @@
         font-size: clamp(60px, 30vw, 200px);
     }
 }
+
+/* ── About Page ── */
+@media (max-width: 1024px) {
+    .story-container--prose {
+        grid-template-columns: 1fr;
+        gap: clamp(32px, 6vw, 64px);
+    }
+
+    .story-portrait {
+        position: static;
+        max-width: 420px;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-hero-title {
+        font-size: clamp(40px, 11vw, 72px);
+    }
+
+    .exp-block,
+    .skill-band {
+        grid-template-columns: 1fr;
+        gap: clamp(8px, 1.5vh, 14px);
+    }
+
+    .exp-year {
+        grid-column: 1;
+        grid-row: auto;
+        padding-top: 0;
+        margin-bottom: 4px;
+    }
+
+    .exp-title,
+    .exp-role,
+    .exp-lede,
+    .exp-list,
+    .exp-facts {
+        grid-column: 1;
+    }
+
+    .story-dropcap::first-letter {
+        font-size: clamp(42px, 11vw, 64px);
+    }
+
+    .skills-aside {
+        padding-left: 0;
+    }
+
+    .about-cta-title {
+        font-size: clamp(36px, 11vw, 64px);
+    }
+}
+
+@media (max-width: 480px) {
+    .exp-facts {
+        grid-template-columns: 1fr;
+    }
+}
+

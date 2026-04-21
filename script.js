@@ -524,6 +524,7 @@ function setupWebProjects() {
     function show(src, text, x, y) {
         if (isMobile || prefersReducedMotion) return;
         img.src = src;
+        img.alt = text || 'Project preview';
         desc.textContent = text || '';
         preview.style.display = 'flex';
         updatePosition(x, y);
@@ -961,6 +962,53 @@ function setupLiquifyAll() {
 }
 
 /* ══════════════════════════════════════════
+   Vertical Timeline Scrub
+   ══════════════════════════════════════════ */
+
+function setupTimelines() {
+    if (prefersReducedMotion) return;
+
+    const containers = document.querySelectorAll('.timeline-container');
+    if (!containers.length) return;
+
+    function update() {
+        const viewportHeight = window.innerHeight;
+        const triggerPoint = viewportHeight * 0.6;
+
+        containers.forEach(container => {
+            const rect = container.getBoundingClientRect();
+            const progressLine = container.querySelector('.timeline-progress');
+            const items = container.querySelectorAll('.timeline-item');
+            
+            if (!progressLine) return;
+
+            const containerTop = rect.top;
+            const containerHeight = rect.height;
+            
+            let progress = 0;
+            if (containerTop < triggerPoint) {
+                progress = Math.min(1, (triggerPoint - containerTop) / containerHeight);
+            }
+            
+            progressLine.style.height = `${progress * 100}%`;
+
+            items.forEach(item => {
+                const itemTop = item.getBoundingClientRect().top;
+                if (itemTop < triggerPoint) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+}
+
+/* ══════════════════════════════════════════
    Init
    ══════════════════════════════════════════ */
 
@@ -981,9 +1029,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ['featured projects', setupFeaturedProjects],
         ['scroll effects', setupScrollEffects],
         ['liquify', setupLiquifyAll],
-        ['magnetic links', setupMagneticLinks],
-        ['smooth anchors', setupSmoothAnchors]
+        ['smooth anchors', setupSmoothAnchors],
+        ['timeline', setupTimelines]
     ];
+
+
 
     setupTasks.forEach(([name, task]) => {
         try {
