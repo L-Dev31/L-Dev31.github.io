@@ -82,8 +82,26 @@
       "polygon": "ALCAR.PA",
       "alpha_vantage": "ALCAR.PAR"
     }
-  }
-  ,
+  },
+  {
+    "symbol": "LBIRD",
+    "ticker": "LBIRD.PA",
+    "name": "Lumibird",
+    "isin": "FR0000038242",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity",
+    "purchases": [
+      {"date": "2026-04-22", "amount": -396.80, "shares": 16}
+    ],
+    "sales": [],
+    "api_mapping": {
+      "yahoo": "LBIRD.PA",
+      "twelve_data": "LBIRD:PAR",
+      "polygon": "LBIRD.PA",
+      "alpha_vantage": "LBIRD.PAR"
+    }
+  },
   {
     "symbol": "AAPL",
     "ticker": "AAPL",

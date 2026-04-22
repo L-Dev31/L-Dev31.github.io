@@ -1,3 +1,5 @@
+import { fetchYahooQuote } from './yahoo-finance.js';
+
 const JSON_FILES = {
     equity: 'json/equity.json',
     crypto: 'json/crypto.json',
@@ -5,18 +7,20 @@ const JSON_FILES = {
     markets: 'json/markets.json'
 };
 
+const quoteLookupCache = new Map();
+
 const MARKET_COUNTRY = {
-    australia: 'AU',
-    uk: 'GB',
-    germany: 'DE',
-    france: 'FR',
-    switzerland: 'CH',
-    japan: 'JP',
-    canada: 'CA',
-    india: 'IN',
-    china: 'CN',
-    hongkong: 'HK',
-    korea: 'KR'
+    australia: 'AU', asx: 'AU',
+    uk: 'GB', lse: 'GB',
+    germany: 'DE', xetra: 'DE',
+    france: 'FR', euronext: 'FR',
+    switzerland: 'CH', six: 'CH',
+    japan: 'JP', tse: 'JP',
+    canada: 'CA', tsx: 'CA',
+    india: 'IN', nse: 'IN', bse: 'IN',
+    china: 'CN', sse: 'CN', szse: 'CN',
+    hongkong: 'HK', hkex: 'HK',
+    korea: 'KR', krx: 'KR'
 };
 
 let catalogPromise = null;
@@ -112,7 +116,22 @@ function resolveIconSymbol(record, symbol, cryptoSymbols) {
     return null;
 }
 
-export async function resolveTickerDetails(symbol, fallback = {}) {
+async function lookupYahooQuote(ticker) {
+    if (!ticker) return null;
+    if (quoteLookupCache.has(ticker)) return quoteLookupCache.get(ticker);
+    const promise = (async () => {
+        try {
+            const res = await fetchYahooQuote(ticker);
+            return res && !res.error ? res.quote || null : null;
+        } catch {
+            return null;
+        }
+    })();
+    quoteLookupCache.set(ticker, promise);
+    return promise;
+}
+
+export async function resolveTickerDetails(symbol, fallback = {}, opts = {}) {
     const upper = normalize(symbol);
     const base = baseSymbol(upper);
     const catalog = await loadCatalog();
@@ -125,15 +144,20 @@ export async function resolveTickerDetails(symbol, fallback = {}) {
         || catalog.byYahoo.get(base)
         || null;
 
-    const ticker = normalize(record?.ticker) || normalize(fallback.ticker) || upper;
-    const market = record?.market || record?.marketId || inferMarketFromSymbol(upper, fallback.quoteType, catalog.markets);
-    const currency = record?.currency || fallback.currency || 'USD';
-    const country = record?.country || inferCountryFromMarket(market, currency);
-    const name = record?.name || fallback.name || upper;
-    const type = record?.type || fallback.type || (market === 'crypto' ? 'crypto' : 'equity');
+    const quote = (!record && opts.lookup !== false) ? await lookupYahooQuote(upper) : null;
+
+    const quoteType = fallback.quoteType || quote?.quoteType;
+    const ticker = normalize(record?.ticker) || normalize(fallback.ticker) || normalize(quote?.symbol) || upper;
+    const market = record?.market || record?.marketId || fallback.market
+        || inferMarketFromSymbol(upper, quoteType, catalog.markets);
+    const currency = record?.currency || fallback.currency || quote?.currency || 'USD';
+    const country = record?.country || fallback.country || inferCountryFromMarket(market, currency);
+    const name = record?.name || fallback.name || quote?.longName || quote?.shortName || upper;
+    const isCrypto = market === 'crypto' || quoteType === 'CRYPTOCURRENCY';
+    const type = record?.type || fallback.type || (isCrypto ? 'crypto' : 'equity');
     const isin = record?.isin || fallback.isin || '';
     const api_mapping = record?.api_mapping || fallback.api_mapping || { yahoo: ticker };
-    const iconSymbol = resolveIconSymbol(record, upper, catalog.cryptoSymbols);
+    const iconSymbol = resolveIconSymbol(record, upper, catalog.cryptoSymbols) || fallback.iconSymbol || null;
 
     return {
         symbol: record?.symbol || base || upper,
@@ -147,6 +171,7 @@ export async function resolveTickerDetails(symbol, fallback = {}) {
         api_mapping,
         iconSymbol,
         jsonSymbol: record?.symbol || null,
-        record
+        record,
+        quote
     };
 }

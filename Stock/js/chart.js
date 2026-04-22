@@ -60,25 +60,30 @@ const downsampleData = (ts, prices, opens, highs, lows, closes, maxPoints) => {
     };
 };
 
-const buildGainLines = ({ ts, index, positions, symbol, price, opens, highs, lows, closes }) => {
+const buildTooltipBody = ({ ts, index, opens, highs, lows, closes }) => {
     const d = new Date(ts[index] * 1000);
-    const shares = positions[symbol]?.shares || 0;
-    const costBasis = positions[symbol]?.costBasis || 0;
-    const avgBuy = shares > 0 ? costBasis / shares : 0;
-    const gain = shares > 0 ? (price - avgBuy) * shares : 0;
-    const gainStr = `Gain/Perte: ${(gain >= 0 ? '+' : '') + gain.toFixed(2)}€`;
-
-    const lines = [
+    const body = [
         d.toLocaleDateString('fr-FR'),
         d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
     ];
 
     if (opens && highs && lows && closes) {
-        lines.push('', `O: ${opens[index].toFixed(2)}`, `H: ${highs[index].toFixed(2)}`, `L: ${lows[index].toFixed(2)}`, `C: ${closes[index].toFixed(2)}`);
+        body.push('', `O: ${opens[index].toFixed(2)}`, `H: ${highs[index].toFixed(2)}`, `L: ${lows[index].toFixed(2)}`, `C: ${closes[index].toFixed(2)}`);
     }
 
-    lines.push(gainStr);
-    return lines;
+    return body;
+};
+
+const getGainInfo = (symbol, price, positions) => {
+    const shares = positions[symbol]?.shares || 0;
+    const costBasis = positions[symbol]?.costBasis || 0;
+    if (shares === 0) return null;
+    const avgBuy = costBasis / shares;
+    const gain = (price - avgBuy) * shares;
+    return {
+        gain,
+        text: `Gain/Perte: ${(gain >= 0 ? '+' : '') + gain.toFixed(2)}€`
+    };
 };
 
 export function initChart(symbol, positions) {
@@ -119,7 +124,22 @@ export function initChart(symbol, positions) {
             layout: { padding: { top: 10, bottom: 75, left: 10, right: 10 } },
             plugins: {
                 legend: { display: false },
-                tooltip: { enabled: true, backgroundColor: 'rgba(26,29,46,0.95)', titleColor: '#a8a2ff', bodyColor: '#e8e9f3', borderColor: 'rgba(168,162,255,0.2)', borderWidth: 1, cornerRadius: 4, displayColors: false, padding: 12, titleFont: { family: 'Poppins', size: 12, weight: 'bold' }, bodyFont: { family: 'Poppins', size: 12 }, filter: i => i.parsed.y != null && !isNaN(i.parsed.y) },
+                tooltip: { 
+                    enabled: true, 
+                    backgroundColor: 'rgba(26,29,46,0.95)', 
+                    titleColor: '#a8a2ff', 
+                    bodyColor: '#e8e9f3', 
+                    borderColor: 'rgba(168,162,255,0.2)', 
+                    borderWidth: 1, 
+                    cornerRadius: 4, 
+                    displayColors: false, 
+                    padding: 12, 
+                    titleFont: { family: 'Poppins', size: 12, weight: 'bold' }, 
+                    bodyFont: { family: 'Poppins', size: 12 }, 
+                    footerFont: { family: 'Poppins', size: 12, weight: 'bold' },
+                    footerSpacing: 4,
+                    footerMarginTop: 8
+                },
                 zoom: { zoom: { wheel: { enabled: true, modifierKey: 'shift', speed: 0.1 }, pinch: { enabled: true }, mode: 'x', limits: { x: { min: 'original', max: 'original' } } }, pan: { enabled: false } }
             },
             scales: { x: { grid: { display: false }, ticks: { color: '#6b7280', font: { size: 8 } } }, y: { position: 'right', grid: { color: 'rgba(168,162,255,0.05)', drawBorder: false }, ticks: { color: '#6b7280', font: { size: 8 }, callback: v => v.toFixed(1) + '€' } } },
@@ -131,8 +151,6 @@ export function initChart(symbol, positions) {
     canvas.style.cursor = 'default';
     setTimeout(() => { if (positions[symbol].chart?.data.labels?.length > 10) positions[symbol].chart.zoom(Math.max(1, positions[symbol].chart.data.labels.length / (positions[symbol].chart.data.labels.length * 0.3))); }, 100);
 }
-
-
 
 export function updateChart(symbol, timestamps, prices, positions, source, fullData) {
     const c = positions[symbol].chart;
@@ -147,18 +165,47 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
     const labels = ts.map(t => buildLabel(t, period));
 
     const type = (chartType === 'candle' && (!opens || !highs || !lows || !closes)) ? 'line' : chartType;
+    
+    // If the chart type changed, it's safer to destroy and recreate to avoid internal Chart.js inconsistencies
+    // especially when switching between Line and Bar/Candle
+    if (c.config.type !== (type === 'candle' ? 'bar' : 'line')) {
+        c.destroy();
+        initChart(symbol, positions);
+        const newC = positions[symbol].chart;
+        if (!newC) return;
+        // Recursive call with the new chart instance
+        updateChart(symbol, timestamps, prices, positions, source, fullData);
+        return;
+    }
+
+    // Stop any current animation
+    c.stop();
+    
+    // Deactivate tooltips to avoid internal errors during update
+    if (c.tooltip) {
+        try { c.tooltip.setActiveElements([], { x: 0, y: 0 }); } catch (e) {}
+    }
+
+    const tooltipOpts = c.options.plugins.tooltip;
+    if (!tooltipOpts.callbacks) tooltipOpts.callbacks = {};
 
     if (type === 'candle') {
         const pos = resolveCssColor('--color-positive', '#4caf50');
         const neg = resolveCssColor('--color-negative', '#ef4444');
-        const colors = opens.map((o, i) => closes[i] >= o ? pos : neg);
-        c.config.type = 'bar';
+        
+        const candleData = opens.map((o, i) => ({
+            o, h: highs[i], l: lows[i], c: closes[i], i
+        })).filter(d => d.o != null && d.h != null && d.l != null && d.c != null);
+
+        const colors = candleData.map(d => d.c >= d.o ? pos : neg);
+        const candleLabels = candleData.map(d => labels[d.i]);
+
         c.data = {
-            labels,
+            labels: candleLabels,
             datasets: [
                 {
                     label: 'Mèche',
-                    data: lows.map((l, i) => [l, highs[i]]),
+                    data: candleData.map(d => [d.l, d.h]),
                     backgroundColor: colors,
                     borderColor: colors,
                     borderWidth: 0,
@@ -168,7 +215,7 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
                 },
                 {
                     label: 'Corps',
-                    data: opens.map((o, i) => [Math.min(o, closes[i]), Math.max(o, closes[i])]),
+                    data: candleData.map(d => [Math.min(d.o, d.c), Math.max(d.o, d.c)]),
                     backgroundColor: colors,
                     borderColor: colors,
                     borderWidth: 0,
@@ -180,27 +227,38 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
                 }
             ]
         };
-        c.options.plugins.tooltip.callbacks.title = ctx => closes[ctx[0].dataIndex].toFixed(2) + ' €';
-        c.options.plugins.tooltip.callbacks.label = ctx => {
+        tooltipOpts.callbacks.title = ctx => {
+            const idx = candleData[ctx?.[0]?.dataIndex]?.i;
+            return idx != null ? (closes[idx]?.toFixed(2) + ' €') : '0.00 €';
+        };
+        tooltipOpts.callbacks.label = ctx => {
             if (ctx.datasetIndex === 0) return null;
-            return buildGainLines({
-                ts,
-                index: ctx.dataIndex,
-                positions,
-                symbol,
-                price: closes[ctx.dataIndex],
-                opens,
-                highs,
-                lows,
-                closes
-            });
+            const idx = candleData[ctx.dataIndex]?.i;
+            if (idx == null) return null;
+            return buildTooltipBody({ ts, index: idx, opens, highs, lows, closes });
+        };
+        tooltipOpts.callbacks.footer = ctx => {
+            const item = ctx?.[0];
+            if (!item) return null;
+            const idx = candleData[item.dataIndex]?.i;
+            if (idx == null) return null;
+            const info = getGainInfo(symbol, closes[idx], positions);
+            return info ? info.text : null;
+        };
+        tooltipOpts.footerColor = ctx => {
+            const item = ctx.tooltipItems?.[0];
+            if (!item) return '#e8e9f3';
+            const idx = candleData[item.dataIndex]?.i;
+            if (idx == null) return '#e8e9f3';
+            const info = getGainInfo(symbol, closes[idx], positions);
+            if (!info) return '#e8e9f3';
+            return resolveCssColor(info.gain >= 0 ? '--color-positive' : '--color-negative', info.gain >= 0 ? '#65d981' : '#f87171');
         };
     } else if (type === 'baseline') {
         const baselineValue = p[0];
         const posColor = resolveCssColor('--color-positive', '#4caf50');
         const negColor = resolveCssColor('--color-negative', '#ef4444');
         
-        c.config.type = 'line';
         c.data = {
             labels,
             datasets: [{
@@ -209,10 +267,12 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
                 borderColor: (context) => {
                     const chart = context.chart;
                     const { ctx, chartArea, scales } = chart;
-                    if (!chartArea) return null;
+                    if (!chartArea || !scales.y) return posColor;
                     const yPixel = scales.y.getPixelForValue(baselineValue);
                     const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-                    const stop = Math.max(0, Math.min(1, (yPixel - chartArea.top) / (chartArea.bottom - chartArea.top)));
+                    const height = chartArea.bottom - chartArea.top;
+                    if (height <= 0) return posColor;
+                    const stop = Math.max(0, Math.min(1, (yPixel - chartArea.top) / height));
                     gradient.addColorStop(0, posColor);
                     gradient.addColorStop(stop, posColor);
                     gradient.addColorStop(stop, negColor);
@@ -231,18 +291,21 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
                 spanGaps: true
             }]
         };
-        c.options.plugins.tooltip.callbacks.title = ctx => ctx[0].parsed.y.toFixed(2) + ' €';
-        c.options.plugins.tooltip.callbacks.label = ctx => buildGainLines({
-            ts,
-            index: ctx.dataIndex,
-            positions,
-            symbol,
-            price: p[ctx.dataIndex],
-            opens,
-            highs,
-            lows,
-            closes
-        });
+        tooltipOpts.callbacks.title = ctx => (ctx?.[0]?.parsed?.y?.toFixed(2) || '0.00') + ' €';
+        tooltipOpts.callbacks.label = ctx => buildTooltipBody({ ts, index: ctx.dataIndex, opens, highs, lows, closes });
+        tooltipOpts.callbacks.footer = ctx => {
+            const item = ctx?.[0];
+            if (!item) return null;
+            const info = getGainInfo(symbol, p[item.dataIndex], positions);
+            return info ? info.text : null;
+        };
+        tooltipOpts.footerColor = ctx => {
+            const item = ctx.tooltipItems?.[0];
+            if (!item) return '#e8e9f3';
+            const info = getGainInfo(symbol, p[item.dataIndex], positions);
+            if (!info) return '#e8e9f3';
+            return resolveCssColor(info.gain >= 0 ? '--color-positive' : '--color-negative', info.gain >= 0 ? '#65d981' : '#f87171');
+        };
     } else {
         let line = resolveCssColor('--color-line-default', DEFAULT_LINE_COLOR);
         let gs = 'rgba(168,162,255,0.3)';
@@ -257,23 +320,33 @@ export function updateChart(symbol, timestamps, prices, positions, source, fullD
         const g = c.ctx.createLinearGradient(0, 0, 0, 200);
         g.addColorStop(0, gs);
         g.addColorStop(1, ge);
-        c.config.type = 'line';
         c.data = { labels, datasets: [{ label: 'Prix', data: p, borderColor: line, backgroundColor: g, borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 4, spanGaps: true }] };
-        c.options.plugins.tooltip.callbacks.title = ctx => ctx[0].parsed.y.toFixed(2) + ' €';
-        c.options.plugins.tooltip.callbacks.label = ctx => buildGainLines({
-            ts,
-            index: ctx.dataIndex,
-            positions,
-            symbol,
-            price: p[ctx.dataIndex],
-            opens,
-            highs,
-            lows,
-            closes
-        });
+        tooltipOpts.callbacks.title = ctx => (ctx?.[0]?.parsed?.y?.toFixed(2) || '0.00') + ' €';
+        tooltipOpts.callbacks.label = ctx => buildTooltipBody({ ts, index: ctx.dataIndex, opens, highs, lows, closes });
+        tooltipOpts.callbacks.footer = ctx => {
+            const item = ctx?.[0];
+            if (!item) return null;
+            const info = getGainInfo(symbol, p[item.dataIndex], positions);
+            return info ? info.text : null;
+        };
+        tooltipOpts.footerColor = ctx => {
+            const item = ctx.tooltipItems?.[0];
+            if (!item) return '#e8e9f3';
+            const info = getGainInfo(symbol, p[item.dataIndex], positions);
+            if (!info) return '#e8e9f3';
+            return resolveCssColor(info.gain >= 0 ? '--color-positive' : '--color-negative', info.gain >= 0 ? '#65d981' : '#f87171');
+        };
     }
 
     c.data.timestamps = ts;
-    c.update('none');
-    c.resetZoom?.();
+    try {
+        c.update('none');
+    } catch (e) {
+        console.warn('Chart update failed safely, attempting full refresh:', e);
+        try {
+            c.update();
+        } catch (e2) {
+            console.error('Fatal chart update error:', e2);
+        }
+    }
 }

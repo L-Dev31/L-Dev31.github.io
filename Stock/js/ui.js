@@ -917,7 +917,7 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
         chart: null,
         lastFetch: 0,
         lastData: null,
-        currentPeriod: '1D'
+        currentPeriod: (resolved.period || '1D').toUpperCase()
     };
 
     lastApiBySymbol[symbol] = selectedApi;

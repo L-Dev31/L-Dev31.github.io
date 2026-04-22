@@ -1130,23 +1130,7 @@ html.lenis body {
     padding: clamp(20px, 5vh, 56px) 0 clamp(40px, 8vh, 100px);
 }
 
-.about-hero-container {
-    width: min(1100px, 100%);
-    margin: 0 auto;
-    padding: 150px var(--pad-edge);
-    box-sizing: border-box;
-}
 
-.about-hero-title {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: clamp(44px, 9vw, 140px);
-    line-height: 0.95;
-    color: var(--white);
-    margin: 0 0 clamp(24px, 5vh, 56px);
-    letter-spacing: -0.01em;
-    text-wrap: balance;
-}
 
 .about-hero-lede {
     font-family: var(--font-body);

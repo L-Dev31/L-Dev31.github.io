@@ -828,56 +828,12 @@ import { debounce } from './constants.js';
         });
     }
 
-    async function openOrCreateTicker(yahooSymbol, itemDataInput = null) {
-        const itemData = itemDataInput || state.results.find(i => i.symbol === yahooSymbol);
-        if (!itemData) return { ok: false, reason: 'not-in-explorer-results' };
-
-        const existingSymbol = getJsonSymbol(yahooSymbol) || yahooSymbol;
-        const existingCard = document.getElementById(`card-${existingSymbol}`);
-        if (existingCard || window.positions?.[existingSymbol]) {
-            return { ok: true, symbol: existingSymbol };
-        }
-
-        if (typeof window.openCustomSymbol !== 'function') {
-            return { ok: false, reason: 'missing-open-custom-symbol' };
-        }
-
-        const type = itemData.market === 'crypto' ? 'crypto' : 'equity';
-        const resolved = {
-            ticker: yahooSymbol,
-            name: itemData.name || yahooSymbol,
-            type,
-            currency: itemData.currency || 'USD',
-            country: getCountryForExplorerSymbol(yahooSymbol, itemData.market, itemData.currency),
-            api_mapping: { yahoo: yahooSymbol },
-            iconSymbol: getIconSymbol(yahooSymbol)
-        };
-
-        await window.openCustomSymbol(yahooSymbol, type, resolved);
-        if (itemData.isSuspended) window.markTabAsSuspended?.(yahooSymbol);
-
-        return { ok: true, symbol: yahooSymbol };
-    }
-
-    function getCountryForExplorerSymbol(symbol, market, currency) {
-        let country = 'US';
-
-        if (market && MARKET_CONFIG[market]?.country) return MARKET_CONFIG[market].country;
-
-        const suffix = symbol.includes('.') ? `.${symbol.split('.').pop()}` : '';
-        const bySuffix = Object.values(MARKET_CONFIG).find(c => c.suffix === suffix);
-        if (bySuffix?.country) return bySuffix.country;
-
-        if (currency === 'GBP') country = 'GB';
-        return country;
-    }
-
     async function openStock(yahooSymbol) {
-        const itemData = state.results.find(i => i.symbol === yahooSymbol);
+        if (typeof window.goToTicker !== 'function') return;
+        const itemData = state.results.find(i => i.symbol === yahooSymbol) || null;
         const period = state.currentPeriod || '1D';
-        if (typeof window.goToTicker === 'function') {
-            await window.goToTicker({ symbol: yahooSymbol, period, itemData });
-        }
+        const result = await window.goToTicker({ symbol: yahooSymbol, period, itemData });
+        if (result?.ok && itemData?.isSuspended) window.markTabAsSuspended?.(result.symbol);
     }
 
     function openExplorer() {
@@ -988,5 +944,5 @@ import { debounce } from './constants.js';
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 
-    window.explorerModule = { openExplorer, loadData, openOrCreateTicker };
+    window.explorerModule = { openExplorer, loadData };
 }

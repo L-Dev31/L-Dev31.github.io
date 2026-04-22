@@ -33,6 +33,19 @@ const PERIODS = {
     'MAX': { interval: '1mo', range: 'max' }
 };
 
+// Fallback chain by period — Yahoo refuse souvent 1m/5m pour small-caps peu liquides.
+// On essaie du plus fin au plus grossier jusqu'à avoir de la donnée.
+const PERIOD_FALLBACKS = {
+    '1D':  [{ interval: '1m',  range: '1d'  }, { interval: '5m',  range: '1d'  }, { interval: '15m', range: '1d'  }, { interval: '1h', range: '5d' }],
+    '1W':  [{ interval: '5m',  range: '5d'  }, { interval: '15m', range: '5d'  }, { interval: '1h',  range: '5d'  }, { interval: '1d', range: '1mo' }],
+    '1M':  [{ interval: '15m', range: '1mo' }, { interval: '1h',  range: '1mo' }, { interval: '1d',  range: '1mo' }],
+    '6M':  [{ interval: '1h',  range: '6mo' }, { interval: '1d',  range: '6mo' }],
+    '1Y':  [{ interval: '1d',  range: '1y'  }, { interval: '1wk', range: '1y'  }],
+    '3Y':  [{ interval: '1wk', range: '3y'  }, { interval: '1mo', range: '3y'  }],
+    '5Y':  [{ interval: '1wk', range: '5y'  }, { interval: '1mo', range: '5y'  }],
+    'MAX': [{ interval: '1mo', range: 'max' }, { interval: '3mo', range: 'max' }]
+};
+
 function filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes, volumes) {
     if (!timestamps || !opens || !highs || !lows || !closes ||
         timestamps.length !== opens.length ||
