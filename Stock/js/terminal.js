@@ -60,10 +60,10 @@ function getTarget(parts) {
 
 function showHelp(cmd) {
     const cmds = [
-        { c: 'GO &lt;SYM&gt; [P]', d: 'Ouvre onglet' }, { c: 'NEWS &lt;SYM&gt;', d: 'Actualités' },
-        { c: 'FA &lt;SYM&gt;', d: 'Financiers' }, { c: 'ANR &lt;SYM&gt;', d: 'Analystes' },
-        { c: 'ERN &lt;SYM&gt;', d: 'Résultats' }, { c: 'DVD &lt;SYM&gt;', d: 'Dividendes' },
-        { c: 'RV T1 T2...', d: 'Comparaison' }, { c: 'CLEAR', d: 'Effacer' }, { c: 'HELP [CMD]', d: 'Aide' }
+        { c: 'GO &lt;SYM&gt; [P]', d: 'Open ticker' }, { c: 'NEWS &lt;SYM&gt;', d: 'News' },
+        { c: 'FA &lt;SYM&gt;', d: 'Fundamentals' }, { c: 'ANR &lt;SYM&gt;', d: 'Analysts' },
+        { c: 'ERN &lt;SYM&gt;', d: 'Earnings' }, { c: 'DVD &lt;SYM&gt;', d: 'Dividends' },
+        { c: 'RV T1 T2...', d: 'Comparison' }, { c: 'CLEAR', d: 'Clear' }, { c: 'HELP [CMD]', d: 'Help' }
     ];
 
     if (!cmd) {
@@ -110,7 +110,7 @@ async function exec(raw) {
         return;
     }
 
-    out(`Commande inconnue: ${raw}`);
+    out(`Unknown command: ${raw}`);
 }
 
 function init() {
@@ -151,7 +151,7 @@ function init() {
             else { window.openTerminalCard?.(); inp.focus(); }
         }
         if (e.key === 'Escape') window.closeTerminalCard?.() || document.getElementById('card-terminal')?.classList.remove('active');
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') { e.preventDefault(); if (cancelTask()) out('Streaming stoppé.'); }
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') { e.preventDefault(); if (cancelTask()) out('Streaming stopped.'); }
     });
 
     document.getElementById('card-terminal')?.addEventListener('click', e => {

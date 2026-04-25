@@ -43,6 +43,11 @@
     gap: 8px;
     cursor: pointer;
     padding: 6px 10px;
+    border-radius: 6px;
+    transition: none !important;
+}
+.sidebar-section-title:hover {
+    background: rgba(168, 162, 255, 0.05);
 }
 
 .sidebar-section .section-toggle {
@@ -57,6 +62,10 @@
     align-items: center;
     justify-content: center;
     font-size: 11px;
+    transition: none !important;
+}
+.sidebar-section .section-toggle:hover {
+    color: var(--text-white);
 }
 
 .sidebar-section .section-toggle:focus {
@@ -86,7 +95,7 @@
     gap: 12px;
     margin-bottom: 20px;
     padding: 16px;
-    background: linear-gradient(145deg, rgba(168, 162, 255, 0.08) 0%, rgba(168, 162, 255, 0.02) 100%);
+    background: rgba(168, 162, 255, 0.05);
     border-radius: 12px;
     border: 1px solid rgba(168, 162, 255, 0.1);
 }
@@ -96,7 +105,7 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--primary);
+    border: 1px solid var(--primary);
 }
 
 .profile-info h1 {
@@ -145,11 +154,21 @@
     font-weight: 500;
     cursor: pointer;
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 8px;
     text-align: left;
+    transition: none !important;
+}
+
+.tool-btn:hover {
+    background: rgba(168, 162, 255, 0.08);
+    color: var(--text-light);
+}
+
+.tool-btn:active {
+    transform: scale(0.97);
 }
 
 .tool-btn.active {
@@ -168,10 +187,10 @@
 .profile-action-btn {
     width: 100%;
     padding: 10px 12px;
-    background: linear-gradient(145deg, #2a2a35 0%, #1e1e25 100%);
+    background: rgba(168, 162, 255, 0.05);
     border: 1px solid rgba(168, 162, 255, 0.1);
     color: var(--primary);
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 13px;
     text-align: left;
@@ -203,13 +222,18 @@
     align-items: center;
     gap: 10px;
     border-bottom: 1px solid rgba(168, 162, 255, 0.06);
-    border-radius: 6px;
+    border-radius: 8px;
     margin-bottom: 2px;
     position: relative;
+    transition: none !important;
+}
+
+.tab:hover {
+    background: linear-gradient(90deg, rgba(168, 162, 255, 0.08) 0%, transparent 100%);
 }
 
 .tab.active {
-    background: linear-gradient(90deg, rgba(168, 162, 255, 0.15) 0%, rgba(168, 162, 255, 0.05) 100%);
+    background: linear-gradient(90deg, rgba(168, 162, 255, 0.15) 0%, transparent 100%);
     border-left: 3px solid var(--primary);
     padding-left: 18px;
 }
@@ -219,11 +243,6 @@
     order: 999;
     background: rgba(107, 114, 128, 0.08) !important;
     border-left-color: #6b7280 !important;
-}
-
-.tab.suspended:hover {
-    background: rgba(107, 114, 128, 0.12) !important;
-    opacity: 0.6;
 }
 
 .tab.suspended.active {

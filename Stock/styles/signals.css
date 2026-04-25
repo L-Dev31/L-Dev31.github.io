@@ -83,7 +83,6 @@
     color: var(--primary-purple);
     margin-bottom: 6px;
     text-transform: uppercase;
-    text-shadow: 0 0 15px rgba(168, 162, 255, 0.4);
 }
 
 .signal-description {
@@ -98,20 +97,19 @@
     background: linear-gradient(145deg, rgba(168, 162, 255, 0.08) 0%, rgba(168, 162, 255, 0.02) 100%);
     border-radius: 14px;
     padding: 18px;
-    border: 1px solid rgba(168, 162, 255, 0.12);
+    border: 1px solid rgba(168, 162, 255, 0.1);
     border-left: 4px solid #fbbf24;
     margin: 15px 0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .signal-state-container.sell-state {
     border-left-color: var(--color-negative);
-    background: linear-gradient(145deg, rgba(248, 113, 113, 0.08) 0%, rgba(248, 113, 113, 0.02) 100%);
+    background: rgba(248, 113, 113, 0.05);
 }
 
 .signal-state-container.buy-state {
     border-left-color: var(--color-positive);
-    background: linear-gradient(145deg, rgba(101, 217, 129, 0.08) 0%, rgba(101, 217, 129, 0.02) 100%);
+    background: rgba(101, 217, 129, 0.05);
 }
 
 .signal-state-container.insufficient-state {
@@ -120,12 +118,12 @@
 
 .signal-state-container.closed-state {
     border-left-color: #6b7280;
-    background: linear-gradient(145deg, rgba(107, 114, 128, 0.08) 0%, rgba(107, 114, 128, 0.02) 100%);
+    background: rgba(107, 114, 128, 0.05);
 }
 
 .signal-state-container.suspended-state {
     border-left-color: #ef4444;
-    background: linear-gradient(145deg, rgba(239, 68, 68, 0.08) 0%, rgba(239, 68, 68, 0.02) 100%);
+    background: rgba(239, 68, 68, 0.05);
 }
 
 .signal-state-title {

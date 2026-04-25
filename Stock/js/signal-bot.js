@@ -935,7 +935,7 @@ function updateSignalUI(symbol, result) {
     // `value` is 0-100 (sell-to-buy), `cssClass` is the indicator's semantic class.
     const miniGauge = (value) => {
         const pct = Math.max(0, Math.min(100, value));
-        return `<div style="position:relative;width:100%;height:8px;border-radius:4px;overflow:hidden;
+        return `<div style="position:relative;width:100%;height:8px;border-radius:8px;overflow:hidden;
             background:linear-gradient(90deg,#6b0000 0%,#dc2626 15%,#ef4444 25%,#f59e0b 40%,#fbbf24 50%,#84cc16 60%,#22c55e 75%,#16a34a 85%,#166534 100%);">
             <div style="position:absolute;top:0;left:${pct}%;transform:translateX(-50%);width:3px;height:100%;
                 background:#fff;box-shadow:0 0 6px rgba(255,255,255,0.7);border-radius:1px;"></div>

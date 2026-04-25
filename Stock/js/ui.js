@@ -17,7 +17,7 @@ export function createTab(stock, type) {
     tab.dataset.symbol = stock.symbol;
     tab.dataset.ticker = stock.ticker;
     
-    if (stock.suspended) {
+    if (stock.suspended || isSymbolSuspendedInStorage(stock.symbol)) {
         tab.classList.add('suspended');
     }
     
@@ -50,9 +50,15 @@ export function createTab(stock, type) {
     const calculated = calculateStockValues(stock);
     tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `(Shares owned: ${calculated.shares})` : '';
     const isPortfolio = calculated.shares > 0 || hasTransactions(stock);
+    const isSuspended = tab.classList.contains('suspended');
 
-    const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
-    document.getElementById(sectionId)?.appendChild(tab);
+    if (isSuspended && !isPortfolio) {
+        const section = ensureSection('suspended-tabs', type);
+        section?.appendChild(tab);
+    } else {
+        const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
+        document.getElementById(sectionId)?.appendChild(tab);
+    }
 }
 
 export function createCard(stock) {
@@ -145,7 +151,7 @@ export function createCard(stock) {
     const upd = card.querySelector('.update-center')
     if (upd) {
         upd.id = `update-center-${stock.symbol}`
-        upd.textContent = 'Last updated: --'
+        upd.textContent = '--'
     }
 
     const courseTitle = card.querySelector('.course-title');
@@ -296,6 +302,28 @@ export function createCard(stock) {
     const nl = card.querySelector('.news-list');
     if (nl) nl.id = `news-list-${stock.symbol}`;
 
+    // Sticky Header Scroll Logic
+    card.addEventListener('scroll', () => {
+        const header = card.querySelector('.card-sticky-header');
+        if (header) {
+            header.classList.toggle('scrolled', card.scrollTop > 40);
+        }
+    });
+
+    // Populate mini-logo
+    const miniLogo = card.querySelector('.card-mini-logo img');
+    if (miniLogo) {
+        miniLogo.src = stock.iconSymbol ? `img/icon/${stock.iconSymbol}.png` : `img/logo/${stock.symbol}.png`;
+        miniLogo.onerror = function() {
+            const parent = this.parentElement;
+            parent.innerHTML = '';
+            const fallback = document.createElement('div');
+            fallback.className = 'logo-fallback';
+            fallback.textContent = (stock.ticker || stock.symbol || '').slice(0, 2).toUpperCase();
+            parent.appendChild(fallback);
+        };
+    }
+
     document.getElementById('cards-container')?.appendChild(card)
     
     setupNewsSearch(stock.symbol);
@@ -422,9 +450,9 @@ export function updateUI(symbol, data) {
             const dataDate = new Date(latestTimestamp * 1000);
             const dateStr = dataDate.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
             const timeStr = dataDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-            timeString = `${dateStr} a ${timeStr}`;
+            timeString = `${dateStr} ${timeStr}`;
         }
-        updateEl.textContent = `Last updated: ${timeString}`;
+        updateEl.textContent = `${timeString}`;
     }
 
     if (data && data.name && positions[symbol] && positions[symbol].name === symbol) {
@@ -483,7 +511,7 @@ function resetPricePerformanceAndUpdate(symbol) {
     }
 
     const updateEl = document.getElementById(`update-center-${symbol}`);
-    if (updateEl) updateEl.textContent = 'Last updated: --';
+    if (updateEl) updateEl.textContent = '--';
 }
 
 function resetSignalDisplay(symbol, description) {

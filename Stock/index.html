@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nemeris</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="styles/sidebar.css" />
     <link rel="stylesheet" href="styles/card-tabs.css" />
@@ -83,21 +82,27 @@
             <div class="card news-card" id="card-news" role="document" aria-hidden="true">
                 <div class="news-header">
                     <h3 class="section-title"><i class="fa-solid fa-newspaper"></i> Market News</h3>
-                    <div class="section-date">Last updated: <span id="news-last-update">—</span></div>
+                    <div class="section-date"><span id="news-last-update">—</span></div>
                     <div class="news-filters-column">
                         <div class="news-filters-row">
                             <div class="news-filter-group news-ticker-group">
                                 <label for="news-ticker-search" class="news-label">Ticker</label>
-                                <input id="news-ticker-search" class="news-input news-ticker-search" type="text"
-                                    placeholder="e.g. AAPL, BTC" autocomplete="off" />
+                                <div class="search-box">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input id="news-ticker-search" class="search-input news-ticker-search" type="text"
+                                        placeholder="e.g. AAPL, BTC" autocomplete="off" />
+                                </div>
                                 <div id="ticker-suggestions" class="ticker-suggestions"></div>
                             </div>
                         </div>
                         <div class="news-filters-row">
                             <div class="news-filter-group">
                                 <label for="news-article-search" class="news-label">Search</label>
-                                <input id="news-article-search" class="news-input news-articles-input" type="search"
-                                    placeholder="Search articles..." />
+                                <div class="search-box">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input id="news-article-search" class="search-input news-articles-input" type="search"
+                                        placeholder="Search articles..." />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -114,8 +119,11 @@
                         <div class="explorer-filters-row">
                             <div class="explorer-filter-group">
                                 <label class="explorer-label">Search</label>
-                                <input id="explorer-search" class="explorer-input" type="text"
-                                    placeholder="Ticker, name..." autocomplete="off" />
+                                <div class="search-box">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input id="explorer-search" class="search-input explorer-input" type="text"
+                                        placeholder="Ticker, name..." autocomplete="off" />
+                                </div>
                             </div>
                             <div class="explorer-filter-group">
                                 <label class="explorer-label">Market</label>
@@ -266,10 +274,15 @@
                     </div>
                 </div>
 
-                <div class="card-tabs-nav">
-                    <button class="card-tab-btn active" data-target="overview">Overview</button>
-                    <button class="card-tab-btn" data-target="news">News</button>
-                    <button class="card-tab-btn" data-target="investment">Investment</button>
+                <div class="card-sticky-header">
+                    <div class="card-mini-logo">
+                        <img data-symbol="" src="" alt="" />
+                    </div>
+                    <div class="card-tabs-nav">
+                        <button class="card-tab-btn active" data-target="overview">Overview</button>
+                        <button class="card-tab-btn" data-target="news">News</button>
+                        <button class="card-tab-btn" data-target="investment">Investment</button>
+                    </div>
                 </div>
 
                 <div class="card-content">
@@ -354,12 +367,15 @@
                     <div class="card-tab-pane" data-pane="news">
                         <div class="news-section">
                             <h3 class="section-title">Latest News</h3>
-                            <div class="section-date">Last updated: <span class="news-last-update">—</span>
+                            <div class="section-date"><span class="news-last-update">—</span>
                             </div>
                             <div class="news-filter-group">
                                 <label class="news-label">Search</label>
-                                <input type="text" class="news-input news-search-input"
-                                    placeholder="Search news..." />
+                                <div class="search-box">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" class="search-input news-search-input"
+                                        placeholder="Search news..." />
+                                </div>
                             </div>
                             <div class="news-list" aria-live="polite"></div>
                         </div>

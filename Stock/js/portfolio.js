@@ -1,5 +1,5 @@
 import { positions, loadApiConfig, selectedApi, lastApiBySymbol, getCurrency } from './state.js';
-import { createTab, createCard, updateSectionDates, initChart, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js';
+import { createTab, createCard, updateSectionDates, initChart, markTabAsSuspended, unmarkTabAsSuspended, isSymbolSuspendedInStorage } from './ui.js';
 import { fetchActiveSymbol } from './general.js';
 import { fetchYahooSparkBatch, getYahooSymbol, isYahooSparkFriendly } from './yahoo-finance.js';
 import rateLimiter from './rate-limiter.js';
@@ -163,6 +163,7 @@ export async function loadStocks() {
             lastData: null,
             currentPeriod: '1D',
             chartType: 'line',
+            suspended: s.suspended || isSymbolSuspendedInStorage(s.symbol),
             raw: s
         };
         lastApiBySymbol[s.symbol] = selectedApi;

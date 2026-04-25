@@ -32,13 +32,7 @@ function selectApiFetch() {
 const DEFAULT_PROFILE_NAME = 'Nemeris User';
 const DEFAULT_PROFILE_PFP = 'img/icon/favicon.png';
 
-function setSettingsStatus(text = '', level = '') {
-    const status = document.getElementById('settings-proxy-status');
-    if (!status) return;
-    status.textContent = text;
-    status.className = 'settings-proxy-status';
-    if (level) status.classList.add(level);
-}
+
 
 function applySettingsToUi(settings = getUserSettings()) {
     const profileName = document.getElementById('profile-name');

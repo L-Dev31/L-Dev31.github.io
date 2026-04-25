@@ -12,7 +12,7 @@
     font-size: 0.75rem;
 }
 
-.term-cmd { color: var(--primary-purple); font-weight: 700; }
+.term-cmd { color: var(--text-white); font-weight: 500; }
 
 .card.terminal-card {
     display: none;
@@ -51,24 +51,24 @@
 }
 
 .terminal-card .terminal-output .terminal-log { color: var(--text-white); }
-.terminal-card .terminal-output .terminal-cmd { color: var(--primary-purple); font-style: italic; }
-.terminal-command { color: var(--primary-purple) !important; }
+.terminal-card .terminal-output .terminal-cmd { color: var(--text-white); }
+.terminal-command { color: var(--text-white) !important; font-weight: 600; }
 
 .terminal-panel {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    padding: 8px;
-    margin: 4px 0;
-    background: rgba(255, 255, 255, 0.02);
+    padding: 12px 0;
+    margin: 8px 0;
+    background: transparent;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .terminal-panel-title {
     font-size: 0.75rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--primary-purple);
-    margin-bottom: 6px;
+    color: var(--text-white);
+    margin-bottom: 8px;
     font-weight: 700;
+    opacity: 0.9;
 }
 
 .terminal-mini-table,
@@ -102,7 +102,7 @@
 
 .terminal-mini-table tbody th,
 .terminal-data-table tbody th {
-    color: var(--primary-purple);
+    color: var(--text-white);
     text-transform: none;
     letter-spacing: normal;
 }
@@ -131,7 +131,7 @@
 }
 
 .terminal-help-table tbody td:first-child {
-    color: var(--primary-purple);
+    color: var(--text-white);
 }
 
 .terminal-muted { color: rgba(255, 255, 255, 0.55); }
@@ -141,28 +141,23 @@
 .terminal-input-row {
     display: flex;
     width: 100%;
-    padding: 6px 8px;
-    min-height: 40px;
+    padding: 0;
+    min-height: 20px;
     align-items: center;
-    background: inherit;
+    background: transparent;
 }
 
 .terminal-prompt {
-    margin-right: 8px;
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.8rem;
+    margin-right: 6px;
     color: var(--text-white);
 }
 
 .terminal-input {
     color: var(--text-white);
-    font-size: 0.8rem;
-    font-family: "JetBrains Mono", monospace;
-    width: 100%;
     background: transparent;
     border: none;
-    resize: none;
-    min-height: 32px;
+    padding: 0;
+    width: 100%;
 }
 
 .terminal-input:focus { outline: none; }

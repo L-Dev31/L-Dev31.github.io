@@ -16,8 +16,14 @@
     font-weight: 500;
     cursor: pointer;
     padding: 8px 12px;
-    border-radius: 4px;
+    border-radius: 8px;
     white-space: nowrap;
+    transition: none !important;
+}
+
+.card-tab-btn:hover:not(.active) {
+    background: rgba(255,255,255,0.06);
+    color: var(--text-light);
 }
 
 .card-tab-btn.active {

@@ -148,7 +148,7 @@ export function updateNewsUI(symbol, items, filter = null) {
 
     sortNewsItems(list).forEach(item => {
         const tagLabels = collectCardTags(item);
-        el.appendChild(buildNewsAnchorItem(item, { className: 'news-item news-item-link', tagLabels }));
+        el.appendChild(buildNewsAnchorItem(item, { className: 'news-item', tagLabels }));
     });
 }
 
