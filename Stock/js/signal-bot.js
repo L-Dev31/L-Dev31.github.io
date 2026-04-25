@@ -925,9 +925,7 @@ function updateSignalUI(symbol, result) {
     else if (result.regime.type === 'downtrend') regimeClass = 'negative';
     else if (result.regime.type === 'ranging') regimeClass = 'warning';
 
-    let headerColor = '#fbbf24';
-    if (result.signalValue >= 60) headerColor = '#4ade80';
-    else if (result.signalValue <= 40) headerColor = '#f87171';
+    let headerColor = 'var(--primary-purple)';
 
     const horizon = HORIZON_MAP[result.period] || { label: 'Medium Term', desc: 'Swing Trading (Weeks)' };
 
@@ -985,7 +983,7 @@ function updateSignalUI(symbol, result) {
 
     explanationContent.innerHTML = `
         <div style="margin-bottom: 32px; text-align: center;">
-            <div style="font-size: 22px; font-weight: 800; color: ${conclusionColor}; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 1px; text-shadow: 0 0 20px ${conclusionColor}44;">
+            <div style="font-size: 22px; font-weight: 800; color: ${conclusionColor}; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 1px;">
                 ${result.signalDesc}
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">

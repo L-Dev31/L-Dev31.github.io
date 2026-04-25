@@ -1,5 +1,5 @@
 .settings-card {
-    max-width: 960px;
+    width: 100%;
 }
 
 .settings-header {
@@ -75,17 +75,9 @@
     color: var(--text-light);
 }
 
-.settings-action-btn.secondary:hover {
-    background: rgba(255, 255, 255, 0.14);
-}
-
 .settings-action-btn.primary {
     background: var(--primary-purple);
     color: #0b1020;
-}
-
-.settings-action-btn.primary:hover {
-    filter: brightness(1.08);
 }
 
 .settings-proxy-status {

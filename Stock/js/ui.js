@@ -51,16 +51,6 @@ export function createTab(stock, type) {
     tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `(Shares owned: ${calculated.shares})` : '';
     const isPortfolio = calculated.shares > 0 || hasTransactions(stock);
 
-    // Si l'on a mémorisé le ticker comme suspendu lors d'une session précédente,
-    // et que ce n'est pas un ticker du portefeuille (on garde ceux-là visibles), on le route direct dans Suspendus.
-    // Un fetch réussi ultérieur (unmarkTabAsSuspended) le sortira automatiquement.
-    if (!isPortfolio && isSymbolSuspendedInStorage(stock.symbol)) {
-        tab.classList.add('suspended');
-        const section = ensureSection('suspended-tabs', type);
-        (section || document.getElementById(`general-section-${type}`))?.appendChild(tab);
-        return;
-    }
-
     const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
     document.getElementById(sectionId)?.appendChild(tab);
 }
@@ -582,11 +572,9 @@ export function updateTabTitle(symbol) {
 }
 
 export function updateCardTitle(symbol) {
-    const dateStr = getLastDataDate(symbol);
-    if (!dateStr) return;
     const titleEl = document.getElementById(`course-title-${symbol}`);
     if (!titleEl) return;
-    titleEl.textContent = `Stock Price (${dateStr})`;
+    titleEl.textContent = `Stock Price`;
 }
 
 export function updateSectionDates(symbol) {
@@ -595,28 +583,28 @@ export function updateSectionDates(symbol) {
     if (courseTitle) {
         const courseDate = courseTitle.nextElementSibling;
         if (courseDate && courseDate.classList.contains('section-date')) {
-            courseDate.textContent = dateStr ? `Data: ${dateStr}` : '';
+            courseDate.textContent = dateStr || '';
         }
     }
     const invTitle = document.getElementById(`investment-title-${symbol}`);
     if (invTitle) {
         const invDate = invTitle.nextElementSibling;
         if (invDate && invDate.classList.contains('section-date')) {
-            invDate.textContent = dateStr ? `Data: ${dateStr}` : '';
+            invDate.textContent = dateStr || '';
         }
     }
     const detTitle = document.getElementById(`details-title-${symbol}`);
     if (detTitle) {
         const detDate = detTitle.nextElementSibling;
         if (detDate && detDate.classList.contains('section-date')) {
-            detDate.textContent = dateStr ? `Donnees : ${dateStr}` : '';
+            detDate.textContent = dateStr || '';
         }
     }
     const signalTitle = document.getElementById(`signal-title-${symbol}`);
     if (signalTitle) {
         const signalDate = signalTitle.nextElementSibling;
         if (signalDate && signalDate.classList.contains('section-date')) {
-            signalDate.textContent = dateStr ? `Donnees : ${dateStr}` : '';
+            signalDate.textContent = dateStr || '';
         }
     }
 }
@@ -670,7 +658,6 @@ function ensureSection(containerId, type) {
     return section;
 }
 
-// Persistance de l'état suspendu entre sessions — self-heal si le ticker redevient vivant (unmarkTabAsSuspended).
 const SUSPENDED_KEY_PREFIX = 'nemeris_suspended_';
 
 export function isSymbolSuspendedInStorage(symbol) {
@@ -682,7 +669,7 @@ function setSymbolSuspendedInStorage(symbol, suspended) {
     try {
         if (suspended) localStorage.setItem(SUSPENDED_KEY_PREFIX + symbol, '1');
         else localStorage.removeItem(SUSPENDED_KEY_PREFIX + symbol);
-    } catch { /* ignore */ }
+    } catch { }
 }
 
 export function markTabAsSuspended(symbol) {

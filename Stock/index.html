@@ -40,7 +40,7 @@
         <div class="sidebar-scroll">
             <div class="sidebar-section" id="sidebar-portfolio">
                 <h3 class="sidebar-section-title">My Portfolio
-                    <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs"><i
+                    <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs" aria-label="Toggle portfolio section"><i
                             class="fa-solid fa-chevron-down"></i></button>
                 </h3>
                 <div class="tabs portfolio" id="portfolio-tabs"></div>
@@ -48,7 +48,7 @@
 
             <div class="sidebar-section" id="sidebar-market">
                 <h3 class="sidebar-section-title">Market
-                    <button class="section-toggle" aria-expanded="true" aria-controls="general-tabs"><i
+                    <button class="section-toggle" aria-expanded="true" aria-controls="general-tabs" aria-label="Toggle market section"><i
                             class="fa-solid fa-chevron-down"></i></button>
                 </h3>
                 <div class="tabs general" id="general-tabs"></div>
@@ -56,14 +56,12 @@
 
             <div class="sidebar-section" id="sidebar-suspended">
                 <h3 class="sidebar-section-title">Suspended
-                    <button class="section-toggle" aria-expanded="true" aria-controls="suspended-tabs"><i
+                    <button class="section-toggle" aria-expanded="true" aria-controls="suspended-tabs" aria-label="Toggle suspended section"><i
                             class="fa-solid fa-chevron-down"></i></button>
                 </h3>
                 <div class="tabs suspended" id="suspended-tabs"></div>
             </div>
-
         </div>
-
     </div>
     <div class="container">
         <div class="tabs" id="tabs"></div>
@@ -121,54 +119,69 @@
                             </div>
                             <div class="explorer-filter-group">
                                 <label class="explorer-label">Market</label>
-                                <select id="explorer-market" class="explorer-select">
-                                    <option value="">Select...</option>
-                                </select>
+                                <div class="select-wrapper">
+                                    <select id="explorer-market" class="explorer-select">
+                                        <option value="">Select...</option>
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down select-chevron"></i>
+                                </div>
                             </div>
                             <div class="explorer-filter-group">
                                 <label class="explorer-label">Eligibility</label>
-                                <select id="explorer-eligibility" class="explorer-select">
-                                    <option value="">All</option>
-                                    <option value="pea">PEA</option>
-                                    <option value="pea-pme">PEA-PME</option>
-                                    <option value="cto">CTO only</option>
-                                </select>
+                                <div class="select-wrapper">
+                                    <select id="explorer-eligibility" class="explorer-select">
+                                        <option value="">All</option>
+                                        <option value="pea">PEA</option>
+                                        <option value="pea-pme">PEA-PME</option>
+                                        <option value="cto">CTO only</option>
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down select-chevron"></i>
+                                </div>
                             </div>
                         </div>
                         <div class="explorer-filters-row">
                             <div class="explorer-filter-group">
                                 <label class="explorer-label">Sort by</label>
-                                <select id="explorer-sort" class="explorer-select">
-                                    <option value="trending">Trending</option>
-                                    <option value="signal">Buy Signal</option>
-                                    <option value="gainers">Top Gainers</option>
-                                    <option value="losers">Top Losers</option>
-                                    <option value="volume">Volume</option>
-                                    <option value="name">Name A-Z</option>
-                                </select>
+                                <div class="select-wrapper">
+                                    <select id="explorer-sort" class="explorer-select">
+                                        <option value="trending">Trending</option>
+                                        <option value="signal">Buy Signal</option>
+                                        <option value="gainers">Top Gainers</option>
+                                        <option value="losers">Top Losers</option>
+                                        <option value="volume">Volume</option>
+                                        <option value="name">Name A-Z</option>
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down select-chevron"></i>
+                                </div>
                             </div>
                             <div class="explorer-filter-group">
                                 <label class="explorer-label">Period</label>
-                                <select id="explorer-period" class="explorer-select">
-                                    <option value="1D">1 Day</option>
-                                    <option value="1W">1 Week</option>
-                                    <option value="1M">1 Month</option>
-                                    <option value="3M">3 Months</option>
-                                    <option value="6M">6 Months</option>
-                                    <option value="1Y">1 Year</option>
-                                    <option value="YTD">YTD</option>
-                                </select>
+                                <div class="select-wrapper">
+                                    <select id="explorer-period" class="explorer-select">
+                                        <option value="1D">1 Day</option>
+                                        <option value="1W">1 Week</option>
+                                        <option value="1M">1 Month</option>
+                                        <option value="3M">3 Months</option>
+                                        <option value="6M">6 Months</option>
+                                        <option value="1Y">1 Year</option>
+                                        <option value="YTD">YTD</option>
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down select-chevron"></i>
+                                </div>
                             </div>
                             <div class="explorer-filter-group">
                                 <label class="explorer-label">Sector</label>
-                                <select id="explorer-sector" class="explorer-select">
-                                    <option value="">All</option>
-                                    <option value="technology">Technology</option>
-                                    <option value="healthcare">Healthcare</option>
-                                    <option value="finance">Finance</option>
-                                    <option value="energy">Energy</option>
-                                    <option value="consumer">Consumer</option>
-                                </select>
+                                <div class="select-wrapper">
+                                    <select id="explorer-sector" class="explorer-select">
+                                        <option value="">All</option>
+                                        <option value="technology">Technology</option>
+                                        <option value="healthcare">Healthcare</option>
+                                        <option value="finance">Finance</option>
+                                        <option value="energy">Energy</option>
+                                        <option value="consumer">Consumer</option>
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down select-chevron"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -213,11 +226,14 @@
                     </div>
                     <div class="settings-group">
                         <label class="settings-label" for="settings-currency">Default currency</label>
-                        <select id="settings-currency" class="settings-input">
-                            <option value="€">Euro (€)</option>
-                            <option value="$">Dollar ($)</option>
-                            <option value="£">Pound (£)</option>
-                        </select>
+                        <div class="select-wrapper">
+                            <select id="settings-currency" class="settings-input">
+                                <option value="€">Euro (€)</option>
+                                <option value="$">Dollar ($)</option>
+                                <option value="£">Pound (£)</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down select-chevron"></i>
+                        </div>
                     </div>
                     <div class="settings-group">
                         <label class="settings-label" for="settings-proxy-url">Cloudflare Worker URL (Proxy)</label>
@@ -276,11 +292,11 @@
                             <div class="chart-header">
                                 <span>Chart</span>
                                 <div class="chart-controls">
-                                    <button class="chart-type-btn active" data-type="line" title="Line"><i
+                                    <button class="chart-type-btn active" data-type="line" title="Line" aria-label="Line chart"><i
                                             class="fa-solid fa-chart-line"></i></button>
-                                    <button class="chart-type-btn" data-type="baseline" title="Baseline"><i
+                                    <button class="chart-type-btn" data-type="baseline" title="Baseline" aria-label="Baseline chart"><i
                                             class="fa-solid fa-chart-area"></i></button>
-                                    <button class="chart-type-btn" data-type="candle" title="Candles"><i
+                                    <button class="chart-type-btn" data-type="candle" title="Candles" aria-label="Candlestick chart"><i
                                             class="fa-solid fa-chart-simple"></i></button>
                                 </div>
                             </div>
@@ -328,21 +344,8 @@
                         <div class="section-date"></div>
                         <div class="signal-container">
                             <div class="signal-explanation hidden-by-bot">
-                                <div class="explanation-content">
-                                        <p><strong>Balanced technical analysis</strong>: No indicator clearly dominates.</p>
-                                        <ul>
-                                            <li><strong>Performance vs open</strong> (40%): Current price near
-                                                opening price</li>
-                                            <li><strong>RSI</strong> (30%): Around 50 — buyer/seller equilibrium
-                                            </li>
-                                            <li><strong>Trend</strong> (20%): Price evolving around its moving
-                                                average</li>
-                                            <li><strong>Volatility</strong> (10%): Moderate price variation amplitude
-                                            </li>
-                                        </ul>
-                                        <p><em>SignalScore between -10 and +10 = Neutral indecision zone</em></p>
-                                    </div>
-                                </div>
+                                <div class="explanation-content"></div>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -440,7 +443,6 @@
             </tr>
         </template>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>

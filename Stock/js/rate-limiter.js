@@ -38,8 +38,7 @@ class RateLimiter {
         l.limited = true;
         l.endTime = end;
         this._setWindowState(api, l.endTime);
-        // Un seul canal de notification : l'event. general.js écoute 'rateLimitStart'
-        // et appelle startRateLimitCountdown — éviter le double appel.
+        // Un seul canal de notification : l'event.
         this._emit('rateLimitStart', { apiName: api, seconds: Math.ceil(ms / 1000) });
         this._reset(api);
     }

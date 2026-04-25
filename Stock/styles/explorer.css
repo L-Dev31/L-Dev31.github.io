@@ -232,11 +232,6 @@
     padding: 12px 14px;
     margin-bottom: 8px;
     cursor: pointer;
-    transition: background 0.15s ease;
-}
-
-.card.explorer-card .explorer-item:hover {
-    background: rgba(255, 255, 255, 0.04);
 }
 
 .card.explorer-card .explorer-item-logo {
@@ -399,10 +394,6 @@
     font-size: 12px;
 }
 
-.card.explorer-card .explorer-page-btn:hover:not(:disabled) {
-    background: rgba(168, 162, 255, 0.1);
-}
-
 .card.explorer-card .explorer-page-btn:disabled {
     opacity: 0.3;
     cursor: not-allowed;
@@ -431,17 +422,10 @@
     border-radius: 12px;
     padding: 24px;
     cursor: pointer;
-    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     aspect-ratio: 1.5;
-}
-
-.market-grid-btn:hover {
-    background: linear-gradient(180deg, rgba(168,162,255,0.3) 0%, rgba(168,162,255,0.05) 100%);
-    border-color: rgba(168, 162, 255, 0.4);
-    transform: translateY(-2px);
 }
 
 .market-grid-btn img {

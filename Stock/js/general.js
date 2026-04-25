@@ -5,9 +5,9 @@ import { setPositions as setNewsPositions, setupNewsSearch, startCardNewsAutoRef
 import './terminal.js'
 
 import { DEAD_ERROR_CODES, periodToDays } from './constants.js'
-import { loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, mainFetchController, setMainFetchController, fastPollTimer, setFastPollTimer, rateLimitCountdownTimer, setRateLimitCountdownTimer, getUserSettings, saveUserSettings } from './state.js'
+import { loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, mainFetchController, setMainFetchController, fastPollTimer, setFastPollTimer, getUserSettings, saveUserSettings } from './state.js'
 import { updatePortfolioSummary, loadStocks } from './portfolio.js'
-import { updateUI, clearPeriodDisplay, setApiStatus, updateApiCountdown, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js'
+import { updateUI, clearPeriodDisplay, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js'
 
 // Re-export for other modules
 export { loadApiConfig, fetchActiveSymbol };
@@ -199,52 +199,7 @@ function isFetchInFlight() {
     return mainFetchController !== null && !mainFetchController.signal.aborted;
 }
 
-function startRateLimitCountdown(seconds) {
-    setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true });
-    setTimeout(() => {
-        updateApiCountdown(seconds);
-        setRateLimitCountdownTimer(setInterval(() => {
-            const el = document.getElementById('api-status-indicator');
-            if (el) {
-                const countdownText = el.querySelector('.countdown-text');
-                if (countdownText) {
-                    let t = countdownText.textContent.match(/\((\d+)s\)/);
-                    let s = t ? parseInt(t[1],10) : seconds;
-                    if (s > 1) {
-                        updateApiCountdown(s-1);
-                    } else {
-                        updateApiCountdown(0);
-                        clearInterval(rateLimitCountdownTimer);
-                        setRateLimitCountdownTimer(null);
-                    }
-                }
-            }
-        }, 1000));
-    }, 10);
-}
 
-function stopRateLimitCountdown() {
-    if (!rateLimitCountdownTimer) return;
-    clearInterval(rateLimitCountdownTimer);
-    setRateLimitCountdownTimer(null);
-}
-
-function startGlobalRateLimitCountdown() {
-    if (rateLimitCountdownTimer) clearInterval(rateLimitCountdownTimer);
-    setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true, rateLimited: true });
-    setRateLimitCountdownTimer(setInterval(() => {
-        const remaining = rateLimiter.getRemainingSeconds(selectedApi);
-        if (remaining > 0) {
-            updateApiCountdown(remaining);
-        } else {
-            clearInterval(rateLimitCountdownTimer);
-            setRateLimitCountdownTimer(null);
-            setApiStatus(null, 'active', { api: selectedApi });
-        }
-    }, 1000));
-}
-
-const stopGlobalRateLimitCountdown = stopRateLimitCountdown;
 
 function setPeriodButtonsFetching(symbol, fetching) {
     const group = document.getElementById(`periods-${symbol}`);
@@ -265,7 +220,7 @@ async function fetchActiveSymbol(force) {
     const signal = controller.signal;
 
     setPeriodButtonsFetching(symbol, true);
-    setApiStatus(symbol, 'fetching', { api: selectedApi, loadingFallback: true });
+
 
     let d;
     try {
@@ -276,7 +231,7 @@ async function fetchActiveSymbol(force) {
         const apiConfig = config.apis[apiName];
 
         if (!apiConfig || !apiConfig.enabled) {
-            setApiStatus(symbol, 'noinfo', { api: apiName, errorCode: 503 });
+
             return;
         }
 
@@ -295,8 +250,7 @@ async function fetchActiveSymbol(force) {
         updateUI(symbol, d);
         if (d?.source) lastApiBySymbol[symbol] = d.source;
 
-        if (d?.error && d.source) setApiStatus(symbol, 'noinfo', { api: d.source, errorCode: d.errorCode });
-        else setApiStatus(symbol, d ? 'active' : 'inactive', { api: apiName });
+
 
         updatePortfolioSummary();
 
@@ -310,7 +264,7 @@ async function fetchActiveSymbol(force) {
         } catch { /* ignore */ }
     } catch (e) {
         if (e.name === 'AbortError') return;
-        setApiStatus(symbol, 'inactive', { api: selectedApi });
+
     } finally {
         // Ne cache le spinner QUE si on est toujours le fetch courant.
         // Et dans ce cas, on libère mainFetchController pour que isFetchInFlight() soit false.
@@ -476,10 +430,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-window.startRateLimitCountdown = startRateLimitCountdown;
-window.stopRateLimitCountdown = stopRateLimitCountdown;
-window.startGlobalRateLimitCountdown = startGlobalRateLimitCountdown;
-window.stopGlobalRateLimitCountdown = stopGlobalRateLimitCountdown;
 
 window.fetchCardNews = fetchCardNews;
 window.fetchActiveSymbol = fetchActiveSymbol;
@@ -538,17 +488,4 @@ document.addEventListener('visibilitychange', () => {
     if (!document.hidden && fastPollTimer) fetchActiveSymbol(false);
 });
 
-window.addEventListener('rateLimitStart', (e) => {
-    try {
-        startGlobalRateLimitCountdown();
-    } catch (err) {
-        setApiStatus(null, 'fetching', { api: selectedApi, loadingFallback: true, rateLimited: true });
-    }
-});
 
-window.addEventListener('rateLimitEnd', (e) => {
-    try {
-        stopGlobalRateLimitCountdown();
-    } catch (err) {
-    }
-});

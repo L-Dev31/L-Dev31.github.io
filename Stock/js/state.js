@@ -43,7 +43,7 @@ export let selectedApi = 'yahoo';
 export let lastApiBySymbol = {};
 export let mainFetchController = null;
 export let fastPollTimer = null;
-export let rateLimitCountdownTimer = null;
+
 
 // CONFIG LOADER
 export async function loadApiConfig() {
@@ -67,4 +67,4 @@ export function setSelectedApi(api) {
 export function getSelectedApi() { return selectedApi; }
 export function setMainFetchController(ctrl) { mainFetchController = ctrl; }
 export function setFastPollTimer(timer) { fastPollTimer = timer; }
-export function setRateLimitCountdownTimer(timer) { rateLimitCountdownTimer = timer; }
+

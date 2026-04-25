@@ -20,11 +20,6 @@
     white-space: nowrap;
 }
 
-.card-tab-btn:hover { 
-    color: var(--text-light); 
-    background: rgba(168,162,255,0.08);
-}
-
 .card-tab-btn.active {
     color: #0b1020;
     background: var(--primary-purple);
@@ -33,9 +28,4 @@
 }
 
 .card-tab-pane { display: none; }
-.card-tab-pane.active { display: block; animation: tabFade 0.2s ease; }
-
-@keyframes tabFade {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+.card-tab-pane.active { display: block; }

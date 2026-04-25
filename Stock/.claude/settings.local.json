@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(node --check js/signal-bot.js)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(python3 \"C:/Users/gigabyte/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"fintech stock dashboard Bloomberg terminal dark data-heavy\" --design-system -p \"Nemeris\")",
+      "Bash(py \"C:/Users/gigabyte/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"fintech stock dashboard Bloomberg terminal dark data-heavy\" --design-system -p \"Nemeris\")",
+      "Bash(py \"C:/Users/gigabyte/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"animation accessibility loading states\" --domain ux)",
+      "Bash(py \"C:/Users/gigabyte/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"real-time financial dashboard chart\" --domain chart)",
+      "Bash(py \"C:/Users/gigabyte/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"fintech stock dashboard terminal dark professional\" --design-system -p \"Nemeris\" -f markdown)"
     ]
   }
 }
