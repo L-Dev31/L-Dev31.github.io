@@ -6,7 +6,8 @@ const defaultSettings = {
     name: 'Nemeris User',
     pfp: 'img/icon/favicon.png',
     currency: '€',
-    proxyUrl: 'https://nemeris.leotoskuepro.workers.dev'
+    proxyUrl: '',
+    performanceViewerEnabled: true
 };
 
 export function getUserSettings() {
@@ -41,8 +42,14 @@ export let API_CONFIG = null;
 export let positions = {};
 export let selectedApi = 'yahoo';
 export let lastApiBySymbol = {};
+export let globalPeriod = '1D';
+export function setGlobalPeriod(p) { globalPeriod = p; }
 export let mainFetchController = null;
+export function setMainFetchController(c) { mainFetchController = c; }
 export let fastPollTimer = null;
+export function setFastPollTimer(t) { fastPollTimer = t; }
+export let globalRefreshTimer = null;
+export function setGlobalRefreshTimer(t) { globalRefreshTimer = t; }
 
 
 // CONFIG LOADER
@@ -65,6 +72,5 @@ export function setSelectedApi(api) {
     try { window.selectedApi = selectedApi; } catch(e) { /* ignore */ }
 }
 export function getSelectedApi() { return selectedApi; }
-export function setMainFetchController(ctrl) { mainFetchController = ctrl; }
-export function setFastPollTimer(timer) { fastPollTimer = timer; }
+
 

@@ -5,9 +5,9 @@ import { setPositions as setNewsPositions, setupNewsSearch, startCardNewsAutoRef
 import './terminal.js'
 
 import { DEAD_ERROR_CODES, periodToDays } from './constants.js'
-import { loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, mainFetchController, setMainFetchController, fastPollTimer, setFastPollTimer, getUserSettings, saveUserSettings } from './state.js'
-import { updatePortfolioSummary, loadStocks } from './portfolio.js'
-import { updateUI, clearPeriodDisplay, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js'
+import { loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, fastPollTimer, setFastPollTimer, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings } from './state.js'
+import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching } from './portfolio.js'
+import { updateUI, clearPeriodDisplay, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance } from './ui.js'
 
 // Re-export for other modules
 export { loadApiConfig, fetchActiveSymbol };
@@ -52,18 +52,18 @@ function applySettingsToUi(settings = getUserSettings()) {
 }
 
 function fillSettingsForm(settings = getUserSettings()) {
-    const nameInput = document.getElementById('settings-name');
-    const pfpInput = document.getElementById('settings-pfp');
-    const currencyInput = document.getElementById('settings-currency');
     const proxyInput = document.getElementById('settings-proxy-url');
-
-    if (nameInput) nameInput.value = settings.name || '';
-    if (pfpInput) pfpInput.value = settings.pfp || '';
-    if (currencyInput) {
-        const currency = settings.currency || '€';
-        currencyInput.value = ['€', '$', '£'].includes(currency) ? currency : '€';
-    }
     if (proxyInput) proxyInput.value = settings.proxyUrl || DEFAULT_WORKER_URL;
+    
+    const perfViewer = document.getElementById('settings-performance-viewer');
+    if (perfViewer) perfViewer.checked = !!settings.performanceViewerEnabled;
+}
+
+function setSettingsStatus(msg, type = '') {
+    const el = document.getElementById('settings-proxy-status');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'settings-proxy-status ' + type;
 }
 
 function rebuildTransactionHistoryRows() {
@@ -110,10 +110,13 @@ function rebuildTransactionHistoryRows() {
 function refreshUiAfterSettingsSave() {
     updatePortfolioSummary();
 
-    const activeSymbol = getActiveSymbol();
-    if (activeSymbol && positions[activeSymbol]?.lastData) {
-        updateUI(activeSymbol, positions[activeSymbol].lastData);
-    }
+    // Refresh UI for all tickers to respect new settings (like performance viewer)
+    Object.keys(positions).forEach(symbol => {
+        updateSidebarPerformance(symbol);
+        if (positions[symbol].lastData) {
+            updateUI(symbol, positions[symbol].lastData);
+        }
+    });
 
     rebuildTransactionHistoryRows();
 
@@ -143,18 +146,16 @@ function openSettingsCard() {
 }
 
 
-
 async function saveSettingsFromForm() {
     const current = getUserSettings();
-    const nameInput = document.getElementById('settings-name');
-    const pfpInput = document.getElementById('settings-pfp');
-    const currencyInput = document.getElementById('settings-currency');
     const proxyInput = document.getElementById('settings-proxy-url');
+    const perfViewer = document.getElementById('settings-performance-viewer');
 
-    const name = (nameInput?.value || '').trim() || DEFAULT_PROFILE_NAME;
-    const pfp = (pfpInput?.value || '').trim() || DEFAULT_PROFILE_PFP;
-    const currency = ['€', '$', '£'].includes(currencyInput?.value) ? currencyInput.value : '€';
+    const name = current.name || DEFAULT_PROFILE_NAME;
+    const pfp = current.pfp || DEFAULT_PROFILE_PFP;
+    const currency = current.currency || '€';
     const nextProxy = (proxyInput?.value || '').trim() || DEFAULT_WORKER_URL;
+    const performanceViewerEnabled = !!perfViewer?.checked;
 
     let proxyUrl = current.proxyUrl || DEFAULT_WORKER_URL;
     if (nextProxy !== proxyUrl) {
@@ -163,28 +164,119 @@ async function saveSettingsFromForm() {
         if (ok) {
             proxyUrl = nextProxy;
             setProxyBaseUrl(proxyUrl);
-            setSettingsStatus('Settings saved.', 'success');
         } else {
             setSettingsStatus('Invalid proxy, previous URL kept.', 'error');
         }
-    } else {
-        setSettingsStatus('Settings saved.', 'success');
     }
 
-    const settings = { name, pfp, currency, proxyUrl };
+    const settings = { name, pfp, currency, proxyUrl, performanceViewerEnabled };
     saveUserSettings(settings);
     applySettingsToUi(settings);
     fillSettingsForm(settings);
     refreshUiAfterSettingsSave();
+    
+    setSettingsStatus('Settings saved.', 'success');
+
+    // If turned OFF, stop loops
+    if (!performanceViewerEnabled) {
+        if (globalRefreshTimer) {
+            clearInterval(globalRefreshTimer);
+            setGlobalRefreshTimer(null);
+        }
+        if (priceUpdateTimer) {
+            clearInterval(priceUpdateTimer);
+            priceUpdateTimer = null;
+        }
+    } else {
+        startGlobalRefreshLoop();
+        startPriceUpdateLoop();
+    }
 }
 
 function startFastPolling() {
+    const settings = getUserSettings();
+    // If bulk performance is enabled, we use the bulk loop instead of individual fast polling
+    if (settings.performanceViewerEnabled) {
+        startPriceUpdateLoop();
+        return;
+    }
+
     if (fastPollTimer) return;
     setFastPollTimer(setInterval(() => {
-        // Pause quand l'onglet n'est pas visible — économise quota worker + batterie.
         if (document.hidden) return;
         fetchActiveSymbol(false);
-    }, 10000));
+    }, 15000));
+}
+
+function startGlobalRefreshLoop() {
+    const settings = getUserSettings();
+    if (!settings.performanceViewerEnabled) return;
+    if (globalRefreshTimer) return;
+    
+    // Performance/Spark loop (5min)
+    setGlobalRefreshTimer(setInterval(() => {
+        if (document.hidden) return;
+        batchPerformanceFetch(globalPeriod);
+    }, 300000));
+}
+
+let priceUpdateTimer = null;
+function startPriceUpdateLoop() {
+    const settings = getUserSettings();
+    if (!settings.performanceViewerEnabled) return;
+    if (priceUpdateTimer) return;
+
+    // Fast Price update loop (20s) - Uses bulk quote endpoint
+    priceUpdateTimer = setInterval(() => {
+        if (document.hidden) return;
+        batchPriceFetch();
+    }, 20000);
+}
+
+async function batchPriceFetch() {
+    if (isBatchFetching) return;
+    const tickers = Object.values(positions).map(p => p.ticker).filter(Boolean);
+    if (!tickers.length) return;
+
+    try {
+        const { fetchYahooQuotesBatch } = await import('./yahoo-finance.js');
+        const quotes = await fetchYahooQuotesBatch(tickers);
+        if (quotes) {
+            for (const q of quotes) {
+                const ticker = q.symbol;
+                // Find all positions matching this ticker
+                for (const pos of Object.values(positions)) {
+                    if (pos.ticker === ticker) {
+                        const prevPrice = pos.lastData?.price || 0;
+                        const newPrice = q.regularMarketPrice || prevPrice;
+                        
+                        // Update basic data if not already having more detailed chart data
+                        if (!pos.lastData || !pos.lastData.history) {
+                            pos.lastData = {
+                                ...pos.lastData,
+                                price: newPrice,
+                                change: q.regularMarketChange || 0,
+                                changePercent: q.regularMarketChangePercent || 0,
+                                source: 'yahoo-bulk'
+                            };
+                        } else {
+                            // Update just the latest price in existing data
+                            pos.lastData.price = newPrice;
+                        }
+                        
+                        updateSidebarPerformance(pos.symbol);
+                        
+                        // If this is the active symbol, update the card too
+                        if (getActiveSymbol() === pos.symbol) {
+                            updateUI(pos.symbol, pos.lastData);
+                        }
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.error('[Price Batch] Error:', e);
+    }
 }
 
 // True si un fetch est actuellement en vol. mainFetchController est remis à null
@@ -248,7 +340,10 @@ async function fetchActiveSymbol(force) {
 
         updatePortfolioSummary();
 
-        if (d && !d.error && !d.throttled) startFastPolling();
+        if (d && !d.error && !d.throttled) {
+            startFastPolling();
+            startGlobalRefreshLoop();
+        }
 
         // News en tâche de fond — ne pas bloquer
         try {
@@ -284,7 +379,15 @@ document.addEventListener('click', async e=>{
             cd.classList.add('active')
             try { if (cd.id !== 'card-terminal' && typeof closeTerminalCard === 'function') closeTerminalCard(); } catch (e) {}
         }
+        
+        // 1. Fetch active symbol details
         fetchActiveSymbol(true)
+        
+        // 2. Global refresh for everyone ONLY if performance viewer is enabled
+        const settings = getUserSettings();
+        if (settings.performanceViewerEnabled) {
+            batchPerformanceFetch(globalPeriod)
+        }
     }
 })
 
@@ -309,27 +412,42 @@ document.addEventListener('click', e => {
 document.getElementById('cards-container')?.addEventListener('click', async e => {
     const b = e.target.closest('.period-btn');
     if (!b) return;
-    const s = b.dataset.symbol;
     const p = b.dataset.period;
-    if (!positions[s]) return;
+    
+    // Update global state
+    setGlobalPeriod(p);
+    
+    // Update every position's period
+    Object.keys(positions).forEach(sym => {
+        positions[sym].currentPeriod = p;
+    });
 
-    positions[s].currentPeriod = p;
-    const g = document.getElementById(`periods-${s}`);
-    if (g) g.querySelectorAll('.period-btn').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-    const card = document.getElementById(`card-${s}`);
-    const periodLabel = card?.querySelector('.performance-period');
-    if (periodLabel) periodLabel.textContent = p;
+    // Update all period buttons in the UI for consistency
+    document.querySelectorAll('.period-btn').forEach(btn => {
+        if (btn.dataset.period === p) btn.classList.add('active');
+        else btn.classList.remove('active');
+    });
 
-    // Délègue à fetchActiveSymbol : abort de l'ancien fetch, guard isFetching, mise à jour signal/news cohérente.
+    // Update active card's labels
+    document.querySelectorAll('.performance-period').forEach(label => {
+        label.textContent = p;
+    });
+
+    // 1. Fetch active symbol's detailed data (Chart + UI)
     fetchActiveSymbol(true);
 
-    // Rafraîchir la vue news si la page news est active sur ce symbole.
+    // 2. Fetch batch performance ONLY if performance viewer is enabled
+    const settings = getUserSettings();
+    if (settings.performanceViewerEnabled) {
+        batchPerformanceFetch(p);
+    }
+
+    // Rafraîchir la vue news si la page news est active.
     const cardNews = document.getElementById('card-news');
     if (cardNews && cardNews.classList.contains('active')) {
         const activeTab = document.querySelector('.tab.active');
-        if (activeTab && activeTab.dataset.symbol === s) {
-            try { openNewsPage(s); } catch (err) { /* ignore */ }
+        if (activeTab) {
+            try { openNewsPage(activeTab.dataset.symbol); } catch (err) { /* ignore */ }
         }
     }
 });
@@ -380,7 +498,7 @@ window.addEventListener('load', async () => {
 
     try {
         // Sections collapsed par défaut si l'utilisateur n'a rien choisi.
-        const DEFAULT_COLLAPSED = new Set(['sidebar-suspended']);
+        const DEFAULT_COLLAPSED = new Set();
         document.querySelectorAll('.sidebar-section').forEach(section => {
             const key = `sidebar:${section.id}:collapsed`;
             const val = localStorage.getItem(key);
@@ -479,7 +597,10 @@ window.nemeris = {
 
 // Refresh immédiat au retour dans l'onglet (si polling actif).
 document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && fastPollTimer) fetchActiveSymbol(false);
+    if (!document.hidden) {
+        if (fastPollTimer) fetchActiveSymbol(false);
+        if (globalRefreshTimer) batchPerformanceFetch(globalPeriod);
+    }
 });
 
 

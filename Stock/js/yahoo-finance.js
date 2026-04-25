@@ -22,7 +22,7 @@ const PERIOD_TTL_MS = {
 const chartSnapshotCache = new Map();
 const chartSnapshotInflight = new Map();
 
-const PERIODS = {
+export const PERIODS = {
     '1D': { interval: '1m', range: '1d' },
     '1W': { interval: '5m', range: '5d' },
     '1M': { interval: '15m', range: '1mo' },
@@ -35,7 +35,7 @@ const PERIODS = {
 
 // Fallback chain by period — Yahoo refuse souvent 1m/5m pour small-caps peu liquides.
 // On essaie du plus fin au plus grossier jusqu'à avoir de la donnée.
-const PERIOD_FALLBACKS = {
+export const PERIOD_FALLBACKS = {
     '1D':  [{ interval: '1m',  range: '1d'  }, { interval: '5m',  range: '1d'  }, { interval: '15m', range: '1d'  }, { interval: '1h', range: '5d' }],
     '1W':  [{ interval: '5m',  range: '5d'  }, { interval: '15m', range: '5d'  }, { interval: '1h',  range: '5d'  }, { interval: '1d', range: '1mo' }],
     '1M':  [{ interval: '15m', range: '1mo' }, { interval: '1h',  range: '1mo' }, { interval: '1d',  range: '1mo' }],
@@ -102,7 +102,7 @@ const YAHOO_MARKET_SUFFIXES = new Set([
 ]);
 
 function normalizeSymbol(sym) {
-    const upper = (sym || '').toUpperCase();
+    const upper = (sym || '').trim().toUpperCase();
     return upper
         // Ne transforme BRK.A → BRK-A que si le suffixe n'est PAS un suffixe marché
         .replace(/^([A-Z0-9]+)\.([A-Z]{1,3})$/, (match, base, suffix) =>
@@ -157,8 +157,20 @@ function errorTtl(code) {
 const MIN_VALID_CANDLES = 20;
 
 async function tryFetchChart(yahooSymbol, cfg, signal) {
-    const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?interval=${cfg.interval}&range=${cfg.range}`;
-    const j = await yahooFetch(url, signal);
+    const norm = normalizeYahooSymbol(yahooSymbol);
+    const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(norm)}?interval=${cfg.interval}&range=${cfg.range}`;
+    let j = await yahooFetch(url, signal);
+
+    // Fallback: If 404 and ticker has a market suffix, try without the suffix as last resort
+    if (j.error && j.errorCode === 404 && norm.includes('.')) {
+        const base = norm.split('.')[0];
+        if (base) {
+            console.log(`[Yahoo] 404 for ${norm}, retrying without suffix: ${base}`);
+            const url2 = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(base)}?interval=${cfg.interval}&range=${cfg.range}`;
+            j = await yahooFetch(url2, signal);
+        }
+    }
+
     if (j.error) return { error: true, errorCode: j.errorCode, throttled: j.throttled, retryAfter: j.retryAfter };
 
     const res = j.chart?.result?.[0];
@@ -489,110 +501,113 @@ export async function fetchYahooChartSnapshot(symbol, range = '1d', interval = '
 }
 
 export async function fetchYahooSparkBatch(symbols, range = '1d', interval = '1m', signal) {
-    const base = getNextBase();
-    const url = `${base}/v7/finance/spark?symbols=${symbols.join(',')}&range=${range}&interval=${interval}&includePrePost=false`;
+    // query2 often works better for bulk without crumbs
+    const url = `https://query2.finance.yahoo.com/v7/finance/spark?symbols=${symbols.join(',')}&range=${range}&interval=${interval}&includePrePost=false`;
     const j = await yahooFetch(url, signal);
-    if (j?.error) return null;
+    if (j?.error) {
+        console.warn('[Yahoo] Spark Batch Error:', j.errorCode);
+        return null;
+    }
     return j?.spark?.result || [];
 }
 
-export async function fetchYahooPeriodChanges(symbols, range, interval, onProgress) {
-    if (!symbols.length) return {};
-    const changes = {};
-    const safeSymbols = symbols.filter(isYahooSparkFriendly);
-    const batchSize = 12;
-    const stepDelay = 900;
-    const singleFallbackCap = 4;
-    let completed = 0;
+export async function fetchYahooQuotesBatch(symbols, signal) {
+    if (!symbols.length) return [];
+    const url = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(',')}`;
+    const j = await yahooFetch(url, signal);
+    if (j?.error) {
+        console.warn('[Yahoo] Quote Batch Error:', j.errorCode);
+        return null;
+    }
+    return j?.quoteResponse?.result || [];
+}
 
-    const parseChartPayload = (payload, symbolKey) => {
-        const resp = payload?.response?.[0];
-        const quote = resp?.indicators?.quote?.[0];
-        const closes = quote?.close;
-        const adjCloses = resp?.indicators?.adjclose?.[0]?.adjclose;
-        if (!closes || closes.length < 2) return null;
+export async function fetchYahooPeriodChanges(tickers, period, signal) {
+    if (!tickers.length) return {};
+    const results = {};
+    const periodConfig = PERIODS[period] || PERIODS['1D'];
+    const { range, interval } = periodConfig;
 
-        const cleanData = { prices: [], highs: [], lows: [], volumes: [] };
-        for (let k = 0; k < closes.length; k++) {
-            if (closes[k] !== null) {
-                const c = closes[k];
-                const adjC = (adjCloses && adjCloses[k] !== null) ? adjCloses[k] : c;
-                const ratio = (adjCloses && c && c !== 0 && adjCloses[k] !== null) ? (adjC / c) : 1;
-
-                cleanData.prices.push(adjC);
-                cleanData.highs.push((quote.high?.[k] !== null ? quote.high[k] : c) * ratio);
-                cleanData.lows.push((quote.low?.[k] !== null ? quote.low[k] : c) * ratio);
-                cleanData.volumes.push(quote.volume?.[k] || 0);
-            }
-        }
-
-        if (cleanData.prices.length === 0) return null;
-        const firstClose = cleanData.prices[0];
-        const lastClose = cleanData.prices[cleanData.prices.length - 1];
-
-        return {
-            change: lastClose - firstClose,
-            changePercent: ((lastClose - firstClose) / firstClose) * 100,
-            history: cleanData,
-            symbol: symbolKey
-        };
-    };
-
-    const fetchSingleChart = async (sym) => {
-        const res = await fetchYahooChartSnapshot(sym, range, interval);
-        if (!res) return;
-        const parsed = parseChartPayload({ response: [res] }, sym);
-        if (parsed) changes[sym] = parsed;
-    };
-
-    const waitForYahooCooldownIfNeeded = async () => {
-        const remaining = globalRateLimiter.getRemainingSeconds('yahoo');
-        if (remaining <= 0) return false;
-        if (onProgress) onProgress(completed, safeSymbols.length, true, `API Yahoo limitée (${remaining}s)`);
-        await new Promise(r => setTimeout(r, remaining * 1000));
-        return true;
-    };
-
-    for (let i = 0; i < safeSymbols.length; i += batchSize) {
-        await waitForYahooCooldownIfNeeded();
-
-        const batch = safeSymbols.slice(i, i + batchSize);
-        let sparkFailed = false;
-
+    // 1. Try to fetch as many as possible via Batch Spark (Most Efficient)
+    const safeTickers = tickers.filter(isYahooSparkFriendly);
+    if (safeTickers.length > 0) {
         try {
-            const results = await fetchYahooSparkBatch(batch, range, interval);
-            if (!results) {
-                sparkFailed = true;
-            } else {
-                for (const entry of results) {
+            const batchResults = await fetchYahooSparkBatch(safeTickers, range, interval, signal);
+            if (batchResults) {
+                for (const entry of batchResults) {
                     const symbolKey = entry?.symbol;
                     if (!symbolKey) continue;
                     const parsed = parseChartPayload(entry, symbolKey);
-                    if (parsed) changes[symbolKey] = parsed;
+                    if (parsed) results[symbolKey] = parsed;
                 }
             }
         } catch (e) {
-            sparkFailed = true;
-        }
-
-        if (sparkFailed) {
-            if (await waitForYahooCooldownIfNeeded()) continue;
-            for (const sym of batch.slice(0, singleFallbackCap)) {
-                if (await waitForYahooCooldownIfNeeded()) break;
-                await fetchSingleChart(sym);
-                await new Promise(r => setTimeout(r, 180));
-            }
-        }
-
-        completed += batch.length;
-        if (onProgress) onProgress(completed, safeSymbols.length, false);
-
-        if (i + batchSize < safeSymbols.length) {
-            await new Promise(r => setTimeout(r, stepDelay));
+            console.warn('[Yahoo] Spark Batch failed, falling back to individual calls.', e);
         }
     }
 
-    return changes;
+    // 2. For those that failed or are not spark-friendly, use fetchFromYahoo (Slow but Robust with Fallbacks)
+    const missing = tickers.filter(t => !results[t]);
+    if (missing.length > 0) {
+        // Concurrency limit for fallback calls to avoid triggering rate limits too hard
+        const CONCURRENCY = 3;
+        for (let i = 0; i < missing.length; i += CONCURRENCY) {
+            const chunk = missing.slice(i, i + CONCURRENCY);
+            await Promise.all(chunk.map(async (ticker) => {
+                try {
+                    const data = await fetchFromYahoo(ticker, period, ticker, null, null, signal);
+                    if (data && !data.error) {
+                        results[ticker] = data;
+                    }
+                } catch (e) { /* ignore individual failure */ }
+            }));
+            if (i + CONCURRENCY < missing.length) await new Promise(r => setTimeout(r, 200));
+        }
+    }
+
+    return results;
+}
+
+function parseChartPayload(payload, symbolKey) {
+    if (!payload) return null;
+    const resp = payload?.response?.[0];
+    if (!resp) return null;
+
+    const quote = resp?.indicators?.quote?.[0];
+    const closes = quote?.close;
+    if (!closes || closes.length < 1) return null;
+
+    const adjCloses = resp?.indicators?.adjclose?.[0]?.adjclose;
+    
+    const cleanData = { prices: [], highs: [], lows: [], volumes: [] };
+    for (let k = 0; k < closes.length; k++) {
+        if (closes[k] !== null && closes[k] !== undefined) {
+            const c = closes[k];
+            const adjC = (adjCloses && adjCloses[k] !== null && adjCloses[k] !== undefined) ? adjCloses[k] : c;
+            const ratio = (adjCloses && c && c !== 0 && adjCloses[k] !== null) ? (adjC / c) : 1;
+
+            cleanData.prices.push(adjC);
+            const rawHigh = (quote.high && quote.high[k] !== null && quote.high[k] !== undefined) ? quote.high[k] : c;
+            const rawLow = (quote.low && quote.low[k] !== null && quote.low[k] !== undefined) ? quote.low[k] : c;
+            cleanData.highs.push(rawHigh * ratio);
+            cleanData.lows.push(rawLow * ratio);
+            cleanData.volumes.push((quote.volume && quote.volume[k] !== null) ? quote.volume[k] : 0);
+        }
+    }
+
+    if (cleanData.prices.length === 0) return null;
+    
+    // Performance calculation: compare last price to the FIRST available price in this range
+    const firstPrice = cleanData.prices[0];
+    const lastPrice = cleanData.prices[cleanData.prices.length - 1];
+
+    return {
+        change: lastPrice - firstPrice,
+        changePercent: firstPrice ? ((lastPrice - firstPrice) / firstPrice) * 100 : 0,
+        history: cleanData,
+        price: lastPrice,
+        symbol: symbolKey
+    };
 }
 
 export async function fetchYahooOptions(ticker, date, signal) {

@@ -95,9 +95,6 @@
 
 .signal-state-container {
     background: linear-gradient(145deg, rgba(168, 162, 255, 0.08) 0%, rgba(168, 162, 255, 0.02) 100%);
-    border-radius: 14px;
-    padding: 18px;
-    border: 1px solid rgba(168, 162, 255, 0.1);
     border-left: 4px solid #fbbf24;
     margin: 15px 0;
 }

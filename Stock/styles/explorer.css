@@ -8,37 +8,18 @@
 }
 
 .container .card.explorer-card {
-    padding: 0;
     display: none;
     flex-direction: column;
     height: 100vh;
     overflow-y: auto;
 }
 
-.container .card.explorer-card.active { display: flex; }
+.container .card.explorer-card.active {
+    display: flex;
+}
 
 .card.explorer-card .explorer-header {
-    position: sticky;
-    top: 0;
-    padding: 20px 28px 14px;
-    background: var(--explorer-bg);
-    z-index: 2;
-}
-
-.card.explorer-card .explorer-header .section-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0 0 6px;
-}
-
-.card.explorer-card .explorer-header .section-title i {
-    color: var(--primary-purple);
-}
-
-.card.explorer-card .explorer-header .section-date {
-    margin-bottom: 16px;
-    color: var(--explorer-muted);
+    display: none;
 }
 
 /* Filters */
@@ -51,7 +32,7 @@
 .card.explorer-card .explorer-limit-control {
     margin-top: 14px;
     padding-top: 10px;
-    border-top: 1px solid rgba(168,162,255,0.08);
+    border-top: 1px solid rgba(168, 162, 255, 0.08);
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -75,7 +56,7 @@
     border-radius: 4px;
     background: linear-gradient(90deg, var(--color-positive) 0%, var(--color-positive) 30%, var(--color-negative) 30%, var(--color-negative) 100%);
     outline: none;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .card.explorer-card .explorer-limit-range::-webkit-slider-thumb {
@@ -85,7 +66,7 @@
     height: 16px;
     border-radius: 50%;
     background: var(--text-white);
-    box-shadow: 0 0 0 1px rgba(168,162,255,0.2);
+    box-shadow: 0 0 0 1px rgba(168, 162, 255, 0.2);
     cursor: pointer;
 }
 
@@ -95,7 +76,7 @@
     border-radius: 50%;
     background: var(--text-white);
     border: none;
-    box-shadow: 0 0 0 1px rgba(168,162,255,0.2);
+    box-shadow: 0 0 0 1px rgba(168, 162, 255, 0.2);
     cursor: pointer;
 }
 
@@ -114,15 +95,26 @@
     border: 1px solid transparent;
     font-weight: 600;
     opacity: 0.6;
+    cursor: pointer;
 }
 
-.card.explorer-card .explorer-limit-tick.safe { color: var(--color-positive); }
-.card.explorer-card .explorer-limit-tick.danger { color: var(--color-negative); }
+.card.explorer-card .explorer-limit-tick:hover {
+    background: rgba(255, 255, 255, 0.06);
+    opacity: 0.8;
+}
+
+.card.explorer-card .explorer-limit-tick.safe {
+    color: var(--color-positive);
+}
+
+.card.explorer-card .explorer-limit-tick.danger {
+    color: var(--color-negative);
+}
 
 .card.explorer-card .explorer-limit-tick.active {
     opacity: 1;
-    border-color: rgba(168,162,255,0.35);
-    background: rgba(255,255,255,0.06);
+    border-color: rgba(168, 162, 255, 0.35);
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .card.explorer-card .explorer-limit-toggle {
@@ -168,24 +160,19 @@
     text-transform: uppercase;
 }
 
-.card.explorer-card .explorer-input,
 .card.explorer-card .explorer-select {
     padding: 10px 12px;
     border-radius: 8px;
-    border: 1px solid rgba(168,162,255,0.1);
-    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(168, 162, 255, 0.1);
+    background: rgba(255, 255, 255, 0.02);
     color: var(--text-white);
     font-size: 13px;
     outline: none;
-}
-
-.card.explorer-card .explorer-input:focus,
-.card.explorer-card .explorer-select:focus {
-    border-color: rgba(168,162,255,0.3);
-}
-
-.card.explorer-card .explorer-select {
     cursor: pointer;
+}
+
+.card.explorer-card .explorer-select:focus {
+    border-color: rgba(168, 162, 255, 0.3);
 }
 
 .card.explorer-card .explorer-select option {
@@ -197,7 +184,7 @@
 .card.explorer-card .explorer-list {
     flex: 1;
     overflow-y: auto;
-    padding: 16px 28px;
+    margin-top: 20px;
 }
 
 .card.explorer-card .explorer-loading {
@@ -416,7 +403,6 @@
     text-align: center;
 }
 
-/* Market Grid (Empty State) */
 .explorer-market-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -427,7 +413,7 @@
 }
 
 .market-grid-btn {
-    background: linear-gradient(180deg, rgba(168,162,255,0.2) 0%, rgba(168,162,255,0) 100%);
+    background: linear-gradient(180deg, rgba(168, 162, 255, 0.2) 0%, rgba(168, 162, 255, 0) 100%);
     border: 1px solid rgba(168, 162, 255, 0.1);
     border-radius: 12px;
     padding: 24px;

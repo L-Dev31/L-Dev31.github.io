@@ -16,18 +16,15 @@
 
 .card.terminal-card {
     display: none;
-    padding: 18px;
-    background: var(--bg-black);
-    border: 1px solid rgba(0,0,0,0.5);
+    background: linear-gradient(145deg, rgba(30, 30, 36, 0.95) 0%, rgba(24, 24, 30, 0.98) 100%);
+    border-left: 1px solid rgba(168, 162, 255, 0.1);
     color: var(--text-white);
-    min-width: 400px;
 }
 
 .card.terminal-card.active {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    padding-bottom: 100px;
 }
 
 .terminal-card .terminal-body {
@@ -155,11 +152,21 @@
 .terminal-input {
     color: var(--text-white);
     background: transparent;
-    border: none;
+    border: none !important;
     padding: 0;
     width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
-.terminal-input:focus { outline: none; }
+.terminal-input:focus { 
+    outline: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
 .terminal-input::placeholder { color: rgba(255,255,255,0.4); }
 .close-btn { display: none; }

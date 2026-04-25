@@ -13,7 +13,7 @@
 
 import { getUserSettings, saveUserSettings } from './state.js';
 
-export const DEFAULT_WORKER_URL = 'https://nemeris.leotoskuepro.workers.dev';
+export const DEFAULT_WORKER_URL = '';
 const WORKER_FAIL_THRESHOLD = 3;
 
 let workerFails = 0;

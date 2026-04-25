@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nemeris</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="styles/sidebar.css" />
     <link rel="stylesheet" href="styles/card-tabs.css" />
     <link rel="stylesheet" href="styles/terminal.css" />
     <link rel="stylesheet" href="styles/signals.css" />
+    <link rel="stylesheet" href="styles/stock-view.css" />
 
     <link rel="stylesheet" href="styles/overlay.css" />
     <link rel="stylesheet" href="styles/news.css" />
@@ -33,30 +35,32 @@
         <div class="tools-bar" id="tools-actions">
             <button id="open-terminal-btn" class="tool-btn"><i class="fa-solid fa-terminal"></i>Terminal</button>
             <button id="open-news-feed" class="tool-btn"><i class="fa-solid fa-newspaper"></i>News</button>
-            <button id="open-explorer" class="tool-btn"><i class="fa-solid fa-magnifying-glass-chart"></i>Explorer</button>
-            <button id="open-settings-btn" class="tool-btn" title="Settings"><i class="fa-solid fa-gear"></i>Settings</button>
+            <button id="open-explorer" class="tool-btn"><i
+                    class="fa-solid fa-magnifying-glass-chart"></i>Explorer</button>
+            <button id="open-settings-btn" class="tool-btn" title="Settings"><i
+                    class="fa-solid fa-gear"></i>Settings</button>
         </div>
         <div class="sidebar-scroll">
             <div class="sidebar-section" id="sidebar-portfolio">
-                <h3 class="sidebar-section-title">My Portfolio
-                    <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs" aria-label="Toggle portfolio section"><i
-                            class="fa-solid fa-chevron-down"></i></button>
+                <h3 class="sidebar-section-title"><i class="fa-solid fa-briefcase"></i> My Portfolio
+                    <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs"
+                        aria-label="Toggle portfolio section"><i class="fa-solid fa-chevron-down"></i></button>
                 </h3>
                 <div class="tabs portfolio" id="portfolio-tabs"></div>
             </div>
 
             <div class="sidebar-section" id="sidebar-market">
-                <h3 class="sidebar-section-title">Market
-                    <button class="section-toggle" aria-expanded="true" aria-controls="general-tabs" aria-label="Toggle market section"><i
-                            class="fa-solid fa-chevron-down"></i></button>
+                <h3 class="sidebar-section-title"><i class="fa-solid fa-chart-line"></i> Market
+                    <button class="section-toggle" aria-expanded="true" aria-controls="general-tabs"
+                        aria-label="Toggle market section"><i class="fa-solid fa-chevron-down"></i></button>
                 </h3>
                 <div class="tabs general" id="general-tabs"></div>
             </div>
 
             <div class="sidebar-section" id="sidebar-suspended">
-                <h3 class="sidebar-section-title">Suspended
-                    <button class="section-toggle" aria-expanded="true" aria-controls="suspended-tabs" aria-label="Toggle suspended section"><i
-                            class="fa-solid fa-chevron-down"></i></button>
+                <h3 class="sidebar-section-title"><i class="fa-solid fa-ban"></i> Suspended
+                    <button class="section-toggle" aria-expanded="true" aria-controls="suspended-tabs"
+                        aria-label="Toggle suspended section"><i class="fa-solid fa-chevron-down"></i></button>
                 </h3>
                 <div class="tabs suspended" id="suspended-tabs"></div>
             </div>
@@ -67,9 +71,8 @@
 
         <div id="cards-container">
             <div class="card terminal-card" id="card-terminal" role="document" aria-hidden="true">
-                <div class="section-date"></div>
+                <h3 class="section-title"><i class="fa-solid fa-terminal"></i> Terminal</h3>
                 <div class="terminal-body">
-                    <div class="terminal-header" id="terminal-header" aria-hidden="false"></div>
                     <div class="terminal-output" id="terminal-output" aria-live="polite"></div>
                     <div class="terminal-input-row" aria-hidden="false">
                         <span class="terminal-prompt">USER&gt;</span>
@@ -80,29 +83,27 @@
             </div>
 
             <div class="card news-card" id="card-news" role="document" aria-hidden="true">
-                <div class="news-header">
-                    <h3 class="section-title"><i class="fa-solid fa-newspaper"></i> Market News</h3>
-                    <div class="section-date"><span id="news-last-update">—</span></div>
-                    <div class="news-filters-column">
-                        <div class="news-filters-row">
-                            <div class="news-filter-group news-ticker-group">
-                                <label for="news-ticker-search" class="news-label">Ticker</label>
-                                <div class="search-box">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                    <input id="news-ticker-search" class="search-input news-ticker-search" type="text"
-                                        placeholder="e.g. AAPL, BTC" autocomplete="off" />
-                                </div>
-                                <div id="ticker-suggestions" class="ticker-suggestions"></div>
+                <h3 class="section-title"><i class="fa-solid fa-newspaper"></i> Market News</h3>
+                <div class="section-date" id="news-last-update">—</div>
+                <div class="news-filters-column">
+                    <div class="news-filters-row">
+                        <div class="news-filter-group news-ticker-group">
+                            <label for="news-ticker-search" class="news-label">Ticker</label>
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input id="news-ticker-search" class="search-input news-ticker-search" type="text"
+                                    placeholder="e.g. AAPL, BTC" autocomplete="off" />
                             </div>
+                            <div id="ticker-suggestions" class="ticker-suggestions"></div>
                         </div>
-                        <div class="news-filters-row">
-                            <div class="news-filter-group">
-                                <label for="news-article-search" class="news-label">Search</label>
-                                <div class="search-box">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                    <input id="news-article-search" class="search-input news-articles-input" type="search"
-                                        placeholder="Search articles..." />
-                                </div>
+                    </div>
+                    <div class="news-filters-row">
+                        <div class="news-filter-group">
+                            <label for="news-article-search" class="news-label">Search</label>
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input id="news-article-search" class="search-input news-articles-input" type="search"
+                                    placeholder="Search articles..." />
                             </div>
                         </div>
                     </div>
@@ -111,101 +112,97 @@
             </div>
 
             <div class="card explorer-card" id="card-explorer" role="document" aria-hidden="true">
-                <div class="explorer-header">
-                    <h3 class="section-title"><i class="fa-solid fa-magnifying-glass-chart"></i> Market Explorer</h3>
-                    <div class="section-date">Discover opportunities</div>
-
-                    <div class="explorer-filters">
-                        <div class="explorer-filters-row">
-                            <div class="explorer-filter-group">
-                                <label class="explorer-label">Search</label>
-                                <div class="search-box">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                    <input id="explorer-search" class="search-input explorer-input" type="text"
-                                        placeholder="Ticker, name..." autocomplete="off" />
-                                </div>
-                            </div>
-                            <div class="explorer-filter-group">
-                                <label class="explorer-label">Market</label>
-                                <div class="select-wrapper">
-                                    <select id="explorer-market" class="explorer-select">
-                                        <option value="">Select...</option>
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down select-chevron"></i>
-                                </div>
-                            </div>
-                            <div class="explorer-filter-group">
-                                <label class="explorer-label">Eligibility</label>
-                                <div class="select-wrapper">
-                                    <select id="explorer-eligibility" class="explorer-select">
-                                        <option value="">All</option>
-                                        <option value="pea">PEA</option>
-                                        <option value="pea-pme">PEA-PME</option>
-                                        <option value="cto">CTO only</option>
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down select-chevron"></i>
-                                </div>
+                <h3 class="section-title"><i class="fa-solid fa-magnifying-glass-chart"></i> Market Explorer</h3>
+                <div class="explorer-filters">
+                    <div class="explorer-filters-row">
+                        <div class="explorer-filter-group">
+                            <label class="explorer-label">Search</label>
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input id="explorer-search" class="search-input explorer-input" type="text"
+                                    placeholder="Ticker, name..." autocomplete="off" />
                             </div>
                         </div>
-                        <div class="explorer-filters-row">
-                            <div class="explorer-filter-group">
-                                <label class="explorer-label">Sort by</label>
-                                <div class="select-wrapper">
-                                    <select id="explorer-sort" class="explorer-select">
-                                        <option value="trending">Trending</option>
-                                        <option value="signal">Buy Signal</option>
-                                        <option value="gainers">Top Gainers</option>
-                                        <option value="losers">Top Losers</option>
-                                        <option value="volume">Volume</option>
-                                        <option value="name">Name A-Z</option>
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down select-chevron"></i>
-                                </div>
+                        <div class="explorer-filter-group">
+                            <label class="explorer-label">Market</label>
+                            <div class="select-wrapper">
+                                <select id="explorer-market" class="explorer-select">
+                                    <option value="">Select...</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-chevron"></i>
                             </div>
-                            <div class="explorer-filter-group">
-                                <label class="explorer-label">Period</label>
-                                <div class="select-wrapper">
-                                    <select id="explorer-period" class="explorer-select">
-                                        <option value="1D">1 Day</option>
-                                        <option value="1W">1 Week</option>
-                                        <option value="1M">1 Month</option>
-                                        <option value="3M">3 Months</option>
-                                        <option value="6M">6 Months</option>
-                                        <option value="1Y">1 Year</option>
-                                        <option value="YTD">YTD</option>
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down select-chevron"></i>
-                                </div>
-                            </div>
-                            <div class="explorer-filter-group">
-                                <label class="explorer-label">Sector</label>
-                                <div class="select-wrapper">
-                                    <select id="explorer-sector" class="explorer-select">
-                                        <option value="">All</option>
-                                        <option value="technology">Technology</option>
-                                        <option value="healthcare">Healthcare</option>
-                                        <option value="finance">Finance</option>
-                                        <option value="energy">Energy</option>
-                                        <option value="consumer">Consumer</option>
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down select-chevron"></i>
-                                </div>
+                        </div>
+                        <div class="explorer-filter-group">
+                            <label class="explorer-label">Eligibility</label>
+                            <div class="select-wrapper">
+                                <select id="explorer-eligibility" class="explorer-select">
+                                    <option value="">All</option>
+                                    <option value="pea">PEA</option>
+                                    <option value="pea-pme">PEA-PME</option>
+                                    <option value="cto">CTO only</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-chevron"></i>
                             </div>
                         </div>
                     </div>
-
-                    <div class="explorer-limit-control">
-                        <div class="explorer-limit-label">
-                            <span>Max tickers to fetch</span>
+                    <div class="explorer-filters-row">
+                        <div class="explorer-filter-group">
+                            <label class="explorer-label">Sort by</label>
+                            <div class="select-wrapper">
+                                <select id="explorer-sort" class="explorer-select">
+                                    <option value="trending">Trending</option>
+                                    <option value="signal">Buy Signal</option>
+                                    <option value="gainers">Top Gainers</option>
+                                    <option value="losers">Top Losers</option>
+                                    <option value="volume">Volume</option>
+                                    <option value="name">Name A-Z</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-chevron"></i>
+                            </div>
                         </div>
-                        <input id="explorer-max-tickers" class="explorer-limit-range" type="range" min="50" max="600"
-                            step="50" value="250" />
-                        <div id="explorer-limit-ticks" class="explorer-limit-ticks"></div>
-                        <label class="explorer-limit-toggle">
-                            <input id="explorer-max-all" type="checkbox" />
-                            <span>Show all</span>
-                        </label>
+                        <div class="explorer-filter-group">
+                            <label class="explorer-label">Period</label>
+                            <div class="select-wrapper">
+                                <select id="explorer-period" class="explorer-select">
+                                    <option value="1D">1 Day</option>
+                                    <option value="1W">1 Week</option>
+                                    <option value="1M">1 Month</option>
+                                    <option value="3M">3 Months</option>
+                                    <option value="6M">6 Months</option>
+                                    <option value="1Y">1 Year</option>
+                                    <option value="YTD">YTD</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-chevron"></i>
+                            </div>
+                        </div>
+                        <div class="explorer-filter-group">
+                            <label class="explorer-label">Sector</label>
+                            <div class="select-wrapper">
+                                <select id="explorer-sector" class="explorer-select">
+                                    <option value="">All</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="healthcare">Healthcare</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="energy">Energy</option>
+                                    <option value="consumer">Consumer</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-chevron"></i>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <div class="explorer-limit-control">
+                    <div class="explorer-limit-label">
+                        <span>Max tickers to fetch</span>
+                    </div>
+                    <input id="explorer-max-tickers" class="explorer-limit-range" type="range" min="50" max="600"
+                        step="50" value="250" />
+                    <div id="explorer-limit-ticks" class="explorer-limit-ticks"></div>
+                    <label class="explorer-limit-toggle">
+                        <input id="explorer-max-all" type="checkbox" />
+                        <span>Show all</span>
+                    </label>
                 </div>
                 <div id="explorer-list" class="explorer-list">
                     <div class="explorer-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>
@@ -218,246 +215,230 @@
                             class="fa-solid fa-chevron-right"></i></button>
                 </div>
             </div>
-            <div class="card settings-card" id="card-settings" role="document" aria-hidden="true">
-                <div class="settings-header">
-                    <h3 class="section-title"><i class="fa-solid fa-gear"></i> Settings</h3>
-                    <div class="section-date">Global configuration</div>
+        </div>
+        <div class="card settings-card" id="card-settings" role="document" aria-hidden="true">
+            <h3 class="section-title"><i class="fa-solid fa-gear"></i> Settings</h3>
+            <div class="settings-body">
+                <div class="settings-group">
+                    <label class="settings-label" for="settings-proxy-url">Cloudflare Worker URL (Proxy)</label>
+                    <input id="settings-proxy-url" class="settings-input" type="url"
+                        placeholder="https://my-worker.dev" />
                 </div>
-                <div class="settings-body">
-                    <div class="settings-group">
-                        <label class="settings-label" for="settings-name">Full name</label>
-                        <input id="settings-name" class="settings-input" type="text" placeholder="Nemeris User" />
+                <div class="settings-group">
+                    <label class="settings-label" for="settings-performance-viewer">Performance Viewer (Auto-Refresh)</label>
+                    <div class="settings-toggle-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="settings-performance-viewer" />
+                            <span class="slider round"></span>
+                        </label>
                     </div>
-                    <div class="settings-group">
-                        <label class="settings-label" for="settings-pfp">Avatar / photo URL</label>
-                        <input id="settings-pfp" class="settings-input" type="text" placeholder="img/icon/favicon.png" />
-                    </div>
-                    <div class="settings-group">
-                        <label class="settings-label" for="settings-currency">Default currency</label>
-                        <div class="select-wrapper">
-                            <select id="settings-currency" class="settings-input">
-                                <option value="€">Euro (€)</option>
-                                <option value="$">Dollar ($)</option>
-                                <option value="£">Pound (£)</option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down select-chevron"></i>
-                        </div>
-                    </div>
-                    <div class="settings-group">
-                        <label class="settings-label" for="settings-proxy-url">Cloudflare Worker URL (Proxy)</label>
-                        <input id="settings-proxy-url" class="settings-input" type="url" placeholder="https://my-worker.dev" />
-                        <div id="settings-proxy-status" class="settings-proxy-status"></div>
-                    </div>
-                    <div class="settings-actions">
-                        <button id="settings-save" class="settings-action-btn primary">Save</button>
-                    </div>
+                </div>
+                <div class="settings-actions">
+                    <button id="settings-save" class="settings-action-btn primary">Save</button>
+                    <div id="settings-proxy-status" class="settings-proxy-status"></div>
                 </div>
             </div>
         </div>
-        <!-- Hidden templates for dynamic content -->
-        <template id="tab-template">
-            <div class="tab" data-symbol="">
-                <div class="tab-logo">
-                    <img src="" alt="" />
+    </div>
+    <!-- Hidden templates for dynamic content -->
+    <template id="tab-template">
+        <div class="tab" data-symbol="">
+            <div class="tab-logo">
+                <img src="" alt="" />
+            </div>
+            <div class="tab-info">
+                <div class="tab-name"></div>
+                <div class="tab-performance" style="display: none;">
+                    <span class="perf-value"></span>
+                    <span class="perf-period"></span>
                 </div>
-                <div class="tab-info">
-                    <div class="tab-name"></div>
-                    <div class="tab-shares"></div>
+                <div class="tab-shares"></div>
+            </div>
+        </div>
+    </template>
+    <template id="view-template">
+        <div class="card">
+            <div class="card-logo-section">
+                <div class="logo">
+                    <img data-symbol="" src="" alt="" />
                 </div>
             </div>
-        </template>
-        <template id="view-template">
-            <div class="card">
-                <div class="card-logo-section">
-                    <div class="logo">
-                        <img data-symbol="" src="" alt="" />
+
+            <div class="card-sticky-header">
+                <div class="card-mini-logo">
+                    <img data-symbol="" src="" alt="" />
+                </div>
+                <div class="card-tabs-nav">
+                    <button class="card-tab-btn active" data-target="overview">Overview</button>
+                    <button class="card-tab-btn" data-target="news">News</button>
+                    <button class="card-tab-btn" data-target="investment">Investment</button>
+                </div>
+            </div>
+
+            <div class="card-content">
+                <!-- Tab: Overview -->
+                <div class="card-tab-pane active" data-pane="overview">
+                    <h3 class="section-title"><i class="fa-solid fa-circle-info"></i> General Info</h3>
+                    <div class="card-general-info">
+                        <div class="general-row"><strong>ISIN</strong> : <span></span></div>
+                        <div class="general-row"><strong>Ticker</strong> : <span></span></div>
+                        <div class="general-row"><strong>Symbol</strong> : <span id="symbol-info"></span></div>
+                        <div class="general-row card-country-row"><strong>Country</strong> : <span
+                                class="country-name"></span><img data-country="" src="" alt="" class="flag-icon" />
+                        </div>
+                    </div>
+                    <h3 class="section-title course-title"><i class="fa-solid fa-chart-line"></i> Stock Price</h3>
+                    <div class="chart-container card-base">
+                        <div class="chart-header">
+                            <span>Chart</span>
+                            <div class="chart-controls">
+                                <button class="chart-type-btn active" data-type="line" title="Line"
+                                    aria-label="Line chart"><i class="fa-solid fa-chart-line"></i></button>
+                                <button class="chart-type-btn" data-type="baseline" title="Baseline"
+                                    aria-label="Baseline chart"><i class="fa-solid fa-chart-area"></i></button>
+                                <button class="chart-type-btn" data-type="candle" title="Candles"
+                                    aria-label="Candlestick chart"><i class="fa-solid fa-chart-simple"></i></button>
+                            </div>
+                        </div>
+                        <canvas class="chart-canvas"></canvas>
+                        <div class="chart-empty-state" aria-hidden="true">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span class="chart-empty-text">No data available</span>
+                        </div>
+                        <div class="periods-group">
+                            <button class="period-btn" data-symbol="" data-period="1D">1D</button>
+                            <button class="period-btn" data-symbol="" data-period="1W">1W</button>
+                            <button class="period-btn" data-symbol="" data-period="1M">1M</button>
+                            <button class="period-btn" data-symbol="" data-period="6M">6M</button>
+                            <button class="period-btn" data-symbol="" data-period="1Y">1Y</button>
+                            <button class="period-btn" data-symbol="" data-period="3Y">3Y</button>
+                            <button class="period-btn" data-symbol="" data-period="5Y">5Y</button>
+                            <button class="period-btn" data-symbol="" data-period="MAX">MAX</button>
+                        </div>
+                    </div>
+                    <div class="performance card-base">
+                        <div class="performance-label">Performance over <span class="performance-period">1D</span>
+                        </div>
+                        <div class="performance-value"></div>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Open</div>
+                            <div class="info-value"></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">High</div>
+                            <div class="info-value"></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Low</div>
+                            <div class="info-value"></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Close</div>
+                            <div class="info-value"></div>
+                        </div>
+                    </div>
+                    <div class="update-center"></div>
+                    <h3 class="section-title signal-title"><i class="fa-solid fa-signal"></i> Buy/Sell Signal</h3>
+                    <div class="signal-container">
+                        <div class="signal-explanation hidden-by-bot">
+                            <div class="explanation-content"></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="card-sticky-header">
-                    <div class="card-mini-logo">
-                        <img data-symbol="" src="" alt="" />
-                    </div>
-                    <div class="card-tabs-nav">
-                        <button class="card-tab-btn active" data-target="overview">Overview</button>
-                        <button class="card-tab-btn" data-target="news">News</button>
-                        <button class="card-tab-btn" data-target="investment">Investment</button>
+                <!-- Tab: News -->
+                <div class="card-tab-pane" data-pane="news">
+                    <div class="news-section">
+                        <h3 class="section-title"><i class="fa-solid fa-newspaper"></i> Latest News</h3>
+                        <div class="news-filter-group">
+                            <label class="news-label">Search</label>
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" class="search-input news-search-input" placeholder="Search news..." />
+                            </div>
+                        </div>
+                        <div class="news-list" aria-live="polite"></div>
                     </div>
                 </div>
 
-                <div class="card-content">
-                    <!-- Tab: Overview -->
-                    <div class="card-tab-pane active" data-pane="overview">
-                        <h3 class="section-title">General Info</h3>
-                        <div class="section-date"></div>
-                        <div class="card-general-info">
-                            <div class="general-row"><strong>ISIN</strong> : <span></span></div>
-                            <div class="general-row"><strong>Ticker</strong> : <span></span></div>
-                            <div class="general-row"><strong>Symbol</strong> : <span id="symbol-info"></span></div>
-                            <div class="general-row card-country-row"><strong>Country</strong> : <span
-                                    class="country-name"></span><img data-country="" src="" alt="" class="flag-icon" />
-                            </div>
-                        </div>
-
-                        <h3 class="section-title course-title">Stock Price</h3>
-                        <div class="section-date"></div>
-                        <div class="chart-container">
-                            <div class="chart-header">
-                                <span>Chart</span>
-                                <div class="chart-controls">
-                                    <button class="chart-type-btn active" data-type="line" title="Line" aria-label="Line chart"><i
-                                            class="fa-solid fa-chart-line"></i></button>
-                                    <button class="chart-type-btn" data-type="baseline" title="Baseline" aria-label="Baseline chart"><i
-                                            class="fa-solid fa-chart-area"></i></button>
-                                    <button class="chart-type-btn" data-type="candle" title="Candles" aria-label="Candlestick chart"><i
-                                            class="fa-solid fa-chart-simple"></i></button>
-                                </div>
-                            </div>
-                            <canvas class="chart-canvas"></canvas>
-                            <div class="chart-empty-state" aria-hidden="true">
-                                <i class="fa-solid fa-chart-line"></i>
-                                <span class="chart-empty-text">No data available</span>
-                            </div>
-                            <div class="periods-group">
-                                <button class="period-btn" data-symbol="" data-period="1D">1D</button>
-                                <button class="period-btn" data-symbol="" data-period="1W">1W</button>
-                                <button class="period-btn" data-symbol="" data-period="1M">1M</button>
-                                <button class="period-btn" data-symbol="" data-period="6M">6M</button>
-                                <button class="period-btn" data-symbol="" data-period="1Y">1Y</button>
-                                <button class="period-btn" data-symbol="" data-period="3Y">3Y</button>
-                                <button class="period-btn" data-symbol="" data-period="5Y">5Y</button>
-                                <button class="period-btn" data-symbol="" data-period="MAX">MAX</button>
-                            </div>
-                        </div>
-                        <div class="performance">
-                            <div class="performance-label">Performance over <span class="performance-period">1D</span>
-                            </div>
-                            <div class="performance-value"></div>
-                        </div>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-label">Open</div>
-                                <div class="info-value"></div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">High</div>
-                                <div class="info-value"></div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Low</div>
-                                <div class="info-value"></div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Close</div>
-                                <div class="info-value"></div>
-                            </div>
-                        </div>
-                        <div class="update-center"></div>
-                        <h3 class="section-title signal-title">Buy/Sell Signal</h3>
-                        <div class="section-date"></div>
-                        <div class="signal-container">
-                            <div class="signal-explanation hidden-by-bot">
-                                <div class="explanation-content"></div>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tab: News -->
-                    <div class="card-tab-pane" data-pane="news">
-                        <div class="news-section">
-                            <h3 class="section-title">Latest News</h3>
-                            <div class="section-date"><span class="news-last-update">—</span>
-                            </div>
-                            <div class="news-filter-group">
-                                <label class="news-label">Search</label>
-                                <div class="search-box">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                    <input type="text" class="search-input news-search-input"
-                                        placeholder="Search news..." />
-                                </div>
-                            </div>
-                            <div class="news-list" aria-live="polite"></div>
-                        </div>
-                    </div>
-
-                    <!-- Tab: Investment -->
-                    <div class="card-tab-pane" data-pane="investment">
-                        <div class="investment-section">
-                            <h3 class="section-title investment-title">Personal Investment</h3>
-                            <div class="section-date"></div>
-                            <div class="card-table-container">
-                                <div class="general-row important-shares">Shares owned: <span></span></div>
-                                <table class="card-table">
-                                    <thead class="card-table-header">
-                                        <tr>
-                                            <th class="card-table-th"></th>
-                                            <th class="card-table-th">Invested</th>
-                                            <th class="card-table-th">Current Value</th>
-                                            <th class="card-table-th">Gain/Loss</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="card-table-td card-table-type">Total</td>
-                                            <td class="card-table-td"></td>
-                                            <td class="card-table-td"></td>
-                                            <td class="card-table-td"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="card-table-td card-table-type">Per Share</td>
-                                            <td class="card-table-td"></td>
-                                            <td class="card-table-td"></td>
-                                            <td class="card-table-td"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <h3 class="section-title transaction-history-title" style="margin-top: 24px;">Transaction History</h3>
-                        <div class="transaction-history-container">
-                            <table class="transaction-history-table">
-                                <thead>
+                <!-- Tab: Investment -->
+                <div class="card-tab-pane" data-pane="investment">
+                    <div class="investment-section">
+                        <h3 class="section-title investment-title"><i class="fa-solid fa-wallet"></i> Personal Investment</h3>
+                        <div class="card-table-container">
+                            <div class="general-row important-shares">Shares owned: <span></span></div>
+                            <table class="card-table">
+                                <thead class="card-table-header">
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Type</th>
-                                        <th class="currency-amount-header">Amount</th>
-                                        <th>Shares</th>
-                                        <th class="currency-price-header">Price</th>
+                                        <th class="card-table-th"></th>
+                                        <th class="card-table-th">Invested</th>
+                                        <th class="card-table-th">Current Value</th>
+                                        <th class="card-table-th">Gain/Loss</th>
                                     </tr>
                                 </thead>
-                                <tbody class="transaction-history-body">
+                                <tbody>
+                                    <tr>
+                                        <td class="card-table-td card-table-type">Total</td>
+                                        <td class="card-table-td"></td>
+                                        <td class="card-table-td"></td>
+                                        <td class="card-table-td"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="card-table-td card-table-type">Per Share</td>
+                                        <td class="card-table-td"></td>
+                                        <td class="card-table-td"></td>
+                                        <td class="card-table-td"></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </div>
-            </div>
-        </template>
 
-
-        <template id="shift-tooltip-template">
-            <div class="shift-tooltip" role="tooltip">
-                <div>
-                    <div class="shift-tooltip-content">
-                        <div class="shift-tooltip-item">
-                            <i class="fas fa-search-plus"></i>
-                            <span>Scroll to zoom</span>
-                        </div>
+                    <h3 class="section-title transaction-history-title"><i class="fa-solid fa-history"></i> Transaction History</h3>
+                    <div class="transaction-history-container">
+                        <table class="transaction-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th class="currency-amount-header">Amount</th>
+                                    <th>Shares</th>
+                                    <th class="currency-price-header">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody class="transaction-history-body">
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </template>
-        <template id="transaction-row-template">
-            <tr class="transaction-row">
-                <td class="trans-date"></td>
-                <td class="trans-type"></td>
-                <td class="trans-amount"></td>
-                <td class="trans-shares"></td>
-                <td class="trans-price"></td>
-            </tr>
-        </template>
+        </div>
+    </template>
+
+
+    <template id="shift-tooltip-template">
+        <div class="shift-tooltip" role="tooltip">
+            <div>
+                <div class="shift-tooltip-content">
+                    <div class="shift-tooltip-item">
+                        <i class="fas fa-search-plus"></i>
+                        <span>Scroll to zoom</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="transaction-row-template">
+        <tr class="transaction-row">
+            <td class="trans-date"></td>
+            <td class="trans-type"></td>
+            <td class="trans-amount"></td>
+            <td class="trans-shares"></td>
+            <td class="trans-price"></td>
+        </tr>
+    </template>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>

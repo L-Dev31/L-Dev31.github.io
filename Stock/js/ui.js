@@ -1,4 +1,4 @@
-import { positions, selectedApi, loadApiConfig, lastApiBySymbol, getCurrency } from './state.js';
+import { positions, selectedApi, loadApiConfig, lastApiBySymbol, getCurrency, globalPeriod, getUserSettings } from './state.js';
 import { hasTransactions, typeLabel, typeIcon } from './constants.js';
 import { calculateStockValues } from './portfolio.js';
 import { fetchActiveSymbol } from './general.js';
@@ -380,13 +380,19 @@ export function updateUI(symbol, data) {
     if (closeEl) closeEl.textContent = data.price ? data.price.toFixed(2) + ' ' + getCurrency() : '--';
 
     const perfEl = document.getElementById(`perf-${symbol}`);
-    if (perfEl && data.changePercent !== undefined) {
-        const changePercent = data.changePercent;
-        const change = data.change || 0;
-        const isPositive = change >= 0;
-        
-        perfEl.textContent = `${isPositive ? '+' : ''}${changePercent.toFixed(2)}%`;
-        perfEl.className = `performance-value ${isPositive ? 'positive' : 'negative'}`;
+    if (perfEl) {
+        const settings = getUserSettings();
+        if (settings.performanceViewerEnabled && data.changePercent !== undefined) {
+            const changePercent = data.changePercent;
+            const change = data.change || 0;
+            const isPositive = change >= 0;
+            
+            perfEl.textContent = `${isPositive ? '+' : ''}${changePercent.toFixed(2)}%`;
+            perfEl.className = `performance-value ${isPositive ? 'positive' : 'negative'}`;
+            perfEl.style.display = '';
+        } else {
+            perfEl.style.display = 'none';
+        }
     }
 
     const valueEl = document.getElementById(`value-${symbol}`);
@@ -479,8 +485,48 @@ export function updateUI(symbol, data) {
     updateCardTitle(symbol);
     try { updateSectionDates(symbol); } catch (e) { /* ignore */ }
 
-    const currentPeriod = positions[symbol]?.currentPeriod || '1D';
+    const currentPeriod = positions[symbol]?.currentPeriod || globalPeriod;
     updateSignal(symbol, data, { period: currentPeriod });
+    updateSidebarPerformance(symbol);
+}
+
+export function updateSidebarPerformance(symbol) {
+    const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
+    if (!tab) return;
+    const perfWrapper = tab.querySelector('.tab-performance');
+    if (!perfWrapper) return;
+
+    const settings = getUserSettings();
+    if (!settings.performanceViewerEnabled) {
+        perfWrapper.style.display = 'none';
+        tab.classList.remove('tab-perf-positive', 'tab-perf-negative');
+        return;
+    }
+
+    const pos = positions[symbol];
+    const data = pos?.lastData;
+    if (!data || data.changePercent === undefined) {
+        perfWrapper.style.display = 'none';
+        return;
+    }
+    
+    perfWrapper.style.display = 'flex';
+    const isPositive = data.change >= 0;
+    
+    tab.classList.remove('tab-perf-positive', 'tab-perf-negative');
+    perfWrapper.classList.remove('positive', 'negative');
+    
+    tab.classList.add(isPositive ? 'tab-perf-positive' : 'tab-perf-negative');
+    perfWrapper.classList.add(isPositive ? 'positive' : 'negative');
+    
+    const valEl = perfWrapper.querySelector('.perf-value');
+    if (valEl) {
+        valEl.textContent = `${isPositive ? '+' : ''}${data.changePercent.toFixed(2)}%`;
+    }
+    const perEl = perfWrapper.querySelector('.perf-period');
+    if (perEl) {
+        perEl.textContent = globalPeriod;
+    }
 }
 
 function clearChartData(symbol) {

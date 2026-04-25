@@ -1,9 +1,9 @@
-import { positions, loadApiConfig, selectedApi, lastApiBySymbol, getCurrency } from './state.js';
-import { createTab, createCard, updateSectionDates, initChart, markTabAsSuspended, unmarkTabAsSuspended, isSymbolSuspendedInStorage } from './ui.js';
+import { positions, loadApiConfig, selectedApi, lastApiBySymbol, getCurrency, globalPeriod } from './state.js';
 import { fetchActiveSymbol } from './general.js';
-import { fetchYahooSparkBatch, getYahooSymbol, isYahooSparkFriendly } from './yahoo-finance.js';
+import { fetchYahooSparkBatch, getYahooSymbol, isYahooSparkFriendly, fetchYahooPeriodChanges, PERIODS } from './yahoo-finance.js';
 import rateLimiter from './rate-limiter.js';
 import { TYPE_ORDER, hasTransactions, typeLabel, typeIcon } from './constants.js';
+import { createTab, createCard, updateSectionDates, initChart, markTabAsSuspended, unmarkTabAsSuspended, isSymbolSuspendedInStorage, updateSidebarPerformance, getActiveSymbol } from './ui.js';
 
 
 
@@ -110,6 +110,9 @@ export async function loadStocks() {
     }
     document.getElementById('portfolio-tabs').innerHTML = '';
     document.getElementById('general-tabs').innerHTML = '';
+    const suspendedTabs = document.getElementById('suspended-tabs');
+    if (suspendedTabs) suspendedTabs.innerHTML = '';
+
     for (const [type, stocks] of Object.entries(byType)) {
         const hasPortfolio = stocks.some(s => {
             const calculated = calculateStockValues(s);
@@ -186,6 +189,43 @@ export async function loadStocks() {
     updatePortfolioSummary();
     // Scan léger en arrière-plan pour détecter les tickers morts (spark batch, quota minimal).
     setTimeout(() => backgroundSuspendedScan(), 2500);
+    
+    // Fetch initial pour la performance de tout le monde
+    setTimeout(() => batchPerformanceFetch(globalPeriod), 500);
+}
+
+export let isBatchFetching = false;
+
+export async function batchPerformanceFetch(period) {
+    if (isBatchFetching) return;
+    const tickers = Object.values(positions).map(p => p.ticker).filter(Boolean);
+    if (!tickers.length) return;
+
+    isBatchFetching = true;
+    try {
+        console.log(`[Batch Performance] Fetching ${period} for all ${tickers.length} tickers...`);
+        const results = await fetchYahooPeriodChanges(tickers, period);
+        
+        for (const pos of Object.values(positions)) {
+            const data = results[pos.ticker];
+            if (data) {
+                pos.lastData = data;
+                updateSidebarPerformance(pos.symbol);
+                
+                // If this is the active symbol, update the card too
+                if (typeof getActiveSymbol === 'function' && getActiveSymbol() === pos.symbol) {
+                    try {
+                        const { updateUI } = await import('./ui.js');
+                        updateUI(pos.symbol, data);
+                    } catch (e) { /* ignore */ }
+                }
+            }
+        }
+    } catch (e) {
+        console.error('[Batch Performance] Error:', e);
+    } finally {
+        isBatchFetching = false;
+    }
 }
 
 // Scan de santé via /v7/finance/spark (pas de crumb requis, batch 30 symboles/call).
@@ -195,10 +235,6 @@ async function backgroundSuspendedScan() {
     const BATCH_SIZE = 30;
     const BATCH_DELAY_MS = 1500;
     const candidates = Object.values(positions)
-        .filter(p => {
-            const inPortfolio = (p.shares || 0) > 0 || hasTransactions(p);
-            return !inPortfolio;
-        })
         .map(p => ({ symbol: p.symbol, yahoo: getYahooSymbol(p) || p.ticker }))
         .filter(x => x.yahoo && isYahooSparkFriendly(x.yahoo));
 
