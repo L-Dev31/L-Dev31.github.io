@@ -28,7 +28,7 @@ export async function runFaCommand({ parts, getTarget, out, fmtErr }) {
                 return;
             }
 
-            out('Aucune donnée FA');
+            out('No FA data available');
         }
     });
 }

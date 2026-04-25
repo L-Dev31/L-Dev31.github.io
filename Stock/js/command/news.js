@@ -11,7 +11,7 @@ export async function fetchTickerNewsItems({ ticker, config, limit = 50, days = 
 
 export async function fetchSymbolNewsItems({ symbol, positions, config, limit = 50, days = 7, apiName = null }) {
     const api = apiName || window.getSelectedApi?.() || window.selectedApi || 'yahoo';
-    const mapped = positions?.[symbol]?.api_mapping?.[api] || positions?.[symbol]?.ticker || symbol;
+    const mapped = positions?.[symbol]?.ticker || symbol;
     const items = await fetchTickerNewsItems({ ticker: mapped, config, limit, days, apiName: api });
     return items.map(item => ({ ...item, symbol }));
 }
@@ -60,7 +60,7 @@ export async function runNewsCommand({ parts, getTarget, out, fmtErr }) {
 
         const results = await fetchTickerNewsItems({ ticker: target.ticker, config, limit: 50, days: 7, apiName: api });
         if (!results.length) {
-            out(`Aucune actualité trouvée pour ${target.ticker}`);
+            out(`No news found for ${target.ticker}`);
             window.openNewsPage(null, { search: rawQuery });
             return;
         }

@@ -19,11 +19,11 @@ export async function runDvdCommand({ parts, getTarget, out, fmtErr }) {
                     return;
                 }
 
-                out('Aucun dividende');
+                out('No dividends');
                 return;
             }
 
-            out('Aucune donnée DVD');
+            out('No DVD data available');
         }
     });
 }

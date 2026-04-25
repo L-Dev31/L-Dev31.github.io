@@ -31,7 +31,7 @@ export async function runErnCommand({ parts, getTarget, out, fmtErr }) {
                 return;
             }
 
-            out('Aucune donnée ERN');
+            out('No earnings data available');
         }
     });
 }

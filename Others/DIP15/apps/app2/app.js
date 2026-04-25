@@ -122,7 +122,7 @@ if (typeof SettingsApp === 'undefined') {
                             <h3>Current Background</h3>
                             <div class="settings-item">
                                 <div class="wallpaper-preview">
-                                    <img id="currentWallpaper" src="images/BG/1.jpg" alt="Current wallpaper">
+                                    <img id="currentWallpaper" src="../../assets/img/bg/1.jpg" alt="Current wallpaper">
                                 </div>
                             </div>
                         </div>
@@ -161,7 +161,7 @@ if (typeof SettingsApp === 'undefined') {
                             <div class="system-info-card">
                                 <div class="os-info">
                                     <div class="os-header">
-                                        <img src="images/icon.png" alt="DIP15 Icon" class="os-icon-img">
+                                        <img src="../../assets/img/icon.png" alt="DIP15 Icon" class="os-icon-img">
                                         <div class="os-details">
                                             <div class="os-name">The Idyll Desktop Environment</div>
                                             <div class="os-version">Death in Paradise Season 15</div>
@@ -443,19 +443,19 @@ if (typeof SettingsApp === 'undefined') {
             const desktopBackgroundById = document.getElementById('desktopBackground');
             
             if (desktopBackground) {
-                desktopBackground.style.backgroundImage = `url(images/wallpaper.jpg)`;
+                desktopBackground.style.backgroundImage = `url('../../assets/img/wallpaper.jpg')`;
                 console.log('✅ Reset .desktop-background element to default');
             }
             
             if (desktopBackgroundById) {
-                desktopBackgroundById.style.backgroundImage = `url(images/wallpaper.jpg)`;
+                desktopBackgroundById.style.backgroundImage = `url('../../assets/img/wallpaper.jpg')`;
                 console.log('✅ Reset #desktopBackground element to default');
             }
             
             // Fallback: reset desktop style if not found
             const desktop = document.querySelector('.desktop');
             if (desktop && !desktopBackground && !desktopBackgroundById) {
-                desktop.style.backgroundImage = `url(images/wallpaper.jpg)`;
+                desktop.style.backgroundImage = `url('../../assets/img/wallpaper.jpg')`;
                 console.log('✅ Reset .desktop element as fallback');
             }
             
@@ -464,7 +464,7 @@ if (typeof SettingsApp === 'undefined') {
             if (window) {
                 const preview = window.element.querySelector('#currentWallpaper');
                 if (preview) {
-                    preview.src = 'images/wallpaper.jpg';
+                    preview.src = '../../assets/img/wallpaper.jpg';
                     console.log('✅ Reset wallpaper preview');
                 }
             }
@@ -525,11 +525,11 @@ if (typeof SettingsApp === 'undefined') {
             }
             
             // Final fallback to default wallpaper
-            preview.src = 'images/wallpaper.jpg';
+            preview.src = '../../assets/img/wallpaper.jpg';
             console.log('✅ Using default wallpaper fallback');
         } catch (error) {
             console.warn('Error updating wallpaper preview:', error);
-            preview.src = 'images/wallpaper.jpg';
+            preview.src = '../../assets/img/wallpaper.jpg';
         }
     }
 

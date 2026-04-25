@@ -10,7 +10,7 @@ let lastActiveSymbol = null;
 let newsRefreshInterval = null;
 let cardRefreshIntervals = {};
 
-const formatNewsDate = value => new Date(value || new Date()).toLocaleString('fr-FR');
+const formatNewsDate = value => new Date(value || new Date()).toLocaleString('en-US');
 const sortNewsItems = items => items.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
 const normalizeQuery = q => (q || '').trim().toLowerCase();
 
@@ -59,35 +59,6 @@ const buildNewsAnchorItem = (item, { className, includeSummary = true, tagLabels
     }
 
     return a;
-};
-
-const buildNewsFeedItem = item => {
-    const d = document.createElement('div');
-    d.className = 'news-item';
-
-    const t = document.createElement('div');
-    t.className = 'news-title';
-    const a = document.createElement('a');
-    a.href = item.url || '#';
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    a.textContent = item.title || '—';
-    t.appendChild(a);
-    d.appendChild(t);
-
-    const m = document.createElement('div');
-    m.className = 'news-meta';
-    m.textContent = `${item.source || ''} • ${formatNewsDate(item.publishedAt)}`;
-    d.appendChild(m);
-
-    if (item.summary) {
-        const s = document.createElement('div');
-        s.className = 'news-summary';
-        s.textContent = item.summary;
-        d.appendChild(s);
-    }
-
-    return d;
 };
 
 const filterNewsItems = (items, query) => {
@@ -165,7 +136,7 @@ export function updateNewsUI(symbol, items, filter = null) {
     const el = document.getElementById(`news-list-${symbol}`);
     if (!el) return;
     const upd = document.querySelector(`#card-${symbol} .news-last-update`);
-    if (upd) upd.textContent = new Date().toLocaleTimeString('fr-FR');
+    if (upd) upd.textContent = new Date().toLocaleTimeString('en-US');
     if (filter === null) {
         const inp = document.querySelector(`#card-${symbol} .news-search-input`);
         if (inp) filter = inp.value;
@@ -173,7 +144,7 @@ export function updateNewsUI(symbol, items, filter = null) {
     el.innerHTML = '';
     let list = items || [];
     list = filterNewsItems(list, filter);
-    if (!list.length) { el.textContent = filter ? 'Aucun résultat.' : 'Aucune actualité récente.'; return; }
+    if (!list.length) { el.textContent = filter ? 'No results.' : 'No recent news.'; return; }
 
     sortNewsItems(list).forEach(item => {
         const tagLabels = collectCardTags(item);
@@ -189,84 +160,12 @@ export function setupNewsSearch(symbol) {
     clone.addEventListener('input', e => updateNewsUI(symbol, positions[symbol]?.news || [], e.target.value));
 }
 
-export function updateNewsFeedList(items) {
-    const el = document.getElementById('news-feed-list');
-    if (!el) return;
-    el.innerHTML = '';
-    if (!items?.length) { el.textContent = 'Aucune actualité récente.'; return; }
-    sortNewsItems(items).forEach(item => {
-        el.appendChild(buildNewsFeedItem(item));
-    });
-}
-
-export async function openNewsOverlay(symbol) {
-    const overlay = document.getElementById('news-overlay');
-    if (!overlay) return;
-    document.querySelectorAll('.card').forEach(x => x.classList.remove('active'));
-    overlay.setAttribute('aria-hidden', 'false');
-    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('open-news-feed')?.classList.add('active');
-    try {
-        const config = await loadApiConfig();
-        const api = window.getSelectedApi?.() || window.selectedApi || 'yahoo';
-        const days = symbol && positions[symbol]?.currentPeriod ? periodToDays(positions[symbol].currentPeriod) : 1;
-        if (symbol) {
-            const items = await fetchSymbolNewsItems({ symbol, positions, config, limit: 50, days, apiName: api });
-            if (items?.length) { updateNewsFeedList(items); updateNewsTrending(items); }
-        } else {
-            let all = [];
-            for (const s of Object.keys(positions)) {
-                try {
-                    const items = await fetchSymbolNewsItems({ symbol: s, positions, config, limit: 50, days, apiName: api });
-                    if (items?.length) all = all.concat(items);
-                } catch (e) {}
-            }
-            all.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
-            updateNewsFeedList(all);
-            updateNewsTrending(all);
-        }
-    } catch (e) {}
-}
-
-export function closeNewsOverlay() {
-    const overlay = document.getElementById('news-overlay');
-    if (overlay) overlay.setAttribute('aria-hidden', 'true');
-    document.getElementById('open-news-feed')?.classList.remove('active');
-}
-
-export function updateNewsTrending(items) {
-    const el = document.getElementById('news-page-trending');
-    if (!el) return;
-    el.innerHTML = '';
-    const counts = {};
-    if (items?.length) items.forEach(i => { const s = i.symbol || i.ticker; if (s) counts[s] = (counts[s] || 0) + 1; });
-    else Object.keys(positions || {}).forEach(k => counts[k] = 0);
-    Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5).forEach(([sym, cnt]) => {
-        const pos = positions[sym] || {};
-        const t = document.createElement('div');
-        t.className = 'trending-item';
-        const w = document.createElement('div');
-        w.className = 'trending-symbol-wrapper';
-        const s = document.createElement('span');
-        s.className = 'ticker';
-        s.textContent = `(${pos.ticker || sym}) ${pos.name || ''}`;
-        w.appendChild(s);
-        const c = document.createElement('span');
-        c.className = 'ticker-count';
-        c.textContent = `${cnt} article${cnt > 1 ? 's' : ''}`;
-        w.appendChild(c);
-        t.appendChild(w);
-        t.addEventListener('click', () => openNewsPage(sym));
-        el.appendChild(t);
-    });
-}
-
 export function updateNewsPageList(items, opts = {}) {
     const { replaceCache = true, skipSort = false } = opts;
     const el = document.getElementById('news-page-feed-list');
     if (!el) return;
     el.innerHTML = '';
-    if (!items?.length) { el.innerHTML = '<div class="news-empty">Aucune actualité trouvée</div>'; if (replaceCache) lastPageNews = []; return; }
+    if (!items?.length) { el.innerHTML = '<div class="news-empty">No news found</div>'; if (replaceCache) lastPageNews = []; return; }
     let list = items.slice();
     if (!skipSort) sortNewsItems(list);
     if (replaceCache) lastPageNews = list;
@@ -275,7 +174,7 @@ export function updateNewsPageList(items, opts = {}) {
         el.appendChild(buildNewsAnchorItem(item, { className: 'news-item', tagLabels }));
     });
     const upd = document.getElementById('news-last-update');
-    if (upd) upd.textContent = new Date().toLocaleTimeString('fr-FR');
+    if (upd) upd.textContent = new Date().toLocaleTimeString('en-US');
 }
 
 export async function openNewsPage(symbol, options = {}) {
@@ -285,7 +184,6 @@ export async function openNewsPage(symbol, options = {}) {
     lastActiveSymbol = activeTab?.dataset.symbol || null;
     document.querySelectorAll('.card').forEach(x => x.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('news-overlay')?.setAttribute('aria-hidden', 'true');
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
     document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
@@ -343,18 +241,18 @@ async function loadNews() {
     const inp = document.getElementById('news-ticker-search');
     const manual = (inp?.value || '').trim().toUpperCase();
     if (!el) return;
-    el.innerHTML = '<div class="news-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="news-loading-text">Chargement des actualités en cours...</span></div>';
+    el.innerHTML = '<div class="news-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="news-loading-text">Loading news...</span></div>';
     try {
         const config = await loadApiConfig();
         const api = window.getSelectedApi?.() || window.selectedApi || 'yahoo';
         const days = periodToDays(currentNewsPeriod);
         let tickers = [];
         if (manual) { tickers = [{ symbol: manual, ticker: manual }]; currentNewsSymbol = manual; }
-        else { tickers = Object.keys(positions).map(s => ({ symbol: s, ticker: positions[s]?.api_mapping?.[api] || positions[s]?.ticker || s })); currentNewsSymbol = null; }
-        if (!tickers.length) { el.innerHTML = '<div class="news-empty">Ajoutez des actifs ou recherchez un ticker.</div>'; lastPageNews = []; return; }
+        else { tickers = Object.keys(positions).map(s => ({ symbol: s, ticker: positions[s]?.ticker || s })); currentNewsSymbol = null; }
+        if (!tickers.length) { el.innerHTML = '<div class="news-empty">Add assets or search for a ticker.</div>'; lastPageNews = []; return; }
         let all = [];
         let completed = 0;
-        const updateProgress = () => { const t = document.getElementById('news-loading-text'); if (t) t.textContent = `Chargement... ${completed}/${tickers.length}`; };
+        const updateProgress = () => { const t = document.getElementById('news-loading-text'); if (t) t.textContent = `Loading... ${completed}/${tickers.length}`; };
         if (tickers.length > 1) updateProgress();
 
         const uniqueItems = new Map();
@@ -381,14 +279,14 @@ async function loadNews() {
         
         all = Array.from(uniqueItems.values()).map(i => ({ ...i, symbols: Array.from(i.symbols) }));
         if (manual && !all.length) {
-            el.innerHTML = `<div class="news-empty">Ticker introuvable ou aucune actualité trouvée pour ${manual}</div>`;
+            el.innerHTML = `<div class="news-empty">Ticker not found or no news found for ${manual}</div>`;
             lastPageNews = [];
             return;
         }
         all.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
         updateNewsPageList(all);
     } catch (e) {
-        el.innerHTML = `<div class="news-empty">Impossible de charger les actualités${manual ? ` pour ${manual}` : ''}.</div>`;
+        el.innerHTML = `<div class="news-empty">Unable to load news${manual ? ` for ${manual}` : ''}.</div>`;
     }
 }
 
@@ -413,7 +311,7 @@ function buildTickers(symbol) {
     const set = new Set();
     const add = v => { if (typeof v === 'string' && v.trim()) { const n = v.trim().toUpperCase(); set.add(n); const d = n.lastIndexOf('.'); if (d > 0) set.add(n.substring(0, d)); } };
     add(symbol);
-    if (pos) { add(pos.ticker); if (pos.api_mapping) Object.values(pos.api_mapping).forEach(add); }
+    if (pos) { add(pos.ticker); }
     return [...set];
 }
 

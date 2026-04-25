@@ -1,10 +1,11 @@
-import { positions, loadApiConfig, selectedApi, lastApiBySymbol } from './state.js';
-import { createTab, createCard, updateSectionDates, setApiStatus, initChart, markTabAsSuspended } from './ui.js';
-import { fetchActiveSymbol } from './general.js'; 
-import { isYahooTickerSuspended } from './yahoo-finance.js';
+import { positions, loadApiConfig, selectedApi, lastApiBySymbol, getCurrency } from './state.js';
+import { createTab, createCard, updateSectionDates, initChart, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js';
+import { fetchActiveSymbol } from './general.js';
+import { fetchYahooSparkBatch, getYahooSymbol, isYahooSparkFriendly } from './yahoo-finance.js';
+import rateLimiter from './rate-limiter.js';
 import { TYPE_ORDER, hasTransactions, typeLabel, typeIcon } from './constants.js';
 
-const DEFAULT_CASH_ACCOUNT = 356.10;
+
 
 const setText = (id, value) => {
     const el = document.getElementById(id);
@@ -73,14 +74,24 @@ export function calculateStockValues(stock) {
 export function updatePortfolioSummary() {
     let totalShares = 0;
     let totalInvestment = 0;
-    let cashAccount = DEFAULT_CASH_ACCOUNT;
+    let totalTransactionCosts = 0;
+
     for (const pos of Object.values(positions)) {
         totalShares += pos.shares || 0;
         if (typeof pos.investment === 'number') totalInvestment += pos.investment;
+
+        const raw = pos.raw || {};
+        totalTransactionCosts += Number(raw.transactionCost || 0);
+
+        const purchases = raw.purchases || [];
+        const sales = raw.sales || [];
+        [...purchases, ...sales].forEach((tx) => {
+            totalTransactionCosts += Number(tx.fee || tx.fees || tx.commission || 0);
+        });
     }
+
     setText('total-shares', totalShares);
-    setText('total-investment', totalInvestment.toFixed(2) + ' €');
-    setText('cash-account', cashAccount.toFixed(2) + ' €');
+    setText('total-investment', totalInvestment.toFixed(2) + ' ' + getCurrency());
 }
 
 export async function loadStocks() {
@@ -139,7 +150,7 @@ export async function loadStocks() {
             name: s.name,
             type: s.type,
             currency: s.currency,
-            api_mapping: s.api_mapping,
+
             shares: calculated.shares,
             investment: calculated.investment,
             costBasis: calculated.costBasis || 0,
@@ -151,6 +162,7 @@ export async function loadStocks() {
             lastFetch: 0,
             lastData: null,
             currentPeriod: '1D',
+            chartType: 'line',
             raw: s
         };
         lastApiBySymbol[s.symbol] = selectedApi;
@@ -167,28 +179,60 @@ export async function loadStocks() {
         const sym = first.dataset.symbol;
         document.getElementById(`card-${sym}`)?.classList.add('active');
         fetchActiveSymbol(true);
+    } else {
+
     }
-    setApiStatus(null, 'active', { api: selectedApi });
     updatePortfolioSummary();
-    setTimeout(() => checkSuspendedTickers(), 3000);
+    // Scan léger en arrière-plan pour détecter les tickers morts (spark batch, quota minimal).
+    setTimeout(() => backgroundSuspendedScan(), 2500);
 }
 
-export async function checkSuspendedTickers() {
-    const symbols = Object.keys(positions);
-    const batchSize = 2;
-    for (let i = 0; i < symbols.length; i += batchSize) {
-        const batch = symbols.slice(i, i + batchSize);
-        await Promise.all(batch.map(async (symbol) => {
-            try {
-                const pos = positions[symbol];
-                if (!pos) return;
-                const yahooSymbol = pos.api_mapping?.yahoo || pos.ticker || symbol;
-                
-                const suspended = await isYahooTickerSuspended(yahooSymbol);
-                
-                if (suspended) markTabAsSuspended(symbol);
-            } catch (e) {}
-        }));
-        if (i + batchSize < symbols.length) await new Promise(r => setTimeout(r, 1500));
+// Scan de santé via /v7/finance/spark (pas de crumb requis, batch 30 symboles/call).
+// Mark suspend si pas de données. Unmark si données reviennent (self-heal).
+// Ne touche jamais les tickers du portefeuille (on veut les voir même suspendus).
+async function backgroundSuspendedScan() {
+    const BATCH_SIZE = 30;
+    const BATCH_DELAY_MS = 1500;
+    const candidates = Object.values(positions)
+        .filter(p => {
+            const inPortfolio = (p.shares || 0) > 0 || hasTransactions(p);
+            return !inPortfolio;
+        })
+        .map(p => ({ symbol: p.symbol, yahoo: getYahooSymbol(p) || p.ticker }))
+        .filter(x => x.yahoo && isYahooSparkFriendly(x.yahoo));
+
+    if (!candidates.length) return;
+
+    for (let i = 0; i < candidates.length; i += BATCH_SIZE) {
+        if (rateLimiter.isRateLimited('yahoo')) {
+            await new Promise(r => setTimeout(r, 5000));
+            i -= BATCH_SIZE;
+            continue;
+        }
+        const batch = candidates.slice(i, i + BATCH_SIZE);
+        const yahooSymbols = batch.map(b => b.yahoo);
+        let results;
+        try {
+            results = await fetchYahooSparkBatch(yahooSymbols, '1d', '1d');
+        } catch { results = null; }
+
+        if (results) {
+            // Map yahoo-symbol → a un résultat non vide ?
+            const alive = new Map();
+            for (const r of results) {
+                const hasData = r?.response?.[0]?.indicators?.quote?.[0]?.close?.some(v => v != null);
+                if (r?.symbol) alive.set(r.symbol.toUpperCase(), !!hasData);
+            }
+            for (const { symbol, yahoo } of batch) {
+                const isAlive = alive.get(yahoo.toUpperCase());
+                if (isAlive === false) markTabAsSuspended(symbol);
+                else if (isAlive === true) unmarkTabAsSuspended(symbol);
+                // undefined = symbole absent de la réponse → on ne tranche pas
+            }
+        }
+
+        if (i + BATCH_SIZE < candidates.length) {
+            await new Promise(r => setTimeout(r, BATCH_DELAY_MS));
+        }
     }
 }

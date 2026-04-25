@@ -1,7 +1,7 @@
 import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade } from './yahoo-finance.js';
 import { debounce } from './constants.js';
+import { getCurrency } from './state.js';
 
-// Removed IIFE wrapper
 {
     'use strict';
     const ITEMS_PER_PAGE = 10;
@@ -23,7 +23,7 @@ import { debounce } from './constants.js';
         lastParams: null
     };
 
-    const PERIOD_LABELS = { '1D': '1J', '1W': '1S', '1M': '1M', '3M': '3M', '6M': '6M', '1Y': '1A', 'YTD': 'YTD' };
+    const PERIOD_LABELS = { '1D': '1D', '1W': '1W', '1M': '1M', '3M': '3M', '6M': '6M', '1Y': '1Y', 'YTD': 'YTD' };
     const PERIOD_CONFIG = {
         '1D': { range: '1d', interval: '1m' },
         '1W': { range: '5d', interval: '1h' },
@@ -77,7 +77,7 @@ import { debounce } from './constants.js';
     function renderMarketSelect() {
         const select = document.getElementById('explorer-market');
         if (!select) return;
-        select.innerHTML = '<option value="">Sélectionner...</option>';
+        select.innerHTML = '<option value="">Select...</option>';
         marketsData.filter(m => !m.disabled).forEach(m => {
             const opt = document.createElement('option');
             opt.value = m.id;
@@ -85,11 +85,8 @@ import { debounce } from './constants.js';
             select.appendChild(opt);
         });
 
-        // Initialize visibility
         const eligibilitySelect = document.getElementById('explorer-eligibility');
-        if (eligibilitySelect && eligibilitySelect.parentElement) {
-            eligibilitySelect.parentElement.style.display = 'none';
-        }
+        if (eligibilitySelect?.parentElement) eligibilitySelect.parentElement.style.display = 'none';
     }
 
     function selectMarket(marketId) {
@@ -107,13 +104,11 @@ import { debounce } from './constants.js';
                 const hasLists = marketDef && marketDef.type === 'list' && marketDef.lists && Object.keys(marketDef.lists).length > 0;
                 
                 if (hasLists) {
-                    // Dynamic population from JSON
-                    eligibilitySelect.innerHTML = '<option value="">Tous</option>';
+                    eligibilitySelect.innerHTML = '<option value="">All</option>';
                     Object.keys(marketDef.lists).forEach(listKey => {
                         const opt = document.createElement('option');
                         opt.value = listKey;
-                        // Simple capitalization for label
-                        opt.textContent = listKey.charAt(0).toUpperCase() + listKey.slice(1); 
+                        opt.textContent = listKey.charAt(0).toUpperCase() + listKey.slice(1);
                         eligibilitySelect.appendChild(opt);
                     });
                     eligibilitySelect.parentElement.style.display = 'flex';
@@ -145,11 +140,10 @@ import { debounce } from './constants.js';
                 const sym = s.symbol;
                 if (s.ticker) { stockIconMap[s.ticker] = sym; yahooToJsonSymbol[s.ticker] = sym; }
                 if (sym) { stockIconMap[sym] = sym; yahooToJsonSymbol[sym] = sym; }
-                if (s.api_mapping?.yahoo) yahooToJsonSymbol[s.api_mapping.yahoo] = sym;
                 if (isCrypto && sym) cryptoSymbols.add(sym);
 
                 const marketId = inferMarketFromLocalSymbol(s);
-                const yahooSymbol = (s.api_mapping?.yahoo || s.ticker || s.symbol || '').toUpperCase();
+                const yahooSymbol = (s.ticker || s.symbol || '').toUpperCase();
                 if (marketId && yahooSymbol) {
                     if (!localSymbolsByMarket.has(marketId)) localSymbolsByMarket.set(marketId, new Set());
                     localSymbolsByMarket.get(marketId).add(yahooSymbol);
@@ -159,7 +153,7 @@ import { debounce } from './constants.js';
     }
 
     function inferMarketFromLocalSymbol(stock) {
-        const yahoo = (stock?.api_mapping?.yahoo || stock?.ticker || stock?.symbol || '').toUpperCase();
+        const yahoo = (stock?.ticker || stock?.symbol || '').toUpperCase();
         const country = (stock?.country || '').toUpperCase();
 
         if (yahoo.endsWith('.PA') || yahoo.endsWith('.EPA')) return 'euronext';
@@ -208,12 +202,8 @@ import { debounce } from './constants.js';
         if (stockIconMap[sym]) return stockIconMap[sym];
         const base = sym.split('.')[0].split('-')[0];
         const mapped = stockIconMap[base];
-        
         if (mapped) {
-            // Prevent regional stocks (with dot suffix) from matching crypto symbols (e.g. SOL.AX -> SOL)
-            if (sym.includes('.') && cryptoSymbols.has(mapped)) {
-                return null;
-            }
+            if (sym.includes('.') && cryptoSymbols.has(mapped)) return null;
             return mapped;
         }
         return null;
@@ -304,16 +294,10 @@ import { debounce } from './constants.js';
         const symbol = q.symbol || '';
 
         let market = 'other';
-        
-        // Dynamic market detection from marketsData
-        const foundMarket = marketsData.find(m => 
-            (m.exchanges && m.exchanges.includes(exchange))
-        );
-
+        const foundMarket = marketsData.find(m => m.exchanges?.includes(exchange));
         if (foundMarket) {
             market = foundMarket.id;
         } else {
-            // Fallbacks
             if (['NMS', 'NGS', 'NCM', 'NASDAQ'].includes(exchange)) market = 'nasdaq';
             else if (['NYQ', 'NYSE', 'NYS', 'PCX', 'ASE'].includes(exchange)) market = 'nyse';
             else if (exchange === 'PAR' || exchange === 'EPA' || symbol.endsWith('.PA')) market = 'euronext';
@@ -334,19 +318,15 @@ import { debounce } from './constants.js';
         let eligibility = 'cto';
         if (market === 'euronext') eligibility = q.marketCap && q.marketCap < 1e9 ? 'pea-pme' : 'pea';
 
-        const daysSinceLastTrade = computeDaysSinceLastTrade(q.regularMarketTime);
         const isSuspended = !isYahooTickerActiveFromQuote(q);
-
-        let score = Math.max(0, Math.min(100, 50 + changePercent * 3 + Math.min(volume / 50000000, 15)));
-        let signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
 
         return {
             symbol: q.symbol, name: q.shortName || q.longName || q.symbol,
             price, change, changePercent, volume, market, sector, eligibility,
             currency: q.currency || 'USD', marketCap: q.marketCap, industry: q.industry || '',
             isClosed: isSuspended, isSuspended,
-            daysSinceLastTrade: Math.round(daysSinceLastTrade),
-            score: Math.round(score), signal
+            daysSinceLastTrade: Math.round(computeDaysSinceLastTrade(q.regularMarketTime)),
+            score: 50, signal: 'hold', riskScore: 1
         };
     }
 
@@ -371,10 +351,6 @@ import { debounce } from './constants.js';
                 const volume = meta.regularMarketVolume || totalVolume;
 
                 const isSuspended = !isYahooTickerActiveFromChart(meta, closes, volumes);
-                const daysSinceLastTrade = computeDaysSinceLastTrade(meta.regularMarketTime);
-
-                let score = Math.max(0, Math.min(100, 50 + changePercent * 3 + Math.min(volume / 50000000, 15)));
-                let signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
 
                 return {
                     symbol: sym, name: meta.shortName || meta.longName || sym.replace(/\.[A-Z]+$/, ''),
@@ -382,8 +358,8 @@ import { debounce } from './constants.js';
                     market: marketId, sector: 'other', eligibility: defaultEligibility,
                     currency: meta.currency || 'USD', marketCap: 0, industry: '',
                     isClosed: isSuspended, isSuspended,
-                    daysSinceLastTrade: Math.round(daysSinceLastTrade),
-                    score: Math.round(score), signal
+                    daysSinceLastTrade: Math.round(computeDaysSinceLastTrade(meta.regularMarketTime)),
+                    score: 50, signal: 'hold', riskScore: 1
                 };
             } catch (e) { return null; }
         };
@@ -492,42 +468,47 @@ import { debounce } from './constants.js';
         return result;
     }
 
-    function computeTrendingScores(items) {
-        return items.map(item => {
-            const vol = item.volume || 0;
-            const change = Math.abs(item.changePercent || 0);
+    // Signal-based composite rank: signalValue (0-100) + ADX conviction + confluence bonus - risk penalty.
+    // Suspended items always sink to bottom.
+    function computeSignalRank(item) {
+        const signal = item.score || 50;          // SignalBot signalValue 0-100
+        const adx = item.botAdx || 0;             // ADX trend strength
+        const conf = item.botConfluence || 0;     // confluence ratio 0-1
+        const risk = item.riskScore || 1;         // 1-10
 
-            let riskPenalty = 1;
-            if ((item.riskScore || 1) >= 9) riskPenalty = 0.01;
-            else if ((item.riskScore || 1) >= 7) riskPenalty = 0.2;
+        const conviction = Math.abs(signal - 50) / 50;    // 0-1: how far from neutral
+        const adxBonus = Math.min(adx / 100, 0.3);        // ADX 25→+0.25, 50→+0.5 capped
+        const confBonus = conf * 0.2;                     // up to +0.2
+        const riskMalus = risk >= 9 ? 2 : risk >= 7 ? 0.5 : 0;
 
-            const volumeScore = Math.log10(vol + 1);
-            const volatilityScore = Math.sqrt(change) + 1;
-
-            return { ...item, trendingScore: (volumeScore * volatilityScore * 10) * riskPenalty };
-        });
+        return conviction + adxBonus + confBonus - riskMalus;
     }
 
     function sortItems(items, sort) {
-        const sorted = [...items];
-        if (sort === 'trending') {
-            sorted.sort((a, b) => {
-                if (a.isSuspended && !b.isSuspended) return 1;
-                if (!a.isSuspended && b.isSuspended) return -1;
-                return (b.trendingScore || 0) - (a.trendingScore || 0);
-            });
-            return sorted;
-        }
+        const active = items.filter(i => !i.isSuspended);
+        const suspended = items.filter(i => i.isSuspended);
 
         switch (sort) {
-            case 'gainers': sorted.sort((a, b) => b.changePercent - a.changePercent); break;
-            case 'losers': sorted.sort((a, b) => a.changePercent - b.changePercent); break;
-            case 'volume': sorted.sort((a, b) => b.volume - a.volume); break;
-            case 'signal': sorted.sort((a, b) => b.score - a.score); break;
-            case 'name': sorted.sort((a, b) => a.name.localeCompare(b.name)); break;
-            default: break;
+            case 'trending':
+                active.sort((a, b) => computeSignalRank(b) - computeSignalRank(a));
+                break;
+            case 'signal':
+                active.sort((a, b) => b.score - a.score);
+                break;
+            case 'gainers':
+                active.sort((a, b) => b.changePercent - a.changePercent);
+                break;
+            case 'losers':
+                active.sort((a, b) => a.changePercent - b.changePercent);
+                break;
+            case 'volume':
+                active.sort((a, b) => b.volume - a.volume);
+                break;
+            case 'name':
+                active.sort((a, b) => a.name.localeCompare(b.name));
+                break;
         }
-        return sorted;
+        return [...active, ...suspended];
     }
 
     async function enrichWithPeriodChanges(items, period) {
@@ -543,7 +524,7 @@ import { debounce } from './constants.js';
                 const endTime = Number(window.__rateLimitEndTime || 0);
                 if (activeApi !== 'yahoo' || endTime <= Date.now()) return;
                 const remaining = Math.max(1, Math.ceil((endTime - Date.now()) / 1000));
-                showLoadingProgress(0, `API Yahoo limitée, reprise dans ${remaining}s...`);
+                showLoadingProgress(0, `Yahoo API limited, resuming in ${remaining}s...`);
             }, 1000);
         };
 
@@ -554,7 +535,7 @@ import { debounce } from './constants.js';
         };
 
         try {
-            showLoadingProgress(0, `Analyse ${PERIOD_LABELS[period]}...`);
+            showLoadingProgress(0, `Analysis ${PERIOD_LABELS[period]}...`);
             startYahooCooldownLoader();
             const config = PERIOD_CONFIG[period] || PERIOD_CONFIG['1D'];
             changes = await fetchYahooPeriodChanges(
@@ -563,8 +544,8 @@ import { debounce } from './constants.js';
                 config.interval,
                 (done, total, isPaused, msg) => {
                     if (msg) showLoadingProgress(done, `${msg} ${done}/${total}`);
-                    else if (isPaused) showLoadingProgress(done, `Pause API (Protection)... ${done}/${total}`);
-                    else showLoadingProgress(done, `Analyse ${done}/${total}`);
+                    else if (isPaused) showLoadingProgress(done, `API Pause (Protection)... ${done}/${total}`);
+                    else showLoadingProgress(done, `Analysis ${done}/${total}`);
                 }
             );
         } catch (e) {
@@ -575,46 +556,38 @@ import { debounce } from './constants.js';
 
         return items.map(item => {
             const pd = changes[item.symbol];
-            let score = item.score;
-            let signal = item.signal;
-            let riskScore = 1;
+            if (!pd) return item;
 
-            if (pd) {
-                const vol = Number.isFinite(item.volume) ? item.volume : 0;
-                const fallbackScore = Math.max(0, Math.min(100, 50 + pd.changePercent * 3 + Math.min(vol / 50000000, 15)));
+            item.change = pd.change;
+            item.changePercent = pd.changePercent;
 
-                item.change = pd.change;
-                item.changePercent = pd.changePercent;
+            if (window.SignalBot && pd.history) {
+                try {
+                    const bot = window.SignalBot.calculateBotSignal({
+                        symbol: item.symbol,
+                        prices: pd.history.prices,
+                        highs: pd.history.highs,
+                        lows: pd.history.lows,
+                        volumes: pd.history.volumes
+                    }, { period: state.currentPeriod });
 
-                if (window.SignalBot && pd.history) {
-                    try {
-                        const botResult = window.SignalBot.calculateBotSignal({
-                            symbol: item.symbol,
-                            prices: pd.history.prices,
-                            highs: pd.history.highs,
-                            lows: pd.history.lows,
-                            volumes: pd.history.volumes
-                        }, { period: state.currentPeriod });
+                    const score = bot.signalValue;
+                    const riskScore = bot.risk?.score ?? 1;
+                    const signal = riskScore >= 9 ? 'sell' : score >= 60 ? 'buy' : score <= 40 ? 'sell' : 'hold';
 
-                        score = botResult.signalValue;
-                        riskScore = botResult.risk ? botResult.risk.score : 1;
-                        
-                        if (score >= 60) signal = 'buy';
-                        else if (score <= 40) signal = 'sell';
-                        else signal = 'hold';
-                        
-                        if (riskScore >= 9) signal = 'sell';
-                    } catch (e) {
-                        score = fallbackScore;
-                        signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
-                    }
-                } else {
-                    score = fallbackScore;
-                    signal = score >= 65 ? 'buy' : score <= 35 ? 'sell' : 'hold';
-                }
+                    return {
+                        ...item,
+                        score,
+                        signal,
+                        riskScore,
+                        botRegime: bot.regime?.label ?? '',
+                        botRegimeType: bot.regime?.type ?? '',
+                        botAdx: bot.regime?.strength ?? 0,
+                        botConfluence: bot.confluence?.ratio ?? 0
+                    };
+                } catch (_) { return item; }
             }
-            
-            return { ...item, score: Math.round(score), signal, riskScore };
+            return item;
         });
     }
 
@@ -710,13 +683,12 @@ import { debounce } from './constants.js';
                 items = applyFilters(items, filters);
                 items = items.slice(0, getMaxAllowed());
                 items = await enrichWithPeriodChanges(items, filters.period);
-                items = computeTrendingScores(items);
 
                 state.cachedItems = items;
                 state.lastParams = paramsKey;
             } catch (e) {
                 console.error('Explorer load failed', e);
-                showError('Erreur de chargement');
+                showError('Loading error');
                 return;
             } finally {
                 state.isLoading = false;
@@ -733,12 +705,12 @@ import { debounce } from './constants.js';
 
     function showLoading(show) {
         const list = document.getElementById('explorer-list');
-        if (list && show) list.innerHTML = '<div class="explorer-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="explorer-loading-text">Chargement des données...</span></div>';
+        if (list && show) list.innerHTML = '<div class="explorer-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="explorer-loading-text">Loading data...</span></div>';
     }
 
     function showLoadingProgress(loaded, totalOrText) {
         const text = document.getElementById('explorer-loading-text');
-        if (text) text.textContent = typeof totalOrText === 'string' ? totalOrText : `Chargement des données... ${loaded}/${totalOrText}`;
+        if (text) text.textContent = typeof totalOrText === 'string' ? totalOrText : `Loading data... ${loaded}/${totalOrText}`;
     }
 
     function showError(msg) {
@@ -861,7 +833,7 @@ import { debounce } from './constants.js';
         const pageData = state.results.slice(start, start + ITEMS_PER_PAGE);
 
         if (!pageData.length) {
-            list.innerHTML = '<div class="explorer-empty"><i class="fa-solid fa-chart-line" style="font-size:2rem;margin-bottom:10px;opacity:0.3"></i><br>Aucun résultat trouvé</div>';
+            list.innerHTML = '<div class="explorer-empty"><i class="fa-solid fa-chart-line" style="font-size:2rem;margin-bottom:10px;opacity:0.3"></i><br>No results found</div>';
             if (pagination) pagination.style.display = 'none';
         } else {
             list.innerHTML = pageData.map(renderItem).join('');
@@ -911,30 +883,22 @@ import { debounce } from './constants.js';
         const changeSign = changePercent >= 0 ? '+' : '';
         const isSuspended = !!item.isSuspended;
         const signalClass = isSuspended ? 'suspended' : item.isClosed ? 'closed' : item.signal;
-        const signalText = isSuspended ? 'Suspendu' : item.isClosed ? 'Fermé' : item.signal === 'buy' ? 'Achat' : item.signal === 'sell' ? 'Vente' : 'Neutre';
-        const formatPrice = p => p >= 1000 ? p.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : p >= 1 ? p.toFixed(2) : p.toFixed(4);
-        const curr = item.currency === 'EUR' ? '€' : item.currency === 'GBP' ? '£' : '$';
-        
-        // Indicateur de risque visuel
-        let riskIcon = '';
-        if (item.riskScore >= 9) riskIcon = '<i class="fa-solid fa-skull-crossbones" style="color:#ef4444;margin-left:5px;" title="Risque Extrême (Shitcoin)"></i>';
-        else if (item.riskScore >= 7) riskIcon = '<i class="fa-solid fa-triangle-exclamation" style="color:#f97316;margin-left:5px;" title="Risque Élevé"></i>';
+        const signalText = isSuspended ? 'Suspended' : item.isClosed ? 'Closed' : item.signal === 'buy' ? 'Buy' : item.signal === 'sell' ? 'Sell' : 'Neutral';
+        const formatPrice = p => p >= 1000 ? p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : p >= 1 ? p.toFixed(2) : p.toFixed(4);
+        const curr = getCurrency();
 
-        const formatVolume = v => {
-            if (v >= 1e9) return (v / 1e9).toFixed(2) + 'B';
-            if (v >= 1e6) return (v / 1e6).toFixed(2) + 'M';
-            if (v >= 1e3) return (v / 1e3).toFixed(2) + 'k';
-            return v;
-        };
-        
-        const trendInfo = `<div style="font-size:0.75rem;opacity:0.6;margin-top:2px;">Score: ${Math.round(item.trendingScore || 0)} • Vol: ${formatVolume(item.volume)}</div>`;
+        let riskIcon = '';
+        if (item.riskScore >= 9) riskIcon = '<i class="fa-solid fa-skull-crossbones" style="color:#ef4444;margin-left:5px;" title="Extreme Risk"></i>';
+        else if (item.riskScore >= 7) riskIcon = '<i class="fa-solid fa-triangle-exclamation" style="color:#f97316;margin-left:5px;" title="High Risk"></i>';
+
+        const regimeLabel = item.botRegime ? `<div class="explorer-item-regime">${item.botRegime}</div>` : '';
 
         return `<div class="explorer-item ${isSuspended ? 'suspended' : ''}" data-symbol="${item.symbol}">
             <div class="explorer-item-logo">${item.symbol.slice(0, 2).toUpperCase()}</div>
             <div class="explorer-item-info">
                 <div class="explorer-item-name">${item.name}</div>
                 <div class="explorer-item-ticker">${item.symbol}${riskIcon}</div>
-                ${trendInfo}
+                ${regimeLabel}
             </div>
             <div class="explorer-item-price"><div class="explorer-item-current">${formatPrice(priceValue)} ${curr}</div><div class="explorer-item-change ${changeClass}">${changeSign}${changePercent.toFixed(2)}% <span class="explorer-period-label">${PERIOD_LABELS[state.currentPeriod]}</span></div></div>
             <div class="explorer-item-signal"><span class="explorer-signal-badge ${signalClass}">${signalText}</span><span class="explorer-signal-score">${item.score}/100</span></div>

@@ -9,7 +9,7 @@ export function esc(value) {
 
 export function formatNumber(value, maximumFractionDigits = 2) {
     if (value == null || !Number.isFinite(Number(value))) return '<span class="terminal-muted">-</span>';
-    return Number(value).toLocaleString('fr-FR', { maximumFractionDigits });
+    return Number(value).toLocaleString('en-US', { maximumFractionDigits });
 }
 
 export function formatPercent(value, maximumFractionDigits = 2) {

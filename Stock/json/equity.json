@@ -19,13 +19,7 @@
       {"date": "2026-01-30", "amount": 71.35, "shares": 5},
       {"date": "2026-02-11", "amount": 106.63, "shares": 6},
       {"date": "2026-02-18", "amount": 160.00, "shares": 8}
-    ],
-    "api_mapping": {
-      "yahoo": "AL2SI.PA",
-      "twelve_data": "AL2SI:PAR",
-      "polygon": "AL2SI.PA",
-      "alpha_vantage": "AL2SI.PAR"
-    }
+    ]
   },
   {
     "symbol": "ALUNT",
@@ -40,31 +34,18 @@
     ],
     "sales": [
       {"date": "2025-11-21", "amount": 93.63, "shares": 65}
-    ],
-    "api_mapping": {
-      "yahoo": "ALUNT.PA",
-      "twelve_data": "ALUNT:PAR",
-      "polygon": "ALUNT.PA",
-      "alpha_vantage": "ALUNT.PAR"
-    }
-  }
-  ,
+    ]
+  },
   {
     "symbol": "BLC",
-    "ticker": "BLC",
+    "ticker": "BLC.PA",
     "name": "Bastide Le Confort Médical",
     "isin": "",
     "country": "FR",
     "currency": "EUR",
     "type": "equity",
     "purchases": [],
-    "sales": [],
-    "api_mapping": {
-      "yahoo": "BLC.PA",
-      "twelve_data": "BLC:PAR",
-      "polygon": "BLC.PA",
-      "alpha_vantage": "BLC.PAR"
-    }
+    "sales": []
   },
   {
     "symbol": "ALCAR",
@@ -75,13 +56,7 @@
     "currency": "EUR",
     "type": "equity",
     "purchases": [],
-    "sales": [],
-    "api_mapping": {
-      "yahoo": "ALCAR.PA",
-      "twelve_data": "ALCAR:PAR",
-      "polygon": "ALCAR.PA",
-      "alpha_vantage": "ALCAR.PAR"
-    }
+    "sales": []
   },
   {
     "symbol": "LBIRD",
@@ -94,13 +69,7 @@
     "purchases": [
       {"date": "2026-04-22", "amount": -396.80, "shares": 16}
     ],
-    "sales": [],
-    "api_mapping": {
-      "yahoo": "LBIRD.PA",
-      "twelve_data": "LBIRD:PAR",
-      "polygon": "LBIRD.PA",
-      "alpha_vantage": "LBIRD.PAR"
-    }
+    "sales": []
   },
   {
     "symbol": "AAPL",
@@ -111,12 +80,6 @@
     "currency": "USD",
     "type": "equity",
     "purchases": [],
-    "sales": [],
-    "api_mapping": {
-      "yahoo": "AAPL",
-      "twelve_data": "AAPL",
-      "polygon": "AAPL",
-      "alpha_vantage": "AAPL"
-    }
+    "sales": []
   }
 ]

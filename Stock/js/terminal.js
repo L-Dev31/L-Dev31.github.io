@@ -46,16 +46,15 @@ function getTarget(parts) {
     const raw = (parts[1] || '').toUpperCase();
     const pos = window.positions || {};
     if (raw) {
-        if (pos[raw]) return { symbol: raw, ticker: pos[raw].api_mapping?.yahoo || pos[raw].ticker || raw };
+        if (pos[raw]) return { symbol: raw, ticker: pos[raw].ticker || raw };
         for (const [s, p] of Object.entries(pos)) {
             if (!p) continue;
-            if ((p.ticker || '').toUpperCase() === raw) return { symbol: s, ticker: p.api_mapping?.yahoo || p.ticker || raw };
-            if ((p.api_mapping?.yahoo || '').toUpperCase() === raw) return { symbol: s, ticker: p.api_mapping.yahoo };
+            if ((p.ticker || '').toUpperCase() === raw) return { symbol: s, ticker: p.ticker || raw };
         }
         return { symbol: null, ticker: raw };
     }
     const active = window.getActiveSymbol?.();
-    if (active && pos[active]) return { symbol: active, ticker: pos[active].api_mapping?.yahoo || pos[active].ticker || active };
+    if (active && pos[active]) return { symbol: active, ticker: pos[active].ticker || active };
     return null;
 }
 

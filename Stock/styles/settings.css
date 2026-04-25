@@ -1,0 +1,117 @@
+.settings-card {
+    max-width: 960px;
+}
+
+.settings-header {
+    margin-bottom: 16px;
+}
+
+.settings-body {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(168, 162, 255, 0.12);
+    border-radius: 12px;
+    padding: 20px;
+    display: grid;
+    gap: 14px;
+}
+
+.settings-group {
+    display: grid;
+    gap: 8px;
+}
+
+.settings-label {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: rgba(232, 233, 243, 0.65);
+}
+
+.settings-input {
+    width: 100%;
+    border: 1px solid rgba(168, 162, 255, 0.2);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    color: var(--text-light);
+    font-size: 13px;
+    padding: 10px 12px;
+    outline: none;
+}
+
+.settings-input:focus {
+    border-color: rgba(168, 162, 255, 0.6);
+    box-shadow: 0 0 0 2px rgba(168, 162, 255, 0.12);
+}
+
+.settings-help {
+    color: rgba(232, 233, 243, 0.6);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.settings-help a {
+    color: var(--primary-purple);
+}
+
+.settings-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.settings-action-btn {
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.settings-action-btn.secondary {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--text-light);
+}
+
+.settings-action-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.settings-action-btn.primary {
+    background: var(--primary-purple);
+    color: #0b1020;
+}
+
+.settings-action-btn.primary:hover {
+    filter: brightness(1.08);
+}
+
+.settings-proxy-status {
+    min-height: 18px;
+    font-size: 12px;
+}
+
+.settings-proxy-status.success {
+    color: var(--color-positive);
+}
+
+.settings-proxy-status.error {
+    color: var(--color-negative);
+}
+
+.settings-proxy-status.loading {
+    color: rgba(232, 233, 243, 0.72);
+}
+
+@media (max-width: 768px) {
+    .settings-body {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .settings-action-btn {
+        width: 100%;
+    }
+}

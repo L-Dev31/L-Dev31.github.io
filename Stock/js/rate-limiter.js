@@ -38,9 +38,9 @@ class RateLimiter {
         l.limited = true;
         l.endTime = end;
         this._setWindowState(api, l.endTime);
-        try {
-            window.startRateLimitCountdown?.(Math.ceil(ms / 1000)) || this._emit('rateLimitStart', { apiName: api, seconds: Math.ceil(ms / 1000) });
-        } catch (e) {}
+        // Un seul canal de notification : l'event. general.js écoute 'rateLimitStart'
+        // et appelle startRateLimitCountdown — éviter le double appel.
+        this._emit('rateLimitStart', { apiName: api, seconds: Math.ceil(ms / 1000) });
         this._reset(api);
     }
 
@@ -51,7 +51,7 @@ class RateLimiter {
         l.endTime = 0;
         if (l.timeout) { clearTimeout(l.timeout); l.timeout = null; }
         this._setWindowState(null, 0);
-        try { window.stopRateLimitCountdown?.() || this._emit('rateLimitEnd', { apiName: api }); } catch (e) {}
+        this._emit('rateLimitEnd', { apiName: api });
         l.queue.splice(0).forEach(({ reject, error }) => reject(error));
     }
 

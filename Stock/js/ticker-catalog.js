@@ -51,10 +51,10 @@ async function loadCatalog() {
             entries.forEach(entry => {
                 const symbol = normalize(entry.symbol);
                 const ticker = normalize(entry.ticker);
-                const yahoo = normalize(entry.api_mapping?.yahoo);
+                const yahoo = normalize(entry.ticker);
                 if (symbol) bySymbol.set(symbol, entry);
                 if (ticker) byTicker.set(ticker, entry);
-                if (yahoo) byYahoo.set(yahoo, entry);
+                if (yahoo && yahoo !== ticker) byYahoo.set(yahoo, entry);
                 if (entry.type === 'crypto' && symbol) cryptoSymbols.add(symbol);
             });
 
@@ -156,7 +156,7 @@ export async function resolveTickerDetails(symbol, fallback = {}, opts = {}) {
     const isCrypto = market === 'crypto' || quoteType === 'CRYPTOCURRENCY';
     const type = record?.type || fallback.type || (isCrypto ? 'crypto' : 'equity');
     const isin = record?.isin || fallback.isin || '';
-    const api_mapping = record?.api_mapping || fallback.api_mapping || { yahoo: ticker };
+
     const iconSymbol = resolveIconSymbol(record, upper, catalog.cryptoSymbols) || fallback.iconSymbol || null;
 
     return {
@@ -168,7 +168,6 @@ export async function resolveTickerDetails(symbol, fallback = {}, opts = {}) {
         country,
         market,
         isin,
-        api_mapping,
         iconSymbol,
         jsonSymbol: record?.symbol || null,
         record,

@@ -1,56 +1,97 @@
-// PROXY CONFIG
-const PROXY_STORAGE_KEY = 'nemeris_proxy_url';
-const DEFAULT_WORKER_URL = 'https://nemeris.leotoskuepro.workers.dev';
+// ============================================================================
+// proxy-fetch.js — passerelle unique vers le Cloudflare Worker (CORS bypass).
+//
+// Une seule fonction publique de fetch : proxyFetch(targetUrl, opts).
+// Retourne TOUJOURS un objet enveloppé :
+//   - succès :  { data }
+//   - échec  :  { error: true, errorCode, throttled? }
+// Ne throw que AbortError (laisse l'appelant gérer l'abort).
+//
+// Détection panne worker : 3 échecs consécutifs "côté worker" (réseau, 403, 5xx)
+// émettent l'event `workerFailure`. 401/404/422 = Yahoo refuse, pas une panne.
+// ============================================================================
 
-function getProxyBaseUrl() {
-    try {
-        const saved = localStorage.getItem(PROXY_STORAGE_KEY)?.trim();
-        if (saved) return saved;
-    } catch (e) {
-        // localStorage may be unavailable in some contexts; fallback to default.
+import { getUserSettings, saveUserSettings } from './state.js';
+
+export const DEFAULT_WORKER_URL = 'https://nemeris.leotoskuepro.workers.dev';
+const WORKER_FAIL_THRESHOLD = 3;
+
+let workerFails = 0;
+let workerDown = false;
+
+const emit = (name, detail) => {
+    try { window.dispatchEvent(new CustomEvent(name, { detail })); } catch { /* ignore */ }
+};
+
+function onWorkerFailure(reason) {
+    workerFails++;
+    if (!workerDown && workerFails >= WORKER_FAIL_THRESHOLD) {
+        workerDown = true;
+        emit('workerFailure', { reason });
     }
-    return DEFAULT_WORKER_URL;
 }
 
-function buildProxiedUrl(targetUrl) {
-    const baseUrl = getProxyBaseUrl();
-
-    if (!baseUrl) throw new Error('PROXY_NOT_CONFIGURED');
-
-    // Support advanced worker patterns like: https://worker.dev/?target={url}
-    if (baseUrl.includes('{url}')) {
-        return baseUrl.replace('{url}', encodeURIComponent(targetUrl));
-    }
-
-    const separator = baseUrl.includes('?') ? '&' : '?';
-    return `${baseUrl}${separator}url=${encodeURIComponent(targetUrl)}`;
+function onWorkerOk() {
+    if (workerFails === 0 && !workerDown) return;
+    workerFails = 0;
+    if (workerDown) { workerDown = false; emit('workerRecovered', {}); }
 }
 
-// FETCH
-export async function proxyFetch(targetUrl, opts = {}) {
-    const { signal, fetchOptions = {}, expect = 'json' } = opts;
-
-    const proxied = buildProxiedUrl(targetUrl);
-    const mergedOptions = { ...fetchOptions, cache: 'no-store' };
-    if (signal) mergedOptions.signal = signal;
-
-    const r = await fetch(proxied, mergedOptions);
-
-    if (r.status === 429) throw new Error('HTTP_429');
-    if (r.status === 403) throw new Error('HTTP_403');
-    if (!r.ok) throw new Error(`HTTP_${r.status}`);
-
-    const text = await r.text();
-    return expect === 'text' ? text : JSON.parse(text);
+export function getProxyBaseUrl() {
+    return getUserSettings().proxyUrl || DEFAULT_WORKER_URL;
 }
 
-export async function proxyFetchSafe(targetUrl, signal) {
+export function setProxyBaseUrl(url) {
     try {
-        return await proxyFetch(targetUrl, { signal, expect: 'json' });
+        saveUserSettings({ proxyUrl: url?.trim() || '' });
+    } catch { /* ignore */ }
+    workerFails = 0;
+    if (workerDown) { workerDown = false; emit('workerRecovered', {}); }
+}
+
+function wrap(targetUrl, base) {
+    if (base.includes('{url}')) return base.replace('{url}', encodeURIComponent(targetUrl));
+    return `${base}${base.includes('?') ? '&' : '?'}url=${encodeURIComponent(targetUrl)}`;
+}
+
+export async function proxyFetch(targetUrl, { signal, expect = 'json' } = {}) {
+    let r;
+    try {
+        r = await fetch(wrap(targetUrl, getProxyBaseUrl()), { signal, cache: 'no-store' });
     } catch (e) {
         if (e.name === 'AbortError') throw e;
-        const match = e.message?.match(/HTTP_(\d+)/);
-        const code = match ? parseInt(match[1]) : 500;
-        return { error: true, errorCode: code || 'FETCH_FAILED', throttled: code === 429, message: e.message };
+        onWorkerFailure('network');
+        return { error: true, errorCode: 0, message: e.message };
     }
+
+    const s = r.status;
+
+    // 429 = throttled (Yahoo). 401/404/422 = Yahoo refuse (crumb/ticker mort/param). Worker fonctionne.
+    if (s === 429) return { error: true, errorCode: 429, throttled: true };
+    if (s === 401 || s === 404 || s === 422) return { error: true, errorCode: s };
+
+    // 403/5xx/autres non-OK = probable panne worker.
+    if (!r.ok) {
+        onWorkerFailure(`HTTP_${s}`);
+        return { error: true, errorCode: s };
+    }
+
+    onWorkerOk();
+    try {
+        const text = await r.text();
+        return { data: expect === 'text' ? text : JSON.parse(text) };
+    } catch (e) {
+        return { error: true, errorCode: 'PARSE_ERROR', message: e.message };
+    }
+}
+
+// Test de santé worker — utilise v8/finance/chart (endpoint public, pas de crumb requis).
+export async function pingProxy(url) {
+    try {
+        const base = (url || getProxyBaseUrl()).trim();
+        if (!base) return false;
+        const target = 'https://query2.finance.yahoo.com/v8/finance/chart/AAPL?range=1d&interval=1d';
+        const r = await fetch(wrap(target, base), { cache: 'no-store' });
+        return r.ok;
+    } catch { return false; }
 }

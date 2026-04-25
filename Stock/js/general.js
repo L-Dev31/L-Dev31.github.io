@@ -1,10 +1,11 @@
 import { fetchFromYahoo } from './yahoo-finance.js'
 import rateLimiter from './rate-limiter.js'
-import { setPositions as setNewsPositions, setupNewsSearch, startCardNewsAutoRefresh, stopCardNewsAutoRefresh, openNewsOverlay, closeNewsOverlay, openNewsPage, closeNewsPage, fetchCardNews } from './news.js'
+import { getProxyBaseUrl, setProxyBaseUrl, pingProxy, DEFAULT_WORKER_URL } from './proxy-fetch.js'
+import { setPositions as setNewsPositions, setupNewsSearch, startCardNewsAutoRefresh, stopCardNewsAutoRefresh, openNewsPage, closeNewsPage, fetchCardNews } from './news.js'
 import './terminal.js'
 
 import { DEAD_ERROR_CODES, periodToDays } from './constants.js'
-import { loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, mainFetchController, setMainFetchController, initialFetchController, fastPollTimer, setFastPollTimer, rateLimitCountdownTimer, setRateLimitCountdownTimer } from './state.js'
+import { loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, mainFetchController, setMainFetchController, fastPollTimer, setFastPollTimer, rateLimitCountdownTimer, setRateLimitCountdownTimer, getUserSettings, saveUserSettings } from './state.js'
 import { updatePortfolioSummary, loadStocks } from './portfolio.js'
 import { updateUI, clearPeriodDisplay, setApiStatus, updateApiCountdown, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from './ui.js'
 
@@ -28,15 +29,174 @@ function selectApiFetch() {
     return { fetchFunc: fetchFromYahoo, apiName: 'yahoo' };
 }
 
-function startFastPolling() {
-    if (fastPollTimer) return
-    setFastPollTimer(setInterval(() => fetchActiveSymbol(false), 10000));
+const DEFAULT_PROFILE_NAME = 'Nemeris User';
+const DEFAULT_PROFILE_PFP = 'img/icon/favicon.png';
+
+function setSettingsStatus(text = '', level = '') {
+    const status = document.getElementById('settings-proxy-status');
+    if (!status) return;
+    status.textContent = text;
+    status.className = 'settings-proxy-status';
+    if (level) status.classList.add(level);
 }
 
-function stopFastPolling() {
-    if (!fastPollTimer) return
-    clearInterval(fastPollTimer)
-    setFastPollTimer(null)
+function applySettingsToUi(settings = getUserSettings()) {
+    const profileName = document.getElementById('profile-name');
+    const profilePfp = document.getElementById('profile-pfp');
+    const name = (settings.name || '').trim() || DEFAULT_PROFILE_NAME;
+    const pfp = (settings.pfp || '').trim() || DEFAULT_PROFILE_PFP;
+
+    if (profileName) profileName.textContent = name;
+    if (profilePfp) {
+        profilePfp.src = pfp;
+        profilePfp.alt = name;
+        profilePfp.onerror = () => {
+            profilePfp.onerror = null;
+            profilePfp.src = DEFAULT_PROFILE_PFP;
+        };
+    }
+}
+
+function fillSettingsForm(settings = getUserSettings()) {
+    const nameInput = document.getElementById('settings-name');
+    const pfpInput = document.getElementById('settings-pfp');
+    const currencyInput = document.getElementById('settings-currency');
+    const proxyInput = document.getElementById('settings-proxy-url');
+
+    if (nameInput) nameInput.value = settings.name || '';
+    if (pfpInput) pfpInput.value = settings.pfp || '';
+    if (currencyInput) {
+        const currency = settings.currency || '€';
+        currencyInput.value = ['€', '$', '£'].includes(currency) ? currency : '€';
+    }
+    if (proxyInput) proxyInput.value = settings.proxyUrl || DEFAULT_WORKER_URL;
+}
+
+function rebuildTransactionHistoryRows() {
+    const rowTemplate = document.getElementById('transaction-row-template');
+    const currency = getUserSettings().currency || '€';
+
+    Object.values(positions).forEach((pos) => {
+        const card = document.getElementById(`card-${pos.symbol}`);
+        const tbody = card?.querySelector('.transaction-history-body');
+        if (!tbody) return;
+
+        const transactions = [];
+        (pos.purchases || []).forEach((p) => transactions.push({ date: p.date, amount: p.amount, shares: p.shares, type: 'Buy' }));
+        ((pos.raw && pos.raw.sales) || []).forEach((s) => transactions.push({ date: s.date, amount: s.amount, shares: s.shares, type: 'Sell' }));
+        if (!transactions.length) return;
+
+        transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        tbody.innerHTML = '';
+
+        transactions.forEach((t) => {
+            const row = rowTemplate ? rowTemplate.content.firstElementChild.cloneNode(true) : document.createElement('tr');
+            row.classList.add(t.type === 'Buy' ? 'transaction-buy' : 'transaction-sell');
+            const dateEl = row.querySelector('.trans-date');
+            const typeEl = row.querySelector('.trans-type');
+            const amountEl = row.querySelector('.trans-amount');
+            const sharesEl = row.querySelector('.trans-shares');
+            const priceEl = row.querySelector('.trans-price');
+
+            if (dateEl) dateEl.textContent = new Date(t.date).toLocaleDateString('en-US');
+            if (typeEl) typeEl.textContent = t.type;
+            if (amountEl) amountEl.textContent = `${Math.abs(t.amount || 0).toFixed(2)} ${currency}`;
+            if (sharesEl) sharesEl.textContent = t.shares || 0;
+            if (priceEl) {
+                const shares = Number(t.shares || 0);
+                const unit = shares > 0 ? Math.abs(t.amount || 0) / shares : 0;
+                priceEl.textContent = `${unit.toFixed(2)} ${currency}`;
+            }
+
+            tbody.appendChild(row);
+        });
+    });
+}
+
+function refreshUiAfterSettingsSave() {
+    updatePortfolioSummary();
+
+    const activeSymbol = getActiveSymbol();
+    if (activeSymbol && positions[activeSymbol]?.lastData) {
+        updateUI(activeSymbol, positions[activeSymbol].lastData);
+    }
+
+    rebuildTransactionHistoryRows();
+
+    const explorerCard = document.getElementById('card-explorer');
+    if (explorerCard?.classList.contains('active')) {
+        try { window.explorerModule?.loadData?.(); } catch (e) { /* ignore */ }
+    }
+}
+
+function openSettingsCard() {
+    const card = document.getElementById('card-settings');
+    if (!card) return;
+
+    document.querySelectorAll('.card').forEach((c) => {
+        c.classList.remove('active');
+        c.setAttribute('aria-hidden', 'true');
+    });
+    document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+    try { document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active')); } catch (e) {}
+
+    card.classList.add('active');
+    card.setAttribute('aria-hidden', 'false');
+    document.getElementById('open-settings-btn')?.classList.add('active');
+
+    fillSettingsForm();
+    setSettingsStatus('');
+}
+
+
+
+async function saveSettingsFromForm() {
+    const current = getUserSettings();
+    const nameInput = document.getElementById('settings-name');
+    const pfpInput = document.getElementById('settings-pfp');
+    const currencyInput = document.getElementById('settings-currency');
+    const proxyInput = document.getElementById('settings-proxy-url');
+
+    const name = (nameInput?.value || '').trim() || DEFAULT_PROFILE_NAME;
+    const pfp = (pfpInput?.value || '').trim() || DEFAULT_PROFILE_PFP;
+    const currency = ['€', '$', '£'].includes(currencyInput?.value) ? currencyInput.value : '€';
+    const nextProxy = (proxyInput?.value || '').trim() || DEFAULT_WORKER_URL;
+
+    let proxyUrl = current.proxyUrl || DEFAULT_WORKER_URL;
+    if (nextProxy !== proxyUrl) {
+        setSettingsStatus('Validating proxy...', 'loading');
+        const ok = await pingProxy(nextProxy);
+        if (ok) {
+            proxyUrl = nextProxy;
+            setProxyBaseUrl(proxyUrl);
+            setSettingsStatus('Settings saved.', 'success');
+        } else {
+            setSettingsStatus('Invalid proxy, previous URL kept.', 'error');
+        }
+    } else {
+        setSettingsStatus('Settings saved.', 'success');
+    }
+
+    const settings = { name, pfp, currency, proxyUrl };
+    saveUserSettings(settings);
+    applySettingsToUi(settings);
+    fillSettingsForm(settings);
+    refreshUiAfterSettingsSave();
+}
+
+function startFastPolling() {
+    if (fastPollTimer) return;
+    setFastPollTimer(setInterval(() => {
+        // Pause quand l'onglet n'est pas visible — économise quota worker + batterie.
+        if (document.hidden) return;
+        fetchActiveSymbol(false);
+    }, 10000));
+}
+
+// True si un fetch est actuellement en vol. mainFetchController est remis à null
+// dans le `finally` de fetchActiveSymbol quand le fetch courant termine normalement.
+function isFetchInFlight() {
+    return mainFetchController !== null && !mainFetchController.signal.aborted;
 }
 
 function startRateLimitCountdown(seconds) {
@@ -86,74 +246,85 @@ function startGlobalRateLimitCountdown() {
 
 const stopGlobalRateLimitCountdown = stopRateLimitCountdown;
 
+function setPeriodButtonsFetching(symbol, fetching) {
+    const group = document.getElementById(`periods-${symbol}`);
+    if (!group) return;
+    group.classList.toggle('fetching', !!fetching);
+}
+
 async function fetchActiveSymbol(force) {
-    const symbol = getActiveSymbol()
-    if (!symbol || !positions[symbol]) return
-    if (positions[symbol].isFetching) return
+    const symbol = getActiveSymbol();
+    if (!symbol || !positions[symbol]) return;
 
-    if (mainFetchController) mainFetchController.abort()
-    setMainFetchController(new AbortController());
-    const signal = mainFetchController.signal
+    // Fast-poll non-forcé : on n'interrompt pas un fetch utilisateur en vol.
+    if (!force && isFetchInFlight()) return;
 
-    positions[symbol].isFetching=true
-    setApiStatus(symbol, 'fetching', { api: selectedApi, loadingFallback: true })
+    if (mainFetchController) mainFetchController.abort();
+    const controller = new AbortController();
+    setMainFetchController(controller);
+    const signal = controller.signal;
 
+    setPeriodButtonsFetching(symbol, true);
+    setApiStatus(symbol, 'fetching', { api: selectedApi, loadingFallback: true });
+
+    let d;
     try {
-        const p = positions[symbol].currentPeriod||'1D'
-        const name = positions[symbol].name||null
-        
-        let { fetchFunc, apiName } = selectApiFetch()
-        
+        const period = positions[symbol].currentPeriod || '1D';
+        const name = positions[symbol].name || null;
+        const { fetchFunc, apiName } = selectApiFetch();
         const config = await loadApiConfig();
         const apiConfig = config.apis[apiName];
-        
+
         if (!apiConfig || !apiConfig.enabled) {
-            positions[symbol].isFetching=false
-            return { source: apiName, error: true, errorCode: 503, errorMessage: "API désactivée" };
+            setApiStatus(symbol, 'noinfo', { api: apiName, errorCode: 503 });
+            return;
         }
-        
-        let d = await fetchFunc(positions[symbol].ticker, p, symbol, positions[symbol], name, signal, apiConfig.apiKey)
-        
-        positions[symbol].lastFetch=Date.now()
-        positions[symbol].lastData=d
-        
-        if (d && d.error && DEAD_ERROR_CODES.includes(d.errorCode)) {
-            markTabAsSuspended(symbol);
-        } else if (d && !d.error) {
-            unmarkTabAsSuspended(symbol);
-        }
-        
-        updateUI(symbol,d)
-        lastApiBySymbol[symbol]=d.source
-        
-        if (d && d.error && d.source) {
-            setApiStatus(symbol, 'noinfo', { api: d.source, errorCode: d.errorCode });
-        } else {
-            setApiStatus(symbol, d ? 'active' : 'inactive', { api: apiName });
-        }
-        
-        updatePortfolioSummary()
-        
-        if (d && !d.error && !d.throttled) {
-            startFastPolling();
-        }
+
+        d = await fetchFunc(positions[symbol].ticker, period, symbol, positions[symbol], name, signal, apiConfig.apiKey);
+
+        // Si un fetch plus récent a pris le relais pendant qu'on attendait, on jette.
+        if (signal.aborted) return;
+
+        positions[symbol].lastFetch = Date.now();
+        positions[symbol].lastData = d;
+        if (d?.interval) positions[symbol].currentInterval = d.interval;
+
+        if (d && d.error && DEAD_ERROR_CODES.includes(d.errorCode)) markTabAsSuspended(symbol);
+        else if (d && !d.error) unmarkTabAsSuspended(symbol);
+
+        updateUI(symbol, d);
+        if (d?.source) lastApiBySymbol[symbol] = d.source;
+
+        if (d?.error && d.source) setApiStatus(symbol, 'noinfo', { api: d.source, errorCode: d.errorCode });
+        else setApiStatus(symbol, d ? 'active' : 'inactive', { api: apiName });
+
+        updatePortfolioSummary();
+
+        if (d && !d.error && !d.throttled) startFastPolling();
+
+        // News en tâche de fond — ne pas bloquer
         try {
-            const p = positions[symbol].currentPeriod || '1D';
-            const days = periodToDays(p);
-            const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
-            fetchCardNews(symbol, false, 50, days, apiToUse).catch(e=>{});
-        } catch(e) { /* ignore */ }
-    } catch(e){
+            const days = periodToDays(period);
+            const apiToUse = window.getSelectedApi?.() || window.selectedApi;
+            fetchCardNews(symbol, false, 50, days, apiToUse).catch(() => {});
+        } catch { /* ignore */ }
+    } catch (e) {
+        if (e.name === 'AbortError') return;
         setApiStatus(symbol, 'inactive', { api: selectedApi });
+    } finally {
+        // Ne cache le spinner QUE si on est toujours le fetch courant.
+        // Et dans ce cas, on libère mainFetchController pour que isFetchInFlight() soit false.
+        if (!signal.aborted) {
+            setPeriodButtonsFetching(symbol, false);
+            setMainFetchController(null);
+        }
     }
-    positions[symbol].isFetching=false
 }
 
 // Event Listeners
 document.addEventListener('click', async e=>{
     const t = e.target.closest('.tab')
     if (t) {
-        if (initialFetchController) initialFetchController.abort()
         if (mainFetchController) mainFetchController.abort()
         document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'))
         try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch(e) {}
@@ -187,57 +358,33 @@ document.addEventListener('click', e => {
     }
 });
 
-document.getElementById('cards-container')?.addEventListener('click', async e=>{
-    const b=e.target.closest('.period-btn')
-    if (!b) return
-    const s=b.dataset.symbol
-    const p=b.dataset.period
-    positions[s].currentPeriod=p
-    const g=document.getElementById(`periods-${s}`)
-    if (g) g.querySelectorAll('.period-btn').forEach(x=>x.classList.remove('active'))
-    b.classList.add('active')
-    const card = document.getElementById(`card-${s}`)
-    const periodLabel = card?.querySelector('.performance-period')
-    if (periodLabel) periodLabel.textContent = p
-    const name=positions[s].name||null
-    
-    let { fetchFunc, apiName } = selectApiFetch()
-    
-    const config = await loadApiConfig();
-    const apiConfig = config.apis[apiName];
-    
-    if (!apiConfig || !apiConfig.enabled) {
-        return { source: apiName, error: true, errorCode: 503, errorMessage: "API désactivée" };
-    }
-    
-    let d = await fetchFunc(positions[s].ticker, p, s, positions[s], name, null, apiConfig.apiKey)
-    
-    positions[s].lastFetch=Date.now()
-    positions[s].lastData=d
-    
-    if (d && d.error && DEAD_ERROR_CODES.includes(d.errorCode)) {
-        markTabAsSuspended(s);
-    } else if (d && !d.error) {
-        unmarkTabAsSuspended(s);
-    }
-    
-    updateUI(s,d)
-    setApiStatus(s, d ? 'active' : 'inactive', { api: apiName });
-    
-    updatePortfolioSummary()
-    try {
-        const apiToUse = (window.getSelectedApi && typeof window.getSelectedApi === 'function') ? window.getSelectedApi() : window.selectedApi;
-        const days = periodToDays(positions[s].currentPeriod || '1D');
-        try { fetchCardNews(s, true, 50, days, apiToUse).catch(()=>{}); } catch(e) {}
-        const cardNews = document.getElementById('card-news');
-        if (cardNews && cardNews.classList.contains('active')) {
-            const activeTab = document.querySelector('.tab.active');
-            if (activeTab && activeTab.dataset.symbol === s) {
-                try { openNewsPage(s); } catch(e) {}
-            }
+document.getElementById('cards-container')?.addEventListener('click', async e => {
+    const b = e.target.closest('.period-btn');
+    if (!b) return;
+    const s = b.dataset.symbol;
+    const p = b.dataset.period;
+    if (!positions[s]) return;
+
+    positions[s].currentPeriod = p;
+    const g = document.getElementById(`periods-${s}`);
+    if (g) g.querySelectorAll('.period-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    const card = document.getElementById(`card-${s}`);
+    const periodLabel = card?.querySelector('.performance-period');
+    if (periodLabel) periodLabel.textContent = p;
+
+    // Délègue à fetchActiveSymbol : abort de l'ancien fetch, guard isFetching, mise à jour signal/news cohérente.
+    fetchActiveSymbol(true);
+
+    // Rafraîchir la vue news si la page news est active sur ce symbole.
+    const cardNews = document.getElementById('card-news');
+    if (cardNews && cardNews.classList.contains('active')) {
+        const activeTab = document.querySelector('.tab.active');
+        if (activeTab && activeTab.dataset.symbol === s) {
+            try { openNewsPage(s); } catch (err) { /* ignore */ }
         }
-    } catch(e) { /* ignore */ }
-})
+    }
+});
 
 
 const font=document.createElement('link')
@@ -247,6 +394,10 @@ font.href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600
 document.head.appendChild(font)
 
 window.addEventListener('load', async () => {
+    const settings = getUserSettings();
+    applySettingsToUi(settings);
+    fillSettingsForm(settings);
+
     await loadStocks();
     setNewsPositions(positions);
     const active = getActiveSymbol();
@@ -280,10 +431,13 @@ window.addEventListener('load', async () => {
     } catch (e) { /* ignore */ }
 
     try {
+        // Sections collapsed par défaut si l'utilisateur n'a rien choisi.
+        const DEFAULT_COLLAPSED = new Set(['sidebar-suspended']);
         document.querySelectorAll('.sidebar-section').forEach(section => {
             const key = `sidebar:${section.id}:collapsed`;
             const val = localStorage.getItem(key);
-            if (val === '1') {
+            const shouldCollapse = val === '1' || (val === null && DEFAULT_COLLAPSED.has(section.id));
+            if (shouldCollapse) {
                 section.classList.add('collapsed');
                 const btn = section.querySelector('.section-toggle');
                 if (btn) btn.setAttribute('aria-expanded', 'false');
@@ -299,13 +453,16 @@ document.getElementById('open-terminal-btn')?.addEventListener('click', e => {
 });
 document.getElementById('open-news-feed')?.addEventListener('click', async e => {
     const a = getActiveSymbol();
-    try { openNewsPage(a); } catch (err) { openNewsOverlay(a); }
+    try { openNewsPage(a); } catch (err) { /* noop */ }
     try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch(e) {}
     try { document.getElementById('open-news-feed')?.classList.add('active'); } catch(e) {}
 });
+document.getElementById('open-settings-btn')?.addEventListener('click', () => {
+    openSettingsCard();
+});
 
-document.getElementById('close-news-overlay')?.addEventListener('click', e => {
-    closeNewsOverlay();
+document.getElementById('settings-save')?.addEventListener('click', async () => {
+    await saveSettingsFromForm();
 });
 
 document.addEventListener('keydown', (e) => {
@@ -328,14 +485,14 @@ window.fetchCardNews = fetchCardNews;
 window.fetchActiveSymbol = fetchActiveSymbol;
 window.getActiveSymbol = getActiveSymbol;
 window.openTerminalCard = openTerminalCard;
-window.openNewsOverlay = openNewsOverlay;
 window.openNewsPage = openNewsPage;
 window.closeNewsPage = closeNewsPage;
-window.closeNewsOverlay = closeNewsOverlay;
 window.terminalLogGlobal = terminalLogGlobal;
 window.positions = positions;
 window.closeTerminalCard = closeTerminalCard;
 window.openCustomSymbol = openCustomSymbol;
+window.markTabAsSuspended = markTabAsSuspended;
+window.unmarkTabAsSuspended = unmarkTabAsSuspended;
 window.getSelectedApi = () => selectedApi;
 window.setSelectedApi = (api) => { setSelectedApi(api); };
 window.selectedApi = selectedApi;
@@ -347,6 +504,39 @@ window.registerDynamicPosition = function(posData) {
     setPositions(positions);
     setNewsPositions(positions);
 };
+
+// Namespace officiel — les nouveaux modules devraient utiliser window.nemeris.* .
+// Les window.* plats au-dessus sont conservés pour rétrocompat (explorer/terminal/news).
+window.nemeris = {
+    positions,
+    fetchCardNews,
+    fetchActiveSymbol,
+    getActiveSymbol,
+    openTerminalCard,
+    closeTerminalCard,
+    openNewsPage,
+    closeNewsPage,
+    openCustomSymbol,
+    markTabAsSuspended,
+    unmarkTabAsSuspended,
+    setupNewsSearch,
+    getSelectedApi: () => selectedApi,
+    setSelectedApi,
+    registerDynamicPosition: window.registerDynamicPosition,
+    terminalLog: terminalLogGlobal,
+    settings: {
+        get: getUserSettings,
+        save: saveUserSettings,
+        open: openSettingsCard
+    },
+    // Proxy config
+    proxy: { getUrl: getProxyBaseUrl, setUrl: setProxyBaseUrl, ping: pingProxy, defaultUrl: DEFAULT_WORKER_URL }
+};
+
+// Refresh immédiat au retour dans l'onglet (si polling actif).
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && fastPollTimer) fetchActiveSymbol(false);
+});
 
 window.addEventListener('rateLimitStart', (e) => {
     try {

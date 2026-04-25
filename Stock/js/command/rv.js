@@ -13,7 +13,7 @@ export async function runRvCommand({ parts, out, fmtErr }) {
         const results = [];
         for (const target of targets) {
             let ticker = target;
-            if (window.positions?.[target]) ticker = window.positions[target].api_mapping?.yahoo || window.positions[target].ticker || ticker;
+            if (window.positions?.[target]) ticker = window.positions[target].ticker || ticker;
             const response = await fetchYahooFinancials(ticker, null);
             if (response && !response.error && response.financials?.financialData) {
                 const financialData = response.financials.financialData;

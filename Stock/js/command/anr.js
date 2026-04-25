@@ -40,7 +40,7 @@ export async function runAnrCommand({ parts, getTarget, out, fmtErr }) {
                 return;
             }
 
-            out('Aucune donnée ANR');
+            out('No analyst data available');
         }
     });
 }

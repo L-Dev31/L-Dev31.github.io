@@ -1,5 +1,5 @@
 import globalRateLimiter from './rate-limiter.js';
-import { proxyFetchSafe, proxyFetch } from './proxy-fetch.js';
+import { proxyFetch } from './proxy-fetch.js';
 import { cacheGet, cacheSet, ohlcKey, newsKey, TTL } from './cache.js';
 
 const BASES = ['https://query1.finance.yahoo.com', 'https://query2.finance.yahoo.com'];
@@ -46,7 +46,7 @@ const PERIOD_FALLBACKS = {
     'MAX': [{ interval: '1mo', range: 'max' }, { interval: '3mo', range: 'max' }]
 };
 
-function filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes, volumes) {
+function filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes, volumes, adjcloses) {
     if (!timestamps || !opens || !highs || !lows || !closes ||
         timestamps.length !== opens.length ||
         timestamps.length !== highs.length ||
@@ -56,14 +56,25 @@ function filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes, volume
     }
 
     const hasVolumes = Array.isArray(volumes) && volumes.length === timestamps.length;
-    const validData = timestamps.map((ts, index) => ({
-        timestamp: ts,
-        open: opens[index],
-        high: highs[index],
-        low: lows[index],
-        close: closes[index],
-        volume: hasVolumes ? (volumes[index] || 0) : 0
-    })).filter(item =>
+    const hasAdj = Array.isArray(adjcloses) && adjcloses.length === timestamps.length;
+
+    const validData = timestamps.map((ts, index) => {
+        const c = closes[index];
+        const adjC = hasAdj ? adjcloses[index] : c;
+        
+        // Calcule le ratio d'ajustement (split/dividende) pour corriger O, H, L
+        // afin que les bougies restent cohérentes avec le prix ajusté.
+        const ratio = (hasAdj && c && c !== 0 && adjC !== null) ? (adjC / c) : 1;
+
+        return {
+            timestamp: ts,
+            open: opens[index] !== null ? opens[index] * ratio : null,
+            high: highs[index] !== null ? highs[index] * ratio : null,
+            low: lows[index] !== null ? lows[index] * ratio : null,
+            close: adjC !== null ? adjC : c,
+            volume: hasVolumes ? (volumes[index] || 0) : 0
+        };
+    }).filter(item =>
         item.timestamp != null && !isNaN(item.timestamp) &&
         item.open != null && !isNaN(item.open) &&
         item.high != null && !isNaN(item.high) &&
@@ -81,9 +92,21 @@ function filterNullOHLCDataPoints(timestamps, opens, highs, lows, closes, volume
     };
 }
 
+// Suffixes de marché Yahoo officiels — NE PAS convertir le point en tiret.
+// Ex: .L (LSE), .PA (Euronext Paris), .DE (Xetra), etc.
+const YAHOO_MARKET_SUFFIXES = new Set([
+    'L','PA','DE','SW','AX','TO','HK','NS','BO','SZ','SS','T','KS','KQ',
+    'SA','MX','MI','AS','BR','VI','ST','HE','CO','IR','OL','LS','MC','WA',
+    'IS','TA','JO','BA','SN','F','BE','MU','DU','HM','HA','SG','CN','V',
+    'NE','TW','JK','BK','SI','NZ'
+]);
+
 function normalizeSymbol(sym) {
-    return (sym || '').toUpperCase()
-        .replace(/^([A-Z0-9]+)\.([A-Z])$/, '$1-$2')
+    const upper = (sym || '').toUpperCase();
+    return upper
+        // Ne transforme BRK.A → BRK-A que si le suffixe n'est PAS un suffixe marché
+        .replace(/^([A-Z0-9]+)\.([A-Z]{1,3})$/, (match, base, suffix) =>
+            YAHOO_MARKET_SUFFIXES.has(suffix) ? match : `${base}-${suffix}`)
         .replace(/^([A-Z0-9]+)\/P([A-Z0-9]+)$/, '$1-P$2')
         .replaceAll('/', '-');
 }
@@ -91,70 +114,123 @@ function normalizeSymbol(sym) {
 export function getYahooSymbol(stock) {
     if (!stock) return null;
     if (typeof stock === 'string') return stock;
-    return stock.api_mapping?.yahoo || stock.ticker || null;
+    return stock.ticker || null;
 }
 
+// Helper — retourne soit le JSON parsé, soit un objet d'erreur normalisé.
+// Les callers existants checkent `j.error` puis lisent `j.chart`, `j.quoteResponse`, etc.
 async function yahooFetch(targetUrl, signal) {
     const remaining = globalRateLimiter.getRemainingSeconds('yahoo');
     if (remaining > 0) {
-        return {
-            error: true,
-            errorCode: 429,
-            throttled: true,
-            retryAfter: remaining,
-            message: `YAHOO_RATE_LIMIT_ACTIVE_${remaining}s`
-        };
+        return { error: true, errorCode: 429, throttled: true, retryAfter: remaining };
     }
 
-    const j = await proxyFetchSafe(targetUrl, signal);
-    if (j.error && j.errorCode === 429) {
-        globalRateLimiter.setRateLimitForApi('yahoo', YAHOO_RATE_LIMIT_MS);
-        return {
-            ...j,
-            errorCode: 429,
-            throttled: true,
-            retryAfter: Math.ceil(YAHOO_RATE_LIMIT_MS / 1000)
-        };
+    const r = await proxyFetch(targetUrl, { signal });
+    if (r.error) {
+        if (r.errorCode === 429) {
+            globalRateLimiter.setRateLimitForApi('yahoo', YAHOO_RATE_LIMIT_MS);
+            return { ...r, throttled: true, retryAfter: Math.ceil(YAHOO_RATE_LIMIT_MS / 1000) };
+        }
+        return r;
     }
-    return j;
+    return r.data;
+}
+
+// Codes qui indiquent un refus "définitif" côté Yahoo → ne pas retenter les intervals plus larges.
+// 401 = Yahoo exige un crumb (v7/v10). 404/422 = ticker mort. NO_VALID_DATA = filtre post-parse.
+const PERMANENT_ERROR_CODES = new Set([401, 404, 422, 'NO_VALID_DATA']);
+// TTL pour les réponses d'erreur (anti-spam console au reload)
+const ERROR_TTL_MS = {
+    401: 6 * 60 * 60 * 1000,   // endpoint qui demande crumb → inutile de retaper
+    404: 6 * 60 * 60 * 1000,   // ticker probablement mort
+    422: 6 * 60 * 60 * 1000,
+    500: 2 * 60 * 1000,        // incident transitoire
+    default: 60 * 1000
+};
+
+function errorTtl(code) {
+    return ERROR_TTL_MS[code] ?? ERROR_TTL_MS.default;
+}
+
+// Nombre minimum de candles valides pour considérer un résultat "bon" (sinon on tente l'interval suivant).
+// Sur le dernier fallback, on accepte n'importe quoi.
+const MIN_VALID_CANDLES = 20;
+
+async function tryFetchChart(yahooSymbol, cfg, signal) {
+    const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?interval=${cfg.interval}&range=${cfg.range}`;
+    const j = await yahooFetch(url, signal);
+    if (j.error) return { error: true, errorCode: j.errorCode, throttled: j.throttled, retryAfter: j.retryAfter };
+
+    const res = j.chart?.result?.[0];
+    const q = res?.indicators?.quote?.[0];
+    if (!res || !q || !res.timestamp || res.timestamp.length === 0 || !q.close || q.close.length === 0) {
+        return { error: true, errorCode: res?.meta ? 'NO_DATA' : 404 };
+    }
+
+    const adj = res?.indicators?.adjclose?.[0]?.adjclose;
+    const { timestamps, opens, highs, lows, closes, volumes } = filterNullOHLCDataPoints(res.timestamp, q.open, q.high, q.low, q.close, q.volume, adj);
+    if (!timestamps.length) return { error: true, errorCode: 'NO_VALID_DATA' };
+
+    const data = {
+        source: 'yahoo', timestamps, prices: closes, opens, highs, lows, closes, volumes,
+        open: opens[0], high: Math.max(...highs), low: Math.min(...lows), price: closes[closes.length - 1],
+        interval: cfg.interval
+    };
+    data.change = data.price - data.open;
+    data.changePercent = data.open ? (data.change / data.open) * 100 : 0;
+    return data;
 }
 
 export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal) {
     const yahooSymbol = getYahooSymbol(stock) || ticker;
 
-    // CHECK PERSISTENT CACHE
+    // CHECK PERSISTENT CACHE (succès + erreurs cachées)
     const ck = ohlcKey(yahooSymbol, period);
     const cached = cacheGet(ck);
     if (cached) return cached;
 
     return globalRateLimiter.executeIfNotLimited(async () => {
         try {
-            const cfg = PERIODS[period] || PERIODS['1D'];
-            const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?interval=${cfg.interval}&range=${cfg.range}`;
-            const j = await yahooFetch(url, signal);
+            const fallbacks = PERIOD_FALLBACKS[period] || [PERIODS[period] || PERIODS['1D']];
+            let lastError = null;
+            let thinResult = null; // meilleur résultat "trop maigre" gardé en secours
 
-            if (j.error) return { source: 'yahoo', ...j };
+            for (let i = 0; i < fallbacks.length; i++) {
+                const cfg = fallbacks[i];
+                const isLastFallback = i === fallbacks.length - 1;
+                const result = await tryFetchChart(yahooSymbol, cfg, signal);
 
-            const res = j.chart?.result?.[0];
-            const q = res?.indicators?.quote?.[0];
+                if (!result.error) {
+                    // Petits caps (AL2SI, ALUNT, etc.) : 1m renvoie parfois une poignée de candles
+                    // à cause des trous de liquidité. On exige un minimum, sinon on tente l'interval plus large.
+                    if (result.timestamps.length < MIN_VALID_CANDLES && !isLastFallback) {
+                        if (!thinResult || result.timestamps.length > thinResult.timestamps.length) {
+                            thinResult = result;
+                        }
+                        continue;
+                    }
+                    cacheSet(ck, result, PERIOD_TTL_MS[period] || TTL.OHLC_INTRA);
+                    return result;
+                }
 
-            if (!res || !q || !res.timestamp || res.timestamp.length === 0 || !q.close || q.close.length === 0) {
-                return { source: 'yahoo', error: true, errorCode: res?.meta ? 'NO_DATA' : 404 };
+                lastError = result;
+                if (result.throttled) break;
+                if (PERMANENT_ERROR_CODES.has(result.errorCode)) break;
+                // Sinon (NO_DATA, 500, timeout) → essayer interval suivant
             }
 
-            const { timestamps, opens, highs, lows, closes, volumes } = filterNullOHLCDataPoints(res.timestamp, q.open, q.high, q.low, q.close, q.volume);
+            // Aucun interval n'a atteint le seuil : on renvoie le meilleur résultat "maigre" plutôt que rien.
+            if (thinResult) {
+                cacheSet(ck, thinResult, PERIOD_TTL_MS[period] || TTL.OHLC_INTRA);
+                return thinResult;
+            }
 
-            if (!timestamps.length) return { source: 'yahoo', error: true, errorCode: 'NO_VALID_DATA' };
-
-            const data = {
-                source: 'yahoo', timestamps, prices: closes, opens, highs, lows, closes, volumes,
-                open: opens[0], high: Math.max(...highs), low: Math.min(...lows), price: closes[closes.length - 1]
-            };
-            data.change = data.price - data.open;
-            data.changePercent = (data.change / data.open) * 100;
-
-            cacheSet(ck, data, PERIOD_TTL_MS[period] || TTL.OHLC_INTRA);
-            return data;
+            const errorResponse = { source: 'yahoo', error: true, ...lastError };
+            // Cache court pour éviter le spam console au reload
+            if (!lastError?.throttled) {
+                cacheSet(ck, errorResponse, errorTtl(lastError?.errorCode));
+            }
+            return errorResponse;
         } catch (e) {
             if (e.name === 'AbortError') throw e;
             return { source: 'yahoo', error: true, errorCode: 500 };
@@ -333,7 +409,9 @@ export async function fetchYahooDividends(ticker, from, to, signal) {
         const p1 = Math.floor(new Date(from || '2000-01-01').getTime() / 1000);
         const p2 = Math.floor(new Date(to || new Date().toISOString().slice(0, 10)).getTime() / 1000);
         const targetUrl = `https://query2.finance.yahoo.com/v7/finance/download/${encodeURIComponent(ticker)}?period1=${p1}&period2=${p2}&interval=1d&events=div`;
-        const text = await proxyFetch(targetUrl, { signal, expect: 'text' });
+        const r = await proxyFetch(targetUrl, { signal, expect: 'text' });
+        if (r.error || !r.data) return { source: 'yahoo', error: true, errorCode: r.errorCode || 500 };
+        const text = r.data;
         if (text.startsWith('<')) return { source: 'yahoo', error: true, errorCode: 'PROXY_HTML' };
         const items = text.trim().split('\n').slice(1).map(l => {
             const [date, div] = l.split(',');
@@ -431,14 +509,19 @@ export async function fetchYahooPeriodChanges(symbols, range, interval, onProgre
         const resp = payload?.response?.[0];
         const quote = resp?.indicators?.quote?.[0];
         const closes = quote?.close;
+        const adjCloses = resp?.indicators?.adjclose?.[0]?.adjclose;
         if (!closes || closes.length < 2) return null;
 
         const cleanData = { prices: [], highs: [], lows: [], volumes: [] };
         for (let k = 0; k < closes.length; k++) {
             if (closes[k] !== null) {
-                cleanData.prices.push(closes[k]);
-                cleanData.highs.push(quote.high?.[k] || closes[k]);
-                cleanData.lows.push(quote.low?.[k] || closes[k]);
+                const c = closes[k];
+                const adjC = (adjCloses && adjCloses[k] !== null) ? adjCloses[k] : c;
+                const ratio = (adjCloses && c && c !== 0 && adjCloses[k] !== null) ? (adjC / c) : 1;
+
+                cleanData.prices.push(adjC);
+                cleanData.highs.push((quote.high?.[k] !== null ? quote.high[k] : c) * ratio);
+                cleanData.lows.push((quote.low?.[k] !== null ? quote.low[k] : c) * ratio);
                 cleanData.volumes.push(quote.volume?.[k] || 0);
             }
         }
@@ -530,8 +613,11 @@ export async function fetchYahooAnalysis(ticker, signal) {
 
         const snap = await fetchYahooChartSnapshot(ticker, '3mo', '1d', signal);
         if (!snap?.meta) return { source: 'yahoo', error: true, errorCode: j.errorCode || 500 };
-        const closes = snap?.indicators?.quote?.[0]?.close || [];
-        const valid = closes.filter(v => v != null);
+        const q = snap?.indicators?.quote?.[0];
+        const closes = q?.close || [];
+        const adjs = snap?.indicators?.adjclose?.[0]?.adjclose || [];
+        
+        const valid = closes.map((c, i) => (adjs[i] !== null && adjs[i] !== undefined) ? adjs[i] : c).filter(v => v != null);
         const first = valid[0] || 0;
         const last = valid[valid.length - 1] || 0;
         const perf = first ? ((last - first) / first) * 100 : 0;

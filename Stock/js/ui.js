@@ -1,4 +1,4 @@
-import { positions, selectedApi, loadApiConfig, lastApiBySymbol } from './state.js';
+import { positions, selectedApi, loadApiConfig, lastApiBySymbol, getCurrency } from './state.js';
 import { hasTransactions, typeLabel, typeIcon } from './constants.js';
 import { calculateStockValues } from './portfolio.js';
 import { fetchActiveSymbol } from './general.js';
@@ -48,14 +48,25 @@ export function createTab(stock, type) {
     tabNameEl.textContent = baseName;
     
     const calculated = calculateStockValues(stock);
-    tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `(Actions possédées : ${calculated.shares})` : '';
+    tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `(Shares owned: ${calculated.shares})` : '';
     const isPortfolio = calculated.shares > 0 || hasTransactions(stock);
+
+    // Si l'on a mémorisé le ticker comme suspendu lors d'une session précédente,
+    // et que ce n'est pas un ticker du portefeuille (on garde ceux-là visibles), on le route direct dans Suspendus.
+    // Un fetch réussi ultérieur (unmarkTabAsSuspended) le sortira automatiquement.
+    if (!isPortfolio && isSymbolSuspendedInStorage(stock.symbol)) {
+        tab.classList.add('suspended');
+        const section = ensureSection('suspended-tabs', type);
+        (section || document.getElementById(`general-section-${type}`))?.appendChild(tab);
+        return;
+    }
+
     const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
     document.getElementById(sectionId)?.appendChild(tab);
 }
 
 export function createCard(stock) {
-    const t = document.getElementById('card-template')
+    const t = document.getElementById('view-template')
     if (!t) return
     const card = t.content.firstElementChild.cloneNode(true)
     card.id = `card-${stock.symbol}`
@@ -144,7 +155,7 @@ export function createCard(stock) {
     const upd = card.querySelector('.update-center')
     if (upd) {
         upd.id = `update-center-${stock.symbol}`
-        upd.textContent = 'Dernière mise à jour : --'
+        upd.textContent = 'Last updated: --'
     }
 
     const courseTitle = card.querySelector('.course-title');
@@ -185,15 +196,15 @@ export function createCard(stock) {
 
     if (calculated.shares > 0) {
         const displayInvestment = typeof calculated.costBasis === 'number' ? calculated.costBasis : Math.abs(calculated.investment || 0);
-        tds[1].textContent = `${displayInvestment.toFixed(2)} €`;
+        tds[1].textContent = `${displayInvestment.toFixed(2)} ${getCurrency()}`;
         tds[2].textContent = '--';
         tds[3].textContent = '--';
         const displayInvestPerShare = calculated.shares ? (displayInvestment / calculated.shares) : 0;
-        tds[5].textContent = calculated.shares ? `${displayInvestPerShare.toFixed(2)} €` : '--';
+        tds[5].textContent = calculated.shares ? `${displayInvestPerShare.toFixed(2)} ${getCurrency()}` : '--';
         tds[6].textContent = '--';
         tds[7].textContent = '--';
     } else {
-        tds[1].textContent = '0.00 €';
+        tds[1].textContent = `0.00 ${getCurrency()}`;
         tds[2].textContent = '--';
         tds[3].textContent = '--';
         tds[5].textContent = '--';
@@ -266,27 +277,27 @@ export function createCard(stock) {
         if (tbody && hasTransactionsLocal) {
             let transactions = [];
             if (stock.purchases) {
-                stock.purchases.forEach(p => transactions.push({date: p.date, amount: p.amount, shares: p.shares, type: 'Achat'}));
+                stock.purchases.forEach(p => transactions.push({date: p.date, amount: p.amount, shares: p.shares, type: 'Buy'}));
             }
             if (stock.sales) {
-                stock.sales.forEach(s => transactions.push({date: s.date, amount: s.amount, shares: s.shares, type: 'Vente'}));
+                stock.sales.forEach(s => transactions.push({date: s.date, amount: s.amount, shares: s.shares, type: 'Sell'}));
             }
             transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
             const rowTpl = document.getElementById('transaction-row-template');
             tbody.innerHTML = '';
             transactions.forEach(t => {
                 const row = rowTpl ? rowTpl.content.firstElementChild.cloneNode(true) : document.createElement('tr');
-                row.classList.add(t.type === 'Achat' ? 'transaction-buy' : 'transaction-sell');
+                row.classList.add(t.type === 'Buy' ? 'transaction-buy' : 'transaction-sell');
                 const dateEl = row.querySelector('.trans-date');
                 const typeEl = row.querySelector('.trans-type');
                 const amountEl = row.querySelector('.trans-amount');
                 const sharesEl = row.querySelector('.trans-shares');
                 const priceEl = row.querySelector('.trans-price');
-                if (dateEl) dateEl.textContent = new Date(t.date).toLocaleDateString('fr-FR');
+                if (dateEl) dateEl.textContent = new Date(t.date).toLocaleDateString('en-US');
                 if (typeEl) typeEl.textContent = t.type;
-                if (amountEl) amountEl.textContent = Math.abs(t.amount).toFixed(2) + ' €';
+                if (amountEl) amountEl.textContent = Math.abs(t.amount).toFixed(2) + ' ' + getCurrency();
                 if (sharesEl) sharesEl.textContent = t.shares;
-                if (priceEl) priceEl.textContent = (Math.abs(t.amount) / t.shares).toFixed(2) + ' €';
+                if (priceEl) priceEl.textContent = (Math.abs(t.amount) / t.shares).toFixed(2) + ' ' + getCurrency();
                 tbody.appendChild(row);
             });
         }
@@ -299,31 +310,18 @@ export function createCard(stock) {
     
     setupNewsSearch(stock.symbol);
 }
-
 export function updateUI(symbol, data) {
     if (!data || data.error) {
-        if (data && data.throttled) {
-            setApiStatus(symbol, 'fetching', { api: data?.source, loadingFallback: true });
-            return;
-        }
-        if (data && data.errorCode === 429 && data.throttled) {
-            setApiStatus(symbol, 'fetching', { api: data?.source, loadingFallback: true, errorCode: 429 });
-            const el = document.getElementById('api-status-indicator');
-            if (el) {
-                const text = el.querySelector('[data-role="status-text"]');
-                if (text) text.textContent = 'Limite atteinte, veuillez patienter…';
-            }
-            return;
-        }
-        
         clearPeriodDisplay(symbol);
-        setApiStatus(symbol, 'noinfo', { api: data?.source, errorCode: data?.errorCode });
         return;
     }
 
     try {
         const cardRoot = document.getElementById(`card-${symbol}`);
         if (cardRoot) {
+            const chartContainer = cardRoot.querySelector('.chart-container');
+            if (chartContainer) chartContainer.classList.remove('empty');
+
             const detailsTitle = cardRoot.querySelector('.details-title');
             if (detailsTitle) {
                 detailsTitle.classList.remove('hidden-by-bot');
@@ -358,10 +356,10 @@ export function updateUI(symbol, data) {
     const lowEl = document.getElementById(`low-${symbol}`);
     const closeEl = document.getElementById(`close-${symbol}`);
 
-    if (openEl) openEl.textContent = data.open ? data.open.toFixed(2) + ' €' : '--';
-    if (highEl) highEl.textContent = data.high ? data.high.toFixed(2) + ' €' : '--';
-    if (lowEl) lowEl.textContent = data.low ? data.low.toFixed(2) + ' €' : '--';
-    if (closeEl) closeEl.textContent = data.price ? data.price.toFixed(2) + ' €' : '--';
+    if (openEl) openEl.textContent = data.open ? data.open.toFixed(2) + ' ' + getCurrency() : '--';
+    if (highEl) highEl.textContent = data.high ? data.high.toFixed(2) + ' ' + getCurrency() : '--';
+    if (lowEl) lowEl.textContent = data.low ? data.low.toFixed(2) + ' ' + getCurrency() : '--';
+    if (closeEl) closeEl.textContent = data.price ? data.price.toFixed(2) + ' ' + getCurrency() : '--';
 
     const perfEl = document.getElementById(`perf-${symbol}`);
     if (perfEl && data.changePercent !== undefined) {
@@ -393,34 +391,34 @@ export function updateUI(symbol, data) {
         }
 
         if (isOutdated) {
-            if (valueEl) { valueEl.textContent = 'Données obsolètes'; valueEl.className = 'outdated'; }
-            if (valuePerEl) { valuePerEl.textContent = 'Données obsolètes'; valuePerEl.className = 'outdated'; }
-            if (profitEl) { profitEl.textContent = 'Données obsolètes'; profitEl.className = 'outdated'; }
-            if (profitPerEl) { profitPerEl.textContent = 'Données obsolètes'; profitPerEl.className = 'outdated'; }
+            if (valueEl) { valueEl.textContent = 'Data unavailable'; valueEl.className = 'outdated'; }
+            if (valuePerEl) { valuePerEl.textContent = 'Data unavailable'; valuePerEl.className = 'outdated'; }
+            if (profitEl) { profitEl.textContent = 'Data unavailable'; profitEl.className = 'outdated'; }
+            if (profitPerEl) { profitPerEl.textContent = 'Data unavailable'; profitPerEl.className = 'outdated'; }
         } else {
             const totalValue = currentPrice * shares;
             const costBasis = positions[symbol].costBasis || 0;
 
             if (valueEl) {
-                valueEl.textContent = totalValue.toFixed(2) + ' €';
+                valueEl.textContent = totalValue.toFixed(2) + ' ' + getCurrency();
                 valueEl.className = totalValue >= costBasis ? 'positive' : 'negative';
             }
 
             if (valuePerEl) {
-                valuePerEl.textContent = currentPrice.toFixed(2) + ' €';
+                valuePerEl.textContent = currentPrice.toFixed(2) + ' ' + getCurrency();
                 const perShareCost = shares ? costBasis / shares : 0;
                 valuePerEl.className = currentPrice >= perShareCost ? 'positive' : 'negative';
             }
 
             const totalProfit = totalValue - costBasis;
             if (profitEl) {
-                profitEl.textContent = `${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} €`;
+                profitEl.textContent = `${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} ${getCurrency()}`;
                 profitEl.className = totalProfit >= 0 ? 'positive' : 'negative';
             }
 
             const profitPerShare = currentPrice - (shares ? (costBasis / shares) : 0);
             if (profitPerEl) {
-                profitPerEl.textContent = `${profitPerShare >= 0 ? '+' : ''}${profitPerShare.toFixed(2)} €`;
+                profitPerEl.textContent = `${profitPerShare >= 0 ? '+' : ''}${profitPerShare.toFixed(2)} ${getCurrency()}`;
                 profitPerEl.className = profitPerShare >= 0 ? 'positive' : 'negative';
             }
         }
@@ -432,11 +430,11 @@ export function updateUI(symbol, data) {
         if (data.timestamps && data.timestamps.length > 0) {
             const latestTimestamp = Math.max(...data.timestamps);
             const dataDate = new Date(latestTimestamp * 1000);
-            const dateStr = dataDate.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const timeStr = dataDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-            timeString = `${dateStr} à ${timeStr}`;
+            const dateStr = dataDate.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const timeStr = dataDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            timeString = `${dateStr} a ${timeStr}`;
         }
-        updateEl.textContent = `Dernière mise à jour : ${timeString}`;
+        updateEl.textContent = `Last updated: ${timeString}`;
     }
 
     if (data && data.name && positions[symbol] && positions[symbol].name === symbol) {
@@ -448,14 +446,14 @@ export function updateUI(symbol, data) {
         const investPerEl = document.getElementById(`invest-per-${symbol}`);
         if (investEl) {
             const inv = positions[symbol].costBasis || Math.abs(positions[symbol].investment || 0);
-            investEl.textContent = `${inv.toFixed(2)} €`;
+            investEl.textContent = `${inv.toFixed(2)} ${getCurrency()}`;
             investEl.classList.remove('positive');
             investEl.classList.remove('negative');
         }
         if (investPerEl) {
             const costBasis = positions[symbol].costBasis || Math.abs(positions[symbol].investment || 0);
             const invPer = (positions[symbol].shares && positions[symbol].shares > 0) ? (costBasis / positions[symbol].shares) : 0;
-            investPerEl.textContent = positions[symbol].shares ? `${invPer.toFixed(2)} €` : '--';
+            investPerEl.textContent = positions[symbol].shares ? `${invPer.toFixed(2)} ${getCurrency()}` : '--';
         }
     } catch(e) { /* ignore if cells missing */ }
     
@@ -495,7 +493,7 @@ function resetPricePerformanceAndUpdate(symbol) {
     }
 
     const updateEl = document.getElementById(`update-center-${symbol}`);
-    if (updateEl) updateEl.textContent = 'Dernière mise à jour : --';
+    if (updateEl) updateEl.textContent = 'Last updated: --';
 }
 
 function resetSignalDisplay(symbol, description) {
@@ -505,7 +503,7 @@ function resetSignalDisplay(symbol, description) {
 
     if (signalCursor) signalCursor.style.left = '50%';
     if (signalValue) {
-        signalValue.textContent = 'Neutre';
+        signalValue.textContent = 'Neutral';
         signalValue.style.color = '#a8a2ff';
     }
     if (signalDescription) signalDescription.textContent = description;
@@ -527,17 +525,24 @@ export function resetSymbolDisplay(symbol) {
     if (profitEl) profitEl.textContent = '--'
     if (profitPerEl) profitPerEl.textContent = '--'
 
-    resetSignalDisplay(symbol, 'Analyse technique en cours...');
+    resetSignalDisplay(symbol, 'Running technical analysis...');
 }
 
 export function clearPeriodDisplay(symbol) {
     if (!positions[symbol]) return;
     clearChartData(symbol);
     resetPricePerformanceAndUpdate(symbol);
-    resetSignalDisplay(symbol, 'Pas de données pour cette période');
+    resetSignalDisplay(symbol, 'No data for this period');
 
     const cardRoot = document.querySelector(`#card-${symbol}`);
     if (cardRoot) {
+        const chartContainer = cardRoot.querySelector('.chart-container');
+        if (chartContainer) {
+            chartContainer.classList.add('empty');
+            const emptyText = chartContainer.querySelector('.chart-empty-text');
+            if (emptyText) emptyText.textContent = 'No data for this period';
+        }
+
         const labelsEl = cardRoot.querySelector('.signal-labels');
         const barEl = cardRoot.querySelector('.signal-bar');
         const signalExplanation = cardRoot.querySelector('.signal-explanation');
@@ -581,7 +586,7 @@ export function updateCardTitle(symbol) {
     if (!dateStr) return;
     const titleEl = document.getElementById(`course-title-${symbol}`);
     if (!titleEl) return;
-    titleEl.textContent = `Cours de l'action (${dateStr})`;
+    titleEl.textContent = `Stock Price (${dateStr})`;
 }
 
 export function updateSectionDates(symbol) {
@@ -590,28 +595,28 @@ export function updateSectionDates(symbol) {
     if (courseTitle) {
         const courseDate = courseTitle.nextElementSibling;
         if (courseDate && courseDate.classList.contains('section-date')) {
-            courseDate.textContent = dateStr ? `Données : ${dateStr}` : '';
+            courseDate.textContent = dateStr ? `Data: ${dateStr}` : '';
         }
     }
     const invTitle = document.getElementById(`investment-title-${symbol}`);
     if (invTitle) {
         const invDate = invTitle.nextElementSibling;
         if (invDate && invDate.classList.contains('section-date')) {
-            invDate.textContent = dateStr ? `Données : ${dateStr}` : '';
+            invDate.textContent = dateStr ? `Data: ${dateStr}` : '';
         }
     }
     const detTitle = document.getElementById(`details-title-${symbol}`);
     if (detTitle) {
         const detDate = detTitle.nextElementSibling;
         if (detDate && detDate.classList.contains('section-date')) {
-            detDate.textContent = dateStr ? `Données : ${dateStr}` : '';
+            detDate.textContent = dateStr ? `Donnees : ${dateStr}` : '';
         }
     }
     const signalTitle = document.getElementById(`signal-title-${symbol}`);
     if (signalTitle) {
         const signalDate = signalTitle.nextElementSibling;
         if (signalDate && signalDate.classList.contains('section-date')) {
-            signalDate.textContent = dateStr ? `Données : ${dateStr}` : '';
+            signalDate.textContent = dateStr ? `Donnees : ${dateStr}` : '';
         }
     }
 }
@@ -636,7 +641,7 @@ function getBestDataDate(symbol) {
         if (numericTimestamps.length > 0) {
             const latest = Math.max(...numericTimestamps);
             const d = new Date(latest * 1000);
-            return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            return d.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
     }
     return '';
@@ -665,15 +670,28 @@ function ensureSection(containerId, type) {
     return section;
 }
 
+// Persistance de l'état suspendu entre sessions — self-heal si le ticker redevient vivant (unmarkTabAsSuspended).
+const SUSPENDED_KEY_PREFIX = 'nemeris_suspended_';
+
+export function isSymbolSuspendedInStorage(symbol) {
+    try { return localStorage.getItem(SUSPENDED_KEY_PREFIX + symbol) === '1'; }
+    catch { return false; }
+}
+
+function setSymbolSuspendedInStorage(symbol, suspended) {
+    try {
+        if (suspended) localStorage.setItem(SUSPENDED_KEY_PREFIX + symbol, '1');
+        else localStorage.removeItem(SUSPENDED_KEY_PREFIX + symbol);
+    } catch { /* ignore */ }
+}
+
 export function markTabAsSuspended(symbol) {
     const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
     if (!tab) return;
-    
-    if (positions[symbol]) {
-        positions[symbol].suspended = true;
-    }
-    
-    // Always call this to ensure we move it if it's not in the right place
+
+    if (positions[symbol]) positions[symbol].suspended = true;
+    setSymbolSuspendedInStorage(symbol, true);
+
     const inSuspended = tab.closest('#suspended-tabs');
     if (tab.classList.contains('suspended') && inSuspended) return;
 
@@ -696,9 +714,8 @@ export function unmarkTabAsSuspended(symbol) {
     const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
     if (!tab) return;
 
-    if (positions[symbol]) {
-        positions[symbol].suspended = false;
-    }
+    if (positions[symbol]) positions[symbol].suspended = false;
+    setSymbolSuspendedInStorage(symbol, false);
 
     if (!tab.classList.contains('suspended') && !tab.closest('#suspended-tabs')) return;
 
@@ -716,126 +733,6 @@ export function unmarkTabAsSuspended(symbol) {
     if (section) section.appendChild(tab);
 }
 
-export async function setApiStatus(symbol, status, opts = {}) {
-    const config = await loadApiConfig();
-    if (opts && typeof opts.errorCode !== 'undefined' && opts.errorCode !== null) {
-        status = 'noinfo';
-    }
-
-    let el = document.getElementById('api-status-indicator');
-    if (!el) {
-        el = document.createElement('div');
-        el.id = 'api-status-indicator';
-        document.body.appendChild(el);
-    }
-    const template = document.getElementById('api-indicator-template');
-    if (!template) return;
-    const content = template.content.cloneNode(true);
-    const dot = content.querySelector('.api-dot');
-    if (dot) {
-        dot.className = 'api-dot ' + (status === 'active' ? 'active' : (status === 'noinfo' ? 'noinfo' : (status === 'fetching' ? 'fetching' : 'inactive')));
-    }
-    const logo = content.querySelector('.api-indicator-logo');
-    if (logo) {
-        let api = opts.api || selectedApi;
-        const apiConfig = config.apis[api];
-        logo.src = apiConfig.logo;
-        logo.alt = apiConfig.name;
-    }
-    const text = content.querySelector('[data-role="status-text"]');
-    if (text) {
-        if (status === 'noinfo') {
-            text.textContent = `Err. ${opts.errorCode || 404}`;
-        } else if (status === 'fetching') {
-            text.textContent = 'loading...';
-        } else {
-            text.textContent = status === 'active' ? 'actif' : 'inactif';
-        }
-    }
-
-    try {
-        const apiToCheck = opts.api || selectedApi;
-        if (rateLimiter.isRateLimited(apiToCheck)) {
-            if (status !== 'noinfo') {
-                status = 'fetching';
-            }
-            opts = Object.assign({}, opts, { rateLimited: true });
-            const remainingMs = rateLimiter.getRemainingSeconds(apiToCheck) * 1000;
-            updateApiCountdown(Math.ceil(remainingMs / 1000));
-        }
-    } catch (e) { /* ignore */ }
-    const expanded = content.querySelector('.api-expanded');
-    if (expanded) {
-        expanded.innerHTML = '';
-        const optTpl = document.getElementById('api-option-template');
-        config.ui.validApis.forEach(api => {
-            const opt = optTpl ? optTpl.content.firstElementChild.cloneNode(true) : document.createElement('div');
-            opt.classList.add('api-option');
-            opt.dataset.api = api;
-            opt.textContent = config.apis[api].name;
-            expanded.appendChild(opt);
-        });
-    }
-    const spinner = content.querySelector('[data-role="spinner"]');
-    if (spinner && opts.loadingFallback) {
-        spinner.classList.remove('hidden-by-bot');
-        if (!spinner.querySelector('.api-spinner')) {
-            const s = document.createElement('span');
-            s.className = 'api-spinner';
-            spinner.appendChild(s);
-        }
-    }
-    el.innerHTML = '';
-    el.appendChild(content);
-    el.title = symbol || '';
-    el.className = 'api-status-indicator ' + status;
-
-    const apiToCheck = opts.api || selectedApi;
-    if (rateLimiter.isRateLimited(apiToCheck)) {
-        const remainingSec = rateLimiter.getRemainingSeconds(apiToCheck);
-        updateApiCountdown(remainingSec);
-    }
-}
-
-export function updateApiCountdown(seconds) {
-    const el = document.getElementById('api-status-indicator');
-    if (!el) return;
-
-    let spinner = el.querySelector('[data-role="spinner"]');
-    if (!spinner) {
-        spinner = document.createElement('div');
-        spinner.setAttribute('data-role', 'spinner');
-        spinner.classList.add('api-indicator-spinner-row', 'column');
-        el.appendChild(spinner);
-    }
-
-    const spinnerRow = el.querySelector('[data-role="spinner"]');
-    if (spinnerRow) {
-        spinnerRow.classList.add('column');
-        spinnerRow.innerHTML = '';
-        let wrapper = document.createElement('div');
-        wrapper.className = 'api-countdown-wrapper';
-
-        const textElem = document.createElement('div');
-        textElem.className = 'countdown-text';
-        textElem.textContent = `Limite atteinte, veuillez patienter... (${seconds}s)`;
-
-        const spinnerElem = document.createElement('div');
-        spinnerElem.className = 'api-spinner-wrapper';
-        if (!spinnerElem.querySelector('.api-spinner')) {
-            const s = document.createElement('span');
-            s.className = 'api-spinner';
-            spinnerElem.appendChild(s);
-        }
-
-        wrapper.appendChild(textElem);
-        wrapper.appendChild(spinnerElem);
-        spinnerRow.appendChild(wrapper);
-        return;
-    }
-}
-
-
 export function getActiveSymbol() {
     const t = document.querySelector('.tab.active')
     return t? t.dataset.symbol:null
@@ -851,7 +748,6 @@ export function openTerminalCard(prefill = '') {
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
     try { document.getElementById('open-terminal-btn')?.classList.add('active'); } catch(e) {}
-    try { document.getElementById('news-overlay')?.setAttribute('aria-hidden', 'true'); } catch(e) {}
     input.value = prefill;
     card.style.display = '';
     input.focus();
@@ -892,7 +788,6 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
         currency: resolved.currency || 'USD',
         country: resolved.country || '',
         isin: resolved.isin || '',
-        api_mapping: resolved.api_mapping || { yahoo: resolved.ticker || symbol },
         iconSymbol: resolved.iconSymbol || null,
         purchases: [],
         sales: []
@@ -906,7 +801,7 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
         currency: stock.currency,
         country: stock.country,
         isin: stock.isin,
-        api_mapping: stock.api_mapping,
+
         shares: 0,
         investment: 0,
         costBasis: 0,

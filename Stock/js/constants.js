@@ -3,9 +3,9 @@
 export const TYPE_ORDER = ['equity', 'commodity', 'crypto'];
 
 export const TYPE_LABELS = {
-    equity: 'Actions',
-    commodity: 'Matières Premières',
-    crypto: 'Cryptos'
+    equity: 'Equities',
+    commodity: 'Commodities',
+    crypto: 'Crypto'
 };
 
 export const TYPE_ICONS = {

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check js/signal-bot.js)",
+      "Bash(node -e ' *)"
+    ]
+  }
+}
