@@ -194,44 +194,44 @@ async function saveSettingsFromForm() {
 }
 
 function startFastPolling() {
-    const settings = getUserSettings();
-    // If bulk performance is enabled, we use the bulk loop instead of individual fast polling
-    if (settings.performanceViewerEnabled) {
-        startPriceUpdateLoop();
-        return;
-    }
+    startGlobalRefreshLoop();
+}
 
-    if (fastPollTimer) return;
-    setFastPollTimer(setInterval(() => {
-        if (document.hidden) return;
-        fetchActiveSymbol(false);
-    }, 15000));
+function stopFastPolling() {
+    if (globalRefreshTimer) {
+        clearInterval(globalRefreshTimer);
+        setGlobalRefreshTimer(null);
+    }
 }
 
 function startGlobalRefreshLoop() {
-    const settings = getUserSettings();
-    if (!settings.performanceViewerEnabled) return;
     if (globalRefreshTimer) return;
     
-    // Performance/Spark loop (5min)
+    // Initial sync
+    syncDashboardData();
+
+    // Unified sync loop (5min)
     setGlobalRefreshTimer(setInterval(() => {
         if (document.hidden) return;
-        batchPerformanceFetch(globalPeriod);
+        syncDashboardData();
     }, 300000));
 }
 
-let priceUpdateTimer = null;
-function startPriceUpdateLoop() {
+async function syncDashboardData() {
     const settings = getUserSettings();
-    if (!settings.performanceViewerEnabled) return;
-    if (priceUpdateTimer) return;
+    const p = globalPeriod || '1D';
 
-    // Fast Price update loop (20s) - Uses bulk quote endpoint
-    priceUpdateTimer = setInterval(() => {
-        if (document.hidden) return;
-        batchPriceFetch();
-    }, 20000);
+    // 1. Bulk Price Update (Always)
+    await batchPriceFetch();
+
+    // 2. Bulk Performance Update (Only if enabled)
+    if (settings.performanceViewerEnabled) {
+        await batchPerformanceFetch(p);
+    }
 }
+
+// Deprecated: logic moved to syncDashboardData
+function startPriceUpdateLoop() {}
 
 async function batchPriceFetch() {
     if (isBatchFetching) return;

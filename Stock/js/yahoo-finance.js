@@ -125,15 +125,26 @@ async function yahooFetch(targetUrl, signal) {
         return { error: true, errorCode: 429, throttled: true, retryAfter: remaining };
     }
 
-    const r = await proxyFetch(targetUrl, { signal });
-    if (r.error) {
+    // Attempt to rotate between query1 and query2 if we hit a wall
+    const subdomains = ['query2', 'query1'];
+    let lastError = null;
+
+    for (const sub of subdomains) {
+        const url = targetUrl.replace(/query[12]/, sub);
+        const r = await proxyFetch(url, { signal });
+        
+        if (!r.error) return r.data;
+        
+        lastError = r;
         if (r.errorCode === 429) {
             globalRateLimiter.setRateLimitForApi('yahoo', YAHOO_RATE_LIMIT_MS);
             return { ...r, throttled: true, retryAfter: Math.ceil(YAHOO_RATE_LIMIT_MS / 1000) };
         }
-        return r;
+        // If 401/404 on query2, try query1 before giving up
+        if (r.errorCode !== 401 && r.errorCode !== 404) break;
     }
-    return r.data;
+    
+    return lastError;
 }
 
 // Codes qui indiquent un refus "définitif" côté Yahoo → ne pas retenter les intervals plus larges.
@@ -513,7 +524,8 @@ export async function fetchYahooSparkBatch(symbols, range = '1d', interval = '1m
 
 export async function fetchYahooQuotesBatch(symbols, signal) {
     if (!symbols.length) return [];
-    const url = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(',')}`;
+    // v6 is often more stable for bulk quotes
+    const url = `https://query2.finance.yahoo.com/v6/finance/quote?symbols=${symbols.join(',')}`;
     const j = await yahooFetch(url, signal);
     if (j?.error) {
         console.warn('[Yahoo] Quote Batch Error:', j.errorCode);
@@ -570,7 +582,13 @@ export async function fetchYahooPeriodChanges(tickers, period, signal) {
 
 function parseChartPayload(payload, symbolKey) {
     if (!payload) return null;
-    const resp = payload?.response?.[0];
+    
+    // Detect structure: /spark (batch) has .response[0], /chart (individual) is the object itself
+    let resp = payload;
+    if (payload.response && Array.isArray(payload.response)) {
+        resp = payload.response[0];
+    }
+    
     if (!resp) return null;
 
     const quote = resp?.indicators?.quote?.[0];
