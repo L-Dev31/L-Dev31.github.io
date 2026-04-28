@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check js/signal-bot.js)",
+      "Bash(node -e ' *)",
+      "Bash(python3 \"C:/Users/gigabyte/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"fintech stock dashboard Bloomberg terminal dark data-heavy\" --design-system -p \"Nemeris\")",
+      "Bash(py \"C:/Users/gigabyte/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"fintech stock dashboard Bloomberg terminal dark data-heavy\" --design-system -p \"Nemeris\")",
+      "Bash(py \"C:/Users/gigabyte/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"animation accessibility loading states\" --domain ux)",
+      "Bash(py \"C:/Users/gigabyte/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"real-time financial dashboard chart\" --domain chart)",
+      "Bash(py \"C:/Users/gigabyte/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"fintech stock dashboard terminal dark professional\" --design-system -p \"Nemeris\" -f markdown)",
+      "Bash(node --check \"c:/Users/gigabyte/Documents/GitHub/L-Dev31.github.io/projects/Stock/js/general.js\")",
+      "Bash(node --check \"c:/Users/gigabyte/Documents/GitHub/L-Dev31.github.io/projects/Stock/js/portfolio.js\")",
+      "Bash(node --check \"c:/Users/gigabyte/Documents/GitHub/L-Dev31.github.io/projects/Stock/js/ui.js\")",
+      "Bash(node --check \"c:/Users/gigabyte/Documents/GitHub/L-Dev31.github.io/projects/Stock/js/state.js\")",
+      "Bash(python -m http.server 8765)",
+      "Bash(echo \"PID=$!\")",
+      "Bash(curl -s -o /tmp/idx.html -w \"HTTP %{http_code} size=%{size_download}\\\\n\" http://localhost:8765/index.html)",
+      "Bash(curl -s -o /dev/null -w \"general.js HTTP %{http_code}\\\\n\" http://localhost:8765/js/general.js)",
+      "Bash(curl -s -o /dev/null -w \"portfolio.js HTTP %{http_code}\\\\n\" http://localhost:8765/js/portfolio.js)",
+      "Bash(kill 389)",
+      "Bash(pkill -f \"http.server 8765\")",
+      "Bash(command -v node)",
+      "Bash(npm ls *)"
+    ]
+  }
+}

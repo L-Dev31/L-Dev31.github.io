@@ -1,0 +1,68 @@
+{
+  "nav": {
+    "home": "首页",
+    "menu": "菜单",
+    "about": "关于我们",
+    "reservation": "预订",
+    "contact": "联系"
+  },
+  "hero": {
+    "title": "非凡美食",
+    "subtitle": "在普罗旺斯的中心，难忘的美食体验"
+  },
+  "reservation": {
+    "map_title": "显示地图",
+    "map_notice": "您的 IP 地址将发送至 Google 地图。",
+    "address_title": "瓦洛里斯",
+    "address": "24 Av. de la Gare, 06220 Vallauris",
+    "section_title": "预订",
+    "booking_title": "立即<br>预订",
+    "phone": "+33 4 22 91 77 48",
+    "hours_title": "营业<br>时间",
+    "monday": "周一",
+    "tuesday": "周二",
+    "wednesday": "周三",
+    "thursday": "周四",
+    "friday": "周五",
+    "saturday": "周六",
+    "sunday": "周日",
+    "closed": "休息",
+    "payment_title": "可用的<br>支付方式",
+    "cash": "现金",
+    "contactless": "非接触支付",
+    "debit_card": "借记卡"
+  },
+  "menu": {
+    "title": "菜单",
+    "show_more": "查看完整菜单",
+    "show_less": "收起菜单"
+  },
+  "about": {
+    "history_title": "我们的历史",
+    "history_highlight": "传承与卓越",
+    "history_p1": "自创立以来，我们致力于为您带来非凡的美食体验。我们的主厨团队汲取传统美食精髓，匠心打造独特菜品。",
+    "history_h3_1": "烹饪哲学",
+    "history_p2": "每一道菜都有故事，每一种风味都触动情感。我们严选本地优质食材，确保新鲜与品质。",
+    "history_h3_2": "品质承诺",
+    "history_p3": "我们的厨房融合传统技艺与现代创新，在雅致细腻的环境中，为您呈现惊喜与感动的味觉和鸣。",
+    "services_title": "服务",
+    "services_highlight": "个性化体验",
+    "services_p1": "我们的贴心服务因您而变。无论是浪漫晚餐、商务用餐，或是家庭庆祝，我们都为您营造完美氛围。",
+    "services_h3_1": "私享活动",
+    "services_p2": "为您量身定制各类活动并提供高品质服务。我们的可私享空间，是重要时刻的理想场地。",
+    "services_h3_2": "预订",
+    "services_p3": "立即预订餐位，开启一段难忘的法式美食之旅。我们的团队随时为您个性化安排。",
+    "info_title": "实用信息",
+    "info_reservations_label": "预订",
+    "info_reservations": "建议预订",
+    "info_payments_label": "支付方式",
+    "info_payments": "支持各类银行卡",
+    "info_ambiance_label": "氛围",
+    "info_ambiance": "优雅与精致",
+    "info_capacity_label": "席位",
+    "info_capacity": "80 席"
+  },
+  "language": {
+    "current": "中文"
+  }
+}

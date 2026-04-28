@@ -1,0 +1,178 @@
+.settings-card {
+    width: 100%;
+}
+
+.settings-header {
+    display: none;
+}
+
+.settings-body {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(168, 162, 255, 0.12);
+    border-radius: 12px;
+    padding: 20px;
+    display: grid;
+    gap: 14px;
+}
+
+.settings-group {
+    display: grid;
+    gap: 8px;
+}
+
+.settings-label {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: rgba(232, 233, 243, 0.65);
+}
+
+.settings-input {
+    width: 100%;
+    border: 1px solid rgba(168, 162, 255, 0.2);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    color: var(--text-light);
+    font-size: 13px;
+    padding: 10px 12px;
+    outline: none;
+}
+
+.settings-input:focus {
+    border-color: rgba(168, 162, 255, 0.6);
+}
+
+.settings-help {
+    color: rgba(232, 233, 243, 0.6);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.settings-help a {
+    color: var(--primary-purple);
+}
+
+.settings-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.settings-proxy-status {
+    font-size: 12px;
+    color: rgba(232, 233, 243, 0.6);
+}
+
+.settings-proxy-status.success { color: #4ade80; }
+.settings-proxy-status.error { color: #f87171; }
+.settings-proxy-status.loading { color: var(--primary-purple); }
+
+.settings-action-btn {
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: none !important;
+}
+
+.settings-action-btn:hover {
+    filter: brightness(1.15);
+}
+
+.settings-action-btn:active {
+    transform: scale(0.98);
+}
+
+.settings-action-btn.secondary {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--text-light);
+}
+
+.settings-action-btn.primary {
+    background: var(--primary-purple);
+    color: #0b1020;
+}
+
+
+
+/* Switch Toggle Styles */
+.settings-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: .3s;
+    border: 1px solid rgba(168, 162, 255, 0.2);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .3s;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-purple);
+    border-color: var(--primary-purple);
+}
+
+input:checked + .slider:before {
+    transform: translateX(16px);
+}
+
+.slider.round {
+    border-radius: 20px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.settings-hint {
+    font-size: 11px;
+    color: rgba(232, 233, 243, 0.5);
+}
+
+@media (max-width: 768px) {
+    .settings-body {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .settings-action-btn {
+        width: 100%;
+    }
+}

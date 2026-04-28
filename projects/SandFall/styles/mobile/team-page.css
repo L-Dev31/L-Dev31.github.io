@@ -1,0 +1,140 @@
+/* Team Page Mobile Styles */
+@media (max-width: 768px) {
+    .team-page-container {
+        padding: 50px 0;
+    }
+    
+    .team-page-header {
+        margin-bottom: 30px;
+        padding: 0 15px;
+    }
+    
+    .team-page-title {
+        font-size: 2.2rem;
+    }
+    
+    .team-page-content {
+        padding: 0 15px;
+    }
+    
+    .team-category-section {
+        margin-bottom: 50px;
+    }
+    
+    .team-category-title {
+        font-size: 1.6rem;
+        margin-bottom: 25px;
+    }
+    
+    .team-category-title::after {
+        width: 60px;
+        height: 1px;
+    }
+    
+    .team-category-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .team-page-member {
+        padding: 15px;
+        gap: 12px;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .team-page-photo {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto;
+    }
+    
+    .team-page-info {
+        text-align: center;
+    }
+    
+    .team-page-name {
+        font-size: 1.1rem;
+        margin-bottom: 3px;
+    }
+    
+    .team-page-role {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+    
+    .team-page-favorites {
+        font-size: 0.8rem;
+        margin: 8px 0;
+    }
+    
+    .team-page-link {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+        padding-right: 25px;
+    }
+    
+    .team-page-link::after {
+        right: 8px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .team-page-container {
+        padding: 40px 0;
+    }
+    
+    .team-page-title {
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+    
+    .team-category-title {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+    }
+    
+    .team-page-member {
+        padding: 12px;
+        gap: 10px;
+    }
+    
+    .team-page-photo {
+        width: 60px;
+        height: 60px;
+        border-width: 1px;
+    }
+    
+    .team-page-name {
+        font-size: 1rem;
+    }
+    
+    .team-page-role {
+        font-size: 0.85rem;
+    }
+    
+    .team-page-favorites {
+        font-size: 0.75rem;
+        line-height: 1.4;
+    }
+}
+
+@media (max-width: 360px) {
+    .team-page-header,
+    .team-page-content {
+        padding: 0 10px;
+    }
+    
+    .team-page-title {
+        font-size: 1.6rem;
+    }
+    
+    .team-category-title {
+        font-size: 1.2rem;
+    }
+    
+    .team-page-member {
+        padding: 10px;
+    }
+}

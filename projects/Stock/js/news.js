@@ -1,0 +1,323 @@
+import { loadApiConfig } from './state.js';
+import { periodToDays } from './constants.js';
+import { fetchTickerNewsItems, fetchSymbolNewsItems } from './command/news.js';
+
+let positions = {};
+let lastPageNews = [];
+let currentNewsPeriod = '1D';
+let currentNewsSymbol = null;
+let lastActiveSymbol = null;
+let newsRefreshInterval = null;
+let cardRefreshIntervals = {};
+
+const formatNewsDate = value => new Date(value || new Date()).toLocaleString('en-US');
+const sortNewsItems = items => items.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+const normalizeQuery = q => (q || '').trim().toLowerCase();
+
+const getTickerLabel = symbol => positions[symbol]?.ticker || symbol;
+
+const appendTagElements = (metaEl, labels, limit = 4) => {
+    if (!labels?.length) return;
+    const unique = new Set();
+    labels.filter(Boolean).forEach(label => unique.add(label));
+    Array.from(unique).slice(0, limit).forEach(label => {
+        const tag = document.createElement('span');
+        tag.className = 'news-ticker-tag';
+        tag.textContent = label;
+        metaEl.appendChild(tag);
+    });
+};
+
+const buildNewsAnchorItem = (item, { className, includeSummary = true, tagLabels = [] }) => {
+    const a = document.createElement('a');
+    a.className = className;
+    a.href = item.url || '#';
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+
+    const t = document.createElement('div');
+    t.className = 'news-title';
+    t.textContent = item.title || '—';
+    a.appendChild(t);
+
+    const m = document.createElement('div');
+    m.className = 'news-meta';
+    const src = document.createElement('span');
+    src.className = 'news-source';
+    src.textContent = item.source || 'Source';
+    m.appendChild(src);
+    m.appendChild(document.createTextNode(` • ${formatNewsDate(item.publishedAt)}`));
+
+    appendTagElements(m, tagLabels);
+    a.appendChild(m);
+
+    if (includeSummary && item.summary) {
+        const s = document.createElement('div');
+        s.className = 'news-summary';
+        s.textContent = item.summary;
+        a.appendChild(s);
+    }
+
+    return a;
+};
+
+const filterNewsItems = (items, query) => {
+    const q = normalizeQuery(query);
+    if (!q) return items;
+    return items.filter(i =>
+        (i.title || '').toLowerCase().includes(q) ||
+        (i.summary || '').toLowerCase().includes(q) ||
+        (i.source || '').toLowerCase().includes(q)
+    );
+};
+
+const collectCardTags = item => {
+    const tags = new Set();
+    if (item.symbol) tags.add(getTickerLabel(item.symbol));
+    if (item.symbols) item.symbols.forEach(s => tags.add(getTickerLabel(s)));
+    if (item.relatedTickers) item.relatedTickers.forEach(s => tags.add(getTickerLabel(s)));
+    return Array.from(tags);
+};
+
+const collectPageTags = item => {
+    const symbols = item.symbols || (item.symbol ? [item.symbol] : []);
+    const labels = new Set();
+    symbols.forEach(s => labels.add(getTickerLabel(s)));
+    return Array.from(labels);
+};
+
+export function setPositions(pos) { positions = pos; }
+
+export async function fetchCardNews(symbol, force = false, limit = 50, days = 7, apiName = null) {
+    if (!positions[symbol]) return;
+    const now = Date.now();
+    if (!force && positions[symbol].lastNewsFetch && (now - positions[symbol].lastNewsFetch) < 600000) {
+        updateNewsUI(symbol, positions[symbol].news);
+        return positions[symbol].news;
+    }
+    try {
+        const config = await loadApiConfig();
+        const api = apiName || window.getSelectedApi?.() || window.selectedApi || 'yahoo';
+        const enriched = await fetchSymbolNewsItems({
+            symbol,
+            positions,
+            config,
+            limit,
+            days,
+            apiName: api
+        });
+        if (Array.isArray(enriched)) {
+            const filtered = filterBySymbol(enriched, symbol);
+            positions[symbol].news = filtered;
+            positions[symbol].lastNewsFetch = now;
+            updateNewsUI(symbol, filtered);
+            const card = document.getElementById('card-news');
+            if (card?.classList.contains('active') && currentNewsSymbol === symbol) updateNewsPageList(filtered);
+            return filtered;
+        }
+    } catch (e) {}
+    return [];
+}
+
+export function startCardNewsAutoRefresh(symbol) {
+    if (cardRefreshIntervals[symbol]) clearInterval(cardRefreshIntervals[symbol]);
+    cardRefreshIntervals[symbol] = setInterval(() => {
+        const card = document.getElementById(`card-${symbol}`);
+        const pane = card?.querySelector('[data-pane="news"]');
+        if (card?.classList.contains('active') && pane?.classList.contains('active')) fetchCardNews(symbol, true);
+    }, 60000);
+}
+
+export function stopCardNewsAutoRefresh(symbol) {
+    if (cardRefreshIntervals[symbol]) { clearInterval(cardRefreshIntervals[symbol]); delete cardRefreshIntervals[symbol]; }
+}
+
+export function updateNewsUI(symbol, items, filter = null) {
+    const el = document.getElementById(`news-list-${symbol}`);
+    if (!el) return;
+    const upd = document.querySelector(`#card-${symbol} .news-last-update`);
+    if (upd) upd.textContent = new Date().toLocaleTimeString('en-US');
+    if (filter === null) {
+        const inp = document.querySelector(`#card-${symbol} .news-search-input`);
+        if (inp) filter = inp.value;
+    }
+    el.innerHTML = '';
+    let list = items || [];
+    list = filterNewsItems(list, filter);
+    if (!list.length) { el.textContent = filter ? 'No results.' : 'No recent news.'; return; }
+
+    sortNewsItems(list).forEach(item => {
+        const tagLabels = collectCardTags(item);
+        el.appendChild(buildNewsAnchorItem(item, { className: 'news-item', tagLabels }));
+    });
+}
+
+export function setupNewsSearch(symbol) {
+    const inp = document.querySelector(`#card-${symbol} .news-search-input`);
+    if (!inp) return;
+    const clone = inp.cloneNode(true);
+    inp.parentNode.replaceChild(clone, inp);
+    clone.addEventListener('input', e => updateNewsUI(symbol, positions[symbol]?.news || [], e.target.value));
+}
+
+export function updateNewsPageList(items, opts = {}) {
+    const { replaceCache = true, skipSort = false } = opts;
+    const el = document.getElementById('news-page-feed-list');
+    if (!el) return;
+    el.innerHTML = '';
+    if (!items?.length) { el.innerHTML = '<div class="news-empty">No news found</div>'; if (replaceCache) lastPageNews = []; return; }
+    let list = items.slice();
+    if (!skipSort) sortNewsItems(list);
+    if (replaceCache) lastPageNews = list;
+    list.forEach(item => {
+        const tagLabels = collectPageTags(item);
+        el.appendChild(buildNewsAnchorItem(item, { className: 'news-item', tagLabels }));
+    });
+    const upd = document.getElementById('news-last-update');
+    if (upd) upd.textContent = new Date().toLocaleTimeString('en-US');
+}
+
+export async function openNewsPage(symbol, options = {}) {
+    const card = document.getElementById('card-news');
+    if (!card) return;
+    const activeTab = document.querySelector('.tab.active');
+    lastActiveSymbol = activeTab?.dataset.symbol || null;
+    document.querySelectorAll('.card').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    card.classList.add('active');
+    card.setAttribute('aria-hidden', 'false');
+    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('open-news-feed')?.classList.add('active');
+    populateSuggestions();
+    const inp = document.getElementById('news-ticker-search');
+    if (inp) inp.value = (options.search || '').trim().toUpperCase();
+    setupNewsFilters();
+    await loadNews();
+    if (newsRefreshInterval) clearInterval(newsRefreshInterval);
+    newsRefreshInterval = setInterval(() => { if (document.getElementById('card-news')?.classList.contains('active')) loadNews(); }, 60000);
+}
+
+function populateSuggestions() {
+    const el = document.getElementById('ticker-suggestions');
+    if (!el) return;
+    el.innerHTML = '';
+    Object.keys(positions).forEach(sym => {
+        const pos = positions[sym];
+        const d = document.createElement('div');
+        d.className = 'ticker-suggestion-item';
+        d.dataset.symbol = sym;
+        d.innerHTML = `<span class="ticker-symbol">${pos.ticker || sym}</span>${pos.name || ''}`;
+        d.addEventListener('click', () => { const inp = document.getElementById('news-ticker-search'); if (inp) { inp.value = pos.ticker || sym; el.classList.remove('active'); loadNews(); } });
+        el.appendChild(d);
+    });
+}
+
+function setupNewsFilters() {
+    const inp = document.getElementById('news-ticker-search');
+    const sug = document.getElementById('ticker-suggestions');
+    const art = document.getElementById('news-article-search');
+    if (inp && sug) {
+        inp.addEventListener('focus', () => sug.classList.add('active'));
+        inp.addEventListener('blur', () => setTimeout(() => sug.classList.remove('active'), 150));
+        inp.addEventListener('input', e => {
+            const v = (e.target.value || '').trim().toUpperCase();
+            sug.querySelectorAll('.ticker-suggestion-item').forEach(i => { i.style.display = !v || i.dataset.symbol.toUpperCase().includes(v) || i.textContent.toUpperCase().includes(v) ? '' : 'none'; });
+            sug.classList.add('active');
+            if (!v) loadNews();
+        });
+        inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inp.value = (inp.value || '').trim().toUpperCase(); sug.classList.remove('active'); loadNews(); } });
+    }
+    if (art) {
+        art.oninput = () => {
+            const q = normalizeQuery(art.value);
+            if (!q) updateNewsPageList(lastPageNews, { replaceCache: false, skipSort: true });
+            else updateNewsPageList(filterNewsItems(lastPageNews, q), { replaceCache: false, skipSort: true });
+        };
+    }
+}
+
+async function loadNews() {
+    const el = document.getElementById('news-page-feed-list');
+    const inp = document.getElementById('news-ticker-search');
+    const manual = (inp?.value || '').trim().toUpperCase();
+    if (!el) return;
+    el.innerHTML = '<div class="news-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="news-loading-text">Loading news...</span></div>';
+    try {
+        const config = await loadApiConfig();
+        const api = window.getSelectedApi?.() || window.selectedApi || 'yahoo';
+        const days = periodToDays(currentNewsPeriod);
+        let tickers = [];
+        if (manual) { tickers = [{ symbol: manual, ticker: manual }]; currentNewsSymbol = manual; }
+        else { tickers = Object.keys(positions).map(s => ({ symbol: s, ticker: positions[s]?.ticker || s })); currentNewsSymbol = null; }
+        if (!tickers.length) { el.innerHTML = '<div class="news-empty">Add assets or search for a ticker.</div>'; lastPageNews = []; return; }
+        let all = [];
+        let completed = 0;
+        const updateProgress = () => { const t = document.getElementById('news-loading-text'); if (t) t.textContent = `Loading... ${completed}/${tickers.length}`; };
+        if (tickers.length > 1) updateProgress();
+
+        const uniqueItems = new Map();
+
+        for (const t of tickers) {
+            try {
+                const items = await fetchTickerNewsItems({ ticker: t.ticker, config, limit: 30, days, apiName: api });
+                if (items?.length) {
+                    const filtered = filterBySymbol(items.map(i => ({ ...i, symbol: t.symbol })), t.symbol);
+                    filtered.forEach(item => {
+                        const key = item.url || item.title;
+                        if (!uniqueItems.has(key)) {
+                            uniqueItems.set(key, { ...item, symbols: new Set() });
+                        }
+                        const stored = uniqueItems.get(key);
+                        stored.symbols.add(t.symbol);
+                        if (item.relatedTickers) item.relatedTickers.forEach(rt => stored.symbols.add(rt));
+                    });
+                }
+            } catch (e) {}
+            completed++;
+            if (tickers.length > 1) updateProgress();
+        }
+        
+        all = Array.from(uniqueItems.values()).map(i => ({ ...i, symbols: Array.from(i.symbols) }));
+        if (manual && !all.length) {
+            el.innerHTML = `<div class="news-empty">Ticker not found or no news found for ${manual}</div>`;
+            lastPageNews = [];
+            return;
+        }
+        all.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+        updateNewsPageList(all);
+    } catch (e) {
+        el.innerHTML = `<div class="news-empty">Unable to load news${manual ? ` for ${manual}` : ''}.</div>`;
+    }
+}
+
+export function closeNewsPage() {
+    const card = document.getElementById('card-news');
+    if (!card) return;
+    card.classList.remove('active');
+    card.setAttribute('aria-hidden', 'true');
+    currentNewsSymbol = null;
+    if (newsRefreshInterval) { clearInterval(newsRefreshInterval); newsRefreshInterval = null; }
+    document.getElementById('open-news-feed')?.classList.remove('active');
+    if (lastActiveSymbol) {
+        document.querySelector(`.tab[data-symbol="${lastActiveSymbol}"]`)?.classList.add('active');
+        document.getElementById(`card-${lastActiveSymbol}`)?.classList.add('active');
+        lastActiveSymbol = null;
+    }
+}
+
+function buildTickers(symbol) {
+    if (!symbol) return [];
+    const pos = positions[symbol];
+    const set = new Set();
+    const add = v => { if (typeof v === 'string' && v.trim()) { const n = v.trim().toUpperCase(); set.add(n); const d = n.lastIndexOf('.'); if (d > 0) set.add(n.substring(0, d)); } };
+    add(symbol);
+    if (pos) { add(pos.ticker); }
+    return [...set];
+}
+
+function filterBySymbol(items, symbol) {
+    if (!symbol || !items?.length) return items || [];
+    const tickers = buildTickers(symbol);
+    if (!tickers.length) return items;
+    return items.filter(i => { if (i.relatedTickers?.length) { const rel = i.relatedTickers.map(t => t.toUpperCase()); return tickers.some(t => rel.includes(t)); } return i.symbol === symbol; });
+}

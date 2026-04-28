@@ -1,0 +1,6 @@
+/* Special token styles for New Super Mario Bros. */
+.token-chip.special-0200 {
+  background: #2e8b57;
+  color: #fff !important;
+  border-color: #2e8b57;
+}

@@ -1,8 +1,0 @@
-{
-  "yahoo": {
-    "name": "Yahoo Finance",
-    "logo": "img/logo/yahoo-finance.png",
-    "apiKey": "",
-    "enabled": true
-  }
-}
