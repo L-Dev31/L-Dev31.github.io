@@ -8,7 +8,7 @@ export async function runRvCommand({ parts, out, fmtErr }) {
         return;
     }
 
-    out(`Comparaison: ${targets.join(', ')}`);
+    out(`Comparison: ${targets.join(', ')}`);
     try {
         const results = [];
         for (const target of targets) {
@@ -38,15 +38,15 @@ export async function runRvCommand({ parts, out, fmtErr }) {
 
         const rows = results.map(r => {
             const details = [
-                `Prix ${formatNumber(r.price)}`,
-                `Var jour ${formatPercent(r.dayChangePercent)}`,
+                `Price ${formatNumber(r.price)}`,
+                `Day Var ${formatPercent(r.dayChangePercent)}`,
                 `PE ${formatNumber(r.pe)}`,
-                `CA ${r.revenue != null ? formatNumber(r.revenue, 0) : '<span class="terminal-muted">-</span>'}`
+                `Rev ${r.revenue != null ? formatNumber(r.revenue, 0) : '<span class="terminal-muted">-</span>'}`
             ].join(' | ');
             return [esc(r.ticker), details];
         });
-        out(panel(keyValueTable(rows, 'TICKER', 'INDICATEURS')), 'terminal-log', true);
+        out(panel(keyValueTable(rows, 'TICKER', 'INDICATORS')), 'terminal-log', true);
     } catch (error) {
-        out(`Erreur: ${fmtErr(error)}`);
+        out(`Error: ${fmtErr(error)}`);
     }
 }

@@ -8,7 +8,7 @@ export async function runErnCommand({ parts, getTarget, out, fmtErr }) {
         out,
         fmtErr,
         usage: 'Usage: ERN <SYMBOL>',
-        loadingPrefix: 'Résultats',
+        loadingPrefix: 'Results',
         onRun: async target => {
             const result = await fetchYahooEarnings(target.ticker, null);
             if (result && !result.error) {
@@ -22,12 +22,12 @@ export async function runErnCommand({ parts, getTarget, out, fmtErr }) {
                     ['Ticker', esc(target.ticker)],
                     ['EPS TTM', formatNumber(e.epsTrailingTwelveMonths)],
                     ['EPS Forward', formatNumber(e.epsForward)],
-                    ['EPS année', formatNumber(e.epsCurrentYear)],
-                    ['Prix', formatNumber(e.regularMarketPrice)],
-                    ['Variation 1 an', formatPercent(e.yearlyPriceDeltaPercent)],
-                    ['Date earnings', earningsDate]
+                    ['EPS Current Year', formatNumber(e.epsCurrentYear)],
+                    ['Price', formatNumber(e.regularMarketPrice)],
+                    ['1-Year Variation', formatPercent(e.yearlyPriceDeltaPercent)],
+                    ['Earnings Date', earningsDate]
                 ];
-                out(panel(keyValueTable(rows, 'VALEUR', 'RESULTAT')), 'terminal-log', true);
+                out(panel(keyValueTable(rows, 'VALUE', 'RESULT')), 'terminal-log', true);
                 return;
             }
 

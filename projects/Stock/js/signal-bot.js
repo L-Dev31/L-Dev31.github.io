@@ -998,8 +998,8 @@ function updateSignalUI(symbol, result) {
                 </div>
             </div>
         </div>
-        <div class="transaction-history-container" style="margin: 0;">
-            <table class="transaction-history-table">
+        <div class="table-container signal-table-container" style="margin: 0;">
+            <table>
                 <thead>
                     <tr>
                         <th style="color: ${headerColor} !important;">Indicator</th>

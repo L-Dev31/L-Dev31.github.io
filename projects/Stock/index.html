@@ -15,19 +15,25 @@
     <link rel="stylesheet" href="styles/signals.css" />
     <link rel="stylesheet" href="styles/stock-view.css" />
 
-    <link rel="stylesheet" href="styles/overlay.css" />
     <link rel="stylesheet" href="styles/news.css" />
     <link rel="stylesheet" href="styles/explorer.css" />
     <link rel="stylesheet" href="styles/settings.css" />
+    <link rel="stylesheet" href="styles/mobile.css" />
     <link rel="icon" href="img/icon/favicon.png" type="image/png">
 </head>
 
 <body>
-    <div class="sidebar">
+    <button id="hamburger-btn" class="hamburger-btn mobile-only" aria-label="Toggle menu">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="sidebar" id="sidebar">
         <div class="profile-header">
-            <img src="img/icon/favicon.png" alt="Profile" class="profile-photo" id="profile-pfp">
+            <img src="img/photo/leot.png" alt="Profile" class="profile-photo" id="profile-pfp">
             <div class="profile-info">
-                <h1 id="profile-name">Nemeris User</h1>
+                <h1 id="profile-name">Mr. Léo Tosku</h1>
                 <p>Shares held: <span id="total-shares">0</span></p>
                 <p>Total investment: <span id="total-investment">--</span></p>
             </div>
@@ -264,15 +270,10 @@
                 </div>
             </div>
 
-            <div class="card-sticky-header">
-                <div class="card-mini-logo">
-                    <img data-symbol="" src="" alt="" />
-                </div>
-                <div class="card-tabs-nav">
-                    <button class="card-tab-btn active" data-target="overview">Overview</button>
-                    <button class="card-tab-btn" data-target="news">News</button>
-                    <button class="card-tab-btn" data-target="investment">Investment</button>
-                </div>
+            <div class="card-tabs-nav">
+                <button class="card-tab-btn active" data-target="overview">Overview</button>
+                <button class="card-tab-btn" data-target="news">News</button>
+                <button class="card-tab-btn" data-target="investment">Investment</button>
             </div>
 
             <div class="card-content">
@@ -316,12 +317,11 @@
                             <button class="period-btn" data-symbol="" data-period="MAX">MAX</button>
                         </div>
                     </div>
-                    <div class="performance card-base">
-                        <div class="performance-label">Performance over <span class="performance-period">1D</span>
-                        </div>
-                        <div class="performance-value"></div>
-                    </div>
                     <div class="info-grid">
+                        <div class="info-item performance">
+                            <div class="info-label performance-label">Performance over <span class="performance-period">1D</span></div>
+                            <div class="performance-value"></div>
+                        </div>
                         <div class="info-item">
                             <div class="info-label">Open</div>
                             <div class="info-value"></div>
@@ -367,38 +367,38 @@
                 <div class="card-tab-pane" data-pane="investment">
                     <div class="investment-section">
                         <h3 class="section-title investment-title"><i class="fa-solid fa-wallet"></i> Personal Investment</h3>
-                        <div class="card-table-container">
+                        <div class="table-container">
                             <div class="general-row important-shares">Shares owned: <span></span></div>
-                            <table class="card-table">
-                                <thead class="card-table-header">
+                            <table>
+                                <thead>
                                     <tr>
-                                        <th class="card-table-th"></th>
-                                        <th class="card-table-th">Invested</th>
-                                        <th class="card-table-th">Current Value</th>
-                                        <th class="card-table-th">Gain/Loss</th>
+                                        <th></th>
+                                        <th>Invested</th>
+                                        <th>Current Value</th>
+                                        <th>Gain/Loss</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="card-table-td card-table-type">Total</td>
-                                        <td class="card-table-td"></td>
-                                        <td class="card-table-td"></td>
-                                        <td class="card-table-td"></td>
+                                        <td class="card-table-type">Total</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                     <tr>
-                                        <td class="card-table-td card-table-type">Per Share</td>
-                                        <td class="card-table-td"></td>
-                                        <td class="card-table-td"></td>
-                                        <td class="card-table-td"></td>
+                                        <td class="card-table-type">Per Share</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <h3 class="section-title transaction-history-title"><i class="fa-solid fa-history"></i> Transaction History</h3>
-                    <div class="transaction-history-container">
-                        <table class="transaction-history-table">
+                    <h3 class="section-title history-title"><i class="fa-solid fa-history"></i> Transaction History</h3>
+                    <div class="table-container history-container">
+                        <table>
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -408,7 +408,7 @@
                                     <th class="currency-price-header">Price</th>
                                 </tr>
                             </thead>
-                            <tbody class="transaction-history-body">
+                            <tbody class="history-body">
                             </tbody>
                         </table>
                     </div>

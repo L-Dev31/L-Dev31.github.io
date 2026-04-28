@@ -3,8 +3,8 @@ export const SETTINGS_STORAGE_KEY = 'nemeris_settings';
 const LEGACY_PROXY_STORAGE_KEY = 'nemeris_proxy_url';
 
 const defaultSettings = {
-    name: 'Nemeris User',
-    pfp: 'img/icon/favicon.png',
+    name: 'Mr. Léo Tosku',
+    pfp: 'img/photo/leot.png',
     currency: '€',
     proxyUrl: '',
     performanceViewerEnabled: true
@@ -38,7 +38,6 @@ export function getCurrency() {
     return getUserSettings().currency || '€';
 }
 
-export let API_CONFIG = null;
 export let positions = {};
 export let selectedApi = 'yahoo';
 export let lastApiBySymbol = {};
@@ -51,18 +50,6 @@ export function setFastPollTimer(t) { fastPollTimer = t; }
 export let globalRefreshTimer = null;
 export function setGlobalRefreshTimer(t) { globalRefreshTimer = t; }
 
-
-// CONFIG LOADER
-export async function loadApiConfig() {
-    if (API_CONFIG) return API_CONFIG;
-    const response = await fetch('json/api.json');
-    const config = await response.json();
-    API_CONFIG = {
-        apis: config,
-        ui: { defaultApi: 'yahoo', validApis: ['yahoo'] }
-    };
-    return API_CONFIG;
-}
 
 // SETTERS
 export function setPositions(pos) { positions = pos; }

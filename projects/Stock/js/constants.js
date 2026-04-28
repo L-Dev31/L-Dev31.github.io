@@ -14,7 +14,7 @@ export const TYPE_ICONS = {
     crypto: 'fa-brands fa-bitcoin'
 };
 
-export const DEAD_ERROR_CODES = [404, 'NO_DATA', 'NO_VALID_DATA'];
+export const DEAD_ERROR_CODES = [404, 'NO_DATA', 'NO_VALID_DATA', 'PARSE_ERROR'];
 
 export const hasTransactions = stock =>
     (stock.purchases?.length > 0) || (stock.sales?.length > 0);
@@ -36,16 +36,6 @@ export function typeIcon(type) {
 }
 
 export function periodToDays(period) {
-    switch ((period || '').toUpperCase()) {
-        case '1D': return 1;
-        case '1W': return 7;
-        case '1M': return 30;
-        case '3M': return 90;
-        case '6M': return 180;
-        case '1Y': return 365;
-        case '3Y': return 1095;
-        case '5Y': return 1825;
-        case 'MAX': return 36500;
-        default: return 7;
-    }
+    const map = { '1D': 1, '1W': 7, '1M': 30, '3M': 90, '6M': 180, '1Y': 365, '3Y': 1095, '5Y': 1825, 'MAX': 36500 };
+    return map[(period || '').toUpperCase()] || 7;
 }

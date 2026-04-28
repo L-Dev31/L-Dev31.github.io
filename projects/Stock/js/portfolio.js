@@ -1,7 +1,6 @@
-import { positions, loadApiConfig, selectedApi, lastApiBySymbol, getCurrency, globalPeriod } from './state.js';
+import { positions, selectedApi, lastApiBySymbol, getCurrency, globalPeriod } from './state.js';
 import { fetchActiveSymbol } from './general.js';
 import { fetchYahooSparkBatch, getYahooSymbol, isYahooSparkFriendly, fetchYahooPeriodChanges, PERIODS } from './yahoo-finance.js';
-import rateLimiter from './rate-limiter.js';
 import { TYPE_ORDER, hasTransactions, typeLabel, typeIcon } from './constants.js';
 import { createTab, createCard, updateSectionDates, initChart, markTabAsSuspended, unmarkTabAsSuspended, isSymbolSuspendedInStorage, updateSidebarPerformance, getActiveSymbol } from './ui.js';
 
@@ -16,11 +15,11 @@ export function calculateStockValues(stock) {
     let earliestPurchaseDate = stock.purchaseDate;
     let lots = [];
     let initialInvestment = stock.investment || 0;
-    
+
     if (stock.purchases && stock.purchases.length > 0) {
         const dates = stock.purchases.map(p => p.date).filter(d => d).sort();
         earliestPurchaseDate = dates.length > 0 ? dates[0] : null;
-        lots = stock.purchases.slice().sort((a,b)=> new Date(a.date) - new Date(b.date)).map(p => ({
+        lots = stock.purchases.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).map(p => ({
             shares: p.shares || 0,
             amount: Math.abs(p.amount || 0),
             perShare: ((Math.abs(p.amount || 0)) / (p.shares || 1))
@@ -33,7 +32,7 @@ export function calculateStockValues(stock) {
     let costBasis = lots.reduce((sum, l) => sum + l.amount, 0);
 
     if (stock.sales && stock.sales.length > 0) {
-        const salesSorted = stock.sales.slice().sort((a,b)=> new Date(a.date) - new Date(b.date));
+        const salesSorted = stock.sales.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
         salesSorted.forEach(s => {
             let remainingToRemove = s.shares || 0;
             while (remainingToRemove > 0 && lots.length > 0) {
@@ -55,53 +54,48 @@ export function calculateStockValues(stock) {
     }
 
     const totalShares = lots.reduce((sum, l) => sum + l.shares, 0);
-    
+
     let totalInvestment = stock.purchases && stock.purchases.length > 0
         ? stock.purchases.reduce((sum, p) => sum + (p.amount || 0), 0)
         : initialInvestment;
     if (stock.sales && stock.sales.length > 0) totalInvestment += stock.sales.reduce((sum, s) => sum + (s.amount || 0), 0);
-    
+
     const displayInvestment = totalShares > 0 ? totalInvestment : 0;
     return {
         investment: displayInvestment,
         shares: totalShares,
         costBasis: Math.max(0, costBasis),
         purchaseDate: earliestPurchaseDate,
-        realizedPL: totalShares === 0 ? totalInvestment : 0 
+        realizedPL: totalShares === 0 ? totalInvestment : 0
     };
 }
 
 export function updatePortfolioSummary() {
     let totalShares = 0;
     let totalInvestment = 0;
-    let totalTransactionCosts = 0;
 
     for (const pos of Object.values(positions)) {
         totalShares += pos.shares || 0;
         if (typeof pos.investment === 'number') totalInvestment += pos.investment;
-
-        const raw = pos.raw || {};
-        totalTransactionCosts += Number(raw.transactionCost || 0);
-
-        const purchases = raw.purchases || [];
-        const sales = raw.sales || [];
-        [...purchases, ...sales].forEach((tx) => {
-            totalTransactionCosts += Number(tx.fee || tx.fees || tx.commission || 0);
-        });
     }
 
+    const setText = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    };
+
     setText('total-shares', totalShares);
-    setText('total-investment', totalInvestment.toFixed(2) + ' ' + getCurrency());
+    const currency = typeof getCurrency === 'function' ? getCurrency() : '€';
+    setText('total-investment', totalInvestment.toFixed(2) + ' ' + currency);
 }
 
 export async function loadStocks() {
-    const config = await loadApiConfig();
     const list = [];
     for (const type of TYPE_ORDER) {
         try {
             const response = await fetch(`json/${type}.json`);
             if (response.ok) list.push(...(await response.json()));
-        } catch (error) {}
+        } catch (error) { }
     }
     const byType = {};
     for (const s of list) {
@@ -175,7 +169,7 @@ export async function loadStocks() {
     }
     for (const sym of Object.keys(positions)) initChart(sym, positions);
     for (const sym of Object.keys(positions)) {
-        try { updateSectionDates(sym); } catch (e) {}
+        try { updateSectionDates(sym); } catch (e) { }
     }
     const first = document.querySelector('.sidebar .tab');
     if (first) {
@@ -189,7 +183,7 @@ export async function loadStocks() {
     updatePortfolioSummary();
     // Scan léger en arrière-plan pour détecter les tickers morts (spark batch, quota minimal).
     setTimeout(() => backgroundSuspendedScan(), 2500);
-    
+
     // Fetch initial pour la performance de tout le monde
     setTimeout(() => batchPerformanceFetch(globalPeriod), 500);
 }
@@ -207,6 +201,7 @@ export async function batchPerformanceFetch(period) {
         const results = await fetchYahooPeriodChanges(tickers, period);
 
         const activeSymbol = typeof getActiveSymbol === 'function' ? getActiveSymbol() : null;
+        const gotAnything = results && Object.keys(results).length > 0;
 
         for (const pos of Object.values(positions)) {
             // Active symbol is handled by fetchActiveSymbol (detailed data + chart + signal).
@@ -214,8 +209,14 @@ export async function batchPerformanceFetch(period) {
             if (pos.symbol === activeSymbol && pos.lastData?.timestamps?.length) continue;
 
             const data = results[pos.ticker];
-            if (!data) continue;
+            if (!data) {
+                // Si le batch a globalement marché mais ce ticker précis n'a rien renvoyé
+                // après tous les fallbacks de fetchYahooPeriodChanges → ticker mort.
+                if (gotAnything && pos.ticker && !pos.suspended) markTabAsSuspended(pos.symbol);
+                continue;
+            }
 
+            if (pos.suspended) unmarkTabAsSuspended(pos.symbol);
             pos.lastData = { ...(pos.lastData || {}), ...data };
             updateSidebarPerformance(pos.symbol);
         }
@@ -226,9 +227,6 @@ export async function batchPerformanceFetch(period) {
     }
 }
 
-// Scan de santé via /v7/finance/spark (pas de crumb requis, batch 30 symboles/call).
-// Mark suspend si pas de données. Unmark si données reviennent (self-heal).
-// Ne touche jamais les tickers du portefeuille (on veut les voir même suspendus).
 async function backgroundSuspendedScan() {
     const BATCH_SIZE = 30;
     const BATCH_DELAY_MS = 1500;
@@ -239,11 +237,6 @@ async function backgroundSuspendedScan() {
     if (!candidates.length) return;
 
     for (let i = 0; i < candidates.length; i += BATCH_SIZE) {
-        if (rateLimiter.isRateLimited('yahoo')) {
-            await new Promise(r => setTimeout(r, 5000));
-            i -= BATCH_SIZE;
-            continue;
-        }
         const batch = candidates.slice(i, i + BATCH_SIZE);
         const yahooSymbols = batch.map(b => b.yahoo);
         let results;
@@ -258,11 +251,14 @@ async function backgroundSuspendedScan() {
                 const hasData = r?.response?.[0]?.indicators?.quote?.[0]?.close?.some(v => v != null);
                 if (r?.symbol) alive.set(r.symbol.toUpperCase(), !!hasData);
             }
+            // Si Yahoo a renvoyé au moins un résultat dans ce batch, l'absence d'un ticker
+            // est un signal fiable qu'il est mort/délisté → on suspend.
+            const batchAnswered = results.length > 0;
             for (const { symbol, yahoo } of batch) {
                 const isAlive = alive.get(yahoo.toUpperCase());
-                if (isAlive === false) markTabAsSuspended(symbol);
-                else if (isAlive === true) unmarkTabAsSuspended(symbol);
-                // undefined = symbole absent de la réponse → on ne tranche pas
+                if (isAlive === true) unmarkTabAsSuspended(symbol);
+                else if (isAlive === false) markTabAsSuspended(symbol);
+                else if (batchAnswered) markTabAsSuspended(symbol); // absent → mort
             }
         }
 

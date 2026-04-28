@@ -1,16 +1,15 @@
 import { fetchFromYahoo } from './yahoo-finance.js'
-import rateLimiter from './rate-limiter.js'
 import { getProxyBaseUrl, setProxyBaseUrl, pingProxy, DEFAULT_WORKER_URL } from './proxy-fetch.js'
 import { setPositions as setNewsPositions, setupNewsSearch, startCardNewsAutoRefresh, stopCardNewsAutoRefresh, openNewsPage, closeNewsPage, fetchCardNews } from './news.js'
 import './terminal.js'
 
 import { DEAD_ERROR_CODES, periodToDays } from './constants.js'
-import { loadApiConfig, positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, fastPollTimer, setFastPollTimer, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings } from './state.js'
+import { positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, fastPollTimer, setFastPollTimer, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings } from './state.js'
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching } from './portfolio.js'
-import { updateUI, clearPeriodDisplay, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance } from './ui.js'
+import { updateUI, clearPeriodDisplay, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance, initMobileSidebar } from './ui.js'
 
 // Re-export for other modules
-export { loadApiConfig, fetchActiveSymbol };
+export { fetchActiveSymbol };
 
 // Global helper
 function terminalLogGlobal(msg) {
@@ -25,14 +24,8 @@ function terminalLogGlobal(msg) {
     } catch (e) { /* ignore */ }
 }
 
-function selectApiFetch() {
-    return { fetchFunc: fetchFromYahoo, apiName: 'yahoo' };
-}
-
-const DEFAULT_PROFILE_NAME = 'Nemeris User';
-const DEFAULT_PROFILE_PFP = 'img/icon/favicon.png';
-
-
+const DEFAULT_PROFILE_NAME = 'Mr. Léo Tosku';
+const DEFAULT_PROFILE_PFP = 'img/photo/leot.png';
 
 function applySettingsToUi(settings = getUserSettings()) {
     const profileName = document.getElementById('profile-name');
@@ -44,10 +37,6 @@ function applySettingsToUi(settings = getUserSettings()) {
     if (profilePfp) {
         profilePfp.src = pfp;
         profilePfp.alt = name;
-        profilePfp.onerror = () => {
-            profilePfp.onerror = null;
-            profilePfp.src = DEFAULT_PROFILE_PFP;
-        };
     }
 }
 
@@ -72,7 +61,7 @@ function rebuildTransactionHistoryRows() {
 
     Object.values(positions).forEach((pos) => {
         const card = document.getElementById(`card-${pos.symbol}`);
-        const tbody = card?.querySelector('.transaction-history-body');
+        const tbody = card?.querySelector('.history-body');
         if (!tbody) return;
 
         const transactions = [];
@@ -109,6 +98,7 @@ function rebuildTransactionHistoryRows() {
 
 function refreshUiAfterSettingsSave() {
     updatePortfolioSummary();
+    syncDashboardData();
 
     Object.keys(positions).forEach(symbol => {
         updateSidebarPerformance(symbol);
@@ -134,7 +124,7 @@ function openSettingsCard() {
         c.setAttribute('aria-hidden', 'true');
     });
     document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
-    try { document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active')); } catch (e) {}
+    try { document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active')); } catch (e) { }
 
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
@@ -193,7 +183,7 @@ function stopFastPolling() {
 
 function startGlobalRefreshLoop() {
     if (globalRefreshTimer) return;
-    
+
     // Initial sync
     syncDashboardData();
 
@@ -211,7 +201,7 @@ async function syncDashboardData() {
 }
 
 // Deprecated: logic moved to syncDashboardData
-function startPriceUpdateLoop() {}
+function startPriceUpdateLoop() { }
 
 async function batchPriceFetch() {
     if (isBatchFetching) return;
@@ -224,11 +214,14 @@ async function batchPriceFetch() {
         if (!quotes) return;
 
         const activeSymbol = getActiveSymbol();
+        const returnedTickers = new Set(quotes.map(q => (q.symbol || '').toUpperCase()).filter(Boolean));
 
         for (const q of quotes) {
             const ticker = q.symbol;
             for (const pos of Object.values(positions)) {
                 if (pos.ticker !== ticker) continue;
+
+                if (pos.suspended) unmarkTabAsSuspended(pos.symbol);
 
                 const prevPrice = pos.lastData?.price || 0;
                 const newPrice = q.regularMarketPrice || prevPrice;
@@ -252,6 +245,15 @@ async function batchPriceFetch() {
                 if (pos.symbol === activeSymbol) {
                     updateUI(pos.symbol, pos.lastData);
                 }
+            }
+        }
+
+        // Yahoo a répondu mais a omis certains tickers → ils sont morts/délistés.
+        if (quotes.length > 0) {
+            for (const pos of Object.values(positions)) {
+                if (!pos.ticker) continue;
+                if (returnedTickers.has(pos.ticker.toUpperCase())) continue;
+                if (!pos.suspended) markTabAsSuspended(pos.symbol);
             }
         }
     } catch (e) {
@@ -292,16 +294,7 @@ async function fetchActiveSymbol(force) {
     try {
         const period = positions[symbol].currentPeriod || '1D';
         const name = positions[symbol].name || null;
-        const { fetchFunc, apiName } = selectApiFetch();
-        const config = await loadApiConfig();
-        const apiConfig = config.apis[apiName];
-
-        if (!apiConfig || !apiConfig.enabled) {
-
-            return;
-        }
-
-        d = await fetchFunc(positions[symbol].ticker, period, symbol, positions[symbol], name, signal, apiConfig.apiKey);
+        d = await fetchFromYahoo(positions[symbol].ticker, period, symbol, positions[symbol], name, signal, "");
 
         // Si un fetch plus récent a pris le relais pendant qu'on attendait, on jette.
         if (signal.aborted) return;
@@ -310,15 +303,19 @@ async function fetchActiveSymbol(force) {
         positions[symbol].lastData = d;
         if (d?.interval) positions[symbol].currentInterval = d.interval;
 
-        if (d && d.error && DEAD_ERROR_CODES.includes(d.errorCode)) markTabAsSuspended(symbol);
-        else if (d && !d.error) unmarkTabAsSuspended(symbol);
+        updatePortfolioSummary();
+
+        if (d && d.error && DEAD_ERROR_CODES.includes(d.errorCode)) {
+            markTabAsSuspended(symbol);
+        } else if (d && !d.error) {
+            unmarkTabAsSuspended(symbol);
+        }
 
         updateUI(symbol, d);
         if (d?.source) lastApiBySymbol[symbol] = d.source;
 
 
 
-        updatePortfolioSummary();
 
         if (d && !d.error && !d.throttled) {
             startFastPolling();
@@ -329,7 +326,7 @@ async function fetchActiveSymbol(force) {
         try {
             const days = periodToDays(period);
             const apiToUse = window.getSelectedApi?.() || window.selectedApi;
-            fetchCardNews(symbol, false, 50, days, apiToUse).catch(() => {});
+            fetchCardNews(symbol, false, 50, days, apiToUse).catch(() => { });
         } catch { /* ignore */ }
     } catch (e) {
         if (e.name === 'AbortError') return;
@@ -345,21 +342,21 @@ async function fetchActiveSymbol(force) {
 }
 
 // Event Listeners
-document.addEventListener('click', async e=>{
+document.addEventListener('click', async e => {
     const t = e.target.closest('.tab')
     if (t) {
         if (mainFetchController) mainFetchController.abort()
-        document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'))
-        try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch(e) {}
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'))
+        try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch (e) { }
         document.querySelectorAll('.card').forEach(x => x.classList.remove('active'))
         t.classList.add('active')
-        const sym=t.dataset.symbol
-        const cd=document.getElementById(`card-${sym}`)
+        const sym = t.dataset.symbol
+        const cd = document.getElementById(`card-${sym}`)
         if (cd) {
             cd.classList.add('active')
-            try { if (cd.id !== 'card-terminal' && typeof closeTerminalCard === 'function') closeTerminalCard(); } catch (e) {}
+            try { if (cd.id !== 'card-terminal' && typeof closeTerminalCard === 'function') closeTerminalCard(); } catch (e) { }
         }
-        
+
         fetchActiveSymbol(true)
         batchPerformanceFetch(globalPeriod)
     }
@@ -387,10 +384,10 @@ document.getElementById('cards-container')?.addEventListener('click', async e =>
     const b = e.target.closest('.period-btn');
     if (!b) return;
     const p = b.dataset.period;
-    
+
     // Update global state
     setGlobalPeriod(p);
-    
+
     // Update every position's period
     Object.keys(positions).forEach(sym => {
         positions[sym].currentPeriod = p;
@@ -421,10 +418,10 @@ document.getElementById('cards-container')?.addEventListener('click', async e =>
 });
 
 
-const font=document.createElement('link')
-font.id='poppins-font'
-font.rel='stylesheet'
-font.href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'
+const font = document.createElement('link')
+font.id = 'poppins-font'
+font.rel = 'stylesheet'
+font.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'
 document.head.appendChild(font)
 
 window.addEventListener('load', async () => {
@@ -480,6 +477,8 @@ window.addEventListener('load', async () => {
             }
         });
     } catch (err) { /* ignore */ }
+
+    initMobileSidebar();
 });
 
 document.getElementById('open-terminal-btn')?.addEventListener('click', e => {
@@ -488,8 +487,8 @@ document.getElementById('open-terminal-btn')?.addEventListener('click', e => {
 document.getElementById('open-news-feed')?.addEventListener('click', async e => {
     const a = getActiveSymbol();
     try { openNewsPage(a); } catch (err) { /* noop */ }
-    try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch(e) {}
-    try { document.getElementById('open-news-feed')?.classList.add('active'); } catch(e) {}
+    try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch (e) { }
+    try { document.getElementById('open-news-feed')?.classList.add('active'); } catch (e) { }
 });
 document.getElementById('open-settings-btn')?.addEventListener('click', () => {
     openSettingsCard();
@@ -506,7 +505,7 @@ document.addEventListener('keydown', (e) => {
             if (card && card.classList.contains('active')) {
                 closeNewsPage();
             }
-        } catch (err) {}
+        } catch (err) { }
     }
 });
 
@@ -528,7 +527,7 @@ window.setSelectedApi = (api) => { setSelectedApi(api); };
 window.selectedApi = selectedApi;
 window.setupNewsSearch = setupNewsSearch;
 
-window.registerDynamicPosition = function(posData) {
+window.registerDynamicPosition = function (posData) {
     if (!posData || !posData.symbol) return;
     positions[posData.symbol] = posData;
     setPositions(positions);

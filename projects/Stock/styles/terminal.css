@@ -1,8 +1,9 @@
 .terminal-log {
     font-family: "JetBrains Mono", monospace;
-    padding: 6px 8px;
+    padding: 2px 8px;
     color: var(--text-white);
-    font-size: 0.8rem;
+    font-size: 13px;
+    background: transparent !important;
 }
 
 .terminal-help {
@@ -16,7 +17,7 @@
 
 .card.terminal-card {
     display: none;
-    background: linear-gradient(145deg, rgba(30, 30, 36, 0.95) 0%, rgba(24, 24, 30, 0.98) 100%);
+    background: #000 !important;
     border-left: 1px solid rgba(168, 162, 255, 0.1);
     color: var(--text-white);
 }
@@ -28,14 +29,15 @@
 }
 
 .terminal-card .terminal-body {
-    margin: 12px 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
+    padding: 10px 0;
 }
 
 .terminal-card .terminal-output {
     width: 100%;
-    background: var(--bg-black);
+    background: transparent !important;
     color: var(--text-white);
     font-family: "JetBrains Mono", monospace;
     display: flex;
@@ -145,18 +147,20 @@
 }
 
 .terminal-prompt {
-    margin-right: 6px;
+    padding: 2px 0 2px 8px;
     color: var(--text-white);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
 }
 
 .terminal-input {
     color: var(--text-white);
     background: transparent;
     border: none !important;
-    padding: 0;
+    padding: 2px 8px 2px 4px;
     width: 100%;
-    font-family: inherit;
-    font-size: inherit;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
     outline: none !important;
     box-shadow: none !important;
 }

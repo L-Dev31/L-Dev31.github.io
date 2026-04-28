@@ -1,4 +1,3 @@
-import { loadApiConfig } from './state.js';
 import { periodToDays } from './constants.js';
 import { fetchTickerNewsItems, fetchSymbolNewsItems } from './command/news.js';
 
@@ -71,19 +70,12 @@ const filterNewsItems = (items, query) => {
     );
 };
 
-const collectCardTags = item => {
+const collectTags = (item, includeRelated = true) => {
     const tags = new Set();
-    if (item.symbol) tags.add(getTickerLabel(item.symbol));
-    if (item.symbols) item.symbols.forEach(s => tags.add(getTickerLabel(s)));
-    if (item.relatedTickers) item.relatedTickers.forEach(s => tags.add(getTickerLabel(s)));
-    return Array.from(tags);
-};
-
-const collectPageTags = item => {
     const symbols = item.symbols || (item.symbol ? [item.symbol] : []);
-    const labels = new Set();
-    symbols.forEach(s => labels.add(getTickerLabel(s)));
-    return Array.from(labels);
+    symbols.forEach(s => tags.add(getTickerLabel(s)));
+    if (includeRelated && item.relatedTickers) item.relatedTickers.forEach(s => tags.add(getTickerLabel(s)));
+    return Array.from(tags);
 };
 
 export function setPositions(pos) { positions = pos; }
@@ -96,12 +88,10 @@ export async function fetchCardNews(symbol, force = false, limit = 50, days = 7,
         return positions[symbol].news;
     }
     try {
-        const config = await loadApiConfig();
         const api = apiName || window.getSelectedApi?.() || window.selectedApi || 'yahoo';
         const enriched = await fetchSymbolNewsItems({
             symbol,
             positions,
-            config,
             limit,
             days,
             apiName: api
@@ -147,7 +137,7 @@ export function updateNewsUI(symbol, items, filter = null) {
     if (!list.length) { el.textContent = filter ? 'No results.' : 'No recent news.'; return; }
 
     sortNewsItems(list).forEach(item => {
-        const tagLabels = collectCardTags(item);
+        const tagLabels = collectTags(item, true);
         el.appendChild(buildNewsAnchorItem(item, { className: 'news-item', tagLabels }));
     });
 }
@@ -170,7 +160,7 @@ export function updateNewsPageList(items, opts = {}) {
     if (!skipSort) sortNewsItems(list);
     if (replaceCache) lastPageNews = list;
     list.forEach(item => {
-        const tagLabels = collectPageTags(item);
+        const tagLabels = collectTags(item, false);
         el.appendChild(buildNewsAnchorItem(item, { className: 'news-item', tagLabels }));
     });
     const upd = document.getElementById('news-last-update');
@@ -243,7 +233,6 @@ async function loadNews() {
     if (!el) return;
     el.innerHTML = '<div class="news-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="news-loading-text">Loading news...</span></div>';
     try {
-        const config = await loadApiConfig();
         const api = window.getSelectedApi?.() || window.selectedApi || 'yahoo';
         const days = periodToDays(currentNewsPeriod);
         let tickers = [];
@@ -259,7 +248,7 @@ async function loadNews() {
 
         for (const t of tickers) {
             try {
-                const items = await fetchTickerNewsItems({ ticker: t.ticker, config, limit: 30, days, apiName: api });
+                const items = await fetchTickerNewsItems({ ticker: t.ticker, limit: 30, days, apiName: api });
                 if (items?.length) {
                     const filtered = filterBySymbol(items.map(i => ({ ...i, symbol: t.symbol })), t.symbol);
                     filtered.forEach(item => {

@@ -34,7 +34,7 @@ function out(text, cls = 'terminal-log', html = false) {
 }
 
 function fmtErr(e) {
-    if (!e) return 'Erreur';
+    if (!e) return 'Error';
     if (typeof e === 'string') return e;
     const c = e.errorCode || e.status || e.statusCode;
     if (c === 401) return '401 Unauthorized';
@@ -70,8 +70,8 @@ function showHelp(cmd) {
         const rows = cmds
             .map(x => `<tr><td><span class="terminal-command">${x.c}</span></td><td>${x.d}</td></tr>`)
             .join('');
-        out('Commandes terminal:');
-        const html = `<div class="terminal-panel"><table class="terminal-data-table terminal-help-table"><thead><tr><th>COMMANDE</th><th>DESCRIPTION</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        out('Terminal Commands:');
+        const html = `<div class="terminal-panel"><table class="terminal-data-table terminal-help-table"><thead><tr><th>COMMAND</th><th>DESCRIPTION</th></tr></thead><tbody>${rows}</tbody></table></div>`;
         out(html, 'terminal-log', true);
         return;
     }
@@ -79,11 +79,11 @@ function showHelp(cmd) {
     const c = cmd.toUpperCase();
     const found = cmds.find(x => x.c.startsWith(c));
     if (found) {
-        out(`Aide ${c}:`);
-        const html = `<div class="terminal-panel"><table class="terminal-mini-table terminal-help-table"><thead><tr><th>COMMANDE</th><th>DESCRIPTION</th></tr></thead><tbody><tr><td><span class="terminal-command">${found.c}</span></td><td>${found.d}</td></tr></tbody></table></div>`;
+        out(`Help ${c}:`);
+        const html = `<div class="terminal-panel"><table class="terminal-mini-table terminal-help-table"><thead><tr><th>COMMAND</th><th>DESCRIPTION</th></tr></thead><tbody><tr><td><span class="terminal-command">${found.c}</span></td><td>${found.d}</td></tr></tbody></table></div>`;
         out(html, 'terminal-log', true);
     }
-    else out(`Inconnu: ${c}`);
+    else out(`Unknown: ${c}`);
 }
 
 const COMMAND_HANDLERS = {

@@ -1,5 +1,7 @@
 .signal-container {
     margin: 20px 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 .signal-bar {
@@ -64,23 +66,15 @@
     letter-spacing: 0.4px;
 }
 
-.signal-label.sell-label {
-    color: var(--color-negative);
-}
-
-.signal-label.hold-label {
-    color: #fbbf24;
-}
-
-.signal-label.buy-label {
-    color: var(--color-positive);
-}
+.signal-label.sell-label { color: var(--color-negative); }
+.signal-label.hold-label { color: var(--color-warning); }
+.signal-label.buy-label { color: var(--color-positive); }
 
 .signal-value {
     text-align: center;
     font-size: 18px;
     font-weight: 700;
-    color: var(--primary-purple);
+    color: var(--primary);
     margin-bottom: 6px;
     text-transform: uppercase;
 }
@@ -95,7 +89,7 @@
 
 .signal-state-container {
     background: linear-gradient(145deg, rgba(168, 162, 255, 0.08) 0%, rgba(168, 162, 255, 0.02) 100%);
-    border-left: 4px solid #fbbf24;
+    border-left: 4px solid var(--color-warning);
     margin: 15px 0;
 }
 
@@ -109,9 +103,7 @@
     background: rgba(101, 217, 129, 0.05);
 }
 
-.signal-state-container.insufficient-state {
-    border-left-color: var(--primary-purple);
-}
+.signal-state-container.insufficient-state { border-left-color: var(--primary); }
 
 .signal-state-container.closed-state {
     border-left-color: #6b7280;
@@ -119,37 +111,23 @@
 }
 
 .signal-state-container.suspended-state {
-    border-left-color: #ef4444;
+    border-left-color: var(--color-negative);
     background: rgba(239, 68, 68, 0.05);
 }
 
 .signal-state-title {
     font-size: 15px;
     font-weight: 700;
-    color: #fbbf24;
+    color: var(--color-warning);
     text-transform: uppercase;
     margin-bottom: 6px;
 }
 
-.signal-state-container.sell-state .signal-state-title {
-    color: var(--color-negative);
-}
-
-.signal-state-container.buy-state .signal-state-title {
-    color: var(--color-positive);
-}
-
-.signal-state-container.insufficient-state .signal-state-title {
-    color: var(--primary-purple);
-}
-
-.signal-state-container.closed-state .signal-state-title {
-    color: #6b7280;
-}
-
-.signal-state-container.suspended-state .signal-state-title {
-    color: #ef4444;
-}
+.signal-state-container.sell-state .signal-state-title { color: var(--color-negative); }
+.signal-state-container.buy-state .signal-state-title { color: var(--color-positive); }
+.signal-state-container.insufficient-state .signal-state-title { color: var(--primary); }
+.signal-state-container.closed-state .signal-state-title { color: #6b7280; }
+.signal-state-container.suspended-state .signal-state-title { color: var(--color-negative); }
 
 .signal-state-description {
     font-size: 13px;
@@ -169,7 +147,7 @@
     font-weight: 600;
     text-transform: uppercase;
     margin-bottom: 6px;
-    color: var(--primary-purple);
+    color: var(--primary);
 }
 
 .explanation-content {
@@ -177,21 +155,4 @@
     color: var(--text-light);
     opacity: 0.75;
     line-height: 1.5;
-}
-
-/* Utility Colors */
-.positive {
-    color: var(--color-positive) !important;
-}
-
-.negative {
-    color: var(--color-negative) !important;
-}
-
-.warning {
-    color: #fbbf24 !important;
-}
-
-.neutral {
-    color: var(--text-light) !important;
 }

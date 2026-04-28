@@ -1,12 +1,3 @@
-/* ========================================
-   EXPLORER CARD STYLES
-   ======================================== */
-
-:root {
-    --explorer-bg: #1e1e24;
-    --explorer-muted: #6b7280;
-}
-
 .container .card.explorer-card {
     display: none;
     flex-direction: column;
@@ -14,15 +5,10 @@
     overflow-y: auto;
 }
 
-.container .card.explorer-card.active {
-    display: flex;
-}
+.container .card.explorer-card.active { display: flex; }
 
-.card.explorer-card .explorer-header {
-    display: none;
-}
+.card.explorer-card .explorer-header { display: none; }
 
-/* Filters */
 .card.explorer-card .explorer-filters {
     display: flex;
     flex-direction: column;
@@ -44,7 +30,7 @@
     justify-content: space-between;
     font-size: 11px;
     text-transform: uppercase;
-    color: var(--primary-purple);
+    color: var(--primary);
     font-weight: 600;
 }
 
@@ -103,13 +89,8 @@
     opacity: 0.8;
 }
 
-.card.explorer-card .explorer-limit-tick.safe {
-    color: var(--color-positive);
-}
-
-.card.explorer-card .explorer-limit-tick.danger {
-    color: var(--color-negative);
-}
+.card.explorer-card .explorer-limit-tick.safe { color: var(--color-positive); }
+.card.explorer-card .explorer-limit-tick.danger { color: var(--color-negative); }
 
 .card.explorer-card .explorer-limit-tick.active {
     opacity: 1;
@@ -127,19 +108,13 @@
 }
 
 .card.explorer-card .explorer-limit-toggle input {
-    accent-color: var(--primary-purple);
+    accent-color: var(--primary);
     width: 14px;
     height: 14px;
 }
 
-.card.explorer-card .explorer-limit-range:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.card.explorer-card .explorer-limit-ticks.disabled {
-    opacity: 0.4;
-}
+.card.explorer-card .explorer-limit-range:disabled { opacity: 0.5; cursor: not-allowed; }
+.card.explorer-card .explorer-limit-ticks.disabled { opacity: 0.4; }
 
 .card.explorer-card .explorer-filters-row {
     display: flex;
@@ -151,18 +126,19 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+    min-width: 0;
 }
 
 .card.explorer-card .explorer-label {
     font-size: 11px;
-    color: var(--primary-purple);
+    color: var(--primary);
     font-weight: 600;
     text-transform: uppercase;
 }
 
 .card.explorer-card .explorer-select {
     padding: 10px 12px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid rgba(168, 162, 255, 0.1);
     background: rgba(255, 255, 255, 0.02);
     color: var(--text-white);
@@ -171,16 +147,9 @@
     cursor: pointer;
 }
 
-.card.explorer-card .explorer-select:focus {
-    border-color: rgba(168, 162, 255, 0.3);
-}
+.card.explorer-card .explorer-select:focus { border-color: rgba(168, 162, 255, 0.3); }
+.card.explorer-card .explorer-select option { background: var(--explorer-bg); color: var(--text-white); }
 
-.card.explorer-card .explorer-select option {
-    background: var(--explorer-bg);
-    color: var(--text-white);
-}
-
-/* List */
 .card.explorer-card .explorer-list {
     flex: 1;
     overflow-y: auto;
@@ -208,18 +177,16 @@
     text-align: center;
 }
 
-/* Ticker Item */
 .card.explorer-card .explorer-item {
     display: flex;
     align-items: center;
     gap: 14px;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(168, 162, 255, 0.08);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     padding: 12px 14px;
     margin-bottom: 8px;
     cursor: pointer;
-    transition: none !important;
 }
 
 .card.explorer-card .explorer-item:hover {
@@ -227,9 +194,7 @@
     border-color: rgba(168, 162, 255, 0.2);
 }
 
-.card.explorer-card .explorer-item:active {
-    transform: scale(0.99);
-}
+.card.explorer-card .explorer-item:active { transform: scale(0.99); }
 
 .card.explorer-card .explorer-item-logo {
     width: 36px;
@@ -241,8 +206,9 @@
     justify-content: center;
     font-weight: 600;
     font-size: 12px;
-    color: var(--primary-purple);
+    color: var(--primary);
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .card.explorer-card .explorer-item-logo img {
@@ -282,7 +248,7 @@
 
 .card.explorer-card .explorer-item-regime {
     font-size: 10px;
-    color: var(--primary-purple);
+    color: var(--primary);
     opacity: 0.7;
     margin-top: 2px;
     white-space: nowrap;
@@ -301,13 +267,8 @@
     font-weight: 500;
 }
 
-.card.explorer-card .explorer-item-change.positive {
-    color: var(--color-positive);
-}
-
-.card.explorer-card .explorer-item-change.negative {
-    color: var(--color-negative);
-}
+.card.explorer-card .explorer-item-change.positive { color: var(--color-positive); }
+.card.explorer-card .explorer-item-change.negative { color: var(--color-negative); }
 
 .card.explorer-card .explorer-period-label {
     font-size: 9px;
@@ -331,42 +292,18 @@
     text-transform: uppercase;
 }
 
-.card.explorer-card .explorer-signal-badge.buy {
-    background: rgba(74, 222, 128, 0.12);
-    color: var(--color-positive);
-}
-
-.card.explorer-card .explorer-signal-badge.sell {
-    background: rgba(248, 113, 113, 0.12);
-    color: var(--color-negative);
-}
-
-.card.explorer-card .explorer-signal-badge.hold {
-    background: rgba(251, 191, 36, 0.12);
-    color: #fbbf24;
-}
-
-.card.explorer-card .explorer-signal-badge.crypto {
-    background: rgba(249, 115, 22, 0.15);
-    color: #f97316;
-}
-
-.card.explorer-card .explorer-signal-badge.closed {
-    background: rgba(107, 114, 128, 0.12);
-    color: #6b7280;
-}
-
-.card.explorer-card .explorer-signal-badge.suspended {
-    background: rgba(107, 114, 128, 0.12);
-    color: #6b7280;
-}
+.card.explorer-card .explorer-signal-badge.buy { background: rgba(74, 222, 128, 0.12); color: var(--color-positive); }
+.card.explorer-card .explorer-signal-badge.sell { background: rgba(248, 113, 113, 0.12); color: var(--color-negative); }
+.card.explorer-card .explorer-signal-badge.hold { background: rgba(251, 191, 36, 0.12); color: var(--color-warning); }
+.card.explorer-card .explorer-signal-badge.crypto { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+.card.explorer-card .explorer-signal-badge.closed,
+.card.explorer-card .explorer-signal-badge.suspended { background: rgba(107, 114, 128, 0.12); color: #6b7280; }
 
 .card.explorer-card .explorer-signal-score {
     font-size: 10px;
     color: var(--explorer-muted);
 }
 
-/* Pagination */
 .card.explorer-card .explorer-pagination {
     display: flex;
     align-items: center;
@@ -383,7 +320,7 @@
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(168, 162, 255, 0.1);
     border-radius: 6px;
-    color: var(--primary-purple);
+    color: var(--primary);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -391,10 +328,12 @@
     font-size: 12px;
 }
 
-.card.explorer-card .explorer-page-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
+.card.explorer-card .explorer-page-btn:hover:not(:disabled) {
+    background: rgba(168, 162, 255, 0.1);
+    border-color: rgba(168, 162, 255, 0.25);
 }
+
+.card.explorer-card .explorer-page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
 .card.explorer-card .explorer-page-info {
     color: var(--explorer-muted);
@@ -405,7 +344,7 @@
 
 .explorer-market-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 16px;
     padding: 20px;
     max-width: 100%;
@@ -415,7 +354,7 @@
 .market-grid-btn {
     background: linear-gradient(180deg, rgba(168, 162, 255, 0.2) 0%, rgba(168, 162, 255, 0) 100%);
     border: 1px solid rgba(168, 162, 255, 0.1);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     padding: 24px;
     cursor: pointer;
     display: flex;
@@ -423,6 +362,13 @@
     justify-content: center;
     aspect-ratio: 1.5;
 }
+
+.market-grid-btn:hover {
+    background: linear-gradient(180deg, rgba(168, 162, 255, 0.3) 0%, rgba(168, 162, 255, 0.05) 100%);
+    border-color: rgba(168, 162, 255, 0.3);
+}
+
+.market-grid-btn:active { transform: scale(0.98); }
 
 .market-grid-btn img {
     max-width: 80%;

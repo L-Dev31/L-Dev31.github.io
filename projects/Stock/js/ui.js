@@ -1,8 +1,7 @@
-import { positions, selectedApi, loadApiConfig, lastApiBySymbol, getCurrency, globalPeriod, getUserSettings } from './state.js';
+import { positions, selectedApi, lastApiBySymbol, getCurrency, globalPeriod, getUserSettings } from './state.js';
 import { hasTransactions, typeLabel, typeIcon } from './constants.js';
 import { calculateStockValues } from './portfolio.js';
 import { fetchActiveSymbol } from './general.js';
-import rateLimiter from './rate-limiter.js';
 import { updateChart, initChart } from './chart.js';
 import { updateSignal } from './signal-bot.js';
 import { setupNewsSearch } from './news.js';
@@ -173,7 +172,7 @@ export function createCard(stock) {
         }
     }
 
-    const tds = card.querySelectorAll('.card-table-td')
+    const tds = card.querySelectorAll('.investment-section tbody td')
     if (tds.length===8) {
         tds[1].id=`invest-${stock.symbol}`
         tds[2].id=`value-${stock.symbol}`
@@ -208,7 +207,7 @@ export function createCard(stock) {
         tds[7].textContent = '--';
     }
 
-    const cardTableContainer = card.querySelector('.card-table-container')
+    const cardTableContainer = card.querySelector('.investment-section .table-container')
     if (cardTableContainer) {
         cardTableContainer.style.display = '';
     }
@@ -259,16 +258,16 @@ export function createCard(stock) {
         info.forEach(el=>el.textContent='--')
     }
 
-    const transactionTitle = card.querySelector('.transaction-history-title')
+    const transactionTitle = card.querySelector('.history-title')
     if (transactionTitle) {
-        transactionTitle.id = `transaction-history-title-${stock.symbol}`;
+        transactionTitle.id = `history-title-${stock.symbol}`;
         transactionTitle.style.display = '';
     }
 
-    const transactionContainer = card.querySelector('.transaction-history-container')
+    const transactionContainer = card.querySelector('.history-container')
     if (transactionContainer) {
         transactionContainer.style.display = '';
-        const tbody = card.querySelector('.transaction-history-body');
+        const tbody = card.querySelector('.history-body');
         const hasTransactionsLocal = hasTransactions(stock);
         if (tbody && hasTransactionsLocal) {
             let transactions = [];
@@ -301,28 +300,6 @@ export function createCard(stock) {
 
     const nl = card.querySelector('.news-list');
     if (nl) nl.id = `news-list-${stock.symbol}`;
-
-    // Sticky Header Scroll Logic
-    card.addEventListener('scroll', () => {
-        const header = card.querySelector('.card-sticky-header');
-        if (header) {
-            header.classList.toggle('scrolled', card.scrollTop > 40);
-        }
-    });
-
-    // Populate mini-logo
-    const miniLogo = card.querySelector('.card-mini-logo img');
-    if (miniLogo) {
-        miniLogo.src = stock.iconSymbol ? `img/icon/${stock.iconSymbol}.png` : `img/logo/${stock.symbol}.png`;
-        miniLogo.onerror = function() {
-            const parent = this.parentElement;
-            parent.innerHTML = '';
-            const fallback = document.createElement('div');
-            fallback.className = 'logo-fallback';
-            fallback.textContent = (stock.ticker || stock.symbol || '').slice(0, 2).toUpperCase();
-            parent.appendChild(fallback);
-        };
-    }
 
     document.getElementById('cards-container')?.appendChild(card)
     
@@ -654,34 +631,11 @@ export function updateCardTitle(symbol) {
 
 export function updateSectionDates(symbol) {
     const dateStr = getBestDataDate(symbol);
-    const courseTitle = document.getElementById(`course-title-${symbol}`);
-    if (courseTitle) {
-        const courseDate = courseTitle.nextElementSibling;
-        if (courseDate && courseDate.classList.contains('section-date')) {
-            courseDate.textContent = dateStr || '';
-        }
-    }
-    const invTitle = document.getElementById(`investment-title-${symbol}`);
-    if (invTitle) {
-        const invDate = invTitle.nextElementSibling;
-        if (invDate && invDate.classList.contains('section-date')) {
-            invDate.textContent = dateStr || '';
-        }
-    }
-    const detTitle = document.getElementById(`details-title-${symbol}`);
-    if (detTitle) {
-        const detDate = detTitle.nextElementSibling;
-        if (detDate && detDate.classList.contains('section-date')) {
-            detDate.textContent = dateStr || '';
-        }
-    }
-    const signalTitle = document.getElementById(`signal-title-${symbol}`);
-    if (signalTitle) {
-        const signalDate = signalTitle.nextElementSibling;
-        if (signalDate && signalDate.classList.contains('section-date')) {
-            signalDate.textContent = dateStr || '';
-        }
-    }
+    ['course', 'investment', 'details', 'signal'].forEach(key => {
+        const title = document.getElementById(`${key}-title-${symbol}`);
+        const dateEl = title?.nextElementSibling;
+        if (dateEl?.classList.contains('section-date')) dateEl.textContent = dateStr || '';
+    });
 }
 
 function getLastDataDate(symbol) {
@@ -747,53 +701,31 @@ function setSymbolSuspendedInStorage(symbol, suspended) {
     } catch { }
 }
 
-export function markTabAsSuspended(symbol) {
+export function toggleSymbolSuspension(symbol, isSuspended) {
     const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
     if (!tab) return;
 
-    if (positions[symbol]) positions[symbol].suspended = true;
-    setSymbolSuspendedInStorage(symbol, true);
+    if (positions[symbol]) positions[symbol].suspended = isSuspended;
+    setSymbolSuspendedInStorage(symbol, isSuspended);
 
-    const inSuspended = tab.closest('#suspended-tabs');
-    if (tab.classList.contains('suspended') && inSuspended) return;
-
-    tab.classList.add('suspended');
-
-    const pos = positions[symbol];
-    if (!pos) return;
-
-    const calculated = calculateStockValues(pos);
-    const isPortfolio = calculated.shares > 0 || hasTransactions(pos);
-
-    if (isPortfolio) return;
-
-    const type = pos.type || 'equity';
-    const section = ensureSection('suspended-tabs', type);
-    if (section) section.appendChild(tab);
+    if (isSuspended) {
+        if (tab.classList.contains('suspended') && tab.closest('#suspended-tabs')) return;
+        tab.classList.add('suspended');
+        const pos = positions[symbol];
+        if (!pos) return;
+        ensureSection('suspended-tabs', pos.type || 'equity')?.appendChild(tab);
+    } else {
+        if (!tab.classList.contains('suspended') && !tab.closest('#suspended-tabs')) return;
+        tab.classList.remove('suspended');
+        const pos = positions[symbol];
+        if (!pos) return;
+        const isPortfolio = calculateStockValues(pos).shares > 0 || hasTransactions(pos);
+        ensureSection(isPortfolio ? 'portfolio-tabs' : 'general-tabs', pos.type)?.appendChild(tab);
+    }
 }
 
-export function unmarkTabAsSuspended(symbol) {
-    const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
-    if (!tab) return;
-
-    if (positions[symbol]) positions[symbol].suspended = false;
-    setSymbolSuspendedInStorage(symbol, false);
-
-    if (!tab.classList.contains('suspended') && !tab.closest('#suspended-tabs')) return;
-
-    tab.classList.remove('suspended');
-
-    // Move back to original section
-    const pos = positions[symbol];
-    if (!pos) return;
-
-    const calculated = calculateStockValues(pos);
-    const isPortfolio = calculated.shares > 0 || hasTransactions(pos);
-    
-    const containerId = isPortfolio ? 'portfolio-tabs' : 'general-tabs';
-    const section = ensureSection(containerId, pos.type);
-    if (section) section.appendChild(tab);
-}
+export const markTabAsSuspended = (symbol) => toggleSymbolSuspension(symbol, true);
+export const unmarkTabAsSuspended = (symbol) => toggleSymbolSuspension(symbol, false);
 
 export function getActiveSymbol() {
     const t = document.querySelector('.tab.active')
@@ -895,4 +827,22 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
     }
 
     fetchActiveSymbol(true);
+}
+
+export function initMobileSidebar() {
+    const btn = document.getElementById('hamburger-btn');
+    const overlay = document.getElementById('sidebar-overlay');
+    const sidebar = document.getElementById('sidebar');
+
+    const closeSidebar = () => document.body.classList.remove('sidebar-open');
+    const toggleSidebar = () => document.body.classList.toggle('sidebar-open');
+
+    if (btn) btn.onclick = toggleSidebar;
+    if (overlay) overlay.onclick = closeSidebar;
+
+    sidebar?.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768 && (e.target.closest('.tab') || e.target.closest('.tool-btn'))) {
+            closeSidebar();
+        }
+    });
 }

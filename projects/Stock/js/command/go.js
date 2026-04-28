@@ -46,9 +46,9 @@ export async function runGoCommand({ parts, out, fmtErr }) {
 
     try {
         const result = await goToTicker({ symbol: raw, period });
-        if (result?.ok) out(`Ouvert: ${result.symbol || raw} ${period}`);
-        else out(`Non trouvé: ${raw}`);
+        if (result?.ok) out(`Opened: ${result.symbol || raw} ${period}`);
+        else out(`Not found: ${raw}`);
     } catch (error) {
-        out(`Erreur: ${fmtErr(error)}`);
+        out(`Error: ${fmtErr(error)}`);
     }
 }

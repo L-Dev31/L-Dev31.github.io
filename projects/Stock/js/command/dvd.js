@@ -8,14 +8,14 @@ export async function runDvdCommand({ parts, getTarget, out, fmtErr }) {
         out,
         fmtErr,
         usage: 'Usage: DVD <SYMBOL>',
-        loadingPrefix: 'Dividendes',
+        loadingPrefix: 'Dividends',
         onRun: async target => {
             const result = await fetchYahooDividends(target.ticker, null, null, null);
             if (result && !result.error) {
                 const recent = (result.dividends || []).slice(-5).reverse();
                 if (recent.length) {
                     const rows = recent.map(d => [d.date, formatNumber(d.dividend, 4)]);
-                    out(panel(keyValueTable(rows, 'DATE', 'DIVIDENDE')), 'terminal-log', true);
+                    out(panel(keyValueTable(rows, 'DATE', 'DIVIDEND')), 'terminal-log', true);
                     return;
                 }
 

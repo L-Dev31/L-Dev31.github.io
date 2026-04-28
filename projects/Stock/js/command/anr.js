@@ -8,7 +8,7 @@ export async function runAnrCommand({ parts, getTarget, out, fmtErr }) {
         out,
         fmtErr,
         usage: 'Usage: ANR <SYMBOL>',
-        loadingPrefix: 'Analystes',
+        loadingPrefix: 'Analysts',
         onRun: async target => {
             const result = await fetchYahooAnalysis(target.ticker, null);
             if (result && !result.error) {
@@ -18,14 +18,14 @@ export async function runAnrCommand({ parts, getTarget, out, fmtErr }) {
                     const reco = String(t.recommendationKey || 'hold').toLowerCase();
                     const cls = reco === 'buy' ? 'terminal-pos' : reco === 'sell' ? 'terminal-neg' : 'terminal-muted';
                     const rows = [
-                        ['Recommandation', `<span class="${cls}">${esc(reco.toUpperCase())}</span>`],
+                        ['Recommendation', `<span class="${cls}">${esc(reco.toUpperCase())}</span>`],
                         ['Strong Buy', formatNumber(t.strongBuy, 0)],
                         ['Buy', formatNumber(t.buy, 0)],
                         ['Hold', formatNumber(t.hold, 0)],
                         ['Sell', formatNumber(t.sell, 0)],
                         ['Strong Sell', formatNumber(t.strongSell, 0)]
                     ];
-                    out(panel(keyValueTable(rows, 'VALEUR', 'RESULTAT')), 'terminal-log', true);
+                    out(panel(keyValueTable(rows, 'VALUE', 'RESULT')), 'terminal-log', true);
                     return;
                 }
 
@@ -33,10 +33,10 @@ export async function runAnrCommand({ parts, getTarget, out, fmtErr }) {
                 const targetMean = fd.targetMeanPrice?.raw ?? fd.targetMeanPrice;
                 const reco = fd.recommendationMean?.raw ?? fd.recommendationMean;
                 const rows = [
-                    ['Target moyen', formatNumber(targetMean)],
+                    ['Mean target', formatNumber(targetMean)],
                     ['Recommendation mean', formatNumber(reco)]
                 ];
-                out(panel(keyValueTable(rows, 'VALEUR', 'RESULTAT')), 'terminal-log', true);
+                out(panel(keyValueTable(rows, 'VALUE', 'RESULT')), 'terminal-log', true);
                 return;
             }
 

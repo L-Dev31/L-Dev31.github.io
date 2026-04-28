@@ -8,23 +8,23 @@ export async function runFaCommand({ parts, getTarget, out, fmtErr }) {
         out,
         fmtErr,
         usage: 'Usage: FA <SYMBOL>',
-        loadingPrefix: 'Financiers',
+        loadingPrefix: 'Financials',
         onRun: async target => {
             const result = await fetchYahooFinancials(target.ticker, null);
             if (result && !result.error) {
                 const financialData = result.financials?.financialData || {};
                 const rows = [
                     ['Ticker', esc(target.ticker)],
-                    ['Prix', formatNumber(financialData.currentPrice?.raw)],
-                    ['Variation jour', formatPercent(financialData.dayChangePercent)],
-                    ['52 semaines', financialData.fiftyTwoWeekLow?.raw != null && financialData.fiftyTwoWeekHigh?.raw != null
+                    ['Price', formatNumber(financialData.currentPrice?.raw)],
+                    ['Day variation', formatPercent(financialData.dayChangePercent)],
+                    ['52 weeks', financialData.fiftyTwoWeekLow?.raw != null && financialData.fiftyTwoWeekHigh?.raw != null
                         ? `${formatNumber(financialData.fiftyTwoWeekLow.raw)} -> ${formatNumber(financialData.fiftyTwoWeekHigh.raw)}`
                         : '<span class="terminal-muted">-</span>'],
                     ['Volume', formatNumber(financialData.regularMarketVolume, 0)],
-                    ['Croissance CA', formatPercent(financialData.revenueGrowth != null ? Number(financialData.revenueGrowth) * 100 : null)],
-                    ['Marges', financialData.grossMargins != null ? formatPercent(Number(financialData.grossMargins) * 100) : '<span class="terminal-muted">-</span>']
+                    ['Revenue growth', formatPercent(financialData.revenueGrowth != null ? Number(financialData.revenueGrowth) * 100 : null)],
+                    ['Margins', financialData.grossMargins != null ? formatPercent(Number(financialData.grossMargins) * 100) : '<span class="terminal-muted">-</span>']
                 ];
-                out(panel(keyValueTable(rows, 'VALEUR', 'RESULTAT')), 'terminal-log', true);
+                out(panel(keyValueTable(rows, 'VALUE', 'RESULT')), 'terminal-log', true);
                 return;
             }
 

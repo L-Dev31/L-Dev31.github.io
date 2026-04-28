@@ -24,7 +24,7 @@ export function panel(content) {
     return `<div class="terminal-panel">${content}</div>`;
 }
 
-export function keyValueTable(rows, leftHeader = 'VALEUR', rightHeader = 'RESULTAT') {
+export function keyValueTable(rows, leftHeader = 'VALUE', rightHeader = 'RESULT') {
     const body = rows
         .map(([label, value]) => `<tr><th>${esc(label)}</th><td>${value}</td></tr>`)
         .join('');
@@ -43,6 +43,6 @@ export async function runTickerCommand({ parts, getTarget, out, fmtErr, usage, l
     try {
         await onRun(target);
     } catch (error) {
-        out(`Erreur: ${fmtErr(error)}`);
+        out(`Error: ${fmtErr(error)}`);
     }
 }

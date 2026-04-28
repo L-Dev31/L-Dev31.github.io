@@ -1,18 +1,17 @@
 import { fetchNews } from '../yahoo-finance.js';
-import { loadApiConfig } from '../state.js';
 import { periodToDays } from '../constants.js';
 
-export async function fetchTickerNewsItems({ ticker, config, limit = 50, days = 7, apiName = null }) {
+export async function fetchTickerNewsItems({ ticker, limit = 50, days = 7, apiName = null }) {
     const api = apiName || window.getSelectedApi?.() || window.selectedApi || 'yahoo';
-    const result = await fetchNews(ticker, config, limit, days, api);
+    const result = await fetchNews(ticker, limit, days, api);
     if (result?.error || !Array.isArray(result?.items)) return [];
     return result.items;
 }
 
-export async function fetchSymbolNewsItems({ symbol, positions, config, limit = 50, days = 7, apiName = null }) {
+export async function fetchSymbolNewsItems({ symbol, positions, limit = 50, days = 7, apiName = null }) {
     const api = apiName || window.getSelectedApi?.() || window.selectedApi || 'yahoo';
     const mapped = positions?.[symbol]?.ticker || symbol;
-    const items = await fetchTickerNewsItems({ ticker: mapped, config, limit, days, apiName: api });
+    const items = await fetchTickerNewsItems({ ticker: mapped, limit, days, apiName: api });
     return items.map(item => ({ ...item, symbol }));
 }
 
@@ -21,21 +20,20 @@ export async function runNewsCommand({ parts, getTarget, out, fmtErr }) {
 
     if (!rawQuery) {
         window.openNewsPage?.(null, { search: '' });
-        out('Actualités globales');
+        out('Global News');
         return;
     }
 
     const target = getTarget(parts);
     if (!target?.ticker) {
-        out('Erreur: ticker invalide');
+        out('Error: invalid ticker');
         window.openNewsPage?.(null, { search: rawQuery });
         return;
     }
 
-    out(`Actualites ${target.ticker}...`);
+    out(`News for ${target.ticker}...`);
 
     try {
-        const config = await loadApiConfig();
         const api = window.getSelectedApi?.() || window.selectedApi || 'yahoo';
 
         if (target.symbol && window.positions?.[target.symbol]) {
@@ -43,7 +41,6 @@ export async function runNewsCommand({ parts, getTarget, out, fmtErr }) {
             const results = await fetchSymbolNewsItems({
                 symbol: target.symbol,
                 positions: window.positions,
-                config,
                 limit: 20,
                 days: periodToDays(period),
                 apiName: api
@@ -58,7 +55,7 @@ export async function runNewsCommand({ parts, getTarget, out, fmtErr }) {
             return;
         }
 
-        const results = await fetchTickerNewsItems({ ticker: target.ticker, config, limit: 50, days: 7, apiName: api });
+        const results = await fetchTickerNewsItems({ ticker: target.ticker, limit: 50, days: 7, apiName: api });
         if (!results.length) {
             out(`No news found for ${target.ticker}`);
             window.openNewsPage(null, { search: rawQuery });
@@ -68,7 +65,7 @@ export async function runNewsCommand({ parts, getTarget, out, fmtErr }) {
         out(`${results.length} articles`);
         window.openNewsPage(null, { search: rawQuery });
     } catch (error) {
-        out(`Erreur: ${fmtErr(error)}`);
+        out(`Error: ${fmtErr(error)}`);
         window.openNewsPage?.(null, { search: rawQuery });
     }
 }
