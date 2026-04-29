@@ -6,7 +6,7 @@ import './terminal.js'
 import { DEAD_ERROR_CODES, periodToDays } from './constants.js'
 import { positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, fastPollTimer, setFastPollTimer, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings } from './state.js'
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching } from './portfolio.js'
-import { updateUI, clearPeriodDisplay, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance, initMobileSidebar } from './ui.js'
+import { updateUI, clearPeriodDisplay, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance, initMobileSidebar, setBottomNavActive } from './ui.js'
 
 // Re-export for other modules
 export { fetchActiveSymbol };
@@ -479,6 +479,23 @@ window.addEventListener('load', async () => {
     } catch (err) { /* ignore */ }
 
     initMobileSidebar();
+});
+
+document.getElementById('bottom-nav-terminal')?.addEventListener('click', () => {
+    openTerminalCard();
+    setBottomNavActive('bottom-nav-terminal');
+});
+document.getElementById('bottom-nav-news')?.addEventListener('click', () => {
+    try { openNewsPage(getActiveSymbol()); } catch (e) { }
+    setBottomNavActive('bottom-nav-news');
+});
+document.getElementById('bottom-nav-explorer')?.addEventListener('click', () => {
+    window.explorerModule?.openExplorer();
+    setBottomNavActive('bottom-nav-explorer');
+});
+document.getElementById('bottom-nav-settings')?.addEventListener('click', () => {
+    openSettingsCard();
+    setBottomNavActive('bottom-nav-settings');
 });
 
 document.getElementById('open-terminal-btn')?.addEventListener('click', e => {

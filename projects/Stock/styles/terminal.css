@@ -94,7 +94,7 @@
 
 .terminal-mini-table thead th,
 .terminal-data-table thead th {
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--primary);
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }
@@ -112,7 +112,7 @@
 }
 
 .terminal-data-table thead th {
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--primary);
     font-weight: 700;
     border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 }
@@ -133,7 +133,7 @@
     color: var(--text-white);
 }
 
-.terminal-muted { color: rgba(255, 255, 255, 0.55); }
+.terminal-muted { color: var(--primary); }
 .terminal-pos { color: #22c55e; font-weight: 700; }
 .terminal-neg { color: #ef4444; font-weight: 700; }
 

@@ -21,7 +21,6 @@
     border-top: 1px solid rgba(168, 162, 255, 0.08);
     display: flex;
     flex-direction: column;
-    gap: 8px;
 }
 
 .card.explorer-card .explorer-limit-label {
@@ -34,15 +33,29 @@
     font-weight: 600;
 }
 
+.explorer-limit-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-white);
+    background: rgba(168, 162, 255, 0.12);
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
 .card.explorer-card .explorer-limit-range {
     -webkit-appearance: none;
     appearance: none;
     width: 100%;
-    height: 8px;
-    border-radius: 4px;
-    background: linear-gradient(90deg, var(--color-positive) 0%, var(--color-positive) 30%, var(--color-negative) 30%, var(--color-negative) 100%);
+    height: 20px;
+    background-image: linear-gradient(90deg, var(--color-positive) 0%, var(--color-positive) 30%, var(--color-negative) 30%, var(--color-negative) 100%);
+    background-size: 100% 4px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: transparent;
     outline: none;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: none;
 }
 
 .card.explorer-card .explorer-limit-range::-webkit-slider-thumb {

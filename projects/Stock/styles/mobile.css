@@ -1,6 +1,12 @@
+.bottom-nav {
+    display: none;
+}
+
 @media (max-width: 768px) {
     :root {
         --pad-card: 14px;
+        --bottom-nav-h: calc(56px + env(safe-area-inset-bottom));
+        --nav-muted: rgba(168, 162, 255, 0.2);
     }
 
     body {
@@ -8,77 +14,105 @@
         -webkit-tap-highlight-color: transparent;
     }
 
+    body.sidebar-open {
+        overflow: hidden !important;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+
     ::-webkit-scrollbar {
         width: 0;
         height: 0;
     }
 
-    .mobile-only {
-        display: flex !important;
-        visibility: visible !important;
-        pointer-events: auto !important;
+    /* Bottom navigation bar */
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 2100;
+        background: rgba(12, 12, 16, 0.97);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(168, 162, 255, 0.1);
+        height: var(--bottom-nav-h);
+        padding-bottom: env(safe-area-inset-bottom);
     }
 
-    .hamburger-btn {
-        position: fixed;
-        top: 12px;
-        left: 12px;
-        z-index: 2100;
-        background: rgba(15, 15, 18, 0.7);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(168, 162, 255, 0.12);
-        border-radius: 10px;
+    .bottom-nav-btn {
+        flex: 1;
+        background: none;
+        border: none;
         color: var(--primary);
-        width: 40px;
-        height: 40px;
+        opacity: 0.25;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
         cursor: pointer;
-        transition: all 0.2s ease;
+        padding: 0;
+        min-height: 0;
     }
 
-    .hamburger-btn:active {
-        transform: scale(0.92);
-        background: rgba(168, 162, 255, 0.15);
+    .bottom-nav-btn span {
+        display: none;
     }
 
+    .bottom-nav-btn i {
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    .bottom-nav-btn.active {
+        opacity: 1;
+    }
+
+    .bottom-nav-btn:active {
+        opacity: 0.6;
+    }
+
+    .tools-bar {
+        visibility: hidden;
+        height: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    /* Sidebar behave like other cards on mobile */
     .sidebar {
         position: fixed;
         top: 0;
-        left: -100%;
+        left: 0;
         width: 100%;
         height: 100vh;
         z-index: 2000;
         background: #0f0f12;
-        padding: 64px 16px 16px;
+        padding: 20px 16px var(--bottom-nav-h);
         border-right: none;
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        display: flex;
+        display: none;
         flex-direction: column;
     }
 
     body.sidebar-open .sidebar {
-        transform: translateX(100%);
+        display: flex;
     }
 
     .sidebar-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        z-index: 1900;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
+        display: none !important;
     }
 
-    body.sidebar-open .sidebar-overlay {
-        opacity: 1;
-        visibility: visible;
+    .sidebar .tabs {
+        display: flex !important;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .sidebar .tab-logo {
+        width: 28px;
+        height: 28px;
     }
 
     .sidebar-scroll {
@@ -95,15 +129,14 @@
         padding-top: 0;
     }
 
-    /* Cards lose their internal padding so children control their own spacing.
-       Top is reserved only for the hamburger button. */
+    /* Cards: no top chrome, bottom cleared for bottom nav */
     .card {
-        padding: 60px 0 24px;
+        padding: 20px 0 calc(var(--bottom-nav-h) + 16px);
         border-left: none;
         min-height: 100vh;
     }
 
-    /* Children that should still breathe on the sides */
+    /* Children that breathe on the sides */
     .card .section-title,
     .card .card-general-info,
     .card .info-grid,
@@ -115,10 +148,8 @@
     .card .news-filters-column,
     .card.news-card .news-list,
     .card.news-card #news-page-feed-list,
-    .card.explorer-card .explorer-filters,
-    .card.explorer-card .explorer-limit-control,
-    .card.explorer-card .explorer-pagination,
-    .card.settings-card .settings-body {
+    .card.settings-card .settings-group,
+    .card.settings-card .settings-actions {
         padding-left: var(--pad-card);
         padding-right: var(--pad-card);
     }
@@ -145,7 +176,7 @@
         font-size: clamp(28px, 9vw, 36px);
     }
 
-    /* Chart goes edge-to-edge on phones — no border-radius, no side padding */
+    /* Chart goes edge-to-edge */
     .chart-container {
         height: 340px;
         margin: 0 0 24px;
@@ -160,7 +191,7 @@
         height: 220px !important;
     }
 
-    /* Periods: horizontal scroll, snap, no scrollbar — fits all 8 buttons on every screen */
+    /* Periods: horizontal scroll, snap, no scrollbar */
     .periods-group {
         position: static;
         display: flex;
@@ -175,7 +206,9 @@
         justify-content: flex-start;
     }
 
-    .periods-group::-webkit-scrollbar { display: none; }
+    .periods-group::-webkit-scrollbar {
+        display: none;
+    }
 
     .period-btn {
         flex: 0 0 auto;
@@ -237,61 +270,132 @@
         gap: 8px;
     }
 
-    /* Explorer — items go edge-to-edge for a denser, more readable list */
+    /* Explorer — complete mobile redesign */
+    .container .card.explorer-card {
+        height: 100dvh;
+        padding-bottom: var(--bottom-nav-h);
+    }
+
+    /* All 4 filters (Market, Sort, Period, Sector) in a 2×2 grid */
+    .card.explorer-card .explorer-filters {
+        padding-left: var(--pad-card);
+        padding-right: var(--pad-card);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
     .card.explorer-card .explorer-filters-row {
-        flex-direction: column;
-        gap: 10px;
+        display: contents;
     }
 
     .card.explorer-card .explorer-filter-group {
+        width: auto;
+    }
+
+    .card.explorer-card .explorer-label {
+        font-size: 10px;
+    }
+
+    .card.explorer-card .explorer-select {
+        padding: 9px 10px;
+        font-size: 13px;
+        min-height: 0;
+    }
+
+    /* Limit gauge — hide ticks, show slider + value badge only */
+    .card.explorer-card .explorer-limit-control {
+        margin-top: 12px;
+        padding: 12px var(--pad-card) 0;
+    }
+
+    .card.explorer-card .explorer-limit-ticks {
+        display: none;
+    }
+
+    .card.explorer-card .explorer-limit-range {
         width: 100%;
     }
 
+    .card.explorer-card .explorer-limit-range::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+    }
+
+    .card.explorer-card .explorer-limit-range::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+    }
+
     .card.explorer-card .explorer-list {
-        margin-top: 12px;
+        margin-top: 8px;
         padding: 0;
     }
 
     .card.explorer-card .explorer-item {
-        gap: 12px;
-        padding: 12px var(--pad-card);
+        gap: 10px;
+        padding: 11px var(--pad-card);
         margin-bottom: 0;
         border-left: none;
         border-right: none;
         border-radius: 0;
+        border-top: none;
+        border-bottom: 1px solid rgba(168, 162, 255, 0.06);
+        background: transparent;
+    }
+
+    .card.explorer-card .explorer-item:hover {
+        background: rgba(168, 162, 255, 0.04);
     }
 
     .card.explorer-card .explorer-item-logo {
-        width: 32px;
-        height: 32px;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
     }
 
     .card.explorer-card .explorer-item-name {
         font-size: 13px;
     }
 
+    .card.explorer-card .explorer-item-ticker {
+        font-size: 10px;
+    }
+
+    .card.explorer-card .explorer-item-regime {
+        display: none;
+    }
+
     .card.explorer-card .explorer-item-current {
-        font-size: 12px;
+        font-size: 13px;
     }
 
-    .explorer-market-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        padding: 12px var(--pad-card);
+    .card.explorer-card .explorer-item-change {
+        font-size: 11px;
     }
 
-    .market-grid-btn {
-        padding: 16px;
-        aspect-ratio: 1.3;
+    .card.explorer-card .explorer-signal-score {
+        display: none;
     }
 
-    .market-grid-btn .market-fallback-name {
-        font-size: 14px;
+    .card.explorer-card .explorer-item-signal {
+        min-width: 48px;
+    }
+
+    .card.explorer-card .explorer-signal-badge {
+        font-size: 9px;
+        padding: 3px 6px;
     }
 
     .card.explorer-card .explorer-pagination {
-        padding: 12px var(--pad-card);
-        gap: 10px;
+        position: sticky;
+        bottom: 0;
+        background: rgba(12, 12, 16, 0.97);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 10px var(--pad-card);
+        gap: 12px;
+        border-top: 1px solid rgba(168, 162, 255, 0.08);
     }
 
     .card.explorer-card .explorer-page-btn {
@@ -299,9 +403,26 @@
         height: 40px;
     }
 
-    .settings-body {
-        border-radius: 10px;
-        gap: 16px;
+    .explorer-market-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 12px var(--pad-card);
+    }
+
+    .market-grid-btn {
+        padding: 16px;
+        aspect-ratio: 1.4;
+    }
+
+    .market-grid-btn .market-fallback-name {
+        font-size: 14px;
+    }
+
+    .card.settings-card.active {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding-bottom: calc(var(--bottom-nav-h) + 16px);
     }
 
     .settings-action-btn {
@@ -323,10 +444,10 @@
         transform: translateX(20px);
     }
 
-    /* Terminal — full screen, edge to edge, just safe top space for hamburger */
+    /* Terminal — full screen, clears bottom nav */
     .card.terminal-card.active {
         height: 100vh;
-        padding: 56px 0 0;
+        padding: 20px 0 var(--bottom-nav-h);
     }
 
     .terminal-card .terminal-body {
@@ -385,7 +506,7 @@
     }
 
     .btn,
-    button:not(.section-toggle):not(.tab):not(.period-btn):not(.chart-type-btn),
+    button:not(.section-toggle):not(.tab):not(.period-btn):not(.chart-type-btn):not(.bottom-nav-btn),
     input,
     select,
     textarea {
@@ -402,10 +523,15 @@
     select,
     .search-input,
     .settings-input,
-    .card.news-card .news-select,
-    .card.explorer-card .explorer-select {
+    .card.news-card .news-select {
         font-size: 16px;
         padding: 12px 14px;
+    }
+
+    .card.explorer-card .explorer-select {
+        font-size: 13px;
+        padding: 9px 10px;
+        min-height: 0;
     }
 
     .search-input {

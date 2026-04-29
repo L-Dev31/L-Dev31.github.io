@@ -3,12 +3,9 @@
 .settings-header { display: none; }
 
 .settings-body {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(168, 162, 255, 0.12);
-    border-radius: var(--radius-md);
-    padding: 20px;
+    padding: 24px 0;
     display: grid;
-    gap: 14px;
+    gap: 20px;
 }
 
 .settings-group {

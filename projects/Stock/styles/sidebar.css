@@ -98,7 +98,7 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    object-position: 65% center;
+    object-position: 50% 30%;
     border: 1px solid var(--primary);
 }
 

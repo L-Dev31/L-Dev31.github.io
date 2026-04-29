@@ -760,6 +760,9 @@ import { getCurrency } from './state.js';
             state.cachedItems = null;
             state.lastParams = null;
 
+            const valueEl = document.getElementById('explorer-limit-value');
+            if (valueEl) valueEl.textContent = clamped;
+
             ticksEl.querySelectorAll('.explorer-limit-tick').forEach(t => {
                 const v = Number(t.dataset.value || 0);
                 t.classList.toggle('active', v === clamped);
@@ -767,7 +770,7 @@ import { getCurrency } from './state.js';
 
             const range = MAX_TICKERS_MAX - MAX_TICKERS_MIN;
             const safePos = Math.max(0, Math.min(100, ((YAHOO_SAFE_LIMIT - MAX_TICKERS_MIN) / range) * 100));
-            slider.style.background = `linear-gradient(90deg, var(--color-positive) 0%, var(--color-positive) ${safePos}%, var(--color-negative) ${safePos}%, var(--color-negative) 100%)`;
+            slider.style.backgroundImage = `linear-gradient(90deg, var(--color-positive) 0%, var(--color-positive) ${safePos}%, var(--color-negative) ${safePos}%, var(--color-negative) 100%)`;
         };
 
         const applyAllMode = (enabled) => {

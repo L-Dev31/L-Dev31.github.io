@@ -13,15 +13,19 @@ const defaultSettings = {
 export function getUserSettings() {
     try {
         const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
-        if (stored) return { ...defaultSettings, ...JSON.parse(stored) };
-
-        // Migration: anciens deployments utilisaient une clé proxy dédiée.
-        const legacyProxy = (localStorage.getItem(LEGACY_PROXY_STORAGE_KEY) || '').trim();
-        if (legacyProxy) {
-            const migrated = { ...defaultSettings, proxyUrl: legacyProxy };
-            localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(migrated));
-            return migrated;
+        let settings = stored ? JSON.parse(stored) : { ...defaultSettings };
+        
+        // Clean up legacy paths
+        if (settings.pfp === 'leot.png' || settings.pfp === 'img/leot.png' || settings.pfp === 'img/icon/leot.png') {
+            settings.pfp = defaultSettings.pfp;
         }
+
+        // Ensure proxyUrl has protocol
+        if (settings.proxyUrl && !settings.proxyUrl.startsWith('http')) {
+            settings.proxyUrl = 'https://' + settings.proxyUrl;
+        }
+
+        return { ...defaultSettings, ...settings };
     } catch { /* ignore */ }
     return { ...defaultSettings };
 }

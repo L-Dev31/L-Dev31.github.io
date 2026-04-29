@@ -26,6 +26,17 @@
     --bg-glass-hover: rgba(255, 255, 255, 0.04);
 }
 
+/* Global Fade-In for active views */
+.card.active,
+body.sidebar-open .sidebar {
+    animation: globalFadeIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes globalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 *,
 *::before,
 *::after {

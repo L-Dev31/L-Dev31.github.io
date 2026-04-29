@@ -830,14 +830,22 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
 }
 
 export function initMobileSidebar() {
-    const btn = document.getElementById('hamburger-btn');
+    const homeBtn = document.getElementById('bottom-nav-home');
     const overlay = document.getElementById('sidebar-overlay');
     const sidebar = document.getElementById('sidebar');
 
-    const closeSidebar = () => document.body.classList.remove('sidebar-open');
-    const toggleSidebar = () => document.body.classList.toggle('sidebar-open');
+    const closeSidebar = () => {
+        document.body.classList.remove('sidebar-open');
+        homeBtn?.classList.remove('active');
+    };
 
-    if (btn) btn.onclick = toggleSidebar;
+    const toggleSidebar = () => {
+        const isOpen = document.body.classList.toggle('sidebar-open');
+        homeBtn?.classList.toggle('active', isOpen);
+        if (isOpen) setBottomNavActive('bottom-nav-home', false);
+    };
+
+    if (homeBtn) homeBtn.onclick = toggleSidebar;
     if (overlay) overlay.onclick = closeSidebar;
 
     sidebar?.addEventListener('click', (e) => {
@@ -845,4 +853,11 @@ export function initMobileSidebar() {
             closeSidebar();
         }
     });
+}
+
+export function setBottomNavActive(id, clearSidebar = true) {
+    document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+    
+    if (clearSidebar) document.body.classList.remove('sidebar-open');
 }
