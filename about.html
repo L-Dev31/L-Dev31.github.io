@@ -91,11 +91,7 @@
                 <img src="assets/images/core/logo.svg" alt="L-Dev31 logo">
             </a>
         </div>
-        <div class="navbar-center">
-            <span class="status-badge" aria-label="Currently available for work">
-                Available for work
-            </span>
-        </div>
+
         <div class="links-container">
             <a href="index.html#web-projects" class="link">Work</a>
             <a href="about.html" class="link active" aria-current="page">About</a>
@@ -136,9 +132,25 @@
         </section>
 
         <!-- The Story -->
-        <section id="my-story" aria-labelledby="story-title">
-            <h2 id="story-title" class="title">The story</h2>
+        <section id="my-story" aria-label="About Me">
             <div class="story-container">
+                <!-- Consolidated Story Element -->
+                <div class="story-row">
+                    <div class="story-text">
+                        <h3 class="scrubbing-text">About me</h3>
+                        <div class="story-paragraph scrubbing-text">
+                            From my early creative years in Provence to an entrepreneurial chapter in Guadeloupe, my journey has always been about building. 
+                            After launching my first marketplace project at 17, I am now refining my craft as a designer, keeping a T-shaped perspective 
+                            where design meets curiosity in code, history, and culture. I build digital work that is clear, ambitious, and grounded in real use.
+                        </div>
+                    </div>
+                    <div class="story-image">
+                        <img src="assets/images/story/story-3.jpg" data-parallax-speed="90"
+                            alt="About Léo Tosku" loading="lazy" decoding="async">
+                    </div>
+                </div>
+
+                <!-- 
                 <div class="story-row reverse">
                     <div class="story-text">
                         <h3 class="scrubbing-text">Childhood</h3>
@@ -185,6 +197,7 @@
                             decoding="async">
                     </div>
                 </div>
+                -->
             </div>
         </section>
 
@@ -313,60 +326,6 @@
             </div>
         </section>
 
-        <!-- Skills / ranked, not a tag wall -->
-        <section id="skills" aria-labelledby="skills-title">
-            <h2 id="skills-title" class="title">Tools &amp; languages</h2>
-
-            <div class="story-container skills-v2">
-
-                <div class="skill-band">
-                    <h3 class="skill-band-title">Daily</h3>
-                    <ul class="skill-line">
-                        <li>Figma</li>
-                        <li>HTML &amp; CSS</li>
-                        <li>JavaScript</li>
-                        <li>Adobe Creative Suite</li>
-                        <li>GitHub</li>
-                    </ul>
-                </div>
-
-                <div class="skill-band">
-                    <h3 class="skill-band-title">Reach for</h3>
-                    <ul class="skill-line">
-                        <li>Branding &amp; identity</li>
-                        <li>Motion</li>
-                        <li>PHP</li>
-                        <li>WordPress</li>
-                        <li>Blender (3D)</li>
-                    </ul>
-                </div>
-
-                <div class="skill-band">
-                    <h3 class="skill-band-title">Learning</h3>
-                    <ul class="skill-line">
-                        <li>React</li>
-                        <li>WebGL shaders</li>
-                        <li>Design systems at scale</li>
-                    </ul>
-                </div>
-
-                <div class="skill-band skill-band--langs">
-                    <h3 class="skill-band-title">Languages</h3>
-                    <ul class="skill-line skill-line--langs">
-                        <li><span lang="fr">Français</span> <span class="skill-level">native</span></li>
-                        <li>English <span class="skill-level">C2 · bilingual</span></li>
-                        <li><span lang="sq">Shqip</span> <span class="skill-level">family</span></li>
-                        <li><span lang="nl">Nederlands</span> <span class="skill-level">family</span></li>
-                    </ul>
-                </div>
-
-                <p class="skills-aside">
-                    Outside the screen: photography, too much history, and arguing about geopolitics at unreasonable
-                    hours.
-                </p>
-
-            </div>
-        </section>
 
     </main>
 
@@ -407,6 +366,13 @@
         </div>
     </footer>
 
+    <!-- Back to Top -->
+    <button id="back-to-top" class="back-to-top" aria-label="Back to Top">
+        <div class="btt-text" id="btt-text">Back to Top • Back to Top •</div>
+        <div class="btt-icon">
+            <img src="assets/images/core/top-arrow.svg" alt="">
+        </div>
+    </button>
 </body>
 
 </html>

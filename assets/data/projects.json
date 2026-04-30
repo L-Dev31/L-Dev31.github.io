@@ -1,11 +1,11 @@
 {
-  "projects": [    
+  "projects": [
     {
       "id": "dran",
       "title": "Dranima",
       "description": "Discover Dranima: a retro-inspired monster-tamer RPG in development. Follow the project updates, explore the world, and join the community..",
       "creator": "Alex Claude Bourbon",
-      "category": "web", 
+      "category": "web",
       "type": "commission",
       "path": "http://dranima.com/",
       "noPhone": false
@@ -15,7 +15,7 @@
       "title": "Portfolio",
       "description": "Showcasing the musical journey and works of Charlie McKenzie.",
       "creator": "Charlie McKenzie",
-      "category": "web", 
+      "category": "web",
       "type": "commission",
       "path": "http://www.charliemckenziemusic.com/",
       "noPhone": false
@@ -26,7 +26,7 @@
       "description": "A comprehensive editor for BMG files, enhancing game modding workflows.",
       "creator": "Léo Tosku",
       "category": "web",
-      "type": "personal-project", 
+      "type": "personal-project",
       "path": "projects/BMGE",
       "noPhone": false
     },
@@ -36,7 +36,7 @@
       "description": "A modern redesign for Mix and Light, giving a new fresh look from ground up.",
       "creator": "Mix and Light",
       "category": "web",
-      "type": "commission", 
+      "type": "commission",
       "path": "https://www.ynov-sophia-projets.com/ymmersionB1325/",
       "noPhone": false
     },
@@ -46,7 +46,7 @@
       "description": "Website redesign for SandFall Interactive Studio, enhancing user experience and brand identity.",
       "creator": "SandFall Interactive",
       "category": "web",
-      "type": "commission", 
+      "type": "commission",
       "path": "projects/SandFall",
       "noPhone": false
     },
@@ -56,35 +56,31 @@
       "description": "Bringing the flavors of Provence to life with a fresh web design.",
       "creator": "",
       "category": "web",
-      "type": "commission", 
+      "type": "commission",
       "path": "projects/LSDP",
       "noPhone": false
     },
-
-
-
-
-    {
-      "id": "ogfm",
-      "title": "L'Oreille qui Gratte",
-      "creator": null,
-      "category": "featured",
-      "path": null
-    },   
     {
       "id": "rcai",
       "title": "Regards Croisés",
       "creator": "Equipe recTangle - Ynov",
       "category": "featured",
       "path": null
-    },  
+    },
+    {
+      "id": "ogfm",
+      "title": "L'Oreille qui Gratte",
+      "creator": null,
+      "category": "featured",
+      "path": null
+    },
     {
       "id": "mego",
       "title": "Megoteur",
       "creator": "Remi Astier",
       "category": "featured",
       "path": "https://megoteur.com/"
-    },   
+    },
     {
       "id": "prfy",
       "title": "Proofy",

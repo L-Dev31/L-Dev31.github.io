@@ -382,6 +382,8 @@ function setupCursor() {
     const cursor = document.querySelector('.cursor');
     if (!cursor) return;
 
+    document.documentElement.classList.add('has-custom-cursor');
+
     document.addEventListener('mousemove', e => {
         const scale = cursor.classList.contains('cursor--small') ? ' scale(0.5)' : '';
         cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)${scale}`;
@@ -720,9 +722,9 @@ function setupScrollEffects() {
             return;
         }
         const scrollTop = window.scrollY;
-        items = Array.from(document.querySelectorAll('[data-parallax-speed], .scatter-column')).map(el => {
+        items = Array.from(document.querySelectorAll('[data-parallax-speed]')).map(el => {
             const cssVar = getComputedStyle(el).getPropertyValue('--parallax-speed').trim();
-            const speed  = cssVar ? parseFloat(cssVar) : (parseFloat(el.dataset.parallaxSpeed) || 100);
+            const speed  = cssVar ? parseFloat(cssVar) : parseFloat(el.dataset.parallaxSpeed);
             const baseTop = el.getBoundingClientRect().top + scrollTop;
             const halfHeight = el.offsetHeight / 2;
             return { el, speed, baseTop, halfHeight };
@@ -962,50 +964,82 @@ function setupLiquifyAll() {
 }
 
 /* ══════════════════════════════════════════
-   Vertical Timeline Scrub
+   Pause background videos when offscreen
    ══════════════════════════════════════════ */
 
-function setupTimelines() {
-    if (prefersReducedMotion) return;
+function setupVideoVisibility() {
+    if (typeof window.IntersectionObserver !== 'function') return;
 
-    const containers = document.querySelectorAll('.timeline-container');
-    if (!containers.length) return;
+    const videos = document.querySelectorAll('#hero-video, .footer-bg-video');
+    if (!videos.length) return;
 
-    function update() {
-        const viewportHeight = window.innerHeight;
-        const triggerPoint = viewportHeight * 0.6;
-
-        containers.forEach(container => {
-            const rect = container.getBoundingClientRect();
-            const progressLine = container.querySelector('.timeline-progress');
-            const items = container.querySelectorAll('.timeline-item');
-            
-            if (!progressLine) return;
-
-            const containerTop = rect.top;
-            const containerHeight = rect.height;
-            
-            let progress = 0;
-            if (containerTop < triggerPoint) {
-                progress = Math.min(1, (triggerPoint - containerTop) / containerHeight);
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            const v = entry.target;
+            if (entry.isIntersecting) {
+                if (v.paused) v.play().catch(() => {});
+            } else {
+                if (!v.paused) v.pause();
             }
-            
-            progressLine.style.height = `${progress * 100}%`;
-
-            items.forEach(item => {
-                const itemTop = item.getBoundingClientRect().top;
-                if (itemTop < triggerPoint) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
         });
-    }
+    }, { threshold: 0.01 });
 
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update, { passive: true });
-    update();
+    videos.forEach(v => io.observe(v));
+}
+
+/* ══════════════════════════════════════════
+   Back to Top
+   ══════════════════════════════════════════ */
+
+function setupBackToTop() {
+    const btn = document.getElementById('back-to-top');
+    const textContainer = document.getElementById('btt-text');
+    if (!btn || !textContainer) return;
+
+    // Create circular text from the string
+    const text = textContainer.textContent;
+    textContainer.innerHTML = '';
+    const chars = Array.from(text);
+    const totalChars = chars.length;
+    const degPerChar = 360 / totalChars;
+
+    chars.forEach((ch, i) => {
+        const span = document.createElement('span');
+        span.textContent = ch;
+        span.style.transform = `rotate(${i * degPerChar}deg)`;
+        textContainer.appendChild(span);
+    });
+
+    const footer = document.getElementById('footer');
+    const updateVisibility = () => {
+        if (!footer) {
+            if (window.scrollY > window.innerHeight * 0.5) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+            return;
+        }
+        
+        const rect = footer.getBoundingClientRect();
+        // Visible if footer top is within viewport
+        if (rect.top < window.innerHeight) {
+            btn.classList.add('visible');
+        } else {
+            btn.classList.remove('visible');
+        }
+    };
+
+    window.addEventListener('scroll', updateVisibility, { passive: true });
+    btn.addEventListener('click', () => {
+        if (lenis) {
+            lenis.scrollTo(0);
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+
+    updateVisibility();
 }
 
 /* ══════════════════════════════════════════
@@ -1030,10 +1064,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ['scroll effects', setupScrollEffects],
         ['liquify', setupLiquifyAll],
         ['smooth anchors', setupSmoothAnchors],
-        ['timeline', setupTimelines]
+        ['video visibility', setupVideoVisibility],
+        ['back to top', setupBackToTop]
     ];
-
-
 
     setupTasks.forEach(([name, task]) => {
         try {
