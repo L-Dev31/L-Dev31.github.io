@@ -21,7 +21,7 @@ export async function goToTicker(options = {}) {
     if (window.positions?.[symbol]) {
         window.positions[symbol].currentPeriod = period;
         syncPeriodButtons(symbol, period);
-        await window.openCustomSymbol(symbol);
+        await window.openCustomSymbol(symbol, window.positions[symbol].type || 'equity', options.itemData);
         return { ok: true, symbol };
     }
 

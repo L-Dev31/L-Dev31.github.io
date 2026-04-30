@@ -5,7 +5,7 @@ import { fetchActiveSymbol } from './general.js';
 import { updateChart, initChart } from './chart.js';
 import { updateSignal } from './signal-bot.js';
 import { setupNewsSearch } from './news.js';
-import { resolveTickerDetails } from './ticker-catalog.js';
+import { resolveTickerDetails, buildOnlineIconCandidates } from './ticker-catalog.js';
 
 export { initChart }; // Re-export for portfolio.js
 
@@ -27,6 +27,16 @@ export function createTab(stock, type) {
     img.onerror = function () {
         const parent = this.parentElement;
         const ticker = (stock.ticker || stock.symbol || '').toUpperCase();
+        const candidates = stock.iconCandidates || buildOnlineIconCandidates(ticker, stock.market);
+
+        if (candidates && candidates.length > 0) {
+            const next = candidates.shift();
+            // Store modified candidates back to avoid re-trying same failed url
+            stock.iconCandidates = candidates;
+            this.src = next;
+            return;
+        }
+
         parent.innerHTML = '';
         const fallback = document.createElement('div');
         fallback.className = 'tab-logo-fallback';
@@ -72,6 +82,16 @@ export function createCard(stock) {
     logo.src = stock.iconSymbol ? `img/icon/${stock.iconSymbol}.png` : `img/logo/${stock.symbol}.png`
     logo.onerror = function(){
         try {
+            const ticker = (stock.ticker || stock.symbol || '').toUpperCase();
+            const candidates = stock.iconCandidates || buildOnlineIconCandidates(ticker, stock.market);
+            
+            if (candidates && candidates.length > 0) {
+                const next = candidates.shift();
+                stock.iconCandidates = candidates;
+                this.src = next;
+                return;
+            }
+
             const parent = this.parentElement;
             parent.innerHTML = '';
             const name = stock.name || stock.symbol;
@@ -760,6 +780,11 @@ export function closeTerminalCard() {
 
 export async function openCustomSymbol(symbol, type = 'equity', itemData = null) {
     if (positions[symbol]) {
+        if (itemData) {
+            positions[symbol].lastData = { ...itemData };
+            updateUI(symbol, positions[symbol].lastData);
+        }
+
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
         const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
@@ -809,6 +834,21 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
         currentPeriod: (resolved.period || '1D').toUpperCase()
     };
 
+    // Pre-populate lastData if quote is available (for instant feel when using 'go')
+    if (resolved.quote) {
+        const q = resolved.quote;
+        positions[symbol].lastData = {
+            price: q.regularMarketPrice || q.price || 0,
+            change: q.regularMarketChange || 0,
+            changePercent: q.regularMarketChangePercent || 0,
+            name: q.longName || q.shortName || symbol,
+            currency: q.currency || resolved.currency || 'USD',
+            source: 'yahoo-quote'
+        };
+    } else if (itemData && itemData.price !== undefined) {
+        positions[symbol].lastData = { ...itemData };
+    }
+
     lastApiBySymbol[symbol] = selectedApi;
 
     ensureSection('general-tabs', type);
@@ -816,6 +856,10 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
 
     createCard(stock);
     initChart(symbol, positions);
+
+    if (positions[symbol].lastData) {
+        updateUI(symbol, positions[symbol].lastData);
+    }
 
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));

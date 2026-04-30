@@ -3,7 +3,7 @@
     justify-content: flex-start;
     gap: 8px;
     margin-left: 16px;
-    margin-bottom: 64px;
+    margin-bottom: 32px;
     overflow-x: auto;
     pointer-events: auto;
 }
@@ -31,5 +31,10 @@
     font-weight: 600;
 }
 
-.card-tab-pane { display: none; }
-.card-tab-pane.active { display: block; }
+.card-tab-pane {
+    display: none;
+}
+
+.card-tab-pane.active {
+    display: block;
+}

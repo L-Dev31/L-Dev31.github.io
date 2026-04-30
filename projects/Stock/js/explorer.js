@@ -1,6 +1,7 @@
 import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade } from './yahoo-finance.js';
 import { debounce } from './constants.js';
 import { getCurrency } from './state.js';
+import { buildOnlineIconCandidates } from './ticker-catalog.js';
 
 {
     'use strict';
@@ -209,31 +210,6 @@ import { getCurrency } from './state.js';
         return null;
     }
 
-    function buildOnlineIconCandidates(symbol, market) {
-        const candidates = [];
-        const seen = new Set();
-        const upper = (symbol || '').toUpperCase();
-        const base = upper.split('.')[0].split('-')[0].split('/')[0];
-        const isCrypto = market === 'crypto' || cryptoSymbols.has(base) || upper.endsWith('-USD');
-
-        const add = (url) => {
-            if (url && !seen.has(url)) {
-                seen.add(url);
-                candidates.push(url);
-            }
-        };
-
-        if (isCrypto) {
-            const lower = base.toLowerCase();
-            add(`https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/${lower}.png`);
-            add(`https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/black/${lower}.png`);
-        } else {
-            const variants = [upper, upper.replace('.', '-'), upper.split('.')[0], base].filter(Boolean);
-            variants.forEach(v => add(`https://storage.googleapis.com/iex/api/logos/${v}.png`));
-        }
-
-        return candidates;
-    }
 
     async function fetchScreener(scrIds, offset = 0, count = SCREENER_BATCH_SIZE) {
         try {

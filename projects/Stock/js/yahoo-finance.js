@@ -633,24 +633,36 @@ export async function fetchYahooNews(ticker, limit = 10, signal) {
 }
 
 // FETCH NEWS
-export async function fetchNews(symbol, limit = 8, days = 7) {
+export async function fetchNews(symbol, limit = 20, days = 7) {
     try {
         const r = await fetchYahooNews(symbol, limit);
         if (!r?.items?.length) return { source: 'yahoo', items: [] };
-        const cutoff = Date.now() - days * 86400000;
-        const items = r.items.map(i => ({
-            id: i.id,
-            title: i.title,
-            url: i.url,
-            source: i.publisher || 'yahoo',
-            publishedAt: (() => {
-                const n = Number(i.publishedAt);
-                const ts = n && n < 1e12 ? n * 1000 : n;
-                const d = new Date(ts);
-                return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
-            })(),
-            summary: i.summary || ''
-        })).filter(i => new Date(i.publishedAt).getTime() >= cutoff);
+        
+        // If days is 1 (1D period), we still want to show at least some recent news, 
+        // so we'll use a minimum of 3 days for the ticker-specific news pane.
+        const effectiveDays = Math.max(days, 3);
+        const cutoff = Date.now() - effectiveDays * 86400000;
+
+        const items = r.items.map(i => {
+            const n = Number(i.publishedAt);
+            const ts = n && n < 1e12 ? n * 1000 : n;
+            const d = new Date(ts);
+            const iso = isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+
+            return {
+                id: i.id || i.url || i.title,
+                title: i.title,
+                url: i.url,
+                source: i.publisher || 'Yahoo Finance',
+                publishedAt: iso,
+                summary: i.summary || '',
+                relatedTickers: Array.isArray(i.relatedTickers) ? i.relatedTickers : []
+            };
+        }).filter(i => new Date(i.publishedAt).getTime() >= cutoff);
+
         return { source: 'yahoo', items: items.slice(0, limit) };
-    } catch (e) { return { source: 'yahoo', error: true, items: [] }; }
+    } catch (e) {
+        console.error('[News Fetch] Error:', e);
+        return { source: 'yahoo', error: true, items: [] };
+    }
 }

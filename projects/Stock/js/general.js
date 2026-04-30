@@ -289,6 +289,15 @@ async function fetchActiveSymbol(force) {
 
     setPeriodButtonsFetching(symbol, true);
 
+    // News en tâche de fond — ne pas bloquer
+    const newsPromise = (async () => {
+        try {
+            const period = positions[symbol].currentPeriod || '1D';
+            const days = periodToDays(period);
+            const apiToUse = window.getSelectedApi?.() || window.selectedApi;
+            await fetchCardNews(symbol, false, 50, days, apiToUse);
+        } catch { /* ignore */ }
+    })();
 
     let d;
     try {
@@ -322,12 +331,6 @@ async function fetchActiveSymbol(force) {
             startGlobalRefreshLoop();
         }
 
-        // News en tâche de fond — ne pas bloquer
-        try {
-            const days = periodToDays(period);
-            const apiToUse = window.getSelectedApi?.() || window.selectedApi;
-            fetchCardNews(symbol, false, 50, days, apiToUse).catch(() => { });
-        } catch { /* ignore */ }
     } catch (e) {
         if (e.name === 'AbortError') return;
 
@@ -375,7 +378,17 @@ document.addEventListener('click', e => {
     if (targetPane) targetPane.classList.add('active');
     const symbol = card.id?.replace('card-', '');
     if (symbol) {
-        if (targetPaneId === 'news') startCardNewsAutoRefresh(symbol);
+        if (targetPaneId === 'news') {
+            startCardNewsAutoRefresh(symbol);
+            // Trigger immediate fetch if news is empty or old
+            const now = Date.now();
+            const pos = positions[symbol];
+            if (!pos.news?.length || !pos.lastNewsFetch || (now - pos.lastNewsFetch) > 60000) {
+                const days = periodToDays(pos.currentPeriod || globalPeriod);
+                const api = window.getSelectedApi?.() || window.selectedApi;
+                fetchCardNews(symbol, true, 50, days, api).catch(() => {});
+            }
+        }
         else stopCardNewsAutoRefresh(symbol);
     }
 });
