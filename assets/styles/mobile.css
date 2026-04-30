@@ -119,5 +119,15 @@
     .exp-facts {
         grid-template-columns: 1fr;
     }
+
+    .featured-scatter {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .featured-scatter {
+        grid-template-columns: 1fr;
+    }
 }
 

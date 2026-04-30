@@ -559,13 +559,23 @@ function setupWebProjects() {
                 a.tabIndex = -1;
             }
 
-            // Title span
+            // Title container
+            const info = document.createElement('div');
+            info.className = 'featured-project-info';
+
             const titleSpan = document.createElement('span');
             titleSpan.className = 'featured-project-title';
             titleSpan.textContent = p.title;
-            a.appendChild(titleSpan);
+            info.appendChild(titleSpan);
 
-            // Right-side slot: author + arrow overlap in the same position
+            const catSpan = document.createElement('span');
+            catSpan.className = 'featured-project-category';
+            catSpan.textContent = p.type || 'UI/UX Design';
+            info.appendChild(catSpan);
+
+            a.appendChild(info);
+
+            // Right-side slot
             const meta = document.createElement('span');
             meta.className = 'featured-meta';
 
@@ -578,13 +588,6 @@ function setupWebProjects() {
                     authorEl.className = 'featured-author';
                     authorEl.textContent = p.creator;
                     slot.appendChild(authorEl);
-                }
-
-                if (href) {
-                    const arrow = document.createElement('span');
-                    arrow.className = 'featured-arrow';
-                    arrow.innerHTML = `<span class="icon-arrow"></span>`;
-                    slot.appendChild(arrow);
                 }
 
                 meta.appendChild(slot);
@@ -604,6 +607,43 @@ function setupWebProjects() {
     }).catch(() => {
         list.innerHTML = '<p class="projects-empty">Unable to load projects for now.</p>';
     });
+}
+
+function setupHeightScroll(containerSelector, itemSelector, minH = 130, maxH = 200) {
+    const container = document.querySelector(containerSelector);
+    if (!container || isMobile) return;
+
+    const update = () => {
+        const items = container.querySelectorAll(itemSelector);
+        const vh = window.innerHeight;
+        items.forEach(item => {
+            const rect = item.getBoundingClientRect();
+            const center = rect.top + rect.height / 2;
+            const distFromCenter = Math.abs(vh / 2 - center);
+            const normalizedDist = Math.min(1, distFromCenter / (vh / 1.5));
+            const h = maxH - (maxH - minH) * normalizedDist;
+            item.style.height = `${h}px`;
+            item.style.paddingTop = '0';
+            item.style.paddingBottom = '0';
+        });
+    };
+
+    window.addEventListener('scroll', update, { passive: true });
+    const observer = new MutationObserver(update);
+    observer.observe(container, { childList: true });
+    update();
+}
+
+function setupFeaturedListHeightScroll() {
+    setupHeightScroll('.featured-list', '.featured-project', 130, 200);
+}
+
+function setupExperienceHeightScroll() {
+    setupHeightScroll('#experience .exp-stack', '.exp-block', 130, 200);
+}
+
+function setupEducationHeightScroll() {
+    setupHeightScroll('#education .exp-stack', '.exp-block', 130, 200);
 }
 
 /* ══════════════════════════════════════════
@@ -712,9 +752,8 @@ function setupFeaturedProjects() {
 
 function setupScrollEffects() {
     let ticking = false;
-    const header = document.getElementById('header');
+    const header = document.getElementById('header') || document.querySelector('.about-header');
     let items = [];
-    let heroFadeDistance = Math.max(window.innerHeight * 0.9, 480);
 
     function collect() {
         if (isMobile || prefersReducedMotion) {
@@ -733,7 +772,10 @@ function setupScrollEffects() {
 
     function update() {
         if (header) {
-            const progress = Math.min(1, Math.max(0, window.scrollY / heroFadeDistance));
+            const fadeEnd = header.offsetHeight;
+            const fadeStart = Math.max(0, fadeEnd - window.innerHeight);
+            const range = fadeEnd - fadeStart || fadeEnd || 1;
+            const progress = Math.min(1, Math.max(0, (window.scrollY - fadeStart) / range));
             header.style.setProperty('--hero-progress', progress.toFixed(4));
         }
         const viewCenter = window.scrollY + window.innerHeight / 2;
@@ -749,7 +791,6 @@ function setupScrollEffects() {
 
     window.addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(update); ticking = true; } }, { passive: true });
     window.addEventListener('resize', () => {
-        heroFadeDistance = Math.max(window.innerHeight * 0.9, 480);
         collect();
         update();
     }, { passive: true });
@@ -964,6 +1005,90 @@ function setupLiquifyAll() {
 }
 
 /* ══════════════════════════════════════════
+   About Page — Scroll-driven video scrub
+   ══════════════════════════════════════════ */
+
+function setupAboutHeroVideo() {
+    const container = document.querySelector('.about-header');
+    const video = document.querySelector('.about-header-video');
+    if (!container || !video) return;
+
+    video.pause();
+    video.currentTime = 0;
+
+    if (prefersReducedMotion) {
+        video.play().catch(() => {});
+        return;
+    }
+
+    let targetTime = 0, rafId = null, vfcPending = false;
+    const hasVFC = typeof video.requestVideoFrameCallback === 'function';
+
+    function next() {
+        rafId = requestAnimationFrame(scrubLoop);
+    }
+
+    function scrubLoop() {
+        if (!video.duration) { rafId = requestAnimationFrame(scrubLoop); return; }
+        const diff = targetTime - video.currentTime;
+
+        if (Math.abs(diff) < 0.02) {
+            if (!video.paused) video.pause();
+            video.playbackRate = 1;
+            rafId = null;
+            return;
+        }
+
+        if (diff > 0) {
+            const rate = Math.min(8, Math.max(0.25, diff * 6));
+            if (Math.abs(video.playbackRate - rate) > 0.05) video.playbackRate = rate;
+            if (video.paused) video.play().catch(() => {});
+            next();
+        } else {
+            if (!video.paused) video.pause();
+            video.currentTime = Math.max(0, video.currentTime + diff * 0.35);
+            if (hasVFC && !vfcPending) {
+                vfcPending = true;
+                video.requestVideoFrameCallback(() => {
+                    vfcPending = false;
+                    next();
+                });
+            } else if (!hasVFC) {
+                next();
+            }
+        }
+    }
+
+    const textEl = document.querySelector('.about-header-text');
+    const overlayEl = document.querySelector('.about-header-overlay');
+
+    function scrub() {
+        if (!video.duration) return;
+        const scrollable = container.offsetHeight - window.innerHeight;
+        if (scrollable <= 0) return;
+        const progress = Math.max(0, Math.min(1, -container.getBoundingClientRect().top / scrollable));
+        targetTime = progress * video.duration;
+        if (!rafId && !vfcPending) rafId = requestAnimationFrame(scrubLoop);
+
+        // Update progress for CSS (fades, blurs)
+        container.style.setProperty('--hero-progress', progress.toFixed(4));
+
+        const past = window.scrollY >= container.offsetHeight;
+        video.style.visibility = past ? 'hidden' : '';
+        if (textEl) textEl.style.visibility = past ? 'hidden' : '';
+        if (overlayEl) overlayEl.style.visibility = past ? 'hidden' : '';
+        
+        // Refresh parallax just in case
+        if (pendingParallaxRefresh) pendingParallaxRefresh();
+    }
+
+    video.addEventListener('loadedmetadata', scrub);
+    window.addEventListener('scroll', scrub, { passive: true });
+    window.addEventListener('resize', scrub, { passive: true });
+    scrub();
+}
+
+/* ══════════════════════════════════════════
    Pause background videos when offscreen
    ══════════════════════════════════════════ */
 
@@ -1060,10 +1185,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ['text scrubbing', setupScrubbingText],
         ['text reveal', setupTextReveal],
         ['web projects', setupWebProjects],
+        ['featured list height', setupFeaturedListHeightScroll],
         ['featured projects', setupFeaturedProjects],
         ['scroll effects', setupScrollEffects],
         ['liquify', setupLiquifyAll],
         ['smooth anchors', setupSmoothAnchors],
+        ['about hero video', setupAboutHeroVideo],
         ['video visibility', setupVideoVisibility],
         ['back to top', setupBackToTop]
     ];

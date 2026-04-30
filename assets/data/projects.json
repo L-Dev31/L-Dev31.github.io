@@ -36,7 +36,7 @@
       "description": "A modern redesign for Mix and Light, giving a new fresh look from ground up.",
       "creator": "Mix and Light",
       "category": "web",
-      "type": "commission",
+      "type": "School project",
       "path": "https://www.ynov-sophia-projets.com/ymmersionB1325/",
       "noPhone": false
     },
@@ -100,6 +100,7 @@
       "title": "Mix and Light",
       "creator": "Mix and Light",
       "category": "featured",
+      "type": "School project",
       "path": null
     },
     {
