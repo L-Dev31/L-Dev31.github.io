@@ -43,6 +43,7 @@
     --black: #000;
     --color-on-light: #111;
     --font-body: 'Thin', sans-serif;
+    --font-weight-body: 300; /* Increased from default for better readability */
     --font-display: 'Lux', serif;
     --white-06: rgba(255, 255, 255, 0.06);
     --border-strong: rgba(255, 255, 255, 0.2);
@@ -67,17 +68,18 @@ html {
 body {
     background: var(--black);
     font-family: var(--font-body);
+    font-weight: var(--font-weight-body);
     margin: 0;
     color: var(--text);
     overflow-x: hidden;
 }
 
-html.has-custom-cursor,
-html.has-custom-cursor body,
-html.has-custom-cursor a,
-html.has-custom-cursor button,
-html.has-custom-cursor input,
-html.has-custom-cursor [onclick] {
+html.has-custom-cursor-active,
+html.has-custom-cursor-active body,
+html.has-custom-cursor-active a,
+html.has-custom-cursor-active button,
+html.has-custom-cursor-active input,
+html.has-custom-cursor-active [onclick] {
     cursor: none;
 }
 
