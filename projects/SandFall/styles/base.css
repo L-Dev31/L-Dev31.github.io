@@ -4,28 +4,17 @@ html {
 	scrollbar-color: var(--color-primary-gold) var(--color-black);
 }
 
-::-webkit-scrollbar {
-	width: 12px;
-}
-
-::-webkit-scrollbar-track {
-	background: var(--color-black);
-	border-radius: 6px;
-}
-
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: var(--color-black); border-radius: 6px; }
 ::-webkit-scrollbar-thumb {
 	background: linear-gradient(180deg, var(--color-primary-gold) 0%, rgba(227, 187, 112, 0.6) 100%);
 	border-radius: 6px;
 	border: 2px solid var(--color-black);
 }
-
 ::-webkit-scrollbar-thumb:hover {
 	background: linear-gradient(180deg, var(--color-white) 0%, var(--color-primary-gold) 100%);
 }
-
-::-webkit-scrollbar-corner {
-	background: var(--color-black);
-}
+::-webkit-scrollbar-corner { background: var(--color-black); }
 
 body {
 	margin: 0;
@@ -35,9 +24,7 @@ body {
 	overflow-x: hidden;
 }
 
-body.modal-open {
-	overflow: hidden;
-}
+body.modal-open { overflow: hidden; }
 
 .container {
 	max-width: 1200px;
@@ -45,33 +32,74 @@ body.modal-open {
 	padding: 0 20px;
 }
 
-/* Keyboard focus only - cleaner than focus on click */
-:focus {
-	outline: none;
+/* Editorial display headings — only on signature titles, not all h2 */
+.about-content h2,
+.contact-title,
+.expedition33-game-content h2,
+.sandfall-team-title,
+.team-page-title {
+	font-family: var(--font-display);
+	font-weight: 700;
+	letter-spacing: 0.01em;
+	line-height: 1.1;
 }
 
+/* Keyboard focus only */
+:focus { outline: none; }
 :focus-visible {
 	outline: none;
 	box-shadow: var(--focus-ring);
 	border-radius: 2px;
 }
 
-/* Respect user motion preferences */
-@media (prefers-reduced-motion: reduce) {
-	html {
-		scroll-behavior: auto;
-	}
+/* Spinner (merged from spinner.css) */
+.loading-spinner { text-align: center; }
+.spinner { width: 150px; height: 150px; }
+.loading-spinner p {
+	color: var(--color-text-light);
+	font-family: var(--font-primary);
+	font-size: 1.1rem;
+	margin: 0;
+}
 
-	*,
-	*::before,
-	*::after {
+/* Editorial section number prefix (01 — / 02 — etc.) */
+.section-num {
+	display: block;
+	font-family: var(--font-primary);
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.3em;
+	text-transform: uppercase;
+	margin-bottom: 1.25rem;
+	opacity: 0.7;
+}
+
+/* Respect motion preferences */
+@media (prefers-reduced-motion: reduce) {
+	html { scroll-behavior: auto; }
+	*, *::before, *::after {
 		animation-duration: 0.01ms !important;
 		animation-iteration-count: 1 !important;
 		transition-duration: 0.01ms !important;
 		scroll-behavior: auto !important;
 	}
+	video[autoplay] { display: none; }
+}
 
-	video[autoplay] {
-		display: none;
+/* Mobile globals (merged from mobile/base.css) */
+@media (max-width: 768px) {
+	html, body {
+		font-size: 14px;
+		line-height: 1.5;
+	}
+	a, button {
+		min-height: 44px;
+	}
+	img, video {
+		max-width: 100%;
+		height: auto;
+	}
+	input, textarea, select {
+		font-size: 16px;
 	}
 }

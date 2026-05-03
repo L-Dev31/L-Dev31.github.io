@@ -2,8 +2,8 @@
 .contact-section {
   padding: 80px 0;
   background: var(--color-primary-gold);
-  color: #181818;
-  height: 50vh;
+  color: var(--color-bg-deep);
+  min-height: 50vh;
   display: flex;
   align-items: center;
   justify-content: center;
