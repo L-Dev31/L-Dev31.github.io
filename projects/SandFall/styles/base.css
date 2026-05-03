@@ -32,16 +32,29 @@ body.modal-open { overflow: hidden; }
 	padding: 0 20px;
 }
 
-/* Editorial display headings — only on signature titles, not all h2 */
+/* Page titles — 2.2rem */
 .about-content h2,
 .contact-title,
 .expedition33-game-content h2,
-.sandfall-team-title,
 .team-page-title {
 	font-family: var(--font-display);
-	font-weight: 700;
-	letter-spacing: 0.01em;
-	line-height: 1.1;
+	font-weight: 400;
+	letter-spacing: 0.04em;
+	line-height: 1;
+	text-transform: uppercase;
+	font-size: 2.2rem;
+}
+
+/* Section titles — 1.6rem */
+.sandfall-team-title,
+.expedition33-trailer-title,
+.supporters-title {
+	font-family: var(--font-display);
+	font-weight: 400;
+	letter-spacing: 0.04em;
+	line-height: 1;
+	text-transform: uppercase;
+	font-size: 1.6rem;
 }
 
 /* Keyboard focus only */
