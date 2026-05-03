@@ -1,16 +1,3 @@
-@import 'var.css';
-@import 'base.css';
-@import 'bg-video.css';
-@import 'intro.css';
-@import 'navbar.css';
-@import 'hero.css';
-@import 'about.css';
-@import 'expedition33.css';
-@import 'team.css';
-@import 'team-page.css';
-@import 'blog.css';
-@import 'contact.css';
-@import 'supporters.css';
-@import 'footer.css';
-@import 'mobile.css';
-@import 'spinner.css';
+/* Reserved for legacy entrypoint compatibility.
+   All stylesheets are loaded as parallel <link> tags from index.html / team.html / blog.html
+   to avoid the @import waterfall. */
