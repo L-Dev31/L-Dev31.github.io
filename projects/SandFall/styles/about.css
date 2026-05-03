@@ -52,7 +52,6 @@
 	box-shadow: 0 12px 40px rgba(33, 33, 33, 0.22);
 	position: absolute;
 	left: 50%;
-	transition: transform 0.3s var(--ease-out);
 }
 
 .about-img.first {

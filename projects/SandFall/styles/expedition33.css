@@ -23,7 +23,6 @@
 	z-index: 2;
 	pointer-events: none;
 	will-change: transform;
-	transition: opacity 0.3s var(--ease-out);
 	transform: translateY(calc(240px + var(--petal-parallax, 0px)));
 }
 

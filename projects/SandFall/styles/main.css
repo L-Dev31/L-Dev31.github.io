@@ -1,3 +1,0 @@
-/* Reserved for legacy entrypoint compatibility.
-   All stylesheets are loaded as parallel <link> tags from index.html / team.html / blog.html
-   to avoid the @import waterfall. */
