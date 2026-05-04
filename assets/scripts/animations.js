@@ -190,20 +190,21 @@ export function setupLiquifyAll() {
         const res = () => { const d = devicePixelRatio || 1, r = cfg.canvas.getBoundingClientRect(); cfg.canvas.width = r.width * d; cfg.canvas.height = r.height * d; };
         window.addEventListener('resize', res, { passive: true }); res();
         document.addEventListener('mousemove', e => { const r = cfg.canvas.getBoundingClientRect(); cx = (e.clientX - r.left) / r.width; cy = (e.clientY - r.top) / r.height; if (cfg.alwaysOn) { over = true; return; } const z = cfg.containingEl || cfg.canvas, zr = z.getBoundingClientRect(); over = e.clientY >= zr.top && e.clientY <= zr.bottom; });
-        const load = () => { if (!cfg.source.complete) return; gl.activeTexture(gl.TEXTURE33985); gl.bindTexture(gl.TEXTURE_2D, srcT); gl.pixelStorei(37440, true); gl.texImage2D(gl.TEXTURE_2D, 0, 6408, 6408, 5121, cfg.source); ready = true; gl.pixelStorei(37440, false); cfg.source.style.opacity = '0'; };
+        const load = () => { if (!cfg.source.complete) return; gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, srcT); gl.pixelStorei(37440, true); gl.texImage2D(gl.TEXTURE_2D, 0, 6408, 6408, 5121, cfg.source); ready = true; gl.pixelStorei(37440, false); cfg.source.style.opacity = '0'; };
         if (cfg.isVideo) cfg.source.addEventListener('playing', () => cfg.source.style.opacity = '0'); else if (cfg.source.complete) load(); else cfg.source.addEventListener('load', load);
 
         let pVX = 0, pVY = 0;
         (function render() {
+            if (gl.isContextLost()) return;
             vx += (cx - pVX - vx) * 0.25; vy += (cy - pVY - vy) * 0.25; pVX = cx; pVY = cy;
             gl.bindFramebuffer(gl.FRAMEBUFFER, fW); gl.viewport(0, 0, DS, DS); gl.useProgram(upP);
             gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.enableVertexAttribArray(U.aU); gl.vertexAttribPointer(U.aU, 2, 5126, false, 0, 0);
-            gl.activeTexture(gl.TEXTURE33984); gl.bindTexture(gl.TEXTURE_2D, dR); gl.uniform1i(U.p, 0);
+            gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, dR); gl.uniform1i(U.p, 0);
             gl.uniform2f(U.c, cx, 1 - cy); gl.uniform2f(U.v, over ? -vx * 4 : 0, over ? vy * 4 : 0);
             gl.uniform1f(U.r, 0.14); gl.uniform1f(U.d, 0.91); gl.drawArrays(5, 0, 4);
             [dR, dW] = [dW, dR]; [fR, fW] = [fW, fR];
-            if (cfg.isVideo && cfg.source.readyState >= 2) { ready = true; gl.activeTexture(gl.TEXTURE33985); gl.bindTexture(gl.TEXTURE_2D, srcT); gl.pixelStorei(37440, true); gl.texImage2D(gl.TEXTURE_2D, 0, 6408, 6408, 5121, cfg.source); gl.pixelStorei(37440, false); }
-            if (ready) { gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, cfg.canvas.width, cfg.canvas.height); gl.useProgram(rnP); gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.enableVertexAttribArray(U.aR); gl.vertexAttribPointer(U.aR, 2, 5126, false, 0, 0); gl.activeTexture(gl.TEXTURE33985); gl.bindTexture(gl.TEXTURE_2D, srcT); gl.uniform1i(U.s, 1); gl.activeTexture(gl.TEXTURE33984); gl.bindTexture(gl.TEXTURE_2D, dR); gl.uniform1i(U.di, 0); gl.uniform1f(U.st, 0.12); gl.drawArrays(5, 0, 4); }
+            if (cfg.isVideo && cfg.source.readyState >= 2) { ready = true; gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, srcT); gl.pixelStorei(37440, true); gl.texImage2D(gl.TEXTURE_2D, 0, 6408, 6408, 5121, cfg.source); gl.pixelStorei(37440, false); }
+            if (ready) { gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, cfg.canvas.width, cfg.canvas.height); gl.useProgram(rnP); gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.enableVertexAttribArray(U.aR); gl.vertexAttribPointer(U.aR, 2, 5126, false, 0, 0); gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, srcT); gl.uniform1i(U.s, 1); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, dR); gl.uniform1i(U.di, 0); gl.uniform1f(U.st, 0.12); gl.drawArrays(5, 0, 4); }
             requestAnimationFrame(render);
         })();
     };

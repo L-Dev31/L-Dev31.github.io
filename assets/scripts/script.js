@@ -1,7 +1,7 @@
-import { setupPageLoader, setupMobileMenu, setupCursor, setupCTACursor, setupSmoothAnchors, setupBackToTop } from './modules/ui.js';
-import { setupLenis, setupMagneticLinks, setupScrubbingText, setupHeader, setupTextReveal, setupScrollEffects, setupLiquifyAll } from './modules/animations.js';
-import { setupWebProjects, setupFeaturedProjects, setupHeightScroll } from './modules/projects.js';
-import { setupAboutHeroVideo, setupVideoVisibility } from './modules/video.js';
+import { setupPageLoader, setupMobileMenu, setupCursor, setupCTACursor, setupSmoothAnchors, setupBackToTop } from './ui.js';
+import { setupLenis, setupMagneticLinks, setupScrubbingText, setupHeader, setupTextReveal, setupScrollEffects, setupLiquifyAll } from './animations.js';
+import { setupWebProjects, setupFeaturedProjects, setupHeightScroll } from './projects.js';
+import { setupAboutHeroVideo, setupVideoVisibility } from './video.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -26,8 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupWebProjects();
     setupHeightScroll('.featured-list', '.featured-project');
-    setupHeightScroll('#experience .exp-stack', '.exp-block');
-    setupHeightScroll('#education .exp-stack', '.exp-block');
 
     const refreshParallax = setupScrollEffects();
     setupFeaturedProjects(ctaCursor, refreshParallax);
