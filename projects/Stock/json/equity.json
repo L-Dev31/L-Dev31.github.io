@@ -8,17 +8,53 @@
     "currency": "EUR",
     "type": "equity",
     "purchases": [
-      {"date": "2025-11-10", "amount": -107.27, "shares": 9},
-      {"date": "2025-11-11", "amount": -106.93, "shares": 8},
-      {"date": "2025-11-18", "amount": -110.16, "shares": 9},
-      {"date": "2025-11-21", "amount": -113.36, "shares": 10}
+      {
+        "date": "2025-11-10",
+        "amount": -107.27,
+        "shares": 9
+      },
+      {
+        "date": "2025-11-11",
+        "amount": -106.93,
+        "shares": 8
+      },
+      {
+        "date": "2025-11-18",
+        "amount": -110.16,
+        "shares": 9
+      },
+      {
+        "date": "2025-11-21",
+        "amount": -113.36,
+        "shares": 10
+      }
     ],
     "sales": [
-      {"date": "2025-11-11", "amount": 90.45, "shares": 7},
-      {"date": "2025-11-12", "amount": 130.95, "shares": 10},
-      {"date": "2026-01-30", "amount": 71.35, "shares": 5},
-      {"date": "2026-02-11", "amount": 106.63, "shares": 6},
-      {"date": "2026-02-18", "amount": 160.00, "shares": 8}
+      {
+        "date": "2025-11-11",
+        "amount": 90.45,
+        "shares": 7
+      },
+      {
+        "date": "2025-11-12",
+        "amount": 130.95,
+        "shares": 10
+      },
+      {
+        "date": "2026-01-30",
+        "amount": 71.35,
+        "shares": 5
+      },
+      {
+        "date": "2026-02-11",
+        "amount": 106.63,
+        "shares": 6
+      },
+      {
+        "date": "2026-02-18",
+        "amount": 160.00,
+        "shares": 8
+      }
     ]
   },
   {
@@ -30,10 +66,18 @@
     "currency": "EUR",
     "type": "equity",
     "purchases": [
-      {"date": "2025-11-12", "amount": -104.52, "shares": 65}
+      {
+        "date": "2025-11-12",
+        "amount": -104.52,
+        "shares": 65
+      }
     ],
     "sales": [
-      {"date": "2025-11-21", "amount": 93.63, "shares": 65}
+      {
+        "date": "2025-11-21",
+        "amount": 93.63,
+        "shares": 65
+      }
     ]
   },
   {
@@ -67,7 +111,34 @@
     "currency": "EUR",
     "type": "equity",
     "purchases": [
-      {"date": "2026-04-22", "amount": -396.80, "shares": 16}
+      {
+        "date": "2026-04-22",
+        "amount": -396.80,
+        "shares": 16
+      }
+    ],
+    "sales": [
+      {
+        "date": "2026-04-30",
+        "amount": 339.10,
+        "shares": 16
+      }
+    ]
+  },
+  {
+    "symbol": "INF",
+    "ticker": "INF.PA",
+    "name": "Infotel SA",
+    "isin": "FR0000071797",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity",
+    "purchases": [
+      {
+        "date": "2026-05-04",
+        "amount": -249.39,
+        "shares": 7
+      }
     ],
     "sales": []
   },
