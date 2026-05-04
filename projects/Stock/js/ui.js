@@ -21,8 +21,7 @@ export function createTab(stock, type) {
     }
     
     const img = tab.querySelector('img');
-    const iconSymbol = stock.iconSymbol || stock.symbol;
-    img.src = `img/icon/${iconSymbol}.png`;
+    img.src = `img/icon/${stock.symbol}.png`;
     img.alt = stock.symbol;
     img.onerror = function () {
         const parent = this.parentElement;
@@ -79,7 +78,7 @@ export function createCard(stock) {
     const logo = card.querySelector('.logo img')
     logo.id = `logo-${stock.symbol}`
     logo.dataset.symbol = stock.symbol
-    logo.src = stock.iconSymbol ? `img/icon/${stock.iconSymbol}.png` : `img/logo/${stock.symbol}.png`
+    logo.src = `img/logo/${stock.symbol}.png`
     logo.onerror = function(){
         try {
             const ticker = (stock.ticker || stock.symbol || '').toUpperCase();
@@ -807,7 +806,6 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
         currency: resolved.currency || 'USD',
         country: resolved.country || '',
         isin: resolved.isin || '',
-        iconSymbol: resolved.iconSymbol || null,
         purchases: [],
         sales: []
     };

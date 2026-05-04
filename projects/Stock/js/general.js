@@ -24,22 +24,6 @@ function terminalLogGlobal(msg) {
     } catch (e) { /* ignore */ }
 }
 
-const DEFAULT_PROFILE_NAME = 'Mr. Léo Tosku';
-const DEFAULT_PROFILE_PFP = 'img/photo/leot.png';
-
-function applySettingsToUi(settings = getUserSettings()) {
-    const profileName = document.getElementById('profile-name');
-    const profilePfp = document.getElementById('profile-pfp');
-    const name = (settings.name || '').trim() || DEFAULT_PROFILE_NAME;
-    const pfp = (settings.pfp || '').trim() || DEFAULT_PROFILE_PFP;
-
-    if (profileName) profileName.textContent = name;
-    if (profilePfp) {
-        profilePfp.src = pfp;
-        profilePfp.alt = name;
-    }
-}
-
 function fillSettingsForm(settings = getUserSettings()) {
     const proxyInput = document.getElementById('settings-proxy-url');
     if (proxyInput) proxyInput.value = settings.proxyUrl || DEFAULT_WORKER_URL;
@@ -140,8 +124,6 @@ async function saveSettingsFromForm() {
     const proxyInput = document.getElementById('settings-proxy-url');
     const perfViewer = document.getElementById('settings-performance-viewer');
 
-    const name = current.name || DEFAULT_PROFILE_NAME;
-    const pfp = current.pfp || DEFAULT_PROFILE_PFP;
     const currency = current.currency || '€';
     const nextProxy = (proxyInput?.value || '').trim() || DEFAULT_WORKER_URL;
     const performanceViewerEnabled = !!perfViewer?.checked;
@@ -158,9 +140,8 @@ async function saveSettingsFromForm() {
         }
     }
 
-    const settings = { name, pfp, currency, proxyUrl, performanceViewerEnabled };
+    const settings = { currency, proxyUrl, performanceViewerEnabled };
     saveUserSettings(settings);
-    applySettingsToUi(settings);
     fillSettingsForm(settings);
     refreshUiAfterSettingsSave();
 
@@ -439,7 +420,6 @@ document.head.appendChild(font)
 
 window.addEventListener('load', async () => {
     const settings = getUserSettings();
-    applySettingsToUi(settings);
     fillSettingsForm(settings);
 
     await loadStocks();

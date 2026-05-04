@@ -101,21 +101,6 @@ function inferCountryFromMarket(marketId, currency) {
     return 'US';
 }
 
-function resolveIconSymbol(record, symbol, cryptoSymbols) {
-    const exact = normalize(record?.symbol);
-    const ticker = normalize(record?.ticker);
-    const upper = normalize(symbol);
-    const base = baseSymbol(upper);
-
-    if (exact) return exact;
-    if (ticker) return ticker;
-    if (base) {
-        if (upper.includes('.') && cryptoSymbols.has(base)) return null;
-        return base;
-    }
-    return null;
-}
-
 export function buildOnlineIconCandidates(symbol, market) {
     const candidates = [];
     const seen = new Set();
@@ -186,8 +171,6 @@ export async function resolveTickerDetails(symbol, fallback = {}, opts = {}) {
     const type = record?.type || fallback.type || (isCrypto ? 'crypto' : 'equity');
     const isin = record?.isin || fallback.isin || '';
 
-    const iconSymbol = resolveIconSymbol(record, upper, catalog.cryptoSymbols) || fallback.iconSymbol || null;
-
     return {
         symbol: record?.symbol || base || upper,
         ticker,
@@ -197,7 +180,6 @@ export async function resolveTickerDetails(symbol, fallback = {}, opts = {}) {
         country,
         market,
         isin,
-        iconSymbol,
         iconCandidates: buildOnlineIconCandidates(upper, market),
         jsonSymbol: record?.symbol || null,
         record,
