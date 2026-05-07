@@ -25,7 +25,9 @@ export const PERIODS = {
     '1D': { interval: '1m', range: '1d' },
     '1W': { interval: '5m', range: '5d' },
     '1M': { interval: '15m', range: '1mo' },
+    '3M': { interval: '1d', range: '3mo' },
     '6M': { interval: '1h', range: '6mo' },
+    'YTD': { interval: '1d', range: 'ytd' },
     '1Y': { interval: '1d', range: '1y' },
     '3Y': { interval: '1wk', range: '3y' },
     '5Y': { interval: '1wk', range: '5y' },
@@ -38,7 +40,9 @@ export const PERIOD_FALLBACKS = {
     '1D':  [{ interval: '1m',  range: '1d'  }, { interval: '5m',  range: '1d'  }, { interval: '15m', range: '1d'  }, { interval: '1h', range: '5d' }],
     '1W':  [{ interval: '5m',  range: '5d'  }, { interval: '15m', range: '5d'  }, { interval: '1h',  range: '5d'  }, { interval: '1d', range: '1mo' }],
     '1M':  [{ interval: '15m', range: '1mo' }, { interval: '1h',  range: '1mo' }, { interval: '1d',  range: '1mo' }],
+    '3M':  [{ interval: '1d',  range: '3mo' }, { interval: '1wk', range: '3mo' }],
     '6M':  [{ interval: '1h',  range: '6mo' }, { interval: '1d',  range: '6mo' }],
+    'YTD': [{ interval: '1d',  range: 'ytd' }, { interval: '1wk', range: 'ytd' }],
     '1Y':  [{ interval: '1d',  range: '1y'  }, { interval: '1wk', range: '1y'  }],
     '3Y':  [{ interval: '1wk', range: '3y'  }, { interval: '1mo', range: '3y'  }],
     '5Y':  [{ interval: '1wk', range: '5y'  }, { interval: '1mo', range: '5y'  }],
@@ -437,6 +441,39 @@ export async function fetchYahooScreener(scrIds, offset = 0, count = 200, signal
     return { quotes: result?.quotes || [], total: result?.total || 0 };
 }
 
+// Fetch index components (members) from Yahoo. Used to dynamically populate
+// non-US market lists (CAC 40, FTSE 100, DAX, etc.) without hardcoding tickers.
+// v10/quoteSummary?modules=components now requires crumb auth (401), so we
+// fallback to the v1/finance/lookup endpoint which still works without crumb.
+export async function fetchYahooIndexComponents(indexSymbol, signal) {
+    const norm = normalizeYahooSymbol(indexSymbol);
+
+    // Strategy 1: Try v1/finance/lookup (no crumb required)
+    try {
+        const lookupUrl = `https://query2.finance.yahoo.com/v1/finance/lookup?query=${encodeURIComponent(norm)}&type=equity&count=250`;
+        const lj = await yahooFetch(lookupUrl, signal);
+        if (!lj?.error) {
+            const docs = lj?.finance?.result?.[0]?.documents;
+            if (Array.isArray(docs) && docs.length > 0) {
+                return docs.map(d => d.symbol).filter(Boolean);
+            }
+        }
+    } catch { /* ignore, try next */ }
+
+    // Strategy 2: Try v10 components (legacy — needs crumb, may 401)
+    try {
+        const url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(norm)}?modules=components`;
+        const j = await yahooFetch(url, signal);
+        if (!j?.error) {
+            const components = j?.quoteSummary?.result?.[0]?.components?.components;
+            if (Array.isArray(components) && components.length > 0) return components;
+        }
+    } catch { /* ignore */ }
+
+    // Strategy 3: Return empty — caller should fallback to local JSON lists
+    return [];
+}
+
 export async function fetchYahooChartSnapshot(symbol, range = '1d', interval = '1m', signal) {
     const norm = normalizeYahooSymbol(symbol);
     const cacheKey = `${norm}|${range}|${interval}`;
@@ -481,8 +518,8 @@ export async function fetchYahooSparkBatch(symbols, range = '1d', interval = '1m
 
 export async function fetchYahooQuotesBatch(symbols, signal) {
     if (!symbols.length) return [];
-    // v6 is often more stable for bulk quotes
-    const url = `https://query2.finance.yahoo.com/v6/finance/quote?symbols=${symbols.join(',')}`;
+    // v6 is dead (404) — use v7 which works without crumb for basic quotes
+    const url = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(',')}`;
     const j = await yahooFetch(url, signal);
     if (j?.error) {
         console.warn('[Yahoo] Quote Batch Error:', j.errorCode);

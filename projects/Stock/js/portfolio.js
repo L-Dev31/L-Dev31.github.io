@@ -110,11 +110,11 @@ export async function loadStocks() {
     for (const [type, stocks] of Object.entries(byType)) {
         const hasPortfolio = stocks.some(s => {
             const calculated = calculateStockValues(s);
-            return calculated.shares > 0 || hasTransactions(s);
+            return calculated.shares > 0;
         });
         const hasGeneral = stocks.some(s => {
             const calculated = calculateStockValues(s);
-            return calculated.shares === 0 && !hasTransactions(s);
+            return calculated.shares === 0;
         });
         const label = typeLabel(type);
         const icon = typeIcon(type);

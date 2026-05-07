@@ -124,11 +124,27 @@ export function buildOnlineIconCandidates(symbol, market) {
     } else {
         // Stock logo variants
         const variants = [upper, upper.replace('.', '-'), upper.split('.')[0], base].filter(Boolean);
-        variants.forEach(v => add(`https://storage.googleapis.com/iex/api/logos/${v}.png`));
+        
+        const LOGO_DEV_KEY = 'pk_a9Yfpyg0R--W0TNaF1kGng';
+        
+        variants.forEach(v => {
+            // Logo.dev - Premium coverage (Priority #1)
+            add(`https://img.logo.dev/ticker/${v}?token=${LOGO_DEV_KEY}`);
+            // Parqet - Excellent coverage for EU and Global stocks
+            add(`https://assets.parqet.com/logos/symbol/${v}?format=png`);
+            // Financial Modeling Prep - Good for US and major globals
+            add(`https://financialmodelingprep.com/image-stock/${v}.png`);
+            add(`https://financialmodelingprep.com/image-stock/${v}.jpg`);
+            // EODHD public logos
+            add(`https://eodhd.com/img/logos/US/${v}.png`);
+            // IEX Legacy
+            add(`https://storage.googleapis.com/iex/api/logos/${v}.png`);
+        });
     }
 
     return candidates;
 }
+
 
 async function lookupYahooQuote(ticker) {
     if (!ticker) return null;

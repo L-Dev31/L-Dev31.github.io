@@ -182,6 +182,8 @@
 
 .tab:hover {
     background: linear-gradient(90deg, rgba(168, 162, 255, 0.08) 0%, transparent 100%);
+    outline: 1px solid var(--primary);
+    outline-offset: -1px;
 }
 
 .tab.active {

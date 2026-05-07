@@ -28,11 +28,12 @@ export function createTab(stock, type) {
         const ticker = (stock.ticker || stock.symbol || '').toUpperCase();
         const candidates = stock.iconCandidates || buildOnlineIconCandidates(ticker, stock.market);
 
-        if (candidates && candidates.length > 0) {
-            const next = candidates.shift();
-            // Store modified candidates back to avoid re-trying same failed url
-            stock.iconCandidates = candidates;
-            this.src = next;
+        if (!this.dataset.cIndex) this.dataset.cIndex = 0;
+        let idx = parseInt(this.dataset.cIndex, 10);
+
+        if (candidates && idx < candidates.length) {
+            this.src = candidates[idx];
+            this.dataset.cIndex = idx + 1;
             return;
         }
 
@@ -57,7 +58,7 @@ export function createTab(stock, type) {
     
     const calculated = calculateStockValues(stock);
     tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `(Shares owned: ${calculated.shares})` : '';
-    const isPortfolio = calculated.shares > 0 || hasTransactions(stock);
+    const isPortfolio = calculated.shares > 0;
     const isSuspended = tab.classList.contains('suspended');
 
     if (isSuspended && !isPortfolio) {
@@ -81,16 +82,6 @@ export function createCard(stock) {
     logo.src = `img/logo/${stock.symbol}.png`
     logo.onerror = function(){
         try {
-            const ticker = (stock.ticker || stock.symbol || '').toUpperCase();
-            const candidates = stock.iconCandidates || buildOnlineIconCandidates(ticker, stock.market);
-            
-            if (candidates && candidates.length > 0) {
-                const next = candidates.shift();
-                stock.iconCandidates = candidates;
-                this.src = next;
-                return;
-            }
-
             const parent = this.parentElement;
             parent.innerHTML = '';
             const name = stock.name || stock.symbol;
@@ -738,7 +729,7 @@ export function toggleSymbolSuspension(symbol, isSuspended) {
         tab.classList.remove('suspended');
         const pos = positions[symbol];
         if (!pos) return;
-        const isPortfolio = calculateStockValues(pos).shares > 0 || hasTransactions(pos);
+        const isPortfolio = calculateStockValues(pos).shares > 0;
         ensureSection(isPortfolio ? 'portfolio-tabs' : 'general-tabs', pos.type)?.appendChild(tab);
     }
 }

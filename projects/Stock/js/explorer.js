@@ -1,4 +1,4 @@
-import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade } from './yahoo-finance.js';
+import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, fetchYahooIndexComponents, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade } from './yahoo-finance.js';
 import { debounce } from './constants.js';
 import { getCurrency } from './state.js';
 import { buildOnlineIconCandidates } from './ticker-catalog.js';
@@ -513,16 +513,11 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
         try {
             showLoadingProgress(0, `Analysis ${PERIOD_LABELS[period]}...`);
             startYahooCooldownLoader();
-            const config = PERIOD_CONFIG[period] || PERIOD_CONFIG['1D'];
+            // fetchYahooPeriodChanges expects (tickers, periodKey, signal)
+            // periodKey must be a PERIODS key like '1D', '1W', etc.
             changes = await fetchYahooPeriodChanges(
                 enrichItems.map(i => i.symbol),
-                config.range,
-                config.interval,
-                (done, total, isPaused, msg) => {
-                    if (msg) showLoadingProgress(done, `${msg} ${done}/${total}`);
-                    else if (isPaused) showLoadingProgress(done, `API Pause (Protection)... ${done}/${total}`);
-                    else showLoadingProgress(done, `Analysis ${done}/${total}`);
-                }
+                period
             );
         } catch (e) {
             changes = {};
@@ -567,8 +562,63 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
         });
     }
 
+    async function fetchSymbolsFromIndices(indices) {
+        const all = [];
+        const seen = new Set();
+        for (const idx of indices) {
+            showLoadingProgress(0, `Index ${idx}...`);
+            try {
+                const components = await fetchYahooIndexComponents(idx);
+                for (const sym of components) {
+                    const upper = (sym || '').toUpperCase();
+                    if (!upper || seen.has(upper)) continue;
+                    seen.add(upper);
+                    all.push(upper);
+                }
+            } catch (e) { /* ignore single-index failure */ }
+        }
+        return all;
+    }
+
+    // Load fallback tickers from json/markets/{marketId}.json
+    const marketTickerCache = new Map();
+    async function loadMarketFallbackTickers(marketId) {
+        if (marketTickerCache.has(marketId)) return marketTickerCache.get(marketId);
+        try {
+            const r = await fetch(`json/markets/${marketId}.json`);
+            if (r.ok) {
+                const tickers = await r.json();
+                if (Array.isArray(tickers) && tickers.length > 0) {
+                    marketTickerCache.set(marketId, tickers);
+                    return tickers;
+                }
+            }
+        } catch { /* file doesn't exist for this market */ }
+        marketTickerCache.set(marketId, []);
+        return [];
+    }
+
     async function resolveMarketItems(filters, marketDef) {
         if (!marketDef) return [];
+
+        if (Array.isArray(marketDef.indices) && marketDef.indices.length > 0) {
+            let symbols = await fetchSymbolsFromIndices(marketDef.indices);
+            if (!symbols.length) {
+                // Fallback 1: per-market ticker file (json/markets/{id}.json)
+                showLoadingProgress(0, 'Loading market tickers...');
+                const fallbackTickers = await loadMarketFallbackTickers(marketDef.id);
+                if (fallbackTickers.length) {
+                    symbols = fallbackTickers;
+                } else {
+                    // Fallback 2: tickers from user's local JSON portfolios
+                    const localSymbols = getLocalSymbolsForMarket(marketDef.id);
+                    if (localSymbols.length) symbols = localSymbols;
+                }
+            }
+            symbols = symbols.slice(0, getMaxAllowed());
+            const defaultEligibility = marketDef.id === 'euronext' ? 'pea' : 'cto';
+            return fetchStocksBatch(symbols, defaultEligibility, marketDef.id);
+        }
 
         if (marketDef.type === 'list' && marketDef.lists && Object.keys(marketDef.lists).length > 0) {
             let symbolsToFetch = [];
@@ -836,10 +886,11 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
             const img = new Image();
             const setFallbackText = () => { el.innerHTML = ticker.slice(0, 2).toUpperCase(); };
 
+            let cIndex = 0;
             img.onload = () => { el.innerHTML = `<img src="${img.src}" alt="${ticker}" />`; };
             img.onerror = () => {
-                if (candidates.length > 0) {
-                    img.src = candidates.shift();
+                if (cIndex < candidates.length) {
+                    img.src = candidates[cIndex++];
                 } else {
                     setFallbackText();
                 }
@@ -847,8 +898,8 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
 
             if (iconSymbol) {
                 img.src = `img/icon/${iconSymbol}.png`;
-            } else if (candidates.length > 0) {
-                img.src = candidates.shift();
+            } else if (cIndex < candidates.length) {
+                img.src = candidates[cIndex++];
             } else {
                 setFallbackText();
             }
