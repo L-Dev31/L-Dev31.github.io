@@ -140,7 +140,13 @@
         "shares": 7
       }
     ],
-    "sales": []
+    "sales": [
+      {
+        "date": "2026-05-07",
+        "amount": 119.70,
+        "shares": 3
+      }
+    ]
   },
   {
     "symbol": "AAPL",
@@ -151,6 +157,23 @@
     "currency": "USD",
     "type": "equity",
     "purchases": [],
+    "sales": []
+  },
+  {
+    "symbol": "DCAM",
+    "ticker": "DCAM.PA",
+    "name": "Amundi PEA Monde (MSCI World)",
+    "isin": "",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity",
+    "purchases": [
+      {
+        "date": "2026-05-07",
+        "amount": -169.24,
+        "shares": 29
+      }
+    ],
     "sales": []
   }
 ]
