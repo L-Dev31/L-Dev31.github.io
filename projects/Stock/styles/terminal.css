@@ -17,7 +17,7 @@
 
 .card.terminal-card {
     display: none;
-    background: #000 !important;
+    background: var(--terminal-bg) !important;
     border-left: 1px solid rgba(168, 162, 255, 0.1);
     color: var(--text-white);
 }

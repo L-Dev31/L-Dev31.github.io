@@ -3,17 +3,13 @@
     --text-white: #ffffff;
     --text-light: #e8e9f3;
     --text-dark: #6b7280;
-    --bg-black: #000;
+    --terminal-bg: #000;
     --bg-card: #1e1e24;
     --bg-main: #18181c;
+    --bg-dark: #121218;
     --color-positive: #65d981;
     --color-negative: #f87171;
     --color-warning: #fbbf24;
-
-    --news-bg: #1e1e24;
-    --news-muted: #6b7280;
-    --explorer-bg: #1e1e24;
-    --explorer-muted: #6b7280;
 
     --sidebar-w: clamp(260px, 22vw, 300px);
     --pad-card: clamp(18px, 3vw, 32px);
@@ -26,15 +22,19 @@
     --bg-glass-hover: rgba(255, 255, 255, 0.04);
 }
 
-/* Global Fade-In for active views */
 .card.active,
 body.sidebar-open .sidebar {
     animation: globalFadeIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes globalFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 *,
@@ -79,17 +79,31 @@ body {
     scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
     font-family: inherit;
     font-weight: 700;
     line-height: 1.3;
     color: var(--text-white);
 }
 
-h1 { font-size: clamp(22px, 2.4vw, 28px); }
-h2 { font-size: clamp(18px, 1.9vw, 22px); }
-h3 { font-size: clamp(15px, 1.5vw, 18px); }
-h4 { font-size: clamp(14px, 1.2vw, 16px); }
+h1 {
+    font-size: clamp(22px, 2.4vw, 28px);
+}
+
+h2 {
+    font-size: clamp(18px, 1.9vw, 22px);
+}
+
+h3 {
+    font-size: clamp(15px, 1.5vw, 18px);
+}
+
+h4 {
+    font-size: clamp(14px, 1.2vw, 16px);
+}
 
 a {
     color: var(--primary);
@@ -210,12 +224,26 @@ select option {
     color: var(--text-white);
 }
 
-.positive { color: var(--color-positive) !important; }
-.negative { color: var(--color-negative) !important; }
-.warning { color: var(--color-warning) !important; }
-.neutral { color: var(--text-light) !important; }
+.positive {
+    color: var(--color-positive) !important;
+}
 
-.hidden { display: none !important; }
+.negative {
+    color: var(--color-negative) !important;
+}
+
+.warning {
+    color: var(--color-warning) !important;
+}
+
+.neutral {
+    color: var(--text-light) !important;
+}
+
+.hidden {
+    display: none !important;
+}
+
 .mobile-only {
     display: none !important;
 }
@@ -253,7 +281,9 @@ select option {
     overflow-y: auto;
 }
 
-.card.active { display: block; }
+.card.active {
+    display: block;
+}
 
 .fa-solid {
     font-size: 18px;
@@ -261,7 +291,9 @@ select option {
     vertical-align: -2px;
 }
 
-.type-icon { margin-right: 7px; }
+.type-icon {
+    margin-right: 7px;
+}
 
 .section-title {
     font-size: 13px;

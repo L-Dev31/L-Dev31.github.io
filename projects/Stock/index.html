@@ -35,20 +35,13 @@
                     <p>Total investment: <span id="total-investment">--</span></p>
                 </div>
             </div>
-            <div class="exposure-panel" id="exposure-panel" aria-label="Portfolio composition">
-                <div class="exposure-header">
-                    <span class="exposure-title">Exposure</span>
-                    <span class="exposure-toggle" id="exposure-toggle" data-mode="type">By Type</span>
-                </div>
-                <div class="exposure-bar" id="exposure-bar" role="img" aria-label="Allocation bar"></div>
-                <div class="exposure-legend" id="exposure-legend"></div>
-            </div>
         </div>
         <div class="tools-bar" id="tools-actions">
             <button id="open-terminal-btn" class="tool-btn"><i class="fa-solid fa-terminal"></i>Terminal</button>
             <button id="open-news-feed" class="tool-btn"><i class="fa-solid fa-newspaper"></i>News</button>
             <button id="open-explorer" class="tool-btn"><i
                     class="fa-solid fa-magnifying-glass-chart"></i>Explorer</button>
+            <button id="open-portfolio-btn" class="tool-btn"><i class="fa-solid fa-chart-pie"></i>Portfolio</button>
             <button id="open-settings-btn" class="tool-btn" title="Settings"><i
                     class="fa-solid fa-gear"></i>Settings</button>
         </div>
@@ -82,6 +75,33 @@
         <div class="tabs" id="tabs"></div>
 
         <div id="cards-container">
+            <div class="card home-card active" id="card-home" role="document" aria-hidden="false">
+                
+                <div class="sidebar-section" id="mobile-sidebar-portfolio">
+                    <h3 class="sidebar-section-title"><i class="fa-solid fa-briefcase"></i> My Portfolio
+                        <button class="section-toggle" aria-expanded="true" aria-controls="mobile-portfolio-tabs"
+                            aria-label="Toggle portfolio section"><i class="fa-solid fa-chevron-down"></i></button>
+                    </h3>
+                    <div class="tabs portfolio" id="mobile-portfolio-tabs"></div>
+                </div>
+
+                <div class="sidebar-section" id="mobile-sidebar-market">
+                    <h3 class="sidebar-section-title"><i class="fa-solid fa-chart-line"></i> Market
+                        <button class="section-toggle" aria-expanded="true" aria-controls="mobile-general-tabs"
+                            aria-label="Toggle market section"><i class="fa-solid fa-chevron-down"></i></button>
+                    </h3>
+                    <div class="tabs general" id="mobile-general-tabs"></div>
+                </div>
+
+                <div class="sidebar-section" id="mobile-sidebar-suspended">
+                    <h3 class="sidebar-section-title"><i class="fa-solid fa-ban"></i> Suspended
+                        <button class="section-toggle" aria-expanded="true" aria-controls="mobile-suspended-tabs"
+                            aria-label="Toggle suspended section"><i class="fa-solid fa-chevron-down"></i></button>
+                    </h3>
+                    <div class="tabs suspended" id="mobile-suspended-tabs"></div>
+                </div>
+            </div>
+
             <div class="card terminal-card" id="card-terminal" role="document" aria-hidden="true">
                 <h3 class="section-title"><i class="fa-solid fa-terminal"></i> Terminal</h3>
                 <div class="terminal-body">
@@ -200,14 +220,137 @@
                     <div class="explorer-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>
                 </div>
                 <div id="explorer-pagination" class="explorer-pagination" style="display: none;">
-                    <button id="explorer-prev" class="explorer-page-btn" disabled><i
+                    <button id="explorer-prev" class="explorer-page-btn" aria-label="Previous page" disabled><i
                             class="fa-solid fa-chevron-left"></i></button>
                     <span id="explorer-page-info" class="explorer-page-info">Page 1</span>
-                    <button id="explorer-next" class="explorer-page-btn"><i
+                    <button id="explorer-next" class="explorer-page-btn" aria-label="Next page"><i
                             class="fa-solid fa-chevron-right"></i></button>
                 </div>
             </div>
         </div>
+        <div class="card portfolio-card" id="card-portfolio" role="document" aria-hidden="true">
+            <h3 class="section-title"><i class="fa-solid fa-chart-pie"></i> Advanced Portfolio Analytics</h3>
+            <div class="card-tabs-nav">
+                <button class="card-tab-btn active" data-target="portfolio-performance">Performance</button>
+                <button class="card-tab-btn" data-target="portfolio-diversification">Diversification</button>
+                <button class="card-tab-btn" data-target="portfolio-dividends">Dividends</button>
+            </div>
+            <div class="card-content">
+                <div class="card-tab-pane active" data-pane="portfolio-performance">
+                    <div class="chart-container portfolio-chart-container">
+                        <div class="chart-header">
+                            <span>Portfolio vs. Benchmark (MSCI World)</span>
+                            <div class="chart-controls">
+                                <button class="period-btn active" data-period="1Y">1Y</button>
+                                <button class="period-btn" data-period="MAX">MAX</button>
+                            </div>
+                        </div>
+                        <canvas id="portfolio-performance-chart"></canvas>
+                    </div>
+                    <div class="portfolio-summary-grid info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Total Value</div>
+                            <div class="info-value" id="portfolio-total-value">--</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Total Gain/Loss</div>
+                            <div class="info-value" id="portfolio-total-profit">--</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Best Performer</div>
+                            <div class="info-value" id="portfolio-best-performer">--</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Worst Performer</div>
+                            <div class="info-value" id="portfolio-worst-performer">--</div>
+                        </div>
+                    </div>
+                    <div class="portfolio-history-container">
+                        <div class="chart-header">
+                            <h3 class="sub-section-title">Historical Realized Performance</h3>
+                        </div>
+                        <div class="historical-performance-list" id="portfolio-historical-list">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-tab-pane" data-pane="portfolio-diversification">
+                    <div class="diversification-grid">
+                        <div class="diversification-item">
+                            <h4 class="sub-section-title">Asset Class</h4>
+                            <div class="pie-chart-container">
+                                <canvas id="chart-diversification-asset"></canvas>
+                            </div>
+                        </div>
+                        <div class="diversification-item">
+                            <h4 class="sub-section-title">Geography</h4>
+                            <div class="pie-chart-container">
+                                <canvas id="chart-diversification-geo"></canvas>
+                            </div>
+                        </div>
+                        <div class="diversification-item">
+                            <h4 class="sub-section-title">Sector</h4>
+                            <div class="pie-chart-container">
+                                <canvas id="chart-diversification-sector"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="exposure-panel" id="exposure-panel" aria-label="Portfolio composition">
+                        <div class="exposure-header">
+                            <span class="exposure-title">Position Weights</span>
+                            <span class="exposure-toggle" id="exposure-toggle" data-mode="type">By Type</span>
+                        </div>
+                        <div class="exposure-bar" id="exposure-bar" role="img" aria-label="Allocation bar"></div>
+                        <div class="exposure-legend" id="exposure-legend"></div>
+                    </div>
+                </div>
+                <div class="card-tab-pane" data-pane="portfolio-dividends">
+                    <div class="dividend-tracker-section">
+                        <h3 class="section-title"><i class="fa-solid fa-calendar-days"></i> Dividend Calendar</h3>
+                        <div class="dividend-calendar-container">
+                            <div id="dividend-calendar-placeholder" class="empty-state">
+                                <i class="fa-solid fa-hourglass-half"></i>
+                                <p>Coming soon: Predicted dividend payouts based on your holdings.</p>
+                            </div>
+                            <div class="table-container">
+                                <table id="dividend-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ticker</th>
+                                            <th>Ex-Date</th>
+                                            <th>Payment Date</th>
+                                            <th>Amount</th>
+                                            <th>Total Expected</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dividend-table-body">
+                                        <!-- Will be populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card profile-card" id="card-profile" role="document" aria-hidden="true">
+            <div class="profile-header">
+                <div class="profile-header-top">
+                    <img src="img/photo/leot.png" alt="Profile" class="profile-photo">
+                    <div class="profile-info">
+                        <h1>Mr. Léo Tosku</h1>
+                        <p>Shares held: <span id="mobile-total-shares">0</span></p>
+                        <p>Total investment: <span id="mobile-total-investment">--</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="tools-bar" id="mobile-profile-actions">
+                <button id="open-portfolio-btn-mobile" class="tool-btn"><i class="fa-solid fa-chart-pie"></i>Portfolio</button>
+                <button id="open-settings-btn-mobile" class="tool-btn"><i class="fa-solid fa-gear"></i>Settings</button>
+            </div>
+        </div>
+
         <div class="card settings-card" id="card-settings" role="document" aria-hidden="true">
             <h3 class="section-title"><i class="fa-solid fa-gear"></i> Settings</h3>
             <div class="settings-body">
@@ -258,8 +401,9 @@
 
             <div class="card-tabs-nav">
                 <button class="card-tab-btn active" data-target="overview">Overview</button>
-                <button class="card-tab-btn" data-target="news">News</button>
                 <button class="card-tab-btn" data-target="investment">Investment</button>
+                <button class="card-tab-btn" data-target="financials">Financials</button>
+                <button class="card-tab-btn" data-target="news">News</button>
             </div>
 
             <div class="card-content">
@@ -357,6 +501,52 @@
                     <div class="signal-container">
                         <div class="signal-explanation hidden-by-bot">
                             <div class="explanation-content"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Financials -->
+                <div class="card-tab-pane" data-pane="financials">
+                    <div class="financials-section">
+                        <h3 class="section-title"><i class="fa-solid fa-chart-bar"></i> Key Statistics</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Market Cap</div>
+                                <div class="info-value financials-mktcap">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">P/E Ratio</div>
+                                <div class="info-value financials-pe">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">EPS</div>
+                                <div class="info-value financials-eps">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Dividend Yield</div>
+                                <div class="info-value financials-div">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">52W High</div>
+                                <div class="info-value financials-52high">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">52W Low</div>
+                                <div class="info-value financials-52low">--</div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="section-title"><i class="fa-solid fa-user-tie"></i> Analyst Recommendations (ANR)</h3>
+                        <div class="anr-container">
+                            <div class="anr-gauge">
+                                <div class="anr-bar" id="anr-bar">
+                                    <div class="anr-segment anr-sell" style="width: 25%;">Sell</div>
+                                    <div class="anr-segment anr-hold" style="width: 25%;">Hold</div>
+                                    <div class="anr-segment anr-buy" style="width: 25%;">Buy</div>
+                                    <div class="anr-segment anr-strong-buy" style="width: 25%;">Strong Buy</div>
+                                </div>
+                                <div class="anr-consensus">Consensus: <span class="anr-consensus-value">--</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -471,9 +661,10 @@
             <i class="fa-solid fa-magnifying-glass-chart"></i>
             <span>Explorer</span>
         </button>
-        <button class="bottom-nav-btn" id="bottom-nav-settings">
-            <i class="fa-solid fa-gear"></i>
-            <span>Settings</span>
+        <button class="bottom-nav-btn profile-nav-btn" id="bottom-nav-profile">
+            <div class="nav-profile-photo-wrapper">
+                <img src="img/photo/leot.png" alt="Profile" class="nav-profile-photo">
+            </div>
         </button>
     </nav>
 

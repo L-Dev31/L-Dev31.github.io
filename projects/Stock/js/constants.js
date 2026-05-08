@@ -1,5 +1,3 @@
-// Shared constants & micro-utilities used across multiple modules.
-
 export const TYPE_ORDER = ['equity', 'commodity', 'crypto'];
 
 export const TYPE_LABELS = {

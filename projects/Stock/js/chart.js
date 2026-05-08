@@ -134,9 +134,9 @@ const rsiZonesPlugin = {
 
         ctx.font = '600 9px "Plus Jakarta Sans", sans-serif';
         ctx.fillStyle = 'rgba(248, 113, 113, 0.55)';
-        ctx.fillText('70 · Overbought', chartArea.left + 4, yTop - 3);
+        ctx.fillText('70', chartArea.left + 4, yTop - 3);
         ctx.fillStyle = 'rgba(101, 217, 129, 0.55)';
-        ctx.fillText('30 · Oversold', chartArea.left + 4, yBot + 11);
+        ctx.fillText('30', chartArea.left + 4, yBot + 11);
         ctx.restore();
     }
 };
@@ -185,10 +185,11 @@ const buildTooltipBody = ({ ts, index, opens, highs, lows, closes }) => {
 };
 
 function buildMainOptions() {
+    const isMobile = window.innerWidth <= 768;
     return {
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { top: 20, bottom: 75, left: 10, right: 10 } },
+        layout: { padding: { top: 20, bottom: isMobile ? 10 : 75, left: 10, right: 10 } },
         plugins: {
             legend: { display: false },
             tooltip: {
@@ -220,7 +221,7 @@ function buildMainOptions() {
         scales: {
             x: {
                 grid: { display: false },
-                ticks: { color: '#6b7280', font: { size: 8 }, autoSkip: true, maxRotation: 45 }
+                ticks: { color: '#6b7280', font: { size: 8 }, autoSkip: true, maxRotation: window.innerWidth <= 768 ? 0 : 45 }
             },
             y: {
                 position: 'right',
@@ -488,7 +489,7 @@ async function applyBenchmarkOverlay(symbol, benchSymbol, ts, prices, positions,
         }
         const sign = diff >= 0 ? '+' : '';
         badge.textContent = ` · ${benchLabel} ${sign}${diff.toFixed(2)}% vs stock`;
-        badge.style.color = diff >= 0 ? '#65d981' : '#f87171';
+        badge.className = `benchmark-badge ${diff >= 0 ? 'positive' : 'negative'}`;
     }
     
     if (chart._nemerisRendered) {
@@ -647,8 +648,8 @@ function updateIndicatorSubcharts(symbol, prices, positions) {
     const rsiPane = card.querySelector('.stack-rsi');
     const macdPane = card.querySelector('.stack-macd');
     const enough = Array.isArray(prices) && prices.length >= 30;
-    if (rsiPane) rsiPane.style.display = enough ? '' : 'none';
-    if (macdPane) macdPane.style.display = enough ? '' : 'none';
+    if (rsiPane) rsiPane.classList.toggle('hide-indicator', !enough);
+    if (macdPane) macdPane.classList.toggle('hide-indicator', !enough);
     if (!enough) return;
 
     const rsiSeries = calculateRSISeries(prices, 14);
@@ -766,7 +767,6 @@ export function initChart(symbol, positions) {
     if (positions[symbol].macdChart) { try { positions[symbol].macdChart.destroy(); } catch (_) {} positions[symbol].macdChart = null; }
 
     positions[symbol].chart = createMainChart(canvas);
-    canvas.style.cursor = 'default';
 }
 
 export function updateChart(symbol, timestamps, prices, positions, _source, fullData) {

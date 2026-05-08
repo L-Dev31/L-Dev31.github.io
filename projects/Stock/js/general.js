@@ -118,6 +118,68 @@ function openSettingsCard() {
     setSettingsStatus('');
 }
 
+function openHomeCard() {
+    const card = document.getElementById('card-home');
+    if (!card) return;
+
+    document.querySelectorAll('.card').forEach((c) => {
+        c.classList.remove('active');
+        c.setAttribute('aria-hidden', 'true');
+    });
+    document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+    try { document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active')); } catch (e) { }
+
+    card.classList.add('active');
+    card.setAttribute('aria-hidden', 'false');
+}
+
+function openPortfolioCard() {
+    const card = document.getElementById('card-portfolio');
+    if (!card) return;
+
+    document.querySelectorAll('.card').forEach((c) => {
+        c.classList.remove('active');
+        c.setAttribute('aria-hidden', 'true');
+    });
+    document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+    try { document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active')); } catch (e) { }
+
+    card.classList.add('active');
+    card.setAttribute('aria-hidden', 'false');
+    document.getElementById('open-portfolio-btn')?.classList.add('active');
+
+    // Trigger analytics refresh
+    try { 
+        import('./portfolio.js').then(m => {
+            const activeTab = card.querySelector('.card-tab-btn.active')?.dataset.target || 'portfolio-performance';
+            m.initPortfolioAnalytics(); // Ensures listeners are bound
+        });
+    } catch (e) {}
+}
+
+function openProfileCard() {
+    const card = document.getElementById('card-profile');
+    if (!card) return;
+
+    document.querySelectorAll('.card').forEach((c) => {
+        c.classList.remove('active');
+        c.setAttribute('aria-hidden', 'true');
+    });
+    document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+    try { document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active')); } catch (e) { }
+
+    card.classList.add('active');
+    card.setAttribute('aria-hidden', 'false');
+    
+    // Update mobile profile stats to match the sidebar ones
+    const totalShares = document.getElementById('total-shares')?.textContent;
+    const totalInv = document.getElementById('total-investment')?.textContent;
+    const mShares = document.getElementById('mobile-total-shares');
+    const mInv = document.getElementById('mobile-total-investment');
+    if (mShares && totalShares) mShares.textContent = totalShares;
+    if (mInv && totalInv) mInv.textContent = totalInv;
+}
+
 
 async function saveSettingsFromForm() {
     const current = getUserSettings();
@@ -474,6 +536,11 @@ window.addEventListener('load', async () => {
     initMobileSidebar();
 });
 
+document.getElementById('bottom-nav-home')?.addEventListener('click', () => {
+    openHomeCard();
+    setBottomNavActive('bottom-nav-home');
+});
+
 document.getElementById('bottom-nav-terminal')?.addEventListener('click', () => {
     openTerminalCard();
     setBottomNavActive('bottom-nav-terminal');
@@ -486,9 +553,9 @@ document.getElementById('bottom-nav-explorer')?.addEventListener('click', () => 
     window.explorerModule?.openExplorer();
     setBottomNavActive('bottom-nav-explorer');
 });
-document.getElementById('bottom-nav-settings')?.addEventListener('click', () => {
-    openSettingsCard();
-    setBottomNavActive('bottom-nav-settings');
+document.getElementById('bottom-nav-profile')?.addEventListener('click', () => {
+    openProfileCard();
+    setBottomNavActive('bottom-nav-profile');
 });
 
 document.getElementById('open-terminal-btn')?.addEventListener('click', e => {
@@ -500,7 +567,16 @@ document.getElementById('open-news-feed')?.addEventListener('click', async e => 
     try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch (e) { }
     try { document.getElementById('open-news-feed')?.classList.add('active'); } catch (e) { }
 });
+document.getElementById('open-portfolio-btn')?.addEventListener('click', () => {
+    openPortfolioCard();
+});
+document.getElementById('open-portfolio-btn-mobile')?.addEventListener('click', () => {
+    openPortfolioCard();
+});
 document.getElementById('open-settings-btn')?.addEventListener('click', () => {
+    openSettingsCard();
+});
+document.getElementById('open-settings-btn-mobile')?.addEventListener('click', () => {
     openSettingsCard();
 });
 
@@ -567,6 +643,15 @@ window.nemeris = {
         get: getUserSettings,
         save: saveUserSettings,
         open: openSettingsCard
+    },
+    portfolio: {
+        open: openPortfolioCard
+    },
+    profile: {
+        open: openProfileCard
+    },
+    home: {
+        open: openHomeCard
     },
     // Proxy config
     proxy: { getUrl: getProxyBaseUrl, setUrl: setProxyBaseUrl, ping: pingProxy, defaultUrl: DEFAULT_WORKER_URL }

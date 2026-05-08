@@ -703,3 +703,21 @@ export async function fetchNews(symbol, limit = 20, days = 7) {
         return { source: 'yahoo', error: true, items: [] };
     }
 }
+
+/**
+ * Fetch quote summary modules for a specific symbol.
+ * modules: assetProfile, summaryProfile, summaryDetail, calendarEvents, defaultKeyStatistics, financialData
+ */
+export async function fetchYahooQuoteSummary(symbol, modules = ['assetProfile', 'summaryProfile', 'calendarEvents']) {
+    const s = getYahooSymbol(symbol);
+    const url = `${BASES[baseIndex]}/v11/finance/quoteSummary/${s}?modules=${modules.join(',')}`;
+    try {
+        const res = await proxyFetch(url);
+        if (res.error) return null;
+        return res.data?.quoteSummary?.result?.[0];
+    } catch (e) {
+        console.error(`QuoteSummary failed for ${symbol}:`, e);
+        return null;
+    }
+}
+

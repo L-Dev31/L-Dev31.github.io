@@ -12,7 +12,35 @@ export { initChart }; // Re-export for portfolio.js
 export function createTab(stock, type) {
     const t = document.getElementById('tab-template');
     if (!t) return;
-    const tab = t.content.firstElementChild.cloneNode(true);
+    
+    // Create tab for Desktop Sidebar
+    const tab = createTabElement(t, stock, type);
+    
+    const calculated = calculateStockValues(stock);
+    const isPortfolio = calculated.shares > 0;
+    const isSuspended = tab.classList.contains('suspended');
+
+    if (isSuspended && !isPortfolio) {
+        ensureSection('suspended-tabs', type)?.appendChild(tab);
+    } else {
+        const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
+        document.getElementById(sectionId)?.appendChild(tab);
+    }
+
+    // Create tab for Mobile Home Card
+    if (document.getElementById('mobile-portfolio-tabs')) {
+        const mobileTab = createTabElement(t, stock, type);
+        if (isSuspended && !isPortfolio) {
+            ensureSection('mobile-suspended-tabs', type)?.appendChild(mobileTab);
+        } else {
+            const mobileSectionId = isPortfolio ? `mobile-portfolio-section-${type}` : `mobile-general-section-${type}`;
+            ensureSection(isPortfolio ? 'mobile-portfolio-tabs' : 'mobile-general-tabs', type)?.appendChild(mobileTab);
+        }
+    }
+}
+
+function createTabElement(template, stock, type) {
+    const tab = template.content.firstElementChild.cloneNode(true);
     tab.dataset.symbol = stock.symbol;
     tab.dataset.ticker = stock.ticker;
     
@@ -58,16 +86,8 @@ export function createTab(stock, type) {
     
     const calculated = calculateStockValues(stock);
     tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `(Shares owned: ${calculated.shares})` : '';
-    const isPortfolio = calculated.shares > 0;
-    const isSuspended = tab.classList.contains('suspended');
-
-    if (isSuspended && !isPortfolio) {
-        const section = ensureSection('suspended-tabs', type);
-        section?.appendChild(tab);
-    } else {
-        const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
-        document.getElementById(sectionId)?.appendChild(tab);
-    }
+    
+    return tab;
 }
 
 export function createCard(stock) {
@@ -496,42 +516,47 @@ export function updateUI(symbol, data) {
 }
 
 export function updateSidebarPerformance(symbol) {
-    const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
-    if (!tab) return;
-    const perfWrapper = tab.querySelector('.tab-performance');
-    if (!perfWrapper) return;
-
-    if (!getUserSettings().performanceViewerEnabled) {
-        perfWrapper.style.display = 'none';
-        tab.classList.remove('tab-perf-positive', 'tab-perf-negative');
-        return;
-    }
-
+    const tabs = document.querySelectorAll(`.tab[data-symbol="${symbol}"]`);
+    if (tabs.length === 0) return;
+    
     const pos = positions[symbol];
     const data = pos?.lastData;
-    if (!data || data.changePercent === undefined) {
-        perfWrapper.style.display = 'none';
+    const settings = getUserSettings();
+
+    tabs.forEach(tab => {
+        const perfWrapper = tab.querySelector('.tab-performance');
+        if (!perfWrapper) return;
+
+        if (!settings.performanceViewerEnabled) {
+            perfWrapper.style.display = 'none';
+            tab.classList.remove('tab-perf-positive', 'tab-perf-negative');
+            return;
+        }
+
+        if (!data || data.changePercent === undefined) {
+            perfWrapper.style.display = 'none';
+            tab.classList.remove('tab-perf-positive', 'tab-perf-negative');
+            return;
+        }
+        
+        perfWrapper.style.display = 'flex';
+        const isPositive = data.change >= 0;
+        
         tab.classList.remove('tab-perf-positive', 'tab-perf-negative');
-        return;
-    }
-    
-    perfWrapper.style.display = 'flex';
-    const isPositive = data.change >= 0;
-    
-    tab.classList.remove('tab-perf-positive', 'tab-perf-negative');
-    perfWrapper.classList.remove('positive', 'negative');
-    
-    tab.classList.add(isPositive ? 'tab-perf-positive' : 'tab-perf-negative');
-    perfWrapper.classList.add(isPositive ? 'positive' : 'negative');
-    
-    const valEl = perfWrapper.querySelector('.perf-value');
-    if (valEl) {
-        valEl.textContent = `${isPositive ? '+' : ''}${data.changePercent.toFixed(2)}%`;
-    }
-    const perEl = perfWrapper.querySelector('.perf-period');
-    if (perEl) {
-        perEl.textContent = globalPeriod;
-    }
+        perfWrapper.classList.remove('positive', 'negative');
+        
+        tab.classList.add(isPositive ? 'tab-perf-positive' : 'tab-perf-negative');
+        perfWrapper.classList.add(isPositive ? 'positive' : 'negative');
+        
+        const valEl = perfWrapper.querySelector('.perf-value');
+        if (valEl) {
+            valEl.textContent = `${isPositive ? '+' : ''}${data.changePercent.toFixed(2)}%`;
+        }
+        const perEl = perfWrapper.querySelector('.perf-period');
+        if (perEl) {
+            perEl.textContent = globalPeriod;
+        }
+    });
 }
 
 function clearChartData(symbol) {
@@ -729,26 +754,30 @@ function setSymbolSuspendedInStorage(symbol, suspended) {
 }
 
 export function toggleSymbolSuspension(symbol, isSuspended) {
-    const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
-    if (!tab) return;
+    const tabs = document.querySelectorAll(`.tab[data-symbol="${symbol}"]`);
+    if (tabs.length === 0) return;
 
     if (positions[symbol]) positions[symbol].suspended = isSuspended;
     setSymbolSuspendedInStorage(symbol, isSuspended);
 
-    if (isSuspended) {
-        if (tab.classList.contains('suspended') && tab.closest('#suspended-tabs')) return;
-        tab.classList.add('suspended');
-        const pos = positions[symbol];
-        if (!pos) return;
-        ensureSection('suspended-tabs', pos.type || 'equity')?.appendChild(tab);
-    } else {
-        if (!tab.classList.contains('suspended') && !tab.closest('#suspended-tabs')) return;
-        tab.classList.remove('suspended');
-        const pos = positions[symbol];
-        if (!pos) return;
-        const isPortfolio = calculateStockValues(pos).shares > 0;
-        ensureSection(isPortfolio ? 'portfolio-tabs' : 'general-tabs', pos.type)?.appendChild(tab);
-    }
+    tabs.forEach(tab => {
+        const isMobile = tab.closest('#card-home') !== null;
+        if (isSuspended) {
+            tab.classList.add('suspended');
+            const pos = positions[symbol];
+            if (!pos) return;
+            ensureSection(isMobile ? 'mobile-suspended-tabs' : 'suspended-tabs', pos.type || 'equity')?.appendChild(tab);
+        } else {
+            tab.classList.remove('suspended');
+            const pos = positions[symbol];
+            if (!pos) return;
+            const isPortfolio = calculateStockValues(pos).shares > 0;
+            const targetContainer = isMobile ? 
+                (isPortfolio ? 'mobile-portfolio-tabs' : 'mobile-general-tabs') :
+                (isPortfolio ? 'portfolio-tabs' : 'general-tabs');
+            ensureSection(targetContainer, pos.type)?.appendChild(tab);
+        }
+    });
 }
 
 export const markTabAsSuspended = (symbol) => toggleSymbolSuspension(symbol, true);
@@ -881,28 +910,14 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
 
 export function initMobileSidebar() {
     const homeBtn = document.getElementById('bottom-nav-home');
-    const overlay = document.getElementById('sidebar-overlay');
-    const sidebar = document.getElementById('sidebar');
-
-    const closeSidebar = () => {
-        document.body.classList.remove('sidebar-open');
-        homeBtn?.classList.remove('active');
-    };
-
-    const toggleSidebar = () => {
-        const isOpen = document.body.classList.toggle('sidebar-open');
-        homeBtn?.classList.toggle('active', isOpen);
-        if (isOpen) setBottomNavActive('bottom-nav-home', false);
-    };
-
-    if (homeBtn) homeBtn.onclick = toggleSidebar;
-    if (overlay) overlay.onclick = closeSidebar;
-
-    sidebar?.addEventListener('click', (e) => {
-        if (window.innerWidth <= 768 && (e.target.closest('.tab') || e.target.closest('.tool-btn'))) {
-            closeSidebar();
-        }
-    });
+    if (homeBtn) {
+        homeBtn.onclick = () => {
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('card-home')?.classList.add('active');
+            setBottomNavActive('bottom-nav-home');
+        };
+    }
 }
 
 export function setBottomNavActive(id, clearSidebar = true) {

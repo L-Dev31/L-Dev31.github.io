@@ -30,43 +30,41 @@ export function calculateStockValues(stock) {
     }
 
     let costBasis = lots.reduce((sum, l) => sum + l.amount, 0);
+    let realizedPL = 0;
 
     if (stock.sales && stock.sales.length > 0) {
         const salesSorted = stock.sales.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
         salesSorted.forEach(s => {
             let remainingToRemove = s.shares || 0;
+            let costOfSoldShares = 0;
             while (remainingToRemove > 0 && lots.length > 0) {
                 const lot = lots[0];
                 if (lot.shares <= remainingToRemove) {
                     remainingToRemove -= lot.shares;
-                    costBasis -= lot.amount;
+                    costOfSoldShares += lot.amount;
                     lots.shift();
                 } else {
                     const removedShares = remainingToRemove;
                     const removedAmount = lot.perShare * removedShares;
                     lot.shares -= removedShares;
                     lot.amount -= removedAmount;
-                    costBasis -= removedAmount;
+                    costOfSoldShares += removedAmount;
                     remainingToRemove = 0;
                 }
             }
+            realizedPL += (s.amount || 0) - costOfSoldShares;
         });
     }
 
     const totalShares = lots.reduce((sum, l) => sum + l.shares, 0);
+    costBasis = lots.reduce((sum, l) => sum + l.amount, 0);
 
-    let totalInvestment = stock.purchases && stock.purchases.length > 0
-        ? stock.purchases.reduce((sum, p) => sum + (p.amount || 0), 0)
-        : initialInvestment;
-    if (stock.sales && stock.sales.length > 0) totalInvestment += stock.sales.reduce((sum, s) => sum + (s.amount || 0), 0);
-
-    const displayInvestment = totalShares > 0 ? totalInvestment : 0;
     return {
-        investment: displayInvestment,
+        investment: stock.investment || 0, // original
         shares: totalShares,
         costBasis: Math.max(0, costBasis),
         purchaseDate: earliestPurchaseDate,
-        realizedPL: totalShares === 0 ? totalInvestment : 0
+        realizedPL: realizedPL
     };
 }
 
@@ -287,6 +285,7 @@ export async function loadStocks() {
 
     }
     updatePortfolioSummary();
+    initPortfolioAnalytics();
     // Scan léger en arrière-plan pour détecter les tickers morts (spark batch, quota minimal).
     setTimeout(() => backgroundSuspendedScan(), 2500);
 
@@ -373,3 +372,357 @@ async function backgroundSuspendedScan() {
         }
     }
 }
+
+// --- Advanced Portfolio Analytics ---
+
+export function initPortfolioAnalytics() {
+    const card = document.getElementById('card-portfolio');
+    if (!card) return;
+
+    const btns = card.querySelectorAll('.card-tab-btn');
+    const panes = card.querySelectorAll('.card-tab-pane');
+
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.dataset.target;
+            btns.forEach(b => b.classList.remove('active'));
+            panes.forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            card.querySelector(`[data-pane="${target}"]`)?.classList.add('active');
+            
+            refreshAnalyticsTab(target);
+        });
+    });
+
+    // Initial load
+    refreshAnalyticsTab('portfolio-performance');
+}
+
+async function refreshAnalyticsTab(tab) {
+    switch(tab) {
+        case 'portfolio-performance':
+            updatePerformanceChart();
+            break;
+        case 'portfolio-diversification':
+            updateDiversificationCharts();
+            break;
+        case 'portfolio-dividends':
+            updateDividendTable();
+            break;
+    }
+}
+
+async function fetchAllPortfolioMetadata() {
+    const symbols = Object.keys(positions).filter(s => positions[s].shares > 0);
+    if (symbols.length === 0) return;
+
+    const promises = symbols.map(async s => {
+        if (positions[s].analyticsFetched) return;
+        const yahoo = await import('./yahoo-finance.js');
+        const metadata = await yahoo.fetchYahooQuoteSummary(s);
+        if (metadata) {
+            positions[s].metadata = metadata;
+            positions[s].analyticsFetched = true;
+        }
+    });
+
+    await Promise.all(promises);
+}
+
+async function updateDiversificationCharts() {
+    await fetchAllPortfolioMetadata();
+    
+    const sectors = {};
+    const geo = {};
+    const assets = { Equity: 0, ETF: 0, Cash: 0, Bond: 0 };
+    
+    let totalValue = 0;
+    
+    for (const s in positions) {
+        const pos = positions[s];
+        if (pos.shares <= 0) continue;
+        
+        const price = pos.lastData?.price || pos.costBasis / pos.shares || 0;
+        const value = price * pos.shares;
+        totalValue += value;
+        
+        const type = pos.type === 'equity' ? 'Equity' : (pos.type === 'etf' ? 'ETF' : 'Other');
+        assets[type] = (assets[type] || 0) + value;
+        
+        const profile = pos.metadata?.assetProfile || pos.metadata?.summaryProfile;
+        if (profile) {
+            const sector = profile.sector || 'Unknown';
+            sectors[sector] = (sectors[sector] || 0) + value;
+            
+            const country = profile.country || pos.country || 'Other';
+            geo[country] = (geo[country] || 0) + value;
+        } else {
+            sectors['Unknown'] = (sectors['Unknown'] || 0) + value;
+            geo[pos.country || 'Other'] = (geo[pos.country || 'Other'] || 0) + value;
+        }
+    }
+
+    renderPieChart('asset-class-chart', assets);
+    renderPieChart('geography-chart', geo);
+    renderPieChart('sector-chart', sectors);
+}
+
+function renderPieChart(canvasId, dataMap) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const labels = Object.keys(dataMap);
+    const values = Object.values(dataMap);
+    
+    if (canvas.chart) {
+        canvas.chart.data.labels = labels;
+        canvas.chart.data.datasets[0].data = values;
+        canvas.chart.update();
+        return;
+    }
+
+    const colors = ['#a8a2ff', '#65d981', '#fbbf24', '#f87171', '#60a5fa', '#f472b6', '#34d399', '#c084fc', '#fb923c'];
+
+    canvas.chart = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: colors,
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#cdd0e4',
+                        font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" },
+                        boxWidth: 8,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(12, 12, 16, 0.95)',
+                    titleColor: '#a8a2ff',
+                    bodyColor: '#cdd0e4',
+                    borderColor: 'rgba(168, 162, 255, 0.2)',
+                    borderWidth: 1,
+                    callbacks: {
+                        label: (ctx) => {
+                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                            const val = ctx.raw;
+                            const pct = ((val / total) * 100).toFixed(1);
+                            return ` ${ctx.label}: ${pct}%`;
+                        }
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
+}
+
+async function updatePerformanceChart() {
+    const canvas = document.getElementById('portfolio-performance-chart');
+    if (!canvas) return;
+
+    const currency = typeof getCurrency === 'function' ? getCurrency() : '€';
+    const yahoo = await import('./yahoo-finance.js');
+    
+    // 1. Calculate Summary Stats
+    let totalValue = 0;
+    let totalUnrealizedProfit = 0;
+    let totalRealizedProfit = 0;
+    let totalCostBasis = 0;
+    let bestPerf = { symbol: '', pct: -Infinity };
+    let worstPerf = { symbol: '', pct: Infinity };
+    
+    const allSymbols = Object.keys(positions);
+    const historicalEntries = [];
+    
+    allSymbols.forEach(s => {
+        const pos = positions[s];
+        const realized = pos.realizedPL || 0;
+        totalRealizedProfit += realized;
+        
+        if (pos.shares > 0) {
+            const price = pos.lastData?.price || (pos.costBasis / pos.shares) || 0;
+            const value = price * pos.shares;
+            const unrealized = value - pos.costBasis;
+            
+            totalValue += value;
+            totalCostBasis += pos.costBasis;
+            totalUnrealizedProfit += unrealized;
+            
+            const totalProfitForThis = realized + unrealized;
+            const totalCostForThis = pos.costBasis + (pos.investment - pos.costBasis); // total capital put in
+            const pct = totalCostForThis > 0 ? (totalProfitForThis / totalCostForThis) * 100 : 0;
+            
+            if (pct > bestPerf.pct) bestPerf = { symbol: s, pct: pct };
+            if (pct < worstPerf.pct) worstPerf = { symbol: s, pct: pct };
+
+            historicalEntries.push({ symbol: s, realized, unrealized, total: totalProfitForThis, pct, active: true });
+        } else if (realized !== 0) {
+            // Closed position
+            const totalCost = Math.abs(pos.investment);
+            const pct = totalCost > 0 ? (realized / totalCost) * 100 : 0;
+            historicalEntries.push({ symbol: s, realized, unrealized: 0, total: realized, pct, active: false });
+        }
+    });
+    
+    const totalProfit = totalUnrealizedProfit + totalRealizedProfit;
+    const totalInvestmentEver = totalCostBasis + (totalRealizedProfit < 0 ? Math.abs(totalRealizedProfit) : 0); // Approximation
+    
+    setText('portfolio-total-value', totalValue.toLocaleString() + ' ' + currency);
+    const profitEl = document.getElementById('portfolio-total-profit');
+    if (profitEl) {
+        profitEl.innerHTML = `
+            <div class="profit-breakdown">
+                <span class="${totalProfit >= 0 ? 'positive' : 'negative'}">${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} ${currency}</span>
+                <div class="profit-sub">
+                    <span title="Realized Profits">Rel: ${totalRealizedProfit.toFixed(2)}</span> | 
+                    <span title="Unrealized Profits">Unr: ${totalUnrealizedProfit.toFixed(2)}</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    setText('portfolio-best-performer', bestPerf.symbol ? `${bestPerf.symbol} (+${bestPerf.pct.toFixed(1)}%)` : '--');
+    setText('portfolio-worst-performer', worstPerf.symbol ? `${worstPerf.symbol} (${worstPerf.pct.toFixed(1)}%)` : '--');
+
+    // Populate Historical List
+    const histList = document.getElementById('portfolio-historical-list');
+    if (histList) {
+        historicalEntries.sort((a, b) => b.total - a.total);
+        histList.innerHTML = historicalEntries.map(e => `
+            <div class="hist-entry ${e.active ? 'active' : 'closed'}">
+                <div class="hist-main">
+                    <span class="hist-symbol">${e.symbol}</span>
+                    <span class="hist-status">${e.active ? 'ACTIVE' : 'CLOSED'}</span>
+                </div>
+                <div class="hist-stats">
+                    <span class="hist-total ${e.total >= 0 ? 'positive' : 'negative'}">${e.total >= 0 ? '+' : ''}${e.total.toFixed(2)} ${currency}</span>
+                    <span class="hist-pct ${e.pct >= 0 ? 'positive' : 'negative'}">(${e.pct >= 0 ? '+' : ''}${e.pct.toFixed(1)}%)</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 2. Chart Logic: Simple Bar Chart of Performance by Position
+    const labels = activePositions.map(s => s);
+    const performanceData = activePositions.map(s => {
+        const pos = positions[s];
+        const price = pos.lastData?.price || (pos.shares > 0 ? (pos.costBasis / pos.shares) : 0);
+        const cost = pos.costBasis;
+        const value = price * pos.shares;
+        return cost > 0 ? ((value - cost) / cost) * 100 : 0;
+    });
+
+    // Sort by performance
+    const combined = labels.map((l, i) => ({ label: l, value: performanceData[i] }))
+        .sort((a, b) => b.value - a.value);
+    
+    const sortedLabels = combined.map(c => c.label);
+    const sortedValues = combined.map(c => c.value);
+
+    if (canvas.chart) {
+        canvas.chart.data.labels = sortedLabels;
+        canvas.chart.data.datasets[0].data = sortedValues;
+        canvas.chart.data.datasets[0].backgroundColor = sortedValues.map(v => v >= 0 ? 'rgba(101, 217, 129, 0.4)' : 'rgba(248, 113, 113, 0.4)');
+        canvas.chart.data.datasets[0].borderColor = sortedValues.map(v => v >= 0 ? '#65d981' : '#f87171');
+        canvas.chart.update();
+    } else {
+        canvas.chart = new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: sortedLabels,
+                datasets: [
+                    {
+                        label: 'Gain/Loss %',
+                        data: sortedValues,
+                        backgroundColor: sortedValues.map(v => v >= 0 ? 'rgba(101, 217, 129, 0.4)' : 'rgba(248, 113, 113, 0.4)'),
+                        borderColor: sortedValues.map(v => v >= 0 ? '#65d981' : '#f87171'),
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(12, 12, 16, 0.95)',
+                        callbacks: {
+                            label: (ctx) => ` Performance: ${ctx.raw >= 0 ? '+' : ''}${ctx.raw.toFixed(2)}%`
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#6b7280', callback: (v) => v + '%' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: '#cdd0e4', font: { size: 11 } }
+                    }
+                }
+            }
+        });
+    }
+}
+
+async function updateDividendTable() {
+    await fetchAllPortfolioMetadata();
+    
+    const tbody = document.getElementById('dividend-table-body');
+    if (!tbody) return;
+
+    const dividends = [];
+    for (const s in positions) {
+        const pos = positions[s];
+        if (pos.shares <= 0) continue;
+
+        const calendar = pos.metadata?.calendarEvents;
+        if (calendar && calendar.exDividendDate) {
+            const exDate = new Date(calendar.exDividendDate * 1000);
+            const payDate = calendar.dividendDate ? new Date(calendar.dividendDate * 1000) : null;
+            const amount = pos.metadata?.defaultKeyStatistics?.trailingAnnualDividendRate || 0;
+            
+            dividends.push({
+                symbol: s,
+                exDate: exDate,
+                payDate: payDate,
+                amount: amount,
+                total: amount * pos.shares
+            });
+        }
+    }
+
+    dividends.sort((a, b) => a.exDate - b.exDate);
+
+    if (dividends.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-dim);">No upcoming dividends found</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = dividends.map(d => `
+        <tr>
+            <td><strong>${d.symbol}</strong></td>
+            <td>${d.exDate.toLocaleDateString()}</td>
+            <td>${d.payDate ? d.payDate.toLocaleDateString() : '--'}</td>
+            <td>${d.amount.toFixed(2)} ${getCurrency()}</td>
+            <td class="positive">+${d.total.toFixed(2)} ${getCurrency()}</td>
+        </tr>
+    `).join('');
+}
+
