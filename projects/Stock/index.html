@@ -116,30 +116,20 @@
 
             <div class="card news-card" id="card-news" role="document" aria-hidden="true">
                 <h3 class="section-title"><i class="fa-solid fa-newspaper"></i> Market News <span class="title-date-inline">(<span id="news-last-update">—</span>)</span></h3>
-                <div class="news-filters-column">
-                    <div class="news-filters-row">
-                        <div class="news-filter-group news-ticker-group">
-                            <label for="news-ticker-search" class="news-label">Ticker</label>
-                            <div class="search-box">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                <input id="news-ticker-search" class="search-input news-ticker-search" type="text"
-                                    placeholder="e.g. AAPL, BTC" autocomplete="off" />
-                            </div>
-                            <div id="ticker-suggestions" class="ticker-suggestions"></div>
-                        </div>
+                <div class="news-filters-header">
+                    <div class="searchbar ticker-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input id="news-ticker-search" class="search-input news-ticker-search" type="text"
+                            placeholder="Ticker (e.g. AAPL, BTC)" autocomplete="off" />
+                        <div id="ticker-suggestions" class="ticker-suggestions"></div>
                     </div>
-                    <div class="news-filters-row">
-                        <div class="news-filter-group">
-                            <label for="news-article-search" class="news-label">Search</label>
-                            <div class="search-box">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                <input id="news-article-search" class="search-input news-articles-input" type="search"
-                                    placeholder="Search articles..." />
-                            </div>
-                        </div>
+                    <div class="searchbar article-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input id="news-article-search" class="search-input news-articles-input" type="search"
+                            placeholder="Search articles..." />
                     </div>
                 </div>
-                <div id="news-page-feed-list" class="news-list"></div>
+                <div id="news-page-feed-list" class="news-list news-feed-standard"></div>
             </div>
 
             <div class="card explorer-card" id="card-explorer" role="document" aria-hidden="true">
@@ -418,17 +408,22 @@
                                 class="country-name"></span><img data-country="" src="" alt="" class="flag-icon" />
                         </div>
                     </div>
+
                     <h3 class="section-title course-title"><i class="fa-solid fa-chart-line"></i> Stock Price</h3>
                     <div class="chart-container card-base">
                         <div class="chart-header">
-                            <span>Chart</span>
+                            <span></span>
                             <div class="chart-controls">
                                 <div class="benchmark-controls">
                                     <span class="benchmark-label">vs</span>
-                                    <button class="benchmark-btn" data-bench="" title="No benchmark" aria-label="No benchmark">—</button>
-                                    <button class="benchmark-btn" data-bench="^GSPC" title="S&amp;P 500" aria-label="S&amp;P 500">SPX</button>
-                                    <button class="benchmark-btn" data-bench="^FCHI" title="CAC 40" aria-label="CAC 40">CAC</button>
-                                    <button class="benchmark-btn" data-bench="^IXIC" title="Nasdaq" aria-label="Nasdaq">NDX</button>
+                                    <button class="benchmark-btn" data-bench="" title="No benchmark"
+                                        aria-label="No benchmark">—</button>
+                                    <button class="benchmark-btn" data-bench="^GSPC" title="S&amp;P 500"
+                                        aria-label="S&amp;P 500">SPX</button>
+                                    <button class="benchmark-btn" data-bench="^FCHI" title="CAC 40"
+                                        aria-label="CAC 40">CAC</button>
+                                    <button class="benchmark-btn" data-bench="^IXIC" title="Nasdaq"
+                                        aria-label="Nasdaq">NDX</button>
                                 </div>
                                 <button class="chart-type-btn active" data-type="line" title="Line"
                                     aria-label="Line chart"><i class="fa-solid fa-chart-line"></i></button>
@@ -474,29 +469,36 @@
                             <button class="period-btn" data-symbol="" data-period="MAX">MAX</button>
                         </div>
                     </div>
-                    <div class="info-grid">
+
+                    <div class="card-data-section">
                         <div class="info-item performance">
-                            <div class="info-label performance-label">Performance over <span class="performance-period">1D</span></div>
+                            <div class="info-label performance-label">Performance over <span
+                                    class="performance-period">1D</span></div>
                             <div class="performance-value"></div>
                         </div>
-                        <div class="info-item">
-                            <div class="info-label">Open</div>
-                            <div class="info-value"></div>
+
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Open</div>
+                                <div class="info-value"></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">High</div>
+                                <div class="info-value"></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Low</div>
+                                <div class="info-value"></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Close</div>
+                                <div class="info-value"></div>
+                            </div>
                         </div>
-                        <div class="info-item">
-                            <div class="info-label">High</div>
-                            <div class="info-value"></div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Low</div>
-                            <div class="info-value"></div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Close</div>
-                            <div class="info-value"></div>
-                        </div>
+
+                        <div class="update-center"></div>
                     </div>
-                    <div class="update-center"></div>
+
                     <h3 class="section-title signal-title"><i class="fa-solid fa-signal"></i> Buy/Sell Signal</h3>
                     <div class="signal-container">
                         <div class="signal-explanation hidden-by-bot">
@@ -555,12 +557,9 @@
                 <div class="card-tab-pane" data-pane="news">
                     <div class="news-section">
                         <h3 class="section-title"><i class="fa-solid fa-newspaper"></i> Latest News</h3>
-                        <div class="news-filter-group">
-                            <label class="news-label">Search</label>
-                            <div class="search-box">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="text" class="search-input news-search-input" placeholder="Search news..." />
-                            </div>
+                        <div class="searchbar">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" class="search-input news-search-input" placeholder="Search news..." />
                         </div>
                         <div class="news-list" aria-live="polite"></div>
                     </div>

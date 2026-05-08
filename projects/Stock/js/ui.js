@@ -279,7 +279,7 @@ export function createCard(stock) {
     if (signalValue) signalValue.id = `signal-value-${stock.symbol}`;
     if (signalDescription) signalDescription.id = `signal-description-${stock.symbol}`;
 
-    const info = card.querySelectorAll('.info-value')
+    const info = card.querySelectorAll('.card-tab-pane[data-pane="overview"] .info-value')
     if (info.length===4) {
         info[0].id=`open-${stock.symbol}`
         info[1].id=`high-${stock.symbol}`

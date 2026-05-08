@@ -982,7 +982,7 @@ function updateSignalUI(symbol, result) {
     else if (result.signalValue <= 40) conclusionColor = '#f87171';
 
     explanationContent.innerHTML = `
-        <div style="margin-bottom: 32px; text-align: center;">
+        <div class="signal-gauge-section" style="margin-bottom: 32px; text-align: center;">
             <div style="font-size: 22px; font-weight: 800; color: ${conclusionColor}; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 1px;">
                 ${result.signalDesc}
             </div>

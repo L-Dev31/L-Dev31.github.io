@@ -48,29 +48,17 @@
         opacity: 1;
     }
 
-    .bottom-nav-btn span {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-    }
-
     .bottom-nav-btn i {
         font-size: 18px;
         line-height: 1;
     }
 
-    .bottom-nav-btn.active {
-        opacity: 1;
+    .bottom-nav-btn span {
+        display: none;
     }
 
-    .bottom-nav-btn:active {
-        opacity: 0.6;
+    .bottom-nav-btn.active {
+        opacity: 1;
     }
 
     .nav-profile-photo-wrapper {
@@ -92,62 +80,7 @@
         object-fit: cover;
     }
 
-    .tools-bar {
-        visibility: hidden;
-        height: 0;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-
     .sidebar {
-        display: none !important;
-    }
-
-    .sidebar-overlay {
-        display: none !important;
-    }
-
-    .home-card {
-        display: none;
-        flex-direction: column;
-        gap: 20px;
-        padding-top: 24px;
-        padding-bottom: calc(var(--bottom-nav-h) + 20px);
-    }
-
-    .home-card.active {
-        display: flex;
-    }
-
-    .home-card .sidebar-section {
-        margin: 0;
-        padding: 0 var(--pad-card);
-    }
-
-    .home-card .sidebar-section-title,
-    .home-card .sidebar-section-title:hover {
-        font-size: 14px;
-        margin-bottom: 12px;
-        padding: 4px 0;
-        display: flex;
-        align-items: center;
-        width: 100%;
-        color: var(--primary);
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        background: none !important;
-    }
-
-    .home-card .tabs {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        transition: all 0.3s ease;
-    }
-
-    .sidebar-section.collapsed .tabs {
         display: none !important;
     }
 
@@ -164,28 +97,57 @@
         min-height: 100dvh;
     }
 
-    .card .section-title,
-    .card .card-general-info,
-    .card .info-grid,
-    .card .performance,
-    .card .update-center,
-    .card .signal-container,
-    .card .news-section,
-    .card .investment-section,
-    .card .news-filters-column,
-    .card.news-card .news-list,
-    .card.news-card #news-page-feed-list,
-    .card.settings-card .settings-group,
-    .card.settings-card .settings-actions,
-    .card-tab-pane {
+    /* Full-width technical elements */
+    .card-tab-pane,
+    .chart-container,
+    .signal-container,
+    .news-section,
+    .investment-section {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* Standard horizontal padding */
+    .card-header,
+    .card-general-info,
+    .card-data-section,
+    .section-title,
+    .news-filters-header,
+    .financials-section,
+    .news-list,
+    .news-feed-standard,
+    .signal-gauge-section,
+    .explorer-filters,
+    .explorer-limit-control,
+    .explorer-pagination,
+    .explorer-market-grid,
+    .info-grid,
+    .profile-header,
+    #mobile-profile-actions {
         padding-left: var(--pad-card);
         padding-right: var(--pad-card);
     }
 
+    .searchbar {
+        margin-left: var(--pad-card);
+        margin-right: var(--pad-card);
+        width: auto;
+    }
+
+    .news-filters-header .searchbar {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: auto !important;
+    }
+
     .section-title {
         font-size: 12px;
-        margin: 0 0 16px;
+        margin-bottom: 18px;
         letter-spacing: 1px;
+    }
+
+    .section-title:first-child {
+        margin-top: 0;
     }
 
     .card-tabs-nav {
@@ -200,6 +162,14 @@
         font-size: 13px;
     }
 
+    .info-item.performance {
+        margin: 0 0 24px;
+        border: var(--b-soft);
+        border-radius: var(--radius-md);
+        background: linear-gradient(180deg, rgba(168, 162, 255, 0.1) 0%, rgba(168, 162, 255, 0.02) 100%);
+        padding: 16px;
+    }
+
     .performance-value {
         font-size: clamp(28px, 9vw, 36px);
     }
@@ -207,11 +177,18 @@
     .chart-container {
         height: auto;
         min-height: 280px;
-        margin: 0 0 24px;
-        padding: 14px 12px 12px;
+        margin: 0 0 16px;
+        padding: 14px 0 0;
         border-radius: 0;
         border-left: none;
         border-right: none;
+        width: 100%;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0 var(--pad-card) 12px;
     }
 
     .stack-price {
@@ -230,66 +207,35 @@
         display: flex;
         flex-wrap: nowrap;
         gap: 6px;
-        margin-top: 10px;
-        padding: 4px 2px;
+        margin-top: 4px;
+        padding: 4px var(--pad-card) 12px;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
-        -ms-overflow-style: none;
-        justify-content: flex-start;
+        justify-content: flex-end;
     }
 
-    .periods-group::-webkit-scrollbar {
-        display: none;
-    }
 
-    .period-btn {
-        flex: 0 0 auto;
+    .benchmark-btn {
+        height: 38px;
         min-width: 0;
-        min-height: 44px;
-        padding: 6px 12px;
+        padding: 0 12px;
         font-size: 11px;
-        font-weight: 600;
-        scroll-snap-align: start;
-        white-space: nowrap;
     }
 
     .chart-type-btn {
-        width: 44px;
-        height: 44px;
+        width: 38px;
+        height: 38px;
     }
 
     .info-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
         gap: 8px;
-        margin-bottom: 24px;
+        margin: 16px 0 24px;
     }
 
     .info-item {
         padding: 12px;
-    }
-
-    .info-value {
-        font-size: 14px;
-    }
-
-    .card.news-card .news-filters-column {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .card.news-card .news-filters-row {
-        width: 100%;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .card.news-card .news-filter-group {
-        width: 100%;
-    }
-
-    .card.news-card .news-ticker-search {
-        width: 100%;
     }
 
     .news-item {
@@ -305,16 +251,13 @@
         gap: 8px;
     }
 
-    /* Explorer — complete mobile redesign */
-    .container .card.explorer-card {
+    /* Explorer */
+    .card.explorer-card {
         height: 100dvh;
         padding-bottom: var(--bottom-nav-h);
     }
 
-    /* All 4 filters (Market, Sort, Period, Sector) in a 2×2 grid */
     .card.explorer-card .explorer-filters {
-        padding-left: var(--pad-card);
-        padding-right: var(--pad-card);
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 8px;
@@ -324,24 +267,14 @@
         display: contents;
     }
 
-    .card.explorer-card .explorer-filter-group {
-        width: auto;
-    }
-
-    .card.explorer-card .explorer-label {
-        font-size: 10px;
-    }
-
     .card.explorer-card .explorer-select {
         padding: 9px 10px;
         font-size: 16px;
         min-height: 44px;
     }
 
-    /* Limit gauge — hide ticks, show slider + value badge only */
     .card.explorer-card .explorer-limit-control {
         margin-top: 12px;
-        padding: 12px var(--pad-card) 0;
     }
 
     .card.explorer-card .explorer-limit-ticks {
@@ -352,16 +285,6 @@
         width: 100%;
     }
 
-    .card.explorer-card .explorer-limit-range::-webkit-slider-thumb {
-        width: 24px;
-        height: 24px;
-    }
-
-    .card.explorer-card .explorer-limit-range::-moz-range-thumb {
-        width: 24px;
-        height: 24px;
-    }
-
     .card.explorer-card .explorer-list {
         margin-top: 8px;
         padding: 0;
@@ -370,56 +293,15 @@
     .card.explorer-card .explorer-item {
         gap: 10px;
         padding: 11px var(--pad-card);
-        margin-bottom: 0;
-        border-left: none;
-        border-right: none;
         border-radius: 0;
-        border-top: none;
+        border: none;
         border-bottom: 1px solid rgba(168, 162, 255, 0.06);
         background: transparent;
     }
 
-    .card.explorer-card .explorer-item:hover {
-        background: rgba(168, 162, 255, 0.04);
-    }
-
-    .card.explorer-card .explorer-item-logo {
-        width: 34px;
-        height: 34px;
-        border-radius: 8px;
-    }
-
-    .card.explorer-card .explorer-item-name {
-        font-size: 13px;
-    }
-
-    .card.explorer-card .explorer-item-ticker {
-        font-size: 10px;
-    }
-
-    .card.explorer-card .explorer-item-regime {
-        display: none;
-    }
-
-    .card.explorer-card .explorer-item-current {
-        font-size: 13px;
-    }
-
-    .card.explorer-card .explorer-item-change {
-        font-size: 11px;
-    }
-
+    .card.explorer-card .explorer-item-regime,
     .card.explorer-card .explorer-signal-score {
         display: none;
-    }
-
-    .card.explorer-card .explorer-item-signal {
-        min-width: 48px;
-    }
-
-    .card.explorer-card .explorer-signal-badge {
-        font-size: 9px;
-        padding: 3px 6px;
     }
 
     .card.explorer-card .explorer-pagination {
@@ -439,9 +321,8 @@
     }
 
     .explorer-market-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
         gap: 10px;
-        padding: 12px var(--pad-card);
     }
 
     .market-grid-btn {
@@ -449,37 +330,7 @@
         aspect-ratio: 1.4;
     }
 
-    .market-grid-btn .market-fallback-name {
-        font-size: 14px;
-    }
-
-    .card.settings-card.active {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        padding-bottom: calc(var(--bottom-nav-h) + 16px);
-    }
-
-    .settings-action-btn {
-        width: 100%;
-        min-height: 44px;
-    }
-
-    .switch {
-        width: 44px;
-        height: 24px;
-    }
-
-    .slider:before {
-        height: 18px;
-        width: 18px;
-    }
-
-    input:checked+.slider:before {
-        transform: translateX(20px);
-    }
-
-    /* Terminal — full screen, clears bottom nav */
+    /* Terminal */
     .card.terminal-card.active {
         height: 100vh;
         padding: 20px 0 var(--bottom-nav-h);
@@ -493,17 +344,13 @@
 
     .terminal-card .terminal-output {
         font-size: 12px;
-        padding-right: 0;
-    }
-
-    .terminal-card .terminal-input-row {
-        padding-top: 4px;
     }
 
     .terminal-input {
-        font-size: 14px;
+        font-size: 16px !important;
     }
 
+    /* Tables */
     .card .table-container {
         margin: 0 0 20px;
         border-radius: 0;
@@ -517,56 +364,62 @@
 
     .card .table-container th,
     .card .table-container td {
-        padding: 10px var(--pad-card);
+        padding: 10px 20px;
     }
 
-    .important-shares {
-        margin: 0 var(--pad-card) 10px;
+    /* Signals */
+    .signal-container {
+        margin: 20px 0;
+        width: 100%;
     }
 
     .signal-bar {
+        border-radius: 0 !important;
         height: 32px;
     }
 
-    .signal-value {
-        font-size: 16px;
+    .signal-labels,
+    .signal-value,
+    .signal-description,
+    .signal-disclaimer,
+    .data-source-strip {
+        padding: 0 var(--pad-card);
     }
 
-    .signal-state-title {
-        font-size: 13px;
+    .signal-explanation {
+        margin: 0;
+        padding: 0;
     }
 
-    .signal-state-description {
-        font-size: 12px;
+    .signal-state-container {
+        margin: 15px 0;
+        padding: 15px var(--pad-card);
+        border-right: none !important;
     }
 
-    .btn,
-    button:not(.section-toggle):not(.tab):not(.period-btn):not(.chart-type-btn):not(.bottom-nav-btn),
-    input,
+    /* Standard inputs */
+    input:not([type="checkbox"]):not([type="radio"]),
     select,
-    textarea {
-        min-height: 44px;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    input[type="email"],
-    input[type="password"],
-    input[type="search"],
-    input[type="url"],
     textarea,
-    select,
     .search-input,
-    .settings-input,
-    .card.news-card .news-select {
-        font-size: 16px;
-        padding: 12px 14px;
+    .settings-input {
+        min-height: 44px;
+        font-size: 16px !important;
+        padding: 10px 14px;
     }
 
-    .card.explorer-card .explorer-select {
-        font-size: 16px;
-        padding: 9px 10px;
-        min-height: 44px;
+    .search-bar {
+        position: relative;
+        margin-bottom: 8px;
+    }
+
+    .search-bar i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-dark);
+        pointer-events: none;
     }
 
     .search-input {
@@ -576,33 +429,8 @@
     .select-wrapper select {
         padding-right: 40px !important;
     }
-}
 
-@media (max-width: 380px) {
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .explorer-market-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .profile-info h1 {
-        font-size: 12px;
-    }
-
-    .tool-btn {
-        font-size: 11px;
-        padding: 7px 12px;
-    }
-
-    .period-btn {
-        padding: 6px 10px;
-    }
-}
-
-/* --- Mobile Profile Card Improvements --- */
-@media (max-width: 768px) {
+    /* Profile */
     .card.profile-card {
         padding-top: 24px;
     }
@@ -615,21 +443,11 @@
         padding: 16px;
     }
 
-    .profile-header .profile-info p span {
-        color: #ffffff !important;
-        font-weight: 700;
-    }
-
     .card.profile-card #mobile-profile-actions {
         display: flex;
         flex-direction: column;
         gap: 2px;
-        padding: 0 var(--pad-card);
         margin-top: -12px;
-        /* Pull closer to header */
-        visibility: visible;
-        height: auto;
-        overflow: visible;
     }
 
     .card.profile-card #mobile-profile-actions .tool-btn {
@@ -638,25 +456,9 @@
         border: none;
         color: var(--text-dark);
         font: 500 13px inherit;
-        padding: 10px 12px;
-        border-radius: var(--radius-sm);
+        padding: 12px;
         display: flex;
         align-items: center;
         gap: 10px;
-        text-align: left;
-    }
-
-    .card.profile-card #mobile-profile-actions .tool-btn i {
-        font-size: 14px;
-        width: 18px;
-        text-align: center;
-        color: inherit;
-        margin: 0;
-    }
-
-    .card.profile-card #mobile-profile-actions .tool-btn:active {
-        background: rgba(168, 162, 255, 0.08);
-        color: var(--text-light);
-        transform: none;
     }
 }

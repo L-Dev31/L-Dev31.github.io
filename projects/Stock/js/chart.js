@@ -488,7 +488,7 @@ async function applyBenchmarkOverlay(symbol, benchSymbol, ts, prices, positions,
             header?.appendChild(badge);
         }
         const sign = diff >= 0 ? '+' : '';
-        badge.textContent = ` · ${benchLabel} ${sign}${diff.toFixed(2)}% vs stock`;
+        badge.textContent = `${benchLabel} ${sign}${diff.toFixed(2)}%`;
         badge.className = `benchmark-badge ${diff >= 0 ? 'positive' : 'negative'}`;
     }
     

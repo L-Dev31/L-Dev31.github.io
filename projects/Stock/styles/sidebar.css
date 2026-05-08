@@ -389,6 +389,8 @@
     margin-bottom: 10px;
     display: flex;
     flex-direction: column;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .tab-type-title {
