@@ -160,10 +160,13 @@
     font-family: "JetBrains Mono", monospace;
     font-size: 13px;
     outline: none;
+    box-shadow: none;
 }
 
 .terminal-input:focus { 
     outline: none;
+    border: none;
+    background: transparent;
 }
 
 .terminal-input::placeholder { color: rgba(255,255,255,0.4); }

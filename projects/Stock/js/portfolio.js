@@ -544,6 +544,7 @@ async function updatePerformanceChart() {
     let worstPerf = { symbol: '', pct: Infinity };
     
     const allSymbols = Object.keys(positions);
+    const activePositions = allSymbols.filter(s => positions[s].shares > 0);
     const historicalEntries = [];
     
     allSymbols.forEach(s => {
