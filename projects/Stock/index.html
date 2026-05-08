@@ -27,11 +27,21 @@
 
     <div class="sidebar" id="sidebar">
         <div class="profile-header">
-            <img src="img/photo/leot.png" alt="Profile" class="profile-photo" id="profile-pfp">
-            <div class="profile-info">
-                <h1 id="profile-name">Mr. Léo Tosku</h1>
-                <p>Shares held: <span id="total-shares">0</span></p>
-                <p>Total investment: <span id="total-investment">--</span></p>
+            <div class="profile-header-top">
+                <img src="img/photo/leot.png" alt="Profile" class="profile-photo" id="profile-pfp">
+                <div class="profile-info">
+                    <h1 id="profile-name">Mr. Léo Tosku</h1>
+                    <p>Shares held: <span id="total-shares">0</span></p>
+                    <p>Total investment: <span id="total-investment">--</span></p>
+                </div>
+            </div>
+            <div class="exposure-panel" id="exposure-panel" aria-label="Portfolio composition">
+                <div class="exposure-header">
+                    <span class="exposure-title">Exposure</span>
+                    <span class="exposure-toggle" id="exposure-toggle" data-mode="type">By Type</span>
+                </div>
+                <div class="exposure-bar" id="exposure-bar" role="img" aria-label="Allocation bar"></div>
+                <div class="exposure-legend" id="exposure-legend"></div>
             </div>
         </div>
         <div class="tools-bar" id="tools-actions">
@@ -269,6 +279,13 @@
                         <div class="chart-header">
                             <span>Chart</span>
                             <div class="chart-controls">
+                                <div class="benchmark-controls">
+                                    <span class="benchmark-label">vs</span>
+                                    <button class="benchmark-btn" data-bench="" title="No benchmark" aria-label="No benchmark">—</button>
+                                    <button class="benchmark-btn" data-bench="^GSPC" title="S&amp;P 500" aria-label="S&amp;P 500">SPX</button>
+                                    <button class="benchmark-btn" data-bench="^FCHI" title="CAC 40" aria-label="CAC 40">CAC</button>
+                                    <button class="benchmark-btn" data-bench="^IXIC" title="Nasdaq" aria-label="Nasdaq">NDX</button>
+                                </div>
                                 <button class="chart-type-btn active" data-type="line" title="Line"
                                     aria-label="Line chart"><i class="fa-solid fa-chart-line"></i></button>
                                 <button class="chart-type-btn" data-type="baseline" title="Baseline"
@@ -277,10 +294,30 @@
                                     aria-label="Candlestick chart"><i class="fa-solid fa-chart-simple"></i></button>
                             </div>
                         </div>
-                        <canvas class="chart-canvas"></canvas>
-                        <div class="chart-empty-state" aria-hidden="true">
-                            <i class="fa-solid fa-chart-line"></i>
-                            <span class="chart-empty-text">No data available</span>
+                        <div class="chart-stack">
+                            <div class="stack-pane stack-price">
+                                <canvas class="chart-canvas"></canvas>
+                                <div class="chart-empty-state" aria-hidden="true">
+                                    <i class="fa-solid fa-chart-line"></i>
+                                    <span class="chart-empty-text">No data available</span>
+                                </div>
+                            </div>
+                            <div class="stack-pane stack-rsi">
+                                <div class="indicator-readout">
+                                    <span class="readout-title">RSI 14</span>
+                                    <span class="subchart-value rsi-value">--</span>
+                                    <span class="readout-state rsi-state"></span>
+                                </div>
+                                <canvas class="rsi-canvas"></canvas>
+                            </div>
+                            <div class="stack-pane stack-macd">
+                                <div class="indicator-readout">
+                                    <span class="readout-title">MACD</span>
+                                    <span class="subchart-value macd-value">--</span>
+                                    <span class="readout-state macd-state"></span>
+                                </div>
+                                <canvas class="macd-canvas"></canvas>
+                            </div>
                         </div>
                         <div class="periods-group">
                             <button class="period-btn" data-symbol="" data-period="1D">1D</button>

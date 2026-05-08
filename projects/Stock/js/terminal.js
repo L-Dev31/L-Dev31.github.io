@@ -5,12 +5,30 @@ import { runAnrCommand } from './command/anr.js';
 import { runErnCommand } from './command/ern.js';
 import { runDvdCommand } from './command/dvd.js';
 import { runRvCommand } from './command/rv.js';
+import { positions } from './state.js';
 
 const INPUT_ID = 'terminal-input';
 const OUTPUT_ID = 'terminal-output';
 const PROMPT = 'USER>';
+const HISTORY_KEY = 'nemeris_terminal_history';
+const HISTORY_MAX = 100;
 
-let history = [];
+const COMMAND_NAMES = ['GO', 'NEWS', 'FA', 'ANR', 'ERN', 'DVD', 'RV', 'CLEAR', 'HELP'];
+
+function loadHistory() {
+    try {
+        const raw = localStorage.getItem(HISTORY_KEY);
+        if (!raw) return [];
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr.slice(-HISTORY_MAX) : [];
+    } catch (e) { return []; }
+}
+
+function persistHistory(arr) {
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(-HISTORY_MAX))); } catch (e) { /* quota */ }
+}
+
+let history = loadHistory();
 let historyIdx = null;
 let currentTask = null;
 
@@ -44,7 +62,7 @@ function fmtErr(e) {
 
 function getTarget(parts) {
     const raw = (parts[1] || '').toUpperCase();
-    const pos = window.positions || {};
+    const pos = positions;
     if (raw) {
         if (pos[raw]) return { symbol: raw, ticker: pos[raw].ticker || raw };
         for (const [s, p] of Object.entries(pos)) {
@@ -123,7 +141,12 @@ function init() {
         if (e.key === 'Enter') {
             e.preventDefault();
             const v = inp.value;
-            if (v.trim()) history.push(v);
+            if (v.trim()) {
+                if (history[history.length - 1] !== v) {
+                    history.push(v);
+                    persistHistory(history);
+                }
+            }
             historyIdx = null;
             out(`${PROMPT} ${v}`, 'terminal-log terminal-cmd');
             exec(v);
@@ -140,6 +163,32 @@ function init() {
             if (historyIdx === null) { inp.value = ''; return; }
             historyIdx = Math.min(history.length - 1, historyIdx + 1);
             inp.value = historyIdx >= history.length ? '' : history[historyIdx] || '';
+        } else if (e.key === 'Tab') {
+            e.preventDefault();
+            const value = inp.value;
+            const tokens = value.split(/\s+/);
+            // Complete only the first token (command)
+            if (tokens.length === 1) {
+                const prefix = tokens[0].toUpperCase();
+                if (!prefix) return;
+                const matches = COMMAND_NAMES.filter(c => c.startsWith(prefix));
+                if (matches.length === 1) {
+                    inp.value = matches[0] + ' ';
+                } else if (matches.length > 1) {
+                    out(matches.join('  '), 'terminal-log');
+                }
+            } else {
+                // Complete ticker (2nd token) from positions
+                const prefix = tokens[tokens.length - 1].toUpperCase();
+                if (!prefix) return;
+                const tickers = Object.keys(positions).filter(s => s.startsWith(prefix));
+                if (tickers.length === 1) {
+                    tokens[tokens.length - 1] = tickers[0];
+                    inp.value = tokens.join(' ');
+                } else if (tickers.length > 1 && tickers.length <= 25) {
+                    out(tickers.join('  '), 'terminal-log');
+                }
+            }
         }
     });
 

@@ -1,16 +1,3 @@
-// ============================================================================
-// proxy-fetch.js — passerelle unique vers le Cloudflare Worker (CORS bypass).
-//
-// Une seule fonction publique de fetch : proxyFetch(targetUrl, opts).
-// Retourne TOUJOURS un objet enveloppé :
-//   - succès :  { data }
-//   - échec  :  { error: true, errorCode, throttled? }
-// Ne throw que AbortError (laisse l'appelant gérer l'abort).
-//
-// Détection panne worker : 3 échecs consécutifs "côté worker" (réseau, 403, 5xx)
-// émettent l'event `workerFailure`. 401/404/422 = Yahoo refuse, pas une panne.
-// ============================================================================
-
 import { getUserSettings, saveUserSettings } from './state.js';
 
 export const DEFAULT_WORKER_URL = '';

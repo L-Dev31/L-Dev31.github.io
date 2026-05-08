@@ -43,16 +43,16 @@ const HORIZON_MAP = {
 // Adaptive indicator config per candle granularity.
 // volScale normalizes raw ATR%/price by candle horizon (intraday ATR is much smaller than yearly).
 const PERIOD_INDICATOR_CONFIG = {
-    '1D':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
-    '1W':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
-    '1M':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
-    '3M':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.008, volScale: 1.2 },
-    '6M':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.008, volScale: 1.5 },
-    '1Y':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.01,  volScale: 2 },
-    'YTD': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.01,  volScale: 2 },
-    '3Y':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 104], momentumPeriod: 8,  atrPeriod: 14, macdNormFactor: 0.02,  volScale: 3 },
-    '5Y':  { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 104], momentumPeriod: 8,  atrPeriod: 14, macdNormFactor: 0.02,  volScale: 4 },
-    'MAX': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [12, 36, 60],  momentumPeriod: 6,  atrPeriod: 14, macdNormFactor: 0.04,  volScale: 6 }
+    '1D': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
+    '1W': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
+    '1M': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
+    '3M': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.008, volScale: 1.2 },
+    '6M': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.008, volScale: 1.5 },
+    '1Y': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.01, volScale: 2 },
+    'YTD': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.01, volScale: 2 },
+    '3Y': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 104], momentumPeriod: 8, atrPeriod: 14, macdNormFactor: 0.02, volScale: 3 },
+    '5Y': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 104], momentumPeriod: 8, atrPeriod: 14, macdNormFactor: 0.02, volScale: 4 },
+    'MAX': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [12, 36, 60], momentumPeriod: 6, atrPeriod: 14, macdNormFactor: 0.04, volScale: 6 }
 };
 const DEFAULT_INDICATOR_CONFIG = PERIOD_INDICATOR_CONFIG['1D'];
 
@@ -469,8 +469,8 @@ function detectDivergence(prices, rsiSeries, lookback = 30) {
 
     const lows = [], highs = [];
     for (let i = 2; i < p.length - 2; i++) {
-        if (p[i] < p[i-1] && p[i] < p[i-2] && p[i] < p[i+1] && p[i] < p[i+2]) lows.push(i);
-        if (p[i] > p[i-1] && p[i] > p[i-2] && p[i] > p[i+1] && p[i] > p[i+2]) highs.push(i);
+        if (p[i] < p[i - 1] && p[i] < p[i - 2] && p[i] < p[i + 1] && p[i] < p[i + 2]) lows.push(i);
+        if (p[i] > p[i - 1] && p[i] > p[i - 2] && p[i] > p[i + 1] && p[i] > p[i + 2]) highs.push(i);
     }
 
     let bullish = false, bearish = false;
@@ -494,8 +494,8 @@ function detectCandlestickPatterns(opens, highs, lows, closes) {
     const n = Math.min(o.length, h.length, l.length, c.length);
     if (n < 2) return [];
 
-    const o1 = o[n-1], h1 = h[n-1], l1 = l[n-1], c1 = c[n-1];
-    const o0 = o[n-2], c0 = c[n-2];
+    const o1 = o[n - 1], h1 = h[n - 1], l1 = l[n - 1], c1 = c[n - 1];
+    const o0 = o[n - 2], c0 = c[n - 2];
     const body1 = Math.abs(c1 - o1);
     const range1 = h1 - l1;
     if (range1 === 0) return [];
@@ -642,8 +642,8 @@ function calculateBotSignal(data, options = {}) {
 
     // Multi-period Rate-of-Change breadth: 5/10/20 bars.
     // All three pointing same direction = strong momentum confirmation.
-    const roc5  = clamp(momentum5  / 5,  -0.3, 0.3);
-    const roc10 = clamp(momentum   / 10, -0.3, 0.3);
+    const roc5 = clamp(momentum5 / 5, -0.3, 0.3);
+    const roc10 = clamp(momentum / 10, -0.3, 0.3);
     const roc20 = clamp(momentum20 / 20, -0.3, 0.3);
     const rocBreadth = roc5 + roc10 + roc20; // [-0.9, +0.9]
     momentumScore += rocBreadth * 0.35;
@@ -776,18 +776,18 @@ function calculateBotSignal(data, options = {}) {
 
     // --- Risk label ---
     let riskLevel, riskDesc;
-    if (riskScore >= 9)       { riskLevel = 'Extreme ☠️'; riskDesc = 'Highly Volatile'; }
-    else if (riskScore >= 7)  { riskLevel = 'High ⚠️'; riskDesc = 'Volatile'; }
-    else if (riskScore >= 5)  { riskLevel = 'Moderate'; riskDesc = 'Average Market'; }
-    else if (riskScore >= 3)  { riskLevel = 'Low'; riskDesc = 'Stable'; }
+    if (riskScore >= 9) { riskLevel = 'Extreme ☠️'; riskDesc = 'Highly Volatile'; }
+    else if (riskScore >= 7) { riskLevel = 'High ⚠️'; riskDesc = 'Volatile'; }
+    else if (riskScore >= 5) { riskLevel = 'Moderate'; riskDesc = 'Average Market'; }
+    else if (riskScore >= 3) { riskLevel = 'Low'; riskDesc = 'Stable'; }
     else if (riskScore === 2) { riskLevel = 'Very Low'; riskDesc = 'Very Stable'; }
-    else                      { riskLevel = 'None'; riskDesc = 'Near-Immobile'; }
+    else { riskLevel = 'None'; riskDesc = 'Near-Immobile'; }
 
     // --- Regime label ---
     const regimeLabels = {
-        uptrend:      { label: 'Uptrend', desc: `ADX ${adx.adx.toFixed(0)} — buyer momentum` },
-        downtrend:    { label: 'Downtrend', desc: `ADX ${adx.adx.toFixed(0)} — seller pressure` },
-        ranging:      { label: 'Ranging Market', desc: `ADX ${adx.adx.toFixed(0)} — directionless` },
+        uptrend: { label: 'Uptrend', desc: `ADX ${adx.adx.toFixed(0)} — buyer momentum` },
+        downtrend: { label: 'Downtrend', desc: `ADX ${adx.adx.toFixed(0)} — seller pressure` },
+        ranging: { label: 'Ranging Market', desc: `ADX ${adx.adx.toFixed(0)} — directionless` },
         transitional: { label: 'Transition', desc: `ADX ${adx.adx.toFixed(0)} — ambiguous regime` }
     };
     const regimeInfo = regimeLabels[regimeType];
@@ -997,6 +997,9 @@ function updateSignalUI(symbol, result) {
                     <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #fff;"></div>
                 </div>
             </div>
+        </div>
+        <div class="signal-disclaimer">
+            <strong>Not investment advice.</strong> Signal generated by a non-backtested algorithm on delayed Yahoo Finance data.
         </div>
         <div class="table-container signal-table-container" style="margin: 0;">
             <table>

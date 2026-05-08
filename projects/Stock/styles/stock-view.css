@@ -32,11 +32,99 @@
 }
 
 .chart-container {
-    height: clamp(280px, 40vh, 400px);
+    height: clamp(460px, 64vh, 640px);
     margin: 0 0 32px 0;
     background: linear-gradient(180deg, rgba(168, 162, 255, 0.1) 0%, rgba(168, 162, 255, 0) 100%);
     border-color: rgba(168, 162, 255, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
+
+.chart-stack {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* increased for better visual separation */
+    padding-bottom: 48px;
+}
+
+.stack-pane {
+    position: relative;
+    min-height: 0;
+}
+
+.stack-price {
+    flex: 0 0 55%; /* reduced to give more space to indicators */
+}
+
+.stack-rsi,
+.stack-macd {
+    flex: 0 0 22.5%; /* increased for better visibility */
+    margin-top: 6px;
+    border-top: 1px solid rgba(168, 162, 255, 0.1);
+}
+
+.stack-pane.collapsed {
+    flex: 0 0 32px;
+    overflow: hidden;
+}
+
+.stack-pane.collapsed canvas {
+    display: none;
+}
+
+.stack-pane > canvas {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+.indicator-readout {
+    position: absolute;
+    top: 4px;
+    left: 8px;
+    z-index: 2;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.readout-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #8a8da3;
+    font-weight: 600;
+}
+
+.readout-state {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+    color: #8a8da3;
+}
+
+.readout-state.positive { color: #65d981; }
+.readout-state.negative { color: #f87171; }
+.readout-state.warning { color: #fbbf24; }
+
+.subchart-value {
+    color: #cdd0e4;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.subchart-value.positive { color: #65d981; }
+.subchart-value.negative { color: #f87171; }
+.subchart-value.warning  { color: #fbbf24; }
+
 
 .chart-empty-state {
     position: absolute;
@@ -84,6 +172,55 @@
 .chart-controls {
     display: flex;
     gap: 4px;
+    align-items: center;
+}
+
+.benchmark-controls {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-right: 8px;
+    padding-right: 8px;
+    border-right: 1px solid rgba(168, 162, 255, 0.12);
+}
+
+.benchmark-label {
+    font-size: 9px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-right: 2px;
+}
+
+.benchmark-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(168, 162, 255, 0.1);
+    color: var(--text-dark);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding: 4px 7px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.benchmark-btn:hover {
+    background: rgba(168, 162, 255, 0.12);
+    color: #cdd0e4;
+}
+
+.benchmark-btn.active {
+    background: rgba(168, 162, 255, 0.22);
+    border-color: rgba(168, 162, 255, 0.5);
+    color: #fff;
+}
+
+.benchmark-badge {
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 6px;
 }
 
 .chart-type-btn {
@@ -118,7 +255,7 @@
 
 .chart-canvas {
     width: 100%;
-    height: clamp(240px, 36vh, 360px);
+    height: 100%;
 }
 
 .periods-group {
@@ -129,6 +266,7 @@
     gap: 4px;
     flex-wrap: wrap;
     justify-content: flex-end;
+    z-index: 3;
 }
 
 .period-btn {

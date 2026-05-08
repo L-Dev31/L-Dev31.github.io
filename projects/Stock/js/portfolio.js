@@ -87,6 +87,112 @@ export function updatePortfolioSummary() {
     setText('total-shares', totalShares);
     const currency = typeof getCurrency === 'function' ? getCurrency() : '€';
     setText('total-investment', totalInvestment.toFixed(2) + ' ' + currency);
+
+    try { updatePortfolioComposition(); } catch (e) { /* ignore */ }
+}
+
+const EXPOSURE_COLORS = {
+    equity: '#a8a2ff',
+    crypto: '#fbbf24',
+    commodity: '#65d981',
+    other: '#6b7280'
+};
+const COUNTRY_COLORS = ['#a8a2ff', '#65d981', '#fbbf24', '#f87171', '#60a5fa', '#f472b6', '#34d399', '#c084fc', '#fb923c'];
+
+export function updatePortfolioComposition() {
+    const panel = document.getElementById('exposure-panel');
+    if (!panel) return;
+
+    const toggle = document.getElementById('exposure-toggle');
+    const mode = toggle?.dataset.mode || 'type';
+
+    const positionValues = [];
+    for (const pos of Object.values(positions)) {
+        if (!pos || !(pos.shares > 0)) continue;
+        const lastPrice = pos.lastData?.price;
+        const value = lastPrice ? lastPrice * pos.shares : (pos.costBasis || 0);
+        if (value <= 0) continue;
+        positionValues.push({
+            symbol: pos.symbol,
+            name: pos.name,
+            type: pos.type || 'other',
+            country: (pos.raw?.country || 'OTH').toUpperCase(),
+            value
+        });
+    }
+
+    if (positionValues.length === 0) { panel.classList.add('empty'); return; }
+    panel.classList.remove('empty');
+
+    const total = positionValues.reduce((s, p) => s + p.value, 0);
+    const buckets = new Map();
+
+    if (mode === 'type') {
+        for (const p of positionValues) {
+            const key = p.type;
+            buckets.set(key, (buckets.get(key) || 0) + p.value);
+        }
+    } else if (mode === 'country') {
+        for (const p of positionValues) {
+            buckets.set(p.country, (buckets.get(p.country) || 0) + p.value);
+        }
+    } else {
+        for (const p of positionValues) {
+            buckets.set(p.symbol, (buckets.get(p.symbol) || 0) + p.value);
+        }
+    }
+
+    const sorted = Array.from(buckets.entries())
+        .map(([k, v]) => ({ key: k, value: v, pct: (v / total) * 100 }))
+        .sort((a, b) => b.value - a.value);
+
+    const bar = document.getElementById('exposure-bar');
+    const legend = document.getElementById('exposure-legend');
+    if (!bar || !legend) return;
+
+    const colorFor = (key, idx) => {
+        if (mode === 'type') return EXPOSURE_COLORS[key] || EXPOSURE_COLORS.other;
+        return COUNTRY_COLORS[idx % COUNTRY_COLORS.length];
+    };
+
+    const labelFor = (key) => {
+        if (mode === 'type') {
+            return typeLabel(key);
+        }
+        if (mode === 'symbol') {
+            const n = positions[key]?.name || key;
+            return n.length > 22 ? n.slice(0, 21) + '…' : n;
+        }
+        return key;
+    };
+
+    bar.innerHTML = sorted.map((b, i) =>
+        `<span style="width:${b.pct.toFixed(2)}%;background:${colorFor(b.key, i)};" title="${labelFor(b.key)} ${b.pct.toFixed(1)}%"></span>`
+    ).join('');
+
+    const top = sorted.slice(0, 6);
+    legend.innerHTML = top.map((b, i) =>
+        `<div class="exposure-legend-row"><span class="swatch" style="background:${colorFor(b.key, i)};"></span><span class="label">${labelFor(b.key)}</span><span class="pct">${b.pct.toFixed(1)}%</span></div>`
+    ).join('');
+
+}
+
+function initExposureToggle() {
+    const toggle = document.getElementById('exposure-toggle');
+    if (!toggle || toggle.dataset.bound) return;
+    toggle.dataset.bound = '1';
+    const modes = ['type', 'country', 'symbol'];
+    const labels = { type: 'By Type', country: 'By Country', symbol: 'By Position' };
+    toggle.addEventListener('click', () => {
+        const cur = toggle.dataset.mode || 'type';
+        const next = modes[(modes.indexOf(cur) + 1) % modes.length];
+        toggle.dataset.mode = next;
+        toggle.textContent = labels[next];
+        updatePortfolioComposition();
+    });
+}
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', initExposureToggle);
 }
 
 export async function loadStocks() {

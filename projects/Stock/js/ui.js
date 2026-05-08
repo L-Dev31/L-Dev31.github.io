@@ -439,14 +439,31 @@ export function updateUI(symbol, data) {
     const updateEl = document.getElementById(`update-center-${symbol}`);
     if (updateEl) {
         let timeString = '--';
+        let latencyMin = null;
         if (data.timestamps && data.timestamps.length > 0) {
             const latestTimestamp = Math.max(...data.timestamps);
             const dataDate = new Date(latestTimestamp * 1000);
             const dateStr = dataDate.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
             const timeStr = dataDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
             timeString = `${dateStr} ${timeStr}`;
+            latencyMin = Math.round((Date.now() - dataDate.getTime()) / 60000);
         }
-        updateEl.textContent = `${timeString}`;
+        const isCached = !!data.fromCache;
+        const sourceLabel = (data.source || 'yahoo').toUpperCase();
+        let freshLabel = 'CACHED';
+        if (!isCached) {
+            if (latencyMin == null) freshLabel = '--';
+            else if (latencyMin <= 20) freshLabel = 'LIVE (delayed)';
+            else if (latencyMin <= 24 * 60) freshLabel = `${latencyMin}m old`;
+            else freshLabel = `${Math.round(latencyMin / 60 / 24)}d old`;
+        }
+        updateEl.innerHTML = `
+            <div class="data-source-strip" role="status" aria-label="Data source and freshness">
+                <span class="src-pill"><span class="src-key">Status</span><span class="src-val">${freshLabel}</span></span>
+                <span class="src-pill"><span class="src-key">Source</span><span class="src-val">${sourceLabel}</span></span>
+                <span class="src-pill"><span class="src-key">As of</span><span class="src-val">${timeString}</span></span>
+            </div>
+        `;
     }
 
     if (data && data.name && positions[symbol] && positions[symbol].name === symbol) {
