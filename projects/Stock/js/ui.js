@@ -24,32 +24,38 @@ export function createTab(stock, type) {
     const tab = createTabElement(t, stock, type);
     
     const calculated = calculateStockValues(stock);
-    const isPortfolio = calculated.shares > 0;
+    const hasShares = calculated.shares > 0;
     const isSuspended = tab.classList.contains('suspended');
 
-    if (isSuspended && !isPortfolio) {
+    // Desktop Placement
+    if (isSuspended) {
         ensureSection('suspended-tabs', type)?.appendChild(tab);
+    } else if (hasShares) {
+        ensureSection('portfolio-tabs', type)?.appendChild(tab);
     } else {
-        const sectionId = isPortfolio ? `portfolio-section-${type}` : `general-section-${type}`;
-        document.getElementById(sectionId)?.appendChild(tab);
+        ensureSection('general-tabs', type)?.appendChild(tab);
     }
 
-    // Create tab for Mobile Home Card
+    // Mobile Placement
     if (document.getElementById('mobile-portfolio-tabs')) {
         const mobileTab = createTabElement(t, stock, type);
-        if (isSuspended && !isPortfolio) {
+        if (isSuspended) {
             ensureSection('mobile-suspended-tabs', type)?.appendChild(mobileTab);
+        } else if (hasShares) {
+            ensureSection('mobile-portfolio-tabs', type)?.appendChild(mobileTab);
         } else {
-            const mobileSectionId = isPortfolio ? `mobile-portfolio-section-${type}` : `mobile-general-section-${type}`;
-            ensureSection(isPortfolio ? 'mobile-portfolio-tabs' : 'mobile-general-tabs', type)?.appendChild(mobileTab);
+            ensureSection('mobile-general-tabs', type)?.appendChild(mobileTab);
         }
     }
 }
+
+let _tabOrder = 0;
 
 function createTabElement(template, stock, type) {
     const tab = template.content.firstElementChild.cloneNode(true);
     tab.dataset.symbol = stock.symbol;
     tab.dataset.ticker = stock.ticker;
+    tab.dataset.tabOrder = String(_tabOrder++);
     
     if (stock.suspended || isSymbolSuspendedInStorage(stock.symbol)) {
         tab.classList.add('suspended');
@@ -104,22 +110,24 @@ export function createCard(stock) {
         investmentSection.style.display = calculated.shares > 0 ? '' : 'none';
     }
 
-    const isin = card.querySelector('.general-row strong + span')
+    const isin = card.querySelector('.isin-val')
     if (isin) {
         isin.id = `isin-${stock.symbol}`
         isin.textContent = stock.isin || ''
-        if (!stock.isin) isin.parentElement.style.display='none'
+        if (!stock.isin) isin.parentElement.style.display = 'none'
     }
 
-    const arr = card.querySelectorAll('.general-row strong + span')
-    const tk = arr[1]
+    const tk = card.querySelector('.ticker-val')
     if (tk) {
         tk.id = `ticker-${stock.symbol}`
         tk.textContent = stock.ticker || stock.symbol
     }
 
-    const symInfo = card.querySelector('#symbol-info')
-    if (symInfo) symInfo.textContent = stock.symbol
+    const symInfo = card.querySelector('.symbol-val')
+    if (symInfo) {
+        symInfo.id = `symbol-info-${stock.symbol}`
+        symInfo.textContent = stock.symbol
+    }
 
     const cn = card.querySelector('.country-name')
     if (cn) cn.textContent = stock.country || ''
@@ -734,18 +742,28 @@ export function toggleSymbolSuspension(symbol, isSuspended) {
             tab.classList.add('suspended');
             const pos = positions[symbol];
             if (!pos) return;
-            ensureSection(isMobile ? 'mobile-suspended-tabs' : 'suspended-tabs', pos.type || 'equity')?.appendChild(tab);
+            const section = ensureSection(isMobile ? 'mobile-suspended-tabs' : 'suspended-tabs', pos.type || 'equity');
+            if (section) { section.appendChild(tab); sortSection(section); }
         } else {
             tab.classList.remove('suspended');
             const pos = positions[symbol];
             if (!pos) return;
-            const isPortfolio = calculateStockValues(pos).shares > 0;
-            const targetContainer = isMobile ? 
-                (isPortfolio ? 'mobile-portfolio-tabs' : 'mobile-general-tabs') :
-                (isPortfolio ? 'portfolio-tabs' : 'general-tabs');
-            ensureSection(targetContainer, pos.type)?.appendChild(tab);
+            const isPortfolio = (pos.shares ?? 0) > 0;
+            const targetContainer = isMobile
+                ? (isPortfolio ? 'mobile-portfolio-tabs' : 'mobile-general-tabs')
+                : (isPortfolio ? 'portfolio-tabs' : 'general-tabs');
+            const section = ensureSection(targetContainer, pos.type);
+            if (section) { section.appendChild(tab); sortSection(section); }
         }
     });
+}
+
+function sortSection(section) {
+    const title = section.querySelector('.tab-type-title');
+    const tabs = Array.from(section.querySelectorAll('.tab'));
+    tabs.sort((a, b) => Number(a.dataset.tabOrder ?? 0) - Number(b.dataset.tabOrder ?? 0));
+    tabs.forEach(t => section.appendChild(t));
+    if (title) section.insertBefore(title, section.firstChild);
 }
 
 export const markTabAsSuspended = (symbol) => toggleSymbolSuspension(symbol, true);

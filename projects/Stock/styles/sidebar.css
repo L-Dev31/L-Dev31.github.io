@@ -79,6 +79,12 @@
     outline: none;
 }
 
+.sidebar-section .section-toggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
 .sidebar-section.collapsed .section-toggle i {
     transform: rotate(-90deg);
 }
@@ -212,9 +218,11 @@
     align-items: center;
     gap: 10px;
     border-bottom: 1px solid rgba(168, 162, 255, 0.06);
+    border-left: 3px solid transparent; /* Stabilize width to prevent displacement */
     border-radius: var(--radius-sm);
     margin-bottom: 2px;
     position: relative;
+    transition: var(--trans-base);
 }
 
 .tab:hover {
@@ -225,8 +233,7 @@
 
 .tab.active {
     background: linear-gradient(90deg, rgba(168, 162, 255, 0.15) 0%, transparent 100%);
-    border-left: 3px solid var(--primary);
-    padding-left: 18px;
+    border-left-color: var(--primary);
 }
 
 .tab.tab-perf-positive {

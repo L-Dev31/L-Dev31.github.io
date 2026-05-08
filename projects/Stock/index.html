@@ -227,42 +227,18 @@
             </div>
             <div class="card-content">
                 <div class="card-tab-pane active" data-pane="portfolio-performance">
-                    <div class="chart-container portfolio-chart-container">
-                        <div class="chart-header">
-                            <span>Portfolio vs. Benchmark (MSCI World)</span>
-                            <div class="chart-controls">
-                                <button class="period-btn active" data-period="1Y">1Y</button>
-                                <button class="period-btn" data-period="MAX">MAX</button>
-                            </div>
-                        </div>
-                        <canvas id="portfolio-performance-chart"></canvas>
+                    <div class="perf-hero">
+                        <div class="perf-hero-label">Portfolio Value</div>
+                        <div class="perf-hero-value" id="perf-total-value">--</div>
+                        <div class="perf-hero-delta" id="perf-total-delta">--</div>
+                        <div class="perf-hero-cost" id="perf-cost-basis">--</div>
                     </div>
-                    <div class="portfolio-summary-grid info-grid">
-                        <div class="info-item">
-                            <div class="info-label">Total Value</div>
-                            <div class="info-value" id="portfolio-total-value">--</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Total Gain/Loss</div>
-                            <div class="info-value" id="portfolio-total-profit">--</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Best Performer</div>
-                            <div class="info-value" id="portfolio-best-performer">--</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Worst Performer</div>
-                            <div class="info-value" id="portfolio-worst-performer">--</div>
-                        </div>
+                    <div class="perf-pulse">
+                        <div class="perf-pulse-bar" id="perf-pulse-bar"></div>
+                        <div class="perf-pulse-caption" id="perf-pulse-caption">--</div>
                     </div>
-                    <div class="portfolio-history-container">
-                        <div class="chart-header">
-                            <h3 class="sub-section-title">Historical Realized Performance</h3>
-                        </div>
-                        <div class="historical-performance-list" id="portfolio-historical-list">
-                            <!-- Populated via JS -->
-                        </div>
-                    </div>
+                    <div class="perf-positions" id="perf-positions"></div>
+                    <div class="perf-realized" id="perf-realized" hidden></div>
                 </div>
                 <div class="card-tab-pane" data-pane="portfolio-diversification">
                     <div class="diversification-grid">
@@ -392,7 +368,6 @@
             <div class="card-tabs-nav">
                 <button class="card-tab-btn active" data-target="overview">Overview</button>
                 <button class="card-tab-btn" data-target="investment">Investment</button>
-                <button class="card-tab-btn" data-target="financials">Financials</button>
                 <button class="card-tab-btn" data-target="news">News</button>
             </div>
 
@@ -401,9 +376,9 @@
                 <div class="card-tab-pane active" data-pane="overview">
                     <h3 class="section-title"><i class="fa-solid fa-circle-info"></i> General Info</h3>
                     <div class="card-general-info">
-                        <div class="general-row"><strong>ISIN</strong> : <span></span></div>
-                        <div class="general-row"><strong>Ticker</strong> : <span></span></div>
-                        <div class="general-row"><strong>Symbol</strong> : <span id="symbol-info"></span></div>
+                        <div class="general-row"><strong>ISIN</strong> : <span class="isin-val"></span></div>
+                        <div class="general-row"><strong>Ticker</strong> : <span class="ticker-val"></span></div>
+                        <div class="general-row"><strong>Symbol</strong> : <span class="symbol-val"></span></div>
                         <div class="general-row card-country-row"><strong>Country</strong> : <span
                                 class="country-name"></span><img data-country="" src="" alt="" class="flag-icon" />
                         </div>
@@ -503,52 +478,6 @@
                     <div class="signal-container">
                         <div class="signal-explanation hidden-by-bot">
                             <div class="explanation-content"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab: Financials -->
-                <div class="card-tab-pane" data-pane="financials">
-                    <div class="financials-section">
-                        <h3 class="section-title"><i class="fa-solid fa-chart-bar"></i> Key Statistics</h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-label">Market Cap</div>
-                                <div class="info-value financials-mktcap">--</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">P/E Ratio</div>
-                                <div class="info-value financials-pe">--</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">EPS</div>
-                                <div class="info-value financials-eps">--</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Dividend Yield</div>
-                                <div class="info-value financials-div">--</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">52W High</div>
-                                <div class="info-value financials-52high">--</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">52W Low</div>
-                                <div class="info-value financials-52low">--</div>
-                            </div>
-                        </div>
-                        
-                        <h3 class="section-title"><i class="fa-solid fa-user-tie"></i> Analyst Recommendations (ANR)</h3>
-                        <div class="anr-container">
-                            <div class="anr-gauge">
-                                <div class="anr-bar" id="anr-bar">
-                                    <div class="anr-segment anr-sell" style="width: 25%;">Sell</div>
-                                    <div class="anr-segment anr-hold" style="width: 25%;">Hold</div>
-                                    <div class="anr-segment anr-buy" style="width: 25%;">Buy</div>
-                                    <div class="anr-segment anr-strong-buy" style="width: 25%;">Strong Buy</div>
-                                </div>
-                                <div class="anr-consensus">Consensus: <span class="anr-consensus-value">--</span></div>
-                            </div>
                         </div>
                     </div>
                 </div>

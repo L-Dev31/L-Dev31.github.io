@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/gigabyte/Documents/GitHub/L-Dev31.github.io/**)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"fintech portfolio dashboard dark mode mobile\" --design-system -p \"Nemeris Stock\")",
+      "Bash(python \"C:\\\\Users\\\\gigabyte\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"fintech portfolio dashboard dark mobile\" --design-system -p \"Nemeris Stock\")",
+      "Bash(python \"C:\\\\Users\\\\gigabyte\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"touch target mobile bottom navigation financial app\" --domain ux -n 8)"
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 import { positions, selectedApi, lastApiBySymbol, getCurrency, globalPeriod } from './state.js';
 import { fetchActiveSymbol } from './general.js';
-import { fetchYahooSparkBatch, getYahooSymbol, isYahooSparkFriendly, fetchYahooPeriodChanges, PERIODS } from './yahoo-finance.js';
-import { TYPE_ORDER, hasTransactions, typeLabel, typeIcon } from './constants.js';
+import { fetchYahooSparkBatch, getYahooSymbol, isYahooSparkFriendly, fetchYahooPeriodChanges } from './yahoo-finance.js';
+import { TYPE_ORDER, typeLabel, typeIcon } from './constants.js';
 import { createTab, createCard, updateSectionDates, initChart, markTabAsSuspended, unmarkTabAsSuspended, isSymbolSuspendedInStorage, updateSidebarPerformance, getActiveSymbol } from './ui.js';
 
 
@@ -206,10 +206,10 @@ export async function loadStocks() {
         if (!byType[s.type]) byType[s.type] = [];
         byType[s.type].push(s);
     }
-    document.getElementById('portfolio-tabs').innerHTML = '';
-    document.getElementById('general-tabs').innerHTML = '';
-    const suspendedTabs = document.getElementById('suspended-tabs');
-    if (suspendedTabs) suspendedTabs.innerHTML = '';
+    for (const id of ['portfolio-tabs', 'general-tabs', 'suspended-tabs', 'mobile-portfolio-tabs', 'mobile-general-tabs', 'mobile-suspended-tabs']) {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+    }
 
     for (const [type, stocks] of Object.entries(byType)) {
         const hasPortfolio = stocks.some(s => {
@@ -255,8 +255,10 @@ export async function loadStocks() {
             shares: calculated.shares,
             investment: calculated.investment,
             costBasis: calculated.costBasis || 0,
+            realizedPL: calculated.realizedPL || 0,
             purchaseDate: calculated.purchaseDate,
             purchases: s.purchases || [],
+            sales: s.sales || [],
             news: [],
             lastNewsFetch: 0,
             chart: null,
@@ -416,10 +418,10 @@ async function fetchAllPortfolioMetadata() {
     const symbols = Object.keys(positions).filter(s => positions[s].shares > 0);
     if (symbols.length === 0) return;
 
+    const { fetchYahooQuoteSummary } = await import('./yahoo-finance.js');
     const promises = symbols.map(async s => {
         if (positions[s].analyticsFetched) return;
-        const yahoo = await import('./yahoo-finance.js');
-        const metadata = await yahoo.fetchYahooQuoteSummary(s);
+        const metadata = await fetchYahooQuoteSummary(s);
         if (metadata) {
             positions[s].metadata = metadata;
             positions[s].analyticsFetched = true;
@@ -462,9 +464,9 @@ async function updateDiversificationCharts() {
         }
     }
 
-    renderPieChart('asset-class-chart', assets);
-    renderPieChart('geography-chart', geo);
-    renderPieChart('sector-chart', sectors);
+    renderPieChart('chart-diversification-asset', assets);
+    renderPieChart('chart-diversification-geo', geo);
+    renderPieChart('chart-diversification-sector', sectors);
 }
 
 function renderPieChart(canvasId, dataMap) {
@@ -533,7 +535,6 @@ async function updatePerformanceChart() {
     if (!canvas) return;
 
     const currency = typeof getCurrency === 'function' ? getCurrency() : '€';
-    const yahoo = await import('./yahoo-finance.js');
     
     // 1. Calculate Summary Stats
     let totalValue = 0;
@@ -543,43 +544,33 @@ async function updatePerformanceChart() {
     let bestPerf = { symbol: '', pct: -Infinity };
     let worstPerf = { symbol: '', pct: Infinity };
     
-    const allSymbols = Object.keys(positions);
-    const activePositions = allSymbols.filter(s => positions[s].shares > 0);
+    const activePositions = Object.keys(positions).filter(s => positions[s].shares > 0);
     const historicalEntries = [];
-    
-    allSymbols.forEach(s => {
+
+    activePositions.forEach(s => {
         const pos = positions[s];
         const realized = pos.realizedPL || 0;
         totalRealizedProfit += realized;
-        
-        if (pos.shares > 0) {
-            const price = pos.lastData?.price || (pos.costBasis / pos.shares) || 0;
-            const value = price * pos.shares;
-            const unrealized = value - pos.costBasis;
-            
-            totalValue += value;
-            totalCostBasis += pos.costBasis;
-            totalUnrealizedProfit += unrealized;
-            
-            const totalProfitForThis = realized + unrealized;
-            const totalCostForThis = pos.costBasis + (pos.investment - pos.costBasis); // total capital put in
-            const pct = totalCostForThis > 0 ? (totalProfitForThis / totalCostForThis) * 100 : 0;
-            
-            if (pct > bestPerf.pct) bestPerf = { symbol: s, pct: pct };
-            if (pct < worstPerf.pct) worstPerf = { symbol: s, pct: pct };
 
-            historicalEntries.push({ symbol: s, realized, unrealized, total: totalProfitForThis, pct, active: true });
-        } else if (realized !== 0) {
-            // Closed position
-            const totalCost = Math.abs(pos.investment);
-            const pct = totalCost > 0 ? (realized / totalCost) * 100 : 0;
-            historicalEntries.push({ symbol: s, realized, unrealized: 0, total: realized, pct, active: false });
-        }
+        const price = pos.lastData?.price || (pos.costBasis / pos.shares) || 0;
+        const value = price * pos.shares;
+        const unrealized = value - pos.costBasis;
+
+        totalValue += value;
+        totalCostBasis += pos.costBasis;
+        totalUnrealizedProfit += unrealized;
+
+        const totalProfitForThis = realized + unrealized;
+        const pct = pos.costBasis > 0 ? (unrealized / pos.costBasis) * 100 : 0;
+
+        if (pct > bestPerf.pct) bestPerf = { symbol: s, pct };
+        if (pct < worstPerf.pct) worstPerf = { symbol: s, pct };
+
+        historicalEntries.push({ symbol: s, realized, unrealized, total: totalProfitForThis, pct, active: true });
     });
     
     const totalProfit = totalUnrealizedProfit + totalRealizedProfit;
-    const totalInvestmentEver = totalCostBasis + (totalRealizedProfit < 0 ? Math.abs(totalRealizedProfit) : 0); // Approximation
-    
+
     setText('portfolio-total-value', totalValue.toLocaleString() + ' ' + currency);
     const profitEl = document.getElementById('portfolio-total-profit');
     if (profitEl) {
@@ -602,10 +593,9 @@ async function updatePerformanceChart() {
     if (histList) {
         historicalEntries.sort((a, b) => b.total - a.total);
         histList.innerHTML = historicalEntries.map(e => `
-            <div class="hist-entry ${e.active ? 'active' : 'closed'}">
+            <div class="hist-entry active">
                 <div class="hist-main">
                     <span class="hist-symbol">${e.symbol}</span>
-                    <span class="hist-status">${e.active ? 'ACTIVE' : 'CLOSED'}</span>
                 </div>
                 <div class="hist-stats">
                     <span class="hist-total ${e.total >= 0 ? 'positive' : 'negative'}">${e.total >= 0 ? '+' : ''}${e.total.toFixed(2)} ${currency}</span>
