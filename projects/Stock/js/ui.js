@@ -6,6 +6,13 @@ import { updateChart, initChart } from './chart.js';
 import { updateSignal } from './signal-bot.js';
 import { setupNewsSearch } from './news.js';
 import { resolveTickerDetails, buildOnlineIconCandidates } from './ticker-catalog.js';
+import { handleImageAssetError } from './assets.js';
+
+const $elements = new Map();
+function getEl(id) {
+    if (!$elements.has(id)) $elements.set(id, document.getElementById(id));
+    return $elements.get(id);
+}
 
 export { initChart }; // Re-export for portfolio.js
 
@@ -51,32 +58,7 @@ function createTabElement(template, stock, type) {
     const img = tab.querySelector('img');
     img.src = `img/icon/${stock.symbol}.png`;
     img.alt = stock.symbol;
-    img.onerror = function () {
-        const parent = this.parentElement;
-        const ticker = (stock.ticker || stock.symbol || '').toUpperCase();
-        const candidates = stock.iconCandidates || buildOnlineIconCandidates(ticker, stock.market);
-
-        if (!this.dataset.cIndex) this.dataset.cIndex = 0;
-        let idx = parseInt(this.dataset.cIndex, 10);
-
-        if (candidates && idx < candidates.length) {
-            this.src = candidates[idx];
-            this.dataset.cIndex = idx + 1;
-            return;
-        }
-
-        parent.innerHTML = '';
-        const fallback = document.createElement('div');
-        fallback.className = 'tab-logo-fallback';
-        fallback.textContent = ticker;
-        fallback.title = ticker;
-        let fontSize = 12;
-        if (ticker.length > 4) {
-            fontSize = Math.max(6, 12 - (ticker.length - 4) * 2);
-        }
-        fallback.style.fontSize = fontSize + 'px';
-        parent.appendChild(fallback);
-    };
+    img.onerror = () => handleImageAssetError(img, stock.ticker || stock.symbol, stock.market, false);
     
     const pos = positions[stock.symbol];
     const baseName = pos?.name || stock.symbol;
@@ -100,21 +82,7 @@ export function createCard(stock) {
     logo.id = `logo-${stock.symbol}`
     logo.dataset.symbol = stock.symbol
     logo.src = `img/logo/${stock.symbol}.png`
-    logo.onerror = function(){
-        try {
-            const parent = this.parentElement;
-            parent.innerHTML = '';
-            const name = stock.name || stock.symbol;
-            const wrapper = document.createElement('div');
-            wrapper.className = 'logo-fallback';
-            const nEl = document.createElement('div');
-            nEl.className = 'logo-name';
-            nEl.textContent = name;
-            nEl.title = name;
-            wrapper.appendChild(nEl);
-            parent.appendChild(wrapper);
-        } catch(e) { this.parentElement.innerHTML = stock.symbol.slice(0,2); }
-    }
+    logo.onerror = () => handleImageAssetError(logo, stock.symbol, stock.market, true);
 
     const generalTitle = card.querySelector('h3.section-title');
     if (generalTitle) {

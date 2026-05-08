@@ -103,7 +103,9 @@
     background: rgba(101, 217, 129, 0.05);
 }
 
-.signal-state-container.insufficient-state { border-left-color: var(--primary); }
+.signal-state-container.insufficient-state { 
+    border-left-color: var(--primary); 
+}
 
 .signal-state-container.closed-state {
     border-left-color: #6b7280;
@@ -137,8 +139,6 @@
     line-height: 1.4;
 }
 
-.signal-explanation {
-}
 
 .explanation-title {
     font-size: 12px;

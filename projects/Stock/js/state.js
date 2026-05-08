@@ -10,7 +10,11 @@ const defaultSettings = {
     performanceViewerEnabled: true
 };
 
+let settingsCache = null;
+
 export function getUserSettings() {
+    if (settingsCache) return settingsCache;
+    
     try {
         const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
         let settings = stored ? JSON.parse(stored) : { ...defaultSettings };
@@ -25,7 +29,8 @@ export function getUserSettings() {
             settings.proxyUrl = 'https://' + settings.proxyUrl;
         }
 
-        return { ...defaultSettings, ...settings };
+        settingsCache = { ...defaultSettings, ...settings };
+        return settingsCache;
     } catch { /* ignore */ }
     return { ...defaultSettings };
 }
@@ -35,6 +40,7 @@ export function saveUserSettings(settings) {
         const current = getUserSettings();
         const merged = { ...current, ...settings };
         localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(merged));
+        settingsCache = merged;
     } catch { /* ignore */ }
 }
 

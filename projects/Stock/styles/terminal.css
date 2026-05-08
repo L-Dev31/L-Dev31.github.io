@@ -3,7 +3,7 @@
     padding: 2px 8px;
     color: var(--text-white);
     font-size: 13px;
-    background: transparent !important;
+    background: transparent;
 }
 
 .terminal-help {
@@ -17,7 +17,7 @@
 
 .card.terminal-card {
     display: none;
-    background: var(--terminal-bg) !important;
+    background: var(--terminal-bg);
     border-left: 1px solid rgba(168, 162, 255, 0.1);
     color: var(--text-white);
 }
@@ -37,7 +37,7 @@
 
 .terminal-card .terminal-output {
     width: 100%;
-    background: transparent !important;
+    background: transparent;
     color: var(--text-white);
     font-family: "JetBrains Mono", monospace;
     display: flex;
@@ -49,9 +49,7 @@
     padding-right: 8px;
 }
 
-.terminal-card .terminal-output .terminal-log { color: var(--text-white); }
-.terminal-card .terminal-output .terminal-cmd { color: var(--text-white); }
-.terminal-command { color: var(--text-white) !important; font-weight: 600; }
+.terminal-command { color: var(--text-white); font-weight: 600; }
 
 .terminal-panel {
     padding: 12px 0;
@@ -156,21 +154,16 @@
 .terminal-input {
     color: var(--text-white);
     background: transparent;
-    border: none !important;
+    border: none;
     padding: 2px 8px 2px 4px;
     width: 100%;
     font-family: "JetBrains Mono", monospace;
     font-size: 13px;
-    outline: none !important;
-    box-shadow: none !important;
+    outline: none;
 }
 
 .terminal-input:focus { 
-    outline: none !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
+    outline: none;
 }
 
 .terminal-input::placeholder { color: rgba(255,255,255,0.4); }
-.close-btn { display: none; }

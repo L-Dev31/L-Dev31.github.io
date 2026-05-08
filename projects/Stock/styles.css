@@ -20,6 +20,16 @@
     --b-hover: 1px solid rgba(168, 162, 255, 0.2);
     --bg-glass: rgba(255, 255, 255, 0.02);
     --bg-glass-hover: rgba(255, 255, 255, 0.04);
+
+    /* Contextual Colors */
+    --news-muted: #6b7280;
+    --news-bg: #1e1e24;
+    --explorer-muted: #6b7280;
+    --explorer-bg: #121218;
+}
+
+.bottom-nav {
+    display: none;
 }
 
 .card.active,

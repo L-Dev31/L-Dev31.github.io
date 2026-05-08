@@ -202,7 +202,6 @@ async function saveSettingsFromForm() {
         }
     }
 
-    const settings = { currency, proxyUrl, performanceViewerEnabled };
     saveUserSettings(settings);
     fillSettingsForm(settings);
     refreshUiAfterSettingsSave();
@@ -210,7 +209,6 @@ async function saveSettingsFromForm() {
     setSettingsStatus('Settings saved.', 'success');
 
     startGlobalRefreshLoop();
-    startPriceUpdateLoop();
 }
 
 function startFastPolling() {
@@ -243,8 +241,7 @@ async function syncDashboardData() {
     await batchPerformanceFetch(p);
 }
 
-// Deprecated: logic moved to syncDashboardData
-function startPriceUpdateLoop() { }
+
 
 async function batchPriceFetch() {
     if (isBatchFetching) return;

@@ -430,7 +430,7 @@ export function isYahooSparkFriendly(sym) {
 
 function getNextBase() {
     const base = BASES[baseIndex % BASES.length];
-    baseIndex += 1;
+    baseIndex = (baseIndex + 1) % BASES.length;
     return base;
 }
 
@@ -710,7 +710,7 @@ export async function fetchNews(symbol, limit = 20, days = 7) {
  */
 export async function fetchYahooQuoteSummary(symbol, modules = ['assetProfile', 'summaryProfile', 'calendarEvents']) {
     const s = getYahooSymbol(symbol);
-    const url = `${BASES[baseIndex]}/v11/finance/quoteSummary/${s}?modules=${modules.join(',')}`;
+    const url = `${getNextBase()}/v11/finance/quoteSummary/${s}?modules=${modules.join(',')}`;
     try {
         const res = await proxyFetch(url);
         if (res.error) return null;

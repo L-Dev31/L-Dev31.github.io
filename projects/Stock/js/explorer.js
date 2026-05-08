@@ -1,4 +1,5 @@
 import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, fetchYahooIndexComponents, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade } from './yahoo-finance.js';
+import { handleImageAssetError } from './assets.js';
 import { debounce } from './constants.js';
 import { getCurrency } from './state.js';
 import { buildOnlineIconCandidates } from './ticker-catalog.js';
@@ -351,10 +352,10 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
         showLoadingProgress(0, `Loading (${limitedSymbols.length})...`);
         if (!limitedSymbols.length) return items;
 
-        const BATCH_SIZE = 3;
-        const STEP_DELAY = 320;
-        const COOLDOWN_EVERY = 60;
-        const COOLDOWN_MS = 3000;
+        const BATCH_SIZE = 10;
+        const STEP_DELAY = 100;
+        const COOLDOWN_EVERY = 50;
+        const COOLDOWN_MS = 2000;
 
         for (let i = 0; i < limitedSymbols.length; i += BATCH_SIZE) {
             const batch = limitedSymbols.slice(i, i + BATCH_SIZE);
@@ -368,11 +369,7 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
             showLoadingProgress(completed, limitedSymbols.length);
 
             if (completed < limitedSymbols.length) {
-                if (completed % COOLDOWN_EVERY === 0) {
-                    await new Promise(r => setTimeout(r, COOLDOWN_MS));
-                } else {
-                    await new Promise(r => setTimeout(r, STEP_DELAY));
-                }
+                await new Promise(r => setTimeout(r, STEP_DELAY));
             }
         }
         return items;
@@ -410,13 +407,7 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
             const img = document.createElement('img');
             img.src = m.logo;
             img.alt = m.name;
-            img.onerror = function() {
-                this.style.display = 'none';
-                const fallback = document.createElement('div');
-                fallback.className = 'market-fallback-name';
-                fallback.textContent = m.name;
-                this.parentElement.appendChild(fallback);
-            };
+            img.onerror = () => handleImageAssetError(img, m.name, 'other', true);
 
             btn.appendChild(img);
             emptyState.appendChild(btn);
