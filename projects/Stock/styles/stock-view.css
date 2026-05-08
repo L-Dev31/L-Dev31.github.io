@@ -57,7 +57,7 @@
 }
 
 .stack-price {
-    flex: 0 0 55%; /* reduced to give more space to indicators */
+    flex: 1; /* allowed to expand if indicators are hidden */
 }
 
 .stack-rsi,

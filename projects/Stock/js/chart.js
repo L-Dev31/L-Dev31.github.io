@@ -647,8 +647,8 @@ function updateIndicatorSubcharts(symbol, prices, positions) {
     const rsiPane = card.querySelector('.stack-rsi');
     const macdPane = card.querySelector('.stack-macd');
     const enough = Array.isArray(prices) && prices.length >= 30;
-    if (rsiPane) rsiPane.style.opacity = enough ? '' : '0.35';
-    if (macdPane) macdPane.style.opacity = enough ? '' : '0.35';
+    if (rsiPane) rsiPane.style.display = enough ? '' : 'none';
+    if (macdPane) macdPane.style.display = enough ? '' : 'none';
     if (!enough) return;
 
     const rsiSeries = calculateRSISeries(prices, 14);
