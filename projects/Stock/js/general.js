@@ -7,6 +7,7 @@ import { DEAD_ERROR_CODES, periodToDays } from './constants.js'
 import { positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, fastPollTimer, setFastPollTimer, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings } from './state.js'
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching } from './portfolio.js'
 import { updateUI, clearPeriodDisplay, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance, initMobileSidebar, setBottomNavActive } from './ui.js'
+import { getEl, formatCurrency, formatPct } from './utils.js'
 
 // Re-export for other modules
 export { fetchActiveSymbol };
@@ -14,7 +15,7 @@ export { fetchActiveSymbol };
 // Global helper
 function terminalLogGlobal(msg) {
     try {
-        const out = document.getElementById('terminal-output');
+        const out = getEl('terminal-output');
         if (!out) return;
         const el = document.createElement('div');
         el.className = 'terminal-log';
@@ -25,11 +26,31 @@ function terminalLogGlobal(msg) {
 }
 
 function fillSettingsForm(settings = getUserSettings()) {
-    const proxyInput = document.getElementById('settings-proxy-url');
+    const proxyInput = getEl('settings-proxy-url');
     if (proxyInput) proxyInput.value = settings.proxyUrl || DEFAULT_WORKER_URL;
 
     const perfViewer = document.getElementById('settings-performance-viewer');
     if (perfViewer) perfViewer.checked = !!settings.performanceViewerEnabled;
+
+    const nameInput = getEl('settings-user-name');
+    if (nameInput) nameInput.value = settings.name || '';
+
+    const pfpPreview = getEl('settings-pfp-preview');
+    if (pfpPreview) pfpPreview.src = settings.pfp || '';
+}
+
+function applyUserSettings(settings = getUserSettings()) {
+    const nameEls = [getEl('profile-name'), getEl('mobile-profile-name')];
+    nameEls.forEach(el => { if (el) el.textContent = settings.name || 'Investor'; });
+
+    const pfpEls = document.querySelectorAll('.profile-photo, .nav-profile-photo');
+    pfpEls.forEach(el => { 
+        if (settings.pfp) el.src = settings.pfp;
+        else if (el.classList.contains('nav-profile-photo')) {
+             // Fallback for small nav pfp if no image
+             el.style.display = 'none'; 
+        }
+    });
 }
 
 function setSettingsStatus(msg, type = '') {
@@ -93,14 +114,14 @@ function refreshUiAfterSettingsSave() {
 
     rebuildTransactionHistoryRows();
 
-    const explorerCard = document.getElementById('card-explorer');
+    const explorerCard = getEl('card-explorer');
     if (explorerCard?.classList.contains('active')) {
         try { window.explorerModule?.loadData?.(); } catch (e) { /* ignore */ }
     }
 }
 
 function openSettingsCard() {
-    const card = document.getElementById('card-settings');
+    const card = getEl('card-settings');
     if (!card) return;
 
     document.querySelectorAll('.card').forEach((c) => {
@@ -108,18 +129,18 @@ function openSettingsCard() {
         c.setAttribute('aria-hidden', 'true');
     });
     document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
-    try { document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active')); } catch (e) { }
+    document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active'));
 
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
-    document.getElementById('open-settings-btn')?.classList.add('active');
+    getEl('open-settings-btn')?.classList.add('active');
 
     fillSettingsForm();
     setSettingsStatus('');
 }
 
 function openHomeCard() {
-    const card = document.getElementById('card-home');
+    const card = getEl('card-home');
     if (!card) return;
 
     document.querySelectorAll('.card').forEach((c) => {
@@ -127,14 +148,14 @@ function openHomeCard() {
         c.setAttribute('aria-hidden', 'true');
     });
     document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
-    try { document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active')); } catch (e) { }
+    document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active'));
 
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
 }
 
 function openPortfolioCard() {
-    const card = document.getElementById('card-portfolio');
+    const card = getEl('card-portfolio');
     if (!card) return;
 
     document.querySelectorAll('.card').forEach((c) => {
@@ -142,11 +163,13 @@ function openPortfolioCard() {
         c.setAttribute('aria-hidden', 'true');
     });
     document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
-    try { document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active')); } catch (e) { }
+    document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('active'));
 
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
-    document.getElementById('open-portfolio-btn')?.classList.add('active');
+    getEl('open-portfolio-btn')?.classList.add('active');
+
+    if (typeof renderDiversificationPane === 'function') renderDiversificationPane();
 
     // Trigger analytics refresh
     try { 
@@ -237,8 +260,13 @@ function startGlobalRefreshLoop() {
 
 async function syncDashboardData() {
     const p = globalPeriod || '1D';
-    await batchPriceFetch();
+    if (isBatchFetching) return;
+    
+    // We prioritize performance fetch because it provides both Sparkline data and latest prices
     await batchPerformanceFetch(p);
+    
+    // batchPriceFetch is now mostly redundant for the sidebar, but we can still use it 
+    // for extra metadata if needed, though we'll throttle it much more.
 }
 
 
@@ -390,11 +418,11 @@ document.addEventListener('click', async e => {
     if (t) {
         if (mainFetchController) mainFetchController.abort()
         document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'))
-        try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch (e) { }
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.card').forEach(x => x.classList.remove('active'))
         t.classList.add('active')
         const sym = t.dataset.symbol
-        const cd = document.getElementById(`card-${sym}`)
+        const cd = getEl(`card-${sym}`)
         if (cd) {
             cd.classList.add('active')
             try { if (cd.id !== 'card-terminal' && typeof closeTerminalCard === 'function') closeTerminalCard(); } catch (e) { }
@@ -480,6 +508,7 @@ document.head.appendChild(font)
 window.addEventListener('load', async () => {
     const settings = getUserSettings();
     fillSettingsForm(settings);
+    applyUserSettings(settings);
 
     await loadStocks();
     setNewsPositions(positions);
@@ -533,58 +562,117 @@ window.addEventListener('load', async () => {
     initMobileSidebar();
 });
 
-document.getElementById('bottom-nav-home')?.addEventListener('click', () => {
+getEl('bottom-nav-home')?.addEventListener('click', () => {
     openHomeCard();
     setBottomNavActive('bottom-nav-home');
 });
 
-document.getElementById('bottom-nav-terminal')?.addEventListener('click', () => {
+getEl('bottom-nav-terminal')?.addEventListener('click', () => {
     openTerminalCard();
     setBottomNavActive('bottom-nav-terminal');
 });
-document.getElementById('bottom-nav-news')?.addEventListener('click', () => {
+getEl('bottom-nav-news')?.addEventListener('click', () => {
     try { openNewsPage(getActiveSymbol()); } catch (e) { }
     setBottomNavActive('bottom-nav-news');
 });
-document.getElementById('bottom-nav-explorer')?.addEventListener('click', () => {
+getEl('bottom-nav-explorer')?.addEventListener('click', () => {
     window.explorerModule?.openExplorer();
     setBottomNavActive('bottom-nav-explorer');
 });
-document.getElementById('bottom-nav-profile')?.addEventListener('click', () => {
+getEl('bottom-nav-profile')?.addEventListener('click', () => {
     openProfileCard();
     setBottomNavActive('bottom-nav-profile');
 });
 
-document.getElementById('open-terminal-btn')?.addEventListener('click', e => {
+getEl('open-terminal-btn')?.addEventListener('click', e => {
     openTerminalCard();
 });
-document.getElementById('open-news-feed')?.addEventListener('click', async e => {
+getEl('open-news-feed')?.addEventListener('click', async e => {
     const a = getActiveSymbol();
     try { openNewsPage(a); } catch (err) { /* noop */ }
-    try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch (e) { }
-    try { document.getElementById('open-news-feed')?.classList.add('active'); } catch (e) { }
+    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+    getEl('open-news-feed')?.classList.add('active');
 });
-document.getElementById('open-portfolio-btn')?.addEventListener('click', () => {
+getEl('open-portfolio-btn')?.addEventListener('click', () => {
     openPortfolioCard();
 });
-document.getElementById('open-portfolio-btn-mobile')?.addEventListener('click', () => {
+getEl('open-portfolio-btn-mobile')?.addEventListener('click', () => {
     openPortfolioCard();
 });
-document.getElementById('open-settings-btn')?.addEventListener('click', () => {
+getEl('open-settings-btn')?.addEventListener('click', () => {
     openSettingsCard();
 });
-document.getElementById('open-settings-btn-mobile')?.addEventListener('click', () => {
+getEl('open-settings-btn-mobile')?.addEventListener('click', () => {
     openSettingsCard();
 });
 
-document.getElementById('settings-save')?.addEventListener('click', async () => {
-    await saveSettingsFromForm();
+getEl('settings-save')?.addEventListener('click', async () => {
+    const proxyUrl = getEl('settings-proxy-url')?.value;
+    const perfEnabled = getEl('settings-performance-viewer')?.checked;
+    const name = getEl('settings-user-name')?.value;
+    
+    // Handle Profile Photo Upload
+    const pfpFile = getEl('settings-user-pfp-file')?.files[0];
+    let pfpBase64 = getUserSettings().pfp;
+
+    if (pfpFile) {
+        try {
+            pfpBase64 = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(pfpFile);
+            });
+        } catch (e) { console.error('Error reading pfp file', e); }
+    }
+
+    const newSettings = {
+        proxyUrl,
+        performanceViewerEnabled: perfEnabled,
+        name,
+        pfp: pfpBase64
+    };
+
+    saveUserSettings(newSettings);
+    setProxyBaseUrl(proxyUrl);
+    applyUserSettings(newSettings);
+    
+    setSettingsStatus('Settings saved!', 'success');
+    setTimeout(() => setSettingsStatus(''), 3000);
+
+    const actionBar = getEl('settings-actions-bar');
+    if (actionBar) actionBar.style.display = 'none';
+
+    refreshUiAfterSettingsSave();
+});
+
+// Instant PFP Preview
+getEl('settings-user-pfp-file')?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const preview = getEl('settings-pfp-preview');
+            if (preview) preview.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Show Save Bar on Change
+['input', 'change'].forEach(evt => {
+    getEl('card-settings')?.addEventListener(evt, (e) => {
+        const actionBar = getEl('settings-actions-bar');
+        if (actionBar && actionBar.style.display === 'none') {
+            actionBar.style.display = 'flex';
+        }
+    });
 });
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         try {
-            const card = document.getElementById('card-news');
+            const card = getEl('card-news');
             if (card && card.classList.contains('active')) {
                 closeNewsPage();
             }

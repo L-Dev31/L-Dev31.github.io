@@ -28,9 +28,10 @@
     <div class="sidebar" id="sidebar">
         <div class="profile-header">
             <div class="profile-header-top">
-                <img src="img/photo/leot.png" alt="Profile" class="profile-photo" id="profile-pfp">
+                <img src="" alt="Profile" class="profile-photo" id="profile-pfp">
                 <div class="profile-info">
-                    <h1 id="profile-name">Mr. Léo Tosku</h1>
+                    <h1 id="profile-name">Investor</h1>
+                    <p>Positions held: <span id="total-positions">0</span></p>
                     <p>Shares held: <span id="total-shares">0</span></p>
                     <p>Total investment: <span id="total-investment">--</span></p>
                 </div>
@@ -115,7 +116,7 @@
             </div>
 
             <div class="card news-card" id="card-news" role="document" aria-hidden="true">
-                <h3 class="section-title"><i class="fa-solid fa-newspaper"></i> Market News <span class="title-date-inline">(<span id="news-last-update">—</span>)</span></h3>
+                <h3 class="section-title"><i class="fa-solid fa-newspaper"></i> Market News</h3>
                 <div class="news-filters-header">
                     <div class="searchbar ticker-search">
                         <i class="fa-solid fa-magnifying-glass"></i>
@@ -219,7 +220,7 @@
             </div>
         </div>
         <div class="card portfolio-card" id="card-portfolio" role="document" aria-hidden="true">
-            <h3 class="section-title"><i class="fa-solid fa-chart-pie"></i> Advanced Portfolio Analytics</h3>
+            <h3 class="section-title"><i class="fa-solid fa-briefcase"></i> Portfolio Overview</h3>
             <div class="card-tabs-nav">
                 <button class="card-tab-btn active" data-target="portfolio-performance">Performance</button>
                 <button class="card-tab-btn" data-target="portfolio-diversification">Diversification</button>
@@ -228,73 +229,59 @@
             <div class="card-content">
                 <div class="card-tab-pane active" data-pane="portfolio-performance">
                     <div class="perf-hero">
-                        <div class="perf-hero-label">Portfolio Value</div>
                         <div class="perf-hero-value" id="perf-total-value">--</div>
                         <div class="perf-hero-delta" id="perf-total-delta">--</div>
-                        <div class="perf-hero-cost" id="perf-cost-basis">--</div>
                     </div>
                     <div class="perf-pulse">
                         <div class="perf-pulse-bar" id="perf-pulse-bar"></div>
                         <div class="perf-pulse-caption" id="perf-pulse-caption">--</div>
                     </div>
-                    <div class="perf-positions" id="perf-positions"></div>
-                    <div class="perf-realized" id="perf-realized" hidden></div>
+                    <div class="perf-alltime" id="perf-alltime" hidden></div>
+
+                    <div class="perf-section" id="perf-active-section">
+                        <div class="perf-section-head">
+                            <span class="perf-section-title">Active Positions</span>
+                            <span class="perf-section-count" id="perf-active-count">—</span>
+                        </div>
+                        <div class="perf-positions" id="perf-positions"></div>
+                    </div>
+
+                    <div class="perf-section" id="perf-closed-section" hidden>
+                        <div class="perf-section-head">
+                            <span class="perf-section-title">Closed Positions</span>
+                            <span class="perf-section-count" id="perf-closed-count">—</span>
+                        </div>
+                        <div class="perf-positions perf-positions--closed" id="perf-closed"></div>
+                    </div>
                 </div>
                 <div class="card-tab-pane" data-pane="portfolio-diversification">
-                    <div class="diversification-grid">
-                        <div class="diversification-item">
-                            <h4 class="sub-section-title">Asset Class</h4>
-                            <div class="pie-chart-container">
-                                <canvas id="chart-diversification-asset"></canvas>
+                    <div class="exposure-panel" id="exposure-panel" data-mode="symbol" aria-label="Portfolio composition">
+                        <div class="exposure-modes" role="tablist" aria-label="Allocation view">
+                            <button class="exposure-mode active" data-mode="symbol" role="tab">By Position</button>
+                            <button class="exposure-mode" data-mode="sector" role="tab">By Sector</button>
+                            <button class="exposure-mode" data-mode="type" role="tab">By Type</button>
+                            <button class="exposure-mode" data-mode="country" role="tab">By Country</button>
+                        </div>
+                        <div class="exposure-content">
+                            <div class="exposure-chart-container">
+                                <svg id="exposure-chart-svg" viewBox="0 0 200 200" class="exposure-chart-svg">
+                                    <circle cx="100" cy="100" r="80" fill="rgba(255,255,255,0.02)"></circle>
+                                </svg>
+                                <div id="exposure-tooltip" class="exposure-tooltip" hidden></div>
+                                <div class="exposure-chart-hole"></div>
                             </div>
+                            <div class="exposure-legend" id="exposure-legend"></div>
                         </div>
-                        <div class="diversification-item">
-                            <h4 class="sub-section-title">Geography</h4>
-                            <div class="pie-chart-container">
-                                <canvas id="chart-diversification-geo"></canvas>
-                            </div>
-                        </div>
-                        <div class="diversification-item">
-                            <h4 class="sub-section-title">Sector</h4>
-                            <div class="pie-chart-container">
-                                <canvas id="chart-diversification-sector"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="exposure-panel" id="exposure-panel" aria-label="Portfolio composition">
-                        <div class="exposure-header">
-                            <span class="exposure-title">Position Weights</span>
-                            <span class="exposure-toggle" id="exposure-toggle" data-mode="type">By Type</span>
-                        </div>
-                        <div class="exposure-bar" id="exposure-bar" role="img" aria-label="Allocation bar"></div>
-                        <div class="exposure-legend" id="exposure-legend"></div>
                     </div>
                 </div>
                 <div class="card-tab-pane" data-pane="portfolio-dividends">
-                    <div class="dividend-tracker-section">
-                        <h3 class="section-title"><i class="fa-solid fa-calendar-days"></i> Dividend Calendar</h3>
-                        <div class="dividend-calendar-container">
-                            <div id="dividend-calendar-placeholder" class="empty-state">
-                                <i class="fa-solid fa-hourglass-half"></i>
-                                <p>Coming soon: Predicted dividend payouts based on your holdings.</p>
-                            </div>
-                            <div class="table-container">
-                                <table id="dividend-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Ticker</th>
-                                            <th>Ex-Date</th>
-                                            <th>Payment Date</th>
-                                            <th>Amount</th>
-                                            <th>Total Expected</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="dividend-table-body">
-                                        <!-- Will be populated by JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="dividend-hero">
+                        <div class="dividend-hero-label">Annual Dividends</div>
+                        <div class="dividend-hero-value" id="dividend-total">—</div>
+                        <div class="dividend-hero-meta" id="dividend-meta">—</div>
+                    </div>
+                    <div class="dividend-list" id="dividend-list">
+                        <div class="dividend-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading dividend data...</div>
                     </div>
                 </div>
             </div>
@@ -303,9 +290,10 @@
         <div class="card profile-card" id="card-profile" role="document" aria-hidden="true">
             <div class="profile-header">
                 <div class="profile-header-top">
-                    <img src="img/photo/leot.png" alt="Profile" class="profile-photo">
+                    <img src="" alt="Profile" class="profile-photo">
                     <div class="profile-info">
-                        <h1>Mr. Léo Tosku</h1>
+                        <h1 id="mobile-profile-name">Investor</h1>
+                        <p>Positions held: <span id="mobile-total-positions">0</span></p>
                         <p>Shares held: <span id="mobile-total-shares">0</span></p>
                         <p>Total investment: <span id="mobile-total-investment">--</span></p>
                     </div>
@@ -318,24 +306,48 @@
         </div>
 
         <div class="card settings-card" id="card-settings" role="document" aria-hidden="true">
-            <h3 class="section-title"><i class="fa-solid fa-gear"></i> Settings</h3>
-            <div class="settings-body">
-                <div class="settings-group">
-                    <label class="settings-label" for="settings-proxy-url">Cloudflare Worker URL (Proxy)</label>
-                    <input id="settings-proxy-url" class="settings-input" type="url"
-                        placeholder="https://my-worker.dev" />
-                </div>
-                <div class="settings-group">
-                    <label class="settings-label" for="settings-performance-viewer">Sidebar Performance Viewer</label>
-                    <div class="settings-toggle-wrapper">
-                        <label class="switch">
-                            <input type="checkbox" id="settings-performance-viewer" />
-                            <span class="slider round"></span>
-                        </label>
+            <h3 class="section-title"><i class="fa-solid fa-gear"></i> App Settings</h3>
+            <div class="card-tabs-nav">
+                <button class="card-tab-btn active" data-target="settings-general">General</button>
+                <button class="card-tab-btn" data-target="settings-profile">Profile</button>
+            </div>
+            <div class="card-content">
+                <div class="card-tab-pane active" data-pane="settings-general">
+                    <div class="settings-group">
+                        <input id="settings-proxy-url" class="settings-input" type="url"
+                            placeholder="https://my-worker.dev" />
+                    </div>
+                    <div class="settings-group">
+                        <label class="settings-label" for="settings-performance-viewer">Sidebar Performance Viewer</label>
+                        <div class="settings-toggle-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="settings-performance-viewer" />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
-                <div class="settings-actions">
-                    <button id="settings-save" class="settings-action-btn primary">Save</button>
+                <div class="card-tab-pane" data-pane="settings-profile">
+                    <div class="settings-group pfp-upload-group">
+                        <label class="settings-label">Profile Image</label>
+                        <div class="pfp-upload-container">
+                            <label for="settings-user-pfp-file" class="pfp-upload-label">
+                                <img id="settings-pfp-preview" src="" alt="" class="pfp-preview-img" />
+                                <div class="pfp-upload-overlay">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <span>Change</span>
+                                </div>
+                            </label>
+                            <input id="settings-user-pfp-file" class="hidden-file-input" type="file" accept="image/*" />
+                        </div>
+                    </div>
+                    <div class="settings-group">
+                        <label class="settings-label" for="settings-user-name">Profile Name</label>
+                        <input id="settings-user-name" class="settings-input" type="text" placeholder="Your Name" />
+                    </div>
+                </div>
+                <div class="settings-actions" id="settings-actions-bar" style="display: none; justify-content: flex-end;">
+                    <button id="settings-save" class="settings-action-btn primary">Save Changes</button>
                     <div id="settings-proxy-status" class="settings-proxy-status"></div>
                 </div>
             </div>
@@ -591,7 +603,7 @@
         </button>
         <button class="bottom-nav-btn profile-nav-btn" id="bottom-nav-profile">
             <div class="nav-profile-photo-wrapper">
-                <img src="img/photo/leot.png" alt="Profile" class="nav-profile-photo">
+                <img src="" alt="Profile" class="nav-profile-photo">
             </div>
         </button>
     </nav>

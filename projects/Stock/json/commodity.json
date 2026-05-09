@@ -6,10 +6,7 @@
     "isin": null,
     "country": "GLOBAL",
     "currency": "USD",
-    "type": "commodity",
-    "shares": 0,
-    "investment": 0.00,
-    "purchaseDate": null
+    "type": "commodity"
   },
   {
     "symbol": "XAGUSD",
@@ -18,10 +15,7 @@
     "isin": null,
     "country": "GLOBAL",
     "currency": "USD",
-    "type": "commodity",
-    "shares": 0,
-    "investment": 0.00,
-    "purchaseDate": null
+    "type": "commodity"
   },
   {
     "symbol": "HG",
@@ -30,10 +24,7 @@
     "isin": null,
     "country": "GLOBAL",
     "currency": "USD",
-    "type": "commodity",
-    "shares": 0,
-    "investment": 0.00,
-    "purchaseDate": null
+    "type": "commodity"
   },
   {
     "symbol": "CL",
@@ -42,10 +33,7 @@
     "isin": null,
     "country": "GLOBAL",
     "currency": "USD",
-    "type": "commodity",
-    "shares": 0,
-    "investment": 0.00,
-    "purchaseDate": null
+    "type": "commodity"
   },
   {
     "symbol": "NG",
@@ -54,9 +42,6 @@
     "isin": null,
     "country": "GLOBAL",
     "currency": "USD",
-    "type": "commodity",
-    "shares": 0,
-    "investment": 0.00,
-    "purchaseDate": null
+    "type": "commodity"
   }
 ]

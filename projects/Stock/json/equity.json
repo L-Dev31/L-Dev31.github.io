@@ -6,56 +6,7 @@
     "isin": "FR0013341781",
     "country": "FR",
     "currency": "EUR",
-    "type": "equity",
-    "purchases": [
-      {
-        "date": "2025-11-10",
-        "amount": -107.27,
-        "shares": 9
-      },
-      {
-        "date": "2025-11-11",
-        "amount": -106.93,
-        "shares": 8
-      },
-      {
-        "date": "2025-11-18",
-        "amount": -110.16,
-        "shares": 9
-      },
-      {
-        "date": "2025-11-21",
-        "amount": -113.36,
-        "shares": 10
-      }
-    ],
-    "sales": [
-      {
-        "date": "2025-11-11",
-        "amount": 90.45,
-        "shares": 7
-      },
-      {
-        "date": "2025-11-12",
-        "amount": 130.95,
-        "shares": 10
-      },
-      {
-        "date": "2026-01-30",
-        "amount": 71.35,
-        "shares": 5
-      },
-      {
-        "date": "2026-02-11",
-        "amount": 106.63,
-        "shares": 6
-      },
-      {
-        "date": "2026-02-18",
-        "amount": 160.00,
-        "shares": 8
-      }
-    ]
+    "type": "equity"
   },
   {
     "symbol": "ALUNT",
@@ -64,21 +15,7 @@
     "isin": "FR0010342608",
     "country": "FR",
     "currency": "EUR",
-    "type": "equity",
-    "purchases": [
-      {
-        "date": "2025-11-12",
-        "amount": -104.52,
-        "shares": 65
-      }
-    ],
-    "sales": [
-      {
-        "date": "2025-11-21",
-        "amount": 93.63,
-        "shares": 65
-      }
-    ]
+    "type": "equity"
   },
   {
     "symbol": "BLC",
@@ -87,9 +24,7 @@
     "isin": "",
     "country": "FR",
     "currency": "EUR",
-    "type": "equity",
-    "purchases": [],
-    "sales": []
+    "type": "equity"
   },
   {
     "symbol": "ALCAR",
@@ -98,9 +33,7 @@
     "isin": "",
     "country": "FR",
     "currency": "EUR",
-    "type": "equity",
-    "purchases": [],
-    "sales": []
+    "type": "equity"
   },
   {
     "symbol": "LBIRD",
@@ -109,21 +42,7 @@
     "isin": "FR0000038242",
     "country": "FR",
     "currency": "EUR",
-    "type": "equity",
-    "purchases": [
-      {
-        "date": "2026-04-22",
-        "amount": -396.80,
-        "shares": 16
-      }
-    ],
-    "sales": [
-      {
-        "date": "2026-04-30",
-        "amount": 339.10,
-        "shares": 16
-      }
-    ]
+    "type": "equity"
   },
   {
     "symbol": "INF",
@@ -132,21 +51,7 @@
     "isin": "FR0000071797",
     "country": "FR",
     "currency": "EUR",
-    "type": "equity",
-    "purchases": [
-      {
-        "date": "2026-05-04",
-        "amount": -249.39,
-        "shares": 7
-      }
-    ],
-    "sales": [
-      {
-        "date": "2026-05-07",
-        "amount": 119.70,
-        "shares": 3
-      }
-    ]
+    "type": "equity"
   },
   {
     "symbol": "AAPL",
@@ -155,9 +60,7 @@
     "isin": "US0378331005",
     "country": "US",
     "currency": "USD",
-    "type": "equity",
-    "purchases": [],
-    "sales": []
+    "type": "equity"
   },
   {
     "symbol": "DCAM",
@@ -166,14 +69,6 @@
     "isin": "",
     "country": "FR",
     "currency": "EUR",
-    "type": "equity",
-    "purchases": [
-      {
-        "date": "2026-05-07",
-        "amount": -169.24,
-        "shares": 29
-      }
-    ],
-    "sales": []
+    "type": "equity"
   }
 ]

@@ -155,18 +155,6 @@
     line-height: 1.5;
 }
 
-.signal-disclaimer {
-    margin: 16px 0 12px;
-    display: block;
-    text-align: center;
-    font-size: 10px;
-    line-height: 1.4;
-    color: #52556a;
-}
-.signal-disclaimer strong {
-    color: #52556a;
-    font-weight: 600;
-}
 
 .data-source-strip {
     display: flex;

@@ -7,7 +7,6 @@
 
 .container .card.explorer-card.active { display: flex; }
 
-.card.explorer-card .explorer-header { display: none; }
 
 .card.explorer-card .explorer-filters {
     display: flex;
@@ -59,24 +58,11 @@
 }
 
 .card.explorer-card .explorer-limit-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--text-white);
     box-shadow: 0 0 0 1px rgba(168, 162, 255, 0.2);
-    cursor: pointer;
 }
 
 .card.explorer-card .explorer-limit-range::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--text-white);
-    border: none;
     box-shadow: 0 0 0 1px rgba(168, 162, 255, 0.2);
-    cursor: pointer;
 }
 
 .card.explorer-card .explorer-limit-ticks {
@@ -135,32 +121,40 @@
 }
 
 .card.explorer-card .explorer-filter-group {
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
     min-width: 0;
 }
 
 .card.explorer-card .explorer-label {
-    font-size: 11px;
-    color: var(--primary);
-    font-weight: 600;
+    position: absolute;
+    top: 6px;
+    left: 14px;
+    font-size: 8px;
+    color: var(--text-dark);
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.6;
 }
 
 .card.explorer-card .explorer-select {
-    padding: 10px 12px;
+    padding: 22px 16px 10px;
     border-radius: var(--radius-sm);
-    border: 1px solid rgba(168, 162, 255, 0.1);
-    background: rgba(255, 255, 255, 0.02);
+    border: 2px solid rgba(168, 162, 255, 0.15);
+    background: transparent;
     color: var(--text-white);
     font-size: 13px;
     outline: none;
     cursor: pointer;
+    transition: border-color var(--trans-fast);
 }
 
-.card.explorer-card .explorer-select:focus { border-color: rgba(168, 162, 255, 0.3); }
+.card.explorer-card .explorer-select:focus { border-color: var(--primary); }
 .card.explorer-card .explorer-select option { background: var(--explorer-bg); color: var(--text-white); }
 
 .card.explorer-card .explorer-list {

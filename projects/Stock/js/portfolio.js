@@ -1,13 +1,14 @@
-import { positions, selectedApi, lastApiBySymbol, getCurrency, globalPeriod } from './state.js';
+import { positions, selectedApi, lastApiBySymbol, getCurrency, globalPeriod, getUserSettings } from './state.js';
 import { fetchActiveSymbol } from './general.js';
 import { fetchYahooSparkBatch, getYahooSymbol, isYahooSparkFriendly, fetchYahooPeriodChanges } from './yahoo-finance.js';
 import { TYPE_ORDER, typeLabel, typeIcon } from './constants.js';
-import { createTab, createCard, updateSectionDates, initChart, markTabAsSuspended, unmarkTabAsSuspended, isSymbolSuspendedInStorage, updateSidebarPerformance, getActiveSymbol } from './ui.js';
+import { createTab, createCard, updateSectionDates, initChart, markTabAsSuspended, unmarkTabAsSuspended, isSymbolSuspendedInStorage, updateSidebarPerformance, getActiveSymbol, updateUI } from './ui.js';
+import { getEl, formatCurrency, formatPct } from './utils.js';
 
 
 
 const setText = (id, value) => {
-    const el = document.getElementById(id);
+    const el = getEl(id);
     if (el) el.textContent = value;
 };
 
@@ -68,25 +69,44 @@ export function calculateStockValues(stock) {
     };
 }
 
+let lastCompositionHash = '';
+
 export function updatePortfolioSummary() {
+    const settings = getUserSettings();
+    const currency = getCurrency();
+    
+    // Update Profile Name & Photo
+    const nameEls = [getEl('profile-name'), ...document.querySelectorAll('.profile-info h1')];
+    nameEls.forEach(el => { if (el) el.textContent = settings.name; });
+    
+    const pfpEls = [getEl('profile-pfp'), ...document.querySelectorAll('.profile-photo')];
+    pfpEls.forEach(el => { if (el && settings.pfp) el.src = settings.pfp; });
+
     let totalShares = 0;
     let totalInvestment = 0;
+    let totalPositions = 0;
 
     for (const pos of Object.values(positions)) {
-        totalShares += pos.shares || 0;
-        if (typeof pos.investment === 'number') totalInvestment += pos.investment;
+        const shares = pos.shares || 0;
+        if (shares > 0) {
+            totalPositions++;
+            totalShares += shares;
+            // Use costBasis if available (current value of held lots), fallback to investment
+            totalInvestment += (pos.costBasis || pos.investment || 0);
+        }
     }
 
-    const setText = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = val;
-    };
+    const tPos = getEl('total-positions'); if (tPos) tPos.textContent = totalPositions;
+    const mtPos = getEl('mobile-total-positions'); if (mtPos) mtPos.textContent = totalPositions;
+    const tSha = getEl('total-shares'); if (tSha) tSha.textContent = totalShares;
+    const mtSha = getEl('mobile-total-shares'); if (mtSha) mtSha.textContent = totalShares;
+    
+    const invStr = totalInvestment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + currency;
+    const tInv = getEl('total-investment'); if (tInv) tInv.textContent = invStr;
+    const mtInv = getEl('mobile-total-investment'); if (mtInv) mtInv.textContent = invStr;
 
-    setText('total-shares', totalShares);
-    const currency = typeof getCurrency === 'function' ? getCurrency() : '€';
-    setText('total-investment', totalInvestment.toFixed(2) + ' ' + currency);
-
-    try { updatePortfolioComposition(); } catch (e) { /* ignore */ }
+    try { initExposureToggle(); } catch(e) {}
+    try { updatePortfolioComposition(); } catch (e) {}
 }
 
 const EXPOSURE_COLORS = {
@@ -98,107 +118,178 @@ const EXPOSURE_COLORS = {
 const COUNTRY_COLORS = ['#a8a2ff', '#65d981', '#fbbf24', '#f87171', '#60a5fa', '#f472b6', '#34d399', '#c084fc', '#fb923c'];
 
 export function updatePortfolioComposition() {
-    const panel = document.getElementById('exposure-panel');
-    if (!panel) return;
+    const panel = getEl('exposure-panel');
+    const svg = getEl('exposure-chart-svg');
+    const tooltip = getEl('exposure-tooltip');
+    const legend = getEl('exposure-legend');
+    if (!panel || !svg || !legend) return;
 
-    const toggle = document.getElementById('exposure-toggle');
-    const mode = toggle?.dataset.mode || 'type';
-
+    const mode = panel.dataset.mode || 'symbol';
     const positionValues = [];
+    let totalValForHash = 0;
     for (const pos of Object.values(positions)) {
         if (!pos || !(pos.shares > 0)) continue;
         const lastPrice = pos.lastData?.price;
         const value = lastPrice ? lastPrice * pos.shares : (pos.costBasis || 0);
         if (value <= 0) continue;
+        totalValForHash += value;
         positionValues.push({
             symbol: pos.symbol,
+            ticker: pos.ticker || pos.symbol,
             name: pos.name,
-            type: pos.type || 'other',
+            type: pos.type || 'equity',
             country: (pos.raw?.country || 'OTH').toUpperCase(),
+            sector: pos.metadata?.assetProfile?.sector || pos.metadata?.summaryProfile?.sector || 'Unknown',
             value
         });
     }
+
+    const currentHash = `${mode}-${positionValues.length}-${totalValForHash.toFixed(0)}`;
+    if (currentHash === lastCompositionHash) return;
+    lastCompositionHash = currentHash;
 
     if (positionValues.length === 0) { panel.classList.add('empty'); return; }
     panel.classList.remove('empty');
 
     const total = positionValues.reduce((s, p) => s + p.value, 0);
     const buckets = new Map();
+    const bucketMeta = new Map();
 
     if (mode === 'type') {
-        for (const p of positionValues) {
-            const key = p.type;
-            buckets.set(key, (buckets.get(key) || 0) + p.value);
-        }
+        positionValues.forEach(p => {
+            buckets.set(p.type, (buckets.get(p.type) || 0) + p.value);
+            bucketMeta.set(p.type, { label: typeLabel(p.type), ticker: '' });
+        });
     } else if (mode === 'country') {
-        for (const p of positionValues) {
+        positionValues.forEach(p => {
             buckets.set(p.country, (buckets.get(p.country) || 0) + p.value);
-        }
+            bucketMeta.set(p.country, { label: p.country, ticker: '' });
+        });
+    } else if (mode === 'sector') {
+        positionValues.forEach(p => {
+            buckets.set(p.sector, (buckets.get(p.sector) || 0) + p.value);
+            bucketMeta.set(p.sector, { label: p.sector, ticker: '' });
+        });
     } else {
-        for (const p of positionValues) {
+        positionValues.forEach(p => {
             buckets.set(p.symbol, (buckets.get(p.symbol) || 0) + p.value);
-        }
+            bucketMeta.set(p.symbol, { label: p.name, ticker: p.ticker });
+        });
     }
 
     const sorted = Array.from(buckets.entries())
-        .map(([k, v]) => ({ key: k, value: v, pct: (v / total) * 100 }))
+        .map(([k, v]) => ({ key: k, value: v, pct: (v / total) * 100, ...bucketMeta.get(k) }))
         .sort((a, b) => b.value - a.value);
 
-    const bar = document.getElementById('exposure-bar');
-    const legend = document.getElementById('exposure-legend');
-    if (!bar || !legend) return;
-
+    // Filter colors
     const colorFor = (key, idx) => {
         if (mode === 'type') return EXPOSURE_COLORS[key] || EXPOSURE_COLORS.other;
         return COUNTRY_COLORS[idx % COUNTRY_COLORS.length];
     };
 
-    const labelFor = (key) => {
-        if (mode === 'type') {
-            return typeLabel(key);
-        }
-        if (mode === 'symbol') {
-            const n = positions[key]?.name || key;
-            return n.length > 22 ? n.slice(0, 21) + '…' : n;
-        }
-        return key;
-    };
+    // Render SVG
+    svg.innerHTML = '';
+    let currentAngle = -90; // Start at top
+    const centerX = 100, centerY = 100, radius = 85;
 
-    bar.innerHTML = sorted.map((b, i) =>
-        `<span style="width:${b.pct.toFixed(2)}%;background:${colorFor(b.key, i)};" title="${labelFor(b.key)} ${b.pct.toFixed(1)}%"></span>`
-    ).join('');
+    sorted.forEach((b, i) => {
+        let angle = (b.pct / 100) * 360;
+        if (angle >= 360) angle = 359.99; // Fix 100% slice case
 
-    const top = sorted.slice(0, 6);
-    legend.innerHTML = top.map((b, i) =>
-        `<div class="exposure-legend-row"><span class="swatch" style="background:${colorFor(b.key, i)};"></span><span class="label">${labelFor(b.key)}</span><span class="pct">${b.pct.toFixed(1)}%</span></div>`
-    ).join('');
+        const largeArc = angle > 180 ? 1 : 0;
+        const startRad = (currentAngle * Math.PI) / 180;
+        const endRad = ((currentAngle + angle) * Math.PI) / 180;
 
-}
+        const x1 = centerX + radius * Math.cos(startRad);
+        const y1 = centerY + radius * Math.sin(startRad);
+        const x2 = centerX + radius * Math.cos(endRad);
+        const y2 = centerY + radius * Math.sin(endRad);
 
-function initExposureToggle() {
-    const toggle = document.getElementById('exposure-toggle');
-    if (!toggle || toggle.dataset.bound) return;
-    toggle.dataset.bound = '1';
-    const modes = ['type', 'country', 'symbol'];
-    const labels = { type: 'By Type', country: 'By Country', symbol: 'By Position' };
-    toggle.addEventListener('click', () => {
-        const cur = toggle.dataset.mode || 'type';
-        const next = modes[(modes.indexOf(cur) + 1) % modes.length];
-        toggle.dataset.mode = next;
-        toggle.textContent = labels[next];
-        updatePortfolioComposition();
+        const pathData = [
+            `M ${centerX} ${centerY}`,
+            `L ${x1} ${y1}`,
+            `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+            'Z'
+        ].join(' ');
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', pathData);
+        path.setAttribute('fill', colorFor(b.key, i));
+        path.setAttribute('stroke', 'var(--bg-card)');
+        path.setAttribute('stroke-width', '2');
+        path.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s';
+        path.style.cursor = 'pointer';
+        path.style.transformOrigin = 'center';
+
+        path.addEventListener('mouseenter', () => {
+            path.style.transform = 'scale(1.06)';
+            path.style.filter = 'brightness(1.1) saturate(1.2)';
+            if (tooltip) {
+                const currency = getCurrency();
+                tooltip.innerHTML = `
+                    <div class="tt-ticker">${b.label} (${b.ticker || b.key})</div>
+                    <div class="tt-data">
+                        <div class="tt-val">${b.pct.toFixed(1)}%</div>
+                        <div class="tt-val">${b.value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ${currency}</div>
+                    </div>
+                `;
+                tooltip.hidden = false;
+            }
+        });
+
+        path.addEventListener('mousemove', (e) => {
+            if (tooltip) {
+                const rect = svg.getBoundingClientRect();
+                tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+                tooltip.style.top = (e.clientY - rect.top - 40) + 'px';
+            }
+        });
+
+        path.addEventListener('mouseleave', () => {
+            path.style.transform = 'scale(1)';
+            path.style.filter = 'none';
+            if (tooltip) tooltip.hidden = true;
+        });
+
+        svg.appendChild(path);
+        currentAngle += angle;
     });
+
+    // Render Legend
+    const top = sorted.slice(0, 10);
+    legend.innerHTML = top.map((b, i) =>
+        `<div class="exposure-legend-row">
+            <span class="swatch" style="background:${colorFor(b.key, i)};"></span>
+            <span class="label">${b.label}</span>
+            <span class="pct">${b.pct.toFixed(1)}%</span>
+        </div>`
+    ).join('');
 }
-if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', initExposureToggle);
-}
+
 
 export async function loadStocks() {
     const list = [];
+    let orders = {};
+    
+    // Fetch portfolio orders first
+    try {
+        const orderRes = await fetch('json/portfolio.json');
+        if (orderRes.ok) orders = await orderRes.json();
+    } catch (e) { console.error('Error loading portfolio.json', e); }
+
     for (const type of TYPE_ORDER) {
         try {
             const response = await fetch(`json/${type}.json`);
-            if (response.ok) list.push(...(await response.json()));
+            if (response.ok) {
+                const stocks = await response.json();
+                stocks.forEach(s => {
+                    if (orders[s.symbol]) {
+                        s.purchases = orders[s.symbol].purchases || [];
+                        s.sales = orders[s.symbol].sales || [];
+                    }
+                });
+                list.push(...stocks);
+            }
         } catch (error) { }
     }
     const byType = {};
@@ -207,7 +298,7 @@ export async function loadStocks() {
         byType[s.type].push(s);
     }
     for (const id of ['portfolio-tabs', 'general-tabs', 'suspended-tabs', 'mobile-portfolio-tabs', 'mobile-general-tabs', 'mobile-suspended-tabs']) {
-        const el = document.getElementById(id);
+        const el = getEl(id);
         if (el) el.innerHTML = '';
     }
 
@@ -230,7 +321,7 @@ export async function loadStocks() {
             portTitle.className = 'tab-type-title';
             portTitle.innerHTML = `<i class="${icon} type-icon"></i>${label}`;
             portSection.appendChild(portTitle);
-            document.getElementById('portfolio-tabs').appendChild(portSection);
+            getEl('portfolio-tabs').appendChild(portSection);
         }
         if (hasGeneral) {
             const genSection = document.createElement('div');
@@ -240,7 +331,7 @@ export async function loadStocks() {
             genTitle.className = 'tab-type-title';
             genTitle.innerHTML = `<i class="${icon} type-icon"></i>${label}`;
             genSection.appendChild(genTitle);
-            document.getElementById('general-tabs').appendChild(genSection);
+            getEl('general-tabs').appendChild(genSection);
         }
     }
     for (const s of list) {
@@ -277,14 +368,21 @@ export async function loadStocks() {
     for (const sym of Object.keys(positions)) {
         try { updateSectionDates(sym); } catch (e) { }
     }
-    const first = document.querySelector('.sidebar .tab');
+    // Open the first ticker in the Portfolio list by default. Fallback to General if Portfolio is empty.
+    const firstPortfolio = document.querySelector('#sidebar-portfolio .tab');
+    const firstGeneral = document.querySelector('#sidebar-market .tab');
+    const first = firstPortfolio || firstGeneral;
+
     if (first) {
+        // Ensure no other tabs or cards are active (fixes dual home-card + ticker-card view)
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.card').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+
         first.classList.add('active');
         const sym = first.dataset.symbol;
-        document.getElementById(`card-${sym}`)?.classList.add('active');
+        getEl(`card-${sym}`)?.classList.add('active');
         fetchActiveSymbol(true);
-    } else {
-
     }
     updatePortfolioSummary();
     initPortfolioAnalytics();
@@ -311,20 +409,22 @@ export async function batchPerformanceFetch(period) {
         const gotAnything = results && Object.keys(results).length > 0;
 
         for (const pos of Object.values(positions)) {
-            // Active symbol is handled by fetchActiveSymbol (detailed data + chart + signal).
-            // Skip it here so we never overwrite its lastData with stripped batch data.
-            if (pos.symbol === activeSymbol && pos.lastData?.timestamps?.length) continue;
-
             const data = results[pos.ticker];
             if (!data) {
-                // Si le batch a globalement marché mais ce ticker précis n'a rien renvoyé
-                // après tous les fallbacks de fetchYahooPeriodChanges → ticker mort.
                 if (gotAnything && pos.ticker && !pos.suspended) markTabAsSuspended(pos.symbol);
                 continue;
             }
 
             if (pos.suspended) unmarkTabAsSuspended(pos.symbol);
-            pos.lastData = { ...(pos.lastData || {}), ...data };
+
+            if (pos.symbol === activeSymbol && pos.lastData?.timestamps?.length) {
+                pos.lastData.price = data.price;
+                pos.lastData.change = data.change;
+                pos.lastData.changePercent = data.changePercent;
+                updateUI(pos.symbol, pos.lastData);
+            } else {
+                pos.lastData = { ...(pos.lastData || {}), ...data };
+            }
             updateSidebarPerformance(pos.symbol);
         }
     } catch (e) {
@@ -378,7 +478,7 @@ async function backgroundSuspendedScan() {
 // --- Advanced Portfolio Analytics ---
 
 export function initPortfolioAnalytics() {
-    const card = document.getElementById('card-portfolio');
+    const card = getEl('card-portfolio');
     if (!card) return;
 
     const btns = card.querySelectorAll('.card-tab-btn');
@@ -403,13 +503,13 @@ export function initPortfolioAnalytics() {
 async function refreshAnalyticsTab(tab) {
     switch(tab) {
         case 'portfolio-performance':
-            updatePerformanceChart();
+            renderPerformancePane();
             break;
         case 'portfolio-diversification':
-            updateDiversificationCharts();
+            renderDiversificationPane();
             break;
         case 'portfolio-dividends':
-            updateDividendTable();
+            renderDividendsPane();
             break;
     }
 }
@@ -419,9 +519,10 @@ async function fetchAllPortfolioMetadata() {
     if (symbols.length === 0) return;
 
     const { fetchYahooQuoteSummary } = await import('./yahoo-finance.js');
+    const modules = ['assetProfile', 'summaryProfile', 'calendarEvents', 'summaryDetail', 'defaultKeyStatistics'];
     const promises = symbols.map(async s => {
         if (positions[s].analyticsFetched) return;
-        const metadata = await fetchYahooQuoteSummary(s);
+        const metadata = await fetchYahooQuoteSummary(s, modules);
         if (metadata) {
             positions[s].metadata = metadata;
             positions[s].analyticsFetched = true;
@@ -431,289 +532,255 @@ async function fetchAllPortfolioMetadata() {
     await Promise.all(promises);
 }
 
-async function updateDiversificationCharts() {
-    await fetchAllPortfolioMetadata();
-    
-    const sectors = {};
-    const geo = {};
-    const assets = { Equity: 0, ETF: 0, Cash: 0, Bond: 0 };
-    
-    let totalValue = 0;
-    
-    for (const s in positions) {
-        const pos = positions[s];
-        if (pos.shares <= 0) continue;
-        
-        const price = pos.lastData?.price || pos.costBasis / pos.shares || 0;
-        const value = price * pos.shares;
-        totalValue += value;
-        
-        const type = pos.type === 'equity' ? 'Equity' : (pos.type === 'etf' ? 'ETF' : 'Other');
-        assets[type] = (assets[type] || 0) + value;
-        
-        const profile = pos.metadata?.assetProfile || pos.metadata?.summaryProfile;
-        if (profile) {
-            const sector = profile.sector || 'Unknown';
-            sectors[sector] = (sectors[sector] || 0) + value;
-            
-            const country = profile.country || pos.country || 'Other';
-            geo[country] = (geo[country] || 0) + value;
-        } else {
-            sectors['Unknown'] = (sectors['Unknown'] || 0) + value;
-            geo[pos.country || 'Other'] = (geo[pos.country || 'Other'] || 0) + value;
-        }
-    }
-
-    renderPieChart('chart-diversification-asset', assets);
-    renderPieChart('chart-diversification-geo', geo);
-    renderPieChart('chart-diversification-sector', sectors);
+function renderDiversificationPane() {
+    initExposureToggle();
+    updatePortfolioComposition();
+    fetchAllPortfolioMetadata().then(() => updatePortfolioComposition());
 }
 
-function renderPieChart(canvasId, dataMap) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-
-    const labels = Object.keys(dataMap);
-    const values = Object.values(dataMap);
-    
-    if (canvas.chart) {
-        canvas.chart.data.labels = labels;
-        canvas.chart.data.datasets[0].data = values;
-        canvas.chart.update();
-        return;
-    }
-
-    const colors = ['#a8a2ff', '#65d981', '#fbbf24', '#f87171', '#60a5fa', '#f472b6', '#34d399', '#c084fc', '#fb923c'];
-
-    canvas.chart = new Chart(canvas, {
-        type: 'doughnut',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: values,
-                backgroundColor: colors,
-                borderWidth: 0,
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right',
-                    labels: {
-                        color: '#cdd0e4',
-                        font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" },
-                        boxWidth: 8,
-                        usePointStyle: true
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(12, 12, 16, 0.95)',
-                    titleColor: '#a8a2ff',
-                    bodyColor: '#cdd0e4',
-                    borderColor: 'rgba(168, 162, 255, 0.2)',
-                    borderWidth: 1,
-                    callbacks: {
-                        label: (ctx) => {
-                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                            const val = ctx.raw;
-                            const pct = ((val / total) * 100).toFixed(1);
-                            return ` ${ctx.label}: ${pct}%`;
-                        }
-                    }
-                }
-            },
-            cutout: '70%'
-        }
-    });
-}
-
-async function updatePerformanceChart() {
-    const canvas = document.getElementById('portfolio-performance-chart');
-    if (!canvas) return;
-
+function renderPerformancePane() {
     const currency = typeof getCurrency === 'function' ? getCurrency() : '€';
-    
-    // 1. Calculate Summary Stats
-    let totalValue = 0;
-    let totalUnrealizedProfit = 0;
-    let totalRealizedProfit = 0;
-    let totalCostBasis = 0;
-    let bestPerf = { symbol: '', pct: -Infinity };
-    let worstPerf = { symbol: '', pct: Infinity };
-    
-    const activePositions = Object.keys(positions).filter(s => positions[s].shares > 0);
-    const historicalEntries = [];
+    const fmt = (n) => Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtSigned = (n) => (n >= 0 ? '+' : '') + fmt(n);
 
-    activePositions.forEach(s => {
-        const pos = positions[s];
-        const realized = pos.realizedPL || 0;
-        totalRealizedProfit += realized;
-
-        const price = pos.lastData?.price || (pos.costBasis / pos.shares) || 0;
-        const value = price * pos.shares;
-        const unrealized = value - pos.costBasis;
-
-        totalValue += value;
-        totalCostBasis += pos.costBasis;
-        totalUnrealizedProfit += unrealized;
-
-        const totalProfitForThis = realized + unrealized;
-        const pct = pos.costBasis > 0 ? (unrealized / pos.costBasis) * 100 : 0;
-
-        if (pct > bestPerf.pct) bestPerf = { symbol: s, pct };
-        if (pct < worstPerf.pct) worstPerf = { symbol: s, pct };
-
-        historicalEntries.push({ symbol: s, realized, unrealized, total: totalProfitForThis, pct, active: true });
-    });
-    
-    const totalProfit = totalUnrealizedProfit + totalRealizedProfit;
-
-    setText('portfolio-total-value', totalValue.toLocaleString() + ' ' + currency);
-    const profitEl = document.getElementById('portfolio-total-profit');
-    if (profitEl) {
-        profitEl.innerHTML = `
-            <div class="profit-breakdown">
-                <span class="${totalProfit >= 0 ? 'positive' : 'negative'}">${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} ${currency}</span>
-                <div class="profit-sub">
-                    <span title="Realized Profits">Rel: ${totalRealizedProfit.toFixed(2)}</span> | 
-                    <span title="Unrealized Profits">Unr: ${totalUnrealizedProfit.toFixed(2)}</span>
+    const renderRow = ({ symbol, name, pl, pct, tag }) => {
+        const sign = pl >= 0 ? 'positive' : 'negative';
+        const tagHtml = tag ? `<span class="perf-row-tag">${tag}</span>` : '';
+        return `
+            <div class="perf-row ${sign}" data-symbol="${symbol}">
+                <img class="perf-row-logo" src="img/icon/${symbol}.png" alt="" onerror="this.style.visibility='hidden'" />
+                <div class="perf-row-id">
+                    <span class="perf-row-name">${name} (${symbol})${tagHtml}</span>
+                </div>
+                <div class="perf-row-pl">
+                    <span class="perf-row-pl-amt ${sign}">${fmtSigned(pl)} ${currency}</span>
+                    <span class="perf-row-pl-pct ${sign}">${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%</span>
                 </div>
             </div>
         `;
-    }
-    
-    setText('portfolio-best-performer', bestPerf.symbol ? `${bestPerf.symbol} (+${bestPerf.pct.toFixed(1)}%)` : '--');
-    setText('portfolio-worst-performer', worstPerf.symbol ? `${worstPerf.symbol} (${worstPerf.pct.toFixed(1)}%)` : '--');
+    };
 
-    // Populate Historical List
-    const histList = document.getElementById('portfolio-historical-list');
-    if (histList) {
-        historicalEntries.sort((a, b) => b.total - a.total);
-        histList.innerHTML = historicalEntries.map(e => `
-            <div class="hist-entry active">
-                <div class="hist-main">
-                    <span class="hist-symbol">${e.symbol}</span>
-                </div>
-                <div class="hist-stats">
-                    <span class="hist-total ${e.total >= 0 ? 'positive' : 'negative'}">${e.total >= 0 ? '+' : ''}${e.total.toFixed(2)} ${currency}</span>
-                    <span class="hist-pct ${e.pct >= 0 ? 'positive' : 'negative'}">(${e.pct >= 0 ? '+' : ''}${e.pct.toFixed(1)}%)</span>
-                </div>
-            </div>
-        `).join('');
-    }
+    let totalValue = 0;
+    let totalCostBasis = 0;
+    let totalUnrealized = 0;
+    let totalRealized = 0;
+    let winningCapital = 0;
+    let losingCapital = 0;
+    let flatCapital = 0;
+    let winners = 0, losers = 0, flat = 0;
 
-    // 2. Chart Logic: Simple Bar Chart of Performance by Position
-    const labels = activePositions.map(s => s);
-    const performanceData = activePositions.map(s => {
+    const activeRows = [];
+    const closedRows = [];
+
+    for (const s in positions) {
         const pos = positions[s];
-        const price = pos.lastData?.price || (pos.shares > 0 ? (pos.costBasis / pos.shares) : 0);
-        const cost = pos.costBasis;
-        const value = price * pos.shares;
-        return cost > 0 ? ((value - cost) / cost) * 100 : 0;
-    });
+        const realized = pos.realizedPL || 0;
+        totalRealized += realized;
 
-    // Sort by performance
-    const combined = labels.map((l, i) => ({ label: l, value: performanceData[i] }))
-        .sort((a, b) => b.value - a.value);
-    
-    const sortedLabels = combined.map(c => c.label);
-    const sortedValues = combined.map(c => c.value);
+        if ((pos.shares || 0) > 0) {
+            const price = pos.lastData?.price || (pos.costBasis / pos.shares) || 0;
+            const value = price * pos.shares;
+            const unrealized = value - pos.costBasis;
+            const pct = pos.costBasis > 0 ? (unrealized / pos.costBasis) * 100 : 0;
 
-    if (canvas.chart) {
-        canvas.chart.data.labels = sortedLabels;
-        canvas.chart.data.datasets[0].data = sortedValues;
-        canvas.chart.data.datasets[0].backgroundColor = sortedValues.map(v => v >= 0 ? 'rgba(101, 217, 129, 0.4)' : 'rgba(248, 113, 113, 0.4)');
-        canvas.chart.data.datasets[0].borderColor = sortedValues.map(v => v >= 0 ? '#65d981' : '#f87171');
-        canvas.chart.update();
-    } else {
-        canvas.chart = new Chart(canvas, {
-            type: 'bar',
-            data: {
-                labels: sortedLabels,
-                datasets: [
-                    {
-                        label: 'Gain/Loss %',
-                        data: sortedValues,
-                        backgroundColor: sortedValues.map(v => v >= 0 ? 'rgba(101, 217, 129, 0.4)' : 'rgba(248, 113, 113, 0.4)'),
-                        borderColor: sortedValues.map(v => v >= 0 ? '#65d981' : '#f87171'),
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }
-                ]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: 'rgba(12, 12, 16, 0.95)',
-                        callbacks: {
-                            label: (ctx) => ` Performance: ${ctx.raw >= 0 ? '+' : ''}${ctx.raw.toFixed(2)}%`
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#6b7280', callback: (v) => v + '%' }
-                    },
-                    y: {
-                        grid: { display: false },
-                        ticks: { color: '#cdd0e4', font: { size: 11 } }
-                    }
-                }
-            }
-        });
+            totalValue += value;
+            totalCostBasis += pos.costBasis;
+            totalUnrealized += unrealized;
+
+            if (unrealized > 0.01) { winningCapital += value; winners++; }
+            else if (unrealized < -0.01) { losingCapital += value; losers++; }
+            else { flatCapital += value; flat++; }
+
+            activeRows.push({ symbol: s, name: pos.name || s, invested: pos.costBasis, exit: value, pl: unrealized, pct });
+        } else if ((pos.sales?.length || 0) > 0) {
+            const invested = (pos.purchases || []).reduce((sum, p) => sum + Math.abs(p.amount || 0), 0);
+            const received = (pos.sales || []).reduce((sum, p) => sum + (p.amount || 0), 0);
+            const pl = realized || (received - invested);
+            const pct = invested > 0 ? (pl / invested) * 100 : 0;
+            closedRows.push({ symbol: s, name: pos.name || s, invested, exit: received, pl, pct });
+        }
+    }
+
+    const totalPct = totalCostBasis > 0 ? (totalUnrealized / totalCostBasis) * 100 : 0;
+    const allTimePL = totalUnrealized + totalRealized;
+
+    setText('perf-total-value', formatCurrency(totalValue, currency));
+
+    const deltaEl = getEl('perf-total-delta');
+    if (deltaEl) {
+        const isPos = totalUnrealized >= 0;
+        deltaEl.className = 'perf-hero-delta ' + (isPos ? 'positive' : 'negative');
+        deltaEl.textContent = `${fmtSigned(totalUnrealized)} ${currency}   ${formatPct(totalPct)}`;
+    }
+
+    const bar = getEl('perf-pulse-bar');
+    if (bar) {
+        const total = winningCapital + losingCapital + flatCapital;
+        if (total > 0) {
+            const wPct = (winningCapital / total) * 100;
+            const lPct = (losingCapital / total) * 100;
+            const fPct = Math.max(0, 100 - wPct - lPct);
+            bar.innerHTML = `
+                <span class="pulse-win" style="width:${wPct.toFixed(2)}%"></span>
+                <span class="pulse-flat" style="width:${fPct.toFixed(2)}%"></span>
+                <span class="pulse-loss" style="width:${lPct.toFixed(2)}%"></span>
+            `;
+        } else {
+            bar.innerHTML = '';
+        }
+    }
+
+    const captionParts = [];
+    if (winners) captionParts.push(`${winners} winner${winners > 1 ? 's' : ''}`);
+    if (flat) captionParts.push(`${flat} flat`);
+    if (losers) captionParts.push(`${losers} loser${losers > 1 ? 's' : ''}`);
+    setText('perf-pulse-caption', captionParts.join('  ·  '));
+
+    const activeList = getEl('perf-positions');
+    if (activeList) {
+        activeRows.sort((a, b) => Math.abs(b.pl) - Math.abs(a.pl));
+        activeList.innerHTML = activeRows.length
+            ? activeRows.map(renderRow).join('')
+            : '<div class="perf-empty">No active positions</div>';
+    }
+    setText('perf-active-count', activeRows.length);
+
+    const closedSection = getEl('perf-closed-section');
+    const closedList = getEl('perf-closed');
+    if (closedSection && closedList) {
+        if (closedRows.length) {
+            closedRows.sort((a, b) => Math.abs(b.pl) - Math.abs(a.pl));
+            closedList.innerHTML = closedRows.map(renderRow).join('');
+            setText('perf-closed-count', closedRows.length);
+            closedSection.hidden = false;
+        } else {
+            closedSection.hidden = true;
+        }
+    }
+
+    const allTimeEl = getEl('perf-alltime');
+    if (allTimeEl) {
+        if (activeRows.length || closedRows.length) {
+            const sign = allTimePL >= 0 ? 'positive' : 'negative';
+            const segs = [];
+            if (Math.abs(totalUnrealized) > 0.01) segs.push(`unrealized <strong class="${totalUnrealized >= 0 ? 'positive' : 'negative'}">${fmtSigned(totalUnrealized)} ${currency}</strong>`);
+            if (Math.abs(totalRealized) > 0.01) segs.push(`realized <strong class="${totalRealized >= 0 ? 'positive' : 'negative'}">${fmtSigned(totalRealized)} ${currency}</strong>`);
+            allTimeEl.hidden = false;
+            allTimeEl.innerHTML = `
+                <div class="perf-alltime-label">All-Time Profit</div>
+                <div class="perf-alltime-value ${sign}">${fmtSigned(allTimePL)} ${currency}</div>
+                ${segs.length ? `<div class="perf-alltime-breakdown">${segs.join('  ·  ')}</div>` : ''}
+            `;
+        } else {
+            allTimeEl.hidden = true;
+        }
     }
 }
 
-async function updateDividendTable() {
-    await fetchAllPortfolioMetadata();
-    
-    const tbody = document.getElementById('dividend-table-body');
-    if (!tbody) return;
+async function renderDividendsPane() {
+    const currency = getCurrency();
+    const list = getEl('dividend-list');
 
-    const dividends = [];
+    await fetchAllPortfolioMetadata();
+
+    const totalEl = getEl('dividend-total');
+    const metaEl = getEl('dividend-meta');
+    if (!list) return;
+
+    const payers = [];
+    let totalIncome = 0;
+    let totalValue = 0;
+
     for (const s in positions) {
         const pos = positions[s];
-        if (pos.shares <= 0) continue;
+        if ((pos.shares || 0) <= 0) continue;
 
+        const summary = pos.metadata?.summaryDetail;
+        const stats = pos.metadata?.defaultKeyStatistics;
         const calendar = pos.metadata?.calendarEvents;
-        if (calendar && calendar.exDividendDate) {
-            const exDate = new Date(calendar.exDividendDate * 1000);
-            const payDate = calendar.dividendDate ? new Date(calendar.dividendDate * 1000) : null;
-            const amount = pos.metadata?.defaultKeyStatistics?.trailingAnnualDividendRate || 0;
-            
-            dividends.push({
+
+        const dividendRate = (typeof summary?.dividendRate === 'object' ? summary.dividendRate.raw : summary?.dividendRate)
+            || (typeof stats?.trailingAnnualDividendRate === 'object' ? stats.trailingAnnualDividendRate.raw : stats?.trailingAnnualDividendRate)
+            || 0;
+        const yieldRaw = (typeof summary?.dividendYield === 'object' ? summary.dividendYield.raw : summary?.dividendYield)
+            ?? (typeof summary?.trailingAnnualDividendYield === 'object' ? summary.trailingAnnualDividendYield.raw : summary?.trailingAnnualDividendYield)
+            ?? 0;
+        const yieldPct = yieldRaw * 100;
+
+        const price = pos.lastData?.price || (pos.costBasis / pos.shares) || 0;
+        const value = price * pos.shares;
+        totalValue += value;
+
+        if (dividendRate > 0) {
+            const exRaw = typeof calendar?.exDividendDate === 'object' ? calendar.exDividendDate.raw : calendar?.exDividendDate;
+            const payRaw = typeof calendar?.dividendDate === 'object' ? calendar.dividendDate.raw : calendar?.dividendDate;
+            const exDate = exRaw ? new Date(exRaw * 1000) : null;
+            const payDate = payRaw ? new Date(payRaw * 1000) : null;
+            const annualIncome = dividendRate * pos.shares;
+            totalIncome += annualIncome;
+            payers.push({
                 symbol: s,
-                exDate: exDate,
-                payDate: payDate,
-                amount: amount,
-                total: amount * pos.shares
+                name: pos.name || s,
+                yieldPct,
+                rate: dividendRate,
+                exDate,
+                payDate,
+                annualIncome
             });
         }
     }
 
-    dividends.sort((a, b) => a.exDate - b.exDate);
+    const avgYield = totalValue > 0 ? (totalIncome / totalValue) * 100 : 0;
 
-    if (dividends.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-dim);">No upcoming dividends found</td></tr>';
+    if (totalEl) totalEl.textContent = formatCurrency(totalIncome, currency);
+    if (metaEl) {
+        if (payers.length) {
+            metaEl.innerHTML = `<span>avg yield ${avgYield.toFixed(2)}%</span><span class="dividend-dot">·</span><span>${payers.length} payer${payers.length > 1 ? 's' : ''}</span>`;
+        } else {
+            metaEl.textContent = 'No dividend-paying positions';
+        }
+    }
+
+    if (payers.length === 0) {
+        list.innerHTML = '<div class="dividend-empty">No dividend-paying positions in your portfolio</div>';
         return;
     }
 
-    tbody.innerHTML = dividends.map(d => `
-        <tr>
-            <td><strong>${d.symbol}</strong></td>
-            <td>${d.exDate.toLocaleDateString()}</td>
-            <td>${d.payDate ? d.payDate.toLocaleDateString() : '--'}</td>
-            <td>${d.amount.toFixed(2)} ${getCurrency()}</td>
-            <td class="positive">+${d.total.toFixed(2)} ${getCurrency()}</td>
-        </tr>
-    `).join('');
+    payers.sort((a, b) => b.annualIncome - a.annualIncome);
+    const dateFmt = (d) => d ? d.toLocaleDateString(undefined, { day: '2-digit', month: 'short' }) : null;
+
+    list.innerHTML = payers.map(p => {
+        const exTag = p.exDate ? `<span class="dividend-row-tag">ex ${dateFmt(p.exDate)}</span>` : '';
+        const payTag = p.payDate ? `<span class="dividend-row-tag">pay ${dateFmt(p.payDate)}</span>` : '';
+        return `
+            <div class="dividend-row" data-symbol="${p.symbol}">
+                <img class="dividend-row-logo" src="img/icon/${p.symbol}.png" alt="" onerror="this.style.visibility='hidden'" />
+                <div class="dividend-row-id">
+                    <span class="dividend-row-name">${p.name} (${p.symbol})</span>
+                </div>
+                <div class="dividend-row-meta">
+                    <span class="dividend-row-yield">${p.yieldPct.toFixed(2)}%</span>
+                    ${exTag}${payTag}
+                </div>
+                <div class="dividend-row-amt positive">+${fmt(p.annualIncome)} ${currency}<span class="dividend-row-period">/yr</span></div>
+            </div>
+        `;
+    }).join('');
+}
+
+export function initExposureToggle() {
+    const panel = getEl('exposure-panel');
+    const buttons = document.querySelectorAll('.exposure-mode');
+    if (!panel || !buttons.length || panel.dataset.bound) return;
+    panel.dataset.bound = '1';
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            panel.dataset.mode = btn.dataset.mode;
+            updatePortfolioComposition();
+        });
+    });
 }
 

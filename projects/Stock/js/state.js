@@ -3,8 +3,8 @@ export const SETTINGS_STORAGE_KEY = 'nemeris_settings';
 const LEGACY_PROXY_STORAGE_KEY = 'nemeris_proxy_url';
 
 const defaultSettings = {
-    name: 'Mr. Léo Tosku',
-    pfp: 'img/photo/leot.png',
+    name: 'Investor',
+    pfp: '',
     currency: '€',
     proxyUrl: '',
     performanceViewerEnabled: true

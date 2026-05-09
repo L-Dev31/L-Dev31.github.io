@@ -771,7 +771,11 @@ export function initChart(symbol, positions) {
 
 export function updateChart(symbol, timestamps, prices, positions, _source, fullData) {
     const chart = positions[symbol]?.chart;
-    if (!chart || !timestamps?.length) return;
+    if (!chart) return;
+    if (!timestamps?.length) {
+        try { updateIndicatorSubcharts(symbol, [], positions); } catch (_) {}
+        return;
+    }
 
     const ts = timestamps;
     const opens = fullData?.opens ?? null;

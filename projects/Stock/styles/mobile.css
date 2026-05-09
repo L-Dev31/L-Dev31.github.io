@@ -64,7 +64,6 @@
         border-radius: 50%;
         overflow: hidden;
         border: 1px solid transparent;
-        transition: border-color 0.2s ease;
     }
 
     .bottom-nav-btn.active .nav-profile-photo-wrapper {
@@ -388,7 +387,6 @@
     .signal-labels,
     .signal-value,
     .signal-description,
-    .signal-disclaimer,
     .data-source-strip {
         padding: 0 var(--pad-card);
     }

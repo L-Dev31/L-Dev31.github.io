@@ -49,20 +49,36 @@
     }
 }
 
+.card.news-card .news-filter-group {
+    position: relative;
+    flex: 1;
+    min-width: 150px;
+}
+
 .card.news-card .news-label {
-    font-size: 11px;
-    color: var(--primary);
-    font-weight: 600;
+    position: absolute;
+    top: 6px;
+    left: 14px;
+    font-size: 8px;
+    color: var(--text-dark);
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.6;
 }
 
 .card.news-card .news-select {
-    padding: 10px 12px;
+    width: 100%;
+    padding: 22px 16px 10px;
     border-radius: var(--radius-sm);
-    border: 1px solid rgba(168, 162, 255, 0.1);
-    background: rgba(255, 255, 255, 0.02);
+    border: 2px solid rgba(168, 162, 255, 0.15);
+    background: transparent;
     color: var(--text-white);
     font-size: 13px;
+    outline: none;
+    transition: border-color var(--trans-fast);
 }
 
 .card.news-card .news-ticker-search {

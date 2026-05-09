@@ -7,17 +7,12 @@ import { updateSignal } from './signal-bot.js';
 import { setupNewsSearch } from './news.js';
 import { resolveTickerDetails, buildOnlineIconCandidates } from './ticker-catalog.js';
 import { handleImageAssetError } from './assets.js';
-
-const $elements = new Map();
-function getEl(id) {
-    if (!$elements.has(id)) $elements.set(id, document.getElementById(id));
-    return $elements.get(id);
-}
+import { getEl, formatCurrency, formatPct } from './utils.js';
 
 export { initChart }; // Re-export for portfolio.js
 
 export function createTab(stock, type) {
-    const t = document.getElementById('tab-template');
+    const t = getEl('tab-template');
     if (!t) return;
     
     // Create tab for Desktop Sidebar
@@ -37,7 +32,7 @@ export function createTab(stock, type) {
     }
 
     // Mobile Placement
-    if (document.getElementById('mobile-portfolio-tabs')) {
+    if (getEl('mobile-portfolio-tabs')) {
         const mobileTab = createTabElement(t, stock, type);
         if (isSuspended) {
             ensureSection('mobile-suspended-tabs', type)?.appendChild(mobileTab);
@@ -67,19 +62,20 @@ function createTabElement(template, stock, type) {
     img.onerror = () => handleImageAssetError(img, stock.ticker || stock.symbol, stock.market, false);
     
     const pos = positions[stock.symbol];
-    const baseName = pos?.name || stock.symbol;
+    const baseName = pos?.name || stock.name || stock.symbol;
+    const ticker = stock.ticker || stock.symbol;
     
     const tabNameEl = tab.querySelector('.tab-name');
-    tabNameEl.textContent = baseName;
+    tabNameEl.textContent = `${baseName} (${ticker})`;
     
     const calculated = calculateStockValues(stock);
-    tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `(Shares owned: ${calculated.shares})` : '';
+    tab.querySelector('.tab-shares').textContent = calculated.shares > 0 ? `${calculated.shares} shares` : '';
     
     return tab;
 }
 
 export function createCard(stock) {
-    const t = document.getElementById('view-template')
+    const t = getEl('view-template')
     if (!t) return
     const card = t.content.firstElementChild.cloneNode(true)
     card.id = `card-${stock.symbol}`
@@ -195,17 +191,18 @@ export function createCard(stock) {
         investmentTabBtn.style.display = hasEverInvested ? '' : 'none';
     }
 
+    const currency = getCurrency();
     if (calculated.shares > 0) {
         const displayInvestment = typeof calculated.costBasis === 'number' ? calculated.costBasis : Math.abs(calculated.investment || 0);
-        tds[1].textContent = `${displayInvestment.toFixed(2)} ${getCurrency()}`;
+        tds[1].textContent = formatCurrency(displayInvestment, currency);
         tds[2].textContent = '--';
         tds[3].textContent = '--';
         const displayInvestPerShare = calculated.shares ? (displayInvestment / calculated.shares) : 0;
-        tds[5].textContent = calculated.shares ? `${displayInvestPerShare.toFixed(2)} ${getCurrency()}` : '--';
+        tds[5].textContent = calculated.shares ? formatCurrency(displayInvestPerShare, currency) : '--';
         tds[6].textContent = '--';
         tds[7].textContent = '--';
     } else {
-        tds[1].textContent = `0.00 ${getCurrency()}`;
+        tds[1].textContent = formatCurrency(0, currency);
         tds[2].textContent = '--';
         tds[3].textContent = '--';
         tds[5].textContent = '--';
@@ -307,7 +304,7 @@ export function createCard(stock) {
     const nl = card.querySelector('.news-list');
     if (nl) nl.id = `news-list-${stock.symbol}`;
 
-    document.getElementById('cards-container')?.appendChild(card)
+    getEl('cards-container')?.appendChild(card)
     
     setupNewsSearch(stock.symbol);
 }
@@ -318,7 +315,7 @@ export function updateUI(symbol, data) {
     }
 
     try {
-        const cardRoot = document.getElementById(`card-${symbol}`);
+        const cardRoot = getEl(`card-${symbol}`);
         if (cardRoot) {
             const chartContainer = cardRoot.querySelector('.chart-container');
             if (chartContainer) chartContainer.classList.remove('empty');
@@ -352,37 +349,34 @@ export function updateUI(symbol, data) {
         updateChart(symbol, data.timestamps, data.prices, positions, data.source, data);
     }
 
-    const openEl = document.getElementById(`open-${symbol}`);
-    const highEl = document.getElementById(`high-${symbol}`);
-    const lowEl = document.getElementById(`low-${symbol}`);
-    const closeEl = document.getElementById(`close-${symbol}`);
+    const currency = getCurrency();
+    const openEl = getEl(`open-${symbol}`);
+    const highEl = getEl(`high-${symbol}`);
+    const lowEl = getEl(`low-${symbol}`);
+    const closeEl = getEl(`close-${symbol}`);
 
-    if (openEl) openEl.textContent = data.open ? data.open.toFixed(2) + ' ' + getCurrency() : '--';
-    if (highEl) highEl.textContent = data.high ? data.high.toFixed(2) + ' ' + getCurrency() : '--';
-    if (lowEl) lowEl.textContent = data.low ? data.low.toFixed(2) + ' ' + getCurrency() : '--';
-    if (closeEl) closeEl.textContent = data.price ? data.price.toFixed(2) + ' ' + getCurrency() : '--';
+    if (openEl) openEl.textContent = data.open ? formatCurrency(data.open, currency) : '--';
+    if (highEl) highEl.textContent = data.high ? formatCurrency(data.high, currency) : '--';
+    if (lowEl) lowEl.textContent = data.low ? formatCurrency(data.low, currency) : '--';
+    if (closeEl) closeEl.textContent = data.price ? formatCurrency(data.price, currency) : '--';
 
-    const perfEl = document.getElementById(`perf-${symbol}`);
+    const perfEl = getEl(`perf-${symbol}`);
     if (perfEl) {
         if (data.changePercent !== undefined) {
-            const changePercent = data.changePercent;
-            const change = data.change || 0;
-            const isPositive = change >= 0;
-
-            perfEl.textContent = `${isPositive ? '+' : ''}${changePercent.toFixed(2)}%`;
+            const isPositive = data.change >= 0;
+            perfEl.textContent = formatPct(data.changePercent);
             perfEl.className = `performance-value ${isPositive ? 'positive' : 'negative'}`;
             perfEl.style.display = '';
         } else {
             perfEl.textContent = '--';
             perfEl.className = 'performance-value';
-            perfEl.style.display = '';
         }
     }
 
-    const valueEl = document.getElementById(`value-${symbol}`);
-    const valuePerEl = document.getElementById(`value-per-${symbol}`);
-    const profitEl = document.getElementById(`profit-${symbol}`);
-    const profitPerEl = document.getElementById(`profit-per-${symbol}`);
+    const valueEl = getEl(`value-${symbol}`);
+    const valuePerEl = getEl(`value-per-${symbol}`);
+    const profitEl = getEl(`profit-${symbol}`);
+    const profitPerEl = getEl(`profit-per-${symbol}`);
 
     if (data.price && positions[symbol]) {
         const currentPrice = data.price;
@@ -406,33 +400,34 @@ export function updateUI(symbol, data) {
         } else {
             const totalValue = currentPrice * shares;
             const costBasis = positions[symbol].costBasis || 0;
+            const currency = getCurrency();
 
             if (valueEl) {
-                valueEl.textContent = totalValue.toFixed(2) + ' ' + getCurrency();
+                valueEl.textContent = formatCurrency(totalValue, currency);
                 valueEl.className = totalValue >= costBasis ? 'positive' : 'negative';
             }
 
             if (valuePerEl) {
-                valuePerEl.textContent = currentPrice.toFixed(2) + ' ' + getCurrency();
+                valuePerEl.textContent = formatCurrency(currentPrice, currency);
                 const perShareCost = shares ? costBasis / shares : 0;
                 valuePerEl.className = currentPrice >= perShareCost ? 'positive' : 'negative';
             }
 
             const totalProfit = totalValue - costBasis;
             if (profitEl) {
-                profitEl.textContent = `${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} ${getCurrency()}`;
+                profitEl.textContent = formatCurrency(totalProfit, currency);
                 profitEl.className = totalProfit >= 0 ? 'positive' : 'negative';
             }
 
             const profitPerShare = currentPrice - (shares ? (costBasis / shares) : 0);
             if (profitPerEl) {
-                profitPerEl.textContent = `${profitPerShare >= 0 ? '+' : ''}${profitPerShare.toFixed(2)} ${getCurrency()}`;
+                profitPerEl.textContent = formatCurrency(profitPerShare, currency);
                 profitPerEl.className = profitPerShare >= 0 ? 'positive' : 'negative';
             }
         }
     }
 
-    const updateEl = document.getElementById(`update-center-${symbol}`);
+    const updateEl = getEl(`update-center-${symbol}`);
     if (updateEl) {
         let timeString = '--';
         let latencyMin = null;
@@ -467,18 +462,18 @@ export function updateUI(symbol, data) {
         updateTabTitle(symbol);
     }
     try {
-        const investEl = document.getElementById(`invest-${symbol}`);
-        const investPerEl = document.getElementById(`invest-per-${symbol}`);
+        const investEl = getEl(`invest-${symbol}`);
+        const investPerEl = getEl(`invest-per-${symbol}`);
+        const currency = getCurrency();
         if (investEl) {
             const inv = positions[symbol].costBasis || Math.abs(positions[symbol].investment || 0);
-            investEl.textContent = `${inv.toFixed(2)} ${getCurrency()}`;
-            investEl.classList.remove('positive');
-            investEl.classList.remove('negative');
+            investEl.textContent = formatCurrency(inv, currency);
+            investEl.classList.remove('positive', 'negative');
         }
         if (investPerEl) {
             const costBasis = positions[symbol].costBasis || Math.abs(positions[symbol].investment || 0);
             const invPer = (positions[symbol].shares && positions[symbol].shares > 0) ? (costBasis / positions[symbol].shares) : 0;
-            investPerEl.textContent = positions[symbol].shares ? `${invPer.toFixed(2)} ${getCurrency()}` : '--';
+            investPerEl.textContent = positions[symbol].shares ? formatCurrency(invPer, currency) : '--';
         }
     } catch(e) { /* ignore if cells missing */ }
     
@@ -526,7 +521,7 @@ export function updateSidebarPerformance(symbol) {
         
         const valEl = perfWrapper.querySelector('.perf-value');
         if (valEl) {
-            valEl.textContent = `${isPositive ? '+' : ''}${data.changePercent.toFixed(2)}%`;
+            valEl.textContent = formatPct(data.changePercent);
         }
         const perEl = perfWrapper.querySelector('.perf-period');
         if (perEl) {
@@ -546,30 +541,30 @@ function clearChartData(symbol) {
 }
 
 function resetPricePerformanceAndUpdate(symbol) {
-    const openEl = document.getElementById(`open-${symbol}`);
-    const highEl = document.getElementById(`high-${symbol}`);
-    const lowEl = document.getElementById(`low-${symbol}`);
-    const closeEl = document.getElementById(`close-${symbol}`);
+    const openEl = getEl(`open-${symbol}`);
+    const highEl = getEl(`high-${symbol}`);
+    const lowEl = getEl(`low-${symbol}`);
+    const closeEl = getEl(`close-${symbol}`);
 
     if (openEl) openEl.textContent = '--';
     if (highEl) highEl.textContent = '--';
     if (lowEl) lowEl.textContent = '--';
     if (closeEl) closeEl.textContent = '--';
 
-    const perfEl = document.getElementById(`perf-${symbol}`);
+    const perfEl = getEl(`perf-${symbol}`);
     if (perfEl) {
         perfEl.textContent = '--';
         perfEl.className = 'performance-value';
     }
 
-    const updateEl = document.getElementById(`update-center-${symbol}`);
+    const updateEl = getEl(`update-center-${symbol}`);
     if (updateEl) updateEl.textContent = '--';
 }
 
 function resetSignalDisplay(symbol, description) {
-    const signalCursor = document.getElementById(`signal-cursor-${symbol}`);
-    const signalValue = document.getElementById(`signal-value-${symbol}`);
-    const signalDescription = document.getElementById(`signal-description-${symbol}`);
+    const signalCursor = getEl(`signal-cursor-${symbol}`);
+    const signalValue = getEl(`signal-value-${symbol}`);
+    const signalDescription = getEl(`signal-description-${symbol}`);
 
     if (signalCursor) signalCursor.style.left = '50%';
     if (signalValue) {
@@ -585,10 +580,10 @@ export function resetSymbolDisplay(symbol) {
     clearChartData(symbol);
     resetPricePerformanceAndUpdate(symbol);
 
-    const valueEl = document.getElementById(`value-${symbol}`);
-    const valuePerEl = document.getElementById(`value-per-${symbol}`);
-    const profitEl = document.getElementById(`profit-${symbol}`);
-    const profitPerEl = document.getElementById(`profit-per-${symbol}`);
+    const valueEl = getEl(`value-${symbol}`);
+    const valuePerEl = getEl(`value-per-${symbol}`);
+    const profitEl = getEl(`profit-${symbol}`);
+    const profitPerEl = getEl(`profit-per-${symbol}`);
 
     if (valueEl) valueEl.textContent = '--'
     if (valuePerEl) valuePerEl.textContent = '--'
@@ -652,7 +647,7 @@ export function updateTabTitle(symbol) {
 }
 
 export function updateCardTitle(symbol) {
-    const titleEl = document.getElementById(`course-title-${symbol}`);
+    const titleEl = getEl(`course-title-${symbol}`);
     if (!titleEl) return;
     titleEl.textContent = `Stock Price`;
 }
@@ -660,7 +655,7 @@ export function updateCardTitle(symbol) {
 export function updateSectionDates(symbol) {
     const dateStr = getBestDataDate(symbol);
     ['course', 'investment', 'details', 'signal'].forEach(key => {
-        const title = document.getElementById(`${key}-title-${symbol}`);
+        const title = getEl(`${key}-title-${symbol}`);
         const dateEl = title?.nextElementSibling;
         if (dateEl?.classList.contains('section-date')) dateEl.textContent = dateStr || '';
     });
@@ -693,13 +688,13 @@ function getBestDataDate(symbol) {
 }
 
 function ensureSection(containerId, type) {
-    const container = document.getElementById(containerId);
+    const container = getEl(containerId);
     if (!container) return null;
     
     const prefix = containerId.replace('tabs', 'section');
     const sectionId = `${prefix}-${type}`;
     
-    let section = document.getElementById(sectionId);
+    let section = getEl(sectionId);
     if (!section) {
         section = document.createElement('div');
         section.className = 'tab-type-section';
@@ -775,29 +770,29 @@ export function getActiveSymbol() {
 }
 
 export function openTerminalCard(prefill = '') {
-    const card = document.getElementById('card-terminal');
-    const input = document.getElementById('terminal-input');
+    const card = getEl('card-terminal');
+    const input = getEl('terminal-input');
     if (!card || !input) return;
     document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     try { document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); } catch(e) {}
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
-    try { document.getElementById('open-terminal-btn')?.classList.add('active'); } catch(e) {}
+    try { getEl('open-terminal-btn')?.classList.add('active'); } catch(e) {}
     input.value = prefill;
     card.style.display = '';
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);
-    try { const out = document.getElementById('terminal-output'); if (out) out.scrollTop = out.scrollHeight; } catch(e) {}
+    try { const out = getEl('terminal-output'); if (out) out.scrollTop = out.scrollHeight; } catch(e) {}
 }
 
 export function closeTerminalCard() {
-    const card = document.getElementById('card-terminal');
+    const card = getEl('card-terminal');
     if (!card) return;
     card.classList.remove('active');
     card.style.display = '';
     card.setAttribute('aria-hidden', 'true');
-    try { document.getElementById('open-terminal-btn')?.classList.remove('active'); } catch(e) {}
+    try { getEl('open-terminal-btn')?.classList.remove('active'); } catch(e) {}
 }
 
 export async function openCustomSymbol(symbol, type = 'equity', itemData = null) {
@@ -812,7 +807,7 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
         const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
         if (tab) {
             tab.classList.add('active');
-            const card = document.getElementById(`card-${symbol}`);
+            const card = getEl(`card-${symbol}`);
             if (card) card.classList.add('active');
         }
         fetchActiveSymbol(true);
@@ -887,7 +882,7 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
     const tab = document.querySelector(`.tab[data-symbol="${symbol}"]`);
     if (tab) {
         tab.classList.add('active');
-        const card = document.getElementById(`card-${symbol}`);
+        const card = getEl(`card-${symbol}`);
         if (card) card.classList.add('active');
     }
 
@@ -895,12 +890,12 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
 }
 
 export function initMobileSidebar() {
-    const homeBtn = document.getElementById('bottom-nav-home');
+    const homeBtn = getEl('bottom-nav-home');
     if (homeBtn) {
         homeBtn.onclick = () => {
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById('card-home')?.classList.add('active');
+            getEl('card-home')?.classList.add('active');
             setBottomNavActive('bottom-nav-home');
         };
     }
@@ -908,7 +903,7 @@ export function initMobileSidebar() {
 
 export function setBottomNavActive(id, clearSidebar = true) {
     document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(id)?.classList.add('active');
+    getEl(id)?.classList.add('active');
     
     if (clearSidebar) document.body.classList.remove('sidebar-open');
 }

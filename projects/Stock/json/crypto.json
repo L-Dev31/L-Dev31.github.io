@@ -6,10 +6,7 @@
     "isin": null,
     "country": "CRYPTO",
     "currency": "USD",
-    "type": "crypto",
-    "shares": 0,
-    "investment": 0.00,
-    "purchaseDate": null
+    "type": "crypto"
   },
   {
     "symbol": "ETH",
@@ -18,10 +15,7 @@
     "isin": null,
     "country": "CRYPTO",
     "currency": "USD",
-    "type": "crypto",
-    "shares": 0,
-    "investment": 0.00,
-    "purchaseDate": null
+    "type": "crypto"
   },
   {
     "symbol": "SOL",
@@ -30,10 +24,7 @@
     "isin": null,
     "country": "CRYPTO",
     "currency": "USD",
-    "type": "crypto",
-    "shares": 0,
-    "investment": 0.00,
-    "purchaseDate": null
+    "type": "crypto"
   },
   {
     "symbol": "XRP",
@@ -42,10 +33,7 @@
     "isin": null,
     "country": "CRYPTO",
     "currency": "USD",
-    "type": "crypto",
-    "shares": 0,
-    "investment": 0.00,
-    "purchaseDate": null
+    "type": "crypto"
   },
   {
     "symbol": "DOGE",

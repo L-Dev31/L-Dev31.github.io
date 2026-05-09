@@ -1,5 +1,6 @@
 import { periodToDays } from './constants.js';
 import { fetchTickerNewsItems, fetchSymbolNewsItems } from './command/news.js';
+import { getEl } from './utils.js';
 
 let positions = {};
 let lastPageNews = [];
@@ -101,7 +102,7 @@ export async function fetchCardNews(symbol, force = false, limit = 50, days = 7,
             positions[symbol].news = filtered;
             positions[symbol].lastNewsFetch = now;
             updateNewsUI(symbol, filtered);
-            const card = document.getElementById('card-news');
+            const card = getEl('card-news');
             if (card?.classList.contains('active') && currentNewsSymbol === symbol) updateNewsPageList(filtered);
             return filtered;
         }
@@ -112,7 +113,7 @@ export async function fetchCardNews(symbol, force = false, limit = 50, days = 7,
 export function startCardNewsAutoRefresh(symbol) {
     if (cardRefreshIntervals[symbol]) clearInterval(cardRefreshIntervals[symbol]);
     cardRefreshIntervals[symbol] = setInterval(() => {
-        const card = document.getElementById(`card-${symbol}`);
+        const card = getEl(`card-${symbol}`);
         const pane = card?.querySelector('[data-pane="news"]');
         if (card?.classList.contains('active') && pane?.classList.contains('active')) fetchCardNews(symbol, true);
     }, 60000);
@@ -123,10 +124,9 @@ export function stopCardNewsAutoRefresh(symbol) {
 }
 
 export function updateNewsUI(symbol, items, filter = null) {
-    const el = document.getElementById(`news-list-${symbol}`);
+    const el = getEl(`news-list-${symbol}`);
     if (!el) return;
-    const upd = document.querySelector(`#card-${symbol} .news-last-update`);
-    if (upd) upd.textContent = new Date().toLocaleTimeString('en-US');
+    // Removed news last update noise
     if (filter === null) {
         const inp = document.querySelector(`#card-${symbol} .news-search-input`);
         if (inp) filter = inp.value;
@@ -152,7 +152,7 @@ export function setupNewsSearch(symbol) {
 
 export function updateNewsPageList(items, opts = {}) {
     const { replaceCache = true, skipSort = false } = opts;
-    const el = document.getElementById('news-page-feed-list');
+    const el = getEl('news-page-feed-list');
     if (!el) return;
     el.innerHTML = '';
     if (!items?.length) { el.innerHTML = '<div class="news-empty">No news found</div>'; if (replaceCache) lastPageNews = []; return; }
@@ -163,12 +163,11 @@ export function updateNewsPageList(items, opts = {}) {
         const tagLabels = collectTags(item, false);
         el.appendChild(buildNewsAnchorItem(item, { className: 'news-item', tagLabels }));
     });
-    const upd = document.getElementById('news-last-update');
-    if (upd) upd.textContent = new Date().toLocaleTimeString('en-US');
+    // Removed news last update noise
 }
 
 export async function openNewsPage(symbol, options = {}) {
-    const card = document.getElementById('card-news');
+    const card = getEl('card-news');
     if (!card) return;
     const activeTab = document.querySelector('.tab.active');
     lastActiveSymbol = activeTab?.dataset.symbol || null;
@@ -177,18 +176,18 @@ export async function openNewsPage(symbol, options = {}) {
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
     document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('open-news-feed')?.classList.add('active');
+    getEl('open-news-feed')?.classList.add('active');
     populateSuggestions();
-    const inp = document.getElementById('news-ticker-search');
+    const inp = getEl('news-ticker-search');
     if (inp) inp.value = (options.search || '').trim().toUpperCase();
     setupNewsFilters();
     await loadNews();
     if (newsRefreshInterval) clearInterval(newsRefreshInterval);
-    newsRefreshInterval = setInterval(() => { if (document.getElementById('card-news')?.classList.contains('active')) loadNews(); }, 60000);
+    newsRefreshInterval = setInterval(() => { if (getEl('card-news')?.classList.contains('active')) loadNews(); }, 60000);
 }
 
 function populateSuggestions() {
-    const el = document.getElementById('ticker-suggestions');
+    const el = getEl('ticker-suggestions');
     if (!el) return;
     el.innerHTML = '';
     Object.keys(positions).forEach(sym => {
@@ -197,15 +196,15 @@ function populateSuggestions() {
         d.className = 'ticker-suggestion-item';
         d.dataset.symbol = sym;
         d.innerHTML = `<span class="ticker-symbol">${pos.ticker || sym}</span>${pos.name || ''}`;
-        d.addEventListener('click', () => { const inp = document.getElementById('news-ticker-search'); if (inp) { inp.value = pos.ticker || sym; el.classList.remove('active'); loadNews(); } });
+        d.addEventListener('click', () => { const inp = getEl('news-ticker-search'); if (inp) { inp.value = pos.ticker || sym; el.classList.remove('active'); loadNews(); } });
         el.appendChild(d);
     });
 }
 
 function setupNewsFilters() {
-    const inp = document.getElementById('news-ticker-search');
-    const sug = document.getElementById('ticker-suggestions');
-    const art = document.getElementById('news-article-search');
+    const inp = getEl('news-ticker-search');
+    const sug = getEl('ticker-suggestions');
+    const art = getEl('news-article-search');
     if (inp && sug) {
         inp.addEventListener('focus', () => sug.classList.add('active'));
         inp.addEventListener('blur', () => setTimeout(() => sug.classList.remove('active'), 150));
@@ -227,8 +226,8 @@ function setupNewsFilters() {
 }
 
 async function loadNews() {
-    const el = document.getElementById('news-page-feed-list');
-    const inp = document.getElementById('news-ticker-search');
+    const el = getEl('news-page-feed-list');
+    const inp = getEl('news-ticker-search');
     const manual = (inp?.value || '').trim().toUpperCase();
     if (!el) return;
     el.innerHTML = '<div class="news-loading"><i class="fa-solid fa-spinner fa-spin"></i><span id="news-loading-text">Loading news...</span></div>';
@@ -241,7 +240,7 @@ async function loadNews() {
         if (!tickers.length) { el.innerHTML = '<div class="news-empty">Add assets or search for a ticker.</div>'; lastPageNews = []; return; }
         let all = [];
         let completed = 0;
-        const updateProgress = () => { const t = document.getElementById('news-loading-text'); if (t) t.textContent = `Loading... ${completed}/${tickers.length}`; };
+        const updateProgress = () => { const t = getEl('news-loading-text'); if (t) t.textContent = `Loading... ${completed}/${tickers.length}`; };
         if (tickers.length > 1) updateProgress();
 
         const uniqueItems = new Map();
@@ -280,16 +279,16 @@ async function loadNews() {
 }
 
 export function closeNewsPage() {
-    const card = document.getElementById('card-news');
+    const card = getEl('card-news');
     if (!card) return;
     card.classList.remove('active');
     card.setAttribute('aria-hidden', 'true');
     currentNewsSymbol = null;
     if (newsRefreshInterval) { clearInterval(newsRefreshInterval); newsRefreshInterval = null; }
-    document.getElementById('open-news-feed')?.classList.remove('active');
+    getEl('open-news-feed')?.classList.remove('active');
     if (lastActiveSymbol) {
         document.querySelector(`.tab[data-symbol="${lastActiveSymbol}"]`)?.classList.add('active');
-        document.getElementById(`card-${lastActiveSymbol}`)?.classList.add('active');
+        getEl(`card-${lastActiveSymbol}`)?.classList.add('active');
         lastActiveSymbol = null;
     }
 }
