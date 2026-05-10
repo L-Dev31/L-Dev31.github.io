@@ -574,25 +574,6 @@ function resetSignalDisplay(symbol, description) {
     if (signalDescription) signalDescription.textContent = description;
 }
 
-export function resetSymbolDisplay(symbol) {
-    if (!positions[symbol]) return
-
-    clearChartData(symbol);
-    resetPricePerformanceAndUpdate(symbol);
-
-    const valueEl = getEl(`value-${symbol}`);
-    const valuePerEl = getEl(`value-per-${symbol}`);
-    const profitEl = getEl(`profit-${symbol}`);
-    const profitPerEl = getEl(`profit-per-${symbol}`);
-
-    if (valueEl) valueEl.textContent = '--'
-    if (valuePerEl) valuePerEl.textContent = '--'
-    if (profitEl) profitEl.textContent = '--'
-    if (profitPerEl) profitPerEl.textContent = '--'
-
-    resetSignalDisplay(symbol, 'Running technical analysis...');
-}
-
 export function clearPeriodDisplay(symbol) {
     if (!positions[symbol]) return;
     clearChartData(symbol);
@@ -711,6 +692,23 @@ function ensureSection(containerId, type) {
 }
 
 const SUSPENDED_KEY_PREFIX = 'nemeris_suspended_';
+const SUSPEND_RESET_FLAG = 'nemeris_suspended_reset_v1';
+
+// One-shot migration: a previous version of backgroundSuspendedScan suspended every ticker
+// when it ran on a closed market (1d/1d range = single null candle). Wipe the poisoned state
+// once so the fixed scan can re-determine suspension on the next successful spark batch.
+(function clearPoisonedSuspensionState() {
+    try {
+        if (localStorage.getItem(SUSPEND_RESET_FLAG)) return;
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith(SUSPENDED_KEY_PREFIX)) keysToRemove.push(k);
+        }
+        keysToRemove.forEach(k => localStorage.removeItem(k));
+        localStorage.setItem(SUSPEND_RESET_FLAG, '1');
+    } catch { /* ignore */ }
+})();
 
 export function isSymbolSuspendedInStorage(symbol) {
     try { return localStorage.getItem(SUSPENDED_KEY_PREFIX + symbol) === '1'; }

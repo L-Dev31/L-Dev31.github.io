@@ -13,8 +13,6 @@
     font-size: 0.75rem;
 }
 
-.term-cmd { color: var(--text-white); font-weight: 500; }
-
 .card.terminal-card {
     display: none;
     background: var(--terminal-bg);

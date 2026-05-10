@@ -143,7 +143,6 @@
 }
 
 .card.explorer-card .explorer-select {
-    padding: 22px 16px 10px;
     border-radius: var(--radius-sm);
     border: 2px solid rgba(168, 162, 255, 0.15);
     background: transparent;

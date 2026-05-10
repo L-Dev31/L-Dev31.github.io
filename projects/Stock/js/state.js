@@ -1,10 +1,9 @@
 // STATE
 export const SETTINGS_STORAGE_KEY = 'nemeris_settings';
-const LEGACY_PROXY_STORAGE_KEY = 'nemeris_proxy_url';
 
 const defaultSettings = {
-    name: 'Investor',
-    pfp: '',
+    name: 'Nemeris User',
+    pfp: 'img/icon/favicon.png',
     currency: '€',
     proxyUrl: '',
     performanceViewerEnabled: true
@@ -56,7 +55,6 @@ export function setGlobalPeriod(p) { globalPeriod = p; }
 export let mainFetchController = null;
 export function setMainFetchController(c) { mainFetchController = c; }
 export let fastPollTimer = null;
-export function setFastPollTimer(t) { fastPollTimer = t; }
 export let globalRefreshTimer = null;
 export function setGlobalRefreshTimer(t) { globalRefreshTimer = t; }
 

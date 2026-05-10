@@ -40,41 +40,9 @@
     --trans-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Base Utility Classes */
-.flex-row {
-    display: flex;
-    align-items: center;
-    gap: var(--gap-md);
-}
-
 .bottom-nav {
     display: none;
 }
-
-.flex-col {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap-md);
-}
-
-.grid-2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--gap-md);
-}
-
-.m-0 {
-    margin: 0 !important;
-}
-
-.p-0 {
-    padding: 0 !important;
-}
-
-.w-full {
-    width: 100%;
-}
-
 
 .card.active,
 body.sidebar-open .sidebar {
@@ -206,6 +174,38 @@ hr {
     margin: 16px 0;
 }
 
+.user-typing-wrap {
+    position: relative;
+}
+
+.user-typing-label {
+    position: absolute;
+    top: 6px;
+    left: 14px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-dark);
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 10;
+    margin: 0;
+}
+
+.user-typing {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: 2px solid rgba(168, 162, 255, 0.15);
+    border-radius: var(--radius-sm);
+    color: var(--text-white);
+    font: 13px inherit;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
 input[type="text"],
 input[type="number"],
 input[type="search"],
@@ -229,6 +229,13 @@ input:focus,
 textarea:focus {
     border-color: var(--primary);
     background: transparent;
+}
+
+.user-typing,
+.user-typing:focus,
+.user-typing:hover {
+    border-color: rgba(168, 162, 255, 0.15) !important;
+    transition: none !important;
 }
 
 input::placeholder {
@@ -273,7 +280,7 @@ input[type="range"]::-moz-range-thumb {
 select {
     display: block;
     width: 100%;
-    padding: 9px 28px 9px 12px;
+    padding: 22px 28px 10px 12px;
     background: rgba(255, 255, 255, 0.03) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
     border: 1px solid rgba(168, 162, 255, 0.15);
     border-radius: 0;
@@ -311,10 +318,6 @@ select option {
 }
 
 .hidden {
-    display: none !important;
-}
-
-.mobile-only {
     display: none !important;
 }
 
@@ -425,7 +428,7 @@ select option {
 
 .search-input {
     width: 100%;
-    padding: 22px 16px 10px 42px !important;
+    padding: 11px 16px 11px 42px !important;
     border-radius: var(--radius-sm);
     border: 2px solid rgba(168, 162, 255, 0.15);
     background: transparent;

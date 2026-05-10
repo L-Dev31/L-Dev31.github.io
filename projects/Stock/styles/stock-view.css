@@ -112,12 +112,6 @@
     color: #8a8da3;
 }
 
-.benchmark-badge {
-    font-size: 11px;
-    font-weight: 600;
-}
-
-
 .chart-empty-state {
     position: absolute;
     inset: 0;
@@ -388,14 +382,6 @@
     font-weight: 700;
 }
 
-.card-name-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-light);
-    margin-top: 8px;
-    text-align: center;
-}
-
 .table-container {
     overflow: hidden;
     border-radius: var(--radius-md);
@@ -455,12 +441,6 @@
     letter-spacing: 0.2px;
 }
 
-.perf-hero-cost {
-    font-size: 11px;
-    color: var(--text-dark);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.3px;
-}
 
 .perf-pulse {
     margin: 0 0 28px;
@@ -683,51 +663,6 @@
 }
 
 .perf-alltime-breakdown strong {
-    font-weight: 600;
-}
-
-.sub-section-title {
-    font-size: 12px;
-    color: var(--text-dark);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-/* Diversification Pane */
-.allocation-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: rgba(168, 162, 255, 0.08);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    margin-bottom: 24px;
-}
-
-.allocation-stat {
-    background: var(--bg-dark);
-    padding: 18px 12px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.allocation-stat-value {
-    font-size: clamp(18px, 2vw, 22px);
-    font-weight: 600;
-    color: var(--text-white);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
-}
-
-.allocation-stat-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-dark);
     font-weight: 600;
 }
 
@@ -1061,15 +996,6 @@
 
     .perf-row-flow {
         padding-left: 0;
-    }
-
-    .allocation-stats {
-        grid-template-columns: repeat(2, 1fr);
-        margin: 0 var(--pad-card) 20px;
-    }
-
-    .allocation-stat {
-        padding: 14px 10px;
     }
 
     .exposure-panel {

@@ -30,7 +30,7 @@
             <div class="profile-header-top">
                 <img src="" alt="Profile" class="profile-photo" id="profile-pfp">
                 <div class="profile-info">
-                    <h1 id="profile-name">Investor</h1>
+                    <h1 id="profile-name">Nemeris User</h1>
                     <p>Positions held: <span id="total-positions">0</span></p>
                     <p>Shares held: <span id="total-shares">0</span></p>
                     <p>Total investment: <span id="total-investment">--</span></p>
@@ -292,7 +292,7 @@
                 <div class="profile-header-top">
                     <img src="" alt="Profile" class="profile-photo">
                     <div class="profile-info">
-                        <h1 id="mobile-profile-name">Investor</h1>
+                        <h1 id="mobile-profile-name">Nemeris User</h1>
                         <p>Positions held: <span id="mobile-total-positions">0</span></p>
                         <p>Shares held: <span id="mobile-total-shares">0</span></p>
                         <p>Total investment: <span id="mobile-total-investment">--</span></p>
@@ -314,11 +314,14 @@
             <div class="card-content">
                 <div class="card-tab-pane active" data-pane="settings-general">
                     <div class="settings-group">
-                        <input id="settings-proxy-url" class="settings-input" type="url"
-                            placeholder="https://my-worker.dev" />
+                        <div class="user-typing-wrap">
+                            <label class="user-typing-label" for="settings-proxy-url">Worker URL</label>
+                            <input id="settings-proxy-url" class="user-typing" type="url"
+                                placeholder="https://my-worker.dev" />
+                        </div>
                     </div>
                     <div class="settings-group">
-                        <label class="settings-label" for="settings-performance-viewer">Sidebar Performance Viewer</label>
+                        <label class="settings-label-toggle" for="settings-performance-viewer">Sidebar Performance Viewer</label>
                         <div class="settings-toggle-wrapper">
                             <label class="switch">
                                 <input type="checkbox" id="settings-performance-viewer" />
@@ -329,7 +332,6 @@
                 </div>
                 <div class="card-tab-pane" data-pane="settings-profile">
                     <div class="settings-group pfp-upload-group">
-                        <label class="settings-label">Profile Image</label>
                         <div class="pfp-upload-container">
                             <label for="settings-user-pfp-file" class="pfp-upload-label">
                                 <img id="settings-pfp-preview" src="" alt="" class="pfp-preview-img" />
@@ -342,8 +344,10 @@
                         </div>
                     </div>
                     <div class="settings-group">
-                        <label class="settings-label" for="settings-user-name">Profile Name</label>
-                        <input id="settings-user-name" class="settings-input" type="text" placeholder="Your Name" />
+                        <div class="user-typing-wrap">
+                            <label class="user-typing-label" for="settings-user-name">Profile Name</label>
+                            <input id="settings-user-name" class="user-typing" type="text" placeholder="Your Name" />
+                        </div>
                     </div>
                 </div>
                 <div class="settings-actions" id="settings-actions-bar" style="display: none; justify-content: flex-end;">

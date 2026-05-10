@@ -19,7 +19,6 @@
     flex-direction: column;
     gap: 8px;
     scrollbar-width: none;
-    -ms-overflow-style: none;
 }
 
 .sidebar-scroll::-webkit-scrollbar {
@@ -366,24 +365,6 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-}
-
-.tab-name-text {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex: 1;
-}
-
-.tab-trend-info {
-    font-family: 'Inter', sans-serif;
-    white-space: nowrap;
-    margin-left: 6px;
-    font-size: 10px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 3px;
 }
 
 .tab-shares {

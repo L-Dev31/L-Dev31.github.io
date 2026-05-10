@@ -402,8 +402,7 @@ export async function batchPerformanceFetch(period) {
 
     isBatchFetching = true;
     try {
-        console.log(`[Batch Performance] Fetching ${period} for all ${tickers.length} tickers...`);
-        const results = await fetchYahooPeriodChanges(tickers, period);
+const results = await fetchYahooPeriodChanges(tickers, period);
 
         const activeSymbol = typeof getActiveSymbol === 'function' ? getActiveSymbol() : null;
         const gotAnything = results && Object.keys(results).length > 0;
@@ -448,24 +447,24 @@ async function backgroundSuspendedScan() {
         const yahooSymbols = batch.map(b => b.yahoo);
         let results;
         try {
-            results = await fetchYahooSparkBatch(yahooSymbols, '1d', '1d');
+            // 5d/1d range so weekends and holidays still surface valid candles.
+            // 1d/1d returned a single null candle on closed markets → false-positive suspensions.
+            results = await fetchYahooSparkBatch(yahooSymbols, '5d', '1d');
         } catch { results = null; }
 
         if (results) {
-            // Map yahoo-symbol → a un résultat non vide ?
             const alive = new Map();
             for (const r of results) {
                 const hasData = r?.response?.[0]?.indicators?.quote?.[0]?.close?.some(v => v != null);
                 if (r?.symbol) alive.set(r.symbol.toUpperCase(), !!hasData);
             }
-            // Si Yahoo a renvoyé au moins un résultat dans ce batch, l'absence d'un ticker
-            // est un signal fiable qu'il est mort/délisté → on suspend.
             const batchAnswered = results.length > 0;
             for (const { symbol, yahoo } of batch) {
                 const isAlive = alive.get(yahoo.toUpperCase());
                 if (isAlive === true) unmarkTabAsSuspended(symbol);
-                else if (isAlive === false) markTabAsSuspended(symbol);
-                else if (batchAnswered) markTabAsSuspended(symbol); // absent → mort
+                // isAlive === false (Yahoo entry but every close is null over 5 days) → still ambiguous
+                // (could be a long holiday week or transient API issue). Don't suspend on that signal.
+                else if (batchAnswered && isAlive === undefined) markTabAsSuspended(symbol); // absent from response → delisted
             }
         }
 

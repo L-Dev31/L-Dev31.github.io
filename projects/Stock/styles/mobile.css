@@ -403,14 +403,20 @@
     }
 
     /* Standard inputs */
-    input:not([type="checkbox"]):not([type="radio"]),
+    input:not([type="checkbox"]):not([type="radio"]):not(.user-typing):not(.search-input),
     select,
-    textarea,
-    .search-input,
-    .settings-input {
+    textarea:not(.user-typing) {
         min-height: 44px;
         font-size: 16px !important;
         padding: 10px 14px;
+    }
+
+    .user-typing {
+        font-size: 16px !important;
+    }
+
+    .search-input {
+        font-size: 16px !important;
     }
 
     .select-wrapper select {

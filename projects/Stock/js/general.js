@@ -4,7 +4,7 @@ import { setPositions as setNewsPositions, setupNewsSearch, startCardNewsAutoRef
 import './terminal.js'
 
 import { DEAD_ERROR_CODES, periodToDays } from './constants.js'
-import { positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, fastPollTimer, setFastPollTimer, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings } from './state.js'
+import { positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, fastPollTimer, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings } from './state.js'
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching } from './portfolio.js'
 import { updateUI, clearPeriodDisplay, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance, initMobileSidebar, setBottomNavActive } from './ui.js'
 import { getEl, formatCurrency, formatPct } from './utils.js'
@@ -41,7 +41,7 @@ function fillSettingsForm(settings = getUserSettings()) {
 
 function applyUserSettings(settings = getUserSettings()) {
     const nameEls = [getEl('profile-name'), getEl('mobile-profile-name')];
-    nameEls.forEach(el => { if (el) el.textContent = settings.name || 'Investor'; });
+    nameEls.forEach(el => { if (el) el.textContent = settings.name || 'Nemeris User'; });
 
     const pfpEls = document.querySelectorAll('.profile-photo, .nav-profile-photo');
     pfpEls.forEach(el => { 
