@@ -69,7 +69,7 @@
     display: flex;
     justify-content: space-between;
     font-size: 10px;
-    color: var(--explorer-muted);
+    color: #6b7280;
     gap: 6px;
     flex-wrap: wrap;
 }
@@ -154,7 +154,7 @@
 }
 
 .card.explorer-card .explorer-select:focus { border-color: var(--primary); }
-.card.explorer-card .explorer-select option { background: var(--explorer-bg); color: var(--text-white); }
+.card.explorer-card .explorer-select option { background: var(--bg-dark); color: var(--text-white); }
 
 .card.explorer-card .explorer-list {
     flex: 1;
@@ -168,7 +168,7 @@
     justify-content: center;
     gap: 10px;
     height: 200px;
-    color: var(--explorer-muted);
+    color: #6b7280;
     font-size: 13px;
 }
 
@@ -178,7 +178,7 @@
     align-items: center;
     justify-content: center;
     height: 200px;
-    color: var(--explorer-muted);
+    color: #6b7280;
     font-size: 13px;
     text-align: center;
 }
@@ -242,7 +242,7 @@
 }
 
 .card.explorer-card .explorer-item-ticker {
-    color: var(--explorer-muted);
+    color: #6b7280;
     font-size: 11px;
     font-weight: 500;
     margin-top: 2px;
@@ -307,7 +307,7 @@
 
 .card.explorer-card .explorer-signal-score {
     font-size: 10px;
-    color: var(--explorer-muted);
+    color: #6b7280;
 }
 
 .card.explorer-card .explorer-pagination {
@@ -317,7 +317,7 @@
     gap: 14px;
     padding: 14px 28px;
     border-top: 1px solid rgba(168, 162, 255, 0.08);
-    background: var(--explorer-bg);
+    background: var(--bg-dark);
 }
 
 .card.explorer-card .explorer-page-btn {
@@ -342,7 +342,7 @@
 .card.explorer-card .explorer-page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
 .card.explorer-card .explorer-page-info {
-    color: var(--explorer-muted);
+    color: #6b7280;
     font-size: 12px;
     min-width: 70px;
     text-align: center;

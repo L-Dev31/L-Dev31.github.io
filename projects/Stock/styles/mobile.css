@@ -38,7 +38,7 @@
         justify-content: center;
         cursor: pointer;
         padding: 0;
-        min-height: 0;
+        min-height: 44px;
     }
 
     .bottom-nav-btn.profile-nav-btn {
@@ -450,8 +450,14 @@
         color: var(--text-dark);
         font: 500 13px inherit;
         padding: 12px;
+        min-height: 44px;
         display: flex;
         align-items: center;
         gap: 10px;
+    }
+
+    .tool-btn {
+        min-height: 44px;
+        padding: 10px 12px;
     }
 }

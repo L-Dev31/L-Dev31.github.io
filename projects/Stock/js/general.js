@@ -438,8 +438,12 @@ document.addEventListener('click', e => {
     if (!btn) return;
     const card = btn.closest('.card');
     if (!card) return;
-    card.querySelectorAll('.card-tab-btn').forEach(b => b.classList.remove('active'));
+    card.querySelectorAll('.card-tab-btn').forEach(b => {
+        b.classList.remove('active');
+        if (b.hasAttribute('role')) b.setAttribute('aria-selected', 'false');
+    });
     btn.classList.add('active');
+    if (btn.hasAttribute('role')) btn.setAttribute('aria-selected', 'true');
     const targetPaneId = btn.dataset.target;
     card.querySelectorAll('.card-tab-pane').forEach(p => p.classList.remove('active'));
     const targetPane = card.querySelector(`.card-tab-pane[data-pane="${targetPaneId}"]`);

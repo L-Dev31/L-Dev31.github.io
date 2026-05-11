@@ -26,11 +26,12 @@
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <div class="sidebar" id="sidebar">
+        <div class="sidebar-scroll">
         <div class="profile-header">
             <div class="profile-header-top">
                 <img src="" alt="Profile" class="profile-photo" id="profile-pfp">
                 <div class="profile-info">
-                    <h1 id="profile-name">Nemeris User</h1>
+                    <p class="profile-name" id="profile-name">Nemeris User</p>
                     <p>Positions held: <span id="total-positions">0</span></p>
                     <p>Shares held: <span id="total-shares">0</span></p>
                     <p>Total investment: <span id="total-investment">--</span></p>
@@ -46,7 +47,6 @@
             <button id="open-settings-btn" class="tool-btn" title="Settings"><i
                     class="fa-solid fa-gear"></i>Settings</button>
         </div>
-        <div class="sidebar-scroll">
             <div class="sidebar-section" id="sidebar-portfolio">
                 <h3 class="sidebar-section-title"><i class="fa-solid fa-briefcase"></i> My Portfolio
                     <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs"
@@ -110,7 +110,7 @@
                     <div class="terminal-input-row" aria-hidden="false">
                         <span class="terminal-prompt">USER&gt;</span>
                         <input id="terminal-input" class="terminal-input" type="text" aria-label="Terminal input"
-                            autocomplete="off" />
+                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
                     </div>
                 </div>
             </div>
@@ -221,13 +221,13 @@
         </div>
         <div class="card portfolio-card" id="card-portfolio" role="document" aria-hidden="true">
             <h3 class="section-title"><i class="fa-solid fa-briefcase"></i> Portfolio Overview</h3>
-            <div class="card-tabs-nav">
-                <button class="card-tab-btn active" data-target="portfolio-performance">Performance</button>
-                <button class="card-tab-btn" data-target="portfolio-diversification">Diversification</button>
-                <button class="card-tab-btn" data-target="portfolio-dividends">Dividends</button>
+            <div class="card-tabs-nav" role="tablist" aria-label="Portfolio sections">
+                <button class="card-tab-btn active" data-target="portfolio-performance" role="tab" id="tab-portfolio-performance" aria-controls="pane-portfolio-performance" aria-selected="true">Performance</button>
+                <button class="card-tab-btn" data-target="portfolio-diversification" role="tab" id="tab-portfolio-diversification" aria-controls="pane-portfolio-diversification" aria-selected="false">Diversification</button>
+                <button class="card-tab-btn" data-target="portfolio-dividends" role="tab" id="tab-portfolio-dividends" aria-controls="pane-portfolio-dividends" aria-selected="false">Dividends</button>
             </div>
             <div class="card-content">
-                <div class="card-tab-pane active" data-pane="portfolio-performance">
+                <div class="card-tab-pane active" data-pane="portfolio-performance" role="tabpanel" id="pane-portfolio-performance" aria-labelledby="tab-portfolio-performance">
                     <div class="perf-hero">
                         <div class="perf-hero-value" id="perf-total-value">--</div>
                         <div class="perf-hero-delta" id="perf-total-delta">--</div>
@@ -254,7 +254,7 @@
                         <div class="perf-positions perf-positions--closed" id="perf-closed"></div>
                     </div>
                 </div>
-                <div class="card-tab-pane" data-pane="portfolio-diversification">
+                <div class="card-tab-pane" data-pane="portfolio-diversification" role="tabpanel" id="pane-portfolio-diversification" aria-labelledby="tab-portfolio-diversification">
                     <div class="exposure-panel" id="exposure-panel" data-mode="symbol" aria-label="Portfolio composition">
                         <div class="exposure-modes" role="tablist" aria-label="Allocation view">
                             <button class="exposure-mode active" data-mode="symbol" role="tab">By Position</button>
@@ -264,7 +264,9 @@
                         </div>
                         <div class="exposure-content">
                             <div class="exposure-chart-container">
-                                <svg id="exposure-chart-svg" viewBox="0 0 200 200" class="exposure-chart-svg">
+                                <svg id="exposure-chart-svg" viewBox="0 0 200 200" class="exposure-chart-svg"
+                                    role="img" aria-labelledby="exposure-chart-title">
+                                    <title id="exposure-chart-title">Portfolio allocation donut chart</title>
                                     <circle cx="100" cy="100" r="80" fill="rgba(255,255,255,0.02)"></circle>
                                 </svg>
                                 <div id="exposure-tooltip" class="exposure-tooltip" hidden></div>
@@ -274,7 +276,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-tab-pane" data-pane="portfolio-dividends">
+                <div class="card-tab-pane" data-pane="portfolio-dividends" role="tabpanel" id="pane-portfolio-dividends" aria-labelledby="tab-portfolio-dividends">
                     <div class="dividend-hero">
                         <div class="dividend-hero-label">Annual Dividends</div>
                         <div class="dividend-hero-value" id="dividend-total">—</div>
@@ -292,7 +294,7 @@
                 <div class="profile-header-top">
                     <img src="" alt="Profile" class="profile-photo">
                     <div class="profile-info">
-                        <h1 id="mobile-profile-name">Nemeris User</h1>
+                        <p class="profile-name" id="mobile-profile-name">Nemeris User</p>
                         <p>Positions held: <span id="mobile-total-positions">0</span></p>
                         <p>Shares held: <span id="mobile-total-shares">0</span></p>
                         <p>Total investment: <span id="mobile-total-investment">--</span></p>

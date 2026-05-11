@@ -152,8 +152,9 @@
 .terminal-input {
     color: var(--text-white);
     background: transparent;
-    border: none;
-    padding: 2px 8px 2px 4px;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 0 0 8px !important;
     width: 100%;
     font-family: "JetBrains Mono", monospace;
     font-size: 13px;

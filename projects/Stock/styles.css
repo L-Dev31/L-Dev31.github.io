@@ -7,7 +7,7 @@
     --bg-card: #1e1e24;
     --bg-main: #18181c;
     --bg-dark: #121218;
-    --color-positive: #65d981;
+    --color-positive: #4ade80;
     --color-negative: #f87171;
     --color-warning: #fbbf24;
 
@@ -20,12 +20,6 @@
     --b-hover: 1px solid rgba(168, 162, 255, 0.2);
     --bg-glass: rgba(255, 255, 255, 0.02);
     --bg-glass-hover: rgba(255, 255, 255, 0.04);
-
-    /* Contextual Colors */
-    --news-muted: #6b7280;
-    --news-bg: #1e1e24;
-    --explorer-muted: #6b7280;
-    --explorer-bg: #121218;
 
     /* Spacing & Layout Tokens */
     --gap-xs: 4px;
@@ -46,7 +40,7 @@
 
 .card.active,
 body.sidebar-open .sidebar {
-    animation: globalFadeIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: globalFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes globalFadeIn {
@@ -283,7 +277,7 @@ select {
     padding: 22px 28px 10px 12px;
     background: rgba(255, 255, 255, 0.03) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
     border: 1px solid rgba(168, 162, 255, 0.15);
-    border-radius: 0;
+    border-radius: var(--radius-sm);
     color: var(--text-white);
     font: 13px inherit;
     outline: none;

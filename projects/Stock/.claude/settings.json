@@ -19,7 +19,11 @@
       "Bash(node --check js/yahoo-finance.js)",
       "Bash(node --check js/portfolio.js)",
       "Bash(git -C \"c:/Users/gigabyte/Documents/GitHub/L-Dev31.github.io\" log -p --all -S \"leot.png\" -- projects/Stock/js/state.js)",
-      "Bash(node --check js/ui.js)"
+      "Bash(node --check js/ui.js)",
+      "Read(//c/Users/gigabyte/.claude/skills/ui-ux-pro-max/**)",
+      "Bash(python scripts/search.py \"fintech trading terminal bloomberg dark dashboard\" --design-system -p \"Nemeris\" -f markdown)",
+      "Bash(python scripts/search.py \"accessibility touch-target focus keyboard data-table\" --domain ux -n 10)",
+      "Bash(python scripts/search.py \"chart real-time financial line candle\" --domain chart -n 6)"
     ]
   }
 }
