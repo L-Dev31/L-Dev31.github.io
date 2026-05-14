@@ -70,5 +70,14 @@
     "country": "FR",
     "currency": "EUR",
     "type": "equity"
+  },
+  {
+    "symbol": "ALODC",
+    "ticker": "ALODC.PA",
+    "name": "Omer-Decugis & Cie",
+    "isin": "FR0014003T71",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity"
   }
 ]

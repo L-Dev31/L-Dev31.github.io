@@ -24,6 +24,8 @@ const getPriceHash = (prices) => {
 };
 
 const PERIOD_LABELS = {
+    '1H': 'over 1 hour',
+    '4H': 'over 4 hours',
     '1D': 'over 1 day',
     '1W': 'over 1 week',
     '1M': 'over 1 month',
@@ -37,6 +39,8 @@ const PERIOD_LABELS = {
 };
 
 const HORIZON_MAP = {
+    '1H': { label: 'Micro Term', desc: 'Scalp (1 Hour)' },
+    '4H': { label: 'Micro Term', desc: 'Scalp (4 Hours)' },
     '1D': { label: 'Very Short Term', desc: 'Intraday (24h)' },
     '1W': { label: 'Short Term', desc: 'Swing (1 Week)' },
     '1M': { label: 'Medium Term', desc: 'Swing (1 Month)' },
@@ -52,6 +56,8 @@ const HORIZON_MAP = {
 // Adaptive indicator config per candle granularity.
 // volScale normalizes raw ATR%/price by candle horizon (intraday ATR is much smaller than yearly).
 const PERIOD_INDICATOR_CONFIG = {
+    '1H': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
+    '4H': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
     '1D': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
     '1W': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },
     '1M': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [20, 50, 200], momentumPeriod: 10, atrPeriod: 14, macdNormFactor: 0.005, volScale: 1 },

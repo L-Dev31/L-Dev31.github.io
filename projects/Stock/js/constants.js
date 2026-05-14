@@ -34,6 +34,6 @@ export function typeIcon(type) {
 }
 
 export function periodToDays(period) {
-    const map = { '1D': 1, '1W': 7, '1M': 30, '3M': 90, '6M': 180, '1Y': 365, '3Y': 1095, '5Y': 1825, 'MAX': 36500 };
+    const map = { '1H': 1, '4H': 1, '1D': 1, '1W': 7, '1M': 30, '3M': 90, '6M': 180, '1Y': 365, '3Y': 1095, '5Y': 1825, 'MAX': 36500 };
     return map[(period || '').toUpperCase()] || 7;
 }

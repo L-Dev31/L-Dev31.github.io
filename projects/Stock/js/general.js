@@ -8,6 +8,8 @@ import { positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, 
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching } from './portfolio.js'
 import { updateUI, clearPeriodDisplay, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance, initMobileSidebar, setBottomNavActive } from './ui.js'
 import { getEl, formatCurrency, formatPct } from './utils.js'
+import { Store } from './store.js'
+import { QuantEngine } from './quant-engine.js'
 
 // Re-export for other modules
 export { fetchActiveSymbol };
@@ -465,10 +467,10 @@ document.addEventListener('click', e => {
     }
 });
 
-document.getElementById('cards-container')?.addEventListener('click', async e => {
-    const b = e.target.closest('.period-btn');
-    if (!b) return;
-    const p = b.dataset.period;
+document.getElementById('cards-container')?.addEventListener('change', async e => {
+    const sel = e.target.closest('.period-select');
+    if (!sel) return;
+    const p = sel.value;
 
     // Update global state
     setGlobalPeriod(p);
@@ -478,10 +480,9 @@ document.getElementById('cards-container')?.addEventListener('click', async e =>
         positions[sym].currentPeriod = p;
     });
 
-    // Update all period buttons in the UI for consistency
-    document.querySelectorAll('.period-btn').forEach(btn => {
-        if (btn.dataset.period === p) btn.classList.add('active');
-        else btn.classList.remove('active');
+    // Update all period dropdowns in the UI for consistency
+    document.querySelectorAll('.period-select').forEach(dropdown => {
+        dropdown.value = p;
     });
 
     // Update active card's labels
@@ -564,7 +565,41 @@ window.addEventListener('load', async () => {
     } catch (err) { /* ignore */ }
 
     initMobileSidebar();
+    initCardA11ySync();
 });
+
+function initCardA11ySync() {
+    const syncCard = (card) => {
+        const active = card.classList.contains('active');
+        card.setAttribute('aria-hidden', active ? 'false' : 'true');
+        if (active) card.removeAttribute('inert');
+        else card.setAttribute('inert', '');
+    };
+
+    const observer = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+            if (m.attributeName === 'class') syncCard(m.target);
+        }
+    });
+
+    const watchCard = (card) => {
+        if (card.__a11ySynced) return;
+        card.__a11ySynced = true;
+        observer.observe(card, { attributes: true, attributeFilter: ['class'] });
+        syncCard(card);
+    };
+
+    document.querySelectorAll('.card').forEach(watchCard);
+
+    const cardsContainer = getEl('cards-container') || document.body;
+    new MutationObserver((mutations) => {
+        for (const m of mutations) {
+            for (const node of m.addedNodes) {
+                if (node.nodeType === 1 && node.classList?.contains('card')) watchCard(node);
+            }
+        }
+    }).observe(cardsContainer, { childList: true, subtree: true });
+}
 
 getEl('bottom-nav-home')?.addEventListener('click', () => {
     openHomeCard();
@@ -648,6 +683,35 @@ getEl('settings-save')?.addEventListener('click', async () => {
     if (actionBar) actionBar.style.display = 'none';
 
     refreshUiAfterSettingsSave();
+});
+
+// Data Management Listeners
+getEl('settings-export-data')?.addEventListener('click', () => {
+    const backup = {
+        settings: getUserSettings(),
+        positions: positions,
+        timestamp: new Date().toISOString()
+    };
+    Store.exportData(backup, `nemeris_backup_${new Date().toISOString().split('T')[0]}.json`);
+});
+
+getEl('settings-import-data')?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+        const imported = await Store.importData(file);
+        if (imported.settings) saveUserSettings(imported.settings);
+        if (imported.positions) {
+            // We'll store the imported positions in a specific key
+            localStorage.setItem('nemeris_imported_positions', JSON.stringify(imported.positions));
+        }
+        
+        setSettingsStatus('Backup imported! Reloading...', 'success');
+        setTimeout(() => window.location.reload(), 1500);
+    } catch (err) {
+        setSettingsStatus('Error importing backup: ' + err.message, 'error');
+    }
 });
 
 // Instant PFP Preview

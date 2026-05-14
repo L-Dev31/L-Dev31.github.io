@@ -19,8 +19,8 @@ export async function goToTicker(options = {}) {
 
     const group = document.getElementById(`periods-${symbol}`);
     if (group) {
-        group.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
-        group.querySelector(`.period-btn[data-period="${period}"]`)?.classList.add('active');
+        const sel = group.querySelector('.period-select');
+        if (sel) sel.value = period;
     }
 
     return { ok: true, symbol };

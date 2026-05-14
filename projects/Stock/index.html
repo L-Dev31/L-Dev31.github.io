@@ -5,20 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nemeris</title>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="styles/sidebar.css" />
-    <link rel="stylesheet" href="styles/card-tabs.css" />
-    <link rel="stylesheet" href="styles/terminal.css" />
-    <link rel="stylesheet" href="styles/signals.css" />
-    <link rel="stylesheet" href="styles/stock-view.css" />
 
-    <link rel="stylesheet" href="styles/news.css" />
-    <link rel="stylesheet" href="styles/explorer.css" />
-    <link rel="stylesheet" href="styles/settings.css" />
-    <link rel="stylesheet" href="styles/mobile.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://use.fontawesome.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="styles.css">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+
     <link rel="icon" href="img/icon/favicon.png" type="image/png">
 </head>
 
@@ -27,26 +27,26 @@
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-scroll">
-        <div class="profile-header">
-            <div class="profile-header-top">
-                <img src="" alt="Profile" class="profile-photo" id="profile-pfp">
-                <div class="profile-info">
-                    <p class="profile-name" id="profile-name">Nemeris User</p>
-                    <p>Positions held: <span id="total-positions">0</span></p>
-                    <p>Shares held: <span id="total-shares">0</span></p>
-                    <p>Total investment: <span id="total-investment">--</span></p>
+            <div class="profile-header">
+                <div class="profile-header-top">
+                    <img src="" alt="Profile" class="profile-photo" id="profile-pfp">
+                    <div class="profile-info">
+                        <p class="profile-name" id="profile-name">Nemeris User</p>
+                        <p>Positions held: <span id="total-positions">0</span></p>
+                        <p>Shares held: <span id="total-shares">0</span></p>
+                        <p>Total investment: <span id="total-investment">--</span></p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="tools-bar" id="tools-actions">
-            <button id="open-terminal-btn" class="tool-btn"><i class="fa-solid fa-terminal"></i>Terminal</button>
-            <button id="open-news-feed" class="tool-btn"><i class="fa-solid fa-newspaper"></i>News</button>
-            <button id="open-explorer" class="tool-btn"><i
-                    class="fa-solid fa-magnifying-glass-chart"></i>Explorer</button>
-            <button id="open-portfolio-btn" class="tool-btn"><i class="fa-solid fa-chart-pie"></i>Portfolio</button>
-            <button id="open-settings-btn" class="tool-btn" title="Settings"><i
-                    class="fa-solid fa-gear"></i>Settings</button>
-        </div>
+            <div class="tools-bar" id="tools-actions">
+                <button id="open-terminal-btn" class="tool-btn"><i class="fa-solid fa-terminal"></i>Terminal</button>
+                <button id="open-news-feed" class="tool-btn"><i class="fa-solid fa-newspaper"></i>News</button>
+                <button id="open-explorer" class="tool-btn"><i
+                        class="fa-solid fa-magnifying-glass-chart"></i>Explorer</button>
+                <button id="open-portfolio-btn" class="tool-btn"><i class="fa-solid fa-chart-pie"></i>Portfolio</button>
+                <button id="open-settings-btn" class="tool-btn" title="Settings"><i
+                        class="fa-solid fa-gear"></i>Settings</button>
+            </div>
             <div class="sidebar-section" id="sidebar-portfolio">
                 <h3 class="sidebar-section-title"><i class="fa-solid fa-briefcase"></i> My Portfolio
                     <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs"
@@ -77,7 +77,7 @@
 
         <div id="cards-container">
             <div class="card home-card active" id="card-home" role="document" aria-hidden="false">
-                
+
                 <div class="sidebar-section" id="mobile-sidebar-portfolio">
                     <h3 class="sidebar-section-title"><i class="fa-solid fa-briefcase"></i> My Portfolio
                         <button class="section-toggle" aria-expanded="true" aria-controls="mobile-portfolio-tabs"
@@ -166,27 +166,17 @@
                             <label class="explorer-label">Period</label>
                             <div class="select-wrapper">
                                 <select id="explorer-period" class="explorer-select">
+                                    <option value="1H">1 Hour</option>
+                                    <option value="4H">4 Hours</option>
                                     <option value="1D">1 Day</option>
                                     <option value="1W">1 Week</option>
                                     <option value="1M">1 Month</option>
                                     <option value="3M">3 Months</option>
                                     <option value="6M">6 Months</option>
                                     <option value="1Y">1 Year</option>
-                                    <option value="YTD">YTD</option>
-                                </select>
-                                <i class="fa-solid fa-chevron-down select-chevron"></i>
-                            </div>
-                        </div>
-                        <div class="explorer-filter-group">
-                            <label class="explorer-label">Sector</label>
-                            <div class="select-wrapper">
-                                <select id="explorer-sector" class="explorer-select">
-                                    <option value="">All</option>
-                                    <option value="technology">Technology</option>
-                                    <option value="healthcare">Healthcare</option>
-                                    <option value="finance">Finance</option>
-                                    <option value="energy">Energy</option>
-                                    <option value="consumer">Consumer</option>
+                                    <option value="3Y">3 Years</option>
+                                    <option value="5Y">5 Years</option>
+                                    <option value="MAX">Max</option>
                                 </select>
                                 <i class="fa-solid fa-chevron-down select-chevron"></i>
                             </div>
@@ -222,12 +212,20 @@
         <div class="card portfolio-card" id="card-portfolio" role="document" aria-hidden="true">
             <h3 class="section-title"><i class="fa-solid fa-briefcase"></i> Portfolio Overview</h3>
             <div class="card-tabs-nav" role="tablist" aria-label="Portfolio sections">
-                <button class="card-tab-btn active" data-target="portfolio-performance" role="tab" id="tab-portfolio-performance" aria-controls="pane-portfolio-performance" aria-selected="true">Performance</button>
-                <button class="card-tab-btn" data-target="portfolio-diversification" role="tab" id="tab-portfolio-diversification" aria-controls="pane-portfolio-diversification" aria-selected="false">Diversification</button>
-                <button class="card-tab-btn" data-target="portfolio-dividends" role="tab" id="tab-portfolio-dividends" aria-controls="pane-portfolio-dividends" aria-selected="false">Dividends</button>
+                <button class="card-tab-btn active" data-target="portfolio-performance" role="tab"
+                    id="tab-portfolio-performance" aria-controls="pane-portfolio-performance"
+                    aria-selected="true">Performance</button>
+                <button class="card-tab-btn" data-target="portfolio-diversification" role="tab"
+                    id="tab-portfolio-diversification" aria-controls="pane-portfolio-diversification"
+                    aria-selected="false">Diversification</button>
+                <button class="card-tab-btn" data-target="portfolio-analysis" role="tab" id="tab-portfolio-analysis"
+                    aria-controls="pane-portfolio-analysis" aria-selected="false">Analysis</button>
+                <button class="card-tab-btn" data-target="portfolio-dividends" role="tab" id="tab-portfolio-dividends"
+                    aria-controls="pane-portfolio-dividends" aria-selected="false">Dividends</button>
             </div>
             <div class="card-content">
-                <div class="card-tab-pane active" data-pane="portfolio-performance" role="tabpanel" id="pane-portfolio-performance" aria-labelledby="tab-portfolio-performance">
+                <div class="card-tab-pane active" data-pane="portfolio-performance" role="tabpanel"
+                    id="pane-portfolio-performance" aria-labelledby="tab-portfolio-performance">
                     <div class="perf-hero">
                         <div class="perf-hero-value" id="perf-total-value">--</div>
                         <div class="perf-hero-delta" id="perf-total-delta">--</div>
@@ -254,18 +252,19 @@
                         <div class="perf-positions perf-positions--closed" id="perf-closed"></div>
                     </div>
                 </div>
-                <div class="card-tab-pane" data-pane="portfolio-diversification" role="tabpanel" id="pane-portfolio-diversification" aria-labelledby="tab-portfolio-diversification">
-                    <div class="exposure-panel" id="exposure-panel" data-mode="symbol" aria-label="Portfolio composition">
+                <div class="card-tab-pane" data-pane="portfolio-diversification" role="tabpanel"
+                    id="pane-portfolio-diversification" aria-labelledby="tab-portfolio-diversification">
+                    <div class="exposure-panel" id="exposure-panel" data-mode="symbol"
+                        aria-label="Portfolio composition">
                         <div class="exposure-modes" role="tablist" aria-label="Allocation view">
                             <button class="exposure-mode active" data-mode="symbol" role="tab">By Position</button>
-                            <button class="exposure-mode" data-mode="sector" role="tab">By Sector</button>
                             <button class="exposure-mode" data-mode="type" role="tab">By Type</button>
                             <button class="exposure-mode" data-mode="country" role="tab">By Country</button>
                         </div>
                         <div class="exposure-content">
                             <div class="exposure-chart-container">
-                                <svg id="exposure-chart-svg" viewBox="0 0 200 200" class="exposure-chart-svg"
-                                    role="img" aria-labelledby="exposure-chart-title">
+                                <svg id="exposure-chart-svg" viewBox="0 0 200 200" class="exposure-chart-svg" role="img"
+                                    aria-labelledby="exposure-chart-title">
                                     <title id="exposure-chart-title">Portfolio allocation donut chart</title>
                                     <circle cx="100" cy="100" r="80" fill="rgba(255,255,255,0.02)"></circle>
                                 </svg>
@@ -276,14 +275,58 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-tab-pane" data-pane="portfolio-dividends" role="tabpanel" id="pane-portfolio-dividends" aria-labelledby="tab-portfolio-dividends">
+                <div class="card-tab-pane" data-pane="portfolio-analysis" role="tabpanel"
+                    id="pane-portfolio-analysis" aria-labelledby="tab-portfolio-analysis">
+                    <div class="analysis-container">
+                        <div class="analysis-header">
+                            <div class="analysis-title">
+                                <h3>Quantitative Engine</h3>
+                                <p id="analysis-subtitle">Weighted portfolio risk profile</p>
+                            </div>
+                            <div class="analysis-actions">
+                                <select id="analysis-range" class="analysis-range-select" aria-label="Lookback window">
+                                    <option value="3mo">3M</option>
+                                    <option value="6mo">6M</option>
+                                    <option value="1y" selected>1Y</option>
+                                    <option value="3y">3Y</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="analysis-hero" id="analysis-hero"></div>
+
+                        <div class="analysis-grid">
+                            <div class="analysis-card quant-metrics">
+                                <h4>Risk Metrics</h4>
+                                <div id="analysis-metrics-list" class="metrics-list"></div>
+                            </div>
+
+                            <div class="analysis-card">
+                                <h4>Risk Contributors</h4>
+                                <div class="risk-contrib-scroll">
+                                    <table class="risk-contrib-table" id="risk-contrib"></table>
+                                </div>
+                            </div>
+
+                            <div class="analysis-card correlation-wrap analysis-card-full">
+                                <h4>Correlation Matrix</h4>
+                                <div class="matrix-scroll">
+                                    <div id="correlation-matrix" class="correlation-matrix"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-tab-pane" data-pane="portfolio-dividends" role="tabpanel" id="pane-portfolio-dividends"
+                    aria-labelledby="tab-portfolio-dividends">
                     <div class="dividend-hero">
                         <div class="dividend-hero-label">Annual Dividends</div>
                         <div class="dividend-hero-value" id="dividend-total">—</div>
                         <div class="dividend-hero-meta" id="dividend-meta">—</div>
                     </div>
                     <div class="dividend-list" id="dividend-list">
-                        <div class="dividend-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading dividend data...</div>
+                        <div class="dividend-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading dividend
+                            data...</div>
                     </div>
                 </div>
             </div>
@@ -302,7 +345,8 @@
                 </div>
             </div>
             <div class="tools-bar" id="mobile-profile-actions">
-                <button id="open-portfolio-btn-mobile" class="tool-btn"><i class="fa-solid fa-chart-pie"></i>Portfolio</button>
+                <button id="open-portfolio-btn-mobile" class="tool-btn"><i
+                        class="fa-solid fa-chart-pie"></i>Portfolio</button>
                 <button id="open-settings-btn-mobile" class="tool-btn"><i class="fa-solid fa-gear"></i>Settings</button>
             </div>
         </div>
@@ -312,6 +356,7 @@
             <div class="card-tabs-nav">
                 <button class="card-tab-btn active" data-target="settings-general">General</button>
                 <button class="card-tab-btn" data-target="settings-profile">Profile</button>
+                <button class="card-tab-btn" data-target="settings-data">Data</button>
             </div>
             <div class="card-content">
                 <div class="card-tab-pane active" data-pane="settings-general">
@@ -323,7 +368,8 @@
                         </div>
                     </div>
                     <div class="settings-group">
-                        <label class="settings-label-toggle" for="settings-performance-viewer">Sidebar Performance Viewer</label>
+                        <label class="settings-label-toggle" for="settings-performance-viewer">Sidebar Performance
+                            Viewer</label>
                         <div class="settings-toggle-wrapper">
                             <label class="switch">
                                 <input type="checkbox" id="settings-performance-viewer" />
@@ -352,7 +398,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="settings-actions" id="settings-actions-bar" style="display: none; justify-content: flex-end;">
+                <div class="card-tab-pane" data-pane="settings-data">
+                    <h3 class="section-title" style="margin-top:0;"><i class="fa-solid fa-database"></i> Local Data Management</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Nemeris runs entirely in your browser. You can export your portfolio and settings as a JSON file, or import an existing backup.</p>
+                    
+                    <div class="settings-group" style="display: flex; gap: 1rem; align-items: center;">
+                        <button id="settings-export-data" class="settings-action-btn primary" style="flex: 1;"><i class="fa-solid fa-download"></i> Export Backup</button>
+                        
+                        <div style="flex: 1; position: relative;">
+                            <input id="settings-import-data" class="hidden-file-input" type="file" accept=".json" style="opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer;" />
+                            <button class="settings-action-btn" style="width: 100%; pointer-events: none;"><i class="fa-solid fa-upload"></i> Import Backup</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-actions" id="settings-actions-bar"
+                    style="display: none; justify-content: flex-end;">
                     <button id="settings-save" class="settings-action-btn primary">Save Changes</button>
                     <div id="settings-proxy-status" class="settings-proxy-status"></div>
                 </div>
@@ -451,15 +511,25 @@
                                 <canvas class="macd-canvas"></canvas>
                             </div>
                         </div>
-                        <div class="periods-group">
-                            <button class="period-btn" data-symbol="" data-period="1D">1D</button>
-                            <button class="period-btn" data-symbol="" data-period="1W">1W</button>
-                            <button class="period-btn" data-symbol="" data-period="1M">1M</button>
-                            <button class="period-btn" data-symbol="" data-period="6M">6M</button>
-                            <button class="period-btn" data-symbol="" data-period="1Y">1Y</button>
-                            <button class="period-btn" data-symbol="" data-period="3Y">3Y</button>
-                            <button class="period-btn" data-symbol="" data-period="5Y">5Y</button>
-                            <button class="period-btn" data-symbol="" data-period="MAX">MAX</button>
+                        <div class="periods-group user-typing-wrap">
+                            <label class="user-typing-label">Period</label>
+                            <div class="select-wrapper">
+                                <select class="period-select" data-symbol="">
+                                    <option value="1H">1H</option>
+                                    <option value="4H">4H</option>
+                                    <option value="1D">1D</option>
+                                    <option value="1W">1W</option>
+                                    <option value="1M">1M</option>
+                                    <option value="3M">3M</option>
+                                    <option value="6M">6M</option>
+                                    <option value="YTD">YTD</option>
+                                    <option value="1Y">1Y</option>
+                                    <option value="3Y">3Y</option>
+                                    <option value="5Y">5Y</option>
+                                    <option value="MAX">MAX</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-chevron"></i>
+                            </div>
                         </div>
                     </div>
 
@@ -515,7 +585,8 @@
                 <!-- Tab: Investment -->
                 <div class="card-tab-pane" data-pane="investment">
                     <div class="investment-section">
-                        <h3 class="section-title investment-title"><i class="fa-solid fa-wallet"></i> Personal Investment</h3>
+                        <h3 class="section-title investment-title"><i class="fa-solid fa-wallet"></i> Personal
+                            Investment</h3>
                         <div class="table-container">
                             <div class="general-row important-shares">Shares owned: <span></span></div>
                             <table>
@@ -614,8 +685,6 @@
         </button>
     </nav>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <script type="module" src="js/general.js"></script>
     <script type="module" src="js/news.js"></script>
     <script type="module" src="js/terminal.js"></script>

@@ -5,6 +5,10 @@ import { runAnrCommand } from './command/anr.js';
 import { runErnCommand } from './command/ern.js';
 import { runDvdCommand } from './command/dvd.js';
 import { runRvCommand } from './command/rv.js';
+import { runRiskCommand } from './command/risk.js';
+import { runBetaCommand } from './command/beta.js';
+import { runCompareCommand } from './command/compare.js';
+import { runMcCommand } from './command/mc.js';
 import { positions } from './state.js';
 
 const INPUT_ID = 'terminal-input';
@@ -13,7 +17,7 @@ const PROMPT = 'USER>';
 const HISTORY_KEY = 'nemeris_terminal_history';
 const HISTORY_MAX = 100;
 
-const COMMAND_NAMES = ['GO', 'NEWS', 'FA', 'ANR', 'ERN', 'DVD', 'RV', 'CLEAR', 'HELP'];
+const COMMAND_NAMES = ['GO', 'NEWS', 'FA', 'ANR', 'ERN', 'DVD', 'RV', 'RISK', 'BETA', 'COMPARE', 'MC', 'CLEAR', 'HELP'];
 
 function loadHistory() {
     try {
@@ -81,7 +85,12 @@ function showHelp(cmd) {
         { c: 'GO &lt;SYM&gt; [P]', d: 'Open ticker' }, { c: 'NEWS &lt;SYM&gt;', d: 'News' },
         { c: 'FA &lt;SYM&gt;', d: 'Fundamentals' }, { c: 'ANR &lt;SYM&gt;', d: 'Analysts' },
         { c: 'ERN &lt;SYM&gt;', d: 'Earnings' }, { c: 'DVD &lt;SYM&gt;', d: 'Dividends' },
-        { c: 'RV T1 T2...', d: 'Comparison' }, { c: 'CLEAR', d: 'Clear' }, { c: 'HELP [CMD]', d: 'Help' }
+        { c: 'RV T1 T2...', d: 'Comparison' },
+        { c: 'RISK &lt;SYM&gt; [RANGE]', d: 'Volatility / Sharpe / Sortino / VaR / DD' },
+        { c: 'BETA &lt;SYM&gt; [BENCH]', d: 'Beta vs benchmark (default ^GSPC)' },
+        { c: 'COMPARE T1 T2...', d: 'Correlation matrix + perf summary' },
+        { c: 'MC &lt;SYM&gt; [DAYS] [PATHS]', d: 'Monte-Carlo price projection' },
+        { c: 'CLEAR', d: 'Clear' }, { c: 'HELP [CMD]', d: 'Help' }
     ];
 
     if (!cmd) {
@@ -111,7 +120,11 @@ const COMMAND_HANDLERS = {
     ANR: runAnrCommand,
     ERN: runErnCommand,
     DVD: runDvdCommand,
-    RV: runRvCommand
+    RV: runRvCommand,
+    RISK: runRiskCommand,
+    BETA: runBetaCommand,
+    COMPARE: runCompareCommand,
+    MC: runMcCommand
 };
 
 async function exec(raw) {

@@ -9,6 +9,8 @@ const CHART_SNAPSHOT_ERROR_TTL_MS = 12000;
 
 // OHLC CACHE TTL BY PERIOD
 const PERIOD_TTL_MS = {
+    '1H': TTL.OHLC_INTRA,
+    '4H': TTL.OHLC_INTRA,
     '1D': TTL.OHLC_INTRA,
     '1W': 10 * 60 * 1000,
     '1M': 15 * 60 * 1000,
@@ -22,6 +24,8 @@ const chartSnapshotCache = new Map();
 const chartSnapshotInflight = new Map();
 
 export const PERIODS = {
+    '1H': { interval: '1m', range: '1h' },
+    '4H': { interval: '1m', range: '4h' },
     '1D': { interval: '1m', range: '1d' },
     '1W': { interval: '5m', range: '5d' },
     '1M': { interval: '15m', range: '1mo' },
@@ -37,6 +41,8 @@ export const PERIODS = {
 // Fallback chain by period — Yahoo refuse souvent 1m/5m pour small-caps peu liquides.
 // On essaie du plus fin au plus grossier jusqu'à avoir de la donnée.
 export const PERIOD_FALLBACKS = {
+    '1H':  [{ interval: '1m',  range: '1h'  }, { interval: '2m',  range: '1h'  }, { interval: '5m', range: '1d' }],
+    '4H':  [{ interval: '1m',  range: '4h'  }, { interval: '2m',  range: '4h'  }, { interval: '5m', range: '1d' }],
     '1D':  [{ interval: '1m',  range: '1d'  }, { interval: '5m',  range: '1d'  }, { interval: '15m', range: '1d'  }, { interval: '1h', range: '5d' }],
     '1W':  [{ interval: '5m',  range: '5d'  }, { interval: '15m', range: '5d'  }, { interval: '1h',  range: '5d'  }, { interval: '1d', range: '1mo' }],
     '1M':  [{ interval: '15m', range: '1mo' }, { interval: '1h',  range: '1mo' }, { interval: '1d',  range: '1mo' }],
@@ -147,7 +153,7 @@ async function yahooFetch(targetUrl, signal) {
 
 // Codes qui indiquent un refus "définitif" côté Yahoo → ne pas retenter les intervals plus larges.
 // 401 = Yahoo exige un crumb (v7/v10). 404/422 = ticker mort. NO_VALID_DATA = filtre post-parse.
-const PERMANENT_ERROR_CODES = new Set([401, 404, 422, 'NO_VALID_DATA']);
+const PERMANENT_ERROR_CODES = new Set([401, 422, 'NO_VALID_DATA']);
 // TTL pour les réponses d'erreur (anti-spam console au reload)
 const ERROR_TTL_MS = {
     401: 6 * 60 * 60 * 1000,   // endpoint qui demande crumb → inutile de retaper
@@ -198,7 +204,7 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
 
     // CHECK PERSISTENT CACHE (succès + erreurs cachées)
     const ck = ohlcKey(yahooSymbol, period);
-    const cached = cacheGet(ck);
+    const cached = await cacheGet(ck);
     if (cached) return cached;
 
     try {
@@ -220,7 +226,7 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
                         }
                         continue;
                     }
-                    cacheSet(ck, result, PERIOD_TTL_MS[period] || TTL.OHLC_INTRA);
+                    await cacheSet(ck, result, PERIOD_TTL_MS[period] || TTL.OHLC_INTRA);
                     return result;
                 }
 
@@ -229,17 +235,17 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
                 if (PERMANENT_ERROR_CODES.has(result.errorCode)) break;
                 // Sinon (NO_DATA, 500, timeout) → essayer interval suivant
             }
-
+ 
             // Aucun interval n'a atteint le seuil : on renvoie le meilleur résultat "maigre" plutôt que rien.
             if (thinResult) {
-                cacheSet(ck, thinResult, PERIOD_TTL_MS[period] || TTL.OHLC_INTRA);
+                await cacheSet(ck, thinResult, PERIOD_TTL_MS[period] || TTL.OHLC_INTRA);
                 return thinResult;
             }
-
+ 
             const errorResponse = { source: 'yahoo', error: true, ...lastError };
             // Cache court pour éviter le spam console au reload
             if (!lastError?.throttled) {
-                cacheSet(ck, errorResponse, errorTtl(lastError?.errorCode));
+                await cacheSet(ck, errorResponse, errorTtl(lastError?.errorCode));
             }
             return errorResponse;
         } catch (e) {
@@ -333,12 +339,6 @@ async function fetchYahooModules(ticker, modules, signal) {
         if (j.error) return { source: 'yahoo', ...j };
         return { source: 'yahoo', result: j.quoteSummary?.result?.[0] || null };
     } catch (e) { return { source: 'yahoo', error: true, errorCode: 500 }; }
-}
-
-export async function fetchYahooSummary(ticker, signal) {
-    const res = await fetchYahooModules(ticker, 'assetProfile,summaryProfile,price', signal);
-    if (res.error) return res;
-    return { source: 'yahoo', summary: res.result?.assetProfile || res.result?.summaryProfile || null, price: res.result?.price || null };
 }
 
 export async function fetchYahooFinancials(ticker, signal) {
@@ -649,7 +649,7 @@ export async function fetchYahooAnalysis(ticker, signal) {
 export async function fetchYahooNews(ticker, limit = 10, signal) {
     // CHECK PERSISTENT CACHE
     const ck = newsKey(ticker);
-    const cached = cacheGet(ck);
+    const cached = await cacheGet(ck);
     if (cached) return { source: 'yahoo', items: cached };
 
     try {
@@ -664,7 +664,7 @@ export async function fetchYahooNews(ticker, limit = 10, signal) {
             summary: i.summary || '',
             relatedTickers: i.relatedTickers || []
         }));
-        cacheSet(ck, items, TTL.NEWS);
+        await cacheSet(ck, items, TTL.NEWS);
         return { source: 'yahoo', items };
     } catch (e) { return { source: 'yahoo', error: true, errorCode: 500, items: [] }; }
 }
@@ -704,16 +704,20 @@ export async function fetchNews(symbol, limit = 20, days = 7) {
     }
 }
 
-/**
- * Fetch quote summary modules for a specific symbol.
- * modules: assetProfile, summaryProfile, summaryDetail, calendarEvents, defaultKeyStatistics, financialData
- */
-export async function fetchYahooQuoteSummary(symbol, modules = ['assetProfile', 'summaryProfile', 'calendarEvents']) {
+const quoteSummary404 = new Set();
+
+export async function fetchYahooQuoteSummary(symbol, modules = ['calendarEvents', 'summaryDetail']) {
     const s = getYahooSymbol(symbol);
+    const cacheKey = `${s}|${modules.join(',')}`;
+    if (quoteSummary404.has(cacheKey)) return null;
+
     const url = `${getNextBase()}/v11/finance/quoteSummary/${s}?modules=${modules.join(',')}`;
     try {
         const res = await proxyFetch(url);
-        if (res.error) return null;
+        if (res.error) {
+            if (res.errorCode === 404 || res.errorCode === 422) quoteSummary404.add(cacheKey);
+            return null;
+        }
         return res.data?.quoteSummary?.result?.[0];
     } catch (e) {
         console.error(`QuoteSummary failed for ${symbol}:`, e);

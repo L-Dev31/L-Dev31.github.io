@@ -1,3 +1,5 @@
+import { Store } from './store.js';
+
 // CACHE KEYS
 const PREFIX = 'nemeris_cache_';
 
@@ -10,35 +12,29 @@ export const TTL = {
 };
 
 // READ
-export function cacheGet(key) {
+export async function cacheGet(key) {
     try {
-        const raw = localStorage.getItem(PREFIX + key);
-        if (!raw) return null;
-        const { data, expires } = JSON.parse(raw);
-        if (Date.now() > expires) { localStorage.removeItem(PREFIX + key); return null; }
-        return data;
+        const entry = await Store.get(PREFIX + key);
+        if (!entry) return null;
+        if (Date.now() > entry.expires) {
+            // We don't necessarily need to delete it immediately, 
+            // Store.set will overwrite it later, but good for hygiene.
+            return null; 
+        }
+        return entry.data;
     } catch { return null; }
 }
 
 // WRITE
-export function cacheSet(key, data, ttlMs) {
+export async function cacheSet(key, data, ttlMs) {
     try {
-        localStorage.setItem(PREFIX + key, JSON.stringify({ data, expires: Date.now() + ttlMs }));
-    } catch {
-        evictOldest();
-        try { localStorage.setItem(PREFIX + key, JSON.stringify({ data, expires: Date.now() + ttlMs })); } catch { /* ignore */ }
+        await Store.set(PREFIX + key, {
+            data,
+            expires: Date.now() + ttlMs
+        });
+    } catch (e) {
+        console.warn('[Cache] Set failed:', e);
     }
-}
-
-// EVICTION
-function evictOldest() {
-    try {
-        const entries = Object.keys(localStorage)
-            .filter(k => k.startsWith(PREFIX))
-            .map(k => { try { return { key: k, expires: JSON.parse(localStorage.getItem(k)).expires }; } catch { return { key: k, expires: 0 }; } })
-            .sort((a, b) => a.expires - b.expires);
-        entries.slice(0, Math.ceil(entries.length / 3)).forEach(e => localStorage.removeItem(e.key));
-    } catch { /* ignore */ }
 }
 
 // KEY BUILDERS

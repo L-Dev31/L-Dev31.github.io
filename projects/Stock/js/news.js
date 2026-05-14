@@ -1,6 +1,6 @@
 import { periodToDays } from './constants.js';
 import { fetchTickerNewsItems, fetchSymbolNewsItems } from './command/news.js';
-import { getEl } from './utils.js';
+import { getEl, formatPct } from './utils.js';
 
 let positions = {};
 let lastPageNews = [];
@@ -49,6 +49,36 @@ const buildNewsAnchorItem = (item, { className, includeSummary = true, tagLabels
     m.appendChild(document.createTextNode(` • ${formatNewsDate(item.publishedAt)}`));
 
     appendTagElements(m, tagLabels);
+
+    const allSymbols = [item.symbol, ...(item.symbols || []), ...(item.relatedTickers || [])].filter(Boolean);
+    let perfData = null;
+    let perfSymbol = null;
+
+    for (const sym of allSymbols) {
+        if (positions[sym] && positions[sym].lastData?.changePercent !== undefined) {
+            perfData = positions[sym].lastData;
+            perfSymbol = sym;
+            break;
+        } else {
+            const found = Object.keys(positions).find(k => positions[k].ticker === sym || k === sym);
+            if (found && positions[found].lastData?.changePercent !== undefined) {
+                perfData = positions[found].lastData;
+                perfSymbol = found;
+                break;
+            }
+        }
+    }
+
+    if (perfData) {
+        const isPositive = perfData.change >= 0;
+        a.classList.add(isPositive ? 'perf-positive' : 'perf-negative');
+        
+        const badge = document.createElement('span');
+        badge.className = `news-badge ${isPositive ? 'positive' : 'negative'}`;
+        badge.textContent = `${getTickerLabel(perfSymbol)} ${formatPct(perfData.changePercent)}`;
+        m.appendChild(badge);
+    }
+
     a.appendChild(m);
 
     if (includeSummary && item.summary) {

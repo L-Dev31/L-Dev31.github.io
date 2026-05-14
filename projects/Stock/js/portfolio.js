@@ -4,6 +4,7 @@ import { fetchYahooSparkBatch, getYahooSymbol, isYahooSparkFriendly, fetchYahooP
 import { TYPE_ORDER, typeLabel, typeIcon } from './constants.js';
 import { createTab, createCard, updateSectionDates, initChart, markTabAsSuspended, unmarkTabAsSuspended, isSymbolSuspendedInStorage, updateSidebarPerformance, getActiveSymbol, updateUI } from './ui.js';
 import { getEl, formatCurrency, formatPct } from './utils.js';
+import { initAnalysisPane, renderAnalysisPane } from './portfolio-analysis.js';
 
 
 
@@ -139,7 +140,6 @@ export function updatePortfolioComposition() {
             name: pos.name,
             type: pos.type || 'equity',
             country: (pos.raw?.country || 'OTH').toUpperCase(),
-            sector: pos.metadata?.assetProfile?.sector || pos.metadata?.summaryProfile?.sector || 'Unknown',
             value
         });
     }
@@ -164,11 +164,6 @@ export function updatePortfolioComposition() {
         positionValues.forEach(p => {
             buckets.set(p.country, (buckets.get(p.country) || 0) + p.value);
             bucketMeta.set(p.country, { label: p.country, ticker: '' });
-        });
-    } else if (mode === 'sector') {
-        positionValues.forEach(p => {
-            buckets.set(p.sector, (buckets.get(p.sector) || 0) + p.value);
-            bucketMeta.set(p.sector, { label: p.sector, ticker: '' });
         });
     } else {
         positionValues.forEach(p => {
@@ -292,6 +287,21 @@ export async function loadStocks() {
             }
         } catch (error) { }
     }
+
+    // Load imported positions from local storage
+    try {
+        const imported = localStorage.getItem('nemeris_imported_positions');
+        if (imported) {
+            const importedPos = JSON.parse(imported);
+            Object.values(importedPos).forEach(p => {
+                // If it's a new ticker or we want to overwrite, we can handle it here
+                // For now, let's just add it to the list if it's not already there
+                if (!list.find(s => s.symbol === p.symbol)) {
+                    list.push(p.raw || p);
+                }
+            });
+        }
+    } catch (e) { console.error('Error loading imported positions', e); }
     const byType = {};
     for (const s of list) {
         if (!byType[s.type]) byType[s.type] = [];
@@ -495,6 +505,8 @@ export function initPortfolioAnalytics() {
         });
     });
 
+    initAnalysisPane();
+
     // Initial load
     refreshAnalyticsTab('portfolio-performance');
 }
@@ -510,6 +522,9 @@ async function refreshAnalyticsTab(tab) {
         case 'portfolio-dividends':
             renderDividendsPane();
             break;
+        case 'portfolio-analysis':
+            renderAnalysisPane();
+            break;
     }
 }
 
@@ -518,14 +533,12 @@ async function fetchAllPortfolioMetadata() {
     if (symbols.length === 0) return;
 
     const { fetchYahooQuoteSummary } = await import('./yahoo-finance.js');
-    const modules = ['assetProfile', 'summaryProfile', 'calendarEvents', 'summaryDetail', 'defaultKeyStatistics'];
+    const modules = ['calendarEvents', 'summaryDetail', 'defaultKeyStatistics'];
     const promises = symbols.map(async s => {
         if (positions[s].analyticsFetched) return;
+        positions[s].analyticsFetched = true;
         const metadata = await fetchYahooQuoteSummary(s, modules);
-        if (metadata) {
-            positions[s].metadata = metadata;
-            positions[s].analyticsFetched = true;
-        }
+        if (metadata) positions[s].metadata = metadata;
     });
 
     await Promise.all(promises);

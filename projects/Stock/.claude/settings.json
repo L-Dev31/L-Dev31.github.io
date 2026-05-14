@@ -23,7 +23,12 @@
       "Read(//c/Users/gigabyte/.claude/skills/ui-ux-pro-max/**)",
       "Bash(python scripts/search.py \"fintech trading terminal bloomberg dark dashboard\" --design-system -p \"Nemeris\" -f markdown)",
       "Bash(python scripts/search.py \"accessibility touch-target focus keyboard data-table\" --domain ux -n 10)",
-      "Bash(python scripts/search.py \"chart real-time financial line candle\" --domain chart -n 6)"
+      "Bash(python scripts/search.py \"chart real-time financial line candle\" --domain chart -n 6)",
+      "Bash(bash bundle-css.sh)",
+      "Bash(grep -v \"console\\\\.\\\\|//.*metadata\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\gigabyte\\Documents\\GitHub\\L-Dev31.github.io\\projects\\Stock"
     ]
   }
 }

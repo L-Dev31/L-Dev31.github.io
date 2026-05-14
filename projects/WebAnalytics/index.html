@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VN Engine - POC</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TITLE SCREEN -->
+<section id="screen-title" class="screen">
+
+  <!-- Logo — top right -->
+  <img class="title-logo" src="images/logo.png" alt="L'Affaire Blackwood">
+
+  <!-- Menu — vertical center, left side -->
+  <nav class="menu focus-group">
+    <button class="choice menu-btn" data-action="play" data-i18n="play">JOUER</button>
+    <button class="choice menu-btn" data-action="settings" data-i18n="settings">OPTIONS</button>
+    <button class="choice menu-btn" data-action="credits" data-i18n="credits">CREDITS</button>
+  </nav>
+
+</section>
+
+<!-- SETTINGS -->
+<section id="screen-settings" class="screen hidden">
+  <div class="panel focus-group">
+    <h2 data-i18n="settings">Options</h2>
+    <div class="row">
+      <span data-i18n="music">Musique</span>
+      <button id="toggle-music" class="toggle">ON</button>
+    </div>
+    <div class="row">
+      <span data-i18n="autoplay">Lecture auto</span>
+      <button id="toggle-autoplay" class="toggle">OFF</button>
+    </div>
+    <button class="choice back focus-item" data-action="back-title" data-i18n="back">Retour</button>
+  </div>
+</section>
+
+<!-- CREDITS -->
+<section id="screen-credits" class="screen hidden">
+  <div class="panel focus-group">
+    <h2 data-i18n="credits">CREDITS</h2>
+    <div class="credits-grid">
+      <div class="credit-card">
+        <div class="credit-head"></div>
+        <div class="credit-name">Leo TOSKU</div>
+        <div class="credit-role" data-i18n="role_dev">Design & Dev</div>
+      </div>
+      <div class="credit-card">
+        <div class="credit-head"></div>
+        <div class="credit-name">Clement DEZON HULIN</div>
+        <div class="credit-role" data-i18n="role_writer">Scénariste</div>
+      </div>
+    </div>
+    <button class="choice back focus-item" data-action="back-title" data-i18n="back">Retour</button>
+  </div>
+</section>
+
+<!-- GAME -->
+<section id="screen-game" class="screen hidden">
+
+  <!-- Environment transition overlay -->
+  <div id="env-overlay" class="hidden">
+    <span id="env-overlay-label"></span>
+  </div>
+
+  <!-- Background -->
+  <div id="background"></div>
+
+  <!-- Character sprites -->
+  <div id="sprites">
+    <div id="sprite-left" class="sprite inactive hidden"></div>
+    <div id="sprite-right" class="sprite inactive hidden"></div>
+  </div>
+
+  <!-- Dialogue box -->
+  <div id="dialogue-box" class="hidden">
+    <div id="name-tag-left" class="name-tag left hidden"></div>
+    <div id="name-tag-right" class="name-tag right hidden"></div>
+    <div id="dialogue-text"></div>
+    <div id="dialogue-hint" data-i18n="hint_continue">[ESPACE / CLIC]</div>
+  </div>
+
+  <!-- Choice panel -->
+  <div id="choice-panel" class="hidden">
+    <div id="choice-question"></div>
+    <div id="choice-options" class="focus-group"></div>
+  </div>
+
+  <button id="back-to-title" class="choice back-small" data-action="back-title">×</button>
+</section>
+
+<!-- REUSABLE POPUP -->
+<section id="screen-popup" class="screen hidden">
+  <div class="panel popup-panel">
+    <h2 id="popup-title" class="popup-title">ATTENTION</h2>
+    <div id="popup-body" class="popup-body">Voulez-vous vraiment continuer ?</div>
+    <div class="popup-buttons focus-group">
+      <button id="popup-confirm" class="choice popup-btn">CONFIRMER</button>
+      <button id="popup-cancel" class="choice popup-btn">ANNULER</button>
+    </div>
+  </div>
+</section>
+
+<script src="engine.js"></script>
+</body>
+</html>

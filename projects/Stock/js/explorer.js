@@ -25,8 +25,10 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
         lastParams: null
     };
 
-    const PERIOD_LABELS = { '1D': '1D', '1W': '1W', '1M': '1M', '3M': '3M', '6M': '6M', '1Y': '1Y', 'YTD': 'YTD' };
+    const PERIOD_LABELS = { '1H': '1H', '4H': '4H', '1D': '1D', '1W': '1W', '1M': '1M', '3M': '3M', '6M': '6M', '1Y': '1Y', 'YTD': 'YTD' };
     const PERIOD_CONFIG = {
+        '1H': { range: '1h', interval: '1m' },
+        '4H': { range: '4h', interval: '1m' },
         '1D': { range: '1d', interval: '1m' },
         '1W': { range: '5d', interval: '1h' },
         '1M': { range: '1mo', interval: '1d' },
@@ -284,14 +286,6 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
             else if (fullExchange.includes('paris') || fullExchange.includes('euronext')) market = 'euronext';
         }
 
-        const yahooSector = (q.sector || q.industry || '').toLowerCase();
-        let sector = 'other';
-        if (yahooSector.match(/tech|software|semiconductor|computer|electronic/)) sector = 'technology';
-        else if (yahooSector.match(/health|pharma|biotech|medical/)) sector = 'healthcare';
-        else if (yahooSector.match(/financ|bank|insurance|capital/)) sector = 'finance';
-        else if (yahooSector.match(/energy|oil|gas|petrol/)) sector = 'energy';
-        else if (yahooSector.match(/consumer|retail|food|beverage|apparel/)) sector = 'consumer';
-
         let eligibility = 'cto';
         if (market === 'euronext') eligibility = q.marketCap && q.marketCap < 1e9 ? 'pea-pme' : 'pea';
 
@@ -299,7 +293,7 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
 
         return {
             symbol: q.symbol, name: q.shortName || q.longName || q.symbol,
-            price, change, changePercent, volume, market, sector, eligibility,
+            price, change, changePercent, volume, market, eligibility,
             currency: q.currency || 'USD', marketCap: q.marketCap, industry: q.industry || '',
             isClosed: isSuspended, isSuspended,
             daysSinceLastTrade: Math.round(computeDaysSinceLastTrade(q.regularMarketTime)),
@@ -332,7 +326,7 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
                 return {
                     symbol: sym, name: meta.shortName || meta.longName || sym.replace(/\.[A-Z]+$/, ''),
                     price, change, changePercent, volume,
-                    market: marketId, sector: 'other', eligibility: defaultEligibility,
+                    market: marketId, eligibility: defaultEligibility,
                     currency: meta.currency || 'USD', marketCap: 0, industry: '',
                     isClosed: isSuspended, isSuspended,
                     daysSinceLastTrade: Math.round(computeDaysSinceLastTrade(meta.regularMarketTime)),
@@ -382,7 +376,6 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
             search: document.getElementById('explorer-search')?.value.trim().toLowerCase() || '',
             sort: document.getElementById('explorer-sort')?.value || 'trending',
             market: document.getElementById('explorer-market')?.value || '',
-            sector: document.getElementById('explorer-sector')?.value || '',
             eligibility: document.getElementById('explorer-eligibility')?.value || '',
             period: document.getElementById('explorer-period')?.value || '1D'
         };
@@ -431,7 +424,6 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
             const needle = filters.search;
             result = result.filter(i => (i.symbol || '').toLowerCase().includes(needle) || (i.name || '').toLowerCase().includes(needle));
         }
-        if (filters.sector) result = result.filter(i => i.sector === filters.sector);
         return result;
     }
 
@@ -680,7 +672,6 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
 
         const paramsKey = JSON.stringify({
             market: filters.market,
-            sector: filters.sector,
             eligibility: filters.eligibility,
             period: filters.period,
             search: filters.search
@@ -740,7 +731,6 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
         document.getElementById('explorer-search')?.addEventListener('input', debounce(() => { state.currentPage = 1; loadData(); }, 500));
         document.getElementById('explorer-market')?.addEventListener('change', (e) => { state.currentPage = 1; selectMarket(e.target.value); });
         document.getElementById('explorer-sort')?.addEventListener('change', () => { state.currentPage = 1; loadData(); });
-        document.getElementById('explorer-sector')?.addEventListener('change', () => { state.currentPage = 1; loadData(); });
         document.getElementById('explorer-eligibility')?.addEventListener('change', () => { state.currentPage = 1; loadData(); });
         document.getElementById('explorer-period')?.addEventListener('change', () => { state.currentPage = 1; loadData(); });
         document.getElementById('explorer-prev')?.addEventListener('click', () => changePage(-1));

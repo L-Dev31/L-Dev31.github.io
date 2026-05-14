@@ -37,6 +37,8 @@ const buildLabel = (ts, period, interval) => {
     const time = () => d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     const dm = () => d.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit' });
     switch (period) {
+        case '1H':
+        case '4H':
         case '1D': return time();
         case '1W': return (!interval || interval === '5m' || interval === '15m') ? time() : `${dm()} ${time()}`;
         case '1M': return (!interval || interval === '15m' || interval === '1h') ? `${dm()} ${time()}` : dm();
@@ -74,14 +76,19 @@ const candlePlugin = {
         const pos = resolveCssColor('--color-positive', '#65d981');
         const neg = resolveCssColor('--color-negative', '#f87171');
 
-        const slot = (chartArea.right - chartArea.left) / n;
+        // Calculate visible items based on current scale zoom
+        const minIdx = scales.x.min !== undefined ? Math.max(0, scales.x.min) : 0;
+        const maxIdx = scales.x.max !== undefined ? Math.min(n - 1, scales.x.max) : n - 1;
+        const visibleCount = Math.max(1, maxIdx - minIdx + 1);
+
+        const slot = (chartArea.right - chartArea.left) / visibleCount;
         const bodyW = Math.max(2, slot * 0.7);
         const wickW = Math.max(1, Math.min(2, slot * 0.12));
         const halfBody = bodyW / 2;
         const halfWick = wickW / 2;
 
         ctx.save();
-        for (let i = 0; i < n; i++) {
+        for (let i = Math.floor(minIdx); i <= Math.ceil(maxIdx) && i < n; i++) {
             const o = opens[i], h = highs[i], l = lows[i], c = closes[i];
             if (o == null || h == null || l == null || c == null) continue;
 
@@ -184,7 +191,24 @@ const buildTooltipBody = ({ ts, index, opens, highs, lows, closes }) => {
     return body;
 };
 
-function buildMainOptions() {
+function syncSubcharts(mainChart, symbol, positions) {
+    if (!positions || !positions[symbol]) return;
+    const { min, max } = mainChart.scales.x;
+    const rsi = positions[symbol].rsiChart;
+    const macd = positions[symbol].macdChart;
+    if (rsi && rsi.options.scales.x) {
+        rsi.options.scales.x.min = min;
+        rsi.options.scales.x.max = max;
+        rsi.update('none');
+    }
+    if (macd && macd.options.scales.x) {
+        macd.options.scales.x.min = min;
+        macd.options.scales.x.max = max;
+        macd.update('none');
+    }
+}
+
+function buildMainOptions(symbol, positions) {
     const isMobile = window.innerWidth <= 768;
     return {
         responsive: true,
@@ -211,11 +235,17 @@ function buildMainOptions() {
             },
             zoom: {
                 zoom: {
-                    wheel: { enabled: true, modifierKey: 'shift', speed: 0.1 },
+                    wheel: { enabled: true, speed: 0.1 },
                     pinch: { enabled: true },
-                    mode: 'x'
+                    drag: { enabled: true },
+                    mode: 'x',
+                    onZoom: function({ chart }) { syncSubcharts(chart, symbol, positions); }
                 },
-                pan: { enabled: false }
+                pan: { 
+                    enabled: true, 
+                    mode: 'x',
+                    onPan: function({ chart }) { syncSubcharts(chart, symbol, positions); }
+                }
             }
         },
         scales: {
@@ -250,7 +280,7 @@ function buildMainOptions() {
     };
 }
 
-function createMainChart(canvas) {
+function createMainChart(canvas, symbol, positions) {
     return new Chart(canvas.getContext('2d'), {
         type: 'line',
         data: {
@@ -267,7 +297,7 @@ function createMainChart(canvas) {
                 spanGaps: true
             }]
         },
-        options: buildMainOptions()
+        options: buildMainOptions(symbol, positions)
     });
 }
 
@@ -766,7 +796,7 @@ export function initChart(symbol, positions) {
     if (positions[symbol].rsiChart) { try { positions[symbol].rsiChart.destroy(); } catch (_) {} positions[symbol].rsiChart = null; }
     if (positions[symbol].macdChart) { try { positions[symbol].macdChart.destroy(); } catch (_) {} positions[symbol].macdChart = null; }
 
-    positions[symbol].chart = createMainChart(canvas);
+    positions[symbol].chart = createMainChart(canvas, symbol, positions);
 }
 
 export function updateChart(symbol, timestamps, prices, positions, _source, fullData) {

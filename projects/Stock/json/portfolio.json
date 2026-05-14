@@ -41,7 +41,14 @@
   },
   "DCAM": {
     "purchases": [
-      { "date": "2026-05-07", "amount": -169.24, "shares": 29 }
+      { "date": "2026-05-07", "amount": -169.24, "shares": 29 },
+      { "date": "2026-05-14", "amount": -100.55, "shares": 17 }
+    ],
+    "sales": []
+  },
+  "ALODC": {
+    "purchases": [
+      { "date": "2026-05-14", "amount": -214.50, "shares": 25 }
     ],
     "sales": []
   }

@@ -137,10 +137,11 @@ export function createCard(stock) {
 
     const group = card.querySelector('.periods-group')
     group.id = `periods-${stock.symbol}`
-    group.querySelectorAll('.period-btn').forEach(btn=>{
-        btn.dataset.symbol = stock.symbol
-        if (btn.dataset.period==='1D') btn.classList.add('active')
-    })
+    const sel = group.querySelector('.period-select')
+    if (sel) {
+        sel.dataset.symbol = stock.symbol
+        sel.value = '1D'
+    }
 
     const c = card.querySelector('.chart-canvas')
     c.id = `chart-${stock.symbol}`
