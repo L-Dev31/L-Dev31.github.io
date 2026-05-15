@@ -9,6 +9,7 @@ import { runRiskCommand } from './command/risk.js';
 import { runBetaCommand } from './command/beta.js';
 import { runCompareCommand } from './command/compare.js';
 import { runMcCommand } from './command/mc.js';
+import { runMacroCommand } from './command/macro.js';
 import { positions } from './state.js';
 
 const INPUT_ID = 'terminal-input';
@@ -17,7 +18,7 @@ const PROMPT = 'USER>';
 const HISTORY_KEY = 'nemeris_terminal_history';
 const HISTORY_MAX = 100;
 
-const COMMAND_NAMES = ['GO', 'NEWS', 'FA', 'ANR', 'ERN', 'DVD', 'RV', 'RISK', 'BETA', 'COMPARE', 'MC', 'CLEAR', 'HELP'];
+const COMMAND_NAMES = ['GO', 'NEWS', 'FA', 'ANR', 'ERN', 'DVD', 'RV', 'RISK', 'BETA', 'COMPARE', 'MC', 'MACRO', 'CLEAR', 'HELP'];
 
 function loadHistory() {
     try {
@@ -83,13 +84,16 @@ function getTarget(parts) {
 function showHelp(cmd) {
     const cmds = [
         { c: 'GO &lt;SYM&gt; [P]', d: 'Open ticker' }, { c: 'NEWS &lt;SYM&gt;', d: 'News' },
-        { c: 'FA &lt;SYM&gt;', d: 'Fundamentals' }, { c: 'ANR &lt;SYM&gt;', d: 'Analysts' },
-        { c: 'ERN &lt;SYM&gt;', d: 'Earnings' }, { c: 'DVD &lt;SYM&gt;', d: 'Dividends' },
+        { c: 'FA &lt;SYM&gt;', d: 'Fundamentals (valuation, margins, balance, market)' },
+        { c: 'ANR &lt;SYM&gt;', d: 'Analyst consensus' },
+        { c: 'ERN &lt;SYM&gt;', d: 'Earnings + EPS surprises + forward estimates' },
+        { c: 'DVD &lt;SYM&gt;', d: 'Dividends' },
         { c: 'RV T1 T2...', d: 'Comparison' },
         { c: 'RISK &lt;SYM&gt; [RANGE]', d: 'Volatility / Sharpe / Sortino / VaR / DD' },
         { c: 'BETA &lt;SYM&gt; [BENCH]', d: 'Beta vs benchmark (default ^GSPC)' },
         { c: 'COMPARE T1 T2...', d: 'Correlation matrix + perf summary' },
         { c: 'MC &lt;SYM&gt; [DAYS] [PATHS]', d: 'Monte-Carlo price projection' },
+        { c: 'MACRO', d: 'VIX, yields, FX, indices, commodities snapshot' },
         { c: 'CLEAR', d: 'Clear' }, { c: 'HELP [CMD]', d: 'Help' }
     ];
 
@@ -124,7 +128,8 @@ const COMMAND_HANDLERS = {
     RISK: runRiskCommand,
     BETA: runBetaCommand,
     COMPARE: runCompareCommand,
-    MC: runMcCommand
+    MC: runMcCommand,
+    MACRO: runMacroCommand
 };
 
 async function exec(raw) {

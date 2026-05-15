@@ -3,7 +3,7 @@ import { cacheGet, cacheSet, ohlcKey, newsKey, TTL } from './cache.js';
 
 const BASES = ['https://query1.finance.yahoo.com', 'https://query2.finance.yahoo.com'];
 let baseIndex = 0;
-const YAHOO_RATE_LIMIT_MS = 120000;
+
 const CHART_SNAPSHOT_TTL_MS = 45000;
 const CHART_SNAPSHOT_ERROR_TTL_MS = 12000;
 
@@ -199,7 +199,7 @@ async function tryFetchChart(yahooSymbol, cfg, signal) {
     return data;
 }
 
-export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal) {
+export async function fetchFromYahoo(ticker, period, _symbol, stock, _name, signal) {
     const yahooSymbol = getYahooSymbol(stock) || ticker;
 
     // CHECK PERSISTENT CACHE (succès + erreurs cachées)
@@ -252,28 +252,6 @@ export async function fetchFromYahoo(ticker, period, symbol, stock, name, signal
             if (e.name === 'AbortError') throw e;
             return { source: 'yahoo', error: true, errorCode: 500 };
         }
-}
-
-export async function isYahooTickerSuspended(ticker) {
-    try {
-        const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=1d&interval=1m`;
-        const j = await yahooFetch(url);
-
-        if (j.error) {
-            if (j.errorCode === 404) return true;
-            return false;
-        }
-
-        const result = j.chart?.result?.[0];
-        if (!result) return true;
-
-        const meta = result.meta || {};
-        const closes = result.indicators?.quote?.[0]?.close || [];
-        const volumes = result.indicators?.quote?.[0]?.volume || [];
-        return !isYahooTickerActiveFromChart(meta, closes, volumes);
-    } catch (e) {
-        return false;
-    }
 }
 
 export function computeDaysSinceLastTrade(regularMarketTime) {
@@ -334,16 +312,74 @@ export function isYahooTickerActiveFromQuote(q = {}) {
 }
 
 async function fetchYahooModules(ticker, modules, signal) {
+    // v10/quoteSummary now requires a crumb token. v11 still serves modules without auth
+    // through the proxy worker (same pattern as fetchYahooQuoteSummary above).
     try {
-        const j = await yahooFetch(`https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=${modules}`, signal);
+        const j = await yahooFetch(`https://query2.finance.yahoo.com/v11/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=${modules}`, signal);
         if (j.error) return { source: 'yahoo', ...j };
         return { source: 'yahoo', result: j.quoteSummary?.result?.[0] || null };
     } catch (e) { return { source: 'yahoo', error: true, errorCode: 500 }; }
 }
 
+// Map v7/quote fields into the quoteSummary-style shape consumed by fa.js / rv.js.
+// v7/quote works without crumb on the proxy, so this keeps FA usable when v11 is blocked.
+function synthesizeFinancialsFromQuote(q) {
+    const wrap = v => (v != null ? { raw: v } : null);
+    return {
+        financialData: {
+            currentPrice: wrap(q.regularMarketPrice),
+            dayChangePercent: q.regularMarketChangePercent ?? null,
+            fiftyTwoWeekHigh: wrap(q.fiftyTwoWeekHigh),
+            fiftyTwoWeekLow: wrap(q.fiftyTwoWeekLow),
+            regularMarketVolume: q.regularMarketVolume ?? null,
+            totalRevenue: wrap(q.totalRevenue)
+        },
+        defaultKeyStatistics: {
+            forwardPE: wrap(q.forwardPE),
+            priceToBook: wrap(q.priceToBook),
+            trailingEps: wrap(q.epsTrailingTwelveMonths),
+            forwardEps: wrap(q.epsForward),
+            beta: wrap(q.beta),
+            sharesOutstanding: wrap(q.sharesOutstanding)
+        },
+        summaryDetail: {
+            trailingPE: wrap(q.trailingPE),
+            forwardPE: wrap(q.forwardPE),
+            marketCap: wrap(q.marketCap),
+            dividendYield: wrap(q.trailingAnnualDividendYield),
+            averageDailyVolume10Day: q.averageDailyVolume10Day ?? null,
+            averageVolume10days: q.averageDailyVolume10Day ?? null,
+            regularMarketVolume: q.regularMarketVolume ?? null,
+            fiftyTwoWeekHigh: wrap(q.fiftyTwoWeekHigh),
+            fiftyTwoWeekLow: wrap(q.fiftyTwoWeekLow),
+            beta: wrap(q.beta)
+        },
+        price: {
+            marketCap: wrap(q.marketCap),
+            regularMarketPrice: wrap(q.regularMarketPrice),
+            // v7 returns percent as percent (2.5 = 2.5%) — fa.js multiplies by 100, so divide here.
+            regularMarketChangePercent: q.regularMarketChangePercent != null
+                ? { raw: q.regularMarketChangePercent / 100 }
+                : null,
+            longName: q.longName,
+            shortName: q.shortName
+        },
+        assetProfile: {}
+    };
+}
+
 export async function fetchYahooFinancials(ticker, signal) {
-    const q = await fetchYahooModules(ticker, 'financialData', signal);
+    // Tier 1: rich quoteSummary (margins, ROE, FCF, debt, etc.)
+    const q = await fetchYahooModules(ticker, 'financialData,defaultKeyStatistics,summaryDetail,price,assetProfile', signal);
     if (!q.error && q.result?.financialData) return { source: 'yahoo', financials: q.result };
+
+    // Tier 2: v7/quote — valuation, EPS, dividend, market data (no margins/ratios).
+    const quoteResp = await fetchYahooQuote(ticker, signal);
+    if (!quoteResp.error && quoteResp.quote) {
+        return { source: 'yahoo', financials: synthesizeFinancialsFromQuote(quoteResp.quote) };
+    }
+
+    // Tier 3: chart snapshot — last resort, price + 52W only.
     try {
         const snap = await fetchYahooChartSnapshot(ticker, '6mo', '1d', signal);
         if (!snap?.meta) return { source: 'yahoo', error: true, errorCode: q.errorCode || 500 };
@@ -359,17 +395,33 @@ export async function fetchYahooFinancials(ticker, signal) {
 }
 
 export async function fetchYahooEarnings(ticker, signal) {
-    const q = await fetchYahooModules(ticker, 'earnings,earningsHistory,earningsTrend', signal);
-    if (!q.error && q.result) return { source: 'yahoo', earnings: q.result.earnings || q.result };
+    // Tier 1: full earnings modules (surprise history, forward estimates, calendar)
+    const q = await fetchYahooModules(ticker, 'earnings,earningsHistory,earningsTrend,calendarEvents,defaultKeyStatistics,price', signal);
+    if (!q.error && q.result) return { source: 'yahoo', data: q.result };
+
+    // Tier 2: v7/quote — EPS TTM/Forward + next earnings date.
+    const quoteResp = await fetchYahooQuote(ticker, signal);
+    if (!quoteResp.error && quoteResp.quote) {
+        const qq = quoteResp.quote;
+        return { source: 'yahoo', data: {
+            price: { regularMarketPrice: qq.regularMarketPrice != null ? { raw: qq.regularMarketPrice } : null },
+            defaultKeyStatistics: {
+                trailingEps: qq.epsTrailingTwelveMonths != null ? { raw: qq.epsTrailingTwelveMonths } : null,
+                forwardEps: qq.epsForward != null ? { raw: qq.epsForward } : null
+            },
+            calendarEvents: qq.earningsTimestamp
+                ? { earnings: { earningsDate: [{ raw: qq.earningsTimestamp }] } }
+                : {}
+        }};
+    }
+
+    // Tier 3: chart snapshot — last resort, price only.
     try {
         const snap = await fetchYahooChartSnapshot(ticker, '1y', '1d', signal);
         if (!snap?.meta) return { source: 'yahoo', error: true, errorCode: q.errorCode || 500 };
-        const meta = snap.meta, closes = (snap?.indicators?.quote?.[0]?.close || []).filter(v => v != null);
-        const trailing = closes.length >= 2 ? closes[closes.length - 1] - closes[0] : null;
-        return { source: 'yahoo', earnings: {
-            regularMarketPrice: meta.regularMarketPrice ?? null,
-            yearlyPriceDelta: trailing,
-            yearlyPriceDeltaPercent: (trailing && closes[0]) ? (trailing / closes[0]) * 100 : null
+        const meta = snap.meta;
+        return { source: 'yahoo', data: {
+            price: { regularMarketPrice: { raw: meta.regularMarketPrice ?? null } }
         }};
     } catch (e) { return { source: 'yahoo', error: true, errorCode: 500 }; }
 }
@@ -518,8 +570,11 @@ export async function fetchYahooSparkBatch(symbols, range = '1d', interval = '1m
 
 export async function fetchYahooQuotesBatch(symbols, signal) {
     if (!symbols.length) return [];
-    // v6 is dead (404) — use v7 which works without crumb for basic quotes
-    const url = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(',')}`;
+    // v6 is dead (404) — use v7 which works without crumb for basic quotes.
+    // Special chars (^VIX, EURUSD=X, DX-Y.NYB) must be URL-encoded per symbol,
+    // while the comma separator stays literal.
+    const encoded = symbols.map(s => encodeURIComponent(s)).join(',');
+    const url = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${encoded}`;
     const j = await yahooFetch(url, signal);
     if (j?.error) {
         console.warn('[Yahoo] Quote Batch Error:', j.errorCode);
@@ -620,14 +675,6 @@ function parseChartPayload(payload, symbolKey) {
         price: lastPrice,
         symbol: symbolKey
     };
-}
-
-export async function fetchYahooOptions(ticker, date, signal) {
-    try {
-        const j = await yahooFetch(`https://query2.finance.yahoo.com/v7/finance/options/${encodeURIComponent(ticker)}${date ? `?date=${date}` : ''}`, signal);
-        if (j.error) return { source: 'yahoo', ...j };
-        return { source: 'yahoo', options: j.optionChain || j.option || j };
-    } catch (e) { return { source: 'yahoo', error: true, errorCode: 500 }; }
 }
 
 export async function fetchYahooAnalysis(ticker, signal) {

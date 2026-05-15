@@ -16,19 +16,7 @@ const normalizeQuery = q => (q || '').trim().toLowerCase();
 
 const getTickerLabel = symbol => positions[symbol]?.ticker || symbol;
 
-const appendTagElements = (metaEl, labels, limit = 4) => {
-    if (!labels?.length) return;
-    const unique = new Set();
-    labels.filter(Boolean).forEach(label => unique.add(label));
-    Array.from(unique).slice(0, limit).forEach(label => {
-        const tag = document.createElement('span');
-        tag.className = 'news-ticker-tag';
-        tag.textContent = label;
-        metaEl.appendChild(tag);
-    });
-};
-
-const buildNewsAnchorItem = (item, { className, includeSummary = true, tagLabels = [] }) => {
+const buildNewsAnchorItem = (item, { className, includeSummary = true }) => {
     const a = document.createElement('a');
     a.className = className;
     a.href = item.url || '#';
@@ -47,38 +35,6 @@ const buildNewsAnchorItem = (item, { className, includeSummary = true, tagLabels
     src.textContent = item.source || 'Source';
     m.appendChild(src);
     m.appendChild(document.createTextNode(` • ${formatNewsDate(item.publishedAt)}`));
-
-    appendTagElements(m, tagLabels);
-
-    const allSymbols = [item.symbol, ...(item.symbols || []), ...(item.relatedTickers || [])].filter(Boolean);
-    let perfData = null;
-    let perfSymbol = null;
-
-    for (const sym of allSymbols) {
-        if (positions[sym] && positions[sym].lastData?.changePercent !== undefined) {
-            perfData = positions[sym].lastData;
-            perfSymbol = sym;
-            break;
-        } else {
-            const found = Object.keys(positions).find(k => positions[k].ticker === sym || k === sym);
-            if (found && positions[found].lastData?.changePercent !== undefined) {
-                perfData = positions[found].lastData;
-                perfSymbol = found;
-                break;
-            }
-        }
-    }
-
-    if (perfData) {
-        const isPositive = perfData.change >= 0;
-        a.classList.add(isPositive ? 'perf-positive' : 'perf-negative');
-        
-        const badge = document.createElement('span');
-        badge.className = `news-badge ${isPositive ? 'positive' : 'negative'}`;
-        badge.textContent = `${getTickerLabel(perfSymbol)} ${formatPct(perfData.changePercent)}`;
-        m.appendChild(badge);
-    }
-
     a.appendChild(m);
 
     if (includeSummary && item.summary) {
@@ -86,6 +42,41 @@ const buildNewsAnchorItem = (item, { className, includeSummary = true, tagLabels
         s.className = 'news-summary';
         s.textContent = item.summary;
         a.appendChild(s);
+    }
+
+    // One sentiment badge per affected portfolio position
+    const allSymbols = [...new Set([item.symbol, ...(item.symbols || []), ...(item.relatedTickers || [])].filter(Boolean))];
+    const seen = new Set();
+    const matches = [];
+    for (const sym of allSymbols) {
+        let label = null, data = null;
+        if (positions[sym]?.lastData?.changePercent !== undefined) {
+            label = getTickerLabel(sym);
+            data = positions[sym].lastData;
+        } else {
+            const k = Object.keys(positions).find(k => positions[k].ticker === sym || k === sym);
+            if (k && positions[k].lastData?.changePercent !== undefined) {
+                label = getTickerLabel(k);
+                data = positions[k].lastData;
+            }
+        }
+        if (label && data && !seen.has(label)) {
+            seen.add(label);
+            matches.push({ label, data });
+        }
+    }
+
+    if (matches.length > 0) {
+        a.classList.add(matches[0].data.change >= 0 ? 'perf-positive' : 'perf-negative');
+        const footer = document.createElement('div');
+        footer.className = 'news-badges';
+        for (const { label, data } of matches) {
+            const badge = document.createElement('span');
+            badge.className = `news-badge ${data.change >= 0 ? 'positive' : 'negative'}`;
+            badge.textContent = `${label} ${formatPct(data.changePercent)}`;
+            footer.appendChild(badge);
+        }
+        a.appendChild(footer);
     }
 
     return a;
@@ -99,14 +90,6 @@ const filterNewsItems = (items, query) => {
         (i.summary || '').toLowerCase().includes(q) ||
         (i.source || '').toLowerCase().includes(q)
     );
-};
-
-const collectTags = (item, includeRelated = true) => {
-    const tags = new Set();
-    const symbols = item.symbols || (item.symbol ? [item.symbol] : []);
-    symbols.forEach(s => tags.add(getTickerLabel(s)));
-    if (includeRelated && item.relatedTickers) item.relatedTickers.forEach(s => tags.add(getTickerLabel(s)));
-    return Array.from(tags);
 };
 
 export function setPositions(pos) { positions = pos; }
@@ -167,8 +150,7 @@ export function updateNewsUI(symbol, items, filter = null) {
     if (!list.length) { el.textContent = filter ? 'No results.' : 'No recent news.'; return; }
 
     sortNewsItems(list).forEach(item => {
-        const tagLabels = collectTags(item, true);
-        el.appendChild(buildNewsAnchorItem(item, { className: 'news-item', tagLabels }));
+        el.appendChild(buildNewsAnchorItem(item, { className: 'news-item' }));
     });
 }
 
@@ -190,8 +172,7 @@ export function updateNewsPageList(items, opts = {}) {
     if (!skipSort) sortNewsItems(list);
     if (replaceCache) lastPageNews = list;
     list.forEach(item => {
-        const tagLabels = collectTags(item, false);
-        el.appendChild(buildNewsAnchorItem(item, { className: 'news-item', tagLabels }));
+        el.appendChild(buildNewsAnchorItem(item, { className: 'news-item' }));
     });
     // Removed news last update noise
 }

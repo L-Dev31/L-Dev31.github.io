@@ -25,7 +25,10 @@
       "Bash(python scripts/search.py \"accessibility touch-target focus keyboard data-table\" --domain ux -n 10)",
       "Bash(python scripts/search.py \"chart real-time financial line candle\" --domain chart -n 6)",
       "Bash(bash bundle-css.sh)",
-      "Bash(grep -v \"console\\\\.\\\\|//.*metadata\")"
+      "Bash(grep -v \"console\\\\.\\\\|//.*metadata\")",
+      "Bash(grep -v \"^\\\\s*//\")",
+      "Bash(curl -sI \"https://query2.finance.yahoo.com/v10/finance/quoteSummary/AAPL?modules=financialData\")",
+      "Bash(curl -sI \"https://query2.finance.yahoo.com/v7/finance/quote?symbols=%5EVIX,%5EGSPC\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\gigabyte\\Documents\\GitHub\\L-Dev31.github.io\\projects\\Stock"

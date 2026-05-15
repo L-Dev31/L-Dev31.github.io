@@ -1,6 +1,4 @@
-// Nemeris Quant Engine — pure math, no DOM, no fetch.
-// All inputs are arrays of numbers (close prices) or arrays of returns.
-// All functions are deterministic and safe to run inside a Web Worker.
+// Nemeris Quant Engine
 
 const TRADING_DAYS = 252;
 

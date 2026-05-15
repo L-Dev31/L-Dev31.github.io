@@ -41,8 +41,7 @@
     display: none;
 }
 
-.card.active,
-body.sidebar-open .sidebar {
+.card.active {
     animation: globalFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -58,10 +57,13 @@ body.sidebar-open .sidebar {
 
 @media (prefers-reduced-motion: reduce) {
 
-    .card.active,
-    body.sidebar-open .sidebar {
+    .card.active {
         animation: none;
     }
+}
+
+.hidden-by-bot {
+    display: none !important;
 }
 
 *,
@@ -1764,12 +1766,6 @@ select option {
     background: linear-gradient(90deg, rgba(248, 113, 113, 0.15) 0%, transparent 100%);
 }
 
-.perf-row-head {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
 .perf-row-logo {
     width: 24px;
     height: 24px;
@@ -1811,26 +1807,6 @@ select option {
 .perf-row-pl-pct {
     font-size: 11px;
     opacity: 0.75;
-}
-
-.perf-row-flow {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--text-dark);
-    font-variant-numeric: tabular-nums;
-    padding-left: 34px;
-}
-
-.perf-row-flow i {
-    font-size: 8px;
-    color: var(--text-dark);
-    opacity: 0.5;
-}
-
-.perf-row-to {
-    color: var(--text-light);
 }
 
 .perf-empty {
@@ -1882,10 +1858,7 @@ select option {
     vertical-align: 1px;
 }
 
-.perf-positions--closed .perf-row-symbol,
-.perf-positions--closed .perf-row-name,
-.perf-positions--closed .perf-row-from,
-.perf-positions--closed .perf-row-to {
+.perf-positions--closed .perf-row-name {
     opacity: 0.85;
 }
 
@@ -2323,41 +2296,6 @@ select option {
     }
 }
 
-.news-filter-group {
-    position: relative;
-    flex: 1;
-    min-width: 150px;
-}
-
-.news-label {
-    position: absolute;
-    top: 6px;
-    left: 14px;
-    font-size: 8px;
-    color: var(--text-dark);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    pointer-events: none;
-    z-index: 10;
-    opacity: 0.6;
-}
-
-.news-select {
-    width: 100%;
-    border-radius: var(--radius-sm);
-    border: 2px solid rgba(168, 162, 255, 0.15);
-    background: transparent;
-    color: var(--text-white);
-    font-size: 13px;
-    outline: none;
-    transition: border-color var(--trans-fast);
-}
-
-.news-ticker-group {
-    position: relative;
-}
-
 .ticker-suggestions {
     display: none;
     position: absolute;
@@ -2428,25 +2366,6 @@ select option {
     transform: scale(0.998);
 }
 
-.news-item.perf-positive {
-    background: linear-gradient(135deg, rgba(101, 217, 129, 0.08) 0%, rgba(101, 217, 129, 0.02) 100%);
-    border-color: rgba(101, 217, 129, 0.15);
-}
-
-.news-item.perf-positive:hover {
-    background: linear-gradient(135deg, rgba(101, 217, 129, 0.12) 0%, rgba(101, 217, 129, 0.04) 100%);
-    border-color: rgba(101, 217, 129, 0.3);
-}
-
-.news-item.perf-negative {
-    background: linear-gradient(135deg, rgba(248, 113, 113, 0.08) 0%, rgba(248, 113, 113, 0.02) 100%);
-    border-color: rgba(248, 113, 113, 0.15);
-}
-
-.news-item.perf-negative:hover {
-    background: linear-gradient(135deg, rgba(248, 113, 113, 0.12) 0%, rgba(248, 113, 113, 0.04) 100%);
-    border-color: rgba(248, 113, 113, 0.3);
-}
 
 .news-title {
     font-size: 14px;
@@ -2472,22 +2391,20 @@ select option {
     letter-spacing: 0.5px;
 }
 
-.news-ticker-tag {
-    padding: 2px 6px;
-    border-radius: 6px;
-    background: rgba(168, 162, 255, 0.12);
-    font-size: 9px;
-    font-weight: 700;
-    color: var(--primary);
-    border: 1px solid rgba(168, 162, 255, 0.1);
+.news-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: flex-end;
+    margin-top: 8px;
 }
 
 .news-badge {
-    padding: 2px 6px;
+    padding: 2px 7px;
     border-radius: 6px;
     font-size: 9px;
     font-weight: 700;
-    margin-left: auto;
+    white-space: nowrap;
 }
 
 .news-badge.positive {
@@ -3007,12 +2924,6 @@ select option {
     transform: scale(0.98);
 }
 
-.settings-action-btn.secondary {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.12);
-    color: var(--text-light);
-}
-
 .settings-action-btn.primary {
     background: var(--primary);
     color: var(--color-on-primary);
@@ -3258,7 +3169,6 @@ input:checked+.slider:before {
     }
 
     /* Standard horizontal padding */
-    .card-header,
     .card-general-info,
     .card-data-section,
     .section-title,
@@ -3532,8 +3442,6 @@ input:checked+.slider:before {
     }
 
     .signal-labels,
-    .signal-value,
-    .signal-description,
     .data-source-strip {
         padding: 0 var(--pad-card);
     }

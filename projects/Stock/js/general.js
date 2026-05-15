@@ -6,10 +6,8 @@ import './terminal.js'
 import { DEAD_ERROR_CODES, periodToDays } from './constants.js'
 import { positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, fastPollTimer, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings } from './state.js'
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching } from './portfolio.js'
-import { updateUI, clearPeriodDisplay, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance, initMobileSidebar, setBottomNavActive } from './ui.js'
-import { getEl, formatCurrency, formatPct } from './utils.js'
-import { Store } from './store.js'
-import { QuantEngine } from './quant-engine.js'
+import { updateUI, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance, initMobileSidebar, setBottomNavActive } from './ui.js'
+import { getEl } from './utils.js'
 
 // Re-export for other modules
 export { fetchActiveSymbol };
@@ -176,10 +174,9 @@ function openPortfolioCard() {
     // Trigger analytics refresh
     try { 
         import('./portfolio.js').then(m => {
-            const activeTab = card.querySelector('.card-tab-btn.active')?.dataset.target || 'portfolio-performance';
-            m.initPortfolioAnalytics(); // Ensures listeners are bound
+            m.initPortfolioAnalytics();
         });
-    } catch (e) {}
+    } catch {}
 }
 
 function openProfileCard() {
@@ -206,45 +203,8 @@ function openProfileCard() {
 }
 
 
-async function saveSettingsFromForm() {
-    const current = getUserSettings();
-    const proxyInput = document.getElementById('settings-proxy-url');
-    const perfViewer = document.getElementById('settings-performance-viewer');
-
-    const currency = current.currency || '€';
-    const nextProxy = (proxyInput?.value || '').trim() || DEFAULT_WORKER_URL;
-    const performanceViewerEnabled = !!perfViewer?.checked;
-
-    let proxyUrl = current.proxyUrl || DEFAULT_WORKER_URL;
-    if (nextProxy !== proxyUrl) {
-        setSettingsStatus('Validating proxy...', 'loading');
-        const ok = await pingProxy(nextProxy);
-        if (ok) {
-            proxyUrl = nextProxy;
-            setProxyBaseUrl(proxyUrl);
-        } else {
-            setSettingsStatus('Invalid proxy, previous URL kept.', 'error');
-        }
-    }
-
-    saveUserSettings(settings);
-    fillSettingsForm(settings);
-    refreshUiAfterSettingsSave();
-
-    setSettingsStatus('Settings saved.', 'success');
-
-    startGlobalRefreshLoop();
-}
-
 function startFastPolling() {
     startGlobalRefreshLoop();
-}
-
-function stopFastPolling() {
-    if (globalRefreshTimer) {
-        clearInterval(globalRefreshTimer);
-        setGlobalRefreshTimer(null);
-    }
 }
 
 function startGlobalRefreshLoop() {
@@ -263,72 +223,7 @@ function startGlobalRefreshLoop() {
 async function syncDashboardData() {
     const p = globalPeriod || '1D';
     if (isBatchFetching) return;
-    
-    // We prioritize performance fetch because it provides both Sparkline data and latest prices
     await batchPerformanceFetch(p);
-    
-    // batchPriceFetch is now mostly redundant for the sidebar, but we can still use it 
-    // for extra metadata if needed, though we'll throttle it much more.
-}
-
-
-
-async function batchPriceFetch() {
-    if (isBatchFetching) return;
-    const tickers = Object.values(positions).map(p => p.ticker).filter(Boolean);
-    if (!tickers.length) return;
-
-    try {
-        const { fetchYahooQuotesBatch } = await import('./yahoo-finance.js');
-        const quotes = await fetchYahooQuotesBatch(tickers);
-        if (!quotes) return;
-
-        const activeSymbol = getActiveSymbol();
-        const returnedTickers = new Set(quotes.map(q => (q.symbol || '').toUpperCase()).filter(Boolean));
-
-        for (const q of quotes) {
-            const ticker = q.symbol;
-            for (const pos of Object.values(positions)) {
-                if (pos.ticker !== ticker) continue;
-
-                if (pos.suspended) unmarkTabAsSuspended(pos.symbol);
-
-                const prevPrice = pos.lastData?.price || 0;
-                const newPrice = q.regularMarketPrice || prevPrice;
-                const hasDetailed = pos.lastData?.timestamps?.length > 0;
-
-                if (hasDetailed) {
-                    // Refresh only the latest price; keep period-scoped change/changePercent.
-                    pos.lastData.price = newPrice;
-                } else {
-                    pos.lastData = {
-                        ...(pos.lastData || {}),
-                        price: newPrice,
-                        change: q.regularMarketChange || 0,
-                        changePercent: q.regularMarketChangePercent || 0,
-                        source: 'yahoo-bulk'
-                    };
-                }
-
-                updateSidebarPerformance(pos.symbol);
-
-                if (pos.symbol === activeSymbol) {
-                    updateUI(pos.symbol, pos.lastData);
-                }
-            }
-        }
-
-        // Yahoo a répondu mais a omis certains tickers → ils sont morts/délistés.
-        if (quotes.length > 0) {
-            for (const pos of Object.values(positions)) {
-                if (!pos.ticker) continue;
-                if (returnedTickers.has(pos.ticker.toUpperCase())) continue;
-                if (!pos.suspended) markTabAsSuspended(pos.symbol);
-            }
-        }
-    } catch (e) {
-        console.error('[Price Batch] Error:', e);
-    }
 }
 
 // True si un fetch est actuellement en vol. mainFetchController est remis à null
@@ -360,7 +255,7 @@ async function fetchActiveSymbol(force) {
     setPeriodButtonsFetching(symbol, true);
 
     // News en tâche de fond — ne pas bloquer
-    const newsPromise = (async () => {
+    (async () => {
         try {
             const period = positions[symbol].currentPeriod || '1D';
             const days = periodToDays(period);
@@ -504,12 +399,6 @@ document.getElementById('cards-container')?.addEventListener('change', async e =
 });
 
 
-const font = document.createElement('link')
-font.id = 'poppins-font'
-font.rel = 'stylesheet'
-font.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'
-document.head.appendChild(font)
-
 window.addEventListener('load', async () => {
     const settings = getUserSettings();
     fillSettingsForm(settings);
@@ -517,7 +406,6 @@ window.addEventListener('load', async () => {
 
     await loadStocks();
     setNewsPositions(positions);
-    const active = getActiveSymbol();
     try {
         document.querySelectorAll('.section-toggle').forEach(btn => {
             const section = btn.closest('.sidebar-section');
@@ -623,10 +511,10 @@ getEl('bottom-nav-profile')?.addEventListener('click', () => {
     setBottomNavActive('bottom-nav-profile');
 });
 
-getEl('open-terminal-btn')?.addEventListener('click', e => {
+getEl('open-terminal-btn')?.addEventListener('click', () => {
     openTerminalCard();
 });
-getEl('open-news-feed')?.addEventListener('click', async e => {
+getEl('open-news-feed')?.addEventListener('click', async () => {
     const a = getActiveSymbol();
     try { openNewsPage(a); } catch (err) { /* noop */ }
     document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
@@ -683,35 +571,6 @@ getEl('settings-save')?.addEventListener('click', async () => {
     if (actionBar) actionBar.style.display = 'none';
 
     refreshUiAfterSettingsSave();
-});
-
-// Data Management Listeners
-getEl('settings-export-data')?.addEventListener('click', () => {
-    const backup = {
-        settings: getUserSettings(),
-        positions: positions,
-        timestamp: new Date().toISOString()
-    };
-    Store.exportData(backup, `nemeris_backup_${new Date().toISOString().split('T')[0]}.json`);
-});
-
-getEl('settings-import-data')?.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    try {
-        const imported = await Store.importData(file);
-        if (imported.settings) saveUserSettings(imported.settings);
-        if (imported.positions) {
-            // We'll store the imported positions in a specific key
-            localStorage.setItem('nemeris_imported_positions', JSON.stringify(imported.positions));
-        }
-        
-        setSettingsStatus('Backup imported! Reloading...', 'success');
-        setTimeout(() => window.location.reload(), 1500);
-    } catch (err) {
-        setSettingsStatus('Error importing backup: ' + err.message, 'error');
-    }
 });
 
 // Instant PFP Preview

@@ -16,13 +16,18 @@ export async function runRvCommand({ parts, out, fmtErr }) {
             if (window.positions?.[target]) ticker = window.positions[target].ticker || ticker;
             const response = await fetchYahooFinancials(ticker, null);
             if (response && !response.error && response.financials?.financialData) {
-                const financialData = response.financials.financialData;
-                const price = financialData.currentPrice?.raw ?? null;
-                const dayChangePercent = financialData.dayChangePercent ?? null;
+                const fd = response.financials.financialData;
+                const sd = response.financials.summaryDetail || {};
+                const ks = response.financials.defaultKeyStatistics || {};
+                const pr = response.financials.price || {};
+                const price = fd.currentPrice?.raw ?? pr.regularMarketPrice?.raw ?? null;
+                const dayChangePercent = pr.regularMarketChangePercent?.raw != null
+                    ? pr.regularMarketChangePercent.raw * 100
+                    : (fd.dayChangePercent ?? null);
                 results.push({
                     ticker: target,
-                    pe: financialData.trailingPE || financialData.forwardPE,
-                    revenue: financialData.totalRevenue?.raw || financialData.totalRevenue,
+                    pe: sd.trailingPE?.raw ?? sd.forwardPE?.raw ?? ks.forwardPE?.raw ?? null,
+                    revenue: fd.totalRevenue?.raw ?? null,
                     price,
                     dayChangePercent
                 });
