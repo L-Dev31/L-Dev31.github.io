@@ -9,7 +9,6 @@ import { runRiskCommand } from './command/risk.js';
 import { runBetaCommand } from './command/beta.js';
 import { runCompareCommand } from './command/compare.js';
 import { runMcCommand } from './command/mc.js';
-import { runMacroCommand } from './command/macro.js';
 import { positions } from './state.js';
 
 const INPUT_ID = 'terminal-input';
@@ -18,7 +17,7 @@ const PROMPT = 'USER>';
 const HISTORY_KEY = 'nemeris_terminal_history';
 const HISTORY_MAX = 100;
 
-const COMMAND_NAMES = ['GO', 'NEWS', 'FA', 'ANR', 'ERN', 'DVD', 'RV', 'RISK', 'BETA', 'COMPARE', 'MC', 'MACRO', 'CLEAR', 'HELP'];
+const COMMAND_NAMES = ['GO', 'NEWS', 'FA', 'ANR', 'ERN', 'DVD', 'RV', 'RISK', 'BETA', 'COMPARE', 'MC', 'CLEAR', 'HELP'];
 
 function loadHistory() {
     try {
@@ -93,7 +92,6 @@ function showHelp(cmd) {
         { c: 'BETA &lt;SYM&gt; [BENCH]', d: 'Beta vs benchmark (default ^GSPC)' },
         { c: 'COMPARE T1 T2...', d: 'Correlation matrix + perf summary' },
         { c: 'MC &lt;SYM&gt; [DAYS] [PATHS]', d: 'Monte-Carlo price projection' },
-        { c: 'MACRO', d: 'VIX, yields, FX, indices, commodities snapshot' },
         { c: 'CLEAR', d: 'Clear' }, { c: 'HELP [CMD]', d: 'Help' }
     ];
 
@@ -128,8 +126,7 @@ const COMMAND_HANDLERS = {
     RISK: runRiskCommand,
     BETA: runBetaCommand,
     COMPARE: runCompareCommand,
-    MC: runMcCommand,
-    MACRO: runMacroCommand
+    MC: runMcCommand
 };
 
 async function exec(raw) {

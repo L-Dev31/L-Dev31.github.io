@@ -321,65 +321,9 @@ async function fetchYahooModules(ticker, modules, signal) {
     } catch (e) { return { source: 'yahoo', error: true, errorCode: 500 }; }
 }
 
-// Map v7/quote fields into the quoteSummary-style shape consumed by fa.js / rv.js.
-// v7/quote works without crumb on the proxy, so this keeps FA usable when v11 is blocked.
-function synthesizeFinancialsFromQuote(q) {
-    const wrap = v => (v != null ? { raw: v } : null);
-    return {
-        financialData: {
-            currentPrice: wrap(q.regularMarketPrice),
-            dayChangePercent: q.regularMarketChangePercent ?? null,
-            fiftyTwoWeekHigh: wrap(q.fiftyTwoWeekHigh),
-            fiftyTwoWeekLow: wrap(q.fiftyTwoWeekLow),
-            regularMarketVolume: q.regularMarketVolume ?? null,
-            totalRevenue: wrap(q.totalRevenue)
-        },
-        defaultKeyStatistics: {
-            forwardPE: wrap(q.forwardPE),
-            priceToBook: wrap(q.priceToBook),
-            trailingEps: wrap(q.epsTrailingTwelveMonths),
-            forwardEps: wrap(q.epsForward),
-            beta: wrap(q.beta),
-            sharesOutstanding: wrap(q.sharesOutstanding)
-        },
-        summaryDetail: {
-            trailingPE: wrap(q.trailingPE),
-            forwardPE: wrap(q.forwardPE),
-            marketCap: wrap(q.marketCap),
-            dividendYield: wrap(q.trailingAnnualDividendYield),
-            averageDailyVolume10Day: q.averageDailyVolume10Day ?? null,
-            averageVolume10days: q.averageDailyVolume10Day ?? null,
-            regularMarketVolume: q.regularMarketVolume ?? null,
-            fiftyTwoWeekHigh: wrap(q.fiftyTwoWeekHigh),
-            fiftyTwoWeekLow: wrap(q.fiftyTwoWeekLow),
-            beta: wrap(q.beta)
-        },
-        price: {
-            marketCap: wrap(q.marketCap),
-            regularMarketPrice: wrap(q.regularMarketPrice),
-            // v7 returns percent as percent (2.5 = 2.5%) — fa.js multiplies by 100, so divide here.
-            regularMarketChangePercent: q.regularMarketChangePercent != null
-                ? { raw: q.regularMarketChangePercent / 100 }
-                : null,
-            longName: q.longName,
-            shortName: q.shortName
-        },
-        assetProfile: {}
-    };
-}
-
 export async function fetchYahooFinancials(ticker, signal) {
-    // Tier 1: rich quoteSummary (margins, ROE, FCF, debt, etc.)
-    const q = await fetchYahooModules(ticker, 'financialData,defaultKeyStatistics,summaryDetail,price,assetProfile', signal);
+    const q = await fetchYahooModules(ticker, 'financialData', signal);
     if (!q.error && q.result?.financialData) return { source: 'yahoo', financials: q.result };
-
-    // Tier 2: v7/quote — valuation, EPS, dividend, market data (no margins/ratios).
-    const quoteResp = await fetchYahooQuote(ticker, signal);
-    if (!quoteResp.error && quoteResp.quote) {
-        return { source: 'yahoo', financials: synthesizeFinancialsFromQuote(quoteResp.quote) };
-    }
-
-    // Tier 3: chart snapshot — last resort, price + 52W only.
     try {
         const snap = await fetchYahooChartSnapshot(ticker, '6mo', '1d', signal);
         if (!snap?.meta) return { source: 'yahoo', error: true, errorCode: q.errorCode || 500 };
@@ -395,33 +339,17 @@ export async function fetchYahooFinancials(ticker, signal) {
 }
 
 export async function fetchYahooEarnings(ticker, signal) {
-    // Tier 1: full earnings modules (surprise history, forward estimates, calendar)
-    const q = await fetchYahooModules(ticker, 'earnings,earningsHistory,earningsTrend,calendarEvents,defaultKeyStatistics,price', signal);
-    if (!q.error && q.result) return { source: 'yahoo', data: q.result };
-
-    // Tier 2: v7/quote — EPS TTM/Forward + next earnings date.
-    const quoteResp = await fetchYahooQuote(ticker, signal);
-    if (!quoteResp.error && quoteResp.quote) {
-        const qq = quoteResp.quote;
-        return { source: 'yahoo', data: {
-            price: { regularMarketPrice: qq.regularMarketPrice != null ? { raw: qq.regularMarketPrice } : null },
-            defaultKeyStatistics: {
-                trailingEps: qq.epsTrailingTwelveMonths != null ? { raw: qq.epsTrailingTwelveMonths } : null,
-                forwardEps: qq.epsForward != null ? { raw: qq.epsForward } : null
-            },
-            calendarEvents: qq.earningsTimestamp
-                ? { earnings: { earningsDate: [{ raw: qq.earningsTimestamp }] } }
-                : {}
-        }};
-    }
-
-    // Tier 3: chart snapshot — last resort, price only.
+    const q = await fetchYahooModules(ticker, 'earnings,earningsHistory,earningsTrend', signal);
+    if (!q.error && q.result) return { source: 'yahoo', earnings: q.result.earnings || q.result };
     try {
         const snap = await fetchYahooChartSnapshot(ticker, '1y', '1d', signal);
         if (!snap?.meta) return { source: 'yahoo', error: true, errorCode: q.errorCode || 500 };
-        const meta = snap.meta;
-        return { source: 'yahoo', data: {
-            price: { regularMarketPrice: { raw: meta.regularMarketPrice ?? null } }
+        const meta = snap.meta, closes = (snap?.indicators?.quote?.[0]?.close || []).filter(v => v != null);
+        const trailing = closes.length >= 2 ? closes[closes.length - 1] - closes[0] : null;
+        return { source: 'yahoo', earnings: {
+            regularMarketPrice: meta.regularMarketPrice ?? null,
+            yearlyPriceDelta: trailing,
+            yearlyPriceDeltaPercent: (trailing && closes[0]) ? (trailing / closes[0]) * 100 : null
         }};
     } catch (e) { return { source: 'yahoo', error: true, errorCode: 500 }; }
 }
