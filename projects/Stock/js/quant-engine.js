@@ -263,6 +263,114 @@ export const QuantEngine = {
         return ((finalValue - 10000) / 10000) * 100;
     },
 
+    // ============ TRADE-LEVEL EDGE ============
+    // FIFO extraction: each sale becomes one trade event matched against earliest unsold lots.
+    extractTradeEvents(stock) {
+        if (!stock?.sales?.length || !stock?.purchases?.length) return [];
+
+        const lots = stock.purchases
+            .slice()
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .map(p => ({
+                date: p.date,
+                shares: p.shares || 0,
+                perShare: Math.abs(p.amount || 0) / Math.max(1, p.shares || 1)
+            }));
+
+        const sales = stock.sales.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+        const trades = [];
+
+        for (const sale of sales) {
+            let toRemove = sale.shares || 0;
+            let costBasis = 0;
+            let earliestBuy = null;
+
+            while (toRemove > 0 && lots.length > 0) {
+                const lot = lots[0];
+                if (!earliestBuy) earliestBuy = lot.date;
+                const taken = Math.min(toRemove, lot.shares);
+                costBasis += taken * lot.perShare;
+                lot.shares -= taken;
+                toRemove -= taken;
+                if (lot.shares <= 0) lots.shift();
+            }
+
+            const proceeds = sale.amount || 0;
+            const pnl = proceeds - costBasis;
+            const returnPct = costBasis > 0 ? (pnl / costBasis) * 100 : 0;
+            const days = earliestBuy
+                ? Math.max(1, Math.round((new Date(sale.date) - new Date(earliestBuy)) / 86400000))
+                : 0;
+
+            trades.push({
+                symbol: stock.symbol,
+                date: sale.date,
+                shares: sale.shares,
+                costBasis, proceeds, pnl, returnPct, days
+            });
+        }
+        return trades;
+    },
+
+    // System-edge statistics. Kelly = p − q/b where b = avgWin/avgLoss.
+    tradeStats(trades) {
+        const empty = {
+            count: 0, wins: 0, losses: 0, winRate: 0,
+            avgWinPct: 0, avgLossPct: 0, expectancyPct: 0,
+            profitFactor: 0, avgR: 0, kelly: 0,
+            avgHoldingDays: 0, bestPct: 0, worstPct: 0
+        };
+        if (!trades || !trades.length) return empty;
+
+        const wins = trades.filter(t => t.pnl > 0);
+        const losses = trades.filter(t => t.pnl < 0);
+        const grossWin = wins.reduce((s, t) => s + t.pnl, 0);
+        const grossLoss = Math.abs(losses.reduce((s, t) => s + t.pnl, 0));
+
+        const avgWinPct = wins.length ? wins.reduce((s, t) => s + t.returnPct, 0) / wins.length : 0;
+        const avgLossPct = losses.length ? Math.abs(losses.reduce((s, t) => s + t.returnPct, 0) / losses.length) : 0;
+        const winRate = wins.length / trades.length;
+        const lossRate = losses.length / trades.length;
+        const profitFactor = grossLoss > 0 ? grossWin / grossLoss : (grossWin > 0 ? Infinity : 0);
+        const expectancyPct = winRate * avgWinPct - lossRate * avgLossPct;
+        const avgR = avgLossPct > 0 ? avgWinPct / avgLossPct : 0;
+        const kelly = (avgR > 0 && losses.length > 0)
+            ? Math.max(0, winRate - lossRate / avgR)
+            : 0;
+
+        const dayList = trades.map(t => t.days || 0).filter(d => d > 0);
+        const avgHoldingDays = dayList.length ? dayList.reduce((a, b) => a + b, 0) / dayList.length : 0;
+        const returns = trades.map(t => t.returnPct);
+
+        return {
+            count: trades.length,
+            wins: wins.length,
+            losses: losses.length,
+            winRate, avgWinPct, avgLossPct,
+            expectancyPct, profitFactor, avgR, kelly,
+            avgHoldingDays,
+            bestPct: returns.length ? Math.max(...returns) : 0,
+            worstPct: returns.length ? Math.min(...returns) : 0
+        };
+    },
+
+    // Inverse-volatility target weights (risk-parity proxy without correlation matrix).
+    inverseVolWeights(vols) {
+        const out = {};
+        const symbols = Object.keys(vols || {});
+        if (!symbols.length) return out;
+        let total = 0;
+        const inv = {};
+        for (const s of symbols) {
+            const v = Number(vols[s]) || 0;
+            const x = v > 0 ? 1 / v : 0;
+            inv[s] = x;
+            total += x;
+        }
+        for (const s of symbols) out[s] = total > 0 ? inv[s] / total : 0;
+        return out;
+    },
+
     // ============ SENTIMENT ============
     sentimentScore(headlines) {
         if (!headlines || headlines.length === 0) return { score: 0, label: 'NEUTRAL', bull: 0, bear: 0 };

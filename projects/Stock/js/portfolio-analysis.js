@@ -154,9 +154,28 @@ export async function renderAnalysisPane(force = false) {
             };
         }).sort((a, b) => b.contrib - a.contrib);
 
-        // 9. Render
+        // 9. Inverse-vol target weights (risk-parity proxy) for sizing alignment
+        const volsMap = {};
+        for (const r of contribRows) volsMap[r.symbol] = r.vol;
+        const targetWeights = QuantEngine.inverseVolWeights(volsMap);
+        for (const r of contribRows) r.target = targetWeights[r.symbol] || 0;
+
+        // 10. Trade-level edge stats from the entire ledger (closed events via FIFO)
+        const allTrades = [];
+        for (const pos of Object.values(positions)) {
+            const events = QuantEngine.extractTradeEvents({
+                symbol: pos.symbol,
+                purchases: pos.purchases,
+                sales: pos.sales
+            });
+            allTrades.push(...events);
+        }
+        const edge = QuantEngine.tradeStats(allTrades);
+
+        // 11. Render
         renderHero({ totalReturn, annVol, sharpe, beta });
         renderMetrics({ sortino, maxDD, var95, cvar95, diversification, samples: ts.length });
+        renderTradingEdge(edge);
         renderContributors(contribRows);
         renderCorrelationMatrix(validSymbols, corrMatrix, contribRows.reduce((m, r) => (m[r.symbol] = r.name, m), {}));
     } catch (e) {
@@ -255,11 +274,20 @@ function renderContributors(rows) {
     const el = getEl('risk-contrib');
     if (!el) return;
     if (rows.length === 0) { el.innerHTML = ''; return; }
-    const body = rows.map(r => `
+    const body = rows.map(r => {
+        const target = r.target || 0;
+        const delta = r.weight - target;
+        const deltaCls = Math.abs(delta) < 0.02 ? 'neutral' : delta > 0 ? 'over' : 'under';
+        const deltaSign = delta > 0 ? '+' : '';
+        return `
         <tr>
             <td class="risk-contrib-name">${r.name}</td>
             <td class="risk-contrib-sym">${r.symbol}</td>
             <td>${fmtPct(r.weight * 100)}</td>
+            <td class="risk-contrib-target">
+                <span>${fmtPct(target * 100)}</span>
+                <span class="risk-contrib-delta ${deltaCls}">${deltaSign}${(delta * 100).toFixed(1)}</span>
+            </td>
             <td>${fmtPct(r.vol * 100)}</td>
             <td>${r.beta == null ? '—' : fmtNum(r.beta, 2)}</td>
             <td>
@@ -269,11 +297,56 @@ function renderContributors(rows) {
                 </div>
             </td>
         </tr>
-    `).join('');
+    `;
+    }).join('');
     el.innerHTML = `
-        <thead><tr><th>Name</th><th>Ticker</th><th>Weight</th><th>Ann. Vol</th><th>β</th><th>Risk share</th></tr></thead>
+        <thead><tr>
+            <th>Name</th><th>Ticker</th><th>Weight</th>
+            <th title="Risk-parity target (inverse-volatility)">Target</th>
+            <th>Ann. Vol</th><th>β</th><th>Risk share</th>
+        </tr></thead>
         <tbody>${body}</tbody>
     `;
+}
+
+function renderTradingEdge(edge) {
+    const el = getEl('trading-edge-list');
+    if (!el) return;
+    if (!edge || edge.count === 0) {
+        el.innerHTML = '<div class="perf-empty">No closed trades yet — place at least one round-trip</div>';
+        return;
+    }
+
+    const pf = edge.profitFactor === Infinity ? '∞' : fmtNum(edge.profitFactor, 2);
+    const halfKelly = edge.kelly / 2;
+    const sample = edge.count;
+    const sampleNote = sample < 30 ? ` <span class="edge-warn" title="Statistically thin: need 30+ trades for stable estimates">⚠</span>` : '';
+
+    const items = [
+        { label: `Win rate · ${edge.wins}W / ${edge.losses}L${sampleNote}`,
+          value: fmtPct(edge.winRate * 100), pos: edge.winRate >= 0.5 },
+        { label: 'Profit factor',
+          value: pf, pos: edge.profitFactor >= 1, hint: 'Σ wins / |Σ losses| — above 1.5 is good' },
+        { label: 'Expectancy / trade',
+          value: fmtPct(edge.expectancyPct), pos: edge.expectancyPct > 0,
+          hint: 'p·avgWin − q·avgLoss — must be positive long-term' },
+        { label: 'Reward / Risk (avg R)',
+          value: fmtNum(edge.avgR, 2), pos: edge.avgR >= 1,
+          hint: 'Average win % divided by average loss %' },
+        { label: 'Avg holding · Best / Worst',
+          value: `${Math.round(edge.avgHoldingDays)}d · ${fmtPct(edge.bestPct)} / ${fmtPct(edge.worstPct)}` },
+        { label: 'Suggested size · ½ Kelly',
+          value: edge.kelly > 0 ? fmtPct(halfKelly * 100) : '—',
+          emphasis: true,
+          hint: 'Half-Kelly cap on per-position sizing given current edge' }
+    ];
+
+    el.innerHTML = items.map(m => `
+        <div class="metric-item ${m.emphasis ? 'metric-item-emphasis' : ''}">
+            <span class="metric-label" ${m.hint ? `title="${m.hint}"` : ''}>${m.label}</span>
+            <span class="metric-value ${m.pos === true ? 'positive' : m.pos === false ? 'negative' : ''}">${m.value}</span>
+        </div>
+    `).join('');
 }
 
 function renderCorrelationMatrix(symbols, matrix, names) {
