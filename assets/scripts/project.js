@@ -1,10 +1,14 @@
 import { fetchJson, resolveProjectHref, prefersReducedMotion } from './utils.js';
 
+function escapeHtml(str) {
+    return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 export async function setupProjectPage(lenis) {
     const params = new URLSearchParams(location.search);
     const id = params.get('id')?.trim();
 
-    if (!id) { renderNotFound(); return; }
+    if (!id || !/^[\w-]+$/.test(id)) { renderNotFound(); return; }
 
     try {
         const data = await fetchJson(`assets/data/projects/${id}.json`);
@@ -31,7 +35,7 @@ function renderNotFound() {
 }
 
 function renderPage(data, lenis) {
-    document.title = `${data.title} — Léo Tosku`;
+    document.title = `${data.title || 'Project'} — Léo Tosku`;
     renderHero(data);
     renderArticleHeader(data);
     renderBlocks(data.blocks || []);
@@ -61,10 +65,10 @@ function renderArticleHeader(data) {
 
     header.innerHTML = `
         ${liveHref ? `<a href="${liveHref}" class="article-cta-top" target="_blank" rel="noopener noreferrer">View live →</a>` : ''}
-        <h1 class="article-title">${data.title}</h1>
-        ${data.subtitle ? `<p class="article-subtitle">${data.subtitle}</p>` : ''}
-        ${metaParts.length ? `<p class="article-meta">${metaParts.join(' · ')}</p>` : ''}
-        ${data.tags?.length ? `<div class="article-tags">${data.tags.map(t => `<span class="featured-tag">${t}</span>`).join('')}</div>` : ''}
+        <h1 class="article-title">${escapeHtml(data.title)}</h1>
+        ${data.subtitle ? `<p class="article-subtitle">${escapeHtml(data.subtitle)}</p>` : ''}
+        ${metaParts.length ? `<p class="article-meta">${metaParts.map(escapeHtml).join(' · ')}</p>` : ''}
+        ${data.tags?.length ? `<div class="article-tags">${data.tags.map(t => `<span class="featured-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
     `;
 }
 
@@ -85,13 +89,13 @@ function renderBlocks(blocks) {
                     </div>`;
                 break;
             case 'pull-quote':
-                el.innerHTML = `<blockquote class="block-pullquote">${block.text || ''}</blockquote>`;
+                el.innerHTML = `<blockquote class="block-pullquote">${escapeHtml(block.text)}</blockquote>`;
                 break;
             case 'image':
                 el.innerHTML = `
                     <figure class="block-figure">
-                        <img src="${block.src}" alt="${block.caption || ''}" loading="lazy" decoding="async">
-                        ${block.caption ? `<figcaption>${block.caption}</figcaption>` : ''}
+                        <img src="${block.src}" alt="${escapeHtml(block.caption)}" loading="lazy" decoding="async">
+                        ${block.caption ? `<figcaption>${escapeHtml(block.caption)}</figcaption>` : ''}
                     </figure>`;
                 break;
             case 'gallery':
@@ -105,11 +109,14 @@ function renderBlocks(blocks) {
                     <div class="block-metrics">
                         ${(block.items || []).map(item => `
                             <div class="metric-item">
-                                <span class="metric-value">${item.value}</span>
-                                <span class="metric-label">${item.label}</span>
+                                <span class="metric-value">${escapeHtml(item.value)}</span>
+                                <span class="metric-label">${escapeHtml(item.label)}</span>
                             </div>`).join('')}
                     </div>`;
                 break;
+            default:
+                console.warn(`[project.js] Unknown block type: "${block.type}" — skipping.`);
+                return;
         }
 
         container.appendChild(el);
