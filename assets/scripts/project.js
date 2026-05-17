@@ -84,7 +84,7 @@ function renderBlocks(blocks) {
             case 'text':
                 el.innerHTML = `
                     <div class="block-text-inner">
-                        ${block.title ? `<h2 class="block-text-title">${block.title}</h2>` : ''}
+                        ${block.title ? `<h2 class="block-text-title">${escapeHtml(block.title)}</h2>` : ''}
                         <p class="block-text-body">${block.body || ''}</p>
                     </div>`;
                 break;
