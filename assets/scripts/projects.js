@@ -22,22 +22,25 @@ export function setupWebProjects() {
         if (!projects.length) { list.innerHTML = '<p class="projects-empty">No projects.</p>'; return; }
 
         projects.forEach(p => {
-            const href = resolveProjectHref(p.path);
+            const liveHref = resolveProjectHref(p.path);
             const a = document.createElement('a');
-            a.className = `featured-project ${!href ? 'featured-project--disabled' : ''}`;
-            if (href) { a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; }
-            else { a.setAttribute('aria-disabled', 'true'); a.tabIndex = -1; }
+            a.className = 'featured-project';
+            a.href = `project.html?id=${p.id}`;
+
+            const tagsHtml = p.tags && p.tags.length > 0
+                ? p.tags.map(tag => `<span class="featured-tag">${tag}</span>`).join('')
+                : '';
 
             a.innerHTML = `
                 <div class="featured-project-info">
                     <span class="featured-project-title">${p.title}</span>
-                    <span class="featured-project-category">${p.type || 'UI/UX Design'}</span>
+                    <div class="featured-project-tags">${tagsHtml}</div>
                 </div>
                 <span class="featured-meta">
-                    ${p.creator?.trim() || href ? `<span class="featured-slot">${p.creator?.trim() ? `<span class="featured-author">${p.creator}</span>` : ''}</span>` : ''}
+                    ${p.creator?.trim() || liveHref ? `<span class="featured-slot">${p.creator?.trim() ? `<span class="featured-author">${p.creator}</span>` : ''}</span>` : ''}
                 </span>`;
 
-            if (href) {
+            if (liveHref) {
                 a.addEventListener('mouseenter', e => {
                     if (isMobile || prefersReducedMotion) return;
                     img.src = `assets/images/websites/${p.id}.png`;
@@ -85,11 +88,9 @@ export function setupFeaturedProjects(ctaCursor, refreshParallax) {
         if (!featured.length) { container.innerHTML = '<p class="projects-empty">No featured projects.</p>'; return; }
 
         const items = featured.map(p => {
-            const href = resolveProjectHref(p.path);
             const a = document.createElement('a');
             a.className = 'scatter-item';
-            if (href) { a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; }
-            else a.setAttribute('aria-disabled', 'true');
+            a.href = `project.html?id=${p.id}`;
 
             const img = new Image(); img.alt = p.title; img.loading = 'lazy'; img.decoding = 'async';
             img.src = p.image || `assets/images/projects/${p.id}.png`;
@@ -97,7 +98,7 @@ export function setupFeaturedProjects(ctaCursor, refreshParallax) {
             img.onerror = () => img.classList.add('loaded');
             a.appendChild(img);
 
-            if (ctaCursor) ctaCursor.attach(a, p.title, { showArrow: !!href });
+            if (ctaCursor) ctaCursor.attach(a, p.title, { showArrow: true });
             return a;
         });
 
