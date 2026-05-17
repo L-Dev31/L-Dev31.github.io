@@ -108,7 +108,7 @@ export function setupSmoothAnchors(lenis) {
             const target = document.querySelector(link.getAttribute('href'));
             if (!target) return;
             e.preventDefault();
-            lenis ? lenis.scrollTo(target, { duration: 1.2 }) : target.scrollIntoView({ behavior: 'smooth' });
+            lenis ? lenis.scrollTo(target, { duration: 1.2, offset: -100 }) : target.scrollIntoView({ behavior: 'smooth' });
         });
     });
 }

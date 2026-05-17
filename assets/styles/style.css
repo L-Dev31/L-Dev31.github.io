@@ -43,7 +43,8 @@
     --black: #000;
     --color-on-light: #111;
     --font-body: 'Thin', sans-serif;
-    --font-weight-body: 300; /* Increased from default for better readability */
+    --font-weight-body: 300;
+    /* Increased from default for better readability */
     --font-display: 'Lux', serif;
     --white-06: rgba(255, 255, 255, 0.06);
     --border-strong: rgba(255, 255, 255, 0.2);
@@ -63,6 +64,7 @@ html {
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: var(--white) var(--black);
+    scroll-padding-top: 100px;
 }
 
 body {
@@ -299,9 +301,11 @@ html.has-custom-cursor-active [onclick] {
     0% {
         box-shadow: 0 0 0 0 rgba(245, 184, 112, 0.55);
     }
+
     70% {
         box-shadow: 0 0 0 8px rgba(245, 184, 112, 0);
     }
+
     100% {
         box-shadow: 0 0 0 0 rgba(245, 184, 112, 0);
     }
@@ -376,6 +380,26 @@ html.has-custom-cursor-active [onclick] {
     outline-offset: 3px;
 }
 
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: var(--pad-edge);
+    background: var(--white);
+    color: var(--black);
+    padding: 10px 20px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    z-index: 100000;
+    text-decoration: none;
+    border-radius: 0 0 4px 4px;
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
 .hamburger {
     display: none;
     background: none;
@@ -388,6 +412,7 @@ html.has-custom-cursor-active [onclick] {
     min-height: 44px;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 /* ══════════════════════════════════════════
@@ -662,10 +687,11 @@ section {
 #my-story>.story-container,
 #experience>.story-container,
 #education>.story-container {
-    width: min(1200px, 100%);
+    width: min(1500px, 100%);
     margin: 0 auto;
     box-sizing: border-box;
 }
+
 
 
 #web-projects>.featured-list {
@@ -791,12 +817,22 @@ section {
     display: block;
 }
 
-.featured-project-category {
+.featured-project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.featured-tag {
     font-size: clamp(10px, 0.9vw, 12px);
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 400;
+    padding: 2px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
 }
 
 .featured-meta {
@@ -875,7 +911,6 @@ section {
     --featured-gap: 5px;
     gap: var(--featured-gap);
     padding: 0 var(--pad-edge);
-    max-width: var(--container-width);
     width: 100%;
     box-sizing: border-box;
 }
