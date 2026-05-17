@@ -1,5 +1,39 @@
 {
   "id": "ogfm",
   "title": "L'Oreille qui Gratte",
-  "blocks": []
+  "subtitle": "Brand identity for a punk, DIY, anti-establishment webradio.",
+  "year": "2024",
+  "role": "Brand Designer",
+  "client": "L'Oreille qui Gratte",
+  "tags": ["brand identity", "graphic charter", "fanzine", "punk"],
+  "blocks": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "body": "L'Oreille qui Gratte is a punk, DIY, anti-establishment webradio. Fanzine aesthetics, scratchy typography, colors that aggress. Nothing smooth — and that's the point. This was my first real graphic charter: a brand identity built entirely around the refusal of brand identity."
+    },
+    {
+      "type": "pull-quote",
+      "text": "Punk isn't the absence of a system. It's a system that refuses everyone else's."
+    },
+    {
+      "type": "text",
+      "title": "The Challenge",
+      "body": "How do you bring order to chaos without killing the chaos? Building strict rules for a brand whose identity rests on rejecting rules felt like a contradiction. That tension turned out to be the brief itself."
+    },
+    {
+      "type": "text",
+      "title": "Process",
+      "body": "I spent weeks constructing a graphic charter that codified the uncoded — defining which typefaces scratch, which color combinations aggress, how to build layouts that feel deliberately broken without actually falling apart. The fanzine reference was the key insight: fanzines aren't random. They're obsessive in their DIY logic. That rigor became the framework."
+    },
+    {
+      "type": "pull-quote",
+      "text": "A strong identity isn't beautiful. It's immediately recognizable."
+    },
+    {
+      "type": "text",
+      "title": "Outcome",
+      "body": "First graphic charter. First real visual identity project. A lot of mistakes — even more learnings. What stayed with me: consistency is what transforms a style into a brand. The rules don't kill the punk. They protect it."
+    }
+  ]
 }
