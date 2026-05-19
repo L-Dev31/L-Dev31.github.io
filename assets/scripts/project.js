@@ -51,15 +51,15 @@ function renderProject(data, html, lenis) {
     const header = document.querySelector('.article-header');
     if (header) {
         const meta = [
-            data.role   && `As a ${data.role}`,
-            data.year   && `In ${data.year}`,
+            data.role && `As a ${data.role}`,
+            data.year && `In ${data.year}`,
             data.client && `For ${data.client}`
         ].filter(Boolean);
 
         header.innerHTML = [
             `<h1 class="article-title">${esc(data.title)}</h1>`,
             data.subtitle && `<p class="article-subtitle">${esc(data.subtitle)}</p>`,
-            meta.length   && `<p class="article-meta">${meta.map(esc).join(' · ')}</p>`,
+            meta.length && `<p class="article-meta">${meta.map(esc).join(' · ')}</p>`,
             data.tags?.length && `<div class="article-tags">${data.tags.map(t => `<span class="featured-tag">${esc(t)}</span>`).join('')}</div>`
         ].filter(Boolean).join('');
 
@@ -104,7 +104,7 @@ function renderProject(data, html, lenis) {
                 });
             };
             lenis ? lenis.on('scroll', updateCtaParallax)
-                  : window.addEventListener('scroll', updateCtaParallax, { passive: true });
+                : window.addEventListener('scroll', updateCtaParallax, { passive: true });
             updateCtaParallax();
         }
     } else {
@@ -116,7 +116,7 @@ function renderProject(data, html, lenis) {
         if (img) {
             const tick = s => { img.style.transform = `translateY(${s * 0.3}px)`; };
             lenis ? lenis.on('scroll', ({ scroll }) => tick(scroll))
-                  : window.addEventListener('scroll', () => tick(window.scrollY), { passive: true });
+                : window.addEventListener('scroll', () => tick(window.scrollY), { passive: true });
         }
     }
 

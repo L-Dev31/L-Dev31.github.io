@@ -582,7 +582,7 @@ section.visible>* {
 #my-story>.story-container,
 #experience>.story-container,
 #education>.story-container {
-    width: min(1250px, 100%);
+    width: min(1350px, 100%);
     margin: 0 auto;
     box-sizing: border-box;
 }
@@ -1154,8 +1154,13 @@ html.lenis body {
     max-width: 62ch;
 }
 
+p {
+    font-size: clamp(18px, 2vw, 24px);
+    line-height: 1.7;
+    text-wrap: pretty;
+}
+
 .story-prose p {
-    font-size: clamp(16px, 1.55vw, 20px);
     line-height: 1.7;
     margin: 0 0 clamp(18px, 2.5vh, 28px);
     text-wrap: pretty;
@@ -1591,10 +1596,6 @@ html.lenis body {
 
 .case-intro {
     text-align: center;
-}
-
-.case-intro .case-body {
-    max-width: 60ch;
 }
 
 .case-chapter {

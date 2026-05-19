@@ -1,72 +1,6 @@
 {
   "projects": [
     {
-      "id": "dran",
-      "title": "Dranima",
-      "description": "Discover Dranima: a retro-inspired monster-tamer RPG in development. Follow the project updates, explore the world, and join the community..",
-      "creator": "Alex Claude Bourbon",
-      "category": "web",
-      "tags": [
-        "2d",
-        "rpg",
-        "monster-tamer",
-        "retro",
-        "pokemon-like"
-      ],
-      "path": "http://dranima.com/",
-      "noPhone": false
-    },
-    {
-      "id": "cmck",
-      "title": "Portfolio",
-      "description": "Showcasing the musical journey and works of Charlie McKenzie.",
-      "creator": "Charlie McKenzie",
-      "category": "web",
-      "tags": [],
-      "path": "http://www.charliemckenziemusic.com/",
-      "noPhone": false
-    },
-    {
-      "id": "bmge",
-      "title": "L-DEV's BMG Editor",
-      "description": "A comprehensive editor for BMG files, enhancing game modding workflows.",
-      "creator": "Léo Tosku",
-      "category": "web",
-      "tags": [],
-      "path": "projects/BMGE",
-      "noPhone": false
-    },
-    {
-      "id": "mxal",
-      "title": "Mix and Light (Redesign)",
-      "description": "A modern redesign for Mix and Light, giving a new fresh look from ground up.",
-      "creator": "Mix and Light",
-      "category": "web",
-      "tags": [],
-      "path": "https://www.ynov-sophia-projets.com/ymmersionB1325/",
-      "noPhone": false
-    },
-    {
-      "id": "sand",
-      "title": "SandFall Interactive (Redesign)",
-      "description": "Website redesign for SandFall Interactive Studio, enhancing user experience and brand identity.",
-      "creator": "SandFall Interactive",
-      "category": "web",
-      "tags": [],
-      "path": "projects/SandFall",
-      "noPhone": false
-    },
-    {
-      "id": "lsdp",
-      "title": "Les Saveurs de Provence (Redesign)",
-      "description": "Bringing the flavors of Provence to life with a fresh web design.",
-      "creator": "",
-      "category": "web",
-      "tags": [],
-      "path": "projects/LSDP",
-      "noPhone": false
-    },
-    {
       "id": "rcai",
       "title": "Regards Croisés",
       "creator": "Equipe recTangle - Ynov",
@@ -81,7 +15,12 @@
       "client": "L'Oreille qui Gratte Webradio",
       "heroImage": "assets/images/projects/ogfm/header.jpg",
       "subtitle": "Brand identity for a punk, DIY, anti-establishment webradio.",
-      "tags": ["brand identity", "graphic charter", "fanzine", "punk"],
+      "tags": [
+        "brand identity",
+        "graphic charter",
+        "fanzine",
+        "punk"
+      ],
       "ctaLabel": "Charte Graphique (PDF)",
       "ctaUrl": "projects/Portfolio/ogfm-brand-guidelines.pdf",
       "ctaImages": [
@@ -92,18 +31,20 @@
       "category": "featured"
     },
     {
-      "id": "mego",
-      "title": "Megoteur",
-      "creator": "Remi Astier",
+      "id": "dran",
+      "title": "Dranima",
+      "description": "Discover Dranima: a retro-inspired monster-tamer RPG in development. Follow the project updates, explore the world, and join the community..",
+      "creator": "Alex Claude Bourbon",
       "category": "featured",
-      "path": "https://megoteur.com/"
-    },
-    {
-      "id": "prfy",
-      "title": "Proofy",
-      "creator": "Equipe 1 - Ynov",
-      "category": "featured",
-      "path": null
+      "tags": [
+        "2d",
+        "rpg",
+        "monster-tamer",
+        "retro",
+        "pokemon-like"
+      ],
+      "path": "http://dranima.com/",
+      "noPhone": false
     },
     {
       "id": "bgaw",
@@ -113,12 +54,66 @@
       "path": null
     },
     {
-      "id": "feat-mxal",
+      "id": "mego",
+      "title": "Megoteur",
+      "creator": "Remi Astier",
+      "category": "featured",
+      "path": "https://megoteur.com/"
+    },
+    {
+      "id": "bmge",
+      "title": "L-DEV's BMG Editor",
+      "description": "A comprehensive editor for BMG files, enhancing game modding workflows.",
+      "creator": "Léo Tosku",
+      "category": "featured",
+      "tags": [],
+      "path": "projects/BMGE",
+      "noPhone": false
+    },
+    {
+      "id": "prfy",
+      "title": "Proofy",
+      "creator": "Equipe 1 - Ynov",
+      "category": "featured",
+      "path": null
+    },
+    {
+      "id": "cmck",
+      "title": "Portfolio",
+      "description": "Showcasing the musical journey and works of Charlie McKenzie.",
+      "creator": "Charlie McKenzie",
+      "category": "featured",
+      "tags": [],
+      "path": "http://www.charliemckenziemusic.com/",
+      "noPhone": false
+    },
+    {
+      "id": "mxal",
       "title": "Mix and Light",
       "creator": "Mix and Light",
       "category": "featured",
       "type": "School project",
       "path": null
+    },
+    {
+      "id": "lsdp",
+      "title": "Les Saveurs de Provence (Redesign)",
+      "description": "Bringing the flavors of Provence to life with a fresh web design.",
+      "creator": "",
+      "category": "featured",
+      "tags": [],
+      "path": "projects/LSDP",
+      "noPhone": false
+    },
+    {
+      "id": "sand",
+      "title": "SandFall Interactive (Redesign)",
+      "description": "Website redesign for SandFall Interactive Studio, enhancing user experience and brand identity.",
+      "creator": "SandFall Interactive",
+      "category": "featured",
+      "tags": [],
+      "path": "projects/SandFall",
+      "noPhone": false
     },
     {
       "id": "gpmx",
