@@ -2,6 +2,7 @@ import { setupPageLoader, setupMobileMenu, setupCursor, setupCTACursor, setupSmo
 import { setupLenis, setupMagneticLinks, setupScrubbingText, setupHeader, setupTextReveal, setupScrollEffects, setupLiquifyAll } from './animations.js';
 import { setupWebProjects, setupFeaturedProjects, setupHeightScroll } from './projects.js';
 import { setupAboutHeroVideo, setupVideoVisibility } from './video.js';
+import { observeSections } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -23,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
     setupTextReveal(observer);
+    observeSections(observer);
 
     setupWebProjects();
     setupHeightScroll('.featured-list', '.featured-project');

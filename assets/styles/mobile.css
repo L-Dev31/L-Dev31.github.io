@@ -1,17 +1,18 @@
-/* ══════════════════════════════════════════
-   Mobile & Responsive Overrides
-   ══════════════════════════════════════════ */
-
-/* ── Tablet & below ── */
-@media (max-width: 1024px) {
-    .status-badge {
-        font-size: 10px;
-        padding: 4px 10px 4px 8px;
-    }
-}
-
-/* ── Phone landscape / small tablet ── */
 @media (max-width: 768px) {
+    .case-row,
+    .case-row--reverse {
+        grid-template-columns: 1fr;
+    }
+
+    .case-row--reverse .case-figure {
+        order: 0;
+    }
+
+    .case-row .case-prose,
+    .case-row--reverse .case-prose {
+        text-align: left;
+    }
+
     .link:not(.link--cta) {
         display: none;
     }
@@ -38,7 +39,7 @@
         width: 100%;
     }
 
-    .story-container > .story-row:nth-child(odd) .story-text {
+    .story-container>.story-row:nth-child(odd) .story-text {
         text-align: left;
     }
 
@@ -54,46 +55,7 @@
     .featured-meta {
         display: none;
     }
-}
 
-/* ── Small phones ── */
-@media (max-width: 480px) {
-
-    .big-name {
-        font-size: clamp(60px, 30vw, 200px);
-    }
-}
-
-/* ── About Page ── */
-@media (max-width: 1024px) {
-    .story-container--catch {
-        flex-direction: column-reverse;
-        text-align: center;
-        gap: 32px;
-    }
-
-    .story-prose--catch {
-        text-align: center;
-        margin-right: 0;
-        mix-blend-mode: normal; /* Blend mode can be messy on some mobile browsers over flat colors */
-    }
-
-    .about-title {
-        text-align: center;
-    }
-
-    .story-portrait--catch {
-        flex: 1;
-        max-width: 100%;
-    }
-
-    .story-portrait {
-        position: static;
-        max-width: 420px;
-    }
-}
-
-@media (max-width: 768px) {
     .exp-block {
         grid-template-columns: 1fr;
         gap: clamp(8px, 1.5vh, 14px);
@@ -115,7 +77,39 @@
     }
 }
 
+@media (max-width: 1024px) {
+    .story-container--catch {
+        flex-direction: column-reverse;
+        text-align: center;
+        gap: 32px;
+    }
+
+    .story-prose--catch {
+        text-align: center;
+        margin-right: 0;
+        mix-blend-mode: normal;
+    }
+
+    .about-title {
+        text-align: center;
+    }
+
+    .story-portrait--catch {
+        flex: 1;
+        max-width: 100%;
+    }
+
+    .story-portrait {
+        position: static;
+        max-width: 420px;
+    }
+}
+
 @media (max-width: 480px) {
+    .big-name {
+        font-size: clamp(60px, 30vw, 200px);
+    }
+
     .exp-facts {
         grid-template-columns: 1fr;
     }
@@ -124,10 +118,3 @@
         grid-template-columns: repeat(2, 1fr);
     }
 }
-
-@media (max-width: 480px) {
-    .featured-scatter {
-        grid-template-columns: 1fr;
-    }
-}
-

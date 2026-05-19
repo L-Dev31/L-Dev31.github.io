@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(python \"C:\\\\Users\\\\gigabyte\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"dark editorial portfolio designer minimal\" --design-system -p \"Leo Tosku Portfolio\" -f markdown)",
+      "Bash(python \"C:\\\\Users\\\\gigabyte\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"animation accessibility z-index keyboard-nav focus\" --domain ux)",
+      "Bash(python \"C:\\\\Users\\\\gigabyte\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"touch-target hover loading performance image\" --domain ux)",
+      "Bash(python \"C:\\\\Users\\\\gigabyte\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"color-contrast line-height line-length readability\" --domain ux)",
+      "Read(//c/Users/gigabyte/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/subagent-driven-development/**)",
+      "Read(//c/Users/gigabyte/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/requesting-code-review/**)",
+      "Bash(grep -c \"transition.*ease$\")",
+      "Bash(git commit *)",
+      "Read(//c/c/Users/gigabyte/Documents/GitHub/L-Dev31.github.io/assets/data/projects/**)",
+      "Bash(python3)",
+      "Bash(python -m json.tool)",
+      "Bash(python3 -c ' *)"
+    ]
+  }
+}

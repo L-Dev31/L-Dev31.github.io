@@ -6,7 +6,13 @@
       "description": "Discover Dranima: a retro-inspired monster-tamer RPG in development. Follow the project updates, explore the world, and join the community..",
       "creator": "Alex Claude Bourbon",
       "category": "web",
-      "type": "commission",
+      "tags": [
+        "2d",
+        "rpg",
+        "monster-tamer",
+        "retro",
+        "pokemon-like"
+      ],
       "path": "http://dranima.com/",
       "noPhone": false
     },
@@ -16,7 +22,7 @@
       "description": "Showcasing the musical journey and works of Charlie McKenzie.",
       "creator": "Charlie McKenzie",
       "category": "web",
-      "type": "commission",
+      "tags": [],
       "path": "http://www.charliemckenziemusic.com/",
       "noPhone": false
     },
@@ -26,7 +32,7 @@
       "description": "A comprehensive editor for BMG files, enhancing game modding workflows.",
       "creator": "Léo Tosku",
       "category": "web",
-      "type": "personal-project",
+      "tags": [],
       "path": "projects/BMGE",
       "noPhone": false
     },
@@ -36,7 +42,7 @@
       "description": "A modern redesign for Mix and Light, giving a new fresh look from ground up.",
       "creator": "Mix and Light",
       "category": "web",
-      "type": "School project",
+      "tags": [],
       "path": "https://www.ynov-sophia-projets.com/ymmersionB1325/",
       "noPhone": false
     },
@@ -46,7 +52,7 @@
       "description": "Website redesign for SandFall Interactive Studio, enhancing user experience and brand identity.",
       "creator": "SandFall Interactive",
       "category": "web",
-      "type": "commission",
+      "tags": [],
       "path": "projects/SandFall",
       "noPhone": false
     },
@@ -56,7 +62,7 @@
       "description": "Bringing the flavors of Provence to life with a fresh web design.",
       "creator": "",
       "category": "web",
-      "type": "commission",
+      "tags": [],
       "path": "projects/LSDP",
       "noPhone": false
     },
@@ -70,9 +76,20 @@
     {
       "id": "ogfm",
       "title": "L'Oreille qui Gratte",
-      "creator": null,
-      "category": "featured",
-      "path": null
+      "year": "2026",
+      "role": "Brand Designer",
+      "client": "L'Oreille qui Gratte Webradio",
+      "heroImage": "assets/images/projects/ogfm/header.jpg",
+      "subtitle": "Brand identity for a punk, DIY, anti-establishment webradio.",
+      "tags": ["brand identity", "graphic charter", "fanzine", "punk"],
+      "ctaLabel": "Charte Graphique (PDF)",
+      "ctaUrl": "projects/Portfolio/ogfm-brand-guidelines.pdf",
+      "ctaImages": [
+        "assets/images/projects/ogfm/process1.jpg",
+        "assets/images/projects/ogfm/process2.jpg",
+        "assets/images/projects/ogfm/process3.jpg"
+      ],
+      "category": "featured"
     },
     {
       "id": "mego",

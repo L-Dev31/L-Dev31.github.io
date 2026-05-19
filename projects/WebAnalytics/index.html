@@ -70,24 +70,21 @@
   <!-- Background -->
   <div id="background"></div>
 
-  <!-- Character sprites -->
-  <div id="sprites">
-    <div id="sprite-left" class="sprite inactive hidden"></div>
-    <div id="sprite-right" class="sprite inactive hidden"></div>
-  </div>
-
-  <!-- Dialogue box -->
-  <div id="dialogue-box" class="hidden">
-    <div id="name-tag-left" class="name-tag left hidden"></div>
-    <div id="name-tag-right" class="name-tag right hidden"></div>
-    <div id="dialogue-text"></div>
-    <div id="dialogue-hint" data-i18n="hint_continue">[ESPACE / CLIC]</div>
-  </div>
-
-  <!-- Choice panel -->
-  <div id="choice-panel" class="hidden">
-    <div id="choice-question"></div>
-    <div id="choice-options" class="focus-group"></div>
+  <!-- Sprites + dialogue box grouped and vertically centered -->
+  <div id="game-ui">
+    <div id="sprites">
+      <div id="sprite-left" class="sprite inactive hidden"></div>
+      <div id="sprite-right" class="sprite inactive hidden"></div>
+    </div>
+    <div id="dialogue-box" class="hidden">
+      <div id="name-tag-left" class="name-tag left hidden"></div>
+      <div id="name-tag-right" class="name-tag right hidden"></div>
+      <div id="dialogue-text"></div>
+      <div id="dialogue-hint" class="hidden"><img src="images/icon.png" alt=""></div>
+    </div>
+    <div id="choice-panel" class="hidden">
+      <div id="choice-options" class="focus-group"></div>
+    </div>
   </div>
 
   <button id="back-to-title" class="choice back-small" data-action="back-title">×</button>

@@ -1,171 +1,159 @@
-import { fetchJson, resolveProjectHref, prefersReducedMotion } from './utils.js';
+import { setupPageLoader, setupMobileMenu, setupCursor, setupBackToTop } from './ui.js';
+import { setupLenis, setupMagneticLinks, setupTextReveal } from './animations.js';
+import { prefersReducedMotion, getProjectsData, observeSections } from './utils.js';
 
-function escapeHtml(str) {
-    return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
+const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-export async function setupProjectPage(lenis) {
-    const params = new URLSearchParams(location.search);
-    const id = params.get('id')?.trim();
+document.addEventListener('DOMContentLoaded', async () => {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
 
-    if (!id || !/^[\w-]+$/.test(id)) { renderNotFound(); return; }
+    setupPageLoader();
+    const lenis = setupLenis();
+    setupMobileMenu(lenis);
+    setupCursor();
+    setupBackToTop(lenis);
+    setupMagneticLinks();
+
+    const id = new URLSearchParams(location.search).get('id')?.trim();
+    if (!id || !/^[\w-]+$/.test(id)) return renderNotFound();
+
+    document.title = `${id.toUpperCase()} — Léo Tosku`;
 
     try {
-        const data = await fetchJson(`assets/data/projects/${id}.json`);
-        renderPage(data, lenis);
+        const [projectsData, res] = await Promise.all([
+            getProjectsData(),
+            fetch(`projects/Portfolio/${id}.html`)
+        ]);
+        const data = (projectsData.projects || []).find(p => p.id === id);
+        if (!data || !res.ok) return renderNotFound();
+        renderProject(data, await res.text(), lenis);
     } catch {
         renderNotFound();
+    }
+});
+
+function renderProject(data, html, lenis) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+
+    document.title = `${data.title || 'Project'} — Léo Tosku`;
+
+    const heroImg = document.querySelector('.project-hero-img');
+    if (data.heroImage && heroImg) {
+        heroImg.src = data.heroImage;
+        heroImg.alt = data.title || '';
+        heroImg.hidden = false;
+    } else {
+        document.querySelector('.project-hero')?.remove();
+    }
+
+    const header = document.querySelector('.article-header');
+    if (header) {
+        const meta = [
+            data.role   && `As a ${data.role}`,
+            data.year   && `In ${data.year}`,
+            data.client && `For ${data.client}`
+        ].filter(Boolean);
+
+        header.innerHTML = [
+            `<h1 class="article-title">${esc(data.title)}</h1>`,
+            data.subtitle && `<p class="article-subtitle">${esc(data.subtitle)}</p>`,
+            meta.length   && `<p class="article-meta">${meta.map(esc).join(' · ')}</p>`,
+            data.tags?.length && `<div class="article-tags">${data.tags.map(t => `<span class="featured-tag">${esc(t)}</span>`).join('')}</div>`
+        ].filter(Boolean).join('');
+
+        if (prefersReducedMotion) header.classList.add('loaded');
+        else requestAnimationFrame(() => requestAnimationFrame(() => header.classList.add('loaded')));
+    }
+
+    const ctaBottom = document.querySelector('.project-cta-bottom');
+    if (ctaBottom) ctaBottom.before(...tmp.childNodes);
+
+    const heroLive = document.querySelector('.project-hero-live');
+    if (heroLive) {
+        if (data.ctaLabel) heroLive.textContent = data.ctaLabel + ' →';
+        if (data.ctaUrl) heroLive.href = data.ctaUrl;
+    }
+
+    const ctaLink = document.querySelector('.project-cta-bottom-link');
+    const ctaUrl = data.ctaUrl;
+    if (ctaLink) {
+        if (ctaUrl) {
+            ctaLink.href = ctaUrl;
+            if (data.ctaLabel) ctaLink.textContent = data.ctaLabel + ' →';
+        } else {
+            document.querySelector('.project-cta-bottom')?.remove();
+        }
+    }
+
+    const ctaTiles = document.querySelectorAll('.project-cta-tile');
+    const ctaSection = document.querySelector('.project-cta-bottom');
+    if (data.ctaImages?.length && ctaTiles.length) {
+        ctaTiles.forEach((tile, i) => {
+            const src = data.ctaImages[i];
+            if (src) tile.style.backgroundImage = `url('${src}')`;
+        });
+        if (!prefersReducedMotion && ctaSection) {
+            const updateCtaParallax = () => {
+                const rect = ctaSection.getBoundingClientRect();
+                const center = (rect.top + rect.height / 2) - window.innerHeight / 2;
+                ctaTiles.forEach(tile => {
+                    const speed = parseFloat(tile.dataset.speed) || 0;
+                    tile.style.transform = `translateY(${center * speed}px)`;
+                });
+            };
+            lenis ? lenis.on('scroll', updateCtaParallax)
+                  : window.addEventListener('scroll', updateCtaParallax, { passive: true });
+            updateCtaParallax();
+        }
+    } else {
+        document.querySelector('.project-cta-gallery')?.remove();
+    }
+
+    if (!prefersReducedMotion) {
+        const img = document.querySelector('.project-hero-img');
+        if (img) {
+            const tick = s => { img.style.transform = `translateY(${s * 0.3}px)`; };
+            lenis ? lenis.on('scroll', ({ scroll }) => tick(scroll))
+                  : window.addEventListener('scroll', () => tick(window.scrollY), { passive: true });
+        }
+    }
+
+    const obs = prefersReducedMotion ? null : new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('visible');
+            else if (e.boundingClientRect.top > 0) e.target.classList.remove('visible');
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
+
+    setupTextReveal(obs);
+    observeSections(obs);
+
+    document.querySelectorAll('.case-row').forEach(r => obs ? obs.observe(r) : r.classList.add('visible'));
+
+    if (!prefersReducedMotion) {
+        const figs = document.querySelectorAll('.case-figure img');
+        if (figs.length) {
+            const tick = () => figs.forEach(img => {
+                const r = img.getBoundingClientRect();
+                const center = (r.top + r.height / 2) - window.innerHeight / 2;
+                img.style.transform = `translateY(${center * -0.06}px)`;
+            });
+            lenis ? lenis.on('scroll', tick) : window.addEventListener('scroll', tick, { passive: true });
+            tick();
+        }
     }
 }
 
 function renderNotFound() {
     document.title = 'Project not found — Léo Tosku';
-    document.querySelector('.project-hero')?.remove();
-    document.querySelector('.project-cta-bottom')?.remove();
-    const header = document.querySelector('.article-header');
-    if (header) header.remove();
-    const blocks = document.querySelector('.project-blocks');
-    if (blocks) blocks.remove();
-
-    const div = document.createElement('div');
-    div.className = 'project-not-found';
-    div.innerHTML = '<p>Project not found.</p><a href="index.html">← Back</a>';
+    ['.project-hero', '.project-cta-bottom', '.article-header', '.project-blocks']
+        .forEach(s => document.querySelector(s)?.remove());
+    const div = Object.assign(document.createElement('div'), {
+        className: 'project-not-found',
+        innerHTML: '<p>Project not found.</p><a href="index.html">← Back</a>'
+    });
     const footer = document.getElementById('footer');
     footer ? footer.before(div) : document.body.appendChild(div);
-}
-
-function renderPage(data, lenis) {
-    document.title = `${data.title || 'Project'} — Léo Tosku`;
-    renderHero(data);
-    renderArticleHeader(data);
-    renderBlocks(data.blocks || []);
-    renderBottomCTA(data);
-    setupHeroParallax(lenis);
-    setupBlockReveal();
-    setupHeaderEntrance();
-}
-
-function renderHero(data) {
-    const section = document.querySelector('.project-hero');
-    const img = document.querySelector('.project-hero-img');
-    if (!data.heroImage || !section || !img) {
-        section?.remove();
-        return;
-    }
-    img.src = data.heroImage;
-    img.alt = data.title;
-}
-
-function renderArticleHeader(data) {
-    const header = document.querySelector('.article-header');
-    if (!header) return;
-
-    const liveHref = resolveProjectHref(data.liveUrl);
-    const metaParts = [data.year, data.role, data.client].filter(Boolean);
-
-    header.innerHTML = `
-        ${liveHref ? `<a href="${liveHref}" class="article-cta-top" target="_blank" rel="noopener noreferrer">View live →</a>` : ''}
-        <h1 class="article-title">${escapeHtml(data.title)}</h1>
-        ${data.subtitle ? `<p class="article-subtitle">${escapeHtml(data.subtitle)}</p>` : ''}
-        ${metaParts.length ? `<p class="article-meta">${metaParts.map(escapeHtml).join(' · ')}</p>` : ''}
-        ${data.tags?.length ? `<div class="article-tags">${data.tags.map(t => `<span class="featured-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
-    `;
-}
-
-function renderBlocks(blocks) {
-    const container = document.querySelector('.project-blocks');
-    if (!container) return;
-
-    blocks.forEach(block => {
-        const el = document.createElement('div');
-        el.className = `project-block project-block--${block.type}`;
-
-        switch (block.type) {
-            case 'text':
-                el.innerHTML = `
-                    <div class="block-text-inner">
-                        ${block.title ? `<h2 class="block-text-title">${escapeHtml(block.title)}</h2>` : ''}
-                        <p class="block-text-body">${block.body || ''}</p>
-                    </div>`;
-                break;
-            case 'pull-quote':
-                el.innerHTML = `<blockquote class="block-pullquote">${escapeHtml(block.text)}</blockquote>`;
-                break;
-            case 'image':
-                el.innerHTML = `
-                    <figure class="block-figure">
-                        <img src="${block.src}" alt="${escapeHtml(block.caption)}" loading="lazy" decoding="async">
-                        ${block.caption ? `<figcaption>${escapeHtml(block.caption)}</figcaption>` : ''}
-                    </figure>`;
-                break;
-            case 'gallery':
-                el.innerHTML = `
-                    <div class="block-gallery">
-                        ${(block.images || []).map(src => `<img src="${src}" alt="" loading="lazy" decoding="async">`).join('')}
-                    </div>`;
-                break;
-            case 'metrics':
-                el.innerHTML = `
-                    <div class="block-metrics">
-                        ${(block.items || []).map(item => `
-                            <div class="metric-item">
-                                <span class="metric-value">${escapeHtml(item.value)}</span>
-                                <span class="metric-label">${escapeHtml(item.label)}</span>
-                            </div>`).join('')}
-                    </div>`;
-                break;
-            default:
-                console.warn(`[project.js] Unknown block type: "${block.type}" — skipping.`);
-                return;
-        }
-
-        container.appendChild(el);
-    });
-}
-
-function renderBottomCTA(data) {
-    const ctaEl = document.querySelector('.project-cta-bottom');
-    if (!ctaEl) return;
-
-    const liveHref = resolveProjectHref(data.liveUrl);
-    if (!liveHref) { ctaEl.remove(); return; }
-
-    ctaEl.innerHTML = `<a href="${liveHref}" target="_blank" rel="noopener noreferrer" class="project-cta-bottom-link">Read all that? Here&rsquo;s how it looks →</a>`;
-}
-
-function setupHeroParallax(lenis) {
-    const img = document.querySelector('.project-hero-img');
-    if (!img || prefersReducedMotion) return;
-
-    const update = scroll => { img.style.transform = `translateY(${scroll * 0.3}px)`; };
-
-    if (lenis) lenis.on('scroll', ({ scroll }) => update(scroll));
-    else window.addEventListener('scroll', () => update(window.scrollY), { passive: true });
-}
-
-function setupBlockReveal() {
-    if (prefersReducedMotion) {
-        document.querySelectorAll('.project-block').forEach(el => el.classList.add('visible'));
-        return;
-    }
-
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                e.target.classList.add('visible');
-                observer.unobserve(e.target);
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.project-block').forEach(el => observer.observe(el));
-}
-
-function setupHeaderEntrance() {
-    const header = document.querySelector('.article-header');
-    if (!header) return;
-
-    if (prefersReducedMotion) { header.classList.add('loaded'); return; }
-
-    requestAnimationFrame(() => requestAnimationFrame(() => header.classList.add('loaded')));
 }

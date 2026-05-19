@@ -5,8 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project — Léo Tosku</title>
-    <meta name="robots" content="noindex">
     <link rel="canonical" href="https://l-dev31.github.io/project.html">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Léo Tosku">
+    <meta property="og:title" content="Project — Léo Tosku">
+    <meta property="og:description" content="Case study by Léo Tosku, UI/UX & Product Designer.">
+    <meta property="og:image" content="https://l-dev31.github.io/assets/images/core/portrait.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Project — Léo Tosku">
+    <meta name="twitter:description" content="Case study by Léo Tosku, UI/UX & Product Designer.">
+    <meta name="twitter:image" content="https://l-dev31.github.io/assets/images/core/portrait.png">
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +23,7 @@
     <link rel="stylesheet" href="assets/styles/style.css">
     <link rel="stylesheet" href="assets/styles/mobile.css">
     <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" defer></script>
-    <script src="assets/scripts/project-script.js" type="module"></script>
+    <script src="assets/scripts/project.js" type="module"></script>
     <link rel="icon" type="image/png" href="assets/images/core/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet"
@@ -30,9 +39,6 @@
         <div class="page-loader-bar"></div>
     </div>
 
-    <!-- Noise Overlay -->
-    <div class="noise" aria-hidden="true"></div>
-
     <!-- Custom Cursor -->
     <div class="cursor" aria-hidden="true"></div>
 
@@ -46,7 +52,6 @@
 
         <div class="navbar-center">
             <span class="status-badge" role="status" aria-label="Site status: Work in progress">
-                <span class="status-dot" aria-hidden="true"></span>
                 <span class="status-label-full">Work in progress</span>
                 <span class="status-label-short">WIP</span>
             </span>
@@ -81,18 +86,25 @@
 
     <!-- Project Hero -->
     <main class="project-main">
-        <div class="project-hero" aria-hidden="true">
-            <img class="project-hero-img" src="" alt="">
-        </div>
-
-        <!-- Article Header (populated by project.js) -->
-        <div class="article-header" id="article-header"></div>
-
-        <!-- Blocks (populated by project.js) -->
-        <div class="project-blocks"></div>
+        <header class="project-hero">
+            <img class="project-hero-img" alt="" hidden>
+            <!-- Article Header (populated by project.js) -->
+            <div class="article-header" id="article-header"></div>
+            <a class="project-hero-live" href="#" target="_blank" rel="noopener noreferrer"></a>
+        </header>
 
         <!-- Bottom CTA (populated by project.js) -->
-        <div class="project-cta-bottom"></div>
+        <section class="project-cta-bottom">
+            <div class="project-cta-text">
+                <p class="project-cta-heading">See the project for yourself.</p>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="project-cta-bottom-link">View →</a>
+            </div>
+            <div class="project-cta-gallery" aria-hidden="true">
+                <div class="project-cta-tile" data-speed="-0.10"></div>
+                <div class="project-cta-tile" data-speed="-0.14"></div>
+                <div class="project-cta-tile" data-speed="-0.18"></div>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->

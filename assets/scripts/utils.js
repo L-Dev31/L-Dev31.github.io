@@ -39,4 +39,8 @@ export const observe = (el, observer) => {
     observer.observe(el);
 };
 
+export const observeSections = (observer, root = document) => {
+    root.querySelectorAll('section').forEach(s => observe(s, observer));
+};
+
 export const clamp01 = v => Math.max(0, Math.min(1, v));

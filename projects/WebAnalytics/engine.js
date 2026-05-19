@@ -33,56 +33,60 @@ class ScreenManager {
   }
 }
 
-/* ---------- Visual Novel Engine ---------- */
+/* ---------- Visual Novel Engine — location-based ---------- */
 class VNEngine {
   constructor(data, settings) {
-    this.data = data;
+    this.data     = data;
     this.settings = settings;
 
-    this.bg            = document.getElementById('background');
-    this.envOverlay    = document.getElementById('env-overlay');
-    this.envLabel      = document.getElementById('env-overlay-label');
-    this.spriteLeft    = document.getElementById('sprite-left');
-    this.spriteRight   = document.getElementById('sprite-right');
-    this.dialogueBox   = document.getElementById('dialogue-box');
-    this.dialogueText  = document.getElementById('dialogue-text');
-    this.dialogueHint  = document.getElementById('dialogue-hint');
-    this.nameTagLeft   = document.getElementById('name-tag-left');
-    this.nameTagRight  = document.getElementById('name-tag-right');
-    this.choicePanel   = document.getElementById('choice-panel');
-    this.choiceQuestion= document.getElementById('choice-question');
-    this.choiceOptions = document.getElementById('choice-options');
+    this.bg           = document.getElementById('background');
+    this.envOverlay   = document.getElementById('env-overlay');
+    this.envLabel     = document.getElementById('env-overlay-label');
+    this.spriteLeft   = document.getElementById('sprite-left');
+    this.spriteRight  = document.getElementById('sprite-right');
+    this.dialogueBox  = document.getElementById('dialogue-box');
+    this.dialogueText = document.getElementById('dialogue-text');
+    this.dialogueHint = document.getElementById('dialogue-hint');
+    this.nameTagLeft  = document.getElementById('name-tag-left');
+    this.nameTagRight = document.getElementById('name-tag-right');
+    this.choicePanel  = document.getElementById('choice-panel');
+    this.choiceOptions= document.getElementById('choice-options');
 
-    this.currentScene  = null;
-    this.actionIndex   = 0;
-    this.busy          = false;
-    this.autoplayTimer = null;
-    this.inputHandler  = null;
+    this.currentLocation  = null;
+    this.visitedLocations = new Set();
+    this._nextAction      = null;
+    this.busy             = false;
+    this.autoplayTimer    = null;
+    this.typewriterTimer  = null;
+    this.typing           = false;
+    this._currentText     = '';
+    this.inputHandler     = null;
+    this.flags            = {};
   }
 
   /* ---- lifecycle ---- */
   start() {
     this.resetUI();
-    this.goToScene(this.data.start_scene);
     this.bindInput();
+    this.goToLocation(this.data.game_settings?.start_location || this.data.start_location);
   }
 
   stop() {
     this.unbindInput();
     this.clearAutoplay();
+    this.clearTypewriter();
     this.resetUI();
   }
 
   resetUI() {
     this.dialogueBox.classList.add('hidden');
+    this.dialogueHint.classList.add('hidden');
     this.choicePanel.classList.add('hidden');
     this.spriteLeft.classList.add('hidden');
     this.spriteRight.classList.add('hidden');
     this.nameTagLeft.classList.add('hidden');
     this.nameTagRight.classList.add('hidden');
     this.bg.classList.remove('blur-dark');
-    this.spriteLeft.classList.remove('blur-dark');
-    this.spriteRight.classList.remove('blur-dark');
     this.envOverlay.classList.add('hidden');
   }
 
@@ -93,85 +97,165 @@ class VNEngine {
       if (this.busy) return;
       if (!this.choicePanel.classList.contains('hidden')) return;
       e.preventDefault?.();
-      this.advance();
+      if (this.typing) this.skipTypewriter();
+      else this.advance();
     };
     document.addEventListener('keydown', this.inputHandler);
     this.dialogueBox.addEventListener('click', this.inputHandler);
   }
+
   unbindInput() {
     document.removeEventListener('keydown', this.inputHandler);
     this.dialogueBox.removeEventListener('click', this.inputHandler);
   }
 
-  /* ---- scene flow ---- */
-  goToScene(sceneId) {
-    const scene = this.data.scenes[sceneId];
-    if (!scene) { console.warn('Scene not found:', sceneId); return; }
-    this.currentScene = scene;
-    this.actionIndex = 0;
-    this.advance();
-  }
-
+  /* ---- advance (callback-based) ---- */
   advance() {
     this.clearAutoplay();
-    if (!this.currentScene) return;
-    if (this.actionIndex >= this.currentScene.actions.length) return;
-
-    const action = this.currentScene.actions[this.actionIndex++];
-    this.runAction(action);
+    this.clearTypewriter();
+    this.dialogueHint.classList.add('hidden');
+    const next = this._nextAction;
+    this._nextAction = null;
+    if (next) next();
   }
 
-  async runAction(action) {
-    switch (action.type) {
-      case 'transition':  await this.actTransition(action);  break;
-      case 'dialogue':    this.actDialogue(action);          break;
-      case 'choice':      this.actChoice(action);            break;
-      case 'goto':        this.goToScene(action.scene);      break;
-      case 'end':         this.actEnd();                     break;
-      default:
-        console.warn('Unknown action type:', action.type);
-        this.advance();
+  /* ---- location flow ---- */
+  goToLocation(id) {
+    const loc = this.data.locations[id];
+    if (!loc) { console.warn('Location not found:', id); return; }
+
+    this.currentLocation = id;
+    const env = this.data.environments[loc.environment];
+
+    this.busy = true;
+    this._nextAction = null;
+    this.choicePanel.classList.add('hidden');
+    this.dialogueBox.classList.add('hidden');
+    this.dialogueHint.classList.add('hidden');
+    this.spriteLeft.classList.add('hidden');
+    this.spriteRight.classList.add('hidden');
+    this.bg.classList.remove('blur-dark');
+
+    this.envLabel.textContent = env ? env.label : id;
+    this.envOverlay.classList.remove('hidden');
+
+    setTimeout(() => {
+      this.bg.style.background = env ? env.color || '#333' : '#333';
+      this.envOverlay.classList.add('hidden');
+      this.busy = false;
+
+      const isNew = !this.visitedLocations.has(id);
+      this.visitedLocations.add(id);
+
+      if (isNew && loc.intro && loc.intro.length > 0) {
+        this.playSequence(loc.intro, () => this.showActionMenu());
+      } else {
+        this.showActionMenu();
+      }
+    }, 2000);
+  }
+
+  showActionMenu() {
+    const loc = this.data.locations[this.currentLocation];
+    const options = [];
+
+    (loc.characters_present || loc.characters || []).forEach(charId => {
+      const char = this.data.characters[charId];
+      if (char) options.push({
+        text: `Parler à ${char.name}`,
+        action: () => this.talkToCharacter(charId)
+      });
+    });
+
+    if ((loc.connections || []).length > 0) {
+      options.push({ text: 'Se déplacer', action: () => this.showTravelMenu() });
     }
+
+    this.playLine(
+      { character: 'detective', sprite: 'doubting', text: 'Que devrais-je faire ?' },
+      () => this.showChoices(options)
+    );
   }
 
-  /* ---- action: transition ---- */
-  actTransition(action) {
-    return new Promise(resolve => {
-      this.busy = true;
-      this.dialogueBox.classList.add('hidden');
-      this.spriteLeft.classList.add('hidden');
-      this.spriteRight.classList.add('hidden');
-
-      const env = this.data.environments[action.environment];
-      if (!env) { this.busy = false; resolve(); this.advance(); return; }
-
-      this.envLabel.textContent = env.label;
-      this.envOverlay.classList.remove('hidden');
-
-      setTimeout(() => {
-        this.bg.style.background = env.color || '#333';
-        this.envOverlay.classList.add('hidden');
-        this.busy = false;
-        resolve();
-        this.advance();
-      }, 2000);
+  talkToCharacter(charId) {
+    this.choicePanel.classList.add('hidden');
+    this.bg.classList.remove('blur-dark');
+    const charData = this.data.character_dialogues[charId];
+    if (!charData) { this.showActionMenu(); return; }
+    let lines = charData.default_dialogue || [];
+    for (const cond of charData.conditional_dialogues || []) {
+      if (cond.requires_flag && this.flags[cond.requires_flag]) {
+        lines = cond.dialogue;
+        break;
+      }
+    }
+    this.playSequence(lines, () => {
+      this.playLine(
+        { character: 'detective', sprite: 'doubting', text: 'Hmmm... ça ne m\'avance pas beaucoup.' },
+        () => this.showActionMenu()
+      );
     });
   }
 
-  /* ---- action: dialogue ---- */
-  actDialogue(action) {
-    const char = this.data.characters[action.character];
-    if (!char) { this.advance(); return; }
+  showTravelMenu() {
+    this.choicePanel.classList.add('hidden');
+    this.bg.classList.remove('blur-dark');
+    const loc = this.data.locations[this.currentLocation];
+    const options = (loc.connections || []).map(destId => {
+      const dest = this.data.locations[destId];
+      const env  = dest ? this.data.environments[dest.environment] : null;
+      return {
+        text: env ? env.label : destId,
+        action: () => this.goToLocation(destId)
+      };
+    });
+    this.playLine(
+      { character: 'detective', sprite: 'normal', text: 'Où devrais-je me rendre ?' },
+      () => this.showChoices(options)
+    );
+  }
 
-    const text  = action.text;
-    const name  = char.name;
-    const align = char.align === 'right' ? 'right' : 'left';
+  /* ---- dialogue playback ---- */
+  playSequence(lines, onComplete) {
+    const step = (i) => {
+      if (i >= lines.length) { onComplete(); return; }
+      const line = lines[i];
+      this.playLine(line, () => {
+        if (line.set_flag)       this.flags[line.set_flag] = true;
+        if (line.trigger_event)  this.handleEvent(line.trigger_event);
+        step(i + 1);
+      });
+    };
+    step(0);
+  }
 
+  handleEvent(eventId) {
+    // placeholder — future: show flashback image overlay
+    console.log('[Event triggered]', eventId);
+  }
+
+  playLine(line, onComplete) {
+    const char = this.data.characters[line.character];
+    if (!char) { onComplete(); return; }
+
+    const align         = char.align === 'right' ? 'right' : 'left';
     const speakerSprite = align === 'left' ? this.spriteLeft  : this.spriteRight;
     const otherSprite   = align === 'left' ? this.spriteRight : this.spriteLeft;
 
     speakerSprite.classList.remove('hidden');
-    speakerSprite.style.background = char.color || '#888';
+    speakerSprite.style.backgroundImage = '';
+    let img = speakerSprite.querySelector('img');
+    if (char.sprite && line.sprite) {
+      if (!img) {
+        img = document.createElement('img');
+        img.style.cssText = 'height:100%;width:auto;display:block;';
+        speakerSprite.appendChild(img);
+      }
+      img.src = `${char.sprite}/${line.sprite}.png`;
+      img.style.display = 'block';
+    } else if (img) {
+      img.style.display = 'none';
+    }
     speakerSprite.classList.add('active');
     speakerSprite.classList.remove('inactive');
 
@@ -180,55 +264,71 @@ class VNEngine {
       otherSprite.classList.remove('active');
     }
 
-    this.nameTagLeft.classList.toggle('hidden', align !== 'left');
+    this.nameTagLeft.classList.toggle('hidden',  align !== 'left');
     this.nameTagRight.classList.toggle('hidden', align !== 'right');
-    if (align === 'left')  this.nameTagLeft.textContent  = name;
-    else                   this.nameTagRight.textContent = name;
+    if (align === 'left') this.nameTagLeft.textContent  = char.name;
+    else                  this.nameTagRight.textContent = char.name;
 
     this.dialogueBox.classList.remove('hidden');
-    this.dialogueText.textContent = text;
+    this._nextAction = onComplete;
 
-    if (this.settings.autoplay) {
-      const delay = Math.max(1500, text.length * 50);
-      this.autoplayTimer = setTimeout(() => this.advance(), delay);
-    }
+    this.typewrite(line.text, () => {
+      if (this.settings.autoplay) {
+        const delay = Math.max(800, line.text.length * 30);
+        this.autoplayTimer = setTimeout(() => this.advance(), delay);
+      } else {
+        this.dialogueHint.classList.remove('hidden');
+      }
+    });
   }
 
-  /* ---- action: choice ---- */
-  actChoice(action) {
+  /* ---- choices ---- */
+  showChoices(options) {
     this.bg.classList.add('blur-dark');
-    this.spriteLeft.classList.add('blur-dark');
-    this.spriteRight.classList.add('blur-dark');
-    this.dialogueBox.classList.add('hidden');
-
-    this.choiceQuestion.textContent = action.question;
+    this.dialogueHint.classList.add('hidden');
     this.choiceOptions.innerHTML = '';
-
-    action.options.forEach(opt => {
+    options.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'choice choice-btn';
       btn.textContent = opt.text;
-      btn.addEventListener('click', () => this.resolveChoice(opt));
+      btn.addEventListener('click', () => opt.action());
       this.choiceOptions.appendChild(btn);
     });
-
     this.choicePanel.classList.remove('hidden');
   }
 
-  resolveChoice(opt) {
-    this.choicePanel.classList.add('hidden');
-    this.bg.classList.remove('blur-dark');
-    this.spriteLeft.classList.remove('blur-dark');
-    this.spriteRight.classList.remove('blur-dark');
-
-    if (opt.goto) this.goToScene(opt.goto);
-    else this.advance();
+  /* ---- typewriter ---- */
+  typewrite(text, onComplete) {
+    this._currentText = text;
+    this.typing = true;
+    this.dialogueText.textContent = '';
+    let i = 0;
+    const speed = Math.max(25, Math.min(60, 3000 / text.length));
+    this.typewriterTimer = setInterval(() => {
+      this.dialogueText.textContent = text.slice(0, ++i);
+      if (i >= text.length) {
+        clearInterval(this.typewriterTimer);
+        this.typewriterTimer = null;
+        this.typing = false;
+        onComplete();
+      }
+    }, speed);
   }
 
-  /* ---- action: end ---- */
-  actEnd() {
-    this.dialogueText.textContent = '— FIN —';
-    this.dialogueBox.classList.remove('hidden');
+  skipTypewriter() {
+    clearInterval(this.typewriterTimer);
+    this.typewriterTimer = null;
+    this.typing = false;
+    this.dialogueText.textContent = this._currentText;
+    this.dialogueHint.classList.remove('hidden');
+  }
+
+  clearTypewriter() {
+    if (this.typewriterTimer) {
+      clearInterval(this.typewriterTimer);
+      this.typewriterTimer = null;
+    }
+    this.typing = false;
   }
 
   clearAutoplay() {
