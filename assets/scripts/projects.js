@@ -84,17 +84,27 @@ export function setupFeaturedProjects(ctaCursor, refreshParallax) {
     if (!container) return;
 
     getProjectsData().then(data => {
-        const featured = (data.projects || []).filter(p => p.category === 'featured');
+        const categories = ['All', 'Web', 'Design', 'Video Games', 'Tools', 'Photography'];
+        const categoryPriority = { 'Web': 1, 'Design': 2, 'Video Games': 3, 'Tools': 4, 'Photography': 5 };
+
+        const featured = (data.projects || []).filter(p => categories.includes(p.category));
+        featured.sort((a, b) => (categoryPriority[a.category] || 99) - (categoryPriority[b.category] || 99));
+
         if (!featured.length) { container.innerHTML = '<p class="projects-empty">No featured projects.</p>'; return; }
 
-        const items = featured.map(p => {
+        const filtersContainer = document.createElement('div');
+        filtersContainer.className = 'featured-filters';
+        container.before(filtersContainer);
+
+        const projectItems = featured.map(p => {
             const a = document.createElement('a');
             a.className = 'scatter-item';
             a.href = `project.html?id=${p.id}`;
+            a.dataset.category = p.category;
 
             const img = new Image(); img.alt = p.title; img.loading = 'lazy'; img.decoding = 'async';
             img.src = p.image || `assets/images/projects/${p.id}.png`;
-            img.onload = () => { img.decode ? img.decode().then(() => img.classList.add('loaded')).catch(() => img.classList.add('loaded')) : img.classList.add('loaded'); };
+            img.onload = () => img.classList.add('loaded');
             img.onerror = () => img.classList.add('loaded');
             a.appendChild(img);
 
@@ -102,22 +112,52 @@ export function setupFeaturedProjects(ctaCursor, refreshParallax) {
             return a;
         });
 
+        let currentCategory = 'All';
         let currentCols = 0, resizeRaf = null;
-        const layout = () => {
-            const w = window.innerWidth, cols = w <= 480 ? 2 : (w <= 1024 ? 3 : 4);
-            if (cols === currentCols) return;
+
+        const renderGrid = (force = false) => {
+            const cols = window.innerWidth <= 480 ? 2 : (window.innerWidth <= 1024 ? 3 : 4);
+            if (!force && cols === currentCols) return;
             currentCols = cols;
-            container.innerHTML = ''; container.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+
+            container.innerHTML = '';
+            container.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
             const columnEls = Array.from({ length: cols }, () => {
-                const col = document.createElement('div'); col.className = 'scatter-column';
-                container.appendChild(col); return col;
+                const col = document.createElement('div');
+                col.className = 'scatter-column';
+                container.appendChild(col);
+                return col;
             });
-            items.forEach((a, i) => columnEls[i % cols].appendChild(a));
+
+            const filtered = currentCategory === 'All' ? projectItems : projectItems.filter(el => el.dataset.category === currentCategory);
+            filtered.forEach((el, i) => columnEls[i % cols].appendChild(el));
             refreshParallax?.();
         };
 
-        layout();
-        window.addEventListener('resize', () => { if (!resizeRaf) resizeRaf = requestAnimationFrame(() => { layout(); resizeRaf = null; }); });
+        categories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = `filter-btn ${cat === 'All' ? 'active' : ''}`;
+            btn.textContent = cat;
+            btn.type = 'button';
+
+            btn.addEventListener('click', () => {
+                if (currentCategory === cat) return;
+                filtersContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                container.classList.add('filtering');
+                setTimeout(() => {
+                    currentCategory = cat;
+                    renderGrid(true);
+                    container.classList.remove('filtering');
+                }, 350);
+            });
+
+            filtersContainer.appendChild(btn);
+        });
+
+        renderGrid(true);
+        window.addEventListener('resize', () => { if (!resizeRaf) resizeRaf = requestAnimationFrame(() => { renderGrid(false); resizeRaf = null; }); });
         window.addEventListener('load', () => refreshParallax?.());
     });
 }

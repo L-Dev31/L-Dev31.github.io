@@ -4,7 +4,7 @@
       "id": "rcai",
       "title": "Regards Croisés",
       "creator": "Equipe recTangle - Ynov",
-      "category": "featured",
+      "category": "Photography",
       "path": null
     },
     {
@@ -28,14 +28,14 @@
         "assets/images/projects/ogfm/process2.jpg",
         "assets/images/projects/ogfm/process3.jpg"
       ],
-      "category": "featured"
+      "category": "Design"
     },
     {
       "id": "dran",
       "title": "Dranima",
       "description": "Discover Dranima: a retro-inspired monster-tamer RPG in development. Follow the project updates, explore the world, and join the community..",
       "creator": "Alex Claude Bourbon",
-      "category": "featured",
+      "category": "Web",
       "tags": [
         "2d",
         "rpg",
@@ -50,14 +50,14 @@
       "id": "bgaw",
       "title": "Black Goose",
       "creator": "The Axis - Ynov",
-      "category": "featured",
+      "category": "Web",
       "path": null
     },
     {
       "id": "mego",
       "title": "Megoteur",
       "creator": "Remi Astier",
-      "category": "featured",
+      "category": "Design",
       "path": "https://megoteur.com/"
     },
     {
@@ -65,7 +65,7 @@
       "title": "L-DEV's BMG Editor",
       "description": "A comprehensive editor for BMG files, enhancing game modding workflows.",
       "creator": "Léo Tosku",
-      "category": "featured",
+      "category": "Tools",
       "tags": [],
       "path": "projects/BMGE",
       "noPhone": false
@@ -74,7 +74,7 @@
       "id": "prfy",
       "title": "Proofy",
       "creator": "Equipe 1 - Ynov",
-      "category": "featured",
+      "category": "Web",
       "path": null
     },
     {
@@ -82,7 +82,7 @@
       "title": "Portfolio",
       "description": "Showcasing the musical journey and works of Charlie McKenzie.",
       "creator": "Charlie McKenzie",
-      "category": "featured",
+      "category": "Web",
       "tags": [],
       "path": "http://www.charliemckenziemusic.com/",
       "noPhone": false
@@ -91,7 +91,7 @@
       "id": "mxal",
       "title": "Mix and Light",
       "creator": "Mix and Light",
-      "category": "featured",
+      "category": "Web",
       "type": "School project",
       "path": null
     },
@@ -100,7 +100,7 @@
       "title": "Les Saveurs de Provence (Redesign)",
       "description": "Bringing the flavors of Provence to life with a fresh web design.",
       "creator": "",
-      "category": "featured",
+      "category": "Web",
       "tags": [],
       "path": "projects/LSDP",
       "noPhone": false
@@ -110,7 +110,7 @@
       "title": "SandFall Interactive (Redesign)",
       "description": "Website redesign for SandFall Interactive Studio, enhancing user experience and brand identity.",
       "creator": "SandFall Interactive",
-      "category": "featured",
+      "category": "Web",
       "tags": [],
       "path": "projects/SandFall",
       "noPhone": false
@@ -119,21 +119,21 @@
       "id": "gpmx",
       "title": "GPMailbox",
       "creator": "Léo Tosku",
-      "category": "featured",
+      "category": "Web",
       "path": null
     },
     {
       "id": "gptr",
       "title": "GPTranslator",
       "creator": "Léo Tosku",
-      "category": "featured",
+      "category": "Tools",
       "path": null
     },
     {
       "id": "dgif",
       "title": "DaGameThatIsFun",
       "creator": "Léo Tosku, Korail Lamothe-Jacob, Axel Desbonnes",
-      "category": "featured",
+      "category": "Video Games",
       "path": null
     }
   ]

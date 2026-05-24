@@ -1717,12 +1717,48 @@ p {
     aspect-ratio: auto;
 }
 
+/* ═══ Case Mockups Gallery ═══ */
+
+.case-mockups {
+    padding: var(--pad-section) 0;
+}
+
+.case-mockups-grid {
+    width: 100%;
+    max-width: var(--container-width);
+    margin: clamp(32px, 6vh, 80px) auto 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(8px, 1vw, 16px);
+    padding: 0 var(--pad-edge);
+    box-sizing: border-box;
+}
+
+.mockup-column {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(8px, 1vw, 16px);
+}
+
+.mockup-item {
+    margin: 0;
+    overflow: hidden;
+    background: #111;
+}
+
+.mockup-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
 .project-cta-bottom {
     padding: clamp(60px, 12vh, 120px) var(--pad-edge);
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: clamp(40px, 6vw, 100px);
-    align-items: start;
+    align-items: center;
 }
 
 .project-cta-bottom>.title {
@@ -1823,4 +1859,68 @@ p {
 
 .project-not-found a:hover {
     color: var(--white);
+}
+
+/* ═══ Featured Projects Category Filters ═══ */
+
+.featured-filters {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(8px, 1.2vw, 14px);
+    flex-wrap: wrap;
+    margin: 0 auto clamp(24px, 4vh, 48px);
+    width: 100%;
+    max-width: var(--container-width);
+    padding: 0 var(--pad-edge);
+    box-sizing: border-box;
+    z-index: 5;
+}
+
+.filter-btn {
+    font-family: var(--font-body);
+    font-size: clamp(10px, 1.1vw, 12px);
+    font-weight: 500;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-strong);
+    padding: clamp(6px, 1.2vh, 10px) clamp(14px, 1.8vw, 22px);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s var(--ease-out), box-shadow 0.3s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    will-change: transform, background, border-color;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--white);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.filter-btn.active {
+    background: var(--white);
+    color: var(--color-on-light);
+    border-color: var(--white);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.12);
+}
+
+.filter-btn:focus-visible {
+    outline: 2px solid var(--white);
+    outline-offset: 3px;
+}
+
+/* Premium Filter Fade Transition */
+.featured-scatter {
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: opacity, transform;
+}
+
+.featured-scatter.filtering {
+    opacity: 0;
+    transform: translateY(15px);
 }

@@ -4,6 +4,10 @@
         grid-template-columns: 1fr;
     }
 
+    .case-mockups-grid {
+        grid-template-columns: 1fr;
+    }
+
     .case-row--reverse .case-figure {
         order: 0;
     }
