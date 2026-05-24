@@ -27,11 +27,6 @@ export function getProjectsData() {
     return projectsDataPromise;
 }
 
-export function resolveProjectHref(path) {
-    if (!path?.trim()) return null;
-    const t = path.trim();
-    return /^(?:https?:)?\/\//i.test(t) || /^[a-z][a-z\d+.-]*:/i.test(t) ? t : `${t.replace(/\/+$/, '')}/`;
-}
 
 export const observe = (el, observer) => {
     if (!el) return;

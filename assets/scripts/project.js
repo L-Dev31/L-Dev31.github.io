@@ -52,7 +52,7 @@ function renderProject(data, html, lenis) {
     if (header) {
         const meta = [
             data.role && `As a ${data.role}`,
-            data.year && `In ${data.year}`,
+            data.date && `In ${data.date.slice(0, 4)}`,
             data.client && `For ${data.client}`
         ].filter(Boolean);
 
@@ -70,45 +70,60 @@ function renderProject(data, html, lenis) {
     const ctaBottom = document.querySelector('.project-cta-bottom');
     if (ctaBottom) ctaBottom.before(...tmp.childNodes);
 
+    const ctaSection = document.querySelector('.project-cta-bottom');
+    const hasCtas = data.ctas?.length > 0;
+    const hasImages = data.ctaImages?.length > 0;
+
     const heroLive = document.querySelector('.project-hero-live');
     if (heroLive) {
-        if (data.ctaLabel) heroLive.textContent = data.ctaLabel + ' →';
-        if (data.ctaUrl) heroLive.href = data.ctaUrl;
-    }
-
-    const ctaLink = document.querySelector('.project-cta-bottom-link');
-    const ctaUrl = data.ctaUrl;
-    if (ctaLink) {
-        if (ctaUrl) {
-            ctaLink.href = ctaUrl;
-            if (data.ctaLabel) ctaLink.textContent = data.ctaLabel + ' →';
+        const firstCta = hasCtas ? data.ctas[0] : null;
+        if (firstCta) {
+            heroLive.textContent = firstCta.label + ' →';
+            heroLive.href = firstCta.url;
         } else {
-            document.querySelector('.project-cta-bottom')?.remove();
+            heroLive.remove();
         }
     }
 
-    const ctaTiles = document.querySelectorAll('.project-cta-tile');
-    const ctaSection = document.querySelector('.project-cta-bottom');
-    if (data.ctaImages?.length && ctaTiles.length) {
-        ctaTiles.forEach((tile, i) => {
-            const src = data.ctaImages[i];
-            if (src) tile.style.backgroundImage = `url('${src}')`;
-        });
-        if (!prefersReducedMotion && ctaSection) {
-            const updateCtaParallax = () => {
-                const rect = ctaSection.getBoundingClientRect();
-                const center = (rect.top + rect.height / 2) - window.innerHeight / 2;
-                ctaTiles.forEach(tile => {
-                    const speed = parseFloat(tile.dataset.speed) || 0;
-                    tile.style.transform = `translateY(${center * speed}px)`;
-                });
-            };
-            lenis ? lenis.on('scroll', updateCtaParallax)
-                : window.addEventListener('scroll', updateCtaParallax, { passive: true });
-            updateCtaParallax();
-        }
+    if (!hasCtas && !hasImages) {
+        ctaSection?.remove();
     } else {
-        document.querySelector('.project-cta-gallery')?.remove();
+        const ctaText = document.querySelector('.project-cta-text');
+        ctaText?.querySelector('.project-cta-bottom-link')?.remove();
+        if (hasCtas && ctaText) {
+            data.ctas.forEach(cta => {
+                const a = document.createElement('a');
+                a.href = cta.url;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.className = 'project-cta-bottom-link';
+                a.textContent = cta.label + ' →';
+                ctaText.appendChild(a);
+            });
+        }
+
+        const ctaTiles = document.querySelectorAll('.project-cta-tile');
+        if (hasImages && ctaTiles.length) {
+            ctaTiles.forEach((tile, i) => {
+                const src = data.ctaImages[i];
+                if (src) tile.style.backgroundImage = `url('${src}')`;
+            });
+            if (!prefersReducedMotion && ctaSection) {
+                const updateCtaParallax = () => {
+                    const rect = ctaSection.getBoundingClientRect();
+                    const center = (rect.top + rect.height / 2) - window.innerHeight / 2;
+                    ctaTiles.forEach(tile => {
+                        const speed = parseFloat(tile.dataset.speed) || 0;
+                        tile.style.transform = `translateY(${center * speed}px)`;
+                    });
+                };
+                lenis ? lenis.on('scroll', updateCtaParallax)
+                    : window.addEventListener('scroll', updateCtaParallax, { passive: true });
+                updateCtaParallax();
+            }
+        } else {
+            document.querySelector('.project-cta-gallery')?.remove();
+        }
     }
 
     if (!prefersReducedMotion) {

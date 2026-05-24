@@ -1,4 +1,4 @@
-import { isMobile, prefersReducedMotion, getProjectsData, resolveProjectHref } from './utils.js';
+import { isMobile, prefersReducedMotion, getProjectsData } from './utils.js';
 
 export function setupWebProjects() {
     const list = document.querySelector('.featured-list');
@@ -18,11 +18,10 @@ export function setupWebProjects() {
     const update = (x, y) => { const h = window.innerHeight; tx = x + h * 0.05; ty = y - h * 0.1; };
 
     getProjectsData().then(data => {
-        const projects = (data.projects || []).filter(p => p.category === 'web' && !(isMobile && p.noPhone));
+        const projects = (data.projects || []).filter(p => p.category === 'web');
         if (!projects.length) { list.innerHTML = '<p class="projects-empty">No projects.</p>'; return; }
 
         projects.forEach(p => {
-            const liveHref = resolveProjectHref(p.path);
             const a = document.createElement('a');
             a.className = 'featured-project';
             a.href = `project.html?id=${p.id}`;
@@ -37,21 +36,20 @@ export function setupWebProjects() {
                     <div class="featured-project-tags">${tagsHtml}</div>
                 </div>
                 <span class="featured-meta">
-                    ${p.creator?.trim() || liveHref ? `<span class="featured-slot">${p.creator?.trim() ? `<span class="featured-author">${p.creator}</span>` : ''}</span>` : ''}
+                    ${p.creator?.trim() ? `<span class="featured-slot"><span class="featured-author">${p.creator}</span></span>` : ''}
                 </span>`;
 
-            if (liveHref) {
-                a.addEventListener('mouseenter', e => {
-                    if (isMobile || prefersReducedMotion) return;
-                    img.src = `assets/images/websites/${p.id}.png`;
-                    desc.textContent = p.description || '';
-                    preview.style.display = 'flex';
-                    update(e.clientX, e.clientY);
-                    if (!raf) anim();
-                });
-                a.addEventListener('mousemove', e => update(e.clientX, e.clientY));
-                a.addEventListener('mouseleave', () => { preview.style.display = 'none'; cancelAnimationFrame(raf); raf = null; });
-            }
+            a.addEventListener('mouseenter', e => {
+                if (isMobile || prefersReducedMotion) return;
+                img.src = `assets/images/websites/${p.id}.png`;
+                desc.textContent = p.description || '';
+                preview.style.display = 'flex';
+                update(e.clientX, e.clientY);
+                if (!raf) anim();
+            });
+            a.addEventListener('mousemove', e => update(e.clientX, e.clientY));
+            a.addEventListener('mouseleave', () => { preview.style.display = 'none'; cancelAnimationFrame(raf); raf = null; });
+
             list.appendChild(a);
         });
     }).catch(() => list.innerHTML = '<p class="projects-empty">Error loading projects.</p>');
@@ -84,11 +82,9 @@ export function setupFeaturedProjects(ctaCursor, refreshParallax) {
     if (!container) return;
 
     getProjectsData().then(data => {
-        const categories = ['All', 'Web', 'Design', 'Video Games', 'Tools', 'Photography'];
-        const categoryPriority = { 'Web': 1, 'Design': 2, 'Video Games': 3, 'Tools': 4, 'Photography': 5 };
+        const categories = ['All', 'Design', 'Web', 'Photography', 'Tools', 'Video Games'];
 
         const featured = (data.projects || []).filter(p => categories.includes(p.category));
-        featured.sort((a, b) => (categoryPriority[a.category] || 99) - (categoryPriority[b.category] || 99));
 
         if (!featured.length) { container.innerHTML = '<p class="projects-empty">No featured projects.</p>'; return; }
 
@@ -101,6 +97,7 @@ export function setupFeaturedProjects(ctaCursor, refreshParallax) {
             a.className = 'scatter-item';
             a.href = `project.html?id=${p.id}`;
             a.dataset.category = p.category;
+            if (p.date) a.dataset.date = p.date;
 
             const img = new Image(); img.alt = p.title; img.loading = 'lazy'; img.decoding = 'async';
             img.src = p.image || `assets/images/projects/${p.id}.png`;
@@ -129,7 +126,13 @@ export function setupFeaturedProjects(ctaCursor, refreshParallax) {
                 return col;
             });
 
-            const filtered = currentCategory === 'All' ? projectItems : projectItems.filter(el => el.dataset.category === currentCategory);
+            const filtered = currentCategory === 'All'
+                ? [...projectItems].sort((a, b) => {
+                    const da = a.dataset.date ? new Date(a.dataset.date).getTime() : 0;
+                    const db = b.dataset.date ? new Date(b.dataset.date).getTime() : 0;
+                    return db - da;
+                })
+                : projectItems.filter(el => el.dataset.category === currentCategory);
             filtered.forEach((el, i) => columnEls[i % cols].appendChild(el));
             refreshParallax?.();
         };
