@@ -70,6 +70,6 @@
 
     { "type": "line", "char": "will", "text": "Un seul nom, une seule porte. ~~Pas le choix.~~ **Marine Pestelle.** Le Coin Comm'. Allons voir ce qu'elle a à dire.", "sprite": "doubting" },
 
-    { "type": "goto", "location": "marine" }
+    { "type": "goto", "goto": "marine" }
   ]
 }

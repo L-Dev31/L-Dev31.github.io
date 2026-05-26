@@ -1,0 +1,34 @@
+#screen-title {
+  background:
+    linear-gradient(to top right, #050a14, #050a1433, #050a14),
+    var(--title-bg, url('../images/Environments/outside.png')) center / cover no-repeat;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.title-logo {
+  position: absolute;
+  top: 56px;
+  right: 80px;
+  height: 180px;
+  width: auto;
+  user-select: none;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  padding-left: 120px;
+  padding-bottom: 80px;
+}
+
+.menu-btn {
+  font-family: 'Gondens', Georgia, 'Times New Roman', serif;
+  font-size: 44px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+}
+
+.menu .choice { padding: 0; margin: 4px 0; }

@@ -1,0 +1,52 @@
+{
+  "enquête_lancée": false,
+
+  "marine_parle_de_pascal": false,
+  "marine_dépensière": false,
+  "marine_outils_flous": false,
+  "marine_rebond_évoqué": false,
+  "marine_balance_pascal_solo": false,
+  "marine_balance_ina_blogs": false,
+  "marine_balance_pascal_home": false,
+  "marine_balance_ina_changement": false,
+  "marine_cadrage_évoqué": false,
+
+  "pascal_parle_de_ina": false,
+  "pascal_ux_catastrophe": false,
+  "pascal_ga4_non_vérifié": false,
+  "pascal_délègue_ina": false,
+  "pascal_évoque_ia_jia": false,
+  "pascal_voit_titres_sombres": false,
+  "pascal_ab_test_jamais": false,
+
+  "indice_blogs_existent": false,
+  "indice_ina_calme_louche": false,
+  "indice_ina_changé_six_mois": false,
+  "indice_ina_seul_seo": false,
+  "indice_factures": false,
+
+  "ina_articles_hors_sujet": false,
+  "ina_kpi_décorrélés": false,
+  "ina_segmentation_absente": false,
+  "utm_chaos": false,
+  "ina_se_cache": false,
+  "ina_craque": false,
+  "ina_fuit": false,
+
+  "jia_confirme_conversation_ia": false,
+  "jia_comprend_deux_causes": false,
+  "jia_comprend_reporting": false,
+  "jia_cadrage_initial": false,
+
+  "data_rebond": false,
+  "data_canaux": false,
+  "data_attribution": false,
+  "data_cro_ab": false,
+  "preuve_articles_volés": false,
+  "preuve_liens_cachés": false,
+  "mobile_ina": false,
+  "mobile": false,
+
+  "rgpd_vu": false,
+  "affaire_résolue": false
+}

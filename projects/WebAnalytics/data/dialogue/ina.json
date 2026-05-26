@@ -102,10 +102,38 @@
         "forbids_flag": "ina_fuit",
         "sequence": [
           { "type": "line", "char": "ina",  "text": "**Sessions.** Pages vues. Position moyenne sur Search Console. Taux de clics organiques.", "sprite": "normal" },
-          { "type": "line", "char": "will", "text": "Et le **taux de conversion** ? Le nombre de **leads** ? Le **coût d'acquisition** ?", "sprite": "doubting" },
-          { "type": "line", "char": "ina",  "text": "~~...Ce ne sont pas mes KPI.~~", "sprite": "stress" },
-          { "type": "line", "char": "will", "text": "Ils le sont depuis que la boîte existe.", "sprite": "doubting" },
-          { "type": "set_flag", "flag": "ina_kpi_décorrélés" },
+          {
+            "type": "present_evidence",
+            "prompt": { "char": "will", "text": "~~Sessions. Pages vues. Il récite. Mais réciter n'est pas analyser. Il y a quelque chose dans ce que j'ai appris qui **répond directement à ça**.~~", "sprite": "doubting" },
+            "expected_lesson": "lesson_mesurer_analyser",
+            "on_correct": {
+              "set_flags": ["ina_kpi_décorrélés"],
+              "sequence": [
+                { "type": "line", "char": "will", "text": "**Mesurer n'est pas analyser.** Voir des sessions arriver, ce n'est pas savoir **pourquoi** elles arrivent ni **ce qu'elles rapportent**. Vous comptez. Vous ne lisez pas.", "sprite": "doubting" },
+                { "type": "line", "char": "ina",  "text": "~~...Ce ne sont pas mes KPI.~~", "sprite": "stress" },
+                { "type": "line", "char": "will", "text": "Et le **taux de conversion** ? Le nombre de **leads** ? Le **coût d'acquisition** ? Ils le sont depuis que la boîte existe.", "sprite": "doubting" }
+              ]
+            },
+            "on_wrong": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~...Non. Ça ne le touche pas. Mauvaise pièce.~~", "sprite": "doubting" },
+                { "type": "line", "char": "ina",  "text": "Je ne vois pas en quoi c'est pertinent. Vous m'avez demandé mes indicateurs. Je vous les donne.", "sprite": "normal" },
+                { "type": "line", "char": "will", "text": "Et le **taux de conversion** ? Le nombre de **leads** ? Le **coût d'acquisition** ?", "sprite": "doubting" },
+                { "type": "line", "char": "ina",  "text": "~~...Ce ne sont pas mes KPI.~~", "sprite": "stress" },
+                { "type": "line", "char": "will", "text": "Ils le sont depuis que la boîte existe.", "sprite": "doubting" },
+                { "type": "set_flag", "flag": "ina_kpi_décorrélés" }
+              ]
+            },
+            "on_cancel": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Non. Je laisse passer. Pour l'instant.~~", "sprite": "doubting" },
+                { "type": "line", "char": "will", "text": "Et le **taux de conversion** ? Le nombre de **leads** ? Le **coût d'acquisition** ?", "sprite": "doubting" },
+                { "type": "line", "char": "ina",  "text": "~~...Ce ne sont pas mes KPI.~~", "sprite": "stress" },
+                { "type": "line", "char": "will", "text": "Ils le sont depuis que la boîte existe.", "sprite": "doubting" },
+                { "type": "set_flag", "flag": "ina_kpi_décorrélés" }
+              ]
+            }
+          },
           {
             "type": "lesson",
             "id": "lesson_kpi",

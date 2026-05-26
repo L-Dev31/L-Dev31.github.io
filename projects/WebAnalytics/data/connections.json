@@ -1,0 +1,8 @@
+[
+  { "label": "Coin Comm'",       "goto": "marine" },
+  { "label": "Poste Dev",        "goto": "pascal",        "requires_flag": "marine_parle_de_pascal" },
+  { "label": "Bureau SEO",       "goto": "ina",           "requires_flag": "pascal_parle_de_ina" },
+  { "label": "Direction",        "goto": "jia",           "requires_flag": "enquête_lancée" },
+  { "label": "Salle Données",    "goto": "data",          "requires_any_flag": ["pascal_délègue_ina", "ina_fuit"] },
+  { "label": "Salle de Reunion", "goto": "confrontation", "requires_flags": ["preuve_articles_volés", "preuve_liens_cachés", "mobile_ina"] }
+]

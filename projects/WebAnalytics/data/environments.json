@@ -1,0 +1,49 @@
+{
+  "intro": {
+    "label": "BLUE S.E.A.",
+    "background": "url('images/Environments/outside.png') center / cover no-repeat",
+    "scene_intro": "21h30. La pluie tape contre les baies vitrées d'un open space à moitié vide. Des écrans encore allumés, personne devant."
+  },
+  "marine": {
+    "label": "Coin Comm'",
+    "background": "url('images/Environments/studio.png') center / cover no-repeat",
+    "scene_intro": "Milieu de matinée. Marine Pestelle est assise au fond, entourée de mockups imprimés et d'un tableau de campagnes."
+  },
+  "pascal": {
+    "label": "Poste Dev",
+    "background": "url('images/Environments/dev.png') center / cover no-repeat",
+    "scene_intro": "Vers 11h. Pascal Poinet ne lève pas les yeux de ses trois écrans. Du code, des dashboards, une tasse froide."
+  },
+  "ina": {
+    "label": "Bureau SEO",
+    "background": "url('images/Environments/seo.png') center / cover no-repeat",
+    "scene_intro": "Début d'après-midi. Le bureau d'Ina Voué est ordonné. Trop ordonné — rien qui traîne, rien qui dépasse.",
+    "scene_intro_alt": [
+      {
+        "requires_flag": "ina_fuit",
+        "always": true,
+        "text": "Le bureau d'Ina est vide. Sa chaise est de travers, comme s'il s'était levé en vitesse. L'écran s'est mis en veille sur un onglet à moitié fermé. Il a disparu."
+      },
+      {
+        "requires_flag": "ina_craque",
+        "forbids_flag": "ina_fuit",
+        "text": "Ina est encore là, mais quelque chose s'est cassé. Il évite ton regard. Ses doigts pianotent sur la table — pas un rythme, un tic."
+      }
+    ]
+  },
+  "jia": {
+    "label": "Direction",
+    "background": "url('images/Environments/boss.png') center / cover no-repeat",
+    "scene_intro": "Seo Ji-a attend debout, dos à la fenêtre. Elle ne s'assied que quand elle parle."
+  },
+  "data": {
+    "label": "Salle Données",
+    "background": "url('images/Environments/data.png') center / cover no-repeat",
+    "scene_intro": "15h20. Une salle sans fenêtre. Écrans bleutés, air climatisé. Les données du site sont ici."
+  },
+  "confrontation": {
+    "label": "Salle de Réunion",
+    "background": "url('images/Environments/boss.png') center / cover no-repeat",
+    "scene_intro": "Fin de journée. Tout le monde est convoqué. La vérité va sortir d'ici, d'une façon ou d'une autre."
+  }
+}
