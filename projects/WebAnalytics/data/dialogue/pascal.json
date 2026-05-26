@@ -1,17 +1,16 @@
-{
+﻿{
   "_location": "pascal",
-  "_comment": "Pascal — débloque Ina (pascal_parle_de_ina) via la question 'délègue'. Couvre : UX/rebond, GA4 installation + événements clés, A/B testing (CRO), conversation IA avec Jia, titres sombres sur l'écran d'Ina.",
+  "_comment": "Pascal - débloque Ina (pascal_parle_de_ina) via la question 'délègue'. Couvre : UX/rebond, GA4 installation + événements clés, A/B testing (CRO), conversation IA avec Jia, titres sombres sur l'écran d'Ina.",
   "on_first_visit": [
-    { "type": "line", "char": "pascal", "text": "##Deux secondes, deux secondes## — je finis ce composant — voilà. Vous tombez bien, j'ai plein d'idées pour relancer la boîte. J'ai prototypé un configurateur 3D, un chatbot maison, une refonte complète—", "sprite": "normal" },
+    { "type": "line", "char": "pascal", "text": "##Deux secondes, deux secondes##, je finis ce composant - voilà. Vous tombez bien, j'ai plein d'idées pour relancer la boîte. J'ai prototypé un configurateur 3D, un chatbot maison, une refonte complète...", "sprite": "normal" },
     { "type": "line", "char": "will",   "text": "**Une seule chose** à la fois. Parlez-moi de la page d'accueil actuelle.", "sprite": "normal" },
-    { "type": "line", "char": "pascal", "text": "Ah ! Ma **fierté** ! Parallaxe, micro-interactions, transitions fluides, un carrousel WebGL—", "sprite": "laughing" }
+    { "type": "line", "char": "pascal", "text": "Ah ! Ma **fierté** ! Parallaxe, micro-interactions, transitions fluides, un carrousel WebGL...", "sprite": "laughing" }
   ],
   "menu": {
     "options": [
       {
         "text": "Combien de visiteurs repartent immediatement ?",
         "id": "pascal_rebond",
-        "once_flag": "pascal_ux_catastrophe",
         "sequence": [
           { "type": "line", "char": "will",   "text": "Taux de rebond. **Quatre-vingt-treize pour cent.** Les gens arrivent, et fuient en moins de trois secondes.", "sprite": "doubting" },
           { "type": "line", "char": "pascal", "text": "~~...Quatre-vingt... non. Non non non.~~ C'est... c'est l'UI qui est trop riche. J'ai voulu impressionner. Les boutons sont cachés sous les animations, le menu se déplie en trois étapes, le numéro de contact est... en bas, après le carrousel, en gris clair sur blanc.", "sprite": "explaining" },
@@ -21,7 +20,7 @@
           {
             "type": "lesson",
             "id": "lesson_ux_analytics",
-            "intro": { "char": "will", "text": "93 %. Il a construit quelque chose de beau — et **personne ne rentre dedans**. Ce que Pascal a fait là, c'est l'illustration parfaite de ce que les données UX permettent de détecter. Avant même de toucher au code.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "93 %. Il a construit quelque chose de beau - et **personne ne rentre dedans**. Ce que Pascal a fait là, c'est l'illustration parfaite de ce que les données UX permettent de détecter. Avant même de toucher au code.", "sprite": "doubting" },
             "title": "Détecter les problèmes UX par les données",
             "blocks": [
               { "type": "text", "content": "Un taux de rebond élevé est un signal d'alerte UX. Les analytics permettent de détecter des problèmes que l'œil ne voit pas au premier coup d'œil." },
@@ -41,13 +40,13 @@
                 ]
               },
               { "type": "separator" },
-              { "type": "heading", "content": "Le triangle UX — Marketing, Design, Utilisateur" },
+              { "type": "heading", "content": "Le triangle UX - Marketing, Design, Utilisateur" },
               {
                 "type": "list",
                 "items": [
-                  "**Penser utilisateur** — utile, simple, rapide, esthétique, pertinent",
-                  "**Penser marketing** — cibles, budget, marché, promesses, objectifs",
-                  "**Penser design** — créativité, performance, praticité, choix technologiques"
+                  "**Penser utilisateur** - utile, simple, rapide, esthétique, pertinent",
+                  "**Penser marketing** - cibles, budget, marché, promesses, objectifs",
+                  "**Penser design** - créativité, performance, praticité, choix technologiques"
                 ]
               },
               { "type": "text", "content": "Au centre du triangle : **confiance**, **ergonomie**, **cohérence**." },
@@ -64,16 +63,15 @@
                   "Proposer une amélioration précise"
                 ]
               },
-              { "type": "note", "content": "Un mauvais design fait fuir les visiteurs — mais n'est pas suffisant pour déclencher une pénalité Google. Ce sont **deux blessures différentes**." }
+              { "type": "note", "content": "Un mauvais design fait fuir les visiteurs - mais n'est pas suffisant pour déclencher une pénalité Google. Ce sont **deux blessures différentes**." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Le rebond explique une partie de la fuite. Mais pas la chute dans Google. Pas la **pénalité**. Une mauvaise UX ne fait pas désindexer un site entier. **Autre chose.**", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Le rebond explique Marine qui jette son argent. Pas la pénalité Google. Une mauvaise UX fait fuir les visiteurs. Elle ne fait pas désindexer un site entier.", "sprite": "doubting" }
         ]
       },
       {
         "text": "Comment vous avez installe GA4 ?",
         "id": "pascal_ga4",
-        "once_flag": "pascal_ga4_non_vérifié",
         "sequence": [
           { "type": "line", "char": "pascal", "text": "Oh ça, j'ai été carré ! J'ai créé une propriété **GA4**, un flux de données Web, j'ai récupéré l'identifiant **G-XXXXXXX**... et je l'ai collé directement dans le <head> du site. Classique.", "sprite": "explaining" },
           { "type": "line", "char": "will",   "text": "Et vous avez **vérifié** que ça collectait bien ? Vous avez configuré des **événements clés** ?", "sprite": "doubting" },
@@ -82,7 +80,7 @@
           {
             "type": "lesson",
             "id": "lesson_ga4_install",
-            "intro": { "char": "will", "text": "Il a collé un identifiant dans le code, appuyé sur envoi, et n'a **jamais regardé ce qui remontait**. L'installation de GA4 ne s'arrête pas à la balise — ça commence là. Voilà ce qu'il aurait dû faire.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "Il a collé un identifiant dans le code, appuyé sur envoi, et n'a **jamais regardé ce qui remontait**. L'installation de GA4 ne s'arrête pas à la balise - ça commence là. Voilà ce qu'il aurait dû faire.", "sprite": "doubting" },
             "title": "Installer et vérifier Google Analytics 4",
             "blocks": [
               { "type": "text", "content": "Google Analytics 4 est la version actuelle de Google Analytics. Elle repose sur un modèle centré sur les **événements**." },
@@ -91,10 +89,10 @@
               {
                 "type": "list",
                 "items": [
-                  "**Étape 1** — Créer un compte et une propriété GA4 (nom, fuseau horaire, devise)",
-                  "**Étape 2** — Créer un flux de données Web (URL du site, nom du flux)",
-                  "**Étape 3** — Récupérer l'identifiant de mesure (format : G-XXXXXXXXXX)",
-                  "**Étape 4** — Installer la balise : directement dans le code, via un plugin (WordPress, Shopify) ou via Google Tag Manager"
+                  "**Étape 1** - Créer un compte et une propriété GA4 (nom, fuseau horaire, devise)",
+                  "**Étape 2** - Créer un flux de données Web (URL du site, nom du flux)",
+                  "**Étape 3** - Récupérer l'identifiant de mesure (format : G-XXXXXXXXXX)",
+                  "**Étape 4** - Installer la balise : directement dans le code, via un plugin (WordPress, Shopify) ou via Google Tag Manager"
                 ]
               },
               { "type": "separator" },
@@ -125,32 +123,31 @@
               { "type": "text", "content": "Une action importante peut être marquée comme **événement clé**. Si elle doit piloter la publicité, elle peut être utilisée comme **conversion** dans Google Ads." },
               { "type": "text", "content": "Exemple : un événement nommé `generate_lead` peut être marqué comme événement clé pour suivre les demandes de devis." },
               { "type": "separator" },
-              { "type": "heading", "content": "Cas pratique — demande de devis" },
+              { "type": "heading", "content": "Cas pratique - demande de devis" },
               {
                 "type": "list",
                 "items": [
-                  "**Objectif business** — obtenir des demandes de devis",
-                  "**Action à suivre** — envoi du formulaire",
-                  "**Événement à créer** — `generate_lead`",
-                  "**Événement clé** — marquer l'événement comme important dans GA4",
-                  "**Contrôle** — vérifier qu'il remonte correctement dans les rapports"
+                  "**Objectif business** - obtenir des demandes de devis",
+                  "**Action à suivre** - envoi du formulaire",
+                  "**Événement à créer** - `generate_lead`",
+                  "**Événement clé** - marquer l'événement comme important dans GA4",
+                  "**Contrôle** - vérifier qu'il remonte correctement dans les rapports"
                 ]
               },
               { "type": "note", "content": "Sans événements, vous ne mesurez que des visites. Avec les événements, vous mesurez les **actions importantes**." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Il a installé la balise mais n'a **jamais vérifié** la collecte. Aucun événement clé. Les données sont peut-être incomplètes depuis le début. Un **plan de marquage** aurait évité ça.", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Il a installé la balise et n'a **jamais regardé ce qui remontait**. Aucun événement clé. Les données sont peut-être fausses depuis le début.", "sprite": "doubting" }
         ]
       },
       {
-        "text": "Vous avez deja teste deux versions d'une page pour comparer ?",
+        "text": "Vous avez deja fait un A/B test ?",
         "id": "pascal_ab",
-        "once_flag": "pascal_ab_test_jamais",
         "requires_flag": "pascal_ux_catastrophe",
         "sequence": [
-          { "type": "line", "char": "will",   "text": "Avant de pousser cette home en prod — vous avez fait un **A/B test** ? Comparé deux versions, vérifié laquelle convertit le mieux ?", "sprite": "doubting" },
+          { "type": "line", "char": "will",   "text": "Avant de pousser cette home en prod, vous avez fait un **A/B test** ? Comparé deux versions, vérifié laquelle convertit le mieux ?", "sprite": "doubting" },
           { "type": "line", "char": "pascal", "text": "~~Un A/B test...~~ Non. J'ai fait ce que je trouvais beau. J'ai pas testé. Je me suis dit : si c'est bien fait, ça va marcher.", "sprite": "explaining" },
-          { "type": "line", "char": "will",   "text": "Si c'est bien fait, ça va marcher. Sauf que ce sont les **utilisateurs** qui décident — pas l'équipe.", "sprite": "doubting" },
+          { "type": "line", "char": "will",   "text": "Si c'est bien fait, ça va marcher. Sauf que ce sont les **utilisateurs** qui décident. Pas l'équipe.", "sprite": "doubting" },
           { "type": "set_flag", "flag": "pascal_ab_test_jamais" },
           {
             "type": "lesson",
@@ -158,7 +155,7 @@
             "intro": { "char": "will", "text": "Il a poussé sa page en prod sans jamais la **tester**. Pas une variante, pas une hypothèse, pas une mesure avant/après. Ce qu'il appelle « intuition », le métier l'appelle **risque non calculé**. Il existe une méthode pour ça.", "sprite": "doubting" },
             "title": "CRO et A/B testing",
             "blocks": [
-              { "type": "heading", "content": "CRO — Conversion Rate Optimization" },
+              { "type": "heading", "content": "CRO - Conversion Rate Optimization" },
               { "type": "text", "content": "La **CRO** consiste à améliorer la capacité d'un site à transformer ses visiteurs en clients, leads ou inscrits." },
               {
                 "type": "list",
@@ -183,17 +180,17 @@
                 ]
               },
               { "type": "separator" },
-              { "type": "heading", "content": "L'A/B testing — méthode pas à pas" },
+              { "type": "heading", "content": "L'A/B testing - méthode pas à pas" },
               {
                 "type": "list",
                 "items": [
-                  "**Étape 1** — Repérer un problème (ex : landing visitée mais qui convertit peu)",
-                  "**Étape 2** — Formuler une **hypothèse** précise (« si le bouton est plus visible, le taux augmentera »)",
-                  "**Étape 3** — Créer deux versions (A actuelle, B modifiée)",
-                  "**Étape 4** — Définir l'**indicateur de succès** (taux de clic, formulaire complété…)",
-                  "**Étape 5** — Lancer le test",
-                  "**Étape 6** — Analyser les résultats",
-                  "**Étape 7** — Décider : conserver A, adopter B, ou refaire un test"
+                  "**Étape 1** - Repérer un problème (ex : landing visitée mais qui convertit peu)",
+                  "**Étape 2** - Formuler une **hypothèse** précise (« si le bouton est plus visible, le taux augmentera »)",
+                  "**Étape 3** - Créer deux versions (A actuelle, B modifiée)",
+                  "**Étape 4** - Définir l'**indicateur de succès** (taux de clic, formulaire complété…)",
+                  "**Étape 5** - Lancer le test",
+                  "**Étape 6** - Analyser les résultats",
+                  "**Étape 7** - Décider : conserver A, adopter B, ou refaire un test"
                 ]
               },
               { "type": "separator" },
@@ -212,21 +209,20 @@
               { "type": "note", "content": "On ne teste pas « au hasard ». Un A/B test doit toujours être fondé sur une **hypothèse précise**." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Sa home aurait dû être testée avant. Une moitié de visiteurs sur l'ancienne, une moitié sur la sienne. Au lieu de ça, il a poussé son chef-d'œuvre — et la boîte a saigné.", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Sa home aurait dû être testée avant. Une moitié de visiteurs sur l'ancienne, une moitié sur la sienne. Il a poussé son chef-d'œuvre en prod et la boîte a saigné.", "sprite": "doubting" }
         ]
       },
       {
-        "text": "Comment vous vous repartissez le travail avec votre equipe SEO ?",
+        "text": "Qui s'occupe du SEO ici ?",
         "id": "pascal_délègue",
-        "once_flag": "pascal_délègue_ina",
         "sequence": [
-          { "type": "line", "char": "pascal", "text": "Ah, ça ? Oui, j'ai... beaucoup de projets. J'ai du mal à me concentrer sur un seul truc. Du coup je **délègue** le SEO **entièrement** à un collègue — **Ina Voué**. Il est tout seul au Bureau SEO. Je touche pas. Lui il gère le contenu, les articles, les balises, les liens. Moi je code, je code, je code.", "sprite": "explaining" },
+          { "type": "line", "char": "pascal", "text": "Ah, ça ? Oui, j'ai... beaucoup de projets. J'ai du mal à me concentrer sur un seul truc. Du coup je **délègue** le SEO **entièrement** à un collègue. **Ina Voué**. Il est tout seul au Bureau SEO. Je touche pas. Lui il gère le contenu, les articles, les balises, les liens. Moi je code, je code, je code.", "sprite": "explaining" },
           { "type": "line", "char": "will",   "text": "Vous lui faites confiance pour tout ce qui est **contenu et liens** ?", "sprite": "doubting" },
           { "type": "line", "char": "pascal", "text": "**Aveuglément.** Il est calme, méthodique. Il sort des stats que je comprends même pas. Honnêtement, c'est le seul ici qui a l'air de jamais paniquer.", "sprite": "normal" },
           { "type": "set_flag", "flag": "pascal_délègue_ina" },
           { "type": "set_flag", "flag": "pascal_parle_de_ina" },
           { "type": "set_flag", "flag": "indice_ina_calme_louche" },
-          { "type": "line", "char": "will", "text": "« **Le seul qui ne panique jamais.** » Intéressant. Les gens qui ne paniquent jamais ont souvent appris à très bien cacher la peur. ~~Et maintenant je peux aller fouiller la salle des données — la sienne, en fait. Et son bureau, surtout.~~", "sprite": "doubting" },
+          { "type": "line", "char": "will", "text": "« **Le seul qui ne panique jamais.** » ~~Les gens qui ne paniquent jamais ont en général une très bonne raison de rester calmes.~~", "sprite": "doubting" },
           { "type": "line", "char": "narrateur", "text": "Le Bureau SEO et la Salle des Données sont maintenant accessibles." }
         ]
       },
@@ -234,27 +230,25 @@
         "text": "Vous avez deja jete un oeil sur ce qu'il ecrit, Ina ?",
         "id": "pascal_titres_ina",
         "requires_flags": ["pascal_parle_de_ina", "indice_blogs_existent"],
-        "once_flag": "pascal_voit_titres_sombres",
         "sequence": [
           { "type": "line", "char": "will",   "text": "Vous travaillez à côté de lui depuis des années. Vous avez déjà vu ce qu'il **écrit** ?", "sprite": "doubting" },
-          { "type": "line", "char": "pascal", "text": "Oh... une fois ou deux. J'étais passé prendre un câble. Il avait un onglet ouvert, un brouillon. Le titre c'était un truc style « **L'économie ne se relèvera pas** ». Sur le site d'une boîte qui vend du conseil — j'avais trouvé ça bizarre. Mais je me suis dit qu'il savait ce qu'il faisait. C'est lui le SEO, pas moi.", "sprite": "explaining" },
+          { "type": "line", "char": "pascal", "text": "Oh... une fois ou deux. J'étais passé prendre un câble. Il avait un onglet ouvert, un brouillon. Le titre c'était un truc style « **L'économie ne se relèvera pas** ». Sur le site d'une boîte qui vend du conseil. J'avais trouvé ça bizarre. Mais je me suis dit qu'il savait ce qu'il faisait. C'est lui le SEO, pas moi.", "sprite": "explaining" },
           { "type": "line", "char": "will",   "text": "Vous avez vu un **titre apocalyptique** sur le site de votre boîte, et vous n'avez rien dit ?", "sprite": "doubting" },
           { "type": "line", "char": "pascal", "text": "~~Je voulais pas le vexer.~~ Il sortait des chiffres en hausse à chaque réunion. Qui j'étais pour le contredire ?", "sprite": "explaining" },
           { "type": "set_flag", "flag": "pascal_voit_titres_sombres" },
-          { "type": "line", "char": "will", "text": "Donc les articles sombres existent. Pascal les a vus. Et personne n'a vérifié si Ina les écrivait **vraiment** lui-même. ~~Une question à lui poser, directement.~~", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Les articles existent. Pascal les a vus. Et personne n'a posé la question suivante.", "sprite": "doubting" }
         ]
       },
       {
-        "text": "Vous avez remarque un moment ou Ina a change, il y a environ six mois ?",
+        "text": "Ina a change il y a six mois. Vous l'avez remarque ?",
         "id": "pascal_ia_jia",
         "requires_flags": ["pascal_parle_de_ina", "indice_ina_changé_six_mois"],
-        "once_flag": "pascal_évoque_ia_jia",
         "sequence": [
-          { "type": "line", "char": "pascal", "text": "Six mois... ~~ouais, en fait, oui.~~ Y'a eu un truc. Une réunion. **Madame Seo** avait parlé d'IA, de comment ça allait changer le métier. Elle disait pas du mal d'Ina hein, elle parlait dans le vague — « le SEO va devenir automatique » ce genre de phrase. Mais Ina... il est sorti **blême**.", "sprite": "explaining" },
+          { "type": "line", "char": "pascal", "text": "Six mois... ~~ouais, en fait, oui.~~ Y'a eu un truc. Une réunion. **Madame Seo** avait parlé d'IA, de comment ça allait changer le métier. Elle disait pas du mal d'Ina hein, elle parlait dans le vague. « Le SEO va devenir automatique » ce genre de phrase. Mais Ina... il est sorti **blême**.", "sprite": "explaining" },
           { "type": "line", "char": "will",   "text": "Il a dit quelque chose après ?", "sprite": "doubting" },
           { "type": "line", "char": "pascal", "text": "**Rien.** Plus jamais. À partir de ce jour-là, il a juste... pris encore plus la main sur le site. Il sortait des dashboards de fou, des chiffres en hausse. Tout le monde était impressionné. Personne n'a posé de questions.", "sprite": "normal" },
           { "type": "set_flag", "flag": "pascal_évoque_ia_jia" },
-          { "type": "line", "char": "will", "text": "Six mois. Une conversation sur l'IA. Et un homme qui décide ce jour-là de ne plus jamais être **remplaçable**. ~~Je dois confirmer cette conversation avec Madame Seo elle-même.~~", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Six mois. Une phrase entendue en réunion. Et quelqu'un qui est sorti blême et n'a plus jamais été le même. ~~Il faut que je confirme ça avec Madame Seo.~~", "sprite": "doubting" }
         ]
       }
     ]

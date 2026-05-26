@@ -1,31 +1,31 @@
-{
+﻿{
   "_location": "ina",
-  "_comment": "Ina — verrouille tout. Aucune option sans indice externe. Compteur de fissures → craque → fuit → bureau vide → on fouille pour ouvrir la salle data. Leçons : quanti/quali, dimensions/métriques/KPI, UTM, segmentation/parcours.",
+  "_comment": "Ina - verrouille tout. Aucune option sans indice externe. Compteur de fissures → craque → fuit → bureau vide → on fouille pour ouvrir la salle data. Leçons : quanti/quali, dimensions/métriques/KPI, UTM, segmentation/parcours.",
   "on_first_visit": [
     { "type": "line", "char": "ina",  "text": "Vous êtes le détective. Asseyez-vous. Vous cherchez une cause humaine à un problème **mathématique**. Vous allez perdre du temps.", "sprite": "normal" },
     { "type": "line", "char": "will", "text": "Éclairez-moi.", "sprite": "normal" },
     { "type": "line", "char": "ina",  "text": "Tout est **algorithme**. Le trafic, le classement, la chute. Google a changé ses critères, le site n'a pas suivi, point. Il n'y a pas de coupable. Il y a une fonction, et nous sommes dedans.", "sprite": "normal" },
-    { "type": "line", "char": "will", "text": "**Trop propre. Trop tôt.** Il me sert une conclusion avant même que j'aie posé une question. ~~Je vais devoir lui apporter mes propres morceaux pour qu'il en lâche d'autres.~~", "sprite": "doubting" }
+    { "type": "line", "char": "will", "text": "**Trop propre. Trop tôt.** Il me sert une conclusion avant même que j'aie posé une question. ~~Quelqu'un qui n'a rien à cacher ne prépare pas ses réponses à l'avance.~~", "sprite": "doubting" }
   ],
 
   "on_visit": [
     {
-      "_comment": "Première revisite après que Marine a balancé les blogs — Ina sent l'air changer.",
+      "_comment": "Première revisite après que Marine a balancé les blogs - Ina sent l'air changer.",
       "once_flag": "_ina_remarqué_marine",
       "requires_flag": "indice_blogs_existent",
       "forbids_flag": "ina_craque",
       "sequence": [
         { "type": "line", "char": "ina",  "text": "Vous revenez. Vous avez parlé à **Marine**, j'imagine. Elle parle beaucoup, vous savez. Elle ne sait rien, mais elle parle beaucoup.", "sprite": "normal" },
-        { "type": "line", "char": "will", "text": "~~Il l'a vue arriver de loin. Je vais devoir l'attaquer avec autre chose que des bribes.~~", "sprite": "doubting" }
+        { "type": "line", "char": "will", "text": "~~Il l'a vue arriver de loin. Et il est encore en train de sourire.~~", "sprite": "doubting" }
       ]
     },
     {
-      "_comment": "Après la fuite, on revient — bureau vide, on a accès à fouiller.",
+      "_comment": "Après la fuite, on revient - bureau vide, on a accès à fouiller.",
       "once_flag": "_ina_vide_remarqué",
       "requires_flag": "ina_fuit",
       "sequence": [
         { "type": "line", "char": "will", "text": "Sa chaise est de travers. Son écran est en veille. Il s'est levé, il est parti. ~~Pas de manteau, rien.~~ Il ne reviendra pas aujourd'hui. ##C'est moi qui ai poussé.##", "sprite": "doubting" },
-        { "type": "line", "char": "will", "text": "Mais s'il a fui, c'est qu'il y a quelque chose à trouver. **Salle des données.** Il faut que j'aille lire ce qu'il a laissé derrière.", "sprite": "doubting" }
+        { "type": "line", "char": "will", "text": "Quand on fuit sans son manteau, c'est qu'on ne prévoyait pas de fuir. Quelque chose a cédé. **Salle des données.** Il faut que j'aille lire ce qu'il a laissé derrière.", "sprite": "doubting" }
       ]
     }
   ],
@@ -36,19 +36,18 @@
         "text": "Parlez-moi des articles du blog.",
         "id": "ina_articles",
         "requires_flag": "indice_blogs_existent",
-        "once_flag": "ina_articles_hors_sujet",
         "forbids_flag": "ina_fuit",
         "sequence": [
           { "type": "line", "char": "ina",  "text": "Le contenu, oui. Je publie beaucoup. Le volume nourrit l'**algorithme**.", "sprite": "normal" },
-          { "type": "line", "char": "will", "text": "« **Pourquoi votre entreprise va probablement échouer.** » « **Les 10 signes que tout s'effondre.** » « **L'économie ne se relèvera pas.** » ... Ce sont vos titres ?", "sprite": "doubting" },
+          { "type": "line", "char": "will", "text": "« **Pourquoi votre entreprise va probablement échouer.** » « **Les 10 signes que tout s'effondre.** » « **L'économie ne se relèvera pas.** » Ce sont vos titres ?", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "Le pessimisme performe. Les gens cliquent sur la peur. Les **chiffres** me donnent raison.", "sprite": "normal" },
-          { "type": "line", "char": "will", "text": "Sauf que **BLUE S.E.A.** vend des solutions. Vous publiez du désespoir sur le site d'une boîte censée vendre de l'espoir technique. Ça n'a **aucun rapport** avec l'entreprise.", "sprite": "doubting" },
+          { "type": "line", "char": "will", "text": "**BLUE S.E.A.** vend des solutions de conseil. Vous publiez des textes qui disent à leurs clients que tout va s'effondrer. Ce n'est pas du SEO. C'est autre chose.", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "~~...Le trafic est le trafic.~~", "sprite": "stress" },
           { "type": "set_flag", "flag": "ina_articles_hors_sujet" },
           {
             "type": "lesson",
             "id": "lesson_quanti_quali",
-            "intro": { "char": "will", "text": "Ina voit monter ses chiffres de trafic — et il pense avoir raison. Le problème, c'est que le trafic ne dit pas **qui** vient ni **pourquoi**. Il y a deux types de données, et il n'utilise que l'un d'eux.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "Ina voit monter ses chiffres de trafic - et il pense avoir raison. Le problème, c'est que le trafic ne dit pas **qui** vient ni **pourquoi**. Il y a deux types de données, et il n'utilise que l'un d'eux.", "sprite": "doubting" },
             "title": "Données quantitatives vs qualitatives",
             "blocks": [
               { "type": "text", "content": "Ina voit que le trafic arrive *(quantitatif)*. Il ne vérifie pas si ces visiteurs correspondent à la cible de l'entreprise *(qualitatif)*." },
@@ -65,21 +64,21 @@
               {
                 "type": "list",
                 "items": [
-                  "**Enquêtes utilisateurs** — questions posées aux visiteurs pour recueillir leur avis",
-                  "**Verbatims** — phrases exactes ou commentaires laissés par les utilisateurs",
-                  "**Heatmaps** — cartes visuelles : où les utilisateurs cliquent, scrollent, s'arrêtent",
-                  "**Outils d'observation du parcours** — voir comment un internaute navigue",
-                  "**Tests utilisateurs** — observer des personnes qui réalisent une tâche sur le site",
-                  "**Avis clients** — retours d'expérience après un achat ou une utilisation"
+                  "**Enquêtes utilisateurs** - questions posées aux visiteurs pour recueillir leur avis",
+                  "**Verbatims** - phrases exactes ou commentaires laissés par les utilisateurs",
+                  "**Heatmaps** - cartes visuelles : où les utilisateurs cliquent, scrollent, s'arrêtent",
+                  "**Outils d'observation du parcours** - voir comment un internaute navigue",
+                  "**Tests utilisateurs** - observer des personnes qui réalisent une tâche sur le site",
+                  "**Avis clients** - retours d'expérience après un achat ou une utilisation"
                 ]
               },
               { "type": "separator" },
               { "type": "text", "content": "**Pourquoi croiser les deux ?** Le quantitatif peut montrer un problème. Le qualitatif aide à l'expliquer." },
               { "type": "text", "content": "Exemple : beaucoup d'entrées sur une landing page, peu de formulaires envoyés. Le quantitatif montre un faible taux de conversion. Le qualitatif peut révéler que le formulaire est trop long, que le bouton n'est pas visible, ou que le site n'est pas rassurant." },
-              { "type": "note", "content": "Un fort trafic sans intention d'achat ne génère pas de conversions — et peut même nuire au positionnement si l'engagement est faible." }
+              { "type": "note", "content": "Un fort trafic sans intention d'achat ne génère pas de conversions - et peut même nuire au positionnement si l'engagement est faible." }
             ]
           },
-          { "type": "line", "char": "will", "text": "~~Il a marqué une pause.~~ **Première fissure.**", "sprite": "doubting" },
+          { "type": "line", "char": "will", "text": "~~Il a regardé ses mains une seconde. Une toute petite seconde.~~", "sprite": "doubting" },
           {
             "type": "branch",
             "requires_flag": "pascal_voit_titres_sombres",
@@ -90,7 +89,7 @@
                 { "type": "line", "char": "will", "text": "Une dernière chose. Ces articles à **fort trafic**. Pascal dit en avoir aperçu un brouillon, un jour, en passant. Vous les avez **écrits** vous-même ?", "sprite": "doubting" },
                 { "type": "line", "char": "ina",  "text": "**Évidemment.**", "sprite": "normal" },
                 { "type": "set_flag", "flag": "ina_se_cache" },
-                { "type": "line", "char": "will", "text": "**Trop vite.** Notons. Il faudra vérifier l'origine de ces textes dans les données.", "sprite": "doubting" }
+                { "type": "line", "char": "will", "text": "~~Trop vite. Pas un souvenir, pas une hésitation. Une réponse prête.~~", "sprite": "doubting" }
               ]
             }
           }
@@ -100,18 +99,17 @@
         "text": "Quels KPI suivez-vous vraiment ?",
         "id": "ina_kpi",
         "requires_flag": "indice_ina_seul_seo",
-        "once_flag": "ina_kpi_décorrélés",
         "forbids_flag": "ina_fuit",
         "sequence": [
           { "type": "line", "char": "ina",  "text": "**Sessions.** Pages vues. Position moyenne sur Search Console. Taux de clics organiques.", "sprite": "normal" },
           { "type": "line", "char": "will", "text": "Et le **taux de conversion** ? Le nombre de **leads** ? Le **coût d'acquisition** ?", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "~~...Ce ne sont pas mes KPI.~~", "sprite": "stress" },
-          { "type": "line", "char": "will", "text": "Ce sont ceux de la **boîte**, pourtant.", "sprite": "doubting" },
+          { "type": "line", "char": "will", "text": "Ils le sont depuis que la boîte existe.", "sprite": "doubting" },
           { "type": "set_flag", "flag": "ina_kpi_décorrélés" },
           {
             "type": "lesson",
             "id": "lesson_kpi",
-            "intro": { "char": "will", "text": "Il suit des **sessions** et des **positions**. Pas les leads, pas le taux de conversion, pas ce qui fait vivre la boîte. Ce n'est pas de l'ignorance — c'est un **choix**. Un choix qui demande à être compris. Voilà ce qui sépare une métrique d'un KPI.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "Il suit des **sessions** et des **positions**. Pas les leads, pas le taux de conversion, pas ce qui fait vivre la boîte. Ce n'est pas de l'ignorance - c'est un **choix**. Un choix qui demande à être compris. Voilà ce qui sépare une métrique d'un KPI.", "sprite": "doubting" },
             "title": "Dimensions, métriques et KPI",
             "blocks": [
               {
@@ -128,13 +126,13 @@
               {
                 "type": "list",
                 "items": [
-                  "**Session** — ensemble d'interactions d'un utilisateur sur une période donnée",
-                  "**Utilisateur unique** — entité mesurée comme ayant visité le site (varie selon cookies, appareils, consentement)",
-                  "**Pages vues** — affichage d'une page (un rechargement = +1)",
-                  "**Taux de rebond** — part des sessions à interaction limitée (à interpréter avec prudence en GA4)",
-                  "**Durée de session** — temps passé sur le site, à interpréter selon le mode de calcul",
-                  "**Taux de conversion** — (conversions / sessions) × 100",
-                  "**Événement** — action précise suivie par l'outil (clic, lecture, téléchargement…)"
+                  "**Session** - ensemble d'interactions d'un utilisateur sur une période donnée",
+                  "**Utilisateur unique** - entité mesurée comme ayant visité le site (varie selon cookies, appareils, consentement)",
+                  "**Pages vues** - affichage d'une page (un rechargement = +1)",
+                  "**Taux de rebond** - part des sessions à interaction limitée (à interpréter avec prudence en GA4)",
+                  "**Durée de session** - temps passé sur le site, à interpréter selon le mode de calcul",
+                  "**Taux de conversion** - (conversions / sessions) × 100",
+                  "**Événement** - action précise suivie par l'outil (clic, lecture, téléchargement…)"
                 ]
               },
               { "type": "separator" },
@@ -176,27 +174,26 @@
                   ["Décision liée", "Modifier la landing page si le taux baisse"]
                 ]
               },
-              { "type": "note", "content": "Ici, Ina suit des métriques qui le font **paraître performant** — pas celles qui mesurent la santé de la boîte." }
+              { "type": "note", "content": "Ici, Ina suit des métriques qui le font **paraître performant** - pas celles qui mesurent la santé de la boîte." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Il suit des métriques qui le font paraître performant, pas celles qui mesurent la santé de la boîte. **C'est calculé.** Deuxième fissure.", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Il suit les métriques qui le font paraître performant. Pas celles qui font vivre la boîte. Ce n'est pas de l'ignorance.", "sprite": "doubting" }
         ]
       },
       {
         "text": "Et la segmentation ?",
         "id": "ina_segmentation",
         "requires_flag": "ina_kpi_décorrélés",
-        "once_flag": "ina_segmentation_absente",
         "forbids_flag": "ina_fuit",
         "sequence": [
           { "type": "line", "char": "will", "text": "Vos chiffres en hausse. Vous les présentez en **moyenne globale** ou vous **segmentez** ?", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "La moyenne globale **lisse les écarts**. C'est plus stable. Plus lisible.", "sprite": "normal" },
-          { "type": "line", "char": "will", "text": "Plus stable, oui. Et plus aveugle. Une moyenne globale cache souvent des **réalités très différentes**.", "sprite": "doubting" },
+          { "type": "line", "char": "will", "text": "Plus lisible, oui. Et pratique, si on préfère que personne ne regarde trop près.", "sprite": "doubting" },
           { "type": "set_flag", "flag": "ina_segmentation_absente" },
           {
             "type": "lesson",
             "id": "lesson_segmentation",
-            "intro": { "char": "will", "text": "Il présente des **moyennes**. Toujours des moyennes. Propres, lisses, rassurantes. Mais une moyenne cache autant qu'elle révèle. **Segmenter**, c'est sortir du flou — et voir ce qu'on ne voulait peut-être pas voir.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "Il présente des **moyennes**. Toujours des moyennes. Propres, lisses, rassurantes. Mais une moyenne cache autant qu'elle révèle. **Segmenter**, c'est sortir du flou - et voir ce qu'on ne voulait peut-être pas voir.", "sprite": "doubting" },
             "title": "Segmenter pour vraiment voir",
             "blocks": [
               { "type": "text", "content": "**Segmenter**, c'est découper les données en sous-ensembles pour éviter les analyses globales trompeuses." },
@@ -242,26 +239,25 @@
               { "type": "note", "content": "Sans segmentation, une moyenne en hausse peut masquer une catastrophe sur un canal ou un segment précis." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Pas de segmentation = pas de problème visible. C'est **comme ça** qu'il a maintenu ses dashboards en vert pendant six mois.", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Six mois de dashboards au vert. Six mois où personne n'a posé de questions. ~~Et lui il a compté.~~", "sprite": "doubting" }
         ]
       },
       {
         "text": "Comment vous organisez le suivi des campagnes ?",
         "id": "ina_utm",
         "requires_flag": "marine_outils_flous",
-        "once_flag": "utm_chaos",
         "forbids_flag": "ina_fuit",
         "sequence": [
           { "type": "line", "char": "will", "text": "Marine m'a dit qu'elle ne lisait pas ses propres outils. Vous, vous gérez les **UTM** ?", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "Voici le **plan de marquage UTM**. Chaque campagne est taguée.", "sprite": "normal" },
           { "type": "line", "char": "will", "text": "**linkedin.** LinkedIn. Linkedin. **LINKEDIN.** linkedin_avril. Lnkdn...", "sprite": "doubting" },
-          { "type": "line", "char": "ina",  "text": "~~...Oui. Les conventions de nommage ont évolué au fil du temps.~~", "sprite": "stress" },
-          { "type": "line", "char": "will", "text": "Au fil du temps, ou selon **qui a fait le lien ce jour-là** ?", "sprite": "doubting" },
+          { "type": "line", "char": "ina",  "text": "~~...Les conventions ont évolué.~~", "sprite": "stress" },
+          { "type": "line", "char": "will", "text": "Elles ont surtout varié selon l'humeur du jour.", "sprite": "doubting" },
           { "type": "set_flag", "flag": "utm_chaos" },
           {
             "type": "lesson",
             "id": "lesson_utm",
-            "intro": { "char": "will", "text": "LinkedIn, linkedin, Linkedin, LINKEDIN — quatre façons d'écrire la même source. Dans GA4, ce sont **quatre canaux différents**. L'attribution de Marine est faussée depuis le début, et Ina le savait. Les UTM, c'est une convention — et une convention qu'on viole, c'est une enquête qu'on brouille.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "LinkedIn, linkedin, Linkedin, LINKEDIN - quatre façons d'écrire la même source. Dans GA4, ce sont **quatre canaux différents**. L'attribution de Marine est faussée depuis le début, et Ina le savait. Les UTM, c'est une convention - et une convention qu'on viole, c'est une enquête qu'on brouille.", "sprite": "doubting" },
             "title": "Les UTM et le suivi des campagnes",
             "blocks": [
               { "type": "text", "content": "Les **UTM** sont des paramètres ajoutés à une URL pour identifier précisément l'origine d'un trafic dans GA4." },
@@ -305,19 +301,18 @@
               { "type": "note", "content": "Sans conventions stables, GA4 crée des doublons (linkedin / LinkedIn / Linkedin), les comparaisons sont faussées, et l'attribution devient inexploitable." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Les UTM sont catastrophiques. Mais ça ne l'incrimine pas encore. ~~Continuons à le pousser.~~", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Les UTM sont dans un état qui fait du mal aux yeux. Mais ça ne l'incrimine pas. ~~Pas encore.~~", "sprite": "doubting" }
         ]
       },
       {
         "text": "Vous ne paniquez jamais. Et vous avez change il y a six mois.",
         "id": "ina_calme",
         "requires_flags": ["indice_ina_calme_louche", "indice_ina_changé_six_mois"],
-        "once_flag": "ina_se_cache",
         "forbids_flag": "ina_fuit",
         "sequence": [
           { "type": "line", "char": "will", "text": "Pascal dit que vous êtes le seul ici à ne **jamais** paniquer. Devant une boîte qui meurt, ça mérite explication.", "sprite": "doubting" },
-          { "type": "line", "char": "ina",  "text": "Le doute est inefficace. J'ai cessé d'interpréter il y a longtemps. J'ai fait des erreurs, avant. Maintenant je m'en tiens aux chiffres. Les chiffres ne se trompent pas, eux.", "sprite": "normal" },
-          { "type": "line", "char": "will", "text": "Les chiffres ne mentent pas. Mais on peut les **fabriquer**. Et Marine dit qu'il y a six mois vous avez **changé**. Plus de rires. Plus de pauses. **La même fenêtre que la chute du site.**", "sprite": "doubting" },
+          { "type": "line", "char": "ina",  "text": "Le doute est inefficace. J'ai fait des erreurs, avant. Maintenant je m'en tiens aux chiffres.", "sprite": "normal" },
+          { "type": "line", "char": "will", "text": "Les chiffres ne mentent pas. Mais on peut les **choisir**. Et Marine dit qu'il y a six mois vous avez **changé**. Plus de rires. Plus de pauses.", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "~~...Marine parle trop.~~ Il ne s'est rien passé. J'ai vieilli. Comme tout le monde.", "sprite": "stress" },
           { "type": "line", "char": "will", "text": "On ne vieillit pas **un mardi à 14h**.", "sprite": "doubting" },
           { "type": "line", "char": "narrateur", "text": "Pour la première fois, Ina ne répond pas tout de suite." },
@@ -326,34 +321,34 @@
       },
 
       {
-        "_comment": "Option de craquage finale — n'apparaît que si Ina a accumulé ≥ 3 fissures.",
+        "_comment": "Option de craquage finale - n'apparaît que si Ina a accumulé ≥ 3 fissures.",
         "text": "Vous mentez a chaque reponse. Et vous le savez.",
         "id": "ina_craquage",
         "requires_flags": ["ina_articles_hors_sujet", "ina_kpi_décorrélés", "ina_se_cache"],
         "once_flag": "ina_craque",
         "forbids_flag": "ina_fuit",
         "sequence": [
-          { "type": "line", "char": "will", "text": "Vos articles n'ont rien à voir avec la boîte. Vos KPI ne mesurent que **vous-même**. Vous ne paniquez jamais parce que vous saviez **avant tout le monde** ce qui allait arriver. Je me trompe ?", "sprite": "doubting" },
+          { "type": "line", "char": "will", "text": "Vos articles n'ont rien à voir avec la boîte. Vos KPI ne mesurent que **vous-même**. Et vous ne paniquez jamais parce que quelqu'un qui prépare sa sortie n'a aucune raison de paniquer. Je me trompe ?", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "~~Vous bluffez.~~ Vous n'avez **rien**. Que des bribes ramassées dans le couloir.", "sprite": "stress" },
-          { "type": "line", "char": "will", "text": "C'est vrai. Je n'ai que des bribes. Mais elles **convergent toutes vers vous**. Et vous le savez. Sinon, vous ne transpiriez pas.", "sprite": "doubting" },
+          { "type": "line", "char": "will", "text": "C'est vrai. Je n'ai que des bribes. Mais elles pointent toutes dans la même direction. Et vous l'avez su dès que je suis entré.", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "~~...Cet entretien est terminé. J'ai du travail.~~", "sprite": "irritated" },
           { "type": "set_flag", "flag": "ina_craque" },
-          { "type": "line", "char": "narrateur", "text": "Ina se lève. Il prend ses affaires sans regarder Will. Il sort du bureau d'un pas trop régulier — celui qu'on adopte quand on s'oblige à ne pas courir." },
+          { "type": "line", "char": "narrateur", "text": "Ina se lève. Il prend ses affaires sans regarder Will. Il sort du bureau d'un pas trop régulier, celui qu'on adopte quand on s'oblige à ne pas courir." },
           { "type": "set_flag", "flag": "ina_fuit" },
-          { "type": "line", "char": "will", "text": "Il a fui. Pas vers la sortie — il n'a pas pris son manteau. **Vers ses traces.** S'il essaie d'effacer quelque chose, c'est dans la **salle des données**. Et c'est maintenant.", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Il a fui. Pas vers la sortie, pas de manteau. Il est allé quelque part dans ce bâtiment pour effacer quelque chose. **Salle des données.** C'est là.", "sprite": "doubting" }
         ]
       },
 
       {
-        "_comment": "Bureau vide — option d'investigation pour ouvrir la salle data en route alternative.",
+        "_comment": "Bureau vide - option d'investigation pour ouvrir la salle data en route alternative.",
         "text": "Fouiller le bureau.",
         "id": "ina_fouille",
         "requires_flag": "ina_fuit",
         "once_flag": "_ina_bureau_fouillé",
         "sequence": [
           { "type": "line", "char": "narrateur", "text": "Will tourne autour du bureau. L'écran s'est réveillé en bougeant la souris." },
-          { "type": "line", "char": "will", "text": "Un onglet à moitié fermé. **« Effacer l'historique des trente derniers jours »** — la fenêtre de confirmation est restée ouverte. Il n'a pas eu le temps de valider.", "sprite": "doubting" },
-          { "type": "line", "char": "will", "text": "Et là, sous le clavier — un **téléphone professionnel**. Pas le sien personnel, celui que la boîte lui a fourni. Verrouillé. Mais les logs sont remontés en backup. La salle des données va me dire le reste.", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Un onglet à moitié fermé. **« Effacer l'historique des trente derniers jours. »** La fenêtre de confirmation est restée ouverte. Il n'a pas eu le temps de valider.", "sprite": "doubting" },
+          { "type": "line", "char": "will", "text": "Et là, sous le clavier : un **téléphone professionnel**. Pas le sien personnel, celui que la boîte lui a fourni. Verrouillé. Mais les logs sont remontés en backup. La salle des données va me dire le reste.", "sprite": "doubting" }
         ]
       }
     ]

@@ -49,20 +49,16 @@ class LessonOverlay {
     });
   }
 
-  /* Returns a Promise that resolves when the overlay is closed */
   show(lesson) {
     this.title.textContent = lesson.title || '';
     this.body.innerHTML = '';
-
     (lesson.blocks || []).forEach(block => {
       const el = this._renderBlock(block);
       if (el) this.body.appendChild(el);
     });
-
     this.el.classList.remove('hidden');
     this.closeBtn.classList.remove('hidden');
     this.el.scrollTop = 0;
-
     return new Promise(resolve => { this._resolve = resolve; });
   }
 
@@ -170,7 +166,6 @@ class LessonOverlay {
     }
   }
 
-  /* Mini-markdown for lesson blocks */
   _md(str) {
     if (!str) return '';
     return str
@@ -183,18 +178,13 @@ class LessonOverlay {
 /* ---- Dialogue text markup ----
    ~~text~~   → italic, muted (narration / aside)
    **text**   → bold
-   ##text##   → emphasis (caps)          + shake léger
+   ##text##   → emphasis (caps)          + shake leger
    ###text### → shout (large caps)       + shake fort
 */
 
-/* Tokenise le texte brut en segments {tag, chars[]}
-   Chaque char est un caractère à afficher dans le contexte du tag courant.
-   Retourne un tableau plat de {char, openTag, closeTag, shakeLevel}
-   openTag / closeTag sont émis UNE FOIS au début / fin du segment. */
 function tokeniseMarkup(str) {
   if (!str) return [];
 
-  /* Ordered by specificity: ### before ## before # */
   const TOKENS = [
     { re: /~~~(.+?)~~~/g,   open: '<em>',                   close: '</em>',     shake: 0 },
     { re: /~~(.+?)~~/g,     open: '<em>',                   close: '</em>',     shake: 0 },
@@ -203,7 +193,6 @@ function tokeniseMarkup(str) {
     { re: /##(.+?)##/g,     open: '<span class="dm-emph">',  close: '</span>',  shake: 1 },
   ];
 
-  /* Build a list of {start, end, open, close, inner, shake} segments */
   const segments = [];
   for (const tok of TOKENS) {
     tok.re.lastIndex = 0;
@@ -219,10 +208,8 @@ function tokeniseMarkup(str) {
       });
     }
   }
-  /* Sort by start position */
   segments.sort((a, b) => a.start - b.start);
 
-  /* Flatten into a list of typed chars */
   const result = [];
   let cursor = 0;
 
@@ -233,10 +220,8 @@ function tokeniseMarkup(str) {
   };
 
   for (const seg of segments) {
-    if (seg.start < cursor) continue; // overlapping — skip
-    /* plain text before this segment */
+    if (seg.start < cursor) continue;
     if (seg.start > cursor) pushPlain(str.slice(cursor, seg.start));
-    /* segment chars */
     for (let i = 0; i < seg.inner.length; i++) {
       result.push({
         char:  seg.inner[i],
@@ -247,29 +232,21 @@ function tokeniseMarkup(str) {
     }
     cursor = seg.end;
   }
-  /* trailing plain text */
   if (cursor < str.length) pushPlain(str.slice(cursor));
 
   return result;
 }
 
-/* Build rendered HTML for tokens[0..count].
-   If the last token has an open tag but its close hasn't been reached yet,
-   we must keep the tag open so styles apply to all chars inside.
-   Strategy: emit open on first char of segment, close only on last char.
-   Since tokens already store open/close per-char, we just need to ensure
-   any dangling open tag is closed at the end of the partial render. */
 function renderFromTokens(tokens, count) {
   const end = count !== undefined ? count : tokens.length;
   let html = '';
-  let openTag = null; // track if we're inside an unclosed tag
+  let openTag = null;
   for (let i = 0; i < end; i++) {
     const t = tokens[i];
     if (t.open !== null && t.open !== '') { openTag = t.close; html += t.open; }
     html += escHtml(t.char);
     if (t.close !== null) { html += t.close; openTag = null; }
   }
-  /* Close any dangling tag so the browser doesn't bleed styles */
   if (openTag) html += openTag;
   return html;
 }
@@ -278,20 +255,13 @@ function escHtml(c) {
   return c === '&' ? '&amp;' : c === '<' ? '&lt;' : c === '>' ? '&gt;' : c;
 }
 
-/* Legacy full-render (used outside typewriter e.g. lesson intro lines) */
-function renderDialogueMarkup(str) {
-  if (!str) return renderFromTokens(tokeniseMarkup(str));
-  return renderFromTokens(tokeniseMarkup(str));
-}
-
 /* ---------- Visual Novel Engine ---------- */
 class VNEngine {
   constructor(game, settings, lessonOverlay) {
-    this.game         = game;        // game.json content
+    this.game         = game;
     this.settings     = settings;
     this.lesson       = lessonOverlay;
 
-    /* DOM refs */
     this.gameUI       = document.getElementById('game-ui');
     this.bg           = document.getElementById('background');
     this.envOverlay   = document.getElementById('env-overlay');
@@ -307,11 +277,10 @@ class VNEngine {
     this.choiceOptions= document.getElementById('choice-options');
     this.choiceAvatar = document.getElementById('choice-avatar');
 
-    /* State */
-    this.flags            = { ...game.flags };     // deep copy of initial flags
-    this.dialogueCache    = {};                     // loc id → loaded JSON
+    this.flags            = { ...game.flags };
+    this.dialogueCache    = {};
     this.visitedLocations = new Set();
-    this.seenChoices      = new Set();              // textes de choix déjà affichés au moins une fois
+    this.seenChoices      = new Set();
     this.currentLocation  = null;
     this._nextAction      = null;
     this.busy             = false;
@@ -415,21 +384,18 @@ class VNEngine {
     this.spriteRight.classList.add('hidden');
     this.bg.classList.remove('blur-dark');
 
-    /* Écran noir */
     this.envLabel.textContent = '';
     this.envOverlay.classList.remove('hidden');
 
-    /* Typewriter du nom de lieu sur l'overlay + chargement en parallèle */
     const label = env.label || id;
     const [locData] = await Promise.all([
       this.loadLocation(id),
       this._typewriteOverlayLabel(label, 80)
     ]);
 
-    /* Pause 600ms après que le nom est apparu */
     await new Promise(r => setTimeout(r, 600));
 
-    this.bg.style.background = env.color || '#111';
+    this.bg.style.background = env.background || '#111';
     this.envOverlay.classList.add('hidden');
     this.busy = false;
 
@@ -438,12 +404,8 @@ class VNEngine {
     const isNew = !this.visitedLocations.has(id);
     this.visitedLocations.add(id);
 
-    /* Scene intro dans la dialogue box (remplace narrateur intro)
-       Permet des variantes contextuelles via env.scene_intro_alt = [{requires_flag/...., text}]
-       Première variante satisfaite l'emporte ; sinon fallback env.scene_intro. */
     const sceneIntro = this._pickSceneIntro(env);
-    /* Une variante peut être marquée { always: true } pour rejouer même en revisite */
-    const playIntro = isNew || (sceneIntro && sceneIntro._always);
+    const playIntro  = isNew || (sceneIntro && sceneIntro._always);
 
     const runMain = () => {
       const onFirstVisit = locData.on_first_visit || [];
@@ -461,32 +423,27 @@ class VNEngine {
     }
   }
 
-  /* Choisit la scene_intro contextuelle :
-     - env.scene_intro_alt (array) → première entrée dont les conditions de flags matchent
-     - sinon env.scene_intro (fallback)
-     Retourne { text, _always } ou null. */
   _pickSceneIntro(env) {
     const alts = env.scene_intro_alt || [];
     for (const alt of alts) {
-      if (alt.requires_flag && !this.flags[alt.requires_flag]) continue;
-      if (alt.requires_flags && !alt.requires_flags.every(f => this.flags[f])) continue;
-      if (alt.requires_any_flag && !alt.requires_any_flag.some(f => this.flags[f])) continue;
-      if (alt.forbids_flag && this.flags[alt.forbids_flag]) continue;
+      if (alt.requires_flag     && !this.flags[alt.requires_flag])                      continue;
+      if (alt.requires_flags    && !alt.requires_flags.every(f => this.flags[f]))        continue;
+      if (alt.requires_any_flag && !alt.requires_any_flag.some(f => this.flags[f]))      continue;
+      if (alt.forbids_flag      && this.flags[alt.forbids_flag])                         continue;
       return { text: alt.text, _always: !!alt.always };
     }
     if (env.scene_intro) return { text: env.scene_intro, _always: false };
     return null;
   }
 
-  /* Joue d'éventuels on_visit conditionnels (rejouables à chaque visite si flags matchent + once_flag pas encore set) */
   _runConditionalVisit(locData) {
     const visits = locData.on_visit || [];
     const triggered = visits.find(v => {
-      if (v.once_flag && this.flags[v.once_flag]) return false;
-      if (v.requires_flag && !this.flags[v.requires_flag]) return false;
-      if (v.requires_flags && !v.requires_flags.every(f => this.flags[f])) return false;
-      if (v.requires_any_flag && !v.requires_any_flag.some(f => this.flags[f])) return false;
-      if (v.forbids_flag && this.flags[v.forbids_flag]) return false;
+      if (v.once_flag           && this.flags[v.once_flag])                              return false;
+      if (v.requires_flag       && !this.flags[v.requires_flag])                         return false;
+      if (v.requires_flags      && !v.requires_flags.every(f => this.flags[f]))          return false;
+      if (v.requires_any_flag   && !v.requires_any_flag.some(f => this.flags[f]))        return false;
+      if (v.forbids_flag        && this.flags[v.forbids_flag])                           return false;
       return true;
     });
     if (triggered) {
@@ -497,7 +454,6 @@ class VNEngine {
     }
   }
 
-  /* Typewriter lettre par lettre sur le label de l'overlay */
   _typewriteOverlayLabel(text, speed) {
     return new Promise(resolve => {
       this.envLabel.textContent = '';
@@ -509,19 +465,17 @@ class VNEngine {
     });
   }
 
-  /* Affiche la scène intro via playLine avec le char narrateur */
   _playSceneIntro(text, onComplete) {
     this.playLine({ char: 'narrateur', text }, onComplete);
   }
 
-  /* ---- Location menu — toujours 2 choix max : Parler / Se déplacer ---- */
+  /* ---- Location menu ---- */
   showLocationMenu(locData) {
     if (!locData.menu && !locData.sequence) {
       console.warn('Location has no menu or sequence:', this.currentLocation);
       return;
     }
 
-    /* Séquence linéaire (intro) */
     if (locData.sequence) {
       this.runSequence(locData.sequence, () => {});
       return;
@@ -529,22 +483,20 @@ class VNEngine {
 
     const menuLine = locData.menu?.line || this.game.game_settings?.menu_prompt || { char: 'will', text: '...', sprite: 'doubting' };
 
-    /* Construit les 2 choix principaux */
     const buildTopOptions = () => {
       const opts = [];
 
-      /* ① Parler à [personnage présent] — uniquement s'il y en a un (et que ses conditions de flag passent) */
       const chars = (locData.characters_present || []).filter(c => {
-        if (c.requires_flag && !this.flags[c.requires_flag]) return false;
-        if (c.requires_flags && !c.requires_flags.every(f => this.flags[f])) return false;
-        if (c.requires_any_flag && !c.requires_any_flag.some(f => this.flags[f])) return false;
-        if (c.forbids_flag && this.flags[c.forbids_flag]) return false;
+        if (c.requires_flag     && !this.flags[c.requires_flag])                         return false;
+        if (c.requires_flags    && !c.requires_flags.every(f => this.flags[f]))          return false;
+        if (c.requires_any_flag && !c.requires_any_flag.some(f => this.flags[f]))        return false;
+        if (c.forbids_flag      && this.flags[c.forbids_flag])                           return false;
         return true;
       });
       if (chars.length > 0) {
-        const char = chars[0]; // un seul perso par lieu
+        const char = chars[0];
         opts.push({
-          text: `Parler à ${char.label}`,
+          text: `Parler a ${char.label}`,
           action: () => {
             this._hideChoices();
             this.bg.classList.remove('blur-dark');
@@ -553,9 +505,8 @@ class VNEngine {
         });
       }
 
-      /* ② Se déplacer — toujours disponible via global_connections */
       opts.push({
-        text: 'Se déplacer',
+        text: 'Se deplacer',
         action: () => {
           this._hideChoices();
           this.bg.classList.remove('blur-dark');
@@ -569,18 +520,18 @@ class VNEngine {
     this.playLine(menuLine, () => this.showChoices(buildTopOptions()));
   }
 
-  /* ---- Menu "Parler à" — options de dialogue du perso ---- */
+  /* ---- Menu "Parler a" ---- */
   showCharacterMenu(locData) {
     const menuOpts = locData.menu?.options || [];
 
     const buildCharOptions = () => {
       const opts = [];
       menuOpts.forEach(opt => {
-        if (opt.requires_flag  && !this.flags[opt.requires_flag])                return;
-        if (opt.requires_flags && !opt.requires_flags.every(f => this.flags[f])) return;
-        if (opt.requires_any_flag && !opt.requires_any_flag.some(f => this.flags[f])) return;
-        if (opt.forbids_flag && this.flags[opt.forbids_flag])                    return;
-        if (opt.once_flag && this.flags[opt.once_flag])                          return;
+        if (opt.requires_flag     && !this.flags[opt.requires_flag])                     return;
+        if (opt.requires_flags    && !opt.requires_flags.every(f => this.flags[f]))      return;
+        if (opt.requires_any_flag && !opt.requires_any_flag.some(f => this.flags[f]))    return;
+        if (opt.forbids_flag      && this.flags[opt.forbids_flag])                       return;
+        if (opt.once_flag         && this.flags[opt.once_flag])                          return;
 
         opts.push({
           id: opt.id,
@@ -588,12 +539,10 @@ class VNEngine {
           action: () => {
             this._hideChoices();
             this.bg.classList.remove('blur-dark');
-
-            const proceed = () => {
+            this.playLine({ char: 'will', text: opt.text, sprite: 'normal' }, () => {
               if (opt.goto) { this.goToLocation(opt.goto); return; }
               if (opt.sequence) this.runSequence(opt.sequence, () => this.showLocationMenu(locData));
-            };
-            this._sayChoice(opt.text, proceed);
+            });
           }
         });
       });
@@ -616,18 +565,19 @@ class VNEngine {
     );
   }
 
-  /* ---- Menu "Se déplacer" — lit global_connections, filtre la pièce actuelle ---- */
+  /* ---- Menu "Se deplacer" ---- */
   showTravelMenu(locData) {
     const connections = (this.game.global_connections || []).filter(c => {
-      if (c.goto === this.currentLocation)                                       return false;
-      if (c.requires_flag  && !this.flags[c.requires_flag])                     return false;
-      if (c.requires_flags && !c.requires_flags.every(f => this.flags[f]))      return false;
-      if (c.requires_any_flag && !c.requires_any_flag.some(f => this.flags[f])) return false;
-      if (c.forbids_flag && this.flags[c.forbids_flag])                         return false;
+      if (c.goto === this.currentLocation)                                                return false;
+      if (c.requires_flag     && !this.flags[c.requires_flag])                           return false;
+      if (c.requires_flags    && !c.requires_flags.every(f => this.flags[f]))            return false;
+      if (c.requires_any_flag && !c.requires_any_flag.some(f => this.flags[f]))          return false;
+      if (c.forbids_flag      && this.flags[c.forbids_flag])                             return false;
       return true;
     });
 
     const opts = connections.map(c => ({
+      id: `travel_${c.goto}`,
       text: c.label,
       action: () => {
         this._hideChoices();
@@ -684,11 +634,10 @@ class VNEngine {
           break;
 
         case 'branch':
-          /* Conditional inline option — shown only if flag conditions match */
-          if (step.requires_flag && !this.flags[step.requires_flag]) { next(); break; }
-          if (step.requires_flags && !step.requires_flags.every(f => this.flags[f])) { next(); break; }
-          if (step.requires_any_flag && !step.requires_any_flag.some(f => this.flags[f])) { next(); break; }
-          if (step.forbids_flag && this.flags[step.forbids_flag]) { next(); break; }
+          if (step.requires_flag     && !this.flags[step.requires_flag])                 { next(); break; }
+          if (step.requires_flags    && !step.requires_flags.every(f => this.flags[f]))  { next(); break; }
+          if (step.requires_any_flag && !step.requires_any_flag.some(f => this.flags[f])){ next(); break; }
+          if (step.forbids_flag      && this.flags[step.forbids_flag])                   { next(); break; }
           this.showInlineChoices(
             { options: [step.option, { text: 'Pas maintenant', then_next: true }] },
             onComplete, i, steps, next
@@ -710,11 +659,6 @@ class VNEngine {
     run(0);
   }
 
-  /* ---- Rejoue le texte du choix comme ligne de Will avant d'exécuter onDone ---- */
-  _sayChoice(text, onDone) {
-    this.playLine({ char: 'will', text, sprite: 'normal' }, onDone);
-  }
-
   /* ---- Inline choice (inside a sequence) ---- */
   showInlineChoices(step, onComplete, _i, _steps, fallbackNext) {
     const options = (step.options || []).map(opt => ({
@@ -722,21 +666,13 @@ class VNEngine {
       action: () => {
         this._hideChoices();
         this.bg.classList.remove('blur-dark');
-
-        const proceed = () => {
+        this.playLine({ char: 'will', text: opt.text, sprite: 'normal' }, () => {
           if (opt.then_next) { fallbackNext(); return; }
-          if (opt.then)      { this.goToLocation(opt.then); return; }
-
           const seq = opt.sequence || [];
-          const afterSeq = () => {
-            if (opt.then) this.goToLocation(opt.then);
-            else fallbackNext();
-          };
+          const afterSeq = () => opt.then ? this.goToLocation(opt.then) : fallbackNext();
           if (seq.length) this.runSequence(seq, afterSeq);
           else afterSeq();
-        };
-
-        this._sayChoice(opt.text, proceed);
+        });
       }
     }));
     this.showChoices(options);
@@ -746,13 +682,13 @@ class VNEngine {
   handleEvent(eventId, onComplete) {
     switch (eventId) {
       case 'fin_vraie':
-        this.showEndScreen('VÉRITÉ COMPLÈTE', 'Affaire résolue. Toutes les preuves réunies.', '#1a3a1a');
+        this.showEndScreen('VERITE COMPLETE', 'Affaire resolue. Toutes les preuves reunies.', '#1a3a1a');
         break;
       case 'fin_partielle':
-        this.showEndScreen('FIN PARTIELLE', 'Il manque une pièce. Retournez enquêter.', '#1a2a3a', () => this.goToLocation('jia'));
+        this.showEndScreen('FIN PARTIELLE', 'Il manque une piece. Retournez enqueter.', '#1a2a3a', () => this.goToLocation('jia'));
         break;
       case 'fin_echec':
-        this.showEndScreen('ÉCHEC', 'Sans preuve, il n\'y a pas de conclusion. Retournez enquêter.', '#2a1a1a', () => this.goToLocation('jia'));
+        this.showEndScreen('ECHEC', 'Sans preuve, il n\'y a pas de conclusion. Retournez enqueter.', '#2a1a1a', () => this.goToLocation('jia'));
         break;
       default:
         console.warn('[Event]', eventId);
@@ -762,14 +698,13 @@ class VNEngine {
 
   showEndScreen(title, body, color, onBack) {
     this.bg.style.background = color || '#000';
-
     this.dialogueBox.classList.add('hidden');
     this._hideChoices();
     this.spriteLeft.classList.add('hidden');
     this.spriteRight.classList.add('hidden');
 
     const opts = [];
-    if (onBack) opts.push({ text: 'Continuer l\'enquête', action: () => { this._hideChoices(); onBack(); } });
+    if (onBack) opts.push({ text: 'Continuer l\'enquete', action: () => { this._hideChoices(); onBack(); } });
     opts.push({ text: 'Retour au menu', action: () => { this._hideChoices(); this.stop(); window._app?.goToTitle(); } });
 
     this.playLine({ char: 'narrateur', text: `${title} — ${body}` }, () => this.showChoices(opts));
@@ -780,9 +715,8 @@ class VNEngine {
     if (!line) { onComplete(); return; }
 
     const charDef = this.game.characters[line.char || line.character];
-
-    /* Narrateur — boîte visible, pas de name tag, style italique */
     const isNarrator = !charDef || !!charDef.italic;
+
     if (isNarrator) {
       this.nameTagLeft.classList.add('hidden');
       this.nameTagRight.classList.add('hidden');
@@ -803,7 +737,6 @@ class VNEngine {
     const speakerSprite= align === 'left' ? this.spriteLeft  : this.spriteRight;
     const otherSprite  = align === 'left' ? this.spriteRight : this.spriteLeft;
 
-    /* Sprite */
     speakerSprite.classList.remove('hidden');
     let img = speakerSprite.querySelector('img');
     if (charDef.sprite && line.sprite) {
@@ -826,7 +759,6 @@ class VNEngine {
       otherSprite.classList.remove('active');
     }
 
-    /* Name tag */
     this.nameTagLeft.classList.toggle('hidden',  align !== 'left');
     this.nameTagRight.classList.toggle('hidden', align !== 'right');
     const nameTag = align === 'left' ? this.nameTagLeft : this.nameTagRight;
@@ -835,11 +767,11 @@ class VNEngine {
     nameTag.style.borderColor = charDef.color ? `color-mix(in srgb, ${charDef.color} 60%, #fff 40%)` : '';
     nameTag.style.color = '#f4f1e8';
 
-    /* Gradient dialogue box : couleur personnage en haut → bleu foncé en bas */
     const dialogBg = charDef.color
       ? `linear-gradient(180deg, color-mix(in srgb, ${charDef.color} 18%, #111c2e) 0%, #070e1c 100%)`
       : 'linear-gradient(180deg, #111c2e 0%, #070e1c 100%)';
     this.dialogueBox.style.background = dialogBg;
+    this.dialogueBox.style.setProperty('--char-color', charDef.color || 'transparent');
 
     this.dialogueBox.classList.remove('italic-line');
     this.dialogueText.classList.remove('narrator');
@@ -875,7 +807,6 @@ class VNEngine {
     this.dialogueBox.classList.remove('hidden');
     this.gameUI.classList.add('choices-active');
 
-    /* Avatar — toujours Will à gauche */
     this.choiceAvatar.innerHTML = '';
     const willDef = this.game.characters['will'];
     if (willDef?.sprite) {
@@ -887,23 +818,17 @@ class VNEngine {
     this.choicePanel.classList.add('choice-left');
 
     this.choiceOptions.innerHTML = '';
-    const btns = [];
-    /* "Nouveau" = option pédagogique (a un opt.id stable) jamais cliquée.
-       Les options sans id (navigation, système, voyage, inline) ne sont jamais marquées. */
     options.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'choice choice-btn';
-      btn.textContent = opt.text;
+      btn.textContent = opt.text.normalize('NFD').replace(/[̀-ͯ]/g, '');
       const id = opt.id;
-      if (id && !this.seenChoices.has(id)) {
-        btn.classList.add('choice-new');
-      }
+      if (id && !this.seenChoices.has(id)) btn.classList.add('choice-new');
       btn.addEventListener('click', () => {
         if (id) this.seenChoices.add(id);
         opt.action();
       });
       this.choiceOptions.appendChild(btn);
-      btns.push(btn);
     });
     this.choicePanel.classList.remove('hidden');
   }
@@ -918,12 +843,8 @@ class VNEngine {
     let i = 0;
     const speed = Math.max(22, Math.min(55, 2800 / Math.max(tokens.length, 1)));
     this.typewriterTimer = setInterval(() => {
-      const tok = tokens[i];
-      i++;
-      /* Shake fires on first char of a marked segment */
-      if (tok.shake) this._shake(tok.shake);
-      /* Rebuild full HTML up to current position — avoids innerHTML+= breaking open tags */
-      this.dialogueText.innerHTML = renderFromTokens(tokens, i);
+      if (tokens[i].shake) this._shake(tokens[i].shake);
+      this.dialogueText.innerHTML = renderFromTokens(tokens, ++i);
       if (i >= tokens.length) {
         clearInterval(this.typewriterTimer);
         this.typewriterTimer = null;
@@ -941,8 +862,7 @@ class VNEngine {
     let i = 0;
     const speed = Math.max(22, Math.min(55, 2800 / Math.max(text.length, 1)));
     this.typewriterTimer = setInterval(() => {
-      i++;
-      this.dialogueText.textContent = text.slice(0, i);
+      this.dialogueText.textContent = text.slice(0, ++i);
       if (i >= text.length) {
         clearInterval(this.typewriterTimer);
         this.typewriterTimer = null;
@@ -954,11 +874,9 @@ class VNEngine {
 
   /* ---- Screen shake ---- */
   _shake(level) {
-    /* level 1 = ## (léger), level 2 = ### (fort) */
     const el = document.getElementById('screen-game');
     const cls = level >= 2 ? 'shake-strong' : 'shake-light';
     el.classList.remove('shake-light', 'shake-strong');
-    /* force reflow so re-trigger works */
     void el.offsetWidth;
     el.classList.add(cls);
     el.addEventListener('animationend', () => el.classList.remove(cls), { once: true });
@@ -989,12 +907,74 @@ class VNEngine {
 /* ---------- App Bootstrap ---------- */
 class App {
   constructor() {
-    this.settings = Settings.load();
-    this.screens  = new ScreenManager();
-    this.lesson   = new LessonOverlay();
-    this.engine   = null;
-    this.game     = null;
-    window._app   = this;
+    this.settings      = Settings.load();
+    this.screens       = new ScreenManager();
+    this.lesson        = new LessonOverlay();
+    this.engine        = null;
+    this.game          = null;
+    this.seenLessons   = [];
+    this.seenLessonIds = new Set();
+    window._app        = this;
+
+    const originalShow = this.lesson.show.bind(this.lesson);
+    this.lesson.show = (lesson) => {
+      this.recordLesson(lesson);
+      return originalShow(lesson);
+    };
+  }
+
+  recordLesson(lesson) {
+    const id = lesson.title || JSON.stringify(lesson.blocks || []).slice(0, 80);
+    if (this.seenLessonIds.has(id)) return;
+    this.seenLessonIds.add(id);
+    this.seenLessons.push({ id, title: lesson.title || 'Sans titre', blocks: lesson.blocks || [], isNew: true });
+    document.getElementById('lessons-new-badge')?.classList.remove('hidden');
+  }
+
+  openLessonsInventory() {
+    const popup  = document.getElementById('screen-lessons');
+    const listEl = document.getElementById('lessons-list');
+    document.getElementById('lessons-new-badge')?.classList.add('hidden');
+    listEl.innerHTML = '';
+
+    if (this.seenLessons.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'lessons-empty';
+      empty.textContent = 'AUCUN COURS DECOUVERT POUR LE MOMENT';
+      listEl.appendChild(empty);
+    } else {
+      [...this.seenLessons].reverse().forEach((les) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice lesson-item';
+
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = les.title;
+        btn.appendChild(titleSpan);
+
+        if (les.isNew) {
+          const newTag = document.createElement('span');
+          newTag.className = 'lesson-item-new';
+          newTag.textContent = 'NEW';
+          btn.appendChild(newTag);
+        }
+
+        btn.addEventListener('click', () => {
+          les.isNew = false;
+          btn.querySelector('.lesson-item-new')?.remove();
+          popup.classList.add('hidden');
+          this.lesson.show(les).then(() => popup.classList.remove('hidden'));
+        });
+        listEl.appendChild(btn);
+      });
+    }
+
+    popup.classList.remove('hidden');
+  }
+
+  _resetLessonState() {
+    this.seenLessons = [];
+    this.seenLessonIds = new Set();
+    document.getElementById('lessons-new-badge')?.classList.add('hidden');
   }
 
   async init() {
@@ -1005,7 +985,6 @@ class App {
       alert('Impossible de charger data/game.json. Utilisez un serveur HTTP local.');
       return;
     }
-
     this.bindMenu();
     this.bindSettings();
     this.screens.show('title');
@@ -1013,14 +992,14 @@ class App {
 
   bindMenu() {
     const titleScreen = document.getElementById('screen-title');
-    const defaultBg   = "url('images/titlescreen.png')";
+    const defaultBg   = "url('images/Environments/outside.png')";
 
     document.querySelectorAll('.menu [data-action]').forEach(btn => {
       btn.addEventListener('mouseenter', () => {
         const a = btn.dataset.action;
         let bg = defaultBg;
-        if (a === 'settings') bg = "url('images/titlescreen-settings.png')";
-        else if (a === 'credits') bg = "url('images/titlescreen-credits.png')";
+        if (a === 'settings') bg = "url('images/Environments/data.png')";
+        else if (a === 'credits') bg = "url('images/Environments/seo.png')";
         titleScreen.style.setProperty('--title-bg', bg);
       });
 
@@ -1029,7 +1008,7 @@ class App {
         if (a === 'play') {
           this.confirm(
             'LANCER LA PARTIE',
-            'Aucune sauvegarde disponible. Toute progression sera perdue à la fermeture. Prêt à commencer ?',
+            'Aucune sauvegarde disponible. Toute progression sera perdue a la fermeture. Pret a commencer ?',
             () => this.startGame()
           );
         } else if (a === 'settings') {
@@ -1042,9 +1021,16 @@ class App {
       });
     });
 
-    document.querySelectorAll(':not(.menu) [data-action="back-title"]').forEach(btn => {
-      btn.addEventListener('click', () => this.goToTitle());
-    });
+    const gameMenuPopup  = document.getElementById('screen-game-menu');
+    const closeGameMenu  = () => gameMenuPopup.classList.add('hidden');
+
+    document.getElementById('back-to-title').addEventListener('click', () => gameMenuPopup.classList.remove('hidden'));
+    document.getElementById('game-menu-quit').addEventListener('click', () => { closeGameMenu(); this.goToTitle(); });
+    document.getElementById('game-menu-cancel').addEventListener('click', closeGameMenu);
+
+    const lessonsPopup = document.getElementById('screen-lessons');
+    document.getElementById('open-lessons').addEventListener('click', () => this.openLessonsInventory());
+    document.getElementById('lessons-close').addEventListener('click', () => lessonsPopup.classList.add('hidden'));
   }
 
   bindSettings() {
@@ -1056,19 +1042,14 @@ class App {
       autoBtn.textContent  = this.settings.autoplay ? 'ON' : 'OFF';
     };
 
-    musicBtn.addEventListener('click', () => {
-      this.settings.music = !this.settings.music;
-      Settings.save(this.settings); refresh();
-    });
-    autoBtn.addEventListener('click', () => {
-      this.settings.autoplay = !this.settings.autoplay;
-      Settings.save(this.settings); refresh();
-    });
+    musicBtn.addEventListener('click', () => { this.settings.music    = !this.settings.music;    Settings.save(this.settings); refresh(); });
+    autoBtn.addEventListener('click',  () => { this.settings.autoplay = !this.settings.autoplay; Settings.save(this.settings); refresh(); });
 
     refresh();
   }
 
   startGame() {
+    this._resetLessonState();
     this.screens.show('game');
     this.engine = new VNEngine(this.game, this.settings, this.lesson);
     this.engine.start();
@@ -1076,6 +1057,7 @@ class App {
 
   goToTitle() {
     if (this.engine) { this.engine.stop(); this.engine = null; }
+    this._resetLessonState();
     this.screens.show('title');
   }
 
@@ -1097,7 +1079,7 @@ class App {
     };
 
     confirmBtn.onclick = () => { close(); onConfirm(); };
-    cancelBtn.onclick  = () => { close(); };
+    cancelBtn.onclick  = () => close();
   }
 }
 

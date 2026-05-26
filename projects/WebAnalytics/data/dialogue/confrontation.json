@@ -1,17 +1,17 @@
-{
+﻿{
   "_location": "confrontation",
-  "_comment": "Accusation finale — 3 fins possibles selon les preuves réunies",
+  "_comment": "Accusation finale - 3 fins possibles selon les preuves réunies",
   "on_first_visit": [
     {
       "type": "line",
       "char": "will",
-      "text": "Trois personnes touchent à ce site. Il y a eu **deux fautes** — et un **crime**.",
+      "text": "Trois personnes touchent à ce site. Il y a eu **deux fautes** - et un **crime**.",
       "sprite": "normal"
     },
     {
       "type": "line",
       "char": "will",
-      "text": "La première faute : **Marine**. Elle dépense trop. Elle ne lit pas vraiment ses métriques. Elle confond volume de trafic et qualité de trafic. Mais elle attire les visiteurs — elle ne les détruit pas. **Innocente du crime.**",
+      "text": "La première faute : **Marine**. Elle dépense trop. Elle ne lit pas vraiment ses métriques. Elle confond volume de trafic et qualité de trafic. Mais elle attire les visiteurs - elle ne les détruit pas. **Innocente du crime.**",
       "sprite": "normal"
     },
     {
@@ -23,7 +23,7 @@
     {
       "type": "line",
       "char": "will",
-      "text": "La deuxième faute : **Pascal**. Une page d'accueil somptueuse et inutilisable. **93 %** de rebond. Des UTM dans un état catastrophique. Une installation GA4 jamais vérifiée. Une erreur d'orgueil technique — pas un sabotage.",
+      "text": "La deuxième faute : **Pascal**. Une page d'accueil somptueuse et inutilisable. **93 %** de rebond. Des UTM dans un état catastrophique. Une installation GA4 jamais vérifiée. Une erreur d'orgueil technique - pas un sabotage.",
       "sprite": "normal"
     },
     {
@@ -35,7 +35,7 @@
     {
       "type": "line",
       "char": "will",
-      "text": "Reste la **pénalité Google**. Le contenu volé. Et ça—",
+      "text": "Reste la **pénalité Google**. Le contenu volé. Et ça-",
       "sprite": "doubting"
     }
   ],
@@ -58,7 +58,7 @@
           {
             "type": "line",
             "char": "will",
-            "text": "**Trois pièces.** Les articles volés : la pénalité. Les liens cachés : le détournement vers votre site personnel. Et ceci—",
+            "text": "**Trois pièces.** Les articles volés : la pénalité. Les liens cachés : le détournement vers votre site personnel. Et ceci-",
             "sprite": "normal"
           },
           {
@@ -81,19 +81,19 @@
           {
             "type": "line",
             "char": "will",
-            "text": "Le **mobile**. Vous l'avez entendue parler de l'IA. Vous vous êtes cru fini. Au lieu de parler, vous avez préparé votre fuite — en saignant la boîte qui vous nourrissait. Le calme que tout le monde vous enviait, ce n'était pas de la sérénité. C'était de la **peur**, parfaitement rangée.",
+            "text": "Le **mobile**. Vous l'avez entendue, dans ce couloir, parler de l'IA. Vous êtes sorti blême de cette réunion. Et au lieu de poser la question, vous avez construit une sortie. Sur le dos de la boîte qui vous payait. Le calme que tout le monde vous enviait, ce n'était pas de la sérénité. C'était quelqu'un qui calcule.",
             "sprite": "normal"
           },
           {
             "type": "line",
             "char": "ina",
-            "text": "~~...J'avais fait trop d'erreurs. Vous croyez vraiment qu'ils m'auraient gardé ? Face à une machine qui ne dort pas, qui ne se trompe pas ? J'ai juste... voulu exister quelque part où on ne pouvait pas me remplacer.~~",
+            "text": "~~...Vous ne savez pas ce que c'est. Voir arriver quelque chose qui va vous rendre inutile. Pas dans dix ans. Maintenant. J'ai fait ce que j'ai pu.~~",
             "sprite": "stress"
           },
           {
             "type": "line",
             "char": "jia",
-            "text": "Tu aurais pu me parler. On était au bord du gouffre ensemble. Et c'est **toi** qui as poussé.",
+            "text": "Tu aurais pu me parler. ##On avait les mêmes peurs.## Et c'est ###toi### qui as tout brûlé.",
             "sprite": "angry"
           },
           {
@@ -103,7 +103,7 @@
           {
             "type": "lesson",
             "id": "lesson_conclusion",
-            "intro": { "char": "will", "text": "L'enquête est bouclée. Mais une enquête, ça ne sert à rien si on n'en tire pas les **leçons**. Voilà ce que cette affaire nous a appris — et ce que tout professionnel du web analytics doit garder en tête.", "sprite": "happy" },
+            "intro": { "char": "will", "text": "L'enquête est bouclée. Mais une enquête, ça ne sert à rien si on n'en tire pas les **leçons**. Voilà ce que cette affaire nous a appris - et ce que tout professionnel du web analytics doit garder en tête.", "sprite": "happy" },
             "title": "Ce que vous devez absolument retenir",
             "blocks": [
               {
@@ -111,10 +111,10 @@
                 "items": [
                   "Le web analytics sert à **décider**, pas à collectionner des chiffres",
                   "Un bon indicateur est toujours **lié à un objectif** métier",
-                  "Les données doivent être **segmentées** pour être utiles — une moyenne globale cache des réalités différentes",
+                  "Les données doivent être **segmentées** pour être utiles - une moyenne globale cache des réalités différentes",
                   "**GA4 repose sur les événements** : penser le marquage avant d'installer",
-                  "Les **UTM** sont indispensables pour suivre les campagnes — avec des conventions de nommage stables",
-                  "Un **reporting efficace** est simple, lisible et orienté action — il conclut toujours par des recommandations",
+                  "Les **UTM** sont indispensables pour suivre les campagnes - avec des conventions de nommage stables",
+                  "Un **reporting efficace** est simple, lisible et orienté action - il conclut toujours par des recommandations",
                   "Le croisement **quantitatif / qualitatif** est indispensable : les chiffres montrent le problème, les verbatims l'expliquent",
                   "L'analyse suit toujours : **constat → hypothèse → vérification → recommandation**",
                   "La **conformité RGPD** et l'**éthique** ne sont pas optionnelles"
@@ -165,7 +165,7 @@
           {
             "type": "line",
             "char": "will",
-            "text": "**Deux pièces.** Vous avez volé des articles — la pénalité. Et planté des liens cachés pour détourner le trafic vers votre propre site.",
+            "text": "**Deux pièces.** Vous avez volé des articles - la pénalité. Et planté des liens cachés pour détourner le trafic vers votre propre site.",
             "sprite": "doubting"
           },
           {
@@ -177,13 +177,13 @@
           {
             "type": "line",
             "char": "jia",
-            "text": "Ce n'est **pas assez**. Je veux savoir **pourquoi**.",
+            "text": "##Ce n'est pas assez.## Je veux savoir **pourquoi**.",
             "sprite": "angry"
           },
           {
             "type": "line",
             "char": "will",
-            "text": "Je suis allé trop vite. Il manque une pièce. Le « **pourquoi** » reste dans l'ombre — et avec lui, la part délibérée du crime.",
+            "text": "Je suis allé trop vite. Il manque une pièce. Sans le mobile, c'est une faute, pas un crime.",
             "sprite": "doubting"
           },
           {
@@ -212,13 +212,13 @@
           {
             "type": "line",
             "char": "jia",
-            "text": "Ce n'est **pas assez**. Je veux savoir **pourquoi**.",
+            "text": "##Ce n'est pas assez.## Je veux savoir **pourquoi**.",
             "sprite": "angry"
           },
           {
             "type": "line",
             "char": "will",
-            "text": "~~Il garde son calme.~~ Il manque une pièce. Le « **pourquoi** » reste dans l'ombre.",
+            "text": "~~Il garde son calme. Il sait que je n'ai pas le fond.~~ Il manque une pièce.",
             "sprite": "doubting"
           },
           {
@@ -257,7 +257,7 @@
           {
             "type": "lesson",
             "id": "lesson_methode_echec",
-            "intro": { "char": "will", "text": "J'ai accusé sans preuve. J'ai dit ce que je **croyais** — pas ce que je **savais**. En analytics comme en enquête, une opinion sans données, ça ne vaut rien. Voilà la méthode que j'aurais dû suivre.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "J'ai accusé sans preuve. J'ai dit ce que je **croyais** - pas ce que je **savais**. En analytics comme en enquête, une opinion sans données, ça ne vaut rien. Voilà la méthode que j'aurais dû suivre.", "sprite": "doubting" },
             "title": "La méthode analytique",
             "blocks": [
               {
@@ -267,10 +267,10 @@
               {
                 "type": "list",
                 "items": [
-                  "**Constat** — qu'observe-t-on dans les données ?",
-                  "**Hypothèse** — quelle cause probable explique ce constat ?",
-                  "**Vérification** — quelle donnée permet de confirmer ou d'infirmer ?",
-                  "**Recommandation** — quelle action concrète en découle ?"
+                  "**Constat** - qu'observe-t-on dans les données ?",
+                  "**Hypothèse** - quelle cause probable explique ce constat ?",
+                  "**Vérification** - quelle donnée permet de confirmer ou d'infirmer ?",
+                  "**Recommandation** - quelle action concrète en découle ?"
                 ]
               },
               {

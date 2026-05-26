@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BLUE S.E.A. — Le Crime Économique</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
@@ -83,7 +84,11 @@
     </div>
   </div>
 
-  <button id="back-to-title" class="choice back-small" data-action="back-title">×</button>
+  <button id="back-to-title" class="choice back-small" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+  <button id="open-lessons" class="choice lessons-small" aria-label="Cours">
+    <i class="fa-solid fa-book"></i>
+    <span id="lessons-new-badge" class="lessons-new-badge hidden">NEW</span>
+  </button>
 </section>
 
 <!-- LESSON OVERLAY -->
@@ -105,6 +110,29 @@
     <div class="popup-buttons focus-group">
       <button id="popup-confirm" class="choice popup-btn">CONFIRMER</button>
       <button id="popup-cancel"  class="choice popup-btn">ANNULER</button>
+    </div>
+  </div>
+</section>
+
+<!-- LESSONS INVENTORY POPUP -->
+<section id="screen-lessons" class="screen hidden">
+  <div class="panel popup-panel lessons-panel">
+    <h2 class="popup-title">COURS</h2>
+    <div id="lessons-list" class="lessons-list"></div>
+    <div class="popup-buttons focus-group">
+      <button id="lessons-close" class="choice popup-btn">FERMER</button>
+    </div>
+  </div>
+</section>
+
+<!-- GAME MENU POPUP -->
+<section id="screen-game-menu" class="screen hidden">
+  <div class="panel popup-panel">
+    <h2 class="popup-title">MENU</h2>
+    <p class="popup-body">Si vous partez, toute votre progression sera perdue. L'enquete n'est pas sauvegardee. Etes-vous certain de vouloir quitter ?</p>
+    <div class="popup-buttons focus-group">
+      <button id="game-menu-quit"   class="choice popup-btn">PARTIR</button>
+      <button id="game-menu-cancel" class="choice popup-btn">ANNULER</button>
     </div>
   </div>
 </section>

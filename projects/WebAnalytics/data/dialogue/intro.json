@@ -1,24 +1,24 @@
-{
+﻿{
   "_location": "intro",
-  "_comment": "Prologue — Jia ne mentionne QUE Marine. Will ne peut aller voir que Marine. Les autres personnages se débloqueront au fil de l'enquête. Leçon 1.1 — Définition + importance du web analytics.",
+  "_comment": "Prologue - Jia ne mentionne QUE Marine. Will ne peut aller voir que Marine. Les autres personnages se débloqueront au fil de l'enquête. Leçon 1.1 - Définition + importance du web analytics.",
 
   "sequence": [
     { "type": "line", "char": "will",  "text": "Madame **Seo Ji-a** ? On m'a appelé pour un ##crime économique##. D'après le dossier, votre boîte **coule**. Vite. Et personne ne sait pourquoi.", "sprite": "normal" },
-    { "type": "line", "char": "jia",   "text": "**Six mois.** En six mois on est passés de premiers sur Google à... ~~invisibles~~. Nos clients historiques ont été **pénalisés** avec nous. Ils sont partis. Quelqu'un, dans cette équipe, a **saboté** mon entreprise. Et je vais le découvrir.", "sprite": "angry" },
+    { "type": "line", "char": "jia",   "text": "**Six mois.** En six mois on est passés de premiers sur Google à... ~~invisibles~~. Nos clients historiques ont été **pénalisés** avec nous. ##Ils sont partis.## Quelqu'un, dans cette équipe, a ###saboté### mon entreprise. Et je vais le découvrir.", "sprite": "angry" },
     { "type": "line", "char": "will",  "text": "Vous avez **une idée** de qui ?", "sprite": "doubting" },
-    { "type": "line", "char": "jia",   "text": "**Marine Pestelle.** La com'. Elle dépense l'argent de la boîte comme si c'était le sien — campagnes pub à rallonge, partenariats absurdes, du matériel qu'elle utilise pas. La trésorerie fond et elle, elle poste des stories. Si quelqu'un nous coule, c'est **elle**.", "sprite": "angry" },
+    { "type": "line", "char": "jia",   "text": "**Marine Pestelle.** La com'. Elle dépense l'argent de la boîte comme si c'était le sien. Campagnes pub à rallonge, partenariats absurdes, du matériel qu'elle utilise pas. ##La trésorerie fond## et elle, elle poste des stories. Si quelqu'un nous coule, c'est ###elle###.", "sprite": "angry" },
     { "type": "line", "char": "will",  "text": "Vous en êtes **sûre** ?", "sprite": "doubting" },
-    { "type": "line", "char": "jia",   "text": "Aussi sûre qu'on peut l'être quand on regarde des **factures**. Elle ne sait même pas se défendre — vous lui parlez, vous verrez. Elle **parle trop**, elle s'embrouille. C'est le profil idéal du saboteur qui ne s'en rend même pas compte.", "sprite": "normal" },
-    { "type": "line", "char": "will",  "text": "Vos équipes — Marine, c'est tout ? Il n'y a qu'elle qui touche au site ?", "sprite": "doubting" },
-    { "type": "line", "char": "jia",   "text": "~~Bien sûr que non.~~ Mais commencez par **elle**. Le reste de l'équipe, je leur fais confiance — du moins pour le moment. Si vous me parlez d'eux maintenant, vous allez **vous éparpiller**. Marine d'abord. Quand vous l'aurez cuisinée, on en reparlera.", "sprite": "normal" },
-    { "type": "line", "char": "will",  "text": "Une patronne qui me **verrouille** mon enquête dans la première minute, c'est suspect. Mais je note. Marine d'abord — au moins pour comprendre ce qu'elle dépense.", "sprite": "doubting" },
+    { "type": "line", "char": "jia",   "text": "Aussi sûre qu'on peut l'être quand on regarde des **factures**. Elle ne sait même pas se défendre. Vous lui parlez, vous verrez. Elle **parle trop**, elle s'embrouille. C'est le profil idéal du saboteur qui ne s'en rend même pas compte.", "sprite": "normal" },
+    { "type": "line", "char": "will",  "text": "Vos équipes. Marine, c'est tout ? Il n'y a qu'elle qui touche au site ?", "sprite": "doubting" },
+    { "type": "line", "char": "jia",   "text": "~~Bien sûr que non.~~ Mais commencez par **elle**. Le reste de l'équipe, je leur fais confiance, du moins pour le moment. Si vous me parlez d'eux maintenant, vous allez **vous éparpiller**. Marine d'abord. Quand vous l'aurez cuisinée, on en reparlera.", "sprite": "normal" },
+    { "type": "line", "char": "will",  "text": "Une patronne qui me **verrouille** mon enquête dans la première minute, c'est suspect. Mais je note. Marine d'abord.", "sprite": "doubting" },
     { "type": "set_flag", "flag": "indice_factures" },
     { "type": "set_flag", "flag": "jia_cadrage_initial" },
 
     {
       "type": "lesson",
       "id": "lesson_definition",
-      "intro": { "char": "will", "text": "Avant d'aller voir Marine, je dois **poser les bases**. Parce que si je ne sais pas ce que je cherche, je ne verrai rien. Voilà ce qu'est vraiment le **web analytics** — et pourquoi ça change tout.", "sprite": "doubting" },
+      "intro": { "char": "will", "text": "Avant d'aller voir Marine, je dois **poser les bases**. Parce que si je ne sais pas ce que je cherche, je ne verrai rien. Voilà ce qu'est vraiment le **web analytics** - et pourquoi ça change tout.", "sprite": "doubting" },
       "title": "Qu'est-ce que le web analytics ?",
       "blocks": [
         { "type": "text",      "content": "Le web analytics désigne l'ensemble des méthodes, outils et pratiques permettant de **collecter, mesurer, analyser et interpréter** les données issues d'un site web, d'une application, d'une landing page ou d'une campagne digitale." },
@@ -30,7 +30,7 @@
           "headers": ["Action", "Définition", "Exemple"],
           "rows": [
             ["Mesurer", "Recueillir des données brutes", "1 000 visiteurs sont venus sur la page"],
-            ["Analyser", "Interpréter pour répondre à une question et décider", "Malgré ce trafic, la page convertit peu — vérifier le CTA"]
+            ["Analyser", "Interpréter pour répondre à une question et décider", "Malgré ce trafic, la page convertit peu - vérifier le CTA"]
           ]
         },
         { "type": "separator" },
@@ -62,7 +62,7 @@
             "Quelle campagne génère le meilleur ROI ?"
           ]
         },
-        { "type": "note",      "content": "Sans analyse, une entreprise agit à l'intuition. Le web analytics sert à **piloter une action marketing et commerciale** — pas à accumuler des chiffres." }
+        { "type": "note",      "content": "Sans analyse, une entreprise agit à l'intuition. Le web analytics sert à **piloter une action marketing et commerciale** - pas à accumuler des chiffres." }
       ]
     },
 

@@ -1,6 +1,6 @@
-{
+﻿{
   "_location": "marine",
-  "_comment": "Marine — la commère qui lâche des bribes sur Pascal et Ina. La piste 'argent' DOIT être posée d'abord — c'est là qu'elle balance Pascal (la home pourrie) → déverrouille le Poste Dev. La piste Ina (blogs sombres) reste, mais ne déverrouille rien : c'est Pascal qui ouvrira ina.",
+  "_comment": "Marine - la commère qui lâche des bribes sur Pascal et Ina. La piste 'argent' DOIT être posée d'abord - c'est là qu'elle balance Pascal (la home pourrie) → déverrouille le Poste Dev. La piste Ina (blogs sombres) reste, mais ne déverrouille rien : c'est Pascal qui ouvrira ina.",
   "on_first_visit": [
     {
       "type": "line",
@@ -11,7 +11,7 @@
     {
       "type": "line",
       "char": "will",
-      "text": "~~Elle parle plus vite qu'elle ne réfléchit. Et elle adore parler des autres. Je vais peut-être apprendre plus ici qu'avec elle directement.~~",
+      "text": "~~Elle parle plus vite qu'elle ne réfléchit, je devrais noter ça...~~",
       "sprite": "doubting"
     }
   ],
@@ -20,11 +20,10 @@
       {
         "text": "Parlez-moi de l'argent. On dit que vous depensez beaucoup.",
         "id": "marine_argent",
-        "once_flag": "marine_dépensière",
         "sequence": [
           { "type": "line", "char": "marine", "text": "##Trop, trop, trop##, tout le monde dit trop ! Mais la pub ça coûte, la visibilité ça coûte, on ne fait pas d'omelette sans... sans casser le budget ! Bon. Oui. J'ai claqué. **Beaucoup.** Les campagnes **SEA**, c'est moi qui les paie, c'est moi qui ramène du trafic !", "sprite": "questioning" },
           { "type": "line", "char": "will",   "text": "Et ce trafic, il **convertit** ?", "sprite": "doubting" },
-          { "type": "line", "char": "marine", "text": "~~...Il arrive.~~ Après, sur le site... les gens partent. **Tout de suite.** Comme si la page leur faisait peur. Mais ça c'est pas moi ! Moi je les amène à la porte, ce qu'il y a derrière la porte — la **home** — c'est **Pascal** qui l'a faite. Pascal Poinet, notre dev. Magnifique d'ailleurs, vraiment magnifique. Mais bon entre nous... y'a un truc qui va pas.", "sprite": "questioning" },
+          { "type": "line", "char": "marine", "text": "~~...Il arrive.~~ Après, sur le site... les gens partent. **Tout de suite.** Comme si la page leur faisait peur. Mais ça c'est pas moi ! Moi je les amène à la porte, ce qui est derrière la porte c'est **Pascal** qui l'a fait. Pascal Poinet, notre dev. Magnifique, vraiment magnifique. Mais bon entre nous... y'a un truc qui va pas.", "sprite": "questioning" },
           { "type": "set_flag", "flag": "marine_dépensière" },
           { "type": "set_flag", "flag": "marine_rebond_évoqué" },
           { "type": "set_flag", "flag": "marine_balance_pascal_home" },
@@ -32,7 +31,7 @@
           {
             "type": "lesson",
             "id": "lesson_mesurer_analyser",
-            "intro": { "char": "will", "text": "Marine voit des chiffres. Elle ne les **lit** pas. Et c'est exactement là que tout se casse. Il y a une nuance fondamentale entre **mesurer** et **analyser** — et cette nuance, c'est toute la différence entre une campagne pilotée et de l'argent jeté.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "Marine voit des chiffres. Elle ne les **lit** pas. Et c'est exactement là que tout se casse. Il y a une nuance fondamentale entre **mesurer** et **analyser** - et cette nuance, c'est toute la différence entre une campagne pilotée et de l'argent jeté.", "sprite": "doubting" },
             "title": "Mesurer n'est pas encore analyser",
             "blocks": [
               { "type": "text", "content": "Marine *mesure* : elle voit du trafic arriver. Mais elle n'*analyse* pas : elle ne sait pas pourquoi il repart. C'est l'erreur la plus fréquente." },
@@ -73,23 +72,22 @@
               { "type": "note", "content": "Dans GA4, la notion de taux de rebond est complétée ou remplacée par des indicateurs d'**engagement** plus fins." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Elle paie pour amener des visiteurs sur une porte qui leur fait peur. La porte, c'est **Pascal Poinet**. **Notons.** Il faudra qu'il m'explique ce **93 %**. ~~Et qu'il me donne sa propre version de l'histoire.~~", "sprite": "doubting" },
+          { "type": "line", "char": "will", "text": "Elle amène des visiteurs sur une porte qui leur fait peur. La porte, c'est **Pascal Poinet**. Il faudra qu'il m'explique ce **93 %**.", "sprite": "doubting" },
           { "type": "line", "char": "narrateur", "text": "Une nouvelle porte vient de s'ouvrir dans l'enquête. Le Poste Dev est désormais accessible." }
         ]
       },
       {
         "text": "Vous avez un plan avant de lancer ?",
         "id": "marine_méthode",
-        "once_flag": "marine_cadrage_évoqué",
         "sequence": [
-          { "type": "line", "char": "will",   "text": "Avant chaque campagne — vous **cadrez** ? Vous écrivez un objectif, vous choisissez un indicateur, vous décidez d'avance ce que vous ferez si ça marche ou pas ?", "sprite": "doubting" },
+          { "type": "line", "char": "will",   "text": "Avant chaque campagne, vous **cadrez** ? Vous écrivez un objectif, vous choisissez un indicateur, vous décidez d'avance ce que vous ferez si ça marche ou pas ?", "sprite": "doubting" },
           { "type": "line", "char": "marine", "text": "~~Cadrer ?~~ Je... je lance, et je regarde après. C'est plus instinctif chez moi. Je le **sens**, vous voyez. La pub, ça vit, ça respire, on peut pas mettre ça dans un tableau !", "sprite": "questioning" },
           { "type": "line", "char": "will",   "text": "Une **fiche de cadrage** aurait évité que vous découvriez après coup que vos visiteurs fuyaient.", "sprite": "doubting" },
           { "type": "set_flag", "flag": "marine_cadrage_évoqué" },
           {
             "type": "lesson",
             "id": "lesson_cadrage",
-            "intro": { "char": "will", "text": "Marine lance des campagnes au feeling. Pas de plan, pas de cible, pas de seuil de succès. Ce qu'il lui faudrait — ce qu'il faudrait à toute équipe — c'est une **fiche de cadrage**. Ça prend vingt minutes. Ça évite des mois d'aveuglement.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "Marine lance des campagnes au feeling. Pas de plan, pas de cible, pas de seuil de succès. Ce qu'il lui faudrait - ce qu'il faudrait à toute équipe - c'est une **fiche de cadrage**. Ça prend vingt minutes. Ça évite des mois d'aveuglement.", "sprite": "doubting" },
             "title": "La fiche de cadrage analytique",
             "blocks": [
               { "type": "text", "content": "Avant même d'ouvrir un outil comme GA4, Matomo ou Looker Studio, il faut remplir une **fiche de cadrage**. Elle clarifie *pourquoi* on mesure, *ce qu'on observe*, et *à quelles décisions* les données vont servir." },
@@ -99,10 +97,10 @@
               {
                 "type": "list",
                 "items": [
-                  "**Outil** — GA4, Matomo, GTM",
-                  "**Donnée** — clic, visite, session, ajout au panier",
-                  "**Indicateur** — taux de conversion, nombre de leads",
-                  "**Décision** — modifier une page, ajuster une campagne, changer un ciblage"
+                  "**Outil** - GA4, Matomo, GTM",
+                  "**Donnée** - clic, visite, session, ajout au panier",
+                  "**Indicateur** - taux de conversion, nombre de leads",
+                  "**Décision** - modifier une page, ajuster une campagne, changer un ciblage"
                 ]
               },
               { "type": "separator" },
@@ -133,27 +131,25 @@
               { "type": "note", "content": "Marine a lancé des campagnes sans jamais écrire ce qu'elle attendait. Résultat : elle ne peut juger ni les succès ni les échecs." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Lancer sans cadrer, c'est dépenser à l'aveugle. Elle ne saboteuse rien — elle **gaspille**. C'est déjà ça, mais ce n'est pas le crime.", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Lancer sans cadrer, c'est dépenser à l'aveugle. Elle ne sabote rien. Elle ne sait même pas ce qu'elle rate.", "sprite": "doubting" }
         ]
       },
       {
         "text": "Comment Pascal travaille, vous le voyez de loin ?",
         "id": "marine_sur_pascal",
         "requires_flag": "marine_parle_de_pascal",
-        "once_flag": "marine_balance_pascal_solo",
         "sequence": [
           { "type": "line", "char": "marine", "text": "Pascal ? Pascal Pascal Pascal. **Adorable**, vraiment, mais... il vit dans sa **bulle**. Il code, il code, il code. Il refait des trucs qu'on lui a pas demandés, il prototype des **chatbots**, des **configurateurs 3D**... pendant que le SEO, le truc qui fait vivre la boîte, ##il y touche même pas##.", "sprite": "questioning" },
           { "type": "line", "char": "will",   "text": "Il y touche pas ? Mais c'est **son site**.", "sprite": "doubting" },
           { "type": "line", "char": "marine", "text": "Justement ! Il a tout délégué à quelqu'un d'autre dans l'équipe. ##Tout-tout-tout.## Les articles, les balises, les liens. Pascal il dit que cette personne est « **méthodique** ». Moi je dis qu'il a juste pas envie de s'en occuper.", "sprite": "questioning" },
           { "type": "set_flag", "flag": "marine_balance_pascal_solo" },
           { "type": "set_flag", "flag": "indice_ina_seul_seo" },
-          { "type": "line", "char": "will", "text": "Donc Pascal a confié **les clés du référencement** à une seule personne. Sans contrôle. Il faudra que je creuse ça — **chez lui d'abord**.", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Pascal a confié **les clés du référencement** à une seule personne. Sans contrôle. Je vais d'abord aller voir Pascal.", "sprite": "doubting" }
         ]
       },
       {
         "text": "Quels outils utilisez-vous pour mesurer vos campagnes ?",
         "id": "marine_outils",
-        "once_flag": "marine_outils_flous",
         "sequence": [
           { "type": "line", "char": "marine", "text": "Les outils ? Oh j'en ai **plein, plein, plein** ! **Google Analytics**, Meta Business Suite, TikTok Analytics, LinkedIn... Et même **Google Tag Manager**, même si franchement, les balises c'est Pascal qui s'en occupe.", "sprite": "questioning" },
           { "type": "line", "char": "will",   "text": "Et vous **lisez** tous ces outils ? Vraiment ?", "sprite": "doubting" },
@@ -162,7 +158,7 @@
           {
             "type": "lesson",
             "id": "lesson_outils",
-            "intro": { "char": "will", "text": "Elle a cité cinq outils d'une traite. Elle n'en maîtrise aucun. Mais les outils, eux, **existent** — et chacun répond à un besoin précis. Faisons le tour de ceux qu'un professionnel du digital doit connaître.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "Elle a cité cinq outils d'une traite. Elle n'en maîtrise aucun. Mais les outils, eux, **existent** - et chacun répond à un besoin précis. Faisons le tour de ceux qu'un professionnel du digital doit connaître.", "sprite": "doubting" },
             "title": "Panorama des outils analytics",
             "blocks": [
               { "type": "text", "content": "Aucun outil ne répond seul à tous les besoins. Le professionnel combine les outils selon les objectifs, le budget, les contraintes techniques et les exigences juridiques." },
@@ -189,7 +185,7 @@
                   "Pinterest Analytics"
                 ]
               },
-              { "type": "text", "content": "Ces outils mesurent la portée, l'engagement, les clics, les performances publicitaires. **GTM ne remplace pas GA4** — c'est un outil de gestion des balises, pas de mesure." },
+              { "type": "text", "content": "Ces outils mesurent la portée, l'engagement, les clics, les performances publicitaires. **GTM ne remplace pas GA4** - c'est un outil de gestion des balises, pas de mesure." },
               { "type": "separator" },
               { "type": "heading", "content": "Évolutions récentes du domaine" },
               {
@@ -206,34 +202,32 @@
               { "type": "note", "content": "Le bon professionnel fait une **veille régulière** : outils, indicateurs, règles de confidentialité et interfaces évoluent rapidement." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Elle utilise les outils comme des décorations. ~~Ce n'est pas une saboteuse~~ — c'est une communicante qui ne maîtrise pas ce qu'elle mesure. Note pour Madame Seo : il manque un **reporting**.", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "Elle a les outils. Elle ne les lit pas. ~~Ce n'est pas une saboteuse, c'est quelqu'un qui navigue à vue.~~ Note pour Madame Seo : il manque un **reporting**.", "sprite": "doubting" }
         ]
       },
       {
         "text": "Et l'autre personne du SEO ? Vous le voyez souvent ?",
         "id": "marine_sur_ina",
         "requires_flag": "pascal_parle_de_ina",
-        "once_flag": "marine_balance_ina_blogs",
         "sequence": [
           { "type": "line", "char": "marine", "text": "**Ina ?** ~~...Pfff.~~ Il sort **jamais** de son bureau. Jamais de pause cafèt', jamais d'apéro, jamais rien. Au début je pensais qu'il était timide. Maintenant je sais qu'il est juste... **ailleurs**.", "sprite": "questioning" },
           { "type": "line", "char": "will",   "text": "Ailleurs ?", "sprite": "doubting" },
           { "type": "line", "char": "marine", "text": "Je suis passée derrière lui un jour pour récupérer un dossier. Il écrivait. Des **articles**. Des **blogs**. À la chaîne, des heures et des heures. C'est un **passionné** vous savez, faut comprendre... Mais bon les titres c'était... ~~bizarre.~~ Du genre très très noir. Pas du tout dans l'esprit boîte.", "sprite": "questioning" },
           { "type": "set_flag", "flag": "marine_balance_ina_blogs" },
           { "type": "set_flag", "flag": "indice_blogs_existent" },
-          { "type": "line", "char": "will", "text": "**Ina écrit des articles sombres.** Sur le site d'une boîte qui vend du conseil tech. ~~Pourquoi ?~~ Il faudra que je lui pose la question.", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "**Ina écrit des articles sombres.** Sur le site d'une boîte qui vend du conseil tech. ~~Il y a une raison à ça. Faudra la trouver.~~", "sprite": "doubting" }
         ]
       },
       {
         "text": "Vous avez remarque un changement chez Ina, recemment ?",
         "id": "marine_ina_changé",
-        "once_flag": "marine_balance_ina_changement",
         "requires_flag": "marine_balance_ina_blogs",
         "sequence": [
           { "type": "line", "char": "will",   "text": "Vous le voyez tous les jours depuis des années. Il y a eu un **moment** où Ina a changé ?", "sprite": "doubting" },
-          { "type": "line", "char": "marine", "text": "~~Vous voulez vraiment savoir ?~~ Oui. ##Il y a environ six mois.## Avant, il rigolait — pas beaucoup, mais il rigolait. Depuis... rien. Plus rien. Comme si on lui avait coupé un fil dans la tête. Je sais pas ce qui s'est passé. Personne sait.", "sprite": "questioning" },
+          { "type": "line", "char": "marine", "text": "~~Vous voulez vraiment savoir ?~~ Oui. ##Il y a environ six mois.## Avant, il rigolait. Pas beaucoup, mais il rigolait. Depuis... rien. Plus rien. Comme si on lui avait coupé un fil dans la tête. Je sais pas ce qui s'est passé. Personne sait.", "sprite": "questioning" },
           { "type": "set_flag", "flag": "marine_balance_ina_changement" },
           { "type": "set_flag", "flag": "indice_ina_changé_six_mois" },
-          { "type": "line", "char": "will", "text": "**Six mois.** ~~La même fenêtre que la chute du site.~~ Coïncidence ? Je ne crois plus aux coïncidences.", "sprite": "doubting" }
+          { "type": "line", "char": "will", "text": "**Six mois.** ~~La même fenêtre que la chute du site.~~", "sprite": "doubting" }
         ]
       }
     ]
