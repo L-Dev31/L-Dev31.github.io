@@ -1,10 +1,11 @@
 /* ==========================================================
-   Visual Novel Engine - POC (vanilla JS)
+   BLUE S.E.A. — Visual Novel Engine
+   Architecture : game.json (global) + data/dialogue/{loc}.json (lazy)
    ========================================================== */
 
 /* ---------- Settings (localStorage) ---------- */
 class Settings {
-  static KEY = 'vn_settings_v1';
+  static KEY = 'blueSea_settings_v1';
   static defaults = { music: true, autoplay: false };
 
   static load() {
@@ -33,12 +34,265 @@ class ScreenManager {
   }
 }
 
-/* ---------- Visual Novel Engine — location-based ---------- */
-class VNEngine {
-  constructor(data, settings) {
-    this.data     = data;
-    this.settings = settings;
+/* ---------- Lesson Overlay ---------- */
+class LessonOverlay {
+  constructor() {
+    this.el       = document.getElementById('lesson-overlay');
+    this.title    = document.getElementById('lesson-title');
+    this.body     = document.getElementById('lesson-body');
+    this.closeBtn = document.getElementById('lesson-close');
+    this._resolve = null;
 
+    this.closeBtn.addEventListener('click', () => this._close());
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !this.el.classList.contains('hidden')) this._close();
+    });
+  }
+
+  /* Returns a Promise that resolves when the overlay is closed */
+  show(lesson) {
+    this.title.textContent = lesson.title || '';
+    this.body.innerHTML = '';
+
+    (lesson.blocks || []).forEach(block => {
+      const el = this._renderBlock(block);
+      if (el) this.body.appendChild(el);
+    });
+
+    this.el.classList.remove('hidden');
+    this.closeBtn.classList.remove('hidden');
+    this.el.scrollTop = 0;
+
+    return new Promise(resolve => { this._resolve = resolve; });
+  }
+
+  _close() {
+    this.el.classList.add('hidden');
+    this.closeBtn.classList.add('hidden');
+    if (this._resolve) { this._resolve(); this._resolve = null; }
+  }
+
+  _renderBlock(block) {
+    switch (block.type) {
+
+      case 'text': {
+        const p = document.createElement('p');
+        p.className = 'lesson-text';
+        p.innerHTML = this._md(block.content);
+        return p;
+      }
+
+      case 'heading': {
+        const h = document.createElement('h3');
+        h.className = 'lesson-heading';
+        h.innerHTML = this._md(block.content);
+        return h;
+      }
+
+      case 'list': {
+        const ul = document.createElement('ul');
+        ul.className = 'lesson-list';
+        (block.items || []).forEach(item => {
+          const li = document.createElement('li');
+          li.innerHTML = this._md(item);
+          ul.appendChild(li);
+        });
+        return ul;
+      }
+
+      case 'table': {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'lesson-table-wrapper';
+        const table = document.createElement('table');
+        table.className = 'lesson-table';
+        if (block.headers?.length) {
+          const thead = table.createTHead();
+          const tr = thead.insertRow();
+          block.headers.forEach(h => {
+            const th = document.createElement('th');
+            th.innerHTML = this._md(h);
+            tr.appendChild(th);
+          });
+        }
+        const tbody = table.createTBody();
+        (block.rows || []).forEach(row => {
+          const tr = tbody.insertRow();
+          row.forEach(cell => {
+            const td = tr.insertCell();
+            td.innerHTML = this._md(String(cell));
+          });
+        });
+        wrapper.appendChild(table);
+        return wrapper;
+      }
+
+      case 'code': {
+        const pre = document.createElement('pre');
+        pre.className = 'lesson-code';
+        const code = document.createElement('code');
+        code.textContent = block.content;
+        pre.appendChild(code);
+        return pre;
+      }
+
+      case 'note': {
+        const aside = document.createElement('aside');
+        aside.className = 'lesson-note';
+        aside.innerHTML = this._md(block.content);
+        return aside;
+      }
+
+      case 'separator': {
+        const hr = document.createElement('hr');
+        hr.className = 'lesson-separator';
+        return hr;
+      }
+
+      case 'image': {
+        const figure = document.createElement('figure');
+        figure.className = 'lesson-figure';
+        const img = document.createElement('img');
+        img.src = block.src;
+        img.alt = block.alt || '';
+        img.className = 'lesson-img';
+        figure.appendChild(img);
+        if (block.caption) {
+          const cap = document.createElement('figcaption');
+          cap.className = 'lesson-caption';
+          cap.textContent = block.caption;
+          figure.appendChild(cap);
+        }
+        return figure;
+      }
+
+      default:
+        return null;
+    }
+  }
+
+  /* Mini-markdown for lesson blocks */
+  _md(str) {
+    if (!str) return '';
+    return str
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g,     '<em>$1</em>')
+      .replace(/`(.+?)`/g,       '<code>$1</code>');
+  }
+}
+
+/* ---- Dialogue text markup ----
+   ~~text~~   → italic, muted (narration / aside)
+   **text**   → bold
+   ##text##   → emphasis (caps)          + shake léger
+   ###text### → shout (large caps)       + shake fort
+*/
+
+/* Tokenise le texte brut en segments {tag, chars[]}
+   Chaque char est un caractère à afficher dans le contexte du tag courant.
+   Retourne un tableau plat de {char, openTag, closeTag, shakeLevel}
+   openTag / closeTag sont émis UNE FOIS au début / fin du segment. */
+function tokeniseMarkup(str) {
+  if (!str) return [];
+
+  /* Ordered by specificity: ### before ## before # */
+  const TOKENS = [
+    { re: /~~~(.+?)~~~/g,   open: '<em>',                   close: '</em>',     shake: 0 },
+    { re: /~~(.+?)~~/g,     open: '<em>',                   close: '</em>',     shake: 0 },
+    { re: /\*\*(.+?)\*\*/g, open: '<strong>',               close: '</strong>', shake: 0 },
+    { re: /###(.+?)###/g,   open: '<span class="dm-shout">', close: '</span>',  shake: 2 },
+    { re: /##(.+?)##/g,     open: '<span class="dm-emph">',  close: '</span>',  shake: 1 },
+  ];
+
+  /* Build a list of {start, end, open, close, inner, shake} segments */
+  const segments = [];
+  for (const tok of TOKENS) {
+    tok.re.lastIndex = 0;
+    let m;
+    while ((m = tok.re.exec(str)) !== null) {
+      segments.push({
+        start: m.index,
+        end:   m.index + m[0].length,
+        open:  tok.open,
+        close: tok.close,
+        inner: tok.shake >= 1 ? m[1].toUpperCase() : m[1],
+        shake: tok.shake
+      });
+    }
+  }
+  /* Sort by start position */
+  segments.sort((a, b) => a.start - b.start);
+
+  /* Flatten into a list of typed chars */
+  const result = [];
+  let cursor = 0;
+
+  const pushPlain = (text) => {
+    for (let i = 0; i < text.length; i++) {
+      result.push({ char: text[i], open: i === 0 ? '' : null, close: null, shake: 0 });
+    }
+  };
+
+  for (const seg of segments) {
+    if (seg.start < cursor) continue; // overlapping — skip
+    /* plain text before this segment */
+    if (seg.start > cursor) pushPlain(str.slice(cursor, seg.start));
+    /* segment chars */
+    for (let i = 0; i < seg.inner.length; i++) {
+      result.push({
+        char:  seg.inner[i],
+        open:  i === 0 ? seg.open  : null,
+        close: i === seg.inner.length - 1 ? seg.close : null,
+        shake: i === 0 ? seg.shake : 0,
+      });
+    }
+    cursor = seg.end;
+  }
+  /* trailing plain text */
+  if (cursor < str.length) pushPlain(str.slice(cursor));
+
+  return result;
+}
+
+/* Build rendered HTML for tokens[0..count].
+   If the last token has an open tag but its close hasn't been reached yet,
+   we must keep the tag open so styles apply to all chars inside.
+   Strategy: emit open on first char of segment, close only on last char.
+   Since tokens already store open/close per-char, we just need to ensure
+   any dangling open tag is closed at the end of the partial render. */
+function renderFromTokens(tokens, count) {
+  const end = count !== undefined ? count : tokens.length;
+  let html = '';
+  let openTag = null; // track if we're inside an unclosed tag
+  for (let i = 0; i < end; i++) {
+    const t = tokens[i];
+    if (t.open !== null && t.open !== '') { openTag = t.close; html += t.open; }
+    html += escHtml(t.char);
+    if (t.close !== null) { html += t.close; openTag = null; }
+  }
+  /* Close any dangling tag so the browser doesn't bleed styles */
+  if (openTag) html += openTag;
+  return html;
+}
+
+function escHtml(c) {
+  return c === '&' ? '&amp;' : c === '<' ? '&lt;' : c === '>' ? '&gt;' : c;
+}
+
+/* Legacy full-render (used outside typewriter e.g. lesson intro lines) */
+function renderDialogueMarkup(str) {
+  if (!str) return renderFromTokens(tokeniseMarkup(str));
+  return renderFromTokens(tokeniseMarkup(str));
+}
+
+/* ---------- Visual Novel Engine ---------- */
+class VNEngine {
+  constructor(game, settings, lessonOverlay) {
+    this.game         = game;        // game.json content
+    this.settings     = settings;
+    this.lesson       = lessonOverlay;
+
+    /* DOM refs */
+    this.gameUI       = document.getElementById('game-ui');
     this.bg           = document.getElementById('background');
     this.envOverlay   = document.getElementById('env-overlay');
     this.envLabel     = document.getElementById('env-overlay-label');
@@ -51,24 +305,31 @@ class VNEngine {
     this.nameTagRight = document.getElementById('name-tag-right');
     this.choicePanel  = document.getElementById('choice-panel');
     this.choiceOptions= document.getElementById('choice-options');
+    this.choiceAvatar = document.getElementById('choice-avatar');
 
-    this.currentLocation  = null;
+    /* State */
+    this.flags            = { ...game.flags };     // deep copy of initial flags
+    this.dialogueCache    = {};                     // loc id → loaded JSON
     this.visitedLocations = new Set();
+    this.seenChoices      = new Set();              // textes de choix déjà affichés au moins une fois
+    this.currentLocation  = null;
     this._nextAction      = null;
     this.busy             = false;
     this.autoplayTimer    = null;
     this.typewriterTimer  = null;
     this.typing           = false;
     this._currentText     = '';
+    this._lastAlign       = 'left';
+    this._lastSpeakerImg  = null;
     this.inputHandler     = null;
-    this.flags            = {};
   }
 
-  /* ---- lifecycle ---- */
+  /* ---- Lifecycle ---- */
   start() {
     this.resetUI();
     this.bindInput();
-    this.goToLocation(this.data.game_settings?.start_location || this.data.start_location);
+    const startLoc = this.game.game_settings?.start_location || 'intro';
+    this.goToLocation(startLoc);
   }
 
   stop() {
@@ -81,7 +342,7 @@ class VNEngine {
   resetUI() {
     this.dialogueBox.classList.add('hidden');
     this.dialogueHint.classList.add('hidden');
-    this.choicePanel.classList.add('hidden');
+    this._hideChoices();
     this.spriteLeft.classList.add('hidden');
     this.spriteRight.classList.add('hidden');
     this.nameTagLeft.classList.add('hidden');
@@ -90,12 +351,13 @@ class VNEngine {
     this.envOverlay.classList.add('hidden');
   }
 
-  /* ---- input ---- */
+  /* ---- Input ---- */
   bindInput() {
     this.inputHandler = (e) => {
       if (e.type === 'keydown' && e.code !== 'Space') return;
       if (this.busy) return;
       if (!this.choicePanel.classList.contains('hidden')) return;
+      if (!this.lesson.el.classList.contains('hidden')) return;
       e.preventDefault?.();
       if (this.typing) this.skipTypewriter();
       else this.advance();
@@ -105,11 +367,11 @@ class VNEngine {
   }
 
   unbindInput() {
+    if (!this.inputHandler) return;
     document.removeEventListener('keydown', this.inputHandler);
     this.dialogueBox.removeEventListener('click', this.inputHandler);
   }
 
-  /* ---- advance (callback-based) ---- */
   advance() {
     this.clearAutoplay();
     this.clearTypewriter();
@@ -119,140 +381,440 @@ class VNEngine {
     if (next) next();
   }
 
-  /* ---- location flow ---- */
-  goToLocation(id) {
-    const loc = this.data.locations[id];
-    if (!loc) { console.warn('Location not found:', id); return; }
+  /* ---- Location loader (lazy) ---- */
+  async loadLocation(id) {
+    if (this.dialogueCache[id]) return this.dialogueCache[id];
+    const locDef = this.game.locations[id];
+    if (!locDef) { console.warn('No location def for:', id); return null; }
+    try {
+      const data = await fetch(locDef.dialogue_file).then(r => r.json());
+      this.dialogueCache[id] = data;
+      return data;
+    } catch (err) {
+      console.error('Failed to load dialogue:', locDef.dialogue_file, err);
+      return null;
+    }
+  }
+
+  /* ---- Navigate ---- */
+  async goToLocation(id) {
+    const locDef = this.game.locations[id];
+    if (!locDef) { console.warn('Location not found:', id); return; }
 
     this.currentLocation = id;
-    const env = this.data.environments[loc.environment];
+    const env = this.game.environments[locDef.environment] || {};
 
     this.busy = true;
     this._nextAction = null;
-    this.choicePanel.classList.add('hidden');
+    this._hideChoices();
     this.dialogueBox.classList.add('hidden');
     this.dialogueHint.classList.add('hidden');
+    this.nameTagLeft.classList.add('hidden');
+    this.nameTagRight.classList.add('hidden');
     this.spriteLeft.classList.add('hidden');
     this.spriteRight.classList.add('hidden');
     this.bg.classList.remove('blur-dark');
 
-    this.envLabel.textContent = env ? env.label : id;
+    /* Écran noir */
+    this.envLabel.textContent = '';
     this.envOverlay.classList.remove('hidden');
 
-    setTimeout(() => {
-      this.bg.style.background = env ? env.color || '#333' : '#333';
-      this.envOverlay.classList.add('hidden');
-      this.busy = false;
+    /* Typewriter du nom de lieu sur l'overlay + chargement en parallèle */
+    const label = env.label || id;
+    const [locData] = await Promise.all([
+      this.loadLocation(id),
+      this._typewriteOverlayLabel(label, 80)
+    ]);
 
-      const isNew = !this.visitedLocations.has(id);
-      this.visitedLocations.add(id);
+    /* Pause 600ms après que le nom est apparu */
+    await new Promise(r => setTimeout(r, 600));
 
-      if (isNew && loc.intro && loc.intro.length > 0) {
-        this.playSequence(loc.intro, () => this.showActionMenu());
+    this.bg.style.background = env.color || '#111';
+    this.envOverlay.classList.add('hidden');
+    this.busy = false;
+
+    if (!locData) { console.warn('No dialogue data for:', id); return; }
+
+    const isNew = !this.visitedLocations.has(id);
+    this.visitedLocations.add(id);
+
+    /* Scene intro dans la dialogue box (remplace narrateur intro)
+       Permet des variantes contextuelles via env.scene_intro_alt = [{requires_flag/...., text}]
+       Première variante satisfaite l'emporte ; sinon fallback env.scene_intro. */
+    const sceneIntro = this._pickSceneIntro(env);
+    /* Une variante peut être marquée { always: true } pour rejouer même en revisite */
+    const playIntro = isNew || (sceneIntro && sceneIntro._always);
+
+    const runMain = () => {
+      const onFirstVisit = locData.on_first_visit || [];
+      if (isNew && onFirstVisit.length > 0) {
+        this.runSequence(onFirstVisit, () => this._runConditionalVisit(locData));
       } else {
-        this.showActionMenu();
+        this._runConditionalVisit(locData);
       }
-    }, 2000);
-  }
-
-  showActionMenu() {
-    const loc = this.data.locations[this.currentLocation];
-    const options = [];
-
-    (loc.characters_present || loc.characters || []).forEach(charId => {
-      const char = this.data.characters[charId];
-      if (char) options.push({
-        text: `Parler à ${char.name}`,
-        action: () => this.talkToCharacter(charId)
-      });
-    });
-
-    if ((loc.connections || []).length > 0) {
-      options.push({ text: 'Se déplacer', action: () => this.showTravelMenu() });
-    }
-
-    this.playLine(
-      { character: 'detective', sprite: 'doubting', text: 'Que devrais-je faire ?' },
-      () => this.showChoices(options)
-    );
-  }
-
-  talkToCharacter(charId) {
-    this.choicePanel.classList.add('hidden');
-    this.bg.classList.remove('blur-dark');
-    const charData = this.data.character_dialogues[charId];
-    if (!charData) { this.showActionMenu(); return; }
-    let lines = charData.default_dialogue || [];
-    for (const cond of charData.conditional_dialogues || []) {
-      if (cond.requires_flag && this.flags[cond.requires_flag]) {
-        lines = cond.dialogue;
-        break;
-      }
-    }
-    this.playSequence(lines, () => {
-      this.playLine(
-        { character: 'detective', sprite: 'doubting', text: 'Hmmm... ça ne m\'avance pas beaucoup.' },
-        () => this.showActionMenu()
-      );
-    });
-  }
-
-  showTravelMenu() {
-    this.choicePanel.classList.add('hidden');
-    this.bg.classList.remove('blur-dark');
-    const loc = this.data.locations[this.currentLocation];
-    const options = (loc.connections || []).map(destId => {
-      const dest = this.data.locations[destId];
-      const env  = dest ? this.data.environments[dest.environment] : null;
-      return {
-        text: env ? env.label : destId,
-        action: () => this.goToLocation(destId)
-      };
-    });
-    this.playLine(
-      { character: 'detective', sprite: 'normal', text: 'Où devrais-je me rendre ?' },
-      () => this.showChoices(options)
-    );
-  }
-
-  /* ---- dialogue playback ---- */
-  playSequence(lines, onComplete) {
-    const step = (i) => {
-      if (i >= lines.length) { onComplete(); return; }
-      const line = lines[i];
-      this.playLine(line, () => {
-        if (line.set_flag)       this.flags[line.set_flag] = true;
-        if (line.trigger_event)  this.handleEvent(line.trigger_event);
-        step(i + 1);
-      });
     };
-    step(0);
+
+    if (sceneIntro && playIntro) {
+      this._playSceneIntro(sceneIntro.text || sceneIntro, runMain);
+    } else {
+      runMain();
+    }
   }
 
-  handleEvent(eventId) {
-    // placeholder — future: show flashback image overlay
-    console.log('[Event triggered]', eventId);
+  /* Choisit la scene_intro contextuelle :
+     - env.scene_intro_alt (array) → première entrée dont les conditions de flags matchent
+     - sinon env.scene_intro (fallback)
+     Retourne { text, _always } ou null. */
+  _pickSceneIntro(env) {
+    const alts = env.scene_intro_alt || [];
+    for (const alt of alts) {
+      if (alt.requires_flag && !this.flags[alt.requires_flag]) continue;
+      if (alt.requires_flags && !alt.requires_flags.every(f => this.flags[f])) continue;
+      if (alt.requires_any_flag && !alt.requires_any_flag.some(f => this.flags[f])) continue;
+      if (alt.forbids_flag && this.flags[alt.forbids_flag]) continue;
+      return { text: alt.text, _always: !!alt.always };
+    }
+    if (env.scene_intro) return { text: env.scene_intro, _always: false };
+    return null;
   }
 
+  /* Joue d'éventuels on_visit conditionnels (rejouables à chaque visite si flags matchent + once_flag pas encore set) */
+  _runConditionalVisit(locData) {
+    const visits = locData.on_visit || [];
+    const triggered = visits.find(v => {
+      if (v.once_flag && this.flags[v.once_flag]) return false;
+      if (v.requires_flag && !this.flags[v.requires_flag]) return false;
+      if (v.requires_flags && !v.requires_flags.every(f => this.flags[f])) return false;
+      if (v.requires_any_flag && !v.requires_any_flag.some(f => this.flags[f])) return false;
+      if (v.forbids_flag && this.flags[v.forbids_flag]) return false;
+      return true;
+    });
+    if (triggered) {
+      if (triggered.once_flag) this.flags[triggered.once_flag] = true;
+      this.runSequence(triggered.sequence || [], () => this.showLocationMenu(locData));
+    } else {
+      this.showLocationMenu(locData);
+    }
+  }
+
+  /* Typewriter lettre par lettre sur le label de l'overlay */
+  _typewriteOverlayLabel(text, speed) {
+    return new Promise(resolve => {
+      this.envLabel.textContent = '';
+      let i = 0;
+      const timer = setInterval(() => {
+        this.envLabel.textContent = text.slice(0, ++i);
+        if (i >= text.length) { clearInterval(timer); resolve(); }
+      }, speed);
+    });
+  }
+
+  /* Affiche la scène intro via playLine avec le char narrateur */
+  _playSceneIntro(text, onComplete) {
+    this.playLine({ char: 'narrateur', text }, onComplete);
+  }
+
+  /* ---- Location menu — toujours 2 choix max : Parler / Se déplacer ---- */
+  showLocationMenu(locData) {
+    if (!locData.menu && !locData.sequence) {
+      console.warn('Location has no menu or sequence:', this.currentLocation);
+      return;
+    }
+
+    /* Séquence linéaire (intro) */
+    if (locData.sequence) {
+      this.runSequence(locData.sequence, () => {});
+      return;
+    }
+
+    const menuLine = locData.menu?.line || this.game.game_settings?.menu_prompt || { char: 'will', text: '...', sprite: 'doubting' };
+
+    /* Construit les 2 choix principaux */
+    const buildTopOptions = () => {
+      const opts = [];
+
+      /* ① Parler à [personnage présent] — uniquement s'il y en a un (et que ses conditions de flag passent) */
+      const chars = (locData.characters_present || []).filter(c => {
+        if (c.requires_flag && !this.flags[c.requires_flag]) return false;
+        if (c.requires_flags && !c.requires_flags.every(f => this.flags[f])) return false;
+        if (c.requires_any_flag && !c.requires_any_flag.some(f => this.flags[f])) return false;
+        if (c.forbids_flag && this.flags[c.forbids_flag]) return false;
+        return true;
+      });
+      if (chars.length > 0) {
+        const char = chars[0]; // un seul perso par lieu
+        opts.push({
+          text: `Parler à ${char.label}`,
+          action: () => {
+            this._hideChoices();
+            this.bg.classList.remove('blur-dark');
+            this.showCharacterMenu(locData);
+          }
+        });
+      }
+
+      /* ② Se déplacer — toujours disponible via global_connections */
+      opts.push({
+        text: 'Se déplacer',
+        action: () => {
+          this._hideChoices();
+          this.bg.classList.remove('blur-dark');
+          this.showTravelMenu(locData);
+        }
+      });
+
+      return opts;
+    };
+
+    this.playLine(menuLine, () => this.showChoices(buildTopOptions()));
+  }
+
+  /* ---- Menu "Parler à" — options de dialogue du perso ---- */
+  showCharacterMenu(locData) {
+    const menuOpts = locData.menu?.options || [];
+
+    const buildCharOptions = () => {
+      const opts = [];
+      menuOpts.forEach(opt => {
+        if (opt.requires_flag  && !this.flags[opt.requires_flag])                return;
+        if (opt.requires_flags && !opt.requires_flags.every(f => this.flags[f])) return;
+        if (opt.requires_any_flag && !opt.requires_any_flag.some(f => this.flags[f])) return;
+        if (opt.forbids_flag && this.flags[opt.forbids_flag])                    return;
+        if (opt.once_flag && this.flags[opt.once_flag])                          return;
+
+        opts.push({
+          id: opt.id,
+          text: opt.text,
+          action: () => {
+            this._hideChoices();
+            this.bg.classList.remove('blur-dark');
+
+            const proceed = () => {
+              if (opt.goto) { this.goToLocation(opt.goto); return; }
+              if (opt.sequence) this.runSequence(opt.sequence, () => this.showLocationMenu(locData));
+            };
+            this._sayChoice(opt.text, proceed);
+          }
+        });
+      });
+
+      opts.push({
+        text: 'Laisser tomber',
+        action: () => {
+          this._hideChoices();
+          this.bg.classList.remove('blur-dark');
+          this.showLocationMenu(locData);
+        }
+      });
+
+      return opts;
+    };
+
+    this.playLine(
+      this.game.game_settings?.menu_prompt_talk || { char: 'will', text: '...', sprite: 'doubting' },
+      () => this.showChoices(buildCharOptions())
+    );
+  }
+
+  /* ---- Menu "Se déplacer" — lit global_connections, filtre la pièce actuelle ---- */
+  showTravelMenu(locData) {
+    const connections = (this.game.global_connections || []).filter(c => {
+      if (c.goto === this.currentLocation)                                       return false;
+      if (c.requires_flag  && !this.flags[c.requires_flag])                     return false;
+      if (c.requires_flags && !c.requires_flags.every(f => this.flags[f]))      return false;
+      if (c.requires_any_flag && !c.requires_any_flag.some(f => this.flags[f])) return false;
+      if (c.forbids_flag && this.flags[c.forbids_flag])                         return false;
+      return true;
+    });
+
+    const opts = connections.map(c => ({
+      text: c.label,
+      action: () => {
+        this._hideChoices();
+        this.bg.classList.remove('blur-dark');
+        this.goToLocation(c.goto);
+      }
+    }));
+
+    opts.push({
+      text: 'Laisser tomber',
+      action: () => {
+        this._hideChoices();
+        this.bg.classList.remove('blur-dark');
+        this.showLocationMenu(locData);
+      }
+    });
+
+    this.playLine(
+      this.game.game_settings?.menu_prompt_travel || { char: 'will', text: '...', sprite: 'doubting' },
+      () => this.showChoices(opts)
+    );
+  }
+
+  /* ---- Sequence runner ---- */
+  runSequence(steps, onComplete) {
+    const run = async (i) => {
+      if (i >= steps.length) { onComplete(); return; }
+      const step = steps[i];
+      const next = () => run(i + 1);
+
+      switch (step.type) {
+
+        case 'line':
+          this.playLine(step, next);
+          break;
+
+        case 'set_flag':
+          this.flags[step.flag] = true;
+          next();
+          break;
+
+        case 'lesson': {
+          const showLesson = async () => { await this.lesson.show(step); next(); };
+          if (step.intro) {
+            this.playLine({ char: step.intro.char || 'will', text: step.intro.text, sprite: step.intro.sprite || 'normal' }, showLesson);
+          } else {
+            await showLesson();
+          }
+          break;
+        }
+
+        case 'choice':
+          this.showInlineChoices(step, onComplete, i, steps, next);
+          break;
+
+        case 'branch':
+          /* Conditional inline option — shown only if flag conditions match */
+          if (step.requires_flag && !this.flags[step.requires_flag]) { next(); break; }
+          if (step.requires_flags && !step.requires_flags.every(f => this.flags[f])) { next(); break; }
+          if (step.requires_any_flag && !step.requires_any_flag.some(f => this.flags[f])) { next(); break; }
+          if (step.forbids_flag && this.flags[step.forbids_flag]) { next(); break; }
+          this.showInlineChoices(
+            { options: [step.option, { text: 'Pas maintenant', then_next: true }] },
+            onComplete, i, steps, next
+          );
+          break;
+
+        case 'goto':
+          this.goToLocation(step.location || step.goto);
+          break;
+
+        case 'event':
+          this.handleEvent(step.id, onComplete);
+          break;
+
+        default:
+          next();
+      }
+    };
+    run(0);
+  }
+
+  /* ---- Rejoue le texte du choix comme ligne de Will avant d'exécuter onDone ---- */
+  _sayChoice(text, onDone) {
+    this.playLine({ char: 'will', text, sprite: 'normal' }, onDone);
+  }
+
+  /* ---- Inline choice (inside a sequence) ---- */
+  showInlineChoices(step, onComplete, _i, _steps, fallbackNext) {
+    const options = (step.options || []).map(opt => ({
+      text: opt.text,
+      action: () => {
+        this._hideChoices();
+        this.bg.classList.remove('blur-dark');
+
+        const proceed = () => {
+          if (opt.then_next) { fallbackNext(); return; }
+          if (opt.then)      { this.goToLocation(opt.then); return; }
+
+          const seq = opt.sequence || [];
+          const afterSeq = () => {
+            if (opt.then) this.goToLocation(opt.then);
+            else fallbackNext();
+          };
+          if (seq.length) this.runSequence(seq, afterSeq);
+          else afterSeq();
+        };
+
+        this._sayChoice(opt.text, proceed);
+      }
+    }));
+    this.showChoices(options);
+  }
+
+  /* ---- Event handler ---- */
+  handleEvent(eventId, onComplete) {
+    switch (eventId) {
+      case 'fin_vraie':
+        this.showEndScreen('VÉRITÉ COMPLÈTE', 'Affaire résolue. Toutes les preuves réunies.', '#1a3a1a');
+        break;
+      case 'fin_partielle':
+        this.showEndScreen('FIN PARTIELLE', 'Il manque une pièce. Retournez enquêter.', '#1a2a3a', () => this.goToLocation('jia'));
+        break;
+      case 'fin_echec':
+        this.showEndScreen('ÉCHEC', 'Sans preuve, il n\'y a pas de conclusion. Retournez enquêter.', '#2a1a1a', () => this.goToLocation('jia'));
+        break;
+      default:
+        console.warn('[Event]', eventId);
+        if (onComplete) onComplete();
+    }
+  }
+
+  showEndScreen(title, body, color, onBack) {
+    this.bg.style.background = color || '#000';
+
+    this.dialogueBox.classList.add('hidden');
+    this._hideChoices();
+    this.spriteLeft.classList.add('hidden');
+    this.spriteRight.classList.add('hidden');
+
+    const opts = [];
+    if (onBack) opts.push({ text: 'Continuer l\'enquête', action: () => { this._hideChoices(); onBack(); } });
+    opts.push({ text: 'Retour au menu', action: () => { this._hideChoices(); this.stop(); window._app?.goToTitle(); } });
+
+    this.playLine({ char: 'narrateur', text: `${title} — ${body}` }, () => this.showChoices(opts));
+  }
+
+  /* ---- Line playback ---- */
   playLine(line, onComplete) {
-    const char = this.data.characters[line.character];
-    if (!char) { onComplete(); return; }
+    if (!line) { onComplete(); return; }
 
-    const align         = char.align === 'right' ? 'right' : 'left';
-    const speakerSprite = align === 'left' ? this.spriteLeft  : this.spriteRight;
-    const otherSprite   = align === 'left' ? this.spriteRight : this.spriteLeft;
+    const charDef = this.game.characters[line.char || line.character];
 
+    /* Narrateur — boîte visible, pas de name tag, style italique */
+    const isNarrator = !charDef || !!charDef.italic;
+    if (isNarrator) {
+      this.nameTagLeft.classList.add('hidden');
+      this.nameTagRight.classList.add('hidden');
+      this.spriteLeft.classList.add('hidden');
+      this.spriteRight.classList.add('hidden');
+      this.dialogueBox.classList.remove('hidden');
+      this.dialogueBox.classList.remove('italic-line');
+      this.dialogueText.style.textAlign = 'left';
+      this.dialogueText.classList.add('narrator');
+      this._nextAction = onComplete;
+      this.typewritePlain(line.text || '', () => this._afterType());
+      return;
+    }
+
+    this.dialogueBox.classList.remove('italic-line');
+
+    const align        = charDef.align === 'right' ? 'right' : 'left';
+    const speakerSprite= align === 'left' ? this.spriteLeft  : this.spriteRight;
+    const otherSprite  = align === 'left' ? this.spriteRight : this.spriteLeft;
+
+    /* Sprite */
     speakerSprite.classList.remove('hidden');
-    speakerSprite.style.backgroundImage = '';
     let img = speakerSprite.querySelector('img');
-    if (char.sprite && line.sprite) {
+    if (charDef.sprite && line.sprite) {
       if (!img) {
         img = document.createElement('img');
         img.style.cssText = 'height:100%;width:auto;display:block;';
         speakerSprite.appendChild(img);
       }
-      img.src = `${char.sprite}/${line.sprite}.png`;
+      img.src = `${charDef.sprite}/${line.sprite}.png`;
       img.style.display = 'block';
+      this._lastSpeakerImg = img.src;
     } else if (img) {
       img.style.display = 'none';
     }
@@ -264,48 +826,123 @@ class VNEngine {
       otherSprite.classList.remove('active');
     }
 
+    /* Name tag */
     this.nameTagLeft.classList.toggle('hidden',  align !== 'left');
     this.nameTagRight.classList.toggle('hidden', align !== 'right');
-    if (align === 'left') this.nameTagLeft.textContent  = char.name;
-    else                  this.nameTagRight.textContent = char.name;
+    const nameTag = align === 'left' ? this.nameTagLeft : this.nameTagRight;
+    nameTag.textContent = charDef.name;
+    nameTag.style.background = charDef.color || '';
+    nameTag.style.borderColor = charDef.color ? `color-mix(in srgb, ${charDef.color} 60%, #fff 40%)` : '';
+    nameTag.style.color = '#f4f1e8';
+
+    /* Gradient dialogue box : couleur personnage en haut → bleu foncé en bas */
+    const dialogBg = charDef.color
+      ? `linear-gradient(180deg, color-mix(in srgb, ${charDef.color} 18%, #111c2e) 0%, #070e1c 100%)`
+      : 'linear-gradient(180deg, #111c2e 0%, #070e1c 100%)';
+    this.dialogueBox.style.background = dialogBg;
+
+    this.dialogueBox.classList.remove('italic-line');
+    this.dialogueText.classList.remove('narrator');
+    this.dialogueText.style.textAlign = '';
+    this._lastAlign = align;
 
     this.dialogueBox.classList.remove('hidden');
     this._nextAction = onComplete;
 
-    this.typewrite(line.text, () => {
-      if (this.settings.autoplay) {
-        const delay = Math.max(800, line.text.length * 30);
-        this.autoplayTimer = setTimeout(() => this.advance(), delay);
-      } else {
-        this.dialogueHint.classList.remove('hidden');
-      }
-    });
+    this.typewrite(line.text || '', () => this._afterType());
   }
 
-  /* ---- choices ---- */
+  _afterType() {
+    if (this.settings.autoplay) {
+      const delay = Math.max(800, (this._currentText.length || 40) * 28);
+      this.autoplayTimer = setTimeout(() => this.advance(), delay);
+    } else {
+      this.dialogueHint.classList.remove('hidden');
+    }
+  }
+
+  _hideChoices() {
+    this.choicePanel.classList.add('hidden');
+    this.gameUI.classList.remove('choices-active');
+  }
+
+  /* ---- Choices ---- */
   showChoices(options) {
     this.bg.classList.add('blur-dark');
     this.dialogueHint.classList.add('hidden');
+    this.spriteLeft.classList.add('hidden');
+    this.spriteRight.classList.add('hidden');
+    this.dialogueBox.classList.remove('hidden');
+    this.gameUI.classList.add('choices-active');
+
+    /* Avatar — toujours Will à gauche */
+    this.choiceAvatar.innerHTML = '';
+    const willDef = this.game.characters['will'];
+    if (willDef?.sprite) {
+      const img = document.createElement('img');
+      img.src = `${willDef.sprite}/doubting.png`;
+      this.choiceAvatar.appendChild(img);
+    }
+    this.choicePanel.classList.remove('choice-right');
+    this.choicePanel.classList.add('choice-left');
+
     this.choiceOptions.innerHTML = '';
+    const btns = [];
+    /* "Nouveau" = option pédagogique (a un opt.id stable) jamais cliquée.
+       Les options sans id (navigation, système, voyage, inline) ne sont jamais marquées. */
     options.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'choice choice-btn';
       btn.textContent = opt.text;
-      btn.addEventListener('click', () => opt.action());
+      const id = opt.id;
+      if (id && !this.seenChoices.has(id)) {
+        btn.classList.add('choice-new');
+      }
+      btn.addEventListener('click', () => {
+        if (id) this.seenChoices.add(id);
+        opt.action();
+      });
       this.choiceOptions.appendChild(btn);
+      btns.push(btn);
     });
     this.choicePanel.classList.remove('hidden');
   }
 
-  /* ---- typewriter ---- */
+  /* ---- Typewriter ---- */
   typewrite(text, onComplete) {
-    this._currentText = text;
+    this._currentText     = text;
+    const tokens          = tokeniseMarkup(text);
+    this._currentRendered = renderFromTokens(tokens);
+    this.typing = true;
+    this.dialogueText.innerHTML = '';
+    let i = 0;
+    const speed = Math.max(22, Math.min(55, 2800 / Math.max(tokens.length, 1)));
+    this.typewriterTimer = setInterval(() => {
+      const tok = tokens[i];
+      i++;
+      /* Shake fires on first char of a marked segment */
+      if (tok.shake) this._shake(tok.shake);
+      /* Rebuild full HTML up to current position — avoids innerHTML+= breaking open tags */
+      this.dialogueText.innerHTML = renderFromTokens(tokens, i);
+      if (i >= tokens.length) {
+        clearInterval(this.typewriterTimer);
+        this.typewriterTimer = null;
+        this.typing = false;
+        onComplete();
+      }
+    }, speed);
+  }
+
+  typewritePlain(text, onComplete) {
+    this._currentText     = text;
+    this._currentRendered = text;
     this.typing = true;
     this.dialogueText.textContent = '';
     let i = 0;
-    const speed = Math.max(25, Math.min(60, 3000 / text.length));
+    const speed = Math.max(22, Math.min(55, 2800 / Math.max(text.length, 1)));
     this.typewriterTimer = setInterval(() => {
-      this.dialogueText.textContent = text.slice(0, ++i);
+      i++;
+      this.dialogueText.textContent = text.slice(0, i);
       if (i >= text.length) {
         clearInterval(this.typewriterTimer);
         this.typewriterTimer = null;
@@ -315,27 +952,37 @@ class VNEngine {
     }, speed);
   }
 
+  /* ---- Screen shake ---- */
+  _shake(level) {
+    /* level 1 = ## (léger), level 2 = ### (fort) */
+    const el = document.getElementById('screen-game');
+    const cls = level >= 2 ? 'shake-strong' : 'shake-light';
+    el.classList.remove('shake-light', 'shake-strong');
+    /* force reflow so re-trigger works */
+    void el.offsetWidth;
+    el.classList.add(cls);
+    el.addEventListener('animationend', () => el.classList.remove(cls), { once: true });
+  }
+
   skipTypewriter() {
     clearInterval(this.typewriterTimer);
     this.typewriterTimer = null;
     this.typing = false;
-    this.dialogueText.textContent = this._currentText;
+    if (this.dialogueText.classList.contains('narrator')) {
+      this.dialogueText.textContent = this._currentRendered;
+    } else {
+      this.dialogueText.innerHTML = this._currentRendered;
+    }
     this.dialogueHint.classList.remove('hidden');
   }
 
   clearTypewriter() {
-    if (this.typewriterTimer) {
-      clearInterval(this.typewriterTimer);
-      this.typewriterTimer = null;
-    }
+    if (this.typewriterTimer) { clearInterval(this.typewriterTimer); this.typewriterTimer = null; }
     this.typing = false;
   }
 
   clearAutoplay() {
-    if (this.autoplayTimer) {
-      clearTimeout(this.autoplayTimer);
-      this.autoplayTimer = null;
-    }
+    if (this.autoplayTimer) { clearTimeout(this.autoplayTimer); this.autoplayTimer = null; }
   }
 }
 
@@ -344,20 +991,18 @@ class App {
   constructor() {
     this.settings = Settings.load();
     this.screens  = new ScreenManager();
+    this.lesson   = new LessonOverlay();
     this.engine   = null;
-    this.data     = null;
+    this.game     = null;
+    window._app   = this;
   }
 
   async init() {
     try {
-      const [environments, dialogues] = await Promise.all([
-        fetch('./environments.json').then(r => r.json()),
-        fetch('./dialogues.json').then(r => r.json()),
-      ]);
-      this.data = { ...dialogues, environments };
+      this.game = await fetch('./data/game.json').then(r => r.json());
     } catch (err) {
-      console.error('Failed to load data files', err);
-      alert('Impossible de charger environments.json ou dialogues.json. Utilisez un serveur HTTP.');
+      console.error('Failed to load data/game.json', err);
+      alert('Impossible de charger data/game.json. Utilisez un serveur HTTP local.');
       return;
     }
 
@@ -368,39 +1013,35 @@ class App {
 
   bindMenu() {
     const titleScreen = document.getElementById('screen-title');
-    const defaultBg = "url('images/titlescreen.png')";
+    const defaultBg   = "url('images/titlescreen.png')";
 
     document.querySelectorAll('.menu [data-action]').forEach(btn => {
-      // Background swap on hover
       btn.addEventListener('mouseenter', () => {
-        const action = btn.dataset.action;
+        const a = btn.dataset.action;
         let bg = defaultBg;
-        if (action === 'settings') bg = "url('images/titlescreen-settings.png')";
-        else if (action === 'credits') bg = "url('images/titlescreen-credits.png')";
+        if (a === 'settings') bg = "url('images/titlescreen-settings.png')";
+        else if (a === 'credits') bg = "url('images/titlescreen-credits.png')";
         titleScreen.style.setProperty('--title-bg', bg);
       });
 
-      /* No reset on mouseleave to keep the last hovered background visible */
-      /* btn.addEventListener('mouseleave', () => {
-        titleScreen.style.setProperty('--title-bg', defaultBg);
-      }); */
-
       btn.addEventListener('click', () => {
         const a = btn.dataset.action;
-        if      (a === 'play')       {
+        if (a === 'play') {
           this.confirm(
-            "LANCER LA PARTIE", 
-            "Vous pouvez quitter à tout moment, mais notez qu'aucune sauvegarde n'est disponible. Toute progression sera perdue à la fermeture. Êtes-vous prêt à commencer l'aventure ?", 
+            'LANCER LA PARTIE',
+            'Aucune sauvegarde disponible. Toute progression sera perdue à la fermeture. Prêt à commencer ?',
             () => this.startGame()
           );
+        } else if (a === 'settings') {
+          this.screens.show('settings');
+        } else if (a === 'credits') {
+          this.screens.show('credits');
+        } else if (a === 'back-title') {
+          this.goToTitle();
         }
-        else if (a === 'settings')   this.screens.show('settings');
-        else if (a === 'credits')    this.screens.show('credits');
-        else if (a === 'back-title') this.goToTitle();
       });
     });
 
-    // Handle back buttons (they can also be found elsewhere)
     document.querySelectorAll(':not(.menu) [data-action="back-title"]').forEach(btn => {
       btn.addEventListener('click', () => this.goToTitle());
     });
@@ -429,7 +1070,7 @@ class App {
 
   startGame() {
     this.screens.show('game');
-    this.engine = new VNEngine(this.data, this.settings);
+    this.engine = new VNEngine(this.game, this.settings, this.lesson);
     this.engine.start();
   }
 
@@ -438,29 +1079,26 @@ class App {
     this.screens.show('title');
   }
 
-  /* ---- confirmation popup ---- */
   confirm(title, body, onConfirm) {
-    const popup = document.getElementById('screen-popup');
-    const titleEl = document.getElementById('popup-title');
-    const bodyEl = document.getElementById('popup-body');
+    const popup      = document.getElementById('screen-popup');
+    const titleEl    = document.getElementById('popup-title');
+    const bodyEl     = document.getElementById('popup-body');
     const confirmBtn = document.getElementById('popup-confirm');
-    const cancelBtn = document.getElementById('popup-cancel');
+    const cancelBtn  = document.getElementById('popup-cancel');
 
     titleEl.textContent = title;
-    bodyEl.textContent = body;
+    bodyEl.textContent  = body;
     popup.classList.remove('hidden');
 
     const close = () => {
       popup.classList.add('hidden');
       confirmBtn.onclick = null;
-      cancelBtn.onclick = null;
+      cancelBtn.onclick  = null;
     };
 
     confirmBtn.onclick = () => { close(); onConfirm(); };
-    cancelBtn.onclick = () => { close(); };
+    cancelBtn.onclick  = () => { close(); };
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  new App().init();
-});
+window.addEventListener('DOMContentLoaded', () => { new App().init(); });

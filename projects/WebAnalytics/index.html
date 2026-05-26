@@ -3,59 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VN Engine - POC</title>
+<title>BLUE S.E.A. — Le Crime Économique</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <!-- TITLE SCREEN -->
 <section id="screen-title" class="screen">
-
-  <!-- Logo — top right -->
-  <img class="title-logo" src="images/logo.png" alt="L'Affaire Blackwood">
-
-  <!-- Menu — vertical center, left side -->
+  <img class="title-logo" src="images/logo.png" alt="BLUE S.E.A.">
   <nav class="menu focus-group">
-    <button class="choice menu-btn" data-action="play" data-i18n="play">JOUER</button>
-    <button class="choice menu-btn" data-action="settings" data-i18n="settings">OPTIONS</button>
-    <button class="choice menu-btn" data-action="credits" data-i18n="credits">CREDITS</button>
+    <button class="choice menu-btn" data-action="play">JOUER</button>
+    <button class="choice menu-btn" data-action="settings">OPTIONS</button>
+    <button class="choice menu-btn" data-action="credits">CREDITS</button>
   </nav>
-
 </section>
 
 <!-- SETTINGS -->
 <section id="screen-settings" class="screen hidden">
   <div class="panel focus-group">
-    <h2 data-i18n="settings">Options</h2>
+    <h2>Options</h2>
     <div class="row">
-      <span data-i18n="music">Musique</span>
+      <span>Musique</span>
       <button id="toggle-music" class="toggle">ON</button>
     </div>
     <div class="row">
-      <span data-i18n="autoplay">Lecture auto</span>
+      <span>Lecture auto</span>
       <button id="toggle-autoplay" class="toggle">OFF</button>
     </div>
-    <button class="choice back focus-item" data-action="back-title" data-i18n="back">Retour</button>
+    <button class="choice back focus-item" data-action="back-title">Retour</button>
   </div>
 </section>
 
 <!-- CREDITS -->
 <section id="screen-credits" class="screen hidden">
   <div class="panel focus-group">
-    <h2 data-i18n="credits">CREDITS</h2>
+    <h2>CREDITS</h2>
     <div class="credits-grid">
       <div class="credit-card">
         <div class="credit-head"></div>
         <div class="credit-name">Leo TOSKU</div>
-        <div class="credit-role" data-i18n="role_dev">Design & Dev</div>
+        <div class="credit-role">Design & Dev</div>
       </div>
       <div class="credit-card">
         <div class="credit-head"></div>
         <div class="credit-name">Clement DEZON HULIN</div>
-        <div class="credit-role" data-i18n="role_writer">Scénariste</div>
+        <div class="credit-role">Scénariste</div>
       </div>
     </div>
-    <button class="choice back focus-item" data-action="back-title" data-i18n="back">Retour</button>
+    <button class="choice back focus-item" data-action="back-title">Retour</button>
   </div>
 </section>
 
@@ -70,25 +65,37 @@
   <!-- Background -->
   <div id="background"></div>
 
-  <!-- Sprites + dialogue box grouped and vertically centered -->
+  <!-- Sprites + dialogue -->
   <div id="game-ui">
     <div id="sprites">
-      <div id="sprite-left" class="sprite inactive hidden"></div>
+      <div id="sprite-left"  class="sprite inactive hidden"></div>
       <div id="sprite-right" class="sprite inactive hidden"></div>
     </div>
     <div id="dialogue-box" class="hidden">
-      <div id="name-tag-left" class="name-tag left hidden"></div>
+      <div id="name-tag-left"  class="name-tag left hidden"></div>
       <div id="name-tag-right" class="name-tag right hidden"></div>
       <div id="dialogue-text"></div>
       <div id="dialogue-hint" class="hidden"><img src="images/icon.png" alt=""></div>
     </div>
     <div id="choice-panel" class="hidden">
+      <div id="choice-avatar"></div>
       <div id="choice-options" class="focus-group"></div>
     </div>
   </div>
 
   <button id="back-to-title" class="choice back-small" data-action="back-title">×</button>
 </section>
+
+<!-- LESSON OVERLAY -->
+<div id="lesson-overlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="lesson-title">
+  <div id="lesson-panel">
+    <div id="lesson-header">
+      <h2 id="lesson-title">Leçon</h2>
+    </div>
+    <div id="lesson-body"></div>
+  </div>
+</div>
+<button id="lesson-close" class="choice choice-btn hidden" aria-label="Fermer">Continuer</button>
 
 <!-- REUSABLE POPUP -->
 <section id="screen-popup" class="screen hidden">
@@ -97,7 +104,7 @@
     <div id="popup-body" class="popup-body">Voulez-vous vraiment continuer ?</div>
     <div class="popup-buttons focus-group">
       <button id="popup-confirm" class="choice popup-btn">CONFIRMER</button>
-      <button id="popup-cancel" class="choice popup-btn">ANNULER</button>
+      <button id="popup-cancel"  class="choice popup-btn">ANNULER</button>
     </div>
   </div>
 </section>

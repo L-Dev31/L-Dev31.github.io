@@ -1,6 +1,0 @@
-{
-  "office":        { "label": "Bureau du Détective",    "color": "#2b2b3a" },
-  "crime_scene":   { "label": "Scène de Crime",         "color": "#3a1f1f" },
-  "interrogation": { "label": "Salle d'Interrogatoire", "color": "#1f2a3a" },
-  "mansion":       { "label": "Manoir Blackwood",       "color": "#2a1f2e" }
-}

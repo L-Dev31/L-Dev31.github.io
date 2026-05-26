@@ -1,0 +1,202 @@
+{
+  "_location": "jia",
+  "_comment": "Jia — checkpoint d'innocence Marine/Pascal + confirmation orale de la conversation IA (clé pour débloquer le mobile). Leçons : ROI/objectifs, matrice objectif/KPI/source/décision, reporting.",
+  "on_first_visit": [],
+  "menu": {
+    "options": [
+      {
+        "text": "Pourquoi soupçonniez-vous Marine de depenser a tort ?",
+        "id": "jia_factures",
+        "once_flag": "indice_factures",
+        "forbids_flag": "marine_dépensière",
+        "sequence": [
+          { "type": "line", "char": "jia",  "text": "Parce que je vois les **factures**. Des campagnes pub à rallonge, du matériel, des partenariats. La trésorerie fond, et elle, elle poste des stories.", "sprite": "angry" },
+          { "type": "set_flag", "flag": "indice_factures" },
+          { "type": "line", "char": "will", "text": "~~Note : Madame Seo a vu Marine **dépenser**, pas **saboter**. Nuance importante.~~", "sprite": "doubting" }
+        ]
+      },
+      {
+        "text": "Marine depense trop, mais ce n'est pas elle.",
+        "id": "jia_innocente_marine",
+        "requires_flag": "marine_dépensière",
+        "once_flag": "_jia_innocente_marine",
+        "sequence": [
+          { "type": "line", "char": "jia",  "text": "##Pas elle ?## Vous êtes sûr ? Elle a brûlé une **fortune** !", "sprite": "angry" },
+          { "type": "line", "char": "will", "text": "Brûler de l'argent n'est pas le **crime**. Le crime, c'est d'avoir fait **bannir** votre site. Marine ramène des visiteurs — c'est ce qui se passe **après** leur arrivée qui vous tue. Et ça, elle n'y touche pas.", "sprite": "normal" },
+          { "type": "line", "char": "jia",  "text": "~~...Alors qui.~~", "sprite": "normal" },
+          { "type": "line", "char": "will", "text": "**Patience.** Encore des pièces à recoller. Mais avant ça, parlons **objectifs** — sans ça, on ne pourra rien améliorer.", "sprite": "normal" },
+          {
+            "type": "lesson",
+            "id": "lesson_objectifs_roi",
+            "intro": { "char": "will", "text": "Marine dépense, Pascal rate sa home — mais sans **objectifs clairs**, personne dans cette boîte ne pouvait savoir ce qui comptait vraiment. Un objectif mal défini, c'est l'erreur avant toutes les autres. Voilà comment en définir un qui serve à quelque chose.", "sprite": "doubting" },
+            "title": "Objectifs mesurables, KPI et ROI",
+            "blocks": [
+              { "type": "heading", "content": "Définir un bon objectif" },
+              { "type": "text", "content": "Un objectif analytique doit être :" },
+              {
+                "type": "list",
+                "items": [
+                  "**Clair** — formulé sans ambiguïté",
+                  "**Mesurable** — relié à un indicateur chiffré",
+                  "**Utile pour le business** — orienté décision",
+                  "**Relié à une action observable** — pas un vœu pieux"
+                ]
+              },
+              { "type": "separator" },
+              { "type": "heading", "content": "Exemples d'objectifs digitaux" },
+              {
+                "type": "list",
+                "items": [
+                  "Obtenir 100 téléchargements de livre blanc",
+                  "Générer 30 demandes de devis",
+                  "Atteindre un taux de conversion de 2,5 %",
+                  "Réduire le coût par lead de 20 %",
+                  "Augmenter le panier moyen"
+                ]
+              },
+              { "type": "separator" },
+              { "type": "heading", "content": "Matrice Objectif / KPI / Outil / Décision" },
+              {
+                "type": "table",
+                "headers": ["Objectif business", "KPI principal", "Source", "Seuil", "Décision"],
+                "rows": [
+                  ["Générer des leads", "Formulaires envoyés", "GA4 + CRM", "50/mois", "Améliorer landing page"],
+                  ["Vendre en ligne", "Taux de conversion e-com", "GA4", "2,5 %", "Optimiser tunnel d'achat"],
+                  ["Accroître la notoriété", "Sessions trafic organique", "GA4 + Search Console", "+15 %", "Renforcer SEO"],
+                  ["Augmenter l'engagement", "Temps d'engagement moyen", "GA4", "+20 %", "Revoir contenu"]
+                ]
+              },
+              { "type": "separator" },
+              { "type": "heading", "content": "Le ROI — Retour sur investissement" },
+              { "type": "text", "content": "Formule simple : **ROI = (Gain obtenu − Coût investi) / Coût investi × 100**" },
+              { "type": "text", "content": "Exemple : coût campagne 2 000 € — marge générée 5 000 € → **ROI = 150 %**" },
+              { "type": "note", "content": "Regarder des chiffres sans lien avec un objectif concret est l'erreur la plus fréquente. Une donnée prend du sens uniquement reliée à une décision." }
+            ]
+          }
+        ]
+      },
+      {
+        "text": "Pascal a sabote l'UX, mais par maladresse.",
+        "id": "jia_pascal",
+        "requires_flag": "pascal_ux_catastrophe",
+        "once_flag": "jia_comprend_deux_causes",
+        "sequence": [
+          { "type": "line", "char": "jia",  "text": "Donc c'est **Pascal**. Sa page d'accueil **monstrueuse**.", "sprite": "angry" },
+          { "type": "line", "char": "will", "text": "Il a fait fuir des visiteurs, oui. Mais un mauvais design ne déclenche pas une **pénalité manuelle** de Google. La fuite des gens et la chute dans les classements sont **deux blessures différentes**. L'une est une erreur. L'autre est un **acte**.", "sprite": "doubting" },
+          { "type": "set_flag", "flag": "jia_comprend_deux_causes" }
+        ]
+      },
+      {
+        "text": "Cette conversation sur l'IA, il y a six mois ?",
+        "id": "jia_ia",
+        "requires_flag": "pascal_évoque_ia_jia",
+        "once_flag": "jia_confirme_conversation_ia",
+        "sequence": [
+          { "type": "line", "char": "jia",  "text": "~~...L'IA ?~~ Oui. Je crois. C'était une réunion d'équipe. Je parlais à voix haute, je disais que **les métiers allaient changer**, que le SEO automatique allait remplacer une partie du travail... ##C'était une réflexion générale.## Pas une menace.", "sprite": "normal" },
+          { "type": "line", "char": "will", "text": "Qui était là ?", "sprite": "doubting" },
+          { "type": "line", "char": "jia",  "text": "Toute l'équipe. Marine, Pascal, **Ina**. Pourquoi ?", "sprite": "normal" },
+          { "type": "line", "char": "will", "text": "~~Parce qu'à partir de ce jour-là, Ina a cessé de rire.~~ Madame Seo, quelqu'un dans cette pièce a entendu votre phrase comme une **condamnation**. Et a réagi en conséquence.", "sprite": "doubting" },
+          { "type": "set_flag", "flag": "jia_confirme_conversation_ia" },
+          { "type": "line", "char": "jia",  "text": "~~...Mon dieu.~~", "sprite": "normal" }
+        ]
+      },
+      {
+        "text": "Je veux vous parler du reporting que vous n'avez jamais eu.",
+        "id": "jia_reporting",
+        "requires_flag": "data_canaux",
+        "once_flag": "jia_comprend_reporting",
+        "sequence": [
+          { "type": "line", "char": "will", "text": "Votre équipe n'a jamais produit un seul **rapport lisible**. Des chiffres épars, des captures d'écran, du ressenti. Pas de dashboard, pas de structure, pas de recommandations.", "sprite": "doubting" },
+          { "type": "line", "char": "jia",  "text": "J'ai toujours pensé que mes équipes savaient ce qu'elles faisaient. Je ne leur ai **jamais demandé de me prouver**.", "sprite": "normal" },
+          { "type": "line", "char": "will", "text": "Un bon reporting sert à **informer, piloter, comparer et décider**. Pas une liste de métriques sans lien avec un objectif.", "sprite": "normal" },
+          { "type": "set_flag", "flag": "jia_comprend_reporting" },
+          {
+            "type": "lesson",
+            "id": "lesson_reporting",
+            "intro": { "char": "will", "text": "Madame Seo n'a jamais demandé de **rapport** à son équipe. Et son équipe n'en a jamais produit. Résultat : des captures d'écran éparpillées, du ressenti, aucune trace. Un reporting, ça ne se fait pas pour remplir un template — ça se fait pour **piloter**.", "sprite": "doubting" },
+            "title": "Créer un reporting efficace avec Looker Studio",
+            "blocks": [
+              { "type": "heading", "content": "Dashboard vs Rapport" },
+              {
+                "type": "table",
+                "headers": ["", "Dashboard", "Rapport"],
+                "rows": [
+                  ["Nature", "Vue synthétique", "Document détaillé"],
+                  ["Mise à jour", "Régulière, automatique", "Ponctuelle, commentée"],
+                  ["Objectif", "Pilotage", "Décision et justification"]
+                ]
+              },
+              { "type": "separator" },
+              { "type": "heading", "content": "Structure conseillée d'un rapport mensuel" },
+              {
+                "type": "list",
+                "items": [
+                  "Contexte et objectifs",
+                  "Chiffres clés (utilisateurs, événements clés, revenu)",
+                  "Acquisition (trafic par canal, campagne, coût)",
+                  "Engagement (temps moyen, pages vues, événements)",
+                  "Conversion (leads, taux, revenu)",
+                  "Analyse des écarts (comparaison N-1, commentaires)",
+                  "**Recommandations** (constat → explication → action → indicateur de suivi)"
+                ]
+              },
+              { "type": "separator" },
+              { "type": "heading", "content": "Looker Studio — premier dashboard" },
+              {
+                "type": "list",
+                "items": [
+                  "**Étape 1** — Ouvrir Looker Studio, créer un rapport vierge",
+                  "**Étape 2** — Connecter une source (GA4)",
+                  "**Étape 3** — Ajouter une carte de score : utilisateurs / événements clés",
+                  "**Étape 4** — Courbe : trafic dans le temps",
+                  "**Étape 5** — Tableau : source / support",
+                  "**Étape 6** — Histogramme : événements clés par canal",
+                  "**Étape 7** — Filtres (période, appareil, canal, campagne)"
+                ]
+              },
+              { "type": "separator" },
+              { "type": "heading", "content": "Choisir le bon visuel" },
+              {
+                "type": "table",
+                "headers": ["Type de donnée", "Visualisation"],
+                "rows": [
+                  ["Évolution dans le temps", "Courbe ou barres verticales"],
+                  ["Comparaison entre catégories", "Barres horizontales"],
+                  ["Proportion d'un tout", "Anneau, barres empilées en %"],
+                  ["Corrélation entre 2 variables", "Nuage de points"],
+                  ["Un chiffre clé unique", "Scorecard avec variation vs N-1"]
+                ]
+              },
+              { "type": "separator" },
+              { "type": "heading", "content": "Règles d'un bon dashboard" },
+              {
+                "type": "list",
+                "items": [
+                  "Peu d'indicateurs, bien choisis",
+                  "Chaque indicateur relié à un objectif",
+                  "Période contextualisée et comparée",
+                  "Un graphique = une idée principale",
+                  "Titres explicites, unités visibles, légende claire"
+                ]
+              },
+              { "type": "heading", "content": "Erreurs fréquentes" },
+              {
+                "type": "list",
+                "items": [
+                  "Trop de couleurs ou de graphiques",
+                  "Indicateurs sans lien entre eux",
+                  "Absence de commentaire",
+                  "Visuel esthétique mais peu utile"
+                ]
+              },
+              { "type": "note", "content": "Un bon dashboard ne se contente pas d'afficher — il doit permettre de répondre à une question de gestion." }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "characters_present": [
+    { "label": "Seo Ji-a", "key": "jia" }
+  ]
+}

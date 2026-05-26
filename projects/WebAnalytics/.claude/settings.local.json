@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m http.server 8765)",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('characters',{}\\), indent=2\\)\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(cd c:/Users/gigabyte/Documents/GitHub/L-Dev31.github.io/projects/WebAnalytics)",
+      "Bash(node -e 'JSON.parse\\(require\\('\\\\''fs'\\\\''\\).readFileSync\\('\\\\''__TRACKED_VAR__'\\\\'','\\\\''utf8'\\\\''\\)\\); console.log\\('\\\\''OK __TRACKED_VAR__'\\\\''\\);')",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('data/dialogue/intro.json','utf8'\\)\\); console.log\\('intro OK'\\);\")",
+      "Bash(node -e 'JSON.parse\\(require\\('\\\\''fs'\\\\''\\).readFileSync\\('\\\\''__TRACKED_VAR__'\\\\'','\\\\''utf8'\\\\''\\)\\); process.stdout.write\\('\\\\''OK '\\\\''\\);')",
+      "Bash(node -e ' *)"
+    ]
+  }
+}

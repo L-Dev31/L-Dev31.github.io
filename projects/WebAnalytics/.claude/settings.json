@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e \"const fs = require\\('fs'\\); try { JSON.parse\\(fs.readFileSync\\('c:/Users/gigabyte/Documents/GitHub/L-Dev31.github.io/projects/WebAnalytics/dialogues.json', 'utf8'\\)\\); console.log\\('JSON valid'\\); } catch\\(e\\) { console.error\\('JSON error:', e.message\\); }\")"
+      "Bash(node -e \"const fs = require\\('fs'\\); try { JSON.parse\\(fs.readFileSync\\('c:/Users/gigabyte/Documents/GitHub/L-Dev31.github.io/projects/WebAnalytics/dialogues.json', 'utf8'\\)\\); console.log\\('JSON valid'\\); } catch\\(e\\) { console.error\\('JSON error:', e.message\\); }\")",
+      "Bash(python -c ' *)",
+      "Bash(pip install *)",
+      "Bash(node -e ' *)"
     ]
   }
 }

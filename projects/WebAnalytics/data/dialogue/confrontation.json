@@ -1,0 +1,290 @@
+{
+  "_location": "confrontation",
+  "_comment": "Accusation finale — 3 fins possibles selon les preuves réunies",
+  "on_first_visit": [
+    {
+      "type": "line",
+      "char": "will",
+      "text": "Trois personnes touchent à ce site. Il y a eu **deux fautes** — et un **crime**.",
+      "sprite": "normal"
+    },
+    {
+      "type": "line",
+      "char": "will",
+      "text": "La première faute : **Marine**. Elle dépense trop. Elle ne lit pas vraiment ses métriques. Elle confond volume de trafic et qualité de trafic. Mais elle attire les visiteurs — elle ne les détruit pas. **Innocente du crime.**",
+      "sprite": "normal"
+    },
+    {
+      "type": "line",
+      "char": "marine",
+      "text": "###VOILÀ ! VOILÀ VOILÀ VOILÀ !### Je l'ai **TOUJOURS** dit !",
+      "sprite": "normal"
+    },
+    {
+      "type": "line",
+      "char": "will",
+      "text": "La deuxième faute : **Pascal**. Une page d'accueil somptueuse et inutilisable. **93 %** de rebond. Des UTM dans un état catastrophique. Une installation GA4 jamais vérifiée. Une erreur d'orgueil technique — pas un sabotage.",
+      "sprite": "normal"
+    },
+    {
+      "type": "line",
+      "char": "pascal",
+      "text": "~~...Coupable d'ego. Pas de trahison.~~",
+      "sprite": "explaining"
+    },
+    {
+      "type": "line",
+      "char": "will",
+      "text": "Reste la **pénalité Google**. Le contenu volé. Et ça—",
+      "sprite": "doubting"
+    }
+  ],
+  "menu": {
+    "line": {
+      "char": "will",
+      "text": "Maintenant, l'**accusation**. Choisis bien.",
+      "sprite": "doubting"
+    },
+    "options": [
+      {
+        "text": "Presenter les trois preuves",
+        "id": "fin_vraie",
+        "requires_flags": [
+          "preuve_articles_volés",
+          "preuve_liens_cachés",
+          "mobile_ina"
+        ],
+        "sequence": [
+          {
+            "type": "line",
+            "char": "will",
+            "text": "**Trois pièces.** Les articles volés : la pénalité. Les liens cachés : le détournement vers votre site personnel. Et ceci—",
+            "sprite": "normal"
+          },
+          {
+            "type": "line",
+            "char": "narrateur",
+            "text": "Le mémo vocal résonne une dernière fois dans la pièce silencieuse."
+          },
+          {
+            "type": "line",
+            "char": "jia",
+            "text": "~~...franchement, avec l'IA, on pourrait remplacer une partie de l'équipe. Le SEO surtout, ça va devenir automatique...~~",
+            "sprite": "normal"
+          },
+          {
+            "type": "line",
+            "char": "jia",
+            "text": "~~...C'est ma voix.~~",
+            "sprite": "normal"
+          },
+          {
+            "type": "line",
+            "char": "will",
+            "text": "Le **mobile**. Vous l'avez entendue parler de l'IA. Vous vous êtes cru fini. Au lieu de parler, vous avez préparé votre fuite — en saignant la boîte qui vous nourrissait. Le calme que tout le monde vous enviait, ce n'était pas de la sérénité. C'était de la **peur**, parfaitement rangée.",
+            "sprite": "normal"
+          },
+          {
+            "type": "line",
+            "char": "ina",
+            "text": "~~...J'avais fait trop d'erreurs. Vous croyez vraiment qu'ils m'auraient gardé ? Face à une machine qui ne dort pas, qui ne se trompe pas ? J'ai juste... voulu exister quelque part où on ne pouvait pas me remplacer.~~",
+            "sprite": "stress"
+          },
+          {
+            "type": "line",
+            "char": "jia",
+            "text": "Tu aurais pu me parler. On était au bord du gouffre ensemble. Et c'est **toi** qui as poussé.",
+            "sprite": "angry"
+          },
+          {
+            "type": "set_flag",
+            "flag": "affaire_résolue"
+          },
+          {
+            "type": "lesson",
+            "id": "lesson_conclusion",
+            "intro": { "char": "will", "text": "L'enquête est bouclée. Mais une enquête, ça ne sert à rien si on n'en tire pas les **leçons**. Voilà ce que cette affaire nous a appris — et ce que tout professionnel du web analytics doit garder en tête.", "sprite": "happy" },
+            "title": "Ce que vous devez absolument retenir",
+            "blocks": [
+              {
+                "type": "list",
+                "items": [
+                  "Le web analytics sert à **décider**, pas à collectionner des chiffres",
+                  "Un bon indicateur est toujours **lié à un objectif** métier",
+                  "Les données doivent être **segmentées** pour être utiles — une moyenne globale cache des réalités différentes",
+                  "**GA4 repose sur les événements** : penser le marquage avant d'installer",
+                  "Les **UTM** sont indispensables pour suivre les campagnes — avec des conventions de nommage stables",
+                  "Un **reporting efficace** est simple, lisible et orienté action — il conclut toujours par des recommandations",
+                  "Le croisement **quantitatif / qualitatif** est indispensable : les chiffres montrent le problème, les verbatims l'expliquent",
+                  "L'analyse suit toujours : **constat → hypothèse → vérification → recommandation**",
+                  "La **conformité RGPD** et l'**éthique** ne sont pas optionnelles"
+                ]
+              },
+              {
+                "type": "separator"
+              },
+              {
+                "type": "heading",
+                "content": "La méthode complète en 8 étapes"
+              },
+              {
+                "type": "list",
+                "items": [
+                  "**1.** Partir du besoin métier",
+                  "**2.** Définir les objectifs mesurables",
+                  "**3.** Choisir les KPI",
+                  "**4.** Construire un plan de marquage",
+                  "**5.** Installer les outils et vérifier la collecte",
+                  "**6.** Tester : pages vues, événements, UTM, événements clés",
+                  "**7.** Analyser régulièrement : acquisition, engagement, conversion, tunnel, rentabilité",
+                  "**8.** Formuler des recommandations : constat → explication → action → indicateur de suivi"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "line",
+            "char": "will",
+            "text": "Les **chiffres** ne mentent jamais. Ce sont les gens qui apprennent à mentir avec. ###AFFAIRE CLOSE###",
+            "sprite": "happy"
+          },
+          {
+            "type": "event",
+            "id": "fin_vraie"
+          }
+        ]
+      },
+      {
+        "text": "Presenter articles voles et liens caches",
+        "id": "fin_partielle_deux",
+        "requires_flags": [
+          "preuve_articles_volés",
+          "preuve_liens_cachés"
+        ],
+        "sequence": [
+          {
+            "type": "line",
+            "char": "will",
+            "text": "**Deux pièces.** Vous avez volé des articles — la pénalité. Et planté des liens cachés pour détourner le trafic vers votre propre site.",
+            "sprite": "doubting"
+          },
+          {
+            "type": "line",
+            "char": "ina",
+            "text": "Du contenu dupliqué. Une négligence. Des liens dans des articles. Une mauvaise pratique. On me virera, peut-être. Mais **saboteur** ? Prouvez le mobile. Prouvez l'**intention**.",
+            "sprite": "irritated"
+          },
+          {
+            "type": "line",
+            "char": "jia",
+            "text": "Ce n'est **pas assez**. Je veux savoir **pourquoi**.",
+            "sprite": "angry"
+          },
+          {
+            "type": "line",
+            "char": "will",
+            "text": "Je suis allé trop vite. Il manque une pièce. Le « **pourquoi** » reste dans l'ombre — et avec lui, la part délibérée du crime.",
+            "sprite": "doubting"
+          },
+          {
+            "type": "event",
+            "id": "fin_partielle"
+          }
+        ]
+      },
+      {
+        "text": "Presenter les articles voles seulement",
+        "id": "fin_partielle_une",
+        "requires_flag": "preuve_articles_volés",
+        "sequence": [
+          {
+            "type": "line",
+            "char": "will",
+            "text": "Vous avez volé ces articles. La **pénalité**, c'est vous.",
+            "sprite": "doubting"
+          },
+          {
+            "type": "line",
+            "char": "ina",
+            "text": "Du contenu dupliqué. Une négligence. On me virera, peut-être. Mais « **saboteur** » ? Prouvez le mobile. Prouvez l'**intention**.",
+            "sprite": "irritated"
+          },
+          {
+            "type": "line",
+            "char": "jia",
+            "text": "Ce n'est **pas assez**. Je veux savoir **pourquoi**.",
+            "sprite": "angry"
+          },
+          {
+            "type": "line",
+            "char": "will",
+            "text": "~~Il garde son calme.~~ Il manque une pièce. Le « **pourquoi** » reste dans l'ombre.",
+            "sprite": "doubting"
+          },
+          {
+            "type": "event",
+            "id": "fin_partielle"
+          }
+        ]
+      },
+      {
+        "text": "Accuser sans presenter de preuve",
+        "id": "fin_echec",
+        "sequence": [
+          {
+            "type": "line",
+            "char": "will",
+            "text": "C'est **Ina**. Il a tout orchestré.",
+            "sprite": "doubting"
+          },
+          {
+            "type": "line",
+            "char": "ina",
+            "text": "Une accusation **sans preuve**. Tout est algorithme, je vous l'avais dit. Vous n'avez **rien**.",
+            "sprite": "normal"
+          },
+          {
+            "type": "line",
+            "char": "narrateur",
+            "text": "Il se lève, ramasse ses affaires. Seo Ji-a serre les poings, impuissante."
+          },
+          {
+            "type": "line",
+            "char": "will",
+            "text": "Je suis allé trop vite. Sans les pièces, ce n'est qu'une **opinion**. Et une opinion ne condamne personne.",
+            "sprite": "doubting"
+          },
+          {
+            "type": "lesson",
+            "id": "lesson_methode_echec",
+            "intro": { "char": "will", "text": "J'ai accusé sans preuve. J'ai dit ce que je **croyais** — pas ce que je **savais**. En analytics comme en enquête, une opinion sans données, ça ne vaut rien. Voilà la méthode que j'aurais dû suivre.", "sprite": "doubting" },
+            "title": "La méthode analytique",
+            "blocks": [
+              {
+                "type": "text",
+                "content": "Sauter à la recommandation sans vérification, c'est ça : une **opinion**, pas une **analyse**."
+              },
+              {
+                "type": "list",
+                "items": [
+                  "**Constat** — qu'observe-t-on dans les données ?",
+                  "**Hypothèse** — quelle cause probable explique ce constat ?",
+                  "**Vérification** — quelle donnée permet de confirmer ou d'infirmer ?",
+                  "**Recommandation** — quelle action concrète en découle ?"
+                ]
+              },
+              {
+                "type": "note",
+                "content": "En analytics comme en enquête : sans preuve, il n'y a pas de conclusion valide."
+              }
+            ]
+          },
+          {
+            "type": "event",
+            "id": "fin_echec"
+          }
+        ]
+      }
+    ]
+  }
+}
