@@ -30,7 +30,7 @@
         </div>
         <figure class="case-panel" data-no-parallax>
             <img src="../../assets/images/projects/bmge/problem.jpg"
-                alt="MSBT Editor by AeonSake — an existing Nintendo text editor, the kind of tool that existed but couldn't handle BMG files reliably."
+                alt="MSBT Editor by AeonSake, an existing Nintendo text editor, the kind of tool that existed but couldn't handle BMG files reliably."
                 loading="lazy" decoding="async">
             <figcaption class="media-caption">MSBT Editor by <a href="https://gitlab.com/AeonSake/msbt-editor"
                     target="_blank" rel="noopener noreferrer">AeonSake</a></figcaption>
@@ -107,6 +107,39 @@
                 alt="Tomodachi Collection Nintendo DS box art." loading="lazy" decoding="async">
             <figcaption class="media-caption">Tomodachi Collection &copy; Nintendo</figcaption>
         </figure>
+    </div>
+</section>
+
+<section class="case-chapter" id="design">
+    <h2 class="title">The Design</h2>
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">5. Visual Language</h3>
+            <p>The accent color is <code>#FDE404</code>, Tomodachi Collection&rsquo;s signature yellow, pulled
+                directly from the game&rsquo;s visual identity. It&rsquo;s used for primary buttons, active states,
+                focus rings, and modified entry highlights. Text rendered on top of that yellow flips to
+                <code>#111</code> (near-black) to maintain contrast: the same off-black used as the background
+                everywhere else.<br><br>The overall palette is intentionally dark. Translation work means long
+                sessions staring at text. A dark interface with muted grays and a single warm accent reduces eye
+                fatigue without making the tool feel oppressive. Everything that isn&rsquo;t interactive fades back;
+                everything that is, reads immediately.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="../../assets/images/projects/bmge/website.png"
+                alt="BMGE editor interface, dark theme with Tomodachi Collection yellow accent." loading="lazy"
+                decoding="async">
+        </figure>
+    </div>
+    <div class="case-row">
+        <div>
+            <h3 class="case-heading">6. Workflow Decisions</h3>
+            <p>A translation mod for a full game means hundreds of BMG files. Opening them one by one would make
+                the editor unusable for real work. Folder mode lets you load an entire directory at once and switch
+                between files from a persistent sidebar, without ever leaving the page.<br><br>Keyboard shortcuts
+                cover the most repeated actions: navigating entries, reverting changes, saving. The interface buttons
+                are there, but experienced users shouldn&rsquo;t need to reach for them. The goal was an editor you
+                could actually live in for hours, not one that made every operation feel like a form submission.</p>
+        </div>
     </div>
 </section>
 
