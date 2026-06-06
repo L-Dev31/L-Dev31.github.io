@@ -373,19 +373,27 @@ export class VNEngine {
 
         case 'present_evidence': {
           if (!this.presentEvidence) { next(); break; }
-          const runOutcome = (outcome, applyFlags) => {
+          const runOutcome = (outcome, applyFlags, afterDone) => {
             if (applyFlags && Array.isArray(outcome.set_flags)) {
               outcome.set_flags.forEach(f => { this.flags[f] = true; });
             }
             const seq = outcome.sequence || [];
-            if (seq.length) this.runSequence(seq, next);
-            else next();
+            if (seq.length) this.runSequence(seq, afterDone);
+            else afterDone();
           };
           const openInventory = async () => {
             const { result } = await this.presentEvidence(step.expected_lesson);
-            if (result === 'correct' && step.on_correct) { runOutcome(step.on_correct, true);  return; }
-            if (result === 'wrong'   && step.on_wrong)   { runOutcome(step.on_wrong,   false); return; }
-            if (result === 'cancel'  && step.on_cancel)  { runOutcome(step.on_cancel,  false); return; }
+            if (result === 'correct' && step.on_correct) { runOutcome(step.on_correct, true, next);  return; }
+            if (result === 'wrong'   && step.on_wrong)   {
+              const allowRetry = step.on_wrong.retry !== false;
+              runOutcome(step.on_wrong, false, () => { if (allowRetry) openInventory(); else next(); });
+              return;
+            }
+            if (result === 'cancel'  && step.on_cancel)  {
+              const allowRetry = step.on_cancel.retry === true;
+              runOutcome(step.on_cancel, false, () => { if (allowRetry) openInventory(); else next(); });
+              return;
+            }
             next();
           };
           const promptLine = step.prompt || {

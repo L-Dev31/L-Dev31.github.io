@@ -1,8 +1,8 @@
 {
   "intro": {
-    "label": "BLUE S.E.A.",
+    "label": "ACTE I — BLUE S.E.A.",
     "background": "url('images/Environments/outside.png') center / cover no-repeat",
-    "scene_intro": "21h30. La pluie tape contre les baies vitrées d'un open space à moitié vide. Des écrans encore allumés, personne devant."
+    "scene_intro": "Quartier d'affaires. Tour 14, étage 9. Une agence qui se vantait il y a six mois d'être la première sur Google. Aujourd'hui, son nom n'apparaît plus nulle part. Sauf dans un dossier de mission. Le mien."
   },
   "marine": {
     "label": "Coin Comm'",
@@ -45,5 +45,10 @@
     "label": "Salle de Réunion",
     "background": "url('images/Environments/boss.png') center / cover no-repeat",
     "scene_intro": "Fin de journée. Tout le monde est convoqué. La vérité va sortir d'ici, d'une façon ou d'une autre."
+  },
+  "_acte1_outro": {
+    "label": "FIN DE L'ACTE I",
+    "background": "url('images/Environments/outside.png') center / cover no-repeat",
+    "scene_intro": "Couloir vide. Will sort du bureau de Jia, son carnet à la main. Il s'arrête devant la baie vitrée. Le quartier d'affaires s'éteint lentement."
   }
 }

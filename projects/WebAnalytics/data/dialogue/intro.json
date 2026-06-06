@@ -1,74 +1,71 @@
-﻿{
+{
   "_location": "intro",
-  "_comment": "Prologue - Jia ne mentionne QUE Marine. Will ne peut aller voir que Marine. Les autres personnages se débloqueront au fil de l'enquête. Leçon 1.1 - Définition + importance du web analytics.",
+  "_comment": "ACTE I - BLUE S.E.A. (Scene d'intro + Scene 1 Bureau Jia). Le prologue pose : armure pro de Jia + fissure n°1 + verrouillage Marine d'abord + lecon Definition. Will sort -> Coin Comm'.",
 
   "sequence": [
-    { "type": "line", "char": "will",  "text": "Madame **Seo Ji-a** ? On m'a appelé pour un ##crime économique##. D'après le dossier, votre boîte **coule**. Vite. Et personne ne sait pourquoi.", "sprite": "normal" },
-    { "type": "line", "char": "jia",   "text": "**Six mois.** En six mois on est passés de premiers sur Google à... ~~invisibles~~. Nos clients historiques ont été **pénalisés** avec nous. ##Ils sont partis.## Quelqu'un, dans cette équipe, a ###saboté### mon entreprise. Et je vais le découvrir.", "sprite": "angry" },
-    { "type": "line", "char": "will",  "text": "Vous avez **une idée** de qui ?", "sprite": "doubting" },
-    { "type": "line", "char": "jia",   "text": "**Marine Pestelle.** La com'. Elle dépense l'argent de la boîte comme si c'était le sien. Campagnes pub à rallonge, partenariats absurdes, du matériel qu'elle utilise pas. ##La trésorerie fond## et elle, elle poste des stories. Si quelqu'un nous coule, c'est ###elle###.", "sprite": "angry" },
-    { "type": "line", "char": "will",  "text": "Vous en êtes **sûre** ?", "sprite": "doubting" },
-    { "type": "line", "char": "jia",   "text": "Aussi sûre qu'on peut l'être quand on regarde des **factures**. Elle ne sait même pas se défendre. Vous lui parlez, vous verrez. Elle **parle trop**, elle s'embrouille. C'est le profil idéal du saboteur qui ne s'en rend même pas compte.", "sprite": "normal" },
-    { "type": "line", "char": "will",  "text": "Vos équipes. Marine, c'est tout ? Il n'y a qu'elle qui touche au site ?", "sprite": "doubting" },
-    { "type": "line", "char": "jia",   "text": "~~Bien sûr que non.~~ Mais commencez par **elle**. Le reste de l'équipe, je leur fais confiance, du moins pour le moment. Si vous me parlez d'eux maintenant, vous allez **vous éparpiller**. Marine d'abord. Quand vous l'aurez cuisinée, on en reparlera.", "sprite": "normal" },
-    { "type": "line", "char": "will",  "text": "Une patronne qui me **verrouille** mon enquête dans la première minute, c'est suspect. Mais je note. Marine d'abord.", "sprite": "doubting" },
+    { "type": "line", "char": "will", "text": "**BLUE S.E.A.** Sea Engine Agency. Trente personnes au sol, trois au top management. Et un trou de **400 000 euros** que personne ne sait expliquer. On y va.", "sprite": "normal" },
+
+    { "type": "line", "char": "jia",  "text": "Vous etes le detective. Asseyez-vous. **Six mois.** En six mois on est passes de premier sur Google a ~~invisibles~~. Mes clients historiques ont coule avec moi. Quelqu'un dans cette equipe a ###sabote### ma boite. Et je vais savoir qui.", "sprite": "angry" },
+    { "type": "line", "char": "will", "text": "Vous parlez comme quelqu'un qui a **deja decide**.", "sprite": "normal" },
+    { "type": "line", "char": "jia",  "text": "J'ai des soupcons. Un nom. **Marine Pestelle.** Communication. Elle depense l'argent de la boite comme si c'etait le sien.", "sprite": "normal" },
+    { "type": "line", "char": "will", "text": "Vos preuves ?", "sprite": "doubting" },
+    { "type": "line", "char": "jia",  "text": "Les **factures**. SEA a rallonge, partenariats absurdes, materiel qu'elle n'utilise pas. ##La tresorerie fond## et elle, elle poste des stories.", "sprite": "angry" },
+    { "type": "line", "char": "will", "text": "Trois personnes touchent a votre site. Pourquoi je commencerais par Marine plutot que par votre **dev** ou votre **SEO** ?", "sprite": "doubting" },
+
+    { "type": "line", "char": "jia",  "text": "Parce que je vous **paie** pour faire votre travail dans l'ordre que je decide.", "sprite": "angry" },
+    { "type": "line", "char": "narrateur", "text": "Un silence court. Jia detourne le regard." },
+    { "type": "line", "char": "jia",  "text": "~~...Pardon.~~ Je... commencez par **Marine**. S'il vous plait.", "sprite": "normal" },
+    { "type": "line", "char": "will", "text": "~~Quelqu'un qui s'excuse avant qu'on lui en demande le droit n'est pas en colere. Il est epuise.~~", "sprite": "doubting" },
+    { "type": "line", "char": "will", "text": "D'accord. Marine d'abord. Mais je veux votre **GA4**.", "sprite": "normal" },
+    { "type": "line", "char": "jia",  "text": "Tout est dans le drive partage. Le code aussi. Marine est au **Coin Comm'**. Pascal au **Poste Dev** --- vous le verrez plus tard. Ina ne recoit pas, sauf si je le valide.", "sprite": "normal" },
+    { "type": "line", "char": "will", "text": "~~Elle vient de me clore deux portes sur trois en une phrase. A noter.~~", "sprite": "doubting" },
+
     { "type": "set_flag", "flag": "indice_factures" },
     { "type": "set_flag", "flag": "jia_cadrage_initial" },
+    { "type": "set_flag", "flag": "jia_fissure_1" },
+    { "type": "set_flag", "flag": "enquête_lancée" },
+
+    { "type": "line", "char": "narrateur", "text": "Will sort. Couloir vide. Neon qui clignote. Il s'arrete une seconde avant la porte du Coin Comm'." },
+    { "type": "line", "char": "will", "text": "Avant d'aller voir Marine, je dois **poser les bases**. Parce que si je ne sais pas ce que je cherche, je ne verrai rien.", "sprite": "doubting" },
 
     {
       "type": "lesson",
       "id": "lesson_definition",
-      "intro": { "char": "will", "text": "Avant d'aller voir Marine, je dois **poser les bases**. Parce que si je ne sais pas ce que je cherche, je ne verrai rien. Voilà ce qu'est vraiment le **web analytics** - et pourquoi ça change tout.", "sprite": "doubting" },
+      "intro": { "char": "will", "text": "Voila ce qu'est vraiment le **web analytics** --- et pourquoi sans cette grille mentale, je vais juste regarder des chiffres comme tout le monde dans cette boite.", "sprite": "doubting" },
       "title": "Qu'est-ce que le web analytics ?",
       "blocks": [
-        { "type": "text",      "content": "Le web analytics désigne l'ensemble des méthodes, outils et pratiques permettant de **collecter, mesurer, analyser et interpréter** les données issues d'un site web, d'une application, d'une landing page ou d'une campagne digitale." },
-        { "type": "text",      "content": "Il ne s'agit pas seulement de « voir des chiffres » : il s'agit de **transformer des comportements numériques en informations utiles à la décision**." },
+        { "type": "text",    "content": "Le web analytics, c'est **collecter, mesurer, analyser et interpreter** les donnees issues d'un site, d'une appli ou d'une campagne." },
+        { "type": "text",    "content": "Ce n'est pas 'voir des chiffres'. C'est **transformer des comportements numeriques en decisions**." },
         { "type": "separator" },
-        { "type": "heading",   "content": "Mesurer ≠ Analyser" },
+        { "type": "heading", "content": "Mesurer ≠ Analyser" },
         {
           "type": "table",
-          "headers": ["Action", "Définition", "Exemple"],
+          "headers": ["Action", "Definition", "Exemple"],
           "rows": [
-            ["Mesurer", "Recueillir des données brutes", "1 000 visiteurs sont venus sur la page"],
-            ["Analyser", "Interpréter pour répondre à une question et décider", "Malgré ce trafic, la page convertit peu - vérifier le CTA"]
+            ["Mesurer", "Recueillir des donnees brutes", "1 000 visiteurs sont venus sur la page"],
+            ["Analyser", "Interpreter pour decider", "Malgre ce trafic, la page convertit peu - verifier le CTA"]
           ]
         },
         { "type": "separator" },
-        { "type": "heading",   "content": "À quoi ça sert ?" },
+        { "type": "heading", "content": "A quoi ca sert ?" },
         {
           "type": "list",
           "items": [
             "Mesurer la performance de ses actions",
             "Comprendre l'origine de son trafic",
             "Identifier les contenus qui fonctionnent",
-            "Repérer les points de friction",
+            "Reperer les points de friction",
             "Optimiser les conversions",
             "Justifier ses investissements marketing",
-            "Améliorer l'expérience utilisateur",
-            "Prendre des décisions fondées sur des preuves"
+            "Ameliorer l'experience utilisateur",
+            "**Decider sur preuves**, pas a l'intuition"
           ]
         },
-        { "type": "separator" },
-        { "type": "heading",   "content": "Les questions auxquelles répondent les web analytics" },
-        {
-          "type": "list",
-          "items": [
-            "Combien de personnes visitent le site ?",
-            "D'où viennent-elles ?",
-            "Quelles pages consultent-elles ?",
-            "À quel moment quittent-elles le parcours ?",
-            "Quels canaux apportent le plus de ventes ou de leads ?",
-            "Quel contenu convertit le mieux ?",
-            "Quelle campagne génère le meilleur ROI ?"
-          ]
-        },
-        { "type": "note",      "content": "Sans analyse, une entreprise agit à l'intuition. Le web analytics sert à **piloter une action marketing et commerciale** - pas à accumuler des chiffres." }
+        { "type": "note", "content": "Sans analyse, une entreprise agit a l'intuition. Le web analytics sert a **piloter** une action marketing et commerciale --- pas a accumuler des chiffres." }
       ]
     },
 
-    { "type": "set_flag", "flag": "enquête_lancée" },
-
-    { "type": "line", "char": "will", "text": "Un seul nom, une seule porte. ~~Pas le choix.~~ **Marine Pestelle.** Le Coin Comm'. Allons voir ce qu'elle a à dire.", "sprite": "doubting" },
+    { "type": "line", "char": "will", "text": "Marine d'abord. Voyons ce qu'elle **mesure** --- et surtout, ce qu'elle ne **lit** pas.", "sprite": "normal" },
 
     { "type": "goto", "goto": "marine" }
   ]

@@ -1,4 +1,4 @@
-import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, fetchYahooIndexComponents, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade } from './yahoo-finance.js';
+import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, fetchYahooIndexComponents, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade, fetchYahooQuotesBatch } from './yahoo-finance.js';
 import { handleImageAssetError } from './assets.js';
 import { debounce } from './constants.js';
 import { getCurrency } from './state.js';
@@ -52,7 +52,6 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
         china: { country: 'CN', resolve: (t, e) => e === 'SZSE' ? `${t}.SZ` : `${t}.SS` },
         hongkong: { country: 'HK', resolve: t => `${t.padStart(4, '0')}.HK` },
         korea: { country: 'KR', resolve: (t, e) => e === 'KOSDAQ' ? `${t}.KQ` : `${t}.KS` },
-        // Market ID mappings
         euronext: { country: 'FR' }, lse: { country: 'GB' }, xetra: { country: 'DE' },
         asx: { country: 'AU' }, tsx: { country: 'CA' }, six: { country: 'CH' },
         tse: { country: 'JP' }, hkex: { country: 'HK' }, sse: { country: 'CN' },
@@ -286,14 +285,28 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
             else if (fullExchange.includes('paris') || fullExchange.includes('euronext')) market = 'euronext';
         }
 
+        // PEA / PEA-PME eligibility CANNOT be fully determined from a price quote.
+        // Legal criteria (Code monétaire et financier, art. L221-32-2): issuer domiciled in
+        // the EU/EEA and subject to corporate tax, fewer than 5 000 employees, AND
+        // (revenue < 1.5 Bn€ OR balance sheet < 2 Bn€); a *listed* issuer additionally needs
+        // market cap < 1 Bn€. We only have market cap + currency here, so we infer a LIKELY
+        // status and mark it unverified rather than asserting it. Market cap is only comparable
+        // to the 1 Bn€ threshold when it is denominated in euros.
         let eligibility = 'cto';
-        if (market === 'euronext') eligibility = q.marketCap && q.marketCap < 1e9 ? 'pea-pme' : 'pea';
+        let eligibilityVerified = false;
+        const isEea = market === 'euronext' || q.currency === 'EUR';
+        if (isEea) {
+            const capEur = q.currency === 'EUR' ? q.marketCap : null;
+            eligibility = (capEur && capEur < 1e9) ? 'pea-pme' : 'pea';
+            // employees/revenue/balance-sheet + EEA HQ tests are not checkable from a quote.
+            eligibilityVerified = false;
+        }
 
         const isSuspended = !isYahooTickerActiveFromQuote(q);
 
         return {
             symbol: q.symbol, name: q.shortName || q.longName || q.symbol,
-            price, change, changePercent, volume, market, eligibility,
+            price, change, changePercent, volume, market, eligibility, eligibilityVerified,
             currency: q.currency || 'USD', marketCap: q.marketCap, industry: q.industry || '',
             isClosed: isSuspended, isSuspended,
             daysSinceLastTrade: Math.round(computeDaysSinceLastTrade(q.regularMarketTime)),
@@ -341,32 +354,33 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
     async function fetchStocksBatch(symbols, defaultEligibility = 'pea', marketId = 'euronext') {
         const uniqueSymbols = [...new Set((symbols || []).filter(Boolean))];
         const limitedSymbols = uniqueSymbols.slice(0, getMaxAllowed());
-        const items = [];
-        let completed = 0;
         showLoadingProgress(0, `Loading (${limitedSymbols.length})...`);
-        if (!limitedSymbols.length) return items;
+        if (!limitedSymbols.length) return [];
 
-        const BATCH_SIZE = 10;
-        const STEP_DELAY = 100;
-        const COOLDOWN_EVERY = 50;
-        const COOLDOWN_MS = 2000;
-
-        for (let i = 0; i < limitedSymbols.length; i += BATCH_SIZE) {
-            const batch = limitedSymbols.slice(i, i + BATCH_SIZE);
-            const results = await Promise.allSettled(batch.map(s => fetchStockDetails(s, marketId, defaultEligibility)));
-            results.forEach((r) => {
-                if (r.status === 'fulfilled' && r.value) {
-                    items.push(r.value);
-                }
-            });
-            completed += batch.length;
-            showLoadingProgress(completed, limitedSymbols.length);
-
-            if (completed < limitedSymbols.length) {
-                await new Promise(r => setTimeout(r, STEP_DELAY));
+        try {
+            const quotes = await fetchYahooQuotesBatch(limitedSymbols);
+            if (!quotes) {
+                showError('Failed to fetch batch data');
+                return [];
             }
+
+            const items = quotes
+                .map(q => {
+                    const item = mapQuoteToItem(q);
+                    if (item) {
+                        item.market = marketId;
+                        item.eligibility = defaultEligibility;
+                    }
+                    return item;
+                })
+                .filter(Boolean);
+
+            showLoadingProgress(items.length, limitedSymbols.length);
+            return items;
+        } catch (e) {
+            console.error('[Explorer Batch] Error:', e);
+            return [];
         }
-        return items;
     }
 
 
@@ -527,13 +541,20 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
 
                     const score = bot.signalValue;
                     const riskScore = bot.risk?.score ?? 1;
-                    const signal = riskScore >= 9 ? 'sell' : score >= 60 ? 'buy' : score <= 40 ? 'sell' : 'hold';
+                    // Directional signal comes from the score ONLY. Previously riskScore>=9 forced
+                    // a 'sell' label, so a bullish-but-volatile name was mislabelled as a sell
+                    // signal — conflating "risky" with "bearish". Risk is surfaced separately via
+                    // riskScore (and highRisk) so the user sees direction and danger independently.
+                    const signal = score >= 60 ? 'buy' : score <= 40 ? 'sell' : 'hold';
+                    const highRisk = riskScore >= 9;
 
                     return {
                         ...item,
                         score,
                         signal,
                         riskScore,
+                        highRisk,
+                        dataQuality: bot.dataQuality ?? null,
                         botRegime: bot.regime?.label ?? '',
                         botRegimeType: bot.regime?.type ?? '',
                         botAdx: bot.regime?.strength ?? 0,
@@ -563,7 +584,6 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
         return all;
     }
 
-    // Load fallback tickers from json/markets/{marketId}.json
     const marketTickerCache = new Map();
     async function loadMarketFallbackTickers(marketId) {
         if (marketTickerCache.has(marketId)) return marketTickerCache.get(marketId);
@@ -587,13 +607,11 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
         if (Array.isArray(marketDef.indices) && marketDef.indices.length > 0) {
             let symbols = await fetchSymbolsFromIndices(marketDef.indices);
             if (!symbols.length) {
-                // Fallback 1: per-market ticker file (json/markets/{id}.json)
                 showLoadingProgress(0, 'Loading market tickers...');
                 const fallbackTickers = await loadMarketFallbackTickers(marketDef.id);
                 if (fallbackTickers.length) {
                     symbols = fallbackTickers;
                 } else {
-                    // Fallback 2: tickers from user's local JSON portfolios
                     const localSymbols = getLocalSymbolsForMarket(marketDef.id);
                     if (localSymbols.length) symbols = localSymbols;
                 }

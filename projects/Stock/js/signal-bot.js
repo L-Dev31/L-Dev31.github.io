@@ -18,9 +18,17 @@ const DEFAULT_OPTIONS = {
 const SIGNAL_CACHE = new Map();
 const INDICATOR_BUFFER = new Map();
 
+// Cache key. length+first+last alone collides easily (e.g. same-length window that
+// only differs in the middle). Sample several interior points + a checksum to make
+// accidental collisions (stale cached signals) practically impossible.
 const getPriceHash = (prices) => {
     if (!prices || !prices.length) return '';
-    return `${prices.length}-${prices[0]}-${prices[prices.length - 1]}`;
+    const n = prices.length;
+    const step = Math.max(1, Math.floor(n / 16));
+    let sum = 0;
+    for (let i = 0; i < n; i += step) sum += prices[i];
+    const mid = prices[Math.floor(n / 2)];
+    return `${n}-${prices[0]}-${mid}-${prices[n - 1]}-${sum.toFixed(4)}`;
 };
 
 const PERIOD_LABELS = {
@@ -78,18 +86,36 @@ const getRiskColorClass = (score) => {
     return 'positive';
 };
 
-// === Utils ===
-
 const safeArray = (arr) => Array.isArray(arr) ? arr : [];
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+// When only closing prices are available (no real intraday high/low), the true range
+// collapses to the absolute close-to-close move, which systematically UNDERSTATES the
+// real daily range. For driftless geometric Brownian motion the expected daily range is
+// twice the expected absolute close-to-close change: E[H−L]=σ√(8/π) vs E[|ΔC|]=σ√(2/π),
+// ratio = √4 = 2.0 (Parkinson 1980, "The extreme value method for estimating the variance
+// of the rate of return"). We scale the close-only ATR by this factor so stop distances and
+// position sizing are not built on an under-estimated volatility. Slightly conservative (1.8)
+// to account for discrete daily sampling vs the continuous-time bound.
+const CLOSE_ONLY_RANGE_FACTOR = 1.8;
+
+// True if the payload carries genuine intraday highs/lows (not just closes echoed into them).
+function hasRealOHLC(data, prices) {
+    const h = data?.highs, l = data?.lows;
+    if (!Array.isArray(h) || !Array.isArray(l)) return false;
+    if (h.length !== prices.length || l.length !== prices.length) return false;
+    // At least one bar must have high>low (echoed closes give high===low===close everywhere).
+    for (let i = 0; i < h.length; i++) {
+        if (h[i] > l[i]) return true;
+    }
+    return false;
+}
 
 function validateData(data, opts = {}) {
     const prices = safeArray(data?.prices);
     const minBars = 50;
     return prices.length >= Math.max(minBars, opts.minLength || 30) && prices.every(x => x > 0);
 }
-
-// === Core indicators ===
 
 function calculateRSI(prices, period = 14) {
     const series = calculateRSISeries(prices, period);
@@ -216,8 +242,6 @@ function calculateMomentum(prices, period = 10) {
     const prev = p[p.length - period - 1];
     return prev === 0 ? 0 : ((current - prev) / prev) * 100;
 }
-
-// === Extended indicator suite ===
 
 // Linear regression slope of last `period` values, normalized to % per bar.
 function calculateSlope(prices, period) {
@@ -557,23 +581,26 @@ function calculateVolumeRatio(volumes, period = 20) {
     return avg === 0 ? 1 : recent / avg;
 }
 
-// === Engine ===
-
 function calculateBotSignal(data, options = {}) {
     options = { ...DEFAULT_OPTIONS, ...options };
     const symbol = data.symbol || 'unknown';
     const period = options.period || '1D';
     const prices = safeArray(data.prices);
     
-    // Cache Check
     const hash = getPriceHash(prices);
     const cacheKey = `${symbol}-${period}-${hash}`;
     if (SIGNAL_CACHE.has(cacheKey)) return SIGNAL_CACHE.get(cacheKey);
 
-    const opens = safeArray(data.opens || prices);
-    const highs = safeArray(data.highs || prices);
-    const lows = safeArray(data.lows || prices);
+    // Data-quality gate. Previously highs/lows fell back to the close series, which silently
+    // turned every range-based indicator (ATR, candlesticks, ADX, Stochastic, Ichimoku,
+    // SuperTrend, MFI) into a degenerate close-only version WITHOUT telling the user.
+    // We now detect this and flag it so confidence is communicated and ATR is corrected.
+    const ohlcAvailable = hasRealOHLC(data, prices);
+    const opens = ohlcAvailable ? safeArray(data.opens || prices) : prices;
+    const highs = ohlcAvailable ? safeArray(data.highs) : prices;
+    const lows = ohlcAvailable ? safeArray(data.lows) : prices;
     const volumes = safeArray(data.volumes);
+    const volumeAvailable = volumes.length === prices.length && volumes.some(v => v > 0);
 
     if (!validateData(data, options)) {
         return {
@@ -590,13 +617,17 @@ function calculateBotSignal(data, options = {}) {
 
     const ic = PERIOD_INDICATOR_CONFIG[options.period] || DEFAULT_INDICATOR_CONFIG;
 
-    // --- Indicators ---
     const rsiSeries = calculateRSISeries(prices, ic.rsiPeriod);
     const rsi = rsiSeries.length ? rsiSeries[rsiSeries.length - 1] : 50;
     const macd = calculateMACD(prices, ic.macdFast, ic.macdSlow, ic.macdSignal);
     const sma20 = calculateSMA(prices, ic.sma[0]);
     const sma50 = calculateSMA(prices, ic.sma[1]);
     const sma200 = calculateSMA(prices, ic.sma[2]);
+    // calculateSMA falls back to the mean of all available data when length < period, so a
+    // "200-day SMA" on 60 bars is NOT a real SMA200. Track validity and gate the longer
+    // averages out of the trend score when the history is too short to support them.
+    const hasSMA50 = prices.length >= ic.sma[1];
+    const hasSMA200 = prices.length >= ic.sma[2];
     const priceSlope = calculateSlope(prices, Math.min(20, ic.sma[0]));
     const adx = calculateADX(highs, lows, prices, 14);
     const bb = calculateBollinger(prices, 20, 2);
@@ -605,7 +636,12 @@ function calculateBotSignal(data, options = {}) {
     const mfi = calculateMFI(highs, lows, prices, volumes, 14);
     const ichimoku = calculateIchimoku(highs, lows, 9, 26);
     const supertrend = calculateSuperTrend(highs, lows, prices, 10, 3);
-    const atr = calculateATR(highs, lows, prices, ic.atrPeriod);
+    // ATR. With real OHLC this is the Wilder true-range average. With closes only it
+    // degenerates to the average |Δclose|, which under-estimates the true range — we apply
+    // the Parkinson-derived correction (see CLOSE_ONLY_RANGE_FACTOR) so risk sizing is not
+    // built on understated volatility.
+    let atr = calculateATR(highs, lows, prices, ic.atrPeriod);
+    if (!ohlcAvailable) atr *= CLOSE_ONLY_RANGE_FACTOR;
     const momentum = calculateMomentum(prices, ic.momentumPeriod);
     const momentum5 = calculateMomentum(prices, 5);
     const momentum20 = calculateMomentum(prices, 20);
@@ -614,7 +650,6 @@ function calculateBotSignal(data, options = {}) {
     const divergence = detectDivergence(prices.slice(-rsiSeries.length), rsiSeries, 30);
     const patterns = detectCandlestickPatterns(opens, highs, lows, prices);
 
-    // --- Regime classification ---
     let regimeType;
     if (adx.adx >= 25) regimeType = adx.plusDI > adx.minusDI ? 'uptrend' : 'downtrend';
     else if (adx.adx < 20) regimeType = 'ranging';
@@ -625,13 +660,12 @@ function calculateBotSignal(data, options = {}) {
     const volRegime = volatilityPct > 5 ? 'high' : volatilityPct > 2 ? 'normal' : 'low';
     const bbSqueeze = bb.bandwidth > 0 && bb.bandwidth < 4;
 
-    // --- Factor: TREND ---
     let trendScore = 0;
     if (currentPrice > sma20) trendScore += 0.5; else trendScore -= 0.5;
-    if (currentPrice > sma50) trendScore += 0.3; else trendScore -= 0.3;
-    if (currentPrice > sma200) trendScore += 0.2; else trendScore -= 0.2;
-    if (sma20 > sma50) trendScore += 0.2; else trendScore -= 0.2;
-    if (sma50 > sma200) trendScore += 0.15; else trendScore -= 0.15;
+    if (hasSMA50) { if (currentPrice > sma50) trendScore += 0.3; else trendScore -= 0.3; }
+    if (hasSMA200) { if (currentPrice > sma200) trendScore += 0.2; else trendScore -= 0.2; }
+    if (hasSMA50) { if (sma20 > sma50) trendScore += 0.2; else trendScore -= 0.2; }
+    if (hasSMA50 && hasSMA200) { if (sma50 > sma200) trendScore += 0.15; else trendScore -= 0.15; }
     if (priceSlope > 0) trendScore += clamp(priceSlope / 2, 0, 0.3);
     else trendScore += clamp(priceSlope / 2, -0.3, 0);
     if (ichimoku.signal > 0) trendScore += 0.15;
@@ -642,7 +676,6 @@ function calculateBotSignal(data, options = {}) {
     const adxGate = clamp(adx.adx / 25, 0.4, 1);
     trendScore = clamp((trendScore / 2) * adxGate, -1, 1);
 
-    // --- Factor: MOMENTUM ---
     // RSI: oversold/overbought extremes carry the most weight.
     let momentumScore = 0;
     if (rsi < 30) momentumScore += 0.8;
@@ -672,7 +705,6 @@ function calculateBotSignal(data, options = {}) {
 
     momentumScore = clamp(momentumScore / 3.5, -1, 1);
 
-    // --- Factor: MEAN REVERSION ---
     let meanRevScore = 0;
     if (bb.percentB < 0) meanRevScore += 0.9;
     else if (bb.percentB < 0.2) meanRevScore += 0.6;
@@ -687,7 +719,6 @@ function calculateBotSignal(data, options = {}) {
 
     meanRevScore = clamp(meanRevScore / 1.5, -1, 1);
 
-    // --- Factor: VOLUME ---
     let volumeScore = 0;
     if (obv.slope > 0.05) volumeScore += 0.4;
     else if (obv.slope < -0.05) volumeScore -= 0.4;
@@ -702,14 +733,12 @@ function calculateBotSignal(data, options = {}) {
     }
     volumeScore = clamp(volumeScore, -1, 1);
 
-    // --- Factor: PATTERN ---
     let patternScore = 0;
     if (divergence.bullish) patternScore += 0.5;
     if (divergence.bearish) patternScore -= 0.5;
     for (const pat of patterns) patternScore += pat.bullish * pat.strength * 0.4;
     patternScore = clamp(patternScore, -1, 1);
 
-    // --- Composite (regime-weighted) ---
     let weights;
     if (regimeType === 'uptrend' || regimeType === 'downtrend') {
         if (adx.adx >= 40) {
@@ -731,7 +760,6 @@ function calculateBotSignal(data, options = {}) {
         patternScore * weights.pattern
     );
 
-    // --- Confluence multiplier ---
     const factors = [trendScore, momentumScore, meanRevScore, volumeScore, patternScore];
     const compSign = totalScore >= 0 ? 1 : -1;
     const agreeing = factors.filter(f => Math.sign(f) === compSign && Math.abs(f) > 0.1).length;
@@ -740,6 +768,10 @@ function calculateBotSignal(data, options = {}) {
     totalScore *= confluenceMult;
 
     // --- Risk score (1-10) ---
+    // NOTE: these volatility/price cut-offs are EMPIRICAL heuristics for ranking, not a
+    // calibrated probability of loss. volatilityPct is the per-period ATR%/price normalized by
+    // volScale (≈ √horizon scaling, since volatility grows with the square root of time). Treat
+    // the 1-10 output as an ordinal risk flag, not a statistical risk measure.
     let riskScore = 1;
     if (volatilityPct > 20 || currentPrice < 0.001) riskScore = 10;
     else if (volatilityPct > 15 || currentPrice < 0.01) riskScore = 9;
@@ -783,18 +815,40 @@ function calculateBotSignal(data, options = {}) {
     const slDist = atr * slMult;
     const tpDist = atr * tpMult;
     const dir = totalScore >= 0 ? 1 : -1;
-    const stopLoss = currentPrice - dir * slDist;
-    const takeProfit = currentPrice + dir * tpDist;
+    const direction = dir > 0 ? 'long' : 'short';
+    // A stop can never sit at or below zero. Floor it at 1% of price when the ATR distance
+    // would push it negative (previously stopLoss could go negative for very volatile names).
+    let stopLoss = currentPrice - dir * slDist;
+    if (stopLoss <= 0) stopLoss = currentPrice * 0.01;
+    const takeProfit = Math.max(currentPrice * 0.01, currentPrice + dir * tpDist);
 
-    // Quarter-Kelly position sizing
-    const winRateProxy = clamp(0.5 + confluenceRatio * 0.15 - (riskScore - 5) * 0.02, 0.35, 0.65);
-    const payoff = tpMult / slMult;
-    const kellyFrac = Math.max(0, winRateProxy - (1 - winRateProxy) / payoff);
-    const accountRiskFrac = clamp(kellyFrac * 0.25, 0.005, 0.04);
-    const positionSize = Math.min(
-        options.maxPosition,
-        (options.accountCapital * accountRiskFrac) / Math.max(slDist, currentPrice * 0.005)
-    );
+    // --- Position sizing: fixed-fractional risk model (NOT a fabricated Kelly) ---
+    // The previous code fed an INVENTED win rate (0.5 + confluence*0.15 - …) into the Kelly
+    // formula. Kelly is extremely sensitive to the win-rate/edge estimate: MacLean, Thorp &
+    // Ziemba (2011, "The Kelly Capital Growth Investment Criterion") show a ~10% error in the
+    // expected return can cause ~50% over-betting, so sizing off an unvalidated probability is
+    // exactly what the literature warns against. We instead risk a fixed fraction of capital
+    // per trade (standard risk-based sizing): quantity such that hitting the stop loses
+    // `accountRisk` of capital, capped at maxPosition of capital. Kelly is applied ONLY when a
+    // genuinely backtested win rate is supplied (options.empiricalWinRate over ≥30 trades), and
+    // then as HALF-Kelly (MacLean/Ziemba: ~75% of the growth at ~50% of the volatility).
+    const riskPerUnit = Math.max(slDist, currentPrice * 0.005);
+    let accountRiskFrac = clamp(options.accountRisk, 0.005, 0.02); // cap risk-per-trade at 2%
+    let sizingMethod = 'fixed-fractional';
+    let kelly = null;
+    if (typeof options.empiricalWinRate === 'number' && (options.empiricalTrades || 0) >= 30) {
+        const p = clamp(options.empiricalWinRate, 0, 1);
+        const b = tpDist / slDist;                       // payoff from the ACTUAL sl/tp distances
+        const fullKelly = Math.max(0, p - (1 - p) / b);
+        const halfKelly = fullKelly * 0.5;
+        accountRiskFrac = clamp(halfKelly, 0, 0.02);
+        sizingMethod = 'half-kelly';
+        kelly = { winRate: p, payoff: b, fullKelly, halfKelly, trades: options.empiricalTrades };
+    }
+    // Long-only context (e.g. PEA): bearish setups produce no position.
+    const maxShares = (options.maxPosition * options.accountCapital) / currentPrice;
+    const riskBasedShares = (options.accountCapital * accountRiskFrac) / riskPerUnit;
+    const positionSize = direction === 'long' ? Math.min(maxShares, riskBasedShares) : 0;
 
     // --- Risk label ---
     let riskLevel, riskDesc;
@@ -829,6 +883,16 @@ function calculateBotSignal(data, options = {}) {
         risk: { level: riskLevel, desc: riskDesc, score: riskScore, volatility: volatilityPct, drawdown },
         regime: { type: regimeType, strength: adx.adx, label: regimeInfo.label, desc: regimeInfo.desc, volRegime, squeeze: bbSqueeze },
         confluence: { ratio: confluenceRatio, agreeing, total: factors.length, multiplier: confluenceMult },
+        // Data-quality disclosure: when only closing prices are available, range-based
+        // indicators (ATR/candlesticks/ADX/Stochastic/Ichimoku/SuperTrend/MFI) are approximated
+        // from closes and confidence should be read down accordingly.
+        dataQuality: {
+            ohlc: ohlcAvailable ? 'full' : 'closes-only',
+            volume: volumeAvailable,
+            degraded: !ohlcAvailable,
+            note: ohlcAvailable ? null : 'No intraday high/low: range indicators are approximated from closes; ATR is volatility-corrected.'
+        },
+        trade: { direction, sizingMethod, kelly },
         patterns: allPatterns,
         explanation: {
             currentPrice,
@@ -869,8 +933,6 @@ function calculateBotSignal(data, options = {}) {
     return result;
 }
 
-// === UI ===
-
 function updateSignalUI(symbol, result) {
     const card = document.getElementById(`card-${symbol}`);
     if (!card) return;
@@ -896,21 +958,18 @@ function updateSignalUI(symbol, result) {
     const e = result.explanation;
     const price = e.currentPrice;
 
-    // RSI
     let rsiText = 'Neutral', rsiClass = 'neutral';
     if (e.rsi < 30) { rsiText = 'Oversold — opportunity'; rsiClass = 'positive'; }
     else if (e.rsi < 40) { rsiText = 'Weakening — bullish bias'; rsiClass = 'positive'; }
     else if (e.rsi > 70) { rsiText = 'Overbought — correction risk'; rsiClass = 'negative'; }
     else if (e.rsi > 60) { rsiText = 'Supported — bearish bias'; rsiClass = 'negative'; }
 
-    // MACD
     let macdText, macdClass;
     if (e.macdHistogram > 0 && e.macdLine > 0) { macdText = 'Confirmed Bullish'; macdClass = 'positive'; }
     else if (e.macdHistogram > 0) { macdText = 'Bullish Recovery'; macdClass = 'positive'; }
     else if (e.macdHistogram < 0 && e.macdLine < 0) { macdText = 'Confirmed Bearish'; macdClass = 'negative'; }
     else { macdText = 'Bullish Exhaustion'; macdClass = 'negative'; }
 
-    // Stochastic
     let stochText, stochClass = 'neutral';
     if (e.stochK < 20 && e.stochK > e.stochD) { stochText = 'Bullish crossover in oversold'; stochClass = 'positive'; }
     else if (e.stochK < 20) { stochText = 'Oversold'; stochClass = 'positive'; }
@@ -918,7 +977,6 @@ function updateSignalUI(symbol, result) {
     else if (e.stochK > 80) { stochText = 'Overbought'; stochClass = 'negative'; }
     else stochText = 'Neutral';
 
-    // Trend (SMA stack)
     let trendText, trendClass = 'neutral';
     if (price > e.sma200) {
         trendText = price > e.sma50 ? 'Strong Uptrend' : 'Pullback in Uptrend';
@@ -928,7 +986,6 @@ function updateSignalUI(symbol, result) {
         trendClass = price < e.sma50 ? 'negative' : 'warning';
     }
 
-    // Bollinger %B
     let bbText, bbClass = 'neutral';
     if (e.bbPercentB < 0) { bbText = 'Below lower band — extreme oversold'; bbClass = 'positive'; }
     else if (e.bbPercentB < 0.2) { bbText = 'Near lower band'; bbClass = 'positive'; }
@@ -936,7 +993,6 @@ function updateSignalUI(symbol, result) {
     else if (e.bbPercentB > 0.8) { bbText = 'Near upper band'; bbClass = 'negative'; }
     else bbText = 'Within channel';
 
-    // Volume
     let volText, volClass = 'neutral';
     if (e.obvSlope > 0.05 && e.mfi < 50) { volText = 'Accumulation — positive flow'; volClass = 'positive'; }
     else if (e.obvSlope > 0.05) { volText = 'Bullish flow'; volClass = 'positive'; }
@@ -944,13 +1000,11 @@ function updateSignalUI(symbol, result) {
     else volText = 'Neutral flow';
 
 
-    // Confluence color: high agreement looks like the signal direction; low looks neutral.
     const confluencePct = Math.round(result.confluence.ratio * 100);
     let confluenceClass = 'neutral';
     if (result.confluence.agreeing >= 4) confluenceClass = result.signalValue >= 50 ? 'positive' : 'negative';
     else if (result.confluence.agreeing <= 2) confluenceClass = 'warning';
 
-    // Regime class
     let regimeClass = 'neutral';
     if (result.regime.type === 'uptrend') regimeClass = 'positive';
     else if (result.regime.type === 'downtrend') regimeClass = 'negative';

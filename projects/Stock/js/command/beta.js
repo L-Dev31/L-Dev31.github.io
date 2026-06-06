@@ -2,7 +2,10 @@ import { runQuant } from '../quant-client.js';
 import { fetchCloses } from './quant-shared.js';
 import { esc, formatNumber, panel, keyValueTable } from './market-data-shared.js';
 
-const DEFAULT_BENCHMARK = '^GSPC';
+// Default benchmark for the euro-focused context (EURO STOXX 50). Beta against a USD index for
+// a euro-quoted stock blends market risk with EUR/USD risk; the user can still pass any benchmark
+// as the 2nd argument (e.g. BETA AAPL ^GSPC for a US stock).
+const DEFAULT_BENCHMARK = '^STOXX50E';
 
 export async function runBetaCommand({ parts, getTarget, out, fmtErr }) {
     const target = getTarget(parts);

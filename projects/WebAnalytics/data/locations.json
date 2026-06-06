@@ -1,9 +1,10 @@
 {
-  "intro":         { "environment": "intro",         "dialogue_file": "data/dialogue/intro.json" },
-  "marine":        { "environment": "marine",        "dialogue_file": "data/dialogue/marine.json" },
-  "pascal":        { "environment": "pascal",        "dialogue_file": "data/dialogue/pascal.json" },
-  "ina":           { "environment": "ina",           "dialogue_file": "data/dialogue/ina.json" },
-  "jia":           { "environment": "jia",           "dialogue_file": "data/dialogue/jia.json" },
-  "data":          { "environment": "data",          "dialogue_file": "data/dialogue/data.json" },
-  "confrontation": { "environment": "confrontation", "dialogue_file": "data/dialogue/confrontation.json" }
+  "intro":          { "environment": "intro",          "dialogue_file": "data/dialogue/intro.json" },
+  "marine":         { "environment": "marine",         "dialogue_file": "data/dialogue/marine.json" },
+  "pascal":         { "environment": "pascal",         "dialogue_file": "data/dialogue/pascal.json" },
+  "ina":            { "environment": "ina",            "dialogue_file": "data/dialogue/ina.json" },
+  "jia":            { "environment": "jia",            "dialogue_file": "data/dialogue/jia.json" },
+  "data":           { "environment": "data",           "dialogue_file": "data/dialogue/data.json" },
+  "confrontation":  { "environment": "confrontation",  "dialogue_file": "data/dialogue/confrontation.json" },
+  "_acte1_outro":   { "environment": "intro",          "dialogue_file": "data/dialogue/_acte1_outro.json" }
 }

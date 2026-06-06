@@ -76,7 +76,6 @@ export function updatePortfolioSummary() {
     const settings = getUserSettings();
     const currency = getCurrency();
     
-    // Update Profile Name & Photo
     const nameEls = [getEl('profile-name'), ...document.querySelectorAll('.profile-info h1')];
     nameEls.forEach(el => { if (el) el.textContent = settings.name; });
     
@@ -92,8 +91,7 @@ export function updatePortfolioSummary() {
         if (shares > 0) {
             totalPositions++;
             totalShares += shares;
-            // Use costBasis if available (current value of held lots), fallback to investment
-            totalInvestment += (pos.costBasis || pos.investment || 0);
+                totalInvestment += (pos.costBasis || pos.investment || 0);
         }
     }
 
@@ -176,13 +174,11 @@ export function updatePortfolioComposition() {
         .map(([k, v]) => ({ key: k, value: v, pct: (v / total) * 100, ...bucketMeta.get(k) }))
         .sort((a, b) => b.value - a.value);
 
-    // Filter colors
     const colorFor = (key, idx) => {
         if (mode === 'type') return EXPOSURE_COLORS[key] || EXPOSURE_COLORS.other;
         return COUNTRY_COLORS[idx % COUNTRY_COLORS.length];
     };
 
-    // Render SVG
     svg.innerHTML = '';
     let currentAngle = -90; // Start at top
     const centerX = 100, centerY = 100, radius = 85;
@@ -250,7 +246,6 @@ export function updatePortfolioComposition() {
         currentAngle += angle;
     });
 
-    // Render Legend
     const top = sorted.slice(0, 10);
     legend.innerHTML = top.map((b, i) =>
         `<div class="exposure-legend-row">
@@ -266,7 +261,6 @@ export async function loadStocks() {
     const list = [];
     let orders = {};
     
-    // Fetch portfolio orders first
     try {
         const orderRes = await fetch('json/portfolio.json');
         if (orderRes.ok) orders = await orderRes.json();
@@ -288,14 +282,11 @@ export async function loadStocks() {
         } catch (error) { }
     }
 
-    // Load imported positions from local storage
     try {
         const imported = localStorage.getItem('nemeris_imported_positions');
         if (imported) {
             const importedPos = JSON.parse(imported);
             Object.values(importedPos).forEach(p => {
-                // If it's a new ticker or we want to overwrite, we can handle it here
-                // For now, let's just add it to the list if it's not already there
                 if (!list.find(s => s.symbol === p.symbol)) {
                     list.push(p.raw || p);
                 }
@@ -378,13 +369,11 @@ export async function loadStocks() {
     for (const sym of Object.keys(positions)) {
         try { updateSectionDates(sym); } catch (e) { }
     }
-    // Open the first ticker in the Portfolio list by default. Fallback to General if Portfolio is empty.
     const firstPortfolio = document.querySelector('#sidebar-portfolio .tab');
     const firstGeneral = document.querySelector('#sidebar-market .tab');
     const first = firstPortfolio || firstGeneral;
 
     if (first) {
-        // Ensure no other tabs or cards are active (fixes dual home-card + ticker-card view)
         document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
         document.querySelectorAll('.card').forEach(x => x.classList.remove('active'));
         document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
@@ -396,10 +385,7 @@ export async function loadStocks() {
     }
     updatePortfolioSummary();
     initPortfolioAnalytics();
-    // Scan léger en arrière-plan pour détecter les tickers morts (spark batch, quota minimal).
     setTimeout(() => backgroundSuspendedScan(), 2500);
-
-    // Fetch initial pour la performance de tout le monde
     setTimeout(() => batchPerformanceFetch(globalPeriod), 500);
 }
 
@@ -484,8 +470,6 @@ async function backgroundSuspendedScan() {
     }
 }
 
-// --- Advanced Portfolio Analytics ---
-
 export function initPortfolioAnalytics() {
     const card = getEl('card-portfolio');
     if (!card) return;
@@ -507,7 +491,6 @@ export function initPortfolioAnalytics() {
 
     initAnalysisPane();
 
-    // Initial load
     refreshAnalyticsTab('portfolio-performance');
 }
 
@@ -560,13 +543,13 @@ function renderPerformancePane() {
         const tagHtml = tag ? `<span class="perf-row-tag">${tag}</span>` : '';
         return `
             <div class="perf-row ${sign}" data-symbol="${symbol}">
-                <img class="perf-row-logo" src="img/icon/${symbol}.png" alt="" onerror="this.style.visibility='hidden'" />
+                <img class="perf-row-logo" src="img/icon/${symbol}.png" alt="" loading="lazy" onerror="this.style.visibility='hidden'" />
                 <div class="perf-row-id">
                     <span class="perf-row-name">${name} (${symbol})${tagHtml}</span>
                 </div>
                 <div class="perf-row-pl">
                     <span class="perf-row-pl-amt ${sign}">${fmtSigned(pl)} ${currency}</span>
-                    <span class="perf-row-pl-pct ${sign}">${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%</span>
+                    <span class="perf-row-pl-pct ${sign}">${formatPct(pct)}</span>
                 </div>
             </div>
         `;
@@ -581,6 +564,11 @@ function renderPerformancePane() {
     let flatCapital = 0;
     let winners = 0, losers = 0, flat = 0;
 
+    let realizedGains = 0;
+    let realizedLosses = 0;
+    let unrealizedGains = 0;
+    let unrealizedLosses = 0;
+
     const activeRows = [];
     const closedRows = [];
 
@@ -588,12 +576,17 @@ function renderPerformancePane() {
         const pos = positions[s];
         const realized = pos.realizedPL || 0;
         totalRealized += realized;
+        if (realized > 0) realizedGains += realized;
+        else if (realized < 0) realizedLosses += Math.abs(realized);
 
         if ((pos.shares || 0) > 0) {
             const price = pos.lastData?.price || (pos.costBasis / pos.shares) || 0;
             const value = price * pos.shares;
             const unrealized = value - pos.costBasis;
             const pct = pos.costBasis > 0 ? (unrealized / pos.costBasis) * 100 : 0;
+
+            if (unrealized > 0) unrealizedGains += unrealized;
+            else if (unrealized < 0) unrealizedLosses += Math.abs(unrealized);
 
             totalValue += value;
             totalCostBasis += pos.costBasis;
@@ -687,6 +680,8 @@ function renderPerformancePane() {
             allTimeEl.hidden = true;
         }
     }
+
+    updatePerformanceChart(realizedGains, unrealizedGains, realizedLosses + unrealizedLosses);
 }
 
 async function renderDividendsPane() {
@@ -766,7 +761,7 @@ async function renderDividendsPane() {
         const payTag = p.payDate ? `<span class="dividend-row-tag">pay ${dateFmt(p.payDate)}</span>` : '';
         return `
             <div class="dividend-row" data-symbol="${p.symbol}">
-                <img class="dividend-row-logo" src="img/icon/${p.symbol}.png" alt="" onerror="this.style.visibility='hidden'" />
+                <img class="dividend-row-logo" src="img/icon/${p.symbol}.png" alt="" loading="lazy" onerror="this.style.visibility='hidden'" />
                 <div class="dividend-row-id">
                     <span class="dividend-row-name">${p.name} (${p.symbol})</span>
                 </div>
@@ -795,4 +790,124 @@ export function initExposureToggle() {
         });
     });
 }
+
+function updatePerformanceChart(earned, yetToGain, lost) {
+    const section = getEl('perf-chart-section');
+    const svg = getEl('perf-chart-svg');
+    const tooltip = getEl('perf-chart-tooltip');
+    const legend = getEl('perf-chart-legend');
+    if (!section || !svg || !legend) return;
+
+    const total = earned + yetToGain + lost;
+    if (total <= 0) {
+        section.style.display = 'none';
+        return;
+    }
+    section.style.display = 'block';
+
+    const items = [];
+    if (earned > 0) {
+        items.push({
+            key: 'earned',
+            label: 'Realized Gains',
+            value: earned,
+            color: 'var(--color-positive)', // Green
+            pct: (earned / total) * 100
+        });
+    }
+    if (yetToGain > 0) {
+        items.push({
+            key: 'yetToGain',
+            label: 'Unrealized Gains',
+            value: yetToGain,
+            color: 'var(--primary)', // Purple
+            pct: (yetToGain / total) * 100
+        });
+    }
+    if (lost > 0) {
+        items.push({
+            key: 'lost',
+            label: 'Total Losses',
+            value: lost,
+            color: 'var(--color-negative)', // Red
+            pct: (lost / total) * 100
+        });
+    }
+
+    svg.innerHTML = '';
+    let currentAngle = -90; // Start at top
+    const centerX = 100, centerY = 100, radius = 85;
+
+    items.forEach((item) => {
+        let angle = (item.pct / 100) * 360;
+        if (angle >= 360) angle = 359.99;
+
+        const largeArc = angle > 180 ? 1 : 0;
+        const startRad = (currentAngle * Math.PI) / 180;
+        const endRad = ((currentAngle + angle) * Math.PI) / 180;
+
+        const x1 = centerX + radius * Math.cos(startRad);
+        const y1 = centerY + radius * Math.sin(startRad);
+        const x2 = centerX + radius * Math.cos(endRad);
+        const y2 = centerY + radius * Math.sin(endRad);
+
+        const pathData = [
+            `M ${centerX} ${centerY}`,
+            `L ${x1} ${y1}`,
+            `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+            'Z'
+        ].join(' ');
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', pathData);
+        path.setAttribute('fill', item.color);
+        path.setAttribute('stroke', 'var(--bg-card)');
+        path.setAttribute('stroke-width', '2');
+        path.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s';
+        path.style.cursor = 'pointer';
+        path.style.transformOrigin = 'center';
+
+        path.addEventListener('mouseenter', () => {
+            path.style.transform = 'scale(1.06)';
+            path.style.filter = 'brightness(1.1) saturate(1.2)';
+            if (tooltip) {
+                const currency = getCurrency();
+                tooltip.innerHTML = `
+                    <div class="tt-ticker">${item.label}</div>
+                    <div class="tt-data">
+                        <div class="tt-val">${item.pct.toFixed(1)}%</div>
+                        <div class="tt-val">${item.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}</div>
+                    </div>
+                `;
+                tooltip.hidden = false;
+            }
+        });
+
+        path.addEventListener('mousemove', (e) => {
+            if (tooltip) {
+                const rect = svg.getBoundingClientRect();
+                tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+                tooltip.style.top = (e.clientY - rect.top - 40) + 'px';
+            }
+        });
+
+        path.addEventListener('mouseleave', () => {
+            path.style.transform = 'scale(1)';
+            path.style.filter = 'none';
+            if (tooltip) tooltip.hidden = true;
+        });
+
+        svg.appendChild(path);
+        currentAngle += angle;
+    });
+
+    legend.innerHTML = items.map((item) =>
+        `<div class="exposure-legend-row">
+            <span class="swatch" style="background:${item.color};"></span>
+            <span class="label">${item.label}</span>
+            <span class="pct">${item.pct.toFixed(1)}%</span>
+        </div>`
+    ).join('');
+}
+
 

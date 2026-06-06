@@ -17,16 +17,21 @@ export const getEl = (id) => {
  * @param {string} currency 
  * @returns {string}
  */
+const currencyFormatter = new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+});
+
 export const formatCurrency = (val, currency = '$') => {
-    return (val >= 0 ? '' : '-') + currency + Math.abs(val).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
+    return (val >= 0 ? '' : '-') + currency + currencyFormatter.format(Math.abs(val));
 };
 
 /**
  * Formats percentage.
  */
 export const formatPct = (val) => {
-    return (val >= 0 ? '+' : '') + val.toFixed(2) + '%';
+    if (val === 0) return '0.00%';
+    const arrow = val > 0 ? '▲ ' : '▼ ';
+    return arrow + (val > 0 ? '+' : '') + val.toFixed(2) + '%';
 };
+

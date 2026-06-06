@@ -6,6 +6,11 @@ let baseIndex = 0;
 
 const CHART_SNAPSHOT_TTL_MS = 45000;
 const CHART_SNAPSHOT_ERROR_TTL_MS = 12000;
+const DEAD_TICKER_TTL_MS = 6 * 60 * 60 * 1000; // 404/422 ticker → suppress for the session
+
+// Symbols Yahoo answered 404/422 for (delisted/renamed/wrong suffix). Skipped entirely
+// on subsequent lookups so a stale constituent list can't re-flood the network/console.
+const deadTickers = new Set();
 
 // OHLC CACHE TTL BY PERIOD
 const PERIOD_TTL_MS = {
@@ -144,8 +149,10 @@ async function yahooFetch(targetUrl, signal) {
         if (r.errorCode === 429) {
             return { ...r, throttled: true, retryAfter: 30 }; // Fixed 30s as fallback if 429
         }
-        // If 401/404 on query2, try query1 before giving up
-        if (r.errorCode !== 401 && r.errorCode !== 404) break;
+        // 404 = ticker doesn't exist on Yahoo (not subdomain-specific) → don't retry query1.
+        // 401 = crumb wall, identical on both hosts → don't retry either. Only retry on
+        // transient/network errors where the other host might respond.
+        if (r.errorCode === 401 || r.errorCode === 404) break;
     }
     
     return lastError;
@@ -202,7 +209,11 @@ async function tryFetchChart(yahooSymbol, cfg, signal) {
 export async function fetchFromYahoo(ticker, period, _symbol, stock, _name, signal) {
     const yahooSymbol = getYahooSymbol(stock) || ticker;
 
-    // CHECK PERSISTENT CACHE (succès + erreurs cachées)
+    // Known-dead ticker (404/422 seen this session) → don't hit the network again.
+    if (deadTickers.has(normalizeYahooSymbol(yahooSymbol))) {
+        return { source: 'yahoo', error: true, errorCode: 404 };
+    }
+
     const ck = ohlcKey(yahooSymbol, period);
     const cached = await cacheGet(ck);
     if (cached) return cached;
@@ -243,6 +254,10 @@ export async function fetchFromYahoo(ticker, period, _symbol, stock, _name, sign
             }
  
             const errorResponse = { source: 'yahoo', error: true, ...lastError };
+            // Dead ticker (404/422) → remember it session-wide so other code paths skip it.
+            if (lastError?.errorCode === 404 || lastError?.errorCode === 422) {
+                deadTickers.add(normalizeYahooSymbol(yahooSymbol));
+            }
             // Cache court pour éviter le spam console au reload
             if (!lastError?.throttled) {
                 await cacheSet(ck, errorResponse, errorTtl(lastError?.errorCode));
@@ -438,24 +453,17 @@ export async function fetchYahooIndexComponents(indexSymbol, signal) {
                 return docs.map(d => d.symbol).filter(Boolean);
             }
         }
-    } catch { /* ignore, try next */ }
+    } catch { /* ignore, fall through */ }
 
-    // Strategy 2: Try v10 components (legacy — needs crumb, may 401)
-    try {
-        const url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(norm)}?modules=components`;
-        const j = await yahooFetch(url, signal);
-        if (!j?.error) {
-            const components = j?.quoteSummary?.result?.[0]?.components?.components;
-            if (Array.isArray(components) && components.length > 0) return components;
-        }
-    } catch { /* ignore */ }
-
-    // Strategy 3: Return empty — caller should fallback to local JSON lists
+    // quoteSummary?modules=components (v10/v11) now requires a crumb and returns 404/401
+    // from the proxy, so it's no longer attempted. Return empty — caller falls back to
+    // the local JSON constituent lists.
     return [];
 }
 
 export async function fetchYahooChartSnapshot(symbol, range = '1d', interval = '1m', signal) {
     const norm = normalizeYahooSymbol(symbol);
+    if (deadTickers.has(norm)) return null; // known 404/422 — no network call
     const cacheKey = `${norm}|${range}|${interval}`;
     const now = Date.now();
 
@@ -469,7 +477,14 @@ export async function fetchYahooChartSnapshot(symbol, range = '1d', interval = '
         const url = `${base}/v8/finance/chart/${encodeURIComponent(norm)}?range=${range}&interval=${interval}`;
         const j = await yahooFetch(url, signal);
         if (j?.error) {
-            chartSnapshotCache.set(cacheKey, { expiresAt: Date.now() + CHART_SNAPSHOT_ERROR_TTL_MS, data: null });
+            // 404/422 = ticker doesn't exist on Yahoo (delisted/renamed/wrong suffix).
+            // Suppress it for hours instead of 12s so a stale constituent list doesn't
+            // re-flood the console every time the market reloads. Transient errors keep
+            // the short TTL so they retry soon.
+            const isDeadTicker = j.errorCode === 404 || j.errorCode === 422;
+            const ttl = isDeadTicker ? DEAD_TICKER_TTL_MS : CHART_SNAPSHOT_ERROR_TTL_MS;
+            if (isDeadTicker) deadTickers.add(norm);
+            chartSnapshotCache.set(cacheKey, { expiresAt: Date.now() + ttl, data: null });
             return null;
         }
         const parsed = j?.chart?.result?.[0] || null;
@@ -485,30 +500,138 @@ export async function fetchYahooChartSnapshot(symbol, range = '1d', interval = '
     }
 }
 
+// v7/finance/spark ALWAYS returns 400 through the proxy now (deprecated/crumb-gated) — it
+// will never succeed from the browser. Default to dead so we don't emit a guaranteed 400
+// (browser-logged regardless of handling) on every load. fetchYahooPeriodChanges falls
+// back to per-ticker v8/chart fetches. Flip to false to re-probe if Yahoo restores it.
+let sparkEndpointDead = true;
+
 export async function fetchYahooSparkBatch(symbols, range = '1d', interval = '1m', signal) {
-    // query2 often works better for bulk without crumbs
-    const url = `https://query2.finance.yahoo.com/v7/finance/spark?symbols=${symbols.join(',')}&range=${range}&interval=${interval}&includePrePost=false`;
-    const j = await yahooFetch(url, signal);
-    if (j?.error) {
-        console.warn('[Yahoo] Spark Batch Error:', j.errorCode);
+    if (!symbols.length) return [];
+    if (sparkEndpointDead) return [];
+    const CHUNK_SIZE = 40;
+    const chunks = [];
+    for (let i = 0; i < symbols.length; i += CHUNK_SIZE) {
+        chunks.push(symbols.slice(i, i + CHUNK_SIZE));
+    }
+    try {
+        const promises = chunks.map(async (chunk) => {
+            const url = `https://query2.finance.yahoo.com/v7/finance/spark?symbols=${chunk.join(',')}&range=${range}&interval=${interval}&includePrePost=false`;
+            const j = await yahooFetch(url, signal);
+            if (j?.error) {
+                if (j.errorCode === 400 || j.errorCode === 401) sparkEndpointDead = true;
+                return [];
+            }
+            return j?.spark?.result || [];
+        });
+        const results = await Promise.all(promises);
+        return results.flat();
+    } catch (err) {
+        console.error('[Yahoo] Spark Batch Parallel Error:', err);
         return null;
     }
-    return j?.spark?.result || [];
+}
+
+// v7/finance/quote requires a crumb and ALWAYS returns 401 through the proxy now — it
+// will never succeed from the browser. We default to dead so we don't emit a guaranteed
+// 401 (which the browser logs to the console regardless of how we handle it) on every
+// load. Quotes are synthesized from v8/chart (crumb-free) instead. If Yahoo ever restores
+// crumb-free access, flip this back to false to re-probe.
+let quoteEndpointDead = true;
+
+// Build a quote-shaped object from a v8/chart snapshot so callers (mapQuoteToItem,
+// isYahooTickerActiveFromQuote) keep working without the v7/quote endpoint.
+function synthesizeQuoteFromChart(symbol, chart) {
+    const meta = chart?.meta;
+    if (!meta) return null;
+    const closes = chart?.indicators?.quote?.[0]?.close || [];
+    let price = meta.regularMarketPrice || 0;
+    if (!price) for (let i = closes.length - 1; i >= 0; i--) if (closes[i] != null) { price = closes[i]; break; }
+    const prevClose = meta.chartPreviousClose || meta.previousClose || 0;
+    const change = prevClose ? price - prevClose : 0;
+    const changePercent = prevClose ? (change / prevClose) * 100 : 0;
+    return {
+        symbol,
+        shortName: meta.shortName || symbol,
+        longName: meta.longName || meta.shortName || symbol,
+        regularMarketPrice: price,
+        regularMarketChange: change,
+        regularMarketChangePercent: changePercent,
+        regularMarketVolume: meta.regularMarketVolume || 0,
+        regularMarketTime: meta.regularMarketTime || 0,
+        exchange: meta.exchangeName || meta.fullExchangeName || '',
+        fullExchangeName: meta.fullExchangeName || meta.exchangeName || '',
+        currency: meta.currency || 'USD',
+        quoteType: meta.instrumentType || meta.quoteType || '',
+        marketCap: 0,
+        industry: '',
+        tradeable: meta.tradeable !== false
+    };
+}
+
+async function fetchQuotesViaChart(symbols, signal) {
+    const out = [];
+    const CONCURRENCY = 4;
+    for (let i = 0; i < symbols.length; i += CONCURRENCY) {
+        const chunk = symbols.slice(i, i + CONCURRENCY);
+        const settled = await Promise.all(chunk.map(async (sym) => {
+            try {
+                const chart = await fetchYahooChartSnapshot(sym, '1d', '1m', signal);
+                return synthesizeQuoteFromChart(sym, chart);
+            } catch { return null; }
+        }));
+        for (const q of settled) if (q) out.push(q);
+    }
+    return out;
 }
 
 export async function fetchYahooQuotesBatch(symbols, signal) {
     if (!symbols.length) return [];
-    // v6 is dead (404) — use v7 which works without crumb for basic quotes.
-    // Special chars (^VIX, EURUSD=X, DX-Y.NYB) must be URL-encoded per symbol,
-    // while the comma separator stays literal.
-    const encoded = symbols.map(s => encodeURIComponent(s)).join(',');
-    const url = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${encoded}`;
-    const j = await yahooFetch(url, signal);
-    if (j?.error) {
-        console.warn('[Yahoo] Quote Batch Error:', j.errorCode);
+
+    // v7/quote is dead (crumb required) — go straight to the chart-based fallback.
+    if (quoteEndpointDead) return fetchQuotesViaChart(symbols, signal);
+
+    const CHUNK_SIZE = 40;
+    const chunks = [];
+    for (let i = 0; i < symbols.length; i += CHUNK_SIZE) {
+        chunks.push(symbols.slice(i, i + CHUNK_SIZE));
+    }
+    const fetchChunk = async (chunk) => {
+        const encoded = chunk.map(s => encodeURIComponent(s)).join(',');
+        const url = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${encoded}`;
+        const j = await yahooFetch(url, signal);
+        if (j?.error) {
+            if (j.errorCode === 401) quoteEndpointDead = true;
+            return { failed: chunk };
+        }
+        return { quotes: j?.quoteResponse?.result || [] };
+    };
+
+    try {
+        // Probe with the first chunk only. If v7/quote is crumb-walled (401) it fails
+        // here, we flip quoteEndpointDead, and route ALL chunks through the chart
+        // fallback — avoiding a parallel burst of identical 401s on every page load.
+        const probe = await fetchChunk(chunks[0]);
+        if (quoteEndpointDead) return fetchQuotesViaChart(symbols, signal);
+
+        const quotes = [];
+        const failed = [];
+        (probe.quotes ? quotes : failed).push(...(probe.quotes || probe.failed));
+
+        if (chunks.length > 1) {
+            const rest = await Promise.all(chunks.slice(1).map(fetchChunk));
+            for (const r of rest) {
+                if (r.quotes) quotes.push(...r.quotes);
+                else if (r.failed) failed.push(...r.failed);
+            }
+        }
+        // Recover any individually-failed chunks via the crumb-free chart endpoint.
+        if (failed.length) quotes.push(...await fetchQuotesViaChart(failed, signal));
+        return quotes;
+    } catch (err) {
+        console.error('[Yahoo] Quote Batch Parallel Error:', err);
         return null;
     }
-    return j?.quoteResponse?.result || [];
 }
 
 export async function fetchYahooPeriodChanges(tickers, period, signal) {
@@ -517,7 +640,6 @@ export async function fetchYahooPeriodChanges(tickers, period, signal) {
     const periodConfig = PERIODS[period] || PERIODS['1D'];
     const { range, interval } = periodConfig;
 
-    // 1. Try to fetch as many as possible via Batch Spark (Most Efficient)
     const safeTickers = tickers.filter(isYahooSparkFriendly);
     if (safeTickers.length > 0) {
         try {
@@ -535,10 +657,8 @@ export async function fetchYahooPeriodChanges(tickers, period, signal) {
         }
     }
 
-    // 2. For those that failed or are not spark-friendly, use fetchFromYahoo (Slow but Robust with Fallbacks)
     const missing = tickers.filter(t => !results[t]);
     if (missing.length > 0) {
-        // Concurrency limit for fallback calls to avoid triggering rate limits too hard
         const CONCURRENCY = 3;
         for (let i = 0; i < missing.length; i += CONCURRENCY) {
             const chunk = missing.slice(i, i + CONCURRENCY);
@@ -560,7 +680,6 @@ export async function fetchYahooPeriodChanges(tickers, period, signal) {
 function parseChartPayload(payload, symbolKey) {
     if (!payload) return null;
     
-    // Detect structure: /spark (batch) has .response[0], /chart (individual) is the object itself
     let resp = payload;
     if (payload.response && Array.isArray(payload.response)) {
         resp = payload.response[0];
@@ -592,7 +711,6 @@ function parseChartPayload(payload, symbolKey) {
 
     if (cleanData.prices.length === 0) return null;
     
-    // Performance calculation: compare last price to the FIRST available price in this range
     const firstPrice = cleanData.prices[0];
     const lastPrice = cleanData.prices[cleanData.prices.length - 1];
 
@@ -622,7 +740,6 @@ export async function fetchYahooAnalysis(ticker, signal) {
 }
 
 export async function fetchYahooNews(ticker, limit = 10, signal) {
-    // CHECK PERSISTENT CACHE
     const ck = newsKey(ticker);
     const cached = await cacheGet(ck);
     if (cached) return { source: 'yahoo', items: cached };
@@ -644,7 +761,6 @@ export async function fetchYahooNews(ticker, limit = 10, signal) {
     } catch (e) { return { source: 'yahoo', error: true, errorCode: 500, items: [] }; }
 }
 
-// FETCH NEWS
 export async function fetchNews(symbol, limit = 20, days = 7) {
     try {
         const r = await fetchYahooNews(symbol, limit);

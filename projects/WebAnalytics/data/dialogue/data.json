@@ -1,283 +1,161 @@
-﻿{
+{
   "_location": "data",
-  "_comment": "Salle des données - pénalité gatée sur soupçon articles ; liens cachés gatés sur ina_se_cache ; mobile gaté sur jia_confirme_conversation_ia (cause d'Ina confirmée oralement).",
+  "_comment": "ACTE I - Scene 4. Premiere plongee data. Lecon 'lire une courbe' offerte d'entree. Deux actions Acte I : analyser UTM (forge utm_chaos), analyser canaux (forge data_canaux). Les autres actions data (rebond, penalite, attribution, trafic, mobile) restent gatees par flags Acte II/III. Sortie : retour Marine pour climax.",
+
   "on_first_visit": [
+    { "type": "line", "char": "narrateur", "text": "Sous-sol. Eclairage bleu froid. Deux grands ecrans, un serveur qui ronronne, des tableaux blancs avec des graphiques griffonnes au feutre rouge sec. Une seule chaise. C'est desert." },
+    { "type": "line", "char": "will", "text": "~~Personne ne descend ici. Les chartes ont six mois. Les feutres rouges ont seche. Cette boite **mesure**, mais elle ne regarde plus ce qu'elle mesure.~~", "sprite": "doubting" },
+
     {
       "type": "lesson",
       "id": "lesson_lire_courbe",
-      "intro": { "char": "will", "text": "Une salle remplie de données. Des courbes, des tableaux, des exports. Mais une donnée brute ne dit rien - c'est la **lecture** qui fait tout. Avant de plonger, voilà comment interpréter ce qu'on voit.", "sprite": "doubting" },
+      "intro": { "char": "will", "text": "Une salle remplie de donnees. Des courbes, des tableaux, des exports. Mais une donnee brute ne dit rien --- c'est la **lecture** qui fait tout. Avant de plonger, voila comment interpreter ce qu'on voit.", "sprite": "doubting" },
       "title": "Comment lire une courbe de trafic ?",
       "blocks": [
-        { "type": "text", "content": "Une donnée isolée ne signifie rien. Il faut toujours croiser plusieurs angles de lecture." },
+        { "type": "text", "content": "Une donnee isolee ne signifie rien. Il faut toujours croiser plusieurs angles de lecture." },
         {
           "type": "list",
           "items": [
-            "**Contextualiser la période** - saisonnalité, événements externes, refonte du site",
-            "**Comparer avec une période antérieure** - même mois N-1, même trimestre",
-            "**Croiser plusieurs indicateurs** - le volume seul ne dit pas si le trafic est de qualité",
-            "**Segmenter** - la moyenne globale cache souvent des réalités très différentes"
+            "**Contextualiser la periode** - saisonnalite, evenements externes, refonte du site",
+            "**Comparer avec une periode anterieure** - meme mois N-1, meme trimestre",
+            "**Croiser plusieurs indicateurs** - le volume seul ne dit pas si le trafic est de qualite",
+            "**Segmenter** - la moyenne globale cache souvent des realites tres differentes"
           ]
         },
-        { "type": "note", "content": "Une donnée ne prend du sens que si elle est replacée dans un contexte, comparée à d'autres indicateurs, et reliée à une décision." }
+        { "type": "note", "content": "Une donnee ne prend du sens que si elle est replacee dans un contexte, comparee a d'autres indicateurs, et reliee a une decision." }
       ]
     }
   ],
+
   "menu": {
     "options": [
       {
-        "text": "Analyser le taux de rebond",
-        "id": "data_rebond",
-        "requires_flag": "pascal_ux_catastrophe",
+        "text": "Analyser les UTM de Marine",
+        "id": "data_utm",
+        "requires_flag": "indice_utm_chaos",
+        "forbids_flag": "utm_chaos",
         "sequence": [
-          { "type": "line", "char": "will", "text": "Rebond à **93 %** sur la page d'accueil. Les visiteurs arrivent et disparaissent.", "sprite": "doubting" },
-          { "type": "line", "char": "will", "text": "Ça correspond à la refonte de **Pascal**. ~~Interne, pas malveillant.~~ Ça fait fuir les gens, ça ne fait pas **bannir** le site.", "sprite": "doubting" },
+          { "type": "line", "char": "will", "text": "Le rapport sources/supports. Voyons.", "sprite": "normal" },
+          { "type": "line", "char": "will", "text": "**Quatre orthographes** pour LinkedIn. Trois pour Meta. Aucune convention. GA4 voit **douze canaux** la ou il y en a **quatre**.", "sprite": "doubting" },
+
+          {
+            "type": "present_evidence",
+            "prompt": { "char": "will", "text": "~~Marine a cinq outils qu'elle ne lit pas. Ses UTM en sont l'extension logique : elle nomme a l'humeur du jour. Ma fiche sur les outils le dit en creux. Sortez-la.~~", "sprite": "doubting" },
+            "expected_lesson": "lesson_outils",
+            "on_correct": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "Un outil ne vaut que par sa **convention**. GA4 ne sait pas que 'linkedin' et 'LinkedIn' sont la meme chose. Pour lui, c'est deux canaux. Pour Marine, c'est deux pubs. Pour Jia, c'est deux factures. **Personne ne voit la meme chose.**", "sprite": "doubting" }
+              ]
+            },
+            "on_wrong":  { "sequence": [ { "type": "line", "char": "will", "text": "~~Non. Pas cette piece. Pas pour ce que je vois la.~~", "sprite": "doubting" } ] },
+            "on_cancel": { "sequence": [ { "type": "line", "char": "will", "text": "~~Je note sans le carnet.~~", "sprite": "doubting" } ] }
+          },
+
           {
             "type": "lesson",
-            "id": "lesson_diagnostic",
-            "intro": { "char": "will", "text": "Le rebond révèle l'erreur de Pascal. Mais **un chiffre n'est pas une analyse**. Il faut une méthode pour passer du symptôme à la cause - et de la cause à l'action. Voilà cette méthode.", "sprite": "doubting" },
-            "title": "Matrice diagnostic de performance",
+            "id": "lesson_utm",
+            "intro": { "char": "will", "text": "Les UTM, c'est une **convention**. Et une convention qu'on viole, c'est une enquete qu'on brouille. Tout le reporting de cette boite repose sur des balises qui se contredisent.", "sprite": "doubting" },
+            "title": "Les UTM et le suivi des campagnes",
             "blocks": [
-              { "type": "text", "content": "L'analyse ne consiste pas à décrire des chiffres - elle suit un raisonnement en 4 temps." },
-              {
-                "type": "list",
-                "items": [
-                  "**Constat** - qu'observe-t-on dans les données ?",
-                  "**Hypothèse** - quelle cause probable explique ce constat ?",
-                  "**Vérification** - quelle donnée permet de confirmer ou d'infirmer ?",
-                  "**Recommandation** - quelle action concrète en découle ?"
-                ]
-              },
+              { "type": "text", "content": "Les **UTM** sont des parametres ajoutes a une URL pour identifier precisement l'origine d'un trafic dans GA4." },
+              { "type": "text", "content": "Exemple d'URL taguee :" },
+              { "type": "code", "content": "https://monsite.fr/formation?utm_source=linkedin&utm_medium=social&utm_campaign=lancement_mai" },
               { "type": "separator" },
               {
                 "type": "table",
-                "headers": ["Symptôme", "Cause probable", "Vérification", "Action"],
+                "headers": ["Parametre", "Role", "Exemple"],
                 "rows": [
-                  ["Fort trafic, peu de leads", "Mauvaise landing page", "Analyser scroll, clics, source", "Simplifier message et CTA"],
-                  ["Taux de conversion mobile faible", "Problème UX mobile", "Comparer mobile / desktop", "Revoir responsive et formulaires"],
-                  ["Panier abandonné", "Friction au paiement", "Analyser le tunnel", "Réduire étapes, rassurer"],
-                  ["Temps faible sur article", "Contenu peu engageant", "Analyser source et page d'entrée", "Retravailler titre, structure, visuels"]
+                  ["utm_source",   "La source du trafic",         "linkedin, google, newsletter"],
+                  ["utm_medium",   "Le canal / support",          "social, email, paid_social, cpc"],
+                  ["utm_campaign", "Le nom de la campagne",       "lancement_mai, promo_ete"],
+                  ["utm_content",  "Variante de message ou visuel","bouton_rouge, version_b"],
+                  ["utm_term",     "Mot-cle (contexte pub)",      "analytics_formation"]
                 ]
-              }
+              },
+              { "type": "separator" },
+              { "type": "heading", "content": "Regles de nommage obligatoires" },
+              {
+                "type": "list",
+                "items": [
+                  "Toujours en **minuscules**",
+                  "Sans accents, sans espaces",
+                  "Tirets bas `_` ou tirets simples `-`",
+                  "Harmonise dans **toute l'equipe**",
+                  "Documente dans un **plan de marquage partage**"
+                ]
+              },
+              { "type": "note", "content": "Sans conventions stables, GA4 cree des doublons, les comparaisons sont faussees, et l'attribution devient inexploitable." }
             ]
           },
-          { "type": "set_flag", "flag": "data_rebond" }
+
+          { "type": "set_flag", "flag": "utm_chaos" },
+          { "type": "line", "char": "will", "text": "Les UTM sont dans un etat qui fait du mal aux yeux. **Mais ca n'incrimine pas Marine** --- c'est censee etre la responsabilite d'Ina. Note pour plus tard.", "sprite": "doubting" }
         ]
       },
+
       {
-        "text": "Analyser les canaux d'acquisition",
+        "text": "Comparer les canaux d'acquisition",
         "id": "data_canaux",
         "requires_flag": "marine_dépensière",
+        "forbids_flag": "data_canaux",
         "sequence": [
-          { "type": "line", "char": "narrateur", "text": "Will ouvre le rapport d'acquisition. Il aligne les chiffres en colonnes." },
-          { "type": "line", "char": "will", "text": "Intéressant. **Marine** dépense **5 000 €** en pub pour générer moins de revenus que l'**email**, qui coûte dix fois moins. Et le **SEO organique** s'est effondré il y a exactement **six mois**.", "sprite": "doubting" },
+          { "type": "line", "char": "narrateur", "text": "Will ouvre le rapport Acquisition. Il aligne les chiffres en colonnes sur trente jours." },
+          { "type": "line", "char": "will", "text": "**SEA : 3 100 sessions, 3 200 € de budget, 2 500 € de revenu. Email : 380 sessions, 200 € de budget, 1 200 € de revenu.** Et le **SEO organique** s'est effondre il y a exactement **six mois**.", "sprite": "doubting" },
+
+          {
+            "type": "present_evidence",
+            "prompt": { "char": "will", "text": "~~Marine voit des **volumes**. Du 'plein de trafic'. Mais le volume n'est pas le rendement. Le rendement, c'est ce qui vient APRES la mesure. J'ai deja cette piece dans mon carnet.~~", "sprite": "doubting" },
+            "expected_lesson": "lesson_mesurer_analyser",
+            "on_correct": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "**Mesurer 3 100 sessions SEA, ce n'est pas analyser un ROI.** L'email convertit dix fois mieux pour dix fois moins cher. Marine a mesure du volume --- elle n'a jamais analyse une rentabilite. Et personne ne lui a dit que c'etait son boulot.", "sprite": "doubting" }
+              ]
+            },
+            "on_wrong":  { "sequence": [ { "type": "line", "char": "will", "text": "~~Non. Le canal qui s'effondre demande autre chose. Mais ca viendra.~~", "sprite": "doubting" } ] },
+            "on_cancel": { "sequence": [ { "type": "line", "char": "will", "text": "~~Avancons.~~", "sprite": "doubting" } ] }
+          },
+
           {
             "type": "lesson",
             "id": "lesson_canaux",
-            "intro": { "char": "will", "text": "Marine dépense 5 000 € en pub pour moins de revenus que l'email - qui coûte dix fois moins. Et le SEO organique s'est effondré il y a exactement six mois. Les canaux ne valent pas tous la même chose. Voilà comment les **comparer vraiment**.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "Marine depense 5 000 € en pub pour moins de revenus que l'email --- qui coute dix fois moins. Et le SEO organique s'est effondre il y a exactement six mois. Les canaux ne valent pas tous la meme chose. Voila comment les **comparer vraiment**.", "sprite": "doubting" },
             "title": "Analyse comparative des canaux d'acquisition",
             "blocks": [
-              { "type": "text", "content": "Le professionnel ne doit pas regarder seulement le **volume**. Il faut comparer : volume + qualité + coût + conversion." },
+              { "type": "text", "content": "Le professionnel ne doit pas regarder seulement le **volume**. Il faut comparer : volume + qualite + cout + conversion." },
               {
                 "type": "table",
-                "headers": ["Canal", "Sessions", "Taux de conv.", "Coût", "Revenu", "Lecture"],
+                "headers": ["Canal", "Sessions", "Taux conv.", "Cout", "Revenu", "Lecture"],
                 "rows": [
-                  ["SEO organique", "4 200", "0,3 %", "0 €", "900 €", "Bonne visibilité, conversion faible"],
-                  ["SEA Google Ads", "3 100", "0,8 %", "3 200 €", "2 500 €", "Trafic coûteux, peu rentable"],
-                  ["Social payant", "2 400", "0,4 %", "1 800 €", "900 €", "Faible ROI"],
-                  ["Email", "380", "3,1 %", "200 €", "1 200 €", "Excellent levier sous-exploité"],
-                  ["Direct", "900", "2,2 %", "0 €", "1 800 €", "Trafic qualifié et fidèle"]
+                  ["SEO organique",  "4 200", "0,3 %", "0 €",     "900 €",   "Bonne visibilite, conversion faible"],
+                  ["SEA Google Ads", "3 100", "0,8 %", "3 200 €", "2 500 €", "Trafic couteux, peu rentable"],
+                  ["Social payant",  "2 400", "0,4 %", "1 800 €", "900 €",   "Faible ROI"],
+                  ["Email",          "380",   "3,1 %", "200 €",   "1 200 €", "**Excellent levier sous-exploite**"],
+                  ["Direct",         "900",   "2,2 %", "0 €",     "1 800 €", "Trafic qualifie et fidele"]
                 ]
               },
               { "type": "separator" },
-              { "type": "heading", "content": "La segmentation est indispensable" },
-              { "type": "text", "content": "Une moyenne globale cache souvent des réalités très différentes." },
-              { "type": "text", "content": "Exemple : taux de conversion global = 2,1 % → desktop 3,4 %, mobile 0,8 %. La vraie information n'est pas « le site convertit à 2,1 % » mais **« le site convertit mal sur mobile »**." },
-              {
-                "type": "list",
-                "items": [
-                  "Nouveaux visiteurs / visiteurs récurrents",
-                  "Mobile / desktop",
-                  "Trafic organique / paid / social / referral / direct",
-                  "France / international",
-                  "Visiteurs ayant converti / n'ayant pas converti"
-                ]
-              },
-              { "type": "note", "content": "Un canal avec peu de trafic mais un excellent taux de conversion mérite d'être développé. Un canal coûteux avec un faible ROAS doit être optimisé ou réduit." }
+              { "type": "heading", "content": "Le ROI" },
+              { "type": "text", "content": "Formule : **ROI = (Gain obtenu − Cout investi) / Cout investi × 100**" },
+              { "type": "text", "content": "Exemple : cout campagne 2 000 € - marge generee 5 000 € → **ROI = 150 %**" },
+              { "type": "note", "content": "Un canal avec peu de trafic mais un excellent taux de conversion merite d'etre developpe. Un canal couteux avec un faible ROAS doit etre optimise ou reduit." }
             ]
           },
-          { "type": "set_flag", "flag": "data_canaux" }
+
+          { "type": "set_flag", "flag": "data_canaux" },
+          { "type": "line", "char": "will", "text": "~~Marine n'a pas sabote la boite. Elle est une preuve vivante qu'on peut couler un compte sans rien faire de mal --- juste en faisant mal son metier. Avant de la blanchir devant Jia, je dois lui mettre ca sous le nez.~~", "sprite": "doubting" }
         ]
       },
+
       {
-        "text": "Analyser la penalite Google",
-        "id": "data_pénalité",
-        "requires_flag": "ina_articles_hors_sujet",
-        "once_flag": "preuve_articles_volés",
+        "text": "(Remonter voir Marine)",
+        "id": "data_sortie_marine",
+        "requires_flag": "data_canaux",
         "sequence": [
-          { "type": "line", "char": "will", "text": "Là. Le vrai **coup de massue**. **Google** a appliqué une **pénalité manuelle** au domaine. Motif détecté : **contenu dupliqué**. Le site, et tous les clients liés, déclassés d'un coup.", "sprite": "doubting" },
-          { "type": "line", "char": "will", "text": "**Contenu dupliqué**. Quelqu'un a publié des textes qui existaient déjà ailleurs. **Volés.** Google a vu la copie. Il a sanctionné l'original, le voleur, et tous ceux qui pointaient vers eux.", "sprite": "doubting" },
-          { "type": "set_flag", "flag": "preuve_articles_volés" },
-          { "type": "line", "char": "will", "text": "Les articles d'**Ina**. « **Évidemment** » qu'il les a écrits. ~~Évidemment.~~", "sprite": "doubting" }
-        ]
-      },
-      {
-        "text": "Analyser l'attribution des conversions",
-        "id": "data_attribution",
-        "requires_flags": ["marine_outils_flous", "preuve_articles_volés"],
-        "sequence": [
-          { "type": "line", "char": "narrateur", "text": "Will ouvre le rapport de parcours multi-touch. Les conversions qui restent montrent des chemins complexes." },
-          { "type": "line", "char": "will", "text": "Un utilisateur voit une pub **Meta** → revient via **Google** → reçoit un **email** → achète. À qui attribue-t-on la **vente** ?", "sprite": "doubting" },
-          {
-            "type": "lesson",
-            "id": "lesson_attribution",
-            "intro": { "char": "will", "text": "Un utilisateur voit une pub Meta, revient via Google, reçoit un email, achète. À qui attribue-t-on la vente ? C'est là que tout se complique - et là que beaucoup se trompent. Les modèles d'**attribution** répondent à cette question.", "sprite": "doubting" },
-            "title": "Les modèles d'attribution",
-            "blocks": [
-              { "type": "text", "content": "Un utilisateur peut passer par plusieurs canaux avant de convertir. L'attribution détermine comment le **crédit d'une conversion** est réparti entre ces différents points de contact." },
-              { "type": "separator" },
-              { "type": "heading", "content": "Le parcours client" },
-              {
-                "type": "list",
-                "items": [
-                  "**Notoriété** - relations presse, publicités en ligne",
-                  "**Considération** - blog, avis, e-mails, réseaux sociaux",
-                  "**Achat** - site internet, boutique en ligne",
-                  "**Fidélisation** - newsletter, programme de fidélité",
-                  "**Recommandation** - bouche-à-oreille, réseaux sociaux"
-                ]
-              },
-              { "type": "separator" },
-              {
-                "type": "table",
-                "headers": ["Modèle", "Principe", "Risque"],
-                "rows": [
-                  ["Last click", "Tout le crédit au dernier canal cliqué", "Surestimer l'email/retargeting, sous-estimer la notoriété"],
-                  ["First click", "Tout le crédit au premier canal", "Sous-estimer les canaux de conversion finale"],
-                  ["Linéaire", "Crédit réparti également entre tous les contacts", "Nivellement - tous les canaux ont le même poids"],
-                  ["Basé sur la position", "Plus de crédit au 1er et au dernier contact", "Ignore les étapes intermédiaires"],
-                  ["Data-driven", "Crédit calculé selon les données réelles (GA4)", "Nécessite un volume de données suffisant"]
-                ]
-              },
-              { "type": "separator" },
-              { "type": "text", "content": "**Le bon réflexe** n'est pas de chercher « le meilleur modèle universel ». C'est de choisir un modèle **cohérent avec l'objectif d'analyse**." },
-              { "type": "note", "content": "Dans GA4, certains modèles historiques ont été supprimés. Toujours vérifier les options réellement disponibles dans l'interface." }
-            ]
-          },
-          { "type": "set_flag", "flag": "data_attribution" }
-        ]
-      },
-      {
-        "text": "Analyser les flux de trafic sortant",
-        "id": "data_trafic",
-        "requires_flag": "ina_se_cache",
-        "once_flag": "preuve_liens_cachés",
-        "sequence": [
-          { "type": "line", "char": "will", "text": "Regardons où part le trafic au lieu de **convertir**.", "sprite": "doubting" },
-          { "type": "line", "char": "narrateur", "text": "Il suit les liens sortants dans le code des articles. Des liens. Cachés. Texte de la même couleur que le fond, insérés dans les articles. Ils ne mènent pas à un produit BLUE S.E.A." },
-          { "type": "line", "char": "will", "text": "Ils mènent tous au même endroit. Un **site personnel**. Saturé de publicités. Un portfolio gonflé au trafic **détourné**.", "sprite": "doubting" },
-          { "type": "line", "char": "narrateur", "text": "Il ouvre le « à propos » du site personnel." },
-          { "type": "line", "char": "will", "text": "~~...Ina Voué.~~", "sprite": "doubting" },
-          { "type": "set_flag", "flag": "preuve_liens_cachés" },
-          {
-            "type": "lesson",
-            "id": "lesson_navigation",
-            "intro": { "char": "will", "text": "Des liens invisibles. Texte de la même couleur que le fond. Le trafic de BLUE S.E.A. partait ailleurs, en silence, depuis des mois. Le **flux de navigation** ne ment pas - et ce soir, il m'a tout dit.", "sprite": "doubting" },
-            "title": "Analyser les comportements utilisateurs et les flux de navigation",
-            "blocks": [
-              { "type": "text", "content": "Le **flux de navigation** montre la succession des pages consultées. Il permet de voir les chemins les plus fréquents, les points de sortie anormaux, les boucles inutiles." },
-              { "type": "separator" },
-              { "type": "heading", "content": "L'entonnoir de conversion" },
-              { "type": "text", "content": "L'entonnoir représente les étapes menant à un objectif. À chaque étape, une partie des utilisateurs abandonne." },
-              {
-                "type": "list",
-                "items": [
-                  "Page produit",
-                  "Ajout au panier",
-                  "Validation du panier",
-                  "Paiement",
-                  "Confirmation"
-                ]
-              },
-              { "type": "text", "content": "Ce qu'il faut analyser : à quelle étape la chute est la plus forte ? Est-elle normale ou anormale ? Concerne-t-elle tous les segments ou un seul appareil / canal ?" },
-              { "type": "note", "content": "Un fort trafic vers des liens externes sans valeur pour l'entreprise est un signal d'alarme. Le flux de navigation révèle où part l'attention des visiteurs." }
-            ]
-          },
-          { "type": "line", "char": "will", "text": "Il a fait fuir l'argent de la boîte vers son propre site. **Volé** des articles pour le trafic, quitte à faire pénaliser tout le monde. Reste à comprendre le **pourquoi**. Et pour ça, il faut Madame Seo.", "sprite": "doubting" }
-        ]
-      },
-      {
-        "text": "Examiner le telephone professionnel d'Ina",
-        "id": "data_mobile",
-        "requires_flags": ["preuve_liens_cachés", "jia_confirme_conversation_ia"],
-        "once_flag": "mobile_ina",
-        "sequence": [
-          { "type": "line", "char": "narrateur", "text": "Will récupère les logs du mobile pro d'Ina. Un mémo vocal. Daté d'il y a six mois. Le jour exact que Madame Seo m'a confirmé." },
-          { "type": "line", "char": "narrateur", "text": "Il appuie sur lecture. La voix d'Ina, basse, enregistrée à la dérobée. Et derrière, étouffée, celle de Seo Ji-a." },
-          { "type": "line", "char": "jia", "text": "~~...franchement, avec l'IA, on pourrait remplacer une partie de l'équipe. Le SEO surtout, ça va devenir automatique...~~", "sprite": "normal" },
-          { "type": "line", "char": "will", "text": "Il l'a **entendue**. Il s'est cru **fini**. Alors il s'est construit une **issue de secours**. Sur le dos de la boîte.", "sprite": "doubting" },
-          { "type": "set_flag", "flag": "mobile_ina" },
-          { "type": "set_flag", "flag": "mobile" },
-          {
-            "type": "lesson",
-            "id": "lesson_rgpd",
-            "intro": { "char": "will", "text": "Un mémo vocal enregistré à son insu. Des logs récupérés depuis un mobile pro. Ce qu'Ina a fait était illégal - mais ce que j'ai utilisé pour le confondre, ça frôle les limites aussi. Les données, les **droits**, la **vie privée** : le RGPD est là pour que tout ça ne devienne pas un terrain sans règles.", "sprite": "doubting" },
-            "title": "RGPD, éthique et confidentialité des données",
-            "blocks": [
-              { "type": "text", "content": "En web analytics, on ne manipule pas seulement des statistiques. On manipule souvent des informations qui entrent dans le champ de la **protection des données**." },
-              { "type": "separator" },
-              { "type": "heading", "content": "Ce que protège le RGPD en analytics" },
-              {
-                "type": "list",
-                "items": [
-                  "Les identifiants en ligne et cookies",
-                  "Certaines adresses IP",
-                  "Les données de navigation et de comportement",
-                  "Les données issues du croisement entre plusieurs sources"
-                ]
-              },
-              { "type": "separator" },
-              { "type": "heading", "content": "Questions à toujours se poser" },
-              {
-                "type": "list",
-                "items": [
-                  "Pourquoi ai-je besoin de cette donnée ?",
-                  "Est-elle réellement nécessaire ?",
-                  "L'utilisateur a-t-il été correctement informé ?",
-                  "Les durées de conservation sont-elles définies et limitées ?",
-                  "Les données sont-elles protégées et accessibles aux seules personnes habilitées ?"
-                ]
-              },
-              { "type": "separator" },
-              { "type": "heading", "content": "Durées de conservation (CNIL)" },
-              {
-                "type": "table",
-                "headers": ["Élément", "Durée maximale"],
-                "rows": [
-                  ["Traceurs (cookies analytics)", "13 mois"],
-                  ["Données collectées via ces traceurs", "25 mois"]
-                ]
-              },
-              { "type": "separator" },
-              { "type": "heading", "content": "Exemption de consentement ≠ conformité totale" },
-              { "type": "text", "content": "Certains outils analytics peuvent être exemptés de consentement pour la mesure d'audience - mais seulement sous conditions strictes. L'exemption ne couvre pas tout le dispositif." },
-              { "type": "separator" },
-              { "type": "heading", "content": "Erreurs graves à éviter" },
-              {
-                "type": "list",
-                "items": [
-                  "Laisser remonter des données de santé, mots de passe, numéros de carte",
-                  "Transmettre des contenus de champs de formulaire non filtrés",
-                  "Collecter plus de données que nécessaire (principe de minimisation)",
-                  "Ne pas documenter le plan de marquage"
-                ]
-              },
-              { "type": "note", "content": "**Une pratique peut être juridiquement encadrée et techniquement possible, tout en restant discutable sur le plan éthique.** Le droit fixe un cadre minimal - l'éthique interroge la légitimité, la proportionnalité et l'impact réel sur les personnes." }
-            ]
-          },
-          { "type": "line", "char": "will", "text": "J'ai le **quoi**. J'ai le **comment**. J'ai le **pourquoi**. Il est temps de tout poser sur la table.", "sprite": "happy" }
+          { "type": "goto", "goto": "marine" }
         ]
       }
     ]
   },
+
   "characters_present": []
 }

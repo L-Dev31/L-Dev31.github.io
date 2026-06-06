@@ -4,7 +4,8 @@
       "id": "rcai",
       "title": "Regards Croisés",
       "creator": "Equipe recTangle - Ynov",
-      "category": "Photography"
+      "category": "Photography",
+      "disabled": true
     },
     {
       "id": "ogfm",
@@ -21,7 +22,10 @@
         "punk"
       ],
       "ctas": [
-        { "label": "Charte Graphique (PDF)", "url": "projects/Portfolio/ogfm-brand-guidelines.pdf" }
+        {
+          "label": "Charte Graphique (PDF)",
+          "url": "projects/Portfolio/ogfm-brand-guidelines.pdf"
+        }
       ],
       "ctaImages": [
         "assets/images/projects/ogfm/process1.jpg",
@@ -42,33 +46,98 @@
         "monster-tamer",
         "retro",
         "pokemon-like"
-      ]
+      ],
+      "disabled": true
     },
     {
       "id": "bgaw",
       "title": "Black Goose",
-      "creator": "The Axis - Ynov",
-      "category": "Web"
+      "date": "2026-03-01",
+      "role": "Web Designer & Logo Designer",
+      "client": "BLACK GOOSE (The Axis, Sophia Ynov Campus)",
+      "heroImage": "assets/images/projects/bgaw/header.jpg",
+      "subtitle": "A luxury web redesign for an independent brand fusing precision watchmaking and automotive aesthetics.",
+      "tags": [
+        "web design",
+        "brand identity",
+        "art direction",
+        "luxury",
+        "UI/UX"
+      ],
+      "ctas": [
+        {
+          "label": "View Presentation (PDF)",
+          "url": "projects/Portfolio/Black_Goose,Presentation_-_The_Axis_-_Ryan_AVERSA,Benoite_MACCHI, Clement_DEZON-HULIN,Timeo_RENARD,Léo_TOSKU_-_31-3-2026.pdf"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/bgaw/identity.jpg",
+        "assets/images/projects/bgaw/logo.jpg",
+        "assets/images/projects/bgaw/web.jpg"
+      ],
+      "category": "UI/UX"
     },
     {
       "id": "mego",
-      "title": "Megoteur",
-      "creator": "Remi Astier",
+      "title": "Mégoteur",
+      "date": "2026-02-01",
+      "role": "Designer",
+      "client": "Mégoteur — Challenge 48H, Sophia Ynov Campus",
+      "heroImage": "assets/images/projects/mego/header.jpg",
+      "subtitle": "Visual communication package for a GPS cigarette butt collection startup. 48 hours. Real constraints.",
+      "tags": [
+        "brochure design",
+        "social media kit",
+        "BtoG",
+        "pitch deck",
+        "48H challenge"
+      ],
       "category": "Design"
     },
     {
       "id": "bmge",
-      "title": "L-DEV's BMG Editor",
-      "description": "A comprehensive editor for BMG files, enhancing game modding workflows.",
-      "creator": "Léo Tosku",
-      "category": "Tools",
-      "tags": []
+      "title": "BMG Editor",
+      "date": "2024-01-01",
+      "role": "Developer",
+      "client": "Personal — Tomodachi Collection FR Translation Mod",
+      "heroImage": "assets/images/projects/bmge/header.jpg",
+      "subtitle": "A browser-based binary editor for Nintendo's BMG format, built from reverse-engineering. No documentation, no SDK.",
+      "tags": [
+        "reverse engineering",
+        "binary format",
+        "game modding",
+        "JavaScript",
+        "NDS"
+      ],
+      "ctas": [
+        {
+          "label": "Open Editor",
+          "url": "projects/BMGE/index.html"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/bmge/tomodachi.png",
+        "assets/images/projects/bmge/tags.png",
+        "assets/images/projects/bmge/re.png"
+      ],
+      "category": "Web"
     },
     {
       "id": "prfy",
       "title": "Proofy",
-      "creator": "Equipe 1 - Ynov",
-      "category": "Design"
+      "date": "2026-02-01",
+      "role": "UX Designer",
+      "client": "Academic Sprint, Sophia Ynov Campus",
+      "heroImage": "assets/images/projects/prfy/header.jpg",
+      "subtitle": "A scan-first mobile vault for receipts and warranties. No account. No paper.",
+      "tags": [
+        "UX design",
+        "product thinking",
+        "MVP scoping",
+        "Figma prototype",
+        "mobile"
+      ],
+      "category": "UI/UX"
     },
     {
       "id": "cmck",
@@ -76,22 +145,43 @@
       "description": "Showcasing the musical journey and works of Charlie McKenzie.",
       "creator": "Charlie McKenzie",
       "category": "Web",
-      "tags": []
+      "tags": [],
+      "disabled": true
     },
     {
       "id": "mxal",
       "title": "Mix and Light",
       "creator": "Mix and Light",
       "category": "Web",
-      "type": "School project"
+      "type": "School project",
+      "disabled": true
     },
     {
       "id": "lsdp",
-      "title": "Les Saveurs de Provence (Redesign)",
-      "description": "Bringing the flavors of Provence to life with a fresh web design.",
-      "creator": "",
-      "category": "Web",
-      "tags": []
+      "title": "Les Saveurs de Provence",
+      "date": "2025-08-01",
+      "role": "Web Designer & Developer",
+      "client": "Les Saveurs de Provence (Vallauris)",
+      "heroImage": "assets/images/projects/lsdp/header.jpg",
+      "subtitle": "A premium web redesign for a traditional restaurant in Vallauris.",
+      "tags": [
+        "web design",
+        "frontend development",
+        "UX/UI redesign",
+        "vanilla JS"
+      ],
+      "ctas": [
+        {
+          "label": "View Live Site",
+          "url": "projects/LSDP/index.html"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/lsdp/hero.png",
+        "assets/images/projects/lsdp/menu.png",
+        "assets/images/projects/lsdp/history.png"
+      ],
+      "category": "UI/UX"
     },
     {
       "id": "sand",
@@ -99,25 +189,50 @@
       "description": "Website redesign for SandFall Interactive Studio, enhancing user experience and brand identity.",
       "creator": "SandFall Interactive",
       "category": "Web",
-      "tags": []
+      "tags": [],
+      "disabled": true
     },
     {
       "id": "gpmx",
       "title": "GPMailbox",
       "creator": "Léo Tosku",
-      "category": "Web"
+      "category": "Web",
+      "disabled": true
     },
     {
       "id": "gptr",
       "title": "GPTranslator",
-      "creator": "Léo Tosku",
+      "date": "2023-05-01",
+      "role": "Developer & Dataset Author",
+      "client": "Trophées NSI — Lycée Sonny Rupaire, Sainte-Rose, Guadeloupe",
+      "heroImage": "assets/images/projects/gptr/header.jpg",
+      "subtitle": "The first French to Guadeloupean Creole translator. Built from scratch, from a language the internet had forgotten.",
+      "tags": [
+        "Python",
+        "NLP",
+        "low-resource language",
+        "Tkinter",
+        "Trophées NSI"
+      ],
+      "ctas": [
+        {
+          "label": "View on GitHub",
+          "url": "https://github.com/L-Dev31/GPTranslator"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/gptr/dictionary.png",
+        "assets/images/projects/gptr/translation.png",
+        "assets/images/projects/gptr/interface.png"
+      ],
       "category": "Tools"
     },
     {
       "id": "dgif",
       "title": "DaGameThatIsFun",
       "creator": "Léo Tosku, Korail Lamothe-Jacob, Axel Desbonnes",
-      "category": "Video Games"
+      "category": "Video Games",
+      "disabled": true
     }
   ]
 }

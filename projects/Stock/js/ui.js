@@ -42,6 +42,8 @@ export function createTab(stock, type) {
             ensureSection('mobile-general-tabs', type)?.appendChild(mobileTab);
         }
     }
+
+    refreshSuspendedVisibility();
 }
 
 let _tabOrder = 0;
@@ -57,6 +59,7 @@ function createTabElement(template, stock, type) {
     }
     
     const img = tab.querySelector('img');
+    img.loading = 'lazy';
     img.src = `img/icon/${stock.symbol}.png`;
     img.alt = stock.symbol;
     img.onerror = () => handleImageAssetError(img, stock.ticker || stock.symbol, stock.market, false);
@@ -83,6 +86,7 @@ export function createCard(stock) {
     const logo = card.querySelector('.logo img')
     logo.id = `logo-${stock.symbol}`
     logo.dataset.symbol = stock.symbol
+    logo.loading = 'lazy'
     logo.src = `img/logo/${stock.symbol}.png`
     logo.onerror = () => handleImageAssetError(logo, stock.symbol, stock.market, true);
 
@@ -132,6 +136,7 @@ export function createCard(stock) {
     if (flag) {
         flag.id = `flag-${stock.symbol}`
         flag.dataset.country = stock.country || ''
+        flag.loading = 'lazy'
         flag.src = `img/flag/${(stock.country||'').toLowerCase()}.png`
     }
 
@@ -292,7 +297,7 @@ export function createCard(stock) {
                 const amountEl = row.querySelector('.trans-amount');
                 const sharesEl = row.querySelector('.trans-shares');
                 const priceEl = row.querySelector('.trans-price');
-                if (dateEl) dateEl.textContent = new Date(t.date).toLocaleDateString('en-US');
+                if (dateEl) dateEl.textContent = new Date(t.date).toLocaleDateString(undefined);
                 if (typeEl) typeEl.textContent = t.type;
                 if (amountEl) amountEl.textContent = Math.abs(t.amount).toFixed(2) + ' ' + getCurrency();
                 if (sharesEl) sharesEl.textContent = t.shares;
@@ -435,8 +440,8 @@ export function updateUI(symbol, data) {
         if (data.timestamps && data.timestamps.length > 0) {
             const latestTimestamp = Math.max(...data.timestamps);
             const dataDate = new Date(latestTimestamp * 1000);
-            const dateStr = dataDate.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const timeStr = dataDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = dataDate.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const timeStr = dataDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
             timeString = `${dateStr} ${timeStr}`;
             latencyMin = Math.round((Date.now() - dataDate.getTime()) / 60000);
         }
@@ -663,7 +668,7 @@ function getBestDataDate(symbol) {
         if (numericTimestamps.length > 0) {
             const latest = Math.max(...numericTimestamps);
             const d = new Date(latest * 1000);
-            return d.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            return d.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
     }
     return '';
@@ -750,6 +755,8 @@ export function toggleSymbolSuspension(symbol, isSuspended) {
             if (section) { section.appendChild(tab); sortSection(section); }
         }
     });
+
+    refreshSuspendedVisibility();
 }
 
 function sortSection(section) {
@@ -905,4 +912,16 @@ export function setBottomNavActive(id, clearSidebar = true) {
     getEl(id)?.classList.add('active');
     
     if (clearSidebar) document.body.classList.remove('sidebar-open');
+}
+
+/**
+ * Hide suspended sidebar sections when they have no tab elements inside.
+ */
+function refreshSuspendedVisibility() {
+    ['sidebar-suspended', 'mobile-sidebar-suspended'].forEach(sectionId => {
+        const section = getEl(sectionId);
+        if (!section) return;
+        const hasTabs = section.querySelector('.tab') !== null;
+        section.style.display = hasTabs ? '' : 'none';
+    });
 }

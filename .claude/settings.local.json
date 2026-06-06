@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(curl -s http://localhost:8080/about.html)"
+      "Bash(curl -s http://localhost:8080/about.html)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"portfolio case study navigation next project\" --domain landing -n 5)",
+      "Bash(python \"C:\\\\Users\\\\gigabyte\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"portfolio case study next project navigation footer\" --domain landing -n 5)",
+      "Bash(python -m http.server 8765 --bind 127.0.0.1)",
+      "Bash(python -c \"import urllib.request,json; d=json.load\\(urllib.request.urlopen\\('http://127.0.0.1:8765/assets/data/projects.json'\\)\\); nav=[p for p in d['projects'] if not p.get\\('disabled'\\) and p.get\\('subtitle'\\)]; print\\('Navigable case studies \\(in order\\):'\\); [print\\(' ',i,p['id'],'-',p['title']\\) for i,p in enumerate\\(nav\\)]; print\\('count:',len\\(nav\\)\\)\")",
+      "Bash(python -c \"import urllib.request as u; html=u.urlopen\\('http://127.0.0.1:8765/project.html'\\).read\\(\\).decode\\(\\); js=u.urlopen\\('http://127.0.0.1:8765/assets/scripts/project.js'\\).read\\(\\).decode\\(\\); css=u.urlopen\\('http://127.0.0.1:8765/assets/styles/style.css'\\).read\\(\\).decode\\(\\); print\\('html pager nav:', 'project-pager' in html\\); print\\('js setupPager:', 'function setupPager' in js\\); print\\('js call:', 'setupPager\\(data, all\\)' in js\\); print\\('css block:', '.project-pager-item' in css\\)\")",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"CommandLine LIKE '%http.server 8765%'\" | ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} }; \"done\")"
     ]
   }
 }

@@ -35,7 +35,7 @@
       {
         "text": "Parlez-moi des articles du blog.",
         "id": "ina_articles",
-        "requires_flag": "indice_blogs_existent",
+        "requires_flags": ["indice_blogs_existent", "marine_cadrage_évoqué"],
         "forbids_flag": "ina_fuit",
         "sequence": [
           { "type": "line", "char": "ina",  "text": "Le contenu, oui. Je publie beaucoup. Le volume nourrit l'**algorithme**.", "sprite": "normal" },
@@ -43,6 +43,27 @@
           { "type": "line", "char": "ina",  "text": "Le pessimisme performe. Les gens cliquent sur la peur. Les **chiffres** me donnent raison.", "sprite": "normal" },
           { "type": "line", "char": "will", "text": "**BLUE S.E.A.** vend des solutions de conseil. Vous publiez des textes qui disent à leurs clients que tout va s'effondrer. Ce n'est pas du SEO. C'est autre chose.", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "~~...Le trafic est le trafic.~~", "sprite": "stress" },
+          {
+            "type": "present_evidence",
+            "prompt": { "char": "will", "text": "~~« Le trafic est le trafic. » Non. Le trafic n'est pas un objectif - c'est un moyen. Sans **objectif business** derrière, c'est du bruit. Marine m'a appris ça, sans le vouloir. Sortez-la.~~", "sprite": "doubting" },
+            "expected_lesson": "lesson_cadrage",
+            "on_correct": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "Avant de publier, **on cadre**. Quel objectif business ? Quel public ? Quelle décision derrière les chiffres ? Vous n'avez rien cadré, Ina. Vous avez chassé du clic. Et vos clics ne ressemblent à **aucun** client de BLUE S.E.A.", "sprite": "doubting" },
+                { "type": "line", "char": "ina",  "text": "~~...Le brief n'a jamais été clair.~~", "sprite": "stress" }
+              ]
+            },
+            "on_wrong": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Non. Ce n'est pas la pièce qui ouvre cette porte-là.~~", "sprite": "doubting" }
+              ]
+            },
+            "on_cancel": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Plus tard. Je veux d'abord voir jusqu'où il va dérouler.~~", "sprite": "doubting" }
+              ]
+            }
+          },
           { "type": "set_flag", "flag": "ina_articles_hors_sujet" },
           {
             "type": "lesson",
@@ -217,6 +238,27 @@
           { "type": "line", "char": "will", "text": "Vos chiffres en hausse. Vous les présentez en **moyenne globale** ou vous **segmentez** ?", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "La moyenne globale **lisse les écarts**. C'est plus stable. Plus lisible.", "sprite": "normal" },
           { "type": "line", "char": "will", "text": "Plus lisible, oui. Et pratique, si on préfère que personne ne regarde trop près.", "sprite": "doubting" },
+          {
+            "type": "present_evidence",
+            "prompt": { "char": "will", "text": "~~« Lisse les écarts. » Il vient de me dire à voix haute pourquoi il préfère les moyennes. Parce que les écarts disent **autre chose** que les moyennes. Une de mes fiches met exactement le doigt là-dessus - sur ce qui sépare une métrique brute d'un **indicateur stratégique**.~~", "sprite": "doubting" },
+            "expected_lesson": "lesson_kpi",
+            "on_correct": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "Une **moyenne** n'est pas un KPI. Un KPI, c'est un indicateur qui **aide à décider**. Vos moyennes ne décident de rien - elles vous protègent. Elles cachent qu'un canal s'effondre. Que les leads ont chuté. Que vos « chiffres en hausse » sont en hausse sur **du vent**.", "sprite": "doubting" },
+                { "type": "line", "char": "ina",  "text": "~~...Personne ne m'a jamais demandé autre chose qu'une moyenne.~~", "sprite": "stress" }
+              ]
+            },
+            "on_wrong": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Non. Pas tout à fait. Je dois préciser ma pensée.~~", "sprite": "doubting" }
+              ]
+            },
+            "on_cancel": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Je le laisse continuer.~~", "sprite": "doubting" }
+              ]
+            }
+          },
           { "type": "set_flag", "flag": "ina_segmentation_absente" },
           {
             "type": "lesson",
@@ -281,6 +323,27 @@
           { "type": "line", "char": "will", "text": "**linkedin.** LinkedIn. Linkedin. **LINKEDIN.** linkedin_avril. Lnkdn...", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "~~...Les conventions ont évolué.~~", "sprite": "stress" },
           { "type": "line", "char": "will", "text": "Elles ont surtout varié selon l'humeur du jour.", "sprite": "doubting" },
+          {
+            "type": "present_evidence",
+            "prompt": { "char": "will", "text": "~~Quatre orthographes. Quatre canaux différents pour GA4. Marine a cinq outils qu'elle ne lit pas - lui a quatre conventions qui se contredisent. C'est le **même mal** vu sous un autre angle. Ma fiche sur le panorama outil/donnée s'applique. Discrètement.~~", "sprite": "doubting" },
+            "expected_lesson": "lesson_outils",
+            "on_correct": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "Un outil ne vaut que par sa **convention**. GA4 ne sait pas que « linkedin », « LinkedIn », « Linkedin » et « LNKDN » sont la même source. Pour lui, ce sont quatre canaux. Vos UTM ne servent personne. Ils protègent **vous**.", "sprite": "doubting" },
+                { "type": "line", "char": "ina",  "text": "~~...J'ai jamais documenté.~~", "sprite": "stress" }
+              ]
+            },
+            "on_wrong": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Non. Trop frontal. Il faut viser plus juste.~~", "sprite": "doubting" }
+              ]
+            },
+            "on_cancel": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Je préfère le laisser parler encore.~~", "sprite": "doubting" }
+              ]
+            }
+          },
           { "type": "set_flag", "flag": "utm_chaos" },
           {
             "type": "lesson",
@@ -358,6 +421,28 @@
         "sequence": [
           { "type": "line", "char": "will", "text": "Vos articles n'ont rien à voir avec la boîte. Vos KPI ne mesurent que **vous-même**. Et vous ne paniquez jamais parce que quelqu'un qui prépare sa sortie n'a aucune raison de paniquer. Je me trompe ?", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "~~Vous bluffez.~~ Vous n'avez **rien**. Que des bribes ramassées dans le couloir.", "sprite": "stress" },
+          {
+            "type": "present_evidence",
+            "prompt": { "char": "will", "text": "~~Il s'abrite derrière le **chiffre**. Toujours. « Le trafic me donne raison », « Les chiffres ne mentent pas ». Mais il existe **un autre type de donnée** que les chiffres - et c'est exactement ce que j'apporte ici, en face de lui. Une seule fiche colle.~~", "sprite": "doubting" },
+            "expected_lesson": "lesson_quanti_quali",
+            "on_correct": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "Vous me ressortez vos chiffres - le **quantitatif**. Moi je suis dans la pièce. J'écoute le **qualitatif**. Vos hésitations. Le regard que vous baissez quand je dis « **six mois** ». Vos mains qui s'arrêtent. Le qualitatif explique le quantitatif. Et le qualitatif dit que vous **mentez**.", "sprite": "doubting" },
+                { "type": "line", "char": "ina",  "text": "~~...Vous bluffez encore.~~", "sprite": "stress" },
+                { "type": "line", "char": "will", "text": "Non. Et vous le savez.", "sprite": "doubting" }
+              ]
+            },
+            "on_wrong": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Non. Cette pièce, il sait la balayer. Il me faut autre chose - quelque chose qu'il ne pourra pas couvrir avec un chiffre.~~", "sprite": "doubting" }
+              ]
+            },
+            "on_cancel": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Je reformule sans carnet, droit dans ses yeux.~~", "sprite": "doubting" }
+              ]
+            }
+          },
           { "type": "line", "char": "will", "text": "C'est vrai. Je n'ai que des bribes. Mais elles pointent toutes dans la même direction. Et vous l'avez su dès que je suis entré.", "sprite": "doubting" },
           { "type": "line", "char": "ina",  "text": "~~...Cet entretien est terminé. J'ai du travail.~~", "sprite": "irritated" },
           { "type": "set_flag", "flag": "ina_craque" },

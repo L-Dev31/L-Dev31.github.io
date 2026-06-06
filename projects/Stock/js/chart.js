@@ -802,6 +802,29 @@ export function initChart(symbol, positions) {
 export function updateChart(symbol, timestamps, prices, positions, _source, fullData) {
     const chart = positions[symbol]?.chart;
     if (!chart) return;
+
+    const period = positions[symbol].currentPeriod || '1D';
+    const lastPeriod = chart._nemerisLastPeriod;
+    chart._nemerisLastPeriod = period;
+
+    if (lastPeriod && lastPeriod !== period) {
+        if (typeof chart.resetZoom === 'function') {
+            try {
+                chart.resetZoom();
+                const rsi = positions[symbol].rsiChart;
+                const macd = positions[symbol].macdChart;
+                if (rsi && rsi.options.scales.x) {
+                    rsi.options.scales.x.min = undefined;
+                    rsi.options.scales.x.max = undefined;
+                }
+                if (macd && macd.options.scales.x) {
+                    macd.options.scales.x.min = undefined;
+                    macd.options.scales.x.max = undefined;
+                }
+            } catch (_) {}
+        }
+    }
+
     if (!timestamps?.length) {
         try { updateIndicatorSubcharts(symbol, [], positions); } catch (_) {}
         return;
@@ -813,7 +836,6 @@ export function updateChart(symbol, timestamps, prices, positions, _source, full
     const lows = fullData?.lows ?? null;
     const closes = fullData?.closes ?? null;
 
-    const period = positions[symbol].currentPeriod || '1D';
     const interval = positions[symbol].currentInterval || null;
     const requested = positions[symbol].chartType || 'line';
     const hasOhlc = opens && highs && lows && closes;

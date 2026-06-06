@@ -1,4 +1,4 @@
-import { runQuant } from '../quant-client.js';
+import { runQuant, QuantEngine } from '../quant-client.js';
 import { fetchCloses, resolveTicker } from './quant-shared.js';
 import { esc, formatNumber, formatPercent, panel } from './market-data-shared.js';
 
@@ -27,7 +27,9 @@ export async function runCompareCommand({ parts, out, fmtErr }) {
         const perf = valid.map(t => {
             const p = pricesMap[t];
             const first = p[0], last = p[p.length - 1];
-            return { t, ret: ((last - first) / first) * 100, vol: stdev(returns(p)) * Math.sqrt(252) * 100 };
+            // Use the shared QuantEngine instead of a local stdev/returns copy so every screen
+            // computes volatility identically (annualizedVolatility already applies the √252 scaling).
+            return { t, ret: ((last - first) / first) * 100, vol: QuantEngine.annualizedVolatility(p) * 100 };
         });
 
         out(panel(matrixHtml(valid, matrix) + perfHtml(perf)), 'terminal-log', true);
@@ -57,16 +59,4 @@ function corrStyle(r) {
     const a = Math.min(1, Math.abs(r));
     if (r >= 0) return `background:rgba(46,160,67,${a * 0.35})`;
     return `background:rgba(248,81,73,${a * 0.35})`;
-}
-
-function returns(p) {
-    const out = new Array(p.length - 1);
-    for (let i = 1; i < p.length; i++) out[i - 1] = p[i - 1] ? (p[i] - p[i - 1]) / p[i - 1] : 0;
-    return out;
-}
-function stdev(arr) {
-    if (arr.length < 2) return 0;
-    let m = 0; for (let i = 0; i < arr.length; i++) m += arr[i]; m /= arr.length;
-    let s = 0; for (let i = 0; i < arr.length; i++) { const d = arr[i] - m; s += d * d; }
-    return Math.sqrt(s / arr.length);
 }

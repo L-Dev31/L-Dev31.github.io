@@ -4,11 +4,11 @@
         grid-template-columns: 1fr;
     }
 
-    .case-mockups-grid {
+    .case-gallery-grid {
         grid-template-columns: 1fr;
     }
 
-    .case-row--reverse .case-figure {
+    .case-row--reverse .case-panel {
         order: 0;
     }
 

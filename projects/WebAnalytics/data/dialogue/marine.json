@@ -1,176 +1,205 @@
-﻿{
+{
   "_location": "marine",
-  "_comment": "Marine - la commère qui lâche des bribes sur Pascal et Ina. La piste 'argent' DOIT être posée d'abord - c'est là qu'elle balance Pascal (la home pourrie) → déverrouille le Poste Dev. La piste Ina (blogs sombres) reste, mais ne déverrouille rien : c'est Pascal qui ouvrira ina.",
+  "_comment": "ACTE I - Scenes 2 et 5 (climax). Premier passage : 3 questions thematiques (argent, cadrage, outils). Chaque question degainant une lecon-arme via present_evidence. Retour (apres salle data) : 2 options de menu = choix joueur DURE / EMPATHIQUE qui change la qualite de fin d'acte.",
+
   "on_first_visit": [
-    {
-      "type": "line",
-      "char": "marine",
-      "text": "###Ah enfin enfin enfin !### Vous êtes le détective, c'est ça, le détective ? Parce que moi je dis, je dis toujours, je dis : la **transparence**, la transparence c'est la base, la base de la base ! Alors **demandez, demandez, demandez** !",
-      "sprite": "normal"
-    },
-    {
-      "type": "line",
-      "char": "will",
-      "text": "~~Elle parle plus vite qu'elle ne réfléchit, je devrais noter ça...~~",
-      "sprite": "doubting"
-    }
+    { "type": "line", "char": "marine", "text": "###Ah enfin enfin enfin###, le detective ! Asseyez-vous, asseyez-vous --- non pardon pas la, y'a mon yaourt --- voila. Vous voulez un cafe ? Non ? Bon.", "sprite": "normal" },
+    { "type": "line", "char": "will",   "text": "Madame Pestelle---", "sprite": "normal" },
+    { "type": "line", "char": "marine", "text": "**Marine.** Marine ca suffit largement. Bon je sais pourquoi vous etes la, hein, je suis pas bete. Jia pense que c'est moi. Bon. **Demandez. Demandez tout.**", "sprite": "normal" },
+    { "type": "line", "char": "will",   "text": "~~Elle parle plus vite qu'elle ne reflechit. Ou elle parle plus vite pour ne pas reflechir.~~", "sprite": "doubting" }
   ],
+
   "menu": {
     "options": [
+
       {
         "text": "Parlez-moi de l'argent. On dit que vous depensez beaucoup.",
         "id": "marine_argent",
+        "forbids_flag": "marine_dépensière",
         "sequence": [
-          { "type": "line", "char": "marine", "text": "##Trop, trop, trop##, tout le monde dit trop ! Mais la pub ça coûte, la visibilité ça coûte, on ne fait pas d'omelette sans... sans casser le budget ! Bon. Oui. J'ai claqué. **Beaucoup.** Les campagnes **SEA**, c'est moi qui les paie, c'est moi qui ramène du trafic !", "sprite": "questioning" },
+          { "type": "line", "char": "marine", "text": "Beaucoup, oui. ##Trop##, je sais, on me l'a deja dit. Mais la pub ca coute, la visibilite ca coute, on fait pas d'omelette sans casser le budget ! Les campagnes **SEA**, c'est moi qui les gere. J'ai claque **cinq mille balles** le mois dernier.", "sprite": "questioning" },
           { "type": "line", "char": "will",   "text": "Et ce trafic, il **convertit** ?", "sprite": "doubting" },
-          { "type": "line", "char": "marine", "text": "~~...Il arrive.~~ Après, sur le site... les gens partent. **Tout de suite.** Comme si la page leur faisait peur. Mais ça c'est pas moi ! Moi je les amène à la porte, ce qui est derrière la porte c'est **Pascal** qui l'a fait. Pascal Poinet, notre dev. Magnifique, vraiment magnifique. Mais bon entre nous... y'a un truc qui va pas.", "sprite": "questioning" },
-          { "type": "set_flag", "flag": "marine_dépensière" },
-          { "type": "set_flag", "flag": "marine_rebond_évoqué" },
-          { "type": "set_flag", "flag": "marine_balance_pascal_home" },
-          { "type": "set_flag", "flag": "marine_parle_de_pascal" },
+          { "type": "line", "char": "marine", "text": "~~...Il arrive.~~ Apres sur le site... les gens partent. **Tout de suite.** Comme si la page leur faisait peur.", "sprite": "questioning" },
+          { "type": "line", "char": "narrateur", "text": "Un silence court. Marine se ressaisit." },
+          { "type": "line", "char": "marine", "text": "Mais ca c'est pas moi hein, moi je les amene a la **porte**. Ce qui est derriere la porte c'est **Pascal** qui l'a fait. Pascal Poinet, notre dev. Adorable. Mais entre nous... y'a un truc qui va pas.", "sprite": "questioning" },
+
+          { "type": "line", "char": "will", "text": "~~Elle voit du trafic arriver. Elle ne sait pas pourquoi il repart. Elle **mesure**. Elle n'**analyse** pas. C'est exactement l'erreur que Jia n'a pas su nommer.~~", "sprite": "doubting" },
+
           {
             "type": "lesson",
             "id": "lesson_mesurer_analyser",
-            "intro": { "char": "will", "text": "Marine voit des chiffres. Elle ne les **lit** pas. Et c'est exactement là que tout se casse. Il y a une nuance fondamentale entre **mesurer** et **analyser** - et cette nuance, c'est toute la différence entre une campagne pilotée et de l'argent jeté.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "Marine voit des chiffres. Elle ne les **lit** pas. Et c'est exactement la que tout se casse. Il y a une nuance fondamentale entre **mesurer** et **analyser** --- et cette nuance, c'est toute la difference entre une campagne pilotee et de l'argent jete.", "sprite": "doubting" },
             "title": "Mesurer n'est pas encore analyser",
             "blocks": [
-              { "type": "text", "content": "Marine *mesure* : elle voit du trafic arriver. Mais elle n'*analyse* pas : elle ne sait pas pourquoi il repart. C'est l'erreur la plus fréquente." },
+              { "type": "text", "content": "Marine *mesure* : elle voit du trafic arriver. Mais elle n'*analyse* pas : elle ne sait pas pourquoi il repart. C'est l'erreur la plus frequente." },
               {
                 "type": "table",
-                "headers": ["Action", "Définition", "Exemple"],
+                "headers": ["Action", "Definition", "Exemple"],
                 "rows": [
-                  ["Mesurer", "Recueillir des données", "1 000 visiteurs sont venus sur la page"],
-                  ["Analyser", "Interpréter pour décider", "La page convertit peu → vérifier message et CTA"]
+                  ["Mesurer", "Recueillir des donnees", "1 000 visiteurs sont venus sur la page"],
+                  ["Analyser", "Interpreter pour decider", "La page convertit peu → verifier message et CTA"]
                 ]
               },
               { "type": "separator" },
               { "type": "heading", "content": "Le taux de rebond" },
-              { "type": "text", "content": "Le **taux de rebond** désigne la part des sessions où l'utilisateur quitte rapidement le site après une interaction limitée. Un taux élevé signale souvent :" },
+              { "type": "text", "content": "Le **taux de rebond** designe la part des sessions ou l'utilisateur quitte rapidement le site apres une interaction limitee. Causes frequentes :" },
               {
                 "type": "list",
                 "items": [
-                  "Contenu inadapté aux attentes du visiteur",
+                  "Contenu inadapte aux attentes du visiteur",
                   "Page trop lente",
                   "Navigation peu intuitive",
-                  "Désalignement entre la promesse de la campagne et ce que trouve le visiteur"
+                  "Desalignement entre la promesse de la campagne et ce que trouve le visiteur"
                 ]
               },
-              { "type": "separator" },
-              { "type": "heading", "content": "L'exemple concret d'une campagne Instagram Ads" },
-              { "type": "text", "content": "Sans web analytics, une boutique voit seulement qu'elle « a eu du trafic ». Avec un bon dispositif, elle peut savoir :" },
-              {
-                "type": "list",
-                "items": [
-                  "Combien de visiteurs sont venus grâce à la campagne",
-                  "Combien ont consulté une fiche produit",
-                  "Combien ont ajouté un produit au panier",
-                  "Combien ont acheté",
-                  "Quel chiffre d'affaires a été généré",
-                  "Si la campagne a été **rentable** ou non"
-                ]
-              },
-              { "type": "note", "content": "Dans GA4, la notion de taux de rebond est complétée ou remplacée par des indicateurs d'**engagement** plus fins." }
+              { "type": "note", "content": "Dans GA4, la notion de taux de rebond est completee ou remplacee par des indicateurs d'**engagement** plus fins." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Elle amène des visiteurs sur une porte qui leur fait peur. La porte, c'est **Pascal Poinet**. Il faudra qu'il m'explique ce **93 %**.", "sprite": "doubting" },
-          { "type": "line", "char": "narrateur", "text": "Une nouvelle porte vient de s'ouvrir dans l'enquête. Le Poste Dev est désormais accessible." }
+
+          { "type": "line", "char": "will", "text": "Vous payez pour amener des visiteurs. Vous ne payez personne pour comprendre **pourquoi ils s'enfuient**. C'est la moitie du travail qui n'est faite par personne.", "sprite": "doubting" },
+          { "type": "line", "char": "marine", "text": "~~...J'ai jamais vu ca comme ca.~~", "sprite": "questioning" },
+
+          { "type": "set_flag", "flag": "marine_dépensière" },
+          { "type": "set_flag", "flag": "marine_rebond_évoqué" },
+          { "type": "set_flag", "flag": "marine_balance_pascal_home" },
+          { "type": "set_flag", "flag": "marine_parle_de_pascal" }
         ]
       },
+
       {
-        "text": "Vous avez un plan avant de lancer ?",
+        "text": "Vous avez un plan avant de lancer une campagne ?",
         "id": "marine_méthode",
+        "forbids_flag": "marine_cadrage_évoqué",
         "sequence": [
-          { "type": "line", "char": "will",   "text": "Avant chaque campagne, vous **cadrez** ? Vous écrivez un objectif, vous choisissez un indicateur, vous décidez d'avance ce que vous ferez si ça marche ou pas ?", "sprite": "doubting" },
-          { "type": "line", "char": "marine", "text": "~~Cadrer ?~~ Je... je lance, et je regarde après. C'est plus instinctif chez moi. Je le **sens**, vous voyez. La pub, ça vit, ça respire, on peut pas mettre ça dans un tableau !", "sprite": "questioning" },
-          { "type": "line", "char": "will",   "text": "Une **fiche de cadrage** aurait évité que vous découvriez après coup que vos visiteurs fuyaient.", "sprite": "doubting" },
+          { "type": "line", "char": "will",   "text": "Avant chaque campagne, vous **cadrez** ? Vous ecrivez un objectif, vous choisissez un indicateur, vous decidez d'avance ce que vous ferez si ca marche ou pas ?", "sprite": "doubting" },
+          { "type": "line", "char": "marine", "text": "~~Cadrer ?~~ Je... je lance, et je regarde apres. C'est plus **instinctif** chez moi. Je le **sens**, vous voyez. La pub, ca vit, ca respire, on peut pas mettre ca dans un tableau !", "sprite": "questioning" },
+          { "type": "line", "char": "will",   "text": "~~« Je le sens. » Elle vient de me servir l'**exact oppose** de ce qu'est le web analytics. Il faut que je le pose, la, maintenant. Avec la fiche que je viens d'ouvrir en arrivant.~~", "sprite": "doubting" },
+
+          {
+            "type": "present_evidence",
+            "prompt": { "char": "will", "text": "~~Dans mon carnet, **une seule fiche** s'applique ici. Celle que je viens d'ouvrir en sortant de chez Jia. Sortez-la.~~ *(Ouvrez votre inventaire de lecons et presentez la bonne.)*", "sprite": "doubting" },
+            "expected_lesson": "lesson_definition",
+            "on_correct": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "**Le web analytics, ce n'est pas voir des chiffres. C'est transformer des comportements en decisions.** Vous, vous lancez a l'instinct. Vous ne **decidez** de rien. Vous **constatez** apres coup.", "sprite": "doubting" },
+                { "type": "line", "char": "marine", "text": "~~...On peut pas tout mettre dans un tableau.~~", "sprite": "questioning" }
+              ]
+            },
+            "on_wrong": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Non. Ce n'est pas la bonne piece. Pas ici, pas maintenant.~~ *(Will replie son carnet, cherche encore.)*", "sprite": "doubting" }
+              ]
+            },
+            "on_cancel": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Pas maintenant. Mais c'est exactement la que ca se joue.~~", "sprite": "doubting" }
+              ]
+            }
+          },
+
           { "type": "set_flag", "flag": "marine_cadrage_évoqué" },
+
           {
             "type": "lesson",
             "id": "lesson_cadrage",
-            "intro": { "char": "will", "text": "Marine lance des campagnes au feeling. Pas de plan, pas de cible, pas de seuil de succès. Ce qu'il lui faudrait - ce qu'il faudrait à toute équipe - c'est une **fiche de cadrage**. Ça prend vingt minutes. Ça évite des mois d'aveuglement.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "Marine lance des campagnes au feeling. Pas de plan, pas de cible, pas de seuil de succes. Ce qu'il lui faudrait --- ce qu'il faudrait a toute equipe --- c'est une **fiche de cadrage**. Ca prend vingt minutes. Ca evite des mois d'aveuglement.", "sprite": "doubting" },
             "title": "La fiche de cadrage analytique",
             "blocks": [
-              { "type": "text", "content": "Avant même d'ouvrir un outil comme GA4, Matomo ou Looker Studio, il faut remplir une **fiche de cadrage**. Elle clarifie *pourquoi* on mesure, *ce qu'on observe*, et *à quelles décisions* les données vont servir." },
-              { "type": "text", "content": "Elle évite l'erreur la plus fréquente : **installer un outil avant d'avoir défini les besoins réels**." },
+              { "type": "text", "content": "Avant meme d'ouvrir un outil comme GA4, Matomo ou Looker Studio, il faut remplir une **fiche de cadrage**. Elle clarifie *pourquoi* on mesure, *ce qu'on observe*, et *a quelles decisions* les donnees vont servir." },
+              { "type": "text", "content": "Elle evite l'erreur la plus frequente : **installer un outil avant d'avoir defini les besoins reels**." },
               { "type": "separator" },
               { "type": "heading", "content": "Distinguer les notions" },
               {
                 "type": "list",
                 "items": [
                   "**Outil** - GA4, Matomo, GTM",
-                  "**Donnée** - clic, visite, session, ajout au panier",
+                  "**Donnee** - clic, visite, session, ajout au panier",
                   "**Indicateur** - taux de conversion, nombre de leads",
-                  "**Décision** - modifier une page, ajuster une campagne, changer un ciblage"
+                  "**Decision** - modifier une page, ajuster une campagne, changer un ciblage"
                 ]
               },
               { "type": "separator" },
               {
                 "type": "table",
-                "headers": ["Élément à définir", "Question à se poser", "Exemple"],
+                "headers": ["Element a definir", "Question a se poser", "Exemple"],
                 "rows": [
-                  ["Objectif business", "Pourquoi mesure-t-on ?", "Générer plus de demandes de devis"],
-                  ["Public concerné", "Qui veut-on observer ?", "Les visiteurs venant de LinkedIn"],
-                  ["Action à suivre", "Quel comportement est important ?", "Envoi du formulaire de contact"],
-                  ["Donnée utile", "Quel indicateur faudra suivre ?", "Nombre de formulaires envoyés"],
-                  ["Outil pressenti", "Avec quel outil va-t-on mesurer ?", "GA4 + formulaire du site"],
-                  ["Décision attendue", "Que fera-t-on avec le résultat ?", "Si peu de formulaires : retravailler la page"]
+                  ["Objectif business", "Pourquoi mesure-t-on ?", "Generer plus de demandes de devis"],
+                  ["Public concerne",   "Qui veut-on observer ?", "Les visiteurs venant de LinkedIn"],
+                  ["Action a suivre",   "Quel comportement est important ?", "Envoi du formulaire de contact"],
+                  ["Donnee utile",      "Quel indicateur faudra suivre ?", "Nombre de formulaires envoyes"],
+                  ["Outil pressenti",   "Avec quel outil va-t-on mesurer ?", "GA4 + formulaire du site"],
+                  ["Decision attendue", "Que fera-t-on avec le resultat ?", "Si peu de formulaires : retravailler la page"]
                 ]
               },
               { "type": "separator" },
-              { "type": "heading", "content": "La méthode D.M.A.I.C en arrière-plan" },
+              { "type": "heading", "content": "La methode D.M.A.I.C en arriere-plan" },
               {
                 "type": "list",
                 "items": [
-                  "**D**éfinir le processus à analyser",
-                  "**M**esurer les entrées et sorties clés",
+                  "**D**efinir le processus a analyser",
+                  "**M**esurer les entrees et sorties cles",
                   "**A**nalyser les causes profondes",
-                  "**I**nnover / améliorer en créant des solutions",
-                  "**C**ontrôler les progrès dans le temps"
+                  "**I**nnover / ameliorer en creant des solutions",
+                  "**C**ontroler les progres dans le temps"
                 ]
               },
-              { "type": "note", "content": "Marine a lancé des campagnes sans jamais écrire ce qu'elle attendait. Résultat : elle ne peut juger ni les succès ni les échecs." }
+              { "type": "note", "content": "Marine a lance des campagnes sans jamais ecrire ce qu'elle attendait. Resultat : elle ne peut juger ni les succes ni les echecs." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Lancer sans cadrer, c'est dépenser à l'aveugle. Elle ne sabote rien. Elle ne sait même pas ce qu'elle rate.", "sprite": "doubting" }
+
+          { "type": "line", "char": "will", "text": "Une **fiche de cadrage** aurait evite que vous decouvriez apres coup que vos visiteurs fuyaient.", "sprite": "doubting" }
         ]
       },
-      {
-        "text": "Comment Pascal travaille, vous le voyez de loin ?",
-        "id": "marine_sur_pascal",
-        "requires_flag": "marine_parle_de_pascal",
-        "sequence": [
-          { "type": "line", "char": "marine", "text": "Pascal ? Pascal Pascal Pascal. **Adorable**, vraiment, mais... il vit dans sa **bulle**. Il code, il code, il code. Il refait des trucs qu'on lui a pas demandés, il prototype des **chatbots**, des **configurateurs 3D**... pendant que le SEO, le truc qui fait vivre la boîte, ##il y touche même pas##.", "sprite": "questioning" },
-          { "type": "line", "char": "will",   "text": "Il y touche pas ? Mais c'est **son site**.", "sprite": "doubting" },
-          { "type": "line", "char": "marine", "text": "Justement ! Il a tout délégué à quelqu'un d'autre dans l'équipe. ##Tout-tout-tout.## Les articles, les balises, les liens. Pascal il dit que cette personne est « **méthodique** ». Moi je dis qu'il a juste pas envie de s'en occuper.", "sprite": "questioning" },
-          { "type": "set_flag", "flag": "marine_balance_pascal_solo" },
-          { "type": "set_flag", "flag": "indice_ina_seul_seo" },
-          { "type": "line", "char": "will", "text": "Pascal a confié **les clés du référencement** à une seule personne. Sans contrôle. Je vais d'abord aller voir Pascal.", "sprite": "doubting" }
-        ]
-      },
+
       {
         "text": "Quels outils utilisez-vous pour mesurer vos campagnes ?",
         "id": "marine_outils",
+        "forbids_flag": "marine_outils_flous",
         "sequence": [
-          { "type": "line", "char": "marine", "text": "Les outils ? Oh j'en ai **plein, plein, plein** ! **Google Analytics**, Meta Business Suite, TikTok Analytics, LinkedIn... Et même **Google Tag Manager**, même si franchement, les balises c'est Pascal qui s'en occupe.", "sprite": "questioning" },
+          { "type": "line", "char": "marine", "text": "Les outils ? Oh j'en ai **plein, plein, plein** ! **Google Analytics**, Meta Business Suite, TikTok Analytics, LinkedIn... Et meme **Google Tag Manager**, meme si franchement, les balises c'est Pascal qui s'en occupe. J'ai meme un dashboard Looker quelque part. Pascal me l'avait fait. ~~Je sais plus ou il est.~~", "sprite": "questioning" },
           { "type": "line", "char": "will",   "text": "Et vous **lisez** tous ces outils ? Vraiment ?", "sprite": "doubting" },
-          { "type": "line", "char": "marine", "text": "~~...Je regarde les chiffres.~~ Les **gros chiffres**. Les impressions, les clics, les vues. Après, les conversions, les taux, les... c'est un peu nébuleux pour moi.", "sprite": "questioning" },
+          { "type": "line", "char": "marine", "text": "~~...Je regarde les chiffres.~~ Les **gros chiffres**. Les impressions, les clics, les vues. Apres, les conversions, les taux, les... c'est un peu **nebuleux** pour moi.", "sprite": "questioning" },
+
+          {
+            "type": "present_evidence",
+            "prompt": { "char": "will", "text": "~~Cinq outils. Cinq tableaux de bord. Et elle ne **lit** rien. Elle me ressort le meme schema qu'avec l'argent : elle voit, elle ne comprend pas. J'ai exactement la piece qui repond a ca dans mon carnet.~~", "sprite": "doubting" },
+            "expected_lesson": "lesson_mesurer_analyser",
+            "on_correct": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "**Mesurer, ce n'est pas analyser.** Vous avez cinq outils. Vous regardez cinq fois les memes gros chiffres. Et vous n'en tirez **aucune decision**. C'est exactement ce qui vous a coute votre budget.", "sprite": "doubting" },
+                { "type": "line", "char": "marine", "text": "~~...Personne m'a jamais demande de decisions. On me demande des chiffres en reunion. Je les sors.~~", "sprite": "questioning" }
+              ]
+            },
+            "on_wrong": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Non, c'est a cote. Ce que je cherche, c'est plus fondamental que ca.~~", "sprite": "doubting" }
+              ]
+            },
+            "on_cancel": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "~~Je laisse couler. J'ai d'autres pieces a voir.~~", "sprite": "doubting" }
+              ]
+            }
+          },
+
           { "type": "set_flag", "flag": "marine_outils_flous" },
+
           {
             "type": "lesson",
             "id": "lesson_outils",
-            "intro": { "char": "will", "text": "Elle a cité cinq outils d'une traite. Elle n'en maîtrise aucun. Mais les outils, eux, **existent** - et chacun répond à un besoin précis. Faisons le tour de ceux qu'un professionnel du digital doit connaître.", "sprite": "doubting" },
+            "intro": { "char": "will", "text": "Elle a cite cinq outils d'une traite. Elle n'en maitrise aucun. Mais les outils, eux, **existent** --- et chacun repond a un besoin precis. Faisons le tour de ceux qu'un professionnel du digital doit connaitre.", "sprite": "doubting" },
             "title": "Panorama des outils analytics",
             "blocks": [
-              { "type": "text", "content": "Aucun outil ne répond seul à tous les besoins. Le professionnel combine les outils selon les objectifs, le budget, les contraintes techniques et les exigences juridiques." },
+              { "type": "text", "content": "Aucun outil ne repond seul a tous les besoins. Le professionnel combine les outils selon les objectifs, le budget, les contraintes techniques et les exigences juridiques." },
               { "type": "separator" },
               {
                 "type": "table",
-                "headers": ["Outil", "Rôle principal", "Niveau", "Point fort", "Vigilance"],
+                "headers": ["Outil", "Role principal", "Niveau", "Point fort", "Vigilance"],
                 "rows": [
-                  ["GA4", "Mesurer le trafic et les événements", "Débutant → intermédiaire", "Très répandu, écosystème Google", "Paramétrage indispensable"],
-                  ["Matomo", "Analytics plus maîtrisé (souvent on-premise)", "Intermédiaire", "Souveraineté des données, conformité renforcée", "Installation parfois technique"],
-                  ["Adobe Analytics", "Analyse avancée en grande entreprise", "Avancé", "Puissance d'analyse, attribution poussée", "Coût élevé, complexité forte"],
-                  ["GTM", "Gérer les balises (Tag Manager)", "Intermédiaire", "Centralisation du tracking, moins de dépendance dev", "Erreurs si mal configuré"]
+                  ["GA4", "Mesurer le trafic et les evenements", "Debutant → intermediaire", "Tres repandu, ecosysteme Google", "Parametrage indispensable"],
+                  ["Matomo", "Analytics plus maitrise (souvent on-premise)", "Intermediaire", "Souverainete des donnees, conformite renforcee", "Installation parfois technique"],
+                  ["Adobe Analytics", "Analyse avancee en grande entreprise", "Avance", "Puissance d'analyse, attribution poussee", "Cout eleve, complexite forte"],
+                  ["GTM", "Gerer les balises (Tag Manager)", "Intermediaire", "Centralisation du tracking, moins de dependance dev", "Erreurs si mal configure"]
                 ]
               },
               { "type": "separator" },
@@ -185,54 +214,129 @@
                   "Pinterest Analytics"
                 ]
               },
-              { "type": "text", "content": "Ces outils mesurent la portée, l'engagement, les clics, les performances publicitaires. **GTM ne remplace pas GA4** - c'est un outil de gestion des balises, pas de mesure." },
+              { "type": "text", "content": "Ces outils mesurent la portee, l'engagement, les clics, les performances publicitaires. **GTM ne remplace pas GA4** --- c'est un outil de gestion des balises, pas de mesure." },
               { "type": "separator" },
-              { "type": "heading", "content": "Évolutions récentes du domaine" },
+              { "type": "heading", "content": "Evolutions recentes du domaine" },
               {
                 "type": "list",
                 "items": [
-                  "Approche **événementielle** de la mesure (GA4)",
-                  "Intégration plus forte avec la publicité digitale",
-                  "Dashboards **temps réel**",
+                  "Approche **evenementielle** de la mesure (GA4)",
+                  "Integration plus forte avec la publicite digitale",
+                  "Dashboards **temps reel**",
                   "Importance de la **privacy**",
-                  "Montée des outils orientés **first-party data**",
-                  "Besoin croissant d'**interprétation**, pas seulement de collecte"
+                  "Montee des outils orientes **first-party data**",
+                  "Besoin croissant d'**interpretation**, pas seulement de collecte"
                 ]
               },
-              { "type": "note", "content": "Le bon professionnel fait une **veille régulière** : outils, indicateurs, règles de confidentialité et interfaces évoluent rapidement." }
+              { "type": "note", "content": "Le bon professionnel fait une **veille reguliere** : outils, indicateurs, regles de confidentialite et interfaces evoluent rapidement." }
             ]
           },
-          { "type": "line", "char": "will", "text": "Elle a les outils. Elle ne les lit pas. ~~Ce n'est pas une saboteuse, c'est quelqu'un qui navigue à vue.~~ Note pour Madame Seo : il manque un **reporting**.", "sprite": "doubting" }
+
+          { "type": "line", "char": "will", "text": "Elle a les outils. Elle ne les lit pas. ~~Ce n'est pas une saboteuse, c'est quelqu'un qui navigue a vue.~~ Note pour Madame Seo : il manque un **reporting**.", "sprite": "doubting" }
         ]
       },
+
       {
-        "text": "Et l'autre personne du SEO ? Vous le voyez souvent ?",
-        "id": "marine_sur_ina",
-        "requires_flag": "pascal_parle_de_ina",
+        "text": "(Partir) Aller voir Pascal.",
+        "id": "marine_sortie_pascal",
+        "requires_flag": "marine_balance_pascal_home",
+        "once_flag": "_marine_quitte_pour_pascal",
         "sequence": [
-          { "type": "line", "char": "marine", "text": "**Ina ?** ~~...Pfff.~~ Il sort **jamais** de son bureau. Jamais de pause cafèt', jamais d'apéro, jamais rien. Au début je pensais qu'il était timide. Maintenant je sais qu'il est juste... **ailleurs**.", "sprite": "questioning" },
-          { "type": "line", "char": "will",   "text": "Ailleurs ?", "sprite": "doubting" },
-          { "type": "line", "char": "marine", "text": "Je suis passée derrière lui un jour pour récupérer un dossier. Il écrivait. Des **articles**. Des **blogs**. À la chaîne, des heures et des heures. C'est un **passionné** vous savez, faut comprendre... Mais bon les titres c'était... ~~bizarre.~~ Du genre très très noir. Pas du tout dans l'esprit boîte.", "sprite": "questioning" },
-          { "type": "set_flag", "flag": "marine_balance_ina_blogs" },
-          { "type": "set_flag", "flag": "indice_blogs_existent" },
-          { "type": "line", "char": "will", "text": "**Ina écrit des articles sombres.** Sur le site d'une boîte qui vend du conseil tech. ~~Il y a une raison à ça. Faudra la trouver.~~", "sprite": "doubting" }
+          { "type": "line", "char": "will",   "text": "Je reviendrai. Restez joignable.", "sprite": "normal" },
+          { "type": "line", "char": "marine", "text": "Vous allez voir **Pascal**, c'est ca ?", "sprite": "questioning" },
+          { "type": "line", "char": "will",   "text": "Pourquoi ?", "sprite": "doubting" },
+          { "type": "line", "char": "marine", "text": "~~...Faites attention a lui.~~ Il a pas l'air mais il **dort plus** depuis longtemps.", "sprite": "normal" },
+          { "type": "set_flag", "flag": "marine_balance_pascal_burnout" },
+          { "type": "goto", "goto": "pascal" }
         ]
       },
+
       {
-        "text": "Vous avez remarque un changement chez Ina, recemment ?",
-        "id": "marine_ina_changé",
-        "requires_flag": "marine_balance_ina_blogs",
+        "text": "(Confrontation) Vous mentez. Vous saviez et vous avez continue.",
+        "id": "marine_retour_dur",
+        "requires_flag": "data_canaux",
+        "forbids_flag": "marine_resolved",
         "sequence": [
-          { "type": "line", "char": "will",   "text": "Vous le voyez tous les jours depuis des années. Il y a eu un **moment** où Ina a changé ?", "sprite": "doubting" },
-          { "type": "line", "char": "marine", "text": "~~Vous voulez vraiment savoir ?~~ Oui. ##Il y a environ six mois.## Avant, il rigolait. Pas beaucoup, mais il rigolait. Depuis... rien. Plus rien. Comme si on lui avait coupé un fil dans la tête. Je sais pas ce qui s'est passé. Personne sait.", "sprite": "questioning" },
-          { "type": "set_flag", "flag": "marine_balance_ina_changement" },
+          { "type": "line", "char": "will",   "text": "J'ai vu vos chiffres. **SEA cinq mille euros. Email deux cents.** L'email rapporte **plus**. Vous le saviez ?", "sprite": "doubting" },
+          { "type": "line", "char": "marine", "text": "~~...Non.~~", "sprite": "questioning" },
+          { "type": "line", "char": "will",   "text": "Vous le saviez.", "sprite": "doubting" },
+          { "type": "line", "char": "narrateur", "text": "Marine baisse les yeux." },
+
+          {
+            "type": "present_evidence",
+            "prompt": { "char": "will", "text": "~~Le vrai probleme de Marine, c'est qu'elle n'a **jamais ecrit** ce qu'elle attendait d'une campagne avant de la lancer. Une fiche resume ca. Sortez-la.~~", "sprite": "doubting" },
+            "expected_lesson": "lesson_cadrage",
+            "on_correct": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "Vous lancez sans objectif. Sans seuil. Sans **'voila ce que je fais si ca marche pas'**. Vous ne pouvez ni mesurer un succes, ni reconnaitre un echec. Vous ne **pilotez** pas. Vous **arrosez**.", "sprite": "doubting" }
+              ]
+            },
+            "on_wrong": { "sequence": [ { "type": "line", "char": "will", "text": "~~Non, pas cette fiche. Je dois etre plus precis.~~", "sprite": "doubting" } ] },
+            "on_cancel": { "sequence": [ { "type": "line", "char": "will", "text": "~~Je tranche sans le carnet.~~", "sprite": "doubting" } ] }
+          },
+
+          { "type": "line", "char": "will",   "text": "Vous **mentez**. Vous saviez et vous avez continue. Parce que c'etait plus facile que de cadrer.", "sprite": "doubting" },
+          { "type": "line", "char": "marine", "text": "Tres bien. Pensez ce que vous voulez. J'ai du travail. La porte est derriere vous.", "sprite": "questioning" },
+          { "type": "line", "char": "narrateur", "text": "Marine se tourne vers son ecran. Conversation finie." },
+          { "type": "line", "char": "will", "text": "~~Mauvais ton. J'ai eu mes faits, j'ai perdu sa cooperation. Tant pis. Je reconstruirai sans elle.~~", "sprite": "doubting" },
+
+          { "type": "set_flag", "flag": "marine_fermée" },
+          { "type": "set_flag", "flag": "marine_resolved" },
+          { "type": "set_flag", "flag": "acte1_fin_amorce" },
+
+          { "type": "goto", "goto": "jia" }
+        ]
+      },
+
+      {
+        "text": "(Confrontation) Vous avez peur d'etre viree, c'est ca ?",
+        "id": "marine_retour_empathie",
+        "requires_flag": "data_canaux",
+        "forbids_flag": "marine_resolved",
+        "sequence": [
+          { "type": "line", "char": "will",   "text": "J'ai vu vos chiffres. **SEA cinq mille euros. Email deux cents.** L'email rapporte **plus**. Vous le saviez ?", "sprite": "doubting" },
+          { "type": "line", "char": "marine", "text": "~~...Non.~~", "sprite": "questioning" },
+          { "type": "line", "char": "will",   "text": "Vous le saviez.", "sprite": "doubting" },
+
+          {
+            "type": "present_evidence",
+            "prompt": { "char": "will", "text": "~~Le vrai probleme de Marine, c'est qu'elle n'a **jamais ecrit** ce qu'elle attendait d'une campagne avant de la lancer. Une fiche resume ca. Sortez-la.~~", "sprite": "doubting" },
+            "expected_lesson": "lesson_cadrage",
+            "on_correct": {
+              "sequence": [
+                { "type": "line", "char": "will", "text": "Vous lancez sans objectif. Sans seuil. Sans **'voila ce que je fais si ca marche pas'**. Vous ne pouvez ni mesurer un succes, ni reconnaitre un echec. Vous ne **pilotez** pas. Vous **arrosez**.", "sprite": "doubting" }
+              ]
+            },
+            "on_wrong": { "sequence": [ { "type": "line", "char": "will", "text": "~~Non, pas cette fiche. Je dois etre plus precis.~~", "sprite": "doubting" } ] },
+            "on_cancel": { "sequence": [ { "type": "line", "char": "will", "text": "~~Je tranche sans le carnet.~~", "sprite": "doubting" } ] }
+          },
+
+          { "type": "line", "char": "will",   "text": "Vous avez peur **d'etre viree**, c'est ca ?", "sprite": "normal" },
+          { "type": "line", "char": "narrateur", "text": "Marine ne repond pas. Elle regarde par la fenetre." },
+          { "type": "line", "char": "marine", "text": "~~...Jia me l'a dit y'a deux mois.~~ « Si tu redresses pas ton ROI, je dois revoir le poste. » J'ai pas redresse. J'ai juste... balance plus d'argent en esperant que ca marche par la **masse**.", "sprite": "questioning" },
+          { "type": "line", "char": "narrateur", "text": "Will s'assoit. Il attend." },
+          { "type": "line", "char": "marine", "text": "Je suis pas une saboteuse, monsieur. Je suis juste... **pas faite pour ce poste**. Et personne m'a aidee a m'y faire. Je suis arrivee community manager y'a quatre ans. On m'a poussee 'responsable com' parce que y'avait personne d'autre. **Je sais pas faire un cadrage. Je sais pas lire un GA4. Je fais semblant tous les jours.**", "sprite": "questioning" },
+
+          { "type": "line", "char": "will",   "text": "Vous savez ce qui se passe avec **Pascal** ?", "sprite": "doubting" },
+          { "type": "line", "char": "marine", "text": "Il dort plus. Il code la nuit. Sa copine l'a quitte y'a **six mois**. Il s'est jete dans le boulot comme on se jette d'un pont. Personne lui dit rien parce qu'il livre toujours, a l'arrache, mais il livre.", "sprite": "normal" },
+          { "type": "line", "char": "marine", "text": "Et... **Ina** aussi a change. Vers la meme epoque. Mais lui c'est different. Lui c'est devenu **froid**.", "sprite": "questioning" },
+          { "type": "line", "char": "will", "text": "~~Deux personnes qui basculent il y a six mois. Le meme moment ou la boite commence a couler. Ce n'est plus une coincidence.~~", "sprite": "doubting" },
+
+          { "type": "set_flag", "flag": "marine_ouverte" },
+          { "type": "set_flag", "flag": "indice_pascal_burnout" },
           { "type": "set_flag", "flag": "indice_ina_changé_six_mois" },
-          { "type": "line", "char": "will", "text": "**Six mois.** ~~La même fenêtre que la chute du site.~~", "sprite": "doubting" }
+          { "type": "set_flag", "flag": "indice_six_mois_charnière" },
+          { "type": "set_flag", "flag": "marine_resolved" },
+          { "type": "set_flag", "flag": "acte1_fin_amorce" },
+
+          { "type": "line", "char": "will", "text": "Merci, Marine. Je vais voir Madame Seo.", "sprite": "normal" },
+          { "type": "goto", "goto": "jia" }
         ]
       }
     ]
   },
+
   "characters_present": [
-    { "label": "Marine Pestelle", "key": "marine" }
+    { "label": "Marine Pestelle", "key": "marine", "forbids_flag": "marine_resolved" }
   ]
 }

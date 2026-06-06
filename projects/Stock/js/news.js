@@ -19,7 +19,10 @@ const getTickerLabel = symbol => positions[symbol]?.ticker || symbol;
 const buildNewsAnchorItem = (item, { className, includeSummary = true }) => {
     const a = document.createElement('a');
     a.className = className;
-    a.href = item.url || '#';
+    try {
+        const u = new URL(item.url);
+        a.href = (u.protocol === 'https:' || u.protocol === 'http:') ? item.url : '#';
+    } catch { a.href = '#'; }
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
 
@@ -44,7 +47,6 @@ const buildNewsAnchorItem = (item, { className, includeSummary = true }) => {
         a.appendChild(s);
     }
 
-    // One sentiment badge per affected portfolio position
     const allSymbols = [...new Set([item.symbol, ...(item.symbols || []), ...(item.relatedTickers || [])].filter(Boolean))];
     const seen = new Set();
     const matches = [];
@@ -139,7 +141,6 @@ export function stopCardNewsAutoRefresh(symbol) {
 export function updateNewsUI(symbol, items, filter = null) {
     const el = getEl(`news-list-${symbol}`);
     if (!el) return;
-    // Removed news last update noise
     if (filter === null) {
         const inp = document.querySelector(`#card-${symbol} .news-search-input`);
         if (inp) filter = inp.value;
@@ -174,7 +175,6 @@ export function updateNewsPageList(items, opts = {}) {
     list.forEach(item => {
         el.appendChild(buildNewsAnchorItem(item, { className: 'news-item' }));
     });
-    // Removed news last update noise
 }
 
 export async function openNewsPage(symbol, options = {}) {
@@ -206,7 +206,11 @@ function populateSuggestions() {
         const d = document.createElement('div');
         d.className = 'ticker-suggestion-item';
         d.dataset.symbol = sym;
-        d.innerHTML = `<span class="ticker-symbol">${pos.ticker || sym}</span>${pos.name || ''}`;
+        const tickerSpan = document.createElement('span');
+        tickerSpan.className = 'ticker-symbol';
+        tickerSpan.textContent = pos.ticker || sym;
+        d.appendChild(tickerSpan);
+        if (pos.name) d.appendChild(document.createTextNode(pos.name));
         d.addEventListener('click', () => { const inp = getEl('news-ticker-search'); if (inp) { inp.value = pos.ticker || sym; el.classList.remove('active'); loadNews(); } });
         el.appendChild(d);
     });
@@ -278,14 +282,20 @@ async function loadNews() {
         
         all = Array.from(uniqueItems.values()).map(i => ({ ...i, symbols: Array.from(i.symbols) }));
         if (manual && !all.length) {
-            el.innerHTML = `<div class="news-empty">Ticker not found or no news found for ${manual}</div>`;
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'news-empty';
+            emptyDiv.textContent = `Ticker not found or no news found for ${manual}`;
+            el.replaceChildren(emptyDiv);
             lastPageNews = [];
             return;
         }
         all.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
         updateNewsPageList(all);
     } catch (e) {
-        el.innerHTML = `<div class="news-empty">Unable to load news${manual ? ` for ${manual}` : ''}.</div>`;
+        const errDiv = document.createElement('div');
+        errDiv.className = 'news-empty';
+        errDiv.textContent = `Unable to load news${manual ? ` for ${manual}` : ''}.`;
+        el.replaceChildren(errDiv);
     }
 }
 

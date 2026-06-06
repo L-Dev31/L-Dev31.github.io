@@ -9,10 +9,8 @@ import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetch
 import { updateUI, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance, initMobileSidebar, setBottomNavActive } from './ui.js'
 import { getEl } from './utils.js'
 
-// Re-export for other modules
 export { fetchActiveSymbol };
 
-// Global helper
 function terminalLogGlobal(msg) {
     try {
         const out = getEl('terminal-output');
@@ -86,7 +84,7 @@ function rebuildTransactionHistoryRows() {
             const sharesEl = row.querySelector('.trans-shares');
             const priceEl = row.querySelector('.trans-price');
 
-            if (dateEl) dateEl.textContent = new Date(t.date).toLocaleDateString('en-US');
+            if (dateEl) dateEl.textContent = new Date(t.date).toLocaleDateString(undefined);
             if (typeEl) typeEl.textContent = t.type;
             if (amountEl) amountEl.textContent = `${Math.abs(t.amount || 0).toFixed(2)} ${currency}`;
             if (sharesEl) sharesEl.textContent = t.shares || 0;
@@ -171,8 +169,7 @@ function openPortfolioCard() {
 
     if (typeof renderDiversificationPane === 'function') renderDiversificationPane();
 
-    // Trigger analytics refresh
-    try { 
+    try {
         import('./portfolio.js').then(m => {
             m.initPortfolioAnalytics();
         });
@@ -193,7 +190,6 @@ function openProfileCard() {
     card.classList.add('active');
     card.setAttribute('aria-hidden', 'false');
     
-    // Update mobile profile stats to match the sidebar ones
     const totalShares = document.getElementById('total-shares')?.textContent;
     const totalInv = document.getElementById('total-investment')?.textContent;
     const mShares = document.getElementById('mobile-total-shares');
@@ -210,10 +206,7 @@ function startFastPolling() {
 function startGlobalRefreshLoop() {
     if (globalRefreshTimer) return;
 
-    // Initial sync
     syncDashboardData();
-
-    // Unified sync loop (5min)
     setGlobalRefreshTimer(setInterval(() => {
         if (document.hidden) return;
         syncDashboardData();
@@ -309,7 +302,6 @@ async function fetchActiveSymbol(force) {
     }
 }
 
-// Event Listeners
 document.addEventListener('click', async e => {
     const t = e.target.closest('.tab')
     if (t) {
@@ -349,7 +341,6 @@ document.addEventListener('click', e => {
     if (symbol) {
         if (targetPaneId === 'news') {
             startCardNewsAutoRefresh(symbol);
-            // Trigger immediate fetch if news is empty or old
             const now = Date.now();
             const pos = positions[symbol];
             if (!pos.news?.length || !pos.lastNewsFetch || (now - pos.lastNewsFetch) > 60000) {
@@ -367,20 +358,13 @@ document.getElementById('cards-container')?.addEventListener('change', async e =
     if (!sel) return;
     const p = sel.value;
 
-    // Update global state
     setGlobalPeriod(p);
-
-    // Update every position's period
     Object.keys(positions).forEach(sym => {
         positions[sym].currentPeriod = p;
     });
-
-    // Update all period dropdowns in the UI for consistency
     document.querySelectorAll('.period-select').forEach(dropdown => {
         dropdown.value = p;
     });
-
-    // Update active card's labels
     document.querySelectorAll('.performance-period').forEach(label => {
         label.textContent = p;
     });
@@ -388,7 +372,6 @@ document.getElementById('cards-container')?.addEventListener('change', async e =
     fetchActiveSymbol(true);
     batchPerformanceFetch(p);
 
-    // Rafraîchir la vue news si la page news est active.
     const cardNews = document.getElementById('card-news');
     if (cardNews && cardNews.classList.contains('active')) {
         const activeTab = document.querySelector('.tab.active');
@@ -538,8 +521,7 @@ getEl('settings-save')?.addEventListener('click', async () => {
     const perfEnabled = getEl('settings-performance-viewer')?.checked;
     const name = getEl('settings-user-name')?.value;
     
-    // Handle Profile Photo Upload
-    const pfpFile = getEl('settings-user-pfp-file')?.files[0];
+        const pfpFile = getEl('settings-user-pfp-file')?.files[0];
     let pfpBase64 = getUserSettings().pfp;
 
     if (pfpFile) {
@@ -573,7 +555,6 @@ getEl('settings-save')?.addEventListener('click', async () => {
     refreshUiAfterSettingsSave();
 });
 
-// Instant PFP Preview
 getEl('settings-user-pfp-file')?.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -586,7 +567,6 @@ getEl('settings-user-pfp-file')?.addEventListener('change', (e) => {
     }
 });
 
-// Show Save Bar on Change
 ['input', 'change'].forEach(evt => {
     getEl('card-settings')?.addEventListener(evt, (e) => {
         const actionBar = getEl('settings-actions-bar');
@@ -665,7 +645,6 @@ window.nemeris = {
     home: {
         open: openHomeCard
     },
-    // Proxy config
     proxy: { getUrl: getProxyBaseUrl, setUrl: setProxyBaseUrl, ping: pingProxy, defaultUrl: DEFAULT_WORKER_URL }
 };
 

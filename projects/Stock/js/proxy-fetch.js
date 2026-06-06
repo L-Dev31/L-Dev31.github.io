@@ -30,7 +30,12 @@ export function getProxyBaseUrl() {
 
 export function setProxyBaseUrl(url) {
     try {
-        saveUserSettings({ proxyUrl: url?.trim() || '' });
+        const trimmed = url?.trim() || '';
+        if (trimmed && !trimmed.startsWith('https://')) {
+            emit('workerFailure', { reason: 'Proxy URL must use HTTPS' });
+            return;
+        }
+        saveUserSettings({ proxyUrl: trimmed });
     } catch { /* ignore */ }
     workerFails = 0;
     if (workerDown) { workerDown = false; emit('workerRecovered', {}); }
@@ -53,11 +58,11 @@ export async function proxyFetch(targetUrl, { signal, expect = 'json' } = {}) {
 
     const s = r.status;
 
-    // 429 = throttled (Yahoo). 401/404/422 = Yahoo refuse (crumb/ticker mort/param). Worker fonctionne.
+    // 429 = throttled (Yahoo). 401/404/422 = Yahoo refuse (crumb/ticker mort/param).
     if (s === 429) return { error: true, errorCode: 429, throttled: true };
     if (s === 401 || s === 404 || s === 422) return { error: true, errorCode: s };
 
-    // 403/5xx/autres non-OK = probable panne worker.
+    // 403/5xx/autres non-OK
     if (!r.ok) {
         onWorkerFailure(`HTTP_${s}`);
         return { error: true, errorCode: s };
@@ -72,7 +77,7 @@ export async function proxyFetch(targetUrl, { signal, expect = 'json' } = {}) {
     }
 }
 
-// Test de santé worker — utilise v8/finance/chart (endpoint public, pas de crumb requis).
+// Test de santé worker
 export async function pingProxy(url) {
     try {
         const base = (url || getProxyBaseUrl()).trim();

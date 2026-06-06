@@ -25,15 +25,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             getProjectsData(),
             fetch(`projects/Portfolio/${id}.html`)
         ]);
-        const data = (projectsData.projects || []).find(p => p.id === id);
+        const all = projectsData.projects || [];
+        const data = all.find(p => p.id === id);
         if (!data || !res.ok) return renderNotFound();
-        renderProject(data, await res.text(), lenis);
+        renderProject(data, await res.text(), lenis, all);
     } catch {
         renderNotFound();
     }
 });
 
-function renderProject(data, html, lenis) {
+function renderProject(data, html, lenis, all = []) {
     const tmp = document.createElement('div');
     tmp.innerHTML = html;
 
@@ -126,6 +127,8 @@ function renderProject(data, html, lenis) {
         }
     }
 
+    setupPager(data, all);
+
     if (!prefersReducedMotion) {
         const img = document.querySelector('.project-hero-img');
         if (img) {
@@ -148,7 +151,7 @@ function renderProject(data, html, lenis) {
     document.querySelectorAll('.case-row').forEach(r => obs ? obs.observe(r) : r.classList.add('visible'));
 
     if (!prefersReducedMotion) {
-        const figs = document.querySelectorAll('.case-figure img');
+        const figs = document.querySelectorAll('.case-panel:not([data-no-parallax]) img');
         if (figs.length) {
             const tick = () => figs.forEach(img => {
                 const r = img.getBoundingClientRect();
@@ -159,6 +162,36 @@ function renderProject(data, html, lenis) {
             tick();
         }
     }
+}
+
+function setupPager(data, all) {
+    const pager = document.querySelector('.project-pager');
+    if (!pager) return;
+
+    // Navigable projects: enabled, with a case study page (have a subtitle), in JSON order.
+    const list = all.filter(p => !p.disabled && p.subtitle);
+    const idx = list.findIndex(p => p.id === data.id);
+
+    // Need at least one other project to navigate to.
+    if (idx === -1 || list.length < 2) { pager.remove(); return; }
+
+    const prev = list[(idx - 1 + list.length) % list.length];
+    const next = list[(idx + 1) % list.length];
+
+    const fill = (sel, p) => {
+        const el = pager.querySelector(sel);
+        if (!el || !p) return;
+        el.href = `project.html?id=${encodeURIComponent(p.id)}`;
+        el.setAttribute('aria-label', `${el.classList.contains('project-pager-item--prev') ? 'Previous' : 'Next'} project: ${p.title}`);
+        el.querySelector('.project-pager-title').textContent = p.title || '';
+        el.querySelector('.project-pager-role').textContent = p.role || p.category || '';
+        const img = el.querySelector('.project-pager-img');
+        if (img && p.heroImage) img.style.backgroundImage = `url('${p.heroImage}')`;
+    };
+
+    fill('.project-pager-item--prev', prev);
+    fill('.project-pager-item--next', next);
+    pager.hidden = false;
 }
 
 function renderNotFound() {

@@ -7,7 +7,12 @@ import { getEl } from './utils.js';
 import { fetchSeries, alignSeries } from './command/quant-shared.js';
 import { runQuant, QuantEngine } from './quant-client.js';
 
-const BENCHMARK = '^GSPC';
+// Benchmark for beta/alpha. This app targets a euro (PEA) investor, so the default is a
+// EUR-denominated European benchmark (EURO STOXX 50) rather than the S&P 500: beta against a
+// USD index for a EUR book mixes market risk with EUR/USD currency risk and is not meaningful.
+// Override if the book is genuinely USD-based.
+const BENCHMARK = '^STOXX50E';
+const BENCHMARK_LABEL = 'EURO STOXX 50';
 const DEFAULT_RANGE = '1y';
 const MIN_SAMPLES = 30;
 
@@ -64,6 +69,18 @@ export async function renderAnalysisPane(force = false) {
         }
         if (totalValue <= 0) { rendering = false; setLoading(false); return; }
         for (const s of symbols) weights[s] /= totalValue;
+
+        // FX caveat. The portfolio return series below sums LOCAL-currency asset returns. For a
+        // euro investor, the realized return on a non-EUR holding also includes the EUR/FX move,
+        // which is not captured here (it would require fetching an FX series per currency). If the
+        // book spans currencies, flag the metrics as currency-unadjusted so totalReturn/beta are
+        // not read as exact EUR figures.
+        const currencies = new Set();
+        for (const [, pos] of active) {
+            const c = pos.currency || pos.lastData?.currency;
+            if (c) currencies.add(String(c).toUpperCase());
+        }
+        const currencyMixed = currencies.size > 1;
 
         seriesPromises.push(fetchSeries(BENCHMARK, range, '1d'));
         const seriesArr = await Promise.all(seriesPromises);
@@ -126,6 +143,10 @@ export async function renderAnalysisPane(force = false) {
             runQuant('correlationMatrix', pricesMap)
         ]);
 
+        // NOTE: this is a CONSTANT-WEIGHT reconstruction — it applies today's portfolio weights to
+        // past asset returns (i.e. a portfolio continuously rebalanced to current weights), NOT the
+        // performance actually realized as positions were built up over time. It is a "what the
+        // current mix would have done" figure, not a track record. Labelled as such in the UI.
         const totalReturn = ((portPrices[portPrices.length - 1] - 100) / 100) * 100;
 
         // Diversification ratio = Σ w_i * σ_i / σ_p (>1 means diversified)
@@ -173,7 +194,7 @@ export async function renderAnalysisPane(force = false) {
         const edge = QuantEngine.tradeStats(allTrades);
 
         // 11. Render
-        renderHero({ totalReturn, annVol, sharpe, beta });
+        renderHero({ totalReturn, annVol, sharpe, beta, currencyMixed });
         renderMetrics({ sortino, maxDD, var95, cvar95, diversification, samples: ts.length });
         renderTradingEdge(edge);
         renderContributors(contribRows);
@@ -186,7 +207,6 @@ export async function renderAnalysisPane(force = false) {
     }
 }
 
-// ============ HELPERS ============
 function alignBenchmarkTo(targetTs, benchSeries) {
     const m = new Map();
     for (let i = 0; i < benchSeries.ts.length; i++) m.set(benchSeries.ts[i], benchSeries.closes[i]);
@@ -229,23 +249,24 @@ function betaSync(pricesA, pricesB) {
     return vb === 0 ? 0 : cov / vb;
 }
 
-// ============ RENDER ============
-function renderHero({ totalReturn, annVol, sharpe, beta }) {
+function renderHero({ totalReturn, annVol, sharpe, beta, currencyMixed }) {
     const el = getEl('analysis-hero');
     if (!el) return;
+    const fxNote = currencyMixed ? ' Holdings span multiple currencies — figures are currency-unadjusted (FX moves not included).' : '';
     el.innerHTML = `
-        ${heroCard('Total return', fmtPct(totalReturn), totalReturn)}
-        ${heroCard('Annualized volatility', fmtPct(annVol * 100), -annVol * 100)}
-        ${heroCard('Sharpe ratio', fmtNum(sharpe, 2), sharpe)}
-        ${heroCard('Beta vs S&P 500', beta == null ? '—' : fmtNum(beta, 2), beta == null ? 0 : (beta - 1))}
+        ${heroCard('Total return*', fmtPct(totalReturn), totalReturn, 'Constant-weight reconstruction: today’s weights applied to past returns, not the return actually realized over time.' + fxNote)}
+        ${heroCard('Annualized volatility', fmtPct(annVol * 100), -annVol * 100, 'Measure of price fluctuations over a year (lower is less volatile)')}
+        ${heroCard('Sharpe ratio', fmtNum(sharpe, 2), sharpe, 'Risk-adjusted performance (excess return over the euro risk-free rate ÷ volatility; higher is better)')}
+        ${heroCard(`Beta vs ${BENCHMARK_LABEL}`, beta == null ? '—' : fmtNum(beta, 2), beta == null ? 0 : (beta - 1), 'Systematic risk relative to the benchmark.' + fxNote)}
     `;
 }
 
-function heroCard(label, value, signed) {
+function heroCard(label, value, signed, hint = '') {
     const cls = signed > 0 ? 'positive' : signed < 0 ? 'negative' : '';
+    const titleAttr = hint ? `title="${hint}" style="cursor: help; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 1px;"` : '';
     return `
         <div class="analysis-hero-card">
-            <span class="analysis-hero-label">${label}</span>
+            <span class="analysis-hero-label" ${titleAttr}>${label}</span>
             <span class="analysis-hero-value ${cls}">${value}</span>
         </div>
     `;
@@ -356,7 +377,7 @@ function renderCorrelationMatrix(symbols, matrix, names) {
     el.style.gridTemplateColumns = `88px repeat(${size}, minmax(58px, 1fr))`;
     const headerCell = (s) => `
         <div class="matrix-cell matrix-header matrix-header-rich">
-            <img class="matrix-header-logo" src="img/icon/${s}.png" alt="" onerror="this.style.visibility='hidden'" />
+            <img class="matrix-header-logo" src="img/icon/${s}.png" alt="" loading="lazy" onerror="this.style.visibility='hidden'" />
             <span class="matrix-header-name">${escapeHtml(names[s] || s)}</span>
             <span class="matrix-header-ticker">${s}</span>
         </div>

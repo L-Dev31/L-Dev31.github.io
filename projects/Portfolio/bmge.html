@@ -1,0 +1,127 @@
+<section class="case-intro">
+    <h2 class="title">The Brief</h2>
+    <p>In 2024, I started a French translation mod for <em>Tomodachi Collection</em>, a Nintendo DS life simulation
+        game that was never officially released outside Japan. The game stores all its text in BMG files: a proprietary
+        Nintendo binary format with no official documentation. Existing editors were either too sketchy to trust or
+        would silently corrupt the file on save, making them unusable for a real translation workflow.<br><br>So I
+        built my own: a browser-based BMG editor capable of opening, editing, and re-exporting any BMG file while
+        preserving every byte of the original structure it didn&rsquo;t need to touch.</p>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">No documentation. No existing editor. Just the binary and enough curiosity to
+        reverse-engineer it.</blockquote>
+</section>
+
+<section class="case-chapter" id="problem">
+    <h2 class="title">The Problem</h2>
+    <div class="case-row">
+        <div class="case-prose case-prose--right">
+            <h3 class="case-heading">A Closed Format, a Missing Game</h3>
+            <p>BMG (Binary Message Group) is a Nintendo format used across NDS and Wii titles to store all in-game
+                dialogue and UI strings. It has no official spec. Some community editors existed, but they were
+                unreliable: either abandoned projects of uncertain origin, or tools that would produce files the game
+                engine rejected outright because they mishandled section sizes, offset tables, or the padding rules
+                between chunks.<br><br>Tomodachi Collection added its own layer of complexity: text strings can embed
+                inline control tags, sequences of raw bytes starting with <code>0x1A</code> that the game engine
+                interprets at render time as color changes, variable insertions, and formatting commands. Editors that
+                didn&rsquo;t understand this structure would strip or mangle those bytes on save, producing text that
+                displayed wrong or crashed the game.</p>
+        </div>
+        <figure class="case-panel" data-no-parallax>
+            <img src="../../assets/images/projects/bmge/problem.jpg"
+                alt="MSBT Editor by AeonSake — an existing Nintendo text editor, the kind of tool that existed but couldn't handle BMG files reliably."
+                loading="lazy" decoding="async">
+            <figcaption class="media-caption">MSBT Editor by <a href="https://gitlab.com/AeonSake/msbt-editor"
+                    target="_blank" rel="noopener noreferrer">AeonSake</a></figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="case-chapter" id="process">
+    <h2 class="title">The Process</h2>
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">1. Reverse-Engineering the Format</h3>
+            <p>I opened raw BMG files in a hex editor and mapped the structure manually. A BMG file starts with an
+                8-byte magic string (<code>MESGbmg1</code> for little-endian, <code>GSEM1gmb</code> for big-endian),
+                followed by file size, section count, and encoding type. Then come the sections, each identified by a
+                4-byte ASCII tag:<br><br><strong>INF1</strong> holds the message index: how many messages, how large
+                each entry is, and the byte offset pointing to where each message lives in DAT1.<br>
+                <strong>DAT1</strong> is the raw text block: all messages concatenated, each null-terminated, with
+                inline tag bytes embedded mid-string.<br><strong>MID1</strong> stores a numeric ID for each message,
+                used by the game engine to look up specific strings by code.<br><strong>STR1</strong> optionally holds
+                ASCII label names for messages, used in some games for developer reference.
+            </p>
+        </div>
+        <figure class="case-panel">
+            <img src="../../assets/images/projects/bmge/re.png"
+                alt="Hex view of a BMG file showing section headers and inline tag bytes." loading="lazy"
+                decoding="async">
+        </figure>
+    </div>
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">2. Parsing Inline Tags</h3>
+            <p>The trickiest part was the inline control tags embedded in message text. A tag sequence starts with
+                byte <code>0x1A</code>, followed by the total tag length, a group ID, a type ID (2 bytes), and
+                optional argument bytes. These tags encode things like color changes, in-game variable insertions
+                (like a Mii&rsquo;s name), or special formatting.<br><br>In the editor, these are surfaced as
+                human-readable tokens: <code>[Color:0200]</code> for a specific color, <code>[FF:0:0800]</code>
+                for another. When the user edits a message and saves, the parser re-encodes the tokens back to their
+                exact original byte sequences. If the tag was already in the file, its original bytes are reused
+                byte-for-byte. Only new tags typed by the user get freshly encoded, minimizing the risk of
+                introducing any unintended differences.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="../../assets/images/projects/bmge/tags.png"
+                alt="BMGE editor showing inline color tags rendered visually inside a message." loading="lazy"
+                decoding="async">
+        </figure>
+    </div>
+    <div class="case-row">
+        <div>
+            <h3 class="case-heading">3. Non-Destructive Export</h3>
+            <p>The export logic (buildBmg) was designed around a core constraint: only touch what changed. For each
+                message, the editor tracks whether the text is dirty (edited) or clean (untouched). Clean messages
+                keep their original byte chunk from DAT1 exactly as it was. Dirty messages get re-encoded, padded
+                to 4-byte alignment, and written fresh. The INF1 index is then rebuilt with updated offsets pointing
+                to the correct positions in the new DAT1.<br><br>The rest of the file, including sections like FLW1
+                or FLI1 that the editor doesn&rsquo;t touch, is preserved verbatim from the original binary. The
+                result is a file that is structurally identical to the original everywhere it wasn&rsquo;t edited,
+                which is the only way to guarantee the game engine won&rsquo;t reject it.</p>
+        </div>
+    </div>
+    <div class="case-row">
+        <div class="case-prose case-prose--right">
+            <h3 class="case-heading">4. Game-Specific Profiles</h3>
+            <p>Different games use BMG differently. Tomodachi Collection has its own color token set and visual
+                rendering behavior. New Super Mario Bros uses a different tag vocabulary. Rather than hardcoding one
+                game&rsquo;s rules, I built a plugin system: each game gets its own JS module that declares its
+                special token definitions and a CSS file for how those tokens should look in the editor. Switching
+                games from the dropdown reloads the token set and the visual theme, so the editor stays accurate
+                for whatever file you&rsquo;re working on.</p>
+        </div>
+        <figure class="case-panel" data-no-parallax>
+            <img src="../../assets/images/projects/bmge/tomodachi.png"
+                alt="Tomodachi Collection Nintendo DS box art." loading="lazy" decoding="async">
+            <figcaption class="media-caption">Tomodachi Collection &copy; Nintendo</figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">The editor doesn&rsquo;t know what a Mii is. It just knows exactly which bytes
+        to leave alone.</blockquote>
+</section>
+
+<section class="case-intro">
+    <h2 class="title">What This Built</h2>
+    <p>A browser-based binary editor for a proprietary Nintendo format, built entirely from reverse-engineering:
+        no SDK, no documentation, no prior tooling for this specific game. It parses, edits, and re-exports BMG
+        files with full inline tag support, multi-section preservation, and a game-specific profile system that
+        makes it extensible to other NDS and Wii titles.<br><br>What it proved: understanding a closed binary
+        format deeply enough to write a non-destructive editor for it is a different kind of technical work.
+        It&rsquo;s not about libraries or frameworks. It&rsquo;s about reading raw bytes until the structure
+        reveals itself.</p>
+</section>

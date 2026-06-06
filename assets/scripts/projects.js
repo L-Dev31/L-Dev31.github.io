@@ -18,7 +18,7 @@ export function setupWebProjects() {
     const update = (x, y) => { const h = window.innerHeight; tx = x + h * 0.05; ty = y - h * 0.1; };
 
     getProjectsData().then(data => {
-        const projects = (data.projects || []).filter(p => p.category === 'web');
+        const projects = (data.projects || []).filter(p => p.category === 'web' && !p.disabled);
         if (!projects.length) { list.innerHTML = '<p class="projects-empty">No projects.</p>'; return; }
 
         projects.forEach(p => {
@@ -82,11 +82,14 @@ export function setupFeaturedProjects(ctaCursor, refreshParallax) {
     if (!container) return;
 
     getProjectsData().then(data => {
-        const categories = ['All', 'Design', 'Web', 'Photography', 'Tools', 'Video Games'];
+        const allCategories = ['All', 'Design', 'UI/UX', 'Web', 'Photography', 'Tools', 'Video Games'];
 
-        const featured = (data.projects || []).filter(p => categories.includes(p.category));
+        const featured = (data.projects || []).filter(p => allCategories.includes(p.category) && !p.disabled);
 
         if (!featured.length) { container.innerHTML = '<p class="projects-empty">No featured projects.</p>'; return; }
+
+        const activeCategories = new Set(featured.map(p => p.category));
+        const categories = allCategories.filter(c => c === 'All' || activeCategories.has(c));
 
         const filtersContainer = document.createElement('div');
         filtersContainer.className = 'featured-filters';
