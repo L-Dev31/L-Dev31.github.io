@@ -37,17 +37,30 @@
     {
       "id": "dran",
       "title": "Dranima",
-      "description": "Discover Dranima: a retro-inspired monster-tamer RPG in development. Follow the project updates, explore the world, and join the community..",
-      "creator": "Alex Claude Bourbon",
-      "category": "Web",
+      "date": "2026-03-08",
+      "role": "Web Designer & Developer",
+      "client": "Dranima Studio — Alex Claude Bourbon",
+      "heroImage": "assets/images/projects/dran/header.jpg",
+      "subtitle": "A showcase site for an independent monster-tamer RPG in development.",
       "tags": [
-        "2d",
-        "rpg",
-        "monster-tamer",
-        "retro",
-        "pokemon-like"
+        "web design",
+        "frontend development",
+        "game website",
+        "wiki",
+        "client project"
       ],
-      "disabled": true
+      "ctas": [
+        {
+          "label": "Visit Dranima",
+          "url": "https://dranima.com"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/dran/structure.png",
+        "assets/images/projects/dran/design.png",
+        "assets/images/projects/dran/roadmap.png"
+      ],
+      "category": "Web"
     },
     {
       "id": "bgaw",
@@ -97,7 +110,7 @@
     {
       "id": "bmge",
       "title": "BMG Editor",
-      "date": "2024-01-01",
+      "date": "2025-10-01",
       "role": "Developer",
       "client": "Personal — Tomodachi Collection FR Translation Mod",
       "heroImage": "assets/images/projects/bmge/header.jpg",
@@ -141,12 +154,30 @@
     },
     {
       "id": "cmck",
-      "title": "Portfolio",
-      "description": "Showcasing the musical journey and works of Charlie McKenzie.",
-      "creator": "Charlie McKenzie",
-      "category": "Web",
-      "tags": [],
-      "disabled": true
+      "title": "Charlie McKenzie",
+      "date": "2026-01-01",
+      "role": "Web Designer & Developer",
+      "client": "Charlie McKenzie — Composer & Sound Designer",
+      "heroImage": "assets/images/projects/cmck/header.jpg",
+      "subtitle": "A composer portfolio built to serve two audiences at once: personal work and paid commissions.",
+      "tags": [
+        "web design",
+        "frontend development",
+        "portfolio",
+        "client project"
+      ],
+      "ctas": [
+        {
+          "label": "View Live Site",
+          "url": "https://charliemckenziemusic.com"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/cmck/typography.png",
+        "assets/images/projects/cmck/website.jpg",
+        "assets/images/projects/cmck/structure.png"
+      ],
+      "category": "Web"
     },
     {
       "id": "mxal",

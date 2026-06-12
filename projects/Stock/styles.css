@@ -4127,3 +4127,38 @@ input:checked+.slider:before {
     aspect-ratio: auto;
     min-height: 64px;
 }
+
+/* Sidebar Sorting styling */
+.sidebar-sort-container {
+    padding: 0 12px 12px;
+}
+
+.mobile-sort-container {
+    padding: 0 16px 16px;
+}
+
+select.sidebar-select {
+    padding: 8px 28px 8px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-image: none; /* remove default select background arrow */
+    border: 1px solid rgba(168, 162, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-sm);
+    color: var(--text-dark);
+    transition: border-color var(--trans-fast), color var(--trans-fast), background-color var(--trans-fast);
+}
+
+select.sidebar-select:hover {
+    border-color: rgba(168, 162, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.04);
+    color: var(--text-light);
+}
+
+select.sidebar-select:focus {
+    border-color: var(--primary);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-white);
+}

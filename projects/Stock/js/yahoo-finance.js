@@ -666,7 +666,23 @@ export async function fetchYahooPeriodChanges(tickers, period, signal) {
                 try {
                     const data = await fetchFromYahoo(ticker, period, ticker, null, null, signal);
                     if (data && !data.error) {
-                        results[ticker] = data;
+                        // Normalize to the same shape parseChartPayload emits. fetchFromYahoo
+                        // returns a FLAT result (prices/highs/lows/volumes at top level), but
+                        // consumers (explorer SignalBot enrichment) gate on `.history`. Without
+                        // this wrap, every fallback-path ticker had no history → SignalBot never
+                        // ran → all scores defaulted to a neutral 50.
+                        results[ticker] = {
+                            change: data.change,
+                            changePercent: data.changePercent,
+                            price: data.price,
+                            symbol: ticker,
+                            history: {
+                                prices: data.prices || data.closes || [],
+                                highs: data.highs || [],
+                                lows: data.lows || [],
+                                volumes: data.volumes || []
+                            }
+                        };
                     }
                 } catch (e) { /* ignore individual failure */ }
             }));

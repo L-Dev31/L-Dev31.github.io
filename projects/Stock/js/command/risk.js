@@ -13,15 +13,23 @@ export async function runRiskCommand({ parts, getTarget, out, fmtErr }) {
         const closes = await fetchCloses(target.ticker, range, '1d');
         if (closes.length < 30) { out('Not enough data (need 30+ daily closes).'); return; }
 
-        const [annVol, sharpe, sortino, maxDD, var95, cvar95] = await Promise.all([
+        const [annVol, sharpe, sortino, maxDD, var95, cvar95, outlierP] = await Promise.all([
             runQuant('annualizedVolatility', closes),
             runQuant('calculateSharpeRatio', closes),
             runQuant('calculateSortinoRatio', closes),
             runQuant('calculateMaxDrawdown', closes),
             runQuant('calculateVaR', closes, 0.95),
-            runQuant('calculateCVaR', closes, 0.95)
+            runQuant('calculateCVaR', closes, 0.95),
+            runQuant('priceOutlierPValue', closes, 60)
         ]);
         const dailyVol = annVol / Math.sqrt(252);
+
+        // Colour-code the outlier p-value: green = normal, orange = notable, red = extreme.
+        const outlierLabel = outlierP < 0.01
+            ? `<span class="terminal-neg">${formatNumber(outlierP, 4)} ★ extreme</span>`
+            : outlierP < 0.05
+                ? `<span class="terminal-warning">${formatNumber(outlierP, 4)} notable</span>`
+                : `<span class="terminal-muted">${formatNumber(outlierP, 4)} normal</span>`;
 
         const rows = [
             ['Ticker', esc(target.ticker)],
@@ -32,7 +40,8 @@ export async function runRiskCommand({ parts, getTarget, out, fmtErr }) {
             ['Sortino', formatNumber(sortino, 3)],
             ['Max drawdown', formatPercent(maxDD)],
             ['VaR 95% (1d)', formatPercent(var95)],
-            ['CVaR 95% (1d)', formatPercent(cvar95)]
+            ['CVaR 95% (1d)', formatPercent(cvar95)],
+            ['Last move p-value', outlierLabel]
         ];
         out(panel(keyValueTable(rows, 'METRIC', 'VALUE')), 'terminal-log', true);
     } catch (e) {

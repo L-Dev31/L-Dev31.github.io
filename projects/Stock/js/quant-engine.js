@@ -1,27 +1,26 @@
-// Nemeris Quant Engine
+// Nemeris Quant Engine — portfolio/risk analytics built on the shared quant-math core.
+//
+// Financial-correctness notes (changes vs previous revision):
+// - Volatility now uses the SAMPLE standard deviation (n-1). Market returns are always a
+//   sample, never the population; the n denominator biased volatility (and therefore Sharpe,
+//   Sortino, VaR-scaling) low, especially on short windows.
+// - Sortino now uses the FULL-SAMPLE downside deviation: sqrt( Σ min(r - MAR, 0)² / N ).
+//   The previous version divided by the number of down days only, which (a) is not the
+//   Sortino (1994) definition, and (b) made the ratio jump discontinuously when a single
+//   small down day entered the window.
+// - Historical VaR/CVaR use linear-interpolation percentiles instead of a floor index,
+//   removing the systematic optimistic bias on small samples.
+// - runBacktest is O(n) (was O(n²): it re-sliced the whole price history every bar).
 
-const TRADING_DAYS = 252;
+import {
+    TRADING_DAYS, mean, sampleStdDev, simpleReturns, logReturns,
+    maxDrawdown as coreMaxDrawdown, percentileSorted,
+    vwap as coreVWAP, covariance, pearsonCorrelation,
+    zScore as coreZScore, outlierPValue
+} from './quant-math.js';
 
 // Annualized risk-free rate (2% default for Eurozone PEA, mid-2026)
 const DEFAULT_RISK_FREE_RATE = 0.02;
-
-function _mean(arr) {
-    if (!arr || arr.length === 0) return 0;
-    let s = 0;
-    for (let i = 0; i < arr.length; i++) s += arr[i];
-    return s / arr.length;
-}
-
-function _stdev(arr, mean) {
-    if (!arr || arr.length < 2) return 0;
-    const m = mean ?? _mean(arr);
-    let s = 0;
-    for (let i = 0; i < arr.length; i++) {
-        const d = arr[i] - m;
-        s += d * d;
-    }
-    return Math.sqrt(s / arr.length);
-}
 
 let _nextGaussian = null;
 function _gaussian() {
@@ -61,86 +60,67 @@ const NEGATORS = new Set(['not', 'no', 'never', 'without', 'fails', 'fail', 'fai
 export const QuantEngine = {
     // ============ CORE ============
     calculateReturns(prices) {
-        if (!prices || prices.length < 2) return [];
-        const out = new Array(prices.length - 1);
-        for (let i = 1; i < prices.length; i++) {
-            const prev = prices[i - 1];
-            out[i - 1] = prev ? (prices[i] - prev) / prev : 0;
-        }
-        return out;
+        return simpleReturns(prices);
     },
 
     calculateLogReturns(prices) {
-        if (!prices || prices.length < 2) return [];
-        const out = new Array(prices.length - 1);
-        for (let i = 1; i < prices.length; i++) {
-            const prev = prices[i - 1];
-            out[i - 1] = prev > 0 && prices[i] > 0 ? Math.log(prices[i] / prev) : 0;
-        }
-        return out;
+        return logReturns(prices);
     },
 
     calculateVolatility(returns) {
         if (!returns || returns.length === 0) return 0;
-        return _stdev(returns);
+        return sampleStdDev(returns);
     },
 
     annualizedVolatility(prices) {
-        const r = this.calculateReturns(prices);
-        return _stdev(r) * Math.sqrt(TRADING_DAYS);
+        return sampleStdDev(simpleReturns(prices)) * Math.sqrt(TRADING_DAYS);
     },
 
     // ============ RISK METRICS ============
     calculateSharpeRatio(prices, riskFreeRate = DEFAULT_RISK_FREE_RATE) {
-        const returns = this.calculateReturns(prices);
-        if (returns.length === 0) return 0;
-        const mean = _mean(returns);
-        const vol = _stdev(returns, mean);
+        const returns = simpleReturns(prices);
+        if (returns.length < 2) return 0;
+        const m = mean(returns);
+        const vol = sampleStdDev(returns, m);
         if (vol === 0) return 0;
         // Annualize: (mean * 252 - Rf) / (vol * sqrt(252))
-        return ((mean * TRADING_DAYS) - riskFreeRate) / (vol * Math.sqrt(TRADING_DAYS));
+        return ((m * TRADING_DAYS) - riskFreeRate) / (vol * Math.sqrt(TRADING_DAYS));
     },
 
+    // Sortino (annualized). `mar` is the ANNUAL minimum acceptable return.
+    // Downside deviation per Sortino & Price (1994): full-sample root-mean-square of
+    // below-MAR deviations — zeros count. Dividing by down-day count only (previous
+    // behaviour) overstates DD with few losers and understates it with many.
     calculateSortinoRatio(prices, mar = 0) {
-        const returns = this.calculateReturns(prices);
-        if (returns.length === 0) return 0;
-        const mean = _mean(returns);
-        const downside = returns.filter(r => r < mar);
-        if (downside.length === 0) return 0;
+        const returns = simpleReturns(prices);
+        if (returns.length < 2) return 0;
+        const marDaily = mar / TRADING_DAYS;
         let s = 0;
-        for (let i = 0; i < downside.length; i++) {
-            const d = downside[i] - mar;
-            s += d * d;
+        for (let i = 0; i < returns.length; i++) {
+            const d = returns[i] - marDaily;
+            if (d < 0) s += d * d;
         }
-        const dd = Math.sqrt(s / downside.length);
-        if (dd === 0) return 0;
-        return ((mean - mar / TRADING_DAYS) * Math.sqrt(TRADING_DAYS)) / dd;
+        const downsideDev = Math.sqrt(s / returns.length);
+        if (downsideDev === 0) return 0;
+        return ((mean(returns) - marDaily) * TRADING_DAYS) / (downsideDev * Math.sqrt(TRADING_DAYS));
     },
 
+    // Max drawdown as a NEGATIVE percentage (UI convention preserved).
     calculateMaxDrawdown(prices) {
-        if (!prices || prices.length === 0) return 0;
-        let maxPrice = prices[0];
-        let maxDD = 0;
-        for (let i = 0; i < prices.length; i++) {
-            if (prices[i] > maxPrice) maxPrice = prices[i];
-            const dd = (maxPrice - prices[i]) / maxPrice;
-            if (dd > maxDD) maxDD = dd;
-        }
-        return -(maxDD * 100);
+        return -(coreMaxDrawdown(prices) * 100);
     },
 
-    // Historical VaR (percentile return, negative % loss)
+    // Historical VaR (interpolated percentile of daily returns, negative % loss)
     calculateVaR(prices, confidence = 0.95) {
-        const returns = this.calculateReturns(prices);
+        const returns = simpleReturns(prices);
         if (returns.length < 5) return 0;
         const sorted = [...returns].sort((a, b) => a - b);
-        const idx = Math.floor((1 - confidence) * sorted.length);
-        return sorted[Math.max(0, idx)] * 100;
+        return percentileSorted(sorted, 1 - confidence) * 100;
     },
 
-    // Expected Shortfall (mean of worst tail, negative % loss)
+    // Expected Shortfall (mean of returns at or below the VaR threshold, negative % loss)
     calculateCVaR(prices, confidence = 0.95) {
-        const returns = this.calculateReturns(prices);
+        const returns = simpleReturns(prices);
         if (returns.length < 5) return 0;
         const sorted = [...returns].sort((a, b) => a - b);
         const cutoff = Math.max(1, Math.floor((1 - confidence) * sorted.length));
@@ -150,43 +130,43 @@ export const QuantEngine = {
     },
 
     // ============ RELATIVE METRICS ============
+    // NOTE: both series must be CALENDAR-ALIGNED (same dates). Use alignSeries() from
+    // command/quant-shared.js before calling — truncating to equal length does NOT align
+    // series with different holidays/trading calendars.
     calculateCorrelation(pricesA, pricesB) {
         if (!pricesA || !pricesB) return 0;
-        const minLength = Math.min(pricesA.length, pricesB.length);
-        if (minLength < 2) return 0;
-        const retA = this.calculateReturns(pricesA.slice(-minLength));
-        const retB = this.calculateReturns(pricesB.slice(-minLength));
-        const meanA = _mean(retA);
-        const meanB = _mean(retB);
-        let num = 0, denA = 0, denB = 0;
-        for (let i = 0; i < retA.length; i++) {
-            const dA = retA[i] - meanA;
-            const dB = retB[i] - meanB;
-            num += dA * dB;
-            denA += dA * dA;
-            denB += dB * dB;
-        }
-        if (denA === 0 || denB === 0) return 0;
-        return num / Math.sqrt(denA * denB);
+        const n = Math.min(pricesA.length, pricesB.length);
+        if (n < 2) return 0;
+        const retA = simpleReturns(pricesA.slice(-n));
+        const retB = simpleReturns(pricesB.slice(-n));
+        return pearsonCorrelation(retA, retB);
     },
 
     calculateBeta(pricesAsset, pricesBenchmark) {
         if (!pricesAsset || !pricesBenchmark) return 0;
         const n = Math.min(pricesAsset.length, pricesBenchmark.length);
         if (n < 3) return 0;
-        const retA = this.calculateReturns(pricesAsset.slice(-n));
-        const retB = this.calculateReturns(pricesBenchmark.slice(-n));
-        const meanA = _mean(retA);
-        const meanB = _mean(retB);
-        let cov = 0, varB = 0;
-        for (let i = 0; i < retA.length; i++) {
-            const dA = retA[i] - meanA;
-            const dB = retB[i] - meanB;
-            cov += dA * dB;
-            varB += dB * dB;
-        }
+        const retA = simpleReturns(pricesAsset.slice(-n));
+        const retB = simpleReturns(pricesBenchmark.slice(-n));
+        const varB = sampleStdDev(retB) ** 2;
         if (varB === 0) return 0;
-        return cov / varB;
+        return covariance(retA, retB) / varB;
+    },
+
+    // VWAP over the full price/volume series (typical price = (H+L+C)/3 when available,
+    // else the closing price array). Returns 0 when volume is empty or sums to zero.
+    calculateVWAP(prices, volumes) {
+        return coreVWAP(prices, volumes);
+    },
+
+    // Two-tailed p-value for the most recent daily return being a statistical outlier
+    // relative to the trailing `window` returns. p < 0.05 = unusual move at 95% confidence.
+    priceOutlierPValue(prices, window = 60) {
+        const ret = simpleReturns(prices);
+        if (ret.length < 10) return 1;
+        const latest = ret[ret.length - 1];
+        const ref = ret.slice(-Math.min(window, ret.length));
+        return outlierPValue(latest, ref);
     },
 
     // pricesMap: { TICKER: [prices] } -> { TICKER: { TICKER: r } }
@@ -214,12 +194,12 @@ export const QuantEngine = {
     // Default drift is 0 (martingale cone). historical/custom drift supported via opts.
     monteCarlo(prices, days = 252, paths = 1000, opts = {}) {
         if (!prices || prices.length < 30) return null;
-        const logRet = this.calculateLogReturns(prices);
-        const sigma = _stdev(logRet);
+        const logRet = logReturns(prices);
+        const sigma = sampleStdDev(logRet);
         let mu;
         let driftMode;
         if (typeof opts.drift === 'number') { mu = opts.drift / TRADING_DAYS; driftMode = 'custom'; }
-        else if (opts.drift === 'historical') { mu = _mean(logRet); driftMode = 'historical'; }
+        else if (opts.drift === 'historical') { mu = mean(logRet); driftMode = 'historical'; }
         else { mu = 0; driftMode = 'zero'; }
         const S0 = prices[prices.length - 1];
 
@@ -243,44 +223,43 @@ export const QuantEngine = {
         const p50 = new Array(days);
         const p95 = new Array(days);
 
-        // Precompute indices for percentile extraction
-        const idx5 = Math.floor(0.05 * (paths - 1));
-        const idx50 = Math.floor(0.50 * (paths - 1));
-        const idx95 = Math.floor(0.95 * (paths - 1));
-
         for (let d = 0; d < days; d++) {
             const arr = perDay[d];
-            arr.sort(); // In-place sort on the typed array (highly optimized by V8, no allocations)
-            p5[d] = arr[idx5];
-            p50[d] = arr[idx50];
-            p95[d] = arr[idx95];
+            arr.sort(); // TypedArray sort is numeric by default (unlike Array)
+            p5[d] = percentileSorted(arr, 0.05);
+            p50[d] = percentileSorted(arr, 0.50);
+            p95[d] = percentileSorted(arr, 0.95);
         }
 
         const sortedFinals = finals.slice().sort();
+        let finalsSum = 0;
+        for (let i = 0; i < paths; i++) finalsSum += finals[i];
         return {
             S0,
             days,
             paths,
             p5, p50, p95,
-            finalP5: sortedFinals[idx5],
-            finalP50: sortedFinals[idx50],
-            finalP95: sortedFinals[idx95],
-            expectedReturn: (sortedFinals.reduce((a, b) => a + b, 0) / paths - S0) / S0,
+            finalP5: percentileSorted(sortedFinals, 0.05),
+            finalP50: percentileSorted(sortedFinals, 0.50),
+            finalP95: percentileSorted(sortedFinals, 0.95),
+            expectedReturn: (finalsSum / paths - S0) / S0,
             driftMode,                          // 'zero' | 'historical' | 'custom'
             annualizedSigma: sigma * Math.sqrt(TRADING_DAYS)
         };
     },
 
-    // Simple long/flat backtest charging transaction cost + slippage (default 15 bps)
+    // Simple long/flat backtest charging transaction cost + slippage (default 15 bps).
+    // signalCallback(prices, i) must derive its signal ONLY from indices < i (the bar at i
+    // is the execution price). O(n) — the previous version re-sliced the whole history per
+    // bar, which was O(n²) time AND allocation.
     runBacktest(prices, signalCallback, opts = {}) {
         if (!prices || prices.length < 15) return 0;
         const cost = typeof opts.cost === 'number' ? opts.cost : 0.0015;
         let capital = 10000;
         let position = 0;
         for (let i = 14; i < prices.length; i++) {
-            const historySlice = prices.slice(0, i);
             const currentPrice = prices[i];
-            const signal = signalCallback(historySlice);
+            const signal = signalCallback(prices, i);
             if (signal === 1 && capital > currentPrice) {
                 position = (capital * (1 - cost)) / currentPrice;   // pay cost on entry
                 capital = 0;

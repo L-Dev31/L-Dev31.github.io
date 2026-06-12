@@ -44,6 +44,7 @@ export function createTab(stock, type) {
     }
 
     refreshSuspendedVisibility();
+    resortAllSidebarSections();
 }
 
 let _tabOrder = 0;
@@ -488,8 +489,29 @@ export function updateUI(symbol, data) {
     try { updateSectionDates(symbol); } catch (e) { /* ignore */ }
 
     const currentPeriod = positions[symbol]?.currentPeriod || globalPeriod;
-    updateSignal(symbol, data, { period: currentPeriod });
+    const sigResult = updateSignal(symbol, data, { period: currentPeriod });
+
+    // Write signal fields back to lastData so sortSection can use them.
+    // updateSignal computes the result but never persisted it — meaning
+    // 'signal' and 'trending' sorts always read undefined/0.
+    if (sigResult && positions[symbol]) {
+        const ld = positions[symbol].lastData || (positions[symbol].lastData = {});
+        ld.score       = sigResult.signalValue;           // 0-100
+        ld.botAdx      = sigResult.regime?.strength ?? 0; // ADX value
+        ld.botConfluence = sigResult.confluence?.ratio ?? 0;
+        ld.riskScore   = sigResult.risk?.score ?? 1;
+    }
+
     updateSidebarPerformance(symbol);
+    debouncedResort();
+}
+
+// Debounce the resort so batch data loads (many symbols arriving at once)
+// only re-sort once after the last update, not after every individual tick.
+let _resortTimer = null;
+function debouncedResort() {
+    clearTimeout(_resortTimer);
+    _resortTimer = setTimeout(() => resortAllSidebarSections(), 120);
 }
 
 export function updateSidebarPerformance(symbol) {
@@ -759,10 +781,86 @@ export function toggleSymbolSuspension(symbol, isSuspended) {
     refreshSuspendedVisibility();
 }
 
+function computeSidebarTrendingRank(pos) {
+    if (!pos) return -Infinity;
+    const lastData = pos.lastData || {};
+    // score is 0-100 (signalValue); normalize to [-1, +1] around 50.
+    const signal = lastData.score !== undefined ? lastData.score : 50;
+    const adx = lastData.botAdx || 0;
+    const conf = lastData.botConfluence || 0;
+    const risk = lastData.riskScore || 1;
+    const chg = Number.isFinite(lastData.changePercent) ? lastData.changePercent : 0;
+
+    const conviction = (signal - 50) / 50;           // [-1, +1]
+    const trendQuality = Math.min(adx / 40, 1) * conf; // [0, 1]
+    const momentum = Math.tanh(chg / 10);             // [-1, +1]
+    const riskMalus = risk >= 9 ? 2 : Math.max(0, (risk - 5) * 0.08);
+
+    return conviction * 0.50
+        + trendQuality * 0.25
+        + momentum * 0.25
+        - riskMalus;
+}
+
 function sortSection(section) {
     const title = section.querySelector('.tab-type-title');
     const tabs = Array.from(section.querySelectorAll('.tab'));
-    tabs.sort((a, b) => Number(a.dataset.tabOrder ?? 0) - Number(b.dataset.tabOrder ?? 0));
+
+    const sortEl = document.getElementById('sidebar-sort');
+    const sortCriterion = sortEl ? sortEl.value : 'default';
+
+    tabs.sort((a, b) => {
+        const symA = a.dataset.symbol;
+        const symB = b.dataset.symbol;
+        const posA = positions[symA];
+        const posB = positions[symB];
+
+        if (sortCriterion === 'default') {
+            return Number(a.dataset.tabOrder ?? 0) - Number(b.dataset.tabOrder ?? 0);
+        }
+
+        if (sortCriterion === 'name') {
+            const nameA = posA?.name || symA || '';
+            const nameB = posB?.name || symB || '';
+            return nameA.localeCompare(nameB);
+        }
+
+        const dataA = posA?.lastData;
+        const dataB = posB?.lastData;
+
+        if (sortCriterion === 'trending') {
+            const rankA = computeSidebarTrendingRank(posA);
+            const rankB = computeSidebarTrendingRank(posB);
+            return rankB - rankA;
+        }
+
+        if (sortCriterion === 'signal') {
+            const scoreA = dataA?.score !== undefined ? dataA.score : 50;
+            const scoreB = dataB?.score !== undefined ? dataB.score : 50;
+            return scoreB - scoreA;
+        }
+
+        if (sortCriterion === 'gainers') {
+            const pctA = dataA?.changePercent !== undefined ? dataA.changePercent : -Infinity;
+            const pctB = dataB?.changePercent !== undefined ? dataB.changePercent : -Infinity;
+            return pctB - pctA;
+        }
+
+        if (sortCriterion === 'losers') {
+            const pctA = dataA?.changePercent !== undefined ? dataA.changePercent : Infinity;
+            const pctB = dataB?.changePercent !== undefined ? dataB.changePercent : Infinity;
+            return pctA - pctB;
+        }
+
+        if (sortCriterion === 'volume') {
+            const volA = dataA?.volume !== undefined ? dataA.volume : -1;
+            const volB = dataB?.volume !== undefined ? dataB.volume : -1;
+            return volB - volA;
+        }
+
+        return Number(a.dataset.tabOrder ?? 0) - Number(b.dataset.tabOrder ?? 0);
+    });
+
     tabs.forEach(t => section.appendChild(t));
     if (title) section.insertBefore(title, section.firstChild);
 }
@@ -923,5 +1021,45 @@ function refreshSuspendedVisibility() {
         if (!section) return;
         const hasTabs = section.querySelector('.tab') !== null;
         section.style.display = hasTabs ? '' : 'none';
+    });
+}
+
+export function initSidebarSort() {
+    const dSort = document.getElementById('sidebar-sort');
+    const mSort = document.getElementById('mobile-sidebar-sort');
+    
+    let savedSort = 'default';
+    try {
+        savedSort = localStorage.getItem('sidebar_sort_criterion') || 'default';
+    } catch (e) {}
+
+    if (dSort) {
+        dSort.value = savedSort;
+        dSort.addEventListener('change', handleSortChange);
+    }
+    if (mSort) {
+        mSort.value = savedSort;
+        mSort.addEventListener('change', handleSortChange);
+    }
+
+    resortAllSidebarSections();
+}
+
+function handleSortChange(e) {
+    const val = e.target.value;
+    const otherId = e.target.id === 'sidebar-sort' ? 'mobile-sidebar-sort' : 'sidebar-sort';
+    const otherEl = document.getElementById(otherId);
+    if (otherEl) {
+        otherEl.value = val;
+    }
+    try {
+        localStorage.setItem('sidebar_sort_criterion', val);
+    } catch (err) {}
+    resortAllSidebarSections();
+}
+
+export function resortAllSidebarSections() {
+    document.querySelectorAll('.tab-type-section').forEach(section => {
+        sortSection(section);
     });
 }

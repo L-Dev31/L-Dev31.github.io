@@ -441,20 +441,51 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
         return result;
     }
 
-    // Signal-based composite rank: signalValue (0-100) + ADX conviction + confluence bonus - risk penalty.
-    // Suspended items always sink to bottom.
-    function computeSignalRank(item) {
-        const signal = item.score || 50;          // SignalBot signalValue 0-100
+    // ---- Trending rank (bullish-biased composite) ----
+    // Previous version ranked by |signal-50|, so a Strong SELL surfaced as high as a Strong
+    // Buy — "trending" listed assets the bot wanted to dump. The composite is now:
+    //   conviction  — bullish distance from neutral only (sells get 0 and sink below holds)
+    //   trendQuality— ADX × confluence: conviction in a trendless/contradictory tape is noise
+    //   momentum    — tanh-squashed period return, so one +80% microcap print can't dominate
+    //   liquidity   — CROSS-SECTIONAL volume percentile. Raw volume is only meaningful
+    //                 relative to the current universe (microstructure: thin books produce
+    //                 outsized % moves that are not tradeable at displayed prices)
+    //   risk        — graduated penalty instead of a cliff at 7/9.
+    function computeTrendingRank(item, volPctile) {
+        const signal = item.score !== undefined ? item.score : 50; // SignalBot signalValue 0-100
         const adx = item.botAdx || 0;             // ADX trend strength
         const conf = item.botConfluence || 0;     // confluence ratio 0-1
         const risk = item.riskScore || 1;         // 1-10
+        const chg = Number.isFinite(item.changePercent) ? item.changePercent : 0;
 
-        const conviction = Math.abs(signal - 50) / 50;    // 0-1: how far from neutral
-        const adxBonus = Math.min(adx / 100, 0.3);        // ADX 25→+0.25, 50→+0.5 capped
-        const confBonus = conf * 0.2;                     // up to +0.2
-        const riskMalus = risk >= 9 ? 2 : risk >= 7 ? 0.5 : 0;
+        const conviction = (signal - 50) / 50;           // [-1,+1] — bearish items now sink
+        const trendQuality = Math.min(adx / 40, 1) * conf; // [0,1]
+        const momentum = Math.tanh(chg / 10);            // [-1,1], saturates ±~30%
+        const riskMalus = risk >= 9 ? 2 : Math.max(0, (risk - 5) * 0.08);
 
-        return conviction + adxBonus + confBonus - riskMalus;
+        return conviction * 0.45
+            + trendQuality * 0.20
+            + momentum * 0.20
+            + (volPctile ?? 0.5) * 0.15
+            - riskMalus;
+    }
+
+    // Percentile rank of each item's log-volume within the active universe (Map symbol→0-1).
+    function computeVolumePercentiles(items) {
+        const logs = items.map(i => Math.log10(1 + (i.volume || 0)));
+        const sorted = [...logs].sort((a, b) => a - b);
+        const n = sorted.length;
+        const pct = new Map();
+        items.forEach((item, idx) => {
+            // binary search for rank of logs[idx]
+            let lo = 0, hi = n - 1, v = logs[idx];
+            while (lo <= hi) {
+                const mid = (lo + hi) >> 1;
+                if (sorted[mid] <= v) lo = mid + 1; else hi = mid - 1;
+            }
+            pct.set(item.symbol, n > 1 ? (lo - 1) / (n - 1) : 0.5);
+        });
+        return pct;
     }
 
     function sortItems(items, sort) {
@@ -462,11 +493,30 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
         const suspended = items.filter(i => i.isSuspended);
 
         switch (sort) {
-            case 'trending':
-                active.sort((a, b) => computeSignalRank(b) - computeSignalRank(a));
+            case 'trending': {
+                const volPct = computeVolumePercentiles(active);
+                const rank = new Map(active.map(i => [i.symbol, computeTrendingRank(i, volPct.get(i.symbol))]));
+                // Enriched items (have real signal data) always rank above unenriched.
+                // Within unenriched items, fall back to changePercent (momentum-only).
+                active.sort((a, b) => {
+                    const aEnriched = a.enriched ? 1 : 0;
+                    const bEnriched = b.enriched ? 1 : 0;
+                    if (bEnriched !== aEnriched) return bEnriched - aEnriched;
+                    if (a.enriched) return rank.get(b.symbol) - rank.get(a.symbol);
+                    return b.changePercent - a.changePercent;
+                });
                 break;
+            }
             case 'signal':
-                active.sort((a, b) => b.score - a.score);
+                // Enriched items first (sorted by score desc), unenriched appended at bottom
+                // sorted by changePercent so they're not random.
+                active.sort((a, b) => {
+                    const aEnriched = a.enriched ? 1 : 0;
+                    const bEnriched = b.enriched ? 1 : 0;
+                    if (bEnriched !== aEnriched) return bEnriched - aEnriched;
+                    if (a.enriched) return b.score - a.score;
+                    return b.changePercent - a.changePercent;
+                });
                 break;
             case 'gainers':
                 active.sort((a, b) => b.changePercent - a.changePercent);
@@ -554,6 +604,7 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
                         signal,
                         riskScore,
                         highRisk,
+                        enriched: true,           // flag so sort can deprioritize unenriched items
                         dataQuality: bot.dataQuality ?? null,
                         botRegime: bot.regime?.label ?? '',
                         botRegimeType: bot.regime?.type ?? '',

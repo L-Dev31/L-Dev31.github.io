@@ -84,6 +84,22 @@
                 <button id="open-settings-btn" class="tool-btn" title="Settings"><i
                         class="fa-solid fa-gear"></i>Settings</button>
             </div>
+
+            <div class="sidebar-sort-container">
+                <div class="select-wrapper">
+                    <select id="sidebar-sort" class="sidebar-select" aria-label="Sort sidebar sections">
+                        <option value="default">Sort by: Default</option>
+                        <option value="trending">Sort by: Trending</option>
+                        <option value="signal">Sort by: Buy Signal</option>
+                        <option value="gainers">Sort by: Top Gainers</option>
+                        <option value="losers">Sort by: Top Losers</option>
+                        <option value="volume">Sort by: Volume</option>
+                        <option value="name">Sort by: Name A-Z</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-chevron"></i>
+                </div>
+            </div>
+
             <div class="sidebar-section" id="sidebar-portfolio">
                 <h3 class="sidebar-section-title"><i class="fa-solid fa-briefcase"></i> My Portfolio
                     <button class="section-toggle" aria-expanded="true" aria-controls="portfolio-tabs"
@@ -114,6 +130,21 @@
 
         <div id="cards-container">
             <div class="card home-card active" id="card-home" role="document" aria-hidden="false">
+
+                <div class="mobile-sort-container">
+                    <div class="select-wrapper">
+                        <select id="mobile-sidebar-sort" class="sidebar-select" aria-label="Sort mobile sidebar sections">
+                            <option value="default">Sort by: Default</option>
+                            <option value="trending">Sort by: Trending</option>
+                            <option value="signal">Sort by: Buy Signal</option>
+                            <option value="gainers">Sort by: Top Gainers</option>
+                            <option value="losers">Sort by: Top Losers</option>
+                            <option value="volume">Sort by: Volume</option>
+                            <option value="name">Sort by: Name A-Z</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-chevron"></i>
+                    </div>
+                </div>
 
                 <div class="sidebar-section" id="mobile-sidebar-portfolio">
                     <h3 class="sidebar-section-title"><i class="fa-solid fa-briefcase"></i> My Portfolio

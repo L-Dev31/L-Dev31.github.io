@@ -2,6 +2,14 @@
 // Pipeline: indicators → factor scores → regime detection → regime-weighted composite
 // → confluence multiplier → risk penalty → 0-100 signal + ATR/Kelly risk management.
 import { getCurrency } from './state.js';
+import {
+    clamp, safeArray, mean, populationStdDev,
+    sma as coreSMA, ema as coreEMA,
+    linRegSlopePct, linRegSlopeAbsNorm,
+    maxDrawdown as coreMaxDrawdown,
+    trueRanges, wilderSmoothSeries, wilderSmoothLast, wilderSumSeries,
+    vwap as coreVWAP, zScore as coreZScore
+} from './quant-math.js';
 
 const DEFAULT_OPTIONS = {
     accountCapital: 10000,
@@ -80,14 +88,10 @@ const PERIOD_INDICATOR_CONFIG = {
 const DEFAULT_INDICATOR_CONFIG = PERIOD_INDICATOR_CONFIG['1D'];
 
 const getRiskColorClass = (score) => {
-    if (score >= 9) return 'negative';
     if (score >= 7) return 'negative';
     if (score >= 4) return 'warning';
     return 'positive';
 };
-
-const safeArray = (arr) => Array.isArray(arr) ? arr : [];
-const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
 // When only closing prices are available (no real intraday high/low), the true range
 // collapses to the absolute close-to-close move, which systematically UNDERSTATES the
@@ -148,34 +152,11 @@ function calculateRSISeries(prices, period = 14) {
     return series;
 }
 
-function calculateEMA(prices, period) {
-    const p = safeArray(prices);
-    if (p.length === 0) return 0;
-    if (p.length < period) return p.reduce((a, b) => a + b, 0) / p.length;
-
-    const k = 2 / (period + 1);
-    let ema = p.slice(0, period).reduce((a, b) => a + b, 0) / period;
-
-    for (let i = period; i < p.length; i++) {
-        ema = p[i] * k + ema * (1 - k);
-    }
-    return ema;
-}
-
-function calculateSMA(prices, period) {
-    const p = safeArray(prices);
-    if (p.length === 0) return 0;
-    if (p.length < period) return p.reduce((a, b) => a + b, 0) / p.length;
-    return p.slice(-period).reduce((a, b) => a + b, 0) / period;
-}
-
-function calculateStdDev(prices, period) {
-    const p = safeArray(prices).slice(-period);
-    if (p.length === 0) return 0;
-    const mean = p.reduce((a, b) => a + b, 0) / p.length;
-    const variance = p.reduce((a, b) => a + (b - mean) ** 2, 0) / p.length;
-    return Math.sqrt(variance);
-}
+// Thin delegations to the shared core (names kept for existing importers, e.g. chart.js).
+const calculateEMA = (prices, period) => coreEMA(prices, period);
+const calculateSMA = (prices, period) => coreSMA(prices, period);
+// Bollinger window is fully observed → population stdev is the correct estimator here.
+const calculateStdDev = (prices, period) => populationStdDev(safeArray(prices).slice(-period));
 
 function calculateMACD(prices, fast = 12, slow = 26, signal = 9) {
     const p = safeArray(prices);
@@ -211,28 +192,9 @@ function calculateMACD(prices, fast = 12, slow = 26, signal = 9) {
 }
 
 function calculateATR(highs, lows, closes, period = 14) {
-    const h = safeArray(highs);
-    const l = safeArray(lows);
-    const c = safeArray(closes);
-    const n = Math.min(h.length, l.length, c.length);
-
-    if (n < 2) return 0;
-
-    const trueRanges = [];
-    for (let i = 1; i < n; i++) {
-        const hl = h[i] - l[i];
-        const hc = Math.abs(h[i] - c[i - 1]);
-        const lc = Math.abs(l[i] - c[i - 1]);
-        trueRanges.push(Math.max(hl, hc, lc));
-    }
-
-    if (trueRanges.length < period) return trueRanges.reduce((a, b) => a + b, 0) / trueRanges.length;
-
-    let atr = trueRanges.slice(0, period).reduce((a, b) => a + b, 0) / period;
-    for (let i = period; i < trueRanges.length; i++) {
-        atr = (atr * (period - 1) + trueRanges[i]) / period;
-    }
-    return atr;
+    const tr = trueRanges(highs, lows, closes);
+    if (tr.length === 0) return 0;
+    return wilderSmoothLast(tr, period);
 }
 
 function calculateMomentum(prices, period = 10) {
@@ -244,23 +206,7 @@ function calculateMomentum(prices, period = 10) {
 }
 
 // Linear regression slope of last `period` values, normalized to % per bar.
-function calculateSlope(prices, period) {
-    const p = safeArray(prices).slice(-period);
-    const n = p.length;
-    if (n < 2) return 0;
-    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-    for (let i = 0; i < n; i++) {
-        sumX += i;
-        sumY += p[i];
-        sumXY += i * p[i];
-        sumX2 += i * i;
-    }
-    const denom = n * sumX2 - sumX * sumX;
-    if (denom === 0) return 0;
-    const slope = (n * sumXY - sumX * sumY) / denom;
-    const mean = sumY / n;
-    return mean === 0 ? 0 : (slope / mean) * 100;
-}
+const calculateSlope = (prices, period) => linRegSlopePct(prices, period);
 
 function calculateBollinger(prices, period = 20, mult = 2) {
     const p = safeArray(prices);
@@ -309,33 +255,18 @@ function calculateADX(highs, lows, closes, period = 14) {
     const n = Math.min(h.length, l.length, c.length);
     if (n < period * 2) return { adx: 0, plusDI: 0, minusDI: 0 };
 
-    const tr = [], plusDM = [], minusDM = [];
+    const tr = trueRanges(h, l, c);
+    const plusDM = [], minusDM = [];
     for (let i = 1; i < n; i++) {
         const upMove = h[i] - h[i - 1];
         const downMove = l[i - 1] - l[i];
         plusDM.push((upMove > downMove && upMove > 0) ? upMove : 0);
         minusDM.push((downMove > upMove && downMove > 0) ? downMove : 0);
-        const hl = h[i] - l[i];
-        const hc = Math.abs(h[i] - c[i - 1]);
-        const lc = Math.abs(l[i] - c[i - 1]);
-        tr.push(Math.max(hl, hc, lc));
     }
 
-    const wilderSum = (arr, p) => {
-        if (arr.length < p) return [];
-        const out = [];
-        let s = arr.slice(0, p).reduce((a, b) => a + b, 0);
-        out.push(s);
-        for (let i = p; i < arr.length; i++) {
-            s = s - (s / p) + arr[i];
-            out.push(s);
-        }
-        return out;
-    };
-
-    const trS = wilderSum(tr, period);
-    const plusS = wilderSum(plusDM, period);
-    const minusS = wilderSum(minusDM, period);
+    const trS = wilderSumSeries(tr, period);
+    const plusS = wilderSumSeries(plusDM, period);
+    const minusS = wilderSumSeries(minusDM, period);
 
     if (trS.length === 0) return { adx: 0, plusDI: 0, minusDI: 0 };
 
@@ -382,18 +313,8 @@ function calculateOBV(closes, volumes) {
         else series.push(last);
     }
 
-    const recent = series.slice(-20);
-    const m = recent.length;
-    if (m < 2) return { obv: series[series.length - 1], slope: 0 };
-    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-    for (let i = 0; i < m; i++) {
-        sumX += i; sumY += recent[i]; sumXY += i * recent[i]; sumX2 += i * i;
-    }
-    const denom = m * sumX2 - sumX * sumX;
-    const rawSlope = denom === 0 ? 0 : (m * sumXY - sumX * sumY) / denom;
-    const meanAbs = recent.reduce((a, b) => a + Math.abs(b), 0) / m;
-    const slope = meanAbs === 0 ? 0 : rawSlope / meanAbs;
-    return { obv: series[series.length - 1], slope };
+    // OBV oscillates around 0 → normalize the regression slope by mean |OBV|, not mean OBV.
+    return { obv: series[series.length - 1], slope: linRegSlopeAbsNorm(series, 20) };
 }
 
 // Money Flow Index — volume-weighted RSI. Classic divergence indicator.
@@ -448,21 +369,9 @@ function calculateSuperTrend(highs, lows, closes, period = 10, mult = 3) {
     const n = Math.min(h.length, l.length, c.length);
     if (n < period + 1) return { value: 0, direction: 0 };
 
-    const tr = [];
-    for (let i = 1; i < n; i++) {
-        const hl = h[i] - l[i];
-        const hc = Math.abs(h[i] - c[i - 1]);
-        const lc = Math.abs(l[i] - c[i - 1]);
-        tr.push(Math.max(hl, hc, lc));
-    }
-
-    const atrSeries = [];
-    let atr = tr.slice(0, period).reduce((a, b) => a + b, 0) / period;
-    atrSeries.push(atr);
-    for (let i = period; i < tr.length; i++) {
-        atr = (atr * (period - 1) + tr[i]) / period;
-        atrSeries.push(atr);
-    }
+    const tr = trueRanges(h, l, c);
+    const atrSeries = wilderSmoothSeries(tr, period);
+    if (atrSeries.length === 0) return { value: 0, direction: 0 };
 
     let direction = 1;
     let prevUpper = 0, prevLower = 0;
@@ -559,18 +468,7 @@ function detectCandlestickPatterns(opens, highs, lows, closes) {
     return patterns;
 }
 
-function calculateMaxDrawdown(prices) {
-    const p = safeArray(prices);
-    if (p.length < 2) return 0;
-    let peak = p[0];
-    let maxDD = 0;
-    for (let i = 1; i < p.length; i++) {
-        if (p[i] > peak) peak = p[i];
-        const dd = (peak - p[i]) / peak;
-        if (dd > maxDD) maxDD = dd;
-    }
-    return maxDD * 100;
-}
+const calculateMaxDrawdown = (prices) => coreMaxDrawdown(prices) * 100;
 
 function calculateVolumeRatio(volumes, period = 20) {
     const v = safeArray(volumes);
@@ -712,12 +610,30 @@ function calculateBotSignal(data, options = {}) {
     else if (bb.percentB > 0.8) meanRevScore -= 0.6;
     else meanRevScore -= (bb.percentB - 0.5) * 0.8;
 
-    const zScore = bb.sd === 0 ? 0 : (currentPrice - sma20) / bb.sd;
-    if (zScore < -2) meanRevScore += 0.6;
-    else if (zScore > 2) meanRevScore -= 0.6;
-    else meanRevScore -= zScore * 0.2;
+    const bbZScore = bb.sd === 0 ? 0 : (currentPrice - sma20) / bb.sd;
+    if (bbZScore < -2) meanRevScore += 0.6;
+    else if (bbZScore > 2) meanRevScore -= 0.6;
+    else meanRevScore -= bbZScore * 0.2;
 
     meanRevScore = clamp(meanRevScore / 1.5, -1, 1);
+
+    // VWAP: price above VWAP = institutions net buyers; below = net sellers.
+    // Typical price = (H+L+C)/3; falls back to closes when no real OHLC.
+    let vwapValue = null;
+    if (volumeAvailable) {
+        const typicalPrices = ohlcAvailable
+            ? highs.map((h, i) => (h + lows[i] + prices[i]) / 3)
+            : prices;
+        vwapValue = coreVWAP(typicalPrices, volumes);
+    }
+
+    // Volume z-score: how many standard deviations above/below the 20-bar average is
+    // today's volume? A z > 2 with direction confirmation signals a high-conviction move.
+    let volZScore = 0;
+    if (volumeAvailable && volumes.length >= 21) {
+        const volWindow = volumes.slice(-21, -1); // last 20 bars (exclude today)
+        volZScore = coreZScore(volumes[volumes.length - 1], volWindow);
+    }
 
     let volumeScore = 0;
     if (obv.slope > 0.05) volumeScore += 0.4;
@@ -727,10 +643,25 @@ function calculateBotSignal(data, options = {}) {
     else if (mfi > 80) volumeScore -= 0.5;
     else volumeScore -= ((mfi - 50) / 50) * 0.4;
 
-    if (prices.length >= 2 && volRatio > 1.5) {
+    // VWAP factor: replaces the raw volume-ratio directional nudge with a more robust signal.
+    if (vwapValue !== null && vwapValue > 0) {
+        const vwapDev = (currentPrice - vwapValue) / vwapValue;
+        // Price above VWAP = bullish; clamp to avoid swamping other signals.
+        volumeScore += clamp(vwapDev * 10, -0.4, 0.4);
+    } else if (prices.length >= 2 && volRatio > 1.5) {
+        // Fallback when no volume data: keep original ratio-based directional nudge.
         const lastDir = currentPrice > prices[prices.length - 2] ? 1 : -1;
         volumeScore += 0.3 * lastDir;
     }
+
+    // Volume z-score: abnormally high volume (z > 2) in the direction of the move
+    // confirms conviction; extreme volume (z > 3) on a reversal day is a warning.
+    if (Math.abs(volZScore) > 2 && prices.length >= 2) {
+        const lastDir = currentPrice > prices[prices.length - 2] ? 1 : -1;
+        const zBoost = clamp((Math.abs(volZScore) - 2) * 0.1, 0, 0.25);
+        volumeScore += zBoost * lastDir;
+    }
+
     volumeScore = clamp(volumeScore, -1, 1);
 
     let patternScore = 0;
@@ -903,9 +834,9 @@ function calculateBotSignal(data, options = {}) {
             adx: adx.adx, plusDI: adx.plusDI, minusDI: adx.minusDI,
             bbUpper: bb.upper, bbMiddle: bb.middle, bbLower: bb.lower, bbPercentB: bb.percentB, bbBandwidth: bb.bandwidth,
             stochK: stoch.k, stochD: stoch.d,
-            obvSlope: obv.slope, mfi, volRatio,
+            obvSlope: obv.slope, mfi, volRatio, vwap: vwapValue, volZScore,
             ichimoku, supertrend,
-            zScore,
+            bbZScore,
             scores: { trend: trendScore, momentum: momentumScore, meanRev: meanRevScore, volume: volumeScore, pattern: patternScore },
             weights, weightedScore: totalScore,
             stopLoss, takeProfit, positionSize
@@ -962,7 +893,7 @@ function updateSignalUI(symbol, result) {
     if (e.rsi < 30) { rsiText = 'Oversold — opportunity'; rsiClass = 'positive'; }
     else if (e.rsi < 40) { rsiText = 'Weakening — bullish bias'; rsiClass = 'positive'; }
     else if (e.rsi > 70) { rsiText = 'Overbought — correction risk'; rsiClass = 'negative'; }
-    else if (e.rsi > 60) { rsiText = 'Supported — bearish bias'; rsiClass = 'negative'; }
+    else if (e.rsi > 60) { rsiText = 'Elevated — overbought risk'; rsiClass = 'negative'; }
 
     let macdText, macdClass;
     if (e.macdHistogram > 0 && e.macdLine > 0) { macdText = 'Confirmed Bullish'; macdClass = 'positive'; }
@@ -1184,7 +1115,7 @@ function updateSignalUI(symbol, result) {
                         <td>Advised Size</td>
                         <td class="neutral">${e.positionSize.toFixed(2)} ${getCurrency()}</td>
                         <td></td>
-                        <td>Risk-adjusted Quarter-Kelly</td>
+                        <td>${result.trade?.sizingMethod === 'half-kelly' ? 'Half-Kelly (backtested edge)' : 'Fixed-fractional risk sizing'}</td>
                     </tr>
                 </tbody>
             </table>

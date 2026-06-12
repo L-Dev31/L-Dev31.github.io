@@ -6,7 +6,7 @@ import './terminal.js'
 import { DEAD_ERROR_CODES, periodToDays } from './constants.js'
 import { positions, setPositions, selectedApi, setSelectedApi, lastApiBySymbol, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, fastPollTimer, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings } from './state.js'
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching } from './portfolio.js'
-import { updateUI, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance, initMobileSidebar, setBottomNavActive } from './ui.js'
+import { updateUI, getActiveSymbol, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, updateSidebarPerformance, initMobileSidebar, setBottomNavActive, initSidebarSort } from './ui.js'
 import { getEl } from './utils.js'
 
 export { fetchActiveSymbol };
@@ -389,6 +389,11 @@ window.addEventListener('load', async () => {
 
     await loadStocks();
     setNewsPositions(positions);
+    try {
+        initSidebarSort();
+    } catch (e) {
+        console.error('Failed to initialize sidebar sort:', e);
+    }
     try {
         document.querySelectorAll('.section-toggle').forEach(btn => {
             const section = btn.closest('.sidebar-section');
