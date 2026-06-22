@@ -27,15 +27,6 @@
     "type": "equity"
   },
   {
-    "symbol": "ALCAR",
-    "ticker": "ALCAR.PA",
-    "name": "Carmat SA",
-    "isin": "",
-    "country": "FR",
-    "currency": "EUR",
-    "type": "equity"
-  },
-  {
     "symbol": "LBIRD",
     "ticker": "LBIRD.PA",
     "name": "Lumibird",

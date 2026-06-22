@@ -1,0 +1,88 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "Oh so you're already here ?",
+      "excerpt": "Well we don't have much to share now, other than what we shared on the main page, it's the very beginning you know.",
+      "content": "Well we don't have much to share now, other than what we shared on the main page, it's the very beginning you know. But rest assured this blog will be Oh so amazing soon. Stay tuned.",
+      "author": "Guillaume Broche",
+      "authorImage": "images/team/guillaume.png",
+      "date": "2020-10-16",
+      "readTime": "1 min",      "views": 2974,
+      "likes": 127,
+      "image": "images/blog/1.png"
+    },
+    {
+      "id": 2,
+      "title": "Happy new year from Sandfall Interactive!",
+      "excerpt": "2020 was a disturbing year for everyone. And it might be a weird moment to choose to leave our jobs and start a video game studio!",
+      "content": "2020 was a disturbing year for everyone.\n\nAnd it might be a weird moment to choose to leave our jobs and start a video game studio!\n\nBut when the moment came to register the company, the choice was obvious.\n\nWe felt we had the right core team and the right project; the one game we would love to play ourselves.\n\nWe can't wait to reveal the RPG we're working on: Project W.\n\nWe hope 2021 will be a great year for game studios, creators, and most of all: players.\n\nHave a great year, and stay tuned!\n\nThe Sandfall team",
+      "author": "Francois Meurisse",
+      "authorImage": "images/team/francois.png",
+      "date": "2021-01-07",
+      "readTime": "1 min",      "views": 3897,
+      "likes": 99,
+      "image": "images/blog/2.png"
+    },
+    {
+      "id": 3,
+      "title": "March 2022 update: latest news from Sandfall",
+      "excerpt": "It's been more than a year since the last blog post - and yet so many things happened in the meantime!",
+      "content": "Hi there! It's been more than a year since the last blog post - and yet so many things happened in the meantime!\n\nIn April 2021, Sandfall moved from Paris to Montpellier and the core team working on Project W started to expand. We were 6 before that time, we're now more than 15 people to work on the game! Some of us even work from Sweden or Turkey.\n\nWe still believe time has come for small indie teams to deliver high quality realistic 3D premium games, thanks to the amazing tools that are now accessible to them. And we're getting closer to that goal every day! Brace yourselves, Unreal Engine 5 is also on its way to our pipelines...\n\nWe're now very close to finish Project W's vertical slice demo: more than one hour of gameplay, featuring pretty much everything we wanted to see in the game.\n\nIf you're a professional from the industry, be sure to poke us before the Game Developers Conference in San Francisco, we'll be onsite to showcase the game! Guillaume, François and Tom will be making the trip from March 21st to 25th.\n\nLast but not least, we'd like to add a special thanks to great companies and institutions who gave their trust and support to Sandfall Interactive's Project W:\n\nEpic Games, for their $50,000 Epic MegaGrant to Project W.\n\nThe CNC (French national center for cinema), for their huge financial support, through preproduction financial support and tax rebate.\n\nThe Occitanie Region, in which Sandfall is located, which also provided additional funds for preproduction.\n\n...And of course, thanks to all of our friends, family and business angels who put their trust and money in the project from the very beginning!\n\nSee you soon and stay safe, from all the Sandfall team.",
+      "author": "Francois Meurisse",
+      "authorImage": "images/team/francois.png",
+      "date": "2022-03-02",
+      "readTime": "2 min",      "views": 4261,
+      "likes": 87,
+      "image": "images/blog/3.png"
+    },
+    {
+      "id": 4,
+      "title": "March 2023 update: Project W to be published by Kepler Interactive",
+      "excerpt": "We've been working super hard for 12 months, and we have exciting news to share about our partnership!",
+      "content": "Hi there, long time no see! We've been working super hard for 12 months, since the latest blog update. But check this out:\n\n- The Sandfall team has grown from 12 to 22 skilled and talented people: programmers, artists, operations & producing support...\n\n- We increased collaboration with top industry freelancers and experts on specific missions, such as animation and lighting, to deliver outstanding graphics and art.\n\n- Project W now runs fully on Unreal Engine 5, we explore and make full use of new features like Lumen and Nanite.\n\n- We're heading to new offices, in an early-20th century mansion just 5 minutes by foot from Montpellier's historical city center. We aim to transform the place into a unique creative venue for employees and collaborators.\n\nAll of this is made possible by a new partnership sealed with Kepler Interactive, a new major global publisher co‑owned and run by developers, which will publish Sandfall's Project W.\n\nSandfall Interactive and Kepler Interactive are currently attending the Game Developers Conference in San Francisco, feel free to reach out to us!",
+      "author": "Francois Meurisse",
+      "authorImage": "images/team/francois.png",
+      "date": "2023-03-21",
+      "readTime": "1 min",      "views": 6216,
+      "likes": 94,
+      "image": "images/blog/4.png"
+    },
+    {
+      "id": 5,
+      "title": "What's new for Sandfall in 2024",
+      "excerpt": "The Sandfall team has had quite an eventful 2023! From 11 to 25 people and two new offices.",
+      "content": "The Sandfall team has had quite an eventful 2023!\n\nFirst of all, as Project W is progressing fast, the team has gone from 11 to 25 people in just about a year, which required not one but actually TWO new offices!\n\nThe team in Montpellier is now working in a beautiful town mansion (nicknamed Le Manoir), with its own beautiful garden - perfect to chill during breaks and get inspiration :) The Manoir was inaugurated last July, with over 100 guests.\n\nPart of the team being located in Paris, Sandfall now has an office there too, with access to a beautiful cinema room - where all the motion capture sessions are shot.\n\nWe are looking forward to revealing Project W to the public in the coming months, so stay tuned for more info!",
+      "author": "Emilie Perez",
+      "authorImage": "images/team/emilie.png",
+      "date": "2024-02-13",
+      "readTime": "1 min",      "views": 4557,
+      "likes": 99,
+      "image": "images/blog/5.png"
+    },
+    {
+      "id": 6,
+      "title": "We're really proud to finally reveal Clair Obscur: Expedition 33, our first game!",
+      "excerpt": "After years of work behind the scenes, we're excited to reveal our first game as premiered during Xbox Showcase!",
+      "content": "Hello Expeditioners!\n\nAfter years of work behind the scenes, we're so excited to finally reveal our first game, Clair Obscur: Expedition 33 as the trailer premiered during yesterday's Xbox Showcase!\n\nJoin Gustave, Maelle, and their fellow Expeditioners as they embark on a desperate quest to break the Paintress' cycle of death!\n\nClair Obscur: Expedition 33, or \"Expedition 33,\" is an RPG with real-time mechanics set in a world inspired by one of our native country's famous periods, the French Belle Époque. The game is published by Kepler Interactive (thanks again for your support!) and is currently in development for Xbox Series X|S, Xbox Game Pass, PlayStation 5, and PC.\n\nWhile making this game, we were inspired by our beloved fantasy JRPGs and action games alike.\n\nExpedition 33 is an innovative reactive turn-based RPG with real-time offensive and defensive commands to enhance combat, making battles more challenging than ever. You will need to master offensive skills and magical abilities, dodge, parry, and counter enemy assaults in real time! We're also adding a ranged free-aim system to target enemy weak points to overcome overwhelming odds.\n\nWe sincerely hope you will enjoy discovering the world, the story, and the characters we crafted with love these past years. As we also wanted the best look to match our visual ambitions, we chose Unreal Engine 5 to create the game as we imagined it!\n\nBreak the cycle. Lead the Expedition.\n\nLove from the Sandfall Team.",
+      "author": "Benjamin Dimanche",
+      "authorImage": "images/team/benjamin.png",
+      "date": "2024-06-10",
+      "readTime": "2 min",      "views": 8238,
+      "likes": 414,
+      "image": "images/blog/6.png"
+    },
+    {
+      "id": 7,
+      "title": "Clair Obscur: Expedition 33 was released on April 24, 2025",
+      "excerpt": "Tomorrow has come! Our debut game launched on PlayStation 5, Xbox Series S/X, Steam & Epic Games Store.",
+      "content": "Tomorrow has come!\n\nClair Obscur: Expedition 33, our first debut game, launched on April 24th 2025 on PlayStation 5, Xbox Series S/X, Steam & Epic Games Store.\n\nShe will never paint death again.\n\nAfter over 5 years of development, we are thrilled to see that our game is resonating with so many of you around the world. We put all our heart and soul into this project and since its release, we have been overwhelmed by all the support we received.\n\nIt is truly unbelievable!\n\nOn May 23, 2025 we gathered our friends, family and studio friends in our Manor in order to celebrate this tremendous and humbling success with them - but we also wish to thank, once again, all the fans and supporters of the game, without whom this could never have happened.\n\nFor those who come after - The Expedition 33 Team.",
+      "author": "Emilie Perez",
+      "authorImage": "images/team/emilie.png",
+      "date": "2025-06-11",
+      "readTime": "1 min",      "views": 452,
+      "likes": 21,
+      "image": "images/blog/7.png"
+    }
+  ]
+}

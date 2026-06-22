@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Pénal Quiz</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Menu principal -->
+        <div id="mainMenu" class="main-menu">
+            <h1>Code Pénal Quiz</h1>
+            <p class="subtitle">Testez vos connaissances du droit pénal français</p>
+            <button id="playButton" class="play-button">Jouer</button>
+        </div>
+
+        <!-- Sélection des modes -->
+        <div id="modeSelection" class="mode-selection">
+            <button class="back-button" onclick="showMainMenu()">← Retour</button>
+            <h2 class="section-title">Choisissez votre mode de jeu</h2>
+            <p class="section-subtitle">Quatre façons différentes de tester vos connaissances</p>
+            <div class="mode-grid">
+                <div class="mode-card" onclick="selectMode(1)">
+                    <div class="mode-icon">📜</div>
+                    <div class="mode-title">Numéro → Description</div>
+                    <div class="mode-description">Devinez la description à partir du numéro de l'article</div>
+                </div>
+                <div class="mode-card" onclick="selectMode(2)">
+                    <div class="mode-icon">🔍</div>
+                    <div class="mode-title">Description → Numéro</div>
+                    <div class="mode-description">Trouvez le numéro de l'article correspondant à la description</div>
+                </div>
+                <div class="mode-card" onclick="selectMode(3)">
+                    <div class="mode-icon">⚖️</div>
+                    <div class="mode-title">Situation → Numéro</div>
+                    <div class="mode-description">Identifiez l'article applicable à une situation réelle</div>
+                </div>
+                <div class="mode-card" onclick="selectMode(4)">
+                    <div class="mode-icon">🏛️</div>
+                    <div class="mode-title">Numéro → Situation</div>
+                    <div class="mode-description">Trouvez la situation correspondant à l'article</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sélection des niveaux -->
+        <div id="levelSelection" class="level-selection">
+            <button class="back-button" onclick="showModeSelection()">← Retour</button>
+            <h2 class="section-title" id="levelModeTitle">Choisissez votre niveau</h2>
+            <p class="section-subtitle">Du novice au maître du barreau suprême</p>
+            <div class="level-grid" id="levelGrid">
+                <!-- Les niveaux seront générés dynamiquement -->
+            </div>
+        </div>
+
+        <!-- Interface de quiz -->
+        <div id="quizContainer" class="quiz-container">
+            <div class="quiz-header">
+                <div class="quiz-progress" id="quizProgress">1/10</div>
+                <div class="quiz-timer" id="quizTimer">30s</div>
+                <div class="hearts" id="hearts">
+                    <div class="heart"></div>
+                    <div class="heart"></div>
+                    <div class="heart"></div>
+                </div>
+            </div>
+            <div class="question-text" id="questionText">Question apparaîtra ici</div>
+            <div class="options-grid" id="optionsGrid">
+                <!-- Les options seront générées dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
+

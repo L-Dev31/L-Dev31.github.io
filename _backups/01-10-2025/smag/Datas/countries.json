@@ -1,0 +1,52 @@
+{
+  "countries": [
+    {
+      "id": "fr",
+      "name": "France",
+      "flag": "Images/flags/fr.png",
+      "background": "Images/personal-card/fr.png"
+    },
+    {
+      "id": "us",
+      "name": "United States",
+      "flag": "Images/flags/us.png",
+      "background": "Images/personal-card/us.png"
+    },
+    {
+      "id": "ca",
+      "name": "Canada",
+      "flag": "Images/flags/ca.png",
+      "background": "Images/personal-card/ca.png"
+    },
+    {
+      "id": "es",
+      "name": "Spain",
+      "flag": "Images/flags/es.png",
+      "background": "Images/personal-card/es.png"
+    },
+    {
+      "id": "ro",
+      "name": "Romania",
+      "flag": "Images/flags/ro.png",
+      "background": "Images/personal-card/ro.png"
+    },
+    {
+      "id": "ch",
+      "name": "Switzerland",
+      "flag": "Images/flags/ch.png",
+      "background": "Images/personal-card/ch.png"
+    },
+    {
+      "id": "de",
+      "name": "Germany",
+      "flag": "Images/flags/de.png",
+      "background": "Images/personal-card/de.png"
+    },
+    {
+      "id": "international",
+      "name": "International",
+      "flag": "Images/flags/international.png",
+      "background": "Images/personal-card/international.png"
+    }
+  ]
+}

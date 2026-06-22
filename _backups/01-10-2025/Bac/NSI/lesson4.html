@@ -1,0 +1,180 @@
+<div class="lesson-container">
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-sort-amount-up"></i>
+                1. Tri par insertion
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Principe
+                </div>
+                <p>Le tri par insertion construit la liste triée élément par élément, en insérant chaque nouvel élément à sa place dans la partie déjà triée.</p>
+            </div>
+
+            <div class="code-block">
+def tri_insertion(liste):
+    """Tri par insertion - O(n²)"""
+    for i in range(1, len(liste)):
+        cle = liste[i]
+        j = i - 1
+        
+        # Décaler les éléments plus grands vers la droite
+        while j >= 0 and liste[j] > cle:
+            liste[j + 1] = liste[j]
+            j -= 1
+        
+        # Insérer la clé à sa position
+        liste[j + 1] = cle
+    
+    return liste
+
+# Exemple d'utilisation
+nombres = [64, 34, 25, 12, 22, 11, 90]
+print("Liste non triée:", nombres)
+tri_insertion(nombres)
+print("Liste triée:", nombres)
+            </div>
+        </div>
+
+
+        <div class="page-break"></div>
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-hand-pointer"></i>
+                2. Tri par sélection
+            </h2>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-cogs"></i>
+                    Algorithme
+                </div>
+                <ol>
+                    <li>Trouver le minimum dans la liste</li>
+                    <li>L'échanger avec le premier élément</li>
+                    <li>Répéter avec le reste de la liste</li>
+                </ol>
+            </div>
+
+            <div class="code-block">
+def tri_selection(liste):
+    """Tri par sélection - O(n²)"""
+    n = len(liste)
+    
+    for i in range(n):
+        # Trouver l'index du minimum
+        min_idx = i
+        for j in range(i + 1, n):
+            if liste[j] < liste[min_idx]:
+                min_idx = j
+        
+        # Échanger les éléments
+        liste[i], liste[min_idx] = liste[min_idx], liste[i]
+    
+    return liste
+
+# Exemple avec animation des étapes
+def tri_selection_verbose(liste):
+    print(f"Liste initiale: {liste}")
+    n = len(liste)
+    
+    for i in range(n):
+        min_idx = i
+        for j in range(i + 1, n):
+            if liste[j] < liste[min_idx]:
+                min_idx = j
+        
+        if min_idx != i:
+            liste[i], liste[min_idx] = liste[min_idx], liste[i]
+            print(f"Étape {i+1}: {liste}")
+    
+    return liste
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-code-branch"></i>
+                3. Tri fusion (Merge Sort)
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Principe "Diviser pour régner"
+                </div>
+                <p>Le tri fusion divise récursivement la liste en deux, trie chaque moitié, puis fusionne les résultats triés.</p>
+            </div>
+
+            <div class="code-block">
+def tri_fusion(liste):
+    """Tri fusion - O(n log n)"""
+    if len(liste) <= 1:
+        return liste
+    
+    # Diviser
+    milieu = len(liste) // 2
+    gauche = tri_fusion(liste[:milieu])
+    droite = tri_fusion(liste[milieu:])
+    
+    # Conquérir (fusionner)
+    return fusionner(gauche, droite)
+
+def fusionner(gauche, droite):
+    """Fusionne deux listes triées"""
+    resultat = []
+    i = j = 0
+    
+    # Comparer et fusionner
+    while i < len(gauche) and j < len(droite):
+        if gauche[i] <= droite[j]:
+            resultat.append(gauche[i])
+            i += 1
+        else:
+            resultat.append(droite[j])
+            j += 1
+    
+    # Ajouter les éléments restants
+    resultat.extend(gauche[i:])
+    resultat.extend(droite[j:])
+    
+    return resultat
+
+# Exemple d'utilisation
+nombres = [38, 27, 43, 3, 9, 82, 10]
+print("Tri fusion:", tri_fusion(nombres))
+            </div>
+
+            <div class="example-box">
+                <div class="example-title">
+                    <i class="fas fa-chart-line"></i>
+                    Comparaison des complexités
+                </div>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                    <tr style="background: var(--nsi-light);">
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Algorithme</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Complexité</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Stabilité</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Tri insertion</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">O(n²)</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">✓ Stable</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Tri sélection</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">O(n²)</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">✗ Instable</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Tri fusion</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">O(n log n)</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">✓ Stable</td>
+                    </tr>
+                </table>
+            </div>        </div>
+    </div>

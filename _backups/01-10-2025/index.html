@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">    <title>L-Dev31</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-mobile.css">
+    <link rel="icon" type="image/png" href="Elements/image/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body class="no-scroll">
+    
+<div class="navbar">
+    <img id="logo" src="Elements/image/logo.svg" Alt="Logo">
+    <div class="text-container">
+        <span class="name"><strong>Léo Tosku</strong></span>
+        <span class="description">3D & Web Design</span>
+    </div>
+    <div class="links-container">
+        <!--Desktop-->
+        <a href="#" class="link" id="everything">All</a>
+        <a href="#" class="link" id="personal-project">Personal Projects</a>
+        <a href="#" class="link" id="commissions">Commissions</a>
+        <!-- <a href="#" class="link" id="art-link">Art</a> -->
+        <a href="#" class="link" id="info-link">About</a>
+        <a href="#" class="link" style="pointer-events: none;">|</a>
+        <a href="Elements/image/CV.pdf" target="_blank" class="download">CV<span class="material-symbols-outlined" style="font-size: 3.5vh;">download</span></a>
+        <!--Mobile-->
+        <a href="#" class="link-mobile" id="everything-mobile"><span class="material-symbols-outlined" style="font-size: 3.5vh;">dashboard</span></a>
+        <!-- <a href="#" class="link-mobile" id="art-link-mobile"><span class="material-symbols-outlined" style="font-size: 3.5vh;">landscape_2</span></a> -->
+        <a href="#" class="link-mobile" id="info-link-mobile"><span class="material-symbols-outlined" style="font-size: 3.5vh;">info</span></a>
+        <a href="Elements/image/CV.pdf" class="download-mobile" target="_blank"><span class="material-symbols-outlined" style="font-size: 3.5vh;">Description</span></a>
+    </div>
+</div>
+
+<div class="bg"></div>
+
+<header id="header">
+    <div class="header-content">
+        <h1>ELEGANCE AND <br> SIMPLICITY</h1>
+    </div>
+    <div class="scrolling-bands">
+        <div class="band band1">
+            <div class="scrolling-text">
+                <p>Web Design • 3D Modeling • Unique Creations • Programming • Digital Design • </p>
+            </div>
+        </div>
+        <div class="band band2">
+            <div class="scrolling-text">
+                <p>Digital Design • Programming • Unique Creations • 3D Modeling • Web Design • </p>
+            </div>
+        </div>
+    </div>    <div class="achievements">
+        <div class="achievements-header">
+            <h2 class="achievements-title">My Achievements</h2>
+            <div class="achievements-subtitle">Excellence recognized by my peers</div>
+        </div>
+        <div class="achievements-container">            
+            <div class="achievement-item" data-achievement="trophy">
+                <div class="achievement-content">
+                    <div class="achievement-icon">
+                        <img src="Elements/image/svg/tnsi.svg" alt="Trophée NSI">
+                    </div>
+                    <div class="achievement-info">
+                        <h3 class="achievement-title">Prix Spécial du Jury</h3>
+                        <p class="achievement-description">Trophées NSI 2024-2025</p>
+                        <div class="achievement-badge">Excellence</div>
+                    </div>
+                </div>
+            </div>            
+            <div class="achievement-item" data-achievement="innovation">
+                <div class="achievement-content">
+                    <div class="achievement-icon">
+                        <img src="Elements/image/svg/cid.svg" alt="Caribbean Innovation Days">
+                    </div>
+                    <div class="achievement-info">
+                        <h3 class="achievement-title">Caribbean Innovation</h3>
+                        <p class="achievement-description">Caribbean Innovation Days 2024</p>
+                        <div class="achievement-badge">Innovation</div>
+                    </div>
+                </div>
+            </div>              <div class="achievement-item" data-achievement="participation">
+                <div class="achievement-content">
+                    <div class="achievement-icon">
+                        <img src="Elements/image/svg/ufl.svg" alt="Up for Life">
+                    </div>
+                    <div class="achievement-info">
+                        <h3 class="achievement-title">Professional Networking</h3>
+                        <p class="achievement-description">Up for Life 2024-2025</p>
+                        <div class="achievement-badge">Business</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+    <div id="infos" style="display:none;">
+        <div class="infos-container">
+            <div class="infos-content">
+                <h1>Who am I?</h1>
+                <h3 class="subtitle">Self-taught 3D designer and modeler with an adventurous spirit based in Cannes, France. <br><br> Passionate about digital design since the age of 10, I create projects with modern and minimalist styles, combining creativity and functionality. <br><br> Specialized in 3D modeling and web development, I bring a unique vision to each project. <br><br> From growing up in Southern France to living 5 years in Guadeloupe and 1 year in Thailand, this multicultural journey has shaped me into an adaptable, open-minded creative who thrives on cultural diversity and new challenges. <br><br> For new projects: <br><strong><a href="mailto:leotoskuepro@gmail.com">Leotoskuepro@gmail.com</a></strong></h3>
+                
+                <!-- Entreprises -->
+                <div class="companies-section">
+                    <h2>Companies that trusted me</h2>
+                    <div class="companies-logos">
+                        <!-- Companies will be loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-img-container">
+                <img src="Elements/image/LéoTosku.jpg" alt="Profile Image" class="info-img">
+            </div>
+        </div>
+    </div>
+
+<!-- 3D Art Gallery -->
+<div id="art-gallery" style="display:none;">
+    <h1>My Artistic Creations</h1>
+    <div class="art-gallery-container">
+        <!-- Art items will be loaded dynamically -->
+    </div>
+</div>
+
+
+<!-- Website Gallery -->
+<div class="projects-section">
+    <div class="projects-header">
+        <h2 class="projects-title">My Web Projects</h2>
+        <div class="projects-subtitle">Digital creations portfolio</div>
+    </div>
+    <div id="gallery" class="gallery">
+        <!-- Projects will be loaded dynamically -->
+    </div>
+</div>
+
+</div>
+
+<div class="landing-page">
+    <img id="landing-logo" src="Elements/image/logo.svg" alt="Logo">
+</div>
+
+<div class="zoom-out-page">
+    <h1>Why are you zooming out so much? 🤨</h1>
+</div>
+
+<div class="social-links">
+    <a href="https://www.instagram.com/leotosku/" target="_blank" class="social-link">
+        <i class="fab fa-instagram"></i>
+        <span class="social-label">Instagram</span>
+    </a>
+    <a href="https://www.linkedin.com/in/l%C3%A9o-tosku-8432242a0/" target="_blank" class="social-link">
+        <i class="fab fa-linkedin"></i>
+        <span class="social-label">LinkedIn</span>
+    </a>
+</div>
+
+<!-- Script -->
+<script src="script.js"></script>
+</body>
+</html>

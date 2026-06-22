@@ -1,0 +1,21 @@
+[
+    {
+        "id": "roelof",
+        "name": "Roelof De-Vries",
+        "family": "devries",
+        "born": null,
+        "death": null,
+        "religion": "p",
+        "country": "nl1839",
+        "city": null,
+        "img": "Images/Persons/Unknown.jpg",
+        "gender": "male",
+        "pids": [
+            "elizabeth"
+        ],
+        "children": [
+            "jan1944"
+        ],
+        "region": null
+    }
+]

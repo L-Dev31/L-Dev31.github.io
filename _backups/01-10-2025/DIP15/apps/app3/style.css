@@ -1,0 +1,237 @@
+/* ======================================
+   NOTES APP STYLES - MODERN NOTEPAD
+   ====================================== */
+
+/* Window-specific styling */
+.notes-app-window {
+    width: 600px;
+    height: 500px;
+    min-width: 450px;
+    min-height: 350px;
+    /* Pas de max-width ni max-height pour permettre le redimensionnement libre */
+}
+
+.notes-app-window .window-content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #ffffff;
+}
+
+/* Notes Container */
+.notes-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #ffffff;
+}
+
+/* Toolbar */
+.notes-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-bottom: 1px solid #e9ecef;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.toolbar-left,
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.toolbar-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #495057;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.toolbar-btn:hover {
+    background: rgba(0, 123, 255, 0.08);
+    color: #0056b3;
+    transform: translateY(-1px);
+}
+
+.toolbar-btn:active {
+    transform: translateY(0);
+    background: rgba(0, 123, 255, 0.2);
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 24px;
+    background: #dee2e6;
+    margin: 0 8px;
+}
+
+.font-size-select {
+    padding: 4px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #495057;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.font-size-select:hover {
+    border-color: #007bff;
+}
+
+.font-size-select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Editor Area */
+.notes-editor {
+    flex: 1;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+#notes-textarea {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #212529;
+    background: #ffffff;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    tab-size: 4;
+    transition: all 0.2s ease;
+}
+
+#notes-textarea:focus {
+    background: #fefefe;
+}
+
+#notes-textarea::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+}
+
+/* Scrollbar styling for textarea */
+#notes-textarea::-webkit-scrollbar {
+    width: 8px;
+}
+
+#notes-textarea::-webkit-scrollbar-track {
+    background: #f1f3f4;
+}
+
+#notes-textarea::-webkit-scrollbar-thumb {
+    background: #c1c8cd;
+    border-radius: 4px;
+}
+
+#notes-textarea::-webkit-scrollbar-thumb:hover {
+    background: #a8b1ba;
+}
+
+/* Selection styling */
+#notes-textarea::selection {
+    background: rgba(0, 123, 255, 0.2);
+    color: inherit;
+}
+
+/* Line numbers (optional enhancement) */
+.notes-editor.with-line-numbers {
+    display: flex;
+}
+
+.line-numbers {
+    width: 50px;
+    background: #f8f9fa;
+    border-right: 1px solid #e9ecef;
+    padding: 20px 10px;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', 'Ubuntu Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #6c757d;
+    user-select: none;
+    overflow: hidden;
+}
+
+/* Animation for opening */
+.notes-container {
+    animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .notes-app-window {
+        width: 100%;
+        height: 100%;
+        min-width: 320px;
+        min-height: 300px;
+    }
+    
+    .notes-toolbar {
+        padding: 6px 8px;
+    }
+    
+    .toolbar-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+    
+    #notes-textarea {
+        padding: 15px;
+        font-size: 13px;
+    }
+    
+    .toolbar-left .toolbar-divider {
+        display: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .notes-toolbar {
+        display: none;
+    }
+    
+    #notes-textarea {
+        background: white !important;
+        color: black !important;
+        padding: 0;
+        font-size: 12pt;
+        line-height: 1.4;
+    }
+}

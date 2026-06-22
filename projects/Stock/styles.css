@@ -96,6 +96,27 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
+/* Global focus-visible for all interactive elements (WCAG 2.4.7) */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="tab"]:focus-visible,
+[role="button"]:focus-visible,
+.tool-btn:focus-visible,
+.card-tab-btn:focus-visible,
+.benchmark-btn:focus-visible,
+.chart-type-btn:focus-visible,
+.explorer-page-btn:focus-visible,
+.bottom-nav-btn:focus-visible,
+.period-select:focus-visible,
+.tab:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
 *,
 *::before,
 *::after {
@@ -1948,19 +1969,27 @@ select option {
     padding: 4px;
     border-radius: var(--radius-md);
     margin-bottom: 18px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+}
+
+.exposure-modes::-webkit-scrollbar {
+    display: none;
 }
 
 .exposure-mode {
-    flex: 1;
+    flex: 0 0 auto;
     background: none;
     border: none;
     color: var(--text-dark);
     font: 600 11px inherit;
     text-transform: uppercase;
     letter-spacing: 0.6px;
-    padding: 10px;
+    padding: 8px 12px;
     border-radius: var(--radius-sm);
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .exposure-mode:hover:not(.active) {
@@ -4127,8 +4156,62 @@ input:checked+.slider:before {
     aspect-ratio: auto;
     min-height: 64px;
 }
+/* ===== Legal disclaimer & app footer (added for launch readiness) ===== */
+.app-footer {
+    margin-top: 18px;
+    padding: 14px 14px 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.app-disclaimer {
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text-dark);
+    margin: 0 0 10px;
+}
+.app-disclaimer i { color: var(--primary); margin-right: 4px; }
+.app-disclaimer strong { color: var(--text-light); }
+.app-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+}
+.app-footer-links a {
+    font-size: 11px;
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: color .15s ease;
+}
+.app-footer-links a:hover,
+.app-footer-links a:focus-visible { color: var(--primary); text-decoration: underline; }
+.signal-disclaimer {
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text-dark);
+    margin: 10px 0 0;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+@media (prefers-reduced-motion: reduce) {
+    .app-footer-links a { transition: none; }
+}
 
-/* Sidebar Sorting styling */
+/* ===== Visible label for sort dropdowns ===== */
+.sort-field-label {
+    position: absolute;
+    top: 6px;
+    left: 14px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-dark);
+    opacity: 0.8;
+    pointer-events: none;
+    z-index: 10;
+    margin: 0;
+}
+
+/* Sidebar sort containers */
 .sidebar-sort-container {
     padding: 0 12px 12px;
 }
@@ -4138,27 +4221,17 @@ input:checked+.slider:before {
 }
 
 select.sidebar-select {
-    padding: 8px 28px 8px 12px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background-image: none; /* remove default select background arrow */
-    border: 1px solid rgba(168, 162, 255, 0.12);
-    background-color: rgba(255, 255, 255, 0.02);
+    padding: 22px 28px 10px 12px;
+    font-size: 13px;
     border-radius: var(--radius-sm);
-    color: var(--text-dark);
-    transition: border-color var(--trans-fast), color var(--trans-fast), background-color var(--trans-fast);
-}
-
-select.sidebar-select:hover {
-    border-color: rgba(168, 162, 255, 0.25);
-    background-color: rgba(255, 255, 255, 0.04);
-    color: var(--text-light);
+    border: 1px solid rgba(168, 162, 255, 0.15);
+    background: transparent;
+    background-image: none;
+    color: var(--text-white);
+    transition: border-color var(--trans-fast);
+    width: 100%;
 }
 
 select.sidebar-select:focus {
     border-color: var(--primary);
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--text-white);
 }

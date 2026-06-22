@@ -1,0 +1,84 @@
+{
+  "projects": [    
+    {
+      "id": "mxal",
+      "title": "Mix and Light (Redesign)",
+      "creator": "Mix and Light",
+      "category": "commission", 
+      "path": "https://www.ynov-sophia-projets.com/ymmersionB1325/",
+      "noPhone": false
+    },
+    {
+      "id": "lsdp",
+      "title": "Les Saveurs de Provence (Redesign)",
+      "creator": "",
+      "category": "commission", 
+      "path": "LSDP",
+      "noPhone": false
+    },
+    {
+      "id": "sand",
+      "title": "SandFall Interactive (Redesign)",
+      "creator": "SandFall Interactive",
+      "category": "commission", 
+      "path": "SandFall",
+      "noPhone": false
+    },
+    {
+      "id": "escd",
+      "title": "Eurovision Song Contest Design Generator 2025",
+      "creator": "Léo Tosku",
+      "category": "personal-project", 
+      "path": "ESCDesignGenerator/2025",
+      "noPhone": true
+    },
+    {
+      "id": "azhr",
+      "title": "Azahar n3DS Emulator (Redesign)",
+      "creator": "PabloMK7 & Opensauce",
+      "category": "commission", 
+      "path": "Azahar",
+      "noPhone": true
+    },
+    {
+      "id": "cemu",
+      "title": "Cemu WiiU Emulator (Redesign)",
+      "creator": "Exzap",
+      "category": "commission",
+      "path": "Cemu",
+      "noPhone": true
+    },
+    {
+      "id": "dssm",
+      "title": "DeepSeek Status Monitor",
+      "creator": "Léo Tosku",
+      "category": "personal-project",
+      "path": "DeepSeekStatusMonitor",
+      "noPhone": false
+    },
+    {
+      "id": "apmr",
+      "title": "Appartement Marina Royale",
+      "creator": "Viviane De-Vries",
+      "category": "commission",
+      "path": "AppartementMarinaRoyale",
+      "noPhone": false
+    },
+    {
+      "id": "smag",
+      "title": "Super Mario Another Galaxy",
+      "creator": "SMAG Team",
+      "category": "commission",
+      "path": "smag",
+      "noPhone": false
+    },
+    {
+      "id": "wlux",
+      "title": "Wine Lux (Fictif)",
+      "creator": "Léo Tosku",
+      "category": "personal-project",
+      "path": "winelux",
+      "noPhone": false
+    }
+  ]
+}

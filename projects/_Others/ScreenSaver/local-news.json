@@ -1,0 +1,21 @@
+{
+  "source": "Local News",
+  "logo": "images/RSS/LeMonde.png",
+  "items": [
+    {
+      "title": "Bienvenue sur l'économiseur d'écran !",
+      "link": "#",
+      "description": "Ceci est une actualité locale de démonstration. Les flux RSS distants sont inaccessibles ou bloqués."
+    },
+    {
+      "title": "Astuce : Ajoutez votre propre flux RSS !",
+      "link": "#",
+      "description": "Modifiez local-news.json pour personnaliser les actualités affichées en cas de panne des flux distants."
+    },
+    {
+      "title": "Sources d'actualité fiables",
+      "link": "#",
+      "description": "Pour une expérience optimale, installez un proxy RSS local ou contactez l'administrateur."
+    }
+  ]
+}

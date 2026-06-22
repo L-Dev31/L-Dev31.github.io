@@ -1,0 +1,148 @@
+/* Styles spécifiques à la section NSI - Code blocks uniquement */
+@import url('../common.css');
+
+/* Variables de couleur pour NSI */
+:root {
+  --nsi-primary: #2196f3;
+  --nsi-secondary: #1976d2;
+  --nsi-light: #e3f2fd;
+  --nsi-bg-light: #f5fbff;
+  --nsi-border: #90caf9;
+  --nsi-code-bg: #263238;
+  --nsi-code-text: #ffffff;
+  --subject-color: var(--nsi-primary);
+}
+
+/* ============================== */
+/* BLOCS DE CODE ET COLORATION SYNTAXIQUE */
+/* ============================== */
+
+.code-block {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  font-family: 'SF Mono', 'Monaco', 'Consolas', 'Roboto Mono', monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  border-left: 4px solid var(--nsi-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.code-block::before {
+  content: 'Python';
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  color: var(--nsi-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Numéros de ligne */
+.code-block.with-line-numbers {
+  padding-left: 3.5rem;
+}
+
+.code-block .line-number {
+  position: absolute;
+  left: 1rem;
+  color: #546e7a;
+  font-size: 0.8rem;
+  user-select: none;
+  width: 2rem;
+  text-align: right;
+}
+
+/* Coloration syntaxique */
+.code-block .keyword {
+  color: #c792ea;
+  font-weight: 600;
+}
+
+.code-block .string {
+  color: #c3e88d;
+}
+
+.code-block .comment {
+  color: #80cbc4 !important;
+  font-style: italic;
+  font-weight: 500;
+  display: inline !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.code-block .boolean {
+  color: #ff9cac;
+}
+
+.code-block .number {
+  color: #f78c6c;
+}
+
+.code-block .function {
+  color: #82aaff;
+}
+
+.code-block .operator {
+  color: #89ddff;
+}
+
+/* Code inline */
+code {
+  background: var(--nsi-light);
+  color: var(--nsi-secondary);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'SF Mono', 'Monaco', 'Consolas', 'Roboto Mono', monospace;
+  font-size: 0.85em;
+  border: 1px solid var(--nsi-border);
+}
+
+/* ============================== */
+/* STYLES D'IMPRESSION POUR LES BLOCS DE CODE */
+/* ============================== */
+
+@media print {
+  .code-block {
+    background: #f8f9fa !important;
+    color: #000 !important;
+    border: 1px solid #dee2e6 !important;
+    border-left: 3px solid #2196f3 !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    page-break-inside: avoid !important;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    font-size: 10px !important;
+    line-height: 1.4 !important;
+    padding: 10px !important;
+    margin: 10px 0 !important;
+  }
+  
+  .code-block::before {
+    color: #2196f3 !important;
+  }
+  
+  /* Préserver les commentaires et la coloration */
+  .code-block .comment {
+    color: #6a9955 !important;
+    font-style: italic !important;
+  }
+  
+  .code-block .keyword,
+  .code-block .string,
+  .code-block .number,
+  .code-block .function,
+  .code-block .operator,
+  .code-block .boolean {
+    color: #000 !important;
+  }
+}

@@ -4,16 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nemeris — Stock Portfolio Tracker</title>
-    <meta name="description" content="Nemeris — Personal stock portfolio tracker with real-time charts, buy/sell signals, quantitative analysis, and market exploration.">
-    <meta property="og:title" content="Nemeris — Stock Portfolio Tracker">
-    <meta property="og:description" content="Track your portfolio performance, analyze risk metrics, and explore markets with real-time data.">
-    <meta property="og:image" content="https://l-dev31.github.io/projects/Stock/img/icon/favicon.png">
+    <title>Nemeris - Stock Analysis, Quant Signals & Portfolio Tracker</title>
+    <meta name="description" content="Nemeris is a free stock analysis and portfolio tracker with real-time charts, quantitative signals, and risk metrics, built to make the market make sense for everyday investors.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Nemeris">
+    <link rel="canonical" href="https://l-dev31.github.io/projects/Stock/">
+
+    <meta property="og:site_name" content="Nemeris">
+    <meta property="og:title" content="Nemeris - Stock Analysis, Quant Signals & Portfolio Tracker">
+    <meta property="og:description" content="Track your portfolio, read clear quantitative analysis, and explore markets with real-time charts. Built for everyday investors.">
+    <meta property="og:image" content="https://l-dev31.github.io/projects/Stock/img/icon/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://l-dev31.github.io/projects/Stock/">
     <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Nemeris — Stock Portfolio Tracker">
-    <meta name="twitter:description" content="Personal stock portfolio tracker with real-time charts and quantitative analysis.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Nemeris - Stock Analysis, Quant Signals & Portfolio Tracker">
+    <meta name="twitter:description" content="Clear quantitative analysis, real-time charts, and portfolio tracking for everyday investors.">
+    <meta name="twitter:image" content="https://l-dev31.github.io/projects/Stock/img/icon/og-image.png">
     <meta name="theme-color" content="#0f0f12">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Nemeris",
+      "url": "https://l-dev31.github.io/projects/Stock/",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript",
+      "description": "Free stock analysis and portfolio tracker with real-time charts, quantitative signals, and risk metrics for everyday investors.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "disclaimer": "Nemeris provides information and tools, not financial advice. Investing involves risk, including the possible loss of capital."
+    }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +70,9 @@
     </script>
 
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/fontawesome.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/solid.css">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="styles.css">
@@ -59,14 +85,14 @@
 
 <body>
     <a href="#cards-container" class="sr-only sr-only-focusable">Skip to content</a>
-    <h1 class="sr-only">Nemeris — Stock Portfolio Tracker</h1>
+    <h1 class="sr-only">Nemeris - Stock Portfolio Tracker</h1>
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-scroll">
             <div class="profile-header">
                 <div class="profile-header-top">
-                    <img src="" alt="Profile" class="profile-photo" id="profile-pfp">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Profile" class="profile-photo" id="profile-pfp">
                     <div class="profile-info">
                         <p class="profile-name" id="profile-name">Nemeris User</p>
                         <p>Positions held: <span id="total-positions">0</span></p>
@@ -87,14 +113,15 @@
 
             <div class="sidebar-sort-container">
                 <div class="select-wrapper">
+                    <label class="sort-field-label" for="sidebar-sort">Sort by</label>
                     <select id="sidebar-sort" class="sidebar-select" aria-label="Sort sidebar sections">
-                        <option value="default">Sort by: Default</option>
-                        <option value="trending">Sort by: Trending</option>
-                        <option value="signal">Sort by: Buy Signal</option>
-                        <option value="gainers">Sort by: Top Gainers</option>
-                        <option value="losers">Sort by: Top Losers</option>
-                        <option value="volume">Sort by: Volume</option>
-                        <option value="name">Sort by: Name A-Z</option>
+                        <option value="default">Default</option>
+                        <option value="trending">Trending</option>
+                        <option value="signal">Buy Signal</option>
+                        <option value="gainers">Top Gainers</option>
+                        <option value="losers">Top Losers</option>
+                        <option value="volume">Volume</option>
+                        <option value="name">Name A-Z</option>
                     </select>
                     <i class="fa-solid fa-chevron-down select-chevron"></i>
                 </div>
@@ -123,6 +150,19 @@
                 </h3>
                 <div class="tabs suspended" id="suspended-tabs"></div>
             </div>
+
+            <footer class="app-footer" role="contentinfo">
+                <p class="app-disclaimer">Nemeris provides information and
+                    analytical tools only, <strong>not financial advice</strong> or a recommendation to buy or sell.
+                    Investing involves risk, including loss of capital.</p>
+                <nav class="app-footer-links" aria-label="Legal">
+                    <a href="disclaimer.html">Disclaimer</a>
+                    <a href="privacy.html">Privacy</a>
+                    <a href="terms.html">Terms</a>
+                    <a href="cookies.html">Cookies</a>
+                    <a href="faq.html">FAQ</a>
+                </nav>
+            </footer>
         </div>
     </div>
     <div class="container">
@@ -133,14 +173,15 @@
 
                 <div class="mobile-sort-container">
                     <div class="select-wrapper">
+                        <label class="sort-field-label" for="mobile-sidebar-sort">Sort by</label>
                         <select id="mobile-sidebar-sort" class="sidebar-select" aria-label="Sort mobile sidebar sections">
-                            <option value="default">Sort by: Default</option>
-                            <option value="trending">Sort by: Trending</option>
-                            <option value="signal">Sort by: Buy Signal</option>
-                            <option value="gainers">Sort by: Top Gainers</option>
-                            <option value="losers">Sort by: Top Losers</option>
-                            <option value="volume">Sort by: Volume</option>
-                            <option value="name">Sort by: Name A-Z</option>
+                            <option value="default">Default</option>
+                            <option value="trending">Trending</option>
+                            <option value="signal">Buy Signal</option>
+                            <option value="gainers">Top Gainers</option>
+                            <option value="losers">Top Losers</option>
+                            <option value="volume">Volume</option>
+                            <option value="name">Name A-Z</option>
                         </select>
                         <i class="fa-solid fa-chevron-down select-chevron"></i>
                     </div>
@@ -169,6 +210,14 @@
                     </h3>
                     <div class="tabs suspended" id="mobile-suspended-tabs"></div>
                 </div>
+
+                <noscript>
+                    <div style="padding: 40px 24px; text-align: center; color: #e8e9f3;">
+                        <h2 style="color: #a8a2ff; margin-bottom: 16px;">Nemeris &mdash; Stock Analysis &amp; Portfolio Tracker</h2>
+                        <p style="max-width: 600px; margin: 0 auto 16px; line-height: 1.6;">Nemeris is a free stock analysis and portfolio tracker with real-time charts, quantitative signals, and risk metrics &mdash; built to make the market make sense for everyday investors.</p>
+                        <p style="font-size: 13px; color: #9ca3af;">JavaScript is required to use Nemeris. Please enable JavaScript in your browser.</p>
+                    </div>
+                </noscript>
             </div>
 
             <div class="card terminal-card" id="card-terminal" role="document" aria-hidden="true">
@@ -337,9 +386,15 @@
                     <div class="exposure-panel" id="exposure-panel" data-mode="symbol"
                         aria-label="Portfolio composition">
                         <div class="exposure-modes" role="tablist" aria-label="Allocation view">
-                            <button class="exposure-mode active" data-mode="symbol" role="tab">By Position</button>
-                            <button class="exposure-mode" data-mode="type" role="tab">By Type</button>
-                            <button class="exposure-mode" data-mode="country" role="tab">By Country</button>
+                            <button class="exposure-mode active" data-mode="symbol" role="tab">Position</button>
+                            <button class="exposure-mode" data-mode="sector" role="tab">Sector</button>
+                            <button class="exposure-mode" data-mode="industry" role="tab">Industry</button>
+                            <button class="exposure-mode" data-mode="marketcap" role="tab">Market cap</button>
+                            <button class="exposure-mode" data-mode="continent" role="tab">Continent</button>
+                            <button class="exposure-mode" data-mode="country" role="tab">Country</button>
+                            <button class="exposure-mode" data-mode="currency" role="tab">Currency</button>
+                            <button class="exposure-mode" data-mode="exchange" role="tab">Exchange</button>
+                            <button class="exposure-mode" data-mode="type" role="tab">Security type</button>
                         </div>
                         <div class="exposure-content">
                             <div class="exposure-chart-container">
@@ -420,7 +475,7 @@
         <div class="card profile-card" id="card-profile" role="document" aria-hidden="true">
             <div class="profile-header">
                 <div class="profile-header-top">
-                    <img src="" alt="Profile" class="profile-photo">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Profile" class="profile-photo">
                     <div class="profile-info">
                         <p class="profile-name" id="mobile-profile-name">Nemeris User</p>
                         <p>Positions held: <span id="mobile-total-positions">0</span></p>
@@ -434,6 +489,18 @@
                         class="fa-solid fa-chart-pie"></i>Portfolio</button>
                 <button id="open-settings-btn-mobile" class="tool-btn"><i class="fa-solid fa-gear"></i>Settings</button>
             </div>
+            <footer class="app-footer" role="contentinfo">
+                <p class="app-disclaimer">Nemeris provides information and
+                    analytical tools only, <strong>not financial advice</strong>. Investing involves risk, including
+                    loss of capital.</p>
+                <nav class="app-footer-links" aria-label="Legal">
+                    <a href="disclaimer.html">Disclaimer</a>
+                    <a href="privacy.html">Privacy</a>
+                    <a href="terms.html">Terms</a>
+                    <a href="cookies.html">Cookies</a>
+                    <a href="faq.html">FAQ</a>
+                </nav>
+            </footer>
         </div>
 
         <div class="card settings-card" id="card-settings" role="document" aria-hidden="true">
@@ -493,7 +560,7 @@
     <template id="tab-template">
         <div class="tab" data-symbol="">
             <div class="tab-logo">
-                <img src="" alt="" />
+                <img src="" alt="" loading="lazy" decoding="async" />
             </div>
             <div class="tab-info">
                 <div class="tab-name"></div>
@@ -509,7 +576,7 @@
         <div class="card">
             <div class="card-logo-section">
                 <div class="logo">
-                    <img data-symbol="" src="" alt="" />
+                    <img data-symbol="" src="" alt="" loading="lazy" decoding="async" />
                 </div>
             </div>
 
@@ -528,7 +595,7 @@
                         <div class="general-row"><strong>Ticker</strong> : <span class="ticker-val"></span></div>
                         <div class="general-row"><strong>Symbol</strong> : <span class="symbol-val"></span></div>
                         <div class="general-row card-country-row"><strong>Country</strong> : <span
-                                class="country-name"></span><img data-country="" src="" alt="" class="flag-icon" />
+                                class="country-name"></span><img data-country="" src="" alt="" class="flag-icon" loading="lazy" decoding="async" />
                         </div>
                     </div>
 
@@ -632,11 +699,13 @@
                         <div class="update-center"></div>
                     </div>
 
-                    <h3 class="section-title signal-title"><i class="fa-solid fa-signal"></i> Buy/Sell Signal</h3>
+                    <h3 class="section-title signal-title"><i class="fa-solid fa-signal"></i> Technical Signal</h3>
                     <div class="signal-container">
                         <div class="signal-explanation hidden-by-bot">
                             <div class="explanation-content"></div>
                         </div>
+                        <p class="signal-disclaimer">Automated technical reading for information only, not
+                            financial advice or a recommendation. Markets carry risk; do your own research.</p>
                     </div>
                 </div>
 
@@ -646,7 +715,7 @@
                         <h3 class="section-title"><i class="fa-solid fa-newspaper"></i> Latest News</h3>
                         <div class="searchbar">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" class="search-input news-search-input" placeholder="Search news..." />
+                            <input type="text" class="search-input news-search-input" placeholder="Search news..." aria-label="Search news articles" />
                         </div>
                         <div class="news-list" aria-live="polite"></div>
                     </div>
@@ -750,7 +819,7 @@
         </button>
         <button class="bottom-nav-btn profile-nav-btn" id="bottom-nav-profile">
             <div class="nav-profile-photo-wrapper">
-                <img src="" alt="Profile" class="nav-profile-photo">
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Profile" class="nav-profile-photo">
             </div>
             <span>Profile</span>
         </button>
@@ -760,3 +829,5 @@
     <script type="module" src="js/explorer.js"></script>
 
 </body>
+
+</html>

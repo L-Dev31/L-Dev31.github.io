@@ -3,7 +3,7 @@ import { hasTransactions, typeLabel, typeIcon } from './constants.js';
 import { calculateStockValues } from './portfolio.js';
 import { fetchActiveSymbol } from './general.js';
 import { updateChart, initChart } from './chart.js';
-import { updateSignal } from './signal-bot.js';
+import { updateSignal, calculateBotSignal } from './signal-bot.js';
 import { setupNewsSearch } from './news.js';
 import { resolveTickerDetails, buildOnlineIconCandidates } from './ticker-catalog.js';
 import { handleImageAssetError } from './assets.js';
@@ -802,6 +802,52 @@ function computeSidebarTrendingRank(pos) {
         - riskMalus;
 }
 
+// Latest traded volume, derived from whatever shape lastData carries.
+// Active symbols expose `volumes` at the top level; batch-loaded tabs keep it
+// under `history.volumes`. Without this, the volume sort read an undefined
+// scalar for every tab and never reordered anything.
+function getLatestVolume(data) {
+    if (!data) return -1;
+    if (Number.isFinite(data.volume)) return data.volume;
+    const arr = data.volumes || data.history?.volumes;
+    if (Array.isArray(arr)) {
+        for (let i = arr.length - 1; i >= 0; i--) {
+            if (Number.isFinite(arr[i]) && arr[i] > 0) return arr[i];
+        }
+    }
+    return -1;
+}
+
+// Ensure a signal score exists on lastData. updateUI only runs for the active
+// symbol, so batch-loaded sidebar tabs had no `score` and both the 'signal' and
+// 'trending' sorts treated every tab as a neutral 50. Compute it lazily (only
+// when these sorts run) from the history the batch fetch already provides, and
+// cache it so each tab is scored at most once per data refresh.
+function ensureSidebarScore(pos) {
+    if (!pos || !pos.lastData) return 50;
+    const ld = pos.lastData;
+    if (Number.isFinite(ld.score)) return ld.score;
+    const h = ld.history || ld;
+    const prices = h.prices || ld.prices || ld.closes;
+    if (!Array.isArray(prices) || prices.length < 2) return 50;
+    try {
+        const bot = calculateBotSignal({
+            symbol: pos.symbol,
+            prices,
+            highs: h.highs || ld.highs || [],
+            lows: h.lows || ld.lows || [],
+            volumes: h.volumes || ld.volumes || []
+        }, { period: pos.currentPeriod || globalPeriod });
+        ld.score = bot.signalValue;
+        ld.botAdx = bot.regime?.strength ?? 0;
+        ld.botConfluence = bot.confluence?.ratio ?? 0;
+        ld.riskScore = bot.risk?.score ?? 1;
+        return ld.score;
+    } catch (e) {
+        return 50;
+    }
+}
+
 function sortSection(section) {
     const title = section.querySelector('.tab-type-title');
     const tabs = Array.from(section.querySelectorAll('.tab'));
@@ -829,14 +875,16 @@ function sortSection(section) {
         const dataB = posB?.lastData;
 
         if (sortCriterion === 'trending') {
+            ensureSidebarScore(posA);
+            ensureSidebarScore(posB);
             const rankA = computeSidebarTrendingRank(posA);
             const rankB = computeSidebarTrendingRank(posB);
             return rankB - rankA;
         }
 
         if (sortCriterion === 'signal') {
-            const scoreA = dataA?.score !== undefined ? dataA.score : 50;
-            const scoreB = dataB?.score !== undefined ? dataB.score : 50;
+            const scoreA = ensureSidebarScore(posA);
+            const scoreB = ensureSidebarScore(posB);
             return scoreB - scoreA;
         }
 
@@ -853,8 +901,8 @@ function sortSection(section) {
         }
 
         if (sortCriterion === 'volume') {
-            const volA = dataA?.volume !== undefined ? dataA.volume : -1;
-            const volB = dataB?.volume !== undefined ? dataB.volume : -1;
+            const volA = getLatestVolume(dataA);
+            const volB = getLatestVolume(dataB);
             return volB - volA;
         }
 

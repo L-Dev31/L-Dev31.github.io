@@ -72,6 +72,45 @@ export function calculateStockValues(stock) {
 
 let lastCompositionHash = '';
 
+const CONTINENT_MAP = {
+    AF:'Africa', AO:'Africa', BJ:'Africa', BW:'Africa', BF:'Africa', BI:'Africa', CM:'Africa', CV:'Africa',
+    CF:'Africa', TD:'Africa', KM:'Africa', CG:'Africa', CD:'Africa', DJ:'Africa', EG:'Africa', GQ:'Africa',
+    ER:'Africa', ET:'Africa', GA:'Africa', GM:'Africa', GH:'Africa', GN:'Africa', GW:'Africa', CI:'Africa',
+    KE:'Africa', LS:'Africa', LR:'Africa', LY:'Africa', MG:'Africa', MW:'Africa', ML:'Africa', MR:'Africa',
+    MU:'Africa', MA:'Africa', MZ:'Africa', NA:'Africa', NE:'Africa', NG:'Africa', RW:'Africa', ST:'Africa',
+    SN:'Africa', SL:'Africa', SO:'Africa', ZA:'Africa', SS:'Africa', SD:'Africa', SZ:'Africa', TZ:'Africa',
+    TG:'Africa', TN:'Africa', UG:'Africa', ZM:'Africa', ZW:'Africa',
+    AS:'Asia', AM:'Asia', AZ:'Asia', BH:'Asia', BD:'Asia', BT:'Asia', BN:'Asia', KH:'Asia', CN:'Asia',
+    CY:'Asia', GE:'Asia', HK:'Asia', IN:'Asia', ID:'Asia', IR:'Asia', IQ:'Asia', IL:'Asia', JP:'Asia',
+    JO:'Asia', KZ:'Asia', KW:'Asia', KG:'Asia', LA:'Asia', LB:'Asia', MO:'Asia', MY:'Asia', MV:'Asia',
+    MN:'Asia', MM:'Asia', NP:'Asia', KP:'Asia', OM:'Asia', PK:'Asia', PS:'Asia', PH:'Asia', QA:'Asia',
+    SA:'Asia', SG:'Asia', KR:'Asia', LK:'Asia', SY:'Asia', TW:'Asia', TJ:'Asia', TH:'Asia', TL:'Asia',
+    TR:'Asia', TM:'Asia', AE:'Asia', UZ:'Asia', VN:'Asia', YE:'Asia',
+    AL:'Europe', AD:'Europe', AT:'Europe', BY:'Europe', BE:'Europe', BA:'Europe', BG:'Europe', HR:'Europe',
+    CZ:'Europe', DK:'Europe', EE:'Europe', FI:'Europe', FR:'Europe', DE:'Europe', GR:'Europe', HU:'Europe',
+    IS:'Europe', IE:'Europe', IT:'Europe', XK:'Europe', LV:'Europe', LI:'Europe', LT:'Europe', LU:'Europe',
+    MT:'Europe', MD:'Europe', MC:'Europe', ME:'Europe', NL:'Europe', MK:'Europe', NO:'Europe', PL:'Europe',
+    PT:'Europe', RO:'Europe', RU:'Europe', SM:'Europe', RS:'Europe', SK:'Europe', SI:'Europe', ES:'Europe',
+    SE:'Europe', CH:'Europe', UA:'Europe', GB:'Europe', VA:'Europe',
+    CA:'North America', MX:'North America', US:'North America', GT:'North America', BZ:'North America',
+    HN:'North America', SV:'North America', NI:'North America', CR:'North America', PA:'North America',
+    CU:'North America', JM:'North America', HT:'North America', DO:'North America', PR:'North America',
+    AR:'South America', BO:'South America', BR:'South America', CL:'South America', CO:'South America',
+    EC:'South America', GY:'South America', PY:'South America', PE:'South America', SR:'South America',
+    UY:'South America', VE:'South America',
+    AU:'Oceania', FJ:'Oceania', KI:'Oceania', MH:'Oceania', FM:'Oceania', NR:'Oceania', NZ:'Oceania',
+    PW:'Oceania', PG:'Oceania', WS:'Oceania', SB:'Oceania', TO:'Oceania', TV:'Oceania', VU:'Oceania'
+};
+
+const MARKET_CAP_BUCKET = (cap) => {
+    if (!cap || cap <= 0) return 'Unknown';
+    if (cap >= 200e9) return 'Mega cap (>$200B)';
+    if (cap >= 10e9) return 'Large cap ($10B–$200B)';
+    if (cap >= 2e9) return 'Mid cap ($2B–$10B)';
+    if (cap >= 300e6) return 'Small cap ($300M–$2B)';
+    return 'Micro cap (<$300M)';
+};
+
 export function updatePortfolioSummary() {
     const settings = getUserSettings();
     const currency = getCurrency();
@@ -132,12 +171,25 @@ export function updatePortfolioComposition() {
         const value = lastPrice ? lastPrice * pos.shares : (pos.costBasis || 0);
         if (value <= 0) continue;
         totalValForHash += value;
+        const countryCode = (pos.raw?.country || 'OTH').toUpperCase();
+        const profile = pos.metadata?.assetProfile;
+        const summary = pos.metadata?.summaryDetail;
+        const stats = pos.metadata?.defaultKeyStatistics;
+        const rawMarketCap = (typeof summary?.marketCap === 'object' ? summary.marketCap?.raw : summary?.marketCap)
+            || (typeof stats?.marketCap === 'object' ? stats.marketCap?.raw : stats?.marketCap)
+            || pos.lastData?.marketCap || 0;
         positionValues.push({
             symbol: pos.symbol,
             ticker: pos.ticker || pos.symbol,
             name: pos.name,
             type: pos.type || 'equity',
-            country: (pos.raw?.country || 'OTH').toUpperCase(),
+            country: countryCode,
+            continent: CONTINENT_MAP[countryCode] || 'Other',
+            currency: (pos.raw?.currency || pos.lastData?.currency || 'USD').toUpperCase(),
+            exchange: (pos.lastData?.exchange || pos.lastData?.fullExchangeName || 'Unknown').toUpperCase(),
+            sector: profile?.sector || 'Unknown',
+            industry: profile?.industry || 'Unknown',
+            marketCapBucket: MARKET_CAP_BUCKET(rawMarketCap),
             value
         });
     }
@@ -153,21 +205,29 @@ export function updatePortfolioComposition() {
     const buckets = new Map();
     const bucketMeta = new Map();
 
+    const addBucket = (key, value, label, ticker = '') => {
+        buckets.set(key, (buckets.get(key) || 0) + value);
+        if (!bucketMeta.has(key)) bucketMeta.set(key, { label, ticker });
+    };
+
     if (mode === 'type') {
-        positionValues.forEach(p => {
-            buckets.set(p.type, (buckets.get(p.type) || 0) + p.value);
-            bucketMeta.set(p.type, { label: typeLabel(p.type), ticker: '' });
-        });
+        positionValues.forEach(p => addBucket(p.type, p.value, typeLabel(p.type)));
     } else if (mode === 'country') {
-        positionValues.forEach(p => {
-            buckets.set(p.country, (buckets.get(p.country) || 0) + p.value);
-            bucketMeta.set(p.country, { label: p.country, ticker: '' });
-        });
+        positionValues.forEach(p => addBucket(p.country, p.value, p.country));
+    } else if (mode === 'continent') {
+        positionValues.forEach(p => addBucket(p.continent, p.value, p.continent));
+    } else if (mode === 'currency') {
+        positionValues.forEach(p => addBucket(p.currency, p.value, p.currency));
+    } else if (mode === 'exchange') {
+        positionValues.forEach(p => addBucket(p.exchange, p.value, p.exchange));
+    } else if (mode === 'sector') {
+        positionValues.forEach(p => addBucket(p.sector, p.value, p.sector));
+    } else if (mode === 'industry') {
+        positionValues.forEach(p => addBucket(p.industry, p.value, p.industry));
+    } else if (mode === 'marketcap') {
+        positionValues.forEach(p => addBucket(p.marketCapBucket, p.value, p.marketCapBucket));
     } else {
-        positionValues.forEach(p => {
-            buckets.set(p.symbol, (buckets.get(p.symbol) || 0) + p.value);
-            bucketMeta.set(p.symbol, { label: p.name, ticker: p.ticker });
-        });
+        positionValues.forEach(p => addBucket(p.symbol, p.value, p.name, p.ticker));
     }
 
     const sorted = Array.from(buckets.entries())
@@ -178,6 +238,7 @@ export function updatePortfolioComposition() {
         if (mode === 'type') return EXPOSURE_COLORS[key] || EXPOSURE_COLORS.other;
         return COUNTRY_COLORS[idx % COUNTRY_COLORS.length];
     };
+
 
     svg.innerHTML = '';
     let currentAngle = -90; // Start at top
@@ -419,6 +480,9 @@ const results = await fetchYahooPeriodChanges(tickers, period);
                 updateUI(pos.symbol, pos.lastData);
             } else {
                 pos.lastData = { ...(pos.lastData || {}), ...data };
+                // Fresh history arrived: drop the cached signal score so the
+                // sidebar's 'signal'/'trending' sorts recompute it on demand.
+                if (data.history) delete pos.lastData.score;
             }
             updateSidebarPerformance(pos.symbol);
         }
@@ -516,7 +580,7 @@ async function fetchAllPortfolioMetadata() {
     if (symbols.length === 0) return;
 
     const { fetchYahooQuoteSummary } = await import('./yahoo-finance.js');
-    const modules = ['calendarEvents', 'summaryDetail', 'defaultKeyStatistics'];
+    const modules = ['calendarEvents', 'summaryDetail', 'defaultKeyStatistics', 'assetProfile'];
     const promises = symbols.map(async s => {
         if (positions[s].analyticsFetched) return;
         positions[s].analyticsFetched = true;
@@ -786,6 +850,7 @@ export function initExposureToggle() {
             buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             panel.dataset.mode = btn.dataset.mode;
+            lastCompositionHash = '';
             updatePortfolioComposition();
         });
     });
