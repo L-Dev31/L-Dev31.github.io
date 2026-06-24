@@ -2,6 +2,11 @@
   "TCSIF": {
     "purchases": [
       {
+        "date": "2026-6-22",
+        "amount": -223.11,
+        "shares": 12
+      },
+      {
         "date": "2025-11-10",
         "amount": -107.27,
         "shares": 9
