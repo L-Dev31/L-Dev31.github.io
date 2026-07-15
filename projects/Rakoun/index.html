@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rakoun — Traducteur Français ⇄ Créole guadeloupéen</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+  <link rel="icon" type="image/x-icon" href="images/favicon.png">
+</head>
+<body>
+
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KX9Z3K4" height="0"  width="0"  style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <!-- Header -->
+  <header>
+    <!-- Head -->
+    <div class="logo-wrap">
+      <img class="logo" src="images/rakoun.png" alt="Rakoun">
+      <img class="eye-pupil" id="eye-left" src="images/eye.png" alt="">
+      <img class="eye-pupil" id="eye-right" src="images/eye.png" alt="">
+    </div>
+    <!-- Title -->
+    <h1>Rakoun</h1>
+  </header>
+
+  <!-- Main Translator HTML -->
+  <main>
+    <div class="translator" id="translator">
+
+      <!-- Panel source language -->
+      <div class="lang-section" id="section-src">
+        <!-- Language header (flag, name, translated name) -->
+        <div class="lang-header">
+          <img class="flag" id="flag-src" src="images/flags/fr.png" alt="Drapeau Français">
+          <div>
+            <div class="lang-name" id="lang-src">Français</div>
+            <div class="lang-native" id="lang-src-native">Fwansé</div>
+          </div>
+        </div>
+        <!-- Input panel source language -->
+        <div class="panel">
+          <textarea id="input" placeholder="Écrivez ici…" autofocus></textarea>
+          <div class="panel-action">
+            <!--Listen-->
+            <button id="listen" class="listen" title="Écouter le texte" aria-label="Écouter le texte">
+              <iconify-icon icon="fluent:speaker-2-16-filled"></iconify-icon>
+            </button>
+
+            <!--Copy-->
+            <button id="copy" class="copy" title="Copier le texte" aria-label="Copier le texte">
+              <iconify-icon icon="fluent:copy-16-filled"></iconify-icon>
+            </button>
+
+            <!--Clear-->
+            <button id="clear" class="clear" title="Effacer le texte" aria-label="Effacer le texte">
+              <iconify-icon icon="fluent:delete-16-filled"></iconify-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Swap button -->
+      <button id="swap" class="swap" title="Inverser les langues" aria-label="Inverser les langues">
+        <iconify-icon icon="fluent:arrow-swap-16-filled"></iconify-icon>
+      </button>
+
+      <!-- Panel target language -->
+      <div class="lang-section" id="section-tgt">
+        <!-- Language header (flag, name, translated name) -->
+        <div class="lang-header">
+          <img class="flag" id="flag-tgt" src="images/flags/gp.png" alt="Drapeau Créole">
+          <div>
+            <div class="lang-name" id="lang-tgt">Créole</div>
+            <div class="lang-native" id="lang-tgt-native">Kréyòl</div>
+          </div>
+        </div>
+        <!-- Output panel target language -->
+        <div class="panel panel-output">
+          <textarea id="output" placeholder="Traduction…" readonly></textarea>
+          <div class="panel-action">
+            <button id="listen-tgt" title="Écouter la traduction" aria-label="Écouter la traduction">
+              <iconify-icon icon="fluent:speaker-2-16-filled"></iconify-icon>
+            </button>
+            <button id="copy-tgt" title="Copier la traduction" aria-label="Copier la traduction">
+              <iconify-icon icon="fluent:copy-16-filled"></iconify-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status (errors, warnings, etc...) -->
+    <p class="status" id="status"></p>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© <span id="year"></span> Rakoun. Tous droits reservés.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/engine.js"></script>
+  <script src="js/listen.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/eyes.js"></script>
+</body>
+</html>

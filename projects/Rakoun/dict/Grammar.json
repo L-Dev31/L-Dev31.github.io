@@ -1,0 +1,952 @@
+{
+  "articles_supprimes": [
+    "des",
+    "du",
+    "de",
+    "la",
+    "le",
+    "les",
+    "l",
+    "d",
+    "de la",
+    "de l",
+    "de l'",
+    "d'",
+    "l'",
+    "à",
+    "au",
+    "aux"
+  ],
+  "pronoms_sujets": {
+    "je": "an",
+    "j": "an",
+    "tu": "ou",
+    "il": "i",
+    "elle": "i",
+    "on": "nou",
+    "nous": "nou",
+    "vous": "zot",
+    "ils": "yo",
+    "elles": "yo",
+    "c": "sa"
+  },
+  "pronoms_creole_francais": {
+    "an": "je",
+    "mwen": "je",
+    "ou": "tu",
+    "i": "il",
+    "nou": "nous",
+    "zot": "vous",
+    "yo": "ils",
+    "li": "il"
+  },
+  "marqueur_present": "ka",
+  "marqueur_passe": "té",
+  "marqueur_futur": "ké",
+  "marqueur_futur_proche": "kay",
+  "marqueur_negation": "pa",
+  "negation_ne": [
+    "ne",
+    "n"
+  ],
+  "negation_pas": [
+    "pas",
+    "jamais",
+    "plus",
+    "point",
+    "guère",
+    "rien",
+    "personne"
+  ],
+  "negation_mots_gp": {
+    "jamais": "janmen",
+    "rien": "ayen",
+    "plus": "ankò",
+    "personne": "moun"
+  },
+  "determinants_feminins": [
+    "la",
+    "une",
+    "cette",
+    "ma",
+    "ta",
+    "sa",
+    "ladite",
+    "madame",
+    "mme"
+  ],
+  "determinants_masculins": [
+    "le",
+    "un",
+    "ce",
+    "cet",
+    "mon",
+    "ton",
+    "son",
+    "ledit",
+    "monsieur",
+    "m"
+  ],
+  "possessifs": {
+    "mon": "an-mwen",
+    "ma": "an-mwen",
+    "mes": "an-mwen",
+    "ton": "a-w",
+    "ta": "a-w",
+    "tes": "a-w",
+    "son": "a-y",
+    "sa": "a-y",
+    "ses": "a-y",
+    "notre": "an-nou",
+    "nos": "an-nou",
+    "votre": "a-zot",
+    "vos": "a-zot",
+    "leur": "a-yo",
+    "leurs": "a-yo"
+  },
+  "demonstratifs": [
+    "ce",
+    "cet",
+    "cette",
+    "ces"
+  ],
+  "particule_demonstrative": "lasa",
+  "interrogatifs": {
+    "qui": "kimoun",
+    "que": "ka",
+    "quoi": "ka",
+    "où": "ola",
+    "quand": "ki lè",
+    "comment": "kijan",
+    "pourquoi": "poukisa",
+    "combien": "konmen",
+    "quel": "ki",
+    "quelle": "ki",
+    "quels": "ki",
+    "quelles": "ki"
+  },
+  "elision": {
+    "je": "j'",
+    "le": "l'",
+    "la": "l'",
+    "de": "d'",
+    "ne": "n'",
+    "que": "qu'",
+    "se": "s'",
+    "ce": "c'",
+    "me": "m'",
+    "te": "t'"
+  },
+  "h_muet": [
+    "homme",
+    "heure",
+    "habit",
+    "hôtel",
+    "histoire",
+    "herbe",
+    "huile"
+  ],
+  "pronoms_toniques": {
+    "moi": "mwen",
+    "toi": "ou",
+    "lui": "li",
+    "eux": "yo"
+  },
+  "clitiques_objets": {
+    "me": "mwen",
+    "m": "mwen",
+    "te": "vou",
+    "t": "vou",
+    "se": "",
+    "s": "",
+    "le": "li",
+    "la": "li",
+    "l": "li",
+    "les": "yo",
+    "lui": "y",
+    "leur": "yo",
+    "nous": "nou",
+    "vous": "zot",
+    "y": "",
+    "en": ""
+  },
+  "clitiques_postposes": {
+    "w": "te",
+    "vou": "te",
+    "y": "le",
+    "li": "le",
+    "mwen": "me",
+    "nou": "nous",
+    "zot": "vous",
+    "yo": "les"
+  },
+  "adverbes_degre": [
+    "plus",
+    "moins",
+    "très",
+    "trop",
+    "aussi"
+  ],
+  "suffixes_feminins": [
+    "ion",
+    "té",
+    "ure",
+    "elle",
+    "ette",
+    "esse",
+    "ance",
+    "ence",
+    "ie",
+    "ude",
+    "ée"
+  ],
+  "avoir_attributs": [
+    "faim",
+    "soif",
+    "peur",
+    "froid",
+    "chaud",
+    "sommeil",
+    "raison",
+    "tort",
+    "honte",
+    "besoin"
+  ],
+  "determinants_genre": {
+    "un": [
+      "un",
+      "une"
+    ],
+    "une": [
+      "un",
+      "une"
+    ],
+    "le": [
+      "le",
+      "la"
+    ],
+    "la": [
+      "le",
+      "la"
+    ],
+    "du": [
+      "du",
+      "de la"
+    ],
+    "ce": [
+      "ce",
+      "cette"
+    ],
+    "cette": [
+      "ce",
+      "cette"
+    ],
+    "aucun": [
+      "aucun",
+      "aucune"
+    ]
+  },
+  "adjectifs_feminins": {
+    "beau": "belle",
+    "nouveau": "nouvelle",
+    "vieux": "vieille",
+    "blanc": "blanche",
+    "bon": "bonne",
+    "gentil": "gentille",
+    "gros": "grosse",
+    "long": "longue",
+    "frais": "fraîche",
+    "sec": "sèche",
+    "faux": "fausse",
+    "doux": "douce",
+    "fou": "folle",
+    "mou": "molle",
+    "court": "courte"
+  },
+  "tonique_de_sujet": {
+    "je": "moi",
+    "tu": "toi",
+    "il": "lui",
+    "elle": "elle",
+    "nous": "nous",
+    "vous": "vous",
+    "ils": "eux",
+    "elles": "elles"
+  },
+  "objet_imperatif": {
+    "mwen": "moi",
+    "w": "toi",
+    "vou": "toi",
+    "y": "le",
+    "li": "le",
+    "nou": "nous",
+    "zot": "vous",
+    "yo": "les"
+  },
+  "possessifs_deux_mots": {
+    "an mwen": "an-mwen",
+    "a w": "a-w",
+    "a y": "a-y",
+    "an nou": "an-nou",
+    "a zot": "a-zot",
+    "an zot": "a-zot",
+    "a zòt": "a-zot",
+    "an zòt": "a-zot",
+    "a yo": "a-yo",
+    "an yo": "a-yo"
+  },
+  "determinants_fr": [
+    "le",
+    "la",
+    "les",
+    "un",
+    "une",
+    "des",
+    "ce",
+    "cet",
+    "cette",
+    "ces",
+    "mon",
+    "ma",
+    "mes",
+    "ton",
+    "ta",
+    "tes",
+    "son",
+    "sa",
+    "ses",
+    "notre",
+    "nos",
+    "votre",
+    "vos",
+    "leur",
+    "leurs",
+    "l'",
+    "chaque",
+    "tout",
+    "toute",
+    "tous",
+    "toutes",
+    "aucun",
+    "aucune",
+    "plusieurs",
+    "quelques"
+  ],
+  "pluriel_determinants": {
+    "le": "les",
+    "la": "les",
+    "l'": "les",
+    "un": "des",
+    "une": "des",
+    "mon": "mes",
+    "ma": "mes",
+    "ton": "tes",
+    "ta": "tes",
+    "son": "ses",
+    "sa": "ses",
+    "notre": "nos",
+    "votre": "vos",
+    "leur": "leurs"
+  },
+  "locatifs_fr": [
+    "là",
+    "ici",
+    "là-bas",
+    "là-haut",
+    "là-dedans",
+    "dehors",
+    "dedans"
+  ],
+  "locutions_gp_fr": {
+    "an kolè": "en colère",
+    "an fòs": "en forme",
+    "tout tan": "tout le temps",
+    "tou tan": "tout le temps",
+    "an vi": "en ville",
+    "an kanpay": "à la campagne",
+    "an mèr": "en mer",
+    "ki manniè": "comment",
+    "ki jan": "comment",
+    "an simen": "par semaine",
+    "tout lanuit": "toute la nuit",
+    "tout lannuit": "toute la nuit",
+    "le ": null,
+    "an kolre": "en colère",
+    "an bon sante": "en bonne santé",
+    "an bon santé": "en bonne santé",
+    "ki lè": "quand",
+    "ki le": "quand",
+    "ki kote": "où",
+    "ki sa": "quoi"
+  },
+  "refl_pronoms": {
+    "je": "me",
+    "tu": "te",
+    "il": "se",
+    "elle": "se",
+    "nous": "nous",
+    "vous": "vous",
+    "ils": "se",
+    "elles": "se"
+  },
+  "possessifs_masculins": [
+    "mon",
+    "ton",
+    "son",
+    "notre",
+    "votre",
+    "leur"
+  ],
+  "possessifs_feminins": [
+    "ma",
+    "ta",
+    "sa",
+    "notre",
+    "votre",
+    "leur"
+  ],
+  "terminaisons_temps": {
+    "conditionnel": [
+      "eraient",
+      "erait",
+      "erais"
+    ],
+    "futur": [
+      "erons",
+      "eront",
+      "rons",
+      "erez",
+      "eras",
+      "ront",
+      "erai",
+      "rez",
+      "ras",
+      "rai",
+      "era",
+      "ra"
+    ],
+    "imparfait": [
+      "aient",
+      "ais",
+      "ait"
+    ]
+  },
+  "possessifs_toniques": {
+    "moi": "an-mwen",
+    "toi": "a-w",
+    "lui": "a-y",
+    "elle": "a-y",
+    "nous": "an-nou",
+    "vous": "a-zot",
+    "eux": "a-yo"
+  },
+  "strict_objects": [
+    "me",
+    "m",
+    "te",
+    "t",
+    "le",
+    "la",
+    "l",
+    "les",
+    "lui",
+    "leur"
+  ],
+  "ambiguous_objects": [
+    "nous",
+    "vous"
+  ],
+  "boundaries": [
+    ".",
+    ",",
+    "!",
+    "?",
+    ";",
+    ":",
+    "é",
+    "paske",
+    "si",
+    "lè",
+    "oben",
+    "men",
+    "kidonk",
+    "lo",
+    "et",
+    "ou",
+    "car",
+    "mais",
+    "quand",
+    "parce"
+  ],
+  "aller_imparfait": [
+    "allais",
+    "allait",
+    "allaient",
+    "allions",
+    "alliez"
+  ],
+  "venir_present": [
+    "viens",
+    "vient",
+    "venons",
+    "venez",
+    "viennent"
+  ],
+  "statives_fr": [
+    "peur",
+    "faim",
+    "soif",
+    "honte",
+    "chaud",
+    "froid",
+    "sommeil"
+  ],
+  "subjonctif_present_terminaisons": {
+    "je": "e",
+    "tu": "es",
+    "il": "e",
+    "elle": "e",
+    "ils": "ent",
+    "elles": "ent"
+  },
+  "present_3e_groupe_re": {
+    "je": "s",
+    "tu": "s",
+    "il": "",
+    "elle": "",
+    "nous": "ons",
+    "vous": "ez",
+    "ils": "ent",
+    "elles": "ent"
+  },
+  "suffixes_adjectifs": [
+    "es",
+    "ée",
+    "ées",
+    "e",
+    "s"
+  ],
+  "accords_adjectifs_suffixes": {
+    "eux": "euse",
+    "if": "ive",
+    "er": "ère",
+    "et": "ette"
+  },
+  "autres_fins_participe": [
+    "i",
+    "u",
+    "is"
+  ],
+  "verbes_declencheurs_que": [
+    "vouloir",
+    "savoir",
+    "dire",
+    "croire",
+    "penser"
+  ],
+  "faut_declencheurs_que": [
+    "faut"
+  ],
+  "pronoms_objet_gp": {
+    "mwen": "me",
+    "ou": "te",
+    "i": "le",
+    "nou": "nous",
+    "zot": "vous",
+    "yo": "les"
+  },
+  "clitiques_toujours": [
+    "me",
+    "te"
+  ],
+  "clitiques_contexte": [
+    "le",
+    "la",
+    "les",
+    "lui",
+    "nous",
+    "vous"
+  ],
+  "determinants_restituer_exclus": [
+    "les",
+    "des",
+    "du",
+    "de",
+    "l",
+    "aucun",
+    "aucune"
+  ],
+  "determinants_pluriels": [
+    "les",
+    "des",
+    "mes",
+    "tes",
+    "ses",
+    "nos",
+    "vos",
+    "leurs"
+  ],
+  "indefinis_singuliers": [
+    "un",
+    "une"
+  ],
+  "quantificateurs_pluriel": [
+    "combien",
+    "beaucoup"
+  ],
+  "interrogatifs_exclus": [
+    "ka",
+    "ki"
+  ],
+  "voyelles": "aàâäeéèêëiîïoôöuùûüy",
+  "ponctuation_fin_phrase": [
+    ".",
+    "!",
+    "?",
+    ",",
+    ";",
+    ":"
+  ],
+  "marqueurs_supplementaires": [
+    "ja",
+    "pòkò"
+  ],
+  "verbes_statifs_gp": [
+    "konnèt",
+    "konèt",
+    "sav",
+    "savé",
+    "vlé",
+    "lé",
+    "pé",
+    "enmé",
+    "ni",
+    "bizwen",
+    "dwèt",
+    "dwé",
+    "ka vlé"
+  ],
+  "etre_formes_gp": [
+    "yé",
+    "sé",
+    "la",
+    "lan"
+  ],
+  "radical_etre_imparfait": "ét",
+  "comp_remplacement": {
+    "toi": "ou",
+    "lui": "i"
+  },
+  "prepositions_toniques": [
+    "que",
+    "chez",
+    "avec",
+    "pour",
+    "de"
+  ],
+  "eclat_pani": {
+    "prefixe": "pa",
+    "suffixe": "ni"
+  },
+  "traductions_fr_gp": {
+    "c_est_fin": "sa yé",
+    "c_est_suite": "sé",
+    "si": "si",
+    "chez": "lakay",
+    "aussi_comparatif": "otan",
+    "plus_comparatif": "pi",
+    "allons": "annou",
+    "aller": "alé",
+    "il_y_a": "ni",
+    "il_faut": "fò",
+    "venir_de": "sòti"
+  },
+  "traductions_gp_fr": {
+    "se_les": "les",
+    "se_cest": "c'est",
+    "tout": "tous",
+    "es": "est-ce que",
+    "annou": "allons",
+    "lakay_chez": "chez",
+    "lakay_maison": [
+      "à",
+      "la",
+      "maison"
+    ],
+    "le_quand": "quand",
+    "pi_plus": "plus",
+    "pou_pour": "pour",
+    "a_de": "de",
+    "article_indefini": "un",
+    "ba_donner": "donne",
+    "fo_il": "il",
+    "fo_faut": "faut",
+    "fo_que": "que"
+  },
+  "patterns_ni_gp": {
+    "pa_ni_pon": [
+      "il",
+      "n'y",
+      "a",
+      "aucun"
+    ],
+    "pa_ni": [
+      "il",
+      "n'y",
+      "a",
+      "pas"
+    ],
+    "ni": [
+      "il",
+      "y",
+      "a"
+    ],
+    "ni_du": "du"
+  },
+  "multiword_monde": {
+    "tout_le_monde": [
+      "tout",
+      "moun"
+    ],
+    "du_monde": "moun",
+    "le_monde": [
+      "monn",
+      "la"
+    ]
+  },
+  "declencheurs_ba": [
+    "ba",
+    "bay",
+    "ban"
+  ],
+  "poko_formes": [
+    "pòkò",
+    "poko"
+  ],
+  "poko_prefixes": [
+    "po",
+    "pò"
+  ],
+  "poko_suffixes": [
+    "ko",
+    "kò"
+  ],
+  "article_indefini_gp": [
+    "an",
+    "on",
+    "yon",
+    "yonn"
+  ],
+  "clitique_te_gp": {
+    "cible": "vou",
+    "apres_voyelle": "-w",
+    "apres_consonne": "ou",
+    "voyelles_gp": "aéèeioòuùy"
+  },
+  "participes_passes": {},
+  "ensembles_lexicaux": {
+    "pluriel_invariables_al": [
+      "bal",
+      "carnaval",
+      "festival",
+      "récital",
+      "chacal",
+      "régal",
+      "banal",
+      "natal",
+      "fatal",
+      "naval",
+      "final"
+    ],
+    "demonstratifs_gp": [
+      "sa",
+      "ça",
+      "sa-a",
+      "sé",
+      "la",
+      "lan",
+      "lasa"
+    ],
+    "bloqueurs_verbe_nu": [
+      "faut",
+      "que",
+      "qui",
+      "ne",
+      "pas",
+      "allons",
+      "de",
+      "à",
+      "pour",
+      "sans",
+      "là",
+      "ici",
+      "san",
+      "pou",
+      "avan",
+      "apré",
+      "apre"
+    ],
+    "pronoms_fr": [
+      "je",
+      "tu",
+      "il",
+      "elle",
+      "on",
+      "nous",
+      "vous",
+      "ils",
+      "elles",
+      "me",
+      "te",
+      "se",
+      "le",
+      "la",
+      "les",
+      "lui",
+      "leur",
+      "moi",
+      "toi",
+      "ça",
+      "ce",
+      "qui",
+      "que"
+    ],
+    "mots_fonctionnels_fr": [
+      "ne",
+      "pas",
+      "plus",
+      "jamais",
+      "rien",
+      "personne",
+      "guère",
+      "et",
+      "ou",
+      "mais",
+      "donc",
+      "or",
+      "ni",
+      "car",
+      "que",
+      "qui",
+      "dont",
+      "où",
+      "quand",
+      "si",
+      "comme"
+    ],
+    "clitiques_objet_fr": [
+      "me",
+      "m",
+      "te",
+      "t",
+      "se",
+      "s",
+      "nous",
+      "vous",
+      "lui",
+      "leur"
+    ],
+    "intensifieurs_fr": [
+      "plus",
+      "moins",
+      "très",
+      "aussi",
+      "si",
+      "bien",
+      "trop"
+    ],
+    "materiaux_fr": [
+      "or",
+      "argent",
+      "bois",
+      "fer",
+      "plastique",
+      "cuir",
+      "coton",
+      "laine",
+      "pierre",
+      "verre",
+      "béton",
+      "bronze",
+      "acier",
+      "marbre",
+      "paille"
+    ],
+    "articles_definis_fr": [
+      "le",
+      "la",
+      "l",
+      "les"
+    ],
+    "pronoms_sujet_fr": [
+      "je",
+      "tu",
+      "il",
+      "elle",
+      "on",
+      "nous",
+      "vous",
+      "ils",
+      "elles",
+      "ça",
+      "cela"
+    ],
+    "stop_groupe_nominal": [
+      "et", "ou", "mais", "que", "car", "donc", "or", "ni",
+      "à", "de", "dans", "sur", "sous", "pour", "avec", "sans", "vers", "chez",
+      "en", "par", "entre", "dès", "depuis", "pendant", "malgré", "selon", "dont", "où",
+      "se", "s", "me", "te"
+    ],
+    "prepositions_contexte": [
+      "sur", "dans", "avec", "sous", "pour", "sans", "vers", "chez",
+      "à", "de", "derrière", "devant", "près"
+    ],
+    "nombres_fr": [
+      "dix", "vingt", "trente", "quarante", "cinquante", "soixante", "cent", "mille",
+      "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf",
+      "onze", "douze", "treize", "quatorze", "quinze", "seize"
+    ],
+    "articles_clause": ["le", "la", "les", "un", "une", "des"],
+    "coordinateurs": ["et", "ou", "mais"],
+    "mots_negatifs_fr": ["rien", "personne", "jamais", "aucun", "aucune", "nulle", "nul", "guère"],
+    "adverbes_quantite_fr": ["beaucoup", "peu", "trop", "assez", "moins", "tant", "autant", "plein"],
+    "prepositions_locatives": ["sur", "sous", "dans", "derrière", "devant", "entre", "chez"],
+    "noms_masse_fr": [
+      "eau", "argent", "pain", "riz", "lait", "sang", "sel", "sucre", "farine", "beurre", "miel",
+      "café", "thé", "jus", "huile", "viande", "air", "sable", "pluie", "vent", "musique",
+      "courage", "force", "chance", "patience", "respect", "soleil", "chaleur", "fumée", "boue", "herbe"
+    ]
+  },
+  "contractions_fr": [
+    [
+      "à",
+      "le",
+      "au"
+    ],
+    [
+      "à",
+      "les",
+      "aux"
+    ],
+    [
+      "de",
+      "le",
+      "du"
+    ],
+    [
+      "de",
+      "les",
+      "des"
+    ],
+    [
+      "ça",
+      "est",
+      "c'est"
+    ],
+    [
+      "ça",
+      "était",
+      "c'était"
+    ]
+  ]
+}

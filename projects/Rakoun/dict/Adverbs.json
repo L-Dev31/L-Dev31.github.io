@@ -1,0 +1,395 @@
+[
+  {
+    "fr": "ailleurs",
+    "gp": "on lòt koté"
+  },
+  {
+    "fr": "ainsi",
+    "gp": "épi tout konsa"
+  },
+  {
+    "fr": "alors",
+    "gp": "toupannan"
+  },
+  {
+    "fr": "apparamment",
+    "gp": "néyè"
+  },
+  {
+    "fr": "assez",
+    "gp": "asé"
+  },
+  {
+    "fr": "aussi",
+    "gp": "tou"
+  },
+  {
+    "fr": "autrefois",
+    "gp": [
+      "nanni",
+      "tanlontan"
+    ]
+  },
+  {
+    "fr": "beaucoup",
+    "gp": [
+      "onlo",
+      "anpil",
+      "antchô"
+    ]
+  },
+  {
+    "fr": "bien",
+    "gp": [
+      "byen",
+      "bien"
+    ]
+  },
+  {
+    "fr": "bientôt",
+    "gp": "talè"
+  },
+  {
+    "fr": "combien",
+    "gp": "konmen"
+  },
+  {
+    "fr": "comment",
+    "gp": "kijan"
+  },
+  {
+    "fr": "dehors",
+    "gp": "déro"
+  },
+  {
+    "fr": "demain",
+    "gp": "dèmen"
+  },
+  {
+    "fr": "doucement",
+    "gp": "dousman"
+  },
+  {
+    "fr": "déjà",
+    "gp": "déja"
+  },
+  {
+    "fr": "encore",
+    "gp": "ankò"
+  },
+  {
+    "fr": "ensemble",
+    "gp": "ansanm"
+  },
+  {
+    "fr": "environ",
+    "gp": "owonzon"
+  },
+  {
+    "fr": "facilement",
+    "gp": "déflouz"
+  },
+  {
+    "fr": "hier",
+    "gp": [
+      "iyè",
+      "yè"
+    ]
+  },
+  {
+    "fr": "ici",
+    "gp": "isi"
+  },
+  {
+    "fr": "longtemps",
+    "gp": "lontan"
+  },
+  {
+    "fr": "là",
+    "gp": "la"
+  },
+  {
+    "fr": "maintenant",
+    "gp": "atjèlman"
+  },
+  {
+    "fr": "mal",
+    "gp": "mal"
+  },
+  {
+    "fr": "moins",
+    "gp": "mwens"
+  },
+  {
+    "fr": "non",
+    "gp": "awa"
+  },
+  {
+    "fr": "oui",
+    "gp": "anhan"
+  },
+  {
+    "fr": "partout",
+    "gp": "toupatou"
+  },
+  {
+    "fr": "pas du tout",
+    "gp": "ditou"
+  },
+  {
+    "fr": "peu",
+    "gp": "anzing"
+  },
+  {
+    "fr": "peut-être",
+    "gp": [
+      "pétèt",
+      "nè"
+    ]
+  },
+  {
+    "fr": "plus jamais",
+    "gp": "janmen ankò"
+  },
+  {
+    "fr": "plus personne",
+    "gp": "moun ankò"
+  },
+  {
+    "fr": "plus rien",
+    "gp": "ayen ankò"
+  },
+  {
+    "fr": [
+      "pourquoi",
+      "pq"
+    ],
+    "gp": "poukisa"
+  },
+  {
+    "fr": "souvent",
+    "gp": "souvan"
+  },
+  {
+    "fr": "tellement",
+    "gp": [
+      "toubòlman",
+      "afos"
+    ]
+  },
+  {
+    "fr": "toujours",
+    "gp": "toujou"
+  },
+  {
+    "fr": [
+      "tout",
+      "tous",
+      "toute",
+      "toutes"
+    ],
+    "gp": "tout"
+  },
+  {
+    "fr": "tout de suite",
+    "gp": "tousit"
+  },
+  {
+    "fr": "tout à l'heure",
+    "gp": "talè"
+  },
+  {
+    "fr": "trop",
+    "gp": [
+      "twòp",
+      "two",
+      "tro"
+    ]
+  },
+  {
+    "fr": "très",
+    "gp": [
+      "trè",
+      "tré"
+    ]
+  },
+  {
+    "fr": "vite",
+    "gp": "vit"
+  },
+  {
+    "fr": "vraiment",
+    "gp": "vréman"
+  },
+  {
+    "gp": "prèské",
+    "fr": "presque",
+    "type": "adv"
+  },
+  {
+    "gp": "razman",
+    "fr": "rarement",
+    "type": "adv"
+  },
+  {
+    "gp": "anndan",
+    "fr": "dedans",
+    "type": "adv"
+  },
+  {
+    "gp": "anlè",
+    "fr": "dessus",
+    "type": "adv"
+  },
+  {
+    "gp": "érèzman",
+    "fr": "heureusement",
+    "type": "adv"
+  },
+  {
+    "gp": "malérèzman",
+    "fr": "malheureusement",
+    "type": "adv"
+  },
+  {
+    "gp": "sirtou",
+    "fr": "surtout",
+    "type": "adv"
+  },
+  {
+    "gp": "otan",
+    "fr": "autant",
+    "type": "adv"
+  },
+  {
+    "fr": "jamais",
+    "gp": "janmen",
+    "type": "adv"
+  },
+  {
+    "fr": "plus",
+    "gp": [
+      "pi",
+      "pli"
+    ],
+    "type": "adv"
+  },
+  {
+    "fr": "tôt",
+    "gp": "bonè",
+    "type": "adv"
+  },
+  {
+    "fr": "aujourd'hui",
+    "gp": [
+      "jodi",
+      "jòdi",
+      "jodla",
+      "jodi-la"
+    ],
+    "type": "adv"
+  },
+  {
+    "fr": [
+      "aujourd hui",
+      "aujourd'hui"
+    ],
+    "gp": "jodla",
+    "type": "adv",
+    "secondaire": true
+  },
+  {
+    "fr": [
+      "tous les jours"
+    ],
+    "gp": [
+      "toulèjou",
+      "touléjou"
+    ],
+    "type": "adv"
+  },
+  {
+    "gp": [
+      "net"
+    ],
+    "fr": "complètement",
+    "type": "adv"
+  },
+  {
+    "gp": [
+      "poko",
+      "pa ko"
+    ],
+    "fr": "pas encore",
+    "type": "adv"
+  },
+  {
+    "gp": [
+      "sèlman",
+      "selman"
+    ],
+    "fr": "seulement",
+    "type": "adv"
+  },
+  {
+    "gp": [
+      "modèstman"
+    ],
+    "fr": "modestement",
+    "type": "adv"
+  },
+  {
+    "gp": "kisa",
+    "fr": "quoi",
+    "type": "adv"
+  },
+  {
+    "gp": "alè",
+    "fr": "à l'heure",
+    "type": "adv"
+  },
+  {
+    "gp": "ta",
+    "fr": "tard",
+    "type": "adv"
+  },
+  {
+    "gp": "menm",
+    "fr": "même",
+    "type": "adv"
+  },
+  {
+    "gp": [
+      "doubout",
+      "kanpé",
+      "kanpe"
+    ],
+    "fr": "debout",
+    "type": "adv"
+  },
+  {
+    "fr": "parfois",
+    "gp": "dèlè",
+    "type": "adv"
+  },
+  {
+    "fr": "lentement",
+    "gp": "dousman"
+  },
+  {
+    "fr": "ici",
+    "gp": "isit"
+  },
+  {
+    "fr": "dehors",
+    "gp": "deyò"
+  },
+  {
+    "fr": "bientôt",
+    "gp": "titak"
+  },
+  {
+    "fr": "hier",
+    "gp": "ayè"
+  }
+]

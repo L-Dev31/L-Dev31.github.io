@@ -1,0 +1,1487 @@
+[
+  {
+    "gp": "san",
+    "fr": "sans",
+    "type": "misc"
+  },
+  {
+    "fr": "1/2",
+    "gp": "chopin",
+    "type": "num"
+  },
+  {
+    "fr": "1/4",
+    "gp": "wotji",
+    "type": "num"
+  },
+  {
+    "fr": "1/8",
+    "gp": "mis",
+    "type": "num"
+  },
+  {
+    "fr": "aucun",
+    "gp": "pon",
+    "type": "article"
+  },
+  {
+    "fr": "avec",
+    "gp": "èvè",
+    "type": "prep"
+  },
+  {
+    "fr": [
+      "bonjour",
+      "bjr"
+    ],
+    "gp": "bonjou",
+    "type": "interj"
+  },
+  {
+    "fr": [
+      "bonsoir",
+      "bsr"
+    ],
+    "gp": "bonswa",
+    "type": "interj"
+  },
+  {
+    "fr": "car",
+    "gp": "paske",
+    "type": "conj"
+  },
+  {
+    "fr": "cent",
+    "gp": "san",
+    "type": "num",
+    "secondaire": true
+  },
+  {
+    "fr": "chez elle",
+    "gp": "lakay a-y",
+    "type": "expr"
+  },
+  {
+    "fr": "chez elles",
+    "gp": "lakay a-yo",
+    "type": "expr"
+  },
+  {
+    "fr": "chez eux",
+    "gp": "lakay a-yo",
+    "type": "expr"
+  },
+  {
+    "fr": "chez lui",
+    "gp": "lakay a-y",
+    "type": "expr"
+  },
+  {
+    "fr": "chez moi",
+    "gp": "lakay an-mwen",
+    "type": "expr"
+  },
+  {
+    "fr": "chez nous",
+    "gp": "lakay an-nou",
+    "type": "expr"
+  },
+  {
+    "fr": "chez toi",
+    "gp": "lakay a-w",
+    "type": "expr"
+  },
+  {
+    "fr": "chez vous",
+    "gp": "lakay a-zot",
+    "type": "expr"
+  },
+  {
+    "fr": "cinq",
+    "gp": "senk",
+    "type": "num"
+  },
+  {
+    "fr": "dans",
+    "gp": "adan",
+    "type": "prep"
+  },
+  {
+    "fr": "de monde",
+    "gp": "moun",
+    "type": "expr"
+  },
+  {
+    "fr": "depuis",
+    "gp": "dèpi",
+    "type": "prep"
+  },
+  {
+    "fr": "derrière",
+    "gp": "dèyè",
+    "type": "prep"
+  },
+  {
+    "fr": "deux",
+    "gp": "dé",
+    "type": "num"
+  },
+  {
+    "fr": "devant",
+    "gp": "douvan",
+    "type": "prep"
+  },
+  {
+    "fr": "dix",
+    "gp": "dis",
+    "type": "num"
+  },
+  {
+    "fr": "donc",
+    "gp": "kidonk",
+    "type": "conj"
+  },
+  {
+    "fr": "douze",
+    "gp": "douz",
+    "type": "num"
+  },
+  {
+    "fr": "du monde",
+    "gp": "moun",
+    "type": "expr"
+  },
+  {
+    "fr": "en",
+    "gp": "an",
+    "type": "prep",
+    "secondaire": true
+  },
+  {
+    "fr": "à",
+    "gp": "a",
+    "type": "prep"
+  },
+  {
+    "fr": "au",
+    "gp": "a",
+    "type": "prep",
+    "secondaire": true
+  },
+  {
+    "fr": "vers",
+    "gp": "vè",
+    "type": "prep"
+  },
+  {
+    "fr": "est-ce que",
+    "gp": "ès",
+    "type": "expr"
+  },
+  {
+    "fr": "et",
+    "gp": "é",
+    "type": "conj"
+  },
+  {
+    "fr": "huit",
+    "gp": "uit",
+    "type": "num"
+  },
+  {
+    "fr": [
+      "je t'aime",
+      "je t aime",
+      "jtm"
+    ],
+    "gp": "an enmé-w",
+    "type": "expr"
+  },
+  {
+    "fr": "jusqu'à",
+    "gp": "jiktan",
+    "type": "prep"
+  },
+  {
+    "fr": "monde",
+    "gp": "monn la",
+    "type": "expr"
+  },
+  {
+    "fr": "leur",
+    "gp": "an yo",
+    "type": "pron"
+  },
+  {
+    "fr": "lui",
+    "gp": "misyé",
+    "type": "pron"
+  },
+  {
+    "fr": "mais",
+    "gp": [
+      "men",
+      "mé"
+    ],
+    "type": "conj"
+  },
+  {
+    "fr": [
+      "merci",
+      "mrc"
+    ],
+    "gp": [
+      "mèsi",
+      "mèci"
+    ],
+    "type": "interj"
+  },
+  {
+    "fr": "mille",
+    "gp": "mil",
+    "type": "num"
+  },
+  {
+    "fr": [
+      "mort de rire",
+      "mdr",
+      "lol"
+    ],
+    "gp": "ka pété ri",
+    "type": "expr"
+  },
+  {
+    "fr": "neuf",
+    "gp": "nèf",
+    "type": "num"
+  },
+  {
+    "fr": "ni",
+    "gp": "ni",
+    "type": "conj"
+  },
+  {
+    "fr": "onze",
+    "gp": "onz",
+    "type": "num"
+  },
+  {
+    "fr": "or",
+    "gp": "lo",
+    "type": "conj"
+  },
+  {
+    "fr": "ou",
+    "gp": "oben",
+    "type": "conj"
+  },
+  {
+    "fr": "où",
+    "gp": "oti",
+    "type": "pron"
+  },
+  {
+    "fr": "parce",
+    "gp": "paske",
+    "type": "conj"
+  },
+  {
+    "fr": "pour",
+    "gp": "pou",
+    "type": "prep"
+  },
+  {
+    "fr": "quand",
+    "gp": "lè",
+    "type": "conj"
+  },
+  {
+    "fr": "quatre",
+    "gp": "kat",
+    "type": "num"
+  },
+  {
+    "fr": "que",
+    "gp": "anni",
+    "type": "pron"
+  },
+  {
+    "fr": "qui",
+    "gp": "ta",
+    "type": "pron",
+    "secondaire": true
+  },
+  {
+    "fr": "quoi",
+    "gp": "toufwazékant",
+    "type": "pron"
+  },
+  {
+    "fr": "rien",
+    "gp": "ayen",
+    "type": "pron"
+  },
+  {
+    "fr": [
+      "s'il te plaît",
+      "s'il te plait",
+      "stp"
+    ],
+    "gp": "souplé",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "s'il vous plaît",
+      "s'il vous plait",
+      "svp"
+    ],
+    "gp": "souplé",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "salut",
+      "slt"
+    ],
+    "gp": [
+      "yèp",
+      "bonjou"
+    ],
+    "type": "interj"
+  },
+  {
+    "fr": "sans",
+    "gp": "abizan",
+    "type": "prep"
+  },
+  {
+    "fr": "selon",
+    "gp": "dapré",
+    "type": "prep"
+  },
+  {
+    "fr": "sept",
+    "gp": "sèt",
+    "type": "num"
+  },
+  {
+    "fr": "si",
+    "gp": "wi",
+    "type": "conj"
+  },
+  {
+    "fr": "six",
+    "gp": "sis",
+    "type": "num"
+  },
+  {
+    "fr": "sous",
+    "gp": "anba",
+    "type": "prep"
+  },
+  {
+    "fr": "sur",
+    "gp": "asou",
+    "type": "prep"
+  },
+  {
+    "fr": "trois",
+    "gp": "twa",
+    "type": "num"
+  },
+  {
+    "fr": "un",
+    "gp": "yonn",
+    "type": "num"
+  },
+  {
+    "fr": "vingt",
+    "gp": "ven",
+    "type": "num"
+  },
+  {
+    "fr": "ça",
+    "gp": "sa",
+    "type": "pronom"
+  },
+  {
+    "fr": "comme ça",
+    "gp": "kon-sa",
+    "type": "expr"
+  },
+  {
+    "fr": "il faut",
+    "gp": [
+      "fok",
+      "fò"
+    ],
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "pendant",
+      "pendant que"
+    ],
+    "gp": "toutan",
+    "type": "conj"
+  },
+  {
+    "fr": "que",
+    "gp": "pasé",
+    "type": "conj"
+  },
+  {
+    "fr": "les autres",
+    "gp": [
+      "lézot",
+      "lézòt"
+    ],
+    "type": "pron"
+  },
+  {
+    "fr": "par semaine",
+    "gp": "an simen",
+    "type": "expr"
+  },
+  {
+    "fr": "tous les autres",
+    "gp": "tout lézot",
+    "type": "expr"
+  },
+  {
+    "fr": "toutes les autres",
+    "gp": "tout lézòt",
+    "type": "expr"
+  },
+  {
+    "fr": "l'un devant l'autre",
+    "gp": "yonn douvan lòt",
+    "type": "expr"
+  },
+  {
+    "fr": "l'un l'autre",
+    "gp": "yonn lòt",
+    "type": "expr"
+  },
+  {
+    "fr": "en charbon",
+    "gp": "an chabon",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "petit enfant",
+      "petits enfants",
+      "petit garçon"
+    ],
+    "gp": "ti manmay",
+    "type": "expr"
+  },
+  {
+    "fr": "toute la nuit",
+    "gp": "tout lanuit",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "au",
+      "aux"
+    ],
+    "gp": "o",
+    "type": "prep"
+  },
+  {
+    "fr": "comme",
+    "gp": "kon",
+    "type": "conj"
+  },
+  {
+    "fr": [
+      "pendant",
+      "durant"
+    ],
+    "gp": "pannan",
+    "type": "prep"
+  },
+  {
+    "fr": [
+      "au revoir",
+      "à bientôt"
+    ],
+    "gp": "orevwa",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "bon anniversaire"
+    ],
+    "gp": "bon fèt",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "à l'heure"
+    ],
+    "gp": "alè",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "sans importance"
+    ],
+    "gp": "san enpòtans",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "loin"
+    ],
+    "gp": "lwen",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "de suite",
+      "tout de suite"
+    ],
+    "gp": "tousit",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "enfin"
+    ],
+    "gp": "enfen",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "d'accord"
+    ],
+    "gp": "dakor",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "tout seul",
+      "toute seule"
+    ],
+    "gp": "toutosel",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "sinon"
+    ],
+    "gp": "sinon",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "anniversaire"
+    ],
+    "gp": "anivèsè",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "bibliothèque"
+    ],
+    "gp": "bibliothèk",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "importance"
+    ],
+    "gp": "enpòtans",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "décembre"
+    ],
+    "gp": "desanm",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "scène"
+    ],
+    "gp": "sèn",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "le"
+    ],
+    "fr": "quand",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "nwit",
+      "nuit"
+    ],
+    "fr": "nuit",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "swa"
+    ],
+    "fr": "soir",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "ankolè",
+      "ankolre",
+      "an kolre"
+    ],
+    "fr": "en colère",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "pandan"
+    ],
+    "fr": "pendant que",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "akoz",
+      "akòz"
+    ],
+    "fr": "à cause de",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "épi",
+      "epi"
+    ],
+    "fr": "et",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "paski"
+    ],
+    "fr": "parce que",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "jis",
+      "isi"
+    ],
+    "fr": "jusqu'à",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "tou piti",
+      "toutosel"
+    ],
+    "fr": "tout petit",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "sala",
+      "sa a"
+    ],
+    "fr": "cela",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "aswa"
+    ],
+    "fr": "ce soir",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "e"
+    ],
+    "fr": "et",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "kont"
+    ],
+    "fr": "contre",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "oui",
+      "wi"
+    ],
+    "fr": "oui",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "non"
+    ],
+    "fr": "non",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "kabech"
+    ],
+    "fr": "pieds nus",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "trente",
+      "30"
+    ],
+    "gp": "trant",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "quarante",
+      "40"
+    ],
+    "gp": "karant",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "cinquante",
+      "50"
+    ],
+    "gp": "senkant",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "soixante",
+      "60"
+    ],
+    "gp": "swasant",
+    "type": "misc"
+  },
+  {
+    "fr": "pieds nus",
+    "gp": "pyé touni",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "maksimòm",
+      "maximum"
+    ],
+    "fr": "maximum",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "avan"
+    ],
+    "fr": "avant",
+    "type": "misc",
+    "secondaire": true
+  },
+  {
+    "gp": [
+      "ke",
+      "k"
+    ],
+    "fr": "que",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "nan"
+    ],
+    "fr": "dans",
+    "type": "misc",
+    "secondaire": true
+  },
+  {
+    "gp": [
+      "pran swen"
+    ],
+    "fr": "prendre soin",
+    "type": "misc"
+  },
+  {
+    "gp": "de",
+    "fr": "de",
+    "type": "misc"
+  },
+  {
+    "gp": "pou",
+    "fr": "pour",
+    "type": "misc",
+    "secondaire": true
+  },
+  {
+    "gp": "ak",
+    "fr": "avec",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "kon",
+      "kon sa"
+    ],
+    "fr": "comme",
+    "type": "misc",
+    "secondaire": true
+  },
+  {
+    "gp": [
+      "bésoin",
+      "bezwen"
+    ],
+    "fr": "avoir besoin",
+    "type": "misc",
+    "secondaire": true
+  },
+  {
+    "gp": "bonmaten",
+    "fr": "le matin",
+    "type": "misc"
+  },
+  {
+    "gp": "bò",
+    "fr": "près de",
+    "type": "prep"
+  },
+  {
+    "gp": "bo",
+    "fr": "près de",
+    "type": "prep"
+  },
+  {
+    "gp": "lapòt",
+    "fr": "la porte",
+    "type": "misc"
+  },
+  {
+    "gp": "lapot",
+    "fr": "la porte",
+    "type": "misc"
+  },
+  {
+    "gp": "dan",
+    "fr": "dans",
+    "type": "prep"
+  },
+  {
+    "gp": "ek",
+    "fr": "et",
+    "type": "conj"
+  },
+  {
+    "gp": "èk",
+    "fr": "et",
+    "type": "conj"
+  },
+  {
+    "gp": "sou",
+    "fr": "sur",
+    "type": "prep"
+  },
+  {
+    "gp": "ba",
+    "fr": "à",
+    "type": "prep"
+  },
+  {
+    "gp": "paski",
+    "fr": "parce que",
+    "type": "conj"
+  },
+  {
+    "gp": "paske",
+    "fr": "parce que",
+    "type": "conj"
+  },
+  {
+    "gp": "zot",
+    "fr": "vous",
+    "type": "pron"
+  },
+  {
+    "gp": "avèk",
+    "fr": "avec",
+    "type": "prep"
+  },
+  {
+    "gp": "avek",
+    "fr": "avec",
+    "type": "prep"
+  },
+  {
+    "gp": "diz",
+    "fr": "dix",
+    "type": "num"
+  },
+  {
+    "gp": "nan",
+    "fr": "dans",
+    "type": "prep"
+  },
+  {
+    "gp": "avè",
+    "fr": "avec",
+    "type": "prep"
+  },
+  {
+    "fr": [
+      "comment vas-tu",
+      "comment tu vas",
+      "ça va ?",
+      "ca va ?",
+      "tu vas bien",
+      "vous allez bien",
+      "comment tu te sens",
+      "comment tu te portes"
+    ],
+    "gp": [
+      "kijan a-w",
+      "kijan aw",
+      "kijan a'w"
+    ],
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "ça va",
+      "ca va"
+    ],
+    "gp": "an byen",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "comment allez-vous",
+      "comment vous allez"
+    ],
+    "gp": "kouman zot yé",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "pas mal",
+      "pas trop mal"
+    ],
+    "gp": "pa pi mal",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "à tout à l'heure",
+      "à tout a l heure",
+      "à toute à l'heure",
+      "à tout à l heure",
+      "à toute à l heure"
+    ],
+    "gp": "a talè",
+    "type": "expr"
+  },
+  {
+    "fr": "pardon",
+    "gp": "padòn",
+    "type": "interj"
+  },
+  {
+    "fr": [
+      "bravo",
+      "félicitations"
+    ],
+    "gp": "woulo",
+    "type": "interj"
+  },
+  {
+    "fr": [
+      "dépêche-toi",
+      "dépêchez-vous",
+      "fais vite",
+      "dépêche toi",
+      "vous dépêchez"
+    ],
+    "gp": "fè vit",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "comment tu t appelles",
+      "comment tu t appelle",
+      "comment t appelles-tu",
+      "comment vous appelez-vous",
+      "comment vous vous appelez",
+      "comment on t appelle",
+      "tu t appelles comment",
+      "tu t appelle comment",
+      "vous vous appelez comment",
+      "quel est ton nom",
+      "quel est votre nom",
+      "quel est ton prénom",
+      "quel est votre prénom",
+      "c est quoi ton nom",
+      "c est quoi ton prénom",
+      "c est quoi votre nom",
+      "ton nom c est quoi",
+      "ton prénom c est quoi"
+    ],
+    "gp": "ki non a-w",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "je m appelle",
+      "je me nomme",
+      "mon nom est",
+      "mon prénom est",
+      "mon nom c est",
+      "mon prénom c est",
+      "on m appelle",
+      "moi c est"
+    ],
+    "gp": "non an mwen sé",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "je t'aime",
+      "je t aime"
+    ],
+    "gp": [
+      "mwen enmé-w",
+      "an enmé-w",
+      "mwen enmé ou"
+    ],
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "mon amour",
+      "mon chéri",
+      "ma chérie"
+    ],
+    "gp": "lanmou an mwen",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "quel âge as-tu",
+      "quel âge avez-vous",
+      "tu as quel âge"
+    ],
+    "gp": "ki laj a-w",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "tu habites loin",
+      "vous habitez loin",
+      "tu vis loin"
+    ],
+    "gp": "ou ka rété lwen",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "de rien",
+      "je vous en prie",
+      "il n'y a pas de quoi",
+      "pas de quoi",
+      "avec plaisir"
+    ],
+    "gp": "pa pwan kont",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "il fait chaud",
+      "il fait très chaud"
+    ],
+    "gp": "i ka fè cho",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "il fait froid",
+      "il fait très froid"
+    ],
+    "gp": "i ka fè frèt",
+    "type": "expr"
+  },
+  {
+    "fr": "il pleut",
+    "gp": "lapli ka tonbé",
+    "type": "expr"
+  },
+  {
+    "fr": "bonne nuit",
+    "gp": "bon nwit",
+    "type": "interj"
+  },
+  {
+    "fr": [
+      "laisse-moi",
+      "laisse-moi tranquille",
+      "fiche-moi la paix",
+      "laisse moi",
+      "laisse moi tranquille"
+    ],
+    "gp": "kité mwen",
+    "type": "expr"
+  },
+  {
+    "fr": "donne-moi",
+    "gp": "ban mwen",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "n'aie pas peur",
+      "ne t'inquiète pas",
+      "ne vous inquiétez pas",
+      "n aie pas peur",
+      "ne t inquiète pas"
+    ],
+    "gp": "pa pè",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "c'est la vie",
+      "ainsi va la vie",
+      "c est la vie"
+    ],
+    "gp": "sé sa lavi",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "il était une fois",
+      "une fois"
+    ],
+    "gp": "té ni on fwa",
+    "type": "expr"
+  },
+  {
+    "fr": "quelle chance",
+    "gp": "ala chans",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "comme c'est beau",
+      "que c'est beau",
+      "c'est magnifique",
+      "comme c est beau"
+    ],
+    "gp": "ala bèl bagay",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "qu'est-ce qui se passe",
+      "que se passe-t-il",
+      "que se passe t il",
+      "qu est-ce qui se passe"
+    ],
+    "gp": "sa ki ka pasé",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "bon courage",
+      "courage"
+    ],
+    "gp": "bay kò-w fòs",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "je suis désolé",
+      "je suis désolée",
+      "je suis navré",
+      "pardon",
+      "excuse-moi"
+    ],
+    "gp": "padòn",
+    "type": "expr"
+  },
+  {
+    "gp": [
+      "kijan a-w",
+      "kouman ou yé",
+      "kijan ou yé",
+      "ka ou fè",
+      "ka-w fè",
+      "kijan ou alé",
+      "kijan alé ou",
+      "kijan ou ka alé"
+    ],
+    "fr": "comment vas-tu",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "pour ma part",
+      "quant à moi",
+      "de mon côté",
+      "en ce qui me concerne"
+    ],
+    "gp": "kanta mwen",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "je vais très bien",
+      "je vais tres bien",
+      "je me porte très bien"
+    ],
+    "gp": "an byen net",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "je vais bien",
+      "je me porte bien",
+      "ça va bien"
+    ],
+    "gp": "an byen",
+    "type": "expr"
+  },
+  {
+    "gp": [
+      "kijan alé zot",
+      "kijan zot alé",
+      "kijan zot ka alé",
+      "kouman zot yé",
+      "ka zot fè"
+    ],
+    "fr": "comment allez-vous",
+    "type": "expr"
+  },
+  {
+    "gp": [
+      "sa ou fè",
+      "sa ou ka fè",
+      "sa ka maché"
+    ],
+    "fr": "comment ça va",
+    "type": "expr"
+  },
+  {
+    "gp": [
+      "ki non a-w",
+      "ki non a'w",
+      "ki non aw"
+    ],
+    "fr": "comment t'appelles-tu",
+    "type": "expr"
+  },
+  {
+    "gp": "non an mwen sé",
+    "fr": "je m'appelle",
+    "type": "expr"
+  },
+  {
+    "gp": "pa pwan kont",
+    "fr": "de rien",
+    "type": "expr"
+  },
+  {
+    "gp": "fè vit",
+    "fr": "dépêche-toi",
+    "type": "expr"
+  },
+  {
+    "gp": "a talè",
+    "fr": "à tout à l'heure",
+    "type": "expr"
+  },
+  {
+    "gp": [
+      "ban mwen",
+      "ba mwen"
+    ],
+    "fr": "donne-moi",
+    "type": "expr"
+  },
+  {
+    "gp": "kité mwen",
+    "fr": "laisse-moi",
+    "type": "expr"
+  },
+  {
+    "gp": [
+      "padòn",
+      "padon"
+    ],
+    "fr": "pardon",
+    "type": "interj"
+  },
+  {
+    "gp": "lapli ka tonbé",
+    "fr": "il pleut",
+    "type": "expr"
+  },
+  {
+    "gp": "i ka fè cho",
+    "fr": "il fait chaud",
+    "type": "expr"
+  },
+  {
+    "gp": "i ka fè frèt",
+    "fr": "il fait froid",
+    "type": "expr"
+  },
+  {
+    "gp": "pa pè",
+    "fr": "n'aie pas peur",
+    "type": "expr"
+  },
+  {
+    "gp": [
+      "woulo",
+      "woulo bravo",
+      "brav",
+      "ala brav"
+    ],
+    "fr": "bravo",
+    "type": "interj"
+  },
+  {
+    "gp": "sé sa lavi",
+    "fr": "c'est la vie",
+    "type": "expr"
+  },
+  {
+    "gp": "ala bèl bagay",
+    "fr": "comme c'est beau",
+    "type": "expr"
+  },
+  {
+    "gp": "ala chans",
+    "fr": "quelle chance",
+    "type": "expr"
+  },
+  {
+    "gp": "sa ki ka pasé",
+    "fr": "qu'est-ce qui se passe",
+    "type": "expr"
+  },
+  {
+    "gp": [
+      "bay kò-w fòs",
+      "bay kò -w fòs"
+    ],
+    "fr": "bon courage",
+    "type": "expr"
+  },
+  {
+    "gp": "pa pi mal",
+    "fr": "pas mal",
+    "type": "expr"
+  },
+  {
+    "gp": "bon nwit",
+    "fr": "bonne nuit",
+    "type": "interj"
+  },
+  {
+    "gp": "asi",
+    "fr": "sur",
+    "type": "prep"
+  },
+  {
+    "fr": "je suis content",
+    "gp": "an kontan",
+    "type": "expr"
+  },
+  {
+    "fr": "lequel",
+    "gp": "kilès",
+    "type": "pron"
+  },
+  {
+    "fr": "quant",
+    "gp": "kantapou",
+    "type": "prep"
+  },
+  {
+    "fr": "quoique",
+    "gp": "magrési",
+    "type": "conj"
+  },
+  {
+    "fr": [
+      "manquer de respect",
+      "manquer de respect à"
+    ],
+    "gp": "dérespekté",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "s'en foutre",
+      "s en foutre",
+      "je m'en fous",
+      "je m en fous"
+    ],
+    "gp": "sanfouté",
+    "type": "expr"
+  },
+  {
+    "fr": "malgré",
+    "gp": [
+      "magré",
+      "malgré"
+    ],
+    "type": "prep"
+  },
+  {
+    "fr": [
+      "n'importe",
+      "n importe"
+    ],
+    "gp": "nenpòt",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "pire que",
+      "pires que"
+    ],
+    "gp": "pi mové ki",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "pire",
+      "pires"
+    ],
+    "gp": "pi mové",
+    "type": "adj"
+  },
+  {
+    "fr": "pourquoi",
+    "gp": "pouki",
+    "type": "adv"
+  },
+  {
+    "fr": "par exemple",
+    "gp": "kontèl",
+    "type": "adv"
+  }
+]

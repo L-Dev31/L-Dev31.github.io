@@ -125,6 +125,7 @@ export function setupFeaturedProjects(ctaCursor, refreshParallax) {
             const columnEls = Array.from({ length: cols }, () => {
                 const col = document.createElement('div');
                 col.className = 'scatter-column';
+                col.dataset.parallaxSpeed = '1';
                 container.appendChild(col);
                 return col;
             });

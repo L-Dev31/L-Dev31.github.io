@@ -1,0 +1,1850 @@
+[
+ {
+  "input": "I ka travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il travaille."
+ },
+ {
+  "input": "I ka manje.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il mange."
+ },
+ {
+  "input": "I ka danse.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il danse."
+ },
+ {
+  "input": "I ka dòmi.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il dort."
+ },
+ {
+  "input": "I té ka travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il travaillait."
+ },
+ {
+  "input": "I té ka manje.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il mangeait."
+ },
+ {
+  "input": "Yo té ka danse.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils dansaient."
+ },
+ {
+  "input": "Manman mwen té ka chante.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ma maman chantait."
+ },
+ {
+  "input": "I té travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a travaillé."
+ },
+ {
+  "input": "I té manje.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a mangé."
+ },
+ {
+  "input": "Yo té chanté.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils ont chanté."
+ },
+ {
+  "input": "I ké travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il travaillera."
+ },
+ {
+  "input": "I ké vini.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il viendra."
+ },
+ {
+  "input": "I ké vini dèmen.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il viendra demain."
+ },
+ {
+  "input": "I kay manje.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il va manger."
+ },
+ {
+  "input": "Yo kay vini.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils vont venir."
+ },
+ {
+  "input": "I té ké travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il travaillerait."
+ },
+ {
+  "input": "Nou té ké vini.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous viendrions."
+ },
+ {
+  "input": "I pa ka travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il ne travaille pas."
+ },
+ {
+  "input": "I pa té ka travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il ne travaillait pas."
+ },
+ {
+  "input": "I pa té travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il n'a pas travaillé."
+ },
+ {
+  "input": "I pa ké travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il ne travaillera pas."
+ },
+ {
+  "input": "I pa té ké travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il ne travaillerait pas."
+ },
+ {
+  "input": "Yo pa té ka vini.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils ne venaient pas."
+ },
+ {
+  "input": "An pa ka manje.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je ne mange pas."
+ },
+ {
+  "input": "Mwen ka chante.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je chante."
+ },
+ {
+  "input": "Ou ka kouri.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu cours."
+ },
+ {
+  "input": "Nou ka danse.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous dansons."
+ },
+ {
+  "input": "Zot ka manje.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Vous mangez."
+ },
+ {
+  "input": "Yo ka dòmi.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils dorment."
+ },
+ {
+  "input": "An ka alé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je vais."
+ },
+ {
+  "input": "Kaz mwen gran.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ma maison est grande."
+ },
+ {
+  "input": "Papa mwen ka travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Mon papa travaille."
+ },
+ {
+  "input": "Manman mwen ka chante.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ma maman chante."
+ },
+ {
+  "input": "Zanmi mwen rivé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Mon ami est arrivé."
+ },
+ {
+  "input": "I té alé laplaj.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est allé à la plage."
+ },
+ {
+  "input": "I travay lopital.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il travaille à l'hôpital."
+ },
+ {
+  "input": "Nou té alé laplaj.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous sommes allés à la plage."
+ },
+ {
+  "input": "Yo té alé laplaj.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils sont allés à la plage."
+ },
+ {
+  "input": "I pati iyè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est parti hier."
+ },
+ {
+  "input": "I rivé bonmaten.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est arrivé le matin."
+ },
+ {
+  "input": "An rivé bonmaten.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je suis arrivé le matin."
+ },
+ {
+  "input": "Fèt la té bèl.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "La fête était belle."
+ },
+ {
+  "input": "Kaz la gran.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "La maison est grande."
+ },
+ {
+  "input": "I vye.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est vieux."
+ },
+ {
+  "input": "I ka travay toujou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il travaille toujours."
+ },
+ {
+  "input": "Lapli a fè mal.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "La pluie fait mal."
+ },
+ {
+  "input": "Timoun-la ka jwé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "L'enfant joue."
+ },
+ {
+  "input": "Sé mwen ki palé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est moi qui parle."
+ },
+ {
+  "input": "Sé li ki fè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est lui qui fait ça."
+ },
+ {
+  "input": "Sé ti moun la ki té ka jwé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est l'enfant qui jouait."
+ },
+ {
+  "input": "Lè an rivé, i té pati.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Quand je suis arrivé, il est parti."
+ },
+ {
+  "input": "Sa fè mal.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ça fait mal."
+ },
+ {
+  "input": "An poko manje.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je n'ai pas encore mangé."
+ },
+ {
+  "input": "I té ka chanté.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il chantait."
+ },
+ {
+  "input": "Manman mwen té ka chante on chanson.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ma maman chantait une chanson."
+ },
+ {
+  "input": "I ka dòmi déro.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il dort dehors."
+ },
+ {
+  "input": "I ka travay depi maten.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il travaille depuis le matin."
+ },
+ {
+  "input": "I alé lakay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est allé à la maison."
+ },
+ {
+  "input": "An ni on kaz.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "J'ai une maison."
+ },
+ {
+  "input": "I ni de pitit.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a d'enfant."
+ },
+ {
+  "input": "Ki moun ou yé?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Quel gens tu es?"
+ },
+ {
+  "input": "Poukisa ou pa vini?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Pourquoi tu n'es pas venu?"
+ },
+ {
+  "input": "Il travaille.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I ka travay."
+ },
+ {
+  "input": "Il travaillait.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I té ka travay."
+ },
+ {
+  "input": "Il a travaillé.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I travay."
+ },
+ {
+  "input": "Il travaillera.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I ké travay."
+ },
+ {
+  "input": "Il travaillerait.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I té ké travay."
+ },
+ {
+  "input": "Il ne travaille pas.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I pa ka travay."
+ },
+ {
+  "input": "Il ne travaillait pas.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I pa té ka travay."
+ },
+ {
+  "input": "Je ne mange pas.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "An pa ka manjé."
+ },
+ {
+  "input": "Il ne viendra pas.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I pa ké vini."
+ },
+ {
+  "input": "Il ne vient jamais.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I pa ka vini janmen."
+ },
+ {
+  "input": "Je ne mange plus.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "An pa ka manjé ankò."
+ },
+ {
+  "input": "Je travaille.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "An ka travay."
+ },
+ {
+  "input": "Tu travailles.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Ou ka travay."
+ },
+ {
+  "input": "Nous travaillons.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Nou ka travay."
+ },
+ {
+  "input": "Vous travaillez.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Zot ka travay."
+ },
+ {
+  "input": "Ils travaillent.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Yo ka travay."
+ },
+ {
+  "input": "Elles travaillent.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Yo ka travay."
+ },
+ {
+  "input": "Elle a mangé.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I ni manjé."
+ },
+ {
+  "input": "Ils ont chanté.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Yo chanté."
+ },
+ {
+  "input": "Je suis arrivé hier.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "An rivé iyè."
+ },
+ {
+  "input": "Ils sont partis tôt.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Yo pati bonè."
+ },
+ {
+  "input": "Nous avons mangé.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Nou ni manjé."
+ },
+ {
+  "input": "Ma mère chantait.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Manman an-mwen té ka chanté."
+ },
+ {
+  "input": "Nous allions à la plage.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Nou té ka alé a laplaj la."
+ },
+ {
+  "input": "Il pleuvait beaucoup.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I té ka plivwa onlo."
+ },
+ {
+  "input": "Il pleuvait fort.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I té ka plivwa fò."
+ },
+ {
+  "input": "Elle viendra demain.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I ké vini dèmen."
+ },
+ {
+  "input": "Il mourra seul.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I ké mouri sèl."
+ },
+ {
+  "input": "Il va venir.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I kay vini."
+ },
+ {
+  "input": "Je vais partir.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "An kay pati."
+ },
+ {
+  "input": "Je viens d'arriver.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "An sòti rivé."
+ },
+ {
+  "input": "Il vient de partir.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I sòti pati."
+ },
+ {
+  "input": "Je mangerais bien.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "An té ké manjé byen."
+ },
+ {
+  "input": "Il faut que tu travailles.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Fò ou ka travay."
+ },
+ {
+  "input": "J'ai faim.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "An fen."
+ },
+ {
+  "input": "Il a soif.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I swèf."
+ },
+ {
+  "input": "Elle a peur.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I pè."
+ },
+ {
+  "input": "Nous avons chaud.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Nou cho."
+ },
+ {
+  "input": "Ma maison est grande.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Kaz an-mwen gran."
+ },
+ {
+  "input": "Ton père travaille.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Papa a-w travay."
+ },
+ {
+  "input": "Sa mère chante.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Manman a-y chanté."
+ },
+ {
+  "input": "Notre famille est belle.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Fanmiy an-nou bèl."
+ },
+ {
+  "input": "Il vient maintenant.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I ka vini atjèlman."
+ },
+ {
+  "input": "Elle part demain.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I ka pati dèmen."
+ },
+ {
+  "input": "Ils sont arrivés hier.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Yo rivé iyè."
+ },
+ {
+  "input": "Bonjour.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Bonjou."
+ },
+ {
+  "input": "Au revoir.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "orevwa."
+ },
+ {
+  "input": "Merci.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Mèsi."
+ },
+ {
+  "input": "S'il vous plaît.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "souplé."
+ },
+ {
+  "input": "Bon anniversaire.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "bon fèt."
+ },
+ {
+  "input": "I di ke i vini.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il dit qu'il vient."
+ },
+ {
+  "input": "Il pleuvait.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I té ka plivwa."
+ },
+ {
+  "input": "Nous allions souvent.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Nou té ka alé souvan."
+ },
+ {
+  "input": "An sòti travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je viens de travailler."
+ },
+ {
+  "input": "Bon fèt!",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Bon fèt!"
+ },
+ {
+  "input": "I té chanté.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a chanté."
+ },
+ {
+  "input": "I té manje.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a mangé."
+ },
+ {
+  "input": "Sé li ki fè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est lui qui fait ça."
+ },
+ {
+  "input": "Sé mwen ki palé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est moi qui parle."
+ },
+ {
+  "input": "Sa fè mal.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ça fait mal."
+ },
+ {
+  "input": "Nou té alé laplaj.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous sommes allés à la plage."
+ },
+ {
+  "input": "Yo té alé laplaj.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils sont allés à la plage."
+ },
+ {
+  "input": "I alé laplaj.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est allé à la plage."
+ },
+ {
+  "input": "I travay lopital.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il travaille à l'hôpital."
+ },
+ {
+  "input": "I pati iyè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est parti hier."
+ },
+ {
+  "input": "I rivé bonmaten.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est arrivé le matin."
+ },
+ {
+  "input": "Lè an rivé, i té pati.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Quand je suis arrivé, il est parti."
+ },
+ {
+  "input": "Fèt la té bèl.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "La fête était belle."
+ },
+ {
+  "input": "An rivé bonmaten.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je suis arrivé le matin."
+ },
+ {
+  "input": "Sé li ki fè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est lui qui fait ça."
+ },
+ {
+  "input": "Sé ti moun la ki té ka jwé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est l'enfant qui jouait."
+ },
+ {
+  "input": "An fek rive.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je viens d'arriver."
+ },
+ {
+  "input": "An fek fini.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je viens de finir."
+ },
+ {
+  "input": "Sè mwen ni yonn ti bébé iyè swè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ma soeur a un bébé hier soir."
+ },
+ {
+  "input": "Papa mwen ka travay fo chak jou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Mon papa travaille fort chaque jour."
+ },
+ {
+  "input": "I pli gran ke mwen.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est plus grand que moi."
+ },
+ {
+  "input": "I pati san di orevwa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est parti sans dire au revoir."
+ },
+ {
+  "input": "I an kolè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est en colère."
+ },
+ {
+  "input": "I té an kolè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il était en colère."
+ },
+ {
+  "input": "Tout moun sav sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tout le monde sait ça."
+ },
+ {
+  "input": "Tout monn te kontan.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tout le monde était content."
+ },
+ {
+  "input": "Tout moun te la.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tout le monde était là."
+ },
+ {
+  "input": "Tout moun ka travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tout le monde travaille."
+ },
+ {
+  "input": "Yo te la ye swa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils étaient là hier soir."
+ },
+ {
+  "input": "Tout moun pa ka vini.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tout le monde ne vient pas."
+ },
+ {
+  "input": "I an bon sante.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est en bonne santé."
+ },
+ {
+  "input": "Nou ka viv bo lanme.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous vivons près de la mer."
+ },
+ {
+  "input": "Fre mwen ki pli gran ka travay lopital.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Mon frère qui est plus grand travaille à l'hôpital."
+ },
+ {
+  "input": "I pli piti ke ou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est plus petit que toi."
+ },
+ {
+  "input": "Yo ka pale fransé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils parlent français."
+ },
+ {
+  "input": "Ki lè ou ké rivé?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Quand tu arriveras?"
+ },
+ {
+  "input": "I pa ké vini dèmen.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il ne viendra pas demain."
+ },
+ {
+  "input": "An sav ke ou ka travay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je sais que tu travailles."
+ },
+ {
+  "input": "An ké rété an Gwadloup.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je resterai en Guadeloupe."
+ },
+ {
+  "input": "I té ja la.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il était déjà là."
+ },
+ {
+  "input": "Yo té poko rivé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils ne sont pas encore arrivés."
+ },
+ {
+  "input": "Ou ka ri tro.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu ris trop."
+ },
+ {
+  "input": "Lè ou soti, fèmé lapòt.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Quand tu sors, ferme la porte."
+ },
+ {
+  "input": "Nou ka viv bò lanmè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous vivons près de la mer."
+ },
+ {
+  "input": "Kisa ou vlé?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Quoi tu veux?"
+ },
+ {
+  "input": "An vlé rété isit.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je veux rester ici."
+ },
+ {
+  "input": "Sé bel.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est beau."
+ },
+ {
+  "input": "Ou dwe travay plis.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu dois travailler plus."
+ },
+ {
+  "input": "I pa ka dòmi bien.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il ne dort pas bien."
+ },
+ {
+  "input": "Yo ka chanté ansanm.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils chantent ensemble."
+ },
+ {
+  "input": "Gadé sa mwen ka fè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Regarde ça je fais."
+ },
+ {
+  "input": "Manjé!",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Mange!"
+ },
+ {
+  "input": "Mwen rélé Marie.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "J'appelle Marie."
+ },
+ {
+  "input": "I ka pran bèl foto.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il prend une belle photo."
+ },
+ {
+  "input": "I wè an bel fiy.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il voit une belle fille."
+ },
+ {
+  "input": "Yo ké rivé dèmen maten.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils arriveront demain matin."
+ },
+ {
+  "input": "Nou pa té la yè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous n'étions pas là hier."
+ },
+ {
+  "input": "Fok ou vini.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il faut que tu viennes."
+ },
+ {
+  "input": "Sa ou ka fè?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ça tu fais?"
+ },
+ {
+  "input": "Kijan ou rélé?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Comment tu appelles?"
+ },
+ {
+  "input": "Mwen té malad yè swa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "J'étais malade hier soir."
+ },
+ {
+  "input": "Yo viv an Gwadloup depi lontan.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils vivent en Guadeloupe depuis longtemps."
+ },
+ {
+  "input": "Ou pa dwe fè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu ne dois pas faire ça."
+ },
+ {
+  "input": "Ti moun yo ka jouwé dan lari.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Les enfants jouent dans la rue."
+ },
+ {
+  "input": "I ni twa zanfan.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a trois enfants."
+ },
+ {
+  "input": "An pa konprann pouki ou fè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je ne comprends pas pourquoi tu fais ça."
+ },
+ {
+  "input": "Papa mwen achté an nouvo loto.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Mon papa achète une nouvelle voiture."
+ },
+ {
+  "input": "Ou pa ka kouri isi a.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu ne cours pas ici."
+ },
+ {
+  "input": "Loto a kasé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "La voiture a cassé."
+ },
+ {
+  "input": "Yo ka ri ek yo ka chanté.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils rient et ils chantent."
+ },
+ {
+  "input": "Ayè yo té pati.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Hier ils sont partis."
+ },
+ {
+  "input": "I ni twa zanfan.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a trois enfants."
+ },
+ {
+  "input": "Yo rivé alè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils sont arrivés à l'heure."
+ },
+ {
+  "input": "Sé papa mwen ki fè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est mon papa qui fait ça."
+ },
+ {
+  "input": "Sé bon pou ou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est bon pour toi."
+ },
+ {
+  "input": "I ka konn ou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il te connaît."
+ },
+ {
+  "input": "Fok ou vini.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il faut que tu viennes."
+ },
+ {
+  "input": "An ka li jounal la chak maten.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je lis le journal chaque matin."
+ },
+ {
+  "input": "Dlo a cho.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "L'eau est chaude."
+ },
+ {
+  "input": "Solèy la ka lévé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Le soleil se lève."
+ },
+ {
+  "input": "Nou pé fè sa ansanm.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous pouvons faire ça ensemble."
+ },
+ {
+  "input": "I sav pouki mwen ka fè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il sait pourquoi je fais ça."
+ },
+ {
+  "input": "Mwen wè an bèl tab.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je vois une belle table."
+ },
+ {
+  "input": "Fanmiy mwen ka rété an Bès-Tè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ma famille reste en Bès-Tè."
+ },
+ {
+  "input": "An pa wè ou depi lontan.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je ne te vois pas depuis longtemps."
+ },
+ {
+  "input": "Bébé a ka dòmi sou kaz la.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Le bébé dort sur la maison."
+ },
+ {
+  "input": "Mwen vlé sav pouki ou fè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je veux savoir pourquoi tu fais ça."
+ },
+ {
+  "input": "Mwen ka travay chak jou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je travaille chaque jour."
+ },
+ {
+  "input": "Fè sa vit.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Fais ça vite."
+ },
+ {
+  "input": "Ès ou ka konprann mwen?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Est-ce que tu me comprends?"
+ },
+ {
+  "input": "Nou ka travay pou chanjé sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous travaillons pour changer ça."
+ },
+ {
+  "input": "Lè ou fini manjé, rété isit.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Quand tu finis manger, reste ici."
+ },
+ {
+  "input": "An ni an zanmi ki rété an Frans.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "J'ai un ami qui reste en Frans."
+ },
+ {
+  "input": "Ou wè sa mwen di a?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu vois ça je dis là?"
+ },
+ {
+  "input": "I ka fè bèl tan jòdi a.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il fait le beau temps aujourd'hui."
+ },
+ {
+  "input": "Lapli ka tonbé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "La pluie tombe."
+ },
+ {
+  "input": "Ou dwe rété trankil.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu dois rester tranquille."
+ },
+ {
+  "input": "An ké rivé alè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "J'arriverai à l'heure."
+ },
+ {
+  "input": "I fò é bèl.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est fort et beau."
+ },
+ {
+  "input": "Ou ni an bèl kaz.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu as une belle maison."
+ },
+ {
+  "input": "Nou ka manjé ansanm chak jou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous mangeons ensemble chaque jour."
+ },
+ {
+  "input": "Mwen ka wè ou dèmen.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je te vois demain."
+ },
+ {
+  "input": "Nou toujou ka aidé yo.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous les aidons toujours."
+ },
+ {
+  "input": "I toujou ka di vré.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il dit toujours vrai."
+ },
+ {
+  "input": "Pa fè bwi.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ne fais pas des bruits."
+ },
+ {
+  "input": "Ou té ka fè kisa yè?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu faisais quoi hier?"
+ },
+ {
+  "input": "Fanm la bèl.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "La femme est belle."
+ },
+ {
+  "input": "Tifi a gran.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "La fille est grande."
+ },
+ {
+  "input": "Ni an bèl solèy jòdi.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il y a un beau soleil aujourd'hui."
+ },
+ {
+  "input": "Yo ka viv ansanm.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils vivent ensemble."
+ },
+ {
+  "input": "I pati san di mwen.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est parti sans me dire."
+ },
+ {
+  "input": "Mwen ni an bèl kaz bò lanmè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "J'ai une belle maison près de la mer."
+ },
+ {
+  "input": "I té enmé dansé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a aimé danser."
+ },
+ {
+  "input": "Yo té rivé ta.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ils sont arrivés tard."
+ },
+ {
+  "input": "Gason a pa té la.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Le garçon n'était pas là."
+ },
+ {
+  "input": "Kijan ou ka fè sa?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Comment tu fais ça?"
+ },
+ {
+  "input": "I kay vini dèmen maten.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il va venir demain matin."
+ },
+ {
+  "input": "Mwen ka alé lékòl chak maten.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je vais des écoles chaque matin."
+ },
+ {
+  "input": "Mwen ka mache bò lanmè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je marche près de la mer."
+ },
+ {
+  "input": "Ti moun yo ka jouwé deyò.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Les enfants jouent dehors."
+ },
+ {
+  "input": "Bèf a mouri.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Le boeuf est mort."
+ },
+ {
+  "input": "Ou ka jwenn mwen bò kaz la.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu me joinds près de la maison."
+ },
+ {
+  "input": "Nou pé alé ansanm.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous pouvons aller ensemble."
+ },
+ {
+  "input": "Ou vlé manjé kisa?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu veux manger quoi?"
+ },
+ {
+  "input": "I fort é bèl.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est fort et beau."
+ },
+ {
+  "input": "Titak ou ké la.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Bientôt tu seras là."
+ },
+ {
+  "input": "I ka gadé televizyon.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il regarde des télévisions."
+ },
+ {
+  "input": "Fanmiy mwen viv an Frans.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ma famille vit en Frans."
+ },
+ {
+  "input": "Mwen ni malèz.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "J'ai des malaises."
+ },
+ {
+  "input": "Chapant té ka fè an bèl tab.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Le charpentier faisait une belle table."
+ },
+ {
+  "input": "Mwen pa té konnt ou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je ne t'ai pas connu."
+ },
+ {
+  "input": "Mwen té ka mandé pou ou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je commandais pour toi."
+ },
+ {
+  "input": "Ou pa dwèt fè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu ne dois pas faire ça."
+ },
+ {
+  "input": "Sa fè lontan.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ça fait longtemps."
+ },
+ {
+  "input": "Lapli ka tonbé dèyè a.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "La pluie tombe derrière."
+ },
+ {
+  "input": "I pa ka konpwann mwen.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il ne me comprend pas."
+ },
+ {
+  "input": "Mwen sé kréyol.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je suis un créole."
+ },
+ {
+  "input": "Ou wè sa?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu vois ça?"
+ },
+ {
+  "input": "Zanfan yo pa domi.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Les enfants ne dorment pas."
+ },
+ {
+  "input": "I ka lévé bonmaten.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il se lève le matin."
+ },
+ {
+  "input": "Ki lè ou rivé?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Quand tu es arrivé?"
+ },
+ {
+  "input": "Ou ka bwè avan ou manje.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu bois avant tu manges."
+ },
+ {
+  "input": "An ké vini dèmen.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je viendrai demain."
+ },
+ {
+  "input": "Ou té la yè?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu étais là hier?"
+ },
+ {
+  "input": "I fè cho jòdi a.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il fait chaud aujourd'hui."
+ },
+ {
+  "input": "Sé mwen ki fè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est moi qui fait ça."
+ },
+ {
+  "input": "Nou ka ranjé kay la.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous rangeons la maison."
+ },
+ {
+  "input": "Mwen sé yon nonm libr.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je suis un homme libre."
+ },
+ {
+  "input": "I ka dòmi.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il dort."
+ },
+ {
+  "input": "Nou enmé péyi an-nou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous aimons notre pays."
+ },
+ {
+  "input": "Ou té dòmi déjà?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu as dormi déjà?"
+ },
+ {
+  "input": "I ka palé twò vit.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il parle trop vite."
+ },
+ {
+  "input": "Nou ka travay ansanm.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous travaillons ensemble."
+ },
+ {
+  "input": "I té pran an gwo désizon.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a pris une grosse décision."
+ },
+ {
+  "input": "Fè atansyon!",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Faire attention!"
+ },
+ {
+  "input": "Ou dwèt fè atansyon.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu dois faire attention."
+ },
+ {
+  "input": "Ou fè mwen mal.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu me fais mal."
+ },
+ {
+  "input": "Sa ka pran lontan.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ça prend longtemps."
+ },
+ {
+  "input": "I toujou trankil.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est toujours tranquille."
+ },
+ {
+  "input": "Zanfan yo ka joué deyò.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Les enfants jouent dehors."
+ },
+ {
+  "input": "Nou ka atann ou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous t'attendons."
+ },
+ {
+  "input": "Mwen ké toujou sonjé ou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je te penserai toujours."
+ },
+ {
+  "input": "I ni bon kè.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a un bon cœur."
+ },
+ {
+  "input": "Mwen viv an Gwadloup depi diz an.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je vis en Guadeloupe depuis dix an."
+ },
+ {
+  "input": "Nou ka sòti chak lendi.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous sortons chaque lundi."
+ },
+ {
+  "input": "Mwen ka travay pou nouri fanmiy mwen.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je travaille pour nourrir ma famille."
+ },
+ {
+  "input": "Ou ka konpwann mwen?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu me comprends?"
+ },
+ {
+  "input": "I né an Gwadloup.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est né en Guadeloupe."
+ },
+ {
+  "input": "Nou ka palé kréyol lakay.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous parlons des créoles à la maison."
+ },
+ {
+  "input": "Mwen pa té kontan.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je n'étais pas content."
+ },
+ {
+  "input": "Sa ou vlé di?",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ça tu veux dire?"
+ },
+ {
+  "input": "Mwen lé ritounen an Gwadloup.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je veux retourner en Guadeloupe."
+ },
+ {
+  "input": "Timoun yo ka jwe nan lekol.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Les enfants jouent dans l'école."
+ },
+ {
+  "input": "I trè entèlijan.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il est très intelligent."
+ },
+ {
+  "input": "Sa ka santi bon.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Ça sent bon."
+ },
+ {
+  "input": "Nou té fè an gran vwayaj.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Nous avons fait un grand voyage."
+ },
+ {
+  "input": "Mwen vlé sòti avè ou.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je veux sortir avec toi."
+ },
+ {
+  "input": "Mwen pa konnèt li.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je ne le connais pas."
+ },
+ {
+  "input": "I gen rézon.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a raison."
+ },
+ {
+  "input": "Mwen pa fouti fè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je ne peux pas faire ça."
+ },
+ {
+  "input": "I ni an bon lidé.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il a une bonne idée."
+ },
+ {
+  "input": "Sé bon biten.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "C'est un bon objet."
+ },
+ {
+  "input": "Mwen ka touvé sa difisil.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Je trouve ça difficile."
+ },
+ {
+  "input": "Ou ka jenmen wè sa.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Tu vois jamais ça."
+ },
+ {
+  "input": "I ka travay nan biwo a.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "Il travaille dans le bureau."
+ },
+ {
+  "input": "Il a confiance.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "I ni konfyans."
+ },
+ {
+  "input": "Le pont est large.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Pont la laj."
+ },
+ {
+  "input": "Chanm la piti.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "La chambre est petite."
+ },
+ {
+  "input": "Mwen ka achté on manto.",
+  "src": "gp",
+  "tgt": "fr",
+  "expected": "J'achète un manteau."
+ },
+ {
+  "input": "Il faut oser.",
+  "src": "fr",
+  "tgt": "gp",
+  "expected": "Fò ozé."
+ }
+]

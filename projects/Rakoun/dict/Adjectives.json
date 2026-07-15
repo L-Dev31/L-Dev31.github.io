@@ -1,0 +1,1233 @@
+[
+  {
+    "fr": [
+      "noir",
+      "noire",
+      "noirs",
+      "noires"
+    ],
+    "gp": [
+      "nwè",
+      "nwa"
+    ]
+  },
+  {
+    "fr": "acompagné",
+    "gp": "fanmté"
+  },
+  {
+    "fr": "adéquat",
+    "gp": "obidjoul"
+  },
+  {
+    "fr": [
+      "agité",
+      "agitée",
+      "agités",
+      "agitées"
+    ],
+    "gp": "boulvèsé"
+  },
+  {
+    "fr": "aguichant",
+    "gp": "agasan"
+  },
+  {
+    "fr": "alchimique",
+    "gp": "gildivyè"
+  },
+  {
+    "fr": "alternative",
+    "gp": "déchimen"
+  },
+  {
+    "fr": "amoureuse",
+    "gp": "enmé",
+    "secondaire": true
+  },
+  {
+    "fr": "amoureux",
+    "gp": "kontan",
+    "secondaire": true
+  },
+  {
+    "fr": "anglophone",
+    "gp": "anglopal"
+  },
+  {
+    "fr": "aphatique",
+    "gp": "kanyan"
+  },
+  {
+    "fr": "autre",
+    "gp": "lòt"
+  },
+  {
+    "fr": "avant",
+    "gp": "avan"
+  },
+  {
+    "fr": "beau",
+    "gp": "bèl"
+  },
+  {
+    "fr": "belle",
+    "gp": "bèl"
+  },
+  {
+    "fr": "blanc",
+    "gp": "blan"
+  },
+  {
+    "fr": "blanche",
+    "gp": "blanch",
+    "genre": "f"
+  },
+  {
+    "fr": "blessé",
+    "gp": "blésé"
+  },
+  {
+    "fr": "bleu",
+    "gp": "blé"
+  },
+  {
+    "fr": [
+      "bon",
+      "bonne",
+      "bons",
+      "bonnes"
+    ],
+    "gp": "bon"
+  },
+  {
+    "fr": "branlant",
+    "gp": "brannzenng"
+  },
+  {
+    "fr": "brillant",
+    "gp": "olendeng"
+  },
+  {
+    "fr": "brutal",
+    "gp": "souba"
+  },
+  {
+    "fr": "bruyant",
+    "gp": "èskandalè"
+  },
+  {
+    "fr": "chaud",
+    "gp": "cho"
+  },
+  {
+    "fr": "cher",
+    "gp": "chè"
+  },
+  {
+    "fr": "chiant",
+    "gp": "anmèdan"
+  },
+  {
+    "fr": "content",
+    "gp": "kontan"
+  },
+  {
+    "fr": "critique",
+    "gp": "dékinay"
+  },
+  {
+    "fr": "delicieux",
+    "gp": "ki bon"
+  },
+  {
+    "fr": "dernier",
+    "gp": "dènyé"
+  },
+  {
+    "fr": "difficile",
+    "gp": "rèd"
+  },
+  {
+    "fr": [
+      "doux",
+      "douce",
+      "douces"
+    ],
+    "gp": "dous"
+  },
+  {
+    "fr": "en colère",
+    "gp": "an kolè"
+  },
+  {
+    "fr": "en forme",
+    "gp": "an fòs"
+  },
+  {
+    "fr": "facile",
+    "gp": [
+      "flouz",
+      "fasil"
+    ]
+  },
+  {
+    "fr": "faible",
+    "gp": [
+      "fèb",
+      "kalmo"
+    ]
+  },
+  {
+    "fr": "fiévreux",
+    "gp": "chimérik"
+  },
+  {
+    "fr": [
+      "fort",
+      "forte",
+      "forts",
+      "fortes"
+    ],
+    "gp": [
+      "fò",
+      "vidjo"
+    ]
+  },
+  {
+    "fr": "fou",
+    "gp": "fou"
+  },
+  {
+    "fr": "froid",
+    "gp": "fwèt"
+  },
+  {
+    "fr": "gentil",
+    "gp": "janti"
+  },
+  {
+    "fr": [
+      "grand",
+      "grande",
+      "grands",
+      "grandes"
+    ],
+    "gp": [
+      "gran",
+      "totoblo"
+    ]
+  },
+  {
+    "fr": [
+      "gris",
+      "grise",
+      "grises"
+    ],
+    "gp": "gri"
+  },
+  {
+    "fr": "gros",
+    "gp": "gwo"
+  },
+  {
+    "fr": "grosse",
+    "gp": "gwo"
+  },
+  {
+    "fr": "généreux",
+    "gp": "donan"
+  },
+  {
+    "fr": "haut",
+    "gp": "wopalè"
+  },
+  {
+    "fr": "heureuse",
+    "gp": "kontan"
+  },
+  {
+    "fr": "heureux",
+    "gp": "kontan"
+  },
+  {
+    "fr": "impudique",
+    "gp": "malélivé"
+  },
+  {
+    "fr": "intelligent",
+    "gp": "intélijan"
+  },
+  {
+    "fr": "international",
+    "gp": "toutwonlatè"
+  },
+  {
+    "fr": "jalouse",
+    "gp": "jalouzi"
+  },
+  {
+    "fr": "jaloux",
+    "gp": "jalouzi"
+  },
+  {
+    "fr": "jaune",
+    "gp": "jòn"
+  },
+  {
+    "fr": "jeune",
+    "gp": [
+      "jenn",
+      "kapistrèl"
+    ]
+  },
+  {
+    "fr": "local",
+    "gp": "péyi"
+  },
+  {
+    "fr": "logique",
+    "gp": "lojik"
+  },
+  {
+    "fr": "long",
+    "gp": "lon"
+  },
+  {
+    "fr": "lourd",
+    "gp": "lou"
+  },
+  {
+    "fr": "léger",
+    "gp": "léjè"
+  },
+  {
+    "fr": "magnifique",
+    "gp": "bidjoul"
+  },
+  {
+    "fr": [
+      "malade",
+      "malades"
+    ],
+    "gp": [
+      "malad",
+      "dèkdèk"
+    ]
+  },
+  {
+    "fr": "malheureux",
+    "gp": "maléré"
+  },
+  {
+    "fr": "marron",
+    "gp": [
+      "kako",
+      "maron"
+    ]
+  },
+  {
+    "fr": "mauvais",
+    "gp": [
+      "mové",
+      "tafya"
+    ]
+  },
+  {
+    "fr": [
+      "mort",
+      "morte",
+      "morts",
+      "mortes",
+      "mourru",
+      "mourrues"
+    ],
+    "gp": "mô"
+  },
+  {
+    "fr": "mou",
+    "gp": "mol"
+  },
+  {
+    "fr": "méchant",
+    "gp": "mové"
+  },
+  {
+    "fr": "médisant",
+    "gp": "malparlan"
+  },
+  {
+    "fr": "même",
+    "gp": "kanmenm"
+  },
+  {
+    "fr": "mûr",
+    "gp": "mi"
+  },
+  {
+    "fr": "mûre",
+    "gp": "mi"
+  },
+  {
+    "fr": "Noir",
+    "gp": "nèg",
+    "genre": "m",
+    "secondaire": true
+  },
+  {
+    "fr": [
+      "nouveau",
+      "nouvelle",
+      "nouveaux",
+      "nouvelles"
+    ],
+    "gp": "nèf"
+  },
+  {
+    "fr": "nuageux",
+    "gp": "nwajé"
+  },
+  {
+    "fr": "négligent",
+    "gp": "fouben"
+  },
+  {
+    "fr": "paresseux",
+    "gp": "fenyan"
+  },
+  {
+    "fr": "pauvre",
+    "gp": "pòv"
+  },
+  {
+    "fr": "petit",
+    "gp": "ti"
+  },
+  {
+    "fr": "plastique",
+    "gp": "tôl"
+  },
+  {
+    "fr": "plein",
+    "gp": "plen"
+  },
+  {
+    "fr": "premier",
+    "gp": "primié"
+  },
+  {
+    "fr": "propre",
+    "gp": [
+      "pwòp",
+      "pwop"
+    ]
+  },
+  {
+    "fr": "prétentieux",
+    "gp": "konpawèson"
+  },
+  {
+    "fr": "puant",
+    "gp": "ka santi"
+  },
+  {
+    "fr": "riche",
+    "gp": "rich"
+  },
+  {
+    "fr": "rouge",
+    "gp": "wouj"
+  },
+  {
+    "fr": "sacripant",
+    "gp": "sakabôy"
+  },
+  {
+    "fr": "sale",
+    "gp": "sal"
+  },
+  {
+    "fr": "scientifique",
+    "gp": "wouchachè"
+  },
+  {
+    "fr": "sec",
+    "gp": "sek"
+  },
+  {
+    "fr": "senblant",
+    "gp": "wol"
+  },
+  {
+    "fr": "seul",
+    "gp": "sèl"
+  },
+  {
+    "fr": "surpris",
+    "gp": [
+      "souprann",
+      "èstèbèkwé"
+    ]
+  },
+  {
+    "fr": "triste",
+    "gp": "tris"
+  },
+  {
+    "fr": "téléphone portable",
+    "gp": "télimob"
+  },
+  {
+    "fr": "unsine",
+    "gp": "lizin"
+  },
+  {
+    "fr": "vert",
+    "gp": "vèt"
+  },
+  {
+    "fr": "vicieux",
+    "gp": "zéklè"
+  },
+  {
+    "fr": "vide",
+    "gp": "vid"
+  },
+  {
+    "fr": "vieille",
+    "gp": "vyé",
+    "genre": "f"
+  },
+  {
+    "fr": "vieux",
+    "gp": [
+      "vié",
+      "vyé"
+    ]
+  },
+  {
+    "fr": "vigilant",
+    "gp": "véyatif"
+  },
+  {
+    "fr": "vigoureux",
+    "gp": "vayan"
+  },
+  {
+    "fr": "violet",
+    "gp": "violèt"
+  },
+  {
+    "fr": "voisine",
+    "gp": "vwazin",
+    "genre": "f"
+  },
+  {
+    "fr": "voluptueux",
+    "gp": "kalenndyè"
+  },
+  {
+    "fr": "vrai",
+    "gp": "franch"
+  },
+  {
+    "fr": "économique",
+    "gp": "rékolonmik"
+  },
+  {
+    "fr": "élégant",
+    "gp": "ganmen"
+  },
+  {
+    "fr": "épileptique",
+    "gp": "malkadik"
+  },
+  {
+    "fr": "épineux",
+    "gp": "margot"
+  },
+  {
+    "fr": [
+      "frais",
+      "fraîche",
+      "froids",
+      "fraîches"
+    ],
+    "gp": "fré"
+  },
+  {
+    "fr": [
+      "nu",
+      "nue",
+      "nus",
+      "nues"
+    ],
+    "gp": "touni"
+  },
+  {
+    "fr": [
+      "aîné",
+      "aînée",
+      "aînés",
+      "aînées"
+    ],
+    "gp": "gran"
+  },
+  {
+    "fr": [
+      "fatigué",
+      "fatiguée",
+      "fatigués",
+      "fatiguées"
+    ],
+    "gp": [
+      "las",
+      "fatigé"
+    ]
+  },
+  {
+    "fr": [
+      "fier",
+      "fière",
+      "fiers",
+      "fières"
+    ],
+    "gp": "fyè"
+  },
+  {
+    "gp": "laj",
+    "fr": "large",
+    "type": "adj"
+  },
+  {
+    "gp": "fon",
+    "fr": "profond",
+    "type": "adj"
+  },
+  {
+    "gp": "won",
+    "fr": "rond",
+    "type": "adj"
+  },
+  {
+    "gp": "pwenti",
+    "fr": "pointu",
+    "type": "adj"
+  },
+  {
+    "gp": "posib",
+    "fr": "possible",
+    "type": "adj"
+  },
+  {
+    "gp": "kalm",
+    "fr": "calme",
+    "type": "adj"
+  },
+  {
+    "gp": "poli",
+    "fr": "poli",
+    "type": "adj"
+  },
+  {
+    "gp": "saj",
+    "fr": "sage",
+    "type": "adj"
+  },
+  {
+    "gp": "mouyé",
+    "fr": "mouillé",
+    "type": "adj"
+  },
+  {
+    "gp": "tyèd",
+    "fr": "tiède",
+    "type": "adj"
+  },
+  {
+    "gp": "glasé",
+    "fr": "glacé",
+    "type": "adj"
+  },
+  {
+    "gp": "senp",
+    "fr": "simple",
+    "type": "adj"
+  },
+  {
+    "gp": "konpliké",
+    "fr": "compliqué",
+    "type": "adj"
+  },
+  {
+    "gp": "itil",
+    "fr": "utile",
+    "type": "adj"
+  },
+  {
+    "gp": "initil",
+    "fr": "inutile",
+    "type": "adj"
+  },
+  {
+    "gp": "danjéré",
+    "fr": "dangereux",
+    "type": "adj"
+  },
+  {
+    "gp": "sèten",
+    "fr": "certain",
+    "type": "adj"
+  },
+  {
+    "gp": "enposib",
+    "fr": "impossible",
+    "type": "adj"
+  },
+  {
+    "gp": "egzak",
+    "fr": "exact",
+    "type": "adj"
+  },
+  {
+    "gp": "épè",
+    "fr": "épais",
+    "type": "adj"
+  },
+  {
+    "gp": "joli",
+    "fr": "joli",
+    "type": "adj"
+  },
+  {
+    "gp": "vilen",
+    "fr": "vilain",
+    "type": "adj"
+  },
+  {
+    "gp": "anmè",
+    "fr": "amer",
+    "type": "adj"
+  },
+  {
+    "gp": "salé",
+    "fr": "salé",
+    "type": "adj"
+  },
+  {
+    "gp": "asid",
+    "fr": "acide",
+    "type": "adj"
+  },
+  {
+    "gp": "fad",
+    "fr": "fade",
+    "type": "adj"
+  },
+  {
+    "gp": "pouri",
+    "fr": "pourri",
+    "type": "adj"
+  },
+  {
+    "gp": "okipé",
+    "fr": "occupé",
+    "type": "adj"
+  },
+  {
+    "gp": "absan",
+    "fr": "absent",
+    "type": "adj"
+  },
+  {
+    "gp": "prézan",
+    "fr": "présent",
+    "type": "adj"
+  },
+  {
+    "gp": "vivan",
+    "fr": "vivant",
+    "type": "adj"
+  },
+  {
+    "gp": "antyé",
+    "fr": "entier",
+    "type": "adj"
+  },
+  {
+    "gp": "plizyè",
+    "fr": "plusieurs",
+    "type": "adj"
+  },
+  {
+    "gp": "kourajé",
+    "fr": "courageux",
+    "type": "adj"
+  },
+  {
+    "gp": "pèrè",
+    "fr": "peureux",
+    "type": "adj"
+  },
+  {
+    "gp": "onèt",
+    "fr": "honnête",
+    "type": "adj"
+  },
+  {
+    "gp": "malonèt",
+    "fr": "malhonnête",
+    "type": "adj"
+  },
+  {
+    "gp": "fidèl",
+    "fr": "fidèle",
+    "type": "adj"
+  },
+  {
+    "gp": "ògèyé",
+    "fr": "orgueilleux",
+    "type": "adj"
+  },
+  {
+    "gp": "enb",
+    "fr": "humble",
+    "type": "adj"
+  },
+  {
+    "gp": "timid",
+    "fr": "timide",
+    "type": "adj"
+  },
+  {
+    "gp": "babiyè",
+    "fr": "bavard",
+    "type": "adj"
+  },
+  {
+    "gp": "kiryé",
+    "fr": "curieux",
+    "type": "adj"
+  },
+  {
+    "gp": "prudan",
+    "fr": "prudent",
+    "type": "adj"
+  },
+  {
+    "gp": "enprudan",
+    "fr": "imprudent",
+    "type": "adj"
+  },
+  {
+    "gp": "séryé",
+    "fr": "sérieux",
+    "type": "adj"
+  },
+  {
+    "gp": "dwòl",
+    "fr": "drôle",
+    "type": "adj"
+  },
+  {
+    "gp": "dézagréab",
+    "fr": "désagréable",
+    "type": "adj"
+  },
+  {
+    "gp": "émab",
+    "fr": "aimable",
+    "type": "adj"
+  },
+  {
+    "gp": "kriyèl",
+    "fr": "cruel",
+    "type": "adj"
+  },
+  {
+    "gp": "patyan",
+    "fr": "patient",
+    "type": "adj"
+  },
+  {
+    "gp": "enpatyan",
+    "fr": "impatient",
+    "type": "adj"
+  },
+  {
+    "gp": "téti",
+    "fr": "têtu",
+    "type": "adj"
+  },
+  {
+    "gp": "ipokrit",
+    "fr": "hypocrite",
+    "type": "adj"
+  },
+  {
+    "gp": "sensè",
+    "fr": "sincère",
+    "type": "adj"
+  },
+  {
+    "gp": "rizé",
+    "fr": "rusé",
+    "type": "adj"
+  },
+  {
+    "gp": "naif",
+    "fr": "naïf",
+    "type": "adj"
+  },
+  {
+    "gp": "enkapab",
+    "fr": "incapable",
+    "type": "adj"
+  },
+  {
+    "gp": "résponsab",
+    "fr": "responsable",
+    "type": "adj"
+  },
+  {
+    "gp": "koupab",
+    "fr": "coupable",
+    "type": "adj"
+  },
+  {
+    "gp": "inosan",
+    "fr": "innocent",
+    "type": "adj"
+  },
+  {
+    "gp": "enkoni",
+    "fr": "inconnu",
+    "type": "adj"
+  },
+  {
+    "gp": "òdinè",
+    "fr": "ordinaire",
+    "type": "adj"
+  },
+  {
+    "gp": "nòrmal",
+    "fr": "normal",
+    "type": "adj"
+  },
+  {
+    "gp": "natirèl",
+    "fr": "naturel",
+    "type": "adj"
+  },
+  {
+    "gp": "konplè",
+    "fr": "complet",
+    "type": "adj"
+  },
+  {
+    "gp": "jénéral",
+    "fr": "général",
+    "type": "adj"
+  },
+  {
+    "gp": "nésésè",
+    "fr": "nécessaire",
+    "type": "adj"
+  },
+  {
+    "gp": "karé",
+    "fr": "carré",
+    "type": "adj"
+  },
+  {
+    "gp": "tòd",
+    "fr": "tordu",
+    "type": "adj"
+  },
+  {
+    "gp": "panché",
+    "fr": "penché",
+    "type": "adj"
+  },
+  {
+    "fr": [
+      "courte",
+      "courts",
+      "courtes"
+    ],
+    "gp": "kout"
+  },
+  {
+    "fr": [
+      "pensif",
+      "pensive",
+      "pensifs",
+      "pensives"
+    ],
+    "gp": "pansif"
+  },
+  {
+    "fr": [
+      "hideux",
+      "hideuse",
+      "hideux",
+      "hideuses"
+    ],
+    "gp": "idye"
+  },
+  {
+    "fr": [
+      "rêveur",
+      "rêveuse",
+      "rêveurs",
+      "rêveuses"
+    ],
+    "gp": "rèvè"
+  },
+  {
+    "fr": [
+      "lumineux",
+      "lumineuse",
+      "lumineux",
+      "lumineuses"
+    ],
+    "gp": "liminè"
+  },
+  {
+    "fr": [
+      "obscur",
+      "obscure",
+      "obscurs",
+      "obscures"
+    ],
+    "gp": "onskur"
+  },
+  {
+    "fr": [
+      "convulsif",
+      "convulsive",
+      "convulsifs",
+      "convulsives"
+    ],
+    "gp": "konvilsif"
+  },
+  {
+    "fr": [
+      "sombre",
+      "sombres"
+    ],
+    "gp": "onskur"
+  },
+  {
+    "fr": [
+      "horrible",
+      "horribles"
+    ],
+    "gp": "orib"
+  },
+  {
+    "fr": [
+      "grimpant",
+      "grimpante",
+      "grimpants",
+      "grimpantes"
+    ],
+    "gp": "grenpan"
+  },
+  {
+    "fr": [
+      "difformes",
+      "difforme"
+    ],
+    "gp": "difòm"
+  },
+  {
+    "fr": [
+      "palmé",
+      "palmée",
+      "palmés",
+      "palmées"
+    ],
+    "gp": "palmé"
+  },
+  {
+    "fr": "dur",
+    "gp": "rèd"
+  },
+  {
+    "fr": "lisse",
+    "gp": "lis"
+  },
+  {
+    "fr": "faux",
+    "gp": "fo"
+  },
+  {
+    "fr": "clair",
+    "gp": "klè"
+  },
+  {
+    "fr": "impoli",
+    "gp": "malélivé"
+  },
+  {
+    "fr": "guéri",
+    "gp": "géri"
+  },
+  {
+    "fr": "reposé",
+    "gp": "répozé"
+  },
+  {
+    "fr": "stupide",
+    "gp": "sòt"
+  },
+  {
+    "fr": "chaque",
+    "gp": [
+      "chak",
+      "chaklè"
+    ],
+    "type": "adj"
+  },
+  {
+    "fr": "médicinal",
+    "gp": "médsin",
+    "type": "adj"
+  },
+  {
+    "gp": [
+      "sré",
+      "sre"
+    ],
+    "fr": "sucré",
+    "type": "adj"
+  },
+  {
+    "gp": [
+      "koloré"
+    ],
+    "fr": "coloré",
+    "type": "adj"
+  },
+  {
+    "gp": [
+      "animé"
+    ],
+    "fr": "animé",
+    "type": "adj"
+  },
+  {
+    "gp": [
+      "pret"
+    ],
+    "fr": "prêt",
+    "type": "adj"
+  },
+  {
+    "gp": [
+      "djòl",
+      "djol"
+    ],
+    "fr": "agréable",
+    "type": "adj"
+  },
+  {
+    "gp": [
+      "parey",
+      "parei"
+    ],
+    "fr": "pareil",
+    "type": "adj"
+  },
+  {
+    "gp": [
+      "kapab"
+    ],
+    "fr": "capable",
+    "type": "adj"
+  },
+  {
+    "gp": [
+      "pwochen",
+      "prochèn"
+    ],
+    "fr": "prochain",
+    "type": "adj"
+  },
+  {
+    "fr": "généeux",
+    "gp": "donan",
+    "type": "adj"
+  },
+  {
+    "gp": [
+      "enpòtan",
+      "enpotan"
+    ],
+    "fr": "important",
+    "type": "adj"
+  },
+  {
+    "gp": [
+      "senkyèm"
+    ],
+    "fr": "cinquième",
+    "type": "adj"
+  },
+  {
+    "gp": "fransé",
+    "fr": "français",
+    "type": "adj"
+  },
+  {
+    "gp": "trankil",
+    "fr": "tranquille",
+    "type": "adj"
+  },
+  {
+    "gp": "libr",
+    "fr": "libre",
+    "type": "adj"
+  },
+  {
+    "fr": "premier",
+    "gp": [
+      "prèmyé",
+      "prèmié"
+    ]
+  },
+  {
+    "fr": [
+      "meilleur",
+      "meilleure",
+      "meilleurs",
+      "meilleures"
+    ],
+    "gp": "miyò"
+  },
+  {
+    "fr": "vrai",
+    "gp": "vré"
+  },
+  {
+    "fr": "nouveau",
+    "gp": "nouvo"
+  },
+  {
+    "fr": "petit",
+    "gp": "piti"
+  },
+  {
+    "fr": "intelligent",
+    "gp": "entèlijan"
+  },
+  {
+    "fr": "difficile",
+    "gp": "difisil"
+  },
+  {
+    "fr": "libre",
+    "gp": "lib"
+  }
+]

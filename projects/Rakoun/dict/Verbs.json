@@ -1,0 +1,4679 @@
+{
+  "rules": {
+    "verbes_sans_ka": [
+      "vais",
+      "vas",
+      "va",
+      "vont",
+      "allons",
+      "allez",
+      "suis",
+      "es",
+      "est",
+      "sommes",
+      "êtes",
+      "sont",
+      "ai",
+      "as",
+      "a",
+      "avons",
+      "avez",
+      "ont",
+      "veux",
+      "veut",
+      "veulent",
+      "voulons",
+      "voulez",
+      "peux",
+      "peut",
+      "peuvent",
+      "pouvons",
+      "pouvez",
+      "dois",
+      "doit",
+      "doivent",
+      "sais",
+      "sait",
+      "savons",
+      "savez",
+      "savent",
+      "fait",
+      "voulais",
+      "voulait",
+      "voulaient",
+      "vouliez",
+      "pouvais",
+      "pouvait",
+      "pouvaient",
+      "pouviez",
+      "pouvions",
+      "devais",
+      "devait",
+      "devaient",
+      "deviez",
+      "devions",
+      "savais",
+      "savait",
+      "savaient",
+      "saviez",
+      "savions",
+      "fallait"
+    ],
+    "verbes_futur": [
+      "vais",
+      "vas",
+      "va",
+      "vont",
+      "allons",
+      "allez",
+      "allais",
+      "allait",
+      "allaient",
+      "allions",
+      "alliez"
+    ],
+    "present_1er_groupe": {
+      "je": "e",
+      "tu": "es",
+      "il": "e",
+      "elle": "e",
+      "nous": "ons",
+      "vous": "ez",
+      "ils": "ent",
+      "elles": "ent"
+    },
+    "present_2e_groupe": {
+      "je": "is",
+      "tu": "is",
+      "il": "it",
+      "elle": "it",
+      "nous": "issons",
+      "vous": "issez",
+      "ils": "issent",
+      "elles": "issent"
+    },
+    "imparfait_terminaisons": {
+      "je": "ais",
+      "tu": "ais",
+      "il": "ait",
+      "elle": "ait",
+      "nous": "ions",
+      "vous": "iez",
+      "ils": "aient",
+      "elles": "aient"
+    },
+    "futur_terminaisons": {
+      "je": "ai",
+      "tu": "as",
+      "il": "a",
+      "elle": "a",
+      "nous": "ons",
+      "vous": "ez",
+      "ils": "ont",
+      "elles": "ont"
+    },
+    "futur_radicaux": {
+      "être": "ser",
+      "avoir": "aur",
+      "aller": "ir",
+      "faire": "fer",
+      "pouvoir": "pourr",
+      "vouloir": "voudr",
+      "devoir": "devr",
+      "savoir": "saur",
+      "voir": "verr",
+      "venir": "viendr",
+      "tenir": "tiendr",
+      "courir": "courr",
+      "mourir": "mourr",
+      "envoyer": "enverr"
+    },
+    "verbes_irreguliers": {
+      "être": {
+        "je": "suis",
+        "tu": "es",
+        "il": "est",
+        "elle": "est",
+        "nous": "sommes",
+        "vous": "êtes",
+        "ils": "sont",
+        "elles": "sont"
+      },
+      "avoir": {
+        "je": "ai",
+        "tu": "as",
+        "il": "a",
+        "elle": "a",
+        "nous": "avons",
+        "vous": "avez",
+        "ils": "ont",
+        "elles": "ont"
+      },
+      "aller": {
+        "je": "vais",
+        "tu": "vas",
+        "il": "va",
+        "elle": "va",
+        "nous": "allons",
+        "vous": "allez",
+        "ils": "vont",
+        "elles": "vont"
+      },
+      "faire": {
+        "je": "fais",
+        "tu": "fais",
+        "il": "fait",
+        "elle": "fait",
+        "nous": "faisons",
+        "vous": "faites",
+        "ils": "font",
+        "elles": "font"
+      },
+      "dire": {
+        "je": "dis",
+        "tu": "dis",
+        "il": "dit",
+        "elle": "dit",
+        "nous": "disons",
+        "vous": "dites",
+        "ils": "disent",
+        "elles": "disent"
+      },
+      "pouvoir": {
+        "je": "peux",
+        "tu": "peux",
+        "il": "peut",
+        "elle": "peut",
+        "nous": "pouvons",
+        "vous": "pouvez",
+        "ils": "peuvent",
+        "elles": "peuvent"
+      },
+      "vouloir": {
+        "je": "veux",
+        "tu": "veux",
+        "il": "veut",
+        "elle": "veut",
+        "nous": "voulons",
+        "vous": "voulez",
+        "ils": "veulent",
+        "elles": "veulent"
+      },
+      "devoir": {
+        "je": "dois",
+        "tu": "dois",
+        "il": "doit",
+        "elle": "doit",
+        "nous": "devons",
+        "vous": "devez",
+        "ils": "doivent",
+        "elles": "doivent"
+      },
+      "savoir": {
+        "je": "sais",
+        "tu": "sais",
+        "il": "sait",
+        "elle": "sait",
+        "nous": "savons",
+        "vous": "savez",
+        "ils": "savent",
+        "elles": "savent"
+      },
+      "voir": {
+        "je": "vois",
+        "tu": "vois",
+        "il": "voit",
+        "elle": "voit",
+        "nous": "voyons",
+        "vous": "voyez",
+        "ils": "voient",
+        "elles": "voient"
+      },
+      "boire": {
+        "je": "bois",
+        "tu": "bois",
+        "il": "boit",
+        "elle": "boit",
+        "nous": "buvons",
+        "vous": "buvez",
+        "ils": "boivent",
+        "elles": "boivent"
+      },
+      "prendre": {
+        "je": "prends",
+        "tu": "prends",
+        "il": "prend",
+        "elle": "prend",
+        "nous": "prenons",
+        "vous": "prenez",
+        "ils": "prennent",
+        "elles": "prennent"
+      },
+      "venir": {
+        "je": "viens",
+        "tu": "viens",
+        "il": "vient",
+        "elle": "vient",
+        "nous": "venons",
+        "vous": "venez",
+        "ils": "viennent",
+        "elles": "viennent"
+      },
+      "partir": {
+        "je": "pars",
+        "tu": "pars",
+        "il": "part",
+        "elle": "part",
+        "nous": "partons",
+        "vous": "partez",
+        "ils": "partent",
+        "elles": "partent"
+      },
+      "mettre": {
+        "je": "mets",
+        "tu": "mets",
+        "il": "met",
+        "elle": "met",
+        "nous": "mettons",
+        "vous": "mettez",
+        "ils": "mettent",
+        "elles": "mettent"
+      },
+      "appeler": {
+        "je": "appelle",
+        "tu": "appelles",
+        "il": "appelle",
+        "elle": "appelle",
+        "nous": "appelons",
+        "vous": "appelez",
+        "ils": "appellent",
+        "elles": "appellent"
+      },
+      "vivre": {
+        "je": "vis",
+        "tu": "vis",
+        "il": "vit",
+        "elle": "vit",
+        "nous": "vivons",
+        "vous": "vivez",
+        "ils": "vivent",
+        "elles": "vivent"
+      },
+      "rire": {
+        "je": "ris",
+        "tu": "ris",
+        "il": "rit",
+        "elle": "rit",
+        "nous": "rions",
+        "vous": "riez",
+        "ils": "rient",
+        "elles": "rient"
+      },
+      "dormir": {
+        "je": "dors",
+        "tu": "dors",
+        "il": "dort",
+        "elle": "dort",
+        "nous": "dormons",
+        "vous": "dormez",
+        "ils": "dorment",
+        "elles": "dorment"
+      },
+      "sortir": {
+        "je": "sors",
+        "tu": "sors",
+        "il": "sort",
+        "elle": "sort",
+        "nous": "sortons",
+        "vous": "sortez",
+        "ils": "sortent",
+        "elles": "sortent"
+      },
+      "sentir": {
+        "je": "sens",
+        "tu": "sens",
+        "il": "sent",
+        "elle": "sent",
+        "nous": "sentons",
+        "vous": "sentez",
+        "ils": "sentent",
+        "elles": "sentent"
+      },
+      "servir": {
+        "je": "sers",
+        "tu": "sers",
+        "il": "sert",
+        "elle": "sert",
+        "nous": "servons",
+        "vous": "servez",
+        "ils": "servent",
+        "elles": "servent"
+      },
+      "courir": {
+        "je": "cours",
+        "tu": "cours",
+        "il": "court",
+        "elle": "court",
+        "nous": "courons",
+        "vous": "courez",
+        "ils": "courent",
+        "elles": "courent"
+      },
+      "ouvrir": {
+        "je": "ouvre",
+        "tu": "ouvres",
+        "il": "ouvre",
+        "elle": "ouvre",
+        "nous": "ouvrons",
+        "vous": "ouvrez",
+        "ils": "ouvrent",
+        "elles": "ouvrent"
+      },
+      "offrir": {
+        "je": "offre",
+        "tu": "offres",
+        "il": "offre",
+        "elle": "offre",
+        "nous": "offrons",
+        "vous": "offrez",
+        "ils": "offrent",
+        "elles": "offrent"
+      },
+      "tenir": {
+        "je": "tiens",
+        "tu": "tiens",
+        "il": "tient",
+        "elle": "tient",
+        "nous": "tenons",
+        "vous": "tenez",
+        "ils": "tiennent",
+        "elles": "tiennent"
+      },
+      "lire": {
+        "je": "lis",
+        "tu": "lis",
+        "il": "lit",
+        "elle": "lit",
+        "nous": "lisons",
+        "vous": "lisez",
+        "ils": "lisent",
+        "elles": "lisent"
+      },
+      "écrire": {
+        "je": "écris",
+        "tu": "écris",
+        "il": "écrit",
+        "elle": "écrit",
+        "nous": "écrivons",
+        "vous": "écrivez",
+        "ils": "écrivent",
+        "elles": "écrivent"
+      },
+      "pleuvoir": {
+        "il": "pleut",
+        "elle": "pleut"
+      },
+      "mentir": {
+        "je": "mens",
+        "tu": "mens",
+        "il": "ment",
+        "elle": "ment",
+        "nous": "mentons",
+        "vous": "mentez",
+        "ils": "mentent",
+        "elles": "mentent"
+      },
+      "entretenir": {
+        "je": "entretiens",
+        "tu": "entretiens",
+        "il": "entretient",
+        "elle": "entretient",
+        "nous": "entretenons",
+        "vous": "entretenez",
+        "ils": "entretiennent",
+        "elles": "entretiennent"
+      },
+      "traduire": {
+        "je": "traduis",
+        "tu": "traduis",
+        "il": "traduit",
+        "elle": "traduit",
+        "nous": "traduisons",
+        "vous": "traduisez",
+        "ils": "traduisent",
+        "elles": "traduisent"
+      },
+      "réduire": {
+        "je": "réduis",
+        "tu": "réduis",
+        "il": "réduit",
+        "elle": "réduit",
+        "nous": "réduisons",
+        "vous": "réduisez",
+        "ils": "réduisent",
+        "elles": "réduisent"
+      },
+      "devenir": {
+        "je": "deviens",
+        "tu": "deviens",
+        "il": "devient",
+        "elle": "devient",
+        "nous": "devenons",
+        "vous": "devenez",
+        "ils": "deviennent",
+        "elles": "deviennent"
+      },
+      "subvenir": {
+        "je": "subviens",
+        "tu": "subviens",
+        "il": "subvient",
+        "elle": "subvient",
+        "nous": "subvenons",
+        "vous": "subvenez",
+        "ils": "subviennent",
+        "elles": "subviennent"
+      },
+      "permettre": {
+        "je": "permets",
+        "tu": "permets",
+        "il": "permet",
+        "elle": "permet",
+        "nous": "permettons",
+        "vous": "permettez",
+        "ils": "permettent",
+        "elles": "permettent"
+      },
+      "apprendre": {
+        "je": "apprends",
+        "tu": "apprends",
+        "il": "apprend",
+        "elle": "apprend",
+        "nous": "apprenons",
+        "vous": "apprenez",
+        "ils": "apprennent",
+        "elles": "apprennent"
+      },
+      "convenir": {
+        "je": "conviens",
+        "tu": "conviens",
+        "il": "convient",
+        "elle": "convient",
+        "nous": "convenons",
+        "vous": "convenez",
+        "ils": "conviennent",
+        "elles": "conviennent"
+      },
+      "revenir": {
+        "je": "reviens",
+        "tu": "reviens",
+        "il": "revient",
+        "elle": "revient",
+        "nous": "revenons",
+        "vous": "revenez",
+        "ils": "reviennent",
+        "elles": "reviennent"
+      },
+      "obtenir": {
+        "je": "obtiens",
+        "tu": "obtiens",
+        "il": "obtient",
+        "elle": "obtient",
+        "nous": "obtenons",
+        "vous": "obtenez",
+        "ils": "obtiennent",
+        "elles": "obtiennent"
+      },
+      "comprendre": {
+        "je": "comprends",
+        "tu": "comprends",
+        "il": "comprend",
+        "elle": "comprend",
+        "nous": "comprenons",
+        "vous": "comprenez",
+        "ils": "comprennent",
+        "elles": "comprennent"
+      },
+      "connaître": {
+        "je": "connais",
+        "tu": "connais",
+        "il": "connaît",
+        "elle": "connaît",
+        "nous": "connaissons",
+        "vous": "connaissez",
+        "ils": "connaissent",
+        "elles": "connaissent"
+      },
+      "enduire": {
+        "je": "enduis",
+        "tu": "enduis",
+        "il": "enduit",
+        "elle": "enduit",
+        "nous": "enduisons",
+        "vous": "enduisez",
+        "ils": "enduisent",
+        "elles": "enduisent"
+      },
+      "retenir": {
+        "je": "retiens",
+        "tu": "retiens",
+        "il": "retient",
+        "elle": "retient",
+        "nous": "retenons",
+        "vous": "retenez",
+        "ils": "retiennent",
+        "elles": "retiennent"
+      },
+      "maintenir": {
+        "je": "maintiens",
+        "tu": "maintiens",
+        "il": "maintient",
+        "elle": "maintient",
+        "nous": "maintenons",
+        "vous": "maintenez",
+        "ils": "maintiennent",
+        "elles": "maintiennent"
+      },
+      "prévenir": {
+        "je": "préviens",
+        "tu": "préviens",
+        "il": "prévient",
+        "elle": "prévient",
+        "nous": "prévenons",
+        "vous": "prévenez",
+        "ils": "préviennent",
+        "elles": "préviennent"
+      },
+      "reconnaître": {
+        "je": "reconnais",
+        "tu": "reconnais",
+        "il": "reconnaît",
+        "elle": "reconnaît",
+        "nous": "reconnaissons",
+        "vous": "reconnaissez",
+        "ils": "reconnaissent",
+        "elles": "reconnaissent"
+      },
+      "naître": {
+        "je": "nais",
+        "tu": "nais",
+        "il": "naît",
+        "elle": "naît",
+        "nous": "naissons",
+        "vous": "naissez",
+        "ils": "naissent",
+        "elles": "naissent"
+      },
+      "intervenir": {
+        "je": "interviens",
+        "tu": "interviens",
+        "il": "intervient",
+        "elle": "intervient",
+        "nous": "intervenons",
+        "vous": "intervenez",
+        "ils": "interviennent",
+        "elles": "interviennent"
+      },
+      "reconnaitre": {
+        "je": "reconnais",
+        "tu": "reconnais",
+        "il": "reconnaît",
+        "elle": "reconnaît",
+        "nous": "reconnaissons",
+        "vous": "reconnaissez",
+        "ils": "reconnaissent",
+        "elles": "reconnaissent"
+      },
+      "détenir": {
+        "je": "détiens",
+        "tu": "détiens",
+        "il": "détient",
+        "elle": "détient",
+        "nous": "détenons",
+        "vous": "détenez",
+        "ils": "détiennent",
+        "elles": "détiennent"
+      },
+      "promettre": {
+        "je": "promets",
+        "tu": "promets",
+        "il": "promet",
+        "elle": "promet",
+        "nous": "promettons",
+        "vous": "promettez",
+        "ils": "promettent",
+        "elles": "promettent"
+      },
+      "appartenir": {
+        "je": "appartiens",
+        "tu": "appartiens",
+        "il": "appartient",
+        "elle": "appartient",
+        "nous": "appartenons",
+        "vous": "appartenez",
+        "ils": "appartiennent",
+        "elles": "appartiennent"
+      },
+      "surprendre": {
+        "je": "surprends",
+        "tu": "surprends",
+        "il": "surprend",
+        "elle": "surprend",
+        "nous": "surprenons",
+        "vous": "surprenez",
+        "ils": "surprennent",
+        "elles": "surprennent"
+      },
+      "conduire": {
+        "je": "conduis",
+        "tu": "conduis",
+        "il": "conduit",
+        "elle": "conduit",
+        "nous": "conduisons",
+        "vous": "conduisez",
+        "ils": "conduisent",
+        "elles": "conduisent"
+      },
+      "désapprendre": {
+        "je": "désapprends",
+        "tu": "désapprends",
+        "il": "désapprend",
+        "elle": "désapprend",
+        "nous": "désapprenons",
+        "vous": "désapprenez",
+        "ils": "désapprennent",
+        "elles": "désapprennent"
+      },
+      "apartenir": {
+        "je": "apartiens",
+        "tu": "apartiens",
+        "il": "apartient",
+        "elle": "apartient",
+        "nous": "apartenons",
+        "vous": "apartenez",
+        "ils": "apartiennent",
+        "elles": "apartiennent"
+      },
+      "craindre": {
+        "je": "crains",
+        "tu": "crains",
+        "il": "craint",
+        "elle": "craint",
+        "nous": "craignons",
+        "vous": "craignez",
+        "ils": "craignent",
+        "elles": "craignent"
+      },
+      "souffrir": {
+        "je": "souffre",
+        "tu": "souffres",
+        "il": "souffre",
+        "elle": "souffre",
+        "nous": "souffrons",
+        "vous": "souffrez",
+        "ils": "souffrent",
+        "elles": "souffrent"
+      },
+      "lever": {
+        "je": "lève",
+        "tu": "lèves",
+        "il": "lève",
+        "elle": "lève",
+        "nous": "levons",
+        "vous": "levez",
+        "ils": "lèvent",
+        "elles": "lèvent"
+      },
+      "croire": {
+        "je": "crois",
+        "tu": "crois",
+        "il": "croit",
+        "elle": "croit",
+        "nous": "croyons",
+        "vous": "croyez",
+        "ils": "croient",
+        "elles": "croient"
+      }
+    },
+    "participes_passes": {
+      "être": "été",
+      "avoir": "eu",
+      "faire": "fait",
+      "dire": "dit",
+      "prendre": "pris",
+      "mettre": "mis",
+      "boire": "bu",
+      "voir": "vu",
+      "venir": "venu",
+      "tenir": "tenu",
+      "courir": "couru",
+      "ouvrir": "ouvert",
+      "offrir": "offert",
+      "lire": "lu",
+      "écrire": "écrit",
+      "savoir": "su",
+      "pouvoir": "pu",
+      "vouloir": "voulu",
+      "devoir": "dû",
+      "aller": "allé",
+      "partir": "parti",
+      "sortir": "sorti",
+      "dormir": "dormi",
+      "sentir": "senti",
+      "servir": "servi",
+      "finir": "fini",
+      "entretenir": "entretenu",
+      "traduire": "traduit",
+      "réduire": "réduit",
+      "devenir": "devenu",
+      "subvenir": "subvenu",
+      "permettre": "permis",
+      "apprendre": "appris",
+      "convenir": "convenu",
+      "revenir": "revenu",
+      "obtenir": "obtenu",
+      "comprendre": "compris",
+      "connaître": "connu",
+      "enduire": "enduit",
+      "retenir": "retenu",
+      "maintenir": "maintenu",
+      "prévenir": "prévenu",
+      "reconnaître": "reconnu",
+      "naître": "né",
+      "intervenir": "intervenu",
+      "reconnaitre": "reconnu",
+      "détenir": "détenu",
+      "promettre": "promis",
+      "appartenir": "appartenu",
+      "surprendre": "surpris",
+      "conduire": "conduit",
+      "désapprendre": "désappris",
+      "apartenir": "apartenu",
+      "craindre": "craint",
+      "souffrir": "souffert",
+      "mourir": "mort",
+      "couvrir": "couvert",
+      "vivre": "vécu",
+      "recevoir": "reçu",
+      "perdre": "perdu",
+      "vendre": "vendu",
+      "répondre": "répondu",
+      "attendre": "attendu",
+      "entendre": "entendu",
+      "descendre": "descendu",
+      "rendre": "rendu"
+    },
+    "verbes_aux_etre": [
+      "aller",
+      "venir",
+      "partir",
+      "arriver",
+      "rester",
+      "sortir",
+      "monter",
+      "descendre",
+      "tomber",
+      "mourir",
+      "naître",
+      "retourner"
+    ],
+    "fins_participe": [
+      "é",
+      "ée",
+      "és",
+      "ées"
+    ],
+    "desinences_1er_groupe": [
+      "eraient",
+      "erais",
+      "erait",
+      "erons",
+      "erez",
+      "eront",
+      "erai",
+      "eras",
+      "era",
+      "assent",
+      "asses",
+      "âmes",
+      "âtes",
+      "èrent",
+      "eaient",
+      "eais",
+      "eait",
+      "eons",
+      "geons",
+      "geais",
+      "aient",
+      "ais",
+      "ait",
+      "ant",
+      "ons",
+      "ez",
+      "ent",
+      "es",
+      "e",
+      "é",
+      "ée",
+      "és",
+      "ées"
+    ],
+    "etre_futur": [
+      "sera",
+      "seras",
+      "serons",
+      "serez",
+      "seront"
+    ],
+    "etre_conditionnel": [
+      "serais",
+      "serait",
+      "seraient"
+    ]
+  },
+  "entries": [
+    {
+      "fr": "a",
+      "gp": "ni",
+      "secondaire": true
+    },
+    {
+      "fr": "abaisser",
+      "gp": "fésé"
+    },
+    {
+      "fr": "abandonner",
+      "gp": "kité alé"
+    },
+    {
+      "fr": "abasourdir",
+      "gp": "toudi"
+    },
+    {
+      "fr": "aboyer",
+      "gp": "japé"
+    },
+    {
+      "fr": "abrutir",
+      "gp": "tèbèdjé"
+    },
+    {
+      "fr": "abâtardir",
+      "gp": "anmalangi"
+    },
+    {
+      "fr": "abîmer",
+      "gp": "makayé"
+    },
+    {
+      "fr": "accaparer",
+      "gp": "fè bawouf anlè"
+    },
+    {
+      "fr": "accepter",
+      "gp": [
+        "aksèpté",
+        "asèpté"
+      ]
+    },
+    {
+      "fr": [
+        "accompagner",
+        "acconpagner"
+      ],
+      "gp": [
+        "akonpayé",
+        "akonpayen"
+      ]
+    },
+    {
+      "fr": "accourir",
+      "gp": "akouri"
+    },
+    {
+      "fr": "accrocher",
+      "gp": "kwoché"
+    },
+    {
+      "fr": "accueillir",
+      "gp": "akéyi"
+    },
+    {
+      "fr": "accuser",
+      "gp": "akizé"
+    },
+    {
+      "fr": "accélérer",
+      "gp": "chabonnen"
+    },
+    {
+      "fr": "acheter",
+      "gp": [
+        "achté",
+        "djenyen"
+      ]
+    },
+    {
+      "fr": "acquerir",
+      "gp": "akéri"
+    },
+    {
+      "fr": "adorer",
+      "gp": "adoré"
+    },
+    {
+      "fr": "affaire",
+      "gp": "zafè"
+    },
+    {
+      "fr": "agacer",
+      "gp": "agasé"
+    },
+    {
+      "fr": "agir",
+      "gp": "aji"
+    },
+    {
+      "fr": "agiter",
+      "gp": "lélé"
+    },
+    {
+      "fr": "agrandir",
+      "gp": "grandi"
+    },
+    {
+      "fr": "ai",
+      "gp": "ni",
+      "secondaire": true
+    },
+    {
+      "fr": "aider",
+      "gp": [
+        "édé",
+        "ed"
+      ]
+    },
+    {
+      "fr": "aiguiser",
+      "gp": "filé"
+    },
+    {
+      "fr": "aimait",
+      "gp": "té enmé"
+    },
+    {
+      "fr": "aime",
+      "gp": "enmé"
+    },
+    {
+      "fr": "aimer",
+      "gp": "enmé"
+    },
+    {
+      "fr": "aimes",
+      "gp": "enmé"
+    },
+    {
+      "fr": "aimé",
+      "gp": "enmé"
+    },
+    {
+      "fr": "ajouter",
+      "gp": "rajouté"
+    },
+    {
+      "fr": "aligner",
+      "gp": "aliyen"
+    },
+    {
+      "fr": "aller",
+      "gp": "alé"
+    },
+    {
+      "fr": "allier",
+      "gp": "alyansé"
+    },
+    {
+      "fr": "allonger",
+      "gp": "alongé"
+    },
+    {
+      "fr": "allons",
+      "gp": "annalé"
+    },
+    {
+      "fr": "allons",
+      "gp": "annou"
+    },
+    {
+      "fr": "allons-y",
+      "gp": "annou alé"
+    },
+    {
+      "fr": "allumer",
+      "gp": "limen"
+    },
+    {
+      "fr": "allummer",
+      "gp": "limen"
+    },
+    {
+      "fr": "amadouer",
+      "gp": "miyonnen"
+    },
+    {
+      "fr": "ameliorer",
+      "gp": "amélyoré"
+    },
+    {
+      "fr": "amender",
+      "gp": "anbyennen"
+    },
+    {
+      "fr": "amener",
+      "gp": "mennen vini"
+    },
+    {
+      "fr": "amuser",
+      "gp": "amizé"
+    },
+    {
+      "fr": "analyser",
+      "gp": "dékatiyé"
+    },
+    {
+      "fr": "annoncer",
+      "gp": "anonse"
+    },
+    {
+      "fr": "anvant-hier",
+      "gp": "avantyè"
+    },
+    {
+      "fr": "apartenir",
+      "gp": "apartjenn"
+    },
+    {
+      "fr": "apparaitre",
+      "gp": "parèt"
+    },
+    {
+      "fr": "appeler",
+      "gp": "kriyé"
+    },
+    {
+      "fr": "applaudir",
+      "gp": "aplodi"
+    },
+    {
+      "fr": "apporter",
+      "gp": "pòté"
+    },
+    {
+      "fr": "apprendre",
+      "gp": "apwann"
+    },
+    {
+      "fr": "appuyer",
+      "gp": "apiyé"
+    },
+    {
+      "fr": "architecture",
+      "gp": "konstriksyonnay"
+    },
+    {
+      "fr": "arracher",
+      "gp": "raché"
+    },
+    {
+      "fr": "arreter",
+      "gp": "awété"
+    },
+    {
+      "fr": "arriver",
+      "gp": "rivé"
+    },
+    {
+      "fr": "arroger",
+      "gp": "anlopsyonnen"
+    },
+    {
+      "fr": "arroser",
+      "gp": "wouzé"
+    },
+    {
+      "fr": "arrête",
+      "gp": "asé"
+    },
+    {
+      "fr": "arrêter",
+      "gp": "sispann"
+    },
+    {
+      "fr": "as",
+      "gp": "ni",
+      "secondaire": true
+    },
+    {
+      "fr": [
+        "asseoir",
+        "s'asseoir"
+      ],
+      "gp": [
+        "asiz",
+        "chita"
+      ]
+    },
+    {
+      "fr": "asservir",
+      "gp": "mété anba djouk"
+    },
+    {
+      "fr": "assister",
+      "gp": "asiste"
+    },
+    {
+      "fr": "associer",
+      "gp": "asosiyé"
+    },
+    {
+      "fr": "atelier",
+      "gp": "atilyé"
+    },
+    {
+      "fr": "attacher",
+      "gp": "aché"
+    },
+    {
+      "fr": "attaquer",
+      "gp": "atakté"
+    },
+    {
+      "fr": "attendre",
+      "gp": [
+        "tann",
+        "atann"
+      ]
+    },
+    {
+      "fr": "attends",
+      "gp": "tann"
+    },
+    {
+      "fr": "atterrir",
+      "gp": "planni"
+    },
+    {
+      "fr": "attiser",
+      "gp": "tizonnen"
+    },
+    {
+      "fr": "attraper",
+      "gp": "trenné"
+    },
+    {
+      "fr": "attrapper",
+      "gp": "trapé"
+    },
+    {
+      "fr": "augmenter",
+      "gp": "ogmanté"
+    },
+    {
+      "fr": "avait",
+      "gp": "té",
+      "secondaire": true
+    },
+    {
+      "fr": "avaler",
+      "gp": "avalé"
+    },
+    {
+      "fr": "avancer",
+      "gp": "avansé"
+    },
+    {
+      "fr": "avançer",
+      "gp": "vansé"
+    },
+    {
+      "fr": "avare",
+      "gp": "rafen"
+    },
+    {
+      "fr": "avertir",
+      "gp": "avèti"
+    },
+    {
+      "fr": "avez",
+      "gp": "ni",
+      "secondaire": true
+    },
+    {
+      "fr": "avoir",
+      "gp": "ni"
+    },
+    {
+      "fr": "avons",
+      "gp": "ni",
+      "secondaire": true
+    },
+    {
+      "fr": "baigner",
+      "gp": "bényé"
+    },
+    {
+      "fr": "baiser",
+      "gp": "koké"
+    },
+    {
+      "fr": "baisser",
+      "gp": "bésé"
+    },
+    {
+      "fr": "balayer",
+      "gp": "balalyé"
+    },
+    {
+      "fr": "ballotter",
+      "gp": "djoumbaté"
+    },
+    {
+      "fr": "bander",
+      "gp": "kal rèd"
+    },
+    {
+      "fr": "barrer",
+      "gp": "baré"
+    },
+    {
+      "fr": "batir",
+      "gp": "bati"
+    },
+    {
+      "fr": "battre",
+      "gp": "baté"
+    },
+    {
+      "fr": "bavarder",
+      "gp": "pran milan"
+    },
+    {
+      "fr": "beurre",
+      "gp": "bè"
+    },
+    {
+      "fr": "bizarre",
+      "gp": "mistik"
+    },
+    {
+      "fr": "blesser",
+      "gp": "blésé",
+      "secondaire": true
+    },
+    {
+      "fr": "bloquer",
+      "gp": "bloké"
+    },
+    {
+      "fr": "boire",
+      "gp": "bwè"
+    },
+    {
+      "fr": "bois",
+      "gp": "bwè"
+    },
+    {
+      "fr": "boit",
+      "gp": "bwè"
+    },
+    {
+      "fr": "boiter",
+      "gp": "maché-bwété"
+    },
+    {
+      "fr": "bouger",
+      "gp": "bougé"
+    },
+    {
+      "fr": "bouillir",
+      "gp": "bouyi"
+    },
+    {
+      "fr": "brancher",
+      "gp": "plogé"
+    },
+    {
+      "fr": "branler",
+      "gp": "bat kal"
+    },
+    {
+      "fr": "braquer",
+      "gp": "bratjé"
+    },
+    {
+      "fr": "briller",
+      "gp": "briyé"
+    },
+    {
+      "fr": "briser",
+      "gp": "krazé"
+    },
+    {
+      "fr": "bruler",
+      "gp": "bwilé"
+    },
+    {
+      "fr": "brûler",
+      "gp": "brilé"
+    },
+    {
+      "fr": "cabosser",
+      "gp": "boskaf"
+    },
+    {
+      "fr": "cacher",
+      "gp": "séré"
+    },
+    {
+      "fr": "calculer",
+      "gp": "kalkile"
+    },
+    {
+      "fr": "casser",
+      "gp": [
+        "pété",
+        "kasé"
+      ]
+    },
+    {
+      "fr": "castrer",
+      "gp": "dégrennen"
+    },
+    {
+      "fr": "cerner",
+      "gp": "sennen"
+    },
+    {
+      "fr": "chandelier",
+      "gp": "chandilyé"
+    },
+    {
+      "fr": "changer",
+      "gp": "chanjé"
+    },
+    {
+      "fr": "chanter",
+      "gp": "chanté"
+    },
+    {
+      "fr": "charger",
+      "gp": "chajé"
+    },
+    {
+      "fr": [
+        "charpentière",
+        "charpentières"
+      ],
+      "gp": "chapantyé"
+    },
+    {
+      "fr": "chasser",
+      "gp": "chasé"
+    },
+    {
+      "fr": "chauffer",
+      "gp": "chofé"
+    },
+    {
+      "fr": "chaumière",
+      "gp": "kamach"
+    },
+    {
+      "fr": "chavirer",
+      "gp": "chalviré"
+    },
+    {
+      "fr": "chercher",
+      "gp": "chèché"
+    },
+    {
+      "fr": "chevaucher",
+      "gp": "achouvalé"
+    },
+    {
+      "fr": "chevelure",
+      "gp": "chivé"
+    },
+    {
+      "fr": "chier",
+      "gp": "kaka"
+    },
+    {
+      "fr": "choisir",
+      "gp": "chwézi"
+    },
+    {
+      "fr": "chuchoter",
+      "gp": "choukoté"
+    },
+    {
+      "fr": "cimenter",
+      "gp": "masonnen"
+    },
+    {
+      "fr": "cimetiere",
+      "gp": "senmityé"
+    },
+    {
+      "fr": "clouer",
+      "gp": "klouré"
+    },
+    {
+      "fr": "coiffer",
+      "gp": "penyen"
+    },
+    {
+      "fr": "coincer",
+      "gp": "kwensé"
+    },
+    {
+      "fr": "coller",
+      "gp": "kolé"
+    },
+    {
+      "fr": "commander",
+      "gp": "mandé"
+    },
+    {
+      "fr": "commencer",
+      "gp": "koumansé"
+    },
+    {
+      "fr": "comparer",
+      "gp": "konparé"
+    },
+    {
+      "fr": "comprendre",
+      "gp": "konprann"
+    },
+    {
+      "fr": "compter",
+      "gp": "konté"
+    },
+    {
+      "fr": "concevoir",
+      "gp": "konsivwè"
+    },
+    {
+      "fr": "conduire",
+      "gp": "kondwi"
+    },
+    {
+      "fr": "confirmer",
+      "gp": "konfimé"
+    },
+    {
+      "fr": "conjoncture",
+      "gp": "doukou"
+    },
+    {
+      "fr": "conjurer",
+      "gp": "marénika"
+    },
+    {
+      "fr": "connaitre",
+      "gp": "konné"
+    },
+    {
+      "fr": "connaître",
+      "gp": "konèt"
+    },
+    {
+      "fr": "conseiller",
+      "gp": "konseyé"
+    },
+    {
+      "fr": "consoler",
+      "gp": "konsolé"
+    },
+    {
+      "fr": "construire",
+      "gp": "konstwi"
+    },
+    {
+      "fr": "continuer",
+      "gp": "kontiniyé"
+    },
+    {
+      "fr": "contredire",
+      "gp": "dékontrolé"
+    },
+    {
+      "fr": "convenir",
+      "gp": "konvyenn"
+    },
+    {
+      "fr": "copier",
+      "gp": "kopiyé"
+    },
+    {
+      "fr": "copuler",
+      "gp": "koké"
+    },
+    {
+      "fr": "corriger",
+      "gp": "korjé"
+    },
+    {
+      "fr": "coucher",
+      "gp": "kouché"
+    },
+    {
+      "fr": "coudre",
+      "gp": "koud"
+    },
+    {
+      "fr": "couillonner",
+      "gp": "kouyonnen"
+    },
+    {
+      "fr": "couler",
+      "gp": "koulé"
+    },
+    {
+      "fr": "courir",
+      "gp": "kouri"
+    },
+    {
+      "fr": "courrier",
+      "gp": "kourilèt"
+    },
+    {
+      "fr": "cours",
+      "gp": "montray"
+    },
+    {
+      "fr": [
+        "couturier",
+        "couturiers",
+        "couturière",
+        "couturières"
+      ],
+      "gp": "koutiryé"
+    },
+    {
+      "fr": "couvrir",
+      "gp": "kouvri"
+    },
+    {
+      "fr": "coûter",
+      "gp": "kosté"
+    },
+    {
+      "fr": "cracher",
+      "gp": "kraché"
+    },
+    {
+      "fr": "craindre",
+      "gp": "pè",
+      "secondaire": true
+    },
+    {
+      "fr": "creer",
+      "gp": "kréyé"
+    },
+    {
+      "fr": "crier",
+      "gp": "kriyé"
+    },
+    {
+      "fr": "critiquer",
+      "gp": "chaléré"
+    },
+    {
+      "fr": "croire",
+      "gp": "kwè"
+    },
+    {
+      "fr": "cueillir",
+      "gp": "kéyi"
+    },
+    {
+      "fr": "cuiller",
+      "gp": "tchwiyè"
+    },
+    {
+      "fr": "cuir",
+      "gp": "tjui"
+    },
+    {
+      "fr": "cuire",
+      "gp": "tjuit"
+    },
+    {
+      "fr": [
+        "cuisinier",
+        "cuisiniers",
+        "cuisinière",
+        "cuisinières"
+      ],
+      "gp": "tjwizinye"
+    },
+    {
+      "fr": "cuivre",
+      "gp": "tjuiv"
+    },
+    {
+      "fr": "câliner",
+      "gp": "dousiné"
+    },
+    {
+      "fr": "danser",
+      "gp": "zouké"
+    },
+    {
+      "fr": "danser",
+      "gp": "dansé"
+    },
+    {
+      "fr": "dechirer",
+      "gp": "déchiré"
+    },
+    {
+      "fr": "decouvrir",
+      "gp": "dékouvri"
+    },
+    {
+      "fr": "defendre",
+      "gp": "défann"
+    },
+    {
+      "fr": "demander",
+      "gp": "mandé"
+    },
+    {
+      "fr": "demenager",
+      "gp": "déménajé"
+    },
+    {
+      "fr": "deranger",
+      "gp": "déwanjé"
+    },
+    {
+      "fr": "descendre",
+      "gp": [
+        "désan",
+        "désann"
+      ]
+    },
+    {
+      "fr": "deshabiller",
+      "gp": "désabiyé"
+    },
+    {
+      "fr": "dessiner",
+      "gp": "désiné"
+    },
+    {
+      "fr": "detacher",
+      "gp": "déaché"
+    },
+    {
+      "fr": "developper",
+      "gp": "devlopé"
+    },
+    {
+      "fr": "devenir",
+      "gp": "vini",
+      "secondaire": true
+    },
+    {
+      "fr": "deviner",
+      "gp": "déviné"
+    },
+    {
+      "fr": "devoir",
+      "gp": "dwé"
+    },
+    {
+      "fr": "diminuer",
+      "gp": "diminiyé"
+    },
+    {
+      "fr": "dire",
+      "gp": [
+        "di",
+        "malpalé"
+      ]
+    },
+    {
+      "fr": "dis",
+      "gp": "di"
+    },
+    {
+      "fr": "discuter",
+      "gp": "diskité"
+    },
+    {
+      "fr": "disent",
+      "gp": "di"
+    },
+    {
+      "fr": "disparaitre",
+      "gp": "déparèt"
+    },
+    {
+      "fr": "disperser",
+      "gp": "gayé"
+    },
+    {
+      "fr": "disputer",
+      "gp": "lagé"
+    },
+    {
+      "fr": "distribuer",
+      "gp": "distribiyé"
+    },
+    {
+      "fr": "dit",
+      "gp": "di"
+    },
+    {
+      "fr": "diviser",
+      "gp": "divizé"
+    },
+    {
+      "fr": "dominer",
+      "gp": "mété anba lopsyon"
+    },
+    {
+      "fr": "donner",
+      "gp": "ba"
+    },
+    {
+      "fr": "donner",
+      "gp": "ban"
+    },
+    {
+      "fr": "dormir",
+      "gp": "dômi"
+    },
+    {
+      "fr": "doser",
+      "gp": "dosé"
+    },
+    {
+      "fr": "draguer",
+      "gp": "zayé"
+    },
+    {
+      "fr": "dresser",
+      "gp": "drésé"
+    },
+    {
+      "fr": "débarquer",
+      "gp": "débatjé"
+    },
+    {
+      "fr": "débloquer",
+      "gp": "dékoré"
+    },
+    {
+      "fr": "déboucher",
+      "gp": "débownen"
+    },
+    {
+      "fr": "débouler",
+      "gp": "chouboulé"
+    },
+    {
+      "fr": "déchirer",
+      "gp": "chiré"
+    },
+    {
+      "fr": "décider",
+      "gp": "désidé"
+    },
+    {
+      "fr": "défendre",
+      "gp": "défann"
+    },
+    {
+      "fr": "défier",
+      "gp": "laten"
+    },
+    {
+      "fr": "déformer",
+      "gp": "défwazé"
+    },
+    {
+      "fr": "dégrigoler",
+      "gp": "dédlèldésann"
+    },
+    {
+      "fr": "dégringoler",
+      "gp": "denngolé"
+    },
+    {
+      "fr": "délirer",
+      "gp": "dépalé"
+    },
+    {
+      "fr": "démenbrer",
+      "gp": "dékatché"
+    },
+    {
+      "fr": "démoustiquer",
+      "gp": "fliktosé"
+    },
+    {
+      "fr": "dépenser",
+      "gp": "dépansé"
+    },
+    {
+      "fr": "dépensier",
+      "gp": "gaspiya"
+    },
+    {
+      "fr": "désapprendre",
+      "gp": "dézaprann"
+    },
+    {
+      "fr": "désordre",
+      "gp": "chingpongtong"
+    },
+    {
+      "fr": "détacher",
+      "gp": "démaré"
+    },
+    {
+      "fr": "déteindre",
+      "gp": "détenn"
+    },
+    {
+      "fr": "détenir",
+      "gp": "détjenn"
+    },
+    {
+      "fr": "détruire",
+      "gp": "détwi"
+    },
+    {
+      "fr": "dévaster",
+      "gp": "défolmanté"
+    },
+    {
+      "fr": "echanger",
+      "gp": "echanjé"
+    },
+    {
+      "fr": "echouer",
+      "gp": "échwé"
+    },
+    {
+      "fr": "ecrire",
+      "gp": "ékri"
+    },
+    {
+      "fr": "embarcadère",
+      "gp": "bakadè"
+    },
+    {
+      "fr": "embarquer",
+      "gp": "batjé"
+    },
+    {
+      "fr": "embrasser",
+      "gp": "enbrasé"
+    },
+    {
+      "fr": "embêter",
+      "gp": "fè djèz anlè"
+    },
+    {
+      "fr": "emmerder",
+      "gp": [
+        "anmèdé",
+        "anmerdé"
+      ]
+    },
+    {
+      "fr": "empecher",
+      "gp": "anpéché"
+    },
+    {
+      "fr": "employer",
+      "gp": "anplwayé"
+    },
+    {
+      "fr": "empoigner",
+      "gp": "anpwenyen"
+    },
+    {
+      "fr": "empoisonner",
+      "gp": "pyayé"
+    },
+    {
+      "fr": "emprunter",
+      "gp": "anpranté"
+    },
+    {
+      "fr": "empêcher",
+      "gp": "opozé"
+    },
+    {
+      "fr": "encoignure",
+      "gp": "lankongni"
+    },
+    {
+      "fr": "encourager",
+      "gp": "ankourajé"
+    },
+    {
+      "fr": "enculer",
+      "gp": "ankilé"
+    },
+    {
+      "fr": "enduire",
+      "gp": "randui"
+    },
+    {
+      "fr": "engloutir",
+      "gp": "anfounen"
+    },
+    {
+      "fr": "enjamber",
+      "gp": "janbé"
+    },
+    {
+      "fr": "enlever",
+      "gp": "tiré"
+    },
+    {
+      "fr": "enraciner",
+      "gp": "anchouké"
+    },
+    {
+      "fr": "enseigner",
+      "gp": "ansènyé"
+    },
+    {
+      "fr": "ensorceler",
+      "gp": "fokolé"
+    },
+    {
+      "fr": "entendre",
+      "gp": "antann"
+    },
+    {
+      "fr": "enterrer",
+      "gp": "téré"
+    },
+    {
+      "fr": "entortiller",
+      "gp": "anmayé"
+    },
+    {
+      "fr": "entrer",
+      "gp": [
+        "rantré",
+        "antré"
+      ]
+    },
+    {
+      "fr": "entretenir",
+      "gp": "antretjenn"
+    },
+    {
+      "fr": "envlopper",
+      "gp": "vlopé"
+    },
+    {
+      "fr": "envoyer",
+      "gp": [
+        "vréyé alé",
+        "voyé"
+      ]
+    },
+    {
+      "fr": "es",
+      "gp": "sé"
+    },
+    {
+      "fr": "esperer",
+      "gp": "éspéré"
+    },
+    {
+      "fr": "espoir",
+      "gp": "espwamalpapay"
+    },
+    {
+      "fr": "espérer",
+      "gp": "èspéré"
+    },
+    {
+      "fr": "essayer",
+      "gp": "sayé"
+    },
+    {
+      "fr": "essuyer",
+      "gp": "swiyé"
+    },
+    {
+      "fr": "est",
+      "gp": "sé"
+    },
+    {
+      "fr": "estimer",
+      "gp": "estimé"
+    },
+    {
+      "fr": "etablir",
+      "gp": "établi"
+    },
+    {
+      "fr": "etendre",
+      "gp": "étenn"
+    },
+    {
+      "fr": "etudier",
+      "gp": "étidiyé"
+    },
+    {
+      "fr": "examiner",
+      "gp": "ègzaminé"
+    },
+    {
+      "fr": "exhiber",
+      "gp": "dégaré"
+    },
+    {
+      "fr": "expliquer",
+      "gp": "èspitjé"
+    },
+    {
+      "fr": "exposer",
+      "gp": "ekspoze"
+    },
+    {
+      "fr": "exprimer",
+      "gp": "èsprimen"
+    },
+    {
+      "fr": "extraordinaire",
+      "gp": "méchan"
+    },
+    {
+      "fr": "fabriquer",
+      "gp": "fabriké"
+    },
+    {
+      "fr": "faillir",
+      "gp": "mantché"
+    },
+    {
+      "fr": "faire",
+      "gp": "fè"
+    },
+    {
+      "fr": "fais",
+      "gp": "fè"
+    },
+    {
+      "fr": "fait",
+      "gp": "fè"
+    },
+    {
+      "fr": "faner",
+      "gp": "fennen"
+    },
+    {
+      "fr": "faucher",
+      "gp": "koutlasé"
+    },
+    {
+      "fr": "feliciter",
+      "gp": "félicité"
+    },
+    {
+      "fr": "fermer",
+      "gp": [
+        "fèmé",
+        "fèmen"
+      ]
+    },
+    {
+      "fr": "filer",
+      "gp": "foukan"
+    },
+    {
+      "fr": "finir",
+      "gp": "fini"
+    },
+    {
+      "fr": "fixer",
+      "gp": "fikse"
+    },
+    {
+      "fr": "flâner",
+      "gp": "flagannen"
+    },
+    {
+      "fr": "forcer",
+      "gp": "fòsé"
+    },
+    {
+      "fr": "forger",
+      "gp": "machoké"
+    },
+    {
+      "fr": "fouler",
+      "gp": "pyété"
+    },
+    {
+      "fr": "fourrière",
+      "gp": "fouyè"
+    },
+    {
+      "fr": "foutre",
+      "gp": "fouté"
+    },
+    {
+      "fr": "frapper",
+      "gp": "fwapé"
+    },
+    {
+      "fr": "freiner",
+      "gp": "frennen"
+    },
+    {
+      "fr": "froisser",
+      "gp": "fwaksé"
+    },
+    {
+      "fr": "frontière",
+      "gp": "lalinman"
+    },
+    {
+      "fr": "frotter",
+      "gp": "fwoté"
+    },
+    {
+      "fr": "fuir",
+      "gp": "fouyé"
+    },
+    {
+      "fr": "fumer",
+      "gp": "fimen"
+    },
+    {
+      "fr": "fusionner",
+      "gp": "makonnen"
+    },
+    {
+      "fr": "fôlatrer",
+      "gp": "èskoniflé"
+    },
+    {
+      "fr": "gagner",
+      "gp": "genyen"
+    },
+    {
+      "fr": "galoper",
+      "gp": "kavalkadé"
+    },
+    {
+      "fr": "gerber",
+      "gp": "vonmi"
+    },
+    {
+      "fr": "glisser",
+      "gp": "glisé"
+    },
+    {
+      "fr": "gouter",
+      "gp": "gousté"
+    },
+    {
+      "fr": "grandir",
+      "gp": "grandi"
+    },
+    {
+      "fr": "gratter",
+      "gp": "graté"
+    },
+    {
+      "fr": "grimacer",
+      "gp": "griyen"
+    },
+    {
+      "fr": "grimper",
+      "gp": "grimpé"
+    },
+    {
+      "fr": "grogner",
+      "gp": "gwonyen"
+    },
+    {
+      "fr": "grossir",
+      "gp": "gwosiré"
+    },
+    {
+      "fr": "guerir",
+      "gp": "gwéri"
+    },
+    {
+      "fr": "guerre",
+      "gp": "ladjè"
+    },
+    {
+      "fr": "guérir",
+      "gp": "géri"
+    },
+    {
+      "fr": "gâter",
+      "gp": "chouchouté"
+    },
+    {
+      "fr": "gêner",
+      "gp": "jennen"
+    },
+    {
+      "fr": "habiller",
+      "gp": "abiyé"
+    },
+    {
+      "fr": [
+        "habiter",
+        "résider"
+      ],
+      "gp": "rété",
+      "secondaire": true
+    },
+    {
+      "fr": "harnacher",
+      "gp": "sélébridé"
+    },
+    {
+      "fr": "harponner",
+      "gp": "raponnen"
+    },
+    {
+      "fr": "hausser",
+      "gp": "wosé"
+    },
+    {
+      "fr": "haute-couture",
+      "gp": "ot-kout"
+    },
+    {
+      "fr": "hennir",
+      "gp": "renni"
+    },
+    {
+      "fr": "hisser",
+      "gp": "palantjé"
+    },
+    {
+      "fr": "hésiter",
+      "gp": "tjasé"
+    },
+    {
+      "fr": "illuminer",
+      "gp": "chaltounen"
+    },
+    {
+      "fr": "imaginer",
+      "gp": "imajine"
+    },
+    {
+      "fr": "imiter",
+      "gp": "imité"
+    },
+    {
+      "fr": "inciter",
+      "gp": "enstidjé"
+    },
+    {
+      "fr": "indiquer",
+      "gp": "enditjé"
+    },
+    {
+      "fr": "installer",
+      "gp": "enstalé"
+    },
+    {
+      "fr": "insulter",
+      "gp": "jouré"
+    },
+    {
+      "fr": "intercepter",
+      "gp": "sipé"
+    },
+    {
+      "fr": "interdire",
+      "gp": "defann"
+    },
+    {
+      "fr": "intervenir",
+      "gp": "entèvyenn"
+    },
+    {
+      "fr": "inventer",
+      "gp": "envanté"
+    },
+    {
+      "fr": "inviter",
+      "gp": "envité"
+    },
+    {
+      "fr": "jeter",
+      "gp": "jété"
+    },
+    {
+      "fr": "joindre",
+      "gp": "jwenn"
+    },
+    {
+      "fr": "jouer",
+      "gp": "jwé"
+    },
+    {
+      "fr": "jouir",
+      "gp": "voyé"
+    },
+    {
+      "fr": "kilomètre",
+      "gp": "tjilomèt"
+    },
+    {
+      "fr": "laboratoire",
+      "gp": "djoubakwa"
+    },
+    {
+      "fr": "lacher",
+      "gp": "ladjé"
+    },
+    {
+      "fr": "lancer",
+      "gp": "lanse"
+    },
+    {
+      "fr": "laver",
+      "gp": "lavé"
+    },
+    {
+      "fr": "lever",
+      "gp": "lévé",
+      "secondaire": true
+    },
+    {
+      "fr": "levier",
+      "gp": "baladè"
+    },
+    {
+      "fr": "lire",
+      "gp": "li"
+    },
+    {
+      "fr": "louer",
+      "gp": "louwé"
+    },
+    {
+      "fr": "lèvre",
+      "gp": "lèv"
+    },
+    {
+      "fr": "lécher",
+      "gp": "niché"
+    },
+    {
+      "fr": "maigre",
+      "gp": "mèg"
+    },
+    {
+      "fr": "maigrir",
+      "gp": "mayri"
+    },
+    {
+      "fr": "maintenir",
+      "gp": "mentjenn"
+    },
+    {
+      "fr": [
+        "maire",
+        "maires"
+      ],
+      "gp": "mè",
+      "secondaire": true
+    },
+    {
+      "fr": "malpropre",
+      "gp": "malpwop"
+    },
+    {
+      "fr": "mange",
+      "gp": "manjé"
+    },
+    {
+      "fr": "mangent",
+      "gp": "manjé"
+    },
+    {
+      "fr": "manger",
+      "gp": "manjé"
+    },
+    {
+      "fr": "manges",
+      "gp": "manjé"
+    },
+    {
+      "fr": "manière",
+      "gp": "mannyè"
+    },
+    {
+      "fr": "manquer",
+      "gp": [
+        "manké",
+        "mantjé"
+      ]
+    },
+    {
+      "fr": "marcher",
+      "gp": [
+        "maché",
+        "pilé"
+      ],
+      "secondaire": true
+    },
+    {
+      "fr": "marier",
+      "gp": "mayé"
+    },
+    {
+      "fr": "melanger",
+      "gp": "mélanjé"
+    },
+    {
+      "fr": "mendier",
+      "gp": "mandyannen"
+    },
+    {
+      "fr": "mentir",
+      "gp": [
+        "manti",
+        "menti"
+      ]
+    },
+    {
+      "fr": "mesurer",
+      "gp": "miziré"
+    },
+    {
+      "fr": "mettre",
+      "gp": "mété"
+    },
+    {
+      "fr": [
+        "militaire",
+        "militaires"
+      ],
+      "gp": "militè"
+    },
+    {
+      "fr": [
+        "ministre",
+        "ministres"
+      ],
+      "gp": "minis"
+    },
+    {
+      "fr": "mizère",
+      "gp": "lanmizè"
+    },
+    {
+      "fr": "monstre",
+      "gp": "bèt-a-fé"
+    },
+    {
+      "fr": "monter",
+      "gp": "monté"
+    },
+    {
+      "fr": "montrer",
+      "gp": "montré"
+    },
+    {
+      "fr": "mordre",
+      "gp": "modé"
+    },
+    {
+      "fr": "mourir",
+      "gp": "mouri"
+    },
+    {
+      "fr": "mourrir",
+      "gp": "mo fen"
+    },
+    {
+      "fr": "mégère",
+      "gp": "masoukrèl"
+    },
+    {
+      "fr": "mélanger",
+      "gp": "migannen"
+    },
+    {
+      "fr": "métamorphoser",
+      "gp": "mofwaza"
+    },
+    {
+      "fr": "nager",
+      "gp": "najé"
+    },
+    {
+      "fr": "nettoyer",
+      "gp": "nétouyé"
+    },
+    {
+      "fr": "niquer",
+      "gp": "koké"
+    },
+    {
+      "fr": "nommer",
+      "gp": "nonmé"
+    },
+    {
+      "fr": "notre",
+      "gp": "an nou"
+    },
+    {
+      "fr": "nourrir",
+      "gp": "nouri"
+    },
+    {
+      "fr": "nourriture",
+      "gp": "manjé"
+    },
+    {
+      "fr": "noyer",
+      "gp": "néyé"
+    },
+    {
+      "fr": "nôtre",
+      "gp": "tanou"
+    },
+    {
+      "fr": "obliger",
+      "gp": "obligé"
+    },
+    {
+      "fr": "obtenir",
+      "gp": "obtjenn"
+    },
+    {
+      "fr": "obéir",
+      "gp": "obéyi"
+    },
+    {
+      "fr": "occuper",
+      "gp": "otjipé"
+    },
+    {
+      "fr": "octroyer",
+      "gp": "akôdé"
+    },
+    {
+      "fr": "offrir",
+      "gp": "ofè"
+    },
+    {
+      "fr": "ombre",
+      "gp": "lonbray"
+    },
+    {
+      "fr": "onduler",
+      "gp": "zannzolé"
+    },
+    {
+      "fr": "ont",
+      "gp": "ni",
+      "secondaire": true
+    },
+    {
+      "fr": "ordonner",
+      "gp": "òdonné"
+    },
+    {
+      "fr": "organiser",
+      "gp": "òganizé"
+    },
+    {
+      "fr": "ossature",
+      "gp": "zobray"
+    },
+    {
+      "fr": "oublier",
+      "gp": [
+        "oubliyé",
+        "obliyé"
+      ]
+    },
+    {
+      "fr": [
+        "ouvrier",
+        "ouvriers",
+        "ouvrière",
+        "ouvrières"
+      ],
+      "gp": "ouvriyé"
+    },
+    {
+      "fr": "ouvrir",
+      "gp": "ouvè"
+    },
+    {
+      "fr": "pardonner",
+      "gp": "padonnée"
+    },
+    {
+      "fr": "parfaire",
+      "gp": "agréyé"
+    },
+    {
+      "fr": "parler",
+      "gp": "palé"
+    },
+    {
+      "fr": "partager",
+      "gp": "patajé"
+    },
+    {
+      "fr": "participer",
+      "gp": "patisipé"
+    },
+    {
+      "fr": "partir",
+      "gp": "pati"
+    },
+    {
+      "fr": "patiner",
+      "gp": "patinen"
+    },
+    {
+      "fr": "payer",
+      "gp": "payé"
+    },
+    {
+      "fr": "peigner",
+      "gp": "peyiné"
+    },
+    {
+      "fr": "peignoir",
+      "gp": "gôl"
+    },
+    {
+      "fr": "peindre",
+      "gp": "pent"
+    },
+    {
+      "fr": "pendre",
+      "gp": "pann"
+    },
+    {
+      "fr": "penser",
+      "gp": [
+        "sonjé",
+        "pansé"
+      ]
+    },
+    {
+      "fr": "perdre",
+      "gp": "péd"
+    },
+    {
+      "fr": "permettre",
+      "gp": "pèmèt"
+    },
+    {
+      "fr": "peut",
+      "gp": "pé"
+    },
+    {
+      "fr": "peuvent",
+      "gp": "pé"
+    },
+    {
+      "fr": "peux",
+      "gp": "pé"
+    },
+    {
+      "fr": "pierre",
+      "gp": "roch"
+    },
+    {
+      "fr": "pilier",
+      "gp": "potomitan"
+    },
+    {
+      "fr": "piquer",
+      "gp": "pitché"
+    },
+    {
+      "fr": "pisser",
+      "gp": "pisé"
+    },
+    {
+      "fr": "piéger",
+      "gp": "ansak"
+    },
+    {
+      "fr": "planifier",
+      "gp": "planifiyé"
+    },
+    {
+      "fr": "pleurer",
+      "gp": "pléré"
+    },
+    {
+      "fr": [
+        "pleuvoir",
+        "pleut",
+        "pleuvait"
+      ],
+      "gp": "plivwa"
+    },
+    {
+      "fr": "plier",
+      "gp": "pliyé"
+    },
+    {
+      "fr": "plonger",
+      "gp": "pitché an létjet"
+    },
+    {
+      "fr": "planter",
+      "gp": [
+        "planté",
+        "plantè"
+      ]
+    },
+    {
+      "fr": [
+        "pompier",
+        "pompiers",
+        "pompière",
+        "pompières"
+      ],
+      "gp": "ponpyé"
+    },
+    {
+      "fr": "porter",
+      "gp": "pòté"
+    },
+    {
+      "fr": "poser",
+      "gp": "pozé"
+    },
+    {
+      "fr": "pousser",
+      "gp": "pousé"
+    },
+    {
+      "fr": "pouvoir",
+      "gp": "pé"
+    },
+    {
+      "fr": "prend",
+      "gp": "pran"
+    },
+    {
+      "fr": "prendre",
+      "gp": [
+        "pran",
+        "pwan"
+      ]
+    },
+    {
+      "fr": "prends",
+      "gp": "pran"
+    },
+    {
+      "fr": "prennent",
+      "gp": "pran"
+    },
+    {
+      "fr": "préparer",
+      "gp": "préparé"
+    },
+    {
+      "fr": "presenter",
+      "gp": "prézenté"
+    },
+    {
+      "fr": "preter",
+      "gp": "prété"
+    },
+    {
+      "fr": "prier",
+      "gp": "priyé"
+    },
+    {
+      "fr": "prière",
+      "gp": "lapriè"
+    },
+    {
+      "fr": "produire",
+      "gp": "pwodui"
+    },
+    {
+      "fr": "projeter",
+      "gp": "vwéyé an bagay alé"
+    },
+    {
+      "fr": "promettre",
+      "gp": "pwomèt"
+    },
+    {
+      "fr": "proteger",
+      "gp": "protéjé"
+    },
+    {
+      "fr": "protéger",
+      "gp": "pwotéjé"
+    },
+    {
+      "fr": "préférer",
+      "gp": "simyé"
+    },
+    {
+      "fr": "prélever",
+      "gp": "chaspannen"
+    },
+    {
+      "fr": "préparer",
+      "gp": "préparé"
+    },
+    {
+      "fr": "présenter",
+      "gp": "prézanté"
+    },
+    {
+      "fr": "prévenir",
+      "gp": [
+        "avèti",
+        "prévini"
+      ]
+    },
+    {
+      "fr": "prêter",
+      "gp": "prété"
+    },
+    {
+      "fr": "prêtre",
+      "gp": "labé"
+    },
+    {
+      "fr": "psitter",
+      "gp": "psité"
+    },
+    {
+      "fr": "sentir",
+      "gp": "santi"
+    },
+    {
+      "fr": "punir",
+      "gp": "pini"
+    },
+    {
+      "fr": "péter",
+      "gp": "pété van"
+    },
+    {
+      "fr": "questionner",
+      "gp": "kèsyonnen"
+    },
+    {
+      "fr": "raconter",
+      "gp": "rakonté"
+    },
+    {
+      "fr": "rajeunir",
+      "gp": "rajenni"
+    },
+    {
+      "fr": "ramasser",
+      "gp": "ranmasé"
+    },
+    {
+      "fr": "ramener",
+      "gp": "ralé"
+    },
+    {
+      "fr": "ramer",
+      "gp": "ranmen"
+    },
+    {
+      "fr": "ranger",
+      "gp": "wanjé"
+    },
+    {
+      "fr": "raper",
+      "gp": "grajé"
+    },
+    {
+      "fr": "rappeler",
+      "gp": "sonjé"
+    },
+    {
+      "fr": "rasoir",
+      "gp": "razwè"
+    },
+    {
+      "fr": "rassambler",
+      "gp": "samblé"
+    },
+    {
+      "fr": "rassembler",
+      "gp": "sanblé"
+    },
+    {
+      "fr": "rater",
+      "gp": "chouchouté"
+    },
+    {
+      "fr": "recevoir",
+      "gp": "wèsevwa"
+    },
+    {
+      "fr": "rechercher",
+      "gp": "wouchaché"
+    },
+    {
+      "fr": "reconnaitre",
+      "gp": "reconné"
+    },
+    {
+      "fr": "reconnaître",
+      "gp": "rèkonnèt"
+    },
+    {
+      "fr": "reculer",
+      "gp": [
+        "tchilé",
+        "baké"
+      ]
+    },
+    {
+      "fr": "redonner",
+      "gp": "riba"
+    },
+    {
+      "fr": "redresser",
+      "gp": "dékochi"
+    },
+    {
+      "fr": "reflechir",
+      "gp": "réfléchi"
+    },
+    {
+      "fr": "refroidir",
+      "gp": "frédi"
+    },
+    {
+      "fr": "refuser",
+      "gp": "refizé"
+    },
+    {
+      "fr": "regarder",
+      "gp": [
+        "gadé",
+        "gadéwè"
+      ]
+    },
+    {
+      "fr": "regretter",
+      "gp": "regwèté"
+    },
+    {
+      "fr": "relier",
+      "gp": "lyennen"
+    },
+    {
+      "fr": "remplir",
+      "gp": "ranpli"
+    },
+    {
+      "fr": "rencontrer",
+      "gp": "rankonté"
+    },
+    {
+      "fr": "rendre",
+      "gp": "rann"
+    },
+    {
+      "fr": "renforcer",
+      "gp": "bastendjé"
+    },
+    {
+      "fr": "rentrer",
+      "gp": "tounen"
+    },
+    {
+      "fr": "reparer",
+      "gp": "répare"
+    },
+    {
+      "fr": "repasser",
+      "gp": "repasé"
+    },
+    {
+      "fr": "repeter",
+      "gp": "répété"
+    },
+    {
+      "fr": "repondre",
+      "gp": "réponn"
+    },
+    {
+      "fr": "reposer",
+      "gp": "repozé"
+    },
+    {
+      "fr": "reserver",
+      "gp": "réservé"
+    },
+    {
+      "fr": "resoudre",
+      "gp": "résoùd"
+    },
+    {
+      "fr": "respecter",
+      "gp": "rispekté"
+    },
+    {
+      "fr": "ressembler",
+      "gp": [
+        "pasé pou",
+        "sanm"
+      ]
+    },
+    {
+      "fr": "rester",
+      "gp": "rété"
+    },
+    {
+      "fr": "retenir",
+      "gp": "rutjenn"
+    },
+    {
+      "fr": "reussir",
+      "gp": "réisi"
+    },
+    {
+      "fr": "revenir",
+      "gp": "riviré"
+    },
+    {
+      "fr": "rever",
+      "gp": "rêvé"
+    },
+    {
+      "fr": "rire",
+      "gp": "ri"
+    },
+    {
+      "fr": "rivère",
+      "gp": "lariviè"
+    },
+    {
+      "fr": "ronfler",
+      "gp": "wonflé"
+    },
+    {
+      "fr": "rouer",
+      "gp": "lenndé"
+    },
+    {
+      "fr": "rougir",
+      "gp": "wouji"
+    },
+    {
+      "fr": "ruminer",
+      "gp": "ankonbinen"
+    },
+    {
+      "fr": "réanimer",
+      "gp": "démalkadi"
+    },
+    {
+      "fr": "réduire",
+      "gp": "djouké"
+    },
+    {
+      "fr": "réfléchir",
+      "gp": "katjilé"
+    },
+    {
+      "fr": "répondre",
+      "gp": "réponn"
+    },
+    {
+      "fr": "réunir",
+      "gp": "réyni"
+    },
+    {
+      "fr": "réussir",
+      "gp": "réyisi"
+    },
+    {
+      "fr": [
+        "réveiller",
+        "se réveiller"
+      ],
+      "gp": "lévé",
+      "secondaire": true
+    },
+    {
+      "fr": "s'agenouiller",
+      "gp": "ajounou"
+    },
+    {
+      "fr": "s'endormir",
+      "gp": "pran sonmèy"
+    },
+    {
+      "fr": "s'enerver",
+      "gp": "tjimen"
+    },
+    {
+      "fr": "s'enfuir",
+      "gp": "chapé"
+    },
+    {
+      "fr": "s'occuper",
+      "gp": "otjipé di"
+    },
+    {
+      "fr": "s'évanouir",
+      "gp": "tonbé an léta"
+    },
+    {
+      "fr": "saigner",
+      "gp": "senyen"
+    },
+    {
+      "fr": "sais",
+      "gp": "sav"
+    },
+    {
+      "fr": "saisir",
+      "gp": "sèzi"
+    },
+    {
+      "fr": "sait",
+      "gp": "sav"
+    },
+    {
+      "fr": "saluer",
+      "gp": "saliyé"
+    },
+    {
+      "fr": "sauter",
+      "gp": "soté"
+    },
+    {
+      "fr": "sauvegarder",
+      "gp": "sovgadé"
+    },
+    {
+      "fr": "sauver",
+      "gp": "sauvé"
+    },
+    {
+      "fr": "savent",
+      "gp": "sav"
+    },
+    {
+      "fr": "savoir",
+      "gp": "sav"
+    },
+    {
+      "fr": "se lever",
+      "gp": "lévé"
+    },
+    {
+      "fr": "secher",
+      "gp": "séché"
+    },
+    {
+      "fr": "secouer",
+      "gp": "soukwé"
+    },
+    {
+      "fr": [
+        "secrétaire",
+        "secrétaires"
+      ],
+      "gp": "sèkrétè"
+    },
+    {
+      "fr": "sectionner",
+      "gp": "kaskôdé"
+    },
+    {
+      "fr": "sembler",
+      "gp": "sanblé"
+    },
+    {
+      "fr": "semer",
+      "gp": "simen",
+      "secondaire": true
+    },
+    {
+      "fr": "separer",
+      "gp": "séparé"
+    },
+    {
+      "fr": "sera",
+      "gp": "kéy"
+    },
+    {
+      "fr": "serai",
+      "gp": "péké"
+    },
+    {
+      "fr": "serrer",
+      "gp": "séré"
+    },
+    {
+      "fr": "servir",
+      "gp": "sèvi"
+    },
+    {
+      "fr": "shooter",
+      "gp": "doumé"
+    },
+    {
+      "fr": "signer",
+      "gp": "signé"
+    },
+    {
+      "fr": "signifier",
+      "gp": "védi"
+    },
+    {
+      "fr": "sommes",
+      "gp": "sé"
+    },
+    {
+      "fr": "sonner",
+      "gp": "sonnen"
+    },
+    {
+      "fr": "sont",
+      "gp": "sé"
+    },
+    {
+      "fr": "sort",
+      "gp": "tchenbwa"
+    },
+    {
+      "fr": "sortir",
+      "gp": "sòti"
+    },
+    {
+      "fr": "souffler",
+      "gp": [
+        "soufé",
+        "souflé"
+      ]
+    },
+    {
+      "fr": "souffrir",
+      "gp": "soufè"
+    },
+    {
+      "fr": "souhaiter",
+      "gp": "souhèté"
+    },
+    {
+      "fr": "sourire",
+      "gp": "souri"
+    },
+    {
+      "fr": "stresser",
+      "gp": "istrésé"
+    },
+    {
+      "fr": "subir",
+      "gp": "sibir"
+    },
+    {
+      "fr": "subvenir",
+      "gp": "sibvyenn"
+    },
+    {
+      "fr": "sucre",
+      "gp": "sik"
+    },
+    {
+      "fr": "suffire",
+      "gp": "sifi"
+    },
+    {
+      "fr": "suis",
+      "gp": "sé"
+    },
+    {
+      "fr": "suivre",
+      "gp": "swiv"
+    },
+    {
+      "fr": "supprimer",
+      "gp": "siprimé"
+    },
+    {
+      "fr": "surprendre",
+      "gp": "souprann",
+      "secondaire": true
+    },
+    {
+      "fr": "sursauter",
+      "gp": "soté"
+    },
+    {
+      "fr": "surveiller",
+      "gp": "véyé"
+    },
+    {
+      "fr": "suçer",
+      "gp": "sisé"
+    },
+    {
+      "fr": "sécher",
+      "gp": "matébis"
+    },
+    {
+      "fr": "telephoner",
+      "gp": "téléphoné"
+    },
+    {
+      "fr": "tenir",
+      "gp": "tini"
+    },
+    {
+      "fr": "terre",
+      "gp": "latè"
+    },
+    {
+      "fr": "tirer",
+      "gp": "tiré"
+    },
+    {
+      "fr": "tomber",
+      "gp": "tonbé"
+    },
+    {
+      "fr": "tonnelier",
+      "gp": "tondilyé"
+    },
+    {
+      "fr": "tonnèrre",
+      "gp": "tonnan"
+    },
+    {
+      "fr": "toucher",
+      "gp": "touché"
+    },
+    {
+      "fr": "tousser",
+      "gp": "kousé"
+    },
+    {
+      "fr": "traduire",
+      "gp": "tradwi"
+    },
+    {
+      "fr": "trahir",
+      "gp": "trahi"
+    },
+    {
+      "fr": "transpirer",
+      "gp": "switté"
+    },
+    {
+      "fr": "transporter",
+      "gp": "chawayé"
+    },
+    {
+      "fr": "travailler",
+      "gp": [
+        "travay",
+        "woulé"
+      ]
+    },
+    {
+      "fr": "traverser",
+      "gp": "travèsé"
+    },
+    {
+      "fr": "tricher",
+      "gp": "fè kotchen"
+    },
+    {
+      "fr": "tricoter",
+      "gp": "trikoté"
+    },
+    {
+      "fr": "tromper",
+      "gp": "twompé"
+    },
+    {
+      "fr": "trouver",
+      "gp": "trouvé"
+    },
+    {
+      "fr": "trébucher",
+      "gp": "bityé"
+    },
+    {
+      "fr": "tuer",
+      "gp": [
+        "tuyé",
+        "tjwé",
+        "touyé",
+        "jété"
+      ]
+    },
+    {
+      "fr": "téléphoner",
+      "gp": "téléfoné"
+    },
+    {
+      "fr": "téméraire",
+      "gp": "popilè"
+    },
+    {
+      "fr": "unir",
+      "gp": "ini"
+    },
+    {
+      "fr": "utiliser",
+      "gp": "itilizé"
+    },
+    {
+      "fr": "va",
+      "gp": "kay",
+      "secondaire": true
+    },
+    {
+      "fr": "vagabonder",
+      "gp": "gabandé"
+    },
+    {
+      "fr": "vais",
+      "gp": "kay",
+      "secondaire": true
+    },
+    {
+      "fr": "varier",
+      "gp": "janjolé"
+    },
+    {
+      "fr": "vas",
+      "gp": "kay",
+      "secondaire": true
+    },
+    {
+      "fr": "vendre",
+      "gp": "vann"
+    },
+    {
+      "fr": "venir",
+      "gp": "vini"
+    },
+    {
+      "fr": "verrouiller",
+      "gp": "laklé"
+    },
+    {
+      "fr": "veulent",
+      "gp": "lé"
+    },
+    {
+      "fr": "veut",
+      "gp": "lé"
+    },
+    {
+      "fr": "veux",
+      "gp": "lé"
+    },
+    {
+      "fr": "victoire",
+      "gp": "viktwè"
+    },
+    {
+      "fr": "vieillir",
+      "gp": "vyéyi"
+    },
+    {
+      "fr": "viens",
+      "gp": "vini"
+    },
+    {
+      "fr": "violer",
+      "gp": "vyolé"
+    },
+    {
+      "fr": "visiter",
+      "gp": "vizité"
+    },
+    {
+      "fr": "vivre",
+      "gp": "viv"
+    },
+    {
+      "fr": "voient",
+      "gp": "wè"
+    },
+    {
+      "fr": "voir",
+      "gp": "wè"
+    },
+    {
+      "fr": "voir",
+      "gp": "vwè"
+    },
+    {
+      "fr": "voire",
+      "gp": "ajijéwè"
+    },
+    {
+      "fr": "vois",
+      "gp": "wè"
+    },
+    {
+      "fr": "voit",
+      "gp": "wè"
+    },
+    {
+      "fr": "voler",
+      "gp": "volé"
+    },
+    {
+      "fr": "vomir",
+      "gp": "vomi"
+    },
+    {
+      "fr": "vont",
+      "gp": "kay",
+      "secondaire": true
+    },
+    {
+      "fr": "vouloir",
+      "gp": [
+        "lé",
+        "vlé"
+      ]
+    },
+    {
+      "fr": "voyager",
+      "gp": "voyajé"
+    },
+    {
+      "fr": "vulgaire",
+      "gp": "gras"
+    },
+    {
+      "fr": "vérifier",
+      "gp": "vériyé"
+    },
+    {
+      "fr": [
+        "vétérinaire",
+        "vétérinaires"
+      ],
+      "gp": "vétériner"
+    },
+    {
+      "fr": "vôtre",
+      "gp": "tazot"
+    },
+    {
+      "fr": "échappatoire",
+      "gp": "chimendispay"
+    },
+    {
+      "fr": [
+        "échapper",
+        "s'échapper"
+      ],
+      "gp": "chapé"
+    },
+    {
+      "fr": "échouer",
+      "gp": "échoué"
+    },
+    {
+      "fr": "éclairer",
+      "gp": "kléré"
+    },
+    {
+      "fr": "écorcher",
+      "gp": "kôché"
+    },
+    {
+      "fr": "écouter",
+      "gp": "kouté"
+    },
+    {
+      "fr": "écrire",
+      "gp": "matjé"
+    },
+    {
+      "fr": "écumoire",
+      "gp": "étjimwè"
+    },
+    {
+      "fr": "égorger",
+      "gp": "gojé"
+    },
+    {
+      "fr": "élever",
+      "gp": "élivé"
+    },
+    {
+      "fr": "éperonner",
+      "gp": "zéponnen"
+    },
+    {
+      "fr": "épier",
+      "gp": "souskandé"
+    },
+    {
+      "fr": "éplucher",
+      "gp": "pliché"
+    },
+    {
+      "fr": "épluchure",
+      "gp": "plichi"
+    },
+    {
+      "fr": "éraflure",
+      "gp": "grijti"
+    },
+    {
+      "fr": "étaient",
+      "gp": "té",
+      "secondaire": true
+    },
+    {
+      "fr": "étais",
+      "gp": "té",
+      "secondaire": true
+    },
+    {
+      "fr": "était",
+      "gp": "té",
+      "secondaire": true
+    },
+    {
+      "fr": "éteindre",
+      "gp": "tenn"
+    },
+    {
+      "fr": "étiez",
+      "gp": "té",
+      "secondaire": true
+    },
+    {
+      "fr": "étions",
+      "gp": "té",
+      "secondaire": true
+    },
+    {
+      "fr": "étirer",
+      "gp": "dérédi"
+    },
+    {
+      "fr": "étonner",
+      "gp": "étoné"
+    },
+    {
+      "fr": "étouffer",
+      "gp": "toufé"
+    },
+    {
+      "fr": "étranger",
+      "gp": "vanmennen"
+    },
+    {
+      "fr": "étudier",
+      "gp": "étidyé"
+    },
+    {
+      "fr": "éviter",
+      "gp": "évité"
+    },
+    {
+      "fr": "êtes",
+      "gp": "sé"
+    },
+    {
+      "fr": "être",
+      "gp": [
+        "yé",
+        "sé"
+      ]
+    },
+    {
+      "fr": [
+        "préserver",
+        "préserve",
+        "préservons",
+        "préservez",
+        "préservent"
+      ],
+      "gp": "préservé"
+    },
+    {
+      "fr": [
+        "laisser",
+        "laisse",
+        "laisses",
+        "laissons",
+        "laissez",
+        "laissent"
+      ],
+      "gp": "lésé"
+    },
+    {
+      "fr": [
+        "résonner",
+        "résonne",
+        "résonnent"
+      ],
+      "gp": "résonné"
+    },
+    {
+      "fr": [
+        "remonter",
+        "remonte",
+        "remontent"
+      ],
+      "gp": "remonté"
+    },
+    {
+      "fr": [
+        "emporter",
+        "emporte",
+        "emportent"
+      ],
+      "gp": "emporté"
+    },
+    {
+      "fr": [
+        "tresser",
+        "tresse",
+        "tressent"
+      ],
+      "gp": "tré"
+    },
+    {
+      "fr": [
+        "devoir",
+        "dois",
+        "doit",
+        "devons",
+        "devez",
+        "doivent"
+      ],
+      "gp": [
+        "dwèt",
+        "dwé"
+      ]
+    },
+    {
+      "fr": [
+        "fumer",
+        "fume",
+        "fument"
+      ],
+      "gp": "fimé"
+    },
+    {
+      "fr": [
+        "griller",
+        "grille",
+        "grillé",
+        "grillée",
+        "grillés"
+      ],
+      "gp": "griyé"
+    },
+    {
+      "fr": [
+        "connaître",
+        "connais",
+        "connaît",
+        "connaissons",
+        "connaissent"
+      ],
+      "gp": [
+        "konnèt",
+        "konèt"
+      ]
+    },
+    {
+      "fr": [
+        "pêcher",
+        "pêche",
+        "pêchent"
+      ],
+      "gp": [
+        "pèché",
+        "pèsché"
+      ]
+    },
+    {
+      "fr": [
+        "célébrer"
+      ],
+      "gp": [
+        "sélébré",
+        "fété"
+      ]
+    },
+    {
+      "fr": [
+        "fêter"
+      ],
+      "gp": "fété"
+    },
+    {
+      "fr": [
+        "mourir",
+        "meurt",
+        "meurent",
+        "mort",
+        "morte"
+      ],
+      "gp": [
+        "mò",
+        "mouri"
+      ]
+    },
+    {
+      "fr": [
+        "cuire",
+        "cuit"
+      ],
+      "gp": [
+        "kuit",
+        "kwit"
+      ]
+    },
+    {
+      "fr": [
+        "passer",
+        "passe",
+        "passé"
+      ],
+      "gp": "pasé",
+      "secondaire": true
+    },
+    {
+      "fr": [
+        "inquiéter",
+        "inquiète"
+      ],
+      "gp": "enkyété"
+    },
+    {
+      "fr": "appartenir",
+      "gp": "apatjenn",
+      "type": "verbe"
+    },
+    {
+      "fr": "naître",
+      "gp": "fèt",
+      "type": "verbe",
+      "secondaire": true
+    },
+    {
+      "gp": [
+        "mèt",
+        "met"
+      ],
+      "fr": "pouvoir",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "kab"
+      ],
+      "fr": "pouvoir",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "bizwen"
+      ],
+      "fr": "avoir besoin",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "kryé",
+        "krye"
+      ],
+      "fr": "appeler",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "suiv"
+      ],
+      "fr": "suivre",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "rélé",
+        "rele"
+      ],
+      "fr": "appeler",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "konn"
+      ],
+      "fr": "connaître",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "chanje"
+      ],
+      "fr": "changer",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "monte"
+      ],
+      "fr": "monter",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "eksplike"
+      ],
+      "fr": "expliquer",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "aprann"
+      ],
+      "fr": "apprendre",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "satisfè"
+      ],
+      "fr": "satisfaire",
+      "type": "verbe"
+    },
+    {
+      "gp": "rayi",
+      "fr": "détester",
+      "type": "verbe"
+    },
+    {
+      "gp": "douté",
+      "fr": "douter",
+      "type": "verbe"
+    },
+    {
+      "gp": "rimaké",
+      "fr": "remarquer",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "rèmèsyé",
+        "rimèsyé"
+      ],
+      "fr": "remercier",
+      "type": "verbe"
+    },
+    {
+      "gp": "ozé",
+      "fr": "oser",
+      "type": "verbe"
+    },
+    {
+      "gp": "rékòlté",
+      "fr": "récolter",
+      "type": "verbe"
+    },
+    {
+      "gp": "béni",
+      "fr": "bénir",
+      "type": "verbe"
+    },
+    {
+      "gp": "jiré",
+      "fr": "jurer",
+      "type": "verbe"
+    },
+    {
+      "gp": "prouvé",
+      "fr": "prouver",
+      "type": "verbe"
+    },
+    {
+      "gp": "félisité",
+      "fr": "féliciter",
+      "type": "verbe"
+    },
+    {
+      "gp": "rasiré",
+      "fr": "rassurer",
+      "type": "verbe"
+    },
+    {
+      "gp": "kalmé",
+      "fr": "calmer",
+      "type": "verbe"
+    },
+    {
+      "gp": "enèvé",
+      "fr": "énerver",
+      "type": "verbe"
+    },
+    {
+      "gp": "koupé",
+      "fr": "couper",
+      "type": "verbe"
+    },
+    {
+      "gp": "brasé",
+      "fr": "remuer",
+      "type": "verbe"
+    },
+    {
+      "gp": "goumé",
+      "fr": "goûter",
+      "type": "verbe"
+    },
+    {
+      "gp": "respiré",
+      "fr": "respirer",
+      "type": "verbe"
+    },
+    {
+      "gp": "siflé",
+      "fr": "siffler",
+      "type": "verbe"
+    },
+    {
+      "gp": "rinmen",
+      "fr": "caresser",
+      "type": "verbe"
+    },
+    {
+      "gp": "pensé",
+      "fr": "pincer",
+      "type": "verbe"
+    },
+    {
+      "gp": "trennen",
+      "fr": "traîner",
+      "type": "verbe"
+    },
+    {
+      "gp": "pézé",
+      "fr": "peser",
+      "type": "verbe"
+    },
+    {
+      "gp": "ranplasé",
+      "fr": "remplacer",
+      "type": "verbe"
+    },
+    {
+      "gp": "ékonomizé",
+      "fr": "économiser",
+      "type": "verbe"
+    },
+    {
+      "gp": "jijé",
+      "fr": "juger",
+      "type": "verbe"
+    },
+    {
+      "gp": "dépasé",
+      "fr": "dépasser",
+      "type": "verbe"
+    },
+    {
+      "gp": "rijwenn",
+      "fr": "rejoindre",
+      "type": "verbe"
+    },
+    {
+      "gp": "gidé",
+      "fr": "guider",
+      "type": "verbe"
+    },
+    {
+      "gp": "woti",
+      "fr": "rôtir",
+      "type": "verbe"
+    },
+    {
+      "gp": "fri",
+      "fr": "frire",
+      "type": "verbe"
+    },
+    {
+      "gp": "rapé",
+      "fr": "râper",
+      "type": "verbe"
+    },
+    {
+      "gp": "prèsé",
+      "fr": "presser",
+      "type": "verbe"
+    },
+    {
+      "gp": "razé",
+      "fr": "raser",
+      "type": "verbe"
+    },
+    {
+      "gp": "andòmi",
+      "fr": "endormir",
+      "type": "verbe"
+    },
+    {
+      "gp": "swangné",
+      "fr": "soigner",
+      "type": "verbe"
+    },
+    {
+      "gp": "opéré",
+      "fr": "opérer",
+      "type": "verbe"
+    },
+    {
+      "gp": "vaksiné",
+      "fr": "vacciner",
+      "type": "verbe"
+    },
+    {
+      "gp": "soupiré",
+      "fr": "soupirer",
+      "type": "verbe"
+    },
+    {
+      "gp": "tisé",
+      "fr": "tisser",
+      "type": "verbe"
+    },
+    {
+      "gp": "pétri",
+      "fr": "pétrir",
+      "type": "verbe"
+    },
+    {
+      "gp": "tranblé",
+      "fr": "trembler",
+      "type": "verbe"
+    },
+    {
+      "gp": "ranpé",
+      "fr": "ramper",
+      "type": "verbe"
+    },
+    {
+      "gp": "flòté",
+      "fr": "flotter",
+      "type": "verbe"
+    },
+    {
+      "gp": "soulvé",
+      "fr": "soulever",
+      "type": "verbe"
+    },
+    {
+      "gp": "ranvèsé",
+      "fr": "renverser",
+      "type": "verbe"
+    },
+    {
+      "gp": "balansé",
+      "fr": "balancer",
+      "type": "verbe"
+    },
+    {
+      "gp": "dékouvè",
+      "fr": "découvrir",
+      "type": "verbe"
+    },
+    {
+      "gp": "anvlopé",
+      "fr": "envelopper",
+      "type": "verbe"
+    },
+    {
+      "gp": "nouyé",
+      "fr": "nouer",
+      "type": "verbe"
+    },
+    {
+      "gp": "débranché",
+      "fr": "débrancher",
+      "type": "verbe"
+    },
+    {
+      "gp": "éksplozé",
+      "fr": "exploser",
+      "type": "verbe"
+    },
+    {
+      "gp": "hurlé",
+      "fr": "hurler",
+      "type": "verbe"
+    },
+    {
+      "gp": "mirmiré",
+      "fr": "murmurer",
+      "type": "verbe"
+    },
+    {
+      "gp": "ézité",
+      "fr": "hésiter",
+      "type": "verbe"
+    },
+    {
+      "gp": "renonsé",
+      "fr": "renoncer",
+      "type": "verbe"
+    },
+    {
+      "gp": "ensisté",
+      "fr": "insister",
+      "type": "verbe"
+    },
+    {
+      "gp": "ekzijé",
+      "fr": "exiger",
+      "type": "verbe"
+    },
+    {
+      "gp": "siplyé",
+      "fr": "supplier",
+      "type": "verbe"
+    },
+    {
+      "gp": "menasé",
+      "fr": "menacer",
+      "type": "verbe"
+    },
+    {
+      "gp": "ekskizé",
+      "fr": "excuser",
+      "type": "verbe"
+    },
+    {
+      "gp": "grondé",
+      "fr": "gronder",
+      "type": "verbe"
+    },
+    {
+      "fr": "consommer",
+      "gp": "konsonmé"
+    },
+    {
+      "fr": "cuisiner",
+      "gp": "kwit"
+    },
+    {
+      "fr": [
+        "verser",
+        "vider"
+      ],
+      "gp": [
+        "vidé"
+      ]
+    },
+    {
+      "fr": "réparer",
+      "gp": "ranjé"
+    },
+    {
+      "fr": "creuser",
+      "gp": "fouyé"
+    },
+    {
+      "fr": "répéter",
+      "gp": "répété"
+    },
+    {
+      "fr": "éternuer",
+      "gp": "étènyé"
+    },
+    {
+      "fr": "bâiller",
+      "gp": "bayé"
+    },
+    {
+      "fr": "gifler",
+      "gp": "kalòté"
+    },
+    {
+      "fr": "tordre",
+      "gp": "tòdé"
+    },
+    {
+      "fr": "déterrer",
+      "gp": "détéré"
+    },
+    {
+      "fr": "geler",
+      "gp": "glasé"
+    },
+    {
+      "fr": "fondre",
+      "gp": "fonn"
+    },
+    {
+      "fr": "tremper",
+      "gp": "tranpé"
+    },
+    {
+      "fr": "déranger",
+      "gp": "dérenjé"
+    },
+    {
+      "fr": "empiler",
+      "gp": "anpilé"
+    },
+    {
+      "fr": "récompenser",
+      "gp": "rékonpansé"
+    },
+    {
+      "fr": "rembourser",
+      "gp": "ranbousé"
+    },
+    {
+      "fr": "échanger",
+      "gp": "échanjé"
+    },
+    {
+      "fr": "gaspiller",
+      "gp": "gaspiyé"
+    },
+    {
+      "fr": "lâcher",
+      "gp": "lagé"
+    },
+    {
+      "fr": "trancher",
+      "gp": "tranché"
+    },
+    {
+      "fr": "hacher",
+      "gp": "haché"
+    },
+    {
+      "fr": "mâcher",
+      "gp": "maché"
+    },
+    {
+      "fr": "rêver",
+      "gp": "révé"
+    },
+    {
+      "fr": "recommencer",
+      "gp": "rékòmansé"
+    },
+    {
+      "fr": "rincer",
+      "gp": "rensé"
+    },
+    {
+      "fr": "avouer",
+      "gp": "avwé"
+    },
+    {
+      "gp": [
+        "fonksioné"
+      ],
+      "fr": "fonctionner",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "akouché"
+      ],
+      "fr": "accoucher",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "kré"
+      ],
+      "fr": "croire en",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "réini"
+      ],
+      "fr": "se réunir",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "enkyété",
+        "enkyet"
+      ],
+      "fr": "s'inquiéter",
+      "type": "verbe",
+      "secondaire": true
+    },
+    {
+      "fr": "cultiver",
+      "gp": "kiltivé",
+      "type": "verbe"
+    },
+    {
+      "fr": "réconcilier",
+      "gp": "fè lapè",
+      "type": "verbe"
+    },
+    {
+      "fr": "se comporter",
+      "gp": "konpòté kò",
+      "type": "verbe"
+    },
+    {
+      "fr": "se plaindre",
+      "gp": "plenyen",
+      "type": "verbe"
+    },
+    {
+      "fr": [
+        "se marier",
+        "marier"
+      ],
+      "gp": "mayé",
+      "type": "verbe"
+    },
+    {
+      "fr": "inonder",
+      "gp": "inondé",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "pèdi",
+        "pedi"
+      ],
+      "fr": "se perdre",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "oblije",
+        "blije"
+      ],
+      "fr": "être obligé",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "gade",
+        "gadé"
+      ],
+      "fr": "garder",
+      "type": "verbe",
+      "secondaire": true
+    },
+    {
+      "gp": [
+        "repozé",
+        "repoze"
+      ],
+      "fr": "se reposer",
+      "type": "verbe"
+    },
+    {
+      "gp": "fè atansyon",
+      "fr": "faire attention",
+      "type": "verbe"
+    },
+    {
+      "gp": "ritounen",
+      "fr": "retourner",
+      "type": "verbe"
+    },
+    {
+      "gp": [
+        "tchoué",
+        "tchwé",
+        "tchoue",
+        "twoué"
+      ],
+      "fr": "trouer",
+      "type": "verbe"
+    },
+    {
+      "fr": "caresser",
+      "gp": [
+        "karésé",
+        "karesé"
+      ]
+    },
+    {
+      "fr": "gagner",
+      "gp": [
+        "gannyé",
+        "ganyé"
+      ]
+    },
+    {
+      "fr": "agripper",
+      "gp": "varé",
+      "type": "verbe"
+    },
+    {
+      "fr": "transpercer",
+      "gp": "foré",
+      "type": "verbe"
+    },
+    {
+      "fr": "fendre",
+      "gp": "fann",
+      "type": "verbe"
+    },
+    {
+      "fr": "se révolter",
+      "gp": "gawoulé",
+      "type": "verbe"
+    },
+    {
+      "fr": "héler",
+      "gp": "hélé",
+      "type": "verbe"
+    },
+    {
+      "fr": "engourdir",
+      "gp": "angoudi",
+      "type": "verbe"
+    },
+    {
+      "fr": "avais",
+      "gp": "ni",
+      "secondaire": true
+    },
+    {
+      "fr": "aviez",
+      "gp": "ni",
+      "secondaire": true
+    },
+    {
+      "fr": "avaient",
+      "gp": "ni",
+      "secondaire": true
+    },
+    {
+      "fr": "aider",
+      "gp": "aidé"
+    },
+    {
+      "fr": "marcher",
+      "gp": "mache"
+    },
+    {
+      "fr": "comprendre",
+      "gp": "konpwann"
+    },
+    {
+      "fr": "trouver",
+      "gp": "touvé"
+    },
+    {
+      "fr": "donner",
+      "gp": "bay"
+    },
+    {
+      "fr": "sembler",
+      "gp": "sanb"
+    },
+    {
+      "fr": "haler",
+      "gp": "halé"
+    },
+    {
+      "fr": "retrouver",
+      "gp": "ritouvé"
+    },
+    {
+      "fr": "régler",
+      "gp": "réglé"
+    },
+    {
+      "fr": "tuer",
+      "gp": "kyouyé"
+    }
+  ]
+}
