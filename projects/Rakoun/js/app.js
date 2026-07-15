@@ -7,7 +7,11 @@
         elStatus = $("status"), elTranslator = $("translator"),
         elLangSrc = $("lang-src"), elLangTgt = $("lang-tgt"),
         elLangSrcNative = $("lang-src-native"), elLangTgtNative = $("lang-tgt-native"),
-        elFlagSrc = $("flag-src"), elFlagTgt = $("flag-tgt");
+        elFlagSrc = $("flag-src"), elFlagTgt = $("flag-tgt"),
+        elListenSrc = $("listen"), elListenTgt = $("listen-tgt");
+
+  // Pas de voix créole native disponible : on désactive l'écoute côté créole.
+  const NO_VOICE = { gp: true };
 
   const NAMES = { fr: "Français", gp: "Kréyòl Gwadloup" };
   const NAMES_NATIVE = { fr: "Fwansé", gp: "créole guadeloupéen" };
@@ -26,6 +30,8 @@
     elFlagSrc.src = FLAG_URLS[src];
     elFlagTgt.src = FLAG_URLS[tgt];
     elInput.placeholder = src === "fr" ? "Écrivez en français…" : "Maké an kréyòl…";
+    elListenSrc.disabled = !!NO_VOICE[src];
+    elListenTgt.disabled = !!NO_VOICE[tgt];
   }
 
   const BASE_FONT_PX = 32; // doit correspondre à font-size: 2rem dans style.css

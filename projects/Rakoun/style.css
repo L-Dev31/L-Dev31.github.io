@@ -2,30 +2,35 @@
   --bg: #fff;
   --accent: #f15a29;
   --text: #1a2233;
-  --muted: #868c98;
+  --muted: #64748b;
   --panel: #fff;
   --border: 6.5px solid;
+  --panel-border: #e5e5e5;
   --panel2: color-mix(in srgb, var(--accent) 12%, white);
   --radius: 14px;
+  color-scheme: light;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #1a2233;
-    --accent: #f15a29;
-    --text: #f0f0f0;
-    --muted: #a0a6b2;
-    --panel: #252d3d;
-    --panel2: color-mix(in srgb, var(--accent) 12%, #252d3d);
+    --bg: #0e1420;
+    --accent: #ff7a4d;
+    --text: #e8ebf1;
+    --muted: #8b93a3;
+    --panel: #151c2b;
+    --panel-border: #1b2334;
+    --panel2: color-mix(in srgb, var(--accent) 11%, #151c2b);
+    color-scheme: dark;
   }
 }
 
 @font-face {
   font-family: 'fredoka';
-  src: url('font/fredokaOne-Regular.ttf') format('truetype');
+  src: url('font/FredokaOne-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 * { box-sizing: border-box; }
@@ -33,6 +38,7 @@
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--bg);
   color: var(--text);
   display: flex;
@@ -124,11 +130,16 @@ main {
 
 .panel {
   background: var(--panel);
-  border: var(--border) #e5e5e5;
+  border: var(--border) var(--panel-border);
   border-radius: var(--radius);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: border-color 150ms ease;
+}
+
+.panel:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--panel-border));
 }
 
 .panel-output {
@@ -167,8 +178,13 @@ textarea::placeholder { color: var(--muted); }
   font-size: 2.2rem;
   cursor: pointer;
   flex-shrink: 0;
+  touch-action: manipulation;
 }
-.swap:hover { background: var(--panel2); }
+.swap:active { background: var(--panel2); transform: scale(0.94); }
+
+@media (hover: hover) {
+  .swap:hover { background: var(--panel2); }
+}
 
 .status {
   text-align: center;
@@ -202,24 +218,53 @@ textarea::placeholder { color: var(--muted); }
 .slide-in-right   { animation: slide-in-from-right   160ms ease forwards; }
 
 @media (max-width: 640px) {
+  header { padding: 2rem 1rem 2.5rem; }
+  .logo-wrap { display: none; }
+  h1 { font-size: 3.25rem; }
+  main { width: 100%; padding: 0 1rem 1.5rem; }
   .translator { grid-template-columns: 1fr; }
   .swap { margin: -0.3rem auto; }
+  .swap iconify-icon { transform: rotate(90deg); }
+  .flag { width: 48px; height: 32px; }
+  .lang-name { font-size: 1.4em; }
+  textarea { font-size: 1.25rem; min-height: 150px; padding: 0.85rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-out-right,
+  .slide-out-left,
+  .slide-in-left,
+  .slide-in-right { animation: none; }
+  .panel, .swap { transition: none; }
 }
 
 .panel-action {
   display: flex;
   justify-content: flex-end;
-  padding: 0.5rem 1rem;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem 0.5rem;
 }
 
 .panel-action button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
   background: transparent;
   border: 0;
+  border-radius: 10px;
   color: var(--muted);
   font-size: 1.5rem;
   cursor: pointer;
+  touch-action: manipulation;
 }
-.panel-action button:hover { color: var(--accent); }
+.panel-action button:active { color: var(--accent); background: var(--panel2); }
+.panel-action button:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+
+@media (hover: hover) {
+  .panel-action button:hover { color: var(--accent); }
+}
 
 footer {
   text-align: center;
