@@ -218,16 +218,94 @@ textarea::placeholder { color: var(--muted); }
 .slide-in-right   { animation: slide-in-from-right   160ms ease forwards; }
 
 @media (max-width: 640px) {
-  header { padding: 2rem 1rem 2.5rem; }
+  /* Header stays, scaled down on a golden-ratio type scale (φ ≈ 1.618) */
+  header { padding: 1.5rem; gap: 0.6rem; }
   .logo-wrap { display: none; }
-  h1 { font-size: 3.25rem; }
-  main { width: 100%; padding: 0 1rem 1.5rem; }
-  .translator { grid-template-columns: 1fr; }
-  .swap { margin: -0.3rem auto; }
-  .swap iconify-icon { transform: rotate(90deg); }
-  .flag { width: 48px; height: 32px; }
-  .lang-name { font-size: 1.4em; }
-  textarea { font-size: 1.25rem; min-height: 150px; padding: 0.85rem; }
+  h1 { font-size: 2.618rem; }        /* φ² */
+
+  main {
+    width: 100%;
+    padding: max(1rem, env(safe-area-inset-top))
+             1rem
+             max(1.5rem, env(safe-area-inset-bottom));
+  }
+
+  /* No focus outline on phone */
+  .translator :focus { outline: none; }
+  .panel:focus-within { border-color: var(--panel-border); }
+
+  /* Flatten the sections so panels and language chips become
+     direct items of the translator, freeing us to reorder them */
+  .translator {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .lang-section { display: contents; }
+
+  /* Translation zone: source + target merged into a single card,
+     the two results split by a centered 90% divider */
+  .panel {
+    order: 1;
+    flex: 0 0 100%;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+  }
+  #section-src .panel {
+    border-bottom: 0;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .panel-output {
+    order: 2;
+    background: var(--panel);
+    border-top: 0;
+    border-radius: 0 0 var(--radius) var(--radius);
+    position: relative;
+  }
+  .panel-output::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    height: 1px;
+    background: var(--panel-border);
+  }
+
+  /* Bottom bar: source chip · switch · target chip */
+  #section-src .lang-header { order: 3; }
+  .swap { order: 4; }
+  #section-tgt .lang-header { order: 5; }
+
+  /* Name only: no flag, centered */
+  .flag { display: none; }
+
+  .lang-header {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.9rem;
+    padding: 0.5rem 0.7rem;
+    background: var(--panel2);
+    border-radius: 12px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .swap {
+    flex: 0 0 auto;
+    margin: 0.9rem 0.35rem 0;
+  }
+
+  .lang-name { font-size: 1em; }
+  textarea { font-size: 1.05rem; min-height: 150px; padding: 0.85rem; }
+
+  .lang-section.slide-out-right .lang-header { animation: slide-out-right 160ms ease forwards; }
+  .lang-section.slide-out-left  .lang-header { animation: slide-out-left  160ms ease forwards; }
+  .lang-section.slide-in-left   .lang-header { animation: slide-in-from-left  160ms ease forwards; }
+  .lang-section.slide-in-right  .lang-header { animation: slide-in-from-right 160ms ease forwards; }
 }
 
 @media (prefers-reduced-motion: reduce) {
