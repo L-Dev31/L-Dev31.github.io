@@ -222,6 +222,19 @@ textarea::placeholder { color: var(--muted); }
 .panel-action button:active { color: var(--accent); background: var(--panel2); }
 .panel-action button:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
 
+/* Collapsed instead of display:none: the iconify-icon custom element inside
+   needs a real box to measure itself against on first render, or its icon
+   stays blank forever even after being un-hidden. */
+.panel-action button.is-collapsed {
+  min-width: 0;
+  width: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 @media (hover: hover) {
   .panel-action button:hover { color: var(--accent); }
 }

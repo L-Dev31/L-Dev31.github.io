@@ -14,7 +14,7 @@
  * reçoit la version fraîche. C'est le mécanisme de cache-busting « simple »
  * demandé : pas besoin de renommer les fichiers avec un hash.
  */
-const APP_VERSION = "3";
+const APP_VERSION = "5";
 const DICT_VERSION = "1";
 
 const STATIC_CACHE = `rakoun-static-v${APP_VERSION}`;

@@ -8,7 +8,8 @@
         elLangSrc = $("lang-src"), elLangTgt = $("lang-tgt"),
         elLangSrcNative = $("lang-src-native"), elLangTgtNative = $("lang-tgt-native"),
         elFlagSrc = $("flag-src"), elFlagTgt = $("flag-tgt"),
-        elListenSrc = $("listen"), elListenTgt = $("listen-tgt");
+        elListenSrc = $("listen"), elListenTgt = $("listen-tgt"),
+        elClear = $("clear");
 
   // Pas de voix créole native disponible : on désactive l'écoute côté créole.
   const NO_VOICE = { gp: true };
@@ -52,6 +53,7 @@
   }
 
   function traduire() {
+    elClear.classList.toggle("is-collapsed", !elInput.value.trim());
     if (!engine) return;
     const txt = elInput.value;
     elOutput.value = txt.trim() ? engine.traduire(txt, src, tgt) : "";
