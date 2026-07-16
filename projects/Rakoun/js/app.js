@@ -159,4 +159,15 @@
 })();
 
 yearEl = document.getElementById("year");
-yearEl.textContent = new Date().getFullYear();  
+yearEl.textContent = new Date().getFullYear();
+
+// ── PWA : enregistrement du service worker ─────────────────────────────────
+// Chemin relatif volontaire : le site est servi depuis un sous-dossier
+// (/projects/Rakoun/). La portée du SW se limite donc à ce dossier.
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch((err) => {
+      console.error("[Rakoun] Échec d'enregistrement du service worker :", err);
+    });
+  });
+}
