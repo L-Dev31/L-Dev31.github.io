@@ -301,7 +301,7 @@ textarea::placeholder { color: var(--muted); }
 
 @media (max-width: 640px) {
   /* Header stays, scaled down on a golden-ratio type scale (φ ≈ 1.618) */
-  header { padding: 1.5rem; gap: 0.6rem; }
+  header { padding-bottom: 1rem; gap: 0.6rem; }
   .logo-wrap { display: none; }
   h1 { font-size: 2.618rem; } /* φ² */
 
