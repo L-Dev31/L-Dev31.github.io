@@ -7,18 +7,31 @@
         elStatus = $("status"), elTranslator = $("translator"),
         elLangSrc = $("lang-src"), elLangTgt = $("lang-tgt"),
         elLangSrcNative = $("lang-src-native"), elLangTgtNative = $("lang-tgt-native"),
+        elLangSrcAbbr = $("lang-src-abbr"), elLangTgtAbbr = $("lang-tgt-abbr"),
         elFlagSrc = $("flag-src"), elFlagTgt = $("flag-tgt"),
+        elFlagSrcMobile = $("flag-src-mobile"), elFlagTgtMobile = $("flag-tgt-mobile"),
         elListenSrc = $("listen"), elListenTgt = $("listen-tgt"),
-        elClear = $("clear");
+        elClear = $("clear"), elCharCount = $("char-count");
+
+  const CHAR_LIMIT = 1500;
+  const OVER_LIMIT_MSG =
+    "Texte trop long : réduisez-le à 1500 caractères.\n" +
+    "Tèks two long : fè’y pli kout ki 1500 karaktè.";
 
   // Pas de voix créole native disponible : on désactive l'écoute côté créole.
   const NO_VOICE = { gp: true };
 
   const NAMES = { fr: "Français", gp: "Kréyòl Gwadloup" };
   const NAMES_NATIVE = { fr: "Fwansé", gp: "créole guadeloupéen" };
+  const NAMES_ABBR = { fr: "FR", gp: "GP" };
   const FLAG_URLS = {
     fr: "images/flags/fr.png",
     gp: "images/flags/gp.png"
+  };
+  // Version carrée : se recadre proprement en cercle sur le pill mobile.
+  const FLAG_URLS_SQUARE = {
+    fr: "images/flags/fr_square.png",
+    gp: "images/flags/gp_square.png"
   };
   let src = "fr", tgt = "gp";
   let engine = null;
@@ -28,8 +41,12 @@
     elLangTgt.textContent = NAMES[tgt];
     elLangSrcNative.textContent = NAMES_NATIVE[src];
     elLangTgtNative.textContent = NAMES_NATIVE[tgt];
+    elLangSrcAbbr.textContent = NAMES_ABBR[src];
+    elLangTgtAbbr.textContent = NAMES_ABBR[tgt];
     elFlagSrc.src = FLAG_URLS[src];
     elFlagTgt.src = FLAG_URLS[tgt];
+    elFlagSrcMobile.srcset = FLAG_URLS_SQUARE[src];
+    elFlagTgtMobile.srcset = FLAG_URLS_SQUARE[tgt];
     elInput.placeholder = src === "fr" ? "Écrivez en français…" : "Maké an kréyòl…";
     elListenSrc.disabled = !!NO_VOICE[src];
     elListenTgt.disabled = !!NO_VOICE[tgt];
@@ -53,10 +70,18 @@
   }
 
   function traduire() {
-    elClear.classList.toggle("is-collapsed", !elInput.value.trim());
-    if (!engine) return;
     const txt = elInput.value;
-    elOutput.value = txt.trim() ? engine.traduire(txt, src, tgt) : "";
+    elClear.classList.toggle("is-collapsed", !txt.trim());
+
+    const overLimit = txt.length > CHAR_LIMIT;
+    elCharCount.textContent = `${txt.length} / ${CHAR_LIMIT}`;
+    elCharCount.classList.toggle("over-limit", overLimit);
+
+    if (overLimit) {
+      elOutput.value = OVER_LIMIT_MSG;
+    } else if (engine) {
+      elOutput.value = txt.trim() ? engine.traduire(txt, src, tgt) : "";
+    }
     autosize(elInput);
     autosize(elOutput);
   }

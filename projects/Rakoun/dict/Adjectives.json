@@ -405,7 +405,7 @@
   },
   {
     "fr": "plastique",
-    "gp": "tôl"
+    "gp": ["plastik", "tôl"]
   },
   {
     "fr": "plein",
@@ -1229,5 +1229,53 @@
   {
     "fr": "libre",
     "gp": "lib"
+  },
+  {
+    "fr": "gonflable",
+    "gp": "gonflab"
+  },
+  {
+    "fr": ["rouillé", "rouillée", "rouillés", "rouillées"],
+    "gp": "wouyé"
+  },
+  {
+    "fr": "galactique",
+    "gp": "galaktik"
+  },
+  {
+    "fr": "spatial",
+    "gp": "espasyal"
+  },
+  {
+    "fr": ["imaginaire", "imaginaires"],
+    "gp": "imajinè"
+  },
+  {
+    "fr": "fluo",
+    "gp": "fliyo"
+  },
+  {
+    "fr": ["différent", "différente", "différents", "différentes"],
+    "gp": "diféran"
+  },
+  {
+    "fr": ["parfait", "parfaite", "parfaits", "parfaites"],
+    "gp": "pafè"
+  },
+  {
+    "fr": ["immense", "immenses"],
+    "gp": "gwo"
+  },
+  {
+    "fr": ["rapide", "rapides"],
+    "gp": "rapid"
+  },
+  {
+    "fr": "botanique",
+    "gp": "botanik"
+  },
+  {
+    "fr": ["géant", "géante", "géants", "géantes"],
+    "gp": "jeyan"
   }
 ]

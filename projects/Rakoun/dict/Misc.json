@@ -1483,5 +1483,10 @@
     "fr": "par exemple",
     "gp": "kontèl",
     "type": "adv"
+  },
+  {
+    "fr": "par",
+    "gp": "pa",
+    "type": "misc"
   }
 ]

@@ -660,6 +660,16 @@
       if (!sortie.length || !est_mot(last(sortie))) return false;
       const dernier = last(sortie).toLowerCase();
       if (rules.pronoms_gp.has(dernier) || rules.marqueurs.has(dernier)) return false;
+      // Le mot courant est un COMPLÉMENT d'infinitif (donc nu, sans "ka") quand le
+      // dernier mot émis GOUVERNE un infinitif : un verbe — déjà traduit en créole
+      // ("lé", "fè", "alé") OU encore en français brut ("faire", "aller") — ou la
+      // préposition "pou"/"pour". Sans ça : "faire/aller/pour prendre" produisaient
+      // un "ka" parasite ("fè ka pran"), et au retour "des kas prendre".
+      const frDernier = ctx.index_gp[dernier];
+      const dernierEstVerbe = est_verbe_gp(last(sortie)) || est_verbe(last(sortie)) ||
+        (typeof frDernier === "string" && frDernier &&
+         (ctx.type_fr[frDernier.split(" ")[0]] === "verbe" || trouver_infinitif(frDernier.split(" ")[0]) !== null));
+      if ((dernierEstVerbe || dernier === "pou" || dernier === "pour") && !has(rules.tonique_de_sujet, dernier)) return false;
       if (dernier === rules.R.marqueur_negation)
         return sortie.length >= 2 && est_mot(sortie[sortie.length - 2]) && !rules.pronoms_gp.has(sortie[sortie.length - 2].toLowerCase());
       return true;
@@ -960,6 +970,10 @@
         return i + 1;
       }
       if (cle === "qui") { e.emettre(reporter_casse(tok, !sortie.length ? rules.R.interrogatifs.qui : "ki")); return i + 1; }
+      // « dont » est toujours relatif (jamais interrogatif en tête) : le créole le
+      // rend par le relativiseur « ki » (avec reprise possessive implicite),
+      // cohérent avec le traitement de « qui » → « ki ». Évite un résidu français.
+      if (cle === "dont") { e.emettre(reporter_casse(tok, "ki")); return i + 1; }
       if (cle === "quand") {
         const question = tokens.slice(i + 1).includes("?");
         e.emettre(reporter_casse(tok, question ? rules.R.interrogatifs.quand : "lè"));
@@ -2562,9 +2576,11 @@
 
     loadDicts(dicts);
     // `classer_fr`/`trouver_infinitif` sont exposés pour l'outillage de
-    // vérification (détection de résidus français), pas pour l'UI.
-    return { traduire, ctx, rules, classer_fr, trouver_infinitif, est_verbe, est_adjectif };
+    // vérification (détection de parasites), en plus de l'API de traduction.
+    return { traduire, ctx, rules, classer_fr, trouver_infinitif };
   }
 
-  root.RakounCore = { createEngine, est_mot, reporter_casse, normalize_token };
-})(typeof module !== "undefined" && module.exports ? module.exports : (typeof window !== "undefined" ? window : globalThis));
+  root.RakounCore = { createEngine, normalize_token, est_mot };
+})(typeof module !== "undefined" && module.exports
+   ? module.exports
+   : (typeof window !== "undefined" ? window : globalThis));

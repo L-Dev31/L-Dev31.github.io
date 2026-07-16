@@ -166,6 +166,8 @@ h1 { margin: 0; font-size: 6rem; letter-spacing: 0.5px; }
   text-overflow: ellipsis;
 }
 
+.lang-abbr { display: none; }
+
 /* -- Panels (input / output) --------------------------------------------- */
 
 .panel {
@@ -206,10 +208,19 @@ textarea::placeholder { color: var(--muted); }
 
 .panel-action {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
   padding: 0.25rem 0.5rem 0.5rem;
 }
+
+.char-count {
+  margin-right: auto;
+  padding-left: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.char-count.over-limit { color: #e88; font-weight: 600; }
 
 .panel-action button {
   display: flex;
@@ -347,7 +358,7 @@ textarea::placeholder { color: var(--muted); }
   /* Translation zone: source + target merged into a single card, the
      two results split by a centered 90% divider */
   .panel {
-    order: 1;
+    order: 4;
     flex: 0 0 100%;
     background: var(--panel);
     border: 1px solid var(--panel-border);
@@ -357,7 +368,7 @@ textarea::placeholder { color: var(--muted); }
     border-radius: var(--radius) var(--radius) 0 0;
   }
   .panel-output {
-    order: 2;
+    order: 5;
     background: var(--panel);
     border-top: 0;
     border-radius: 0 0 var(--radius) var(--radius);
@@ -374,40 +385,47 @@ textarea::placeholder { color: var(--muted); }
     background: var(--panel-border);
   }
 
-  /* Bottom bar: source chip · switch · target chip */
-  #section-src .lang-header { order: 3; }
-  .swap { order: 4; }
-  #section-tgt .lang-header { order: 5; }
+  /* Top bar: source chip · switch · target chip, above the panel */
+  #section-src .lang-header { order: 1; }
+  .swap { order: 2; }
+  #section-tgt .lang-header { order: 3; }
 
-  /* Flag stacked above the name, centered */
-  .flag { width: 26px; height: 18px; border-radius: 5px; }
+  /* Pill-shaped chip: circular flag on the left, language code (FR / GP)
+     to its right — full name and native subtitle are desktop-only */
+  .flag { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+  .lang-name, .lang-native { display: none; }
+  .lang-abbr {
+    display: block;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
 
   .lang-header {
     flex: 1 1 0;
-    flex-direction: column;
+    flex-direction: row;
     min-width: 0;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    gap: 0.3rem;
-    margin-top: 0.9rem;
-    padding: 0.5rem 0.7rem;
-    background: var(--panel2);
-    border-radius: 12px;
-    text-align: center;
+    gap: 0.618rem;       /* 1/φ */
+    margin-bottom: 0.618rem; /* 1/φ */
+    padding: 0.618rem 1rem;  /* 1/φ · 1 */
+    background: transparent;
+    border: 1px solid var(--panel-border);
+    border-radius: 999px;
+    text-align: left;
     overflow: hidden;
   }
 
-  /* align-items: center sizes this to its content in a column flex
-     context, which defeats the ellipsis — force it to fill the chip
-     width so overflow can actually kick in */
-  .lang-header > div { width: 100%; }
+  .lang-header > div { min-width: 0; width: auto; }
 
   .swap {
     flex: 0 0 auto;
-    margin: 0.9rem 0.35rem 0;
+    margin: 0 0.382rem 0.618rem; /* 1/φ² · 1/φ */
+    background: var(--panel2);
   }
 
-  .lang-name { font-size: 1em; }
   textarea { font-size: 1.05rem; min-height: 150px; padding: 0.85rem; }
 
   /* Slide animation lives on .lang-section, which is display:contents

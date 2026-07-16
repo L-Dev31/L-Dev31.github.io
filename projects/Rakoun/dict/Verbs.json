@@ -2723,8 +2723,8 @@
     {
       "fr": "penser",
       "gp": [
-        "sonjé",
-        "pansé"
+        "pansé",
+        "sonjé"
       ]
     },
     {
@@ -4674,6 +4674,22 @@
     {
       "fr": "tuer",
       "gp": "kyouyé"
+    },
+    {
+      "fr": "collectionner",
+      "gp": "ranmasé"
+    },
+    {
+      "fr": "disparaître",
+      "gp": "disparèt"
+    },
+    {
+      "fr": "croiser",
+      "gp": "kwazé"
+    },
+    {
+      "fr": "garer",
+      "gp": "garé"
     }
   ]
 }

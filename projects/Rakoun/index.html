@@ -90,16 +90,22 @@
       <div class="lang-section" id="section-src">
         <!-- Language header (flag, name, translated name) -->
         <div class="lang-header">
-          <img class="flag" id="flag-src" src="images/flags/fr.png" alt="Drapeau Français">
+          <picture>
+            <source media="(max-width: 640px)" srcset="images/flags/fr_square.png" id="flag-src-mobile">
+            <img class="flag" id="flag-src" src="images/flags/fr.png" alt="Drapeau Français">
+          </picture>
           <div>
             <div class="lang-name" id="lang-src">Français</div>
             <div class="lang-native" id="lang-src-native">Fwansé</div>
+            <div class="lang-abbr" id="lang-src-abbr" aria-hidden="true">FR</div>
           </div>
         </div>
         <!-- Input panel source language -->
         <div class="panel">
           <textarea id="input" placeholder="Écrivez ici…" autofocus></textarea>
           <div class="panel-action">
+            <span class="char-count" id="char-count">0 / 1500</span>
+
             <!--Listen-->
             <button id="listen" class="listen" title="Écouter le texte" aria-label="Écouter le texte">
               <iconify-icon icon="fluent:speaker-2-16-filled"></iconify-icon>
@@ -127,10 +133,14 @@
       <div class="lang-section" id="section-tgt">
         <!-- Language header (flag, name, translated name) -->
         <div class="lang-header">
-          <img class="flag" id="flag-tgt" src="images/flags/gp.png" alt="Drapeau Créole">
+          <picture>
+            <source media="(max-width: 640px)" srcset="images/flags/gp_square.png" id="flag-tgt-mobile">
+            <img class="flag" id="flag-tgt" src="images/flags/gp.png" alt="Drapeau Créole">
+          </picture>
           <div>
             <div class="lang-name" id="lang-tgt">Créole</div>
             <div class="lang-native" id="lang-tgt-native">Kréyòl</div>
+            <div class="lang-abbr" id="lang-tgt-abbr" aria-hidden="true">GP</div>
           </div>
         </div>
         <!-- Output panel target language -->

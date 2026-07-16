@@ -7858,7 +7858,9 @@
   {
     "fr": [
       "Pointe-à-Pitre",
-      "Pointe à Pitre"
+      "Pointe à Pitre",
+      "Pointe a Pitre",
+      "Pointe-a-Pitre"
     ],
     "gp": "Lapwent"
   },
@@ -13958,5 +13960,229 @@
     "fr": "surf",
     "gp": "surf",
     "genre": "m"
+  },
+  {
+    "fr": "vacances",
+    "gp": "vakans"
+  },
+  {
+    "fr": "cachette",
+    "gp": "kachèt"
+  },
+  {
+    "fr": "yaourt",
+    "gp": "yogourt"
+  },
+  {
+    "fr": "glaçon",
+    "gp": "glas"
+  },
+  {
+    "fr": "canapé",
+    "gp": "kanape"
+  },
+  {
+    "fr": "olive",
+    "gp": "oliv"
+  },
+  {
+    "fr": "guimauve",
+    "gp": "gimov"
+  },
+  {
+    "fr": "robot",
+    "gp": "robo"
+  },
+  {
+    "fr": "dimension",
+    "gp": "dimansyon"
+  },
+  {
+    "fr": "expert",
+    "gp": "èspè"
+  },
+  {
+    "fr": "grille-pain",
+    "gp": "griy-pen"
+  },
+  {
+    "fr": "confettis",
+    "gp": "konfetti"
+  },
+  {
+    "fr": "rock",
+    "gp": "wòk"
+  },
+  {
+    "fr": "jazz",
+    "gp": "djaz"
+  },
+  {
+    "fr": "pizza",
+    "gp": "pitza"
+  },
+  {
+    "fr": "tango",
+    "gp": "tango"
+  },
+  {
+    "fr": "astronaute",
+    "gp": "astrònot"
+  },
+  {
+    "fr": "frigo",
+    "gp": "frijidè"
+  },
+  {
+    "fr": "carton",
+    "gp": "katon"
+  },
+  {
+    "fr": "costume",
+    "gp": "kostim"
+  },
+  {
+    "fr": ["lunettes", "lunette"],
+    "gp": "linèt"
+  },
+  {
+    "fr": "réseau",
+    "gp": "rézo"
+  },
+  {
+    "fr": "formation",
+    "gp": "fòmasyon"
+  },
+  {
+    "fr": "pyjama",
+    "gp": "pijama"
+  },
+  {
+    "fr": "douche",
+    "gp": "douch"
+  },
+  {
+    "fr": "four",
+    "gp": "fou"
+  },
+  {
+    "fr": "compagnie",
+    "gp": "konpanyi"
+  },
+  {
+    "fr": "glacier",
+    "gp": "glasye"
+  },
+  {
+    "fr": "casque",
+    "gp": "kas"
+  },
+  {
+    "fr": "chantier",
+    "gp": "chantyé"
+  },
+  {
+    "fr": "peinture",
+    "gp": "penti"
+  },
+  {
+    "fr": "langage",
+    "gp": "lang"
+  },
+  {
+    "fr": ["élastique", "élastiques"],
+    "gp": "elastik"
+  },
+  {
+    "fr": "roller",
+    "gp": "woulèt"
+  },
+  {
+    "fr": "tracteur",
+    "gp": "traktè"
+  },
+  {
+    "fr": "congélateur",
+    "gp": "frizè"
+  },
+  {
+    "fr": "stratégie",
+    "gp": "èstratéji"
+  },
+  {
+    "fr": "pirate",
+    "gp": "pirat"
+  },
+  {
+    "fr": ["souvenir", "souvenirs"],
+    "gp": "souvni"
+  },
+  {
+    "fr": "paille",
+    "gp": "pay"
+  },
+  {
+    "fr": "puzzle",
+    "gp": "puzl"
+  },
+  {
+    "fr": "marathon",
+    "gp": "maraton"
+  },
+  {
+    "fr": "massage",
+    "gp": "masaj"
+  },
+  {
+    "fr": "pièce",
+    "gp": "pyès"
+  },
+  {
+    "fr": "tapis",
+    "gp": "tapi"
+  },
+  {
+    "fr": "toile",
+    "gp": "twèl"
+  },
+  {
+    "fr": "compétition",
+    "gp": "konpétisyon"
+  },
+  {
+    "fr": "champagne",
+    "gp": "chanpay"
+  },
+  {
+    "fr": ["bulle", "bulles"],
+    "gp": "bil"
+  },
+  {
+    "fr": ["champion", "champions"],
+    "gp": "chanpyon"
+  },
+  {
+    "fr": "demi-tour",
+    "gp": "demi-tou"
+  },
+  {
+    "fr": ["bisou", "bisous"],
+    "gp": "bo"
+  },
+  {
+    "fr": ["bonbon", "bonbons"],
+    "gp": "bonbon"
+  },
+  {
+    "fr": "carburant",
+    "gp": "gaz"
+  },
+  {
+    "fr": "futur",
+    "gp": "lavenir"
+  },
+  {
+    "fr": "smoking",
+    "gp": "smoking"
   }
 ]
