@@ -5,6 +5,9 @@
 :root {
   --bg: #fff;
   --accent: #f15a29;
+  /* Darker orange reserved for TEXT so normal-size copy passes WCAG AA (4.5:1
+     on white). --accent stays bright for logo, borders, icons and the title. */
+  --accent-text: #c8451c;
   --text: #1a2233;
   --muted: #64748b;
   --panel: #fff;
@@ -25,6 +28,9 @@
     --panel: #151c2b;
     --panel-border: #1b2334;
     --panel2: color-mix(in srgb, var(--accent) 11%, #151c2b);
+    /* On dark backgrounds the bright accent already exceeds 4.5:1, so text
+       can keep the vivid orange. */
+    --accent-text: #f15a29;
     color-scheme: dark;
   }
 }
@@ -67,7 +73,7 @@ footer {
   color: var(--muted);
   font-size: 0.9rem;
 }
-footer a { color: var(--accent); }
+footer a { color: var(--accent-text); }
 
 /* ==========================================================================
    Header (logo + title)
@@ -196,7 +202,7 @@ textarea {
 }
 
 textarea::placeholder { color: var(--muted); }
-#output { color: var(--accent); }
+#output { color: var(--accent-text); }
 
 .panel-action {
   display: flex;
