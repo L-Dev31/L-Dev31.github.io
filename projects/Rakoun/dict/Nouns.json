@@ -9349,7 +9349,10 @@
   },
   {
     "fr": "sorte",
-    "gp": "model"
+    "gp": [
+      "kalité",
+      "sòt"
+    ]
   },
   {
     "fr": "sortilège",
