@@ -345,7 +345,11 @@
   {
     "fr": [
       "ami",
-      "amis"
+      "amis",
+      "copain",
+      "copine",
+      "pote",
+      "camarade"
     ],
     "gp": "zanmi"
   },
@@ -588,7 +592,13 @@
     "gp": "achitekt"
   },
   {
-    "fr": "argent",
+    "fr": [
+      "argent",
+      "fric",
+      "pognon",
+      "thune",
+      "oseille"
+    ],
     "gp": "lajan"
   },
   {
@@ -696,7 +706,10 @@
   },
   {
     "fr": "aujourd'hui",
-    "gp": "jodijou"
+    "gp": [
+      "jòdi-a",
+      "jodijou"
+    ]
   },
   {
     "fr": "aurait",
@@ -1078,7 +1091,10 @@
   },
   {
     "fr": "besoin",
-    "gp": "bouzon"
+    "gp": [
+      "bizwen",
+      "bouzon"
+    ]
   },
   {
     "fr": [
@@ -1146,7 +1162,8 @@
   },
   {
     "fr": "bite",
-    "gp": "kal"
+    "gp": "kal",
+    "genre": "f"
   },
   {
     "fr": [
@@ -1216,7 +1233,8 @@
   },
   {
     "fr": "boisson",
-    "gp": "bwè"
+    "gp": "bwè",
+    "genre": "f"
   },
   {
     "fr": "boite",
@@ -1262,7 +1280,10 @@
   },
   {
     "fr": "bonheur",
-    "gp": "bonè"
+    "gp": [
+      "bonnè",
+      "bonè"
+    ]
   },
   {
     "fr": "bonhomme",
@@ -1405,7 +1426,8 @@
   },
   {
     "fr": "brebis",
-    "gp": "mouton-fimèl"
+    "gp": "mouton-fimèl",
+    "genre": "f"
   },
   {
     "fr": [
@@ -1684,7 +1706,8 @@
   },
   {
     "fr": "camion",
-    "gp": "cha"
+    "gp": "cha",
+    "genre": "m"
   },
   {
     "fr": "campagne",
@@ -1817,7 +1840,10 @@
   },
   {
     "fr": "casquette",
-    "gp": "kastjèt"
+    "gp": [
+      "kazèt",
+      "kastjèt"
+    ]
   },
   {
     "fr": "casse-toi",
@@ -2036,7 +2062,10 @@
       "soulier",
       "souliers"
     ],
-    "gp": "soulié",
+    "gp": [
+      "soulyé",
+      "soulié"
+    ],
     "genre": "m"
   },
   {
@@ -2052,7 +2081,10 @@
     "genre": "f"
   },
   {
-    "fr": "chemin",
+    "fr": [
+      "chemin",
+      "sentier"
+    ],
     "gp": "chimen"
   },
   {
@@ -2740,7 +2772,8 @@
   },
   {
     "fr": "couleur",
-    "gp": "koulè"
+    "gp": "koulè",
+    "genre": "f"
   },
   {
     "fr": "coup",
@@ -2788,7 +2821,10 @@
   },
   {
     "fr": "course",
-    "gp": "kouskouri"
+    "gp": [
+      "kous",
+      "kouskouri"
+    ]
   },
   {
     "fr": [
@@ -2881,7 +2917,10 @@
   },
   {
     "fr": "cravate",
-    "gp": "lavalyè"
+    "gp": [
+      "kravat",
+      "lavalyè"
+    ]
   },
   {
     "fr": [
@@ -2918,7 +2957,10 @@
       "crocodile",
       "crocodiles"
     ],
-    "gp": "kokodril",
+    "gp": [
+      "kwokodil",
+      "kokodril"
+    ],
     "genre": "m"
   },
   {
@@ -2982,7 +3024,10 @@
       "cuillere",
       "cuilleres"
     ],
-    "gp": "kwiyè",
+    "gp": [
+      "kiyè",
+      "kwiyè"
+    ],
     "genre": "f"
   },
   {
@@ -3454,7 +3499,15 @@
     "gp": "koté"
   },
   {
-    "fr": "enfant",
+    "fr": [
+      "enfant",
+      "gosse",
+      "gamin",
+      "gamine",
+      "môme",
+      "bambin",
+      "marmot"
+    ],
     "gp": "timoun"
   },
   {
@@ -3477,7 +3530,7 @@
       "escargot",
       "escargots"
     ],
-    "gp": "kalimason",
+    "gp": "kalmason",
     "genre": "m"
   },
   {
@@ -3486,7 +3539,10 @@
   },
   {
     "fr": "espace",
-    "gp": "zayann"
+    "gp": [
+      "léspas",
+      "zayann"
+    ]
   },
   {
     "fr": "espagne",
@@ -3510,7 +3566,8 @@
   },
   {
     "fr": "espion",
-    "gp": "pèsyennè"
+    "gp": "pèsyennè",
+    "genre": "m"
   },
   {
     "fr": "espionnage",
@@ -3657,7 +3714,10 @@
   },
   {
     "fr": "fantôme",
-    "gp": "zonbi"
+    "gp": [
+      "fantòm",
+      "zonbi"
+    ]
   },
   {
     "fr": "fardeau",
@@ -3883,7 +3943,8 @@
   },
   {
     "fr": "fois",
-    "gp": "fwa"
+    "gp": "fwa",
+    "genre": "f"
   },
   {
     "fr": "folâtrerie",
@@ -3946,7 +4007,10 @@
       "fourmi",
       "fourmis"
     ],
-    "gp": "fonmi",
+    "gp": [
+      "foumi",
+      "fonmi"
+    ],
     "genre": "f"
   },
   {
@@ -4103,7 +4167,7 @@
   },
   {
     "fr": "gagné",
-    "gp": "gannyé"
+    "gp": "ganyen"
   },
   {
     "fr": "gai",
@@ -4296,7 +4360,10 @@
   },
   {
     "fr": "gouvernement",
-    "gp": "lemetjwas"
+    "gp": [
+      "gouvènmann",
+      "lemetjwas"
+    ]
   },
   {
     "fr": [
@@ -4588,7 +4655,10 @@
   },
   {
     "fr": "gâteau",
-    "gp": "bonbon"
+    "gp": [
+      "gato",
+      "bonbon"
+    ]
   },
   {
     "fr": "générosité",
@@ -5830,7 +5900,8 @@
   },
   {
     "fr": "longueur",
-    "gp": "londjè"
+    "gp": "londjè",
+    "genre": "f"
   },
   {
     "fr": [
@@ -6004,7 +6075,11 @@
   {
     "fr": [
       "maison",
-      "maisons"
+      "maisons",
+      "demeure",
+      "habitation",
+      "logis",
+      "logement"
     ],
     "gp": "kaz",
     "genre": "f",
@@ -6160,7 +6235,10 @@
       "mangue",
       "mangues"
     ],
-    "gp": "mango",
+    "gp": [
+      "mang",
+      "mango"
+    ],
     "genre": "f"
   },
   {
@@ -6493,7 +6571,8 @@
   },
   {
     "fr": "million",
-    "gp": "milyon"
+    "gp": "milyon",
+    "genre": "m"
   },
   {
     "fr": "mince",
@@ -6504,7 +6583,10 @@
       "miroir",
       "miroirs"
     ],
-    "gp": "miwa",
+    "gp": [
+      "glas",
+      "miwa"
+    ],
     "genre": "m"
   },
   {
@@ -6590,8 +6672,8 @@
   {
     "fr": "montagne",
     "gp": [
-      "mòn",
-      "lamontay"
+      "montay",
+      "mòn"
     ],
     "genre": "f"
   },
@@ -6749,7 +6831,10 @@
   },
   {
     "fr": "mur",
-    "gp": "masonn"
+    "gp": [
+      "mi",
+      "masonn"
+    ]
   },
   {
     "fr": "muscle",
@@ -6795,7 +6880,10 @@
       "méduse",
       "méduses"
     ],
-    "gp": "lakal",
+    "gp": [
+      "mediz",
+      "lakal"
+    ],
     "genre": "f"
   },
   {
@@ -6877,7 +6965,7 @@
   },
   {
     "fr": "nez",
-    "gp": "nen"
+    "gp": "né"
   },
   {
     "fr": "Nicaragua",
@@ -6962,7 +7050,8 @@
   },
   {
     "fr": "noix",
-    "gp": "koko"
+    "gp": "koko",
+    "genre": "f"
   },
   {
     "fr": "nom",
@@ -7047,8 +7136,8 @@
   {
     "fr": "nuage",
     "gp": [
-      "niyaj",
-      "nyaj"
+      "nyaj",
+      "niyaj"
     ]
   },
   {
@@ -7228,7 +7317,10 @@
       "ordinateur",
       "ordinateurs"
     ],
-    "gp": "lòdinatè",
+    "gp": [
+      "òdinatè",
+      "lòdinatè"
+    ],
     "genre": "m"
   },
   {
@@ -7402,7 +7494,10 @@
   },
   {
     "fr": "panne",
-    "gp": "pan'"
+    "gp": [
+      "pann",
+      "pan'"
+    ]
   },
   {
     "fr": [
@@ -7560,8 +7655,8 @@
   {
     "fr": "peau",
     "gp": [
-      "lapo",
-      "po"
+      "po",
+      "lapo"
     ],
     "genre": "f"
   },
@@ -7664,8 +7759,13 @@
     "gp": "pèp"
   },
   {
-    "fr": "peur",
-    "gp": "pè"
+    "fr": [
+      "peur",
+      "frousse",
+      "trouille"
+    ],
+    "gp": "pè",
+    "genre": "f"
   },
   {
     "fr": [
@@ -8109,7 +8209,8 @@
   },
   {
     "fr": "prison",
-    "gp": "lajol"
+    "gp": "lajol",
+    "genre": "f"
   },
   {
     "fr": "problème",
@@ -8617,7 +8718,8 @@
   },
   {
     "fr": "rumeur",
-    "gp": "makrélaj"
+    "gp": "makrélaj",
+    "genre": "f"
   },
   {
     "fr": [
@@ -8675,7 +8777,8 @@
   },
   {
     "fr": "Réunion",
-    "gp": "Réinion"
+    "gp": "Réinion",
+    "genre": "f"
   },
   {
     "fr": [
@@ -9300,7 +9403,10 @@
   },
   {
     "fr": "sport",
-    "gp": "ispo"
+    "gp": [
+      "espò",
+      "ispo"
+    ]
   },
   {
     "fr": "spécialiste",
@@ -10317,7 +10423,9 @@
       "voiture",
       "voitures",
       "auto",
-      "autos"
+      "autos",
+      "automobile",
+      "bagnole"
     ],
     "gp": [
       "loto",
@@ -10647,7 +10755,10 @@
       "éléphant",
       "éléphants"
     ],
-    "gp": "léfan",
+    "gp": [
+      "éléfan",
+      "léfan"
+    ],
     "genre": "m"
   },
   {
@@ -10781,7 +10892,10 @@
   },
   {
     "fr": "étoile",
-    "gp": "zétwèl",
+    "gp": [
+      "étwal",
+      "zétwèl"
+    ],
     "genre": "f"
   },
   {
@@ -10998,7 +11112,11 @@
   {
     "fr": [
       "ancêtre",
-      "ancêtres"
+      "ancêtres",
+      "aïeul",
+      "aïeule",
+      "aïeux",
+      "ascendant"
     ],
     "gp": "zansèt",
     "genre": "m"
@@ -11158,8 +11276,8 @@
       "coquillages"
     ],
     "gp": [
-      "koki",
-      "kòki"
+      "kokiyaj",
+      "koki"
     ],
     "genre": "m"
   },
@@ -11433,7 +11551,10 @@
     "genre": "f"
   },
   {
-    "gp": "zòrèyé",
+    "gp": [
+      "zòryé",
+      "zòrèyé"
+    ],
     "fr": "oreiller",
     "type": "nom",
     "genre": "m"
@@ -11685,7 +11806,10 @@
     "genre": "f"
   },
   {
-    "gp": "fromaj",
+    "gp": [
+      "fwomaj",
+      "fromaj"
+    ],
     "fr": "fromage",
     "type": "nom",
     "genre": "m"
@@ -11715,7 +11839,10 @@
     "genre": "m"
   },
   {
-    "gp": "zépis",
+    "gp": [
+      "lépis",
+      "zépis"
+    ],
     "fr": "épice",
     "type": "nom",
     "genre": "f"
@@ -12420,7 +12547,10 @@
     "genre": "f"
   },
   {
-    "gp": "sériri",
+    "gp": [
+      "sèrriz",
+      "sériri"
+    ],
     "fr": "serrure",
     "type": "nom",
     "genre": "f"
@@ -12546,7 +12676,10 @@
     "genre": "m"
   },
   {
-    "gp": "kokoyé",
+    "gp": [
+      "pyé kokò",
+      "kokoyé"
+    ],
     "fr": "cocotier",
     "type": "nom",
     "genre": "m"
@@ -12684,7 +12817,10 @@
       "journée",
       "journées"
     ],
-    "gp": "jouné",
+    "gp": [
+      "jounen",
+      "jouné"
+    ],
     "genre": "f"
   },
   {
@@ -12833,7 +12969,8 @@
   },
   {
     "fr": "foie",
-    "gp": "fwa"
+    "gp": "fwa",
+    "genre": "m"
   },
   {
     "fr": "estomac",
@@ -12985,7 +13122,10 @@
   },
   {
     "fr": "vague",
-    "gp": "lanm",
+    "gp": [
+      "vag",
+      "lanm"
+    ],
     "genre": "f"
   },
   {
@@ -13283,7 +13423,10 @@
       "rèv",
       "rev"
     ],
-    "fr": "rêve",
+    "fr": [
+      "rêve",
+      "songe"
+    ],
     "type": "nom"
   },
   {
@@ -13327,7 +13470,8 @@
       "lape"
     ],
     "fr": "paix",
-    "type": "nom"
+    "type": "nom",
+    "genre": "f"
   },
   {
     "gp": [
@@ -13958,7 +14102,10 @@
   },
   {
     "fr": "surf",
-    "gp": "surf",
+    "gp": [
+      "sèf",
+      "surf"
+    ],
     "genre": "m"
   },
   {
@@ -14042,7 +14189,10 @@
     "gp": "kostim"
   },
   {
-    "fr": ["lunettes", "lunette"],
+    "fr": [
+      "lunettes",
+      "lunette"
+    ],
     "gp": "linèt"
   },
   {
@@ -14090,7 +14240,10 @@
     "gp": "lang"
   },
   {
-    "fr": ["élastique", "élastiques"],
+    "fr": [
+      "élastique",
+      "élastiques"
+    ],
     "gp": "elastik"
   },
   {
@@ -14114,7 +14267,10 @@
     "gp": "pirat"
   },
   {
-    "fr": ["souvenir", "souvenirs"],
+    "fr": [
+      "souvenir",
+      "souvenirs"
+    ],
     "gp": "souvni"
   },
   {
@@ -14154,23 +14310,36 @@
     "gp": "chanpay"
   },
   {
-    "fr": ["bulle", "bulles"],
+    "fr": [
+      "bulle",
+      "bulles"
+    ],
     "gp": "bil"
   },
   {
-    "fr": ["champion", "champions"],
-    "gp": "chanpyon"
+    "fr": [
+      "champion",
+      "champions"
+    ],
+    "gp": "chanpyon",
+    "genre": "m"
   },
   {
     "fr": "demi-tour",
     "gp": "demi-tou"
   },
   {
-    "fr": ["bisou", "bisous"],
+    "fr": [
+      "bisou",
+      "bisous"
+    ],
     "gp": "bo"
   },
   {
-    "fr": ["bonbon", "bonbons"],
+    "fr": [
+      "bonbon",
+      "bonbons"
+    ],
     "gp": "bonbon"
   },
   {
@@ -14184,5 +14353,96 @@
   {
     "fr": "smoking",
     "gp": "smoking"
+  },
+  {
+    "fr": [
+      "ombre",
+      "ombres"
+    ],
+    "gp": "lonbraj"
+  },
+  {
+    "fr": "retard",
+    "gp": "reta"
+  },
+  {
+    "fr": "vapeur",
+    "gp": "vapè"
+  },
+  {
+    "fr": "équilibre",
+    "gp": "ékilib"
+  },
+  {
+    "fr": "pull",
+    "gp": "chanday"
+  },
+  {
+    "fr": "mode",
+    "gp": "mòd"
+  },
+  {
+    "fr": "reflet",
+    "gp": "lonbraj"
+  },
+  {
+    "fr": "médaille",
+    "gp": "meday"
+  },
+  {
+    "fr": "plan",
+    "gp": "plan"
+  },
+  {
+    "fr": "plume",
+    "gp": "plim"
+  },
+  {
+    "fr": "trésor",
+    "gp": "trézò"
+  },
+  {
+    "fr": "poème",
+    "gp": "powèm"
+  },
+  {
+    "fr": "palme",
+    "gp": "palm"
+  },
+  {
+    "fr": "danseur",
+    "gp": "dansè"
+  },
+  {
+    "fr": "lenteur",
+    "gp": "lantè"
+  },
+  {
+    "fr": "gilet",
+    "gp": "jilé"
+  },
+  {
+    "fr": "biguine",
+    "gp": "bigwin"
+  },
+  {
+    "fr": "domino",
+    "gp": "domino"
+  },
+  {
+    "fr": "lagon",
+    "gp": "lagon"
+  },
+  {
+    "fr": "beatbox",
+    "gp": "bitboks"
+  },
+  {
+    "fr": "dégustation",
+    "gp": "dégistasyon"
+  },
+  {
+    "fr": "neige",
+    "gp": "nèj"
   }
 ]

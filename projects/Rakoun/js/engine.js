@@ -29,15 +29,20 @@
     return traduction;
   }
 
+  const _normCache = new Map();
   function normalize_token(word) {
     if (!word) return "";
-    word = word.normalize("NFD").replace(/\p{Mn}/gu, "").toLowerCase();
-    for (const ch of ["'", "’", "-"]) word = word.split(ch).join("");
-    word = word.replace(/ph/g, "f").replace(/qu/g, "k").replace(/gu/g, "g")
-               .replace(/ç/g, "s").replace(/c/g, "k").replace(/q/g, "k")
-               .replace(/ou/g, "w").replace(/y/g, "i");
-    word = word.replace(RE_C_SOFT, "s");
-    return word.replace(RE_DOUBLE, "$1");
+    const hit = _normCache.get(word);
+    if (hit !== undefined) return hit;
+    let w = word.normalize("NFD").replace(/\p{Mn}/gu, "").toLowerCase();
+    for (const ch of ["'", "’", "-"]) w = w.split(ch).join("");
+    w = w.replace(/ph/g, "f").replace(/qu/g, "k").replace(/gu/g, "g")
+         .replace(/ç/g, "s").replace(/c/g, "k").replace(/q/g, "k")
+         .replace(/ou/g, "w").replace(/y/g, "i");
+    w = w.replace(RE_C_SOFT, "s");
+    const out = w.replace(RE_DOUBLE, "$1");
+    _normCache.set(word, out);
+    return out;
   }
 
   // Helpers génériques
@@ -280,6 +285,25 @@
       return false;
     }
 
+    // Forme créole d'un mot (pour accorder l'article postposé à la PRONONCIATION
+    // créole, pas au français). Si déjà créole/inconnu, on garde tel quel.
+    function forme_gp(mot) {
+      const k = (mot || "").toLowerCase();
+      let g = ctx.index_fr[k];
+      if (g === undefined) return mot;
+      if (Array.isArray(g)) g = g[0];
+      const parts = String(g).split(" ");
+      return parts[parts.length - 1];
+    }
+    // Article défini postposé accordé au son final (table en données :
+    // Grammar.json > article_postpose_regles). Règle générale, aucun mot nommé.
+    function article_postpose(mot) {
+      const R = rules.R.article_postpose_regles;
+      if (!R || !R.regles) return "la";
+      const w = forme_gp(mot).toLowerCase();
+      for (const r of R.regles) if (w.endsWith(r.suf)) return r.art;
+      return R.defaut || "la";
+    }
     function genre_nom(mot) {
       const cle = mot.toLowerCase();
       const g = ctx.genre_fr[cle];
@@ -445,6 +469,9 @@
     // ── Chargement des règles (port de charger) ───────────────────────────────
     function charger(bloc) {
       const arr = (k) => bloc[k] || [];
+      rules.substitutions_fr = (bloc.substitutions_fr || []).map((s) => [new RegExp(s.re, s.flags || "gi"), s.rep]);
+      rules.gouverneurs_infinitif = new Set(bloc.gouverneurs_infinitif_gp || ["pou", "pour"]);
+      rules.mot_collectif_monde = bloc.mot_collectif_monde || "monde";
       rules.suffixes_feminins = arr("suffixes_feminins").slice();
       rules.fins_participe = arr("fins_participe").slice();
       rules.suffixes_adjectifs = arr("suffixes_adjectifs").slice();
@@ -669,7 +696,7 @@
       const dernierEstVerbe = est_verbe_gp(last(sortie)) || est_verbe(last(sortie)) ||
         (typeof frDernier === "string" && frDernier &&
          (ctx.type_fr[frDernier.split(" ")[0]] === "verbe" || trouver_infinitif(frDernier.split(" ")[0]) !== null));
-      if ((dernierEstVerbe || dernier === "pou" || dernier === "pour") && !has(rules.tonique_de_sujet, dernier)) return false;
+      if ((dernierEstVerbe || rules.gouverneurs_infinitif.has(dernier)) && !has(rules.tonique_de_sujet, dernier)) return false;
       if (dernier === rules.R.marqueur_negation)
         return sortie.length >= 2 && est_mot(sortie[sortie.length - 2]) && !rules.pronoms_gp.has(sortie[sortie.length - 2].toLowerCase());
       return true;
@@ -917,7 +944,7 @@
         const t = ctx.type_fr[tok.toLowerCase()];
         if (["adj", "nom", "lieu", "num"].includes(t) || est_adjectif(tok)) return null;
       }
-      e.emettre(e.state.post_la); delete e.state.post_la; delete e.state.post_la_min;
+      e.emettre(e.sortie.length ? article_postpose(last(e.sortie)) : e.state.post_la); delete e.state.post_la; delete e.state.post_la_min;
       return null;
     });
     HF.push(function hf_article_defini(e) {
@@ -926,8 +953,8 @@
       let j = i + 1; while (j < n && !est_mot(tokens[j])) j++;
       if (j >= n) return null;
       const suiv = tokens[j];
-      if (suiv.toLowerCase() === "monde" || est_verbe(suiv) || trouver_infinitif(suiv) !== null) return null;
-      if (cle === "les") { e.emettre("sé"); return i + 1; }
+      if (suiv.toLowerCase() === rules.mot_collectif_monde || est_verbe(suiv) || trouver_infinitif(suiv) !== null) return null;
+      if (cle === "les") { e.state.post_la = "la"; e.state.post_la_min = e.sortie.length; e.state.pluriel = true; return i + 1; }
       // Partitif "de la / de l'" + nom de masse ("de l'eau", "de la farine") :
       // nom NU en créole ("dlo", "farin") — pas d'article postposé.
       const prevTok = i > 0 ? tokens[i - 1].toLowerCase() : null;
@@ -938,7 +965,7 @@
     HF.push(function hf_articles_et_est_ce(e) {
       const { tokens, i, n } = e; const cle = tokens[i].toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1].toLowerCase() : null;
-      if (["le", "la", "les", "du", "de", "d", "d'"].includes(cle) && suiv === "monde") return null;
+      if (["le", "la", "les", "du", "de", "d", "d'"].includes(cle) && suiv === rules.mot_collectif_monde) return null;
       if (rules.R.articles_supprimes.includes(cle)) {
         if (cle === "à" || cle === "en" || cle === "au") {
           if (i + 1 < n && tokens[i + 1][0] === tokens[i + 1][0].toUpperCase() && tokens[i + 1][0] !== tokens[i + 1][0].toLowerCase()) return null;
@@ -970,10 +997,6 @@
         return i + 1;
       }
       if (cle === "qui") { e.emettre(reporter_casse(tok, !sortie.length ? rules.R.interrogatifs.qui : "ki")); return i + 1; }
-      // « dont » est toujours relatif (jamais interrogatif en tête) : le créole le
-      // rend par le relativiseur « ki » (avec reprise possessive implicite),
-      // cohérent avec le traitement de « qui » → « ki ». Évite un résidu français.
-      if (cle === "dont") { e.emettre(reporter_casse(tok, "ki")); return i + 1; }
       if (cle === "quand") {
         const question = tokens.slice(i + 1).includes("?");
         e.emettre(reporter_casse(tok, question ? rules.R.interrogatifs.quand : "lè"));
@@ -1005,7 +1028,9 @@
         if (!est_mot(tokens[j])) break;
         const tl = tokens[j].toLowerCase();
         if (STOP_NP.has(tl)) break;
-        if (est_verbe(tokens[j])) break;
+        // Un homographe nom+verbe (ex. "lit" = kabann / lire) après un
+        // déterminant est le NOM possédé, pas un verbe : on ne casse pas le groupe.
+        if (est_verbe(tokens[j]) && ctx.type_fr[tl] !== "nom") break;
         if (has(rules.R.pronoms_sujets, tl)) break;
         if (postposition(tl) !== null) break;
         if (rules.R.articles_supprimes && rules.R.articles_supprimes.includes(tl)) break;
@@ -1124,7 +1149,9 @@
       const { tokens, i, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
       if (sujet_nominal_devant(sortie) && est_mot(tok) && !rules.R.verbes_sans_ka.includes(cle) &&
           !endsWithAny(cle, rules.fins_participe) && participe(tok) === null) {
-        const inf = trouver_infinitif(tok);
+        // force=true : un sujet précède → lecture VERBE autorisée même pour un
+        // homographe typé "nom" ("le vent joue" → jouer). Générique à tous les verbes.
+        const inf = trouver_infinitif(tok, true);
         if (inf && ctx.type_fr[inf] === "verbe") {
           const irreg = rules.inverse_irreguliers[cle];
           const temps = irreg ? irreg[1] : detecter_temps(cle);
@@ -1226,7 +1253,7 @@
         for (const h of HF) { const r = h(e); if (r !== null && r !== undefined) { e.i = r; matched = true; break; } }
         if (!matched) { e.emettre(e.tok, false); e.i += 1; }
       }
-      if (e.state.post_la) { e.emettre(e.state.post_la); delete e.state.post_la; }
+      if (e.state.post_la) { e.emettre(e.sortie.length ? article_postpose(last(e.sortie)) : e.state.post_la); delete e.state.post_la; }
       // Réorganisation "ankò"
       const sortie = e.sortie, deja = e.deja; let iAnk = 0; const nAnk = sortie.length;
       while (iAnk < nAnk) {
@@ -1955,6 +1982,27 @@
       return false;
     }
 
+    // GP→FR : deux noms juxtaposés en créole ("tèt chouval") expriment un
+    // complément de nom → on insère "de" ("tête de cheval"). Générique : ne
+    // nomme aucun mot. On n'insère pas si un lien existe déjà, ni autour d'un
+    // déterminant/pronom/adjectif/nombre.
+    function inserer_de_entre_noms(mots) {
+      const out = [];
+      for (let i = 0; i < mots.length; i++) {
+        out.push(mots[i]);
+        if (i + 1 >= mots.length) continue;
+        const a = mots[i], b = mots[i + 1];
+        if (!est_mot(a) || !est_mot(b)) continue;
+        const ca = a.toLowerCase(), cb = b.toLowerCase();
+        if (a.includes(" ") || b.includes(" ")) continue;
+        if (rules.determinants_fr.has(ca) || rules.determinants_fr.has(cb)) continue;
+        if (rules.pronoms_fr.has(ca) || rules.pronoms_fr.has(cb)) continue;
+        if (rules.mots_fonctionnels_fr.has(cb)) continue;
+        if (est_adjectif(a) || est_adjectif(b)) continue;
+        if (classer_fr(a) === "nom" && classer_fr(b) === "nom") out.push("de");
+      }
+      return out;
+    }
     function reordonner_groupe_nominal(mots) {
       let sortie = [];
       for (const mot of mots) {
@@ -2487,16 +2535,6 @@
       return chars.join("");
     }
 
-    const SUBS = [
-      [/\bpas\s+du\s+tout\b/gi, "ditou"], [/\btout\s+de\s+suite\b/gi, "tousit"],
-      [/\bau\s+revoir\b/gi, "orevwa"], [/\bs'?\s*il\s+(?:vous|te)\s+pla[iî]t\b/gi, "souplé"],
-      [/\bbon\s+anniversaire\b/gi, "bon fèt"], [/\bvenir\s+de\b/gi, "fèk"],
-      [/à\s+cause\s+d[eu']?\b/gi, "akoz"], [/\bparce\s+que\b/gi, "paski"],
-      [/\b(?:me|te|se)\s+souvien\w*/gi, "sonjé"], [/\bnous\s+souveno\w*/gi, "sonjé"],
-      [/\bpendant\s+que\b/gi, "pandan"],
-      [/\bgrand(s)?\s+m[èe]res?\b/gi, "grand$1-mère"], [/\bgrand(s)?\s+p[èe]res?\b/gi, "grand$1-père"],
-      [/\bbeau(x)?\s+p[èe]res?\b/gi, "beau$1-père"], [/\bbelle(s)?\s+m[èe]res?\b/gi, "belle$1-mère"],
-    ];
 
     function traduire(text, source_lang = "fr", target_lang = "gp") {
       if (!text || !text.trim()) return "";
@@ -2510,7 +2548,7 @@
             ? seg : traduire(seg, source_lang, target_lang)))
           .join("");
       }
-      if (source_lang === "fr") for (const [re, rep] of SUBS) text = text.replace(re, rep);
+      if (source_lang === "fr") for (const [re, rep] of rules.substitutions_fr) text = text.replace(re, rep);
       // Créole : pronom objet enclitique attaché par apostrophe (enmé'w, tjwé'y,
       // wè'm) → on le détache en forme pleine, qui suit ensuite le chemin normal.
       if (source_lang === "gp") text = text.replace(/(\p{L})['’](w|y|m)(?![\p{L}\p{N}])/gu,
@@ -2568,7 +2606,7 @@
       }
 
       if (target_lang !== "gp") {
-        const reordered = reordonner_groupe_nominal(translation);
+        const reordered = inserer_de_entre_noms(reordonner_groupe_nominal(translation));
         return capitaliser(appliquer_elision(assemble(reordered)), text);
       }
       return capitaliser(assemble(translation), text);

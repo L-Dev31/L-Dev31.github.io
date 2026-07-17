@@ -4,7 +4,7 @@
 
   const $ = (id) => document.getElementById(id);
   const elInput = $("input"), elOutput = $("output"), elSwap = $("swap"),
-        elStatus = $("status"), elTranslator = $("translator"),
+        elTranslator = $("translator"),
         elLangSrc = $("lang-src"), elLangTgt = $("lang-tgt"),
         elLangSrcNative = $("lang-src-native"), elLangTgtNative = $("lang-tgt-native"),
         elLangSrcAbbr = $("lang-src-abbr"), elLangTgtAbbr = $("lang-tgt-abbr"),
@@ -54,7 +54,7 @@
 
   const BASE_FONT_PX = 32; // doit correspondre à font-size: 2rem dans style.css
   const MIN_FONT_PX = 24;
-  const BASE_HEIGHT_PX = 220; // doit correspondre à min-height dans style.css
+  const BASE_HEIGHT_PX = 140; // doit correspondre à min-height dans style.css
 
   function autosize(el) {
     let fontSize = BASE_FONT_PX;
@@ -94,7 +94,6 @@
     });
   }
 
-  // ── Panel source ─────────────────────────────────────────────────────────
   panelAction($("listen"), () => {
     const txt = elInput.value;
     if (!txt.trim()) return;
@@ -111,7 +110,6 @@
     elInput.focus();
   });
 
-  // ── Panel cible ───────────────────────────────────────────────────────────
   panelAction($("listen-tgt"), () => {
     const txt = elOutput.value;
     if (!txt.trim()) return;
@@ -175,9 +173,7 @@
       majLangues();
       traduire();
     } catch (err) {
-      elStatus.textContent = "Erreur de chargement : " + err.message +
-        " — servez le dossier via un serveur HTTP (ex. python -m http.server).";
-      elStatus.classList.add("error");
+      console.error("[Rakoun] Échec de chargement du dictionnaire :", err);
     }
   }
 
@@ -188,7 +184,6 @@
 yearEl = document.getElementById("year");
 yearEl.textContent = new Date().getFullYear();
 
-// ── PWA : enregistrement du service worker ─────────────────────────────────
 // Chemin relatif volontaire : le site est servi depuis un sous-dossier
 // (/projects/Rakoun/). La portée du SW se limite donc à ce dossier.
 if ("serviceWorker" in navigator) {

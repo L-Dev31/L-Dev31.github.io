@@ -26,7 +26,10 @@
   },
   {
     "fr": "avec",
-    "gp": "èvè",
+    "gp": [
+      "épi",
+      "èvè"
+    ],
     "type": "prep"
   },
   {
@@ -382,7 +385,10 @@
   },
   {
     "fr": "sur",
-    "gp": "asou",
+    "gp": [
+      "asi",
+      "asou"
+    ],
     "type": "prep"
   },
   {
@@ -802,9 +808,7 @@
     "type": "misc"
   },
   {
-    "gp": [
-      "nan"
-    ],
+    "gp": "adan",
     "fr": "dans",
     "type": "misc",
     "secondaire": true
@@ -876,7 +880,7 @@
     "type": "misc"
   },
   {
-    "gp": "dan",
+    "gp": "adan",
     "fr": "dans",
     "type": "prep"
   },
@@ -891,7 +895,10 @@
     "type": "conj"
   },
   {
-    "gp": "sou",
+    "gp": [
+      "asi",
+      "asou"
+    ],
     "fr": "sur",
     "type": "prep"
   },
@@ -931,7 +938,7 @@
     "type": "num"
   },
   {
-    "gp": "nan",
+    "gp": "adan",
     "fr": "dans",
     "type": "prep"
   },
@@ -1400,7 +1407,10 @@
     "type": "interj"
   },
   {
-    "gp": "asi",
+    "gp": [
+      "asi",
+      "asou"
+    ],
     "fr": "sur",
     "type": "prep"
   },
@@ -1476,7 +1486,10 @@
   },
   {
     "fr": "pourquoi",
-    "gp": "pouki",
+    "gp": [
+      "pouki",
+      "poukisa"
+    ],
     "type": "adv"
   },
   {
@@ -1487,6 +1500,46 @@
   {
     "fr": "par",
     "gp": "pa",
+    "type": "misc"
+  },
+  {
+    "fr": "dont",
+    "gp": "ki",
+    "type": "misc"
+  },
+  {
+    "fr": "barbe à papa",
+    "gp": "sirèt",
+    "type": "misc"
+  },
+  {
+    "fr": "froid de canard",
+    "gp": "fwèt kon chyen",
+    "type": "misc"
+  },
+  {
+    "fr": "cache-cache",
+    "gp": "kach-kach",
+    "type": "misc"
+  },
+  {
+    "fr": "en fait",
+    "gp": "an réyalité",
+    "type": "misc"
+  },
+  {
+    "fr": "à l'envers",
+    "gp": "an vè",
+    "type": "misc"
+  },
+  {
+    "fr": "envers",
+    "gp": "anvè",
+    "type": "misc"
+  },
+  {
+    "fr": "en secret",
+    "gp": "an kachèt",
     "type": "misc"
   }
 ]

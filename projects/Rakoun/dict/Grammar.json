@@ -118,7 +118,7 @@
     "où": "ola",
     "quand": "ki lè",
     "comment": "kijan",
-    "pourquoi": "poukisa",
+    "pourquoi": "pouki",
     "combien": "konmen",
     "quel": "ki",
     "quelle": "ki",
@@ -188,7 +188,10 @@
     "aussi"
   ],
   "suffixes_feminins": [
-    "ion",
+    "tion",
+    "sion",
+    "xion",
+    "aison",
     "té",
     "ure",
     "elle",
@@ -659,7 +662,8 @@
     "aller": "alé",
     "il_y_a": "ni",
     "il_faut": "fò",
-    "venir_de": "sòti"
+    "venir_de": "sòti",
+    "article_indefini": "an"
   },
   "traductions_gp_fr": {
     "se_les": "les",
@@ -892,29 +896,152 @@
       "cela"
     ],
     "stop_groupe_nominal": [
-      "et", "ou", "mais", "que", "car", "donc", "or", "ni",
-      "à", "de", "dans", "sur", "sous", "pour", "avec", "sans", "vers", "chez",
-      "en", "par", "entre", "dès", "depuis", "pendant", "malgré", "selon", "dont", "où",
-      "se", "s", "me", "te"
+      "et",
+      "ou",
+      "mais",
+      "que",
+      "car",
+      "donc",
+      "or",
+      "ni",
+      "à",
+      "de",
+      "dans",
+      "sur",
+      "sous",
+      "pour",
+      "avec",
+      "sans",
+      "vers",
+      "chez",
+      "en",
+      "par",
+      "entre",
+      "dès",
+      "depuis",
+      "pendant",
+      "malgré",
+      "selon",
+      "dont",
+      "où",
+      "se",
+      "s",
+      "me",
+      "te"
     ],
     "prepositions_contexte": [
-      "sur", "dans", "avec", "sous", "pour", "sans", "vers", "chez",
-      "à", "de", "derrière", "devant", "près"
+      "sur",
+      "dans",
+      "avec",
+      "sous",
+      "pour",
+      "sans",
+      "vers",
+      "chez",
+      "à",
+      "de",
+      "derrière",
+      "devant",
+      "près"
     ],
     "nombres_fr": [
-      "dix", "vingt", "trente", "quarante", "cinquante", "soixante", "cent", "mille",
-      "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf",
-      "onze", "douze", "treize", "quatorze", "quinze", "seize"
+      "dix",
+      "vingt",
+      "trente",
+      "quarante",
+      "cinquante",
+      "soixante",
+      "cent",
+      "mille",
+      "deux",
+      "trois",
+      "quatre",
+      "cinq",
+      "six",
+      "sept",
+      "huit",
+      "neuf",
+      "onze",
+      "douze",
+      "treize",
+      "quatorze",
+      "quinze",
+      "seize"
     ],
-    "articles_clause": ["le", "la", "les", "un", "une", "des"],
-    "coordinateurs": ["et", "ou", "mais"],
-    "mots_negatifs_fr": ["rien", "personne", "jamais", "aucun", "aucune", "nulle", "nul", "guère"],
-    "adverbes_quantite_fr": ["beaucoup", "peu", "trop", "assez", "moins", "tant", "autant", "plein"],
-    "prepositions_locatives": ["sur", "sous", "dans", "derrière", "devant", "entre", "chez"],
+    "articles_clause": [
+      "le",
+      "la",
+      "les",
+      "un",
+      "une",
+      "des"
+    ],
+    "coordinateurs": [
+      "et",
+      "ou",
+      "mais"
+    ],
+    "mots_negatifs_fr": [
+      "rien",
+      "personne",
+      "jamais",
+      "aucun",
+      "aucune",
+      "nulle",
+      "nul",
+      "guère"
+    ],
+    "adverbes_quantite_fr": [
+      "beaucoup",
+      "peu",
+      "trop",
+      "assez",
+      "moins",
+      "tant",
+      "autant",
+      "plein"
+    ],
+    "prepositions_locatives": [
+      "sur",
+      "sous",
+      "dans",
+      "derrière",
+      "devant",
+      "entre",
+      "chez"
+    ],
     "noms_masse_fr": [
-      "eau", "argent", "pain", "riz", "lait", "sang", "sel", "sucre", "farine", "beurre", "miel",
-      "café", "thé", "jus", "huile", "viande", "air", "sable", "pluie", "vent", "musique",
-      "courage", "force", "chance", "patience", "respect", "soleil", "chaleur", "fumée", "boue", "herbe"
+      "eau",
+      "argent",
+      "pain",
+      "riz",
+      "lait",
+      "sang",
+      "sel",
+      "sucre",
+      "farine",
+      "beurre",
+      "miel",
+      "café",
+      "thé",
+      "jus",
+      "huile",
+      "viande",
+      "air",
+      "sable",
+      "pluie",
+      "vent",
+      "musique",
+      "courage",
+      "force",
+      "chance",
+      "patience",
+      "respect",
+      "soleil",
+      "chaleur",
+      "fumée",
+      "boue",
+      "herbe"
     ]
   },
   "contractions_fr": [
@@ -948,5 +1075,165 @@
       "était",
       "c'était"
     ]
-  ]
+  ],
+  "article_postpose_regles": {
+    "regles": [
+      {
+        "suf": "oun",
+        "art": "lan"
+      },
+      {
+        "suf": "onm",
+        "art": "lan"
+      },
+      {
+        "suf": "anm",
+        "art": "lan"
+      },
+      {
+        "suf": "enm",
+        "art": "lan"
+      },
+      {
+        "suf": "onn",
+        "art": "lan"
+      },
+      {
+        "suf": "ann",
+        "art": "lan"
+      },
+      {
+        "suf": "enn",
+        "art": "lan"
+      },
+      {
+        "suf": "in",
+        "art": "lan"
+      },
+      {
+        "suf": "un",
+        "art": "lan"
+      },
+      {
+        "suf": "nn",
+        "art": "lan"
+      },
+      {
+        "suf": "an",
+        "art": "an"
+      },
+      {
+        "suf": "on",
+        "art": "an"
+      },
+      {
+        "suf": "en",
+        "art": "an"
+      },
+      {
+        "suf": "a",
+        "art": "a"
+      },
+      {
+        "suf": "é",
+        "art": "a"
+      },
+      {
+        "suf": "è",
+        "art": "a"
+      },
+      {
+        "suf": "e",
+        "art": "a"
+      },
+      {
+        "suf": "i",
+        "art": "a"
+      },
+      {
+        "suf": "o",
+        "art": "a"
+      },
+      {
+        "suf": "ò",
+        "art": "a"
+      },
+      {
+        "suf": "ou",
+        "art": "a"
+      },
+      {
+        "suf": "u",
+        "art": "a"
+      }
+    ],
+    "defaut": "la"
+  },
+  "substitutions_fr": [
+    {
+      "re": "\\bpas\\s+du\\s+tout\\b",
+      "rep": "ditou"
+    },
+    {
+      "re": "\\btout\\s+de\\s+suite\\b",
+      "rep": "tousit"
+    },
+    {
+      "re": "\\bau\\s+revoir\\b",
+      "rep": "orevwa"
+    },
+    {
+      "re": "\\bs'?\\s*il\\s+(?:vous|te)\\s+pla[iî]t\\b",
+      "rep": "souplé"
+    },
+    {
+      "re": "\\bbon\\s+anniversaire\\b",
+      "rep": "bon fèt"
+    },
+    {
+      "re": "\\bvenir\\s+de\\b",
+      "rep": "fèk"
+    },
+    {
+      "re": "à\\s+cause\\s+d[eu']?\\b",
+      "rep": "akoz"
+    },
+    {
+      "re": "\\bparce\\s+que\\b",
+      "rep": "paski"
+    },
+    {
+      "re": "\\b(?:me|te|se)\\s+souvien\\w*",
+      "rep": "sonjé"
+    },
+    {
+      "re": "\\bnous\\s+souveno\\w*",
+      "rep": "sonjé"
+    },
+    {
+      "re": "\\bpendant\\s+que\\b",
+      "rep": "pandan"
+    },
+    {
+      "re": "\\bgrand(s)?\\s+m[èe]res?\\b",
+      "rep": "grand$1-mère"
+    },
+    {
+      "re": "\\bgrand(s)?\\s+p[èe]res?\\b",
+      "rep": "grand$1-père"
+    },
+    {
+      "re": "\\bbeau(x)?\\s+p[èe]res?\\b",
+      "rep": "beau$1-père"
+    },
+    {
+      "re": "\\bbelle(s)?\\s+m[èe]res?\\b",
+      "rep": "belle$1-mère"
+    }
+  ],
+  "gouverneurs_infinitif_gp": [
+    "pou",
+    "pour"
+  ],
+  "mot_collectif_monde": "monde"
 }

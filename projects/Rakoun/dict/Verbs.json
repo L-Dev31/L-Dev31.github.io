@@ -1005,8 +1005,16 @@
       "gp": "enmé"
     },
     {
-      "fr": "aimer",
-      "gp": "enmé"
+      "fr": [
+        "aimer",
+        "adorer",
+        "apprécier",
+        "kiffer"
+      ],
+      "gp": [
+        "enmen",
+        "enmé"
+      ]
     },
     {
       "fr": "aimes",
@@ -1026,7 +1034,10 @@
     },
     {
       "fr": "aller",
-      "gp": "alé"
+      "gp": [
+        "ay",
+        "alé"
+      ]
     },
     {
       "fr": "allier",
@@ -1110,7 +1121,10 @@
     },
     {
       "fr": "apprendre",
-      "gp": "apwann"
+      "gp": [
+        "aprann",
+        "apwann"
+      ]
     },
     {
       "fr": "appuyer",
@@ -1208,7 +1222,10 @@
     },
     {
       "fr": "attraper",
-      "gp": "trenné"
+      "gp": [
+        "trapé",
+        "trenné"
+      ]
     },
     {
       "fr": "attrapper",
@@ -1352,7 +1369,10 @@
     },
     {
       "fr": "briller",
-      "gp": "briyé"
+      "gp": [
+        "kléré",
+        "briyé"
+      ]
     },
     {
       "fr": "briser",
@@ -1493,7 +1513,10 @@
       "gp": "konparé"
     },
     {
-      "fr": "comprendre",
+      "fr": [
+        "comprendre",
+        "piger"
+      ],
       "gp": "konprann"
     },
     {
@@ -1581,7 +1604,10 @@
       "gp": "koulé"
     },
     {
-      "fr": "courir",
+      "fr": [
+        "courir",
+        "galoper"
+      ],
       "gp": "kouri"
     },
     {
@@ -1712,7 +1738,10 @@
     },
     {
       "fr": "dessiner",
-      "gp": "désiné"
+      "gp": [
+        "desinen",
+        "désiné"
+      ]
     },
     {
       "fr": "detacher",
@@ -1752,7 +1781,10 @@
     },
     {
       "fr": "discuter",
-      "gp": "diskité"
+      "gp": [
+        "palé",
+        "diskité"
+      ]
     },
     {
       "fr": "disent",
@@ -1787,7 +1819,11 @@
       "gp": "mété anba lopsyon"
     },
     {
-      "fr": "donner",
+      "fr": [
+        "donner",
+        "offrir",
+        "refiler"
+      ],
       "gp": "ba"
     },
     {
@@ -1795,7 +1831,12 @@
       "gp": "ban"
     },
     {
-      "fr": "dormir",
+      "fr": [
+        "dormir",
+        "roupiller",
+        "pioncer",
+        "sommeiller"
+      ],
       "gp": "dômi"
     },
     {
@@ -2216,7 +2257,10 @@
     },
     {
       "fr": "gagner",
-      "gp": "genyen"
+      "gp": [
+        "ganyen",
+        "genyen"
+      ]
     },
     {
       "fr": "galoper",
@@ -2460,7 +2504,11 @@
       "gp": "manjé"
     },
     {
-      "fr": "manger",
+      "fr": [
+        "manger",
+        "bouffer",
+        "dévorer"
+      ],
       "gp": "manjé"
     },
     {
@@ -2628,10 +2676,6 @@
       "gp": "ofè"
     },
     {
-      "fr": "ombre",
-      "gp": "lonbray"
-    },
-    {
       "fr": "onduler",
       "gp": "zannzolé"
     },
@@ -2655,8 +2699,8 @@
     {
       "fr": "oublier",
       "gp": [
-        "oubliyé",
-        "obliyé"
+        "bliyé",
+        "oubliyé"
       ]
     },
     {
@@ -2681,7 +2725,13 @@
       "gp": "agréyé"
     },
     {
-      "fr": "parler",
+      "fr": [
+        "parler",
+        "causer",
+        "bavarder",
+        "papoter",
+        "jaser"
+      ],
       "gp": "palé"
     },
     {
@@ -2714,7 +2764,7 @@
     },
     {
       "fr": "peindre",
-      "gp": "pent"
+      "gp": "pentiré"
     },
     {
       "fr": "pendre",
@@ -3025,7 +3075,11 @@
       "gp": "refizé"
     },
     {
-      "fr": "regarder",
+      "fr": [
+        "regarder",
+        "mater",
+        "contempler"
+      ],
       "gp": [
         "gadé",
         "gadéwè"
@@ -3531,7 +3585,10 @@
     },
     {
       "fr": "venir",
-      "gp": "vini"
+      "gp": [
+        "vin",
+        "vini"
+      ]
     },
     {
       "fr": "verrouiller",
@@ -3619,7 +3676,10 @@
     },
     {
       "fr": "voyager",
-      "gp": "voyajé"
+      "gp": [
+        "vwayajé",
+        "voyajé"
+      ]
     },
     {
       "fr": "vulgaire",
@@ -4016,7 +4076,8 @@
     },
     {
       "gp": [
-        "aprann"
+        "aprann",
+        "apwann"
       ],
       "fr": "apprendre",
       "type": "verbe"
@@ -4586,8 +4647,8 @@
     {
       "fr": "gagner",
       "gp": [
-        "gannyé",
-        "ganyé"
+        "ganyen",
+        "genyen"
       ]
     },
     {
@@ -4690,6 +4751,10 @@
     {
       "fr": "garer",
       "gp": "garé"
+    },
+    {
+      "fr": "réchauffer",
+      "gp": "chofé"
     }
   ]
 }

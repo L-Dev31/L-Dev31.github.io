@@ -67,7 +67,14 @@
     "gp": "avan"
   },
   {
-    "fr": "beau",
+    "fr": [
+      "beau",
+      "magnifique",
+      "superbe",
+      "splendide",
+      "ravissant",
+      "sublime"
+    ],
     "gp": "bèl"
   },
   {
@@ -129,7 +136,13 @@
     "gp": "anmèdan"
   },
   {
-    "fr": "content",
+    "fr": [
+      "content",
+      "joyeux",
+      "ravi",
+      "enchanté",
+      "satisfait"
+    ],
     "gp": "kontan"
   },
   {
@@ -154,7 +167,10 @@
       "douce",
       "douces"
     ],
-    "gp": "dous"
+    "gp": [
+      "dou",
+      "dous"
+    ]
   },
   {
     "fr": "en colère",
@@ -203,7 +219,13 @@
     "gp": "fwèt"
   },
   {
-    "fr": "gentil",
+    "fr": [
+      "gentil",
+      "aimable",
+      "sympa",
+      "sympathique",
+      "adorable"
+    ],
     "gp": "janti"
   },
   {
@@ -349,7 +371,11 @@
     "gp": "mol"
   },
   {
-    "fr": "méchant",
+    "fr": [
+      "méchant",
+      "cruel",
+      "vilain"
+    ],
     "gp": "mové"
   },
   {
@@ -405,7 +431,10 @@
   },
   {
     "fr": "plastique",
-    "gp": ["plastik", "tôl"]
+    "gp": [
+      "plastik",
+      "tôl"
+    ]
   },
   {
     "fr": "plein",
@@ -515,7 +544,7 @@
   },
   {
     "fr": "violet",
-    "gp": "violèt"
+    "gp": "vyolèt"
   },
   {
     "fr": "voisine",
@@ -578,11 +607,16 @@
       "fatigué",
       "fatiguée",
       "fatigués",
-      "fatiguées"
+      "fatiguées",
+      "épuisé",
+      "crevé",
+      "éreinté",
+      "fourbu",
+      "exténué"
     ],
     "gp": [
-      "las",
-      "fatigé"
+      "bouké",
+      "las"
     ]
   },
   {
@@ -1235,7 +1269,12 @@
     "gp": "gonflab"
   },
   {
-    "fr": ["rouillé", "rouillée", "rouillés", "rouillées"],
+    "fr": [
+      "rouillé",
+      "rouillée",
+      "rouillés",
+      "rouillées"
+    ],
     "gp": "wouyé"
   },
   {
@@ -1247,7 +1286,10 @@
     "gp": "espasyal"
   },
   {
-    "fr": ["imaginaire", "imaginaires"],
+    "fr": [
+      "imaginaire",
+      "imaginaires"
+    ],
     "gp": "imajinè"
   },
   {
@@ -1255,19 +1297,35 @@
     "gp": "fliyo"
   },
   {
-    "fr": ["différent", "différente", "différents", "différentes"],
+    "fr": [
+      "différent",
+      "différente",
+      "différents",
+      "différentes"
+    ],
     "gp": "diféran"
   },
   {
-    "fr": ["parfait", "parfaite", "parfaits", "parfaites"],
+    "fr": [
+      "parfait",
+      "parfaite",
+      "parfaits",
+      "parfaites"
+    ],
     "gp": "pafè"
   },
   {
-    "fr": ["immense", "immenses"],
+    "fr": [
+      "immense",
+      "immenses"
+    ],
     "gp": "gwo"
   },
   {
-    "fr": ["rapide", "rapides"],
+    "fr": [
+      "rapide",
+      "rapides"
+    ],
     "gp": "rapid"
   },
   {
@@ -1275,7 +1333,16 @@
     "gp": "botanik"
   },
   {
-    "fr": ["géant", "géante", "géants", "géantes"],
+    "fr": [
+      "géant",
+      "géante",
+      "géants",
+      "géantes"
+    ],
     "gp": "jeyan"
+  },
+  {
+    "fr": "magique",
+    "gp": "majik"
   }
 ]

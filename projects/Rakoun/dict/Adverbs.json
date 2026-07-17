@@ -31,7 +31,10 @@
     ]
   },
   {
-    "fr": "beaucoup",
+    "fr": [
+      "beaucoup",
+      "énormément"
+    ],
     "gp": [
       "onlo",
       "anpil",
@@ -92,8 +95,8 @@
   {
     "fr": "hier",
     "gp": [
-      "iyè",
-      "yè"
+      "yè",
+      "iyè"
     ]
   },
   {
@@ -164,7 +167,10 @@
       "pourquoi",
       "pq"
     ],
-    "gp": "poukisa"
+    "gp": [
+      "pouki",
+      "poukisa"
+    ]
   },
   {
     "fr": "souvent",
@@ -201,9 +207,8 @@
   {
     "fr": "trop",
     "gp": [
-      "twòp",
-      "two",
-      "tro"
+      "twò",
+      "twòp"
     ]
   },
   {
@@ -214,7 +219,11 @@
     ]
   },
   {
-    "fr": "vite",
+    "fr": [
+      "vite",
+      "rapidement",
+      "promptement"
+    ],
     "gp": "vit"
   },
   {
@@ -359,11 +368,7 @@
     "type": "adv"
   },
   {
-    "gp": [
-      "doubout",
-      "kanpé",
-      "kanpe"
-    ],
+    "gp": "kanpé",
     "fr": "debout",
     "type": "adv"
   },
@@ -391,5 +396,9 @@
   {
     "fr": "hier",
     "gp": "ayè"
+  },
+  {
+    "fr": "autour",
+    "gp": "otou"
   }
 ]
