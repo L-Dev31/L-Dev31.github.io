@@ -4,6 +4,10 @@
     "gp": "kayad"
   },
   {
+    "fr": ["truc", "choses", "machin", "bidule"],
+    "gp": "bitin"
+  },
+  {
     "fr": "abbé",
     "gp": "tjiré"
   },
@@ -553,7 +557,8 @@
   },
   {
     "fr": "après",
-    "gp": "apré"
+    "gp": "apré",
+    "type": "prep"
   },
   {
     "fr": "Arabie Saoudite",
@@ -1445,7 +1450,10 @@
   },
   {
     "fr": "bruit",
-    "gp": "voukoum"
+    "gp": [
+      "voukoum",
+      "bwi"
+    ]
   },
   {
     "fr": "Brunei",
@@ -1950,10 +1958,6 @@
     ],
     "gp": "seriz",
     "genre": "f"
-  },
-  {
-    "fr": "cette",
-    "gp": "biten lasa guad"
   },
   {
     "fr": [
@@ -2518,10 +2522,6 @@
   {
     "fr": "colombo de poulet.",
     "gp": "kolombo poul."
-  },
-  {
-    "fr": "comment ça va",
-    "gp": "sa ou fè"
   },
   {
     "fr": "commerce",
@@ -3095,7 +3095,10 @@
   },
   {
     "fr": "cœur",
-    "gp": "tjè"
+    "gp": [
+      "tjè",
+      "kè"
+    ]
   },
   {
     "fr": "d'accord",
@@ -3959,10 +3962,6 @@
     "gp": "fondas"
   },
   {
-    "fr": "font",
-    "gp": "fè"
-  },
-  {
     "fr": "force",
     "gp": "foss"
   },
@@ -4511,11 +4510,12 @@
     "gp": "lagrèv"
   },
   {
-    "fr": "guadeloupe",
+    "fr": "Guadeloupe",
     "gp": [
-      "gwada",
-      "Gwadloup"
-    ]
+      "Gwadloup",
+      "gwada"
+    ],
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5223,10 +5223,6 @@
     "gp": "isia"
   },
   {
-    "fr": "j'ai",
-    "gp": "mwen ni"
-  },
-  {
     "fr": "j'ai faim",
     "gp": "an ni fen"
   },
@@ -5682,10 +5678,6 @@
     "gp": "Moul"
   },
   {
-    "fr": "le trouve",
-    "gp": "jwenn li"
-  },
-  {
     "fr": "lent",
     "gp": "lan"
   },
@@ -5698,20 +5690,12 @@
     "genre": "f"
   },
   {
-    "fr": "les",
-    "gp": "yo"
-  },
-  {
     "fr": "Les Abymes",
     "gp": "Zabim"
   },
   {
     "fr": "les femmes sont des diablesses",
     "gp": "fanm sé dyab"
-  },
-  {
-    "fr": "les trouve",
-    "gp": "jwenn yo"
   },
   {
     "fr": "lesbienne",
@@ -6445,10 +6429,6 @@
     "genre": "m"
   },
   {
-    "fr": "me trouve",
-    "gp": "jwenn mwen"
-  },
-  {
     "fr": "mec",
     "gp": "timal"
   },
@@ -6625,14 +6605,6 @@
   {
     "fr": "moment",
     "gp": "moman"
-  },
-  {
-    "fr": "mon",
-    "gp": "mwen"
-  },
-  {
-    "fr": "mon nom est",
-    "gp": "mwen sé"
   },
   {
     "fr": "Monaco",
@@ -7112,10 +7084,6 @@
   {
     "fr": "Nous allons",
     "gp": "Nou kay"
-  },
-  {
-    "fr": "nous trouve",
-    "gp": "jwenn nou"
   },
   {
     "fr": "Nouvelle-Calédonie",
@@ -8441,10 +8409,6 @@
     "gp": "katoz"
   },
   {
-    "fr": "quel",
-    "gp": "ki"
-  },
-  {
     "fr": "quel temps il fait",
     "gp": "ki tan i ka fè"
   },
@@ -9336,10 +9300,6 @@
     "type": "adj"
   },
   {
-    "fr": "son",
-    "gp": "ay"
-  },
-  {
     "fr": [
       "sorbet coco",
       "sorbets coco"
@@ -9606,10 +9566,6 @@
     "genre": "f"
   },
   {
-    "fr": "t'abandonne",
-    "gp": "ka lésé'w"
-  },
-  {
     "fr": "t'apprecie",
     "gp": "apresyé ou"
   },
@@ -9776,10 +9732,6 @@
     "gp": "Tkhékie"
   },
   {
-    "fr": "te trouve",
-    "gp": "jwenn ou"
-  },
-  {
     "fr": "temps",
     "gp": "tan"
   },
@@ -9882,10 +9834,6 @@
     ],
     "gp": "tomat",
     "genre": "f"
-  },
-  {
-    "fr": "ton",
-    "gp": "aw"
   },
   {
     "fr": "Tonga",
@@ -10175,10 +10123,6 @@
     "gp": "on ti kras"
   },
   {
-    "fr": "une",
-    "gp": "on"
-  },
-  {
     "fr": "Uruguay",
     "gp": "Irigai"
   },
@@ -10463,14 +10407,6 @@
   {
     "fr": "vous etes mort",
     "gp": "zot mô"
-  },
-  {
-    "fr": "vous présente",
-    "gp": "ka prezentew"
-  },
-  {
-    "fr": "vous trouve",
-    "gp": "jwenn zot"
   },
   {
     "fr": "voyou",
@@ -13591,7 +13527,10 @@
     "genre": "f"
   },
   {
-    "gp": "muzik",
+    "gp": [
+      "muzik",
+      "mizik"
+    ],
     "fr": "musique",
     "type": "nom",
     "genre": "f"
@@ -13763,7 +13702,8 @@
   {
     "fr": "cuisine",
     "gp": "tjuizin",
-    "type": "nom"
+    "type": "nom",
+    "genre": "f"
   },
   {
     "fr": "diable",

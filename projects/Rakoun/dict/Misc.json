@@ -106,7 +106,11 @@
   },
   {
     "fr": "dans",
-    "gp": "adan",
+    "gp": [
+      "adan",
+      "dan",
+      "nan"
+    ],
     "type": "prep"
   },
   {
@@ -387,7 +391,8 @@
     "fr": "sur",
     "gp": [
       "asi",
-      "asou"
+      "asou",
+      "sou"
     ],
     "type": "prep"
   },
@@ -419,8 +424,8 @@
   {
     "fr": "il faut",
     "gp": [
-      "fok",
-      "fò"
+      "fò",
+      "fok"
     ],
     "type": "expr"
   },
@@ -1281,8 +1286,8 @@
   },
   {
     "gp": [
-      "sa ou fè",
-      "sa ou ka fè",
+      "sa ou fè ?",
+      "sa ou ka fè ?",
       "sa ka maché"
     ],
     "fr": "comment ça va",
@@ -1541,5 +1546,301 @@
     "fr": "en secret",
     "gp": "an kachèt",
     "type": "misc"
+  },
+  {
+    "gp": "sa ka pété sèk",
+    "fr": "ça va barder",
+    "type": "expr"
+  },
+  {
+    "gp": "kimafoutiésa",
+    "fr": "qu'est-ce que ça peut faire",
+    "type": "expr"
+  },
+  {
+    "gp": "tchimbé rèd",
+    "fr": "tiens bon",
+    "type": "expr"
+  },
+  {
+    "gp": "tchimbé rèd pa moli",
+    "fr": "tiens bon ne lâche pas",
+    "type": "expr"
+  },
+  {
+    "gp": "pa moli",
+    "fr": "ne lâche pas",
+    "type": "expr"
+  },
+  {
+    "gp": "bay chabon",
+    "fr": "mets le paquet",
+    "type": "expr"
+  },
+  {
+    "gp": "asiré pa pétèt",
+    "fr": "sûr et certain",
+    "type": "expr"
+  },
+  {
+    "gp": "menm biten menm bagay",
+    "fr": "c'est du pareil au même",
+    "type": "expr"
+  },
+  {
+    "gp": "mi bèl bagay",
+    "fr": "quelle belle chose",
+    "type": "expr"
+  },
+  {
+    "gp": "mi mizè",
+    "fr": "quelle misère",
+    "type": "expr"
+  },
+  {
+    "gp": "fout",
+    "fr": "qu'est-ce que",
+    "type": "excl"
+  },
+  {
+    "gp": "ébé",
+    "fr": "eh bien",
+    "type": "excl"
+  },
+  {
+    "gp": "an vérité",
+    "fr": "en vérité",
+    "type": "excl"
+  },
+  {
+    "gp": "tonnè di sò",
+    "fr": "tonnerre du sort",
+    "type": "excl"
+  },
+  {
+    "gp": "bondyé senyè",
+    "fr": "mon dieu",
+    "type": "excl"
+  },
+  {
+    "gp": "sa pa ka fè ayen",
+    "fr": "ça ne fait rien",
+    "type": "expr"
+  },
+  {
+    "gp": "mèsi on pil",
+    "fr": "merci beaucoup",
+    "type": "expr"
+  },
+  {
+    "gp": "an ka vin",
+    "fr": "j'arrive",
+    "type": "expr"
+  },
+  {
+    "gp": "an ti moman",
+    "fr": "dans un instant",
+    "type": "expr"
+  },
+  {
+    "gp": "pa fè sa",
+    "fr": "ne fais pas ça",
+    "type": "expr"
+  },
+  {
+    "gp": "gadé sa",
+    "fr": "regarde ça",
+    "type": "expr"
+  },
+  {
+    "gp": "rété la",
+    "fr": "reste là",
+    "type": "expr"
+  },
+  {
+    "gp": "pa bougé",
+    "fr": "ne bouge pas",
+    "type": "expr"
+  },
+  {
+    "gp": "mi wou",
+    "fr": "te voilà",
+    "type": "expr"
+  },
+  {
+    "gp": "lè ou lé",
+    "fr": "quand tu veux",
+    "type": "expr"
+  },
+  {
+    "gp": "si ou lé",
+    "fr": "si tu veux",
+    "type": "expr"
+  },
+  {
+    "gp": "sa dépann",
+    "fr": "ça dépend",
+    "type": "expr"
+  },
+  {
+    "gp": "sé konsa",
+    "fr": "c'est comme ça",
+    "type": "expr"
+  },
+  {
+    "gp": "sa bon konsa",
+    "fr": "c'est bon comme ça",
+    "type": "expr"
+  },
+  {
+    "gp": "fè on ti pozé",
+    "fr": "faire une pause",
+    "type": "expr"
+  },
+  {
+    "gp": "ay fè on won",
+    "fr": "aller faire un tour",
+    "type": "expr"
+  },
+  {
+    "gp": "lagé mwen",
+    "fr": "lâche-moi",
+    "type": "expr"
+  },
+  {
+    "gp": "fè lafèt",
+    "fr": "faire la fête",
+    "type": "expr"
+  },
+  {
+    "gp": "pran fè",
+    "fr": "en baver",
+    "type": "expr"
+  },
+  {
+    "gp": "pòté mannèv",
+    "fr": "se débrouiller",
+    "type": "expr"
+  },
+  {
+    "gp": "ni on bab",
+    "fr": "avoir un problème",
+    "type": "expr"
+  },
+  {
+    "gp": "sé pa fòt an-mwen",
+    "fr": "ce n'est pas ma faute",
+    "type": "expr"
+  },
+  {
+    "gp": "an ka mò ri",
+    "fr": "je meurs de rire",
+    "type": "expr"
+  },
+  {
+    "gp": "ou two fò",
+    "fr": "tu es trop fort",
+    "type": "expr"
+  },
+  {
+    "gp": "ka i ni",
+    "fr": "qu'est-ce qu'il y a",
+    "type": "expr"
+  },
+  {
+    "gp": "sa ki rivé'w",
+    "fr": "qu'est-ce qui t'arrive",
+    "type": "expr"
+  },
+  {
+    "gp": "ayen menm",
+    "fr": "rien du tout",
+    "type": "expr"
+  },
+  {
+    "gp": "wè pa wè",
+    "fr": "quoi qu'il arrive",
+    "type": "expr"
+  },
+  {
+    "gp": "a pa jé",
+    "fr": "ce n'est pas un jeu",
+    "type": "expr"
+  },
+  {
+    "gp": "a pa ti bagay",
+    "fr": "ce n'est pas rien",
+    "type": "expr"
+  },
+  {
+    "gp": "sa sé zafè a-w",
+    "fr": "c'est ton affaire",
+    "type": "expr"
+  },
+  {
+    "gp": "zafè a-w",
+    "fr": "tant pis pour toi",
+    "type": "expr"
+  },
+  {
+    "gp": "ti punch",
+    "fr": "petit punch",
+    "type": "nom"
+  },
+  {
+    "gp": "vréman vré",
+    "fr": "vraiment vrai",
+    "type": "expr"
+  },
+  {
+    "gp": "toubònman",
+    "fr": "carrément",
+    "type": "adv"
+  },
+  {
+    "gp": "ravèt pa ni rézon douvan poul",
+    "fr": "le faible n'a pas raison devant le fort",
+    "type": "expr"
+  },
+  {
+    "gp": "chien pa ka fè chat",
+    "fr": "les chiens ne font pas des chats",
+    "type": "expr"
+  },
+  {
+    "gp": "sé grenn diri ka fè sak diri",
+    "fr": "les petits ruisseaux font les grandes rivières",
+    "type": "expr"
+  },
+  {
+    "gp": "sa ki ta-w ta-w",
+    "fr": "ce qui est à toi est à toi",
+    "type": "expr"
+  },
+  {
+    "gp": "pawòl an bouch pa chaj",
+    "fr": "les paroles ne coûtent rien",
+    "type": "expr"
+  },
+  {
+    "gp": "mié vo ta ki janmen",
+    "fr": "il vaut mieux tard que jamais",
+    "type": "expr"
+  },
+  {
+    "gp": "chak bourgo ka trouvé zékal a-y",
+    "fr": "chacun trouve chaussure à son pied",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "celui",
+      "celle",
+      "ceux",
+      "celles"
+    ],
+    "gp": "ta",
+    "type": "pron",
+    "secondaire": true
   }
 ]

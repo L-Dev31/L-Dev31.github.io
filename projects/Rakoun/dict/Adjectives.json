@@ -207,7 +207,8 @@
     ],
     "gp": [
       "fò",
-      "vidjo"
+      "vidjo",
+      "fo"
     ]
   },
   {
@@ -441,6 +442,15 @@
     "gp": "plen"
   },
   {
+    "fr": [
+      "rempli",
+      "remplie",
+      "remplis",
+      "remplies"
+    ],
+    "gp": "plen"
+  },
+  {
     "fr": "premier",
     "gp": "primié"
   },
@@ -454,10 +464,6 @@
   {
     "fr": "prétentieux",
     "gp": "konpawèson"
-  },
-  {
-    "fr": "puant",
-    "gp": "ka santi"
   },
   {
     "fr": "riche",

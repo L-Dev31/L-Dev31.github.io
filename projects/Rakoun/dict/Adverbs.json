@@ -95,8 +95,8 @@
   {
     "fr": "hier",
     "gp": [
-      "yè",
-      "iyè"
+      "iyè",
+      "yè"
     ]
   },
   {
@@ -208,7 +208,8 @@
     "fr": "trop",
     "gp": [
       "twò",
-      "twòp"
+      "twòp",
+      "tro"
     ]
   },
   {
@@ -272,7 +273,11 @@
   },
   {
     "fr": "jamais",
-    "gp": "janmen",
+    "gp": [
+      "janmen",
+      "jenmen",
+      "jen"
+    ],
     "type": "adv"
   },
   {
@@ -313,7 +318,8 @@
     ],
     "gp": [
       "toulèjou",
-      "touléjou"
+      "touléjou",
+      "tou lé jou"
     ],
     "type": "adv"
   },

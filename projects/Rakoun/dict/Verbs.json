@@ -814,7 +814,11 @@
       "tomber",
       "mourir",
       "naître",
-      "retourner"
+      "retourner",
+      "rentrer",
+      "revenir",
+      "devenir",
+      "entrer"
     ],
     "fins_participe": [
       "é",
@@ -858,6 +862,7 @@
       "ées"
     ],
     "etre_futur": [
+      "serai",
       "sera",
       "seras",
       "serons",
@@ -997,10 +1002,6 @@
       "gp": "filé"
     },
     {
-      "fr": "aimait",
-      "gp": "té enmé"
-    },
-    {
       "fr": "aime",
       "gp": "enmé"
     },
@@ -1035,8 +1036,8 @@
     {
       "fr": "aller",
       "gp": [
-        "ay",
-        "alé"
+        "alé",
+        "ay"
       ]
     },
     {
@@ -1267,7 +1268,10 @@
     },
     {
       "fr": "avoir",
-      "gp": "ni"
+      "gp": [
+        "ni",
+        "gen"
+      ]
     },
     {
       "fr": "avons",
@@ -1549,7 +1553,10 @@
     },
     {
       "fr": "connaître",
-      "gp": "konèt"
+      "gp": [
+        "konèt",
+        "konnt"
+      ]
     },
     {
       "fr": "conseiller",
@@ -1633,7 +1640,7 @@
     },
     {
       "fr": "coûter",
-      "gp": "kosté"
+      "gp": "kouté"
     },
     {
       "fr": "cracher",
@@ -1781,10 +1788,7 @@
     },
     {
       "fr": "discuter",
-      "gp": [
-        "palé",
-        "diskité"
-      ]
+      "gp": "diskité"
     },
     {
       "fr": "disent",
@@ -2077,10 +2081,6 @@
       ]
     },
     {
-      "fr": "es",
-      "gp": "sé"
-    },
-    {
       "fr": "esperer",
       "gp": "éspéré"
     },
@@ -2099,10 +2099,6 @@
     {
       "fr": "essuyer",
       "gp": "swiyé"
-    },
-    {
-      "fr": "est",
-      "gp": "sé"
     },
     {
       "fr": "estimer",
@@ -2620,6 +2616,10 @@
       "gp": "najé"
     },
     {
+      "fr": "naître",
+      "gp": "né"
+    },
+    {
       "fr": "nettoyer",
       "gp": "nétouyé"
     },
@@ -2871,7 +2871,10 @@
     },
     {
       "fr": "pouvoir",
-      "gp": "pé"
+      "gp": [
+        "pé",
+        "fouti"
+      ]
     },
     {
       "fr": "prend",
@@ -3005,7 +3008,10 @@
     },
     {
       "fr": "ranger",
-      "gp": "wanjé"
+      "gp": [
+        "ranjé",
+        "wanjé"
+      ]
     },
     {
       "fr": "raper",
@@ -3329,14 +3335,6 @@
       "gp": "séparé"
     },
     {
-      "fr": "sera",
-      "gp": "kéy"
-    },
-    {
-      "fr": "serai",
-      "gp": "péké"
-    },
-    {
       "fr": "serrer",
       "gp": "séré"
     },
@@ -3357,16 +3355,8 @@
       "gp": "védi"
     },
     {
-      "fr": "sommes",
-      "gp": "sé"
-    },
-    {
       "fr": "sonner",
       "gp": "sonnen"
-    },
-    {
-      "fr": "sont",
-      "gp": "sé"
     },
     {
       "fr": "sort",
@@ -3414,10 +3404,6 @@
     {
       "fr": "suffire",
       "gp": "sifi"
-    },
-    {
-      "fr": "suis",
-      "gp": "sé"
     },
     {
       "fr": "suivre",
@@ -3586,8 +3572,8 @@
     {
       "fr": "venir",
       "gp": [
-        "vin",
-        "vini"
+        "vini",
+        "vin"
       ]
     },
     {
@@ -3815,10 +3801,6 @@
     {
       "fr": "éviter",
       "gp": "évité"
-    },
-    {
-      "fr": "êtes",
-      "gp": "sé"
     },
     {
       "fr": "être",

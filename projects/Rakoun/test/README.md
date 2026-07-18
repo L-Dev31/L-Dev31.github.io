@@ -1,11 +1,13 @@
 # Boucles de vérification Rakoun
 
-Trois boucles complémentaires (lancer depuis `Rakoun/`) :
+Quatre boucles complémentaires (lancer depuis `Rakoun/`) :
 
 ```
 node test_node.cjs           # GOLD : correction exacte, 308 cas — doit rester 100%
 node test/run.cjs            # PARASITES : corpus curé, 0 mot non traduit
 node test/realworld.cjs      # MONDE RÉEL : articles entiers → parasites classés
+node test/fuzz.cjs           # FUZZ : ~15 000 appels (dico entier, combos, entrées
+                             #        hostiles) — 0 crash, 0 sentinelle, déterministe
 ```
 
 ## Boucle monde réel (`realworld.cjs`) — test + classification + réparation
