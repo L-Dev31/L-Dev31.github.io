@@ -14,7 +14,7 @@ const gpWords = Object.keys(engine.ctx.index_gp);
 const frWords = Object.keys(engine.ctx.index_fr);
 
 let fails = [];
-const SENTINEL_RE = /[-]/;
+const SENTINEL_RE = /[-⟦⟧]/;
 function check(input, src, tgt, label) {
   let out;
   try { out = engine.traduire(input, src, tgt); }

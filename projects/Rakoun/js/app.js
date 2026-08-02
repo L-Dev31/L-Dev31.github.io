@@ -86,6 +86,15 @@
     autosize(elOutput);
   }
 
+  // La traduction est synchrone : la lancer à chaque frappe fige la saisie sur
+  // un texte long ou un collage massif. On débounce l'appel moteur (la frappe
+  // reste fluide, la traduction se déclenche une fois la salve terminée).
+  let debounceId = null;
+  function traduireDebounce() {
+    if (debounceId !== null) clearTimeout(debounceId);
+    debounceId = setTimeout(() => { debounceId = null; traduire(); }, 90);
+  }
+
   function panelAction(el, action) {
     el.addEventListener("click", action);
     el.addEventListener("touchstart", (e) => {
@@ -120,7 +129,7 @@
     navigator.clipboard.writeText(elOutput.value);
   });
 
-  elInput.addEventListener("input", traduire);
+  elInput.addEventListener("input", traduireDebounce);
 
   let swapping = false;
   const elSectionSrc = document.getElementById("section-src");

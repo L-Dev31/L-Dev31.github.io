@@ -552,8 +552,12 @@
     "gp": "kangn"
   },
   {
-    "fr": "appat",
-    "gp": "lak"
+    "fr": [
+      "appât",
+      "appat"
+    ],
+    "gp": "lak",
+    "genre": "m"
   },
   {
     "fr": "après",
@@ -1369,6 +1373,10 @@
     "gp": "labou"
   },
   {
+    "fr": "bourgot",
+    "gp": "bourgo"
+  },
+  {
     "fr": "Bouillante",
     "gp": "Bouyant"
   },
@@ -1553,8 +1561,12 @@
     "gp": "bata"
   },
   {
-    "fr": "bâton",
-    "gp": "bwa"
+    "fr": [
+      "bâton"
+    ],
+    "gp": "bwa",
+    "genre": "m",
+    "secondaire": true
   },
   {
     "fr": "bébé",
@@ -1948,8 +1960,7 @@
       "biche",
       "biches"
     ],
-    "gp": "sèf",
-    "genre": "m"
+    "gp": "sèf"
   },
   {
     "fr": [
@@ -3945,7 +3956,9 @@
     "gp": "zèb chèch"
   },
   {
-    "fr": "fois",
+    "fr": [
+      "fois"
+    ],
     "gp": "fwa",
     "genre": "f"
   },
@@ -4737,7 +4750,8 @@
       "haricots"
     ],
     "gp": "pwa",
-    "genre": "m"
+    "genre": "m",
+    "secondaire": true
   },
   {
     "fr": [
@@ -5595,8 +5609,11 @@
     "gp": "kité mwen trantjil"
   },
   {
-    "fr": "lait",
-    "gp": "lèt"
+    "fr": [
+      "lait"
+    ],
+    "gp": "lèt",
+    "genre": "m"
   },
   {
     "fr": [
@@ -5726,7 +5743,8 @@
   {
     "fr": "lettre",
     "gp": "lèt",
-    "genre": "f"
+    "genre": "f",
+    "secondaire": true
   },
   {
     "fr": "Liban",
@@ -7954,7 +7972,8 @@
       "pois"
     ],
     "gp": "pwa",
-    "genre": "m"
+    "genre": "m",
+    "secondaire": true
   },
   {
     "fr": [
@@ -8426,7 +8445,8 @@
   },
   {
     "fr": "quelqu'un",
-    "gp": "on moun"
+    "gp": "on moun",
+    "type": "pron"
   },
   {
     "fr": "quelque",
@@ -8434,7 +8454,8 @@
   },
   {
     "fr": "quelque chose",
-    "gp": "on bagay"
+    "gp": "on bagay",
+    "type": "pron"
   },
   {
     "fr": "querelle",
@@ -9575,10 +9596,6 @@
       "gèl aw",
       "djòl aw"
     ]
-  },
-  {
-    "fr": "ta mère",
-    "gp": "manman'w"
   },
   {
     "fr": [
@@ -12800,7 +12817,8 @@
       "lacs"
     ],
     "gp": "lak",
-    "genre": "m"
+    "genre": "m",
+    "secondaire": true
   },
   {
     "fr": [
@@ -12909,7 +12927,8 @@
   {
     "fr": "foie",
     "gp": "fwa",
-    "genre": "m"
+    "genre": "m",
+    "secondaire": true
   },
   {
     "fr": "estomac",
@@ -14045,6 +14064,7 @@
   },
   {
     "fr": "surf",
+    "secondaire": true,
     "gp": [
       "sèf",
       "surf"
