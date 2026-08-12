@@ -388,6 +388,11 @@
     "gp": "dousman"
   },
   {
+    "fr": "volontairement",
+    "gp": "volontèwman",
+    "type": "adv"
+  },
+  {
     "fr": "ici",
     "gp": "isit"
   },
@@ -406,5 +411,33 @@
   {
     "fr": "autour",
     "gp": "otou"
+  },
+  {
+    "fr": "apparemment",
+    "gp": "asiparé"
+  },
+  {
+    "fr": "tranquillement",
+    "gp": "dousman"
+  },
+  {
+    "fr": "couramment",
+    "gp": "kouraman"
+  },
+  {
+    "fr": "bizarrement",
+    "gp": "dwòlman"
+  },
+  {
+    "fr": "secrètement",
+    "gp": "an kachèt"
+  },
+  {
+    "fr": "soudain",
+    "gp": "toudenkou"
+  },
+  {
+    "fr": "soudainement",
+    "gp": "toudenkou"
   }
 ]

@@ -1350,5 +1350,17 @@
   {
     "fr": "magique",
     "gp": "majik"
+  },
+  {
+    "fr": ["énervé", "énervée", "énervés", "énervées"],
+    "gp": "anrajé"
+  },
+  {
+    "fr": ["fâché", "fâchée", "fâchés", "fâchées"],
+    "gp": "faché"
+  },
+  {
+    "fr": ["second", "seconde", "seconds", "secondes"],
+    "gp": "sègond"
   }
 ]

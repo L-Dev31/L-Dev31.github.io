@@ -1,33 +1,35 @@
-// Rakoun — synthèse vocale via Web Speech API.
 (function (root) {
   "use strict";
 
-  // Pas de voix créole native : on utilise le français comme approximation phonétique.
-  const LANG_MAP = { fr: "fr-FR", gp: "fr-FR" };
+  const synth = root.speechSynthesis;
+  if (!synth) { root.RakounListen = { parler() {} }; return; }
 
-  let speaking = false;
+  // Pas de voix créole native : le français sert d'approximation phonétique.
+  const LANGUES = { fr: "fr-FR", gp: "fr-FR" };
 
-  function parler(texte, lang) {
-    if (!("speechSynthesis" in window)) return;
-    if (speaking) {
-      window.speechSynthesis.cancel();
-      return;
-    }
-    const utt = new SpeechSynthesisUtterance(texte);
-    utt.lang = LANG_MAP[lang] || "fr-FR";
-    utt.rate = 0.85;
-    utt.onstart = () => {
-      speaking = true;
-      const btn = document.getElementById("listen");
-      if (btn) btn.setAttribute("aria-pressed", "true");
-    };
-    utt.onend = utt.onerror = () => {
-      speaking = false;
-      const btn = document.getElementById("listen");
-      if (btn) btn.removeAttribute("aria-pressed");
-    };
-    window.speechSynthesis.speak(utt);
+  let bouton = null;   // bouton en cours de lecture, sinon null
+
+  function relacher() {
+    if (bouton) { bouton.removeAttribute("aria-pressed"); bouton = null; }
   }
 
+  function parler(texte, langue, declencheur) {
+    // Deuxième appui = arrêt.
+    if (bouton) { synth.cancel(); relacher(); return; }
+
+    const utt = new SpeechSynthesisUtterance(texte);
+    utt.lang = LANGUES[langue] || "fr-FR";
+    utt.rate = 0.85;
+    utt.onstart = () => {
+      bouton = declencheur || null;
+      if (bouton) bouton.setAttribute("aria-pressed", "true");
+    };
+    utt.onend = utt.onerror = relacher;
+    synth.speak(utt);
+  }
+
+  // Une lecture en cours survit à la navigation : on la coupe explicitement.
+  addEventListener("pagehide", () => { synth.cancel(); relacher(); });
+
   root.RakounListen = { parler };
-})(typeof window !== "undefined" ? window : globalThis);
+})(window);

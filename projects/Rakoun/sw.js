@@ -14,8 +14,8 @@
  * reçoit la version fraîche. C'est le mécanisme de cache-busting « simple »
  * demandé : pas besoin de renommer les fichiers avec un hash.
  */
-const APP_VERSION = "20";
-const DICT_VERSION = "2";
+const APP_VERSION = "33";
+const DICT_VERSION = "15";
 
 const STATIC_CACHE = `rakoun-static-v${APP_VERSION}`;
 const DICT_CACHE = `rakoun-dict-v${DICT_VERSION}`;
@@ -26,16 +26,17 @@ const APP_SHELL = [
   "index.html",
   "manifest.json",
   "style.css",
-  "js/engine.js",
+  "js/engine.js?v=32",
   "js/listen.js",
   "js/app.js",
   "js/eyes.js",
   "font/FredokaOne-Regular.ttf",
   "images/rakoun.png",
   "images/eye.png",
-  "images/favicon.png",
   "images/flags/fr.png",
   "images/flags/gp.png",
+  "images/flags/fr_square.png",
+  "images/flags/gp_square.png",
   "icons/icon-192.png",
   "icons/icon-512.png",
   "icons/maskable-512.png",

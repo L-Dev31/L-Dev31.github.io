@@ -34,6 +34,7 @@
     "an": "je",
     "mwen": "je",
     "ou": "tu",
+    "vou": "vous",
     "i": "il",
     "nou": "nous",
     "zot": "vous",
@@ -550,6 +551,9 @@
     "croire",
     "penser"
   ],
+  "verbes_declencheurs_de": [
+    "essayer"
+  ],
   "faut_declencheurs_que": [
     "faut"
   ],
@@ -666,7 +670,7 @@
     "il_y_a": "ni",
     "il_faut": "fò",
     "venir_de": "sòti",
-    "article_indefini": "yonn",
+    "article_indefini": "on",
     "les_pluriel": "sé"
   },
   "traductions_gp_fr": {
@@ -691,6 +695,45 @@
     "fo_faut": "faut",
     "fo_que": "que"
   },
+  "traductions_conjonctions_gp_fr": {
+    "mè": "mais"
+  },
+  "conjonctions_gp_debut": {
+    "mè": ["alè", "sé"]
+  },
+  "prepositions_gp_contextuelles": {
+    "si": ["enpo", "taks", "do"]
+  },
+  "verbes_reflexifs_gp": {
+    "asosyé": "s'associer"
+  },
+  "imperatifs_gp": {
+    "sèvi": "Sers-toi"
+  },
+  "noms_definis_gp": {
+    "dyab": "le diable"
+  },
+  "infinitifs_apres_gp": {
+    "las": {
+      "maché": "marcher"
+    }
+  },
+  "adjectifs_de_infinitif": [
+    "fatigué",
+    "fatigués",
+    "fatiguée",
+    "fatiguées"
+  ],
+  "noms_sans_article_fr": [
+    "laser",
+    "glaucome"
+  ],
+  "interjections_gp_contextuelles": {
+    "soukou": "au secours"
+  },
+  "traductions_gp_fr_contextuelles": {
+    "léta": "l'état"
+  },
   "patterns_ni_gp": {
     "pa_ni_pon": [
       "il",
@@ -710,17 +753,6 @@
       "a"
     ],
     "ni_du": "du"
-  },
-  "multiword_monde": {
-    "tout_le_monde": [
-      "tout",
-      "moun"
-    ],
-    "du_monde": "moun",
-    "le_monde": [
-      "monn",
-      "la"
-    ]
   },
   "declencheurs_ba": [
     "ba",
@@ -985,6 +1017,9 @@
       "ou",
       "mais"
     ],
+    "conjonctions_gp": [
+      "mè"
+    ],
     "mots_negatifs_fr": [
       "rien",
       "personne",
@@ -1081,96 +1116,8 @@
     ]
   ],
   "article_postpose_regles": {
-    "regles": [
-      {
-        "suf": "oun",
-        "art": "lan"
-      },
-      {
-        "suf": "onm",
-        "art": "lan"
-      },
-      {
-        "suf": "anm",
-        "art": "lan"
-      },
-      {
-        "suf": "enm",
-        "art": "lan"
-      },
-      {
-        "suf": "onn",
-        "art": "lan"
-      },
-      {
-        "suf": "ann",
-        "art": "lan"
-      },
-      {
-        "suf": "enn",
-        "art": "lan"
-      },
-      {
-        "suf": "in",
-        "art": "lan"
-      },
-      {
-        "suf": "un",
-        "art": "lan"
-      },
-      {
-        "suf": "nn",
-        "art": "lan"
-      },
-      {
-        "suf": "an",
-        "art": "an"
-      },
-      {
-        "suf": "on",
-        "art": "an"
-      },
-      {
-        "suf": "en",
-        "art": "an"
-      },
-      {
-        "suf": "a",
-        "art": "a"
-      },
-      {
-        "suf": "é",
-        "art": "a"
-      },
-      {
-        "suf": "è",
-        "art": "a"
-      },
-      {
-        "suf": "e",
-        "art": "a"
-      },
-      {
-        "suf": "i",
-        "art": "a"
-      },
-      {
-        "suf": "o",
-        "art": "a"
-      },
-      {
-        "suf": "ò",
-        "art": "a"
-      },
-      {
-        "suf": "ou",
-        "art": "a"
-      },
-      {
-        "suf": "u",
-        "art": "a"
-      }
-    ],
+    "_note": "Guadeloupéen : article défini postposé INVARIABLE = -la (kaz-la, zozyo-la, pon-la, chanm-la). Les allomorphes a/an/lan sont martiniquais (source : Hazaël-Massieux, tableau Guadeloupe/Martinique ; APiCS ch. 50 Colot & Ludwig, 39/39 occurrences en -la). Pour repasser en martiniquais, remplir regles[].",
+    "regles": [],
     "defaut": "la"
   },
   "substitutions_fr": [
@@ -1239,5 +1186,10 @@
     "pou",
     "pour"
   ],
-  "mot_collectif_monde": "monde"
+  "mot_collectif_monde": "monde",
+  "prepositions_lieu_supprimees": [
+    "à",
+    "au",
+    "aux"
+  ]
 }

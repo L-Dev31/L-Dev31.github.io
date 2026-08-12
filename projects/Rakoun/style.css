@@ -15,13 +15,11 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0e1420;
-    --accent: #f15a29;
     --text: #e8ebf1;
     --muted: #8b93a3;
     --panel: #151c2b;
     --panel-border: #1b2334;
     --panel2: color-mix(in srgb, var(--accent) 11%, #151c2b);
-    --accent: #f15a29;
     color-scheme: dark;
   }
 }
@@ -43,7 +41,7 @@ body {
   color: var(--text);
   display: flex;
   flex-direction: column;
-  font-family: 'nunito', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 main {

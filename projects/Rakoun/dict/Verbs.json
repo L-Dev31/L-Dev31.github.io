@@ -179,6 +179,16 @@
         "ils": "disent",
         "elles": "disent"
       },
+      "battre": {
+        "je": "bats",
+        "tu": "bats",
+        "il": "bat",
+        "elle": "bat",
+        "nous": "battons",
+        "vous": "battez",
+        "ils": "battent",
+        "elles": "battent"
+      },
       "pouvoir": {
         "je": "peux",
         "tu": "peux",
@@ -1270,7 +1280,8 @@
       "fr": "avoir",
       "gp": [
         "ni",
-        "gen"
+        "gen",
+        "tini"
       ]
     },
     {
@@ -1313,6 +1324,11 @@
     {
       "fr": "battre",
       "gp": "baté"
+    },
+    {
+      "fr": "se battre",
+      "gp": "bat",
+      "type": "verbe"
     },
     {
       "fr": "bavarder",
@@ -1677,11 +1693,11 @@
     },
     {
       "fr": "cuir",
-      "gp": "tjui"
+      "gp": "tjwi"
     },
     {
       "fr": "cuire",
-      "gp": "tjuit"
+      "gp": "tjwit"
     },
     {
       "fr": [
@@ -1694,7 +1710,7 @@
     },
     {
       "fr": "cuivre",
-      "gp": "tjuiv"
+      "gp": "tjwiv"
     },
     {
       "fr": "câliner",
@@ -2020,7 +2036,7 @@
     },
     {
       "fr": "enduire",
-      "gp": "randui"
+      "gp": "randwi"
     },
     {
       "fr": "engloutir",
@@ -2094,7 +2110,11 @@
     },
     {
       "fr": "essayer",
-      "gp": "sayé"
+      "gp": [
+        "sayé",
+        "éséyé",
+        "séyé"
+      ]
     },
     {
       "fr": "essuyer",
@@ -2170,7 +2190,7 @@
     },
     {
       "fr": "feliciter",
-      "gp": "félicité"
+      "gp": "félisité"
     },
     {
       "fr": "fermer",
@@ -2917,7 +2937,7 @@
     },
     {
       "fr": "produire",
-      "gp": "pwodui"
+      "gp": "pwodwi"
     },
     {
       "fr": "projeter",
@@ -2942,10 +2962,6 @@
     {
       "fr": "prélever",
       "gp": "chaspannen"
-    },
-    {
-      "fr": "préparer",
-      "gp": "préparé"
     },
     {
       "fr": "présenter",
@@ -3288,7 +3304,7 @@
     },
     {
       "fr": "sauver",
-      "gp": "sauvé"
+      "gp": "sové"
     },
     {
       "fr": "savent",
@@ -3520,7 +3536,7 @@
     {
       "fr": "tuer",
       "gp": [
-        "tuyé",
+        "tjwé",
         "tjwé",
         "touyé",
         "jété"
@@ -3952,7 +3968,7 @@
         "cuit"
       ],
       "gp": [
-        "kuit",
+        "kwit",
         "kwit"
       ]
     },
@@ -3976,12 +3992,6 @@
       "fr": "appartenir",
       "gp": "apatjenn",
       "type": "verbe"
-    },
-    {
-      "fr": "naître",
-      "gp": "fèt",
-      "type": "verbe",
-      "secondaire": true
     },
     {
       "gp": [
@@ -4011,13 +4021,6 @@
         "krye"
       ],
       "fr": "appeler",
-      "type": "verbe"
-    },
-    {
-      "gp": [
-        "suiv"
-      ],
-      "fr": "suivre",
       "type": "verbe"
     },
     {
@@ -4054,14 +4057,6 @@
         "eksplike"
       ],
       "fr": "expliquer",
-      "type": "verbe"
-    },
-    {
-      "gp": [
-        "aprann",
-        "apwann"
-      ],
-      "fr": "apprendre",
       "type": "verbe"
     },
     {
@@ -4230,7 +4225,10 @@
       "type": "verbe"
     },
     {
-      "gp": "prèsé",
+      "gp": [
+        "prèsé",
+        "pijé"
+      ],
       "fr": "presser",
       "type": "verbe"
     },
@@ -4627,13 +4625,6 @@
       ]
     },
     {
-      "fr": "gagner",
-      "gp": [
-        "ganyen",
-        "genyen"
-      ]
-    },
-    {
       "fr": "agripper",
       "gp": "varé",
       "type": "verbe"
@@ -4737,6 +4728,67 @@
     {
       "fr": "réchauffer",
       "gp": "chofé"
+    },
+    {
+      "fr": "supposer",
+      "gp": "sipozé"
+    },
+    {
+      "fr": "se débrouiller",
+      "gp": "débouyé"
+    },
+    {
+      "fr": "débrouiller",
+      "gp": "débouyé"
+    },
+    {
+      "fr": "se promener",
+      "gp": "pwonmné"
+    },
+    {
+      "fr": "promener",
+      "gp": "pwonmné"
+    },
+    {
+      "fr": "s'envoler",
+      "gp": "chapé"
+    },
+    {
+      "fr": "envoler",
+      "gp": "chapé"
+    },
+    {
+      "fr": "enfuir",
+      "gp": "sové"
+    },
+    {
+      "fr": "étendre",
+      "gp": "pann"
+    },
+    {
+      "fr": "s'embrasser",
+      "gp": "bo",
+      "secondaire": true
+    },
+    {
+      "fr": "fleurir",
+      "gp": "flèri"
+    },
+    {
+      "fr": "ressentir",
+      "gp": "santi"
+    },
+    {
+      "fr": "empoisonner",
+      "gp": "anpwazoné"
+    },
+    {
+      "fr": "servir",
+      "gp": "sèvi"
+    },
+    {
+      "fr": "commander",
+      "gp": "komandé"
     }
   ]
 }

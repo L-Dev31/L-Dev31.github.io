@@ -403,7 +403,10 @@
   },
   {
     "fr": "un",
-    "gp": "yonn",
+    "gp": [
+      "yonn",
+      "on"
+    ],
     "type": "num"
   },
   {
@@ -847,16 +850,7 @@
       "kon sa"
     ],
     "fr": "comme",
-    "type": "misc",
-    "secondaire": true
-  },
-  {
-    "gp": [
-      "bésoin",
-      "bezwen"
-    ],
-    "fr": "avoir besoin",
-    "type": "misc",
+    "type": "conj",
     "secondaire": true
   },
   {
@@ -866,11 +860,6 @@
   },
   {
     "gp": "bò",
-    "fr": "près de",
-    "type": "prep"
-  },
-  {
-    "gp": "bo",
     "fr": "près de",
     "type": "prep"
   },
@@ -900,25 +889,7 @@
     "type": "conj"
   },
   {
-    "gp": [
-      "asi",
-      "asou"
-    ],
-    "fr": "sur",
-    "type": "prep"
-  },
-  {
-    "gp": "ba",
-    "fr": "à",
-    "type": "prep"
-  },
-  {
     "gp": "paski",
-    "fr": "parce que",
-    "type": "conj"
-  },
-  {
-    "gp": "paske",
     "fr": "parce que",
     "type": "conj"
   },
@@ -941,11 +912,6 @@
     "gp": "diz",
     "fr": "dix",
     "type": "num"
-  },
-  {
-    "gp": "adan",
-    "fr": "dans",
-    "type": "prep"
   },
   {
     "gp": "avè",
@@ -1308,31 +1274,11 @@
     "type": "expr"
   },
   {
-    "gp": "pa pwan kont",
-    "fr": "de rien",
-    "type": "expr"
-  },
-  {
-    "gp": "fè vit",
-    "fr": "dépêche-toi",
-    "type": "expr"
-  },
-  {
-    "gp": "a talè",
-    "fr": "à tout à l'heure",
-    "type": "expr"
-  },
-  {
     "gp": [
       "ban mwen",
       "ba mwen"
     ],
     "fr": "donne-moi",
-    "type": "expr"
-  },
-  {
-    "gp": "kité mwen",
-    "fr": "laisse-moi",
     "type": "expr"
   },
   {
@@ -1342,26 +1288,6 @@
     ],
     "fr": "pardon",
     "type": "interj"
-  },
-  {
-    "gp": "lapli ka tonbé",
-    "fr": "il pleut",
-    "type": "expr"
-  },
-  {
-    "gp": "i ka fè cho",
-    "fr": "il fait chaud",
-    "type": "expr"
-  },
-  {
-    "gp": "i ka fè frèt",
-    "fr": "il fait froid",
-    "type": "expr"
-  },
-  {
-    "gp": "pa pè",
-    "fr": "n'aie pas peur",
-    "type": "expr"
   },
   {
     "gp": [
@@ -1374,50 +1300,12 @@
     "type": "interj"
   },
   {
-    "gp": "sé sa lavi",
-    "fr": "c'est la vie",
-    "type": "expr"
-  },
-  {
-    "gp": "ala bèl bagay",
-    "fr": "comme c'est beau",
-    "type": "expr"
-  },
-  {
-    "gp": "ala chans",
-    "fr": "quelle chance",
-    "type": "expr"
-  },
-  {
-    "gp": "sa ki ka pasé",
-    "fr": "qu'est-ce qui se passe",
-    "type": "expr"
-  },
-  {
     "gp": [
       "bay kò-w fòs",
       "bay kò -w fòs"
     ],
     "fr": "bon courage",
     "type": "expr"
-  },
-  {
-    "gp": "pa pi mal",
-    "fr": "pas mal",
-    "type": "expr"
-  },
-  {
-    "gp": "bon nwit",
-    "fr": "bonne nuit",
-    "type": "interj"
-  },
-  {
-    "gp": [
-      "asi",
-      "asou"
-    ],
-    "fr": "sur",
-    "type": "prep"
   },
   {
     "fr": "je suis content",
@@ -1488,14 +1376,6 @@
     ],
     "gp": "pi mové",
     "type": "adj"
-  },
-  {
-    "fr": "pourquoi",
-    "gp": [
-      "pouki",
-      "poukisa"
-    ],
-    "type": "adv"
   },
   {
     "fr": "par exemple",
@@ -1648,11 +1528,6 @@
     "type": "expr"
   },
   {
-    "gp": "gadé sa",
-    "fr": "regarde ça",
-    "type": "expr"
-  },
-  {
     "gp": "rété la",
     "fr": "reste là",
     "type": "expr"
@@ -1785,7 +1660,7 @@
   {
     "gp": "ti punch",
     "fr": "petit punch",
-    "type": "nom"
+    "type": "misc"
   },
   {
     "gp": "vréman vré",
@@ -1842,5 +1717,334 @@
     "gp": "ta",
     "type": "pron",
     "secondaire": true
+  },
+  {
+    "fr": [
+      "celui-ci",
+      "celle-ci"
+    ],
+    "gp": "sila",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "celui-là",
+      "celle-là"
+    ],
+    "gp": "tala",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "ceux-ci",
+      "celles-ci"
+    ],
+    "gp": "séla",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "ceux-là",
+      "celles-là"
+    ],
+    "gp": "sétala",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "lui-même",
+      "elle-même"
+    ],
+    "gp": "li-menm",
+    "type": "misc"
+  },
+  {
+    "fr": [
+      "eux-mêmes",
+      "elles-mêmes"
+    ],
+    "gp": "yo-menm",
+    "type": "misc"
+  },
+  {
+    "fr": "moi-même",
+    "gp": "mwen-menm",
+    "type": "misc"
+  },
+  {
+    "fr": "toi-même",
+    "gp": "ou-menm",
+    "type": "misc"
+  },
+  {
+    "fr": "un peu",
+    "gp": "tibwen",
+    "type": "misc"
+  },
+  {
+    "fr": "hors de",
+    "gp": "andèwò a",
+    "type": "misc"
+  },
+  {
+    "fr": "en dehors de",
+    "gp": "andèwò a",
+    "type": "misc"
+  },
+  {
+    "fr": "les deux",
+    "gp": "lé dé",
+    "type": "expr"
+  },
+  {
+    "fr": "Même quand tu vois que tu dors",
+    "gp": "Menm lè-w vwè kè ou ka dòmi",
+    "type": "expr"
+  },
+  {
+    "fr": "si la prison n'est pas faite pour les chiens",
+    "gp": [
+      "si lajòl pa fèt pou chyen",
+      "si lajol pa fèt pou chyen"
+    ],
+    "type": "expr"
+  },
+  {
+    "fr": "sache que",
+    "gp": "sav kè",
+    "type": "expr"
+  },
+  {
+    "fr": "plus ils ont du pouvoir, plus ils sont malhonnêtes",
+    "gp": "Pi yo tini pouvwa pli yo malonèt",
+    "type": "expr"
+  },
+  {
+    "fr": "Ti Sélès",
+    "gp": "Ti Sélès",
+    "type": "expr"
+  },
+  {
+    "fr": "Ti Sélès leur dit",
+    "gp": "Ti sélès di yo",
+    "type": "expr"
+  },
+  {
+    "fr": "Ceux qui sont au pouvoir ont de l'argent",
+    "gp": "Sa ki o pouvwa ki ni money",
+    "type": "expr"
+  },
+  {
+    "fr": "ce qu'ils veulent",
+    "gp": "sa yo lé",
+    "type": "expr"
+  },
+  {
+    "fr": "tube",
+    "gp": [
+      "tib",
+      "Tib"
+    ],
+    "type": "misc"
+  },
+  {
+    "fr": "Colgat",
+    "gp": "kòlgat",
+    "type": "misc"
+  },
+  {
+    "fr": "je t'aime",
+    "gp": ["je t'aime", "je t aime"],
+    "type": "expr"
+  },
+  {
+    "fr": "c'est le syndrome de Stockholm",
+    "gp": ["sé syndrome", "sé syndrome de Stockholm"],
+    "type": "expr"
+  },
+  {
+    "fr": "comme un homme",
+    "gp": "kon nonm",
+    "type": "expr"
+  },
+  {
+    "fr": "sur le dos",
+    "gp": "si do",
+    "type": "expr"
+  },
+  {
+    "fr": "qu'ils ont faite",
+    "gp": "a yo fèt",
+    "type": "expr"
+  },
+  {
+    "fr": "des pauvres",
+    "gp": "a maléré",
+    "type": "expr"
+  },
+  {
+    "fr": "leur richesse",
+    "gp": "richès a yo",
+    "type": "expr"
+  },
+  {
+    "fr": "Ils s'associent avec",
+    "gp": "yo asosyé èvè",
+    "type": "expr"
+  },
+  {
+    "fr": "Toute la richesse",
+    "gp": "Tout richès",
+    "type": "expr"
+  },
+  {
+    "fr": "une bande de malfaiteurs",
+    "gp": "on band malfétè",
+    "type": "expr"
+  },
+  {
+    "fr": "une bande de voleurs",
+    "gp": "on band vòlè",
+    "type": "expr"
+  },
+  {
+    "fr": "une bande de connards",
+    "gp": "on band kouyonè",
+    "type": "expr"
+  },
+  {
+    "fr": "est le plus énervé",
+    "gp": "pi anrajé",
+    "type": "expr"
+  },
+  {
+    "fr": "mais alors",
+    "gp": "Mè alè",
+    "type": "expr"
+  },
+  {
+    "fr": "les mêmes",
+    "gp": "lé menm",
+    "type": "expr"
+  },
+  {
+    "fr": "il n'y a pas",
+    "gp": "pani",
+    "type": "expr"
+  },
+  {
+    "fr": "ne peuvent pas",
+    "gp": "pépa",
+    "type": "expr"
+  },
+  {
+    "fr": "courir se cacher",
+    "gp": "kouwi kaché",
+    "type": "expr"
+  },
+  {
+    "fr": "aucune pitié",
+    "gp": "pon pité",
+    "type": "expr"
+  },
+  {
+    "fr": "eux-mêmes",
+    "gp": "yo menm",
+    "type": "expr"
+  },
+  {
+    "fr": "au secours",
+    "gp": "soukou",
+    "type": "interj"
+  },
+  {
+    "fr": "te font payer",
+    "gp": "fèw péyé",
+    "type": "expr"
+  },
+  {
+    "fr": "ce que tu",
+    "gp": "sa-w",
+    "type": "expr"
+  },
+  {
+    "fr": "Tva par ci par là",
+    "gp": "Tva par ci par là",
+    "type": "expr"
+  },
+  {
+    "fr": "David",
+    "gp": ["David", "david"],
+    "type": "nom"
+  },
+  {
+    "fr": "Goliath",
+    "gp": ["Goliath", "goliath"],
+    "type": "nom"
+  },
+  {
+    "fr": "Kobay Bay",
+    "gp": ["Kobay Bay", "kobay bay"],
+    "type": "nom"
+  },
+  {
+    "fr": "Capesterre",
+    "gp": ["Capèstè", "kapèstè"],
+    "type": "lieu"
+  },
+  {
+    "fr": "même pour les",
+    "gp": "menm é lé",
+    "type": "expr"
+  },
+  {
+    "fr": "n'as pas acheté",
+    "gp": "pa achté",
+    "type": "expr"
+  },
+  {
+    "fr": "n'as pas commandé",
+    "gp": "pa komandé",
+    "type": "expr"
+  },
+  {
+    "fr": "Capesterre",
+    "gp": "kapèstè",
+    "type": "lieu"
+  },
+  {
+    "fr": "well",
+    "gp": "well",
+    "type": "interj"
+  },
+  {
+    "fr": "Ô",
+    "gp": "Ô",
+    "type": "interj"
+  },
+  {
+    "fr": "woy",
+    "gp": "woy",
+    "type": "interj"
+  },
+  {
+    "fr": ["âgé", "âgée", "âgées"],
+    "gp": ["âgé", "âgée", "âgées"],
+    "type": "adj"
+  },
+  {
+    "fr": "Anmwé",
+    "gp": "Anmwé",
+    "type": "interj"
+  },
+  {
+    "fr": "kawmòs",
+    "gp": "kawmòs",
+    "type": "interj"
+  },
+  {
+    "fr": "Ka ka kawmòs",
+    "gp": "Ka ka kawmòs",
+    "type": "expr"
   }
 ]

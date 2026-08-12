@@ -4,7 +4,12 @@
     "gp": "kayad"
   },
   {
-    "fr": ["truc", "choses", "machin", "bidule"],
+    "fr": [
+      "truc",
+      "choses",
+      "machin",
+      "bidule"
+    ],
     "gp": "bitin"
   },
   {
@@ -44,7 +49,8 @@
   },
   {
     "fr": "Abymes",
-    "gp": "Zabim"
+    "gp": "Zabim",
+    "type": "lieu"
   },
   {
     "fr": "abâtardissement",
@@ -148,7 +154,8 @@
   },
   {
     "fr": "Afghanistan",
-    "gp": "Afghanistan"
+    "gp": "Afghanistan",
+    "type": "lieu"
   },
   {
     "fr": "afin",
@@ -157,11 +164,13 @@
   },
   {
     "fr": "Africain",
-    "gp": "Zafritchen"
+    "gp": "Zafritchen",
+    "type": "lieu"
   },
   {
     "fr": "Afrique du Sud",
-    "gp": "Afrike di si"
+    "gp": "Afrike di si",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -208,7 +217,8 @@
   },
   {
     "fr": "Ahvenanmaa",
-    "gp": "Ahvenanma"
+    "gp": "Ahvenanma",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -223,7 +233,7 @@
   },
   {
     "fr": "aiguille",
-    "gp": "zédjui"
+    "gp": "zédjwi"
   },
   {
     "fr": "aiguillon",
@@ -259,7 +269,8 @@
   },
   {
     "fr": "Albanie",
-    "gp": "Albanie"
+    "gp": "Albanie",
+    "type": "lieu"
   },
   {
     "fr": "alchimie",
@@ -279,7 +290,8 @@
   },
   {
     "fr": "Algérie",
-    "gp": "Laljéri"
+    "gp": "Laljéri",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -301,7 +313,8 @@
   },
   {
     "fr": "Allemagne",
-    "gp": "Lalmagn"
+    "gp": "Lalmagn",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -440,7 +453,8 @@
   },
   {
     "fr": "Andorre",
-    "gp": "Andore"
+    "gp": "Andore",
+    "type": "lieu"
   },
   {
     "fr": "andouille",
@@ -448,7 +462,8 @@
   },
   {
     "fr": "Angola",
-    "gp": "Angola"
+    "gp": "Angola",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -464,7 +479,8 @@
   },
   {
     "fr": "Anguilla",
-    "gp": "Anjila"
+    "gp": "Anjila",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -505,7 +521,8 @@
   },
   {
     "fr": "Anse-Bertrand",
-    "gp": "Lansbètran"
+    "gp": "Lansbètran",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -523,11 +540,13 @@
   },
   {
     "fr": "Antarctique",
-    "gp": "Antarktike"
+    "gp": "Antarktike",
+    "type": "lieu"
   },
   {
     "fr": "Antigua-et-Barbuda",
-    "gp": "Antiga-et-barbida"
+    "gp": "Antiga-et-barbida",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -566,7 +585,8 @@
   },
   {
     "fr": "Arabie Saoudite",
-    "gp": "Arabie saoidite"
+    "gp": "Arabie saoidite",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -608,7 +628,10 @@
       "thune",
       "oseille"
     ],
-    "gp": "lajan"
+    "gp": [
+      "lajan",
+      "money"
+    ]
   },
   {
     "fr": [
@@ -626,11 +649,13 @@
   },
   {
     "fr": "Argentine",
-    "gp": "Larjantin"
+    "gp": "Larjantin",
+    "type": "lieu"
   },
   {
     "fr": "Arménie",
-    "gp": "Arménie"
+    "gp": "Arménie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -663,7 +688,8 @@
   },
   {
     "fr": "Aruba",
-    "gp": "Ariba"
+    "gp": "Ariba",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -734,7 +760,8 @@
   },
   {
     "fr": "Australie",
-    "gp": "Lostrali"
+    "gp": "Lostrali",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -752,7 +779,8 @@
   },
   {
     "fr": "Autriche",
-    "gp": "Aitrikhe"
+    "gp": "Aitrikhe",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -773,7 +801,7 @@
       "autruche",
       "autruches"
     ],
-    "gp": "otruch",
+    "gp": "otrich",
     "genre": "f"
   },
   {
@@ -797,7 +825,8 @@
   },
   {
     "fr": "Azerbaïdjan",
-    "gp": "Azerbaïdjan"
+    "gp": "Azerbaïdjan",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -828,7 +857,8 @@
   },
   {
     "fr": "Bahamas",
-    "gp": "Bahamas"
+    "gp": "Bahamas",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -846,7 +876,8 @@
   },
   {
     "fr": "Bahreïn",
-    "gp": "Bahreïn"
+    "gp": "Bahreïn",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -864,11 +895,13 @@
   },
   {
     "fr": "Baie-Mahault",
-    "gp": "Bémaho"
+    "gp": "Bémaho",
+    "type": "lieu"
   },
   {
     "fr": "Baillif",
-    "gp": "Bayif"
+    "gp": "Bayif",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -947,11 +980,13 @@
   },
   {
     "fr": "Bangladesh",
-    "gp": "Bangladesh"
+    "gp": "Bangladesh",
+    "type": "lieu"
   },
   {
     "fr": "Barbade",
-    "gp": "Babad"
+    "gp": "Babad",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1003,7 +1038,8 @@
   },
   {
     "fr": "Basse-Terre",
-    "gp": "Bastè"
+    "gp": "Bastè",
+    "type": "lieu"
   },
   {
     "fr": "bateau",
@@ -1051,11 +1087,13 @@
   },
   {
     "fr": "Belgique",
-    "gp": "Bèljik"
+    "gp": "Bèljik",
+    "type": "lieu"
   },
   {
     "fr": "Belize",
-    "gp": "Belize"
+    "gp": "Belize",
+    "type": "lieu"
   },
   {
     "fr": "belle-mère",
@@ -1072,7 +1110,8 @@
   },
   {
     "fr": "Bermudes",
-    "gp": "Bermide"
+    "gp": "Bermide",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1115,7 +1154,8 @@
   },
   {
     "fr": "Bhoutan",
-    "gp": "Bhoitan"
+    "gp": "Bhoitan",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1153,7 +1193,8 @@
   },
   {
     "fr": "Birmanie",
-    "gp": "Birmanie"
+    "gp": "Birmanie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1186,7 +1227,8 @@
   },
   {
     "fr": "Biélorussie",
-    "gp": "Biélorisie"
+    "gp": "Biélorisie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1263,7 +1305,8 @@
   },
   {
     "fr": "Bolivie",
-    "gp": "Bolivi"
+    "gp": "Bolivi",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1304,7 +1347,8 @@
   },
   {
     "fr": "Bosnie-Herzégovine",
-    "gp": "Bosnie-herzégovine"
+    "gp": "Bosnie-herzégovine",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1322,7 +1366,8 @@
   },
   {
     "fr": "Botswana",
-    "gp": "Botswana"
+    "gp": "Botswana",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1378,7 +1423,8 @@
   },
   {
     "fr": "Bouillante",
-    "gp": "Bouyant"
+    "gp": "Bouyant",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1465,7 +1511,8 @@
   },
   {
     "fr": "Brunei",
-    "gp": "Brinei"
+    "gp": "Brinei",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1483,7 +1530,8 @@
   },
   {
     "fr": "Brésil",
-    "gp": "Brezil"
+    "gp": "Brezil",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1515,11 +1563,13 @@
   },
   {
     "fr": "Bulgarie",
-    "gp": "Bilgarie"
+    "gp": "Bilgarie",
+    "type": "lieu"
   },
   {
     "fr": "Burkina Faso",
-    "gp": "Birkina faso"
+    "gp": "Birkina faso",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1549,7 +1599,8 @@
   },
   {
     "fr": "Burundi",
-    "gp": "Birendi"
+    "gp": "Birendi",
+    "type": "lieu"
   },
   {
     "fr": "bus",
@@ -1596,7 +1647,8 @@
   },
   {
     "fr": "Bénin",
-    "gp": "Bénen"
+    "gp": "Bénen",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1692,7 +1744,8 @@
   },
   {
     "fr": "Cambodge",
-    "gp": "Kanbodje"
+    "gp": "Kanbodje",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1710,7 +1763,8 @@
   },
   {
     "fr": "Cameroun",
-    "gp": "Kamewoun"
+    "gp": "Kamewoun",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1737,7 +1791,8 @@
   },
   {
     "fr": "Canada",
-    "gp": "Kanada"
+    "gp": "Kanada",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -1810,11 +1865,13 @@
   },
   {
     "fr": "Capesterre-Belle-Eau",
-    "gp": "Kapestè"
+    "gp": "Kapestè",
+    "type": "lieu"
   },
   {
     "fr": "Capesterre-de-Marie-Galante",
-    "gp": "Kapestè Marigalant"
+    "gp": "Kapestè Marigalant",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -2166,7 +2223,8 @@
   },
   {
     "fr": "Chili",
-    "gp": "Chili"
+    "gp": "Chili",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -2192,7 +2250,8 @@
   },
   {
     "fr": "Chine",
-    "gp": "Lachin"
+    "gp": "Lachin",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -2269,7 +2328,8 @@
   },
   {
     "fr": "Chypre",
-    "gp": "Khipre"
+    "gp": "Khipre",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -2365,7 +2425,8 @@
   },
   {
     "fr": "Cité du Vatican",
-    "gp": "Sité di vatikan"
+    "gp": "Sité di vatikan",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -2476,7 +2537,8 @@
   },
   {
     "fr": "Colombie",
-    "gp": "Kolonbi"
+    "gp": "Kolonbi",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -2548,7 +2610,8 @@
   },
   {
     "fr": "Comores",
-    "gp": "Komore"
+    "gp": "Komore",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -2599,11 +2662,13 @@
   },
   {
     "fr": "Congo",
-    "gp": "Kongo"
+    "gp": "Kongo",
+    "type": "lieu"
   },
   {
     "fr": "Congo (Rép. dém.)",
-    "gp": "Kongo"
+    "gp": "Kongo",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -2733,15 +2798,18 @@
   },
   {
     "fr": "Corée du Nord",
-    "gp": "Korée di nor"
+    "gp": "Korée di nor",
+    "type": "lieu"
   },
   {
     "fr": "Corée du Sud",
-    "gp": "Korée di si"
+    "gp": "Korée di si",
+    "type": "lieu"
   },
   {
     "fr": "Costa Rica",
-    "gp": "Kosta rika"
+    "gp": "Kosta rika",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -2957,11 +3025,12 @@
   },
   {
     "fr": "Croatie",
-    "gp": "Kroatie"
+    "gp": "Kroatie",
+    "type": "lieu"
   },
   {
     "fr": "crochu",
-    "gp": "crochi"
+    "gp": "kwochi"
   },
   {
     "fr": [
@@ -3012,7 +3081,8 @@
   },
   {
     "fr": "Cuba",
-    "gp": "Kiba"
+    "gp": "Kiba",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -3073,7 +3143,8 @@
   },
   {
     "fr": "Curaçao",
-    "gp": "Kiraçao"
+    "gp": "Kiraçao",
+    "type": "lieu"
   },
   {
     "fr": "curiosité",
@@ -3102,7 +3173,8 @@
   },
   {
     "fr": "Côte d'Ivoire",
-    "gp": "Kôte d'ivoire"
+    "gp": "Kôte d'ivoire",
+    "type": "lieu"
   },
   {
     "fr": "cœur",
@@ -3126,7 +3198,8 @@
   },
   {
     "fr": "Danemark",
-    "gp": "Danemark"
+    "gp": "Danemark",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -3195,7 +3268,8 @@
   },
   {
     "fr": "Deshaies",
-    "gp": "Déhé"
+    "gp": "Déhé",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -3283,7 +3357,8 @@
   },
   {
     "fr": "Djibouti",
-    "gp": "Djiboiti"
+    "gp": "Djiboiti",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -3366,7 +3441,8 @@
   },
   {
     "fr": "Dominique",
-    "gp": "Donmnik"
+    "gp": "Donmnik",
+    "type": "lieu"
   },
   {
     "fr": "dorlis",
@@ -3463,7 +3539,8 @@
   },
   {
     "fr": "Désirade",
-    "gp": "Lazirad"
+    "gp": "Lazirad",
+    "type": "lieu"
   },
   {
     "fr": "détour",
@@ -3633,7 +3710,8 @@
   },
   {
     "fr": "Estonie",
-    "gp": "Estonie"
+    "gp": "Estonie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -3651,7 +3729,8 @@
   },
   {
     "fr": "Eswatini",
-    "gp": "Eswatini"
+    "gp": "Eswatini",
+    "type": "lieu"
   },
   {
     "fr": "et toi",
@@ -3841,7 +3920,8 @@
   },
   {
     "fr": "Fidji",
-    "gp": "Fidji"
+    "gp": "Fidji",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -3906,7 +3986,8 @@
   },
   {
     "fr": "Finlande",
-    "gp": "Fenlande"
+    "gp": "Fenlande",
+    "type": "lieu"
   },
   {
     "fr": "fièvre",
@@ -4055,11 +4136,13 @@
   },
   {
     "fr": "France",
-    "gp": "Lafrans"
+    "gp": "Lafrans",
+    "type": "lieu"
   },
   {
     "fr": "Paris",
-    "gp": "Pari"
+    "gp": "Pari",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4163,7 +4246,8 @@
   },
   {
     "fr": "Gabon",
-    "gp": "Gabon"
+    "gp": "Gabon",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4191,7 +4275,8 @@
   },
   {
     "fr": "Gambie",
-    "gp": "Ganbie"
+    "gp": "Ganbie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4284,7 +4369,8 @@
   },
   {
     "fr": "Ghana",
-    "gp": "Ghana"
+    "gp": "Ghana",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4302,7 +4388,8 @@
   },
   {
     "fr": "Gibraltar",
-    "gp": "Jibraltar"
+    "gp": "Jibraltar",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4360,11 +4447,13 @@
   },
   {
     "fr": "Gosier",
-    "gp": "Gozyé"
+    "gp": "Gozyé",
+    "type": "lieu"
   },
   {
     "fr": "Gourbeyre",
-    "gp": "Goubè"
+    "gp": "Goubè",
+    "type": "lieu"
   },
   {
     "fr": "goutte-à-goutte",
@@ -4387,7 +4476,8 @@
   },
   {
     "fr": "Grand-Bourg",
-    "gp": "Granbou"
+    "gp": "Granbou",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4491,7 +4581,8 @@
   },
   {
     "fr": "Groenland",
-    "gp": "Groanlan"
+    "gp": "Groanlan",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4516,7 +4607,8 @@
   },
   {
     "fr": "Grèce",
-    "gp": "Grès"
+    "gp": "Grès",
+    "type": "lieu"
   },
   {
     "fr": "grève",
@@ -4546,11 +4638,13 @@
   },
   {
     "fr": "Guam",
-    "gp": "Gan"
+    "gp": "Gan",
+    "type": "lieu"
   },
   {
     "fr": "Guatemala",
-    "gp": "Gatemala"
+    "gp": "Gatemala",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4564,7 +4658,8 @@
   },
   {
     "fr": "Guernesey",
-    "gp": "Jernesei"
+    "gp": "Jernesei",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4584,15 +4679,18 @@
   },
   {
     "fr": "Guinée",
-    "gp": "Djinen"
+    "gp": "Djinen",
+    "type": "lieu"
   },
   {
     "fr": "Guinée équatoriale",
-    "gp": "Jinée ékatoriale"
+    "gp": "Jinée ékatoriale",
+    "type": "lieu"
   },
   {
     "fr": "Guinée-Bissau",
-    "gp": "Jinée-bisai"
+    "gp": "Jinée-bisai",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4618,7 +4716,8 @@
   },
   {
     "fr": "Guyana",
-    "gp": "Jiana"
+    "gp": "Jiana",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4634,7 +4733,8 @@
   },
   {
     "fr": "Guyane",
-    "gp": "Gwiyann"
+    "gp": "Gwiyann",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4679,11 +4779,13 @@
   },
   {
     "fr": "Géorgie",
-    "gp": "Géorjie"
+    "gp": "Géorjie",
+    "type": "lieu"
   },
   {
     "fr": "Géorgie du Sud-et-les Îles Sandwich du Sud",
-    "gp": "Géorjie di sid-et-les îles sandwikh di si"
+    "gp": "Géorjie di sid-et-les îles sandwikh di si",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4780,7 +4882,8 @@
   },
   {
     "fr": "Haïti",
-    "gp": "Ayiti"
+    "gp": "Ayiti",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4854,7 +4957,8 @@
   },
   {
     "fr": "Honduras",
-    "gp": "Hondira"
+    "gp": "Hondira",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4872,7 +4976,8 @@
   },
   {
     "fr": "Hong Kong",
-    "gp": "Hong kong"
+    "gp": "Hong kong",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -4888,7 +4993,8 @@
   },
   {
     "fr": "Hongrie",
-    "gp": "Hongrie"
+    "gp": "Hongrie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5014,7 +5120,8 @@
   },
   {
     "fr": "Inde",
-    "gp": "Lend"
+    "gp": "Lend",
+    "type": "lieu"
   },
   {
     "fr": "indication",
@@ -5048,7 +5155,8 @@
   },
   {
     "fr": "Indonésie",
-    "gp": "Endonésie"
+    "gp": "Endonésie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5108,7 +5216,8 @@
   },
   {
     "fr": "Irak",
-    "gp": "Irak"
+    "gp": "Irak",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5126,7 +5235,8 @@
   },
   {
     "fr": "Iran",
-    "gp": "Iran"
+    "gp": "Iran",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5156,7 +5266,8 @@
   },
   {
     "fr": "Irlande",
-    "gp": "Irlande"
+    "gp": "Irlande",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5172,7 +5283,8 @@
   },
   {
     "fr": "Islande",
-    "gp": "Islande"
+    "gp": "Islande",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5190,11 +5302,13 @@
   },
   {
     "fr": "Israël",
-    "gp": "Israël"
+    "gp": "Israël",
+    "type": "lieu"
   },
   {
     "fr": "Italie",
-    "gp": "Litali"
+    "gp": "Litali",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5268,7 +5382,8 @@
   },
   {
     "fr": "Jamaïque",
-    "gp": "Janmayik"
+    "gp": "Janmayik",
+    "type": "lieu"
   },
   {
     "fr": "jambe",
@@ -5277,7 +5392,8 @@
   },
   {
     "fr": "Japon",
-    "gp": "Japon"
+    "gp": "Japon",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5348,7 +5464,8 @@
   },
   {
     "fr": "Jersey",
-    "gp": "Jersei"
+    "gp": "Jersei",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5379,7 +5496,8 @@
   },
   {
     "fr": "Jordanie",
-    "gp": "Jordanie"
+    "gp": "Jordanie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5432,7 +5550,7 @@
   },
   {
     "fr": "jèdi",
-    "gp": "jeudi"
+    "gp": "jédi"
   },
   {
     "fr": [
@@ -5454,7 +5572,8 @@
   },
   {
     "fr": "Kazakhstan",
-    "gp": "Kazakhstan"
+    "gp": "Kazakhstan",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5470,7 +5589,8 @@
   },
   {
     "fr": "Kenya",
-    "gp": "Kenia"
+    "gp": "Kenia",
+    "type": "lieu"
   },
   {
     "fr": "kimono",
@@ -5488,11 +5608,13 @@
   },
   {
     "fr": "Kirghizistan",
-    "gp": "Kirghizistan"
+    "gp": "Kirghizistan",
+    "type": "lieu"
   },
   {
     "fr": "Kiribati",
-    "gp": "Kiribati"
+    "gp": "Kiribati",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5550,11 +5672,13 @@
   },
   {
     "fr": "Kosovo",
-    "gp": "Kosovo"
+    "gp": "Kosovo",
+    "type": "lieu"
   },
   {
     "fr": "Koweït",
-    "gp": "Koweï"
+    "gp": "Koweï",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5590,7 +5714,8 @@
   },
   {
     "fr": "La Désirade",
-    "gp": "Lazirad"
+    "gp": "Lazirad",
+    "type": "lieu"
   },
   {
     "fr": "la mort",
@@ -5632,7 +5757,8 @@
   },
   {
     "fr": "Lamentin",
-    "gp": "Lamanten"
+    "gp": "Lamanten",
+    "type": "lieu"
   },
   {
     "fr": "langue",
@@ -5640,7 +5766,8 @@
   },
   {
     "fr": "Laos",
-    "gp": "Lao"
+    "gp": "Lao",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5688,11 +5815,13 @@
   },
   {
     "fr": "Le Gosier",
-    "gp": "Gozyé"
+    "gp": "Gozyé",
+    "type": "lieu"
   },
   {
     "fr": "Le Moule",
-    "gp": "Moul"
+    "gp": "Moul",
+    "type": "lieu"
   },
   {
     "fr": "lent",
@@ -5708,7 +5837,8 @@
   },
   {
     "fr": "Les Abymes",
-    "gp": "Zabim"
+    "gp": "Zabim",
+    "type": "lieu"
   },
   {
     "fr": "les femmes sont des diablesses",
@@ -5720,7 +5850,8 @@
   },
   {
     "fr": "Lesotho",
-    "gp": "Lesotho"
+    "gp": "Lesotho",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5738,7 +5869,8 @@
   },
   {
     "fr": "Lettonie",
-    "gp": "Letonie"
+    "gp": "Letonie",
+    "type": "lieu"
   },
   {
     "fr": "lettre",
@@ -5748,7 +5880,8 @@
   },
   {
     "fr": "Liban",
-    "gp": "Liban"
+    "gp": "Liban",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5772,7 +5905,8 @@
   },
   {
     "fr": "Liberia",
-    "gp": "Liberia"
+    "gp": "Liberia",
+    "type": "lieu"
   },
   {
     "fr": "liberté",
@@ -5780,7 +5914,8 @@
   },
   {
     "fr": "Libye",
-    "gp": "Libie"
+    "gp": "Libie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5812,7 +5947,8 @@
   },
   {
     "fr": "Liechtenstein",
-    "gp": "Liekhtansten"
+    "gp": "Liekhtansten",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5872,7 +6008,8 @@
   },
   {
     "fr": "Lituanie",
-    "gp": "Litianie"
+    "gp": "Litianie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -5947,7 +6084,8 @@
   },
   {
     "fr": "Luxembourg",
-    "gp": "Lixanboirg"
+    "gp": "Lixanboirg",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6014,7 +6152,8 @@
   },
   {
     "fr": "Macao",
-    "gp": "Makao"
+    "gp": "Makao",
+    "type": "lieu"
   },
   {
     "fr": "machine à café",
@@ -6026,7 +6165,8 @@
   },
   {
     "fr": "Macédoine du Nord",
-    "gp": "Makédoine di nor"
+    "gp": "Makédoine di nor",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6044,7 +6184,8 @@
   },
   {
     "fr": "Madagascar",
-    "gp": "Madagaskar"
+    "gp": "Madagaskar",
+    "type": "lieu"
   },
   {
     "fr": "madame",
@@ -6093,7 +6234,8 @@
   },
   {
     "fr": "Malaisie",
-    "gp": "Malaisie"
+    "gp": "Malaisie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6111,7 +6253,8 @@
   },
   {
     "fr": "Malawi",
-    "gp": "Malawi"
+    "gp": "Malawi",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6129,7 +6272,8 @@
   },
   {
     "fr": "Maldives",
-    "gp": "Maldive"
+    "gp": "Maldive",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6161,7 +6305,8 @@
   },
   {
     "fr": "Mali",
-    "gp": "Mali"
+    "gp": "Mali",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6205,7 +6350,8 @@
   },
   {
     "fr": "Malte",
-    "gp": "Malte"
+    "gp": "Malte",
+    "type": "lieu"
   },
   {
     "fr": "malédiction",
@@ -6312,7 +6458,8 @@
   },
   {
     "fr": "Maroc",
-    "gp": "Mawòk"
+    "gp": "Mawòk",
+    "type": "lieu"
   },
   {
     "fr": "marocain",
@@ -6366,7 +6513,8 @@
   },
   {
     "fr": "Martinique",
-    "gp": "Matinik"
+    "gp": "Matinik",
+    "type": "lieu"
   },
   {
     "fr": "massue",
@@ -6416,7 +6564,8 @@
   },
   {
     "fr": "Mauritanie",
-    "gp": "Mairitanie"
+    "gp": "Mairitanie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6434,7 +6583,8 @@
   },
   {
     "fr": "Mayotte",
-    "gp": "Maiote"
+    "gp": "Maiote",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6526,11 +6676,13 @@
   },
   {
     "fr": "Mexique",
-    "gp": "Meksik"
+    "gp": "Meksik",
+    "type": "lieu"
   },
   {
     "fr": "Micronésie",
-    "gp": "Mikronésie"
+    "gp": "Mikronésie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6618,7 +6770,8 @@
   },
   {
     "fr": "Moldavie",
-    "gp": "Moldavie"
+    "gp": "Moldavie",
+    "type": "lieu"
   },
   {
     "fr": "moment",
@@ -6626,7 +6779,8 @@
   },
   {
     "fr": "Monaco",
-    "gp": "Monako"
+    "gp": "Monako",
+    "type": "lieu"
   },
   {
     "fr": "monaie",
@@ -6652,7 +6806,8 @@
   },
   {
     "fr": "Mongolie",
-    "gp": "Mongolie"
+    "gp": "Mongolie",
+    "type": "lieu"
   },
   {
     "fr": "monsieur",
@@ -6677,7 +6832,8 @@
   },
   {
     "fr": "Montserrat",
-    "gp": "Montsera"
+    "gp": "Montsera",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6709,7 +6865,8 @@
   },
   {
     "fr": "Monténégro",
-    "gp": "Monténégro"
+    "gp": "Monténégro",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6723,7 +6880,8 @@
   },
   {
     "fr": "Morne-à-l'Eau",
-    "gp": "Mòn-a-dlo"
+    "gp": "Mòn-a-dlo",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6767,7 +6925,8 @@
   },
   {
     "fr": "Moule",
-    "gp": "Moul"
+    "gp": "Moul",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6805,7 +6964,8 @@
   },
   {
     "fr": "Mozambique",
-    "gp": "Mozanbike"
+    "gp": "Mozanbike",
+    "type": "lieu"
   },
   {
     "fr": "mulet",
@@ -6894,7 +7054,8 @@
   },
   {
     "fr": "Namibie",
-    "gp": "Namibie"
+    "gp": "Namibie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6912,7 +7073,8 @@
   },
   {
     "fr": "Nauru",
-    "gp": "Nairi"
+    "gp": "Nairi",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6959,7 +7121,8 @@
   },
   {
     "fr": "Nicaragua",
-    "gp": "Nikaraga"
+    "gp": "Nikaraga",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -6977,11 +7140,13 @@
   },
   {
     "fr": "Niger",
-    "gp": "Nijer"
+    "gp": "Nijer",
+    "type": "lieu"
   },
   {
     "fr": "Nigéria",
-    "gp": "Nigéria"
+    "gp": "Nigéria",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7017,7 +7182,8 @@
   },
   {
     "fr": "Niue",
-    "gp": "Nie"
+    "gp": "Nie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7079,7 +7245,8 @@
   },
   {
     "fr": "Norvège",
-    "gp": "Norvèje"
+    "gp": "Norvèje",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7105,11 +7272,13 @@
   },
   {
     "fr": "Nouvelle-Calédonie",
-    "gp": "Noivele-kalédonie"
+    "gp": "Noivele-kalédonie",
+    "type": "lieu"
   },
   {
     "fr": "Nouvelle-Zélande",
-    "gp": "Noivele-zélande"
+    "gp": "Noivele-zélande",
+    "type": "lieu"
   },
   {
     "fr": "Noël",
@@ -7174,7 +7343,8 @@
   },
   {
     "fr": "Népal",
-    "gp": "Népal"
+    "gp": "Népal",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7238,7 +7408,8 @@
   },
   {
     "fr": "Oman",
-    "gp": "Oman"
+    "gp": "Oman",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7330,7 +7501,8 @@
   },
   {
     "fr": "Ouganda",
-    "gp": "Oiganda"
+    "gp": "Oiganda",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7365,7 +7537,8 @@
   },
   {
     "fr": "Ouzbékistan",
-    "gp": "Oizbékistan"
+    "gp": "Oizbékistan",
+    "type": "lieu"
   },
   {
     "fr": "Où vas-tu",
@@ -7378,7 +7551,8 @@
   },
   {
     "fr": "Pakistan",
-    "gp": "Pakistan"
+    "gp": "Pakistan",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7394,11 +7568,13 @@
   },
   {
     "fr": "Palaos (Palau)",
-    "gp": "Palaos (palai)"
+    "gp": "Palaos (palai)",
+    "type": "lieu"
   },
   {
     "fr": "Palestine",
-    "gp": "Palestine"
+    "gp": "Palestine",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7446,7 +7622,8 @@
   },
   {
     "fr": "Panama",
-    "gp": "Panama"
+    "gp": "Panama",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7524,7 +7701,8 @@
   },
   {
     "fr": "Papouasie-Nouvelle-Guinée",
-    "gp": "Papoiasie-noivele-jinée"
+    "gp": "Papoiasie-noivele-jinée",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7550,7 +7728,8 @@
   },
   {
     "fr": "Paraguay",
-    "gp": "Paragai"
+    "gp": "Paragai",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7632,11 +7811,13 @@
   },
   {
     "fr": "Pays-Bas",
-    "gp": "Pais-ba"
+    "gp": "Pais-ba",
+    "type": "lieu"
   },
   {
     "fr": "Pays-Bas caribéens",
-    "gp": "Pais-bas karibéian"
+    "gp": "Pais-bas karibéian",
+    "type": "lieu"
   },
   {
     "fr": "peau",
@@ -7721,11 +7902,13 @@
   },
   {
     "fr": "Petit-Bourg",
-    "gp": "Tibou"
+    "gp": "Tibou",
+    "type": "lieu"
   },
   {
     "fr": "Petit-Canal",
-    "gp": "Kannal"
+    "gp": "Kannal",
+    "type": "lieu"
   },
   {
     "fr": "petite fille",
@@ -7778,7 +7961,8 @@
   },
   {
     "fr": "Philippines",
-    "gp": "Filipine"
+    "gp": "Filipine",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7939,7 +8123,8 @@
   },
   {
     "fr": "Pointe-Noire",
-    "gp": "Pwentnwa"
+    "gp": "Pwentnwa",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -7948,7 +8133,8 @@
       "Pointe a Pitre",
       "Pointe-a-Pitre"
     ],
-    "gp": "Lapwent"
+    "gp": "Lapwent",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8014,7 +8200,8 @@
   },
   {
     "fr": "Pologne",
-    "gp": "Pologne"
+    "gp": "Pologne",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8034,7 +8221,8 @@
   },
   {
     "fr": "Polynésie française",
-    "gp": "Polinésie françé"
+    "gp": "Polinésie françé",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8080,7 +8268,8 @@
   },
   {
     "fr": "Port-Louis",
-    "gp": "Pòlo"
+    "gp": "Pòlo",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8100,7 +8289,8 @@
   },
   {
     "fr": "Porto Rico",
-    "gp": "Porto riko"
+    "gp": "Porto riko",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8130,7 +8320,8 @@
   },
   {
     "fr": "Portugal",
-    "gp": "Pòtigal"
+    "gp": "Pòtigal",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8355,7 +8546,8 @@
   },
   {
     "fr": "Pérou",
-    "gp": "Pérou"
+    "gp": "Pérou",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8391,7 +8583,8 @@
   },
   {
     "fr": "Qatar",
-    "gp": "Qatar"
+    "gp": "Qatar",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8675,7 +8868,8 @@
   },
   {
     "fr": "Roumanie",
-    "gp": "Roimanie"
+    "gp": "Roimanie",
+    "type": "lieu"
   },
   {
     "fr": "route",
@@ -8718,11 +8912,13 @@
   },
   {
     "fr": "Russie",
-    "gp": "Risi"
+    "gp": "Risi",
+    "type": "lieu"
   },
   {
     "fr": "Rwanda",
-    "gp": "Rwanda"
+    "gp": "Rwanda",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8754,16 +8950,19 @@
   },
   {
     "fr": "République centrafricaine",
-    "gp": "Répiblike santrafrisan"
+    "gp": "Répiblike santrafrisan",
+    "type": "lieu"
   },
   {
     "fr": "République dominicaine",
-    "gp": "Repiblik dominiken"
+    "gp": "Repiblik dominiken",
+    "type": "lieu"
   },
   {
     "fr": "Réunion",
     "gp": "Réinion",
-    "genre": "f"
+    "genre": "f",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8787,27 +8986,33 @@
   },
   {
     "fr": "Sahara Occidental",
-    "gp": "Sahara osidantal"
+    "gp": "Sahara osidantal",
+    "type": "lieu"
   },
   {
     "fr": "Saint-Barthélemy",
-    "gp": "Saent-barthélemi"
+    "gp": "Saent-barthélemi",
+    "type": "lieu"
   },
   {
     "fr": "Saint-Christophe-et-Niévès",
-    "gp": "Saent-khristofe-et-niévè"
+    "gp": "Saent-khristofe-et-niévè",
+    "type": "lieu"
   },
   {
     "fr": "Saint-Claude",
-    "gp": "Senklòd"
+    "gp": "Senklòd",
+    "type": "lieu"
   },
   {
     "fr": "Saint-François",
-    "gp": "Senfwanswa"
+    "gp": "Senfwanswa",
+    "type": "lieu"
   },
   {
     "fr": "Saint-Louis",
-    "gp": "Senlwi"
+    "gp": "Senlwi",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8825,7 +9030,8 @@
   },
   {
     "fr": "Saint-Marin",
-    "gp": "Saent-maren"
+    "gp": "Saent-maren",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8841,7 +9047,8 @@
   },
   {
     "fr": "Saint-Martin",
-    "gp": "Saent-marten"
+    "gp": "Saent-marten",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8869,19 +9076,23 @@
   },
   {
     "fr": "Saint-Pierre-et-Miquelon",
-    "gp": "Saent-piere-et-mikelon"
+    "gp": "Saent-piere-et-mikelon",
+    "type": "lieu"
   },
   {
     "fr": "Saint-Vincent-et-les-Grenadines",
-    "gp": "Saent-vensant-et-les-grenadine"
+    "gp": "Saent-vensant-et-les-grenadine",
+    "type": "lieu"
   },
   {
     "fr": "Sainte-Anne",
-    "gp": "Sentann"
+    "gp": "Sentann",
+    "type": "lieu"
   },
   {
     "fr": "Sainte-Hélène, Ascension et Tristan da Cunha",
-    "gp": "Saente-hélène, asansion et tristan da kenha"
+    "gp": "Saente-hélène, asansion et tristan da kenha",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8897,11 +9108,13 @@
   },
   {
     "fr": "Sainte-Lucie",
-    "gp": "Sentlisi"
+    "gp": "Sentlisi",
+    "type": "lieu"
   },
   {
     "fr": "Sainte-Rose",
-    "gp": "Sentwòz"
+    "gp": "Sentwòz",
+    "type": "lieu"
   },
   {
     "fr": "saison",
@@ -8947,7 +9160,8 @@
   },
   {
     "fr": "Salvador",
-    "gp": "Salvador"
+    "gp": "Salvador",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -8969,11 +9183,13 @@
   },
   {
     "fr": "Samoa",
-    "gp": "Samoa"
+    "gp": "Samoa",
+    "type": "lieu"
   },
   {
     "fr": "Samoa américaines",
-    "gp": "Samoa amérisan"
+    "gp": "Samoa amérisan",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9122,7 +9338,8 @@
   },
   {
     "fr": "Serbie",
-    "gp": "Serbie"
+    "gp": "Serbie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9166,7 +9383,8 @@
   },
   {
     "fr": "Seychelles",
-    "gp": "Seikhele"
+    "gp": "Seikhele",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9186,7 +9404,8 @@
   },
   {
     "fr": "Sierra Leone",
-    "gp": "Siera leone"
+    "gp": "Siera leone",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9202,7 +9421,8 @@
   },
   {
     "fr": "Singapour",
-    "gp": "Sengapoir"
+    "gp": "Sengapoir",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9242,7 +9462,8 @@
   },
   {
     "fr": "Slovaquie",
-    "gp": "Slovakie"
+    "gp": "Slovakie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9256,7 +9477,8 @@
   },
   {
     "fr": "Slovénie",
-    "gp": "Slovénie"
+    "gp": "Slovénie",
+    "type": "lieu"
   },
   {
     "fr": "snowball",
@@ -9304,7 +9526,8 @@
   },
   {
     "fr": "Somalie",
-    "gp": "Somalie"
+    "gp": "Somalie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9341,11 +9564,13 @@
   },
   {
     "fr": "Soudan",
-    "gp": "Soidan"
+    "gp": "Soidan",
+    "type": "lieu"
   },
   {
     "fr": "Soudan du Sud",
-    "gp": "Soidan di si"
+    "gp": "Soidan di si",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9398,7 +9623,8 @@
   },
   {
     "fr": "Sri Lanka",
-    "gp": "Sri lanka"
+    "gp": "Sri lanka",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9474,11 +9700,13 @@
   },
   {
     "fr": "Suisse",
-    "gp": "Swis"
+    "gp": "Swis",
+    "type": "lieu"
   },
   {
     "fr": "Surinam",
-    "gp": "Sirinan"
+    "gp": "Sirinan",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9498,7 +9726,8 @@
   },
   {
     "fr": "Suède",
-    "gp": "Swèd"
+    "gp": "Swèd",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9514,7 +9743,8 @@
   },
   {
     "fr": "Svalbard et Jan Mayen",
-    "gp": "Svalbard et jan maian"
+    "gp": "Svalbard et jan maian",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9528,7 +9758,8 @@
   },
   {
     "fr": "Syrie",
-    "gp": "Siri"
+    "gp": "Siri",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9550,7 +9781,8 @@
   },
   {
     "fr": "São Tomé et Príncipe",
-    "gp": "São tomé et prínsipe"
+    "gp": "São tomé et prínsipe",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9563,7 +9795,8 @@
   },
   {
     "fr": "Sénégal",
-    "gp": "Senegal"
+    "gp": "Senegal",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9625,7 +9858,8 @@
   },
   {
     "fr": "Tadjikistan",
-    "gp": "Tadjikistan"
+    "gp": "Tadjikistan",
+    "type": "lieu"
   },
   {
     "fr": "taille",
@@ -9660,7 +9894,8 @@
   },
   {
     "fr": "Tanzanie",
-    "gp": "Tanzanie"
+    "gp": "Tanzanie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9702,7 +9937,8 @@
   },
   {
     "fr": "Taïwan",
-    "gp": "Taïwan"
+    "gp": "Taïwan",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9718,7 +9954,8 @@
   },
   {
     "fr": "Tchad",
-    "gp": "Tkha"
+    "gp": "Tkha",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9746,7 +9983,8 @@
   },
   {
     "fr": "Tchéquie",
-    "gp": "Tkhékie"
+    "gp": "Tkhékie",
+    "type": "lieu"
   },
   {
     "fr": "temps",
@@ -9754,19 +9992,23 @@
   },
   {
     "fr": "Terre-de-Bas",
-    "gp": "Tèdéba"
+    "gp": "Tèdéba",
+    "type": "lieu"
   },
   {
     "fr": "Terre-de-Haut",
-    "gp": "Tèdéwo"
+    "gp": "Tèdéwo",
+    "type": "lieu"
   },
   {
     "fr": "Terres australes et antarctiques françaises",
-    "gp": "Teres aistrales et antarktikes françé"
+    "gp": "Teres aistrales et antarktikes françé",
+    "type": "lieu"
   },
   {
     "fr": "Territoire britannique de l'océan Indien",
-    "gp": "Teritoire britanike de l'okéan endian"
+    "gp": "Teritoire britanike de l'okéan endian",
+    "type": "lieu"
   },
   {
     "fr": "testicule",
@@ -9786,7 +10028,8 @@
   },
   {
     "fr": "Thaïlande",
-    "gp": "Thaïlande"
+    "gp": "Thaïlande",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9814,7 +10057,8 @@
   },
   {
     "fr": "Timor oriental",
-    "gp": "Timor oriantal"
+    "gp": "Timor oriantal",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9826,7 +10070,8 @@
   },
   {
     "fr": "Togo",
-    "gp": "Togo"
+    "gp": "Togo",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9842,7 +10087,8 @@
   },
   {
     "fr": "Tokelau",
-    "gp": "Tokelai"
+    "gp": "Tokelai",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9854,7 +10100,8 @@
   },
   {
     "fr": "Tonga",
-    "gp": "Tonga"
+    "gp": "Tonga",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9967,11 +10214,13 @@
   },
   {
     "fr": "Trinité-et-Tobago",
-    "gp": "Trinité"
+    "gp": "Trinité",
+    "type": "lieu"
   },
   {
     "fr": "Trois-Rivières",
-    "gp": "Twarivyè"
+    "gp": "Twarivyè",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -9983,7 +10232,7 @@
   },
   {
     "fr": "trou",
-    "gp": "tchou"
+    "gp": "tou"
   },
   {
     "fr": "trou du cul",
@@ -10019,7 +10268,8 @@
   },
   {
     "fr": "Tunisie",
-    "gp": "Tinizi"
+    "gp": "Tinizi",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10061,15 +10311,18 @@
   },
   {
     "fr": "Turkménistan",
-    "gp": "Tirkménistan"
+    "gp": "Tirkménistan",
+    "type": "lieu"
   },
   {
     "fr": "Turquie",
-    "gp": "Tirki"
+    "gp": "Tirki",
+    "type": "lieu"
   },
   {
     "fr": "Tuvalu",
-    "gp": "Tivali"
+    "gp": "Tivali",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10119,7 +10372,8 @@
   },
   {
     "fr": "Ukraine",
-    "gp": "Ikran"
+    "gp": "Ikran",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10141,7 +10395,8 @@
   },
   {
     "fr": "Uruguay",
-    "gp": "Irigai"
+    "gp": "Irigai",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10175,7 +10430,8 @@
   },
   {
     "fr": "Vanuatu",
-    "gp": "Vaniati"
+    "gp": "Vaniati",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10240,7 +10496,8 @@
   },
   {
     "fr": "Venezuela",
-    "gp": "Vénézuéla"
+    "gp": "Vénézuéla",
+    "type": "lieu"
   },
   {
     "fr": "venin",
@@ -10321,11 +10578,13 @@
   },
   {
     "fr": "Vieux-Fort",
-    "gp": "Vyéfò"
+    "gp": "Vyéfò",
+    "type": "lieu"
   },
   {
     "fr": "Vieux-Habitants",
-    "gp": "Vyézabitan"
+    "gp": "Vyézabitan",
+    "type": "lieu"
   },
   {
     "fr": "vigueur",
@@ -10367,7 +10626,8 @@
   },
   {
     "fr": "Viêt Nam",
-    "gp": "Vyetnam"
+    "gp": "Vyetnam",
+    "type": "lieu"
   },
   {
     "fr": "voeu",
@@ -10478,7 +10738,8 @@
   },
   {
     "fr": "Wallis-et-Futuna",
-    "gp": "Walis-et-fitina"
+    "gp": "Walis-et-fitina",
+    "type": "lieu"
   },
   {
     "fr": "Web",
@@ -10490,7 +10751,8 @@
   },
   {
     "fr": "Yémen",
-    "gp": "Iéman"
+    "gp": "Iéman",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10504,7 +10766,8 @@
   },
   {
     "fr": "Zambie",
-    "gp": "Zanbie"
+    "gp": "Zanbie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10533,7 +10796,8 @@
   },
   {
     "fr": "Zimbabwe",
-    "gp": "Zenbabwe"
+    "gp": "Zenbabwe",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10676,7 +10940,8 @@
   },
   {
     "fr": "Égypte",
-    "gp": "Léjip"
+    "gp": "Léjip",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10723,7 +10988,8 @@
   },
   {
     "fr": "Émirats arabes unis",
-    "gp": "Émirats arabes ini"
+    "gp": "Émirats arabes ini",
+    "type": "lieu"
   },
   {
     "fr": "émotion",
@@ -10760,7 +11026,8 @@
   },
   {
     "fr": "Équateur",
-    "gp": "Ékwatè"
+    "gp": "Ékwatè",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10792,7 +11059,8 @@
   },
   {
     "fr": "Érythrée",
-    "gp": "Érithrée"
+    "gp": "Érithrée",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10826,7 +11094,8 @@
   },
   {
     "fr": "Éthiopie",
-    "gp": "Éthiopie"
+    "gp": "Éthiopie",
+    "type": "lieu"
   },
   {
     "fr": [
@@ -10872,83 +11141,103 @@
   },
   {
     "fr": "Île Bouvet",
-    "gp": "Île boive"
+    "gp": "Île boive",
+    "type": "lieu"
   },
   {
     "fr": "Île Christmas",
-    "gp": "Île khristma"
+    "gp": "Île khristma",
+    "type": "lieu"
   },
   {
     "fr": "Île de Man",
-    "gp": "Île de man"
+    "gp": "Île de man",
+    "type": "lieu"
   },
   {
     "fr": "Île Maurice",
-    "gp": "Île mairise"
+    "gp": "Île mairise",
+    "type": "lieu"
   },
   {
     "fr": "Île Norfolk",
-    "gp": "Île norfolk"
+    "gp": "Île norfolk",
+    "type": "lieu"
   },
   {
     "fr": "Îles Caïmans",
-    "gp": "Îles kaïman"
+    "gp": "Îles kaïman",
+    "type": "lieu"
   },
   {
     "fr": "Îles Cocos",
-    "gp": "Îles koko"
+    "gp": "Îles koko",
+    "type": "lieu"
   },
   {
     "fr": "Îles Cook",
-    "gp": "Îles kok"
+    "gp": "Îles kok",
+    "type": "lieu"
   },
   {
     "fr": "Îles du Cap-Vert",
-    "gp": "Îles di kap-ver"
+    "gp": "Îles di kap-ver",
+    "type": "lieu"
   },
   {
     "fr": "Îles Féroé",
-    "gp": "Îles féroé"
+    "gp": "Îles féroé",
+    "type": "lieu"
   },
   {
     "fr": "Îles Heard-et-MacDonald",
-    "gp": "Îles heard-et-makdonal"
+    "gp": "Îles heard-et-makdonal",
+    "type": "lieu"
   },
   {
     "fr": "Îles Malouines",
-    "gp": "Îles maloine"
+    "gp": "Îles maloine",
+    "type": "lieu"
   },
   {
     "fr": "Îles Mariannes du Nord",
-    "gp": "Îles marianes di nor"
+    "gp": "Îles marianes di nor",
+    "type": "lieu"
   },
   {
     "fr": "Îles Marshall",
-    "gp": "Îles marshal"
+    "gp": "Îles marshal",
+    "type": "lieu"
   },
   {
     "fr": "Îles mineures éloignées des États-Unis",
-    "gp": "Îles mineires éloignées des états-ini"
+    "gp": "Îles mineires éloignées des états-ini",
+    "type": "lieu"
   },
   {
     "fr": "Îles Pitcairn",
-    "gp": "Îles pitkairn"
+    "gp": "Îles pitkairn",
+    "type": "lieu"
   },
   {
     "fr": "Îles Salomon",
-    "gp": "Îles salomon"
+    "gp": "Îles salomon",
+    "type": "lieu"
   },
   {
     "fr": "Îles Turques-et-Caïques",
-    "gp": "Îles tirkes-et-kaïke"
+    "gp": "Îles tirkes-et-kaïke",
+    "type": "lieu"
   },
   {
     "fr": "Îles Vierges britanniques",
-    "gp": "Îles vierjes britanike"
+    "gp": "Îles vierjes britanike",
+    "type": "lieu"
   },
   {
     "fr": "Îles Vierges des États-Unis",
-    "gp": "Îles vierjes des états-ini"
+    "gp": "Îles vierjes des états-ini",
+    "type": "lieu"
   },
   {
     "fr": "œil",
@@ -14407,5 +14696,233 @@
   {
     "fr": "neige",
     "gp": "nèj"
+  },
+  {
+    "fr": "Pierre",
+    "gp": "Pyè"
+  },
+  {
+    "fr": "Marie",
+    "gp": "Mari"
+  },
+  {
+    "fr": "Jean",
+    "gp": "Jan"
+  },
+  {
+    "fr": "Georges",
+    "gp": "Jòj"
+  },
+  {
+    "fr": "Gérard",
+    "gp": "Jéra"
+  },
+  {
+    "fr": "Paul",
+    "gp": "Pòl"
+  },
+  {
+    "fr": "Roger",
+    "gp": "Wojé"
+  },
+  {
+    "fr": "Jacques",
+    "gp": "Jak"
+  },
+  {
+    "fr": "Daniel",
+    "gp": "Danyèl"
+  },
+  {
+    "fr": "Hector",
+    "gp": "Ektò"
+  },
+  {
+    "fr": "Geneviève",
+    "gp": "Jènvyèv"
+  },
+  {
+    "fr": "Rosalie",
+    "gp": "Wozali"
+  },
+  {
+    "fr": "Eugène",
+    "gp": "Ijenn"
+  },
+  {
+    "fr": "Eugénie",
+    "gp": "Ijéni"
+  },
+  {
+    "fr": "Élisa",
+    "gp": "Eliza"
+  },
+  {
+    "fr": "Germaine",
+    "gp": "Jermèn"
+  },
+  {
+    "fr": "Jeanne",
+    "gp": "Jàn"
+  },
+  {
+    "fr": "baiser",
+    "gp": "bo",
+    "secondaire": true
+  },
+  {
+    "fr": [
+      "boutique",
+      "boutiques"
+    ],
+    "gp": "boutik"
+  },
+  {
+    "fr": [
+      "bijou",
+      "bijoux"
+    ],
+    "gp": "bèbèl"
+  },
+  {
+    "fr": [
+      "bouquet",
+      "bouquets"
+    ],
+    "gp": "bouké"
+  },
+  {
+    "fr": [
+      "réfrigérateur",
+      "réfrigérateurs"
+    ],
+    "gp": "frijidè"
+  },
+  {
+    "fr": [
+      "blague",
+      "blagues"
+    ],
+    "gp": "blag"
+  },
+  {
+    "fr": "mazurka",
+    "gp": "mazouk"
+  },
+  {
+    "fr": [
+      "pépite",
+      "pépites"
+    ],
+    "gp": "pépit"
+  },
+  {
+    "fr": [
+      "toast",
+      "toasts"
+    ],
+    "gp": "pen griyé"
+  },
+  {
+    "fr": "camembert",
+    "gp": "kanmanbè"
+  },
+  {
+    "fr": [
+      "gruyère",
+      "gruyere"
+    ],
+    "gp": "gwiyè"
+  },
+  {
+    "fr": [
+      "extra-terrestre",
+      "extraterrestre"
+    ],
+    "gp": "estraterès"
+  },
+  {
+    "fr": "Pétra",
+    "gp": "Pétra",
+    "type": "lieu"
+  },
+  {
+    "fr": [
+      "grandeur",
+      "grandeurs"
+    ],
+    "gp": "grandè"
+  },
+  {
+    "fr": "pouvoir",
+    "gp": "pouvwa",
+    "genre": "m",
+    "type": "nom"
+  },
+  {
+    "fr": "laser",
+    "gp": "lazer",
+    "genre": "m",
+    "type": "nom"
+  },
+  {
+    "fr": "glaucome",
+    "gp": "glokòm",
+    "genre": "m",
+    "type": "nom"
+  },
+  {
+    "fr": "pitié",
+    "gp": "pité",
+    "genre": "f",
+    "type": "nom"
+  },
+  {
+    "fr": "diable",
+    "gp": "dyab",
+    "genre": "m",
+    "type": "nom"
+  },
+  {
+    "fr": "malfaiteur",
+    "gp": "malfétè",
+    "genre": "m",
+    "type": "nom"
+  },
+  {
+    "fr": "voleur",
+    "gp": "vòlè",
+    "genre": "m",
+    "type": "nom"
+  },
+  {
+    "fr": "connard",
+    "gp": "kouyonè",
+    "genre": "m",
+    "type": "nom"
+  },
+  {
+    "fr": "impôt",
+    "gp": "enpo",
+    "genre": "m",
+    "type": "nom"
+  },
+  {
+    "fr": "taxe",
+    "gp": "taks",
+    "genre": "f",
+    "type": "nom"
+  },
+  {
+    "fr": "mafia",
+    "gp": "mafia",
+    "genre": "f",
+    "type": "nom"
+  },
+  {
+    "fr": "Satan",
+    "gp": "satan",
+    "genre": "m",
+    "type": "nom"
   }
 ]

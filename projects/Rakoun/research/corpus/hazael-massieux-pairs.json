@@ -1,0 +1,652 @@
+[
+ {
+  "cr": "on moun ki pa ka palé",
+  "fr": "quelqu'un qui ne parle pas",
+  "src": "adject"
+ },
+ {
+  "cr": "on moun ki andézòd",
+  "fr": "quelqu'un qui",
+  "src": "adject"
+ },
+ {
+  "cr": "I am eating",
+  "fr": "je suis en train de manger), à des langues africaines qui auraient été centrées sur l'aspect",
+  "src": "aspect"
+ },
+ {
+  "cr": "moun-la ki vini...",
+  "fr": "l'homme qui est venu",
+  "src": "connex"
+ },
+ {
+  "cr": "loto blé la",
+  "fr": "la voiture bleue)",
+  "src": "connex"
+ },
+ {
+  "cr": "An pa konnèt nonm-la ki vini la",
+  "fr": "Je ne connais pas l'homme qui est venu",
+  "src": "connex"
+ },
+ {
+  "cr": ") peut être placé devant un groupe nominal (dépi bonmatin-la-sa...",
+  "fr": "depuis ce matin",
+  "src": "connex"
+ },
+ {
+  "cr": "dépi Pyè ka vini",
+  "fr": "dès lors que Pierre vient",
+  "src": "connex"
+ },
+ {
+  "cr": "i ka palé-moin dépi moin ka palé-li",
+  "fr": "il me parle depuis que je lui parle)",
+  "src": "connex"
+ },
+ {
+  "cr": "liv",
+  "fr": "livre ou",
+  "src": "determ"
+ },
+ {
+  "cr": "fanm",
+  "fr": "femme, sont d'abord des mots de dictionnaire, avant d'être actualisés dans le discours :",
+  "src": "determ"
+ },
+ {
+  "cr": "fanm-la té bèl",
+  "fr": "la femme était belle",
+  "src": "determ"
+ },
+ {
+  "cr": "moin pòté liv-la",
+  "fr": "j'ai rapporté le livre",
+  "src": "determ"
+ },
+ {
+  "cr": "Pòl rivé",
+  "fr": "Paul est arrivé - le générique : ainsi, dans les proverbes, on trouve souvent le nom sans déterminant",
+  "src": "determ"
+ },
+ {
+  "cr": "Sak vid pa ka kinbé doubout",
+  "fr": "Un sac vide ne tient pas debout",
+  "src": "determ"
+ },
+ {
+  "cr": "Pentad sé bèt ki malen",
+  "fr": "La pintade est un animal intelligent",
+  "src": "determ"
+ },
+ {
+  "cr": "Chouval ka rété an létchiri, milèt en savann",
+  "fr": "Le cheval habite dans l'écurie, le mulet dans les champs (Martinique) - le pluriel indéfini :",
+  "src": "determ"
+ },
+ {
+  "cr": "On bèl tifi",
+  "fr": "une belle jeune fille",
+  "src": "determ"
+ },
+ {
+  "cr": "on ti gason",
+  "fr": "un petit garçon",
+  "src": "determ"
+ },
+ {
+  "cr": "An bèl tifi",
+  "fr": "une belle jeune fille",
+  "src": "determ"
+ },
+ {
+  "cr": "an mal-krab",
+  "fr": "un crabe mâle",
+  "src": "determ"
+ },
+ {
+  "cr": "Youn bèl fij",
+  "fr": "une belle fille Dans l'Océan Indien, on aurait à la Réunion",
+  "src": "determ"
+ },
+ {
+  "cr": "in boug",
+  "fr": "un homme, à Maurice",
+  "src": "determ"
+ },
+ {
+  "cr": "èn lakolèr ti pran moua",
+  "fr": "une colère me prit",
+  "src": "determ"
+ },
+ {
+  "cr": "timoun-la",
+  "fr": "l'enfant, ou cet enfant dès qu'il y a reprise en contexte",
+  "src": "determ"
+ },
+ {
+  "cr": "sé timoun-la",
+  "fr": "les enfants",
+  "src": "determ"
+ },
+ {
+  "cr": "sé liv-la",
+  "fr": "les livres",
+  "src": "determ"
+ },
+ {
+  "cr": "sé zozyo-a",
+  "fr": "les oiseaux",
+  "src": "determ"
+ },
+ {
+  "cr": "liv-yo",
+  "fr": "les livres (en général)",
+  "src": "determ"
+ },
+ {
+  "cr": "liv-a",
+  "fr": "le livre",
+  "src": "determ"
+ },
+ {
+  "cr": "dilo-a",
+  "fr": "l'eau",
+  "src": "determ"
+ },
+ {
+  "cr": "fanm-an",
+  "fr": "la femme",
+  "src": "determ"
+ },
+ {
+  "cr": "pon-an",
+  "fr": "le pont Le défini pluriel se forme par ajout du morphème",
+  "src": "determ"
+ },
+ {
+  "cr": "liv-ya",
+  "fr": "les livres",
+  "src": "determ"
+ },
+ {
+  "cr": "fanm-la-sa",
+  "fr": "cette femme -",
+  "src": "determ"
+ },
+ {
+  "cr": "liv-la-sa",
+  "fr": "ce livre -",
+  "src": "determ"
+ },
+ {
+  "cr": "zozyo-la-sa",
+  "fr": "cet oiseau",
+  "src": "determ"
+ },
+ {
+  "cr": "ich-ta-la",
+  "fr": "cet enfant",
+  "src": "determ"
+ },
+ {
+  "cr": "fanm-ta-la",
+  "fr": "cette femme",
+  "src": "determ"
+ },
+ {
+  "cr": "- zozyo-ta-la",
+  "fr": "cet oiseau",
+  "src": "determ"
+ },
+ {
+  "cr": "sé liv-ta-la",
+  "fr": "ces livres",
+  "src": "determ"
+ },
+ {
+  "cr": "sa liv-a",
+  "fr": "ce livre",
+  "src": "determ"
+ },
+ {
+  "cr": "sa timoun-an",
+  "fr": "cet enfant",
+  "src": "determ"
+ },
+ {
+  "cr": "lari",
+  "fr": "rue",
+  "src": "determ"
+ },
+ {
+  "cr": "monpè",
+  "fr": "abbé",
+  "src": "determ"
+ },
+ {
+  "cr": "divin",
+  "fr": "vin, etc",
+  "src": "determ"
+ },
+ {
+  "cr": "Le dimanch, nou alé lanmè",
+  "fr": "Le dimanche nous allons à la mer",
+  "src": "determ"
+ },
+ {
+  "cr": "tou lé samdi swa, yo sòti",
+  "fr": "Tous les samedis soirs, ils sortent Dans Ti-Chika, on trouve",
+  "src": "determ"
+ },
+ {
+  "cr": "moin vouè Pòl",
+  "fr": "j'ai vu Paul des pronoms compléments, placés après le verbe :",
+  "src": "determ"
+ },
+ {
+  "cr": "Pòl vouè-moin",
+  "fr": "Paul m'a vu Ainsi, placée après le nom qu'elle détermine, la marque personnelle prend valeur de possessif",
+  "src": "determ"
+ },
+ {
+  "cr": "zozyo-(l)i",
+  "fr": "ton oiseau, son oiseau (en guadeloupéen la préposition",
+  "src": "determ"
+ },
+ {
+  "cr": "mo timoun",
+  "fr": "mon enfant",
+  "src": "determ"
+ },
+ {
+  "cr": "so timoun",
+  "fr": "son enfant",
+  "src": "determ"
+ },
+ {
+  "cr": "moin ka alé",
+  "fr": "caille",
+  "src": "ecriture"
+ },
+ {
+  "cr": "fouté on kou",
+  "fr": "donner un coup anmèkdan veut dire",
+  "src": "fauxam"
+ },
+ {
+  "cr": "O zòt ay ?",
+  "fr": "Où êtes-vous allé ? retour B ba : donner",
+  "src": "glossai"
+ },
+ {
+  "cr": "Ba-li bouyon",
+  "fr": "donne lui du bouillon",
+  "src": "glossai"
+ },
+ {
+  "cr": "On moun a bab",
+  "fr": "une personne à histoire",
+  "src": "glossai"
+ },
+ {
+  "cr": "Pitit an moin, chè !",
+  "fr": "mon cher petit",
+  "src": "glossai"
+ },
+ {
+  "cr": "moin ennmé dansé",
+  "fr": "j'aime danser",
+  "src": "glossai"
+ },
+ {
+  "cr": "Annou fè on ti dansé",
+  "fr": "Faisons une danse",
+  "src": "glossai"
+ },
+ {
+  "cr": "on èkétéra boug épi chyen",
+  "fr": "une quantité d'hommes avec des chiens",
+  "src": "glossai"
+ },
+ {
+  "cr": "malanga",
+  "fr": "tubercule comestible appelé ailleurs",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "didiko",
+  "fr": "repas léger, casse-croute, petit déjeuner (kikongo ?) : pour aller plus loin",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "canari",
+  "fr": "marmite en terre",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "mabouya",
+  "fr": "gros lézard transparent, voisin du",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "ajoupa",
+  "fr": "abri provisoire, cabane de feuillage, etc",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "pliché",
+  "fr": "éplucher",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "gadé",
+  "fr": "regarder",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "krazé",
+  "fr": "écraser",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "blijé",
+  "fr": "obliger, etc",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "érisi",
+  "fr": "réussir ou",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "présepsyon",
+  "fr": "perception, jusqu'à des changements de phonèmes :",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "péyé",
+  "fr": "payer, péyè = payeur, à côté de",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "kaché",
+  "fr": "cacher",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "kachè",
+  "fr": "celui qui cache, etc",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "biginé-a-li",
+  "fr": "sa façon de danser la biguine",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "manti-a-ou",
+  "fr": "ton mensonge, etc",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "on zinyam-pakala",
+  "fr": "une igname pakala (variété d'igname)",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "on krab-sirik",
+  "fr": "un crabe cirique (variété)",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "on tanbou gwoka",
+  "fr": "tambour de type particulier",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "on boutèj luil",
+  "fr": "une bouteille d'huile",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "fanm-mayé",
+  "fr": "épouse",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "fanm-déwò",
+  "fr": "maîtresse, concubine",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "kaka-zorèy",
+  "fr": "cérumen, etc",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "on salibouch",
+  "fr": "un amuse-gueule",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "on bénirété",
+  "fr": "une régularisation de concubinage (= un mariage)",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "fè lous",
+  "fr": "faire le gros dur",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "fè kim",
+  "fr": "mousser",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "fè labé",
+  "fr": "entrer dans les ordres",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "fè mas",
+  "fr": "se déguiser pour le carnaval, etc",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "bay bal",
+  "fr": "s'amuser, faire la fête",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "bay blé",
+  "fr": "mentir",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "bay do",
+  "fr": "se désintéresser",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "bay lavwa",
+  "fr": "répandre une nouvelle, etc",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "i ka rété",
+  "fr": "il vit en ménage sans être marié, etc",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "i ka méné-alé + complément",
+  "fr": "il emmène X, ou",
+  "src": "lexiqcr"
+ },
+ {
+  "cr": "i ka manjé",
+  "fr": "il mange - tantôt nom (lorsqu'elle est accompagnée des déterminants nécessaires à son fonctionnement) :",
+  "src": "nom"
+ },
+ {
+  "cr": "manjé-la kuit",
+  "fr": "le repas est cuit",
+  "src": "nom"
+ },
+ {
+  "cr": "Blan kréol",
+  "fr": "un Blanc né aux Iles) (cf",
+  "src": "nom"
+ },
+ {
+  "cr": "i ka manti",
+  "fr": "il ment",
+  "src": "phrase"
+ },
+ {
+  "cr": "manti-a-li",
+  "fr": "son mensonge",
+  "src": "phrase"
+ },
+ {
+  "cr": "li, i ka vini",
+  "fr": "lui, il vient :",
+  "src": "pronoms"
+ },
+ {
+  "cr": "moin, an ka pati",
+  "fr": "moi, je pars",
+  "src": "pronoms"
+ },
+ {
+  "cr": "an ka bat-li",
+  "fr": "je le bats",
+  "src": "pronoms"
+ },
+ {
+  "cr": "moin ka émé-y",
+  "fr": "je l'aime",
+  "src": "pronoms"
+ },
+ {
+  "cr": "Mwen èvè Pòl, nouchak té ni on kaz ; i vann ta-y, an louwé tan-mwen",
+  "fr": "Paul et moi avions chacun une maison",
+  "src": "pronoms"
+ },
+ {
+  "cr": "Sé liv-lasa sé tan-mwen",
+  "fr": "Ces livres sont les miens",
+  "src": "pronoms"
+ },
+ {
+  "cr": "Sila pli piti ki tala",
+  "fr": "Celui-ci est plus petit que celui-là",
+  "src": "pronoms"
+ },
+ {
+  "cr": "Séla pòkò bon",
+  "fr": "Ceux-ci ne sont pas encore bons",
+  "src": "pronoms"
+ },
+ {
+  "cr": "Ni on pyé fouyapen ka pòté byen, mè sé-lasa an ni lidé yo kòklèch",
+  "fr": "Il y a un arbre à pain qui donne des fruits, mais ceux-ci, je pense qu'ils sont infertiles",
+  "src": "pronoms"
+ },
+ {
+  "cr": "Nou pa ka kontan lè ou ka pati",
+  "fr": "nous ne sommes pas contents quand tu pars",
+  "src": "verbe"
+ },
+ {
+  "cr": "Tété-ou ka gaté",
+  "fr": "tes seins s'abiment (corpus de Shelly-Ann Meade)",
+  "src": "verbe"
+ },
+ {
+  "cr": "I doktè",
+  "fr": "il est médecin",
+  "src": "verbe"
+ },
+ {
+  "cr": "i ka doktè",
+  "fr": "il est en train de devenir médecin",
+  "src": "verbe"
+ },
+ {
+  "cr": "moin ka vlé",
+  "fr": "je le veux vraiment (phrase également recueillie chez une personne âgée à La Dominique)",
+  "src": "verbe"
+ },
+ {
+  "cr": "yo mété yo ka détayé vyann...",
+  "fr": "ils se mirent à découper la viande",
+  "src": "verbe"
+ },
+ {
+  "cr": "moin pa vini",
+  "fr": "je ne suis pas venu) qui se combine avec les particules, au point de",
+  "src": "verbe"
+ },
+ {
+  "cr": "I pa téké ka palé-li",
+  "fr": "il n'aurait pas été en train de lui parler",
+  "src": "verbe"
+ },
+ {
+  "cr": "Pyè pa té vlé palé Jak",
+  "fr": "Pierre n'avait pas voulu parler à Jacques",
+  "src": "verbe"
+ },
+ {
+  "cr": "Pyè ké ka manjé-li",
+  "fr": "Pierre sera en train de le manger",
+  "src": "verbe"
+ },
+ {
+  "cr": "moin ké malad",
+  "fr": "je serai malade, etc",
+  "src": "verbe"
+ },
+ {
+  "cr": "Manjé-an-moin bon",
+  "fr": "mon repas est bon",
+  "src": "verbe"
+ },
+ {
+  "cr": "moin ka manjé",
+  "fr": "je mange",
+  "src": "verbe"
+ },
+ {
+  "cr": "ti-moun fwè-moin ka manjé banane",
+  "fr": "le fils de mon frère mange des bananes",
+  "src": "verbe"
+ },
+ {
+  "cr": "fwè ti-moun-moin ka manjé banane",
+  "fr": "le frère de mon fils mange des bananes",
+  "src": "verbe"
+ },
+ {
+  "cr": "manjé ti-moun-moin, sé banane",
+  "fr": "le repas de mon/mes enfant(s), c'est des bananes etc",
+  "src": "verbe"
+ },
+ {
+  "cr": "I ka mayé Pyè",
+  "fr": "Elle a épousé Pierre",
+  "src": "verbe"
+ },
+ {
+  "cr": "i ké pran",
+  "fr": "il prendra",
+  "src": "verbe"
+ },
+ {
+  "cr": "i ké pri",
+  "fr": "il sera pris",
+  "src": "verbe"
+ }
+]

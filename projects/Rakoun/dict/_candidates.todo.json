@@ -12,19 +12,7 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "par",
-    "gp": "",
-    "freq": 4,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "impressionnant",
-    "gp": "",
-    "freq": 4,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "paysages",
     "gp": "",
     "freq": 4,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -42,19 +30,7 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "entreprise",
-    "gp": "",
-    "freq": 3,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "passionnant",
-    "gp": "",
-    "freq": 3,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "peinture",
     "gp": "",
     "freq": 3,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -72,18 +48,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "art",
-    "gp": "",
-    "freq": 3,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "ravi",
-    "gp": "",
-    "freq": 3,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "parents",
     "gp": "",
     "freq": 2,
@@ -91,6 +55,12 @@
   },
   {
     "fr": "enrichissante",
+    "gp": "",
+    "freq": 2,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "entreprise",
     "gp": "",
     "freq": 2,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -126,12 +96,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "formation",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "initiative",
     "gp": "",
     "freq": 2,
@@ -162,7 +126,13 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "énergie",
+    "fr": "énergie-la",
+    "gp": "",
+    "freq": 2,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "art",
     "gp": "",
     "freq": 2,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -174,13 +144,19 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "nature",
+    "fr": "paysages-la",
     "gp": "",
     "freq": 2,
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
     "fr": "particulier",
+    "gp": "",
+    "freq": 2,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "paysages",
     "gp": "",
     "freq": 2,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -193,12 +169,6 @@
   },
   {
     "fr": "pratique",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "ressenti",
     "gp": "",
     "freq": 2,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -237,6 +207,1170 @@
     "fr": "salariés",
     "gp": "",
     "freq": 2,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "employeur",
+    "gp": "",
+    "freq": 2,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "classement",
+    "gp": "",
+    "freq": 2,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "indépendance-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "maternelle-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "grandit",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "sujet",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "bel",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "accomplissement",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "précieux",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "figuré",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "agrandit",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "succès",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "familiale",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "redécouvrir",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "envisageons",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "rapprocher",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "impatience",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "passe-temps",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "œuvres",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "remis",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "précieuse",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "jumeaux",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "perspective",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "envisagent",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "tranquillité",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "décroché",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "emploi",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "enthousiaste",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "remporté",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "concours",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "doué",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "talent",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "promotion",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "waouh",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "mérites-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "terminé",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "essentiel",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "stimulant",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "gérer",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "proposé",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "déplacement",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "opportunité",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "compétences",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "formidable",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "atout",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "majeur",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "envisage",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "passionné",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "collègue",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "démissionner",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "surprenant",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "rapport",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "domicile",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "pauses",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "labeur",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "congé",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "sabbatique",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "instructif",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "stage",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "termine",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "élu",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "délégué",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "personnel",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "responsabilité",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "bien-être-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "apaisé",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "sacrée",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "repris",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "ancienne",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "créative",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "lecture-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "poterie",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "apaisant",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "musée",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "contemporain",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "musées-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "perspectives",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "œuvre",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "revigoré",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "jardiner",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "nature-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "gratifiant",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "club",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "théâtre",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "art-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "dramatique",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "captivant",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "lors",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "nature",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "photographie-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "capturer",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "éphémères",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "écriture",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "excellent",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "moyen",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "perfectionner",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "style",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "randonnée",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "endurance",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "rejoint",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "libérateur",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "paisible",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "soi",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "peint",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "personnelle",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "initié",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "méditation-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "bienfaits",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "appartement",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "admirable",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "reprendre",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "études",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "ménage",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "satisfaisant",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "capricieux",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "recette",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "recommanderais",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "supermarchés-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "plu",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "déluge",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "accro",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "recommandations",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "séries",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "genre",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "agissait",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "automne-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "saine",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "shopping",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "ligne",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "options-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "savouré",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "trekking",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "tropicale",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "ressourcer",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "road",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "travers",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "vaste",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "cerisiers",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "hanami",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "traditionnels",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "souks-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "impressionnants",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "châteaux-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "chambord",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "architecturales",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "aurores-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "boréales",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "inoubliable",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "festival",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "traditionnel",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "sensationnel",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "merveille",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "rio",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "effervescence",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "période",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "ambiance",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "incomparable",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "randonné",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "monument",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "historique",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "grandiose",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "ondoyantes",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "vignobles",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "charme",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "unique",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "temples-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "spiritualité",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "sculptures-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "détaillées",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "paradisiaques",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "cristalline",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "lunaires",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "geysers",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "volcans",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "culture",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "légendaires",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "éclater",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "principal-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "liste-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "publiée",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "base",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "entreprise-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "spécialisée",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "gestion-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "installations",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "rétrogradé",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "tandis",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "devancé",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "dixième-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "entreprises-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "effectifs-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "inverse-la",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "michel",
+    "gp": "",
+    "freq": 1,
+    "_todo": "à valider par locuteur/dico faisant autorité"
+  },
+  {
+    "fr": "tue",
+    "gp": "",
+    "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
   }
 ]

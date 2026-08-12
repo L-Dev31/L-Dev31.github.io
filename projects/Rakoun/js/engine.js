@@ -1,9 +1,12 @@
-// Rakoun — moteur de traduction Français <-> Créole guadeloupéen (port JS fidèle
-// du moteur Python GPTranslator). Tout est dans une closure createEngine(dicts)
-// pour reproduire les `rules`/`ctx` globaux du module Python.
+// Rakoun — moteur de traduction Français <-> Créole guadeloupéen.
+//
+// Le moteur est GÉNÉRIQUE : il ne connaît aucun mot en propre. Tout le savoir
+// linguistique — vocabulaire, exceptions, dialecte, graphie — vit dans dict/*.json.
+// Une règle qui nomme un mot précis n'est pas une règle : c'est une donnée.
+// Voir AMELIORER-SANS-JS.md.
 //
 // `dicts` = { Grammar, Verbs, Nouns, Adjectives, Adverbs, Misc } (JSON parsés).
-// Renvoie { traduire(text, src, tgt) }.
+// createEngine(dicts) renvoie { traduire(text, src, tgt), ctx, rules, … }.
 
 (function (root) {
   "use strict";
@@ -55,8 +58,21 @@
     return out;
   }
 
-  const lower = (s) => s.toLowerCase();
-  const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+  // Toutes les tables interrogées par `has` sont à prototype nul : les index du
+  // moteur (voir `createEngine`) et les tables de règles (voir `charger`). Une
+  // lecture directe suffit donc, sans risque de confondre une clé légitime
+  // ("constructor") avec un membre du prototype — et hasOwnProperty.call, qui
+  // pesait 13 % du temps CPU, disparaît.
+  // RAKOUN_TRACE lu UNE fois : process.env est un accès système, pas un objet.
+  const TRACE = typeof process !== "undefined" && !!(process.env && process.env.RAKOUN_TRACE);
+  const has = (o, k) => o[k] !== undefined;
+  // Copie à prototype nul, en profondeur, des tables de règles JSON.
+  function sansPrototype(v) {
+    if (v === null || typeof v !== "object" || Array.isArray(v)) return v;
+    const o = Object.create(null);
+    for (const k in v) o[k] = sansPrototype(v[k]);
+    return o;
+  }
   function endsWithAny(s, arr) { for (const a of arr) if (a && s.endsWith(a)) return true; return false; }
   function isDigits(s) { return s.length > 0 && /^\d+$/.test(s); }
   const last = (a) => a[a.length - 1];
@@ -68,7 +84,23 @@
   const normApos = (s) => s.replace(/['']/g, "'").replace(/-/g, " ").replace(/\s+/g, " ").trim();
 
   function createEngine(dicts) {
-    const ctx = { index_fr: {}, index_gp: {}, index_gp_nom: {}, index_fr_nom: {}, index_fr_verbe: {}, type_fr: {}, genre_fr: {}, norm_fr: {}, norm_gp: {}, phrases_fr_gp: {}, phrases_gp_fr: {} };
+    // index_*_propre : index SENSIBLES À LA CASSE, alimentés par les seules
+    // entrées dont la forme commence par une majuscule. Ils sont consultés avant
+    // l'index normal quand le jeton source est capitalisé. C'est ce qui permet à
+    // "Pierre"→Pyè (prénom) et "pierre"→wòch (caillou) de coexister EN DONNÉES,
+    // sans aucune règle nommée dans le moteur.
+    // Tous les index sont à prototype nul : une entrée peut légitimement
+    // s'appeler "constructor" ou "toString", et sans prototype la lecture
+    // directe `obj[cle]` devient sûre — donc utilisable dans la boucle chaude
+    // à la place de hasOwnProperty, qui pesait 4 % du temps CPU.
+    const nul = () => Object.create(null);
+    const ctx = { index_fr: nul(), index_gp: nul(), index_gp_nom: nul(), index_fr_nom: nul(), index_fr_verbe: nul(), type_fr: nul(), genre_fr: nul(), norm_fr: nul(), norm_gp: nul(), phrases_fr_gp: nul(), phrases_gp_fr: nul(), index_fr_propre: nul(), index_gp_propre: nul() };
+    // Longueur maximale (en mots) d'une entrée multi-mots commençant par tel
+    // mot. Sans cet index, la boucle de recherche essayait systématiquement
+    // les fenêtres de 6 mots à 1 mot pour CHAQUE jeton : 6 découpages, 6
+    // jointures et 6 mises en minuscules par jeton, presque toujours pour
+    // rien. Avec, la quasi-totalité des jetons ne fait qu'un seul essai.
+    const spanFr = nul(), spanGp = nul();
     // Caches de classification (fonctions PURES du token, dico figé après
     // chargement) : `trouver_infinitif` et `fr_de_gp` sont ré-appelés des
     // dizaines de fois sur le même jeton par la chaîne de handlers. La
@@ -84,14 +116,14 @@
       boundaries: new Set(), aller_imparfait: new Set(), venir_present: new Set(),
       statives_fr: new Set(), possessifs_toniques: {}, toniques_lakay: {},
       subjonctif_present_terminaisons: {}, present_3e_groupe_re: {}, accords_adjectifs_suffixes: {},
-      masculin_de_feminin: {}, verbes_declencheurs_que: new Set(), faut_declencheurs_que: new Set(),
+      masculin_de_feminin: {}, verbes_declencheurs_que: new Set(), verbes_declencheurs_de: new Set(), faut_declencheurs_que: new Set(),
       clitiques_toujours: new Set(), clitiques_contexte: new Set(), determinants_restituer_exclus: new Set(),
       determinants_pluriels: new Set(), indefinis_singuliers: new Set(), quantificateurs_pluriel: new Set(),
       interrogatifs_exclus: new Set(),
       pluriel_invariables_al: new Set(), demonstratifs_gp: new Set(), bloqueurs_verbe_nu: new Set(),
       pronoms_fr: new Set(), mots_fonctionnels_fr: new Set(), clitiques_objet_fr: new Set(),
       intensifieurs_fr: new Set(), materiaux_fr: new Set(), articles_definis_fr: new Set(),
-      pronoms_sujet_fr: new Set(), contractions_fr: new Map(),
+      pronoms_sujet_fr: new Set(), adjectifs_de_infinitif: new Set(), noms_sans_article_fr: new Set(), contractions_fr: new Map(),
       R: {},
       inverse_irreguliers: {}, participes_inverse: {}, possessifs_gp: {}, interrogatifs_inverse: {},
       toniques_gp: {}, pronoms_gp: new Set(), marqueurs: new Set(),
@@ -316,6 +348,15 @@
       for (const r of R.regles) if (w.endsWith(r.suf)) return r.art;
       return R.defaut || "la";
     }
+    // Graphie GEREC : le déterminant postposé s'accroche au nom par un trait
+    // d'union (kaz-la, sé timoun-la). Le jeton est émis préfixé d'un "-" ;
+    // `assemble` le recolle au mot précédent. Pilotable en données via
+    // Grammar.json > article_postpose_regles.attache (false = jeton séparé).
+    function marque_postposee(art) {
+      const R = rules.R.article_postpose_regles;
+      const attache = !R || R.attache !== false;
+      return attache ? "-" + art : art;
+    }
     function genre_nom(mot) {
       const cle = mot.toLowerCase();
       const g = ctx.genre_fr[cle];
@@ -446,7 +487,12 @@
     function est_adjectif(token) {
       const cle = token.toLowerCase();
       if (classer_fr(token) === "adj") return true;
-      if (trouver_infinitif(token) !== null) return false;
+      // Un infinitif retrouvé ne disqualifie que s'il est VRAIMENT un verbe.
+      // Sans ce garde-fou, "carrée" → infinitif "carré" (lui-même adjectif) et
+      // l'adjectif féminin était traité comme un participe : le créole
+      // fabriquait alors une copule ("Latè SÉ karé" au lieu de "Latè karé").
+      const _inf = trouver_infinitif(token);
+      if (_inf !== null && (ctx.type_fr[_inf.toLowerCase()] === "verbe" || has(ctx.index_fr_verbe, _inf.toLowerCase()))) return false;
       for (const suffix of rules.suffixes_adjectifs) {
         if (cle.endsWith(suffix)) {
           const base = cle.slice(0, cle.length - suffix.length);
@@ -531,6 +577,7 @@
       rules.accords_adjectifs_suffixes = Object.assign({}, bloc.accords_adjectifs_suffixes || {});
       rules.masculin_de_feminin = {}; for (const k in rules.adjectifs_feminins) rules.masculin_de_feminin[rules.adjectifs_feminins[k]] = k;
       rules.verbes_declencheurs_que = new Set(arr("verbes_declencheurs_que"));
+      rules.verbes_declencheurs_de = new Set(arr("verbes_declencheurs_de"));
       rules.faut_declencheurs_que = new Set(arr("faut_declencheurs_que"));
       rules.clitiques_toujours = new Set(arr("clitiques_toujours"));
       rules.clitiques_contexte = new Set(arr("clitiques_contexte"));
@@ -539,8 +586,11 @@
       rules.indefinis_singuliers = new Set(arr("indefinis_singuliers"));
       rules.quantificateurs_pluriel = new Set(arr("quantificateurs_pluriel"));
       rules.interrogatifs_exclus = new Set(arr("interrogatifs_exclus"));
+      rules.adjectifs_de_infinitif = new Set(arr("adjectifs_de_infinitif"));
+      rules.noms_sans_article_fr = new Set(arr("noms_sans_article_fr"));
 
-      rules.R = Object.assign({}, bloc);
+      // Prototype nul : rend `has` (lecture directe) exact et rapide.
+      rules.R = sansPrototype(bloc);
 
       const ens = bloc.ensembles_lexicaux || {};
       rules.pluriel_invariables_al = new Set(ens.pluriel_invariables_al || []);
@@ -566,6 +616,7 @@
       ]);
       rules.articles_clause = new Set(ens.articles_clause || ["le","la","les","un","une","des"]);
       rules.coordinateurs = new Set(ens.coordinateurs || ["et","ou","mais"]);
+      rules.conjonctions_gp = new Set(ens.conjonctions_gp || []);
       rules.mots_negatifs_fr = new Set(ens.mots_negatifs_fr || ["rien","personne","jamais","aucun","aucune","nulle","nul","guère"]);
       rules.adverbes_quantite_fr = new Set(ens.adverbes_quantite_fr || ["beaucoup","peu","trop","assez","moins","tant","autant","plein"]);
       rules.prepositions_locatives = new Set(ens.prepositions_locatives || ["sur","sous","dans","derrière","devant","entre","chez"]);
@@ -868,11 +919,27 @@
         else if (rules.etre_conditionnel.has(cle)) { sortie.push(rules.R.marqueur_passe); deja.push(true); sortie.push(rules.R.marqueur_futur); deja.push(true); }
         return j + 1;
       }
-      // Copule + groupe nominal ("Gwadloup EST une île", "c'était LE chef") :
-      // "sé", précédé du marqueur de temps si besoin.
+      // Copule + participe passé ("la porte EST fermée", "la chambre EST
+      // balayée") : le créole n'a pas de copule non plus — le participe est à
+      // lui seul le prédicat ("pòt-la fèmé", "chanm-la baléyé"). Seul le
+      // marqueur de temps subsiste. Règle générale : aucun verbe nommé.
+      if (participe(suiv) !== null) {
+        if (rules.etre_imparfait.has(cle) || rules.etre_conditionnel.has(cle)) { sortie.push(rules.R.marqueur_passe); deja.push(true); }
+        if (rules.etre_futur.has(cle) || rules.etre_conditionnel.has(cle)) { sortie.push(rules.R.marqueur_futur); deja.push(true); }
+        return j + 1;
+      }
+      // Copule + groupe nominal. Le créole guadeloupéen n'emploie "sé" que si le
+      // prédicat est DÉTERMINÉ ("Gwadloup sé on zil", "c'était LE chef").
+      // Devant un nom NU, la copule tombe : "Jak dòktè", "Mari enfirmyèz",
+      // "I dòktè" (APiCS ch. 50). Test purement structurel : présence d'un
+      // déterminant en tête du prédicat — aucun mot nommé dans la règle.
       if (rules.etre_imparfait.has(cle) || rules.etre_conditionnel.has(cle)) { sortie.push(rules.R.marqueur_passe); deja.push(true); }
       if (rules.etre_futur.has(cle) || rules.etre_conditionnel.has(cle)) { sortie.push(rules.R.marqueur_futur); deja.push(true); }
-      sortie.push(rules.R.traductions_fr_gp.c_est_suite); deja.push(true);
+      const tetePredicat = suiv.toLowerCase();
+      const determine = rules.determinants_fr.has(tetePredicat) || rules.restituer_determinants.has(tetePredicat) ||
+        has(rules.R.possessifs, tetePredicat) || rules.articles_definis_fr.has(tetePredicat) ||
+        rules.R.articles_supprimes.includes(tetePredicat) || rules.nombres_fr.has(tetePredicat);
+      if (determine) { sortie.push(rules.R.traductions_fr_gp.c_est_suite); deja.push(true); }
       return j + 1;
     }
 
@@ -989,9 +1056,10 @@
         const t = ctx.type_fr[tok.toLowerCase()];
         if (["adj", "nom", "lieu", "num"].includes(t) || est_adjectif(tok)) return null;
       }
-      // Pluriel "sé …-la" : marqueur "la" invariable, pas l'article accordé au
-      // son. Singulier : article postposé accordé (la/lan/an).
-      e.emettre(e.state.post_la_pluriel ? e.state.post_la : (e.sortie.length ? article_postpose(last(e.sortie)) : e.state.post_la));
+      // Pluriel "sé …-la" : marqueur "la" toujours invariable. Singulier :
+      // forme donnée par `article_postpose` (invariable "-la" en guadeloupéen,
+      // accordée au son final si Grammar.json rétablit les règles).
+      e.emettre(marque_postposee(e.state.post_la_pluriel ? e.state.post_la : (e.sortie.length ? article_postpose(last(e.sortie)) : e.state.post_la)));
       delete e.state.post_la; delete e.state.post_la_min; delete e.state.post_la_pluriel;
       return null;
     });
@@ -1004,8 +1072,8 @@
       if (suiv.toLowerCase() === rules.mot_collectif_monde || est_verbe(suiv) || trouver_infinitif(suiv) !== null) return null;
       if (cle === "les") {
         // Pluriel défini créole = "sé …-la" (marqueur "sé" antéposé + "la"
-        // postposé, invariable). Sans le "sé", "sé timoun la" retombait en
-        // "ti moun lan" ambigu, relu au singulier ("l'enfant").
+        // postposé, invariable). Sans le "sé", le groupe se relisait au
+        // singulier ("l'enfant" au lieu de "les enfants").
         e.emettre(reporter_casse(tokens[i], rules.R.traductions_fr_gp.les_pluriel || "sé"));
         e.state.post_la = "la"; e.state.post_la_min = e.sortie.length;
         e.state.post_la_pluriel = true; e.state.pluriel = true; return i + 1;
@@ -1016,6 +1084,20 @@
       if ((prevTok === "de" || prevTok === "d") && rules.noms_masse_fr.has(suiv.toLowerCase())) return i + 1;
       e.state.post_la = "la"; e.state.post_la_min = e.sortie.length;
       return i + 1;
+    });
+    // Devant un NOM DE LIEU, le créole ne met pas de préposition : "An k'ay
+    // Bastè", "Nou ay Goubè", "I ay Trinidad" (APiCS ch. 50). La préposition
+    // française est simplement supprimée. Liste pilotée en données
+    // (Grammar.json > prepositions_lieu_supprimees) ; le déclencheur est le
+    // type "lieu" de l'entrée du dico — donc extensible sans toucher au JS.
+    HF.push(function hf_preposition_lieu(e) {
+      const { tokens, i, n } = e; const cle = tokens[i].toLowerCase();
+      const preps = rules.R.prepositions_lieu_supprimees || ["à", "au", "aux"];
+      if (!preps.includes(cle)) return null;
+      let j = i + 1; while (j < n && !est_mot(tokens[j])) j++;
+      if (j >= n) return null;
+      if (classer_fr(tokens[j]) !== "lieu") return null;
+      return i + 1; // préposition avalée, le lieu suit normalement
     });
     HF.push(function hf_articles_et_est_ce(e) {
       const { tokens, i, n } = e; const cle = tokens[i].toLowerCase();
@@ -1236,15 +1318,26 @@
     // et émise telle quelle (déjà traduite) par le handler prioritaire.
     function extraire_phrases(tokens, index) {
       const phMap = new Map(); const sortie = []; const n = tokens.length;
+      // normApos coûtait 13 % du temps total parce qu'il était rappelé pour
+      // CHAQUE fenêtre de chaque position. Il est ici calculé une fois par
+      // jeton : concaténer des morceaux déjà normalisés (non vides, sans espace
+      // en bordure) redonne exactement la normalisation de leur jointure.
+      const norm = new Array(n);
+      let concatSure = true;
+      for (let k = 0; k < n; k++) { norm[k] = normApos(tokens[k].toLowerCase()); if (!norm[k]) concatSure = false; }
       let i = 0, ph = 0;
       while (i < n) {
         let hit = false;
-        for (let len = Math.min(6, n - i); len >= 2; len--) {
+        // Les locutions peuvent dépasser six mots (ex. « Menm lè-w vwè kè ou
+        // ka dòmi »). La limite reste bornée pour éviter tout coût imprévisible.
+        for (let len = Math.min(8, n - i); len >= 2; len--) {
           // Un span de phrase ne contient que des mots : s'il finit par une
           // ponctuation (ex. "?"), on l'exclut du span pour que le "?" reste
           // disponible à la détection interrogative ci-dessous (et en sortie).
           if (!est_mot(tokens[i + len - 1])) continue;
-          const base = normApos(tokens.slice(i, i + len).join(" ").toLowerCase());
+          let base;
+          if (concatSure) { base = norm[i]; for (let k = 1; k < len; k++) base += " " + norm[i + k]; }
+          else base = normApos(tokens.slice(i, i + len).join(" ").toLowerCase());
           const after = i + len < n ? tokens[i + len] : null;
           // Forme interrogative : si le groupe est suivi de "?", on tente d'abord
           // la clé "… ?" (plus spécifique) → permet de distinguer question et
@@ -1297,8 +1390,10 @@
       return null;
     });
 
-    // "un/une" article indéfini (devant nom ou adjectif) → "yonn" (jamais "an",
-    // qui collide avec le pronom "je"). Ex. "un chien" = "yonn chyen".
+    // "un/une" article indéfini (devant nom ou adjectif) → forme donnée par
+    // Grammar.json > traductions_fr_gp.article_indefini ("on" en guadeloupéen :
+    // "on chyen"). Ni "yonn", qui est le numéral, ni "an", qui collide avec le
+    // pronom sujet "an" (= je).
     HF.splice(2, 0, function hf_un_article(e) {
       const { tokens, i, n } = e; const cle = tokens[i].toLowerCase();
       if (cle !== "un" && cle !== "une") return null;
@@ -1314,7 +1409,7 @@
       const [bruts, phMap] = extraire_phrases(tokens, ctx.phrases_fr_gp);
       const e = makeEtat(separer_inversions(bruts));
       e.phMap = phMap;
-      const _trF = typeof process !== "undefined" && process.env && process.env.RAKOUN_TRACE;
+      const _trF = TRACE;
       while (e.i < e.n) {
         let matched = false;
         for (const h of HF) {
@@ -1330,7 +1425,7 @@
           e.emettre(e.tok, false); e.i += 1;
         }
       }
-      if (e.state.post_la) { e.emettre(e.state.post_la_pluriel ? e.state.post_la : (e.sortie.length ? article_postpose(last(e.sortie)) : e.state.post_la)); delete e.state.post_la; delete e.state.post_la_pluriel; }
+      if (e.state.post_la) { e.emettre(marque_postposee(e.state.post_la_pluriel ? e.state.post_la : (e.sortie.length ? article_postpose(last(e.sortie)) : e.state.post_la))); delete e.state.post_la; delete e.state.post_la_pluriel; }
       // Réorganisation "ankò"
       const sortie = e.sortie, deja = e.deja; let iAnk = 0; const nAnk = sortie.length;
       while (iAnk < nAnk) {
@@ -1570,8 +1665,9 @@
     }
 
     // Marqueur interne de pluriel démonstratif ("Timoun YO" → les enfants) :
-    // hors alphabet pour ne jamais entrer en collision avec un mot du texte.
-    const MARQUE_DEM = "⟦dem⟧";
+    // caractère privé invisible pour ne jamais afficher un faux mot ("dem")
+    // si un chemin de réordonnancement échoue à le consommer.
+    const MARQUE_DEM = "\uE001";
 
     // Génitif créole "N1 a N2" ("kaka a vwazen" = le caca DU voisin) détecté à
     // partir du token qui suit N1 : "a" puis un complément NOMINAL (nom, nom
@@ -1596,7 +1692,12 @@
     function sujet_pluriel_gp(sortie) {
       for (let k = sortie.length - 1; k >= 0; k--) {
         const w = sortie[k];
-        if (typeof w !== "string" || !est_mot(w)) break;
+        if (typeof w !== "string") break;
+        if (!est_mot(w)) {
+          const morceaux = w.toLowerCase().split(/\s+/);
+          if (morceaux.includes("les") || morceaux.includes("des") || morceaux.includes("ces")) return true;
+          break;
+        }
         const wl = w.toLowerCase();
         if (rules.pronoms_gp.has(wl) || rules.marqueurs.has(wl) || est_verbe_gp(w)) break;
         if (/^\d+$/.test(wl)) { if (parseInt(wl, 10) >= 2) return true; continue; }
@@ -1617,6 +1718,144 @@
       }
       const bi = e.cle + " " + e.suiv.toLowerCase();
       if (has(loc, bi)) { e.emettre(loc[bi]); return e.i + 2; }
+      return null;
+    });
+    // Certains mots créoles sont homographes d'un nom et d'un coordonnant.
+    // La préférence se décide par le contexte nominal, au lieu d'écraser le
+    // sens nominal dans l'index global (ex. « bout mè léta » = « bout mais état »).
+    HG.push(function h_conjonction_gp(e) {
+      const { tokens, i, n, sortie } = e;
+      if (!rules.conjonctions_gp.has(e.cle)) return null;
+      const suiv = i + 1 < n ? tokens[i + 1] : null;
+      const debutDecl = (rules.R.conjonctions_gp_debut || {})[e.cle];
+      if (e.debut_de_phrase() && suiv !== null && debutDecl && debutDecl.includes(suiv.toLowerCase())) {
+        const tradDebut = (rules.R.traductions_conjonctions_gp_fr || {})[e.cle] || e.cle;
+        e.emettre(reporter_casse(e.tok, tradDebut)); return i + 1;
+      }
+      if (!sortie.length || !est_mot(last(sortie))) return null;
+      if (suiv === null || !est_mot(suiv) || rules.marqueurs.has(suiv.toLowerCase()) || rules.pronoms_gp.has(suiv.toLowerCase())) return null;
+      const precedentNom = est_nom(last(sortie)) || (last(sortie)[0] === last(sortie)[0].toUpperCase() && last(sortie)[0] !== last(sortie)[0].toLowerCase());
+      const suivantNom = est_nom(suiv) || !!ctx.index_gp_nom[suiv.toLowerCase()] || (suiv[0] === suiv[0].toUpperCase() && suiv[0] !== suiv[0].toLowerCase());
+      if (!precedentNom || !suivantNom) return null;
+      const trad = (rules.R.traductions_conjonctions_gp_fr || {})[e.cle] || e.cle;
+      e.emettre(reporter_casse(e.tok, trad)); return i + 1;
+    });
+    HG.push(function h_traduction_contextuelle_gp(e) {
+      const map = rules.R.traductions_gp_fr_contextuelles || {};
+      if (has(map, e.cle)) { e.emettre(reporter_casse(e.tok, map[e.cle])); return e.i + 1; }
+      return null;
+    });
+    HG.push(function h_vocatif_gp(e) {
+      if (e.cle !== "o" || !e.debut_de_phrase() || e.suiv === null) return null;
+      const s = e.suiv;
+      if (s[0] && s[0] === s[0].toUpperCase() && s[0] !== s[0].toLowerCase()) { e.emettre("Ô"); return e.i + 1; }
+      return null;
+    });
+    HG.push(function h_copule_coordination_gp(e) {
+      if (e.cle !== "sé" || e.i === 0 || e.suiv === null) return null;
+      const prev = e.tokens[e.i - 1].toLowerCase();
+      const suivantPronom = rules.pronoms_gp.has(e.suiv.toLowerCase()) ||
+        (est_sentinelle(e.suiv) && e.phMap && String(e.phMap.get(e.suiv) || "").toLowerCase().includes("eux-mêmes"));
+      if ((prev === "é" || prev === "et" || prev === "mè") && suivantPronom) {
+        if (est_sentinelle(e.suiv)) e.state.pluriel = true;
+        e.emettre("c'est");
+        if (!est_sentinelle(e.suiv) && e.suiv.toLowerCase() === "vou") { e.emettre("vous"); return e.i + 2; }
+        return e.i + 1;
+      }
+      return null;
+    });
+    HG.push(function h_article_initial_gp(e) {
+      if (e.cle !== "la" || !e.debut_de_phrase() || e.suiv === null || !est_mot(e.suiv)) return null;
+      if (!est_verbe_gp(e.suiv) && !rules.marqueurs.has(e.suiv.toLowerCase()) && !rules.pronoms_gp.has(e.suiv.toLowerCase())) {
+        e.emettre("la"); return e.i + 1;
+      }
+      return null;
+    });
+    HG.push(function h_articles_gp(e) {
+      if (e.cle !== "lé" || e.suiv === null || !est_mot(e.suiv)) return null;
+      if (!est_verbe_gp(e.suiv) && !rules.marqueurs.has(e.suiv.toLowerCase()) && !rules.pronoms_gp.has(e.suiv.toLowerCase()) &&
+          (est_nom(e.suiv) || ctx.index_gp_nom[e.suiv.toLowerCase()] !== undefined || e.suiv.toLowerCase() === "personnes")) {
+        e.emettre("les"); return e.i + 1;
+      }
+      return null;
+    });
+    HG.push(function h_de_preposition_gp(e) {
+      if (e.cle !== "dè" || e.suiv === null || !est_mot(e.suiv)) return null;
+      const prev = e.i > 0 ? e.tokens[e.i - 1] : null;
+      const prevSentNom = prev && est_sentinelle(prev) && e.phMap && /\b(?:homme|femme|gens|monde|mêmes?)\b/i.test(String(e.phMap.get(prev) || ""));
+      const prevImperatif = prev && has(rules.R.imperatifs_gp || {}, prev);
+      if (rules.pronoms_gp.has(e.suiv.toLowerCase()) || prevSentNom || prevImperatif ||
+          (prev && est_mot(prev) && (est_nom(prev) || ctx.index_gp_nom[prev.toLowerCase()] !== undefined))) {
+        e.emettre("de"); return e.i + 1;
+      }
+      return null;
+    });
+    HG.push(function h_preposition_contextuelle_gp(e) {
+      const decl = (rules.R.prepositions_gp_contextuelles || {})[e.cle];
+      if (!decl || e.suiv === null || !decl.includes(e.suiv.toLowerCase())) return null;
+      e.emettre("sur"); return e.i + 1;
+    });
+    HG.push(function h_pon_contextuel_gp(e) {
+      if (e.cle !== "pon" || e.suiv === null || !est_mot(e.suiv)) return null;
+      const fr = fr_de_gp(e.suiv) || e.suiv;
+      if (est_nom(e.suiv) || ctx.index_gp_nom[e.suiv.toLowerCase()] !== undefined) {
+        const f = genre_nom(fr) === "f" ? "aucune" : "aucun";
+        e.emettre(f); return e.i + 1;
+      }
+      return null;
+    });
+    HG.push(function h_verbe_reflexif_gp(e) {
+      const inf = (rules.R.verbes_reflexifs_gp || {})[e.cle];
+      if (!inf || e.i === 0 || e.tokens[e.i - 1].toLowerCase() !== "yo") return null;
+      e.emettre("s'associent"); return e.i + 1;
+    });
+    HG.push(function h_infinitif_contextuel_gp(e) {
+      const prev = e.i > 0 ? e.tokens[e.i - 1].toLowerCase() : null;
+      const map = prev ? (rules.R.infinitifs_apres_gp || {})[prev] : null;
+      if (map && has(map, e.cle)) { e.emettre(map[e.cle]); return e.i + 1; }
+      return null;
+    });
+    HG.push(function h_interjection_contextuelle_gp(e) {
+      const map = rules.R.interjections_gp_contextuelles || {};
+      if (has(map, e.cle)) { e.emettre(map[e.cle]); return e.i + 1; }
+      return null;
+    });
+    HG.push(function h_imperatif_gp(e) {
+      const map = rules.R.imperatifs_gp || {};
+      if (e.i === 0 && has(map, e.cle)) { e.emettre(map[e.cle]); return e.i + 1; }
+      return null;
+    });
+    HG.push(function h_nom_defini_gp(e) {
+      const map = rules.R.noms_definis_gp || {};
+      if (!has(map, e.cle)) return null;
+      const prev = e.i > 0 ? e.tokens[e.i - 1].toLowerCase() : null;
+      const prevAvec = prev === "èvè" || prev === "épi" ||
+        (prev && est_sentinelle(prev) && e.phMap && /avec$/i.test(String(e.phMap.get(prev) || "")));
+      if (prevAvec) { e.emettre(map[e.cle]); return e.i + 1; }
+      return null;
+    });
+    HG.push(function h_pani_gp(e) {
+      if (e.cle !== "pani") return null;
+      const prev = e.i > 0 ? e.tokens[e.i - 1].toLowerCase() : null;
+      if (prev && rules.pronoms_gp.has(prev)) return null;
+      e.emettre("il"); e.emettre("n'y"); e.emettre("a"); e.emettre("pas"); e.emettre("de"); return e.i + 1;
+    });
+    HG.push(function h_sa_w_gp(e) {
+      if (e.cle !== "sa" || e.suiv !== "-w") return null;
+      e.emettre("ce que tu"); return e.i + 2;
+    });
+    // « épi » signifie « avec » devant un complément, mais « et » entre deux
+    // noms (notamment deux noms propres). Cette règle ne remplace donc pas la
+    // préposition générale du dictionnaire.
+    HG.push(function h_coordination_nominale(e) {
+      if (e.cle !== "épi" && e.cle !== "epi") return null;
+      const { tokens, i, sortie } = e;
+      if (!sortie.length || !est_mot(last(sortie)) || e.suiv === null || !est_mot(e.suiv)) return null;
+      const precedentNom = est_nom(last(sortie)) || (last(sortie)[0] === last(sortie)[0].toUpperCase() && last(sortie)[0] !== last(sortie)[0].toLowerCase());
+      const suivantTrad = fr_de_gp(e.suiv) || "";
+      const suivantNom = est_nom(e.suiv) || !!ctx.index_gp_nom[e.suiv.toLowerCase()] || (e.suiv[0] === e.suiv[0].toUpperCase() && e.suiv[0] !== e.suiv[0].toLowerCase()) ||
+        (suivantTrad && suivantTrad[0] === suivantTrad[0].toUpperCase() && suivantTrad[0] !== suivantTrad[0].toLowerCase());
+      if (precedentNom && suivantNom) { e.emettre("et"); return i + 1; }
       return null;
     });
     HG.push(function h_ponctuation(e) {
@@ -1967,7 +2206,8 @@
       // caca DU voisin est noir) est le NOM, tête du groupe génitif — pas un
       // impératif ("chie") : h_nom_homographe tranchera.
       if (e.debut_de_phrase() && est_mot(tok) && est_verbe_gp(tok) && clauseImp && !rules.etre_formes_gp_set.has(cle) &&
-          !(has(ctx.index_gp_nom, cle) && suit_genitif_gp(tokens, i + 1, e.n))) {
+          !(has(ctx.index_gp_nom, cle) && (suit_genitif_gp(tokens, i + 1, e.n) ||
+            i + 1 >= e.n || !est_mot(tokens[i + 1])))) {
         conj[sortie.length] = ["tu", "imperatif", false, null]; e.emettre(tok, false); return i + 1;
       }
       return null;
@@ -1985,6 +2225,16 @@
       if (tokGp[0] === tokGp[0].toUpperCase() && tokGp[0] !== tokGp[0].toLowerCase()) det = majuscule(det);
       e.emettre(det); e.emettre(nomFr); return e.i + 1;
     });
+    // « yo ja [adjectif] » porte une copule implicite : le pronom reste un
+    // sujet (« ils sont déjà… »), pas un tonique isolé. La règle s'applique à
+    // tout adjectif du dictionnaire, sans dépendre d'une phrase complète.
+    HG.push(function h_pronom_ja_adjectif(e) {
+      if (e.cle !== "yo" || e.i + 2 >= e.n || e.tokens[e.i + 1].toLowerCase() !== "ja") return null;
+      const adj = e.tokens[e.i + 2];
+      if (!est_adjectif_gp(adj)) return null;
+      e.emettre("ils"); e.emettre("sont"); e.emettre("déjà"); e.state.pluriel = true;
+      return e.i + 2;
+    });
     HG.push(function h_pronoms(e) {
       const { tokens, i, n, sortie, deja, conj } = e; const tok = tokens[i], cle = tok.toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null;
@@ -2000,7 +2250,14 @@
         if (cle === "yo" && sortie.length && est_mot(last(sortie))) {
           const prev = last(sortie).toLowerCase();
           const prevFr = ctx.index_gp[prev] !== undefined ? ctx.index_gp[prev] : prev;
-          if (!rules.pronoms_gp.has(prev) && !rules.marqueurs.has(prev) && !rules.demonstratifs_gp.has(prev) &&
+          // Après une préposition, « yo » est un pronom tonique (« pour eux »),
+          // jamais l'article pluriel postposé. Le texte déjà émis est en français
+          // à ce stade : reconnaître les deux formes (GP et traduction FR), car
+          // « pou » peut être traduit en « pour » avant d'arriver ici.
+          const prevPrep = Rin("prepositions_toniques", prev) || Rin("prepositions_toniques", prevFr) ||
+            rules.prepositions_contexte.has(prev) || rules.prepositions_contexte.has(prevFr) ||
+            ctx.type_fr[prev] === "prep" || ctx.type_fr[prevFr] === "prep";
+          if (!prevPrep && !rules.pronoms_gp.has(prev) && !rules.marqueurs.has(prev) && !rules.demonstratifs_gp.has(prev) &&
               !est_verbe_gp(last(sortie)) && !["adv", "prep", "conj"].includes(ctx.type_fr[prev]) && !["adv", "prep", "conj"].includes(ctx.type_fr[prevFr])) {
             sortie.push(MARQUE_DEM); deja.push(true); e.state.pluriel = true;
             let [temps, adverbe, j] = lire_marqueurs(tokens, i + 1, n);
@@ -2065,7 +2322,8 @@
       if ((e.cle !== "pli" && e.cle !== "pi") || !e.sortie.length) return null;
       if (last(e.sortie).toLowerCase() !== "qui") return null;
       if (e.suiv === null || !est_adjectif_gp(e.suiv)) return null;
-      e.emettre("est"); e.emettre("plus"); return e.i + 1;
+      const sujet = e.sortie.length >= 2 ? String(e.sortie[e.sortie.length - 2]).toLowerCase() : "";
+      e.emettre(sujet === "vous" ? "êtes" : "est"); e.emettre("le"); e.emettre("plus"); return e.i + 1;
     });
     HG.push(function h_fek_standalone(e) {
       if (e.cle !== "fèk" && e.cle !== "fek") return null;
@@ -2078,6 +2336,16 @@
         conj[sortie.length] = ["tu", "imperatif", false, null]; e.emettre(tok, false); e.emettre(rules.objet_imperatif[suiv.slice(1).toLowerCase()]); return i + 2;
       }
       return null;
+    });
+    HG.push(function h_pani_decompose_gp(e) {
+      if (e.cle !== "pa" || e.suiv !== "ni") return null;
+      const prev = e.i > 0 ? e.tokens[e.i - 1].toLowerCase() : null;
+      if (prev && rules.pronoms_gp.has(prev)) return null;
+      e.emettre("il"); e.emettre("n'y"); e.emettre("a"); e.emettre("pas"); e.emettre("de"); return e.i + 2;
+    });
+    HG.push(function h_parce_que_gp(e) {
+      if (e.cle !== "pas" || e.suiv === null || e.suiv.toLowerCase() !== "yo") return null;
+      e.emettre("parce que"); return e.i + 1;
     });
     HG.push(function h_negation_milieu(e) {
       const { tokens, i, sortie, state } = e; const cle = tokens[i].toLowerCase(); const neg = rules.R.marqueur_negation;
@@ -2218,7 +2486,7 @@
       const [bruts, phMap] = extraire_phrases(tokens, ctx.phrases_gp_fr);
       const e = makeEtat(eclater_traits_union(bruts));
       e.phMap = phMap;
-      const _trH = typeof process !== "undefined" && process.env && process.env.RAKOUN_TRACE;
+      const _trH = TRACE;
       while (e.i < e.n) {
         let matched = false;
         for (const h of HG) {
@@ -2366,16 +2634,18 @@
       }
       // RAKOUN_TRACE=1 : trace chaque étape du post-traitement (debug).
       const _tr = (etape, mots) => {
-        if (typeof process !== "undefined" && process.env && process.env.RAKOUN_TRACE) console.error("PIPE", etape, JSON.stringify(mots));
+        if (TRACE) console.error("PIPE", etape, JSON.stringify(mots));
         return mots;
       };
       _tr("brut", sortie);
       sortie = _tr("placer_clitiques", placer_clitiques(sortie));
+      sortie = _tr("replacer_adverbes", replacer_adverbes(sortie));
       sortie = _tr("restituer_articles", restituer_articles(sortie));
       sortie = _tr("pluraliser", pluraliser(sortie));
       sortie = _tr("accorder_adjectifs", accorder_adjectifs(sortie));
       sortie = _tr("accorder_determinants", accorder_determinants(sortie));
       sortie = _tr("inserer_que", inserer_que(sortie));
+      sortie = _tr("inserer_de", inserer_de(sortie));
       sortie = _tr("inserer_qui_cleft", inserer_qui_cleft(sortie));
       sortie = _tr("nettoyer_negation", nettoyer_negation(sortie));
       sortie = _tr("participe_apres_etre", participe_apres_etre(sortie));
@@ -2396,7 +2666,7 @@
         for (let p = i; p < j; p++) {
           if (mots[p] && mots[p].toLowerCase() === "pas") {
             for (let k = p + 1; k < j; k++) {
-              if (mots[k] && NEG.has(mots[k].toLowerCase())) { remove[p] = true; break; }
+              if (mots[k] && String(mots[k]).toLowerCase().split(/\s+/).some((w) => NEG.has(w))) { remove[p] = true; break; }
             }
           }
         }
@@ -2436,7 +2706,18 @@
     }
 
     function inserer_qui_cleft(mots) {
-      if (!mots.length || mots[0].toLowerCase() !== "c'est") return mots;
+      if (!mots.length) return mots;
+      for (let i = 0; i + 2 < mots.length; i++) {
+        if (mots[i].toLowerCase() !== "c'est") continue;
+        if (typeof mots[i + 1] === "string" && mots[i + 1].includes("eux-mêmes")) {
+          let j = i + 2;
+          while (j < mots.length && rules.clitiques_objet_fr.has(String(mots[j]).toLowerCase())) j++;
+          if (j < mots.length && contient_verbe(mots[j]) && mots[j].toLowerCase() !== "est") {
+            mots.splice(i + 2, 0, "qui"); i++;
+          }
+        }
+      }
+      if (mots[0].toLowerCase() !== "c'est") return mots;
       for (let i = 1; i < mots.length; i++) {
         const cle = mots[i].toLowerCase();
         if (!est_mot(mots[i])) break;
@@ -2464,6 +2745,45 @@
         sortie.push(mot);
       }
       return sortie;
+    }
+
+    // Les verbes français qui régissent « de » (« essayer de faire », etc.)
+    // sont déclarés dans Grammar.json. On n'insère la préposition que devant
+    // un infinitif et seulement si elle n'est pas déjà présente.
+    function inserer_de(mots) {
+      const sortie = [];
+      for (let i = 0; i < mots.length; i++) {
+        const mot = mots[i];
+        sortie.push(mot);
+        const motFinal = String(mot).toLowerCase().split(/\s+/).pop();
+        if (!rules.verbes_declencheurs_de.has(String(mot).toLowerCase()) && !rules.adjectifs_de_infinitif.has(motFinal)) continue;
+        const suivant = mots[i + 1];
+        if (!suivant || String(suivant).toLowerCase() === "de" || String(suivant).toLowerCase().startsWith("d'")) continue;
+        if (ctx.type_fr[String(suivant).toLowerCase()] === "verbe" || trouver_infinitif(String(suivant), true) !== null) sortie.push("de");
+      }
+      return sortie;
+    }
+
+    // Position usuelle des adverbes courts : « la poule a toujours raison »,
+    // et non « la poule toujours a raison ». Les formes déjà bien placées ne
+    // bougent pas; la règle reste limitée aux adverbes déclarés dans le dico.
+    function replacer_adverbes(mots) {
+      for (let i = 0; i < mots.length; i++) {
+        if (String(mots[i]).toLowerCase() === "même" && i >= 2 && String(mots[i - 2]).toLowerCase() === "pas") {
+          const adv = mots.splice(i, 1)[0]; mots.splice(i - 2, 0, adv); i--; continue;
+        }
+        if (String(mots[i]).toLowerCase() !== "toujours") continue;
+        let j = i + 1;
+        while (j < mots.length && mots[j] !== "." && mots[j] !== "!" && mots[j] !== "?" &&
+               !((est_mot(mots[j]) || (typeof mots[j] === "string" && mots[j].includes(" "))) &&
+                 (classer_fr(mots[j]) === "verbe" || contient_verbe(mots[j])))) j++;
+        if (j >= mots.length || mots[j] === "." || mots[j] === "!" || mots[j] === "?") continue;
+        mots.splice(i, 1);
+        if (j > i) j--;
+        mots.splice(j + 1, 0, "toujours");
+        i = j + 1;
+      }
+      return mots;
     }
 
     function placer_clitiques(mots) {
@@ -2502,6 +2822,7 @@
         if (!precNeg && est_mot(mot) && !rules.restituer_determinants.has(mot.toLowerCase()) &&
             !rules.etre_formes.has(mot.toLowerCase()) && !rules.avoir_formes.has(mot.toLowerCase()) &&
             !rules.etre_imparfait.has(mot.toLowerCase()) && ["nom", "lieu"].includes(classer_fr(mot))) {
+          if (rules.noms_sans_article_fr.has(mot.toLowerCase())) { sortie.push(mot); continue; }
           const prec = i > 0 ? mots[i - 1].toLowerCase() : null;
           const precType = prec ? ctx.type_fr[prec] : null;
           // "avoir faim/soif/peur…" sans article, y compris à la forme négative
@@ -2531,13 +2852,16 @@
           // Adverbe de quantité + nom nu → "de" ("beaucoup de gens", "trop de bruit").
           if (prec !== null && rules.adverbes_quantite_fr.has(prec)) {
             if (commence_par_voyelle(mot) || mot.toLowerCase()[0] === "h") sortie.push("d'" + mot);
-            else sortie.push("de", mot);
-            continue;
+              else sortie.push("de", rules.noms_masse_fr.has(mot.toLowerCase()) ? mot : pluriel_fr(mot));
+              continue;
           }
-          const afterNum = prec !== null && (/^\d+$/.test(prec) || rules.nombres_fr.has(prec) || rules.nombres_fr.has(prec.replace(/s$/, "")));
+          const precDernier = prec ? prec.split(" ").pop() : null;
+          const afterNum = prec !== null && (/^\d+$/.test(prec) || rules.nombres_fr.has(prec) || rules.nombres_fr.has(prec.replace(/s$/, "")) ||
+            (precDernier && (rules.nombres_fr.has(precDernier) || rules.nombres_fr.has(precDernier.replace(/s$/, "")))));
           const prepContr = ["au", "aux", "du", "des"].includes(prec);
           const apresClit = rules.clitiques_objet_fr.has(prec);
           const apresPronSujet = rules.pronoms_sujet_fr.has(prec) || (prec !== null && prec.endsWith("'") && ["j", "c", "m", "t", "s", "l", "n"].includes(prec.slice(0, -1)));
+          if (prec === "de") { sortie.push(mot); continue; }
           const nu = (!afterNum && !prepContr && !apresClit && !apresPronSujet &&
             (prec === null || !est_mot(mots[i - 1]) || (!rules.restituer_determinants.has(prec) && !["adj", "nom", "num", "adv"].includes(precType))));
           if (nu) {
@@ -2602,7 +2926,8 @@
           const nom = mots[i + 1]; if (est_nom(nom)) mots[i + 1] = pluriel_fr(nom); continue;
         }
         let nomGenre, j2;
-        if ((ctx.type_fr[mot.toLowerCase()] === "num" || /^\d+$/.test(mot)) && !rules.indefinis_singuliers.has(mot.toLowerCase())) {
+        const motDernier = typeof mot === "string" ? mot.toLowerCase().split(" ").pop() : "";
+        if ((ctx.type_fr[mot.toLowerCase()] === "num" || /^\d+$/.test(mot) || rules.nombres_fr.has(motDernier)) && !rules.indefinis_singuliers.has(motDernier)) {
           nomGenre = genre_nom_suivant(mots, i + 1); j2 = i + 1;
         } else if (rules.determinants_pluriels.has(mot.toLowerCase())) {
           nomGenre = genre_nom_suivant(mots, i + 1); j2 = i + 1;
@@ -2704,7 +3029,7 @@
               else break;
             }
             while (startIdx > 0 && rules.intensifieurs_fr.has(sentence[startIdx - 1].toLowerCase())) startIdx--;
-            if (typeof process !== "undefined" && process.env && process.env.RAKOUN_TRACE) console.error("COPULE inserted at", startIdx, "in", JSON.stringify(sentence));
+            if (TRACE) console.error("COPULE inserted at", startIdx, "in", JSON.stringify(sentence));
             insertions.push({ idx: startIdx, word: conjuguer("être", subjPronom, "present") });
           }
         }
@@ -2732,8 +3057,10 @@
         const frForms = asList(entry.fr), gpForms = asList(entry.gp);
         if (!frForms.length || !gpForms.length) continue;
         const wordGenre = entry.genre, canonFr = frForms[0], canonGp = gpForms[0];
+        const estPropre = (s) => s && s[0] === s[0].toUpperCase() && s[0] !== s[0].toLowerCase();
         for (const f of frForms) {
           const key = f.toLowerCase();
+          if (estPropre(f) && !has(ctx.index_fr_propre, f)) ctx.index_fr_propre[f] = canonGp;
           if (!has(ctx.index_fr, key)) ctx.index_fr[key] = canonGp;
           // Index séparés nom/verbe : permettent de désambiguïser un homographe
           // (mot ayant une entrée nom ET une entrée verbe) selon le contexte.
@@ -2743,15 +3070,29 @@
           if (wordGenre === "m" || wordGenre === "f") ctx.genre_fr[key] = wordGenre;
           if (!key.includes(" ")) { const nk = normalize_token(key); if (!has(ctx.norm_fr, nk)) ctx.norm_fr[nk] = key; }
         }
+        // Nom propre CRÉOLISÉ = les deux formes sont capitalisées ET diffèrent
+        // (Pierre/Pyè, Jean/Jan, Basse-Terre/Bastè). Celui-là ne peuple QUE
+        // l'index sensible à la casse : sans ça, le prénom "Jan" écraserait le
+        // mot courant "jan" (manière) dans le sens GP→FR, "Mari" écraserait
+        // "mari", "Pyè" écraserait "pyè".
+        // Un nom propre NON créolisé (Népal, Jordanie…) ne pose aucune ambiguïté :
+        // il reste dans l'index normal, et le sens GP→FR le reconnaît tel quel.
+        const nomPropre = estPropre(canonFr) && estPropre(canonGp) &&
+          canonFr.toLowerCase() !== canonGp.toLowerCase();
         for (const g of gpForms) {
           const key = g.toLowerCase(); const existing = ctx.index_gp[key];
+          if (estPropre(g) && !has(ctx.index_gp_propre, g)) ctx.index_gp_propre[g] = canonFr;
+          if (nomPropre) continue;
           if (entry.secondaire) { /* skip index_gp */ }
           else if (existing === undefined) ctx.index_gp[key] = canonFr;
           else if (wt === "verbe") { if (!(existing.endsWith("er") || existing.endsWith("ir") || existing.endsWith("re"))) ctx.index_gp[key] = canonFr; }
           if (!key.includes(" ") && has(ctx.index_gp, key)) { const nk = normalize_token(key); if (!has(ctx.norm_gp, nk)) ctx.norm_gp[nk] = key; }
           // Sens nominal (nom/lieu) gardé à part : sert à désambiguïser "X la"
           // quand le sens verbe a gagné dans index_gp (ex. maché=marcher / marché).
-          if (!entry.secondaire && (wt === "nom" || wt === "lieu") && !has(ctx.index_gp_nom, key)) {
+          // Un nom propre n'entre pas dans l'index des NOMS COMMUNS créoles :
+          // sinon "Pyè" (Pierre) ferait de "pyè" un nom courant et la grammaire
+          // GP→FR analyserait la phrase de travers.
+          if (!entry.secondaire && !nomPropre && (wt === "nom" || wt === "lieu") && !has(ctx.index_gp_nom, key)) {
             ctx.index_gp_nom[key] = canonFr;
             if (wordGenre === "m" || wordGenre === "f") ctx.genre_fr[canonFr.toLowerCase()] = wordGenre;
           }
@@ -2766,6 +3107,19 @@
         for (const f of frForms) if (multi(f)) ctx.phrases_fr_gp[normApos(f.toLowerCase())] = canonGp;
         for (const g of gpForms) if (multi(g)) ctx.phrases_gp_fr[normApos(g.toLowerCase())] = canonFr;
       }
+      // Portée maximale des entrées multi-mots, par premier mot (voir `spanFr`).
+      const noterPortee = (span, cle) => {
+        const mots = cle.split(" ");
+        if (mots.length < 2) return;
+        const tete = mots[0];
+        if (!(span[tete] >= mots.length)) span[tete] = mots.length;
+      };
+      ctx.vide_fr = true; for (const _ in ctx.index_fr) { ctx.vide_fr = false; break; }
+      ctx.vide_gp = true; for (const _ in ctx.index_gp) { ctx.vide_gp = false; break; }
+      for (const k in ctx.index_fr) noterPortee(spanFr, k);
+      for (const k in ctx.index_fr_propre) noterPortee(spanFr, k.toLowerCase());
+      for (const k in ctx.index_gp) noterPortee(spanGp, k);
+      for (const k in ctx.index_gp_propre) noterPortee(spanGp, k.toLowerCase());
     }
 
     function tokenize(text) {
@@ -2819,17 +3173,13 @@
       const res = [];
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
-        // Pas d'espace avant : ponctuation isolée, ou clitique élidé collé
-        // ("wè" + "'w" → "wè'w", pas "wè 'w").
-        if (i === 0 || /^[^\p{L}\p{N}_]$/u.test(token) || /^['']/.test(token)) res.push(token);
+        // Pas d'espace avant : ponctuation isolée, clitique élidé collé
+        // ("wè" + "'w" → "wè'w"), ou marque postposée à trait d'union
+        // ("kaz" + "-la" → "kaz-la", graphie GEREC).
+        if (i === 0 || /^[^\p{L}\p{N}_]$/u.test(token) || /^['']/.test(token) || /^-\p{L}/u.test(token)) res.push(token);
         else res.push(" " + token);
       }
       return res.join("");
-    }
-
-    function sourceStartsUpper(source) {
-      for (const ch of source.trim()) if (/\p{L}/u.test(ch)) return ch === ch.toUpperCase() && ch !== ch.toLowerCase();
-      return false;
     }
 
     function capitaliser(texte, source) {
@@ -2878,9 +3228,12 @@
 
       const db = target_lang === "gp" ? ctx.index_fr : ctx.index_gp;
       const dbNorm = target_lang === "gp" ? ctx.norm_fr : ctx.norm_gp;
-      // Dico non chargé ? test de non-vacuité sans allouer Object.keys().
-      let dbVide = true; for (const _ in db) { dbVide = false; break; }
-      if (dbVide) return text;
+      const dbPropre = target_lang === "gp" ? ctx.index_fr_propre : ctx.index_gp_propre;
+      // Dico non chargé ? Le dictionnaire est figé après chargement : le test
+      // se fait UNE fois à l'indexation. Il était auparavant refait à chaque
+      // appel par un `for…in` sur des dizaines de milliers de clés — à lui seul
+      // 96 % du temps de traduction.
+      if (target_lang === "gp" ? ctx.vide_fr : ctx.vide_gp) return text;
 
       let tokens = tokenize(text);
       // Garde-fou 3 : borne sur le nombre de jetons d'une même ligne. Au-delà,
@@ -2896,16 +3249,24 @@
       else { [tokens, already, conjMap] = grammaire_gp_vers_fr(tokens); }
 
       const translation = []; let index = 0; const n = tokens.length; const MAX = 6;
+      const span = target_lang === "gp" ? spanFr : spanGp;
+      // Minuscules calculées UNE fois par jeton au lieu d'une fois par fenêtre.
+      const bas = new Array(n);
+      for (let i = 0; i < n; i++) bas[i] = tokens[i].toLowerCase();
+      const estCap = (t) => est_mot(t) && t[0] === t[0].toUpperCase() && t[0] !== t[0].toLowerCase();
       while (index < n) {
         let current = tokens[index];
         if (already[index]) {
           let negSuffix = null;
-          if (has(conjMap, String(index))) [current, negSuffix] = conjuguer_consigne(current, conjMap[index]);
+          const consigne = conjMap[index];
+          if (consigne !== undefined) [current, negSuffix] = conjuguer_consigne(current, consigne);
           translation.push(current); if (negSuffix) translation.push(negSuffix); index++; continue;
         }
         if (/^[^\p{L}\p{N}_]+$/u.test(current)) { translation.push(current); index++; continue; }
         let found = false;
-        let maxLen = Math.min(MAX, n - index);
+        // Aucune entrée multi-mots ne commence par ce jeton ⇒ une seule fenêtre.
+        const portee = span[bas[index]];
+        let maxLen = Math.min(MAX, n - index, portee === undefined ? 1 : portee);
         while (maxLen > 1 && already[index + maxLen - 1]) maxLen--;
         // Nom propre présumé : mot capitalisé en MILIEU de phrase (index>0, pas
         // juste après une fin de phrase). Les paires de noms propres du dico
@@ -2925,15 +3286,40 @@
             let j = index + 1; while (j < n && !est_mot(tokens[j])) j++;
             return j < n && !!already[j] && (est_verbe_gp(tokens[j]) || rules.etre_formes_gp_set.has(tokens[j].toLowerCase()));
           })();
-        const capMilieu = target_lang !== "gp" && capInconnu;
+        // Un jeton capitalisé ISOLÉ en milieu de phrase ne doit jamais être rendu
+        // par une entrée de nom commun (« Pierre » n'est pas un caillou, « Marie »
+        // n'est pas le verbe marier). Vrai dans les deux sens de traduction.
+        // Les vrais noms propres passent quand même : soit par l'index sensible
+        // à la casse (index_*_propre), soit parce que leur traduction est elle-
+        // même capitalisée, soit parce qu'ils sont typés « lieu ».
+        // Exception : un capitalisé VOISIN d'un autre capitalisé appartient à un
+        // nom propre composé (« la Grande Barrière ») dont les composants sont de
+        // vrais mots à traduire — on ne protège donc que les jetons isolés.
+        const capVoisin = (index > 0 && estCap(tokens[index - 1])) || (index + 1 < n && estCap(tokens[index + 1]));
+        const capMilieu = capInconnu && !capVoisin;
         for (let length = maxLen; length >= 1; length--) {
-          const segment = tokens.slice(index, index + length);
-          const expr = segment.join(" ").toLowerCase();
-          if (has(db, expr)) {
-            let translated = db[expr];
+          // Concaténation directe : pas de tableau intermédiaire ni de join.
+          let brut = tokens[index], expr = bas[index];
+          for (let k = 1; k < length; k++) { brut += " " + tokens[index + k]; expr += " " + bas[index + k]; }
+          // Index des noms propres (sensible à la casse) : prioritaire.
+          const propre = dbPropre[brut];
+          if (propre !== undefined) {
+            let translated = propre;
+            let negSuffix = null;
+            const consigne = length === 1 ? conjMap[index] : undefined;
+            if (consigne !== undefined) [translated, negSuffix] = conjuguer_consigne(translated, consigne);
+            translation.push(reporter_casse(tokens[index], translated));
+            if (negSuffix) translation.push(negSuffix);
+            index += length; found = true; break;
+          }
+          const trouve = db[expr];
+          if (trouve !== undefined) {
+            let translated = trouve;
+            // Le type « lieu » est porté par la clé française dans les deux sens :
+            // FR→GP on interroge la source, GP→FR la traduction produite.
             if (capMilieu && length === 1 && typeof translated === "string" &&
                 translated[0] === translated[0].toLowerCase() &&
-                ctx.type_fr[translated.toLowerCase()] !== "lieu") continue;
+                ctx.type_fr[(target_lang === "gp" ? expr : translated).toLowerCase()] !== "lieu") continue;
             if (target_lang === "gp" && length === 1) {
               // Seul un déterminant du TEXTE SOURCE compte : un token déjà émis
               // par la grammaire ("la" postposé créole) n'est pas un article français.
@@ -2942,8 +3328,9 @@
               if (variant !== null) translated = variant;
             }
             let negSuffix = null;
-            if (length === 1 && has(conjMap, String(index))) [translated, negSuffix] = conjuguer_consigne(translated, conjMap[index]);
-            translation.push(reporter_casse(segment[0], translated));
+            const consigne = length === 1 ? conjMap[index] : undefined;
+            if (consigne !== undefined) [translated, negSuffix] = conjuguer_consigne(translated, consigne);
+            translation.push(reporter_casse(tokens[index], translated));
             if (negSuffix) translation.push(negSuffix);
             index += length; found = true; break;
           }
@@ -2958,15 +3345,16 @@
           if (capInconnu || capSujetDebut) { translation.push(word); index++; continue; }
           if (target_lang === "gp") { const inf = trouver_infinitif(word); if (inf !== null) translated = db[inf]; }
           if (translated === null || translated === undefined) translated = fuzzy_lookup(word, db, dbNorm);
+          const consigne = conjMap[index];
           if (translated !== null && translated !== undefined) {
             let negSuffix = null;
-            if (has(conjMap, String(index))) [translated, negSuffix] = conjuguer_consigne(translated, conjMap[index]);
+            if (consigne !== undefined) [translated, negSuffix] = conjuguer_consigne(translated, consigne);
             translation.push(reporter_casse(word, translated)); if (negSuffix) translation.push(negSuffix);
           } else {
             // Mot intraduisible : on le garde tel quel, mais la NÉGATION de la
             // consigne ne doit pas se perdre ("i pa ka plé" → "il ne plé PAS").
             translation.push(word);
-            if (has(conjMap, String(index)) && conjMap[index][2]) translation.push("pas");
+            if (consigne !== undefined && consigne[2]) translation.push("pas");
           }
           index++;
         }
@@ -2974,7 +3362,11 @@
 
       const suffixe = reste_brut ? " " + reste_brut : "";
       if (target_lang !== "gp") {
-        const reordered = inserer_de_entre_noms(reordonner_groupe_nominal(translation));
+        // MARQUE_DEM est un marqueur de travail du réordonnancement nominal.
+        // Il ne doit jamais atteindre l'interface, même si aucun nom exploitable
+        // ne suit (cas d'une entrée inconnue ou d'une phrase tronquée).
+        const reordered = inserer_de_entre_noms(reordonner_groupe_nominal(translation))
+          .filter((token) => token !== MARQUE_DEM);
         return capitaliser(appliquer_elision(assemble(reordered)), text) + suffixe;
       }
       return capitaliser(assemble(translation), text) + suffixe;
