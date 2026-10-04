@@ -1,80 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disclaimer - Nemeris</title>
-    <meta name="description" content="Nemeris provides information and analytical tools only, not financial advice. Read the full risk disclaimer.">
+    <title>Avertissement - Nemeris</title>
+    <meta name="description" content="Nemeris fournit des informations et des outils, pas des conseils financiers. Lis l'avertissement complet sur les risques.">
     <link rel="canonical" href="https://l-dev31.github.io/projects/Stock/disclaimer.html">
-    <meta property="og:title" content="Disclaimer - Nemeris">
-    <meta property="og:description" content="Nemeris provides information and analytical tools only, not financial advice. Read the full risk disclaimer.">
+    <meta property="og:title" content="Avertissement - Nemeris">
+    <meta property="og:description" content="Nemeris fournit des informations et des outils, pas des conseils financiers. Lis l'avertissement complet sur les risques.">
     <meta property="og:image" content="https://l-dev31.github.io/projects/Stock/img/icon/og-image.png">
     <meta property="og:url" content="https://l-dev31.github.io/projects/Stock/disclaimer.html">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Disclaimer - Nemeris">
-    <meta name="twitter:description" content="Nemeris provides information and analytical tools only, not financial advice.">
+    <meta name="twitter:title" content="Avertissement - Nemeris">
+    <meta name="twitter:description" content="Nemeris fournit des informations et des outils, pas des conseils financiers. Lis l'avertissement complet sur les risques.">
     <link rel="icon" href="img/icon/favicon.png" type="image/png">
-    <style>
-        :root { --primary:#a8a2ff; --text-white:#fff; --text-light:#e8e9f3; --text-dark:#9ca3af; --bg-card:#1e1e24; --bg-main:#18181c; --bg-dark:#121218; --border:rgba(255,255,255,.08); }
-        * { box-sizing:border-box; }
-        body { margin:0; background:var(--bg-dark); color:var(--text-light); font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif; line-height:1.7; }
-        .wrap { max-width:760px; margin:0 auto; padding:48px 22px 80px; }
-        .topbar { border-bottom:1px solid var(--border); }
-        .topbar-inner { max-width:760px; margin:0 auto; padding:16px 22px; display:flex; align-items:center; gap:10px; }
-        .topbar img { width:30px; height:30px; border-radius:7px; }
-        .topbar a { color:var(--text-white); text-decoration:none; font-weight:700; }
-        h1 { color:var(--text-white); font-size:30px; margin:0 0 6px; }
-        h2 { color:var(--text-white); font-size:18px; margin:34px 0 8px; }
-        .updated { color:var(--text-dark); font-size:13px; margin-bottom:30px; }
-        p, li { color:var(--text-light); font-size:15px; }
-        a { color:var(--primary); }
-        strong { color:var(--text-white); }
-        .note { background:var(--bg-card); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:8px; padding:14px 16px; font-size:13px; color:var(--text-dark); margin:28px 0; }
-        .back { display:inline-block; margin-top:34px; color:var(--primary); text-decoration:none; }
-        footer { border-top:1px solid var(--border); margin-top:50px; padding-top:18px; font-size:12px; color:var(--text-dark); }
-        footer a { color:var(--text-dark); margin-right:14px; }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..600&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="styles/legal.css">
+    <script>
+        (function () {
+            var l; try { l = localStorage.getItem('nemeris_lang'); } catch (e) { l = null; }
+            if (l !== 'fr' && l !== 'en') l = 'en';
+            document.documentElement.lang = l; document.documentElement.dataset.lang = l;
+            if (l === 'en') document.title = 'Disclaimer - Nemeris';
+            document.addEventListener('click', function (e) {
+                var a = e.target.closest('.lang-link'); if (!a) return;
+                e.preventDefault(); try { localStorage.setItem('nemeris_lang', a.dataset.to); } catch (err) { /* storage blocked */ } location.reload();
+            });
+        })();
+    </script>
 </head>
 
 <body>
-    <div class="topbar"><div class="topbar-inner"><img src="img/icon/favicon.png" alt="Nemeris logo"><a href="index.html">Nemeris</a></div></div>
-    <div class="wrap">
-        <h1>Disclaimer</h1>
-        <p class="updated">Last updated: 12 June 2026</p>
+    <div class="topbar"><div class="topbar-inner"><img src="img/icon/favicon.png" alt="Logo Nemeris"><a href="index.html">Nemeris</a><a class="lang-link" href="#" data-to="en" lang="en">English</a><a class="lang-link" href="#" data-to="fr" lang="fr">Français</a></div></div>
+    <div class="wrap" lang="fr">
+        <h1>Avertissement</h1>
+        <p class="updated">Mis à jour le 26 septembre 2026</p>
 
-        <p>Nemeris (the "Service") is an information and analytical tool for tracking and exploring financial markets.
-            By using Nemeris you acknowledge and agree to the following.</p>
+        <p>Nemeris (le « Service ») est un outil d'information et d'analyse pour suivre et explorer les marchés. En l'utilisant, tu acceptes ce qui suit.</p>
+
+        <h2>Pas un conseil financier</h2>
+        <p>Rien sur Nemeris n'est un <strong>conseil financier, d'investissement, juridique ou fiscal</strong>, ni une recommandation personnelle ou une offre d'acheter, vendre ou garder un titre. Graphiques, indicateurs, mesures et « signaux » sont fournis à titre d'information et de pédagogie. Ils ne tiennent pas compte de ta situation.</p>
+
+        <h2>Signaux automatiques et IA</h2>
+        <p>Les signaux et scores sont des calculs techniques automatiques sur des données passées. Les avis de l'IA sont produits par un modèle que tu choisis. Ce ne sont <strong>pas des prédictions</strong> ni des recommandations. Ils peuvent être faux, incomplets ou datés. Ne prends jamais une décision sur la seule base de Nemeris.</p>
+
+        <h2>Risque</h2>
+        <p>Investir comporte des risques, dont la <strong>perte de tout ton capital</strong>. Les performances passées ne préjugent pas des performances futures. Tu es seul responsable de tes décisions. Pense à consulter un conseiller indépendant agréé avant d'investir.</p>
+
+        <h2>Données</h2>
+        <p>Les données viennent de sources tierces (dont Yahoo Finance) et peuvent être <strong>différées, inexactes, incomplètes ou indisponibles</strong>. Nemeris ne garantit pas leur exactitude.</p>
+
+        <h2>Responsabilité</h2>
+        <p>Dans la limite permise par la loi, Nemeris et son créateur déclinent toute responsabilité pour toute perte ou dommage lié à l'utilisation du Service ou de son contenu.</p>
+
+        <a class="back" href="index.html">← Retour à Nemeris</a>
+
+        <footer>
+            <a href="disclaimer.html">Avertissement</a><a href="privacy.html">Confidentialité</a><a href="terms.html">Conditions</a><a href="cookies.html">Cookies</a><a href="faq.html">FAQ</a>
+        </footer>
+    </div>
+    <div class="wrap" lang="en">
+        <h1>Disclaimer</h1>
+        <p class="updated">Updated September 26, 2026</p>
+
+        <p>Nemeris (the "Service") is an information and analysis tool to follow and explore the markets. By using it, you accept the following.</p>
 
         <h2>Not financial advice</h2>
-        <p>Nothing on Nemeris constitutes <strong>financial, investment, legal, tax, or other professional advice</strong>,
-            nor a personal recommendation, solicitation, or offer to buy, sell, or hold any security or financial
-            instrument. All content, including charts, indicators, quantitative metrics, and automated "signals", is
-            provided for general informational and educational purposes only and does not take account of your personal
-            circumstances, objectives, or financial situation.</p>
+        <p>Nothing on Nemeris is <strong>financial, investment, legal or tax advice</strong>, nor a personal recommendation or an offer to buy, sell or hold a security. Charts, indicators, metrics and "signals" are provided for information and learning. They do not take your situation into account.</p>
 
-        <h2>Automated signals</h2>
-        <p>Any "signal," score, or indicator generated by Nemeris is the output of automated technical calculations
-            applied to historical data. It is <strong>not a prediction</strong> and not a recommendation. Such outputs
-            can be wrong, incomplete, or out of date. You should never make an investment decision based solely on
-            information from Nemeris.</p>
+        <h2>Automatic signals and AI</h2>
+        <p>Signals and scores are automatic technical calculations on past data. AI opinions come from a model you choose. They are <strong>not predictions</strong> or recommendations. They can be wrong, incomplete or out of date. Never make a decision based on Nemeris alone.</p>
 
-        <h2>Investment risk</h2>
-        <p>Investing involves substantial risk, including the <strong>possible loss of your entire capital</strong>.
-            Past performance is not a reliable indicator of future results. The value of investments can go down as well
-            as up. You are solely responsible for your own investment decisions and should consider seeking advice from a
-            licensed, independent financial adviser before investing.</p>
+        <h2>Risk</h2>
+        <p>Investing involves risk, including <strong>losing all of your capital</strong>. Past performance does not predict future results. You alone are responsible for your decisions. Consider talking to an independent licensed adviser before investing.</p>
 
-        <h2>Data accuracy</h2>
-        <p>Market data is obtained from third-party sources (including Yahoo Finance) and may be <strong>delayed,
-            inaccurate, incomplete, or unavailable</strong>. Nemeris does not guarantee the accuracy, timeliness, or
-            completeness of any data and is not liable for any reliance placed on it.</p>
+        <h2>Data</h2>
+        <p>Data comes from third-party sources (including Yahoo Finance) and may be <strong>delayed, inaccurate, incomplete or unavailable</strong>. Nemeris does not guarantee its accuracy.</p>
 
-        <h2>No liability</h2>
-        <p>To the maximum extent permitted by law, Nemeris and its creator accept no liability for any loss or damage, direct, indirect, or consequential, arising from use of, or reliance on, the Service or its content.</p>
-
-
+        <h2>Liability</h2>
+        <p>To the extent permitted by law, Nemeris and its creator accept no liability for any loss or damage arising from the use of the Service or its content.</p>
 
         <a class="back" href="index.html">← Back to Nemeris</a>
 

@@ -59,6 +59,22 @@ footer {
 }
 footer a { color: var(--accent); }
 
+.ad-footer {
+  margin: 1.5rem auto 0;
+  max-width: 728px;
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel2);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+@media (max-width: 640px) {
+  .ad-footer { min-height: 50px; }
+}
+
 header {
   display: flex;
   align-items: center;

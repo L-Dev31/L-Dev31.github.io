@@ -94,7 +94,7 @@
     // directe `obj[cle]` devient sûre — donc utilisable dans la boucle chaude
     // à la place de hasOwnProperty, qui pesait 4 % du temps CPU.
     const nul = () => Object.create(null);
-    const ctx = { index_fr: nul(), index_gp: nul(), index_gp_nom: nul(), index_fr_nom: nul(), index_fr_verbe: nul(), type_fr: nul(), genre_fr: nul(), norm_fr: nul(), norm_gp: nul(), phrases_fr_gp: nul(), phrases_gp_fr: nul(), index_fr_propre: nul(), index_gp_propre: nul() };
+    const ctx = { index_fr: nul(), index_gp: nul(), index_gp_nom: nul(), index_gp_adj: nul(), index_fr_nom: nul(), index_fr_verbe: nul(), type_fr: nul(), genre_fr: nul(), norm_fr: nul(), norm_gp: nul(), phrases_fr_gp: nul(), phrases_gp_fr: nul(), index_fr_propre: nul(), index_gp_propre: nul() };
     // Longueur maximale (en mots) d'une entrée multi-mots commençant par tel
     // mot. Sans cet index, la boucle de recherche essayait systématiquement
     // les fenêtres de 6 mots à 1 mot pour CHAQUE jeton : 6 découpages, 6
@@ -665,7 +665,16 @@
         const p = R.participes_passes[inf];
         for (const d of [p + "e", p + "s", p + "es"]) if (!has(rules.participes_inverse, d)) rules.participes_inverse[d] = inf;
         const norm = normalize_token(p);
-        if (norm !== p && !has(rules.participes_inverse, norm)) rules.participes_inverse[norm] = inf;
+        // Un participe sans accent ne doit jamais éclipser un mot grammatical
+        // distinct déjà établi ("né" → "ne" collisionnait avec la négation "ne",
+        // "dû" → "du" avec l'article contracté "du") : sans ce garde-fou,
+        // trouver_infinitif("ne") rendait "naître" et contient_verbe("ne")
+        // faisait croire qu'un verbe était déjà présent dans la proposition,
+        // supprimant à tort l'insertion de la copule ("i pa kontan" → "Il ne
+        // content" au lieu de "Il n'est pas content").
+        const collisionMotGrammatical = rules.mots_fonctionnels_fr.has(norm) ||
+          rules.determinants_fr.has(norm) || (rules.R.articles_supprimes || []).includes(norm);
+        if (norm !== p && !has(rules.participes_inverse, norm) && !collisionMotGrammatical) rules.participes_inverse[norm] = inf;
         for (const d of [norm + "e", norm + "s", norm + "es"]) if (!has(rules.participes_inverse, d)) rules.participes_inverse[d] = inf;
       }
       for (const cle in R.pronoms_creole_francais) {
@@ -733,7 +742,7 @@
 
     function makeEtat(tokens) {
       const e = {
-        tokens, ctx, i: 0, sortie: [], deja: [], conj: {}, state: { pluriel: false, nie_attente: false },
+        tokens, ctx, i: 0, sortie: [], deja: [], conj: {}, state: { pluriel: false, nie_attente: false, attenteComparatifKi: false },
         get n() { return this.tokens.length; },
         get tok() { return this.tokens[this.i]; },
         get cle() { return this.tokens[this.i].toLowerCase(); },
@@ -1455,6 +1464,17 @@
       if (marqueur === normalize_token(rules.R.marqueur_present)) return [passe ? "imparfait" : "present", null, j + 1];
       if (marqueur === normalize_token(rules.R.marqueur_futur)) return [passe ? "conditionnel" : "futur", null, j + 1];
       if (marqueur === "ja") return ["passe", "déjà", j + 1];
+      // "poko"/"pòkò" ("pas encore") est un marqueur d'aspect à part entière
+      // (Grammar.json > marqueurs_supplementaires), donc rules.marqueurs.has()
+      // le fait entrer ici — mais sans cette branche, aucun cas ci-dessus ne le
+      // reconnaissait : la fonction rendait j INCHANGÉ, et l'appelant
+      // (h_marqueurs_aspect) rebouclait indéfiniment sur le même jeton dès que
+      // "poko" suivait un sujet NOMINAL (ex. "kaz poko" figeait le moteur ;
+      // après un PRONOM, traiter_pronom_gp a sa propre gestion de "poko" et
+      // n'appelle pas cette fonction pour ce cas).
+      if (rules.R.poko_formes.some((f) => normalize_token(f) === marqueur)) return ["passe", "encore", j + 1];
+      if (j < n && rules.R.poko_prefixes.includes(tokens[j].toLowerCase()) &&
+          j + 1 < n && rules.R.poko_suffixes.includes(tokens[j + 1].toLowerCase())) return ["passe", "encore", j + 2];
       if (passe) return ["passe", null, j];
       return [null, null, j];
     }
@@ -1505,7 +1525,7 @@
       return sortie;
     }
 
-    function traiter_pronom_gp(tok, cle, tokens, i, n, sortie, deja, conj, phMap) {
+    function traiter_pronom_gp(tok, cle, tokens, i, n, sortie, deja, conj, phMap, state) {
       const pronom_fr = rules.R.pronoms_creole_francais[cle];
       const phraseAttributive = (t) => {
         const fr = phMap && phMap.get ? phMap.get(t) : undefined;
@@ -1602,7 +1622,20 @@
       let skipped_adverb = null;
       if (j < n && est_mot(tokens[j]) && est_adverbe_gp(tokens[j])) {
         const advGp = tokens[j].toLowerCase(); const advFr = ctx.index_gp[advGp] !== undefined ? ctx.index_gp[advGp] : advGp;
-        skipped_adverb = reporter_casse(tokens[j], advFr); j++; while (j < n && !est_mot(tokens[j])) j++;
+        skipped_adverb = reporter_casse(tokens[j], advFr);
+        // Comparatif d'égalité "otan ADJ ki Y" ("otan fò ki on lous" = aussi
+        // fort qu'un ours) : "otan" se lit "aussi" ici, pas sa traduction
+        // lexicale par défaut "autant", et pose un état consommé par h_qui
+        // pour que le "ki" qui suit l'adjectif devienne "que", pas "qui".
+        if (advGp === "otan" && state) {
+          let jAdj = j + 1; while (jAdj < n && !est_mot(tokens[jAdj])) jAdj++;
+          let jKi = jAdj + 1; while (jKi < n && !est_mot(tokens[jKi])) jKi++;
+          if (jAdj < n && est_adjectif_gp(tokens[jAdj]) && jKi < n && tokens[jKi].toLowerCase() === "ki") {
+            skipped_adverb = reporter_casse(tokens[j], "aussi");
+            state.attenteComparatifKi = true;
+          }
+        }
+        j++; while (j < n && !est_mot(tokens[j])) j++;
         if (j < n && rules.marqueurs.has(tokens[j].toLowerCase())) {
           let t2, a2; [t2, a2, j] = lire_marqueurs(tokens, j, n);
           if (t2) temps = t2; if (a2) adverbe = a2;
@@ -1650,8 +1683,15 @@
             else if (sortie.length && last(sortie).toLowerCase() === "quand") temps = "passe";
           }
           conj[sortie.length] = [pronom_fr, temps || "present", nie, skipped_adverb || adverbe];
-        } else if (temps === "present") {
-          conj[sortie.length] = [pronom_fr, temps, nie, skipped_adverb || adverbe];
+        } else if (temps === "present" || (temps === null && nie)) {
+          // Prédicat non-verbal SANS marqueur ("i pa kontan") : la négation a déjà
+          // consommé "pa" plus haut (nie=true) mais aucun marqueur n'a fixé de
+          // temps. Sans passer par la consigne ici, "pas" ne serait jamais
+          // rattaché à la copule — seul inserer_copule (post-traitement, plus
+          // bas) restitue "être" pour le cas affirmatif, et il ignore la
+          // négation. Cas affirmatif (nie=false, temps=null) inchangé : il
+          // continue de dépendre d'inserer_copule comme avant.
+          conj[sortie.length] = [pronom_fr, temps || "present", nie, skipped_adverb || adverbe];
         } else if (skipped_adverb !== null) {
           sortie.push(conjuguer("être", pronom_fr, "present")); deja.push(true);
           if (nie) { sortie.push("pas"); deja.push(true); }
@@ -1929,6 +1969,22 @@
       }
       return null;
     });
+    HG.push(function h_comparatif_egalite(e) {
+      // Comparatif d'égalité créole "otan ADJ ki Y" ("otan fò ki on lous" =
+      // aussi fort qu'un ours) : "otan" se traduit "aussi" ici (pas sa
+      // traduction lexicale par défaut "autant"), et pose un état consommé par
+      // h_qui pour que le "ki" qui suit l'adjectif devienne "que" — sinon h_qui
+      // le lit comme le relatif "qui" par défaut.
+      const { tokens, i, n, state } = e; const cle = tokens[i].toLowerCase();
+      if (cle !== "otan") return null;
+      let j = i + 1; while (j < n && !est_mot(tokens[j])) j++;
+      if (j >= n || !est_adjectif_gp(tokens[j])) return null;
+      let k = j + 1; while (k < n && !est_mot(tokens[k])) k++;
+      if (k >= n || tokens[k].toLowerCase() !== "ki") return null;
+      e.emettre("aussi");
+      state.attenteComparatifKi = true;
+      return i + 1;
+    });
     HG.push(function h_comparatif(e) {
       const { tokens, i, sortie, deja } = e; const cle = tokens[i].toLowerCase();
       if (cle === "pasé" && sortie.length && est_mot(last(sortie)) && est_adjectif_gp(last(sortie))) {
@@ -2057,6 +2113,37 @@
       e.emettre(reporter_casse(tok, ctx.index_gp_nom[cle]));
       return i + 1;
     });
+    HG.push(function h_adj_predicat_homographe(e) {
+      // Désambiguïsation nom/adjectif : un homographe créole (ex. "bouké" = nom
+      // "bouquet" ET adjectif "fatigué") est chargé nom-avant-adjectif dans
+      // index_gp (le nom gagne le sens par défaut, voir loadDicts). En position
+      // de PRÉDICAT — juste après le sujet, sans rien qui suive suggérant un
+      // groupe nominal — c'est presque toujours le sens adjectif qui est visé
+      // ("i bouké" = il est fatigué, pas "il bouquet"). Sans ce filet, le mot
+      // reste typé nom et la copule "être" n'est jamais restituée.
+      const { tokens, i } = e; const tok = tokens[i], cle = tok.toLowerCase();
+      if (!est_mot(tok) || !has(ctx.index_gp_adj, cle)) return null;
+      const sensActuel = ctx.index_gp[cle];
+      if (sensActuel !== undefined && ctx.type_fr[sensActuel.toLowerCase()] === "adj") return null; // déjà adjectif, rien à corriger
+      // Remonte au-delà d'une négation ("pa") et des marqueurs d'aspect (ka/té/ké)
+      // pour retrouver le vrai sujet ("i pa bouké", "i té bouké" restent des
+      // prédicats malgré le marqueur entre le sujet et le mot).
+      let k = i - 1; while (k >= 0 && !est_mot(tokens[k])) k--;
+      while (k >= 0 && est_mot(tokens[k]) &&
+        (tokens[k].toLowerCase() === rules.R.marqueur_negation || rules.marqueurs.has(tokens[k].toLowerCase()))) {
+        k--; while (k >= 0 && !est_mot(tokens[k])) k--;
+      }
+      const prev = k >= 0 ? tokens[k].toLowerCase() : null;
+      // "an" est un homographe pronom sujet ("an kontan" = je suis content) ET
+      // article indéfini ("an bouké flè" = un bouquet de fleurs) : trop ambigu
+      // pour servir de signal de sujet ici sans la désambiguïsation complète que
+      // fait h_pronoms ailleurs — on l'exclut pour ne pas casser le sens nominal.
+      const sujetPronom = prev !== null && prev !== "an" && rules.pronoms_gp.has(prev);
+      const sujetNominal = prev === "la" || prev === "lan";
+      if (!sujetPronom && !sujetNominal) return null;
+      e.emettre(reporter_casse(tok, ctx.index_gp_adj[cle]));
+      return i + 1;
+    });
     HG.push(function h_negation_debut(e) {
       const { tokens, i, n, conj, sortie } = e; const cle = tokens[i].toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null; const neg = rules.R.marqueur_negation;
@@ -2093,6 +2180,9 @@
     HG.push(function h_qui(e) {
       const { tokens, i, n, sortie, conj, state } = e; const cle = tokens[i].toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null;
+      if (cle === "ki" && state.attenteComparatifKi) {
+        state.attenteComparatifKi = false; e.emettre("que"); return i + 1;
+      }
       if (cle === "ki" && sortie.length) {
         if (suiv !== null && has(rules.toniques_gp, suiv.toLowerCase())) { e.emettre("que"); e.emettre(rules.toniques_gp[suiv.toLowerCase()]); return i + 2; }
         else if (suiv !== null && rules.etre_formes_gp_set.has(suiv.toLowerCase())) {
@@ -2212,8 +2302,15 @@
       }
       return null;
     });
-    HG.push(function h_possessif_mwen(e) {
-      if (e.cle !== "mwen" || !e.sortie.length || !est_mot(last(e.sortie))) return null;
+    HG.push(function h_possessif_postpose(e) {
+      // Possessif postposé créole, générique sur TOUTES les personnes (données :
+      // Grammar.json > possessifs_postposes) : NOM + pronom tonique = "det NOM"
+      // ("kaz mwen" = ma maison, "kaz ou"/"kaz'w" = ta maison, "kaz li"/"kaz'y" =
+      // sa maison, "kaz nou" = notre maison, "kaz zòt" = votre maison). "yo" est
+      // volontairement exclu de cette table : il reste géré par h_pronoms, qui
+      // le désambigüe déjà entre marqueur pluriel postposé et pronom tonique.
+      const paire = (rules.R.possessifs_postposes || {})[e.cle];
+      if (!paire || !e.sortie.length || !est_mot(last(e.sortie))) return null;
       const prev = last(e.sortie).toLowerCase();
       let nomFr;
       if (e.deja.length && last(e.deja)) nomFr = prev;
@@ -2221,7 +2318,7 @@
       if (nomFr === null || !["nom", "lieu"].includes(ctx.type_fr[nomFr])) return null;
       const tokGp = e.sortie.pop(); e.deja.pop();
       const genre = ctx.genre_fr[nomFr] !== undefined ? ctx.genre_fr[nomFr] : "m";
-      let det = genre === "f" ? "ma" : "mon";
+      let det = paire[genre] || paire.m;
       if (tokGp[0] === tokGp[0].toUpperCase() && tokGp[0] !== tokGp[0].toLowerCase()) det = majuscule(det);
       e.emettre(det); e.emettre(nomFr); return e.i + 1;
     });
@@ -2314,7 +2411,7 @@
           for (const k of ks) { conj[k + 1] = conj[k]; delete conj[k]; }
           return i + 1;
         }
-        return traiter_pronom_gp(tok, cle, tokens, i, n, sortie, deja, conj, e.phMap);
+        return traiter_pronom_gp(tok, cle, tokens, i, n, sortie, deja, conj, e.phMap, e.state);
       }
       return null;
     });
@@ -2539,17 +2636,36 @@
       for (let i = 0; i < mots.length; i++) {
         out.push(mots[i]);
         if (i + 1 >= mots.length) continue;
-        const a = mots[i], b = mots[i + 1];
+        const a = mots[i]; let b = mots[i + 1];
         if (!est_mot(a) || !est_mot(b)) continue;
-        const ca = a.toLowerCase(), cb = b.toLowerCase();
-        if (a.includes(" ") || b.includes(" ")) continue;
-        if (rules.determinants_fr.has(ca) || rules.determinants_fr.has(cb)) continue;
-        if (rules.pronoms_fr.has(ca) || rules.pronoms_fr.has(cb)) continue;
-        if (rules.mots_fonctionnels_fr.has(cb)) continue;
-        if (est_adjectif(a) || est_adjectif(b)) continue;
+        const ca = a.toLowerCase();
+        if (a.includes(" ")) continue;
+        if (rules.determinants_fr.has(ca) || rules.pronoms_fr.has(ca)) continue;
+        if (est_adjectif(a)) continue;
+        // Un groupe déterminé ("ton papa", "le voisin"…) porte sa propre tête
+        // nominale après le déterminant : le complément de nom se juge sur
+        // CETTE tête, pas sur le déterminant lui-même ("téléphone ton papa" →
+        // tête "papa", pas "ton"), sinon "de" n'était jamais restitué dès que le
+        // second nom était précédé d'un possessif postposé ("kaz papa'w").
+        const bBrut = b;
+        if (rules.determinants_fr.has(b.toLowerCase()) && i + 2 < mots.length && est_mot(mots[i + 2])) b = mots[i + 2];
+        const cb = b.toLowerCase();
+        const bEstTeteDeterminee = b !== bBrut;
+        if (b.includes(" ")) continue;
+        if (rules.pronoms_fr.has(cb) || rules.mots_fonctionnels_fr.has(cb)) continue;
+        // Homographe nom/adjectif de même orthographe (ex. "voisine" = la
+        // voisine ET nearby) : derrière un déterminant, c'est la tête d'un
+        // groupe nominal, pas un adjectif, même si le type gagnant est "adj".
+        if (est_adjectif(b) && !(bEstTeteDeterminee && has(ctx.index_fr_nom, cb))) continue;
         // Homographe verbal conjugué ("l'enfant joue") : pas un complément de nom.
         if (trouver_infinitif(b, true) !== null) continue;
-        if (classer_fr(a) === "nom" && classer_fr(b) === "nom") out.push("de");
+        if (classer_fr(a) === "nom" && (classer_fr(b) === "nom" || (bEstTeteDeterminee && has(ctx.index_fr_nom, cb)))) {
+          // Le second nom est encore NU (aucun déterminant restitué avant lui,
+          // sinon on aurait pris la branche de la tête de groupe ci-dessus) :
+          // un complément de nom français en prend un ("le cheval DU facteur").
+          if (!bEstTeteDeterminee) out.push(determinant_devant({ m: "du", f: "de la" }, b)[0]);
+          else out.push("de");
+        }
       }
       return out;
     }
@@ -2566,8 +2682,13 @@
             let idxNom = -1, repli = -1;
             for (let j = sortie.length - 1; j >= 0; j--) {
               if (!est_mot(sortie[j])) break;
-              if (est_nom(sortie[j])) { idxNom = j; break; }
               const cand = sortie[j].toLowerCase();
+              // Homographe nom/adjectif de même orthographe (ex. "voisine" =
+              // la voisine ET nearby) : le type gagnant dans ctx.type_fr n'est
+              // pas forcément "nom", mais index_fr_nom garde le sens nominal à
+              // part dès qu'une entrée nom existe — sans ce filet, "vwazin a-w"
+              // ne trouvait aucun nom auquel accrocher le possessif.
+              if (est_nom(sortie[j]) || has(ctx.index_fr_nom, cand)) { idxNom = j; break; }
               if (repli === -1 && !rules.determinants_fr.has(cand) && !rules.pronoms_fr.has(cand) &&
                   ["nom", "lieu", "inconnu"].includes(classer_fr(sortie[j])) && !est_adjectif(sortie[j])) repli = j;
             }
@@ -2842,6 +2963,13 @@
                 if (infPrec && rules.verbes_origine_lieu.has(infPrec)) {
                   if (commence_par_voyelle(mot)) { sortie.push("d'" + mot); continue; }
                   sortie.push("de");
+                } else if (["nom", "lieu"].includes(precType)) {
+                  // Nom propre juxtaposé SANS verbe à un nom commun : même génitif
+                  // créole que "kaz vwazen" ("la maison DU voisin") — "kaz Pais-ba"
+                  // = la maison DES Pays-Bas, pas "à Pays-Bas" (réservé au verbe de
+                  // déplacement ci-dessus, où "à" marque la destination).
+                  if (commence_par_voyelle(mot)) { sortie.push("d'" + mot); continue; }
+                  sortie.push("de");
                 } else sortie.push("à");
               }
               sortie.push(mot); continue;
@@ -2887,8 +3015,11 @@
             // Sauf homographe verbal conjugué ("l'enfant joue" ≠ "l'enfant de joue") :
             // force=true pour outrepasser le type nominal ("joue" = la joue).
             if (precPrec && rules.restituer_determinants.has(precPrec) && trouver_infinitif(mot, true) === null) {
-              if (commence_par_voyelle(mot) || mot.toLowerCase()[0] === "h") sortie.push("d'" + mot);
-              else sortie.push("de", mot);
+              // Le second nom est nu : un complément de nom français en prend
+              // un ("la famille DU jardinier"), comme pour tout nom nu ailleurs
+              // dans cette fonction (cf. branche "nom de masse" ci-dessus).
+              if (commence_par_voyelle(mot) || mot.toLowerCase()[0] === "h") sortie.push("de", "l'" + minuscule(mot));
+              else sortie.push(...determinant_devant({ m: "du", f: "de la" }, mot));
               continue;
             }
           }
@@ -3014,7 +3145,16 @@
             if (rules.pronoms_sujet_fr.has(cle)) { subjSeen = true; subjGenre = ["elle", "elles"].includes(cle) ? "f" : "m"; subjPronom = cle === "ça" || cle === "cela" ? "il" : cle; }
             else if (t === "nom" || t === "lieu") { subjSeen = true; subjGenre = genre_nom(m); subjPronom = plur ? "ils" : "il"; }
             else if (t === undefined && !subjSeen) { subjSeen = true; }
-            else if (subjSeen && (t === "adj" || est_adjectif(m))) { copuleIdx = [pos, idx]; break; }
+            else if (subjSeen && (t === "adj" || est_adjectif(m))) {
+              // Homographe nom/adjectif de même orthographe (ex. "voisine" = la
+              // voisine ET nearby) : précédé d'un déterminant, ce n'est pas un
+              // prédicat mais un groupe nominal imbriqué ("la maison DE TA
+              // voisine") — inserer_de_entre_noms s'en charge plus loin, pas de
+              // copule à insérer ici.
+              const prevW = pos > 0 ? words[pos - 1][1].toLowerCase() : null;
+              if (prevW && rules.determinants_fr.has(prevW) && has(ctx.index_fr_nom, cle)) break;
+              copuleIdx = [pos, idx]; break;
+            }
             else if (!["adv", "conj", "interj", undefined].includes(t)) break;
           }
           if (copuleIdx !== null) {
@@ -3095,6 +3235,15 @@
           if (!entry.secondaire && !nomPropre && (wt === "nom" || wt === "lieu") && !has(ctx.index_gp_nom, key)) {
             ctx.index_gp_nom[key] = canonFr;
             if (wordGenre === "m" || wordGenre === "f") ctx.genre_fr[canonFr.toLowerCase()] = wordGenre;
+          }
+          // Sens adjectival gardé à part, même logique que index_gp_nom ci-dessus :
+          // un homographe nom/adjectif (ex. gp "bouké" = nom "bouquet" ET adj
+          // "fatigué") voit son sens nominal gagner index_gp (premier chargé).
+          // Sans ce filet, le sens adjectif est invisible en position de
+          // prédicat ("i bouké" → "il bouquet" au lieu de "il est fatigué") et
+          // la copule n'est jamais restituée puisque le mot choisi est typé nom.
+          if (!entry.secondaire && !nomPropre && wt === "adj" && !has(ctx.index_gp_adj, key)) {
+            ctx.index_gp_adj[key] = canonFr;
           }
         }
       }

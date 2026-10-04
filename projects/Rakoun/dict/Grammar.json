@@ -412,6 +412,14 @@
     "votre",
     "leur"
   ],
+  "possessifs_postposes": {
+    "mwen": { "m": "mon", "f": "ma" },
+    "ou": { "m": "ton", "f": "ta" },
+    "li": { "m": "son", "f": "sa" },
+    "nou": { "m": "notre", "f": "notre" },
+    "zot": { "m": "votre", "f": "votre" },
+    "zòt": { "m": "votre", "f": "votre" }
+  },
   "terminaisons_temps": {
     "conditionnel": [
       "eraient",

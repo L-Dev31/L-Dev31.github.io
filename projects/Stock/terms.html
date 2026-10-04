@@ -1,95 +1,112 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Service - Nemeris</title>
-    <meta name="description" content="The terms governing your use of Nemeris, a stock analysis and portfolio tracking tool.">
+    <title>Conditions d'utilisation - Nemeris</title>
+    <meta name="description" content="Les conditions d'utilisation de Nemeris, outil d'analyse d'actions et de suivi de portefeuille.">
     <link rel="canonical" href="https://l-dev31.github.io/projects/Stock/terms.html">
-    <meta property="og:title" content="Terms of Service - Nemeris">
-    <meta property="og:description" content="The terms governing your use of Nemeris, a stock analysis and portfolio tracking tool.">
+    <meta property="og:title" content="Conditions d'utilisation - Nemeris">
+    <meta property="og:description" content="Les conditions d'utilisation de Nemeris, outil d'analyse d'actions et de suivi de portefeuille.">
     <meta property="og:image" content="https://l-dev31.github.io/projects/Stock/img/icon/og-image.png">
     <meta property="og:url" content="https://l-dev31.github.io/projects/Stock/terms.html">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Terms of Service - Nemeris">
-    <meta name="twitter:description" content="Terms governing your use of the Nemeris stock analysis and portfolio tracking tool.">
+    <meta name="twitter:title" content="Conditions d'utilisation - Nemeris">
+    <meta name="twitter:description" content="Les conditions d'utilisation de Nemeris, outil d'analyse d'actions et de suivi de portefeuille.">
     <link rel="icon" href="img/icon/favicon.png" type="image/png">
-    <style>
-        :root { --primary:#a8a2ff; --text-white:#fff; --text-light:#e8e9f3; --text-dark:#9ca3af; --bg-card:#1e1e24; --bg-main:#18181c; --bg-dark:#121218; --border:rgba(255,255,255,.08); }
-        * { box-sizing:border-box; }
-        body { margin:0; background:var(--bg-dark); color:var(--text-light); font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif; line-height:1.7; }
-        .wrap { max-width:760px; margin:0 auto; padding:48px 22px 80px; }
-        .topbar { border-bottom:1px solid var(--border); }
-        .topbar-inner { max-width:760px; margin:0 auto; padding:16px 22px; display:flex; align-items:center; gap:10px; }
-        .topbar img { width:30px; height:30px; border-radius:7px; }
-        .topbar a { color:var(--text-white); text-decoration:none; font-weight:700; }
-        h1 { color:var(--text-white); font-size:30px; margin:0 0 6px; }
-        h2 { color:var(--text-white); font-size:18px; margin:34px 0 8px; }
-        .updated { color:var(--text-dark); font-size:13px; margin-bottom:30px; }
-        p, li { color:var(--text-light); font-size:15px; }
-        a { color:var(--primary); }
-        strong { color:var(--text-white); }
-        .note { background:var(--bg-card); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:8px; padding:14px 16px; font-size:13px; color:var(--text-dark); margin:28px 0; }
-        .back { display:inline-block; margin-top:34px; color:var(--primary); text-decoration:none; }
-        footer { border-top:1px solid var(--border); margin-top:50px; padding-top:18px; font-size:12px; color:var(--text-dark); }
-        footer a { color:var(--text-dark); margin-right:14px; }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..600&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="styles/legal.css">
+    <script>
+        (function () {
+            var l; try { l = localStorage.getItem('nemeris_lang'); } catch (e) { l = null; }
+            if (l !== 'fr' && l !== 'en') l = 'en';
+            document.documentElement.lang = l; document.documentElement.dataset.lang = l;
+            if (l === 'en') document.title = 'Terms of use - Nemeris';
+            document.addEventListener('click', function (e) {
+                var a = e.target.closest('.lang-link'); if (!a) return;
+                e.preventDefault(); try { localStorage.setItem('nemeris_lang', a.dataset.to); } catch (err) { /* storage blocked */ } location.reload();
+            });
+        })();
+    </script>
 </head>
 
 <body>
-    <div class="topbar"><div class="topbar-inner"><img src="img/icon/favicon.png" alt="Nemeris logo"><a href="index.html">Nemeris</a></div></div>
-    <div class="wrap">
-        <h1>Terms of Service</h1>
-        <p class="updated">Last updated: 12 June 2026</p>
+    <div class="topbar"><div class="topbar-inner"><img src="img/icon/favicon.png" alt="Logo Nemeris"><a href="index.html">Nemeris</a><a class="lang-link" href="#" data-to="en" lang="en">English</a><a class="lang-link" href="#" data-to="fr" lang="fr">Français</a></div></div>
+    <div class="wrap" lang="fr">
+        <h1>Conditions d'utilisation</h1>
+        <p class="updated">Mis à jour le 26 septembre 2026</p>
 
-        <p>These terms govern your use of Nemeris (the "Service"). By accessing or using Nemeris, you agree to them. If
-            you do not agree, please do not use the Service.</p>
+        <p>Ces conditions encadrent ton utilisation de Nemeris (le « Service »). En l'utilisant, tu les acceptes. Sinon, merci de ne pas l'utiliser.</p>
+
+        <h2>1. Le Service</h2>
+        <p>Nemeris est un outil pour suivre, analyser et explorer les marchés à partir de données tierces. Il est fourni à titre d'information et de pédagogie.</p>
+
+        <h2>2. Pas un conseil financier</h2>
+        <p>Nemeris ne donne aucun conseil financier, fiscal ou juridique ni de recommandation personnelle. Voir l'<a href="disclaimer.html">avertissement</a>, qui fait partie de ces conditions. Tu es seul responsable de tes décisions.</p>
+
+        <h2>3. Usage correct</h2>
+        <p>Tu t'engages à ne pas perturber le Service, ne pas l'aspirer massivement, ne pas surcharger les sources de données à travers lui, et à respecter la loi et les conditions des fournisseurs de données.</p>
+
+        <h2>4. Données et services tiers</h2>
+        <p>Les données de marché et certains contenus viennent de tiers, y compris l'IA que tu choisis. Nous ne contrôlons ni leur exactitude, ni leur disponibilité, ni leurs conditions.</p>
+
+        <h2>5. Aucune garantie</h2>
+        <p>Le Service est fourni « tel quel », sans garantie d'aucune sorte, notamment d'exactitude, de fiabilité ou de disponibilité.</p>
+
+        <h2>6. Responsabilité</h2>
+        <p>Dans la limite permise par la loi, nous ne sommes pas responsables des pertes, y compris financières, liées à l'utilisation du Service. Rien ici n'exclut une responsabilité qui ne peut légalement l'être.</p>
+
+        <h2>7. Propriété intellectuelle</h2>
+        <p>Le nom, le design et le code de Nemeris appartiennent à leur créateur. Les logos, marques et données de tiers restent la propriété de leurs titulaires et servent uniquement à l'identification.</p>
+
+        <h2>8. Modifications</h2>
+        <p>Le Service et ces conditions peuvent changer à tout moment. Continuer à l'utiliser vaut acceptation.</p>
+
+        <h2>9. Droit applicable</h2>
+        <p>Ces conditions relèvent du droit <strong>français</strong>, sans préjudice des protections du consommateur de ton pays.</p>
+
+        <a class="back" href="index.html">← Retour à Nemeris</a>
+
+        <footer>
+            <a href="disclaimer.html">Avertissement</a><a href="privacy.html">Confidentialité</a><a href="terms.html">Conditions</a><a href="cookies.html">Cookies</a><a href="faq.html">FAQ</a>
+        </footer>
+    </div>
+    <div class="wrap" lang="en">
+        <h1>Terms of use</h1>
+        <p class="updated">Updated September 26, 2026</p>
+
+        <p>These terms govern your use of Nemeris (the "Service"). By using it, you accept them. If you do not, please do not use it.</p>
 
         <h2>1. The Service</h2>
-        <p>Nemeris is a tool for tracking, analysing, and exploring financial markets using third-party data. It is
-            provided for general informational and educational purposes only.</p>
+        <p>Nemeris is a tool to follow, analyze and explore the markets using third-party data. It is provided for information and learning.</p>
 
         <h2>2. Not financial advice</h2>
-        <p>Nemeris does not provide financial, investment, tax, or legal advice and does not make personal
-            recommendations. See our <a href="disclaimer.html">Disclaimer</a>, which forms part of these terms. You are
-            solely responsible for your investment decisions.</p>
+        <p>Nemeris gives no financial, tax or legal advice and no personal recommendation. See the <a href="disclaimer.html">disclaimer</a>, which is part of these terms. You alone are responsible for your decisions.</p>
 
-        <h2>3. Acceptable use</h2>
-        <p>You agree not to misuse the Service, including by attempting to disrupt it, reverse-engineer it for malicious
-            purposes, scrape it at scale, overload third-party data sources through it, or use it in violation of
-            applicable laws or the terms of any third-party data provider.</p>
+        <h2>3. Fair use</h2>
+        <p>You agree not to disrupt the Service, not to scrape it at scale, not to overload data sources through it, and to follow the law and the data providers' terms.</p>
 
         <h2>4. Third-party data and services</h2>
-        <p>Market data and certain assets are supplied by third parties. We do not control and are not responsible for
-            the accuracy, availability, or terms of those third-party services. Your use of market data may be subject to
-            the data provider's own terms.</p>
+        <p>Market data and some content come from third parties, including the AI you choose. We control neither their accuracy, nor their availability, nor their terms.</p>
 
         <h2>5. No warranty</h2>
-        <p>The Service is provided "as is" and "as available", without warranties of any kind, whether express or
-            implied, including as to accuracy, reliability, fitness for a particular purpose, or uninterrupted
-            availability.</p>
+        <p>The Service is provided "as is", without warranty of any kind, including accuracy, reliability or availability.</p>
 
-        <h2>6. Limitation of liability</h2>
-        <p>To the maximum extent permitted by law, we are not liable for any loss or damage, including any investment or
-            financial loss, arising from your use of, or inability to use, the Service or any content within it. Nothing
-            in these terms excludes liability that cannot lawfully be excluded.</p>
+        <h2>6. Liability</h2>
+        <p>To the extent permitted by law, we are not liable for losses, including financial losses, arising from the use of the Service. Nothing here excludes a liability that cannot legally be excluded.</p>
 
         <h2>7. Intellectual property</h2>
-        <p>The Nemeris name, design, and original code are the property of their creator. Third-party logos, marks, and
-            data shown in the app remain the property of their respective owners and are used for identification and
-            informational purposes only.</p>
+        <p>The Nemeris name, design and code belong to their creator. Third-party logos, trademarks and data remain the property of their owners and are used for identification only.</p>
 
         <h2>8. Changes</h2>
-        <p>We may modify the Service or these terms at any time. Continued use after changes take effect constitutes
-            acceptance of the updated terms.</p>
+        <p>The Service and these terms may change at any time. Continuing to use it means you accept the changes.</p>
 
         <h2>9. Governing law</h2>
-        <p>These terms are governed by the laws of <strong>France</strong>,
-            without prejudice to any mandatory consumer-protection rights you have where you live.</p>
-
-
+        <p>These terms are governed by <strong>French</strong> law, without prejudice to the consumer protections of your country.</p>
 
         <a class="back" href="index.html">← Back to Nemeris</a>
 
