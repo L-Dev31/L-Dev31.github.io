@@ -9,24 +9,98 @@
         h1 { color: #2c3e50; }
         h2 { color: #34495e; margin-top: 20px; }
         p { margin-bottom: 15px; }
+        .separator { border-top: 1px solid #ccc; margin: 40px 0; }
+        footer { margin-top: 40px; text-align: center; font-size: 0.9em; color: #777; background-color: #f2f2f2; padding: 10px;}
+        .contact { margin-bottom: 10px; }
     </style>
 </head>
 <body>
+
     <h1>Privacy Policy</h1>
-    <p><em>Last updated: August 2026</em></p>
-    
+    <p>Last updated: October 2026</p>
     <p>Your privacy is our priority. Open Fit Meter is designed as a local-first application.</p>
 
     <h2>1. Data Collection</h2>
-    <p>We collect location data (GPS), sensor data like accelerometer and barometer, and physical profile information such as height, weight, and gender to provide fitness tracking services.</p>
+    <p>To provide fitness tracking services, the app collects:</p>
+    <ul>
+    <li>Location data (GPS), used to record your route, distance and elevation.</li>
+    <li>Sensor data, such as the accelerometer (steps) and the barometer (altitude).</li>
+    <li>Physical profile information: height, weight and gender, used to estimate calories.</li>
+    </ul>
 
     <h2>2. Data Storage</h2>
-    <p>Activity history, profile data and any imported rendering resource are stored locally on your device. There is no cloud storage or remote database, and activity history is excluded from Android cloud backup.</p>
+    <ul>
+    <li>Activity history, profile data and any imported rendering resource are stored locally on your device.</li>
+    <li>There is no cloud storage and no remote database.</li>
+    <li>Activity history is excluded from Android cloud backup.</li>
+    </ul>
 
     <h2>3. Data Sharing</h2>
-    <p>Your activity data is never sold or shared with third parties. It leaves the device in only two cases: a peer-to-peer sync you start with your fitness console, and map tiles, which are downloaded from OpenStreetMap servers when a route map is shown (those requests reveal your IP address and the map area being viewed; no account data is sent with them).</p>
+    <p>Your activity data is never sold or shared with third parties. It leaves the device in only two cases:</p>
+    <ul>
+    <li>A peer-to-peer sync that you start yourself with your fitness console.</li>
+    <li>Map tiles, which are downloaded from OpenStreetMap servers when a route map is shown. These requests reveal your IP address and the map area being viewed. No account data is sent with them.</li>
+    </ul>
 
-    <h2>4. Your Rights</h2>
+    <h2>4. Permissions</h2>
+    <ul>
+    <li>Location and physical activity: required to track steps and routes, including in the background through a foreground service.</li>
+    <li>Notifications: required to display the persistent notification while tracking or syncing.</li>
+    </ul>
+
+    <h2>5. Donations</h2>
+    <p>Optional donations are processed by Google Play. The app does not receive or store your payment information.</p>
+
+    <h2>6. Your Rights</h2>
     <p>You have the right to access and delete your data at any time. Use the "Clear History" or "Delete Account" options in the app settings to permanently erase your information.</p>
+
+    <div class="separator"></div>
+
+    <h1>Politique de confidentialité</h1>
+    <p>Dernière mise à jour : octobre 2026</p>
+    <p>Votre vie privée est notre priorité. Open Fit Meter est conçu comme une application locale avant tout.</p>
+
+    <h2>1. Collecte des données</h2>
+    <p>Pour fournir les services de suivi d'activité, l'application collecte :</p>
+    <ul>
+    <li>Des données de position (GPS), utilisées pour enregistrer votre parcours, la distance et le dénivelé.</li>
+    <li>Des données de capteurs, comme l'accéléromètre (pas) et le baromètre (altitude).</li>
+    <li>Des informations de profil physique : taille, poids et sexe, utilisées pour estimer les calories.</li>
+    </ul>
+
+    <h2>2. Stockage des données</h2>
+    <ul>
+    <li>L'historique d'activité, les données de profil et toute ressource de rendu importée sont stockés localement sur votre appareil.</li>
+    <li>Il n'y a ni stockage cloud ni base de données distante.</li>
+    <li>L'historique d'activité est exclu de la sauvegarde cloud d'Android.</li>
+    </ul>
+
+    <h2>3. Partage des données</h2>
+    <p>Vos données d'activité ne sont jamais vendues ni partagées avec des tiers. Elles ne quittent l'appareil que dans deux cas :</p>
+    <ul>
+    <li>Une synchronisation directe que vous lancez vous-même avec votre console de fitness.</li>
+    <li>Les tuiles de carte, téléchargées depuis les serveurs OpenStreetMap lorsqu'un tracé est affiché. Ces requêtes révèlent votre adresse IP et la zone consultée. Aucune donnée de compte ne les accompagne.</li>
+    </ul>
+
+    <h2>4. Autorisations</h2>
+    <ul>
+    <li>Position et activité physique : nécessaires au suivi des pas et des parcours, y compris en arrière-plan via un service au premier plan.</li>
+    <li>Notifications : nécessaires pour afficher la notification permanente pendant le suivi ou la synchronisation.</li>
+    </ul>
+
+    <h2>5. Dons</h2>
+    <p>Les dons facultatifs sont traités par Google Play. L'application ne reçoit ni ne stocke vos informations de paiement.</p>
+
+    <h2>6. Vos droits</h2>
+    <p>Vous avez le droit d'accéder à vos données et de les supprimer à tout moment. Utilisez les options « Effacer tout l'historique » ou « Supprimer le compte » dans les paramètres de l'application pour effacer définitivement vos informations.</p>
+
+    <footer>
+        <div class="contact">If you have any questions or concerns, please contact me at <a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a>.</div>
+        <p>&copy; <span id="year"></span> Open Fit Meter. All rights reserved.</p> 
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>
