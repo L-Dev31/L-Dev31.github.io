@@ -95,7 +95,6 @@ function buildBmg(bmgFile) {
   const dat1 = sectionList.find(s => s.tag === 'DAT1');
   if (!inf1 || !dat1) throw new Error('Required sections not found');
 
-  const oldEntryCount = safeGetUint16(view, inf1.offset + 8, rawBuffer.byteLength);
   const entrySize = safeGetUint16(view, inf1.offset + 10, rawBuffer.byteLength);
   const dat1DataStart = dat1.offset + 8;
   const encodingWidth = bmgFile.encodingType === 'UTF16' ? 2 : 1;

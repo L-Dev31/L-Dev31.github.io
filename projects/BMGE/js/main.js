@@ -21,23 +21,15 @@ async function setupGameConfigDropdown() {
 	}
 
 	function setGameBg(gameName) {
-		const bgDiv = document.querySelector('.game-config-bg');
-		if (!bgDiv) return;
-		const tryBg = (ext) => fetch(`game/${gameName}/bg.${ext}`, { method: 'HEAD' })
-			.then(r => r.ok ? `url('game/${gameName}/bg.${ext}')` : null);
-		tryBg('png')
-			.then(url => url || tryBg('jpg'))
-			.then(url => bgDiv.style.setProperty('--game-bg-url', url || 'none'));
+		document.querySelector('.game-config-bg').style.setProperty('--game-bg-url', `url('game/${gameName}/bg.png')`);
 	}
 
 	async function applyGameConfig(option) {
 		const gameName = option.value;
-		// Load icon
-		try {
-			const res = await fetch(`game/${gameName}/icon.png`, { method: 'HEAD' });
-			if (res.ok) { icon.src = `game/${gameName}/icon.png`; icon.alt = option.textContent; icon.style.display = 'inline-block'; }
-			else { icon.src = ''; icon.alt = ''; icon.style.display = 'none'; }
-		} catch { icon.src = ''; icon.alt = ''; icon.style.display = 'none'; }
+		icon.onerror = () => { icon.style.display = 'none'; };
+		icon.src = `game/${gameName}/icon.png`;
+		icon.alt = option.textContent;
+		icon.style.display = 'inline-block';
 		loadGameCss(gameName);
 		setGameBg(gameName);
 		const gameConfig = await loadGameConfig(gameName);

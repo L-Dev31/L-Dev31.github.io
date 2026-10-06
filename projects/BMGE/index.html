@@ -11,7 +11,7 @@
 </head>
 <body>
   <header class="page-header">
-    <img src="logo.png" alt="Logo" style="height: 300px; width: auto; display: block; margin: 0 auto;">
+    <img class="page-logo" src="logo.png" alt="BMG Editor logo">
     <h1>BMG Editor</h1>
     <p class="tagline">Load a .bmg file, review each entry, adjust the text, and export a patched archive without breaking the original offsets.</p>
   </header>
@@ -29,12 +29,11 @@
         <div class="game-config-bg"></div>
         <div class="game-config-content">
           <div class="game-config-dropdown">
-            <div style="display: flex; flex-direction: column; gap: 0.3em; width: max-content;">
+            <div class="game-config-field">
               <label for="game-config-select" class="game-config-label">Game config:</label>
               <div class="game-config-select-wrapper">
                 <select id="game-config-select" class="game-config-select">
                   <option value="tomodachicollection">Tomodachi Collection</option>
-                  <!-- <option value="newsupermariobros">New Super Mario Bros.</option> -->
                 </select>
                 <img id="game-config-icon" class="game-icon" alt="" />
               </div>
@@ -47,7 +46,6 @@
         <div class="search-wrapper">
           <i class="fas fa-search search-icon"></i>
           <input id="search" type="search" placeholder="Filter by text" disabled>
-          <i class="fas fa-times search-clear" style="display: none;"></i>
         </div>
       </div>
       <div class="filters-container">
@@ -56,7 +54,6 @@
             <input type="checkbox" id="filter-single" checked>
             <span>Single Entries</span>
           </label>
-          <!-- Sequenced entries filter removed (no longer needed) -->
           <label class="filter-checkbox">
             <input type="checkbox" id="filter-modified" checked>
             <span>Show Modified</span>
@@ -135,7 +132,7 @@
   <!-- New message modal -->
   <div class="modal-overlay" id="new-msg-modal">
     <div class="modal-card modal-wide">
-      <h3>New Message <span style="opacity: 0.6;">(Experimental)</span></h3>
+      <h3>New Message <span class="experimental">(Experimental)</span></h3>
       <p class="modal-desc">Configure the new message.</p>
       <label class="modal-label">Message ID</label>
       <input id="new-msg-id-input" type="text" inputmode="numeric" placeholder="Message ID" autocomplete="off">
@@ -158,7 +155,7 @@
   <!-- Delete confirmation modal -->
   <div class="modal-overlay" id="delete-confirm-modal">
     <div class="modal-card modal-danger">
-      <h3><i class="fas fa-exclamation-triangle"></i> Delete Message <span style="opacity: 0.6;">(Experimental)</span></h3>
+      <h3><i class="fas fa-exclamation-triangle"></i> Delete Message <span class="experimental">(Experimental)</span></h3>
       <p class="modal-desc">Are you sure you want to delete this message? This action can be undone.</p>
       <div class="modal-actions">
         <button id="delete-confirm-cancel" type="button" class="ghost">Cancel</button>
@@ -213,8 +210,8 @@
 
   <script type="module" src="js/main.js"></script>
 
-  <footer style="text-align:center;padding:24px 16px;font-size:11px;color:#52525b;line-height:1.8;">
-    <p>BMG Editor &copy; 2024 <a href="https://l-dev31.github.io" style="color:inherit;text-decoration:underline;">Léo Tosku (L-DEV31)</a> &mdash; MIT License</p>
+  <footer class="page-footer">
+    <p>BMG Editor &copy; 2024 <a href="https://l-dev31.github.io">Léo Tosku (L-DEV31)</a> &mdash; MIT License</p>
     <p>This tool operates entirely in your browser. No files are uploaded or stored. All processing is local.</p>
     <p>BMG is a proprietary format by Nintendo. This editor is an independent fan tool for modding and preservation purposes only.<br>Nintendo&reg; trademarks and game assets remain the property of their respective owners.</p>
   </footer>

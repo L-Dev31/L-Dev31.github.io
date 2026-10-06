@@ -184,17 +184,6 @@ function createEntryCard(message, displayIndex) {
       highlight.scrollLeft = e.target.scrollLeft;
     });
 
-    // Track edits for undo/redo
-    let editStartText = segment.text;
-    textarea.addEventListener('focus', () => {
-      editStartText = message.text;
-    });
-    textarea.addEventListener('blur', () => {
-      // keep editStartText in sync; per-entry history is recorded on input events so
-      // we no longer push a global undo action for text edits here.
-      editStartText = message.text;
-    });
-
     textareaContainer.appendChild(highlight);
     textareaContainer.appendChild(textarea);
     label.appendChild(textareaContainer);

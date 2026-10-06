@@ -66,6 +66,30 @@ header.page-header .tagline {
   max-width: 720px;
 }
 
+.page-logo {
+  display: block;
+  height: 300px;
+  width: auto;
+  margin: 0 auto;
+}
+
+.page-footer {
+  padding: 24px 16px;
+  color: #52525b;
+  font-size: 11px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.page-footer a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.experimental {
+  opacity: 0.6;
+}
+
 main {
   max-width: 960px;
   margin: 0 auto 3rem;
@@ -180,29 +204,16 @@ main {
   width: 100%;
 }
 
-.search-wrapper .search-icon,
-.search-wrapper .search-clear {
+.search-wrapper .search-icon {
   position: absolute;
   top: 50%;
+  left: 1rem;
   transform: translateY(-50%);
   color: var(--text);
   font-size: 1rem;
   z-index: 2;
-}
-
-.search-wrapper .search-icon {
-  left: 1rem;
   pointer-events: none;
 }
-
-.search-wrapper .search-clear {
-  right: 1rem;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.search-wrapper .search-clear:hover { opacity: 1; }
 
 #search {
   width: 100%;
@@ -513,6 +524,13 @@ button.danger:hover { background: #c73e3e; }
 }
 
 /* === Game Config === */
+.game-config-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+  width: max-content;
+}
+
 #game-config-loader { margin: 1.5rem 0; }
 
 .game-config-loader {
