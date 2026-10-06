@@ -26,10 +26,12 @@ export function saveUserSettings(patch) {
     const merged = { ...getUserSettings(), ...patch };
     settingsCache = merged;
     try { localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(merged)); } catch { /* storage full */ }
+    window.dispatchEvent(new Event('nemeris:settings'));
     return merged;
 }
 
 export const getCurrency = () => getUserSettings().currency || '€';
+export const currencyCode = () => ({ '€': 'EUR', '$': 'USD', '£': 'GBP', CHF: 'CHF' })[getCurrency()] || 'EUR';
 export const isExpert = () => !!getUserSettings().expert;
 
 const DROP_COMFORT = { sell_all: 2, sell_some: 3, wait: 5, buy_more: 6 };

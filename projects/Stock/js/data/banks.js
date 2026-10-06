@@ -1,6 +1,6 @@
 // The user's bank or broker (Settings › Profile) and what its public fees mean in money.
 // Data: json/banks.json. Fee rules there: flat, pct, min/max, upTo tiers, or "at" examples.
-import { getUserSettings, saveUserSettings } from '../core/state.js';
+import { getUserSettings, saveUserSettings, currencyCode } from '../core/state.js';
 import { LOGO_DEV_KEY } from './ticker-catalog.js';
 import { LOCALE } from '../i18n/i18n.js';
 
@@ -15,6 +15,8 @@ export function formatMoney(n, currency = 'EUR') {
     const digits = Number.isInteger(n) ? 0 : 2;
     try { return n.toLocaleString(LOCALE, { style: 'currency', currency, minimumFractionDigits: digits, maximumFractionDigits: digits }); } catch { return `${n} ${currency}`; }
 }
+/** Amounts the way people say them, in the user's currency: no cents above 100. */
+export const money = n => formatMoney(Math.abs(n) >= 100 ? Math.round(n) : Math.round(n * 100) / 100, currencyCode());
 export const banksAsOf = () => {
     const [year, month] = String(catalog.asOf).split('-').map(Number);
     return year && month ? new Date(year, month - 1).toLocaleDateString(LOCALE, { month: 'long', year: 'numeric' }) : catalog.asOf;

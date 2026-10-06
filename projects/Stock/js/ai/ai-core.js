@@ -20,7 +20,21 @@ export class ModelError extends Error {
     constructor(msg, kind = 'error') { super(msg); this.kind = kind; }
 }
 
-export const isLoopback = url => { try { return ['127.0.0.1', 'localhost', '[::1]', '::1', '0.0.0.0'].includes(new URL(url).hostname); } catch { return false; } };
+/** Where an address lives, in the browser's words: 'loopback' (this computer), 'local' (the home network) or null (the internet). */
+export function addressSpace(url) {
+    let host;
+    try { host = new URL(url).hostname.replace(/^\[|\]$/g, ''); } catch { return null; }
+    if (/^(localhost|127\.\d+\.\d+\.\d+|::1|0\.0\.0\.0)$/i.test(host)) return 'loopback';
+    if (/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|169\.254\.)/.test(host) || /\.local$/i.test(host)) return 'local';
+    return null;
+}
+export const isLoopback = url => addressSpace(url) === 'loopback';
+/** fetch for AI servers. A request to this computer or the home network says so: from an https page, Chrome then
+ *  asks the user once to allow "apps on this device" instead of blocking it as mixed content. */
+export function aiFetch(url, init = {}) {
+    const space = addressSpace(url);
+    return fetch(url, space ? { ...init, targetAddressSpace: space } : init);
+}
 export const pageOrigin = () => location.origin;
 export const pageIsPublicHttps = () => location.protocol === 'https:' && !isLoopback(location.href);
 /** Model name as the server gives it, without folders or file extension. */
@@ -40,7 +54,7 @@ const isSafari = () => /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(nav
 export function endpointBase(url) {
     let s = String(url || '').trim();
     if (!s) return '';
-    if (!/^https?:\/\//i.test(s)) s = (/^(localhost|127\.|\[::1\]|0\.0\.0\.0)/i.test(s) ? 'http://' : 'https://') + s;
+    if (!/^https?:\/\//i.test(s)) s = (addressSpace(`http://${s}`) ? 'http://' : 'https://') + s;
     try {
         const u = new URL(s);
         const path = u.pathname.replace(/\/+$/, '');
@@ -267,12 +281,19 @@ async function errorFrom(r) {
     return new ModelError(`HTTP ${r.status}. ${msg}`);
 }
 
-async function localPermission() {
+async function localPermission(space) {
     if (!navigator.permissions?.query) return null;
-    for (const name of ['loopback-network', 'local-network-access']) {
+    for (const name of [space === 'local' ? 'local-network' : 'loopback-network', 'local-network-access']) {
         try { return (await navigator.permissions.query({ name })).state; } catch { /* unknown permission name */ }
     }
     return null;
+}
+
+/** How to let this site in (CORS), for the servers people run most, by their usual port. */
+function corsFix(port) {
+    if (port === '1234') return { fix: L('In LM Studio, open the Developer tab, click Settings and turn on "Enable CORS", then retry. From a terminal: lms server start --cors'), copy: 'lms server start --cors' };
+    if (port === '11434') return { fix: L('Quit Ollama, set the environment variable OLLAMA_ORIGINS to {0}, then start it again.', pageOrigin()), copy: pageOrigin() };
+    return { fix: L('Allow the origin {0} (CORS) in its settings.', pageOrigin()), copy: pageOrigin() };
 }
 
 /** Why a server on this computer can't be reached, in words the user can act on. */
@@ -281,9 +302,9 @@ async function diagnoseLocal(base, name) {
     const who = name || L('The server');
     const https = pageIsPublicHttps();
     let answered = false;
-    try { await fetch(`${base}/models`, { mode: 'no-cors', cache: 'no-store', signal: AbortSignal.timeout(6000) }); answered = true; } catch { /* no answer */ }
-    const perm = await localPermission();
-    if (answered) return { code: 'cors', title: L('{0} is running but blocks this site.', who), fix: L('Allow the origin {0} (CORS) in its settings.', pageOrigin()), copy: pageOrigin() };
+    try { await aiFetch(`${base}/models`, { mode: 'no-cors', cache: 'no-store', signal: AbortSignal.timeout(6000) }); answered = true; } catch { /* no answer */ }
+    const perm = await localPermission(addressSpace(base));
+    if (answered) return { code: 'cors', title: L('{0} is running but blocks this site.', who), ...corsFix(port) };
     if (perm === 'denied') return { code: 'lna', title: L('Your browser blocked access to apps on this computer.'), fix: L('Click the icon left of the address bar, open the site settings and allow "Apps on this device", then retry.') };
     if (https && perm === null && isSafari()) return { code: 'safari', title: L('Safari cannot reach apps on this computer from an https page.'), fix: L('Use Chrome, Edge or Firefox, or open Nemeris from localhost.') };
     return { code: 'down', title: L('{0} is not answering on port {1}.', who, port), fix: https ? L('Start it, then retry. Your browser may ask to allow apps on this device: accept.') : L('Start it, then retry.') };
@@ -295,7 +316,7 @@ async function checkServer(entry, { patient = false } = {}) {
     entry.state = 'checking';
     entry.diag = null;
     changed();
-    const local = isLoopback(entry.base);
+    const local = !!addressSpace(entry.base);
     if (!local && !/^https:/i.test(entry.base) && pageIsPublicHttps()) {
         entry.state = 'error';
         entry.diag = { code: 'mixed', title: L('This page is https, so the address must be https too.'), fix: L('Use an https address, or 127.0.0.1 for this computer.') };
@@ -306,7 +327,7 @@ async function checkServer(entry, { patient = false } = {}) {
     const timeout = patient ? 90000 : local ? 8000 : 12000;
     try {
         entry.type = 'llm';
-        const r = await fetch(`${entry.base}/models${entry.kind === 'anthropic' ? '?limit=100' : ''}`, { headers: authHeaders(entry.kind, key), cache: 'no-store', signal: AbortSignal.timeout(timeout) });
+        const r = await aiFetch(`${entry.base}/models${entry.kind === 'anthropic' ? '?limit=100' : ''}`, { headers: authHeaders(entry.kind, key), cache: 'no-store', signal: AbortSignal.timeout(timeout) });
         // An endpoint without a model list may expose the scoring API; detect that response automatically.
         if (r.status === 404) { await checkDecision(entry, timeout); entry.type = 'decision'; }
         else {
@@ -342,7 +363,7 @@ async function checkDecision(entry, timeout) {
     let info = null, reached = false;
     for (const url of [`${originOf(entry.base)}/health`, `${entry.base}/models`]) {
         let r;
-        try { r = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(timeout) }); } catch (e) { if (url.endsWith('/models')) throw e; continue; }
+        try { r = await aiFetch(url, { cache: 'no-store', signal: AbortSignal.timeout(timeout) }); } catch (e) { if (url.endsWith('/models')) throw e; continue; }
         reached = true;
         if (!r.ok) continue;
         info = await r.json().catch(() => ({}));
@@ -360,7 +381,7 @@ async function checkDecision(entry, timeout) {
 /** Some local servers also tell which models are loaded in memory. */
 async function enrichLocal(entry) {
     const origin = originOf(entry.base);
-    const get = async path => { try { const r = await fetch(origin + path, { cache: 'no-store', signal: AbortSignal.timeout(3000) }); return r.ok ? await r.json() : null; } catch { return null; } };
+    const get = async path => { try { const r = await aiFetch(origin + path, { cache: 'no-store', signal: AbortSignal.timeout(3000) }); return r.ok ? await r.json() : null; } catch { return null; } };
     const byId = new Map(entry.models.map(m => [m.id, m]));
     const lm = (await get('/api/v1/models')) || (await get('/api/v0/models'));
     if (lm?.data || lm?.models) {
@@ -615,7 +636,7 @@ function markFailure(task, e) {
     if (srv && e.kind === 'offline') srv.state = 'error';
     changed();
 }
-const offline = (c, e) => new ModelError(isLoopback(c.base) ? L('{0} stopped answering.', c.where) : L('Can\'t reach {0} ({1}).', c.where, e.message), 'offline');
+const offline = (c, e) => new ModelError(addressSpace(c.base) ? L('{0} stopped answering.', c.where) : L('Can\'t reach {0} ({1}).', c.where, e.message), 'offline');
 
 /** Rewrites a request for servers that reject part of it. Returns true when something changed. */
 function adaptBody(body, msg) {
@@ -639,7 +660,7 @@ export async function callStructured({ task, system, user, schema, name, signal,
         let text = '';
         const push = t => { text += t; onText?.(text); };
         if (c.kind === 'anthropic') {
-            const r = await fetch(`${c.base}/messages`, {
+            const r = await aiFetch(`${c.base}/messages`, {
                 method: 'POST', headers: authHeaders('anthropic', c.key), signal,
                 body: JSON.stringify({
                     model: c.model, max_tokens: Math.max(maxTokens, 1024), stream: true, system,
@@ -666,7 +687,7 @@ export async function callStructured({ task, system, user, schema, name, signal,
         body.temperature = temperature;
         for (let attempt = 0; attempt < 5; attempt++) {
             let r;
-            try { r = await fetch(`${c.base}/chat/completions`, { method: 'POST', headers: authHeaders(c.kind, c.key), body: JSON.stringify(body), signal }); }
+            try { r = await aiFetch(`${c.base}/chat/completions`, { method: 'POST', headers: authHeaders(c.kind, c.key), body: JSON.stringify(body), signal }); }
             catch (e) { if (e.name === 'AbortError') throw e; throw offline(c, e); }
             if (!r.ok) {
                 const err = await errorFrom(r);
@@ -763,7 +784,7 @@ async function chatOpenAI(c, { system, messages, tools, signal, onText, onStatus
     let body = build();
     for (let attempt = 0; attempt < 5; attempt++) {
         let r;
-        try { r = await fetch(`${c.base}/chat/completions`, { method: 'POST', headers: authHeaders(c.kind, c.key), body: JSON.stringify(body), signal }); }
+        try { r = await aiFetch(`${c.base}/chat/completions`, { method: 'POST', headers: authHeaders(c.kind, c.key), body: JSON.stringify(body), signal }); }
         catch (e) { if (e.name === 'AbortError') throw e; throw offline(c, e); }
         if (!r.ok) {
             const err = await errorFrom(r);
@@ -838,7 +859,7 @@ function toAnthropicMessages(messages) {
 async function chatAnthropic(c, { system, messages, tools, signal, onText, onStatus, maxTokens, temperature }) {
     const body = { model: c.model, max_tokens: Math.max(maxTokens, 1024), stream: true, system, temperature, messages: toAnthropicMessages(messages) };
     if (tools.length) body.tools = tools.map(t => ({ name: t.name, description: t.description, input_schema: t.parameters }));
-    const r = await fetch(`${c.base}/messages`, { method: 'POST', headers: authHeaders('anthropic', c.key), body: JSON.stringify(body), signal })
+    const r = await aiFetch(`${c.base}/messages`, { method: 'POST', headers: authHeaders('anthropic', c.key), body: JSON.stringify(body), signal })
         .catch(e => { if (e.name === 'AbortError') throw e; throw offline(c, e); });
     if (!r.ok) throw await errorFrom(r);
     let text = '';
@@ -868,7 +889,7 @@ async function chatAnthropic(c, { system, messages, tools, signal, onText, onSta
 /* ── decision AIs: score many states at once (POST /v1/decide) ── */
 export async function decide(base, items, questions, { signal, onItem } = {}) {
     const who = serverName(base);
-    const r = await fetch(`${originOf(base)}/v1/decide`, {
+    const r = await aiFetch(`${originOf(base)}/v1/decide`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, signal,
         body: JSON.stringify({ questions, items, stream: true }),
     }).catch(e => { if (e.name === 'AbortError') throw e; throw new ModelError(L('{0} stopped answering.', who), 'offline'); });
@@ -1060,6 +1081,22 @@ function serverRow(s, { onAdd } = {}) {
     return row;
 }
 
+// One tap to add a well-known AI: servers on this computer at their default port, and online APIs (they need a key).
+const PRESETS = [
+    { name: 'LM Studio', base: 'http://127.0.0.1:1234/v1' },
+    { name: 'Ollama', base: 'http://127.0.0.1:11434/v1' },
+    { name: 'Jan', base: 'http://127.0.0.1:1337/v1' },
+    { name: 'llama.cpp', base: 'http://127.0.0.1:8080/v1' },
+    { name: 'KoboldCpp', base: 'http://127.0.0.1:5001/v1' },
+    { name: 'GPT4All', base: 'http://127.0.0.1:4891/v1' },
+    { name: 'OpenAI', base: 'https://api.openai.com/v1', key: true },
+    { name: 'Anthropic', base: 'https://api.anthropic.com/v1', key: true },
+    { name: 'Google Gemini', base: 'https://generativelanguage.googleapis.com/v1beta/openai', key: true },
+    { name: 'Mistral', base: 'https://api.mistral.ai/v1', key: true },
+    { name: 'Groq', base: 'https://api.groq.com/openai/v1', key: true },
+    { name: 'OpenRouter', base: 'https://openrouter.ai/api/v1', key: true },
+];
+
 let settingsOff = null;
 let editingEndpoint = '';
 function editEndpointForm(ep) {
@@ -1141,6 +1178,18 @@ export function renderAiSettings() {
         err.hidden = true;
         form.append(name, url, key, add, err);
         const fail = (msg, field) => { err.textContent = msg; err.hidden = false; field.focus(); };
+
+        const presets = h('div', 'chips ais-presets');
+        presets.setAttribute('aria-label', L('Quick add'));
+        for (const p of PRESETS.filter(p => !s.endpoints.some(e => e.base === p.base))) {
+            presets.append(btn(p.name, () => {
+                if (!p.key) { addEndpoint(p.base, '', p.name); return; }
+                name.value = p.name;
+                url.value = p.base;
+                key.focus();
+            }, 'chip'));
+        }
+        if (presets.childElementCount) yours.append(h('p', 'meta', L('Quick add: tap one. Online AIs then ask for their key.')), presets);
         form.addEventListener('submit', e => {
             e.preventDefault();
             const label = name.value.trim();

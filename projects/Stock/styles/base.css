@@ -87,7 +87,7 @@ ul, ol { margin: 0; }
 .positive { color: var(--pos); }
 .negative { color: var(--neg); }
 
-p.muted, .empty, .vd-summary, .vd-reasons, .aio-thesis, .aio-col, .aio-inval, .opinion-thesis, .news-summary, .for-you, .risk-tip, .risk-verdict, .comfort, .notice, .term-pop p, .bubble {
+p.muted, .empty, .vd-summary, .vd-reasons, .aio-thesis, .aio-col, .aio-inval, .opinion-thesis, .news-summary, .for-you, .risk-tip, .risk-verdict, .comfort, .notice, .bubble {
     font-family: var(--body);
     font-weight: 400;
     line-height: 1.6;

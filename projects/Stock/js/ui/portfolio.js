@@ -93,6 +93,7 @@ export function updatePortfolioSummary() {
         gEl.title = held ? L('{0}{1} on {2} put in', gain >= 0 ? '+' : '', formatCurrency(gain, cur), formatCurrency(cost, cur)) : '';
     }
     updatePortfolioComposition();
+    window.dispatchEvent(new Event('nemeris:portfolio'));
 }
 
 const SHADES = ['#A99CFF', '#7C6CF2', '#CFC7FF', '#5B4CC9', '#E6E1FF', '#9486FF', '#463A9C', '#B9AEFF', '#6A5BDB', '#F1EEFF'];
@@ -302,10 +303,6 @@ export async function loadStocks() {
 
     updatePortfolioSummary();
     initPortfolioAnalytics();
-    if (matchMedia('(min-width: 900px)').matches) {
-        if (Object.values(positions).some(p => p.shares > 0)) openPortfolio();
-        else document.querySelector('#general-tabs .tab:not([hidden])')?.click();
-    }
     setTimeout(backgroundSuspendedScan, 2500);
     setTimeout(() => batchPerformanceFetch(globalPeriod), 300);
 }

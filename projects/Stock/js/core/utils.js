@@ -78,31 +78,6 @@ export function fillOrphans(scope = document) {
     }
 }
 
-export const GLOSSARY = {
-    dividend: [L('Dividend'), L('A share of the company profit paid to shareholders, usually once to four times a year.')],
-    volatility: [L('Volatility'), L('How much the price jumps around. Higher volatility means bigger ups and bigger downs.')],
-    risk: [L('Risk level'), L('A score from 1 (very calm) to 7 (very wild), based on how much prices moved over the past year. European fund documents use the same scale.')],
-    drawdown: [L('Worst drop'), L('The biggest fall from a high point to a later low. It shows how painful a rough patch was.')],
-    diversification: ['Diversification', L('Spreading your money over different companies, sectors and countries, so one bad surprise hurts less.')],
-    sector: [L('Sector'), L('The kind of business a company is in, such as technology, health or energy.')],
-    index: [L('Index'), L('A basket of big companies used as a yardstick for the market, such as the S&P 500 in the US or the CAC 40 in France.')],
-    unrealized: [L('Unrealized gain'), L('The gain on stocks you still hold. It becomes real money only when you sell.')],
-    realized: [L('Cashed-in gain'), L('A gain or loss you locked in by selling.')],
-    signal: ['Signal', L('A reading of recent price moves by fixed rules. It describes the trend, it does not predict the future.')],
-    rsi: ['RSI', L('Relative Strength Index, from 0 to 100. Above 70 the price rose fast and may pause. Below 30 it fell fast and may bounce.')],
-    macd: ['MACD', L('A trend gauge built from two moving averages. When its line crosses above the signal line, momentum is turning up.')],
-    average: [L('Moving average'), L('The average price over the last days. A price above its average suggests an uptrend.')],
-    stoploss: ['Stop loss', L('A price at which you would sell to limit a loss.')],
-    takeprofit: ['Take profit', L('A price at which you would sell to lock in a gain.')],
-    simulation: ['Simulation', L('Thousands of possible futures built from how the price moved in the past. It shows a range, not a promise.')],
-    lossChance: [L('Chance of a loss'), L('In how many of the simulated futures you end up with less than you put in.')],
-    beta: ['Beta', L('How much a stock tends to move when the market moves. 1 means like the market, 2 means twice as much.')],
-    sharpe: [L('Sharpe ratio'), L('Return earned for each unit of risk taken. Higher is better, above 1 is good.')],
-    correlation: [L('Correlation'), L('How much two stocks move together. Close to 1 means they rise and fall together, so owning both spreads risk less.')],
-    comfort: [L('Your comfort with risk'), L('How much ups and downs you said you can live with, on the same 1 to 7 scale. Set it in Settings, Profile.')],
-    beatMarket: [L('Chance of beating the market'), L('How likely the AI thinks this stock does better than a world index over the next month. 50% means no edge.')],
-    isin: ['ISIN', L('An international ID for a security, 12 characters long.')],
-};
 export const termHtml = (key, text) => `<button type="button" class="term" data-term="${key}">${text}</button>`;
 
 export function downloadText(filename, text, type = 'application/json') {

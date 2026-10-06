@@ -5,11 +5,12 @@ import '../terminal/terminal.js';
 import '../ui/explorer.js';
 import '../ai/assistant.js';
 import '../ui/bank-picker.js';
-import { DEAD_ERROR_CODES, periodToDays } from './constants.js';
+import { initCoach } from '../coach/coach.js';
+import { DEAD_ERROR_CODES, periodToDays, periodPhrase } from './constants.js';
 import { positions, selectedApi, setSelectedApi, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings, getCurrency, comfortLevel, COMFORT_WORD, isExpert } from './state.js';
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching, openPortfolio } from '../ui/portfolio.js';
-import { updateUI, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended, periodPhrase } from '../ui/ui.js';
-import { getEl, el, icon, showCard, makeResizer, GLOSSARY, fillOrphans, getActiveSymbol } from './utils.js';
+import { updateUI, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from '../ui/ui.js';
+import { getEl, el, icon, showCard, makeResizer, fillOrphans, getActiveSymbol } from './utils.js';
 import { renderTickerAi } from '../ai/ai-lab.js';
 import { syncAiGates, onAiChange } from '../ai/ai-core.js';
 import { L, LANG, setLang } from '../i18n/i18n.js';
@@ -57,7 +58,7 @@ for (const btn of document.querySelectorAll('.list-toggle')) {
     try { if (localStorage.getItem(`nemeris_list_${btn.id}`) === '0') toggleList(btn, false); } catch { /* ignore */ }
 }
 
-const NAV_FOR_CARD = { 'card-portfolio': 'portfolio', 'card-explorer': 'explorer', 'card-news': 'news', 'card-terminal': 'terminal', 'card-settings': 'settings' };
+const NAV_FOR_CARD = { 'card-home': 'home', 'card-portfolio': 'portfolio', 'card-explorer': 'explorer', 'card-news': 'news', 'card-terminal': 'terminal', 'card-settings': 'settings' };
 const BOTTOM_FOR_CARD = { 'card-explorer': 'bottom-nav-explorer', 'card-news': 'bottom-nav-news', 'card-profile': 'bottom-nav-profile', 'card-settings': 'bottom-nav-profile', 'card-portfolio': 'bottom-nav-home' };
 
 function syncCard(card) {
@@ -346,46 +347,6 @@ function renderRelayNotice(message) {
 window.addEventListener('workerFailure', () => renderRelayNotice(L('The financial data API is not responding. Displayed prices may be outdated.')));
 window.addEventListener('workerRecovered', () => renderRelayNotice());
 
-/* ── words explained on tap ── */
-let pop = null;
-function closeTerm() { pop?.remove(); pop = null; }
-function openTerm(btn) {
-    const [title, text] = GLOSSARY[btn.dataset.term] || [];
-    if (!title) return;
-    closeTerm();
-    pop = el('div', 'term-pop');
-    pop.dataset.for = btn.dataset.term;
-    pop.setAttribute('role', 'dialog');
-    pop.setAttribute('aria-label', title);
-    const ask = el('button', 'btn btn-quiet', L('Ask Nemeris about it'));
-    ask.type = 'button';
-    ask.dataset.needsAi = 'assistant';
-    ask.addEventListener('click', () => { closeTerm(); window.nemerisAssistant?.send(L('Explain "{0}" simply, with an example from my portfolio if it helps.', title)); });
-    pop.append(el('strong', null, title), el('p', null, text), ask);
-    document.body.append(pop);
-    syncAiGates(pop);
-    const r = btn.getBoundingClientRect();
-    const w = Math.min(320, window.innerWidth - 24);
-    pop.style.width = `${w}px`;
-    pop.style.left = `${Math.max(12, Math.min(window.innerWidth - w - 12, r.left))}px`;
-    const below = r.bottom + 8 + pop.offsetHeight < window.innerHeight;
-    pop.style.top = `${below ? r.bottom + 8 : Math.max(12, r.top - pop.offsetHeight - 8)}px`;
-    ask.focus({ preventScroll: true });
-}
-document.addEventListener('click', e => {
-    const t = e.target.closest('.term[data-term]');
-    if (t) {
-        e.stopPropagation();
-        const same = pop?.dataset.for === t.dataset.term;
-        closeTerm();
-        if (!same) openTerm(t);
-        return;
-    }
-    if (pop && !pop.contains(e.target)) closeTerm();
-}, true);
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTerm(); });
-window.addEventListener('scroll', closeTerm, { passive: true });
-
 document.addEventListener('error', e => { if (e.target.classList?.contains('row-logo')) e.target.hidden = true; }, true);
 
 /* ── start ── */
@@ -405,6 +366,7 @@ window.addEventListener('load', async () => {
     renderRelayNotice();
     makeResizer(document.querySelector('.sidebar-resize'), { cssVar: '--sidebar-w', storageKey: 'nemeris_sidebar_w', min: 220, max: 480, side: 'left', fallback: 280 });
     await loadStocks();
+    initCoach({ go, openSymbol: openCustomSymbol });
     setNewsPositions(positions);
     syncAiGates();
     onAiChange(() => syncAiGates());

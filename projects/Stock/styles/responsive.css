@@ -1,7 +1,7 @@
 .bottom-nav { display: none; }
 
 @media (min-width: 900px) {
-    .card.home-card, .card.profile-card { display: none; }
+    .card.profile-card, .home-card > .list-section { display: none; }
 }
 
 @media (min-width: 1280px) {

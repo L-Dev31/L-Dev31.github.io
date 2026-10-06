@@ -3,7 +3,7 @@
 // Listening: Silero VAD (@ricky0123/vad-web) cuts the microphone into sentences and hands each one over as WAV.
 // Speaking: each sentence is fetched as audio and queued on one Web Audio timeline, so they play back to back.
 // Same interfaces as the browser engines of voice.js, so the call code does not care which one runs.
-import { bearerHeaders, readModelError, ModelError } from '../ai-core.js';
+import { bearerHeaders, readModelError, ModelError, aiFetch } from '../ai-core.js';
 import { L } from '../../i18n/i18n.js';
 import { speakable } from './voice.js';
 
@@ -68,7 +68,7 @@ export function createAiSpeaker(conn, { onStart, onEnd, onError, onLevel } = {})
     };
     const fetchAudio = async (text, signal) => {
         const body = { model: conn.model, input: text, response_format: 'mp3', ...(conn.voice && { voice: conn.voice }) };
-        const r = await fetch(`${conn.base}/audio/speech`, {
+        const r = await aiFetch(`${conn.base}/audio/speech`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...bearerHeaders(conn.key) },
             body: JSON.stringify(body),
@@ -149,7 +149,7 @@ export function createAiListener(conn, { lang, prompt = '', onFinal, onError }) 
         form.append('language', String(lang || '').slice(0, 2));
         if (prompt) form.append('prompt', prompt);
         try {
-            const r = await fetch(`${conn.base}/audio/transcriptions`, { method: 'POST', headers: bearerHeaders(conn.key), body: form, signal: AbortSignal.timeout(20000) });
+            const r = await aiFetch(`${conn.base}/audio/transcriptions`, { method: 'POST', headers: bearerHeaders(conn.key), body: form, signal: AbortSignal.timeout(20000) });
             if (!r.ok) throw await readModelError(r);
             const raw = await r.text();
             let text = raw;

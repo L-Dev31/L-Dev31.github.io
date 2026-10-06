@@ -1,6 +1,6 @@
 // Settings › Profile › Your bank: a searchable list of banks and brokers by country, and its fees once chosen.
 import { getEl, el, icon } from '../core/utils.js';
-import { getCurrency } from '../core/state.js';
+import { currencyCode } from '../core/state.js';
 import { L, LANG, LOCALE } from '../i18n/i18n.js';
 import { banksReady, allBanks, banksAsOf, bankLogo, currentBank, chooseBank, saveCustomBank, orderFee, isEstimate, formatMoney } from '../data/banks.js';
 
@@ -124,8 +124,6 @@ customForm.addEventListener('submit', e => {
     sheet.close();
     renderSummary();
 });
-
-const currencyCode = () => ({ '€': 'EUR', '$': 'USD', '£': 'GBP', 'CHF': 'CHF' })[getCurrency()] || 'EUR';
 
 /* ── the chosen bank in Settings › Profile ── */
 function feeTable(bank) {

@@ -6,6 +6,8 @@ import { openSimulation, summarize, normalizeHorizon, HORIZONS } from '../quant/
 import { researchSnapshot } from './ai-lab.js';
 import { calculateBotSignal } from '../quant/signal-bot.js';
 import { webSearch, readPage } from '../data/web.js';
+import { round, holdingRows } from '../data/holdings.js';
+import { TERMS } from '../coach/terms.js';
 import { el, icon, makeResizer, downloadText } from '../core/utils.js';
 import { L, Ln, LOCALE, LANG } from '../i18n/i18n.js';
 import { TOOL_SPECS, checkToolCall, buildSystemPrompt, tidyAnswer, guessLanguage } from './assistant-rules.js';
@@ -24,12 +26,16 @@ const MAX_CONTEXT = 30;
 const MAX_CHATS = 60;
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// [[key|word]] in an answer: a word the user can tap for the full explanation (js/coach/explain.js).
+const TERM_MARK = /\[\[(\w+)\|([^\]|]+)\]\]/g;
+const termWord = (m, key, word) => (TERMS[key] ? `<button type="button" class="term" data-term="${key}">${word}</button>` : word);
 
 /** Safe markdown subset: escape first, then bold, italics, code, links, lists, tables, paragraphs. */
 function md(text) {
     const out = [];
     let list = null, table = null, para = [];
     const inline = s => s
+        .replace(TERM_MARK, termWord)
         .replace(/`([^`]+)`/g, '<code>$1</code>')
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
         .replace(/(^|[\s(])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>')
@@ -39,7 +45,7 @@ function md(text) {
     const flushTable = () => {
         if (!table) return;
         const rows = table.filter(r => !/^\s*\|?\s*:?-{2,}/.test(r));
-        const cells = r => r.replace(/^\s*\||\|\s*$/g, '').split('|').map(c => inline(c.trim()));
+        const cells = r => r.replace(TERM_MARK, '[[$1\u0001$2]]').replace(/^\s*\||\|\s*$/g, '').split('|').map(c => inline(c.trim().replaceAll('\u0001', '|')));
         const [head, ...body] = rows;
         out.push(`<div class="msg-table"><table><thead><tr>${cells(head).map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${body.map(r => `<tr>${cells(r).map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`);
         table = null;
@@ -65,26 +71,7 @@ function md(text) {
 }
 
 /* ── what Nemeris knows ── */
-const round = (x, d = 2) => x == null || !Number.isFinite(x) ? null : Math.round(x * 10 ** d) / 10 ** d;
 const normalize = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9.]/g, '');
-
-const FUND_WORDS = /\b(ETF|UCITS|ETC|ETN|fonds|fund|index|indice|tracker|MSCI|S&P|STOXX|Monde|World|SICAV|FCP)\b/i;
-const kindOf = p => (p.type === 'crypto' ? 'crypto' : FUND_WORDS.test(`${p.name || ''} ${p.raw?.name || ''}`) ? 'fund' : 'stock');
-
-function holdingRows() {
-    const rows = [];
-    let total = 0;
-    for (const [sym, p] of Object.entries(positions)) {
-        if (!(p?.shares > 0)) continue;
-        const price = p.lastData?.price || (p.costBasis && p.shares ? p.costBasis / p.shares : 0);
-        const value = price * p.shares;
-        total += value;
-        rows.push({ symbol: sym, name: p.name, ticker: p.ticker, kind: kindOf(p), shares: p.shares, avg_cost: round(p.costBasis / p.shares), price: round(price), value: round(value), cost: round(p.costBasis), pl: round(value - p.costBasis), pl_pct: round(p.costBasis ? (value / p.costBasis - 1) * 100 : 0, 1), currency: p.raw?.currency || '', country: p.raw?.country || p.country || '', first_buy: p.purchaseDate || null });
-    }
-    for (const r of rows) r.weight_pct = total ? round(r.value / total * 100, 1) : null;
-    rows.sort((a, b) => b.value - a.value);
-    return { rows, total };
-}
 
 function portfolioSnapshot() {
     const { rows, total } = holdingRows();
@@ -385,6 +372,7 @@ function systemPrompt(effort, replyLang = null) {
         total,
         cost: rows.reduce((a, r) => a + (r.cost || 0), 0),
         holdings: rows,
+        terms: Object.entries(TERMS).map(([key, t]) => `${key} (${t.title})`).join(', '),
     });
 }
 
@@ -1138,6 +1126,7 @@ function feedbackBar(index) {
 
 /** Answer as plain text: what people paste into notes or a message, without markdown marks. */
 const plainText = s => String(s || '')
+    .replace(TERM_MARK, '$2')
     .replace(/\*\*([^*]+)\*\*/g, '$1')
     .replace(/(^|[\s(])\*([^*\s][^*]*)\*/g, '$1$2')
     .replace(/`([^`]+)`/g, '$1')
@@ -1577,7 +1566,7 @@ export async function send(text) {
                     if (!clean) return;
                     if (!shown) { typing.before(bubble); shown = true; }
                     bubble.innerHTML = md(clean);
-                    feeder?.feed(clean);
+                    feeder?.feed(clean.replace(TERM_MARK, '$2'));
                     scrollDown();
                 },
                 onStatus: s => {

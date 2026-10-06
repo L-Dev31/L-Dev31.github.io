@@ -342,3 +342,50 @@ a.news-item:hover { border-color: var(--line-2); background: var(--surface-2); t
 .terminal-input-row::before { content: 'USER>'; color: var(--term-bright); }
 input.terminal-input { flex: 1; width: auto; min-width: 0; padding: 2px 0; border: 0; border-radius: 0; background: none; color: var(--term-bright); caret-color: var(--term-bright); font: inherit; transition: none; }
 input.terminal-input::placeholder { color: var(--term-dim); }
+
+/* Home: the coach */
+.coach { display: grid; gap: 16px; width: 100%; max-width: 720px; }
+.coach-hello { margin: 0; font-size: 26px; font-weight: 700; line-height: 1.2; color: var(--text); }
+.coach-status { margin: -8px 0 4px; color: var(--muted); }
+.coach-cards, .coach-review { display: grid; gap: 14px; }
+.coach-review:empty { display: none; }
+.coach-card { display: grid; gap: 14px; padding: 20px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
+.coach-head { display: flex; align-items: flex-start; gap: 12px; }
+.coach-icon { display: grid; flex: none; place-items: center; width: 36px; height: 36px; border-radius: var(--r-circle); background: var(--surface-2); color: var(--muted); font-size: 18px; }
+.is-down .coach-icon { background: var(--neg-soft); color: var(--neg); }
+.is-up .coach-icon { background: var(--pos-soft); color: var(--pos); }
+.is-up .coach-icon .i { transform: scaleY(-1); }
+.is-warn .coach-icon { background: var(--warn-soft); color: var(--warn); }
+.is-info .coach-icon, .is-review .coach-icon { background: var(--accent-soft); color: var(--accent); }
+.is-calm .coach-icon { background: var(--pos-soft); color: var(--pos); }
+.coach-what { margin: 6px 0 0; font-size: 18px; line-height: 1.35; color: var(--text); }
+.coach-meaning { display: grid; gap: 8px; }
+.coach-card p, .coach-lesson p { margin: 0; }
+.coach-label { margin: 0 0 6px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+.coach-options { margin: 0; padding: 0; list-style: none; }
+.coach-options li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.coach-options li > div { flex: 1; min-width: 0; }
+.coach-options strong { color: var(--text); }
+.coach-options .meta { margin-top: 2px; }
+.coach-options .btn { flex: none; }
+.coach-learn { border-radius: var(--r-md); background: var(--surface-2); }
+.coach-learn > summary { display: flex; align-items: center; gap: 12px; padding: 14px 16px; list-style: none; cursor: pointer; }
+.coach-learn > summary::-webkit-details-marker { display: none; }
+.coach-learn > summary > .i { flex: none; color: var(--accent); font-size: 18px; }
+.coach-idea { display: grid; flex: 1; }
+.coach-idea .coach-label { margin-bottom: 2px; }
+.coach-idea p { font-weight: 600; color: var(--text); }
+.coach-learn-cta { flex: none; font-size: 13px; font-weight: 700; color: var(--accent); }
+.coach-learn[open] .coach-learn-cta { visibility: hidden; }
+.coach-lesson { display: grid; gap: 10px; padding: 0 16px 16px; }
+.coach-lesson .coach-label { margin: 6px 0 0; }
+.coach-foot { display: flex; }
+.coach-progress { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r-md); background: none; color: var(--text-2); font: inherit; text-align: left; cursor: pointer; }
+.coach-progress:hover { background: var(--surface); }
+.coach-progress-bar { grid-column: 1 / -1; height: 6px; border-radius: var(--r-bar); background: linear-gradient(90deg, var(--accent) calc(var(--done, 0) * 100%), var(--surface-3) 0); }
+.coach-progress-cta { grid-row: 1; grid-column: 2; font-size: 13px; font-weight: 700; color: var(--accent); }
+
+@media (max-width: 640px) {
+    .coach-card { padding: 16px; }
+    .coach-options li { flex-wrap: wrap; }
+}

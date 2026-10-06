@@ -1,5 +1,5 @@
 import { positions, selectedApi, lastApiBySymbol, getCurrency, globalPeriod } from '../core/state.js';
-import { typeLabel } from '../core/constants.js';
+import { typeLabel, periodPhrase } from '../core/constants.js';
 import { calculateStockValues, recordTrade, deleteTrade } from './portfolio.js';
 import { fetchActiveSymbol } from '../core/general.js';
 import { updateChart, initChart } from './chart.js';
@@ -12,9 +12,6 @@ import { L, Ln, LANG, LOCALE } from '../i18n/i18n.js';
 import { currentBank, orderFee, isEstimate, marketFor, formatMoney } from '../data/banks.js';
 
 export { initChart };
-
-const PERIOD_PHRASE = { '1H': L('in the last hour'), '4H': L('in the last 4 hours'), '1D': L('today'), '1W': L('over 1 week'), '1M': L('over 1 month'), '3M': L('over 3 months'), '6M': L('over 6 months'), 'YTD': L('this year'), '1Y': L('over 1 year'), '3Y': L('over 3 years'), '5Y': L('over 5 years'), 'MAX': L('since it was listed') };
-export const periodPhrase = p => PERIOD_PHRASE[p] || '';
 
 let regionNames = null;
 export function countryName(code) {

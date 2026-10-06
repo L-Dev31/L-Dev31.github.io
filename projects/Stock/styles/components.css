@@ -235,22 +235,6 @@ details.more > * + * + * { margin-top: 26px; }
 }
 .term:has(.i) { text-decoration: none; color: var(--faint); vertical-align: middle; }
 .term:has(.i):hover { color: var(--accent); }
-.term-pop {
-    position: fixed;
-    z-index: 120;
-    display: grid;
-    gap: 8px;
-    padding: 16px;
-    border: 1px solid var(--line-2);
-    border-radius: var(--r-md);
-    background: var(--surface-3);
-    box-shadow: var(--shadow);
-    font-size: 14px;
-    animation: pop .16s ease-out;
-}
-.term-pop strong { font-size: 15px; }
-.term-pop .btn { justify-self: start; padding: 7px 14px; font-size: 13px; }
-@keyframes pop { from { opacity: 0; transform: translateY(4px); } }
 
 .pbar { display: grid; gap: 8px; padding: 12px 0; }
 .pbar-compact { padding: 6px 0; }
@@ -446,3 +430,39 @@ details.more > * + * + * { margin-top: 26px; }
 }
 #bank-summary { display: grid; gap: 16px; }
 .trade-fee, .sim-costs { margin: 0; }
+
+/* A check question (coach and explainer). */
+.quiz { display: grid; gap: 10px; }
+.quiz-q { margin: 0; font-weight: 600; color: var(--text); }
+.quiz-options { display: grid; gap: 8px; }
+.quiz-option { padding: 12px 14px; border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--surface); color: var(--text-2); font: inherit; text-align: left; cursor: pointer; }
+.quiz-option:hover:not(:disabled) { border-color: var(--accent); }
+.quiz-option:disabled { cursor: default; opacity: .6; }
+.quiz-option.right { border-color: var(--pos); background: var(--pos-soft); color: var(--text); opacity: 1; }
+.quiz-option.wrong { border-color: var(--neg); background: var(--neg-soft); opacity: 1; }
+.quiz-why { margin: 0; }
+
+/* The explainer: any underlined word, explained in full. */
+.explain .sheet-title { flex: 1; }
+.explain-body { display: grid; flex: 1; align-content: start; gap: 18px; min-height: 0; padding: 8px 20px 24px; overflow-y: auto; overscroll-behavior: contain; }
+.explain-body p { margin: 0; }
+.explain-body > .btn { justify-self: start; }
+.explain-lead { font-size: 17px; color: var(--text); }
+.explain-part { display: grid; gap: 8px; }
+.explain-part > h3 { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+.explain-example, .explain-yours { padding: 12px 14px; border-left: 3px solid var(--line-3); border-radius: 0 var(--r-sm) var(--r-sm) 0; background: var(--surface-2); }
+.explain-yours { border-left-color: var(--accent); }
+.explain-idea { font-weight: 600; color: var(--text); }
+.explain-idea-box { padding: 14px 16px; border-radius: var(--r-md); background: var(--accent-soft); }
+.explain-idea-box > .btn { justify-self: start; }
+.explain .chips .term { padding: 6px 12px; border: 1px solid var(--line-2); border-radius: var(--r-pill); font-size: 14px; text-decoration: none; cursor: pointer; }
+.explain .chips .term:hover { border-color: var(--accent); }
+.lesson-list { display: grid; }
+.lesson-row { display: flex; align-items: center; gap: 12px; padding: 12px 4px; border: 0; border-top: 1px solid var(--line); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.lesson-row:hover .lesson-row-title { color: var(--accent); }
+.lesson-row-text { display: grid; flex: 1; min-width: 0; }
+.lesson-row-title { font-weight: 600; color: var(--text); }
+.lesson-row-idea { font-size: 13px; color: var(--muted); }
+.lesson-status { flex: none; padding: 3px 10px; border-radius: var(--r-pill); background: var(--surface-2); color: var(--muted); font-size: 12px; font-weight: 700; }
+.lesson-status.is-met { background: var(--warn-soft); color: var(--warn); }
+.lesson-status.is-learned, .lesson-status.is-solid { background: var(--pos-soft); color: var(--pos); }
