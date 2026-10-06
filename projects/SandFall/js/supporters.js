@@ -39,7 +39,6 @@ class SupportersManager {
 
 		const originalSupporters = data.supporters;
 		this.originalCount = originalSupporters.length;
-		// Duplique 4x pour un loop parfait
 		const duplicatedSupporters = [
 			...originalSupporters,
 			...originalSupporters,
@@ -48,7 +47,7 @@ class SupportersManager {
 		];
 
 		this.track.innerHTML = duplicatedSupporters.map(supporter => `
-			<img src="images/supporters/${supporter.id}.png" 
+			<img src="images/supporters/${supporter.id}.png"
 				 alt="${supporter.name}" class="supporter-img" title="${supporter.name}"
 				 loading="lazy" draggable="false" />
 		`).join('');
@@ -94,11 +93,9 @@ class SupportersManager {
 	}
 
 	setupInteractions() {
-		// Mouse events
 		this.track.addEventListener('mousedown', e => this.onStart(e));
 		document.addEventListener('mousemove', e => this.onMove(e));
 		document.addEventListener('mouseup', () => this.onEnd());
-		// Touch events
 		this.track.addEventListener('touchstart', e => this.onStart(e), { passive: false });
 		document.addEventListener('touchmove', e => this.onMove(e), { passive: false });
 		document.addEventListener('touchend', () => this.onEnd());
@@ -135,7 +132,6 @@ class SupportersManager {
 		if (!this.isDragging) return;
 		this.isDragging = false;
 		this.track.style.cursor = 'grab';
-		// Snap dans la boucle
 		if (this.currentPos <= -this.supportersWidth * 2) {
 			this.currentPos += this.supportersWidth * 2;
 		}

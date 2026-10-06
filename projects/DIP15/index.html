@@ -44,7 +44,7 @@
   <script>
     const backgrounds = [
       'images/BG/1.jpg',
-      'images/BG/2.jpg', 
+      'images/BG/2.jpg',
       'images/BG/3.jpg',
       'images/BG/4.jpg',
       'images/BG/5.jpg',
@@ -80,7 +80,7 @@
       if (backgroundElement) {
         backgroundElement.style.backgroundImage = `url(${backgrounds[index]})`;
       }
-      
+
       document.querySelectorAll('.indicator-dot').forEach((dot, i) => {
         dot.classList.toggle('active', i === index);
       });
@@ -120,7 +120,7 @@
 
     function handleLogin() {
       const password = passwordInput ? passwordInput.value : '';
-      
+
       if (password === '312007') {
         // Mark session as authenticated
         sessionStorage.setItem('authenticated', 'true');
@@ -130,7 +130,7 @@
           overlay.classList.add('login-transition');
           setTimeout(() => overlay.classList.add('zoom-in'), 100);
         }
-        
+
         setTimeout(() => {
           window.location.href = 'desktop.html';
         }, 1200);
@@ -138,7 +138,7 @@
         const loginContainer = document.querySelector('.login-container');
         if (loginContainer) {
           loginContainer.style.animation = 'shake 0.5s ease-in-out';
-          
+
           setTimeout(() => {
             loginContainer.style.animation = '';
             if (passwordInput) {
@@ -154,7 +154,7 @@
       if (submitButton) {
         submitButton.addEventListener('click', handleLogin);
       }
-      
+
       if (passwordInput) {
         passwordInput.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') {

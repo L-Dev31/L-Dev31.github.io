@@ -186,7 +186,7 @@ body {
 
 .container {
   flex: 1;
-  border-top-style: solid; 
+  border-top-style: solid;
   border-radius: 70px 70px 0px 0px;
   width: 100%;
   background-image: linear-gradient(to bottom, #c0c8d6, white);
@@ -280,10 +280,10 @@ iframe{
 }
 
 .contact {
-  text-decoration: none; 
-  font-weight: bold; 
+  text-decoration: none;
+  font-weight: bold;
   color: white !important;
-  display: flex; 
+  display: flex;
   align-items: center;
 }
 
@@ -410,7 +410,7 @@ h5{
   height: 100%;
   border-radius: 50%;
   position: relative;
-  box-shadow: 
+  box-shadow:
     0 0 20px rgba(0, 0, 0, 0.8),
     0 0 0 2px rgba(255, 255, 255, 0.5),
     inset 4px 4px 12px rgba(0, 0, 0, 0.4),
@@ -475,13 +475,12 @@ h5{
   border-radius: 50%;
   background: transparent;
   border: 5px solid rgba(216, 216, 216, 0.7);
-  box-shadow: 
+  box-shadow:
     inset 2px 2px 4px rgba(0, 0, 0, 0.3),
     inset -2px -2px 4px rgba(255, 255, 255, 0.2);
   z-index: 20;
   pointer-events: none;
 }
-
 
 @keyframes spin {
   from {
@@ -534,8 +533,8 @@ h5{
 
 .trailer__player {
   width: 100%;
-  max-width: 1280px; 
-  margin: 10px auto; 
+  max-width: 1280px;
+  margin: 10px auto;
   margin-bottom: 75px!important;
   box-shadow: 0 30px 30px #0000002a;
   border-radius: 20px;
@@ -553,9 +552,9 @@ h5{
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%; 
-  height: 100%; 
-  border: none; 
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 .carousel {
@@ -633,29 +632,6 @@ h5{
 
 .next-btn {
   right: 10px;
-}
-
-.textbox a {
-  color: rgb(0, 183, 255);
-}
-
-.Flags {
-  text-align: center;
-}
-
-.FlagIMG {
-  display: inline-block;
-  margin: 0 20px;
-  border-radius: 10px;
-  margin-bottom: 2%;
-  box-shadow: 0 50px 80px rgba(0, 0, 0, 0.236);
-  transition: transform 0.3s ease;
-  width: 250px;
-  height: auto;
-}
-
-.FlagIMG:hover {
-  transform: scale(1.2);
 }
 
 /* News Section */
@@ -891,11 +867,6 @@ h5{
   color: #141414;
 }
 
-.news-date {
-  font-size: 16px;
-  color: #555;
-}
-
 .news-details {
   display: flex;
   align-items: center;
@@ -964,7 +935,6 @@ h5{
   max-width: 900px;
   min-width: 800px;
 }
-
 
 .personal-card {
   background: white;
@@ -1581,17 +1551,17 @@ h5{
     height: auto;
     padding: 10px 0;
   }
-  
+
   .navItems {
     flex-wrap: wrap;
     justify-content: center;
     gap: 5px;
   }
-  
+
   .navItems li {
     margin: 5px 8px;
   }
-  
+
   .navItems li a {
     font-size: 18px;
     letter-spacing: 1px;
@@ -1602,7 +1572,7 @@ h5{
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
   }
-  
+
   .navItems li a:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
@@ -1613,7 +1583,7 @@ h5{
   .navItems li {
     margin: 3px 5px;
   }
-  
+
   .navItems li a {
     font-size: 16px;
     letter-spacing: 0.5px;
@@ -1636,47 +1606,47 @@ h5{
     width: 95%;
     padding: 0 15px;
   }
-  
+
   .galaxy-progress {
     padding: 20px;
     margin: 0 auto;
     width: 100%;
   }
-  
+
   .galaxy-name {
     font-size: 1.4rem;
   }
-  
+
   .star-name,
   .star-percentage {
     font-size: 1rem;
   }
-  
+
   .total-progress {
     padding: 20px;
     grid-column: span 1 !important;
     width: 100%;
     margin: 0 auto 30px auto;
   }
-  
+
   .total-progress-title {
     font-size: 1.6rem;
   }
-  
+
   .total-progress-info {
     font-size: 1.1rem;
   }
-  
+
   .total-progress-bar {
     height: 16px;
   }
-  
+
   .galaxies-subtitle {
     grid-column: span 1 !important;
     width: 100%;
     margin: 20px auto;
   }
-  
+
   .galaxies-subtitle h3 {
     font-size: 1.3rem;
   }
@@ -1687,36 +1657,36 @@ h5{
     padding: 0 10px;
     gap: 12px;
   }
-  
+
   .galaxy-progress {
     padding: 15px;
   }
-  
+
   .galaxy-name {
     font-size: 1.2rem;
   }
-  
+
   .star-name,
   .star-percentage {
     font-size: 0.9rem;
   }
-  
+
   .total-progress {
     padding: 15px;
   }
-  
+
   .total-progress-title {
     font-size: 1.4rem;
   }
-  
+
   .total-progress-info {
     font-size: 1rem;
   }
-  
+
   .galaxies-subtitle h3 {
     font-size: 1.1rem;
   }
-  
+
   .progress-bar,
   .total-progress-bar {
     height: 14px;

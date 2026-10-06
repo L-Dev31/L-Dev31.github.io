@@ -17,16 +17,6 @@ body {
   overflow: auto;
 }
 
-.family-tree {
-  min-width: 3000px;
-  min-height: 2000px;
-  padding: 50px;
-}
-
-.node.dead rect {
-  background-color: #222!important;
-}
-
 .node image {
   outline: 2px solid #ddd!important;
   border-radius: 35%;
@@ -52,12 +42,6 @@ body {
 
 .node.female rect {
   stroke: #e26a8d !important;
-}
-
-.person-content {
-  display: flex;
-  gap: 15px;
-  align-items: center;
 }
 
 .ft-person[male] { border-color: #4a90e2; }
@@ -276,9 +260,9 @@ body {
   transform: translateY(25%);
   cursor: pointer;
   margin-left: 8px;
-  color: #3E4A5A; 
+  color: #3E4A5A;
   transition: all 0.3s ease;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)); 
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .deceased {
@@ -289,16 +273,10 @@ body {
 .info-icon:hover {
   color: #4a90e2;
   transform: scale(1.1) translateY(25%);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2)); 
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 
 .info-icon:active {
-  transform: scale(0.9) translateY(25%); 
+  transform: scale(0.9) translateY(25%);
   transition: transform 0.1s ease;
-}
-
-.region-map-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
 }

@@ -187,8 +187,7 @@ class BlogManager {
 					this.openModal(postId);
 				}
 			});
-			
-			// Keyboard accessibility
+
 			post.addEventListener('keydown', (e) => {
 				if (e.key === 'Enter' || e.key === ' ') {
 					e.preventDefault();
@@ -221,7 +220,7 @@ class BlogManager {
 		allLikeButtons.forEach(btn => {
 			const heart = btn.querySelector('.heart');
 			const likeCount = btn.querySelector('.like-count');
-			
+
 			if (isLiked) {
 				btn.classList.add('liked');
 				btn.setAttribute('aria-label', 'Unlike this article');

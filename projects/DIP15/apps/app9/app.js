@@ -53,7 +53,7 @@ if (typeof ScheduleApp === 'undefined') {
                 await this.loadScheduleData();
                 this.setupEventListeners();
                 this.renderCurrentView();
-                
+
                 return scheduleWindow;
             } catch (error) {
                 console.error('Failed to initialize Schedule app:', error);
@@ -76,7 +76,7 @@ if (typeof ScheduleApp === 'undefined') {
                                 <i class="fas fa-chevron-right"></i>
                             </button>
                         </div>
-                        
+
                         <div class="schedule-title">
                             <h3>Keira Mayhew's Schedule</h3>
                         </div>
@@ -129,16 +129,16 @@ if (typeof ScheduleApp === 'undefined') {
                     let notes = '';
                     const type = (apt.type || '').toLowerCase();
                     if (type === 'individual') {
-                        color = 'aliceblue'; 
+                        color = 'aliceblue';
                         notes = '1:1 session';
                     } else if (type === 'couples') {
-                        color = 'lavenderblush'; 
+                        color = 'lavenderblush';
                         notes = 'Relationship/couples session';
                     } else if (type === 'classes') {
-                        color = '#FFF9E3'; 
+                        color = '#FFF9E3';
                         notes = 'Group/class session';
                     } else if (type === 'appointment') {
-                        color = 'honeydew'; 
+                        color = 'honeydew';
                         notes = 'Appointment';
                     }
                     // Special: Trust Exercises (move one hour prior if found)
@@ -279,7 +279,7 @@ if (typeof ScheduleApp === 'undefined') {
         }
 
         renderAppointmentCard(appointment, compact = false) {
-            const statusClass = appointment.status === 'confirmed' ? 'confirmed' : 
+            const statusClass = appointment.status === 'confirmed' ? 'confirmed' :
                               appointment.status === 'pending' ? 'pending' : 'cancelled';
             // Use title as main label, fallback to clientName/type for legacy
             const mainTitle = appointment.title || appointment.clientName || '';
@@ -287,7 +287,7 @@ if (typeof ScheduleApp === 'undefined') {
             const notes = appointment.notes || '';
             if (compact) {
                 return `
-                    <div class="appointment-card compact ${statusClass}" 
+                    <div class="appointment-card compact ${statusClass}"
                          style="background-color: ${appointment.color};">
                         <div class="appointment-title" style="font-weight: normal;">${mainTitle}</div>
                         <div class="appointment-type">${type}</div>
@@ -296,7 +296,7 @@ if (typeof ScheduleApp === 'undefined') {
             }
 
             return `
-                <div class="appointment-card ${statusClass}" 
+                <div class="appointment-card ${statusClass}"
                      style="background-color: ${appointment.color};">
                     <div class="appointment-header">
                         <div class="appointment-title" style="font-weight: normal;">${mainTitle}</div>

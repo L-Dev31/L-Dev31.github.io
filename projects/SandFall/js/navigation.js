@@ -13,13 +13,9 @@ class NavigationManager {
 	}
 
 	async loadNavigation() {
-		try {
-			const response = await fetch('data/navigation.json');
-			if (!response.ok) throw new Error('Failed to load navigation');
-			this.navigationData = await response.json();
-		} catch (error) {
-			throw error;
-		}
+		const response = await fetch('data/navigation.json');
+		if (!response.ok) throw new Error('Failed to load navigation');
+		this.navigationData = await response.json();
 	}
 	getCurrentPage() {
 		const path = window.location.pathname;
@@ -63,7 +59,7 @@ class NavigationManager {
 			document.querySelector('.mobile-social-icons')
 		];
 		if (!this.navigationData) return;
-		const socialHTML = this.navigationData.social.map(social => 
+		const socialHTML = this.navigationData.social.map(social =>
 			`<a href="${social.url}" title="${social.name}"><i class="${social.icon}"></i></a>`
 		).join('');
 		socialContainers.forEach(container => {
@@ -72,8 +68,8 @@ class NavigationManager {
 	}
 	getHref(item) {
 		if (item.external) {
-			return this.currentPage === 'blog' && !item.href.startsWith('http') 
-				? item.href 
+			return this.currentPage === 'blog' && !item.href.startsWith('http')
+				? item.href
 				: item.href;
 		} else {
 			if (this.currentPage === 'blog') {

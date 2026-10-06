@@ -7,7 +7,6 @@ let teamData = [];
 let countriesData = [];
 let progressData = [];
 
-let FORCE_LOADING_ERROR = false;
 
 function createLoadingSection(message = 'Loading...') {
     const loadingDiv = document.createElement('div');
@@ -23,10 +22,8 @@ function createLoadingSection(message = 'Loading...') {
 
 function showSectionLoading(containerSelector, message = 'Loading...') {
     if (containerSelector === '.pic-ctn') {
-        // On masque le carousel
         const carouselDiv = document.querySelector('.carousel');
         if (carouselDiv) carouselDiv.style.display = 'none';
-        // On affiche la section loading dans le parent du carousel (ex: .container)
         if (carouselDiv && carouselDiv.parentNode) {
             let loadingDiv = document.getElementById('carousel-loading-section');
             if (!loadingDiv) {
@@ -42,7 +39,6 @@ function showSectionLoading(containerSelector, message = 'Loading...') {
         }
         return;
     }
-    // Pour les autres sections, comportement normal
     const container = document.querySelector(containerSelector);
     if (container) {
         container.innerHTML = '';
@@ -51,25 +47,8 @@ function showSectionLoading(containerSelector, message = 'Loading...') {
     }
 }
 
-function hideSectionLoading(containerSelector) {
-    if (containerSelector === '.pic-ctn') {
-        // On enlève la section loading et on réaffiche le carousel
-        const loadingDiv = document.getElementById('carousel-loading-section');
-        if (loadingDiv) loadingDiv.style.display = 'none';
-        const carouselDiv = document.querySelector('.carousel');
-        if (carouselDiv) carouselDiv.style.display = '';
-        return;
-    }
-    // Pour les autres sections, comportement normal
-    const container = document.querySelector(containerSelector);
-    if (container) {
-        container.innerHTML = '';
-    }
-}
-
 async function loadData() {
     try {
-        if (FORCE_LOADING_ERROR) throw new Error('Forced error for loading test');
         const [imagesResponse, musicsResponse, mediasResponse, creditsResponse, newsResponse, teamResponse, countriesResponse, progressResponse] = await Promise.all([
             fetch('Datas/images.json'),
             fetch('Datas/musics.json'),
@@ -80,7 +59,7 @@ async function loadData() {
             fetch('Datas/countries.json'),
             fetch('Datas/progress.json')
         ]);
-        if (!imagesResponse.ok || !musicsResponse.ok || !mediasResponse.ok || 
+        if (!imagesResponse.ok || !musicsResponse.ok || !mediasResponse.ok ||
             !creditsResponse.ok || !newsResponse.ok || !teamResponse.ok || !countriesResponse.ok || !progressResponse.ok) {
             throw new Error('Failed to fetch one or more JSON files');
         }
@@ -183,7 +162,6 @@ function setupCarousel() {
     const pics = Array.from(picCtn.querySelectorAll('.pic'));
     const prevBtn = document.querySelector('.prev-btn');
     const nextBtn = document.querySelector('.next-btn');
-    // Masquer le loader et réafficher le carousel
     const loadingDiv = document.getElementById('carousel-loading-section');
     if (loadingDiv) loadingDiv.style.display = 'none';
     const carouselDiv = document.querySelector('.carousel');
@@ -339,8 +317,6 @@ function initializeCredits() {
 }
 
 async function initializeNews() {
-    const newsContainer = document.querySelector('.news-container');
-    const searchInput = document.getElementById('blog-search');
     showSectionLoading('.news-container', 'Loading blog posts...');
     requestAnimationFrame(async () => {
         await displayNews(newsData.blogs, false);
@@ -386,10 +362,10 @@ async function displayNews(blogs, isSearchResult = false) {
         article.style.animationDelay = `${index * 0.1}s`;
         article.style.cursor = 'pointer';
         const date = new Date(blog.publishDate);
-        const formattedDate = date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
+        const formattedDate = date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
         });
         const author = teamData.members.find(member => member.id === blog.authorId) || {
             name: 'Unknown',
@@ -464,7 +440,7 @@ async function openBlogPopup(blog) {
         popup.className = 'blog-popup';
         document.body.appendChild(popup);
     }
-    
+
     let closeButton = document.getElementById('blog-close-btn');
     if (!closeButton) {
         closeButton = document.createElement('button');
@@ -474,7 +450,7 @@ async function openBlogPopup(blog) {
         closeButton.onclick = closeBlogPopup;
         document.body.appendChild(closeButton);
     }
-    
+
     popup.innerHTML = `
         <div class="blog-popup-content">
             <div class="blog-popup-header">
@@ -489,10 +465,10 @@ async function openBlogPopup(blog) {
         const htmlContent = await loadBlogContent(blog.id);
         const readTime = calculateReadTime(htmlContent);
         const date = new Date(blog.publishDate);
-        const formattedDate = date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
+        const formattedDate = date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
         });
         const author = teamData.members.find(member => member.id === blog.authorId) || {
             name: 'Unknown',
@@ -668,8 +644,7 @@ function closeBlogPopup() {
 
 function setupNewsSearch() {
     const searchInput = document.getElementById('blog-search');
-    const allArticles = document.querySelectorAll('.news-article');
-      searchInput.addEventListener('input', async (e) => {
+    searchInput.addEventListener('input', async (e) => {
         const searchTerm = e.target.value.toLowerCase().trim();
         if (searchTerm === '') {
             await displayNews(newsData.blogs, false);
@@ -690,14 +665,10 @@ function setupAudioControls() {
     audioElements.forEach((audio, index) => {
         const playerDiv = audio.closest('.player');
         const imgbox = playerDiv.querySelector('.imgbox');
-        const discOverlay = playerDiv.querySelector('.disc-overlay');
-        const disc = playerDiv.querySelector('.disc');
-        
+
         audio.addEventListener('play', () => {
-            // Darken the background and show the disc
             imgbox.classList.add('playing');
-            
-            // Pause other audios
+
             audioElements.forEach(otherAudio => {
                 if (otherAudio !== audio && !otherAudio.paused) {
                     otherAudio.pause();
@@ -708,11 +679,11 @@ function setupAudioControls() {
                 }
             });
         });
-        
+
         audio.addEventListener('pause', () => {
             imgbox.classList.remove('playing');
         });
-        
+
         audio.addEventListener('ended', () => {
             imgbox.classList.remove('playing');
         });
@@ -834,101 +805,72 @@ async function loadBlogContent(blogId) {
     }
 }
 
-// Progress functionality
-async function loadProgress() {
-    try {
-        showSectionLoading('.progress-container', 'Loading progress data...');
-        
-        if (FORCE_LOADING_ERROR) {
-            throw new Error("Forced error for testing");
-        }
-        
-        const response = await fetch('Datas/progress.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        progressData = await response.json();
-        displayProgress();
-    } catch (error) {
-        console.error('Error loading progress:', error);
-        showSectionError('.progress-container', 'Failed to load progress data');
-    }
-}
-
 function displayProgress() {
     const container = document.querySelector('.progress-container');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
-    // Calculate total progress first
+
     let totalStars = 0;
     let totalProgress = 0;
-    
+
     progressData.galaxies.forEach(galaxy => {
         galaxy.stars.forEach(star => {
             totalStars++;
             totalProgress += star.progress;
         });
     });
-    
-    // Calculate overall completion percentage
+
     const overallProgress = Math.round(totalProgress / totalStars);
-    
-    // Create total progress section at the top
+
     const totalProgressDiv = document.createElement('div');
     totalProgressDiv.className = 'total-progress';
-    
+
     const totalTitle = document.createElement('h2');
     totalTitle.className = 'total-progress-title';
     totalTitle.textContent = 'Global Completion';
     totalProgressDiv.appendChild(totalTitle);
-    
+
     const totalInfo = document.createElement('div');
     totalInfo.className = 'total-progress-info';
-    
+
     const totalLabel = document.createElement('span');
     totalLabel.textContent = 'Overall Progress';
     totalLabel.style.color = '#333';
-    
+
     const totalPercentage = document.createElement('span');
     totalPercentage.textContent = `${overallProgress}%`;
     totalPercentage.style.color = '#333';
-    
+
     totalInfo.appendChild(totalLabel);
     totalInfo.appendChild(totalPercentage);
     totalProgressDiv.appendChild(totalInfo);
-    
+
     const totalProgressBar = document.createElement('div');
     totalProgressBar.className = 'total-progress-bar';
-    
+
     const totalProgressFill = document.createElement('div');
     totalProgressFill.className = 'total-progress-fill';
-    
-    // Animate the total progress bar
+
     setTimeout(() => {
         totalProgressFill.style.width = `${overallProgress}%`;
     }, 500);
-    
+
     totalProgressBar.appendChild(totalProgressFill);
     totalProgressDiv.appendChild(totalProgressBar);
-    
-    // Add total progress at the top
+
     container.appendChild(totalProgressDiv);
-    
-    // Add subtitle for individual galaxies
+
     const subtitleDiv = document.createElement('div');
     subtitleDiv.className = 'galaxies-subtitle';
-    
-    // Check if mobile to adjust grid column
+
     const isMobile = window.innerWidth <= 768;
     subtitleDiv.style.gridColumn = isMobile ? 'span 1' : 'span 2';
     subtitleDiv.style.textAlign = 'center';
     subtitleDiv.style.marginBottom = '20px';
     subtitleDiv.style.marginTop = '20px';
     subtitleDiv.style.width = '100%';
-    
+
     const subtitleText = document.createElement('h3');
     subtitleText.style.fontSize = isMobile ? '1.3rem' : '1.5rem';
     subtitleText.style.fontWeight = '600';
@@ -937,72 +879,67 @@ function displayProgress() {
     subtitleText.style.letterSpacing = '1px';
     subtitleText.style.margin = '0';
     subtitleText.textContent = 'Individual Galaxies';
-    
+
     subtitleDiv.appendChild(subtitleText);
     container.appendChild(subtitleDiv);
-    
-    // Then add all galaxy progress
+
     progressData.galaxies.forEach(galaxy => {
         const galaxyDiv = document.createElement('div');
         galaxyDiv.className = 'galaxy-progress';
-        
+
         const galaxyName = document.createElement('h3');
         galaxyName.className = 'galaxy-name';
         galaxyName.textContent = galaxy.name;
         galaxyDiv.appendChild(galaxyName);
-        
+
         galaxy.stars.forEach(star => {
             const starDiv = document.createElement('div');
             starDiv.className = 'star-progress';
-            
+
             const starInfo = document.createElement('div');
             starInfo.className = 'star-info';
-            
+
             const starName = document.createElement('span');
             starName.className = 'star-name';
             starName.textContent = star.name;
-            
+
             const starPercentage = document.createElement('span');
             starPercentage.className = 'star-percentage';
-            
-            // Create percentage text
+
             const percentageText = document.createElement('span');
             percentageText.textContent = `${star.progress}%`;
             percentageText.style.color = '#333';
             starPercentage.appendChild(percentageText);
-            
-            // Add star icon for completed stars
+
             if (star.progress === 100) {
                 const starIcon = document.createElement('span');
                 starIcon.className = 'completed-star-icon';
                 starIcon.style.background = galaxy.gradient || 'linear-gradient(to right, #4e54c8, #6a5acd)';
                 starPercentage.appendChild(starIcon);
             }
-            
+
             starInfo.appendChild(starName);
             starInfo.appendChild(starPercentage);
-            
+
             const progressBar = document.createElement('div');
             progressBar.className = 'progress-bar';
-            
+
             const progressFill = document.createElement('div');
             progressFill.className = 'progress-fill';
-            
-            // Apply galaxy gradient for all progress bars
+
             progressFill.style.background = galaxy.gradient || 'linear-gradient(to right, #4e54c8, #6a5acd)';
-            
-            // Animate the progress bar
+
             setTimeout(() => {
                 progressFill.style.width = `${star.progress}%`;
             }, 100);
-            
+
             progressBar.appendChild(progressFill);
-            
+
             starDiv.appendChild(starInfo);
             starDiv.appendChild(progressBar);
             galaxyDiv.appendChild(starDiv);
         });
-        
+
         container.appendChild(galaxyDiv);
     });
 }

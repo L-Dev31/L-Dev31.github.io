@@ -64,7 +64,7 @@ class BmgTag {
       parseArgHex(decMatch[3])
     );
   }
-  
+
   toBytes() {
     if (this._originalBytes) return this._originalBytes;
     const argLen = this.argumentData.length;
@@ -94,7 +94,7 @@ class BmgMessage {
   get dirty() {
     return this.text !== this._originalText;
   }
-  
+
   storeTagBytes(tagString, bytes) {
     this._tagBytesMap.set(tagString, bytes);
     const colorMatch = /^\[Color:([0-9A-F]+)\]$/i.exec(tagString);
@@ -107,7 +107,7 @@ class BmgMessage {
       this._tagBytesMap.set(`[Color:${hex}]`, bytes);
     }
   }
-  
+
   getTagBytes(tagString) {
     const v = this._tagBytesMap.get(tagString);
     if (v) return v;
@@ -142,7 +142,7 @@ class BmgFile {
     this.hasStr1 = false;
     this.str1Data = [];
     this.messages = [];
-    
+
     this._rawData = null;
     this._dat1DataSize = 0;
     this._inf1Data = null;

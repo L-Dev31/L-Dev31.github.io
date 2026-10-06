@@ -7,24 +7,24 @@ import { renderEntries, updateMeta, showMessage, updateSaveButton } from './ui.j
 export async function handleFileSelection(event) {
   const file = event.target.files?.[0];
   if (!file) return;
-  
+
   try {
     showMessage('Loading file...', 'info');
-    
+
     const buffer = await file.arrayBuffer();
     state.bmgFile = parseBmg(buffer);
     state.fileName = file.name;
-    
+
     els.fileLabel.textContent = file.name;
     els.search.disabled = false;
     els.exportJson.disabled = false;
     els.importJson.disabled = false;
-    
+
     showMessage(`Loaded ${state.bmgFile.messages.length} messages successfully`, 'info');
     renderEntries();
     updateMeta();
     updateSaveButton();
-    
+
   } catch (error) {
     console.error('Error loading BMG file:', error);
     showMessage(`Error loading file: ${error.message}`, 'error');
@@ -36,23 +36,23 @@ export function handleDownload() {
     showMessage('No file loaded', 'warning');
     return;
   }
-  
+
   try {
     showMessage('Building BMG file...', 'info');
-    
+
     const buffer = buildBmg(state.bmgFile);
     const blob = new Blob([buffer], { type: 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
-    
+
     const a = document.createElement('a');
     a.href = url;
     a.download = state.fileName || 'modified.bmg';
     a.click();
-    
+
     URL.revokeObjectURL(url);
-    
+
     showMessage('BMG file downloaded successfully', 'info');
-    
+
   } catch (error) {
     console.error('Error building BMG file:', error);
     showMessage(`Error building BMG: ${error.message}`, 'error');

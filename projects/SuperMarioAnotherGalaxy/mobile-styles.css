@@ -8,7 +8,6 @@
   .news-article { flex-direction: column; min-height: auto; border-radius: 20px; }
   .news-image { flex: none; height: 250px; width: 100%; }
   .news-content { padding: 25px 20px 20px; position: relative; }
-  .news-date-badge { display: none !important; }
   .news-header { margin-bottom: 20px; }
   .news-title { font-size: 24px; line-height: 1.2; margin-bottom: 15px; }
   .news-summary { font-size: 16px; line-height: 1.4; margin-bottom: 20px; letter-spacing: 0.5px; }
@@ -66,7 +65,7 @@
   .blog-popup-content-text video { border-radius: 15px; margin: 15px auto; display: block; max-width: 100%; width: 100%; height: auto; }
   .credit h5 { margin: 20px ; width: auto; text-align: left;}
   .carousel { max-width: 100%!important; height: auto!important;}
-  
+
   /* Mobile view count positioning */
   .news-views-top {
     position: static !important;
@@ -78,11 +77,11 @@
     margin: 10px !important;
     order: -1;
   }
-  
+
   .news-views-top i {
     font-size: 14px !important;
   }
-  
+
   .news-details {
     display: flex !important;
     align-items: center !important;
@@ -92,7 +91,7 @@
     padding-left: 40px;
     margin: 50px;
   }
-  
+
   .blog-popup-content-text ul li {
     margin-bottom: 16px;
     font-size: 22px;
@@ -115,7 +114,7 @@
 @media (max-width: 800px) {
   .personal-card-popup {
     padding: 0 !important;
-  } 
+  }
 
   .personal-card-container {
         width: 100% !important;

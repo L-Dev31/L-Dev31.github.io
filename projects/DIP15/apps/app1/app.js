@@ -14,17 +14,17 @@ if (typeof FilesApp === 'undefined') {
         try {
             this.windowManager = options.windowManager;
             this.appConfig = options.appConfig;
-            
+
             this.directoryFetcher = new DirectoryFetcher();
-            
+
             if (options.appsData) {
                 this.directoryFetcher.setAppsData(options.appsData);
             }
-            
+
             window.filesAppInstance = this;
-            
+
             await this.open(options.path || 'Home');
-            
+
             return true;
         } catch (error) {
             console.error('Failed to initialize Files app:', error);
@@ -39,7 +39,7 @@ if (typeof FilesApp === 'undefined') {
         }
 
         const content = await this.createFileManagerContent();
-        
+
         const windowObj = this.windowManager.createWindow({
             id: `files-${Date.now()}`,
             title: 'Files',
@@ -58,9 +58,9 @@ if (typeof FilesApp === 'undefined') {
         this.historyIndex = 0;
 
         this.setupEventListeners();
-        
+
         await this.toggleDetectionMode();
-        
+
         await this.updateContent();
     }
 
@@ -80,11 +80,11 @@ if (typeof FilesApp === 'undefined') {
                             <i class="fas fa-arrow-up"></i>
                         </button>
                     </div>
-                    
+
                     <div class="files-address-bar">
                         <span class="files-path-segment" data-path="Home">Home</span>
                     </div>
-                    
+
                     <div class="files-view-buttons">
                         <button id="filesGridViewBtn" class="files-view-btn active" title="Grid View">
                             <i class="fas fa-th-large"></i>
@@ -122,7 +122,7 @@ if (typeof FilesApp === 'undefined') {
             if (fileItem) {
                 const itemName = fileItem.dataset.name;
                 const itemType = fileItem.dataset.type;
-                
+
                 if (itemType === 'folder') {
                     await this.navigate(itemName);
                 }
@@ -134,13 +134,13 @@ if (typeof FilesApp === 'undefined') {
             if (fileItem) {
                 const itemName = fileItem.dataset.name;
                 const itemType = fileItem.dataset.type;
-                
-                
+
+
                 if (itemType === 'file') {
                     if (window.universalLauncher) {
                         const item = { name: itemName, type: 'file' };
                         const launchItem = window.universalLauncher.createLaunchItem(item);
-                        await window.universalLauncher.launch(launchItem, { 
+                        await window.universalLauncher.launch(launchItem, {
                             basePath: 'home',
                             currentPath: this.currentPath === 'Home' ? '' : this.currentPath
                         });
@@ -199,13 +199,13 @@ if (typeof FilesApp === 'undefined') {
 
     async navigate(path) {
         this.currentPath = path;
-        
+
         if (this.historyIndex < this.history.length - 1) {
             this.history = this.history.slice(0, this.historyIndex + 1);
         }
         this.history.push(path);
         this.historyIndex = this.history.length - 1;
-        
+
         await this.updateContent();
         this.updateNavigation();
     }
@@ -214,11 +214,11 @@ if (typeof FilesApp === 'undefined') {
         if (this.windowId && this.windowManager) {
             this.windowManager.closeWindow(this.windowId);
         }
-        
+
         if (window.filesAppInstance === this) {
             window.filesAppInstance = null;
         }
-        
+
     }
 
     async navigateTo(path) {
@@ -228,7 +228,7 @@ if (typeof FilesApp === 'undefined') {
             }
             this.history.push(path);
             this.historyIndex = this.history.length - 1;
-            
+
             this.currentPath = path;
             await this.updateContent();
             this.updateNavigation();
@@ -262,13 +262,13 @@ if (typeof FilesApp === 'undefined') {
     setView(viewType) {
         const window = this.windowManager.getWindow(this.windowId);
         if (!window) return;
-        
+
         const filesGrid = window.element.querySelector('#filesGrid');
         const gridBtn = window.element.querySelector('#filesGridViewBtn');
         const listBtn = window.element.querySelector('#filesListViewBtn');
-        
+
         if (!filesGrid || !gridBtn || !listBtn) return;
-        
+
         if (viewType === 'list') {
             filesGrid.classList.add('list-view');
             listBtn.style.background = 'rgba(0, 120, 212, 0.2)';
@@ -283,17 +283,17 @@ if (typeof FilesApp === 'undefined') {
     async updateContent() {
         const window = this.windowManager.getWindow(this.windowId);
         if (!window) return;
-        
+
         const filesGrid = window.element.querySelector('#filesGrid');
         if (!filesGrid) return;
-        
+
         filesGrid.innerHTML = '<div style="padding: 20px; text-align: center; color: rgba(0,0,0,0.6);">Loading...</div>';
-        
+
         try {
             const items = await this.getFolderContent(this.currentPath);
-            
+
             filesGrid.innerHTML = '';
-            
+
             if (items.length === 0) {
                 filesGrid.innerHTML = '<div class="files-grid-empty-message"><i class="fas fa-folder-open"></i><div>This folder is empty</div></div>';
             } else {
@@ -302,24 +302,24 @@ if (typeof FilesApp === 'undefined') {
                     fileItem.className = 'files-item';
                     fileItem.dataset.name = item.name;
                     fileItem.dataset.type = item.type;
-                    
-                    const iconHtml = item.icon.includes('images/') 
+
+                    const iconHtml = item.icon.includes('images/')
                         ? `<img src="${item.icon}" alt="${item.name}">`
                         : `<i class="${item.icon}"></i>`;
-                    
+
                     fileItem.innerHTML = `
                         <div class="files-item-icon">${iconHtml}</div>
                         <div class="files-item-name">${item.name}</div>
                     `;
-                    
+
                     filesGrid.appendChild(fileItem);
                 });
             }
-            
+
             if (this.windowManager) {
                 this.windowManager.updateFooter(this.windowId, this.getFooterText());
             }
-            
+
         } catch (error) {
             console.error('Error loading folder content:', error);
             filesGrid.innerHTML = '<div style="padding: 40px; text-align: center; color: rgba(255,0,0,0.6);"><i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i><br>Error loading folder contents</div>';
@@ -327,7 +327,7 @@ if (typeof FilesApp === 'undefined') {
                 this.windowManager.updateFooter(this.windowId, this.getFooterText());
             }
         }
-        
+
         if (this.windowManager) {
             const windowObj = this.windowManager.getWindow(this.windowId);
             if (windowObj) {
@@ -337,7 +337,7 @@ if (typeof FilesApp === 'undefined') {
                 }
             }
         }
-        
+
         // Force layout recalculation to prevent visual glitches
         setTimeout(() => this.forceLayoutRecalc(), 50);
     }
@@ -414,13 +414,13 @@ if (typeof FilesApp === 'undefined') {
     updateFooterText() {
         const window = this.windowManager.getWindow(this.windowId);
         if (!window) return '';
-        
+
         const container = window.element.querySelector('.files-grid');
         if (!container) return '';
-        
+
         const items = container.querySelectorAll('.files-item');
         const itemCount = items.length;
-        
+
         let footerText = '';
         if (itemCount === 0) {
             footerText = 'Empty folder';
@@ -429,9 +429,9 @@ if (typeof FilesApp === 'undefined') {
         } else {
             footerText = `${itemCount} items`;
         }
-        
+
         footerText += ' • Auto-detection enabled';
-        
+
         return footerText;
     }
 
@@ -442,11 +442,11 @@ if (typeof FilesApp === 'undefined') {
         const backBtn = window.element.querySelector('#filesBackBtn');
         const forwardBtn = window.element.querySelector('#filesForwardBtn');
         const upBtn = window.element.querySelector('#filesUpBtn');
-        
+
         if (backBtn) backBtn.disabled = this.historyIndex <= 0;
         if (forwardBtn) forwardBtn.disabled = this.historyIndex >= this.history.length - 1;
         if (upBtn) upBtn.disabled = this.currentPath === 'Home';
-        
+
         const addressBar = window.element.querySelector('.files-address-bar');
         if (addressBar) {
             if (this.currentPath === 'Home') {
@@ -464,7 +464,7 @@ if (typeof FilesApp === 'undefined') {
     async openFile(fileName) {
         const fileExtension = fileName.split('.').pop().toLowerCase();
         const textExtensions = ['txt', 'md', 'json', 'js', 'css', 'html', 'xml', 'log'];
-        
+
         if (textExtensions.includes(fileExtension)) {
             try {
                 if (window.appLauncher) {
@@ -479,10 +479,10 @@ if (typeof FilesApp === 'undefined') {
                         console.warn('Could not read file content:', error);
                         content = `# ${fileName}\n\nFile content could not be loaded.`;
                     }
-                    
-                    await window.appLauncher.launchApp('app3', { 
+
+                    await window.appLauncher.launchApp('app3', {
                         fileName: fileName,
-                        content: content 
+                        content: content
                     });
                 }
             } catch (error) {
@@ -492,26 +492,26 @@ if (typeof FilesApp === 'undefined') {
     }
 
     async refreshContent() {
-        
+
         const window = this.windowManager.getWindow(this.windowId);
         if (!window) return;
-        
+
         const refreshBtn = window.element.querySelector('#refreshBtn');
         const filesGrid = window.element.querySelector('#filesGrid');
-        
+
         if (refreshBtn) {
             refreshBtn.disabled = true;
             refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         }
-        
+
         if (filesGrid) {
             filesGrid.innerHTML = '<div style="padding: 20px; text-align: center; color: rgba(0,0,0,0.6);"><i class="fas fa-spinner fa-spin"></i><br>Auto-detecting files...</div>';
         }
-        
+
         try {
             await this.updateContent();
             this.forceLayoutRecalc();
-            
+
             if (refreshBtn) {
                 refreshBtn.innerHTML = '<i class="fas fa-check"></i>';
                 setTimeout(() => {
@@ -521,7 +521,7 @@ if (typeof FilesApp === 'undefined') {
             }
         } catch (error) {
             console.error('Error refreshing content:', error);
-            
+
             if (refreshBtn) {
                 refreshBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
                 setTimeout(() => {
@@ -536,7 +536,7 @@ if (typeof FilesApp === 'undefined') {
     async toggleDetectionMode() {
         const window = this.windowManager.getWindow(this.windowId);
         if (!window) return;
-        
+
         // Add a refresh button to the toolbar if it doesn't exist
         const toolbar = window.element.querySelector('.files-toolbar');
         if (toolbar && !toolbar.querySelector('#refreshBtn')) {
@@ -546,7 +546,7 @@ if (typeof FilesApp === 'undefined') {
             refreshBtn.title = 'Refresh (Auto-detect files)';
             refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
             refreshBtn.addEventListener('click', () => this.refreshContent());
-            
+
             const navButtons = toolbar.querySelector('.files-nav-buttons');
             if (navButtons) {
                 navButtons.appendChild(refreshBtn);

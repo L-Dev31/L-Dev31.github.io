@@ -16,7 +16,7 @@
         .contact { margin-bottom: 10px; }
         .warning { color: red; font-weight: bold; }
         section { margin-bottom: 20px; outline: solid 1px black; border-radius: 10px; padding: 15px; }
-        
+
         /* Auto TOC Styling */
         .toc { background-color: #f9f9f9; border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin: 20px 0; }
         .toc-title { margin-top: 0; font-size: 1.2em; color: #2c3e50; font-weight: bold; margin-bottom: 10px; }
@@ -43,7 +43,7 @@
         .data { background: teal; }
         .crc { background: black; }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
@@ -64,16 +64,16 @@
     <h2>How the Fit Meter and Wii Fit U talk to each other?</h2>
 
     <section>
-        <h3>1. Where it happens</h3> 
+        <h3>1. Where it happens</h3>
         <img src="irda.png" alt="IrDA port">
         <p>To communicate the fit meter sends data <strong>over the infrared (IrDA-SIR) port on the GamePad</strong> at <strong>115200 bps</strong></p>
     </section>
 
     <section>
-        <h3>2. Three software layers</h3> 
+        <h3>2. Three software layers</h3>
 
         <p>The communication is split into three discoverable layers:</p>
-        
+
         <table>
             <thead>
                 <tr>
@@ -100,8 +100,8 @@
     </section>
 
     <section>
-        <h3>3. The wire frame is an "A5" frame with a CRC-8</h3> 
-        <p>Every IR message is: 
+        <h3>3. The wire frame is an "A5" frame with a CRC-8</h3>
+        <p>Every IR message is:
             <br><code>A5  &lt;sessionId&gt;  &lt;flags&gt;  [&lt;size8&gt;]  &lt;2-byte prefix (semantics unresolved)&gt;  &lt;msg&gt;  &lt;crc8&gt;</code></p>
 
         <p>Every IR message is sent in an <strong>A5 frame</strong>. It comes in two versions: a short <strong>SETUP</strong> frame to connect, and a <strong>Standard</strong> frame to transfer data.</p>
@@ -267,7 +267,7 @@
         <img src="emulated.png" alt="Emulation graph">
     </section>
 
-    
+
 
     <h1>Sources</h1>
 
@@ -326,7 +326,7 @@
 
     <footer>
         <div class="contact">If you have any questions or concerns, please contact me at <a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a>.</div>
-        <p>&copy; <span id="year"></span> Open Fit Meter. All rights reserved.</p> 
+        <p>&copy; <span id="year"></span> Open Fit Meter. All rights reserved.</p>
     </footer>
 
     <script>

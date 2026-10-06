@@ -16,7 +16,7 @@ if (typeof CalculatorApp === 'undefined') {
         try {
             this.windowManager = options.windowManager;
             this.appConfig = options.appConfig;
-            
+
             return true;
         } catch (error) {
             console.error('Failed to initialize Calculator app:', error);
@@ -38,7 +38,7 @@ if (typeof CalculatorApp === 'undefined') {
         }
 
         const content = this.createCalculatorContent();
-        
+
         const windowObj = this.windowManager.createWindow({
             id: `calculator-${Date.now()}`,
             title: 'Calculator',
@@ -53,7 +53,7 @@ if (typeof CalculatorApp === 'undefined') {
 
         this.setupEventListeners();
     }
-    
+
     createCalculatorContent() {
         return `
             <div class="calculator-container">
@@ -188,7 +188,7 @@ if (typeof CalculatorApp === 'undefined') {
         if (this.operation && this.previousValue !== null) {
             const inputValue = parseFloat(this.display);
             const newValue = this.performCalculation(this.previousValue, inputValue, this.operation);
-            
+
             this.display = String(newValue);
             this.previousValue = null;
             this.operation = null;

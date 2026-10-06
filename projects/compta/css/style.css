@@ -188,7 +188,6 @@ label { font-size: 13px; color: var(--muted); font-weight: 600; }
 
 @media (min-width: 700px) {
   .dialog-form { max-width: 640px; }
-  .dialog-form .account-names { flex-direction: row; gap: var(--gap); }
 }
 
 @media (min-width: 1000px) {

@@ -14,20 +14,15 @@ class TeamPageManager {
 	}
 
 	async loadTeam() {
-		try {
-			const response = await fetch('data/team.json');
-			if (!response.ok) throw new Error('Failed to load team data');
-			this.teamData = await response.json();
-		} catch (error) {
-			throw error;
-		}
+		const response = await fetch('data/team.json');
+		if (!response.ok) throw new Error('Failed to load team data');
+		this.teamData = await response.json();
 	}
 
 	renderTeamByCategories() {
 		const teamContainer = document.getElementById('team-page-content');
 		if (!teamContainer || !this.teamData) return;
 
-		// Group team members by role category
 		const teamByCategory = {};
 		this.teamData.team.forEach(member => {
 			const category = member.roleCategory;
@@ -37,7 +32,6 @@ class TeamPageManager {
 			teamByCategory[category].push(member);
 		});
 
-		// Define the order of categories
 		const categoryOrder = [
 			'DESIGN',
 			'TECH & PROG',
@@ -59,8 +53,8 @@ class TeamPageManager {
 				`;				teamByCategory[category].forEach(member => {
 					teamHTML += `
 						<div class="team-member">
-							<img src="${member.image}" alt="${member.name}" class="team-member-photo" 
-								 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iODAiIHI9IjMwIiBmaWxsPSIjRTNCQjcwIi8+PHJlY3QgeD0iNzAiIHk9IjEzMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRTNCQjcwIi8+PC9zdmc+'" 
+							<img src="${member.image}" alt="${member.name}" class="team-member-photo"
+								 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iODAiIHI9IjMwIiBmaWxsPSIjRTNCQjcwIi8+PHJlY3QgeD0iNzAiIHk9IjEzMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRTNCQjcwIi8+PC9zdmc+'"
 								 loading="lazy" />							<h3 class="team-member-name">${member.name}</h3>
 							<div class="team-member-role">${member.role}</div>
 							${member.favorites ? `<div class="team-member-favorites">${member.favorites}</div>` : '<div class="team-member-favorites"></div>'}

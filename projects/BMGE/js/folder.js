@@ -62,13 +62,13 @@ const renderSidebar = () => {
   if (!list) return;
   if (t) t.textContent = folderName;
   list.innerHTML = '';
-  
+
   folderFiles.forEach((f, i) => {
     const btn = document.createElement('button');
     btn.className = 'folder-item' + (i === activeFile ? ' active' : '');
     btn.textContent = f.path.split('/').pop();
     btn.onclick = () => loadBmgFromFolder(i);
-    
+
     // Context events
     btn.oncontextmenu = e => { e.preventDefault(); e.stopPropagation(); showCtxMenu(e.clientX, e.clientY, i); };
     let tm; // Long press
@@ -94,7 +94,7 @@ export async function downloadFolderZip() {
     const { zipSync } = await import('https://cdn.jsdelivr.net/npm/fflate@0.8.2/+esm');
     const data = {};
     for (const f of folderFiles) data[f.name] = new Uint8Array(await f.file.arrayBuffer());
-    
+
     const url = URL.createObjectURL(new Blob([zipSync(data)], { type: 'application/zip' }));
     const a = document.createElement('a'); a.href = url; a.download = `${folderName}.zip`; a.click();
     URL.revokeObjectURL(url); showMessage('ZIP downloaded', 'info');
@@ -104,14 +104,14 @@ export async function downloadFolderZip() {
 // --- Init & UI ---
 export function initFolder() {
   const ev = (id, fn, t='click') => { const el = byId(id); if(el) el.addEventListener(t, fn); };
-  
+
   ev('folder-input', handleFolderSelection, 'change');
   ev('open-folder-btn', openFolder);
   ev('folder-close-btn', closeFolder);
   ev('folder-zip-btn', downloadFolderZip);
   ev('folder-minimize-btn', () => document.body.classList.add('sidebar-minimized'));
   ev('folder-reopen-btn', () => document.body.classList.remove('sidebar-minimized'));
-  
+
   // Resize logic
   const sb = byId('folder-sidebar');
   if (sb) {
@@ -148,10 +148,10 @@ function showCtxMenu(x, y, idx) {
   ctxMenu.idx = idx;
   ctxMenu.style.left = x + 'px'; ctxMenu.style.top = y + 'px';
   ctxMenu.classList.add('open');
-  
+
   const l = byId('folder-file-list');
   if(l?.children[idx]) l.children[idx].classList.add('ctx-target');
-  
+
   requestAnimationFrame(() => {
     const r = ctxMenu.getBoundingClientRect();
     if (r.right > innerWidth) ctxMenu.style.left = (innerWidth - r.width - 6) + 'px';
@@ -164,7 +164,7 @@ const hideCtx = () => { if(ctxMenu) ctxMenu.classList.remove('open'); document.q
 function startRename(idx) {
   const l = byId('folder-file-list'), ent = folderFiles[idx];
   if (!l?.children[idx] || !ent) return;
-  
+
   const inp = document.createElement('input');
   inp.className='folder-rename-input'; inp.value = ent.name.replace(/\.bmg$/i, '');
   l.children[idx].textContent=''; l.children[idx].appendChild(inp);
@@ -198,13 +198,13 @@ const confirmDelete = () => {
   if (delIdx === null) return closeDelModal();
   const idx = delIdx, wasAct = activeFile === idx;
   const savedFile = { ...folderFiles[idx] };
-  
+
   folderFiles.splice(idx, 1);
   if (!folderFiles.length) return closeFolder(), showMessage('Folder closed', 'info');
-  
+
   if (wasAct) { activeFile = null; loadBmgFromFolder(Math.min(idx, folderFiles.length-1)); }
   else { if (activeFile > idx) activeFile--; renderSidebar(); updateActiveItem(); }
-  
+
   pushUndo({
     undo: () => {
       folderFiles.splice(idx, 0, savedFile);
@@ -223,6 +223,6 @@ const confirmDelete = () => {
       showMessage('File deleted', 'info');
     }
   });
-  
+
   closeDelModal(); showMessage('File deleted', 'info');
 };

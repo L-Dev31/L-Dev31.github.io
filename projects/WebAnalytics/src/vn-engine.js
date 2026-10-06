@@ -38,7 +38,6 @@ export class VNEngine {
     this.inputHandler     = null;
   }
 
-  /* ---- Lifecycle ---- */
   start() {
     this.resetUI();
     this.bindInput();
@@ -65,7 +64,6 @@ export class VNEngine {
     this.envOverlay.classList.add('hidden');
   }
 
-  /* ---- Input ---- */
   bindInput() {
     this.inputHandler = (e) => {
       if (e.type === 'keydown' && e.code !== 'Space') return;
@@ -96,7 +94,6 @@ export class VNEngine {
     if (next) next();
   }
 
-  /* ---- Location loader (lazy) ---- */
   async loadLocation(id) {
     if (this.dialogueCache[id]) return this.dialogueCache[id];
     const locDef = this.game.locations[id];
@@ -111,7 +108,6 @@ export class VNEngine {
     }
   }
 
-  /* ---- Navigate ---- */
   async goToLocation(id) {
     const locDef = this.game.locations[id];
     if (!locDef) { console.warn('Location not found:', id); return; }
@@ -213,7 +209,6 @@ export class VNEngine {
     this.playLine({ char: 'narrateur', text }, onComplete);
   }
 
-  /* ---- Location menu ---- */
   showLocationMenu(locData) {
     if (!locData.menu && !locData.sequence) {
       console.warn('Location has no menu or sequence:', this.currentLocation);
@@ -258,7 +253,6 @@ export class VNEngine {
     this.playLine(menuLine, () => this.showChoices(buildTopOptions()));
   }
 
-  /* ---- Menu "Parler a" ---- */
   showCharacterMenu(locData) {
     const menuOpts = locData.menu?.options || [];
 
@@ -296,7 +290,6 @@ export class VNEngine {
     );
   }
 
-  /* ---- Menu "Se deplacer" ---- */
   showTravelMenu(locData) {
     const connections = (this.game.global_connections || []).filter(c =>
       c.goto !== this.currentLocation && this._meetsRequirements(c)
@@ -327,7 +320,6 @@ export class VNEngine {
     );
   }
 
-  /* ---- Sequence runner ---- */
   runSequence(steps, onComplete) {
     const run = async (i) => {
       if (i >= steps.length) { onComplete(); return; }
@@ -416,7 +408,6 @@ export class VNEngine {
     run(0);
   }
 
-  /* ---- Inline choice (inside a sequence) ---- */
   showInlineChoices(step, onComplete, _i, _steps, fallbackNext) {
     const options = (step.options || []).map(opt => ({
       text: opt.text,
@@ -435,7 +426,6 @@ export class VNEngine {
     this.showChoices(options);
   }
 
-  /* ---- Event handler ---- */
   handleEvent(eventId, onComplete) {
     switch (eventId) {
       case 'fin_vraie':
@@ -467,7 +457,6 @@ export class VNEngine {
     this.playLine({ char: 'narrateur', text: `${title} — ${body}` }, () => this.showChoices(opts));
   }
 
-  /* ---- Line playback ---- */
   playLine(line, onComplete) {
     if (!line) { onComplete(); return; }
 
@@ -549,7 +538,6 @@ export class VNEngine {
     this.gameUI.classList.remove('choices-active');
   }
 
-  /* ---- Choices ---- */
   showChoices(options) {
     this.bg.classList.add('blur-dark');
     this.dialogueHint.classList.add('hidden');
@@ -581,7 +569,6 @@ export class VNEngine {
     this.choicePanel.classList.remove('hidden');
   }
 
-  /* ---- Typewriter ---- */
   typewrite(text, onComplete) {
     this._currentText     = text;
     const tokens          = tokeniseMarkup(text);
@@ -620,7 +607,6 @@ export class VNEngine {
     }, speed);
   }
 
-  /* ---- Screen shake ---- */
   _shake(level) {
     const el = document.getElementById('screen-game');
     const cls = level >= 2 ? 'shake-strong' : 'shake-light';

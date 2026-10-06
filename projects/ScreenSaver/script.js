@@ -1,14 +1,11 @@
 let imageSources = {}, sourceConfig = null, artDB, newsManager, background, metadataDisplay, backgroundChangeInterval = null;
 
-const DEBUG_MODE = false;
-
-// Charge la configuration JSON des images
 async function loadImageSourcesConfig() {
     try {
         const response = await fetch('image-sources.json');
         sourceConfig = await response.json();
         imageSources = {};
-        
+
         for (const [key, src] of Object.entries(sourceConfig.sources)) {
             if (src.enabled) {
                 imageSources[key] = {
@@ -27,7 +24,6 @@ async function loadImageSourcesConfig() {
     }
 }
 
-// Générateur d'URL dynamique selon le type de source
 function createUrlGenerator({ baseUrl, config, type }) {
     return (w, h, cat, seed = Math.floor(Math.random() * 10000)) => {
         let pattern = config.urlPattern.replace(/{baseUrl}/g, baseUrl).replace(/{width}/g, w).replace(/{height}/g, h);
@@ -54,7 +50,7 @@ class ArtDatabase {
             if (!await loadImageSourcesConfig()) throw new Error();
             const { width, height } = sourceConfig.settings.defaultDimensions;
             const perCat = sourceConfig.settings.wallpapersPerCategory;
-            
+
             for (const [key, src] of Object.entries(imageSources)) {
                 for (const cat of src.categories) {
                     for (let j = 0; j < perCat; j++) {
@@ -78,7 +74,7 @@ class ArtDatabase {
         if (!this.wallpapers.length || this.isLoading) return null;
         this.isLoading = true;
         if (Math.random() < 0.1) this.shuffleArray(this.wallpapers);
-        
+
         const wp = this.wallpapers[Math.floor(Math.random() * this.wallpapers.length)];
         this.isLoading = false;
         return wp;
@@ -111,7 +107,7 @@ class NewsManager {
             this.rssContainer = document.getElementById('rssContainer');
             this.swipeIndicators = document.getElementById('swipeIndicators');
             this.setupSwipeListeners();
-            
+
             for (let i = 0; i < this.newsFeeds.length; i++) {
                 this.feedArticles[i] = await this.tryFetchFeed(this.newsFeeds[i].url, this.newsFeeds[i]);
             }
@@ -125,12 +121,11 @@ class NewsManager {
 
     async tryFetchFeed(url, feed) {
         try {
-            // Remplace l'URL ci-dessous par l'adresse de ton Worker Cloudflare déployé
             const workerUrl = `https://screensaver.leotoskuepro.workers.dev/?url=${encodeURIComponent(url)}`;
-            
+
             const res = await fetch(workerUrl);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            
+
             const data = await res.json();
             if (data.error) throw new Error(data.error);
 
@@ -139,7 +134,7 @@ class NewsManager {
                 description: data.description,
                 link: data.link,
                 pubDate: data.pubDate ? this.formatDate(data.pubDate) : "",
-                feed: feed 
+                feed: feed
             };
         } catch (e) {
             console.warn(`Flux indisponible via Worker pour : ${feed.name}`, e);
@@ -157,13 +152,13 @@ class NewsManager {
 
     setupSwipeListeners() {
         if (!this.rssContainer) return;
-        
+
         const start = (x, e) => {
             if (!this.isSwipeEnabled) return;
             this.swipeState = { isDragging: true, startX: x, currentX: x, startTime: Date.now() };
             Object.assign(this.rssContainer.style, { transition: 'none', cursor: 'grabbing', opacity: '1', filter: 'none' });
         };
-        
+
         const move = (x, e) => {
             if (!this.swipeState.isDragging || !this.isSwipeEnabled) return;
             this.swipeState.currentX = x;
@@ -171,19 +166,19 @@ class NewsManager {
             const maxDelta = window.innerWidth * 0.3;
             const clamped = Math.max(-maxDelta, Math.min(maxDelta, deltaX));
             const finalDelta = clamped * (1 - Math.pow(Math.abs(clamped) / maxDelta, 2) * 0.6);
-            
+
             this.rssContainer.style.transform = `translateY(-50%) translateX(${finalDelta}px)`;
             this.rssContainer.style.opacity = Math.max(0.1, 1 - Math.pow(Math.abs(finalDelta) / (maxDelta * 0.8), 1.5)).toString();
             this.rssContainer.style.filter = Math.abs(finalDelta) > maxDelta * 0.6 ? `blur(${(Math.abs(finalDelta) - maxDelta * 0.6) / (maxDelta * 0.6)}px)` : 'none';
         };
-        
+
         const end = (e) => {
             if (!this.swipeState.isDragging || !this.isSwipeEnabled) return;
             this.swipeState.isDragging = false;
             this.rssContainer.style.cursor = 'grab';
             const deltaX = this.swipeState.currentX - this.swipeState.startX;
             const v = Math.abs(deltaX) / (Date.now() - this.swipeState.startTime);
-            
+
             if ((Math.abs(deltaX) > 50 || v > 0.3) && this.newsFeeds.length > 1) {
                 deltaX > 0 ? this.showPreviousFeed() : this.showNextFeed();
             } else {
@@ -194,19 +189,19 @@ class NewsManager {
         this.rssContainer.addEventListener('mousedown', e => start(e.clientX, e));
         document.addEventListener('mousemove', e => move(e.clientX, e));
         document.addEventListener('mouseup', end);
-        
-        this.rssContainer.addEventListener('touchstart', e => { 
-            e.preventDefault(); 
-            start(e.touches[0].clientX, e); 
+
+        this.rssContainer.addEventListener('touchstart', e => {
+            e.preventDefault();
+            start(e.touches[0].clientX, e);
         }, { passive: false });
-        
-        document.addEventListener('touchmove', e => { 
-            if (this.swipeState.isDragging) { 
-                e.preventDefault(); 
-                move(e.touches[0].clientX, e); 
-            } 
+
+        document.addEventListener('touchmove', e => {
+            if (this.swipeState.isDragging) {
+                e.preventDefault();
+                move(e.touches[0].clientX, e);
+            }
         }, { passive: false });
-        
+
         document.addEventListener('touchend', end);
         this.rssContainer.addEventListener('selectstart', e => e.preventDefault());
     }
@@ -243,16 +238,16 @@ class NewsManager {
             Object.assign(this.rssContainer.style, { transition: 'opacity 0.15s ease-out, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)', opacity: '0', transform: `translateY(-50%) translateX(${dir === 'left' ? '-100%' : '100%'})` });
             background.style.transition = 'opacity 0.15s ease-out';
             background.style.opacity = '0';
-            
+
             setTimeout(() => {
                 background.style.backgroundImage = `url(${imgUrl})`;
                 metadataDisplay.textContent = simplifySourceName(wp.artist);
                 this.displayNewsHtml(art);
-                
+
                 this.rssContainer.style.transform = `translateY(-50%) translateX(${dir === 'left' ? '100%' : '-100%'})`;
                 this.rssContainer.style.opacity = '0';
                 this.rssContainer.style.filter = 'none';
-                
+
                 requestAnimationFrame(() => {
                     Object.assign(this.rssContainer.style, { transition: 'opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)', transform: 'translateY(-50%) translateX(0)', opacity: '1' });
                     background.style.transition = 'opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -300,7 +295,7 @@ class NewsManager {
             return;
         }
         Object.assign(this.rssContainer.style, { transition: 'opacity 0.15s ease-out, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)', opacity: '0', transform: `translateY(-50%) translateX(${dir === 'left' ? '-100%' : '100%'})` });
-        
+
         setTimeout(() => {
             this.displayNewsHtml(art);
             this.rssContainer.style.transform = `translateY(-50%) translateX(${dir === 'left' ? '100%' : '-100%'})`;
@@ -346,7 +341,7 @@ async function changeBackground() {
 async function unifiedTransition() {
     const wp = await artDB.getRandomArtwork();
     if (!wp) return;
-    
+
     if (newsManager.newsFeeds.length > 1) {
         newsManager.currentFeedIndex = (newsManager.currentFeedIndex + 1) % newsManager.newsFeeds.length;
         const art = newsManager.feedArticles[newsManager.currentFeedIndex];
@@ -364,7 +359,7 @@ async function displayUnifiedContent(wp, art) {
         const imgUrl = await preloadImage(wp.imageUrl);
         background.style.opacity = '0';
         newsManager.rssContainer.style.opacity = '0';
-        
+
         setTimeout(() => {
             background.style.backgroundImage = `url(${imgUrl})`;
             metadataDisplay.textContent = wp.hasMetadata && wp.title && wp.artist && wp.title !== wp.artist ? `"${wp.title}" par ${wp.artist}` : simplifySourceName(wp.artist);
@@ -382,7 +377,7 @@ async function displayArtwork(wp) {
         const imgUrl = await preloadImage(wp.imageUrl);
         background.style.opacity = '0';
         const art = newsManager.feedArticles[newsManager.currentFeedIndex];
-        
+
         setTimeout(() => {
             background.style.backgroundImage = `url(${imgUrl})`;
             metadataDisplay.textContent = wp.hasMetadata && wp.title && wp.artist && wp.title !== wp.artist ? `"${wp.title}" par ${wp.artist}` : simplifySourceName(wp.artist);
@@ -410,7 +405,7 @@ async function fetchWeather() {
         const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=43.5&longitude=-7.0&current_weather=true');
         const data = await res.json();
         const tempEl = document.getElementById('temperature'), iconEl = document.getElementById('weather-icon');
-        
+
         if (tempEl) tempEl.textContent = `${Math.round(data.current_weather.temperature)}°`;
         if (iconEl) iconEl.className = `fa-solid ${getWeatherIcon(data.current_weather.weathercode)}`;
     } catch {
@@ -437,12 +432,12 @@ document.addEventListener('DOMContentLoaded', () => {
     newsManager.loadFeedsConfig();
     background = document.getElementById('background');
     metadataDisplay = document.getElementById('metadata');
-    
+
     updateTimeAndDate();
     setInterval(updateTimeAndDate, 1000);
     fetchWeather();
     setInterval(fetchWeather, 1800000);
-    
+
     initBackground();
     backgroundChangeInterval = setInterval(unifiedTransition, 30000);
 });

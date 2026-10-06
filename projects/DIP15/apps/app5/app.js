@@ -50,13 +50,13 @@ class PrismApp {
 
             this.windowId = windowObj.id;
             this.setupEventListeners();
-            
+
             if (fileName && filePath) {
                 await this.loadTrack(fileName, filePath);
             } else {
                 await this.loadDefaultPlaylist();
             }
-            
+
         }
 
         createPrismContent() {
@@ -169,7 +169,7 @@ class PrismApp {
                 this.audio.src = encodeURI(filePath);
 
                 const existingTrack = this.playlist.find(track => track.path === filePath);
-                
+
                 this.currentTrack = existingTrack || {
                     name: fileName,
                     path: filePath,
@@ -424,7 +424,7 @@ class PrismApp {
             }
 
             container.innerHTML = this.playlist.map((track, index) => `
-                <div class="playlist-item ${index === this.currentIndex ? 'active' : ''}" 
+                <div class="playlist-item ${index === this.currentIndex ? 'active' : ''}"
                      onclick="window.prismAppInstance.selectTrack(${index})">
                     <div class="track-icon">
                         <i class="fas ${index === this.currentIndex && this.isPlaying ? 'fa-volume-up' : 'fa-music'}"></i>

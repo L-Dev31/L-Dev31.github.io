@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	const body = document.body;
 	const mobileNavLinks = document.querySelectorAll('.mobile-nav a');
 	if (!hamburger || !overlay) return;
-	
+
 	hamburger.addEventListener('click', function () {
 		hamburger.classList.toggle('active');
 		overlay.classList.toggle('active');
@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			body.classList.remove('mobile-menu-open');
 		}
 	});
-	// Close mobile menu when any link inside the mobile-nav is clicked (delegation)
 	const mobileNavContainer = document.querySelector('.mobile-nav');
 	if (mobileNavContainer) {
 		mobileNavContainer.addEventListener('click', function (e) {

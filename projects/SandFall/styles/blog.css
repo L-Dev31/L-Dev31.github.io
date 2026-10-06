@@ -534,7 +534,7 @@
         flex-direction: column !important;
         justify-content: space-between !important;
     }
-    
+
     .blog-post:hover .post-image,
     .blog-post.active-post .post-image {
         filter: none !important;
@@ -552,35 +552,35 @@
         flex-direction: column !important;
         justify-content: space-between !important;
     }
-    
+
     .blog-post:hover .post-header::after,
     .blog-post.active-post .post-header::after {
         transform: scaleX(0) !important;
     }
-    
+
     .blog-post:hover .post-footer::before,
     .blog-post.active-post .post-footer::before {
         transform: scaleX(0) !important;
     }
-    
+
     .like-btn:hover {
         background: rgba(128, 128, 128, 0.3) !important;
         transform: none !important;
     }
-    
+
     .like-btn:hover .heart {
         transform: none !important;
     }
-    
+
     .search-btn:hover {
         color: var(--color-primary-gold) !important;
         transform: none !important;
     }
-    
+
     .pagination-btn:not(:disabled):hover {
         background: transparent !important;
     }
-    
+
     .modal-close:hover {
         background: rgba(60, 60, 60, 0.85) !important;
         color: var(--color-white) !important;

@@ -140,7 +140,6 @@ const ExportManager = {
         const offsetY = (exportCanvas.height - gridHeight) / 2;
         const sampleBoxSizeX = Math.max(1, Math.floor(canvasElement.width / cols));
         const sampleBoxSizeY = Math.max(1, Math.floor(canvasElement.height / rows));
-        const smoothSpeed = 0.18;
         const tempSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         tempSvg.setAttribute('width', exportCanvas.width);
         tempSvg.setAttribute('height', exportCanvas.height);
@@ -218,7 +217,7 @@ const ExportManager = {
         await new Promise((imgResolve, imgReject) => {
           img.onload = imgResolve;
           img.onerror = (e) => {
-            imgReject(new Error('SVG image load error for frame ' + frame)); 
+            imgReject(new Error('SVG image load error for frame ' + frame));
           };
           img.src = 'data:image/svg+xml;base64,' + svg64;
         });
@@ -244,11 +243,10 @@ const ExportManager = {
       const videoElement = document.getElementById('refVideo');
       const canvasElement = document.getElementById('refCanvas');
       const canvasCtx = canvasElement.getContext('2d');
-      const wasPlaying = !videoElement.paused;      videoElement.pause();
+      const wasPlaying = !videoElement.paused;
+      videoElement.pause();
       const mw = videoElement.videoWidth;
       const mh = videoElement.videoHeight;
-      // --- Détermination de la résolution d'export vidéo ---
-      // On veut le plus grand côté à 3840px (4K), l'autre côté selon l'aspect ratio
       let exportW, exportH;
       if (mw >= mh) {
         exportW = 3840;
@@ -257,7 +255,6 @@ const ExportManager = {
         exportH = 3840;
         exportW = Math.round(3840 * mw / mh);
       }
-      // --- Ajustement de la densité des cœurs pour correspondre à l'affichage ---
       const fit = calculateAspectRatioFit(mw, mh, window.innerWidth, window.innerHeight);
       const scale = fit.width / exportW;
       const exportSettings = {
@@ -265,7 +262,6 @@ const ExportManager = {
         itemSize: settings.itemSize / scale,
         spacing: settings.spacing / scale
       };
-      // --- Préparation du canvas d'export ---
       const exportCanvas = document.createElement('canvas');
       exportCanvas.width = exportW;
       exportCanvas.height = exportH;
@@ -289,8 +285,8 @@ const ExportManager = {
           if (frameIndex % 5 === 0 || frameIndex === totalFrames - 1) {
             const progress = Math.round((frameIndex / totalFrames) * 100);
             const elapsed = (performance.now() - startTime) / 1000;
-            const remaining = frameIndex > 0 ? 
-              (elapsed / frameIndex) * (totalFrames - frameIndex) : 
+            const remaining = frameIndex > 0 ?
+              (elapsed / frameIndex) * (totalFrames - frameIndex) :
               'calculating...';
             ExportStatus.update(
               `Preparing frame ${frameIndex+1}/${totalFrames} (${progress}%)\n` +
@@ -309,7 +305,6 @@ const ExportManager = {
           });
           await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
           canvasCtx.drawImage(videoElement, 0, 0, videoElement.videoWidth, videoElement.videoHeight);
-          // --- Génère la grille SVG pour ce frame à la bonne résolution ---
           const exportSvg = generateFullGridSVG(exportW, exportH, exportSettings, canvasElement, canvasCtx);
           const svgData = new XMLSerializer().serializeToString(exportSvg);
           const svgBlob = new Blob([svgData], {type: 'image/svg+xml'});
@@ -361,13 +356,11 @@ const ExportManager = {
         a.download = 'ESC2025-Design.webm';
         a.href = url;
         a.click();
-        // Restore UI after export
         document.getElementById('cornerLogo').style.display = '';
         document.getElementById('settingsPanel').style.display = '';
         document.getElementById('gradientOverlay').style.display = '';
         const footer = document.getElementById('esc-credits-footer');
         if (footer) footer.style.display = '';
-        // Resume video if it was playing before export
         if (wasPlaying) {
           videoElement.play().catch(() => {});
         }
@@ -408,13 +401,11 @@ const ExportManager = {
       drawFrames().catch(error => {
         ExportStatus.update('Error: ' + error.message);
         mediaRecorder.stop();
-        // Restore UI on error
         document.getElementById('cornerLogo').style.display = '';
         document.getElementById('settingsPanel').style.display = '';
         document.getElementById('gradientOverlay').style.display = '';
         const footer = document.getElementById('esc-credits-footer');
         if (footer) footer.style.display = '';
-        // Resume video if it was playing before export
         if (wasPlaying) {
           videoElement.play().catch(() => {});
         }
@@ -426,7 +417,6 @@ const ExportManager = {
       document.getElementById('gradientOverlay').style.display = '';
       const footer = document.getElementById('esc-credits-footer');
       if (footer) footer.style.display = '';
-      // Resume video if it was playing before export
       if (wasPlaying) {
         videoElement.play().catch(() => {});
       }
@@ -480,13 +470,11 @@ function drawFrame() {
 
 function setupMedia(fileOrUrl) {
   let url;
-  
+
   if (typeof fileOrUrl === 'string') {
-    // C'est une URL directe (pour bg.mp4)
     url = fileOrUrl;
     isCurrentMediaVideo = true;
   } else {
-    // C'est un fichier uploadé
     isCurrentMediaVideo = fileOrUrl.type.startsWith('video/');
     url = URL.createObjectURL(fileOrUrl);
   }
@@ -497,7 +485,6 @@ function setupMedia(fileOrUrl) {
     screenshotBtn.textContent = isCurrentMediaVideo ? 'Screenshot' : 'Export Image';
   }
 
-  // Nettoyage de l'ancien média
   if (currentMediaImage) {
     currentMediaImage = null;
   }
@@ -573,7 +560,6 @@ function drawGrid() {
   svg.style.left = fit.x + 'px';
   svg.style.top = fit.y + 'px';
 
-  // Use fit.width/fit.height for grid calculation when aspect ratio is ON
   const gridStep = settings.itemSize + settings.spacing;
   const gridCols = Math.floor(fit.width / gridStep);
   const gridRows = Math.floor(fit.height / gridStep);
@@ -590,12 +576,10 @@ function drawGrid() {
     for (let x = 0; x < gridCols; x++) {
       const heartCenterX = gridOffsetX + x * gridStep + settings.itemSize / 2;
       const heartCenterY = gridOffsetY + y * gridStep + settings.itemSize / 2;
-      // Map sampleX/sampleY to the media's coordinates
       const sampleX = Math.floor((x / gridCols) * canvasElement.width);
       const sampleY = Math.floor((y / gridRows) * canvasElement.height);
       let totalR = 0, totalG = 0, totalB = 0, pixelCount = 0;
       try {
-        // Utilise willReadFrequently pour accélérer getImageData
         const imageData = canvasCtx.getImageData(sampleX, sampleY, sampleBoxWidth, sampleBoxHeight, { willReadFrequently: true });
         const data = imageData.data;
         for (let i = 0; i < data.length; i += 4) {
@@ -659,13 +643,11 @@ function drawGrid() {
   }
   requestAnimationFrame(drawGrid);
 }
-// Génère une grille SVG complète et centrée pour une taille donnée
 function generateFullGridSVG(width, height, settings, canvasElement, canvasCtx) {
   const svgNS = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(svgNS, 'svg');
   svg.setAttribute('width', width);
   svg.setAttribute('height', height);
-  // Calcul grille
   const gridStep = settings.itemSize + settings.spacing;
   const gridCols = Math.floor(width / gridStep);
   const gridRows = Math.floor(height / gridStep);
@@ -679,7 +661,6 @@ function generateFullGridSVG(width, height, settings, canvasElement, canvasCtx) 
     for (let x = 0; x < gridCols; x++) {
       const heartCenterX = gridOffsetX + x * gridStep + settings.itemSize / 2;
       const heartCenterY = gridOffsetY + y * gridStep + settings.itemSize / 2;
-      // Map sampleX/sampleY to la vidéo/image source
       const sampleX = Math.floor((x / gridCols) * canvasElement.width);
       const sampleY = Math.floor((y / gridRows) * canvasElement.height);
       let totalR = 0, totalG = 0, totalB = 0, pixelCount = 0;
@@ -752,7 +733,7 @@ const settings = {
   color1: '#F90900',
   color2: '#07DED6',
   color3: '#F22FEB',
-  keepAspectRatio: false // Ajout option aspect ratio
+  keepAspectRatio: false
 };
 document.addEventListener('DOMContentLoaded', () => {
   const itemSizeSlider = document.getElementById('itemSizeSlider');
@@ -812,16 +793,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (videoElement.src && videoElement.videoWidth > 0) {
       onMediaLoaded();
     } else if (canvasElement.width > 0) {
-      // Pour les images fixes, redessiner simplement la grille
       drawGrid();
     }
   });
 
-  // Charger la vidéo par défaut au démarrage
   setupMedia('bg.mp4');
 
-  // Plus de création dynamique du toggle aspect ratio ici
-  // On récupère simplement l'élément existant
   const toggle = document.getElementById('aspectRatioToggle');
   toggle.checked = settings.keepAspectRatio;
   toggle.onchange = e => {
@@ -834,46 +811,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Screenshot unique, centré ou stretch selon le toggle
   const screenshotBtn = document.getElementById('screenshotBtn');
   if (screenshotBtn) {
-    // Ajout de l'icône Font Awesome (fa-solid fa-file-arrow-down)
     screenshotBtn.innerHTML = '<i class="fa-solid fa-file-arrow-down" style="margin-right:8px;"></i>Screenshot';
     screenshotBtn.onclick = () => {
       const svg = document.getElementById('grid');
       const mw = isCurrentMediaVideo ? videoElement.videoWidth : currentMediaImage.width;
       const mh = isCurrentMediaVideo ? videoElement.videoHeight : currentMediaImage.height;
-      // Détermine la résolution 4K cible en respectant l'aspect ratio du média
       let targetW = 3840, targetH = 2160;
       if (mw < mh) {
-        // Portrait
         targetW = 2160;
         targetH = 3840;
       }
-      // Ajuste pour respecter l'aspect ratio du média
       const mediaRatio = mw / mh;
       let exportW = targetW, exportH = targetH;
       if (mediaRatio > targetW / targetH) {
-        // Média plus large que 16:9, ajuste la hauteur
         exportH = Math.round(targetW / mediaRatio);
         exportW = targetW;
       } else {
-        // Média plus haut que 16:9, ajuste la largeur
         exportW = Math.round(targetH * mediaRatio);
         exportH = targetH;
       }
       if (settings.keepAspectRatio) {
-        // Calcule la zone de fit utilisée à l'écran
         const fit = calculateAspectRatioFit(mw, mh, window.innerWidth, window.innerHeight);
-        // Calcule le ratio d'échelle entre l'affichage et l'export
         const scale = fit.width / exportW;
-        // Ajuste la taille des cœurs et l'espacement pour l'export
         const exportSettings = {
           ...settings,
           itemSize: settings.itemSize / scale,
           spacing: settings.spacing / scale
         };
-        // Génère la grille SVG à la taille d'export 4K, aspect ratio média
         const exportSvg = generateFullGridSVG(exportW, exportH, exportSettings, canvasElement, canvasCtx);
         const exportCanvas = document.createElement('canvas');
         exportCanvas.width = exportW;
@@ -895,7 +861,6 @@ document.addEventListener('DOMContentLoaded', () => {
         img.src = url;
         return;
       } else {
-        // Mode stretch classique, exporte en 4K plein écran
         const c = document.createElement('canvas');
         c.width = targetW;
         c.height = targetH;
@@ -927,7 +892,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(fa);
   }
 
-  // Ajout de l'icône Font Awesome pour screenshot et export vidéo (sans redéclaration)
   if (screenshotBtn) {
     screenshotBtn.innerHTML = '<i class="fa-solid fa-file-arrow-down" style="margin-right:8px;"></i>Screenshot';
   }

@@ -15,7 +15,7 @@ const centuryFiles = [
 
 const fetchAllCenturies = async () => {
     try {
-        const fetchPromises = centuryFiles.map(file => 
+        const fetchPromises = centuryFiles.map(file =>
             fetch(file).then(res => {
                 if (!res.ok) throw new Error(`Erreur de chargement ${file}`);
                 return res.json();
@@ -38,11 +38,11 @@ async function loadExternalData() {
             fetch('DB/religion.json'),
             fetch('DB/family.json')
         ]);
-  
+
         if (!countryRes.ok) throw new Error('Erreur de chargement de country.json');
         if (!religionRes.ok) throw new Error('Erreur de chargement de religion.json');
         if (!familyInfoRes.ok) throw new Error('Erreur de chargement de family.json');
-  
+
         familyData = familyRes;
         countryData = await countryRes.json();
         try {
@@ -53,14 +53,14 @@ async function loadExternalData() {
         }
         religionData = await religionRes.json();
         familyInfoData = await familyInfoRes.json();
-        
+
     } catch (error) {
         console.error('Erreur de chargement:', error);
     }
 }
 
 function getCountryInfo(countryCode) {
-    const country = countryData[countryCode] || { 
+    const country = countryData[countryCode] || {
         name: 'Inconnu',
         nativeName: 'Inconnu',
         anthem: 'Hymne inconnu',
@@ -73,7 +73,7 @@ function getCountryInfo(countryCode) {
         capital: country.capital || 'Inconnue',
         flag: `Images/Countries/Flags/${countryCode || 'unknown'}.png`,
         banner: `Images/Countries/Banner/${countryCode || 'unknown'}.png`,
-        images: Array.from({length: 4}, (_, i) => 
+        images: Array.from({length: 4}, (_, i) =>
             `Images/Countries/Images/${countryCode}-${i + 1}.png`),
         anthemFile: `Music/Anthem/Countries/${countryCode}.mp3`
     };
@@ -81,14 +81,14 @@ function getCountryInfo(countryCode) {
 
 function getRegionInfo(regionCode) {
     if (!regionCode) return null;
-    
-    const region = regionData[regionCode] || { 
+
+    const region = regionData[regionCode] || {
         name: 'Inconnue',
         nativeName: 'Inconnue',
         anthem: '',
         capital: 'Inconnue'
     };
-    
+
     return {
         name: region.name,
         nativeName: region.nativeName,
@@ -103,7 +103,7 @@ function getRegionInfo(regionCode) {
 function getReligionInfo(religionCode) {
     return religionData[religionCode] || {
         name: 'Inconnue',
-        icon: '/Images/Icons/unknown.png'
+        icon: 'Images/Icons/unknown.png'
     };
 }
 
@@ -114,7 +114,7 @@ function getFamilyInfo(familyCode) {
 function showPersonDetails(personId) {
     const person = familyData.find(p => p.id === personId);
     const infoPanel = document.getElementById('info-panel');
-    
+
     if (!person) {
         infoPanel.style.display = 'none';
         return;
@@ -131,19 +131,19 @@ function showPersonDetails(personId) {
 
     document.getElementById('infoPhoto').src = person.img || 'Images/Persons/Unknown.jpg';
     document.getElementById('infoName').textContent = person.name || 'Inconnu';
-    
+
     const born = person.born === 'Inconnu' ? '?' : person.born;
     const death = ['null', 'inconnu'].includes(person.death?.toLowerCase()) ? '?' : person.death;
     document.getElementById('infoDates').textContent = `${born || '?'} - ${death || '?'}`;
 
     document.getElementById('infoCity').textContent = person.city || 'Inconnue';
-    
+
     const regionRow = document.getElementById('infoRegionRow');
     if (region) {
         document.getElementById('infoRegion').innerHTML = `
-            ${region.name} 
-            <svg class="info-icon" onclick="showRegionPopup('${person.region}')" 
-                style="width:12px;height:12px;cursor:pointer;margin-left:5px;" 
+            ${region.name}
+            <svg class="info-icon" onclick="showRegionPopup('${person.region}')"
+                style="width:12px;height:12px;cursor:pointer;margin-left:5px;"
                 viewBox="0 0 24 24">
                 <path fill="currentColor" d="M13 9h-2V7h2m0 10h-2v-6h2m-1-9A10 10 0 002 12a10 10 0 0010 10 10 10 0 0010-10A10 10 0 0012 2z"/>
             </svg>
@@ -153,17 +153,17 @@ function showPersonDetails(personId) {
     } else {
         regionRow.style.display = 'none';
     }
-    
+
     document.getElementById('infoCountry').innerHTML = `
-        ${country.name} 
-        <svg class="info-icon" onclick="showCountryPopup('${person.country}')" 
-            style="width:12px;height:12px;cursor:pointer;margin-left:5px;" 
+        ${country.name}
+        <svg class="info-icon" onclick="showCountryPopup('${person.country}')"
+            style="width:12px;height:12px;cursor:pointer;margin-left:5px;"
             viewBox="0 0 24 24">
             <path fill="currentColor" d="M13 9h-2V7h2m0 10h-2v-6h2m-1-9A10 10 0 002 12a10 10 0 0010 10 10 10 0 0010-10A10 10 0 0012 2z"/>
         </svg>
     `;
     document.getElementById('infoFlag').src = country.flag;
-    
+
     document.getElementById('infoReligion').textContent = religion.name;
     document.getElementById('infoReligionIcon').src = religion.icon;
 
@@ -182,12 +182,12 @@ function showPersonDetails(personId) {
     }
 
     const handleImageError = (img, fallback) => {
-        img.onerror = null; 
+        img.onerror = null;
         img.src = fallback;
     };
-    
+
     document.querySelectorAll('#info-panel img').forEach(img => {
-        img.onerror = () => handleImageError(img, '/Images/Icons/unknown.png');
+        img.onerror = () => handleImageError(img, 'Images/Icons/unknown.png');
     });
 
     infoPanel.style.display = 'block';
@@ -196,7 +196,7 @@ function showPersonDetails(personId) {
 function showCountryPopup(countryCode) {
     const country = getCountryInfo(countryCode);
     const popup = document.getElementById('countryPopup');
-    
+
     popup.querySelector('.country-banner').src = country.banner;
     popup.querySelector('.country-popup-flag').src = country.flag;
     popup.querySelector('.country-name').textContent = country.name;
@@ -216,22 +216,22 @@ function showCountryPopup(countryCode) {
     const audio = popup.querySelector('audio');
     audio.querySelector('source').src = country.anthemFile;
     audio.load();
-    
+
     popup.style.display = 'flex';
 }
 
 function showRegionPopup(regionCode) {
     const region = getRegionInfo(regionCode);
     if (!region) return;
-    
+
     const popup = document.getElementById('regionPopup');
-    
+
     popup.querySelector('.country-banner').src = region.banner;
     popup.querySelector('.region-popup-flag').src = region.flag;
     popup.querySelector('.region-name').textContent = region.name;
     popup.querySelector('.region-native-name').textContent = `"${region.nativeName}"`;
     popup.querySelector('.region-capital').textContent = `Capitale: ${region.capital}`;
-    
+
     const anthemPlayer = popup.querySelector('#regionAnthemPlayer');
     if (region.anthem) {
         popup.querySelector('.anthem-title').textContent = region.anthem;
@@ -242,7 +242,7 @@ function showRegionPopup(regionCode) {
     } else {
         anthemPlayer.style.display = 'none';
     }
-    
+
     popup.style.display = 'flex';
 }
 
@@ -250,10 +250,10 @@ document.querySelectorAll('.close-popup').forEach(button => {
     button.addEventListener('click', () => {
         const countryAudio = document.querySelector('#countryPopup audio');
         if (countryAudio) countryAudio.pause();
-        
+
         const regionAudio = document.querySelector('#regionPopup audio');
         if (regionAudio) regionAudio.pause();
-        
+
         document.getElementById('countryPopup').style.display = 'none';
         document.getElementById('regionPopup').style.display = 'none';
     });
@@ -263,7 +263,7 @@ document.getElementById('countryPopup').addEventListener('click', (e) => {
     if(e.target === document.getElementById('countryPopup')) {
         const countryAudio = document.querySelector('#countryPopup audio');
         if (countryAudio) countryAudio.pause();
-        
+
         document.getElementById('countryPopup').style.display = 'none';
     }
 });
@@ -272,14 +272,14 @@ document.getElementById('regionPopup').addEventListener('click', (e) => {
     if(e.target === document.getElementById('regionPopup')) {
         const regionAudio = document.querySelector('#regionPopup audio');
         if (regionAudio) regionAudio.pause();
-        
+
         document.getElementById('regionPopup').style.display = 'none';
     }
 });
 
 async function initializeFamilyTree() {
     await loadExternalData();
-    
+
     const chart = new FamilyTree(document.getElementById("tree"), {
         mouseScroll: FamilyTree.none,
         nodeBinding: {

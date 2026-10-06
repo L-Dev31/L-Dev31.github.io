@@ -25,7 +25,7 @@ if (typeof NotesApp === 'undefined') {
 
         async open(options = {}) {
             const { fileName, content } = options;
-            
+
             try {
                 const existingWindow = this.windowId ? this.windowManager?.getWindow(this.windowId) : null;
 
@@ -76,7 +76,7 @@ if (typeof NotesApp === 'undefined') {
 
                 this.setupElements();
                 this.setupEventListeners();
-                
+
                 if (content) {
                     this.textarea.value = content;
                     this.isModified = false;
@@ -134,8 +134,8 @@ if (typeof NotesApp === 'undefined') {
                         </div>
                     </div>
                     <div class="notes-editor">
-                        <textarea 
-                            id="notes-textarea" 
+                        <textarea
+                            id="notes-textarea"
                             placeholder="Start typing your notes..."
                             spellcheck="true"
                         ></textarea>
@@ -259,7 +259,7 @@ if (typeof NotesApp === 'undefined') {
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = '.txt,.md,.json,.js,.css,.html,.xml';
-                
+
                 input.onchange = (e) => {
                     const file = e.target.files[0];
                     if (file) {
@@ -274,7 +274,7 @@ if (typeof NotesApp === 'undefined') {
                         reader.readAsText(file);
                     }
                 };
-                
+
                 input.click();
             } catch (error) {
                 console.error('Error opening file:', error);
@@ -286,14 +286,14 @@ if (typeof NotesApp === 'undefined') {
                 const content = this.textarea.value;
                 const blob = new Blob([content], { type: 'text/plain' });
                 const url = window.URL.createObjectURL(blob);
-                
+
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = this.fileName;
                 a.click();
-                
+
                 window.URL.revokeObjectURL(url);
-                
+
                 this.isModified = false;
                 this.updateWindowTitle();
             } catch (error) {
@@ -325,7 +325,7 @@ if (typeof NotesApp === 'undefined') {
             if (this.textarea) {
                 const currentWrap = this.textarea.style.whiteSpace;
                 this.textarea.style.whiteSpace = currentWrap === 'nowrap' ? 'pre-wrap' : 'nowrap';
-                
+
                 const icon = this.wordWrapBtn.querySelector('i');
                 if (icon) {
                     icon.className = currentWrap === 'nowrap' ? 'fas fa-align-left' : 'fas fa-align-justify';

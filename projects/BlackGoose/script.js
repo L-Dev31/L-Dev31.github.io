@@ -183,7 +183,7 @@ function createCarouselItem(item) {
         img.addEventListener('dragstart', (event) => event.preventDefault());
         attachImageFallback(img);
     });
-    
+
     return carouselItem;
 }
 
@@ -224,7 +224,7 @@ function updatePurchaseSection(item) {
     const productTitle = purchaseSection.querySelector('.product-title');
     productTitle.textContent = item.title;
     productTitle.className = `product-title font-${item.font.toLowerCase()}`;
-    
+
     purchaseSection.querySelector('.price').textContent = item.price;
     purchaseSection.querySelector('.description').textContent = item.descriptionLong;
 
@@ -334,13 +334,13 @@ async function initNewProduct() {
                     <source src="${trailerUrl}" type="video/mp4">
                     Votre navigateur ne supporte pas la vidéo.
                </video>`
-            : `<iframe 
-                    width="100%" 
-                    height="100%" 
-                    src="${trailerUrl}${trailerUrl.includes('?') ? '&' : '?'}autoplay=0&rel=0&modestbranding=1&controls=1&fs=1&playsinline=1&enablejsapi=0" 
-                    title="${product.title} Trailer" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            : `<iframe
+                    width="100%"
+                    height="100%"
+                    src="${trailerUrl}${trailerUrl.includes('?') ? '&' : '?'}autoplay=0&rel=0&modestbranding=1&controls=1&fs=1&playsinline=1&enablejsapi=0"
+                    title="${product.title} Trailer"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen
                     loading="lazy">
                </iframe>`;
@@ -383,7 +383,7 @@ function setupEventListeners() {
     const openCarouselItemById = (itemId, instant = false) => {
         const item = document.querySelector(`.carousel-item[data-item-id="${itemId}"]`);
         if (!item) return false;
-        
+
         if (instant) {
             if (selectedItem) return true;
             const itemData = carouselData?.carouselItems?.find((data) => String(data.id) === String(itemId));
@@ -526,12 +526,12 @@ function setupEventListeners() {
             if (collectionPanel) {
                 collectionPanel.classList.add('no-transform');
             }
-            
+
             document.body.style.overflow = 'hidden';
             document.documentElement.style.overflow = 'hidden';
 
             lockCarouselContainerHeight(carouselContainer);
-            
+
             const positions = [];
             carouselItems.forEach((currentItem, index) => {
                 const rect = currentItem.getBoundingClientRect();
@@ -559,7 +559,7 @@ function setupEventListeners() {
 
             document.querySelector('.carousel-container').classList.add('no-scroll');
             item.classList.add('text-slide-out');
-            
+
             await sleep(100);
                 togglePageChrome(true);
 
@@ -569,28 +569,28 @@ function setupEventListeners() {
                         otherItem.classList.add('fade-out');
                     }
                 });
-            
-            
+
+
             await sleep(300);
                 item.style.transition = 'all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)';
                 item.style.top = '50%';
                 item.style.left = '25%';
                 item.style.transform = 'translate(-50%, -50%)';
-            
-            
+
+
             await sleep(400);
                 item.classList.add('expanding');
                 item.style.width = '50vw';
                 item.style.height = '100vh';
                 item.style.left = '0';
                 item.style.transform = 'translateY(-50%)';
-                
+
                 updatePurchaseSection(itemData);
                 purchaseSection.classList.add('show');
 
                 const backButton = purchaseSection.querySelector('.back-button');
                 if (backButton) backButton.focus();
-                
+
         };
 
         item.addEventListener('click', openItem);
@@ -638,12 +638,12 @@ function resetCarousel() {
     purchaseSection.style.transition = 'none';
     purchaseSection.classList.remove('show');
     togglePageChrome(false);
-    
+
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
-    
+
     selectedItem.classList.remove('expanding', 'text-slide-out');
-    
+
     document.querySelectorAll('.carousel-item').forEach(item => {
         item.style = '';
         item.classList.remove('fade-out');
@@ -652,7 +652,7 @@ function resetCarousel() {
 
     const collectionPanel = document.querySelector('.collection-panel');
     if (collectionPanel) collectionPanel.classList.remove('no-transform');
-    
+
     unlockCarouselContainerHeight(document.querySelector('.carousel-container'));
     selectedItem = null;
 
@@ -660,7 +660,7 @@ function resetCarousel() {
         lastFocusedElement.focus();
     }
     lastFocusedElement = null;
-    
+
     setTimeout(() => {
         if (purchaseSection) {
             purchaseSection.style.transition = '';

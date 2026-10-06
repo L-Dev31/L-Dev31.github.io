@@ -4,10 +4,10 @@ if (typeof WeatherApp === 'undefined') {
             this.windowId = null;
             this.weatherData = null;
             this.currentLocation = 'St.Marie';
-            this.apiKey = 'demo'; 
+            this.apiKey = 'demo';
             this.coordinates = {
-                lat: 16.3127,  
-                lon: -61.7947  
+                lat: 16.3127,
+                lon: -61.7947
             };
         }
 
@@ -52,7 +52,7 @@ if (typeof WeatherApp === 'undefined') {
 
                 this.windowId = weatherWindow.id;
                 this.setupWeatherElements();
-                
+
                 return weatherWindow;
             } catch (error) {
                 console.error('Failed to initialize Weather app:', error);
@@ -125,7 +125,7 @@ if (typeof WeatherApp === 'undefined') {
 
         startAutoRefresh() {
             this.loadWeatherData();
-            
+
             // Then refresh every 5 minutes (300000 ms)
             this.refreshInterval = setInterval(() => {
                 this.loadWeatherData();
@@ -142,16 +142,16 @@ if (typeof WeatherApp === 'undefined') {
         async loadWeatherData() {
             try {
                 this.showLoadingState();
-                
+
                 let weather = await this.fetchRealWeatherData();
-                
+
                 // Si l'API échoue, utiliser des données simulées tropicales réalistes pour Deshaies
                 if (!weather) {
                     weather = this.getFallbackWeatherData();
                 }
-                
+
                 this.updateWeatherDisplay(weather);
-                
+
             } catch (error) {
                 console.error('Failed to load weather data:', error);
                 // Utiliser des données de fallback en cas d'erreur
@@ -164,17 +164,17 @@ if (typeof WeatherApp === 'undefined') {
             try {
                 // Use OpenWeatherMap API (free with limitations)
                 const url = `https://api.openweathermap.org/data/2.5/weather?lat=${this.coordinates.lat}&lon=${this.coordinates.lon}&appid=${this.apiKey}&units=metric&lang=en`;
-                
+
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`API Error: ${response.status}`);
                 }
-                
+
                 const data = await response.json();
-                
+
                 // Convert API data to our weather format
                 return this.convertApiDataToWeatherFormat(data);
-                
+
             } catch (error) {
                 return null;
             }
@@ -221,19 +221,19 @@ if (typeof WeatherApp === 'undefined') {
         }
 
         formatTime(date) {
-            return date.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
+            return date.toLocaleTimeString('en-US', {
+                hour: '2-digit',
                 minute: '2-digit',
-                hour12: false 
+                hour12: false
             });
         }
 
         getFallbackWeatherData() {
             const tropicalWeatherConditions = [
-                { 
-                    condition: 'sunny', 
-                    icon: 'fas fa-sun', 
-                    description: 'Sunny', 
+                {
+                    condition: 'sunny',
+                    icon: 'fas fa-sun',
+                    description: 'Sunny',
                     bg: 'linear-gradient(135deg, #FDB813 0%, #FF6B35 100%)',
                     temp: 29,
                     feelsLike: 33,
@@ -244,10 +244,10 @@ if (typeof WeatherApp === 'undefined') {
                     sunset: '18:45',
                     cloudCover: 15
                 },
-                { 
-                    condition: 'partly-cloudy', 
-                    icon: 'fas fa-cloud-sun', 
-                    description: 'Partly Cloudy', 
+                {
+                    condition: 'partly-cloudy',
+                    icon: 'fas fa-cloud-sun',
+                    description: 'Partly Cloudy',
                     bg: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
                     temp: 27,
                     feelsLike: 31,
@@ -258,10 +258,10 @@ if (typeof WeatherApp === 'undefined') {
                     sunset: '18:40',
                     cloudCover: 45
                 },
-                { 
-                    condition: 'rainy', 
-                    icon: 'fas fa-cloud-rain', 
-                    description: 'Tropical Showers', 
+                {
+                    condition: 'rainy',
+                    icon: 'fas fa-cloud-rain',
+                    description: 'Tropical Showers',
                     bg: 'linear-gradient(135deg, #81ecec 0%, #00b894 100%)',
                     temp: 25,
                     feelsLike: 28,
@@ -272,10 +272,10 @@ if (typeof WeatherApp === 'undefined') {
                     sunset: '18:35',
                     cloudCover: 85
                 },
-                { 
-                    condition: 'stormy', 
-                    icon: 'fas fa-bolt', 
-                    description: 'Tropical Storm', 
+                {
+                    condition: 'stormy',
+                    icon: 'fas fa-bolt',
+                    description: 'Tropical Storm',
                     bg: 'linear-gradient(135deg, #2d3436 0%, #000000 100%)',
                     temp: 26,
                     feelsLike: 29,
@@ -290,7 +290,7 @@ if (typeof WeatherApp === 'undefined') {
 
             const hour = new Date().getHours();
             let weatherIndex;
-            
+
             if (hour >= 6 && hour <= 11) {
                 weatherIndex = Math.random() < 0.7 ? 0 : 1;
             } else if (hour >= 12 && hour <= 16) {
@@ -298,7 +298,7 @@ if (typeof WeatherApp === 'undefined') {
             } else {
                 weatherIndex = Math.random() < 0.6 ? 1 : 0;
             }
-            
+
             return tropicalWeatherConditions[weatherIndex];
         }
 
@@ -337,7 +337,7 @@ if (typeof WeatherApp === 'undefined') {
             document.getElementById('cloudCover').textContent = `${weather.cloudCover}%`;
 
             const now = new Date();
-            document.getElementById('lastUpdated').textContent = 
+            document.getElementById('lastUpdated').textContent =
                 `Updated: ${now.toLocaleTimeString()}`;
         }
 
