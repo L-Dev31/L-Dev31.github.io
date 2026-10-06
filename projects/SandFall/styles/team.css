@@ -163,8 +163,6 @@
 }
 
 .team-link:hover::after { transform: translateY(-50%) translateX(3px); }
-
-/* Discover button */
 .team-discover-section {
 	text-align: center;
 	margin-top: 50px;

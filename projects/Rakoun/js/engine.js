@@ -1136,7 +1136,7 @@
       return null;
     });
     HF.push(function hf_interrogatifs(e) {
-      const { tokens, i, n, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
+      const { tokens, i, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
       if (cle === "que" || cle === "qu" || cle === "quoi") {
         if (cle === "quoi" || !sortie.length) e.emettre(reporter_casse(tok, rules.R.interrogatifs.quoi));
         else if (i > 0 && ctx.type_fr[tokens[i - 1].toLowerCase()] === "adj") e.emettre("ki");
@@ -1889,7 +1889,7 @@
     // préposition générale du dictionnaire.
     HG.push(function h_coordination_nominale(e) {
       if (e.cle !== "épi" && e.cle !== "epi") return null;
-      const { tokens, i, sortie } = e;
+      const { i, sortie } = e;
       if (!sortie.length || !est_mot(last(sortie)) || e.suiv === null || !est_mot(e.suiv)) return null;
       const precedentNom = est_nom(last(sortie)) || (last(sortie)[0] === last(sortie)[0].toUpperCase() && last(sortie)[0] !== last(sortie)[0].toLowerCase());
       const suivantTrad = fr_de_gp(e.suiv) || "";

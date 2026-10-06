@@ -71,7 +71,6 @@
 
 #dialogue-text em              { font-style: italic; font-size: 0.8em; opacity: 0.5; }
 #dialogue-text strong          { font-weight: 600; }
-#dialogue-text .dm-aside       { font-weight: 700; font-style: italic; font-size: 0.8em; opacity: 0.5; }
 #dialogue-text .dm-emph    { font-weight: 700; text-transform: uppercase; font-size: 1.15em; }
 #dialogue-text .dm-shout   { font-size: 1.45em; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
 

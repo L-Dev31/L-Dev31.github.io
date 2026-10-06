@@ -26,15 +26,11 @@ body {
 ::-webkit-scrollbar {
   width: 24px;
 }
-
-/* Track */
 ::-webkit-scrollbar-track {
   background: linear-gradient(to bottom, #f1f1f1, #e6e6e6);
   border-radius: 12px;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
-/* Handle */
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #4e54c8, #ee8ffb, #9da0dd);
   border-radius: 12px;
@@ -42,20 +38,14 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
-
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #3d47b8, #d678e8, #8a93cd);
   transform: scale(1.05);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
-
-/* Handle on active */
 ::-webkit-scrollbar-thumb:active {
   background: linear-gradient(135deg, #2a3498, #c45bd4, #7785ba);
 }
-
-/* Up arrow button */
 ::-webkit-scrollbar-button:vertical:start:decrement {
   background: linear-gradient(135deg, #4e54c8, #ee8ffb);
   border-radius: 12px 12px 0 0;
@@ -66,8 +56,6 @@ body {
   background-position: center;
   background-size: 24px;
 }
-
-/* Down arrow button */
 ::-webkit-scrollbar-button:vertical:end:increment {
   background: linear-gradient(135deg, #4e54c8, #ee8ffb);
   border-radius: 0 0 12px 12px;
@@ -78,8 +66,6 @@ body {
   background-position: center;
   background-size: 24px;
 }
-
-/* Arrow buttons hover effects */
 ::-webkit-scrollbar-button:hover {
   background: linear-gradient(135deg, #3d47b8, #d678e8);
 }
@@ -87,8 +73,6 @@ body {
 ::-webkit-scrollbar-button:active {
   background: linear-gradient(135deg, #2a3498, #c45bd4);
 }
-
-/* Inline Loading Indicators */
 .section-loading {
   display: flex;
   justify-content: center;
@@ -158,7 +142,6 @@ nav{
 
 body {
   zoom: 0.6;
-  /* Remove overflow: hidden; so the page is scrollable by default */
   min-height: 100%;
 }
 
@@ -434,8 +417,6 @@ h5{
   animation: spin 8s linear infinite;
   z-index: 1;
 }
-
-/* Overlay de lighting réaliste avec gradient conique statique sur le disque */
 .disc {
   position: relative;
 }
@@ -462,8 +443,6 @@ h5{
   pointer-events: none;
   z-index: 5;
 }
-
-/* Centre du disque */
 .disc-overlay::after {
   content: '';
   position: absolute;
@@ -633,8 +612,6 @@ h5{
 .next-btn {
   right: 10px;
 }
-
-/* News Section */
 .search-container {
   position: relative;
   margin: 30px 0;
@@ -886,8 +863,6 @@ h5{
   border-radius: 15px;
   font-size: 14px;  font-weight: 500;
 }
-
-/* Content Section Navigation */
 .content-section {
   display: none;
 }
@@ -895,8 +870,6 @@ h5{
 .content-section.active {
   display: block;
 }
-
-/* Personal Card Popup */
 .personal-card-popup {
   position: fixed;
   top: 0;
@@ -1037,8 +1010,6 @@ h5{
   text-align: left;
   font-weight: 500;
 }
-
-/* Clickable authors in blog */
 .news-author.clickable-author,
 .blog-popup-author.clickable-author {
   cursor: pointer;
@@ -1056,8 +1027,6 @@ h5{
 .blog-popup-author.clickable-author:hover p {
   color: #555;
 }
-
-/* Clickable person names in credits */
 .clickable-person {
   color: #555 !important;
   cursor: pointer;
@@ -1070,8 +1039,6 @@ h5{
   text-decoration-color: #555;
   color: #333 !important;
 }
-
-/* Colored clickable persons for special sections */
 .clickable-person.engine-credit {
   color: #005050 !important;
   outline: none !important;
@@ -1089,8 +1056,6 @@ h5{
 .clickable-person.special-credit:hover {
   color: #4a3f19 !important;
 }
-
-/* Blog Popup Styles */
 .blog-popup {
   position: fixed;
   top: 0;
@@ -1326,8 +1291,6 @@ h5{
   margin-bottom: 25px;
   text-align: left;
 }
-
-/* Enhanced list styling for blog content */
 .blog-popup-content-text ul {
   margin: 50px;
   padding-left: 100px;
@@ -1340,8 +1303,6 @@ h5{
   font-size: 24px;
   line-height: 1.8;
 }
-
-/* Blog post images and videos: add border-radius for embedded media in blog content */
 .blog-popup-content-text img,
 .news-summary img {
   border-radius: 18px;
@@ -1362,8 +1323,6 @@ h5{
   height: auto;
   display: block;
 }
-
-/* Blog popup: make <strong> with solid purple color */
 .blog-popup-content-text strong {
   background: none !important;
   -webkit-background-clip: initial !important;
@@ -1372,21 +1331,15 @@ h5{
   color: #9A70E0 !important;
   font-weight: 600;
 }
-
-/* Blog popup: make <em> (the quote) with better styling */
 .blog-popup-content-text em {
   color: #7f8c8d !important;
   font-style: italic;
   font-weight: 300;
 }
-
-/* Ensure .blog-popup does not have transform/filter that would create a stacking context */
 .blog-popup {
   transform: none !important;
   filter: none !important;
 }
-
-/* Progress Section Styles */
 .progress-container {
   width: 1200px;
   margin: 30px auto;
@@ -1544,8 +1497,6 @@ h5{
   letter-spacing: 1px;
   margin: 0;
 }
-
-/* Navigation Responsive */
 @media (max-width: 768px) {
   nav {
     height: auto;
@@ -1590,8 +1541,6 @@ h5{
     padding: 6px 10px;
   }
 }
-
-/* Progress Section Responsive */
 @media (max-width: 1250px) {
   .progress-container {
     width: 95%;

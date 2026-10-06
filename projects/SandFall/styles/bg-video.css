@@ -1,6 +1,3 @@
-/* Styles centralisés pour la vidéo de fond bg.mp4 */
-
-/* Style global pour les pages blog et team - position fixed */
 .blog-container ~ .hero-bg-video,
 .team-page-container ~ .hero-bg-video,
 body:has(.blog-container) .hero-bg-video,
@@ -16,8 +13,6 @@ body:has(.team-page-container) .hero-bg-video {
     filter: brightness(0.12) !important;
     pointer-events: none !important;
 }
-
-/* Overlay gradient pour les pages blog et team */
 .blog-container::before,
 .team-page-container::before {
     content: '';
@@ -31,8 +26,6 @@ body:has(.team-page-container) .hero-bg-video {
     z-index: -5;
     pointer-events: none;
 }
-
-/* Styles mobiles pour les pages blog et team */
 @media (max-width: 768px) {
     .blog-container ~ .hero-bg-video,
     .team-page-container ~ .hero-bg-video,
@@ -49,8 +42,6 @@ body:has(.team-page-container) .hero-bg-video {
         filter: brightness(0.12) !important;
         pointer-events: none !important;
     }
-
-    /* Overlay gradient mobile pour les pages blog et team */
     .blog-container::before,
     .team-page-container::before {
         content: '';

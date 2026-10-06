@@ -49,7 +49,7 @@
 
 .search-input {
     width: 100%;
-    padding: 18px 200px 18px 25px; /* Ensure this padding accommodates the controls */
+    padding: 18px 200px 18px 25px;
     background: transparent;
     border: none;
     border-bottom: 2px solid var(--color-primary-gold);
@@ -74,7 +74,7 @@
 
 .sort-select {
     position: absolute;
-    right: 55px; /* Adjusted from 50px */
+    right: 55px;
     background: transparent;
     border: none;
     color: var(--color-primary-gold);
@@ -303,12 +303,6 @@
     transform: scale(1.2);
 }
 
-.read-time {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
 .blog-pagination {    display: flex;
     justify-content: center;
     align-items: center;
@@ -377,12 +371,11 @@
     background: var(--color-black);
     border: 1px solid var(--color-primary-gold);
     max-width: 800px;
-    max-height: 90vh; /* Ensure modal content does not exceed 90% of viewport height */
+    max-height: 90vh;
     margin: auto;
-    overflow-y: auto; /* Allow scrolling within the modal content if it overflows */
+    overflow-y: auto;
     transform: scale(0.9);
     transition: transform 0.3s ease;
-    /* Add a stacking context for absolute children */
 }
 
 .post-modal.active .modal-content {
@@ -394,7 +387,7 @@
     top: 10px;
     right: 10px;
     margin-left: auto;
-    background: rgba(60, 60, 60, 0.85); /* Opaque gray background */
+    background: rgba(60, 60, 60, 0.85);
     border: none;
     border-radius: 50%;
     color: var(--color-white);
@@ -499,8 +492,6 @@
     font-size: 1.2rem;    font-weight: 500;
 }
 
-/* Les styles de vidéo de fond sont maintenant dans bg-video.css */
-
 @keyframes fadeInUp {
     to {
         opacity: 1;
@@ -518,9 +509,7 @@
     transform: translateY(0);
     transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-
-/* Disable all hover effects on mobile */
-@media (max-width: 768px) {    /* Ensure post content covers full container on mobile */
+@media (max-width: 768px) {
     .blog-post .post-content {
         width: 100% !important;
         height: 100% !important;
@@ -759,10 +748,6 @@
     transform: scale(1.4);
   }
 
-  .read-time {
-    font-size: 0.85rem;
-  }
-
   .author-info {
     gap: 8px;
   }
@@ -882,5 +867,4 @@
 }
 
 @media (max-width: 480px) {
-  /* Les règles spécifiques pour <=480px sont conservées dans le même esprit */
 }

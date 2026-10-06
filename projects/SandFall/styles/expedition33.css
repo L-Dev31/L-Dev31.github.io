@@ -69,8 +69,6 @@
 }
 
 .expedition33-logo-sticky.visible { display: block; opacity: 1; }
-
-/* Trailer */
 .expedition33-trailer-section {
 	width: 100%;
 	padding: 80px 0 60px;
@@ -111,8 +109,6 @@
 	box-shadow: 0 16px 64px rgba(33,33,33,0.28), 0 4px 16px rgba(33,33,33,0.18);
 	background: var(--color-black);
 }
-
-/* Game showcase — grid replaces fragile -60px margin */
 .expedition33-game-section {
 	width: 100%;
 	min-height: 80vh;
@@ -161,8 +157,6 @@
 	margin-bottom: 0.7em;
 	letter-spacing: 0.02em;
 }
-
-/* Buttons */
 .exp33-btn {
 	display: inline-block;
 	padding: 0.45em 1.2em;
@@ -237,8 +231,6 @@
 }
 
 .expedition33-game-content a.exp33-link:hover { color: var(--color-white); }
-
-/* Newsletter */
 .exp33-newsletter {
 	margin-top: 13px;
 	width: 100%;
