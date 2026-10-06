@@ -1,11 +1,4 @@
-/* ======================================
-   SETTINGS APP - LIGHT & SIMPLE UI
-   ====================================== */
-
-/* Import clean fonts */
 @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap');
-
-/* Window-specific styling */
 .settings-app-window {
     width: 950px;
     height: 700px;
@@ -21,16 +14,12 @@
     border-radius: 0 0 8px 8px;
     background: #ffffff;
 }
-
-/* Main Container */
 .settings-app {
     display: flex;
     height: 100%;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     background: #ffffff;
 }
-
-/* Sidebar Navigation */
 .settings-sidebar {
     width: 260px;
     background: #f8f9fa;
@@ -75,30 +64,24 @@
 .settings-category span {
     font-size: 14px;
 }
-
-/* Content Area - FORCE MAXIMUM HEIGHT */
 .settings-content {
     flex: 1;
     padding: 30px;
     overflow-y: auto;
     background: #ffffff;
-    /* FORCE maximum height regardless of window size */
     height: 100%;
     min-height: 0;
     max-height: 100%;
     display: flex;
     flex-direction: column;
-    /* Ensure it takes all available space */
     flex-grow: 1;
     flex-shrink: 1;
     flex-basis: 0;
 }
 
 .settings-content > .settings-section {
-    /* Each settings section should expand to fill the available space */
     flex: 1;
     display: none;
-    /* Ensure sections take full height */
     min-height: 0;
     height: 100%;
 }
@@ -107,7 +90,6 @@
     display: flex;
     flex-direction: column;
     animation: fadeIn 0.3s ease-out;
-    /* Force full height for active section */
     flex: 1;
     height: 100%;
 }
@@ -122,8 +104,6 @@
         transform: translateY(0);
     }
 }
-
-/* Section Headers */
 .settings-section h2 {
     margin: 0 0 24px 0;
     font-size: 24px;
@@ -132,8 +112,6 @@
     border-bottom: 2px solid #e9ecef;
     padding-bottom: 8px;
 }
-
-/* Settings Groups */
 .settings-group {
     margin-bottom: 32px;
     background: #f8f9fa;
@@ -148,8 +126,6 @@
     font-weight: 600;
     color: #495057;
 }
-
-/* Settings Items */
 .settings-item {
     margin-bottom: 16px;
     display: flex;
@@ -166,8 +142,6 @@
     color: #495057;
     font-weight: 500;
 }
-
-/* Form Controls */
 .settings-item input[type="text"],
 .settings-item input[type="password"],
 .settings-item select {
@@ -188,8 +162,6 @@
     border-color: #0d6efd;
     box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
 }
-
-/* File Input Styling - Version Moderne */
 .file-input-container {
     display: flex;
     align-items: center;
@@ -267,8 +239,6 @@
     margin-top: 4px;
     display: block;
 }
-
-/* Radio Groups */
 .radio-group {
     display: flex;
     gap: 16px;
@@ -297,8 +267,6 @@
     height: 16px;
     accent-color: #0d6efd;
 }
-
-/* Checkboxes */
 .settings-item input[type="checkbox"] {
     margin: 0;
     width: 16px;
@@ -312,27 +280,6 @@
     cursor: pointer;
     font-weight: 500;
     gap: 8px;
-}
-
-/* Buttons */
-.btn-primary {
-    background: #0d6efd;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: inherit;
-}
-
-.btn-primary:hover {
-    background: #0b5ed7;
 }
 
 .btn-secondary {
@@ -355,8 +302,6 @@
     background: #e9ecef;
     border-color: #adb5bd;
 }
-
-/* Button styling applied to all buttons */
 button {
     background: #0d6efd;
     color: white;
@@ -387,64 +332,6 @@ button.btn-secondary:hover {
     background: #e9ecef;
     border-color: #adb5bd;
 }
-
-/* User Profile Display */
-.user-profile-display {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    border: 1px solid #dee2e6;
-}
-
-.user-avatar-large {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid #dee2e6;
-    flex-shrink: 0;
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.user-avatar-large img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    border-radius: 50%;
-}
-
-/* Profile image styling */
-#userProfileImage {
-    width: 100% !important;
-    height: 100% !important;
-    border-radius: 50% !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    border: none !important;
-}
-
-.user-info h4 {
-    margin: 0 0 4px 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #212529;
-}
-
-.user-info p {
-    margin: 0;
-    font-size: 14px;
-    color: #6c757d;
-}
-
-/* Wallpaper Preview */
 .wallpaper-preview {
     margin-bottom: 16px;
     text-align: center;
@@ -457,8 +344,6 @@ button.btn-secondary:hover {
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-
-/* Wallpaper feedback */
 .wallpaper-feedback {
     padding: 8px 12px;
     margin-top: 8px;
@@ -486,8 +371,6 @@ button.btn-secondary:hover {
     85% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-5px); }
 }
-
-/* System Info Cards */
 .system-info-card {
     background: #ffffff;
     border-radius: 6px;
@@ -495,31 +378,6 @@ button.btn-secondary:hover {
     border: 1px solid #dee2e6;
     margin-bottom: 12px;
 }
-
-/* Feature List */
-.feature-list {
-    line-height: 1.6;
-    color: #495057;
-    font-size: 14px;
-    list-style: none;
-    padding: 0;
-}
-
-.feature-list li {
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.feature-list li::before {
-    content: '✓';
-    color: #198754;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-/* OS Info Styling */
 .os-info {
     margin-bottom: 16px;
 }
@@ -529,15 +387,6 @@ button.btn-secondary:hover {
     align-items: center;
     gap: 16px;
     padding: 16px 0;
-}
-
-.os-icon {
-    font-size: 48px;
-    color: #0078d4;
-    width: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .os-icon-img {
@@ -563,8 +412,6 @@ button.btn-secondary:hover {
     color: #6c757d;
     opacity: 0.8;
 }
-
-/* Technical Specifications */
 .tech-specs, .dev-info {
     display: flex;
     flex-direction: column;
@@ -589,8 +436,6 @@ button.btn-secondary:hover {
     font-weight: 600;
     min-width: 140px;
 }
-
-/* Animations et effets pour les boutons file */
 .btn-file-upload {
     position: relative;
     overflow: hidden;

@@ -1,4 +1,3 @@
-/* Clock App Styles */
 .clock-container {
     display: flex;
     flex-direction: column;
@@ -51,17 +50,12 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
 }
-
-/* Window-specific styling */
 .clock-app-window {
     width: 450px;
     height: 500px;
     min-width: 450px;
     min-height: 500px;
-    /* Pas de max-width ni max-height pour permettre le redimensionnement libre */
 }
-
-/* Animation for smooth transitions */
 .clock-container {
     animation: clockFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -76,8 +70,6 @@
         transform: translateY(0) scale(1);
     }
 }
-
-/* Responsive adjustments */
 @media (max-width: 480px) {
     .clock-app-window {
         width: 300px;
@@ -85,21 +77,19 @@
         min-width: 260px;
         min-height: 180px;
     }
-    
+
     .clock-container {
         padding: 25px 20px;
     }
-    
+
     .time {
         font-size: 2.2rem;
     }
-    
+
     .date {
         font-size: 0.95rem;
     }
 }
-
-/* Analog Clock */
 .analog-clock {
     position: relative;
     margin-bottom: 20px;
@@ -125,8 +115,6 @@
     transform: translate(-50%, -50%);
     z-index: 10;
 }
-
-/* Clock Numbers */
 .clock-numbers {
     position: absolute;
     top: 0;
@@ -165,8 +153,6 @@
     top: 50%;
     transform: translateY(-50%);
 }
-
-/* Clock Ticks */
 .clock-ticks {
     position: absolute;
     top: 0;
@@ -198,8 +184,6 @@
 .tick-9 { transform: translateX(-50%) rotate(270deg); }
 .tick-10 { transform: translateX(-50%) rotate(300deg); }
 .tick-11 { transform: translateX(-50%) rotate(330deg); }
-
-/* Clock Hands */
 .hour-hand,
 .minute-hand,
 .second-hand {

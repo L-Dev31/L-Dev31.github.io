@@ -12,22 +12,18 @@ if (typeof SettingsApp === 'undefined') {
             this.windowManager = options.windowManager;
             this.appConfig = options.appConfig;
             
-            console.log('✅ Settings app initialized');
             return true;
         } catch (error) {
-            console.error('❌ Failed to initialize Settings app:', error);
+            console.error('Failed to initialize Settings app:', error);
             return false;
         }
     }
 
     async open() {
-        console.log('🔧 Opening Settings app...');
         
         if (this.windowId && this.windowManager) {
-            // Window already exists, just focus it
             const windowObj = this.windowManager.getWindow(this.windowId);
             if (windowObj) {
-                console.log('✅ Settings window already exists, focusing...');
                 if (windowObj.isMinimized) {
                     this.windowManager.restoreWindow(this.windowId);
                 } else {
@@ -38,10 +34,8 @@ if (typeof SettingsApp === 'undefined') {
         }
 
         try {
-            // Create the main content
             const content = this.createSettingsContent();
             
-            // Create window
             const windowObj = this.windowManager.createWindow({
                 id: `settings-${Date.now()}`,
                 title: 'Settings',
@@ -56,14 +50,12 @@ if (typeof SettingsApp === 'undefined') {
             });
 
             this.windowId = windowObj.id;
-            console.log('✅ Settings window created with ID:', this.windowId);
             
             this.setupEventListeners();
             this.loadCurrentSettings();
             
-            console.log('✅ Settings app opened successfully');
         } catch (error) {
-            console.error('❌ Failed to open Settings app:', error);
+            console.error('Failed to open Settings app:', error);
         }
     }
 
@@ -211,14 +203,12 @@ if (typeof SettingsApp === 'undefined') {
 
         const element = window.element;
 
-        // Category navigation
         element.querySelectorAll('.settings-category').forEach(category => {
             category.addEventListener('click', () => {
                 this.switchCategory(category.dataset.category);
             });
         });
 
-        // Taskbar settings
         element.querySelectorAll('input[name="taskbarPosition"]').forEach(input => {
             input.addEventListener('change', (e) => {
                 this.updateTaskbarPosition(e.target.value);
@@ -243,7 +233,6 @@ if (typeof SettingsApp === 'undefined') {
         if (resetWallpaper) {
             resetWallpaper.addEventListener('click', () => {
                 this.resetWallpaper();
-                // Reset file input and filename display
                 const wallpaperInput = element.querySelector('#wallpaperInput');
                 if (wallpaperInput) {
                     wallpaperInput.value = '';
@@ -259,13 +248,11 @@ if (typeof SettingsApp === 'undefined') {
 
         const element = window.element;
         
-        // Update navigation
         element.querySelectorAll('.settings-category').forEach(item => {
             item.classList.remove('active');
         });
         element.querySelector(`[data-category="${categoryName}"]`).classList.add('active');
 
-        // Update content
         element.querySelectorAll('.settings-section').forEach(panel => {
             panel.classList.remove('active');
         });
@@ -273,10 +260,8 @@ if (typeof SettingsApp === 'undefined') {
 
         this.currentCategory = categoryName;
 
-        // Update footer
         this.windowManager.setWindowFooter(this.windowId, `Settings • ${this.getCategoryTitle(categoryName)}`);
 
-        // Load category-specific data
         if (categoryName === 'about') {
             this.loadSystemInfo();
         } else if (categoryName === 'wallpaper') {
@@ -299,12 +284,10 @@ if (typeof SettingsApp === 'undefined') {
 
         const element = window.element;
 
-        // Load current taskbar settings - try from taskbarManager first, then localStorage
         try {
             let currentPosition = 'bottom';
             let currentAlignment = 'center';
             
-            // Get current settings from taskbarManager if available
             if (window.taskbarManager && window.taskbarManager.settings) {
                 currentPosition = window.taskbarManager.settings.taskbarPosition || 'bottom';
                 currentAlignment = window.taskbarManager.settings.taskbarAlignment || 'center';
@@ -315,17 +298,14 @@ if (typeof SettingsApp === 'undefined') {
                 currentAlignment = settings.taskbarAlignment || 'center';
             }
             
-            // Update radio buttons
             const positionInput = element.querySelector(`input[name="taskbarPosition"][value="${currentPosition}"]`);
             const alignmentInput = element.querySelector(`input[name="taskbarAlignment"][value="${currentAlignment}"]`);
             
             if (positionInput) {
                 positionInput.checked = true;
-                console.log('✅ Loaded taskbar position:', currentPosition);
             }
             if (alignmentInput) {
                 alignmentInput.checked = true;
-                console.log('✅ Loaded taskbar alignment:', currentAlignment);
             }
         } catch (error) {
             console.warn('Could not load taskbar settings:', error);
@@ -349,30 +329,18 @@ if (typeof SettingsApp === 'undefined') {
     }
 
     updateTaskbarPosition(position) {
-        // Use the global taskbarManager
         if (window.taskbarManager) {
             window.taskbarManager.updateTaskbarPosition(position);
-            console.log('✅ Taskbar position updated to:', position);
         } else {
-            console.warn('⚠️ TaskbarManager not available');
+            console.warn('TaskbarManager not available');
         }
     }
 
     updateTaskbarAlignment(alignment) {
-        // Use the global taskbarManager
         if (window.taskbarManager) {
             window.taskbarManager.updateTaskbarAlignment(alignment);
-            console.log('✅ Taskbar alignment updated to:', alignment);
-            
-            // Debug: log taskbar classes
-            setTimeout(() => {
-                const taskbar = document.getElementById('taskbar');
-                if (taskbar) {
-                    console.log('🔍 Taskbar classes after alignment change:', taskbar.className);
-                }
-            }, 100);
         } else {
-            console.warn('⚠️ TaskbarManager not available');
+            console.warn('TaskbarManager not available');
         }
     }
 
@@ -384,52 +352,43 @@ if (typeof SettingsApp === 'undefined') {
             const imageUrl = e.target.result;
             
             try {
-                // Update desktop background (the main desktop wallpaper)
                 const desktopBackground = document.querySelector('.desktop-background');
                 const desktopBackgroundById = document.getElementById('desktopBackground');
                 
                 if (desktopBackground) {
                     desktopBackground.style.backgroundImage = `url(${imageUrl})`;
-                    console.log('✅ Updated .desktop-background element');
                 }
                 
                 if (desktopBackgroundById) {
                     desktopBackgroundById.style.backgroundImage = `url(${imageUrl})`;
-                    console.log('✅ Updated #desktopBackground element');
                 }
                 
                 // Fallback: also try to update the desktop element itself
                 const desktop = document.querySelector('.desktop');
                 if (desktop && !desktopBackground && !desktopBackgroundById) {
                     desktop.style.backgroundImage = `url(${imageUrl})`;
-                    console.log('✅ Updated .desktop element as fallback');
                 }
                 
-                // Update wallpaper preview in Settings
                 const window = this.windowManager.getWindow(this.windowId);
                 if (window) {
                     const preview = window.element.querySelector('#currentWallpaper');
                     if (preview) {
                         preview.src = imageUrl;
-                        console.log('✅ Updated wallpaper preview');
                     }
                 }
 
-                // Save to localStorage
                 localStorage.setItem('desktop-wallpaper', imageUrl);
                 
-                console.log('✅ Wallpaper updated and saved successfully');
                 
-                // Show feedback to user
                 this.showWallpaperFeedback('Wallpaper updated successfully!', 'success');
             } catch (error) {
-                console.error('❌ Error updating wallpaper:', error);
+                console.error('Error updating wallpaper:', error);
                 this.showWallpaperFeedback('Error updating wallpaper', 'error');
             }
         };
         
         reader.onerror = () => {
-            console.error('❌ Error reading wallpaper file');
+            console.error('Error reading wallpaper file');
             this.showWallpaperFeedback('Error reading file', 'error');
         };
         
@@ -438,46 +397,37 @@ if (typeof SettingsApp === 'undefined') {
 
     resetWallpaper() {
         try {
-            // Reset to default wallpaper (desktop background)
             const desktopBackground = document.querySelector('.desktop-background');
             const desktopBackgroundById = document.getElementById('desktopBackground');
             
             if (desktopBackground) {
                 desktopBackground.style.backgroundImage = `url(images/wallpaper.jpg)`;
-                console.log('✅ Reset .desktop-background element to default');
             }
             
             if (desktopBackgroundById) {
                 desktopBackgroundById.style.backgroundImage = `url(images/wallpaper.jpg)`;
-                console.log('✅ Reset #desktopBackground element to default');
             }
             
             // Fallback: reset desktop style if not found
             const desktop = document.querySelector('.desktop');
             if (desktop && !desktopBackground && !desktopBackgroundById) {
                 desktop.style.backgroundImage = `url(images/wallpaper.jpg)`;
-                console.log('✅ Reset .desktop element as fallback');
             }
             
-            // Update preview in Settings
             const window = this.windowManager.getWindow(this.windowId);
             if (window) {
                 const preview = window.element.querySelector('#currentWallpaper');
                 if (preview) {
                     preview.src = 'images/wallpaper.jpg';
-                    console.log('✅ Reset wallpaper preview');
                 }
             }
 
-            // Remove custom wallpaper from localStorage
             localStorage.removeItem('desktop-wallpaper');
             
-            console.log('✅ Wallpaper reset to default successfully');
             
-            // Show feedback to user
             this.showWallpaperFeedback('Wallpaper reset to default', 'success');
         } catch (error) {
-            console.error('❌ Error resetting wallpaper:', error);
+            console.error('Error resetting wallpaper:', error);
             this.showWallpaperFeedback('Error resetting wallpaper', 'error');
         }
     }
@@ -487,21 +437,17 @@ if (typeof SettingsApp === 'undefined') {
         if (!preview) return;
         
         try {
-            // First check if there's a custom wallpaper in localStorage
             const customWallpaper = localStorage.getItem('desktop-wallpaper');
             if (customWallpaper) {
                 preview.src = customWallpaper;
-                console.log('✅ Using custom wallpaper from localStorage');
                 return;
             }
             
-            // Get actual computed background image from the desktop
             const desktopBackground = document.querySelector('.desktop-background');
             const desktop = document.querySelector('.desktop');
             
             let currentBg = null;
             
-            // Check desktop-background first, then desktop element
             if (desktopBackground) {
                 const backgroundStyle = window.getComputedStyle(desktopBackground);
                 if (backgroundStyle.backgroundImage !== 'none') {
@@ -515,18 +461,15 @@ if (typeof SettingsApp === 'undefined') {
             }
             
             if (currentBg) {
-                // Extract URL from CSS background-image property
                 const urlMatch = currentBg.match(/url\(["']?([^"']*)["']?\)/);
                 if (urlMatch && urlMatch[1]) {
                     preview.src = urlMatch[1];
-                    console.log('✅ Using current desktop background:', urlMatch[1]);
                     return;
                 }
             }
             
             // Final fallback to default wallpaper
             preview.src = 'images/wallpaper.jpg';
-            console.log('✅ Using default wallpaper fallback');
         } catch (error) {
             console.warn('Error updating wallpaper preview:', error);
             preview.src = 'images/wallpaper.jpg';
@@ -534,7 +477,6 @@ if (typeof SettingsApp === 'undefined') {
     }
 
     showMessage(message, type = 'info') {
-        // Notifications désactivées
         return;
     }
 
@@ -544,13 +486,11 @@ if (typeof SettingsApp === 'undefined') {
 
         const element = window.element;
         
-        // Update screen resolution
         const screenRes = element.querySelector('#screenResolution');
         if (screenRes) {
             screenRes.textContent = `${screen.width} × ${screen.height}`;
         }
 
-        // Update browser info
         const browserInfo = element.querySelector('#browserInfo');
         if (browserInfo) {
             const userAgent = navigator.userAgent;
@@ -564,7 +504,6 @@ if (typeof SettingsApp === 'undefined') {
             browserInfo.textContent = browser;
         }
         
-        // Update platform info
         const platformInfo = element.querySelector('#platformInfo');
         if (platformInfo) {
             const platform = navigator.platform || navigator.userAgentData?.platform || 'Unknown';
@@ -577,7 +516,6 @@ if (typeof SettingsApp === 'undefined') {
         if (this.windowId && this.windowManager) {
             this.windowManager.closeWindow(this.windowId);
             this.windowId = null;
-            console.log('✅ Settings window closed');
         }
     }
 
@@ -590,7 +528,6 @@ if (typeof SettingsApp === 'undefined') {
         
         if (fileNameElement) {
             if (file) {
-                // Validation du type de fichier
                 const isValidImage = file.type.startsWith('image/');
                 const validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
                 const fileExtension = file.name.split('.').pop().toLowerCase();
@@ -600,12 +537,11 @@ if (typeof SettingsApp === 'undefined') {
                     fileNameElement.textContent = file.name;
                     fileNameElement.classList.add('has-file');
                     fileNameElement.classList.remove('invalid-file');
-                    console.log('✅ Valid file selected:', file.name);
                 } else {
                     fileNameElement.textContent = `❌ Invalid file: ${file.name}`;
                     fileNameElement.classList.remove('has-file');
                     fileNameElement.classList.add('invalid-file');
-                    console.warn('⚠️ Invalid file type:', file.type);
+                    console.warn('Invalid file type:', file.type);
                 }
             } else {
                 fileNameElement.textContent = 'No file selected';
@@ -620,18 +556,15 @@ if (typeof SettingsApp === 'undefined') {
 
         const element = window.element;
         
-        // Remove existing feedback
         const existingFeedback = element.querySelector('.wallpaper-feedback');
         if (existingFeedback) {
             existingFeedback.remove();
         }
 
-        // Create feedback element
         const feedback = document.createElement('div');
         feedback.className = `wallpaper-feedback ${type}`;
         feedback.textContent = message;
         
-        // Insert after the file input container
         const fileContainer = element.querySelector('.file-input-container');
         if (fileContainer) {
             fileContainer.parentNode.insertBefore(feedback, fileContainer.nextSibling);
@@ -646,8 +579,6 @@ if (typeof SettingsApp === 'undefined') {
     }
 }
 
-// Export for global use
 window.SettingsApp = SettingsApp;
 
-// Close the conditional block
 }

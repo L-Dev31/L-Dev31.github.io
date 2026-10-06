@@ -1,4 +1,3 @@
-// Weather App
 if (typeof WeatherApp === 'undefined') {
     class WeatherApp {
         constructor() {
@@ -54,7 +53,6 @@ if (typeof WeatherApp === 'undefined') {
                 this.windowId = weatherWindow.id;
                 this.setupWeatherElements();
                 
-                console.log('✅ Weather app launched successfully');
                 return weatherWindow;
             } catch (error) {
                 console.error('Failed to initialize Weather app:', error);
@@ -126,7 +124,6 @@ if (typeof WeatherApp === 'undefined') {
         }
 
         startAutoRefresh() {
-            // Refresh immediately
             this.loadWeatherData();
             
             // Then refresh every 5 minutes (300000 ms)
@@ -144,10 +141,8 @@ if (typeof WeatherApp === 'undefined') {
 
         async loadWeatherData() {
             try {
-                // Afficher un état de chargement
                 this.showLoadingState();
                 
-                // Essayer de récupérer les vraies données météo
                 let weather = await this.fetchRealWeatherData();
                 
                 // Si l'API échoue, utiliser des données simulées tropicales réalistes pour Deshaies
@@ -181,13 +176,11 @@ if (typeof WeatherApp === 'undefined') {
                 return this.convertApiDataToWeatherFormat(data);
                 
             } catch (error) {
-                console.log('🌤️ Using demo weather data (API not configured):', error.message);
                 return null;
             }
         }
 
         convertApiDataToWeatherFormat(apiData) {
-            // Map OpenWeatherMap weather codes to our icons
             const weatherIconMap = {
                 '01d': { icon: 'fas fa-sun', condition: 'sunny', bg: 'linear-gradient(135deg, #FDB813 0%, #FF6B35 100%)' },
                 '01n': { icon: 'fas fa-moon', condition: 'clear', bg: 'linear-gradient(135deg, #2C3E50 0%, #4A6741 100%)' },
@@ -236,7 +229,6 @@ if (typeof WeatherApp === 'undefined') {
         }
 
         getFallbackWeatherData() {
-            // Realistic weather data for Deshaies, Guadeloupe (tropical climate)
             const tropicalWeatherConditions = [
                 { 
                     condition: 'sunny', 
@@ -296,18 +288,14 @@ if (typeof WeatherApp === 'undefined') {
                 }
             ];
 
-            // Simulate a selection based on time for more realism
             const hour = new Date().getHours();
             let weatherIndex;
             
             if (hour >= 6 && hour <= 11) {
-                // Morning: often sunny
                 weatherIndex = Math.random() < 0.7 ? 0 : 1;
             } else if (hour >= 12 && hour <= 16) {
-                // Afternoon: can be stormy (rainy season)
                 weatherIndex = Math.random() < 0.4 ? 0 : (Math.random() < 0.5 ? 2 : 3);
             } else {
-                // Evening/night: generally calmer
                 weatherIndex = Math.random() < 0.6 ? 1 : 0;
             }
             
@@ -318,7 +306,6 @@ if (typeof WeatherApp === 'undefined') {
             const container = document.getElementById('weatherContainer');
             if (!container) return;
 
-            // Show loading state
             document.getElementById('cityName').textContent = 'Loading...';
             document.getElementById('countryName').textContent = 'Updating...';
             document.getElementById('temperature').textContent = '--°';
@@ -329,44 +316,34 @@ if (typeof WeatherApp === 'undefined') {
             const container = document.getElementById('weatherContainer');
             if (!container) return;
 
-            // Update background
             container.style.background = weather.bg;
 
-            // Update city info
             document.getElementById('cityName').textContent = this.currentLocation;
             document.getElementById('countryName').textContent = 'Lesser Antilles';
 
-            // Update main weather icon
             const mainIcon = document.getElementById('mainWeatherIcon');
             mainIcon.className = weather.icon;
 
-            // Update temperature
             document.getElementById('temperature').textContent = `${weather.temp}°`;
             document.getElementById('feelsLike').textContent = `Feels like ${weather.feelsLike}°`;
 
-            // Update weather condition
             document.getElementById('weatherCondition').textContent = weather.description;
             document.getElementById('humidity').textContent = `Humidity: ${weather.humidity}%`;
 
-            // Update details
             document.getElementById('windSpeed').textContent = `${weather.wind} km/h`;
             document.getElementById('uvIndex').textContent = weather.uvIndex;
             document.getElementById('sunrise').textContent = weather.sunrise;
             document.getElementById('sunset').textContent = weather.sunset;
             document.getElementById('cloudCover').textContent = `${weather.cloudCover}%`;
 
-            // Update last updated time with auto-refresh indicator
-            // Update last updated time
             const now = new Date();
             document.getElementById('lastUpdated').textContent = 
                 `Updated: ${now.toLocaleTimeString()}`;
         }
 
-        // Method called when window is closed
         onWindowClose() {
             this.stopAutoRefresh();
             this.windowId = null;
-            console.log('🌤️ Weather app closed, auto-refresh stopped');
         }
 
         showError() {
@@ -383,6 +360,5 @@ if (typeof WeatherApp === 'undefined') {
         }
     }
 
-    // Make WeatherApp globally available
     window.WeatherApp = WeatherApp;
 }

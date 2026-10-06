@@ -21,16 +21,13 @@
     <link rel="stylesheet" href="apps/app9/style.css">
 </head>
 <body>
-    <!-- Desktop Background -->
     <div class="desktop-background" id="desktopBackground"></div>
     
-    <!-- Desktop -->
     <div class="desktop active" id="desktop">
         <!-- Desktop items will be loaded dynamically -->
         <div class="desktop-icons" id="desktopIcons"></div>
     </div>
 
-    <!-- Taskbar -->
     <div class="taskbar" id="taskbar">
         <div class="taskbar-center" id="taskbarCenter">
             <div class="start-button" id="startButton">
@@ -53,7 +50,6 @@
         </div>
     </div>
 
-    <!-- Settings Panel (moved outside desktop for proper z-index) -->
     <div class="settings-panel" id="settingsPanel">
         <div class="settings-header">
             <h3>Recommended</h3>
@@ -84,13 +80,10 @@
     <!-- Windows will be injected here by WindowManager -->
     <div id="windows-container"></div>
 
-    <!-- Fade overlay for transitions -->
     <div id="fadeOverlay"></div>
 
-    <!-- Background slideshow elements for desktop -->
     <div class="image-indicators" id="imageIndicators" style="display: none;"></div>
 
-    <!-- Mark session as authenticated -->
     <script>sessionStorage.setItem('authenticated', 'true');</script>
 
     <script src="Scripts/get-directory.js"></script>

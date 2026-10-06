@@ -1,5 +1,5 @@
 const CONFIG = { imageFolder:'images/BG/', slideInterval:30000, password:'312007' };
-let currentImageIndex = 0, localImages = [], autoChangeInterval = null, isLoginMode = false, userProfile = null, currentGridConfig = null, currentGridPositions = [];
+let currentImageIndex = 0, localImages = [], autoChangeInterval = null, isLoginMode = false, userProfile = null, currentGridConfig = null;
 const knownImages = ['1.jpg','2.jpg','3.jpg','4.jpg','5.jpg','6.jpg','219692.jpg','7704801.jpg','8957663.jpg'];
 
 async function loadImages() {
@@ -112,12 +112,6 @@ function createGridPositions(g) {
     for (let r = 0; r < g.rows; r++) for (let c = 0; c < g.cols; c++) p.push({ x:g.padding+(c*g.cellWidth), y:g.paddingY+(r*g.cellHeight), row:r, col:c });
     return p;
 }
-function findClosestGridPosition(x, y) {
-    if (!currentGridPositions.length) return null;
-    let closest = currentGridPositions[0], minD = Infinity;
-    currentGridPositions.forEach(p => { const d = Math.hypot(p.x-x, p.y-y); if (d < minD) { minD = d; closest = p; } });
-    return closest;
-}
 async function loadDesktopItems() {
     try {
         const items = await fetchHomeItemsFromServer();
@@ -128,7 +122,6 @@ async function loadDesktopItems() {
         const gc = calculateDesktopGrid();
         currentGridConfig = gc;
         const gp = createGridPositions(gc);
-        currentGridPositions = gp;
         const saved = loadIconPositions();
         const used = new Set();
         const sk = (r,c) => r+','+c;
@@ -444,13 +437,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-function handleWindowResize() {
-    clearTimeout(window.resizeTimeout);
-    window.resizeTimeout = setTimeout(() => {
-        const g = calculateDesktopGrid();
-        if (!currentGridConfig || currentGridConfig.rows !== g.rows || currentGridConfig.cols !== g.cols) loadDesktopItems();
-    }, 250);
-}
 const ICON_POSITIONS_KEY = 'desktop-icon-positions';
 function loadIconPositions() { try { const s = localStorage.getItem(ICON_POSITIONS_KEY); return s ? JSON.parse(s) : {}; } catch(e) { return {}; } }
 function saveIconPositions(p) { try { localStorage.setItem(ICON_POSITIONS_KEY, JSON.stringify(p)); } catch(e) {} }
@@ -507,10 +493,6 @@ function getIconAtPosition(row, col) {
 function swapIconPositions(i1, i2) {
     const r1 = parseInt(i1.dataset.gridRow), c1 = parseInt(i1.dataset.gridCol), co1 = getGridCoordinates(r1,c1);
     i2.style.left = co1.x+'px'; i2.style.top = co1.y+'px'; i2.dataset.gridRow = r1; i2.dataset.gridCol = c1;
-}
-function isPositionOccupied(row, col) {
-    for (const icon of document.querySelectorAll('.desktop-item')) { if (icon !== draggedIcon && parseInt(icon.dataset.gridRow)===row && parseInt(icon.dataset.gridCol)===col) return true; }
-    return false;
 }
 function getGridCoordinates(row, col) {
     return { x:currentGridConfig.padding+(col*currentGridConfig.cellWidth), y:currentGridConfig.paddingY+(row*currentGridConfig.cellHeight), row, col };

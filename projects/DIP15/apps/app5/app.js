@@ -22,7 +22,7 @@ class PrismApp {
                 window.prismAppInstance = this;
                 return true;
             } catch (error) {
-                console.error('❌ Failed to initialize Prism app:', error);
+                console.error('Failed to initialize Prism app:', error);
                 return false;
             }
         }
@@ -57,7 +57,6 @@ class PrismApp {
                 await this.loadDefaultPlaylist();
             }
             
-            console.log('✅ Prism app opened successfully');
         }
 
         createPrismContent() {
@@ -137,7 +136,6 @@ class PrismApp {
 
             const element = window.element;
 
-            // Control buttons
             element.querySelector('#playPauseBtn')?.addEventListener('click', () => this.togglePlayPause());
             element.querySelector('#prevBtn')?.addEventListener('click', () => this.previousTrack());
             element.querySelector('#nextBtn')?.addEventListener('click', () => this.nextTrack());
@@ -145,14 +143,12 @@ class PrismApp {
             element.querySelector('#repeatBtn')?.addEventListener('click', () => this.toggleRepeat());
             element.querySelector('#loadMusicBtn')?.addEventListener('click', () => this.loadMusicFolder());
 
-            // Sliders
             const progressSlider = element.querySelector('#progressSlider');
             const volumeSlider = element.querySelector('#volumeSlider');
 
             progressSlider?.addEventListener('input', (e) => this.seekTo(e.target.value));
             volumeSlider?.addEventListener('input', (e) => this.setVolume(e.target.value / 100));
 
-            // Audio events
             if (this.audio) {
                 this.audio.addEventListener('timeupdate', () => this.updateProgress());
                 this.audio.addEventListener('ended', () => this.onTrackEnded());
@@ -167,7 +163,6 @@ class PrismApp {
                     this.audio = null;
                 }
 
-                // Create audio element safely (encode URI, preload metadata)
                 this.audio = new Audio();
                 this.audio.preload = 'metadata';
                 this.audio.crossOrigin = 'anonymous';
@@ -188,7 +183,6 @@ class PrismApp {
                 this.updatePlayButton();
                 this.updateCoverImage();
 
-                // Add to playlist if not already there
                 const existingIndex = this.playlist.findIndex(track => track.path === filePath);
                 if (existingIndex === -1) {
                     this.playlist.push(this.currentTrack);
@@ -198,9 +192,8 @@ class PrismApp {
                 }
 
                 this.renderPlaylist();
-                console.log('✅ Track loaded:', fileName);
             } catch (error) {
-                console.error('❌ Error loading track:', error);
+                console.error('Error loading track:', error);
             }
         }
 
@@ -227,7 +220,7 @@ class PrismApp {
 
                 this.renderPlaylist();
             } catch (error) {
-                console.error('❌ Error loading default playlist:', error);
+                console.error('Error loading default playlist:', error);
                 this.playlist = [];
                 this.renderPlaylist();
             }
@@ -248,7 +241,6 @@ class PrismApp {
             this.audio.addEventListener('loadedmetadata', () => this.onTrackLoaded());
             this.audio.addEventListener('error', (e) => {
                 console.error('Audio error event:', e, 'src=', this.audio?.src, 'mediaError=', this.audio?.error);
-                // Attempt a quick fetch to diagnose network/404 issues (best-effort)
                 try {
                     fetch(this.audio.src, { method: 'HEAD' }).then(res => {
                         console.warn('Audio HEAD response', res.status, res.statusText);
@@ -379,7 +371,6 @@ class PrismApp {
             this.isPlaying = false;
             this.updatePlayButton();
 
-            // Try to provide actionable diagnosis in UI console (keeps UI resilient)
             const window = this.windowManager.getWindow(this.windowId);
             if (window) {
                 const playlistContainer = window.element.querySelector('#playlistContainer');
@@ -457,8 +448,6 @@ class PrismApp {
         }
 
         loadMusicFolder() {
-            // This would typically open a file dialog
-            // For now, we'll just reload the default playlist
             this.loadDefaultPlaylist();
         }
 
@@ -490,7 +479,6 @@ class PrismApp {
             window.prismAppInstance = null;
         }
 
-        console.log('🎵 Prism app closed');
     }
         updateCoverImage() {
             const window = this.windowManager.getWindow(this.windowId);

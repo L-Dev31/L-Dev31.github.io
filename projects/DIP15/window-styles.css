@@ -22,9 +22,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, 
-        rgba(0, 120, 212, 0.08) 0%, 
-        rgba(0, 120, 212, 0.03) 50%, 
+    background: linear-gradient(45deg,
+        rgba(0, 120, 212, 0.08) 0%,
+        rgba(0, 120, 212, 0.03) 50%,
         rgba(0, 120, 212, 0.08) 100%);
     border-radius: 6px;
     animation: snapPreviewPulse 2s ease-in-out infinite;
@@ -266,9 +266,6 @@
         opacity: 1;
         transform: scale(1) translateY(0);
     }
-}
-.app-window.animating {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 @media (max-width: 768px) {
     .app-window {

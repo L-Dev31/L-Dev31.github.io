@@ -15,39 +15,31 @@ if (typeof FilesApp === 'undefined') {
             this.windowManager = options.windowManager;
             this.appConfig = options.appConfig;
             
-            // Initialize DirectoryFetcher
             this.directoryFetcher = new DirectoryFetcher();
             
-            // Set apps data if provided
             if (options.appsData) {
                 this.directoryFetcher.setAppsData(options.appsData);
             }
             
-            // Store global reference for window manager
             window.filesAppInstance = this;
             
-            // Open the window
             await this.open(options.path || 'Home');
             
-            console.log('✅ Files app initialized');
             return true;
         } catch (error) {
-            console.error('❌ Failed to initialize Files app:', error);
+            console.error('Failed to initialize Files app:', error);
             return false;
         }
     }
 
     async open(path = 'Home') {
         if (this.windowId && this.windowManager) {
-            // Window already exists, just navigate
             await this.navigate(path);
             return;
         }
 
-        // Create the main content
         const content = await this.createFileManagerContent();
         
-        // Create window
         const windowObj = this.windowManager.createWindow({
             id: `files-${Date.now()}`,
             title: 'Files',
@@ -65,13 +57,10 @@ if (typeof FilesApp === 'undefined') {
         this.history = [path];
         this.historyIndex = 0;
 
-        // Setup app-specific event listeners
         this.setupEventListeners();
         
-        // Add refresh button
         await this.toggleDetectionMode();
         
-        // Load initial content
         await this.updateContent();
     }
 
@@ -122,14 +111,12 @@ if (typeof FilesApp === 'undefined') {
 
         const element = window.element;
 
-        // Toolbar buttons
         element.querySelector('#filesBackBtn')?.addEventListener('click', () => this.goBack());
         element.querySelector('#filesForwardBtn')?.addEventListener('click', () => this.goForward());
         element.querySelector('#filesUpBtn')?.addEventListener('click', () => this.goUp());
         element.querySelector('#filesGridViewBtn')?.addEventListener('click', () => this.setView('grid'));
         element.querySelector('#filesListViewBtn')?.addEventListener('click', () => this.setView('list'));
 
-        // File item clicks
         element.querySelector('#filesGrid')?.addEventListener('click', async (e) => {
             const fileItem = e.target.closest('.files-item');
             if (fileItem) {
@@ -142,81 +129,66 @@ if (typeof FilesApp === 'undefined') {
             }
         });
 
-        // File item double-clicks
         element.querySelector('#filesGrid')?.addEventListener('dblclick', async (e) => {
             const fileItem = e.target.closest('.files-item');
             if (fileItem) {
                 const itemName = fileItem.dataset.name;
                 const itemType = fileItem.dataset.type;
                 
-                console.log(`🔍 Double-click on item: ${itemName} (type: ${itemType})`);
                 
                 if (itemType === 'file') {
-                    // Use Universal Launcher for file opening
                     if (window.universalLauncher) {
                         const item = { name: itemName, type: 'file' };
                         const launchItem = window.universalLauncher.createLaunchItem(item);
-                        console.log('🚀 Launching file with Universal Launcher:', launchItem);
                         await window.universalLauncher.launch(launchItem, { 
                             basePath: 'home',
                             currentPath: this.currentPath === 'Home' ? '' : this.currentPath
                         });
                     } else {
                         // Fallback to old system
-                        console.log('🔧 Using fallback file opening system');
                         await this.openFile(itemName);
                     }
                 } else if (itemType === 'app') {
-                    // Use Universal Launcher for app opening
                     if (window.universalLauncher) {
-                        // Find the app data from the current items
                         const items = await this.getFolderContent(this.currentPath);
                         const appItem = items.find(i => i.name === itemName);
-                        console.log('🔍 Found app item:', appItem);
                         if (appItem) {
                             const launchItem = window.universalLauncher.createLaunchItem(appItem);
-                            console.log('🚀 Launching app with Universal Launcher:', launchItem);
                             await window.universalLauncher.launch(launchItem);
                         } else {
-                            console.warn('❌ App item not found in current folder content');
+                            console.warn('App item not found in current folder content');
                         }
                     } else {
                         // Fallback - need to find app ID
-                        console.log('🔧 Using fallback app opening system');
                         const items = await this.getFolderContent(this.currentPath);
                         const appItem = items.find(i => i.name === itemName);
                         if (appItem && (appItem.appId || appItem.id)) {
-                            console.log('🚀 Launching app with fallback:', appItem.appId || appItem.id);
                             if (window.appLauncher) {
                                 window.appLauncher.launchApp(appItem.appId || appItem.id);
                             } else {
-                                console.error('❌ AppLauncher not available');
+                                console.error('AppLauncher not available');
                             }
                         } else {
-                            console.warn('❌ App item not found or missing ID:', appItem);
+                            console.warn('App item not found or missing ID:', appItem);
                         }
                     }
                 } else {
-                    console.log(`ℹ️ Unknown item type: ${itemType}, attempting to handle as generic item`);
-                    // Try to handle as generic item
                     if (window.universalLauncher) {
                         const items = await this.getFolderContent(this.currentPath);
                         const item = items.find(i => i.name === itemName);
                         if (item) {
                             const launchItem = window.universalLauncher.createLaunchItem(item);
-                            console.log('🚀 Launching generic item with Universal Launcher:', launchItem);
                             await window.universalLauncher.launch(launchItem);
                         } else {
-                            console.warn('❌ No item found for generic launch');
+                            console.warn('No item found for generic launch');
                         }
                     } else {
-                        console.warn('❌ Universal Launcher not available for generic item');
+                        console.warn('Universal Launcher not available for generic item');
                     }
                 }
             }
         });
 
-        // Path navigation
         element.querySelector('.files-address-bar')?.addEventListener('click', async (e) => {
             const pathSegment = e.target.closest('.files-path-segment');
             if (pathSegment && pathSegment.dataset.path) {
@@ -228,14 +200,12 @@ if (typeof FilesApp === 'undefined') {
     async navigate(path) {
         this.currentPath = path;
         
-        // Add to history if navigating forward
         if (this.historyIndex < this.history.length - 1) {
             this.history = this.history.slice(0, this.historyIndex + 1);
         }
         this.history.push(path);
         this.historyIndex = this.history.length - 1;
         
-        // Update content and navigation
         await this.updateContent();
         this.updateNavigation();
     }
@@ -245,17 +215,14 @@ if (typeof FilesApp === 'undefined') {
             this.windowManager.closeWindow(this.windowId);
         }
         
-        // Clean up global reference
         if (window.filesAppInstance === this) {
             window.filesAppInstance = null;
         }
         
-        console.log('📁 Files app closed');
     }
 
     async navigateTo(path) {
         if (this.currentPath !== path) {
-            // Add to history if navigating forward
             if (this.historyIndex < this.history.length - 1) {
                 this.history = this.history.slice(0, this.historyIndex + 1);
             }
@@ -320,7 +287,6 @@ if (typeof FilesApp === 'undefined') {
         const filesGrid = window.element.querySelector('#filesGrid');
         if (!filesGrid) return;
         
-        // Show loading state
         filesGrid.innerHTML = '<div style="padding: 20px; text-align: center; color: rgba(0,0,0,0.6);">Loading...</div>';
         
         try {
@@ -350,7 +316,6 @@ if (typeof FilesApp === 'undefined') {
                 });
             }
             
-            // Update footer with item count
             if (this.windowManager) {
                 this.windowManager.updateFooter(this.windowId, this.getFooterText());
             }
@@ -363,7 +328,6 @@ if (typeof FilesApp === 'undefined') {
             }
         }
         
-        // Update window title
         if (this.windowManager) {
             const windowObj = this.windowManager.getWindow(this.windowId);
             if (windowObj) {
@@ -386,7 +350,6 @@ if (typeof FilesApp === 'undefined') {
         const filesContainer = windowObj.element.querySelector('.files-container');
         const filesGrid = windowObj.element.querySelector('#filesGrid');
 
-        // Ensure visibility of all components
         [filesContainer, filesContent, filesGrid].forEach(el => {
             if (el) {
                 el.style.visibility = 'visible';
@@ -394,7 +357,6 @@ if (typeof FilesApp === 'undefined') {
             }
         });
 
-        // Force reflow
         if (filesContent) void filesContent.offsetHeight;
     }
 
@@ -449,7 +411,6 @@ if (typeof FilesApp === 'undefined') {
         return this.updateFooterText();
     }
 
-    // Method to update footer text with current directory info
     updateFooterText() {
         const window = this.windowManager.getWindow(this.windowId);
         if (!window) return '';
@@ -469,7 +430,6 @@ if (typeof FilesApp === 'undefined') {
             footerText = `${itemCount} items`;
         }
         
-        // Add detection mode indicator
         footerText += ' • Auto-detection enabled';
         
         return footerText;
@@ -479,7 +439,6 @@ if (typeof FilesApp === 'undefined') {
         const window = this.windowManager.getWindow(this.windowId);
         if (!window) return;
 
-        // Update toolbar buttons
         const backBtn = window.element.querySelector('#filesBackBtn');
         const forwardBtn = window.element.querySelector('#filesForwardBtn');
         const upBtn = window.element.querySelector('#filesUpBtn');
@@ -488,7 +447,6 @@ if (typeof FilesApp === 'undefined') {
         if (forwardBtn) forwardBtn.disabled = this.historyIndex >= this.history.length - 1;
         if (upBtn) upBtn.disabled = this.currentPath === 'Home';
         
-        // Update address bar
         const addressBar = window.element.querySelector('.files-address-bar');
         if (addressBar) {
             if (this.currentPath === 'Home') {
@@ -509,9 +467,7 @@ if (typeof FilesApp === 'undefined') {
         
         if (textExtensions.includes(fileExtension)) {
             try {
-                // Launch Notes app with the file content
                 if (window.appLauncher) {
-                    // Read file content if it's a real file
                     let content = '';
                     try {
                         const filePath = `home/${this.currentPath}/${fileName}`.replace('//', '/');
@@ -532,14 +488,10 @@ if (typeof FilesApp === 'undefined') {
             } catch (error) {
                 console.error('Error opening file:', error);
             }
-        } else {
-            console.log(`File type .${fileExtension} not supported for opening`);
         }
     }
 
-    // Method to refresh directory content with automatic detection
     async refreshContent() {
-        console.log('🔄 Refreshing directory content...');
         
         const window = this.windowManager.getWindow(this.windowId);
         if (!window) return;
@@ -547,7 +499,6 @@ if (typeof FilesApp === 'undefined') {
         const refreshBtn = window.element.querySelector('#refreshBtn');
         const filesGrid = window.element.querySelector('#filesGrid');
         
-        // Show loading state
         if (refreshBtn) {
             refreshBtn.disabled = true;
             refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -561,7 +512,6 @@ if (typeof FilesApp === 'undefined') {
             await this.updateContent();
             this.forceLayoutRecalc();
             
-            // Success feedback
             if (refreshBtn) {
                 refreshBtn.innerHTML = '<i class="fas fa-check"></i>';
                 setTimeout(() => {
@@ -572,7 +522,6 @@ if (typeof FilesApp === 'undefined') {
         } catch (error) {
             console.error('Error refreshing content:', error);
             
-            // Error feedback
             if (refreshBtn) {
                 refreshBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
                 setTimeout(() => {
@@ -606,8 +555,6 @@ if (typeof FilesApp === 'undefined') {
     }
 }
 
-// Export for global use
 window.FilesApp = FilesApp;
 
-// Close the conditional block
 }

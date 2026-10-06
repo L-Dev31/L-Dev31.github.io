@@ -1,14 +1,8 @@
-/* ======================================
-   NOTES APP STYLES - MODERN NOTEPAD
-   ====================================== */
-
-/* Window-specific styling */
 .notes-app-window {
     width: 600px;
     height: 500px;
     min-width: 450px;
     min-height: 350px;
-    /* Pas de max-width ni max-height pour permettre le redimensionnement libre */
 }
 
 .notes-app-window .window-content {
@@ -18,16 +12,12 @@
     height: 100%;
     background: #ffffff;
 }
-
-/* Notes Container */
 .notes-container {
     display: flex;
     flex-direction: column;
     height: 100%;
     background: #ffffff;
 }
-
-/* Toolbar */
 .notes-toolbar {
     display: flex;
     justify-content: space-between;
@@ -98,8 +88,6 @@
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
-
-/* Editor Area */
 .notes-editor {
     flex: 1;
     padding: 0;
@@ -133,8 +121,6 @@
     color: #adb5bd;
     font-style: italic;
 }
-
-/* Scrollbar styling for textarea */
 #notes-textarea::-webkit-scrollbar {
     width: 8px;
 }
@@ -151,32 +137,10 @@
 #notes-textarea::-webkit-scrollbar-thumb:hover {
     background: #a8b1ba;
 }
-
-/* Selection styling */
 #notes-textarea::selection {
     background: rgba(0, 123, 255, 0.2);
     color: inherit;
 }
-
-/* Line numbers (optional enhancement) */
-.notes-editor.with-line-numbers {
-    display: flex;
-}
-
-.line-numbers {
-    width: 50px;
-    background: #f8f9fa;
-    border-right: 1px solid #e9ecef;
-    padding: 20px 10px;
-    font-family: 'SF Mono', 'Monaco', 'Consolas', 'Ubuntu Mono', monospace;
-    font-size: 12px;
-    line-height: 1.6;
-    color: #6c757d;
-    user-select: none;
-    overflow: hidden;
-}
-
-/* Animation for opening */
 .notes-container {
     animation: slideInUp 0.3s ease-out;
 }

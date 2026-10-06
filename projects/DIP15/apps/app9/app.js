@@ -1,11 +1,10 @@
-// Schedule App - Professional Calendar for Psychology Practice
 if (typeof ScheduleApp === 'undefined') {
     class ScheduleApp {
         constructor() {
             this.windowId = null;
             this.appointments = [];
             this.currentDate = new Date();
-            this.currentView = 'week'; // Only week view
+            this.currentView = 'week';
             this.selectedDate = new Date();
         }
 
@@ -55,7 +54,6 @@ if (typeof ScheduleApp === 'undefined') {
                 this.setupEventListeners();
                 this.renderCurrentView();
                 
-                console.log('✅ Schedule app launched successfully');
                 return scheduleWindow;
             } catch (error) {
                 console.error('Failed to initialize Schedule app:', error);
@@ -125,9 +123,8 @@ if (typeof ScheduleApp === 'undefined') {
             try {
                 const response = await fetch('Datas/schedule.json');
                 const data = await response.json();
-                // Assign soft pastel color names to tasks, full saturation only for legend
                 this.appointments = (data.appointments || []).map(apt => {
-                    let color = 'honeydew'; // pastel green for appointment
+                    let color = 'honeydew';
                     let status = 'confirmed';
                     let notes = '';
                     const type = (apt.type || '').toLowerCase();
@@ -152,7 +149,6 @@ if (typeof ScheduleApp === 'undefined') {
                     }
                     return { ...apt, color, status, notes };
                 });
-                console.log('✅ Schedule data loaded:', this.appointments.length, 'appointments');
             } catch (error) {
                 console.error('Failed to load schedule data:', error);
                 this.appointments = [];
@@ -168,7 +164,6 @@ if (typeof ScheduleApp === 'undefined') {
         }
 
         formatCurrentPeriod() {
-            // Week view only, Monday to Sunday
             const startOfWeek = new Date(this.selectedDate);
             const dayOfWeek = startOfWeek.getDay();
             const diffToMonday = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
@@ -179,13 +174,11 @@ if (typeof ScheduleApp === 'undefined') {
         }
 
         navigatePrevious() {
-            // Week view only - navigate by 7 days
             this.selectedDate.setDate(this.selectedDate.getDate() - 7);
             this.updateView();
         }
 
         navigateNext() {
-            // Week view only - navigate by 7 days
             this.selectedDate.setDate(this.selectedDate.getDate() + 7);
             this.updateView();
         }
@@ -199,13 +192,11 @@ if (typeof ScheduleApp === 'undefined') {
             const content = document.getElementById('scheduleContent');
             if (!content) return;
 
-            // Week view only
             content.innerHTML = this.renderWeekView();
             this.updateAppointmentCount();
         }
 
         renderWeekView() {
-            // Set startOfWeek to Monday
             const startOfWeek = new Date(this.selectedDate);
             const dayOfWeek = startOfWeek.getDay();
             const diffToMonday = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
@@ -217,7 +208,6 @@ if (typeof ScheduleApp === 'undefined') {
                         <div class="time-column-header"></div>
             `;
 
-            // Day headers (Monday to Sunday)
             for (let i = 0; i < 7; i++) {
                 const day = new Date(startOfWeek);
                 day.setDate(day.getDate() + i);
@@ -235,9 +225,7 @@ if (typeof ScheduleApp === 'undefined') {
                     <div class="week-grid">
             `;
 
-            // Time rows
             for (let hour = 8; hour <= 18; hour++) {
-                const timeSlot = hour < 10 ? `0${hour}:00` : `${hour}:00`;
                 let displayTime = hour <= 12 ? `${hour}:00 AM` : `${hour - 12}:00 PM`;
                 if (hour === 12) displayTime = '12:00 PM';
 
@@ -246,7 +234,6 @@ if (typeof ScheduleApp === 'undefined') {
                         <div class="time-label">${displayTime}</div>
                 `;
 
-                // Day columns (Monday to Sunday)
                 for (let i = 0; i < 7; i++) {
                     const day = new Date(startOfWeek);
                     day.setDate(day.getDate() + i);
@@ -256,8 +243,7 @@ if (typeof ScheduleApp === 'undefined') {
                     // Find all appointments that overlap this time slot
                     const dayAppointments = this.appointments.filter(apt => {
                         if (apt.date !== dayStr) return false;
-                        // Parse start and end time
-                        const [startHour, startMin] = (apt.time || '00:00').split(':').map(Number);
+                        const [startHour] = (apt.time || '00:00').split(':').map(Number);
                         const start = startHour * 60 + startMin;
                         const end = start + (apt.duration || 60);
                         const slotHour = hour;
@@ -268,9 +254,8 @@ if (typeof ScheduleApp === 'undefined') {
                     });
 
                     html += `<div class="week-cell" style="position:relative;">`;
-                    // Only render the appointment in the time slot where it starts
                     dayAppointments.forEach(apt => {
-                        const [startHour, startMin] = (apt.time || '00:00').split(':').map(Number);
+                        const [startHour] = (apt.time || '00:00').split(':').map(Number);
                         if (startHour === hour) {
                             const duration = apt.duration || 60;
                             const heightMultiplier = Math.max(1, Math.round(duration / 60));
@@ -328,7 +313,6 @@ if (typeof ScheduleApp === 'undefined') {
         updateAppointmentCount() {
             const totalEl = document.getElementById('totalAppointments');
             if (totalEl) {
-                // Week view only, Monday to Sunday
                 const startOfWeek = new Date(this.selectedDate);
                 const dayOfWeek = startOfWeek.getDay();
                 const diffToMonday = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
@@ -343,13 +327,10 @@ if (typeof ScheduleApp === 'undefined') {
             }
         }
 
-        // Method called when window is closed
         onWindowClose() {
             this.windowId = null;
-            console.log('📅 Schedule app window closed');
         }
     }
 
-    // Make ScheduleApp globally available
     window.ScheduleApp = ScheduleApp;
 }

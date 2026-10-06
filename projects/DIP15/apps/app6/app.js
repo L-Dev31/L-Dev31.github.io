@@ -1,6 +1,3 @@
-// ======================================
-// CALCULATOR APP - UNIVERSAL WINDOW MANAGER
-// ======================================
 
 // Avoid redeclaration if already defined
 if (typeof CalculatorApp === 'undefined') {
@@ -20,17 +17,15 @@ if (typeof CalculatorApp === 'undefined') {
             this.windowManager = options.windowManager;
             this.appConfig = options.appConfig;
             
-            console.log('✅ Calculator app initialized');
             return true;
         } catch (error) {
-            console.error('❌ Failed to initialize Calculator app:', error);
+            console.error('Failed to initialize Calculator app:', error);
             return false;
         }
     }
 
     async open() {
         if (this.windowId && this.windowManager) {
-            // Window already exists, just focus it
             const windowObj = this.windowManager.getWindow(this.windowId);
             if (windowObj) {
                 if (windowObj.isMinimized) {
@@ -42,10 +37,8 @@ if (typeof CalculatorApp === 'undefined') {
             }
         }
 
-        // Create the main content
         const content = this.createCalculatorContent();
         
-        // Create window
         const windowObj = this.windowManager.createWindow({
             id: `calculator-${Date.now()}`,
             title: 'Calculator',
@@ -58,7 +51,6 @@ if (typeof CalculatorApp === 'undefined') {
 
         this.windowId = windowObj.id;
 
-        // Setup app-specific event listeners
         this.setupEventListeners();
     }
     
@@ -109,7 +101,6 @@ if (typeof CalculatorApp === 'undefined') {
 
         const element = window.element;
 
-        // Number buttons
         element.querySelectorAll('.number-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 if (e.target.dataset.number) {
@@ -120,7 +111,6 @@ if (typeof CalculatorApp === 'undefined') {
             });
         });
 
-        // Operator buttons
         element.querySelectorAll('.operator-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const action = e.target.dataset.action;
@@ -132,7 +122,6 @@ if (typeof CalculatorApp === 'undefined') {
             });
         });
 
-        // Function buttons
         element.querySelectorAll('.function-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const action = e.target.dataset.action;
@@ -253,8 +242,6 @@ if (typeof CalculatorApp === 'undefined') {
     }
 }
 
-// Export for global use
 window.CalculatorApp = CalculatorApp;
 
-// Close the conditional block
 }

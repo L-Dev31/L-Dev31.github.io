@@ -1,4 +1,3 @@
-/* Weather App Styles */
 .weather-container {
     display: flex;
     flex-direction: column;
@@ -28,8 +27,6 @@
     position: relative;
     z-index: 1;
 }
-
-/* Window-specific styling */
 .weather-app-window {
     width: 400px;
     height: 600px;
@@ -44,8 +41,6 @@
     padding: 0;
     border-radius: 0 0 12px 12px;
 }
-
-/* Header Section */
 .weather-header {
     display: flex;
     justify-content: space-between;
@@ -77,8 +72,6 @@
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
 }
-
-/* Main Weather Display */
 .weather-main {
     text-align: center;
     margin-bottom: 40px;
@@ -119,8 +112,6 @@
     margin: 0;
     font-weight: 300;
 }
-
-/* Weather Details Grid */
 .weather-details {
     display: flex;
     justify-content: space-between;
@@ -141,7 +132,7 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: none; /* Remove all transitions */
+    transition: none;
 }
 
 .detail-item i {
@@ -161,8 +152,6 @@
     font-size: 0.8rem;
     font-weight: 500;
 }
-
-/* Footer */
 .weather-footer {
     display: flex;
     justify-content: center;
@@ -181,8 +170,6 @@
     -webkit-backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
-
-/* Weather-specific backgrounds */
 .weather-container.sunny {
     background: linear-gradient(135deg, #FDB813 0%, #FF6B35 100%);
 }
@@ -209,18 +196,6 @@
     border: 1px solid rgba(44, 62, 80, 0.2);
     color: #2C3E50;
 }
-
-.weather-container.snowy .refresh-btn {
-    background: rgba(44, 62, 80, 0.2);
-    border: 1px solid rgba(44, 62, 80, 0.3);
-    color: #2C3E50;
-}
-
-.weather-container.snowy .refresh-btn:hover {
-    background: rgba(44, 62, 80, 0.3);
-}
-
-/* Error State */
 .weather-error {
     display: flex;
     flex-direction: column;
@@ -256,8 +231,6 @@
 .weather-error button:hover {
     background: rgba(255, 255, 255, 0.3);
 }
-
-/* Loading animation */
 @keyframes weatherLoad {
     0% { opacity: 0; transform: translateY(20px); }
     100% { opacity: 1; transform: translateY(0); }

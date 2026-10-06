@@ -1,4 +1,3 @@
-// Notepad App - Notes/Text Editor
 if (typeof NotesApp === 'undefined') {
     class NotesApp {
         constructor() {
@@ -80,15 +79,13 @@ if (typeof NotesApp === 'undefined') {
                 
                 if (content) {
                     this.textarea.value = content;
-                    this.isModified = false; // File was loaded, not modified
+                    this.isModified = false;
                     this.updateStats();
                 } else if (fileName && fileName !== 'Untitled.txt') {
-                    // If we have a filename but no content, mark as not modified
                     this.isModified = false;
                     this.updateStats();
                 }
 
-                // Focus on textarea
                 setTimeout(() => {
                     if (this.textarea) {
                         this.textarea.focus();
@@ -163,7 +160,6 @@ if (typeof NotesApp === 'undefined') {
         setupEventListeners() {
             if (!this.textarea) return;
 
-            // Text change events
             this.textarea.addEventListener('input', () => {
                 this.markAsModified();
                 this.updateStats();
@@ -173,7 +169,6 @@ if (typeof NotesApp === 'undefined') {
                 this.handleKeyboardShortcuts(e);
             });
 
-            // Toolbar buttons
             this.newBtn?.addEventListener('click', () => this.newDocument());
             this.openBtn?.addEventListener('click', () => this.openDocument());
             this.saveBtn?.addEventListener('click', () => this.saveDocument());
@@ -182,7 +177,6 @@ if (typeof NotesApp === 'undefined') {
             this.fontSizeSelect?.addEventListener('change', (e) => this.changeFontSize(e.target.value));
             this.wordWrapBtn?.addEventListener('click', () => this.toggleWordWrap());
 
-            // Initial stats update
             this.updateStats();
         }
 
@@ -340,6 +334,5 @@ if (typeof NotesApp === 'undefined') {
         }
     }
 
-    // Make it globally available
     window.NotesApp = NotesApp;
 }

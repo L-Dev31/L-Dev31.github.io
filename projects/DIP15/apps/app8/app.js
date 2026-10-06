@@ -1,4 +1,3 @@
-// Clock App
 if (typeof ClockApp === 'undefined') {
     class ClockApp {
         constructor() {
@@ -99,7 +98,6 @@ if (typeof ClockApp === 'undefined') {
                 });
             }
 
-            // Analog hands
             const hours = now.getHours() % 12;
             const minutes = now.getMinutes();
             const seconds = now.getSeconds();
