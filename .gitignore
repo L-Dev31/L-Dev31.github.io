@@ -1,2 +1,4 @@
-
 .codegpt
+.vscode/
+.claude/
+graphify-out/
