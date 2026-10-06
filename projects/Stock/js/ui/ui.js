@@ -1,4 +1,4 @@
-import { positions, selectedApi, lastApiBySymbol, getCurrency, globalPeriod } from '../core/state.js';
+import { positions, selectedApi, lastApiBySymbol, getCurrency, currencyCode, globalPeriod } from '../core/state.js';
 import { typeLabel, periodPhrase } from '../core/constants.js';
 import { calculateStockValues, recordTrade, deleteTrade } from './portfolio.js';
 import { fetchActiveSymbol } from '../core/general.js';
@@ -215,7 +215,7 @@ function showOrderFee(form, pos) {
     note.hidden = fee == null;
     if (fee == null) return;
     const share = fee / amount * 100;
-    const cost = `${isEstimate(bank, marketFor(pos?.currency)) ? '≈ ' : ''}${formatMoney(fee, bank.currency)}`;
+    const cost = `${isEstimate(bank, marketFor(pos?.currency)) ? '≈ ' : ''}${formatMoney(fee, currencyCode())}`;
     note.textContent = L('At {0}, this order costs {1} in fees, {2}% of it.', bank.name, cost, share.toLocaleString(LOCALE, { maximumFractionDigits: share < 1 ? 2 : 1 }))
         + (share >= 1 ? ` ${L('That is a lot: grouping small orders into fewer, bigger ones costs less.')}` : '');
 }

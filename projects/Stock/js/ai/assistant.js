@@ -1,5 +1,5 @@
 import { chat, probeTask, getTaskState, modelOptions, getAiSettings, patchAiSettings, setTaskModel, onAiChange, stripThinking, EFFORTS, registerAiSettingsSection, syncAiGates } from './ai-core.js';
-import { positions, getUserSettings, getCurrency, investorContext, getInvestor } from '../core/state.js';
+import { positions, getUserSettings, getCurrency, currencyCode, investorContext, getInvestor } from '../core/state.js';
 import { proxyFetch } from '../data/proxy-fetch.js';
 import { fetchYahooChartSnapshot, fetchNews } from '../data/yahoo-finance.js';
 import { openSimulation, summarize, normalizeHorizon, HORIZONS } from '../quant/simulation.js';
@@ -15,6 +15,7 @@ import { banksReady, allBanks, banksAsOf, currentBank, bankContext, orderFee, in
 import { termDetails, findTerm, plainText as plainTerms } from '../coach/explain.js';
 import { findSituations } from '../coach/situations.js';
 import { countryCode, countryName } from '../data/country.js';
+import { ratesReady, ratesDate } from '../data/rates.js';
 import { sentenceFeeder, watchMicrophoneLevel } from './voice/voice.js';
 import { canCall, voiceAvailability, VOICE_HEALTH_EVENT, createCallSpeaker, createCallListener, resetVoiceHealth } from './voice/voice-engine.js';
 import './voice/voice-settings.js';
@@ -378,27 +379,27 @@ const RUNNERS = {
 };
 /** Fees for one order or investment at the user's bank, and the cheapest banks Nemeris knows for the same order. */
 async function costEstimate(a) {
-    await banksReady;
+    await Promise.all([banksReady, ratesReady]);
     const bank = currentBank();
     const amount = Number(a.amount);
     const market = a.market === 'us' ? 'us' : 'home';
     const years = Number(a.years) > 0 ? Number(a.years) : 1;
     const pct = x => (x == null ? null : round(x / amount * 100, 2));
-    const out = { amount, market, years };
+    const out = { amount, currency: currencyCode(), market, years };
     if (bank) {
         const c = investmentCosts(bank, { amount, years, market });
         Object.assign(out, {
-            bank: bank.name, currency: c.currency,
+            bank: bank.name,
             buy_fee: c.buy, buy_fee_pct: pct(c.buy), sell_fee: c.sell, currency_conversion: c.fx, custody_over_period: c.custody,
             total: c.total, total_pct: pct(c.total),
-            note: `${c.estimate ? 'Estimated from the published price examples. ' : ''}From the bank's public price list (${banksAsOf()}); unknown parts are null.`,
+            note: `${c.estimate ? 'Estimated from the published price examples. ' : ''}${bank.currency !== c.currency ? `Converted from ${bank.currency} at the ECB rate of ${ratesDate()}. ` : ''}From the bank's public price list (${banksAsOf()}); unknown parts are null.`,
         });
     } else out.note = 'The user has not chosen a bank: give no exact fee for them, and suggest choosing it in Settings › Profile › Your bank.';
     if (a.compare || !bank) {
         const country = countryCode();
         out.cheapest_known = allBanks()
             .filter(b => b.country === country || b.countries?.includes(country))
-            .map(b => ({ bank: b.name, kind: b.kind, buy_fee: orderFee(b, amount, market) }))
+            .map(b => ({ bank: b.name, kind: b.kind, buy_fee: orderFee(b, amount, market), ...(b.currency !== currencyCode() && { converted_from: b.currency }) }))
             .filter(x => x.buy_fee != null)
             .sort((x, y) => x.buy_fee - y.buy_fee)
             .slice(0, 5);

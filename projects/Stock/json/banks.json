@@ -1,6 +1,6 @@
 {
   "asOf": "2026-10",
-  "about": "Public fees for an online order, from each bank's price list or a 2026 comparison. Order rules: flat (fixed fee), pct (% of the order), min/max, upTo ([order up to, fee] tiers, then pct above), at (published examples, interpolated). Fees are in the bank's currency. null means not verified.",
+  "about": "Public fees for an online order, from each bank's price list or a 2026 comparison. Order rules: flat (fixed fee), pct (% of the order), min/max, upTo ([order up to, fee] tiers, then pct above), at (published examples, interpolated). Fees are in the bank's currency. countries: other countries a broker serves with the same prices. null means not verified.",
   "banks": [
     {
       "id": "boursobank", "name": "BoursoBank", "country": "FR", "currency": "EUR", "domain": "boursobank.com", "kind": "online",
@@ -37,13 +37,14 @@
     {
       "id": "degiro-fr", "name": "DEGIRO", "country": "FR", "currency": "EUR", "domain": "degiro.com", "kind": "online",
       "accounts": ["CTO"],
-      "orders": { "home": { "flat": 2 }, "us": { "flat": 2 } },
+      "orders": { "home": { "flat": 4.9 }, "us": { "flat": 2 } },
       "fx": 0.25, "custody": { "pct": 0, "text": "None, but 2.50 € a year per stock exchange used" },
-      "note": "1 € commission + 1 € handling fee per order. No PEA.",
-      "source": "https://www.cafedelabourse.com/courtiers/fiches/degiro"
+      "note": "3.90 € commission + 1 € handling fee. ETFs in the core selection: 1 €, other ETFs: 3 €. No PEA.",
+      "source": "https://quantroutine.com/brokers/degiro-fees-explained/"
     },
     {
       "id": "ibkr-fr", "name": "Interactive Brokers", "country": "FR", "currency": "EUR", "domain": "interactivebrokers.com", "kind": "online",
+      "countries": ["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK", "IS", "NO", "CH", "GB"],
       "accounts": ["CTO"],
       "orders": { "home": { "pct": 0.05, "min": 1.25 }, "us": { "flat": 1.25 } },
       "fx": 0.002, "custody": { "pct": 0, "text": "None" },
@@ -60,6 +61,7 @@
     },
     {
       "id": "xtb-fr", "name": "XTB", "country": "FR", "currency": "EUR", "domain": "xtb.com", "kind": "app",
+      "countries": ["CY", "CZ", "DE", "EE", "ES", "GR", "HU", "IT", "LT", "LV", "PL", "PT", "RO", "SI", "SK"],
       "accounts": ["CTO"],
       "orders": { "home": { "flat": 0 }, "us": { "flat": 0 } },
       "fx": 0.5, "custody": { "pct": 0, "text": "None" },
@@ -68,6 +70,7 @@
     },
     {
       "id": "trading212-fr", "name": "Trading 212", "country": "FR", "currency": "EUR", "domain": "trading212.com", "kind": "app",
+      "countries": ["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK"],
       "accounts": ["CTO"],
       "orders": { "home": { "flat": 0 }, "us": { "flat": 0 } },
       "fx": 0.15, "custody": { "pct": 0, "text": "None" },
@@ -76,6 +79,7 @@
     },
     {
       "id": "revolut-fr", "name": "Revolut", "country": "FR", "currency": "EUR", "domain": "revolut.com", "kind": "app",
+      "countries": ["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK", "IS", "NO"],
       "accounts": ["CTO"],
       "orders": { "home": { "flat": 1 }, "us": { "flat": 1 } },
       "fx": null, "custody": { "pct": 0, "text": "None" },
@@ -84,6 +88,7 @@
     },
     {
       "id": "etoro-fr", "name": "eToro", "country": "FR", "currency": "USD", "domain": "etoro.com", "kind": "app",
+      "countries": ["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK"],
       "accounts": ["CTO"],
       "orders": { "home": { "flat": 1 }, "us": { "flat": 1 } },
       "fx": null, "custody": { "pct": 0, "text": "None" },
@@ -170,7 +175,6 @@
       "note": "Order fees not verified: enter yours to get exact figures.",
       "source": "https://www.meilleur-pea.fr/pea-la-banque-postale/"
     },
-
     {
       "id": "bolero", "name": "Bolero", "country": "BE", "currency": "EUR", "domain": "bolero.be", "kind": "online",
       "accounts": ["CTO"],
@@ -190,10 +194,10 @@
     {
       "id": "degiro-be", "name": "DEGIRO", "country": "BE", "currency": "EUR", "domain": "degiro.com", "kind": "online",
       "accounts": ["CTO"],
-      "orders": { "home": { "flat": 1, "pct": 0.02 }, "us": { "flat": 2 } },
+      "orders": { "home": { "flat": 4.9 }, "us": { "flat": 2 } },
       "fx": 0.25, "custody": { "pct": 0, "text": "None, but 2.50 € a year per stock exchange used" },
-      "note": "Handles the TOB automatically.",
-      "source": "https://curvo.eu/article/cheapest-broker-belgium-etf"
+      "note": "3.90 € commission + 1 € handling fee. ETFs in the core selection: 1 €. Handles the TOB automatically.",
+      "source": "https://quantroutine.com/brokers/degiro-fees-explained/"
     },
     {
       "id": "saxo-be", "name": "Saxo", "country": "BE", "currency": "EUR", "domain": "home.saxo", "kind": "online",
@@ -211,7 +215,161 @@
       "note": "ETFs are free to trade since August 2025.",
       "source": "https://curvo.eu/article/cheapest-broker-belgium-etf"
     },
-
+    {
+      "id": "spuerkeess", "name": "Spuerkeess", "country": "LU", "currency": "EUR", "domain": "spuerkeess.lu", "kind": "bank",
+      "accounts": ["Compte-titres"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "bil", "name": "BIL", "country": "LU", "currency": "EUR", "domain": "bil.com", "kind": "bank",
+      "accounts": ["Compte-titres"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "bgl", "name": "BGL BNP Paribas", "country": "LU", "currency": "EUR", "domain": "bgl.lu", "kind": "bank",
+      "accounts": ["Compte-titres"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "traderepublic-de", "name": "Trade Republic", "country": "DE", "currency": "EUR", "domain": "traderepublic.com", "kind": "app",
+      "countries": ["AT", "BE", "EE", "ES", "FI", "GR", "IE", "IT", "LT", "LU", "LV", "NL", "PL", "PT", "SI", "SK"],
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 1 }, "us": { "flat": 1 } },
+      "fx": 0, "custody": { "pct": 0, "text": "None" },
+      "note": "1 € with Best Price execution, 2 € if you pick the exchange yourself. Savings plans are free.",
+      "source": "https://www.handelsblatt.com/vergleich/trade-republic-oder-comdirect/"
+    },
+    {
+      "id": "scalable", "name": "Scalable Capital", "country": "DE", "currency": "EUR", "domain": "scalable.capital", "kind": "app",
+      "countries": ["AT", "ES", "FR", "IT", "NL"],
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 0.99 }, "us": { "flat": 0.99 } },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "FREE plan: 0.99 € on its own exchange (EIX), 1.99 € on gettex and Xetra since 1 September 2026.",
+      "source": "https://www.wiwo.de/vergleich/scalable-capital-oder-trade-republic/"
+    },
+    {
+      "id": "comdirect", "name": "comdirect", "country": "DE", "currency": "EUR", "domain": "comdirect.de", "kind": "bank",
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 4.9, "pct": 0.25 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "comdirect pure: 1 € per order on gettex only.",
+      "source": "https://www.handelsblatt.com/vergleich/trade-republic-oder-comdirect/"
+    },
+    {
+      "id": "smartbroker", "name": "Smartbroker+", "country": "DE", "currency": "EUR", "domain": "smartbroker.de", "kind": "online",
+      "accounts": ["Depot"],
+      "orders": { "home": { "upTo": [[499.99, 1]], "pct": 0 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "0 € on gettex from 500 €, 1 € below.",
+      "source": "https://www.onvista.de/news/2026/03-16-trade-republic-scalable-oder-comdirect-dieser-neobroker-bietet-im-maerz-2026-das-beste-paket-41122918-19-26490301"
+    },
+    {
+      "id": "flatex-de", "name": "flatex", "country": "DE", "currency": "EUR", "domain": "flatex.de", "kind": "online",
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 5.9 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": null,
+      "source": "https://www.capitalo.de/depot/vergleich"
+    },
+    {
+      "id": "ing-de", "name": "ING", "country": "DE", "currency": "EUR", "domain": "ing.de", "kind": "bank",
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 4.9, "pct": 0.25, "max": 69.9 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "ETF savings plans are free.",
+      "source": "https://www.capitalo.de/depot/vergleich"
+    },
+    {
+      "id": "consorsbank", "name": "Consorsbank", "country": "DE", "currency": "EUR", "domain": "consorsbank.de", "kind": "bank",
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 4.95, "pct": 0.25 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": null,
+      "source": "https://www.capitalo.de/anbieter/consorsbank/produkte/depot"
+    },
+    {
+      "id": "dkb", "name": "DKB", "country": "DE", "currency": "EUR", "domain": "dkb.de", "kind": "bank",
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 10 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "10 € per order up to 10,000 €. Savings plans: 1.50 €.",
+      "source": "https://etf.capital/broker-vergleich/dkb-vs-consorsbank/"
+    },
+    {
+      "id": "flatex-at", "name": "flatex", "country": "AT", "currency": "EUR", "domain": "flatex.at", "kind": "online",
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 5.9 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "Pays the KESt for you.",
+      "source": "https://www.capitalo.at/anbieter/flatex/produkte/depot"
+    },
+    {
+      "id": "dadat", "name": "DADAT Bank", "country": "AT", "currency": "EUR", "domain": "dadat.at", "kind": "online",
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 3.9 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "From 3.90 € an order: bigger orders can cost more. Pays the KESt for you.",
+      "source": "https://www.capitalo.at/anbieter/dadat/news/dadat-depot-gebuehr-abgeschafft"
+    },
+    {
+      "id": "erste", "name": "Erste Bank", "country": "AT", "currency": "EUR", "domain": "sparkasse.at", "kind": "bank",
+      "accounts": ["Depot"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": { "pct": null, "text": "At least 55 € a year" },
+      "note": "From 16.65 € an order (base fee plus commission).",
+      "source": "https://www.capitalo.at/anbieter/erste-bank/news/erste-bank-depot"
+    },
+    {
+      "id": "raiffeisen", "name": "Raiffeisen", "country": "AT", "currency": "EUR", "domain": "raiffeisen.at", "kind": "bank",
+      "accounts": ["Depot"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": { "pct": 0.2, "text": "About 0.2 % a year" },
+      "note": null,
+      "source": "https://www.capitalo.at/depot/ratgeber/depot-kosten"
+    },
+    {
+      "id": "degiro-nl", "name": "DEGIRO", "country": "NL", "currency": "EUR", "domain": "degiro.com", "kind": "online",
+      "countries": ["AT", "CH", "CZ", "DE", "DK", "ES", "FI", "GR", "HU", "IE", "IT", "NO", "PL", "PT", "SE"],
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 4.9 }, "us": { "flat": 2 } },
+      "fx": 0.25, "custody": { "pct": 0, "text": "None" },
+      "note": "3.90 € commission + 1 € handling fee. ETFs in the core selection: 1 €, other ETFs: 3 €.",
+      "source": "https://quantroutine.com/brokers/degiro-fees-explained/"
+    },
+    {
+      "id": "ing-nl", "name": "ING", "country": "NL", "currency": "EUR", "domain": "ing.nl", "kind": "bank",
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 1, "pct": 0.1, "max": 150 }, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": "https://brokerchooser.com/broker-reviews/ing-nederland-review"
+    },
+    {
+      "id": "abnamro", "name": "ABN AMRO", "country": "NL", "currency": "EUR", "domain": "abnamro.nl", "kind": "bank",
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 6 }, "us": { "flat": 6 } },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": "https://brokerchooser.com/best-brokers/best-stock-brokers-in-the-netherlands"
+    },
+    {
+      "id": "bux", "name": "BUX", "country": "NL", "currency": "EUR", "domain": "getbux.com", "kind": "app",
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 3.99 }, "us": { "flat": 0.99 } },
+      "fx": null, "custody": null,
+      "note": "EU stocks: 3.99 € on Basic down to 0.99 € on Prime. ETFs and US stocks: 0.99 €.",
+      "source": "https://brokerchooser.com/broker-reviews/bux-review/bux-fees"
+    },
     {
       "id": "swissquote", "name": "Swissquote", "country": "CH", "currency": "CHF", "domain": "swissquote.com", "kind": "online",
       "accounts": ["Depot", "3a"],
@@ -252,82 +410,6 @@
       "note": "No currency conversion when trading in CHF on BX Swiss. Swiss stamp duty on top.",
       "source": "https://thepoorswiss.com/best-swiss-broker/"
     },
-
-    {
-      "id": "traderepublic-de", "name": "Trade Republic", "country": "DE", "currency": "EUR", "domain": "traderepublic.com", "kind": "app",
-      "accounts": ["Depot"],
-      "orders": { "home": { "flat": 1 }, "us": { "flat": 1 } },
-      "fx": 0, "custody": { "pct": 0, "text": "None" },
-      "note": "1 € with Best Price execution, 2 € if you pick the exchange yourself. Savings plans are free.",
-      "source": "https://www.handelsblatt.com/vergleich/trade-republic-oder-comdirect/"
-    },
-    {
-      "id": "scalable", "name": "Scalable Capital", "country": "DE", "currency": "EUR", "domain": "scalable.capital", "kind": "app",
-      "accounts": ["Depot"],
-      "orders": { "home": { "flat": 0.99 }, "us": { "flat": 0.99 } },
-      "fx": null, "custody": { "pct": 0, "text": "None" },
-      "note": "FREE plan: 0.99 € on its own exchange (EIX), 1.99 € on gettex and Xetra since 1 September 2026.",
-      "source": "https://www.wiwo.de/vergleich/scalable-capital-oder-trade-republic/"
-    },
-    {
-      "id": "comdirect", "name": "comdirect", "country": "DE", "currency": "EUR", "domain": "comdirect.de", "kind": "bank",
-      "accounts": ["Depot"],
-      "orders": { "home": { "flat": 4.9, "pct": 0.25 }, "us": null },
-      "fx": null, "custody": { "pct": 0, "text": "None" },
-      "note": "comdirect pure: 1 € per order on gettex only.",
-      "source": "https://www.handelsblatt.com/vergleich/trade-republic-oder-comdirect/"
-    },
-    {
-      "id": "smartbroker", "name": "Smartbroker+", "country": "DE", "currency": "EUR", "domain": "smartbroker.de", "kind": "online",
-      "accounts": ["Depot"],
-      "orders": { "home": { "upTo": [[499.99, 1]], "pct": 0 }, "us": null },
-      "fx": null, "custody": { "pct": 0, "text": "None" },
-      "note": "0 € on gettex from 500 €, 1 € below.",
-      "source": "https://www.onvista.de/news/2026/03-16-trade-republic-scalable-oder-comdirect-dieser-neobroker-bietet-im-maerz-2026-das-beste-paket-41122918-19-26490301"
-    },
-
-    {
-      "id": "degiro-nl", "name": "DEGIRO", "country": "NL", "currency": "EUR", "domain": "degiro.com", "kind": "online",
-      "accounts": ["Depot"],
-      "orders": { "home": { "flat": 4.9 }, "us": { "flat": 2 } },
-      "fx": 0.25, "custody": { "pct": 0, "text": "None" },
-      "note": "ETFs in the core selection: 1 €, other ETFs: 3 €.",
-      "source": "https://brokerchooser.com/broker-reviews/degiro-review/degiro-fees"
-    },
-    {
-      "id": "ing-nl", "name": "ING", "country": "NL", "currency": "EUR", "domain": "ing.nl", "kind": "bank",
-      "accounts": ["Depot"],
-      "orders": { "home": { "flat": 1, "pct": 0.1, "max": 150 }, "us": null },
-      "fx": null, "custody": null,
-      "note": null,
-      "source": "https://brokerchooser.com/broker-reviews/ing-nederland-review"
-    },
-    {
-      "id": "abnamro", "name": "ABN AMRO", "country": "NL", "currency": "EUR", "domain": "abnamro.nl", "kind": "bank",
-      "accounts": ["Depot"],
-      "orders": { "home": { "flat": 6 }, "us": { "flat": 6 } },
-      "fx": null, "custody": null,
-      "note": null,
-      "source": "https://brokerchooser.com/best-brokers/best-stock-brokers-in-the-netherlands"
-    },
-    {
-      "id": "bux", "name": "BUX", "country": "NL", "currency": "EUR", "domain": "getbux.com", "kind": "app",
-      "accounts": ["Depot"],
-      "orders": { "home": { "flat": 3.99 }, "us": { "flat": 0.99 } },
-      "fx": null, "custody": null,
-      "note": "EU stocks: 3.99 € on Basic down to 0.99 € on Prime. ETFs and US stocks: 0.99 €.",
-      "source": "https://brokerchooser.com/broker-reviews/bux-review/bux-fees"
-    },
-
-    {
-      "id": "myinvestor", "name": "MyInvestor", "country": "ES", "currency": "EUR", "domain": "myinvestor.es", "kind": "online",
-      "accounts": ["Cuenta de valores"],
-      "orders": { "home": { "pct": 0.12, "min": 3, "max": 25 }, "us": { "pct": 0.12, "min": 3, "max": 25 } },
-      "fx": 0.3, "custody": null,
-      "note": "ETFs: 1 € minimum. Index funds from Vanguard and iShares with no purchase fee.",
-      "source": "https://www.pordividendos.com/en/blog/myinvestor-review"
-    },
-
     {
       "id": "fineco", "name": "Fineco", "country": "IT", "currency": "EUR", "domain": "finecobank.com", "kind": "bank",
       "accounts": ["Conto titoli"],
@@ -344,7 +426,134 @@
       "note": "From 1.50 € on Italian markets, 5 € flat for ETFs on Borsa Italiana.",
       "source": "https://www.donkycapital.com/en/compare/fineco-vs-directa-vs-scalable-capital-2026"
     },
-
+    {
+      "id": "intesa", "name": "Intesa Sanpaolo", "country": "IT", "currency": "EUR", "domain": "intesasanpaolo.com", "kind": "bank",
+      "accounts": ["Conto titoli"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "unicredit", "name": "UniCredit", "country": "IT", "currency": "EUR", "domain": "unicredit.it", "kind": "bank",
+      "accounts": ["Conto titoli"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "sella", "name": "Banca Sella", "country": "IT", "currency": "EUR", "domain": "sella.it", "kind": "bank",
+      "accounts": ["Conto titoli"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "webank", "name": "Webank", "country": "IT", "currency": "EUR", "domain": "webank.it", "kind": "online",
+      "accounts": ["Conto titoli"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "myinvestor", "name": "MyInvestor", "country": "ES", "currency": "EUR", "domain": "myinvestor.es", "kind": "online",
+      "accounts": ["Cuenta de valores"],
+      "orders": { "home": { "pct": 0.12, "min": 3, "max": 25 }, "us": { "pct": 0.12, "min": 3, "max": 25 } },
+      "fx": 0.3, "custody": null,
+      "note": "ETFs: 1 € minimum. Index funds from Vanguard and iShares with no purchase fee.",
+      "source": "https://www.pordividendos.com/en/blog/myinvestor-review"
+    },
+    {
+      "id": "renta4", "name": "Renta 4", "country": "ES", "currency": "EUR", "domain": "r4.com", "kind": "online",
+      "accounts": ["Cuenta de valores"],
+      "orders": { "home": { "flat": 4 }, "us": { "flat": 15 } },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "15 € on international markets.",
+      "source": "https://www.novatostradingclub.com/brokers/brokers-con-menos-comisiones"
+    },
+    {
+      "id": "ing-es", "name": "ING", "country": "ES", "currency": "EUR", "domain": "ing.es", "kind": "bank",
+      "accounts": ["Cuenta de valores"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "santander", "name": "Santander", "country": "ES", "currency": "EUR", "domain": "bancosantander.es", "kind": "bank",
+      "accounts": ["Cuenta de valores"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "bbva", "name": "BBVA", "country": "ES", "currency": "EUR", "domain": "bbva.es", "kind": "bank",
+      "accounts": ["Cuenta de valores"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "caixabank", "name": "CaixaBank", "country": "ES", "currency": "EUR", "domain": "caixabank.es", "kind": "bank",
+      "accounts": ["Cuenta de valores"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "bankinter", "name": "Bankinter", "country": "ES", "currency": "EUR", "domain": "bankinter.com", "kind": "bank",
+      "accounts": ["Cuenta de valores"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "activobank", "name": "ActivoBank", "country": "PT", "currency": "EUR", "domain": "activobank.pt", "kind": "bank",
+      "accounts": ["Conta de títulos"],
+      "orders": { "home": { "flat": 6.5 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "Euronext Lisbon: 6.50 € per order, 5 € above 10 orders a month.",
+      "source": "https://www.activobank.pt/"
+    },
+    {
+      "id": "bancobest", "name": "Banco Best", "country": "PT", "currency": "EUR", "domain": "bancobest.pt", "kind": "bank",
+      "accounts": ["Conta de títulos"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "millennium", "name": "Millennium bcp", "country": "PT", "currency": "EUR", "domain": "millenniumbcp.pt", "kind": "bank",
+      "accounts": ["Conta de títulos"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "cgd", "name": "Caixa Geral de Depósitos", "country": "PT", "currency": "EUR", "domain": "cgd.pt", "kind": "bank",
+      "accounts": ["Conta de títulos"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "davy", "name": "Davy Select", "country": "IE", "currency": "EUR", "domain": "davyselect.ie", "kind": "online",
+      "accounts": ["Brokerage"],
+      "orders": { "home": { "pct": 0.5, "min": 14.99 }, "us": null },
+      "fx": null, "custody": { "pct": null, "text": "50 € a quarter, reduced by the commissions paid" },
+      "note": "Shares outside Ireland and the UK: 25 € settlement charge + 0.06 % per trade.",
+      "source": "https://brokerchooser.com/invest-long-term/costs/equity-trading-fees-davy-select"
+    },
     {
       "id": "hl", "name": "Hargreaves Lansdown", "country": "GB", "currency": "GBP", "domain": "hl.co.uk", "kind": "online",
       "accounts": ["ISA", "SIPP", "GIA"],
@@ -364,10 +573,10 @@
     {
       "id": "ii", "name": "interactive investor", "country": "GB", "currency": "GBP", "domain": "ii.co.uk", "kind": "online",
       "accounts": ["ISA", "SIPP", "GIA"],
-      "orders": { "home": null, "us": null },
-      "fx": null, "custody": { "pct": null, "text": "Flat £4.99 to £11.99 a month" },
-      "note": "Flat monthly plan instead of a percentage of your assets.",
-      "source": "https://iireferral.co.uk/calculator"
+      "orders": { "home": { "flat": 3.99 }, "us": { "flat": 3.99 } },
+      "fx": 0.75, "custody": { "pct": null, "text": "£5.99 a month on the Core plan (up to £100,000)" },
+      "note": "Flat monthly plan instead of a percentage of your assets, since 1 February 2026.",
+      "source": "https://moneytothemasses.com/news/interactive-investor-new-price-plans-how-do-they-compare"
     },
     {
       "id": "vanguard-uk", "name": "Vanguard UK", "country": "GB", "currency": "GBP", "domain": "vanguardinvestor.co.uk", "kind": "online",
@@ -377,7 +586,295 @@
       "note": "Vanguard funds and ETFs only.",
       "source": "https://votrumnados.com/platform-fees-hargreaves-lansdown-aj-bell-vanguard-2026/"
     },
-
+    {
+      "id": "trading212-uk", "name": "Trading 212", "country": "GB", "currency": "GBP", "domain": "trading212.com", "kind": "app",
+      "accounts": ["ISA", "GIA"],
+      "orders": { "home": { "flat": 0 }, "us": { "flat": 0 } },
+      "fx": 0.15, "custody": { "pct": 0, "text": "None" },
+      "note": null,
+      "source": "https://uktaxdrag.co.uk/best-isa-platform-2026-27"
+    },
+    {
+      "id": "freetrade", "name": "Freetrade", "country": "GB", "currency": "GBP", "domain": "freetrade.io", "kind": "app",
+      "accounts": ["ISA", "SIPP", "GIA"],
+      "orders": { "home": { "flat": 0 }, "us": { "flat": 0 } },
+      "fx": 0.99, "custody": { "pct": 0, "text": "None" },
+      "note": "Currency conversion: 0.99 % on Basic, 0.59 % on Standard, 0.39 % on Plus.",
+      "source": "https://freetrade.io/invest-for-less"
+    },
+    {
+      "id": "avanza", "name": "Avanza", "country": "SE", "currency": "SEK", "domain": "avanza.se", "kind": "online",
+      "accounts": ["ISK", "KF", "Depå"],
+      "orders": { "home": { "pct": 0.25, "min": 1 }, "us": null },
+      "fx": 0.25, "custody": { "pct": 0, "text": "None" },
+      "note": "Mini class: 0.25 %, at least 1 kr. Bigger orders are cheaper in the Small, Medium or Fixed class. 0 kr on Swedish stocks while your savings are under 50,000 kr.",
+      "source": "https://isk-guiden.se/avanza-vs-nordnet/"
+    },
+    {
+      "id": "nordnet-se", "name": "Nordnet", "country": "SE", "currency": "SEK", "domain": "nordnet.se", "kind": "online",
+      "accounts": ["ISK", "KF", "Depå"],
+      "orders": { "home": { "pct": 0.25, "min": 1 }, "us": null },
+      "fx": 0.25, "custody": { "pct": 0, "text": "None" },
+      "note": "Mini class: 0.25 %, at least 1 kr. Bigger orders are cheaper in the Small, Medium or Fixed class. 0 kr on Swedish stocks while your savings are under 50,000 kr.",
+      "source": "https://isk-guiden.se/avanza-vs-nordnet/"
+    },
+    {
+      "id": "nordea-se", "name": "Nordea", "country": "SE", "currency": "SEK", "domain": "nordea.se", "kind": "bank",
+      "accounts": ["ISK", "KF", "Depå"],
+      "orders": { "home": { "pct": 0.09, "min": 1 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "One rate for every order: 0.09 %, at least 1 kr, no ceiling.",
+      "source": "https://isk-guiden.se/avanza-vs-nordea/"
+    },
+    {
+      "id": "seb", "name": "SEB", "country": "SE", "currency": "SEK", "domain": "seb.se", "kind": "bank",
+      "accounts": ["ISK", "KF", "Depå"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "swedbank", "name": "Swedbank", "country": "SE", "currency": "SEK", "domain": "swedbank.se", "kind": "bank",
+      "accounts": ["ISK", "KF", "Depå"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "handelsbanken", "name": "Handelsbanken", "country": "SE", "currency": "SEK", "domain": "handelsbanken.se", "kind": "bank",
+      "accounts": ["ISK", "KF", "Depå"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "nordnet-dk", "name": "Nordnet", "country": "DK", "currency": "DKK", "domain": "nordnet.dk", "kind": "online",
+      "accounts": ["Aktiesparekonto", "Depot"],
+      "orders": { "home": { "pct": 0.1, "min": 25 }, "us": { "pct": 0.15, "min": 25 } },
+      "fx": 0.25, "custody": { "pct": 0, "text": "None" },
+      "note": null,
+      "source": "https://npinvestor.dk/aktier-for-begyndere/bedste-investeringsplatform/"
+    },
+    {
+      "id": "saxo-dk", "name": "Saxo", "country": "DK", "currency": "DKK", "domain": "home.saxo", "kind": "online",
+      "accounts": ["Aktiesparekonto", "Depot"],
+      "orders": { "home": { "pct": 0.08, "min": 10 }, "us": { "pct": 0.08, "min": 7 } },
+      "fx": 0.25, "custody": { "pct": 0, "text": "None" },
+      "note": "US stocks: 0.08 %, at least $1.",
+      "source": "https://npinvestor.dk/aktier-for-begyndere/saxo-bank-vs-nordnet/"
+    },
+    {
+      "id": "danskebank-dk", "name": "Danske Bank", "country": "DK", "currency": "DKK", "domain": "danskebank.dk", "kind": "bank",
+      "accounts": ["Aktiesparekonto", "Depot"],
+      "orders": { "home": { "pct": 0.15, "min": 29 }, "us": null },
+      "fx": 0.4, "custody": { "pct": 0, "text": "None" },
+      "note": null,
+      "source": "https://npinvestor.dk/aktier-for-begyndere/bedste-investeringsplatform/"
+    },
+    {
+      "id": "nordea-dk", "name": "Nordea", "country": "DK", "currency": "DKK", "domain": "nordea.dk", "kind": "bank",
+      "accounts": ["Aktiesparekonto", "Depot"],
+      "orders": { "home": { "pct": 0.1, "min": 29 }, "us": null },
+      "fx": 0.25, "custody": { "pct": 0, "text": "None" },
+      "note": null,
+      "source": "https://npinvestor.dk/aktier-for-begyndere/bedste-investeringsplatform/"
+    },
+    {
+      "id": "lunar", "name": "Lunar", "country": "DK", "currency": "DKK", "domain": "lunar.app", "kind": "app",
+      "accounts": ["Depot"],
+      "orders": { "home": { "flat": 19 }, "us": null },
+      "fx": 0.5, "custody": { "pct": 0, "text": "None" },
+      "note": "19 kr per order up to 50,000 kr.",
+      "source": "https://npinvestor.dk/aktier-for-begyndere/bedste-investeringsplatform/"
+    },
+    {
+      "id": "nordnet-no", "name": "Nordnet", "country": "NO", "currency": "NOK", "domain": "nordnet.no", "kind": "online",
+      "accounts": ["ASK", "Depot"],
+      "orders": { "home": { "pct": 0.15, "min": 29 }, "us": null },
+      "fx": 0.25, "custody": { "pct": 0, "text": "None" },
+      "note": "Mini class. Normal: 0.049 %, at least 79 kr, cheaper above about 53,000 kr.",
+      "source": "https://www.smartepenger.no/sparing/2072-prisoversikt-aksjemeglere-pa-nett"
+    },
+    {
+      "id": "dnb", "name": "DNB", "country": "NO", "currency": "NOK", "domain": "dnb.no", "kind": "bank",
+      "accounts": ["ASK", "Depot"],
+      "orders": { "home": { "pct": 0.12, "min": 59 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "Basis plan. Standard: 0.05 %, at least 79 kr.",
+      "source": "https://www.smartepenger.no/sparing/2072-prisoversikt-aksjemeglere-pa-nett"
+    },
+    {
+      "id": "nordea-no", "name": "Nordea", "country": "NO", "currency": "NOK", "domain": "nordea.no", "kind": "bank",
+      "accounts": ["ASK", "Depot"],
+      "orders": { "home": { "pct": 0.04, "min": 39 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": null,
+      "source": "https://www.smartepenger.no/sparing/2072-prisoversikt-aksjemeglere-pa-nett"
+    },
+    {
+      "id": "nordnet-fi", "name": "Nordnet", "country": "FI", "currency": "EUR", "domain": "nordnet.fi", "kind": "online",
+      "accounts": ["Osakesäästötili", "Arvo-osuustili"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "A 500 € order costs about 9 € (the minimum). New customers: 0.06 %, at least 3 €, for two months.",
+      "source": "https://www.nordnet.fi/fi/palvelut/hinnasto"
+    },
+    {
+      "id": "nordea-fi", "name": "Nordea", "country": "FI", "currency": "EUR", "domain": "nordea.fi", "kind": "bank",
+      "accounts": ["Osakesäästötili", "Arvo-osuustili"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "Fees capped at 1 % of the order on Nordic exchanges and ETFs: a 500 € order costs 5 €.",
+      "source": "https://www.nordnet.fi/fi/palvelut/hinnasto"
+    },
+    {
+      "id": "op", "name": "OP", "country": "FI", "currency": "EUR", "domain": "op.fi", "kind": "bank",
+      "accounts": ["Osakesäästötili", "Arvo-osuustili"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "A 500 € order costs about 8 € (the minimum).",
+      "source": "https://www.nordnet.fi/fi/palvelut/hinnasto"
+    },
+    {
+      "id": "danskebank-fi", "name": "Danske Bank", "country": "FI", "currency": "EUR", "domain": "danskebank.fi", "kind": "bank",
+      "accounts": ["Osakesäästötili", "Arvo-osuustili"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "A 500 € order costs about 8 € (the minimum).",
+      "source": "https://www.nordnet.fi/fi/palvelut/hinnasto"
+    },
+    {
+      "id": "mbank", "name": "mBank", "country": "PL", "currency": "PLN", "domain": "mbank.pl", "kind": "bank",
+      "accounts": ["IKE", "IKZE", "Rachunek maklerski"],
+      "orders": { "home": { "pct": 0.39, "min": 5 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": null,
+      "source": "https://ppcg.com.pl/ranking-kont-maklerskich-najlepsze-rachunki-inwestycyjne-porownanie-oplat-i-prowizji/"
+    },
+    {
+      "id": "pkobp", "name": "PKO BP", "country": "PL", "currency": "PLN", "domain": "pkobp.pl", "kind": "bank",
+      "accounts": ["IKE", "IKZE", "Rachunek maklerski"],
+      "orders": { "home": { "pct": 0.39, "min": 5 }, "us": null },
+      "fx": null, "custody": { "pct": null, "text": "60 zł a year" },
+      "note": null,
+      "source": "https://ppcg.com.pl/ranking-kont-maklerskich-najlepsze-rachunki-inwestycyjne-porownanie-oplat-i-prowizji/"
+    },
+    {
+      "id": "bossa", "name": "Bossa", "country": "PL", "currency": "PLN", "domain": "bossa.pl", "kind": "online",
+      "accounts": ["IKE", "IKZE", "Rachunek maklerski"],
+      "orders": { "home": { "pct": 0.29, "min": 5 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": null,
+      "source": "https://ppcg.com.pl/ranking-kont-maklerskich-najlepsze-rachunki-inwestycyjne-porownanie-oplat-i-prowizji/"
+    },
+    {
+      "id": "ing-pl", "name": "ING", "country": "PL", "currency": "PLN", "domain": "ing.pl", "kind": "bank",
+      "accounts": ["IKE", "IKZE", "Rachunek maklerski"],
+      "orders": { "home": { "pct": 0.37, "min": 6 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": null,
+      "source": "https://ppcg.com.pl/ranking-kont-maklerskich-najlepsze-rachunki-inwestycyjne-porownanie-oplat-i-prowizji/"
+    },
+    {
+      "id": "alior", "name": "Alior Bank", "country": "PL", "currency": "PLN", "domain": "aliorbank.pl", "kind": "bank",
+      "accounts": ["Rachunek maklerski"],
+      "orders": { "home": { "pct": 0.38, "min": 3 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": null,
+      "source": "https://ppcg.com.pl/ranking-kont-maklerskich-najlepsze-rachunki-inwestycyjne-porownanie-oplat-i-prowizji/"
+    },
+    {
+      "id": "fio", "name": "Fio banka", "country": "CZ", "currency": "CZK", "domain": "fio.cz", "kind": "bank",
+      "accounts": ["DIP", "Investiční účet"],
+      "orders": { "home": { "pct": 0.35, "min": 40 }, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "US stocks: $7.95 an order ($9.95 above 100 shares). Germany: 0.15 %, at least 9.95 €.",
+      "source": "https://www.e15.cz/investicni-platformy-poplatky-srovnani-xtb-portu-fio-broker-degiro-etoro-trading212-fondee"
+    },
+    {
+      "id": "patria", "name": "Patria", "country": "CZ", "currency": "CZK", "domain": "patria.cz", "kind": "online",
+      "accounts": ["DIP", "Investiční účet"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "Czech stocks from 80 Kč. US stocks: $14.90, European ones: 16.90 €.",
+      "source": "https://www.e15.cz/investicni-platformy-poplatky-srovnani-xtb-portu-fio-broker-degiro-etoro-trading212-fondee"
+    },
+    {
+      "id": "portu", "name": "Portu", "country": "CZ", "currency": "CZK", "domain": "portu.cz", "kind": "app",
+      "accounts": ["DIP", "Investiční účet"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": { "pct": 0, "text": "None" },
+      "note": "Managed portfolios of ETFs, from 500 Kč.",
+      "source": "https://www.e15.cz/investicni-platformy-poplatky-srovnani-xtb-portu-fio-broker-degiro-etoro-trading212-fondee"
+    },
+    {
+      "id": "otp", "name": "OTP Bank", "country": "HU", "currency": "HUF", "domain": "otpbank.hu", "kind": "bank",
+      "accounts": ["TBSZ", "Brokerage"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "bt", "name": "Banca Transilvania", "country": "RO", "currency": "RON", "domain": "bancatransilvania.ro", "kind": "bank",
+      "accounts": ["Brokerage"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "tradeville", "name": "Tradeville", "country": "RO", "currency": "RON", "domain": "tradeville.ro", "kind": "online",
+      "accounts": ["Brokerage"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "piraeus", "name": "Piraeus Bank", "country": "GR", "currency": "EUR", "domain": "piraeusbank.gr", "kind": "bank",
+      "accounts": ["Brokerage"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "eurobank", "name": "Eurobank", "country": "GR", "currency": "EUR", "domain": "eurobank.gr", "kind": "bank",
+      "accounts": ["Brokerage"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "nbg", "name": "National Bank of Greece", "country": "GR", "currency": "EUR", "domain": "nbg.gr", "kind": "bank",
+      "accounts": ["Brokerage"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
+    {
+      "id": "lightyear", "name": "Lightyear", "country": "EE", "currency": "EUR", "domain": "lightyear.com", "kind": "app",
+      "countries": ["AT", "BE", "CY", "DE", "ES", "FI", "FR", "GR", "HR", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PT", "SI", "SK", "HU", "GB"],
+      "accounts": ["Brokerage"],
+      "orders": { "home": { "flat": 1 }, "us": { "pct": 0.1, "min": 0.09, "max": 0.88 } },
+      "fx": 0.1, "custody": { "pct": 0, "text": "None" },
+      "note": "ETFs: 0 €. US stocks: 0.1 %, from $0.10 to $1. Currency conversion 0.10 % since March 2026.",
+      "source": "https://quantroutine.com/brokers/lightyear/"
+    },
+    {
+      "id": "lhv", "name": "LHV", "country": "EE", "currency": "EUR", "domain": "lhv.ee", "kind": "bank",
+      "accounts": ["Investment account"],
+      "orders": { "home": null, "us": null },
+      "fx": null, "custody": null,
+      "note": null,
+      "source": null
+    },
     {
       "id": "fidelity", "name": "Fidelity", "country": "US", "currency": "USD", "domain": "fidelity.com", "kind": "online",
       "accounts": ["Brokerage", "IRA", "Roth IRA"],
@@ -426,7 +923,6 @@
       "note": "IBKR Lite: $0. IBKR Pro: $0.005 a share, $1 minimum.",
       "source": "https://www.brokerage-review.com/discount-broker/compare-brokerage-commissions.aspx"
     },
-
     {
       "id": "wealthsimple", "name": "Wealthsimple", "country": "CA", "currency": "CAD", "domain": "wealthsimple.com", "kind": "app",
       "accounts": ["TFSA", "RRSP", "FHSA", "Non-registered"],

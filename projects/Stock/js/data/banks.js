@@ -3,6 +3,7 @@
 import { getUserSettings, saveUserSettings, currencyCode } from '../core/state.js';
 import { LOGO_DEV_KEY } from './ticker-catalog.js';
 import { LOCALE } from '../i18n/i18n.js';
+import { convert } from './rates.js';
 
 let catalog = { asOf: '', banks: [] };
 export const banksReady = fetch('json/banks.json')
@@ -34,10 +35,14 @@ export function currentBank() {
 export const chooseBank = id => saveUserSettings({ bank: id ? { id } : null });
 export const saveCustomBank = custom => saveUserSettings({ bank: { custom: { id: 'custom', kind: 'custom', ...custom } } });
 
-/** Fee for one order, in the bank's currency, or null when the bank does not publish it. market: 'home' or 'us'. */
-export function orderFee(bank, amount, market = 'home') {
+/**
+ * Fee for one order, or null when the bank does not publish it. market: 'home' or 'us'.
+ * Amount and fee are in the user's currency, or in the one given (the bank's own for its price list).
+ */
+export function orderFee(bank, amount, market = 'home', currency = currencyCode()) {
     const rule = bank?.orders?.[market];
     if (!rule || !(amount > 0)) return null;
+    amount = convert(amount, currency, bank.currency);
     let fee;
     if (rule.upTo) {
         const tier = rule.upTo.find(([limit]) => amount <= limit);
@@ -49,7 +54,7 @@ export function orderFee(bank, amount, market = 'home') {
     }
     if (rule.min != null) fee = Math.max(fee, rule.min);
     if (rule.max != null) fee = Math.min(fee, rule.max);
-    return Math.round(fee * 100) / 100;
+    return Math.round(convert(fee, bank.currency, currency) * 100) / 100;
 }
 
 /** True when the fee comes from published examples rather than an exact rule. */
@@ -80,11 +85,11 @@ export const marketFor = instrumentCurrency => (instrumentCurrency === 'USD' ? '
 
 /**
  * Everything one investment costs at the user's bank: buying, selling at the end, currency conversion both ways
- * and custody over the years held. Amounts in the bank's currency. Null parts are unknown.
+ * and custody over the years held. Amounts in the user's currency unless one is given. Null parts are unknown.
  */
-export function investmentCosts(bank, { amount, endValue = amount, years = 1, market = 'home', foreignCurrency = market === 'us' }) {
-    const buy = orderFee(bank, amount, market);
-    const sell = orderFee(bank, endValue, market);
+export function investmentCosts(bank, { amount, endValue = amount, years = 1, market = 'home', foreignCurrency = market === 'us', currency = currencyCode() }) {
+    const buy = orderFee(bank, amount, market, currency);
+    const sell = orderFee(bank, endValue, market, currency);
     const fx = foreignCurrency && bank?.fx != null ? (amount + endValue) * bank.fx / 100 : null;
     const custody = bank?.custody?.pct != null ? ((amount + endValue) / 2) * bank.custody.pct / 100 * years : null;
     const parts = [buy, sell, fx, custody].filter(x => x != null);
@@ -92,7 +97,7 @@ export function investmentCosts(bank, { amount, endValue = amount, years = 1, ma
         buy, sell, fx, custody,
         total: parts.length ? Math.round(parts.reduce((a, b) => a + b, 0) * 100) / 100 : null,
         estimate: isEstimate(bank, market),
-        currency: bank?.currency || null,
+        currency,
     };
 }
 
@@ -103,7 +108,7 @@ export function bankContext(bank = currentBank()) {
     if (!bank) return '';
     const cur = bank.currency || '';
     const fee = (amount, market) => {
-        const f = orderFee(bank, amount, market);
+        const f = orderFee(bank, amount, market, cur);
         return f == null ? null : `${fmt(amount)} ${cur} order → ${isEstimate(bank, market) ? 'about ' : ''}${fmt(f)} ${cur}`;
     };
     const home = [500, 1000, 5000].map(a => fee(a, 'home')).filter(Boolean);

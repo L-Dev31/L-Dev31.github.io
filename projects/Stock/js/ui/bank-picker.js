@@ -27,8 +27,8 @@ function logo(bank) {
 
 /** "1 000 € order: 3,99 €" for the list, or the most telling fact when no fee is published. */
 function headline(bank) {
-    const fee = orderFee(bank, 1000, 'home');
-    if (fee == null) return bank.note || L('Fees not published');
+    const fee = orderFee(bank, 1000, 'home', bank.currency);
+    if (fee == null) return bank.note ? L(bank.note) : L('Fees not published');
     return L('{0} order: {1}', money(1000, bank.currency), `${isEstimate(bank) ? '≈ ' : ''}${money(fee, bank.currency)}`);
 }
 
@@ -39,7 +39,8 @@ const list = getEl('bank-list');
 const customForm = getEl('bank-custom');
 
 // The user's country first, then the others by name. A broker that serves several countries
-// (countries: [...]) is listed under the user's country when it serves it, else under its own.
+// (countries: [...]) is listed under the user's country when it serves it, else under its own,
+// after the country's own banks.
 function renderList() {
     const q = normalize(search.value.trim());
     const chosenId = currentBank()?.id;
@@ -59,7 +60,7 @@ function renderList() {
         const title = el('h3', 'bank-country');
         title.append(flag(code), countryName(code));
         group.append(title);
-        for (const bank of byCountry.get(code)) {
+        for (const bank of byCountry.get(code).sort((x, y) => (x.country !== code) - (y.country !== code))) {
             const row = el('button', 'bank-row');
             row.type = 'button';
             row.dataset.id = bank.id;
@@ -129,7 +130,7 @@ function feeTable(bank) {
     const table = el('dl', 'bank-fees');
     const add = (label, value) => { if (value) table.append(el('dt', null, label), el('dd', null, value)); };
     const fee = (amount, market) => {
-        const f = orderFee(bank, amount, market);
+        const f = orderFee(bank, amount, market, bank.currency);
         return f == null ? null : `${isEstimate(bank, market) ? '≈ ' : ''}${money(f, bank.currency)}`;
     };
     for (const amount of [500, 1000, 5000]) add(L('Order of {0}', money(amount, bank.currency)), fee(amount, 'home'));
