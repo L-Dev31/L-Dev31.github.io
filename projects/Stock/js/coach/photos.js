@@ -1,9 +1,9 @@
-// A small photo for each Home card, so its subject is clear at a glance (a bank, a calendar, bitcoin...).
+// A wide photo across the top of each Home card, so its subject is clear at a glance (a bank, a calendar, bitcoin...).
 // Source: Openverse (openly licensed images, free, no key). With an Unsplash access key (free at
 // unsplash.com/developers, "demo" apps allow 50 searches an hour) Unsplash photos are used instead.
-// Each subject is searched once and kept for 30 days; the credit shows on hover.
+// Each subject is searched once and kept for 30 days; the credit shows on the photo.
 const UNSPLASH_KEY = '';
-const KEY = 'nemeris_photos';
+const KEY = 'nemeris_card_photos';
 const KEEP = 30 * 86400000;
 
 let saved;
@@ -11,13 +11,13 @@ try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch { sav
 const pending = new Map();
 
 async function fromUnsplash(query) {
-    const r = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=1&orientation=squarish&content_filter=high&client_id=${UNSPLASH_KEY}`);
+    const r = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=1&orientation=landscape&content_filter=high&client_id=${UNSPLASH_KEY}`);
     const p = r.ok ? (await r.json()).results?.[0] : null;
-    return p && { src: p.urls.small, credit: `${p.user.name} / Unsplash`, link: `${p.links.html}?utm_source=nemeris&utm_medium=referral` };
+    return p && { src: `${p.urls.raw}&w=960&h=400&fit=crop&auto=format`, credit: `${p.user.name} / Unsplash`, link: `${p.links.html}?utm_source=nemeris&utm_medium=referral` };
 }
 
 async function fromOpenverse(query) {
-    const r = await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(query)}&page_size=5&aspect_ratio=square&license_type=commercial&mature=false`);
+    const r = await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(query)}&page_size=5&aspect_ratio=wide&license_type=commercial&mature=false`);
     const p = r.ok ? (await r.json()).results?.find(x => x.thumbnail) : null;
     return p && { src: p.thumbnail, credit: `${p.creator || p.source} · ${String(p.license || '').toUpperCase()} ${p.license_version || ''}`.trim(), link: p.foreign_landing_url };
 }

@@ -112,14 +112,24 @@ function fillLesson(panel, lessonId) {
     panel.append(para('coach-idea', lesson.idea), ...lesson.body.map(b => para(null, b)), el('h4', 'coach-sub', L('Check yourself')), quizBox(lessonId, renderProgress));
 }
 
-/** The card's photo, shown once it has loaded; nothing at all if no source answers. */
+/** The card's photo, across its top like a news story, with its credit; nothing at all if no source answers. */
 function photo(query) {
-    const img = el('img', 'coach-photo');
+    const box = el('figure', 'coach-photo');
+    const img = el('img');
+    const credit = el('a', 'coach-photo-credit');
+    box.hidden = true;
     img.alt = '';
-    img.hidden = true;
-    img.addEventListener('load', () => { img.hidden = false; });
-    photoFor(query).then(p => { if (p) { img.src = p.src; img.title = p.credit; } });
-    return img;
+    img.addEventListener('load', () => { box.hidden = false; });
+    credit.target = '_blank';
+    credit.rel = 'noopener';
+    box.append(img, credit);
+    photoFor(query).then(p => {
+        if (!p) return;
+        img.src = p.src;
+        credit.textContent = p.credit;
+        if (p.link) credit.href = p.link;
+    });
+    return box;
 }
 
 function buildCard(s) {
@@ -129,7 +139,6 @@ function buildCard(s) {
     text.append(el('span', 'coach-kind'), el('h3', 'coach-what'), el('p', 'coach-lead'));
     const head = el('div', 'coach-head');
     head.append(el('span', 'coach-icon'), text);
-    if (s.photo) head.append(photo(s.photo));
     const more = el('div', 'coach-more');
     const lesson = el('div', 'coach-lesson');
     more.hidden = lesson.hidden = true;
@@ -138,6 +147,7 @@ function buildCard(s) {
         disclose(L('What can I do?'), 'expand', more, 'btn coach-toggle'),
         disclose(L('The idea to remember'), 'lightbulb', lesson, 'link-btn coach-idea-btn', () => fillLesson(lesson, s.lesson)),
     );
+    if (s.photo) card.append(photo(s.photo));
     card.append(head, actions, more, lesson);
     return card;
 }
