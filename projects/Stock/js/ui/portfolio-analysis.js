@@ -3,6 +3,7 @@ import { getEl, progressBar, formatCurrency, termHtml, iconHtml } from '../core/
 import { fetchSeries, alignSeries } from '../quant/quant-shared.js';
 import { runQuant, QuantEngine } from '../quant/quant-client.js';
 import { L } from '../i18n/i18n.js';
+import { colors, alpha } from '../core/palette.js';
 
 const BENCHMARK = '^STOXX50E';
 const BENCHMARK_LABEL = 'EURO STOXX 50';
@@ -426,7 +427,7 @@ function escapeHtml(s) {
 
 function corrBackground(r) {
     const a = (Math.min(1, Math.abs(r)) * 0.42).toFixed(3);
-    return r >= 0 ? `rgba(169,156,255,${a})` : `rgba(79,224,163,${a})`;
+    return alpha(r >= 0 ? colors().accent : colors().pos, a);
 }
 
 function fmtPct(n) {

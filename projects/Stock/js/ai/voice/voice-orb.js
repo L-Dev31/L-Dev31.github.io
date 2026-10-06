@@ -266,10 +266,10 @@ export async function mountVoiceOrb(container) {
         const updatePalette = () => {
             const css = getComputedStyle(document.documentElement);
             const read = (name, target) => { const value = css.getPropertyValue(name).trim(); if (value) target.setStyle(value); };
-            read('--accent', colors.a);
-            read('--pos', colors.b);
-            read('--text-2', colors.c);
-            read('--accent-strong', colors.deep);
+            read('--orb-a', colors.a);
+            read('--orb-b', colors.b);
+            read('--orb-c', colors.c);
+            read('--orb-deep', colors.deep);
             colors.deep.multiplyScalar(0.1);
         };
         updatePalette();

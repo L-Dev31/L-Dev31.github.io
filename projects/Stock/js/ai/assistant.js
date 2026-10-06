@@ -824,13 +824,11 @@ function makeCtxWheel() {
     b.addEventListener('click', async e => {
         e.preventDefault();
         e.stopPropagation();
-        console.debug('[ctx] compact click');
-        if (!ui?.ctxWheels?.length) { console.debug('[ctx] no wheels mounted'); return; }
+        if (!ui?.ctxWheels?.length) return;
         for (const w of ui.ctxWheels) w.classList.add('is-working');
         let saved = 0, failed = false;
         try { saved = (await compactNow())?.saved || 0; }
         catch (err) { failed = true; console.error('[ctx] compact failed', err); }
-        console.debug('[ctx] compact saved', saved);
         for (const w of ui.ctxWheels) {
             w.classList.remove('is-working');
             const pctEl = w.querySelector('.ctx-pct');

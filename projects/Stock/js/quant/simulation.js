@@ -4,6 +4,7 @@ import { getCurrency, positions, getInvestor } from '../core/state.js';
 import { el, progressBar } from '../core/utils.js';
 import { currentBank, investmentCosts, marketFor, formatMoney } from '../data/banks.js';
 import { L, Ln, LOCALE } from '../i18n/i18n.js';
+import { colors, alpha } from '../core/palette.js';
 
 export const HORIZONS = { '1W': 5, '1M': 21, '3M': 63, '6M': 126, '1Y': 252, '3Y': 756, '5Y': 1260 };
 export const RETURN_MODELS = {
@@ -232,9 +233,10 @@ function drawResult(box, r) {
     drawChart(canvas, r);
 }
 
-const BAND = { bad: 'rgba(255,107,142,0.16)', mid: 'rgba(169,156,255,0.24)', good: 'rgba(79,224,163,0.16)' };
 function drawChart(canvas, r) {
     if (!window.Chart) return;
+    const c = colors();
+    const BAND = { bad: alpha(c.neg, 0.14), mid: alpha(c.accent, 0.18), good: alpha(c.pos, 0.14) };
     charts.get(canvas)?.destroy();
     const long = r.days > 300;
     const labels = r.series.dates.map(d => d.toLocaleDateString(LOCALE, long ? { month: 'short', year: '2-digit' } : { day: 'numeric', month: 'short' }));
@@ -248,8 +250,8 @@ function drawChart(canvas, r) {
                 line('25th', r.series.p25, 'transparent', { fill: '-1', backgroundColor: BAND.bad }),
                 line('75th', r.series.p75, 'transparent', { fill: '-1', backgroundColor: BAND.mid }),
                 line(L('If things go well'), r.series.p95, 'transparent', { fill: '-1', backgroundColor: BAND.good }),
-                line(L('Most likely'), r.series.p50, '#A99CFF', { borderWidth: 2.4 }),
-                line(L('Your stake'), r.series.p50.map(() => r.amount), '#726B8C', { borderWidth: 1.2, borderDash: [4, 4] }),
+                line(L('Most likely'), r.series.p50, c.accent, { borderWidth: 2.4 }),
+                line(L('Your stake'), r.series.p50.map(() => r.amount), c.faint, { borderWidth: 1.2, borderDash: [4, 4] }),
             ],
         },
         options: {
@@ -258,7 +260,7 @@ function drawChart(canvas, r) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#272038', borderColor: 'rgba(196,184,255,0.16)', borderWidth: 1, titleColor: '#F5F3FF', bodyColor: '#DCD7EF', padding: 10, cornerRadius: 10,
+                    backgroundColor: c.inverse, borderWidth: 0, titleColor: c.onInverse, bodyColor: c.onInverse, padding: 10, cornerRadius: 10,
                     filter: item => !/^(25th|75th)/.test(item.dataset.label),
                     itemSort: (a, b) => b.parsed.y - a.parsed.y,
                     callbacks: { label: ctx => `${ctx.dataset.label}: ${money(ctx.parsed.y, r.currency)}` },
@@ -266,8 +268,8 @@ function drawChart(canvas, r) {
                 zoom: false,
             },
             scales: {
-                x: { grid: { display: false }, ticks: { color: '#726B8C', maxRotation: 0, autoSkip: true, maxTicksLimit: 6, font: { family: 'Space Grotesk', size: 12 } } },
-                y: { position: 'right', grid: { color: 'rgba(196,184,255,0.06)' }, border: { display: false }, ticks: { color: '#726B8C', font: { family: 'Space Grotesk', size: 12 }, callback: v => money(v, r.currency) } },
+                x: { grid: { display: false }, ticks: { color: c.faint, maxRotation: 0, autoSkip: true, maxTicksLimit: 6, font: { family: 'Space Grotesk', size: 12 } } },
+                y: { position: 'right', grid: { color: c.grid }, border: { display: false }, ticks: { color: c.faint, font: { family: 'Space Grotesk', size: 12 }, callback: v => money(v, r.currency) } },
             },
         },
     });

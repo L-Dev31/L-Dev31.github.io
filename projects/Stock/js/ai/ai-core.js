@@ -402,10 +402,9 @@ async function enrichLocal(entry) {
 }
 
 /** Looks at the usual ports of this computer and at every address the user added. */
-let scanPromise = null, scanning = false;
+let scanPromise = null;
 export function scanAll({ patient = false, discoverLocal = false } = {}) {
     if (scanPromise) return scanPromise;
-    scanning = true;
     scanPromise = (async () => {
         const jobs = [];
         if (discoverLocal) {
@@ -422,11 +421,10 @@ export function scanAll({ patient = false, discoverLocal = false } = {}) {
         }
         refreshTaskStates();
         await Promise.all(jobs.map(j => j.finally(() => { refreshTaskStates(); changed(); })));
-        scanning = false;
         catalog.scannedAt = Date.now();
         refreshTaskStates();
         changed();
-    })().finally(() => { scanPromise = null; scanning = false; });
+    })().finally(() => { scanPromise = null; });
     return scanPromise;
 }
 async function quickCheck(entry, patient) {

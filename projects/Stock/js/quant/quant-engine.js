@@ -16,7 +16,7 @@ import {
     TRADING_DAYS, mean, sampleStdDev, simpleReturns, logReturns,
     maxDrawdown as coreMaxDrawdown, percentileSorted,
     vwap as coreVWAP, covariance, pearsonCorrelation,
-    zScore as coreZScore, outlierPValue, seededRandom
+    outlierPValue, seededRandom
 } from './quant-math.js';
 
 // Annualized risk-free rate (2% default for Eurozone PEA, mid-2026)

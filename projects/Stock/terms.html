@@ -25,6 +25,8 @@
             var l; try { l = localStorage.getItem('nemeris_lang'); } catch (e) { l = null; }
             if (l !== 'fr' && l !== 'en') l = 'en';
             document.documentElement.lang = l; document.documentElement.dataset.lang = l;
+            var t; try { t = localStorage.getItem('nemeris_theme'); } catch (e) { t = null; }
+            if (t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.dataset.theme = 'dark';
             if (l === 'en') document.title = 'Terms of use - Nemeris';
             document.addEventListener('click', function (e) {
                 var a = e.target.closest('.lang-link'); if (!a) return;

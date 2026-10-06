@@ -295,7 +295,7 @@ function renderPositionSummary(card, symbol, price) {
         <div class="kpi-row">
             <div class="kpi kpi-hero"><span class="kpi-label">${L('Worth now')}</span><span class="kpi-value">${formatCurrency(value, cur)}</span><span class="kpi-sub">${Ln(shares, '{0} share at {1}', '{0} shares at {1}', formatCurrency(price, cur))}</span></div>
             <div class="kpi"><span class="kpi-label">${L('You put in')}</span><span class="kpi-value">${formatCurrency(cost, cur)}</span><span class="kpi-sub">${L('{0} per share on average', formatCurrency(cost / shares, cur))}</span></div>
-            <div class="kpi ${gain >= 0 ? 'is-up' : 'is-down'}"><span class="kpi-label">${gain >= 0 ? L('You gained') : L('You lost')}</span><span class="kpi-value ${tone}">${gain >= 0 ? '+' : ''}${formatCurrency(gain, cur)}</span><span class="kpi-sub ${tone}">${L('{0} on what you put in', formatPct(pct))}</span></div>
+            <div class="kpi"><span class="kpi-label">${gain >= 0 ? L('You gained') : L('You lost')}</span><span class="kpi-value ${tone}">${gain >= 0 ? '+' : ''}${formatCurrency(gain, cur)}</span><span class="kpi-sub ${tone}">${L('{0} on what you put in', formatPct(pct))}</span></div>
         </div>`;
 }
 

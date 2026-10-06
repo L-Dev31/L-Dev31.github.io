@@ -7,6 +7,7 @@ import { initAnalysisPane, renderAnalysisPane } from './portfolio-analysis.js';
 import { renderAiLabPane } from '../ai/ai-lab.js';
 import { buildLabel, createMainChart, renderLine, alignBenchmarkToTimestamps } from './chart.js';
 import { L, Ln, LOCALE } from '../i18n/i18n.js';
+import { colors, alpha } from '../core/palette.js';
 
 const setText = (id, value) => {
     const el = getEl(id);
@@ -96,7 +97,8 @@ export function updatePortfolioSummary() {
     window.dispatchEvent(new Event('nemeris:portfolio'));
 }
 
-const SHADES = ['#A99CFF', '#7C6CF2', '#CFC7FF', '#5B4CC9', '#E6E1FF', '#9486FF', '#463A9C', '#B9AEFF', '#6A5BDB', '#F1EEFF'];
+// Donut slices without a logo color: the accent, fading.
+const SHADES = [1, .8, .64, .5, .4, .32, .25, .2, .16, .12].map(a => alpha(colors().accent, a));
 
 export function updatePortfolioComposition() {
     const panel = getEl('exposure-panel');
@@ -607,8 +609,6 @@ function renderPerformancePane() {
     const allTime = unrealized + realized;
     const gainTile = getEl('pf-gain');
     if (gainTile) {
-        gainTile.classList.toggle('kpi-pos', allTime >= 0);
-        gainTile.classList.toggle('kpi-neg', allTime < 0);
         const v = getEl('pf-gain-value');
         v.textContent = signed(allTime);
         v.className = `kpi-value ${allTime >= 0 ? 'positive' : 'negative'}`;
@@ -686,9 +686,9 @@ function updatePerformanceChart(earned, open, lost) {
     const legend = getEl('perf-chart-legend');
     if (!section || !svg || !legend) return;
     const items = [
-        { label: L('Realized'), value: earned, color: '#4FE0A3' },
-        { label: L('Unrealized'), value: open, color: '#A99CFF' },
-        { label: L('Losses'), value: lost, color: '#FF6B8E' },
+        { label: L('Realized'), value: earned, color: colors().pos },
+        { label: L('Unrealized'), value: open, color: colors().accent },
+        { label: L('Losses'), value: lost, color: colors().neg },
     ].filter(x => x.value > 0);
     section.hidden = !items.length;
     const currency = getCurrency();

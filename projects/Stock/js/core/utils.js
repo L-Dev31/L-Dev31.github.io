@@ -14,10 +14,8 @@ const moneyFormat = new Intl.NumberFormat(LOCALE, { minimumFractionDigits: 2, ma
 
 export const formatCurrency = (val, currency = '$') => `${val < 0 ? '-' : ''}${moneyFormat.format(Math.abs(val))}\u00A0${currency}`;
 
-export const formatPct = (val) => {
-    if (!val) return '0.00%';
-    return `${val > 0 ? '▲ +' : '▼ '}${val.toFixed(2)}%`;
-};
+const pctFormat = new Intl.NumberFormat(LOCALE, { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'exceptZero' });
+export const formatPct = val => (val ? `${val > 0 ? '▲' : '▼'} ${pctFormat.format(val / 100)}` : pctFormat.format(0));
 
 export function el(tag, cls, text) {
     const n = document.createElement(tag);
@@ -42,14 +40,6 @@ export function showCard(target) {
     const sym = card.classList.contains('ticker-card') ? card.id.slice(5) : null;
     for (const t of document.querySelectorAll('.tab.active')) if (t.dataset.symbol !== sym) t.classList.remove('active');
     if (sym) for (const t of document.querySelectorAll(`.tab[data-symbol="${CSS.escape(sym)}"]`)) t.classList.add('active');
-    document.body.classList.toggle('is-ticker-view', !!sym);
-    if (sym) {
-        document.body.style.setProperty('--tk-glow', 'rgba(139, 123, 255, .12)');
-        iconColor(sym).then(c => {
-            if (!c || document.querySelector('.ticker-card.active')?.id !== `card-${sym}`) return;
-            document.body.style.setProperty('--tk-glow', c.replace('rgb(', 'rgba(').replace(')', ', .16)'));
-        });
-    }
     window.scrollTo(0, 0);
     return card;
 }

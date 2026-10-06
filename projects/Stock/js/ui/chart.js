@@ -2,10 +2,12 @@ import { getCurrency } from '../core/state.js';
 import { calculateRSISeries, calculateMACD } from '../quant/signal-bot.js';
 import { fetchFromYahoo } from '../data/yahoo-finance.js';
 import { L, LOCALE } from '../i18n/i18n.js';
+import { colors, alpha } from '../core/palette.js';
 
-const C = { line: '#A99CFF', pos: '#4FE0A3', neg: '#FF6B8E', soft: '#DCD7EF', text: '#726B8C', grid: 'rgba(196,184,255,0.06)', tipBg: '#272038', tipBorder: 'rgba(196,184,255,0.16)', tipTitle: '#F5F3FF' };
+const P = colors();
+const C = { line: P.accent, pos: P.pos, neg: P.neg, soft: P.text2, text: P.faint, grid: P.grid, tipBg: P.inverse, tipText: P.onInverse };
 const FONT = "'Space Grotesk', system-ui, sans-serif";
-const TOOLTIP = { backgroundColor: C.tipBg, titleColor: C.tipTitle, bodyColor: C.soft, borderColor: C.tipBorder, borderWidth: 1, cornerRadius: 12, displayColors: false, titleFont: { family: FONT, size: 13, weight: '800' }, bodyFont: { family: FONT, size: 12, weight: '600' }, footerFont: { family: FONT, size: 12, weight: '800' } };
+const TOOLTIP = { backgroundColor: C.tipBg, titleColor: C.tipText, bodyColor: C.tipText, footerColor: C.tipText, borderWidth: 0, cornerRadius: 12, displayColors: false, titleFont: { family: FONT, size: 13, weight: '600' }, bodyFont: { family: FONT, size: 12, weight: '500' }, footerFont: { family: FONT, size: 12, weight: '600' } };
 const RSI_THRESHOLDS = [30, 70];
 const RSI_ZONE_COLOR = { over: C.neg, under: C.pos, mid: C.soft };
 
@@ -114,9 +116,9 @@ const rsiZonesPlugin = {
         const yBot = scales.y.getPixelForValue(30);
 
         ctx.save();
-        ctx.fillStyle = 'rgba(255,107,142,0.08)';
+        ctx.fillStyle = alpha(C.neg, 0.06);
         ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, yTop - chartArea.top);
-        ctx.fillStyle = 'rgba(79,224,163,0.08)';
+        ctx.fillStyle = alpha(C.pos, 0.06);
         ctx.fillRect(chartArea.left, yBot, chartArea.right - chartArea.left, chartArea.bottom - yBot);
 
         const hLine = (y, stroke) => {
@@ -127,14 +129,14 @@ const rsiZonesPlugin = {
             ctx.lineTo(chartArea.right, y);
             ctx.stroke();
         };
-        hLine(yMid, 'rgba(196,184,255,0.08)');
-        hLine(yTop, 'rgba(255,107,142,0.4)');
-        hLine(yBot, 'rgba(79,224,163,0.4)');
+        hLine(yMid, C.grid);
+        hLine(yTop, alpha(C.neg, 0.4));
+        hLine(yBot, alpha(C.pos, 0.4));
 
-        ctx.font = `700 11px ${FONT}`;
-        ctx.fillStyle = 'rgba(255,107,142,0.7)';
+        ctx.font = `600 11px ${FONT}`;
+        ctx.fillStyle = alpha(C.neg, 0.7);
         ctx.fillText('70', chartArea.left + 4, yTop - 3);
-        ctx.fillStyle = 'rgba(79,224,163,0.7)';
+        ctx.fillStyle = alpha(C.pos, 0.7);
         ctx.fillText('30', chartArea.left + 4, yBot + 11);
         ctx.restore();
     }
@@ -148,7 +150,7 @@ const macdZeroPlugin = {
         if (!chartArea || !scales.y) return;
         const y0 = scales.y.getPixelForValue(0);
         ctx.save();
-        ctx.strokeStyle = 'rgba(220,215,239,0.3)';
+        ctx.strokeStyle = alpha(C.text, 0.5);
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(chartArea.left, y0);
@@ -636,9 +638,9 @@ function updateIndicatorSubcharts(symbol, prices, positions) {
     }
     if (peak === 0) peak = 1;
     const histColors = histAligned.map(v => {
-        if (v == null) return 'rgba(114,107,140,0.4)';
+        if (v == null) return alpha(C.text, 0.4);
         const a = Math.min(1, 0.35 + (Math.abs(v) / peak) * 0.65).toFixed(2);
-        return v >= 0 ? `rgba(79,224,163,${a})` : `rgba(255,107,142,${a})`;
+        return alpha(v >= 0 ? C.pos : C.neg, a);
     });
 
     macdCh.data.labels = labels;

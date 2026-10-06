@@ -4,7 +4,7 @@
 import { getCurrency } from '../core/state.js';
 import { termHtml } from '../core/utils.js';
 import {
-    clamp, safeArray, mean, populationStdDev,
+    clamp, safeArray, populationStdDev,
     sma as coreSMA, ema as coreEMA,
     linRegSlopePct, linRegSlopeAbsNorm,
     maxDrawdown as coreMaxDrawdown,
@@ -26,7 +26,6 @@ const DEFAULT_OPTIONS = {
 
 // Signal & Indicator Cache to prevent redundant high-CPU tasks
 const SIGNAL_CACHE = new Map();
-const INDICATOR_BUFFER = new Map();
 
 // Cache key. length+first+last alone collides easily (e.g. same-length window that
 // only differs in the middle). Sample several interior points + a checksum to make
@@ -39,21 +38,6 @@ const getPriceHash = (prices) => {
     for (let i = 0; i < n; i += step) sum += prices[i];
     const mid = prices[Math.floor(n / 2)];
     return `${n}-${prices[0]}-${mid}-${prices[n - 1]}-${sum.toFixed(4)}`;
-};
-
-const PERIOD_LABELS = {
-    '1H': 'over 1 hour',
-    '4H': 'over 4 hours',
-    '1D': 'over 1 day',
-    '1W': 'over 1 week',
-    '1M': 'over 1 month',
-    '3M': 'over 3 months',
-    '6M': 'over 6 months',
-    '1Y': 'over 1 year',
-    '3Y': 'over 3 years',
-    '5Y': 'over 5 years',
-    'YTD': 'year to date',
-    'MAX': 'all time'
 };
 
 const HORIZON_MAP = {
@@ -88,12 +72,6 @@ const PERIOD_INDICATOR_CONFIG = {
     'MAX': { rsiPeriod: 14, macdFast: 12, macdSlow: 26, macdSignal: 9, sma: [12, 36, 60], momentumPeriod: 6, atrPeriod: 14, macdNormFactor: 0.04, volScale: 6 }
 };
 const DEFAULT_INDICATOR_CONFIG = PERIOD_INDICATOR_CONFIG['1D'];
-
-const getRiskColorClass = (score) => {
-    if (score >= 7) return 'negative';
-    if (score >= 4) return 'warning';
-    return 'positive';
-};
 
 // When only closing prices are available (no real intraday high/low), the true range
 // collapses to the absolute close-to-close move, which systematically UNDERSTATES the

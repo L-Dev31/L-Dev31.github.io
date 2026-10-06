@@ -22,7 +22,7 @@
     <meta name="twitter:title" content="Nemeris - Investing made calm and clear">
     <meta name="twitter:description" content="Clear signals, simulations, and an AI that knows your portfolio.">
     <meta name="twitter:image" content="https://l-dev31.github.io/projects/Stock/img/icon/og-image.png">
-    <meta name="theme-color" content="#0B0912">
+    <meta name="theme-color" content="#F5F5F7">
 
     <script type="application/ld+json">
     {
@@ -46,6 +46,13 @@
     <link rel="preconnect" href="https://query2.finance.yahoo.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:opsz,wght@14..32,400..600&family=Space+Grotesk:wght@400;500;600;700&display=swap">
     <script>
+        // Theme before the first paint: light unless the user chose dark, or automatic with a dark system.
+        (function () {
+            var t; try { t = localStorage.getItem('nemeris_theme'); } catch (e) { t = null; }
+            var dark = t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+            if (dark) document.documentElement.dataset.theme = 'dark';
+            document.querySelector('meta[name="theme-color"]').content = dark ? '#0B0912' : '#F5F5F7';
+        })();
         // English is the source language: the page shows immediately, unless a
         // translation (French for now) still has to be applied by js/i18n/i18n.js (2.5 s at most).
         (function () {
@@ -490,6 +497,14 @@
                         <div class="seg">
                             <label><input type="radio" name="app-lang" value="en" lang="en"><span>English</span></label>
                             <label><input type="radio" name="app-lang" value="fr" lang="fr"><span>Français</span></label>
+                        </div>
+                    </fieldset>
+                    <fieldset class="question">
+                        <legend>Appearance</legend>
+                        <div class="seg">
+                            <label><input type="radio" name="app-theme" value="light"><span>Light</span></label>
+                            <label><input type="radio" name="app-theme" value="dark"><span>Dark</span></label>
+                            <label><input type="radio" name="app-theme" value="auto"><span>Automatic</span></label>
                         </div>
                     </fieldset>
                 </section>

@@ -1,6 +1,7 @@
 import { runQuant, QuantEngine } from '../../quant/quant-client.js';
 import { fetchCloses, resolveTicker } from '../../quant/quant-shared.js';
 import { esc, formatNumber, formatPercent, panel } from './market-data-shared.js';
+import { colors, alpha } from '../../core/palette.js';
 
 export async function runCompareCommand({ parts, out, fmtErr }) {
     const tokens = parts.slice(1).map(s => s.toUpperCase()).filter(Boolean);
@@ -57,6 +58,5 @@ function perfHtml(rows) {
 
 function corrStyle(r) {
     const a = Math.min(1, Math.abs(r));
-    if (r >= 0) return `background:rgba(46,160,67,${a * 0.35})`;
-    return `background:rgba(248,81,73,${a * 0.35})`;
+    return `background:${alpha(r >= 0 ? colors().pos : colors().neg, a * 0.3)}`;
 }

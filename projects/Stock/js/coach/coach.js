@@ -57,26 +57,38 @@ function askButton(question) {
     return b;
 }
 
-/* ── one situation: what is happening, what it means, your options, the idea behind it ── */
-function fillFacts(card, s) {
-    const head = card.querySelector('.coach-head');
-    const title = el('h3', 'coach-what');
-    title.append(richText(s.title));
-    head.replaceChildren(badge(ICON[s.tone]), title);
+/* ── one situation in three levels: the headline, what it means in one sentence,
+   then on demand what you can do and the idea behind it ── */
+function disclose(label, iconName, panel, cls, onFirstOpen) {
+    const b = el('button', cls, label);
+    b.type = 'button';
+    b.prepend(icon(iconName));
+    b.setAttribute('aria-expanded', 'false');
+    b.addEventListener('click', () => {
+        const open = panel.hidden;
+        if (open && !panel.childElementCount) onFirstOpen?.();
+        panel.hidden = !open;
+        b.setAttribute('aria-expanded', String(open));
+    });
+    return b;
+}
 
-    const meaning = card.querySelector('.coach-meaning');
-    meaning.replaceChildren(...s.meaning.map(m => para(null, m)));
+function fillFacts(card, s) {
+    card.querySelector('.coach-icon').replaceChildren(icon(ICON[s.tone]));
+    card.querySelector('.coach-what').replaceChildren(richText(s.title));
+    card.querySelector('.coach-lead').replaceChildren(richText(s.meaning[0]));
+
+    const why = s.meaning.slice(1).map(m => para('coach-why', m));
     if (s.history) {
-        const usual = para('coach-usual meta', L('Checking how usual this is…'));
-        meaning.append(usual);
+        const usual = para('coach-why', L('Checking how usual this is…'));
+        why.push(usual);
         howUsual(s.history).then(text => { if (text) usual.replaceChildren(richText(text)); else usual.remove(); });
     }
-
     const list = el('ul', 'coach-options');
     for (const o of s.options) {
         const li = el('li');
         const text = el('div');
-        text.append(el('strong', null, o.label), para('meta', o.detail));
+        text.append(el('span', 'coach-option', o.label), para('coach-why', o.detail));
         li.append(text);
         if (o.action) {
             const go = el('button', 'btn btn-quiet', ACTION_LABEL[o.action]);
@@ -86,36 +98,32 @@ function fillFacts(card, s) {
         }
         list.append(li);
     }
-    card.querySelector('.coach-options-box').replaceChildren(el('h4', 'coach-label', L('What you can do')), list);
+    const more = card.querySelector('.coach-more');
+    more.replaceChildren(list, ...why, ...(s.ask ? [askButton(s.ask)] : []));
 }
 
-function learnBox(lessonId) {
+function fillLesson(panel, lessonId) {
     const lesson = LESSONS[lessonId];
-    const box = el('details', 'coach-learn');
-    const summary = el('summary');
-    const idea = el('span', 'coach-idea');
-    idea.append(el('span', 'coach-label', L('The idea to remember')), para(null, lesson.idea));
-    summary.append(icon('lightbulb'), idea, el('span', 'coach-learn-cta', L('Understand')));
-    box.append(summary);
-    box.addEventListener('toggle', () => {
-        if (!box.open || box.querySelector('.coach-lesson')) return;
-        markSeen(lessonId);
-        const inside = el('div', 'coach-lesson');
-        inside.append(...lesson.body.map(b => para(null, b)), el('h4', 'coach-label', L('Check yourself')), quizBox(lessonId, renderProgress));
-        box.append(inside);
-    });
-    return box;
+    markSeen(lessonId);
+    panel.append(para('coach-idea', lesson.idea), ...lesson.body.map(b => para(null, b)), el('h4', 'coach-sub', L('Check yourself')), quizBox(lessonId, renderProgress));
 }
 
 function buildCard(s) {
     const card = el('article', `coach-card is-${s.tone}`);
     card.dataset.id = s.id;
-    card.append(el('div', 'coach-head'), el('div', 'coach-meaning'), el('div', 'coach-options-box'), learnBox(s.lesson));
-    if (s.ask) {
-        const foot = el('div', 'coach-foot');
-        foot.append(askButton(s.ask));
-        card.append(foot);
-    }
+    const text = el('div', 'coach-text');
+    text.append(el('h3', 'coach-what'), el('p', 'coach-lead'));
+    const head = el('div', 'coach-head');
+    head.append(el('span', 'coach-icon'), text);
+    const more = el('div', 'coach-more');
+    const lesson = el('div', 'coach-lesson');
+    more.hidden = lesson.hidden = true;
+    const actions = el('div', 'coach-actions');
+    actions.append(
+        disclose(L('What can I do?'), 'expand', more, 'btn coach-toggle'),
+        disclose(L('The idea to remember'), 'lightbulb', lesson, 'link-btn coach-idea-btn', () => fillLesson(lesson, s.lesson)),
+    );
+    card.append(head, actions, more, lesson);
     return card;
 }
 

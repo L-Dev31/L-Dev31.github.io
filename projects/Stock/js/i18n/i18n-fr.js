@@ -1470,5 +1470,10 @@ export default {
     "Explaining \"{0}\"": "Explication de « {0} »",
     "Minimize assistant": "Réduire l'assistant",
     "Minimize voice mode": "Réduire le mode vocal",
-    "Checking the figures": "Vérification des chiffres"
+    "Checking the figures": "Vérification des chiffres",
+    "Appearance": "Apparence",
+    "Light": "Clair",
+    "Dark": "Sombre",
+    "Automatic": "Automatique",
+    "What can I do?": "Que faire ?"
 };

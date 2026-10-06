@@ -256,6 +256,7 @@ function fillSettings() {
     getEl('settings-pfp-preview').src = s.pfp || 'img/icon/favicon.png';
     getEl('settings-expert').checked = !!s.expert;
     for (const r of document.querySelectorAll('input[name="app-lang"]')) r.checked = r.value === LANG;
+    for (const r of document.querySelectorAll('input[name="app-theme"]')) r.checked = r.value === theme();
     getEl('settings-proxy-url').value = s.proxyUrl || '';
     const inv = s.investor || {};
     for (const set of document.querySelectorAll('#about-you .question')) {
@@ -310,6 +311,13 @@ getEl('settings-user-pfp-file')?.addEventListener('change', e => {
     reader.readAsDataURL(file);
 });
 for (const r of document.querySelectorAll('input[name="app-lang"]')) r.addEventListener('change', () => { if (r.checked) setLang(r.value); });
+// Charts read their colors once, so a new theme reloads the page (like a new language).
+const theme = () => { try { return localStorage.getItem('nemeris_theme') || 'light'; } catch { return 'light'; } };
+for (const r of document.querySelectorAll('input[name="app-theme"]')) r.addEventListener('change', () => {
+    if (!r.checked) return;
+    try { localStorage.setItem('nemeris_theme', r.value); } catch { /* storage blocked */ }
+    location.reload();
+});
 getEl('settings-expert')?.addEventListener('change', e => {
     saveUserSettings({ expert: e.target.checked });
     try { localStorage.removeItem(ADV_KEY); } catch { /* ignore */ }

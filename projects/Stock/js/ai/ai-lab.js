@@ -5,6 +5,7 @@ import { proxyFetch } from '../data/proxy-fetch.js';
 import { Store } from '../data/store.js';
 import { getAiSettings, patchAiSettings, getTaskState, probeTask, resolveTask, isLoopback, callStructured, prettyModel, onAiChange, registerAiSettingsSection, startAiCore, syncAiGates } from './ai-core.js';
 import { L, Ln, LANG, LOCALE } from '../i18n/i18n.js';
+import { colors } from '../core/palette.js';
 
 const llm = () => getTaskState('research');
 const researchModel = () => resolveTask('research')?.model || '';
@@ -90,7 +91,7 @@ function emit() {
 function note(msg, level = 'info') {
     status.log.push({ t: new Date().toLocaleTimeString(LOCALE), msg, level });
     status.log = status.log.slice(-80);
-    if (level !== 'info') console.warn('[AI]', msg); else console.debug('[AI]', msg);
+    if (level !== 'info') console.warn('[AI]', msg);
     emit();
 }
 
@@ -874,7 +875,7 @@ const STANCE = {
 };
 const stanceWord = (s, held) => (STANCE[s] || STANCE.hold)[held ? 1 : 0];
 const stanceTone = s => (STANCE[s] || STANCE.hold)[2];
-const BOOK = { ai: [L('AI'), '#A99CFF'], momentum: [L('Trend rule'), '#DCD7EF'], random: [L('Random'), '#726B8C'], benchmark: [L('World market'), '#4FE0A3'] };
+const BOOK = { ai: [L('AI'), colors().accent], momentum: [L('Trend rule'), colors().muted], random: [L('Random'), colors().faint], benchmark: [L('World market'), colors().pos] };
 const PREDICTOR = { ai: L('AI'), momentum: L('Trend rule'), coin: L('Coin flip') };
 const STEP = { prices: L('Price'), news: L('News'), model: L('Thinking'), journal: L('Saving') };
 
@@ -1192,7 +1193,7 @@ function drawPaperChart(canvas) {
         options: {
             responsive: true, maintainAspectRatio: false, animation: false, interaction: { mode: 'index', intersect: false },
             plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Number(c.parsed.y).toFixed(0)} €` } }, zoom: false },
-            scales: { x: { ticks: { color: '#726B8C', maxTicksLimit: 6 }, grid: { display: false } }, y: { ticks: { color: '#726B8C', callback: v => `${v} €` }, grid: { color: 'rgba(196,184,255,0.06)' } } },
+            scales: { x: { ticks: { color: colors().faint, maxTicksLimit: 6 }, grid: { display: false } }, y: { ticks: { color: colors().faint, callback: v => `${v} €` }, grid: { color: colors().grid } } },
         },
     });
 }

@@ -1,4 +1,4 @@
-import { fetchYahooScreener, fetchYahooChartSnapshot, fetchYahooPeriodChanges, fetchYahooIndexComponents, isYahooTickerActiveFromQuote, isYahooTickerActiveFromChart, computeDaysSinceLastTrade, fetchYahooQuotesBatch } from '../data/yahoo-finance.js';
+import { fetchYahooScreener, fetchYahooPeriodChanges, fetchYahooIndexComponents, isYahooTickerActiveFromQuote, computeDaysSinceLastTrade, fetchYahooQuotesBatch } from '../data/yahoo-finance.js';
 import { handleImageAssetError } from '../data/assets.js';
 import { debounce } from '../core/constants.js';
 import { getCurrency } from '../core/state.js';
@@ -35,37 +35,8 @@ import { L, LOCALE } from '../i18n/i18n.js';
     const aiCache = new Map();
 
     const PERIOD_LABELS = { '1H': '1H', '4H': '4H', '1D': '1D', '1W': '1W', '1M': '1M', '3M': '3M', '6M': '6M', '1Y': '1Y', 'YTD': 'YTD' };
-    const PERIOD_CONFIG = {
-        '1H': { range: '1h', interval: '1m' },
-        '4H': { range: '4h', interval: '1m' },
-        '1D': { range: '1d', interval: '1m' },
-        '1W': { range: '5d', interval: '1h' },
-        '1M': { range: '1mo', interval: '1d' },
-        '3M': { range: '3mo', interval: '1d' },
-        '6M': { range: '6mo', interval: '1d' },
-        '1Y': { range: '1y', interval: '1wk' },
-        'YTD': { range: 'ytd', interval: '1d' }
-    };
 
     const YAHOO_SCREENERS = ['day_gainers', 'day_losers', 'most_actives', 'undervalued_growth_stocks', 'growth_technology_stocks', 'undervalued_large_caps', 'aggressive_small_caps', 'small_cap_gainers'];
-
-    const MARKET_CONFIG = {
-        australia: { suffix: '.AX', country: 'AU' },
-        uk: { suffix: '.L', country: 'GB' },
-        germany: { suffix: '.DE', country: 'DE' },
-        france: { suffix: '.PA', country: 'FR' },
-        switzerland: { suffix: '.SW', country: 'CH' },
-        japan: { suffix: '.T', country: 'JP' },
-        canada: { suffix: '.TO', country: 'CA', transform: t => t.replace('.', '-').toUpperCase() },
-        india: { country: 'IN', resolve: (t, e) => e === 'BSE' ? `${t}.BO` : `${t}.NS` },
-        china: { country: 'CN', resolve: (t, e) => e === 'SZSE' ? `${t}.SZ` : `${t}.SS` },
-        hongkong: { country: 'HK', resolve: t => `${t.padStart(4, '0')}.HK` },
-        korea: { country: 'KR', resolve: (t, e) => e === 'KOSDAQ' ? `${t}.KQ` : `${t}.KS` },
-        euronext: { country: 'FR' }, lse: { country: 'GB' }, xetra: { country: 'DE' },
-        asx: { country: 'AU' }, tsx: { country: 'CA' }, six: { country: 'CH' },
-        tse: { country: 'JP' }, hkex: { country: 'HK' }, sse: { country: 'CN' },
-        szse: { country: 'CN' }, nse: { country: 'IN' }, bse: { country: 'IN' }, krx: { country: 'KR' }
-    };
 
     const getMaxAllowed = () => Math.min(state.maxFetchTickers, HARD_MAX_RESULTS);
 
@@ -191,12 +162,6 @@ import { L, LOCALE } from '../i18n/i18n.js';
         return [...set].slice(0, getMaxAllowed());
     }
 
-    function getJsonSymbol(sym) {
-        if (yahooToJsonSymbol[sym]) return yahooToJsonSymbol[sym];
-        const base = sym.split('.')[0].split('-')[0];
-        return yahooToJsonSymbol[base] || null;
-    }
-
     function getIconSymbol(sym) {
         if (stockIconMap[sym]) return stockIconMap[sym];
         const base = sym.split('.')[0].split('-')[0];
@@ -308,43 +273,6 @@ import { L, LOCALE } from '../i18n/i18n.js';
             daysSinceLastTrade: Math.round(computeDaysSinceLastTrade(q.regularMarketTime)),
             score: 50, signal: 'hold', riskScore: 1
         };
-    }
-
-    async function fetchStockDetails(symbol, marketId = 'euronext', defaultEligibility = 'cto') {
-        const fetchOne = async (sym) => {
-            try {
-                const result = await fetchYahooChartSnapshot(sym, '1d', '1m');
-                if (!result) return null;
-
-                const meta = result.meta || {};
-                const closes = result.indicators?.quote?.[0]?.close || [];
-                const volumes = result.indicators?.quote?.[0]?.volume || [];
-
-                let price = meta.regularMarketPrice || 0;
-                if (!price) for (let i = closes.length - 1; i >= 0; i--) if (closes[i] !== null) { price = closes[i]; break; }
-
-                const prevClose = meta.chartPreviousClose || meta.previousClose || 0;
-                const change = prevClose ? price - prevClose : 0;
-                const changePercent = prevClose ? ((price - prevClose) / prevClose) * 100 : 0;
-
-                let totalVolume = volumes.reduce((a, v) => a + (v || 0), 0);
-                const volume = meta.regularMarketVolume || totalVolume;
-
-                const isSuspended = !isYahooTickerActiveFromChart(meta, closes, volumes);
-
-                return {
-                    symbol: sym, name: meta.shortName || meta.longName || sym.replace(/\.[A-Z]+$/, ''),
-                    price, change, changePercent, volume,
-                    market: marketId, eligibility: defaultEligibility,
-                    currency: meta.currency || 'USD', marketCap: 0, industry: '',
-                    isClosed: isSuspended, isSuspended,
-                    daysSinceLastTrade: Math.round(computeDaysSinceLastTrade(meta.regularMarketTime)),
-                    score: 50, signal: 'hold', riskScore: 1
-                };
-            } catch (e) { return null; }
-        };
-
-        return fetchOne(symbol);
     }
 
     async function fetchStocksBatch(symbols, defaultEligibility = 'pea', marketId = 'euronext') {
