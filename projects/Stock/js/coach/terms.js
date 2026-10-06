@@ -292,7 +292,7 @@ export const TERMS = {
             L('It is also called ongoing charges, TER or OCF. A world ETF often charges 0.1 to 0.3% a year; many funds sold in bank branches charge 1.5 to 2%.'),
             L('Because it is taken every year on everything you hold, it grows with [[compounding|compounding]] too, against you.'),
         ],
-        example: L('10,000 € growing 6% a year for 25 years ends near 40,900 € with a 0.2% fee, and near 28,000 € with a 1.8% fee: almost 13,000 € apart.'),
+        example: L('10,000 € growing 6% a year for 25 years ends near 40,800 € with a 0.2% yearly fee, and near 27,300 € with a 1.8% fee: about 13,500 € apart.'),
         yours: c => {
             const funds = c.rows.filter(r => r.kind === 'fund').reduce((s, r) => s + r.value, 0);
             return funds > 0 && L('Your funds are worth {0}. At 0.2% a year they cost about {1} a year; at 1.8%, about {2}.', c.money(funds), c.money(funds * 0.002), c.money(funds * 0.018));

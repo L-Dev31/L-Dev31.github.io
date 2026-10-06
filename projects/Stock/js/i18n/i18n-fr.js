@@ -1248,7 +1248,7 @@ export default {
     "What a fund takes each year to run, as a share of your money. It comes out of the price, so you never see a bill.": "Ce qu'un fonds prélève chaque année pour fonctionner, en part de ton argent. C'est déduit du cours : tu ne vois jamais de facture.",
     "It is also called ongoing charges, TER or OCF. A world ETF often charges 0.1 to 0.3% a year; many funds sold in bank branches charge 1.5 to 2%.": "On parle aussi de frais courants, de TER ou d'OCF. Un ETF monde prend souvent 0,1 à 0,3 % par an ; beaucoup de fonds vendus en agence bancaire prennent 1,5 à 2 %.",
     "Because it is taken every year on everything you hold, it grows with [[compounding|compounding]] too, against you.": "Comme ils sont prélevés chaque année sur tout ce que tu détiens, ils profitent eux aussi des [[compounding|intérêts composés]], contre toi.",
-    "10,000 € growing 6% a year for 25 years ends near 40,900 € with a 0.2% fee, and near 28,000 € with a 1.8% fee: almost 13,000 € apart.": "10 000 € qui grandissent de 6 % par an pendant 25 ans finissent vers 40 900 € avec 0,2 % de frais, et vers 28 000 € avec 1,8 % : presque 13 000 € d'écart.",
+    "10,000 € growing 6% a year for 25 years ends near 40,800 € with a 0.2% yearly fee, and near 27,300 € with a 1.8% fee: about 13,500 € apart.": "10 000 € qui grandissent de 6 % par an pendant 25 ans finissent vers 40 800 € avec 0,2 % de frais annuels, et vers 27 300 € avec 1,8 % : environ 13 500 € d'écart.",
     "Your funds are worth {0}. At 0.2% a year they cost about {1} a year; at 1.8%, about {2}.": "Tes fonds valent {0}. À 0,2 % par an, ils coûtent environ {1} par an ; à 1,8 %, environ {2}.",
     "Order fee": "Frais de courtage",
     "What your bank charges each time you buy or sell.": "Ce que ta banque facture à chaque achat ou vente.",
@@ -1462,5 +1462,13 @@ export default {
     "Quit Ollama, set the environment variable OLLAMA_ORIGINS to {0}, then start it again.": "Quitte Ollama, mets la variable d'environnement OLLAMA_ORIGINS à {0}, puis relance-le.",
     "{0} answered but is not an AI API.": "{0} a répondu, mais ce n'est pas une API d'IA.",
     "Quick add": "Ajout rapide",
-    "Quick add: tap one. Online AIs then ask for their key.": "Ajout rapide : touches-en un. Les IA en ligne te demandent ensuite leur clé."
+    "Quick add: tap one. Online AIs then ask for their key.": "Ajout rapide : touches-en un. Les IA en ligne te demandent ensuite leur clé.",
+    "Scan of {0}": "Scan de {0}",
+    "Calculating": "Calcul",
+    "Projection over {0} years": "Projection sur {0} ans",
+    "Fees at your bank": "Frais chez ta banque",
+    "Explaining \"{0}\"": "Explication de « {0} »",
+    "Minimize assistant": "Réduire l'assistant",
+    "Minimize voice mode": "Réduire le mode vocal",
+    "Checking the figures": "Vérification des chiffres"
 };

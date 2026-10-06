@@ -215,3 +215,31 @@ document.addEventListener('click', e => {
     else if (lesson) explain('lesson', lesson.dataset.lesson);
     else explain('library');
 }, true);
+
+/** A word's whole explanation as plain text, with the user's own numbers when they help (for the assistant). */
+export function termDetails(key) {
+    const t = TERMS[key];
+    if (!t) return null;
+    let yours = null;
+    try { yours = t.yours?.(myNumbers()) || null; } catch { /* numbers not loaded yet */ }
+    return {
+        key, title: t.title, short: t.short,
+        more: t.more.map(plainText), example: plainText(t.example),
+        with_your_numbers: yours ? plainText(yours) : null,
+        idea_to_remember: t.lesson ? plainText(LESSONS[t.lesson].idea) : null,
+        related: t.related || [],
+    };
+}
+
+/** The word Nemeris explains for a free-form query ("ETF", "frais de courtage", "orderFee"), or null. */
+export function findTerm(word) {
+    const norm = x => String(x || '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    const q = norm(word);
+    if (!q) return null;
+    const keys = Object.keys(TERMS);
+    return keys.find(k => k.toLowerCase() === q.replace(/ /g, ''))
+        || keys.find(k => norm(TERMS[k].title) === q)
+        || keys.find(k => norm(TERMS[k].title).includes(q) || q.includes(norm(TERMS[k].title)))
+        || keys.find(k => norm(TERMS[k].short).includes(q))
+        || null;
+}

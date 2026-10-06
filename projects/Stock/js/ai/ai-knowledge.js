@@ -2,7 +2,7 @@
 // The model only receives the text blocks below; the sources are here for whoever maintains them.
 //
 // Sources (checked September 2026):
-//  - Bessembinder 2018, Journal of Financial Economics: 58% of US stocks returned less than one-month T-bills over their
+//  - Bessembinder 2018, Journal of Financial Economics: 57% (four in seven) of US stocks returned less than one-month T-bills over their
 //    lifetime; the best 4% of stocks account for the entire net gain of the US market since 1926.
 //  - J.P. Morgan, "The Agony and the Ecstasy" (2021): more than 40% of US stocks suffered a 70%+ decline never recovered.
 //  - SPIVA Europe Scorecard, year-end 2025: 97-98% of active equity funds sold in euros lagged their index over 10 years.
@@ -26,6 +26,13 @@
 //  - Vanguard 2023: investing a lump sum beat 3-month cost averaging 68% of the time (global, 1976-2022).
 //  - UBS Global Investment Returns Yearbook 2026: equities beat bonds, bills and inflation in every country since 1900.
 //  - service-public.fr: social levies 18.6% and flat tax 31.4% on investment income from 1 January 2026.
+//  - Décret 2020-95: PEA fees capped (orders 0.5% online / 1.2% otherwise, custody 0.4% a year, transfer 15 € a line, 150 € max).
+//  - Fernandes, Lynch & Netemeyer 2014, Management Science: generic financial education barely changes behavior and fades;
+//    teaching tied to a decision the person is about to make works better (hence the coach and the HOW TO TEACH rules).
+//  - Dunlosky et al. 2013, Psychological Science in the Public Interest: practice tests and spaced practice teach best.
+//  - Language models get multi-step arithmetic wrong far more often than tools do, and answer better with the evidence in the
+//    prompt than with retrieval (FinanceBench, Islam et al. 2023). Hence calculate / project_growth / estimate_costs and the
+//    figure self-check in assistant.js.
 
 /** For one-stock opinions (AI check-up). */
 export const STOCK_EVIDENCE = `Evidence to apply (from finance research, use it without citing it):

@@ -10,7 +10,10 @@ import { round, holdingRows } from '../data/holdings.js';
 import { TERMS } from '../coach/terms.js';
 import { el, icon, makeResizer, downloadText } from '../core/utils.js';
 import { L, Ln, LOCALE, LANG } from '../i18n/i18n.js';
-import { TOOL_SPECS, checkToolCall, buildSystemPrompt, tidyAnswer, guessLanguage } from './assistant-rules.js';
+import { TOOL_SPECS, checkToolCall, buildSystemPrompt, tidyAnswer, guessLanguage, calculate, projectGrowth, ungroundedFigures, groundingNudge } from './assistant-rules.js';
+import { banksReady, allBanks, banksAsOf, currentBank, bankContext, orderFee, investmentCosts } from '../data/banks.js';
+import { termDetails, findTerm, plainText as plainTerms } from '../coach/explain.js';
+import { findSituations } from '../coach/situations.js';
 import { sentenceFeeder, watchMicrophoneLevel } from './voice/voice.js';
 import { canCall, voiceAvailability, VOICE_HEALTH_EVENT, createCallSpeaker, createCallListener, resetVoiceHealth } from './voice/voice-engine.js';
 import './voice/voice-settings.js';
@@ -323,6 +326,30 @@ const RUNNERS = {
         label: () => L('Reading this page'),
         run: async () => pageSnapshot(),
     },
+    calculate: {
+        label: () => L('Calculating'),
+        run: async a => ({ expression: a.expression, result: calculate(a.expression) }),
+    },
+    project_growth: {
+        label: a => L('Projection over {0} years', a.years),
+        run: async a => {
+            const given = Object.fromEntries(Object.entries(a).filter(([, v]) => v != null && v !== '').map(([k, v]) => [k, Number(v)]));
+            return { currency: getCurrency(), ...projectGrowth(given) };
+        },
+    },
+    estimate_costs: {
+        label: () => L('Fees at your bank'),
+        run: async a => costEstimate(a),
+    },
+    explain_term: {
+        label: a => L('Explaining "{0}"', a.word),
+        run: async a => {
+            const key = findTerm(a.word);
+            return key
+                ? { ...termDetails(key), write_it_as: `[[${key}|${a.word}]]` }
+                : { ok: false, error: `Nemeris has no explanation for "${a.word}". Explain it yourself, simply, and say it is general knowledge.` };
+        },
+    },
     run_terminal: {
         label: a => L('Terminal: {0}', a.command),
         run: async a => {
@@ -347,11 +374,47 @@ const RUNNERS = {
         run: async (a, signal) => readPage(a.url, { signal }),
     },
 };
+/** Fees for one order or investment at the user's bank, and the cheapest banks Nemeris knows for the same order. */
+async function costEstimate(a) {
+    await banksReady;
+    const bank = currentBank();
+    const amount = Number(a.amount);
+    const market = a.market === 'us' ? 'us' : 'home';
+    const years = Number(a.years) > 0 ? Number(a.years) : 1;
+    const pct = x => (x == null ? null : round(x / amount * 100, 2));
+    const out = { amount, market, years };
+    if (bank) {
+        const c = investmentCosts(bank, { amount, years, market });
+        Object.assign(out, {
+            bank: bank.name, currency: c.currency,
+            buy_fee: c.buy, buy_fee_pct: pct(c.buy), sell_fee: c.sell, currency_conversion: c.fx, custody_over_period: c.custody,
+            total: c.total, total_pct: pct(c.total),
+            note: `${c.estimate ? 'Estimated from the published price examples. ' : ''}From the bank's public price list (${banksAsOf()}); unknown parts are null.`,
+        });
+    } else out.note = 'The user has not chosen a bank: give no exact fee for them, and suggest choosing it in Settings › Profile › Your bank.';
+    if (a.compare || !bank) {
+        const country = bank?.country || (LANG === 'fr' ? 'FR' : null);
+        out.cheapest_known = allBanks()
+            .filter(b => !country || b.country === country)
+            .map(b => ({ bank: b.name, kind: b.kind, buy_fee: orderFee(b, amount, market) }))
+            .filter(x => x.buy_fee != null)
+            .sort((x, y) => x.buy_fee - y.buy_fee)
+            .slice(0, 5);
+        out.prices_as_of = banksAsOf();
+    }
+    return out;
+}
+
 const TOOL_BY_NAME = Object.fromEntries(TOOL_SPECS.map(t => [t.name, { ...t, ...RUNNERS[t.name] }]));
 const toolDefs = web => TOOL_SPECS.filter(t => web || !t.web).map(({ name, description, parameters }) => ({ name, description, parameters }));
 
 /** The user's own rules may ask to be addressed as "vous": then the tu/vous check stands down. */
 const wantsFormal = () => /vouvoie[- ]moi|\b(utilise|dis)[- ](moi )?(le )?[«"']?vous\b/i.test(getAiSettings().rules || '');
+
+/** The situations Home shows right now, so the assistant starts from the same picture. */
+function coachNotes() {
+    try { return findSituations().slice(0, 3).map(x => plainTerms(x.title)); } catch { return []; }
+}
 
 function systemPrompt(effort, replyLang = null) {
     const s = getUserSettings();
@@ -372,6 +435,8 @@ function systemPrompt(effort, replyLang = null) {
         total,
         cost: rows.reduce((a, r) => a + (r.cost || 0), 0),
         holdings: rows,
+        bank: bankContext(),
+        noticed: coachNotes(),
         terms: Object.entries(TERMS).map(([key, t]) => `${key} (${t.title})`).join(', '),
     });
 }
@@ -1541,6 +1606,7 @@ export async function send(text) {
         } catch { /* no speech */ }
     } : null;
     const seen = new Set();
+    let figuresChecked = false;
     const replyLang = guessLanguage(text);
     const typing = el('div', 'typing');
     const typingLabel = el('span', null, L('Thinking'));
@@ -1587,6 +1653,19 @@ export async function send(text) {
         bubble.remove();
         if (!reply.toolCalls.length) {
             reply.content = tidyAnswer(reply.content, replyLang || LANG);
+            // One self-check before the user sees it: figures found in no tool result, the portfolio or the
+            // user's words go back to the model once, to be recomputed with a tool or removed.
+            if (withTools && !voice && !figuresChecked) {
+                const given = modelMessages(convo.messages).map(m => `${m.content}\n${m.toolCalls ? JSON.stringify(m.toolCalls) : ''}`).join('\n');
+                const loose = ungroundedFigures(reply.content, `${system}\n${given}`);
+                if (loose.length) {
+                    figuresChecked = true;
+                    ensureRequestActive();
+                    convo.messages.push({ ...reply, hidden: true }, { role: 'user', hidden: true, content: groundingNudge(loose) });
+                    typingLabel.textContent = L('Checking the figures');
+                    return false;
+                }
+            }
         }
         ensureRequestActive();
         convo.messages.push(reply);
