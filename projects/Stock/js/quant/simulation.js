@@ -2,6 +2,7 @@ import { runQuant } from './quant-client.js';
 import { fetchCloses } from './quant-shared.js';
 import { getCurrency, positions, getInvestor } from '../core/state.js';
 import { el, progressBar } from '../core/utils.js';
+import { currentBank, investmentCosts, marketFor, formatMoney } from '../data/banks.js';
 import { L, Ln, LOCALE } from '../i18n/i18n.js';
 
 export const HORIZONS = { '1W': 5, '1M': 21, '3M': 63, '6M': 126, '1Y': 252, '3Y': 756, '5Y': 1260 };
@@ -79,9 +80,13 @@ export async function simulate({ ticker, amount = prefs.amount, horizon = prefs.
     const pick = arr => [amount, ...idx.map(i => arr[i] * k)];
     const dates = [now, ...idx.map(i => addTradingDays(now, i + 1))];
     const pos = Object.values(positions).find(p => p?.ticker === ticker);
+    const instrumentCurrency = pos?.currency || (ticker.endsWith('.PA') ? 'EUR' : '');
+    const bank = currentBank();
+    const costs = bank ? investmentCosts(bank, { amount, endValue: res.finalP50 * k, years: days / 252, market: marketFor(instrumentCurrency) }) : null;
     return {
         ticker, name: pos?.name || ticker, amount, horizon, days, model, paths,
-        currency: getCurrency(), instrumentCurrency: pos?.currency || (ticker.endsWith('.PA') ? 'EUR' : ''),
+        currency: getCurrency(), instrumentCurrency,
+        costs: costs?.total != null ? { ...costs, bank: bank.name } : null,
         driftAnnual: Math.exp(drift) - 1, historicalAnnual: Math.exp(histAnnual) - 1, sigmaAnnual: res.annualizedSigma,
         series: { dates, p5: pick(res.p5), p25: pick(res.p25), p50: pick(res.p50), p75: pick(res.p75), p95: pick(res.p95) },
         final: {
@@ -111,6 +116,9 @@ export function summarize(r) {
         chance_gain_10pct_or_more: `${Math.round(r.probUp10 * 100)}%`,
         chance_loss_10pct_or_more: `${Math.round(r.probDown10 * 100)}%`,
         currency_note: r.instrumentCurrency && r.instrumentCurrency !== 'EUR' && c === '€' ? `Priced in ${r.instrumentCurrency}: exchange-rate moves are not included.` : '',
+        costs_at_your_bank: r.costs
+            ? `${m(r.costs.total)} at ${r.costs.bank} (buying ${r.costs.buy ?? 'unknown'}, selling ${r.costs.sell ?? 'unknown'}${r.costs.fx ? `, currency conversion ${r.costs.fx}` : ''}${r.costs.custody ? `, custody ${r.costs.custody}` : ''}${r.costs.estimate ? ', estimated' : ''}). Likely value after costs: ${m(r.final.p50 - r.costs.total)}.`
+            : 'The user has not chosen a bank: order fees and custody are not included.',
         caveat: 'Statistical projection from past volatility, not a forecast.',
     };
 }
@@ -213,7 +221,14 @@ function drawResult(box, r) {
     bits.push(L('A range, not a promise.'));
     note.textContent = bits.join(' ');
 
-    box.append(cards, loss, wrap, note);
+    box.append(cards, loss);
+    if (r.costs) {
+        const costs = el('p', 'sim-costs');
+        const parts = [L('buying'), L('selling'), r.costs.fx ? L('currency conversion') : null, r.costs.custody ? L('custody') : null].filter(Boolean).join(', ');
+        costs.textContent = L('Fees at {0}: {1} ({2}). Most likely after fees: {3}.', r.costs.bank, `${r.costs.estimate ? '≈ ' : ''}${formatMoney(r.costs.total, r.costs.currency)}`, parts, money(r.final.p50 - r.costs.total, c));
+        box.append(costs);
+    }
+    box.append(wrap, note);
     drawChart(canvas, r);
 }
 

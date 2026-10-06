@@ -4,6 +4,7 @@ import { setPositions as setNewsPositions, setupNewsSearch, startCardNewsAutoRef
 import '../terminal/terminal.js';
 import '../ui/explorer.js';
 import '../ai/assistant.js';
+import '../ui/bank-picker.js';
 import { DEAD_ERROR_CODES, periodToDays } from './constants.js';
 import { positions, selectedApi, setSelectedApi, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings, getCurrency, comfortLevel, COMFORT_WORD, isExpert } from './state.js';
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching, openPortfolio } from '../ui/portfolio.js';

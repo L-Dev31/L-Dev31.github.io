@@ -9,6 +9,7 @@ import { resolveTickerDetails } from '../data/ticker-catalog.js';
 import { handleImageAssetError } from '../data/assets.js';
 import { getEl, el, icon, formatCurrency, formatPct, showCard, termHtml } from '../core/utils.js';
 import { L, Ln, LANG, LOCALE } from '../i18n/i18n.js';
+import { currentBank, orderFee, isEstimate, marketFor, formatMoney } from '../data/banks.js';
 
 export { initChart };
 
@@ -207,6 +208,20 @@ export function renderTrades(card, symbol) {
     }
 }
 
+// What this order costs at the user's bank, and what share of the order that is.
+function showOrderFee(form, pos) {
+    const note = form.querySelector('.trade-fee');
+    const bank = currentBank();
+    const amount = Number(form.amount.value || form.amount.placeholder);
+    const fee = bank && amount > 0 ? orderFee(bank, amount, marketFor(pos?.currency)) : null;
+    note.hidden = fee == null;
+    if (fee == null) return;
+    const share = fee / amount * 100;
+    const cost = `${isEstimate(bank, marketFor(pos?.currency)) ? '≈ ' : ''}${formatMoney(fee, bank.currency)}`;
+    note.textContent = L('At {0}, this order costs {1} in fees, {2}% of it.', bank.name, cost, share.toLocaleString(LOCALE, { maximumFractionDigits: share < 1 ? 2 : 1 }))
+        + (share >= 1 ? ` ${L('That is a lot: grouping small orders into fewer, bigger ones costs less.')}` : '');
+}
+
 function tradeForm(card, symbol) {
     const cur = getCurrency();
     const form = el('form', 'trade-form');
@@ -221,6 +236,7 @@ function tradeForm(card, symbol) {
             <label class="field"><span>${L('Shares')}</span><input name="shares" type="number" min="0" step="any" inputmode="decimal" required></label>
             <label class="field"><span class="amount-label">${L('Total paid, fees included')}</span><span class="input-unit"><input name="amount" type="number" min="0" step="0.01" inputmode="decimal" required><span class="unit">${cur}</span></span></label>
         </div>
+        <p class="meta trade-fee" hidden></p>
         <div class="form-foot">
             <button class="btn btn-quiet" type="button" data-cancel>${L('Cancel')}</button>
             <button class="btn btn-primary" type="submit">${L('Save')}</button>
@@ -231,6 +247,7 @@ function tradeForm(card, symbol) {
     form.addEventListener('input', e => {
         if (e.target.name === 'side') form.querySelector('.amount-label').textContent = form.side.value === 'buy' ? L('Total paid, fees included') : L('Total received, after fees');
         if (e.target.name === 'shares' && price > 0) form.amount.placeholder = (Number(form.shares.value) * price).toFixed(2);
+        showOrderFee(form, positions[symbol]);
     });
     form.querySelector('[data-cancel]').addEventListener('click', () => form.remove());
     form.addEventListener('submit', e => {

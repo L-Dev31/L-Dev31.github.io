@@ -101,6 +101,9 @@ function inferCountryFromMarket(marketId, currency) {
     return 'US';
 }
 
+// Publishable Logo.dev key: meant to be used from the browser.
+export const LOGO_DEV_KEY = 'pk_a9Yfpyg0R--W0TNaF1kGng';
+
 export function buildOnlineIconCandidates(symbol, market) {
     const candidates = [];
     const seen = new Set();
@@ -124,8 +127,6 @@ export function buildOnlineIconCandidates(symbol, market) {
     } else {
         // Stock logo variants
         const variants = [upper, upper.replace('.', '-'), upper.split('.')[0], base].filter(Boolean);
-        
-        const LOGO_DEV_KEY = 'pk_a9Yfpyg0R--W0TNaF1kGng';
         
         variants.forEach(v => {
             // Logo.dev - Premium coverage (Priority #1)
