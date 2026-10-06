@@ -2,7 +2,7 @@ import { positions, selectedApi, lastApiBySymbol, getCurrency, globalPeriod } fr
 import { fetchYahooSparkBatch, getYahooSymbol, isYahooSparkFriendly, fetchYahooPeriodChanges, fetchFromYahoo } from '../data/yahoo-finance.js';
 import { TYPE_ORDER } from '../core/constants.js';
 import { createTab, createCard, initChart, markTabAsSuspended, unmarkTabAsSuspended, isSymbolSuspendedInStorage, updateSidebarPerformance, updateUI, openCustomSymbol, placeTabs, refreshPositionViews } from './ui.js';
-import { getEl, formatCurrency, formatPct, progressBar, activity, drawDonut, showCard, iconColor, getActiveSymbol } from '../core/utils.js';
+import { getEl, formatCurrency, formatPct, progressBar, activity, drawDonut, showCard, iconColor, getActiveSymbol, downloadText } from '../core/utils.js';
 import { initAnalysisPane, renderAnalysisPane } from './portfolio-analysis.js';
 import { renderAiLabPane } from '../ai/ai-lab.js';
 import { buildLabel, createMainChart, renderLine, alignBenchmarkToTimestamps } from './chart.js';
@@ -148,15 +148,26 @@ function saveLocalTrades(all) {
 }
 const stockInfo = p => ({ symbol: p.symbol, ticker: p.ticker, name: p.name, type: p.type || 'equity', currency: p.currency || p.raw?.currency || '', country: p.raw?.country || p.country || '', isin: p.raw?.isin || p.isin || '' });
 
+const isoDate = date => String(date).split('-').map((part, i) => (i ? part.padStart(2, '0') : part)).join('-');
+const tradeKey = t => `${isoDate(t.date)}|${t.shares}|${Number(t.amount).toFixed(2)}`;
+
+/** Trades typed in this browser that json/portfolio.json now contains too (after an export was committed). */
+function alreadyInFile(pos) {
+    const inFile = new Set([...(pos.raw?.purchases || []), ...(pos.raw?.sales || [])].map(tradeKey));
+    return t => inFile.has(tradeKey(t));
+}
+
 function mergeTrades(pos, local = loadLocalTrades()[pos.symbol]) {
-    pos.purchases = [...(pos.raw?.purchases || []), ...(local?.purchases || [])];
-    pos.sales = [...(pos.raw?.sales || []), ...(local?.sales || [])];
+    const known = alreadyInFile(pos);
+    pos.purchases = [...(pos.raw?.purchases || []), ...(local?.purchases || []).filter(t => !known(t))];
+    pos.sales = [...(pos.raw?.sales || []), ...(local?.sales || []).filter(t => !known(t))];
     const c = calculateStockValues(pos);
     Object.assign(pos, { shares: c.shares, investment: c.investment, costBasis: c.costBasis, realizedPL: c.realizedPL, purchaseDate: c.purchaseDate });
 }
 
 function afterTradesChanged(symbol) {
     mergeTrades(positions[symbol]);
+    syncExportButtons();
     placeTabs(symbol);
     refreshPositionViews(symbol);
     updatePortfolioSummary();
@@ -186,6 +197,66 @@ export function deleteTrade(symbol, id) {
     afterTradesChanged(symbol);
 }
 
+const catalogLists = {};
+const cleanTrades = list => list
+    .map(({ date, amount, shares }) => ({ date: isoDate(date), amount: Number(Number(amount).toFixed(2)), shares }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+/** Downloads json/portfolio.json as it should now be: the file's trades plus the ones typed in this browser. */
+export function exportPortfolio() {
+    const out = {};
+    for (const pos of Object.values(positions)) {
+        const purchases = cleanTrades(pos.purchases || []), sales = cleanTrades(pos.sales || []);
+        if (purchases.length || sales.length) out[pos.symbol] = { purchases, sales };
+    }
+    downloadText('portfolio.json', `${JSON.stringify(out, null, 2)}\n`);
+}
+
+/** Instruments added in this browser that json/<type>.json does not list yet, by type. */
+export function instrumentsToAdd() {
+    const byType = {};
+    for (const pos of Object.values(positions)) {
+        if (!pos.raw?.addedHere) continue;
+        const { symbol, ticker, name, isin = '', country = '', currency = '', type = 'equity' } = pos.raw;
+        (byType[type] ||= []).push({ symbol, ticker, name, isin, country, currency, type });
+    }
+    return byType;
+}
+
+/** Downloads each json/<type>.json that needs the instruments added in this browser. */
+export function exportInstrumentLists() {
+    for (const [type, added] of Object.entries(instrumentsToAdd())) {
+        const listed = (catalogLists[type] || []).map(({ purchases, sales, ...instrument }) => instrument);
+        downloadText(`${type}.json`, `${JSON.stringify([...listed, ...added], null, 2)}\n`);
+    }
+}
+
+function forgetTradesNowInFile(local) {
+    let changed = false;
+    for (const [symbol, entry] of Object.entries(local)) {
+        const pos = positions[symbol];
+        if (!pos) continue;
+        const known = alreadyInFile(pos);
+        const before = entry.purchases.length + entry.sales.length;
+        entry.purchases = entry.purchases.filter(t => !known(t));
+        entry.sales = entry.sales.filter(t => !known(t));
+        if (entry.purchases.length + entry.sales.length !== before) changed = true;
+        if (!entry.purchases.length && !entry.sales.length) delete local[symbol];
+    }
+    if (changed) saveLocalTrades(local);
+}
+
+function syncExportButtons() {
+    const lists = Object.keys(instrumentsToAdd());
+    const btn = getEl('export-instruments');
+    if (!btn) return;
+    btn.hidden = !lists.length;
+    btn.querySelector('span').textContent = lists.map(type => `${type}.json`).join(', ');
+}
+
+getEl('export-portfolio')?.addEventListener('click', exportPortfolio);
+getEl('export-instruments')?.addEventListener('click', exportInstrumentLists);
+
 export async function loadStocks() {
     let orders = {};
     try {
@@ -194,6 +265,7 @@ export async function loadStocks() {
     } catch (e) { console.error('Error loading portfolio.json', e); }
 
     const lists = await Promise.all(TYPE_ORDER.map(type => fetch(`json/${type}.json`).then(r => r.ok ? r.json() : []).catch(() => [])));
+    TYPE_ORDER.forEach((type, i) => { catalogLists[type] = lists[i]; });
     const list = lists.flat();
     for (const s of list) {
         s.purchases = orders[s.symbol]?.purchases || [];
@@ -201,7 +273,7 @@ export async function loadStocks() {
     }
     const local = loadLocalTrades();
     for (const [sym, entry] of Object.entries(local)) {
-        if (!list.some(s => s.symbol === sym) && entry.stock) list.push({ ...entry.stock, symbol: sym, purchases: [], sales: [] });
+        if (!list.some(s => s.symbol === sym) && entry.stock) list.push({ ...entry.stock, symbol: sym, purchases: [], sales: [], addedHere: true });
     }
 
     for (const id of ['portfolio-tabs', 'general-tabs', 'mobile-portfolio-tabs', 'mobile-general-tabs']) getEl(id)?.replaceChildren();
@@ -216,6 +288,9 @@ export async function loadStocks() {
         positions[s.symbol] = pos;
         lastApiBySymbol[s.symbol] = selectedApi;
     }
+    forgetTradesNowInFile(local);
+    syncExportButtons();
+
     for (const s of list) {
         createTab({ ...s, purchases: positions[s.symbol].purchases, sales: positions[s.symbol].sales });
         createCard(s);

@@ -892,5 +892,7 @@ export default {
     "Compaction failed — see console": "Compactage échoué — voir la console",
     "About": "À propos",
     "Created by leo tosku": "Créé par leo tosku",
-    "{0} old turns compacted": "{0} anciens tours compactés"
+    "{0} old turns compacted": "{0} anciens tours compactés",
+    "Download your trades as json/portfolio.json, to replace that file in the code": "Télécharge tes opérations au format json/portfolio.json, pour remplacer ce fichier dans le code",
+    "Stocks you added here are missing from these files: download them to replace the ones in json/": "Des actions ajoutées ici manquent dans ces fichiers : télécharge-les pour remplacer ceux de json/"
 };

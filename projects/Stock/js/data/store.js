@@ -1,7 +1,4 @@
-/**
- * Nemeris Storage Engine
- * IndexedDB wrapper and Import/Export capabilities.
- */
+/** Small IndexedDB key/value store (market data cache, AI lab state). */
 const DB_NAME = 'NemerisDB';
 const STORE_NAME = 'marketCache';
 const DB_VERSION = 1;
@@ -67,43 +64,6 @@ export const Store = {
                 resolve(result ? result.data : null);
             };
             request.onerror = () => resolve(null);
-        });
-    },
-
-    exportData(data, filename) {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", filename);
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-    },
-
-    importData(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const json = JSON.parse(e.target.result);
-                    if (typeof json !== 'object' || json === null || Array.isArray(json)) {
-                        reject(new Error("Invalid portfolio format: expected an object"));
-                        return;
-                    }
-                    // Strip any non-portfolio keys: each value must be a position object
-                    const sanitized = {};
-                    for (const [sym, pos] of Object.entries(json)) {
-                        if (typeof pos === 'object' && pos !== null && !Array.isArray(pos)) {
-                            sanitized[sym] = pos;
-                        }
-                    }
-                    resolve(sanitized);
-                } catch (err) {
-                    reject(new Error("Invalid JSON file"));
-                }
-            };
-            reader.onerror = () => reject(new Error("Error reading file"));
-            reader.readAsText(file);
         });
     }
 };

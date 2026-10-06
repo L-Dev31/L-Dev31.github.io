@@ -297,7 +297,13 @@
                 </div>
 
                 <section class="panel" aria-labelledby="positions-title">
-                    <h2 class="panel-title" id="positions-title">Your stocks</h2>
+                    <div class="panel-head">
+                        <h2 class="panel-title" id="positions-title">Your stocks</h2>
+                        <div class="panel-actions">
+                            <button class="btn btn-quiet" id="export-portfolio" type="button" title="Download your trades as json/portfolio.json, to replace that file in the code"><i class="i i-download" aria-hidden="true"></i>portfolio.json</button>
+                            <button class="btn btn-quiet" id="export-instruments" type="button" title="Stocks you added here are missing from these files: download them to replace the ones in json/" hidden><i class="i i-download" aria-hidden="true"></i><span></span></button>
+                        </div>
+                    </div>
                     <div class="row-list" id="perf-positions"></div>
                     <details class="more" id="perf-closed-section" hidden>
                         <summary>Stocks you sold</summary>
