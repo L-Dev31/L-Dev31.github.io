@@ -1,16 +1,10 @@
 {
   "projects": [
     {
-      "id": "rcai",
-      "title": "Regards Croisés",
-      "creator": "Equipe recTangle - Ynov",
-      "category": "Photography",
-      "disabled": true
-    },
-    {
       "id": "ogfm",
       "title": "L'Oreille qui Gratte",
       "date": "2026-04-01",
+      "category": "Design",
       "role": "Brand Designer",
       "client": "L'Oreille qui Gratte Webradio",
       "heroImage": "assets/images/projects/ogfm/header.jpg",
@@ -31,13 +25,13 @@
         "assets/images/projects/ogfm/process1.jpg",
         "assets/images/projects/ogfm/process2.jpg",
         "assets/images/projects/ogfm/process3.jpg"
-      ],
-      "category": "Design"
+      ]
     },
     {
       "id": "dran",
       "title": "Dranima",
       "date": "2026-03-08",
+      "category": "Web",
       "role": "Web Designer & Developer",
       "client": "Dranima Studio — Alex Claude Bourbon",
       "heroImage": "assets/images/projects/dran/header.jpg",
@@ -59,13 +53,13 @@
         "assets/images/projects/dran/structure.png",
         "assets/images/projects/dran/design.png",
         "assets/images/projects/dran/roadmap.png"
-      ],
-      "category": "Web"
+      ]
     },
     {
       "id": "bgaw",
       "title": "Black Goose",
       "date": "2026-03-01",
+      "category": "UI/UX",
       "role": "Web Designer & Logo Designer",
       "client": "BLACK GOOSE (The Axis, Sophia Ynov Campus)",
       "heroImage": "assets/images/projects/bgaw/header.jpg",
@@ -80,20 +74,20 @@
       "ctas": [
         {
           "label": "View Presentation (PDF)",
-          "url": "projects/Portfolio/Black_Goose,Presentation_-_The_Axis_-_Ryan_AVERSA,Benoite_MACCHI, Clement_DEZON-HULIN,Timeo_RENARD,Léo_TOSKU_-_31-3-2026.pdf"
+          "url": "projects/Portfolio/bgaw-presentation.pdf"
         }
       ],
       "ctaImages": [
         "assets/images/projects/bgaw/identity.jpg",
         "assets/images/projects/bgaw/logo.jpg",
         "assets/images/projects/bgaw/web.jpg"
-      ],
-      "category": "UI/UX"
+      ]
     },
     {
       "id": "mego",
       "title": "Mégoteur",
       "date": "2026-02-01",
+      "category": "Design",
       "role": "Designer",
       "client": "Mégoteur — Challenge 48H, Sophia Ynov Campus",
       "heroImage": "assets/images/projects/mego/header.jpg",
@@ -104,13 +98,57 @@
         "BtoG",
         "pitch deck",
         "48H challenge"
+      ]
+    },
+    {
+      "id": "prfy",
+      "title": "Proofy",
+      "date": "2026-02-01",
+      "category": "UI/UX",
+      "role": "UX Designer",
+      "client": "Academic Sprint, Sophia Ynov Campus",
+      "heroImage": "assets/images/projects/prfy/header.jpg",
+      "subtitle": "A scan-first mobile vault for receipts and warranties. No account. No paper.",
+      "tags": [
+        "UX design",
+        "product thinking",
+        "MVP scoping",
+        "Figma prototype",
+        "mobile"
+      ]
+    },
+    {
+      "id": "cmck",
+      "title": "Charlie McKenzie",
+      "date": "2026-01-01",
+      "category": "Web",
+      "role": "Web Designer & Developer",
+      "client": "Charlie McKenzie — Composer & Sound Designer",
+      "heroImage": "assets/images/projects/cmck/header.jpg",
+      "subtitle": "A composer portfolio built to serve two audiences at once: personal work and paid commissions.",
+      "tags": [
+        "web design",
+        "frontend development",
+        "portfolio",
+        "client project"
       ],
-      "category": "Design"
+      "ctas": [
+        {
+          "label": "View Live Site",
+          "url": "https://charliemckenziemusic.com"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/cmck/typography.png",
+        "assets/images/projects/cmck/website.jpg",
+        "assets/images/projects/cmck/structure.png"
+      ]
     },
     {
       "id": "bmge",
       "title": "BMG Editor",
       "date": "2025-10-01",
+      "category": "Web",
       "role": "Developer",
       "client": "Personal — Tomodachi Collection FR Translation Mod",
       "heroImage": "assets/images/projects/bmge/header.jpg",
@@ -132,65 +170,13 @@
         "assets/images/projects/bmge/tomodachi.png",
         "assets/images/projects/bmge/tags.png",
         "assets/images/projects/bmge/re.png"
-      ],
-      "category": "Web"
-    },
-    {
-      "id": "prfy",
-      "title": "Proofy",
-      "date": "2026-02-01",
-      "role": "UX Designer",
-      "client": "Academic Sprint, Sophia Ynov Campus",
-      "heroImage": "assets/images/projects/prfy/header.jpg",
-      "subtitle": "A scan-first mobile vault for receipts and warranties. No account. No paper.",
-      "tags": [
-        "UX design",
-        "product thinking",
-        "MVP scoping",
-        "Figma prototype",
-        "mobile"
-      ],
-      "category": "UI/UX"
-    },
-    {
-      "id": "cmck",
-      "title": "Charlie McKenzie",
-      "date": "2026-01-01",
-      "role": "Web Designer & Developer",
-      "client": "Charlie McKenzie — Composer & Sound Designer",
-      "heroImage": "assets/images/projects/cmck/header.jpg",
-      "subtitle": "A composer portfolio built to serve two audiences at once: personal work and paid commissions.",
-      "tags": [
-        "web design",
-        "frontend development",
-        "portfolio",
-        "client project"
-      ],
-      "ctas": [
-        {
-          "label": "View Live Site",
-          "url": "https://charliemckenziemusic.com"
-        }
-      ],
-      "ctaImages": [
-        "assets/images/projects/cmck/typography.png",
-        "assets/images/projects/cmck/website.jpg",
-        "assets/images/projects/cmck/structure.png"
-      ],
-      "category": "Web"
-    },
-    {
-      "id": "mxal",
-      "title": "Mix and Light",
-      "creator": "Mix and Light",
-      "category": "Web",
-      "type": "School project",
-      "disabled": true
+      ]
     },
     {
       "id": "lsdp",
       "title": "Les Saveurs de Provence",
       "date": "2025-08-01",
+      "category": "UI/UX",
       "role": "Web Designer & Developer",
       "client": "Les Saveurs de Provence (Vallauris)",
       "heroImage": "assets/images/projects/lsdp/header.jpg",
@@ -204,36 +190,20 @@
       "ctas": [
         {
           "label": "View Live Site",
-          "url": "projects/LSDP/index.html"
+          "url": "projects/LesSaveursDeProvence/index.html"
         }
       ],
       "ctaImages": [
         "assets/images/projects/lsdp/hero.png",
         "assets/images/projects/lsdp/menu.png",
         "assets/images/projects/lsdp/history.png"
-      ],
-      "category": "UI/UX"
-    },
-    {
-      "id": "sand",
-      "title": "SandFall Interactive (Redesign)",
-      "description": "Website redesign for SandFall Interactive Studio, enhancing user experience and brand identity.",
-      "creator": "SandFall Interactive",
-      "category": "Web",
-      "tags": [],
-      "disabled": true
-    },
-    {
-      "id": "gpmx",
-      "title": "GPMailbox",
-      "creator": "Léo Tosku",
-      "category": "Web",
-      "disabled": true
+      ]
     },
     {
       "id": "gptr",
       "title": "GPTranslator",
       "date": "2023-05-01",
+      "category": "Tools",
       "role": "Developer & Dataset Author",
       "client": "Trophées NSI — Lycée Sonny Rupaire, Sainte-Rose, Guadeloupe",
       "heroImage": "assets/images/projects/gptr/header.jpg",
@@ -255,13 +225,35 @@
         "assets/images/projects/gptr/dictionary.png",
         "assets/images/projects/gptr/translation.png",
         "assets/images/projects/gptr/interface.png"
-      ],
-      "category": "Tools"
+      ]
+    },
+    {
+      "id": "rcai",
+      "title": "Regards Croisés",
+      "category": "Photography",
+      "disabled": true
+    },
+    {
+      "id": "mxal",
+      "title": "Mix and Light",
+      "category": "Web",
+      "disabled": true
+    },
+    {
+      "id": "sand",
+      "title": "SandFall Interactive (Redesign)",
+      "category": "Web",
+      "disabled": true
+    },
+    {
+      "id": "gpmx",
+      "title": "GPMailbox",
+      "category": "Web",
+      "disabled": true
     },
     {
       "id": "dgif",
       "title": "DaGameThatIsFun",
-      "creator": "Léo Tosku, Korail Lamothe-Jacob, Axel Desbonnes",
       "category": "Video Games",
       "disabled": true
     }

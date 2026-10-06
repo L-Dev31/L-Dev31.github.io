@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 
 Sitemap: https://l-dev31.github.io/sitemap.xml
+Sitemap: https://l-dev31.github.io/projects/Rakoun/sitemap.xml
+Sitemap: https://l-dev31.github.io/projects/Stock/sitemap.xml
