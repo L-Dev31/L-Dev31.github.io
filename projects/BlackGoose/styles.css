@@ -285,7 +285,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
     z-index: 1;
 }
 
-
 .new-product-content .new-product-cta {
     align-self: flex-start;
     margin-top: 0;
@@ -299,8 +298,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
     margin: 0 0 30px;
     max-width: 500px;
 }
-
-
 
 .new-product-video {
     position: relative;
@@ -501,15 +498,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
     border: 0;
 }
 
-
-.hero-kicker {
-    font-size: 1rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.85);
-    font-weight: 300;
-}
-
 .main-title {
     font-family: 'Nunito', sans-serif;
     font-size: 2.4rem;
@@ -519,15 +507,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
     line-height: 1.2;
     color: #333;
     margin-bottom: 14px;
-}
-
-.hero-subtitle {
-    max-width: 720px;
-    margin: 0 auto 28px;
-    font-size: 1.05rem;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.85);
-    font-weight: 300;
 }
 
 .cta-button {
@@ -685,7 +664,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
         transition: none;
     }
 }
-
 
 .carousel-item .content {
     position: absolute;
@@ -945,11 +923,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
         font-size: 1.05rem;
     }
 
-    .hero-subtitle {
-        font-size: 0.98rem;
-        margin-bottom: 22px;
-    }
-
     .hero-inner {
         padding: 70px 18px;
     }
@@ -1005,7 +978,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
 
 }
 
-
 /* =====================
    PRESS SECTION
    ===================== */
@@ -1032,15 +1004,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-.press-kicker {
-    font-size: 0.85rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.78);
-    font-weight: 700;
-    margin: 0;
 }
 
 .press-title {
@@ -1122,7 +1085,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
     }
 }
 
-
 /* =====================
    FOOTER
    ===================== */
@@ -1190,22 +1152,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
     width: auto;
     object-fit: contain;
     margin-bottom: 0;
-}
-
-.footer-tagline {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: white;
-    letter-spacing: 0.02em;
-    margin: 0;
-}
-
-.footer-description {
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: #b0b0b0;
-    font-weight: 300;
-    margin: 0;
 }
 
 .footer-title {
@@ -1283,9 +1229,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
     line-height: 1.5;
     font-weight: 300;
 }
-
-
-
 
 .footer-bottom {
     background: #0f0f0f;

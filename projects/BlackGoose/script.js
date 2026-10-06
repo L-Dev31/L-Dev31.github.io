@@ -1,4 +1,4 @@
-// Animation brillance bande bordeaux
+// Periodic shine across the burgundy band of the new product banner.
 document.addEventListener('DOMContentLoaded', function () {
     const band = document.querySelector('.new-product-title-band');
     if (!band) return;
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
         band.classList.add('shine-anim');
     }
     triggerShine();
-    setInterval(triggerShine, 7000); 
+    setInterval(triggerShine, 7000);
 });
 let carouselData = null;
 let selectedItem = null;
@@ -101,20 +101,16 @@ function setCardImageSlide(containerEl, nextSrc, direction = 'left') {
     incoming.setAttribute('draggable', 'false');
     incoming.addEventListener('dragstart', (event) => event.preventDefault());
 
-    // Mark outgoing as inactive and animate out
     activeImg.dataset.active = 'false';
     activeImg.classList.add(dir === 'right' ? 'is-leaving-right' : 'is-leaving-left');
 
-    // Insert on top, right after the outgoing image
     activeImg.insertAdjacentElement('afterend', incoming);
 
-    // Trigger transition for the incoming image
     incoming.offsetHeight;
     requestAnimationFrame(() => {
         incoming.classList.remove('is-entering-left', 'is-entering-right');
     });
 
-    // Cleanup after animation
     setTimeout(() => {
         if (activeImg && activeImg.parentNode) activeImg.remove();
         if (incoming) {
@@ -242,7 +238,6 @@ function updatePurchaseSection(item) {
         return;
     }
 
-    // Hide the selector if there is only one option
     if (item.colors.length <= 1) {
         colorsSection.style.display = 'none';
         colorsSelector.innerHTML = '';
@@ -252,7 +247,6 @@ function updatePurchaseSection(item) {
     colorsSection.style.display = 'block';
     colorsSelector.innerHTML = '';
 
-    // Default selected color index for the open card
     if (selectedItem) selectedItem.dataset.colorIndex = '0';
 
     item.colors.forEach((color, index) => {
@@ -278,7 +272,6 @@ function updatePurchaseSection(item) {
             selectedItem.dataset.colorIndex = String(nextIndex);
             const direction = nextIndex < prevIndex ? 'right' : 'left';
 
-            // Update expanded card background
             setCardImageSlide(selectedItem, color.image, direction);
         });
 
@@ -307,12 +300,10 @@ async function initCarousel() {
                 : "Impossible de charger la collection. Réessayez plus tard.",
             'error'
         );
-        // eslint-disable-next-line no-console
         console.error('Failed to load carousel-data.json', error);
         return;
     }
 
-    // Nettoyer le message de statut avant d'ajouter les items
     const status = carouselContainer.querySelector('.carousel-status');
     if (status) status.remove();
 
@@ -394,7 +385,6 @@ function setupEventListeners() {
         if (!item) return false;
         
         if (instant) {
-            // Open instantly in expanded state
             if (selectedItem) return true;
             const itemData = carouselData?.carouselItems?.find((data) => String(data.id) === String(itemId));
             if (!itemData) return false;
@@ -406,11 +396,9 @@ function setupEventListeners() {
 
             lockCarouselContainerHeight(carouselContainer);
 
-            // Hide page sections
             togglePageChrome(true);
             document.querySelector('.carousel-container')?.classList.add('no-scroll');
 
-            // Hide other carousel items
             document.querySelectorAll('.carousel-item').forEach((otherItem) => {
                 if (otherItem !== item) {
                     otherItem.style.opacity = '0';
@@ -418,8 +406,6 @@ function setupEventListeners() {
                 }
             });
 
-            // Apply expanded state instantly
-            const rect = item.getBoundingClientRect();
             item.style.position = 'fixed';
             item.style.top = '50%';
             item.style.left = '0';
@@ -430,14 +416,12 @@ function setupEventListeners() {
             item.style.transition = 'none';
             item.classList.add('expanding');
 
-            // Hide content (title/description)
             const content = item.querySelector('.content');
             if (content) {
                 content.style.opacity = '0';
                 content.style.display = 'none';
             }
 
-            // Show purchase section
             updatePurchaseSection(itemData);
             purchaseSection.style.transition = 'none';
             purchaseSection.classList.add('show');
@@ -447,7 +431,6 @@ function setupEventListeners() {
             return true;
         }
 
-        // Normal animated open
         const openButton = item.querySelector('.open-button');
         (openButton || item).click();
         return true;
@@ -458,10 +441,8 @@ function setupEventListeners() {
         newProductCta.addEventListener('click', async () => {
             const itemId = newProductCta.dataset.carouselItemId || '1';
 
-            // Wait for carousel to exist, then open instantly
             for (let attempt = 0; attempt < 20; attempt += 1) {
                 if (openCarouselItemById(itemId, true)) return;
-                // eslint-disable-next-line no-await-in-loop
                 await sleep(100);
             }
         });
@@ -546,13 +527,11 @@ function setupEventListeners() {
                 collectionPanel.classList.add('no-transform');
             }
             
-            // Bloquer complètement tous les scrolls
             document.body.style.overflow = 'hidden';
             document.documentElement.style.overflow = 'hidden';
 
             lockCarouselContainerHeight(carouselContainer);
             
-            // Capturer les positions AVANT tout changement
             const positions = [];
             carouselItems.forEach((currentItem, index) => {
                 const rect = currentItem.getBoundingClientRect();
@@ -564,7 +543,6 @@ function setupEventListeners() {
                 };
             });
 
-            // Appliquer les positions fixes immédiatement
             carouselItems.forEach((currentItem, index) => {
                 const pos = positions[index];
                 currentItem.style.position = 'fixed';
@@ -577,17 +555,14 @@ function setupEventListeners() {
                 currentItem.style.transition = 'none';
             });
 
-            // Forcer un reflow
             item.offsetHeight;
 
             document.querySelector('.carousel-container').classList.add('no-scroll');
             item.classList.add('text-slide-out');
             
-            // Faire disparaître tout le reste de la page automatiquement
             await sleep(100);
                 togglePageChrome(true);
 
-                // Faire disparaître tous les autres items du carousel
                 carouselItems.forEach(otherItem => {
                     if (otherItem !== item) {
                         otherItem.style.transition = 'opacity 0.5s ease';
@@ -610,11 +585,9 @@ function setupEventListeners() {
                 item.style.left = '0';
                 item.style.transform = 'translateY(-50%)';
                 
-                // Afficher la shop zone immédiatement après l'expansion
                 updatePurchaseSection(itemData);
                 purchaseSection.classList.add('show');
 
-                // Focus sur le bouton retour pour clavier / lecteurs d'écran
                 const backButton = purchaseSection.querySelector('.back-button');
                 if (backButton) backButton.focus();
                 
@@ -646,11 +619,9 @@ function setupEventListeners() {
 function resetCarousel() {
     if (!selectedItem) return;
 
-    // Remettre l'image à la couleur par défaut (première couleur)
     const itemData = carouselData.carouselItems.find(data => data.id == selectedItem.dataset.itemId);
     if (itemData && Array.isArray(itemData.colors) && itemData.colors.length > 0) {
         const defaultImage = itemData.colors[0].image;
-        // Remove any extra bg-image elements from color transitions
         const allBgImages = selectedItem.querySelectorAll('.bg-image');
         allBgImages.forEach((img, i) => {
             if (i === 0) {
@@ -664,20 +635,16 @@ function resetCarousel() {
         });
     }
 
-    // Fermeture INSTANTANÉE de la purchase section et réaffichage du header
     purchaseSection.style.transition = 'none';
     purchaseSection.classList.remove('show');
     togglePageChrome(false);
     
-    // Restaurer les scrolls
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
     
-    // Reset immédiat de tous les items
     selectedItem.classList.remove('expanding', 'text-slide-out');
     
     document.querySelectorAll('.carousel-item').forEach(item => {
-        // Reset complet des styles
         item.style = '';
         item.classList.remove('fade-out');
         delete item.dataset.colorIndex;
@@ -689,13 +656,11 @@ function resetCarousel() {
     unlockCarouselContainerHeight(document.querySelector('.carousel-container'));
     selectedItem = null;
 
-    // Rendre le focus à l'élément précédent (si possible)
     if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
         lastFocusedElement.focus();
     }
     lastFocusedElement = null;
     
-    // Restaurer la transition après un délai
     setTimeout(() => {
         if (purchaseSection) {
             purchaseSection.style.transition = '';
