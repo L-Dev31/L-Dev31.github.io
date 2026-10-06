@@ -1517,5 +1517,13 @@ export default {
     "US stocks: $7.95 an order ($9.95 above 100 shares). Germany: 0.15 %, at least 9.95 €.": "Actions américaines : 7,95 $ l'ordre (9,95 $ au-delà de 100 actions). Allemagne : 0,15 %, au moins 9,95 €.",
     "Czech stocks from 80 Kč. US stocks: $14.90, European ones: 16.90 €.": "Actions tchèques à partir de 80 Kč. Actions américaines : 14,90 $, européennes : 16,90 €.",
     "Managed portfolios of ETFs, from 500 Kč.": "Portefeuilles d'ETF gérés pour toi, dès 500 Kč.",
-    "ETFs: 0 €. US stocks: 0.1 %, from $0.10 to $1. Currency conversion 0.10 % since March 2026.": "ETF : 0 €. Actions américaines : 0,1 %, de 0,10 $ à 1 $. Conversion de devises à 0,10 % depuis mars 2026."
+    "ETFs: 0 €. US stocks: 0.1 %, from $0.10 to $1. Currency conversion 0.10 % since March 2026.": "ETF : 0 €. Actions américaines : 0,1 %, de 0,10 $ à 1 $. Conversion de devises à 0,10 % depuis mars 2026.",
+    "System default": "Celui du système",
+    "The browser's own voice always plays on the system speaker.": "La voix du navigateur passe toujours par la sortie du système.",
+    "Microphone": "Micro",
+    "Speaker": "Haut-parleur",
+    "Show the device names": "Afficher le nom des appareils",
+    "Microphone and speaker": "Micro et haut-parleur",
+    "Microphone {0}": "Micro {0}",
+    "Speaker {0}": "Haut-parleur {0}"
 };

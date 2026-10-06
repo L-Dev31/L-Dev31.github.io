@@ -2,6 +2,7 @@
 // Listening goes through the browser's recognition service (Google in Chrome, Microsoft in Edge, Apple in Safari).
 // Speaking uses the voices of the system or the browser.
 import { L } from '../../i18n/i18n.js';
+import { openMic, chosenDevice } from './devices.js';
 
 const Recognition = typeof window !== 'undefined' ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null;
 export const canListen = () => !!Recognition;
@@ -25,9 +26,7 @@ export async function watchMicrophoneLevel(onLevel) {
 
     try {
         context = new AudioContext();
-        stream = await navigator.mediaDevices.getUserMedia({
-            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-        });
+        stream = await openMic({ echoCancellation: true, noiseSuppression: true, autoGainControl: true });
         if (stopped) {
             stream.getTracks().forEach(track => track.stop());
             return stop;
@@ -239,6 +238,14 @@ export function createListener({ lang, onInterim, onFinal, onError, silenceMs = 
     let heard = '';
     let interim = '';
     let timer = 0;
+    // A microphone other than the default: recognition listens to its track where the browser allows it
+    // (start(track)); engines that do not know that argument ignore it and use the default microphone.
+    let mic = null;
+    const begin = () => {
+        const track = mic?.getAudioTracks()[0];
+        if (track?.readyState === 'live') rec.start(track);
+        else rec.start();
+    };
     const finish = () => {
         const t = heard.trim();
         if (!on || held || !t || interim.trim()) return;
@@ -267,18 +274,20 @@ export function createListener({ lang, onInterim, onFinal, onError, silenceMs = 
     };
     rec.onend = () => {
         if (!on) return;
-        try { rec.start(); }
+        try { begin(); }
         catch (e) {
             on = false;
             onError?.('service-not-allowed', e.message);
         }
     };
     return {
-        start() {
+        async start() {
             heard = '';
             interim = '';
             on = true;
-            try { rec.start(); }
+            if (chosenDevice('input') && !mic) mic = await openMic().catch(() => null);
+            if (!on) return;
+            try { begin(); }
             catch (e) {
                 on = false;
                 onError?.(e.name === 'NotAllowedError' ? 'not-allowed' : 'service-not-allowed', e.message);
@@ -288,6 +297,8 @@ export function createListener({ lang, onInterim, onFinal, onError, silenceMs = 
             on = false;
             clearTimeout(timer);
             try { rec.abort(); } catch { /* not running */ }
+            mic?.getTracks().forEach(t => t.stop());
+            mic = null;
         },
         hold(value) { held = !!value; },
         flush() {

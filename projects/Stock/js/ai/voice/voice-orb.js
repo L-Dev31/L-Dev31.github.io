@@ -95,6 +95,7 @@ const coreFragment = /* glsl */ `
     uniform vec3 uColA;
     uniform vec3 uColB;
     uniform vec3 uColC;
+    uniform float uLight;
     varying vec3 vNormal;
     varying vec3 vDir;
     varying vec3 vView;
@@ -123,10 +124,12 @@ const coreFragment = /* glsl */ `
         float speck = smoothstep(0.22, 0.0, length(fract(cell) - 0.5)) * step(0.975, h);
         col += uColC * speck * (0.55 + 0.45 * sin(uTime * 2.6 + h * 60.0)) * (0.35 + ndv);
         vec3 L = normalize(vec3(-0.55, 0.75, 0.55));
-        col *= 0.7 + max(dot(N, L), 0.0) * 0.5;
-        col += mix(uColA, uColC, 0.35) * fres * 1.3;
+        float lit = max(dot(N, L), 0.0);
+        // On a dark page the light carves the body and the rim glows; on a light one it stays a pale pearl.
+        col *= mix(0.7 + lit * 0.5, 0.95 + lit * 0.08, uLight);
+        col += mix(uColA, uColC, 0.35) * fres * mix(1.3, 0.45, uLight);
         // A clear heart: the surface is opaque at its edge and fades to nothing where it faces the viewer.
-        float alpha = clamp(0.04 + pow(1.0 - ndv, 1.7) * 1.05, 0.0, 1.0) * (gl_FrontFacing ? 1.0 : 0.45);
+        float alpha = clamp(mix(0.04, 0.12, uLight) + pow(1.0 - ndv, 1.7) * mix(1.05, 0.8, uLight), 0.0, 1.0) * (gl_FrontFacing ? 1.0 : 0.45);
         gl_FragColor = vec4(col, alpha);
         #include <colorspace_fragment>
     }
@@ -207,12 +210,12 @@ export async function mountVoiceOrb(container) {
 
         const calm = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
         const shared = { uTime: { value: 0 }, uEnergy: { value: 0 } };
-        const colors = { deep: new THREE.Color('#1A1340'), a: new THREE.Color('#A99CFF'), b: new THREE.Color('#4FE0A3'), c: new THREE.Color('#DCD7EF') };
+        const colors = { deep: new THREE.Color('#2D2659'), a: new THREE.Color('#A99CFF'), b: new THREE.Color('#4FE0A3'), c: new THREE.Color('#DCD7EF') };
 
         const coreMat = new THREE.ShaderMaterial({
             vertexShader: coreVertex,
             fragmentShader: coreFragment,
-            uniforms: { ...shared, uDeep: { value: colors.deep }, uColA: { value: colors.a }, uColB: { value: colors.b }, uColC: { value: colors.c } },
+            uniforms: { ...shared, uDeep: { value: colors.deep }, uColA: { value: colors.a }, uColB: { value: colors.b }, uColC: { value: colors.c }, uLight: { value: 0 } },
             transparent: true,
             depthWrite: false,
             side: THREE.DoubleSide,
@@ -270,7 +273,7 @@ export async function mountVoiceOrb(container) {
             read('--orb-b', colors.b);
             read('--orb-c', colors.c);
             read('--orb-deep', colors.deep);
-            colors.deep.multiplyScalar(0.1);
+            coreMat.uniforms.uLight.value = colors.deep.getHSL({}).l > 0.5 ? 1 : 0;
         };
         updatePalette();
         const paletteObserver = new MutationObserver(updatePalette);

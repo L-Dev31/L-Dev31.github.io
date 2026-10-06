@@ -3,6 +3,7 @@ import { registerAiSettingsSection, getAiSettings, setVoiceAi, setVoiceLang, voi
 import { L, LANG, LANGS } from '../../i18n/i18n.js';
 import { el } from '../../core/utils.js';
 import { previewVoice, testVoiceRecognition, voiceStatus, VOICE_HEALTH_EVENT } from './voice-engine.js';
+import { listDevices, chosenDevice, chooseDevice, canChooseOutput, revealDeviceNames } from './devices.js';
 
 const TITLE = { tts: L('AI speech'), stt: L('AI speech recognition') };
 
@@ -115,9 +116,43 @@ function kindBlock(kind) {
     return box;
 }
 
+function deviceSelect(kind, devices) {
+    const field = el('label', 'field');
+    const sel = el('select');
+    sel.append(new Option(L('System default'), ''));
+    devices.forEach((d, i) => sel.append(new Option(d.label || L(kind === 'input' ? 'Microphone {0}' : 'Speaker {0}', i + 1), d.deviceId)));
+    sel.value = devices.some(d => d.deviceId === chosenDevice(kind)) ? chosenDevice(kind) : '';
+    const hint = el('span', 'meta', L('The browser\'s own voice always plays on the system speaker.'));
+    hint.hidden = kind === 'input' || !sel.value;
+    sel.addEventListener('change', () => { chooseDevice(kind, sel.value); hint.hidden = kind === 'input' || !sel.value; });
+    field.append(el('span', null, kind === 'input' ? L('Microphone') : L('Speaker')), sel, hint);
+    return field;
+}
+
+/** Microphone and speaker pickers, kept in step with what is plugged in. Used here and in the call bar. */
+export function deviceFields() {
+    const box = el('div', 'device-fields');
+    const fill = async () => {
+        if (!box.isConnected && box.childElementCount) { navigator.mediaDevices?.removeEventListener('devicechange', fill); return; }
+        const { input, output, named } = await listDevices().catch(() => ({ input: [], output: [], named: true }));
+        box.replaceChildren(deviceSelect('input', input));
+        if (canChooseOutput()) box.append(deviceSelect('output', output));
+        if (!named) {
+            const ask = el('button', 'link-btn', L('Show the device names'));
+            ask.type = 'button';
+            ask.addEventListener('click', () => revealDeviceNames().then(fill, () => {}));
+            box.append(ask);
+        }
+    };
+    fill();
+    navigator.mediaDevices?.addEventListener('devicechange', fill);
+    return box;
+}
+
 registerAiSettingsSection(() => {
     const box = el('section', 'panel');
-    box.append(el('h2', 'panel-title', L('Voice')));
-    box.append(kindBlock('tts'), kindBlock('stt'));
+    const devices = el('div', 'voice-kind');
+    devices.append(el('strong', null, L('Microphone and speaker')), deviceFields());
+    box.append(el('h2', 'panel-title', L('Voice')), devices, kindBlock('tts'), kindBlock('stt'));
     return box;
 }, 10);

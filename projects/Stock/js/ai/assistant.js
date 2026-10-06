@@ -18,7 +18,8 @@ import { countryCode, countryName } from '../data/country.js';
 import { ratesReady, ratesDate } from '../data/rates.js';
 import { sentenceFeeder, watchMicrophoneLevel } from './voice/voice.js';
 import { canCall, voiceAvailability, VOICE_HEALTH_EVENT, createCallSpeaker, createCallListener, resetVoiceHealth } from './voice/voice-engine.js';
-import './voice/voice-settings.js';
+import { AUDIO_DEVICES_EVENT } from './voice/devices.js';
+import { deviceFields } from './voice/voice-settings.js';
 import { know, knowledgeReady } from './knowledge.js';
 
 const CHATS_KEY = 'nemeris_assistant_chats';
@@ -727,8 +728,17 @@ function build() {
     const hang = el('button', 'btn asst-voice-action asst-hangup');
     hang.type = 'button';
     hang.append(el('span', null, L('End voice mode')));
-    callActions.append(cut, hang);
-    callBar.append(callSummary, callActions, callEffort);
+    const devicesBtn = iconButton('mic', L('Microphone and speaker'), 'icon-btn asst-devices-btn');
+    devicesBtn.setAttribute('aria-expanded', 'false');
+    const devices = el('div', 'asst-devices');
+    devices.hidden = true;
+    devicesBtn.addEventListener('click', () => {
+        devices.hidden = !devices.hidden;
+        devicesBtn.setAttribute('aria-expanded', String(!devices.hidden));
+        if (!devices.hidden) devices.replaceChildren(deviceFields());
+    });
+    callActions.append(devicesBtn, cut, hang);
+    callBar.append(callSummary, callActions, devices, callEffort);
     form.append(row, effort);
     panel.append(resize, head, status, log, list, callBar, form);
     document.body.append(fab, panel);
@@ -1389,10 +1399,24 @@ function sayMini(text, kind) {
     setCallText(text, kind);
 }
 
-/** The orb moves with both voices: the assistant's (speaker onLevel) and the user's (microphone level). */
-function startCallVisual() {
+function startMicMeter() {
+    call.micStop?.();
+    call.micStop = null;
     watchMicrophoneLevel(level => { if (call.active) call.visual?.setInputLevel(level); })
         .then(stopMeter => { if (call.active) call.micStop = stopMeter; else stopMeter(); });
+}
+
+// Another microphone picked during a call: listen through it from now on.
+window.addEventListener(AUDIO_DEVICES_EVENT, e => {
+    if (!call.active || e.detail?.kind !== 'input') return;
+    call.listener.stop();
+    call.listener.start();
+    startMicMeter();
+});
+
+/** The orb moves with both voices: the assistant's (speaker onLevel) and the user's (microphone level). */
+function startCallVisual() {
+    startMicMeter();
     import('./voice/voice-orb.js').then(({ mountVoiceOrb }) => mountVoiceOrb(ui.callOrb)).then(visual => {
         if (!call.active) { visual?.dispose(); return; }
         call.visual = visual;

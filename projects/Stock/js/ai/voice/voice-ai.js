@@ -6,6 +6,7 @@
 import { bearerHeaders, readModelError, ModelError, aiFetch } from '../ai-core.js';
 import { L } from '../../i18n/i18n.js';
 import { speakable } from './voice.js';
+import { openMic, playOn } from './devices.js';
 
 const ORT = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/';
 const VAD = 'https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.31/dist/';
@@ -55,7 +56,7 @@ const remoteSpeech = conn => async (text, signal) => {
  * audioFor(text, signal) → encoded audio; by default the AI's /audio/speech (voice-local.js passes its own).
  */
 export function createAiSpeaker(conn, { onStart, onEnd, onError, onLevel } = {}, audioFor = remoteSpeech(conn)) {
-    const ctx = new AudioContext();
+    const ctx = playOn(new AudioContext());
     const analyser = ctx.createAnalyser();
     analyser.fftSize = 512;
     analyser.connect(ctx.destination);
@@ -179,7 +180,7 @@ export function createAiListener(conn, { lang, prompt = '', onFinal, onError, to
                     baseAssetPath: VAD,
                     onnxWASMBasePath: ORT,
                     redemptionMs: 900,
-                    getStream: () => navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true } }),
+                    getStream: () => openMic({ channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true }),
                     // A sentence begun while the assistant was speaking is its own voice: never written down.
                     onSpeechStart: () => { dropSegment = held; },
                     onSpeechEnd: audio => {
