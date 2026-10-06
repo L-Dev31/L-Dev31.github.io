@@ -1,11 +1,13 @@
-// Which engine speaks and listens in each language: the browser by default, the user's own AI when it is
-// switched on in Settings › AI › Voice. A failed engine disables voice mode until it passes a test again.
+// Which engine speaks and listens in each language: the user's own AI when it is switched on in Settings › AI › Voice,
+// else the browser's, else the built-in open-source voice (voice-local.js) for browsers without one or whose service
+// fails. A failed engine disables voice mode until it passes a test again.
 // Whatever the engine, what it hears is corrected with the finance vocabulary of lexicon.js.
 import { resolveVoice } from '../ai-core.js';
 import { L, LANG, LANGS } from '../../i18n/i18n.js';
 import { positions } from '../../core/state.js';
 import { canListen, canSpeak, createSpeaker, createListener } from './voice.js';
 import { canRecord, createAiSpeaker, createAiListener } from './voice-ai.js';
+import { canRunLocally, createLocalSpeaker, createLocalListener } from './voice-local.js';
 import { buildLexicon, correctTranscript, bestAlternative, hintPhrases, recognitionPrompt } from './lexicon.js';
 
 /** The BCP 47 tag browser engines expect for an app language. */
@@ -19,6 +21,7 @@ function engineFor(kind, lang) {
     const conn = resolveVoice(kind, lang);
     if (conn && (kind !== 'stt' || canRecord())) return { type: 'ai', conn };
     if (kind === 'tts' ? canSpeak() : canListen()) return { type: 'browser', conn: null };
+    if (canRunLocally()) return { type: 'local', conn: null };
     return { type: 'none', conn: null };
 }
 
@@ -56,6 +59,7 @@ export function voiceStatus(kind, lang = LANG) {
     const result = health.get(healthKey(kind, lang, engine));
     if (result?.state === 'failed') return { kind, engine: engine.type, state: 'failed', message: result.message, detail: result.detail };
     if (result?.state === 'ready') return { kind, engine: engine.type, state: 'ready', message: result.message };
+    if (engine.type === 'local') return { kind, engine: 'local', state: 'ready', message: L('Built-in voice, downloaded on first use.') };
     return { kind, engine: engine.type, state: engine.type === 'ai' ? 'untested' : 'ready', message: engine.type === 'ai' ? L('Not tested.') : L('Available.') };
 }
 
@@ -85,17 +89,26 @@ export function financeLexicon() {
  * handlers: { onStart, onEnd, onLevel(0..1) for the orb, onNotice(message) }.
  */
 export function createCallSpeaker(lang, { onStart, onEnd, onLevel, onNotice } = {}) {
-    const browser = {};
+    const browser = {}, builtIn = {}, broken = new Set();
     let current = lang, ai = null, aiLang = null;
-    const browserFor = l => (browser[l] ||= canSpeak() ? createSpeaker(speechTag(l), {
-        onStart: () => { setHealth('tts', l, { type: 'browser' }, true); onStart?.(); },
-        onEnd,
-        onLevel,
-        onError: error => {
-            setHealth('tts', l, { type: 'browser' }, false, error);
-            onNotice?.(L('The browser\'s speech synthesis failed. ({0})', error.message || String(error)));
-        },
+    const builtInFor = l => (builtIn[l] ||= canRunLocally() ? createLocalSpeaker(l, {
+        onStart, onEnd, onLevel,
+        onError: error => onNotice?.(L('The built-in voice failed. ({0})', error.message || String(error))),
     }) : null);
+    const browserFor = l => {
+        if (!canSpeak() || broken.has(l)) return builtInFor(l);
+        return (browser[l] ||= createSpeaker(speechTag(l), {
+            onStart: () => { setHealth('tts', l, { type: 'browser' }, true); onStart?.(); },
+            onEnd,
+            onLevel,
+            onError: error => {
+                // No voice installed, or the engine gave up: the built-in voice takes over from the next sentence.
+                if (canRunLocally()) { broken.add(l); onNotice?.(L('Your browser has no working voice: Nemeris switches to its built-in one (downloaded once).')); return; }
+                setHealth('tts', l, { type: 'browser' }, false, error);
+                onNotice?.(L('The browser\'s speech synthesis failed. ({0})', error.message || String(error)));
+            },
+        }));
+    };
     const engine = () => {
         const conn = resolveVoice('tts', current);
         if (!conn) return browserFor(current);
@@ -115,7 +128,7 @@ export function createCallSpeaker(lang, { onStart, onEnd, onLevel, onNotice } = 
         }
         return ai;
     };
-    const all = () => [ai, ...Object.values(browser)].filter(Boolean);
+    const all = () => [ai, ...Object.values(browser), ...Object.values(builtIn)].filter(Boolean);
     return {
         setLang(l) { if (l) current = l; },
         say(text, opts) { engine()?.say(text, opts); },
@@ -133,21 +146,37 @@ export function createCallSpeaker(lang, { onStart, onEnd, onLevel, onNotice } = 
 export function createCallListener(lang, { onInterim, onFinal, onError, onNotice } = {}) {
     const lex = financeLexicon();
     const fix = t => correctTranscript(t, lex).text;
-    const fromBrowser = () => createListener({
+    const builtIn = () => createLocalListener(lang, {
+        onFinal: t => onFinal?.(fix(t)),
+        onError: (code, detail) => { setHealth('stt', lang, { type: 'local' }, false, detail || code); onError?.(code, detail); },
+    });
+    const conn = aiListens(lang) ? resolveVoice('stt', lang) : null;
+    let inner;
+    // The browser's recognition service unreachable (Brave, plain Chromium, a filtered network): the built-in one takes over.
+    const browserOrBuiltIn = () => createListener({
         lang: speechTag(lang),
         pick: alternatives => bestAlternative(alternatives, lex),
         phrases: hintPhrases(lex),
         onInterim: t => onInterim?.(fix(t)),
         onFinal: t => { setHealth('stt', lang, { type: 'browser' }, true); onFinal?.(fix(t)); },
-        onError: (code, detail) => { setHealth('stt', lang, { type: 'browser' }, false, detail || code); onError?.(code, detail); },
+        onError: (code, detail) => {
+            if (['network', 'service-not-allowed', 'language-not-supported'].includes(code) && canRunLocally()) {
+                onNotice?.(L('Your browser\'s speech recognition is unavailable: Nemeris switches to its built-in one (downloaded once).'));
+                inner = builtIn();
+                inner.start();
+                return;
+            }
+            setHealth('stt', lang, { type: 'browser' }, false, detail || code);
+            onError?.(code, detail);
+        },
     });
-    const conn = aiListens(lang) ? resolveVoice('stt', lang) : null;
-    let inner = conn ? createAiListener(conn, {
+    if (conn) inner = createAiListener(conn, {
         lang,
         prompt: recognitionPrompt(lex, lang),
         onFinal: t => { setHealth('stt', lang, { type: 'ai', conn }, true); onFinal?.(fix(t)); },
         onError: (code, detail) => { setHealth('stt', lang, { type: 'ai', conn }, false, detail || code); onError?.(code, detail); },
-    }) : fromBrowser();
+    });
+    else inner = canListen() ? browserOrBuiltIn() : builtIn();
     return {
         start: () => inner.start(),
         stop: () => inner.stop(),
@@ -189,7 +218,12 @@ export function previewVoice(lang) {
     if (previewing) (previewing.dispose || previewing.cancel).call(previewing);
     return new Promise((resolve, reject) => {
         const conn = resolveVoice('tts', lang);
-        if (!conn && !canSpeak()) { reject(new Error(L('This browser has no voice.'))); return; }
+        if (!conn && !canSpeak() && !canRunLocally()) { reject(new Error(L('This browser has no voice.'))); return; }
+        if (!conn && !canSpeak()) {
+            previewing = createLocalSpeaker(lang, { onEnd: resolve, onError: reject });
+            previewing.say(SAMPLE[lang] || SAMPLE.en);
+            return;
+        }
         previewing = conn ? createAiSpeaker(conn, {
             onStart: () => setHealth('tts', lang, { type: 'ai', conn }, true),
             onEnd: resolve,

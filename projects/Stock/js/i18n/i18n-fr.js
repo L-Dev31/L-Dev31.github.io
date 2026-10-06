@@ -1475,5 +1475,16 @@ export default {
     "Light": "Clair",
     "Dark": "Sombre",
     "Automatic": "Automatique",
-    "What can I do?": "Que faire ?"
+    "What can I do?": "Que faire ?",
+    "Built-in voice, downloaded on first use.": "Voix intégrée, téléchargée à la première utilisation.",
+    "The built-in voice failed. ({0})": "La voix intégrée a échoué. ({0})",
+    "Your browser has no working voice: Nemeris switches to its built-in one (downloaded once).": "Ton navigateur n'a pas de voix qui fonctionne : Nemeris passe à sa voix intégrée (téléchargée une seule fois).",
+    "Your browser's speech recognition is unavailable: Nemeris switches to its built-in one (downloaded once).": "La reconnaissance vocale de ton navigateur est indisponible : Nemeris passe à la sienne, intégrée (téléchargée une seule fois).",
+    "The built-in voice": "La voix intégrée",
+    "Fall": "Baisse",
+    "Rise": "Hausse",
+    "To set up": "À configurer",
+    "Good to know": "Bon à savoir",
+    "All calm": "Tout va bien",
+    "Quick check": "Révision"
 };

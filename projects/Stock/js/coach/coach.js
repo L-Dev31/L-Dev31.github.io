@@ -11,8 +11,11 @@ import { LESSONS, LESSON_IDS } from './lessons.js';
 import { markSeen, learnedCount, dueReview } from './learning.js';
 import { findSituations, portfolioMove, howUsual, pct } from './situations.js';
 import { explain, para, richText, quizBox } from './explain.js';
+import { photoFor } from './photos.js';
 
-const ICON = { down: 'trend-down', up: 'trend-down', warn: 'info', info: 'lightbulb', calm: 'check' };
+// Each kind of situation has its color, icon and word, so a glance says what a card is about.
+const ICON = { down: 'trend-down', up: 'trend-down', warn: 'info', setup: 'help', tip: 'lightbulb', calm: 'check', review: 'history' };
+const KIND = { down: L('Fall'), up: L('Rise'), warn: L('Risk'), setup: L('To set up'), tip: L('Good to know'), calm: L('All calm'), review: L('Quick check') };
 const ACTION_LABEL = { profile: L('Open your profile'), bank: L('Choose your bank'), explorer: L('Open Explorer'), news: L('Read the news'), stock: L('Open it'), library: L('See the ideas') };
 const MAX_CARDS = 3;
 
@@ -75,6 +78,7 @@ function disclose(label, iconName, panel, cls, onFirstOpen) {
 
 function fillFacts(card, s) {
     card.querySelector('.coach-icon').replaceChildren(icon(ICON[s.tone]));
+    card.querySelector('.coach-kind').textContent = KIND[s.tone];
     card.querySelector('.coach-what').replaceChildren(richText(s.title));
     card.querySelector('.coach-lead').replaceChildren(richText(s.meaning[0]));
 
@@ -108,13 +112,24 @@ function fillLesson(panel, lessonId) {
     panel.append(para('coach-idea', lesson.idea), ...lesson.body.map(b => para(null, b)), el('h4', 'coach-sub', L('Check yourself')), quizBox(lessonId, renderProgress));
 }
 
+/** The card's photo, shown once it has loaded; nothing at all if no source answers. */
+function photo(query) {
+    const img = el('img', 'coach-photo');
+    img.alt = '';
+    img.hidden = true;
+    img.addEventListener('load', () => { img.hidden = false; });
+    photoFor(query).then(p => { if (p) { img.src = p.src; img.title = p.credit; } });
+    return img;
+}
+
 function buildCard(s) {
     const card = el('article', `coach-card is-${s.tone}`);
     card.dataset.id = s.id;
     const text = el('div', 'coach-text');
-    text.append(el('h3', 'coach-what'), el('p', 'coach-lead'));
+    text.append(el('span', 'coach-kind'), el('h3', 'coach-what'), el('p', 'coach-lead'));
     const head = el('div', 'coach-head');
     head.append(el('span', 'coach-icon'), text);
+    if (s.photo) head.append(photo(s.photo));
     const more = el('div', 'coach-more');
     const lesson = el('div', 'coach-lesson');
     more.hidden = lesson.hidden = true;
@@ -131,7 +146,9 @@ function buildCard(s) {
 function reviewCard(id) {
     const card = el('article', 'coach-card is-review');
     const head = el('div', 'coach-head');
-    head.append(badge('history'), el('h3', 'coach-what', L('Quick check, 30 seconds')));
+    const text = el('div', 'coach-text');
+    text.append(el('span', 'coach-kind', KIND.review), el('h3', 'coach-what', L('Quick check, 30 seconds')));
+    head.append(badge('history'), text);
     const note = el('p', 'meta', L('You met this idea a while ago. Remembering it now is what makes it stick.'));
     const after = el('p', 'meta coach-after');
     after.hidden = true;

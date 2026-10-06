@@ -24,7 +24,9 @@
 .card.active { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; max-width: var(--content-max); margin: 0 auto; }
 .card-tab-pane { display: none; }
 .card-tab-pane.active { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; }
-.grid-2 { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
+/* Bento rows: flex-wrap, so the items of a shorter last row stretch to fill it instead of leaving a hole. */
+.grid-2 { display: flex; flex-wrap: wrap; gap: 24px; }
+.grid-2 > * { flex: 1 1 340px; min-width: 0; }
 
 .me {
     display: grid;

@@ -1,6 +1,6 @@
 // AI check-up: prices, news and one model call per stock, a prediction journal scored against simple controls, and paper portfolios. Model and news text are untrusted and rendered as text only.
 import { positions, investorContext, isExpert } from '../core/state.js';
-import { getEl, el, icon, activity, downloadText, termHtml, fillOrphans } from '../core/utils.js';
+import { getEl, el, icon, activity, downloadText, termHtml } from '../core/utils.js';
 import { proxyFetch } from '../data/proxy-fetch.js';
 import { Store } from '../data/store.js';
 import { getAiSettings, patchAiSettings, getTaskState, probeTask, resolveTask, isLoopback, callStructured, prettyModel, onAiChange, registerAiSettingsSection, startAiCore, syncAiGates } from './ai-core.js';
@@ -1031,7 +1031,6 @@ export async function renderAiLabPane() {
         const sec = el('section', 'panel');
         sec.append(el('h2', 'panel-title', L('What it thinks')));
         const list = el('div', 'opinions');
-        list.dataset.fill = 'orphans';
         for (const r of recs) {
             const held = positions[r.symbol]?.shares > 0;
             const card = el('article', 'opinion');
@@ -1058,7 +1057,7 @@ export async function renderAiLabPane() {
     }
 
     const sc = scorecard();
-    if (!recs.length && !(sc.by.ai.n > 0)) { root.append(expertDetails(sc), el('p', 'meta disclaimer', L('Experimental. The AI can be wrong. Not financial advice.'))); syncAiGates(root); fillOrphans(root); return; }
+    if (!recs.length && !(sc.by.ai.n > 0)) { root.append(expertDetails(sc), el('p', 'meta disclaimer', L('Experimental. The AI can be wrong. Not financial advice.'))); syncAiGates(root); return; }
     const trust = el('section', 'panel');
     trust.append(el('h2', 'panel-title', L('Can you trust it?')));
     const n = sc.by.ai.n || 0;
@@ -1079,7 +1078,6 @@ export async function renderAiLabPane() {
 
     root.append(expertDetails(sc), el('p', 'meta disclaimer', L('Experimental. The AI can be wrong. Not financial advice.')));
     syncAiGates(root);
-    fillOrphans(root);
 }
 
 function expertDetails(sc) {
@@ -1087,8 +1085,6 @@ function expertDetails(sc) {
     more.open = isExpert();
     more.append(el('summary', null, L('Details for experts')));
     const grid = el('div', 'analysis-grid');
-    grid.dataset.fill = 'orphans';
-    more.addEventListener('toggle', () => { if (more.open) fillOrphans(grid); });
 
     const log = el('section', 'panel');
     log.append(el('h2', 'panel-title', L('Last run')));

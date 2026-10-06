@@ -47,7 +47,7 @@
 .vd-head { display: grid; gap: 4px; margin: 2px 0 6px; text-align: center; }
 .vd-signal { margin: 0; font-size: 28px; font-weight: 600; line-height: 1.15; letter-spacing: -.01em; }
 .vd-summary { margin: 0; font-size: 15px; }
-.vd-scale-track { position: relative; height: 10px; border-radius: var(--r-bar); background: linear-gradient(90deg, color-mix(in srgb, var(--neg) 45%, transparent), color-mix(in srgb, var(--warn) 40%, transparent), color-mix(in srgb, var(--pos) 45%, transparent)); }
+.vd-scale-track { position: relative; height: 10px; border-radius: var(--r-bar); background: linear-gradient(90deg, var(--neg), var(--warn), var(--pos)); }
 .vd-scale-marker { position: absolute; top: 50%; width: 18px; height: 18px; border: 3px solid var(--surface); border-radius: var(--r-circle); background: var(--text); transform: translate(-50%, -50%); }
 .vd-scale-labels, .risk-scale-labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--faint); }
 .vd-reasons { display: grid; gap: 8px; padding: 0; list-style: none; font-size: 14px; }
@@ -118,7 +118,7 @@
 .event-tone { font-size: 12px; font-weight: 600; }
 
 .rng-track { position: relative; height: 10px; margin: 10px 0 12px; border-radius: var(--r-bar); background: var(--surface-3); }
-.rng-fill { position: absolute; top: 0; bottom: 0; border-radius: inherit; opacity: .55; }
+.rng-fill { position: absolute; top: 0; bottom: 0; border-radius: inherit; }
 .rng-fill.positive { background: var(--pos); }
 .rng-fill.negative { background: var(--neg); }
 .rng-open { position: absolute; top: -4px; bottom: -4px; width: 2px; border-radius: var(--r-xs); background: var(--faint); transform: translateX(-1px); }
@@ -167,9 +167,9 @@
 .risk-level { font-size: 15px; font-weight: 600; color: var(--muted); }
 .risk-level strong { font-size: 22px; margin-right: 4px; }
 .analysis-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
-.analysis-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
-.panel-wide { grid-column: 1 / -1; }
-.span-full { grid-column: 1 / -1; }
+.analysis-grid { display: flex; flex-wrap: wrap; gap: 20px; }
+.analysis-grid > * { flex: 1 1 340px; min-width: 0; }
+.analysis-grid > .panel-wide { flex-basis: 100%; }
 .risk-contrib-name { font-weight: 600; color: var(--text-2); }
 .risk-contrib-sym { color: var(--muted); }
 .risk-contrib-delta { margin-left: 6px; font-size: 11.5px; font-weight: 600; }
@@ -188,7 +188,8 @@
 .matrix-header-ticker { font-size: 10px; color: var(--faint); }
 
 .checkup-progress { display: grid; gap: 8px; }
-.opinions { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.opinions { display: flex; flex-wrap: wrap; gap: 18px; }
+.opinions > * { flex: 1 1 300px; min-width: 0; }
 .opinion {
     display: grid;
     align-content: start;
@@ -350,13 +351,20 @@ input.terminal-input::placeholder { color: var(--term-dim); }
 .coach-review:empty { display: none; }
 .coach-card { display: grid; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
 .coach-card p { margin: 0; }
-.coach-head { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; align-items: start; }
+.coach-head { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 14px; align-items: start; }
 .coach-text { display: grid; gap: 4px; }
-.coach-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--r-circle); background: var(--surface-2); color: var(--muted); font-size: 18px; }
-.is-down .coach-icon { color: var(--neg); }
-.is-up .coach-icon { color: var(--pos); }
+/* One color per kind of situation: fall red, rise green, risk amber, to set up blue, tip and review purple, calm grey. */
+.coach-card { --kind: var(--muted); --kind-soft: var(--surface-2); }
+.is-down { --kind: var(--neg); --kind-soft: var(--neg-soft); }
+.is-up { --kind: var(--pos); --kind-soft: var(--pos-soft); }
+.is-warn { --kind: var(--warn); --kind-soft: var(--warn-soft); }
+.is-setup { --kind: var(--info); --kind-soft: var(--info-soft); }
+.is-tip, .is-review { --kind: var(--accent); --kind-soft: var(--accent-soft); }
+.coach-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--r-circle); background: var(--kind-soft); color: var(--kind); font-size: 18px; }
 .is-up .coach-icon .i { transform: scaleY(-1); }
-.coach-what { margin-top: 5px; font-size: 19px; line-height: 1.3; color: var(--text); }
+.coach-kind { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--kind); }
+.coach-photo { width: 72px; height: 72px; border-radius: var(--r-md); object-fit: cover; background: var(--surface-2); }
+.coach-what { font-size: 19px; line-height: 1.3; color: var(--text); }
 .coach-lead { color: var(--text-2); }
 .coach-actions, .coach-more, .coach-lesson { margin-left: 50px; }
 .coach-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
@@ -383,5 +391,6 @@ input.terminal-input::placeholder { color: var(--term-dim); }
 @media (max-width: 640px) {
     .coach-card { padding: 16px; }
     .coach-actions, .coach-more, .coach-lesson { margin-left: 0; }
+    .coach-photo { width: 56px; height: 56px; }
     .coach-options li { flex-wrap: wrap; }
 }

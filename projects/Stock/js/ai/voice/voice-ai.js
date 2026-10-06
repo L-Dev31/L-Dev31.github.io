@@ -36,11 +36,25 @@ function voiceError(conn, error) {
     return new ModelError(`${conn.where}: ${error?.message || String(error)}`, 'offline');
 }
 
+/** Audio for one sentence from the AI's /audio/speech. */
+const remoteSpeech = conn => async (text, signal) => {
+    const body = { model: conn.model, input: text, response_format: 'mp3', ...(conn.voice && { voice: conn.voice }) };
+    const r = await aiFetch(`${conn.base}/audio/speech`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...bearerHeaders(conn.key) },
+        body: JSON.stringify(body),
+        signal: AbortSignal.any([signal, AbortSignal.timeout(20000)]),
+    });
+    if (!r.ok) throw await readModelError(r);
+    return r.arrayBuffer();
+};
+
 /**
  * Speaks sentence by sentence: audio is fetched one sentence at a time, in order, while earlier ones play.
  * onLevel(0..1): the loudness of what is playing, every frame, for the orb. onError(error) stops everything.
+ * audioFor(text, signal) → encoded audio; by default the AI's /audio/speech (voice-local.js passes its own).
  */
-export function createAiSpeaker(conn, { onStart, onEnd, onError, onLevel } = {}) {
+export function createAiSpeaker(conn, { onStart, onEnd, onError, onLevel } = {}, audioFor = remoteSpeech(conn)) {
     const ctx = new AudioContext();
     const analyser = ctx.createAnalyser();
     analyser.fftSize = 512;
@@ -66,17 +80,7 @@ export function createAiSpeaker(conn, { onStart, onEnd, onError, onLevel } = {})
         waiting = [];
         w.forEach(fn => fn());
     };
-    const fetchAudio = async (text, signal) => {
-        const body = { model: conn.model, input: text, response_format: 'mp3', ...(conn.voice && { voice: conn.voice }) };
-        const r = await aiFetch(`${conn.base}/audio/speech`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', ...bearerHeaders(conn.key) },
-            body: JSON.stringify(body),
-            signal: AbortSignal.any([signal, AbortSignal.timeout(20000)]),
-        });
-        if (!r.ok) throw await readModelError(r);
-        return ctx.decodeAudioData(await r.arrayBuffer());
-    };
+    const fetchAudio = async (text, signal) => ctx.decodeAudioData(await audioFor(text, signal));
     const api = {
         say(text, opts) {
             const t = speakable(text, conn.lang);
@@ -127,12 +131,25 @@ export function createAiSpeaker(conn, { onStart, onEnd, onError, onLevel } = {})
     return api;
 }
 
+/** Text for one sentence (16 kHz samples) from the AI's /audio/transcriptions. */
+const remoteTranscriber = (conn, lang, prompt) => async samples => {
+    const form = new FormData();
+    form.append('file', new Blob([window.vad.utils.encodeWAV(samples)], { type: 'audio/wav' }), 'speech.wav');
+    if (conn.model) form.append('model', conn.model);
+    form.append('language', String(lang || '').slice(0, 2));
+    if (prompt) form.append('prompt', prompt);
+    const r = await aiFetch(`${conn.base}/audio/transcriptions`, { method: 'POST', headers: bearerHeaders(conn.key), body: form, signal: AbortSignal.timeout(20000) });
+    if (!r.ok) throw await readModelError(r);
+    const raw = await r.text();
+    try { return JSON.parse(raw).text ?? ''; } catch { return raw; }
+};
+
 /**
- * Listens with the microphone; each sentence the VAD hears is sent to the AI to be written down.
+ * Listens with the microphone; each sentence the VAD hears is written down, by the AI by default.
  * Same shape as createListener in voice.js: start(), stop(), hold(), flush(), onFinal(text), onError(code, detail).
- * prompt: vocabulary the model should spell right (see lexicon.js).
+ * prompt: vocabulary the model should spell right (see lexicon.js). toText(samples) replaces the AI (voice-local.js).
  */
-export function createAiListener(conn, { lang, prompt = '', onFinal, onError }) {
+export function createAiListener(conn, { lang, prompt = '', onFinal, onError, toText = remoteTranscriber(conn, lang, prompt) }) {
     let vad = null, on = false, held = false, dropSegment = false;
     let chain = Promise.resolve();
     const fail = (code, detail) => {
@@ -143,18 +160,8 @@ export function createAiListener(conn, { lang, prompt = '', onFinal, onError }) 
         onError?.(code, detail);
     };
     const transcribe = async samples => {
-        const form = new FormData();
-        form.append('file', new Blob([window.vad.utils.encodeWAV(samples)], { type: 'audio/wav' }), 'speech.wav');
-        if (conn.model) form.append('model', conn.model);
-        form.append('language', String(lang || '').slice(0, 2));
-        if (prompt) form.append('prompt', prompt);
         try {
-            const r = await aiFetch(`${conn.base}/audio/transcriptions`, { method: 'POST', headers: bearerHeaders(conn.key), body: form, signal: AbortSignal.timeout(20000) });
-            if (!r.ok) throw await readModelError(r);
-            const raw = await r.text();
-            let text = raw;
-            try { text = JSON.parse(raw).text ?? ''; } catch { /* plain text answer */ }
-            text = String(text || '').trim();
+            const text = String(await toText(samples) || '').trim();
             if (on && text.length > 1 && !NOT_SPEECH.test(text)) onFinal?.(text);
         } catch (e) {
             fail('ai', voiceError(conn, e).message);
@@ -164,8 +171,9 @@ export function createAiListener(conn, { lang, prompt = '', onFinal, onError }) 
         async start() {
             if (on) return;
             on = true;
+            let lib;
+            try { lib = await loadVad(); } catch (e) { fail('ai', e.message); return; }
             try {
-                const lib = await loadVad();
                 const instance = await lib.MicVAD.new({
                     model: 'v5',
                     baseAssetPath: VAD,

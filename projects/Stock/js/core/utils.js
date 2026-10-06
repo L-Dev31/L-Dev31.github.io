@@ -48,26 +48,6 @@ export function showCard(target) {
  *  general ↔ ui import cycle cannot trap it uninitialized at load time. */
 export const getActiveSymbol = () => document.querySelector('.ticker-card.active')?.id.slice(5) || null;
 
-/** Orphan cells in dashboard grids stretch full width instead of leaving gaps.
- *  Add data-fill="orphans" on the grid; call after render (and when revealed).
- *  Measured, so it stays right at every breakpoint: a last row with fewer
- *  cells than the grid has tracks goes full-bleed. */
-export function fillOrphans(scope = document) {
-    for (const g of scope.querySelectorAll('[data-fill="orphans"]')) {
-        const kids = [...g.children].filter(e => e.nodeType === 1 && e.offsetParent !== null);
-        g.querySelectorAll('.span-full').forEach(e => e.classList.remove('span-full'));
-        if (kids.length < 2) continue;
-        const firstTop = kids[0].offsetTop;
-        let tracks = 0;
-        while (tracks < kids.length && kids[tracks].offsetTop === firstTop) tracks++;
-        if (!tracks) continue;
-        const lastTop = kids[kids.length - 1].offsetTop;
-        const row = [];
-        for (let i = kids.length - 1; i >= 0 && kids[i].offsetTop === lastTop; i--) row.unshift(kids[i]);
-        if (row.length < tracks) row.forEach(e => e.classList.add('span-full'));
-    }
-}
-
 export const termHtml = (key, text) => `<button type="button" class="term" data-term="${key}">${text}</button>`;
 
 export function downloadText(filename, text, type = 'application/json') {

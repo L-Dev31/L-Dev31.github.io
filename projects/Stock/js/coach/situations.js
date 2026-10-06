@@ -38,7 +38,7 @@ export function findSituations() {
     if (!rows.length) {
         const sample = positions.DCAM ? { action: 'stock', symbol: 'DCAM' } : { action: 'explorer' };
         add({
-            id: 'start', tone: 'info', priority: 100,
+            id: 'start', tone: 'setup', photo: 'piggy bank', priority: 100,
             title: L('You have not added any investment yet.'),
             meaning: [
                 L('No rush. Most people start with one broad [[etf|ETF]], a small amount every month, and money they will not need for years.'),
@@ -59,7 +59,7 @@ export function findSituations() {
     const known = rows.some(r => r.change_pct != null);
 
     if (inv.horizon === 'lt2') add({
-        id: 'horizon', tone: 'warn', priority: 90,
+        id: 'horizon', tone: 'warn', photo: 'calendar', priority: 90,
         title: L('You may need this money within 2 years, but it is invested in stocks.'),
         meaning: [
             L('Stocks can lose 20 to 30% in a bad year and take years to recover. Over 2 years, that is a real risk for money you will need.'),
@@ -80,7 +80,7 @@ export function findSituations() {
         const r = drops[0];
         const impact = -moveOf(r) / before * 100;
         add({
-            id: `drop:${r.symbol}`, tone: 'down', priority: 70 + impact * 5,
+            id: `drop:${r.symbol}`, tone: 'down', photo: 'stock market chart', priority: 70 + impact * 5,
             title: L('{0} fell {1} {2}.', r.name, pct(r.change_pct), period),
             meaning: [
                 L('Your shares lost about {0} [[unrealized|on paper]] and are worth {1} now.', money(-moveOf(r)), money(r.value)),
@@ -101,7 +101,7 @@ export function findSituations() {
         const r = rises[0];
         const heavy = r.weight_pct > 20;
         add({
-            id: `rise:${r.symbol}`, tone: 'up', priority: 40 + (moveOf(r) / before * 100) * 3,
+            id: `rise:${r.symbol}`, tone: 'up', photo: 'stock market chart', priority: 40 + (moveOf(r) / before * 100) * 3,
             title: L('{0} rose {1} {2}.', r.name, pct(r.change_pct), period),
             meaning: [
                 L('Your shares gained about {0} [[unrealized|on paper]] and are worth {1} now.', money(moveOf(r)), money(r.value)),
@@ -120,7 +120,7 @@ export function findSituations() {
 
     const portfolioMove = before > 0 ? moved / before * 100 : 0;
     if (known && portfolioMove <= -bigMove('fund')) add({
-        id: 'portfolio-drop', tone: 'down', priority: 75,
+        id: 'portfolio-drop', tone: 'down', photo: 'stormy sea', priority: 75,
         title: L('Your portfolio lost {0} {1}.', pct(portfolioMove), period),
         meaning: [
             L('That is about {0} less [[unrealized|on paper]]. Falls like this are part of investing, and most are forgotten a few months later.', money(-moved)),
@@ -136,7 +136,7 @@ export function findSituations() {
 
     const stocks = rows.filter(r => r.kind === 'stock');
     if (rows.length === 1 && stocks.length === 1) add({
-        id: 'single', tone: 'warn', priority: 65,
+        id: 'single', tone: 'warn', photo: 'eggs basket', priority: 65,
         title: L('All your money is in one stock: {0}.', rows[0].name),
         meaning: [
             L('Your result depends on a single company. If it has a bad year, nothing else in your portfolio softens the blow.'),
@@ -154,7 +154,7 @@ export function findSituations() {
         const part = r.value / 3;
         const fee = bank ? orderFee(bank, part) : null;
         add({
-            id: `heavy:${r.symbol}`, tone: 'warn', priority: 60 + r.weight_pct / 2,
+            id: `heavy:${r.symbol}`, tone: 'warn', photo: 'eggs basket', priority: 60 + r.weight_pct / 2,
             title: L('{0} is {1} of your money.', r.name, pct(r.weight_pct)),
             meaning: [
                 L('Solid companies can fall 30% on one piece of bad news. For {0}, that would cost about {1}, or {2} of everything you have invested.', r.name, money(r.value * 0.3), pct(r.weight_pct * 0.3)),
@@ -174,7 +174,7 @@ export function findSituations() {
 
     const loser = [...rows].sort((a, b) => a.pl_pct - b.pl_pct)[0];
     if (loser.pl_pct <= -20 && !drops.includes(loser)) add({
-        id: `loss:${loser.symbol}`, tone: 'down', priority: 55 + -loser.pl_pct / 2,
+        id: `loss:${loser.symbol}`, tone: 'down', photo: 'crossroads', priority: 55 + -loser.pl_pct / 2,
         title: L('{0} is {1} below what you paid.', loser.name, pct(loser.pl_pct)),
         meaning: [
             L('You put in {0}; it is worth {1} today. While you hold, the loss stays [[unrealized|on paper]]: it can shrink, or grow.', money(loser.cost), money(loser.value)),
@@ -192,7 +192,7 @@ export function findSituations() {
     const sumOf = test => rows.filter(test).reduce((s, r) => s + r.value, 0);
     const crypto = sumOf(r => r.kind === 'crypto');
     if (crypto / total > 0.1) add({
-        id: 'crypto', tone: 'warn', priority: 50 + crypto / total * 50 + ((comfortLevel() || 7) <= 3 ? 20 : 0),
+        id: 'crypto', tone: 'warn', photo: 'bitcoin', priority: 50 + crypto / total * 50 + ((comfortLevel() || 7) <= 3 ? 20 : 0),
         title: L('Crypto is {0} of your portfolio.', pct(crypto / total * 100)),
         meaning: [
             L('Bitcoin has lost more than 70% several times. If that happened again, you would lose about {0}.', money(crypto * 0.7)),
@@ -209,7 +209,7 @@ export function findSituations() {
     const home = currencyCode();
     const foreign = sumOf(r => r.currency && r.currency !== home);
     if (foreign / total > 0.5) add({
-        id: 'currency', tone: 'info', priority: 25,
+        id: 'currency', tone: 'tip', photo: 'currency exchange', priority: 25,
         title: L('{0} of your money is priced in other currencies.', pct(foreign / total * 100)),
         meaning: [
             L('When those currencies move against yours ({0}), your investments gain or lose value even if their prices do not move. A 10% move would change your portfolio by about {1}.', home, money(foreign * 0.1)),
@@ -228,7 +228,7 @@ export function findSituations() {
     if (fee != null && fee / amount >= 0.01) {
         const bigger = orderFee(bank, amount * 3);
         add({
-            id: 'fees', tone: 'warn', priority: 45 + fee / amount * 1000,
+            id: 'fees', tone: 'warn', photo: 'coins', priority: 45 + fee / amount * 1000,
             title: L('Your orders lose {0} to fees at {1}.', pct(fee / amount * 100), bank.name),
             meaning: [
                 L('A typical order of yours, {0}, costs {1}. It must rise {2} just to pay back the fee to buy, and as much again when you sell.', money(amount), money(fee), pct(fee / amount * 100)),
@@ -243,14 +243,14 @@ export function findSituations() {
     }
 
     if (!inv.horizon || !inv.drop) add({
-        id: 'profile', tone: 'info', priority: 30,
+        id: 'profile', tone: 'setup', photo: 'compass', priority: 30,
         title: L('Nemeris does not know your goals yet.'),
         meaning: [L('Whether a fall is a problem depends on you: when you need the money and how you would react. Three quick questions let Nemeris fit every explanation to you.')],
         options: [{ label: L('Answer three questions'), detail: L('It takes a minute, in Settings, Profile.'), action: 'profile' }],
         lesson: 'horizon',
     });
     else if (!bank) add({
-        id: 'bank', tone: 'info', priority: 20,
+        id: 'bank', tone: 'setup', photo: 'bank building', priority: 20,
         title: L('Nemeris does not know your bank yet.'),
         meaning: [L('Each bank charges differently: the same 500 € order can cost nothing or more than 5 €. Once Nemeris knows yours, it counts the real [[orderFee|cost of every order]].')],
         options: [{ label: L('Choose your bank'), detail: L('Pick it from the list, or type in its fees.'), action: 'bank' }],
@@ -258,7 +258,7 @@ export function findSituations() {
     });
 
     if (known && !found.some(s => s.priority >= 40)) add({
-        id: 'calm', tone: 'calm', priority: 35,
+        id: 'calm', tone: 'calm', photo: 'calm lake', priority: 35,
         title: L('Nothing needs your attention.'),
         meaning: [L('Your investments moved within their usual range. On calm days the best move is usually no move at all.')],
         options: [

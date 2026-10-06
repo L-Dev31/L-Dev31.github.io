@@ -1,7 +1,7 @@
 /* Light by default, in the spirit of Swiss design and Pixel phones: monochrome surfaces and hairlines.
    Color only where it means something: the Nemeris purple (exact brand colors) for the main action, focus and
    progress; green and red for gains and losses.
-   The dark theme keeps the original Nemeris night look. The voice call stage stays dark in both, for the orb. */
+   The dark theme keeps the original Nemeris night look. */
 :root {
     color-scheme: light;
     --bg: #F5F5F7;
@@ -27,6 +27,8 @@
     --neg-soft: #FBE7EB;
     --warn: #8C5D00;
     --warn-soft: #FCF1D9;
+    --info: #1F6FD6;
+    --info-soft: #E5EFFC;
     --inverse: #1D1C22;
     --on-inverse: #F3F3F6;
     --grid: rgba(20, 19, 24, .07);
@@ -34,10 +36,10 @@
     --glass: rgba(255, 255, 255, .88);
     --shadow: 0 1px 2px rgba(20, 19, 24, .05), 0 12px 32px rgba(20, 19, 24, .10);
     --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2362616C' d='M12 14.95q-.2 0-.375-.062t-.325-.213l-4.6-4.6q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l3.9 3.9l3.9-3.9q.275-.275.7-.275t.7.275t.275.7t-.275.7l-4.6 4.6q-.15.15-.325.213T12 14.95'/%3E%3C/svg%3E");
-    /* the voice orb: its own colors, the same in both themes */
-    --orb-a: #A99CFF;
-    --orb-b: #4FE0A3;
-    --orb-c: #DCD7EF;
+    /* the voice orb: deeper tones so its glow shows on white */
+    --orb-a: #8B7BFF;
+    --orb-b: #2FBF8A;
+    --orb-c: #7A6AF0;
     --orb-deep: #8B7BFF;
     --r-xs: 4px;
     --r-sm: 10px;
@@ -56,7 +58,7 @@
     --asst-w: 420px;
     --content-max: 1080px;
 }
-:root[data-theme="dark"], .asst-callbar {
+:root[data-theme="dark"] {
     color-scheme: dark;
     --bg: #0B0912;
     --bg-2: #0E0B17;
@@ -81,6 +83,8 @@
     --neg-soft: rgba(255, 107, 142, .12);
     --warn: #F2C94C;
     --warn-soft: rgba(242, 201, 76, .14);
+    --info: #6CB6FF;
+    --info-soft: rgba(108, 182, 255, .14);
     --inverse: #272038;
     --on-inverse: #F5F3FF;
     --grid: rgba(196, 184, 255, .06);
@@ -88,6 +92,10 @@
     --glass: rgba(14, 11, 23, .92);
     --shadow: 0 18px 48px rgba(5, 3, 12, .5);
     --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23A29CBB' d='M12 14.95q-.2 0-.375-.062t-.325-.213l-4.6-4.6q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l3.9 3.9l3.9-3.9q.275-.275.7-.275t.7.275t.275.7t-.275.7l-4.6 4.6q-.15.15-.325.213T12 14.95'/%3E%3C/svg%3E");
+    --orb-a: #A99CFF;
+    --orb-b: #4FE0A3;
+    --orb-c: #DCD7EF;
+    --orb-deep: #8B7BFF;
 }
 
 *, *::before, *::after { box-sizing: border-box; }

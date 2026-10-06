@@ -29,11 +29,13 @@ export function addressSpace(url) {
     return null;
 }
 export const isLoopback = url => addressSpace(url) === 'loopback';
-/** fetch for AI servers. A request to this computer or the home network says so: from an https page, Chrome then
- *  asks the user once to allow "apps on this device" instead of blocking it as mixed content. */
+/** fetch for AI servers. Only an http address on the home network, from the https site, needs announcing: Chrome
+ *  then asks once to allow "apps on this device" instead of blocking it as mixed content. This computer's own
+ *  addresses are recognized by the browser itself. A browser that does not know the option gets the plain request. */
 export function aiFetch(url, init = {}) {
-    const space = addressSpace(url);
-    return fetch(url, space ? { ...init, targetAddressSpace: space } : init);
+    if (addressSpace(url) !== 'local' || !pageIsPublicHttps() || !/^http:/i.test(url)) return fetch(url, init);
+    return fetch(url, { ...init, targetAddressSpace: 'local' })
+        .catch(e => (e instanceof TypeError && /address ?space|enum/i.test(e.message) ? fetch(url, init) : Promise.reject(e)));
 }
 export const pageOrigin = () => location.origin;
 export const pageIsPublicHttps = () => location.protocol === 'https:' && !isLoopback(location.href);

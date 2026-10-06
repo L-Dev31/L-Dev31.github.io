@@ -10,7 +10,7 @@ import { DEAD_ERROR_CODES, periodToDays, periodPhrase } from './constants.js';
 import { positions, selectedApi, setSelectedApi, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings, getCurrency, comfortLevel, COMFORT_WORD, isExpert } from './state.js';
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching, openPortfolio } from '../ui/portfolio.js';
 import { updateUI, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from '../ui/ui.js';
-import { getEl, el, icon, showCard, makeResizer, fillOrphans, getActiveSymbol } from './utils.js';
+import { getEl, el, icon, showCard, makeResizer, getActiveSymbol } from './utils.js';
 import { renderTickerAi } from '../ai/ai-lab.js';
 import { syncAiGates, onAiChange } from '../ai/ai-core.js';
 import { L, LANG, setLang } from '../i18n/i18n.js';
@@ -85,11 +85,6 @@ new MutationObserver(list => {
 }).observe(getEl('cards-container'), { childList: true });
 
 /* ── tabs inside a view ── */
-let fillTimer = 0;
-window.addEventListener('resize', () => {
-    clearTimeout(fillTimer);
-    fillTimer = setTimeout(() => fillOrphans(document), 150);
-});
 document.addEventListener('click', e => {
     const btn = e.target.closest('.card-tab-btn');
     if (!btn) return;
@@ -100,7 +95,6 @@ document.addEventListener('click', e => {
         b.setAttribute('aria-selected', String(on));
     }
     for (const p of card.querySelectorAll('.card-tab-pane')) p.classList.toggle('active', p.dataset.pane === btn.dataset.target);
-    fillOrphans(card);
     if (!card.classList.contains('ticker-card')) return;
     const symbol = card.id.slice(5);
     if (btn.dataset.target === 'overview') renderTickerAi(card, symbol);
