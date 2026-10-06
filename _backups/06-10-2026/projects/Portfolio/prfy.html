@@ -1,0 +1,186 @@
+<section class="case-intro">
+    <h2 class="title">The Brief</h2>
+    <p>In February 2026, as part of a team of four students at Sophia Ynov Campus, we tackled a hands-on UX/product
+        sprint: define a real-world mobile problem, frame a valid MVP scope using structured product methodology, and
+        prototype four independent solutions in Figma. The constraint was intentional: one concept, four individual
+        design interpretations, each graded on UX rigor, not aesthetic preference.</p>
+    <p class="case-team">L&eacute;o Tosku (UI design) &middot; Beno&icirc;te Macchi (UX research)
+        &middot; Ryan Aversa (UX research) &middot; Margaux Halby (UX research)</p>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">Every time I needed a warranty, the receipt was gone. That&rsquo;s not a personal
+        failure. That&rsquo;s a UX gap.</blockquote>
+</section>
+
+<section class="case-chapter" id="problem">
+    <h2 class="title">The Problem</h2>
+    <div class="case-row">
+        <div class="case-prose case-prose--right">
+            <h3 class="case-heading">Physical Receipts in a Digital World</h3>
+            <p>Warranties exist on paper. Paper gets lost. When you need proof of purchase for a return or a broken
+                product under guarantee, the receipt is never where you left it. Existing solutions either require an
+                account (and therefore hand your purchase data to a third party), rely on email forwarding, or are too
+                generic to be practical. The opportunity: a zero-account, scan-first mobile vault for receipts and
+                warranties, legally usable, locally stored, always accessible.</p>
+        </div>
+        <figure class="case-panel" data-no-parallax>
+            <img src="../../assets/images/projects/prfy/receipt.jpg"
+                alt="A paper receipt — the fragile artifact Proofy aims to replace." loading="lazy" decoding="async">
+            <figcaption class="media-caption">Photo by <a href="https://unsplash.com/@chris_designer" target="_blank" rel="noopener noreferrer">Christina Radevich</a> on Unsplash</figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="case-chapter" id="process">
+    <h2 class="title">The Process</h2>
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">1. Scoping the MVP</h3>
+            <p>We used MoSCoW prioritization to cut ruthlessly. Must-haves: OCR receipt scanning, manual warranty entry,
+                a browsable store list, instant search, and per-receipt detail pages with PDF export. Deferred to later:
+                dark mode, discount coupon management, email import, QR codes at checkout. The goal was a focused,
+                shippable core, not a feature wishlist dressed as a product.</p>
+        </div>
+        <div class="case-panel">
+            <table class="case-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th class="col-accent-gold">Must</th>
+                        <th class="col-accent-blue">Should</th>
+                        <th class="col-accent-green">Could</th>
+                        <th class="col-accent-red">Won&rsquo;t</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Scan receipt by photo (OCR)</td><td class="col-accent-gold">✓</td><td></td><td></td><td></td></tr>
+                    <tr><td>Manual warranty / receipt entry</td><td class="col-accent-gold">✓</td><td></td><td></td><td></td></tr>
+                    <tr><td>Store list home screen</td><td class="col-accent-gold">✓</td><td></td><td></td><td></td></tr>
+                    <tr><td>Receipt detail page</td><td class="col-accent-gold">✓</td><td></td><td></td><td></td></tr>
+                    <tr><td>Instant search</td><td class="col-accent-gold">✓</td><td></td><td></td><td></td></tr>
+                    <tr><td>PDF export</td><td class="col-accent-gold">✓</td><td></td><td></td><td></td></tr>
+                    <tr><td>Sort by category / store</td><td></td><td class="col-accent-blue">✓</td><td></td><td></td></tr>
+                    <tr><td>Warranty expiry notifications</td><td></td><td class="col-accent-blue">✓</td><td></td><td></td></tr>
+                    <tr><td>Storage &amp; settings screen</td><td></td><td class="col-accent-blue">✓</td><td></td><td></td></tr>
+                    <tr><td>QR code at checkout</td><td></td><td></td><td class="col-accent-green">✓</td><td></td></tr>
+                    <tr><td>Light / dark theme</td><td></td><td></td><td class="col-accent-green">✓</td><td></td></tr>
+                    <tr><td>Automatic email import</td><td></td><td></td><td></td><td class="col-accent-red">✗</td></tr>
+                    <tr><td>Discount coupon management</td><td></td><td></td><td></td><td class="col-accent-red">✗</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">2. User Stories</h3>
+            <p>Five stories anchored every interface decision: the <em>pressured scanner</em> who needs to capture a
+                receipt in under ten seconds, the <em>budget tracker</em> browsing spending by store and month, the
+                <em>privacy-conscious buyer</em> who refuses to create an account, the <em>warranty hunter</em> who
+                wants a notification before a product expires, and the <em>searcher</em> who needs to find any receipt
+                instantly. Every screen traces back to one of them.</p>
+        </div>
+        <div class="case-panel">
+            <div class="quote-grid" style="grid-template-columns:1fr">
+                <div class="quote-card">
+                    <blockquote>As a user in a hurry, I want to scan my receipt with my camera to save my purchase instantly, without retyping anything.</blockquote>
+                    <footer><strong>The Scanner</strong> · Speed &amp; capture</footer>
+                </div>
+                <div class="quote-card">
+                    <blockquote>As someone watching their budget, I want to browse my receipts by store and date to know how much I spent this month.</blockquote>
+                    <footer><strong>The Tracker</strong> · History &amp; clarity</footer>
+                </div>
+                <div class="quote-card">
+                    <blockquote>As a privacy-conscious user, I want my receipts to stay on my phone only, with no online account required.</blockquote>
+                    <footer><strong>The Private User</strong> · Data ownership</footer>
+                </div>
+                <div class="quote-card">
+                    <blockquote>As an electronics buyer, I want a notification before my warranty expires so I can act before it&rsquo;s too late.</blockquote>
+                    <footer><strong>The Warranty Hunter</strong> · Peace of mind</footer>
+                </div>
+                <div class="quote-card">
+                    <blockquote>As a frequent shopper, I want to find any receipt instantly by store name or amount without scrolling.</blockquote>
+                    <footer><strong>The Searcher</strong> · Instant retrieval</footer>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">3. Architecture & User Flow</h3>
+            <p>The app has five surfaces: a home screen showing store cards, a per-store receipt list sorted by date, an
+                individual receipt detail page with PDF download, a central scan button in the nav that opens the camera
+                directly, and a verification screen after OCR processing where the user can correct detected data before
+                saving. Settings handles storage management, notification preferences, and theme. No account screen,
+                by design.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="../../assets/images/projects/prfy/architecture.jpg"
+                alt="Proofy app architecture and user flow diagram." loading="lazy" decoding="async">
+        </figure>
+    </div>
+    <div class="case-row">
+        <div class="case-prose case-prose--right">
+            <h3 class="case-heading">4. Figma Prototype: Light Glassmorphic UI</h3>
+            <p>My individual prototype in Figma used a light glassmorphic visual language: white and soft blue surfaces
+                with frosted glass depth, very dark navy for primary text, light grey for secondary labels. The target
+                was a native iPhone feel, familiar, frictionless, premium without being cold. The scan flow was
+                designed to resolve in three taps: open camera, confirm scan, save. The detail page surfaced only the
+                data that mattered: store name, date, total amount, and guarantee expiry.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="../../assets/images/projects/prfy/figma.jpg"
+                alt="Proofy Figma prototype overview — light glassmorphic iPhone UI." loading="lazy" decoding="async">
+        </figure>
+    </div>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">The scan button lives in the nav because the product only works if adding a receipt
+        takes less time than losing one.</blockquote>
+</section>
+
+<section class="case-intro">
+    <h2 class="title">What This Built</h2>
+    <p>A complete product definition exercise: problem framing, MoSCoW scoping, user story writing, information
+        architecture, user flow mapping, and a Figma prototype. Four individual interpretations of the same brief
+        within the same team. It established a foundation in structured product thinking: defining scope before
+        touching a frame, grounding every interface decision in a named user and a specific friction point, and knowing
+        what to cut before knowing what to build.</p>
+</section>
+
+<section class="case-gallery" id="mockups">
+    <h2 class="title">Mockups</h2>
+    <div class="case-gallery-grid">
+        <figure class="gallery-item">
+            <img src="../../assets/images/projects/prfy/mockups/1_home.png"
+                alt="Proofy home screen — store cards list." loading="lazy" decoding="async">
+            <figcaption class="media-caption">Home</figcaption>
+        </figure>
+        <figure class="gallery-item">
+            <img src="../../assets/images/projects/prfy/mockups/2_store.png"
+                alt="Proofy store receipts list." loading="lazy" decoding="async">
+            <figcaption class="media-caption">Store</figcaption>
+        </figure>
+        <figure class="gallery-item">
+            <img src="../../assets/images/projects/prfy/mockups/3_product.png"
+                alt="Proofy receipt detail page." loading="lazy" decoding="async">
+            <figcaption class="media-caption">Receipt Detail</figcaption>
+        </figure>
+        <figure class="gallery-item">
+            <img src="../../assets/images/projects/prfy/mockups/4_scan.png"
+                alt="Proofy scan screen." loading="lazy" decoding="async">
+            <figcaption class="media-caption">Scan</figcaption>
+        </figure>
+        <figure class="gallery-item">
+            <img src="../../assets/images/projects/prfy/mockups/5_form.png"
+                alt="Proofy OCR verification form." loading="lazy" decoding="async">
+            <figcaption class="media-caption">Verification Form</figcaption>
+        </figure>
+        <figure class="gallery-item">
+            <img src="../../assets/images/projects/prfy/mockups/6_settings.png"
+                alt="Proofy settings screen." loading="lazy" decoding="async">
+            <figcaption class="media-caption">Settings</figcaption>
+        </figure>
+    </div>
+</section>

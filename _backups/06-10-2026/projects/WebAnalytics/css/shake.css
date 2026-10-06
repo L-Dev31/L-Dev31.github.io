@@ -1,0 +1,69 @@
+@keyframes shake-light {
+  0%        { transform: translate(0,    0); }
+  10%       { transform: translate(-5px, -4px); }
+  10.001%   { transform: translate(5px,  3px); }
+  20%       { transform: translate(5px,  3px); }
+  20.001%   { transform: translate(-4px, 4px); }
+  35%       { transform: translate(-4px, 4px); }
+  35.001%   { transform: translate(4px, -3px); }
+  50%       { transform: translate(4px, -3px); }
+  50.001%   { transform: translate(-2px, 2px); }
+  70%       { transform: translate(-2px, 2px); }
+  70.001%   { transform: translate(2px, -1px); }
+  90%       { transform: translate(2px, -1px); }
+  100%      { transform: translate(0,    0); }
+}
+
+@keyframes shake-strong {
+  0%        { transform: translate(0,     0); }
+  8%        { transform: translate(-12px, -9px); }
+  8.001%    { transform: translate(12px,  8px); }
+  18%       { transform: translate(12px,  8px); }
+  18.001%   { transform: translate(-10px, 9px); }
+  28%       { transform: translate(-10px, 9px); }
+  28.001%   { transform: translate(10px, -7px); }
+  40%       { transform: translate(10px, -7px); }
+  40.001%   { transform: translate(-7px,  6px); }
+  52%       { transform: translate(-7px,  6px); }
+  52.001%   { transform: translate(7px,  -5px); }
+  64%       { transform: translate(7px,  -5px); }
+  64.001%   { transform: translate(-4px,  4px); }
+  76%       { transform: translate(-4px,  4px); }
+  76.001%   { transform: translate(3px,  -2px); }
+  90%       { transform: translate(3px,  -2px); }
+  100%      { transform: translate(0,     0); }
+}
+
+@keyframes flash-light {
+  0%   { opacity: 0; }
+  15%  { opacity: 0.18; }
+  100% { opacity: 0; }
+}
+
+@keyframes flash-strong {
+  0%   { opacity: 0; }
+  10%  { opacity: 0.45; }
+  100% { opacity: 0; }
+}
+
+#screen-game.shake-light  #background,
+#screen-game.shake-light  #sprites {
+  animation: shake-light 0.35s cubic-bezier(0.36,0.07,0.19,0.97);
+}
+#screen-game.shake-strong #background,
+#screen-game.shake-strong #sprites {
+  animation: shake-strong 0.55s cubic-bezier(0.36,0.07,0.19,0.97);
+}
+
+#screen-game.shake-light::after,
+#screen-game.shake-strong::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  pointer-events: none;
+  z-index: 15;
+}
+
+#screen-game.shake-light::after  { animation: flash-light  0.35s ease-out forwards; }
+#screen-game.shake-strong::after { animation: flash-strong 0.55s ease-out forwards; }

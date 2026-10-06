@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confidentialité - Nemeris</title>
+    <meta name="description" content="Comment Nemeris gère tes données : tout reste dans ton navigateur, sans compte.">
+    <link rel="canonical" href="https://l-dev31.github.io/projects/Stock/privacy.html">
+    <meta property="og:title" content="Confidentialité - Nemeris">
+    <meta property="og:description" content="Comment Nemeris gère tes données : tout reste dans ton navigateur, sans compte.">
+    <meta property="og:image" content="https://l-dev31.github.io/projects/Stock/img/icon/og-image.png">
+    <meta property="og:url" content="https://l-dev31.github.io/projects/Stock/privacy.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Confidentialité - Nemeris">
+    <meta name="twitter:description" content="Comment Nemeris gère tes données : tout reste dans ton navigateur, sans compte.">
+    <link rel="icon" href="img/icon/favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..600&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="styles/legal.css">
+    <script>
+        (function () {
+            var l; try { l = localStorage.getItem('nemeris_lang'); } catch (e) { l = null; }
+            if (l !== 'fr' && l !== 'en') l = 'en';
+            document.documentElement.lang = l; document.documentElement.dataset.lang = l;
+            if (l === 'en') document.title = 'Privacy - Nemeris';
+            document.addEventListener('click', function (e) {
+                var a = e.target.closest('.lang-link'); if (!a) return;
+                e.preventDefault(); try { localStorage.setItem('nemeris_lang', a.dataset.to); } catch (err) { /* storage blocked */ } location.reload();
+            });
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="topbar"><div class="topbar-inner"><img src="img/icon/favicon.png" alt="Logo Nemeris"><a href="index.html">Nemeris</a><a class="lang-link" href="#" data-to="en" lang="en">English</a><a class="lang-link" href="#" data-to="fr" lang="fr">Français</a></div></div>
+    <div class="wrap" lang="fr">
+        <h1>Politique de confidentialité</h1>
+        <p class="updated">Mis à jour le 27 septembre 2026</p>
+
+        <p>Nemeris est pensé pour respecter ta vie privée : <strong>pas de compte</strong>, et tes données restent sur ton appareil.</p>
+
+        <h2>Responsable</h2>
+        <p>Le responsable du traitement au sens du RGPD est l'éditeur de Nemeris. Pour toute question ou pour exercer tes droits : <strong>contact@nemeris.app</strong>.</p>
+
+        <h2>Données stockées</h2>
+        <p>Nemeris ne te demande pas de t'inscrire et ne collecte ni nom, ni e-mail, ni paiement. Ces données sont stockées <strong>dans ton navigateur</strong> (<code>localStorage</code>) et ne nous sont jamais envoyées :</p>
+        <ul>
+            <li>Ton portefeuille et tes opérations.</li>
+            <li>Tes réglages : prénom, photo, profil d'investisseur (« À propos de toi »), relais de données, réglages IA et clés API.</li>
+            <li>Tes discussions avec l'assistant et les avis de l'IA.</li>
+        </ul>
+        <p>Elles restent sur ton appareil jusqu'à ce que tu les effaces (en vidant les données du site).</p>
+
+        <h2>Services tiers</h2>
+        <ul>
+            <li><strong>Données de marché (Yahoo Finance), via un relais.</strong> Les tickers que tu consultes passent par un relais puis atteignent les serveurs de Yahoo Finance, situés hors UE (États-Unis).</li>
+            <li><strong>IA que tu choisis.</strong> Si tu configures une IA (sur ton ordinateur ou un service comme Claude ou ChatGPT), tes messages et le contexte utile (portefeuille, profil, écran) lui sont envoyés. Une IA locale ne sort pas de ton ordinateur. Un service en ligne applique sa propre politique.</li>
+            <li><strong>Appel vocal, si tu l'utilises.</strong> Par défaut, ta voix est transcrite par la reconnaissance vocale de ton navigateur, qui l'envoie en général aux serveurs de son éditeur (Google pour Chrome, Microsoft pour Edge, Apple pour Safari) et applique sa propre politique, et la réponse est lue par une voix de ton système. Si tu actives la voix par IA dans Réglages › IA, l'enregistrement de ta voix (reconnaissance) ou le texte de la réponse (synthèse) est envoyé à l'IA que tu as choisie pour cette langue. Pour mieux reconnaître le vocabulaire de la finance, la reconnaissance reçoit aussi les noms et tickers de tes actions.</li>
+            <li><strong>CDN.</strong> Les polices et bibliothèques viennent de Google Fonts et jsDelivr, qui peuvent voir des données techniques comme ton adresse IP.</li>
+        </ul>
+
+        <h2>Mesure d'audience</h2>
+        <p>Nemeris n'utilise ni publicité ni traceur d'audience. Si cela change, un consentement sera demandé avant.</p>
+
+        <h2>Base légale</h2>
+        <p>Les données techniques nécessaires au fonctionnement sont traitées sur la base de notre intérêt légitime à fournir une application qui marche, et sur ton consentement quand il est requis.</p>
+
+        <h2>Tes droits</h2>
+        <p>Tu as le droit d'accéder à tes données, de les corriger, de les effacer, d'en limiter l'usage, de les récupérer et de t'opposer à leur traitement. Comme elles sont sur ton appareil, tu peux le faire toi-même. Sinon, écris-nous. Tu peux aussi saisir la CNIL.</p>
+
+        <h2>Mineurs</h2>
+        <p>Nemeris n'est pas destiné aux enfants n'ayant pas l'âge de consentir au traitement de leurs données dans leur pays.</p>
+
+        <h2>Modifications</h2>
+        <p>Cette politique peut évoluer. La date ci-dessus indique la dernière version.</p>
+
+        <a class="back" href="index.html">← Retour à Nemeris</a>
+
+        <footer>
+            <a href="disclaimer.html">Avertissement</a><a href="privacy.html">Confidentialité</a><a href="terms.html">Conditions</a><a href="cookies.html">Cookies</a><a href="faq.html">FAQ</a>
+        </footer>
+    </div>
+    <div class="wrap" lang="en">
+        <h1>Privacy policy</h1>
+        <p class="updated">Updated September 27, 2026</p>
+
+        <p>Nemeris is built to respect your privacy: <strong>no account</strong>, and your data stays on your device.</p>
+
+        <h2>Controller</h2>
+        <p>The data controller under the GDPR is the publisher of Nemeris. For any question or to exercise your rights: <strong>contact@nemeris.app</strong>.</p>
+
+        <h2>Data stored</h2>
+        <p>Nemeris does not ask you to sign up and collects no name, email or payment. This data is stored <strong>in your browser</strong> (<code>localStorage</code>) and is never sent to us:</p>
+        <ul>
+            <li>Your portfolio and trades.</li>
+            <li>Your settings: name, picture, investor profile ("About you"), data relay, AI settings and API keys.</li>
+            <li>Your chats with the assistant and the AI opinions.</li>
+        </ul>
+        <p>It stays on your device until you erase it (by clearing the site's data).</p>
+
+        <h2>Third-party services</h2>
+        <ul>
+            <li><strong>Market data (Yahoo Finance), through a relay.</strong> The tickers you look up go through a relay and then reach Yahoo Finance servers, located outside the EU (United States).</li>
+            <li><strong>The AI you choose.</strong> If you set up an AI (on your computer or a service like Claude or ChatGPT), your messages and the useful context (portfolio, profile, screen) are sent to it. A local AI never leaves your computer. An online service applies its own policy.</li>
+            <li><strong>Voice call, if you use it.</strong> By default, your voice is transcribed by your browser's speech recognition, which usually sends it to its maker's servers (Google for Chrome, Microsoft for Edge, Apple for Safari) and applies its own policy, and the answer is read aloud by a voice of your system. If you turn on AI voice in Settings › AI, the recording of your voice (recognition) or the text of the answer (speech) is sent to the AI you chose for that language. To recognize finance words better, recognition also receives the names and tickers of your stocks.</li>
+            <li><strong>CDN.</strong> Fonts and libraries come from Google Fonts and jsDelivr, which can see technical data such as your IP address.</li>
+        </ul>
+
+        <h2>Audience measurement</h2>
+        <p>Nemeris uses no advertising and no audience tracking. If that changes, your consent will be asked first.</p>
+
+        <h2>Legal basis</h2>
+        <p>Technical data needed for the app to work is processed on the basis of our legitimate interest in providing a working app, and on your consent where required.</p>
+
+        <h2>Your rights</h2>
+        <p>You have the right to access, correct, erase, restrict, port and object to the processing of your data. Since it sits on your device, you can do this yourself. Otherwise, write to us. You can also complain to the CNIL, the French data protection authority.</p>
+
+        <h2>Minors</h2>
+        <p>Nemeris is not intended for children below the age at which they can consent to data processing in their country.</p>
+
+        <h2>Changes</h2>
+        <p>This policy may change. The date above shows the latest version.</p>
+
+        <a class="back" href="index.html">← Back to Nemeris</a>
+
+        <footer>
+            <a href="disclaimer.html">Disclaimer</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="faq.html">FAQ</a>
+        </footer>
+    </div>
+</body>
+
+</html>

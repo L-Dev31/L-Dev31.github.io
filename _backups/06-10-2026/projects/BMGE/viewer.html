@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BMG Viewer</title>
+  <link rel="icon" href="favicon.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e10;
+      --surface: #18181b;
+      --border: #2a2a2f;
+      --text: #e4e4e7;
+      --text-dim: #71717a;
+      --mono: 'Courier New', monospace;
+
+      --col-header:  #6366f1; /* indigo   — file header (MESG) */
+      --col-inf1:    #f59e0b; /* amber    — INF1 */
+      --col-dat1:    #10b981; /* emerald  — DAT1 */
+      --col-mid1:    #3b82f6; /* blue     — MID1 */
+      --col-str1:    #ec4899; /* pink     — STR1 */
+      --col-flw1:    #8b5cf6; /* violet   — FLW1 */
+      --col-fli1:    #f97316; /* orange   — FLI1 */
+      --col-other:   #52525b; /* zinc     — unknown */
+      --col-tag:     #ef4444; /* red      — inline 0x1A tags inside DAT1 */
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Drop zone ── */
+    #drop-zone {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border: 2px dashed var(--border);
+      margin: 32px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      padding: 60px 32px;
+    }
+    #drop-zone.over {
+      border-color: var(--col-header);
+      background: rgba(99,102,241,.05);
+    }
+    #drop-zone svg { opacity: .4; }
+    #drop-zone p { color: var(--text-dim); font-size: 15px; }
+    #drop-zone label {
+      display: inline-block;
+      padding: 8px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background .12s;
+    }
+    #drop-zone label:hover { background: #222226; }
+    #file-input { display: none; }
+
+    /* ── Viewer shell ── */
+    #viewer { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+    #viewer.visible { display: flex; }
+
+    #topbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    #topbar h1 { font-size: 14px; font-weight: 600; }
+    #topbar .meta { color: var(--text-dim); font-size: 12px; font-family: var(--mono); }
+    #topbar button {
+      margin-left: auto;
+      padding: 5px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text-dim);
+      font-size: 12px;
+      cursor: pointer;
+    }
+    #topbar button:hover { color: var(--text); border-color: #52525b; }
+
+    /* ── Main layout ── */
+    #main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Hex panel ── */
+    #hex-panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    #hex-grid {
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.8;
+      white-space: pre;
+      word-break: break-all;
+    }
+
+    .hex-row {
+      display: flex;
+      gap: 0;
+      align-items: baseline;
+    }
+
+    .hex-addr {
+      color: var(--text-dim);
+      min-width: 72px;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .hex-bytes {
+      flex: 0 0 auto;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 1px;
+    }
+
+    .hex-sep {
+      width: 16px;
+      flex-shrink: 0;
+    }
+
+    .hex-ascii {
+      color: var(--text-dim);
+      flex: 1;
+    }
+
+    /* ── Byte cells ── */
+    .b {
+      display: inline-block;
+      width: 20px;
+      text-align: center;
+      border-radius: 2px;
+      cursor: default;
+      transition: filter .1s;
+    }
+    .b:hover { filter: brightness(1.4); }
+    .b + .b { margin-left: 1px; }
+    .b.gap { margin-left: 8px; }  /* mid-row gap after byte 7 */
+
+    /* Section colors */
+    .s-header { background: rgba(99,102,241,.25); color: #a5b4fc; }
+    .s-inf1   { background: rgba(245,158,11,.22); color: #fcd34d; }
+    .s-dat1   { background: rgba(16,185,129,.18); color: #6ee7b7; }
+    .s-mid1   { background: rgba(59,130,246,.22); color: #93c5fd; }
+    .s-str1   { background: rgba(236,72,153,.20); color: #f9a8d4; }
+    .s-flw1   { background: rgba(139,92,246,.22); color: #c4b5fd; }
+    .s-fli1   { background: rgba(249,115,22,.20); color: #fdba74; }
+    .s-other  { background: rgba(82,82,91,.25);   color: #a1a1aa; }
+    .s-tag    { background: rgba(239,68,68,.30);  color: #fca5a5; }
+
+    /* Section header row highlight */
+    .sec-label-row {
+      margin-top: 6px;
+      padding: 2px 4px;
+      font-size: 11px;
+      color: var(--text-dim);
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sec-label-row .pill {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #sidebar h2 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .legend-info { display: flex; flex-direction: column; gap: 1px; }
+    .legend-name { font-weight: 600; }
+    .legend-desc { color: var(--text-dim); font-size: 11px; }
+
+    /* ── Tooltip ── */
+    #tooltip {
+      position: fixed;
+      pointer-events: none;
+      background: #1c1c20;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--text);
+      z-index: 999;
+      display: none;
+      max-width: 260px;
+    }
+    #tooltip.visible { display: block; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- Drop zone -->
+<div id="drop-zone">
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+    <polyline points="16 10 12 6 8 10"/>
+    <line x1="12" y1="6" x2="12" y2="16"/>
+  </svg>
+  <p>Drop a <strong>.bmg</strong> file here or</p>
+  <label for="file-input">Browse file</label>
+  <input type="file" id="file-input" accept=".bmg">
+</div>
+
+<!-- Viewer -->
+<div id="viewer">
+  <div id="topbar">
+    <h1 id="file-name">—</h1>
+    <span class="meta" id="file-meta">—</span>
+    <button id="reset-btn">← Load another</button>
+  </div>
+  <div id="main">
+    <div id="hex-panel">
+      <div id="hex-grid"></div>
+    </div>
+    <nav id="sidebar">
+      <h2>Legend</h2>
+      <!-- populated by JS -->
+    </nav>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Known sections ────────────────────────────────────────────────
+  const SECTIONS = [
+    { tag: 'INF1', cls: 's-inf1',  color: '#f59e0b', desc: 'Message index — offsets, entry count, attributes' },
+    { tag: 'DAT1', cls: 's-dat1',  color: '#10b981', desc: 'Raw text data — all messages concatenated' },
+    { tag: 'MID1', cls: 's-mid1',  color: '#3b82f6', desc: 'Message ID table — numeric IDs per message' },
+    { tag: 'STR1', cls: 's-str1',  color: '#ec4899', desc: 'Label table — ASCII names for messages' },
+    { tag: 'FLW1', cls: 's-flw1',  color: '#8b5cf6', desc: 'Flow script section' },
+    { tag: 'FLI1', cls: 's-fli1',  color: '#f97316', desc: 'Flow index section' },
+  ];
+
+  const HEADER_COLOR = '#6366f1';
+  const TAG_COLOR    = '#ef4444';
+
+  // ── Utilities ─────────────────────────────────────────────────────
+  function readAscii(bytes, start, len) {
+    let s = '';
+    for (let i = 0; i < len; i++) s += String.fromCharCode(bytes[start + i]);
+    return s;
+  }
+
+  function getU32(view, off, le) { return view.getUint32(off, le); }
+  function getU16(view, off, le) { return view.getUint16(off, le); }
+
+  // ── Parse: build a byte→region map ────────────────────────────────
+  function buildRegions(buffer) {
+    const bytes = new Uint8Array(buffer);
+    const view  = new DataView(buffer);
+    const len   = bytes.length;
+
+    // region[i] = { cls, section, detail }
+    const region = new Array(len).fill(null);
+
+    function mark(start, end, cls, section, detail) {
+      for (let i = start; i < end && i < len; i++) {
+        region[i] = { cls, section, detail };
+      }
+    }
+
+    // File header: bytes 0–31
+    const magic = readAscii(bytes, 0, 8);
+    const bigEndian = (magic === 'GSEM1gmb');
+    const le = !bigEndian;
+
+    let encodingByte = bytes[16];
+    const encodingName = { 2: 'UTF-16 LE', 3: 'Shift-JIS', 4: 'UTF-8' }[encodingByte] || 'Latin-1';
+    const encodingWidth = encodingByte === 2 ? 2 : 1;
+
+    const fileSize    = getU32(view, 8,  le);
+    const secCount    = getU32(view, 12, le);
+
+    mark(0, 32, 's-header', 'MESG Header', `Magic: ${magic}\nFile size: ${fileSize} bytes\nSections: ${secCount}\nEncoding: ${encodingName}\nEndian: ${bigEndian ? 'Big' : 'Little'}`);
+
+    // Detect DAT1 offset + size for tag scanning later
+    let dat1Start = -1, dat1DataStart = -1, dat1End = -1;
+    let inf1EntryCount = 0, inf1EntrySize = 8, inf1DataStart = -1;
+    let encodingDetected = encodingWidth;
+
+    // Walk sections
+    for (const sec of SECTIONS) {
+      // Find tag in bytes
+      const tagBytes = sec.tag.split('').map(c => c.charCodeAt(0));
+      let secOff = -1;
+      outer: for (let i = 0; i <= len - 4; i++) {
+        for (let j = 0; j < 4; j++) if (bytes[i + j] !== tagBytes[j]) continue outer;
+        secOff = i; break;
+      }
+      if (secOff === -1) continue;
+
+      const secSize = getU32(view, secOff + 4, le);
+      const secEnd  = secOff + secSize;
+
+      // Section tag + size header (8 bytes)
+      mark(secOff, secOff + 8, sec.cls, sec.tag, `Section: ${sec.tag}\nOffset: 0x${secOff.toString(16).toUpperCase()}\nSize: ${secSize} bytes`);
+
+      // Section body
+      mark(secOff + 8, secEnd, sec.cls, sec.tag, `${sec.tag} data\nOffset: 0x${secOff.toString(16).toUpperCase()}\nSize: ${secSize} bytes`);
+
+      if (sec.tag === 'INF1') {
+        inf1EntryCount  = getU16(view, secOff + 8, le);
+        inf1EntrySize   = getU16(view, secOff + 10, le);
+        const fileId    = getU16(view, secOff + 12, le);
+        const defColor  = bytes[secOff + 14];
+        inf1DataStart   = secOff + 16;
+
+        mark(secOff + 8,  secOff + 16, sec.cls, 'INF1',
+          `INF1 meta\nEntry count: ${inf1EntryCount}\nEntry size: ${inf1EntrySize}\nFile ID: 0x${fileId.toString(16).toUpperCase()}\nDefault color: 0x${defColor.toString(16).padStart(2,'0').toUpperCase()}`);
+
+        // Per-entry highlights
+        for (let e = 0; e < inf1EntryCount; e++) {
+          const base = inf1DataStart + e * inf1EntrySize;
+          if (base + inf1EntrySize > len) break;
+          const msgOff = getU32(view, base, le);
+          const attr   = Array.from(bytes.slice(base + 4, base + inf1EntrySize))
+                              .map(b => b.toString(16).padStart(2,'0').toUpperCase()).join(' ');
+          mark(base, base + inf1EntrySize, sec.cls, 'INF1',
+            `INF1 entry #${e}\nDAT1 offset: 0x${msgOff.toString(16).toUpperCase()}\nAttribute: ${attr || '—'}`);
+        }
+      }
+
+      if (sec.tag === 'DAT1') {
+        dat1Start     = secOff;
+        dat1DataStart = secOff + 8;
+        dat1End       = secEnd;
+      }
+    }
+
+    // Re-scan DAT1 body to highlight inline 0x1A tags
+    if (dat1DataStart !== -1) {
+      let j = dat1DataStart;
+      while (j < dat1End) {
+        if (bytes[j] !== 0x1A) { j += encodingDetected; continue; }
+        // tag: 0x1A [len] [groupId] [typeId lo] [typeId hi] [args...]
+        const tagLenByte = bytes[j + encodingDetected];
+        if (tagLenByte === undefined) break;
+        const argLen   = Math.max(0, tagLenByte - 4);
+        const totalTag = encodingDetected + 1 + 4 + argLen; // escape + len byte + header + args
+        const groupId  = bytes[j + encodingDetected + 1];
+        const typeId   = bytes[j + encodingDetected + 2] | (bytes[j + encodingDetected + 3] << 8);
+        const args     = Array.from(bytes.slice(j + encodingDetected + 5, j + totalTag))
+                              .map(b => b.toString(16).padStart(2,'0').toUpperCase()).join(' ');
+        mark(j, j + totalTag, 's-tag', 'Inline Tag',
+          `Inline escape tag\nGroup: 0x${groupId.toString(16).toUpperCase()}\nType: 0x${typeId.toString(16).padStart(4,'0').toUpperCase()}\nArgs: ${args || '—'}`);
+        j += totalTag;
+      }
+    }
+
+    // Mark any remaining unmapped bytes as 'other'
+    for (let i = 32; i < len; i++) {
+      if (!region[i]) region[i] = { cls: 's-other', section: 'Unknown', detail: `Unknown byte at 0x${i.toString(16).toUpperCase()}` };
+    }
+
+    return { region, bytes, bigEndian, encodingName, secCount };
+  }
+
+  // ── Render hex grid ────────────────────────────────────────────────
+  const BYTES_PER_ROW = 16;
+
+  function toHex(b)  { return b.toString(16).padStart(2, '0').toUpperCase(); }
+  function toAscii(b){ return (b >= 0x20 && b < 0x7f) ? String.fromCharCode(b) : '.'; }
+
+  function renderGrid(bytes, region) {
+    const grid = document.getElementById('hex-grid');
+    const tooltip = document.getElementById('tooltip');
+    grid.innerHTML = '';
+
+    let lastSection = null;
+
+    for (let row = 0; row < bytes.length; row += BYTES_PER_ROW) {
+      const rowBytes = bytes.slice(row, row + BYTES_PER_ROW);
+
+      // Section label before the row if section changed
+      const firstReg = region[row];
+      const secName  = firstReg?.section || 'Unknown';
+      if (secName !== lastSection) {
+        lastSection = secName;
+        const label = document.createElement('div');
+        label.className = 'sec-label-row';
+
+        const sec = SECTIONS.find(s => s.tag === secName);
+        const isHeader = secName === 'MESG Header';
+        const isTag    = secName === 'Inline Tag';
+        const color    = sec ? sec.color : isHeader ? HEADER_COLOR : isTag ? TAG_COLOR : '#52525b';
+
+        const pill = document.createElement('span');
+        pill.className = 'pill';
+        pill.textContent = secName;
+        pill.style.background = color + '33';
+        pill.style.color = color;
+
+        if (sec) {
+          const info = document.createElement('span');
+          info.style.fontSize = '10px';
+          info.textContent = sec.desc;
+          label.appendChild(pill);
+          label.appendChild(info);
+        } else {
+          label.appendChild(pill);
+        }
+        grid.appendChild(label);
+      }
+
+      const rowEl = document.createElement('div');
+      rowEl.className = 'hex-row';
+
+      // Address
+      const addr = document.createElement('span');
+      addr.className = 'hex-addr';
+      addr.textContent = `0x${row.toString(16).padStart(6, '0').toUpperCase()}  `;
+      rowEl.appendChild(addr);
+
+      // Hex bytes
+      const hexPart = document.createElement('span');
+      hexPart.className = 'hex-bytes';
+
+      for (let col = 0; col < BYTES_PER_ROW; col++) {
+        const absIdx = row + col;
+        const b = absIdx < bytes.length ? bytes[absIdx] : null;
+
+        if (col === 8) {
+          const sep = document.createElement('span');
+          sep.className = 'hex-sep';
+          hexPart.appendChild(sep);
+        }
+
+        const cell = document.createElement('span');
+        cell.className = 'b';
+
+        if (b === null) {
+          cell.textContent = '  ';
+        } else {
+          const reg = region[absIdx];
+          cell.classList.add(reg ? reg.cls : 's-other');
+          cell.textContent = toHex(b);
+
+          // Tooltip
+          if (reg) {
+            cell.addEventListener('mouseenter', (e) => {
+              tooltip.innerHTML = `<span style="color:var(--text-dim);font-size:10px;">0x${absIdx.toString(16).toUpperCase().padStart(6,'0')}</span>\n` + reg.detail.replace(/\n/g, '<br>');
+              tooltip.classList.add('visible');
+              positionTooltip(e);
+            });
+            cell.addEventListener('mousemove', positionTooltip);
+            cell.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+          }
+        }
+        hexPart.appendChild(cell);
+      }
+      rowEl.appendChild(hexPart);
+
+      // ASCII
+      const sep2 = document.createElement('span');
+      sep2.className = 'hex-sep';
+      rowEl.appendChild(sep2);
+
+      const asciiPart = document.createElement('span');
+      asciiPart.className = 'hex-ascii';
+      asciiPart.textContent = Array.from(rowBytes).map(toAscii).join('');
+      rowEl.appendChild(asciiPart);
+
+      grid.appendChild(rowEl);
+    }
+  }
+
+  function positionTooltip(e) {
+    const tooltip = document.getElementById('tooltip');
+    const x = e.clientX + 16, y = e.clientY + 12;
+    const tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
+    tooltip.style.left = (x + tw > window.innerWidth  ? e.clientX - tw - 8 : x) + 'px';
+    tooltip.style.top  = (y + th > window.innerHeight ? e.clientY - th - 8 : y) + 'px';
+  }
+
+  // ── Build legend ──────────────────────────────────────────────────
+  function buildLegend(presentSections) {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.innerHTML = '<h2>Legend</h2>';
+
+    const all = [
+      { tag: 'MESG Header', color: HEADER_COLOR, desc: 'Magic, file size, section count, encoding, endianness' },
+      ...SECTIONS,
+      { tag: 'Inline Tag', color: TAG_COLOR, desc: '0x1A escape sequences inside DAT1 text (color, variable, format)' },
+      { tag: 'Unknown',    color: '#52525b', desc: 'Unmapped / gap bytes' },
+    ];
+
+    for (const entry of all) {
+      if (!presentSections.has(entry.tag)) continue;
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `
+        <span class="legend-swatch" style="background:${entry.color}55;outline:1px solid ${entry.color}88;"></span>
+        <span class="legend-info">
+          <span class="legend-name">${entry.tag}</span>
+          <span class="legend-desc">${entry.desc}</span>
+        </span>`;
+      sidebar.appendChild(item);
+    }
+  }
+
+  // ── Load file ─────────────────────────────────────────────────────
+  function loadFile(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const buffer = e.target.result;
+        const { region, bytes, bigEndian, encodingName, secCount } = buildRegions(buffer);
+
+        document.getElementById('file-name').textContent = file.name;
+        document.getElementById('file-meta').textContent =
+          `${bytes.length} bytes  ·  ${secCount} sections  ·  ${encodingName}  ·  ${bigEndian ? 'Big-endian' : 'Little-endian'}`;
+
+        // Collect present sections for legend
+        const present = new Set();
+        for (const r of region) { if (r) present.add(r.section); }
+
+        renderGrid(bytes, region);
+        buildLegend(present);
+
+        document.getElementById('drop-zone').style.display = 'none';
+        const viewer = document.getElementById('viewer');
+        viewer.classList.add('visible');
+      } catch (err) {
+        alert('Failed to parse BMG file:\n' + err.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // ── Drag & drop ───────────────────────────────────────────────────
+  const dropZone  = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+
+  dropZone.addEventListener('dragover',  (e) => { e.preventDefault(); dropZone.classList.add('over'); });
+  dropZone.addEventListener('dragleave', ()  => dropZone.classList.remove('over'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('over');
+    const file = e.dataTransfer.files[0];
+    if (file) loadFile(file);
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) loadFile(fileInput.files[0]);
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    document.getElementById('hex-grid').innerHTML = '';
+    document.getElementById('viewer').classList.remove('visible');
+    document.getElementById('drop-zone').style.display = '';
+    fileInput.value = '';
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<div class="lesson-container">
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-list-ol"></i>
+                1. Recherche séquentielle (linéaire)
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Principe
+                </div>
+                <p>La recherche séquentielle parcourt les éléments un par un jusqu'à trouver l'élément recherché ou atteindre la fin de la liste.</p>
+            </div>
+
+            <div class="code-block">
+def recherche_sequentielle(liste, element):
+    """Recherche séquentielle - O(n)"""
+    for i in range(len(liste)):
+        if liste[i] == element:
+            return i  # Retourne l'index de l'élément trouvé
+    return -1  # Élément non trouvé
+
+# Version avec position et nombre de comparaisons
+def recherche_sequentielle_verbose(liste, element):
+    comparaisons = 0
+    for i in range(len(liste)):
+        comparaisons += 1
+        print(f"Comparaison {comparaisons}: liste[{i}] = {liste[i]}")
+        if liste[i] == element:
+            print(f"Élément trouvé à l'index {i}")
+            return i, comparaisons
+    print("Élément non trouvé")
+    return -1, comparaisons
+
+# Exemple d'utilisation
+nombres = [3, 7, 1, 9, 4, 6, 2, 8]
+resultat = recherche_sequentielle(nombres, 6)
+print(f"Position de 6: {resultat}")
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-cut"></i>
+                2. Recherche dichotomique (binaire)
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Prérequis : Liste triée
+                </div>
+                <p>La recherche dichotomique divise l'espace de recherche par deux à chaque étape en comparant avec l'élément du milieu.</p>
+            </div>
+
+            <div class="code-block">
+def recherche_dichotomique(liste, element):
+    """Recherche dichotomique - O(log n)"""
+    gauche, droite = 0, len(liste) - 1
+    
+    while gauche <= droite:
+        milieu = (gauche + droite) // 2
+        
+        if liste[milieu] == element:
+            return milieu
+        elif liste[milieu] < element:
+            gauche = milieu + 1  # Chercher dans la moitié droite
+        else:
+            droite = milieu - 1  # Chercher dans la moitié gauche
+    
+    return -1  # Élément non trouvé
+
+# Version récursive
+def recherche_dichotomique_recursive(liste, element, gauche=0, droite=None):
+    if droite is None:
+        droite = len(liste) - 1
+    
+    if gauche > droite:
+        return -1
+    
+    milieu = (gauche + droite) // 2
+    
+    if liste[milieu] == element:
+        return milieu
+    elif liste[milieu] < element:
+        return recherche_dichotomique_recursive(liste, element, milieu + 1, droite)
+    else:
+        return recherche_dichotomique_recursive(liste, element, gauche, milieu - 1)
+
+# Exemple avec liste triée
+nombres_tries = [1, 2, 3, 4, 6, 7, 8, 9]
+resultat = recherche_dichotomique(nombres_tries, 6)
+print(f"Position de 6: {resultat}")
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-line"></i>
+                3. Comparaison et analyse
+            </h2>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-cogs"></i>
+                    Visualisation de la recherche dichotomique
+                </div>
+                <div class="code-block">
+def recherche_dichotomique_demo(liste, element):
+    """Démontre le fonctionnement de la recherche dichotomique"""
+    print(f"Recherche de {element} dans {liste}")
+    gauche, droite = 0, len(liste) - 1
+    etape = 1
+    
+    while gauche <= droite:
+        milieu = (gauche + droite) // 2
+        print(f"Étape {etape}: intervalle [{gauche}, {droite}], milieu = {milieu}")
+        print(f"   liste[{milieu}] = {liste[milieu]}")
+        
+        if liste[milieu] == element:
+            print(f"   ✓ Trouvé à l'index {milieu}!")
+            return milieu
+        elif liste[milieu] < element:
+            print(f"   {liste[milieu]} < {element}, chercher à droite")
+            gauche = milieu + 1
+        else:
+            print(f"   {liste[milieu]} > {element}, chercher à gauche")
+            droite = milieu - 1
+        
+        etape += 1
+    
+    print("   ✗ Élément non trouvé")
+    return -1
+
+# Exemple de démonstration
+liste_demo = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+recherche_dichotomique_demo(liste_demo, 11)
+                </div>
+            </div>
+
+            <div class="example-box">
+                <div class="example-title">
+                    <i class="fas fa-stopwatch"></i>
+                    Comparaison des performances
+                </div>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                    <tr style="background: var(--nsi-light);">
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Algorithme</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Complexité</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Prérequis</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Cas d'usage</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Séquentielle</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">O(n)</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Aucun</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Listes non triées</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Dichotomique</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">O(log n)</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Liste triée</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Grandes listes triées</td>
+                    </tr>
+                </table>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
+                    <strong>Exemple :</strong> Pour 1 million d'éléments, la recherche séquentielle peut nécessiter jusqu'à 1 000 000 comparaisons, 
+                    tandis que la recherche dichotomique n'en nécessite que 20 au maximum !
+                </p>            </div>
+        </div>
+    </div>

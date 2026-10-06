@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon 13 : Dénombrement</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>    <script src="../mathJax.js"></script>
+    <script>
+        // Configuration MathJax centralisée chargée depuis ../mathJax.js
+        window.addEventListener('beforeprint', function() {
+            // Ajustements d'impression si nécessaire
+        });
+    </script>
+    <style>
+        /* Suggestion de saut de page avant les sections principales - Media query d'impression supprimée */
+    </style>
+</head>
+<body>    <div class="lesson-container">
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">Introduction</h2>
+            <p>Le dénombrement est l'art de compter les éléments d'ensembles finis, souvent en utilisant des techniques systématiques pour éviter les oublis ou les doubles comptes. C'est une compétence essentielle en probabilités, en algorithmique et dans de nombreux autres domaines. Ce chapitre introduit les principes fondamentaux du dénombrement, les factorielles, les permutations, les arrangements et les combinaisons.</p>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">1. Principes fondamentaux</h2>
+            <div class="property-box">
+                <h3 class="box-title">Principe additif</h3>
+                <p>Si un ensemble $E$ est la réunion de $k$ ensembles finis $E_1, E_2, ..., E_k$ deux à deux disjoints <span class="tex2jax_ignore">(c'est-à-dire</span> $E_i \cap E_j = \emptyset$ <span class="tex2jax_ignore">pour</span> $i \neq j$<span class="tex2jax_ignore">)</span>, alors le cardinal de $E$ <span class="tex2jax_ignore">(nombre d'éléments)</span> est la somme des cardinaux des $E_i$ :</p>
+                <p>$|E| = |E_1 \cup E_2 \cup ... \cup E_k| = |E_1| + |E_2| + ... + |E_k|$</p>
+                <p>Ce principe s'applique lorsqu'une situation peut être décomposée en cas mutuellement exclusifs.</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Principe multiplicatif <span class="tex2jax_ignore">(Principe des choix successifs)</span></h3>
+                <p>Si une situation comporte $k$ étapes successives, et s'il y a $n_1$ choix possibles pour la première étape, $n_2$ choix possibles pour la deuxième étape <span class="tex2jax_ignore">(quel que soit le choix fait à la première)</span>, ..., $n_k$ choix possibles pour la $k$-ième étape <span class="tex2jax_ignore">(quels que soient les choix faits aux étapes précédentes)</span>, alors le nombre total de résultats possibles pour l'ensemble des $k$ étapes est le produit :</p>
+                <p>$N = n_1 \times n_2 \times ... \times n_k$</p>
+            </div>
+            <div class="example-box">                <h3 class="box-title">Exemple <span class="tex2jax_ignore">(Multiplicatif)</span></h3>
+                <p>Un restaurant propose 3 entrées, 4 plats principaux et 2 desserts. Combien de menus différents <span class="tex2jax_ignore">(entrée + plat + dessert)</span> peut-on composer ?</p>
+                <p>Il y a 3 étapes : choisir l'entrée <span class="tex2jax_ignore">(3 choix)</span>, choisir le plat <span class="tex2jax_ignore">(4 choix)</span>, choisir le dessert <span class="tex2jax_ignore">(2 choix)</span>.</p>
+                <p>Nombre de menus = $3 \times 4 \times 2 = 24$.</p>
+            </div>
+
+        <div class="page-break"></div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple <span class="tex2jax_ignore">(Additif et Multiplicatif)</span></h3>
+                <p>Combien de nombres à 3 chiffres distincts peut-on former avec les chiffres {1, 2, 3, 4, 5} ?</p>
+                <p>On utilise le principe multiplicatif :</p>
+                <ul>                    <li>Choix du premier chiffre <span class="tex2jax_ignore">(centaines)</span> : 5 possibilités.</li>
+                    <li>Choix du deuxième chiffre <span class="tex2jax_ignore">(dizaines)</span>, distinct du premier : 4 possibilités restantes.</li>
+                    <li>Choix du troisième chiffre <span class="tex2jax_ignore">(unités)</span>, distinct des deux premiers : 3 possibilités restantes.</li>
+                </ul>
+                <p>Nombre total = $5 \times 4 \times 3 = 60$.</p>
+                <p>Combien de ces nombres sont pairs ?</p>                <p>Pour être pair, le dernier chiffre <span class="tex2jax_ignore">(unités)</span> doit être 2 ou 4 <span class="tex2jax_ignore">(2 choix)</span>.</p>
+                <p>On peut décomposer en cas <span class="tex2jax_ignore">(principe additif)</span> ou raisonner différemment :</p>
+                <p>Méthode 1 <span class="tex2jax_ignore">(fixer le dernier chiffre)</span> :</p>
+                <ul>                    <li>Choix du dernier chiffre <span class="tex2jax_ignore">(unités)</span> : 2 possibilités <span class="tex2jax_ignore">(2 ou 4)</span>.</li>
+                    <li>Choix du premier chiffre <span class="tex2jax_ignore">(centaines)</span>, distinct du dernier : 4 possibilités restantes.</li>
+                    <li>Choix du deuxième chiffre <span class="tex2jax_ignore">(dizaines)</span>, distinct des deux choisis : 3 possibilités restantes.</li>
+                </ul>
+                 <p>Nombre total = $2 \times 4 \times 3 = 24$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">2. Factorielles et Permutations</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Factorielle</h3>
+                <p>Pour tout entier naturel $n \ge 1$, on appelle <strong>factorielle de $n$</strong>, notée $n!$, le produit de tous les entiers naturels de 1 à $n$ :</p>
+                <p>$n! = n \times (n-1) \times (n-2) \times ... \times 2 \times 1$</p>
+                <p>Par convention, $0! = 1$.</p>
+                <p>Relation de récurrence : Pour $n \ge 1$, $n! = n \times (n-1)!$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemples de factorielles</h3>
+                <ul>
+                    <li>$1! = 1$</li>
+                    <li>$2! = 2 \times 1 = 2$</li>
+                    <li>$3! = 3 \times 2 \times 1 = 6$</li>
+                    <li>$4! = 4 \times 3 \times 2 \times 1 = 24$</li>
+                    <li>$5! = 5 \times 4! = 5 \times 24 = 120$</li>
+                </ul>
+            </div>
+            <div class="definition-box">
+                <h3 class="box-title">Permutation</h3>
+                <p>Soit $E$ un ensemble fini de $n$ éléments <span class="tex2jax_ignore">(</span>$n \ge 1$<span class="tex2jax_ignore">)</span>.</p>
+                <p>Une <strong>permutation</strong> de $E$ est un arrangement ordonné de tous les éléments de $E$. C'est une façon d'ordonner les $n$ éléments.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Nombre de permutations</h3>
+                <p>Le nombre de permutations d'un ensemble à $n$ éléments est $n!$.</p>
+                <p><strong>Justification <span class="tex2jax_ignore">(Principe multiplicatif)</span> :</strong> Pour ordonner $n$ éléments :</p>
+                <ul>
+                    <li>Choix du 1er élément : $n$ possibilités.</li>
+                    <li>Choix du 2ème élément (distinct du 1er) : $n-1$ possibilités.</li>
+                    <li>...</li>
+                    <li>Choix du $n$-ième élément : 1 possibilité.</li>
+                </ul>
+                <p>Nombre total = $n \times (n-1) \times ... \times 1 = n!$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple (Anagrammes)</h3>
+                <p>Combien d'anagrammes (mots ayant un sens ou non) peut-on former avec les lettres du mot "MATHS" ?</p>
+                <p>Il s'agit de permuter les 5 lettres distinctes M, A, T, H, S.</p>
+                <p>Nombre d'anagrammes = $5! = 120$.</p>
+            </div>
+        </section>
+
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">3. Arrangements</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Arrangement sans répétition</h3>
+                <p>Soit $E$ un ensemble fini de $n$ éléments et $k$ un entier tel que $1 \le k \le n$.</p>
+                <p>Un <strong>arrangement</strong> de $k$ éléments de $E$ (ou $k$-arrangement) est une sélection ordonnée et sans répétition de $k$ éléments parmi les $n$ éléments de $E$.</p>
+                <p>L'ordre compte et on ne peut pas choisir plusieurs fois le même élément.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Nombre d'arrangements sans répétition</h3>
+                <p>Le nombre d'arrangements de $k$ éléments parmi $n$, noté $A_n^k$ <span class="tex2jax_ignore">(ou</span> $P(n,k)$<span class="tex2jax_ignore">)</span>, est :</p>
+                <p>$A_n^k = n \times (n-1) \times ... \times (n-k+1)$</p>
+                <p>On peut aussi l'exprimer avec les factorielles :</p>
+                <p>$A_n^k = \frac{n!}{(n-k)!}$</p>
+                <p><strong>Justification (Principe multiplicatif) :</strong> Pour choisir $k$ éléments ordonnés sans répétition parmi $n$ :</p>
+                <ul>
+                    <li>Choix du 1er élément : $n$ possibilités.</li>
+                    <li>Choix du 2ème élément (distinct du 1er) : $n-1$ possibilités.</li>
+                    <li>...</li>
+                    <li>Choix du $k$-ième élément (distinct des $k-1$ premiers) : $n-(k-1) = n-k+1$ possibilités.</li>
+                </ul>
+                <p>Nombre total = $n \times (n-1) \times ... \times (n-k+1)$.</p>
+                <p><strong>Cas particulier :</strong> Si $k=n$, $A_n^n = n!$, on retrouve le nombre de permutations.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple (Tiercé)</h3>
+                <p>Dans une course de 10 chevaux, un tiercé consiste à parier sur les 3 premiers chevaux dans l'ordre exact d'arrivée.</p>
+                <p>Combien de tiercés possibles y a-t-il ?</p>
+                <p>Il s'agit de choisir 3 chevaux parmi 10, en tenant compte de l'ordre et sans répétition.</p>
+                <p>Nombre de tiercés = $A_{10}^3 = 10 \times 9 \times 8 = 720$.</p>
+                <p>Avec la formule : $A_{10}^3 = \frac{10!}{(10-3)!} = \frac{10!}{7!} = \frac{10 \times 9 \times 8 \times 7!}{7!} = 10 \times 9 \times 8 = 720$.</p>
+            </div>
+             <div class="definition-box">
+                <h3 class="box-title">Arrangement avec répétition (ou $k$-liste)</h3>
+                <p>Soit $E$ un ensemble fini de $n$ éléments et $k$ un entier $k \ge 1$.</p>
+                <p>Un <strong>arrangement avec répétition</strong> de $k$ éléments de $E$ (ou $k$-liste, ou $k$-uplet) est une sélection ordonnée de $k$ éléments parmi les $n$ éléments de $E$, où les répétitions sont autorisées.</p>
+            </div>
+             <div class="theorem-box">
+                <h3 class="box-title">Nombre d'arrangements avec répétition</h3>
+                <p>Le nombre d'arrangements avec répétition de $k$ éléments parmi $n$ est :</p>
+                <p>$n^k$</p>
+                 <p><strong>Justification (Principe multiplicatif) :</strong> Pour choisir $k$ éléments ordonnés avec répétition parmi $n$ :</p>
+                <ul>
+                    <li>Choix du 1er élément : $n$ possibilités.</li>
+                    <li>Choix du 2ème élément : $n$ possibilités (répétition autorisée).</li>
+                    <li>...</li>
+                    <li>Choix du $k$-ième élément : $n$ possibilités.</li>
+                </ul>
+                <p>Nombre total = $n \times n \times ... \times n$ ($k$ fois) $= n^k$.</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple (Code PIN)</h3>
+                <p>Combien de codes PIN à 4 chiffres peut-on former ?</p>
+                <p>Les chiffres sont {0, 1, ..., 9} (n=10 éléments). On choisit 4 chiffres (k=4) avec ordre et répétition autorisée.</p>
+                <p>Nombre de codes PIN = $10^4 = 10000$.</p>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+        <section class="lesson-section">
+            <h2 class="lesson-subtitle">4. Combinaisons</h2>
+            <div class="definition-box">
+                <h3 class="box-title">Combinaison sans répétition</h3>
+                <p>Soit $E$ un ensemble fini de $n$ éléments et $k$ un entier tel que $0 \le k \le n$.</p>
+                <p>Une <strong>combinaison</strong> de $k$ éléments de $E$ (ou $k$-combinaison) est une sélection non ordonnée et sans répétition de $k$ éléments parmi les $n$ éléments de $E$. C'est un sous-ensemble de $E$ ayant $k$ éléments.</p>
+                <p>L'ordre ne compte pas et on ne peut pas choisir plusieurs fois le même élément.</p>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Nombre de combinaisons sans répétition (Coefficients binomiaux)</h3>
+                <p>Le nombre de combinaisons de $k$ éléments parmi $n$, noté $\binom{n}{k}$ (lire "k parmi n" ou "combinaison de k parmi n"), est :</p>
+                <p>$\binom{n}{k} = \frac{A_n^k}{k!} = \frac{n!}{k!(n-k)!}$</p>
+                <p><strong>Justification :</strong> Pour former un arrangement $A_n^k$ de $k$ éléments, on peut :</p>
+                <ol>
+                    <li>Choisir un sous-ensemble de $k$ éléments (une combinaison) : $\binom{n}{k}$ façons.</li>
+                    <li>Ordonner ces $k$ éléments (une permutation) : $k!$ façons.</li>
+                </ol>
+                <p>Par le principe multiplicatif, $A_n^k = \binom{n}{k} \times k!$. D'où la formule.</p>
+                <p>Les nombres $\binom{n}{k}$ sont appelés <strong>coefficients binomiaux</strong>.</p>
+            </div>
+            <div class="property-box">
+                <h3 class="box-title">Propriétés des coefficients binomiaux</h3>
+                <ul>
+                    <li>$
+                        \binom{n}{0} = 1
+                    $ (Il y a une seule façon de choisir 0 élément : l'ensemble vide).</li>
+                    <li>$
+                        \binom{n}{n} = 1
+                    $ (Il y a une seule façon de choisir $n$ éléments : l'ensemble $E$ entier).</li>
+                    <li>$
+                        \binom{n}{1} = n
+                    $ (Il y a $n$ façons de choisir 1 élément).</li>
+                    <li><strong>Symétrie :</strong> $\binom{n}{k} = \binom{n}{n-k}$ (Choisir $k$ éléments revient à choisir les $n-k$ éléments qu'on ne prend pas).</li>
+                    <li><strong>Formule de Pascal :</strong> Pour $1 \le k \le n-1$, $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$.<br/>(Pour choisir $k$ éléments parmi $n$, soit on prend un élément particulier $e$ et on choisit $k-1$ parmi les $n-1$ autres, soit on ne prend pas $e$ et on choisit $k$ parmi les $n-1$ autres).</li>
+                </ul>
+            </div>
+            <div class="summary-box">
+                <h3 class="box-title">Triangle de Pascal</h3>
+                <p>La formule de Pascal permet de construire le triangle de Pascal, où chaque terme est la somme des deux termes juste au-dessus :</p>
+                <pre>
+n=0:      1
+n=1:     1  1
+n=2:    1  2  1
+n=3:   1  3  3  1
+n=4:  1  4  6  4  1
+n=5: 1  5 10 10  5  1
+...    (Ligne n contient les C(n,k) pour k=0 à n)
+                </pre>
+            </div>
+            <div class="theorem-box">
+                <h3 class="box-title">Binôme de Newton</h3>
+                <p>Pour tous nombres réels (ou complexes) $a$ et $b$, et tout entier naturel $n$ :</p>
+                <p>$(a+b)^n = \sum_{k=0}^{n} \binom{n}{k} a^{n-k} b^k$</p>
+                <p>$(a+b)^n = \binom{n}{0}a^n + \binom{n}{1}a^{n-1}b + \binom{n}{2}a^{n-2}b^2 + ... + \binom{n}{n-1}ab^{n-1} + \binom{n}{n}b^n$</p>
+            </div>
+            <div class="example-box">
+                <h3 class="box-title">Exemple (Comité)</h3>
+                <p>Dans une classe de 30 élèves (18 filles, 12 garçons), on veut former un comité de 4 élèves.</p>
+                <p>a) Combien de comités possibles ?</p>
+                <p>   L'ordre ne compte pas, sans répétition. C'est une combinaison.</p>
+                <p>   Nombre = $\binom{30}{4} = \frac{30!}{4! (30-4)!} = \frac{30!}{4! 26!} = \frac{30 \times 29 \times 28 \times 27}{4 \times 3 \times 2 \times 1} = 27405$.</p>
+                <p>b) Combien de comités contenant exactement 2 filles et 2 garçons ?</p>
+                <p>   On choisit 2 filles parmi 18 ET on choisit 2 garçons parmi 12.</p>
+                <p>   Nombre = $\binom{18}{2} \times \binom{12}{2}$</p>
+                <p>   $\binom{18}{2} = \frac{18 \times 17}{2 \times 1} = 9 \times 17 = 153$.</p>
+                <p>   $\binom{12}{2} = \frac{12 \times 11}{2 \times 1} = 6 \times 11 = 66$.</p>
+                <p>   Nombre total = $153 \times 66 = 10098$.</p>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
+

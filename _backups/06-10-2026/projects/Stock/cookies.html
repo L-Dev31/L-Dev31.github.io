@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookies - Nemeris</title>
+    <meta name="description" content="Nemeris n'utilise pas de cookies de suivi. Tes données restent dans ton navigateur.">
+    <link rel="canonical" href="https://l-dev31.github.io/projects/Stock/cookies.html">
+    <meta property="og:title" content="Cookies - Nemeris">
+    <meta property="og:description" content="Nemeris n'utilise pas de cookies de suivi. Tes données restent dans ton navigateur.">
+    <meta property="og:image" content="https://l-dev31.github.io/projects/Stock/img/icon/og-image.png">
+    <meta property="og:url" content="https://l-dev31.github.io/projects/Stock/cookies.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Cookies - Nemeris">
+    <meta name="twitter:description" content="Nemeris n'utilise pas de cookies de suivi. Tes données restent dans ton navigateur.">
+    <link rel="icon" href="img/icon/favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..600&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="styles/legal.css">
+    <script>
+        (function () {
+            var l; try { l = localStorage.getItem('nemeris_lang'); } catch (e) { l = null; }
+            if (l !== 'fr' && l !== 'en') l = 'en';
+            document.documentElement.lang = l; document.documentElement.dataset.lang = l;
+            if (l === 'en') document.title = 'Cookies - Nemeris';
+            document.addEventListener('click', function (e) {
+                var a = e.target.closest('.lang-link'); if (!a) return;
+                e.preventDefault(); try { localStorage.setItem('nemeris_lang', a.dataset.to); } catch (err) { /* storage blocked */ } location.reload();
+            });
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="topbar"><div class="topbar-inner"><img src="img/icon/favicon.png" alt="Logo Nemeris"><a href="index.html">Nemeris</a><a class="lang-link" href="#" data-to="en" lang="en">English</a><a class="lang-link" href="#" data-to="fr" lang="fr">Français</a></div></div>
+    <div class="wrap" lang="fr">
+        <h1>Politique cookies</h1>
+        <p class="updated">Mis à jour le 26 septembre 2026</p>
+
+        <p>Nemeris fonctionne sans te pister.</p>
+
+        <h2>Cookies</h2>
+        <p>Nemeris ne dépose <strong>aucun</strong> cookie publicitaire ou de mesure d'audience, et ne te suit pas d'un site à l'autre.</p>
+
+        <h2>Stockage local (fonctionnel)</h2>
+        <p>Nemeris utilise le <code>localStorage</code> de ton navigateur pour retenir ce qui est nécessaire : portefeuille, opérations, réglages, discussions avec l'IA. Tout reste sur ton appareil et ne sert pas à te suivre. Tu peux l'effacer en vidant les données du site.</p>
+
+        <h2>Requêtes tierces</h2>
+        <p>Ton navigateur charge des polices et bibliothèques depuis Google Fonts et jsDelivr, et les données de marché via un relais et Yahoo Finance. Ces services peuvent enregistrer des données techniques comme ton adresse IP. Nemeris ne les utilise pas pour déposer des cookies de suivi.</p>
+
+        <a class="back" href="index.html">← Retour à Nemeris</a>
+
+        <footer>
+            <a href="disclaimer.html">Avertissement</a><a href="privacy.html">Confidentialité</a><a href="terms.html">Conditions</a><a href="cookies.html">Cookies</a><a href="faq.html">FAQ</a>
+        </footer>
+    </div>
+    <div class="wrap" lang="en">
+        <h1>Cookie policy</h1>
+        <p class="updated">Updated September 26, 2026</p>
+
+        <p>Nemeris works without tracking you.</p>
+
+        <h2>Cookies</h2>
+        <p>Nemeris sets <strong>no</strong> advertising or audience-measurement cookies, and does not follow you from site to site.</p>
+
+        <h2>Local storage (functional)</h2>
+        <p>Nemeris uses your browser's <code>localStorage</code> to remember what it needs: portfolio, trades, settings, chats with the AI. Everything stays on your device and is not used to track you. You can erase it by clearing the site's data.</p>
+
+        <h2>Third-party requests</h2>
+        <p>Your browser loads fonts and libraries from Google Fonts and jsDelivr, and market data through a relay and Yahoo Finance. These services may log technical data such as your IP address. Nemeris does not use them to set tracking cookies.</p>
+
+        <a class="back" href="index.html">← Back to Nemeris</a>
+
+        <footer>
+            <a href="disclaimer.html">Disclaimer</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="faq.html">FAQ</a>
+        </footer>
+    </div>
+</body>
+
+</html>

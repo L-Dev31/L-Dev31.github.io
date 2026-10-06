@@ -1,0 +1,84 @@
+{
+  "carouselItems": [
+    {
+      "id": 1,
+      "title": "Iconic II",
+      "description": "Design sportif inspiré des années 80, mouvement Seiko NH70.",
+      "descriptionLong": "L'Iconic II, inspirée des jantes Fuchs des années 80, affiche un style plus sportif avec une numérotation affirmée. Sculptée à la main à Nice, elle associe un cadran en aluminium brossé noir mat au mouvement automatique Seiko NH70. Produite en 50 exemplaires numérotés de 42 mm, elle rend hommage aux gentlemen drivers et à une icône des 80's.",
+      "price": "299€",
+      "font": "Remarcle",
+      "label": "Nouveau",
+      "colors": [
+        {
+          "name": "Noir",
+          "image": "watches/iconic2/black.png"
+        },
+        {
+          "name": "Marron", 
+          "image": "watches/iconic2/brown.png"
+        }
+      ],
+      "bgVideo": "watches/iconic2/black.gif"
+    },
+    {
+      "id": 2,
+      "title": "Miami 67",
+      "description": "Inspirée par l'esprit NASCAR, mouvement squelette automatique.",
+      "descriptionLong": "Cette création d'exception revisite les codes de l'horlogerie de prestige avec une approche résolument moderne. Le bracelet en cuir pleine fleur sélectionné dans les plus prestigieuses tanneries européennes s'harmonise parfaitement avec le cadran aux finitions soleil. Chaque détail témoigne d'un art de vivre raffiné, de la couronne gravée aux index appliqués rhodiés. Une pièce rare destinée aux amateurs éclairés d'horlogerie d'art.",
+      "price": "299€",
+      "font": "Vipnagorgialla",
+      "colors": [
+        {
+          "name": "Default",
+          "image": "watches/miami67/default.png"
+        }
+      ],
+      "bgVideo": "watches/miami67/default.gif"
+    },
+    {
+      "id": 3,
+      "title": "Veloce II",
+      "description": "Design sportif inspiré des années 80, mouvement Seiko NH70.",
+      "descriptionLong": "L'Iconic II, inspirée des jantes Fuchs des années 80, affiche un style plus sportif avec une numérotation affirmée. Sculptée à la main à Nice, elle associe un cadran en aluminium brossé noir mat au mouvement automatique Seiko NH70. Produite en 50 exemplaires numérotés de 42 mm, elle rend hommage aux gentlemen drivers et à une icône des 80's.",
+      "price": "299€",
+      "font": "Nunito",
+      "colors": [
+        {
+          "name": "Default",
+          "image": "watches/veloce2/default.png"
+        }
+      ],
+      "bgVideo": "watches/veloce2/default.gif"
+    },
+    {
+      "id": 4,
+      "title": "GT France",
+      "description": "Inspirée par l'esprit NASCAR, mouvement squelette automatique.",
+      "descriptionLong": "Cette création d'exception revisite les codes de l'horlogerie de prestige avec une approche résolument moderne. Le bracelet en cuir pleine fleur sélectionné dans les plus prestigieuses tanneries européennes s'harmonise parfaitement avec le cadran aux finitions soleil. Chaque détail témoigne d'un art de vivre raffiné, de la couronne gravée aux index appliqués rhodiés. Une pièce rare destinée aux amateurs éclairés d'horlogerie d'art.",
+      "price": "299€",
+      "font": "Nunito",
+      "colors": [
+        {
+          "name": "Default",
+          "image": "watches/gtfrance/default.png"
+        }
+      ],
+      "bgVideo": "watches/gtfrance/default.gif"
+    },
+    {
+      "id": 5,
+      "title": "Heritage",
+      "description": "Inspirée par l'esprit NASCAR, mouvement squelette automatique.",
+      "descriptionLong": "Cette création d'exception revisite les codes de l'horlogerie de prestige avec une approche résolument moderne. Le bracelet en cuir pleine fleur sélectionné dans les plus prestigieuses tanneries européennes s'harmonise parfaitement avec le cadran aux finitions soleil. Chaque détail témoigne d'un art de vivre raffiné, de la couronne gravée aux index appliqués rhodiés. Une pièce rare destinée aux amateurs éclairés d'horlogerie d'art.",
+      "price": "299€",
+      "font": "Nunito",
+      "colors": [
+        {
+          "name": "Default",
+          "image": "watches/heritage/default.png"
+        }
+      ],
+      "bgVideo": "watches/heritage/default.gif"
+    }
+  ]
+}

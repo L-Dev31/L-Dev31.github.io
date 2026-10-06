@@ -1,0 +1,121 @@
+[
+    "AI.PA","AIR.PA","ALO.PA","MT.PA","CS.PA","BNP.PA","EN.PA","CAP.PA","CA.PA",
+    "ACA.PA","SGO.PA","SAN.PA","DG.PA","BN.PA","ENGI.PA","EL.PA","ERF.PA",
+    "RMS.PA","KER.PA","LR.PA","MC.PA","ML.PA","OR.PA","ORA.PA","RI.PA",
+    "PUB.PA","RNO.PA","SAF.PA","SCR.PA","GLE.PA","STLAP.PA","STMPA.PA",
+    "SU.PA","TEP.PA","HO.PA","TTE.PA","URW.PA","VIE.PA","DEC.PA","VIV.PA",
+    "WLN.PA","DSY.PA","SOP.PA","AM.PA","ATO.PA","SW.PA","RXL.PA","RCO.PA",
+    "TKO.PA","DBG.PA","AKE.PA","GTT.PA","SOI.PA","NK.PA","COFA.PA","FGR.PA",
+    "ERA.PA","IPH.PA","NEX.PA","UBI.PA","LI.PA","GFC.PA",
+    "MMB.PA","RF.PA","GET.PA","BON.PA","VLA.PA","MERY.PA","TFI.PA",
+    "ATOS.PA",
+    "BIG.PA","CRBP2.PA","CO.PA",
+    "ELIS.PA","FNAC.PA","INEA.PA",
+    "LOUP.PA","MAAT.PA","MGIC.PA","OSE.PA","PARRO.PA",
+    "SFCA.PA","SLCO.PA",
+    "SPIE.PA","VLTSA.PA","XFAB.PA",
+    "SESG.PA","EDEN.PA","PCAS.PA","ABCA.PA","ALLOG.PA",
+    "METEX.PA","AURE.PA","CROS.PA",
+    "FIPP.PA","FNTS.PA",
+    "JCDX.PA",
+    "MBWS.PA",
+    "ODET.PA",
+    "POXEL.PA",
+    "SFPI.PA","SHOS.PA",
+    "TCFP.PA",
+    
+    "WAGA.PA","ZCCM.PA",
+
+    "ASML.AS","INGA.AS","HEIA.AS","PHIA.AS","REN.AS","NN.AS","AKZA.AS",
+    "ABN.AS","RAND.AS","WKL.AS","LIGHT.AS","IMCD.AS",
+    "BESI.AS","SBMO.AS","NSI.AS","FLOW.AS","BRNL.AS",
+    "ACOMO.AS","AGN.AS","AH.AS","AJAX.AS","ALFEN.AS",
+    "AMG.AS","APAM.AS","ASM.AS",
+    "BEVER.AS",
+    "BFIT.AS",
+    "CCEP.AS","CMCOM.AS","CTPNV.AS",
+    "ECMPA.AS","FAGR.AS",
+    "FUR.AS","HAL.AS","HEIJM.AS",
+    "HES.AS","HYDRA.AS","INPST.AS","JDEP.AS",
+    "KENDR.AS","KPN.AS",
+    
+    "OCI.AS",
+    "PHARM.AS","PSH.AS",
+    
+    
+    
+    "UNIT4.AS","UMG.AS",
+    
+    
+
+    "ABI.BR","COLR.BR","ACKB.BR","AGS.BR",
+    "BELG.BR",
+    "DECB.BR",
+    "DELB.BR","DIE.BR","ELI.BR",
+    "EXM.BR","GBLB.BR",
+    "GIMV.BR",
+    
+    "KBC.BR","MELE.BR","MIKO.BR",
+    "ONTEX.BR",
+    "PROX.BR",
+    "SOF.BR","SOLB.BR",
+    "TESB.BR","THEB.BR",
+    "TINC.BR","UCB.BR","UMI.BR",
+    "WDP.BR","WEB.BR","XIOR.BR",
+
+    "EDP.LS","GALP.LS","JMT.LS","NOS.LS","BCP.LS","EDPR.LS",
+    "ALTR.LS","CTT.LS","EGL.LS","IBS.LS",
+    "PHR.LS",
+    "SEM.LS","SLBEN.LS","TDSA.LS",
+    
+    
+    
+
+    "EQNR.OL","DNB.OL","TEL.OL","YAR.OL","ORK.OL","NHY.OL",
+    "MOWI.OL","SUBC.OL","SALM.OL","TGS.OL","PGS.OL",
+    "AKER.OL","AKSO.OL","BAKKA.OL","BWLPG.OL",
+    "CECO.OL","ELK.OL","ENTRA.OL",
+    "FRO.OL","GJF.OL",
+    "HAUTO.OL","HNA.OL","IDEX.OL",
+    "KIT.OL","LINK.OL",
+    "MPCC.OL","NAPA.OL","NAVA.OL","NEL.OL","NEXT.OL",
+    
+    "OKEA.OL","OTL.OL","PCIB.OL",
+    "POL.OL","PROT.OL","PRSO.OL","REACH.OL","RECSI.OL",
+    "ROGG.OL","SAGA.OL","SATS.OL",
+    "SKUE.OL","SOFF.OL",
+    "SPOL.OL",
+    "TEKNA.OL","TOM.OL",
+    "VVL.OL",
+    "ZAL.OL",
+
+    "ENI.MI","ENEL.MI","UCG.MI","ISP.MI","TIT.MI",
+    "PRY.MI","BMED.MI","A2A.MI","AMP.MI","AZM.MI",
+    "BPE.MI",
+    "CALT.MI","COP.MI","CPR.MI",
+    "DAN.MI","DIT.MI",
+    "ECK.MI","ELC.MI","ERG.MI",
+    "FBK.MI",
+    "FILA.MI",
+    
+    
+    "GVS.MI","HER.MI","IGD.MI",
+    "INS.MI","IRE.MI","IT.MI",
+    "ITW.MI",
+    "MARR.MI","MB.MI",
+    
+    "MONC.MI",
+    "NTV.MI",
+    "PINF.MI",
+    "PIRC.MI",
+    "PST.MI","RACE.MI","RCS.MI",
+    "REVO.MI",
+    "SERI.MI","SES.MI",
+    "SFT.MI","SGC.MI","SIT.MI","SOL.MI",
+    "STS.MI",
+    "TBS.MI","TEN.MI","TGBT.MI",
+    "TPRO.MI",
+    "UNI.MI",
+    "UST.MI","VIM.MI",
+    "VNT.MI","WBD.MI"
+]

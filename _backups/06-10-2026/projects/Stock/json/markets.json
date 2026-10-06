@@ -1,0 +1,163 @@
+[
+    {
+        "id": "nasdaq",
+        "name": "NASDAQ",
+        "logo": "img/market/nasdaq.svg",
+        "type": "screener",
+        "tvRegion": "america",
+        "tvExchange": "NASDAQ",
+        "screeners": ["day_gainers", "day_losers", "most_actives", "undervalued_growth_stocks", "growth_technology_stocks", "undervalued_large_caps", "aggressive_small_caps", "small_cap_gainers"],
+        "filterMarket": "nasdaq",
+        "exchanges": ["NMS", "NGS", "NCM", "NASDAQ"]
+    },
+    {
+        "id": "nyse",
+        "name": "NYSE",
+        "logo": "img/market/nyse.svg",
+        "type": "screener",
+        "tvRegion": "america",
+        "tvExchange": "NYSE",
+        "screeners": ["day_gainers", "day_losers", "most_actives", "undervalued_growth_stocks", "growth_technology_stocks", "undervalued_large_caps", "aggressive_small_caps", "small_cap_gainers"],
+        "filterMarket": "nyse",
+        "exchanges": ["NYQ", "NYSE", "NYS", "PCX", "ASE"]
+    },
+    {
+        "id": "euronext",
+        "name": "Euronext",
+        "logo": "img/market/euronext.svg",
+        "type": "index",
+        "tvRegion": "france",
+        "tvExchange": "EURONEXT",
+        "indices": ["^FCHI", "^SBF120"],
+        "exchanges": ["PAR", "EPA", "AMS", "BRU", "LIS"]
+    },
+    {
+        "id": "lse",
+        "name": "London Stock Exchange",
+        "logo": "img/market/lse.svg",
+        "type": "index",
+        "tvRegion": "uk",
+        "tvExchange": "LSE",
+        "indices": ["^FTSE", "^FTMC"],
+        "exchanges": ["LSE", "LON", "L"]
+    },
+    {
+        "id": "xetra",
+        "name": "Deutsche Börse",
+        "logo": "img/market/xetra.svg",
+        "type": "index",
+        "tvRegion": "germany",
+        "tvExchange": "XETR",
+        "indices": ["^GDAXI", "^MDAXI"],
+        "exchanges": ["GER", "FRA", "BER", "MUN", "STU", "HAM", "HAN", "DUS", "XETRA", "DE"]
+    },
+    {
+        "id": "six",
+        "name": "SIX Swiss Exchange",
+        "logo": "img/market/six.svg",
+        "type": "index",
+        "tvRegion": "switzerland",
+        "tvExchange": "SIX",
+        "indices": ["^SSMI"],
+        "exchanges": ["SWI", "SW"]
+    },
+    {
+        "id": "tse",
+        "name": "Tokyo Stock Exchange",
+        "logo": "img/market/tse.svg",
+        "type": "index",
+        "tvRegion": "japan",
+        "tvExchange": "TSE",
+        "indices": ["^N225"],
+        "exchanges": ["JPX", "TOK", "T"]
+    },
+    {
+        "id": "hkex",
+        "name": "Hong Kong Stock Exchange",
+        "logo": "img/market/hkex.svg",
+        "type": "index",
+        "tvRegion": "hongkong",
+        "tvExchange": "HKEX",
+        "indices": ["^HSI"],
+        "exchanges": ["HKG", "HK"]
+    },
+    {
+        "id": "sse",
+        "name": "Shanghai Stock Exchange",
+        "logo": "img/market/sse.png",
+        "type": "index",
+        "tvRegion": "china",
+        "tvExchange": "SSE",
+        "indices": ["000001.SS"],
+        "exchanges": ["SHH", "SS"]
+    },
+    {
+        "id": "szse",
+        "name": "Shenzhen Stock Exchange",
+        "logo": "img/market/szse.svg",
+        "type": "index",
+        "tvRegion": "china",
+        "tvExchange": "SZSE",
+        "indices": ["399001.SZ"],
+        "exchanges": ["SHZ", "SZ"]
+    },
+    {
+        "id": "tsx",
+        "name": "Toronto Stock Exchange",
+        "logo": "img/market/tsx.svg",
+        "type": "index",
+        "tvRegion": "canada",
+        "tvExchange": "TSX",
+        "indices": ["^GSPTSE"],
+        "exchanges": ["TOR", "TO", "CNQ"]
+    },
+    {
+        "id": "asx",
+        "name": "Australian Securities Exchange",
+        "logo": "img/market/asx.png",
+        "type": "index",
+        "tvRegion": "australia",
+        "tvExchange": "ASX",
+        "indices": ["^AXJO"],
+        "exchanges": ["ASX", "AX"]
+    },
+    {
+        "id": "nse",
+        "name": "National Stock Exchange of India",
+        "logo": "img/market/nse.svg",
+        "type": "index",
+        "tvRegion": "india",
+        "tvExchange": "NSE",
+        "indices": ["^NSEI"],
+        "exchanges": ["NSI", "NS"]
+    },
+    {
+        "id": "bse",
+        "name": "Bombay Stock Exchange",
+        "logo": "img/market/bse.svg",
+        "type": "index",
+        "tvRegion": "india",
+        "tvExchange": "BSE",
+        "indices": ["^BSESN"],
+        "exchanges": ["BSE", "BO"]
+    },
+    {
+        "id": "krx",
+        "name": "Korea Exchange",
+        "logo": "img/market/krx.svg",
+        "type": "index",
+        "tvRegion": "korea",
+        "tvExchange": "KRX",
+        "indices": ["^KS11"],
+        "exchanges": ["KSC", "KOE", "KS", "KQ"]
+    },
+    {
+        "id": "crypto",
+        "name": "Crypto",
+        "logo": "img/market/crypto.png",
+        "type": "screener",
+        "screeners": ["all_cryptocurrencies_us"],
+        "filterMarket": "crypto",
+        "exchanges": ["CCC", "CCY"]
+    }
+]

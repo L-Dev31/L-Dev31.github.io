@@ -1,0 +1,74 @@
+[
+  {
+    "symbol": "TCSIF",
+    "ticker": "AL2SI.PA",
+    "name": "2CRSI",
+    "isin": "FR0013341781",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity"
+  },
+  {
+    "symbol": "ALUNT",
+    "ticker": "ALUNT.PA",
+    "name": "UNITI",
+    "isin": "FR0010342608",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity"
+  },
+  {
+    "symbol": "BLC",
+    "ticker": "BLC.PA",
+    "name": "Bastide Le Confort Médical",
+    "isin": "",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity"
+  },
+  {
+    "symbol": "LBIRD",
+    "ticker": "LBIRD.PA",
+    "name": "Lumibird",
+    "isin": "FR0000038242",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity"
+  },
+  {
+    "symbol": "INF",
+    "ticker": "INF.PA",
+    "name": "Infotel SA",
+    "isin": "FR0000071797",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity"
+  },
+  {
+    "symbol": "AAPL",
+    "ticker": "AAPL",
+    "name": "Apple Inc.",
+    "isin": "US0378331005",
+    "country": "US",
+    "currency": "USD",
+    "type": "equity"
+  },
+  {
+    "symbol": "DCAM",
+    "ticker": "DCAM.PA",
+    "name": "Amundi PEA Monde (MSCI World)",
+    "isin": "",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity"
+  },
+  {
+    "symbol": "ALODC",
+    "ticker": "ALODC.PA",
+    "name": "Omer-Decugis & Cie",
+    "isin": "FR0014003T71",
+    "country": "FR",
+    "currency": "EUR",
+    "type": "equity"
+  }
+]

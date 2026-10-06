@@ -1,0 +1,152 @@
+{
+  "metadata": {
+    "subject": "maths",
+    "version": "2.0",
+    "totalChapters": 5,
+    "totalVideos": 15
+  },
+  "chaptersVideos": [
+    {
+      "id": "algebre-geometrie",
+      "title": "Algèbre et géométrie",
+      "description": "Vidéos sur l'algèbre et la géométrie vectorielle",
+      "videos": [
+        {
+          "id": 101,
+          "title": "Combinatoire et dénombrement",
+          "url": "https://www.youtube.com/watch?v=Cb-jNj-RyBE&t=8s",
+          "channel": "Les génies des sciences"
+        },
+        {
+          "id": 102,
+          "title": "Manipulation des vecteurs, droites et plans",
+          "url": "https://www.youtube.com/watch?v=EoT48VtnUJ4",
+          "channel": "Yvan Monka"
+        },
+        {
+          "id": 103,
+          "title": "Orthogonalité et distances dans l'espace",
+          "url": "https://www.youtube.com/watch?v=aostYZK5jkE",
+          "channel": "Yvan Monka"
+        },
+        {
+          "id": 104,
+          "title": "Représentations paramétriques et équations cartésiennes",
+          "url": "https://www.youtube.com/watch?v=naOM6YG6DJc",
+          "channel": "Yvan Monka"
+        }
+      ]
+    },
+    {
+      "id": "analyse",
+      "title": "Analyse",
+      "description": "Vidéos sur l'analyse mathématique",
+      "videos": [
+        {
+          "id": 201,
+          "title": "Les suites",
+          "url": "https://www.youtube.com/watch?v=QNyxESToCP8",
+          "channel": "Le génie des Maths"
+        },
+        {
+          "id": 202,
+          "title": "Limites des fonctions",
+          "url": "https://www.youtube.com/watch?v=wV_V1EiI3eI",
+          "channel": "Hedacademy"
+        },
+        {
+          "id": 203,
+          "title": "La dérivation",
+          "url": "https://www.youtube.com/watch?v=XAgdHblbajE",
+          "channel": "Yvan Monka"
+        },
+        {
+          "id": 204,
+          "title": "Continuité des fonctions d'une variable réelle",
+          "url": "https://www.youtube.com/watch?v=9SSEUoyHh2s",
+          "channel": "Yvan Monka"
+        },
+        {
+          "id": 205,
+          "title": "Logarithmes Népériens",
+          "url": "https://www.youtube.com/watch?v=VJns0RfVWGg",
+          "channel": "Yvan Monka"
+        },
+        {
+          "id": 206,
+          "title": "Fonctions sinus et cosinus",
+          "url": "https://www.youtube.com/watch?v=OnBW3Rl2ipc",
+          "channel": "Mathrix"
+        },
+        {
+          "id": 207,
+          "title": "Les Primitives",
+          "url": "https://www.youtube.com/watch?v=bQ-eS1zZCdw",
+          "channel": "Yvan Monka"
+        },
+        {
+          "id": 208,
+          "title": "Equations différentielles",
+          "url": "https://www.youtube.com/watch?v=qHF5kiDFkW8",
+          "channel": "Yvan Monka"
+        },
+        {
+          "id": 209,
+          "title": "Calcul intégral",
+          "url": "https://www.youtube.com/watch?v=utM8TKG90r8",
+          "channel": "Hedacademy"
+        }
+      ]
+    },
+    {
+      "id": "probabilites",
+      "title": "Probabilités",
+      "description": "Vidéos sur les probabilités et statistiques",
+      "videos": [
+        {
+          "id": 301,
+          "title": "Succession d'épreuves indépendantes",
+          "url": "https://www.youtube.com/watch?v=Pz9VCp-Rsnk",
+          "channel": "Yvan Monka"
+        },
+        {
+          "id": 302,
+          "title": "Loi Binomiale",
+          "url": "https://www.youtube.com/watch?v=xMmfPUoBTtM&t=42s",
+          "channel": "Yvan Monka"
+        },
+        {
+          "id": 303,
+          "title": "Probabilités conditionnelles et indépendance",
+          "url": "https://www.youtube.com/watch?v=OPuoB5EuOAQ",
+          "channel": "Yvan Monka"
+        },
+        {
+          "id": 304,
+          "title": "Concentration, loi des grands nombres",
+          "url": "https://www.youtube.com/watch?v=_ZzxgjAxrt4",
+          "channel": "Yvan Monka"
+        }
+      ]
+    },
+    {
+      "id": "annexes",
+      "title": "Annexes techniques",
+      "description": "Guides et outils techniques",
+      "videos": [
+        {
+          "id": 401,
+          "title": "Guide Ti83 Premium CE #1",
+          "url": "https://www.youtube.com/watch?v=YmhgsEL4hU4",
+          "channel": "MaClasseTi"
+        },
+        {
+          "id": 402,
+          "title": "Guide Ti83 Premium CE #",
+          "url": "https://www.youtube.com/watch?v=8z1_uts0Ft0",
+          "channel": "MaClasseTi"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1878 @@
+[
+ {
+  "id": "50-1",
+  "cr": "Pyè ka manjé poul.",
+  "gloss": "Peter PROG eat chicken",
+  "en": "Peter is eating chicken.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-2",
+  "cr": "I pran liv-la.",
+  "gloss": "3SG take book-DEF",
+  "en": "He took the book.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-3",
+  "cr": "chyen a Wojé",
+  "gloss": "dog of Roger",
+  "en": "Roger's dog",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-5",
+  "cr": "on bèl kaz",
+  "gloss": "INDF beautiful house",
+  "en": "a beautiful house",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-6",
+  "cr": "on manman kaz",
+  "gloss": "INDF mother house",
+  "en": "a big house",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-7",
+  "cr": "on kaz sal",
+  "gloss": "INDF house dirty",
+  "en": "a dirty house",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-8",
+  "cr": "Achté'y ban mwen!",
+  "gloss": "buy.3SG for 1SG",
+  "en": "Buy it for me!",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-9",
+  "cr": "Yo adan chanm-la.",
+  "gloss": "3PL in room-DEF",
+  "en": "They are in the room.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-36",
+  "cr": "On moun kongné asi pòt-la.",
+  "gloss": "one person knock on door-DEF",
+  "en": "Someone knocked at the door.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-10",
+  "cr": "boug-lasa",
+  "gloss": "man-DEM",
+  "en": "this man",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-11",
+  "cr": "douz timoun",
+  "gloss": "twelve child",
+  "en": "twelve children",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-12",
+  "cr": "kabrit-la ou maré la",
+  "gloss": "goat-DEF 2SG tie up",
+  "en": "the goat that you tied up",
+  "type": "naturalistic written"
+ },
+ {
+  "id": "50-13",
+  "cr": "I tibwen cho.",
+  "gloss": "3SG a.little hot",
+  "en": "It is a little hot.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-14",
+  "cr": "I gran toubolman.",
+  "gloss": "3SG tall very",
+  "en": "He is very tall.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-15",
+  "cr": "Madanm-la bèl onpil.",
+  "gloss": "woman-DEF beautiful a.lot",
+  "en": "That woman is very beautiful.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-16",
+  "cr": "vwati-la",
+  "gloss": "car-DEF",
+  "en": "the car",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-17",
+  "cr": "on fanm",
+  "gloss": "INDF woman",
+  "en": "a woman",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-18",
+  "cr": "Jòj souvan k'ay Bastè.",
+  "gloss": "George often go Basse-Terre",
+  "en": "George often goes to Basse-Terre.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-19",
+  "cr": "Jòj toujou k'ay Bastè.",
+  "gloss": "George always go Basse-Terre",
+  "en": "George always goes to Basse-Terre.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-20",
+  "cr": "Jòj k'ay Bastè souvan.",
+  "gloss": "George HAB.go Basse-Terre often",
+  "en": "George often goes to Basse-Terre.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-21",
+  "cr": "Jòj ka bwè onlo.",
+  "gloss": "George HAB drink a.lot",
+  "en": "George drinks a lot.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-22",
+  "cr": "Ola ou yé?",
+  "gloss": "where 2SG be",
+  "en": "Where are you?",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-23",
+  "cr": "Ki koté ou té yé?",
+  "gloss": "which place 2SG PST be",
+  "en": "Where were you?",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-24",
+  "cr": "Ou té ki koté?",
+  "gloss": "2SG PST which place",
+  "en": "Where were you?",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-25",
+  "cr": "I pati.",
+  "gloss": "3SG leave",
+  "en": "He/she left.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-26",
+  "cr": "Nou ay Goubè.",
+  "gloss": "1PL go Gourbeyre",
+  "en": "We went to Gourbeyre.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-27",
+  "cr": "an pati / ou pati / i pati / nou pati / zòt pati / yo pati",
+  "gloss": "I leave   you leave   he/she leave   we leave   you leave   they leave",
+  "en": "I left / you left / he, she left / we left / you left / they left",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-28",
+  "cr": "Mwen ka pati. ~ An ka pati.",
+  "gloss": "1SG PROG leave   1SG PROG leave",
+  "en": "I am leaving.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-29",
+  "cr": "Mwen, an ka pati.",
+  "gloss": "1SG 1SG PROG leave",
+  "en": "Me, I am leaving.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-30",
+  "cr": "Ou ni chans.",
+  "gloss": "2SG have luck",
+  "en": "You are lucky.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-31",
+  "cr": "Ki koté ou yé?",
+  "gloss": "which place 2SG be",
+  "en": "Where are you?",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-32",
+  "cr": "Ki jan a'w?",
+  "gloss": "which way PREP.1SG",
+  "en": "How are you?",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-33",
+  "cr": "Ki tan i ké vini?",
+  "gloss": "what time/period 3SG FUT come",
+  "en": "When will he come?",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-34",
+  "cr": "Ki moun ki la?",
+  "gloss": "which person that there",
+  "en": "Who's there?",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-35",
+  "cr": "Mwen épi Jòj alé jwé boul.",
+  "gloss": "1SG and Georges go play ball",
+  "en": "Georges and I went to play football.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-37",
+  "cr": "An ni on biten ba'w.",
+  "gloss": "1SG have one thing for.2SG",
+  "en": "I have something for you.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-38",
+  "cr": "Sé timoun-la pati.",
+  "gloss": "PL child-DEF leave",
+  "en": "The children left.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-39",
+  "cr": "Sé tab-la sal.",
+  "gloss": "PL table-DEF dirty",
+  "en": "The tables are dirty.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-40",
+  "cr": "Sé madanm-lasa bèl.",
+  "gloss": "PL woman-DEM beautiful",
+  "en": "These women are beautiful.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-41",
+  "cr": "Jéra é zanmi a'y",
+  "gloss": "Gérard and friend PREP.3SG",
+  "en": "Gérard and his friends",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-42",
+  "cr": "Sé zozyo-la chapé.",
+  "gloss": "PL bird-DEF escape",
+  "en": "The birds flew away.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-43",
+  "cr": "Yo chapé.",
+  "gloss": "3PL escape",
+  "en": "They escaped/ flew away.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-44",
+  "cr": "kòlè~kòlè",
+  "gloss": "angry~angry",
+  "en": "very angry",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-45",
+  "cr": "wouj~wouj",
+  "gloss": "red~red",
+  "en": "very red",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-46",
+  "cr": "kolé~kolé",
+  "gloss": "close~close",
+  "en": "very close",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-47",
+  "cr": "on bra",
+  "gloss": "one arm",
+  "en": "an/one arm",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-48",
+  "cr": "Kaz-la gran.",
+  "gloss": "house-DEF big",
+  "en": "The house is big.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-49",
+  "cr": "Kaz-lasa gran.",
+  "gloss": "house-DEM big",
+  "en": "This/that house is big.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-50",
+  "cr": "on chyen",
+  "gloss": "one dog",
+  "en": "a dog",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-51",
+  "cr": "An ni on chyen. vs. An ni yonn.",
+  "gloss": "1SG have INDF dog vs. 1SG have one",
+  "en": "I have a/one dog.    vs.     I have one.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-52",
+  "cr": "Chyen pa ka fè chat.",
+  "gloss": "dog NEG HAB do cat",
+  "en": "Like father, like son (lit. Dogs do not give birth to cats).",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-53",
+  "cr": "Kaz-la bèl. vs. Kaz-la-sa bèl.",
+  "gloss": "house-DEF beautiful vs. house-DEF-DEM beautiful",
+  "en": "The house is beautiful.    vs.    This house is beautiful.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-54",
+  "cr": "Mwen enmé sila.",
+  "gloss": "1SG like DEM",
+  "en": "I like this one.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-55",
+  "cr": "Mwen enmé tala/sala.",
+  "gloss": "1SG like DEM",
+  "en": "I like that one.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-56",
+  "cr": "Mwen enmé madanm-lasa.",
+  "gloss": "1SG love woman-DEM",
+  "en": "I love this/that woman.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-57",
+  "cr": "kaz-lasa",
+  "gloss": "house-DEM",
+  "en": "this house / that house",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-58",
+  "cr": "yonn/prèmyé",
+  "gloss": "one/first",
+  "en": "one/first",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-59",
+  "cr": "dé/dézyèm",
+  "gloss": "two/second",
+  "en": "two/second",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-60",
+  "cr": "twa/twazyèm",
+  "gloss": "three/third",
+  "en": "three/third",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-61",
+  "cr": "senk moun",
+  "gloss": "five person",
+  "en": "five persons",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-62",
+  "cr": "senk chouval",
+  "gloss": "five horse",
+  "en": "five horses",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-63",
+  "cr": "timoun an mwen",
+  "gloss": "little.person PREP 1SG",
+  "en": "my child/children",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-64",
+  "cr": "kaz a Pyè",
+  "gloss": "house of Peter",
+  "en": "Peter's house",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-65",
+  "cr": "ta yo",
+  "gloss": "PREP they",
+  "en": "their",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-66",
+  "cr": "Sé tan mwen.",
+  "gloss": "be PREP 1SG",
+  "en": "It's mine.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-67",
+  "cr": "Liv an mwen pli gwo ki ta'y.",
+  "gloss": "book of 1SG more big than PREP.3SG",
+  "en": "My book is bigger than his/hers.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-68",
+  "cr": "on bèl gason",
+  "gloss": "INDF beautiful boy",
+  "en": "a beautiful boy",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-69",
+  "cr": "I pli bèl ki lòt-la",
+  "gloss": "3SG more beautiful than other-DEF",
+  "en": "He/she/it is more beautiful (than the other one).",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-70",
+  "cr": "I bèl pasé Wozali.",
+  "gloss": "3SG beautiful pass Rosalie",
+  "en": "She is more beautiful than Rosalie.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-71",
+  "cr": "I pli bèl pasé Wozali.",
+  "gloss": "3SG more beautiful passed Rosalie",
+  "en": "She is more beautiful than Rosalie.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-72",
+  "cr": "I gran pasé mwen.",
+  "gloss": "3SG tall pass 1SG",
+  "en": "He/she is taller than me.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-73",
+  "cr": "I pli gran ki mwen.",
+  "gloss": "3SG more tall than 1SG",
+  "en": "He/she is taller than me.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-77",
+  "cr": "I té toujou ka maché Bastè.",
+  "gloss": "3SG PST always PROG wander.about Basse-Terre",
+  "en": "He/she was always wandering about in Basse-Terre.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-78",
+  "cr": "I pa ka jan pléré.",
+  "gloss": "3SG NEG HAB never cry",
+  "en": "He/she never cries.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-89",
+  "cr": "I ké travay rèd.",
+  "gloss": "3SG FUT work hard",
+  "en": "He will work hard.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-75",
+  "cr": "Si zanndoli té bon vyann, i pa té ké ka tréné anlè tout bayè.",
+  "gloss": "if lizard PST.be good meat 3SG NEG PST MOOD PROG hang.around on all fences",
+  "en": "If lizard were good meat, it would not hang around on all fences.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-76",
+  "cr": "I té ka travay.",
+  "gloss": "3SG PST PROG work",
+  "en": "He/she was working.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-79",
+  "cr": "I ka dòmi.",
+  "gloss": "3SG PROG sleep",
+  "en": "He/she is sleeping.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-80",
+  "cr": "An ka sipozé i la.",
+  "gloss": "1SG IPFV suppose 3SG there",
+  "en": "I suppose he's there.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-81",
+  "cr": "I ka jwé foutbòl.",
+  "gloss": "3SG HAB play ball",
+  "en": "He plays football. / He is a football player.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-82",
+  "cr": "I ka vini dèmen.",
+  "gloss": "3SG FUT come tomorrow",
+  "en": "He/she is coming tomorrow.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-83",
+  "cr": "I ka enmé kontré-mwen anvil.",
+  "gloss": "3SG HAB like meet-1SG.OBJ in.town",
+  "en": "He likes to meet me in town.",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-84",
+  "cr": "I ka dòmi.",
+  "gloss": "3SG PROG sleep",
+  "en": "He/She is sleeping.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-85",
+  "cr": "An ka sipozé i la.",
+  "gloss": "1SG IPFV suppose 3SG there",
+  "en": "I suppose he is there.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-86",
+  "cr": "I Ø travay rèd.",
+  "gloss": "3SG Ø work hard",
+  "en": "He worked hard.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-87",
+  "cr": "I ka travay rèd.",
+  "gloss": "3SG PROG work hard",
+  "en": "He is working hard. / He works hard.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-88",
+  "cr": "I té ka travay rèd.",
+  "gloss": "3SG PST PROG work hard",
+  "en": "He was working hard. / He had been working hard.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-90",
+  "cr": "I pa té ka travay.",
+  "gloss": "3SG NEG PST PROG work",
+  "en": "He/she was not working.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-91",
+  "cr": "I pa ka travay.",
+  "gloss": "3SG NEG PROG work",
+  "en": "He/she is not working.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-92",
+  "cr": "I enmé.",
+  "gloss": "3SG love",
+  "en": "He loves. / He likes.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-93",
+  "cr": "I pati.",
+  "gloss": "3SG leave",
+  "en": "He left.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-94",
+  "cr": "An pati ka maché tou byen, mwen enki vwè on chyen douvan mwen.",
+  "gloss": "1SG leave PROG walk all good 1SG suddenly see INDF dog in.front.of 1SG",
+  "en": "I left and as I was walking idly, I suddenly saw a dog in front of me.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-95",
+  "cr": "An pé fè sa ba'w.",
+  "gloss": "1SG can do it for.2SG",
+  "en": "I can do it for you.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-96",
+  "cr": "An pé rivé a fè sa ba'w dèmen, mé sa pa sèten.",
+  "gloss": "1SG can arrive PREP do it for.2SG tomorrow but it NEG be.certain",
+  "en": "I will possibly do it for you tomorrow, but it is not certain.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-97",
+  "cr": "I pé vini dèmen, kon i pé pa vini osi.",
+  "gloss": "3SG can come tomorrow as 3SG can NEG come also",
+  "en": "He may come tomorrow, as well as he may not come.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-98",
+  "cr": "I pé ka manjé.",
+  "gloss": "3SG can PROG eat",
+  "en": "He may be eating.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-99",
+  "cr": "Sa pé.",
+  "gloss": "this may.be",
+  "en": "This may be.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-100",
+  "cr": "Chanté!",
+  "gloss": "sing",
+  "en": "Sing!",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-101",
+  "cr": "Pa chanté!",
+  "gloss": "NEG sing",
+  "en": "Don't sing!",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-102",
+  "cr": "Ou pa ka chanté!",
+  "gloss": "2SG NEG PROG sing",
+  "en": "You don't sing!",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-103",
+  "cr": "Chat ka manjé sourit.",
+  "gloss": "cat PROG eat mice",
+  "en": "Cats eat mice.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-104",
+  "cr": "I ka bwè kafé.",
+  "gloss": "3SG PROG boire café",
+  "en": "He/she is drinking coffee.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-105",
+  "cr": "I ka bwè.",
+  "gloss": "3SG PROG drink",
+  "en": "He/she is drinking.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-106",
+  "cr": "I ka bwè'y.",
+  "gloss": "3SG PROG boire.3SG",
+  "en": "He/she is drinking it.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-107",
+  "cr": "I ka bwè.",
+  "gloss": "3SG PROG boire",
+  "en": "He/she is drinking.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-108",
+  "cr": "An ba madanm-la liv-la.",
+  "gloss": "1SG give woman-DEF book-DEF",
+  "en": "I gave the woman the book.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-109",
+  "cr": "An pran liv-la.",
+  "gloss": "1SG take book-DEF",
+  "en": "I took the book.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-110",
+  "cr": "An ba Wojé on poul.",
+  "gloss": "1SG give Roger INDF chicken",
+  "en": "I gave Roger a chicken.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-111",
+  "cr": "Pyè ba Eliza on bo.",
+  "gloss": "Peter give Elisa INDF kiss",
+  "en": "Peter gave Elisa a kiss. OR: Peter kissed Elisa.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-112",
+  "cr": "An ka pòté fig ba papa.",
+  "gloss": "1SG PROG bring banana PREP father",
+  "en": "I am bringing some bananas to/for my father.",
+  "type": "elicited from speaker"
+ },
+ {
+  "id": "50-113",
+  "cr": "Nou manjé pen-bwa.",
+  "gloss": "1SG eat breadfruit",
+  "en": "We ate breadfruit.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-114",
+  "cr": "Asiparé, i malad.",
+  "gloss": "apparently 3SG ill",
+  "en": "It seems that he is ill.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-115",
+  "cr": "I ni onlo moun.",
+  "gloss": "3SG have much people",
+  "en": "There are a lot of people.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-116",
+  "cr": "Ni onlo moun.",
+  "gloss": "have much people",
+  "en": "There are a lot of people.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-117",
+  "cr": "Lapli ka tonbé.",
+  "gloss": "rain PROG fall",
+  "en": "It is raining.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-118",
+  "cr": "I ni mal tèt.",
+  "gloss": "3SG have pain head",
+  "en": "He/she's got a headache.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-119",
+  "cr": "Tèt a'y ka fè'y mal.",
+  "gloss": "head of.3SG PROG do.3SG hurt",
+  "en": "He/she's got a headache.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-120",
+  "cr": "Yo enmé gouyav.",
+  "gloss": "3PL like guavas",
+  "en": "They like guavas.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-121",
+  "cr": "Lapè pran mwen.",
+  "gloss": "fear take 1SG",
+  "en": "Fear overcame me.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-122",
+  "cr": "An pè.",
+  "gloss": "1SG afraid",
+  "en": "I am afraid.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-123",
+  "cr": "An koupé pen-la épi on kouto.",
+  "gloss": "1SG cut bread-DEF INS INDF knife",
+  "en": "I cut the bread with a knife.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-124",
+  "cr": "I pwan hach a-y koupé bwa.",
+  "gloss": "3SG take axe 3SG.POSS cut wood",
+  "en": "He cut the wood with the axe.",
+  "type": "elicited from speaker"
+ },
+ {
+  "id": "50-125",
+  "cr": "I ay Trinidad épi madanm a'y.",
+  "gloss": "3SG go Trinidad with wife PREP.3SG",
+  "en": "He went to Trinidad with his wife.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-126",
+  "cr": "I pran sa épi men a'y.",
+  "gloss": "3SG take it INS hand PREP.3SG",
+  "en": "He took it with his hands.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-127",
+  "cr": "Jòj épi Jéra ay péché.",
+  "gloss": "George with Gérard go fish",
+  "en": "George and Gérard went fishing.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-128",
+  "cr": "Jòj ay péché épi Jéra.",
+  "gloss": "George go fish with Gérard",
+  "en": "George went fishing with Gérard.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-129",
+  "cr": "Jòj é Jéra ay péché.",
+  "gloss": "George and Gérard go fish",
+  "en": "George and Gerad went fishing.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-130",
+  "cr": "Jòj ay péché é Jéra.",
+  "gloss": "George go fish with Gérard",
+  "en": "George went fishing with Gerard.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-131",
+  "cr": "Jòj èvè Jéra ay péché.",
+  "gloss": "George with Gérard go fish",
+  "en": "George  and Gerard went fishing.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-132",
+  "cr": "Jòj ay péché èvè Jéra.",
+  "gloss": "George go fish with Gérard",
+  "en": "George went fishing with Gerard.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-133",
+  "cr": "Mari épi Jan",
+  "gloss": "Mary with John",
+  "en": "Mary and John",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-134",
+  "cr": "Jan ka kongné tanbou épi Mari ka dansé.",
+  "gloss": "John PROG play drum and Mary PROG dance",
+  "en": "John is playing drum and Marie is dancing.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-135",
+  "cr": "Jan ka kongné tanbou é Mari ka dansé.",
+  "gloss": "John PROG play drum and Mary PROG dance",
+  "en": "John is playing drum and Marie is dancing.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-136",
+  "cr": "Jan ka kongné tanbou èvè Mari ka dansé.",
+  "gloss": "John PROG play drum and Mary PROG dance",
+  "en": "John is playing drum and Marie is dancing.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-137",
+  "cr": "Jak dòktè.",
+  "gloss": "Jack doctor",
+  "en": "Jack is a doctor.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-138",
+  "cr": "Mari pa dòktè, Mari enfirmyèz.",
+  "gloss": "Mary NEG doctor Mary nurse",
+  "en": "Mary is not a doctor, she is a nurse.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-139",
+  "cr": "Diana bèl.",
+  "gloss": "Diana beautiful",
+  "en": "Diana is beautiful.",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-140",
+  "cr": "Boul-la anba tab-la.",
+  "gloss": "ball-DEF under table-DEF",
+  "en": "The ball is under the table.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-141",
+  "cr": "I dòktè.",
+  "gloss": "3SG doctor",
+  "en": "He/she is a doctor.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-142",
+  "cr": "I anlè pon-la.",
+  "gloss": "3SG on bridge-DEF",
+  "en": "He/she is on the bridge.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-143",
+  "cr": "Mari ni on chat.",
+  "gloss": "Mary have one cat",
+  "en": "Mary has a cat.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-144",
+  "cr": "Ni manjè anlè tab-la.",
+  "gloss": "be food on table-DEF",
+  "en": "There is food on the table.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-145",
+  "cr": "Mari ni on kabrit.",
+  "gloss": "Mary have one goat",
+  "en": "Mary has a goat.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-148",
+  "cr": "An k'ay Bastè.",
+  "gloss": "1SG PROG.go Basse-Terre",
+  "en": "I am going to Basse-Terre.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-149",
+  "cr": "An sòti Lapwent.",
+  "gloss": "1SG come.back Pointe.à.Pitre",
+  "en": "I am coming back from Ponte-à-Pitre.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-146",
+  "cr": "An k'ay anba marché.",
+  "gloss": "1SG PROG.go under market",
+  "en": "I am going to the market.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-147",
+  "cr": "An sòti anba marché.",
+  "gloss": "1SG come.back under market",
+  "en": "I am coming back from the market/ I came back from the market.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-150",
+  "cr": "I bouré Pòl adan tou-la.",
+  "gloss": "3SG push Paul in hole-DEF",
+  "en": "He pushed Paul into the hole.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-151",
+  "cr": "Pòl adan tou-la.",
+  "gloss": "Paul in hole-DEF",
+  "en": "Paul is in the hole.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-152",
+  "cr": "I bouré Pòl alé adan tou-la.",
+  "gloss": "3SG push Paul go in hole-DEF",
+  "en": "He pushed Paul into the hole.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-153",
+  "cr": "I tiré Mari adan tou-la.",
+  "gloss": "3SG pull Mary in hole-DEF",
+  "en": "He pulled Mary out of the hole.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-154",
+  "cr": "Mari pa adan tou-la.",
+  "gloss": "Mary NEG in hole-DEF",
+  "en": "Marie is out of the hole.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-155",
+  "cr": "Mari adan tou-la.",
+  "gloss": "Mary in hole-DEF",
+  "en": "Mary is in the hole.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-156",
+  "cr": "I halé Mari vini andèwò a tou-la.",
+  "gloss": "3SG pull Mary come outside PREP hole-DEF",
+  "en": "He pulled Mary out of the hole.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-157",
+  "cr": "An voyé'y alé Lapwent.",
+  "gloss": "1SG send.3SG go Pointe-à-Pitre",
+  "en": "I sent it to Pointe-à-Pitre.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-158",
+  "cr": "Timoun-la té ka pléré, manman-y menné-y alé.",
+  "gloss": "child-DEF PST PROG cry mother-POSS take-it go",
+  "en": "The child cried, his mother took him along (away from the speaker).",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-159",
+  "cr": "I pran lenj a-y pann-li.",
+  "gloss": "3SG take cloth 3SG.POSS hang-3SG.OBJ",
+  "en": "She hung up her cloth.",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-160",
+  "cr": "I pwan vwati touché Lapwent.",
+  "gloss": "3SG take car arrive La.Pointe",
+  "en": "S/he went to La Pointe by car.",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-161",
+  "cr": "I maké on lèt ba Jòj.",
+  "gloss": "3SG write INDF letter give George",
+  "en": "He/She wrote a letter to George.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-162",
+  "cr": "Ijénie ka pòté mango ba Ijenn.",
+  "gloss": "Eugénie PROG bring mango to Eugène",
+  "en": "Eugénie is bringing the mangos to Eugène.",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-163",
+  "cr": "I ka débouyé'y.",
+  "gloss": "3SG PROG manage.3SG",
+  "en": "He does well.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-164",
+  "cr": "I ka débouyé kò a'y.",
+  "gloss": "3SG PROG manage body PREP.3SG",
+  "en": "He does well.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-165",
+  "cr": "I dépann kò a'y.",
+  "gloss": "3SG kill body PREP.3SG",
+  "en": "He killed himself.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-166",
+  "cr": "I ka gadé li-menm adan glas-la.",
+  "gloss": "3SG PROG look 3SG-EMPH in mirror-DEF",
+  "en": "She is looking at herself in the mirror.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-167",
+  "cr": "I ka gadé kò a'y adan glas-la. / I ka gadé'y adan glas-la.",
+  "gloss": "3SG PROG look body 3SG in mirror-DEF / 3SG PROG look.3SG in mirror-DEF",
+  "en": "She is looking at herself in the mirror.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-168",
+  "cr": "Sé Danyèl li-menm ki di mwen sa.",
+  "gloss": "be Daniel INTENS REL tell 1SG it",
+  "en": "Daniel himself told me about it.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-169",
+  "cr": "Yo ka gadé yo-menm.",
+  "gloss": "3PL PROG look 3PL-EMPH",
+  "en": "They are looking at themselves.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-170",
+  "cr": "Yonn ka gadé lòt.",
+  "gloss": "one PROG look other",
+  "en": "They are looking at each other.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-171",
+  "cr": "Yo bo.",
+  "gloss": "3PL kiss",
+  "en": "They kissed (each other).",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-172",
+  "cr": "Chanm-la ja baléyé.",
+  "gloss": "room-DEF already swept.up",
+  "en": "The room has already been swept up.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-173",
+  "cr": "Mwen konnèt on ti boutik ki ka vann bèbèl kréyòl.",
+  "gloss": "1SG know INDF little shop REL PROG sell fancy.jewels creole",
+  "en": "I know a little shop which sells creole fancy jewels.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-174",
+  "cr": "Sé madanm-la ka maré paké kann-la ka chanté.",
+  "gloss": "DEF.PL woman-DEF PROG tie package sugar.cane-DEF PROG sing",
+  "en": "The women who are tying the sugar cane packages are singing.",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-175",
+  "cr": "Sé madanm-la i ka maré paké kann-la ka chanté.",
+  "gloss": "DEF.PL woman-DEF RES PROG tie package surgar.cane-DEF PROG sing",
+  "en": "The women who are tying the sugar cane packages are singing.",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-176",
+  "cr": "Mi on bouké flè manman mwen ka voyé ba'w.",
+  "gloss": "here INDF bunch.of flowers mother 1SG.POSS PROG send for.2SG",
+  "en": "Here is a bunch of flowers which my mother sent to you.",
+  "type": "constructed by linguist"
+ },
+ {
+  "id": "50-177",
+  "cr": "Ektò vann flè ki Jènvyèv platné lanné pasé.",
+  "gloss": "Hector sell flower REL Geneviève plant year last",
+  "en": "Hector sold the flowers that Geneviève planted last year.",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-178",
+  "cr": "kouto-la ou ka sèvi épi'y la",
+  "gloss": "knife-DEF 2SG use cut with.3SG DET",
+  "en": "the knife you use (the knife with which you cut)",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-179",
+  "cr": "I di i ké vini.",
+  "gloss": "3SG say 3SG FUT come",
+  "en": "He said he will come.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-180",
+  "cr": "ou ka di yo pa'a ni tan travay",
+  "gloss": "2SG IPFV say 3PL NEG.IPFV have time work",
+  "en": "You say that they don't have time to work.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-181",
+  "cr": "Yo di-y konha nou kay bengné nou.",
+  "gloss": "3PL say-3SG like.that 1PL go bath 1PL",
+  "en": "They said to him we would take a bath.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-182",
+  "cr": "I di-mwen konmkwa i pé ké la jòd-la.",
+  "gloss": "3SG tell-1SG.OBJ COMP 3SG NEG.FUT FUT there day-DET",
+  "en": "He told me that he would not be there today.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-183",
+  "cr": "Jan di-mwen ki i ka pati.",
+  "gloss": "Jan tell-1SG.OBJ SUBORD 3SG PROG leave.",
+  "en": "Jan told me that he left.",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-184",
+  "cr": "An sav i ni rézon.",
+  "gloss": "1SG know 3SG be right",
+  "en": "I know she is right.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-185",
+  "cr": "fò savé kè sa ki ni sé kè la lari té baré",
+  "gloss": "have.to know that what that have be that there street PST block",
+  "en": "You should know that what happened was that the street was blocked there.",
+  "type": "unknown"
+ },
+ {
+  "id": "50-186",
+  "cr": "An vlé pati.",
+  "gloss": "1SG want leave",
+  "en": "I want to leave.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-187",
+  "cr": "An ka kwè ø i pwòpté chanm a'y.",
+  "gloss": "1SG PROG believe COMP 3SG clean room PREP.3SG",
+  "en": "I think he has cleaned his room.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-188",
+  "cr": "An vlé ø i pwòpté chanm a'y.",
+  "gloss": "1SG want COMP 3SG clean room PREP.3SG",
+  "en": "I want him to clean his room.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-189",
+  "cr": "Fini i fini, i chapé.",
+  "gloss": "finish 3SG finish 3SG escape",
+  "en": "As soon as he finished, he left.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-190",
+  "cr": "I pa manjé.",
+  "gloss": "3SG NEG eat",
+  "en": "He/she did not eat.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-191",
+  "cr": "Pyè pa vini.",
+  "gloss": "Peter NEG come",
+  "en": "Peter did not come.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-192",
+  "cr": "An pa vwè pon moun.",
+  "gloss": "1SG NEG see no person",
+  "en": "I didn't see anybody.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-193",
+  "cr": "I pati?",
+  "gloss": "3SG leave",
+  "en": "Has he left?",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-194",
+  "cr": "Es i pati?",
+  "gloss": "Q 3SG leave",
+  "en": "Did he leave?",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-195",
+  "cr": "Ou ka vin on?",
+  "gloss": "2SG IPFV come Q",
+  "en": "Do you come?",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-196",
+  "cr": "Papa ki fè kaz=la.",
+  "gloss": "father REL do house=DEF",
+  "en": "It is my father who built the house.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-197",
+  "cr": "Sé papa ki fè kaz=la.",
+  "gloss": "FOC father REL do house=DEF",
+  "en": "It is my father who built the house.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-199",
+  "cr": "Achté mwen achté='y.",
+  "gloss": "buy 1SG buy=3SG",
+  "en": "I did buy it.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-200",
+  "cr": "Bat Ijénie ka bat Ijenn.",
+  "gloss": "beat Ijénie PROG beat Ijenn",
+  "en": "It's beating what Ijénie does with Ijenn. OR: Ijénie is really beating Ijenn.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-201",
+  "cr": "Sé bat Ijéni ka bat Ijenn.",
+  "gloss": "FOC beat Ijéni PROG beat Ijenn",
+  "en": "It's beating which Ijéni does/is doing with Ijenn.",
+  "type": "constructed by author and approved by speaker"
+ },
+ {
+  "id": "50-202",
+  "cr": "Sé bat menm Ijéni ka bat Ijenn.",
+  "gloss": "FOC beat INTENS Ijéni PROG beat Ijenn",
+  "en": "It's really beating what Ijéni does/is doing with Ijenn.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-203",
+  "cr": "Mwen alé osi.",
+  "gloss": "1SG go too",
+  "en": "I went too.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-204",
+  "cr": "Mwen osi alé.",
+  "gloss": "1SG go too",
+  "en": "I went too.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-205",
+  "cr": "Diana o!",
+  "gloss": "Diana oh",
+  "en": "Hey Diana!",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-206",
+  "cr": "Wé Diana!",
+  "gloss": "oh Diana",
+  "en": "Hey Diana!",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-207",
+  "cr": "ts",
+  "gloss": "tsk",
+  "en": "(disapproval)",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-208",
+  "cr": "tsss",
+  "gloss": "tsk",
+  "en": "(irritation)",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-209",
+  "cr": "hm",
+  "gloss": "tsk",
+  "en": "(disgust/disdain)",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-210",
+  "cr": "An sav/savé.",
+  "gloss": "1SG know",
+  "en": "I know.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-211",
+  "cr": "dlo",
+  "gloss": "water",
+  "en": "water, tears",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-212",
+  "cr": "men",
+  "gloss": "hand",
+  "en": "hand",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-213",
+  "cr": "bra",
+  "gloss": "arm",
+  "en": "arm",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-214",
+  "cr": "dwèt",
+  "gloss": "finger",
+  "en": "finger",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-215",
+  "cr": "zòtèy",
+  "gloss": "toe",
+  "en": "toe",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-216",
+  "cr": "chivé",
+  "gloss": "hair",
+  "en": "hair/feather",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-217",
+  "cr": "pwèl",
+  "gloss": "feather",
+  "en": "feather",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-218",
+  "cr": "tann/tandé",
+  "gloss": "hear",
+  "en": "hear",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-219",
+  "cr": "santi",
+  "gloss": "smell",
+  "en": "to smell",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-220",
+  "cr": "vèr",
+  "gloss": "green",
+  "en": "green",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-221",
+  "cr": "blé",
+  "gloss": "blue",
+  "en": "blue",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-222",
+  "cr": "on fimèl-chyen",
+  "gloss": "INDF female-dog",
+  "en": "a female dog",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-223",
+  "cr": "on mal-chat",
+  "gloss": "INDF male-cat",
+  "en": "a tomcat",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-224",
+  "cr": "kras",
+  "gloss": "grime",
+  "en": "grime",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-225",
+  "cr": "klè",
+  "gloss": "bright",
+  "en": "bright",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-226",
+  "cr": "lò",
+  "gloss": "gold",
+  "en": "gold",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-227",
+  "cr": "bèl",
+  "gloss": "beautiful",
+  "en": "beautiful",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-228",
+  "cr": "kòn",
+  "gloss": "horn",
+  "en": "horn",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-229",
+  "cr": "sourit",
+  "gloss": "mouse",
+  "en": "mouse",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-230",
+  "cr": "lò",
+  "gloss": "gold",
+  "en": "gold",
+  "type": "constructed by native-speaker linguist"
+ },
+ {
+  "id": "50-4",
+  "cr": "zanmi an mwen",
+  "gloss": "friend of 3SG",
+  "en": "my friend",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-74",
+  "cr": "An ka travay.",
+  "gloss": "1SG PROG work",
+  "en": "I'm working.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-198",
+  "cr": "Ijéni menm ka bat Ijenn.",
+  "gloss": "Eugénie INTENS PROG beat Eugène",
+  "en": "It's Eugénie who is beating Eugène.",
+  "type": "naturalistic spoken"
+ },
+ {
+  "id": "50-231",
+  "cr": "",
+  "gloss": "",
+  "en": "hole",
+  "type": null
+ },
+ {
+  "id": "50-232",
+  "cr": "",
+  "gloss": "",
+  "en": "afraid",
+  "type": null
+ },
+ {
+  "id": "50-233",
+  "cr": "",
+  "gloss": "",
+  "en": "cow",
+  "type": null
+ },
+ {
+  "id": "50-234",
+  "cr": "",
+  "gloss": "",
+  "en": "sweet",
+  "type": null
+ },
+ {
+  "id": "50-235",
+  "cr": "",
+  "gloss": "",
+  "en": "punch",
+  "type": null
+ },
+ {
+  "id": "50-236",
+  "cr": "",
+  "gloss": "",
+  "en": "vigorous",
+  "type": null
+ },
+ {
+  "id": "50-237",
+  "cr": "",
+  "gloss": "",
+  "en": "cock",
+  "type": null
+ },
+ {
+  "id": "50-238",
+  "cr": "",
+  "gloss": "",
+  "en": "big, fat",
+  "type": null
+ },
+ {
+  "id": "50-239",
+  "cr": "",
+  "gloss": "",
+  "en": "hill",
+  "type": null
+ },
+ {
+  "id": "50-240",
+  "cr": "",
+  "gloss": "",
+  "en": "dare",
+  "type": null
+ },
+ {
+  "id": "50-241",
+  "cr": "",
+  "gloss": "",
+  "en": "champagne",
+  "type": null
+ },
+ {
+  "id": "50-242",
+  "cr": "",
+  "gloss": "",
+  "en": "line",
+  "type": null
+ },
+ {
+  "id": "50-243",
+  "cr": "",
+  "gloss": "",
+  "en": "false",
+  "type": null
+ },
+ {
+  "id": "50-244",
+  "cr": "",
+  "gloss": "",
+  "en": "true",
+  "type": null
+ },
+ {
+  "id": "50-245",
+  "cr": "",
+  "gloss": "",
+  "en": "blood",
+  "type": null
+ },
+ {
+  "id": "50-246",
+  "cr": "",
+  "gloss": "",
+  "en": "bone",
+  "type": null
+ },
+ {
+  "id": "50-247",
+  "cr": "",
+  "gloss": "",
+  "en": "hot",
+  "type": null
+ },
+ {
+  "id": "50-248",
+  "cr": "",
+  "gloss": "",
+  "en": "day",
+  "type": null
+ },
+ {
+  "id": "50-249",
+  "cr": "",
+  "gloss": "",
+  "en": "cockroach",
+  "type": null
+ },
+ {
+  "id": "50-250",
+  "cr": "",
+  "gloss": "",
+  "en": "pull",
+  "type": null
+ },
+ {
+  "id": "50-251",
+  "cr": "",
+  "gloss": "",
+  "en": "heavy",
+  "type": null
+ },
+ {
+  "id": "50-252",
+  "cr": "",
+  "gloss": "",
+  "en": "big foot",
+  "type": null
+ },
+ {
+  "id": "50-253",
+  "cr": "",
+  "gloss": "",
+  "en": "yes",
+  "type": null
+ },
+ {
+  "id": "50-254",
+  "cr": "",
+  "gloss": "",
+  "en": "oil",
+  "type": null
+ },
+ {
+  "id": "50-255",
+  "cr": "",
+  "gloss": "",
+  "en": "rice",
+  "type": null
+ },
+ {
+  "id": "50-256",
+  "cr": "",
+  "gloss": "",
+  "en": "can",
+  "type": null
+ },
+ {
+  "id": "50-257",
+  "cr": "",
+  "gloss": "",
+  "en": "expensive",
+  "type": null
+ },
+ {
+  "id": "50-258",
+  "cr": "",
+  "gloss": "",
+  "en": "not",
+  "type": null
+ },
+ {
+  "id": "50-259",
+  "cr": "",
+  "gloss": "",
+  "en": "bread",
+  "type": null
+ },
+ {
+  "id": "50-260",
+  "cr": "",
+  "gloss": "",
+  "en": "port",
+  "type": null
+ },
+ {
+  "id": "50-261",
+  "cr": "",
+  "gloss": "",
+  "en": "bridge",
+  "type": null
+ },
+ {
+  "id": "50-262",
+  "cr": "",
+  "gloss": "",
+  "en": "false",
+  "type": null
+ },
+ {
+  "id": "50-263",
+  "cr": "",
+  "gloss": "",
+  "en": "day",
+  "type": null
+ },
+ {
+  "id": "50-264",
+  "cr": "",
+  "gloss": "",
+  "en": "juce",
+  "type": null
+ },
+ {
+  "id": "50-265",
+  "cr": "",
+  "gloss": "",
+  "en": "egg",
+  "type": null
+ },
+ {
+  "id": "50-266",
+  "cr": "",
+  "gloss": "",
+  "en": "mouth",
+  "type": null
+ },
+ {
+  "id": "50-267",
+  "cr": "",
+  "gloss": "",
+  "en": "big foot",
+  "type": null
+ },
+ {
+  "id": "50-268",
+  "cr": "",
+  "gloss": "",
+  "en": "monday",
+  "type": null
+ }
+]

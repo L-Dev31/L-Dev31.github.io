@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AzurShield.fr | Achat</title>
+    <link rel="icon" href="images/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <style>
+        /* Ajouts spécifiques à la page d'achat si besoin */
+        .order-summary {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 24px rgba(44,102,110,0.08);
+            padding: 2rem;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+        .order-summary h2 {
+            color: var(--midnight-green);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        .order-summary-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .order-summary-table th, .order-summary-table td {
+            padding: 0.8rem 1rem;
+            text-align: left;
+        }
+        .order-summary-table th {
+            color: var(--caribbean-current);
+            font-size: 1.1rem;
+        }
+        .order-summary-table td {
+            background: #f7fafb;
+            border-radius: 8px;
+        }
+        .order-summary-total {
+            font-size: 1.3rem;
+            color: var(--midnight-green);
+            font-weight: bold;
+            text-align: right;
+            margin-top: 1.5rem;
+        }
+        .order-form {
+            margin-top: 2.5rem;
+        }
+        .order-form label {
+            font-weight: 600;
+            color: var(--midnight-green);
+        }
+        .order-form input, .order-form textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+        }
+        .order-form textarea {
+            min-height: 80px;
+        }
+        .order-form button {
+            width: 100%;
+            background: var(--midnight-green);
+            color: #fff;
+            border: none;
+            padding: 1rem 0;
+            border-radius: 999px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .order-form button:hover {
+            background: var(--caribbean-current);
+        }
+        .order-success {
+            background: #7be495;
+            color: #07393c;
+            padding: 1.2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 2rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-placeholder"></div>
+    <main>
+        <div class="order-summary" id="order-summary">
+            <h2>Récapitulatif de la commande</h2>
+            <table class="order-summary-table" id="order-summary-table">
+                <!-- JS: lignes produits -->
+            </table>
+            <div class="order-summary-total" id="order-summary-total"></div>
+        </div>
+        <form class="order-form" id="order-form">
+            <h2>Informations de livraison</h2>
+            <label for="name">Nom complet</label>
+            <input type="text" id="name" name="name" required>
+            <label for="address">Adresse</label>
+            <textarea id="address" name="address" required></textarea>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            <label for="phone">Téléphone</label>
+            <input type="tel" id="phone" name="phone" required>
+            <button type="submit">Valider la commande</button>
+        </form>
+        <div class="order-success" id="order-success" style="display:none;">Merci pour votre commande ! Un email de confirmation vous a été envoyé.</div>
+    </main>
+    <div id="footer-placeholder"></div>
+    <script src="js/layout.js"></script>
+    <script src="js/achat.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<div class="lesson-container">
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-database"></i>
+                1. Les listes (list)
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Définition
+                </div>
+                <p>Une <strong>liste</strong> est une structure de données <strong>ordonnée</strong> et <strong>modifiable</strong> qui peut contenir des éléments de types différents.</p>
+            </div>
+
+            <div class="code-block">
+# Création et manipulation de listes
+ma_liste = [1, 2, "hello", 3.14, True]
+nombres = [10, 20, 30, 40, 50]
+
+# Accès aux éléments (indexation)
+print(ma_liste[0])     # 1 (premier élément)
+print(ma_liste[-1])    # True (dernier élément)
+
+# Modification
+ma_liste[1] = "modifié"
+print(ma_liste)        # [1, 'modifié', 'hello', 3.14, True]
+            </div>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">Opérations essentielles</div>
+                <ul>
+                    <li><code>append(x)</code> : ajoute x à la fin <span class="complexity-badge">O(1)</span></li>
+                    <li><code>insert(i, x)</code> : insère x à l'index i <span class="complexity-badge">O(n)</span></li>
+                    <li><code>remove(x)</code> : supprime la première occurrence de x <span class="complexity-badge">O(n)</span></li>
+                    <li><code>pop(i)</code> : supprime et retourne l'élément à l'index i <span class="complexity-badge">O(n)</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-lock"></i>
+                2. Les tuples (tuple)
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Définition
+                </div>
+                <p>Un <strong>tuple</strong> est une structure de données <strong>ordonnée</strong> et <strong>immutable</strong> (non modifiable).</p>
+            </div>
+
+            <div class="code-block">
+# Création de tuples
+coordonnees = (3, 4)
+point = (10.5, 20.3, "origine")
+singleton = (42,)  # Attention à la virgule !
+
+# Accès (comme les listes)
+x, y = coordonnees  # Déballage (unpacking)
+print(f"x = {x}, y = {y}")
+
+# Tuples immuables
+# coordonnees[0] = 5  # ERREUR !
+            </div>
+
+            <div class="example-box">
+                <div class="example-title">Cas d'usage typiques</div>
+                <ul>
+                    <li>Coordonnées géographiques : <code>(latitude, longitude)</code></li>
+                    <li>Retour multiple de fonction : <code>return (min_val, max_val)</code></li>
+                    <li>Clés de dictionnaire : <code>dico[(x, y)] = valeur</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-key"></i>
+                3. Les dictionnaires (dict)
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Définition
+                </div>
+                <p>Un <strong>dictionnaire</strong> est une structure de données qui associe des <strong>clés</strong> à des <strong>valeurs</strong>. Ordonné depuis Python 3.7.</p>
+            </div>
+
+            <div class="code-block">
+# Création et manipulation
+etudiant = {
+    "nom": "Dupont",
+    "age": 17,
+    "notes": [15, 18, 12],
+    "mention": True
+}
+
+# Accès et modification
+print(etudiant["nom"])           # "Dupont"
+etudiant["age"] = 18            # Modification
+etudiant["classe"] = "Terminale" # Ajout
+
+# Méthodes importantes
+print(etudiant.keys())          # dict_keys(['nom', 'age', ...])
+print(etudiant.values())        # dict_values(['Dupont', 18, ...])
+print(etudiant.items())         # dict_items([('nom', 'Dupont'), ...])
+            </div>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">Complexités importantes</div>
+                <ul>
+                    <li>Accès par clé : <span class="complexity-badge">O(1)</span></li>
+                    <li>Insertion/Suppression : <span class="complexity-badge">O(1)</span></li>
+                    <li>Recherche de valeur : <span class="complexity-badge">O(n)</span></li>
+                </ul>
+            </div>
+        </div>
+</div>

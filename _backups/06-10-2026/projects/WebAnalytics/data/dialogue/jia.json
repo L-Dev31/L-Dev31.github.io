@@ -1,0 +1,158 @@
+{
+  "_location": "jia",
+  "_comment": "ACTE I - Scene 6 : Cloture d'acte. Le passage ici DECLENCHE automatiquement la conclusion (selon branche dure/empathique), la lecon objectifs/ROI, la fissure Jia n°2, le carton de fin d'Acte I, et le set du flag 'acte2_ouvert' qui debloque tous les vrais interrogatoires de l'Acte II (Pascal en profondeur, plus tard Ina).",
+
+  "on_visit": [
+    {
+      "_comment": "Cloture Acte I - branche EMPATHIQUE (chaude). Marine ouverte, indices burnout + six mois en main.",
+      "requires_flag": "marine_ouverte",
+      "forbids_flag": "acte1_clos",
+      "once_flag": "acte1_clos",
+      "sequence": [
+        { "type": "line", "char": "jia",  "text": "Alors ?", "sprite": "angry" },
+        { "type": "line", "char": "will", "text": "Marine n'est pas votre saboteuse.", "sprite": "normal" },
+        { "type": "line", "char": "jia",  "text": "Vous avez passe une **journee** pour ME DIRE CA ?", "sprite": "angry" },
+        { "type": "line", "char": "will", "text": "J'ai passe une journee pour ne **pas** faire virer quelqu'un d'innocent du sabotage. Elle est coupable d'autre chose : elle depense mal parce qu'elle n'a jamais appris a **cadrer**. Et personne dans cette boite n'a pris le temps de le lui apprendre.", "sprite": "doubting" },
+        { "type": "line", "char": "jia",  "text": "~~...C'est une accusation contre moi, ca ?~~", "sprite": "normal" },
+        { "type": "line", "char": "will", "text": "C'est une **observation**. Vous lui avez dit « redresse ou je revois ton poste ». Vous ne lui avez pas dit « voila ce qu'on attend, voila comment je peux t'aider ». Ce n'est pas du management. C'est de la **sanction**.", "sprite": "normal" },
+        { "type": "line", "char": "jia",  "text": "Je ne suis **pas la personne en accusation** ici.", "sprite": "angry" },
+        { "type": "line", "char": "will", "text": "Pas encore.", "sprite": "doubting" },
+        { "type": "line", "char": "narrateur", "text": "Jia ne repond pas tout de suite. Sa main, sur la tasse de cafe, tremble legerement." },
+        { "type": "line", "char": "jia",  "text": "~~...Pascal vous attend. Bureau 8.~~", "sprite": "normal" },
+        { "type": "line", "char": "will", "text": "Avant ca. Lisez ca. Pas pour Marine. **Pour vous.**", "sprite": "normal" },
+
+        { "type": "set_flag", "flag": "jia_fissure_2" },
+
+        {
+          "type": "lesson",
+          "id": "lesson_objectifs_roi",
+          "intro": { "char": "will", "text": "Marine depense, Pascal rate sa home --- mais sans **objectifs clairs**, personne dans cette boite ne pouvait savoir ce qui comptait vraiment. Un objectif mal defini, c'est l'erreur avant toutes les autres. Voila comment en definir un qui serve a quelque chose.", "sprite": "doubting" },
+          "title": "Objectifs mesurables, KPI et ROI",
+          "blocks": [
+            { "type": "heading", "content": "Definir un bon objectif" },
+            { "type": "text", "content": "Un objectif analytique doit etre :" },
+            {
+              "type": "list",
+              "items": [
+                "**Clair** - formule sans ambiguite",
+                "**Mesurable** - relie a un indicateur chiffre",
+                "**Utile pour le business** - oriente decision",
+                "**Relie a une action observable** - pas un voeu pieux"
+              ]
+            },
+            { "type": "separator" },
+            { "type": "heading", "content": "Exemples d'objectifs digitaux" },
+            {
+              "type": "list",
+              "items": [
+                "Obtenir 100 telechargements de livre blanc",
+                "Generer 30 demandes de devis",
+                "Atteindre un taux de conversion de 2,5 %",
+                "Reduire le cout par lead de 20 %",
+                "Augmenter le panier moyen"
+              ]
+            },
+            { "type": "separator" },
+            { "type": "heading", "content": "Matrice Objectif / KPI / Outil / Decision" },
+            {
+              "type": "table",
+              "headers": ["Objectif business", "KPI principal", "Source", "Seuil", "Decision"],
+              "rows": [
+                ["Generer des leads",       "Formulaires envoyes",  "GA4 + CRM",          "50/mois", "Ameliorer landing page"],
+                ["Vendre en ligne",         "Taux de conversion e-com","GA4",             "2,5 %",   "Optimiser tunnel d'achat"],
+                ["Accroitre la notoriete",  "Sessions trafic organique","GA4 + Search Console","+15 %","Renforcer SEO"],
+                ["Augmenter l'engagement",  "Temps d'engagement moyen","GA4",             "+20 %",   "Revoir contenu"]
+              ]
+            },
+            { "type": "separator" },
+            { "type": "heading", "content": "Le ROI - Retour sur investissement" },
+            { "type": "text", "content": "Formule : **ROI = (Gain obtenu − Cout investi) / Cout investi × 100**" },
+            { "type": "text", "content": "Exemple : cout campagne 2 000 € - marge generee 5 000 € → **ROI = 150 %**" },
+            { "type": "note", "content": "Regarder des chiffres sans lien avec un objectif concret est l'erreur la plus frequente. Une donnee prend du sens uniquement reliee a une decision." }
+          ]
+        },
+
+        { "type": "set_flag", "flag": "acte1_clos" },
+        { "type": "set_flag", "flag": "acte2_ouvert" },
+        { "type": "goto", "goto": "_acte1_outro" }
+      ]
+    },
+
+    {
+      "_comment": "Cloture Acte I - branche DURE (froide). Marine fermee, pas d'indices burnout - on ferme l'acte plus seche.",
+      "requires_flag": "marine_fermée",
+      "forbids_flag": "acte1_clos",
+      "once_flag": "acte1_clos",
+      "sequence": [
+        { "type": "line", "char": "jia",  "text": "Alors ?", "sprite": "angry" },
+        { "type": "line", "char": "will", "text": "Marine n'est pas votre saboteuse. Elle est juste **mauvaise a son poste**. Elle ne le sait pas, elle ne l'admettra pas, et je n'aurai pas son aide pour la suite.", "sprite": "doubting" },
+        { "type": "line", "char": "jia",  "text": "Vous l'avez **brusquee**.", "sprite": "angry" },
+        { "type": "line", "char": "will", "text": "J'ai fait mon travail. Vous, vous avez votre part : elle depense mal parce qu'elle n'a jamais appris a **cadrer**. Et personne dans cette boite n'a pris le temps de le lui apprendre.", "sprite": "normal" },
+        { "type": "line", "char": "jia",  "text": "~~...C'est une accusation contre moi, ca ?~~", "sprite": "normal" },
+        { "type": "line", "char": "will", "text": "C'est une **observation**.", "sprite": "doubting" },
+        { "type": "line", "char": "narrateur", "text": "Jia ne repond pas tout de suite. Sa main, sur la tasse de cafe, tremble legerement." },
+        { "type": "line", "char": "jia",  "text": "~~...Pascal vous attend. Bureau 8.~~", "sprite": "normal" },
+        { "type": "line", "char": "will", "text": "Avant ca. Lisez ca. Pas pour Marine. **Pour vous.**", "sprite": "normal" },
+
+        { "type": "set_flag", "flag": "jia_fissure_2" },
+
+        {
+          "type": "lesson",
+          "id": "lesson_objectifs_roi",
+          "intro": { "char": "will", "text": "Marine depense, Pascal rate sa home --- mais sans **objectifs clairs**, personne dans cette boite ne pouvait savoir ce qui comptait vraiment. Un objectif mal defini, c'est l'erreur avant toutes les autres.", "sprite": "doubting" },
+          "title": "Objectifs mesurables, KPI et ROI",
+          "blocks": [
+            { "type": "heading", "content": "Definir un bon objectif" },
+            { "type": "text", "content": "Un objectif analytique doit etre :" },
+            {
+              "type": "list",
+              "items": [
+                "**Clair** - formule sans ambiguite",
+                "**Mesurable** - relie a un indicateur chiffre",
+                "**Utile pour le business** - oriente decision",
+                "**Relie a une action observable** - pas un voeu pieux"
+              ]
+            },
+            { "type": "separator" },
+            { "type": "heading", "content": "Matrice Objectif / KPI / Outil / Decision" },
+            {
+              "type": "table",
+              "headers": ["Objectif business", "KPI principal", "Source", "Seuil", "Decision"],
+              "rows": [
+                ["Generer des leads",       "Formulaires envoyes",  "GA4 + CRM",          "50/mois", "Ameliorer landing page"],
+                ["Vendre en ligne",         "Taux de conversion e-com","GA4",             "2,5 %",   "Optimiser tunnel d'achat"],
+                ["Accroitre la notoriete",  "Sessions trafic organique","GA4 + Search Console","+15 %","Renforcer SEO"],
+                ["Augmenter l'engagement",  "Temps d'engagement moyen","GA4",             "+20 %",   "Revoir contenu"]
+              ]
+            },
+            { "type": "separator" },
+            { "type": "heading", "content": "Le ROI" },
+            { "type": "text", "content": "Formule : **ROI = (Gain obtenu − Cout investi) / Cout investi × 100**" },
+            { "type": "note", "content": "Regarder des chiffres sans lien avec un objectif concret est l'erreur la plus frequente. Une donnee prend du sens uniquement reliee a une decision." }
+          ]
+        },
+
+        { "type": "set_flag", "flag": "acte1_clos" },
+        { "type": "set_flag", "flag": "acte2_ouvert" },
+        { "type": "goto", "goto": "_acte1_outro" }
+      ]
+    }
+  ],
+
+  "menu": {
+    "options": [
+      {
+        "_comment": "Stub Acte II - vide pour l'instant, sera enrichi quand l'Acte II sera redige.",
+        "text": "(En attente : Acte II)",
+        "id": "jia_placeholder_acte2",
+        "requires_flag": "acte1_clos",
+        "forbids_flag": "acte1_clos",
+        "sequence": []
+      }
+    ]
+  },
+
+  "characters_present": [
+    { "label": "Seo Ji-a", "key": "jia" }
+  ]
+}
