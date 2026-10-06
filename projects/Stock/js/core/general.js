@@ -4,6 +4,7 @@ import { setPositions as setNewsPositions, setupNewsSearch, startCardNewsAutoRef
 import '../terminal/terminal.js';
 import '../ui/explorer.js';
 import '../ai/assistant.js';
+import '../ui/country-picker.js';
 import '../ui/bank-picker.js';
 import { initCoach } from '../coach/coach.js';
 import { DEAD_ERROR_CODES, periodToDays, periodPhrase } from './constants.js';

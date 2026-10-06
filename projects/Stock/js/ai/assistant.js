@@ -14,9 +14,11 @@ import { TOOL_SPECS, checkToolCall, buildSystemPrompt, tidyAnswer, guessLanguage
 import { banksReady, allBanks, banksAsOf, currentBank, bankContext, orderFee, investmentCosts } from '../data/banks.js';
 import { termDetails, findTerm, plainText as plainTerms } from '../coach/explain.js';
 import { findSituations } from '../coach/situations.js';
+import { countryCode, countryName } from '../data/country.js';
 import { sentenceFeeder, watchMicrophoneLevel } from './voice/voice.js';
 import { canCall, voiceAvailability, VOICE_HEALTH_EVENT, createCallSpeaker, createCallListener, resetVoiceHealth } from './voice/voice-engine.js';
 import './voice/voice-settings.js';
+import { know, knowledgeReady } from './knowledge.js';
 
 const CHATS_KEY = 'nemeris_assistant_chats';
 const LEGACY_KEY = 'nemeris_assistant_chat';
@@ -393,9 +395,9 @@ async function costEstimate(a) {
         });
     } else out.note = 'The user has not chosen a bank: give no exact fee for them, and suggest choosing it in Settings › Profile › Your bank.';
     if (a.compare || !bank) {
-        const country = bank?.country || (LANG === 'fr' ? 'FR' : null);
+        const country = countryCode();
         out.cheapest_known = allBanks()
-            .filter(b => !country || b.country === country)
+            .filter(b => b.country === country || b.countries?.includes(country))
             .map(b => ({ bank: b.name, kind: b.kind, buy_fee: orderFee(b, amount, market) }))
             .filter(x => x.buy_fee != null)
             .sort((x, y) => x.buy_fee - y.buy_fee)
@@ -436,6 +438,7 @@ function systemPrompt(effort, replyLang = null) {
         cost: rows.reduce((a, r) => a + (r.cost || 0), 0),
         holdings: rows,
         bank: bankContext(),
+        country: { code: countryCode(), name: countryName(countryCode(), 'en') },
         noticed: coachNotes(),
         terms: Object.entries(TERMS).map(([key, t]) => `${key} (${t.title})`).join(', '),
     });
@@ -534,7 +537,7 @@ function recordFeedback(chatId, index, rating, correction = '') {
 
 function exportTraining() {
     const feedback = loadFeedback();
-    const system = 'You are Nemeris, the calm assistant of a personal investing app. Answer in plain words, use tools for every figure.';
+    const system = know('chat.training');
     const examples = feedback.filter(f => f.rating === 'up').map(f => ({ messages: [{ role: 'system', content: system }, ...f.conversation.filter(m => m.role !== 'tool').map(m => ({ role: m.role, content: m.content || '' }))] }));
     downloadText(`nemeris-assistant-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify({
         app: 'Nemeris', purpose: 'Improve the Nemeris assistant: give this file to Claude, or fine-tune a model with fine_tune_examples (OpenAI chat format).',
@@ -886,7 +889,7 @@ async function summarizeTranscript(messages) {
     if (!(await probeTask('assistant'))) throw new Error('no model');
     const res = await chat({
         task: 'assistant',
-        system: `Summarize this conversation excerpt in ${LANG === 'fr' ? 'French' : 'English'} in under 900 characters. Keep only durable facts: the user's goals and positions, decisions taken, numbers mentioned, and open questions. No greeting, no advice, just the dense facts.`,
+        system: know('chat.summary', { language: LANG === 'fr' ? 'French' : 'English' }),
         messages: [{ role: 'user', content: transcriptOf(messages) }],
         tools: [], effort: 'quick', temperature: 0.2,
     });
@@ -1723,6 +1726,7 @@ export async function send(text) {
     let ok = false;
     try {
         if (!(await probeTask('assistant'))) throw Object.assign(new Error(getTaskState('assistant').error || L('Choose a model for the assistant in Settings › AI.')), { kind: 'config' });
+        await knowledgeReady;
         ensureRequestActive();
         let answered = false;
         for (let i = 0; i < EFFORTS[effort].steps && !answered; i++) answered = await step(true);

@@ -1,4 +1,5 @@
 import { L, Ln } from '../i18n/i18n.js';
+import { know, knowledgeReady } from './knowledge.js';
 export const TASKS = {
     assistant: { label: 'Assistant', hint: L('Chats with you and acts in Nemeris'), type: 'llm' },
     research: { label: L('Stock opinions'), hint: L('Writes the AI opinion on each stock'), type: 'llm' },
@@ -984,7 +985,8 @@ export async function scoreTickers(rows, { signal, onProgress } = {}) {
             },
             required: ['scores'], additionalProperties: false,
         };
-        const system = 'Score each stock for its one-month outlook using only the supplied facts. Return one score per ID, with no duplicates. Scores range from 0 (very unattractive) to 100 (very attractive); 50 means mixed or neutral. Do not use outside knowledge.';
+        await knowledgeReady;
+        const system = know('screening');
         const batchSize = 20;
         for (let i = 0; i < rows.length; i += batchSize) {
             const batch = rows.slice(i, i + batchSize);

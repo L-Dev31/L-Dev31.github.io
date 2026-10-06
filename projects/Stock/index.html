@@ -420,6 +420,15 @@
                     </div>
                 </section>
 
+                <section class="panel country-panel" aria-labelledby="country-title">
+                    <div class="panel-head">
+                        <h2 class="panel-title" id="country-title">Your country</h2>
+                        <button class="btn btn-quiet" id="country-change" type="button">Change</button>
+                    </div>
+                    <p class="country-current" id="country-current"></p>
+                    <p class="meta">Your banks come first, and the AI follows your country's tax rules.</p>
+                </section>
+
                 <section class="panel bank-panel" aria-labelledby="bank-title">
                     <div class="panel-head">
                         <h2 class="panel-title" id="bank-title">Your bank</h2>
@@ -657,6 +666,18 @@
         <button class="bottom-nav-btn" id="bottom-nav-news"><i class="i i-news" aria-hidden="true"></i><span>News</span></button>
         <button class="bottom-nav-btn" id="bottom-nav-profile"><img src="img/icon/favicon.png" alt="" class="nav-photo profile-photo"><span>Profile</span></button>
     </nav>
+
+    <dialog class="sheet" id="country-sheet" aria-labelledby="country-sheet-title">
+        <div class="sheet-head">
+            <h2 class="sheet-title" id="country-sheet-title">Your country</h2>
+            <button class="icon-btn" type="button" data-close aria-label="Close"><i class="i i-close" aria-hidden="true"></i></button>
+        </div>
+        <label class="searchbar">
+            <i class="i i-search" aria-hidden="true"></i>
+            <input id="country-search" type="search" placeholder="Search a country" aria-label="Search a country" autocomplete="off">
+        </label>
+        <div class="bank-list" id="country-list"></div>
+    </dialog>
 
     <dialog class="sheet" id="bank-sheet" aria-labelledby="bank-sheet-title">
         <div class="sheet-head">

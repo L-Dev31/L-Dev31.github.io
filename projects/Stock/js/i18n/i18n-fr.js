@@ -1486,5 +1486,9 @@ export default {
     "To set up": "À configurer",
     "Good to know": "Bon à savoir",
     "All calm": "Tout va bien",
-    "Quick check": "Révision"
+    "Quick check": "Révision",
+    "Your country": "Ton pays",
+    "Your banks come first, and the AI follows your country's tax rules.": "Tes banques passent en premier, et l'IA suit les règles fiscales de ton pays.",
+    "Search a country": "Chercher un pays",
+    "No country found.": "Aucun pays trouvé."
 };

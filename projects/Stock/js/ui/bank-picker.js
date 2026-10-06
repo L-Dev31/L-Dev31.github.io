@@ -1,12 +1,11 @@
 // Settings › Profile › Your bank: a searchable list of banks and brokers by country, and its fees once chosen.
 import { getEl, el, icon } from '../core/utils.js';
 import { currencyCode } from '../core/state.js';
-import { L, LANG, LOCALE } from '../i18n/i18n.js';
+import { L, LOCALE } from '../i18n/i18n.js';
+import { countryCode, countryName } from '../data/country.js';
+import { flag } from './country-picker.js';
 import { banksReady, allBanks, banksAsOf, bankLogo, currentBank, chooseBank, saveCustomBank, orderFee, isEstimate, formatMoney } from '../data/banks.js';
 
-const countryName = code => {
-    try { return new Intl.DisplayNames([LOCALE], { type: 'region' }).of(code); } catch { return code; }
-};
 const KIND = { bank: L('Bank'), online: L('Online broker'), app: L('Investing app'), custom: L('Your own fees') };
 const money = formatMoney;
 const normalize = s => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
@@ -39,27 +38,27 @@ const search = getEl('bank-search');
 const list = getEl('bank-list');
 const customForm = getEl('bank-custom');
 
-// Countries in the language's own country first, then by name.
-function homeCountry() {
-    const chosen = currentBank();
-    if (chosen?.country) return chosen.country;
-    return LANG === 'fr' ? 'FR' : (navigator.language.split('-')[1] || 'US').toUpperCase();
-}
-
+// The user's country first, then the others by name. A broker that serves several countries
+// (countries: [...]) is listed under the user's country when it serves it, else under its own.
 function renderList() {
     const q = normalize(search.value.trim());
     const chosenId = currentBank()?.id;
+    const home = countryCode();
     const matches = allBanks().filter(b => !q || normalize(`${b.name} ${countryName(b.country)} ${b.country} ${(b.accounts || []).join(' ')}`).includes(q));
     const byCountry = new Map();
-    for (const b of matches) byCountry.set(b.country, [...(byCountry.get(b.country) || []), b]);
-    const home = homeCountry();
+    for (const b of matches) {
+        const where = b.countries?.includes(home) ? home : b.country;
+        byCountry.set(where, [...(byCountry.get(where) || []), b]);
+    }
     const countries = [...byCountry.keys()].sort((a, b) => (a === home ? -1 : b === home ? 1 : countryName(a).localeCompare(countryName(b), LOCALE)));
 
     list.replaceChildren();
     if (!matches.length) list.append(el('p', 'empty', L('No bank found. You can enter your fees yourself below.')));
     for (const code of countries) {
         const group = el('section', 'bank-group');
-        group.append(el('h3', 'bank-country', countryName(code)));
+        const title = el('h3', 'bank-country');
+        title.append(flag(code), countryName(code));
+        group.append(title);
         for (const bank of byCountry.get(code)) {
             const row = el('button', 'bank-row');
             row.type = 'button';

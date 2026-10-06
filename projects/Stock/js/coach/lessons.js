@@ -1,6 +1,6 @@
 // The ideas a new investor needs, each taught when a real situation calls for it:
 // one sentence to remember, a short explanation, an example with the user's numbers, and one check question.
-// Figures come from the sources listed in js/ai/ai-knowledge.js.
+// Figures come from the sources listed in knowledge/nemeris.md.
 import { L } from '../i18n/i18n.js';
 
 export const LESSONS = {

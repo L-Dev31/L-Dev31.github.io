@@ -10,6 +10,7 @@ import { handleImageAssetError } from '../data/assets.js';
 import { getEl, el, icon, formatCurrency, formatPct, showCard, termHtml } from '../core/utils.js';
 import { L, Ln, LANG, LOCALE } from '../i18n/i18n.js';
 import { currentBank, orderFee, isEstimate, marketFor, formatMoney } from '../data/banks.js';
+import { flagUrl } from '../data/country.js';
 
 export { initChart };
 
@@ -143,7 +144,7 @@ export function createCard(stock) {
     card.querySelector('.tk-sub-text').textContent = [stock.ticker || sym, countryName(stock.country)].filter(Boolean).join(' · ');
     const flag = card.querySelector('.flag');
     if (stock.country) {
-        flag.src = `img/flag/${stock.country.toLowerCase()}.png`;
+        flag.src = stock.country.length === 2 ? flagUrl(stock.country) : `img/flag/${stock.country.toLowerCase()}.png`;
         flag.onload = () => { flag.hidden = false; };
         flag.onerror = () => flag.remove();
     } else flag.remove();

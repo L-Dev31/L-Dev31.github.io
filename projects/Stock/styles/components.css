@@ -428,6 +428,10 @@ details.more > * + * + * { margin-top: 26px; }
     .sheet { width: 100%; max-width: none; max-height: 92vh; margin: auto 0 0; border-radius: var(--r-lg) var(--r-lg) 0 0; }
 }
 #bank-summary { display: grid; gap: 16px; }
+.flag-img { flex: none; width: 28px; height: 20px; border-radius: 3px; object-fit: cover; box-shadow: 0 0 0 1px var(--line); }
+.country-current { display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 500; color: var(--text); }
+.bank-country { display: flex; align-items: center; gap: 8px; }
+.bank-country .flag-img { width: 20px; height: 14px; }
 .trade-fee, .sim-costs { margin: 0; }
 
 /* A check question (coach and explainer). */
