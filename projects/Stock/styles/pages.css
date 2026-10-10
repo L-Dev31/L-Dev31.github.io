@@ -427,12 +427,12 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 .learn-node:nth-child(4n + 2) { translate: 90px; }
 .learn-node:nth-child(4n) { translate: -90px; }
 .learn-node button { font-family: var(--font); display: grid; justify-items: center; gap: 10px; max-width: 220px; padding: 0; border: 0; background: none; color: var(--text); font: inherit; font-size: 16px; font-weight: 700; text-align: center; cursor: pointer; }
-.learn-node button:disabled { color: var(--faint); cursor: default; }
+.learn-node button:disabled { opacity: 1; color: var(--muted); cursor: default; }
 .learn-dot { display: grid; place-items: center; width: 92px; height: 92px; border-radius: var(--r-circle); background: var(--world); color: #fff; font-size: 40px; box-shadow: 0 8px 0 color-mix(in srgb, var(--world) 55%, #000); transition: transform .15s; }
 .learn-node button:not(:disabled):hover .learn-dot { transform: translateY(-3px) scale(1.04); }
 .learn-node.is-boss .learn-dot { width: 120px; height: 120px; font-size: 54px; }
 .learn-node.is-next .learn-dot { outline: 6px solid color-mix(in srgb, var(--world) 38%, transparent); outline-offset: 7px; animation: pulse 2.2s ease-in-out infinite; }
-.learn-node button:disabled .learn-dot { background: var(--surface-3); color: var(--faint); box-shadow: none; }
+.learn-node button:disabled .learn-dot { background: color-mix(in srgb, var(--world) 22%, var(--surface)); color: color-mix(in srgb, var(--world) 55%, var(--surface)); box-shadow: none; }
 @keyframes pulse { 50% { outline-offset: 12px; outline-color: color-mix(in srgb, var(--world) 12%, transparent); } }
 .learn-stars, .learn-hearts { display: inline-flex; gap: 3px; color: var(--warn); }
 .learn-hearts { color: var(--neg); font-size: 22px; }
@@ -470,8 +470,8 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 /* Nemeris the teacher: the voice orb's soft shape, flat. Two uneven layers wave and turn against each other, and two big eyes blink and look around. */
 .teacher { position: relative; display: inline-flex; flex: none; align-items: center; justify-content: center; gap: 14%; width: 64px; aspect-ratio: 1; }
 .teacher::before, .teacher::after { content: ''; position: absolute; inset: 0; }
-.teacher::after { background: var(--world, var(--accent)); border-radius: 38% 62% 55% 45% / 55% 36% 64% 45%; animation: turn 14s linear infinite, wave 4.5s ease-in-out infinite; }
-.teacher::before { z-index: 1; background: rgb(255 255 255 / .25); border-radius: 60% 40% 38% 62% / 42% 60% 40% 58%; animation: turn 9s linear infinite reverse, wave2 3.4s ease-in-out infinite; }
+.teacher::after { z-index: 1; background: var(--world, var(--accent)); border-radius: 38% 62% 55% 45% / 55% 36% 64% 45%; animation: turn 14s linear infinite, wave 4.5s ease-in-out infinite; }
+.teacher::before { inset: -9%; background: color-mix(in srgb, var(--world, var(--accent)) 25%, transparent); border-radius: 60% 40% 38% 62% / 42% 60% 40% 58%; animation: turn 9s linear infinite reverse, wave2 3.4s ease-in-out infinite; }
 .teacher i { position: relative; z-index: 2; width: 17%; height: 26%; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 18%, #15121E 21%); animation: blink 5s infinite, look 9s ease-in-out infinite; }
 .teacher.is-happy { animation: hop .55s ease; }
 .teacher.is-oops { animation: shake .4s ease; }
