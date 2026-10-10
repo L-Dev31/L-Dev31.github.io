@@ -241,7 +241,7 @@ export function questionBox(q, { tries = 1, onMiss, onDone }) {
     return box;
 }
 
-/** The start of a level, on the Academy's card only: "Level 3 · World 1" fades in, then the level's name rises word by word. */
+/** The start of a level, over the main area: "Level 3 · World 1" fades in, then the level's name rises word by word. */
 function splash(level) {
     const box = el('div', 'learn-splash');
     const number = worlds().indexOf(world) + 1;
@@ -256,7 +256,8 @@ function splash(level) {
     const end = () => { box.classList.add('is-out'); setTimeout(() => box.remove(), 400); };
     box.addEventListener('click', end);
     setTimeout(end, 1300 + words.length * 180 + 1200);
-    card.append(box);
+    // The whole main area turns violet; the sidebar and the bottom bar are never touched.
+    document.querySelector('main.container').append(box);
 }
 
 /** The end of a level: its result big in the middle, Nemeris under it (jumping for joy on a perfect run), then the stars. */
