@@ -1443,11 +1443,8 @@ export default {
     "Not quite. Try another one.": "Pas tout à fait. Essaie une autre réponse.",
     "Right!": "Bravo !",
     "Not this time.": "Pas cette fois.",
-    "Watch the short video": "Regarder la courte vidéo",
-    "Video": "Vidéo",
     "Back to the map": "Retour à la carte",
     "Continue": "Continuer",
-    "See what happens": "Voir la suite",
     "Boss beaten!": "Boss vaincu !",
     "Level done!": "Niveau réussi !",
     "You beat {0}! Everything before it is now solid.": "Tu as battu {0} ! Tout ce qui précède est maintenant solide.",
@@ -1535,5 +1532,6 @@ export default {
     "Your country's: {0}": "Celle de ton pays : {0}",
     "Count pay, grants and regular help from family. A typical income (country: {0}) is about {1} a month.": "Compte ton salaire, tes bourses et l'aide régulière de ta famille. Un revenu typique (pays : {0}) tourne autour de {1} par mois.",
     "Learning with a small sum a month teaches as much as with a big one.": "Apprendre avec une petite somme par mois apprend autant qu'avec une grosse.",
-    "This world opens when you finish the one before it.": "Ce monde s'ouvre quand tu termines celui d'avant."
+    "This world opens when you finish the one before it.": "Ce monde s'ouvre quand tu termines celui d'avant.",
+    "Previous step": "Étape précédente"
 };

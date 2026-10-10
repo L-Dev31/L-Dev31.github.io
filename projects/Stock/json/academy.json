@@ -36,6 +36,10 @@
     "en": "The plain",
     "fr": "La plaine"
    },
+   "back": {
+    "en": "Back to the plain",
+    "fr": "Retour à la plaine"
+   },
    "icon": "flower",
    "color": "#2E9D57",
    "intro": {
@@ -64,14 +68,14 @@
       },
       {
        "say": {
-        "en": "A budget is just three boxes: needs (rent, food, transport), wants (outings, clothes, streaming) and savings.",
-        "fr": "Un budget, c'est juste trois boîtes : les besoins (loyer, courses, transports), les envies (sorties, vêtements, streaming) et l'épargne."
+        "en": "A budget is just **three boxes**:\n- **Needs**: rent, food, transport\n- **Wants**: outings, clothes, streaming\n- **Savings**: what you put aside",
+        "fr": "Un budget, c'est juste **trois boîtes** :\n- **Les besoins** : loyer, courses, transports\n- **Les envies** : sorties, vêtements, streaming\n- **L'épargne** : ce que tu mets de côté"
        }
       },
       {
        "say": {
-        "en": "A common starting point is the 50/30/20 rule: about half for needs, up to a third for wants, a fifth for savings. A guide, not a law.",
-        "fr": "Un point de départ courant, la règle 50/30/20 : environ la moitié pour les besoins, jusqu'à un tiers pour les envies, un cinquième pour l'épargne. Un repère, pas une loi."
+        "en": "A common starting point is the **50/30/20 rule**:\n- About **50%** for needs\n- Up to **30%** for wants\n- **20%** for savings\nA guide, not a law.",
+        "fr": "Un point de départ courant, la **règle 50/30/20** :\n- Environ **50 %** pour les besoins\n- Jusqu'à **30 %** pour les envies\n- **20 %** pour l'épargne\nUn repère, pas une loi."
        },
        "example": {
         "en": "With 1,500 € a month: about 750 € for needs, 450 € for wants, 300 € saved. On a small income, saving even a tenth is a great start.",
@@ -105,8 +109,8 @@
       },
       {
        "say": {
-        "en": "The trick that works: pay yourself first. An automatic transfer to savings on the day your money arrives, before you spend anything.",
-        "fr": "L'astuce qui marche : te payer en premier. Un virement automatique vers ton épargne le jour où ton argent arrive, avant de dépenser quoi que ce soit."
+        "en": "The trick that works: **pay yourself first**. An automatic transfer to savings on the day your money arrives, before you spend anything.",
+        "fr": "L'astuce qui marche : **te payer en premier**. Un virement automatique vers ton épargne le jour où ton argent arrive, avant de dépenser quoi que ce soit."
        },
        "photo": "piggy bank",
        "example": {
@@ -116,8 +120,8 @@
       },
       {
        "say": {
-        "en": "Spending well matters as much: check your subscriptions once a year, and wait a day before any big purchase you don't really need.",
-        "fr": "Bien dépenser compte tout autant : passe tes abonnements en revue une fois par an, et attends un jour avant tout gros achat dont tu n'as pas vraiment besoin."
+        "en": "Spending well matters as much:\n- Check your subscriptions **once a year**\n- Wait **a day** before a big purchase you don't really need",
+        "fr": "Bien dépenser compte tout autant :\n- Passe tes abonnements en revue **une fois par an**\n- Attends **un jour** avant un gros achat dont tu n'as pas vraiment besoin"
        }
       },
       {
@@ -328,8 +332,8 @@
       },
       {
        "say": {
-        "en": "A common guideline: 3 to 6 months of your spending. Aim higher if your income is irregular.",
-        "fr": "Un repère courant : 3 à 6 mois de tes dépenses. Vise plus haut si tes revenus sont irréguliers."
+        "en": "A common guideline: **3 to 6 months** of your spending. Aim higher if your income is irregular.",
+        "fr": "Un repère courant : **3 à 6 mois** de tes dépenses. Vise plus haut si tes revenus sont irréguliers."
        },
        "example": {
         "en": "If you spend 1,200 € a month: a cushion of 3,600 to 7,200 €.",
@@ -551,8 +555,8 @@
       },
       {
        "say": {
-        "en": "Expensive debt: credit cards, overdrafts, consumer loans, buy-now-pay-later. They often cost 10 to 20% a year, sometimes more.",
-        "fr": "La dette chère : cartes de crédit, découverts, crédits à la consommation, paiements fractionnés. Ils coûtent souvent 10 à 20 % par an, parfois plus."
+        "en": "**Expensive debt** often costs 10 to 20% a year, sometimes more:\n- Credit cards\n- Overdrafts\n- Consumer loans\n- Buy-now-pay-later",
+        "fr": "La **dette chère** coûte souvent 10 à 20 % par an, parfois plus :\n- Les cartes de crédit\n- Les découverts\n- Les crédits à la consommation\n- Les paiements fractionnés"
        }
       },
       {
@@ -598,8 +602,8 @@
       },
       {
        "say": {
-        "en": "And one firm rule: never borrow to invest. If the investment falls, you still owe all of it.",
-        "fr": "Et une règle ferme : ne jamais emprunter pour investir. Si le placement baisse, tu dois quand même tout rembourser."
+        "en": "And one firm rule: **never borrow to invest**. If the investment falls, you still owe all of it.",
+        "fr": "Et une règle ferme : **ne jamais emprunter pour investir**. Si le placement baisse, tu dois quand même tout rembourser."
        }
       }
      ],
@@ -816,8 +820,8 @@
       },
       {
        "say": {
-        "en": "That is why you should only invest money you won't need for at least 5 years: time lets you wait for prices to recover.",
-        "fr": "C'est pour ça qu'on n'investit que de l'argent dont on n'aura pas besoin avant au moins 5 ans : le temps permet d'attendre que les prix remontent."
+        "en": "That is why you should only invest money you **won't need for at least 5 years**: time lets you wait for prices to recover.",
+        "fr": "C'est pour ça qu'on n'investit que de l'argent dont **on n'aura pas besoin avant au moins 5 ans** : le temps permet d'attendre que les prix remontent."
        },
        "example": {
         "en": "World stocks have fallen 20% or more several times in the past. Each time they later climbed back above their old high, sometimes after several years. The past does not guarantee the future.",
@@ -1288,7 +1292,7 @@
       },
       {
        "say": {
-        "en": "Spread across countries and [[sector|sectors]] too: companies in the same sector often fall together.",
+        "en": "Spread across **countries** and [[sector|sectors]] too: companies in the same sector often fall together.",
         "fr": "Répartis aussi entre pays et [[sector|secteurs]] : les entreprises d'un même secteur baissent souvent ensemble."
        }
       },
@@ -1696,8 +1700,8 @@
      "learn": [
       {
        "say": {
-        "en": "Fees look small but they add up. There are two kinds: fees on each order, and yearly fees.",
-        "fr": "Les frais ont l'air petits, mais ils s'additionnent. Il y en a deux sortes : les frais à chaque ordre et les frais annuels."
+        "en": "Fees look small but they add up. There are **two kinds**:\n- Fees on **each order**\n- **Yearly** fees",
+        "fr": "Les frais ont l'air petits, mais ils s'additionnent. Il y en a **deux sortes** :\n- Les frais à **chaque ordre**\n- Les frais **annuels**"
        },
        "photo": "coins"
       },
@@ -1748,8 +1752,8 @@
       },
       {
        "say": {
-        "en": "So: choose low-cost funds, don't trade too often, and with a fixed fee, group small orders into bigger ones. Nemeris shows your bank's real fees.",
-        "fr": "Donc : choisis des fonds peu chers, ne passe pas d'ordres trop souvent, et avec des frais fixes, regroupe les petits ordres en plus gros. Nemeris te montre les vrais frais de ta banque."
+        "en": "To pay less:\n- Choose **low-cost funds**\n- Don't trade too often\n- With a fixed fee, **group small orders** into bigger ones\nNemeris shows your bank's real fees.",
+        "fr": "Pour payer moins :\n- Choisis des **fonds peu chers**\n- Ne passe pas d'ordres trop souvent\n- Avec des frais fixes, **regroupe les petits ordres** en plus gros\nNemeris te montre les vrais frais de ta banque."
        }
       }
      ],
@@ -1928,6 +1932,10 @@
    "name": {
     "en": "The caves",
     "fr": "Les grottes"
+   },
+   "back": {
+    "en": "Back to the caves",
+    "fr": "Retour aux grottes"
    },
    "icon": "diamond",
    "color": "#8A6239",
@@ -2294,6 +2302,10 @@
     "en": "The sea",
     "fr": "La mer"
    },
+   "back": {
+    "en": "Back to the sea",
+    "fr": "Retour à la mer"
+   },
    "icon": "sailing",
    "color": "#1F78B4",
    "intro": {
@@ -2496,6 +2508,10 @@
    "name": {
     "en": "The mountains",
     "fr": "Les montagnes"
+   },
+   "back": {
+    "en": "Back to the mountains",
+    "fr": "Retour aux montagnes"
    },
    "icon": "landscape",
    "color": "#5A55B8",
@@ -2780,6 +2796,10 @@
    "name": {
     "en": "The volcano",
     "fr": "Le volcan"
+   },
+   "back": {
+    "en": "Back to the volcano",
+    "fr": "Retour au volcan"
    },
    "icon": "volcano",
    "color": "#D2461E",
