@@ -36,6 +36,8 @@ export function isOpen(id) {
     return i === 0 || (i > 0 && isDone(all[i - 1].id));
 }
 export const nextLevel = () => path().find(l => !isDone(l.id)) || null;
+/** The next level that teaches something (bosses only test), or null. */
+export const nextLesson = () => path().find(l => !l.boss && !isDone(l.id)) || null;
 /** The level after this one in the whole path, or null after the last. */
 export function levelAfter(id) {
     const all = path();
@@ -51,11 +53,15 @@ const questionsOf = level => PHASES.slice(1).flatMap(phase => (level[phase] || [
  */
 export function stepsOf(level) {
     if (!level.boss) return PHASES.flatMap(phase => (level[phase] || []).map((s, i) => ({ ...s, phase, id: `${level.id}.${phase}.${i}`, skill: s.skill || level.skill })));
+    // The levels of its world before it; when they hold fewer questions than the boss asks, everything before it in the path.
     const w = worldOf(level.id);
-    const pool = w.levels.slice(0, w.levels.indexOf(level)).filter(l => !l.boss).flatMap(questionsOf)
-        .map(q => [saved.score[q.id] ?? 0, Math.random(), q])
-        .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-    return pool.slice(0, level.count || 5).map(([, , q]) => ({ ...q, phase: 'boss' }));
+    const count = level.count || 5;
+    const asked = levels => levels.filter(l => !l.boss).flatMap(questionsOf);
+    let pool = asked(w.levels.slice(0, w.levels.indexOf(level)));
+    if (pool.length < count) pool = asked(path().slice(0, path().indexOf(level)));
+    return pool.map(q => [saved.score[q.id] ?? 0, Math.random(), q])
+        .sort((a, b) => a[0] - b[0] || a[1] - b[1])
+        .slice(0, count).map(([, , q]) => ({ ...q, phase: 'boss' }));
 }
 
 export function record(questionId, score) {

@@ -1,15 +1,15 @@
 // Reads the portfolio as it is now and finds what deserves attention, explained the same way every time:
 // what is happening, what it means for you, what you can do (doing nothing is often one), and the idea behind it.
 // Text may hold [[key|words]]: they become tappable words (js/coach/explain.js).
-import { positions, globalPeriod, getInvestor, comfortLevel, currencyCode } from '../core/state.js';
+import { positions, globalPeriod, getInvestor, comfortLevel, currencyCode, monthlyAmount } from '../core/state.js';
 import { periodPhrase } from '../core/constants.js';
 import { holdingRows } from '../data/holdings.js';
 import { currentBank, orderFee, money } from '../data/banks.js';
 import { fetchCloses } from '../quant/quant-shared.js';
 import { L, LOCALE } from '../i18n/i18n.js';
-import { nextLevel } from '../learn/academy.js';
+import { nextLesson } from '../learn/academy.js';
 import { moneyFlags } from '../data/income.js';
-import { convert } from '../data/rates.js';
+import { convert, majorCurrency } from '../data/rates.js';
 
 export const pct = n => (Math.abs(n) / 100).toLocaleString(LOCALE, { style: 'percent', maximumFractionDigits: Math.abs(n) < 10 ? 1 : 0 });
 
@@ -22,7 +22,7 @@ const bigMove = kind => (BIG_MOVE[globalPeriod] || 10) * KIND_SCALE[kind];
 const moveOf = r => (r.change_pct == null ? 0 : r.value - r.value / (1 + r.change_pct / 100));
 
 function typicalOrder(inv) {
-    if (inv.monthly > 0) return inv.monthly;
+    if (inv.monthly > 0) return monthlyAmount(inv);
     const amounts = Object.values(positions).flatMap(p => (p.purchases || []).map(t => convert(Math.abs(t.amount || 0), t.currency || 'EUR', currencyCode()))).filter(Boolean).sort((a, b) => a - b);
     return amounts.length ? amounts[Math.floor(amounts.length / 2)] : null;
 }
@@ -65,7 +65,7 @@ function moneySituations(inv) {
         title: inv.income === 'none' ? L('You plan to invest without a regular income.') : L('You plan to invest about {0} of your income each month.', pct(f.share * 100)),
         meaning: [
             L('Investing works only if you never have to take the money back out at a bad time.'),
-            L('Learning with 10 to 50 € a month teaches as much as with 500 €.'),
+            L('Learning with a small sum a month teaches as much as with a big one.'),
         ],
         options: [
             { label: L('Start smaller'), detail: L('A small amount you are sure to keep invested beats a big one you may need back.') },
@@ -270,7 +270,7 @@ export function findSituations() {
     });
 
     const home = currencyCode();
-    const foreign = sumOf(r => r.currency && r.currency !== home);
+    const foreign = sumOf(r => r.currency && majorCurrency(r.currency) !== home);
     if (foreign / total > 0.5) add({
         id: 'currency', tone: 'tip', photo: 'currency exchange', priority: 25,
         title: L('{0} of your money is priced in other currencies.', pct(foreign / total * 100)),
@@ -328,7 +328,7 @@ export function findSituations() {
             { label: L('Do nothing'), detail: L('Really. Checking less often leads to fewer emotional decisions.') },
             { label: L('Learn something new'), detail: L('A short level in the Academy, with Nemeris.'), action: 'learn' },
         ],
-        lesson: nextLevel()?.id || 'compounding',
+        lesson: nextLesson()?.id || 'compounding',
     });
 
     return found.sort((a, b) => b.priority - a.priority);

@@ -1,5 +1,5 @@
 import { chat, probeTask, getTaskState, modelOptions, getAiSettings, patchAiSettings, setTaskModel, onAiChange, stripThinking, EFFORTS, registerAiSettingsSection, syncAiGates } from './ai-core.js';
-import { positions, getUserSettings, getCurrency, currencyCode, investorContext, getInvestor } from '../core/state.js';
+import { positions, getUserSettings, getCurrency, currencyCode, investorContext, monthlyAmount } from '../core/state.js';
 import { proxyFetch } from '../data/proxy-fetch.js';
 import { fetchYahooChartSnapshot, fetchNews } from '../data/yahoo-finance.js';
 import { openSimulation, summarize, normalizeHorizon, HORIZONS } from '../quant/simulation.js';
@@ -583,7 +583,7 @@ let panelCloseTimer = 0;
 function suggestions() {
     const card = document.querySelector('.card.active');
     const p = positions[card?.id?.slice(5)];
-    const amount = Math.round(getInvestor().monthly || 500);
+    const amount = Math.round(monthlyAmount() || 500);
     const cur = getCurrency();
     if (p && card.classList.contains('ticker-card')) return [L('Is {0} a good fit for me?', p.name), L('What could make {0} drop?', p.name), L('If I put {0} {1} in {2}, what could happen in a year?', amount, cur, p.name)];
     if (card?.id === 'card-explorer') return [L('Find three solid, calm stocks for me'), L('How do I read this list?'), L('What is an ETF, and should I start with one?')];
@@ -1412,8 +1412,7 @@ function startMicMeter() {
 // Another microphone picked during a call: listen through it from now on.
 window.addEventListener(AUDIO_DEVICES_EVENT, e => {
     if (!call.active || e.detail?.kind !== 'input') return;
-    call.listener.stop();
-    call.listener.start();
+    call.listener.restart();
     startMicMeter();
 });
 

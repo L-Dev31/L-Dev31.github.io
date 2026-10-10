@@ -113,7 +113,9 @@ function renderMap(w) {
     head.append(icon(world.icon), pick);
 
     const next = world.levels.find(l => isOpen(l.id) && !isDone(l.id));
-    const say = !next ? L('You finished this world. Replay any level whenever you like.')
+    const finished = world.levels.every(l => isDone(l.id));
+    const say = finished ? L('You finished this world. Replay any level whenever you like.')
+        : !next ? L('This world opens when you finish the one before it.')
         : next === world.levels[0] ? t(world.intro)
         : L('Next: {0}. Ready when you are.', t(next.title));
     const path = el('ol', 'learn-path');
@@ -181,8 +183,11 @@ function video(id) {
 function play(level) {
     if (!isOpen(level.id)) return;
     world = worldOf(level.id);
+    document.documentElement.style.setProperty('--world', world.color);
     const steps = stepsOf(level);
-    let at = -1, hearts = HEARTS;
+    // A run must be losable: with only two graded questions, one miss ends it.
+    const graded = steps.filter(s => s.ask && s.phase !== 'learn').length;
+    let at = -1, hearts = Math.max(1, Math.min(HEARTS, graded - 1));
     const nemeris = teacher();
     const close = el('button', 'icon-btn');
     close.type = 'button';
@@ -278,7 +283,7 @@ export async function openAcademy(levelId) {
     await academyReady;
     const level = levelId && levelById(levelId);
     if (level && isOpen(level.id)) play(level);
-    else renderMap(level ? worldOf(level.id) : null);
+    else renderMap(level && isOpen(worldOf(level.id).levels[0].id) ? worldOf(level.id) : null);
 }
 
 // Any element with data-level, anywhere (a Home card, a word's explanation), opens that level.

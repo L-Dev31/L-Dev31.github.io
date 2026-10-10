@@ -4,6 +4,7 @@
 // Inside any text, [[key|shown words]] becomes a tappable word.
 import { L, LOCALE } from '../i18n/i18n.js';
 import { orderFee, custodyPerYear, formatMoney } from '../data/banks.js';
+import { monthlyAmount } from '../core/state.js';
 
 const num = (n, d = 1) => n.toLocaleString(LOCALE, { maximumFractionDigits: d });
 const HORIZON_TEXT = { lt2: L('for less than 2 years'), '2to5': L('for 2 to 5 years'), '5to10': L('for 5 to 10 years'), gt10: L('for more than 10 years') };
@@ -310,7 +311,7 @@ export const TERMS = {
         example: L('With a 2 € minimum, a 100 € order loses 2% on day one; a 1,000 € order loses 0.2%.'),
         yours: c => {
             if (!c.bank) return L('Choose your bank in Settings, Profile, and Nemeris will show what your own orders cost.');
-            const amount = c.inv.monthly > 0 ? Math.round(c.inv.monthly) : 500;
+            const amount = monthlyAmount(c.inv) > 0 ? Math.round(monthlyAmount(c.inv)) : 500;
             const fee = orderFee(c.bank, amount);
             return fee != null && L('At {0}, a {1} order costs {2}, which is {3}% of it.', c.bank.name, c.money(amount), c.money(fee), num(fee / amount * 100, 2));
         },
@@ -387,7 +388,7 @@ export const TERMS = {
         ],
         example: L('Average price 50 €, price today 44 €: you are 12% down on paper. The useful question is not "when will it be back at 50 €?" but "would I buy it at 44 € today?".'),
         yours: c => {
-            const r = [...c.rows].sort((a, b) => a.pl_pct - b.pl_pct)[0];
+            const r = [...c.rows].filter(x => x.price != null).sort((a, b) => a.pl_pct - b.pl_pct)[0];
             return r && L('Your average price for {0} is {1}; it trades at {2} today.', r.name, formatMoney(r.avg_cost, r.cost_currency), formatMoney(r.price, r.currency));
         },
         related: ['unrealized', 'realized'],
@@ -519,11 +520,12 @@ export const TERMS = {
         ],
         example: L('200 € a month: at 100 € a share you get 2 shares, at 80 € you get 2.5. Your average price, 88.89 €, ends below the average of the two prices.'),
         yours: c => {
-            if (!(c.inv.monthly > 0)) return null;
-            const fee = c.bank ? orderFee(c.bank, c.inv.monthly) : null;
+            const monthly = monthlyAmount(c.inv);
+            if (!(monthly > 0)) return null;
+            const fee = c.bank ? orderFee(c.bank, monthly) : null;
             return fee == null
-                ? L('You said you can invest {0} a month.', c.money(c.inv.monthly))
-                : L('You said you can invest {0} a month. At {1}, each of those orders costs {2} ({3}%).', c.money(c.inv.monthly), c.bank.name, c.money(fee), num(fee / c.inv.monthly * 100, 2));
+                ? L('You said you can invest {0} a month.', c.money(monthly))
+                : L('You said you can invest {0} a month. At {1}, each of those orders costs {2} ({3}%).', c.money(monthly), c.bank.name, c.money(fee), num(fee / monthly * 100, 2));
         },
         related: ['compounding', 'orderFee', 'bearMarket'],
         lesson: 'timeInMarket',

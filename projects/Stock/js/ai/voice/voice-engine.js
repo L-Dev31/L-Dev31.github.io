@@ -180,6 +180,8 @@ export function createCallListener(lang, { onInterim, onFinal, onError, onNotice
     return {
         start: () => inner.start(),
         stop: () => inner.stop(),
+        /** Listens through another microphone from now on. */
+        restart: () => (inner.restart ? inner.restart() : (inner.stop(), inner.start())),
         /** While the assistant speaks: its voice in the microphone is never taken for the user's. */
         hold: value => inner.hold(value),
         flush: () => inner.flush(),

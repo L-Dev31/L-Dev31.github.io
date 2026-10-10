@@ -1,5 +1,6 @@
 import { positions, getCurrency, comfortLevel, COMFORT_WORD } from '../core/state.js';
-import { positionMoney } from '../data/holdings.js';
+import { positionMoney, paidCurrency } from '../data/holdings.js';
+import { convert } from '../data/rates.js';
 import { getEl, progressBar, formatCurrency, termHtml, iconHtml } from '../core/utils.js';
 import { fetchSeries, alignSeries } from '../quant/quant-shared.js';
 import { runQuant, QuantEngine } from '../quant/quant-client.js';
@@ -175,10 +176,12 @@ export async function renderAnalysisPane(force = false) {
 
         const allTrades = [];
         for (const pos of Object.values(positions)) {
+            // The engine knows no currencies: every trade is counted in the one the position's cost is in.
+            const inCostCurrency = t => ({ ...t, amount: t.amount < 0 ? -convert(-t.amount, t.currency || 'EUR', paidCurrency(pos)) : convert(t.amount || 0, t.currency || 'EUR', paidCurrency(pos)) });
             const events = QuantEngine.extractTradeEvents({
                 symbol: pos.symbol,
-                purchases: pos.purchases,
-                sales: pos.sales
+                purchases: pos.purchases?.map(inCostCurrency),
+                sales: pos.sales?.map(inCostCurrency)
             });
             allTrades.push(...events);
         }

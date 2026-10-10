@@ -10,7 +10,7 @@ import { initCoach } from '../coach/coach.js';
 import { incomeBands, loadMedian } from '../data/income.js';
 import { openAcademy } from '../learn/academy-page.js';
 import { DEAD_ERROR_CODES, periodToDays, periodPhrase } from './constants.js';
-import { positions, selectedApi, setSelectedApi, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings, getCurrency, comfortLevel, COMFORT_WORD, isExpert } from './state.js';
+import { positions, selectedApi, setSelectedApi, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings, getCurrency, currencyCode, monthlyAmount, comfortLevel, COMFORT_WORD, isExpert } from './state.js';
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching, openPortfolio } from '../ui/portfolio.js';
 import { updateUI, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from '../ui/ui.js';
 import { getEl, el, icon, showCard, makeResizer, getActiveSymbol } from './utils.js';
@@ -260,7 +260,7 @@ function fillSettings() {
     for (const set of document.querySelectorAll('#about-you .question')) {
         for (const r of set.querySelectorAll('input[type="radio"]')) r.checked = r.value === inv[set.dataset.key];
     }
-    getEl('inv-monthly').value = inv.monthly || '';
+    getEl('inv-monthly').value = inv.monthly > 0 ? Math.round(monthlyAmount(inv)) : '';
     getEl('inv-monthly-unit').textContent = getCurrency();
     getEl('inv-notes').value = inv.notes || '';
     renderComfort(inv);
@@ -284,7 +284,7 @@ function readInvestor() {
         if (on) inv[set.dataset.key] = on.value;
     }
     const monthly = Number(getEl('inv-monthly').value);
-    if (monthly > 0) inv.monthly = monthly;
+    if (monthly > 0) Object.assign(inv, { monthly, monthlyCurrency: currencyCode() });
     const notes = getEl('inv-notes').value.trim();
     if (notes) inv.notes = notes;
     return inv;

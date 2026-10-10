@@ -239,6 +239,9 @@ const refresh = debounce(render, 400);
 export function initCoach({ go, openSymbol }) {
     host = document.getElementById('coach');
     if (!host) return;
+    // general.js can run twice (loaded under two URLs): the second start replaces the first, its cards with it.
+    cards.clear();
+    reviewShown = false;
     nav = { go, openSymbol };
     const hello = el('p', 'coach-hello');
     const status = el('p', 'coach-status');

@@ -1492,7 +1492,6 @@ export default {
     "You plan to invest without a regular income.": "Tu prévois d'investir sans revenu régulier.",
     "You plan to invest about {0} of your income each month.": "Tu prévois d'investir environ {0} de tes revenus chaque mois.",
     "Investing works only if you never have to take the money back out at a bad time.": "Investir ne marche que si tu n'as jamais à reprendre l'argent au mauvais moment.",
-    "Learning with 10 to 50 € a month teaches as much as with 500 €.": "Apprendre avec 10 à 50 € par mois apprend autant qu'avec 500 €.",
     "Start smaller": "Commencer plus petit",
     "A small amount you are sure to keep invested beats a big one you may need back.": "Une petite somme que tu es sûr de laisser investie vaut mieux qu'une grosse dont tu pourrais avoir besoin.",
     "Invest what is left": "Investir ce qui reste",
@@ -1515,7 +1514,6 @@ export default {
     "Under {0}": "Moins de {0}",
     "{0} to {1}": "{0} à {1}",
     "Over {0}": "Plus de {0}",
-    "Count pay, grants and regular help from family. In {0}, a typical income is about {1} a month.": "Compte ton salaire, tes bourses et l'aide régulière de ta famille. En {0}, un revenu typique tourne autour de {1} par mois.",
     "Your money today": "Ton argent aujourd'hui",
     "What is your situation?": "Quelle est ta situation ?",
     "Student": "Étudiant",
@@ -1534,5 +1532,8 @@ export default {
     "Your investing": "Tes investissements",
     "Your currency": "Ta devise",
     "Totals are shown in it. Each stock keeps its own currency, and each trade the one it was paid in.": "Les totaux s'affichent dans cette devise. Chaque action garde la sienne, et chaque achat celle dans laquelle il a été payé.",
-    "Your country's: {0}": "Celle de ton pays : {0}"
+    "Your country's: {0}": "Celle de ton pays : {0}",
+    "Count pay, grants and regular help from family. A typical income (country: {0}) is about {1} a month.": "Compte ton salaire, tes bourses et l'aide régulière de ta famille. Un revenu typique (pays : {0}) tourne autour de {1} par mois.",
+    "Learning with a small sum a month teaches as much as with a big one.": "Apprendre avec une petite somme par mois apprend autant qu'avec une grosse.",
+    "This world opens when you finish the one before it.": "Ce monde s'ouvre quand tu termines celui d'avant."
 };

@@ -1,5 +1,6 @@
 import { L, LOCALE } from '../i18n/i18n.js';
 import { countryCode } from '../data/country.js';
+import { convert } from '../data/rates.js';
 export const SETTINGS_STORAGE_KEY = 'nemeris_settings';
 
 const defaultSettings = {
@@ -39,6 +40,7 @@ export const homeCurrency = (country = countryCode()) => HOME_CURRENCY[country] 
 export const currencyCode = () => getUserSettings().currency || homeCurrency();
 /** A currency's short sign: €, $, £, kr... */
 export function currencySymbol(code = currencyCode()) {
+    if (code === 'GBp' || code === 'GBX') return 'p';
     try { return new Intl.NumberFormat(LOCALE, { style: 'currency', currency: code, currencyDisplay: 'narrowSymbol' }).formatToParts(0).find(p => p.type === 'currency').value; } catch { return code; }
 }
 export const getCurrency = () => currencySymbol();
@@ -50,6 +52,8 @@ const HORIZON_YEARS = { lt2: 1, '2to5': 3, '5to10': 7, gt10: 10 };
 export const COMFORT_WORD = ['', L('Very cautious'), L('Cautious'), L('Measured'), L('Balanced'), L('Dynamic'), L('Bold'), L('Very bold')];
 
 export const getInvestor = () => getUserSettings().investor || {};
+/** What they can invest a month, in the user's currency (typed in the one they had then; euros before currencies existed). */
+export const monthlyAmount = (inv = getInvestor()) => (inv.monthly > 0 ? convert(inv.monthly, inv.monthlyCurrency || 'EUR', currencyCode()) : 0);
 
 /** Risk the user said they can live with, on the same 1 to 7 scale as fund documents. */
 export function comfortLevel(inv = getInvestor()) {
@@ -76,7 +80,7 @@ export function investorContext(inv = getInvestor()) {
     for (const [key, map] of Object.entries(PHRASES)) if (map[inv[key]]) lines.push(`The user ${map[inv[key]]}.`);
     const comfort = comfortLevel(inv);
     if (comfort) lines.push(`Their comfort with risk is ${comfort} out of 7 (${COMFORT_WORD[comfort].toLowerCase()}).`);
-    if (inv.monthly > 0) lines.push(`They can invest about ${Math.round(inv.monthly)} ${getCurrency()} a month.`);
+    if (inv.monthly > 0) lines.push(`They can invest about ${Math.round(monthlyAmount(inv))} ${getCurrency()} a month.`);
     const notes = String(inv.notes || '').trim();
     if (notes) lines.push(`In their words: "${notes.slice(0, 600)}"`);
     return lines.join(' ');

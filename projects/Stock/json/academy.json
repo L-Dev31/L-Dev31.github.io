@@ -1633,7 +1633,7 @@
       {
        "ask": {
         "en": "Two world ETFs follow the same index. One costs 0.12% a year, the other 0.60%. Which should you prefer, all else equal?",
-        "fr": "Deux ETF monde suivent le même indice. L'un coûte 0,12 % par an, l'autre 0,60 %. Lequel préférer, à part égale ?"
+        "fr": "Deux ETF monde suivent le même indice. L'un coûte 0,12 % par an, l'autre 0,60 %. Lequel préférer, toutes choses égales par ailleurs ?"
        },
        "options": [
         {
@@ -2107,8 +2107,8 @@
       "fr": "La chauve-souris des grottes"
      },
      "intro": {
-      "en": "Squeak! Five questions on time and patience. One try each!",
-      "fr": "Couic ! Cinq questions sur le temps et la patience. Un seul essai à chaque fois !"
+      "en": "Squeak! Questions on time and patience. One try each!",
+      "fr": "Couic ! Des questions sur le temps et la patience. Un seul essai à chaque fois !"
      }
     },
     {
@@ -2282,8 +2282,8 @@
       "fr": "Le golem de cristal"
      },
      "intro": {
-      "en": "I am made of patience. Eight questions. Can you break me?",
-      "fr": "Je suis fait de patience. Huit questions. Sauras-tu me briser ?"
+      "en": "I am made of patience. Can you break me?",
+      "fr": "Je suis fait de patience. Sauras-tu me briser ?"
      }
     }
    ]
@@ -2391,8 +2391,8 @@
       "fr": "Le serpent de mer"
      },
      "intro": {
-      "en": "Sssss... five questions from the deep. One try each!",
-      "fr": "Sssss... cinq questions venues des profondeurs. Un seul essai à chaque fois !"
+      "en": "Sssss... questions from the deep. One try each!",
+      "fr": "Sssss... des questions venues des profondeurs. Un seul essai à chaque fois !"
      }
     },
     {
@@ -2485,8 +2485,8 @@
       "fr": "Le capitaine pirate"
      },
      "intro": {
-      "en": "Arr! Eight questions, and the sea is yours.",
-      "fr": "Arr ! Huit questions, et la mer est à toi."
+      "en": "Arr! Beat me and the sea is yours.",
+      "fr": "Arr ! Bats-moi et la mer est à toi."
      }
     }
    ]
@@ -2675,8 +2675,8 @@
       "fr": "Le bouquetin"
      },
      "intro": {
-      "en": "Stay balanced! Five questions, one try each.",
-      "fr": "Garde l'équilibre ! Cinq questions, un seul essai à chaque fois."
+      "en": "Stay balanced! One try each.",
+      "fr": "Garde l'équilibre ! Un seul essai à chaque fois."
      }
     },
     {
@@ -2769,8 +2769,8 @@
       "fr": "Le yéti"
      },
      "intro": {
-      "en": "Brrr! Eight questions in the snow. Ready?",
-      "fr": "Brrr ! Huit questions dans la neige. Prêt ?"
+      "en": "Brrr! Questions in the snow. Ready?",
+      "fr": "Brrr ! Des questions dans la neige. Prêt ?"
      }
     }
    ]
@@ -2935,8 +2935,8 @@
       "fr": "Le dragon de lave"
      },
      "intro": {
-      "en": "The heat is rising. Five questions, one try each!",
-      "fr": "La chaleur monte. Cinq questions, un seul essai à chaque fois !"
+      "en": "The heat is rising. One try each!",
+      "fr": "La chaleur monte. Un seul essai à chaque fois !"
      }
     },
     {
@@ -3082,8 +3082,8 @@
       "fr": "Le titan du volcan"
      },
      "intro": {
-      "en": "The final test. Eight questions on everything. Only the bravest reach the top.",
-      "fr": "L'épreuve finale. Huit questions sur tout. Seuls les plus courageux atteignent le sommet."
+      "en": "The final test, on everything. Only the bravest reach the top.",
+      "fr": "L'épreuve finale, sur tout. Seuls les plus courageux atteignent le sommet."
      }
     }
    ]

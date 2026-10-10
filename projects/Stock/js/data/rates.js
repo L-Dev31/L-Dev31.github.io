@@ -6,7 +6,9 @@ const DAY = 86400000;
 
 let rates = {
     date: '2026-07-01',
-    perEuro: { USD: 1.1383, GBP: 0.8597, CHF: 0.9234, SEK: 11.0955, NOK: 11.3125, DKK: 7.4745, PLN: 4.2958, CZK: 24.254, HUF: 355.83, RON: 5.2367, ISK: 143.8, CAD: 1.6191 },
+    // ECB rates of 1 July 2026; the last seven are rough figures for the days before the first live fetch.
+    perEuro: { USD: 1.1383, GBP: 0.8597, CHF: 0.9234, SEK: 11.0955, NOK: 11.3125, DKK: 7.4745, PLN: 4.2958, CZK: 24.254, HUF: 355.83, RON: 5.2367, ISK: 143.8, CAD: 1.6191,
+        JPY: 165, AUD: 1.7, HKD: 8.9, CNY: 8.2, INR: 98, KRW: 1550, ZAR: 20 },
 };
 try { rates = JSON.parse(localStorage.getItem(KEY)) || rates; } catch { /* nothing saved yet */ }
 
@@ -26,6 +28,8 @@ export const ratesDate = () => rates.date;
 
 // Some exchanges quote in a hundredth of a currency: London in pence, Johannesburg in cents, Tel Aviv in agorot.
 const MINOR = { GBp: 'GBP', GBX: 'GBP', ZAc: 'ZAR', ILA: 'ILS' };
+/** The whole currency behind a quote currency: GBp → GBP. */
+export const majorCurrency = c => MINOR[c] || c;
 const perEuro = c => (MINOR[c] ? rates.perEuro[MINOR[c]] * 100 : c === 'EUR' ? 1 : rates.perEuro[c]);
 
 /** An amount in another currency. Unknown currencies are left as they are. */

@@ -3,6 +3,7 @@
 // → confluence multiplier → risk penalty → 0-100 signal + ATR/Kelly risk management.
 import { positions, currencySymbol } from '../core/state.js';
 import { priceCurrency } from '../data/holdings.js';
+import { convert } from '../data/rates.js';
 import { termHtml } from '../core/utils.js';
 import {
     clamp, safeArray, populationStdDev,
@@ -12,7 +13,7 @@ import {
     trueRanges, wilderSmoothSeries, wilderSmoothLast, wilderSumSeries,
     vwap as coreVWAP, zScore as coreZScore
 } from './quant-math.js';
-import { L, Ln } from '../i18n/i18n.js';
+import { L, LOCALE } from '../i18n/i18n.js';
 
 const DEFAULT_OPTIONS = {
     accountCapital: 10000,
@@ -892,6 +893,14 @@ function summarySentence(result, reasons) {
     return L('Signals disagree.');
 }
 
+
+// The engine sizes a 10 000 € account in the stock's own price units: scale it to the real amount and say shares.
+function suggestedSize(size, pos) {
+    const shares = size * convert(1, 'EUR', priceCurrency(pos));
+    const text = shares < 1 ? '< 1' : shares.toLocaleString(LOCALE, { maximumFractionDigits: shares < 10 ? 2 : 0 });
+    return L('{0} shares', text);
+}
+
 function updateSignalUI(symbol, result) {
     const explanationContent = document.getElementById(`card-${symbol}`)?.querySelector('.explanation-content');
     if (!explanationContent) return;
@@ -947,7 +956,7 @@ function updateSignalUI(symbol, result) {
         ['Horizon', horizon.label, horizon.desc],
         [termHtml('stoploss', 'Stop loss'), `${e.stopLoss.toFixed(2)} ${cur}`, L('Price where a trader would cut the loss')],
         [termHtml('takeprofit', 'Take profit'), `${e.takeProfit.toFixed(2)} ${cur}`, L('Price where a trader would take the gain')],
-        [L('Suggested size'), Ln(Math.floor(e.positionSize), '{0} share', '{0} shares'), result.trade?.sizingMethod === 'half-kelly' ? L('Half-Kelly, from a tested edge') : L('Risks about 1% of a 10 000 € account')],
+        [L('Suggested size'), suggestedSize(e.positionSize, positions[symbol]), result.trade?.sizingMethod === 'half-kelly' ? L('Half-Kelly, from a tested edge') : L('Risks about 1% of a 10 000 € account')],
     ];
     const sc = signalColor(result.signalValue);
 

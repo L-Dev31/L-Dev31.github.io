@@ -285,8 +285,11 @@ export function createListener({ lang, onInterim, onFinal, onError, silenceMs = 
             heard = '';
             interim = '';
             on = true;
-            if (chosenDevice('input') && !mic) mic = await openMic().catch(() => null);
-            if (!on) return;
+            if (chosenDevice('input') && !mic) {
+                const opened = await openMic().catch(() => null);
+                if (!on) { opened?.getTracks().forEach(t => t.stop()); return; }
+                mic = opened;
+            }
             try { begin(); }
             catch (e) {
                 on = false;
@@ -299,6 +302,16 @@ export function createListener({ lang, onInterim, onFinal, onError, silenceMs = 
             try { rec.abort(); } catch { /* not running */ }
             mic?.getTracks().forEach(t => t.stop());
             mic = null;
+        },
+        /** Another microphone was chosen while listening: reopen, and let the end of the old session begin the new one. */
+        async restart() {
+            if (!on) return;
+            mic?.getTracks().forEach(t => t.stop());
+            mic = null;
+            const opened = chosenDevice('input') ? await openMic().catch(() => null) : null;
+            if (!on) { opened?.getTracks().forEach(t => t.stop()); return; }
+            mic = opened;
+            try { rec.abort(); } catch { /* not running */ }
         },
         hold(value) { held = !!value; },
         flush() {
