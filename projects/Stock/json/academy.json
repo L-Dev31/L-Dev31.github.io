@@ -39,10 +39,725 @@
    "icon": "flower",
    "color": "#2E9D57",
    "intro": {
-    "en": "Welcome! Here we start with the basics, one small step at a time.",
-    "fr": "Bienvenue ! Ici on commence par les bases, un petit pas à la fois."
+    "en": "Welcome to the Academy! I'm Nemeris, your teacher. On the plain we start with the basics, one small step at a time: you can't break anything here.",
+    "fr": "Bienvenue à l'Académie ! Moi c'est Nemeris, ton prof. Dans la plaine, on commence par les bases, un petit pas à la fois : ici, tu ne peux rien casser."
    },
    "levels": [
+    {
+     "id": "budget",
+     "title": {
+      "en": "Where your money goes",
+      "fr": "Savoir où va ton argent"
+     },
+     "idea": {
+      "en": "Pay yourself first: put savings aside the day your money arrives.",
+      "fr": "Paie-toi en premier : mets ton épargne de côté le jour où ton argent arrive."
+     },
+     "skill": "money",
+     "learn": [
+      {
+       "say": {
+        "en": "Before investing a single euro, let's look at where your money goes. No judging, just facts.",
+        "fr": "Avant d'investir le moindre euro, regardons où va ton argent. Aucun jugement, juste des faits."
+       },
+       "photo": "notebook budget"
+      },
+      {
+       "say": {
+        "en": "A budget is just three boxes: needs (rent, food, transport), wants (outings, clothes, streaming) and savings.",
+        "fr": "Un budget, c'est juste trois boîtes : les besoins (loyer, courses, transports), les envies (sorties, vêtements, streaming) et l'épargne."
+       }
+      },
+      {
+       "say": {
+        "en": "A common starting point is the 50/30/20 rule: about half for needs, up to a third for wants, a fifth for savings. A guide, not a law.",
+        "fr": "Un point de départ courant, la règle 50/30/20 : environ la moitié pour les besoins, jusqu'à un tiers pour les envies, un cinquième pour l'épargne. Un repère, pas une loi."
+       },
+       "example": {
+        "en": "With 1,500 € a month: about 750 € for needs, 450 € for wants, 300 € saved. On a small income, saving even a tenth is a great start.",
+        "fr": "Avec 1 500 € par mois : environ 750 € pour les besoins, 450 € pour les envies, 300 € épargnés. Avec un petit revenu, épargner ne serait-ce qu'un dixième, c'est déjà très bien."
+       }
+      },
+      {
+       "ask": {
+        "en": "Your rent and your public transport pass: which box?",
+        "fr": "Ton loyer et ton abonnement de transport : quelle boîte ?"
+       },
+       "options": [
+        {
+         "en": "Needs",
+         "fr": "Les besoins"
+        },
+        {
+         "en": "Wants",
+         "fr": "Les envies"
+        },
+        {
+         "en": "Savings",
+         "fr": "L'épargne"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "You need them to live and to get to work or school: they are needs. A concert would be a want.",
+        "fr": "Tu en as besoin pour vivre et aller travailler ou étudier : ce sont des besoins. Un concert serait une envie."
+       }
+      },
+      {
+       "say": {
+        "en": "The trick that works: pay yourself first. An automatic transfer to savings on the day your money arrives, before you spend anything.",
+        "fr": "L'astuce qui marche : te payer en premier. Un virement automatique vers ton épargne le jour où ton argent arrive, avant de dépenser quoi que ce soit."
+       },
+       "photo": "piggy bank",
+       "example": {
+        "en": "Léa gets 900 € on the 1st. An automatic 50 € transfer leaves her 850 € to live on, and 600 € saved after a year.",
+        "fr": "Léa reçoit 900 € le 1er du mois. Un virement automatique de 50 € lui laisse 850 € pour vivre, et 600 € de côté au bout d'un an."
+       }
+      },
+      {
+       "say": {
+        "en": "Spending well matters as much: check your subscriptions once a year, and wait a day before any big purchase you don't really need.",
+        "fr": "Bien dépenser compte tout autant : passe tes abonnements en revue une fois par an, et attends un jour avant tout gros achat dont tu n'as pas vraiment besoin."
+       }
+      },
+      {
+       "ask": {
+        "en": "Which habit saves money without effort once it is set up?",
+        "fr": "Quelle habitude fait épargner sans effort une fois en place ?"
+       },
+       "options": [
+        {
+         "en": "An automatic transfer on payday",
+         "fr": "Un virement automatique le jour de paie"
+        },
+        {
+         "en": "Saving what is left at the end of the month",
+         "fr": "Épargner ce qui reste en fin de mois"
+        },
+        {
+         "en": "Checking your account every day",
+         "fr": "Regarder son compte tous les jours"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "What is left at the end of the month is often nothing. An automatic transfer happens before temptation does.",
+        "fr": "Ce qui reste en fin de mois, c'est souvent rien. Un virement automatique passe avant la tentation."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "Tom earns 1,200 € a month. With the 50/30/20 rule, about how much could he save?",
+        "fr": "Tom gagne 1 200 € par mois. Avec la règle 50/30/20, combien pourrait-il épargner environ ?"
+       },
+       "options": [
+        {
+         "en": "240 €",
+         "fr": "240 €"
+        },
+        {
+         "en": "600 €",
+         "fr": "600 €"
+        },
+        {
+         "en": "60 €",
+         "fr": "60 €"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "20% of 1,200 € is 240 €. 600 € is the half meant for needs.",
+        "fr": "20 % de 1 200 €, c'est 240 €. 600 €, c'est la moitié prévue pour les besoins."
+       }
+      },
+      {
+       "ask": {
+        "en": "Which of these is a want, not a need?",
+        "fr": "Lequel est une envie, pas un besoin ?"
+       },
+       "options": [
+        {
+         "en": "Your electricity bill",
+         "fr": "Ta facture d'électricité"
+        },
+        {
+         "en": "A concert ticket",
+         "fr": "Une place de concert"
+        },
+        {
+         "en": "Groceries",
+         "fr": "Les courses"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Concerts make life better, but you can live without them: that is a want.",
+        "fr": "Les concerts rendent la vie plus belle, mais on peut vivre sans : c'est une envie."
+       }
+      },
+      {
+       "ask": {
+        "en": "When is the best moment to set your savings aside?",
+        "fr": "Quel est le meilleur moment pour mettre ton épargne de côté ?"
+       },
+       "options": [
+        {
+         "en": "At the end of the month",
+         "fr": "En fin de mois"
+        },
+        {
+         "en": "When you get a bonus",
+         "fr": "Quand tu reçois une prime"
+        },
+        {
+         "en": "The day your money arrives",
+         "fr": "Le jour où ton argent arrive"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "Paying yourself first means saving before spending, not with whatever is left.",
+        "fr": "Se payer en premier, c'est épargner avant de dépenser, pas avec ce qui reste."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "Sara pays for 4 streaming services at 12 € a month each but uses only one. How much would cancelling the other three save in a year?",
+        "fr": "Sara paie 4 abonnements de streaming à 12 € par mois chacun mais n'en utilise qu'un. Combien économiserait-elle par an en résiliant les trois autres ?"
+       },
+       "options": [
+        {
+         "en": "432 €",
+         "fr": "432 €"
+        },
+        {
+         "en": "144 €",
+         "fr": "144 €"
+        },
+        {
+         "en": "36 €",
+         "fr": "36 €"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "3 subscriptions × 12 € × 12 months = 432 € a year.",
+        "fr": "3 abonnements × 12 € × 12 mois = 432 € par an."
+       }
+      },
+      {
+       "ask": {
+        "en": "Malik, a student, gets 700 € a month and spends all of it. What is a realistic first step?",
+        "fr": "Malik, étudiant, reçoit 700 € par mois et dépense tout. Quelle est une première étape réaliste ?"
+       },
+       "options": [
+        {
+         "en": "Invest 300 € a month in stocks",
+         "fr": "Investir 300 € par mois en actions"
+        },
+        {
+         "en": "Track one month of spending to find 20 to 30 € to save",
+         "fr": "Noter un mois de dépenses pour trouver 20 à 30 € à épargner"
+        },
+        {
+         "en": "Take a loan to start investing",
+         "fr": "Emprunter pour commencer à investir"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Small, steady savings come first. Investing money you need, or borrowed money, is risky.",
+        "fr": "Une petite épargne régulière passe en premier. Investir de l'argent dont on a besoin, ou emprunté, c'est risqué."
+       }
+      },
+      {
+       "ask": {
+        "en": "Which split follows the 50/30/20 idea for a 2,000 € income?",
+        "fr": "Quelle répartition suit l'idée du 50/30/20 pour un revenu de 2 000 € ?"
+       },
+       "options": [
+        {
+         "en": "1,600 € needs, 400 € wants, 0 € savings",
+         "fr": "1 600 € de besoins, 400 € d'envies, 0 € d'épargne"
+        },
+        {
+         "en": "500 € needs, 500 € wants, 1,000 € savings",
+         "fr": "500 € de besoins, 500 € d'envies, 1 000 € d'épargne"
+        },
+        {
+         "en": "1,000 € needs, 600 € wants, 400 € savings",
+         "fr": "1 000 € de besoins, 600 € d'envies, 400 € d'épargne"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "Half (1,000 €), less than a third (600 €), a fifth (400 €). Adapt it to your life.",
+        "fr": "La moitié (1 000 €), moins d'un tiers (600 €), un cinquième (400 €). À adapter à ta vie."
+       }
+      }
+     ]
+    },
+    {
+     "id": "cushion",
+     "title": {
+      "en": "Your safety cushion",
+      "fr": "Ton épargne de précaution"
+     },
+     "idea": {
+      "en": "Keep 3 to 6 months of spending on savings you can use at once, before investing.",
+      "fr": "Garde 3 à 6 mois de dépenses sur une épargne disponible tout de suite, avant d'investir."
+     },
+     "skill": "money",
+     "learn": [
+      {
+       "say": {
+        "en": "Life brings surprises: a broken laptop, a car repair, a lost job. A safety cushion is money kept just for that.",
+        "fr": "La vie réserve des surprises : un ordinateur cassé, une réparation de voiture, un emploi perdu. L'épargne de précaution, c'est de l'argent gardé juste pour ça."
+       },
+       "photo": "umbrella rain"
+      },
+      {
+       "say": {
+        "en": "Without it, a surprise can force you to sell your investments, maybe right after a fall, at a loss. The cushion protects your investments.",
+        "fr": "Sans elle, une surprise peut t'obliger à vendre tes placements, peut-être juste après une baisse, à perte. Le matelas protège tes placements."
+       }
+      },
+      {
+       "say": {
+        "en": "A common guideline: 3 to 6 months of your spending. Aim higher if your income is irregular.",
+        "fr": "Un repère courant : 3 à 6 mois de tes dépenses. Vise plus haut si tes revenus sont irréguliers."
+       },
+       "example": {
+        "en": "If you spend 1,200 € a month: a cushion of 3,600 to 7,200 €.",
+        "fr": "Si tu dépenses 1 200 € par mois : un matelas de 3 600 à 7 200 €."
+       }
+      },
+      {
+       "say": {
+        "en": "Keep it on a savings account you can use the same day, with no risk: in France for example a Livret A. In the EU, deposits are protected up to 100,000 € per bank.",
+        "fr": "Garde-la sur une épargne disponible le jour même, sans risque : en France par exemple un Livret A. Dans l'UE, les dépôts sont garantis jusqu'à 100 000 € par banque."
+       },
+       "photo": "bank building"
+      },
+      {
+       "ask": {
+        "en": "What is the safety cushion for?",
+        "fr": "À quoi sert l'épargne de précaution ?"
+       },
+       "options": [
+        {
+         "en": "Paying for surprises without selling investments",
+         "fr": "Payer les imprévus sans vendre ses placements"
+        },
+        {
+         "en": "Earning the highest return",
+         "fr": "Rapporter le plus possible"
+        },
+        {
+         "en": "Buying stocks when they fall",
+         "fr": "Acheter des actions quand elles baissent"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "Its job is to be there, not to grow: it keeps your investments safe from surprises.",
+        "fr": "Son rôle est d'être là, pas de rapporter : elle met tes placements à l'abri des imprévus."
+       }
+      },
+      {
+       "say": {
+        "en": "Build it step by step: even 20 € a month adds up. Once it is there, you can invest with a calm mind.",
+        "fr": "Construis-la petit à petit : même 20 € par mois finissent par compter. Une fois en place, tu peux investir l'esprit tranquille."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "Ana spends 1,000 € a month. Which cushion fits the 3 to 6 months guideline?",
+        "fr": "Ana dépense 1 000 € par mois. Quel matelas respecte le repère de 3 à 6 mois ?"
+       },
+       "options": [
+        {
+         "en": "1,000 €",
+         "fr": "1 000 €"
+        },
+        {
+         "en": "4,000 €",
+         "fr": "4 000 €"
+        },
+        {
+         "en": "20,000 €",
+         "fr": "20 000 €"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "3 to 6 months of 1,000 € means 3,000 to 6,000 €: 4,000 € is right in that range.",
+        "fr": "3 à 6 mois de 1 000 €, c'est 3 000 à 6 000 € : 4 000 € est pile dans la fourchette."
+       }
+      },
+      {
+       "ask": {
+        "en": "Where should the cushion be kept?",
+        "fr": "Où garder l'épargne de précaution ?"
+       },
+       "options": [
+        {
+         "en": "In shares of one company",
+         "fr": "En actions d'une seule entreprise"
+        },
+        {
+         "en": "In crypto",
+         "fr": "En crypto"
+        },
+        {
+         "en": "On a savings account you can use at once",
+         "fr": "Sur une épargne disponible tout de suite"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "It must be safe and there the same day: stocks and crypto can be down just when you need the money.",
+        "fr": "Elle doit être sûre et disponible le jour même : actions et crypto peuvent être en baisse pile quand tu en as besoin."
+       }
+      },
+      {
+       "ask": {
+        "en": "Why build the cushion before investing?",
+        "fr": "Pourquoi constituer ce matelas avant d'investir ?"
+       },
+       "options": [
+        {
+         "en": "So a surprise never forces you to sell at a bad time",
+         "fr": "Pour qu'un imprévu ne t'oblige jamais à vendre au mauvais moment"
+        },
+        {
+         "en": "Because savings pay more than stocks",
+         "fr": "Parce que l'épargne rapporte plus que les actions"
+        },
+        {
+         "en": "Because investing is not allowed without it",
+         "fr": "Parce qu'investir est interdit sans lui"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "Stocks can fall 30% in a year. With a cushion, you never have to sell then.",
+        "fr": "Les actions peuvent perdre 30 % en un an. Avec un matelas, tu n'as jamais à vendre à ce moment-là."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "Your car breaks down (800 €) while your stocks are down 20%. You have no cushion. What happens?",
+        "fr": "Ta voiture tombe en panne (800 €) alors que tes actions sont en baisse de 20 %. Tu n'as pas de matelas. Que se passe-t-il ?"
+       },
+       "options": [
+        {
+         "en": "Nothing: stocks always recover in time",
+         "fr": "Rien : les actions remontent toujours à temps"
+        },
+        {
+         "en": "You may have to sell stocks at a loss to pay",
+         "fr": "Tu risques de devoir vendre des actions à perte pour payer"
+        },
+        {
+         "en": "The bank pays for the repair",
+         "fr": "La banque paie la réparation"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Without a cushion you sell when prices are low, and a loss on paper becomes a real one.",
+        "fr": "Sans matelas, tu vends quand les prix sont bas, et une perte sur le papier devient réelle."
+       }
+      },
+      {
+       "ask": {
+        "en": "Leo is self-employed and his income changes a lot from month to month. Which cushion fits him best?",
+        "fr": "Léo est indépendant et ses revenus varient beaucoup d'un mois à l'autre. Quel matelas lui convient le mieux ?"
+       },
+       "options": [
+        {
+         "en": "Closer to 6 months of spending, or more",
+         "fr": "Plutôt 6 mois de dépenses, voire plus"
+        },
+        {
+         "en": "None: his income is high on average",
+         "fr": "Aucun : ses revenus sont élevés en moyenne"
+        },
+        {
+         "en": "One week of spending",
+         "fr": "Une semaine de dépenses"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "The less regular your income, the bigger the cushion you need.",
+        "fr": "Moins tes revenus sont réguliers, plus ton matelas doit être gros."
+       }
+      },
+      {
+       "ask": {
+        "en": "Nina has 2 months of spending saved and wants to invest 150 € a month. What is a sensible plan?",
+        "fr": "Nina a 2 mois de dépenses de côté et veut investir 150 € par mois. Quel plan est raisonnable ?"
+       },
+       "options": [
+        {
+         "en": "Invest everything, her savings included",
+         "fr": "Tout investir, épargne comprise"
+        },
+        {
+         "en": "Never invest at all",
+         "fr": "Ne jamais investir"
+        },
+        {
+         "en": "Split it: part to savings until about 3 months are covered, part invested",
+         "fr": "Partager : une part en épargne jusqu'à environ 3 mois, une part investie"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "She is close: finishing the cushion while starting small keeps her safe and learning.",
+        "fr": "Elle y est presque : finir le matelas tout en commençant petit la garde à l'abri et lui permet d'apprendre."
+       }
+      }
+     ]
+    },
+    {
+     "id": "debt",
+     "title": {
+      "en": "Expensive debt first",
+      "fr": "D'abord la dette chère"
+     },
+     "idea": {
+      "en": "Paying off a 20% loan is a sure 20% gain: no investment can promise that.",
+      "fr": "Rembourser un crédit à 20 %, c'est un gain sûr de 20 % : aucun placement ne peut le promettre."
+     },
+     "skill": "money",
+     "learn": [
+      {
+       "say": {
+        "en": "Not all debt is the same. A home loan at 3% and a credit card at 20% are very different animals.",
+        "fr": "Toutes les dettes ne se valent pas. Un prêt immobilier à 3 % et une carte de crédit à 20 %, ce sont deux mondes."
+       },
+       "photo": "credit card"
+      },
+      {
+       "say": {
+        "en": "Expensive debt: credit cards, overdrafts, consumer loans, buy-now-pay-later. They often cost 10 to 20% a year, sometimes more.",
+        "fr": "La dette chère : cartes de crédit, découverts, crédits à la consommation, paiements fractionnés. Ils coûtent souvent 10 à 20 % par an, parfois plus."
+       }
+      },
+      {
+       "say": {
+        "en": "Every euro you repay on a 20% debt saves you 20% a year, for sure. World stocks have earned roughly 7% a year over long periods, with ups and downs and no guarantee.",
+        "fr": "Chaque euro remboursé sur une dette à 20 % t'économise 20 % par an, à coup sûr. Les actions mondiales ont rapporté environ 7 % par an sur de longues périodes, avec des hauts et des bas et sans garantie."
+       },
+       "example": {
+        "en": "1,000 € owed on a card at 20% costs about 200 € a year. Invested at 7%, the same 1,000 € might earn about 70 €.",
+        "fr": "1 000 € dus sur une carte à 20 % coûtent environ 200 € par an. Placés à 7 %, ces mêmes 1 000 € pourraient rapporter environ 70 €."
+       }
+      },
+      {
+       "ask": {
+        "en": "Which of these is expensive debt?",
+        "fr": "Lequel est une dette chère ?"
+       },
+       "options": [
+        {
+         "en": "A home loan at 3%",
+         "fr": "Un prêt immobilier à 3 %"
+        },
+        {
+         "en": "A credit card balance",
+         "fr": "Un solde de carte de crédit"
+        },
+        {
+         "en": "A student loan at 1%",
+         "fr": "Un prêt étudiant à 1 %"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Credit cards often charge 15 to 20% a year or more.",
+        "fr": "Les cartes de crédit facturent souvent 15 à 20 % par an, voire plus."
+       }
+      },
+      {
+       "say": {
+        "en": "Cheap debt is different: a home or student loan at a low rate can go along with investing, as long as you never miss a payment.",
+        "fr": "La dette bon marché, c'est autre chose : un prêt immobilier ou étudiant à faible taux peut aller avec l'investissement, tant que tu ne rates aucune échéance."
+       }
+      },
+      {
+       "say": {
+        "en": "And one firm rule: never borrow to invest. If the investment falls, you still owe all of it.",
+        "fr": "Et une règle ferme : ne jamais emprunter pour investir. Si le placement baisse, tu dois quand même tout rembourser."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "You have 1,000 € and a credit card debt at 19%. What usually gives the best sure result?",
+        "fr": "Tu as 1 000 € et une dette de carte à 19 %. Qu'est-ce qui donne en général le meilleur résultat sûr ?"
+       },
+       "options": [
+        {
+         "en": "Repaying the card",
+         "fr": "Rembourser la carte"
+        },
+        {
+         "en": "Buying shares",
+         "fr": "Acheter des actions"
+        },
+        {
+         "en": "Leaving it on a current account",
+         "fr": "Le laisser sur le compte courant"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "Repaying saves 19% a year for certain. No investment guarantees that.",
+        "fr": "Rembourser t'économise 19 % par an à coup sûr. Aucun placement ne le garantit."
+       }
+      },
+      {
+       "ask": {
+        "en": "Which kind of debt is usually the cheapest?",
+        "fr": "Quel type de dette est en général le moins cher ?"
+       },
+       "options": [
+        {
+         "en": "An overdraft",
+         "fr": "Un découvert"
+        },
+        {
+         "en": "A store credit card",
+         "fr": "Une carte de crédit de magasin"
+        },
+        {
+         "en": "A home loan",
+         "fr": "Un prêt immobilier"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "Home loans have low rates because the home backs the loan. Overdrafts and store cards are among the dearest.",
+        "fr": "Les prêts immobiliers ont des taux bas car le logement garantit le prêt. Découverts et cartes de magasin sont parmi les plus chers."
+       }
+      },
+      {
+       "ask": {
+        "en": "Is taking a consumer loan to buy stocks a good idea?",
+        "fr": "Prendre un crédit à la consommation pour acheter des actions, bonne idée ?"
+       },
+       "options": [
+        {
+         "en": "Yes, stocks always beat loan rates",
+         "fr": "Oui, les actions battent toujours les taux des crédits"
+        },
+        {
+         "en": "No: if the stocks fall, you still owe the loan",
+         "fr": "Non : si les actions baissent, tu dois quand même le crédit"
+        },
+        {
+         "en": "Yes, if the loan is long",
+         "fr": "Oui, si le crédit est long"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Borrowing to invest adds a sure cost to an uncertain gain.",
+        "fr": "Emprunter pour investir ajoute un coût sûr à un gain incertain."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "Jade pays 25 € of interest a month on a revolving credit and wants to invest 100 € a month. What helps her most?",
+        "fr": "Jade paie 25 € d'intérêts par mois sur un crédit renouvelable et veut investir 100 € par mois. Qu'est-ce qui l'aide le plus ?"
+       },
+       "options": [
+        {
+         "en": "Investing the 100 € and keeping the credit",
+         "fr": "Investir les 100 € et garder le crédit"
+        },
+        {
+         "en": "Opening another credit to invest more",
+         "fr": "Ouvrir un autre crédit pour investir plus"
+        },
+        {
+         "en": "Putting the 100 € toward the credit until it is repaid",
+         "fr": "Mettre les 100 € sur le crédit jusqu'à le solder"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "Each euro repaid stops the interest. Once the credit is gone, the 100 € can go to investing.",
+        "fr": "Chaque euro remboursé arrête des intérêts. Une fois le crédit soldé, les 100 € pourront aller à l'investissement."
+       }
+      },
+      {
+       "ask": {
+        "en": "A 'buy now, pay in 4' offer for a 600 € phone: what should you check?",
+        "fr": "Une offre « paie en 4 fois » pour un téléphone à 600 € : que faut-il vérifier ?"
+       },
+       "options": [
+        {
+         "en": "The fees and what happens if you miss a payment",
+         "fr": "Les frais et ce qui se passe si tu rates un paiement"
+        },
+        {
+         "en": "Nothing, it is free",
+         "fr": "Rien, c'est gratuit"
+        },
+        {
+         "en": "Only the phone's colour",
+         "fr": "Seulement la couleur du téléphone"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "Split payments can carry fees and late penalties: they are debt too.",
+        "fr": "Les paiements fractionnés peuvent avoir des frais et des pénalités de retard : c'est aussi une dette."
+       }
+      },
+      {
+       "ask": {
+        "en": "Omar has a 1% student loan, no other debt and a 3-month cushion. Should the loan stop him from investing?",
+        "fr": "Omar a un prêt étudiant à 1 %, aucune autre dette et un matelas de 3 mois. Ce prêt doit-il l'empêcher d'investir ?"
+       },
+       "options": [
+        {
+         "en": "Yes, he must repay it all first",
+         "fr": "Oui, il doit d'abord tout rembourser"
+        },
+        {
+         "en": "No: cheap debt can go with investing, if he keeps paying it",
+         "fr": "Non : une dette bon marché peut aller avec l'investissement, s'il continue de la payer"
+        },
+        {
+         "en": "Yes, students cannot invest",
+         "fr": "Oui, les étudiants ne peuvent pas investir"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "At 1% the loan is cheap. With a cushion and no expensive debt, he can start investing small.",
+        "fr": "À 1 %, le prêt est bon marché. Avec un matelas et sans dette chère, il peut commencer à investir petit."
+       }
+      }
+     ]
+    },
     {
      "id": "swings",
      "title": {
@@ -57,40 +772,62 @@
      "learn": [
       {
        "say": {
-        "en": "A price changes all day because buyers and sellers keep changing their minds. Even solid companies often lose 10% or more in a few weeks, then recover.",
-        "fr": "Un cours change toute la journée, parce que acheteurs et vendeurs changent sans cesse d'avis. Même des entreprises solides perdent souvent 10 % ou plus en quelques semaines, puis remontent."
+        "en": "Now, investing! A share is a small piece of a company. Its price changes all day, because buyers and sellers keep changing their minds.",
+        "fr": "Passons à l'investissement ! Une action, c'est un petit morceau d'entreprise. Son prix change toute la journée, parce qu'acheteurs et vendeurs changent sans cesse d'avis."
        },
-       "photo": "piggy bank"
+       "photo": "stock market chart"
       },
       {
        "say": {
-        "en": "As long as you keep the shares, a fall is a [[unrealized|loss on paper]]. It becomes real only when you sell.",
+        "en": "Even solid companies often lose 10% or more in a few weeks, then recover.",
+        "fr": "Même des entreprises solides perdent souvent 10 % ou plus en quelques semaines, puis remontent."
+       }
+      },
+      {
+       "say": {
+        "en": "As long as you keep your shares, a fall is a [[unrealized|loss on paper]]. It only becomes real if you sell.",
         "fr": "Tant que tu gardes tes actions, une baisse est une [[unrealized|perte sur le papier]]. Elle ne devient réelle que si tu vends."
        }
       },
       {
        "ask": {
-        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
-        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+        "en": "Your share lost 10% this month and you have not sold. What have you lost for good?",
+        "fr": "Ton action a perdu 10 % ce mois-ci et tu n'as pas vendu. Qu'as-tu perdu pour de bon ?"
        },
        "options": [
         {
-         "en": "8% of that money",
-         "fr": "8 % de cet argent"
+         "en": "10% of your money",
+         "fr": "10 % de ton argent"
         },
         {
          "en": "Nothing yet: it is a loss on paper",
          "fr": "Rien pour l'instant : c'est une perte sur le papier"
         },
         {
-         "en": "It depends on the dividend",
-         "fr": "Ça dépend du dividende"
+         "en": "All of it",
+         "fr": "Tout"
         }
        ],
        "answer": 1,
        "why": {
         "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
-        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+        "fr": "Tant que tu gardes, le prix peut remonter, ou pas. La perte ne devient réelle qu'à la vente."
+       }
+      },
+      {
+       "say": {
+        "en": "That is why you should only invest money you won't need for at least 5 years: time lets you wait for prices to recover.",
+        "fr": "C'est pour ça qu'on n'investit que de l'argent dont on n'aura pas besoin avant au moins 5 ans : le temps permet d'attendre que les prix remontent."
+       },
+       "example": {
+        "en": "World stocks have fallen 20% or more several times in the past. Each time they later climbed back above their old high, sometimes after several years. The past does not guarantee the future.",
+        "fr": "Les actions mondiales ont perdu 20 % ou plus plusieurs fois par le passé. À chaque fois, elles sont ensuite remontées au-dessus de leur ancien sommet, parfois après plusieurs années. Le passé ne garantit pas l'avenir."
+       }
+      },
+      {
+       "say": {
+        "en": "Checking prices every day makes falls feel bigger. Many calm investors look once a month, or less.",
+        "fr": "Regarder les cours tous les jours fait paraître les baisses plus grosses. Beaucoup d'investisseurs sereins regardent une fois par mois, voire moins."
        }
       }
      ],
@@ -122,132 +859,145 @@
       },
       {
        "ask": {
-        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
-        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+        "en": "Which money is suited to stocks?",
+        "fr": "Quel argent convient aux actions ?"
        },
        "options": [
         {
-         "en": "8% of that money",
-         "fr": "8 % de cet argent"
+         "en": "Next month's rent",
+         "fr": "Le loyer du mois prochain"
         },
         {
-         "en": "Nothing yet: it is a loss on paper",
-         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+         "en": "Money you won't need for at least 5 years",
+         "fr": "De l'argent dont tu n'auras pas besoin avant au moins 5 ans"
         },
         {
-         "en": "It depends on the dividend",
-         "fr": "Ça dépend du dividende"
+         "en": "Savings for a trip in 6 months",
+         "fr": "L'épargne d'un voyage dans 6 mois"
         }
        ],
        "answer": 1,
        "why": {
-        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
-        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+        "en": "Stocks need time to get over their falls. Money needed soon belongs in savings.",
+        "fr": "Les actions ont besoin de temps pour se remettre de leurs baisses. L'argent dont on a besoin bientôt va sur l'épargne."
        }
       },
       {
        "ask": {
-        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
-        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+        "en": "Your fund fell 15% this year. Is that unusual?",
+        "fr": "Ton fonds a perdu 15 % cette année. Est-ce inhabituel ?"
        },
        "options": [
         {
-         "en": "8% of that money",
-         "fr": "8 % de cet argent"
+         "en": "No: falls of 10 to 20% happen regularly",
+         "fr": "Non : des baisses de 10 à 20 % arrivent régulièrement"
         },
         {
-         "en": "Nothing yet: it is a loss on paper",
-         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+         "en": "Yes, it means the fund is broken",
+         "fr": "Oui, ça veut dire que le fonds est cassé"
         },
         {
-         "en": "It depends on the dividend",
-         "fr": "Ça dépend du dividende"
+         "en": "Yes, it has never happened before",
+         "fr": "Oui, ça n'est jamais arrivé"
         }
        ],
-       "answer": 1,
+       "answer": 0,
        "why": {
-        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
-        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+        "en": "Big falls are part of investing. They feel scary but they are normal.",
+        "fr": "Les grosses baisses font partie de l'investissement. Elles font peur mais elles sont normales."
        }
       }
      ],
      "apply": [
       {
        "ask": {
-        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
-        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+        "en": "You invested 1,000 € and it is now worth 900 €. You need nothing for 10 years. What is a calm reaction?",
+        "fr": "Tu as investi 1 000 € et ça vaut maintenant 900 €. Tu n'as besoin de rien pendant 10 ans. Quelle est une réaction sereine ?"
        },
        "options": [
         {
-         "en": "8% of that money",
-         "fr": "8 % de cet argent"
+         "en": "Keep it: it is a paper loss and you have time",
+         "fr": "Garder : c'est une perte sur le papier et tu as le temps"
         },
         {
-         "en": "Nothing yet: it is a loss on paper",
-         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+         "en": "Sell now to avoid losing more",
+         "fr": "Vendre tout de suite pour ne pas perdre plus"
         },
         {
-         "en": "It depends on the dividend",
-         "fr": "Ça dépend du dividende"
+         "en": "Borrow to buy more",
+         "fr": "Emprunter pour en racheter"
         }
        ],
-       "answer": 1,
+       "answer": 0,
        "why": {
-        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
-        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+        "en": "With 10 years ahead, time is on your side. Selling would make the loss real.",
+        "fr": "Avec 10 ans devant toi, le temps joue pour toi. Vendre rendrait la perte réelle."
        }
       },
       {
        "ask": {
-        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
-        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+        "en": "Leo needs his 3,000 € for a car in 8 months. Where should it be?",
+        "fr": "Léo a besoin de ses 3 000 € pour une voiture dans 8 mois. Où doivent-ils être ?"
        },
        "options": [
         {
-         "en": "8% of that money",
-         "fr": "8 % de cet argent"
+         "en": "In stocks, to grow it faster",
+         "fr": "En actions, pour les faire grossir plus vite"
         },
         {
-         "en": "Nothing yet: it is a loss on paper",
-         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+         "en": "In crypto",
+         "fr": "En crypto"
         },
         {
-         "en": "It depends on the dividend",
-         "fr": "Ça dépend du dividende"
+         "en": "On a savings account",
+         "fr": "Sur une épargne disponible"
         }
        ],
-       "answer": 1,
+       "answer": 2,
        "why": {
-        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
-        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+        "en": "In 8 months stocks could easily be down 20%. Money needed soon belongs somewhere stable.",
+        "fr": "En 8 mois, les actions peuvent facilement perdre 20 %. L'argent dont on a besoin bientôt doit être en lieu stable."
        }
       },
       {
        "ask": {
-        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
-        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+        "en": "Your share drops 12% in a day after bad news and you sell at once. What happened?",
+        "fr": "Ton action chute de 12 % en un jour après une mauvaise nouvelle et tu vends aussitôt. Que s'est-il passé ?"
        },
        "options": [
         {
-         "en": "8% of that money",
-         "fr": "8 % de cet argent"
+         "en": "You avoided every loss",
+         "fr": "Tu as évité toute perte"
         },
         {
-         "en": "Nothing yet: it is a loss on paper",
-         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+         "en": "You turned a loss on paper into a real one",
+         "fr": "Tu as transformé une perte sur le papier en perte réelle"
         },
         {
-         "en": "It depends on the dividend",
-         "fr": "Ça dépend du dividende"
+         "en": "Nothing changed",
+         "fr": "Rien n'a changé"
         }
        ],
        "answer": 1,
        "why": {
-        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
-        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+        "en": "Selling locks the loss in. Sometimes that is right, but it should be a decision, not a reflex.",
+        "fr": "Vendre fige la perte. C'est parfois le bon choix, mais ça doit être une décision, pas un réflexe."
        }
       }
      ]
+    },
+    {
+     "id": "plain-guardian",
+     "boss": "mid",
+     "count": 5,
+     "title": {
+      "en": "The guardian of the plain",
+      "fr": "Le gardien de la plaine"
+     },
+     "intro": {
+      "en": "I'm the guardian of the plain! Five questions on budget, cushion, debt and price swings, one try each. Show me what you learned!",
+      "fr": "Je suis le gardien de la plaine ! Cinq questions sur le budget, l'épargne de précaution, la dette et les variations de prix, un seul essai à chaque fois. Montre-moi ce que tu as appris !"
+     }
     },
     {
      "id": "compounding",
@@ -263,40 +1013,67 @@
      "learn": [
       {
        "say": {
-        "en": "If your money earns 7% a year, it roughly doubles in 10 years and grows about 4 times in 20, because each year's gains also earn gains.",
-        "fr": "Si ton argent rapporte 7 % par an, il double à peu près en 10 ans et est multiplié par 4 environ en 20 ans, car les gains de chaque année rapportent à leur tour."
+        "en": "Here is the magic of investing: gains that make gains. It is called [[compounding|compound growth]].",
+        "fr": "Voici la magie de l'investissement : des gains qui font des gains. On appelle ça les [[compounding|intérêts composés]]."
        },
-       "photo": "piggy bank"
+       "photo": "snowball"
       },
       {
        "say": {
-        "en": "That is why starting early, even with [[dca|small monthly amounts]], matters more than finding the perfect stock.",
-        "fr": "C'est pour ça que commencer tôt, même avec de [[dca|petites sommes chaque mois]], compte plus que trouver l'action parfaite."
+        "en": "If your money earns 5% in a year, the next year's 5% applies to the bigger amount, and so on.",
+        "fr": "Si ton argent rapporte 5 % en un an, les 5 % de l'année suivante s'appliquent au montant plus gros, et ainsi de suite."
+       },
+       "example": {
+        "en": "1,000 € at 5% a year: 1,050 € after 1 year, 1,102.50 € after 2 years, about 1,629 € after 10 years.",
+        "fr": "1 000 € à 5 % par an : 1 050 € après 1 an, 1 102,50 € après 2 ans, environ 1 629 € après 10 ans."
        }
       },
       {
        "ask": {
-        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
-        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+        "en": "1,000 € grows by 10% in year one, and by 10% again in year two. How much do you have?",
+        "fr": "1 000 € prennent 10 % la première année, puis encore 10 % la deuxième. Combien as-tu ?"
        },
        "options": [
         {
-         "en": "1,700 €",
-         "fr": "1 700 €"
+         "en": "1,200 €",
+         "fr": "1 200 €"
         },
         {
-         "en": "2,000 €",
-         "fr": "2 000 €"
+         "en": "1,210 €",
+         "fr": "1 210 €"
         },
         {
-         "en": "7,000 €",
-         "fr": "7 000 €"
+         "en": "1,100 €",
+         "fr": "1 100 €"
         }
        ],
        "answer": 1,
        "why": {
-        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
-        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+        "en": "Year two's 10% applies to 1,100 €, not 1,000 €: that extra 10 € is compounding.",
+        "fr": "Les 10 % de la deuxième année s'appliquent à 1 100 €, pas à 1 000 € : ces 10 € de plus, ce sont les intérêts composés."
+       }
+      },
+      {
+       "say": {
+        "en": "The longer it runs, the faster it grows: time matters more than the amount you start with.",
+        "fr": "Plus ça dure, plus ça accélère : le temps compte plus que la somme de départ."
+       }
+      },
+      {
+       "say": {
+        "en": "Starting early, even small, beats starting later with more.",
+        "fr": "Commencer tôt, même petit, vaut mieux que commencer tard avec plus."
+       },
+       "photo": "young tree",
+       "example": {
+        "en": "100 € a month at 5% a year: about 15,500 € after 10 years (12,000 € put in), about 41,100 € after 20 years (24,000 € put in).",
+        "fr": "100 € par mois à 5 % par an : environ 15 500 € après 10 ans (12 000 € versés), environ 41 100 € après 20 ans (24 000 € versés)."
+       }
+      },
+      {
+       "say": {
+        "en": "It works the other way too: yearly fees compound against you. We'll see that very soon.",
+        "fr": "Ça marche aussi dans l'autre sens : les frais annuels se composent contre toi. On le verra très vite."
        }
       }
      ],
@@ -328,145 +1105,132 @@
       },
       {
        "ask": {
-        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
-        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+        "en": "At 65, who has more, with the same 5% a year: Lina, who put in 100 € a month from age 25, or Max, who put in 200 € a month from 45?",
+        "fr": "À 65 ans, qui a le plus, avec le même 5 % par an : Lina, qui a versé 100 € par mois dès 25 ans, ou Max, 200 € par mois dès 45 ans ?"
        },
        "options": [
         {
-         "en": "1,700 €",
-         "fr": "1 700 €"
+         "en": "Max, he put in twice as much each month",
+         "fr": "Max, il versait deux fois plus par mois"
         },
         {
-         "en": "2,000 €",
-         "fr": "2 000 €"
+         "en": "They end up equal",
+         "fr": "Ils finissent à égalité"
         },
         {
-         "en": "7,000 €",
-         "fr": "7 000 €"
+         "en": "Lina, thanks to her 40 years",
+         "fr": "Lina, grâce à ses 40 ans de placement"
         }
        ],
-       "answer": 1,
+       "answer": 2,
        "why": {
-        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
-        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+        "en": "Lina invests for 40 years, Max for 20. Lina ends with about 153,000 €, Max about 82,000 €.",
+        "fr": "Lina investit 40 ans, Max 20. Lina finit avec environ 153 000 €, Max environ 82 000 €."
        }
       },
       {
        "ask": {
-        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
-        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+        "en": "What does compounding need most?",
+        "fr": "De quoi les intérêts composés ont-ils le plus besoin ?"
        },
        "options": [
         {
-         "en": "1,700 €",
-         "fr": "1 700 €"
+         "en": "Time",
+         "fr": "Du temps"
         },
         {
-         "en": "2,000 €",
-         "fr": "2 000 €"
+         "en": "Luck",
+         "fr": "De la chance"
         },
         {
-         "en": "7,000 €",
-         "fr": "7 000 €"
+         "en": "Checking prices every day",
+         "fr": "Regarder les cours tous les jours"
         }
        ],
-       "answer": 1,
+       "answer": 0,
        "why": {
-        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
-        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+        "en": "Each year builds on the last: the more years, the stronger the effect.",
+        "fr": "Chaque année s'appuie sur la précédente : plus il y a d'années, plus l'effet est fort."
        }
       }
      ],
      "apply": [
       {
        "ask": {
-        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
-        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+        "en": "5,000 € grows 6% a year for 2 years, gains left in. How much is it worth?",
+        "fr": "5 000 € prennent 6 % par an pendant 2 ans, gains laissés dedans. Combien ça vaut ?"
        },
        "options": [
         {
-         "en": "1,700 €",
-         "fr": "1 700 €"
+         "en": "5,618 €",
+         "fr": "5 618 €"
         },
         {
-         "en": "2,000 €",
-         "fr": "2 000 €"
+         "en": "5,600 €",
+         "fr": "5 600 €"
         },
         {
-         "en": "7,000 €",
-         "fr": "7 000 €"
+         "en": "5,300 €",
+         "fr": "5 300 €"
         }
        ],
-       "answer": 1,
+       "answer": 0,
        "why": {
-        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
-        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+        "en": "5,000 × 1.06 = 5,300 after a year, then 5,300 × 1.06 = 5,618.",
+        "fr": "5 000 × 1,06 = 5 300 après un an, puis 5 300 × 1,06 = 5 618."
        }
       },
       {
        "ask": {
-        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
-        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+        "en": "You take your gains out every year instead of leaving them in. What happens?",
+        "fr": "Tu retires tes gains chaque année au lieu de les laisser. Que se passe-t-il ?"
        },
        "options": [
         {
-         "en": "1,700 €",
-         "fr": "1 700 €"
+         "en": "You earn more",
+         "fr": "Tu gagnes plus"
         },
         {
-         "en": "2,000 €",
-         "fr": "2 000 €"
+         "en": "Nothing changes",
+         "fr": "Rien ne change"
         },
         {
-         "en": "7,000 €",
-         "fr": "7 000 €"
+         "en": "Your gains stop earning gains",
+         "fr": "Tes gains arrêtent de rapporter des gains"
         }
        ],
-       "answer": 1,
+       "answer": 2,
        "why": {
-        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
-        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+        "en": "Compounding works only on what stays invested.",
+        "fr": "Les intérêts composés ne jouent que sur ce qui reste investi."
        }
       },
       {
        "ask": {
-        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
-        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+        "en": "At about 7% a year, money roughly doubles in 10 years. About how much do 2,000 € become in 20 years?",
+        "fr": "À environ 7 % par an, l'argent double à peu près en 10 ans. Que deviennent 2 000 € en 20 ans, environ ?"
        },
        "options": [
         {
-         "en": "1,700 €",
-         "fr": "1 700 €"
+         "en": "About 4,000 €",
+         "fr": "Environ 4 000 €"
         },
         {
-         "en": "2,000 €",
-         "fr": "2 000 €"
+         "en": "About 8,000 €",
+         "fr": "Environ 8 000 €"
         },
         {
-         "en": "7,000 €",
-         "fr": "7 000 €"
+         "en": "About 2,800 €",
+         "fr": "Environ 2 800 €"
         }
        ],
        "answer": 1,
        "why": {
-        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
-        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+        "en": "It doubles twice: 2,000 → 4,000 → 8,000 € (about 7,700 € exactly).",
+        "fr": "Ça double deux fois : 2 000 → 4 000 → 8 000 € (environ 7 700 € exactement)."
        }
       }
      ]
-    },
-    {
-     "id": "plain-guardian",
-     "boss": "mid",
-     "count": 5,
-     "title": {
-      "en": "The guardian of the plain",
-      "fr": "Le gardien de la plaine"
-     },
-     "intro": {
-      "en": "Show me what you learned!",
-      "fr": "Montre-moi ce que tu as appris !"
-     }
     },
     {
      "id": "diversification",
@@ -482,40 +1246,56 @@
      "learn": [
       {
        "say": {
-        "en": "If one company is a big part of your money, one bad surprise, like a scandal or a failed product, can cost you a lot.",
-        "fr": "Si une entreprise pèse lourd dans ton argent, une seule mauvaise surprise, comme un scandale ou un produit raté, peut te coûter cher."
+        "en": "Don't put all your eggs in one basket! Spreading your money over many companies is called [[diversification|diversification]].",
+        "fr": "Ne mets pas tous tes œufs dans le même panier ! Répartir ton argent sur beaucoup d'entreprises, c'est la [[diversification|diversification]]."
        },
-       "photo": "piggy bank"
+       "photo": "basket of eggs"
       },
       {
        "say": {
-        "en": "A broad index fund ([[etf|ETF]]) holds hundreds of companies at once, so no single one can sink it. Most people build their base with one, then add single stocks in small amounts.",
-        "fr": "Un fonds indiciel large ([[etf|ETF]]) détient des centaines d'entreprises à la fois, donc aucune ne peut le couler à elle seule. La plupart des gens construisent leur base avec un ETF, puis ajoutent quelques actions en petites quantités."
+        "en": "If one company is a big part of your money, one bad surprise, like a scandal or a failed product, can cost you a lot.",
+        "fr": "Si une entreprise pèse lourd dans ton argent, une seule mauvaise surprise, un scandale ou un produit raté, peut te coûter cher."
+       },
+       "example": {
+        "en": "All in 1 company and it halves: you lose 50%. Spread over 100 companies and one halves: you lose 0.5%.",
+        "fr": "Tout sur 1 entreprise et elle perd la moitié : tu perds 50 %. Réparti sur 100 entreprises et l'une perd la moitié : tu perds 0,5 %."
        }
       },
       {
        "ask": {
-        "en": "Which of these is the most spread out?",
-        "fr": "Lequel de ces choix est le plus diversifié ?"
+        "en": "You own 20 companies in equal parts. One goes bankrupt. About how much do you lose?",
+        "fr": "Tu as 20 entreprises à parts égales. L'une fait faillite. Combien perds-tu environ ?"
        },
        "options": [
         {
-         "en": "One stock you know well",
-         "fr": "Une action que tu connais bien"
+         "en": "About 5%",
+         "fr": "Environ 5 %"
         },
         {
-         "en": "A world index ETF",
-         "fr": "Un ETF indiciel monde"
+         "en": "About 50%",
+         "fr": "Environ 50 %"
         },
         {
-         "en": "Three tech stocks",
-         "fr": "Trois actions tech"
+         "en": "Everything",
+         "fr": "Tout"
         }
        ],
-       "answer": 1,
+       "answer": 0,
        "why": {
-        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
-        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+        "en": "Each company is a twentieth of your money: 1 ÷ 20 = 5%.",
+        "fr": "Chaque entreprise pèse un vingtième de ton argent : 1 ÷ 20 = 5 %."
+       }
+      },
+      {
+       "say": {
+        "en": "Spread across countries and [[sector|sectors]] too: companies in the same sector often fall together.",
+        "fr": "Répartis aussi entre pays et [[sector|secteurs]] : les entreprises d'un même secteur baissent souvent ensemble."
+       }
+      },
+      {
+       "say": {
+        "en": "The simplest way to own hundreds of companies at once is a fund called an [[etf|ETF]]. That's the next level!",
+        "fr": "Le plus simple pour détenir des centaines d'entreprises d'un coup, c'est un fonds appelé [[etf|ETF]]. C'est le prochain niveau !"
        }
       }
      ],
@@ -547,129 +1327,583 @@
       },
       {
        "ask": {
-        "en": "Which of these is the most spread out?",
-        "fr": "Lequel de ces choix est le plus diversifié ?"
+        "en": "Why do several banks often fall on the same day?",
+        "fr": "Pourquoi plusieurs banques baissent-elles souvent le même jour ?"
        },
        "options": [
         {
-         "en": "One stock you know well",
-         "fr": "Une action que tu connais bien"
+         "en": "Banks agree on their prices",
+         "fr": "Les banques s'entendent sur leurs prix"
         },
         {
-         "en": "A world index ETF",
-         "fr": "Un ETF indiciel monde"
+         "en": "The same news hits the whole sector",
+         "fr": "Les mêmes nouvelles touchent tout le secteur"
         },
         {
-         "en": "Three tech stocks",
-         "fr": "Trois actions tech"
+         "en": "It's pure chance",
+         "fr": "C'est le hasard"
         }
        ],
        "answer": 1,
        "why": {
-        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
-        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+        "en": "Interest rates or a crisis hit every bank at once: that is why spreading across sectors matters.",
+        "fr": "Les taux ou une crise touchent toutes les banques à la fois : d'où l'intérêt de répartir entre secteurs."
        }
       },
       {
        "ask": {
-        "en": "Which of these is the most spread out?",
-        "fr": "Lequel de ces choix est le plus diversifié ?"
+        "en": "What does diversification protect you from best?",
+        "fr": "Contre quoi la diversification te protège-t-elle le mieux ?"
        },
        "options": [
         {
-         "en": "One stock you know well",
-         "fr": "Une action que tu connais bien"
+         "en": "One company's bad news",
+         "fr": "Les mauvaises nouvelles d'une seule entreprise"
         },
         {
-         "en": "A world index ETF",
-         "fr": "Un ETF indiciel monde"
+         "en": "Every market fall",
+         "fr": "Toutes les baisses du marché"
         },
         {
-         "en": "Three tech stocks",
-         "fr": "Trois actions tech"
+         "en": "Inflation",
+         "fr": "L'inflation"
         }
        ],
-       "answer": 1,
+       "answer": 0,
        "why": {
-        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
-        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+        "en": "It spreads the risk of single companies. When the whole market falls, a diversified portfolio falls too.",
+        "fr": "Elle dilue le risque des entreprises une par une. Quand tout le marché baisse, un portefeuille diversifié baisse aussi."
        }
       }
      ],
      "apply": [
       {
        "ask": {
-        "en": "Which of these is the most spread out?",
-        "fr": "Lequel de ces choix est le plus diversifié ?"
+        "en": "Sam has 80% of his money in one company he loves. What is the main risk?",
+        "fr": "Sam a 80 % de son argent dans une entreprise qu'il adore. Quel est le principal risque ?"
        },
        "options": [
         {
-         "en": "One stock you know well",
-         "fr": "Une action que tu connais bien"
+         "en": "None, since he knows the company well",
+         "fr": "Aucun, puisqu'il connaît bien l'entreprise"
         },
         {
-         "en": "A world index ETF",
-         "fr": "Un ETF indiciel monde"
+         "en": "One piece of bad news could hit most of his savings",
+         "fr": "Une seule mauvaise nouvelle peut toucher l'essentiel de son épargne"
         },
         {
-         "en": "Three tech stocks",
-         "fr": "Trois actions tech"
+         "en": "His bank may close",
+         "fr": "Sa banque peut fermer"
         }
        ],
        "answer": 1,
        "why": {
-        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
-        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+        "en": "Loving a company does not protect against a scandal or a failed product.",
+        "fr": "Aimer une entreprise ne protège pas d'un scandale ou d'un produit raté."
        }
       },
       {
        "ask": {
-        "en": "Which of these is the most spread out?",
-        "fr": "Lequel de ces choix est le plus diversifié ?"
+        "en": "To spread 100 € a month simply, what suits a beginner best?",
+        "fr": "Pour répartir 100 € par mois simplement, qu'est-ce qui convient le mieux à un débutant ?"
        },
        "options": [
         {
-         "en": "One stock you know well",
-         "fr": "Une action que tu connais bien"
+         "en": "Picking one new stock each month",
+         "fr": "Choisir une nouvelle action chaque mois"
         },
         {
-         "en": "A world index ETF",
-         "fr": "Un ETF indiciel monde"
+         "en": "Putting it all in crypto",
+         "fr": "Tout mettre en crypto"
         },
         {
-         "en": "Three tech stocks",
-         "fr": "Trois actions tech"
+         "en": "A broad world ETF",
+         "fr": "Un ETF monde large"
         }
        ],
-       "answer": 1,
+       "answer": 2,
        "why": {
-        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
-        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+        "en": "One purchase a month gives you a slice of over a thousand companies.",
+        "fr": "Un achat par mois te donne un morceau de plus de mille entreprises."
        }
       },
       {
        "ask": {
-        "en": "Which of these is the most spread out?",
-        "fr": "Lequel de ces choix est le plus diversifié ?"
+        "en": "You hold 10 stocks, all European car makers. Are you well diversified?",
+        "fr": "Tu as 10 actions, toutes des constructeurs automobiles européens. Es-tu bien diversifié ?"
        },
        "options": [
         {
-         "en": "One stock you know well",
-         "fr": "Une action que tu connais bien"
+         "en": "No: they all depend on the same sector and region",
+         "fr": "Non : elles dépendent toutes du même secteur et de la même région"
         },
         {
-         "en": "A world index ETF",
-         "fr": "Un ETF indiciel monde"
+         "en": "Yes, 10 stocks is plenty",
+         "fr": "Oui, 10 actions c'est largement assez"
         },
         {
-         "en": "Three tech stocks",
-         "fr": "Trois actions tech"
+         "en": "Yes, cars are a safe sector",
+         "fr": "Oui, l'automobile est un secteur sûr"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "Ten companies hit by the same news act almost like one.",
+        "fr": "Dix entreprises touchées par les mêmes nouvelles se comportent presque comme une seule."
+       }
+      }
+     ]
+    },
+    {
+     "id": "etf",
+     "title": {
+      "en": "What an ETF is",
+      "fr": "Ce qu'est un ETF"
+     },
+     "idea": {
+      "en": "An ETF is a basket of many stocks you buy in one go.",
+      "fr": "Un ETF est un panier de nombreuses actions que tu achètes d'un coup."
+     },
+     "skill": "products",
+     "learn": [
+      {
+       "say": {
+        "en": "An [[etf|ETF]] is a fund you buy like a share. One ETF can hold hundreds or thousands of companies.",
+        "fr": "Un [[etf|ETF]] est un fonds qui s'achète comme une action. Un seul ETF peut contenir des centaines ou des milliers d'entreprises."
+       },
+       "photo": "shopping basket"
+      },
+      {
+       "say": {
+        "en": "Most ETFs simply copy an [[index|index]], such as the MSCI World and its 1,400 or so large companies.",
+        "fr": "La plupart des ETF copient simplement un [[index|indice]], comme le MSCI World et ses quelque 1 400 grandes entreprises."
+       }
+      },
+      {
+       "say": {
+        "en": "Nobody picks stocks, so they are cheap: the [[ter|yearly cost]] of broad ETFs is often 0.1 to 0.4%.",
+        "fr": "Personne ne choisit les actions, donc ils coûtent peu : les [[ter|frais annuels]] des grands ETF tournent souvent entre 0,1 et 0,4 %."
+       },
+       "example": {
+        "en": "A world ETF at 0.2% a year costs 2 € a year for every 1,000 € invested.",
+        "fr": "Un ETF monde à 0,2 % par an coûte 2 € par an pour chaque tranche de 1 000 € investie."
+       }
+      },
+      {
+       "ask": {
+        "en": "What does a world index ETF usually do?",
+        "fr": "Que fait en général un ETF indiciel monde ?"
+       },
+       "options": [
+        {
+         "en": "Picks the best stocks each day",
+         "fr": "Choisit les meilleures actions chaque jour"
+        },
+        {
+         "en": "Copies an index of many companies",
+         "fr": "Copie un indice de nombreuses entreprises"
+        },
+        {
+         "en": "Guarantees a return",
+         "fr": "Garantit un rendement"
         }
        ],
        "answer": 1,
        "why": {
-        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
-        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+        "en": "It follows its index automatically: no guessing, no guarantee.",
+        "fr": "Il suit son indice automatiquement : pas de pari, pas de garantie."
+       }
+      },
+      {
+       "say": {
+        "en": "An ETF still goes up and down with the market: it spreads the risk of single companies, not the risk of the whole market.",
+        "fr": "Un ETF monte et baisse toujours avec le marché : il dilue le risque des entreprises une par une, pas celui du marché entier."
+       }
+      },
+      {
+       "say": {
+        "en": "In France, many world ETFs can go in a [[pea|PEA]], an account with lighter tax after 5 years.",
+        "fr": "En France, beaucoup d'ETF monde peuvent aller dans un [[pea|PEA]], un compte moins taxé après 5 ans."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "When you buy one share of a world ETF, you own...",
+        "fr": "Quand tu achètes une part d'ETF monde, tu possèdes…"
+       },
+       "options": [
+        {
+         "en": "A tiny part of many companies",
+         "fr": "Un petit bout de nombreuses entreprises"
+        },
+        {
+         "en": "A share of the bank that sells it",
+         "fr": "Une part de la banque qui le vend"
+        },
+        {
+         "en": "A savings account",
+         "fr": "Un livret d'épargne"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "The ETF holds the companies of its index. Your share is a slice of that whole basket.",
+        "fr": "L'ETF détient les entreprises de son indice. Ta part est une tranche de tout ce panier."
+       }
+      },
+      {
+       "ask": {
+        "en": "An ETF costs 0.2% a year. On 5,000 €, that is about:",
+        "fr": "Un ETF coûte 0,2 % par an. Sur 5 000 €, ça fait environ :"
+       },
+       "options": [
+        {
+         "en": "1 €",
+         "fr": "1 €"
+        },
+        {
+         "en": "10 €",
+         "fr": "10 €"
+        },
+        {
+         "en": "100 €",
+         "fr": "100 €"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "0.2% of 5,000 € = 10 € a year.",
+        "fr": "0,2 % de 5 000 € = 10 € par an."
+       }
+      },
+      {
+       "ask": {
+        "en": "Can a world ETF lose value?",
+        "fr": "Un ETF monde peut-il perdre de la valeur ?"
+       },
+       "options": [
+        {
+         "en": "Yes, when markets fall",
+         "fr": "Oui, quand les marchés baissent"
+        },
+        {
+         "en": "No, it is guaranteed",
+         "fr": "Non, il est garanti"
+        },
+        {
+         "en": "Only if one company fails",
+         "fr": "Seulement si une entreprise fait faillite"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "It holds stocks, so it falls when stock markets fall.",
+        "fr": "Il contient des actions, donc il baisse quand les marchés baissent."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "Emma wants to invest 50 € a month for 20 years, simply. What fits?",
+        "fr": "Emma veut investir 50 € par mois pendant 20 ans, simplement. Qu'est-ce qui convient ?"
+       },
+       "options": [
+        {
+         "en": "One single company she likes",
+         "fr": "Une seule entreprise qu'elle aime"
+        },
+        {
+         "en": "New trendy stocks each month",
+         "fr": "De nouvelles actions à la mode chaque mois"
+        },
+        {
+         "en": "A low-cost world index ETF",
+         "fr": "Un ETF indiciel monde peu cher"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "Broad, cheap and nothing to choose each month: ideal for a long, regular plan.",
+        "fr": "Large, peu cher et rien à choisir chaque mois : idéal pour un plan long et régulier."
+       }
+      },
+      {
+       "ask": {
+        "en": "Two world ETFs follow the same index. One costs 0.12% a year, the other 0.60%. Which should you prefer, all else equal?",
+        "fr": "Deux ETF monde suivent le même indice. L'un coûte 0,12 % par an, l'autre 0,60 %. Lequel préférer, à part égale ?"
+       },
+       "options": [
+        {
+         "en": "The 0.12% one",
+         "fr": "Celui à 0,12 %"
+        },
+        {
+         "en": "The 0.60% one, it must be better",
+         "fr": "Celui à 0,60 %, il doit être meilleur"
+        },
+        {
+         "en": "It makes no difference",
+         "fr": "Ça ne change rien"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "Same index, same contents: the cheaper one leaves more for you every year.",
+        "fr": "Même indice, même contenu : le moins cher t'en laisse plus chaque année."
+       }
+      },
+      {
+       "ask": {
+        "en": "Markets fall 25% in a crisis. Your world ETF will most likely...",
+        "fr": "Les marchés perdent 25 % dans une crise. Ton ETF monde va très probablement..."
+       },
+       "options": [
+        {
+         "en": "Stay flat thanks to diversification",
+         "fr": "Rester stable grâce à la diversification"
+        },
+        {
+         "en": "Fall too, by a similar amount",
+         "fr": "Baisser aussi, d'un montant proche"
+        },
+        {
+         "en": "Rise",
+         "fr": "Monter"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "It is the market: when the market falls, it falls with it.",
+        "fr": "Il est le marché : quand le marché baisse, il baisse avec."
+       }
+      }
+     ]
+    },
+    {
+     "id": "fees",
+     "title": {
+      "en": "What fees really cost",
+      "fr": "Ce que coûtent vraiment les frais"
+     },
+     "idea": {
+      "en": "Fees are the one cost you control, and they add up.",
+      "fr": "Les frais sont le seul coût que tu maîtrises, et ils s'additionnent."
+     },
+     "skill": "costs",
+     "learn": [
+      {
+       "say": {
+        "en": "Fees look small but they add up. There are two kinds: fees on each order, and yearly fees.",
+        "fr": "Les frais ont l'air petits, mais ils s'additionnent. Il y en a deux sortes : les frais à chaque ordre et les frais annuels."
+       },
+       "photo": "coins"
+      },
+      {
+       "say": {
+        "en": "[[orderFee|Order fees]] are what your bank charges each time you buy or sell. Small orders suffer most.",
+        "fr": "Les [[orderFee|frais de courtage]], c'est ce que ta banque prend à chaque achat ou vente. Les petits ordres en souffrent le plus."
+       },
+       "example": {
+        "en": "A 2 € fee on a 100 € order is 2%. On a 1,000 € order, only 0.2%.",
+        "fr": "Des frais de 2 € sur un ordre de 100 €, c'est 2 %. Sur un ordre de 1 000 €, seulement 0,2 %."
+       }
+      },
+      {
+       "say": {
+        "en": "Yearly fees, like a fund's [[ter|TER]] or account fees, are taken every year, and they compound against you.",
+        "fr": "Les frais annuels, comme les [[ter|frais courants]] d'un fonds ou les frais de compte, sont prélevés chaque année, et ils se composent contre toi."
+       },
+       "example": {
+        "en": "10,000 € growing 6% a year for 30 years: about 57,400 € with no fees, about 43,200 € with 1% of fees a year.",
+        "fr": "10 000 € qui prennent 6 % par an pendant 30 ans : environ 57 400 € sans frais, environ 43 200 € avec 1 % de frais par an."
+       }
+      },
+      {
+       "ask": {
+        "en": "Which order loses the biggest share to a 2 € fee?",
+        "fr": "Quel ordre perd la plus grosse part avec des frais de 2 € ?"
+       },
+       "options": [
+        {
+         "en": "A 5,000 € order",
+         "fr": "Un ordre de 5 000 €"
+        },
+        {
+         "en": "A 500 € order",
+         "fr": "Un ordre de 500 €"
+        },
+        {
+         "en": "A 50 € order",
+         "fr": "Un ordre de 50 €"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "2 € is 4% of 50 €, 0.4% of 500 € and 0.04% of 5,000 €.",
+        "fr": "2 €, c'est 4 % de 50 €, 0,4 % de 500 € et 0,04 % de 5 000 €."
+       }
+      },
+      {
+       "say": {
+        "en": "So: choose low-cost funds, don't trade too often, and with a fixed fee, group small orders into bigger ones. Nemeris shows your bank's real fees.",
+        "fr": "Donc : choisis des fonds peu chers, ne passe pas d'ordres trop souvent, et avec des frais fixes, regroupe les petits ordres en plus gros. Nemeris te montre les vrais frais de ta banque."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "With a fixed 2 € fee, which order loses the smallest share to fees?",
+        "fr": "Avec des frais fixes de 2 €, quel ordre perd la plus petite part en frais ?"
+       },
+       "options": [
+        {
+         "en": "100 €",
+         "fr": "100 €"
+        },
+        {
+         "en": "500 €",
+         "fr": "500 €"
+        },
+        {
+         "en": "2,000 €",
+         "fr": "2 000 €"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "2 € is 2% of 100 €, 0.4% of 500 € and 0.1% of 2,000 €. Fewer, bigger orders cost less.",
+        "fr": "2 €, c'est 2 % de 100 €, 0,4 % de 500 € et 0,1 % de 2 000 €. Des ordres moins nombreux et plus gros coûtent moins."
+       }
+      },
+      {
+       "ask": {
+        "en": "Your bank charges 5 € per order and you invest 600 € a year. Which costs less?",
+        "fr": "Ta banque prend 5 € par ordre et tu investis 600 € par an. Qu'est-ce qui coûte le moins ?"
+       },
+       "options": [
+        {
+         "en": "Twelve orders of 50 €",
+         "fr": "Douze ordres de 50 €"
+        },
+        {
+         "en": "Two orders of 300 €",
+         "fr": "Deux ordres de 300 €"
+        },
+        {
+         "en": "It costs the same",
+         "fr": "Ça coûte pareil"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "2 × 5 € = 10 € instead of 12 × 5 € = 60 €.",
+        "fr": "2 × 5 € = 10 € au lieu de 12 × 5 € = 60 €."
+       }
+      },
+      {
+       "ask": {
+        "en": "Why do yearly fees matter more over long periods?",
+        "fr": "Pourquoi les frais annuels comptent-ils plus sur de longues périodes ?"
+       },
+       "options": [
+        {
+         "en": "They compound against you, every year",
+         "fr": "Ils se composent contre toi, chaque année"
+        },
+        {
+         "en": "They rise with your age",
+         "fr": "Ils augmentent avec ton âge"
+        },
+        {
+         "en": "They don't matter",
+         "fr": "Ils ne comptent pas"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "Each year's fee also removes the future gains on that money.",
+        "fr": "Les frais de chaque année retirent aussi les gains futurs de cet argent."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "Lucas buys 20 € of shares every week with a 1 € fee each time. What share of his money goes to fees?",
+        "fr": "Lucas achète pour 20 € d'actions chaque semaine avec 1 € de frais à chaque fois. Quelle part de son argent part en frais ?"
+       },
+       "options": [
+        {
+         "en": "0.5%",
+         "fr": "0,5 %"
+        },
+        {
+         "en": "1%",
+         "fr": "1 %"
+        },
+        {
+         "en": "5%",
+         "fr": "5 %"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "1 € out of 20 € is 5%: his investments must rise 5% just to break even.",
+        "fr": "1 € sur 20 €, c'est 5 % : ses placements doivent monter de 5 % juste pour rentrer dans ses frais."
+       }
+      },
+      {
+       "ask": {
+        "en": "Fund A costs 1.8% a year, a world ETF 0.2%. On 10,000 € over 20 years at 6% before fees, about how much more does the ETF leave you?",
+        "fr": "Le fonds A coûte 1,8 % par an, un ETF monde 0,2 %. Sur 10 000 € pendant 20 ans à 6 % avant frais, combien l'ETF te laisse-t-il de plus, environ ?"
+       },
+       "options": [
+        {
+         "en": "About 320 €",
+         "fr": "Environ 320 €"
+        },
+        {
+         "en": "About 8,000 €",
+         "fr": "Environ 8 000 €"
+        },
+        {
+         "en": "Nothing",
+         "fr": "Rien"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "At 5.8% after fees: about 30,900 €. At 4.2%: about 22,800 €. The gap compounds for 20 years.",
+        "fr": "À 5,8 % après frais : environ 30 900 €. À 4,2 % : environ 22 800 €. L'écart se compose pendant 20 ans."
+       }
+      },
+      {
+       "ask": {
+        "en": "What is the best first move to cut your costs?",
+        "fr": "Quel est le meilleur premier geste pour réduire tes coûts ?"
+       },
+       "options": [
+        {
+         "en": "Trading more often to earn more",
+         "fr": "Passer plus d'ordres pour gagner plus"
+        },
+        {
+         "en": "Checking your bank's fees and your funds' yearly costs",
+         "fr": "Vérifier les frais de ta banque et les frais annuels de tes fonds"
+        },
+        {
+         "en": "Ignoring fees, they are small",
+         "fr": "Ignorer les frais, ils sont petits"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "You can't control the market, but you can control what you pay.",
+        "fr": "Tu ne contrôles pas le marché, mais tu contrôles ce que tu paies."
        }
       }
      ]
@@ -683,8 +1917,8 @@
       "fr": "Le roi de la plaine"
      },
      "intro": {
-      "en": "The last test of the plain.",
-      "fr": "Le dernier test de la plaine."
+      "en": "I'm the king of the plain! Eight questions on everything you learned here. Beat me and the caves open their doors.",
+      "fr": "Je suis le roi de la plaine ! Huit questions sur tout ce que tu as appris ici. Bats-moi et les grottes t'ouvriront leurs portes."
      }
     }
    ]
@@ -696,10 +1930,10 @@
     "fr": "Les grottes"
    },
    "icon": "diamond",
-   "color": "#7A5C3E",
+   "color": "#8A6239",
    "intro": {
-    "en": "Deeper now: risk and patience.",
-    "fr": "Plus profond : le risque et la patience."
+    "en": "Welcome to the caves! Down here we learn patience: time, falls and the traps our own minds set.",
+    "fr": "Bienvenue dans les grottes ! Ici, on apprend la patience : le temps, les baisses et les pièges de notre propre tête."
    },
    "levels": [
     {
@@ -719,91 +1953,16 @@
         "en": "Stocks can lose 30% or more in a [[bearMarket|bad year]] and take years to recover. That is fine for money you will leave for 5 to 10 years.",
         "fr": "Les actions peuvent perdre 30 % ou plus lors d'une [[bearMarket|mauvaise année]] et mettre des années à remonter. Ça va pour de l'argent que tu laisses 5 à 10 ans."
        },
-       "photo": "piggy bank"
+       "photo": "calendar"
       },
       {
        "say": {
         "en": "For money you need soon, such as a car or a deposit, a savings account is the calm choice. Keep [[emergencyFund|emergency savings]] there too.",
         "fr": "Pour l'argent dont tu as bientôt besoin, comme une voiture ou un apport, un livret est le choix serein. Garde aussi ton [[emergencyFund|épargne de précaution]] là-dessus."
        }
-      },
-      {
-       "ask": {
-        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
-        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
-       },
-       "options": [
-        {
-         "en": "In stocks, to grow it",
-         "fr": "En bourse, pour les faire fructifier"
-        },
-        {
-         "en": "In a savings account",
-         "fr": "Sur un livret"
-        },
-        {
-         "en": "In crypto",
-         "fr": "En crypto"
-        }
-       ],
-       "answer": 1,
-       "why": {
-        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
-        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
-       }
       }
      ],
      "practice": [
-      {
-       "ask": {
-        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
-        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
-       },
-       "options": [
-        {
-         "en": "In stocks, to grow it",
-         "fr": "En bourse, pour les faire fructifier"
-        },
-        {
-         "en": "In a savings account",
-         "fr": "Sur un livret"
-        },
-        {
-         "en": "In crypto",
-         "fr": "En crypto"
-        }
-       ],
-       "answer": 1,
-       "why": {
-        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
-        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
-       }
-      },
-      {
-       "ask": {
-        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
-        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
-       },
-       "options": [
-        {
-         "en": "In stocks, to grow it",
-         "fr": "En bourse, pour les faire fructifier"
-        },
-        {
-         "en": "In a savings account",
-         "fr": "Sur un livret"
-        },
-        {
-         "en": "In crypto",
-         "fr": "En crypto"
-        }
-       ],
-       "answer": 1,
-       "why": {
-        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
-        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
-       }
-      },
       {
        "ask": {
         "en": "You need 5,000 € for a car in 8 months. Where should it be?",
@@ -833,77 +1992,283 @@
      "apply": [
       {
        "ask": {
-        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
-        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
+        "en": "You will need 4,000 € for studies in 18 months. Where should the money be?",
+        "fr": "Tu auras besoin de 4 000 € pour tes études dans 18 mois. Où doit être cet argent ?"
        },
        "options": [
         {
-         "en": "In stocks, to grow it",
-         "fr": "En bourse, pour les faire fructifier"
+         "en": "On a savings account",
+         "fr": "Sur une épargne disponible"
         },
         {
-         "en": "In a savings account",
-         "fr": "Sur un livret"
+         "en": "In a world ETF",
+         "fr": "Dans un ETF monde"
         },
         {
-         "en": "In crypto",
-         "fr": "En crypto"
+         "en": "In one promising stock",
+         "fr": "Dans une action prometteuse"
         }
        ],
-       "answer": 1,
+       "answer": 0,
        "why": {
-        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
-        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
+        "en": "18 months is too short for stocks: a bad year could leave you short.",
+        "fr": "18 mois, c'est trop court pour les actions : une mauvaise année pourrait te laisser à court."
        }
+      }
+     ]
+    },
+    {
+     "id": "timeInMarket",
+     "title": {
+      "en": "Staying invested",
+      "fr": "Rester investi"
+     },
+     "idea": {
+      "en": "Time in the market beats trying to time it.",
+      "fr": "Le temps passé sur le marché bat le fait de deviner le bon moment."
+     },
+     "skill": "mind",
+     "learn": [
+      {
+       "say": {
+        "en": "Nobody can reliably guess the next rise or fall. Over 20 years, missing just the 10 best days cut the yearly return almost in half.",
+        "fr": "Personne ne devine de façon fiable la prochaine hausse ou baisse. Sur 20 ans, rater seulement les 10 meilleurs jours a presque divisé par deux le rendement annuel."
+       },
+       "photo": "clock"
       },
       {
-       "ask": {
-        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
-        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
-       },
-       "options": [
-        {
-         "en": "In stocks, to grow it",
-         "fr": "En bourse, pour les faire fructifier"
-        },
-        {
-         "en": "In a savings account",
-         "fr": "Sur un livret"
-        },
-        {
-         "en": "In crypto",
-         "fr": "En crypto"
-        }
-       ],
-       "answer": 1,
-       "why": {
-        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
-        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
+       "say": {
+        "en": "The best days often come right after the worst ones, so people who sell in a [[bearMarket|crash]] usually miss the rebound.",
+        "fr": "Les meilleurs jours arrivent souvent juste après les pires : ceux qui vendent pendant un [[bearMarket|krach]] ratent en général le rebond."
        }
-      },
+      }
+     ],
+     "practice": [
       {
        "ask": {
-        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
-        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
+        "en": "The market just fell 10%. For money you will not need for years, history suggests...",
+        "fr": "Le marché vient de perdre 10 %. Pour de l'argent dont tu n'auras pas besoin avant des années, l'histoire suggère de…"
        },
        "options": [
         {
-         "en": "In stocks, to grow it",
-         "fr": "En bourse, pour les faire fructifier"
+         "en": "Sell now, buy back later",
+         "fr": "Vendre maintenant, racheter plus tard"
         },
         {
-         "en": "In a savings account",
-         "fr": "Sur un livret"
+         "en": "Stay invested",
+         "fr": "Rester investi"
         },
         {
-         "en": "In crypto",
-         "fr": "En crypto"
+         "en": "Stop investing for good",
+         "fr": "Arrêter d'investir pour de bon"
         }
        ],
        "answer": 1,
        "why": {
-        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
-        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
+        "en": "Falls are part of the deal. Selling locks in the loss and risks missing the recovery.",
+        "fr": "Les baisses font partie du jeu. Vendre fige la perte et risque de faire rater la reprise."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "Markets drop 15% in a month. You invest for 15 years. What does history suggest?",
+        "fr": "Les marchés perdent 15 % en un mois. Tu investis pour 15 ans. Que suggère l'histoire ?"
+       },
+       "options": [
+        {
+         "en": "Sell and wait for things to calm down",
+         "fr": "Vendre et attendre que ça se calme"
+        },
+        {
+         "en": "Keep investing as planned",
+         "fr": "Continuer d'investir comme prévu"
+        },
+        {
+         "en": "Put everything in cash forever",
+         "fr": "Tout mettre en liquide pour toujours"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "The best days often follow the worst ones. Staying in is how you catch them.",
+        "fr": "Les meilleurs jours suivent souvent les pires. Rester investi, c'est comme ça qu'on les attrape."
+       }
+      }
+     ]
+    },
+    {
+     "id": "caves-guardian",
+     "boss": "mid",
+     "count": 5,
+     "title": {
+      "en": "The cave bat",
+      "fr": "La chauve-souris des grottes"
+     },
+     "intro": {
+      "en": "Squeak! Five questions on time and patience. One try each!",
+      "fr": "Couic ! Cinq questions sur le temps et la patience. Un seul essai à chaque fois !"
+     }
+    },
+    {
+     "id": "sunkCost",
+     "title": {
+      "en": "Judge the future, not your buying price",
+      "fr": "Juge l'avenir, pas ton prix d'achat"
+     },
+     "idea": {
+      "en": "Ask \"would I buy it today?\", not \"when will I get back to even?\".",
+      "fr": "Demande-toi « est-ce que je l'achèterais aujourd'hui ? », pas « quand vais-je revenir à mon prix ? »."
+     },
+     "skill": "mind",
+     "learn": [
+      {
+       "say": {
+        "en": "Many people keep a falling stock only to get back to what they paid, and sell their winners too early. Studies show this habit costs money.",
+        "fr": "Beaucoup gardent une action en baisse juste pour retrouver leur prix d'achat, et vendent trop tôt celles qui montent. Les études montrent que cette habitude coûte de l'argent."
+       },
+       "photo": "crossroads"
+      },
+      {
+       "say": {
+        "en": "The market does not know [[costBasis|what you paid]]. The useful question is whether this stock still deserves your money today.",
+        "fr": "Le marché ne sait pas [[costBasis|combien tu as payé]]. La vraie question : cette action mérite-t-elle encore ton argent aujourd'hui ?"
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "You bought at 50 €, it is now 35 €. What matters most for your decision?",
+        "fr": "Tu as acheté à 50 €, elle vaut 35 €. Qu'est-ce qui compte le plus pour ta décision ?"
+       },
+       "options": [
+        {
+         "en": "Getting back to 50 €",
+         "fr": "Revenir à 50 €"
+        },
+        {
+         "en": "Whether you would buy it today at 35 €",
+         "fr": "Est-ce que tu l'achèterais aujourd'hui à 35 €"
+        },
+        {
+         "en": "How long you have held it",
+         "fr": "Depuis combien de temps tu la gardes"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Your buying price is in the past. Only the company's future matters for what the stock does next.",
+        "fr": "Ton prix d'achat appartient au passé. Seul l'avenir de l'entreprise compte pour la suite du cours."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "You bought a stock at 40 €; it is at 25 € and its business keeps getting worse. What is the sound question?",
+        "fr": "Tu as acheté une action à 40 € ; elle vaut 25 € et son activité se dégrade. Quelle est la bonne question ?"
+       },
+       "options": [
+        {
+         "en": "Would I buy it today at 25 €?",
+         "fr": "L'achèterais-je aujourd'hui à 25 € ?"
+        },
+        {
+         "en": "When will it be back at 40 €?",
+         "fr": "Quand reviendra-t-elle à 40 € ?"
+        },
+        {
+         "en": "How much did I lose?",
+         "fr": "Combien ai-je perdu ?"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "What you paid does not change what the company will do next.",
+        "fr": "Ce que tu as payé ne change rien à ce que l'entreprise fera ensuite."
+       }
+      }
+     ]
+    },
+    {
+     "id": "singleStocks",
+     "title": {
+      "en": "The odds of picking stocks",
+      "fr": "Les chances de bien choisir ses actions"
+     },
+     "idea": {
+      "en": "Most single stocks end up doing worse than the market as a whole.",
+      "fr": "La plupart des actions, prises une à une, finissent par faire moins bien que le marché dans son ensemble."
+     },
+     "skill": "risk",
+     "learn": [
+      {
+       "say": {
+        "en": "Over the long run, a few huge winners carry the stock market while most single stocks do worse than a simple [[index|index]] fund.",
+        "fr": "Sur le long terme, quelques énormes gagnantes portent la bourse, pendant que la plupart des actions font moins bien qu'un simple fonds [[index|indiciel]]."
+       },
+       "photo": "magnifying glass"
+      },
+      {
+       "say": {
+        "en": "Picking stocks can be fun and can work, but keep it to a share of your money you can afford to see go wrong.",
+        "fr": "Choisir des actions peut être amusant et peut marcher, mais garde-le pour une part de ton argent que tu peux te permettre de voir mal tourner."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "Over decades, what share of single US stocks did worse than safe Treasury bills?",
+        "fr": "Sur plusieurs décennies, quelle part des actions américaines a fait moins bien que des bons du Trésor sans risque ?"
+       },
+       "options": [
+        {
+         "en": "About 1 in 10",
+         "fr": "Environ 1 sur 10"
+        },
+        {
+         "en": "About 1 in 3",
+         "fr": "Environ 1 sur 3"
+        },
+        {
+         "en": "More than half",
+         "fr": "Plus de la moitié"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "About 57% of US stocks returned less than one-month Treasury bills over their lifetime (Bessembinder, 2018).",
+        "fr": "Environ 57 % des actions américaines ont rapporté moins que des bons du Trésor à un mois sur toute leur vie en bourse (Bessembinder, 2018)."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "You want to try picking stocks. What is a careful way?",
+        "fr": "Tu veux essayer de choisir des actions. Quelle est une façon prudente ?"
+       },
+       "options": [
+        {
+         "en": "A small share of your money, the rest in a broad fund",
+         "fr": "Une petite part de ton argent, le reste dans un fonds large"
+        },
+        {
+         "en": "All your savings in your three favourites",
+         "fr": "Toute ton épargne dans tes trois préférées"
+        },
+        {
+         "en": "Borrow to buy more",
+         "fr": "Emprunter pour en acheter plus"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "Most single stocks do worse than the market: keep picks to money you can afford to see go wrong.",
+        "fr": "La plupart des actions font moins bien que le marché : limite tes paris à de l'argent que tu peux te permettre de perdre."
        }
       }
      ]
@@ -913,12 +2278,812 @@
      "boss": "final",
      "count": 8,
      "title": {
-      "en": "The king of the caves",
-      "fr": "Le roi des grottes"
+      "en": "The crystal golem",
+      "fr": "Le golem de cristal"
      },
      "intro": {
-      "en": "Ready?",
-      "fr": "Prêt ?"
+      "en": "I am made of patience. Eight questions. Can you break me?",
+      "fr": "Je suis fait de patience. Huit questions. Sauras-tu me briser ?"
+     }
+    }
+   ]
+  },
+  {
+   "id": "sea",
+   "name": {
+    "en": "The sea",
+    "fr": "La mer"
+   },
+   "icon": "sailing",
+   "color": "#1F78B4",
+   "intro": {
+    "en": "Ahoy! At sea we cross borders: currencies, accounts and taxes.",
+    "fr": "Ohé ! En mer, on passe les frontières : devises, comptes et impôts."
+   },
+   "levels": [
+    {
+     "id": "currency",
+     "title": {
+      "en": "Foreign stocks and currencies",
+      "fr": "Actions étrangères et devises"
+     },
+     "idea": {
+      "en": "A foreign stock also moves with its currency.",
+      "fr": "Une action étrangère bouge aussi avec sa devise."
+     },
+     "skill": "costs",
+     "learn": [
+      {
+       "say": {
+        "en": "If you buy US stocks with euros, your result also depends on the dollar: that is [[currencyRisk|currency risk]]. If the dollar falls 10% against the euro, your US stocks lose about 10% in euros even if their price did not move.",
+        "fr": "Si tu achètes des actions américaines avec des euros, ton résultat dépend aussi du dollar : c'est le [[currencyRisk|risque de change]]. Si le dollar perd 10 % face à l'euro, tes actions américaines perdent environ 10 % en euros, même si leur cours n'a pas bougé."
+       },
+       "photo": "currency exchange"
+      },
+      {
+       "say": {
+        "en": "Over long periods this often evens out, but it adds ups and downs along the way.",
+        "fr": "Sur de longues périodes, ça s'équilibre souvent, mais ça ajoute des hauts et des bas en chemin."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "Your US stock is flat in dollars and the dollar fell 5% against the euro. In euros you are...",
+        "fr": "Ton action américaine est stable en dollars et le dollar a perdu 5 % face à l'euro. En euros, tu es…"
+       },
+       "options": [
+        {
+         "en": "Flat",
+         "fr": "Stable"
+        },
+        {
+         "en": "Down about 5%",
+         "fr": "En baisse d'environ 5 %"
+        },
+        {
+         "en": "Up about 5%",
+         "fr": "En hausse d'environ 5 %"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Your shares are worth the same number of dollars, but each dollar buys 5% fewer euros.",
+        "fr": "Tes actions valent le même nombre de dollars, mais chaque dollar achète 5 % d'euros en moins."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "You hold US stocks priced in dollars. The dollar rises 10% against the euro and the stocks don't move. In euros, you are...",
+        "fr": "Tu as des actions américaines en dollars. Le dollar monte de 10 % face à l'euro et les actions ne bougent pas. En euros, tu es..."
+       },
+       "options": [
+        {
+         "en": "Down about 10%",
+         "fr": "En baisse d'environ 10 %"
+        },
+        {
+         "en": "Flat",
+         "fr": "Stable"
+        },
+        {
+         "en": "Up about 10%",
+         "fr": "En hausse d'environ 10 %"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "Each dollar now buys about 10% more euros, so your shares are worth more in euros.",
+        "fr": "Chaque dollar achète maintenant environ 10 % d'euros en plus, donc tes actions valent plus en euros."
+       }
+      }
+     ]
+    },
+    {
+     "id": "sea-guardian",
+     "boss": "mid",
+     "count": 5,
+     "title": {
+      "en": "The sea serpent",
+      "fr": "Le serpent de mer"
+     },
+     "intro": {
+      "en": "Sssss... five questions from the deep. One try each!",
+      "fr": "Sssss... cinq questions venues des profondeurs. Un seul essai à chaque fois !"
+     }
+    },
+    {
+     "id": "accounts",
+     "title": {
+      "en": "Choosing the right account",
+      "fr": "Choisir le bon compte"
+     },
+     "idea": {
+      "en": "The account you invest through changes the tax you pay.",
+      "fr": "Le compte par lequel tu investis change l'impôt que tu paies."
+     },
+     "skill": "tax",
+     "learn": [
+      {
+       "say": {
+        "en": "In France, gains taken from a [[pea|PEA]] older than 5 years only pay 18.6% social levies, while an ordinary account ([[cto|CTO]]) pays a 31.4% flat tax (2026 rates).",
+        "fr": "En France, les gains retirés d'un [[pea|PEA]] de plus de 5 ans ne paient que 18,6 % de prélèvements sociaux, alors qu'un compte-titres ordinaire ([[cto|CTO]]) paie la flat tax de 31,4 % (taux 2026)."
+       },
+       "photo": "lighthouse"
+      },
+      {
+       "say": {
+        "en": "A PEA holds European stocks and many world ETFs, but no US stocks bought directly and no crypto.",
+        "fr": "Un PEA accueille les actions européennes et beaucoup d'ETF monde, mais pas d'actions américaines achetées en direct ni de crypto."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "You want a world ETF for 10 years and live in France. Which account usually costs the least tax?",
+        "fr": "Tu veux un ETF monde pour 10 ans et tu vis en France. Quel compte coûte en général le moins d'impôt ?"
+       },
+       "options": [
+        {
+         "en": "A PEA",
+         "fr": "Un PEA"
+        },
+        {
+         "en": "An ordinary account (CTO)",
+         "fr": "Un compte-titres ordinaire (CTO)"
+        },
+        {
+         "en": "It is always the same",
+         "fr": "C'est toujours pareil"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "After 5 years, a PEA spares you income tax on gains: only the social levies remain.",
+        "fr": "Après 5 ans, un PEA t'épargne l'impôt sur le revenu sur les gains : seuls les prélèvements sociaux restent."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "In France, you open a PEA today and keep it 6 years. What is taxed on your gains when you withdraw?",
+        "fr": "En France, tu ouvres un PEA aujourd'hui et le gardes 6 ans. Qu'est-ce qui est taxé sur tes gains au retrait ?"
+       },
+       "options": [
+        {
+         "en": "Only the social levies",
+         "fr": "Seulement les prélèvements sociaux"
+        },
+        {
+         "en": "The full flat tax",
+         "fr": "Toute la flat tax"
+        },
+        {
+         "en": "Nothing at all",
+         "fr": "Rien du tout"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "After 5 years, PEA gains escape income tax; the social levies remain (18.6% in 2026).",
+        "fr": "Après 5 ans, les gains du PEA échappent à l'impôt sur le revenu ; restent les prélèvements sociaux (18,6 % en 2026)."
+       }
+      }
+     ]
+    },
+    {
+     "id": "sea-king",
+     "boss": "final",
+     "count": 8,
+     "title": {
+      "en": "The pirate captain",
+      "fr": "Le capitaine pirate"
+     },
+     "intro": {
+      "en": "Arr! Eight questions, and the sea is yours.",
+      "fr": "Arr ! Huit questions, et la mer est à toi."
+     }
+    }
+   ]
+  },
+  {
+   "id": "mountains",
+   "name": {
+    "en": "The mountains",
+    "fr": "Les montagnes"
+   },
+   "icon": "landscape",
+   "color": "#5A55B8",
+   "intro": {
+    "en": "Up in the mountains, you build and keep a balanced portfolio.",
+    "fr": "Dans les montagnes, on construit et on garde un portefeuille équilibré."
+   },
+   "levels": [
+    {
+     "id": "rebalancing",
+     "title": {
+      "en": "Keeping your balance",
+      "fr": "Garder l'équilibre"
+     },
+     "idea": {
+      "en": "Point new money at what is underweight instead of selling.",
+      "fr": "Oriente ton nouvel argent vers ce qui pèse trop peu, au lieu de vendre."
+     },
+     "skill": "risk",
+     "learn": [
+      {
+       "say": {
+        "en": "What rises takes more and more [[weight|room in your portfolio]]. Rebalancing means bringing it back to the split you chose.",
+        "fr": "Ce qui monte prend de plus en plus de [[weight|place dans ton portefeuille]]. Rééquilibrer, c'est revenir à la répartition que tu avais choisie."
+       },
+       "photo": "balance scale"
+      },
+      {
+       "say": {
+        "en": "The cheapest way is to put your next deposits into what is underweight. Selling costs fees and can trigger tax.",
+        "fr": "Le moins cher est de placer tes prochains versements dans ce qui pèse trop peu. Vendre coûte des frais et peut déclencher de l'impôt."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "One stock grew to 40% of your portfolio. What is the cheapest way to rebalance?",
+        "fr": "Une action pèse maintenant 40 % de ton portefeuille. Quelle est la façon la moins chère de rééquilibrer ?"
+       },
+       "options": [
+        {
+         "en": "Sell half of it today",
+         "fr": "En vendre la moitié aujourd'hui"
+        },
+        {
+         "en": "Put your next deposits elsewhere",
+         "fr": "Placer tes prochains versements ailleurs"
+        },
+        {
+         "en": "Buy more of it",
+         "fr": "En racheter"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "New money lowers its weight without any selling fee or tax.",
+        "fr": "L'argent neuf réduit son poids sans frais de vente ni impôt."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "You chose 80% world ETF and 20% bonds. After a great year it's 90/10. What is the cheapest fix?",
+        "fr": "Tu as choisi 80 % d'ETF monde et 20 % d'obligations. Après une belle année, c'est 90/10. Quelle est la correction la moins chère ?"
+       },
+       "options": [
+        {
+         "en": "Sell some ETF today",
+         "fr": "Vendre de l'ETF aujourd'hui"
+        },
+        {
+         "en": "Put your next deposits into bonds",
+         "fr": "Mettre tes prochains versements en obligations"
+        },
+        {
+         "en": "Do nothing ever",
+         "fr": "Ne jamais rien faire"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "New money brings the split back without selling fees or tax.",
+        "fr": "L'argent frais rééquilibre sans frais de vente ni impôt."
+       }
+      }
+     ]
+    },
+    {
+     "id": "dividends",
+     "title": {
+      "en": "How dividends work",
+      "fr": "Comment marchent les dividendes"
+     },
+     "idea": {
+      "en": "A dividend is cash from the company, but the price drops by about the same amount.",
+      "fr": "Un dividende, c'est de l'argent versé par l'entreprise, mais le cours baisse d'à peu près autant."
+     },
+     "skill": "products",
+     "learn": [
+      {
+       "say": {
+        "en": "Some companies share part of their profit with shareholders, once to four times a year. You get it if you hold the stock before the [[dividend|ex-dividend date]].",
+        "fr": "Certaines entreprises reversent une partie de leurs bénéfices aux actionnaires, une à quatre fois par an. Tu le touches si tu détiens l'action avant la [[dividend|date de détachement]]."
+       },
+       "photo": "harvest"
+      },
+      {
+       "say": {
+        "en": "On that date the price falls by about the dividend: it is not free money, it is part of your return.",
+        "fr": "Ce jour-là, le cours baisse d'environ le montant du dividende : ce n'est pas de l'argent gratuit, c'est une partie de ton rendement."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "A stock at 100 € pays a 3 € dividend. Just after the ex-date, its price is about...",
+        "fr": "Une action à 100 € verse un dividende de 3 €. Juste après le détachement, son cours est d'environ…"
+       },
+       "options": [
+        {
+         "en": "103 €",
+         "fr": "103 €"
+        },
+        {
+         "en": "100 €",
+         "fr": "100 €"
+        },
+        {
+         "en": "97 €",
+         "fr": "97 €"
+        }
+       ],
+       "answer": 2,
+       "why": {
+        "en": "The 3 € leaves the company and lands in your account, so the share is worth about 3 € less.",
+        "fr": "Les 3 € quittent l'entreprise et arrivent sur ton compte : l'action vaut donc environ 3 € de moins."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "A fund that reinvests its dividends and one that pays them out hold the same stocks. Over time...",
+        "fr": "Un fonds qui réinvestit ses dividendes et un autre qui les verse contiennent les mêmes actions. Avec le temps..."
+       },
+       "options": [
+        {
+         "en": "The reinvesting one compounds without you doing anything",
+         "fr": "Celui qui réinvestit fait jouer les intérêts composés sans que tu fasses rien"
+        },
+        {
+         "en": "The paying one always earns more",
+         "fr": "Celui qui verse rapporte toujours plus"
+        },
+        {
+         "en": "They are forbidden in Europe",
+         "fr": "Ils sont interdits en Europe"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "Reinvested dividends keep earning: it is compounding on autopilot.",
+        "fr": "Les dividendes réinvestis continuent de rapporter : ce sont les intérêts composés en pilote automatique."
+       }
+      }
+     ]
+    },
+    {
+     "id": "mountains-guardian",
+     "boss": "mid",
+     "count": 5,
+     "title": {
+      "en": "The mountain goat",
+      "fr": "Le bouquetin"
+     },
+     "intro": {
+      "en": "Stay balanced! Five questions, one try each.",
+      "fr": "Garde l'équilibre ! Cinq questions, un seul essai à chaque fois."
+     }
+    },
+    {
+     "id": "crypto",
+     "title": {
+      "en": "Crypto's wild swings",
+      "fr": "Les montagnes russes de la crypto"
+     },
+     "idea": {
+      "en": "Keep crypto to money you could lose without changing your life.",
+      "fr": "Ne mets en crypto que de l'argent que tu pourrais perdre sans que ta vie change."
+     },
+     "skill": "products",
+     "learn": [
+      {
+       "say": {
+        "en": "Bitcoin has [[volatility|lost more than 70%]] several times, and smaller coins often disappear. It can also rise very fast.",
+        "fr": "Le bitcoin a [[volatility|perdu plus de 70 %]] plusieurs fois, et les petites cryptos disparaissent souvent. Il peut aussi monter très vite."
+       },
+       "photo": "bitcoin"
+      },
+      {
+       "say": {
+        "en": "Most guides keep it to a small slice of a portfolio, never money you need.",
+        "fr": "La plupart des guides la limitent à une petite part du portefeuille, jamais de l'argent dont tu as besoin."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "Which is the most sensible way to own crypto?",
+        "fr": "Quelle est la façon la plus raisonnable de détenir de la crypto ?"
+       },
+       "options": [
+        {
+         "en": "A small slice you can afford to lose",
+         "fr": "Une petite part que tu peux te permettre de perdre"
+        },
+        {
+         "en": "Your emergency savings",
+         "fr": "Ton épargne de précaution"
+        },
+        {
+         "en": "A loan, to buy more",
+         "fr": "Un crédit, pour en acheter plus"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "With drops of 70% in its history, crypto only belongs in money you could lose.",
+        "fr": "Avec des chutes de 70 % dans son histoire, la crypto n'a sa place qu'avec de l'argent que tu pourrais perdre."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "A friend says a new coin will 'surely' make 10 times your money. What's the sound move?",
+        "fr": "Un ami dit qu'une nouvelle crypto va « sûrement » multiplier ton argent par 10. Quel est le bon réflexe ?"
+       },
+       "options": [
+        {
+         "en": "Put your cushion in it",
+         "fr": "Y mettre ton épargne de précaution"
+        },
+        {
+         "en": "At most a small sum you could lose without harm",
+         "fr": "Au plus une petite somme que tu peux perdre sans dommage"
+        },
+        {
+         "en": "Borrow to buy more",
+         "fr": "Emprunter pour en acheter plus"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Nothing is 'sure' in crypto: many coins disappear. Only money you could lose.",
+        "fr": "Rien n'est « sûr » en crypto : beaucoup de jetons disparaissent. Seulement de l'argent que tu peux perdre."
+       }
+      }
+     ]
+    },
+    {
+     "id": "mountains-king",
+     "boss": "final",
+     "count": 8,
+     "title": {
+      "en": "The yeti",
+      "fr": "Le yéti"
+     },
+     "intro": {
+      "en": "Brrr! Eight questions in the snow. Ready?",
+      "fr": "Brrr ! Huit questions dans la neige. Prêt ?"
+     }
+    }
+   ]
+  },
+  {
+   "id": "volcano",
+   "name": {
+    "en": "The volcano",
+    "fr": "Le volcan"
+   },
+   "icon": "volcano",
+   "color": "#D2461E",
+   "intro": {
+    "en": "The volcano: the hardest world, with longer lessons. Here we measure risk itself.",
+    "fr": "Le volcan : le monde le plus difficile, avec des leçons plus longues. Ici, on mesure le risque lui-même."
+   },
+   "levels": [
+    {
+     "id": "volatility",
+     "skill": "risk",
+     "title": {
+      "en": "Measuring swings",
+      "fr": "Mesurer les variations"
+     },
+     "idea": {
+      "en": "After a fall of half, you need to double just to get back.",
+      "fr": "Après une chute de moitié, il faut doubler juste pour revenir."
+     },
+     "learn": [
+      {
+       "say": {
+        "en": "[[volatility|Volatility]] measures how much a price usually swings. The bigger it is, the bumpier the ride.",
+        "fr": "La [[volatility|volatilité]] mesure à quel point un prix varie d'habitude. Plus elle est forte, plus le trajet est cahoteux."
+       },
+       "photo": "volcano"
+      },
+      {
+       "say": {
+        "en": "It's often given per year: a broad world fund is around 15%, a single company often 25 to 40%, bitcoin far more.",
+        "fr": "On la donne souvent par an : un fonds monde large tourne autour de 15 %, une seule entreprise souvent 25 à 40 %, le bitcoin bien plus."
+       }
+      },
+      {
+       "say": {
+        "en": "A rough rule: in about two years out of three, the yearly result stays within one volatility of the average.",
+        "fr": "Un repère grossier : environ deux années sur trois, le résultat annuel reste à moins d'une volatilité de la moyenne."
+       },
+       "example": {
+        "en": "A fund averaging 7% with 15% volatility: most years land between -8% and +22%. One year in three falls outside.",
+        "fr": "Un fonds à 7 % en moyenne avec 15 % de volatilité : la plupart des années tombent entre -8 % et +22 %. Une année sur trois sort de cette fourchette."
+       }
+      },
+      {
+       "say": {
+        "en": "The biggest drop from a peak is called a [[drawdown|drawdown]]. It tells you how deep the worst moment was.",
+        "fr": "La plus forte baisse depuis un sommet s'appelle un [[drawdown|drawdown]]. Il dit à quel point le pire moment a été profond."
+       }
+      },
+      {
+       "say": {
+        "en": "Falls and rises are not symmetric. Lose 50% and you need +100% to get back where you started.",
+        "fr": "Baisses et hausses ne sont pas symétriques. Perds 50 % et il te faut +100 % pour revenir au point de départ."
+       },
+       "example": {
+        "en": "100 € that loses 50% becomes 50 €. To get back to 100 €, 50 € must double.",
+        "fr": "100 € qui perdent 50 % deviennent 50 €. Pour revenir à 100 €, ces 50 € doivent doubler."
+       }
+      },
+      {
+       "ask": {
+        "en": "After a 20% fall, what rise brings you back?",
+        "fr": "Après une baisse de 20 %, quelle hausse te ramène au départ ?"
+       },
+       "options": [
+        {
+         "en": "20%",
+         "fr": "20 %"
+        },
+        {
+         "en": "25%",
+         "fr": "25 %"
+        },
+        {
+         "en": "40%",
+         "fr": "40 %"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "100 → 80 after the fall; 80 × 1.25 = 100.",
+        "fr": "100 → 80 après la baisse ; 80 × 1,25 = 100."
+       }
+      },
+      {
+       "say": {
+        "en": "That's why limiting deep falls (diversification, a cushion, a horizon that fits) matters as much as chasing gains.",
+        "fr": "C'est pour ça que limiter les chutes profondes (diversification, matelas, horizon adapté) compte autant que chercher des gains."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "Which usually has the highest volatility?",
+        "fr": "Lequel a en général la plus forte volatilité ?"
+       },
+       "options": [
+        {
+         "en": "A world index fund",
+         "fr": "Un fonds indiciel monde"
+        },
+        {
+         "en": "A single small company",
+         "fr": "Une seule petite entreprise"
+        },
+        {
+         "en": "A savings account",
+         "fr": "Une épargne disponible"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "One small company can swing wildly; a broad fund spreads that out.",
+        "fr": "Une petite entreprise peut varier énormément ; un fonds large dilue ça."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "Your portfolio fell 60%. What rise do you need to get back?",
+        "fr": "Ton portefeuille a perdu 60 %. Quelle hausse faut-il pour revenir ?"
+       },
+       "options": [
+        {
+         "en": "60%",
+         "fr": "60 %"
+        },
+        {
+         "en": "150%",
+         "fr": "150 %"
+        },
+        {
+         "en": "100%",
+         "fr": "100 %"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "100 → 40; 40 × 2.5 = 100, so +150%.",
+        "fr": "100 → 40 ; 40 × 2,5 = 100, donc +150 %."
+       }
+      }
+     ]
+    },
+    {
+     "id": "volcano-guardian",
+     "boss": "mid",
+     "count": 5,
+     "title": {
+      "en": "The lava drake",
+      "fr": "Le dragon de lave"
+     },
+     "intro": {
+      "en": "The heat is rising. Five questions, one try each!",
+      "fr": "La chaleur monte. Cinq questions, un seul essai à chaque fois !"
+     }
+    },
+    {
+     "id": "riskReturn",
+     "skill": "risk",
+     "title": {
+      "en": "Risk and return",
+      "fr": "Risque et rendement"
+     },
+     "idea": {
+      "en": "Higher expected returns come with bigger swings: there is no free lunch.",
+      "fr": "Un rendement espéré plus élevé va avec de plus grosses variations : rien n'est gratuit."
+     },
+     "learn": [
+      {
+       "say": {
+        "en": "Risk and return go together. Safe savings pay little; stocks can pay more because they can also fall hard.",
+        "fr": "Risque et rendement vont ensemble. L'épargne sûre rapporte peu ; les actions peuvent rapporter plus parce qu'elles peuvent aussi chuter fort."
+       },
+       "photo": "mountain lava"
+      },
+      {
+       "say": {
+        "en": "Anyone promising high returns with no risk is wrong, or worse: it's the classic sign of a scam.",
+        "fr": "Quiconque promet un rendement élevé sans risque se trompe, ou pire : c'est le signe classique d'une arnaque."
+       }
+      },
+      {
+       "say": {
+        "en": "To compare investments fairly, look at the return you get for each unit of risk taken.",
+        "fr": "Pour comparer des placements équitablement, regarde le rendement obtenu pour chaque unité de risque prise."
+       }
+      },
+      {
+       "say": {
+        "en": "The [[sharpe|Sharpe ratio]] does that: the return above a safe rate, divided by the volatility. Higher means a better trade-off.",
+        "fr": "Le [[sharpe|ratio de Sharpe]] fait exactement ça : le rendement au-dessus d'un taux sans risque, divisé par la volatilité. Plus il est haut, meilleur est le compromis."
+       },
+       "example": {
+        "en": "8% return, 2% safe rate, 15% volatility: (8 - 2) ÷ 15 = 0.4.",
+        "fr": "8 % de rendement, 2 % de taux sans risque, 15 % de volatilité : (8 - 2) ÷ 15 = 0,4."
+       }
+      },
+      {
+       "say": {
+        "en": "[[beta|Beta]] tells how much a stock tends to move with the market: 1 moves like it, 1.5 swings half as much again, 0.5 half as much.",
+        "fr": "Le [[beta|bêta]] dit à quel point une action suit le marché : 1 bouge comme lui, 1,5 varie moitié plus, 0,5 moitié moins."
+       }
+      },
+      {
+       "ask": {
+        "en": "A stock has a beta of 2. The market falls 10%. The stock tends to...",
+        "fr": "Une action a un bêta de 2. Le marché baisse de 10 %. L'action a tendance à..."
+       },
+       "options": [
+        {
+         "en": "Fall about 20%",
+         "fr": "Baisser d'environ 20 %"
+        },
+        {
+         "en": "Fall about 5%",
+         "fr": "Baisser d'environ 5 %"
+        },
+        {
+         "en": "Rise",
+         "fr": "Monter"
+        }
+       ],
+       "answer": 0,
+       "why": {
+        "en": "A beta of 2 roughly doubles the market's moves, both ways.",
+        "fr": "Un bêta de 2 double à peu près les mouvements du marché, dans les deux sens."
+       }
+      },
+      {
+       "say": {
+        "en": "These are averages from the past, not promises. They help you choose how much swinging you can live with.",
+        "fr": "Ce sont des moyennes du passé, pas des promesses. Elles t'aident à choisir combien de variations tu peux supporter."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "Someone offers 'a guaranteed 20% a year, no risk'. What is it most likely?",
+        "fr": "On te propose « 20 % par an garantis, sans risque ». Qu'est-ce que c'est très probablement ?"
+       },
+       "options": [
+        {
+         "en": "A great deal",
+         "fr": "Une affaire en or"
+        },
+        {
+         "en": "A scam",
+         "fr": "Une arnaque"
+        },
+        {
+         "en": "A savings account",
+         "fr": "Une épargne disponible"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "High returns always come with risk. 'Guaranteed and high' is a classic scam sign.",
+        "fr": "Un rendement élevé s'accompagne toujours de risque. « Garanti et élevé », c'est le signe classique d'une arnaque."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "Fund A: 9% return, 20% volatility. Fund B: 7% return, 10% volatility. Safe rate 2%. Which has the better Sharpe ratio?",
+        "fr": "Fonds A : 9 % de rendement, 20 % de volatilité. Fonds B : 7 %, 10 % de volatilité. Taux sans risque 2 %. Lequel a le meilleur ratio de Sharpe ?"
+       },
+       "options": [
+        {
+         "en": "A",
+         "fr": "A"
+        },
+        {
+         "en": "B",
+         "fr": "B"
+        },
+        {
+         "en": "The same",
+         "fr": "Le même"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "A: (9 - 2) ÷ 20 = 0.35. B: (7 - 2) ÷ 10 = 0.5. B pays more per unit of risk.",
+        "fr": "A : (9 - 2) ÷ 20 = 0,35. B : (7 - 2) ÷ 10 = 0,5. B rapporte plus par unité de risque."
+       }
+      }
+     ]
+    },
+    {
+     "id": "volcano-king",
+     "boss": "final",
+     "count": 8,
+     "title": {
+      "en": "The volcano titan",
+      "fr": "Le titan du volcan"
+     },
+     "intro": {
+      "en": "The final test. Eight questions on everything. Only the bravest reach the top.",
+      "fr": "L'épreuve finale. Huit questions sur tout. Seuls les plus courageux atteignent le sommet."
      }
     }
    ]
