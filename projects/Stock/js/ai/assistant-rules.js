@@ -344,6 +344,7 @@ export function buildSystemPrompt(ctx) {
         ctx.terms && !ctx.voice && know('assistant.tappable', { terms: ctx.terms }),
         know('assistant.teaching'),
         know('assistant.advice'),
+        know('assistant.money'),
         country,
         know('assistant.evidence'),
         ctx.voice && know('assistant.voice'),

@@ -5,10 +5,9 @@ import { getInvestor, comfortLevel, currencyCode } from '../core/state.js';
 import { holdingRows } from '../data/holdings.js';
 import { currentBank, money } from '../data/banks.js';
 import { syncAiGates } from '../ai/ai-core.js';
-import { L, Ln, LOCALE } from '../i18n/i18n.js';
+import { L, LOCALE } from '../i18n/i18n.js';
 import { TERMS } from './terms.js';
-import { LESSONS, LESSON_IDS } from './lessons.js';
-import { markSeen, answer, status, learnedCount } from './learning.js';
+import { levelById, t as tr } from '../learn/academy.js';
 
 /* ── text with tappable words: "[[key|shown words]]" ── */
 export function termButton(key, text = TERMS[key]?.title) {
@@ -41,36 +40,6 @@ export function para(cls, text) {
 function myNumbers() {
     const { rows, total } = holdingRows();
     return { rows, total, money, home: currencyCode(), bank: currentBank(), inv: getInvestor(), comfort: comfortLevel() };
-}
-
-/* ── a check question: options in a new order each time, an answer that explains ── */
-const shuffle = list => list.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).map(([, x]) => x);
-
-export function quizBox(id, onAnswer) {
-    const { quiz } = LESSONS[id];
-    const box = el('div', 'quiz');
-    const options = el('div', 'quiz-options');
-    const why = el('p', 'quiz-why');
-    why.hidden = true;
-    for (const { text, right } of shuffle(quiz.options.map((text, i) => ({ text, right: i === quiz.answer })))) {
-        const b = el('button', 'quiz-option', text);
-        b.type = 'button';
-        if (right) b.dataset.right = '';
-        b.addEventListener('click', () => {
-            for (const o of options.children) {
-                o.disabled = true;
-                if ('right' in o.dataset) o.classList.add('right');
-            }
-            if (!right) b.classList.add('wrong');
-            why.replaceChildren(el('strong', null, right ? L('Right.') : L('Not quite.')), ' ', richText(quiz.why));
-            why.hidden = false;
-            answer(id, right);
-            onAnswer?.(right);
-        });
-        options.append(b);
-    }
-    box.append(para('quiz-q', quiz.q), options, why);
-    return box;
 }
 
 /* ── the sheet ── */
@@ -118,10 +87,12 @@ function askButton(subject) {
     return b;
 }
 
-function lessonLink(id, label) {
+/** Opens the Academy on a level (academy-page.js handles every [data-level]). */
+function levelLink(id, label) {
     const b = el('button', 'btn btn-quiet', label);
     b.type = 'button';
-    b.dataset.lesson = id;
+    b.dataset.level = id;
+    b.prepend(icon('school'));
     return b;
 }
 
@@ -136,8 +107,9 @@ const VIEWS = {
             section(L('Example'), para('explain-example', t.example)),
         ];
         if (yours) parts.push(section(L('With your numbers'), para('explain-yours', yours)));
-        if (t.lesson) {
-            const idea = section(L('The idea to remember'), para('explain-idea', LESSONS[t.lesson].idea), lessonLink(t.lesson, L('Understand it in one minute')));
+        const level = levelById(t.lesson);
+        if (level) {
+            const idea = section(L('The idea to remember'), para('explain-idea', tr(level.idea)), levelLink(level.id, L('Learn it with Nemeris')));
             idea.classList.add('explain-idea-box');
             parts.push(idea);
         }
@@ -145,38 +117,9 @@ const VIEWS = {
         parts.push(askButton(t.title));
         return [t.title, parts];
     },
-    lesson(id) {
-        const lesson = LESSONS[id];
-        markSeen(id);
-        const words = Object.keys(TERMS).filter(k => TERMS[k].lesson === id);
-        const parts = [
-            para('explain-lead explain-idea', lesson.idea),
-            ...lesson.body.map(b => para(null, b)),
-            section(L('Check yourself'), quizBox(id)),
-        ];
-        if (words.length) parts.push(section(L('Words behind this idea'), chips(words)));
-        parts.push(askButton(lesson.title));
-        return [lesson.title, parts];
-    },
     library() {
-        const STATUS = { new: L('New'), met: L('To check'), learned: L('Learned'), solid: L('Solid') };
-        const list = el('div', 'lesson-list');
-        for (const id of LESSON_IDS) {
-            const row = el('button', 'lesson-row');
-            row.type = 'button';
-            row.dataset.lesson = id;
-            const text = el('span', 'lesson-row-text');
-            text.append(el('span', 'lesson-row-title', LESSONS[id].title), el('span', 'lesson-row-idea', plainText(LESSONS[id].idea)));
-            const s = status(id);
-            row.append(text, el('span', `lesson-status is-${s}`, STATUS[s]));
-            list.append(row);
-        }
         const words = Object.keys(TERMS).sort((a, b) => TERMS[a].title.localeCompare(TERMS[b].title, LOCALE));
-        return [L('What Nemeris can teach you'), [
-            el('p', 'explain-lead', Ln(learnedCount(), 'You understand {0} of {1} key ideas. Each takes a minute, with one question to check.', 'You understand {0} of {1} key ideas. Each takes a minute, with one question to check.', LESSON_IDS.length)),
-            list,
-            section(L('All the words'), chips(words)),
-        ]];
+        return [L('Every word explained'), [el('p', 'explain-lead', L('Tap a word to read what it means, with an example.')), chips(words)]];
     },
 };
 
@@ -190,7 +133,7 @@ function render() {
     body.scrollTop = 0;
 }
 
-/** Opens the explainer on a word ('term'), a lesson ('lesson') or the list of everything ('library'). */
+/** Opens the explainer on a word ('term') or on the list of every word ('library'). */
 export function explain(kind, arg) {
     if (kind === 'term' && !TERMS[arg]) return;
     if (sheet.open) trail.push([kind, arg]);
@@ -206,13 +149,11 @@ sheet.addEventListener('click', e => { if (e.target === sheet) sheet.close(); })
 // Capture phase: underlined words can sit inside other buttons (a card, a summary) without triggering them.
 document.addEventListener('click', e => {
     const term = e.target.closest('.term[data-term]');
-    const lesson = !term && e.target.closest('[data-lesson]');
-    const library = !term && !lesson && e.target.closest('[data-library]');
-    if (!term && !lesson && !library) return;
+    const library = !term && e.target.closest('[data-library]');
+    if (!term && !library) return;
     e.preventDefault();
     e.stopPropagation();
     if (term) explain('term', term.dataset.term);
-    else if (lesson) explain('lesson', lesson.dataset.lesson);
     else explain('library');
 }, true);
 
@@ -226,7 +167,7 @@ export function termDetails(key) {
         key, title: t.title, short: t.short,
         more: t.more.map(plainText), example: plainText(t.example),
         with_your_numbers: yours ? plainText(yours) : null,
-        idea_to_remember: t.lesson ? plainText(LESSONS[t.lesson].idea) : null,
+        idea_to_remember: levelById(t.lesson) ? plainText(tr(levelById(t.lesson).idea)) : null,
         related: t.related || [],
     };
 }

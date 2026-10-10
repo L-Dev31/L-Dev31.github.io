@@ -51,6 +51,9 @@ export function comfortLevel(inv = getInvestor()) {
 export const horizonYears = (inv = getInvestor()) => HORIZON_YEARS[inv.horizon] || null;
 
 const PHRASES = {
+    situation: { student: 'is a student', employed: 'is employed', self: 'is self-employed, so their income can vary', jobseeker: 'is looking for work, so their income is uncertain', retired: 'is retired' },
+    cushion: { lt1: 'has less than one month of spending saved, so emergency savings come before investing', '1to3': 'has 1 to 3 months of spending saved, a thin cushion', '3to6': 'has 3 to 6 months of spending saved, a sound cushion', gt6: 'has more than 6 months of spending saved' },
+    debt: { costly: 'repays expensive debt (credit card, overdraft or consumer loan), so paying it off usually beats investing', cheap: 'only has low-rate debt (home or student loan)', none: 'has no expensive debt' },
     experience: { new: 'is new to investing, so explain every term simply', basics: 'knows the basics of investing but is not an expert', experienced: 'is an experienced investor, so you can be technical' },
     goal: { growth: 'wants to grow their money over time', income: 'wants regular income, so dividends matter', project: 'saves for a specific project', learn: 'invests mainly to learn' },
     horizon: { lt2: 'may need the money within 2 years', '2to5': 'may need the money in 2 to 5 years', '5to10': 'can leave the money invested 5 to 10 years', gt10: 'can leave the money invested more than 10 years' },

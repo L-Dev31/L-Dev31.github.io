@@ -1,7 +1,9 @@
-// A wide photo across the top of each Home card, so its subject is clear at a glance (a bank, a calendar, bitcoin...).
+// Photos that show a subject at a glance (a bank, a calendar, bitcoin...): across the top of Home cards, in lessons.
 // Source: Openverse (openly licensed images, free, no key). With an Unsplash access key (free at
 // unsplash.com/developers, "demo" apps allow 50 searches an hour) Unsplash photos are used instead.
 // Each subject is searched once and kept for 30 days; the credit shows on the photo.
+import { el } from '../core/utils.js';
+
 const UNSPLASH_KEY = '';
 const KEY = 'nemeris_card_photos';
 const KEEP = 30 * 86400000;
@@ -38,4 +40,24 @@ export function photoFor(query) {
             }));
     }
     return pending.get(query);
+}
+
+/** A photo with its credit, shown once it has loaded; nothing at all if no source answers. */
+export function photoFigure(query, cls = 'coach-photo') {
+    const box = el('figure', cls);
+    const img = el('img');
+    const credit = el('a', 'coach-photo-credit');
+    box.hidden = true;
+    img.alt = '';
+    img.addEventListener('load', () => { box.hidden = false; });
+    credit.target = '_blank';
+    credit.rel = 'noopener';
+    box.append(img, credit);
+    photoFor(query).then(p => {
+        if (!p) return;
+        img.src = p.src;
+        credit.textContent = p.credit;
+        if (p.link) credit.href = p.link;
+    });
+    return box;
 }

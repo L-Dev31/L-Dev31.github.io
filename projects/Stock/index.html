@@ -93,6 +93,7 @@
             </button>
             <nav class="nav" aria-label="Main">
                 <button class="nav-btn" id="nav-home" data-go="home"><i class="i i-home" aria-hidden="true"></i>Home</button>
+                <button class="nav-btn" id="nav-learn" data-go="learn"><i class="i i-school" aria-hidden="true"></i>Learn</button>
                 <button class="nav-btn" id="nav-portfolio" data-go="portfolio"><i class="i i-wallet" aria-hidden="true"></i>Portfolio</button>
                 <button class="nav-btn" id="nav-explorer" data-go="explorer"><i class="i i-explore" aria-hidden="true"></i>Explorer</button>
                 <button class="nav-btn" id="nav-news" data-go="news"><i class="i i-news" aria-hidden="true"></i>News</button>
@@ -152,6 +153,8 @@
                     </div>
                 </div>
             </section>
+
+            <section class="card learn-card" id="card-learn" aria-label="Learn" aria-hidden="true"></section>
 
             <section class="card news-card" id="card-news" aria-labelledby="news-title" aria-hidden="true">
                 <h1 class="view-title" id="news-title">News</h1>
@@ -443,6 +446,47 @@
                         <span class="meta saved-note" id="profile-saved" role="status"></span>
                     </div>
                     <p class="muted">Optional. Makes AI answers fit <em>you</em>. Stays in this browser.</p>
+                    <h3>Your money today</h3>
+                    <fieldset class="question" data-key="situation">
+                        <legend>What is your situation?</legend>
+                        <div class="seg">
+                            <label><input type="radio" name="inv-situation" value="student"><span>Student</span></label>
+                            <label><input type="radio" name="inv-situation" value="employed"><span>Employed</span></label>
+                            <label><input type="radio" name="inv-situation" value="self"><span>Self-employed</span></label>
+                            <label><input type="radio" name="inv-situation" value="jobseeker"><span>Looking for work</span></label>
+                            <label><input type="radio" name="inv-situation" value="retired"><span>Retired</span></label>
+                            <label><input type="radio" name="inv-situation" value="other"><span>Other</span></label>
+                        </div>
+                    </fieldset>
+                    <fieldset class="question" data-key="income">
+                        <legend>About how much comes in each month, after tax?</legend>
+                        <div class="seg" id="income-bands">
+                            <label><input type="radio" name="inv-income" value="none"><span></span></label>
+                            <label><input type="radio" name="inv-income" value="b1"><span></span></label>
+                            <label><input type="radio" name="inv-income" value="b2"><span></span></label>
+                            <label><input type="radio" name="inv-income" value="b3"><span></span></label>
+                            <label><input type="radio" name="inv-income" value="b4"><span></span></label>
+                        </div>
+                        <p class="meta" id="income-hint"></p>
+                    </fieldset>
+                    <fieldset class="question" data-key="cushion">
+                        <legend>If your income stopped, how long could your savings cover your spending?</legend>
+                        <div class="seg">
+                            <label><input type="radio" name="inv-cushion" value="lt1"><span>Less than a month</span></label>
+                            <label><input type="radio" name="inv-cushion" value="1to3"><span>1 to 3 months</span></label>
+                            <label><input type="radio" name="inv-cushion" value="3to6"><span>3 to 6 months</span></label>
+                            <label><input type="radio" name="inv-cushion" value="gt6"><span>More than 6 months</span></label>
+                        </div>
+                    </fieldset>
+                    <fieldset class="question" data-key="debt">
+                        <legend>Are you paying back expensive debt, like a credit card, an overdraft or a consumer loan?</legend>
+                        <div class="seg">
+                            <label><input type="radio" name="inv-debt" value="costly"><span>Yes</span></label>
+                            <label><input type="radio" name="inv-debt" value="cheap"><span>Only a home or student loan</span></label>
+                            <label><input type="radio" name="inv-debt" value="none"><span>No</span></label>
+                        </div>
+                    </fieldset>
+                    <h3>Your investing</h3>
                     <fieldset class="question" data-key="experience">
                         <legend>How well do you know investing?</legend>
                         <div class="seg">
@@ -662,6 +706,7 @@
 
     <nav id="bottom-nav" class="bottom-nav" aria-label="Main">
         <button class="bottom-nav-btn active" id="bottom-nav-home"><i class="i i-home" aria-hidden="true"></i><span>Home</span></button>
+        <button class="bottom-nav-btn" id="bottom-nav-learn" data-go="learn"><i class="i i-school" aria-hidden="true"></i><span>Learn</span></button>
         <button class="bottom-nav-btn" id="bottom-nav-explorer"><i class="i i-explore" aria-hidden="true"></i><span>Explorer</span></button>
         <button class="bottom-nav-btn" id="bottom-nav-news"><i class="i i-news" aria-hidden="true"></i><span>News</span></button>
         <button class="bottom-nav-btn" id="bottom-nav-profile"><img src="img/icon/favicon.png" alt="" class="nav-photo profile-photo"><span>Profile</span></button>

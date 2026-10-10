@@ -1,22 +1,22 @@
 // Home: the coach. It reads the portfolio as prices arrive, says what deserves attention in plain words,
-// offers the options (doing nothing included), and teaches the idea behind each situation with one check question.
-// Ideas met earlier come back for a quick check on a spaced schedule.
+// offers the options (doing nothing included) and the idea behind each situation, taught in the Academy.
+// A question missed in the Academy comes back for a quick check, and the Academy card always closes the page.
 import { el, icon } from '../core/utils.js';
 import { getUserSettings, globalPeriod } from '../core/state.js';
 import { periodPhrase, debounce } from '../core/constants.js';
 import { money } from '../data/banks.js';
 import { syncAiGates } from '../ai/ai-core.js';
 import { L, Ln } from '../i18n/i18n.js';
-import { LESSONS, LESSON_IDS } from './lessons.js';
-import { markSeen, learnedCount, dueReview } from './learning.js';
+import { academyReady, worlds, levelById, nextLevel, worldOf, missedQuestion, record, t } from '../learn/academy.js';
+import { teacher, questionBox } from '../learn/academy-page.js';
 import { findSituations, portfolioMove, howUsual, pct } from './situations.js';
-import { explain, para, richText, quizBox } from './explain.js';
-import { photoFor } from './photos.js';
+import { para, richText } from './explain.js';
+import { photoFigure } from './photos.js';
 
 // Each kind of situation has its color, icon and word, so a glance says what a card is about.
 const ICON = { down: 'trend-down', up: 'trend-down', warn: 'info', setup: 'help', tip: 'lightbulb', calm: 'check', review: 'history' };
 const KIND = { down: L('Fall'), up: L('Rise'), warn: L('Risk'), setup: L('To set up'), tip: L('Good to know'), calm: L('All calm'), review: L('Quick check') };
-const ACTION_LABEL = { profile: L('Open your profile'), bank: L('Choose your bank'), explorer: L('Open Explorer'), news: L('Read the news'), stock: L('Open it'), library: L('See the ideas') };
+const ACTION_LABEL = { profile: L('Open your profile'), bank: L('Choose your bank'), explorer: L('Open Explorer'), news: L('Read the news'), stock: L('Open it'), learn: L('Open the Academy') };
 const MAX_CARDS = 3;
 
 function badge(name) {
@@ -43,7 +43,7 @@ function runAction(action, symbol) {
         document.querySelector('#card-settings .card-tab-btn[data-target="settings-profile"]')?.click();
     } else if (action === 'bank') document.getElementById('bank-change')?.click();
     else if (action === 'explorer') nav.go('explorer');
-    else if (action === 'library') explain('library');
+    else if (action === 'learn') nav.go('learn');
     else if (action === 'stock') nav.openSymbol(symbol);
     else if (action === 'news') {
         nav.openSymbol(symbol);
@@ -106,30 +106,19 @@ function fillFacts(card, s) {
     more.replaceChildren(list, ...why, ...(s.ask ? [askButton(s.ask)] : []));
 }
 
-function fillLesson(panel, lessonId) {
-    const lesson = LESSONS[lessonId];
-    markSeen(lessonId);
-    panel.append(para('coach-idea', lesson.idea), ...lesson.body.map(b => para(null, b)), el('h4', 'coach-sub', L('Check yourself')), quizBox(lessonId, renderProgress));
+function learnButton(levelId, label) {
+    const b = el('button', 'btn btn-quiet', label);
+    b.type = 'button';
+    b.dataset.level = levelId;
+    b.prepend(icon('school'));
+    return b;
 }
 
-/** The card's photo, across its top like a news story, with its credit; nothing at all if no source answers. */
-function photo(query) {
-    const box = el('figure', 'coach-photo');
-    const img = el('img');
-    const credit = el('a', 'coach-photo-credit');
-    box.hidden = true;
-    img.alt = '';
-    img.addEventListener('load', () => { box.hidden = false; });
-    credit.target = '_blank';
-    credit.rel = 'noopener';
-    box.append(img, credit);
-    photoFor(query).then(p => {
-        if (!p) return;
-        img.src = p.src;
-        credit.textContent = p.credit;
-        if (p.link) credit.href = p.link;
+function fillLesson(panel, levelId) {
+    academyReady.then(() => {
+        const level = levelById(levelId);
+        if (level) panel.replaceChildren(para('coach-idea', t(level.idea)), learnButton(levelId, L('Learn it with Nemeris')));
     });
-    return box;
 }
 
 function buildCard(s) {
@@ -147,35 +136,58 @@ function buildCard(s) {
         disclose(L('What can I do?'), 'expand', more, 'btn coach-toggle'),
         disclose(L('The idea to remember'), 'lightbulb', lesson, 'link-btn coach-idea-btn', () => fillLesson(lesson, s.lesson)),
     );
-    if (s.photo) card.append(photo(s.photo));
+    if (s.photo) card.append(photoFigure(s.photo));
     card.append(head, actions, more, lesson);
     return card;
 }
 
-/* ── the spaced check: an idea met days ago comes back as one question ── */
-function reviewCard(id) {
+/* ── a question missed in the Academy comes back once, so it sticks ── */
+function reviewCard(q) {
     const card = el('article', 'coach-card is-review');
     const head = el('div', 'coach-head');
     const text = el('div', 'coach-text');
     text.append(el('span', 'coach-kind', KIND.review), el('h3', 'coach-what', L('Quick check, 30 seconds')));
     head.append(badge('history'), text);
-    const note = el('p', 'meta', L('You met this idea a while ago. Remembering it now is what makes it stick.'));
-    const after = el('p', 'meta coach-after');
-    after.hidden = true;
-    card.append(head, note, quizBox(id, right => {
-        after.replaceChildren(richText(right ? L('Well remembered. Nemeris will ask again later, less often.') : L('No problem: it will come back soon. The idea: {0}', LESSONS[id].idea)));
-        after.hidden = false;
-        renderProgress();
-    }), after);
+    card.append(head, para('meta', L('You missed this one in the Academy. Getting it right now is what makes it stick.')), para('quiz-q', t(q.ask)),
+        questionBox(q, { onDone: score => record(q.id, score) }));
     return card;
 }
 
-function renderProgress() {
-    const done = learnedCount();
-    host.querySelector('.coach-progress-text').textContent = done
-        ? Ln(done, 'You understand {0} of {1} key ideas.', 'You understand {0} of {1} key ideas.', LESSON_IDS.length)
-        : L('{0} key ideas to understand investing, one minute each.', LESSON_IDS.length);
-    host.querySelector('.coach-progress-bar').style.setProperty('--done', done / LESSON_IDS.length);
+/* ── the Academy, always last: where the user is, and one button to go on ── */
+function renderLearn() {
+    const box = host.querySelector('.coach-learn');
+    box.hidden = !worlds().length;
+    if (box.hidden) return;
+    const level = nextLevel();
+    const world = level ? worldOf(level.id) : worlds().at(-1);
+    box.style.setProperty('--world', world.color);
+    box.querySelector('.coach-kind').textContent = `${L('Academy')} · ${t(world.name)}`;
+    box.querySelector('.coach-what').textContent = !level ? L('You finished every world.') : level.boss ? L('Boss: {0}', t(level.title)) : t(level.title);
+    box.querySelector('.coach-lead').textContent = !level ? L('Replay any level whenever you like: it keeps what you know sharp.')
+        : level.boss ? t(level.intro)
+        : L('A short level with Nemeris: learn, practise, then apply. No risk of doing it wrong.');
+    const go = box.querySelector('.coach-learn-go');
+    go.hidden = !level;
+    if (!level) return;
+    go.dataset.level = level.id;
+    go.lastChild.textContent = level === worlds()[0].levels[0] ? L('Start') : L('Continue');
+}
+
+function learnCard() {
+    const box = el('article', 'coach-learn');
+    box.hidden = true;
+    const text = el('div', 'coach-text');
+    text.append(el('span', 'coach-kind'), el('h3', 'coach-what'), el('p', 'coach-lead'));
+    const go = el('button', 'btn btn-primary coach-learn-go');
+    go.type = 'button';
+    go.append(icon('play'), el('span'));
+    const map = el('button', 'link-btn', L('See all the worlds'));
+    map.type = 'button';
+    map.dataset.go = 'learn';
+    const actions = el('div', 'coach-actions');
+    actions.append(go, map);
+    box.append(teacher(), text, actions);
+    return box;
 }
 
 function statusLine(situations) {
@@ -212,12 +224,12 @@ function render() {
         list.append(card);
     }
 
-    const due = dueReview();
-    if (!reviewShown && due && !situations.some(s => s.lesson === due)) {
+    const missed = !reviewShown && missedQuestion();
+    if (missed) {
         reviewShown = true;
-        host.querySelector('.coach-review').append(reviewCard(due));
+        host.querySelector('.coach-review').append(reviewCard(missed));
     }
-    renderProgress();
+    renderLearn();
     syncAiGates(host);
 }
 
@@ -230,12 +242,8 @@ export function initCoach({ go, openSymbol }) {
     nav = { go, openSymbol };
     const hello = el('p', 'coach-hello');
     const status = el('p', 'coach-status');
-    const progress = el('button', 'coach-progress');
-    progress.type = 'button';
-    progress.dataset.library = '';
-    const bar = el('span', 'coach-progress-bar');
-    progress.append(el('span', 'coach-progress-text'), bar, el('span', 'coach-progress-cta', L('See all')));
-    host.replaceChildren(hello, status, el('div', 'coach-cards'), el('div', 'coach-review'), progress);
+    host.replaceChildren(hello, status, el('div', 'coach-cards'), el('div', 'coach-review'), learnCard());
     render();
-    for (const type of ['nemeris:portfolio', 'nemeris:settings']) window.addEventListener(type, refresh);
+    academyReady.then(refresh);
+    for (const type of ['nemeris:portfolio', 'nemeris:settings', 'nemeris:academy']) window.addEventListener(type, refresh);
 }

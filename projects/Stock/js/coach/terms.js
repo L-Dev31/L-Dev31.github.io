@@ -481,12 +481,12 @@ export const TERMS = {
         title: L('Emergency savings'),
         short: L('Cash kept aside for surprises, so you never have to sell investments at a bad time.'),
         more: [
-            L('A common guideline is three to six months of spending, on a savings account you can reach at once, such as a Livret A in France.'),
+            L('A common guideline is three to six months of spending, on a savings account you can reach at once: in France a Livret A, elsewhere an easy-access savings account protected by the deposit guarantee.'),
             L('Without it, a broken car or a lost job during a market fall can force you to sell at a loss.'),
         ],
         example: L('If you spend 1,500 € a month, aim for 4,500 to 9,000 € of savings before putting more into stocks.'),
         related: ['horizon', 'bearMarket'],
-        lesson: 'horizon',
+        lesson: 'cushion',
     },
     limitOrder: {
         title: L('Limit order and market order'),

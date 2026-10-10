@@ -1,0 +1,927 @@
+{
+ "skills": {
+  "money": {
+   "en": "Money basics",
+   "fr": "Les bases de l'argent"
+  },
+  "growth": {
+   "en": "Time and growth",
+   "fr": "Le temps et la croissance"
+  },
+  "risk": {
+   "en": "Risk",
+   "fr": "Le risque"
+  },
+  "products": {
+   "en": "Products",
+   "fr": "Les produits"
+  },
+  "costs": {
+   "en": "Costs",
+   "fr": "Les frais"
+  },
+  "mind": {
+   "en": "Mindset",
+   "fr": "Le bon état d'esprit"
+  },
+  "tax": {
+   "en": "Accounts and tax",
+   "fr": "Comptes et impôts"
+  }
+ },
+ "worlds": [
+  {
+   "id": "plain",
+   "name": {
+    "en": "The plain",
+    "fr": "La plaine"
+   },
+   "icon": "flower",
+   "color": "#2E9D57",
+   "intro": {
+    "en": "Welcome! Here we start with the basics, one small step at a time.",
+    "fr": "Bienvenue ! Ici on commence par les bases, un petit pas à la fois."
+   },
+   "levels": [
+    {
+     "id": "swings",
+     "title": {
+      "en": "Prices move every day",
+      "fr": "Les prix bougent tous les jours"
+     },
+     "idea": {
+      "en": "Ups and downs are normal. A fall only becomes a loss if you sell.",
+      "fr": "Les hauts et les bas sont normaux. Une baisse ne devient une perte que si tu vends."
+     },
+     "skill": "risk",
+     "learn": [
+      {
+       "say": {
+        "en": "A price changes all day because buyers and sellers keep changing their minds. Even solid companies often lose 10% or more in a few weeks, then recover.",
+        "fr": "Un cours change toute la journée, parce que acheteurs et vendeurs changent sans cesse d'avis. Même des entreprises solides perdent souvent 10 % ou plus en quelques semaines, puis remontent."
+       },
+       "photo": "piggy bank"
+      },
+      {
+       "say": {
+        "en": "As long as you keep the shares, a fall is a [[unrealized|loss on paper]]. It becomes real only when you sell.",
+        "fr": "Tant que tu gardes tes actions, une baisse est une [[unrealized|perte sur le papier]]. Elle ne devient réelle que si tu vends."
+       }
+      },
+      {
+       "ask": {
+        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
+        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+       },
+       "options": [
+        {
+         "en": "8% of that money",
+         "fr": "8 % de cet argent"
+        },
+        {
+         "en": "Nothing yet: it is a loss on paper",
+         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+        },
+        {
+         "en": "It depends on the dividend",
+         "fr": "Ça dépend du dividende"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
+        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
+        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+       },
+       "options": [
+        {
+         "en": "8% of that money",
+         "fr": "8 % de cet argent"
+        },
+        {
+         "en": "Nothing yet: it is a loss on paper",
+         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+        },
+        {
+         "en": "It depends on the dividend",
+         "fr": "Ça dépend du dividende"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
+        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+       }
+      },
+      {
+       "ask": {
+        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
+        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+       },
+       "options": [
+        {
+         "en": "8% of that money",
+         "fr": "8 % de cet argent"
+        },
+        {
+         "en": "Nothing yet: it is a loss on paper",
+         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+        },
+        {
+         "en": "It depends on the dividend",
+         "fr": "Ça dépend du dividende"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
+        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+       }
+      },
+      {
+       "ask": {
+        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
+        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+       },
+       "options": [
+        {
+         "en": "8% of that money",
+         "fr": "8 % de cet argent"
+        },
+        {
+         "en": "Nothing yet: it is a loss on paper",
+         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+        },
+        {
+         "en": "It depends on the dividend",
+         "fr": "Ça dépend du dividende"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
+        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
+        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+       },
+       "options": [
+        {
+         "en": "8% of that money",
+         "fr": "8 % de cet argent"
+        },
+        {
+         "en": "Nothing yet: it is a loss on paper",
+         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+        },
+        {
+         "en": "It depends on the dividend",
+         "fr": "Ça dépend du dividende"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
+        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+       }
+      },
+      {
+       "ask": {
+        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
+        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+       },
+       "options": [
+        {
+         "en": "8% of that money",
+         "fr": "8 % de cet argent"
+        },
+        {
+         "en": "Nothing yet: it is a loss on paper",
+         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+        },
+        {
+         "en": "It depends on the dividend",
+         "fr": "Ça dépend du dividende"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
+        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+       }
+      },
+      {
+       "ask": {
+        "en": "Your stock fell 8% this week and you still hold it. What have you lost for good?",
+        "fr": "Ton action a perdu 8 % cette semaine et tu la gardes. Qu'as-tu perdu pour de bon ?"
+       },
+       "options": [
+        {
+         "en": "8% of that money",
+         "fr": "8 % de cet argent"
+        },
+        {
+         "en": "Nothing yet: it is a loss on paper",
+         "fr": "Rien pour l'instant : c'est une perte sur le papier"
+        },
+        {
+         "en": "It depends on the dividend",
+         "fr": "Ça dépend du dividende"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "While you hold, the price can come back, or not. The loss becomes real only when you sell.",
+        "fr": "Tant que tu gardes, le cours peut remonter, ou pas. La perte ne devient réelle que quand tu vends."
+       }
+      }
+     ]
+    },
+    {
+     "id": "compounding",
+     "title": {
+      "en": "Gains that make gains",
+      "fr": "Des gains qui font des gains"
+     },
+     "idea": {
+      "en": "Time is your best friend: gains earn gains.",
+      "fr": "Le temps est ton meilleur allié : les gains rapportent des gains."
+     },
+     "skill": "growth",
+     "learn": [
+      {
+       "say": {
+        "en": "If your money earns 7% a year, it roughly doubles in 10 years and grows about 4 times in 20, because each year's gains also earn gains.",
+        "fr": "Si ton argent rapporte 7 % par an, il double à peu près en 10 ans et est multiplié par 4 environ en 20 ans, car les gains de chaque année rapportent à leur tour."
+       },
+       "photo": "piggy bank"
+      },
+      {
+       "say": {
+        "en": "That is why starting early, even with [[dca|small monthly amounts]], matters more than finding the perfect stock.",
+        "fr": "C'est pour ça que commencer tôt, même avec de [[dca|petites sommes chaque mois]], compte plus que trouver l'action parfaite."
+       }
+      },
+      {
+       "ask": {
+        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
+        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+       },
+       "options": [
+        {
+         "en": "1,700 €",
+         "fr": "1 700 €"
+        },
+        {
+         "en": "2,000 €",
+         "fr": "2 000 €"
+        },
+        {
+         "en": "7,000 €",
+         "fr": "7 000 €"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
+        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
+        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+       },
+       "options": [
+        {
+         "en": "1,700 €",
+         "fr": "1 700 €"
+        },
+        {
+         "en": "2,000 €",
+         "fr": "2 000 €"
+        },
+        {
+         "en": "7,000 €",
+         "fr": "7 000 €"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
+        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+       }
+      },
+      {
+       "ask": {
+        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
+        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+       },
+       "options": [
+        {
+         "en": "1,700 €",
+         "fr": "1 700 €"
+        },
+        {
+         "en": "2,000 €",
+         "fr": "2 000 €"
+        },
+        {
+         "en": "7,000 €",
+         "fr": "7 000 €"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
+        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+       }
+      },
+      {
+       "ask": {
+        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
+        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+       },
+       "options": [
+        {
+         "en": "1,700 €",
+         "fr": "1 700 €"
+        },
+        {
+         "en": "2,000 €",
+         "fr": "2 000 €"
+        },
+        {
+         "en": "7,000 €",
+         "fr": "7 000 €"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
+        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
+        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+       },
+       "options": [
+        {
+         "en": "1,700 €",
+         "fr": "1 700 €"
+        },
+        {
+         "en": "2,000 €",
+         "fr": "2 000 €"
+        },
+        {
+         "en": "7,000 €",
+         "fr": "7 000 €"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
+        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+       }
+      },
+      {
+       "ask": {
+        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
+        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+       },
+       "options": [
+        {
+         "en": "1,700 €",
+         "fr": "1 700 €"
+        },
+        {
+         "en": "2,000 €",
+         "fr": "2 000 €"
+        },
+        {
+         "en": "7,000 €",
+         "fr": "7 000 €"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
+        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+       }
+      },
+      {
+       "ask": {
+        "en": "1,000 € growing 7% a year becomes about how much in 10 years?",
+        "fr": "1 000 € qui grandissent de 7 % par an deviennent combien en 10 ans, environ ?"
+       },
+       "options": [
+        {
+         "en": "1,700 €",
+         "fr": "1 700 €"
+        },
+        {
+         "en": "2,000 €",
+         "fr": "2 000 €"
+        },
+        {
+         "en": "7,000 €",
+         "fr": "7 000 €"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "1.07 multiplied by itself 10 times is about 1.97: the gains of each year add up on top of each other.",
+        "fr": "1,07 multiplié par lui-même 10 fois donne environ 1,97 : les gains de chaque année s'empilent les uns sur les autres."
+       }
+      }
+     ]
+    },
+    {
+     "id": "plain-guardian",
+     "boss": "mid",
+     "count": 5,
+     "title": {
+      "en": "The guardian of the plain",
+      "fr": "Le gardien de la plaine"
+     },
+     "intro": {
+      "en": "Show me what you learned!",
+      "fr": "Montre-moi ce que tu as appris !"
+     }
+    },
+    {
+     "id": "diversification",
+     "title": {
+      "en": "Spreading your money",
+      "fr": "Répartir son argent"
+     },
+     "idea": {
+      "en": "Never let one company decide your future: spread your money.",
+      "fr": "Ne laisse jamais une seule entreprise décider de ton avenir : répartis ton argent."
+     },
+     "skill": "risk",
+     "learn": [
+      {
+       "say": {
+        "en": "If one company is a big part of your money, one bad surprise, like a scandal or a failed product, can cost you a lot.",
+        "fr": "Si une entreprise pèse lourd dans ton argent, une seule mauvaise surprise, comme un scandale ou un produit raté, peut te coûter cher."
+       },
+       "photo": "piggy bank"
+      },
+      {
+       "say": {
+        "en": "A broad index fund ([[etf|ETF]]) holds hundreds of companies at once, so no single one can sink it. Most people build their base with one, then add single stocks in small amounts.",
+        "fr": "Un fonds indiciel large ([[etf|ETF]]) détient des centaines d'entreprises à la fois, donc aucune ne peut le couler à elle seule. La plupart des gens construisent leur base avec un ETF, puis ajoutent quelques actions en petites quantités."
+       }
+      },
+      {
+       "ask": {
+        "en": "Which of these is the most spread out?",
+        "fr": "Lequel de ces choix est le plus diversifié ?"
+       },
+       "options": [
+        {
+         "en": "One stock you know well",
+         "fr": "Une action que tu connais bien"
+        },
+        {
+         "en": "A world index ETF",
+         "fr": "Un ETF indiciel monde"
+        },
+        {
+         "en": "Three tech stocks",
+         "fr": "Trois actions tech"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
+        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "Which of these is the most spread out?",
+        "fr": "Lequel de ces choix est le plus diversifié ?"
+       },
+       "options": [
+        {
+         "en": "One stock you know well",
+         "fr": "Une action que tu connais bien"
+        },
+        {
+         "en": "A world index ETF",
+         "fr": "Un ETF indiciel monde"
+        },
+        {
+         "en": "Three tech stocks",
+         "fr": "Trois actions tech"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
+        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+       }
+      },
+      {
+       "ask": {
+        "en": "Which of these is the most spread out?",
+        "fr": "Lequel de ces choix est le plus diversifié ?"
+       },
+       "options": [
+        {
+         "en": "One stock you know well",
+         "fr": "Une action que tu connais bien"
+        },
+        {
+         "en": "A world index ETF",
+         "fr": "Un ETF indiciel monde"
+        },
+        {
+         "en": "Three tech stocks",
+         "fr": "Trois actions tech"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
+        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+       }
+      },
+      {
+       "ask": {
+        "en": "Which of these is the most spread out?",
+        "fr": "Lequel de ces choix est le plus diversifié ?"
+       },
+       "options": [
+        {
+         "en": "One stock you know well",
+         "fr": "Une action que tu connais bien"
+        },
+        {
+         "en": "A world index ETF",
+         "fr": "Un ETF indiciel monde"
+        },
+        {
+         "en": "Three tech stocks",
+         "fr": "Trois actions tech"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
+        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "Which of these is the most spread out?",
+        "fr": "Lequel de ces choix est le plus diversifié ?"
+       },
+       "options": [
+        {
+         "en": "One stock you know well",
+         "fr": "Une action que tu connais bien"
+        },
+        {
+         "en": "A world index ETF",
+         "fr": "Un ETF indiciel monde"
+        },
+        {
+         "en": "Three tech stocks",
+         "fr": "Trois actions tech"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
+        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+       }
+      },
+      {
+       "ask": {
+        "en": "Which of these is the most spread out?",
+        "fr": "Lequel de ces choix est le plus diversifié ?"
+       },
+       "options": [
+        {
+         "en": "One stock you know well",
+         "fr": "Une action que tu connais bien"
+        },
+        {
+         "en": "A world index ETF",
+         "fr": "Un ETF indiciel monde"
+        },
+        {
+         "en": "Three tech stocks",
+         "fr": "Trois actions tech"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
+        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+       }
+      },
+      {
+       "ask": {
+        "en": "Which of these is the most spread out?",
+        "fr": "Lequel de ces choix est le plus diversifié ?"
+       },
+       "options": [
+        {
+         "en": "One stock you know well",
+         "fr": "Une action que tu connais bien"
+        },
+        {
+         "en": "A world index ETF",
+         "fr": "Un ETF indiciel monde"
+        },
+        {
+         "en": "Three tech stocks",
+         "fr": "Trois actions tech"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "A world ETF holds more than a thousand companies in many countries and sectors. Three tech stocks still depend on one industry.",
+        "fr": "Un ETF monde détient plus de mille entreprises dans de nombreux pays et secteurs. Trois actions tech dépendent toujours d'un seul secteur."
+       }
+      }
+     ]
+    },
+    {
+     "id": "plain-king",
+     "boss": "final",
+     "count": 8,
+     "title": {
+      "en": "The king of the plain",
+      "fr": "Le roi de la plaine"
+     },
+     "intro": {
+      "en": "The last test of the plain.",
+      "fr": "Le dernier test de la plaine."
+     }
+    }
+   ]
+  },
+  {
+   "id": "caves",
+   "name": {
+    "en": "The caves",
+    "fr": "Les grottes"
+   },
+   "icon": "diamond",
+   "color": "#7A5C3E",
+   "intro": {
+    "en": "Deeper now: risk and patience.",
+    "fr": "Plus profond : le risque et la patience."
+   },
+   "levels": [
+    {
+     "id": "horizon",
+     "title": {
+      "en": "When you need the money",
+      "fr": "Quand tu auras besoin de l'argent"
+     },
+     "idea": {
+      "en": "Money you need within 2 years should not be in stocks.",
+      "fr": "L'argent dont tu as besoin d'ici 2 ans n'a rien à faire en bourse."
+     },
+     "skill": "growth",
+     "learn": [
+      {
+       "say": {
+        "en": "Stocks can lose 30% or more in a [[bearMarket|bad year]] and take years to recover. That is fine for money you will leave for 5 to 10 years.",
+        "fr": "Les actions peuvent perdre 30 % ou plus lors d'une [[bearMarket|mauvaise année]] et mettre des années à remonter. Ça va pour de l'argent que tu laisses 5 à 10 ans."
+       },
+       "photo": "piggy bank"
+      },
+      {
+       "say": {
+        "en": "For money you need soon, such as a car or a deposit, a savings account is the calm choice. Keep [[emergencyFund|emergency savings]] there too.",
+        "fr": "Pour l'argent dont tu as bientôt besoin, comme une voiture ou un apport, un livret est le choix serein. Garde aussi ton [[emergencyFund|épargne de précaution]] là-dessus."
+       }
+      },
+      {
+       "ask": {
+        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
+        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
+       },
+       "options": [
+        {
+         "en": "In stocks, to grow it",
+         "fr": "En bourse, pour les faire fructifier"
+        },
+        {
+         "en": "In a savings account",
+         "fr": "Sur un livret"
+        },
+        {
+         "en": "In crypto",
+         "fr": "En crypto"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
+        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
+       }
+      }
+     ],
+     "practice": [
+      {
+       "ask": {
+        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
+        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
+       },
+       "options": [
+        {
+         "en": "In stocks, to grow it",
+         "fr": "En bourse, pour les faire fructifier"
+        },
+        {
+         "en": "In a savings account",
+         "fr": "Sur un livret"
+        },
+        {
+         "en": "In crypto",
+         "fr": "En crypto"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
+        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
+       }
+      },
+      {
+       "ask": {
+        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
+        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
+       },
+       "options": [
+        {
+         "en": "In stocks, to grow it",
+         "fr": "En bourse, pour les faire fructifier"
+        },
+        {
+         "en": "In a savings account",
+         "fr": "Sur un livret"
+        },
+        {
+         "en": "In crypto",
+         "fr": "En crypto"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
+        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
+       }
+      },
+      {
+       "ask": {
+        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
+        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
+       },
+       "options": [
+        {
+         "en": "In stocks, to grow it",
+         "fr": "En bourse, pour les faire fructifier"
+        },
+        {
+         "en": "In a savings account",
+         "fr": "Sur un livret"
+        },
+        {
+         "en": "In crypto",
+         "fr": "En crypto"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
+        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
+       }
+      }
+     ],
+     "apply": [
+      {
+       "ask": {
+        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
+        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
+       },
+       "options": [
+        {
+         "en": "In stocks, to grow it",
+         "fr": "En bourse, pour les faire fructifier"
+        },
+        {
+         "en": "In a savings account",
+         "fr": "Sur un livret"
+        },
+        {
+         "en": "In crypto",
+         "fr": "En crypto"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
+        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
+       }
+      },
+      {
+       "ask": {
+        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
+        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
+       },
+       "options": [
+        {
+         "en": "In stocks, to grow it",
+         "fr": "En bourse, pour les faire fructifier"
+        },
+        {
+         "en": "In a savings account",
+         "fr": "Sur un livret"
+        },
+        {
+         "en": "In crypto",
+         "fr": "En crypto"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
+        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
+       }
+      },
+      {
+       "ask": {
+        "en": "You need 5,000 € for a car in 8 months. Where should it be?",
+        "fr": "Tu as besoin de 5 000 € pour une voiture dans 8 mois. Où les mettre ?"
+       },
+       "options": [
+        {
+         "en": "In stocks, to grow it",
+         "fr": "En bourse, pour les faire fructifier"
+        },
+        {
+         "en": "In a savings account",
+         "fr": "Sur un livret"
+        },
+        {
+         "en": "In crypto",
+         "fr": "En crypto"
+        }
+       ],
+       "answer": 1,
+       "why": {
+        "en": "Over 8 months stocks can easily be down 20%. Money with a near date belongs somewhere stable.",
+        "fr": "Sur 8 mois, les actions peuvent facilement perdre 20 %. L'argent avec une échéance proche doit être à l'abri."
+       }
+      }
+     ]
+    },
+    {
+     "id": "caves-king",
+     "boss": "final",
+     "count": 8,
+     "title": {
+      "en": "The king of the caves",
+      "fr": "Le roi des grottes"
+     },
+     "intro": {
+      "en": "Ready?",
+      "fr": "Prêt ?"
+     }
+    }
+   ]
+  }
+ ]
+}

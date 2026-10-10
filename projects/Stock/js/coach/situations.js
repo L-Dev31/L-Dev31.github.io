@@ -7,8 +7,8 @@ import { holdingRows } from '../data/holdings.js';
 import { currentBank, orderFee, money } from '../data/banks.js';
 import { fetchCloses } from '../quant/quant-shared.js';
 import { L, LOCALE } from '../i18n/i18n.js';
-import { status } from './learning.js';
-import { LESSON_IDS } from './lessons.js';
+import { nextLevel } from '../learn/academy.js';
+import { moneyFlags } from '../data/income.js';
 
 export const pct = n => (Math.abs(n) / 100).toLocaleString(LOCALE, { style: 'percent', maximumFractionDigits: Math.abs(n) < 10 ? 1 : 0 });
 
@@ -26,13 +26,75 @@ function typicalOrder(inv) {
     return amounts.length ? amounts[Math.floor(amounts.length / 2)] : null;
 }
 
+/** Money basics come before investing: expensive debt, no cushion, too big a share of a small income. */
+function moneySituations(inv) {
+    const f = moneyFlags(inv);
+    const out = [];
+    if (f.costlyDebt) out.push({
+        id: 'debt', tone: 'warn', photo: 'credit card', priority: 95,
+        title: L('You are paying back expensive debt.'),
+        meaning: [
+            L('Credit cards, overdrafts and consumer loans often cost 10 to 20% a year or more.'),
+            L('Paying them off is a sure return: no investment can promise that much.'),
+        ],
+        options: [
+            { label: L('Pay it off first'), detail: L('Put what you meant to invest toward the most expensive debt.') },
+            { label: L('Keep a very small amount invested'), detail: L('Fine to learn with, as long as you never miss a repayment.') },
+            { label: L('Check your answer'), detail: L('Only a home or student loan? Update your profile.'), action: 'profile' },
+        ],
+        lesson: 'debt',
+        ask: L('I am paying back a consumer loan. Should I pay it off before investing?'),
+    });
+    if (f.noCushion || f.thinCushion) out.push({
+        id: 'cushion', tone: f.noCushion ? 'warn' : 'tip', photo: 'umbrella rain', priority: f.noCushion ? 88 : 42,
+        title: f.noCushion ? L('You have less than a month of spending set aside.') : L('Your safety cushion is still thin.'),
+        meaning: [
+            L('Without a cushion, a broken phone or a lost job could force you to sell your investments at a bad time.'),
+            L('A common guideline: 3 to 6 months of spending on a savings account you can reach at once, your [[emergencyFund|emergency savings]].'),
+        ],
+        options: [
+            { label: L('Build your cushion first'), detail: L('Send your monthly amount to savings until about 3 months are covered.') },
+            { label: L('Split your monthly amount'), detail: L('For example two thirds to savings and one third to investing, until the cushion is there.') },
+        ],
+        lesson: 'cushion',
+        ask: L('How much emergency savings should I keep before investing?'),
+    });
+    if (f.stretch) out.push({
+        id: 'stretch', tone: 'warn', photo: 'wallet', priority: 80,
+        title: inv.income === 'none' ? L('You plan to invest without a regular income.') : L('You plan to invest about {0} of your income each month.', pct(f.share * 100)),
+        meaning: [
+            L('Investing works only if you never have to take the money back out at a bad time.'),
+            L('Learning with 10 to 50 € a month teaches as much as with 500 €.'),
+        ],
+        options: [
+            { label: L('Start smaller'), detail: L('A small amount you are sure to keep invested beats a big one you may need back.') },
+            { label: L('Invest what is left'), detail: L('Needs and savings first, investing with what remains.') },
+            { label: L('Update your amount'), detail: L('In Settings, Profile.'), action: 'profile' },
+        ],
+        lesson: 'budget',
+        ask: L('How much of my income should I invest each month?'),
+    });
+    if (f.tight && !out.length) out.push({
+        id: 'budget', tone: 'tip', photo: 'notebook budget', priority: 38,
+        title: L('Your best first investment: a simple budget.'),
+        meaning: [L('Knowing where your money goes is what frees money to save and, later, to invest.')],
+        options: [
+            { label: L('Track one month of spending'), detail: L('Write down everything for a month: the surprises show you where to save.') },
+            { label: L('Pay yourself first'), detail: L('A small automatic transfer to savings on the day your money arrives.') },
+            { label: L('Learn the basics'), detail: L('The first levels of the Academy are about exactly this.'), action: 'learn' },
+        ],
+        lesson: 'budget',
+    });
+    return out;
+}
+
 /** Everything worth saying right now, most important first. */
 export function findSituations() {
     const { rows, total } = holdingRows();
     const inv = getInvestor();
     const bank = currentBank();
     const period = periodPhrase(globalPeriod);
-    const found = [];
+    const found = moneySituations(inv);
     const add = s => s && found.push(s);
 
     if (!rows.length) {
@@ -45,13 +107,13 @@ export function findSituations() {
                 L('Already invested at your bank? Open the stock in Nemeris and add your trade: Nemeris will then follow it with you.'),
             ],
             options: [
-                { label: L('Tell Nemeris about you'), detail: L('Three questions about your goal, your timing and how you would react to a fall.'), action: 'profile' },
+                { label: L('Tell Nemeris about you'), detail: L('A few questions about your money, your goal and your timing.'), action: 'profile' },
                 { label: L('Look at a world fund'), detail: L('See how a fund holding the whole world moves.'), ...sample },
             ],
             lesson: 'etf',
             ask: L('I am new to investing. Where should I start, step by step?'),
         });
-        return found;
+        return found.sort((a, b) => b.priority - a.priority);
     }
 
     const moved = rows.reduce((s, r) => s + moveOf(r), 0);
@@ -242,11 +304,11 @@ export function findSituations() {
         });
     }
 
-    if (!inv.horizon || !inv.drop) add({
+    if (!inv.horizon || !inv.drop || !inv.cushion || !inv.debt) add({
         id: 'profile', tone: 'setup', photo: 'compass', priority: 30,
         title: L('Nemeris does not know your goals yet.'),
-        meaning: [L('Whether a fall is a problem depends on you: when you need the money and how you would react. Three quick questions let Nemeris fit every explanation to you.')],
-        options: [{ label: L('Answer three questions'), detail: L('It takes a minute, in Settings, Profile.'), action: 'profile' }],
+        meaning: [L('Whether a fall is a problem depends on you: your money today, when you need it and how you would react. A few quick questions let Nemeris fit every explanation to you.')],
+        options: [{ label: L('Answer a few questions'), detail: L('It takes a minute, in Settings, Profile.'), action: 'profile' }],
         lesson: 'horizon',
     });
     else if (!bank) add({
@@ -263,9 +325,9 @@ export function findSituations() {
         meaning: [L('Your investments moved within their usual range. On calm days the best move is usually no move at all.')],
         options: [
             { label: L('Do nothing'), detail: L('Really. Checking less often leads to fewer emotional decisions.') },
-            { label: L('Learn something new'), detail: L('One idea, one minute, one question.'), action: 'library' },
+            { label: L('Learn something new'), detail: L('A short level in the Academy, with Nemeris.'), action: 'learn' },
         ],
-        lesson: LESSON_IDS.find(id => status(id) === 'new') || 'compounding',
+        lesson: nextLevel()?.id || 'compounding',
     });
 
     return found.sort((a, b) => b.priority - a.priority);

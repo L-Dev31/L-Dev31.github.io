@@ -7,6 +7,8 @@ import '../ai/assistant.js';
 import '../ui/country-picker.js';
 import '../ui/bank-picker.js';
 import { initCoach } from '../coach/coach.js';
+import { incomeBands, loadMedian } from '../data/income.js';
+import { openAcademy } from '../learn/academy-page.js';
 import { DEAD_ERROR_CODES, periodToDays, periodPhrase } from './constants.js';
 import { positions, selectedApi, setSelectedApi, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings, getCurrency, comfortLevel, COMFORT_WORD, isExpert } from './state.js';
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching, openPortfolio } from '../ui/portfolio.js';
@@ -21,6 +23,7 @@ export { fetchActiveSymbol };
 /* ── views ── */
 const VIEWS = {
     home: () => showCard('card-home'),
+    learn: () => openAcademy(),
     portfolio: () => openPortfolio(),
     explorer: () => window.explorerModule?.openExplorer(),
     news: () => openNewsPage(),
@@ -59,8 +62,8 @@ for (const btn of document.querySelectorAll('.list-toggle')) {
     try { if (localStorage.getItem(`nemeris_list_${btn.id}`) === '0') toggleList(btn, false); } catch { /* ignore */ }
 }
 
-const NAV_FOR_CARD = { 'card-home': 'home', 'card-portfolio': 'portfolio', 'card-explorer': 'explorer', 'card-news': 'news', 'card-terminal': 'terminal', 'card-settings': 'settings' };
-const BOTTOM_FOR_CARD = { 'card-explorer': 'bottom-nav-explorer', 'card-news': 'bottom-nav-news', 'card-profile': 'bottom-nav-profile', 'card-settings': 'bottom-nav-profile', 'card-portfolio': 'bottom-nav-home' };
+const NAV_FOR_CARD = { 'card-home': 'home', 'card-learn': 'learn', 'card-portfolio': 'portfolio', 'card-explorer': 'explorer', 'card-news': 'news', 'card-terminal': 'terminal', 'card-settings': 'settings' };
+const BOTTOM_FOR_CARD = { 'card-learn': 'bottom-nav-learn', 'card-explorer': 'bottom-nav-explorer', 'card-news': 'bottom-nav-news', 'card-profile': 'bottom-nav-profile', 'card-settings': 'bottom-nav-profile', 'card-portfolio': 'bottom-nav-home' };
 
 function syncCard(card) {
     const active = card.classList.contains('active');
@@ -261,7 +264,18 @@ function fillSettings() {
     getEl('inv-monthly-unit').textContent = getCurrency();
     getEl('inv-notes').value = inv.notes || '';
     renderComfort(inv);
+    renderIncomeBands();
 }
+
+/** Income brackets follow the country's typical income and the user's currency. */
+function renderIncomeBands() {
+    const bands = incomeBands();
+    for (const r of document.querySelectorAll('#income-bands input')) r.nextElementSibling.textContent = bands[r.value];
+    getEl('income-hint').textContent = bands.hint;
+}
+const refreshIncome = () => loadMedian().then(renderIncomeBands);
+refreshIncome();
+window.addEventListener('nemeris:settings', refreshIncome);
 
 function readInvestor() {
     const inv = {};

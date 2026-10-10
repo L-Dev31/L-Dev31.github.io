@@ -16,6 +16,8 @@ import { termDetails, findTerm, plainText as plainTerms } from '../coach/explain
 import { findSituations } from '../coach/situations.js';
 import { countryCode, countryName } from '../data/country.js';
 import { ratesReady, ratesDate } from '../data/rates.js';
+import { moneyContext } from '../data/income.js';
+import { gradesContext } from '../learn/academy.js';
 import { sentenceFeeder, watchMicrophoneLevel } from './voice/voice.js';
 import { canCall, voiceAvailability, VOICE_HEALTH_EVENT, createCallSpeaker, createCallListener, resetVoiceHealth } from './voice/voice-engine.js';
 import { AUDIO_DEVICES_EVENT } from './voice/devices.js';
@@ -427,7 +429,7 @@ function systemPrompt(effort, replyLang = null) {
         userName: s.name && s.name !== 'Nemeris User' ? s.name : '',
         currency: getCurrency(),
         now: new Date(),
-        about: investorContext(),
+        about: [investorContext(), moneyContext(), gradesContext()].filter(Boolean).join(' '),
         lang: LANG,
         replyLang,
         web: EFFORTS[effort].web,

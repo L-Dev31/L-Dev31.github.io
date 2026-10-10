@@ -384,11 +384,6 @@ input.terminal-input::placeholder { color: var(--term-dim); }
 .coach-options .btn { flex: none; }
 .coach-more > .btn { justify-self: start; }
 .coach-idea { font-size: 16px; font-weight: 600; color: var(--text); }
-.coach-sub { margin-top: 4px; font-size: 14px; color: var(--text); }
-.coach-progress { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r-md); background: none; color: var(--text-2); font: inherit; text-align: left; cursor: pointer; }
-.coach-progress:hover { background: var(--surface); }
-.coach-progress-bar { grid-column: 1 / -1; height: 6px; border-radius: var(--r-bar); background: linear-gradient(90deg, var(--accent) calc(var(--done, 0) * 100%), var(--surface-3) 0); }
-.coach-progress-cta { grid-row: 1; grid-column: 2; font-size: 13px; font-weight: 600; color: var(--text); }
 
 @media (max-width: 640px) {
     .coach-card { padding: 16px; }
@@ -396,3 +391,56 @@ input.terminal-input::placeholder { color: var(--term-dim); }
     .coach-photo { margin: -16px -16px 0; }
     .coach-options li { flex-wrap: wrap; }
 }
+
+/* Academy: a world's path of levels, then a level one step at a time. The world's colour tints the page. */
+body:has(#card-learn.active) .container { background: color-mix(in srgb, var(--world) 9%, var(--bg)); }
+.learn-card.active { max-width: 640px; }
+.coach-learn { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 16px; padding: 20px; border: 1px solid color-mix(in srgb, var(--world) 35%, transparent); border-radius: var(--r-lg); background: color-mix(in srgb, var(--world) 10%, var(--surface)); }
+.coach-learn .coach-kind { color: var(--world); }
+.coach-learn .coach-actions { grid-column: 1 / -1; margin: 0; }
+.learn-title { display: flex; align-items: center; gap: 10px; color: var(--world); }
+.learn-title .i { flex: none; width: 1em; height: 1em; }
+.world-select { width: auto; padding: 0 34px 0 0; border: 0; background-color: transparent; background-position: right center; color: inherit; font: inherit; letter-spacing: inherit; }
+.learn-talk { display: flex; align-items: center; gap: 14px; }
+.learn-bubble { flex: 1; margin: 0; padding: 14px 16px; border-radius: var(--r-md); background: var(--surface); color: var(--text); font-size: 16px; }
+.learn-path { display: grid; justify-items: center; gap: 18px; margin: 0; padding: 0; list-style: none; }
+.learn-node:nth-child(4n + 2) { translate: 56px; }
+.learn-node:nth-child(4n) { translate: -56px; }
+.learn-node button { display: grid; justify-items: center; gap: 6px; max-width: 180px; padding: 0; border: 0; background: none; color: var(--text); font: inherit; font-size: 14px; font-weight: 600; text-align: center; cursor: pointer; }
+.learn-node button:disabled { color: var(--faint); cursor: default; }
+.learn-dot { display: grid; place-items: center; width: 64px; height: 64px; border-radius: var(--r-circle); background: var(--world); color: #fff; font-size: 26px; box-shadow: 0 5px 0 color-mix(in srgb, var(--world) 60%, #000); }
+.learn-node.is-boss .learn-dot { width: 80px; height: 80px; font-size: 34px; }
+.learn-node.is-next .learn-dot { outline: 4px solid color-mix(in srgb, var(--world) 30%, transparent); outline-offset: 4px; }
+.learn-node button:disabled .learn-dot { background: var(--surface-3); color: var(--faint); box-shadow: none; }
+.learn-stars, .learn-hearts { display: inline-flex; gap: 2px; color: var(--warn); }
+.learn-hearts { color: var(--neg); font-size: 22px; }
+.learn-stars .is-lost, .learn-hearts .is-lost { opacity: .25; }
+.learn-play { display: grid; gap: 18px; }
+.learn-top { display: flex; align-items: center; gap: 14px; }
+.learn-top .pbar-track { flex: 1; }
+.learn-top .pbar-fill { background: var(--world); }
+.learn-phase { margin: 0; color: var(--muted); }
+.learn-phase strong { color: var(--world); }
+.learn-phase[data-phase="practice"] strong { color: var(--warn); }
+.learn-phase[data-phase="apply"] strong, .learn-phase[data-phase="boss"] strong { color: var(--neg); }
+.learn-stage { display: grid; gap: 16px; }
+.learn-photo { height: clamp(160px, 40vw, 240px); margin: 0; overflow: hidden; border-radius: var(--r-md); background: var(--surface-2); }
+.learn-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.learn-photo .coach-photo-credit { display: none; }
+.learn-rules { display: grid; gap: 6px; margin: 0; padding-left: 18px; color: var(--text-2); }
+.learn-video { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; padding: 0; overflow: hidden; border: 0; border-radius: var(--r-md); background: #000; color: #fff; font-size: 56px; cursor: pointer; }
+.learn-video img { width: 100%; height: 100%; object-fit: cover; opacity: .85; }
+.learn-video .i { position: absolute; inset: 0; margin: auto; }
+.learn-next { justify-self: stretch; min-height: 50px; font-size: 16px; }
+/* Nemeris the teacher: the voice orb's soft shape, flat, with two big eyes that blink and look around. */
+.teacher { display: inline-flex; flex: none; align-items: center; justify-content: center; gap: 14%; width: 64px; aspect-ratio: 1; border-radius: 46% 54% 52% 48% / 50% 46% 54% 50%; background: var(--accent); animation: blob 6s ease-in-out infinite; }
+.teacher i { width: 17%; height: 26%; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 18%, #15121E 21%); animation: blink 5s infinite, look 9s ease-in-out infinite; }
+.teacher.is-happy { animation: blob 6s ease-in-out infinite, hop .5s ease; }
+.teacher.is-oops { animation: blob 6s ease-in-out infinite, shake .4s ease; }
+@keyframes blob { 50% { border-radius: 55% 45% 44% 56% / 45% 56% 44% 55%; } }
+@keyframes blink { 0%, 92%, 100% { scale: 1; } 95% { scale: 1 .1; } }
+@keyframes look { 0%, 30%, 100% { translate: 0; } 38%, 55% { translate: 30% -10%; } 63%, 85% { translate: -30% 8%; } }
+@keyframes hop { 40% { transform: translateY(-18%) scale(1.05, .95); } }
+@keyframes shake { 25% { transform: translateX(-8%); } 75% { transform: translateX(8%); } }
+@media (prefers-reduced-motion: reduce) { .teacher, .teacher i { animation: none; } }
+
