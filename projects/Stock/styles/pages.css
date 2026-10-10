@@ -471,7 +471,7 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 .teacher { position: relative; display: inline-flex; flex: none; align-items: center; justify-content: center; gap: 14%; width: 64px; aspect-ratio: 1; }
 .teacher::before, .teacher::after { content: ''; position: absolute; inset: 0; }
 .teacher::after { z-index: 1; background: var(--world, var(--accent)); border-radius: 38% 62% 55% 45% / 55% 36% 64% 45%; animation: turn 14s linear infinite, wave 4.5s ease-in-out infinite; }
-.teacher::before { inset: -9%; background: color-mix(in srgb, var(--world, var(--accent)) 25%, transparent); border-radius: 60% 40% 38% 62% / 42% 60% 40% 58%; animation: turn 9s linear infinite reverse, wave2 3.4s ease-in-out infinite; }
+.teacher::before { background: color-mix(in srgb, var(--world, var(--accent)) 25%, transparent); border-radius: 60% 40% 38% 62% / 42% 60% 40% 58%; animation: turn 9s linear infinite reverse, wave2 3.4s ease-in-out infinite; }
 .teacher i { position: relative; z-index: 2; width: 17%; height: 26%; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 18%, #15121E 21%); animation: blink 5s infinite, look 9s ease-in-out infinite; }
 .teacher.is-happy { animation: hop .55s ease; }
 .teacher.is-oops { animation: shake .4s ease; }
