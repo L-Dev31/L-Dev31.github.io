@@ -54,10 +54,10 @@ function rich(text) {
     return out;
 }
 
-const WORD_MS = 45;
+const LETTER_MS = 30;
 const START_MS = 350;
 
-/** Wraps every word in a span that fades in after the one before: Nemeris "types" and the reader keeps pace. Returns the word count. */
+/** Wraps every letter in a span that appears after the one before: Nemeris types, at a pace that can be read. Returns the letter count. */
 function spoken(root) {
     let n = 0;
     const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -68,8 +68,12 @@ function spoken(root) {
         for (const part of node.textContent.split(/(\s+)/)) {
             if (!part) continue;
             if (/^\s+$/.test(part)) { out.append(part); continue; }
-            const word = el('span', 'w', part);
-            word.style.setProperty('--i', n++);
+            const word = el('span', 'word');
+            for (const letter of part) {
+                const mark = el('span', 'w', letter);
+                mark.style.setProperty('--i', n++);
+                word.append(mark);
+            }
             out.append(word);
         }
         node.replaceWith(out);
@@ -82,17 +86,20 @@ function talk(text, who = teacher()) {
     const row = el('div', 'learn-talk');
     const bubble = el('div', 'learn-bubble');
     bubble.append(rich(text));
-    row.speechMs = START_MS + spoken(bubble) * WORD_MS;
+    row.speechMs = START_MS + spoken(bubble) * LETTER_MS;
     row.append(who, bubble);
     return row;
 }
 
-/** What comes after the words (a photo, an example, the answers) shows up one by one once she has finished. */
-const afterWords = (row, nodes) => nodes.map((node, i) => {
+/** What comes after the words (a photo, an example, the answers, the button) shows up one by one once she has finished. */
+const afterWords = (row, nodes) => nodes.map((node, i) => later(node, row.speechMs + 250 + i * 350));
+function later(node, ms) {
+    node.classList.remove('later');
+    void node.offsetWidth;
     node.classList.add('later');
-    node.style.setProperty('--after', `${row.speechMs + 250 + i * 350}ms`);
+    node.style.setProperty('--after', `${ms}ms`);
     return node;
-});
+}
 
 /** Three icons, the first n lit: stars for a level's best run, hearts during a run. */
 function lit(name, n) {
@@ -301,7 +308,7 @@ function play(level) {
     top.append(close, track, lives);
     const phase = el('p', 'learn-phase');
     const stage = el('div', 'learn-stage');
-    stage.addEventListener('click', () => stage.classList.add('skip'));
+    stage.addEventListener('click', () => player.classList.add('skip'));
     const back = el('button', 'icon-btn learn-back');
     back.type = 'button';
     back.setAttribute('aria-label', L('Previous step'));
@@ -317,7 +324,7 @@ function play(level) {
     splash(level);
 
     const drawHearts = () => lives.replaceChildren(...lit('heart', hearts).children);
-    const move = text => { next.hidden = false; next.textContent = text; };
+    const move = (text, after = 0) => { next.hidden = false; next.textContent = text; later(next, after); };
 
     function draw() {
         const s = steps[at];
@@ -327,11 +334,12 @@ function play(level) {
         phase.dataset.phase = s.phase;
         // Going back is for what carries no risk: a graded question cannot be answered twice.
         back.hidden = !(at > 0 && !graded(steps[at - 1]));
-        stage.classList.remove('skip');
+        player.classList.remove('skip');
         if (s.say) {
             const row = talk(t(s.say), nemeris);
-            stage.replaceChildren(row, ...afterWords(row, [...(s.photo ? [photoFigure(s.photo, 'learn-photo')] : []), ...(s.example ? [para('explain-example', t(s.example))] : [])]));
-            return move(L('Continue'));
+            const extras = afterWords(row, [...(s.photo ? [photoFigure(s.photo, 'learn-photo')] : []), ...(s.example ? [para('explain-example', t(s.example))] : [])]);
+            stage.replaceChildren(row, ...extras);
+            return move(L('Continue'), row.speechMs + 250 + extras.length * 350);
         }
         next.hidden = true;
         const tries = s.phase === 'learn' ? Infinity : s.phase === 'practice' ? 2 : 1;

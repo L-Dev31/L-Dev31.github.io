@@ -412,13 +412,13 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 .world-select { width: auto; padding: 0 40px 0 0; border: 0; background-color: transparent; background-position: right center; background-size: 28px; color: inherit; font: inherit; letter-spacing: inherit; }
 .learn-talk { display: flex; align-items: center; gap: 14px; }
 .learn-talk { align-items: flex-end; }
-.learn-bubble { position: relative; flex: 1; padding: 14px 18px; border-radius: 20px 20px 20px 6px; background: var(--surface); color: var(--text); font-size: 17px; line-height: 1.5; transform-origin: left bottom; animation: bubbleIn .4s cubic-bezier(.2, .9, .3, 1.3) both; }
-.learn-bubble::before { content: ''; position: absolute; left: -7px; bottom: 0; border: 7px solid transparent; border-right-color: var(--surface); border-left: 0; border-bottom-color: var(--surface); }
-.learn-bubble .w { display: inline-block; white-space: pre-wrap; animation: wordIn .3s both; animation-delay: calc(350ms + var(--i) * 45ms); }
+.learn-bubble { position: relative; flex: 1; padding: 14px 18px; border-radius: 20px; background: var(--surface); color: var(--text); font-size: 17px; line-height: 1.5; transform-origin: left bottom; animation: bubbleIn .4s cubic-bezier(.2, .9, .3, 1.3) both; }
+.learn-bubble .word { display: inline-block; white-space: nowrap; }
+.learn-bubble .w { animation: wordIn .08s both; animation-delay: calc(350ms + var(--i) * 30ms); }
 .later { animation: laterIn .55s cubic-bezier(.2, .9, .3, 1.1) both; animation-delay: var(--after); }
 .skip .w, .skip .later { animation: none; }
 @keyframes bubbleIn { from { opacity: 0; transform: scale(.7); } }
-@keyframes wordIn { from { opacity: 0; transform: translateY(5px); } }
+@keyframes wordIn { from { opacity: 0; } }
 @keyframes laterIn { from { opacity: 0; transform: translateY(18px) scale(.97); } }
 .learn-bubble > :is(p, ul) { margin: 0; }
 .learn-bubble > * + * { margin-top: 10px; }
