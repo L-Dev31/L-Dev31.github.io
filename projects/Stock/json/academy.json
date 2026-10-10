@@ -41,7 +41,8 @@
     "fr": "Retour à la plaine"
    },
    "icon": "flower",
-   "color": "#2E9D57",
+   "color": "#1E9E4F",
+   "bg": "#A6E3B5",
    "intro": {
     "en": "Welcome to the Academy! I'm Nemeris, your teacher. On the plain we start with the basics, one small step at a time: you can't break anything here.",
     "fr": "Bienvenue à l'Académie ! Moi c'est Nemeris, ton prof. Dans la plaine, on commence par les bases, un petit pas à la fois : ici, tu ne peux rien casser."
@@ -1938,7 +1939,8 @@
     "fr": "Retour aux grottes"
    },
    "icon": "diamond",
-   "color": "#8A6239",
+   "color": "#9C6420",
+   "bg": "#EBCB8B",
    "intro": {
     "en": "Welcome to the caves! Down here we learn patience: time, falls and the traps our own minds set.",
     "fr": "Bienvenue dans les grottes ! Ici, on apprend la patience : le temps, les baisses et les pièges de notre propre tête."
@@ -2307,7 +2309,8 @@
     "fr": "Retour à la mer"
    },
    "icon": "sailing",
-   "color": "#1F78B4",
+   "color": "#1670B8",
+   "bg": "#9CCFF3",
    "intro": {
     "en": "Ahoy! At sea we cross borders: currencies, accounts and taxes.",
     "fr": "Ohé ! En mer, on passe les frontières : devises, comptes et impôts."
@@ -2514,7 +2517,8 @@
     "fr": "Retour aux montagnes"
    },
    "icon": "landscape",
-   "color": "#5A55B8",
+   "color": "#5B4FD6",
+   "bg": "#C2BCF7",
    "intro": {
     "en": "Up in the mountains, you build and keep a balanced portfolio.",
     "fr": "Dans les montagnes, on construit et on garde un portefeuille équilibré."
@@ -2802,7 +2806,8 @@
     "fr": "Retour au volcan"
    },
    "icon": "volcano",
-   "color": "#D2461E",
+   "color": "#D8431A",
+   "bg": "#F7B59B",
    "intro": {
     "en": "The volcano: the hardest world, with longer lessons. Here we measure risk itself.",
     "fr": "Le volcan : le monde le plus difficile, avec des leçons plus longues. Ici, on mesure le risque lui-même."

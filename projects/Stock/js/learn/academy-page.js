@@ -54,13 +54,45 @@ function rich(text) {
     return out;
 }
 
+const WORD_MS = 45;
+const START_MS = 350;
+
+/** Wraps every word in a span that fades in after the one before: Nemeris "types" and the reader keeps pace. Returns the word count. */
+function spoken(root) {
+    let n = 0;
+    const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const texts = [];
+    while (walk.nextNode()) texts.push(walk.currentNode);
+    for (const node of texts) {
+        const out = document.createDocumentFragment();
+        for (const part of node.textContent.split(/(\s+)/)) {
+            if (!part) continue;
+            if (/^\s+$/.test(part)) { out.append(part); continue; }
+            const word = el('span', 'w', part);
+            word.style.setProperty('--i', n++);
+            out.append(word);
+        }
+        node.replaceWith(out);
+    }
+    return n;
+}
+
+/** Nemeris says something in a chat bubble that fills in word by word. */
 function talk(text, who = teacher()) {
     const row = el('div', 'learn-talk');
     const bubble = el('div', 'learn-bubble');
     bubble.append(rich(text));
+    row.speechMs = START_MS + spoken(bubble) * WORD_MS;
     row.append(who, bubble);
     return row;
 }
+
+/** What comes after the words (a photo, an example, the answers) shows up one by one once she has finished. */
+const afterWords = (row, nodes) => nodes.map((node, i) => {
+    node.classList.add('later');
+    node.style.setProperty('--after', `${row.speechMs + 250 + i * 350}ms`);
+    return node;
+});
 
 /** Three icons, the first n lit: stars for a level's best run, hearts during a run. */
 function lit(name, n) {
@@ -79,6 +111,11 @@ function starRow(n) {
     return row;
 }
 
+/** The world's two flat colours: its accent and its background. */
+const paint = w => {
+    document.documentElement.style.setProperty('--world', w.color);
+    document.documentElement.style.setProperty('--world-bg', w.bg);
+};
 const percent = n => (n / 100).toLocaleString(LOCALE, { style: 'percent' });
 const levelNumber = level => worldOf(level.id).levels.filter(l => !l.boss).indexOf(level) + 1;
 
@@ -115,7 +152,7 @@ function node(level, next) {
     b.type = 'button';
     b.disabled = !open;
     const dot = el('span', 'learn-dot');
-    dot.append(icon(!open ? 'lock' : level.boss === 'final' ? 'trophy' : level.boss ? 'swords' : isDone(level.id) ? 'check' : 'play'));
+    dot.append(icon(level.boss === 'final' ? 'crown' : level.boss ? 'tower' : 'arrow'));
     const name = el('span', 'learn-name', t(level.title));
     b.append(dot, name);
     if (isDone(level.id)) b.append(starRow(stars(level.id)));
@@ -127,7 +164,7 @@ function node(level, next) {
 function renderMap(w) {
     world = w || world || worldOf(nextLevel()?.id) || worlds()[0];
     if (!world) return;
-    document.documentElement.style.setProperty('--world', world.color);
+    paint(world);
     const head = el('h1', 'view-title learn-title');
     const pick = el('select', 'world-select');
     pick.setAttribute('aria-label', L('World'));
@@ -197,16 +234,15 @@ export function questionBox(q, { tries = 1, onMiss, onDone }) {
     return box;
 }
 
-/** The level's name across the whole screen, violet, with Nemeris jumping in. The same from the map and from Home. */
+/** The level's name across the Academy's screen, on violet. The same from the map and from Home. */
 function splash(level) {
     const box = el('div', 'learn-splash');
-    const who = teacher();
-    who.classList.add('is-jump');
-    box.append(who, el('p', 'learn-splash-kind', level.boss ? L('Boss') : L('Level {0}', levelNumber(level))), el('h1', null, t(level.title)));
+    box.append(el('p', 'learn-splash-kind', level.boss ? L('Boss') : L('Level {0}', levelNumber(level))), el('h1', null, t(level.title)));
     const end = () => { box.classList.add('is-out'); setTimeout(() => box.remove(), 400); };
     box.addEventListener('click', end);
     setTimeout(end, 2300);
-    document.body.append(box);
+    // Only the Academy's own screen turns violet: the sidebar and the rest stay as they are.
+    document.querySelector('main.container').append(box);
 }
 
 /** The end of a level: its result big in the middle, Nemeris under it (jumping for joy on a perfect run), then the stars. */
@@ -237,7 +273,7 @@ function result(level, { won, hearts, best }) {
 function play(level) {
     if (!isOpen(level.id)) return;
     world = worldOf(level.id);
-    document.documentElement.style.setProperty('--world', world.color);
+    paint(world);
     // A boss starts with Nemeris saying what is coming.
     const steps = [...(level.boss ? [{ say: level.intro, phase: 'boss' }] : []), ...stepsOf(level)];
     const graded = s => s.ask && s.phase !== 'learn';
@@ -258,6 +294,7 @@ function play(level) {
     top.append(close, track, lives);
     const phase = el('p', 'learn-phase');
     const stage = el('div', 'learn-stage');
+    stage.addEventListener('click', () => stage.classList.add('skip'));
     const back = el('button', 'icon-btn learn-back');
     back.type = 'button';
     back.setAttribute('aria-label', L('Previous step'));
@@ -283,13 +320,16 @@ function play(level) {
         phase.dataset.phase = s.phase;
         // Going back is for what carries no risk: a graded question cannot be answered twice.
         back.hidden = !(at > 0 && !graded(steps[at - 1]));
+        stage.classList.remove('skip');
         if (s.say) {
-            stage.replaceChildren(talk(t(s.say), nemeris), ...(s.photo ? [photoFigure(s.photo, 'learn-photo')] : []), ...(s.example ? [para('explain-example', t(s.example))] : []));
+            const row = talk(t(s.say), nemeris);
+            stage.replaceChildren(row, ...afterWords(row, [...(s.photo ? [photoFigure(s.photo, 'learn-photo')] : []), ...(s.example ? [para('explain-example', t(s.example))] : [])]));
             return move(L('Continue'));
         }
         next.hidden = true;
         const tries = s.phase === 'learn' ? Infinity : s.phase === 'practice' ? 2 : 1;
-        stage.replaceChildren(talk(t(s.ask), nemeris), questionBox(s, {
+        const row = talk(t(s.ask), nemeris);
+        stage.replaceChildren(row, ...afterWords(row, [questionBox(s, {
             tries,
             onMiss: () => react(nemeris, 'oops'),
             onDone: score => {
@@ -298,7 +338,7 @@ function play(level) {
                 if (!score && s.phase !== 'learn') { hearts--; drawHearts(); }
                 move(L('Continue'));
             },
-        }));
+        })]));
     }
 
     /** Slides out to one side, the next step slides in from the other. dir: 1 forward, -1 back. */
