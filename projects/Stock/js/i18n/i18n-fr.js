@@ -1533,5 +1533,7 @@ export default {
     "Count pay, grants and regular help from family. A typical income (country: {0}) is about {1} a month.": "Compte ton salaire, tes bourses et l'aide régulière de ta famille. Un revenu typique (pays : {0}) tourne autour de {1} par mois.",
     "Learning with a small sum a month teaches as much as with a big one.": "Apprendre avec une petite somme par mois apprend autant qu'avec une grosse.",
     "This world opens when you finish the one before it.": "Ce monde s'ouvre quand tu termines celui d'avant.",
-    "Previous step": "Étape précédente"
+    "Previous step": "Étape précédente",
+    "Level {0} · World {1}": "Niveau {0} · Monde {1}",
+    "Boss · World {0}": "Boss · Monde {0}"
 };

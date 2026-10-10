@@ -234,15 +234,22 @@ export function questionBox(q, { tries = 1, onMiss, onDone }) {
     return box;
 }
 
-/** The level's name across the Academy's screen, on violet. The same from the map and from Home. */
+/** The start of a level, on the Academy's card only: "Level 3 · World 1" fades in, then the level's name rises word by word. */
 function splash(level) {
     const box = el('div', 'learn-splash');
-    box.append(el('p', 'learn-splash-kind', level.boss ? L('Boss') : L('Level {0}', levelNumber(level))), el('h1', null, t(level.title)));
+    const number = worlds().indexOf(world) + 1;
+    const words = t(level.title).split(' ');
+    const title = el('h1');
+    words.forEach((word, i) => {
+        const span = el('span', null, word);
+        span.style.setProperty('--i', i);
+        title.append(span, ' ');
+    });
+    box.append(el('p', 'learn-splash-kind', level.boss ? L('Boss · World {0}', number) : L('Level {0} · World {1}', levelNumber(level), number)), title);
     const end = () => { box.classList.add('is-out'); setTimeout(() => box.remove(), 400); };
     box.addEventListener('click', end);
-    setTimeout(end, 2300);
-    // Only the Academy's own screen turns violet: the sidebar and the rest stay as they are.
-    document.querySelector('main.container').append(box);
+    setTimeout(end, 1300 + words.length * 180 + 1200);
+    card.append(box);
 }
 
 /** The end of a level: its result big in the middle, Nemeris under it (jumping for joy on a perfect run), then the stars. */
