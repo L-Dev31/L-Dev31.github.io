@@ -9,6 +9,7 @@ import { fetchCloses } from '../quant/quant-shared.js';
 import { L, LOCALE } from '../i18n/i18n.js';
 import { nextLevel } from '../learn/academy.js';
 import { moneyFlags } from '../data/income.js';
+import { convert } from '../data/rates.js';
 
 export const pct = n => (Math.abs(n) / 100).toLocaleString(LOCALE, { style: 'percent', maximumFractionDigits: Math.abs(n) < 10 ? 1 : 0 });
 
@@ -22,7 +23,7 @@ const moveOf = r => (r.change_pct == null ? 0 : r.value - r.value / (1 + r.chang
 
 function typicalOrder(inv) {
     if (inv.monthly > 0) return inv.monthly;
-    const amounts = Object.values(positions).flatMap(p => (p.purchases || []).map(t => Math.abs(t.amount || 0))).filter(Boolean).sort((a, b) => a - b);
+    const amounts = Object.values(positions).flatMap(p => (p.purchases || []).map(t => convert(Math.abs(t.amount || 0), t.currency || 'EUR', currencyCode()))).filter(Boolean).sort((a, b) => a - b);
     return amounts.length ? amounts[Math.floor(amounts.length / 2)] : null;
 }
 

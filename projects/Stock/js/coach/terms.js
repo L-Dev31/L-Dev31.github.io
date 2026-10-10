@@ -3,7 +3,7 @@
 // related words and the lesson that teaches the idea behind it.
 // Inside any text, [[key|shown words]] becomes a tappable word.
 import { L, LOCALE } from '../i18n/i18n.js';
-import { orderFee, custodyPerYear } from '../data/banks.js';
+import { orderFee, custodyPerYear, formatMoney } from '../data/banks.js';
 
 const num = (n, d = 1) => n.toLocaleString(LOCALE, { maximumFractionDigits: d });
 const HORIZON_TEXT = { lt2: L('for less than 2 years'), '2to5': L('for 2 to 5 years'), '5to10': L('for 5 to 10 years'), gt10: L('for more than 10 years') };
@@ -388,7 +388,7 @@ export const TERMS = {
         example: L('Average price 50 €, price today 44 €: you are 12% down on paper. The useful question is not "when will it be back at 50 €?" but "would I buy it at 44 € today?".'),
         yours: c => {
             const r = [...c.rows].sort((a, b) => a.pl_pct - b.pl_pct)[0];
-            return r && L('Your average price for {0} is {1}; it trades at {2} today.', r.name, c.money(r.avg_cost), c.money(r.price));
+            return r && L('Your average price for {0} is {1}; it trades at {2} today.', r.name, formatMoney(r.avg_cost, r.cost_currency), formatMoney(r.price, r.currency));
         },
         related: ['unrealized', 'realized'],
         lesson: 'sunkCost',

@@ -1,7 +1,8 @@
 // Nemeris Signal Bot: Multi-factor regime-aware signal engine.
 // Pipeline: indicators → factor scores → regime detection → regime-weighted composite
 // → confluence multiplier → risk penalty → 0-100 signal + ATR/Kelly risk management.
-import { getCurrency } from '../core/state.js';
+import { positions, currencySymbol } from '../core/state.js';
+import { priceCurrency } from '../data/holdings.js';
 import { termHtml } from '../core/utils.js';
 import {
     clamp, safeArray, populationStdDev,
@@ -11,7 +12,7 @@ import {
     trueRanges, wilderSmoothSeries, wilderSmoothLast, wilderSumSeries,
     vwap as coreVWAP, zScore as coreZScore
 } from './quant-math.js';
-import { L } from '../i18n/i18n.js';
+import { L, Ln } from '../i18n/i18n.js';
 
 const DEFAULT_OPTIONS = {
     accountCapital: 10000,
@@ -907,7 +908,7 @@ function updateSignalUI(symbol, result) {
     const reasons = plainReasons(result);
     const riskIdx = Math.max(0, Math.min(4, Math.ceil(result.risk.score / 2) - 1));
     const horizon = HORIZON_MAP[result.period] || { label: L('Medium term'), desc: L('Swing (weeks)') };
-    const cur = getCurrency();
+    const cur = currencySymbol(priceCurrency(positions[symbol]));
 
     // one diverging bar per indicator: rose left of the middle, mint right of it
     const bar = (value) => {
@@ -946,7 +947,7 @@ function updateSignalUI(symbol, result) {
         ['Horizon', horizon.label, horizon.desc],
         [termHtml('stoploss', 'Stop loss'), `${e.stopLoss.toFixed(2)} ${cur}`, L('Price where a trader would cut the loss')],
         [termHtml('takeprofit', 'Take profit'), `${e.takeProfit.toFixed(2)} ${cur}`, L('Price where a trader would take the gain')],
-        [L('Suggested size'), `${e.positionSize.toFixed(2)} ${cur}`, result.trade?.sizingMethod === 'half-kelly' ? L('Half-Kelly, from a tested edge') : L('Risks about 1% of a 10 000 € account')],
+        [L('Suggested size'), Ln(Math.floor(e.positionSize), '{0} share', '{0} shares'), result.trade?.sizingMethod === 'half-kelly' ? L('Half-Kelly, from a tested edge') : L('Risks about 1% of a 10 000 € account')],
     ];
     const sc = signalColor(result.signalValue);
 

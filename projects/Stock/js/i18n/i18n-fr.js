@@ -1531,5 +1531,8 @@ export default {
     "More than 6 months": "Plus de 6 mois",
     "Are you paying back expensive debt, like a credit card, an overdraft or a consumer loan?": "Rembourses-tu un crédit cher, comme une carte de crédit, un découvert ou un crédit à la consommation ?",
     "Only a home or student loan": "Seulement un prêt immobilier ou étudiant",
-    "Your investing": "Tes investissements"
+    "Your investing": "Tes investissements",
+    "Your currency": "Ta devise",
+    "Totals are shown in it. Each stock keeps its own currency, and each trade the one it was paid in.": "Les totaux s'affichent dans cette devise. Chaque action garde la sienne, et chaque achat celle dans laquelle il a été payé.",
+    "Your country's: {0}": "Celle de ton pays : {0}"
 };

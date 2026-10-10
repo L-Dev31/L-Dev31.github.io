@@ -6,7 +6,7 @@ import { openSimulation, summarize, normalizeHorizon, HORIZONS } from '../quant/
 import { researchSnapshot } from './ai-lab.js';
 import { calculateBotSignal } from '../quant/signal-bot.js';
 import { webSearch, readPage } from '../data/web.js';
-import { round, holdingRows } from '../data/holdings.js';
+import { round, holdingRows, positionMoney, priceCurrency, paidCurrency } from '../data/holdings.js';
 import { TERMS } from '../coach/terms.js';
 import { el, icon, makeResizer, downloadText } from '../core/utils.js';
 import { L, Ln, LOCALE, LANG } from '../i18n/i18n.js';
@@ -15,7 +15,7 @@ import { banksReady, allBanks, banksAsOf, currentBank, bankContext, orderFee, in
 import { termDetails, findTerm, plainText as plainTerms } from '../coach/explain.js';
 import { findSituations } from '../coach/situations.js';
 import { countryCode, countryName } from '../data/country.js';
-import { ratesReady, ratesDate } from '../data/rates.js';
+import { ratesReady, ratesDate, convert } from '../data/rates.js';
 import { moneyContext } from '../data/income.js';
 import { gradesContext } from '../learn/academy.js';
 import { sentenceFeeder, watchMicrophoneLevel } from './voice/voice.js';
@@ -86,14 +86,15 @@ function portfolioSnapshot() {
     const { rows, total } = holdingRows();
     const cost = rows.reduce((s, r) => s + (r.cost || 0), 0);
     const all = Object.entries(positions).filter(([, p]) => p && !(p.shares > 0));
+    const realized = p => convert(p?.realizedPL || 0, paidCurrency(p), currencyCode());
     return {
-        currency: getCurrency(), as_of: new Date().toISOString(),
+        currency: currencyCode(), as_of: new Date().toISOString(),
         total_value: round(total), total_cost: round(cost), unrealized_pl: round(total - cost), unrealized_pl_pct: round(cost ? (total / cost - 1) * 100 : 0, 1),
-        realized_pl: round(Object.values(positions).reduce((s, p) => s + (p?.realizedPL || 0), 0)),
+        realized_pl: round(Object.values(positions).reduce((s, p) => s + realized(p), 0)),
         holdings: rows,
-        closed_positions: all.filter(([, p]) => p.sales?.length).map(([sym, p]) => ({ symbol: sym, name: p.name, realized_pl: round(p.realizedPL) })),
+        closed_positions: all.filter(([, p]) => p.sales?.length).map(([sym, p]) => ({ symbol: sym, name: p.name, realized_pl: round(realized(p)) })),
         watchlist: all.filter(([, p]) => !p.sales?.length).map(([sym, p]) => ({ symbol: sym, name: p.name, ticker: p.ticker, change_pct: round(p.lastData?.changePercent, 2) })),
-        note: 'Values use the last price Nemeris loaded; foreign stocks are priced in their own currency.',
+        note: 'Totals, value, cost and gains are in the user\'s currency at today\'s ECB rate. price is in each stock\'s own currency (currency), avg_cost in the currency its trades were paid in (cost_currency). Values use the last price loaded.',
     };
 }
 
@@ -126,8 +127,8 @@ function pageSnapshot() {
             currency: p.raw?.currency || p.currency || '', period: p.currentPeriod || null,
         };
         if ((p.shares || 0) > 0) {
-            const value = (p.lastData?.price || 0) * p.shares;
-            out.position = { shares: p.shares, cost: round(p.costBasis), value: round(value) };
+            const { value, cost } = positionMoney(p);
+            out.position = { shares: p.shares, cost: round(cost), value: round(value), currency: currencyCode() };
         }
     }
     if (id === 'card-explorer') {
@@ -237,7 +238,7 @@ async function marketDataOnce(query) {
     const bot = calculateBotSignal({ symbol: hit.ticker, prices: closes }, { period: '1Y' });
     if (bot && !bot.isInsufficient) out.technical_signal = { score: round(bot.signalValue, 0), reading: bot.signalTitle, regime: bot.regime?.label, risk: bot.risk?.score };
     const p = hit.symbol ? positions[hit.symbol] : null;
-    if (p?.shares > 0) out.position = { shares: p.shares, cost: round(p.costBasis), value: round(p.shares * closes[closes.length - 1]) };
+    if (p?.shares > 0) out.position = { shares: p.shares, cost: round(convert(p.costBasis, paidCurrency(p), currencyCode())), value: round(convert(p.shares * closes[closes.length - 1], meta.currency || priceCurrency(p), currencyCode())), currency: currencyCode() };
     return out;
 }
 

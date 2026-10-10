@@ -1,4 +1,5 @@
 import { positions, getCurrency, comfortLevel, COMFORT_WORD } from '../core/state.js';
+import { positionMoney } from '../data/holdings.js';
 import { getEl, progressBar, formatCurrency, termHtml, iconHtml } from '../core/utils.js';
 import { fetchSeries, alignSeries } from '../quant/quant-shared.js';
 import { runQuant, QuantEngine } from '../quant/quant-client.js';
@@ -69,8 +70,7 @@ export async function renderAnalysisPane(force = false) {
         let loaded = 0;
         setLoading(true, 0, L('Loading price histories'), `0 / ${active.length + 1}`);
         for (const [sym, pos] of active) {
-            const price = pos.lastData?.price || (pos.costBasis / pos.shares) || 0;
-            const value = price * pos.shares;
+            const { value } = positionMoney(pos);
             if (value <= 0) continue;
             weights[sym] = value;
             totalValue += value;

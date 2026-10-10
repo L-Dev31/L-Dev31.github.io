@@ -1,5 +1,6 @@
 // AI check-up: prices, news and one model call per stock, a prediction journal scored against simple controls, and paper portfolios. Model and news text are untrusted and rendered as text only.
 import { positions, investorContext, isExpert } from '../core/state.js';
+import { positionMoney } from '../data/holdings.js';
 import { getEl, el, icon, activity, downloadText, termHtml } from '../core/utils.js';
 import { proxyFetch } from '../data/proxy-fetch.js';
 import { Store } from '../data/store.js';
@@ -114,7 +115,7 @@ function readPhase(text) {
 
 function buildUniverse() {
     const out = [];
-    const worth = p => (p.shares || 0) * (p.lastData?.price || (p.shares ? p.costBasis / p.shares : 0) || 0);
+    const worth = p => (p.shares > 0 ? positionMoney(p).value : 0);
     const total = Object.values(positions || {}).reduce((sum, p) => sum + worth(p), 0);
     for (const [symbol, p] of Object.entries(positions || {})) {
         const raw = p.raw || {};

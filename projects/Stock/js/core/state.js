@@ -1,10 +1,10 @@
-import { L } from '../i18n/i18n.js';
+import { L, LOCALE } from '../i18n/i18n.js';
+import { countryCode } from '../data/country.js';
 export const SETTINGS_STORAGE_KEY = 'nemeris_settings';
 
 const defaultSettings = {
     name: 'Nemeris User',
     pfp: 'img/icon/favicon.png',
-    currency: '€',
     proxyUrl: '',
     expert: false,
     investor: {},
@@ -18,6 +18,8 @@ export function getUserSettings() {
     try { stored = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) || '{}') || {}; } catch { /* corrupt, use defaults */ }
     if (/leot\.png$/.test(stored.pfp || '')) stored.pfp = defaultSettings.pfp;
     if (stored.proxyUrl && !/^https?:\/\//.test(stored.proxyUrl)) stored.proxyUrl = `https://${stored.proxyUrl}`;
+    // Settings once held a symbol, '€' by default: a real choice becomes its code, the default gives way to the country's.
+    if (stored.currency && !/^[A-Z]{3}$/.test(stored.currency)) stored.currency = { $: 'USD', '£': 'GBP', CHF: 'CHF' }[stored.currency];
     settingsCache = { ...defaultSettings, ...stored, investor: { ...(stored.investor || {}) } };
     return settingsCache;
 }
@@ -30,8 +32,16 @@ export function saveUserSettings(patch) {
     return merged;
 }
 
-export const getCurrency = () => getUserSettings().currency || '€';
-export const currencyCode = () => ({ '€': 'EUR', '$': 'USD', '£': 'GBP', CHF: 'CHF' })[getCurrency()] || 'EUR';
+// The countries Nemeris knows that do not use the euro.
+const HOME_CURRENCY = { GB: 'GBP', CH: 'CHF', SE: 'SEK', NO: 'NOK', DK: 'DKK', PL: 'PLN', CZ: 'CZK', HU: 'HUF', RO: 'RON', IS: 'ISK', US: 'USD', CA: 'CAD' };
+export const homeCurrency = (country = countryCode()) => HOME_CURRENCY[country] || 'EUR';
+/** The user's currency (ISO code): the one chosen in Settings, else their country's. Totals are shown in it. */
+export const currencyCode = () => getUserSettings().currency || homeCurrency();
+/** A currency's short sign: €, $, £, kr... */
+export function currencySymbol(code = currencyCode()) {
+    try { return new Intl.NumberFormat(LOCALE, { style: 'currency', currency: code, currencyDisplay: 'narrowSymbol' }).formatToParts(0).find(p => p.type === 'currency').value; } catch { return code; }
+}
+export const getCurrency = () => currencySymbol();
 export const isExpert = () => !!getUserSettings().expert;
 
 const DROP_COMFORT = { sell_all: 2, sell_some: 3, wait: 5, buy_more: 6 };

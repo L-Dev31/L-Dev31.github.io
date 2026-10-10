@@ -1,7 +1,9 @@
-// Settings › Profile › Your country: its flag and name, and a searchable list to change it.
+// Settings › Profile › Your country: its flag and name, a searchable list to change it, and the user's currency.
 import { getEl, el, icon } from '../core/utils.js';
 import { L, LOCALE } from '../i18n/i18n.js';
 import { COUNTRIES, countryCode, chooseCountry, countryName, flagUrl } from '../data/country.js';
+import { getUserSettings, saveUserSettings, currencyCode, homeCurrency } from '../core/state.js';
+import { knownCurrencies, ratesReady } from '../data/rates.js';
 
 export function flag(code) {
     const img = el('img', 'flag-img');
@@ -38,7 +40,21 @@ function renderList() {
 export function renderCountry() {
     const code = countryCode();
     getEl('country-current').replaceChildren(flag(code), el('span', null, countryName(code)));
+    renderCurrency();
 }
+
+const currencyPick = getEl('settings-currency');
+function renderCurrency() {
+    const names = new Intl.DisplayNames([LOCALE], { type: 'currency' });
+    const label = c => `${names.of(c)} (${c})`;
+    currencyPick.replaceChildren(new Option(L('Your country\'s: {0}', label(homeCurrency())), ''), ...knownCurrencies().map(c => new Option(label(c), c)));
+    currencyPick.value = getUserSettings().currency || '';
+}
+// Every amount on screen depends on it: the page starts again in the new currency.
+currencyPick.addEventListener('change', () => {
+    saveUserSettings({ currency: currencyPick.value || undefined });
+    location.reload();
+});
 
 getEl('country-change').addEventListener('click', () => {
     search.value = '';
@@ -50,9 +66,12 @@ search.addEventListener('input', renderList);
 list.addEventListener('click', e => {
     const row = e.target.closest('.bank-row');
     if (!row) return;
+    const before = currencyCode();
     chooseCountry(row.dataset.code);
     sheet.close();
-    renderCountry();
+    if (currencyCode() !== before) location.reload();
+    else renderCountry();
 });
 sheet.addEventListener('click', e => { if (e.target === sheet || e.target.closest('[data-close]')) sheet.close(); });
 renderCountry();
+ratesReady.then(renderCurrency);

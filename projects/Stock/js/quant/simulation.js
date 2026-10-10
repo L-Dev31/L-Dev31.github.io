@@ -1,6 +1,6 @@
 import { runQuant } from './quant-client.js';
 import { fetchCloses } from './quant-shared.js';
-import { getCurrency, positions, getInvestor } from '../core/state.js';
+import { getCurrency, currencyCode, positions, getInvestor } from '../core/state.js';
 import { el, progressBar } from '../core/utils.js';
 import { currentBank, investmentCosts, marketFor, formatMoney } from '../data/banks.js';
 import { L, Ln, LOCALE } from '../i18n/i18n.js';
@@ -116,7 +116,7 @@ export function summarize(r) {
         chance_of_loss: `${Math.round(r.probLoss * 100)}%`,
         chance_gain_10pct_or_more: `${Math.round(r.probUp10 * 100)}%`,
         chance_loss_10pct_or_more: `${Math.round(r.probDown10 * 100)}%`,
-        currency_note: r.instrumentCurrency && r.instrumentCurrency !== 'EUR' && c === '€' ? `Priced in ${r.instrumentCurrency}: exchange-rate moves are not included.` : '',
+        currency_note: r.instrumentCurrency && r.instrumentCurrency !== currencyCode() ? `Priced in ${r.instrumentCurrency}: exchange-rate moves are not included.` : '',
         costs_at_your_bank: r.costs
             ? `${m(r.costs.total)} at ${r.costs.bank} (buying ${r.costs.buy ?? 'unknown'}, selling ${r.costs.sell ?? 'unknown'}${r.costs.fx ? `, currency conversion ${r.costs.fx}` : ''}${r.costs.custody ? `, custody ${r.costs.custody}` : ''}${r.costs.estimate ? ', estimated' : ''}). Likely value after costs: ${m(r.final.p50 - r.costs.total)}.`
             : 'The user has not chosen a bank: order fees and custody are not included.',
@@ -218,7 +218,7 @@ function drawResult(box, r) {
 
     const note = el('p', 'meta sim-note');
     const bits = [L('{0} simulated futures from 2 years of prices.', r.paths.toLocaleString(LOCALE))];
-    if (r.instrumentCurrency && r.instrumentCurrency !== 'EUR' && c === '€') bits.push(L('{0} price: exchange rate not included.', r.instrumentCurrency));
+    if (r.instrumentCurrency && r.instrumentCurrency !== currencyCode()) bits.push(L('{0} price: exchange rate not included.', r.instrumentCurrency));
     bits.push(L('A range, not a promise.'));
     note.textContent = bits.join(' ');
 

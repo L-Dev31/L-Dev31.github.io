@@ -1,4 +1,6 @@
-import { positions, selectedApi, lastApiBySymbol, getCurrency, globalPeriod } from '../core/state.js';
+import { positions, selectedApi, lastApiBySymbol, getCurrency, currencyCode, globalPeriod } from '../core/state.js';
+import { positionMoney, priceCurrency, paidCurrency } from '../data/holdings.js';
+import { convert } from '../data/rates.js';
 import { fetchYahooSparkBatch, getYahooSymbol, isYahooSparkFriendly, fetchYahooPeriodChanges, fetchFromYahoo } from '../data/yahoo-finance.js';
 import { TYPE_ORDER } from '../core/constants.js';
 import { createTab, createCard, initChart, markTabAsSuspended, unmarkTabAsSuspended, isSymbolSuspendedInStorage, updateSidebarPerformance, updateUI, openCustomSymbol, placeTabs, refreshPositionViews } from './ui.js';
@@ -19,13 +21,16 @@ export function calculateStockValues(stock) {
     let lots = [];
     let initialInvestment = stock.investment || 0;
 
+    // Every trade counted in the currency the first one was paid in (euros for trades saved without one).
+    const costCurrency = stock.purchases?.[0]?.currency || 'EUR';
+    const paid = t => convert(Math.abs(t.amount || 0), t.currency || 'EUR', costCurrency);
     if (stock.purchases && stock.purchases.length > 0) {
         const dates = stock.purchases.map(p => p.date).filter(d => d).sort();
         earliestPurchaseDate = dates.length > 0 ? dates[0] : null;
         lots = stock.purchases.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).map(p => ({
             shares: p.shares || 0,
-            amount: Math.abs(p.amount || 0),
-            perShare: ((Math.abs(p.amount || 0)) / (p.shares || 1))
+            amount: paid(p),
+            perShare: paid(p) / (p.shares || 1)
         }));
     } else if (stock.shares > 0) {
         const initialCost = Math.abs(initialInvestment);
@@ -55,7 +60,7 @@ export function calculateStockValues(stock) {
                     remainingToRemove = 0;
                 }
             }
-            realizedPL += (s.amount || 0) - costOfSoldShares;
+            realizedPL += paid(s) - costOfSoldShares;
         });
     }
 
@@ -67,7 +72,8 @@ export function calculateStockValues(stock) {
         shares: totalShares,
         costBasis: Math.max(0, costBasis),
         purchaseDate: earliestPurchaseDate,
-        realizedPL: realizedPL
+        realizedPL: realizedPL,
+        costCurrency,
     };
 }
 
@@ -79,8 +85,9 @@ export function updatePortfolioSummary() {
     for (const p of Object.values(positions)) {
         if (!(p.shares > 0)) continue;
         held++;
-        worth += (p.lastData?.price || p.costBasis / p.shares || 0) * p.shares;
-        cost += p.costBasis || 0;
+        const m = positionMoney(p);
+        worth += m.value;
+        cost += m.cost;
     }
     const gain = worth - cost;
     const pct = cost > 0 ? (gain / cost) * 100 : 0;
@@ -111,13 +118,13 @@ export function updatePortfolioComposition() {
     let total = 0;
     for (const pos of Object.values(positions)) {
         if (!(pos?.shares > 0)) continue;
-        const value = pos.lastData?.price ? pos.lastData.price * pos.shares : (pos.costBasis || 0);
+        const { value } = positionMoney(pos);
         if (value <= 0) continue;
         total += value;
         let key, label;
         if (mode === 'sector') key = label = pos.metadata?.assetProfile?.sector || L('Other');
         else if (mode === 'country') { key = (pos.raw?.country || L('Other')).toUpperCase(); label = key; }
-        else if (mode === 'currency') key = label = (pos.raw?.currency || pos.lastData?.currency || 'USD').toUpperCase();
+        else if (mode === 'currency') key = label = priceCurrency(pos).toUpperCase();
         else { key = pos.symbol; label = pos.name || pos.symbol; }
         const b = buckets.get(key) || { label, value: 0, symbol: mode === 'symbol' ? pos.symbol : undefined };
         b.value += value;
@@ -165,7 +172,7 @@ function mergeTrades(pos, local = loadLocalTrades()[pos.symbol]) {
     pos.purchases = [...(pos.raw?.purchases || []), ...(local?.purchases || []).filter(t => !known(t))];
     pos.sales = [...(pos.raw?.sales || []), ...(local?.sales || []).filter(t => !known(t))];
     const c = calculateStockValues(pos);
-    Object.assign(pos, { shares: c.shares, investment: c.investment, costBasis: c.costBasis, realizedPL: c.realizedPL, purchaseDate: c.purchaseDate });
+    Object.assign(pos, { shares: c.shares, investment: c.investment, costBasis: c.costBasis, realizedPL: c.realizedPL, purchaseDate: c.purchaseDate, costCurrency: c.costCurrency });
 }
 
 function afterTradesChanged(symbol) {
@@ -178,12 +185,12 @@ function afterTradesChanged(symbol) {
 }
 
 /** Saves a trade typed on a stock page. It lives in this browser, next to json/portfolio.json. */
-export function recordTrade(symbol, { side, date, shares, amount }) {
+export function recordTrade(symbol, { side, date, shares, amount, currency = currencyCode() }) {
     const pos = positions[symbol];
     if (!pos) return;
     const all = loadLocalTrades();
     const entry = all[symbol] ||= { stock: stockInfo(pos), purchases: [], sales: [] };
-    const trade = { id: Date.now().toString(36), date, shares, amount: side === 'buy' ? -Math.abs(amount) : Math.abs(amount), local: true };
+    const trade = { id: Date.now().toString(36), date, shares, amount: side === 'buy' ? -Math.abs(amount) : Math.abs(amount), currency, local: true };
     (side === 'buy' ? entry.purchases : entry.sales).push(trade);
     saveLocalTrades(all);
     afterTradesChanged(symbol);
@@ -202,7 +209,7 @@ export function deleteTrade(symbol, id) {
 
 const catalogLists = {};
 const cleanTrades = list => list
-    .map(({ date, amount, shares }) => ({ date: isoDate(date), amount: Number(Number(amount).toFixed(2)), shares }))
+    .map(({ date, amount, shares, currency }) => ({ date: isoDate(date), amount: Number(Number(amount).toFixed(2)), shares, ...(currency && currency !== 'EUR' && { currency }) }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
 /** Downloads json/portfolio.json as it should now be: the file's trades plus the ones typed in this browser. */
@@ -511,7 +518,7 @@ async function renderPortfolioValueChart(period = portfolioValuePeriod, force = 
         try {
             const d = await fetchFromYahoo(pos.ticker, period, pos.symbol, pos, pos.name, controller.signal);
             if (!d || d.error || !d.timestamps?.length) return null;
-            return { shares: pos.shares, timestamps: d.timestamps, prices: d.prices, interval: d.interval };
+            return { shares: pos.shares, currency: priceCurrency(pos), timestamps: d.timestamps, prices: d.prices, interval: d.interval };
         } catch (_) { return null; }
         finally { loaded++; bar.set(loaded / held.length, L('Loading holdings history'), `${loaded} / ${held.length}`); }
     }));
@@ -547,10 +554,12 @@ async function renderPortfolioValueChart(period = portfolioValuePeriod, force = 
         values.unshift(0);
     }
 
+    // Each line in the user's currency, at today's rate: the curve shows the holdings, not past exchange rates.
+    const user = currencyCode();
     valid.forEach(v => {
         const aligned = alignBenchmarkToTimestamps(ts, v.timestamps, v.prices);
         for (let i = 0; i < ts.length; i++) {
-            if (aligned[i] != null) values[i] += aligned[i] * v.shares;
+            if (aligned[i] != null) values[i] += convert(aligned[i] * v.shares, v.currency, user);
         }
     });
 
@@ -583,22 +592,23 @@ function renderPerformancePane() {
     let totalValue = 0, totalCost = 0, unrealized = 0, realized = 0;
     let realizedGains = 0, realizedLosses = 0, unrealizedGains = 0, unrealizedLosses = 0;
     const active = [], closed = [];
+    const user = currencyCode();
+    const inUser = t => convert(Math.abs(t.amount || 0), t.currency || 'EUR', user);
     for (const [s, pos] of Object.entries(positions)) {
-        const r = pos.realizedPL || 0;
+        const r = convert(pos.realizedPL || 0, paidCurrency(pos), user);
         realized += r;
         if (r > 0) realizedGains += r; else realizedLosses -= r;
         if ((pos.shares || 0) > 0) {
-            const price = pos.lastData?.price || (pos.costBasis / pos.shares) || 0;
-            const value = price * pos.shares;
-            const pl = value - pos.costBasis;
+            const { value, cost } = positionMoney(pos);
+            const pl = value - cost;
             if (pl > 0) unrealizedGains += pl; else unrealizedLosses -= pl;
             totalValue += value;
-            totalCost += pos.costBasis;
+            totalCost += cost;
             unrealized += pl;
-            active.push({ symbol: s, name: pos.name || s, pl, pct: pos.costBasis > 0 ? (pl / pos.costBasis) * 100 : 0, sub: Ln(pos.shares, '{0} share · worth {1}', '{0} shares · worth {1}', money(value)) });
+            active.push({ symbol: s, name: pos.name || s, pl, pct: cost > 0 ? (pl / cost) * 100 : 0, sub: Ln(pos.shares, '{0} share · worth {1}', '{0} shares · worth {1}', money(value)) });
         } else if (pos.sales?.length) {
-            const invested = (pos.purchases || []).reduce((sum, x) => sum + Math.abs(x.amount || 0), 0);
-            const received = pos.sales.reduce((sum, x) => sum + (x.amount || 0), 0);
+            const invested = (pos.purchases || []).reduce((sum, x) => sum + inUser(x), 0);
+            const received = pos.sales.reduce((sum, x) => sum + inUser(x), 0);
             const pl = r || (received - invested);
             closed.push({ symbol: s, name: pos.name || s, pl, pct: invested > 0 ? (pl / invested) * 100 : 0, sub: L('Sold for {0}', money(received)) });
         }
@@ -645,9 +655,9 @@ async function renderDividendsPane() {
         const sd = pos.metadata?.summaryDetail, ks = pos.metadata?.defaultKeyStatistics, cal = pos.metadata?.calendarEvents;
         const rate = raw(sd?.dividendRate) || raw(ks?.trailingAnnualDividendRate) || 0;
         const yieldPct = (raw(sd?.dividendYield) ?? raw(sd?.trailingAnnualDividendYield) ?? 0) * 100;
-        worth += (pos.lastData?.price || pos.costBasis / pos.shares || 0) * pos.shares;
+        worth += positionMoney(pos).value;
         if (rate > 0) {
-            const perYear = rate * pos.shares;
+            const perYear = convert(rate * pos.shares, priceCurrency(pos), currencyCode());
             income += perYear;
             const exd = raw(cal?.exDividendDate), pay = raw(cal?.dividendDate);
             payers.push({ symbol: s, name: pos.name || s, yieldPct, perYear, ex: exd ? new Date(exd * 1000) : null, pay: pay ? new Date(pay * 1000) : null });

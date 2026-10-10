@@ -1,4 +1,6 @@
-import { getCurrency } from '../core/state.js';
+import { getCurrency, currencySymbol } from '../core/state.js';
+import { priceCurrency, paidCurrency } from '../data/holdings.js';
+import { convert } from '../data/rates.js';
 import { calculateRSISeries, calculateMACD } from '../quant/signal-bot.js';
 import { fetchFromYahoo } from '../data/yahoo-finance.js';
 import { L, LOCALE } from '../i18n/i18n.js';
@@ -49,13 +51,15 @@ export const buildLabel = (ts, period, interval) => {
     }
 };
 
+// A stock's chart is in its own currency; the portfolio's in the user's.
+const unitOf = (symbol, positions) => (symbol === '__PORTFOLIO_VALUE__' ? getCurrency() : currencySymbol(priceCurrency(positions?.[symbol])));
+
+/** The gain at a price, in the currency the shares were paid in. */
 const getGainInfo = (symbol, price, positions) => {
-    const shares = positions[symbol]?.shares || 0;
-    const costBasis = positions[symbol]?.costBasis || 0;
-    if (shares === 0) return null;
-    const avgBuy = costBasis / shares;
-    const gain = (price - avgBuy) * shares;
-    return { gain, text: L('Your gain: {0} {1}', (gain >= 0 ? '+' : '') + gain.toFixed(2), getCurrency()) };
+    const pos = positions[symbol];
+    if (!pos?.shares) return null;
+    const gain = convert(price * pos.shares, priceCurrency(pos), paidCurrency(pos)) - (pos.costBasis || 0);
+    return { gain, text: L('Your gain: {0} {1}', (gain >= 0 ? '+' : '') + gain.toFixed(2), currencySymbol(paidCurrency(pos))) };
 };
 
 const candlePlugin = {
@@ -250,7 +254,7 @@ function buildMainOptions(symbol, positions) {
                     color: C.text,
                     font: { family: FONT, size: 12, weight: '600' },
                     maxTicksLimit: 7,
-                    callback: v => v.toFixed(v >= 100 ? 0 : 2) + ' ' + getCurrency()
+                    callback: v => v.toFixed(v >= 100 ? 0 : 2) + ' ' + unitOf(symbol, positions)
                 }
             },
             y2: {
@@ -322,7 +326,7 @@ export function renderLine(chart, { labels, prices, ts, opens, highs, lows, clos
     }];
 
     const tt = chart.options.plugins.tooltip;
-    tt.callbacks.title = ctx => (ctx?.[0]?.parsed?.y?.toFixed(2) || '0.00') + ' ' + getCurrency();
+    tt.callbacks.title = ctx => (ctx?.[0]?.parsed?.y?.toFixed(2) || '0.00') + ' ' + unitOf(symbol, positions);
     tt.callbacks.label = ctx => buildTooltipBody({ ts, index: ctx.dataIndex, opens, highs, lows, closes });
     tt.callbacks.footer = ctx => {
         const item = ctx?.[0];
@@ -357,8 +361,7 @@ function renderCandle(chart, { labels, ts, opens, highs, lows, closes, symbol, p
     const tt = chart.options.plugins.tooltip;
     tt.callbacks.title = ctx => {
         const i = ctx?.[0]?.dataIndex;
-        if (i == null || closes[i] == null) return '0.00 ' + getCurrency();
-        return closes[i].toFixed(2) + ' ' + getCurrency();
+        return `${(closes[i] ?? 0).toFixed(2)} ${unitOf(symbol, positions)}`;
     };
     tt.callbacks.label = ctx => {
         if (ctx.datasetIndex !== 0) return null;

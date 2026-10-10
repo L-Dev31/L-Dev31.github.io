@@ -24,8 +24,14 @@ export const ratesReady = Date.now() - (rates.t || 0) < DAY
 /** Date of the rates in use, as published by the ECB (YYYY-MM-DD). */
 export const ratesDate = () => rates.date;
 
+// Some exchanges quote in a hundredth of a currency: London in pence, Johannesburg in cents, Tel Aviv in agorot.
+const MINOR = { GBp: 'GBP', GBX: 'GBP', ZAc: 'ZAR', ILA: 'ILS' };
+const perEuro = c => (MINOR[c] ? rates.perEuro[MINOR[c]] * 100 : c === 'EUR' ? 1 : rates.perEuro[c]);
+
 /** An amount in another currency. Unknown currencies are left as they are. */
 export function convert(n, from, to) {
-    const perEuro = c => (c === 'EUR' ? 1 : rates.perEuro[c]);
     return from && to && from !== to && perEuro(from) && perEuro(to) ? n / perEuro(from) * perEuro(to) : n;
 }
+
+/** The currencies the rates cover, the euro included. */
+export const knownCurrencies = () => ['EUR', ...Object.keys(rates.perEuro)].sort();

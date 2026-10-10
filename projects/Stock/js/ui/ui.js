@@ -1,4 +1,6 @@
-import { positions, selectedApi, lastApiBySymbol, getCurrency, currencyCode, globalPeriod } from '../core/state.js';
+import { positions, selectedApi, lastApiBySymbol, currencyCode, currencySymbol, globalPeriod } from '../core/state.js';
+import { priceCurrency, paidCurrency } from '../data/holdings.js';
+import { convert } from '../data/rates.js';
 import { typeLabel, periodPhrase } from '../core/constants.js';
 import { calculateStockValues, recordTrade, deleteTrade } from './portfolio.js';
 import { fetchActiveSymbol } from '../core/general.js';
@@ -175,7 +177,6 @@ export function renderTrades(card, symbol) {
     card ||= getEl(`card-${symbol}`);
     const host = card?.querySelector('.trades');
     if (!host) return;
-    const cur = getCurrency();
     const trades = tradeList(symbol);
     host.replaceChildren();
     if (!trades.length) {
@@ -191,6 +192,7 @@ export function renderTrades(card, symbol) {
         );
         const end = el('div', 'row-end');
         const amount = Math.abs(Number(t.amount) || 0);
+        const cur = currencySymbol(t.currency || 'EUR');
         end.append(el('span', 'row-value', formatCurrency(amount, cur)), el('span', 'row-sub', shares ? L('{0} each', formatCurrency(amount / shares, cur)) : ''));
         row.append(main, end);
         if (t.local) {
@@ -211,17 +213,18 @@ function showOrderFee(form, pos) {
     const note = form.querySelector('.trade-fee');
     const bank = currentBank();
     const amount = Number(form.amount.value || form.amount.placeholder);
-    const fee = bank && amount > 0 ? orderFee(bank, amount, marketFor(pos?.currency)) : null;
+    const fee = bank && amount > 0 ? orderFee(bank, amount, marketFor(priceCurrency(pos))) : null;
     note.hidden = fee == null;
     if (fee == null) return;
     const share = fee / amount * 100;
-    const cost = `${isEstimate(bank, marketFor(pos?.currency)) ? '≈ ' : ''}${formatMoney(fee, currencyCode())}`;
+    const cost = `${isEstimate(bank, marketFor(priceCurrency(pos))) ? '≈ ' : ''}${formatMoney(fee, currencyCode())}`;
     note.textContent = L('At {0}, this order costs {1} in fees, {2}% of it.', bank.name, cost, share.toLocaleString(LOCALE, { maximumFractionDigits: share < 1 ? 2 : 1 }))
         + (share >= 1 ? ` ${L('That is a lot: grouping small orders into fewer, bigger ones costs less.')}` : '');
 }
 
+// A trade is typed in the user's currency, the one the bank took or paid, and keeps it.
 function tradeForm(card, symbol) {
-    const cur = getCurrency();
+    const cur = currencySymbol();
     const form = el('form', 'trade-form');
     form.innerHTML = `
         <fieldset class="seg">
@@ -241,7 +244,7 @@ function tradeForm(card, symbol) {
         </div>`;
     form.date.value = new Date().toISOString().slice(0, 10);
     form.date.max = form.date.value;
-    const price = positions[symbol]?.lastData?.price;
+    const price = convert(positions[symbol]?.lastData?.price || 0, priceCurrency(positions[symbol]), currencyCode());
     form.addEventListener('input', e => {
         if (e.target.name === 'side') form.querySelector('.amount-label').textContent = form.side.value === 'buy' ? L('Total paid, fees included') : L('Total received, after fees');
         if (e.target.name === 'shares' && price > 0) form.amount.placeholder = (Number(form.shares.value) * price).toFixed(2);
@@ -285,8 +288,9 @@ function renderPositionSummary(card, symbol, price) {
     if (!host || !pos) return;
     const shares = pos.shares || 0;
     if (!(shares > 0) || !(price > 0)) { host.replaceChildren(); return; }
-    const cur = getCurrency();
-    const value = shares * price;
+    // In the currency the shares were paid in, so the gain compares like with like; the price stays in its own.
+    const cur = currencySymbol(paidCurrency(pos));
+    const value = convert(shares * price, priceCurrency(pos), paidCurrency(pos));
     const cost = pos.costBasis || 0;
     const gain = value - cost;
     const pct = cost > 0 ? (gain / cost) * 100 : 0;
@@ -294,18 +298,17 @@ function renderPositionSummary(card, symbol, price) {
     host.innerHTML = `
         <h2 class="sr-only">${L('Your position')}</h2>
         <div class="kpi-row">
-            <div class="kpi kpi-hero"><span class="kpi-label">${L('Worth now')}</span><span class="kpi-value">${formatCurrency(value, cur)}</span><span class="kpi-sub">${Ln(shares, '{0} share at {1}', '{0} shares at {1}', formatCurrency(price, cur))}</span></div>
+            <div class="kpi kpi-hero"><span class="kpi-label">${L('Worth now')}</span><span class="kpi-value">${formatCurrency(value, cur)}</span><span class="kpi-sub">${Ln(shares, '{0} share at {1}', '{0} shares at {1}', formatCurrency(price, currencySymbol(priceCurrency(pos))))}</span></div>
             <div class="kpi"><span class="kpi-label">${L('You put in')}</span><span class="kpi-value">${formatCurrency(cost, cur)}</span><span class="kpi-sub">${L('{0} per share on average', formatCurrency(cost / shares, cur))}</span></div>
             <div class="kpi"><span class="kpi-label">${gain >= 0 ? L('You gained') : L('You lost')}</span><span class="kpi-value ${tone}">${gain >= 0 ? '+' : ''}${formatCurrency(gain, cur)}</span><span class="kpi-sub ${tone}">${L('{0} on what you put in', formatPct(pct))}</span></div>
         </div>`;
 }
 
-function renderRange(card, data) {
+function renderRange(card, data, cur) {
     const host = card?.querySelector('.tk-range');
     if (!host) return;
     const { low, high, open, price } = data || {};
     if (!(low > 0 && high >= low && price > 0 && open > 0)) { host.innerHTML = L('<p class="empty">No range for this period yet.</p>'); return; }
-    const cur = getCurrency();
     const span = Math.max(high - low, 1e-9);
     const at = v => Math.max(0, Math.min(100, ((v - low) / span) * 100));
     const tone = price >= open ? 'positive' : 'negative';
@@ -344,12 +347,12 @@ export function updateUI(symbol, data) {
 
     if (data.timestamps && data.prices) updateChart(symbol, data.timestamps, data.prices, positions, data.source, data);
 
-    const cur = getCurrency();
+    const cur = currencySymbol(priceCurrency(pos));
     const period = pos.currentPeriod || globalPeriod;
     if (card) {
         card.querySelector('.tk-price').textContent = data.price ? formatCurrency(data.price, cur) : '--';
         card.querySelector('.tk-period').textContent = periodPhrase(period);
-        renderRange(card, data);
+        renderRange(card, data, cur);
         renderPositionSummary(card, symbol, data.price);
     }
     const perf = getEl(`perf-${symbol}`);
