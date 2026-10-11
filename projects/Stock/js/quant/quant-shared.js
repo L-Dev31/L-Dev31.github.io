@@ -1,62 +1,34 @@
 import { fetchYahooChartSnapshot } from '../data/yahoo-finance.js';
 
-// Returns a clean Number[] of closes for a ticker.
-export async function fetchCloses(ticker, range = '1y', interval = '1d') {
-    const series = await fetchSeries(ticker, range, interval);
-    return series.closes;
-}
+export const fetchCloses = async (ticker, range = '1y', interval = '1d') => (await fetchSeries(ticker, range, interval)).closes;
 
-// Returns aligned-by-day { ts:number[] (unix sec, day-floored), closes:number[] }.
+// Clean { ts, closes }: one close per day, ts = unix days (day-floored), so series align across markets.
 export async function fetchSeries(ticker, range = '1y', interval = '1d') {
     const snap = await fetchYahooChartSnapshot(ticker, range, interval);
-    if (!snap) return { ts: [], closes: [] };
-    const rawTs = snap.timestamp || [];
-    const rawCl = snap.indicators?.quote?.[0]?.close || [];
-    const ts = [];
-    const closes = [];
+    const series = { ts: [], closes: [] };
     const seenDay = new Set();
-    for (let i = 0; i < rawCl.length; i++) {
-        const v = rawCl[i];
-        const t = rawTs[i];
-        if (v == null || !Number.isFinite(v) || t == null) continue;
+    (snap?.indicators?.quote?.[0]?.close || []).forEach((v, i) => {
+        const t = snap.timestamp?.[i];
+        if (v == null || !Number.isFinite(v) || t == null) return;
         const day = Math.floor(t / 86400);
-        if (seenDay.has(day)) continue;
+        if (seenDay.has(day)) return;
         seenDay.add(day);
-        ts.push(day);
-        closes.push(v);
-    }
-    return { ts, closes };
+        series.ts.push(day);
+        series.closes.push(v);
+    });
+    return series;
 }
 
-// Intersects multiple series by day-floored timestamp. Returns { ts, pricesMap }.
+// Keeps only the days every series has. Returns { ts, pricesMap }.
 export function alignSeries(seriesMap) {
     const tickers = Object.keys(seriesMap);
-    if (tickers.length === 0) return { ts: [], pricesMap: {} };
-
-    // Build day -> price lookup per ticker.
-    const dayMaps = {};
-    let commonDays = null;
-    for (const t of tickers) {
-        const s = seriesMap[t];
-        const m = new Map();
-        for (let i = 0; i < s.ts.length; i++) m.set(s.ts[i], s.closes[i]);
-        dayMaps[t] = m;
-        const keys = new Set(m.keys());
-        commonDays = commonDays === null ? keys : new Set([...commonDays].filter(d => keys.has(d)));
-    }
-
-    const ts = [...commonDays].sort((a, b) => a - b);
-    const pricesMap = {};
-    for (const t of tickers) {
-        const m = dayMaps[t];
-        pricesMap[t] = ts.map(d => m.get(d));
-    }
-    return { ts, pricesMap };
+    if (!tickers.length) return { ts: [], pricesMap: {} };
+    const dayMaps = Object.fromEntries(tickers.map(t => [t, new Map(seriesMap[t].ts.map((d, i) => [d, seriesMap[t].closes[i]]))]));
+    const ts = [...dayMaps[tickers[0]].keys()].filter(d => tickers.every(t => dayMaps[t].has(d))).sort((a, b) => a - b);
+    return { ts, pricesMap: Object.fromEntries(tickers.map(t => [t, ts.map(d => dayMaps[t].get(d))])) };
 }
 
 export function resolveTicker(token) {
     const raw = String(token || '').toUpperCase().trim();
-    if (!raw) return null;
-    const pos = window.positions?.[raw];
-    return pos?.ticker || raw;
+    return raw ? window.positions?.[raw]?.ticker || raw : null;
 }

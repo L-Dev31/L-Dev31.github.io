@@ -8,11 +8,13 @@ import { L, Ln, LOCALE } from '../i18n/i18n.js';
 import { colors, alpha } from '../core/palette.js';
 
 export const HORIZONS = { '1W': 5, '1M': 21, '3M': 63, '6M': 126, '1Y': 252, '3Y': 756, '5Y': 1260 };
-export const RETURN_MODELS = {
+const RETURN_MODELS = {
     market: { label: L('Like the market, +7% a year'), hint: L('The long-run average of stock markets') },
     none: { label: L('No trend, only ups and downs'), hint: L('Assumes the price goes nowhere on average') },
     history: { label: L('Its own past trend'), hint: L('This stock keeps its average return of the last 2 years') },
 };
+const HORIZON_WORD = { '1W': L('1 week'), '1M': L('1 month'), '3M': L('3 months'), '6M': L('6 months'), '1Y': L('1 year'), '3Y': L('3 years'), '5Y': L('5 years') };
+const HORIZON_SHORT = { '1W': '1S', '1M': '1M', '3M': '3M', '6M': '6M', '1Y': '1A', '3Y': '3A', '5Y': '5A' };
 const PROFILE_HORIZON = { lt2: '1Y', '2to5': '3Y', '5to10': '5Y', gt10: '5Y' };
 const DEFAULTS = { amount: 1000, horizon: '1Y', model: 'market', paths: 2000 };
 const prefs = { ...DEFAULTS };
@@ -27,20 +29,16 @@ const savePrefs = () => { try { localStorage.setItem('nemeris_sim_prefs', JSON.s
 export function normalizeHorizon(h) {
     const s = String(h || '').trim().toUpperCase().replace(/\s+/g, '');
     if (HORIZONS[s]) return s;
+    // A number plus an optional English or French unit (years, months, weeks, days; days when omitted).
     const m = s.match(/^(\d+(?:[.,]\d+)?)(D|J|W|S|M|MO|MOIS|Y|A|AN|ANS|YR|YRS|YEAR|YEARS|MONTH|MONTHS|WEEK|WEEKS|DAY|DAYS)?$/);
     if (!m) return null;
-    const n = parseFloat(m[1].replace(',', '.'));
     const u = m[2] || 'D';
-    let days;
-    if (/^(Y|A|AN|ANS|YR|YRS|YEAR|YEARS)$/.test(u)) days = n * 252;
-    else if (/^(M|MO|MOIS|MONTH|MONTHS)$/.test(u)) days = n * 21;
-    else if (/^(W|S|WEEK|WEEKS)$/.test(u)) days = n * 5;
-    else days = n;
+    const days = parseFloat(m[1].replace(',', '.')) * (/^[YA]/.test(u) ? 252 : u[0] === 'M' ? 21 : /^[WS]/.test(u) ? 5 : 1);
     return Math.max(5, Math.min(1260, Math.round(days)));
 }
 const horizonDays = h => typeof h === 'number' ? h : (HORIZONS[h] || normalizeHorizon(h) || 252);
-export function horizonLabel(h) {
-    if (typeof h === 'string' && HORIZONS[h]) return { '1W': L('1 week'), '1M': L('1 month'), '3M': L('3 months'), '6M': L('6 months'), '1Y': L('1 year'), '3Y': L('3 years'), '5Y': L('5 years') }[h];
+function horizonLabel(h) {
+    if (typeof h === 'string' && HORIZONS[h]) return HORIZON_WORD[h];
     const d = horizonDays(h);
     if (d % 252 === 0) return Ln(d / 252, '{0} year', '{0} years');
     if (d % 21 === 0) return Ln(d / 21, '{0} month', '{0} months');
@@ -59,13 +57,12 @@ function addTradingDays(date, n) {
 }
 
 /** Monte Carlo on the stock's own volatility of the last 2 years. Same inputs, same numbers. */
-export async function simulate({ ticker, amount = prefs.amount, horizon = prefs.horizon, model = prefs.model, paths = DEFAULTS.paths, onStage }) {
+async function simulate({ ticker, amount = prefs.amount, horizon = prefs.horizon, model = prefs.model, paths = DEFAULTS.paths, onStage }) {
     const days = horizonDays(horizon);
     onStage?.('history', null, L('Loading 2 years of {0} prices', ticker));
     const closes = await fetchCloses(ticker, '2y', '1d');
     if (closes.length < 60) throw new Error(L('Not enough price history for {0} ({1} days).', ticker, closes.length));
-    const logRet = [];
-    for (let i = 1; i < closes.length; i++) logRet.push(Math.log(closes[i] / closes[i - 1]));
+    const logRet = closes.slice(1).map((c, i) => Math.log(c / closes[i]));
     const histAnnual = logRet.reduce((s, x) => s + x, 0) / logRet.length * 252;
     let drift = 0;
     if (model === 'market') drift = Math.log(1.07);
@@ -89,29 +86,29 @@ export async function simulate({ ticker, amount = prefs.amount, horizon = prefs.
         ticker, name: pos?.name || ticker, amount, horizon, days, model, paths,
         currency: getCurrency(), instrumentCurrency,
         costs: costs?.total != null ? { ...costs, bank: bank.name } : null,
-        driftAnnual: Math.exp(drift) - 1, historicalAnnual: Math.exp(histAnnual) - 1, sigmaAnnual: res.annualizedSigma,
+        driftAnnual: Math.exp(drift) - 1, sigmaAnnual: res.annualizedSigma,
         series: { dates, p5: pick(res.p5), p25: pick(res.p25), p50: pick(res.p50), p75: pick(res.p75), p95: pick(res.p95) },
         final: {
             p5: res.finalP5 * k, p25: res.finalP25 * k, p50: res.finalP50 * k, p75: res.finalP75 * k, p95: res.finalP95 * k,
             mean: amount * (1 + res.expectedReturn),
         },
         probLoss: res.probLoss, probUp10: res.probUp10, probDown10: res.probDown10,
-        sample: closes.length, lastPrice: res.S0,
     };
 }
 
+const money = (v, c, space = '\u00A0') => `${Math.round(v).toLocaleString(LOCALE)}${space}${c}`;
+const signedPct = v => `${v >= 0 ? '+' : ''}${(v * 100).toFixed(1)}%`;
+
 export function summarize(r) {
-    const c = r.currency;
-    const m = v => `${Math.round(v).toLocaleString(LOCALE)} ${c}`;
-    const pc = v => `${v >= 0 ? '+' : ''}${(v * 100).toFixed(1)}%`;
+    const m = v => money(v, r.currency, ' ');
     return {
         instrument: `${r.name} (${r.ticker})`,
         invested: m(r.amount),
         horizon: horizonLabel(r.horizon),
-        expected_return_assumption: `${RETURN_MODELS[r.model].label} (${pc(r.driftAnnual)} a year)`,
+        expected_return_assumption: `${RETURN_MODELS[r.model].label} (${signedPct(r.driftAnnual)} a year)`,
         volatility_used: `${(r.sigmaAnnual * 100).toFixed(0)}% a year`,
-        median_value: `${m(r.final.p50)} (${pc(r.final.p50 / r.amount - 1)})`,
-        average_value: `${m(r.final.mean)} (${pc(r.final.mean / r.amount - 1)})`,
+        median_value: `${m(r.final.p50)} (${signedPct(r.final.p50 / r.amount - 1)})`,
+        average_value: `${m(r.final.mean)} (${signedPct(r.final.mean / r.amount - 1)})`,
         range_90pct: `${m(r.final.p5)} to ${m(r.final.p95)}`,
         range_50pct: `${m(r.final.p25)} to ${m(r.final.p75)}`,
         chance_of_loss: `${Math.round(r.probLoss * 100)}%`,
@@ -126,49 +123,31 @@ export function summarize(r) {
 }
 
 const charts = new WeakMap();
-const money = (v, c) => `${Math.round(v).toLocaleString(LOCALE)}\u00A0${c}`;
-const signedPct = v => `${v >= 0 ? '+' : ''}${(v * 100).toFixed(1)}%`;
 const tickerOf = symbol => positions[symbol]?.ticker || symbol;
-const HORIZON_WORD = { '1W': L('1 week'), '1M': L('1 month'), '3M': L('3 months'), '6M': L('6 months'), '1Y': L('1 year'), '3Y': L('3 years'), '5Y': L('5 years') };
-const HORIZON_SHORT = { '1W': '1S', '1M': '1M', '3M': '3M', '6M': '6M', '1Y': '1A', '3Y': '3A', '5Y': '5A' };
 
 function drawForm(params, onRun) {
-    const cur = getCurrency();
-    const form = el('form', 'sim-form');
-    form.noValidate = true;
-    const amountField = el('label', 'field');
+    const form = el('form', 'sim-form', null, { noValidate: true });
+    const amount = el('input', null, null, { type: 'number', min: '1', step: '10', inputMode: 'decimal', value: String(params.amount) });
     const unit = el('span', 'input-unit');
-    const amount = el('input');
-    amount.type = 'number';
-    amount.min = '1';
-    amount.step = '10';
-    amount.inputMode = 'decimal';
-    amount.value = String(params.amount);
-    unit.append(amount, el('span', 'unit', cur));
+    unit.append(amount, el('span', 'unit', getCurrency()));
+    const amountField = el('label', 'field');
     amountField.append(el('span', null, L('If I invest')), unit);
 
-    const hz = el('div', 'field');
-    hz.setAttribute('role', 'group');
-    const hzLabel = el('span', null, L('Across'));
-    hzLabel.id = `sim-for-${Math.random().toString(36).slice(2, 8)}`;
-    hz.setAttribute('aria-labelledby', hzLabel.id);
-    hz.append(hzLabel);
+    const hzLabel = el('span', null, L('Across'), { id: `sim-for-${Math.random().toString(36).slice(2, 8)}` });
+    const hz = el('div', 'field', null, { role: 'group', 'aria-labelledby': hzLabel.id });
     const pills = el('div', 'pills');
     for (const h of Object.keys(HORIZONS)) {
-        const b = el('button', `pill${h === params.horizon ? ' active' : ''}`, HORIZON_SHORT[h]);
-        b.type = 'button';
-        b.title = HORIZON_WORD[h];
-        b.setAttribute('aria-pressed', String(h === params.horizon));
+        const b = el('button', `pill${h === params.horizon ? ' active' : ''}`, HORIZON_SHORT[h], { type: 'button', title: HORIZON_WORD[h], 'aria-pressed': String(h === params.horizon) });
         b.addEventListener('click', () => { params.horizon = h; onRun(); });
         pills.append(b);
     }
-    hz.append(pills);
+    hz.append(hzLabel, pills);
 
-    const modelField = el('label', 'field');
     const sel = el('select');
     for (const [k, v] of Object.entries(RETURN_MODELS)) { const o = new Option(v.label, k); o.title = v.hint; sel.append(o); }
     sel.value = params.model;
     sel.addEventListener('change', () => { params.model = sel.value; onRun(); });
+    const modelField = el('label', 'field');
     modelField.append(el('span', null, L('Growth to assume')), sel);
 
     form.append(amountField, hz, modelField);
@@ -183,8 +162,7 @@ function drawForm(params, onRun) {
 
 function scenario(tone, label, value, amount, c, hint) {
     const box = el('div', `scenario ${tone}`);
-    const delta = value / amount - 1;
-    box.append(el('span', 'scenario-label', label), el('span', 'scenario-value', money(value, c)), el('span', 'scenario-delta', signedPct(delta)));
+    box.append(el('span', 'scenario-label', label), el('span', 'scenario-value', money(value, c)), el('span', 'scenario-delta', signedPct(value / amount - 1)));
     if (hint) box.append(el('span', 'meta', hint));
     return box;
 }
@@ -192,7 +170,6 @@ function scenario(tone, label, value, amount, c, hint) {
 function drawResult(box, r) {
     box.replaceChildren();
     const c = r.currency;
-    const when = horizonLabel(r.horizon);
     const cards = el('div', 'scenarios');
     cards.append(
         scenario('negative', L('If things go badly'), r.final.p5, r.amount, c, L('1 chance in 20 of worse')),
@@ -200,37 +177,29 @@ function drawResult(box, r) {
         scenario('positive', L('If things go well'), r.final.p95, r.amount, c, L('1 chance in 20 of better')),
     );
     const lossPct = Math.round(r.probLoss * 100);
-    const loss = el('div', 'loss-meter');
     const label = el('p', 'loss-label');
     label.innerHTML = L('<strong>{0}%</strong> chance of losing money', lossPct);
-    const track = el('div', 'loss-track');
+    const track = el('div', 'loss-track', null, { role: 'img', 'aria-label': L('{0} percent chance of a loss', lossPct) });
     const fill = el('span', 'loss-fill');
     fill.style.transform = `scaleX(${r.probLoss})`;
     track.append(fill);
-    track.setAttribute('role', 'img');
-    track.setAttribute('aria-label', L('{0} percent chance of a loss', lossPct));
+    const loss = el('div', 'loss-meter');
     loss.append(label, track);
 
     const wrap = el('div', 'sim-chart');
-    const canvas = el('canvas');
-    canvas.setAttribute('role', 'img');
-    canvas.setAttribute('aria-label', L('Possible value of {0} over {1}: most likely {2}, between {3} and {4} in 9 cases out of 10.', money(r.amount, c), when, money(r.final.p50, c), money(r.final.p5, c), money(r.final.p95, c)));
+    const canvas = el('canvas', null, null, { role: 'img', 'aria-label': L('Possible value of {0} over {1}: most likely {2}, between {3} and {4} in 9 cases out of 10.', money(r.amount, c), horizonLabel(r.horizon), money(r.final.p50, c), money(r.final.p5, c), money(r.final.p95, c)) });
     wrap.append(canvas);
 
-    const note = el('p', 'meta sim-note');
     const bits = [L('{0} simulated futures from 2 years of prices.', r.paths.toLocaleString(LOCALE))];
     if (r.instrumentCurrency && majorCurrency(r.instrumentCurrency) !== currencyCode()) bits.push(L('{0} price: exchange rate not included.', r.instrumentCurrency));
     bits.push(L('A range, not a promise.'));
-    note.textContent = bits.join(' ');
 
     box.append(cards, loss);
     if (r.costs) {
-        const costs = el('p', 'sim-costs');
         const parts = [L('buying'), L('selling'), r.costs.fx ? L('currency conversion') : null, r.costs.custody ? L('custody') : null].filter(Boolean).join(', ');
-        costs.textContent = L('Fees at {0}: {1} ({2}). Most likely after fees: {3}.', r.costs.bank, `${r.costs.estimate ? '≈ ' : ''}${formatMoney(r.costs.total, r.costs.currency)}`, parts, money(r.final.p50 - r.costs.total, c));
-        box.append(costs);
+        box.append(el('p', 'sim-costs', L('Fees at {0}: {1} ({2}). Most likely after fees: {3}.', r.costs.bank, `${r.costs.estimate ? '≈ ' : ''}${formatMoney(r.costs.total, r.costs.currency)}`, parts, money(r.final.p50 - r.costs.total, c))));
     }
-    box.append(wrap, note);
+    box.append(wrap, el('p', 'meta sim-note', bits.join(' ')));
     drawChart(canvas, r);
 }
 
@@ -279,7 +248,7 @@ function drawChart(canvas, r) {
 
 const running = new WeakMap();
 /** Renders a stock's Simulate tab and runs it. params: { amount, horizon, model }. */
-export async function renderSimulationTab(cardEl, symbol, params = {}) {
+async function renderSimulationTab(cardEl, symbol, params = {}) {
     const root = cardEl.querySelector('.card-tab-pane[data-pane="simulation"] .sim');
     if (!root) return null;
     const p = root.__params || (root.__params = { ...prefs });

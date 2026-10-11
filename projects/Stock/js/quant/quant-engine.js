@@ -1,44 +1,46 @@
-// Nemeris Quant Engine: portfolio/risk analytics built on the shared quant-math core.
+// Nemeris Quant Engine: portfolio and risk analytics on plain price arrays. quant-client.js runs it
+// in a Worker (or in-thread when Workers are missing); signal-bot.js reuses the small stats helpers.
 //
-// Financial-correctness notes (changes vs previous revision):
-// - Volatility now uses the SAMPLE standard deviation (n-1). Market returns are always a
-//   sample, never the population; the n denominator biased volatility (and therefore Sharpe,
-//   Sortino, VaR-scaling) low, especially on short windows.
-// - Sortino now uses the FULL-SAMPLE downside deviation: sqrt( Σ min(r - MAR, 0)² / N ).
-//   The previous version divided by the number of down days only, which (a) is not the
-//   Sortino (1994) definition, and (b) made the ratio jump discontinuously when a single
-//   small down day entered the window.
-// - Historical VaR/CVaR use linear-interpolation percentiles instead of a floor index,
-//   removing the systematic optimistic bias on small samples.
-// - runBacktest is O(n) (was O(n²): it re-sliced the whole price history every bar).
+// Conventions: volatility is the SAMPLE stdev (n-1), because market returns are a sample. Sortino
+// uses the full-sample downside deviation (Sortino & Price, 1994). VaR/CVaR use interpolated
+// percentiles. Correlation inputs must already be calendar-aligned (alignSeries in quant-shared.js).
 
-import {
-    TRADING_DAYS, mean, sampleStdDev, simpleReturns, logReturns,
-    maxDrawdown as coreMaxDrawdown, percentileSorted,
-    vwap as coreVWAP, covariance, pearsonCorrelation,
-    outlierPValue, seededRandom
-} from './quant-math.js';
+const TRADING_DAYS = 252;
+const RISK_FREE_RATE = 0.02;
 
-// Annualized risk-free rate (2% default for Eurozone PEA, mid-2026)
-const DEFAULT_RISK_FREE_RATE = 0.02;
+export const mean = a => a?.length ? a.reduce((s, x) => s + x, 0) / a.length : 0;
 
-let _nextGaussian = null;
-function _gaussian() {
-    if (_nextGaussian !== null) {
-        const val = _nextGaussian;
-        _nextGaussian = null;
-        return val;
-    }
-    // Box-Muller
-    let u = 0, v = 0;
-    while (u === 0) u = Math.random();
-    while (v === 0) v = Math.random();
-    const r = Math.sqrt(-2 * Math.log(u));
-    const theta = 2 * Math.PI * v;
-    _nextGaussian = r * Math.sin(theta);
-    return r * Math.cos(theta);
+export function sampleStdDev(a, m = mean(a)) {
+    if (!a || a.length < 2) return 0;
+    return Math.sqrt(a.reduce((s, x) => s + (x - m) * (x - m), 0) / (a.length - 1));
 }
-// Gaussian generator over a given uniform source (seeded runs are reproducible).
+
+const simpleReturns = p => (p || []).slice(1).map((x, i) => p[i] ? (x - p[i]) / p[i] : 0);
+const logReturns = p => (p || []).slice(1).map((x, i) => p[i] > 0 && x > 0 ? Math.log(x / p[i]) : 0);
+
+// Linear-interpolation percentile of an ascending array, q in [0, 1].
+function percentile(sorted, q) {
+    const n = sorted.length;
+    if (!n) return 0;
+    const pos = q * (n - 1), lo = Math.floor(pos), hi = Math.ceil(pos);
+    return lo === hi ? sorted[lo] : sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+}
+
+// Seeded uniform RNG (mulberry32): the same seed gives the same sequence, so simulations can be reproduced.
+function seededRandom(seed) {
+    let h = 0x811c9dc5;
+    const text = String(seed);
+    for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    let a = h || 1;
+    return () => {
+        a = (a + 0x6D2B79F5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+// Box-Muller gaussians over any uniform source; each draw yields two values, the spare is kept.
 function gaussianFrom(rand) {
     let spare = null;
     return () => {
@@ -52,277 +54,167 @@ function gaussianFrom(rand) {
     };
 }
 
-// Sentiment dictionaries matching whole-words (Sets for O(1) lookup)
-const BULL_WORDS = new Set([
-    'beat', 'beats', 'surge', 'surges', 'soar', 'soars', 'rally', 'rallies', 'gain', 'gains',
-    'jump', 'jumps', 'rise', 'rises', 'climb', 'climbs', 'upgrade', 'outperform', 'bullish',
-    'record', 'breakthrough', 'profit', 'profits', 'strong', 'growth', 'expand', 'expansion',
-    'buy', 'overweight', 'positive', 'boost', 'boosts', 'top', 'tops', 'wins', 'win'
-]);
+// Pearson correlation of two equal-length arrays; 0 when either is flat.
+function pearson(x, y) {
+    if (x.length < 2) return 0;
+    const sx = sampleStdDev(x), sy = sampleStdDev(y);
+    return sx === 0 || sy === 0 ? 0 : covariance(x, y) / (sx * sy);
+}
+function covariance(x, y) {
+    const mx = mean(x), my = mean(y);
+    let s = 0;
+    for (let i = 0; i < x.length; i++) s += (x[i] - mx) * (y[i] - my);
+    return s / (x.length - 1);
+}
 
-const BEAR_WORDS = new Set([
-    'miss', 'misses', 'plunge', 'plunges', 'drop', 'drops', 'fall', 'falls', 'slide', 'slides',
-    'crash', 'crashes', 'tumble', 'tumbles', 'sink', 'sinks', 'downgrade', 'underperform',
-    'bearish', 'loss', 'losses', 'weak', 'cut', 'cuts', 'sell', 'underweight', 'negative',
-    'lawsuit', 'probe', 'investigation', 'fraud', 'recall', 'bankruptcy', 'layoff', 'layoffs'
-]);
+// Daily returns of the last n prices of both series (n = the shorter length).
+function tailReturns(a, b) {
+    const n = Math.min(a.length, b.length);
+    return [n, simpleReturns(a.slice(-n)), simpleReturns(b.slice(-n))];
+}
 
-// Negators flip the polarity of the next sentiment word ("not strong", "fails to beat").
-const NEGATORS = new Set(['not', 'no', 'never', 'without', 'fails', 'fail', 'failed', 'cannot', 'cant', 'didnt', 'doesnt', 'wont', 'isnt', 'arent', 'less', 'lower']);
+// Sorted daily returns for VaR/CVaR; empty when the sample is too small to mean anything.
+function sortedReturns(prices) {
+    const r = simpleReturns(prices);
+    return r.length < 5 ? [] : r.sort((a, b) => a - b);
+}
 
 export const QuantEngine = {
-    // ============ CORE ============
-    calculateReturns(prices) {
-        return simpleReturns(prices);
-    },
+    calculateReturns: simpleReturns,
+    calculateVolatility: returns => sampleStdDev(returns),
+    annualizedVolatility: prices => sampleStdDev(simpleReturns(prices)) * Math.sqrt(TRADING_DAYS),
 
-    calculateLogReturns(prices) {
-        return logReturns(prices);
-    },
-
-    calculateVolatility(returns) {
-        if (!returns || returns.length === 0) return 0;
-        return sampleStdDev(returns);
-    },
-
-    annualizedVolatility(prices) {
-        return sampleStdDev(simpleReturns(prices)) * Math.sqrt(TRADING_DAYS);
-    },
-
-    // ============ RISK METRICS ============
-    calculateSharpeRatio(prices, riskFreeRate = DEFAULT_RISK_FREE_RATE) {
+    calculateSharpeRatio(prices, riskFreeRate = RISK_FREE_RATE) {
         const returns = simpleReturns(prices);
         if (returns.length < 2) return 0;
-        const m = mean(returns);
-        const vol = sampleStdDev(returns, m);
-        if (vol === 0) return 0;
-        // Annualize: (mean * 252 - Rf) / (vol * sqrt(252))
-        return ((m * TRADING_DAYS) - riskFreeRate) / (vol * Math.sqrt(TRADING_DAYS));
+        const m = mean(returns), vol = sampleStdDev(returns, m);
+        return vol === 0 ? 0 : (m * TRADING_DAYS - riskFreeRate) / (vol * Math.sqrt(TRADING_DAYS));
     },
 
-    // Sortino (annualized). `mar` is the ANNUAL minimum acceptable return.
-    // Downside deviation per Sortino & Price (1994): full-sample root-mean-square of
-    // below-MAR deviations: zeros count. Dividing by down-day count only (previous
-    // behaviour) overstates DD with few losers and understates it with many.
+    // `mar` is the ANNUAL minimum acceptable return. Zeros count in the downside deviation, so a
+    // single small down day cannot make the ratio jump.
     calculateSortinoRatio(prices, mar = 0) {
         const returns = simpleReturns(prices);
         if (returns.length < 2) return 0;
         const marDaily = mar / TRADING_DAYS;
-        let s = 0;
-        for (let i = 0; i < returns.length; i++) {
-            const d = returns[i] - marDaily;
-            if (d < 0) s += d * d;
-        }
-        const downsideDev = Math.sqrt(s / returns.length);
-        if (downsideDev === 0) return 0;
-        return ((mean(returns) - marDaily) * TRADING_DAYS) / (downsideDev * Math.sqrt(TRADING_DAYS));
+        const downside = Math.sqrt(returns.reduce((s, r) => { const d = r - marDaily; return d < 0 ? s + d * d : s; }, 0) / returns.length);
+        return downside === 0 ? 0 : ((mean(returns) - marDaily) * TRADING_DAYS) / (downside * Math.sqrt(TRADING_DAYS));
     },
 
-    // Max drawdown as a NEGATIVE percentage (UI convention preserved).
+    // Worst peak-to-trough fall as a NEGATIVE percentage (the UI convention).
     calculateMaxDrawdown(prices) {
-        return -(coreMaxDrawdown(prices) * 100);
+        const p = prices || [];
+        let peak = p[0], worst = 0;
+        for (let i = 1; i < p.length; i++) {
+            if (p[i] > peak) peak = p[i];
+            else { const dd = (peak - p[i]) / peak; if (dd > worst) worst = dd; }
+        }
+        return -(worst * 100);
     },
 
-    // Historical VaR (interpolated percentile of daily returns, negative % loss)
+    // Historical VaR and expected shortfall, as negative % daily losses.
     calculateVaR(prices, confidence = 0.95) {
-        const returns = simpleReturns(prices);
-        if (returns.length < 5) return 0;
-        const sorted = [...returns].sort((a, b) => a - b);
-        return percentileSorted(sorted, 1 - confidence) * 100;
+        const r = sortedReturns(prices);
+        return r.length ? percentile(r, 1 - confidence) * 100 : 0;
     },
-
-    // Expected Shortfall (mean of returns at or below the VaR threshold, negative % loss)
     calculateCVaR(prices, confidence = 0.95) {
-        const returns = simpleReturns(prices);
-        if (returns.length < 5) return 0;
-        const sorted = [...returns].sort((a, b) => a - b);
-        const cutoff = Math.max(1, Math.floor((1 - confidence) * sorted.length));
-        let s = 0;
-        for (let i = 0; i < cutoff; i++) s += sorted[i];
-        return (s / cutoff) * 100;
+        const r = sortedReturns(prices);
+        const cutoff = Math.max(1, Math.floor((1 - confidence) * r.length));
+        return r.length ? (r.slice(0, cutoff).reduce((s, x) => s + x, 0) / cutoff) * 100 : 0;
     },
 
-    // ============ RELATIVE METRICS ============
-    // NOTE: both series must be CALENDAR-ALIGNED (same dates). Use alignSeries() from
-    // command/quant-shared.js before calling: truncating to equal length does NOT align
-    // series with different holidays/trading calendars.
     calculateCorrelation(pricesA, pricesB) {
         if (!pricesA || !pricesB) return 0;
-        const n = Math.min(pricesA.length, pricesB.length);
-        if (n < 2) return 0;
-        const retA = simpleReturns(pricesA.slice(-n));
-        const retB = simpleReturns(pricesB.slice(-n));
-        return pearsonCorrelation(retA, retB);
+        const [n, a, b] = tailReturns(pricesA, pricesB);
+        return n < 2 ? 0 : pearson(a, b);
     },
 
     calculateBeta(pricesAsset, pricesBenchmark) {
         if (!pricesAsset || !pricesBenchmark) return 0;
-        const n = Math.min(pricesAsset.length, pricesBenchmark.length);
-        if (n < 3) return 0;
-        const retA = simpleReturns(pricesAsset.slice(-n));
-        const retB = simpleReturns(pricesBenchmark.slice(-n));
-        const varB = sampleStdDev(retB) ** 2;
-        if (varB === 0) return 0;
-        return covariance(retA, retB) / varB;
+        const [n, a, b] = tailReturns(pricesAsset, pricesBenchmark);
+        const varB = sampleStdDev(b) ** 2;
+        return n < 3 || varB === 0 ? 0 : covariance(a, b) / varB;
     },
 
-    // VWAP over the full price/volume series (typical price = (H+L+C)/3 when available,
-    // else the closing price array). Returns 0 when volume is empty or sums to zero.
-    calculateVWAP(prices, volumes) {
-        return coreVWAP(prices, volumes);
-    },
-
-    // Two-tailed p-value for the most recent daily return being a statistical outlier
-    // relative to the trailing `window` returns. p < 0.05 = unusual move at 95% confidence.
+    // Two-tailed p-value that the latest daily return is an outlier against the trailing `window`
+    // returns (z-score through the Abramowitz & Stegun 26.2.17 normal CDF, error < 7.5e-8).
+    // p < 0.05 means an unusual move at 95% confidence.
     priceOutlierPValue(prices, window = 60) {
         const ret = simpleReturns(prices);
         if (ret.length < 10) return 1;
-        const latest = ret[ret.length - 1];
         const ref = ret.slice(-Math.min(window, ret.length));
-        return outlierPValue(latest, ref);
+        const m = mean(ref), s = sampleStdDev(ref, m);
+        const z = Math.abs(s === 0 ? 0 : (ret[ret.length - 1] - m) / s);
+        const t = 1 / (1 + 0.2316419 * z);
+        const poly = t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+        const pdf = Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI);
+        return 2 * (1 - (1 - pdf * poly));
     },
 
-    // pricesMap: { TICKER: [prices] } -> { TICKER: { TICKER: r } }
+    // { TICKER: [prices] } -> { TICKER: { TICKER: r } }
     correlationMatrix(pricesMap) {
-        const tickers = Object.keys(pricesMap);
-        const matrix = {};
-        for (let i = 0; i < tickers.length; i++) {
-            const a = tickers[i];
-            matrix[a] = matrix[a] || {};
-            matrix[a][a] = 1;
-            for (let j = i + 1; j < tickers.length; j++) {
-                const b = tickers[j];
-                const r = this.calculateCorrelation(pricesMap[a], pricesMap[b]);
-                matrix[a][b] = r;
-                matrix[b] = matrix[b] || {};
-                matrix[b][a] = r;
-                matrix[b][b] = 1;
-            }
-        }
+        const names = Object.keys(pricesMap);
+        const matrix = Object.fromEntries(names.map(a => [a, { [a]: 1 }]));
+        names.forEach((a, i) => names.slice(i + 1).forEach(b => {
+            matrix[a][b] = matrix[b][a] = QuantEngine.calculateCorrelation(pricesMap[a], pricesMap[b]);
+        }));
         return matrix;
     },
 
-    // ============ SIMULATION ============
-    // GBM simulation: returns trajectory percentiles (p5/p50/p95).
-    // Default drift is 0 (martingale cone). historical/custom drift supported via opts.
+    // Geometric Brownian motion on the log-return volatility. Drift is 0 by default (martingale cone),
+    // or opts.drift = annual number | 'historical'. opts.seed makes the paths reproducible.
     monteCarlo(prices, days = 252, paths = 1000, opts = {}) {
         if (!prices || prices.length < 30) return null;
         const logRet = logReturns(prices);
         const sigma = sampleStdDev(logRet);
-        let mu;
-        let driftMode;
+        let mu = 0, driftMode = 'zero';
         if (typeof opts.drift === 'number') { mu = opts.drift / TRADING_DAYS; driftMode = 'custom'; }
         else if (opts.drift === 'historical') { mu = mean(logRet); driftMode = 'historical'; }
-        else { mu = 0; driftMode = 'zero'; }
         const S0 = prices[prices.length - 1];
-        const gauss = opts.seed != null ? gaussianFrom(seededRandom(opts.seed)) : _gaussian;
-
-        const finals = new Float64Array(paths);
-        // store every path's value per day for percentile extraction
-        const perDay = Array.from({ length: days }, () => new Float64Array(paths));
-
-        // Hoist the constant drift component of the Geometric Brownian Motion calculation
+        const gauss = gaussianFrom(opts.seed != null ? seededRandom(opts.seed) : Math.random);
         const driftPart = mu - 0.5 * sigma * sigma;
 
+        const finals = new Float64Array(paths);
+        const perDay = Array.from({ length: days }, () => new Float64Array(paths));
         for (let p = 0; p < paths; p++) {
             let s = S0;
-            for (let d = 0; d < days; d++) {
-                s = s * Math.exp(driftPart + sigma * gauss());
-                perDay[d][p] = s;
-            }
+            for (let d = 0; d < days; d++) perDay[d][p] = s *= Math.exp(driftPart + sigma * gauss());
             finals[p] = s;
         }
 
-        const p5 = new Array(days);
-        const p25 = new Array(days);
-        const p50 = new Array(days);
-        const p75 = new Array(days);
-        const p95 = new Array(days);
-
-        for (let d = 0; d < days; d++) {
-            const arr = perDay[d];
-            arr.sort(); // TypedArray sort is numeric by default (unlike Array)
-            p5[d] = percentileSorted(arr, 0.05);
-            p25[d] = percentileSorted(arr, 0.25);
-            p50[d] = percentileSorted(arr, 0.50);
-            p75[d] = percentileSorted(arr, 0.75);
-            p95[d] = percentileSorted(arr, 0.95);
-        }
-
+        // Trajectory percentiles (p5..p95 per day) and the same levels for the final values.
+        for (const day of perDay) day.sort();   // typed-array sort is numeric
         const sortedFinals = finals.slice().sort();
-        let finalsSum = 0, losers = 0, up10 = 0, down10 = 0;
-        for (let i = 0; i < paths; i++) {
-            finalsSum += finals[i];
-            if (finals[i] < S0) losers++;
-            if (finals[i] >= S0 * 1.1) up10++;
-            if (finals[i] <= S0 * 0.9) down10++;
+        const out = { S0, days, paths };
+        for (const [key, q] of [['p5', 0.05], ['p25', 0.25], ['p50', 0.5], ['p75', 0.75], ['p95', 0.95]]) {
+            out[key] = perDay.map(day => percentile(day, q));
+            out[`final${key.toUpperCase()}`] = percentile(sortedFinals, q);
         }
+        const share = test => finals.filter(test).length / paths;
         return {
-            S0,
-            days,
-            paths,
-            p5, p25, p50, p75, p95,
-            finalP5: percentileSorted(sortedFinals, 0.05),
-            finalP25: percentileSorted(sortedFinals, 0.25),
-            finalP50: percentileSorted(sortedFinals, 0.50),
-            finalP75: percentileSorted(sortedFinals, 0.75),
-            finalP95: percentileSorted(sortedFinals, 0.95),
-            probLoss: losers / paths,
-            probUp10: up10 / paths,
-            probDown10: down10 / paths,
+            ...out,
+            probLoss: share(f => f < S0),
+            probUp10: share(f => f >= S0 * 1.1),
+            probDown10: share(f => f <= S0 * 0.9),
             dailyDrift: mu,
-            expectedReturn: (finalsSum / paths - S0) / S0,
-            driftMode,                          // 'zero' | 'historical' | 'custom'
+            expectedReturn: (mean(finals) - S0) / S0,
+            driftMode,
             annualizedSigma: sigma * Math.sqrt(TRADING_DAYS)
         };
     },
 
-    // Simple long/flat backtest charging transaction cost + slippage (default 15 bps).
-    // signalCallback(prices, i) must derive its signal ONLY from indices < i (the bar at i
-    // is the execution price). O(n): the previous version re-sliced the whole history per
-    // bar, which was O(n²) time AND allocation.
-    runBacktest(prices, signalCallback, opts = {}) {
-        if (!prices || prices.length < 15) return 0;
-        const cost = typeof opts.cost === 'number' ? opts.cost : 0.0015;
-        let capital = 10000;
-        let position = 0;
-        for (let i = 14; i < prices.length; i++) {
-            const currentPrice = prices[i];
-            const signal = signalCallback(prices, i);
-            if (signal === 1 && capital > currentPrice) {
-                position = (capital * (1 - cost)) / currentPrice;   // pay cost on entry
-                capital = 0;
-            } else if (signal === -1 && position > 0) {
-                capital = position * currentPrice * (1 - cost);     // pay cost on exit
-                position = 0;
-            }
-        }
-        const finalValue = capital + (position * prices[prices.length - 1] * (position > 0 ? (1 - cost) : 1));
-        return ((finalValue - 10000) / 10000) * 100;
-    },
-
-    // ============ TRADE-LEVEL EDGE ============
-    // FIFO matching of buy and sell transactions
+    // FIFO matching of buys and sells into closed trades.
     extractTradeEvents(stock) {
         if (!stock?.sales?.length || !stock?.purchases?.length) return [];
+        const byDate = (a, b) => new Date(a.date) - new Date(b.date);
+        const lots = stock.purchases.slice().sort(byDate).map(p => ({
+            date: p.date,
+            shares: p.shares || 0,
+            perShare: Math.abs(p.amount || 0) / Math.max(1, p.shares || 1)
+        }));
 
-        const lots = stock.purchases
-            .slice()
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
-            .map(p => ({
-                date: p.date,
-                shares: p.shares || 0,
-                perShare: Math.abs(p.amount || 0) / Math.max(1, p.shares || 1)
-            }));
-
-        const sales = stock.sales.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
-        const trades = [];
-
-        for (const sale of sales) {
-            let toRemove = sale.shares || 0;
-            let costBasis = 0;
-            let earliestBuy = null;
-
+        return stock.sales.slice().sort(byDate).map(sale => {
+            let toRemove = sale.shares || 0, costBasis = 0, earliestBuy = null;
             while (toRemove > 0 && lots.length > 0) {
                 const lot = lots[0];
                 if (!earliestBuy) earliestBuy = lot.date;
@@ -332,105 +224,52 @@ export const QuantEngine = {
                 toRemove -= taken;
                 if (lot.shares <= 0) lots.shift();
             }
-
-            const proceeds = sale.amount || 0;
-            const pnl = proceeds - costBasis;
-            const returnPct = costBasis > 0 ? (pnl / costBasis) * 100 : 0;
-            const days = earliestBuy
-                ? Math.max(1, Math.round((new Date(sale.date) - new Date(earliestBuy)) / 86400000))
-                : 0;
-
-            trades.push({
-                symbol: stock.symbol,
-                date: sale.date,
-                shares: sale.shares,
-                costBasis, proceeds, pnl, returnPct, days
-            });
-        }
-        return trades;
+            const proceeds = sale.amount || 0, pnl = proceeds - costBasis;
+            const days = earliestBuy ? Math.max(1, Math.round((new Date(sale.date) - new Date(earliestBuy)) / 86400000)) : 0;
+            return {
+                symbol: stock.symbol, date: sale.date, shares: sale.shares,
+                costBasis, proceeds, pnl, returnPct: costBasis > 0 ? (pnl / costBasis) * 100 : 0, days
+            };
+        });
     },
 
-    // Trade statistics and expectancy calculation
     tradeStats(trades) {
-        const empty = {
-            count: 0, wins: 0, losses: 0, winRate: 0,
-            avgWinPct: 0, avgLossPct: 0, expectancyPct: 0,
-            profitFactor: 0, avgR: 0, kelly: 0,
-            avgHoldingDays: 0, bestPct: 0, worstPct: 0
-        };
-        if (!trades || !trades.length) return empty;
-
-        const wins = trades.filter(t => t.pnl > 0);
-        const losses = trades.filter(t => t.pnl < 0);
-        const grossWin = wins.reduce((s, t) => s + t.pnl, 0);
-        const grossLoss = Math.abs(losses.reduce((s, t) => s + t.pnl, 0));
-
-        const avgWinPct = wins.length ? wins.reduce((s, t) => s + t.returnPct, 0) / wins.length : 0;
-        const avgLossPct = losses.length ? Math.abs(losses.reduce((s, t) => s + t.returnPct, 0) / losses.length) : 0;
-        const winRate = wins.length / trades.length;
-        const lossRate = losses.length / trades.length;
-        const profitFactor = grossLoss > 0 ? grossWin / grossLoss : (grossWin > 0 ? Infinity : 0);
-        const expectancyPct = winRate * avgWinPct - lossRate * avgLossPct;
+        if (!trades?.length) {
+            return Object.fromEntries(['count', 'wins', 'losses', 'winRate', 'avgWinPct', 'avgLossPct', 'expectancyPct',
+                'profitFactor', 'avgR', 'kelly', 'avgHoldingDays', 'bestPct', 'worstPct'].map(k => [k, 0]));
+        }
+        const total = (list, key) => list.reduce((s, t) => s + t[key], 0);
+        const wins = trades.filter(t => t.pnl > 0), losses = trades.filter(t => t.pnl < 0);
+        const grossWin = total(wins, 'pnl'), grossLoss = Math.abs(total(losses, 'pnl'));
+        const avgWinPct = wins.length ? total(wins, 'returnPct') / wins.length : 0;
+        const avgLossPct = losses.length ? Math.abs(total(losses, 'returnPct') / losses.length) : 0;
+        const winRate = wins.length / trades.length, lossRate = losses.length / trades.length;
         const avgR = avgLossPct > 0 ? avgWinPct / avgLossPct : 0;
-        const kelly = (avgR > 0 && losses.length > 0)
-            ? Math.max(0, winRate - lossRate / avgR)
-            : 0;
-
-        const dayList = trades.map(t => t.days || 0).filter(d => d > 0);
-        const avgHoldingDays = dayList.length ? dayList.reduce((a, b) => a + b, 0) / dayList.length : 0;
+        const held = trades.map(t => t.days || 0).filter(d => d > 0);
         const returns = trades.map(t => t.returnPct);
-
         return {
-            count: trades.length,
-            wins: wins.length,
-            losses: losses.length,
+            count: trades.length, wins: wins.length, losses: losses.length,
             winRate, avgWinPct, avgLossPct,
-            expectancyPct, profitFactor, avgR, kelly,
-            avgHoldingDays,
-            bestPct: returns.length ? Math.max(...returns) : 0,
-            worstPct: returns.length ? Math.min(...returns) : 0
+            expectancyPct: winRate * avgWinPct - lossRate * avgLossPct,
+            profitFactor: grossLoss > 0 ? grossWin / grossLoss : (grossWin > 0 ? Infinity : 0),
+            avgR,
+            kelly: avgR > 0 && losses.length > 0 ? Math.max(0, winRate - lossRate / avgR) : 0,
+            avgHoldingDays: held.length ? held.reduce((a, b) => a + b, 0) / held.length : 0,
+            bestPct: Math.max(...returns), worstPct: Math.min(...returns)
         };
     },
 
-    // Inverse-volatility portfolio weighting
+    // Weights proportional to 1 / volatility; zero-volatility names get 0.
     inverseVolWeights(vols) {
-        const out = {};
-        const symbols = Object.keys(vols || {});
-        if (!symbols.length) return out;
-        let total = 0;
-        const inv = {};
-        for (const s of symbols) {
-            const v = Number(vols[s]) || 0;
-            const x = v > 0 ? 1 / v : 0;
-            inv[s] = x;
-            total += x;
-        }
-        for (const s of symbols) out[s] = total > 0 ? inv[s] / total : 0;
-        return out;
-    },
-
-    // ============ SENTIMENT ============
-    sentimentScore(headlines) {
-        if (!headlines || headlines.length === 0) return { score: 0, label: 'NEUTRAL', bull: 0, bear: 0 };
-        let bull = 0, bear = 0;
-        for (const h of headlines) {
-            // Tokenize to words, checking previous 2 tokens for negation
-            const tokens = String(h || '').toLowerCase().match(/[a-z]+/g) || [];
-            for (let i = 0; i < tokens.length; i++) {
-                const t = tokens[i];
-                const isBull = BULL_WORDS.has(t);
-                const isBear = BEAR_WORDS.has(t);
-                if (!isBull && !isBear) continue;
-                const negated = (i >= 1 && NEGATORS.has(tokens[i - 1])) || (i >= 2 && NEGATORS.has(tokens[i - 2]));
-                const bullish = negated ? !isBull : isBull; // flip polarity if negated
-                if (bullish) bull++; else bear++;
-            }
-        }
-        const total = bull + bear;
-        const score = total === 0 ? 0 : (bull - bear) / total;
-        let label = 'NEUTRAL';
-        if (score > 0.25) label = 'BULLISH';
-        else if (score < -0.25) label = 'BEARISH';
-        return { score, label, bull, bear };
+        const inv = Object.fromEntries(Object.entries(vols || {}).map(([s, v]) => [s, Number(v) > 0 ? 1 / Number(v) : 0]));
+        const total = Object.values(inv).reduce((a, b) => a + b, 0);
+        return Object.fromEntries(Object.entries(inv).map(([s, x]) => [s, total > 0 ? x / total : 0]));
     }
 };
+
+// One entry point for both the Worker and the in-thread fallback.
+export function runOp(op, args) {
+    const fn = QuantEngine[op];
+    if (typeof fn !== 'function') throw new Error(`Unknown op: ${op}`);
+    return fn.apply(QuantEngine, args || []);
+}

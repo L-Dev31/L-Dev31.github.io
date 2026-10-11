@@ -1,56 +1,41 @@
-// Nemeris Quant Client: thin wrapper that runs QuantEngine ops in a Worker.
-// Falls back to in-thread execution if Worker / module Workers are unsupported.
-import { QuantEngine } from './quant-engine.js';
+// Runs QuantEngine ops in a Worker, or in-thread when module Workers are unsupported or have failed.
+import { QuantEngine, runOp } from './quant-engine.js';
 
-let worker = null;
-let nextId = 1;
+let worker = null, workerFailed = false, nextId = 1;
 const pending = new Map();
-let workerFailed = false;
 
 function getWorker() {
-    if (workerFailed) return null;
-    if (worker) return worker;
+    if (workerFailed || worker) return worker;
     try {
         worker = new Worker(new URL('./workers/quant.worker.js', import.meta.url), { type: 'module' });
-        worker.onmessage = (e) => {
-            const { id, result, error } = e.data || {};
+        worker.onmessage = ({ data: { id, result, error } }) => {
             const slot = pending.get(id);
-            if (!slot) return;
             pending.delete(id);
-            if (error) slot.reject(new Error(error));
-            else slot.resolve(result);
+            if (error) slot?.reject(new Error(error));
+            else slot?.resolve(result);
         };
         worker.onerror = () => {
             workerFailed = true;
             worker = null;
-            for (const [, slot] of pending) slot.reject(new Error('worker failed'));
+            for (const slot of pending.values()) slot.reject(new Error('worker failed'));
             pending.clear();
         };
-        return worker;
     } catch {
         workerFailed = true;
-        return null;
+        worker = null;
     }
+    return worker;
 }
 
 export function runQuant(op, ...args) {
     const w = getWorker();
-    if (!w) {
-        // Synchronous fallback: safe for any QuantEngine op, but blocks main thread.
-        try {
-            const fn = QuantEngine[op];
-            if (typeof fn !== 'function') return Promise.reject(new Error(`Unknown op: ${op}`));
-            return Promise.resolve(fn.apply(QuantEngine, args));
-        } catch (e) {
-            return Promise.reject(e);
-        }
-    }
-    const id = nextId++;
+    if (!w) return new Promise(resolve => resolve(runOp(op, args)));   // blocks the main thread, but works everywhere
     return new Promise((resolve, reject) => {
+        const id = nextId++;
         pending.set(id, { resolve, reject });
         w.postMessage({ id, op, args });
     });
 }
 
-// Re-export sync access for trivially-cheap ops (no worker overhead worth it).
+// Cheap ops can be called directly, without the worker round trip.
 export { QuantEngine };

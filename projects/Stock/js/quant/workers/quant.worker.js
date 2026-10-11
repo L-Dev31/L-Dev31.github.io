@@ -1,17 +1,9 @@
-// Nemeris Quant Worker: runs heavy calculations off the main thread.
-// Loaded as ES module worker: new Worker(url, { type: 'module' }).
-import { QuantEngine } from '../quant-engine.js';
+// Runs the heavy QuantEngine ops off the main thread (module worker, started by quant-client.js).
+import { runOp } from '../quant-engine.js';
 
-self.onmessage = (e) => {
-    const { id, op, args } = e.data || {};
+self.onmessage = ({ data: { id, op, args } }) => {
     try {
-        const fn = QuantEngine[op];
-        if (typeof fn !== 'function') {
-            self.postMessage({ id, error: `Unknown op: ${op}` });
-            return;
-        }
-        const result = fn.apply(QuantEngine, args || []);
-        self.postMessage({ id, result });
+        self.postMessage({ id, result: runOp(op, args) });
     } catch (err) {
         self.postMessage({ id, error: err?.message || String(err) });
     }
