@@ -29,7 +29,7 @@
         font-size: 21px;
     }
     .container { margin-left: 0; padding: 20px 16px calc(96px + env(safe-area-inset-bottom, 0px)); }
-    .card.active { gap: 18px; }
+    .card.active { gap: 28px; }
     /* Home: the same card as the sidebar's. */
     /* Explorer and News share the Discover tab: the switch stands in for their titles. */
     :is(.explorer-card, .news-card) > .view-title { display: none; }

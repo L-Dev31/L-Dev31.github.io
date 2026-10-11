@@ -218,8 +218,9 @@ details.more > * + * + * { margin-top: 26px; }
 .for-you .i, .risk-tip .i, .app-notice .i { margin-top: 1px; color: var(--text-2); }
 .notice { display: grid; gap: 6px; }
 .notice-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.app-notice { align-items: center; max-width: var(--content-max); margin: 0 auto 22px; font-weight: 600; }
-.app-notice .btn { margin-left: auto; }
+.app-notice { align-items: center; max-width: var(--content-max); margin: 0 auto 28px; padding: 0; background: none; color: var(--muted); font-size: 13px; }
+/* A quiet line, not a block: the way to fix it is a plain link. */
+.app-notice .btn { padding: 0; background: none; color: var(--accent); font-size: 13px; font-weight: 600; }
 
 .term {
     padding: 0;

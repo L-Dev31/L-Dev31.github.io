@@ -326,14 +326,16 @@ input.terminal-input::placeholder { color: var(--term-dim); }
 
 /* Home: the coach. Three levels per card: the headline, one sentence, then the rest on demand. */
 .card.home-card.active { max-width: 720px; }
-.coach { display: grid; gap: 16px; }
+.coach { display: grid; gap: 24px; }
 .coach-hello { margin: 0; font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -.02em; color: var(--text); }
 .coach-status { margin: -8px 0 4px; color: var(--muted); }
-.coach-cards, .coach-hero { display: grid; gap: 12px; }
+.coach-cards, .coach-hero { display: grid; gap: 24px; }
 .coach-hero:empty { display: none; }
-.coach-card { display: grid; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
+.coach-card { --pad: 28px; display: grid; gap: 18px; padding: var(--pad); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
 .coach-card p { margin: 0; }
-.coach-head { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; align-items: start; }
+.coach-head { display: grid; }
+/* The kind's word already says what a card is about: no badge beside it. */
+.coach-icon { display: none; }
 .coach-text { display: grid; gap: 4px; }
 /* One color per kind of situation: fall red, rise green, risk amber, to set up blue, tip purple, calm grey. */
 .coach-card { --kind: var(--muted); --kind-soft: var(--surface-2); }
@@ -342,15 +344,12 @@ input.terminal-input::placeholder { color: var(--term-dim); }
 .is-warn { --kind: var(--warn); --kind-soft: var(--warn-soft); }
 .is-setup { --kind: var(--info); --kind-soft: var(--info-soft); }
 .is-tip { --kind: var(--accent); --kind-soft: var(--accent-soft); }
-.coach-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--r-circle); background: var(--kind-soft); color: var(--kind); font-size: 18px; }
-.is-up .coach-icon .i { transform: scaleY(-1); }
 .coach-kind { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--kind); }
-.coach-photo { position: relative; height: clamp(140px, 30vw, 220px); margin: -20px -20px 0; overflow: hidden; border-radius: calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px) 0 0; background: var(--surface-2); }
+.coach-photo { position: relative; height: clamp(140px, 30vw, 220px); margin: calc(-1 * var(--pad)) calc(-1 * var(--pad)) 0; overflow: hidden; border-radius: calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px) 0 0; background: var(--surface-2); }
 .coach-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .coach-photo-credit { position: absolute; right: 8px; bottom: 8px; max-width: calc(100% - 16px); overflow: hidden; padding: 2px 8px; border-radius: var(--r-pill); background: rgb(0 0 0 / .55); color: #fff; font-size: 11px; white-space: nowrap; text-overflow: ellipsis; text-decoration: none; }
 .coach-what { font-size: 19px; line-height: 1.3; color: var(--text); }
 .coach-lead { color: var(--text-2); }
-.coach-actions, .coach-more, .coach-lesson { margin-left: 50px; }
 .coach-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
 .coach-toggle .i { transition: transform .2s; }
 .coach-toggle[aria-expanded="true"] .i { transform: rotate(180deg); }
@@ -368,9 +367,7 @@ input.terminal-input::placeholder { color: var(--term-dim); }
 .coach-idea { font-size: 16px; font-weight: 600; color: var(--text); }
 
 @media (max-width: 640px) {
-    .coach-card { padding: 16px; }
-    .coach-actions, .coach-more, .coach-lesson { margin-left: 0; }
-    .coach-photo { margin: -16px -16px 0; }
+    .coach-card { --pad: 20px; }
     .coach-options li { flex-wrap: wrap; }
 }
 
@@ -481,14 +478,14 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
     /* What you know: closed, just the score in its ring, floating at the top right; open, a panel with a clear close button. */
     .panel.learn-grades { position: fixed; top: calc(12px + env(safe-area-inset-top, 0px)); right: 16px; z-index: 65; max-height: calc(100dvh - 160px); padding: 0; border: 0; background: none; box-shadow: none; }
     .panel.learn-grades > summary { margin: 0; }
-    .panel.learn-grades > summary > :not(.learn-ring, .learn-label, .learn-close) { display: none; }
-    .panel.learn-grades:not([open]) > summary > :is(.learn-label, .learn-close),
+    .panel.learn-grades > summary > :not(.learn-ring, .learn-label, .learn-average, .learn-close) { display: none; }
+    .panel.learn-grades:not([open]) > summary > :is(.learn-label, .learn-average, .learn-close),
     .panel.learn-grades[open] > summary > .learn-ring { display: none; }
     .panel.learn-grades[open] { width: min(340px, calc(100vw - 32px)); padding: 6px 8px 16px 18px; overflow-y: auto; border: 1px solid var(--line-2); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow); }
     .learn-ring { position: relative; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: conic-gradient(var(--world) var(--p), var(--surface-3) 0); box-shadow: var(--shadow); }
     .learn-ring::before { content: ''; position: absolute; inset: 5px; border-radius: 50%; background: var(--surface); }
     .learn-ring b { position: relative; font-size: 13px; font-variant-numeric: tabular-nums; }
-    .learn-close { display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; border-radius: 50%; background: var(--surface-2); color: var(--text); font-size: 20px; }
+    .learn-close { display: grid; place-items: center; width: 44px; height: 44px; margin-left: 4px; border-radius: 50%; background: var(--surface-2); color: var(--text); font-size: 20px; }
     .learn-splash { left: 0; }
     .learn-title { font-size: 30px; }
     .learn-node:nth-child(4n + 2) { translate: 56px; }

@@ -21,7 +21,7 @@
 
 .container { margin-left: var(--sidebar-w); padding: 32px 40px 96px; min-height: 100vh; }
 .card { display: none; }
-.card.active { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; max-width: var(--content-max); margin: 0 auto; }
+.card.active { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; max-width: var(--content-max); margin: 0 auto; }
 .card-tab-pane { display: none; }
 .card-tab-pane.active { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; }
 /* Bento rows: flex-wrap, so the items of a shorter last row stretch to fill it instead of leaving a hole. */
