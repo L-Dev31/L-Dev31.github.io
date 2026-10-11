@@ -2,12 +2,19 @@
 // (learn: none, practice: a second try, apply: one try), with a mid boss and a final boss per world.
 // Content: json/academy.json. Progress and grades stay in this browser.
 import { LANG } from '../i18n/i18n.js';
+import { TERMS } from '../coach/terms.js';
 
 const KEY = 'nemeris_academy';
 const PHASES = ['learn', 'practice', 'apply'];
 
 let data = { skills: {}, worlds: [] };
-export const academyReady = fetch('json/academy.json').then(r => r.json()).then(d => { data = d; }).catch(() => {});
+// The file's own glossary joins the app's words, so tapping a word of a lesson explains it (the app's own words win a clash).
+export const academyReady = fetch('json/academy.json').then(r => r.json()).then(d => {
+    data = d;
+    for (const [key, w] of Object.entries(d.terms || {})) {
+        TERMS[key] ||= { title: t(w.title), short: t(w.short), more: (w.more || []).map(t), example: t(w.example), related: w.related || [], lesson: w.lesson };
+    }
+}).catch(() => {});
 
 // done: level id → hearts left on its best run; score: question id → 1 (right first time), .5 (second try) or 0.
 let saved = {};
