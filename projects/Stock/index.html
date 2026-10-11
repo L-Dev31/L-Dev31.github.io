@@ -86,7 +86,7 @@
             <button class="me" id="me-card" type="button" aria-label="Open your portfolio">
                 <img src="img/icon/favicon.png" alt="" class="me-photo profile-photo" id="profile-pfp">
                 <span class="me-text">
-                    <span class="me-name" id="profile-name">Nemeris user</span>
+                    <span class="me-name profile-name" id="profile-name">Nemeris user</span>
                     <span class="me-worth" id="me-worth">--</span>
                     <span class="me-gain" id="me-gain"></span>
                 </span>
@@ -127,13 +127,15 @@
             <section class="card home-card active" id="card-home" aria-labelledby="home-title">
                 <h1 class="sr-only" id="home-title">Home</h1>
                 <div class="home-top">
-                    <button class="home-summary" id="home-summary" type="button">
-                        <span class="kpi-label">Your portfolio</span>
-                        <span class="home-worth" id="home-worth">--</span>
-                        <span class="home-gain" id="home-gain"></span>
-                        <i class="i i-chevron-right" aria-hidden="true"></i>
+                    <button class="me" id="home-summary" type="button" data-go="portfolio" aria-label="Open your portfolio">
+                        <img src="img/icon/favicon.png" alt="" class="me-photo profile-photo">
+                        <span class="me-text">
+                            <span class="me-name profile-name">Nemeris user</span>
+                            <span class="me-worth" id="home-worth">--</span>
+                            <span class="me-gain" id="home-gain"></span>
+                        </span>
                     </button>
-                    <button class="home-avatar" type="button" data-go="settings" aria-label="Settings"><img src="img/icon/favicon.png" alt="" class="nav-photo profile-photo"></button>
+                    <button class="icon-btn home-settings" type="button" data-go="settings" aria-label="Settings"><i class="i i-settings" aria-hidden="true"></i></button>
                 </div>
                 <section class="coach" id="coach" aria-label="What Nemeris sees"></section>
                 <noscript><p class="noscript">JavaScript is required to use Nemeris.</p></noscript>

@@ -46,7 +46,6 @@ document.addEventListener('keydown', e => {
 });
 
 getEl('me-card')?.addEventListener('click', () => go('portfolio'));
-getEl('home-summary')?.addEventListener('click', () => go('portfolio'));
 
 document.querySelector('.portfolio-switch')?.addEventListener('click', e => {
     const pill = e.target.closest('.pill');
@@ -233,8 +232,7 @@ function flashSaved() {
 }
 
 function applyProfile(s = getUserSettings()) {
-    const n = getEl('profile-name');
-    if (n) n.textContent = s.name && s.name !== 'Nemeris User' ? s.name : L('Nemeris user');
+    for (const n of document.querySelectorAll('.profile-name')) n.textContent = s.name && s.name !== 'Nemeris User' ? s.name : L('Nemeris user');
     for (const img of document.querySelectorAll('.profile-photo')) img.src = s.pfp || 'img/icon/favicon.png';
 }
 

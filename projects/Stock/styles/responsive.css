@@ -30,12 +30,10 @@
     }
     .container { margin-left: 0; padding: 20px 16px calc(96px + env(safe-area-inset-bottom, 0px)); }
     .card.active { gap: 18px; }
-    /* Home: the worth in one line, the avatar opens Settings. */
+    /* Home: the same card as the sidebar's, and a way to Settings beside it. */
     .home-top { display: flex; align-items: center; gap: 12px; }
-    .home-top .home-summary { flex: 1; padding: 10px 16px; }
-    .home-top .home-worth { font-size: 22px; }
-    .home-avatar { flex: none; padding: 0; border: 0; border-radius: var(--r-circle); background: none; }
-    .home-avatar .nav-photo { width: 44px; height: 44px; }
+    .home-top .me { flex: 1; min-width: 0; }
+    .home-settings { flex: none; width: 48px; height: 48px; }
     /* Explorer and News share the Discover tab: the switch stands in for their titles. */
     :is(.explorer-card, .news-card) > .view-title { display: none; }
     .discover-switch, .portfolio-switch { justify-self: start; }

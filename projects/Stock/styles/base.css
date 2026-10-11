@@ -147,7 +147,7 @@ p.muted, .empty, .vd-summary, .vd-reasons, .aio-thesis, .aio-col, .aio-inval, .o
     line-height: 1.6;
 }
 /* Big numbers and headings in the brand face; everything else in Inter. */
-.kpi-value, .home-worth, .me-worth, .tk-price, .scenario-value, .coach-hello, .sheet-title, .aio-stance, .aio-pct, .vd-signal, .rng-labels, .risk-level strong { font-family: var(--font); }
+.kpi-value, .me-worth, .tk-price, .scenario-value, .coach-hello, .sheet-title, .aio-stance, .aio-pct, .vd-signal, .rng-labels, .risk-level strong { font-family: var(--font); }
 .noscript { padding: 20px; }
 
 .i {

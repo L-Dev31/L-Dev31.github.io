@@ -96,8 +96,8 @@ export function updatePortfolioSummary() {
         setText(w, held ? formatCurrency(worth, cur) : L('No stocks yet'));
         const gEl = getEl(g);
         if (!gEl) continue;
-        gEl.textContent = held ? `${formatPct(pct)} ${w === 'me-worth' ? L('overall') : L('since you started')}` : L('Add your first trade on a stock page');
-        gEl.className = gEl.id.startsWith('me') ? `me-gain ${held ? tone : ''}` : `home-gain ${held ? tone : ''}`;
+        gEl.textContent = held ? `${formatPct(pct)} ${L('overall')}` : L('Add your first trade on a stock page');
+        gEl.className = `me-gain ${held ? tone : ''}`;
         gEl.title = held ? L('{0}{1} on {2} put in', gain >= 0 ? '+' : '', formatCurrency(gain, cur), formatCurrency(cost, cur)) : '';
     }
     updatePortfolioComposition();
