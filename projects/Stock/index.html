@@ -396,6 +396,22 @@
             </div>
 
             <div class="card-tab-pane active" data-pane="settings-profile" role="tabpanel">
+                <section class="panel" aria-labelledby="you-title">
+                    <h2 class="panel-title" id="you-title">You</h2>
+                    <div class="me-edit">
+                        <label for="settings-user-pfp-file" class="pfp-upload">
+                            <img id="settings-pfp-preview" src="img/icon/favicon.png" alt="">
+                            <span class="pfp-badge"><i class="i i-camera" aria-hidden="true"></i></span>
+                            <span class="sr-only">Change your picture</span>
+                        </label>
+                        <input id="settings-user-pfp-file" class="sr-only" type="file" accept="image/*">
+                        <label class="field">
+                            <span>Your name</span>
+                            <input id="settings-user-name" type="text" autocomplete="given-name" placeholder="Your name">
+                        </label>
+                    </div>
+                </section>
+
                 <section class="panel investor-form" id="about-you" aria-labelledby="about-title">
                     <div class="panel-head">
                         <h2 class="panel-title" id="about-title">About you</h2>
@@ -485,22 +501,6 @@
                         <span>Anything else Nemeris should know?</span>
                         <textarea id="inv-notes" rows="3" placeholder="For example: I use a PEA, so European stocks only. No tobacco."></textarea>
                     </label>
-                </section>
-
-                <section class="panel" aria-labelledby="you-title">
-                    <h2 class="panel-title" id="you-title">You</h2>
-                    <div class="me-edit">
-                        <label for="settings-user-pfp-file" class="pfp-upload">
-                            <img id="settings-pfp-preview" src="img/icon/favicon.png" alt="">
-                            <span class="pfp-badge"><i class="i i-camera" aria-hidden="true"></i></span>
-                            <span class="sr-only">Change your picture</span>
-                        </label>
-                        <input id="settings-user-pfp-file" class="sr-only" type="file" accept="image/*">
-                        <label class="field">
-                            <span>Your name</span>
-                            <input id="settings-user-name" type="text" autocomplete="given-name" placeholder="Your name">
-                        </label>
-                    </div>
                 </section>
 
                 <section class="panel country-panel" aria-labelledby="country-title">
