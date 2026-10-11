@@ -450,6 +450,11 @@ details.more > * + * + * { margin-top: 26px; }
 .quiz-option.right { border-color: var(--pos); background: var(--pos-soft); color: var(--text); opacity: 1; }
 .quiz-option.wrong { border-color: var(--neg); background: var(--neg-soft); opacity: 1; }
 .quiz-why { margin: 0; }
+.quiz-number { display: flex; align-items: center; gap: 10px; }
+.quiz-number .quiz-input { flex: 1; min-width: 0; font-size: 18px; font-variant-numeric: tabular-nums; }
+.quiz-unit { color: var(--muted); font-weight: 600; }
+.quiz-number.right .quiz-input { border-color: var(--pos); background: var(--pos-soft); }
+.quiz-number.wrong .quiz-input { border-color: var(--neg); background: var(--neg-soft); }
 
 /* The explainer: any underlined word, explained in full. */
 .explain .sheet-title { flex: 1; }

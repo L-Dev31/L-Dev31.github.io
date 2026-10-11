@@ -1540,4 +1540,9 @@ export default {
     "Continue the questionnaire": "Reprendre le questionnaire",
     "Start the questionnaire": "Lancer le questionnaire",
     "Statistics": "Statistiques",
+    "Your answer": "Ta réponse",
+    "Check": "Vérifier",
+    "Type a number.": "Tape un nombre.",
+    "Not quite. Check your steps and try again.": "Pas tout à fait. Revois tes étapes et réessaie.",
+    "Not this time. The answer is {0}.": "Pas cette fois. La réponse est {0}.",
 };

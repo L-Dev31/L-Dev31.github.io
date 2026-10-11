@@ -1,6 +1,6 @@
 // The Academy page: a world's path of levels, and the player that runs one level a step at a time.
 import { el, icon, showCard, floating, progressBar } from '../core/utils.js';
-import { L, LOCALE } from '../i18n/i18n.js';
+import { L, LOCALE, LANG } from '../i18n/i18n.js';
 import { button, iconButton, richText, para, photoFigure } from '../coach/explain.js';
 import { academyReady, worlds, worldOf, levelById, levelAfter, isOpen, isDone, stars, nextLevel, stepsOf, record, finish, grades, t } from './academy.js';
 
@@ -260,7 +260,57 @@ const shuffle = list => list.map(x => [Math.random(), x]).sort((a, b) => a[0] - 
  * A question: options in a new order each time. While tries remain a wrong pick is greyed out (onMiss);
  * the end calls onDone(score): 1 right at once, .5 right on a second try, 0 missed.
  */
+/** The number a person typed, in either language's habits ("1 157,63", "1,157.63", "12 %"), or null. */
+function readNumber(raw) {
+    let s = String(raw).replace(/[\s\u00a0\u202f%€$£]/g, '').replace('−', '-');
+    const comma = s.lastIndexOf(','), dot = s.lastIndexOf('.');
+    if (comma >= 0 && dot >= 0) s = comma > dot ? s.replaceAll('.', '').replace(',', '.') : s.replaceAll(',', '');
+    else if (comma >= 0) s = (LANG === 'fr' || /^-?\d+,\d{1,2}$/.test(s)) && s.split(',').length === 2 ? s.replace(',', '.') : s.replaceAll(',', '');
+    return /^-?\d+(\.\d+)?$/.test(s) ? Number(s) : null;
+}
+
+/** A question answered with a number: typed, because recalling beats recognising. Same scoring as the choices. */
+function numberBox(q, { tries, onMiss, onDone }) {
+    const box = el('div', 'quiz');
+    const field = el('input', 'quiz-input');
+    field.type = 'text';
+    field.inputMode = 'decimal';
+    field.autocomplete = 'off';
+    field.setAttribute('aria-label', L('Your answer'));
+    const unit = q.unit ? el('span', 'quiz-unit', q.unit) : null;
+    const check = button('btn', L('Check'));
+    const row = el('div', 'quiz-number');
+    row.append(field, ...(unit ? [unit] : []), check);
+    const why = el('p', 'quiz-why');
+    why.hidden = true;
+    const tol = q.tol ?? Math.max(0.005, Math.abs(q.answer) * 0.005);
+    const shown = `${q.answer.toLocaleString(LOCALE, { maximumFractionDigits: 6 })}${q.unit ? ` ${q.unit}` : ''}`;
+    const limit = Math.min(tries, 3);
+    let missed = 0;
+    const submit = () => {
+        const value = readNumber(field.value);
+        if (value === null) { why.hidden = false; why.replaceChildren(el('strong', null, L('Type a number.'))); return; }
+        const right = Math.abs(value - q.answer) <= tol;
+        why.hidden = false;
+        if (!right && ++missed < limit) {
+            why.replaceChildren(el('strong', null, L('Not quite. Check your steps and try again.')), ...(q.hint ? [' ', richText(t(q.hint))] : []));
+            field.select();
+            onMiss?.();
+            return;
+        }
+        field.disabled = check.disabled = true;
+        row.classList.add(right ? 'right' : 'wrong');
+        why.replaceChildren(el('strong', null, right ? L('Right!') : L('Not this time. The answer is {0}.', shown)), ' ', richText(t(q.why)));
+        onDone(right ? (missed ? 0.5 : 1) : 0);
+    };
+    check.addEventListener('click', submit);
+    field.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+    box.append(row, why);
+    return box;
+}
+
 function questionBox(q, { tries = 1, onMiss, onDone }) {
+    if (q.type === 'number') return numberBox(q, { tries, onMiss, onDone });
     const box = el('div', 'quiz');
     const options = el('div', 'quiz-options');
     const why = el('p', 'quiz-why');
