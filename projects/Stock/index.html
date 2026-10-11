@@ -225,8 +225,12 @@
             </section>
         </div>
 
-        <section class="card portfolio-card" id="card-portfolio" aria-labelledby="portfolio-title" aria-hidden="true">
+        <section class="card portfolio-card" id="card-portfolio" data-mobile="stocks" aria-labelledby="portfolio-title" aria-hidden="true">
             <h1 class="view-title" id="portfolio-title">Portfolio</h1>
+            <div class="pills portfolio-switch" role="group" aria-label="Portfolio">
+                <button type="button" class="pill active" data-mobile="stocks">My stocks</button>
+                <button type="button" class="pill" data-mobile="stats">Statistics</button>
+            </div>
             <section class="list-section" id="mobile-sidebar-portfolio" aria-labelledby="mlist-title-portfolio">
                 <h2 class="list-title"><button class="list-toggle" id="mlist-title-portfolio" aria-expanded="true" aria-controls="mobile-portfolio-tabs">My stocks<i class="i i-expand" aria-hidden="true"></i></button></h2>
                 <div class="tabs" id="mobile-portfolio-tabs"></div>

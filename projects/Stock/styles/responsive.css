@@ -2,7 +2,7 @@
 
 @media (min-width: 900px) {
     /* The sidebar already holds these: the worth, the lists, every view one click away, the legal links. */
-    .home-top, .portfolio-card > .list-section, .discover-switch, .settings-footer { display: none; }
+    .home-top, .portfolio-card > .list-section, .discover-switch, .portfolio-switch, .settings-footer { display: none; }
 }
 
 @media (min-width: 1280px) {
@@ -38,8 +38,12 @@
     .home-avatar .nav-photo { width: 44px; height: 44px; }
     /* Explorer and News share the Discover tab: the switch stands in for their titles. */
     :is(.explorer-card, .news-card) > .view-title { display: none; }
-    .discover-switch { justify-self: start; }
-    .discover-switch .pill { padding: 8px 18px; font-size: 15px; }
+    .discover-switch, .portfolio-switch { justify-self: start; }
+    .discover-switch .pill, .portfolio-switch .pill { padding: 8px 18px; font-size: 15px; }
+    /* Portfolio: the lists and the statistics take turns, the switch stands in for the title. */
+    .portfolio-card > .view-title { display: none; }
+    .portfolio-card[data-mobile="stocks"] > :is(.card-tabs-nav, .card-tab-pane),
+    .portfolio-card[data-mobile="stats"] > .list-section { display: none; }
     .bottom-nav {
         position: fixed;
         inset: auto 0 0;

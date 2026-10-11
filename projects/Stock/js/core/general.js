@@ -48,6 +48,13 @@ document.addEventListener('keydown', e => {
 getEl('me-card')?.addEventListener('click', () => go('portfolio'));
 getEl('home-summary')?.addEventListener('click', () => go('portfolio'));
 
+document.querySelector('.portfolio-switch')?.addEventListener('click', e => {
+    const pill = e.target.closest('.pill');
+    if (!pill) return;
+    getEl('card-portfolio').dataset.mobile = pill.dataset.mobile;
+    for (const p of pill.parentElement.children) p.classList.toggle('active', p === pill);
+});
+
 function toggleList(btn, force) {
     const open = force ?? btn.getAttribute('aria-expanded') !== 'true';
     btn.setAttribute('aria-expanded', String(open));

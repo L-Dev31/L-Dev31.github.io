@@ -1542,4 +1542,5 @@ export default {
     "Change my answers": "Modifier mes réponses",
     "Continue the questionnaire": "Reprendre le questionnaire",
     "Start the questionnaire": "Lancer le questionnaire",
+    "Statistics": "Statistiques",
 };
