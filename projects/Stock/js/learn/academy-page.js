@@ -54,7 +54,7 @@ function rich(text) {
     return out;
 }
 
-const LETTER_MS = 30;
+const LETTER_MS = 48;
 const START_MS = 350;
 
 /** Wraps every letter in a span that appears after the one before: Nemeris types, at a pace that can be read. Returns the letter count. */
@@ -159,7 +159,7 @@ function node(level, next) {
     b.type = 'button';
     b.disabled = !open;
     const dot = el('span', 'learn-dot');
-    dot.append(icon(level.boss === 'final' ? 'crown' : level.boss ? 'tower' : 'arrow'));
+    dot.append(icon(level.boss === 'final' ? 'crown' : level.boss ? 'tower' : 'play'));
     const name = el('span', 'learn-name', t(level.title));
     b.append(dot, name);
     if (isDone(level.id)) b.append(starRow(stars(level.id)));
@@ -177,7 +177,7 @@ function renderMap(w) {
     pick.setAttribute('aria-label', L('World'));
     for (const x of worlds()) {
         const open = isOpen(x.levels[0].id);
-        const o = new Option(open ? t(x.name) : `${t(x.name)} · ${L('locked')}`, x.id);
+        const o = new Option(open ? t(x.name) : L('Locked'), x.id);
         o.disabled = !open;
         pick.append(o);
     }
@@ -241,23 +241,33 @@ export function questionBox(q, { tries = 1, onMiss, onDone }) {
     return box;
 }
 
-/** The start of a level, over the main area: "Level 3 · World 1" fades in, then the level's name rises word by word. */
-function splash(level) {
+/** A title screen over the main area: a small line fades in, then the title rises word by word. Resolves once it is gone. */
+function splash(kind, text) {
     const box = el('div', 'learn-splash');
-    const number = worlds().indexOf(world) + 1;
-    const words = t(level.title).split(' ');
+    const words = text.split(' ');
     const title = el('h1');
     words.forEach((word, i) => {
         const span = el('span', null, word);
         span.style.setProperty('--i', i);
         title.append(span, ' ');
     });
-    box.append(el('p', 'learn-splash-kind', level.boss ? L('Boss · World {0}', number) : L('Level {0} · World {1}', levelNumber(level), number)), title);
-    const end = () => { box.classList.add('is-out'); setTimeout(() => box.remove(), 400); };
-    box.addEventListener('click', end);
-    setTimeout(end, 1300 + words.length * 180 + 1200);
-    // The whole main area turns violet; the sidebar and the bottom bar are never touched.
+    box.append(el('p', 'learn-splash-kind', kind), title);
+    // The whole main area takes the world's colour; the sidebar and the bottom bar are never touched.
     document.querySelector('main.container').append(box);
+    return new Promise(done => {
+        const end = () => {
+            if (box.classList.contains('is-out')) return;
+            box.classList.add('is-out');
+            setTimeout(() => { box.remove(); done(); }, 400);
+        };
+        box.addEventListener('click', end);
+        setTimeout(end, 1300 + words.length * 180 + 1200);
+    });
+}
+
+function levelSplash(level) {
+    const number = worlds().indexOf(world) + 1;
+    return splash(level.boss ? L('Boss · World {0}', number) : L('Level {0} · World {1}', levelNumber(level), number), t(level.title));
 }
 
 /** The end of a level: its result big in the middle, Nemeris under it (jumping for joy on a perfect run), then the stars. */
@@ -322,7 +332,6 @@ function play(level) {
     player.append(top, phase, stage, nav);
     card.dataset.view = 'play';
     card.replaceChildren(player);
-    splash(level);
 
     const drawHearts = () => lives.replaceChildren(...lit('heart', hearts).children);
     const move = (text, after = 0) => { next.hidden = false; next.textContent = text; later(next, after); };
@@ -370,6 +379,12 @@ function play(level) {
             if (hearts) finish(level.id, hearts);
             return result(level, { won: hearts > 0, hearts, best });
         }
+        // The one-try questions get their own title screen, so nobody walks into them unaware.
+        if (dir > 0 && steps[to].phase === 'apply' && steps[at].phase !== 'apply') {
+            out.cancel();
+            stage.replaceChildren();
+            await splash(L('Apply · one try per question'), L('No room for mistakes'));
+        }
         at = to;
         draw();
         out.cancel();
@@ -380,7 +395,8 @@ function play(level) {
     next.addEventListener('click', () => go(at + 1, 1));
     back.addEventListener('click', () => go(at - 1, -1));
     drawHearts();
-    draw();
+    // The first step starts once the title screen is gone, so the teacher's words are not typed behind it.
+    levelSplash(level).then(draw);
 }
 
 /** Opens the Academy: on a level when it is open, else on the map of its world. */

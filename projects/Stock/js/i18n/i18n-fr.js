@@ -1437,7 +1437,7 @@ export default {
     "Every word explained": "Tous les mots expliqués",
     "Each bar is the share of all the Academy's questions on that topic you got right on your last try.": "Chaque barre montre la part des questions de l'Académie sur ce thème que tu as réussies à ton dernier essai.",
     "World": "Monde",
-    "locked": "verrouillé",
+    "Locked": "Verrouillé",
     "You finished this world. Replay any level whenever you like.": "Tu as terminé ce monde. Rejoue n'importe quel niveau quand tu veux.",
     "Next: {0}. Ready when you are.": "Prochaine étape : {0}. Quand tu es prêt.",
     "Not quite. Try another one.": "Pas tout à fait. Essaie une autre réponse.",
@@ -1535,5 +1535,7 @@ export default {
     "This world opens when you finish the one before it.": "Ce monde s'ouvre quand tu termines celui d'avant.",
     "Previous step": "Étape précédente",
     "Level {0} · World {1}": "Niveau {0} · Monde {1}",
-    "Boss · World {0}": "Boss · Monde {0}"
+    "Boss · World {0}": "Boss · Monde {0}",
+    "Apply · one try per question": "Application · un seul essai par question",
+    "No room for mistakes": "Pas le droit à l'erreur",
 };
