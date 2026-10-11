@@ -9,6 +9,7 @@ import '../ui/bank-picker.js';
 import { initCoach } from '../coach/coach.js';
 import { incomeBands, loadMedian } from '../data/income.js';
 import { openAcademy } from '../learn/academy-page.js';
+import { mountSurvey } from '../learn/survey.js';
 import { DEAD_ERROR_CODES, periodToDays, periodPhrase } from './constants.js';
 import { positions, selectedApi, setSelectedApi, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings, getCurrency, currencyCode, monthlyAmount, comfortLevel, COMFORT_WORD, isExpert } from './state.js';
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching, openPortfolio } from '../ui/portfolio.js';
@@ -29,7 +30,6 @@ const VIEWS = {
     news: () => openNewsPage(),
     terminal: () => openTerminalCard(),
     settings: () => { showCard('card-settings'); fillSettings(); },
-    profile: () => showCard('card-profile'),
 };
 export const go = view => VIEWS[view]?.();
 
@@ -47,10 +47,6 @@ document.addEventListener('keydown', e => {
 
 getEl('me-card')?.addEventListener('click', () => go('portfolio'));
 getEl('home-summary')?.addEventListener('click', () => go('portfolio'));
-getEl('bottom-nav-home')?.addEventListener('click', () => go('home'));
-getEl('bottom-nav-explorer')?.addEventListener('click', () => go('explorer'));
-getEl('bottom-nav-news')?.addEventListener('click', () => go('news'));
-getEl('bottom-nav-profile')?.addEventListener('click', () => go('profile'));
 
 function toggleList(btn, force) {
     const open = force ?? btn.getAttribute('aria-expanded') !== 'true';
@@ -63,7 +59,8 @@ for (const btn of document.querySelectorAll('.list-toggle')) {
 }
 
 const NAV_FOR_CARD = { 'card-home': 'home', 'card-learn': 'learn', 'card-portfolio': 'portfolio', 'card-explorer': 'explorer', 'card-news': 'news', 'card-terminal': 'terminal', 'card-settings': 'settings' };
-const BOTTOM_FOR_CARD = { 'card-learn': 'bottom-nav-learn', 'card-explorer': 'bottom-nav-explorer', 'card-news': 'bottom-nav-news', 'card-profile': 'bottom-nav-profile', 'card-settings': 'bottom-nav-profile', 'card-portfolio': 'bottom-nav-home' };
+// On phones Explorer and News share one tab, Discover; a stock opens from the lists of the Portfolio tab.
+const BOTTOM_FOR_CARD = { 'card-learn': 'bottom-nav-learn', 'card-explorer': 'bottom-nav-explorer', 'card-news': 'bottom-nav-explorer', 'card-portfolio': 'bottom-nav-portfolio', 'card-terminal': 'bottom-nav-terminal' };
 
 function syncCard(card) {
     const active = card.classList.contains('active');
@@ -72,7 +69,7 @@ function syncCard(card) {
     if (!active) return;
     const view = NAV_FOR_CARD[card.id];
     for (const b of document.querySelectorAll('.nav-btn')) b.classList.toggle('active', b.dataset.go === view);
-    const bottom = BOTTOM_FOR_CARD[card.id] || 'bottom-nav-home';
+    const bottom = BOTTOM_FOR_CARD[card.id] || (card.classList.contains('ticker-card') ? 'bottom-nav-portfolio' : 'bottom-nav-home');
     for (const b of document.querySelectorAll('.bottom-nav-btn')) b.classList.toggle('active', b.id === bottom);
     if (card.classList.contains('ticker-card')) {
         syncPeriodPills();
@@ -229,7 +226,8 @@ function flashSaved() {
 }
 
 function applyProfile(s = getUserSettings()) {
-    for (const n of [getEl('profile-name'), getEl('mobile-profile-name')]) if (n) n.textContent = s.name && s.name !== 'Nemeris User' ? s.name : L('Nemeris user');
+    const n = getEl('profile-name');
+    if (n) n.textContent = s.name && s.name !== 'Nemeris User' ? s.name : L('Nemeris user');
     for (const img of document.querySelectorAll('.profile-photo')) img.src = s.pfp || 'img/icon/favicon.png';
 }
 
@@ -248,6 +246,9 @@ function renderComfort(inv) {
     out.innerHTML = `<button type="button" class="term" data-term="comfort">${L('Comfort with risk')}</button>: <b>${level}/7</b>, ${COMFORT_WORD[level].toLowerCase()}`;
 }
 
+// "About you" is asked by Nemeris, a question at a time; the form behind it keeps the answers.
+const restartSurvey = getEl('about-you') ? mountSurvey(getEl('about-you')) : () => {};
+
 function fillSettings() {
     const s = getUserSettings();
     getEl('settings-user-name').value = s.name === 'Nemeris User' ? '' : s.name || '';
@@ -265,6 +266,7 @@ function fillSettings() {
     getEl('inv-notes').value = inv.notes || '';
     renderComfort(inv);
     renderIncomeBands();
+    restartSurvey();
 }
 
 /** Income brackets follow the country's typical income and the user's currency. */

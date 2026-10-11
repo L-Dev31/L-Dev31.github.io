@@ -1,6 +1,7 @@
 // Home: the coach. It reads the portfolio as prices arrive, says what deserves attention in plain words,
 // offers the options (doing nothing included) and the idea behind each situation, taught in the Academy.
-// A question missed in the Academy comes back for a quick check, and the Academy card always closes the page.
+// One thing at a time: the page opens on a single card, the most pressing situation or else the next lesson;
+// everything else waits, folded, under it. A question missed in the Academy comes back there for a quick check.
 import { el, icon } from '../core/utils.js';
 import { getUserSettings, globalPeriod } from '../core/state.js';
 import { periodPhrase, debounce } from '../core/constants.js';
@@ -207,6 +208,9 @@ function statusLine(situations) {
     line.textContent = parts.join(' ');
 }
 
+// What is worth acting on now; anything below can wait in the fold.
+const pressing = s => s && (s.id === 'start' || (s.priority >= 40 && s.tone !== 'calm'));
+
 function render() {
     if (!host) return;
     host.querySelector('.coach-hello').textContent = greeting();
@@ -214,15 +218,14 @@ function render() {
     statusLine(situations);
 
     // Cards already on screen keep their lesson and quiz; only their figures are refreshed.
-    const list = host.querySelector('.coach-cards');
     const keep = new Set(situations.map(s => s.id));
     for (const [id, card] of cards) if (!keep.has(id)) { card.remove(); cards.delete(id); }
-    for (const s of situations) {
+    const shown = situations.map(s => {
         let card = cards.get(s.id);
         if (!card) { card = buildCard(s); cards.set(s.id, card); }
         fillFacts(card, s);
-        list.append(card);
-    }
+        return card;
+    });
 
     const missed = !reviewShown && missedQuestion();
     if (missed) {
@@ -230,6 +233,16 @@ function render() {
         host.querySelector('.coach-review').append(reviewCard(missed));
     }
     renderLearn();
+    // The one card: a pressing situation, else the next lesson, else whatever comes first.
+    const lesson = host.querySelector('.coach-learn');
+    const review = host.querySelector('.coach-review');
+    const hero = pressing(situations[0]) || lesson.hidden ? shown.shift() : lesson;
+    host.querySelector('.coach-hero').replaceChildren(...(hero ? [hero] : []));
+    const rest = host.querySelector('.coach-rest');
+    rest.querySelector('.coach-cards').replaceChildren(...shown, ...(hero === lesson || lesson.hidden ? [] : [lesson]));
+    const count = shown.length + (hero !== lesson && !lesson.hidden) + (review.childElementCount ? 1 : 0);
+    rest.hidden = !count;
+    rest.querySelector('summary span').textContent = Ln(count, 'One more thing', '{0} more things');
     syncAiGates(host);
 }
 
@@ -245,7 +258,12 @@ export function initCoach({ go, openSymbol }) {
     nav = { go, openSymbol };
     const hello = el('p', 'coach-hello');
     const status = el('p', 'coach-status');
-    host.replaceChildren(hello, status, el('div', 'coach-cards'), el('div', 'coach-review'), learnCard());
+    const rest = el('details', 'coach-rest');
+    const summary = el('summary');
+    summary.append(el('span'), icon('expand'));
+    rest.append(summary, el('div', 'coach-cards'), el('div', 'coach-review'));
+    host.replaceChildren(hello, status, el('div', 'coach-hero'), rest);
+    host.querySelector('.coach-hero').append(learnCard());
     render();
     academyReady.then(refresh);
     for (const type of ['nemeris:portfolio', 'nemeris:settings', 'nemeris:academy']) window.addEventListener(type, refresh);

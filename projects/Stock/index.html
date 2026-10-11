@@ -126,21 +126,16 @@
         <div id="cards-container">
             <section class="card home-card active" id="card-home" aria-labelledby="home-title">
                 <h1 class="sr-only" id="home-title">Home</h1>
-                <button class="home-summary" id="home-summary" type="button">
-                    <span class="kpi-label">Your portfolio</span>
-                    <span class="home-worth" id="home-worth">--</span>
-                    <span class="home-gain" id="home-gain"></span>
-                    <i class="i i-chevron-right" aria-hidden="true"></i>
-                </button>
+                <div class="home-top">
+                    <button class="home-summary" id="home-summary" type="button">
+                        <span class="kpi-label">Your portfolio</span>
+                        <span class="home-worth" id="home-worth">--</span>
+                        <span class="home-gain" id="home-gain"></span>
+                        <i class="i i-chevron-right" aria-hidden="true"></i>
+                    </button>
+                    <button class="home-avatar" type="button" data-go="settings" aria-label="Settings"><img src="img/icon/favicon.png" alt="" class="nav-photo profile-photo"></button>
+                </div>
                 <section class="coach" id="coach" aria-label="What Nemeris sees"></section>
-                <section class="list-section" id="mobile-sidebar-portfolio" aria-labelledby="mlist-title-portfolio">
-                    <h2 class="list-title"><button class="list-toggle" id="mlist-title-portfolio" aria-expanded="true" aria-controls="mobile-portfolio-tabs">My stocks<i class="i i-expand" aria-hidden="true"></i></button></h2>
-                    <div class="tabs" id="mobile-portfolio-tabs"></div>
-                </section>
-                <section class="list-section" id="mobile-sidebar-market" aria-labelledby="mlist-title-market">
-                    <h2 class="list-title"><button class="list-toggle" id="mlist-title-market" aria-expanded="true" aria-controls="mobile-general-tabs">Watchlist<i class="i i-expand" aria-hidden="true"></i></button></h2>
-                    <div class="tabs" id="mobile-general-tabs"></div>
-                </section>
                 <noscript><p class="noscript">JavaScript is required to use Nemeris.</p></noscript>
             </section>
 
@@ -158,6 +153,10 @@
 
             <section class="card news-card" id="card-news" aria-labelledby="news-title" aria-hidden="true">
                 <h1 class="view-title" id="news-title">News</h1>
+                <div class="pills discover-switch" role="group" aria-label="Discover">
+                    <button type="button" data-go="explorer" class="pill">Markets</button>
+                    <button type="button" data-go="news" class="pill active">News</button>
+                </div>
                 <div class="news-bar">
                     <div class="chips news-chips" id="news-chips" role="group" aria-label="Show news about"></div>
                     <label class="searchbar">
@@ -170,6 +169,10 @@
 
             <section class="card explorer-card" id="card-explorer" aria-labelledby="explorer-title" aria-hidden="true">
                 <h1 class="view-title" id="explorer-title">Explorer</h1>
+                <div class="pills discover-switch" role="group" aria-label="Discover">
+                    <button type="button" data-go="explorer" class="pill active">Markets</button>
+                    <button type="button" data-go="news" class="pill">News</button>
+                </div>
                 <div class="explorer-filters">
                     <label class="field">
                         <span>Market</span>
@@ -224,6 +227,14 @@
 
         <section class="card portfolio-card" id="card-portfolio" aria-labelledby="portfolio-title" aria-hidden="true">
             <h1 class="view-title" id="portfolio-title">Portfolio</h1>
+            <section class="list-section" id="mobile-sidebar-portfolio" aria-labelledby="mlist-title-portfolio">
+                <h2 class="list-title"><button class="list-toggle" id="mlist-title-portfolio" aria-expanded="true" aria-controls="mobile-portfolio-tabs">My stocks<i class="i i-expand" aria-hidden="true"></i></button></h2>
+                <div class="tabs" id="mobile-portfolio-tabs"></div>
+            </section>
+            <section class="list-section" id="mobile-sidebar-market" aria-labelledby="mlist-title-market">
+                <h2 class="list-title"><button class="list-toggle" id="mlist-title-market" aria-expanded="true" aria-controls="mobile-general-tabs">Watchlist<i class="i i-expand" aria-hidden="true"></i></button></h2>
+                <div class="tabs" id="mobile-general-tabs"></div>
+            </section>
             <div class="card-tabs-nav" role="tablist" aria-label="Portfolio sections">
                 <button class="card-tab-btn active" data-target="portfolio-performance" role="tab" id="tab-portfolio-performance" aria-controls="pane-portfolio-performance" aria-selected="true">Overview</button>
                 <button class="card-tab-btn" data-target="portfolio-analysis" role="tab" id="tab-portfolio-analysis" aria-controls="pane-portfolio-analysis" aria-selected="false">Risk</button>
@@ -375,28 +386,6 @@
             </div>
         </section>
 
-        <section class="card profile-card" id="card-profile" aria-labelledby="mobile-profile-name" aria-hidden="true">
-            <div class="profile-hero">
-                <img src="img/icon/favicon.png" alt="" class="me-photo profile-photo">
-                <h1 class="view-title" id="mobile-profile-name">Nemeris user</h1>
-            </div>
-            <nav class="nav" aria-label="Profile">
-                <button class="nav-btn" id="nav-portfolio-mobile" data-go="portfolio"><i class="i i-wallet" aria-hidden="true"></i>Portfolio<i class="i i-chevron-right nav-end" aria-hidden="true"></i></button>
-                <button class="nav-btn" id="nav-settings-mobile" data-go="settings"><i class="i i-settings" aria-hidden="true"></i>Settings<i class="i i-chevron-right nav-end" aria-hidden="true"></i></button>
-                <button class="nav-btn" id="nav-terminal-mobile" data-go="terminal" data-expert hidden><i class="i i-terminal" aria-hidden="true"></i>Terminal<i class="i i-chevron-right nav-end" aria-hidden="true"></i></button>
-            </nav>
-            <footer class="app-footer">
-                <p>Information, <strong>not financial advice</strong>. Investing can lose money.</p>
-                <nav class="legal-links" aria-label="Legal">
-                    <a href="disclaimer.html">Disclaimer</a>
-                    <a href="privacy.html">Privacy</a>
-                    <a href="terms.html">Terms</a>
-                    <a href="cookies.html">Cookies</a>
-                    <a href="faq.html">FAQ</a>
-                </nav>
-            </footer>
-        </section>
-
         <section class="card settings-card" id="card-settings" aria-labelledby="settings-title" aria-hidden="true">
             <h1 class="view-title" id="settings-title">Settings</h1>
             <div class="card-tabs-nav" role="tablist" aria-label="Settings sections">
@@ -407,50 +396,11 @@
             </div>
 
             <div class="card-tab-pane active" data-pane="settings-profile" role="tabpanel">
-                <section class="panel" aria-labelledby="you-title">
-                    <h2 class="panel-title" id="you-title">You</h2>
-                    <div class="me-edit">
-                        <label for="settings-user-pfp-file" class="pfp-upload">
-                            <img id="settings-pfp-preview" src="img/icon/favicon.png" alt="">
-                            <span class="pfp-badge"><i class="i i-camera" aria-hidden="true"></i></span>
-                            <span class="sr-only">Change your picture</span>
-                        </label>
-                        <input id="settings-user-pfp-file" class="sr-only" type="file" accept="image/*">
-                        <label class="field">
-                            <span>Your name</span>
-                            <input id="settings-user-name" type="text" autocomplete="given-name" placeholder="Your name">
-                        </label>
-                    </div>
-                </section>
-
-                <section class="panel country-panel" aria-labelledby="country-title">
-                    <div class="panel-head">
-                        <h2 class="panel-title" id="country-title">Your country</h2>
-                        <button class="btn btn-quiet" id="country-change" type="button">Change</button>
-                    </div>
-                    <p class="country-current" id="country-current"></p>
-                    <p class="meta">Your banks come first, and the AI follows your country's tax rules.</p>
-                    <label class="field">
-                        <span>Your currency</span>
-                        <select id="settings-currency"></select>
-                    </label>
-                    <p class="meta">Totals are shown in it. Each stock keeps its own currency, and each trade the one it was paid in.</p>
-                </section>
-
-                <section class="panel bank-panel" aria-labelledby="bank-title">
-                    <div class="panel-head">
-                        <h2 class="panel-title" id="bank-title">Your bank</h2>
-                        <button class="btn btn-quiet" id="bank-change" type="button">Choose</button>
-                    </div>
-                    <div id="bank-summary"></div>
-                </section>
-
                 <section class="panel investor-form" id="about-you" aria-labelledby="about-title">
                     <div class="panel-head">
                         <h2 class="panel-title" id="about-title">About you</h2>
                         <span class="meta saved-note" id="profile-saved" role="status"></span>
                     </div>
-                    <p class="muted">Optional. Makes AI answers fit <em>you</em>. Stays in this browser.</p>
                     <h3>Your money today</h3>
                     <fieldset class="question" data-key="situation">
                         <legend>What is your situation?</legend>
@@ -537,6 +487,45 @@
                         <textarea id="inv-notes" rows="3" placeholder="For example: I use a PEA, so European stocks only. No tobacco."></textarea>
                     </label>
                 </section>
+
+                <section class="panel" aria-labelledby="you-title">
+                    <h2 class="panel-title" id="you-title">You</h2>
+                    <div class="me-edit">
+                        <label for="settings-user-pfp-file" class="pfp-upload">
+                            <img id="settings-pfp-preview" src="img/icon/favicon.png" alt="">
+                            <span class="pfp-badge"><i class="i i-camera" aria-hidden="true"></i></span>
+                            <span class="sr-only">Change your picture</span>
+                        </label>
+                        <input id="settings-user-pfp-file" class="sr-only" type="file" accept="image/*">
+                        <label class="field">
+                            <span>Your name</span>
+                            <input id="settings-user-name" type="text" autocomplete="given-name" placeholder="Your name">
+                        </label>
+                    </div>
+                </section>
+
+                <section class="panel country-panel" aria-labelledby="country-title">
+                    <div class="panel-head">
+                        <h2 class="panel-title" id="country-title">Your country</h2>
+                        <button class="btn btn-quiet" id="country-change" type="button">Change</button>
+                    </div>
+                    <p class="country-current" id="country-current"></p>
+                    <p class="meta">Your banks come first, and the AI follows your country's tax rules.</p>
+                    <label class="field">
+                        <span>Your currency</span>
+                        <select id="settings-currency"></select>
+                    </label>
+                    <p class="meta">Totals are shown in it. Each stock keeps its own currency, and each trade the one it was paid in.</p>
+                </section>
+
+                <section class="panel bank-panel" aria-labelledby="bank-title">
+                    <div class="panel-head">
+                        <h2 class="panel-title" id="bank-title">Your bank</h2>
+                        <button class="btn btn-quiet" id="bank-change" type="button">Choose</button>
+                    </div>
+                    <div id="bank-summary"></div>
+                </section>
+
             </div>
 
             <div class="card-tab-pane" data-pane="settings-ai" role="tabpanel">
@@ -585,6 +574,16 @@
                     <p class="muted">Created by leo tosku</p>
                 </section>
             </div>
+            <footer class="app-footer settings-footer">
+                <p>Information, <strong>not financial advice</strong>. Investing can lose money.</p>
+                <nav class="legal-links" aria-label="Legal">
+                    <a href="disclaimer.html">Disclaimer</a>
+                    <a href="privacy.html">Privacy</a>
+                    <a href="terms.html">Terms</a>
+                    <a href="cookies.html">Cookies</a>
+                    <a href="faq.html">FAQ</a>
+                </nav>
+            </footer>
         </section>
     </main>
 
@@ -710,11 +709,11 @@
     </template>
 
     <nav id="bottom-nav" class="bottom-nav" aria-label="Main">
-        <button class="bottom-nav-btn active" id="bottom-nav-home"><i class="i i-home" aria-hidden="true"></i><span>Home</span></button>
+        <button class="bottom-nav-btn active" id="bottom-nav-home" data-go="home"><i class="i i-home" aria-hidden="true"></i><span>Home</span></button>
+        <button class="bottom-nav-btn" id="bottom-nav-portfolio" data-go="portfolio"><i class="i i-wallet" aria-hidden="true"></i><span>Portfolio</span></button>
+        <button class="bottom-nav-btn" id="bottom-nav-explorer" data-go="explorer"><i class="i i-explore" aria-hidden="true"></i><span>Discover</span></button>
         <button class="bottom-nav-btn" id="bottom-nav-learn" data-go="learn"><i class="i i-school" aria-hidden="true"></i><span>Learn</span></button>
-        <button class="bottom-nav-btn" id="bottom-nav-explorer"><i class="i i-explore" aria-hidden="true"></i><span>Explorer</span></button>
-        <button class="bottom-nav-btn" id="bottom-nav-news"><i class="i i-news" aria-hidden="true"></i><span>News</span></button>
-        <button class="bottom-nav-btn" id="bottom-nav-profile"><img src="img/icon/favicon.png" alt="" class="nav-photo profile-photo"><span>Profile</span></button>
+        <button class="bottom-nav-btn" id="bottom-nav-terminal" data-go="terminal" data-expert hidden><i class="i i-terminal" aria-hidden="true"></i><span>Console</span></button>
     </nav>
 
     <dialog class="sheet" id="country-sheet" aria-labelledby="country-sheet-title">

@@ -76,7 +76,7 @@ export function placeTabs(symbol) {
     if (!pos) return;
     const held = heldShares(symbol);
     for (const tab of document.querySelectorAll(`.tab[data-symbol="${CSS.escape(symbol)}"]`)) {
-        const mobile = !!tab.closest('#card-home');
+        const mobile = !tab.closest('#sidebar');
         const target = ensureGroup(`${mobile ? 'mobile-' : ''}${held ? 'portfolio' : 'general'}-tabs`, pos.type || 'equity');
         fillRow(tab, pos.raw || pos);
         if (tab.parentElement !== target) {

@@ -23,7 +23,7 @@ export function teacher() {
     return body;
 }
 
-const react = (who, mood) => {
+export const react = (who, mood) => {
     who.classList.remove('is-happy', 'is-oops');
     void who.offsetWidth;
     who.classList.add(`is-${mood}`);
@@ -82,7 +82,7 @@ function spoken(root) {
 }
 
 /** Nemeris says something in a chat bubble that fills in word by word. */
-function talk(text, who = teacher()) {
+export function talk(text, who = teacher()) {
     const row = el('div', 'learn-talk');
     const bubble = el('div', 'learn-bubble');
     bubble.append(rich(text));
@@ -92,7 +92,7 @@ function talk(text, who = teacher()) {
 }
 
 /** What comes after the words (a photo, an example, the answers, the button) shows up one by one once she has finished. */
-const afterWords = (row, nodes) => nodes.map((node, i) => later(node, row.speechMs + 250 + i * 350));
+export const afterWords = (row, nodes) => nodes.map((node, i) => later(node, row.speechMs + 250 + i * 350));
 function later(node, ms) {
     node.classList.remove('later');
     void node.offsetWidth;
@@ -207,6 +207,16 @@ function renderMap(w) {
 }
 
 /* ── the player ── */
+/** Slides the stage out to one side, lets swap() fill it, slides it in from the other. dir: 1 forward, -1 back. swap() returning false stops there. */
+export async function slide(stage, dir, swap) {
+    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const out = stage.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translateX(${-dir * 80}px)` }], { duration: calm ? 0 : 170, easing: 'ease-in', fill: 'forwards' });
+    await out.finished.catch(() => {});
+    const goOn = swap();
+    out.cancel();
+    if (goOn !== false) stage.animate([{ opacity: 0, transform: `translateX(${dir * 110}px) scale(.96)` }, { opacity: 1, transform: 'none' }], { duration: calm ? 0 : 520, easing: 'cubic-bezier(.2,.9,.3,1.12)' });
+}
+
 const shuffle = list => list.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).map(([, x]) => x);
 
 /**
@@ -370,23 +380,18 @@ function play(level) {
         })]));
     }
 
-    /** Slides out to one side, the next step slides in from the other. dir: 1 forward, -1 back. */
     async function go(to, dir) {
         if (busy) return;
         busy = true;
-        const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const out = stage.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translateX(${-dir * 80}px)` }], { duration: calm ? 0 : 170, easing: 'ease-in', fill: 'forwards' });
-        await out.finished.catch(() => {});
-        if (to >= steps.length || !hearts) {
-            out.cancel();
-            busy = false;
+        await slide(stage, dir, () => {
+            if (to < steps.length && hearts) {
+                at = to;
+                return draw();
+            }
             if (hearts) finish(level.id, hearts);
-            return result(level, { won: hearts > 0, hearts, best });
-        }
-        at = to;
-        draw();
-        out.cancel();
-        stage.animate([{ opacity: 0, transform: `translateX(${dir * 110}px) scale(.96)` }, { opacity: 1, transform: 'none' }], { duration: calm ? 0 : 520, easing: 'cubic-bezier(.2,.9,.3,1.12)' });
+            result(level, { won: hearts > 0, hearts, best });
+            return false;
+        });
         busy = false;
     }
 

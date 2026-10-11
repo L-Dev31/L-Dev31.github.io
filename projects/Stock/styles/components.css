@@ -443,6 +443,8 @@ details.more > * + * + * { margin-top: 26px; }
 .quiz-option::before { counter-increment: option; content: counter(option, upper-alpha); flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--r-sm); background: var(--surface-2); color: var(--text); font-size: 13px; font-weight: 700; }
 .quiz-option.right::before { background: var(--pos); color: #fff; }
 .quiz-option.wrong::before { background: var(--neg); color: #fff; }
+.quiz-option.is-chosen { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); color: var(--text); }
+.quiz-option.is-chosen::before { background: var(--accent); color: var(--on-accent); }
 .quiz-option:hover:not(:disabled) { border-color: var(--line-3); }
 .quiz-option:disabled { cursor: default; opacity: .6; }
 .quiz-option.right { border-color: var(--pos); background: var(--pos-soft); color: var(--text); opacity: 1; }

@@ -16,12 +16,6 @@
 .home-gain { font-size: 14px; font-weight: 600; color: var(--muted); }
 .me-gain.positive, .home-gain.positive { color: var(--pos); }
 .me-gain.negative, .home-gain.negative { color: var(--neg); }
-.profile-hero { display: grid; justify-items: center; gap: 12px; padding-top: 12px; text-align: center; }
-.profile-hero .me-photo { width: 84px; height: 84px; border-radius: var(--r-circle); }
-.profile-card .nav { gap: 12px; }
-.profile-card .nav-btn { padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); color: var(--text); }
-.profile-card .nav-btn:hover { background: var(--surface-2); border-color: var(--line-2); }
-.profile-card .nav-btn:active { background: var(--surface-3); }
 
 .tk-back-row { margin-bottom: -14px; }
 .tk-back { display: inline-flex; align-items: center; gap: 4px; padding: 8px 14px 8px 10px; font-size: 13.5px; }
@@ -347,7 +341,16 @@ input.terminal-input::placeholder { color: var(--term-dim); }
 .coach { display: grid; gap: 16px; }
 .coach-hello { margin: 0; font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -.02em; color: var(--text); }
 .coach-status { margin: -8px 0 4px; color: var(--muted); }
-.coach-cards, .coach-review { display: grid; gap: 12px; }
+.coach-cards, .coach-review, .coach-hero { display: grid; gap: 12px; }
+.coach-hero:empty { display: none; }
+/* Everything but the one card waits here, folded. */
+.coach-rest { display: grid; gap: 12px; }
+.coach-rest > summary { display: inline-flex; align-items: center; gap: 6px; justify-self: start; padding: 6px 0; color: var(--muted); font-weight: 600; cursor: pointer; list-style: none; }
+.coach-rest > summary::-webkit-details-marker { display: none; }
+.coach-rest > summary:hover { color: var(--text); }
+.coach-rest > summary .i { transition: transform .2s; }
+.coach-rest[open] > summary .i { transform: rotate(180deg); }
+.coach-rest[open] { gap: 12px; }
 .coach-review:empty { display: none; }
 .coach-card { display: grid; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
 .coach-card p { margin: 0; }
@@ -500,3 +503,8 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
     .learn-node:nth-child(4n) { translate: -56px; }
     .learn-nav { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 }
+/* About you, asked the Academy's way, always in the app's own violet. */
+.survey { --world: var(--accent); --world-bg: var(--surface-2); }
+.survey .learn-stage { padding: 8px 0 0; }
+.survey .learn-bubble { background: var(--surface-2); }
+.survey .learn-nav { position: static; }
