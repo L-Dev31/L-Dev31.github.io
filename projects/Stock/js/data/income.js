@@ -67,7 +67,6 @@ const limits = () => [0.6, 1, 1.6].map(x => money(typicalIncome() * x));
 
 /** The answers to "how much comes in each month", as labels built on the country's typical income. */
 export function incomeBands() {
-    const m = typicalIncome();
     const [a, b, c] = limits();
     return {
         none: L('No regular income'), b1: L('Under {0}', a), b2: L('{0} to {1}', a, b), b3: L('{0} to {1}', b, c), b4: L('Over {0}', c),
