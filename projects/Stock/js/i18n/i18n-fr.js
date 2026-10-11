@@ -1534,7 +1534,12 @@ export default {
     "Console": "Console",
     "Next": "Suivant",
     "Thank you, that is all I needed. My advice now fits your situation. Change an answer whenever you like.": "Merci, c'est tout ce qu'il me fallait. Mes conseils collent maintenant à ta situation. Tu peux changer une réponse quand tu veux.",
-    "Change an answer": "Changer une réponse",
     "Start the lesson": "Commencer la leçon",
     "Face the boss": "Affronter le boss",
+    "Done": "Terminé",
+    "Your answers shape my advice. Change any of them whenever you like.": "Tes réponses guident mes conseils. Change-les quand tu veux.",
+    "A few questions about your money and your goals, so my advice fits you.": "Quelques questions sur ton argent et tes objectifs, pour que mes conseils te correspondent.",
+    "Change my answers": "Modifier mes réponses",
+    "Continue the questionnaire": "Reprendre le questionnaire",
+    "Start the questionnaire": "Lancer le questionnaire",
 };

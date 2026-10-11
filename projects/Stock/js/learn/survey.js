@@ -1,15 +1,15 @@
 // "About you", asked by Nemeris one question at a time, the Academy's way: her bubble, lettered answers, a slide to the next.
-// The form stays the record: an answer ticks its radio and the form saves itself as before. Always in the app's own violet.
+// A card in Settings starts it. The form stays the record: an answer ticks its radio and the form saves itself as before. Always in the app's own violet.
 import { el, icon } from '../core/utils.js';
 import { L } from '../i18n/i18n.js';
 import { teacher, talk, react, afterWords, slide } from './academy-page.js';
 
-/** Turns the form's multiple-choice questions into Nemeris's player. Returns restart(), which goes to the first unanswered one. */
+/** Turns the form's multiple-choice questions into Nemeris's player, started from a card. Returns reset(), which shows the card again. */
 export function mountSurvey(form) {
     const questions = [...form.querySelectorAll('.question')];
     if (!questions.length) return () => {};
     // general.js can run twice: the second player replaces the first.
-    form.querySelector('.survey')?.remove();
+    form.querySelector('.survey, .survey-intro')?.remove();
     for (const n of [...questions, ...form.querySelectorAll(':scope > h3')]) n.hidden = true;
 
     const answered = q => !!q.querySelector('input:checked');
@@ -31,7 +31,12 @@ export function mountSurvey(form) {
     const box = el('div', 'learn-play survey');
     box.append(top, stage, nav);
     stage.addEventListener('click', () => box.classList.add('skip'));
-    questions[0].before(box);
+    const intro = el('div', 'survey-intro');
+    const blurb = el('p', 'survey-blurb');
+    const start = el('button', 'btn');
+    start.type = 'button';
+    intro.append(teacher(), blurb, start);
+    questions[0].before(intro, box);
 
     let at = 0, busy = false;
 
@@ -63,7 +68,7 @@ export function mountSurvey(form) {
         back.hidden = false;
         stage.replaceChildren(talk(L('Thank you, that is all I needed. My advice now fits your situation. Change an answer whenever you like.'), nemeris));
         react(nemeris, 'happy');
-        next.textContent = L('Change an answer');
+        next.textContent = L('Done');
         next.hidden = false;
     }
 
@@ -81,14 +86,24 @@ export function mountSurvey(form) {
         busy = false;
     }
 
-    next.addEventListener('click', () => go(at < questions.length ? at + 1 : 0, 1));
+    next.addEventListener('click', () => (at < questions.length ? go(at + 1, 1) : reset()));
     back.addEventListener('click', () => go(at - 1, -1));
 
-    const restart = () => {
+    function launch() {
         const first = questions.findIndex(q => !answered(q));
-        at = first < 0 ? questions.length : first;
+        at = first < 0 ? 0 : first;
+        intro.hidden = true;
+        box.hidden = false;
         draw();
-    };
-    restart();
-    return restart;
+    }
+    function reset() {
+        const done = questions.every(answered);
+        blurb.textContent = done ? L('Your answers shape my advice. Change any of them whenever you like.') : L('A few questions about your money and your goals, so my advice fits you.');
+        start.textContent = done ? L('Change my answers') : questions.some(answered) ? L('Continue the questionnaire') : L('Start the questionnaire');
+        intro.hidden = false;
+        box.hidden = true;
+    }
+    start.addEventListener('click', launch);
+    reset();
+    return reset;
 }

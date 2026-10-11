@@ -452,7 +452,8 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 .learn-start { position: sticky; bottom: 24px; z-index: 6; justify-self: center; display: inline-flex; align-items: center; gap: 10px; min-width: min(360px, 100%); min-height: 60px; padding: 0 32px; border: 0; border-radius: var(--r-pill); background: var(--world); color: #fff; font: inherit; font-size: 19px; font-weight: 700; box-shadow: 0 8px 24px color-mix(in srgb, var(--world) 45%, transparent); cursor: pointer; justify-content: center; }
 .learn-start:active { transform: scale(.98); }
 .learn-nav { position: sticky; bottom: 16px; display: flex; align-items: center; gap: 10px; }
-.learn-next, .learn-back { flex: 1; min-height: 52px; font-size: 16px; }
+.learn-next, .learn-back { flex: none; min-width: 140px; min-height: 52px; padding: 0 28px; font-size: 16px; }
+.learn-next { margin-left: auto; }
 .learn-back { border: 2px solid var(--accent); background: transparent; color: var(--accent); }
 .learn-result { display: grid; justify-items: center; align-content: center; gap: 24px; min-height: 70vh; text-align: center; }
 .learn-result h1 { font-family: var(--font); font-weight: 700; font-size: clamp(44px, 12vw, 84px); line-height: 1; letter-spacing: -.03em; color: var(--world); }
@@ -503,3 +504,7 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 .survey .learn-stage { padding: 8px 0 0; }
 .survey .learn-bubble { background: var(--surface-2); }
 .survey .learn-nav { position: static; }
+.survey-intro { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 16px; }
+.survey-intro .teacher { width: 56px; }
+.survey-blurb { flex: 1; min-width: 200px; margin: 0; color: var(--text-2); }
+.survey-intro[hidden], .survey[hidden] { display: none; }
