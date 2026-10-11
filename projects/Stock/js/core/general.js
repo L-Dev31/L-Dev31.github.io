@@ -373,17 +373,17 @@ window.addEventListener('workerRecovered', () => renderRelayNotice());
 document.addEventListener('error', e => { if (e.target.classList?.contains('row-logo')) e.target.hidden = true; }, true);
 
 /* ── start ── */
+// Published right away (this module runs once, after everything it imports): the assistant, the terminal and the
+// Explorer open pages through these, and waiting for every image to load left them doing nothing in the meantime.
+Object.assign(window, {
+    positions, selectedApi, openNewsPage, closeNewsPage, openCustomSymbol, openTerminalCard, closeTerminalCard, getActiveSymbol,
+    markTabAsSuspended, unmarkTabAsSuspended, fetchCardNews, fetchActiveSymbol, setupNewsSearch,
+    getSelectedApi: () => selectedApi,
+    setSelectedApi,
+    terminalLogGlobal: msg => { const out = getEl('terminal-output'); if (!out) return; out.append(el('div', 'terminal-log', msg)); out.scrollTop = out.scrollHeight; },
+    nemeris: { positions, go, settings: { get: getUserSettings, save: saveUserSettings } },
+});
 window.addEventListener('load', async () => {
-    // Published late on purpose: reading other modules' bindings here (not at
-    // import time) keeps the general ↔ ui cycle from ever trapping TDZ at load.
-    Object.assign(window, {
-        positions, selectedApi, openNewsPage, closeNewsPage, openCustomSymbol, openTerminalCard, closeTerminalCard, getActiveSymbol,
-        markTabAsSuspended, unmarkTabAsSuspended, fetchCardNews, fetchActiveSymbol, setupNewsSearch,
-        getSelectedApi: () => selectedApi,
-        setSelectedApi,
-        terminalLogGlobal: msg => { const out = getEl('terminal-output'); if (!out) return; out.append(el('div', 'terminal-log', msg)); out.scrollTop = out.scrollHeight; },
-        nemeris: { positions, go, settings: { get: getUserSettings, save: saveUserSettings } },
-    });
     applyProfile();
     applyExpert();
     renderRelayNotice();

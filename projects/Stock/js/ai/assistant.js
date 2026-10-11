@@ -262,6 +262,7 @@ function navigate(view) {
 }
 
 /* ── tools the model can call: specs and checks live in assistant-rules.js, the app side here ── */
+const PAGE_TOOLS = new Set(['navigate', 'open_ticker', 'simulate_investment']);
 const RUNNERS = {
     get_portfolio: {
         label: () => L('Read your portfolio'),
@@ -931,9 +932,13 @@ function updateCtxWheel() {
 // Opening the assistant closes any other floating panel, and another one opening closes the assistant.
 const fabOpened = floating('assistant', () => { if (ui && !ui.panel.hidden && !document.body.classList.contains('asst-minimized')) toggle(false); });
 
+// In the Academy Nemeris is the teacher: the assistant stays out, so nobody asks it for the answers.
+const inAcademy = () => document.getElementById('card-learn')?.classList.contains('active');
+
 export function toggle(force) {
     if (!ui) return;
     const open = force ?? ui.panel.hidden;
+    if (open && inAcademy()) return;
     if (open) fabOpened();
     clearTimeout(panelCloseTimer);
     ui.panel.classList.remove('is-closing');
@@ -1562,7 +1567,7 @@ window.addEventListener(VOICE_HEALTH_EVENT, () => {
 
 /** Sends a message and runs the tool loop until the model answers. Resolves true when it did. */
 export async function send(text) {
-    if (!ui) return false;
+    if (!ui || inAcademy()) return false;
     if (ui.panel.hidden) toggle(true);
     if (showingHistory) showHistory(false);
     const convo = currentChat(true);
@@ -1595,6 +1600,8 @@ export async function send(text) {
     } : null;
     const seen = new Set();
     let figuresChecked = false;
+    // Set when a tool opened a page: on a phone the chat then steps aside so the page can be seen.
+    let moved = false;
     const replyLang = guessLanguage(text);
     const typing = el('div', 'typing');
     const typingLabel = el('span', null, L('Thinking'));
@@ -1698,6 +1705,7 @@ export async function send(text) {
                 entry.ok = false;
                 entry.error = result.error;
             }
+            if (entry.ok && PAGE_TOOLS.has(tc.name)) moved = true;
             entry.state = 'done';
             entry.content = JSON.stringify(result).slice(0, 7000);
             convo.messages.push(entry);
@@ -1720,6 +1728,7 @@ export async function send(text) {
         // Out of steps with tool results still unread: calls without tools, so the user always gets an answer.
         for (let i = 0; i < 2 && !answered; i++) answered = await step(false);
         ok = true;
+        if (moved && !call.active && matchMedia('(max-width: 899px)').matches) toggle(false);
     } catch (e) {
         typing.remove();
         const silentBargeIn = requestId !== sendSequence || (e.name === 'AbortError' && call.active && call.cut);
@@ -1756,6 +1765,12 @@ function init() {
     renderEffort();
     try { if (localStorage.getItem(OPEN_KEY) === '1' && window.innerWidth >= 1024) toggle(true); } catch { /* ignore */ }
     window.nemerisAssistant = { open: () => toggle(true), close: () => toggle(false), send };
+    // Entering the Academy closes the assistant and ends a call.
+    new MutationObserver(() => {
+        if (!inAcademy()) return;
+        if (call.active) endCall();
+        if (!ui.panel.hidden) toggle(false);
+    }).observe(document.getElementById('card-learn'), { attributes: true, attributeFilter: ['class'] });
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
