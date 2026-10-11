@@ -8,8 +8,6 @@ import { teacher, talk, react, afterWords, slide } from './academy-page.js';
 export function mountSurvey(form) {
     const questions = [...form.querySelectorAll('.question')];
     if (!questions.length) return () => {};
-    // general.js can run twice: the second player replaces the first.
-    form.querySelector('.survey, .survey-intro')?.remove();
     for (const n of [...questions, ...form.querySelectorAll(':scope > h3')]) n.hidden = true;
 
     const answered = q => !!q.querySelector('input:checked');
