@@ -341,28 +341,19 @@ input.terminal-input::placeholder { color: var(--term-dim); }
 .coach { display: grid; gap: 16px; }
 .coach-hello { margin: 0; font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -.02em; color: var(--text); }
 .coach-status { margin: -8px 0 4px; color: var(--muted); }
-.coach-cards, .coach-review, .coach-hero { display: grid; gap: 12px; }
+.coach-cards, .coach-hero { display: grid; gap: 12px; }
 .coach-hero:empty { display: none; }
-/* Everything but the one card waits here, folded. */
-.coach-rest { display: grid; gap: 12px; }
-.coach-rest > summary { display: inline-flex; align-items: center; gap: 6px; justify-self: start; padding: 6px 0; color: var(--muted); font-weight: 600; cursor: pointer; list-style: none; }
-.coach-rest > summary::-webkit-details-marker { display: none; }
-.coach-rest > summary:hover { color: var(--text); }
-.coach-rest > summary .i { transition: transform .2s; }
-.coach-rest[open] > summary .i { transform: rotate(180deg); }
-.coach-rest[open] { gap: 12px; }
-.coach-review:empty { display: none; }
 .coach-card { display: grid; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
 .coach-card p { margin: 0; }
 .coach-head { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; align-items: start; }
 .coach-text { display: grid; gap: 4px; }
-/* One color per kind of situation: fall red, rise green, risk amber, to set up blue, tip and review purple, calm grey. */
+/* One color per kind of situation: fall red, rise green, risk amber, to set up blue, tip purple, calm grey. */
 .coach-card { --kind: var(--muted); --kind-soft: var(--surface-2); }
 .is-down { --kind: var(--neg); --kind-soft: var(--neg-soft); }
 .is-up { --kind: var(--pos); --kind-soft: var(--pos-soft); }
 .is-warn { --kind: var(--warn); --kind-soft: var(--warn-soft); }
 .is-setup { --kind: var(--info); --kind-soft: var(--info-soft); }
-.is-tip, .is-review { --kind: var(--accent); --kind-soft: var(--accent-soft); }
+.is-tip { --kind: var(--accent); --kind-soft: var(--accent-soft); }
 .coach-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--r-circle); background: var(--kind-soft); color: var(--kind); font-size: 18px; }
 .is-up .coach-icon .i { transform: scaleY(-1); }
 .coach-kind { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--kind); }

@@ -1,34 +1,26 @@
 // Home: the coach. It reads the portfolio as prices arrive, says what deserves attention in plain words,
 // offers the options (doing nothing included) and the idea behind each situation, taught in the Academy.
-// One thing at a time: the page opens on a single card, the most pressing situation or else the next lesson;
-// everything else waits, folded, under it. A question missed in the Academy comes back there for a quick check.
+// The page opens on its most pressing card, a situation or else the next lesson; the others follow under it.
 import { el, icon } from '../core/utils.js';
 import { getUserSettings, globalPeriod } from '../core/state.js';
 import { periodPhrase, debounce } from '../core/constants.js';
 import { money } from '../data/banks.js';
 import { syncAiGates } from '../ai/ai-core.js';
 import { L, Ln } from '../i18n/i18n.js';
-import { academyReady, worlds, levelById, nextLevel, worldOf, missedQuestion, record, t } from '../learn/academy.js';
-import { teacher, questionBox } from '../learn/academy-page.js';
+import { academyReady, worlds, levelById, nextLevel, worldOf, t } from '../learn/academy.js';
+import { teacher } from '../learn/academy-page.js';
 import { findSituations, portfolioMove, howUsual, pct } from './situations.js';
 import { para, richText } from './explain.js';
 import { photoFigure } from './photos.js';
 
 // Each kind of situation has its color, icon and word, so a glance says what a card is about.
-const ICON = { down: 'trend-down', up: 'trend-down', warn: 'info', setup: 'help', tip: 'lightbulb', calm: 'check', review: 'history' };
-const KIND = { down: L('Fall'), up: L('Rise'), warn: L('Risk'), setup: L('To set up'), tip: L('Good to know'), calm: L('All calm'), review: L('Quick check') };
+const ICON = { down: 'trend-down', up: 'trend-down', warn: 'info', setup: 'help', tip: 'lightbulb', calm: 'check' };
+const KIND = { down: L('Fall'), up: L('Rise'), warn: L('Risk'), setup: L('To set up'), tip: L('Good to know'), calm: L('All calm') };
 const ACTION_LABEL = { profile: L('Open your profile'), bank: L('Choose your bank'), explorer: L('Open Explorer'), news: L('Read the news'), stock: L('Open it'), learn: L('Open the Academy') };
 const MAX_CARDS = 3;
 
-function badge(name) {
-    const b = el('span', 'coach-icon');
-    b.append(icon(name));
-    return b;
-}
-
 let host, nav;
 const cards = new Map();
-let reviewShown = false;
 
 function greeting() {
     const h = new Date().getHours();
@@ -142,18 +134,6 @@ function buildCard(s) {
     return card;
 }
 
-/* ── a question missed in the Academy comes back once, so it sticks ── */
-function reviewCard(q) {
-    const card = el('article', 'coach-card is-review');
-    const head = el('div', 'coach-head');
-    const text = el('div', 'coach-text');
-    text.append(el('span', 'coach-kind', KIND.review), el('h3', 'coach-what', L('Quick check, 30 seconds')));
-    head.append(badge('history'), text);
-    card.append(head, para('meta', L('You missed this one in the Academy. Getting it right now is what makes it stick.')), para('quiz-q', t(q.ask)),
-        questionBox(q, { onDone: score => record(q.id, score) }));
-    return card;
-}
-
 /* ── the Academy, always last: where the user is, and one button to go on ── */
 function renderLearn() {
     const box = host.querySelector('.coach-learn');
@@ -208,7 +188,7 @@ function statusLine(situations) {
     line.textContent = parts.join(' ');
 }
 
-// What is worth acting on now; anything below can wait in the fold.
+// What is worth acting on now.
 const pressing = s => s && (s.id === 'start' || (s.priority >= 40 && s.tone !== 'calm'));
 
 function render() {
@@ -227,22 +207,12 @@ function render() {
         return card;
     });
 
-    const missed = !reviewShown && missedQuestion();
-    if (missed) {
-        reviewShown = true;
-        host.querySelector('.coach-review').append(reviewCard(missed));
-    }
     renderLearn();
-    // The one card: a pressing situation, else the next lesson, else whatever comes first.
+    // The first card leads: a pressing situation, else the next lesson. The others follow, the lesson last.
     const lesson = host.querySelector('.coach-learn');
-    const review = host.querySelector('.coach-review');
-    const hero = pressing(situations[0]) || lesson.hidden ? shown.shift() : lesson;
-    host.querySelector('.coach-hero').replaceChildren(...(hero ? [hero] : []));
-    const rest = host.querySelector('.coach-rest');
-    rest.querySelector('.coach-cards').replaceChildren(...shown, ...(hero === lesson || lesson.hidden ? [] : [lesson]));
-    const count = shown.length + (hero !== lesson && !lesson.hidden) + (review.childElementCount ? 1 : 0);
-    rest.hidden = !count;
-    rest.querySelector('summary span').textContent = Ln(count, 'One more thing', '{0} more things');
+    const lead = pressing(situations[0]) || lesson.hidden ? shown.shift() : lesson;
+    host.querySelector('.coach-hero').replaceChildren(...(lead ? [lead] : []));
+    host.querySelector('.coach-cards').replaceChildren(...shown, ...(lead === lesson || lesson.hidden ? [] : [lesson]));
     syncAiGates(host);
 }
 
@@ -254,15 +224,10 @@ export function initCoach({ go, openSymbol }) {
     if (!host) return;
     // general.js can run twice (loaded under two URLs): the second start replaces the first, its cards with it.
     cards.clear();
-    reviewShown = false;
     nav = { go, openSymbol };
     const hello = el('p', 'coach-hello');
     const status = el('p', 'coach-status');
-    const rest = el('details', 'coach-rest');
-    const summary = el('summary');
-    summary.append(el('span'), icon('expand'));
-    rest.append(summary, el('div', 'coach-cards'), el('div', 'coach-review'));
-    host.replaceChildren(hello, status, el('div', 'coach-hero'), rest);
+    host.replaceChildren(hello, status, el('div', 'coach-hero'), el('div', 'coach-cards'));
     host.querySelector('.coach-hero').append(learnCard());
     render();
     academyReady.then(refresh);

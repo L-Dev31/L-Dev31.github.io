@@ -84,12 +84,6 @@ export function grades() {
     return Object.entries(data.skills).map(([id, name]) => ({ id, name: t(name), score: total[id] ? Math.round(got[id] / total[id] * 100) : 0 }));
 }
 
-/** A question the user missed before, for a quick check on Home, or null. */
-export function missedQuestion() {
-    const missed = path().filter(l => isDone(l.id) && !l.boss).flatMap(questionsOf).filter(q => (saved.score[q.id] ?? 1) < 1);
-    return missed[Math.floor(Math.random() * missed.length)] || null;
-}
-
 /** The grades in one line for the assistant, or '' before any answer. */
 export function gradesContext() {
     if (!Object.keys(saved.score).length) return '';
