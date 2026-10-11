@@ -131,12 +131,16 @@ function gradesPanel() {
     const box = el('details', 'panel learn-grades');
     box.open = !matchMedia('(max-width: 899px)').matches;
     const all = grades();
-    const summary = el('summary', 'panel-title', L('What you know'));
+    const summary = el('summary', 'panel-title');
+    summary.append(el('span', 'learn-label', L('What you know')));
     const average = Math.round(all.reduce((sum, g) => sum + g.score, 0) / all.length);
     const mini = el('span', 'learn-mini');
     mini.append(el('i'));
     mini.firstChild.style.width = `${average}%`;
-    summary.append(el('span', 'learn-average', percent(average)), mini, icon('chevron-left'));
+    const ring = el('span', 'learn-ring');
+    ring.style.setProperty('--p', `${average}%`);
+    ring.append(el('b', null, `${average}%`));
+    summary.append(el('span', 'learn-average', percent(average)), mini, icon('chevron-left'), ring);
     box.append(summary);
     for (const g of all) {
         const bar = el('div', 'pbar pbar-compact');
@@ -208,7 +212,6 @@ function renderMap(w) {
         const start = el('button', 'learn-start', next.boss ? L('Face the boss') : L('Start the lesson'));
         start.type = 'button';
         start.dataset.level = next.id;
-        start.prepend(icon('play'));
         card.append(start);
     }
     requestAnimationFrame(() => path.querySelector('.is-next')?.scrollIntoView({ block: 'center' }));

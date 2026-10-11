@@ -211,12 +211,16 @@
 .ais-list { display: grid; gap: 8px; }
 .ais-row { display: grid; gap: 10px; padding: 12px 14px; border-radius: var(--r-sm); background: var(--surface-2); }
 .ais-row > .notice { background: var(--surface); }
-.ais-row, .ais-task { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
-.ais-row > .notice { grid-column: 1 / -1; }
-.ais-row > .ais-edit { grid-column: 1 / -1; }
+.ais-task { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+/* The buttons sit beside the name when there is room, and wrap under it when there is not. */
+.ais-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.ais-row > .ais-main { flex: 1 1 220px; }
+.ais-row > .ais-side { flex: 0 1 auto; }
+.ais-row > :is(.notice, .ais-edit) { flex: 1 1 100%; }
+.ais-task .ais-side { justify-content: flex-end; }
 .ais-main { display: grid; gap: 2px; min-width: 0; }
 .ais-title { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
-.ais-side { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
+.ais-side { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px; }
 .dot { width: 9px; height: 9px; border-radius: var(--r-circle); background: var(--faint); }
 .dot.is-ok { background: var(--pos); }
 .dot.is-busy { background: var(--accent); animation: pulse 1.1s ease-in-out infinite; }
@@ -373,7 +377,7 @@ input.terminal-input::placeholder { color: var(--term-dim); }
 /* Academy: a world's path beside what you know, then a level one step at a time. The world's colour tints the page. */
 body:has(#card-learn.active) .container { background: var(--world-bg); }
 :root[data-theme="dark"] body:has(#card-learn.active) .container { background: color-mix(in srgb, var(--world) 34%, #0d0d12); }
-.learn-card.active { max-width: 1040px; }
+.learn-card.active { max-width: 1040px; animation-fill-mode: backwards; }
 .learn-card[data-view="play"].active { max-width: 640px; }
 .coach-learn { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 16px; padding: 20px; border: 1px solid color-mix(in srgb, var(--world) 35%, transparent); border-radius: var(--r-lg); background: color-mix(in srgb, var(--world) 10%, var(--surface)); }
 .coach-learn .coach-kind { color: var(--world); }
@@ -385,6 +389,7 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 .learn-grades > summary::-webkit-details-marker { display: none; }
 .learn-grades > summary { gap: 10px; }
 .learn-grades > summary .panel-title, .learn-grades > summary { font-weight: 700; }
+.learn-ring { display: none; }
 .learn-average { margin-left: auto; color: var(--world); font-variant-numeric: tabular-nums; font-weight: 700; }
 .learn-mini { width: 44px; height: 6px; border-radius: var(--r-pill); background: var(--surface-3); overflow: hidden; }
 .learn-mini i { display: block; height: 100%; background: var(--world); }
@@ -433,7 +438,7 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 .learn-photo { height: clamp(160px, 40vw, 240px); margin: 0; overflow: hidden; border-radius: var(--r-md); background: var(--surface-2); }
 .learn-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .learn-photo .coach-photo-credit { display: none; }
-.learn-start { position: sticky; bottom: 24px; z-index: 6; justify-self: center; display: inline-flex; align-items: center; gap: 10px; min-width: min(360px, 100%); min-height: 60px; padding: 0 32px; border: 0; border-radius: var(--r-pill); background: var(--world); color: #fff; font: inherit; font-size: 19px; font-weight: 700; box-shadow: 0 8px 24px color-mix(in srgb, var(--world) 45%, transparent); cursor: pointer; justify-content: center; }
+.learn-start { position: sticky; bottom: 48px; z-index: 6; justify-self: center; display: inline-flex; align-items: center; gap: 10px; min-width: min(360px, 100%); min-height: 60px; padding: 0 32px; border: 0; border-radius: var(--r-pill); background: var(--world); color: #fff; font: inherit; font-size: 19px; font-weight: 700; box-shadow: 0 8px 24px color-mix(in srgb, var(--world) 45%, transparent); cursor: pointer; justify-content: center; }
 .learn-start:active { transform: scale(.98); }
 .learn-nav { position: sticky; bottom: 16px; display: flex; align-items: center; gap: 10px; }
 .learn-next, .learn-back { flex: none; min-width: 140px; min-height: 52px; padding: 0 28px; font-size: 16px; }
@@ -473,13 +478,23 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 @media (prefers-reduced-motion: reduce) { .teacher, .teacher::before, .teacher::after, .teacher i { animation: none; } }
 @media (max-width: 899px) {
     .learn-split { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-    .learn-grades { position: sticky; top: 8px; z-index: 5; order: -1; padding: 12px 16px; }
-    .learn-grades:not([open]) > summary { margin-bottom: 0; }
+    /* What you know: a round button at the top right, just like the assistant's, that opens the bars. */
+    .panel.learn-grades { position: fixed; top: calc(12px + env(safe-area-inset-top, 0px)); right: 16px; z-index: 65; width: 56px; max-height: calc(100dvh - 160px); padding: 0; overflow: hidden; border: 1px solid var(--line-2); border-radius: 28px; background: var(--surface-2); box-shadow: var(--shadow); }
+    .panel.learn-grades[open] { width: min(340px, calc(100vw - 32px)); padding: 0 16px 14px; overflow-y: auto; border-radius: var(--r-lg); }
+    .panel.learn-grades:not([open]) { height: 56px; }
+    .panel.learn-grades > summary { height: 54px; margin: 0; }
+    .panel.learn-grades:not([open]) > summary { justify-content: center; }
+    .panel.learn-grades > summary > :not(.learn-ring, .learn-label) { display: none; }
+    .panel.learn-grades:not([open]) > summary .learn-label { display: none; }
+    .learn-ring { position: relative; display: grid; place-items: center; flex: none; width: 44px; height: 44px; margin-left: auto; border-radius: 50%; background: conic-gradient(var(--world) var(--p), var(--surface-3) 0); }
+    .learn-ring::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: var(--surface-2); }
+    .learn-ring b { position: relative; font-size: 12px; font-variant-numeric: tabular-nums; }
     .learn-splash { left: 0; }
     .learn-title { font-size: 30px; }
     .learn-node:nth-child(4n + 2) { translate: 56px; }
     .learn-node:nth-child(4n) { translate: -56px; }
-    .learn-nav, .learn-start { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+    .learn-nav { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+    .learn-start { bottom: calc(112px + env(safe-area-inset-bottom, 0px)); }
     /* Centred, and narrow enough to leave the assistant's button free on the right. */
     .learn-start { min-width: 0; width: calc(100% - 144px); padding: 0 12px; font-size: 16px; white-space: nowrap; }
 }

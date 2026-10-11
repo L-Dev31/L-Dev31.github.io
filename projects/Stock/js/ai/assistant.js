@@ -29,7 +29,6 @@ const LEGACY_KEY = 'nemeris_assistant_chat';
 const FEEDBACK_KEY = 'nemeris_assistant_feedback';
 const WIDTH_KEY = 'nemeris_assistant_width';
 const OPEN_KEY = 'nemeris_assistant_open';
-const FAB_CORNER_KEY = 'nemeris_fab_corner';
 const DOCK_SIDE_KEY = 'nemeris_dock_side';
 const MAX_CONTEXT = 30;
 const MAX_CHATS = 60;
@@ -633,10 +632,6 @@ function swallowNextClick(target) {
     setTimeout(() => target.removeEventListener('click', h, true), 800);
 }
 
-const FAB_CORNERS = ['tl', 'tr', 'bl', 'br'];
-function loadFabCorner() {
-    try { const v = localStorage.getItem(FAB_CORNER_KEY); return FAB_CORNERS.includes(v) ? v : null; } catch { return null; }
-}
 function loadDockSide() {
     try { return localStorage.getItem(DOCK_SIDE_KEY) === 'top' ? 'top' : 'bottom'; } catch { return 'bottom'; }
 }
@@ -768,9 +763,7 @@ function build() {
     voiceClose.addEventListener('click', () => { hideVoiceOverlay(); endCall(); toggle(false); });
     voiceOverlay.addEventListener('click', e => { if (e.target === voiceOverlay) hideVoiceOverlay(true); });
     voiceOverlay.addEventListener('keydown', e => { if (e.key === 'Escape') hideVoiceOverlay(true); });
-    setupFabDrag();
     setupDockDrag();
-    applyFabCorner(loadFabCorner());
     ui.panel.classList.toggle('dock-top', loadDockSide() === 'top');
     cut.addEventListener('click', interruptCall);
     hang.addEventListener('click', endCall);
@@ -984,43 +977,6 @@ function minimizeCall(minimized = true) {
     ui.fab.setAttribute('aria-expanded', String(!minimized));
     ui.callSummary.setAttribute('aria-label', L(minimized ? 'Return to assistant' : 'Minimize voice mode'));
     if (minimized) ui.callSummary.focus({ preventScroll: true });
-}
-
-/* ── minified AI bubble: drag it, it snaps to the nearest screen corner ── */
-function applyFabCorner(corner) {
-    if (!ui) return;
-    ui.fab.classList.remove('dock-tl', 'dock-tr', 'dock-bl', 'dock-br');
-    if (corner) ui.fab.classList.add('dock-' + corner);
-}
-
-function setupFabDrag() {
-    const fab = ui.fab;
-    let grabX = 0, grabY = 0;
-    trackDrag(fab, {
-        onStart: e => {
-            const r = fab.getBoundingClientRect();
-            grabX = e.clientX - r.left;
-            grabY = e.clientY - r.top;
-        },
-        onMove: (dx, dy, e) => {
-            const w = fab.offsetWidth, h = fab.offsetHeight;
-            const x = Math.max(4, Math.min(window.innerWidth - w - 4, e.clientX - grabX));
-            const y = Math.max(4, Math.min(window.innerHeight - h - 4, e.clientY - grabY));
-            fab.style.left = `${x}px`;
-            fab.style.top = `${y}px`;
-            fab.style.right = 'auto';
-            fab.style.bottom = 'auto';
-        },
-        onEnd: (dragged, e) => {
-            if (!dragged) return;
-            swallowNextClick(fab);
-            fab.style.left = fab.style.top = fab.style.right = fab.style.bottom = '';
-            const x = e ? e.clientX : window.innerWidth / 2, y = e ? e.clientY : window.innerHeight / 2;
-            const corner = (y < window.innerHeight / 2 ? 't' : 'b') + (x < window.innerWidth / 2 ? 'l' : 'r');
-            applyFabCorner(corner);
-            try { localStorage.setItem(FAB_CORNER_KEY, corner); } catch {}
-        },
-    });
 }
 
 /* ── minimized voice dock: drag it up or down, it slide-locks top or bottom ── */

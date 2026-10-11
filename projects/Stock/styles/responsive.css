@@ -91,10 +91,6 @@
     .asst-callbar { padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
     .ctx-pct { font-size: 10px; }
     .asst.is-closing { animation: asst-popup-out .19s ease-in both; }
-    .asst-fab.dock-tl { top: calc(12px + env(safe-area-inset-top, 0px)); left: 12px; right: auto; bottom: auto; }
-    .asst-fab.dock-tr { top: calc(12px + env(safe-area-inset-top, 0px)); right: 12px; left: auto; bottom: auto; }
-    .asst-fab.dock-bl { top: auto; bottom: calc(82px + env(safe-area-inset-bottom, 0px)); left: 12px; right: auto; }
-    .asst-fab.dock-br { top: auto; bottom: calc(82px + env(safe-area-inset-bottom, 0px)); right: 12px; left: auto; }
     .asst.is-minimized { transition: top .18s ease; touch-action: none; }
     .asst.is-minimized.is-dragging { transition: none; }
     .asst.is-minimized.dock-top { inset: calc(12px + env(safe-area-inset-top, 0px)) 12px auto 12px; }

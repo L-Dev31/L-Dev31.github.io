@@ -1182,7 +1182,7 @@ export function renderAiSettings() {
         const fail = (msg, field) => { err.textContent = msg; err.hidden = false; field.focus(); };
 
         const presets = h('div', 'chips ais-presets');
-        presets.setAttribute('aria-label', L('Quick add'));
+        presets.setAttribute('aria-label', L('Presets'));
         for (const p of PRESETS.filter(p => !s.endpoints.some(e => e.base === p.base))) {
             presets.append(btn(p.name, () => {
                 if (!p.key) { addEndpoint(p.base, '', p.name); return; }
@@ -1191,7 +1191,7 @@ export function renderAiSettings() {
                 key.focus();
             }, 'chip'));
         }
-        if (presets.childElementCount) yours.append(h('p', 'meta', L('Quick add: tap one. Online AIs then ask for their key.')), presets);
+        if (presets.childElementCount) yours.append(h('p', 'meta', L('Presets')), presets);
         form.addEventListener('submit', e => {
             e.preventDefault();
             const label = name.value.trim();
