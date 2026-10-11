@@ -106,8 +106,8 @@
 .tab.is-down .tab-change { color: var(--neg); }
 .tab.is-up { background-color: var(--pos-soft); }
 .tab.is-down { background-color: var(--neg-soft); }
-.tab.is-up:is(:hover, .active) { background-color: color-mix(in srgb, var(--pos) 24%, transparent); }
-.tab.is-down:is(:hover, .active) { background-color: color-mix(in srgb, var(--neg) 24%, transparent); }
+.tab.is-up:is(:hover, .active) { background-color: color-mix(in srgb, var(--pos-fill) 26%, transparent); }
+.tab.is-down:is(:hover, .active) { background-color: color-mix(in srgb, var(--neg-fill) 26%, transparent); }
 .tab.is-paused { opacity: .6; }
 .tab-logo, .row-logo, .explorer-item-logo, .tk-logo {
     display: grid;

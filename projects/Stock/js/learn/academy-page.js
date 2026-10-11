@@ -82,13 +82,29 @@ export function talk(text, who = teacher()) {
 
 /** What comes after the words (a photo, an example, the answers, the button) shows up one by one once she has finished. */
 export const afterWords = (row, nodes) => nodes.map((node, i) => later(node, row.speechMs + 250 + i * 350));
+
+// A node that has not appeared yet takes no room: it is hidden until its turn, then it fades in, slides down and
+// pushes what follows it.
+const waiting = new Map();
+function reveal(node) {
+    waiting.delete(node);
+    node.hidden = false;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const room = node.parentElement?.classList.contains('learn-stage') ? { marginTop: '-16px' } : {};
+    node.style.overflow = 'hidden';
+    node.animate([{ opacity: 0, height: 0, transform: 'translateY(-14px)', ...room }, { opacity: 1, height: `${node.offsetHeight}px`, transform: 'none', marginTop: 0 }], { duration: 480, easing: 'cubic-bezier(.2, .9, .3, 1.1)' })
+        .finished.then(() => { node.style.overflow = ''; }, () => {});
+}
 function later(node, ms) {
-    node.classList.remove('later');
-    void node.offsetWidth;
-    node.classList.add('later');
-    node.style.setProperty('--after', `${ms}ms`);
+    clearTimeout(waiting.get(node));
+    node.hidden = true;
+    if (ms <= 0) { reveal(node); return node; }
+    waiting.set(node, setTimeout(() => reveal(node), ms));
     return node;
 }
+/** Shows everything still waiting now (a tap on the stage) or forgets it (a new step). */
+const flushLater = () => [...waiting.keys()].forEach(reveal);
+const dropLater = () => { waiting.forEach(clearTimeout); waiting.clear(); };
 
 /** Three icons, the first n lit: stars for a level's best run, hearts during a run. */
 function lit(name, n) {
@@ -190,7 +206,7 @@ function renderMap(w) {
     if (next) {
         const start = button('learn-start', next.boss ? L('Face the boss') : L('Start the lesson'));
         start.dataset.level = next.id;
-        card.append(start);
+        main.append(start);
     }
     requestAnimationFrame(() => path.querySelector('.is-next')?.scrollIntoView({ block: 'center' }));
 }
@@ -229,10 +245,11 @@ export function player(cls, nextCls) {
     nav.append(back, next);
     const box = el('div', cls);
     box.append(top, stage, nav);
-    stage.addEventListener('click', () => box.classList.add('skip'));
+    stage.addEventListener('click', () => { box.classList.add('skip'); flushLater(); });
     const progress = share => {
         fill.style.transform = `scaleX(${share})`;
         box.classList.remove('skip');
+        dropLater();
     };
     return { box, top, stage, back, next, progress };
 }
@@ -347,7 +364,7 @@ function play(level) {
     card.replaceChildren(box);
 
     const drawHearts = () => lives.replaceChildren(...lit('heart', hearts).children);
-    const move = (after = 0) => { next.hidden = false; next.textContent = L('Continue'); later(next, after); };
+    const move = (after = 0) => { next.textContent = L('Continue'); later(next, after); };
 
     function draw() {
         const s = steps[at];

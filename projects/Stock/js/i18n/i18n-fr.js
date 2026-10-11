@@ -1358,6 +1358,7 @@ export default {
     "Minimize assistant": "Réduire l'assistant",
     "Minimize voice mode": "Réduire le mode vocal",
     "Checking the figures": "Vérification des chiffres",
+    "Looking up the figures": "Recherche des chiffres",
     "Appearance": "Apparence",
     "Light": "Clair",
     "Dark": "Sombre",

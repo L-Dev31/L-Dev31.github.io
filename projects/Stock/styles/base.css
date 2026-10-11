@@ -22,6 +22,10 @@
     --accent-grad: linear-gradient(135deg, #8B7BFF, #B7A5FF);
     --on-accent: #120E1D;
     --pos: #0E7A54;
+    /* Bars, dots and charts take the bright tones; the dark ones above are for text, which needs the contrast. */
+    --pos-fill: #2FC48D;
+    --neg-fill: #FF5C7C;
+    --warn-fill: #FFC23D;
     --pos-soft: #E3F3EC;
     --neg: #C22D4A;
     --neg-soft: #FBE7EB;
@@ -78,6 +82,9 @@
     --accent-grad: linear-gradient(135deg, #8B7BFF, #B7A5FF);
     --on-accent: #120E1D;
     --pos: #4FE0A3;
+    --pos-fill: #4FE0A3;
+    --neg-fill: #FF6B8E;
+    --warn-fill: #F2C94C;
     --pos-soft: rgba(79, 224, 163, .12);
     --neg: #FF6B8E;
     --neg-soft: rgba(255, 107, 142, .12);

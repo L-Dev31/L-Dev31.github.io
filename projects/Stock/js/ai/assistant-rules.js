@@ -237,6 +237,10 @@ export function ungroundedFigures(answer, context) {
     return loose.slice(0, 6);
 }
 
+/** An answer that still holds a gap to fill in, like "[insert price here]". */
+export const hasPlaceholder = text => /\[[^\]]*(insert|to be filled|à compléter|à insérer|prix ici|price here|amount here|montant ici|x{2,}|\.\.\.)[^\]]*\]/i.test(text);
+export const placeholderNudge = 'Check before the user sees your answer: it still contains a placeholder in square brackets. Look the missing figure up now (get_market_data, or find_instrument first for a name) and answer again with real figures and no placeholder. If a figure cannot be found, say so in plain words instead.';
+
 export const groundingNudge = figures => `Check before the user sees your answer: ${figures.join(', ')} appear in no tool result, in the portfolio or in what the user said. If a figure comes from a calculation, redo it with calculate, project_growth or estimate_costs. If it is general knowledge you are not sure of, remove it or say it is approximate. Then write your final answer again, in full, without mentioning this check.`;
 
 /**
@@ -350,7 +354,7 @@ export function buildSystemPrompt(ctx) {
         ctx.voice && know('assistant.voice'),
         rules.length && know('assistant.user-rules', { rules: rules.map(r => `- ${r}`).join('\n') }),
         know((ctx.replyLang || ctx.lang) === 'fr' ? 'assistant.examples.fr' : 'assistant.examples.en'),
-        know('assistant.now', { view: ctx.view || 'home', value: money(ctx.total), cost: money(ctx.cost), unrealized: `${signed(Math.round((ctx.total || 0) - (ctx.cost || 0)))} ${cur}`, holdings, check }),
+        know('assistant.now', { view: ctx.view || 'home', screen: ctx.screen || 'nothing particular', value: money(ctx.total), cost: money(ctx.cost), unrealized: `${signed(Math.round((ctx.total || 0) - (ctx.cost || 0)))} ${cur}`, holdings, watch: (ctx.watch || []).slice(0, 15).map(w => `- ${w.name} [${w.ticker}]: ${w.price} ${w.currency}, ${signed(w.change_pct)}%`).join('\n') || '- (none)', check }),
         know('assistant.closing', { reminder }),
     ].filter(Boolean).join('\n\n');
 }

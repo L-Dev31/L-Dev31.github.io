@@ -62,9 +62,9 @@ select.asst-model { width: auto; max-width: 100%; padding: 0 22px 0 0; border: 0
 .msg-table table { border-collapse: collapse; font-size: 13px; }
 .msg-table :is(th, td) { padding: 5px 8px; border-bottom: 1px solid var(--line-2); text-align: left; }
 .tool-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
-.tool-mark { width: 8px; height: 8px; border-radius: var(--r-circle); background: var(--pos); }
+.tool-mark { width: 8px; height: 8px; border-radius: var(--r-circle); background: var(--pos-fill); }
 .tool-line.is-running .tool-mark { background: var(--accent); animation: pulse 1.1s ease-in-out infinite; }
-.tool-line.is-failed .tool-mark { background: var(--neg); }
+.tool-line.is-failed .tool-mark { background: var(--neg-fill); }
 .tool-err { color: var(--neg); }
 .msg-rate { display: flex; gap: 2px; }
 .rate-btn { width: 30px; height: 30px; padding: 0; border: 0; border-radius: var(--r-circle); background: none; font-size: 14px; color: var(--muted); }

@@ -10,7 +10,7 @@ import { round, holdingRows, positionMoney, priceCurrency, paidCurrency } from '
 import { TERMS } from '../coach/terms.js';
 import { el, icon, makeResizer, downloadText, floating } from '../core/utils.js';
 import { L, Ln, LOCALE, LANG } from '../i18n/i18n.js';
-import { TOOL_SPECS, checkToolCall, buildSystemPrompt, tidyAnswer, guessLanguage, calculate, projectGrowth, ungroundedFigures, groundingNudge } from './assistant-rules.js';
+import { TOOL_SPECS, checkToolCall, buildSystemPrompt, tidyAnswer, guessLanguage, calculate, projectGrowth, ungroundedFigures, hasPlaceholder, placeholderNudge, groundingNudge } from './assistant-rules.js';
 import { banksReady, allBanks, banksAsOf, currentBank, bankContext, orderFee, investmentCosts } from '../data/banks.js';
 import { termDetails, findTerm, plainText as plainTerms } from '../coach/explain.js';
 import { findSituations } from '../coach/situations.js';
@@ -49,7 +49,8 @@ function md(text) {
         .replace(/(^|[\s(])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>')
         .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
     const flushPara = () => { if (para.length) { out.push(`<p>${inline(para.join(' '))}</p>`); para = []; } };
-    const flushList = () => { if (list) { out.push(`<${list.tag}>${list.items.map(i => `<li>${inline(i)}</li>`).join('')}</${list.tag}>`); list = null; } };
+    // A numbered item keeps the number the model wrote: a list cut in two by a sub-list or a blank line goes on counting.
+    const flushList = () => { if (list) { out.push(`<${list.tag}>${list.items.map(([text, n]) => `<li${n ? ` value="${n}"` : ''}>${inline(text)}</li>`).join('')}</${list.tag}>`); list = null; } };
     const flushTable = () => {
         if (!table) return;
         const rows = table.filter(r => !/^\s*\|?\s*:?-{2,}/.test(r));
@@ -63,13 +64,13 @@ function md(text) {
         if (/^\s*\|.*\|\s*$/.test(line)) { flushPara(); flushList(); (table ||= []).push(line); continue; }
         flushTable();
         const bullet = line.match(/^\s*[-*•]\s+(.*)$/);
-        const num = line.match(/^\s*\d+[.)]\s+(.*)$/);
+        const num = line.match(/^\s*(\d+)[.)]\s+(.*)$/);
         const head = line.match(/^\s*#{1,6}\s+(.*)$/);
         if (bullet || num) {
             flushPara();
             const tag = bullet ? 'ul' : 'ol';
             if (!list || list.tag !== tag) { flushList(); list = { tag, items: [] }; }
-            list.items.push((bullet || num)[1]);
+            list.items.push(bullet ? [bullet[1]] : [num[2], num[1]]);
         } else if (head) { flushPara(); flushList(); out.push(`<p class="msg-h">${inline(head[1])}</p>`); }
         else if (!line.trim()) { flushPara(); flushList(); }
         else { flushList(); para.push(line.trim()); }
@@ -423,6 +424,21 @@ function coachNotes() {
     try { return findSituations().slice(0, 3).map(x => plainTerms(x.title)); } catch { return []; }
 }
 
+/** What the user is looking at, in a line: the open page, its tab and the figures on it (the same as get_current_page). */
+function screenNote() {
+    try {
+        const snap = pageSnapshot();
+        return JSON.stringify({ ...snap, ok: undefined, headings: undefined, note: undefined }).slice(0, 1400);
+    } catch { return ''; }
+}
+
+/** Instruments opened or followed but not held, with their last price: the answer to "what is it worth" without a call. */
+function watchedInstruments() {
+    return Object.values(positions).filter(p => p && !(p.shares > 0) && p.lastData?.price != null).map(p => ({
+        name: p.name, ticker: p.ticker, price: round(p.lastData.price), currency: p.raw?.currency || p.currency || '', change_pct: round(p.lastData.changePercent, 2),
+    }));
+}
+
 function systemPrompt(effort, replyLang = null) {
     const s = getUserSettings();
     const { rows, total } = holdingRows();
@@ -439,6 +455,8 @@ function systemPrompt(effort, replyLang = null) {
         rules: String(getAiSettings().rules || '').split('\n').map(x => x.trim()).filter(Boolean),
         formal: wantsFormal(),
         view: currentView(),
+        screen: screenNote(),
+        watch: watchedInstruments(),
         total,
         cost: rows.reduce((a, r) => a + (r.cost || 0), 0),
         holdings: rows,
@@ -1599,7 +1617,7 @@ export async function send(text) {
         } catch { /* no speech */ }
     } : null;
     const seen = new Set();
-    let figuresChecked = false;
+    let figuresChecked = false, placeholderChecked = false;
     // Set when a tool opened a page: on a phone the chat then steps aside so the page can be seen.
     let moved = false;
     const replyLang = guessLanguage(text);
@@ -1650,6 +1668,13 @@ export async function send(text) {
             reply.content = tidyAnswer(reply.content, replyLang || LANG);
             // One self-check before the user sees it: figures found in no tool result, the portfolio or the
             // user's words go back to the model once, to be recomputed with a tool or removed.
+            if (withTools && !voice && !placeholderChecked && hasPlaceholder(reply.content)) {
+                placeholderChecked = true;
+                ensureRequestActive();
+                convo.messages.push({ ...reply, hidden: true }, { role: 'user', hidden: true, content: placeholderNudge });
+                typingLabel.textContent = L('Looking up the figures');
+                return false;
+            }
             if (withTools && !voice && !figuresChecked) {
                 const given = modelMessages(convo.messages).map(m => `${m.content}\n${m.toolCalls ? JSON.stringify(m.toolCalls) : ''}`).join('\n');
                 const loose = ungroundedFigures(reply.content, `${system}\n${given}`);

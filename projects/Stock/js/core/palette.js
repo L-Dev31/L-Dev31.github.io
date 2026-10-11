@@ -7,7 +7,7 @@ export function colors() {
     const css = getComputedStyle(document.documentElement);
     const token = name => css.getPropertyValue(name).trim();
     cache = {
-        accent: token('--accent'), pos: token('--pos'), neg: token('--neg'), warn: token('--warn'),
+        accent: token('--accent'), pos: token('--pos-fill'), neg: token('--neg-fill'), warn: token('--warn-fill'),
         text: token('--text'), text2: token('--text-2'), muted: token('--muted'), faint: token('--faint'),
         surface: token('--surface'), grid: token('--grid'), line: token('--line-2'),
         inverse: token('--inverse'), onInverse: token('--on-inverse'),
