@@ -1536,6 +1536,4 @@ export default {
     "Previous step": "Étape précédente",
     "Level {0} · World {1}": "Niveau {0} · Monde {1}",
     "Boss · World {0}": "Boss · Monde {0}",
-    "Apply · one try per question": "Application · un seul essai par question",
-    "No room for mistakes": "Pas le droit à l'erreur",
 };

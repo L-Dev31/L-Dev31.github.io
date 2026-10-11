@@ -383,12 +383,6 @@ function play(level) {
             if (hearts) finish(level.id, hearts);
             return result(level, { won: hearts > 0, hearts, best });
         }
-        // The one-try questions get their own title screen, so nobody walks into them unaware.
-        if (dir > 0 && steps[to].phase === 'apply' && steps[at].phase !== 'apply') {
-            out.cancel();
-            stage.replaceChildren();
-            await splash(L('Apply · one try per question'), L('No room for mistakes'));
-        }
         at = to;
         draw();
         out.cancel();
