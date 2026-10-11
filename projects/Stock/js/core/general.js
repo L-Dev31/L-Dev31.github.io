@@ -66,7 +66,7 @@ for (const btn of document.querySelectorAll('.list-toggle')) {
 
 const NAV_FOR_CARD = { 'card-home': 'home', 'card-learn': 'learn', 'card-portfolio': 'portfolio', 'card-explorer': 'explorer', 'card-news': 'news', 'card-terminal': 'terminal', 'card-settings': 'settings' };
 // On phones Explorer and News share one tab, Discover; a stock opens from the lists of the Portfolio tab.
-const BOTTOM_FOR_CARD = { 'card-learn': 'bottom-nav-learn', 'card-explorer': 'bottom-nav-explorer', 'card-news': 'bottom-nav-explorer', 'card-portfolio': 'bottom-nav-portfolio', 'card-terminal': 'bottom-nav-terminal' };
+const BOTTOM_FOR_CARD = { 'card-learn': 'bottom-nav-learn', 'card-explorer': 'bottom-nav-explorer', 'card-news': 'bottom-nav-explorer', 'card-portfolio': 'bottom-nav-portfolio', 'card-terminal': 'bottom-nav-terminal', 'card-settings': 'bottom-nav-settings' };
 
 function syncCard(card) {
     const active = card.classList.contains('active');
