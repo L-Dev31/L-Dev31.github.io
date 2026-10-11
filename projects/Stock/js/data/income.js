@@ -23,7 +23,7 @@ const MEDIAN_AS = { MC: 'FR' };
 const EUROSTAT_GEO = { GR: 'EL' };
 const NOT_EUROSTAT = ['GB', 'US', 'CA', 'MC'];
 // Where each answer sits against the median, for the maths: the bracket's middle.
-export const INCOME_SHARE = { none: 0, b1: 0.45, b2: 0.8, b3: 1.3, b4: 2 };
+const INCOME_SHARE = { none: 0, b1: 0.45, b2: 0.8, b3: 1.3, b4: 2 };
 
 let saved = {};
 try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch { /* nothing saved */ }
@@ -51,7 +51,7 @@ function fetchMedian(code) {
 export const loadMedian = () => fetchMedian(countryCode());
 
 /** The typical monthly net income in the user's country, in their currency. */
-export function typicalIncome(code = countryCode()) {
+function typicalIncome(code = countryCode()) {
     const yearly = saved[code]?.value || MEDIAN[code] || MEDIAN[MEDIAN_AS[code]] || EU27;
     return convert(yearly / 12, 'EUR', currencyCode());
 }

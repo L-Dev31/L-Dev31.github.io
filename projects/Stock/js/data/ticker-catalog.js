@@ -1,14 +1,6 @@
 import { fetchYahooQuote } from './yahoo-finance.js';
 
-const JSON_FILES = {
-    equity: 'json/equity.json',
-    crypto: 'json/crypto.json',
-    commodity: 'json/commodity.json',
-    markets: 'json/markets.json'
-};
-
-const quoteLookupCache = new Map();
-
+// Market ids (and their short names) to the country they sit in.
 const MARKET_COUNTRY = {
     australia: 'AU', asx: 'AU',
     uk: 'GB', lse: 'GB',
@@ -22,184 +14,92 @@ const MARKET_COUNTRY = {
     hongkong: 'HK', hkex: 'HK',
     korea: 'KR', krx: 'KR'
 };
-
-let catalogPromise = null;
+// When the market says nothing, the currency is the best hint (every euro stock counts as French).
+const CURRENCY_COUNTRY = { GBP: 'GB', EUR: 'FR', JPY: 'JP', CAD: 'CA', AUD: 'AU', CHF: 'CH', HKD: 'HK', KRW: 'KR', INR: 'IN' };
+// Yahoo symbol suffix (BP.L, MC.PA...) to market id, for symbols the markets file does not list.
+const SUFFIX_MARKET = { PA: 'euronext', EPA: 'euronext', L: 'lse', DE: 'xetra', T: 'tse', HK: 'hkex', TO: 'tsx', AX: 'asx', SW: 'six', NS: 'nse', BO: 'bse', SZ: 'szse', SS: 'sse', KS: 'krx', KQ: 'krx' };
 
 const normalize = value => (value || '').trim().toUpperCase();
-const baseSymbol = value => normalize(value).split('.')[0].split('-')[0].split('/')[0];
+const baseOf = symbol => symbol.split('.')[0].split('-')[0].split('/')[0];
 
-async function loadJson(path) {
+const loadJson = async path => {
     const response = await fetch(path);
-    if (!response.ok) return [];
-    return response.json();
-}
+    return response.ok ? response.json() : [];
+};
 
-async function loadCatalog() {
-    if (!catalogPromise) {
-        catalogPromise = Promise.all([
-            loadJson(JSON_FILES.equity),
-            loadJson(JSON_FILES.crypto),
-            loadJson(JSON_FILES.commodity),
-            loadJson(JSON_FILES.markets)
-        ]).then(([equity, crypto, commodity, markets]) => {
-            const entries = [...equity, ...crypto, ...commodity].filter(Boolean);
-            const bySymbol = new Map();
-            const byTicker = new Map();
-            const byYahoo = new Map();
-            const cryptoSymbols = new Set();
+let catalogPromise = null;
+const loadCatalog = () => catalogPromise ||= Promise.all(['equity', 'crypto', 'commodity', 'markets'].map(name => loadJson(`json/${name}.json`)))
+    .then(([equity, crypto, commodity, markets]) => {
+        const bySymbol = new Map();
+        const byTicker = new Map();
+        for (const entry of [...equity, ...crypto, ...commodity].filter(Boolean)) {
+            if (normalize(entry.symbol)) bySymbol.set(normalize(entry.symbol), entry);
+            if (normalize(entry.ticker)) byTicker.set(normalize(entry.ticker), entry);
+        }
+        return { bySymbol, byTicker, markets: Array.isArray(markets) ? markets : [] };
+    });
 
-            entries.forEach(entry => {
-                const symbol = normalize(entry.symbol);
-                const ticker = normalize(entry.ticker);
-                const yahoo = normalize(entry.ticker);
-                if (symbol) bySymbol.set(symbol, entry);
-                if (ticker) byTicker.set(ticker, entry);
-                if (yahoo && yahoo !== ticker) byYahoo.set(yahoo, entry);
-                if (entry.type === 'crypto' && symbol) cryptoSymbols.add(symbol);
-            });
-
-            return { entries, bySymbol, byTicker, byYahoo, cryptoSymbols, markets: Array.isArray(markets) ? markets : [] };
-        });
-    }
-
-    return catalogPromise;
-}
-
-function inferMarketFromSymbol(symbol, quoteType, markets) {
-    const upper = normalize(symbol);
+function inferMarket(upper, quoteType, markets) {
     const suffix = upper.split('.').pop();
-    const market = markets.find(m => Array.isArray(m.exchanges) && m.exchanges.includes(suffix));
-    if (market) return market.id;
+    const listed = markets.find(m => Array.isArray(m.exchanges) && m.exchanges.includes(suffix));
+    if (listed) return listed.id;
     if (quoteType === 'CRYPTOCURRENCY' || upper.endsWith('-USD')) return 'crypto';
-    if (upper.endsWith('.PA') || upper.endsWith('.EPA')) return 'euronext';
-    if (upper.endsWith('.L')) return 'lse';
-    if (upper.endsWith('.DE')) return 'xetra';
-    if (upper.endsWith('.T')) return 'tse';
-    if (upper.endsWith('.HK')) return 'hkex';
-    if (upper.endsWith('.TO')) return 'tsx';
-    if (upper.endsWith('.AX')) return 'asx';
-    if (upper.endsWith('.SW')) return 'six';
-    if (upper.endsWith('.NS')) return 'nse';
-    if (upper.endsWith('.BO')) return 'bse';
-    if (upper.endsWith('.SZ')) return 'szse';
-    if (upper.endsWith('.SS')) return 'sse';
-    if (upper.endsWith('.KS') || upper.endsWith('.KQ')) return 'krx';
-    return 'other';
-}
-
-function inferCountryFromMarket(marketId, currency) {
-    if (marketId && MARKET_COUNTRY[marketId]) return MARKET_COUNTRY[marketId];
-    if (currency === 'GBP') return 'GB';
-    if (currency === 'EUR') return 'FR';
-    if (currency === 'JPY') return 'JP';
-    if (currency === 'CAD') return 'CA';
-    if (currency === 'AUD') return 'AU';
-    if (currency === 'CHF') return 'CH';
-    if (currency === 'HKD') return 'HK';
-    if (currency === 'KRW') return 'KR';
-    if (currency === 'INR') return 'IN';
-    return 'US';
+    return (upper.includes('.') && SUFFIX_MARKET[suffix]) || 'other';
 }
 
 // Publishable Logo.dev key: meant to be used from the browser.
 export const LOGO_DEV_KEY = 'pk_a9Yfpyg0R--W0TNaF1kGng';
 
+/** Logo addresses to try one after the other, best coverage first. */
 export function buildOnlineIconCandidates(symbol, market) {
-    const candidates = [];
-    const seen = new Set();
     const upper = (symbol || '').toUpperCase();
-    const base = upper.split('.')[0].split('-')[0].split('/')[0];
-    
-    const add = (url) => {
-        if (url && !seen.has(url)) {
-            seen.add(url);
-            candidates.push(url);
-        }
-    };
-
-    // Detect crypto from market or base symbol patterns
+    const base = baseOf(upper);
     const isCrypto = market === 'crypto' || upper.endsWith('-USD') || (upper.includes('-') && !upper.includes('.'));
-
-    if (isCrypto) {
-        const lower = base.toLowerCase();
-        add(`https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/${lower}.png`);
-        add(`https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/black/${lower}.png`);
-    } else {
-        // Stock logo variants
-        const variants = [upper, upper.replace('.', '-'), upper.split('.')[0], base].filter(Boolean);
-        
-        variants.forEach(v => {
-            // Logo.dev - Premium coverage (Priority #1)
-            add(`https://img.logo.dev/ticker/${v}?token=${LOGO_DEV_KEY}`);
-            // Parqet - Excellent coverage for EU and Global stocks
-            add(`https://assets.parqet.com/logos/symbol/${v}?format=png`);
-            // Financial Modeling Prep - Good for US and major globals
-            add(`https://financialmodelingprep.com/image-stock/${v}.png`);
-            add(`https://financialmodelingprep.com/image-stock/${v}.jpg`);
-            // EODHD public logos
-            add(`https://eodhd.com/img/logos/US/${v}.png`);
-            // IEX Legacy
-            add(`https://storage.googleapis.com/iex/api/logos/${v}.png`);
-        });
-    }
-
-    return candidates;
+    const urls = isCrypto
+        ? ['color', 'black'].map(shade => `https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/${shade}/${base.toLowerCase()}.png`)
+        : [upper, upper.replace('.', '-'), upper.split('.')[0], base].filter(Boolean).flatMap(v => [
+            `https://img.logo.dev/ticker/${v}?token=${LOGO_DEV_KEY}`,
+            `https://assets.parqet.com/logos/symbol/${v}?format=png`, // EU and global stocks
+            `https://financialmodelingprep.com/image-stock/${v}.png`, // US and major globals
+            `https://financialmodelingprep.com/image-stock/${v}.jpg`,
+            `https://eodhd.com/img/logos/US/${v}.png`,
+            `https://storage.googleapis.com/iex/api/logos/${v}.png`,
+        ]);
+    return [...new Set(urls)];
 }
 
-
-async function lookupYahooQuote(ticker) {
+const quoteLookups = new Map();
+function lookupYahooQuote(ticker) {
     if (!ticker) return null;
-    if (quoteLookupCache.has(ticker)) return quoteLookupCache.get(ticker);
-    const promise = (async () => {
-        try {
-            const res = await fetchYahooQuote(ticker);
-            return res && !res.error ? res.quote || null : null;
-        } catch {
-            return null;
-        }
-    })();
-    quoteLookupCache.set(ticker, promise);
-    return promise;
+    if (!quoteLookups.has(ticker)) {
+        quoteLookups.set(ticker, fetchYahooQuote(ticker).then(res => (res && !res.error ? res.quote || null : null), () => null));
+    }
+    return quoteLookups.get(ticker);
 }
 
+/** What the app knows about a symbol: the catalog record, else the given fallback, else a Yahoo quote, else a guess. */
 export async function resolveTickerDetails(symbol, fallback = {}, opts = {}) {
     const upper = normalize(symbol);
-    const base = baseSymbol(upper);
-    const catalog = await loadCatalog();
+    const base = baseOf(upper);
+    const { bySymbol, byTicker, markets } = await loadCatalog();
 
-    const record = catalog.bySymbol.get(upper)
-        || catalog.byTicker.get(upper)
-        || catalog.byYahoo.get(upper)
-        || catalog.bySymbol.get(base)
-        || catalog.byTicker.get(base)
-        || catalog.byYahoo.get(base)
-        || null;
-
+    const record = [upper, base].flatMap(key => [bySymbol.get(key), byTicker.get(key)]).find(Boolean) || null;
     const quote = (!record && opts.lookup !== false) ? await lookupYahooQuote(upper) : null;
 
     const quoteType = fallback.quoteType || quote?.quoteType;
-    const ticker = normalize(record?.ticker) || normalize(fallback.ticker) || normalize(quote?.symbol) || upper;
-    const market = record?.market || record?.marketId || fallback.market
-        || inferMarketFromSymbol(upper, quoteType, catalog.markets);
+    const market = record?.market || record?.marketId || fallback.market || inferMarket(upper, quoteType, markets);
     const currency = record?.currency || fallback.currency || quote?.currency || 'USD';
-    const country = record?.country || fallback.country || inferCountryFromMarket(market, currency);
-    const name = record?.name || fallback.name || quote?.longName || quote?.shortName || upper;
-    const isCrypto = market === 'crypto' || quoteType === 'CRYPTOCURRENCY';
-    const type = record?.type || fallback.type || (isCrypto ? 'crypto' : 'equity');
-    const isin = record?.isin || fallback.isin || '';
 
     return {
         symbol: record?.symbol || base || upper,
-        ticker,
-        name,
-        type,
+        ticker: normalize(record?.ticker) || normalize(fallback.ticker) || normalize(quote?.symbol) || upper,
+        name: record?.name || fallback.name || quote?.longName || quote?.shortName || upper,
+        type: record?.type || fallback.type || (market === 'crypto' || quoteType === 'CRYPTOCURRENCY' ? 'crypto' : 'equity'),
         currency,
-        country,
+        country: record?.country || fallback.country || MARKET_COUNTRY[market] || CURRENCY_COUNTRY[currency] || 'US',
         market,
-        isin,
-        iconCandidates: buildOnlineIconCandidates(upper, market),
-        jsonSymbol: record?.symbol || null,
+        isin: record?.isin || fallback.isin || '',
         record,
-        quote
+        quote,
     };
 }

@@ -3,7 +3,7 @@ import { buildOnlineIconCandidates } from './ticker-catalog.js';
 /** Tries the next logo source; when none is left, shows the ticker initials instead. */
 export function handleImageAssetError(img, symbol, market) {
     if (!img) return;
-    const list = img.dataset.candidates ? JSON.parse(img.dataset.candidates) : buildOnlineIconCandidates(symbol, market) || [];
+    const list = img.dataset.candidates ? JSON.parse(img.dataset.candidates) : buildOnlineIconCandidates(symbol, market);
     const next = Number(img.dataset.cIndex || 0);
     if (next < list.length) {
         img.dataset.candidates = JSON.stringify(list);

@@ -1,6 +1,5 @@
 import { getUserSettings, saveUserSettings } from '../core/state.js';
 
-export const DEFAULT_WORKER_URL = '';
 const WORKER_FAIL_THRESHOLD = 3;
 
 let workerFails = 0;
@@ -22,7 +21,7 @@ function onWorkerOk() {
     if (workerDown) { workerDown = false; emit('workerRecovered', {}); }
 }
 
-export const getProxyBaseUrl = () => getUserSettings().proxyUrl || DEFAULT_WORKER_URL;
+export const getProxyBaseUrl = () => getUserSettings().proxyUrl || '';
 
 export function setProxyBaseUrl(url) {
     const trimmed = url?.trim() || '';
@@ -31,8 +30,7 @@ export function setProxyBaseUrl(url) {
         return;
     }
     saveUserSettings({ proxyUrl: trimmed });
-    workerFails = 0;
-    if (workerDown) { workerDown = false; emit('workerRecovered', {}); }
+    onWorkerOk();
 }
 
 function wrap(targetUrl, base) {

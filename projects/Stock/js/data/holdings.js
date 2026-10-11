@@ -7,7 +7,7 @@ import { convert } from './rates.js';
 export const round = (x, d = 2) => x == null || !Number.isFinite(x) ? null : Math.round(x * 10 ** d) / 10 ** d;
 
 const FUND_WORDS = /\b(ETF|UCITS|ETC|ETN|fonds|fund|index|indice|tracker|MSCI|S&P|STOXX|Monde|World|SICAV|FCP)\b/i;
-export const kindOf = p => (p.type === 'crypto' ? 'crypto' : FUND_WORDS.test(`${p.name || ''} ${p.raw?.name || ''}`) ? 'fund' : 'stock');
+const kindOf = p => (p.type === 'crypto' ? 'crypto' : FUND_WORDS.test(`${p.name || ''} ${p.raw?.name || ''}`) ? 'fund' : 'stock');
 
 /** The currency a position's price is quoted in. */
 export const priceCurrency = p => p?.currency || p?.raw?.currency || p?.lastData?.currency || 'USD';
