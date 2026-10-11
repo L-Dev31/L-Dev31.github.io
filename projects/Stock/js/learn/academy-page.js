@@ -132,7 +132,11 @@ function gradesPanel() {
     box.open = !matchMedia('(max-width: 899px)').matches;
     const all = grades();
     const summary = el('summary', 'panel-title', L('What you know'));
-    summary.append(el('span', 'learn-average', percent(Math.round(all.reduce((sum, g) => sum + g.score, 0) / all.length))));
+    const average = Math.round(all.reduce((sum, g) => sum + g.score, 0) / all.length);
+    const mini = el('span', 'learn-mini');
+    mini.append(el('i'));
+    mini.firstChild.style.width = `${average}%`;
+    summary.append(el('span', 'learn-average', percent(average)), mini, icon('chevron-left'));
     box.append(summary);
     for (const g of all) {
         const bar = el('div', 'pbar pbar-compact');

@@ -405,7 +405,13 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 .learn-grades { position: sticky; top: 24px; display: grid; gap: 6px; }
 .learn-grades > summary { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; cursor: pointer; list-style: none; }
 .learn-grades > summary::-webkit-details-marker { display: none; }
-.learn-average { color: var(--world); font-variant-numeric: tabular-nums; }
+.learn-grades > summary { gap: 10px; }
+.learn-grades > summary .panel-title, .learn-grades > summary { font-weight: 700; }
+.learn-average { margin-left: auto; color: var(--world); font-variant-numeric: tabular-nums; font-weight: 700; }
+.learn-mini { width: 44px; height: 6px; border-radius: var(--r-pill); background: var(--surface-3); overflow: hidden; }
+.learn-mini i { display: block; height: 100%; background: var(--world); }
+.learn-grades > summary .i { flex: none; transform: rotate(-90deg); transition: transform .2s; }
+.learn-grades[open] > summary .i { transform: rotate(90deg); }
 .learn-grades .pbar-fill { background: var(--world); }
 .learn-title { display: flex; align-items: center; gap: 12px; font-family: var(--font); font-size: 40px; color: var(--world); }
 .learn-title .i { flex: none; width: 1em; height: 1em; }
