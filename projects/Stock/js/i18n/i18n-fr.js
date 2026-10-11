@@ -1535,4 +1535,6 @@ export default {
     "Next": "Suivant",
     "Thank you, that is all I needed. My advice now fits your situation. Change an answer whenever you like.": "Merci, c'est tout ce qu'il me fallait. Mes conseils collent maintenant à ta situation. Tu peux changer une réponse quand tu veux.",
     "Change an answer": "Changer une réponse",
+    "Start the lesson": "Commencer la leçon",
+    "Face the boss": "Affronter le boss",
 };

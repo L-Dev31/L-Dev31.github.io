@@ -203,6 +203,14 @@ function renderMap(w) {
     split.append(main, gradesPanel());
     card.dataset.view = 'map';
     card.replaceChildren(split);
+    // Always in reach, so the next step is one tap away.
+    if (next) {
+        const start = el('button', 'learn-start', next.boss ? L('Face the boss') : L('Start the lesson'));
+        start.type = 'button';
+        start.dataset.level = next.id;
+        start.prepend(icon('play'));
+        card.append(start);
+    }
     requestAnimationFrame(() => path.querySelector('.is-next')?.scrollIntoView({ block: 'center' }));
 }
 

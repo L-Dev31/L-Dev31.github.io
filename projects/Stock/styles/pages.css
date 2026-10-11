@@ -449,6 +449,8 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 .learn-photo { height: clamp(160px, 40vw, 240px); margin: 0; overflow: hidden; border-radius: var(--r-md); background: var(--surface-2); }
 .learn-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .learn-photo .coach-photo-credit { display: none; }
+.learn-start { position: sticky; bottom: 24px; z-index: 6; justify-self: center; display: inline-flex; align-items: center; gap: 10px; min-width: min(360px, 100%); min-height: 60px; padding: 0 32px; border: 0; border-radius: var(--r-pill); background: var(--world); color: #fff; font: inherit; font-size: 19px; font-weight: 700; box-shadow: 0 8px 24px color-mix(in srgb, var(--world) 45%, transparent); cursor: pointer; justify-content: center; }
+.learn-start:active { transform: scale(.98); }
 .learn-nav { position: sticky; bottom: 16px; display: flex; align-items: center; gap: 10px; }
 .learn-next { flex: 1; min-height: 52px; font-size: 16px; }
 .learn-back { flex: none; }
@@ -492,7 +494,9 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
     .learn-title { font-size: 30px; }
     .learn-node:nth-child(4n + 2) { translate: 56px; }
     .learn-node:nth-child(4n) { translate: -56px; }
-    .learn-nav { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+    .learn-nav, .learn-start { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+    /* Centred, and narrow enough to leave the assistant's button free on the right. */
+    .learn-start { min-width: 0; width: calc(100% - 144px); padding: 0 12px; font-size: 16px; white-space: nowrap; }
 }
 /* About you, asked the Academy's way, always in the app's own violet. */
 .survey { --world: var(--accent); --world-bg: var(--surface-2); }
