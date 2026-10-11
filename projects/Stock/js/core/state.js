@@ -1,7 +1,7 @@
 import { L, LOCALE } from '../i18n/i18n.js';
 import { countryCode } from '../data/country.js';
 import { convert } from '../data/rates.js';
-export const SETTINGS_STORAGE_KEY = 'nemeris_settings';
+const SETTINGS_KEY = 'nemeris_settings';
 
 const defaultSettings = {
     name: 'Nemeris User',
@@ -16,7 +16,7 @@ let settingsCache = null;
 export function getUserSettings() {
     if (settingsCache) return settingsCache;
     let stored = {};
-    try { stored = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) || '{}') || {}; } catch { /* corrupt, use defaults */ }
+    try { stored = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') || {}; } catch { /* corrupt, use defaults */ }
     if (/leot\.png$/.test(stored.pfp || '')) stored.pfp = defaultSettings.pfp;
     if (stored.proxyUrl && !/^https?:\/\//.test(stored.proxyUrl)) stored.proxyUrl = `https://${stored.proxyUrl}`;
     // Settings once held a symbol, '€' by default: a real choice becomes its code, the default gives way to the country's.
@@ -26,11 +26,10 @@ export function getUserSettings() {
 }
 
 export function saveUserSettings(patch) {
-    const merged = { ...getUserSettings(), ...patch };
-    settingsCache = merged;
-    try { localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(merged)); } catch { /* storage full */ }
+    settingsCache = { ...getUserSettings(), ...patch };
+    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settingsCache)); } catch { /* storage full */ }
     window.dispatchEvent(new Event('nemeris:settings'));
-    return merged;
+    return settingsCache;
 }
 
 // The countries Nemeris knows that do not use the euro.
@@ -48,7 +47,6 @@ export const isExpert = () => !!getUserSettings().expert;
 
 const DROP_COMFORT = { sell_all: 2, sell_some: 3, wait: 5, buy_more: 6 };
 const HORIZON_CAP = { lt2: 3, '2to5': 4, '5to10': 6, gt10: 7 };
-const HORIZON_YEARS = { lt2: 1, '2to5': 3, '5to10': 7, gt10: 10 };
 export const COMFORT_WORD = ['', L('Very cautious'), L('Cautious'), L('Measured'), L('Balanced'), L('Dynamic'), L('Bold'), L('Very bold')];
 
 export const getInvestor = () => getUserSettings().investor || {};
@@ -58,11 +56,8 @@ export const monthlyAmount = (inv = getInvestor()) => (inv.monthly > 0 ? convert
 /** Risk the user said they can live with, on the same 1 to 7 scale as fund documents. */
 export function comfortLevel(inv = getInvestor()) {
     const base = DROP_COMFORT[inv.drop];
-    if (!base) return null;
-    return Math.min(base, HORIZON_CAP[inv.horizon] || 7);
+    return base ? Math.min(base, HORIZON_CAP[inv.horizon] || 7) : null;
 }
-
-export const horizonYears = (inv = getInvestor()) => HORIZON_YEARS[inv.horizon] || null;
 
 const PHRASES = {
     situation: { student: 'is a student', employed: 'is employed', self: 'is self-employed, so their income can vary', jobseeker: 'is looking for work, so their income is uncertain', retired: 'is retired' },
@@ -86,15 +81,7 @@ export function investorContext(inv = getInvestor()) {
     return lines.join(' ');
 }
 
-export let positions = {};
-export let selectedApi = 'yahoo';
-export const lastApiBySymbol = {};
+// Shared by every screen: the stocks on the page and the period shown.
+export const positions = {};
 export let globalPeriod = '1W';
-export function setGlobalPeriod(p) { globalPeriod = p; }
-export let mainFetchController = null;
-export function setMainFetchController(c) { mainFetchController = c; }
-export let globalRefreshTimer = null;
-export function setGlobalRefreshTimer(t) { globalRefreshTimer = t; }
-export function setPositions(pos) { positions = pos; }
-export function setSelectedApi(api) { if (api) selectedApi = api; }
-export const getSelectedApi = () => selectedApi;
+export const setGlobalPeriod = p => { globalPeriod = p; };

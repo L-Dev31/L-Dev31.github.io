@@ -1,20 +1,18 @@
 // Home: the coach. It reads the portfolio as prices arrive, says what deserves attention in plain words,
 // offers the options (doing nothing included) and the idea behind each situation, taught in the Academy.
 // The page opens on its most pressing card, a situation or else the next lesson; the others follow under it.
-import { el, icon } from '../core/utils.js';
+import { el } from '../core/utils.js';
 import { getUserSettings, globalPeriod } from '../core/state.js';
 import { periodPhrase, debounce } from '../core/constants.js';
 import { money } from '../data/banks.js';
 import { syncAiGates } from '../ai/ai-core.js';
 import { L, Ln } from '../i18n/i18n.js';
-import { academyReady, worlds, levelById, nextLevel, worldOf, t } from '../learn/academy.js';
+import { academyReady, worlds, nextLevel, worldOf, t } from '../learn/academy.js';
 import { teacher } from '../learn/academy-page.js';
 import { findSituations, portfolioMove, howUsual, pct } from './situations.js';
-import { para, richText } from './explain.js';
-import { photoFigure } from './photos.js';
+import { button, askButton, lessonIdea, para, richText, photoFigure } from './explain.js';
 
-// Each kind of situation has its color, icon and word, so a glance says what a card is about.
-const ICON = { down: 'trend-down', up: 'trend-down', warn: 'info', setup: 'help', tip: 'lightbulb', calm: 'check' };
+// Each kind of situation has its word, so a glance says what a card is about.
 const KIND = { down: L('Fall'), up: L('Rise'), warn: L('Risk'), setup: L('To set up'), tip: L('Good to know'), calm: L('All calm') };
 const ACTION_LABEL = { profile: L('Open your profile'), bank: L('Choose your bank'), explorer: L('Open Explorer'), news: L('Read the news'), stock: L('Open it'), learn: L('Open the Academy') };
 const MAX_CARDS = 3;
@@ -35,8 +33,7 @@ function runAction(action, symbol) {
         nav.go('settings');
         document.querySelector('#card-settings .card-tab-btn[data-target="settings-profile"]')?.click();
     } else if (action === 'bank') document.getElementById('bank-change')?.click();
-    else if (action === 'explorer') nav.go('explorer');
-    else if (action === 'learn') nav.go('learn');
+    else if (action === 'explorer' || action === 'learn') nav.go(action);
     else if (action === 'stock') nav.openSymbol(symbol);
     else if (action === 'news') {
         nav.openSymbol(symbol);
@@ -44,21 +41,17 @@ function runAction(action, symbol) {
     }
 }
 
-function askButton(question) {
-    const b = el('button', 'btn btn-quiet', L('Ask Nemeris'));
-    b.type = 'button';
-    b.dataset.needsAi = 'assistant';
-    b.prepend(icon('sparkle'));
-    b.addEventListener('click', () => window.nemerisAssistant?.send(question));
-    return b;
+// A card's headline: its kind, what is happening, what it means in one sentence (filled in later).
+function headline() {
+    const text = el('div', 'coach-text');
+    text.append(el('span', 'coach-kind'), el('h3', 'coach-what'), el('p', 'coach-lead'));
+    return text;
 }
 
 /* ── one situation in three levels: the headline, what it means in one sentence,
    then on demand what you can do and the idea behind it ── */
 function disclose(label, iconName, panel, cls, onFirstOpen) {
-    const b = el('button', cls, label);
-    b.type = 'button';
-    b.prepend(icon(iconName));
+    const b = button(cls, label, iconName);
     b.setAttribute('aria-expanded', 'false');
     b.addEventListener('click', () => {
         const open = panel.hidden;
@@ -70,7 +63,6 @@ function disclose(label, iconName, panel, cls, onFirstOpen) {
 }
 
 function fillFacts(card, s) {
-    card.querySelector('.coach-icon').replaceChildren(icon(ICON[s.tone]));
     card.querySelector('.coach-kind').textContent = KIND[s.tone];
     card.querySelector('.coach-what').replaceChildren(richText(s.title));
     card.querySelector('.coach-lead').replaceChildren(richText(s.meaning[0]));
@@ -88,46 +80,28 @@ function fillFacts(card, s) {
         text.append(el('span', 'coach-option', o.label), para('coach-why', o.detail));
         li.append(text);
         if (o.action) {
-            const go = el('button', 'btn btn-quiet', ACTION_LABEL[o.action]);
-            go.type = 'button';
+            const go = button('btn btn-quiet', ACTION_LABEL[o.action]);
             go.addEventListener('click', () => runAction(o.action, o.symbol));
             li.append(go);
         }
         list.append(li);
     }
-    const more = card.querySelector('.coach-more');
-    more.replaceChildren(list, ...why, ...(s.ask ? [askButton(s.ask)] : []));
-}
-
-function learnButton(levelId, label) {
-    const b = el('button', 'btn btn-quiet', label);
-    b.type = 'button';
-    b.dataset.level = levelId;
-    b.prepend(icon('school'));
-    return b;
-}
-
-function fillLesson(panel, levelId) {
-    academyReady.then(() => {
-        const level = levelById(levelId);
-        if (level) panel.replaceChildren(para('coach-idea', t(level.idea)), learnButton(levelId, L('Learn it with Nemeris')));
-    });
+    card.querySelector('.coach-more').replaceChildren(list, ...why, ...(s.ask ? [askButton(L('Ask Nemeris'), s.ask)] : []));
 }
 
 function buildCard(s) {
     const card = el('article', `coach-card is-${s.tone}`);
     card.dataset.id = s.id;
-    const text = el('div', 'coach-text');
-    text.append(el('span', 'coach-kind'), el('h3', 'coach-what'), el('p', 'coach-lead'));
     const head = el('div', 'coach-head');
-    head.append(el('span', 'coach-icon'), text);
+    head.append(headline());
     const more = el('div', 'coach-more');
     const lesson = el('div', 'coach-lesson');
     more.hidden = lesson.hidden = true;
     const actions = el('div', 'coach-actions');
     actions.append(
         disclose(L('What can I do?'), 'expand', more, 'btn coach-toggle'),
-        disclose(L('The idea to remember'), 'lightbulb', lesson, 'link-btn coach-idea-btn', () => fillLesson(lesson, s.lesson)),
+        disclose(L('The idea to remember'), 'lightbulb', lesson, 'link-btn coach-idea-btn',
+            () => academyReady.then(() => lesson.replaceChildren(...lessonIdea('coach-idea', s.lesson)))),
     );
     if (s.photo) card.append(photoFigure(s.photo));
     card.append(head, actions, more, lesson);
@@ -157,39 +131,33 @@ function renderLearn() {
 function learnCard() {
     const box = el('article', 'coach-learn');
     box.hidden = true;
-    const text = el('div', 'coach-text');
-    text.append(el('span', 'coach-kind'), el('h3', 'coach-what'), el('p', 'coach-lead'));
-    const go = el('button', 'btn btn-primary coach-learn-go');
-    go.type = 'button';
-    go.append(icon('play'), el('span'));
-    const map = el('button', 'link-btn', L('See all the worlds'));
-    map.type = 'button';
+    const go = button('btn btn-primary coach-learn-go', null, 'play');
+    go.append(el('span'));
+    const map = button('link-btn', L('See all the worlds'));
     map.dataset.go = 'learn';
     const actions = el('div', 'coach-actions');
     actions.append(go, map);
-    box.append(teacher(), text, actions);
+    box.append(teacher(), headline(), actions);
     return box;
-}
-
-function statusLine(situations) {
-    const line = host.querySelector('.coach-status');
-    const urgent = situations.filter(s => s.priority >= 40 && s.tone !== 'calm').length;
-    const parts = [];
-    if (situations[0]?.id === 'start') parts.push(L('Let us set you up, one step at a time.'));
-    else parts.push(urgent ? Ln(urgent, 'One thing deserves a look.', '{0} things deserve a look.') : L('All calm.'));
-    const move = portfolioMove();
-    if (!move && situations[0]?.id !== 'start') parts.splice(0, 1, L('Checking the latest prices…'));
-    if (move && situations[0]?.id !== 'start') {
-        const signed = `${move.amount >= 0 ? '+' : '−'}${money(Math.abs(move.amount))}`;
-        parts.push(move.pct >= 0
-            ? L('Your portfolio is up {0} {1} ({2}).', pct(move.pct), periodPhrase(globalPeriod), signed)
-            : L('Your portfolio is down {0} {1} ({2}).', pct(move.pct), periodPhrase(globalPeriod), signed));
-    }
-    line.textContent = parts.join(' ');
 }
 
 // What is worth acting on now.
 const pressing = s => s && (s.id === 'start' || (s.priority >= 40 && s.tone !== 'calm'));
+
+function statusLine(situations) {
+    const move = portfolioMove();
+    let text;
+    if (situations[0]?.id === 'start') text = L('Let us set you up, one step at a time.');
+    else if (!move) text = L('Checking the latest prices…');
+    else {
+        const urgent = situations.filter(pressing).length;
+        const signed = `${move.amount >= 0 ? '+' : '−'}${money(Math.abs(move.amount))}`;
+        text = `${urgent ? Ln(urgent, 'One thing deserves a look.', '{0} things deserve a look.') : L('All calm.')} ${move.pct >= 0
+            ? L('Your portfolio is up {0} {1} ({2}).', pct(move.pct), periodPhrase(globalPeriod), signed)
+            : L('Your portfolio is down {0} {1} ({2}).', pct(move.pct), periodPhrase(globalPeriod), signed)}`;
+    }
+    host.querySelector('.coach-status').textContent = text;
+}
 
 function render() {
     if (!host) return;
@@ -202,7 +170,7 @@ function render() {
     for (const [id, card] of cards) if (!keep.has(id)) { card.remove(); cards.delete(id); }
     const shown = situations.map(s => {
         let card = cards.get(s.id);
-        if (!card) { card = buildCard(s); cards.set(s.id, card); }
+        if (!card) cards.set(s.id, card = buildCard(s));
         fillFacts(card, s);
         return card;
     });
@@ -223,10 +191,9 @@ export function initCoach({ go, openSymbol }) {
     host = document.getElementById('coach');
     if (!host) return;
     nav = { go, openSymbol };
-    const hello = el('p', 'coach-hello');
-    const status = el('p', 'coach-status');
-    host.replaceChildren(hello, status, el('div', 'coach-hero'), el('div', 'coach-cards'));
-    host.querySelector('.coach-hero').append(learnCard());
+    const hero = el('div', 'coach-hero');
+    hero.append(learnCard());
+    host.replaceChildren(el('p', 'coach-hello'), el('p', 'coach-status'), hero, el('div', 'coach-cards'));
     render();
     academyReady.then(refresh);
     for (const type of ['nemeris:portfolio', 'nemeris:settings', 'nemeris:academy']) window.addEventListener(type, refresh);

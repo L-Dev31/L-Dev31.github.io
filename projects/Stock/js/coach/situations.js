@@ -96,11 +96,10 @@ export function findSituations() {
     const bank = currentBank();
     const period = periodPhrase(globalPeriod);
     const found = moneySituations(inv);
-    const add = s => s && found.push(s);
 
     if (!rows.length) {
         const sample = positions.DCAM ? { action: 'stock', symbol: 'DCAM' } : { action: 'explorer' };
-        add({
+        found.push({
             id: 'start', tone: 'setup', photo: 'piggy bank', priority: 100,
             title: L('You have not added any investment yet.'),
             meaning: [
@@ -117,11 +116,10 @@ export function findSituations() {
         return found.sort((a, b) => b.priority - a.priority);
     }
 
-    const moved = rows.reduce((s, r) => s + moveOf(r), 0);
-    const before = total - moved;
-    const known = rows.some(r => r.change_pct != null);
+    const move = portfolioMove({ rows, total });
+    const before = total - (move?.amount || 0);
 
-    if (inv.horizon === 'lt2') add({
+    if (inv.horizon === 'lt2') found.push({
         id: 'horizon', tone: 'warn', photo: 'calendar', priority: 90,
         title: L('You may need this money within 2 years, but it is invested in stocks.'),
         meaning: [
@@ -142,7 +140,7 @@ export function findSituations() {
     if (drops[0]) {
         const r = drops[0];
         const impact = -moveOf(r) / before * 100;
-        add({
+        found.push({
             id: `drop:${r.symbol}`, tone: 'down', photo: 'stock market chart', priority: 70 + impact * 5,
             title: L('{0} fell {1} {2}.', r.name, pct(r.change_pct), period),
             meaning: [
@@ -163,7 +161,7 @@ export function findSituations() {
     if (rises[0]) {
         const r = rises[0];
         const heavy = r.weight_pct > 20;
-        add({
+        found.push({
             id: `rise:${r.symbol}`, tone: 'up', photo: 'stock market chart', priority: 40 + (moveOf(r) / before * 100) * 3,
             title: L('{0} rose {1} {2}.', r.name, pct(r.change_pct), period),
             meaning: [
@@ -181,12 +179,11 @@ export function findSituations() {
         });
     }
 
-    const portfolioMove = before > 0 ? moved / before * 100 : 0;
-    if (known && portfolioMove <= -bigMove('fund')) add({
+    if (move?.pct <= -bigMove('fund')) found.push({
         id: 'portfolio-drop', tone: 'down', photo: 'stormy sea', priority: 75,
-        title: L('Your portfolio lost {0} {1}.', pct(portfolioMove), period),
+        title: L('Your portfolio lost {0} {1}.', pct(move.pct), period),
         meaning: [
-            L('That is about {0} less [[unrealized|on paper]]. Falls like this are part of investing, and most are forgotten a few months later.', money(-moved)),
+            L('That is about {0} less [[unrealized|on paper]]. Falls like this are part of investing, and most are forgotten a few months later.', money(-move.amount)),
             L('Nothing is lost until you sell. What matters is when you will need the money.'),
         ],
         options: [
@@ -194,11 +191,11 @@ export function findSituations() {
             { label: L('Keep investing as planned'), detail: L('If you invest every month, this month buys at lower prices.') },
         ],
         lesson: 'timeInMarket',
-        ask: L('My portfolio lost {0} {1}. Should I worry?', pct(portfolioMove), period),
+        ask: L('My portfolio lost {0} {1}. Should I worry?', pct(move.pct), period),
     });
 
     const stocks = rows.filter(r => r.kind === 'stock');
-    if (rows.length === 1 && stocks.length === 1) add({
+    if (rows.length === 1 && stocks.length === 1) found.push({
         id: 'single', tone: 'warn', photo: 'eggs basket', priority: 65,
         title: L('All your money is in one stock: {0}.', rows[0].name),
         meaning: [
@@ -216,7 +213,7 @@ export function findSituations() {
         const r = stocks[0];
         const part = r.value / 3;
         const fee = bank ? orderFee(bank, part) : null;
-        add({
+        found.push({
             id: `heavy:${r.symbol}`, tone: 'warn', photo: 'eggs basket', priority: 60 + r.weight_pct / 2,
             title: L('{0} is {1} of your money.', r.name, pct(r.weight_pct)),
             meaning: [
@@ -236,7 +233,7 @@ export function findSituations() {
     }
 
     const loser = [...rows].sort((a, b) => a.pl_pct - b.pl_pct)[0];
-    if (loser.pl_pct <= -20 && !drops.includes(loser)) add({
+    if (loser.pl_pct <= -20 && !drops.includes(loser)) found.push({
         id: `loss:${loser.symbol}`, tone: 'down', photo: 'crossroads', priority: 55 + -loser.pl_pct / 2,
         title: L('{0} is {1} below what you paid.', loser.name, pct(loser.pl_pct)),
         meaning: [
@@ -254,7 +251,7 @@ export function findSituations() {
 
     const sumOf = test => rows.filter(test).reduce((s, r) => s + r.value, 0);
     const crypto = sumOf(r => r.kind === 'crypto');
-    if (crypto / total > 0.1) add({
+    if (crypto / total > 0.1) found.push({
         id: 'crypto', tone: 'warn', photo: 'bitcoin', priority: 50 + crypto / total * 50 + ((comfortLevel() || 7) <= 3 ? 20 : 0),
         title: L('Crypto is {0} of your portfolio.', pct(crypto / total * 100)),
         meaning: [
@@ -271,7 +268,7 @@ export function findSituations() {
 
     const home = currencyCode();
     const foreign = sumOf(r => r.currency && majorCurrency(r.currency) !== home);
-    if (foreign / total > 0.5) add({
+    if (foreign / total > 0.5) found.push({
         id: 'currency', tone: 'tip', photo: 'currency exchange', priority: 25,
         title: L('{0} of your money is priced in other currencies.', pct(foreign / total * 100)),
         meaning: [
@@ -290,7 +287,7 @@ export function findSituations() {
     const fee = bank && amount ? orderFee(bank, amount) : null;
     if (fee != null && fee / amount >= 0.01) {
         const bigger = orderFee(bank, amount * 3);
-        add({
+        found.push({
             id: 'fees', tone: 'warn', photo: 'coins', priority: 45 + fee / amount * 1000,
             title: L('Your orders lose {0} to fees at {1}.', pct(fee / amount * 100), bank.name),
             meaning: [
@@ -305,14 +302,14 @@ export function findSituations() {
         });
     }
 
-    if (!inv.horizon || !inv.drop || !inv.cushion || !inv.debt) add({
+    if (!inv.horizon || !inv.drop || !inv.cushion || !inv.debt) found.push({
         id: 'profile', tone: 'setup', photo: 'compass', priority: 30,
         title: L('Nemeris does not know your goals yet.'),
         meaning: [L('Whether a fall is a problem depends on you: your money today, when you need it and how you would react. A few quick questions let Nemeris fit every explanation to you.')],
         options: [{ label: L('Answer a few questions'), detail: L('It takes a minute, in Settings, Profile.'), action: 'profile' }],
         lesson: 'horizon',
     });
-    else if (!bank) add({
+    else if (!bank) found.push({
         id: 'bank', tone: 'setup', photo: 'bank building', priority: 20,
         title: L('Nemeris does not know your bank yet.'),
         meaning: [L('Each bank charges differently: the same 500 € order can cost nothing or more than 5 €. Once Nemeris knows yours, it counts the real [[orderFee|cost of every order]].')],
@@ -320,7 +317,7 @@ export function findSituations() {
         lesson: 'fees',
     });
 
-    if (known && !found.some(s => s.priority >= 40)) add({
+    if (move && !found.some(s => s.priority >= 40)) found.push({
         id: 'calm', tone: 'calm', photo: 'calm lake', priority: 35,
         title: L('Nothing needs your attention.'),
         meaning: [L('Your investments moved within their usual range. On calm days the best move is usually no move at all.')],
@@ -335,8 +332,7 @@ export function findSituations() {
 }
 
 /** How the whole portfolio moved over the period: { pct, amount }, or null before prices load. */
-export function portfolioMove() {
-    const { rows, total } = holdingRows();
+export function portfolioMove({ rows, total } = holdingRows()) {
     if (!rows.some(r => r.change_pct != null)) return null;
     const moved = rows.reduce((s, r) => s + moveOf(r), 0);
     return { pct: total - moved > 0 ? moved / (total - moved) * 100 : 0, amount: moved };

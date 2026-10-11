@@ -1,15 +1,11 @@
 import { periodToDays } from '../core/constants.js';
+import { positions } from '../core/state.js';
 import { fetchTickerNewsItems, fetchSymbolNewsItems } from '../terminal/command/news.js';
 import { getEl, el, formatPct, progressBar, showCard } from '../core/utils.js';
 import { L, LOCALE } from '../i18n/i18n.js';
 
-let positions = {};
-let pageItems = [];
-let pageScope = 'mine';
-let pageTimer = 0;
+let pageItems = [], pageScope = 'mine', pageTimer = 0;
 const cardTimers = {};
-
-export function setPositions(pos) { positions = pos; }
 
 const when = value => {
     const d = new Date(value || Date.now());
@@ -33,16 +29,12 @@ function safeUrl(url) {
 
 function newsItem(item) {
     const href = safeUrl(item.url);
-    const a = el(href ? 'a' : 'div', 'news-item');
-    if (href) { a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+    const a = el(href ? 'a' : 'div', 'news-item', null, href && { href, target: '_blank', rel: 'noopener noreferrer' });
     a.append(el('h3', 'news-title', item.title || L('Untitled')));
     if (item.summary) a.append(el('p', 'news-summary', item.summary));
     const meta = el('p', 'news-meta');
-    meta.append(el('span', 'news-source', item.source || 'Source'));
-    const t = el('time', null, when(item.publishedAt));
     const d = new Date(item.publishedAt);
-    if (!Number.isNaN(d.getTime())) { t.dateTime = d.toISOString(); t.title = d.toLocaleString(LOCALE); }
-    meta.append(t);
+    meta.append(el('span', 'news-source', item.source || 'Source'), el('time', null, when(item.publishedAt), !Number.isNaN(d.getTime()) && { dateTime: d.toISOString(), title: d.toLocaleString(LOCALE) }));
     const seen = new Set();
     for (const sym of new Set([item.symbol, ...(item.symbols || []), ...(item.relatedTickers || [])].filter(Boolean))) {
         const key = positions[sym] ? sym : Object.keys(positions).find(k => positions[k].ticker === sym);
@@ -56,11 +48,12 @@ function newsItem(item) {
 }
 
 function renderList(host, items, emptyText) {
-    host.replaceChildren();
-    if (!items.length) { host.append(el('p', 'empty', emptyText)); return; }
-    const frag = document.createDocumentFragment();
-    for (const item of items) frag.append(newsItem(item));
-    host.append(frag);
+    host.replaceChildren(...(items.length ? items.map(newsItem) : [el('p', 'empty', emptyText)]));
+}
+
+/** Headlines newest first, narrowed to what is typed in the search box. */
+function showNews(host, items, q) {
+    renderList(host, byDate(matches(items, q)), q ? L('No headline matches.') : L('No recent news.'));
 }
 
 function tickersFor(symbol) {
@@ -80,7 +73,7 @@ function onlyAbout(items, symbol) {
 }
 
 /* ── the News tab of a stock ── */
-export async function fetchCardNews(symbol, force = false, limit = 50, days = 7, apiName = 'yahoo') {
+export async function fetchCardNews(symbol, force = false, limit = 50, days = 7) {
     const pos = positions[symbol];
     if (!pos) return [];
     if (!force && pos.lastNewsFetch && Date.now() - pos.lastNewsFetch < 600000) { updateNewsUI(symbol, pos.news); return pos.news; }
@@ -91,7 +84,7 @@ export async function fetchCardNews(symbol, force = false, limit = 50, days = 7,
         host.replaceChildren(bar.el);
     }
     try {
-        const items = await fetchSymbolNewsItems({ symbol, positions, limit, days, apiName });
+        const items = await fetchSymbolNewsItems({ symbol, positions, limit, days });
         if (Array.isArray(items)) {
             pos.news = onlyAbout(items, symbol);
             pos.lastNewsFetch = Date.now();
@@ -103,11 +96,9 @@ export async function fetchCardNews(symbol, force = false, limit = 50, days = 7,
     return [];
 }
 
-export function updateNewsUI(symbol, items) {
+function updateNewsUI(symbol, items) {
     const host = getEl(`news-list-${symbol}`);
-    if (!host) return;
-    const q = getEl(`card-${symbol}`)?.querySelector('.news-search-input')?.value || '';
-    renderList(host, byDate(matches(items || [], q)), q ? L('No headline matches.') : L('No recent news.'));
+    if (host) showNews(host, items || [], getEl(`card-${symbol}`)?.querySelector('.news-search-input')?.value || '');
 }
 
 export function setupNewsSearch(symbol) {
@@ -121,7 +112,7 @@ export function startCardNewsAutoRefresh(symbol) {
         if (card?.classList.contains('active') && card.querySelector('[data-pane="news"]')?.classList.contains('active')) fetchCardNews(symbol, true);
     }, 60000);
 }
-export function stopCardNewsAutoRefresh(symbol) { clearInterval(cardTimers[symbol]); delete cardTimers[symbol]; }
+export function stopCardNewsAutoRefresh(symbol) { clearInterval(cardTimers[symbol]); }
 
 /* ── the News page: your stocks first ── */
 function scopeSymbols(scope) {
@@ -136,13 +127,8 @@ function renderChips() {
     if (!host) return;
     const held = scopeSymbols('mine');
     const chips = [['mine', L('My stocks')], ['watch', 'Watchlist'], ...held.map(s => [s, positions[s].name || s])];
-    host.replaceChildren(...chips.map(([k, label]) => {
-        const b = el('button', `chip${k === pageScope ? ' active' : ''}`, label);
-        b.type = 'button';
-        b.dataset.scope = k;
-        b.setAttribute('aria-pressed', String(k === pageScope));
-        return b;
-    }));
+    host.replaceChildren(...chips.map(([k, label]) =>
+        el('button', `chip${k === pageScope ? ' active' : ''}`, label, { type: 'button', 'data-scope': k, 'aria-pressed': k === pageScope })));
 }
 
 async function loadPage() {
@@ -158,7 +144,7 @@ async function loadPage() {
     const worker = async () => { for (let sym; (sym = queue.shift());) await loadOne(sym); };
     const loadOne = async sym => {
         try {
-            const items = await fetchTickerNewsItems({ ticker: positions[sym].ticker || sym, limit: 20, days: periodToDays('1M'), apiName: 'yahoo' });
+            const items = await fetchTickerNewsItems({ ticker: positions[sym].ticker || sym, limit: 20, days: periodToDays('1M') });
             for (const item of onlyAbout((items || []).map(i => ({ ...i, symbol: sym })), sym)) {
                 const key = item.url || item.title;
                 const hit = unique.get(key) || { ...item, symbols: new Set() };
@@ -169,15 +155,11 @@ async function loadPage() {
         bar.set(++done / symbols.length, L('Loading news'), `${done} / ${symbols.length}`);
     };
     await Promise.all(Array.from({ length: Math.min(4, symbols.length) }, worker));
-    pageItems = byDate([...unique.values()].map(i => ({ ...i, symbols: [...i.symbols] })));
+    pageItems = [...unique.values()].map(i => ({ ...i, symbols: [...i.symbols] }));
     renderPage();
 }
 
-function renderPage() {
-    const host = getEl('news-page-feed-list');
-    const q = getEl('news-article-search')?.value || '';
-    renderList(host, matches(pageItems, q), q ? L('No headline matches.') : L('No recent news.'));
-}
+const renderPage = () => showNews(getEl('news-page-feed-list'), pageItems, getEl('news-article-search')?.value || '');
 
 getEl('news-chips')?.addEventListener('click', e => {
     const chip = e.target.closest('.chip');
@@ -196,7 +178,4 @@ export function openNewsPage() {
     pageTimer = setInterval(() => { if (getEl('card-news')?.classList.contains('active')) loadPage(); }, 120000);
 }
 
-export function closeNewsPage() {
-    clearInterval(pageTimer);
-    pageTimer = 0;
-}
+export const closeNewsPage = () => clearInterval(pageTimer);

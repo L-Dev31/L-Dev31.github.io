@@ -1,8 +1,7 @@
 // The Academy page: a world's path of levels, and the player that runs one level a step at a time.
-import { el, icon, showCard, floating } from '../core/utils.js';
+import { el, icon, showCard, floating, progressBar } from '../core/utils.js';
 import { L, LOCALE } from '../i18n/i18n.js';
-import { richText, para } from '../coach/explain.js';
-import { photoFigure } from '../coach/photos.js';
+import { button, iconButton, richText, para, photoFigure } from '../coach/explain.js';
 import { academyReady, worlds, worldOf, levelById, levelAfter, isOpen, isDone, stars, nextLevel, stepsOf, record, finish, grades, t } from './academy.js';
 
 const HEARTS = 3;
@@ -31,25 +30,15 @@ export const react = (who, mood) => {
 
 /** Text of the content file: **bold**, [[tappable|words]], and lines starting with "- " as a bullet list. */
 function rich(text) {
-    const inline = part => {
-        const out = document.createDocumentFragment();
-        part.split(/\*\*(.+?)\*\*/).forEach((bit, i) => out.append(i % 2 ? el('strong', null, bit) : richText(bit)));
-        return out;
-    };
     const out = document.createDocumentFragment();
     let list = null;
     for (const line of String(text).split('\n')) {
-        if (line.startsWith('- ')) {
-            if (!list) out.append(list = el('ul', 'learn-list'));
-            const li = el('li');
-            li.append(inline(line.slice(2)));
-            list.append(li);
-        } else {
-            list = null;
-            const p = el('p');
-            p.append(inline(line));
-            out.append(p);
-        }
+        const item = line.startsWith('- ');
+        if (!item) list = null;
+        else if (!list) out.append(list = el('ul', 'learn-list'));
+        const n = el(item ? 'li' : 'p');
+        line.slice(item ? 2 : 0).split(/\*\*(.+?)\*\*/).forEach((bit, i) => n.append(i % 2 ? el('strong', null, bit) : richText(bit)));
+        (list || out).append(n);
     }
     return out;
 }
@@ -65,9 +54,9 @@ function spoken(root) {
     while (walk.nextNode()) texts.push(walk.currentNode);
     for (const node of texts) {
         const out = document.createDocumentFragment();
-        for (const part of node.textContent.split(/(\s+)/)) {
-            if (!part) continue;
-            if (/^\s+$/.test(part)) { out.append(part); continue; }
+        // The parts alternate between words and the spaces between them, which stay plain.
+        for (const part of node.textContent.split(/(\s+)/).filter(Boolean)) {
+            if (/^\s/.test(part)) { out.append(part); continue; }
             const word = el('span', 'word');
             for (const letter of part) {
                 const mark = el('span', 'w', letter);
@@ -109,12 +98,7 @@ function lit(name, n) {
         mark.classList.toggle('is-lost', i >= n);
         row.append(mark);
     }
-    return row;
-}
-
-function starRow(n) {
-    const row = lit('star', n);
-    row.setAttribute('aria-label', L('{0} of {1} hearts kept', n, HEARTS));
+    if (name === 'star') row.setAttribute('aria-label', L('{0} of {1} hearts kept', n, HEARTS));
     return row;
 }
 
@@ -124,7 +108,6 @@ const paint = w => {
     document.documentElement.style.setProperty('--world-bg', w.bg);
 };
 const percent = n => (n / 100).toLocaleString(LOCALE, { style: 'percent' });
-const levelNumber = level => worldOf(level.id).levels.filter(l => !l.boss).indexOf(level) + 1;
 
 /* ── the map ── */
 // On phones "What you know" is a floating button: it takes turns with the assistant's.
@@ -140,7 +123,6 @@ function gradesPanel() {
     box.addEventListener('toggle', () => { if (box.open && phone.matches) gradesOpened(); });
     const all = grades();
     const summary = el('summary', 'panel-title');
-    summary.append(el('span', 'learn-label', L('What you know')));
     const average = Math.round(all.reduce((sum, g) => sum + g.score, 0) / all.length);
     const mini = el('span', 'learn-mini');
     mini.append(el('i'));
@@ -151,37 +133,23 @@ function gradesPanel() {
     const close = el('span', 'learn-close');
     close.setAttribute('aria-label', L('Close'));
     close.append(icon('close'));
-    summary.append(el('span', 'learn-average', percent(average)), mini, icon('chevron-left'), ring, close);
+    summary.append(el('span', 'learn-label', L('What you know')), el('span', 'learn-average', percent(average)), mini, icon('chevron-left'), ring, close);
     box.append(summary);
-    for (const g of all) {
-        const bar = el('div', 'pbar pbar-compact');
-        const head = el('div', 'pbar-head');
-        head.append(el('span', 'pbar-label', g.name), el('span', 'pbar-detail', percent(g.score)));
-        const track = el('div', 'pbar-track');
-        const fill = el('div', 'pbar-fill');
-        fill.style.transform = `scaleX(${g.score / 100})`;
-        track.append(fill);
-        bar.append(head, track);
-        box.append(bar);
-    }
-    const words = el('button', 'link-btn', L('Every word explained'));
-    words.type = 'button';
+    for (const g of all) box.append(progressBar({ label: g.name, detail: percent(g.score), compact: true, eta: false }).set(g.score / 100).el);
+    const words = button('link-btn', L('Every word explained'));
     words.dataset.library = '';
-    box.append(el('p', 'meta', L('Each bar is the share of all the Academy\'s questions on that topic you got right on your last try.')), words);
+    box.append(words);
     return box;
 }
 
 function node(level, next) {
-    const open = isOpen(level.id);
     const li = el('li', `learn-node${level.boss ? ' is-boss' : ''}${isDone(level.id) ? ' is-done' : ''}${level === next ? ' is-next' : ''}`);
-    const b = el('button');
-    b.type = 'button';
-    b.disabled = !open;
+    const b = button();
+    b.disabled = !isOpen(level.id);
     const dot = el('span', 'learn-dot');
     dot.append(icon(level.boss === 'final' ? 'crown' : level.boss ? 'tower' : 'play'));
-    const name = el('span', 'learn-name', t(level.title));
-    b.append(dot, name);
-    if (isDone(level.id)) b.append(starRow(stars(level.id)));
+    b.append(dot, el('span', 'learn-name', t(level.title)));
+    if (isDone(level.id)) b.append(lit('star', stars(level.id)));
     b.addEventListener('click', () => play(level));
     li.append(b);
     return li;
@@ -220,8 +188,7 @@ function renderMap(w) {
     card.replaceChildren(split);
     // Always in reach, so the next step is one tap away.
     if (next) {
-        const start = el('button', 'learn-start', next.boss ? L('Face the boss') : L('Start the lesson'));
-        start.type = 'button';
+        const start = button('learn-start', next.boss ? L('Face the boss') : L('Start the lesson'));
         start.dataset.level = next.id;
         card.append(start);
     }
@@ -229,14 +196,45 @@ function renderMap(w) {
 }
 
 /* ── the player ── */
-/** Slides the stage out to one side, lets swap() fill it, slides it in from the other. dir: 1 forward, -1 back. swap() returning false stops there. */
+/**
+ * Slides the stage out to one side, lets swap() fill it, slides it in from the other. dir: 1 forward, -1 back.
+ * swap() returning false stops there. Taps during a slide are ignored.
+ */
 export async function slide(stage, dir, swap) {
+    if (stage.sliding) return;
+    stage.sliding = true;
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const out = stage.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translateX(${-dir * 80}px)` }], { duration: calm ? 0 : 170, easing: 'ease-in', fill: 'forwards' });
     await out.finished.catch(() => {});
     const goOn = swap();
     out.cancel();
     if (goOn !== false) stage.animate([{ opacity: 0, transform: `translateX(${dir * 110}px) scale(.96)` }, { opacity: 1, transform: 'none' }], { duration: calm ? 0 : 520, easing: 'cubic-bezier(.2,.9,.3,1.12)' });
+    stage.sliding = false;
+}
+
+/**
+ * What both players (a level, the questionnaire) are made of: a progress bar on top, the stage, Back and Next under it.
+ * Tapping the stage shows the words at once; progress(share) fills the bar and makes Nemeris type the next words again.
+ */
+export function player(cls, nextCls) {
+    const fill = el('div', 'pbar-fill');
+    const track = el('div', 'pbar-track');
+    track.append(fill);
+    const top = el('div', 'learn-top');
+    top.append(track);
+    const stage = el('div', 'learn-stage');
+    const back = button('btn learn-back', L('Back'), 'chevron-left');
+    const next = button(nextCls);
+    const nav = el('div', 'learn-nav');
+    nav.append(back, next);
+    const box = el('div', cls);
+    box.append(top, stage, nav);
+    stage.addEventListener('click', () => box.classList.add('skip'));
+    const progress = share => {
+        fill.style.transform = `scaleX(${share})`;
+        box.classList.remove('skip');
+    };
+    return { box, top, stage, back, next, progress };
 }
 
 const shuffle = list => list.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).map(([, x]) => x);
@@ -245,15 +243,14 @@ const shuffle = list => list.map(x => [Math.random(), x]).sort((a, b) => a[0] - 
  * A question: options in a new order each time. While tries remain a wrong pick is greyed out (onMiss);
  * the end calls onDone(score): 1 right at once, .5 right on a second try, 0 missed.
  */
-export function questionBox(q, { tries = 1, onMiss, onDone }) {
+function questionBox(q, { tries = 1, onMiss, onDone }) {
     const box = el('div', 'quiz');
     const options = el('div', 'quiz-options');
     const why = el('p', 'quiz-why');
     why.hidden = true;
     let missed = 0;
     for (const [text, right] of shuffle(q.options.map((o, i) => [t(o), i === q.answer]))) {
-        const b = el('button', 'quiz-option');
-        b.type = 'button';
+        const b = button('quiz-option');
         b.append(richText(text));
         b.addEventListener('click', () => {
             why.hidden = false;
@@ -277,10 +274,12 @@ export function questionBox(q, { tries = 1, onMiss, onDone }) {
     return box;
 }
 
-/** A title screen over the main area: a small line fades in, then the title rises word by word. Resolves once it is gone. */
-function splash(kind, text) {
+/** A level's title screen over the main area: a small line fades in, then the title rises word by word. Resolves once it is gone. */
+function splash(level) {
+    const number = worlds().indexOf(world) + 1;
+    const kind = level.boss ? L('Boss · World {0}', number) : L('Level {0} · World {1}', world.levels.filter(l => !l.boss).indexOf(level) + 1, number);
     const box = el('div', 'learn-splash');
-    const words = text.split(' ');
+    const words = t(level.title).split(' ');
     const title = el('h1');
     words.forEach((word, i) => {
         const span = el('span', null, word);
@@ -301,11 +300,6 @@ function splash(kind, text) {
     });
 }
 
-function levelSplash(level) {
-    const number = worlds().indexOf(world) + 1;
-    return splash(level.boss ? L('Boss · World {0}', number) : L('Level {0} · World {1}', levelNumber(level), number), t(level.title));
-}
-
 /** The end of a level: its result big in the middle, Nemeris under it (jumping for joy on a perfect run), then the stars. */
 function result(level, { won, hearts, best }) {
     const after = levelAfter(level.id);
@@ -316,17 +310,16 @@ function result(level, { won, hearts, best }) {
         ? L('{0} wins this time. What you learned is still yours: the test starts again from the beginning.', t(level.title))
         : L('That happens to everyone. Try the level again: it will feel easier the second time.')));
     const actions = el('div', 'learn-actions');
-    const button = (label, action, cls = 'btn') => {
-        const b = el('button', cls, label);
-        b.type = 'button';
+    const add = (label, action, cls) => {
+        const b = button(cls, label);
         b.addEventListener('click', action);
         actions.append(b);
     };
-    if (won && after) button(L('Next level'), () => play(after), 'btn btn-primary');
-    else if (!won) button(L('Try again'), () => play(level), 'btn btn-primary');
-    button(t(world.back), () => renderMap(world), won && after ? 'btn btn-quiet' : 'btn btn-primary');
+    if (won && after) add(L('Next level'), () => play(after), 'btn btn-primary');
+    else if (!won) add(L('Try again'), () => play(level), 'btn btn-primary');
+    add(t(world.back), () => renderMap(world), won && after ? 'btn btn-quiet' : 'btn btn-primary');
     const box = el('div', 'learn-result');
-    box.append(el('h1', null, won ? (level.boss ? L('Boss beaten!') : L('Level done!')) : L('No hearts left')), who, won ? starRow(hearts) : lit('heart', 0), bubble, actions);
+    box.append(el('h1', null, won ? (level.boss ? L('Boss beaten!') : L('Level done!')) : L('No hearts left')), who, won ? lit('star', hearts) : lit('heart', 0), bubble, actions);
     card.dataset.view = 'play';
     card.replaceChildren(box);
 }
@@ -340,87 +333,65 @@ function play(level) {
     const graded = s => s.ask && s.phase !== 'learn';
     // A run must be losable: with only two graded questions, one miss ends it.
     const best = Math.max(1, Math.min(HEARTS, steps.filter(graded).length - 1));
-    let at = 0, hearts = best, busy = false;
+    let at = 0, hearts = best;
     const nemeris = teacher();
-    const close = el('button', 'icon-btn');
-    close.type = 'button';
-    close.setAttribute('aria-label', L('Back to the map'));
-    close.append(icon('close'));
+    const { box, top, stage, back, next, progress } = player('learn-play', 'btn btn-primary learn-next');
+    const close = iconButton('close', L('Back to the map'));
     close.addEventListener('click', () => renderMap(world));
-    const track = el('div', 'pbar-track');
-    const fill = el('div', 'pbar-fill');
-    track.append(fill);
     const lives = el('span', 'learn-hearts');
-    const top = el('div', 'learn-top');
-    top.append(close, track, lives);
+    top.prepend(close);
+    top.append(lives);
     const phase = el('p', 'learn-phase');
-    const stage = el('div', 'learn-stage');
-    stage.addEventListener('click', () => player.classList.add('skip'));
-    const back = el('button', 'btn learn-back');
-    back.type = 'button';
-    back.append(icon('chevron-left'), L('Back'));
-    const next = el('button', 'btn btn-primary learn-next');
-    next.type = 'button';
-    const nav = el('div', 'learn-nav');
-    nav.append(back, next);
-    const player = el('div', 'learn-play');
-    player.append(top, phase, stage, nav);
+    stage.before(phase);
     card.dataset.view = 'play';
-    card.replaceChildren(player);
+    card.replaceChildren(box);
 
     const drawHearts = () => lives.replaceChildren(...lit('heart', hearts).children);
-    const move = (text, after = 0) => { next.hidden = false; next.textContent = text; later(next, after); };
+    const move = (after = 0) => { next.hidden = false; next.textContent = L('Continue'); later(next, after); };
 
     function draw() {
         const s = steps[at];
-        fill.style.transform = `scaleX(${at / steps.length})`;
+        progress(at / steps.length);
         const [name, rule] = PHASE[s.phase];
         phase.replaceChildren(el('strong', null, name), ` · ${rule}`);
         phase.dataset.phase = s.phase;
         // Going back is for what carries no risk: a graded question cannot be answered twice.
         back.hidden = !(at > 0 && !graded(steps[at - 1]));
-        player.classList.remove('skip');
         if (s.say) {
             const row = talk(t(s.say), nemeris);
             const extras = afterWords(row, [...(s.photo ? [photoFigure(s.photo, 'learn-photo')] : []), ...(s.example ? [para('explain-example', t(s.example))] : [])]);
             stage.replaceChildren(row, ...extras);
-            return move(L('Continue'), row.speechMs + 250 + extras.length * 350);
+            return move(row.speechMs + 250 + extras.length * 350);
         }
         next.hidden = true;
-        const tries = s.phase === 'learn' ? Infinity : s.phase === 'practice' ? 2 : 1;
         const row = talk(t(s.ask), nemeris);
         stage.replaceChildren(row, ...afterWords(row, [questionBox(s, {
-            tries,
+            tries: s.phase === 'learn' ? Infinity : s.phase === 'practice' ? 2 : 1,
             onMiss: () => react(nemeris, 'oops'),
             onDone: score => {
                 react(nemeris, score ? 'happy' : 'oops');
                 if (s.phase !== 'learn') record(s.id, score);
                 if (!score && s.phase !== 'learn') { hearts--; drawHearts(); }
-                move(L('Continue'));
+                move();
             },
         })]));
     }
 
-    async function go(to, dir) {
-        if (busy) return;
-        busy = true;
-        await slide(stage, dir, () => {
-            if (to < steps.length && hearts) {
-                at = to;
-                return draw();
-            }
-            if (hearts) finish(level.id, hearts);
-            result(level, { won: hearts > 0, hearts, best });
-            return false;
-        });
-        busy = false;
-    }
+    const go = (to, dir) => slide(stage, dir, () => {
+        if (to < steps.length && hearts) {
+            at = to;
+            return draw();
+        }
+        if (hearts) finish(level.id, hearts);
+        result(level, { won: hearts > 0, hearts, best });
+        return false;
+    });
 
     next.addEventListener('click', () => go(at + 1, 1));
     back.addEventListener('click', () => go(at - 1, -1));
     drawHearts();
     // The first step starts once the title screen is gone, so the teacher's words are not typed behind it.
-    levelSplash(level).then(draw);
+    splash(level).then(draw);
 }
 
 /** Opens the Academy: on a level when it is open, else on the map of its world. */

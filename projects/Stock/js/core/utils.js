@@ -1,7 +1,7 @@
 import { L, LOCALE } from '../i18n/i18n.js';
-const domCache = new Map();
 
-export const getEl = (id) => {
+const domCache = new Map();
+export const getEl = id => {
     const hit = domCache.get(id);
     if (hit?.isConnected) return hit;
     const node = document.getElementById(id);
@@ -11,25 +11,25 @@ export const getEl = (id) => {
 };
 
 const moneyFormat = new Intl.NumberFormat(LOCALE, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-export const formatCurrency = (val, currency = '$') => `${val < 0 ? '-' : ''}${moneyFormat.format(Math.abs(val))}\u00A0${currency}`;
+export const formatCurrency = (val, currency = '$') => `${val < 0 ? '-' : ''}${moneyFormat.format(Math.abs(val))} ${currency}`;
 
 const pctFormat = new Intl.NumberFormat(LOCALE, { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'exceptZero' });
 export const formatPct = val => (val ? `${val > 0 ? '▲' : '▼'} ${pctFormat.format(val / 100)}` : pctFormat.format(0));
 
-export function el(tag, cls, text) {
+/** A new element. attrs are set as properties when the element has them (type, title, href...), else as attributes (aria-*, data-*). */
+export function el(tag, cls, text, attrs) {
     const n = document.createElement(tag);
     if (cls) n.className = cls;
     if (text != null) n.textContent = String(text);
+    for (const [k, v] of Object.entries(attrs || {})) {
+        if (k in n) n[k] = v;
+        else n.setAttribute(k, v);
+    }
     return n;
 }
 
 export const iconHtml = name => `<i class="i i-${name}" aria-hidden="true"></i>`;
-export function icon(name) {
-    const i = el('i', `i i-${name}`);
-    i.setAttribute('aria-hidden', 'true');
-    return i;
-}
+export const icon = name => el('i', `i i-${name}`, null, { 'aria-hidden': 'true' });
 
 /** Floating buttons take turns: opening one closes the others. Call the returned function when this one opens. */
 export function floating(name, close) {
@@ -58,9 +58,7 @@ export const termHtml = (key, text) => `<button type="button" class="term" data-
 
 export function downloadText(filename, text, type = 'application/json') {
     const url = URL.createObjectURL(new Blob([text], { type }));
-    const a = el('a');
-    a.href = url;
-    a.download = filename;
+    const a = el('a', null, null, { href: url, download: filename });
     document.body.append(a);
     a.click();
     a.remove();
@@ -104,7 +102,6 @@ export function makeResizer(handle, { cssVar, storageKey, min, max, side = 'left
     });
 }
 
-const SVG_NS = 'http://www.w3.org/2000/svg';
 const DONUT_R = 80;
 const DONUT_C = 2 * Math.PI * DONUT_R;
 
@@ -115,23 +112,14 @@ export function drawDonut({ svg, legend, tooltip, items, format }) {
     if (!(total > 0)) return;
     const gap = items.length > 1 ? 3 : 0;
     let offset = 0;
-    const frag = document.createDocumentFragment();
-    const rows = document.createDocumentFragment();
     for (const item of items) {
         const pct = item.value / total;
         const len = Math.max(0, pct * DONUT_C - gap);
-        const c = document.createElementNS(SVG_NS, 'circle');
-        c.setAttribute('cx', '100');
-        c.setAttribute('cy', '100');
-        c.setAttribute('r', String(DONUT_R));
-        c.setAttribute('stroke', item.color);
-        c.setAttribute('stroke-dasharray', `${len} ${DONUT_C - len}`);
-        c.setAttribute('stroke-dashoffset', String(-offset));
-        c.setAttribute('class', 'donut-seg');
-        c.dataset.label = item.label;
-        c.dataset.pct = (pct * 100).toFixed(1);
-        c.dataset.value = format ? format(item.value) : '';
-        frag.append(c);
+        const seg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        const attrs = { cx: 100, cy: 100, r: DONUT_R, stroke: item.color, 'stroke-dasharray': `${len} ${DONUT_C - len}`, 'stroke-dashoffset': -offset, class: 'donut-seg' };
+        for (const k in attrs) seg.setAttribute(k, attrs[k]);
+        Object.assign(seg.dataset, { label: item.label, pct: (pct * 100).toFixed(1), value: format ? format(item.value) : '' });
+        svg.append(seg);
         offset += pct * DONUT_C;
 
         const row = el('div', 'legend-row');
@@ -139,10 +127,8 @@ export function drawDonut({ svg, legend, tooltip, items, format }) {
         const sw = el('span', 'swatch');
         sw.style.background = item.color;
         row.append(sw, el('span', 'legend-label', item.label), el('span', 'legend-pct', `${(pct * 100).toFixed(1)}%`));
-        rows.append(row);
+        legend.append(row);
     }
-    svg.append(frag);
-    legend.append(rows);
     if (!tooltip || svg.dataset.bound) return;
     svg.dataset.bound = '1';
     svg.addEventListener('pointermove', e => {
@@ -162,15 +148,9 @@ function fmtEta(sec) {
 }
 
 export function progressBar({ label = '', detail = '', compact = false, eta = true } = {}) {
-    const root = el('div', `pbar${compact ? ' pbar-compact' : ''} is-busy`);
-    root.setAttribute('role', 'progressbar');
-    root.setAttribute('aria-valuemin', '0');
-    root.setAttribute('aria-valuemax', '100');
-    const head = el('div', 'pbar-head');
-    const $label = el('span', 'pbar-label');
-    const $detail = el('span', 'pbar-detail');
-    const track = el('div', 'pbar-track');
-    const $fill = el('div', 'pbar-fill');
+    const root = el('div', `pbar${compact ? ' pbar-compact' : ''} is-busy`, null, { role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': 100 });
+    const $label = el('span', 'pbar-label'), $detail = el('span', 'pbar-detail'), $fill = el('div', 'pbar-fill');
+    const head = el('div', 'pbar-head'), track = el('div', 'pbar-track');
     head.append($label, $detail);
     track.append($fill);
     root.append(head, track);
@@ -219,54 +199,42 @@ export function stages(bar, list) {
     };
 }
 
-/* Top-of-page global activity bar removed: each screen already shows its own progress bar tied to what it's actually doing. Kept as no-ops so callers don't need changes. */
-export const activity = {
-    start() {},
-    update() {},
-    end() {},
-};
+// The top-of-page activity bar is gone (each screen shows its own progress bar); kept as no-ops so its callers need no change.
+export const activity = { start() {}, update() {}, end() {} };
 
-/* Average color of a ticker's icon, for tinting things with it (donut slices, the ticker-page glow). Cached in memory + localStorage since an icon's color never changes. */
+// Average color of a ticker's icon, to tint things with it (donut slices, the ticker-page glow). Kept in localStorage since an icon's color never changes.
 const ICON_COLOR_KEY = 'nemeris_icon_colors';
-const iconColorCache = new Map();
-let iconColorStore = null;
-function iconColorStoreGet() {
-    if (!iconColorStore) { try { iconColorStore = JSON.parse(localStorage.getItem(ICON_COLOR_KEY) || '{}'); } catch { iconColorStore = {}; } }
-    return iconColorStore;
-}
+const iconColors = new Map();
+let savedColors = null;
 export function iconColor(symbol) {
     if (!symbol) return Promise.resolve(null);
-    if (iconColorCache.has(symbol)) return iconColorCache.get(symbol);
-    const stored = iconColorStoreGet()[symbol];
-    if (stored) { const p = Promise.resolve(stored); iconColorCache.set(symbol, p); return p; }
-    const p = new Promise(resolve => {
+    if (iconColors.has(symbol)) return iconColors.get(symbol);
+    if (!savedColors) { try { savedColors = JSON.parse(localStorage.getItem(ICON_COLOR_KEY) || '{}'); } catch { savedColors = {}; } }
+    const p = savedColors[symbol] ? Promise.resolve(savedColors[symbol]) : new Promise(resolve => {
         const img = new Image();
         img.onload = () => {
             try {
-                const c = document.createElement('canvas');
-                c.width = c.height = 16;
+                const c = el('canvas', null, null, { width: 16, height: 16 });
                 const ctx = c.getContext('2d', { willReadFrequently: true });
                 ctx.drawImage(img, 0, 0, 16, 16);
-                const data = ctx.getImageData(0, 0, 16, 16).data;
+                const px = ctx.getImageData(0, 0, 16, 16).data;
                 let r = 0, g = 0, b = 0, n = 0;
-                for (let i = 0; i < data.length; i += 4) {
-                    if (data[i + 3] < 80) continue;
-                    const rr = data[i], gg = data[i + 1], bb = data[i + 2];
-                    const max = Math.max(rr, gg, bb), min = Math.min(rr, gg, bb);
-                    if (max > 240 && min > 220) continue;
-                    if (max < 20) continue;
-                    r += rr; g += gg; b += bb; n++;
+                for (let i = 0; i < px.length; i += 4) {
+                    const max = Math.max(px[i], px[i + 1], px[i + 2]), min = Math.min(px[i], px[i + 1], px[i + 2]);
+                    // Skip transparent, near-white and near-black pixels: they are the background, not the logo.
+                    if (px[i + 3] < 80 || (max > 240 && min > 220) || max < 20) continue;
+                    r += px[i]; g += px[i + 1]; b += px[i + 2]; n++;
                 }
                 if (!n) { resolve(null); return; }
                 const color = `rgb(${Math.round(r / n)}, ${Math.round(g / n)}, ${Math.round(b / n)})`;
-                iconColorStoreGet()[symbol] = color;
-                try { localStorage.setItem(ICON_COLOR_KEY, JSON.stringify(iconColorStore)); } catch { /* ignore */ }
+                savedColors[symbol] = color;
+                try { localStorage.setItem(ICON_COLOR_KEY, JSON.stringify(savedColors)); } catch { /* ignore */ }
                 resolve(color);
             } catch { resolve(null); }
         };
         img.onerror = () => resolve(null);
         img.src = `img/icon/${symbol}.png`;
     });
-    iconColorCache.set(symbol, p);
+    iconColors.set(symbol, p);
     return p;
 }

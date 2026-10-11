@@ -44,15 +44,17 @@ export function levelAfter(id) {
     return all[all.findIndex(l => l.id === id) + 1] || null;
 }
 
-const questionsOf = level => PHASES.slice(1).flatMap(phase => (level[phase] || [])
-    .map((q, i) => ({ ...q, phase, id: `${level.id}.${phase}.${i}`, skill: q.skill || level.skill })));
+/** A level's own steps in the given phases, each with its phase, id and skill. Its questions are the graded phases. */
+const stepsIn = (level, phases = PHASES) => phases.flatMap(phase => (level[phase] || [])
+    .map((s, i) => ({ ...s, phase, id: `${level.id}.${phase}.${i}`, skill: s.skill || level.skill })));
+const questionsOf = level => stepsIn(level, PHASES.slice(1));
 
 /**
  * Every step of a level, in order, each with its phase. A boss has no content of its own: it asks `count` questions
  * from the levels before it in its world, the ones the user knows least first.
  */
 export function stepsOf(level) {
-    if (!level.boss) return PHASES.flatMap(phase => (level[phase] || []).map((s, i) => ({ ...s, phase, id: `${level.id}.${phase}.${i}`, skill: s.skill || level.skill })));
+    if (!level.boss) return stepsIn(level);
     // The levels of its world before it; when they hold fewer questions than the boss asks, everything before it in the path.
     const w = worldOf(level.id);
     const count = level.count || 5;

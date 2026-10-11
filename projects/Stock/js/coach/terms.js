@@ -8,9 +8,6 @@ import { monthlyAmount } from '../core/state.js';
 
 const num = (n, d = 1) => n.toLocaleString(LOCALE, { maximumFractionDigits: d });
 const HORIZON_TEXT = { lt2: L('for less than 2 years'), '2to5': L('for 2 to 5 years'), '5to10': L('for 5 to 10 years'), gt10: L('for more than 10 years') };
-
-/** Your biggest single stock, or your biggest line when you only hold funds. */
-const biggest = c => c.rows.find(r => r.kind !== 'fund') || c.rows[0];
 const share = (c, test) => c.total ? c.rows.filter(test).reduce((s, r) => s + r.value, 0) / c.total * 100 : 0;
 
 export const TERMS = {
@@ -72,10 +69,7 @@ export const TERMS = {
             L('The simplest way to be spread out is a broad [[etf|ETF]], such as a world fund holding more than 1,000 companies in over 20 countries.'),
         ],
         example: L('Portfolio A holds three tech stocks. Portfolio B holds a world ETF. If tech falls 30%, A loses about 30% and B around 8%, because tech is roughly a quarter of the world index.'),
-        yours: c => {
-            const top = c.rows[0];
-            return top && L('You hold {0} lines. The biggest, {1}, is {2}% of your money.', c.rows.length, top.name, num(top.weight_pct));
-        },
+        yours: c => c.rows[0] && L('You hold {0} lines. The biggest, {1}, is {2}% of your money.', c.rows.length, c.rows[0].name, num(c.rows[0].weight_pct)),
         related: ['weight', 'etf', 'correlation', 'sector'],
         lesson: 'diversification',
     },
@@ -279,10 +273,7 @@ export const TERMS = {
             L('Accumulating ETFs reinvest the [[dividend|dividends]] for you; distributing ones pay them out. Many world ETFs fit in a French [[pea|PEA]].'),
         ],
         example: L('Put 100 € in a world ETF holding about 1,400 companies: around 5 € each goes to Nvidia, Apple and Microsoft, and the rest is spread over all the others.'),
-        yours: c => {
-            const funds = share(c, r => r.kind === 'fund');
-            return c.rows.length > 0 && L('Funds make up {0}% of your portfolio.', num(funds, 0));
-        },
+        yours: c => c.rows.length > 0 && L('Funds make up {0}% of your portfolio.', num(share(c, r => r.kind === 'fund'), 0)),
         related: ['index', 'ter', 'diversification'],
         lesson: 'etf',
     },
@@ -327,10 +318,8 @@ export const TERMS = {
         ],
         example: L('A 0.25% custody fee on 20,000 € costs 50 € every year, whether your investments rise or fall.'),
         yours: c => {
-            if (!c.bank || !c.total) return null;
-            const fee = custodyPerYear(c.bank, c.total, c.rows.length);
-            if (fee == null) return null;
-            return fee === 0 ? L('{0} charges no custody fee.', c.bank.name) : L('At {0}, keeping your portfolio costs about {1} a year.', c.bank.name, c.money(fee));
+            const fee = c.bank && c.total ? custodyPerYear(c.bank, c.total, c.rows.length) : null;
+            return fee === 0 ? L('{0} charges no custody fee.', c.bank.name) : fee != null && L('At {0}, keeping your portfolio costs about {1} a year.', c.bank.name, c.money(fee));
         },
         related: ['orderFee', 'ter'],
         lesson: 'fees',
@@ -355,11 +344,7 @@ export const TERMS = {
             L('It works both ways and tends to matter less over long periods than the companies themselves. Most world ETFs carry it; "hedged" versions remove most of it for a small extra cost.'),
         ],
         example: L('Your US stock rises 10% in dollars, but the dollar loses 8% against the euro: in euros you gain only about 1%.'),
-        yours: c => {
-            if (!c.home || !c.rows.length) return null;
-            const foreign = share(c, r => r.currency && r.currency !== c.home);
-            return L('About {0}% of your money is in investments priced in another currency than yours ({1}).', num(foreign, 0), c.home);
-        },
+        yours: c => c.home && c.rows.length > 0 && L('About {0}% of your money is in investments priced in another currency than yours ({1}).', num(share(c, r => r.currency && r.currency !== c.home), 0), c.home),
         related: ['fxFee', 'diversification'],
         lesson: 'currency',
     },
@@ -373,7 +358,8 @@ export const TERMS = {
         ],
         example: L('10,000 € in total, 2,500 € in one stock: it weighs 25%. If it halves, you lose 1,250 €, an eighth of everything.'),
         yours: c => {
-            const r = biggest(c);
+            // Your biggest single stock, or your biggest line when you only hold funds.
+            const r = c.rows.find(x => x.kind !== 'fund') || c.rows[0];
             return r && L('{0} weighs {1}% of your portfolio. A 20% fall in it would cost about {2}, or {3}% of everything.', r.name, num(r.weight_pct), c.money(r.value * 0.2), num(r.weight_pct * 0.2));
         },
         related: ['diversification', 'rebalancing'],

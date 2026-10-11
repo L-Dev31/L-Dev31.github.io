@@ -1,25 +1,22 @@
 import { fetchFromYahoo } from '../data/yahoo-finance.js';
 import { getProxyBaseUrl, setProxyBaseUrl, pingProxy } from '../data/proxy-fetch.js';
-import { setPositions as setNewsPositions, setupNewsSearch, startCardNewsAutoRefresh, stopCardNewsAutoRefresh, openNewsPage, closeNewsPage, fetchCardNews } from '../ui/news.js';
+import { startCardNewsAutoRefresh, stopCardNewsAutoRefresh, openNewsPage, closeNewsPage, fetchCardNews } from '../ui/news.js';
 import '../terminal/terminal.js';
 import '../ui/explorer.js';
 import '../ai/assistant.js';
-import '../ui/country-picker.js';
-import '../ui/bank-picker.js';
+import '../ui/pickers.js';
 import { initCoach } from '../coach/coach.js';
 import { incomeBands, loadMedian } from '../data/income.js';
 import { openAcademy } from '../learn/academy-page.js';
 import { mountSurvey } from '../learn/survey.js';
 import { DEAD_ERROR_CODES, periodToDays, periodPhrase } from './constants.js';
-import { positions, selectedApi, setSelectedApi, globalPeriod, setGlobalPeriod, mainFetchController, setMainFetchController, globalRefreshTimer, setGlobalRefreshTimer, getUserSettings, saveUserSettings, getCurrency, currencyCode, monthlyAmount, comfortLevel, COMFORT_WORD, isExpert } from './state.js';
+import { positions, globalPeriod, setGlobalPeriod, getUserSettings, saveUserSettings, getCurrency, currencyCode, monthlyAmount, comfortLevel, COMFORT_WORD, isExpert } from './state.js';
 import { updatePortfolioSummary, loadStocks, batchPerformanceFetch, isBatchFetching, openPortfolio } from '../ui/portfolio.js';
 import { updateUI, openTerminalCard, closeTerminalCard, openCustomSymbol, markTabAsSuspended, unmarkTabAsSuspended } from '../ui/ui.js';
 import { getEl, el, icon, showCard, makeResizer, getActiveSymbol } from './utils.js';
 import { renderTickerAi } from '../ai/ai-lab.js';
 import { syncAiGates, onAiChange } from '../ai/ai-core.js';
 import { L, LANG, setLang } from '../i18n/i18n.js';
-
-export { fetchActiveSymbol };
 
 /* ── views ── */
 const VIEWS = {
@@ -33,13 +30,31 @@ const VIEWS = {
 };
 export const go = view => VIEWS[view]?.();
 
+function toggleList(btn, force) {
+    const open = force ?? btn.getAttribute('aria-expanded') !== 'true';
+    btn.setAttribute('aria-expanded', String(open));
+    getEl(btn.getAttribute('aria-controls')).hidden = !open;
+    try { localStorage.setItem(`nemeris_list_${btn.id}`, open ? '1' : '0'); } catch { /* ignore */ }
+}
+for (const btn of document.querySelectorAll('.list-toggle')) {
+    try { if (localStorage.getItem(`nemeris_list_${btn.id}`) === '0') toggleList(btn, false); } catch { /* ignore */ }
+}
+
+// One click listener for the whole page: navigation, sidebar rows, tabs inside a view, and the stock page's period and indicator buttons.
 document.addEventListener('click', e => {
-    const nav = e.target.closest('[data-go]');
-    if (nav) { go(nav.dataset.go); return; }
-    const tab = e.target.closest('.tab');
-    if (tab) { openCustomSymbol(tab.dataset.symbol); return; }
-    const toggle = e.target.closest('.list-toggle');
-    if (toggle) toggleList(toggle);
+    const hit = sel => e.target.closest(sel);
+    const nav = hit('[data-go]'), tab = hit('.tab'), toggle = hit('.list-toggle'), tabBtn = hit('.card-tab-btn');
+    if (nav) go(nav.dataset.go);
+    else if (tab) openCustomSymbol(tab.dataset.symbol);
+    else if (toggle) toggleList(toggle);
+    if (tabBtn) selectCardTab(tabBtn);
+    const pill = hit('.ticker-card .period-pills .pill'), card = hit('.ticker-card');
+    if (pill) setPeriod(pill.dataset.period);
+    else if (card && hit('.ind-toggle')) {
+        try { localStorage.setItem(ADV_KEY, advancedOn() ? '0' : '1'); } catch { /* ignore */ }
+        syncAdvanced(card);
+        window.dispatchEvent(new Event('resize'));
+    }
 });
 document.addEventListener('keydown', e => {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.classList?.contains('tab')) { e.preventDefault(); e.target.click(); }
@@ -53,16 +68,6 @@ document.querySelector('.portfolio-switch')?.addEventListener('click', e => {
     getEl('card-portfolio').dataset.mobile = pill.dataset.mobile;
     for (const p of pill.parentElement.children) p.classList.toggle('active', p === pill);
 });
-
-function toggleList(btn, force) {
-    const open = force ?? btn.getAttribute('aria-expanded') !== 'true';
-    btn.setAttribute('aria-expanded', String(open));
-    getEl(btn.getAttribute('aria-controls')).hidden = !open;
-    try { localStorage.setItem(`nemeris_list_${btn.id}`, open ? '1' : '0'); } catch { /* ignore */ }
-}
-for (const btn of document.querySelectorAll('.list-toggle')) {
-    try { if (localStorage.getItem(`nemeris_list_${btn.id}`) === '0') toggleList(btn, false); } catch { /* ignore */ }
-}
 
 const NAV_FOR_CARD = { 'card-home': 'home', 'card-learn': 'learn', 'card-portfolio': 'portfolio', 'card-explorer': 'explorer', 'card-news': 'news', 'card-terminal': 'terminal', 'card-settings': 'settings' };
 // On phones Explorer and News share one tab, Discover; a stock opens from the lists of the Portfolio tab.
@@ -92,14 +97,11 @@ new MutationObserver(list => {
 }).observe(getEl('cards-container'), { childList: true });
 
 /* ── tabs inside a view ── */
-document.addEventListener('click', e => {
-    const btn = e.target.closest('.card-tab-btn');
-    if (!btn) return;
+function selectCardTab(btn) {
     const card = btn.closest('.card');
     for (const b of card.querySelectorAll('.card-tab-btn')) {
-        const on = b === btn;
-        b.classList.toggle('active', on);
-        b.setAttribute('aria-selected', String(on));
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-selected', String(b === btn));
     }
     for (const p of card.querySelectorAll('.card-tab-pane')) p.classList.toggle('active', p.dataset.pane === btn.dataset.target);
     if (!card.classList.contains('ticker-card')) return;
@@ -108,16 +110,15 @@ document.addEventListener('click', e => {
     if (btn.dataset.target === 'news') {
         startCardNewsAutoRefresh(symbol);
         const pos = positions[symbol];
-        if (!pos.news?.length || Date.now() - (pos.lastNewsFetch || 0) > 60000) fetchCardNews(symbol, true, 50, periodToDays(pos.currentPeriod || globalPeriod), selectedApi).catch(() => {});
+        if (!pos.news?.length || Date.now() - (pos.lastNewsFetch || 0) > 60000) fetchCardNews(symbol, true, 50, periodToDays(pos.currentPeriod || globalPeriod)).catch(() => {});
     } else stopCardNewsAutoRefresh(symbol);
-});
+}
 
 /* ── stock page: period, advanced view, comparison ── */
 function syncPeriodPills(p = globalPeriod) {
     for (const b of document.querySelectorAll('.ticker-card .period-pills .pill')) {
-        const on = b.dataset.period === p;
-        b.classList.toggle('active', on);
-        b.setAttribute('aria-pressed', String(on));
+        b.classList.toggle('active', b.dataset.period === p);
+        b.setAttribute('aria-pressed', String(b.dataset.period === p));
     }
 }
 
@@ -137,24 +138,10 @@ function syncAdvanced(card) {
     }
 }
 
-document.addEventListener('click', e => {
-    const pill = e.target.closest('.ticker-card .period-pills .pill');
-    if (pill) { setPeriod(pill.dataset.period); return; }
-    const card = e.target.closest('.ticker-card');
-    if (!card) return;
-    if (e.target.closest('.ind-toggle')) {
-        try { localStorage.setItem(ADV_KEY, advancedOn() ? '0' : '1'); } catch { /* ignore */ }
-        syncAdvanced(card);
-        window.dispatchEvent(new Event('resize'));
-        return;
-    }
-});
-
 document.addEventListener('change', e => {
     const sel = e.target.closest('.bench-select');
     if (!sel) return;
-    const card = sel.closest('.ticker-card');
-    const sym = card.id.slice(5);
+    const sym = sel.closest('.ticker-card').id.slice(5);
     const pos = positions[sym];
     if (!pos) return;
     pos.benchmark = sel.value;
@@ -173,7 +160,8 @@ function setPeriod(p) {
 }
 
 /* ── data for the stock on screen ── */
-const fetchInFlight = () => mainFetchController !== null && !mainFetchController.signal.aborted;
+let fetchController = null;
+let refreshTimer = 0;
 
 function setLoading(symbol, on) {
     const box = getEl(`card-${symbol}`)?.querySelector('.chart-container');
@@ -182,17 +170,16 @@ function setLoading(symbol, on) {
     box.querySelector('.chart-empty-text').textContent = on ? L('Loading prices') : L('No data for this period');
 }
 
-async function fetchActiveSymbol(force) {
+export async function fetchActiveSymbol(force) {
     const symbol = getActiveSymbol();
     const pos = positions[symbol];
-    if (!pos || (!force && fetchInFlight())) return;
-    mainFetchController?.abort();
-    const controller = new AbortController();
-    setMainFetchController(controller);
+    if (!pos || (!force && fetchController && !fetchController.signal.aborted)) return;
+    fetchController?.abort();
+    const controller = fetchController = new AbortController();
     const { signal } = controller;
     setLoading(symbol, true);
     const period = pos.currentPeriod || globalPeriod;
-    fetchCardNews(symbol, false, 50, periodToDays(period), selectedApi).catch(() => {});
+    fetchCardNews(symbol, false, 50, periodToDays(period)).catch(() => {});
     try {
         const d = await fetchFromYahoo(pos.ticker, period, symbol, pos, pos.name || null, signal, '');
         if (signal.aborted) return;
@@ -207,16 +194,15 @@ async function fetchActiveSymbol(force) {
     } catch (e) {
         if (e.name !== 'AbortError') console.error(e);
     } finally {
-        if (!signal.aborted) { setLoading(symbol, false); setMainFetchController(null); }
+        if (!signal.aborted) { setLoading(symbol, false); fetchController = null; }
     }
 }
 
 function startRefreshLoop() {
-    if (globalRefreshTimer) return;
-    setGlobalRefreshTimer(setInterval(() => { if (!document.hidden && !isBatchFetching) batchPerformanceFetch(globalPeriod); }, 300000));
+    refreshTimer ||= setInterval(() => { if (!document.hidden && !isBatchFetching) batchPerformanceFetch(globalPeriod); }, 300000);
 }
 document.addEventListener('visibilitychange', () => {
-    if (document.hidden || !globalRefreshTimer) return;
+    if (document.hidden || !refreshTimer) return;
     fetchActiveSymbol(false);
     batchPerformanceFetch(globalPeriod);
 });
@@ -247,12 +233,14 @@ function renderComfort(inv) {
     const out = getEl('comfort-readout');
     const level = comfortLevel(inv);
     out.hidden = !level;
-    if (!level) return;
-    out.innerHTML = `<button type="button" class="term" data-term="comfort">${L('Comfort with risk')}</button>: <b>${level}/7</b>, ${COMFORT_WORD[level].toLowerCase()}`;
+    if (level) out.innerHTML = `<button type="button" class="term" data-term="comfort">${L('Comfort with risk')}</button>: <b>${level}/7</b>, ${COMFORT_WORD[level].toLowerCase()}`;
 }
 
 // "About you" is asked by Nemeris, a question at a time; the form behind it keeps the answers.
 const restartSurvey = getEl('about-you') ? mountSurvey(getEl('about-you')) : () => {};
+
+// Charts read their colors once, so a new theme reloads the page (like a new language).
+const theme = () => { try { return localStorage.getItem('nemeris_theme') || 'light'; } catch { return 'light'; } };
 
 function fillSettings() {
     const s = getUserSettings();
@@ -306,6 +294,7 @@ getEl('settings-user-name')?.addEventListener('input', e => {
     saveUserSettings({ name: e.target.value.trim() || 'Nemeris User' });
     applyProfile();
 });
+// The photo is cropped to a 160 px square and kept in the settings as a small JPEG.
 getEl('settings-user-pfp-file')?.addEventListener('change', e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -313,8 +302,7 @@ getEl('settings-user-pfp-file')?.addEventListener('change', e => {
     reader.onload = () => {
         const img = new Image();
         img.onload = () => {
-            const side = 160, c = document.createElement('canvas');
-            c.width = c.height = side;
+            const side = 160, c = el('canvas', null, null, { width: side, height: side });
             const k = Math.max(side / img.width, side / img.height);
             c.getContext('2d').drawImage(img, (side - img.width * k) / 2, (side - img.height * k) / 2, img.width * k, img.height * k);
             saveUserSettings({ pfp: c.toDataURL('image/jpeg', 0.86) });
@@ -326,8 +314,6 @@ getEl('settings-user-pfp-file')?.addEventListener('change', e => {
     reader.readAsDataURL(file);
 });
 for (const r of document.querySelectorAll('input[name="app-lang"]')) r.addEventListener('change', () => { if (r.checked) setLang(r.value); });
-// Charts read their colors once, so a new theme reloads the page (like a new language).
-const theme = () => { try { return localStorage.getItem('nemeris_theme') || 'light'; } catch { return 'light'; } };
 for (const r of document.querySelectorAll('input[name="app-theme"]')) r.addEventListener('change', () => {
     if (!r.checked) return;
     try { localStorage.setItem('nemeris_theme', r.value); } catch { /* storage blocked */ }
@@ -357,13 +343,10 @@ function renderRelayNotice(message) {
     const text = message || (getProxyBaseUrl() ? '' : L('No financial data API configured.'));
     if (!text) { box?.remove(); return; }
     if (!box) {
-        box = el('div', 'app-notice');
-        box.id = 'app-notice';
-        box.setAttribute('role', 'status');
+        box = el('div', 'app-notice', null, { id: 'app-notice', role: 'status' });
         document.querySelector('.container').prepend(box);
     }
-    const btn = el('button', 'btn btn-quiet', L('Open settings'));
-    btn.type = 'button';
+    const btn = el('button', 'btn btn-quiet', L('Open settings'), { type: 'button' });
     btn.addEventListener('click', () => { go('settings'); document.querySelector('#card-settings .card-tab-btn[data-target="settings-general"]').click(); });
     box.replaceChildren(icon('info'), el('span', null, text), btn);
 }
@@ -376,10 +359,7 @@ document.addEventListener('error', e => { if (e.target.classList?.contains('row-
 // Published right away (this module runs once, after everything it imports): the assistant, the terminal and the
 // Explorer open pages through these, and waiting for every image to load left them doing nothing in the meantime.
 Object.assign(window, {
-    positions, selectedApi, openNewsPage, closeNewsPage, openCustomSymbol, openTerminalCard, closeTerminalCard, getActiveSymbol,
-    markTabAsSuspended, unmarkTabAsSuspended, fetchCardNews, fetchActiveSymbol, setupNewsSearch,
-    getSelectedApi: () => selectedApi,
-    setSelectedApi,
+    positions, openNewsPage, openCustomSymbol, openTerminalCard, closeTerminalCard, markTabAsSuspended,
     terminalLogGlobal: msg => { const out = getEl('terminal-output'); if (!out) return; out.append(el('div', 'terminal-log', msg)); out.scrollTop = out.scrollHeight; },
     nemeris: { positions, go, settings: { get: getUserSettings, save: saveUserSettings } },
 });
@@ -390,8 +370,7 @@ window.addEventListener('load', async () => {
     makeResizer(document.querySelector('.sidebar-resize'), { cssVar: '--sidebar-w', storageKey: 'nemeris_sidebar_w', min: 220, max: 480, side: 'left', fallback: 280 });
     await loadStocks();
     initCoach({ go, openSymbol: openCustomSymbol });
-    setNewsPositions(positions);
     syncAiGates();
-    onAiChange(() => syncAiGates());
+    onAiChange(syncAiGates);
     startRefreshLoop();
 });

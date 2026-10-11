@@ -9,22 +9,18 @@ import { colors, alpha } from '../core/palette.js';
 
 const BENCHMARK = '^STOXX50E';
 const BENCHMARK_LABEL = 'EURO STOXX 50';
-const DEFAULT_RANGE = '1y';
 const MIN_SAMPLES = 30;
 
-let lastRange = DEFAULT_RANGE;
+let lastRange = '1y';
 let rendering = false;
 let loadingBar = null;
 
-function setLoading(on, frac = null, label = '', detail = '') {
-    const host = getEl('analysis-plain');
-    if (!on) { loadingBar?.remove(); loadingBar = null; return; }
+function showProgress(frac, label, detail) {
     if (!loadingBar) {
-        loadingBar = progressBar({ label: label || L('Loading price histories') });
-        host?.before(loadingBar.el);
+        loadingBar = progressBar({ label });
+        getEl('analysis-plain')?.before(loadingBar.el);
     }
-    if (frac == null) loadingBar.busy(label, detail);
-    else loadingBar.set(frac, label, detail);
+    loadingBar.set(frac, label, detail);
 }
 
 export function initAnalysisPane() {
@@ -41,97 +37,75 @@ export function initAnalysisPane() {
 
 export async function renderAnalysisPane(force = false) {
     if (rendering && !force) return;
-    rendering = true;
-
-    const heroEl = getEl('analysis-hero');
-    const metricsEl = getEl('analysis-metrics-list');
-    const contribEl = getEl('risk-contrib');
-    const matrixEl = getEl('correlation-matrix');
-    const subtitleEl = getEl('analysis-subtitle');
-    if (!heroEl || !metricsEl || !matrixEl || !contribEl) { rendering = false; return; }
+    const heroEl = getEl('analysis-hero'), metricsEl = getEl('analysis-metrics-list'), contribEl = getEl('risk-contrib'), matrixEl = getEl('correlation-matrix');
+    if (!heroEl || !metricsEl || !matrixEl || !contribEl) return;
+    // Empties the result blocks, leaving a message in the metrics one.
+    const empty = message => {
+        heroEl.innerHTML = contribEl.innerHTML = matrixEl.innerHTML = '';
+        metricsEl.innerHTML = message;
+    };
 
     const active = Object.entries(positions).filter(([, p]) => (p.shares || 0) > 0);
-    if (active.length === 0) {
+    if (!active.length) {
         getEl('analysis-plain').innerHTML = L('<p class="empty">Add a trade on a stock page and Nemeris shows how risky your portfolio is here.</p>');
-        heroEl.innerHTML = '';
-        metricsEl.innerHTML = '';
-        contribEl.innerHTML = '';
-        matrixEl.innerHTML = '';
-        rendering = false;
+        empty('');
         return;
     }
 
+    rendering = true;
     try {
         const range = lastRange;
+        const subtitleEl = getEl('analysis-subtitle');
         if (subtitleEl) subtitleEl.textContent = L('Today\'s mix applied to the last {0}', range.replace('mo', L(' months')).replace('y', range === '1y' ? L(' year') : L(' years')));
-        const weights = {};
-        let totalValue = 0;
-        const seriesPromises = [];
-        const symbols = [];
-        let loaded = 0;
-        setLoading(true, 0, L('Loading price histories'), `0 / ${active.length + 1}`);
+        const weights = {}, symbols = [], pending = [];
+        let totalValue = 0, loaded = 0;
+        const steps = active.length + 1;
+        const fetched = () => { loaded++; showProgress(loaded / steps * 0.8, L('Loading price histories'), `${loaded} / ${steps}`); };
+        showProgress(0, L('Loading price histories'), `0 / ${steps}`);
         for (const [sym, pos] of active) {
             const { value } = positionMoney(pos);
             if (value <= 0) continue;
             weights[sym] = value;
             totalValue += value;
             symbols.push(sym);
-            seriesPromises.push(fetchSeries(pos.ticker || sym, range, '1d').finally(() => { loaded++; setLoading(true, loaded / (active.length + 1) * 0.8, L('Loading price histories'), `${loaded} / ${active.length + 1}`); }));
+            pending.push(fetchSeries(pos.ticker || sym, range, '1d').finally(fetched));
         }
-        if (totalValue <= 0) { rendering = false; setLoading(false); return; }
+        if (totalValue <= 0) return;
         for (const s of symbols) weights[s] /= totalValue;
 
-        const currencies = new Set();
-        for (const [, pos] of active) {
-            const c = pos.currency || pos.lastData?.currency;
-            if (c) currencies.add(String(c).toUpperCase());
-        }
-        const currencyMixed = currencies.size > 1;
+        const currencyMixed = new Set(active.map(([, p]) => p.currency || p.lastData?.currency).filter(Boolean).map(c => String(c).toUpperCase())).size > 1;
 
-        seriesPromises.push(fetchSeries(BENCHMARK, range, '1d').finally(() => { loaded++; setLoading(true, loaded / (active.length + 1) * 0.8, L('Loading price histories'), `${loaded} / ${active.length + 1}`); }));
-        const seriesArr = await Promise.all(seriesPromises);
+        pending.push(fetchSeries(BENCHMARK, range, '1d').finally(fetched));
+        const seriesArr = await Promise.all(pending);
         const benchSeries = seriesArr.pop();
 
         const seriesMap = {};
-        for (let i = 0; i < symbols.length; i++) {
-            if (seriesArr[i].closes.length >= MIN_SAMPLES) seriesMap[symbols[i]] = seriesArr[i];
-        }
+        symbols.forEach((s, i) => { if (seriesArr[i].closes.length >= MIN_SAMPLES) seriesMap[s] = seriesArr[i]; });
         const validSymbols = Object.keys(seriesMap);
-        if (validSymbols.length === 0) {
-            metricsEl.innerHTML = L('<p class="empty">Not enough price history yet.</p>');
-            heroEl.innerHTML = ''; contribEl.innerHTML = ''; matrixEl.innerHTML = '';
-            rendering = false; setLoading(false); return;
-        }
+        if (!validSymbols.length) return empty(L('<p class="empty">Not enough price history yet.</p>'));
 
-        let validTotal = 0;
-        for (const s of validSymbols) validTotal += weights[s];
+        const validTotal = validSymbols.reduce((sum, s) => sum + weights[s], 0);
         for (const s of validSymbols) weights[s] /= validTotal;
 
         const { ts, pricesMap } = alignSeries(seriesMap);
-        if (ts.length < MIN_SAMPLES) {
-            metricsEl.innerHTML = L('<p class="empty">Not enough shared history yet (30 trading days needed).</p>');
-            heroEl.innerHTML = ''; contribEl.innerHTML = ''; matrixEl.innerHTML = '';
-            rendering = false; setLoading(false); return;
-        }
+        if (ts.length < MIN_SAMPLES) return empty(L('<p class="empty">Not enough shared history yet (30 trading days needed).</p>'));
 
-        const assetReturns = {};
-        for (const s of validSymbols) assetReturns[s] = QuantEngine.calculateReturns(pricesMap[s]);
-
-        const T = assetReturns[validSymbols[0]].length;
-        const portReturns = new Array(T).fill(0);
+        const assetReturns = {}, dailyVol = {};
         for (const s of validSymbols) {
-            const w = weights[s];
-            const r = assetReturns[s];
-            for (let i = 0; i < T; i++) portReturns[i] += w * r[i];
+            assetReturns[s] = QuantEngine.calculateReturns(pricesMap[s]);
+            dailyVol[s] = QuantEngine.calculateVolatility(assetReturns[s]);
+        }
+        // The portfolio as one price series: today's weights applied to each day's returns, starting at 100.
+        const portPrices = [100];
+        for (let i = 0; i < assetReturns[validSymbols[0]].length; i++) {
+            portPrices.push(portPrices[i] * (1 + validSymbols.reduce((sum, s) => sum + weights[s] * assetReturns[s][i], 0)));
         }
 
-        const portPrices = new Array(T + 1);
-        portPrices[0] = 100;
-        for (let i = 0; i < T; i++) portPrices[i + 1] = portPrices[i] * (1 + portReturns[i]);
+        const benchAt = new Map(benchSeries.ts.map((t, i) => [t, benchSeries.closes[i]]));
+        const benchAligned = ts.map(t => benchAt.get(t)).filter(v => v != null);
+        const hasBench = benchAligned.length >= MIN_SAMPLES;
 
-        const benchAligned = alignBenchmarkTo(ts, benchSeries);
-
-        setLoading(true, 0.85, L('Computing risk metrics'), L('{0} positions, {1} days', validSymbols.length, ts.length));
+        showProgress(0.85, L('Computing risk metrics'), L('{0} positions, {1} days', validSymbols.length, ts.length));
         const [annVol, sharpe, sortino, maxDD, var95, cvar95, beta, corrMatrix] = await Promise.all([
             runQuant('annualizedVolatility', portPrices),
             runQuant('calculateSharpeRatio', portPrices),
@@ -139,109 +113,49 @@ export async function renderAnalysisPane(force = false) {
             runQuant('calculateMaxDrawdown', portPrices),
             runQuant('calculateVaR', portPrices, 0.95),
             runQuant('calculateCVaR', portPrices, 0.95),
-            benchAligned.length >= MIN_SAMPLES ? runQuant('calculateBeta', portPrices, benchAligned) : Promise.resolve(null),
-            runQuant('correlationMatrix', pricesMap)
+            hasBench ? runQuant('calculateBeta', portPrices, benchAligned) : null,
+            runQuant('correlationMatrix', pricesMap),
         ]);
 
         const totalReturn = ((portPrices[portPrices.length - 1] - 100) / 100) * 100;
-
         const portDailyVol = annVol / Math.sqrt(252);
-        let weightedAvgVol = 0;
-        for (const s of validSymbols) {
-            weightedAvgVol += weights[s] * QuantEngine.calculateVolatility(assetReturns[s]);
-        }
+        const weightedAvgVol = validSymbols.reduce((sum, s) => sum + weights[s] * dailyVol[s], 0);
         const diversification = portDailyVol > 0 ? weightedAvgVol / portDailyVol : 0;
 
-        const portVar = variance(portReturns);
-        const contribRows = validSymbols.map(s => {
-            const cov = covariance(assetReturns[s], portReturns);
-            const contrib = portVar > 0 ? (weights[s] * cov) / portVar : 0;
-            const annAssetVol = QuantEngine.calculateVolatility(assetReturns[s]) * Math.sqrt(252);
-            return {
-                symbol: s,
-                name: positions[s].name || s,
-                weight: weights[s],
-                vol: annAssetVol,
-                beta: benchAligned.length >= MIN_SAMPLES
-                    ? betaSync(pricesMap[s], benchAligned)
-                    : null,
-                contrib
-            };
-        }).sort((a, b) => b.contrib - a.contrib);
+        // A stock's share of the swings is its weight times its beta to the portfolio.
+        const contribRows = validSymbols.map(s => ({
+            symbol: s,
+            name: positions[s].name || s,
+            weight: weights[s],
+            vol: dailyVol[s] * Math.sqrt(252),
+            beta: hasBench ? QuantEngine.calculateBeta(pricesMap[s], benchAligned) : null,
+            contrib: weights[s] * QuantEngine.calculateBeta(pricesMap[s], portPrices),
+        })).sort((a, b) => b.contrib - a.contrib);
 
-        const volsMap = {};
-        for (const r of contribRows) volsMap[r.symbol] = r.vol;
-        const targetWeights = QuantEngine.inverseVolWeights(volsMap);
+        const targetWeights = QuantEngine.inverseVolWeights(Object.fromEntries(contribRows.map(r => [r.symbol, r.vol])));
         for (const r of contribRows) r.target = targetWeights[r.symbol] || 0;
 
         const allTrades = [];
         for (const pos of Object.values(positions)) {
             // The engine knows no currencies: every trade is counted in the one the position's cost is in.
             const inCostCurrency = t => ({ ...t, amount: t.amount < 0 ? -convert(-t.amount, t.currency || 'EUR', paidCurrency(pos)) : convert(t.amount || 0, t.currency || 'EUR', paidCurrency(pos)) });
-            const events = QuantEngine.extractTradeEvents({
-                symbol: pos.symbol,
-                purchases: pos.purchases?.map(inCostCurrency),
-                sales: pos.sales?.map(inCostCurrency)
-            });
-            allTrades.push(...events);
+            allTrades.push(...QuantEngine.extractTradeEvents({ symbol: pos.symbol, purchases: pos.purchases?.map(inCostCurrency), sales: pos.sales?.map(inCostCurrency) }));
         }
-        const edge = QuantEngine.tradeStats(allTrades);
 
         renderPlain({ annVol, maxDD, var95, totalValue, contribRows, weights });
         renderHero({ totalReturn, annVol, sharpe, beta, currencyMixed });
         renderMetrics({ sortino, maxDD, var95, cvar95, diversification, samples: ts.length });
-        renderTradingEdge(edge);
+        renderTradingEdge(QuantEngine.tradeStats(allTrades));
         renderContributors(contribRows);
-        renderCorrelationMatrix(validSymbols, corrMatrix, contribRows.reduce((m, r) => (m[r.symbol] = r.name, m), {}));
+        renderCorrelationMatrix(validSymbols, corrMatrix, Object.fromEntries(contribRows.map(r => [r.symbol, r.name])));
     } catch (e) {
         console.error('[Analysis] error:', e);
         metricsEl.innerHTML = `<p class="empty">${L('Could not compute the risk: {0}', escapeHtml(e?.message || e))}</p>`;
     } finally {
         rendering = false;
-        setLoading(false);
+        loadingBar?.remove();
+        loadingBar = null;
     }
-}
-
-function alignBenchmarkTo(targetTs, benchSeries) {
-    const m = new Map();
-    for (let i = 0; i < benchSeries.ts.length; i++) m.set(benchSeries.ts[i], benchSeries.closes[i]);
-    const out = [];
-    for (const d of targetTs) {
-        const v = m.get(d);
-        if (v != null) out.push(v);
-    }
-    return out;
-}
-
-function variance(arr) {
-    if (!arr || arr.length < 2) return 0;
-    let m = 0;
-    for (let i = 0; i < arr.length; i++) m += arr[i];
-    m /= arr.length;
-    let s = 0;
-    for (let i = 0; i < arr.length; i++) { const d = arr[i] - m; s += d * d; }
-    return s / arr.length;
-}
-
-function covariance(a, b) {
-    const n = Math.min(a.length, b.length);
-    if (n < 2) return 0;
-    let ma = 0, mb = 0;
-    for (let i = 0; i < n; i++) { ma += a[i]; mb += b[i]; }
-    ma /= n; mb /= n;
-    let s = 0;
-    for (let i = 0; i < n; i++) s += (a[i] - ma) * (b[i] - mb);
-    return s / n;
-}
-
-function betaSync(pricesA, pricesB) {
-    const ra = QuantEngine.calculateReturns(pricesA);
-    const rb = QuantEngine.calculateReturns(pricesB);
-    const n = Math.min(ra.length, rb.length);
-    if (n < 3) return 0;
-    const cov = covariance(ra.slice(-n), rb.slice(-n));
-    const vb = variance(rb.slice(-n));
-    return vb === 0 ? 0 : cov / vb;
 }
 
 const riskClass = vol => [0.005, 0.05, 0.12, 0.20, 0.30, 0.80].findIndex(x => vol < x) + 1 || 7;
@@ -284,62 +198,60 @@ function renderPlain({ annVol, maxDD, var95, totalValue, contribRows, weights })
         </section>`;
 }
 
+const heroCard = (label, value, signed, hint = '') =>
+    `<div class="kpi"><span class="kpi-label"${hint ? ` title="${hint}"` : ''}>${label}</span><span class="kpi-value ${signed > 0 ? 'positive' : signed < 0 ? 'negative' : ''}">${value}</span></div>`;
+
 function renderHero({ totalReturn, annVol, sharpe, beta, currencyMixed }) {
-    const el = getEl('analysis-hero');
-    if (!el) return;
     const fxNote = currencyMixed ? L(' Holdings span several currencies: exchange-rate moves are not included.') : '';
-    el.innerHTML = `
+    getEl('analysis-hero').innerHTML = `
         ${heroCard(L('Total return*'), fmtPct(totalReturn), totalReturn, L('Constant-weight reconstruction: today’s weights applied to past returns, not the return actually realized over time.') + fxNote)}
         ${heroCard(L('Annualized volatility'), fmtPct(annVol * 100).replace(/^\+/, ''), 0, L('Measure of price fluctuations over a year (lower is less volatile)'))}
-        ${heroCard(L('Sharpe ratio'), fmtNum(sharpe, 2), sharpe, L('Risk-adjusted performance (excess return over the euro risk-free rate ÷ volatility; higher is better)'))}
-        ${heroCard(`Beta vs ${BENCHMARK_LABEL}`, beta == null ? L('n/a') : fmtNum(beta, 2), 0, L('Systematic risk relative to the benchmark: 1 moves with it, below 1 moves less.') + fxNote)}
+        ${heroCard(L('Sharpe ratio'), fmtNum(sharpe), sharpe, L('Risk-adjusted performance (excess return over the euro risk-free rate ÷ volatility; higher is better)'))}
+        ${heroCard(`Beta vs ${BENCHMARK_LABEL}`, beta == null ? L('n/a') : fmtNum(beta), 0, L('Systematic risk relative to the benchmark: 1 moves with it, below 1 moves less.') + fxNote)}
     `;
 }
 
-function heroCard(label, value, signed, hint = '') {
-    const cls = signed > 0 ? 'positive' : signed < 0 ? 'negative' : '';
-    return `<div class="kpi"><span class="kpi-label"${hint ? ` title="${hint}"` : ''}>${label}</span><span class="kpi-value ${cls}">${value}</span></div>`;
-}
+const good = ok => (ok ? 'positive' : 'negative');
 
-function renderMetrics({ sortino, maxDD, var95, cvar95, diversification, samples }) {
-    const el = getEl('analysis-metrics-list');
-    if (!el) return;
-    const items = [
-        { label: L('Sortino ratio'), value: fmtNum(sortino, 2), hint: L('Risk-adjusted return (downside only)') },
-        { label: 'Max drawdown', value: fmtPct(maxDD), hint: L('Worst peak-to-trough decline'), neg: maxDD },
-        { label: 'VaR 95% (1d)', value: fmtPct(var95), hint: L('Worst expected daily loss (95% confidence)'), neg: var95 },
-        { label: 'CVaR 95% (1d)', value: fmtPct(cvar95), hint: L('Average loss in worst 5% of days'), neg: cvar95 },
-        { label: L('Diversification ratio'), value: fmtNum(diversification, 2), hint: L('Weighted volatility of the holdings divided by the portfolio volatility. Higher is more diversified.') },
-        { label: L('Samples'), value: String(samples), hint: L('Common trading days analyzed') }
-    ];
-    el.innerHTML = items.map(m => `
+/** Label / value rows; cls colours the value. */
+function metricRows(hostId, items) {
+    const host = getEl(hostId);
+    if (host) host.innerHTML = items.map(m => `
         <div class="metric-item">
-            <span class="metric-label" title="${m.hint}">${m.label}</span>
-            <span class="metric-value ${m.neg != null && m.neg < 0 ? 'negative' : ''}">${m.value}</span>
+            <span class="metric-label"${m.hint ? ` title="${m.hint}"` : ''}>${m.label}</span>
+            <span class="metric-value ${m.cls || ''}">${m.value}</span>
         </div>
     `).join('');
 }
 
+function renderMetrics({ sortino, maxDD, var95, cvar95, diversification, samples }) {
+    metricRows('analysis-metrics-list', [
+        { label: L('Sortino ratio'), value: fmtNum(sortino), hint: L('Risk-adjusted return (downside only)') },
+        { label: 'Max drawdown', value: fmtPct(maxDD), hint: L('Worst peak-to-trough decline'), cls: maxDD < 0 ? 'negative' : '' },
+        { label: 'VaR 95% (1d)', value: fmtPct(var95), hint: L('Worst expected daily loss (95% confidence)'), cls: var95 < 0 ? 'negative' : '' },
+        { label: 'CVaR 95% (1d)', value: fmtPct(cvar95), hint: L('Average loss in worst 5% of days'), cls: cvar95 < 0 ? 'negative' : '' },
+        { label: L('Diversification ratio'), value: fmtNum(diversification), hint: L('Weighted volatility of the holdings divided by the portfolio volatility. Higher is more diversified.') },
+        { label: L('Samples'), value: String(samples), hint: L('Common trading days analyzed') },
+    ]);
+}
+
 function renderContributors(rows) {
-    const el = getEl('risk-contrib');
-    if (!el) return;
-    if (rows.length === 0) { el.innerHTML = ''; return; }
+    const host = getEl('risk-contrib');
+    if (!host) return;
+    if (!rows.length) { host.innerHTML = ''; return; }
     const body = rows.map(r => {
-        const target = r.target || 0;
-        const delta = r.weight - target;
-        const deltaCls = Math.abs(delta) < 0.02 ? 'neutral' : delta > 0 ? 'over' : 'under';
-        const deltaSign = delta > 0 ? '+' : '';
+        const delta = r.weight - r.target;
         return `
         <tr>
             <td class="risk-contrib-name">${r.name}</td>
             <td class="risk-contrib-sym">${r.symbol}</td>
             <td>${fmtPct(r.weight * 100)}</td>
             <td class="risk-contrib-target">
-                <span>${fmtPct(target * 100)}</span>
-                <span class="risk-contrib-delta ${deltaCls}">${deltaSign}${(delta * 100).toFixed(1)}</span>
+                <span>${fmtPct(r.target * 100)}</span>
+                <span class="risk-contrib-delta ${Math.abs(delta) < 0.02 ? 'neutral' : delta > 0 ? 'over' : 'under'}">${delta > 0 ? '+' : ''}${(delta * 100).toFixed(1)}</span>
             </td>
             <td>${fmtPct(r.vol * 100)}</td>
-            <td>${r.beta == null ? L('n/a') : fmtNum(r.beta, 2)}</td>
+            <td>${r.beta == null ? L('n/a') : fmtNum(r.beta)}</td>
             <td>
                 <div class="risk-contrib-bar">
                     <div class="risk-contrib-bar-fill ${r.contrib < 0 ? 'negative' : ''}" style="width:${Math.min(100, Math.abs(r.contrib) * 100)}%"></div>
@@ -349,7 +261,7 @@ function renderContributors(rows) {
         </tr>
     `;
     }).join('');
-    el.innerHTML = `
+    host.innerHTML = `
         <thead><tr>
             <th>${L('Name')}</th><th>Ticker</th><th>${L('Weight')}</th>
             <th title="${L('Risk-parity target (inverse-volatility)')}">${L('Target')}</th>
@@ -360,84 +272,48 @@ function renderContributors(rows) {
 }
 
 function renderTradingEdge(edge) {
-    const el = getEl('trading-edge-list');
-    if (!el) return;
+    const host = getEl('trading-edge-list');
+    if (!host) return;
     if (!edge || edge.count === 0) {
-        el.innerHTML = L('<p class="empty">No closed trades yet. Numbers appear after your first sale.</p>');
+        host.innerHTML = L('<p class="empty">No closed trades yet. Numbers appear after your first sale.</p>');
         return;
     }
-
-    const pf = edge.profitFactor === Infinity ? '∞' : fmtNum(edge.profitFactor, 2);
-    const halfKelly = edge.kelly / 2;
-    const sample = edge.count;
-    const sampleNote = sample < 30 ? ` <span class="meta" title="${L('Statistically thin: 30 or more trades give stable numbers')}">${L('(few trades)')}</span>` : '';
-
-    const items = [
-        { label: `Win rate · ${edge.wins}W / ${edge.losses}L${sampleNote}`,
-          value: fmtPct(edge.winRate * 100), pos: edge.winRate >= 0.5 },
-        { label: 'Profit factor',
-          value: pf, pos: edge.profitFactor >= 1, hint: L('Total gains divided by total losses. Above 1.5 is good.') },
-        { label: L('Expectancy / trade'),
-          value: fmtPct(edge.expectancyPct), pos: edge.expectancyPct > 0,
-          hint: L('Average result per trade. Must stay positive over time.') },
-        { label: 'Reward / Risk (avg R)',
-          value: fmtNum(edge.avgR, 2), pos: edge.avgR >= 1,
-          hint: L('Average win % divided by average loss %') },
-        { label: L('Avg holding · Best / Worst'),
-          value: L('{0}d · {1} / {2}', Math.round(edge.avgHoldingDays), fmtPct(edge.bestPct), fmtPct(edge.worstPct)) },
-        { label: L('Suggested size · ½ Kelly'),
-          value: edge.kelly > 0 ? fmtPct(halfKelly * 100) : L('n/a'),
-          emphasis: true,
-          hint: L('Half-Kelly cap on per-position sizing given current edge') }
-    ];
-
-    el.innerHTML = items.map(m => `
-        <div class="metric-item">
-            <span class="metric-label" ${m.hint ? `title="${m.hint}"` : ''}>${m.label}</span>
-            <span class="metric-value ${m.pos === true ? 'positive' : m.pos === false ? 'negative' : ''}">${m.value}</span>
-        </div>
-    `).join('');
+    const sampleNote = edge.count < 30 ? ` <span class="meta" title="${L('Statistically thin: 30 or more trades give stable numbers')}">${L('(few trades)')}</span>` : '';
+    metricRows('trading-edge-list', [
+        { label: `Win rate · ${edge.wins}W / ${edge.losses}L${sampleNote}`, value: fmtPct(edge.winRate * 100), cls: good(edge.winRate >= 0.5) },
+        { label: 'Profit factor', value: edge.profitFactor === Infinity ? '∞' : fmtNum(edge.profitFactor), cls: good(edge.profitFactor >= 1), hint: L('Total gains divided by total losses. Above 1.5 is good.') },
+        { label: L('Expectancy / trade'), value: fmtPct(edge.expectancyPct), cls: good(edge.expectancyPct > 0), hint: L('Average result per trade. Must stay positive over time.') },
+        { label: 'Reward / Risk (avg R)', value: fmtNum(edge.avgR), cls: good(edge.avgR >= 1), hint: L('Average win % divided by average loss %') },
+        { label: L('Avg holding · Best / Worst'), value: L('{0}d · {1} / {2}', Math.round(edge.avgHoldingDays), fmtPct(edge.bestPct), fmtPct(edge.worstPct)) },
+        { label: L('Suggested size · ½ Kelly'), value: edge.kelly > 0 ? fmtPct(edge.kelly / 2 * 100) : L('n/a'), hint: L('Half-Kelly cap on per-position sizing given current edge') },
+    ]);
 }
 
 function renderCorrelationMatrix(symbols, matrix, names) {
-    const el = getEl('correlation-matrix');
-    if (!el) return;
-    const size = symbols.length;
-    el.style.gridTemplateColumns = `88px repeat(${size}, minmax(58px, 1fr))`;
-    const headerCell = (s) => `
+    const host = getEl('correlation-matrix');
+    if (!host) return;
+    host.style.gridTemplateColumns = `88px repeat(${symbols.length}, minmax(58px, 1fr))`;
+    const headerCell = s => `
         <div class="matrix-cell matrix-header matrix-header-rich">
             <img class="row-logo" src="img/icon/${s}.png" alt="" loading="lazy">
             <span class="matrix-header-name">${escapeHtml(names[s] || s)}</span>
             <span class="matrix-header-ticker">${s}</span>
         </div>
     `;
-    let html = '<div class="matrix-cell matrix-header matrix-header-corner"></div>';
-    for (const s of symbols) html += headerCell(s);
+    let html = '<div class="matrix-cell matrix-header matrix-header-corner"></div>' + symbols.map(headerCell).join('');
     for (const a of symbols) {
         html += headerCell(a);
         for (const b of symbols) {
             const r = matrix?.[a]?.[b] ?? 0;
-            const bg = corrBackground(r);
-            html += `<div class="matrix-cell" style="background:${bg}" title="${a} / ${b}: ${r.toFixed(3)}">${r.toFixed(2)}</div>`;
+            html += `<div class="matrix-cell" style="background:${alpha(r >= 0 ? colors().accent : colors().pos, (Math.min(1, Math.abs(r)) * 0.42).toFixed(3))}" title="${a} / ${b}: ${r.toFixed(3)}">${r.toFixed(2)}</div>`;
         }
     }
-    el.innerHTML = html;
+    host.innerHTML = html;
 }
 
-function escapeHtml(s) {
-    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
+const escapeHtml = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-function corrBackground(r) {
-    const a = (Math.min(1, Math.abs(r)) * 0.42).toFixed(3);
-    return alpha(r >= 0 ? colors().accent : colors().pos, a);
-}
-
-function fmtPct(n) {
-    if (n == null || !Number.isFinite(n)) return 'n/a';
-    const sign = n > 0 ? '+' : '';
-    return `${sign}${n.toFixed(2)}%`;
-}
+const fmtPct = n => (n == null || !Number.isFinite(n) ? 'n/a' : `${n > 0 ? '+' : ''}${n.toFixed(2)}%`);
 function fmtNum(n, d = 2) {
     if (n == null || !Number.isFinite(n)) return 'n/a';
     const out = n.toFixed(d);

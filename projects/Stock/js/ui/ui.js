@@ -1,4 +1,4 @@
-import { positions, selectedApi, lastApiBySymbol, currencyCode, currencySymbol, globalPeriod } from '../core/state.js';
+import { positions, currencyCode, currencySymbol, globalPeriod } from '../core/state.js';
 import { priceCurrency, paidCurrency } from '../data/holdings.js';
 import { convert } from '../data/rates.js';
 import { typeLabel, periodPhrase } from '../core/constants.js';
@@ -10,28 +10,11 @@ import { setupNewsSearch } from './news.js';
 import { resolveTickerDetails } from '../data/ticker-catalog.js';
 import { handleImageAssetError } from '../data/assets.js';
 import { getEl, el, icon, formatCurrency, formatPct, showCard, termHtml } from '../core/utils.js';
-import { L, Ln, LANG, LOCALE } from '../i18n/i18n.js';
+import { L, Ln, LOCALE } from '../i18n/i18n.js';
 import { currentBank, orderFee, isEstimate, marketFor, formatMoney } from '../data/banks.js';
-import { flagUrl } from '../data/country.js';
-
-export { initChart };
-
-let regionNames = null;
-export function countryName(code) {
-    if (!code || code.length !== 2) return code || '';
-    try { regionNames ||= new Intl.DisplayNames([LANG], { type: 'region' }); return regionNames.of(code.toUpperCase()) || code; } catch { return code; }
-}
-
-const BENCH = { USD: ['^GSPC', 'S&P 500'], EUR: ['^FCHI', 'CAC 40'] };
-export function benchFor(symbol) {
-    const p = positions[symbol];
-    const cur = String(p?.currency || p?.raw?.currency || p?.lastData?.currency || '').toUpperCase();
-    const [sym, label] = BENCH[cur] || (/^(FR|DE|NL|BE|IT|ES|PT|IE|FI|AT)$/i.test(p?.raw?.country || '') ? BENCH.EUR : BENCH.USD);
-    return { symbol: sym, label };
-}
+import { flagUrl, countryName } from '../data/country.js';
 
 /* ── sidebar rows ── */
-const heldShares = symbol => (positions[symbol]?.shares ?? 0) > 0;
 let rowOrder = 0;
 
 function ensureGroup(containerId, type) {
@@ -40,9 +23,7 @@ function ensureGroup(containerId, type) {
     const id = `${containerId}-${type}`;
     let group = getEl(id);
     if (!group) {
-        group = el('div', 'tab-group');
-        group.id = id;
-        group.dataset.type = type;
+        group = el('div', 'tab-group', null, { id, 'data-type': type });
         group.append(el('h3', 'group-title', typeLabel(type)));
         container.append(group);
     }
@@ -74,7 +55,7 @@ function buildRow(stock) {
 export function placeTabs(symbol) {
     const pos = positions[symbol];
     if (!pos) return;
-    const held = heldShares(symbol);
+    const held = (pos.shares ?? 0) > 0;
     for (const tab of document.querySelectorAll(`.tab[data-symbol="${CSS.escape(symbol)}"]`)) {
         const mobile = !tab.closest('#sidebar');
         const target = ensureGroup(`${mobile ? 'mobile-' : ''}${held ? 'portfolio' : 'general'}-tabs`, pos.type || 'equity');
@@ -129,9 +110,7 @@ export function createCard(stock) {
     // duplicating ids when a ticker page is rebuilt mid-load.
     const stale = getEl(`card-${sym}`);
     if (stale) {
-        try {
-            for (const c of stale.querySelectorAll('canvas')) window.Chart?.getChart(c)?.destroy();
-        } catch (_) {}
+        try { for (const c of stale.querySelectorAll('canvas')) window.Chart?.getChart(c)?.destroy(); } catch { /* chart gone */ }
         stale.remove();
     }
     const card = getEl('view-template').content.firstElementChild.cloneNode(true);
@@ -163,44 +142,29 @@ export function createCard(stock) {
     setupNewsSearch(sym);
 }
 
-function tradeList(symbol) {
-    const pos = positions[symbol];
-    if (!pos) return [];
-    const list = [
-        ...(pos.purchases || []).map(t => ({ ...t, side: 'buy' })),
-        ...(pos.sales || []).map(t => ({ ...t, side: 'sell' })),
-    ];
-    return list.sort((a, b) => new Date(b.date) - new Date(a.date));
-}
-
-export function renderTrades(card, symbol) {
-    card ||= getEl(`card-${symbol}`);
-    const host = card?.querySelector('.trades');
+function renderTrades(card, symbol) {
+    const host = card.querySelector('.trades'), pos = positions[symbol];
     if (!host) return;
-    const trades = tradeList(symbol);
+    const trades = [...(pos?.purchases || []).map(t => ({ ...t, side: 'buy' })), ...(pos?.sales || []).map(t => ({ ...t, side: 'sell' }))]
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
     host.replaceChildren();
-    if (!trades.length) {
-        host.append(el('p', 'empty', L('Bought it? Add the trade and Nemeris tracks it.')));
-    }
+    if (!trades.length) host.append(el('p', 'empty', L('Bought it? Add the trade and Nemeris tracks it.')));
     for (const t of trades) {
-        const row = el('div', `row trade-row ${t.side === 'buy' ? 'is-buy' : 'is-sell'}`);
-        const main = el('div', 'row-main');
+        const buy = t.side === 'buy';
         const shares = Number(t.shares) || 0;
-        main.append(
-            el('span', 'row-title', t.side === 'buy' ? Ln(shares, 'Bought {0} share', 'Bought {0} shares') : Ln(shares, 'Sold {0} share', 'Sold {0} shares')),
-            el('span', 'row-sub', new Date(t.date).toLocaleDateString(LOCALE, { day: 'numeric', month: 'short', year: 'numeric' })),
-        );
-        const end = el('div', 'row-end');
         const amount = Math.abs(Number(t.amount) || 0);
         const cur = currencySymbol(t.currency || 'EUR');
+        const row = el('div', `row trade-row ${buy ? 'is-buy' : 'is-sell'}`);
+        const main = el('div', 'row-main'), end = el('div', 'row-end');
+        main.append(
+            el('span', 'row-title', buy ? Ln(shares, 'Bought {0} share', 'Bought {0} shares') : Ln(shares, 'Sold {0} share', 'Sold {0} shares')),
+            el('span', 'row-sub', new Date(t.date).toLocaleDateString(LOCALE, { day: 'numeric', month: 'short', year: 'numeric' })),
+        );
         end.append(el('span', 'row-value', formatCurrency(amount, cur)), el('span', 'row-sub', shares ? L('{0} each', formatCurrency(amount / shares, cur)) : ''));
         row.append(main, end);
         if (t.local) {
-            const del = el('button', 'icon-btn trade-del');
-            del.type = 'button';
-            del.dataset.trade = t.id;
-            del.setAttribute('aria-label', L('Delete this trade'));
-            del.title = L('Delete this trade');
+            const label = L('Delete this trade');
+            const del = el('button', 'icon-btn trade-del', null, { type: 'button', title: label, 'aria-label': label, 'data-trade': t.id });
             del.append(icon('delete'));
             row.append(del);
         }
@@ -223,7 +187,7 @@ function showOrderFee(form, pos) {
 }
 
 // A trade is typed in the user's currency, the one the bank took or paid, and keeps it.
-function tradeForm(card, symbol) {
+function tradeForm(symbol) {
     const cur = currencySymbol();
     const form = el('form', 'trade-form');
     form.innerHTML = `
@@ -266,7 +230,7 @@ document.addEventListener('click', e => {
     if (add) {
         const card = add.closest('.ticker-card');
         const slot = card.querySelector('.trade-form-slot');
-        if (!slot.firstChild) slot.append(tradeForm(card, card.id.slice(5)));
+        if (!slot.firstChild) slot.append(tradeForm(card.id.slice(5)));
         slot.querySelector('input[name="shares"]')?.focus();
         return;
     }
@@ -283,7 +247,7 @@ export function refreshPositionViews(symbol) {
 }
 
 function renderPositionSummary(card, symbol, price) {
-    const host = card?.querySelector('.pos-summary');
+    const host = card.querySelector('.pos-summary');
     const pos = positions[symbol];
     if (!host || !pos) return;
     const shares = pos.shares || 0;
@@ -305,7 +269,7 @@ function renderPositionSummary(card, symbol, price) {
 }
 
 function renderRange(card, data, cur) {
-    const host = card?.querySelector('.tk-range');
+    const host = card.querySelector('.tk-range');
     if (!host) return;
     const { low, high, open, price } = data || {};
     if (!(low > 0 && high >= low && price > 0 && open > 0)) { host.innerHTML = L('<p class="empty">No range for this period yet.</p>'); return; }
@@ -376,10 +340,8 @@ export function updateUI(symbol, data) {
     updateSidebarPerformance(symbol);
 }
 
-export function clearPeriodDisplay(symbol) {
-    const pos = positions[symbol];
-    if (!pos) return;
-    const chart = pos.chart;
+function clearPeriodDisplay(symbol) {
+    const chart = positions[symbol].chart;
     if (chart) {
         chart.data.labels = [];
         chart.data.datasets.forEach(d => { d.data = []; });
@@ -440,7 +402,6 @@ export async function openCustomSymbol(symbol, type = 'equity', itemData = null)
         const q = resolved.quote;
         if (q) positions[symbol].lastData = { price: q.regularMarketPrice || q.price || 0, change: q.regularMarketChange || 0, changePercent: q.regularMarketChangePercent || 0, name: q.longName || q.shortName || symbol, currency: q.currency || stock.currency, source: 'yahoo-quote' };
         else if (itemData?.price !== undefined) positions[symbol].lastData = { ...itemData };
-        lastApiBySymbol[symbol] = selectedApi;
         createTab(stock);
         createCard(stock);
         initChart(symbol, positions);
@@ -461,10 +422,8 @@ function syncBackButton(symbol) {
     if (from !== 'explorer' || typeof window.explorerModule?.openExplorer !== 'function') return;
     card.dataset.from = 'explorer';
     const row = el('div', 'tk-back-row');
-    const back = el('button', 'btn btn-quiet tk-back');
-    back.type = 'button';
+    const back = el('button', 'btn btn-quiet tk-back', null, { type: 'button', 'aria-label': L('Back to Explorer') });
     back.append(icon('chevron-left'), el('span', null, L('Back to Explorer')));
-    back.setAttribute('aria-label', L('Back to Explorer'));
     back.addEventListener('click', () => window.explorerModule.openExplorer());
     row.append(back);
     card.prepend(row);

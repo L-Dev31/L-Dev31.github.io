@@ -1,8 +1,9 @@
 // "About you", asked by Nemeris one question at a time, the Academy's way: her bubble, lettered answers, a slide to the next.
 // A card in Settings starts it. The form stays the record: an answer ticks its radio and the form saves itself as before. Always in the app's own violet.
-import { el, icon } from '../core/utils.js';
+import { el } from '../core/utils.js';
 import { L } from '../i18n/i18n.js';
-import { teacher, talk, react, afterWords, slide } from './academy-page.js';
+import { button } from '../coach/explain.js';
+import { teacher, talk, react, afterWords, slide, player } from './academy-page.js';
 
 /** Turns the form's multiple-choice questions into Nemeris's player, started from a card. Returns reset(), which shows the card again. */
 export function mountSurvey(form) {
@@ -12,31 +13,16 @@ export function mountSurvey(form) {
 
     const answered = q => !!q.querySelector('input:checked');
     const nemeris = teacher();
-    const fill = el('div', 'pbar-fill');
-    const track = el('div', 'pbar-track');
-    track.append(fill);
+    const { box, top, stage, back, next, progress } = player('learn-play survey', 'btn learn-next');
     const count = el('span', 'meta');
-    const top = el('div', 'learn-top');
-    top.append(track, count);
-    const stage = el('div', 'learn-stage');
-    const back = el('button', 'btn learn-back');
-    back.type = 'button';
-    back.append(icon('chevron-left'), L('Back'));
-    const next = el('button', 'btn learn-next');
-    next.type = 'button';
-    const nav = el('div', 'learn-nav');
-    nav.append(back, next);
-    const box = el('div', 'learn-play survey');
-    box.append(top, stage, nav);
-    stage.addEventListener('click', () => box.classList.add('skip'));
+    top.append(count);
     const intro = el('div', 'survey-intro');
     const blurb = el('p', 'survey-blurb');
-    const start = el('button', 'btn');
-    start.type = 'button';
+    const start = button('btn');
     intro.append(teacher(), blurb, start);
     questions[0].before(intro, box);
 
-    let at = 0, busy = false;
+    let at = 0;
 
     function ask(q) {
         count.textContent = `${at + 1} / ${questions.length}`;
@@ -44,8 +30,7 @@ export function mountSurvey(form) {
         const row = talk(q.querySelector('legend').textContent, nemeris);
         const options = el('div', 'quiz-options');
         for (const input of q.querySelectorAll('input[type="radio"]')) {
-            const b = el('button', 'quiz-option', input.nextElementSibling.textContent);
-            b.type = 'button';
+            const b = button('quiz-option', input.nextElementSibling.textContent);
             b.classList.toggle('is-chosen', input.checked);
             b.addEventListener('click', () => {
                 input.checked = true;
@@ -71,19 +56,12 @@ export function mountSurvey(form) {
     }
 
     function draw() {
-        box.classList.remove('skip');
-        fill.style.transform = `scaleX(${Math.min(at, questions.length) / questions.length})`;
+        progress(Math.min(at, questions.length) / questions.length);
         if (at < questions.length) ask(questions[at]);
         else thanks();
     }
 
-    async function go(to, dir) {
-        if (busy) return;
-        busy = true;
-        await slide(stage, dir, () => { at = to; draw(); });
-        busy = false;
-    }
-
+    const go = (to, dir) => slide(stage, dir, () => { at = to; draw(); });
     next.addEventListener('click', () => (at < questions.length ? go(at + 1, 1) : reset()));
     back.addEventListener('click', () => go(at - 1, -1));
 
