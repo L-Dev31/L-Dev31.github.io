@@ -54,7 +54,7 @@ export function mountSurvey(form) {
                 input.dispatchEvent(new Event('input', { bubbles: true }));
                 for (const o of options.children) o.classList.toggle('is-chosen', o === b);
                 react(nemeris, 'happy');
-                setTimeout(() => go(at + 1, 1), 450);
+                next.hidden = false;
             });
             options.append(b);
         }
