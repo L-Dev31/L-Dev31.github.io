@@ -273,7 +273,6 @@ function fillSettings() {
 function renderIncomeBands() {
     const bands = incomeBands();
     for (const r of document.querySelectorAll('#income-bands input')) r.nextElementSibling.textContent = bands[r.value];
-    getEl('income-hint').textContent = bands.hint;
 }
 const refreshIncome = () => loadMedian().then(renderIncomeBands);
 refreshIncome();

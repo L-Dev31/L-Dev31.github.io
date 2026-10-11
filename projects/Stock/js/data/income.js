@@ -71,7 +71,6 @@ export function incomeBands() {
     const [a, b, c] = limits();
     return {
         none: L('No regular income'), b1: L('Under {0}', a), b2: L('{0} to {1}', a, b), b3: L('{0} to {1}', b, c), b4: L('Over {0}', c),
-        hint: L('Count pay, grants and regular help from family. A typical income (country: {0}) is about {1} a month.', countryName(countryCode()), money(m)),
     };
 }
 

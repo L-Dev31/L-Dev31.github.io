@@ -451,7 +451,7 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 .learn-photo .coach-photo-credit { display: none; }
 .learn-nav { position: sticky; bottom: 16px; display: flex; align-items: center; gap: 10px; }
 .learn-next { flex: 1; min-height: 52px; font-size: 16px; }
-.learn-back { flex: none; background: var(--accent); color: var(--on-accent); }
+.learn-back { flex: none; }
 .learn-result { display: grid; justify-items: center; align-content: center; gap: 24px; min-height: 70vh; text-align: center; }
 .learn-result h1 { font-family: var(--font); font-weight: 700; font-size: clamp(44px, 12vw, 84px); line-height: 1; letter-spacing: -.03em; color: var(--world); }
 .learn-result .teacher { width: 140px; }

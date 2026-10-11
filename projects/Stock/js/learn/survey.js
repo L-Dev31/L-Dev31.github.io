@@ -21,10 +21,9 @@ export function mountSurvey(form) {
     const top = el('div', 'learn-top');
     top.append(track, count);
     const stage = el('div', 'learn-stage');
-    const back = el('button', 'icon-btn learn-back');
+    const back = el('button', 'btn learn-back');
     back.type = 'button';
-    back.setAttribute('aria-label', L('Previous question'));
-    back.append(icon('chevron-left'));
+    back.append(icon('chevron-left'), L('Back'));
     const next = el('button', 'btn learn-next');
     next.type = 'button';
     const nav = el('div', 'learn-nav');
@@ -54,8 +53,7 @@ export function mountSurvey(form) {
             });
             options.append(b);
         }
-        const hint = q.querySelector('p.meta')?.textContent;
-        stage.replaceChildren(row, ...afterWords(row, [options, ...(hint ? [el('p', 'meta', hint)] : [])]));
+        stage.replaceChildren(row, ...afterWords(row, [options]));
         next.textContent = L('Next');
         next.hidden = !answered(q);
     }
