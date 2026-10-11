@@ -1,5 +1,5 @@
 // The Academy page: a world's path of levels, and the player that runs one level a step at a time.
-import { el, icon, showCard } from '../core/utils.js';
+import { el, icon, showCard, floating } from '../core/utils.js';
 import { L, LOCALE } from '../i18n/i18n.js';
 import { richText, para } from '../coach/explain.js';
 import { photoFigure } from '../coach/photos.js';
@@ -127,9 +127,17 @@ const percent = n => (n / 100).toLocaleString(LOCALE, { style: 'percent' });
 const levelNumber = level => worldOf(level.id).levels.filter(l => !l.boss).indexOf(level) + 1;
 
 /* ── the map ── */
+// On phones "What you know" is a floating button: it takes turns with the assistant's.
+const phone = matchMedia('(max-width: 899px)');
+const gradesOpened = floating('grades', () => {
+    const box = card.querySelector('.learn-grades');
+    if (box && phone.matches) box.open = false;
+});
+
 function gradesPanel() {
     const box = el('details', 'panel learn-grades');
-    box.open = !matchMedia('(max-width: 899px)').matches;
+    box.open = !phone.matches;
+    box.addEventListener('toggle', () => { if (box.open && phone.matches) gradesOpened(); });
     const all = grades();
     const summary = el('summary', 'panel-title');
     summary.append(el('span', 'learn-label', L('What you know')));
@@ -140,7 +148,10 @@ function gradesPanel() {
     const ring = el('span', 'learn-ring');
     ring.style.setProperty('--p', `${average}%`);
     ring.append(el('b', null, `${average}%`));
-    summary.append(el('span', 'learn-average', percent(average)), mini, icon('chevron-left'), ring);
+    const close = el('span', 'learn-close');
+    close.setAttribute('aria-label', L('Close'));
+    close.append(icon('close'));
+    summary.append(el('span', 'learn-average', percent(average)), mini, icon('chevron-left'), ring, close);
     box.append(summary);
     for (const g of all) {
         const bar = el('div', 'pbar pbar-compact');

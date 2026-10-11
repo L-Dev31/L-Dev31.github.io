@@ -389,7 +389,7 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 .learn-grades > summary::-webkit-details-marker { display: none; }
 .learn-grades > summary { gap: 10px; }
 .learn-grades > summary .panel-title, .learn-grades > summary { font-weight: 700; }
-.learn-ring { display: none; }
+.learn-ring, .learn-close { display: none; }
 .learn-average { margin-left: auto; color: var(--world); font-variant-numeric: tabular-nums; font-weight: 700; }
 .learn-mini { width: 44px; height: 6px; border-radius: var(--r-pill); background: var(--surface-3); overflow: hidden; }
 .learn-mini i { display: block; height: 100%; background: var(--world); }
@@ -478,17 +478,17 @@ body:has(#card-learn.active) .container { background: var(--world-bg); }
 @media (prefers-reduced-motion: reduce) { .teacher, .teacher::before, .teacher::after, .teacher i { animation: none; } }
 @media (max-width: 899px) {
     .learn-split { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-    /* What you know: a round button at the top right, just like the assistant's, that opens the bars. */
-    .panel.learn-grades { position: fixed; top: calc(12px + env(safe-area-inset-top, 0px)); right: 16px; z-index: 65; width: 56px; max-height: calc(100dvh - 160px); padding: 0; overflow: hidden; border: 1px solid var(--line-2); border-radius: 28px; background: var(--surface-2); box-shadow: var(--shadow); }
-    .panel.learn-grades[open] { width: min(340px, calc(100vw - 32px)); padding: 0 16px 14px; overflow-y: auto; border-radius: var(--r-lg); }
-    .panel.learn-grades:not([open]) { height: 56px; }
-    .panel.learn-grades > summary { height: 54px; margin: 0; }
-    .panel.learn-grades:not([open]) > summary { justify-content: center; }
-    .panel.learn-grades > summary > :not(.learn-ring, .learn-label) { display: none; }
-    .panel.learn-grades:not([open]) > summary .learn-label { display: none; }
-    .learn-ring { position: relative; display: grid; place-items: center; flex: none; width: 44px; height: 44px; margin-left: auto; border-radius: 50%; background: conic-gradient(var(--world) var(--p), var(--surface-3) 0); }
-    .learn-ring::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: var(--surface-2); }
-    .learn-ring b { position: relative; font-size: 12px; font-variant-numeric: tabular-nums; }
+    /* What you know: closed, just the score in its ring, floating at the top right; open, a panel with a clear close button. */
+    .panel.learn-grades { position: fixed; top: calc(12px + env(safe-area-inset-top, 0px)); right: 16px; z-index: 65; max-height: calc(100dvh - 160px); padding: 0; border: 0; background: none; box-shadow: none; }
+    .panel.learn-grades > summary { margin: 0; }
+    .panel.learn-grades > summary > :not(.learn-ring, .learn-label, .learn-close) { display: none; }
+    .panel.learn-grades:not([open]) > summary > :is(.learn-label, .learn-close),
+    .panel.learn-grades[open] > summary > .learn-ring { display: none; }
+    .panel.learn-grades[open] { width: min(340px, calc(100vw - 32px)); padding: 6px 8px 16px 18px; overflow-y: auto; border: 1px solid var(--line-2); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow); }
+    .learn-ring { position: relative; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: conic-gradient(var(--world) var(--p), var(--surface-3) 0); box-shadow: var(--shadow); }
+    .learn-ring::before { content: ''; position: absolute; inset: 5px; border-radius: 50%; background: var(--surface); }
+    .learn-ring b { position: relative; font-size: 13px; font-variant-numeric: tabular-nums; }
+    .learn-close { display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; border-radius: 50%; background: var(--surface-2); color: var(--text); font-size: 20px; }
     .learn-splash { left: 0; }
     .learn-title { font-size: 30px; }
     .learn-node:nth-child(4n + 2) { translate: 56px; }

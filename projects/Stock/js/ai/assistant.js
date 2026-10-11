@@ -8,7 +8,7 @@ import { calculateBotSignal } from '../quant/signal-bot.js';
 import { webSearch, readPage } from '../data/web.js';
 import { round, holdingRows, positionMoney, priceCurrency, paidCurrency } from '../data/holdings.js';
 import { TERMS } from '../coach/terms.js';
-import { el, icon, makeResizer, downloadText } from '../core/utils.js';
+import { el, icon, makeResizer, downloadText, floating } from '../core/utils.js';
 import { L, Ln, LOCALE, LANG } from '../i18n/i18n.js';
 import { TOOL_SPECS, checkToolCall, buildSystemPrompt, tidyAnswer, guessLanguage, calculate, projectGrowth, ungroundedFigures, groundingNudge } from './assistant-rules.js';
 import { banksReady, allBanks, banksAsOf, currentBank, bankContext, orderFee, investmentCosts } from '../data/banks.js';
@@ -928,9 +928,13 @@ function updateCtxWheel() {
     }
 }
 
+// Opening the assistant closes any other floating panel, and another one opening closes the assistant.
+const fabOpened = floating('assistant', () => { if (ui && !ui.panel.hidden && !document.body.classList.contains('asst-minimized')) toggle(false); });
+
 export function toggle(force) {
     if (!ui) return;
     const open = force ?? ui.panel.hidden;
+    if (open) fabOpened();
     clearTimeout(panelCloseTimer);
     ui.panel.classList.remove('is-closing');
     ui.panel.classList.remove('is-minimized');

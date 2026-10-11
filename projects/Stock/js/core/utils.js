@@ -31,6 +31,12 @@ export function icon(name) {
     return i;
 }
 
+/** Floating buttons take turns: opening one closes the others. Call the returned function when this one opens. */
+export function floating(name, close) {
+    window.addEventListener('nemeris:fab', e => { if (e.detail !== name) close(); });
+    return () => window.dispatchEvent(new CustomEvent('nemeris:fab', { detail: name }));
+}
+
 /** Shows one view: the card becomes active, its sidebar row too, everything else steps back. */
 export function showCard(target) {
     const card = typeof target === 'string' ? document.getElementById(target) : target;
