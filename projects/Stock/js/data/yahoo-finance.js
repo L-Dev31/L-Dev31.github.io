@@ -74,7 +74,7 @@ function normalizeSymbol(sym) {
         .replaceAll('/', '-');
 }
 
-export const getYahooSymbol = stock => (typeof stock === 'string' ? stock : stock?.ticker) || null;
+const getYahooSymbol = stock => (typeof stock === 'string' ? stock : stock?.ticker) || null;
 
 /** The parsed JSON, or an error object ({ error: true, errorCode }) that callers check before reading `.chart` etc. */
 async function yahooFetch(url, signal) {
@@ -284,12 +284,6 @@ export async function fetchYahooQuote(ticker, signal) {
     }
 }
 
-/** Symbols made of plain letters, digits, dots and dashes. */
-export function isYahooSparkFriendly(sym) {
-    const upper = (sym || '').toUpperCase();
-    return /^[A-Z0-9.-]{1,24}$/.test(upper) && !upper.includes('--') && !upper.includes('..');
-}
-
 export async function fetchYahooScreener(scrIds, offset = 0, count = 200, signal) {
     const j = await yahooFetch(`${YAHOO}/v1/finance/screener/predefined/saved?scrIds=${scrIds}&count=${count}&offset=${offset}`, signal);
     const result = j?.finance?.result?.[0];
@@ -330,10 +324,6 @@ export async function fetchYahooChartSnapshot(symbol, range = '1d', interval = '
         return data;
     });
 }
-
-// The spark endpoint (a batch of mini charts) answers 400 through the proxy now and can never succeed from the
-// browser, so there is nothing to fetch: callers fall back to charts one ticker at a time.
-export const fetchYahooSparkBatch = async () => [];
 
 // A quote built from the chart, in the shape of Yahoo's v7/quote (which needs a crumb and always answers 401).
 function synthesizeQuoteFromChart(symbol, chart) {
