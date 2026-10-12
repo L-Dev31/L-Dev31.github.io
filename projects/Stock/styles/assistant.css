@@ -17,7 +17,7 @@
 .asst-fab:hover { transform: translateY(-2px); background: var(--surface-3); }
 .asst-fab { box-shadow: var(--shadow); }
 .asst-open .asst-fab { display: none; }
-/* No assistant in the Academy: its button and every "Ask Nemeris" go away there. */
+
 body:has(#card-learn.active) :is(.asst-fab, [data-needs-ai="assistant"]) { display: none; }
 .asst {
     position: fixed;
