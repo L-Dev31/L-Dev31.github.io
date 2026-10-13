@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Générateur de CV – Léo De-Vries Tosku</title>
+<style>
+:root{--bg:#e9ebee;--bar:#fff;--tx:#222;--bd:#cfd3d8;--ac:#2563eb}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1e22;--bar:#2a2d33;--tx:#eceef1;--bd:#444952}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Poppins","Segoe UI",Arial,sans-serif}
+.bar{position:sticky;top:0;z-index:5;background:var(--bar);border-bottom:1px solid var(--bd);padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bar button,.bar label.b{font:600 13px inherit;border:1px solid var(--bd);background:transparent;color:var(--tx);padding:8px 12px;border-radius:8px;cursor:pointer}
+.bar button:hover{background:var(--bg)}
+.bar .p{background:var(--ac);border-color:var(--ac);color:#fff}
+.bar .p:hover{background:#1d4ed8}
+.layout{display:flex;justify-content:center;align-items:flex-start;gap:16px;padding:18px 10px}
+#editor{width:360px;flex:none;background:var(--bar);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;font-size:13px;max-height:calc(100vh - 90px);overflow-y:auto;position:sticky;top:70px}
+#editor h2{margin:0 0 8px;font-size:14px;text-transform:uppercase}
+.ed-block{border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;overflow:hidden}
+.ed-block>summary{cursor:pointer;font-weight:700;font-size:12.5px;padding:8px 10px;background:var(--bg);list-style:none}
+.ed-block>summary::-webkit-details-marker{display:none}
+.ed-block .ed-body{padding:8px 10px;display:grid;gap:8px}
+.ed-body label{font-size:11px;font-weight:600;opacity:.85;display:grid;gap:4px}
+.ed-body input[type=text],.ed-body textarea{background:transparent;color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:6px 8px;font:inherit;font-size:12px;width:100%}
+.ed-body textarea{min-height:56px;resize:vertical}
+.ed-row{display:flex;gap:6px;align-items:center}
+.ed-row input{flex:1;min-width:0}
+.ed-item{border:1px dashed var(--bd);border-radius:6px;padding:8px;display:grid;gap:6px}
+.ed-add{border:1px dashed var(--ac);color:var(--ac);background:transparent;border-radius:6px;padding:6px;cursor:pointer;font:600 12px inherit}
+.ed-del{background:transparent;border:1px solid #dc2626;color:#dc2626;border-radius:6px;padding:2px 8px;cursor:pointer;font:600 11px inherit;justify-self:end}
+.ed-hint{font-size:10.5px;opacity:.65}
+.ed-icon-prev{width:32px;height:32px;flex:none;background:var(--bg);border:1px solid var(--bd);border-radius:6px;display:grid;place-items:center;overflow:hidden}
+.ed-icon-prev iconify-icon{font-size:20px}
+.ed-icon-prev img{width:100%;height:100%;object-fit:contain}
+@media (max-width:1180px){.layout{flex-direction:column;align-items:center}#editor{width:min(794px,100%);position:static;max-height:none}}
+
+/* ===== CV ===== */
+.cv{width:794px;height:1123px;margin:0 auto;background:#fff;color:#111;position:relative;overflow:hidden;font-size:11px;line-height:1.35;box-shadow:0 4px 24px #0003}
+.cv a{color:#fff;text-decoration:none}
+.hd{height:170px;display:flex;align-items:center;color:#fff;padding:0 22px 0 18px;background-size:cover;background-position:center center;background-repeat:no-repeat}
+.photo{width:104px;height:104px;border-radius:50%;background:#777;flex:none;display:grid;place-items:center;cursor:pointer;margin-right:18px;border:2px solid #ffffff55;overflow:hidden}
+.photo img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.photo iconify-icon{font-size:56px;color:#fff;width:56px;height:56px;display:block}
+.c1{flex:1;min-width:0;padding-right:12px;border-right:1.5px solid #ffffff88;height:104px;display:flex;flex-direction:column;justify-content:center;gap:7px}
+.c1 b{font-size:13px;display:inline-block}
+.ln{display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:500}
+.ln iconify-icon,.c2 iconify-icon{width:15px;height:15px;font-size:15px;flex:none}
+.c2{flex:1;min-width:0;padding:0 12px;border-right:1.5px solid #ffffff88;height:104px;display:flex;flex-direction:column;justify-content:center;gap:12px;font-size:10px}
+.c2 div{display:flex;gap:9px;align-items:center}
+.c3{flex:1;min-width:0;padding-left:14px;font-size:10.5px}
+.c3 h1{margin:0 0 10px;font-size:15.5px;line-height:1.2;font-weight:800;display:inline-block}
+.c3 p{margin:0 0 9px;font-size:10px;font-weight:600}
+.body{padding:0 22px}
+h2.cvsec{margin:15px 0 7px;font-size:13.5px;font-weight:800;letter-spacing:5px;color:#6b7075;border-bottom:2px solid #8a8f94;padding-bottom:3px;text-transform:uppercase}
+h3{display:inline-block;margin:0;font-size:12px;font-weight:700;background:#ddd;padding:1px 10px}
+.cols{display:flex;gap:30px;padding:0 10px}
+.cols>div{flex:1}
+ul.ar{list-style:none;margin:6px 0 0;padding:0}
+ul.ar li{border-bottom:1px solid #aaa;padding:1.5px 0 1.5px 15px;position:relative;font-size:10.5px}
+ul.ar li:before{content:"➤";position:absolute;left:0;font-size:9px;top:3px}
+.g ul.ar li:before{color:#16a34a}.b ul.ar li:before{color:#2563eb}
+.sw{margin:8px 0 0 10px}
+.grp{display:flex;gap:18px;margin-top:5px;padding-left:10px;flex-wrap:wrap;align-items:flex-start}
+.grp>div{flex:0 1 auto;min-width:0}
+.grp h4{margin:0 0 4px;font-size:10.5px;font-weight:600;text-decoration:underline;display:inline-block}
+.grp h4:before{content:"➤ ";text-decoration:none}
+.tl{display:flex;gap:5px 6px;flex-wrap:wrap;align-items:flex-start}
+.t{width:auto;min-width:40px;max-width:82px;text-align:center;font-size:7px;font-weight:600;line-height:1.15;background:#f1f3f6;border-radius:8px;padding:6px 6px 5px;display:flex;flex-direction:column;align-items:center}
+.ic{width:30px;height:30px;margin:0 auto 2px;display:grid;place-items:center}
+.ic iconify-icon{font-size:28px;width:28px;height:28px;display:block}
+.ic img{width:28px;height:28px;object-fit:contain;display:block}
+.kw{margin:6px 0 0 10px;font-size:8.5px;color:#666}
+.row{display:flex;gap:16px;margin:0 0 9px 4px}
+.row .l{width:150px;flex:none;font-size:10px}
+.row .l b{display:block;font-size:10.5px}
+.row .l .d:before,.edu .l .d:before{content:"➤ ";font-style:normal;color:#000}
+.row .r{flex:1;font-size:9.5px}
+.row .r b{display:block;text-decoration:underline;font-size:10.5px;text-transform:uppercase;margin-bottom:2px;font-weight:700}
+.row .r p{margin:0;font-weight:500}
+.edu .r em{color:#777;font-style:normal;font-weight:600}
+.int p{margin:0 0 2px 4px;font-size:8.5px}
+.int u{font-weight:500}
+
+@media screen {
+  [data-target] {cursor:pointer;outline:2px solid transparent;border-radius:3px;transition:all 0.2s}
+  [data-target]:hover {background:rgba(37, 99, 235, 0.1);outline:2px dashed rgba(37, 99, 235, 0.6)}
+  .hd [data-target]:hover {background:rgba(255, 255, 255, 0.15);outline:2px dashed rgba(255, 255, 255, 0.8)}
+}
+.ats .hd{background:#fff!important;color:#000}.ats .hd a,.ats .ln,.ats .c2,.ats .c3{color:#000}
+.ats .ln iconify-icon,.ats .c2 iconify-icon,.ats .photo{display:none}
+.ats .ic{display:none}.ats .t{font-size:9px;background:none;padding:0}
+.ats .c1,.ats .c2{border-color:#000}.ats .kw{font-size:9px;color:#000}
+.ats [data-target]:hover{background:none;outline:none}
+
+@page{size:A4;margin:0}
+@media print{
+  html,body{background:#fff}
+  .bar,.layout{padding:0}.bar,#editor{display:none!important}
+  .layout{display:block}
+  .cv{box-shadow:none;margin:0;width:210mm;height:296.5mm}
+  [data-target]{cursor:auto!important;outline:none!important;background:none!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+<link rel="icon" href="data:,">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+</head>
+<body>
+<div class="bar">
+  <button class="p" onclick="window.print()">Télécharger PDF</button>
+  <button onclick="exportProject()">Sauvegarder</button>
+  <button onclick="document.getElementById('json_upload').click()">Charger</button>
+  <button id="ats" onclick="toggleAts()">Mode ATS : désactivé</button>
+  <input type="file" accept=".json" hidden id="json_upload" onchange="importProject(event)">
+  <input type="file" accept="image/*" hidden id="icon_upload" onchange="handleIconUpload(event)">
+  <input type="file" accept="image/*" hidden id="ph" onchange="handlePhotoUpload(event)">
+</div>
+<div class="layout">
+  <div class="preview"><main class="cv" id="cv" spellcheck="false"></main></div>
+  <aside id="editor"></aside>
+</div>
+
+<script>
+var KEY='cv-leo-v10';
+try{['v1','v2','v3','v4','v5','v6','v7','v8','v9'].forEach(k=>localStorage.removeItem('cv-leo-'+k))}catch(e){}
+
+function DEFAULTS(){return {
+ name:"Léo DE-VRIES — TOSKU",
+ headerBg:"linear-gradient(180deg,#2c2c2c,#4a4a4a)",
+ photo:"",
+ contacts:[
+  {icon:"mdi:email",text:"leotoskuepro@gmail.com",href:"mailto:leotoskuepro@gmail.com"},
+  {icon:"mdi:phone",text:"+33 07 45 37 04 69",href:"tel:+33745370469"},
+  {icon:"mdi:folder-open",text:"Portfolio (l-dev31.github.io)",href:"https://l-dev31.github.io"},
+  {icon:"simple-icons:linkedin",text:"LinkedIn",href:"https://www.linkedin.com/"}
+ ],
+ infos:[
+  {icon:"mdi:translate",text:"Anglais bilingue (C2)\nNotions Italien (B1)\nNotions Creole GP (B1)"},
+  {icon:"mdi:map-marker",text:"Disponibilité\nrégionale (06)"}
+ ],
+ title:"RECHERCHE ALTERNANCE\nGRAPHISME / UI / UX",
+ rhythm:"Rythme :\n3j/Semaines en entreprise : Lun, Mar, Mer.",
+ dispo:"Disponible Immédiatement !",
+ savoirEtre:["Autonomie","Force de proposition","Adaptabilité","Communication orale & écrite","Collaboration","Souci du détail (Optimisation)"],
+ savoirFaire:["Copywriting & Rédaction éditoriale","Photographie","Veilles","Stratégie Marketing","Reporting & Suivi de performance","Création Graphique (Identité visuelle)","Emailing"],
+ softRows:[
+  [ {group:"Analytics & SEO",items:[{label:"Semrush",logo:"simple-icons:semrush",color:"#ff642d"},{"label":"GA4",logo:"simple-icons:googleanalytics",color:"#e37400"}]},
+    {group:"Créatif",items:[{label:"Figma",logo:"logos:figma",color:""},{label:"A.Illustrator",logo:"logos:adobe-illustrator",color:""},{label:"A.Photoshop",logo:"logos:adobe-photoshop",color:""},{label:"Blender",logo:"logos:blender",color:""}]} ],
+  [ {group:"Technique",items:[{label:"VSCode",logo:"logos:visual-studio-code",color:""},{label:"GitHub",logo:"logos:github-icon",color:""},{label:"Linux",logo:"logos:linux-tux",color:""}]} ]
+ ],
+ keywords:"Direction artistique, Identité visuelle, Branding, UI/UX Design, Maquettage, Figma, Adobe Creative Suite, Print & digital, Social media, SEO, Content marketing, Copywriting",
+ experiences:[
+  {date:"2026 (6 Mois)",company:"GEETECH - Superyacht Engineering",color:"",role:"Communication digitale & Social media & Création graphique",desc:"J’ai structuré la présence digitale cross canal de l’entreprise sur 3 plateformes (Instagram, LinkedIn, Facebook)..."}
+ ],
+ education:[
+  {date:"2025 - 2028",school:"Sophia Ynov Campus",color:"",degree:"Bachelor Chef de Projet Digital (+ Digital Design)",extra:"> Toeic 2025 (955/990)"}
+ ],
+ interests:[
+  {label:"Art",text:"Modélisation 3D ; Photographie ; Web Design ; Art Oratoire"},
+  {label:"Culture",text:"Voyages ; Etude des langues ; Géographie"}
+ ]
+};}
+
+var CV=null;
+try{var raw=localStorage.getItem(KEY);CV=raw?JSON.parse(raw):DEFAULTS();}catch(e){CV=DEFAULTS();}
+var cv=document.getElementById('cv'),ats=false;
+
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function nl2br(s){return esc(s).replace(/\n/g,"<br>");}
+function isUrl(s){return /^(https?:|data:|blob:|\/|\.\/|\.\.\/)/.test(s||"")||/\.(png|jpe?g|gif|webp|svg)(\?|#|$)/i.test(s||"");}
+function logoHtml(l,src,c){
+ if(!src)return '';
+ if(isUrl(src))return '<img src="'+esc(src)+'" alt="'+esc(l)+'" loading="lazy">';
+ return '<iconify-icon icon="'+esc(src)+'"'+(c?' style="color:'+esc(c)+'"':'')+'></iconify-icon>';
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(CV))}catch(e){}}
+function fit(){
+ var bd=cv.querySelector('.body');if(!bd)return;
+ var z=1;bd.style.zoom=1;
+ while(cv.scrollHeight>cv.clientHeight+1&&z>0.55){z-=0.01;bd.style.zoom=z.toFixed(2);}
+}
+function toggleAts(){ats=!ats;cv.classList.toggle('ats',ats);fit();document.getElementById('ats').textContent='Mode ATS : '+(ats?'activé':'désactivé');}
+
+function exportProject(){
+ var s="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(CV,null,2));
+ var a=document.createElement('a');a.href=s;a.download="cv_projet.json";
+ document.body.appendChild(a);a.click();a.remove();
+}
+function importProject(e){
+ var f=e.target.files[0];if(!f)return;var r=new FileReader();
+ r.onload=function(ev){try{CV=JSON.parse(ev.target.result);refresh();}catch(err){alert("Erreur JSON");}e.target.value='';};
+ r.readAsText(f);
+}
+
+var iconTarget=null;
+function triggerIconUpload(p){iconTarget=p;document.getElementById('icon_upload').click();}
+function handleIconUpload(e){
+ var f=e.target.files[0];if(!f||!iconTarget)return;var r=new FileReader();
+ r.onload=function(ev){setPath(iconTarget,ev.target.result);e.target.value='';iconTarget=null;};
+ r.readAsDataURL(f);
+}
+function handlePhotoUpload(e){
+ var f=e.target.files[0];if(!f)return;var r=new FileReader();
+ r.onload=function(ev){CV.photo=ev.target.result;refresh();};
+ r.readAsDataURL(f);
+}
+
+function renderCV(){
+ var h='';
+ // Support gradient ou image CSS background
+ var bgStyle = isUrl(CV.headerBg) ? 'background-image:url('+CV.headerBg+')' : 'background:'+CV.headerBg;
+ h+='<header class="hd" style="'+bgStyle+'">';
+ h+='<div class="photo" id="photo" data-target="inp_photo" title="Changer la photo">';
+ h+=CV.photo?'<img src="'+esc(CV.photo)+'" alt="Photo">':'<iconify-icon icon="mdi:account"></iconify-icon>';
+ h+='</div>';
+ h+='<div class="c1"><b data-target="inp_name">'+esc(CV.name)+'</b>'+CV.contacts.map((c,i)=>
+  '<div class="ln" data-target="inp_contacts_'+i+'_text"><iconify-icon icon="'+esc(c.icon)+'"></iconify-icon><a href="'+esc(c.href)+'">'+esc(c.text)+'</a></div>'
+ ).join('')+'</div>';
+ h+='<div class="c2">'+CV.infos.map((b,i)=>
+  '<div data-target="inp_infos_'+i+'_text"><iconify-icon icon="'+esc(b.icon)+'"></iconify-icon><span><b>'+nl2br(b.text)+'</b></span></div>'
+ ).join('')+'</div>';
+ h+='<div class="c3"><h1 data-target="inp_title">'+nl2br(CV.title)+'</h1><p data-target="inp_rhythm">'+nl2br(CV.rhythm)+'</p><p data-target="inp_dispo">'+nl2br(CV.dispo)+'</p></div>';
+ h+='</header><div class="body">';
+ 
+ h+='<h2 class="cvsec">Compétences</h2><div class="cols">'
+  +'<div class="g"><h3>Savoir-être:</h3><ul class="ar">'+CV.savoirEtre.map((x,i)=>'<li data-target="inp_savoirEtre_'+i+'">'+esc(x)+'</li>').join('')+'</ul></div>'
+  +'<div class="b"><h3>Savoir-faire:</h3><ul class="ar">'+CV.savoirFaire.map((x,i)=>'<li data-target="inp_savoirFaire_'+i+'">'+esc(x)+'</li>').join('')+'</ul></div></div>';
+ 
+ h+='<div class="sw"><h3>Logiciels :</h3></div>';
+ CV.softRows.forEach((row,ri)=>{
+  h+='<div class="grp">'+row.map((g,gi)=>
+   '<div><h4 data-target="inp_softRows_'+ri+'_'+gi+'_group">'+esc(g.group)+'</h4><div class="tl">'+g.items.map((t,ii)=>
+    '<div class="t" data-target="inp_softRows_'+ri+'_'+gi+'_items_'+ii+'_label"><div class="ic">'+logoHtml(t.label,t.logo,t.color)+'</div>'+esc(t.label)+'</div>'
+   ).join('')+'</div></div>'
+  ).join('')+'</div>';
+ });
+ 
+ h+='<div class="kw" data-target="inp_keywords"><span id="kw">'+esc(CV.keywords)+'</span></div>';
+ h+='<h2 class="cvsec">Expériences</h2>'+CV.experiences.map((x,i)=>
+  '<div class="row" data-target="inp_experiences_'+i+'_company"><div class="l"><span class="d"><b style="display:inline">'+esc(x.date)+'</b></span><b'+(x.color?' style="color:'+esc(x.color)+'"':'')+'>'+esc(x.company)+'</b></div><div class="r"><b>'+esc(x.role)+'</b><p>'+esc(x.desc)+'</p></div></div>'
+ ).join('');
+ h+='<h2 class="cvsec">Éducation</h2>'+CV.education.map((x,i)=>
+  '<div class="row edu" data-target="inp_education_'+i+'_school"><div class="l"><span class="d"><b style="display:inline">'+esc(x.date)+'</b></span><b'+(x.color?' style="color:'+esc(x.color)+'"':'')+'>'+esc(x.school)+'</b></div><div class="r"><b>'+esc(x.degree)+'</b><em>'+esc(x.extra)+'</em></div></div>'
+ ).join('');
+ h+='<h2 class="cvsec">Centres d’intérêts</h2><div class="int">'+CV.interests.map((x,i)=>
+  '<p data-target="inp_interests_'+i+'_text"><u>'+esc(x.label)+' :</u> '+esc(x.text)+'</p>'
+ ).join('')+'</div></div>';
+ 
+ cv.innerHTML=h;
+ fit();
+}
+
+cv.addEventListener('click', e => {
+ if(ats)return;
+ var t=e.target.closest('[data-target]');if(!t)return;
+ var id=t.getAttribute('data-target');
+ if(id==='inp_photo'){document.getElementById('ph').click();return;}
+ var el=document.getElementById(id);
+ if(el){
+  var d=el.closest('details');if(d)d.open=true;
+  el.scrollIntoView({behavior:'smooth',block:'center'});el.focus();
+ }
+});
+
+function path2id(p){return 'inp_'+p.replace(/\./g,'_');}
+function fld(p,v,ph){return '<input type="text" id="'+path2id(p)+'" value="'+esc(v)+'" placeholder="'+esc(ph||"")+'" oninput="setPath(\''+p+'\',this.value)">';}
+function fldIcon(p,v){return '<div class="ed-row"><div class="ed-icon-prev">'+logoHtml('',v,'')+'</div>'+fld(p,v)+'<button type="button" class="ed-add" style="padding:6px 10px" onclick="triggerIconUpload(\''+p+'\')">Fichier</button></div>';}
+function area(p,v,ph){return '<textarea id="'+path2id(p)+'" placeholder="'+esc(ph||"")+'" oninput="setPath(\''+p+'\',this.value)">'+esc(v)+'</textarea>';}
+function setPath(p,v){var o=CV,ks=p.split('.');for(var i=0;i<ks.length-1;i++)o=o[ks[i]];o[ks[ks.length-1]]=v;save();renderCV();}
+function refresh(){var s=saveOpenState();save();renderCV();renderEditor();restoreOpenState(s);}
+function block(t,i){return '<details class="ed-block"><summary>'+t+'</summary><div class="ed-body">'+i+'</div></details>';}
+
+function renderEditor(){
+ var e='';
+ e+=block('Header & Photo', '<label>Nom'+fld('name',CV.name)+'</label><label>Fond Header (Couleur, Gradient ou URL image)'+fld('headerBg',CV.headerBg)+'</label><button class="ed-add" onclick="document.getElementById(\'ph\').click()">Changer la photo</button>');
+ e+=block('Contacts', CV.contacts.map((c,i)=>'<div class="ed-item"><label>Icône'+fldIcon('contacts.'+i+'.icon',c.icon)+'</label><label>Texte'+fld('contacts.'+i+'.text',c.text)+'</label><label>Lien'+fld('contacts.'+i+'.href',c.href)+'</label><button class="ed-del" onclick="CV.contacts.splice('+i+',1);refresh()">Supprimer</button></div>').join('')+'<button class="ed-add" onclick="CV.contacts.push({icon:\'mdi:link\',text:\'Nouveau\',href:\'#\'});refresh()">Ajouter</button>');
+ e+=block('Infos', CV.infos.map((b,i)=>'<div class="ed-item"><label>Icône'+fldIcon('infos.'+i+'.icon',b.icon)+'</label><label>Texte'+area('infos.'+i+'.text',b.text)+'</label><button class="ed-del" onclick="CV.infos.splice('+i+',1);refresh()">Supprimer</button></div>').join('')+'<button class="ed-add" onclick="CV.infos.push({icon:\'mdi:star\',text:\'Info\'});refresh()">Ajouter</button>');
+ e+=block('Titre', '<label>Titre'+area('title',CV.title)+'</label><label>Rythme'+area('rhythm',CV.rhythm)+'</label><label>Dispo'+fld('dispo',CV.dispo)+'</label>');
+ 
+ function listEd(p,arr,add){return arr.map((x,i)=>'<div class="ed-row"><input type="text" id="inp_'+p+'_'+i+'" value="'+esc(x)+'" oninput="setPath(\''+p+'\','+i+',this.value)"><button class="ed-del" onclick="CV[\''+p+'\'].splice('+i+',1);refresh()">✕</button></div>').join('')+'<button class="ed-add" onclick="CV[\''+p+'\'].push(\'Nouveau\');refresh()">Ajouter</button>';}
+ e+=block('Compétences', '<label>Savoir-être</label>'+listEd('savoirEtre',CV.savoirEtre)+'<br><label>Savoir-faire</label>'+listEd('savoirFaire',CV.savoirFaire));
+ 
+ var sh='';
+ CV.softRows.forEach((row,ri)=>{
+  row.forEach((g,gi)=>{
+   sh+='<div class="ed-item"><label>Groupe'+fld('softRows.'+ri+'.'+gi+'.group',g.group)+'</label>';
+   g.items.forEach((t,ii)=>{
+    var p='softRows.'+ri+'.'+gi+'.items.'+ii;
+    sh+='<div class="ed-item"><label>Outil'+fld(p+'.label',t.label)+'</label><label>Logo'+fldIcon(p+'.logo',t.logo)+'</label><label>Couleur'+fld(p+'.color',t.color)+'</label><button class="ed-del" onclick="CV.softRows['+ri+']['+gi+'].items.splice('+ii+',1);refresh()">Supprimer</button></div>';
+   });
+   sh+='<button class="ed-add" onclick="CV.softRows['+ri+']['+gi+'].items.push({label:\'Outil\',logo:\'mdi:application\',color:\'\'});refresh()">Ajouter outil</button></div>';
+  });
+ });
+ e+=block('Logiciels', sh);
+ e+=block('Mots-clés', '<label>Texte'+area('keywords',CV.keywords)+'</label>');
+ e+=block('Expériences', CV.experiences.map((x,i)=>'<div class="ed-item"><label>Date'+fld('experiences.'+i+'.date',x.date)+'</label><label>Entreprise'+fld('experiences.'+i+'.company',x.company)+'</label><label>Couleur'+fld('experiences.'+i+'.color',x.color)+'</label><label>Poste'+fld('experiences.'+i+'.role',x.role)+'</label><label>Desc'+area('experiences.'+i+'.desc',x.desc)+'</label><button class="ed-del" onclick="CV.experiences.splice('+i+',1);refresh()">Supprimer</button></div>').join('')+'<button class="ed-add" onclick="CV.experiences.push({date:\'2026\',company:\'Entreprise\',role:\'Poste\',desc:\'Desc\'});refresh()">Ajouter</button>');
+ e+=block('Éducation', CV.education.map((x,i)=>'<div class="ed-item"><label>Date'+fld('education.'+i+'.date',x.date)+'</label><label>École'+fld('education.'+i+'.school',x.school)+'</label><label>Couleur'+fld('education.'+i+'.color',x.color)+'</label><label>Diplôme'+fld('education.'+i+'.degree',x.degree)+'</label><label>Détails'+fld('education.'+i+'.extra',x.extra)+'</label><button class="ed-del" onclick="CV.education.splice('+i+',1);refresh()">Supprimer</button></div>').join('')+'<button class="ed-add" onclick="CV.education.push({date:\'2026\',school:\'École\',degree:\'Diplôme\'});refresh()">Ajouter</button>');
+ e+=block('Intérêts', CV.interests.map((x,i)=>'<div class="ed-item"><label>Catégorie'+fld('interests.'+i+'.label',x.label)+'</label><label>Texte'+area('interests.'+i+'.text',x.text)+'</label><button class="ed-del" onclick="CV.interests.splice('+i+',1);refresh()">Supprimer</button></div>').join('')+'<button class="ed-add" onclick="CV.interests.push({label:\'Art\',text:\'Texte\'});refresh()">Ajouter</button>');
+
+ document.getElementById('editor').innerHTML='<h2>Éditeur</h2>'+e;
+}
+
+function saveOpenState(){return Array.from(document.querySelectorAll('#editor details')).map(d=>d.open);}
+function restoreOpenState(s){document.querySelectorAll('#editor details').forEach((d,i)=>{if(s[i]!==undefined)d.open=s[i];});}
+
+window.addEventListener('beforeprint',fit);
+window.addEventListener('load',()=>{fit();setTimeout(fit,800);var f=document.querySelector('.ed-block');if(f)f.open=true;});
+renderCV();renderEditor();
+</script>
+</body>
+</html>

@@ -2,13 +2,16 @@
 
 export const isMobile = matchMedia('(pointer: coarse)').matches || innerWidth <= 1024;
 export const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Old phones / data saving: same look, cheaper effects (no per-character blur).
+export const lowPower = reducedMotion
+    || (navigator.connection?.saveData ?? false)
+    || ((navigator.deviceMemory ?? 8) <= 4);
 export const clamp01 = value => Math.max(0, Math.min(1, value));
 
-// Case studies are the enabled projects, newest first.
+// Visible case studies, newest first. Parked projects live in disabled-projects.json (not loaded).
 export const loadProjects = () => fetch('assets/data/projects.json')
     .then(res => res.json())
     .then(data => data.projects
-        .filter(p => !p.disabled)
         .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? '')));
 
 // Wraps fn so it runs at most once per animation frame.
@@ -137,7 +140,7 @@ function backToTop(lenis) {
     });
 
     const update = () => button.classList.toggle('visible', footer.getBoundingClientRect().top < innerHeight);
-    addEventListener('scroll', update, { passive: true });
+    addEventListener('scroll', throttled(update), { passive: true });
     button.addEventListener('click', () => {
         if (lenis) lenis.scrollTo(0);
         else scrollTo({ top: 0, behavior: 'smooth' });

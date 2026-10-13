@@ -1,6 +1,36 @@
 {
   "projects": [
     {
+      "id": "smfl",
+      "title": "Saint-Martin Flag Project",
+      "date": "2026-09-15",
+      "category": "Design",
+      "role": "Vexillographer & Designer",
+      "client": "Collectivité de Saint-Martin (Proposal)",
+      "heroImage": "assets/images/projects/smfl/header.jpg",
+      "subtitle": "Designing a regional flag rooted in history, NAVA vexillological principles, and real-world wind testing.",
+      "tags": [
+        "Vexillology",
+        "Identity Design",
+        "Design Strategy"
+      ],
+      "ctas": [
+        {
+          "label": "Note d'intention (PDF)",
+          "url": "projects/cases/files/smfl-note-intention.pdf"
+        },
+        {
+          "label": "Processus Créatif (PDF)",
+          "url": "projects/cases/files/smfl-note-processus-creatif.pdf"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/smfl/problem.jpg",
+        "assets/images/projects/smfl/symbol.jpg",
+        "assets/images/projects/smfl/flag-final.jpg"
+      ]
+    },
+    {
       "id": "ogfm",
       "title": "L'Oreille qui Gratte",
       "date": "2026-04-01",
@@ -18,41 +48,13 @@
       "ctas": [
         {
           "label": "Charte Graphique (PDF)",
-          "url": "projects/Portfolio/ogfm-brand-guidelines.pdf"
+          "url": "projects/cases/files/ogfm-brand-guidelines.pdf"
         }
       ],
       "ctaImages": [
         "assets/images/projects/ogfm/process1.jpg",
         "assets/images/projects/ogfm/process2.jpg",
         "assets/images/projects/ogfm/process3.jpg"
-      ]
-    },
-    {
-      "id": "dran",
-      "title": "Dranima",
-      "date": "2026-03-08",
-      "category": "Web",
-      "role": "Web Designer & Developer",
-      "client": "Dranima Studio — Alex Claude Bourbon",
-      "heroImage": "assets/images/projects/dran/header.jpg",
-      "subtitle": "A showcase site for an independent monster-tamer RPG in development.",
-      "tags": [
-        "web design",
-        "frontend development",
-        "game website",
-        "wiki",
-        "client project"
-      ],
-      "ctas": [
-        {
-          "label": "Visit Dranima",
-          "url": "https://dranima.com"
-        }
-      ],
-      "ctaImages": [
-        "assets/images/projects/dran/structure.png",
-        "assets/images/projects/dran/design.png",
-        "assets/images/projects/dran/roadmap.png"
       ]
     },
     {
@@ -74,7 +76,7 @@
       "ctas": [
         {
           "label": "View Presentation (PDF)",
-          "url": "projects/Portfolio/bgaw-presentation.pdf"
+          "url": "projects/cases/files/bgaw-presentation.pdf"
         }
       ],
       "ctaImages": [
@@ -163,40 +165,13 @@
       "ctas": [
         {
           "label": "Open Editor",
-          "url": "projects/BMGE/index.html"
+          "url": "projects/demos/bmge/index.html"
         }
       ],
       "ctaImages": [
         "assets/images/projects/bmge/tomodachi.png",
         "assets/images/projects/bmge/tags.png",
         "assets/images/projects/bmge/re.png"
-      ]
-    },
-    {
-      "id": "lsdp",
-      "title": "Les Saveurs de Provence",
-      "date": "2025-08-01",
-      "category": "UI/UX",
-      "role": "Web Designer & Developer",
-      "client": "Les Saveurs de Provence (Vallauris)",
-      "heroImage": "assets/images/projects/lsdp/header.jpg",
-      "subtitle": "A premium web redesign for a traditional restaurant in Vallauris.",
-      "tags": [
-        "web design",
-        "frontend development",
-        "UX/UI redesign",
-        "vanilla JS"
-      ],
-      "ctas": [
-        {
-          "label": "View Live Site",
-          "url": "projects/LesSaveursDeProvence/index.html"
-        }
-      ],
-      "ctaImages": [
-        "assets/images/projects/lsdp/hero.png",
-        "assets/images/projects/lsdp/menu.png",
-        "assets/images/projects/lsdp/history.png"
       ]
     },
     {
@@ -226,36 +201,6 @@
         "assets/images/projects/gptr/translation.png",
         "assets/images/projects/gptr/interface.png"
       ]
-    },
-    {
-      "id": "rcai",
-      "title": "Regards Croisés",
-      "category": "Photography",
-      "disabled": true
-    },
-    {
-      "id": "mxal",
-      "title": "Mix and Light",
-      "category": "Web",
-      "disabled": true
-    },
-    {
-      "id": "sand",
-      "title": "SandFall Interactive (Redesign)",
-      "category": "Web",
-      "disabled": true
-    },
-    {
-      "id": "gpmx",
-      "title": "GPMailbox",
-      "category": "Web",
-      "disabled": true
-    },
-    {
-      "id": "dgif",
-      "title": "DaGameThatIsFun",
-      "category": "Video Games",
-      "disabled": true
     }
   ]
 }

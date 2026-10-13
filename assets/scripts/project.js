@@ -1,14 +1,16 @@
-// Case study page: project.html?id=<id> renders projects/Portfolio/<id>.html with data from projects.json.
-import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
+// Case study page: project.html?id=<id> renders projects/cases/<id>.html with data from projects.json.
+import { initPage, reveal, loadProjects, reducedMotion, throttled, clamp01 } from './common.js';
+import { scrollyScenes } from './effects.js';
 
 const lenis = initPage();
+progressBar(lenis);
 load();
 
 async function load() {
     const id = new URLSearchParams(location.search).get('id') ?? '';
     if (!/^[\w-]+$/.test(id)) return notFound();
     try {
-        const [projects, res] = await Promise.all([loadProjects(), fetch(`projects/Portfolio/${id}.html`)]);
+        const [projects, res] = await Promise.all([loadProjects(), fetch(`projects/cases/${id}.html`)]);
         const project = projects.find(p => p.id === id);
         if (!project || !res.ok) return notFound();
         render(project, await res.text(), projects);
@@ -42,20 +44,28 @@ function render(project, html, projects) {
 
     const cta = document.querySelector('.project-cta-bottom');
     cta.insertAdjacentHTML('beforebegin', html);
+    scrollyScenes();
     callsToAction(project, cta);
     pager(project, projects);
-    reveal(document.querySelectorAll('section, .title, .case-row'));
-    if (!reducedMotion) parallax(cta);
+    reveal(document.querySelectorAll('.project-cta-bottom, .project-pager, .case-gallery, .case-scene .title'));
+    parallaxHero();
 }
 
-// The first link goes in the hero, all of them in the bottom section next to three preview tiles.
+// Every link goes in the hero; all of them are repeated in the bottom section next to three preview tiles.
 function callsToAction({ ctas = [], ctaImages = [] }, section) {
-    const heroLink = document.querySelector('.project-hero-live');
+    const heroLinks = document.querySelector('.project-hero-links');
     if (ctas.length) {
-        heroLink.href = ctas[0].url;
-        heroLink.textContent = `${ctas[0].label} →`;
+        for (const { label, url } of ctas) {
+            const heroLink = document.createElement('a');
+            heroLink.className = 'project-hero-live';
+            heroLink.href = url;
+            heroLink.target = '_blank';
+            heroLink.rel = 'noopener noreferrer';
+            heroLink.textContent = `${label} →`;
+            heroLinks.append(heroLink);
+        }
     } else {
-        heroLink.remove();
+        heroLinks.remove();
     }
 
     if (!ctas.length && !ctaImages.length) return section.remove();
@@ -95,29 +105,35 @@ function pager(project, projects) {
     nav.hidden = false;
 }
 
-// Hero image sinks slower than the page, case study images and CTA tiles drift around the viewport centre.
-function parallax(cta) {
+// Hero image sinks slower than the page.
+function parallaxHero() {
+    if (reducedMotion) return;
     const heroImg = document.querySelector('.project-hero-img');
-    const tiles = [...document.querySelectorAll('.project-cta-tile')];
-    const panels = [...document.querySelectorAll('.case-panel:not([data-no-parallax])')]
-        .map(panel => panel.querySelector('img'))
-        .filter(Boolean);
-    const offsetFromCenter = el => {
-        const r = el.getBoundingClientRect();
-        return r.top + r.height / 2 - innerHeight / 2;
-    };
+    const update = () => { heroImg.style.transform = `translateY(${scrollY * 0.3}px)`; };
+    const scheduled = throttled(update);
+    if (lenis) lenis.on('scroll', scheduled);
+    else addEventListener('scroll', scheduled, { passive: true });
+    update();
+}
+
+// Slim reading progress bar stuck to the bottom (replaces the hidden scrollbar).
+function progressBar(lenis) {
+    const bar = document.createElement('div');
+    bar.className = 'reading-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    const fill = document.createElement('span');
+    bar.append(fill);
+    document.body.append(bar);
 
     const update = () => {
-        heroImg.style.transform = `translateY(${scrollY * 0.3}px)`;
-        if (tiles.length) {
-            const offset = offsetFromCenter(cta);
-            tiles.forEach(tile => tile.style.transform = `translateY(${offset * tile.dataset.speed}px)`);
-        }
-        panels.forEach(img => img.style.transform = `translateY(${offsetFromCenter(img.parentElement) * -0.06}px)`);
+        const max = document.documentElement.scrollHeight - innerHeight;
+        fill.style.transform = `scaleX(${max > 0 ? clamp01(scrollY / max) : 0})`;
     };
-
-    if (lenis) lenis.on('scroll', update);
-    else addEventListener('scroll', update, { passive: true });
+    const scheduled = throttled(update);
+    if (lenis) lenis.on('scroll', scheduled);
+    else addEventListener('scroll', scheduled, { passive: true });
+    addEventListener('resize', scheduled, { passive: true });
+    addEventListener('load', scheduled);
     update();
 }
 

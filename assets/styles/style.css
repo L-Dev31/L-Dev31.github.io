@@ -23,7 +23,7 @@
     --radius-pill: 50px;
 
     --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.3);
-    --section-gradient: radial-gradient(circle at 50% 100%, #333 0%, #202020 30%, var(--black) 80%);
+    --section-gradient: radial-gradient(circle at 50% 0%, #333 0%, #202020 30%, var(--black) 80%);
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -31,7 +31,7 @@
 /* Base */
 
 html {
-    overflow-x: hidden;
+    overflow-x: clip;
     scrollbar-width: thin;
     scrollbar-color: var(--white) var(--black);
     scroll-padding-top: 100px;
@@ -43,7 +43,7 @@ body {
     color: var(--text);
     font-family: var(--font-body);
     font-weight: 300;
-    overflow-x: hidden;
+    overflow-x: clip;
 }
 
 p {
@@ -70,11 +70,12 @@ section {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: var(--section-gradient) center bottom / cover no-repeat fixed;
+    background: var(--section-gradient) center top / cover no-repeat fixed;
 }
 
-/* Section content fades in once the section scrolls into view (reveal() in common.js). */
-section > * {
+/* Section content fades in once the section scrolls into view (reveal() in common.js).
+   Pinned case study scenes are excluded: scrollyScenes() in effects.js drives them. */
+section:not(.case-scene) > * {
     opacity: 0;
     transition: opacity 1.5s var(--ease-out);
 }
@@ -194,7 +195,7 @@ html.custom-cursor * {
     width: 100%;
     max-width: var(--container-width);
     box-sizing: border-box;
-    margin: var(--pad-section) auto;
+    margin: var(--pad-section) auto clamp(16px, 3vh, 32px);
     padding: 0 var(--pad-edge);
     font-size: clamp(10px, 1.2vw, 14px);
     font-weight: normal;
@@ -257,25 +258,6 @@ html.custom-cursor * {
     font-weight: 400;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-}
-
-.skip-link {
-    position: absolute;
-    top: -100%;
-    left: var(--pad-edge);
-    z-index: 100000;
-    padding: 10px 20px;
-    border-radius: 0 0 4px 4px;
-    background: var(--white);
-    color: var(--black);
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    text-decoration: none;
-    transition: top 0.2s ease;
-}
-
-.skip-link:focus {
-    top: 0;
 }
 
 
@@ -677,14 +659,14 @@ html.custom-cursor * {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 51.776px;
+    gap: 12.5px;
     padding: 50px;
     mix-blend-mode: difference;
     pointer-events: auto;
 }
 
 .header-subtitles {
-    width: 300px;
+    width: auto;
     color: var(--white);
     font-size: clamp(14px, 2.5vw, 28px);
     letter-spacing: 1px;
@@ -1070,7 +1052,7 @@ html.custom-cursor * {
 .company-logo {
     width: auto;
     height: 100px;
-    max-width: 180px;
+    max-width: 220px;
     object-fit: contain;
     border-radius: 15px;
     filter: brightness(1.1) contrast(1.1);
@@ -1181,6 +1163,7 @@ html.custom-cursor * {
     padding: clamp(32px, 5vh, 56px) var(--pad-edge);
     color: var(--white);
     mix-blend-mode: difference;
+    pointer-events: none; /* text-only layer: lets clicks reach the hero links below */
 }
 
 /* Header lines slide up one after the other once project.js adds .loaded. */
@@ -1249,14 +1232,27 @@ html.custom-cursor * {
 }
 
 .project-hero-live {
+    white-space: nowrap;
+    pointer-events: auto;
+}
+
+.project-hero-links {
     position: absolute;
     bottom: clamp(32px, 5vh, 56px);
     right: var(--pad-edge);
-    z-index: 2;
+    /* No z-index here: it would create a stacking context trapping the pills'
+       mix-blend-mode inside the container. DOM order already paints this
+       above the overlay. */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    max-width: min(440px, calc(100% - 2 * var(--pad-edge)));
+    pointer-events: none; /* only the pills themselves are clickable */
 }
 
 
-/* Project page: case study blocks (projects/Portfolio/*.html) */
+/* Project page: case study blocks (projects/cases/*.html) */
 
 .case-intro,
 .case-chapter {
@@ -1275,29 +1271,20 @@ html.custom-cursor * {
     padding: 0 var(--pad-edge);
 }
 
-/* Giant faded opening quote mark behind the pull quote. */
-.case-pullquote::before {
-    content: '\201C';
-    position: absolute;
-    top: 65%;
-    left: 50%;
-    z-index: 0;
-    color: var(--white);
-    font-family: var(--font-display);
-    font-size: clamp(320px, 44vw, 720px);
-    line-height: 0.8;
-    opacity: 0.06;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    user-select: none;
-}
-
 .pullquote {
     position: relative;
     z-index: 1;
-    margin: 0;
+    margin: 0 auto;
+    max-width: 880px;
     font-size: clamp(24px, 3.5vw, 52px);
     text-align: center;
+}
+
+/* Comfortable reading measure for full-width case study text. */
+.case-intro p {
+    max-width: 880px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .case-heading {
@@ -1308,6 +1295,82 @@ html.custom-cursor * {
     font-style: italic;
     letter-spacing: -0.01em;
     line-height: 1.1;
+}
+
+/* Project pages: no scrollbar, a slim progress bar sticks to the bottom instead. */
+html:has(.project-main) {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+html:has(.project-main)::-webkit-scrollbar {
+    display: none;
+}
+
+.reading-progress {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.14);
+    pointer-events: none;
+}
+
+.reading-progress > span {
+    display: block;
+    height: 100%;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: left;
+}
+/* Project page: scrollytelling scenes (scrollyScenes() in effects.js). The pin is
+   held in place by JS transforms (immune to scroll-container quirks); its
+   characters scrub in with scroll, then the scene fades out for the next one.
+   Pinning is desktop-only; on mobile the scenes scroll naturally with a plain
+   progressive reveal. */
+@media (min-width: 769px) {
+    .case-scene.case-intro,
+    .case-scene.case-chapter {
+        height: 260vh;
+    }
+
+    .case-scene.case-pullquote {
+        height: 180vh;
+    }
+
+    /* Pin at the section top: base `section` centers its content, which would
+       strand the pin mid-section with dead scroll above it. */
+    .case-scene {
+        justify-content: flex-start;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .case-scene-pin {
+        display: grid;
+        align-content: center;
+    }
+
+    /* Keep pinned chapters within one viewport so the centered pin never clips:
+       tighter row padding plus capped visuals (long prose stays readable). */
+    .case-scene .case-row {
+        padding: clamp(24px, 4vh, 48px) 0;
+    }
+
+    .case-scene .case-panel {
+        max-height: 64svh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .case-scene .case-panel img {
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        object-fit: cover;
+    }
 }
 
 /* Text and media side by side; --reverse puts the media first. */
@@ -1672,6 +1735,9 @@ html.custom-cursor * {
         justify-content: flex-start;
         text-align: left;
     }
+    .header-content{
+        bottom: 40%;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1746,6 +1812,38 @@ html.custom-cursor * {
 
     .exp-facts {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Low-end simplification (old phones): same look, cheaper compositing.
+   Fullscreen animated blurs and layer hints are desktop-only costs. */
+@media (max-width: 768px) {
+    *, *::before, *::after {
+        will-change: auto !important;
+    }
+
+    #hero-video,
+    #hero-canvas {
+        filter: grayscale(1);
+    }
+
+    .about-header-overlay {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+
+    .mobile-menu,
+    .mobile-menu.open {
+        background: rgba(8, 8, 8, 0.97);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+
+    .button,
+    .filter-btn {
+        background: rgba(255, 255, 255, 0.08);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
     }
 }
 

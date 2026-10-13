@@ -1,5 +1,9 @@
-// Scroll and mouse effects used on the home and about pages.
-import { isMobile, reducedMotion, clamp01, throttled } from './common.js';
+// Scroll and mouse effects used on the home, about and project pages.
+import { isMobile, reducedMotion, lowPower, clamp01, throttled } from './common.js';
+
+// Every character of .scrubbing-text fades and un-blurs in reading order as the block scrolls up.
+// Blur is skipped on low-end devices (opacity-only reveal, same timing).
+const scrubBlur = !lowPower && !isMobile;
 
 // Every character of .scrubbing-text fades and un-blurs in reading order as the block scrolls up.
 export function scrubbingText() {
@@ -16,10 +20,105 @@ export function scrubbingText() {
             const head = clamp01((readingLine - r.top) / Math.max(r.height, 1)) * (chars.length - 1 + SPREAD);
             chars.forEach((char, i) => {
                 const t = clamp01((head - i) / SPREAD);
-                const blur = t > 0 && t < 1 ? (1 - Math.abs(t * 2 - 1)) * 7 : 0;
                 char.style.opacity = (0.2 + 0.8 * t).toFixed(3);
+                if (!scrubBlur) {
+                    if (char.style.filter) char.style.filter = '';
+                    return;
+                }
+                const blur = t > 0 && t < 1 ? (1 - Math.abs(t * 2 - 1)) * 7 : 0;
                 char.style.filter = blur > 0.1 ? `blur(${blur.toFixed(2)}px)` : '';
             });
+        }
+    };
+
+    const schedule = throttled(paint);
+    ['scroll', 'resize', 'load'].forEach(event => addEventListener(event, schedule, { passive: true }));
+    paint();
+}
+
+// Project pages: case study text pins in place while scrolling (JS-driven so it
+// works regardless of the scroll container). Its characters fade in with scroll
+// progress (scrubbing), then the whole scene fades out so the next one can
+// take over. On mobile / reduced motion there is no pin, just a progressive reveal.
+export function scrollyScenes() {
+    const SPREAD = 12; // how many characters are mid-transition at once
+    const scenes = [];
+
+    for (const section of document.querySelectorAll('.project-main .case-intro, .project-main .case-pullquote, .project-main .case-chapter')) {
+        section.classList.add('case-scene');
+        const pin = document.createElement('div');
+        pin.className = 'case-scene-pin';
+        pin.append(...section.childNodes);
+        section.append(pin);
+        const chars = [];
+        // Titles (.title) are left untouched: no scrubbing, exactly as before.
+        for (const el of pin.querySelectorAll('h1, h3, p, blockquote, li, figcaption')) chars.push(...splitChars(el));
+        // Rows skip the IntersectionObserver reveal (the scrub drives their
+        // contents); titles keep the standard index reveal animation.
+        section.querySelectorAll('.case-row').forEach(el => el.classList.add('visible'));
+        // Distance from the section top to the pin top (section padding): the pin
+        // is explicitly centered, so any padding is compensated instead of eaten.
+        const padTop = pin.getBoundingClientRect().top - section.getBoundingClientRect().top;
+        scenes.push({ section, pin, padTop, chars });
+    }
+    if (reducedMotion || !scenes.length) return;
+
+    const paintChars = (revealT, chars) => {
+        const head = revealT * (chars.length - 1 + SPREAD);
+        for (let i = 0; i < chars.length; i++) {
+            const t = clamp01((head - i) / SPREAD);
+            const char = chars[i];
+            char.style.opacity = (0.15 + 0.85 * t).toFixed(3);
+            if (!scrubBlur) {
+                if (char.style.filter) char.style.filter = '';
+                continue;
+            }
+            const blur = t > 0 && t < 1 ? (1 - Math.abs(t * 2 - 1)) * 6 : 0;
+            char.style.filter = blur > 0.1 ? `blur(${blur.toFixed(2)}px)` : '';
+        }
+    };
+
+    const paint = () => {
+        const vh = innerHeight;
+        for (const { section, pin, padTop, chars } of scenes) {
+            const r = section.getBoundingClientRect();
+            if (r.bottom < 0 || r.top > vh) continue;
+            const travel = Math.max(r.height - vh, 1);
+            const pinH = pin.offsetHeight;
+            // Pin only if the scene is tall and the pin fits on screen: the pin
+            // floats centered (never top-anchored full-bleed). Otherwise natural
+            // scroll with a plain progressive reveal.
+            const pinned = r.height - vh > vh * 0.3 && pinH <= vh;
+            if (!pinned) {
+                // Natural scroll: progressive reveal, no fade-out.
+                paintChars(clamp01(((vh * 0.9 - r.top) / travel) / 0.62), chars);
+                if (pin.dataset.scrubbed) {
+                    pin.style.opacity = '';
+                    pin.style.transform = '';
+                    pin.style.filter = '';
+                    delete pin.dataset.scrubbed;
+                }
+                continue;
+            }
+            // Glue the pin to the viewport center while its section travels, keeping
+            // it inside the section. Reveal runs during the stuck phase; the fade-out
+            // ends exactly at handoff so the next scene takes over without a gap.
+            const topMax = (vh - pinH) / 2;
+            const stuckMax = Math.max(r.height - padTop - pinH, 0);
+            const stuck = Math.min(Math.max(topMax - r.top - padTop, 0), stuckMax);
+            paintChars(clamp01(stuck / Math.max(stuckMax * 0.62, 1)), chars);
+            // No rise-and-fade: the pin stays invisible while traveling, fades in
+            // once centered, then fades out at handoff.
+            const fadeIn = clamp01(stuck / 150);
+            const out = clamp01((stuck / Math.max(stuckMax, 1) - 0.80) / 0.20);
+            pin.style.opacity = (fadeIn * (1 - out)).toFixed(3);
+            pin.style.transform = stuck ? `translate3d(0, ${stuck.toFixed(1)}px, 0)` : '';
+            if (!scrubBlur) {
+                if (pin.style.filter) pin.style.filter = '';
+            } else {
+                pin.style.filter = out > 0.01 ? `blur(${(5 * out).toFixed(2)}px)` : '';
+            }
+            pin.dataset.scrubbed = '1';
         }
     };
 

@@ -14,7 +14,7 @@ projectGrid();
 function projectGrid() {
     const grid = document.querySelector('.featured-scatter');
     if (!grid) return;
-    const CATEGORIES = ['Design', 'UI/UX', 'Web', 'Photography', 'Tools', 'Video Games'];
+    const CATEGORIES = ['Design', 'UI/UX', 'Web', 'Marketting', 'Photography', 'Tools', 'Video Games'];
     const cta = ctaCursor();
 
     loadProjects().then(projects => {

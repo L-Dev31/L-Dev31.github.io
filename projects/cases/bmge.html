@@ -1,0 +1,102 @@
+<section class="case-intro">
+    <h2 class="title">The Brief</h2>
+    <p>In late 2026, I decided to translate the Japan-exclusive Nintendo DS game <em>Tomodachi Collection</em> into French. The game keeps all its text locked inside BMG files. It is an undocumented, proprietary Nintendo format. The few fan-made tools out there were unreliable and kept silently corrupting my saves.<br><br>I needed a tool that actually worked, so I built a browser-based BMG editor from scratch. It opens, edits, and re-exports files while preserving every single original byte it does not strictly need to touch.</p>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">No documentation. No SDKs. Just a hex editor and a lot of trial and error.</blockquote>
+</section>
+
+<section class="case-chapter" id="problem">
+    <h2 class="title">The Problem</h2>
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">Locked Files, Broken Tools</h3>
+            <p>Nintendo uses the BMG format for dialogue across various DS and Wii games, but they never released a public spec. Community editors existed but they constantly crashed the game engine by messing up offset tables or padding rules.<br><br><em>Tomodachi Collection</em> makes this even harder by embedding raw hex control tags directly inside text strings to trigger colors or insert Mii names. If an editor did not understand these tags, it stripped them out. The result was a broken file.</p>
+        </div>
+        <figure class="case-panel" data-no-parallax>
+            <img src="assets/images/projects/bmge/problem.jpg"
+                alt="MSBT Editor by AeonSake, an existing Nintendo text editor, the kind of tool that existed but couldn't handle BMG files reliably."
+                loading="lazy" decoding="async">
+            <figcaption class="media-caption">MSBT Editor by <a href="https://gitlab.com/AeonSake/msbt-editor"
+                    target="_blank" rel="noopener noreferrer">AeonSake</a></figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="case-chapter" id="process">
+    <h2 class="title">The Process</h2>
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">1. Reverse-Engineering the Format</h3>
+            <p>I opened the files in a hex editor and mapped the structure by hand. A BMG file is split into specific chunks: a header, an index for message sizes, the raw text block, and numeric IDs so the game knows exactly where to look for a string.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/bmge/re.png"
+                alt="Hex view of a BMG file showing section headers and inline tag bytes." loading="lazy"
+                decoding="async">
+        </figure>
+    </div>
+    
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">2. Parsing Inline Tags</h3>
+            <p>Those inline control tags were the real headache. My editor translates them into readable text like <code>[Color:0200]</code>. When you save your work, the tool re-encodes them perfectly. It reuses the exact original bytes for existing tags and only generates new hex codes for tags you type yourself. This practically eliminates corruption risks.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/bmge/tags.png"
+                alt="BMGE editor showing inline color tags rendered visually inside a message." loading="lazy"
+                decoding="async">
+        </figure>
+    </div>
+    
+    <div class="case-row">
+        <div>
+            <h3 class="case-heading">3. Non-Destructive Export</h3>
+            <p>The export logic is simple: only touch what changed. If you do not edit a message, the tool leaves its original byte chunk alone. If you edit something, it gets re-encoded and padded, and the file's index updates to point to the new location. Every other part of the binary data stays exactly as it was.</p>
+        </div>
+    </div>
+    
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">4. Game-Specific Profiles</h3>
+            <p>Every Nintendo game handles BMG files a bit differently. Instead of hardcoding the rules just for <em>Tomodachi</em>, I built a plugin system. You just pick the game from a dropdown menu and the editor loads the correct tag vocabulary and visual styling.</p>
+        </div>
+        <figure class="case-panel" data-no-parallax>
+            <img src="assets/images/projects/bmge/tomodachi.png"
+                alt="Tomodachi Collection Nintendo DS box art." loading="lazy" decoding="async">
+            <figcaption class="media-caption">Tomodachi Collection &copy; Nintendo</figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="case-chapter" id="design">
+    <h2 class="title">The Design</h2>
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">5. Visual Language</h3>
+            <p>The UI leans heavily on <code>#FDE404</code>, the signature yellow from <em>Tomodachi Collection</em>. Since translation work means staring at text for hours on end, I went with a dark, low-contrast background to cut down on eye strain.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/bmge/website.png"
+                alt="BMGE editor interface, dark theme with Tomodachi Collection yellow accent." loading="lazy"
+                decoding="async">
+        </figure>
+    </div>
+    
+    <div class="case-row">
+        <div>
+            <h3 class="case-heading">6. Workflow Decisions</h3>
+            <p>Translating a game means juggling hundreds of files. Opening them one by one is miserable. I added a folder mode so you can load entire directories at once, plus keyboard shortcuts for everything. I wanted a workspace you could actually live in.</p>
+        </div>
+    </div>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">The editor does not need to know what a Mii is. It just knows exactly which bytes to leave alone.</blockquote>
+</section>
+
+<section class="case-intro">
+    <h2 class="title">What This Built</h2>
+    <p>What started as a translation side project turned into a full browser-based binary editor for a closed console format. It safely parses, edits, and rebuilds these files without any official documentation. It was a solid exercise in staring at raw bytes until the underlying structure finally made sense.</p>
+</section>

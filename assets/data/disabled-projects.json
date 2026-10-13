@@ -1,0 +1,104 @@
+{
+  "projects": [
+    {
+      "id": "geet",
+      "title": "Geetech",
+      "date": "2026-06-01",
+      "category": "Marketting",
+      "role": "Responsable Marketing, Communication & Design",
+      "client": "Geetech — Superyacht Engineering",
+      "heroImage": "assets/images/projects/geet/header.jpg",
+      "subtitle": "Discovering a niche market that doesn't follow traditional marketing codes.",
+      "tags": [
+        "Brand Identity",
+        "Marketing Strategy",
+        "Design"
+      ],
+      "ctaImages": [
+        "assets/images/projects/geet/process1.jpg",
+        "assets/images/projects/geet/process2.jpg",
+        "assets/images/projects/geet/process3.jpg"
+      ]
+    },
+    {
+      "id": "dran",
+      "title": "Dranima",
+      "date": "2026-03-08",
+      "category": "Web",
+      "role": "Web Designer & Developer",
+      "client": "Dranima Studio — Alex Claude Bourbon",
+      "heroImage": "assets/images/projects/dran/header.jpg",
+      "subtitle": "A showcase site for an independent monster-tamer RPG in development.",
+      "tags": [
+        "web design",
+        "frontend development",
+        "game website",
+        "wiki",
+        "client project"
+      ],
+      "ctas": [
+        {
+          "label": "Visit Dranima",
+          "url": "https://dranima.com"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/dran/structure.png",
+        "assets/images/projects/dran/design.png",
+        "assets/images/projects/dran/roadmap.png"
+      ]
+    },
+    {
+      "id": "lsdp",
+      "title": "Les Saveurs de Provence",
+      "date": "2025-08-01",
+      "category": "UI/UX",
+      "role": "Web Designer & Developer",
+      "client": "Les Saveurs de Provence (Vallauris)",
+      "heroImage": "assets/images/projects/lsdp/header.jpg",
+      "subtitle": "A premium web redesign for a traditional restaurant in Vallauris.",
+      "tags": [
+        "web design",
+        "frontend development",
+        "UX/UI redesign",
+        "vanilla JS"
+      ],
+      "ctas": [
+        {
+          "label": "View Live Site",
+          "url": "projects/demos/lsdp/index.html"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/lsdp/hero.png",
+        "assets/images/projects/lsdp/menu.png",
+        "assets/images/projects/lsdp/history.png"
+      ]
+    },
+    {
+      "id": "rcai",
+      "title": "Regards Croisés",
+      "category": "Photography"
+    },
+    {
+      "id": "mxal",
+      "title": "Mix and Light",
+      "category": "Web"
+    },
+    {
+      "id": "sand",
+      "title": "SandFall Interactive (Redesign)",
+      "category": "Web"
+    },
+    {
+      "id": "gpmx",
+      "title": "GPMailbox",
+      "category": "Web"
+    },
+    {
+      "id": "dgif",
+      "title": "DaGameThatIsFun",
+      "category": "Video Games"
+    }
+  ]
+}
