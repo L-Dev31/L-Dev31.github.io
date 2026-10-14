@@ -846,7 +846,6 @@ html.custom-cursor * {
 .scatter-item {
     position: relative;
     display: block;
-    border-radius: 12.944px;
     background: var(--ink);
     overflow: hidden;
     transition: filter 0.25s ease;
