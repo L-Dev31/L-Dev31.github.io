@@ -8,7 +8,8 @@ function encodeToken(tokenString, encodingType = 'UTF16') {
 
   const args = tag.argumentData || [];
   const out = encodingType === 'UTF16' ? [0x1A, 0x00] : [0x1A];
-  out.push(3 + args.length, tag.groupId & 0xFF, tag.typeId & 0xFF, (tag.typeId >> 8) & 0xFF, ...args);
+  // size byte = total tag length: escape + size + group + type(2) + args
+  out.push((encodingType === 'UTF16' ? 2 : 1) + 4 + args.length, tag.groupId & 0xFF, tag.typeId & 0xFF, (tag.typeId >> 8) & 0xFF, ...args);
   return new Uint8Array(out);
 }
 
@@ -36,7 +37,7 @@ function encodeText(text, encodingType) {
 }
 
 function encodeMessageText(text, encodingType, tagBytesMap = null) {
-  const tokenRegex = /\[(?:[0-9A-F]{1,2}):(?:[0-9A-F]{1,4})(?::(?:[0-9A-F]+))?|Color:[0-9A-F]+\]/gi;
+  const tokenRegex = /\[(?:[0-9A-F]{1,2}):(?:[0-9A-F]{1,4})(?::(?:[0-9A-F]+))?\]|Color:[0-9A-F]+\]/gi;
   const parts = [];
   let lastIndex = 0, match;
 
@@ -199,7 +200,9 @@ function buildBmg(bmgFile) {
   }
 
   // --- Build new DAT1 ---
-  const newDat1TotalSize = 8 + newDat1DataSize;
+  // The next section (MID1) must start 4-byte aligned or the game faults. Pad like the original: to 32 if it was, else to 4.
+  const newDat1RawSize = 8 + newDat1DataSize;
+  const newDat1TotalSize = (dat1.size % 32 === 0) ? Math.ceil(newDat1RawSize / 32) * 32 : (newDat1RawSize + 3) & ~3;
   const newDat1 = new Uint8Array(newDat1TotalSize);
   const newDat1View = new DataView(newDat1.buffer);
   newDat1.set([0x44, 0x41, 0x54, 0x31]);
