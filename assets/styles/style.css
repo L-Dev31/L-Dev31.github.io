@@ -2113,22 +2113,28 @@ html:has(.project-main)::-webkit-scrollbar {
         min-height: 0;
         flex-direction: row;
         align-items: center;
-        gap: 16px;
-        padding: 48px var(--pad-edge);
+        gap: 0;
+        padding: 40px var(--pad-edge);
+        position: relative;
     }
 
     .intro-text {
+        /* texte par-dessus le portrait — empiète vers la droite */
+        position: relative;
+        z-index: 10;
         flex: 1;
         min-width: 0;
         text-align: left;
-        margin-right: 0;
+        margin-right: -30vw;
+        mix-blend-mode: difference;
     }
 
     .intro-portrait {
-        flex: 0 0 38%;
-        max-width: 150px;
+        /* portrait prend de la place, pas de flex shrink */
+        flex: 0 0 62%;
+        max-width: none;
+        width: 62%;
         align-self: center;
-        width: auto;
     }
 
     #featured-projects {
