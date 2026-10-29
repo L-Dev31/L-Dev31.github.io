@@ -7,7 +7,9 @@ const scrubBlur = !lowPower && !isMobile;
 
 // Every character of .scrubbing-text fades and un-blurs in reading order as the block scrolls up.
 export function scrubbingText() {
-    if (reducedMotion) return;
+    // Reading stays immediate on touch screens; splitting every character there
+    // adds work without making the content easier to read.
+    if (isMobile || reducedMotion) return;
     const SPREAD = 10; // how many characters are mid-transition at once
 
     const blocks = [...document.querySelectorAll('.scrubbing-text')].map(block => ({ block, chars: splitChars(block) }));
@@ -43,8 +45,48 @@ export function scrubbingText() {
 export function scrollyScenes() {
     const SPREAD = 12; // how many characters are mid-transition at once
     const scenes = [];
+    const selector = '.project-main .case-intro, .project-main .case-pullquote, .project-main .case-chapter';
 
-    for (const section of document.querySelectorAll('.project-main .case-intro, .project-main .case-pullquote, .project-main .case-chapter')) {
+    // Mobile and tablet use a normal reading flow. It keeps every paragraph and
+    // image visible immediately, avoids pinned sections, and uses less battery.
+    if (isMobile || reducedMotion) {
+        document.querySelectorAll(selector).forEach(section => {
+            section.classList.add('case-scene', 'case-scene--static');
+            section.querySelectorAll('.case-row').forEach(row => row.classList.add('visible'));
+        });
+        return;
+    }
+
+    // A chapter with several rows is too tall to pin as one unit. Split it into
+    // row-sized chapters so each visual/text pair gets its own scroll scene.
+    for (const chapter of document.querySelectorAll('.project-main .case-chapter')) {
+        const rows = [...chapter.querySelectorAll(':scope > .case-row')];
+        if (rows.length < 2) continue;
+
+        const title = chapter.querySelector(':scope > .title');
+        const sequence = [...chapter.children];
+        const fragment = document.createDocumentFragment();
+        let rowIndex = 0;
+
+        for (const child of sequence) {
+            if (child.classList.contains('case-row')) {
+                const scene = document.createElement('section');
+                scene.className = 'case-chapter';
+                if (rowIndex === 0 && chapter.id) scene.id = chapter.id;
+                if (rowIndex === 0 && title) scene.append(title);
+                scene.append(child);
+                fragment.append(scene);
+                rowIndex++;
+            } else if (child !== title) {
+                // Keep galleries and other supporting content in their original
+                // order between the row scenes, where they can scroll naturally.
+                fragment.append(child);
+            }
+        }
+        chapter.replaceWith(fragment);
+    }
+
+    for (const section of document.querySelectorAll(selector)) {
         section.classList.add('case-scene');
         const pin = document.createElement('div');
         pin.className = 'case-scene-pin';
@@ -61,7 +103,7 @@ export function scrollyScenes() {
         const padTop = pin.getBoundingClientRect().top - section.getBoundingClientRect().top;
         scenes.push({ section, pin, padTop, chars });
     }
-    if (reducedMotion || !scenes.length) return;
+    if (!scenes.length) return;
 
     const paintChars = (revealT, chars) => {
         const head = revealT * (chars.length - 1 + SPREAD);
@@ -196,11 +238,13 @@ export function scrollScrubbedVideo() {
     const layers = hero.querySelectorAll('video, .about-header-overlay, .about-header-text');
 
     video.pause();
-    video.currentTime = 0;
-    if (reducedMotion) {
+    if (reducedMotion) return;
+    if (isMobile) {
+        video.loop = true;
         video.play().catch(() => {});
         return;
     }
+    video.currentTime = 0;
 
     let target = 0, frame = null, waitingForFrame = false;
 

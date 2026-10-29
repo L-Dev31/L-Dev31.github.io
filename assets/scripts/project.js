@@ -1,5 +1,5 @@
 // Case study page: project.html?id=<id> renders projects/cases/<id>.html with data from projects.json.
-import { initPage, reveal, loadProjects, reducedMotion, throttled, clamp01 } from './common.js';
+import { initPage, reveal, loadProjects, isMobile, reducedMotion, throttled, clamp01 } from './common.js';
 import { scrollyScenes } from './effects.js';
 
 const lenis = initPage();
@@ -21,24 +21,41 @@ async function load() {
 
 function render(project, html, projects) {
     document.title = `${project.title} — Léo Tosku`;
+    updateSearchMetadata(project);
 
     const heroImg = document.querySelector('.project-hero-img');
     heroImg.src = project.heroImage;
     heroImg.alt = project.title;
     heroImg.hidden = false;
 
-    const meta = [
+    const details = [
         project.role && `As a ${project.role}`,
         project.date && `In ${project.date.slice(0, 4)}`,
         project.client && `For ${project.client}`,
-    ].filter(Boolean).join(' · ');
+    ].filter(Boolean);
 
     const header = document.querySelector('.article-header');
-    header.innerHTML = `
-        <h1 class="article-title">${escapeHtml(project.title)}</h1>
-        <p class="article-subtitle">${escapeHtml(project.subtitle)}</p>
-        <p class="article-meta">${escapeHtml(meta)}</p>
-        <div class="article-tags">${project.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div>`;
+    const title = document.createElement('h1');
+    title.className = 'article-title';
+    title.textContent = project.title;
+
+    const subtitle = document.createElement('p');
+    subtitle.className = 'article-subtitle';
+    subtitle.textContent = project.subtitle;
+
+    const meta = document.createElement('p');
+    meta.className = 'article-meta';
+    meta.textContent = details.join(' · ');
+
+    const tags = document.createElement('div');
+    tags.className = 'article-tags';
+    for (const label of project.tags ?? []) {
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.textContent = label;
+        tags.append(tag);
+    }
+    header.replaceChildren(title, subtitle, meta, tags);
     if (reducedMotion) header.classList.add('loaded');
     else requestAnimationFrame(() => requestAnimationFrame(() => header.classList.add('loaded')));
 
@@ -49,6 +66,47 @@ function render(project, html, projects) {
     pager(project, projects);
     reveal(document.querySelectorAll('.project-cta-bottom, .project-pager, .case-gallery, .case-scene .title'));
     parallaxHero();
+}
+
+// Keep search and social previews specific to the project currently displayed.
+function updateSearchMetadata(project) {
+    const url = new URL(`project.html?id=${encodeURIComponent(project.id)}`, location.origin).href;
+    const image = new URL(project.heroImage, location.href).href;
+    const description = (project.subtitle || `Case study: ${project.title} by Léo Tosku.`).slice(0, 160);
+
+    document.querySelector('link[rel="canonical"]').href = url;
+    document.querySelector('meta[name="description"]').content = description;
+    setMeta('property', 'og:title', `${project.title} — Léo Tosku`);
+    setMeta('property', 'og:description', description);
+    setMeta('property', 'og:url', url);
+    setMeta('property', 'og:image', image);
+    setMeta('name', 'twitter:title', `${project.title} — Léo Tosku`);
+    setMeta('name', 'twitter:description', description);
+    setMeta('name', 'twitter:image', image);
+
+    const structuredData = {
+        '@context': 'https://schema.org',
+        '@type': 'CreativeWork',
+        name: project.title,
+        description,
+        url,
+        image,
+        dateCreated: project.date,
+        creator: { '@type': 'Person', name: 'Léo Tosku', url: 'https://l-dev31.github.io/' },
+        keywords: project.tags?.join(', '),
+    };
+    let schema = document.querySelector('#project-schema');
+    if (!schema) {
+        schema = document.createElement('script');
+        schema.id = 'project-schema';
+        schema.type = 'application/ld+json';
+        document.head.append(schema);
+    }
+    schema.textContent = JSON.stringify(structuredData);
+}
+
+function setMeta(attribute, name, content) {
+    document.querySelector(`meta[${attribute}="${name}"]`).content = content;
 }
 
 // Every link goes in the hero; all of them are repeated in the bottom section next to three preview tiles.
@@ -107,7 +165,7 @@ function pager(project, projects) {
 
 // Hero image sinks slower than the page.
 function parallaxHero() {
-    if (reducedMotion) return;
+    if (isMobile || reducedMotion) return;
     const heroImg = document.querySelector('.project-hero-img');
     const update = () => { heroImg.style.transform = `translateY(${scrollY * 0.3}px)`; };
     const scheduled = throttled(update);
@@ -141,8 +199,4 @@ function notFound() {
     document.title = 'Project not found — Léo Tosku';
     document.querySelector('.project-main').innerHTML =
         '<div class="project-not-found"><p>Project not found.</p><a href="index.html">← Back</a></div>';
-}
-
-function escapeHtml(text) {
-    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }

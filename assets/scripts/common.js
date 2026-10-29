@@ -41,9 +41,6 @@ export function reveal(elements) {
 }
 
 export function initPage() {
-    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-    scrollTo(0, 0);
-
     pageLoader();
     const lenis = smoothScroll();
     mobileMenu(lenis);
@@ -74,7 +71,9 @@ function pageLoader() {
 }
 
 function smoothScroll() {
-    if (reducedMotion || !window.Lenis) return null;
+    // Native scrolling is more reliable on touch screens and preserves browser
+    // gestures such as pull-to-refresh and history navigation.
+    if (isMobile || reducedMotion || !window.Lenis) return null;
     const lenis = new Lenis({ duration: 1.2, easing: t => Math.min(1, 1.001 - 2 ** (-10 * t)), touchMultiplier: 2 });
     const raf = time => {
         lenis.raf(time);
@@ -87,17 +86,52 @@ function smoothScroll() {
 function mobileMenu(lenis) {
     const button = document.querySelector('.hamburger');
     const menu = document.querySelector('.mobile-menu');
+    if (!button || !menu) return;
 
-    const toggle = open => {
+    menu.id ||= 'mobile-menu';
+    button.setAttribute('aria-controls', menu.id);
+    menu.inert = true;
+
+    const background = [...document.body.children]
+        .filter(element => element !== menu && !element.classList.contains('navbar'));
+
+    const toggle = (open, returnFocus = false) => {
         menu.classList.toggle('open', open);
         menu.setAttribute('aria-hidden', !open);
+        menu.inert = !open;
         button.setAttribute('aria-expanded', open);
+        document.documentElement.classList.toggle('menu-open', open);
+        background.forEach(element => { element.inert = open; });
         if (open) lenis?.stop();
         else lenis?.start();
+        if (open) requestAnimationFrame(() => menu.querySelector('a')?.focus());
+        else if (returnFocus) button.focus();
     };
 
     button.addEventListener('click', () => toggle(!menu.classList.contains('open')));
     menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => toggle(false)));
+    menu.addEventListener('click', event => {
+        if (event.target === menu) toggle(false);
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && menu.classList.contains('open')) {
+            toggle(false, true);
+            return;
+        }
+        if (event.key !== 'Tab' || !menu.classList.contains('open')) return;
+
+        const links = [...menu.querySelectorAll('a[href]')];
+        if (!links.length) return;
+        const first = links[0];
+        const last = links.at(-1);
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    });
 }
 
 // White dot that replaces the mouse pointer and shrinks over links and buttons.

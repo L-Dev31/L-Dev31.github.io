@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>About Léo Tosku / UI/UX Designer from Grasse to Sophia Antipolis</title>
     <meta name="description" content="I'm Léo Tosku. I've been breaking websites since I was 10, founded a Caribbean marketplace at 17, and now I design dark editorial interfaces from the French Riviera.">
     <meta name="author" content="Léo Tosku">
@@ -57,6 +57,7 @@
 </head>
 
 <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="page-loader" aria-hidden="true"><div class="page-loader-bar"></div></div>
     <div class="cursor" aria-hidden="true"></div>
 
@@ -81,7 +82,7 @@
     <div class="mobile-menu" aria-hidden="true">
         <nav class="mobile-menu-links" aria-label="Mobile navigation">
             <a href="index.html#featured-projects" class="mobile-menu-link">Work</a>
-            <a href="about.html" class="mobile-menu-link">About</a>
+            <a href="about.html" class="mobile-menu-link active" aria-current="page">About</a>
             <a href="mailto:leotoskuepro@gmail.com" class="mobile-menu-link">Contact</a>
         </nav>
         <div class="mobile-menu-footer">
@@ -90,7 +91,7 @@
         </div>
     </div>
 
-    <main>
+    <main id="main-content">
         <div class="about-header">
             <video class="about-header-video" src="assets/images/core/about.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
             <div class="about-header-overlay" aria-hidden="true"></div>
