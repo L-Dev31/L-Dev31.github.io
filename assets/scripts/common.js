@@ -222,23 +222,13 @@ function smoothScroll() {
     return lenis;
 }
 
-// The menu lists the pages and, under the page you are on only, the parts of that page as a tree. It is read from
-// the page each time the menu opens, so it is always current (the project pages fill themselves in late).
+// The menu lists the pages; the one you are on is bold, the one under the pointer italic. Rebuilt each time it opens
+// (the project pages fill themselves in late).
 const PAGES = [
     { id: 'home', label: 'Home', href: 'index.html' },
     { id: 'about', label: 'About', href: 'about.html' },
     { id: 'contact', label: 'Contact', href: 'mailto:leotoskuepro@gmail.com' },
 ];
-
-function pageTree() {
-    const parts = [];
-    for (const section of document.querySelectorAll('main section[id], main .case-chapter[id]')) {
-        const label = section.dataset.menu || section.getAttribute('aria-label')
-            || section.querySelector('.title, h1, h2, h3')?.textContent.trim();
-        if (label) parts.push({ id: section.id, label });
-    }
-    return parts;
-}
 
 function renderMenuLinks(nav) {
     const file = location.pathname.split('/').pop() || 'index.html';
@@ -248,34 +238,13 @@ function renderMenuLinks(nav) {
         const title = document.querySelector('.article-header h1, .project-hero h1')?.textContent.trim() || document.title.split(' — ')[0] || 'Project';
         pages.splice(1, 0, { id: 'project', label: title, href: location.pathname + location.search });
     }
-    nav.replaceChildren(...pages.flatMap(page => {
+    nav.replaceChildren(...pages.map(page => {
         const link = document.createElement('a');
         link.className = 'mobile-menu-link';
         link.href = page.href;
-        if (page.id === here) {
-            link.setAttribute('aria-current', 'page');
-            const mark = document.createElement('span');
-            mark.className = 'menu-current';
-            mark.setAttribute('aria-hidden', 'true');
-            link.append(mark);
-        }
-        link.append(page.label);
-        if (page.id !== here) return [link];
-        const parts = pageTree();
-        if (!parts.length) return [link];
-        const tree = document.createElement('ul');
-        tree.className = 'menu-tree';
-        for (const part of parts) {
-            const item = document.createElement('li');
-            const a = document.createElement('a');
-            a.className = 'menu-tree-link';
-            a.href = `#${part.id}`;
-            a.dataset.target = part.id;
-            a.textContent = part.label;
-            item.append(a);
-            tree.append(item);
-        }
-        return [link, tree];
+        if (page.id === here) link.setAttribute('aria-current', 'page');
+        link.textContent = page.label;
+        return link;
     }));
 }
 
@@ -308,17 +277,7 @@ function mobileMenu(lenis) {
 
     button.addEventListener('click', () => toggle(!menu.classList.contains('open')));
     menu.addEventListener('click', event => {
-        const link = event.target.closest('a');
-        if (!link) return;
-        toggle(false);
-        // A part of this page: scroll to it once the menu has gone.
-        if (link.dataset.target) {
-            event.preventDefault();
-            const target = document.getElementById(link.dataset.target);
-            if (!target) return;
-            if (lenis) lenis.scrollTo(target, { duration: 1.2, offset: -100 });
-            else target.scrollIntoView({ behavior: 'smooth' });
-        }
+        if (event.target.closest('a')) toggle(false);
     });
     menu.addEventListener('click', event => {
         if (event.target === menu) toggle(false);

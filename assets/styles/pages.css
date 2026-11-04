@@ -450,9 +450,13 @@ html.menu-open body {
     transition: opacity 0.5s ease, transform 0.5s var(--ease-out), font-weight 0.3s var(--ease-out);
 }
 
+.mobile-menu-link[aria-current] {
+    font-weight: 800;
+}
+
 .mobile-menu-link:hover,
 .mobile-menu-link:focus-visible {
-    font-weight: 800;
+    font-style: italic;
 }
 
 /* Before the link of the page you are on: a black pixel that appears once the menu is open. */
@@ -2586,44 +2590,3 @@ html:has(.project-main)::-webkit-scrollbar {
     clip-path: inset(0);
 }
 
-/* The parts of the page you are on, as a tree under its title. */
-.menu-tree {
-    position: relative;
-    margin: 6px 0 clamp(10px, 2vh, 22px) 0.4em;
-    padding: 0 0 0 clamp(18px, 2.2vw, 30px);
-    list-style: none;
-    border-left: 2px solid currentColor;
-}
-
-.menu-tree li {
-    position: relative;
-    padding: 5px 0;
-}
-
-.menu-tree li::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: calc(-1 * clamp(18px, 2.2vw, 30px));
-    width: clamp(12px, 1.6vw, 20px);
-    height: 2px;
-    background: currentColor;
-}
-
-.menu-tree li:last-child {
-    margin-bottom: -5px;
-}
-
-.menu-tree-link {
-    color: inherit;
-    font-size: clamp(18px, 2vw, 28px);
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    text-decoration: none;
-    transition: font-weight 0.3s var(--ease-out);
-}
-
-.menu-tree-link:hover,
-.menu-tree-link:focus-visible {
-    font-weight: 800;
-}
