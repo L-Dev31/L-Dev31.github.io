@@ -289,16 +289,12 @@ html.custom-cursor * {
     align-items: center;
     justify-content: space-between;
     padding: clamp(12px, 2.5vh, 28px) var(--pad-edge);
-    color: var(--accent);
+    color: var(--white);
     font-size: clamp(13px, 1.4vw, 16px);
     transition: color 0.3s ease;
 }
 
 /* Over the accent red (the projects, the footer) the bar turns black; set by navTone() in common.js. */
-.navbar.on-dark {
-    color: var(--face);
-}
-
 .navbar.on-accent {
     color: var(--black);
 }
@@ -2560,4 +2556,10 @@ html:has(.project-main)::-webkit-scrollbar {
 
 .clock-time {
     margin-left: 6px;
+}
+
+.clock {
+    padding: 8px 14px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
 }

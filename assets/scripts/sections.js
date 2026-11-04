@@ -89,9 +89,9 @@ const cloud = (lon, lat, t) => {
 };
 
 // ─── Journey ──────────────────────────────────────────────────────────────────
-// The Earth, white with slow checkerboard clouds, fills the screen when the section arrives. Scrolling turns it a full
+// The Earth, red with slow checkerboard clouds, fills the screen when the section arrives. Scrolling turns it a full
 // 360° while it shrinks and moves to the right; there it stays while the stops of the path scroll by on the left and
-// the path, in red like the pins, draws itself between them.
+// the path, in white like the pins, draws itself between them.
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 export async function journey(container) {
@@ -119,8 +119,8 @@ export async function journey(container) {
     const root = getComputedStyle(document.documentElement);
     const ink = getComputedStyle(container).color, paper = root.getPropertyValue('--black').trim();
     const red = root.getPropertyValue('--accent').trim();
-    const cells = cellCanvas(canvas, ink);   // the Earth in white
-    const pins = cellCanvas(marks, red);     // the path and the pins in red
+    const cells = cellCanvas(canvas, red);   // the Earth in red, like the face
+    const pins = cellCanvas(marks, ink);     // the path and the pins in white
     const labels = marks.getContext('2d');
     let cols = 0, rows = 0, brightness = null, pinBrightness = null;
     const fit = () => {
@@ -248,9 +248,9 @@ export async function journey(container) {
             for (const { stop, pt, isActive } of shown) {
                 const w = labels.measureText(stop.place).width;
                 const x = pt.x + 22, y = pt.y;
-                labels.fillStyle = isActive ? red : paper;
+                labels.fillStyle = isActive ? ink : paper;
                 labels.fillRect(x - 8, y - 12, w + 16, 24);
-                labels.fillStyle = ink;
+                labels.fillStyle = isActive ? paper : ink;
                 labels.fillText(stop.place, x, y + 1);
             }
             labels.restore();

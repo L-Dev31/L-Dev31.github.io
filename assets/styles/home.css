@@ -31,7 +31,7 @@
     --pad-section: clamp(40px, 10vh, 120px);
     --pad-edge: clamp(20px, 5vw, 80px);
     --container-width: 1400px;
-    --radius-pill: 0;
+    --radius-pill: 999px;
 
     --section-gradient: var(--black);
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -297,16 +297,12 @@ html.custom-cursor * {
     align-items: center;
     justify-content: space-between;
     padding: clamp(12px, 2.5vh, 28px) var(--pad-edge);
-    color: var(--accent);
+    color: var(--white);
     font-size: clamp(13px, 1.4vw, 16px);
     transition: color 0.3s ease;
 }
 
 /* Over the accent red (the projects, the footer) the bar turns black; set by navTone() in common.js. */
-.navbar.on-dark {
-    color: var(--face);
-}
-
 .navbar.on-accent {
     color: var(--black);
 }
@@ -2620,4 +2616,58 @@ html:has(.project-main)::-webkit-scrollbar {
 
 .clock-time {
     margin-left: 6px;
+}
+
+/* Swiss structure, pills as its small labels: pictures are pixels, information is set in outlined pills. */
+.clock,
+.index-year,
+.client-year,
+.journey-when,
+.index-count,
+.header-subtitles > span {
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    padding: 5px 12px;
+    white-space: nowrap;
+}
+
+.clock {
+    padding: 8px 14px;
+}
+
+.index-year {
+    padding: 4px 11px;
+    font-size: 13px;
+}
+
+.client-year {
+    justify-self: end;
+    padding: 4px 11px;
+    font-size: 13px;
+}
+
+.journey-when {
+    align-self: flex-start;
+    font-size: 13px;
+}
+
+.index-count {
+    align-self: center;
+    margin-left: 14px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    -webkit-text-stroke: 0;
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+
+.header-subtitles {
+    align-items: flex-start;
+    gap: 6px;
+    opacity: calc(1 - var(--turn, 0) * 2.5);
+}
+
+.hero-clock {
+    bottom: 28px;
 }

@@ -43,7 +43,9 @@ function projectIndex(container, projects) {
                 list.append(item);
                 rows.push({ project, row });
             }
-            group.append(el('h3', 'index-category', category), list);
+            const heading = el('h3', 'index-category', category);
+            heading.append(el('span', 'index-count', String(list.children.length).padStart(2, '0')));
+            group.append(heading, list);
             return group;
         });
     const columns = el('div', 'index-groups');
