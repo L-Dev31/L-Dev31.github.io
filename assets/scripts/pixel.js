@@ -168,8 +168,13 @@ export function extrudedSvg(canvas, color) {
     };
 
     return {
-        async show(url, cols) {
-            const next = await loadMask(url);
+        // `urls`: the SVG to extrude, then the ones to fall back on if it does not exist.
+        async show(urls, cols) {
+            let next = null;
+            for (const url of [].concat(urls)) {
+                try { next = await loadMask(url); break; } catch { /* try the next one */ }
+            }
+            if (!next) return;
             mask = next;
             if (cols !== cells.cols) {
                 cells.resize(cols, cols);

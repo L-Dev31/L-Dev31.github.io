@@ -178,7 +178,6 @@ html.lenis body {
     height: 25px;
     border-radius: 50%;
     background: var(--white);
-    mix-blend-mode: exclusion;
     pointer-events: none;
     transition: transform 0.1s ease-out, opacity 0.3s ease;
 }
@@ -698,6 +697,7 @@ html.menu-open body {
 
 /* The name sits at the bottom, Léo and TOSKU pushed to the two edges so the face shows between them. */
 .header-content {
+    --face-gap: 26vw;   /* the width left clear for the face between the two halves */
     position: absolute;
     right: 0;
     bottom: 0;
@@ -711,6 +711,9 @@ html.menu-open body {
 }
 
 .header-subtitles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--face-gap);
     color: var(--white);
     font-size: clamp(13px, 1.1vw, 16px);
     font-weight: 500;
@@ -718,9 +721,9 @@ html.menu-open body {
 }
 
 #site-title {
-    display: flex;
-    justify-content: space-between;
-    align-self: stretch;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--face-gap);
     align-items: baseline;
     margin: 0 0 clamp(12px, 2vh, 24px);
     color: var(--white);
@@ -763,6 +766,18 @@ html.menu-open body {
 
 .hero-spacer {
     height: 250vh;
+}
+
+/* Both lines are mirrored around the face: the first half ends where the gap begins, the second starts after it. */
+#site-title > :first-child,
+.header-subtitles > :first-child {
+    justify-self: end;
+    text-align: right;
+}
+
+#site-title > :last-child,
+.header-subtitles > :last-child {
+    justify-self: start;
 }
 
 
@@ -2207,6 +2222,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .header-content {
+        --face-gap: 12vw;
         right: 0;
         bottom: max(24px, env(safe-area-inset-bottom));
         align-items: flex-start;

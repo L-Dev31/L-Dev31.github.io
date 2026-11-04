@@ -161,7 +161,7 @@ export function scrollyScenes() {
 function paintChar(char, t, small, ghost) {
     char.style.opacity = (ghost + (1 - ghost) * t).toFixed(3);
     const flash = t > 0 && t < 1 ? Math.sin(Math.PI * t) : 0;
-    char.style.color = flash ? `color-mix(in srgb, var(--accent) ${Math.round(flash * 100)}%, currentColor)` : '';
+    char.style.color = flash > 0.3 ? 'var(--accent)' : '';
     char.style.filter = flash > 0.15 ? `url(#ember${small ? '-s' : ''}-${Math.min(3, 1 + Math.floor(flash * 3))})` : '';
 }
 

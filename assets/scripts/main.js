@@ -15,7 +15,7 @@ reveal(document.querySelectorAll('section, .title'));
 
 // ─── Project index ────────────────────────────────────────────────────────────
 // Title with its category boxed under it, an empty column where the project's SVG turns in 3D on hover,
-// and the year. Projects without an SVG of their own (the "svg" field) show the logo.
+// and the year. A project's SVG is assets/images/projects/icons/{id}.svg; without one it shows the logo.
 const DEFAULT_SVG = 'assets/images/core/logo.svg';
 
 const el = (tag, cls, text) => {
@@ -74,7 +74,7 @@ function projectPreview(container, rows) {
         figure.style.left = `${slot.left - box.left + (slot.width - cols * CELL) / 2}px`;
         figure.style.top = `${r.top - box.top + r.height / 2}px`;
         figure.style.width = `${cols * CELL}px`;
-        solid.show(project.svg || DEFAULT_SVG, cols).then(() => {
+        solid.show([project.svg || `assets/images/projects/icons/${project.id}.svg`, DEFAULT_SVG], cols).then(() => {
             if (current !== row) return;
             figure.offsetWidth;
             figure.classList.add('is-on');
