@@ -6,6 +6,7 @@
       "date": "2026-09-15",
       "category": "Design",
       "role": "Vexillographer & Designer",
+      "heroImage": "assets/images/projects/smfl/header.jpg",
       "subtitle": "Designing a regional flag rooted in history, NAVA vexillological principles, and real-world wind testing.",
       "tags": [
         "Vexillology",
@@ -43,6 +44,7 @@
       "date": "2026-04-01",
       "category": "Design",
       "role": "Brand Designer",
+      "heroImage": "assets/images/projects/ogfm/header.jpg",
       "subtitle": "Brand identity for a punk, DIY, anti-establishment webradio.",
       "tags": [
         "Brand Identity",
@@ -78,6 +80,7 @@
       "date": "2026-03-01",
       "category": "Web",
       "role": "Web Designer & Logo Designer",
+      "heroImage": "assets/images/projects/bgaw/header.jpg",
       "subtitle": "A luxury web redesign for an independent brand fusing precision watchmaking and automotive aesthetics.",
       "tags": [
         "Web Design",
@@ -113,6 +116,7 @@
       "date": "2026-02-01",
       "category": "Design",
       "role": "Designer",
+      "heroImage": "assets/images/projects/mego/header.jpg",
       "subtitle": "Visual communication package for a GPS cigarette butt collection startup. 48 hours. Real constraints.",
       "tags": [
         "Brochure Design",
@@ -135,6 +139,7 @@
       "date": "2026-02-01",
       "category": "UI/UX",
       "role": "UX Designer",
+      "heroImage": "assets/images/projects/prfy/header.jpg",
       "subtitle": "A scan-first mobile vault for receipts and warranties. No account. No paper.",
       "tags": [
         "UX Design",
@@ -159,6 +164,7 @@
       "date": "2026-01-01",
       "category": "Web",
       "role": "Web Designer & Developer",
+      "heroImage": "assets/images/projects/cmck/header.jpg",
       "subtitle": "A composer portfolio built to serve two audiences at once: personal work and paid commissions.",
       "tags": [
         "Web Design",
@@ -193,6 +199,7 @@
       "date": "2025-10-01",
       "category": "Tools",
       "role": "Developer",
+      "heroImage": "assets/images/projects/bmge/header.jpg",
       "subtitle": "A browser-based binary editor for Nintendo's BMG format, built from reverse-engineering. No documentation, no SDK.",
       "tags": [
         "Reverse Engineering",
@@ -228,6 +235,7 @@
       "date": "2023-05-01",
       "category": "Tools",
       "role": "Developer & Dataset Author",
+      "heroImage": "assets/images/projects/gptr/header.jpg",
       "subtitle": "The first French to Guadeloupean Creole translator. Built from scratch, from a language the internet had forgotten.",
       "tags": [
         "Python",
