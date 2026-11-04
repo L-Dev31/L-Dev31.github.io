@@ -3,31 +3,31 @@
     "name": "Will La-Garde",
     "align": "left",
     "color": "#4a90c8",
-    "sprite": "images/Characters/Will"
+    "sprite": "images/characters/Will"
   },
   "jia": {
     "name": "Seo Ji-a",
     "align": "right",
     "color": "#e05a8a",
-    "sprite": "images/Characters/Seo"
+    "sprite": "images/characters/Seo"
   },
   "marine": {
     "name": "Marine Pestelle",
     "align": "right",
     "color": "#e07830",
-    "sprite": "images/Characters/Marine"
+    "sprite": "images/characters/Marine"
   },
   "pascal": {
     "name": "Pascal Poinet",
     "align": "right",
     "color": "#3aaa5a",
-    "sprite": "images/Characters/Pascale"
+    "sprite": "images/characters/Pascale"
   },
   "ina": {
     "name": "Ina Voué",
     "align": "right",
     "color": "#7a40d0",
-    "sprite": "images/Characters/Ina"
+    "sprite": "images/characters/Ina"
   },
   "narrateur": {
     "name": "",

@@ -1,0 +1,10 @@
+{
+    "?": { "name": "Inconnue", "icon": "images/icons/unknown.png" },
+    "c": { "name": "Catholique", "icon": "images/icons/catholic.png" },
+    "p": { "name": "Protestant", "icon": "images/icons/protestant.png" },
+    "o": { "name": "Orthodox", "icon": "images/icons/orthodox.svg" },
+    "i": { "name": "Islam", "icon": "images/icons/islam.png" },
+    "a": { "name": "Athéisme", "icon": "images/icons/atheism.png" },
+    "h": { "name": "Hindu", "icon": "images/icons/hindu.svg" },
+    "r": { "name": "Rastafarisme", "icon": "images/icons/rastafarian.png" }
+}

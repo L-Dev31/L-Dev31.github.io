@@ -121,7 +121,7 @@ if (typeof ScheduleApp === 'undefined') {
 
         async loadScheduleData() {
             try {
-                const response = await fetch('Datas/schedule.json');
+                const response = await fetch('datas/schedule.json');
                 const data = await response.json();
                 this.appointments = (data.appointments || []).map(apt => {
                     let color = 'honeydew';

@@ -114,7 +114,7 @@ if (typeof SettingsApp === 'undefined') {
                             <h3>Current Background</h3>
                             <div class="settings-item">
                                 <div class="wallpaper-preview">
-                                    <img id="currentWallpaper" src="images/BG/1.jpg" alt="Current wallpaper">
+                                    <img id="currentWallpaper" src="images/bg/1.jpg" alt="Current wallpaper">
                                 </div>
                             </div>
                         </div>

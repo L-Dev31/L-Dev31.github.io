@@ -2570,12 +2570,26 @@ html:has(.project-main)::-webkit-scrollbar {
         letter-spacing: 2px;
         text-transform: uppercase;
         text-decoration: none;
-        transition: background 0.2s, border-color 0.2s;
+        border-color: transparent;
+        background:
+            linear-gradient(var(--black), var(--black)) padding-box,
+            linear-gradient(110deg, #ffffff, #8a8a8a, #ffffff, #8a8a8a) border-box;
+        background-size: 100% 100%, 300% 100%;
+        animation: cta-flow 4s linear infinite;
+        transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .mob-card-cta:active {
-        background: rgba(255,255,255,0.12);
-        border-color: var(--white);
+        transform: scale(0.96);
+        box-shadow: 0 0 18px rgba(255,255,255,0.35);
+    }
+
+    @keyframes cta-flow {
+        to { background-position: 0 0, 300% 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .mob-card-cta { animation: none; }
     }
 
     /* Bottom navigation - text pills with sliding active indicator */

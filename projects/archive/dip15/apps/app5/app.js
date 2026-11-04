@@ -199,7 +199,7 @@ class PrismApp {
 
         async loadDefaultPlaylist() {
             try {
-                const response = await fetch('Datas/music.json');
+                const response = await fetch('datas/music.json');
                 if (!response.ok) throw new Error('music.json not found');
                 const payload = await response.json();
                 const tracks = Array.isArray(payload) ? payload : payload?.tracks;

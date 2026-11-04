@@ -13,7 +13,7 @@ function createLoadingSection(message = 'Loading...') {
     loadingDiv.className = 'section-loading';
     loadingDiv.innerHTML = `
         <div class="loading-content">
-            <img src="Images/loading.gif" alt="Loading..." class="loading-gif">
+            <img src="images/loading.gif" alt="Loading..." class="loading-gif">
             <p class="loading-text">${message}</p>
         </div>
     `;
@@ -50,14 +50,14 @@ function showSectionLoading(containerSelector, message = 'Loading...') {
 async function loadData() {
     try {
         const [imagesResponse, musicsResponse, mediasResponse, creditsResponse, newsResponse, teamResponse, countriesResponse, progressResponse] = await Promise.all([
-            fetch('Datas/images.json'),
-            fetch('Datas/musics.json'),
-            fetch('Datas/medias.json'),
-            fetch('Datas/credits.json'),
-            fetch('Datas/news.json'),
-            fetch('Datas/team.json'),
-            fetch('Datas/countries.json'),
-            fetch('Datas/progress.json')
+            fetch('datas/images.json'),
+            fetch('datas/musics.json'),
+            fetch('datas/medias.json'),
+            fetch('datas/credits.json'),
+            fetch('datas/news.json'),
+            fetch('datas/team.json'),
+            fetch('datas/countries.json'),
+            fetch('datas/progress.json')
         ]);
         if (!imagesResponse.ok || !musicsResponse.ok || !mediasResponse.ok ||
             !creditsResponse.ok || !newsResponse.ok || !teamResponse.ok || !countriesResponse.ok || !progressResponse.ok) {
@@ -141,7 +141,7 @@ function initializeCarousel() {
                 }
             };
             img.onerror = () => {
-                img.src = 'Images/favicon.png';
+                img.src = 'images/favicon.png';
                 loadedImages++;
                 if (loadedImages === totalImages) {
                     setupCarousel();
@@ -215,7 +215,7 @@ function initializeMusicPlayers() {
             playerDiv.className = 'player';
             playerDiv.innerHTML = `
                 <div class="imgbox">
-                    <img src="Images/boxart/base.png" alt="${track.title}">
+                    <img src="images/boxart/base.png" alt="${track.title}">
                     <div class="disc-overlay">
                         <div class="disc" style="background-image: url('${track.discTexture || track.boxart}')"></div>
                     </div>
@@ -369,7 +369,7 @@ async function displayNews(blogs, isSearchResult = false) {
         });
         const author = teamData.members.find(member => member.id === blog.authorId) || {
             name: 'Unknown',
-            avatar: 'Images/favicon.png'
+            avatar: 'images/favicon.png'
         };
         let readTime = 'Loading...';
         try {
@@ -472,7 +472,7 @@ async function openBlogPopup(blog) {
         });
         const author = teamData.members.find(member => member.id === blog.authorId) || {
             name: 'Unknown',
-            avatar: 'Images/favicon.png'
+            avatar: 'images/favicon.png'
         };        popup.innerHTML = `
             <div class="blog-popup-content">
                 <div class="blog-popup-header">
@@ -544,8 +544,8 @@ function openPersonalCard(personId) {
         country = {
             id: person.country,
             name: person.country.toUpperCase(),
-            flag: 'Images/favicon.png',
-            background: 'Images/Embed.jpg'
+            flag: 'images/favicon.png',
+            background: 'images/Embed.jpg'
         };
     }
     let popup = document.getElementById('personal-card-popup');
@@ -558,13 +558,13 @@ function openPersonalCard(personId) {
         <div class="personal-card-overlay"></div>
         <div class="personal-card-container">            <div class="personal-card" style="background-image: url('${country.background}')">
                 <div class="personal-card-avatar">
-                    <img src="${person.avatar}" alt="${person.name}" onerror="this.src='Images/favicon.png'">
+                    <img src="${person.avatar}" alt="${person.name}" onerror="this.src='images/favicon.png'">
                 </div>
                 <div class="personal-card-content">
                     <h3 class="personal-card-name">${person.name}</h3>
                     <div class="personal-card-country">
                         <span class="country-label">Country:</span>
-                        <img src="${country.flag}" alt="${country.name}" class="country-flag" onerror="this.src='Images/favicon.png'">
+                        <img src="${country.flag}" alt="${country.name}" class="country-flag" onerror="this.src='images/favicon.png'">
                         <span class="country-name">${country.name}</span>
                     </div>
                     <h4 class="personal-card-about">More about me</h4>
@@ -692,13 +692,13 @@ function setupAudioControls() {
 
 function createBlogImage(blogId, blogTitle, className = '') {
     const img = document.createElement('img');
-    img.src = `Images/news/${blogId}.png`;
+    img.src = `images/news/${blogId}.png`;
     img.alt = blogTitle;
     if (className) {
         img.className = className;
     }
     img.onerror = () => {
-        img.src = 'Images/Embed.jpg';
+        img.src = 'images/Embed.jpg';
     };
     return img;
 }
@@ -795,7 +795,7 @@ function calculateReadTime(htmlContent) {
 
 async function loadBlogContent(blogId) {
     try {
-        const response = await fetch(`Datas/news/${blogId}.html`);
+        const response = await fetch(`datas/news/${blogId}.html`);
         if (!response.ok) {
             throw new Error(`Failed to load blog content: ${response.status}`);
         }
