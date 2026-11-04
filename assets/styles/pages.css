@@ -5,18 +5,18 @@
 @font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-Variable.ttf') format('truetype'); font-weight: 300 900; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-VariableItalic.ttf') format('truetype'); font-weight: 300 900; font-style: italic; font-display: swap; }
 :root {
-    --white: #F6F2F2;
-    --black: #0D0909;
+    --white: #F4CFCA;   /* tone on tone: the light is a soft rose of the accent */
+    --black: #3A0B11;   /* ... and the dark a deep wine red, so nothing is pure black or white */
     --pink: #F4C2B8;
-    --paper: #F6F2F2;
-    --dusk: #0D0909;
+    --paper: #F4CFCA;
+    --dusk: #3A0B11;
     --face: #E40613;   /* the red the face is drawn in */
-    --ink: #111;
-    --text: #d5d5d5;
+    --ink: #2A070C;
+    --text: #E9B9B3;
     --text-muted: var(--white);
-    --text-faint: #888;
-    --glass: transparent;
-    --hairline: rgba(255, 255, 255, 0.06);
+    --text-faint: #B77D78;
+    --glass: rgba(244, 207, 202, 0.1);
+    --hairline: rgba(244, 207, 202, 0.08);
     --border: var(--white);
     /* Brand red. Too dim for small text on --black: use it for large type, shapes and fills. */
     --accent: #E40613;

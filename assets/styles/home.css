@@ -6,18 +6,18 @@
 @font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-VariableItalic.ttf') format('truetype'); font-weight: 100 900; font-style: italic; font-display: swap; }
 
 :root {
-    --white: #F6F2F2;
-    --black: #0D0909;
+    --white: #F4CFCA;   /* tone on tone: the light is a soft rose of the accent */
+    --black: #3A0B11;   /* ... and the dark a deep wine red, so nothing is pure black or white */
     --pink: #F4C2B8;
-    --paper: #F6F2F2;
-    --dusk: #0D0909;
+    --paper: #F4CFCA;
+    --dusk: #3A0B11;
     --face: #E40613;   /* the red the face is drawn in */
-    --ink: #111;
-    --text: #d5d5d5;
+    --ink: #2A070C;
+    --text: #E9B9B3;
     --text-muted: var(--white);
-    --text-faint: #888;
-    --glass: rgba(255, 255, 255, 0.1);
-    --hairline: rgba(255, 255, 255, 0.06);
+    --text-faint: #B77D78;
+    --glass: rgba(244, 207, 202, 0.1);
+    --hairline: rgba(244, 207, 202, 0.08);
     --border: var(--white);
     /* Brand red. Too dim for small text on --black: use it for large type, shapes and fills. */
     --accent: #E40613;
@@ -751,8 +751,6 @@ html.menu-open body {
 }
 
 .header-subtitles {
-    display: flex;
-    flex-direction: column;
     color: var(--white);
     font-size: 13px;
     font-weight: 500;
@@ -2623,8 +2621,7 @@ html:has(.project-main)::-webkit-scrollbar {
 .index-year,
 .client-year,
 .journey-when,
-.index-count,
-.header-subtitles > span {
+.index-count {
     border: 1px solid currentColor;
     border-radius: 999px;
     padding: 5px 12px;
@@ -2662,11 +2659,6 @@ html:has(.project-main)::-webkit-scrollbar {
     line-height: 1;
 }
 
-.header-subtitles {
-    align-items: flex-start;
-    gap: 6px;
-    opacity: calc(1 - var(--turn, 0) * 2.5);
-}
 
 .hero-clock {
     bottom: 28px;
