@@ -264,7 +264,7 @@ function startMenuSpin(nav) {
     import('./pixel.js').then(({ extrudedSvg }) => {
         if (!canvas.isConnected) return;
         menuSpin = extrudedSvg(canvas, getComputedStyle(canvas.closest('a')).color);
-        menuSpin.show('assets/images/core/logo.svg', 10);
+        menuSpin.show('assets/images/core/logo.svg', 14);
     });
 }
 function stopMenuSpin() {
