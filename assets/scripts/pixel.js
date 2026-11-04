@@ -1,13 +1,12 @@
 // Drawing the way the hero video is drawn (the way the hero used to be baked): a grid of cells, each one either
-// solid, a checkerboard, a few dots or nothing, picked from a brightness 0-255 with the same thresholds.
+// a pixel, a diamond, a dot or nothing, picked from a brightness 0-255 with the same thresholds.
 import { reducedMotion } from './common.js';
 
 export const CELL = 10;                 // css px per cell
 const GAP = 2;                          // px left empty between two cells
-const SUB = 2;                          // px of one dot / one checker square
 const LEVELS = [22, 60, 130];           // where dots, checkerboard and solid start
 
-// The three drawn states of one cell, side by side: dots, checkerboard, solid.
+// The three drawn states of one cell, side by side: a dot, a diamond, a pixel (the same shapes as the text reveal).
 function atlas(color, scale) {
     const size = CELL * scale;
     const canvas = document.createElement('canvas');
@@ -15,15 +14,16 @@ function atlas(color, scale) {
     canvas.height = size;
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = color;
-    const inner = (CELL - GAP) / SUB;
-    for (let state = 0; state < 3; state++) {
-        for (let i = 0; i < inner; i++) {
-            for (let j = 0; j < inner; j++) {
-                const on = state === 2 || (state === 1 ? (i + j) % 2 === 0 : i % 2 === 1 && j % 2 === 1);
-                if (on) ctx.fillRect(state * size + i * SUB * scale, j * SUB * scale, SUB * scale, SUB * scale);
-            }
-        }
-    }
+    const c = size / 2, square = (CELL - GAP) * scale;
+    // dot
+    const d = size * 0.28;
+    ctx.fillRect(c - d / 2, c - d / 2, d, d);
+    // diamond
+    ctx.beginPath();
+    ctx.moveTo(size + c, size * 0.04); ctx.lineTo(size * 1.96, c); ctx.lineTo(size + c, size * 0.96); ctx.lineTo(size * 1.04, c);
+    ctx.fill();
+    // pixel
+    ctx.fillRect(size * 2, 0, square, square);
     return canvas;
 }
 
