@@ -85,7 +85,7 @@ export function reveal(elements) {
 
 export function initPage() {
     document.querySelectorAll('[data-year]').forEach(el => el.textContent = new Date().getFullYear());
-    smokeFilters();
+    clock();
     navTone();
     pageLoader();
     const lenis = smoothScroll();
@@ -96,31 +96,6 @@ export function initPage() {
     magneticLinks();
     pauseOffscreenVideos();
     return lenis;
-}
-
-// Perlin smoke, in place of blur: fractal noise displacing whatever uses it, flickering a few times a second.
-// ember-{1,2,3} burn harder and harder; the -s versions are for small text.
-function smokeFilters() {
-    const NS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('width', '0');
-    svg.setAttribute('height', '0');
-    svg.setAttribute('aria-hidden', 'true');
-    svg.style.position = 'absolute';
-    const scales = { '': [5, 11, 18], '-s': [2, 4, 7] };
-    let markup = '';
-    for (const [suffix, list] of Object.entries(scales)) {
-        list.forEach((scale, i) => {
-            markup += `<filter id="ember${suffix}-${i + 1}" x="-40%" y="-60%" width="180%" height="220%" color-interpolation-filters="sRGB">
-                <feTurbulence type="fractalNoise" baseFrequency="0.035 0.09" numOctaves="2" seed="1">
-                    <animate attributeName="seed" values="1;2;3;4;5;6;7;8" dur="1.8s" calcMode="discrete" repeatCount="indefinite"/>
-                </feTurbulence>
-                <feDisplacementMap in="SourceGraphic" scale="${scale}" xChannelSelector="R" yChannelSelector="G"/>
-            </filter>`;
-        });
-    }
-    svg.innerHTML = markup;
-    document.body.append(svg);
 }
 
 // The navigation bar is accent red, except over the accent red sections where it turns black.
@@ -135,6 +110,16 @@ function navTone() {
     addEventListener('scroll', throttled(update), { passive: true });
     addEventListener('resize', update, { passive: true });
     update();
+}
+
+// The time in Monaco, to the minute, in the corner of the hero.
+function clock() {
+    const el = document.getElementById('hero-clock');
+    if (!el) return;
+    const format = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Monaco', hour: '2-digit', minute: '2-digit', hour12: false });
+    const tick = () => { el.textContent = `Monaco ${format.format(new Date())}`; };
+    tick();
+    setInterval(tick, 15000);
 }
 
 function pageLoader() {

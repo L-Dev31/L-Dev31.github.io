@@ -157,12 +157,11 @@ export function scrollyScenes() {
 }
 
 // One character of a reveal at t (0 hidden, 1 shown): the front flashes in the accent red and burns,
-// displaced by the perlin smoke, harder in the middle of its flash.
+// stepped, like a terminal.
 function paintChar(char, t, small, ghost) {
-    char.style.opacity = (ghost + (1 - ghost) * t).toFixed(3);
-    const flash = t > 0 && t < 1 ? Math.sin(Math.PI * t) : 0;
-    char.style.color = flash > 0.3 ? 'var(--accent)' : '';
-    char.style.filter = flash > 0.15 ? `url(#ember${small ? '-s' : ''}-${Math.min(3, 1 + Math.floor(flash * 3))})` : '';
+    // Stepped like a terminal: four levels of opacity, and the front of the reveal flashes flat red.
+    char.style.opacity = (ghost + (1 - ghost) * Math.round(t * 4) / 4).toFixed(2);
+    char.style.color = t > 0.1 && t < 0.9 ? 'var(--accent)' : '';
 }
 
 function splitChars(block) {
@@ -194,10 +193,10 @@ function splitChars(block) {
     return [...block.querySelectorAll('.scrubbing-char')];
 }
 
-// Home hero timeline, counted in screens of scroll: the name holds for a third of a screen, then the face
-// turns towards the about brief over the next 0.8 screen (the spacer under the fixed hero is 2.5 screens tall).
-const TURN_START = 0.3;
-const TURN_LENGTH = 0.8;
+// Home hero timeline, counted in screens of scroll: the face starts turning at once and has turned after 0.7
+// screen, leaving a short pause on the about brief before the projects slide over (the spacer is 1.9 screens).
+const TURN_START = 0.05;
+const TURN_LENGTH = 0.65;
 const heroTurn = () => clamp01((scrollY / innerHeight - TURN_START) / TURN_LENGTH);
 
 // [data-parallax-speed] elements drift relative to the viewport centre: 100 is static, 90 lags behind, 110 runs ahead.
