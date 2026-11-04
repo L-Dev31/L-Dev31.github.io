@@ -5,18 +5,20 @@ import { reducedMotion } from './common.js';
 export const CELL = 6;                  // css px per cell
 const LEVELS = [22, 60, 130];           // where dots, checkerboard and solid start
 
-// One cell of side c at (x, y), the terminal way: 0 dots, 1 checkerboard, 2 solid. The square takes 80% of the cell
-// (the rest is the gap), on a 4 x 4 lattice: a 10px cell is an 8px square of 2px dots, as in the hero. Also used by
-// the text reveal (drawCells() in effects.js), so letters and pictures are made of the same cells.
-export function drawCell(ctx, state, x, y, c, fill = 0.8) {
-    const s = c * fill;
+// One cell of side c (device px) at (x, y), the terminal way: 0 dots, 1 checkerboard, 2 solid. Between two cells there is a
+// gap of a round number of pixels (1 css px for a 6px cell); the square is what is left, drawn on a lattice of whole
+// pixels (a 6px cell: a 5px square of 5 x 5 pixels). `fill` (optional) sets the square as a share of the cell instead,
+// 1 for no gap at all. Also used by the text reveal (drawCells() in effects.js), so letters and pictures match.
+export function drawCell(ctx, state, x, y, c, fill) {
+    const gap = Math.max(1, Math.round(c / 6));
+    const s = fill === undefined ? c - gap : c * fill;
     if (state === 2) {
         ctx.fillRect(x, y, s, s);
         return;
     }
-    const q = s / 4;
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
+    const q = Math.max(1, Math.round(s / 5)), n = Math.floor(s / q);
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
             if (state === 1 ? (i + j) % 2 === 0 : i % 2 === 1 && j % 2 === 1) ctx.fillRect(x + i * q, y + j * q, q, q);
         }
     }
