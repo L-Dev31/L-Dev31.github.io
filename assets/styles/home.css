@@ -11,6 +11,9 @@
     --white: #4A2B28;
     --black: #F4E9DD;
     --pink: #F4C2B8;
+    --paper: #F4E9DD;
+    --dusk: #3A2220;   /* the dark of the hero: ink on cream everywhere else, cream on dusk there */
+    --face: #F4C2B8;   /* the light the face is drawn in */
     --ink: #4A2B28;
     --text: var(--white);
     --text-muted: var(--white);
@@ -532,15 +535,17 @@ html.menu-open body {
 }
 
 /* TOSKU, bold, spanning the page between the two margins. */
+/* TOSKU, in Lux, spanning the page between the two margins. */
 .big-name {
     margin: 0;
     color: var(--accent);
-    font-family: var(--font-body);
-    font-size: calc((100vw - 2 * var(--pad-edge)) / 3.3);
+    font-family: var(--font-display);
+    font-size: calc((100vw - 2 * var(--pad-edge)) / 2.38);
     font-style: normal;
-    font-weight: 700;
+    font-weight: 400;
+    -webkit-text-stroke: 0.018em currentColor;
     line-height: 0.8;
-    letter-spacing: -0.04em;
+    letter-spacing: 0;
     text-align: left;
     white-space: nowrap;
     transform: translateY(12%);
@@ -666,6 +671,9 @@ html.menu-open body {
 
 #header {
     --hero-progress: 0;
+    --white: var(--paper);
+    --black: var(--dusk);
+    background: var(--dusk);
     position: fixed;
     top: 0;
     left: 0;
