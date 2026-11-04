@@ -685,8 +685,8 @@ html.menu-open body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* As the face turns to the left, the picture slides right so he looks at the about brief. */
-    transform: translateX(calc(var(--turn, 0) * 22vw));
+    /* The face sits on the right from the start, so that when it turns left it looks at the text. */
+    transform: translateX(22vw);
 }
 
 /* The video only supplies frames; the cells are drawn on the canvas over it. */
@@ -694,42 +694,30 @@ html.menu-open body {
     opacity: 0;
 }
 
-/* The name sits at the bottom, Léo and TOSKU pushed to the two edges so the face shows between them. */
-/* The name, both halves the same width: LEO big, TOSKU smaller with its top on the same line, and the three
-   lines of the subtitle under TOSKU taking up the height it gives back. The pair is centred on the face. */
+/* The name lives in the left third of the screen, vertically centred; the face sits on the right. LEO and TOSKU are the
+   same size, stacked, with the three lines of the subtitle under them. The about brief later takes the very same place. */
 .header-content {
-    /* Swiss grid, golden proportions: the clear space for the face is 38.2% of the width (the minor golden section),
-       the two name blocks are equal, and every gap is a Fibonacci number (13, 21, 34, 55). */
-    --face-gap: 38.2vw;
-    --name-size: clamp(64px, 14vw, 250px);
-    --name-block: calc(var(--name-size) * 1.425);   /* the width of LEO in Lux */
+    --name-size: clamp(56px, 11vw, 200px);
     position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    top: 50%;
+    left: var(--pad-edge);
     z-index: 2;
-    display: grid;
-    grid-template-columns: var(--name-block) var(--name-block);
-    justify-content: center;
-    column-gap: var(--face-gap);
-    row-gap: 13px;
-    align-items: start;
-    padding: 0 var(--pad-edge) 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+    transform: translateY(-50%);
     opacity: calc(1 - var(--turn, 0) * 2.5);
 }
 
-/* The small print: set on the same two edges as the name blocks, level with the signature and the menu. */
+/* The small print, on the outer edges of the grid, level below the navigation. */
 .hero-meta {
-    --name-size: clamp(64px, 14vw, 250px);
     position: absolute;
     top: clamp(89px, 14vh, 144px);
-    right: 0;
-    left: 0;
+    right: var(--pad-edge);
+    left: var(--pad-edge);
     z-index: 2;
-    display: grid;
-    grid-template-columns: calc(var(--name-size) * 1.425) calc(var(--name-size) * 1.425);
-    justify-content: center;
-    column-gap: 38.2vw;
+    display: flex;
+    justify-content: space-between;
     color: var(--white);
     font-size: 13px;
     font-weight: 500;
@@ -739,43 +727,27 @@ html.menu-open body {
     pointer-events: none;
 }
 
-.hero-meta > :last-child {
-    text-align: right;
-}
-
 #site-title {
-    display: contents;   /* LEO, TOSKU and the subtitle are placed on the header's own grid */
+    display: flex;
+    flex-direction: column;
+    gap: 0.14em;
     margin: 0;
     color: var(--white);
     font-family: var(--font-display);
     font-size: var(--name-size);
     font-weight: 400;
-    line-height: 0.8;
+    line-height: 1;
     letter-spacing: 0;
     white-space: nowrap;
     pointer-events: none;
     -webkit-text-stroke: 0.018em currentColor;
 }
 
-/* Lux sets TOSKU about 1.66 times wider than LEO per em: this size makes the two the same width. */
 #site-title > * {
-    text-box: trim-both cap alphabetic;   /* the caps themselves are the box, so the two tops line up */
-}
-
-#site-title > :first-child {
-    grid-column: 1;
-    grid-row: 1 / span 2;
-}
-
-#site-title > :last-child {
-    grid-column: 2;
-    grid-row: 1;
-    font-size: calc(var(--name-size) * 0.604);
+    text-box: trim-both cap alphabetic;   /* the caps themselves are the box */
 }
 
 .header-subtitles {
-    grid-column: 2;
-    grid-row: 2;
     display: flex;
     flex-direction: column;
     color: var(--white);
@@ -2169,6 +2141,9 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .header-content {
+        top: auto;
+        bottom: max(24px, env(safe-area-inset-bottom));
+        transform: none;
         opacity: 1;
     }
 
@@ -2296,11 +2271,8 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .header-content {
-        --face-gap: 14vw;
-        --name-size: clamp(56px, 17vw, 84px);
-        bottom: max(24px, env(safe-area-inset-bottom));
-        row-gap: 8px;
-        padding: 24px var(--pad-edge);
+        --name-size: clamp(48px, 17vw, 76px);
+        gap: 13px;
     }
 
     .hero-about .about-title {
