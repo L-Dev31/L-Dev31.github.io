@@ -1,5 +1,6 @@
 // Scroll and mouse effects used on the home, about and project pages.
 import { reducedMotion, clamp01, throttled, breakpoint } from './common.js';
+import { cellCanvas, CELL } from './pixel.js';
 
 const isMobile = breakpoint.isMobile;
 
@@ -248,12 +249,54 @@ export function parallax() {
 // About page: over its tall hero. Home page: during the turn of the hero timeline above (the hero is fixed,
 // the spacer under it is what scrolls); its clip runs forward then backward so phones can loop it cleanly,
 // and the scroll drives the forward half.
+// The home hero: the (small, plain) face video is drawn again as terminal cells, the way it used to be baked
+// used to bake it, but live: each frame is averaged down to one brightness per cell and painted as solid,
+// checkerboard, dots or nothing in the accent red. The video itself stays invisible and only provides frames.
+function pixelHero(video) {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'hero-pixels';
+    canvas.setAttribute('aria-hidden', 'true');
+    video.after(canvas);
+    const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
+    const sample = document.createElement('canvas');
+    const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
+    let brightness = null, lastTime = -1, lastBox = '';
+
+    const draw = () => {
+        requestAnimationFrame(draw);
+        if (video.readyState < 2 || !video.videoWidth) return;
+        const w = canvas.offsetWidth, h = canvas.offsetHeight;
+        if (!w || !h) return;
+        const box = `${w}x${h}`;
+        if (box !== lastBox) {
+            lastBox = box;
+            const cols = Math.ceil(w / CELL), rows = Math.ceil(h / CELL);
+            cells.resize(cols, rows);
+            sample.width = cols; sample.height = rows;
+            brightness = new Uint8Array(cols * rows);
+            lastTime = -1;
+        }
+        if (video.currentTime === lastTime) return;
+        lastTime = video.currentTime;
+        // object-fit: cover
+        const va = video.videoWidth / video.videoHeight, ba = w / h;
+        const sw = ba > va ? video.videoWidth : video.videoHeight * ba, sh = ba > va ? video.videoWidth / ba : video.videoHeight;
+        sampleCtx.drawImage(video, (video.videoWidth - sw) / 2, (video.videoHeight - sh) / 2, sw, sh, 0, 0, cells.cols, cells.rows);
+        const rgba = sampleCtx.getImageData(0, 0, cells.cols, cells.rows).data;
+        for (let i = 0; i < brightness.length; i++) brightness[i] = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114;
+        cells.paint(brightness);
+    };
+    requestAnimationFrame(draw);
+    return canvas;
+}
+
 export function scrollScrubbedVideo() {
     const hero = document.querySelector('.about-header, #header');
     if (!hero) return;
     const home = hero.id === 'header';
     const video = hero.querySelector('video');
-    const layers = hero.querySelectorAll('video, .about-header-overlay, .about-header-text');
+    if (home) pixelHero(video);
+    const layers = hero.querySelectorAll('video, canvas, .about-header-overlay, .about-header-text');
 
     video.pause();
     if (reducedMotion) return;

@@ -661,16 +661,21 @@ html.menu-open body {
     pointer-events: none;
 }
 
-#hero-video {
+#hero-video,
+#hero-pixels {
     position: absolute;
     inset: 0;
     z-index: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    background: var(--black);
     /* As the face turns to the left, the picture slides right so he looks at the about brief. */
     transform: translateX(calc(var(--turn, 0) * 22vw));
+}
+
+/* The video only supplies frames; the cells are drawn on the canvas over it. */
+#hero-video {
+    opacity: 0;
 }
 
 /* The name sits at the bottom, Léo and TOSKU pushed to the two edges so the face shows between them. */
@@ -701,11 +706,12 @@ html.menu-open body {
     align-items: baseline;
     margin: 0 0 clamp(12px, 2vh, 24px);
     color: var(--white);
-    font-family: var(--font-body);
-    font-size: clamp(56px, 11vw, 200px);
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: clamp(64px, 13vw, 240px);
+    font-weight: 400;
+    -webkit-text-stroke: 0.03em currentColor;
     line-height: 0.82;
-    letter-spacing: -0.05em;
+    letter-spacing: 0;
     white-space: nowrap;
     pointer-events: none;
 }
@@ -833,7 +839,7 @@ html.menu-open body {
 
 .index-cat {
     padding: 5px 10px;
-    border: 1px solid var(--white);
+    border: 1px solid var(--black);
     font-size: 13px;
     font-weight: 500;
     line-height: 1.2;
@@ -841,6 +847,17 @@ html.menu-open body {
 
 .index-slot {
     align-self: stretch;
+}
+
+/* Hovering a row sets its title in bold (Lux has one weight: the outline is thickened). */
+.index-title {
+    -webkit-text-stroke: 0 currentColor;
+    transition: -webkit-text-stroke-width 0.3s var(--ease-out);
+}
+
+.index-row:hover .index-title,
+.index-row:focus-visible .index-title {
+    -webkit-text-stroke-width: 0.035em;
 }
 
 .index-year {
@@ -2008,7 +2025,8 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     /* No pinned scroll on touch screens: the brief sits at the top of the hero, the name stays. */
-    #hero-video {
+    #hero-video,
+    #hero-pixels {
         transform: none;
     }
 
@@ -2129,7 +2147,8 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     /* The face is a wide 16:9 picture: on a phone it is shown 240vw wide, anchored at the bottom, instead of cropped to its middle. */
-    #hero-video {
+    #hero-video,
+    #hero-pixels {
         inset: auto;
         left: 50%;
         bottom: 0;

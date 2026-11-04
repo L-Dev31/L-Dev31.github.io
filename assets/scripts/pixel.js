@@ -1,4 +1,4 @@
-// Drawing the way the hero video is drawn (tools/render-hero-media.py): a grid of cells, each one either
+// Drawing the way the hero video is drawn (the way the hero used to be baked): a grid of cells, each one either
 // solid, a checkerboard, a few dots or nothing, picked from a brightness 0-255 with the same thresholds.
 import { reducedMotion } from './common.js';
 
@@ -105,10 +105,10 @@ function loadMask(url) {
     return promise;
 }
 
-const DEPTH = 0.3;                                  // half the thickness of the block, the outline spanning 1.8
+const DEPTH = 0.12;                                 // half the thickness of the block, the outline spanning 1.8
 const TILT = 0.22;                                  // seen a little from above
 const LIGHT = (() => { const l = [-0.45, 0.55, 0.7], n = Math.hypot(...l); return l.map(v => v / n); })();
-const BASE_SPIN = 0.35;                             // rad/s, turning right
+const BASE_SPIN = 0.9;                              // rad/s, turning right
 const PUSH = 0.005;                                 // rad/s added per px of pointer movement
 const SETTLE = 0.8;                                 // s for a push to fade back into the base spin
 
