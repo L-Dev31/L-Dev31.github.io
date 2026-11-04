@@ -36,13 +36,13 @@ function projectIndex(container, projects) {
                 const row = el('a', 'index-row');
                 row.href = `project.html?id=${project.id}`;
                 const year = (project.date || '').slice(0, 4);
-                const title = el('span', 'index-title scrubbing-text', project.title);
+                const title = el('span', 'index-title', project.title);
                 row.append(title, el('span', 'index-slot'), el('span', 'index-year', year));
                 item.append(row);
                 list.append(item);
                 rows.push({ project, row });
             }
-            const heading = el('h3', 'index-category scrubbing-text', category);
+            const heading = el('h3', 'index-category', category);
             heading.append(el('span', 'index-count', String(list.children.length).padStart(2, '0')));
             group.append(heading, list);
             return group;
