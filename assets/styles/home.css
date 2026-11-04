@@ -2482,7 +2482,7 @@ html:has(.project-main)::-webkit-scrollbar {
     /* Top part: image, title on a fade from black (bottom) to transparent (top) */
     .mob-card-top {
         position: relative;
-        flex: 0 0 55svh;
+        flex: 0 0 64svh;
         overflow: hidden;
     }
 
@@ -2501,7 +2501,7 @@ html:has(.project-main)::-webkit-scrollbar {
         left: -60px;
         right: -60px;
         top: 0;
-        height: calc(55svh + 50px);
+        height: calc(64svh + 50px);
         z-index: 1;
         background: linear-gradient(to top, var(--black) 110px, transparent calc(100% - 60px));
         filter: var(--perlin-smoke);
