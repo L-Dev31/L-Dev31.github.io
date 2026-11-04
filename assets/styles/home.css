@@ -2500,8 +2500,8 @@ html:has(.project-main)::-webkit-scrollbar {
         position: absolute;
         left: -60px;
         right: -60px;
-        top: 0;
-        height: calc(64svh + 50px);
+        bottom: calc(36svh - 50px);
+        height: 40svh;
         z-index: 1;
         background: linear-gradient(to top, var(--black) 110px, transparent calc(100% - 60px));
         filter: var(--perlin-smoke);
