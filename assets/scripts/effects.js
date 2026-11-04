@@ -29,7 +29,7 @@ export function scrubbingText() {
                 ? (touch.matches ? 1 : clamp01((heroTurn() - 0.3) / 0.6))
                 : clamp01((readingLine - r.top) / Math.max(r.height, 1));
             const head = progress * (chars.length - 1 + SPREAD);
-            chars.forEach((char, i) => paintChar(char, clamp01((head - i) / SPREAD), small, 0));
+            chars.forEach((char, i) => paintChar(char, clamp01((head - i) / SPREAD)));
         }
     };
 
@@ -109,7 +109,7 @@ export function scrollyScenes() {
         const head = revealT * (chars.length - 1 + SPREAD);
         for (let i = 0; i < chars.length; i++) {
             const t = clamp01((head - i) / SPREAD);
-            paintChar(chars[i], t, false, 0);
+            paintChar(chars[i], t);
         }
     };
 
@@ -156,12 +156,13 @@ export function scrollyScenes() {
     paint();
 }
 
-// One character of a reveal at t (0 hidden, 1 shown): the front flashes in the accent red and burns,
-// stepped, like a terminal.
-function paintChar(char, t, small, ghost) {
-    // Stepped like a terminal: four levels of opacity, and the front of the reveal flashes flat red.
-    char.style.opacity = (ghost + (1 - ghost) * Math.round(t * 4) / 4).toFixed(2);
-    char.style.color = t > 0.1 && t < 0.9 ? 'var(--accent)' : '';
+// One character of a reveal at t (0 hidden, 1 shown): it resolves in cells, like the pictures: dots, a checkerboard,
+// solid cells, then the crisp glyph.
+function paintChar(char, t) {
+    const stage = t <= 0 ? 0 : t < 0.25 ? 1 : t < 0.5 ? 2 : t < 1 ? 3 : 0;
+    char.style.opacity = t > 0 ? '1' : '0';
+    if (stage) char.dataset.px = stage;
+    else delete char.dataset.px;
 }
 
 function splitChars(block) {
