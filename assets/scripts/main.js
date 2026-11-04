@@ -158,8 +158,6 @@ class ProjectCarousel {
             return n;
         };
         this.wrapper = el('div', 'mob-carousel-section');
-        // Smoke is one fixed layer over the track, so it stays put while cards slide under it
-        this.wrapper.append(el('div', 'mob-smoke'));
         // One View project button for the whole showcase: fixed on screen, its link follows the active project
         this.cta = el('a', 'mob-card-cta');
         this.cta.append(el('i', 'mob-glow'), el('i', 'mob-glow'), el('span', '', 'View project'));
@@ -180,7 +178,7 @@ class ProjectCarousel {
             img.alt = '';
             img.decoding = 'async';
             if (i > 0) img.loading = 'lazy';
-            top.append(img, el('h3', 'mob-card-title', project.title));
+            top.append(img, el('div', 'mob-smoke'), el('h3', 'mob-card-title', project.title));
 
             // Bottom part: role, description, tags, button
             const bottom = el('div', 'mob-card-bottom');

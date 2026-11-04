@@ -2494,13 +2494,13 @@ html:has(.project-main)::-webkit-scrollbar {
         display: block;
     }
 
-    /* Black smoke rising from the bottom of the image: a fixed layer over the track.
+    /* Black smoke rising from the bottom of each image; it travels with its project.
        Flat black below, flat transparent above, so the displacement only waves the middle. */
     .mob-smoke {
         position: absolute;
         left: -60px;
         right: -60px;
-        bottom: calc(36svh - 50px);
+        bottom: -50px;
         height: 40svh;
         z-index: 1;
         background: linear-gradient(to top, var(--black) 110px, transparent calc(100% - 60px));
