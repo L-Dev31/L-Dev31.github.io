@@ -1048,6 +1048,7 @@ html.menu-open body {
    boundary, not to the section's fading content. */
 section:not(.case-scene) > .pixel-edge {
     opacity: 1;
+    transition: none;
 }
 
 .pixel-edge {

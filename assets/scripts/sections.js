@@ -75,9 +75,23 @@ function landGrid() {
 const RAD = Math.PI / 180;
 const SUN = (() => { const l = [-0.5, 0.45, 0.75], n = Math.hypot(...l); return l.map(v => v / n); })();
 
+// Slow clouds: smooth value noise over longitude and latitude, periodic around the Earth so there is no seam.
+const hash = (x, y) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
+function noise(x, y, period) {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+    const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    const at = (i, j) => hash(((i % period) + period) % period, j);
+    return at(xi, yi) * (1 - u) * (1 - v) + at(xi + 1, yi) * u * (1 - v) + at(xi, yi + 1) * (1 - u) * v + at(xi + 1, yi + 1) * u * v;
+}
+const cloud = (lon, lat, t) => {
+    const x = (lon + 180 + t * 0.9) / 12, y = (lat + 90) / 9;   // drifts about 1° a second
+    return noise(x, y, 30) * 0.65 + noise(x * 2.3, y * 2.3, 69) * 0.35;
+};
+
 // ─── Journey ──────────────────────────────────────────────────────────────────
-// The Earth fills the screen when the section arrives. Scrolling turns it a full 360° while it shrinks and moves to
-// the right; there it stays while the stops of the path scroll by on the left and the path draws itself between them.
+// The Earth, white with slow checkerboard clouds, fills the screen when the section arrives. Scrolling turns it a full
+// 360° while it shrinks and moves to the right; there it stays while the stops of the path scroll by on the left and
+// the path, in red like the pins, draws itself between them.
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 export async function journey(container) {
@@ -104,8 +118,9 @@ export async function journey(container) {
     const land = landGrid();
     const root = getComputedStyle(document.documentElement);
     const ink = getComputedStyle(container).color, paper = root.getPropertyValue('--black').trim();
-    const cells = cellCanvas(canvas, root.getPropertyValue('--accent').trim());
-    const pins = cellCanvas(marks, ink);
+    const red = root.getPropertyValue('--accent').trim();
+    const cells = cellCanvas(canvas, ink);   // the Earth in white
+    const pins = cellCanvas(marks, red);     // the path and the pins in red
     const labels = marks.getContext('2d');
     let cols = 0, rows = 0, brightness = null, pinBrightness = null;
     const fit = () => {
@@ -164,7 +179,8 @@ export async function journey(container) {
                 const lon = ((lon0 + Math.atan2(x, z * cosL - y * sinL) / RAD) % 360 + 540) % 360 - 180;
                 const gx = Math.min(360 * GRID - 1, Math.floor((lon + 180) * GRID)), gy = Math.min(180 * GRID - 1, Math.floor((90 - lat) * GRID));
                 const lit = Math.max(0, x * SUN[0] + y * SUN[1] + z * SUN[2]);
-                brightness[row * cols + col] = land[gy * 360 * GRID + gx] ? 80 + 175 * lit : 10 + 45 * lit;
+                const ground = land[gy * 360 * GRID + gx] ? 80 + 175 * lit : 10 + 45 * lit;
+                brightness[row * cols + col] = cloud(lon, lat, time / 1000) > 0.62 ? 100 + 40 * lit : ground;   // clouds: a checkerboard
             }
         }
 
@@ -232,9 +248,9 @@ export async function journey(container) {
             for (const { stop, pt, isActive } of shown) {
                 const w = labels.measureText(stop.place).width;
                 const x = pt.x + 22, y = pt.y;
-                labels.fillStyle = isActive ? ink : paper;
+                labels.fillStyle = isActive ? red : paper;
                 labels.fillRect(x - 8, y - 12, w + 16, 24);
-                labels.fillStyle = isActive ? paper : ink;
+                labels.fillStyle = ink;
                 labels.fillText(stop.place, x, y + 1);
             }
             labels.restore();

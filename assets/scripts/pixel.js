@@ -8,8 +8,8 @@ const LEVELS = [22, 60, 130];           // where dots, checkerboard and solid st
 // One cell of side c at (x, y), the terminal way: 0 dots, 1 checkerboard, 2 solid. The square takes 80% of the cell
 // (the rest is the gap), on a 4 x 4 lattice: a 10px cell is an 8px square of 2px dots, as in the hero. Also used by
 // the text reveal (drawCells() in effects.js), so letters and pictures are made of the same cells.
-export function drawCell(ctx, state, x, y, c) {
-    const s = c * 0.8;
+export function drawCell(ctx, state, x, y, c, fill = 0.8) {
+    const s = c * fill;
     if (state === 2) {
         ctx.fillRect(x, y, s, s);
         return;
@@ -202,8 +202,9 @@ export function extrudedSvg(canvas, color) {
 }
 
 // ─── Pixel edges ──────────────────────────────────────────────────────────────
-// Where two sections meet, the lower one crumbles up into the upper one in the same cells: solid, then a row of
-// checkerboard, then a row of dots, stepping like a skyline, with a few stray dots above.
+// Where two sections meet, the lower one crumbles up into the upper one in the same cells: solid near the section,
+// then a row of checkerboard, then dots, stepping like a skyline. The nearer a cell is to the section the smaller
+// the gap around it, down to none, so the edge melts into the colour.
 // <div class="pixel-edge" data-color="--accent"> as the first child of a section, in that section's colour.
 export function pixelEdges() {
     const ROWS = 10;
@@ -212,7 +213,7 @@ export function pixelEdges() {
         canvas.setAttribute('aria-hidden', 'true');
         host.append(canvas);
         const color = getComputedStyle(document.documentElement).getPropertyValue(host.dataset.color || '--accent').trim();
-        const cells = cellCanvas(canvas, color);
+        const ctx = canvas.getContext('2d');
         let seed = 0, built = 0;
         const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
         const build = () => {
@@ -220,7 +221,11 @@ export function pixelEdges() {
             if (!cols || cols === built) return;
             built = cols;
             seed = 4241 + n * 977;   // the same edge every time
-            cells.resize(cols, ROWS);
+            const scale = Math.max(1, Math.round(devicePixelRatio)), size = CELL * scale;
+            canvas.width = cols * size;
+            canvas.height = ROWS * size;
+            canvas.style.aspectRatio = `${cols} / ${ROWS}`;
+            ctx.fillStyle = color;
             // Height of the crumbled band per column, in runs of 2 to 5 columns.
             const heights = [];
             let h = 6;
@@ -228,17 +233,17 @@ export function pixelEdges() {
                 h = Math.max(3, Math.min(ROWS, h + Math.round((rand() - 0.5) * 5)));
                 for (let run = 2 + Math.floor(rand() * 4); run > 0; run--) heights.push(h);
             }
-            const brightness = new Uint8Array(cols * ROWS);
             for (let col = 0; col < cols; col++) {
                 for (let row = 0; row < ROWS; row++) {
                     const k = ROWS - 1 - row, top = heights[col];   // k: rows up from the section
-                    let v = k < top - 2 ? 200 : k === top - 2 ? 90 : k === top - 1 ? 40 : 0;
-                    if (!v && k < top + 2 && rand() < 0.07) v = 40;
-                    else if (v === 200 && k > 1 && rand() < 0.05) v = 90;
-                    brightness[row * cols + col] = v;
+                    let state = k < top - 2 ? 2 : k === top - 2 ? 1 : k === top - 1 ? 0 : -1;
+                    if (state < 0 && k < top + 2 && rand() < 0.07) state = 0;
+                    else if (state === 2 && k > 1 && rand() < 0.05) state = 1;
+                    if (state < 0) continue;
+                    const fill = 0.8 + 0.2 * (1 - k / (ROWS - 1)) ** 2;   // 0.8 up in the air, 1 at the section
+                    drawCell(ctx, state, col * size, row * size, size, fill);
                 }
             }
-            cells.paint(brightness);
         };
         build();
         addEventListener('resize', build, { passive: true });
