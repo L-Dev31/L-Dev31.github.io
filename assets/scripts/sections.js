@@ -71,6 +71,7 @@ function landGrid() {
 }
 
 const RAD = Math.PI / 180;
+const VIEW = 0.6;   // half the canvas, in globe radii: the Earth is shown about 1.7 times its fit
 const SUN = (() => { const l = [-0.5, 0.45, 0.75], n = Math.hypot(...l); return l.map(v => v / n); })();
 
 // ─── Journey ──────────────────────────────────────────────────────────────────
@@ -95,7 +96,7 @@ export async function journey(container) {
     container.replaceChildren(list, stage);
 
     const land = landGrid();
-    const cells = cellCanvas(canvas, getComputedStyle(container).color);
+    const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
     let size = 0, brightness = null;
     const fit = () => {
         const n = Math.max(24, Math.min(64, Math.floor(stage.clientWidth / CELL)));
@@ -112,7 +113,7 @@ export async function journey(container) {
         const sinL = Math.sin(lat0 * RAD), cosL = Math.cos(lat0 * RAD);
         for (let row = 0; row < n; row++) {
             for (let col = 0; col < n; col++) {
-                const x = ((col + 0.5) / n) * 2.08 - 1.04, y = 1.04 - ((row + 0.5) / n) * 2.08;
+                const x = (((col + 0.5) / n) * 2 - 1) * VIEW, y = (1 - ((row + 0.5) / n) * 2) * VIEW;
                 const rr = x * x + y * y;
                 let b = 0;
                 if (rr <= 1) {
@@ -133,7 +134,7 @@ export async function journey(container) {
             const z = sinL * Math.sin(la) + cosL * Math.cos(la) * Math.cos(dl);
             if (z < 0.05) return;
             const x = Math.cos(la) * Math.sin(dl), y = cosL * Math.sin(la) - sinL * Math.cos(la) * Math.cos(dl);
-            const col = Math.floor(((x + 1.04) / 2.08) * n), row = Math.floor(((1.04 - y) / 2.08) * n);
+            const col = Math.floor(((x / VIEW + 1) / 2) * n), row = Math.floor(((1 - y / VIEW) / 2) * n);
             const ring = i === (hovered >= 0 ? hovered : active) && Math.floor(time / 450) % 2 === 0;
             for (let dy = -2; dy <= 2; dy++) {
                 for (let dx = -2; dx <= 2; dx++) {

@@ -709,7 +709,8 @@ html.menu-open body {
     font-family: var(--font-display);
     font-size: clamp(64px, 13vw, 240px);
     font-weight: 400;
-    -webkit-text-stroke: 0.055em currentColor;
+    font-style: italic;
+    -webkit-text-stroke: 0.025em currentColor;
     line-height: 0.82;
     letter-spacing: 0;
     white-space: nowrap;
