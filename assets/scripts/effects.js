@@ -279,10 +279,10 @@ function splitChars(block) {
     return [...block.querySelectorAll('.scrubbing-char')];
 }
 
-// Home hero timeline, counted in screens of scroll: the hero takes three screens (the name holds, then the face turns
-// and has turned at 3), the about brief the next three (it reads, then the projects slide over; the spacer is 6 screens).
-const TURN_START = 0.9;
-const TURN_LENGTH = 2.1;
+// Home hero timeline, counted in screens of scroll: the hero takes two screens (the name holds for a screen, then the
+// face turns and has turned at 2), the about brief the next two (it reads, then the projects slide over; the spacer is 4).
+const TURN_START = 1.1;
+const TURN_LENGTH = 1.0;
 const heroTurn = () => clamp01((scrollY / innerHeight - TURN_START) / TURN_LENGTH);
 
 // [data-parallax-speed] elements drift relative to the viewport centre: 100 is static, 90 lags behind, 110 runs ahead.
