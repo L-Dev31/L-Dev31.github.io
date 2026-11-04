@@ -1,14 +1,13 @@
 // Home and about pages.
 import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
 import { scrubbingText, parallax, scrollScrubbedVideo } from './effects.js';
-import { extrudedSvg, CELL, pixelEdges } from './pixel.js';
+import { extrudedSvg, CELL } from './pixel.js';
 import { journey, clients } from './sections.js';
 
 // ─── Shared constants ─────────────────────────────────────────────────────────
 const CATEGORIES = ['Design', 'UI/UX', 'Web', 'Marketting', 'Photography', 'Tools', 'Video Games'];
 
 initPage();
-pixelEdges();
 const refreshParallax = parallax();
 scrubbingText();
 scrollScrubbedVideo();
