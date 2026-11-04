@@ -899,7 +899,7 @@ html.menu-open body {
 .index-title {
     display: inline-block;
     font-family: var(--font-body);
-    font-size: clamp(22px, 2.3vw, 38px);
+    font-size: 24px;
     font-weight: 400;
     letter-spacing: -0.03em;
     line-height: 1.05;
@@ -2276,7 +2276,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .index-title {
-        font-size: clamp(26px, 7.5vw, 38px);
+        font-size: 24px;
     }
 
     .about-header-text {
