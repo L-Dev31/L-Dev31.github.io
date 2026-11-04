@@ -2599,11 +2599,11 @@ html:has(.project-main)::-webkit-scrollbar {
         top: 0;
         left: 0;
         z-index: 0;
-        width: 80px;
-        height: 80px;
+        width: 150px;
+        height: 150px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(255,255,255,0.7) 0, transparent 65%);
-        filter: blur(6px);
+        background: radial-gradient(circle, rgba(255,255,255,0.4) 0, transparent 70%);
+        filter: blur(14px);
         offset-path: inset(0 round 999px);
         offset-rotate: 0deg;
         animation: glow-rail 5s linear infinite;
@@ -2611,9 +2611,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .mob-glow:nth-of-type(2) {
-        animation-duration: 7s;
-        animation-direction: reverse;
-        animation-delay: -3s;
+        animation-delay: -2.5s;
     }
 
     .mob-card-cta:active {
