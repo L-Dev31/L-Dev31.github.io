@@ -25,6 +25,7 @@
     --radius-pill: 50px;
 
     --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --perlin-smoke: url(#perlin-smoke);
     --section-gradient: radial-gradient(circle at 50% 0%, #333 0%, #202020 30%, var(--black) 80%);
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -2493,14 +2494,28 @@ html:has(.project-main)::-webkit-scrollbar {
         display: block;
     }
 
+    /* Black smoke rising from the bottom of the image: gradient + static Perlin noise */
+    .mob-card-top::after {
+        content: '';
+        position: absolute;
+        left: -60px;
+        right: -60px;
+        bottom: -1px;
+        height: 55%;
+        z-index: 1;
+        background: linear-gradient(to top, var(--black) 20%, transparent);
+        filter: var(--perlin-smoke);
+        pointer-events: none;
+    }
+
     .mob-card-title {
         position: absolute;
         left: 0;
         right: 0;
         bottom: 0;
+        z-index: 2;
         margin: 0;
-        padding: 72px var(--pad-edge) 20px;
-        background: linear-gradient(to top, var(--black), transparent);
+        padding: 0 var(--pad-edge) 20px;
         font-family: var(--font-display);
         font-style: italic;
         font-weight: bold;
