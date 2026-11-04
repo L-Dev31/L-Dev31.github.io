@@ -456,7 +456,9 @@ html.menu-open body {
 }
 
 .mobile-menu-link[aria-current] {
-    font-style: italic;
+    text-decoration: underline;
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.12em;
 }
 
 .mobile-menu-link:hover,
@@ -465,17 +467,6 @@ html.menu-open body {
 }
 
 /* Before the link of the page you are on: a black pixel that appears once the menu is open. */
-.menu-current {
-    display: inline-flex;
-    flex: none;
-}
-
-.menu-current canvas {
-    display: block;
-    width: auto;
-    height: 1.25em;
-}
-
 
 /* The entrance is staggered; the bold on hover is not delayed. */
 .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-delay: 0.15s, 0.15s, 0s; }
