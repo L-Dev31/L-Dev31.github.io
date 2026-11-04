@@ -12,7 +12,7 @@
     --pink: #F4C2B8;
     --paper: #F4E9DD;
     --dusk: #4C0B13;   /* the dark of the hero: a deep red, so it stays in the family of the accent */
-    --face: #FF9F96;   /* the light the face and the type are drawn in: a coral that sits with the red */
+    --face: #F6F2F2;   /* the off-white the face and the type are drawn in */
     --ink: #4A2B28;
     --text: var(--white);
     --text-muted: var(--white);
