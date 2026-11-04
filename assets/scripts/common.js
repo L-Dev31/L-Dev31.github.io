@@ -144,7 +144,7 @@ function smoothScroll() {
     // Native scrolling is more reliable on touch screens and preserves browser
     // gestures such as pull-to-refresh and history navigation.
     if (isMobile || reducedMotion || !window.Lenis) return null;
-    const lenis = new Lenis({ duration: 1.2, easing: t => Math.min(1, 1.001 - 2 ** (-10 * t)), touchMultiplier: 2 });
+    const lenis = new Lenis({ lerp: 0.06, wheelMultiplier: 0.85, touchMultiplier: 2 })   // a heavy glide: it keeps coasting after the wheel stops;
     const raf = time => {
         lenis.raf(time);
         requestAnimationFrame(raf);

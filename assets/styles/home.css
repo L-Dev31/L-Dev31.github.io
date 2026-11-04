@@ -185,15 +185,6 @@ html.lenis body {
     display: block;
 }
 
-html.hero-field .cursor {
-    opacity: 0;
-}
-
-html.hero-field,
-html.hero-field * {
-    cursor: none;
-}
-
 html.custom-cursor,
 html.custom-cursor * {
     cursor: none;
