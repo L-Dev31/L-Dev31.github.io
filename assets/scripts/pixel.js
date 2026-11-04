@@ -2,7 +2,7 @@
 // picked from a brightness 0-255.
 import { reducedMotion } from './common.js';
 
-export const CELL = 10;                 // css px per cell
+export const CELL = 6;                  // css px per cell
 const LEVELS = [22, 60, 130];           // where dots, checkerboard and solid start
 
 // One cell of side c at (x, y), the terminal way: 0 dots, 1 checkerboard, 2 solid. The square takes 80% of the cell
