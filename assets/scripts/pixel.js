@@ -119,7 +119,7 @@ export function extrudedSvg(canvas, color) {
     const render = () => {
         const { solid, nx, ny, cx, cy, half } = mask;
         const cols = cells.cols, rows = cells.rows;
-        const k = half / 0.9;                       // mask px per unit
+        const k = half / 0.8;                       // mask px per unit
         const cT = Math.cos(angle), sT = Math.sin(angle), cP = Math.cos(TILT), sP = Math.sin(TILT);
         // R = Rx(tilt)·Ry(angle), rows.
         const r0 = [cT, 0, sT], r1 = [sP * sT, cP, -sP * cT], r2 = [-cP * sT, sP, cP * cT];
