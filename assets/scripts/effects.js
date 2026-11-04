@@ -340,12 +340,47 @@ function pixelHero(video) {
     const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--face').trim());
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
-    let brightness = null, lastTime = -1, lastBox = '';
+    let base = null, brightness = null, lastTime = -1, lastBox = '';
 
+    // Life without scrolling, from the references: a band of coarse mosaic that drifts down the face like a
+    // censor bar (Locomotive), and now and then a solid block that glitches in and out (the red patch in dither).
+    const BLOCK = 4, BAND = 2;                 // a mosaic block is 4 x 4 cells; the band is 2 blocks tall
+    const calm = reducedMotion;
+    let glitchAt = performance.now() + 3000, glitch = null;
+    const mosaic = (now, cols, rows) => {
+        const mid = 0.3 + 0.16 * Math.sin(now / 4200);                       // where the band is, as a share of the height
+        const top = Math.max(0, Math.round((rows * mid) / BLOCK) * BLOCK - BLOCK);   // steps in whole blocks
+        const beat = Math.floor(now / 160);
+        for (let by = top; by < Math.min(rows, top + BAND * BLOCK); by += BLOCK) {
+            for (let bx = 0; bx < cols; bx += BLOCK) {
+                let sum = 0, count = 0;
+                for (let y = by; y < Math.min(rows, by + BLOCK); y++) {
+                    for (let x = bx; x < Math.min(cols, bx + BLOCK); x++) { sum += base[y * cols + x]; count++; }
+                }
+                const shimmer = 0.85 + 0.3 * (((bx * 73856093) ^ (by * 19349663) ^ (beat * 83492791)) >>> 0) / 4294967295;
+                const v = Math.min(255, (sum / count) * shimmer);
+                for (let y = by; y < Math.min(rows, by + BLOCK); y++) {
+                    for (let x = bx; x < Math.min(cols, bx + BLOCK); x++) brightness[y * cols + x] = v;
+                }
+            }
+        }
+    };
+    const glitchBlock = (now, cols, rows) => {
+        if (!glitch && now > glitchAt) {
+            const w = 5 + Math.floor(Math.random() * 6), h = 4 + Math.floor(Math.random() * 5);
+            glitch = { x: Math.floor(cols * (0.3 + Math.random() * 0.4)), y: Math.floor(rows * (0.2 + Math.random() * 0.5)), w, h, until: now + 200 + Math.random() * 160 };
+            glitchAt = now + 4000 + Math.random() * 4000;
+        }
+        if (!glitch) return;
+        if (now > glitch.until) { glitch = null; return; }
+        for (let y = glitch.y; y < Math.min(rows, glitch.y + glitch.h); y++) {
+            for (let x = glitch.x; x < Math.min(cols, glitch.x + glitch.w); x++) brightness[y * cols + x] = 255;
+        }
+    };
 
-    const draw = () => {
+    const draw = now => {
         requestAnimationFrame(draw);
-        if (video.readyState < 2 || !video.videoWidth) return;
+        if (video.readyState < 2 || !video.videoWidth || canvas.style.visibility === 'hidden') return;
         const w = canvas.offsetWidth, h = canvas.offsetHeight;
         if (!w || !h) return;
         const box = `${w}x${h}`;
@@ -354,17 +389,24 @@ function pixelHero(video) {
             const cols = Math.ceil(w / CELL), rows = Math.ceil(h / CELL);
             cells.resize(cols, rows);
             sample.width = cols; sample.height = rows;
+            base = new Uint8Array(cols * rows);
             brightness = new Uint8Array(cols * rows);
             lastTime = -1;
         }
-        if (video.currentTime === lastTime) return;
-        lastTime = video.currentTime;
-        // object-fit: cover
-        const va = video.videoWidth / video.videoHeight, ba = w / h;
-        const sw = ba > va ? video.videoWidth : video.videoHeight * ba, sh = ba > va ? video.videoWidth / ba : video.videoHeight;
-        sampleCtx.drawImage(video, (video.videoWidth - sw) / 2, (video.videoHeight - sh) / 2, sw, sh, 0, 0, cells.cols, cells.rows);
-        const rgba = sampleCtx.getImageData(0, 0, cells.cols, cells.rows).data;
-        for (let i = 0; i < brightness.length; i++) brightness[i] = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114;
+        if (video.currentTime !== lastTime) {
+            lastTime = video.currentTime;
+            // object-fit: cover
+            const va = video.videoWidth / video.videoHeight, ba = w / h;
+            const sw = ba > va ? video.videoWidth : video.videoHeight * ba, sh = ba > va ? video.videoWidth / ba : video.videoHeight;
+            sampleCtx.drawImage(video, (video.videoWidth - sw) / 2, (video.videoHeight - sh) / 2, sw, sh, 0, 0, cells.cols, cells.rows);
+            const rgba = sampleCtx.getImageData(0, 0, cells.cols, cells.rows).data;
+            for (let i = 0; i < base.length; i++) base[i] = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114;
+        }
+        brightness.set(base);
+        if (!calm) {
+            mosaic(now, cells.cols, cells.rows);
+            glitchBlock(now, cells.cols, cells.rows);
+        }
         cells.paint(brightness);
     };
     requestAnimationFrame(draw);
@@ -425,7 +467,9 @@ export function scrollScrubbedVideo() {
     const onScroll = () => {
         if (!video.duration) return;
         if (home) {
-            target = heroTurn() * video.duration / 2;
+            // The face is never still: before the turn begins it sways a little, so the hero lives without scrolling.
+            const sway = reducedMotion ? 0 : 0.5 * (0.5 + 0.5 * Math.sin(performance.now() / 2600)) * (1 - clamp01(heroTurn() * 6));
+            target = heroTurn() * video.duration / 2 + sway;
         } else {
             const scrollable = hero.offsetHeight - innerHeight;
             if (scrollable <= 0) return;
@@ -438,6 +482,7 @@ export function scrollScrubbedVideo() {
         layers.forEach(el => el.style.visibility = scrolledPast ? 'hidden' : '');
     };
 
+    if (home) setInterval(onScroll, 90);
     video.addEventListener('loadedmetadata', onScroll);
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', onScroll, { passive: true });

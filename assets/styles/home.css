@@ -7,12 +7,12 @@
 
 :root {
     --white: #F6F2F2;   /* off-white for the light */
-    --black: #2A0509;   /* a deep wine red for the dark, never pure black */
+    --black: #170206;   /* a very deep wine red for the dark, never pure black */
     --pink: #F4C2B8;
     --paper: #F6F2F2;
-    --dusk: #2A0509;
+    --dusk: #170206;
     --face: #E40613;   /* the red the face is drawn in */
-    --ink: #1E0306;
+    --ink: #0F0104;
     --text: #E6DCDC;
     --text-muted: var(--white);
     --text-faint: #A8908F;
