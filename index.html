@@ -20,7 +20,7 @@
     <meta name="twitter:description" content="Portfolio of Léo Tosku, a UI/UX and product designer based on the French Riviera.">
     <meta name="twitter:image" content="https://l-dev31.github.io/assets/images/core/portrait.png">
 
-    <link rel="stylesheet" href="assets/styles/style.css">
+    <link rel="stylesheet" href="assets/styles/home.css">
     <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" defer></script>
     <script src="assets/scripts/main.js" type="module"></script>
 
@@ -80,13 +80,15 @@
         </div>
     </div>
 
-    <!-- Perlin smoke: static fractal noise that displaces and thins whatever uses filter: var(--perlin-smoke) -->
+    <!-- Perlin smoke: large, slowly drifting fractal noise that displaces whatever uses filter: var(--perlin-smoke).
+         The element must keep flat plateaus wider than scale/2 (50px) at both ends so its boundaries stay put. -->
     <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-        <filter id="perlin-smoke" x="-10%" y="-30%" width="120%" height="160%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.018" numOctaves="4" seed="7" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="80" xChannelSelector="R" yChannelSelector="G" result="shifted"/>
-            <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.6 0 0 0 0.1" result="mask"/>
-            <feComposite in="shifted" in2="mask" operator="in"/>
+        <filter id="perlin-smoke" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.004 0.007" numOctaves="2" seed="7" result="noise">
+                <animate attributeName="baseFrequency" dur="24s" repeatCount="indefinite"
+                         values="0.004 0.007;0.0055 0.0085;0.004 0.007" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="100" xChannelSelector="R" yChannelSelector="G"/>
         </filter>
     </svg>
 

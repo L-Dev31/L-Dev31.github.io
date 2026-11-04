@@ -179,8 +179,8 @@ class ProjectCarousel {
 
             // Bottom part: role, description, tags, button
             const bottom = el('div', 'mob-card-bottom');
-            const role = el('p', 'mob-card-role');
-            role.append(el('span', 'mob-card-label', 'Work as a'), document.createTextNode(project.role || ''));
+            const year = project.date ? project.date.slice(0, 4) : '';
+            const role = el('p', 'mob-card-role', [project.role, year].filter(Boolean).join(' · '));
             const tags = el('div', 'mob-card-tags');
             (project.tags || []).slice(0, 5).forEach(t => tags.append(el('span', '', t)));
             const cta = el('a', 'mob-card-cta');

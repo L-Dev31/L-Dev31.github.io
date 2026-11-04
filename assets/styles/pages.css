@@ -1,10 +1,9 @@
-@font-face { font-family: 'Thin'; src: url('../fonts/Thin.otf') format('opentype'); font-display: swap; }
+/* ── base ── */
 @font-face { font-family: 'Lux'; src: url('../fonts/Lux.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Bold'; src: url('../fonts/Bold.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Heavitas'; src: url('../fonts/Heavitas.ttf') format('truetype'); font-display: swap; }
-@font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-Variable.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
-@font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-VariableItalic.ttf') format('truetype'); font-weight: 100 900; font-style: italic; font-display: swap; }
-
+@font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-Variable.ttf') format('truetype'); font-weight: 300 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-VariableItalic.ttf') format('truetype'); font-weight: 300 900; font-style: italic; font-display: swap; }
 :root {
     --white: #fff;
     --black: #000;
@@ -16,7 +15,8 @@
     --hairline: rgba(255, 255, 255, 0.06);
     --border: rgba(255, 255, 255, 0.2);
 
-    --font-body: 'Thin', sans-serif;
+    --font-body: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+    --font-ui: var(--font-body);
     --font-display: 'Lux', serif;
 
     --pad-section: clamp(40px, 10vh, 120px);
@@ -25,11 +25,10 @@
     --radius-pill: 50px;
 
     --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.3);
-    --perlin-smoke: url(#perlin-smoke);
     --section-gradient: radial-gradient(circle at 50% 0%, #333 0%, #202020 30%, var(--black) 80%);
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --smoke-filter: url(#perlin-smoke);
 }
-
 
 /* Base */
 
@@ -47,13 +46,14 @@ body {
     background: var(--black);
     color: var(--text);
     font-family: var(--font-body);
-    font-weight: 300;
+    font-weight: 400;
     overflow-x: clip;
 }
 
 p {
-    font-size: clamp(18px, 2vw, 24px);
-    line-height: 1.7;
+    font-size: clamp(17px, 1.6vw, 22px);
+    font-weight: 400;
+    line-height: 1.62;
     text-wrap: pretty;
 }
 
@@ -107,8 +107,6 @@ section {
     background: var(--section-gradient) center top / cover no-repeat fixed;
 }
 
-/* Section content fades in once the section scrolls into view (reveal() in common.js).
-   Pinned case study scenes are excluded: scrollyScenes() in effects.js drives them. */
 section:not(.case-scene) > * {
     opacity: 0;
     transition: opacity 1.5s var(--ease-out);
@@ -130,7 +128,6 @@ html.lenis body {
 .lenis.lenis-stopped {
     overflow: hidden;
 }
-
 
 /* Page loader */
 
@@ -155,7 +152,6 @@ html.lenis body {
     background: var(--white);
     transition: width 0.7s var(--ease-out);
 }
-
 
 /* Cursors */
 
@@ -218,10 +214,8 @@ html.custom-cursor * {
     mask: url('../images/core/arrow-cta.svg') no-repeat center / contain;
 }
 
-
 /* Shared components */
 
-/* Section title flanked by two lines that draw out from the text when visible. */
 .title {
     display: flex;
     align-items: center;
@@ -295,7 +289,6 @@ html.custom-cursor * {
     letter-spacing: 1.5px;
     text-transform: uppercase;
 }
-
 
 /* Navbar */
 
@@ -400,7 +393,6 @@ html.custom-cursor * {
     display: none;
 }
 
-
 /* Mobile menu */
 
 .mobile-menu {
@@ -442,6 +434,7 @@ html.menu-open body {
     color: var(--white);
     font-family: var(--font-display);
     font-size: clamp(36px, 10vw, 80px);
+    font-weight: 700;
     font-style: italic;
     letter-spacing: 2px;
     text-decoration: none;
@@ -486,12 +479,13 @@ html.menu-open body {
     opacity: 1;
 }
 
-
+/* ── home ── */
 /* Footer */
 
 #footer {
     position: relative;
-    min-height: 100dvh;
+    min-height: 100svh;
+    height: 100vh;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -511,7 +505,6 @@ html.menu-open body {
     pointer-events: none;
 }
 
-/* Dark layer multiplied over the video: the white name below punches a hole through it. */
 .footer-title-mask {
     position: absolute;
     inset: 0;
@@ -584,8 +577,7 @@ html.menu-open body {
     fill: currentColor;
 }
 
-
-/* Back to top: rotating circular label around an arrow */
+/* Back to top */
 
 .back-to-top {
     --size: 100px;
@@ -649,7 +641,6 @@ html.menu-open body {
     }
 }
 
-
 /* Home: hero */
 
 #header {
@@ -666,7 +657,15 @@ html.menu-open body {
     pointer-events: none;
 }
 
-/* Film grain over both page heroes. */
+#header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to top, var(--black) 0%, rgba(0, 0, 0, 0.55) 40%, transparent 72%);
+    pointer-events: none;
+}
+
 #header::after,
 .about-header::after {
     content: '';
@@ -697,7 +696,7 @@ html.menu-open body {
 }
 
 #hero-canvas {
-    z-index: 1;
+    z-index: 0;
 }
 
 .header-content {
@@ -738,7 +737,6 @@ html.menu-open body {
     height: 100dvh;
 }
 
-
 /* Home: intro */
 
 #about-me {
@@ -746,7 +744,6 @@ html.menu-open body {
     overflow: hidden;
 }
 
-/* Text and portrait overlap in the middle, the text blending over the photo. */
 .intro {
     position: relative;
     width: min(1500px, 100%);
@@ -796,7 +793,6 @@ html.menu-open body {
     backface-visibility: hidden;
 }
 
-/* "Hey! I'm Léo Tosku." on both the home intro and the about hero. */
 .about-title {
     margin-bottom: clamp(24px, 4vh, 40px);
     color: var(--white);
@@ -814,7 +810,6 @@ html.menu-open body {
     font-size: clamp(17px, 2vw, 24px);
     line-height: 1.55;
 }
-
 
 /* Home: project grid */
 
@@ -871,7 +866,6 @@ html.menu-open body {
     box-shadow: 0 4px 20px rgba(255, 255, 255, 0.12);
 }
 
-/* Columns are built by projectGrid() in main.js. */
 .featured-scatter {
     --gap: 7px;
     width: min(1500px, 100%);
@@ -935,8 +929,13 @@ html.menu-open body {
     text-transform: uppercase;
 }
 
+.featured-scatter:has(.scatter-item:hover) .scatter-item:not(:hover),
+.featured-scatter:has(.scatter-item:focus-visible) .scatter-item:not(:focus-visible) {
+    filter: brightness(0.35);
+}
+
 .scatter-item:hover {
-    filter: brightness(0.5);
+    filter: none;
 }
 
 .scatter-item:hover .scatter-item-details,
@@ -959,8 +958,8 @@ html.menu-open body {
     opacity: 1;
 }
 
-
-/* About: hero (video scrubbed by scroll, see scrollScrubbedVideo() in effects.js) */
+/* ── about ── */
+/* About: hero */
 
 .about-header {
     --hero-progress: 0;
@@ -1012,7 +1011,6 @@ html.menu-open body {
 .about-header-text .about-hero-lede {
     color: var(--white);
 }
-
 
 /* About: story */
 
@@ -1075,7 +1073,6 @@ html.menu-open body {
     will-change: transform;
 }
 
-
 /* About: experience & education */
 
 .exp-stack {
@@ -1089,7 +1086,6 @@ html.menu-open body {
     padding: 0 var(--pad-edge);
 }
 
-/* Year in the left column, everything else stacked in the right one. */
 .exp-block {
     display: grid;
     grid-template-columns: clamp(90px, 14vw, 150px) minmax(0, 1fr);
@@ -1225,7 +1221,7 @@ html.menu-open body {
     line-height: 1.4;
 }
 
-
+/* ── project ── */
 /* Project page: hero */
 
 .project-hero {
@@ -1252,10 +1248,9 @@ html.menu-open body {
     padding: clamp(32px, 5vh, 56px) var(--pad-edge);
     color: var(--white);
     mix-blend-mode: difference;
-    pointer-events: none; /* text-only layer: lets clicks reach the hero links below */
+    pointer-events: none;
 }
 
-/* Header lines slide up one after the other once project.js adds .loaded. */
 .article-header > * {
     opacity: 0;
     transform: translateY(12px);
@@ -1287,8 +1282,9 @@ html.menu-open body {
 
 .article-meta {
     margin: 0 0 clamp(16px, 2.4vh, 24px);
-    color: var(--text-muted);
+    color: var(--white);
     font-size: clamp(14px, 1.2vw, 18px);
+    font-weight: 600;
     letter-spacing: 1.5px;
     text-transform: uppercase;
 }
@@ -1299,7 +1295,6 @@ html.menu-open body {
     gap: 10px;
 }
 
-/* Outlined pill used by the hero link and the bottom call-to-action links. */
 .project-hero-live,
 .project-cta-bottom-link {
     padding: clamp(10px, 1.4vh, 14px) clamp(18px, 1.8vw, 26px);
@@ -1329,19 +1324,16 @@ html.menu-open body {
     position: absolute;
     bottom: clamp(32px, 5vh, 56px);
     right: var(--pad-edge);
-    /* No z-index here: it would create a stacking context trapping the pills'
-       mix-blend-mode inside the container. DOM order already paints this
-       above the overlay. */
+
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
     gap: 10px;
     max-width: min(440px, calc(100% - 2 * var(--pad-edge)));
-    pointer-events: none; /* only the pills themselves are clickable */
+    pointer-events: none;
 }
 
-
-/* Project page: case study blocks (projects/cases/*.html) */
+/* Project page: case study */
 
 .case-intro,
 .case-chapter {
@@ -1365,15 +1357,17 @@ html.menu-open body {
     z-index: 1;
     margin: 0 auto;
     max-width: 880px;
-    font-family: var(--font-display);
+    font-family: var(--font-body);
+    font-weight: 500;
     font-style: italic;
     font-size: clamp(24px, 3.5vw, 52px);
-    line-height: 1.25;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--white);
     text-align: center;
     text-wrap: balance;
 }
 
-/* Comfortable reading measure for full-width case study text. */
 .case-intro p {
     max-width: 880px;
     margin-left: auto;
@@ -1390,7 +1384,6 @@ html.menu-open body {
     line-height: 1.1;
 }
 
-/* Project pages: no scrollbar, a slim progress bar sticks to the bottom instead. */
 html:has(.project-main) {
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -1418,11 +1411,7 @@ html:has(.project-main)::-webkit-scrollbar {
     transform: scaleX(0);
     transform-origin: left;
 }
-/* Project page: scrollytelling scenes (scrollyScenes() in effects.js). The pin is
-   held in place by JS transforms (immune to scroll-container quirks); its
-   characters scrub in with scroll, then the scene fades out for the next one.
-   Pinning is desktop-only; on mobile the scenes scroll naturally with a plain
-   progressive reveal. */
+
 @media (min-width: 769px) {
     .case-scene.case-intro,
     .case-scene.case-chapter {
@@ -1433,8 +1422,6 @@ html:has(.project-main)::-webkit-scrollbar {
         height: 180vh;
     }
 
-    /* Pin at the section top: base `section` centers its content, which would
-       strand the pin mid-section with dead scroll above it. */
     .case-scene {
         justify-content: flex-start;
         padding-top: 0;
@@ -1446,8 +1433,6 @@ html:has(.project-main)::-webkit-scrollbar {
         align-content: center;
     }
 
-    /* Keep pinned chapters within one viewport so the centered pin never clips:
-       tighter row padding plus capped visuals (long prose stays readable). */
     .case-scene .case-row {
         padding: clamp(24px, 4vh, 48px) 0;
     }
@@ -1466,7 +1451,6 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 }
 
-/* Text and media side by side; --reverse puts the media first. */
 .case-row {
     width: 100%;
     max-width: var(--container-width);
@@ -1638,7 +1622,6 @@ html:has(.project-main)::-webkit-scrollbar {
     object-fit: cover;
 }
 
-
 /* Project page: bottom call to action */
 
 .project-cta-bottom {
@@ -1682,7 +1665,6 @@ html:has(.project-main)::-webkit-scrollbar {
 
 .project-cta-tile:nth-child(1) { margin-top: 40px; }
 .project-cta-tile:nth-child(3) { margin-top: 60px; }
-
 
 /* Project page: previous / next */
 
@@ -1774,7 +1756,6 @@ html:has(.project-main)::-webkit-scrollbar {
     font-size: clamp(12px, 1vw, 15px);
 }
 
-
 /* Project page: not found */
 
 .project-not-found {
@@ -1807,8 +1788,29 @@ html:has(.project-main)::-webkit-scrollbar {
     color: var(--white);
 }
 
-
+/* ── responsive ── */
 /* Responsive */
+
+.title,
+.button,
+.tag,
+.status-badge,
+.filter-btn,
+.cta-cursor,
+.scatter-item-details span,
+.exp-location,
+.exp-role,
+.exp-facts dt,
+.article-meta,
+.project-hero-live,
+.project-cta-bottom-link,
+.project-pager-dir,
+.footer-col h3,
+.case-table thead th,
+.media-caption,
+.skip-link {
+    font-family: var(--font-ui);
+}
 
 @media (max-width: 1024px) {
     .intro {
@@ -1849,6 +1851,10 @@ html:has(.project-main)::-webkit-scrollbar {
 
     .hamburger {
         display: inline-flex;
+    }
+
+    #about-me {
+        display: none;
     }
 
     .story {
@@ -1916,8 +1922,6 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 }
 
-/* Low-end simplification (old phones): same look, cheaper compositing.
-   Fullscreen animated blurs and layer hints are desktop-only costs. */
 @media (max-width: 768px) {
     *, *::before, *::after {
         will-change: auto !important;
@@ -1948,8 +1952,6 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 }
 
-/* Touch layouts favour a continuous reading flow over desktop-style pinning
-   and visual effects. */
 @media (max-width: 1024px) {
     body::before {
         content: '';
@@ -2037,8 +2039,8 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     p {
-        font-size: 18px;
-        line-height: 1.65;
+        font-size: 17px;
+        line-height: 1.62;
     }
 
     section {
@@ -2113,7 +2115,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .intro {
-        min-height: 0;
+        min-height: 100svh;
         flex-direction: row;
         align-items: center;
         gap: 0;
@@ -2122,7 +2124,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .intro-text {
-        /* texte par-dessus le portrait — empiète vers la droite */
+
         position: relative;
         z-index: 10;
         flex: 1;
@@ -2133,7 +2135,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .intro-portrait {
-        /* portrait prend de la place, pas de flex shrink */
+
         flex: 0 0 62%;
         max-width: none;
         width: 62%;
@@ -2251,6 +2253,7 @@ html:has(.project-main)::-webkit-scrollbar {
     .article-meta {
         margin-bottom: 16px;
         font-size: 11px;
+        font-weight: 600;
         letter-spacing: 1.1px;
         line-height: 1.45;
     }
@@ -2412,10 +2415,10 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     #footer {
-        min-height: 0;
+        min-height: 100svh;
         overflow: hidden;
         padding-top: clamp(32px, 6vh, 60px);
-        /* leave enough room at the bottom for the big-name to peek in */
+
         padding-bottom: max(200px, 26vw);
     }
 
@@ -2437,248 +2440,7 @@ html:has(.project-main)::-webkit-scrollbar {
     .btt-text span {
         font-size: 7px;
     }
-}
 
-/* ── Mobile project carousel ── */
-@media (max-width: 768px) {
-    /* On a phone the page is the showcase: no about hero, no section title */
-    #about-me,
-    #featured-projects > .title,
-    .featured-filters {
-        display: none;
-    }
-
-    #featured-projects {
-        padding: 0 !important;
-    }
-
-    .mob-carousel-section {
-        position: relative;
-        width: 100%;
-        min-width: 0;
-        background: var(--black);
-    }
-
-    .mob-carousel {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        scrollbar-width: none;
-    }
-
-    .mob-carousel::-webkit-scrollbar {
-        display: none;
-    }
-
-    .mob-card {
-        flex: 0 0 100%;
-        min-height: 100svh;
-        display: flex;
-        flex-direction: column;
-        scroll-snap-align: start;
-        scroll-snap-stop: always;
-    }
-
-    /* Top part: image, title on a fade from black (bottom) to transparent (top) */
-    .mob-card-top {
-        position: relative;
-        flex: 0 0 55svh;
-        overflow: hidden;
-    }
-
-    .mob-card-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center top;
-        display: block;
-    }
-
-    /* Black smoke rising from the bottom of the image: gradient + static Perlin noise */
-    .mob-card-top::after {
-        content: '';
-        position: absolute;
-        left: -60px;
-        right: -60px;
-        bottom: -1px;
-        height: 55%;
-        z-index: 1;
-        background: linear-gradient(to top, var(--black) 20%, transparent);
-        filter: var(--perlin-smoke);
-        pointer-events: none;
-    }
-
-    .mob-card-title {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 2;
-        margin: 0;
-        padding: 0 var(--pad-edge) 20px;
-        font-family: var(--font-display);
-        font-style: italic;
-        font-weight: bold;
-        font-size: clamp(30px, 9vw, 50px);
-        line-height: 1.05;
-        color: var(--white);
-    }
-
-    /* Bottom part: role, description, tags, then the button */
-    .mob-card-bottom {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 14px;
-        padding: 8px var(--pad-edge) 96px;
-        background: var(--black);
-    }
-
-    .mob-card-role,
-    .mob-card-desc,
-    .mob-card-tags {
-        align-self: stretch;
-        margin: 0;
-    }
-
-    .mob-card-role {
-        font-family: var(--font-sans);
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--white);
-    }
-
-    .mob-card-label {
-        display: block;
-        margin-bottom: 2px;
-        font-size: 10px;
-        font-weight: 400;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: var(--text-muted, #999);
-    }
-
-    .mob-card-desc {
-        font-size: 14px;
-        line-height: 1.6;
-        color: var(--text, #ccc);
-    }
-
-    .mob-card-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-    }
-
-    .mob-card-tags span {
-        padding: 5px 12px;
-        border: 1px solid var(--border, rgba(255,255,255,0.15));
-        border-radius: var(--radius-pill, 999px);
-        font-family: var(--font-sans);
-        font-size: 9px;
-        letter-spacing: 1.2px;
-        text-transform: uppercase;
-        color: var(--text-muted, #999);
-        white-space: nowrap;
-    }
-
-    /* View project: glass pill with a half-transparent white outline; two soft light blobs
-       each ride the button's edge like a rail, clipped to the button */
-    .mob-card-cta {
-        position: relative;
-        margin-top: auto;
-        padding: 14px 34px;
-        overflow: hidden;
-        isolation: isolate;
-        border: 1px solid rgba(255,255,255,0.5);
-        border-radius: 999px;
-        background: linear-gradient(135deg, rgba(255,255,255,0.25), transparent, rgba(255,255,255,0.25));
-        color: var(--white);
-        font-family: 'Satoshi', sans-serif;
-        font-size: 12px;
-        font-weight: 900;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        text-decoration: none;
-        transition: transform 0.2s;
-    }
-
-    .mob-card-cta > span {
-        position: relative;
-        z-index: 1;
-    }
-
-    .mob-glow {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 0;
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(255,255,255,0.8) 0, rgba(255,255,255,0.62) 12%, rgba(255,255,255,0.36) 28%, rgba(255,255,255,0.15) 46%, rgba(255,255,255,0.04) 62%, transparent 74%);
-        filter: blur(6px);
-        offset-path: inset(0 round 999px);
-        offset-rotate: 0deg;
-        animation: glow-rail 10s linear infinite;
-        pointer-events: none;
-    }
-
-    .mob-glow:nth-of-type(2) {
-        animation-delay: -5s;
-    }
-
-    .mob-card-cta:active {
-        transform: scale(0.96);
-    }
-
-    @keyframes glow-rail {
-        from { offset-distance: 0%; }
-        to { offset-distance: 100%; }
-    }
-
-    /* Dots: sit under the cards (not sticky); outline and small when idle, filled when active */
-    .mob-dots {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
-        z-index: 20;
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        pointer-events: none;
-    }
-
-    .mob-dot {
-        pointer-events: auto;
-        width: 12px;
-        height: 12px;
-        padding: 0;
-        border: 1.5px solid var(--white);
-        border-radius: 50%;
-        background: transparent;
-        scale: 0.6;
-        transition: scale 0.25s var(--ease-out), background 0.25s var(--ease-out);
-        -webkit-appearance: none;
-        cursor: pointer;
-    }
-
-    .mob-dot.active {
-        background: var(--white);
-        scale: 1;
-    }
-
-    .mob-dot:focus-visible {
-        outline: 2px solid var(--white);
-        outline-offset: 3px;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .mob-glow { animation: none; }
-        .mob-dot { transition: none; }
-    }
 }
 
 @media (hover: none) {
