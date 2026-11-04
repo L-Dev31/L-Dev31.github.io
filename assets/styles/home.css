@@ -205,6 +205,7 @@ html.custom-cursor * {
     font-weight: 400;
     line-height: 0.86;
     text-align: left;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .section-head {
@@ -697,7 +698,7 @@ html.menu-open body {
 /* The name, both halves the same width: LEO big, TOSKU smaller with its top on the same line, and the three
    lines of the subtitle under TOSKU taking up the height it gives back. The pair is centred on the face. */
 .header-content {
-    --face-gap: 26vw;   /* the width left clear for the face between the two halves */
+    --face-gap: 34vw;   /* the width left clear for the face between the two halves */
     --name-size: clamp(64px, 14vw, 250px);
     position: absolute;
     right: 0;
@@ -708,16 +709,14 @@ html.menu-open body {
     grid-template-columns: auto auto;
     justify-content: center;
     column-gap: var(--face-gap);
-    row-gap: clamp(10px, 1.8vh, 20px);
+    row-gap: 10px;
+    align-items: start;
     padding: 50px var(--pad-edge);
     opacity: calc(1 - var(--turn, 0) * 2.5);
 }
 
 #site-title {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: subgrid;
-    align-items: start;
+    display: contents;   /* LEO, TOSKU and the subtitle are placed on the header's own grid */
     margin: 0;
     color: var(--white);
     font-family: var(--font-display);
@@ -726,17 +725,29 @@ html.menu-open body {
     line-height: 0.8;
     letter-spacing: 0;
     white-space: nowrap;
-    text-box: trim-both cap alphabetic;   /* the caps themselves are the box, so the two tops line up */
     pointer-events: none;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 /* Lux sets TOSKU about 1.66 times wider than LEO per em: this size makes the two the same width. */
+#site-title > * {
+    text-box: trim-both cap alphabetic;   /* the caps themselves are the box, so the two tops line up */
+}
+
+#site-title > :first-child {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+}
+
 #site-title > :last-child {
-    font-size: 0.604em;
+    grid-column: 2;
+    grid-row: 1;
+    font-size: calc(var(--name-size) * 0.604);
 }
 
 .header-subtitles {
     grid-column: 2;
+    grid-row: 2;
     display: flex;
     flex-direction: column;
     color: var(--white);
@@ -775,6 +786,7 @@ html.menu-open body {
 
 .hero-about .about-title {
     font-family: var(--font-body);
+    -webkit-text-stroke: 0;
     font-size: clamp(40px, 5vw, 84px);
     font-weight: 500;
     letter-spacing: -0.04em;
@@ -805,6 +817,7 @@ html.menu-open body {
     font-weight: 400;
     line-height: 0.88;
     text-wrap: balance;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 /* Lux has a single weight: the name is set in italic rather than in a faked bold. */
@@ -863,6 +876,7 @@ html.menu-open body {
     font-size: clamp(36px, 4.4vw, 72px);
     font-weight: 400;
     line-height: 0.9;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .index-list {
@@ -887,7 +901,7 @@ html.menu-open body {
     outline-offset: 4px;
 }
 
-/* Hover: the title turns bold and leans, smoothly. */
+/* Hover: the title turns bold, smoothly. */
 .index-title {
     display: inline-block;
     font-family: var(--font-body);
@@ -899,10 +913,10 @@ html.menu-open body {
     transition: font-weight 0.4s var(--ease-out), transform 0.4s var(--ease-out);
 }
 
+/* Hover: the title turns bold, smoothly. */
 .index-row:hover .index-title,
 .index-row:focus-visible .index-title {
     font-weight: 800;
-    transform: skewX(-10deg);
 }
 
 .index-slot {
@@ -920,7 +934,6 @@ html.menu-open body {
 .index-row:hover .index-year,
 .index-row:focus-visible .index-year {
     font-weight: 800;
-    transform: skewX(-10deg);
 }
 
 .index-preview {
@@ -1009,6 +1022,7 @@ html.menu-open body {
     font-size: clamp(40px, 6vw, 96px);
     font-weight: 400;
     line-height: 0.9;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .journey-what {
@@ -1094,7 +1108,6 @@ html.menu-open body {
 a.client-row:hover .client-name,
 a.client-row:focus-visible .client-name {
     font-weight: 800;
-    transform: skewX(-10deg);
 }
 
 @media (max-width: 1024px) {
@@ -1231,6 +1244,7 @@ a.client-row:focus-visible .client-name {
     font-weight: 700;
     font-synthesis: weight style;
     text-wrap: balance;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .story-paragraph {
@@ -1318,6 +1332,7 @@ a.client-row:focus-visible .client-name {
     font-family: var(--font-display);
     font-style: italic;
     line-height: 1.05;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .company-logo {
@@ -1459,6 +1474,7 @@ a.client-row:focus-visible .client-name {
     font-family: var(--font-display);
     font-size: clamp(36px, 6vw, 96px);
     line-height: 1.05;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .article-subtitle {
@@ -1553,6 +1569,7 @@ a.client-row:focus-visible .client-name {
     line-height: 1.25;
     text-align: center;
     text-wrap: balance;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 /* Comfortable reading measure for full-width case study text. */
@@ -1570,6 +1587,7 @@ a.client-row:focus-visible .client-name {
     font-style: italic;
     letter-spacing: -0.01em;
     line-height: 1.1;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 /* Project pages: no scrollbar, a slim progress bar sticks to the bottom instead. */
@@ -1846,6 +1864,7 @@ html:has(.project-main)::-webkit-scrollbar {
     font-style: italic;
     font-weight: bold;
     line-height: 1.05;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .project-cta-gallery {
@@ -1949,6 +1968,7 @@ html:has(.project-main)::-webkit-scrollbar {
     font-style: italic;
     font-weight: bold;
     line-height: 1.05;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .project-pager-role {
@@ -2247,7 +2267,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .header-content {
-        --face-gap: 10vw;
+        --face-gap: 14vw;
         --name-size: clamp(56px, 17vw, 84px);
         bottom: max(24px, env(safe-area-inset-bottom));
         row-gap: 8px;

@@ -234,6 +234,7 @@ html.custom-cursor * {
     font-weight: 400;
     line-height: 0.9;
     text-align: left;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .button {
@@ -733,6 +734,7 @@ html.menu-open body {
     line-height: 1;
     white-space: nowrap;
     pointer-events: none;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .hero-spacer {
@@ -805,6 +807,7 @@ html.menu-open body {
     font-weight: normal;
     line-height: 1.05;
     text-wrap: balance;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .about-hero-lede {
@@ -917,6 +920,7 @@ html.menu-open body {
     font-family: var(--font-display);
     font-size: clamp(17px, 1.7vw, 24px);
     line-height: 1.05;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .scatter-item-details span {
@@ -1077,6 +1081,7 @@ html.menu-open body {
     font-weight: 700;
     font-synthesis: weight style;
     text-wrap: balance;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .story-paragraph {
@@ -1161,6 +1166,7 @@ html.menu-open body {
     color: var(--white);
     font-family: var(--font-display);
     line-height: 1.05;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .company-logo {
@@ -1301,6 +1307,7 @@ html.menu-open body {
     font-family: var(--font-display);
     font-size: clamp(36px, 6vw, 96px);
     line-height: 1.05;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .article-subtitle {
@@ -1410,6 +1417,7 @@ html.menu-open body {
     font-size: clamp(28px, 2.6vw, 44px);
     letter-spacing: -0.01em;
     line-height: 1.1;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 html:has(.project-main) {
@@ -1674,6 +1682,7 @@ html:has(.project-main)::-webkit-scrollbar {
     font-size: clamp(32px, 5vw, 80px);
     font-weight: 400;
     line-height: 1.05;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .project-cta-gallery {
@@ -1775,6 +1784,7 @@ html:has(.project-main)::-webkit-scrollbar {
     font-size: clamp(26px, 3.6vw, 56px);
     font-weight: 400;
     line-height: 1.05;
+    -webkit-text-stroke: 0.03em currentColor;
 }
 
 .project-pager-role {
