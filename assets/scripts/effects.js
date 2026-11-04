@@ -17,13 +17,22 @@ export function scrubbingText() {
         chars: splitChars(block),
         turn: block.dataset.scrub === 'turn',
         small: parseFloat(getComputedStyle(block).fontSize) < 40,
+        out: block.dataset.scrub === 'out',
     }));
 
     const paint = () => {
         const readingLine = innerHeight * 0.7;
-        for (const { block, chars, turn, small } of blocks) {
+        for (const { block, chars, turn, out } of blocks) {
             const r = block.getBoundingClientRect();
             if (r.top > innerHeight || r.bottom < 0) continue;
+            // The hero name and subtitle scrub out in cells as the face turns.
+            if (out) {
+                const gone = touch.matches ? 0 : clamp01(heroTurn() / 0.5);
+                const front = gone * (chars.length - 1 + SPREAD);
+                chars.forEach((char, i) => paintChar(char, 1 - clamp01((front - i) / SPREAD)));
+                drawCells(block, chars);
+                continue;
+            }
             // The home about brief burns in with the turn of the face, not with its own position (it does not move).
             const progress = turn
                 ? (touch.matches ? 1 : clamp01((heroTurn() - 0.3) / 0.6))
@@ -301,11 +310,6 @@ export function parallax() {
             const turn = heroTurn();
             hero.style.setProperty('--turn', turn.toFixed(4));
             hero.classList.toggle('is-turned', turn > 0.45);
-            // The name and subtitle burn away as the face turns: stronger smoke, then gone.
-            const content = hero.querySelector('.header-content');
-            const burn = clamp01(turn / 0.4);
-            if (burn > 0 && burn < 1) content.dataset.burn = Math.min(3, 1 + Math.floor(burn * 3));
-            else delete content.dataset.burn;
         }
 
         const viewportCenter = scrollY + innerHeight / 2;
@@ -364,12 +368,7 @@ function pixelHero(video) {
         const sw = ba > va ? video.videoWidth : video.videoHeight * ba, sh = ba > va ? video.videoWidth / ba : video.videoHeight;
         sampleCtx.drawImage(video, (video.videoWidth - sw) / 2, (video.videoHeight - sh) / 2, sw, sh, 0, 0, cells.cols, cells.rows);
         const rgba = sampleCtx.getImageData(0, 0, cells.cols, cells.rows).data;
-        // Darker and more contrasted than the plain picture: the shadows drop out, the lights stay solid,
-        // so the features (eyes, brows, jaw) read from the pattern of cells.
-        for (let i = 0; i < brightness.length; i++) {
-            const v = (rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114) / 255;
-            brightness[i] = 255 * Math.min(1, Math.max(0, (v - 0.06) / 0.8) ** 1.3);
-        }
+        for (let i = 0; i < brightness.length; i++) brightness[i] = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114;
         cells.paint(brightness);
     };
     requestAnimationFrame(draw);

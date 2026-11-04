@@ -705,7 +705,6 @@ html.menu-open body {
     flex-direction: column;
     gap: 21px;
     transform: translateY(-50%);
-    opacity: calc(1 - var(--turn, 0) * 2.5);
 }
 
 /* The only small print: the time in Monaco, bottom left (clock() in common.js). */
@@ -754,11 +753,6 @@ html.menu-open body {
     line-height: 1.4;
 }
 
-/* The name and subtitle go red as the face turns, then fade out. */
-.header-content[data-burn] #site-title,
-.header-content[data-burn] .header-subtitles {
-    color: var(--accent);
-}
 
 
 /* The about brief, on the left, where the face ends up looking. Its letters burn in with the turn
