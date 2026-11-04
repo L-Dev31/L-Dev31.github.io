@@ -2494,16 +2494,14 @@ html:has(.project-main)::-webkit-scrollbar {
         display: block;
     }
 
-    /* Black smoke rising from the bottom of the image. The gradient has a flat black plateau below
-       the visible area and a flat transparent plateau above it, so the displacement only waves
-       the middle and the edges stay pure black / pure transparent. */
-    .mob-card-top::after {
-        content: '';
+    /* Black smoke rising from the bottom of the image: a fixed layer over the track.
+       Flat black below, flat transparent above, so the displacement only waves the middle. */
+    .mob-smoke {
         position: absolute;
         left: -60px;
         right: -60px;
-        bottom: -50px;
-        height: calc(50% + 110px);
+        top: 0;
+        height: calc(55svh + 50px);
         z-index: 1;
         background: linear-gradient(to top, var(--black) 110px, transparent calc(100% - 60px));
         filter: var(--perlin-smoke);
@@ -2527,7 +2525,28 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     /* Bottom part: role, description, tags, then the button */
+    /* Bottom texts slide down and fade in each time their card arrives */
+    .mob-card-bottom > * {
+        opacity: 0;
+        translate: 0 -14px;
+        transition: opacity 0.6s ease, translate 0.6s var(--ease-out), transform 0.2s;
+    }
+
+    .mob-card.is-active .mob-card-bottom > * {
+        opacity: 1;
+        translate: 0 0;
+    }
+
+    .mob-card.is-active .mob-card-bottom > :nth-child(2) { transition-delay: 0.08s; }
+    .mob-card.is-active .mob-card-bottom > :nth-child(3) { transition-delay: 0.16s; }
+
+    @media (prefers-reduced-motion: reduce) {
+        .mob-card-bottom > * { transition: none; translate: none; }
+    }
+
     .mob-card-bottom {
+        position: relative;
+        z-index: 2;
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -2593,7 +2612,8 @@ html:has(.project-main)::-webkit-scrollbar {
         letter-spacing: 2px;
         text-transform: uppercase;
         text-decoration: none;
-        transition: transform 0.2s;
+        /* last bottom item: its own transition must include the slide-down, or it snaps in */
+        transition: transform 0.2s, opacity 0.6s ease 0.24s, translate 0.6s var(--ease-out) 0.24s;
     }
 
     .mob-card-cta > span {

@@ -158,6 +158,8 @@ class ProjectCarousel {
             return n;
         };
         this.wrapper = el('div', 'mob-carousel-section');
+        // Smoke is one fixed layer over the track, so it stays put while cards slide under it
+        this.wrapper.append(el('div', 'mob-smoke'));
         this.carousel = el('div', 'mob-carousel');
         this.carousel.setAttribute('role', 'list');
         this.dots = el('nav', 'mob-dots');
@@ -205,7 +207,9 @@ class ProjectCarousel {
         // The dot of the card that is mostly in view is the active one
         this.observer = new IntersectionObserver(entries => {
             for (const e of entries) {
-                if (!e.isIntersecting) continue;
+                const on = e.intersectionRatio >= 0.6;
+                e.target.classList.toggle('is-active', on);
+                if (!on) continue;
                 const i = [...this.carousel.children].indexOf(e.target);
                 [...this.dots.children].forEach((d, k) => d.classList.toggle('active', k === i));
             }
