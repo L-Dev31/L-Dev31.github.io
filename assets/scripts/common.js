@@ -117,12 +117,41 @@ function navTone() {
     update();
 }
 
-// The time in Monaco, to the minute, in the corner of the hero.
+// Where Léo is: the time in Monaco with its offset from GMT, and a pixel sun or moon for day or night there.
+// Fills every [data-clock] (the corner of the hero, the footer).
+const MONACO = { lat: 43.73, lon: 7.42 };
+const pixelIcon = rows => `<svg class="clock-icon" viewBox="0 0 7 7" aria-hidden="true">${rows
+    .flatMap((row, y) => [...row].map((c, x) => (c === '#' ? `<rect x="${x}" y="${y}" width="1" height="1"/>` : '')))
+    .join('')}</svg>`;
+const SUN = pixelIcon(['...#...', '.#...#.', '..###..', '#.###.#', '..###..', '.#...#.', '...#...']);
+const MOON = pixelIcon(['..###..', '.###...', '###....', '###....', '###....', '.###...', '..###..']);
+
+// Is the sun up in Monaco? (solar elevation above the horizon, to a few minutes)
+function daylight(date) {
+    const rad = Math.PI / 180;
+    const day = (date - Date.UTC(date.getUTCFullYear(), 0, 0)) / 864e5;
+    const declination = -23.44 * Math.cos((2 * Math.PI / 365) * (day + 10)) * rad;
+    const hours = date.getUTCHours() + date.getUTCMinutes() / 60 + MONACO.lon / 15;
+    const hourAngle = (hours - 12) * 15 * rad, lat = MONACO.lat * rad;
+    const elevation = Math.sin(lat) * Math.sin(declination) + Math.cos(lat) * Math.cos(declination) * Math.cos(hourAngle);
+    return elevation > Math.sin(-0.833 * rad);
+}
+
 function clock() {
-    const el = document.getElementById('hero-clock');
-    if (!el) return;
-    const format = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Monaco', hour: '2-digit', minute: '2-digit', hour12: false });
-    const tick = () => { el.textContent = `Monaco ${format.format(new Date())}`; };
+    const clocks = document.querySelectorAll('[data-clock]');
+    if (!clocks.length) return;
+    const time = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Monaco', hour: '2-digit', minute: '2-digit', hour12: false });
+    const zone = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Monaco', timeZoneName: 'shortOffset' });
+    const tick = () => {
+        const now = new Date();
+        const day = daylight(now);
+        const t = time.format(now);
+        const offset = zone.formatToParts(now).find(part => part.type === 'timeZoneName')?.value || '';
+        for (const el of clocks) {
+            el.innerHTML = `${day ? SUN : MOON}<span class="clock-place">Monaco, MC</span><span class="clock-time">${t}</span><span class="clock-zone">${offset}</span>`;
+            el.setAttribute('aria-label', `Monaco, ${t}, ${offset}, ${day ? 'daytime' : 'night'}`);
+        }
+    };
     tick();
     setInterval(tick, 15000);
 }

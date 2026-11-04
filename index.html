@@ -78,7 +78,7 @@
     <main id="main-content">
     <header id="header">
         <video id="hero-video" src="assets/images/core/hero-source.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-        <time class="hero-clock" id="hero-clock" aria-label="Current time in Monaco"></time>
+        <p class="hero-clock clock" data-clock></p>
         <div class="header-content">
             <h1 id="site-title" class="scrubbing-text" data-scrub="out"><span>Léo</span> <span>TOSKU</span></h1>
             <div class="header-subtitles scrubbing-text" data-scrub="out"><span>UI/UX Design & Research</span><span>Development</span><span>Marketing</span></div>
@@ -93,6 +93,7 @@
 
 
     <section id="featured-projects">
+        <div class="pixel-edge" data-color="--accent" aria-hidden="true"></div>
         <div class="section-head">
             <h2 class="title">Featured Projects</h2>
             <p class="section-note">Brand identities, interfaces, websites and tools, grouped by discipline. Point at a title to see its mark turn in three dimensions.</p>
@@ -101,6 +102,7 @@
     </section>
 
     <section id="journey" aria-labelledby="journey-title">
+        <div class="pixel-edge" data-color="--black" aria-hidden="true"></div>
         <div class="section-head">
             <h2 class="title" id="journey-title">Journey</h2>
             <p class="section-note">From Guadeloupe, where I learned to build, to the French Riviera, where I study and work. Scroll to follow the path across the map.</p>
@@ -147,6 +149,10 @@
                     <li><a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a></li>
                     <li><a href="tel:+33745370469">+33 7 45 37 04 69</a></li>
                 </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Local time</h3>
+                <p class="clock" data-clock></p>
             </div>
         </div>
     </footer>

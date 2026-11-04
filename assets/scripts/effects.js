@@ -1,6 +1,6 @@
 // Scroll and mouse effects used on the home, about and project pages.
 import { reducedMotion, clamp01, throttled, breakpoint } from './common.js';
-import { cellCanvas, CELL } from './pixel.js';
+import { cellCanvas, CELL, drawCell } from './pixel.js';
 
 const isMobile = breakpoint.isMobile;
 
@@ -168,7 +168,7 @@ export function scrollyScenes() {
 }
 
 // A character of a reveal at t (0 hidden, 1 shown) is drawn as terminal cells that ignore its outline, so the shape is
-// deformed rather than clipped: dots, then diamonds, then pixels, then the crisp glyph.
+// deformed rather than clipped: dots, then a checkerboard, then solid cells, then the crisp glyph.
 function paintChar(char, t) {
     char.style.opacity = t >= 1 ? '1' : '0';
     const stage = t <= 0 || t >= 1 ? 0 : t < 0.34 ? 1 : t < 0.67 ? 2 : 3;
@@ -231,20 +231,15 @@ function drawCells(host, chars) {
         if (!stage) continue;
         const r = char.getBoundingClientRect();
         const style = getComputedStyle(char);
-        const cell = Math.max(3, Math.round(parseFloat(style.fontSize) * 0.13));
+        const cell = Math.max(5, Math.round(parseFloat(style.fontSize) * 0.16));
         const { cols, rows, cover } = glyphGrid(char, r, cell);
         ctx.fillStyle = style.color;
         const ox = (r.left - hr.left) * dpr, oy = (r.top - hr.top) * dpr, c = cell * dpr;
         for (let j = 0; j < rows; j++) {
             for (let i = 0; i < cols; i++) {
                 const v = cover[j * cols + i];
-                const x = ox + i * c, y = oy + j * c;
-                if (stage === 1 && v > 0.18) ctx.fillRect(x + c * 0.36, y + c * 0.36, c * 0.28, c * 0.28);
-                else if (stage === 2 && v > 0.3) {
-                    ctx.beginPath();
-                    ctx.moveTo(x + c / 2, y); ctx.lineTo(x + c, y + c / 2); ctx.lineTo(x + c / 2, y + c); ctx.lineTo(x, y + c / 2);
-                    ctx.fill();
-                } else if (stage === 3 && v > 0.4) ctx.fillRect(x, y, c * 0.86, c * 0.86);
+                const state = stage === 1 ? (v > 0.15 ? 0 : -1) : stage === 2 ? (v > 0.25 ? 1 : -1) : v > 0.4 ? 2 : -1;
+                if (state >= 0) drawCell(ctx, state, ox + i * c, oy + j * c, c);
             }
         }
     }

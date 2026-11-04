@@ -960,30 +960,42 @@ html.menu-open body {
 }
 
 
-/* Home: journey. The stops scroll by on the left while the Earth, in white cells, stays in view on the right
-   and turns to the stop being read (journey() in sections.js). */
-
+/* Home: journey. The Earth fills the screen as the section arrives; scrolling turns it a full turn while it shrinks
+   to the right, then the stops scroll by on the left as the path draws itself (journey() in sections.js). */
 .journey {
-    width: 100%;
-    max-width: var(--container-width);
-    box-sizing: border-box;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-    gap: clamp(24px, 5vw, 80px);
-    margin: 0 auto;
-    padding: 0 var(--pad-edge);
+    position: relative;
+    width: calc(100% + 2 * var(--pad-edge));
+    margin: 0 calc(-1 * var(--pad-edge));
     color: var(--white);
 }
 
+.journey-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.journey-globe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Laid over the stage, starting once the globe has settled (1.4 screens of turning, then the first stop). */
 .journey-stops {
-    margin: 0;
-    padding: 0;
+    position: relative;
+    z-index: 1;
+    max-width: min(44vw, 620px);
+    margin: -100vh 0 0;
+    padding: 150vh var(--pad-edge) 20vh;
     list-style: none;
 }
 
 .journey-stop {
     position: relative;
-    min-height: 70vh;
+    min-height: 80vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1032,27 +1044,25 @@ html.menu-open body {
     line-height: 1.5;
 }
 
-.journey-stage {
-    position: sticky;
-    top: calc(50vh - min(50vh, 50%) + 40px);
-    align-self: start;
-    height: min(80vh, 100%);
-    display: flex;
-    align-items: center;
+/* A section's colour crumbling into the one above it (pixelEdges() in pixel.js). Always shown: it belongs to the
+   boundary, not to the section's fading content. */
+section:not(.case-scene) > .pixel-edge {
+    opacity: 1;
 }
 
-.journey-marks {
+.pixel-edge {
     position: absolute;
-    top: 50%;
+    right: 0;
+    bottom: 100%;
     left: 0;
-    transform: translateY(-50%);
+    line-height: 0;
+    pointer-events: none;
 }
 
-.journey-globe {
+.pixel-edge canvas {
     display: block;
     width: 100%;
-    max-height: 80vh;
-    object-fit: contain;
+    height: auto;
 }
 
 /* Home: clients */
@@ -1122,24 +1132,15 @@ a.client-row:focus-visible .client-name {
         gap: 20px;
     }
 
-    .journey {
-        grid-template-columns: 1fr;
-    }
-
-    .journey-stage {
-        position: relative;
-        top: 0;
-        order: -1;
-        height: auto;
-        max-width: 420px;
-        width: 100%;
-        margin: 0 auto;
+    /* The globe settles at the top: the stops read in the lower half. */
+    .journey-stops {
+        max-width: none;
     }
 
     .journey-stop {
-        min-height: 0;
-        padding: 24px 0;
-        border-top: 1px solid var(--border);
+        min-height: 100vh;
+        justify-content: flex-end;
+        padding-bottom: 12vh;
     }
 
     .client-row {
@@ -2617,3 +2618,26 @@ html:has(.project-main)::-webkit-scrollbar {
     pointer-events: none;
 }
 
+/* The time in Monaco: a pixel sun or moon, the place, the time, the offset (clock() in common.js). */
+.clock {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.clock-icon {
+    flex: none;
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+    shape-rendering: crispEdges;
+}
+
+.clock-time {
+    margin-left: 6px;
+}

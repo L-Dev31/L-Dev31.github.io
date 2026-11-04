@@ -52,11 +52,13 @@ const LAND = [
     [[-180, -84], [-180, -78], [-160, -77.5], [-150, -76], [-130, -74], [-110, -74], [-100, -73], [-75, -73], [-62, -64], [-57, -63.5], [-60, -70], [-60, -75], [-45, -78], [-30, -76], [-10, -71], [10, -70], [30, -69.5], [50, -67], [70, -68], [90, -66.5], [110, -66], [130, -66.3], [150, -68.5], [165, -71], [170, -77.5], [180, -78], [180, -84]],
 ];
 
-// Land on a 360 x 180 grid, one cell per degree.
+// Land on a 720 x 360 grid, two cells per degree (fine enough for the Earth filling the screen).
+const GRID = 2;
 function landGrid() {
     const canvas = document.createElement('canvas');
-    canvas.width = 360; canvas.height = 180;
+    canvas.width = 360 * GRID; canvas.height = 180 * GRID;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.scale(GRID, GRID);
     ctx.fillStyle = '#fff';
     for (const shape of LAND) {
         ctx.beginPath();
@@ -64,22 +66,30 @@ function landGrid() {
         ctx.closePath();
         ctx.fill();
     }
-    const rgba = ctx.getImageData(0, 0, 360, 180).data;
-    const land = new Uint8Array(360 * 180);
+    const rgba = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    const land = new Uint8Array(canvas.width * canvas.height);
     for (let i = 0; i < land.length; i++) land[i] = rgba[i * 4 + 3] > 100 ? 1 : 0;
     return land;
 }
 
 const RAD = Math.PI / 180;
-const VIEW = 1.04;  // half the canvas, in globe radii
 const SUN = (() => { const l = [-0.5, 0.45, 0.75], n = Math.hypot(...l); return l.map(v => v / n); })();
 
 // ─── Journey ──────────────────────────────────────────────────────────────────
-// The stops of the path on the left; the Earth on the right, in red cells like the face, the path in white, turning to the stop being read.
+// The Earth fills the screen when the section arrives. Scrolling turns it a full 360° while it shrinks and moves to
+// the right; there it stays while the stops of the path scroll by on the left and the path draws itself between them.
+const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+
 export async function journey(container) {
     if (!container) return;
     const { stops } = await fetch('assets/data/journey.json').then(r => r.json());
 
+    const stage = el('div', 'journey-stage');
+    const canvas = el('canvas', 'journey-globe');
+    const marks = el('canvas', 'journey-globe');
+    canvas.setAttribute('aria-hidden', 'true');
+    marks.setAttribute('aria-hidden', 'true');
+    stage.append(canvas, marks);
     const list = el('ol', 'journey-stops');
     const items = stops.map(stop => {
         const item = el('li', 'journey-stop');
@@ -89,105 +99,151 @@ export async function journey(container) {
         list.append(item);
         return item;
     });
-    const stage = el('div', 'journey-stage');
-    const canvas = el('canvas', 'journey-globe');
-    canvas.setAttribute('aria-hidden', 'true');
-    const marks = el('canvas', 'journey-globe journey-marks');
-    marks.setAttribute('aria-hidden', 'true');
-    stage.append(canvas, marks);
-    container.replaceChildren(list, stage);
+    container.replaceChildren(stage, list);
 
     const land = landGrid();
-    const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
-    const pins = cellCanvas(marks, getComputedStyle(container).color);
-    let pinBrightness = null;
-    let size = 0, brightness = null;
+    const root = getComputedStyle(document.documentElement);
+    const ink = getComputedStyle(container).color, paper = root.getPropertyValue('--black').trim();
+    const cells = cellCanvas(canvas, root.getPropertyValue('--accent').trim());
+    const pins = cellCanvas(marks, ink);
+    const labels = marks.getContext('2d');
+    let cols = 0, rows = 0, brightness = null, pinBrightness = null;
     const fit = () => {
-        const n = Math.max(24, Math.min(64, Math.floor(stage.clientWidth / CELL)));
-        if (n === size) return;
-        size = n;
-        cells.resize(n, n);
-        pins.resize(n, n);
-        brightness = new Uint8Array(n * n);
-        pinBrightness = new Uint8Array(n * n);
+        const c = Math.ceil(stage.clientWidth / CELL), r = Math.ceil(stage.clientHeight / CELL);
+        if (c === cols && r === rows) return;
+        cols = c; rows = r;
+        cells.resize(c, r);
+        pins.resize(c, r);
+        brightness = new Uint8Array(c * r);
+        pinBrightness = new Uint8Array(c * r);
     };
 
-    let active = 0, hovered = -1, pos = 0, scrollPos = 0;
-    let lon0 = stops[0].lon, lat0 = stops[0].lat;
-    const draw = time => {
-        const n = size;
-        const sinL = Math.sin(lat0 * RAD), cosL = Math.cos(lat0 * RAD);
-        for (let row = 0; row < n; row++) {
-            for (let col = 0; col < n; col++) {
-                const x = (((col + 0.5) / n) * 2 - 1) * VIEW, y = (1 - ((row + 0.5) / n) * 2) * VIEW;
-                const rr = x * x + y * y;
-                let b = 0;
-                if (rr <= 1) {
-                    const z = Math.sqrt(1 - rr);
-                    const lat = Math.asin(z * sinL + y * cosL) / RAD;
-                    let lon = lon0 + Math.atan2(x, z * cosL - y * sinL) / RAD;
-                    lon = ((lon + 540) % 360) - 180;
-                    const gx = Math.min(359, Math.floor(lon + 180)), gy = Math.min(179, Math.floor(90 - lat));
-                    const lit = Math.max(0, x * SUN[0] + y * SUN[1] + z * SUN[2]);
-                    b = land[gy * 360 + gx] ? 80 + 175 * lit : 10 + 45 * lit;
-                }
-                brightness[row * n + col] = b;
-            }
-        }
-        // Stops, in the accent red on their own layer: a solid cell, a black halo cleared in the map, and a blinking ring.
-        pinBrightness.fill(0);
-        // The path: a red arc lifted off the globe, drawn as far as the visit has got (pos counts the stops).
-        const project = (lat, lon, r) => {
-            const la = lat * RAD, dl = (lon - lon0) * RAD;
-            const z = sinL * Math.sin(la) + cosL * Math.cos(la) * Math.cos(dl) * 1;
-            const x = Math.cos(la) * Math.sin(dl), y = cosL * Math.sin(la) - sinL * Math.cos(la) * Math.cos(dl);
-            return { x: x * r, y: y * r, z };
+    // The globe for the intro at p (0 → 1): its centre and radius in px, and the point it faces.
+    const touch = matchMedia('(max-width: 1024px)');
+    const view = p => {
+        const W = stage.clientWidth, H = stage.clientHeight, e = ease(p);
+        const r0 = Math.max(W * 0.62, H * 0.95), y0 = H * 0.22 + r0;            // huge, only its top in view
+        const r1 = touch.matches ? Math.min(W * 0.42, H * 0.26) : Math.min(H * 0.36, W * 0.25);
+        const x1 = touch.matches ? W * 0.5 : W * 0.72, y1 = touch.matches ? H * 0.3 : H * 0.5;
+        return {
+            r: r0 * (r1 / r0) ** e,
+            cx: W / 2 + (x1 - W / 2) * e,
+            cy: y0 + (y1 - y0) * e,
+            lon: stops[0].lon - 360 * (1 - e),                                   // one full turn
+            lat: 30 + (stops[0].lat - 30) * e,
         };
-        const vec = stop => { const la = stop.lat * RAD, lo = stop.lon * RAD; return [Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la)]; };
-        for (let j = 0; j < stops.length - 1; j++) {
-            const done = clamp01(pos - j);
-            if (done <= 0) continue;
-            const a = vec(stops[j]), b = vec(stops[j + 1]);
-            const omega = Math.acos(Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2])) || 1e-6;
-            const steps = 160;
-            for (let k = 0; k <= steps * done; k++) {
-                const t = k / steps;
-                const wa = Math.sin((1 - t) * omega) / Math.sin(omega), wb = Math.sin(t * omega) / Math.sin(omega);
-                const v = [wa * a[0] + wb * b[0], wa * a[1] + wb * b[1], wa * a[2] + wb * b[2]];
-                const pt = project(Math.asin(v[2]) / RAD, Math.atan2(v[1], v[0]) / RAD, 1 + 0.14 * Math.sin(Math.PI * t));
-                if (pt.z < 0) continue;
-                const c = Math.floor(((pt.x / VIEW + 1) / 2) * n), r = Math.floor(((1 - pt.y / VIEW) / 2) * n);
-                if (c < 0 || r < 0 || c >= n || r >= n) continue;
-                pinBrightness[r * n + c] = 255;
-                brightness[r * n + c] = 0;
+    };
+
+    let active = 0, hovered = -1, pos = 0;
+    const draw = time => {
+        if (!cols) return;
+        const introLength = innerHeight * 1.4;
+        const p = reducedMotion ? 1 : clamp01(-container.getBoundingClientRect().top / introLength);
+        const v = view(p);
+        let lon0 = v.lon, lat0 = v.lat;
+        if (p >= 1) {
+            // Settled: the view follows the path between the two stops it is on.
+            const i = Math.min(stops.length - 2, Math.floor(pos)), f = clamp01(pos - i);
+            const from = stops[i], to = stops[Math.min(stops.length - 1, i + 1)];
+            lon0 = from.lon + (((to.lon - from.lon + 540) % 360) - 180) * f;
+            lat0 = from.lat + (to.lat - from.lat) * f;
+        }
+        const sinL = Math.sin(lat0 * RAD), cosL = Math.cos(lat0 * RAD);
+        brightness.fill(0);
+        pinBrightness.fill(0);
+        const c0 = Math.max(0, Math.floor((v.cx - v.r) / CELL)), c1 = Math.min(cols - 1, Math.ceil((v.cx + v.r) / CELL));
+        const r0 = Math.max(0, Math.floor((v.cy - v.r) / CELL)), r1 = Math.min(rows - 1, Math.ceil((v.cy + v.r) / CELL));
+        for (let row = r0; row <= r1; row++) {
+            const y = (v.cy - (row + 0.5) * CELL) / v.r;
+            for (let col = c0; col <= c1; col++) {
+                const x = ((col + 0.5) * CELL - v.cx) / v.r;
+                const rr = x * x + y * y;
+                if (rr > 1) continue;
+                const z = Math.sqrt(1 - rr);
+                const lat = Math.asin(z * sinL + y * cosL) / RAD;
+                const lon = ((lon0 + Math.atan2(x, z * cosL - y * sinL) / RAD) % 360 + 540) % 360 - 180;
+                const gx = Math.min(360 * GRID - 1, Math.floor((lon + 180) * GRID)), gy = Math.min(180 * GRID - 1, Math.floor((90 - lat) * GRID));
+                const lit = Math.max(0, x * SUN[0] + y * SUN[1] + z * SUN[2]);
+                brightness[row * cols + col] = land[gy * 360 * GRID + gx] ? 80 + 175 * lit : 10 + 45 * lit;
             }
         }
-        stops.forEach((stop, i) => {
-            const la = stop.lat * RAD, dl = (stop.lon - lon0) * RAD;
-            const z = sinL * Math.sin(la) + cosL * Math.cos(la) * Math.cos(dl);
-            if (z < 0.05) return;
-            const x = Math.cos(la) * Math.sin(dl), y = cosL * Math.sin(la) - sinL * Math.cos(la) * Math.cos(dl);
-            const col = Math.floor(((x / VIEW + 1) / 2) * n), row = Math.floor(((1 - y / VIEW) / 2) * n);
-            const ring = i === (hovered >= 0 ? hovered : active) && Math.floor(time / 450) % 2 === 0;
-            for (let dy = -2; dy <= 2; dy++) {
-                for (let dx = -2; dx <= 2; dx++) {
-                    const c = col + dx, r = row + dy;
-                    if (c < 0 || r < 0 || c >= n || r >= n) continue;
-                    const d = Math.max(Math.abs(dx), Math.abs(dy));
-                    if (d === 0) pinBrightness[r * n + c] = 255;
-                    else if (d === 1) brightness[r * n + c] = 0;
-                    else if (ring) pinBrightness[r * n + c] = 100;
+
+        // Once the globe has settled: the path, a white arc lifted off the globe, drawn as far as the visit has got,
+        // and the stops, a white cell in a cleared halo, the one being read ringed.
+        const settled = clamp01((p - 0.9) / 0.1);
+        const where = (lat, lon, lift = 1) => {
+            const la = lat * RAD, dl = (lon - lon0) * RAD;
+            return {
+                x: v.cx + Math.cos(la) * Math.sin(dl) * v.r * lift,
+                y: v.cy - (cosL * Math.sin(la) - sinL * Math.cos(la) * Math.cos(dl)) * v.r * lift,
+                z: sinL * Math.sin(la) + cosL * Math.cos(la) * Math.cos(dl),
+            };
+        };
+        const put = (x, y, value, clear) => {
+            const col = Math.floor(x / CELL), row = Math.floor(y / CELL);
+            if (col < 0 || row < 0 || col >= cols || row >= rows) return;
+            if (value) pinBrightness[row * cols + col] = value;
+            if (clear) brightness[row * cols + col] = 0;
+        };
+        const shown = [];
+        if (settled > 0) {
+            const vec = stop => { const la = stop.lat * RAD, lo = stop.lon * RAD; return [Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la)]; };
+            for (let j = 0; j < stops.length - 1; j++) {
+                const done = clamp01(pos - j);
+                if (done <= 0) continue;
+                const a = vec(stops[j]), b = vec(stops[j + 1]);
+                const omega = Math.acos(Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2])) || 1e-6;
+                for (let k = 0, steps = 200; k <= steps * done; k++) {
+                    const t = k / steps;
+                    const wa = Math.sin((1 - t) * omega) / Math.sin(omega), wb = Math.sin(t * omega) / Math.sin(omega);
+                    const q = [wa * a[0] + wb * b[0], wa * a[1] + wb * b[1], wa * a[2] + wb * b[2]];
+                    const pt = where(Math.asin(q[2]) / RAD, Math.atan2(q[1], q[0]) / RAD, 1 + 0.14 * Math.sin(Math.PI * t));
+                    if (pt.z > 0) put(pt.x, pt.y, 255, true);
                 }
             }
-        });
+            stops.forEach((stop, i) => {
+                const pt = where(stop.lat, stop.lon);
+                if (pt.z < 0.08) return;
+                const isActive = i === (hovered >= 0 ? hovered : active);
+                const ring = isActive && Math.floor(time / 450) % 2 === 0;
+                for (let dy = -2; dy <= 2; dy++) {
+                    for (let dx = -2; dx <= 2; dx++) {
+                        const d = Math.max(Math.abs(dx), Math.abs(dy));
+                        const x = pt.x + dx * CELL, y = pt.y + dy * CELL;
+                        if (d === 0) put(x, y, 255, true);
+                        else if (d === 1) put(x, y, 0, true);
+                        else if (ring) put(x, y, 100, false);
+                    }
+                }
+                shown.push({ stop, pt, isActive });
+            });
+        }
         cells.paint(brightness);
         pins.paint(pinBrightness);
+
+        // The names of the stops, small and square-cornered: the stop being read is inverted.
+        if (shown.length) {
+            const k = marks.width / stage.clientWidth;
+            labels.save();
+            labels.scale(k, k);
+            labels.globalAlpha = settled;
+            labels.font = '500 13px Satoshi, sans-serif';
+            labels.textBaseline = 'middle';
+            for (const { stop, pt, isActive } of shown) {
+                const w = labels.measureText(stop.place).width;
+                const x = pt.x + 22, y = pt.y;
+                labels.fillStyle = isActive ? ink : paper;
+                labels.fillRect(x - 8, y - 12, w + 16, 24);
+                labels.fillStyle = isActive ? paper : ink;
+                labels.fillText(stop.place, x, y + 1);
+            }
+            labels.restore();
+        }
     };
 
-    const touch = matchMedia('(max-width: 1024px)');
     // Where the visit stands, in stops: the stop centred on screen, plus how far the next one has come up.
+    let scrollPos = 0;
     const pick = () => {
-        if (touch.matches) { scrollPos = active; return; }
         const centres = items.map(item => { const r = item.getBoundingClientRect(); return r.top + r.height / 2 - innerHeight / 2; });
         let i = 0;
         while (i < items.length - 1 && centres[i + 1] <= 0) i++;
@@ -205,11 +261,15 @@ export async function journey(container) {
     });
 
     fit();
+    if (reducedMotion) {
+        pos = stops.length - 1;
+        mark();
+        const still = () => { fit(); draw(0); };
+        still();
+        addEventListener('resize', still, { passive: true });
+        return;
+    }
     addEventListener('resize', fit, { passive: true });
-    if (reducedMotion) { pos = stops.length - 1; mark(); draw(0); return; }
-
-    // Touch screens have no pinned column: the globe visits the stops on its own.
-    setInterval(() => { if (touch.matches) { active = (active + 1) % stops.length; mark(); } }, 3500);
     let visible = false;
     new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(stage);
     let last = 0;
@@ -219,16 +279,9 @@ export async function journey(container) {
         const dt = Math.min(0.05, (time - last) / 1000 || 0);
         last = time;
         pick();
-        const ease = 1 - Math.exp(-dt * 2.5);
-        pos += ((hovered >= 0 ? hovered : scrollPos) - pos) * ease;
+        pos += ((hovered >= 0 ? hovered : scrollPos) - pos) * (1 - Math.exp(-dt * 4));
         active = Math.round(pos);
         mark();
-        // The view follows the path between the two stops it is on.
-        const i = Math.min(stops.length - 2, Math.floor(pos)), f = clamp01(pos - i);
-        const from = stops[i], to = stops[Math.min(stops.length - 1, i + 1)];
-        const lonGoal = from.lon + (((to.lon - from.lon + 540) % 360) - 180) * f, latGoal = from.lat + (to.lat - from.lat) * f;
-        lon0 += (((lonGoal - lon0 + 540) % 360) - 180) * ease;
-        lat0 += (latGoal - lat0) * ease;
         draw(time);
     };
     requestAnimationFrame(loop);

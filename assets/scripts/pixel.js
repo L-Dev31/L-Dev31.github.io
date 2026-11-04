@@ -1,12 +1,28 @@
-// Drawing the way the hero video is drawn (the way the hero used to be baked): a grid of cells, each one either
-// a pixel, a diamond, a dot or nothing, picked from a brightness 0-255 with the same thresholds.
+// Drawing the way the hero video is drawn: a grid of cells, each one solid, a checkerboard, a few dots or nothing,
+// picked from a brightness 0-255.
 import { reducedMotion } from './common.js';
 
 export const CELL = 10;                 // css px per cell
-const GAP = 2;                          // px left empty between two cells
 const LEVELS = [22, 60, 130];           // where dots, checkerboard and solid start
 
-// The three drawn states of one cell, side by side: a dot, a diamond, a pixel (the same shapes as the text reveal).
+// One cell of side c at (x, y), the terminal way: 0 dots, 1 checkerboard, 2 solid. The square takes 80% of the cell
+// (the rest is the gap), on a 4 x 4 lattice: a 10px cell is an 8px square of 2px dots, as in the hero. Also used by
+// the text reveal (drawCells() in effects.js), so letters and pictures are made of the same cells.
+export function drawCell(ctx, state, x, y, c) {
+    const s = c * 0.8;
+    if (state === 2) {
+        ctx.fillRect(x, y, s, s);
+        return;
+    }
+    const q = s / 4;
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            if (state === 1 ? (i + j) % 2 === 0 : i % 2 === 1 && j % 2 === 1) ctx.fillRect(x + i * q, y + j * q, q, q);
+        }
+    }
+}
+
+// The three drawn states of one cell, side by side: dots, checkerboard, solid.
 function atlas(color, scale) {
     const size = CELL * scale;
     const canvas = document.createElement('canvas');
@@ -14,16 +30,7 @@ function atlas(color, scale) {
     canvas.height = size;
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = color;
-    const c = size / 2, square = (CELL - GAP) * scale;
-    // dot
-    const d = size * 0.28;
-    ctx.fillRect(c - d / 2, c - d / 2, d, d);
-    // diamond
-    ctx.beginPath();
-    ctx.moveTo(size + c, size * 0.04); ctx.lineTo(size * 1.96, c); ctx.lineTo(size + c, size * 0.96); ctx.lineTo(size * 1.04, c);
-    ctx.fill();
-    // pixel
-    ctx.fillRect(size * 2, 0, square, square);
+    for (let state = 0; state < 3; state++) drawCell(ctx, state, state * size, 0, size);
     return canvas;
 }
 
@@ -42,32 +49,14 @@ export function cellCanvas(canvas, color) {
         },
         get cols() { return cols; },
         get rows() { return rows; },
-        // `fx` (optional): { x, y, r, strength } in canvas pixels. Cells inside the circle are pushed away from its centre
-        // and turned by their angle around it, more the closer they are.
-        paint(brightness, fx) {
+        paint(brightness) {
             const size = CELL * scale;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const live = fx && fx.strength > 0.002;
             for (let i = 0; i < brightness.length; i++) {
                 const b = brightness[i];
                 if (b < LEVELS[0]) continue;
                 const state = b < LEVELS[1] ? 0 : b < LEVELS[2] ? 1 : 2;
-                const x = (i % cols) * size, y = ((i / cols) | 0) * size;
-                if (live) {
-                    const cx = x + size / 2, cy = y + size / 2;
-                    const dx = cx - fx.x, dy = cy - fx.y, d = Math.hypot(dx, dy);
-                    if (d < fx.r) {
-                        const u = 1 - d / fx.r, k = u * u * (3 - 2 * u) * fx.strength;
-                        const push = k * size * 1.6 / (d || 1);
-                        ctx.save();
-                        ctx.translate(cx + dx * push, cy + dy * push);
-                        ctx.rotate(k * Math.atan2(dy, dx));
-                        ctx.drawImage(tiles, state * size, 0, size, size, -size / 2, -size / 2, size, size);
-                        ctx.restore();
-                        continue;
-                    }
-                }
-                ctx.drawImage(tiles, state * size, 0, size, size, x, y, size, size);
+                ctx.drawImage(tiles, state * size, 0, size, size, (i % cols) * size, ((i / cols) | 0) * size, size, size);
             }
         },
     };
@@ -210,4 +199,48 @@ export function extrudedSvg(canvas, color) {
             cancelAnimationFrame(frame);
         },
     };
+}
+
+// ─── Pixel edges ──────────────────────────────────────────────────────────────
+// Where two sections meet, the lower one crumbles up into the upper one in the same cells: solid, then a row of
+// checkerboard, then a row of dots, stepping like a skyline, with a few stray dots above.
+// <div class="pixel-edge" data-color="--accent"> as the first child of a section, in that section's colour.
+export function pixelEdges() {
+    const ROWS = 10;
+    document.querySelectorAll('.pixel-edge').forEach((host, n) => {
+        const canvas = document.createElement('canvas');
+        canvas.setAttribute('aria-hidden', 'true');
+        host.append(canvas);
+        const color = getComputedStyle(document.documentElement).getPropertyValue(host.dataset.color || '--accent').trim();
+        const cells = cellCanvas(canvas, color);
+        let seed = 0, built = 0;
+        const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+        const build = () => {
+            const cols = Math.ceil(host.clientWidth / CELL);
+            if (!cols || cols === built) return;
+            built = cols;
+            seed = 4241 + n * 977;   // the same edge every time
+            cells.resize(cols, ROWS);
+            // Height of the crumbled band per column, in runs of 2 to 5 columns.
+            const heights = [];
+            let h = 6;
+            while (heights.length < cols) {
+                h = Math.max(3, Math.min(ROWS, h + Math.round((rand() - 0.5) * 5)));
+                for (let run = 2 + Math.floor(rand() * 4); run > 0; run--) heights.push(h);
+            }
+            const brightness = new Uint8Array(cols * ROWS);
+            for (let col = 0; col < cols; col++) {
+                for (let row = 0; row < ROWS; row++) {
+                    const k = ROWS - 1 - row, top = heights[col];   // k: rows up from the section
+                    let v = k < top - 2 ? 200 : k === top - 2 ? 90 : k === top - 1 ? 40 : 0;
+                    if (!v && k < top + 2 && rand() < 0.07) v = 40;
+                    else if (v === 200 && k > 1 && rand() < 0.05) v = 90;
+                    brightness[row * cols + col] = v;
+                }
+            }
+            cells.paint(brightness);
+        };
+        build();
+        addEventListener('resize', build, { passive: true });
+    });
 }
