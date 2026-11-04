@@ -70,8 +70,8 @@ function projectPreview(container, rows) {
         const box = container.getBoundingClientRect();
         const slot = row.querySelector('.index-slot').getBoundingClientRect();
         const r = row.getBoundingClientRect();
-        // Inside the column with a margin of 24px on each side, in a round number of cells (a multiple of 4).
-        const cols = Math.max(16, Math.floor((slot.width - 48) / CELL / 4) * 4);
+        // Inside the column with a margin of 8px on each side, in a round number of cells (a multiple of 4).
+        const cols = Math.max(16, Math.floor((slot.width - 16) / CELL / 4) * 4);
         figure.style.left = `${slot.left - box.left + (slot.width - cols * CELL) / 2}px`;
         figure.style.top = `${r.top - box.top + r.height / 2}px`;
         figure.style.width = `${cols * CELL}px`;

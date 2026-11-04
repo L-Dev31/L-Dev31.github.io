@@ -288,7 +288,12 @@ function pixelHero(video) {
         const sw = ba > va ? video.videoWidth : video.videoHeight * ba, sh = ba > va ? video.videoWidth / ba : video.videoHeight;
         sampleCtx.drawImage(video, (video.videoWidth - sw) / 2, (video.videoHeight - sh) / 2, sw, sh, 0, 0, cells.cols, cells.rows);
         const rgba = sampleCtx.getImageData(0, 0, cells.cols, cells.rows).data;
-        for (let i = 0; i < brightness.length; i++) brightness[i] = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114;
+        // Darker and more contrasted than the plain picture: the shadows drop out, the lights stay solid,
+        // so the features (eyes, brows, jaw) read from the pattern of cells.
+        for (let i = 0; i < brightness.length; i++) {
+            const v = (rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114) / 255;
+            brightness[i] = 255 * Math.min(1, Math.max(0, (v - 0.06) / 0.8) ** 1.3);
+        }
         cells.paint(brightness);
     };
     requestAnimationFrame(draw);
