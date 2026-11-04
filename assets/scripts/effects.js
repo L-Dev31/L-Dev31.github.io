@@ -347,7 +347,7 @@ function pixelHero(video) {
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
     let brightness = null, lastTime = -1, lastBox = '', wasLive = false;
 
-    // The pointer opens a 200px circle in the cells (pixelcells push away and turn), eased in and out.
+    // The pointer opens a 600px circle in the cells (pixelcells push away and turn), eased in and out.
     const fine = matchMedia('(hover: hover) and (pointer: fine)').matches && !reducedMotion;
     const pointer = { x: 0, y: 0, tx: 0, ty: 0, strength: 0, target: 0 };
     if (fine) {
@@ -355,10 +355,11 @@ function pixelHero(video) {
             const r = canvas.getBoundingClientRect();
             const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom && scrollY < innerHeight * 3;
             pointer.target = inside ? 1 : 0;
+            document.documentElement.classList.toggle('hero-field', inside);   // no visible cursor in the field
             pointer.tx = e.clientX - r.left; pointer.ty = e.clientY - r.top;
             if (inside && !pointer.strength) { pointer.x = pointer.tx; pointer.y = pointer.ty; }
         }, { passive: true });
-        document.addEventListener('pointerleave', () => { pointer.target = 0; });
+        document.addEventListener('pointerleave', () => { pointer.target = 0; document.documentElement.classList.remove('hero-field'); });
     }
 
     const draw = () => {
@@ -375,10 +376,10 @@ function pixelHero(video) {
             brightness = new Uint8Array(cols * rows);
             lastTime = -1;
         }
-        pointer.strength += (pointer.target - pointer.strength) * 0.12;
-        pointer.x += (pointer.tx - pointer.x) * 0.25;
-        pointer.y += (pointer.ty - pointer.y) * 0.25;
-        const fx = pointer.strength > 0.002 ? { x: pointer.x * (canvas.width / w), y: pointer.y * (canvas.height / h), r: 100 * (canvas.width / w), strength: pointer.strength } : null;
+        pointer.strength += (pointer.target - pointer.strength) * 0.04;
+        pointer.x += (pointer.tx - pointer.x) * 0.045;
+        pointer.y += (pointer.ty - pointer.y) * 0.045;
+        const fx = pointer.strength > 0.002 ? { x: pointer.x * (canvas.width / w), y: pointer.y * (canvas.height / h), r: 300 * (canvas.width / w), strength: pointer.strength } : null;
         if (video.currentTime === lastTime) {
             if (fx || wasLive) cells.paint(brightness, fx);   // the circle is still moving, or has just closed
             wasLive = !!fx;
