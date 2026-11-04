@@ -12,8 +12,8 @@
     --black: #F4E9DD;
     --pink: #F4C2B8;
     --paper: #F4E9DD;
-    --dusk: #2A2A52;   /* the dark of the hero (a deep indigo): pink on dusk there, wine ink on cream everywhere else */
-    --face: #F4C2B8;   /* the light the face is drawn in */
+    --dusk: #4C0B13;   /* the dark of the hero: a deep red, so it stays in the family of the accent */
+    --face: #FF9F96;   /* the light the face and the type are drawn in: a coral that sits with the red */
     --ink: #4A2B28;
     --text: var(--white);
     --text-muted: var(--white);
@@ -305,6 +305,10 @@ html.custom-cursor * {
 }
 
 /* Over the accent red (the projects, the footer) the bar turns black; set by navTone() in common.js. */
+.navbar.on-dark {
+    color: var(--face);
+}
+
 .navbar.on-accent {
     color: var(--black);
 }

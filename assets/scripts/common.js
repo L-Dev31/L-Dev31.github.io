@@ -102,9 +102,14 @@ export function initPage() {
 function navTone() {
     const bar = document.querySelector('.navbar');
     const reds = [...document.querySelectorAll('#featured-projects')];
-    if (!bar || !reds.length) return;
+    const aboutHero = document.querySelector('.about-header');
+    const projects = document.getElementById('featured-projects');
+    if (!bar) return;
     const update = () => {
         const y = bar.offsetHeight / 2;
+        // Over the dark hero the bar is coral rather than red.
+        const overHero = aboutHero ? aboutHero.getBoundingClientRect().bottom > y : projects ? projects.getBoundingClientRect().top > y : false;
+        bar.classList.toggle('on-dark', overHero);
         bar.classList.toggle('on-accent', reds.some(el => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; }));
     };
     addEventListener('scroll', throttled(update), { passive: true });
