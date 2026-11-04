@@ -2439,6 +2439,14 @@ html:has(.project-main)::-webkit-scrollbar {
 }
 
 /* ── Mobile project carousel ── */
+@media (max-width: 768px) {
+    /* On a phone the page is the showcase: no about hero, no section title */
+    #about-me,
+    #featured-projects > .title,
+    .featured-filters {
+        display: none;
+    }
+
     #featured-projects {
         padding: 0 !important;
     }
@@ -2446,16 +2454,15 @@ html:has(.project-main)::-webkit-scrollbar {
     .mob-carousel-section {
         position: relative;
         width: 100%;
+        min-width: 0;
         background: var(--black);
     }
 
     .mob-carousel {
         display: flex;
-        overflow-x: scroll;
+        overflow-x: auto;
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-y;
     }
 
     .mob-carousel::-webkit-scrollbar {
@@ -2463,228 +2470,189 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .mob-card {
-        scroll-snap-align: start;
-        width: 100vw;
+        flex: 0 0 100%;
         min-height: 100svh;
         display: flex;
         flex-direction: column;
-        flex-shrink: 0;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+    }
+
+    /* Top part: image, title on a fade from black (bottom) to transparent (top) */
+    .mob-card-top {
         position: relative;
+        flex: 0 0 55svh;
         overflow: hidden;
     }
 
     .mob-card-img {
-        flex: 0 0 52svh;
-        background-size: cover;
-        background-position: center top;
-        background-repeat: no-repeat;
-        position: relative;
-    }
-
-    /* Subtle dark scrim at the bottom of the image */
-    .mob-card-img::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%);
-        pointer-events: none;
-    }
-
-    .mob-card-body {
-        flex: 1;
-        padding: 20px var(--pad-edge) max(24px, calc(env(safe-area-inset-bottom) + 16px));
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        overflow-y: auto;
-        background: var(--black);
-        scrollbar-width: none;
-    }
-
-    .mob-card-body::-webkit-scrollbar {
-        display: none;
-    }
-
-    .mob-card-meta {
-        font-size: 10px;
-        letter-spacing: 2.5px;
-        text-transform: uppercase;
-        color: var(--text-faint, #666);
-        font-family: var(--font-sans);
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        display: block;
     }
 
     .mob-card-title {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 0;
+        padding: 72px var(--pad-edge) 20px;
+        background: linear-gradient(to top, var(--black), transparent);
         font-family: var(--font-display);
         font-style: italic;
-        font-size: clamp(30px, 9vw, 50px);
-        color: var(--white);
-        line-height: 1.05;
-        margin: 0 0 2px;
         font-weight: bold;
+        font-size: clamp(30px, 9vw, 50px);
+        line-height: 1.05;
+        color: var(--white);
+    }
+
+    /* Bottom part: role, description, tags, then the button */
+    .mob-card-bottom {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        padding: 8px var(--pad-edge) 96px;
+        background: var(--black);
+    }
+
+    .mob-card-role,
+    .mob-card-desc,
+    .mob-card-tags {
+        align-self: stretch;
+        margin: 0;
     }
 
     .mob-card-role {
-        font-size: 11px;
-        letter-spacing: 1.5px;
+        font-family: var(--font-sans);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--white);
+    }
+
+    .mob-card-label {
+        display: block;
+        margin-bottom: 2px;
+        font-size: 10px;
+        font-weight: 400;
+        letter-spacing: 2px;
         text-transform: uppercase;
         color: var(--text-muted, #999);
-        margin: 0;
-        font-family: var(--font-sans);
     }
 
     .mob-card-desc {
         font-size: 14px;
         line-height: 1.6;
         color: var(--text, #ccc);
-        margin: 4px 0 0;
     }
 
     .mob-card-tags {
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
-        margin-top: 4px;
     }
 
     .mob-card-tags span {
         padding: 5px 12px;
         border: 1px solid var(--border, rgba(255,255,255,0.15));
         border-radius: var(--radius-pill, 999px);
+        font-family: var(--font-sans);
         font-size: 9px;
         letter-spacing: 1.2px;
         text-transform: uppercase;
         color: var(--text-muted, #999);
-        font-family: var(--font-sans);
         white-space: nowrap;
     }
 
+    /* View project: diagonal white-25% glass pill, soft light blobs orbiting its edges */
     .mob-card-cta {
+        position: relative;
         margin-top: auto;
-        align-self: flex-start;
-        padding: 11px 22px;
-        border: 1px solid rgba(255,255,255,0.4);
-        border-radius: var(--radius-pill, 999px);
+        padding: 14px 34px;
+        overflow: hidden;
+        isolation: isolate;
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.25), transparent, rgba(255,255,255,0.25));
         color: var(--white);
-        font-family: var(--font-sans);
-        font-size: 10px;
+        font-family: 'Satoshi', sans-serif;
+        font-size: 12px;
+        font-weight: 900;
         letter-spacing: 2px;
         text-transform: uppercase;
         text-decoration: none;
-        border-color: transparent;
+        transition: transform 0.2s;
+    }
+
+    .mob-card-cta::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        left: 50%;
+        top: 50%;
+        width: 100%;
+        aspect-ratio: 1;
+        translate: -50% -50%;
         background:
-            linear-gradient(var(--black), var(--black)) padding-box,
-            linear-gradient(110deg, #ffffff, #8a8a8a, #ffffff, #8a8a8a) border-box;
-        background-size: 100% 100%, 300% 100%;
-        animation: cta-flow 4s linear infinite;
-        transition: transform 0.2s, box-shadow 0.2s;
+            radial-gradient(circle at 100% 50%, rgba(255,255,255,0.55) 0, transparent 38%),
+            radial-gradient(circle at 0% 50%, rgba(255,255,255,0.4) 0, transparent 38%);
+        filter: blur(8px);
+        animation: cta-orbit 6s linear infinite;
     }
 
     .mob-card-cta:active {
         transform: scale(0.96);
-        box-shadow: 0 0 18px rgba(255,255,255,0.35);
     }
 
-    @keyframes cta-flow {
-        to { background-position: 0 0, 300% 0; }
+    @keyframes cta-orbit {
+        to { rotate: 360deg; }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .mob-card-cta { animation: none; }
-    }
-
-    /* Bottom navigation - text pills with sliding active indicator */
-    .mob-nav {
+    /* Dots: outline and small when idle, filled and full size when active */
+    .mob-dots {
         position: sticky;
         bottom: 0;
-        left: 0;
-        right: 0;
         z-index: 20;
         display: flex;
         justify-content: center;
-        align-items: center;
-        gap: 8px;
-        padding: 16px var(--pad-edge) max(20px, calc(env(safe-area-inset-bottom) + 16px));
-        background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 100%);
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-        /* Sliding pill indicator */
-        --pill-left: 0;
-        --pill-width: 0;
-    }
-
-    .mob-nav::before {
-        content: '';
-        position: absolute;
-        bottom: calc(16px + max(20px, calc(env(safe-area-inset-bottom) + 16px)) / 2);
-        left: var(--pill-left);
-        width: var(--pill-width);
-        height: 36px;
-        background: var(--white);
-        border-radius: var(--radius-pill);
-        box-shadow: 0 2px 12px rgba(0,0,0,0.4);
-        transition: left 0.4s var(--ease-out), width 0.3s var(--ease-out);
+        gap: 10px;
+        padding: 0 0 max(28px, calc(env(safe-area-inset-bottom) + 20px));
+        margin-top: -56px;
+        height: 56px;
+        align-items: flex-end;
         pointer-events: none;
-        z-index: 0;
     }
 
-    .mob-nav-btn {
-        position: relative;
-        z-index: 1;
-        padding: 8px 16px;
-        border: none;
-        border-radius: var(--radius-pill);
+    .mob-dot {
+        pointer-events: auto;
+        width: 12px;
+        height: 12px;
+        padding: 0;
+        border: 1.5px solid var(--white);
+        border-radius: 50%;
         background: transparent;
-        color: rgba(255,255,255,0.5);
-        font-family: 'Satoshi', sans-serif;
-        font-weight: 700;
-        font-size: 11px;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: color 0.2s var(--ease-out);
+        scale: 0.6;
+        transition: scale 0.25s var(--ease-out), background 0.25s var(--ease-out);
         -webkit-appearance: none;
-        white-space: nowrap;
+        cursor: pointer;
     }
 
-    .mob-nav-btn:hover,
-    .mob-nav-btn:focus-visible {
-        color: var(--white);
+    .mob-dot.active {
+        background: var(--white);
+        scale: 1;
     }
 
-    .mob-nav-btn.active {
-        color: var(--ink);
-    }
-
-    .mob-nav-btn:focus-visible {
+    .mob-dot:focus-visible {
         outline: 2px solid var(--white);
         outline-offset: 3px;
     }
 
-    /* Reduced motion: disable pill slide animation */
     @media (prefers-reduced-motion: reduce) {
-        .mob-nav::before {
-            transition: none;
-        }
-    }
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
-        opacity: 0;
-        animation: dot-pulse 1.8s var(--ease-out) infinite;
-    }
-
-    @keyframes dot-slide {
-        from {
-            transform: scale(1.4) translateX(var(--slide-from, 0));
-        }
-        to {
-            transform: scale(1.4) translateX(0);
-        }
-    }
-
-    @keyframes dot-pulse {
-        0% { opacity: 0.4; transform: scale(1); }
-        50% { opacity: 0.15; transform: scale(1.6); }
-        100% { opacity: 0.4; transform: scale(1); }
+        .mob-card-cta::before { animation: none; }
+        .mob-dot { transition: none; }
     }
 }
 
