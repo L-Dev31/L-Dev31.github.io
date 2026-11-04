@@ -160,6 +160,9 @@ class ProjectCarousel {
         this.wrapper = el('div', 'mob-carousel-section');
         // Smoke is one fixed layer over the track, so it stays put while cards slide under it
         this.wrapper.append(el('div', 'mob-smoke'));
+        // One View project button for the whole showcase: fixed on screen, its link follows the active project
+        this.cta = el('a', 'mob-card-cta');
+        this.cta.append(el('i', 'mob-glow'), el('i', 'mob-glow'), el('span', '', 'View project'));
         this.carousel = el('div', 'mob-carousel');
         this.carousel.setAttribute('role', 'list');
         this.dots = el('nav', 'mob-dots');
@@ -185,11 +188,7 @@ class ProjectCarousel {
             const role = el('p', 'mob-card-role', [project.role, year].filter(Boolean).join(' · '));
             const tags = el('div', 'mob-card-tags');
             (project.tags || []).slice(0, 5).forEach(t => tags.append(el('span', '', t)));
-            const cta = el('a', 'mob-card-cta');
-            cta.href = `project.html?id=${project.id}`;
-            cta.setAttribute('aria-label', `View project: ${project.title}`);
-            cta.append(el('i', 'mob-glow'), el('i', 'mob-glow'), el('span', '', 'View project'));
-            bottom.append(role, el('p', 'mob-card-desc', project.subtitle || project.lede || ''), tags, cta);
+            bottom.append(role, el('p', 'mob-card-desc', project.subtitle || project.lede || ''), tags);
 
             card.append(top, bottom);
             this.carousel.append(card);
@@ -201,7 +200,8 @@ class ProjectCarousel {
             this.dots.append(dot);
         });
 
-        this.wrapper.append(this.carousel, this.dots);
+        this.wrapper.append(this.carousel, this.cta, this.dots);
+        this.setActive(0);
         this.section.append(this.wrapper);
 
         // The dot of the card that is mostly in view is the active one
@@ -211,10 +211,17 @@ class ProjectCarousel {
                 e.target.classList.toggle('is-active', on);
                 if (!on) continue;
                 const i = [...this.carousel.children].indexOf(e.target);
-                [...this.dots.children].forEach((d, k) => d.classList.toggle('active', k === i));
+                this.setActive(i);
             }
         }, { root: this.carousel, threshold: 0.6 });
         [...this.carousel.children].forEach(c => this.observer.observe(c));
+    }
+
+    setActive(i) {
+        [...this.dots.children].forEach((d, k) => d.classList.toggle('active', k === i));
+        const p = this.projects[i];
+        this.cta.href = `project.html?id=${p.id}`;
+        this.cta.setAttribute('aria-label', `View project: ${p.title}`);
     }
 
     unmount() {

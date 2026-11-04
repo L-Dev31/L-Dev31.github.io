@@ -2594,11 +2594,13 @@ html:has(.project-main)::-webkit-scrollbar {
         white-space: nowrap;
     }
 
-    /* View project: glass pill with a half-transparent white outline; two soft light blobs
-       each ride the button's edge like a rail, clipped to the button */
+    /* View project: glass pill fixed at the bottom centre of the screen. It never moves, never fades. */
     .mob-card-cta {
-        position: relative;
-        margin-top: auto;
+        position: absolute;
+        left: 50%;
+        bottom: 88px;
+        z-index: 3;
+        translate: -50% 0;
         padding: 14px 34px;
         overflow: hidden;
         isolation: isolate;
@@ -2612,32 +2614,17 @@ html:has(.project-main)::-webkit-scrollbar {
         letter-spacing: 2px;
         text-transform: uppercase;
         text-decoration: none;
-        /* last bottom item: its own transition must include the slide-down, or it snaps in */
-        transition: transform 0.2s, translate 0.6s var(--ease-out) 0.24s;
-    }
-
-    /* The pill itself never fades (its background stays put between projects); only its
-       label and glows fade in on arrival */
-    .mob-card-bottom > .mob-card-cta {
-        opacity: 1;
-    }
-
-    .mob-card-cta > span,
-    .mob-card-cta .mob-glow {
-        opacity: 0;
-        transition: opacity 0.6s ease 0.3s;
-    }
-
-    .mob-card.is-active .mob-card-cta > span,
-    .mob-card.is-active .mob-card-cta .mob-glow {
-        opacity: 1;
+        white-space: nowrap;
+        transition: transform 0.2s;
     }
 
     .mob-card-cta > span {
         position: relative;
         z-index: 1;
+        font-weight: 900;
     }
 
+    /* Two soft light blobs ride the button's edge like a rail, clipped to the button */
     .mob-glow {
         position: absolute;
         top: 0;
@@ -2658,13 +2645,13 @@ html:has(.project-main)::-webkit-scrollbar {
         animation-delay: -5s;
     }
 
-    .mob-card-cta:active {
-        transform: scale(0.96);
-    }
-
     @keyframes glow-rail {
         from { offset-distance: 0%; }
         to { offset-distance: 100%; }
+    }
+
+    .mob-card-cta:active {
+        transform: scale(0.96);
     }
 
     /* Dots: sit under the cards (not sticky); outline and small when idle, filled when active */
