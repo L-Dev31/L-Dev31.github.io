@@ -112,7 +112,7 @@ export async function journey(container) {
         pinBrightness = new Uint8Array(n * n);
     };
 
-    let active = 0, hovered = -1;
+    let active = 0, hovered = -1, pos = 0, scrollPos = 0;
     let lon0 = stops[0].lon, lat0 = stops[0].lat;
     const draw = time => {
         const n = size;
@@ -136,6 +136,32 @@ export async function journey(container) {
         }
         // Stops, in the accent red on their own layer: a solid cell, a black halo cleared in the map, and a blinking ring.
         pinBrightness.fill(0);
+        // The path: a red arc lifted off the globe, drawn as far as the visit has got (pos counts the stops).
+        const project = (lat, lon, r) => {
+            const la = lat * RAD, dl = (lon - lon0) * RAD;
+            const z = sinL * Math.sin(la) + cosL * Math.cos(la) * Math.cos(dl) * 1;
+            const x = Math.cos(la) * Math.sin(dl), y = cosL * Math.sin(la) - sinL * Math.cos(la) * Math.cos(dl);
+            return { x: x * r, y: y * r, z };
+        };
+        const vec = stop => { const la = stop.lat * RAD, lo = stop.lon * RAD; return [Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la)]; };
+        for (let j = 0; j < stops.length - 1; j++) {
+            const done = clamp01(pos - j);
+            if (done <= 0) continue;
+            const a = vec(stops[j]), b = vec(stops[j + 1]);
+            const omega = Math.acos(Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2])) || 1e-6;
+            const steps = 160;
+            for (let k = 0; k <= steps * done; k++) {
+                const t = k / steps;
+                const wa = Math.sin((1 - t) * omega) / Math.sin(omega), wb = Math.sin(t * omega) / Math.sin(omega);
+                const v = [wa * a[0] + wb * b[0], wa * a[1] + wb * b[1], wa * a[2] + wb * b[2]];
+                const pt = project(Math.asin(v[2]) / RAD, Math.atan2(v[1], v[0]) / RAD, 1 + 0.14 * Math.sin(Math.PI * t));
+                if (pt.z < 0) continue;
+                const c = Math.floor(((pt.x / VIEW + 1) / 2) * n), r = Math.floor(((1 - pt.y / VIEW) / 2) * n);
+                if (c < 0 || r < 0 || c >= n || r >= n) continue;
+                pinBrightness[r * n + c] = 255;
+                brightness[r * n + c] = 0;
+            }
+        }
         stops.forEach((stop, i) => {
             const la = stop.lat * RAD, dl = (stop.lon - lon0) * RAD;
             const z = sinL * Math.sin(la) + cosL * Math.cos(la) * Math.cos(dl);
@@ -159,15 +185,14 @@ export async function journey(container) {
     };
 
     const touch = matchMedia('(max-width: 1024px)');
+    // Where the visit stands, in stops: the stop centred on screen, plus how far the next one has come up.
     const pick = () => {
-        if (touch.matches) return;
-        let best = 0, dist = Infinity;
-        items.forEach((item, i) => {
-            const r = item.getBoundingClientRect();
-            const d = Math.abs(r.top + r.height / 2 - innerHeight / 2);
-            if (d < dist) { dist = d; best = i; }
-        });
-        active = best;
+        if (touch.matches) { scrollPos = active; return; }
+        const centres = items.map(item => { const r = item.getBoundingClientRect(); return r.top + r.height / 2 - innerHeight / 2; });
+        let i = 0;
+        while (i < items.length - 1 && centres[i + 1] <= 0) i++;
+        const frac = i < items.length - 1 ? clamp01(-centres[i] / (centres[i + 1] - centres[i])) : 0;
+        scrollPos = i + frac;
     };
     const mark = () => items.forEach((item, i) => item.classList.toggle('is-active', i === (hovered >= 0 ? hovered : active)));
     items.forEach((item, i) => {
@@ -181,7 +206,7 @@ export async function journey(container) {
 
     fit();
     addEventListener('resize', fit, { passive: true });
-    if (reducedMotion) { mark(); draw(0); return; }
+    if (reducedMotion) { pos = stops.length - 1; mark(); draw(0); return; }
 
     // Touch screens have no pinned column: the globe visits the stops on its own.
     setInterval(() => { if (touch.matches) { active = (active + 1) % stops.length; mark(); } }, 3500);
@@ -194,11 +219,16 @@ export async function journey(container) {
         const dt = Math.min(0.05, (time - last) / 1000 || 0);
         last = time;
         pick();
-        mark();
-        const target = stops[hovered >= 0 ? hovered : active];
         const ease = 1 - Math.exp(-dt * 2.5);
-        lon0 += (((target.lon - lon0 + 540) % 360) - 180) * ease;
-        lat0 += (clamp01((target.lat + 90) / 180) * 180 - 90 - lat0) * ease;
+        pos += ((hovered >= 0 ? hovered : scrollPos) - pos) * ease;
+        active = Math.round(pos);
+        mark();
+        // The view follows the path between the two stops it is on.
+        const i = Math.min(stops.length - 2, Math.floor(pos)), f = clamp01(pos - i);
+        const from = stops[i], to = stops[Math.min(stops.length - 1, i + 1)];
+        const lonGoal = from.lon + (((to.lon - from.lon + 540) % 360) - 180) * f, latGoal = from.lat + (to.lat - from.lat) * f;
+        lon0 += (((lonGoal - lon0 + 540) % 360) - 180) * ease;
+        lat0 += (latGoal - lat0) * ease;
         draw(time);
     };
     requestAnimationFrame(loop);

@@ -218,7 +218,7 @@ html.custom-cursor * {
     align-items: flex-end;
     justify-content: space-between;
     gap: clamp(24px, 5vw, 80px);
-    margin: var(--pad-section) auto clamp(80px, 16vh, 180px);
+    margin: var(--pad-section) auto clamp(160px, 32vh, 360px);
     padding: 0 var(--pad-edge);
 }
 
@@ -813,7 +813,7 @@ html.menu-open body {
 
 .index-group {
     break-inside: avoid;
-    margin-bottom: clamp(80px, 14vh, 160px);
+    margin-bottom: clamp(160px, 28vh, 320px);
 }
 
 .index-category {

@@ -109,14 +109,11 @@ const DEPTH = 0.12;                                 // half the thickness of the
 const TILT = 0.22;                                  // seen a little from above
 const LIGHT = (() => { const l = [-0.45, 0.55, 0.7], n = Math.hypot(...l); return l.map(v => v / n); })();
 const BASE_SPIN = 0.9;                              // rad/s, turning right
-const PUSH = 0.005;                                 // rad/s added per px of pointer movement
-const SETTLE = 0.8;                                 // s for a push to fade back into the base spin
 
-// Turns the SVG at `url` slowly on its vertical axis in `canvas`; moving the pointer left or right spins it
-// faster that way, and it settles back. Returns { show(url, cols), hide() }.
+// Turns the SVG at `url` steadily on its vertical axis in `canvas`. Returns { show(url, cols), hide() }.
 export function extrudedSvg(canvas, color) {
     const cells = cellCanvas(canvas, color);
-    let mask = null, angle = -0.5, speed = BASE_SPIN, frame = 0, last = 0, lastX = null, running = false;
+    let mask = null, angle = -0.5, frame = 0, last = 0, running = false;
     let light = [0, 0, 0], brightness = new Uint8Array(0);
 
     const render = () => {
@@ -165,15 +162,9 @@ export function extrudedSvg(canvas, color) {
     const tick = now => {
         const dt = Math.min(0.05, (now - last) / 1000 || 0);
         last = now;
-        speed += (BASE_SPIN - speed) * (1 - Math.exp(-dt / SETTLE));
-        angle += speed * dt;
+        angle += BASE_SPIN * dt;
         render();
         frame = running ? requestAnimationFrame(tick) : 0;
-    };
-
-    const onMove = e => {
-        if (lastX !== null) speed = Math.max(-12, Math.min(12, speed + (e.clientX - lastX) * PUSH));
-        lastX = e.clientX;
     };
 
     return {
@@ -187,8 +178,6 @@ export function extrudedSvg(canvas, color) {
             if (reducedMotion) return render();
             if (!running) {
                 running = true;
-                lastX = null;
-                addEventListener('pointermove', onMove, { passive: true });
                 last = performance.now();
                 frame = requestAnimationFrame(tick);
             }
@@ -196,7 +185,6 @@ export function extrudedSvg(canvas, color) {
         hide() {
             running = false;
             cancelAnimationFrame(frame);
-            removeEventListener('pointermove', onMove);
         },
     };
 }
