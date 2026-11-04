@@ -309,9 +309,14 @@ html.custom-cursor * {
     align-items: center;
     justify-content: space-between;
     padding: clamp(12px, 2.5vh, 28px) var(--pad-edge);
-    color: var(--white);
+    color: var(--accent);
     font-size: clamp(13px, 1.4vw, 16px);
-    mix-blend-mode: difference;
+    transition: color 0.3s ease;
+}
+
+/* Over the accent red (the projects, the footer) the bar turns black; set by navTone() in common.js. */
+.navbar.on-accent {
+    color: var(--black);
 }
 
 .brand {
@@ -319,8 +324,19 @@ html.custom-cursor * {
     align-items: center;
 }
 
+/* The signature is the logo as a mask, so it takes the bar's colour. */
+.brand a {
+    display: block;
+    color: inherit;
+    background: currentColor;
+    -webkit-mask: url('../images/core/logo.svg') center / contain no-repeat;
+    mask: url('../images/core/logo.svg') center / contain no-repeat;
+}
+
 .brand img {
+    display: block;
     width: clamp(40px, 8vh, 72px);
+    opacity: 0;
 }
 
 .links-container {
@@ -425,10 +441,6 @@ html.custom-cursor * {
 html.menu-open .navbar {
     mix-blend-mode: normal;
     color: var(--black);
-}
-
-html.menu-open .brand img {
-    filter: brightness(0);
 }
 
 html.menu-open,

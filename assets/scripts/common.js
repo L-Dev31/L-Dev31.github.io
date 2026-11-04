@@ -86,6 +86,7 @@ export function reveal(elements) {
 export function initPage() {
     document.querySelectorAll('[data-year]').forEach(el => el.textContent = new Date().getFullYear());
     smokeFilters();
+    navTone();
     pageLoader();
     const lenis = smoothScroll();
     mobileMenu(lenis);
@@ -120,6 +121,20 @@ function smokeFilters() {
     }
     svg.innerHTML = markup;
     document.body.append(svg);
+}
+
+// The navigation bar is accent red, except over the accent red sections where it turns black.
+function navTone() {
+    const bar = document.querySelector('.navbar');
+    const reds = [...document.querySelectorAll('#featured-projects, #footer')];
+    if (!bar || !reds.length) return;
+    const update = () => {
+        const y = bar.offsetHeight / 2;
+        bar.classList.toggle('on-accent', reds.some(el => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; }));
+    };
+    addEventListener('scroll', throttled(update), { passive: true });
+    addEventListener('resize', update, { passive: true });
+    update();
 }
 
 function pageLoader() {
