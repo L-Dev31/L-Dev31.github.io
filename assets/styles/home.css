@@ -202,7 +202,7 @@ html.custom-cursor * {
     margin: 0;
     color: var(--white);
     font-family: var(--font-display);
-    font-size: clamp(48px, 8vw, 132px);
+    font-size: clamp(40px, 5.6vw, 92px);
     font-weight: 400;
     font-style: italic;
     -webkit-text-stroke: 0.03em currentColor;
@@ -218,7 +218,7 @@ html.custom-cursor * {
     align-items: flex-end;
     justify-content: space-between;
     gap: clamp(24px, 5vw, 80px);
-    margin: var(--pad-section) auto clamp(32px, 5vh, 64px);
+    margin: var(--pad-section) auto clamp(80px, 16vh, 180px);
     padding: 0 var(--pad-edge);
 }
 
@@ -813,7 +813,7 @@ html.menu-open body {
 
 .index-group {
     break-inside: avoid;
-    margin-bottom: clamp(36px, 6vh, 64px);
+    margin-bottom: clamp(80px, 14vh, 160px);
 }
 
 .index-category {
@@ -836,7 +836,7 @@ html.menu-open body {
 
 .index-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) clamp(160px, 14vw, 240px) auto;
+    grid-template-columns: minmax(0, 1fr) clamp(200px, 21vw, 320px) auto;
     align-items: center;
     gap: 0 clamp(12px, 2vw, 32px);
     padding: clamp(16px, 2.4vh, 26px) 0;
@@ -850,22 +850,22 @@ html.menu-open body {
     outline-offset: 4px;
 }
 
-/* Satoshi's weight follows the pointer letter by letter (projectWeights() in main.js). */
+/* Hover: the title turns bold and leans, smoothly. */
 .index-title {
+    display: inline-block;
     font-family: var(--font-body);
-    font-size: clamp(24px, 2.6vw, 44px);
+    font-size: clamp(22px, 2.3vw, 38px);
     font-weight: 400;
     letter-spacing: -0.03em;
     line-height: 1.05;
+    transform-origin: left bottom;
+    transition: font-weight 0.4s var(--ease-out), transform 0.4s var(--ease-out);
 }
 
-.index-word {
-    display: inline-block;
-    white-space: nowrap;
-}
-
-.index-char {
-    display: inline-block;
+.index-row:hover .index-title,
+.index-row:focus-visible .index-title {
+    font-weight: 800;
+    transform: skewX(-10deg);
 }
 
 .index-slot {
