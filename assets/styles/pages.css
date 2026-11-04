@@ -11,7 +11,7 @@
     --black: #F4E9DD;
     --pink: #F4C2B8;
     --paper: #F4E9DD;
-    --dusk: #3A2220;   /* the dark of the hero: ink on cream everywhere else, cream on dusk there */
+    --dusk: #2A2A52;   /* the dark of the hero (a deep indigo): pink on dusk there, wine ink on cream everywhere else */
     --face: #F4C2B8;   /* the light the face is drawn in */
     --ink: #4A2B28;
     --text: var(--white);
@@ -971,7 +971,7 @@ html.menu-open body {
 
 .about-header {
     --hero-progress: 0;
-    --white: var(--paper);
+    --white: var(--face);
     --black: var(--dusk);
     position: relative;
     z-index: 1;
@@ -2521,7 +2521,7 @@ html:has(.project-main)::-webkit-scrollbar {
     pointer-events: none;
 }
 
-/* Cream on dusk: the fixed dark behind the About hero. */
+/* Pink on indigo: the fixed dark behind the About hero. */
 .about-header::before {
     content: '';
     position: fixed;
