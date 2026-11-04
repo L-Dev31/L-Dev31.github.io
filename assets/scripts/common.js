@@ -113,7 +113,7 @@ function smokeFilters() {
         list.forEach((scale, i) => {
             markup += `<filter id="ember${suffix}-${i + 1}" x="-40%" y="-60%" width="180%" height="220%" color-interpolation-filters="sRGB">
                 <feTurbulence type="fractalNoise" baseFrequency="0.035 0.09" numOctaves="2" seed="1">
-                    <animate attributeName="seed" values="1;2;3;4;5;6;7;8" dur="0.6s" calcMode="discrete" repeatCount="indefinite"/>
+                    <animate attributeName="seed" values="1;2;3;4;5;6;7;8" dur="1.8s" calcMode="discrete" repeatCount="indefinite"/>
                 </feTurbulence>
                 <feDisplacementMap in="SourceGraphic" scale="${scale}" xChannelSelector="R" yChannelSelector="G"/>
             </filter>`;

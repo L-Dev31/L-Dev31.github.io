@@ -225,6 +225,11 @@ export function parallax() {
             const turn = heroTurn();
             hero.style.setProperty('--turn', turn.toFixed(4));
             hero.classList.toggle('is-turned', turn > 0.45);
+            // The name and subtitle burn away as the face turns: stronger smoke, then gone.
+            const content = hero.querySelector('.header-content');
+            const burn = clamp01(turn / 0.4);
+            if (burn > 0 && burn < 1) content.dataset.burn = Math.min(3, 1 + Math.floor(burn * 3));
+            else delete content.dataset.burn;
         }
 
         const viewportCenter = scrollY + innerHeight / 2;
@@ -249,7 +254,7 @@ export function parallax() {
 // About page: over its tall hero. Home page: during the turn of the hero timeline above (the hero is fixed,
 // the spacer under it is what scrolls); its clip runs forward then backward so phones can loop it cleanly,
 // and the scroll drives the forward half.
-// The home hero: the (small, plain) face video is drawn again as terminal cells, the way it used to be baked
+// The hero face (home and About): the plain face video is drawn again as terminal cells, the way it used to be baked
 // used to bake it, but live: each frame is averaged down to one brightness per cell and painted as solid,
 // checkerboard, dots or nothing in the accent red. The video itself stays invisible and only provides frames.
 function pixelHero(video) {
@@ -295,7 +300,7 @@ export function scrollScrubbedVideo() {
     if (!hero) return;
     const home = hero.id === 'header';
     const video = hero.querySelector('video');
-    if (home) pixelHero(video);
+    pixelHero(video);
     const layers = hero.querySelectorAll('video, canvas, .about-header-overlay, .about-header-text');
 
     video.pause();

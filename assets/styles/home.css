@@ -694,45 +694,66 @@ html.menu-open body {
 }
 
 /* The name sits at the bottom, Léo and TOSKU pushed to the two edges so the face shows between them. */
+/* The name, both halves the same width: LEO big, TOSKU smaller with its top on the same line, and the three
+   lines of the subtitle under TOSKU taking up the height it gives back. The pair is centred on the face. */
 .header-content {
     --face-gap: 26vw;   /* the width left clear for the face between the two halves */
+    --name-size: clamp(64px, 14vw, 250px);
     position: absolute;
     right: 0;
     bottom: 0;
     left: 0;
     z-index: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 12.5px;
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    column-gap: var(--face-gap);
+    row-gap: clamp(10px, 1.8vh, 20px);
     padding: 50px var(--pad-edge);
     opacity: calc(1 - var(--turn, 0) * 2.5);
 }
 
-.header-subtitles {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: var(--face-gap);
-    color: var(--white);
-    font-size: clamp(13px, 1.1vw, 16px);
-    font-weight: 500;
-    line-height: 1.5;
-}
-
 #site-title {
+    grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: var(--face-gap);
-    align-items: baseline;
-    margin: 0 0 clamp(12px, 2vh, 24px);
+    grid-template-columns: subgrid;
+    align-items: start;
+    margin: 0;
     color: var(--white);
     font-family: var(--font-display);
-    font-size: clamp(64px, 13vw, 240px);
+    font-size: var(--name-size);
     font-weight: 400;
-    line-height: 0.82;
+    line-height: 0.8;
     letter-spacing: 0;
     white-space: nowrap;
+    text-box: trim-both cap alphabetic;   /* the caps themselves are the box, so the two tops line up */
     pointer-events: none;
 }
+
+/* Lux sets TOSKU about 1.66 times wider than LEO per em: this size makes the two the same width. */
+#site-title > :last-child {
+    font-size: 0.604em;
+}
+
+.header-subtitles {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    color: var(--white);
+    font-size: clamp(12px, 1vw, 15px);
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* The name and subtitle burn away with the turn: red, displaced by the perlin smoke (parallax() in effects.js). */
+.header-content[data-burn] #site-title,
+.header-content[data-burn] .header-subtitles {
+    color: var(--accent);
+}
+
+.header-content[data-burn="1"] { filter: url(#ember-1); }
+.header-content[data-burn="2"] { filter: url(#ember-2); }
+.header-content[data-burn="3"] { filter: url(#ember-3); }
 
 /* The about brief, on the left, where the face ends up looking. Its letters burn in with the turn
    (scrubbingText() in effects.js); the block itself only exists once the turn has begun. */
@@ -773,17 +794,6 @@ html.menu-open body {
     height: 250vh;
 }
 
-/* Both lines are mirrored around the face: the first half ends where the gap begins, the second starts after it. */
-#site-title > :first-child,
-.header-subtitles > :first-child {
-    justify-self: end;
-    text-align: right;
-}
-
-#site-title > :last-child,
-.header-subtitles > :last-child {
-    justify-self: start;
-}
 
 
 /* "Hey! I'm Léo Tosku." on both the home intro and the about hero. */
@@ -839,13 +849,10 @@ html.menu-open body {
 /* Projects grouped by category, two columns. A category is a Lux title in bold with a rule running to the edge,
    like the big section titles. */
 .index-groups {
-    columns: 2;
-    column-gap: clamp(32px, 5vw, 80px);
-}
-
-.index-group {
-    break-inside: avoid;
-    margin-bottom: clamp(160px, 28vh, 320px);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: clamp(160px, 28vh, 320px) clamp(32px, 5vw, 80px);
 }
 
 .index-category {
@@ -1092,7 +1099,8 @@ a.client-row:focus-visible .client-name {
 
 @media (max-width: 1024px) {
     .index-groups {
-        columns: 1;
+        grid-template-columns: 1fr;
+        row-gap: 96px;
     }
 
     .section-head {
@@ -2239,17 +2247,11 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .header-content {
-        --face-gap: 12vw;
-        right: 0;
+        --face-gap: 10vw;
+        --name-size: clamp(56px, 17vw, 84px);
         bottom: max(24px, env(safe-area-inset-bottom));
-        align-items: flex-start;
-        gap: 8px;
+        row-gap: 8px;
         padding: 24px var(--pad-edge);
-    }
-
-    #site-title {
-        margin-bottom: 8px;
-        font-size: clamp(40px, 13.5vw, 64px);
     }
 
     .hero-about .about-title {
@@ -2257,9 +2259,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .header-subtitles {
-        max-width: 30ch;
         font-size: 12px;
-        line-height: 1.5;
     }
 
 
