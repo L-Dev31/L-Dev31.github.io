@@ -26,20 +26,67 @@ const el = (tag, cls, text) => {
 };
 
 function projectIndex(container, projects) {
-    const rows = projects.map(project => {
-        const item = el('li', 'index-item');
-        const row = el('a', 'index-row');
-        row.href = `project.html?id=${project.id}`;
-        const name = el('span', 'index-name');
-        name.append(el('span', 'index-title', project.title), el('span', 'index-cat', project.category));
-        row.append(name, el('span', 'index-slot'), el('span', 'index-year', (project.date || '').slice(0, 4)));
-        item.append(row);
-        return { project, row };
-    });
-    const list = el('ol', 'index-list');
-    list.append(...rows.map(r => r.row.parentNode));
-    container.replaceChildren(list);
+    const rows = [];
+    const groups = [...new Set(projects.map(p => p.category))]
+        .sort((a, b) => CATEGORIES.indexOf(a) - CATEGORIES.indexOf(b))
+        .map(category => {
+            const group = el('div', 'index-group');
+            const list = el('ul', 'index-list');
+            for (const project of projects.filter(p => p.category === category)) {
+                const item = el('li', 'index-item');
+                const row = el('a', 'index-row');
+                row.href = `project.html?id=${project.id}`;
+                const year = (project.date || '').slice(0, 4);
+                row.setAttribute('aria-label', `${project.title}, ${year}`);
+                const title = el('span', 'index-title');
+                title.setAttribute('aria-hidden', 'true');
+                project.title.split(' ').forEach((text, i) => {
+                    if (i) title.append(' ');
+                    const word = el('span', 'index-word');
+                    for (const char of text) word.append(el('span', 'index-char', char));
+                    title.append(word);
+                });
+                row.append(title, el('span', 'index-slot'), el('span', 'index-year', year));
+                item.append(row);
+                list.append(item);
+                rows.push({ project, row });
+            }
+            group.append(el('h3', 'index-category', category), list);
+            return group;
+        });
+    container.replaceChildren(...groups);
     return rows;
+}
+
+// The weight of every letter of the titles near the pointer rises with proximity (Satoshi is a variable font),
+// so the bold spreads over the neighbouring letters and fades back as the pointer leaves. A focused row is bold.
+function projectWeights(container, rows) {
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches || reducedMotion) return;
+    const MIN = 400, MAX = 900, RADIUS = 150;
+    const letters = rows.flatMap(({ row }) => [...row.querySelectorAll('.index-char')].map(node => ({ node, row, weight: MIN })));
+    let pointer = null, frame = 0;
+
+    const tick = () => {
+        let moving = false;
+        for (const letter of letters) {
+            let target = MIN;
+            if (pointer) {
+                const r = letter.node.getBoundingClientRect();
+                const d = Math.hypot(pointer.x - (r.left + r.width / 2), (pointer.y - (r.top + r.height / 2)) * 0.6);
+                target = MIN + (MAX - MIN) * Math.max(0, 1 - d / RADIUS) ** 2;
+            } else if (letter.row === document.activeElement) target = 700;
+            letter.weight += (target - letter.weight) * 0.2;
+            if (Math.abs(target - letter.weight) > 1) moving = true;
+            else letter.weight = target;
+            letter.node.style.fontWeight = Math.round(letter.weight);
+        }
+        frame = moving || pointer ? requestAnimationFrame(tick) : 0;
+    };
+    const wake = () => { if (!frame) frame = requestAnimationFrame(tick); };
+    container.addEventListener('pointermove', e => { pointer = { x: e.clientX, y: e.clientY }; wake(); });
+    container.addEventListener('pointerleave', () => { pointer = null; wake(); });
+    container.addEventListener('focusin', wake);
+    container.addEventListener('focusout', wake);
 }
 
 // On a pointer device the hovered (or focused) row shows its SVG in its own column, extruded and drawn
@@ -89,7 +136,9 @@ async function initProjects() {
     const container = document.querySelector('.project-index');
     if (!container) return;
     const projects = (await loadProjects()).filter(p => CATEGORIES.includes(p.category));
-    projectPreview(container, projectIndex(container, projects));
+    const rows = projectIndex(container, projects);
+    projectPreview(container, rows);
+    projectWeights(container, rows);
     refreshParallax();
 }
 

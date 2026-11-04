@@ -709,7 +709,7 @@ html.menu-open body {
     font-family: var(--font-display);
     font-size: clamp(64px, 13vw, 240px);
     font-weight: 400;
-    -webkit-text-stroke: 0.03em currentColor;
+    -webkit-text-stroke: 0.055em currentColor;
     line-height: 0.82;
     letter-spacing: 0;
     white-space: nowrap;
@@ -801,19 +801,46 @@ html.menu-open body {
     padding: 0 var(--pad-edge);
 }
 
+/* Projects grouped by category, two columns. A category is a Lux title in bold with a rule running to the edge,
+   like the big section titles. */
+.index-group + .index-group {
+    margin-top: clamp(40px, 7vh, 80px);
+}
+
+.index-category {
+    display: flex;
+    align-items: baseline;
+    margin: 0 0 clamp(16px, 3vh, 28px);
+    font-family: var(--font-display);
+    font-size: clamp(36px, 4.4vw, 72px);
+    font-weight: 400;
+    -webkit-text-stroke: 0.03em currentColor;
+    line-height: 0.9;
+}
+
+.index-category::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    margin-left: clamp(16px, 2vw, 32px);
+    background: var(--black);
+}
+
 .index-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(24px, 4vw, 64px);
     margin: 0;
     padding: 0;
-    border-bottom: 1px solid var(--black);
     list-style: none;
 }
 
 .index-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) clamp(220px, 26vw, 400px) auto;
+    grid-template-columns: minmax(0, 1fr) clamp(160px, 14vw, 240px) auto;
     align-items: center;
-    gap: 0 clamp(16px, 3vw, 48px);
-    padding: clamp(18px, 2.6vh, 28px) 0;
+    gap: 0 clamp(12px, 2vw, 32px);
+    padding: clamp(16px, 2.4vh, 26px) 0;
     border-top: 1px solid var(--black);
     color: var(--black);
     text-decoration: none;
@@ -824,40 +851,26 @@ html.menu-open body {
     outline-offset: 4px;
 }
 
-.index-name {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-}
-
+/* Satoshi's weight follows the pointer letter by letter (projectWeights() in main.js). */
 .index-title {
-    font-family: var(--font-display);
-    font-size: clamp(30px, 4.6vw, 76px);
-    line-height: 0.92;
+    font-family: var(--font-body);
+    font-size: clamp(24px, 2.6vw, 44px);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
 }
 
-.index-cat {
-    padding: 5px 10px;
-    border: 1px solid var(--black);
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.2;
+.index-word {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.index-char {
+    display: inline-block;
 }
 
 .index-slot {
     align-self: stretch;
-}
-
-/* Hovering a row sets its title in bold (Lux has one weight: the outline is thickened). */
-.index-title {
-    -webkit-text-stroke: 0 currentColor;
-    transition: -webkit-text-stroke-width 0.3s var(--ease-out);
-}
-
-.index-row:hover .index-title,
-.index-row:focus-visible .index-title {
-    -webkit-text-stroke-width: 0.035em;
 }
 
 .index-year {
@@ -1020,6 +1033,10 @@ a.client-row:focus-visible .client-name {
 }
 
 @media (max-width: 1024px) {
+    .index-list {
+        grid-template-columns: 1fr;
+    }
+
     .journey {
         grid-template-columns: 1fr;
     }
@@ -2186,9 +2203,12 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     /* No pointer on a phone: no 3D column. */
+    .index-list {
+        grid-template-columns: 1fr;
+    }
+
     .index-row {
         grid-template-columns: minmax(0, 1fr) auto;
-        align-items: start;
     }
 
     .index-slot {
@@ -2196,7 +2216,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .index-title {
-        font-size: clamp(28px, 8vw, 40px);
+        font-size: clamp(26px, 7.5vw, 38px);
     }
 
     .about-header-text {
