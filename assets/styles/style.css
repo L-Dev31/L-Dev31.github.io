@@ -2568,13 +2568,15 @@ html:has(.project-main)::-webkit-scrollbar {
         white-space: nowrap;
     }
 
-    /* View project: diagonal white-25% glass pill, soft light blobs orbiting its edges */
+    /* View project: glass pill with a half-transparent white outline; two soft light blobs
+       each ride the button's edge like a rail, clipped to the button */
     .mob-card-cta {
         position: relative;
         margin-top: auto;
         padding: 14px 34px;
         overflow: hidden;
         isolation: isolate;
+        border: 1px solid rgba(255,255,255,0.5);
         border-radius: 999px;
         background: linear-gradient(135deg, rgba(255,255,255,0.25), transparent, rgba(255,255,255,0.25));
         color: var(--white);
@@ -2587,42 +2589,52 @@ html:has(.project-main)::-webkit-scrollbar {
         transition: transform 0.2s;
     }
 
-    .mob-card-cta::before {
-        content: '';
+    .mob-card-cta > span {
+        position: relative;
+        z-index: 1;
+    }
+
+    .mob-glow {
         position: absolute;
-        z-index: -1;
-        left: 50%;
-        top: 50%;
-        width: 100%;
-        aspect-ratio: 1;
-        translate: -50% -50%;
-        background:
-            radial-gradient(circle at 100% 50%, rgba(255,255,255,0.55) 0, transparent 38%),
-            radial-gradient(circle at 0% 50%, rgba(255,255,255,0.4) 0, transparent 38%);
-        filter: blur(8px);
-        animation: cta-orbit 6s linear infinite;
+        top: 0;
+        left: 0;
+        z-index: 0;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,255,255,0.7) 0, transparent 65%);
+        filter: blur(6px);
+        offset-path: inset(0 round 999px);
+        offset-rotate: 0deg;
+        animation: glow-rail 5s linear infinite;
+        pointer-events: none;
+    }
+
+    .mob-glow:nth-of-type(2) {
+        animation-duration: 7s;
+        animation-direction: reverse;
+        animation-delay: -3s;
     }
 
     .mob-card-cta:active {
         transform: scale(0.96);
     }
 
-    @keyframes cta-orbit {
-        to { rotate: 360deg; }
+    @keyframes glow-rail {
+        from { offset-distance: 0%; }
+        to { offset-distance: 100%; }
     }
 
-    /* Dots: outline and small when idle, filled and full size when active */
+    /* Dots: sit under the cards (not sticky); outline and small when idle, filled when active */
     .mob-dots {
-        position: sticky;
-        bottom: 0;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
         z-index: 20;
         display: flex;
         justify-content: center;
         gap: 10px;
-        padding: 0 0 max(28px, calc(env(safe-area-inset-bottom) + 20px));
-        margin-top: -56px;
-        height: 56px;
-        align-items: flex-end;
         pointer-events: none;
     }
 
@@ -2651,7 +2663,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .mob-card-cta::before { animation: none; }
+        .mob-glow { animation: none; }
         .mob-dot { transition: none; }
     }
 }

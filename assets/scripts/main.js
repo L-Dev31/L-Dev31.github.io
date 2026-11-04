@@ -186,7 +186,7 @@ class ProjectCarousel {
             const cta = el('a', 'mob-card-cta');
             cta.href = `project.html?id=${project.id}`;
             cta.setAttribute('aria-label', `View project: ${project.title}`);
-            cta.append(el('span', '', 'View project'));
+            cta.append(el('i', 'mob-glow'), el('i', 'mob-glow'), el('span', '', 'View project'));
             bottom.append(role, el('p', 'mob-card-desc', project.subtitle || project.lede || ''), tags, cta);
 
             card.append(top, bottom);
