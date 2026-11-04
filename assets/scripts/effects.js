@@ -29,7 +29,7 @@ export function scrubbingText() {
                 ? (touch.matches ? 1 : clamp01((heroTurn() - 0.3) / 0.6))
                 : clamp01((readingLine - r.top) / Math.max(r.height, 1));
             const head = progress * (chars.length - 1 + SPREAD);
-            chars.forEach((char, i) => paintChar(char, clamp01((head - i) / SPREAD), small, 0.2));
+            chars.forEach((char, i) => paintChar(char, clamp01((head - i) / SPREAD), small, 0));
         }
     };
 
@@ -109,7 +109,7 @@ export function scrollyScenes() {
         const head = revealT * (chars.length - 1 + SPREAD);
         for (let i = 0; i < chars.length; i++) {
             const t = clamp01((head - i) / SPREAD);
-            paintChar(chars[i], t, false, 0.15);
+            paintChar(chars[i], t, false, 0);
         }
     };
 

@@ -75,7 +75,7 @@ const VIEW = 1.04;  // half the canvas, in globe radii
 const SUN = (() => { const l = [-0.5, 0.45, 0.75], n = Math.hypot(...l); return l.map(v => v / n); })();
 
 // ─── Journey ──────────────────────────────────────────────────────────────────
-// The stops of the path on the left; the Earth on the right, in white cells, turning to the stop being read.
+// The stops of the path on the left; the Earth on the right, in red cells like the face, the path in white, turning to the stop being read.
 export async function journey(container) {
     if (!container) return;
     const { stops } = await fetch('assets/data/journey.json').then(r => r.json());
@@ -98,8 +98,8 @@ export async function journey(container) {
     container.replaceChildren(list, stage);
 
     const land = landGrid();
-    const cells = cellCanvas(canvas, getComputedStyle(container).color);
-    const pins = cellCanvas(marks, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
+    const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
+    const pins = cellCanvas(marks, getComputedStyle(container).color);
     let pinBrightness = null;
     let size = 0, brightness = null;
     const fit = () => {

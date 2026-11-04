@@ -10,11 +10,11 @@
     --black: #0D0909;
     --ink: #111;
     --text: #d5d5d5;
-    --text-muted: #a0a0a0;
+    --text-muted: var(--white);
     --text-faint: #888;
     --glass: rgba(255, 255, 255, 0.1);
     --hairline: rgba(255, 255, 255, 0.06);
-    --border: rgba(255, 255, 255, 0.2);
+    --border: var(--white);
     /* Brand red. Too dim for small text on --black: use it for large type, shapes and fills. */
     --accent: #E40613;
 
@@ -22,7 +22,7 @@
        and the system's own terminal monospace for labels and listings. */
     --font-body: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Lux', serif;
-    --font-mono: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace;
+    --font-mono: var(--font-body);   /* no second voice: the labels are Satoshi too */
 
     --pad-section: clamp(40px, 10vh, 120px);
     --pad-edge: clamp(20px, 5vw, 80px);
@@ -203,8 +203,6 @@ html.custom-cursor * {
     font-family: var(--font-display);
     font-size: clamp(40px, 5.6vw, 92px);
     font-weight: 400;
-    font-style: italic;
-    -webkit-text-stroke: 0.03em currentColor;
     line-height: 0.86;
     text-align: left;
 }
@@ -255,11 +253,11 @@ html.custom-cursor * {
     margin-top: clamp(16px, 3vh, 32px);
     padding: 10px 24px;
     border-radius: var(--radius-pill);
-    background: var(--glass);
+    border: 1px solid var(--white);
+    background: transparent;
     color: var(--white);
-    font: 500 12px/1 var(--font-mono);
-    letter-spacing: 0.04em;
-    text-transform: lowercase;
+    font: 500 14px/1 var(--font-body);
+    letter-spacing: 0;
     text-decoration: none;
     transition: background 0.3s ease, color 0.3s ease;
 }
@@ -730,8 +728,6 @@ html.menu-open body {
     font-family: var(--font-display);
     font-size: clamp(64px, 13vw, 240px);
     font-weight: 400;
-    font-style: italic;
-    -webkit-text-stroke: 0.025em currentColor;
     line-height: 0.82;
     letter-spacing: 0;
     white-space: nowrap;
@@ -757,7 +753,16 @@ html.menu-open body {
 }
 
 .hero-about .about-title {
-    font-size: clamp(40px, 5.2vw, 88px);
+    font-family: var(--font-body);
+    font-size: clamp(40px, 5vw, 84px);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 0.98;
+}
+
+.hero-about .about-title strong {
+    font-style: normal;
+    font-weight: 700;
 }
 
 .hero-about .about-hero-lede {
@@ -850,8 +855,6 @@ html.menu-open body {
     font-family: var(--font-display);
     font-size: clamp(36px, 4.4vw, 72px);
     font-weight: 400;
-    font-style: italic;
-    -webkit-text-stroke: 0.03em currentColor;
     line-height: 0.9;
 }
 
@@ -959,19 +962,32 @@ html.menu-open body {
 }
 
 .journey-stop {
+    position: relative;
     min-height: 70vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 10px;
-    color: var(--text-muted);
+    color: var(--white);
     outline: none;
-    transition: color 0.4s ease;
 }
 
-.journey-stop.is-active,
-.journey-stop:focus-visible {
-    color: var(--white);
+/* The stop being read is marked by one red pixel, the unit of the pictures. */
+.journey-stop::before {
+    content: '';
+    position: absolute;
+    top: calc(50% - clamp(70px, 8vw, 120px));
+    left: calc(-1 * clamp(18px, 2vw, 28px));
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    transform: scale(0);
+    transition: transform 0.4s var(--ease-out);
+}
+
+.journey-stop.is-active::before,
+.journey-stop:focus-visible::before {
+    transform: scale(1);
 }
 
 .journey-when,
@@ -1047,9 +1063,14 @@ html.menu-open body {
 }
 
 .client-name {
-    font-family: var(--font-display);
-    font-size: clamp(28px, 3.6vw, 60px);
-    line-height: 0.95;
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: clamp(24px, 2.8vw, 46px);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    transform-origin: left bottom;
+    transition: font-weight 0.4s var(--ease-out), transform 0.4s var(--ease-out);
 }
 
 .client-what,
@@ -1063,14 +1084,10 @@ html.menu-open body {
     text-align: right;
 }
 
-a.client-row .client-name {
-    transition: -webkit-text-stroke-width 0.3s var(--ease-out);
-    -webkit-text-stroke: 0 currentColor;
-}
-
 a.client-row:hover .client-name,
 a.client-row:focus-visible .client-name {
-    -webkit-text-stroke-width: 0.035em;
+    font-weight: 800;
+    transform: skewX(-10deg);
 }
 
 @media (max-width: 1024px) {
