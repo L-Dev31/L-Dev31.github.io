@@ -2,6 +2,8 @@
 @font-face { font-family: 'Lux'; src: url('../fonts/Lux.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Bold'; src: url('../fonts/Bold.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Heavitas'; src: url('../fonts/Heavitas.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-Variable.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-VariableItalic.ttf') format('truetype'); font-weight: 100 900; font-style: italic; font-display: swap; }
 
 :root {
     --white: #fff;
@@ -2434,16 +2436,11 @@ html:has(.project-main)::-webkit-scrollbar {
     .btt-text span {
         font-size: 7px;
     }
+}
 
-    /* ── Mobile project carousel ── */
+/* ── Mobile project carousel ── */
     #featured-projects {
         padding: 0 !important;
-    }
-
-    /* Hide the desktop scatter grid & filters when carousel is present */
-    .featured-scatter,
-    .featured-filters {
-        display: none;
     }
 
     .mob-carousel-section {
@@ -2458,6 +2455,7 @@ html:has(.project-main)::-webkit-scrollbar {
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
         -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
     }
 
     .mob-carousel::-webkit-scrollbar {
@@ -2483,12 +2481,13 @@ html:has(.project-main)::-webkit-scrollbar {
         position: relative;
     }
 
-    /* subtle dark scrim at the bottom of the image */
+    /* Subtle dark scrim at the bottom of the image */
     .mob-card-img::after {
         content: '';
         position: absolute;
-        inset: 40% 0 0 0;
-        background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.6));
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%);
+        pointer-events: none;
     }
 
     .mob-card-body {
@@ -2579,7 +2578,7 @@ html:has(.project-main)::-webkit-scrollbar {
         border-color: var(--white);
     }
 
-    /* Bottom navigation strip */
+    /* Bottom navigation - text pills with sliding active indicator */
     .mob-nav {
         position: sticky;
         bottom: 0;
@@ -2587,40 +2586,91 @@ html:has(.project-main)::-webkit-scrollbar {
         right: 0;
         z-index: 20;
         display: flex;
-        overflow-x: auto;
+        justify-content: center;
+        align-items: center;
         gap: 8px;
-        padding: 10px var(--pad-edge) max(12px, calc(env(safe-area-inset-bottom) + 8px));
-        background: rgba(0, 0, 0, 0.88);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        scrollbar-width: none;
-        border-top: 1px solid rgba(255,255,255,0.06);
+        padding: 16px var(--pad-edge) max(20px, calc(env(safe-area-inset-bottom) + 16px));
+        background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 100%);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        /* Sliding pill indicator */
+        --pill-left: 0;
+        --pill-width: 0;
     }
 
-    .mob-nav::-webkit-scrollbar {
-        display: none;
+    .mob-nav::before {
+        content: '';
+        position: absolute;
+        bottom: calc(16px + max(20px, calc(env(safe-area-inset-bottom) + 16px)) / 2);
+        left: var(--pill-left);
+        width: var(--pill-width);
+        height: 36px;
+        background: var(--white);
+        border-radius: var(--radius-pill);
+        box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+        transition: left 0.4s var(--ease-out), width 0.3s var(--ease-out);
+        pointer-events: none;
+        z-index: 0;
     }
 
     .mob-nav-btn {
-        flex-shrink: 0;
-        padding: 7px 15px;
-        border: 1px solid rgba(255,255,255,0.15);
-        border-radius: var(--radius-pill, 999px);
+        position: relative;
+        z-index: 1;
+        padding: 8px 16px;
+        border: none;
+        border-radius: var(--radius-pill);
         background: transparent;
-        color: var(--text-muted, #999);
-        font-family: var(--font-sans);
-        font-size: 10px;
-        letter-spacing: 1px;
+        color: rgba(255,255,255,0.5);
+        font-family: 'Satoshi', sans-serif;
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.5px;
         text-transform: uppercase;
-        white-space: nowrap;
         cursor: pointer;
-        transition: background 0.2s, color 0.2s, border-color 0.2s;
+        transition: color 0.2s var(--ease-out);
+        -webkit-appearance: none;
+        white-space: nowrap;
+    }
+
+    .mob-nav-btn:hover,
+    .mob-nav-btn:focus-visible {
+        color: var(--white);
     }
 
     .mob-nav-btn.active {
-        background: var(--white, #fff);
-        color: var(--ink, #000);
-        border-color: var(--white, #fff);
+        color: var(--ink);
+    }
+
+    .mob-nav-btn:focus-visible {
+        outline: 2px solid var(--white);
+        outline-offset: 3px;
+    }
+
+    /* Reduced motion: disable pill slide animation */
+    @media (prefers-reduced-motion: reduce) {
+        .mob-nav::before {
+            transition: none;
+        }
+    }
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+        opacity: 0;
+        animation: dot-pulse 1.8s var(--ease-out) infinite;
+    }
+
+    @keyframes dot-slide {
+        from {
+            transform: scale(1.4) translateX(var(--slide-from, 0));
+        }
+        to {
+            transform: scale(1.4) translateX(0);
+        }
+    }
+
+    @keyframes dot-pulse {
+        0% { opacity: 0.4; transform: scale(1); }
+        50% { opacity: 0.15; transform: scale(1.6); }
+        100% { opacity: 0.4; transform: scale(1); }
     }
 }
 

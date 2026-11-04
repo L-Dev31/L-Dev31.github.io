@@ -1,6 +1,8 @@
 // Case study page: project.html?id=<id> renders projects/cases/<id>.html with data from projects.json.
-import { initPage, reveal, loadProjects, isMobile, reducedMotion, throttled, clamp01 } from './common.js';
+import { initPage, reveal, loadProjects, reducedMotion, throttled, clamp01, breakpoint } from './common.js';
 import { scrollyScenes } from './effects.js';
+
+const isMobile = breakpoint.isMobile;
 
 const lenis = initPage();
 progressBar(lenis);

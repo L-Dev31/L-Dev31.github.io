@@ -1,5 +1,7 @@
 // Scroll and mouse effects used on the home, about and project pages.
-import { isMobile, reducedMotion, lowPower, clamp01, throttled } from './common.js';
+import { reducedMotion, lowPower, clamp01, throttled, breakpoint } from './common.js';
+
+const isMobile = breakpoint.isMobile;
 
 // Every character of .scrubbing-text fades and un-blurs in reading order as the block scrolls up.
 // Blur is skipped on low-end devices (opacity-only reveal, same timing).

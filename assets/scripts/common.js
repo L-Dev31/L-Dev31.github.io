@@ -1,12 +1,59 @@
 // Shared by every page: page loader, smooth scroll, menu, cursor, back-to-top, reveal on scroll.
 
-export const isMobile = matchMedia('(pointer: coarse)').matches || innerWidth <= 1024;
+// Single source of truth for device/breakpoint detection
+const BREAKPOINT_MOBILE = 768;
+const BREAKPOINT_TABLET = 1024;
+
 export const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Old phones / data saving: same look, cheaper effects (no per-character blur).
 export const lowPower = reducedMotion
     || (navigator.connection?.saveData ?? false)
     || ((navigator.deviceMemory ?? 8) <= 4);
 export const clamp01 = value => Math.max(0, Math.min(1, value));
+
+// Breakpoint manager - single source of truth for all modules
+export const breakpoint = (() => {
+    const BREAKPOINT_MOBILE = 768;
+    const BREAKPOINT_TABLET = 1024;
+    const mobileMQ = matchMedia(`(max-width: ${BREAKPOINT_MOBILE}px)`);
+    const tabletMQ = matchMedia(`(max-width: ${BREAKPOINT_TABLET}px)`);
+    
+    // Fallback: also check innerWidth for cases where matchMedia doesn't update (devtools device toolbar)
+    const getFromWidth = () => innerWidth <= BREAKPOINT_MOBILE ? 'mobile' : innerWidth <= BREAKPOINT_TABLET ? 'tablet' : 'desktop';
+    let current = mobileMQ.matches ? 'mobile' : tabletMQ.matches ? 'tablet' : 'desktop';
+    // Ensure initial value matches innerWidth as fallback
+    if (current !== getFromWidth()) current = getFromWidth();
+    
+    const subscribers = new Set();
+
+    const check = () => {
+        // Use both matchMedia and innerWidth for reliability
+        const mqResult = mobileMQ.matches ? 'mobile' : tabletMQ.matches ? 'tablet' : 'desktop';
+        const widthResult = getFromWidth();
+        const next = mqResult === widthResult ? mqResult : widthResult; // prefer width if mismatch
+        if (next !== current) {
+            current = next;
+            subscribers.forEach(fn => fn(current));
+        }
+    };
+    mobileMQ.addEventListener('change', check);
+    tabletMQ.addEventListener('change', check);
+    // Also listen to resize as ultimate fallback
+    addEventListener('resize', check, { passive: true });
+
+    return {
+        get current() { return current; },
+        get isMobile() { return current === 'mobile'; },
+        get isTablet() { return current === 'tablet'; },
+        get isDesktop() { return current === 'desktop'; },
+        onChange: (fn) => { subscribers.add(fn); return () => subscribers.delete(fn); },
+        BREAKPOINT_MOBILE,
+        BREAKPOINT_TABLET
+    };
+})();
+
+// Backwards compat - use breakpoint.isMobile instead
+export const isMobile = breakpoint.isMobile;
 
 // Visible case studies, newest first. Parked projects live in disabled-projects.json (not loaded).
 export const loadProjects = () => fetch('assets/data/projects.json')
@@ -130,6 +177,13 @@ function mobileMenu(lenis) {
         } else if (!event.shiftKey && document.activeElement === last) {
             event.preventDefault();
             first.focus();
+        }
+    });
+
+    // Close menu on breakpoint change to desktop
+    breakpoint.onChange(bp => {
+        if (bp === 'desktop' && menu.classList.contains('open')) {
+            toggle(false, true);
         }
     });
 }
