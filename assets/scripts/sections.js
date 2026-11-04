@@ -108,8 +108,8 @@ export async function journey(container) {
     const items = stops.map(stop => {
         const item = el('li', 'journey-stop');
         item.tabIndex = 0;
-        item.append(el('span', 'journey-when', stop.when), el('h3', 'journey-place', stop.place),
-            el('span', 'journey-country', stop.country), el('p', 'journey-what', stop.what));
+        item.append(el('span', 'journey-when', stop.when), el('h3', 'journey-place scrubbing-text', stop.place),
+            el('span', 'journey-country', stop.country), el('p', 'journey-what scrubbing-text', stop.what));
         list.append(item);
         return item;
     });
@@ -242,7 +242,6 @@ export async function journey(container) {
             const k = marks.width / stage.clientWidth;
             labels.save();
             labels.scale(k, k);
-            labels.globalAlpha = settled;
             labels.font = '500 13px Satoshi, sans-serif';
             labels.textBaseline = 'middle';
             for (const { stop, pt, isActive } of shown) {
@@ -312,7 +311,7 @@ export async function clients(container) {
         const item = el('li', 'client-item');
         const row = el(client.project ? 'a' : 'div', 'client-row');
         if (client.project) row.href = `project.html?id=${client.project}`;
-        row.append(el('span', 'client-name', client.name), el('span', 'client-what', client.what), el('span', 'client-year', client.year));
+        row.append(el('span', 'client-name scrubbing-text', client.name), el('span', 'client-what scrubbing-text', client.what), el('span', 'client-year', client.year));
         item.append(row);
         list.append(item);
     }

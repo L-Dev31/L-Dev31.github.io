@@ -4,7 +4,11 @@ import { cellCanvas, CELL, drawCell } from './pixel.js';
 
 const isMobile = breakpoint.isMobile;
 
-// Every character of .scrubbing-text fades in, flashing red, in reading order as the block scrolls up.
+// Every .scrubbing-text resolves in cells, character by character in reading order, as the block scrolls up (and the
+// hero name scrubs out). Call it again after adding blocks: it only picks up the new ones.
+const scrubBlocks = [];
+const scrubSeen = new WeakSet();
+let scrubWired = false;
 export function scrubbingText() {
     // Reading stays immediate on touch screens; splitting every character there
     // adds work without making the content easier to read.
@@ -12,17 +16,15 @@ export function scrubbingText() {
     const SPREAD = 10; // how many characters are mid-transition at once
 
     const touch = matchMedia('(max-width: 1024px)');
-    const blocks = [...document.querySelectorAll('.scrubbing-text')].map(block => ({
-        block,
-        chars: splitChars(block),
-        turn: block.dataset.scrub === 'turn',
-        small: parseFloat(getComputedStyle(block).fontSize) < 40,
-        out: block.dataset.scrub === 'out',
-    }));
+    for (const block of document.querySelectorAll('.scrubbing-text')) {
+        if (scrubSeen.has(block)) continue;
+        scrubSeen.add(block);
+        scrubBlocks.push({ block, chars: splitChars(block), turn: block.dataset.scrub === 'turn', out: block.dataset.scrub === 'out' });
+    }
 
     const paint = () => {
-        const readingLine = innerHeight * 0.7;
-        for (const { block, chars, turn, out } of blocks) {
+        const readingLine = innerHeight * 0.85;
+        for (const { block, chars, turn, out } of scrubBlocks) {
             const r = block.getBoundingClientRect();
             if (r.top > innerHeight || r.bottom < 0) continue;
             // The hero name and subtitle scrub out in cells as the face turns.
@@ -33,7 +35,7 @@ export function scrubbingText() {
                 drawCells(block, chars);
                 continue;
             }
-            // The home about brief burns in with the turn of the face, not with its own position (it does not move).
+            // The home about brief scrubs in with the turn of the face, not with its own position (it does not move).
             const progress = turn
                 ? (touch.matches ? 1 : clamp01((heroTurn() - 0.3) / 0.6))
                 : clamp01((readingLine - r.top) / Math.max(r.height, 1));
@@ -43,10 +45,14 @@ export function scrubbingText() {
         }
     };
 
-    const schedule = throttled(paint);
-    ['scroll', 'resize', 'load'].forEach(event => addEventListener(event, schedule, { passive: true }));
+    scrubPaint = throttled(paint);
+    if (!scrubWired) {
+        scrubWired = true;
+        ['scroll', 'resize', 'load'].forEach(event => addEventListener(event, () => scrubPaint(), { passive: true }));
+    }
     paint();
 }
+let scrubPaint = () => {};
 
 // Project pages: case study text pins in place while scrolling (JS-driven so it
 // works regardless of the scroll container). Its characters fade in with scroll

@@ -119,16 +119,7 @@ section {
     background: var(--section-gradient) center top / cover no-repeat fixed;
 }
 
-/* Section content fades in once the section scrolls into view (reveal() in common.js).
-   Pinned case study scenes are excluded: scrollyScenes() in effects.js drives them. */
-section:not(.case-scene) > * {
-    opacity: 0;
-    transition: opacity 1.5s var(--ease-out);
-}
-
-section.visible > * {
-    opacity: 1;
-}
+/* Nothing fades on this page: text scrubs in and out in cells (scrubbingText() in effects.js), the rest is simply there. */
 
 html.lenis,
 html.lenis body {
@@ -146,6 +137,7 @@ html.lenis body {
 
 /* Page loader */
 
+/* The cover leaves in cells (pixelDissolve() in common.js): it turns transparent while they melt away. */
 .page-loader {
     position: fixed;
     inset: 0;
@@ -154,11 +146,18 @@ html.lenis body {
     align-items: flex-end;
     background: var(--black);
     pointer-events: none;
-    transition: opacity 0.6s var(--ease-out) 0.2s;
+}
+
+.page-loader.dissolving {
+    background: transparent;
+}
+
+.page-loader.dissolving .page-loader-bar {
+    display: none;
 }
 
 .page-loader.done {
-    opacity: 0;
+    display: none;
 }
 
 .page-loader-bar {
@@ -453,9 +452,7 @@ html.menu-open body {
     line-height: 1;
     letter-spacing: -0.045em;
     text-decoration: none;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.5s ease, transform 0.5s var(--ease-out), font-weight 0.3s var(--ease-out);
+    transition: font-weight 0.3s var(--ease-out);
 }
 
 .mobile-menu-link:hover,
@@ -476,10 +473,6 @@ html.menu-open body {
     transform: scale(1);
 }
 
-.mobile-menu.open .mobile-menu-link {
-    opacity: 1;
-    transform: translateY(0);
-}
 
 /* The entrance is staggered; the bold on hover is not delayed. */
 .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-delay: 0.15s, 0.15s, 0s; }
@@ -496,12 +489,6 @@ html.menu-open body {
     padding: 0 var(--pad-edge);
     font-size: 13px;
     font-weight: 500;
-    opacity: 0;
-    transition: opacity 0.5s ease 0.4s;
-}
-
-.mobile-menu.open .mobile-menu-footer {
-    opacity: 1;
 }
 
 
@@ -619,14 +606,12 @@ html.menu-open body {
     background: none;
     color: var(--white);
     mix-blend-mode: difference;
-    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transform: scale(0.8);
-    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
 }
 
 .back-to-top.visible {
-    opacity: 1;
+    visibility: visible;
     pointer-events: auto;
     transform: scale(1);
 }
@@ -753,7 +738,6 @@ html.menu-open body {
     left: var(--pad-edge);
     z-index: 2;
     width: min(40vw, 620px);
-    opacity: calc(var(--turn, 0) * 4 - 0.8);
     transform: translate(calc((1 - var(--turn, 0)) * -48px), -50%);
     visibility: hidden;
     pointer-events: auto;
@@ -921,15 +905,14 @@ html.menu-open body {
     left: 0;
     z-index: 3;
     margin: 0;
-    opacity: 0;
+    visibility: hidden;
     transform: translateY(-50%);
     pointer-events: none;
-    transition: opacity 0.25s ease;
 }
 
 .index-preview.is-on {
-    opacity: 1;
-    transition: opacity 0.25s ease, top 0.35s var(--ease-out);
+    visibility: visible;
+    transition: top 0.35s var(--ease-out);
 }
 
 .index-preview canvas {

@@ -1,5 +1,5 @@
 // Home and about pages.
-import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
+import { initPage, loadProjects, reducedMotion } from './common.js';
 import { scrubbingText, parallax, scrollScrubbedVideo } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { journey, clients } from './sections.js';
@@ -11,7 +11,6 @@ initPage();
 const refreshParallax = parallax();
 scrubbingText();
 scrollScrubbedVideo();
-reveal(document.querySelectorAll('section, .title'));
 
 // ─── Project index ────────────────────────────────────────────────────────────
 // Title with its category boxed under it, an empty column where the project's SVG turns in 3D on hover,
@@ -37,13 +36,13 @@ function projectIndex(container, projects) {
                 const row = el('a', 'index-row');
                 row.href = `project.html?id=${project.id}`;
                 const year = (project.date || '').slice(0, 4);
-                const title = el('span', 'index-title', project.title);
+                const title = el('span', 'index-title scrubbing-text', project.title);
                 row.append(title, el('span', 'index-slot'), el('span', 'index-year', year));
                 item.append(row);
                 list.append(item);
                 rows.push({ project, row });
             }
-            const heading = el('h3', 'index-category', category);
+            const heading = el('h3', 'index-category scrubbing-text', category);
             heading.append(el('span', 'index-count', String(list.children.length).padStart(2, '0')));
             group.append(heading, list);
             return group;
@@ -107,6 +106,6 @@ async function initProjects() {
     refreshParallax();
 }
 
-initProjects();
-journey(document.querySelector('.journey'));
-clients(document.querySelector('.client-index'));
+// Text that arrives with its data scrubs in too, once it exists.
+Promise.all([initProjects(), journey(document.querySelector('.journey')), clients(document.querySelector('.client-index'))])
+    .then(() => { scrubbingText(); refreshParallax(); });
