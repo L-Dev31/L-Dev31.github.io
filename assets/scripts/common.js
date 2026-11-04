@@ -101,7 +101,7 @@ export function initPage() {
 // The navigation bar is accent red, except over the accent red sections where it turns black.
 function navTone() {
     const bar = document.querySelector('.navbar');
-    const reds = [...document.querySelectorAll('#featured-projects, #footer')];
+    const reds = [...document.querySelectorAll('#featured-projects')];
     if (!bar || !reds.length) return;
     const update = () => {
         const y = bar.offsetHeight / 2;

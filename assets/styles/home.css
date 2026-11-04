@@ -6,14 +6,17 @@
 @font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-VariableItalic.ttf') format('truetype'); font-weight: 100 900; font-style: italic; font-display: swap; }
 
 :root {
-    --white: #F6F2F2;
-    --black: #0D0909;
-    --ink: #111;
-    --text: #d5d5d5;
+    /* Warm and low in contrast: --black is the paper (cream), --white the ink (a dark wine), the red the signal,
+       and a blush pink for the sections that need to breathe. The names are the old ones, the values are swapped. */
+    --white: #4A2B28;
+    --black: #F4E9DD;
+    --pink: #F4C2B8;
+    --ink: #4A2B28;
+    --text: var(--white);
     --text-muted: var(--white);
-    --text-faint: #888;
-    --glass: rgba(255, 255, 255, 0.1);
-    --hairline: rgba(255, 255, 255, 0.06);
+    --text-faint: #8a6a64;
+    --glass: rgba(74, 43, 40, 0.08);
+    --hairline: rgba(74, 43, 40, 0.08);
     --border: var(--white);
     /* Brand red. Too dim for small text on --black: use it for large type, shapes and fills. */
     --accent: #E40613;
@@ -512,7 +515,7 @@ html.menu-open body {
     justify-content: space-between;
     padding: clamp(40px, 15vh, 200px) clamp(20px, 10vw, 200px) clamp(24px, 5vh, 48px);
     overflow: hidden;
-    background: var(--accent);
+    background: var(--pink);
 }
 
 /* Dark layer multiplied over the red: the white name below punches a hole through it. */
@@ -524,15 +527,14 @@ html.menu-open body {
     align-items: flex-end;
     justify-content: flex-start;
     padding-left: var(--pad-edge);
-    background: var(--ink);
-    mix-blend-mode: multiply;
+    background: transparent;
     pointer-events: none;
 }
 
 /* TOSKU, bold, spanning the page between the two margins. */
 .big-name {
     margin: 0;
-    color: var(--white);
+    color: var(--accent);
     font-family: var(--font-body);
     font-size: calc((100vw - 2 * var(--pad-edge)) / 3.3);
     font-style: normal;
@@ -2152,7 +2154,7 @@ html:has(.project-main)::-webkit-scrollbar {
     #footer {
         position: relative;
         z-index: 2;
-        background: var(--accent);
+        background: var(--pink);
     }
 
     .about-header {
@@ -2604,4 +2606,10 @@ html:has(.project-main)::-webkit-scrollbar {
     width: 100%;
     height: 100%;
     pointer-events: none;
+}
+
+/* The journey on blush pink: the Earth in red, the path in ink. */
+#journey {
+    background: var(--pink);
+    padding-bottom: clamp(55px, 9vh, 89px);
 }
