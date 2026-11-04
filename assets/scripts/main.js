@@ -54,7 +54,9 @@ function projectIndex(container, projects) {
             group.append(el('h3', 'index-category', category), list);
             return group;
         });
-    container.replaceChildren(...groups);
+    const columns = el('div', 'index-groups');
+    columns.append(...groups);
+    container.replaceChildren(columns);
     return rows;
 }
 

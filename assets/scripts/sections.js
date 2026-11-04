@@ -71,7 +71,7 @@ function landGrid() {
 }
 
 const RAD = Math.PI / 180;
-const VIEW = 0.6;   // half the canvas, in globe radii: the Earth is shown about 1.7 times its fit
+const VIEW = 1.04;  // half the canvas, in globe radii
 const SUN = (() => { const l = [-0.5, 0.45, 0.75], n = Math.hypot(...l); return l.map(v => v / n); })();
 
 // ─── Journey ──────────────────────────────────────────────────────────────────
@@ -92,18 +92,24 @@ export async function journey(container) {
     const stage = el('div', 'journey-stage');
     const canvas = el('canvas', 'journey-globe');
     canvas.setAttribute('aria-hidden', 'true');
-    stage.append(canvas);
+    const marks = el('canvas', 'journey-globe journey-marks');
+    marks.setAttribute('aria-hidden', 'true');
+    stage.append(canvas, marks);
     container.replaceChildren(list, stage);
 
     const land = landGrid();
-    const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
+    const cells = cellCanvas(canvas, getComputedStyle(container).color);
+    const pins = cellCanvas(marks, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
+    let pinBrightness = null;
     let size = 0, brightness = null;
     const fit = () => {
         const n = Math.max(24, Math.min(64, Math.floor(stage.clientWidth / CELL)));
         if (n === size) return;
         size = n;
         cells.resize(n, n);
+        pins.resize(n, n);
         brightness = new Uint8Array(n * n);
+        pinBrightness = new Uint8Array(n * n);
     };
 
     let active = 0, hovered = -1;
@@ -128,7 +134,8 @@ export async function journey(container) {
                 brightness[row * n + col] = b;
             }
         }
-        // Stops: a solid cell in a black halo; the one being read blinks a ring around it.
+        // Stops, in the accent red on their own layer: a solid cell, a black halo cleared in the map, and a blinking ring.
+        pinBrightness.fill(0);
         stops.forEach((stop, i) => {
             const la = stop.lat * RAD, dl = (stop.lon - lon0) * RAD;
             const z = sinL * Math.sin(la) + cosL * Math.cos(la) * Math.cos(dl);
@@ -141,13 +148,14 @@ export async function journey(container) {
                     const c = col + dx, r = row + dy;
                     if (c < 0 || r < 0 || c >= n || r >= n) continue;
                     const d = Math.max(Math.abs(dx), Math.abs(dy));
-                    if (d === 0) brightness[r * n + c] = 255;
+                    if (d === 0) pinBrightness[r * n + c] = 255;
                     else if (d === 1) brightness[r * n + c] = 0;
-                    else if (ring) brightness[r * n + c] = 100;
+                    else if (ring) pinBrightness[r * n + c] = 100;
                 }
             }
         });
         cells.paint(brightness);
+        pins.paint(pinBrightness);
     };
 
     const touch = matchMedia('(max-width: 1024px)');

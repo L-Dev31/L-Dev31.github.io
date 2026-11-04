@@ -197,22 +197,42 @@ html.custom-cursor * {
 
 /* Section title in Lux, flush left, followed by a rule that draws out to the right edge when visible.
    Its terminal-style label ([ 02 / 03 ] · Work) comes from data-label, on its own line above. */
+/* Big section title: italic, bold Lux on the left; a few lines of Satoshi on the right say what the section is. */
 .title {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: flex-start;
-    width: 100%;
-    max-width: var(--container-width);
-    box-sizing: border-box;
-    margin: var(--pad-section) auto clamp(24px, 4vh, 48px);
-    padding: 0 var(--pad-edge);
+    margin: 0;
     color: var(--white);
     font-family: var(--font-display);
     font-size: clamp(48px, 8vw, 132px);
     font-weight: 400;
+    font-style: italic;
+    -webkit-text-stroke: 0.03em currentColor;
     line-height: 0.86;
     text-align: left;
+}
+
+.section-head {
+    width: 100%;
+    max-width: var(--container-width);
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: clamp(24px, 5vw, 80px);
+    margin: var(--pad-section) auto clamp(32px, 5vh, 64px);
+    padding: 0 var(--pad-edge);
+}
+
+.section-note {
+    flex: 0 1 34ch;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: clamp(14px, 1.1vw, 17px);
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+#featured-projects .section-note {
+    color: var(--black);
 }
 
 .title[data-label]::before,
@@ -226,20 +246,6 @@ html.custom-cursor * {
     letter-spacing: 0.04em;
 }
 
-.title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    margin-left: clamp(16px, 2vw, 32px);
-    background: var(--white);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 1.5s var(--ease-out);
-}
-
-.title.visible::after {
-    transform: scaleX(1);
-}
 
 .button {
     min-height: 44px;
@@ -789,10 +795,6 @@ html.menu-open body {
     color: var(--black);
 }
 
-#featured-projects .title::after {
-    background: var(--black);
-}
-
 .project-index {
     position: relative;
     width: 100%;
@@ -804,8 +806,14 @@ html.menu-open body {
 
 /* Projects grouped by category, two columns. A category is a Lux title in bold with a rule running to the edge,
    like the big section titles. */
-.index-group + .index-group {
-    margin-top: clamp(40px, 7vh, 80px);
+.index-groups {
+    columns: 2;
+    column-gap: clamp(32px, 5vw, 80px);
+}
+
+.index-group {
+    break-inside: avoid;
+    margin-bottom: clamp(36px, 6vh, 64px);
 }
 
 .index-category {
@@ -815,22 +823,12 @@ html.menu-open body {
     font-family: var(--font-display);
     font-size: clamp(36px, 4.4vw, 72px);
     font-weight: 400;
+    font-style: italic;
     -webkit-text-stroke: 0.03em currentColor;
     line-height: 0.9;
 }
 
-.index-category::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    margin-left: clamp(16px, 2vw, 32px);
-    background: var(--black);
-}
-
 .index-list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: clamp(24px, 4vw, 64px);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -971,6 +969,13 @@ html.menu-open body {
     align-items: center;
 }
 
+.journey-marks {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
 .journey-globe {
     display: block;
     width: 100%;
@@ -1034,8 +1039,14 @@ a.client-row:focus-visible .client-name {
 }
 
 @media (max-width: 1024px) {
-    .index-list {
-        grid-template-columns: 1fr;
+    .index-groups {
+        columns: 1;
+    }
+
+    .section-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
     }
 
     .journey {

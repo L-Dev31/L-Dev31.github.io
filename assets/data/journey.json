@@ -1,8 +1,20 @@
 {
   "stops": [
-    { "place": "Provence", "country": "France", "lat": 43.53, "lon": 5.45, "when": "Early years", "what": "Early creative years." },
-    { "place": "Guadeloupe", "country": "French Caribbean", "lat": 16.31, "lon": -61.8, "when": "2022 — 2025", "what": "Baccalauréat at LGT Sonny Rupaire. Founder and full-stack developer of Rayon." },
-    { "place": "London", "country": "United Kingdom", "lat": 51.51, "lon": -0.13, "when": "2024 — 2025", "what": "Assistant graphic designer for Red Planet Pictures, remotely." },
-    { "place": "French Riviera", "country": "France", "lat": 43.6, "lon": 7.1, "when": "2025 —", "what": "Bachelor at Sophia Ynov Campus. Marketing, communication and design at Geetech, Antibes and Monaco." }
+    {
+      "place": "Guadeloupe",
+      "country": "French Caribbean",
+      "lat": 16.31,
+      "lon": -61.8,
+      "when": "2022 — 2025",
+      "what": "Baccalauréat at LGT Sonny Rupaire. Founder and full-stack developer of Rayon, and remote graphic design for Red Planet Pictures in London."
+    },
+    {
+      "place": "French Riviera",
+      "country": "France",
+      "lat": 43.6,
+      "lon": 7.1,
+      "when": "2025 —",
+      "what": "Bachelor at Sophia Ynov Campus. Marketing, communication and design at Geetech, Antibes and Monaco."
+    }
   ]
 }
