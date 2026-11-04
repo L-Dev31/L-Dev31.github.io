@@ -5,8 +5,8 @@
 @font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-Variable.ttf') format('truetype'); font-weight: 300 900; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-VariableItalic.ttf') format('truetype'); font-weight: 300 900; font-style: italic; font-display: swap; }
 :root {
-    --white: #fff;
-    --black: #000;
+    --white: #F6F2F2;
+    --black: #0D0909;
     --ink: #111;
     --text: #d5d5d5;
     --text-muted: #a0a0a0;
@@ -14,17 +14,19 @@
     --glass: rgba(255, 255, 255, 0.1);
     --hairline: rgba(255, 255, 255, 0.06);
     --border: rgba(255, 255, 255, 0.2);
+    /* Brand red. Too dim for small text on --black: use it for large type, shapes and fills. */
+    --accent: #E40613;
 
     --font-body: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
     --font-ui: var(--font-body);
     --font-display: 'Lux', serif;
+    --font-mono: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace;
 
     --pad-section: clamp(40px, 10vh, 120px);
     --pad-edge: clamp(20px, 5vw, 80px);
     --container-width: 1400px;
     --radius-pill: 50px;
 
-    --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.3);
     --section-gradient: radial-gradient(circle at 50% 0%, #333 0%, #202020 30%, var(--black) 80%);
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
     --smoke-filter: url(#perlin-smoke);
@@ -35,10 +37,15 @@
 html {
     overflow-x: clip;
     scrollbar-width: thin;
-    scrollbar-color: var(--white) var(--black);
+    scrollbar-color: var(--accent) var(--black);
     scroll-padding-top: 100px;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--white);
 }
 
 body {
@@ -191,7 +198,6 @@ html.custom-cursor * {
     border-radius: var(--radius-pill);
     background: var(--white);
     color: var(--ink);
-    box-shadow: var(--shadow-float);
     font-size: clamp(12px, 1.4vw, 16px);
     letter-spacing: 0.5px;
     white-space: nowrap;
@@ -266,17 +272,17 @@ html.custom-cursor * {
     padding: 10px 24px;
     border-radius: var(--radius-pill);
     background: var(--glass);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
     color: var(--white);
     font-size: clamp(10px, 1vw, 12px);
     letter-spacing: 1.5px;
     text-decoration: none;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
+/* Hover inverts the button: white field, black text. */
 .button:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--white);
+    color: var(--black);
 }
 
 .tag {
@@ -317,105 +323,112 @@ html.custom-cursor * {
     width: clamp(40px, 8vh, 72px);
 }
 
-.navbar-center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    pointer-events: none;
-}
-
-.status-badge {
-    padding: 5px 14px;
-    border: 2px solid var(--glass);
-    border-radius: var(--radius-pill);
-    font-size: clamp(10px, 1vw, 12px);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
 .links-container {
     display: flex;
     align-items: center;
     gap: clamp(8px, 1.5vw, 20px);
 }
 
-.link {
-    padding: clamp(4px, 0.5vh, 8px) clamp(6px, 0.8vw, 12px);
-    color: inherit;
-    letter-spacing: 0.5px;
-    text-decoration: none;
-    transition: background 0.3s, transform 0.3s var(--ease-out);
-    will-change: transform;
-}
-
-.link:hover,
-.link.active {
-    background: var(--hairline);
-}
-
-.link--cta {
-    padding: clamp(4px, 0.5vh, 8px) clamp(10px, 1.2vw, 18px);
-    border-radius: var(--radius-pill);
-    background: var(--glass);
-    letter-spacing: 1px;
-    transition: background 0.3s ease, color 0.3s ease, transform 0.3s var(--ease-out);
-}
-
-.link--cta:hover {
-    background: var(--white);
-    color: var(--ink);
-}
-
+/* Menu button: a long line over a line made of two halves. Opening slides the halves to the end of the
+   long line and twists them into the head of an arrow pointing right. */
 .hamburger {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
+    position: relative;
+    display: inline-flex;
+    width: 56px;
+    height: 44px;
     padding: 0;
     border: none;
     background: none;
     color: inherit;
-    font-size: clamp(18px, 5vw, 22px);
-    line-height: 1;
     cursor: pointer;
 }
 
-.hamburger svg {
-    width: 1em;
-    height: 1em;
-    fill: currentColor;
+.hamburger-line,
+.hamburger-half {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
 }
 
-.hamburger[aria-expanded="true"] .icon-open,
-.hamburger[aria-expanded="false"] .icon-close {
-    display: none;
+.hamburger-line {
+    top: 16px;
+    transition: top 0.35s var(--ease-out) 0.2s;
 }
 
-/* Mobile menu */
+/* Closing: the head untwists first, then the halves slide back under the line. */
+.hamburger-half {
+    top: 26px;
+    width: 50%;
+    transform-origin: right center;
+    transition: top 0.35s var(--ease-out) 0.2s, translate 0.35s var(--ease-out) 0.2s, rotate 0.3s var(--ease-out), scale 0.3s var(--ease-out);
+}
+
+.hamburger-half:last-child {
+    left: 50%;
+}
+
+.hamburger[aria-expanded="true"] .hamburger-line {
+    top: 21px;
+    transition-delay: 0s;
+}
+
+/* Opening: slide to the tip, then twist. */
+.hamburger[aria-expanded="true"] .hamburger-half {
+    top: 21px;
+    scale: 0.66 1;
+    transition: top 0.35s var(--ease-out), translate 0.35s var(--ease-out), rotate 0.4s var(--ease-out) 0.2s, scale 0.4s var(--ease-out) 0.2s;
+}
+
+.hamburger[aria-expanded="true"] .hamburger-half:first-child,
+.hamburger[aria-expanded="true"] .hamburger-line + .hamburger-half {
+    translate: 100% 0;
+    rotate: 40deg;
+}
+
+.hamburger[aria-expanded="true"] .hamburger-half:last-child {
+    rotate: -40deg;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hamburger-line,
+    .hamburger-half { transition: none; }
+}
+
+
+/* Menu: a flat red field wiping down, links in black, flush left */
 
 .mobile-menu {
     position: fixed;
     inset: 0;
     z-index: 998;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    background: var(--section-gradient);
-    opacity: 0;
+    padding: 0 var(--pad-edge);
+    background: var(--accent);
+    color: var(--black);
+    clip-path: inset(0 0 100% 0);
     pointer-events: none;
-    -webkit-backdrop-filter: blur(0);
-    backdrop-filter: blur(0);
-    transition: opacity 0.6s var(--ease-out), backdrop-filter 0.6s var(--ease-out), -webkit-backdrop-filter 0.6s var(--ease-out);
+    transition: clip-path 0.6s var(--ease-out);
 }
 
 .mobile-menu.open {
-    opacity: 1;
+    clip-path: inset(0);
     pointer-events: auto;
-    -webkit-backdrop-filter: blur(30px);
-    backdrop-filter: blur(30px);
+}
+
+/* Over the red, the bar stops inverting and turns black. */
+html.menu-open .navbar {
+    mix-blend-mode: normal;
+    color: var(--black);
+}
+
+html.menu-open .brand img {
+    filter: brightness(0);
 }
 
 html.menu-open,
@@ -426,30 +439,41 @@ html.menu-open body {
 .mobile-menu-links {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: clamp(12px, 4vh, 32px);
+    align-items: flex-start;
 }
 
 .mobile-menu-link {
-    color: var(--white);
-    font-family: var(--font-display);
-    font-size: clamp(36px, 10vw, 80px);
-    font-weight: 700;
-    font-style: italic;
-    letter-spacing: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2em;
+    color: inherit;
+    font-family: var(--font-body);
+    font-size: clamp(56px, 11vw, 160px);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.045em;
     text-decoration: none;
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.5s ease, transform 0.5s var(--ease-out), color 0.2s;
+    transition: opacity 0.5s ease, transform 0.5s var(--ease-out), font-weight 0.3s var(--ease-out);
 }
 
 .mobile-menu-link:hover,
-.mobile-menu-link.active,
-.mobile-menu-link[aria-current="page"] {
-    color: var(--text);
-    text-decoration: underline;
-    text-underline-offset: 8px;
-    text-decoration-thickness: 2px;
+.mobile-menu-link:focus-visible {
+    font-weight: 800;
+}
+
+/* Before the link of the page you are on: a black pixel that appears once the menu is open. */
+.menu-current {
+    width: 0.3em;
+    height: 0.3em;
+    background: currentColor;
+    transform: scale(0);
+    transition: transform 0.4s var(--ease-out) 0.5s;
+}
+
+.mobile-menu.open .menu-current {
+    transform: scale(1);
 }
 
 .mobile-menu.open .mobile-menu-link {
@@ -457,9 +481,10 @@ html.menu-open body {
     transform: translateY(0);
 }
 
-.mobile-menu.open .mobile-menu-link:nth-child(1) { transition-delay: 0.15s; }
-.mobile-menu.open .mobile-menu-link:nth-child(2) { transition-delay: 0.22s; }
-.mobile-menu.open .mobile-menu-link:nth-child(3) { transition-delay: 0.29s; }
+/* The entrance is staggered; the bold on hover is not delayed. */
+.mobile-menu.open .mobile-menu-link:nth-child(1) { transition-delay: 0.15s, 0.15s, 0s; }
+.mobile-menu.open .mobile-menu-link:nth-child(2) { transition-delay: 0.22s, 0.22s, 0s; }
+.mobile-menu.open .mobile-menu-link:nth-child(3) { transition-delay: 0.29s, 0.29s, 0s; }
 
 .mobile-menu-footer {
     position: absolute;
@@ -469,8 +494,8 @@ html.menu-open body {
     display: flex;
     justify-content: space-between;
     padding: 0 var(--pad-edge);
-    font-size: clamp(11px, 2vw, 14px);
-    letter-spacing: 1px;
+    font-size: 13px;
+    font-weight: 500;
     opacity: 0;
     transition: opacity 0.5s ease 0.4s;
 }
@@ -492,17 +517,7 @@ html.menu-open body {
     justify-content: space-between;
     padding: clamp(40px, 15vh, 200px) clamp(20px, 10vw, 200px) clamp(24px, 5vh, 48px);
     overflow: hidden;
-}
-
-.footer-bg-video {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: grayscale(1);
-    pointer-events: none;
+    background: var(--accent);
 }
 
 .footer-title-mask {
@@ -517,15 +532,19 @@ html.menu-open body {
     pointer-events: none;
 }
 
+/* TOSKU, bold, spanning the page between the two margins. */
 .big-name {
     margin: 0;
     color: var(--white);
-    font-family: var(--font-display);
-    font-size: clamp(80px, 45vw, 50vh);
-    font-weight: bold;
-    text-align: center;
+    font-family: var(--font-body);
+    font-size: calc((100vw - 2 * var(--pad-edge)) / 3.3);
+    font-style: normal;
+    font-weight: 700;
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    text-align: left;
     white-space: nowrap;
-    transform: translateY(35%);
+    transform: translateY(12%);
 }
 
 .footer-top-links {
@@ -839,8 +858,6 @@ html.menu-open body {
     border: 1px solid var(--border);
     border-radius: var(--radius-pill);
     background: rgba(255, 255, 255, 0.03);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
     color: var(--text-muted);
     font-family: var(--font-body);
     font-size: clamp(10px, 1.1vw, 12px);
@@ -848,7 +865,7 @@ html.menu-open body {
     letter-spacing: 1.5px;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s var(--ease-out), box-shadow 0.3s ease;
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s var(--ease-out);
     will-change: transform, background, border-color;
 }
 
@@ -863,7 +880,6 @@ html.menu-open body {
     border-color: var(--white);
     background: var(--white);
     color: var(--ink);
-    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.12);
 }
 
 .featured-scatter {
@@ -984,8 +1000,6 @@ html.menu-open body {
     inset: 0;
     z-index: 3;
     background: rgba(0, 0, 0, calc(var(--hero-progress) * 0.65));
-    -webkit-backdrop-filter: blur(calc(var(--hero-progress) * 24px));
-    backdrop-filter: blur(calc(var(--hero-progress) * 24px));
     pointer-events: none;
 }
 
@@ -1844,14 +1858,6 @@ html:has(.project-main)::-webkit-scrollbar {
 }
 
 @media (max-width: 768px) {
-    .link,
-    .navbar-center {
-        display: none;
-    }
-
-    .hamburger {
-        display: inline-flex;
-    }
 
     #about-me {
         display: none;
@@ -1913,9 +1919,6 @@ html:has(.project-main)::-webkit-scrollbar {
 }
 
 @media (max-width: 480px) {
-    .big-name {
-        font-size: clamp(60px, 30vw, 200px);
-    }
 
     .exp-facts {
         grid-template-columns: 1fr;
@@ -1932,23 +1935,10 @@ html:has(.project-main)::-webkit-scrollbar {
         filter: grayscale(1);
     }
 
-    .about-header-overlay {
-        -webkit-backdrop-filter: none;
-        backdrop-filter: none;
-    }
-
-    .mobile-menu,
-    .mobile-menu.open {
-        background: rgba(8, 8, 8, 0.97);
-        -webkit-backdrop-filter: none;
-        backdrop-filter: none;
-    }
 
     .button,
     .filter-btn {
         background: rgba(255, 255, 255, 0.08);
-        -webkit-backdrop-filter: none;
-        backdrop-filter: none;
     }
 }
 
@@ -1993,7 +1983,7 @@ html:has(.project-main)::-webkit-scrollbar {
     #footer {
         position: relative;
         z-index: 2;
-        background: var(--black);
+        background: var(--accent);
     }
 
     .about-header {
@@ -2477,4 +2467,13 @@ html:has(.project-main)::-webkit-scrollbar {
     .project-pager-dir {
         transition: none;
     }
+}
+
+/* Characters of a scrubbed reveal: boxes of their own so the ember filter can displace each one. */
+.scrubbing-char {
+    display: inline-block;
+}
+
+.scrubbing-word {
+    white-space: nowrap;
 }

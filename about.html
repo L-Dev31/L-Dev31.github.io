@@ -65,29 +65,24 @@
         <div class="brand">
             <a href="index.html" aria-label="Home"><img src="assets/images/core/logo.svg" alt="L-Dev31 logo"></a>
         </div>
-        <div class="navbar-center">
-            <span class="status-badge">Work in progress</span>
-        </div>
         <div class="links-container">
-            <a href="index.html#featured-projects" class="link">Work</a>
-            <a href="about.html" class="link link--about active" aria-current="page">About</a>
-            <a href="mailto:leotoskuepro@gmail.com" class="link link--cta">Contact</a>
             <button class="hamburger" aria-label="Menu" aria-expanded="false">
-                <svg class="icon-open" aria-hidden="true"><use href="assets/images/core/icons.svg#bars"></use></svg>
-                <svg class="icon-close" aria-hidden="true"><use href="assets/images/core/icons.svg#close"></use></svg>
+                <span class="hamburger-line" aria-hidden="true"></span>
+                <span class="hamburger-half" aria-hidden="true"></span>
+                <span class="hamburger-half" aria-hidden="true"></span>
             </button>
         </div>
     </nav>
 
     <div class="mobile-menu" aria-hidden="true">
-        <nav class="mobile-menu-links" aria-label="Mobile navigation">
+        <nav class="mobile-menu-links" aria-label="Menu">
             <a href="index.html#featured-projects" class="mobile-menu-link">Work</a>
-            <a href="about.html" class="mobile-menu-link active" aria-current="page">About</a>
+            <a href="about.html" class="mobile-menu-link active" aria-current="page"><span class="menu-current" aria-hidden="true"></span>About</a>
             <a href="mailto:leotoskuepro@gmail.com" class="mobile-menu-link">Contact</a>
         </nav>
         <div class="mobile-menu-footer">
             <span>Léo TOSKU</span>
-            <span>&copy; 2026</span>
+            <span>&copy; <span data-year>2026</span></span>
         </div>
     </div>
 
@@ -244,9 +239,8 @@
     </main>
 
     <footer id="footer">
-        <video class="footer-bg-video" src="assets/images/core/bg.mp4" autoplay loop muted playsinline aria-hidden="true"></video>
         <div class="footer-title-mask" aria-hidden="true">
-            <p class="big-name">Léo TOSKU</p>
+            <p class="big-name">TOSKU</p>
         </div>
         <div class="footer-top-links">
             <div class="footer-col">
@@ -254,6 +248,8 @@
                 <ul class="footer-links">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="index.html#featured-projects">Work</a></li>
+                    <li><a href="index.html#journey">Journey</a></li>
+                    <li><a href="index.html#clients">Clients</a></li>
                     <li><a href="about.html">About</a></li>
                     <li><a href="mailto:leotoskuepro@gmail.com">Contact</a></li>
                 </ul>

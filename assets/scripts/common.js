@@ -5,10 +5,6 @@ const BREAKPOINT_MOBILE = 768;
 const BREAKPOINT_TABLET = 1024;
 
 export const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-// Old phones / data saving: same look, cheaper effects (no per-character blur).
-export const lowPower = reducedMotion
-    || (navigator.connection?.saveData ?? false)
-    || ((navigator.deviceMemory ?? 8) <= 4);
 export const clamp01 = value => Math.max(0, Math.min(1, value));
 
 // Breakpoint manager - single source of truth for all modules
@@ -88,6 +84,8 @@ export function reveal(elements) {
 }
 
 export function initPage() {
+    document.querySelectorAll('[data-year]').forEach(el => el.textContent = new Date().getFullYear());
+    smokeFilters();
     pageLoader();
     const lenis = smoothScroll();
     mobileMenu(lenis);
@@ -97,6 +95,31 @@ export function initPage() {
     magneticLinks();
     pauseOffscreenVideos();
     return lenis;
+}
+
+// Perlin smoke, in place of blur: fractal noise displacing whatever uses it, flickering a few times a second.
+// ember-{1,2,3} burn harder and harder; the -s versions are for small text.
+function smokeFilters() {
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('width', '0');
+    svg.setAttribute('height', '0');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.position = 'absolute';
+    const scales = { '': [5, 11, 18], '-s': [2, 4, 7] };
+    let markup = '';
+    for (const [suffix, list] of Object.entries(scales)) {
+        list.forEach((scale, i) => {
+            markup += `<filter id="ember${suffix}-${i + 1}" x="-40%" y="-60%" width="180%" height="220%" color-interpolation-filters="sRGB">
+                <feTurbulence type="fractalNoise" baseFrequency="0.035 0.09" numOctaves="2" seed="1">
+                    <animate attributeName="seed" values="1;2;3;4;5;6;7;8" dur="0.6s" calcMode="discrete" repeatCount="indefinite"/>
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" scale="${scale}" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>`;
+        });
+    }
+    svg.innerHTML = markup;
+    document.body.append(svg);
 }
 
 function pageLoader() {
@@ -243,7 +266,7 @@ function backToTop(lenis) {
 // Nav and footer links lean towards the mouse.
 function magneticLinks() {
     if (isMobile || reducedMotion) return;
-    document.querySelectorAll('.link, .footer-links a').forEach(link => {
+    document.querySelectorAll('.footer-links a').forEach(link => {
         link.addEventListener('mousemove', e => {
             const r = link.getBoundingClientRect();
             const x = (e.clientX - r.left - r.width / 2) * 0.25;
