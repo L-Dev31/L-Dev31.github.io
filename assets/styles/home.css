@@ -6,18 +6,18 @@
 @font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-VariableItalic.ttf') format('truetype'); font-weight: 100 900; font-style: italic; font-display: swap; }
 
 :root {
-    --white: #F4CFCA;   /* tone on tone: the light is a soft rose of the accent */
-    --black: #3A0B11;   /* ... and the dark a deep wine red, so nothing is pure black or white */
+    --white: #F6F2F2;   /* off-white for the light */
+    --black: #2A0509;   /* a deep wine red for the dark, never pure black */
     --pink: #F4C2B8;
-    --paper: #F4CFCA;
-    --dusk: #3A0B11;
+    --paper: #F6F2F2;
+    --dusk: #2A0509;
     --face: #E40613;   /* the red the face is drawn in */
-    --ink: #2A070C;
-    --text: #E9B9B3;
+    --ink: #1E0306;
+    --text: #E6DCDC;
     --text-muted: var(--white);
-    --text-faint: #B77D78;
-    --glass: rgba(244, 207, 202, 0.1);
-    --hairline: rgba(244, 207, 202, 0.08);
+    --text-faint: #A8908F;
+    --glass: rgba(246, 242, 242, 0.1);
+    --hairline: rgba(246, 242, 242, 0.08);
     --border: var(--white);
     /* Brand red. Too dim for small text on --black: use it for large type, shapes and fills. */
     --accent: #E40613;
@@ -547,7 +547,7 @@ html.menu-open body {
     letter-spacing: 0;
     text-align: left;
     white-space: nowrap;
-    transform: translateY(12%);
+    transform: translateY(50%);   /* half of the name is below the edge of the screen */
 }
 
 .footer-top-links {
