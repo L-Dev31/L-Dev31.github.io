@@ -242,10 +242,34 @@ function renderMenuLinks(nav) {
         const link = document.createElement('a');
         link.className = 'mobile-menu-link';
         link.href = page.href;
-        if (page.id === here) link.setAttribute('aria-current', 'page');
-        link.textContent = page.label;
+        if (page.id === here) {
+            link.setAttribute('aria-current', 'page');
+            // Before the page you are on: the logo, extruded and turning in cells like the project icons.
+            const mark = document.createElement('span');
+            mark.className = 'menu-current';
+            mark.setAttribute('aria-hidden', 'true');
+            mark.append(document.createElement('canvas'));
+            link.append(mark);
+        }
+        link.append(page.label);
         return link;
     }));
+}
+
+let menuSpin = null;
+function startMenuSpin(nav) {
+    stopMenuSpin();
+    const canvas = nav.querySelector('.menu-current canvas');
+    if (!canvas) return;
+    import('./pixel.js').then(({ extrudedSvg }) => {
+        if (!canvas.isConnected) return;
+        menuSpin = extrudedSvg(canvas, getComputedStyle(canvas.closest('a')).color);
+        menuSpin.show('assets/images/core/logo.svg', 10);
+    });
+}
+function stopMenuSpin() {
+    menuSpin?.hide();
+    menuSpin = null;
 }
 
 function mobileMenu(lenis) {
@@ -269,8 +293,8 @@ function mobileMenu(lenis) {
         button.setAttribute('aria-expanded', open);
         document.documentElement.classList.toggle('menu-open', open);
         background.forEach(element => { element.inert = open; });
-        if (open) { renderMenuLinks(nav); lenis?.stop(); }
-        else lenis?.start();
+        if (open) { renderMenuLinks(nav); startMenuSpin(nav); lenis?.stop(); }
+        else { stopMenuSpin(); lenis?.start(); }
         if (open) requestAnimationFrame(() => menu.querySelector('a')?.focus());
         else if (returnFocus) button.focus();
     };

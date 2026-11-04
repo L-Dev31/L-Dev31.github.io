@@ -461,15 +461,14 @@ html.menu-open body {
 
 /* Before the link of the page you are on: a black pixel that appears once the menu is open. */
 .menu-current {
-    width: 0.3em;
-    height: 0.3em;
-    background: currentColor;
-    transform: scale(0);
-    transition: transform 0.4s var(--ease-out) 0.5s;
+    display: inline-flex;
+    flex: none;
 }
 
-.mobile-menu.open .menu-current {
-    transform: scale(1);
+.menu-current canvas {
+    display: block;
+    width: auto;
+    height: 0.7em;
 }
 
 .mobile-menu.open .mobile-menu-link {
