@@ -2617,16 +2617,16 @@ html:has(.project-main)::-webkit-scrollbar {
         width: 150px;
         height: 150px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(255,255,255,0.4) 0, transparent 70%);
-        filter: blur(14px);
+        background: radial-gradient(circle, rgba(255,255,255,0.8) 0, rgba(255,255,255,0.62) 12%, rgba(255,255,255,0.36) 28%, rgba(255,255,255,0.15) 46%, rgba(255,255,255,0.04) 62%, transparent 74%);
+        filter: blur(6px);
         offset-path: inset(0 round 999px);
         offset-rotate: 0deg;
-        animation: glow-rail 5s linear infinite;
+        animation: glow-rail 10s linear infinite;
         pointer-events: none;
     }
 
     .mob-glow:nth-of-type(2) {
-        animation-delay: -2.5s;
+        animation-delay: -5s;
     }
 
     .mob-card-cta:active {
