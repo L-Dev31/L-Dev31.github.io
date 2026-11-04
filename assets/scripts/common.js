@@ -227,7 +227,11 @@ function backToTop(lenis) {
         ring.append(span);
     });
 
-    const update = () => button.classList.toggle('visible', footer.getBoundingClientRect().top < innerHeight);
+    // Shown once at least half of the footer is on screen
+    const update = () => {
+        const { top, height } = footer.getBoundingClientRect();
+        button.classList.toggle('visible', innerHeight - top >= height / 2);
+    };
     addEventListener('scroll', throttled(update), { passive: true });
     button.addEventListener('click', () => {
         if (lenis) lenis.scrollTo(0);
