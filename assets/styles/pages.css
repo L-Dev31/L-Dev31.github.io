@@ -2563,3 +2563,16 @@ html:has(.project-main)::-webkit-scrollbar {
     border: 1px solid currentColor;
     border-radius: 999px;
 }
+
+/* The time in Monaco sits in the middle of the bar. */
+.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+@media (max-width: 768px) {
+    .navbar-center {
+        display: none;
+    }
+}

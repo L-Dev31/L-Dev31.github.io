@@ -700,35 +700,20 @@ html.menu-open body {
     opacity: 0;
 }
 
-/* The name lives in the left third of the screen, vertically centred; the face sits on the right. LEO and TOSKU are the
+/* The name lives at the bottom left; the face sits on the right. LEO and TOSKU are the
    same size, stacked, with the three lines of the subtitle under them. The about brief later takes the very same place. */
 .header-content {
     --name-size: clamp(56px, 11vw, 200px);
     position: absolute;
-    top: 50%;
+    bottom: clamp(34px, 7vh, 61px);
     left: var(--pad-edge);
     z-index: 2;
     display: flex;
     flex-direction: column;
     gap: 21px;
-    transform: translateY(-50%);
 }
 
 /* The only small print: the time in Monaco, bottom left (clock() in common.js). */
-.hero-clock {
-    position: absolute;
-    bottom: 34px;
-    left: var(--pad-edge);
-    z-index: 2;
-    color: var(--white);
-    font-size: 13px;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.01em;
-    line-height: 1;
-    opacity: calc(1 - var(--turn, 0) * 2.5);
-    pointer-events: none;
-}
 
 #site-title {
     display: flex;
@@ -2659,7 +2644,15 @@ html:has(.project-main)::-webkit-scrollbar {
     line-height: 1;
 }
 
+/* The time in Monaco sits in the middle of the bar. */
+.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
-.hero-clock {
-    bottom: 28px;
+@media (max-width: 768px) {
+    .navbar-center {
+        display: none;
+    }
 }
