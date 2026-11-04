@@ -174,14 +174,14 @@ class App {
 
   bindMenu() {
     const titleScreen = document.getElementById('screen-title');
-    const defaultBg   = "url('images/Environments/outside.png')";
+    const defaultBg   = "url('images/environments/outside.png')";
 
     document.querySelectorAll('.menu [data-action]').forEach(btn => {
       btn.addEventListener('mouseenter', () => {
         const a = btn.dataset.action;
         let bg = defaultBg;
-        if (a === 'settings') bg = "url('images/Environments/data.png')";
-        else if (a === 'credits') bg = "url('images/Environments/seo.png')";
+        if (a === 'settings') bg = "url('images/environments/data.png')";
+        else if (a === 'credits') bg = "url('images/environments/seo.png')";
         titleScreen.style.setProperty('--title-bg', bg);
       });
 

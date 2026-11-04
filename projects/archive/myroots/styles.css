@@ -266,7 +266,7 @@ body {
 }
 
 .deceased {
-  background-image: url('Images/headstone.png');
+  background-image: url('images/headstone.png');
   background-size: cover;
 }
 

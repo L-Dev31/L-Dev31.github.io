@@ -5,12 +5,12 @@ let religionData = {};
 let familyInfoData = {};
 
 const centuryFiles = [
-    "DB/familyDatas/data_2000.json",
-    "DB/familyDatas/data_1900.json",
-    "DB/familyDatas/data_1800.json",
-    "DB/familyDatas/data_1700.json",
-    "DB/familyDatas/data_1600.json",
-    "DB/familyDatas/data_1500.json",
+    "db/familydatas/data_2000.json",
+    "db/familydatas/data_1900.json",
+    "db/familydatas/data_1800.json",
+    "db/familydatas/data_1700.json",
+    "db/familydatas/data_1600.json",
+    "db/familydatas/data_1500.json",
 ];
 
 const fetchAllCenturies = async () => {
@@ -33,10 +33,10 @@ async function loadExternalData() {
     try {
         const [familyRes, countryRes, regionRes, religionRes, familyInfoRes] = await Promise.all([
             fetchAllCenturies(),
-            fetch('DB/country.json'),
-            fetch('DB/region.json'),
-            fetch('DB/religion.json'),
-            fetch('DB/family.json')
+            fetch('db/country.json'),
+            fetch('db/region.json'),
+            fetch('db/religion.json'),
+            fetch('db/family.json')
         ]);
 
         if (!countryRes.ok) throw new Error('Erreur de chargement de country.json');
@@ -71,11 +71,11 @@ function getCountryInfo(countryCode) {
         nativeName: country.nativeName,
         anthem: country.anthem,
         capital: country.capital || 'Inconnue',
-        flag: `Images/Countries/Flags/${countryCode || 'unknown'}.png`,
-        banner: `Images/Countries/Banner/${countryCode || 'unknown'}.png`,
+        flag: `images/countries/flags/${countryCode || 'unknown'}.png`,
+        banner: `images/countries/banner/${countryCode || 'unknown'}.png`,
         images: Array.from({length: 4}, (_, i) =>
-            `Images/Countries/Images/${countryCode}-${i + 1}.png`),
-        anthemFile: `Music/Anthem/Countries/${countryCode}.mp3`
+            `images/countries/images/${countryCode}-${i + 1}.png`),
+        anthemFile: `music/anthem/countries/${countryCode}.mp3`
     };
 }
 
@@ -94,16 +94,16 @@ function getRegionInfo(regionCode) {
         nativeName: region.nativeName,
         anthem: region.anthem || '',
         capital: region.capital || 'Inconnue',
-        flag: `Images/Regions/Flags/${regionCode || 'unknown'}.png`,
-        banner: `Images/Regions/Banner/${regionCode || 'unknown'}.png`,
-        anthemFile: region.anthem ? `Music/Anthem/Regions/${regionCode}.mp3` : ''
+        flag: `images/regions/flags/${regionCode || 'unknown'}.png`,
+        banner: `images/regions/banner/${regionCode || 'unknown'}.png`,
+        anthemFile: region.anthem ? `music/anthem/regions/${regionCode}.mp3` : ''
     };
 }
 
 function getReligionInfo(religionCode) {
     return religionData[religionCode] || {
         name: 'Inconnue',
-        icon: 'Images/Icons/unknown.png'
+        icon: 'images/icons/unknown.png'
     };
 }
 
@@ -129,7 +129,7 @@ function showPersonDetails(personId) {
     infoPanel.classList.toggle('female', person.gender === 'female');
     infoPanel.classList.toggle('deceased', person.death !== "vivant(e)");
 
-    document.getElementById('infoPhoto').src = person.img || 'Images/Persons/Unknown.jpg';
+    document.getElementById('infoPhoto').src = person.img || 'images/persons/Unknown.jpg';
     document.getElementById('infoName').textContent = person.name || 'Inconnu';
 
     const born = person.born === 'Inconnu' ? '?' : person.born;
@@ -187,7 +187,7 @@ function showPersonDetails(personId) {
     };
 
     document.querySelectorAll('#info-panel img').forEach(img => {
-        img.onerror = () => handleImageError(img, 'Images/Icons/unknown.png');
+        img.onerror = () => handleImageError(img, 'images/icons/unknown.png');
     });
 
     infoPanel.style.display = 'block';
