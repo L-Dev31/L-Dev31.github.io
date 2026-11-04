@@ -345,7 +345,21 @@ function pixelHero(video) {
     const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
-    let brightness = null, lastTime = -1, lastBox = '';
+    let brightness = null, lastTime = -1, lastBox = '', wasLive = false;
+
+    // The pointer opens a 200px circle in the cells (pixelcells push away and turn), eased in and out.
+    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches && !reducedMotion;
+    const pointer = { x: 0, y: 0, tx: 0, ty: 0, strength: 0, target: 0 };
+    if (fine) {
+        addEventListener('pointermove', e => {
+            const r = canvas.getBoundingClientRect();
+            const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom && scrollY < innerHeight * 3;
+            pointer.target = inside ? 1 : 0;
+            pointer.tx = e.clientX - r.left; pointer.ty = e.clientY - r.top;
+            if (inside && !pointer.strength) { pointer.x = pointer.tx; pointer.y = pointer.ty; }
+        }, { passive: true });
+        document.addEventListener('pointerleave', () => { pointer.target = 0; });
+    }
 
     const draw = () => {
         requestAnimationFrame(draw);
@@ -361,7 +375,16 @@ function pixelHero(video) {
             brightness = new Uint8Array(cols * rows);
             lastTime = -1;
         }
-        if (video.currentTime === lastTime) return;
+        pointer.strength += (pointer.target - pointer.strength) * 0.12;
+        pointer.x += (pointer.tx - pointer.x) * 0.25;
+        pointer.y += (pointer.ty - pointer.y) * 0.25;
+        const fx = pointer.strength > 0.002 ? { x: pointer.x * (canvas.width / w), y: pointer.y * (canvas.height / h), r: 100 * (canvas.width / w), strength: pointer.strength } : null;
+        if (video.currentTime === lastTime) {
+            if (fx || wasLive) cells.paint(brightness, fx);   // the circle is still moving, or has just closed
+            wasLive = !!fx;
+            return;
+        }
+        wasLive = !!fx;
         lastTime = video.currentTime;
         // object-fit: cover
         const va = video.videoWidth / video.videoHeight, ba = w / h;
@@ -369,7 +392,7 @@ function pixelHero(video) {
         sampleCtx.drawImage(video, (video.videoWidth - sw) / 2, (video.videoHeight - sh) / 2, sw, sh, 0, 0, cells.cols, cells.rows);
         const rgba = sampleCtx.getImageData(0, 0, cells.cols, cells.rows).data;
         for (let i = 0; i < brightness.length; i++) brightness[i] = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114;
-        cells.paint(brightness);
+        cells.paint(brightness, fx);
     };
     requestAnimationFrame(draw);
     return canvas;

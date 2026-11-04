@@ -42,14 +42,32 @@ export function cellCanvas(canvas, color) {
         },
         get cols() { return cols; },
         get rows() { return rows; },
-        paint(brightness) {
+        // `fx` (optional): { x, y, r, strength } in canvas pixels. Cells inside the circle are pushed away from its centre
+        // and turned by their angle around it, more the closer they are.
+        paint(brightness, fx) {
             const size = CELL * scale;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const live = fx && fx.strength > 0.002;
             for (let i = 0; i < brightness.length; i++) {
                 const b = brightness[i];
                 if (b < LEVELS[0]) continue;
                 const state = b < LEVELS[1] ? 0 : b < LEVELS[2] ? 1 : 2;
-                ctx.drawImage(tiles, state * size, 0, size, size, (i % cols) * size, ((i / cols) | 0) * size, size, size);
+                const x = (i % cols) * size, y = ((i / cols) | 0) * size;
+                if (live) {
+                    const cx = x + size / 2, cy = y + size / 2;
+                    const dx = cx - fx.x, dy = cy - fx.y, d = Math.hypot(dx, dy);
+                    if (d < fx.r) {
+                        const u = 1 - d / fx.r, k = u * u * (3 - 2 * u) * fx.strength;
+                        const push = k * size * 1.6 / (d || 1);
+                        ctx.save();
+                        ctx.translate(cx + dx * push, cy + dy * push);
+                        ctx.rotate(k * Math.atan2(dy, dx));
+                        ctx.drawImage(tiles, state * size, 0, size, size, -size / 2, -size / 2, size, size);
+                        ctx.restore();
+                        continue;
+                    }
+                }
+                ctx.drawImage(tiles, state * size, 0, size, size, x, y, size, size);
             }
         },
     };
