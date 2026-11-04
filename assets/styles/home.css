@@ -456,12 +456,12 @@ html.menu-open body {
 }
 
 .mobile-menu-link[aria-current] {
-    font-weight: 800;
+    font-style: italic;
 }
 
 .mobile-menu-link:hover,
 .mobile-menu-link:focus-visible {
-    font-style: italic;
+    font-weight: 800;
 }
 
 /* Before the link of the page you are on: a black pixel that appears once the menu is open. */
@@ -880,10 +880,10 @@ html.menu-open body {
     transition: font-weight 0.4s var(--ease-out), transform 0.4s var(--ease-out);
 }
 
-/* Hover: the title leans (Satoshi's real italic). */
+/* Hover: the title turns bold, smoothly. */
 .index-row:hover .index-title,
 .index-row:focus-visible .index-title {
-    font-style: italic;
+    font-weight: 800;
 }
 
 .index-slot {
@@ -900,7 +900,7 @@ html.menu-open body {
 
 .index-row:hover .index-year,
 .index-row:focus-visible .index-year {
-    font-style: italic;
+    font-weight: 800;
 }
 
 .index-preview {
@@ -1063,7 +1063,7 @@ html.menu-open body {
 
 a.client-row:hover .client-name,
 a.client-row:focus-visible .client-name {
-    font-style: italic;
+    font-weight: 800;
 }
 
 @media (max-width: 1024px) {

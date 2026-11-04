@@ -451,12 +451,12 @@ html.menu-open body {
 }
 
 .mobile-menu-link[aria-current] {
-    font-weight: 800;
+    font-style: italic;
 }
 
 .mobile-menu-link:hover,
 .mobile-menu-link:focus-visible {
-    font-style: italic;
+    font-weight: 800;
 }
 
 /* Before the link of the page you are on: a black pixel that appears once the menu is open. */
