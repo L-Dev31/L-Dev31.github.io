@@ -2604,7 +2604,7 @@ html:has(.project-main)::-webkit-scrollbar {
         isolation: isolate;
         border: 1px solid rgba(255,255,255,0.5);
         border-radius: 999px;
-        background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1) 50%, transparent);
+        background: linear-gradient(to bottom, rgba(255,255,255,0.25), rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.25));
         color: var(--white);
         font-family: 'Satoshi', sans-serif;
         font-size: 12px;
@@ -2629,8 +2629,8 @@ html:has(.project-main)::-webkit-scrollbar {
         width: 150px;
         height: 150px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(255,255,255,0.8) 0, rgba(255,255,255,0.62) 12%, rgba(255,255,255,0.36) 28%, rgba(255,255,255,0.15) 46%, rgba(255,255,255,0.04) 62%, transparent 74%);
-        filter: blur(6px);
+        background: radial-gradient(circle, rgba(255,255,255,0.45) 0, rgba(255,255,255,0.3) 14%, rgba(255,255,255,0.14) 32%, rgba(255,255,255,0.04) 52%, transparent 68%);
+        filter: blur(12px);
         offset-path: inset(0 round 999px);
         offset-rotate: 0deg;
         animation: glow-rail 10s linear infinite;
