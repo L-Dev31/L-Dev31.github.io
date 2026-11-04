@@ -193,10 +193,10 @@ function splitChars(block) {
     return [...block.querySelectorAll('.scrubbing-char')];
 }
 
-// Home hero timeline, counted in screens of scroll: the hero is one screen and the about brief the next (the spacer
-// is 2 screens). The face turns through the whole first screen, so the brief is complete as the projects arrive.
-const TURN_START = 0;
-const TURN_LENGTH = 0.9;
+// Home hero timeline, counted in screens of scroll: the hero takes two screens (the name holds, then the face turns
+// and has turned at 2), the about brief the next two (it reads, then the projects slide over; the spacer is 4 screens).
+const TURN_START = 0.6;
+const TURN_LENGTH = 1.4;
 const heroTurn = () => clamp01((scrollY / innerHeight - TURN_START) / TURN_LENGTH);
 
 // [data-parallax-speed] elements drift relative to the viewport centre: 100 is static, 90 lags behind, 110 runs ahead.
