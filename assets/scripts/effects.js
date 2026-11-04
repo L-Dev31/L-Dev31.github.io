@@ -30,6 +30,7 @@ export function scrubbingText() {
                 : clamp01((readingLine - r.top) / Math.max(r.height, 1));
             const head = progress * (chars.length - 1 + SPREAD);
             chars.forEach((char, i) => paintChar(char, clamp01((head - i) / SPREAD)));
+            drawCells(block, chars);
         }
     };
 
@@ -105,12 +106,13 @@ export function scrollyScenes() {
     }
     if (!scenes.length) return;
 
-    const paintChars = (revealT, chars) => {
+    const paintChars = (revealT, chars, host) => {
         const head = revealT * (chars.length - 1 + SPREAD);
         for (let i = 0; i < chars.length; i++) {
             const t = clamp01((head - i) / SPREAD);
             paintChar(chars[i], t);
         }
+        if (host) drawCells(host, chars);
     };
 
     const paint = () => {
@@ -126,7 +128,7 @@ export function scrollyScenes() {
             const pinned = r.height - vh > vh * 0.3 && pinH <= vh;
             if (!pinned) {
                 // Natural scroll: progressive reveal, no fade-out.
-                paintChars(clamp01(((vh * 0.9 - r.top) / travel) / 0.62), chars);
+                paintChars(clamp01(((vh * 0.9 - r.top) / travel) / 0.62), chars, pin);
                 if (pin.dataset.scrubbed) {
                     pin.style.opacity = '';
                     pin.style.transform = '';
@@ -140,7 +142,7 @@ export function scrollyScenes() {
             const topMax = (vh - pinH) / 2;
             const stuckMax = Math.max(r.height - padTop - pinH, 0);
             const stuck = Math.min(Math.max(topMax - r.top - padTop, 0), stuckMax);
-            paintChars(clamp01(stuck / Math.max(stuckMax * 0.62, 1)), chars);
+            paintChars(clamp01(stuck / Math.max(stuckMax * 0.62, 1)), chars, pin);
             // No rise-and-fade: the pin stays invisible while traveling, fades in
             // once centered, then fades out at handoff.
             const fadeIn = clamp01(stuck / 150);
@@ -156,13 +158,87 @@ export function scrollyScenes() {
     paint();
 }
 
-// One character of a reveal at t (0 hidden, 1 shown): it resolves in cells, like the pictures: dots, a checkerboard,
-// solid cells, then the crisp glyph.
+// A character of a reveal at t (0 hidden, 1 shown) is drawn as terminal cells that ignore its outline, so the shape is
+// deformed rather than clipped: dots, then diamonds, then pixels, then the crisp glyph.
 function paintChar(char, t) {
-    const stage = t <= 0 ? 0 : t < 0.25 ? 1 : t < 0.5 ? 2 : t < 1 ? 3 : 0;
-    char.style.opacity = t > 0 ? '1' : '0';
+    char.style.opacity = t >= 1 ? '1' : '0';
+    const stage = t <= 0 || t >= 1 ? 0 : t < 0.34 ? 1 : t < 0.67 ? 2 : 3;
     if (stage) char.dataset.px = stage;
     else delete char.dataset.px;
+}
+
+const glyphGrids = new Map();
+const cellLayers = new WeakMap();
+
+// Coverage of the glyph on a grid of cells, cached per character and font.
+function glyphGrid(char, rect, cell) {
+    const style = getComputedStyle(char);
+    const key = `${char.textContent}|${style.font}|${style.webkitTextStrokeWidth}|${cell}`;
+    let grid = glyphGrids.get(key);
+    if (grid) return grid;
+    const w = Math.max(1, Math.ceil(rect.width)), h = Math.max(1, Math.ceil(rect.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.font = style.font;
+    ctx.textBaseline = 'alphabetic';
+    const m = ctx.measureText(char.textContent);
+    const baseline = (h - (m.fontBoundingBoxAscent + m.fontBoundingBoxDescent)) / 2 + m.fontBoundingBoxAscent;
+    ctx.fillText(char.textContent, 0, baseline);
+    const stroke = parseFloat(style.webkitTextStrokeWidth) || 0;
+    if (stroke) { ctx.lineWidth = stroke; ctx.strokeText(char.textContent, 0, baseline); }
+    const data = ctx.getImageData(0, 0, w, h).data;
+    const cols = Math.ceil(w / cell), rows = Math.ceil(h / cell);
+    const cover = new Float32Array(cols * rows);
+    for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) cover[((y / cell) | 0) * cols + ((x / cell) | 0)] += data[(y * w + x) * 4 + 3] / 255;
+    }
+    for (let i = 0; i < cover.length; i++) cover[i] /= cell * cell;
+    grid = { cols, rows, cover };
+    glyphGrids.set(key, grid);
+    return grid;
+}
+
+// Draws the characters in a stage on a canvas laid over `host`.
+function drawCells(host, chars) {
+    let layer = cellLayers.get(host);
+    if (!layer) {
+        const canvas = document.createElement('canvas');
+        canvas.className = 'scrubbing-cells';
+        canvas.setAttribute('aria-hidden', 'true');
+        if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+        host.append(canvas);
+        layer = { canvas, ctx: canvas.getContext('2d') };
+        cellLayers.set(host, layer);
+    }
+    const { canvas, ctx } = layer;
+    const hr = host.getBoundingClientRect();
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    const w = Math.round(hr.width * dpr), h = Math.round(hr.height * dpr);
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+    ctx.clearRect(0, 0, w, h);
+    for (const char of chars) {
+        const stage = +char.dataset.px;
+        if (!stage) continue;
+        const r = char.getBoundingClientRect();
+        const style = getComputedStyle(char);
+        const cell = Math.max(3, Math.round(parseFloat(style.fontSize) * 0.13));
+        const { cols, rows, cover } = glyphGrid(char, r, cell);
+        ctx.fillStyle = style.color;
+        const ox = (r.left - hr.left) * dpr, oy = (r.top - hr.top) * dpr, c = cell * dpr;
+        for (let j = 0; j < rows; j++) {
+            for (let i = 0; i < cols; i++) {
+                const v = cover[j * cols + i];
+                const x = ox + i * c, y = oy + j * c;
+                if (stage === 1 && v > 0.18) ctx.fillRect(x + c * 0.36, y + c * 0.36, c * 0.28, c * 0.28);
+                else if (stage === 2 && v > 0.3) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + c / 2, y); ctx.lineTo(x + c, y + c / 2); ctx.lineTo(x + c / 2, y + c); ctx.lineTo(x, y + c / 2);
+                    ctx.fill();
+                } else if (stage === 3 && v > 0.4) ctx.fillRect(x, y, c * 0.86, c * 0.86);
+            }
+        }
+    }
 }
 
 function splitChars(block) {
