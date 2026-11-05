@@ -157,15 +157,6 @@
       "year": 2019
     },
     {
-      "id": "backrooms",
-      "title": "Backrooms",
-      "year": 2026,
-      "search": [
-        "Backrooms (film)",
-        "Backrooms"
-      ]
-    },
-    {
       "id": "making-a-living",
       "title": "Making a Living",
       "year": 1914
@@ -251,16 +242,6 @@
       ]
     },
     {
-      "id": "men-in-black-ii",
-      "title": "Men in Black II",
-      "year": 2002
-    },
-    {
-      "id": "men-in-black-3",
-      "title": "Men in Black 3",
-      "year": 2012
-    },
-    {
       "id": "home-alone",
       "title": "Home Alone",
       "year": 1990
@@ -284,15 +265,6 @@
       ]
     },
     {
-      "id": "alice-in-wonderland-tim-burton",
-      "title": "Alice in Wonderland (Tim Burton)",
-      "year": 2010,
-      "search": [
-        "Alice in Wonderland (2010 film)",
-        "Alice in Wonderland (Tim Burton)"
-      ]
-    },
-    {
       "id": "ghostbusters",
       "title": "Ghostbusters",
       "year": 1984
@@ -301,11 +273,6 @@
       "id": "ghostbusters-ii",
       "title": "Ghostbusters II",
       "year": 1989
-    },
-    {
-      "id": "ghostbusters-afterlife",
-      "title": "Ghostbusters: Afterlife",
-      "year": 2021
     },
     {
       "id": "charlie-and-the-chocolate-factory",
@@ -1069,15 +1036,6 @@
       "video_seconds": 5
     },
     {
-      "id": "wii-play-motion-wii",
-      "title": "Wii Play: Motion",
-      "year": 2011,
-      "platform": "wii",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
       "id": "new-super-mario-bros-2-3ds",
       "title": "New Super Mario Bros. 2",
       "year": 2012,
@@ -1580,33 +1538,6 @@
       "video_seconds": 5
     },
     {
-      "id": "newer-super-mario-bros-wii-wii",
-      "title": "Newer Super Mario Bros. Wii",
-      "year": 2012,
-      "platform": "wii",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
-      "id": "wii-music-wii",
-      "title": "Wii Music",
-      "year": 2008,
-      "platform": "wii",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
-      "id": "pokemon-quest-switch",
-      "title": "Pokémon Quest",
-      "year": 2018,
-      "platform": "switch",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
       "id": "undertale-steam",
       "title": "Undertale",
       "year": 2015,
@@ -1655,49 +1586,9 @@
       "video_seconds": 5
     },
     {
-      "id": "minecraft-story-mode-wiiu",
-      "title": "Minecraft: Story Mode",
-      "year": 2015,
-      "platform": "wiiu",
-      "search": [
-        "Minecraft: Story Mode",
-        "Minecraft: Story Mode - The Complete Adventure"
-      ],
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
       "id": "angry-birds-rio-android",
       "title": "Angry Birds Rio",
       "year": 2011,
-      "platform": "android",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
-      "id": "angry-birds-epic-android",
-      "title": "Angry Birds Epic",
-      "year": 2014,
-      "platform": "android",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
-      "id": "bad-piggies-android",
-      "title": "Bad Piggies",
-      "year": 2012,
-      "platform": "android",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
-      "id": "angry-birds-friends-android",
-      "title": "Angry Birds Friends",
-      "year": 2012,
       "platform": "android",
       "video_width": 960,
       "video_crf": 27,
