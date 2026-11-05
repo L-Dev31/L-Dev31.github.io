@@ -108,7 +108,11 @@
       "platform": "n64",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "qPBRoqwFzCk",
+        "a83LGSzCqn8"
+      ]
     },
     {
       "id": "the-legend-of-zelda-ocarina-of-time-n64",
@@ -117,7 +121,11 @@
       "platform": "n64",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "EfUoDfnH9ew",
+        "88D8zwosVVU"
+      ]
     },
     {
       "id": "the-legend-of-zelda-majora-s-mask-n64",
@@ -133,7 +141,10 @@
       "title": "Rayman 3",
       "year": 2003,
       "platform": "gba",
-      "search": "Rayman 3"
+      "search": "Rayman 3",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-64-ds-ds",
@@ -637,7 +648,10 @@
       "id": "pokemon-emerald-version-gba",
       "title": "Pokémon Emerald Version",
       "year": 2004,
-      "platform": "gba"
+      "platform": "gba",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "pokemon-red-version-gb",

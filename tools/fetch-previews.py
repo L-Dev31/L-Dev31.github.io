@@ -29,7 +29,7 @@ NAMES = {'nes': 'NES', 'snes': 'SNES', 'n64': 'Nintendo 64 N64', 'gb': 'Game Boy
 KEYS = {'nes': r'\bnes\b|famicom(?! disk)|nintendo entertainment', 'snes': r'\bsnes\b|super nintendo|super famicom', 'n64': r'\bn64\b|nintendo 64',
         'gb': r'game ?boy(?! (advance|color))|\bgb\b|\bdmg\b', 'gbc': r'game ?boy color|\bgbc\b', 'gba': r'game ?boy advance|\bgba\b', 'ds': r'(?<!3)\bn?ds\b|nintendo ds',
         '3ds': r'\b3ds\b', 'wii': r'\bwii\b(?! ?u)', 'wiiu': r'wii ?u\b', 'switch': r'\bswitch\b', 'mame': r'arcade|mame'}
-BAD = r'remake|remaster|reimagined|definitive|\bmod\b|\bhack\b|romhack|randomizer|speedrun|\btas\b|trailer|review|reaction|tutorial|guide|how to|\bvs\b|fan ?game|demo\b'
+BAD = r'streamer|stream\b|twitch|facecam|webcam|reaction|gamemaster|\blive\b|remake|remaster|reimagined|definitive|\bmod\b|\bhack\b|romhack|randomizer|speedrun|\btas\b|trailer|review|reaction|tutorial|guide|how to|\bvs\b|fan ?game|demo\b'
 
 
 def norm(text):
@@ -57,7 +57,8 @@ def pick(item, rows):
         if others:
             continue
         own = re.search(KEYS[platform], low) if platform in KEYS else True
-        score = 1 + (2 if own else 0) + (2 if 'longplay' in low else 0) + (1 if 'no commentary' in low else 0)
+        # pure uploads from longplay channels have no frame, no webcam and no overlay
+        score = 1 + (4 if 'longplay' in low.split('~')[0] else 0) + (2 if own else 0) + (2 if 'longplay' in low else 0) + (1 if 'no commentary' in low else 0)
         if score > best_score:
             best, best_score = (vid, duration), score
     return best
@@ -67,7 +68,7 @@ def clip(item):
     dest = OUT / f"{item_id(item)}.mp4"
     platform = item.get('via') or item['platform']
     query = item.get('video_search') or f"{item.get('video_name', re.sub(r'\s*\([^)]*\)$', '', item['title']))} {NAMES.get(platform, '')} longplay no commentary"
-    lines = subprocess.run(['yt-dlp', '--no-warnings', '--print', '%(id)s|%(duration)s|%(title)s', f'ytsearch12:{query}'], capture_output=True, text=True, timeout=180).stdout.split('\n')
+    lines = subprocess.run(['yt-dlp', '--no-warnings', '--print', '%(id)s|%(duration)s|%(channel)s ~ %(title)s', f'ytsearch12:{query}'], capture_output=True, text=True, timeout=180).stdout.split('\n')
     rows = []
     for line in lines:
         parts = line.split('|', 2)
