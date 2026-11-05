@@ -939,7 +939,7 @@ html.menu-open body {
 .journey-stops {
     position: relative;
     z-index: 1;
-    max-width: min(44vw, 620px);
+    max-width: min(54vw, 780px);
     margin: -100vh 0 0;
     padding: 150vh var(--pad-edge) 20vh;
     list-style: none;
@@ -974,29 +974,18 @@ html.menu-open body {
     transform: scale(1);
 }
 
-.journey-when {
+.journey-when,
+.journey-country {
     font-size: 14px;
     font-weight: 500;
-}
-
-/* The country is set big and cut in two; its flag opens in the gap. */
-.journey-country {
-    display: flex;
-    align-items: center;
-    margin-top: 6px;
-    font-family: var(--font-display);
-    font-size: clamp(30px, 3.6vw, 56px);
-    line-height: 1;
-    white-space: nowrap;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 .journey-flag {
     --open: 0;
     position: relative;
     flex: none;
-    height: 1.5em;
-    width: calc(var(--open) * var(--aspect) * 1.5em + var(--open) * 0.3em);
+    height: 0.8em;
+    width: calc(var(--open) * var(--aspect) * 0.8em + var(--open) * 0.3em);
 }
 
 .journey-flag-canvas {
@@ -1007,9 +996,12 @@ html.menu-open body {
 }
 
 .journey-place {
+    display: flex;
+    align-items: center;
     margin: 0;
+    white-space: nowrap;
     font-family: var(--font-display);
-    font-size: clamp(40px, 6vw, 96px);
+    font-size: clamp(36px, 4.6vw, 76px);
     font-weight: 400;
     line-height: 0.9;
     -webkit-text-stroke: 0.018em currentColor;

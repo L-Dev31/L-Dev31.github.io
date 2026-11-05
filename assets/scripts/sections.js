@@ -213,16 +213,16 @@ export async function journey(container) {
     const items = stops.map(stop => {
         const item = el('li', 'journey-stop');
         item.tabIndex = 0;
-        // The country, split in two: the flag opens between the halves as the stop comes to the middle of the screen.
-        const country = el('span', 'journey-country');
-        country.setAttribute('aria-label', stop.country);
-        const cut = Math.ceil(stop.country.length / 2), slot = el('span', 'journey-flag');
-        const half = (cls, text) => { const s = el('span', cls, text); s.setAttribute('aria-hidden', 'true'); return s; };
+        // The title, split in two: the flag opens between the halves as the stop comes to the middle of the screen.
+        const words = stop.place.split(' '), cut = Math.ceil(words.length / 2);
+        const place = el('h3', 'journey-place'), slot = el('span', 'journey-flag');
+        place.setAttribute('aria-label', stop.place);
         slot.setAttribute('aria-hidden', 'true');
         slot.style.setProperty('--aspect', FLAGS[stop.flag]?.aspect ?? 1.5);
-        country.append(half('journey-half', stop.country.slice(0, cut)), slot, half('journey-half', stop.country.slice(cut)));
-        item.append(el('span', 'journey-when', stop.when), el('h3', 'journey-place scrubbing-text', stop.place),
-            country, el('p', 'journey-what scrubbing-text', stop.what));
+        place.append(el('span', 'journey-half scrubbing-text', words.slice(0, cut).join(' ')), slot,
+            el('span', 'journey-half scrubbing-text', words.slice(cut).join(' ')));
+        item.append(el('span', 'journey-when', stop.when), place,
+            el('span', 'journey-country', stop.country), el('p', 'journey-what scrubbing-text', stop.what));
         list.append(item);
         return item;
     });
@@ -230,7 +230,7 @@ export async function journey(container) {
     const openFlags = (time, instant) => flags.forEach((f, i) => {
         if (!f.paint) return;
         const r = items[i].getBoundingClientRect();
-        const near = instant ? 1 : clamp01(1 - Math.abs(r.top + r.height / 2 - innerHeight / 2) / (innerHeight * 0.3));
+        const near = instant ? 1 : clamp01(1 - Math.abs(r.top + r.height / 2 - innerHeight / 2) / (innerHeight * 0.24));
         f.open = ease(near);
         f.slot.style.setProperty('--open', f.open.toFixed(3));
         f.paint(f.open, time);
