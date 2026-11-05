@@ -275,7 +275,7 @@ function mobileMenu(lenis) {
         const dark = document.querySelector('.navbar.on-accent');
         picture = pixelPicture(host, 'assets/images/core/menu.jpg', {
             mirror: true,
-            color: root.getPropertyValue(dark ? '--accent' : '--black').trim(),
+            color: root.getPropertyValue(dark ? '--accent' : '--white').trim(),
             active: () => menu.classList.contains('open'),
         });
     };
