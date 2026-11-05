@@ -427,6 +427,7 @@ html.menu-open body {
 }
 
 .mobile-menu-picture {
+    --invert: 1;
     position: absolute;
     top: 0;
     right: 0;
@@ -492,6 +493,10 @@ html.menu-open body {
     line-height: 1;
     text-decoration: none;
     transition: background 0.3s ease, color 0.3s ease;
+}
+
+html.on-accent .mobile-menu-picture {
+    --invert: 0;
 }
 
 html.on-accent .mobile-menu-link + .mobile-menu-link {
@@ -881,6 +886,7 @@ html.on-accent .mobile-menu-socials a:focus-visible {
 }
 
 .promise-picture {
+    --invert: 1;
     aspect-ratio: 3 / 4;
     overflow: hidden;
 }
