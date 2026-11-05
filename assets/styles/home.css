@@ -1,4 +1,5 @@
 @font-face { font-family: 'Editorial Old'; src: url('../fonts/editorial-old.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Editorial Old'; src: url('../fonts/editorial-old-italic.otf') format('opentype'); font-style: italic; font-display: swap; }
 @font-face { font-family: 'Bold'; src: url('../fonts/bold.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Heavitas'; src: url('../fonts/heavitas.ttf') format('truetype'); font-display: swap; }
 @font-face { font-family: 'Satoshi'; src: url('../fonts/satoshi-variable.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
@@ -182,6 +183,7 @@ html.custom-cursor * {
     font-weight: 400;
     line-height: 0.86;
     text-align: left;
+    font-style: italic;
 }
 
 .section-head {
@@ -645,6 +647,7 @@ html.menu-open body {
     letter-spacing: 0;
     white-space: nowrap;
     pointer-events: none;
+    font-style: italic;
 }
 
 #site-title > * {
@@ -707,6 +710,7 @@ html.menu-open body {
     font-weight: 400;
     line-height: 0.88;
     text-wrap: balance;
+    font-style: italic;
 }
 
 .about-title strong {
@@ -758,6 +762,7 @@ html.menu-open body {
     font-size: clamp(36px, 4.4vw, 72px);
     font-weight: 400;
     line-height: 0.9;
+    font-style: italic;
 }
 
 .index-list {
@@ -900,6 +905,7 @@ html.menu-open body {
 }
 
 .journey-place {
+    text-transform: uppercase;
     display: flex;
     align-items: center;
     margin: 0;
@@ -908,6 +914,7 @@ html.menu-open body {
     font-size: clamp(36px, 4.6vw, 76px);
     font-weight: 400;
     line-height: 0.9;
+    font-style: italic;
 }
 
 .journey-what {
@@ -1309,6 +1316,7 @@ a.client-row:focus-visible .client-name {
     font-family: var(--font-display);
     font-size: clamp(36px, 6vw, 96px);
     line-height: 1.05;
+    font-style: italic;
 }
 
 .article-subtitle {

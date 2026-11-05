@@ -1,4 +1,5 @@
 @font-face { font-family: 'Editorial Old'; src: url('../fonts/editorial-old.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Editorial Old'; src: url('../fonts/editorial-old-italic.otf') format('opentype'); font-style: italic; font-display: swap; }
 @font-face { font-family: 'Bold'; src: url('../fonts/bold.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Heavitas'; src: url('../fonts/heavitas.ttf') format('truetype'); font-display: swap; }
 @font-face { font-family: 'Satoshi'; src: url('../fonts/satoshi-variable.ttf') format('truetype'); font-weight: 300 900; font-style: normal; font-display: swap; }
@@ -189,6 +190,7 @@ html.custom-cursor * {
     font-weight: 400;
     line-height: 0.9;
     text-align: left;
+    font-style: italic;
 }
 
 .button {
@@ -654,6 +656,7 @@ html.menu-open body {
     line-height: 1;
     white-space: nowrap;
     pointer-events: none;
+    font-style: italic;
 }
 
 .hero-spacer {
@@ -683,6 +686,7 @@ html.menu-open body {
     font-weight: normal;
     line-height: 1.05;
     text-wrap: balance;
+    font-style: italic;
 }
 
 .about-hero-lede {
@@ -813,6 +817,7 @@ html.menu-open body {
     font-weight: 400;
     font-synthesis: weight style;
     text-wrap: balance;
+    font-style: italic;
 }
 
 .story-paragraph {
@@ -895,6 +900,7 @@ html.menu-open body {
     color: var(--white);
     font-family: var(--font-display);
     line-height: 1.05;
+    font-style: italic;
 }
 
 .company-logo {
@@ -1032,6 +1038,7 @@ html.menu-open body {
     font-family: var(--font-display);
     font-size: clamp(36px, 6vw, 96px);
     line-height: 1.05;
+    font-style: italic;
 }
 
 .article-subtitle {
@@ -1139,6 +1146,7 @@ html.menu-open body {
     font-size: clamp(28px, 2.6vw, 44px);
     letter-spacing: -0.01em;
     line-height: 1.1;
+    font-style: italic;
 }
 
 html:has(.project-main) {
@@ -1401,6 +1409,7 @@ html:has(.project-main)::-webkit-scrollbar {
     font-size: clamp(32px, 5vw, 80px);
     font-weight: 400;
     line-height: 1.05;
+    font-style: italic;
 }
 
 .project-cta-gallery {
@@ -1500,6 +1509,7 @@ html:has(.project-main)::-webkit-scrollbar {
     font-size: clamp(26px, 3.6vw, 56px);
     font-weight: 400;
     line-height: 1.05;
+    font-style: italic;
 }
 
 .project-pager-role {
