@@ -1,2 +1,0 @@
-This is a sample document file that will be displayed in the file manager.
-You can add any .txt, .docx, .pdf files here and they will automatically appear in the Documents folder of the file manager.

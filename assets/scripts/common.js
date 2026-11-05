@@ -48,8 +48,7 @@ export const breakpoint = (() => {
     };
 })();
 
-// Backwards compat - use breakpoint.isMobile instead
-export const isMobile = breakpoint.isMobile;
+const isMobile = breakpoint.isMobile;
 
 // Visible case studies, newest first. Parked projects live in disabled-projects.json (not loaded).
 export const loadProjects = () => fetch('assets/data/projects.json')

@@ -1,2 +1,0 @@
-This is a sample document file that will appear in the file manager.
-You can add any text files here and they will be displayed automatically.

@@ -7,15 +7,12 @@
 :root {
     --white: #F6F2F2;   /* off-white for the light */
     --black: #170206;   /* a very deep wine red for the dark, never pure black */
-    --pink: #F4C2B8;
-    --paper: #F6F2F2;
     --dusk: #170206;
     --face: #E40613;   /* the red the face is drawn in */
     --ink: #0F0104;
     --text: #E6DCDC;
     --text-muted: var(--white);
     --text-faint: #A8908F;
-    --glass: rgba(246, 242, 242, 0.1);
     --hairline: rgba(246, 242, 242, 0.08);
     --border: var(--white);
     /* Brand red. Too dim for small text on --black: use it for large type, shapes and fills. */
@@ -24,7 +21,6 @@
     --font-body: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
     --font-ui: var(--font-body);
     --font-display: 'Lux', serif;
-    --font-mono: var(--font-body);   /* no second voice: the labels are Satoshi too */
 
     --pad-section: clamp(40px, 10vh, 120px);
     --pad-edge: clamp(20px, 5vw, 80px);
@@ -33,7 +29,6 @@
 
     --section-gradient: radial-gradient(circle at 50% 0%, #2b0a10 0%, #1e0409 30%, var(--black) 80%);
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-    --smoke-filter: url(#perlin-smoke);
 }
 
 /* Base */
@@ -188,40 +183,6 @@ html.lenis body {
 html.custom-cursor,
 html.custom-cursor * {
     cursor: none;
-}
-
-.cta-cursor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 20px;
-    border-radius: var(--radius-pill);
-    background: var(--white);
-    color: var(--ink);
-    font-size: clamp(12px, 1.4vw, 16px);
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
-    will-change: transform, opacity;
-}
-
-.cta-cursor.active {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-    border-radius: 30px;
-}
-
-.cta-cursor-arrow {
-    width: 0.85em;
-    height: 0.85em;
-    background: currentColor;
-    mask: url('../images/core/arrow-cta.svg') no-repeat center / contain;
 }
 
 /* Shared components */
@@ -391,7 +352,6 @@ html.custom-cursor * {
     .hamburger-line,
     .hamburger-half { transition: none; }
 }
-
 
 /* Menu: a flat red field wiping down, links in black, flush left */
 
@@ -685,8 +645,7 @@ html.menu-open body {
     pointer-events: none;
 }
 
-#hero-video,
-#hero-canvas {
+#hero-video {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -699,10 +658,6 @@ html.menu-open body {
     z-index: 0;
     object-fit: cover;
     background: var(--black);
-}
-
-#hero-canvas {
-    z-index: 0;
 }
 
 .header-content {
@@ -743,13 +698,6 @@ html.menu-open body {
     height: 100dvh;
 }
 
-/* Home: intro */
-
-#about-me {
-    padding: clamp(48px, 10vh, 120px) 0 clamp(48px, 8vh, 100px);
-    overflow: hidden;
-}
-
 .intro {
     position: relative;
     width: min(1500px, 100%);
@@ -761,42 +709,6 @@ html.menu-open body {
     gap: clamp(48px, 8vw, 140px);
     margin: 0 auto;
     padding: clamp(100px, 15vh, 200px) var(--pad-edge);
-}
-
-.intro-text {
-    flex: 1;
-    z-index: 10;
-    max-width: 62ch;
-    margin-right: -12vw;
-    text-align: right;
-    mix-blend-mode: difference;
-}
-
-.intro-text .about-title {
-    margin-top: 0;
-    text-wrap: pretty;
-}
-
-.intro-text .about-hero-lede {
-    line-height: 1.7;
-    margin-bottom: clamp(18px, 2.5vh, 28px);
-}
-
-.intro-portrait {
-    position: relative;
-    z-index: 5;
-    flex: 0 0 45%;
-    max-width: 600px;
-    margin: 0;
-    will-change: transform;
-}
-
-.intro-portrait img {
-    display: block;
-    width: 100%;
-    height: auto;
-    filter: grayscale(1) contrast(1.05);
-    backface-visibility: hidden;
 }
 
 .about-title {
@@ -822,141 +734,6 @@ html.menu-open body {
 #featured-projects {
     padding: clamp(48px, 8vh, 96px) 0 clamp(120px, 18vh, 220px);
     overflow-x: clip;
-}
-
-.featured-filters {
-    z-index: 5;
-    width: 100%;
-    max-width: var(--container-width);
-    box-sizing: border-box;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: clamp(8px, 1.2vw, 14px);
-    margin: 0 auto clamp(24px, 4vh, 48px);
-    padding: 0 var(--pad-edge);
-}
-
-.filter-btn {
-    min-height: 44px;
-    box-sizing: border-box;
-    padding: clamp(6px, 1.2vh, 10px) clamp(14px, 1.8vw, 22px);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-pill);
-    background: transparent;
-    color: var(--white);
-    font-family: var(--font-body);
-    font-size: clamp(10px, 1.1vw, 12px);
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s var(--ease-out);
-    will-change: transform, background, border-color;
-}
-
-.filter-btn:hover {
-    background: var(--white);
-    color: var(--black);
-}
-
-.filter-btn.active {
-    border-color: var(--white);
-    background: var(--white);
-    color: var(--ink);
-}
-
-.featured-scatter {
-    --gap: 7px;
-    width: min(1500px, 100%);
-    box-sizing: border-box;
-    display: grid;
-    gap: var(--gap);
-    margin: 0 auto;
-    padding: 0 var(--pad-edge);
-    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    will-change: opacity, transform;
-}
-
-.featured-scatter.filtering {
-    opacity: 0;
-    transform: translateY(15px);
-}
-
-.scatter-column {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap);
-    will-change: transform;
-}
-
-.scatter-item {
-    position: relative;
-    display: block;
-    background: var(--ink);
-    overflow: hidden;
-    transition: filter 0.25s ease;
-}
-
-.scatter-item-details {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding: 28px 14px 12px;
-    background: linear-gradient(transparent, rgba(23, 2, 6, 0.88));
-    color: var(--white);
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.25s ease, transform 0.25s var(--ease-out);
-}
-
-.scatter-item-details strong {
-    font-family: var(--font-display);
-    font-size: clamp(17px, 1.7vw, 24px);
-    line-height: 1.05;
-    -webkit-text-stroke: 0.018em currentColor;
-}
-
-.scatter-item-details span {
-    color: var(--white);
-    font-size: clamp(10px, 0.9vw, 12px);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.featured-scatter:has(.scatter-item:hover) .scatter-item:not(:hover),
-.featured-scatter:has(.scatter-item:focus-visible) .scatter-item:not(:focus-visible) {
-    filter: brightness(0.35);
-}
-
-.scatter-item:hover {
-    filter: none;
-}
-
-.scatter-item:hover .scatter-item-details,
-.scatter-item:focus-visible .scatter-item-details {
-    opacity: 1;
-    transform: none;
-}
-
-.scatter-item img {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    backface-visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.scatter-item img.loaded {
-    opacity: 1;
 }
 
 /* ── about ── */
@@ -1829,10 +1606,6 @@ html:has(.project-main)::-webkit-scrollbar {
 
 .button,
 .tag,
-.status-badge,
-.filter-btn,
-.cta-cursor,
-.scatter-item-details span,
 .exp-location,
 .exp-role,
 .exp-facts dt,
@@ -1854,17 +1627,6 @@ html:has(.project-main)::-webkit-scrollbar {
         text-align: center;
     }
 
-    .intro-text {
-        margin-right: 0;
-        text-align: center;
-        mix-blend-mode: normal;
-    }
-
-    .intro-portrait {
-        flex: 1;
-        max-width: 420px;
-    }
-
     .project-pager {
         grid-template-columns: 1fr;
     }
@@ -1879,10 +1641,6 @@ html:has(.project-main)::-webkit-scrollbar {
 }
 
 @media (max-width: 768px) {
-
-    #about-me {
-        display: none;
-    }
 
     .story {
         flex-direction: column;
@@ -1951,14 +1709,11 @@ html:has(.project-main)::-webkit-scrollbar {
         will-change: auto !important;
     }
 
-    #hero-video,
-    #hero-canvas {
+    #hero-video {
         filter: grayscale(1);
     }
 
-
-    .button,
-    .filter-btn {
+    .button {
         background: rgba(246, 242, 242, 0.08);
     }
 }
@@ -2121,10 +1876,6 @@ html:has(.project-main)::-webkit-scrollbar {
         line-height: 1.4;
     }
 
-    #about-me {
-        padding: 0;
-    }
-
     .intro {
         min-height: 100svh;
         flex-direction: row;
@@ -2134,65 +1885,8 @@ html:has(.project-main)::-webkit-scrollbar {
         position: relative;
     }
 
-    .intro-text {
-
-        position: relative;
-        z-index: 10;
-        flex: 1;
-        min-width: 0;
-        text-align: left;
-        margin-right: -30vw;
-        mix-blend-mode: difference;
-    }
-
-    .intro-portrait {
-
-        flex: 0 0 62%;
-        max-width: none;
-        width: 62%;
-        align-self: center;
-    }
-
     #featured-projects {
         padding: 64px 0 96px;
-    }
-
-    .featured-filters {
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-        overflow-x: auto;
-        margin-bottom: 24px;
-        padding-inline: var(--pad-edge);
-        scrollbar-width: none;
-        scroll-snap-type: x proximity;
-    }
-
-    .featured-filters::-webkit-scrollbar {
-        display: none;
-    }
-
-    .filter-btn {
-        flex: 0 0 auto;
-        font-size: 12px;
-        scroll-snap-align: start;
-    }
-
-    .scatter-item-details {
-        padding: 28px 10px 10px;
-        opacity: 1;
-        transform: none;
-    }
-
-    .scatter-item-details strong {
-        font-size: clamp(15px, 4.4vw, 20px);
-    }
-
-    .scatter-item-details span {
-        font-size: 9px;
-    }
-
-    .scatter-item:hover {
-        filter: none;
     }
 
     .about-header-text {
@@ -2456,10 +2150,8 @@ html:has(.project-main)::-webkit-scrollbar {
 
 @media (hover: none) {
     .button:active,
-    .filter-btn:active,
     .project-hero-live:active,
     .project-cta-bottom-link:active,
-    .scatter-item:active,
     .project-pager-item:active,
     .back-to-top:active {
         transform: scale(0.97);

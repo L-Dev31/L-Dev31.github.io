@@ -1,4 +1,3 @@
-@font-face { font-family: 'Thin'; src: url('../fonts/Thin.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Lux'; src: url('../fonts/Lux.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Bold'; src: url('../fonts/Bold.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Heavitas'; src: url('../fonts/Heavitas.ttf') format('truetype'); font-display: swap; }
@@ -8,15 +7,12 @@
 :root {
     --white: #F6F2F2;   /* off-white for the light */
     --black: #170206;   /* a very deep wine red for the dark, never pure black */
-    --pink: #F4C2B8;
-    --paper: #F6F2F2;
     --dusk: #170206;
     --face: #E40613;   /* the red the face is drawn in */
     --ink: #0F0104;
     --text: #E6DCDC;
     --text-muted: var(--white);
     --text-faint: #A8908F;
-    --glass: rgba(246, 242, 242, 0.1);
     --hairline: rgba(246, 242, 242, 0.08);
     --border: var(--white);
     /* Brand red. Too dim for small text on --black: use it for large type, shapes and fills. */
