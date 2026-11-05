@@ -54,7 +54,8 @@
       "video_seconds": 5,
       "video_skip": [
         "W0RmGNrNhHE",
-        "RQ6hgzzk_o8"
+        "RQ6hgzzk_o8",
+        "6g2vk8Gudqs"
       ]
     },
     {
@@ -84,7 +85,10 @@
       "platform": "snes",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "ni0imBcL8no"
+      ]
     },
     {
       "id": "super-punch-out-snes",
@@ -533,7 +537,10 @@
       "platform": "gb",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "dxXD5u0I5KQ"
+      ]
     },
     {
       "id": "super-mario-land-2-6-golden-coins-gb",
@@ -542,7 +549,10 @@
       "platform": "gb",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "VVJtVDiMfAE"
+      ]
     },
     {
       "id": "kirby-s-return-to-dream-land-wii",
@@ -565,7 +575,10 @@
       ],
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "-zmMbyS9AbE"
+      ]
     },
     {
       "id": "kirby-star-allies-switch",
@@ -899,6 +912,30 @@
       "id": "the-legend-of-zelda-twilight-princess-wii",
       "title": "The Legend of Zelda: Twilight Princess",
       "year": 2006,
+      "platform": "wii"
+    },
+    {
+      "id": "kirby-s-dream-land-gb",
+      "title": "Kirby's Dream Land",
+      "year": 1992,
+      "platform": "gb",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "kirby-s-adventure-nes",
+      "title": "Kirby's Adventure",
+      "year": 1993,
+      "platform": "nes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "sonic-colours-wii",
+      "title": "Sonic Colours",
+      "year": 2010,
       "platform": "wii"
     }
   ]
