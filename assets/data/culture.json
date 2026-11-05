@@ -72,20 +72,29 @@
       "title": "SimCity",
       "year": 1991,
       "platform": "snes",
-      "search": "SimCity"
+      "search": "SimCity",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "the-legend-of-zelda-a-link-to-the-past-snes",
       "title": "The Legend of Zelda: A Link to the Past",
       "year": 1991,
-      "platform": "snes"
+      "platform": "snes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-punch-out-snes",
       "title": "Super Punch-Out!!",
       "year": 1994,
       "platform": "snes",
-      "search": "Super Punch-Out!!"
+      "search": "Super Punch-Out!!",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-64-n64",
@@ -521,13 +530,19 @@
       "id": "super-mario-land-gb",
       "title": "Super Mario Land",
       "year": 1989,
-      "platform": "gb"
+      "platform": "gb",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-land-2-6-golden-coins-gb",
       "title": "Super Mario Land 2: 6 Golden Coins",
       "year": 1992,
-      "platform": "gb"
+      "platform": "gb",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "kirby-s-return-to-dream-land-wii",
@@ -547,7 +562,10 @@
       "search": [
         "Kirby's Fun Pak",
         "Kirby Super Star"
-      ]
+      ],
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "kirby-star-allies-switch",
@@ -602,7 +620,10 @@
       "title": "Pokémon Red Version",
       "year": 1996,
       "platform": "gb",
-      "search": "Pokémon Red Version"
+      "search": "Pokémon Red Version",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "pokemon-x-3ds",
@@ -632,7 +653,10 @@
       "id": "super-mario-world-snes",
       "title": "Super Mario World",
       "year": 1990,
-      "platform": "snes"
+      "platform": "snes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-odyssey-switch",
@@ -838,7 +862,10 @@
       "id": "tetris-gb",
       "title": "Tetris",
       "year": 1989,
-      "platform": "gb"
+      "platform": "gb",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "dr-mario-nes",
