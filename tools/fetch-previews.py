@@ -51,7 +51,7 @@ def pick(item, rows):
     best, best_score = None, 0
     for vid, duration, title in rows:
         low, n = title.lower(), norm(title)
-        if name not in n or re.search(BAD, low) or duration < 240 or ('super' in n and 'super' not in name):
+        if vid in item.get('video_skip', []) or name not in n or re.search(BAD, low) or duration < 240 or ('super' in n and 'super' not in name):
             continue
         others = [k for p, k in KEYS.items() if p != platform and re.search(k, low)]
         if others:
@@ -84,7 +84,11 @@ def clip(item):
         raw = next(pathlib.Path(tmp).glob('raw*'), None)
         if not raw:
             return None, None
-        done = subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(raw), '-t', str(item.get('video_seconds', CLIP)), '-an', '-vf', f"scale={item.get('video_width', 320)}:-2,fps=12",
+        # black bars around the picture are detected and cut out
+        probe = subprocess.run(['ffmpeg', '-i', str(raw), '-vf', 'cropdetect=limit=24:round=2:reset=0', '-an', '-f', 'null', '-'], capture_output=True, text=True).stderr
+        crops = re.findall(r'crop=(\d+:\d+:\d+:\d+)', probe)
+        crop = f'crop={crops[-1]},' if crops else ''
+        done = subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(raw), '-t', str(item.get('video_seconds', CLIP)), '-an', '-vf', f"{crop}scale={item.get('video_width', 320)}:-2,fps=12",
                                '-c:v', 'libx264', '-crf', str(item.get('video_crf', 36)), '-preset', 'veryslow', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', str(dest)], capture_output=True)
         return (dest, vid) if done.returncode == 0 and dest.exists() else (None, None)
 

@@ -2202,7 +2202,6 @@ html:has(.project-main)::-webkit-scrollbar {
 .culture-preview video {
     display: block;
     width: clamp(240px, 26vw, 420px);
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
+    height: auto;
 }
 

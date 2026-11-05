@@ -822,7 +822,10 @@
       "platform": "nes",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "FiX1HjP9niA"
+      ]
     },
     {
       "id": "tetris-gb",
@@ -840,14 +843,14 @@
       "video_seconds": 5
     },
     {
-      "id": "mario-bros-nes",
+      "id": "mario-bros-mame",
       "title": "Mario Bros.",
       "year": 1983,
-      "platform": "nes",
+      "platform": "mame",
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5,
-      "video_search": "Mario Bros 1983 NES longplay no commentary"
+      "video_search": "Mario Bros 1983 arcade longplay no commentary"
     },
     {
       "id": "super-mario-bros-2-nes",
