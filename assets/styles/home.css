@@ -672,8 +672,8 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     padding: 9px 16px;
     border: 1px solid var(--white);
     border-radius: 999px;
-    background: var(--white);
-    color: var(--black);
+    background: transparent;
+    color: var(--white);
     font-size: 14px;
     font-weight: 500;
     line-height: 1;
@@ -687,8 +687,8 @@ html.on-accent .mobile-menu-socials a:focus-visible {
 
 .hero-socials a:hover,
 .hero-socials a:focus-visible {
-    background: transparent;
-    color: var(--white);
+    background: var(--white);
+    color: var(--black);
 }
 
 #header.is-turned .hero-socials {
