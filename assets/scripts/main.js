@@ -12,7 +12,7 @@ const story = document.querySelector('.promise-picture');
 if (story) {
     let visible = false;
     new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }).observe(story);
-    pixelPicture(story, story.dataset.picture, { invert: true, color: getComputedStyle(document.documentElement).getPropertyValue('--black').trim(), active: () => visible });
+    pixelPicture(story, story.dataset.picture, { color: getComputedStyle(document.documentElement).getPropertyValue('--black').trim(), active: () => visible });
 }
 scrubbingText();
 scrollScrubbedVideo();
