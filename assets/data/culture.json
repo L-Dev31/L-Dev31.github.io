@@ -185,12 +185,6 @@
       "released": "2019-07-03"
     },
     {
-      "id": "making-a-living",
-      "title": "Making a Living",
-      "year": 1914,
-      "released": "1914-02-02"
-    },
-    {
       "id": "the-kid",
       "title": "The Kid",
       "year": 1921,
@@ -623,15 +617,6 @@
       "released": "2021-12-17"
     },
     {
-      "id": "se7en",
-      "title": "Se7en",
-      "year": 1995,
-      "search": [
-        "Seven (1995 film)"
-      ],
-      "released": "1995-09-15"
-    },
-    {
       "id": "interstellar",
       "title": "Interstellar",
       "year": 2014,
@@ -843,6 +828,219 @@
       "title": "Paprika",
       "year": 2006,
       "released": "2006-09-02"
+    },
+    {
+      "id": "pirates-of-the-caribbean-the-curse-of-the-black-pearl",
+      "title": "Pirates of the Caribbean: The Curse of the Black Pearl",
+      "year": 2003,
+      "released": "2003-07-09"
+    },
+    {
+      "id": "pirates-of-the-caribbean-dead-man-s-chest",
+      "title": "Pirates of the Caribbean: Dead Man's Chest",
+      "year": 2006,
+      "released": "2006-07-07"
+    },
+    {
+      "id": "pirates-of-the-caribbean-at-world-s-end",
+      "title": "Pirates of the Caribbean: At World's End",
+      "year": 2007,
+      "released": "2007-05-23"
+    },
+    {
+      "id": "pirates-of-the-caribbean-on-stranger-tides",
+      "title": "Pirates of the Caribbean: On Stranger Tides",
+      "year": 2011,
+      "released": "2011-05-18"
+    },
+    {
+      "id": "pirates-of-the-caribbean-dead-men-tell-no-tales",
+      "title": "Pirates of the Caribbean: Dead Men Tell No Tales",
+      "year": 2017,
+      "released": "2017-05-24"
+    },
+    {
+      "id": "joker",
+      "title": "Joker",
+      "year": 2019,
+      "search": [
+        "Joker (2019 film)"
+      ],
+      "released": "2019-08-31"
+    },
+    {
+      "id": "the-social-network",
+      "title": "The Social Network",
+      "year": 2010,
+      "released": "2010-09-24"
+    },
+    {
+      "id": "the-founder",
+      "title": "The Founder",
+      "year": 2016,
+      "search": [
+        "The Founder (film)"
+      ],
+      "released": "2016-08-05"
+    },
+    {
+      "id": "the-apprentice",
+      "title": "The Apprentice",
+      "year": 2024,
+      "search": [
+        "The Apprentice (2024 film)"
+      ],
+      "released": "2024-05-20"
+    },
+    {
+      "id": "la-grande-vadrouille",
+      "title": "La Grande Vadrouille",
+      "year": 1966,
+      "released": "1966-12-07"
+    },
+    {
+      "id": "la-soupe-aux-choux",
+      "title": "La Soupe aux choux",
+      "year": 1981,
+      "released": "1982-03-26"
+    },
+    {
+      "id": "les-aventures-de-rabbi-jacob",
+      "title": "Les Aventures de Rabbi Jacob",
+      "year": 1973,
+      "search": [
+        "The Adventures of Rabbi Jacob"
+      ],
+      "released": "1973-10-18"
+    },
+    {
+      "id": "fantomas",
+      "title": "Fantômas",
+      "year": 1964,
+      "search": [
+        "Fantômas (1964 film)"
+      ],
+      "released": "1964-11-04"
+    },
+    {
+      "id": "les-parapluies-de-cherbourg",
+      "title": "Les Parapluies de Cherbourg",
+      "year": 1964,
+      "search": [
+        "The Umbrellas of Cherbourg"
+      ],
+      "released": "1964-02-03"
+    },
+    {
+      "id": "le-fabuleux-destin-d-amelie-poulain",
+      "title": "Le Fabuleux Destin d'Amélie Poulain",
+      "year": 2001,
+      "search": [
+        "Amélie"
+      ],
+      "released": "2001-02-28"
+    },
+    {
+      "id": "le-pere-noel-est-une-ordure",
+      "title": "Le Père Noël est une ordure",
+      "year": 1982,
+      "released": "1982-08-25"
+    },
+    {
+      "id": "didier",
+      "title": "Didier",
+      "year": 1997,
+      "search": [
+        "Didier (film)"
+      ],
+      "released": "1997-02-12"
+    },
+    {
+      "id": "le-diner-de-cons",
+      "title": "Le Dîner de cons",
+      "year": 1998,
+      "search": [
+        "The Dinner Game"
+      ],
+      "released": "1999-02-04"
+    },
+    {
+      "id": "les-visiteurs",
+      "title": "Les Visiteurs",
+      "year": 1993,
+      "search": [
+        "The Visitors (1993 film)"
+      ],
+      "released": "1993-01-27"
+    },
+    {
+      "id": "les-visiteurs-2-les-couloirs-du-temps",
+      "title": "Les Visiteurs 2 : Les Couloirs du temps",
+      "year": 1998,
+      "search": [
+        "The Visitors 2: The Corridors of Time"
+      ],
+      "released": "1998-01-28"
+    },
+    {
+      "id": "les-visiteurs-en-amerique",
+      "title": "Les Visiteurs en Amérique",
+      "year": 2001,
+      "search": [
+        "Just Visiting"
+      ],
+      "released": "2001-04-06"
+    },
+    {
+      "id": "les-visiteurs-la-revolution",
+      "title": "Les Visiteurs : La Révolution",
+      "year": 2016,
+      "search": [
+        "The Visitors: Bastille Day"
+      ],
+      "released": "2016-04-14"
+    },
+    {
+      "id": "la-cite-de-la-peur",
+      "title": "La Cité de la peur",
+      "year": 1994,
+      "released": "1994-03-30"
+    },
+    {
+      "id": "la-planete-sauvage",
+      "title": "La Planète sauvage",
+      "year": 1973,
+      "search": [
+        "Fantastic Planet"
+      ],
+      "released": "1973-12-01"
+    },
+    {
+      "id": "kirikou-et-la-sorciere",
+      "title": "Kirikou et la Sorcière",
+      "year": 1998,
+      "search": [
+        "Kirikou and the Sorceress"
+      ],
+      "released": "1999-10-07"
+    },
+    {
+      "id": "j-ai-perdu-mon-corps",
+      "title": "J'ai perdu mon corps",
+      "year": 2019,
+      "search": [
+        "I Lost My Body"
+      ],
+      "released": "2019-11-06"
+    },
+    {
+      "id": "la-belle-et-la-bete-cocteau",
+      "title": "La Belle et la Bête (Cocteau)",
+      "year": 1946,
+      "search": [
+        "Beauty and the Beast (1946 film)"
+      ],
+      "released": "1946-12-29"
     }
   ],
   "books": [
