@@ -182,7 +182,6 @@ html.custom-cursor * {
     font-weight: 400;
     line-height: 0.86;
     text-align: left;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 .section-head {
@@ -474,7 +473,6 @@ html.menu-open body {
     font-size: calc((100vw - 2 * var(--pad-edge)) / 2.38);
     font-style: normal;
     font-weight: 400;
-    -webkit-text-stroke: 0.018em currentColor;
     line-height: 0.8;
     letter-spacing: 0;
     text-align: left;
@@ -647,7 +645,6 @@ html.menu-open body {
     letter-spacing: 0;
     white-space: nowrap;
     pointer-events: none;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 #site-title > * {
@@ -710,7 +707,6 @@ html.menu-open body {
     font-weight: 400;
     line-height: 0.88;
     text-wrap: balance;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 .about-title strong {
@@ -762,7 +758,6 @@ html.menu-open body {
     font-size: clamp(36px, 4.4vw, 72px);
     font-weight: 400;
     line-height: 0.9;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 .index-list {
@@ -913,7 +908,6 @@ html.menu-open body {
     font-size: clamp(36px, 4.6vw, 76px);
     font-weight: 400;
     line-height: 0.9;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 .journey-what {
@@ -1092,10 +1086,9 @@ a.client-row:focus-visible .client-name {
     font-family: var(--font-display);
     font-size: clamp(24px, 3vw, 48px);
     font-style: italic;
-    font-weight: 700;
+    font-weight: 400;
     font-synthesis: weight style;
     text-wrap: balance;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 .story-paragraph {
@@ -1179,7 +1172,6 @@ a.client-row:focus-visible .client-name {
     font-family: var(--font-display);
     font-style: italic;
     line-height: 1.05;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 .company-logo {
@@ -1317,7 +1309,6 @@ a.client-row:focus-visible .client-name {
     font-family: var(--font-display);
     font-size: clamp(36px, 6vw, 96px);
     line-height: 1.05;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 .article-subtitle {
@@ -1406,7 +1397,6 @@ a.client-row:focus-visible .client-name {
     line-height: 1.25;
     text-align: center;
     text-wrap: balance;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 .case-intro p {
@@ -1423,7 +1413,6 @@ a.client-row:focus-visible .client-name {
     font-style: italic;
     letter-spacing: -0.01em;
     line-height: 1.1;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 html:has(.project-main) {
@@ -1687,7 +1676,6 @@ html:has(.project-main)::-webkit-scrollbar {
     font-style: italic;
     font-weight: bold;
     line-height: 1.05;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 .project-cta-gallery {
@@ -1788,7 +1776,6 @@ html:has(.project-main)::-webkit-scrollbar {
     font-style: italic;
     font-weight: bold;
     line-height: 1.05;
-    -webkit-text-stroke: 0.018em currentColor;
 }
 
 .project-pager-role {
