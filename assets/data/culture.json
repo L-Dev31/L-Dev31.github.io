@@ -708,21 +708,30 @@
       "title": "Deltarune: Chapter 1",
       "year": 2018,
       "platform": "steam",
-      "search": "Deltarune"
+      "search": "Deltarune",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "deltarune-chapter-2-steam",
       "title": "Deltarune: Chapter 2",
       "year": 2021,
       "platform": "steam",
-      "search": "Deltarune"
+      "search": "Deltarune",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "deltarune-chapter-3-steam",
       "title": "Deltarune: Chapter 3",
       "year": 2025,
       "platform": "steam",
-      "search": "Deltarune"
+      "search": "Deltarune",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "mario-luigi-bowser-s-inside-story-ds",
