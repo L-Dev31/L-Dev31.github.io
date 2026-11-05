@@ -183,7 +183,10 @@
       "search": "Phoenix Wright: Ace Attorney: Justice for All",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "ZD-E-gkuh_w"
+      ]
     },
     {
       "id": "new-super-mario-bros-ds",
@@ -193,7 +196,10 @@
       "search": "New Super Mario Bros.",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "A9XufKoAm0U"
+      ]
     },
     {
       "id": "wii-play-wii",
@@ -238,15 +244,6 @@
       "platform": "android",
       "search": "Angry Birds Trilogy",
       "via": "3ds"
-    },
-    {
-      "id": "tomodachi-collection-ds",
-      "title": "Tomodachi Collection",
-      "year": 2009,
-      "platform": "ds",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
     },
     {
       "id": "punch-out-wii",
@@ -779,17 +776,20 @@
     {
       "id": "newer-super-mario-bros-wii-wii",
       "title": "Newer Super Mario Bros. Wii",
-      "year": 2011,
+      "year": 2012,
       "platform": "wii"
     },
     {
       "id": "newer-super-mario-bros-ds-ds",
       "title": "Newer Super Mario Bros. DS",
-      "year": 2010,
+      "year": 2018,
       "platform": "ds",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "-3aVTnPfPfY"
+      ]
     },
     {
       "id": "wii-music-wii",
@@ -841,15 +841,6 @@
       "year": 2025,
       "platform": "steam",
       "search": "Deltarune",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
-      "id": "mario-luigi-bowser-s-inside-story-ds",
-      "title": "Mario & Luigi: Bowser's Inside Story",
-      "year": 2009,
-      "platform": "ds",
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5
