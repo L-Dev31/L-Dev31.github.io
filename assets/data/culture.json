@@ -1755,8 +1755,12 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
-        "NHfJsmN42cY"
-      ]
+        "IKg4cgpjCps",
+        "NHfJsmN42cY",
+        "O3l3iybtEqs"
+      ],
+      "video_reject": "dream|switch|2025|2026|living",
+      "video_search": "Tomodachi Life 3DS longplay no commentary"
     },
     {
       "id": "super-mario-3d-world-wiiu",
@@ -1843,6 +1847,8 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
+        "5Hng1mzOY4k",
+        "6Ht0iwkKe4Y",
         "xWsC_ZtLNSQ"
       ]
     },
@@ -1911,7 +1917,10 @@
       "platform": "switch",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "m6bzjdSm3lY"
+      ]
     },
     {
       "id": "new-super-mario-bros-u-deluxe-switch",
@@ -1976,8 +1985,12 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
-        "-1CCvXF6qMY"
-      ]
+        "-1CCvXF6qMY",
+        "6l1VyNPMPkI",
+        "WM2iJIhJykw"
+      ],
+      "video_reject": "just dance 2\\d|wii u|2 \\(|ps[34]|xbox|2020|2019|2018",
+      "video_search": "Just Dance 2 Wii 2010 gameplay"
     },
     {
       "id": "just-dance-3-wii",
@@ -2006,7 +2019,9 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
-        "iXSylOcpRhY"
+        "GIboqDlrn_8",
+        "iXSylOcpRhY",
+        "omFNKeDATNc"
       ]
     },
     {
@@ -2124,11 +2139,12 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
+        "00yKYkO1alE",
         "3Rt_4fjNsKY",
         "e9H2Ws-S8-0"
       ],
       "video_name": "Pokemon White 2",
-      "video_pure": true
+      "video_search": "Pokemon White 2 Nintendo DS longplay no commentary"
     },
     {
       "id": "pokemon-emerald-version-gba",
@@ -2207,7 +2223,10 @@
       "platform": "wiiu",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "q-Tmxt0byrY"
+      ]
     },
     {
       "id": "mario-party-8-wii",
@@ -2291,7 +2310,10 @@
       "search": "Deltarune",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "xHi8wx4W-C0"
+      ]
     },
     {
       "id": "pokemon-let-s-go-eevee-switch",
@@ -2392,7 +2414,9 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
-        "4nccwtru0Rw"
+        "4nccwtru0Rw",
+        "DxQRqPWPMZk",
+        "RV6WPT_n_Jo"
       ]
     },
     {
@@ -2443,19 +2467,9 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
-        "2egTQizHTxY"
-      ]
-    },
-    {
-      "id": "clash-royale-android",
-      "title": "Clash Royale",
-      "year": 2016,
-      "platform": "android",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5,
-      "video_skip": [
-        "SUHBgWbmRa8"
+        "2egTQizHTxY",
+        "ZaTXV0myrSM",
+        "fouf4ahb9jg"
       ]
     },
     {
@@ -2483,7 +2497,10 @@
       "platform": "switch",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "6CkH-ZhM2Ss"
+      ]
     },
     {
       "id": "newer-super-mario-bros-wii-wii",
