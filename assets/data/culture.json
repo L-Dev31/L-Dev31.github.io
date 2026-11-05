@@ -479,6 +479,262 @@
       "search": [
         "Soul (2020 film)"
       ]
+    },
+    {
+      "id": "the-pianist",
+      "title": "The Pianist",
+      "year": 2002,
+      "search": [
+        "The Pianist (2002 film)"
+      ]
+    },
+    {
+      "id": "harry-potter-and-the-philosopher-s-stone",
+      "title": "Harry Potter and the Philosopher's Stone",
+      "year": 2001,
+      "search": [
+        "Harry Potter and the Philosopher's Stone (film)"
+      ]
+    },
+    {
+      "id": "harry-potter-and-the-chamber-of-secrets",
+      "title": "Harry Potter and the Chamber of Secrets",
+      "year": 2002,
+      "search": [
+        "Harry Potter and the Chamber of Secrets (film)"
+      ]
+    },
+    {
+      "id": "harry-potter-and-the-prisoner-of-azkaban",
+      "title": "Harry Potter and the Prisoner of Azkaban",
+      "year": 2004,
+      "search": [
+        "Harry Potter and the Prisoner of Azkaban (film)"
+      ]
+    },
+    {
+      "id": "harry-potter-and-the-goblet-of-fire",
+      "title": "Harry Potter and the Goblet of Fire",
+      "year": 2005,
+      "search": [
+        "Harry Potter and the Goblet of Fire (film)"
+      ]
+    },
+    {
+      "id": "harry-potter-and-the-order-of-the-phoenix",
+      "title": "Harry Potter and the Order of the Phoenix",
+      "year": 2007,
+      "search": [
+        "Harry Potter and the Order of the Phoenix (film)"
+      ]
+    },
+    {
+      "id": "harry-potter-and-the-half-blood-prince",
+      "title": "Harry Potter and the Half-Blood Prince",
+      "year": 2009,
+      "search": [
+        "Harry Potter and the Half-Blood Prince (film)"
+      ]
+    },
+    {
+      "id": "harry-potter-and-the-deathly-hallows-part-1",
+      "title": "Harry Potter and the Deathly Hallows: Part 1",
+      "year": 2010,
+      "search": [
+        "Harry Potter and the Deathly Hallows – Part 1"
+      ]
+    },
+    {
+      "id": "harry-potter-and-the-deathly-hallows-part-2",
+      "title": "Harry Potter and the Deathly Hallows: Part 2",
+      "year": 2011,
+      "search": [
+        "Harry Potter and the Deathly Hallows – Part 2"
+      ]
+    },
+    {
+      "id": "forrest-gump",
+      "title": "Forrest Gump",
+      "year": 1994
+    },
+    {
+      "id": "gladiator",
+      "title": "Gladiator",
+      "year": 2000,
+      "search": [
+        "Gladiator (2000 film)"
+      ]
+    },
+    {
+      "id": "inception",
+      "title": "Inception",
+      "year": 2010
+    },
+    {
+      "id": "the-lord-of-the-rings-the-fellowship-of-the-ring",
+      "title": "The Lord of the Rings: The Fellowship of the Ring",
+      "year": 2001
+    },
+    {
+      "id": "the-lord-of-the-rings-the-two-towers",
+      "title": "The Lord of the Rings: The Two Towers",
+      "year": 2002
+    },
+    {
+      "id": "the-lord-of-the-rings-the-return-of-the-king",
+      "title": "The Lord of the Rings: The Return of the King",
+      "year": 2003
+    },
+    {
+      "id": "the-hobbit-an-unexpected-journey",
+      "title": "The Hobbit: An Unexpected Journey",
+      "year": 2012
+    },
+    {
+      "id": "the-hobbit-the-desolation-of-smaug",
+      "title": "The Hobbit: The Desolation of Smaug",
+      "year": 2013
+    },
+    {
+      "id": "the-hobbit-the-battle-of-the-five-armies",
+      "title": "The Hobbit: The Battle of the Five Armies",
+      "year": 2014
+    },
+    {
+      "id": "the-matrix",
+      "title": "The Matrix",
+      "year": 1999
+    },
+    {
+      "id": "the-matrix-reloaded",
+      "title": "The Matrix Reloaded",
+      "year": 2003
+    },
+    {
+      "id": "the-matrix-revolutions",
+      "title": "The Matrix Revolutions",
+      "year": 2003
+    },
+    {
+      "id": "the-matrix-resurrections",
+      "title": "The Matrix Resurrections",
+      "year": 2021
+    },
+    {
+      "id": "se7en",
+      "title": "Se7en",
+      "year": 1995,
+      "search": [
+        "Seven (1995 film)"
+      ]
+    },
+    {
+      "id": "interstellar",
+      "title": "Interstellar",
+      "year": 2014,
+      "search": [
+        "Interstellar (film)"
+      ]
+    },
+    {
+      "id": "the-avengers",
+      "title": "The Avengers",
+      "year": 2012,
+      "search": [
+        "The Avengers (2012 film)"
+      ]
+    },
+    {
+      "id": "avengers-age-of-ultron",
+      "title": "Avengers: Age of Ultron",
+      "year": 2015
+    },
+    {
+      "id": "avengers-infinity-war",
+      "title": "Avengers: Infinity War",
+      "year": 2018
+    },
+    {
+      "id": "avengers-endgame",
+      "title": "Avengers: Endgame",
+      "year": 2019
+    },
+    {
+      "id": "spider-man-into-the-spider-verse",
+      "title": "Spider-Man: Into the Spider-Verse",
+      "year": 2018
+    },
+    {
+      "id": "the-super-mario-bros-movie",
+      "title": "The Super Mario Bros. Movie",
+      "year": 2023
+    },
+    {
+      "id": "the-super-mario-galaxy-movie",
+      "title": "The Super Mario Galaxy Movie",
+      "year": 2026
+    },
+    {
+      "id": "spider-man",
+      "title": "Spider-Man",
+      "year": 2002,
+      "search": [
+        "Spider-Man (2002 film)"
+      ]
+    },
+    {
+      "id": "spider-man-2",
+      "title": "Spider-Man 2",
+      "year": 2004
+    },
+    {
+      "id": "spider-man-3",
+      "title": "Spider-Man 3",
+      "year": 2007
+    },
+    {
+      "id": "the-amazing-spider-man",
+      "title": "The Amazing Spider-Man",
+      "year": 2012,
+      "search": [
+        "The Amazing Spider-Man (film)"
+      ]
+    },
+    {
+      "id": "the-amazing-spider-man-2",
+      "title": "The Amazing Spider-Man 2",
+      "year": 2014
+    },
+    {
+      "id": "spider-man-homecoming",
+      "title": "Spider-Man: Homecoming",
+      "year": 2017
+    },
+    {
+      "id": "spider-man-far-from-home",
+      "title": "Spider-Man: Far From Home",
+      "year": 2019
+    },
+    {
+      "id": "spider-man-no-way-home",
+      "title": "Spider-Man: No Way Home",
+      "year": 2021
+    },
+    {
+      "id": "the-mummy",
+      "title": "The Mummy",
+      "year": 1999,
+      "search": [
+        "The Mummy (1999 film)"
+      ]
+    },
+    {
+      "id": "les-miserables",
+      "title": "Les Misérables",
+      "year": 2026,
+      "search": [
+        "Les Misérables (2026 film)"
+      ]
     }
   ],
   "books": [
