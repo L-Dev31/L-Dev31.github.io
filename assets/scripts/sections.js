@@ -232,15 +232,16 @@ export async function journey(container) {
         list.append(item);
         return item;
     });
-    const flags = stops.map((stop, i) => ({ paint: waving(items[i].querySelector('.journey-flag'), stop.flag), slot: items[i].querySelector('.journey-flag'), open: 0 }));
+    const flags = stops.map((stop, i) => ({ paint: waving(items[i].querySelector('.journey-flag'), stop.flag), slot: items[i].querySelector('.journey-flag'), open: 0, at: 0 }));
     const openFlags = (time, instant) => flags.forEach((f, i) => {
         if (!f.paint) return;
         const r = items[i].getBoundingClientRect();
         const near = instant ? 1 : clamp01(1 - Math.max(0, r.top + r.height / 2 - innerHeight / 2) / (innerHeight * 0.24));
         f.open = ease(near);
         f.slot.style.setProperty('--open', f.open.toFixed(3));
-        if (r.bottom < 0 || r.top > innerHeight || (f.open === f.shown && (lowPower || f.open === 0))) return;
+        if (r.bottom < 0 || r.top > innerHeight || (f.open === f.shown && (lowPower || f.open === 0 || time - f.at < 66))) return;
         f.shown = f.open;
+        f.at = time;
         f.paint(f.open, lowPower ? 0 : time);
     });
     container.replaceChildren(stage, list);
