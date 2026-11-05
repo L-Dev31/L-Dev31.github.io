@@ -170,8 +170,9 @@ function cultureList(container, items, kind) {
         const row = el('div', 'index-row');
         row.tabIndex = 0;
         const title = el('span', 'index-title', item.title.replace(/ \([^)]*\)$/, ''));
-        if (item.platform) title.append(el('small', 'index-platform', ` ${PLATFORMS[item.platform] || item.platform}`));
-        row.append(title, el('span', 'index-slot'), el('span', 'index-year', String(item.year)));
+        const note = item.platform ? PLATFORMS[item.platform] || item.platform : item.author;
+        if (note) title.append(el('small', 'index-platform', ` ${note}`));
+        row.append(title, el('span', 'index-slot'), el('span', 'index-year', item.date ?? String(item.year)));
         const li = el('li', 'index-item');
         li.append(row);
         list.append(li);
