@@ -163,10 +163,13 @@ async function initProjects() {
 
 const PLATFORMS = { nes: 'NES', snes: 'SNES', n64: 'Nintendo 64', gb: 'Game Boy', gbc: 'Game Boy Color', gba: 'Game Boy Advance', ds: 'DS', '3ds': '3DS', wii: 'Wii', wiiu: 'Wii U', switch: 'Switch', steam: 'PC', pc: 'PC', android: 'Android', web: 'Web', mame: 'Arcade' };
 
+// the exact release date when the data has one, the year otherwise
+const when = item => (item.released ? Date.parse(item.released) : Date.UTC(item.year, 0, 1));
+
 function cultureList(container, items, kind) {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
     const list = el('ul', 'index-list');
-    const entries = [...items].sort((a, b) => b.year - a.year).map(item => {
+    const entries = [...items].sort((a, b) => when(b) - when(a)).map(item => {
         const row = el('div', 'index-row');
         row.tabIndex = 0;
         const title = el('span', 'index-title', item.title.replace(/ \([^)]*\)$/, ''));

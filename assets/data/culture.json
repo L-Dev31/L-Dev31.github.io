@@ -7,62 +7,74 @@
       "search": [
         "Howl's Moving Castle (film)",
         "Howl's Moving Castle"
-      ]
+      ],
+      "released": "2004-09-05"
     },
     {
       "id": "porco-rosso",
       "title": "Porco Rosso",
-      "year": 1992
+      "year": 1992,
+      "released": "1992-07-18"
     },
     {
       "id": "the-boy-and-the-heron",
       "title": "The Boy and the Heron",
-      "year": 2023
+      "year": 2023,
+      "released": "2023-07-14"
     },
     {
       "id": "spirited-away",
       "title": "Spirited Away",
-      "year": 2001
+      "year": 2001,
+      "released": "2001-07-20"
     },
     {
       "id": "from-up-on-poppy-hill",
       "title": "From Up on Poppy Hill",
-      "year": 2011
+      "year": 2011,
+      "released": "2011-07-16"
     },
     {
       "id": "grave-of-the-fireflies",
       "title": "Grave of the Fireflies",
-      "year": 1988
+      "year": 1988,
+      "released": "1988-04-16"
     },
     {
       "id": "wolf-children",
       "title": "Wolf Children",
-      "year": 2012
+      "year": 2012,
+      "released": "2012-07-21"
     },
     {
       "id": "kiki-s-delivery-service",
       "title": "Kiki's Delivery Service",
-      "year": 1989
+      "year": 1989,
+      "released": "1989-07-29"
     },
     {
       "id": "the-cat-returns",
       "title": "The Cat Returns",
-      "year": 2002
+      "year": 2002,
+      "released": "2002-07-19"
     },
     {
       "id": "whisper-of-the-heart",
       "title": "Whisper of the Heart",
-      "year": 1995
+      "year": 1995,
+      "released": "1995-02-05"
     },
     {
       "id": "princess-mononoke",
       "title": "Princess Mononoke",
-      "year": 1997
+      "year": 1997,
+      "released": "1997-07-12"
     },
     {
       "id": "e-t-the-extra-terrestrial",
       "title": "E.T. the Extra-Terrestrial",
-      "year": 1982
+      "year": 1982,
+      "released": "1982-05-26"
     },
     {
       "id": "peter-pan",
@@ -71,7 +83,8 @@
       "search": [
         "Peter Pan (1953 film)",
         "Peter Pan"
-      ]
+      ],
+      "released": "1953-02-05"
     },
     {
       "id": "snow-white-and-the-seven-dwarfs",
@@ -80,27 +93,32 @@
       "search": [
         "Snow White and the Seven Dwarfs (1937 film)",
         "Snow White and the Seven Dwarfs"
-      ]
+      ],
+      "released": "1937-12-21"
     },
     {
       "id": "beetlejuice",
       "title": "Beetlejuice",
-      "year": 1988
+      "year": 1988,
+      "released": "1988-03-29"
     },
     {
       "id": "back-to-the-future",
       "title": "Back to the Future",
-      "year": 1985
+      "year": 1985,
+      "released": "1985-07-03"
     },
     {
       "id": "back-to-the-future-part-ii",
       "title": "Back to the Future Part II",
-      "year": 1989
+      "year": 1989,
+      "released": "1989-11-22"
     },
     {
       "id": "back-to-the-future-part-iii",
       "title": "Back to the Future Part III",
-      "year": 1990
+      "year": 1990,
+      "released": "1990-05-25"
     },
     {
       "id": "jurassic-park",
@@ -109,57 +127,68 @@
       "search": [
         "Jurassic Park (film)",
         "Jurassic Park"
-      ]
+      ],
+      "released": "1993-06-09"
     },
     {
       "id": "raiders-of-the-lost-ark",
       "title": "Raiders of the Lost Ark",
-      "year": 1981
+      "year": 1981,
+      "released": "1981-06-12"
     },
     {
       "id": "indiana-jones-and-the-temple-of-doom",
       "title": "Indiana Jones and the Temple of Doom",
-      "year": 1984
+      "year": 1984,
+      "released": "1984-05-23"
     },
     {
       "id": "indiana-jones-and-the-last-crusade",
       "title": "Indiana Jones and the Last Crusade",
-      "year": 1989
+      "year": 1989,
+      "released": "1989-05-24"
     },
     {
       "id": "hook",
       "title": "Hook",
-      "year": 1991
+      "year": 1991,
+      "released": "1991-12-11"
     },
     {
       "id": "toy-story",
       "title": "Toy Story",
-      "year": 1995
+      "year": 1995,
+      "released": "1995-11-22"
     },
     {
       "id": "toy-story-2",
       "title": "Toy Story 2",
-      "year": 1999
+      "year": 1999,
+      "released": "1999-11-24"
     },
     {
       "id": "toy-story-3",
       "title": "Toy Story 3",
-      "year": 2010
+      "year": 2010,
+      "released": "2010-06-12"
     },
     {
       "id": "toy-story-4",
       "title": "Toy Story 4",
-      "year": 2019
+      "year": 2019,
+      "released": "2019-06-20"
     },
     {
       "id": "midsommar",
       "title": "Midsommar",
-      "year": 2019
+      "year": 2019,
+      "released": "2019-07-03"
     },
     {
       "id": "making-a-living",
       "title": "Making a Living",
-      "year": 1914
+      "year": 1914,
+      "released": "1914-02-02"
     },
     {
       "id": "the-kid",
@@ -168,7 +197,8 @@
       "search": [
         "The Kid (1921 film)",
         "The Kid"
-      ]
+      ],
+      "released": "1921-01-16"
     },
     {
       "id": "modern-times",
@@ -177,22 +207,26 @@
       "search": [
         "Modern Times (film)",
         "Modern Times"
-      ]
+      ],
+      "released": "1936-02-05"
     },
     {
       "id": "the-great-dictator",
       "title": "The Great Dictator",
-      "year": 1940
+      "year": 1940,
+      "released": "1940-10-15"
     },
     {
       "id": "the-good-the-bad-and-the-ugly",
       "title": "The Good, the Bad and the Ugly",
-      "year": 1966
+      "year": 1966,
+      "released": "1966-12-23"
     },
     {
       "id": "once-upon-a-time-in-the-west",
       "title": "Once Upon a Time in the West",
-      "year": 1968
+      "year": 1968,
+      "released": "1969-08-14"
     },
     {
       "id": "the-shining",
@@ -201,32 +235,38 @@
       "search": [
         "The Shining (film)",
         "The Shining"
-      ]
+      ],
+      "released": "1980-05-23"
     },
     {
       "id": "aladdin",
       "title": "Aladdin",
-      "year": 1992
+      "year": 1992,
+      "released": "1992-11-11"
     },
     {
       "id": "the-lion-king",
       "title": "The Lion King",
-      "year": 1994
+      "year": 1994,
+      "released": "1994-06-15"
     },
     {
       "id": "mrs-doubtfire",
       "title": "Mrs. Doubtfire",
-      "year": 1993
+      "year": 1993,
+      "released": "1993-11-24"
     },
     {
       "id": "fight-club",
       "title": "Fight Club",
-      "year": 1999
+      "year": 1999,
+      "released": "1999-09-10"
     },
     {
       "id": "cool-runnings",
       "title": "Cool Runnings",
-      "year": 1993
+      "year": 1993,
+      "released": "1993-10-01"
     },
     {
       "id": "men-in-black",
@@ -234,12 +274,14 @@
       "year": 1997,
       "search": [
         "Men in Black (1997 film)"
-      ]
+      ],
+      "released": "1997-07-02"
     },
     {
       "id": "home-alone",
       "title": "Home Alone",
-      "year": 1990
+      "year": 1990,
+      "released": "1990-11-10"
     },
     {
       "id": "beauty-and-the-beast",
@@ -248,7 +290,8 @@
       "search": [
         "Beauty and the Beast (1991 film)",
         "Beauty and the Beast"
-      ]
+      ],
+      "released": "1991-11-22"
     },
     {
       "id": "alice-in-wonderland",
@@ -257,17 +300,20 @@
       "search": [
         "Alice in Wonderland (1951 film)",
         "Alice in Wonderland"
-      ]
+      ],
+      "released": "1951-07-28"
     },
     {
       "id": "ghostbusters",
       "title": "Ghostbusters",
-      "year": 1984
+      "year": 1984,
+      "released": "1984-06-08"
     },
     {
       "id": "ghostbusters-ii",
       "title": "Ghostbusters II",
-      "year": 1989
+      "year": 1989,
+      "released": "1989-06-16"
     },
     {
       "id": "charlie-and-the-chocolate-factory",
@@ -276,17 +322,20 @@
       "search": [
         "Charlie and the Chocolate Factory (film)",
         "Charlie and the Chocolate Factory"
-      ]
+      ],
+      "released": "2005-07-10"
     },
     {
       "id": "the-nightmare-before-christmas",
       "title": "The Nightmare Before Christmas",
-      "year": 1993
+      "year": 1993,
+      "released": "1993-10-13"
     },
     {
       "id": "la-la-land",
       "title": "La La Land",
-      "year": 2016
+      "year": 2016,
+      "released": "2016-08-31"
     },
     {
       "id": "singin-in-the-rain",
@@ -294,7 +343,8 @@
       "year": 1952,
       "search": [
         "Singin' in the Rain"
-      ]
+      ],
+      "released": "1952-03-27"
     },
     {
       "id": "avatar",
@@ -302,12 +352,14 @@
       "year": 2009,
       "search": [
         "Avatar (2009 film)"
-      ]
+      ],
+      "released": "2009-12-16"
     },
     {
       "id": "avatar-the-way-of-water",
       "title": "Avatar: The Way of Water",
-      "year": 2022
+      "year": 2022,
+      "released": "2022-12-14"
     },
     {
       "id": "the-godfather",
@@ -315,12 +367,14 @@
       "year": 1972,
       "search": [
         "The Godfather"
-      ]
+      ],
+      "released": "1972-03-15"
     },
     {
       "id": "finding-nemo",
       "title": "Finding Nemo",
-      "year": 2003
+      "year": 2003,
+      "released": "2003-05-20"
     },
     {
       "id": "inside-out",
@@ -328,12 +382,14 @@
       "year": 2015,
       "search": [
         "Inside Out (2015 film)"
-      ]
+      ],
+      "released": "2015-05-18"
     },
     {
       "id": "inside-out-2",
       "title": "Inside Out 2",
-      "year": 2024
+      "year": 2024,
+      "released": "2024-06-13"
     },
     {
       "id": "up",
@@ -341,7 +397,8 @@
       "year": 2009,
       "search": [
         "Up (2009 film)"
-      ]
+      ],
+      "released": "2009-05-13"
     },
     {
       "id": "coco",
@@ -349,32 +406,38 @@
       "year": 2017,
       "search": [
         "Coco (2017 film)"
-      ]
+      ],
+      "released": "2017-11-22"
     },
     {
       "id": "the-incredibles",
       "title": "The Incredibles",
-      "year": 2004
+      "year": 2004,
+      "released": "2004-10-27"
     },
     {
       "id": "incredibles-2",
       "title": "Incredibles 2",
-      "year": 2018
+      "year": 2018,
+      "released": "2018-06-05"
     },
     {
       "id": "zootopia",
       "title": "Zootopia",
-      "year": 2016
+      "year": 2016,
+      "released": "2016-02-17"
     },
     {
       "id": "zootopia-2",
       "title": "Zootopia 2",
-      "year": 2025
+      "year": 2025,
+      "released": "2025-11-13"
     },
     {
       "id": "wall-e",
       "title": "WALL-E",
-      "year": 2008
+      "year": 2008,
+      "released": "2008-06-21"
     },
     {
       "id": "brave",
@@ -382,7 +445,8 @@
       "year": 2012,
       "search": [
         "Brave (2012 film)"
-      ]
+      ],
+      "released": "2012-06-10"
     },
     {
       "id": "ratatouille",
@@ -390,12 +454,14 @@
       "year": 2007,
       "search": [
         "Ratatouille (film)"
-      ]
+      ],
+      "released": "2007-06-28"
     },
     {
       "id": "monsters-inc",
       "title": "Monsters, Inc.",
-      "year": 2001
+      "year": 2001,
+      "released": "2001-10-23"
     },
     {
       "id": "soul",
@@ -403,7 +469,8 @@
       "year": 2020,
       "search": [
         "Soul (2020 film)"
-      ]
+      ],
+      "released": "2020-10-11"
     },
     {
       "id": "the-pianist",
@@ -411,7 +478,8 @@
       "year": 2002,
       "search": [
         "The Pianist (2002 film)"
-      ]
+      ],
+      "released": "2002-05-24"
     },
     {
       "id": "harry-potter-and-the-philosopher-s-stone",
@@ -419,7 +487,8 @@
       "year": 2001,
       "search": [
         "Harry Potter and the Philosopher's Stone (film)"
-      ]
+      ],
+      "released": "2001-11-04"
     },
     {
       "id": "harry-potter-and-the-chamber-of-secrets",
@@ -427,7 +496,8 @@
       "year": 2002,
       "search": [
         "Harry Potter and the Chamber of Secrets (film)"
-      ]
+      ],
+      "released": "2002-11-03"
     },
     {
       "id": "harry-potter-and-the-prisoner-of-azkaban",
@@ -435,7 +505,8 @@
       "year": 2004,
       "search": [
         "Harry Potter and the Prisoner of Azkaban (film)"
-      ]
+      ],
+      "released": "2004-05-31"
     },
     {
       "id": "harry-potter-and-the-goblet-of-fire",
@@ -443,7 +514,8 @@
       "year": 2005,
       "search": [
         "Harry Potter and the Goblet of Fire (film)"
-      ]
+      ],
+      "released": "2005-11-06"
     },
     {
       "id": "harry-potter-and-the-order-of-the-phoenix",
@@ -451,7 +523,8 @@
       "year": 2007,
       "search": [
         "Harry Potter and the Order of the Phoenix (film)"
-      ]
+      ],
+      "released": "2007-06-28"
     },
     {
       "id": "harry-potter-and-the-half-blood-prince",
@@ -459,7 +532,8 @@
       "year": 2009,
       "search": [
         "Harry Potter and the Half-Blood Prince (film)"
-      ]
+      ],
+      "released": "2009-07-06"
     },
     {
       "id": "harry-potter-and-the-deathly-hallows-part-1",
@@ -467,7 +541,8 @@
       "year": 2010,
       "search": [
         "Harry Potter and the Deathly Hallows – Part 1"
-      ]
+      ],
+      "released": "2010-11-11"
     },
     {
       "id": "harry-potter-and-the-deathly-hallows-part-2",
@@ -475,12 +550,14 @@
       "year": 2011,
       "search": [
         "Harry Potter and the Deathly Hallows – Part 2"
-      ]
+      ],
+      "released": "2011-07-13"
     },
     {
       "id": "forrest-gump",
       "title": "Forrest Gump",
-      "year": 1994
+      "year": 1994,
+      "released": "1994-06-23"
     },
     {
       "id": "gladiator",
@@ -488,62 +565,74 @@
       "year": 2000,
       "search": [
         "Gladiator (2000 film)"
-      ]
+      ],
+      "released": "2000-05-05"
     },
     {
       "id": "inception",
       "title": "Inception",
-      "year": 2010
+      "year": 2010,
+      "released": "2010-07-08"
     },
     {
       "id": "the-lord-of-the-rings-the-fellowship-of-the-ring",
       "title": "The Lord of the Rings: The Fellowship of the Ring",
-      "year": 2001
+      "year": 2001,
+      "released": "2001-12-19"
     },
     {
       "id": "the-lord-of-the-rings-the-two-towers",
       "title": "The Lord of the Rings: The Two Towers",
-      "year": 2002
+      "year": 2002,
+      "released": "2002-12-05"
     },
     {
       "id": "the-lord-of-the-rings-the-return-of-the-king",
       "title": "The Lord of the Rings: The Return of the King",
-      "year": 2003
+      "year": 2003,
+      "released": "2003-12-01"
     },
     {
       "id": "the-hobbit-an-unexpected-journey",
       "title": "The Hobbit: An Unexpected Journey",
-      "year": 2012
+      "year": 2012,
+      "released": "2012-11-28"
     },
     {
       "id": "the-hobbit-the-desolation-of-smaug",
       "title": "The Hobbit: The Desolation of Smaug",
-      "year": 2013
+      "year": 2013,
+      "released": "2013-12-02"
     },
     {
       "id": "the-hobbit-the-battle-of-the-five-armies",
       "title": "The Hobbit: The Battle of the Five Armies",
-      "year": 2014
+      "year": 2014,
+      "released": "2014-12-01"
     },
     {
       "id": "the-matrix",
       "title": "The Matrix",
-      "year": 1999
+      "year": 1999,
+      "released": "1999-03-31"
     },
     {
       "id": "the-matrix-reloaded",
       "title": "The Matrix Reloaded",
-      "year": 2003
+      "year": 2003,
+      "released": "2003-05-15"
     },
     {
       "id": "the-matrix-revolutions",
       "title": "The Matrix Revolutions",
-      "year": 2003
+      "year": 2003,
+      "released": "2003-11-05"
     },
     {
       "id": "the-matrix-resurrections",
       "title": "The Matrix Resurrections",
-      "year": 2021
+      "year": 2021,
+      "released": "2021-12-17"
     },
     {
       "id": "se7en",
@@ -551,7 +640,8 @@
       "year": 1995,
       "search": [
         "Seven (1995 film)"
-      ]
+      ],
+      "released": "1995-09-15"
     },
     {
       "id": "interstellar",
@@ -559,7 +649,8 @@
       "year": 2014,
       "search": [
         "Interstellar (film)"
-      ]
+      ],
+      "released": "2014-10-26"
     },
     {
       "id": "the-avengers",
@@ -567,37 +658,44 @@
       "year": 2012,
       "search": [
         "The Avengers (2012 film)"
-      ]
+      ],
+      "released": "2011-07-15"
     },
     {
       "id": "avengers-age-of-ultron",
       "title": "Avengers: Age of Ultron",
-      "year": 2015
+      "year": 2015,
+      "released": "2015-04-22"
     },
     {
       "id": "avengers-infinity-war",
       "title": "Avengers: Infinity War",
-      "year": 2018
+      "year": 2018,
+      "released": "2018-04-25"
     },
     {
       "id": "avengers-endgame",
       "title": "Avengers: Endgame",
-      "year": 2019
+      "year": 2019,
+      "released": "2019-04-22"
     },
     {
       "id": "spider-man-into-the-spider-verse",
       "title": "Spider-Man: Into the Spider-Verse",
-      "year": 2018
+      "year": 2018,
+      "released": "2018-12-13"
     },
     {
       "id": "the-super-mario-bros-movie",
       "title": "The Super Mario Bros. Movie",
-      "year": 2023
+      "year": 2023,
+      "released": "2023-03-31"
     },
     {
       "id": "the-super-mario-galaxy-movie",
       "title": "The Super Mario Galaxy Movie",
-      "year": 2026
+      "year": 2026,
+      "released": "2026-04-01"
     },
     {
       "id": "spider-man",
@@ -605,32 +703,38 @@
       "year": 2002,
       "search": [
         "Spider-Man (2002 film)"
-      ]
+      ],
+      "released": "2002-05-03"
     },
     {
       "id": "spider-man-2",
       "title": "Spider-Man 2",
-      "year": 2004
+      "year": 2004,
+      "released": "2004-06-30"
     },
     {
       "id": "the-amazing-spider-man-2",
       "title": "The Amazing Spider-Man 2",
-      "year": 2014
+      "year": 2014,
+      "released": "2014-04-17"
     },
     {
       "id": "spider-man-homecoming",
       "title": "Spider-Man: Homecoming",
-      "year": 2017
+      "year": 2017,
+      "released": "2017-06-28"
     },
     {
       "id": "spider-man-far-from-home",
       "title": "Spider-Man: Far From Home",
-      "year": 2019
+      "year": 2019,
+      "released": "2019-06-28"
     },
     {
       "id": "spider-man-no-way-home",
       "title": "Spider-Man: No Way Home",
-      "year": 2021
+      "year": 2021,
+      "released": "2021-07-16"
     },
     {
       "id": "the-mummy",
@@ -638,7 +742,8 @@
       "year": 1999,
       "search": [
         "The Mummy (1999 film)"
-      ]
+      ],
+      "released": "1999-05-04"
     },
     {
       "id": "les-miserables",
@@ -646,7 +751,8 @@
       "year": 2026,
       "search": [
         "Les Misérables (2026 film)"
-      ]
+      ],
+      "released": "2026-10-14"
     },
     {
       "id": "backrooms",
@@ -655,7 +761,8 @@
       "search": [
         "Backrooms (film)",
         "Backrooms"
-      ]
+      ],
+      "released": "2026-05-07"
     },
     {
       "id": "alice-in-wonderland-tim-burton",
@@ -664,12 +771,139 @@
       "search": [
         "Alice in Wonderland (2010 film)",
         "Alice in Wonderland (Tim Burton)"
-      ]
+      ],
+      "released": "2010-02-25"
     },
     {
       "id": "space-jam",
       "title": "Space Jam",
-      "year": 1996
+      "year": 1996,
+      "released": "1996-11-15"
+    },
+    {
+      "id": "beetlejuice-beetlejuice",
+      "title": "Beetlejuice Beetlejuice",
+      "year": 2024,
+      "released": "2024-08-28"
+    },
+    {
+      "id": "space-jam-a-new-legacy",
+      "title": "Space Jam: A New Legacy",
+      "year": 2021,
+      "released": "2021-07-14"
+    },
+    {
+      "id": "men-in-black-international",
+      "title": "Men in Black: International",
+      "year": 2019,
+      "released": "2019-06-12"
+    },
+    {
+      "id": "alice-through-the-looking-glass",
+      "title": "Alice Through the Looking Glass",
+      "year": 2016,
+      "search": [
+        "Alice Through the Looking Glass (2016 film)",
+        "Alice Through the Looking Glass"
+      ],
+      "released": "2016-05-26"
+    },
+    {
+      "id": "ghostbusters-answer-the-call",
+      "title": "Ghostbusters: Answer the Call",
+      "year": 2016,
+      "search": [
+        "Ghostbusters (2016 film)",
+        "Ghostbusters: Answer the Call"
+      ],
+      "released": "2016-07-15"
+    },
+    {
+      "id": "ghostbusters-frozen-empire",
+      "title": "Ghostbusters: Frozen Empire",
+      "year": 2024,
+      "released": "2024-03-14"
+    },
+    {
+      "id": "dolittle",
+      "title": "Dolittle",
+      "year": 2020,
+      "search": [
+        "Dolittle (film)",
+        "Dolittle"
+      ],
+      "released": "2020-01-16"
+    },
+    {
+      "id": "men-in-black-ii",
+      "title": "Men in Black II",
+      "year": 2002,
+      "released": "2002-07-03"
+    },
+    {
+      "id": "men-in-black-3",
+      "title": "Men in Black 3",
+      "year": 2012,
+      "released": "2012-05-23"
+    },
+    {
+      "id": "ghostbusters-afterlife",
+      "title": "Ghostbusters: Afterlife",
+      "year": 2021,
+      "released": "2021-11-11"
+    },
+    {
+      "id": "onward",
+      "title": "Onward",
+      "year": 2020,
+      "search": [
+        "Onward (film)"
+      ],
+      "released": "2020-03-05"
+    },
+    {
+      "id": "luca",
+      "title": "Luca",
+      "year": 2021,
+      "search": [
+        "Luca (2021 film)"
+      ],
+      "released": "2021-06-13"
+    },
+    {
+      "id": "cars",
+      "title": "Cars",
+      "year": 2006,
+      "search": [
+        "Cars (film)"
+      ],
+      "released": "2006-05-26"
+    },
+    {
+      "id": "elemental",
+      "title": "Elemental",
+      "year": 2023,
+      "search": [
+        "Elemental (2023 film)"
+      ],
+      "released": "2023-05-27"
+    },
+    {
+      "id": "the-good-dinosaur",
+      "title": "The Good Dinosaur",
+      "year": 2015,
+      "released": "2014-05-30"
+    },
+    {
+      "id": "zion",
+      "title": "Zion",
+      "year": 2025,
+      "director": "Nelson Foix",
+      "search": [
+        "Zion (2025 film)",
+        "Zion (film, 2025)"
+      ],
+      "released": "2025-03-14"
     }
   ],
   "books": [
@@ -1751,6 +1985,73 @@
       "title": "Newer Super Mario Bros. Wii",
       "year": 2012,
       "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "wii-play-motion-wii",
+      "title": "Wii Play: Motion",
+      "year": 2011,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "wii-music-wii",
+      "title": "Wii Music",
+      "year": 2008,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "pokemon-quest-switch",
+      "title": "Pokémon Quest",
+      "year": 2018,
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "minecraft-story-mode-wiiu",
+      "title": "Minecraft: Story Mode",
+      "year": 2015,
+      "platform": "wiiu",
+      "search": [
+        "Minecraft: Story Mode",
+        "Minecraft: Story Mode - The Complete Adventure"
+      ],
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "angry-birds-epic-android",
+      "title": "Angry Birds Epic",
+      "year": 2014,
+      "platform": "android",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "bad-piggies-android",
+      "title": "Bad Piggies",
+      "year": 2012,
+      "platform": "android",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "angry-birds-friends-android",
+      "title": "Angry Birds Friends",
+      "year": 2012,
+      "platform": "android",
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5
