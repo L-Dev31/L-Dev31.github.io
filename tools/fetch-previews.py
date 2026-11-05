@@ -4,7 +4,7 @@
 For each game it looks for a longplay (pure gameplay, no commentary) of the exact game
 on the exact console, rejecting titles that mention another console, a remake or a mod.
 It downloads only 21 seconds taken a quarter of the way into the video, drops the sound
-and encodes a tiny H.264 clip (320 px wide, 12 fps, about 100 KB) in assets/videos/culture/.
+and encodes a tiny H.264 clip (320 px wide unless the entry sets "video_width", 12 fps, about 100 KB) in assets/videos/culture/.
 The file is named after the game's "id" in the json, which is how the page finds it. Needs yt-dlp and ffmpeg.
 
     python3 tools/fetch-previews.py [--force] [--only "Ocarina"] [--jobs 4]
@@ -79,12 +79,12 @@ def clip(item):
     vid, duration = found
     start = max(30.0, min(duration * 0.25, duration - 60))
     with tempfile.TemporaryDirectory() as tmp:
-        subprocess.run(['yt-dlp', '--no-warnings', '-q', '-f', 'bv*[height<=480]/b[height<=480]', '--download-sections', f'*{start:.1f}-{start + CLIP + 1:.1f}',
+        subprocess.run(['yt-dlp', '--no-warnings', '-q', '-f', f"bv*[height<={max(480, item.get('video_width', 320) * 9 // 16 + 1)}]/b", '--download-sections', f'*{start:.1f}-{start + CLIP + 1:.1f}',
                         '--force-keyframes-at-cuts', '-o', str(pathlib.Path(tmp) / 'raw.mp4'), f'https://www.youtube.com/watch?v={vid}'], capture_output=True, timeout=300)
         raw = next(pathlib.Path(tmp).glob('raw*'), None)
         if not raw:
             return None, None
-        done = subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(raw), '-t', str(CLIP), '-an', '-vf', 'scale=320:-2,fps=12',
+        done = subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(raw), '-t', str(CLIP), '-an', '-vf', f"scale={item.get('video_width', 320)}:-2,fps=12",
                                '-c:v', 'libx264', '-crf', '36', '-preset', 'veryslow', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', str(dest)], capture_output=True)
         return (dest, vid) if done.returncode == 0 and dest.exists() else (None, None)
 
