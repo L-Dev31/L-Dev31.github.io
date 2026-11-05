@@ -222,7 +222,7 @@ def itunes(item):
 
 def openlibrary(item):
     for name in names(item):
-        found = fetch_json('https://openlibrary.org/search.json?' + urllib.parse.urlencode({'title': name, 'limit': 8, 'fields': 'title,cover_i'})).get('docs', [])
+        found = fetch_json('https://openlibrary.org/search.json?' + urllib.parse.urlencode({'title': name, 'author': item.get('author', '').split(',')[0], 'limit': 8, 'fields': 'title,cover_i'})).get('docs', [])
         target = norm(name)
         pick = next((d for d in found if d.get('cover_i') and norm(d['title']) == target), None) or next((d for d in found if d.get('cover_i')), None)
         if pick:
