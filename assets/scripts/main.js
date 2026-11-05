@@ -204,11 +204,11 @@ function cultureList(container, items, kind) {
         const low = title.right + gap + half, high = year.left - gap - half;
         const middle = (title.right + year.left) / 2;
         // beside the cursor rather than under it: on its right, or on its left when the right side has no room
-        let target = x == null ? middle : x + 36 + half;
-        if (x != null && target > high) target = x - 36 - half;
+        let target = x == null ? middle : x + 108 + half;
+        if (x != null && target > high) target = x - 108 - half;
         target = low <= high ? Math.min(high, Math.max(low, target)) : middle;
-        figure.style.left = `${target - box.left}px`;
-        figure.style.top = `${r.top - box.top + r.height / 2}px`;
+        figure.style.setProperty('--x', `${Math.round(target - box.left - half)}px`);
+        figure.style.setProperty('--y', `${Math.round(r.top - box.top + r.height / 2 - figure.offsetHeight / 2)}px`);
     };
     let pointerX = null;
 

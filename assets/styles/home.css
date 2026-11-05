@@ -2150,13 +2150,15 @@ html:has(.project-main)::-webkit-scrollbar {
     margin: 0;
     overflow: hidden;
     visibility: hidden;
-    transform: translate(-50%, -50%);
+    transform: translate3d(var(--x, 0), var(--y, 0), 0);
+    will-change: transform;
+    backface-visibility: hidden;
     pointer-events: none;
 }
 
 .culture-preview.is-on {
     visibility: visible;
-    transition: left 0.22s var(--ease-out);
+    transition: transform 0.22s var(--ease-out);
 }
 
 .culture-preview img {
