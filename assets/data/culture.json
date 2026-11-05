@@ -51,7 +51,11 @@
       "platform": "nes",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "W0RmGNrNhHE",
+        "RQ6hgzzk_o8"
+      ]
     },
     {
       "id": "punch-out-nes",
@@ -508,7 +512,10 @@
       "title": "Donkey Kong",
       "year": 1981,
       "platform": "mame",
-      "search": "Donkey Kong"
+      "search": "Donkey Kong",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-land-gb",
