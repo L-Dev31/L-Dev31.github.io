@@ -70,6 +70,7 @@ function landGrid() {
 }
 
 const RAD = Math.PI / 180;
+const TILT = 42;
 const SUN = (() => { const l = [-0.5, 0.45, 0.75], n = Math.hypot(...l); return l.map(v => v / n); })();
 
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
@@ -218,15 +219,16 @@ export async function journey(container) {
     const { stops } = await fetch(container.dataset.src || 'assets/data/journey.json').then(r => r.json());
     if (!stops.every(stop => FLAGS[stop.flag])) Object.assign(FLAGS, await fetch('assets/data/flags.json').then(r => r.json()));
 
+    const track = container.dataset.layout === 'track';
     const stage = el('div', 'journey-stage');
     const canvas = el('canvas', 'journey-globe');
     const marks = el('canvas', 'journey-globe');
     canvas.setAttribute('aria-hidden', 'true');
     marks.setAttribute('aria-hidden', 'true');
     stage.append(canvas, marks);
-    const list = el('ol', 'journey-stops');
+    const list = el('ol', track ? 'travel-track' : 'journey-stops');
     const items = stops.map(stop => {
-        const item = el('li', 'journey-stop');
+        const item = el('li', track ? 'travel-stop' : 'journey-stop');
         item.tabIndex = 0;
 
         const words = stop.place.split(' '), cut = Math.ceil(words.length / 2);
@@ -245,15 +247,23 @@ export async function journey(container) {
     const openFlags = (time, instant) => flags.forEach((f, i) => {
         if (!f.paint) return;
         const r = items[i].getBoundingClientRect();
-        const near = instant ? 1 : clamp01(1 - Math.max(0, r.top + r.height / 2 - innerHeight / 2) / (innerHeight * 0.24));
+        const near = instant ? 1 : track
+            ? clamp01(1 - Math.abs(r.left + r.width / 2 - innerWidth / 2) / (innerWidth * 0.3))
+            : clamp01(1 - Math.max(0, r.top + r.height / 2 - innerHeight / 2) / (innerHeight * 0.24));
         f.open = ease(near);
         f.slot.style.setProperty('--open', f.open.toFixed(3));
-        if (r.bottom < 0 || r.top > innerHeight || (f.open === f.shown && (lowPower || f.open === 0 || time - f.at < 66))) return;
+        if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth || (f.open === f.shown && (lowPower || f.open === 0 || time - f.at < 66))) return;
         f.shown = f.open;
         f.at = time;
         f.paint(f.open, lowPower ? 0 : time);
     });
-    container.replaceChildren(stage, list);
+    if (track) {
+        stage.append(list);
+        container.style.setProperty('--stops', stops.length);
+        container.replaceChildren(stage);
+    } else {
+        container.replaceChildren(stage, list);
+    }
 
     const land = landGrid();
     const root = getComputedStyle(document.documentElement);
@@ -276,6 +286,10 @@ export async function journey(container) {
     const touch = matchMedia('(max-width: 1024px)');
     const view = p => {
         const W = stage.clientWidth, H = stage.clientHeight, e = ease(p);
+        if (track) {
+            const r = Math.max(W * 0.56, H * 0.7);
+            return { r, cx: W / 2, cy: H * 0.44 + r, lon: 0, lat: 0 };
+        }
         const r0 = Math.max(W * 0.62, H * 0.95), y0 = H * 0.22 + r0;
         const r1 = touch.matches ? Math.min(W * 0.42, H * 0.26) : Math.min(H * 0.36, W * 0.25);
         const x1 = touch.matches ? W * 0.5 : W * 0.72, y1 = touch.matches ? H * 0.3 : H * 0.5;
@@ -292,7 +306,7 @@ export async function journey(container) {
     const draw = time => {
         if (!cols) return;
         const introLength = innerHeight * 1.4;
-        const p = reducedMotion ? 1 : clamp01(-container.getBoundingClientRect().top / introLength);
+        const p = track || reducedMotion ? 1 : clamp01(-container.getBoundingClientRect().top / introLength);
         const v = view(p);
         let lon0 = v.lon, lat0 = v.lat;
         if (p >= 1) {
@@ -300,7 +314,7 @@ export async function journey(container) {
             const i = Math.min(stops.length - 2, Math.floor(pos)), f = clamp01(pos - i);
             const from = stops[i], to = stops[Math.min(stops.length - 1, i + 1)];
             lon0 = from.lon + (((to.lon - from.lon + 540) % 360) - 180) * f;
-            lat0 = from.lat + (to.lat - from.lat) * f;
+            lat0 = from.lat + (to.lat - from.lat) * f - (track ? TILT : 0);
         }
         const sinL = Math.sin(lat0 * RAD), cosL = Math.cos(lat0 * RAD);
         brightness.fill(0);
@@ -400,6 +414,11 @@ export async function journey(container) {
 
     let scrollPos = 0;
     const pick = () => {
+        if (track) {
+            const r = container.getBoundingClientRect();
+            scrollPos = clamp01(-r.top / Math.max(1, r.height - innerHeight)) * (stops.length - 1);
+            return;
+        }
         const centres = items.map(item => { const r = item.getBoundingClientRect(); return r.top + r.height / 2 - innerHeight / 2; });
         let i = 0;
         while (i < items.length - 1 && centres[i + 1] <= 0) i++;
@@ -407,20 +426,29 @@ export async function journey(container) {
         scrollPos = i + frac;
     };
     const mark = () => items.forEach((item, i) => item.classList.toggle('is-active', i === (hovered >= 0 ? hovered : active)));
-    items.forEach((item, i) => {
-        const on = () => { hovered = i; mark(); };
-        const off = () => { hovered = -1; mark(); };
-        item.addEventListener('pointerenter', on);
-        item.addEventListener('pointerleave', off);
-        item.addEventListener('focus', on);
-        item.addEventListener('blur', off);
-    });
+    if (!track) {
+        items.forEach((item, i) => {
+            const on = () => { hovered = i; mark(); };
+            const off = () => { hovered = -1; mark(); };
+            item.addEventListener('pointerenter', on);
+            item.addEventListener('pointerleave', off);
+            item.addEventListener('focus', on);
+            item.addEventListener('blur', off);
+        });
+    }
+
+    const slide = at => {
+        const a = Math.min(stops.length - 1, Math.floor(at)), b = Math.min(stops.length - 1, a + 1);
+        const centre = i => items[i].offsetLeft + items[i].offsetWidth / 2;
+        const x = stage.clientWidth / 2 - (centre(a) + (centre(b) - centre(a)) * (at - a));
+        list.style.transform = `translate3d(${x.toFixed(1)}px, 0, 0)`;
+    };
 
     fit();
     if (reducedMotion) {
         pos = stops.length - 1;
         mark();
-        const still = () => { fit(); draw(0); openFlags(0, true); };
+        const still = () => { fit(); if (track) slide(pos); draw(0); openFlags(0, true); };
         still();
         addEventListener('resize', still, { passive: true });
         return;
@@ -428,14 +456,23 @@ export async function journey(container) {
     addEventListener('resize', fit, { passive: true });
     let visible = false;
     new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(stage);
-    let last = 0;
+    let last = 0, frameAt = 0, glide = 0;
     const loop = time => {
         requestAnimationFrame(loop);
-        if (!visible || time - last < (lowPower ? 66 : 33)) return;
+        if (!visible) return;
+        if (track) {
+            const step = Math.min(0.1, (time - frameAt) / 1000 || 0);
+            frameAt = time;
+            pick();
+            glide += (scrollPos - glide) * (1 - Math.exp(-step * 7));
+            slide(glide);
+        }
+        if (time - last < (lowPower ? 66 : 33)) return;
         const dt = Math.min(0.1, (time - last) / 1000 || 0);
         last = time;
         pick();
-        pos += ((hovered >= 0 ? hovered : scrollPos) - pos) * (1 - Math.exp(-dt * 4));
+        if (track) pos = glide;
+        else pos += ((hovered >= 0 ? hovered : scrollPos) - pos) * (1 - Math.exp(-dt * 4));
         active = Math.round(pos);
         mark();
         draw(time);
