@@ -2190,6 +2190,3 @@ html:has(.project-main)::-webkit-scrollbar {
     font-size: clamp(40px, 10vw, 170px);
 }
 
-.travel-stop .journey-flag {
-    width: calc(var(--aspect) * 0.7em + 0.3em);
-}

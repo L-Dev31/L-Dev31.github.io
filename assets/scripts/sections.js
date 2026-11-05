@@ -187,7 +187,7 @@ export async function journey(container) {
         if (!f.paint) return;
         const r = items[i].getBoundingClientRect();
         const near = instant ? 1 : track
-            ? clamp01(1 - Math.max(0, r.left + r.width / 2 - innerWidth / 2) / (innerWidth * 0.3))
+            ? clamp01(pos - i + 1)
             : clamp01(1 - Math.max(0, r.top + r.height / 2 - innerHeight / 2) / (innerHeight * 0.24));
         f.open = ease(near);
         f.slot.style.setProperty('--open', f.open.toFixed(3));
@@ -383,10 +383,24 @@ export async function journey(container) {
         });
     }
 
-    let centres = [];
-    const measure = () => { centres = items.map(item => item.offsetLeft + item.offsetWidth / 2); };
+    // the opening flag pushes the split name apart, so the strip is laid out from the scroll position
+    let bases = [], extras = [], gap = 0;
+    const measure = () => {
+        if (!track) return;
+        flags.forEach(f => f.slot.style.setProperty('--open', 0));
+        bases = items.map(item => item.offsetWidth);
+        extras = flags.map((f, i) => parseFloat(getComputedStyle(f.slot).fontSize) * ((FLAGS[stops[i].flag]?.aspect ?? 1.5) * 0.7 + 0.3));
+        gap = items.length > 1 ? items[1].offsetLeft - items[0].offsetLeft - bases[0] : 0;
+    };
     const slide = at => {
-        if (!centres.length) measure();
+        if (!bases.length) measure();
+        let left = 0;
+        const centres = items.map((_, i) => {
+            const width = bases[i] + ease(clamp01(at - i + 1)) * extras[i];
+            const centre = left + width / 2;
+            left += width + gap;
+            return centre;
+        });
         const a = Math.min(stops.length - 1, Math.floor(at)), b = Math.min(stops.length - 1, a + 1);
         const x = stage.clientWidth / 2 - (centres[a] + (centres[b] - centres[a]) * (at - a));
         list.style.transform = `translate3d(${x.toFixed(1)}px, 0, 0)`;
