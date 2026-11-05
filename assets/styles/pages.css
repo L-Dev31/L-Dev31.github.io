@@ -7,7 +7,6 @@
     --white: #F6F2F2;
     --black: #170206;
     --dusk: #170206;
-    --face: #E40613;
     --ink: #0F0104;
     --text: #E6DCDC;
     --text-muted: var(--white);
@@ -15,7 +14,7 @@
     --hairline: rgba(246, 242, 242, 0.08);
     --border: var(--white);
 
-    --accent: #E40613;
+    --accent: #C2132B;
 
     --font-body: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
     --font-ui: var(--font-body);

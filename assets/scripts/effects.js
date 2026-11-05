@@ -306,7 +306,7 @@ function pixelHero(video) {
     canvas.id = 'hero-pixels';
     canvas.setAttribute('aria-hidden', 'true');
     video.after(canvas);
-    const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--face').trim());
+    const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
     let base = null, brightness = null, lastTime = -1, lastBox = '';
