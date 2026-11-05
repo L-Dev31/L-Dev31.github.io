@@ -658,6 +658,11 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     font-style: italic;
 }
 
+.hero-socials,
+.hero-socials a {
+    pointer-events: auto;
+}
+
 .hero-socials {
     display: flex;
     align-items: center;
@@ -1056,7 +1061,8 @@ html.on-accent .mobile-menu-socials a:focus-visible {
 
 .index-tag {
     padding: 4px 10px;
-    border: 1px solid var(--black);
+    background: transparent;
+    border: 1px solid currentColor;
     border-radius: 999px;
     font-size: 12px;
     font-weight: 500;
@@ -1764,6 +1770,7 @@ html:has(.project-main)::-webkit-scrollbar {
 .index-year,
 .journey-when,
 .index-count {
+    background: transparent;
     border: 1px solid currentColor;
     border-radius: 999px;
     padding: 5px 12px;
@@ -2028,6 +2035,7 @@ html:has(.project-main)::-webkit-scrollbar {
     align-self: start;
     justify-self: start;
     padding: 5px 12px;
+    background: transparent;
     border: 1px solid currentColor;
     border-radius: 999px;
     font-size: 13px;
