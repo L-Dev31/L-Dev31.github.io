@@ -1967,6 +1967,15 @@ html:has(.project-main)::-webkit-scrollbar {
     pointer-events: auto;
 }
 
+.about-header-text .about-title {
+    align-items: center;
+    text-align: center;
+}
+
+.about-header-text .about-title .about-line {
+    justify-content: center;
+}
+
 .about-header-text .about-hero-lede {
     max-width: none;
 }
