@@ -15,51 +15,29 @@ export function scrubbingText() {
     for (const block of document.querySelectorAll('.scrubbing-text')) {
         if (scrubSeen.has(block)) continue;
         scrubSeen.add(block);
-        const original = [...block.childNodes].map(node => node.cloneNode(true));
-        scrubBlocks.push({ block, original, chars: splitChars(block), split: true, turn: block.dataset.scrub === 'turn', out: block.dataset.scrub === 'out' });
+        scrubBlocks.push({ block, chars: splitChars(block), turn: block.dataset.scrub === 'turn', out: block.dataset.scrub === 'out' });
     }
-
-    // While it plays the text is cut into letters; once it is fully shown it goes back to one piece of real text, so the
-    // font keeps its kerning and the joins between its italic letters.
-    const whole = entry => {
-        if (!entry.split) return;
-        entry.split = false;
-        cellLayers.delete(entry.block);
-        entry.block.replaceChildren(...entry.original.map(node => node.cloneNode(true)));
-    };
-    const parts = entry => {
-        if (entry.split) return;
-        entry.split = true;
-        entry.chars = splitChars(entry.block);
-    };
 
     const paint = () => {
         const readingLine = innerHeight * 0.85;
-        for (const entry of scrubBlocks) {
-            const { block, turn, out } = entry;
+        for (const { block, chars, turn, out } of scrubBlocks) {
             const r = block.getBoundingClientRect();
-            if (r.top > innerHeight) continue;
+            if (r.top > innerHeight || r.bottom < 0) continue;
 
-            let progress, spread = SPREAD;
             if (out) {
                 const gone = touch.matches ? 0 : clamp01(heroTurn() / 0.5);
-                if (r.bottom < 0) continue;
-                if (gone === 0) { whole(entry); continue; }
-                parts(entry);
-                const front = gone * (entry.chars.length - 1 + SPREAD);
-                entry.chars.forEach((char, i) => paintChar(char, 1 - clamp01((front - i) / SPREAD)));
-                drawCells(block, entry.chars);
+                const front = gone * (chars.length - 1 + SPREAD);
+                chars.forEach((char, i) => paintChar(char, 1 - clamp01((front - i) / SPREAD)));
+                drawCells(block, chars);
                 continue;
             }
 
-            progress = turn
+            const progress = turn
                 ? (touch.matches ? 1 : clamp01((heroTurn() - 0.3) / 0.6))
                 : clamp01((readingLine - r.top) / Math.max(r.height, 1));
-            if (progress >= 1) { whole(entry); continue; }
-            parts(entry);
-            const head = progress * (entry.chars.length - 1 + spread);
-            entry.chars.forEach((char, i) => paintChar(char, clamp01((head - i) / spread)));
-            drawCells(block, entry.chars);
+            const head = progress * (chars.length - 1 + SPREAD);
+            chars.forEach((char, i) => paintChar(char, clamp01((head - i) / SPREAD)));
+            drawCells(block, chars);
         }
     };
 
