@@ -94,6 +94,111 @@ const cloud = (lon, lat, t) => {
 // the path, in white like the pins, draws itself between them.
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
+// ─── Flags ────────────────────────────────────────────────────────────────────
+// A flag waving in the wind, drawn like the rest of the site: in small square cells, from a texture of a few flat colours
+// that is rippled column by column (a travelling wave, pinned at the pole) and shaded by the slope of the cloth.
+const FLAG_CELL = 3;                                  // css px per cell
+const FLAG_WAVE = 0.07;                               // height of the ripple, in flag heights
+const SHADES = 12;
+const FLAGS = {
+    // The Guadeloupe flag (2:1): green, white, red, with the yellow star; Monaco (5:4): red over white.
+    gp: {
+        aspect: 2,
+        palette: ['#078A34', '#F6F2F2', '#DA1218', '#FFDE0A'],
+        draw(g, w, h) {
+            const band = (y0, y1, c) => { g.fillStyle = c; g.fillRect(0, y0 * h, w, (y1 - y0) * h); };
+            band(0, 1, '#078A34'); band(60 / 480, 420 / 480, '#F6F2F2'); band(84 / 480, 396 / 480, '#DA1218');
+            g.fillStyle = '#FFDE0A';
+            g.beginPath();
+            for (let i = 0; i < 10; i++) {
+                const r = (i % 2 ? 0.382 : 1) * 86 / 480 * h, a = -Math.PI / 2 + i * Math.PI / 5;
+                g[i ? 'lineTo' : 'moveTo'](172 / 960 * w + Math.cos(a) * r, 248 / 480 * h + Math.sin(a) * r);
+            }
+            g.fill();
+        },
+    },
+    mc: {
+        aspect: 1.25,
+        palette: ['#CE1126', '#F6F2F2'],
+        draw(g, w, h) {
+            g.fillStyle = '#CE1126'; g.fillRect(0, 0, w, h / 2);
+            g.fillStyle = '#F6F2F2'; g.fillRect(0, h / 2, w, h / 2);
+        },
+    },
+};
+
+function waving(host, key) {
+    const spec = FLAGS[key];
+    if (!spec) return null;
+    const canvas = el('canvas', 'journey-flag-canvas');
+    host.append(canvas);
+    const ctx = canvas.getContext('2d');
+    const rgb = spec.palette.map(hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16)));
+    // fills[colour][shade]: the strings are made once, not once per cell and frame.
+    const fills = rgb.map(c => Array.from({ length: SHADES }, (_, s) => {
+        const f = 0.5 + s * 0.6 / (SHADES - 1);
+        return `rgb(${Math.min(255, c[0] * f) | 0},${Math.min(255, c[1] * f) | 0},${Math.min(255, c[2] * f) | 0})`;
+    }));
+    let cols = 0, rows = 0, pad = 0, scale = 1, texture = null;
+    const build = () => {
+        const h = host.clientHeight;
+        if (!h) return false;
+        const nr = Math.max(6, Math.round(h / FLAG_CELL)), nc = Math.round(nr * spec.aspect);
+        const dpr = Math.max(1, Math.round(devicePixelRatio));
+        if (nr === rows && nc === cols && dpr === scale) return true;
+        rows = nr; cols = nc; scale = dpr;
+        pad = Math.ceil(FLAG_WAVE * rows) + 1;
+        canvas.width = cols * FLAG_CELL * scale;
+        canvas.height = (rows + 2 * pad) * FLAG_CELL * scale;
+        canvas.style.width = `${cols * FLAG_CELL}px`;
+        canvas.style.height = `${(rows + 2 * pad) * FLAG_CELL}px`;
+        // The texture: the flag drawn at twice the cell grid, read back as one palette index per texel.
+        const tw = cols * 2, th = rows * 2;
+        const off = document.createElement('canvas');
+        off.width = tw; off.height = th;
+        const g = off.getContext('2d', { willReadFrequently: true });
+        g.imageSmoothingEnabled = false;
+        spec.draw(g, tw, th);
+        const px = g.getImageData(0, 0, tw, th).data;
+        texture = new Uint8Array(tw * th);
+        for (let i = 0; i < texture.length; i++) {
+            let best = 0, bestD = Infinity;
+            rgb.forEach((c, k) => {
+                const d = (px[i * 4] - c[0]) ** 2 + (px[i * 4 + 1] - c[1]) ** 2 + (px[i * 4 + 2] - c[2]) ** 2;
+                if (d < bestD) { bestD = d; best = k; }
+            });
+            texture[i] = best;
+        }
+        return true;
+    };
+
+    // p (0 → 1): how much of the flag there is, a block of cells growing from its middle.
+    return (p, time) => {
+        if (p <= 0.001 || !build()) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
+        const tw = cols * 2, th = rows * 2, size = FLAG_CELL * scale, side = Math.max(1, Math.round(size * 0.25));
+        const sq = size - side, t = time / 1000 * 2.6;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const span = Math.max(1, Math.round(cols * p)), x0 = Math.round((cols - span) / 2);
+        const high = Math.max(1, Math.round(rows * p)), y0 = Math.round((rows - high) / 2);
+        for (let i = 0; i < span; i++) {
+            const u = (i + 0.5) / span;
+            const a = Math.PI * 2 * 1.3 * u - t;
+            const dy = FLAG_WAVE * u * Math.sin(a) * p;
+            const slope = FLAG_WAVE * (Math.sin(a) + u * Math.PI * 2 * 1.3 * Math.cos(a));
+            const shade = Math.max(0, Math.min(SHADES - 1, Math.round((0.7 - 0.5 * slope) * (SHADES - 1))));
+            const tx = Math.min(tw - 1, Math.floor(u * tw));
+            for (let j = 0; j < high; j++) {
+                const v = (j + 0.5) / high;
+                const ty = Math.floor((v - dy / Math.max(p, 0.001)) * th);
+                if (ty < 0 || ty >= th) continue;
+                ctx.fillStyle = fills[texture[ty * tw + tx]][shade];
+                const row = y0 + j + Math.round(dy * rows) + pad;
+                ctx.fillRect((x0 + i) * size, row * size, sq, sq);
+            }
+        }
+    };
+}
+
 export async function journey(container) {
     if (!container) return;
     const { stops } = await fetch('assets/data/journey.json').then(r => r.json());
@@ -108,10 +213,27 @@ export async function journey(container) {
     const items = stops.map(stop => {
         const item = el('li', 'journey-stop');
         item.tabIndex = 0;
+        // The country, split in two: the flag opens between the halves as the stop comes to the middle of the screen.
+        const country = el('span', 'journey-country');
+        country.setAttribute('aria-label', stop.country);
+        const cut = Math.ceil(stop.country.length / 2), slot = el('span', 'journey-flag');
+        const half = (cls, text) => { const s = el('span', cls, text); s.setAttribute('aria-hidden', 'true'); return s; };
+        slot.setAttribute('aria-hidden', 'true');
+        slot.style.setProperty('--aspect', FLAGS[stop.flag]?.aspect ?? 1.5);
+        country.append(half('journey-half', stop.country.slice(0, cut)), slot, half('journey-half', stop.country.slice(cut)));
         item.append(el('span', 'journey-when', stop.when), el('h3', 'journey-place scrubbing-text', stop.place),
-            el('span', 'journey-country', stop.country), el('p', 'journey-what scrubbing-text', stop.what));
+            country, el('p', 'journey-what scrubbing-text', stop.what));
         list.append(item);
         return item;
+    });
+    const flags = stops.map((stop, i) => ({ paint: waving(items[i].querySelector('.journey-flag'), stop.flag), slot: items[i].querySelector('.journey-flag'), open: 0 }));
+    const openFlags = (time, instant) => flags.forEach((f, i) => {
+        if (!f.paint) return;
+        const r = items[i].getBoundingClientRect();
+        const near = instant ? 1 : clamp01(1 - Math.abs(r.top + r.height / 2 - innerHeight / 2) / (innerHeight * 0.3));
+        f.open = ease(near);
+        f.slot.style.setProperty('--open', f.open.toFixed(3));
+        f.paint(f.open, time);
     });
     container.replaceChildren(stage, list);
 
@@ -245,12 +367,12 @@ export async function journey(container) {
             labels.font = '500 13px Satoshi, sans-serif';
             labels.textBaseline = 'middle';
             for (const { stop, pt, isActive } of shown) {
-                const w = labels.measureText(stop.place).width;
+                const w = labels.measureText(stop.country).width;
                 const x = pt.x + 22, y = pt.y;
                 labels.fillStyle = isActive ? ink : paper;
                 labels.fillRect(x - 8, y - 12, w + 16, 24);
                 labels.fillStyle = isActive ? paper : ink;
-                labels.fillText(stop.place, x, y + 1);
+                labels.fillText(stop.country, x, y + 1);
             }
             labels.restore();
         }
@@ -279,7 +401,7 @@ export async function journey(container) {
     if (reducedMotion) {
         pos = stops.length - 1;
         mark();
-        const still = () => { fit(); draw(0); };
+        const still = () => { fit(); draw(0); openFlags(0, true); };
         still();
         addEventListener('resize', still, { passive: true });
         return;
@@ -298,6 +420,7 @@ export async function journey(container) {
         active = Math.round(pos);
         mark();
         draw(time);
+        openFlags(time);
     };
     requestAnimationFrame(loop);
 }

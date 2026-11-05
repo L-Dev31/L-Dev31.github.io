@@ -1,20 +1,22 @@
 {
   "stops": [
     {
-      "place": "Guadeloupe",
-      "country": "French Caribbean",
+      "place": "French Caribbean",
+      "country": "Guadeloupe",
       "lat": 16.31,
       "lon": -61.8,
       "when": "2022 — 2025",
-      "what": "Baccalauréat at LGT Sonny Rupaire. Founder and full-stack developer of Rayon, and remote graphic design for Red Planet Pictures in London."
+      "what": "Baccalauréat at LGT Sonny Rupaire. Founder and full-stack developer of Rayon, and remote graphic design for Red Planet Pictures in London.",
+      "flag": "gp"
     },
     {
       "place": "French Riviera",
-      "country": "France",
+      "country": "Monaco",
       "lat": 43.6,
       "lon": 7.1,
       "when": "2025 —",
-      "what": "Bachelor at Sophia Ynov Campus. Marketing, communication and design at Geetech, Antibes and Monaco."
+      "what": "Bachelor at Sophia Ynov Campus. Marketing, communication and design at Geetech, Antibes and Monaco.",
+      "flag": "mc"
     }
   ]
 }

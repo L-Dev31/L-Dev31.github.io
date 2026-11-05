@@ -974,10 +974,36 @@ html.menu-open body {
     transform: scale(1);
 }
 
-.journey-when,
-.journey-country {
+.journey-when {
     font-size: 14px;
     font-weight: 500;
+}
+
+/* The country is set big and cut in two; its flag opens in the gap. */
+.journey-country {
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+    font-family: var(--font-display);
+    font-size: clamp(30px, 3.6vw, 56px);
+    line-height: 1;
+    white-space: nowrap;
+    -webkit-text-stroke: 0.018em currentColor;
+}
+
+.journey-flag {
+    --open: 0;
+    position: relative;
+    flex: none;
+    height: 1.5em;
+    width: calc(var(--open) * var(--aspect) * 1.5em + var(--open) * 0.3em);
+}
+
+.journey-flag-canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .journey-place {
