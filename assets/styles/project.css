@@ -32,7 +32,6 @@ section.visible > * {
     height: 25px;
     border-radius: 50%;
     background: var(--white);
-    mix-blend-mode: exclusion;
     pointer-events: none;
     transition: transform 0.1s ease-out, opacity 0.3s ease;
 }
@@ -116,39 +115,6 @@ section.visible > * {
     opacity: 1;
 }
 
-.back-to-top {
-    --size: 100px;
-    position: fixed;
-    bottom: 40px;
-    right: 40px;
-    z-index: 1000;
-    width: var(--size);
-    height: var(--size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: none;
-    background: none;
-    color: var(--white);
-    mix-blend-mode: difference;
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(0.8);
-    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
-}
-
-.back-to-top.visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: scale(1);
-}
-
-.btt-icon {
-    width: 75%;
-    filter: brightness(0) invert(1);
-}
-
 @keyframes spin {
     to {
         transform: rotate(360deg);
@@ -212,7 +178,6 @@ section.visible > * {
     letter-spacing: 1.5px;
     text-decoration: none;
     text-transform: uppercase;
-    mix-blend-mode: difference;
     transition: background 0.3s ease, color 0.3s ease;
 }
 

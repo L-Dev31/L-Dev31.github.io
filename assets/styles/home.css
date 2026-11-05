@@ -428,7 +428,6 @@ html.menu-open body {
 }
 
 .mobile-menu-picture {
-    --invert: 1;
     position: absolute;
     top: 0;
     right: 0;
@@ -494,10 +493,6 @@ html.menu-open body {
     line-height: 1;
     text-decoration: none;
     transition: background 0.3s ease, color 0.3s ease;
-}
-
-html.on-accent .mobile-menu-picture {
-    --invert: 0;
 }
 
 html.on-accent .mobile-menu-link + .mobile-menu-link {
@@ -796,7 +791,6 @@ html.on-accent .mobile-menu-socials a:focus-visible {
 }
 
 .promise-picture {
-    --invert: 1;
     aspect-ratio: 3 / 4;
     overflow: hidden;
 }
@@ -1196,26 +1190,6 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     pointer-events: none;
 }
 
-.about-header-text {
-    text-align: left;
-    position: fixed;
-    inset: 0;
-    z-index: 2;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: clamp(20px, 5vh, 60px) var(--pad-edge);
-    text-align: center;
-    mix-blend-mode: difference;
-    pointer-events: none;
-}
-
-.about-header-text > * {
-    pointer-events: auto;
-}
-
 .about-header-text .about-hero-lede {
     color: var(--white);
 }
@@ -1291,7 +1265,6 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     box-sizing: border-box;
     padding: clamp(32px, 5vh, 56px) var(--pad-edge);
     color: var(--white);
-    mix-blend-mode: difference;
     pointer-events: none;
 }
 
@@ -1983,15 +1956,19 @@ html:has(.project-main)::-webkit-scrollbar {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding: clamp(20px, 5vh, 60px) var(--pad-edge);
+    justify-content: flex-start;
+    align-items: center;
+    padding: clamp(96px, 16vh, 160px) var(--pad-edge) clamp(20px, 5vh, 60px);
     pointer-events: none;
 }
 
 .about-header-text > * {
-    max-width: min(40vw, 620px);
+    width: min(86vw, 620px);
     pointer-events: auto;
+}
+
+.about-header-text .about-hero-lede {
+    max-width: none;
 }
 
 .about-hero-lede {

@@ -434,7 +434,6 @@ export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#
     const render = () => {
         const cols = Math.ceil(host.clientWidth / CELL), rows = Math.ceil(host.clientHeight / CELL);
         if (!cols || !rows || !source.naturalWidth) return;
-        const invert = getComputedStyle(host).getPropertyValue('--invert').trim() === '1';
         cells.resize(cols, rows);
         sample.width = cols; sample.height = rows;
         const scale = Math.max(cols / source.naturalWidth, rows / source.naturalHeight);
@@ -443,7 +442,7 @@ export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#
         sampleCtx.drawImage(source, (cols - w) / 2, (rows - h) * 0.25, w, h);
         const rgba = sampleCtx.getImageData(0, 0, cols, rows).data;
         brightness = new Uint8Array(cols * rows);
-        for (let i = 0; i < brightness.length; i++) { const luma = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114; brightness[i] = invert ? 255 - luma : Math.min(255, luma * gain); }
+        for (let i = 0; i < brightness.length; i++) brightness[i] = Math.min(255, (rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114) * gain);
         cells.paint(brightness);
     };
 
