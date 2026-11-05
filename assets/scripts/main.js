@@ -1,5 +1,6 @@
 import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
 import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture, pixelCover } from './effects.js';
+import { extrudedSvg, CELL } from './pixel.js';
 import { journey } from './sections.js';
 
 const CATEGORIES = ['Graphic Design', 'Webdesign', 'Marketing', 'Dev'];
@@ -15,6 +16,8 @@ if (story) {
 }
 scrubbingText();
 scrollScrubbedVideo();
+
+const DEFAULT_SVG = 'assets/images/core/logo.svg';
 
 const el = (tag, cls, text) => {
     const node = document.createElement(tag);
@@ -80,7 +83,7 @@ function projectIndex(container, projects) {
                 row.href = `project.html?id=${project.id}`;
                 row.setAttribute('role', 'button');
                 row.setAttribute('aria-expanded', 'false');
-                row.append(el('span', 'index-title', project.title), el('span', 'index-year', (project.date || '').slice(0, 4)));
+                row.append(el('span', 'index-title', project.title), el('span', 'index-slot'), el('span', 'index-year', (project.date || '').slice(0, 4)));
                 const detail = el('div', 'index-detail');
                 item.append(row, detail);
                 list.append(item);
@@ -99,13 +102,59 @@ function projectIndex(container, projects) {
     const columns = el('div', 'index-groups');
     columns.append(...groups);
     container.replaceChildren(columns);
+    return entries;
 }
+
+function projectPreview(container, entries) {
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    const figure = el('figure', 'index-preview');
+    figure.setAttribute('aria-hidden', 'true');
+    const canvas = el('canvas');
+    figure.append(canvas);
+    container.append(figure);
+    const solid = extrudedSvg(canvas, getComputedStyle(container).color);
+    let current = null;
+
+    const show = (row, project) => {
+        if (row.parentElement.classList.contains('is-open')) return;
+        current = row;
+        const box = container.getBoundingClientRect();
+        const slot = row.querySelector('.index-slot').getBoundingClientRect();
+        const r = row.getBoundingClientRect();
+
+        const cols = Math.max(16, Math.floor((slot.width - 16) / CELL / 4) * 4);
+        figure.style.left = `${slot.left - box.left + (slot.width - cols * CELL) / 2}px`;
+        figure.style.top = `${r.top - box.top + r.height / 2}px`;
+        figure.style.width = `${cols * CELL}px`;
+        solid.show([project.svg || `assets/images/projects/icons/${project.id}.svg`, DEFAULT_SVG], cols).then(() => {
+            if (current !== row) return;
+            figure.offsetWidth;
+            figure.classList.add('is-on');
+        });
+    };
+    const hide = row => {
+        if (current !== row) return;
+        current = null;
+        figure.classList.remove('is-on');
+        solid.hide();
+    };
+
+    for (const { row, project } of entries) {
+        row.addEventListener('pointerenter', () => show(row, project));
+        row.addEventListener('pointerleave', () => hide(row));
+        row.addEventListener('focus', () => show(row, project));
+        row.addEventListener('blur', () => hide(row));
+        row.addEventListener('click', () => hide(row));
+    }
+}
+
 
 async function initProjects() {
     const container = document.querySelector('.project-index');
     if (!container) return;
     const projects = (await loadProjects()).filter(p => CATEGORIES.includes(p.category));
-    projectIndex(container, projects);
+    projectPreview(container, projectIndex(container, projects));
     refreshParallax();
 }
 

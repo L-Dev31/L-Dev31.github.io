@@ -928,6 +928,10 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     font-weight: 800;
 }
 
+.index-slot {
+    align-self: stretch;
+}
+
 .index-year {
     justify-self: end;
     font-size: clamp(14px, 1.2vw, 18px);
@@ -941,12 +945,30 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     font-weight: 800;
 }
 
-.index-row {
-    grid-template-columns: minmax(0, 1fr) auto;
-}
-
 .index-row[aria-expanded="true"] .index-title {
     font-weight: 800;
+}
+
+.index-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    margin: 0;
+    visibility: hidden;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.index-preview.is-on {
+    visibility: visible;
+    transition: top 0.35s var(--ease-out);
+}
+
+.index-preview canvas {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .index-detail {
@@ -1557,6 +1579,14 @@ html:has(.project-main)::-webkit-scrollbar {
 
     .index-list {
         grid-template-columns: 1fr;
+    }
+
+    .index-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .index-slot {
+        display: none;
     }
 
     .index-detail-inner {
