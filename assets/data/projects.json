@@ -7,7 +7,7 @@
       "category": "Graphic Design",
       "role": "Vexillographer & Designer",
       "heroImage": "assets/images/projects/smfl/header.jpg",
-      "subtitle": "A flag for an island that didn't have one. NAVA rules, real history, and a wind test, because a flag has to survive weather.",
+      "subtitle": "An island had no flag. I gave it one: NAVA rules, real history, wind-tested. It will outlast the opinions.",
       "tags": [
         "Vexillology",
         "Flag Design",
@@ -46,7 +46,7 @@
       "category": "Graphic Design",
       "role": "Brand Designer",
       "heroImage": "assets/images/projects/ogfm/header.jpg",
-      "subtitle": "Identity for an anti-establishment webradio. Punk isn't sloppy, and I made that point loudly.",
+      "subtitle": "A punk webradio that distrusts anything polished. Chaotic on purpose, precise underneath.",
       "tags": [
         "Brand Identity",
         "Logo Design",
@@ -83,7 +83,7 @@
       "category": "Webdesign",
       "role": "Web Designer & Logo Designer",
       "heroImage": "assets/images/projects/bgaw/header.jpg",
-      "subtitle": "A luxury watch brand that wanted to look expensive online. Precision watchmaking meets car culture, with no apology.",
+      "subtitle": "A luxury watch brand that needed to look as expensive online as it is on the wrist. Precision watchmaking, car culture, no apology.",
       "tags": [
         "Web Design",
         "UI/UX Design",
@@ -120,7 +120,7 @@
       "category": "Marketing",
       "role": "Designer",
       "heroImage": "assets/images/projects/mego/header.jpg",
-      "subtitle": "A GPS cigarette-butt collection startup that needed an identity. 48 hours, real constraints, delivered anyway.",
+      "subtitle": "A startup collecting cigarette butts by GPS needed an identity. 48 hours, real constraints, finished on time. Obviously.",
       "tags": [
         "Brochure Design",
         "Editorial Layout",
@@ -144,7 +144,7 @@
       "category": "Webdesign",
       "role": "UX Designer",
       "heroImage": "assets/images/projects/prfy/header.jpg",
-      "subtitle": "Receipts and warranties, scanned and sorted. No account. No paper. No excuse to lose anything.",
+      "subtitle": "You lose receipts. I made sure you'd stop. Scanned, sorted, no account, no paper.",
       "tags": [
         "UX Design",
         "UI Design",
@@ -170,7 +170,7 @@
       "category": "Webdesign",
       "role": "Web Designer & Developer",
       "heroImage": "assets/images/projects/cmck/header.jpg",
-      "subtitle": "One site for two audiences: fans and paying clients. Neither one feels like the second choice.",
+      "subtitle": "A composer needed one site for fans and paying clients at once. Neither feels like the second choice. Not easy. Done.",
       "tags": [
         "Web Design",
         "Frontend Development",
@@ -206,7 +206,7 @@
       "category": "Dev",
       "role": "Developer",
       "heroImage": "assets/images/projects/bmge/header.jpg",
-      "subtitle": "A binary editor for Nintendo's BMG format, in a browser. Built by reverse-engineering with no documentation and no SDK, because I wanted it to exist.",
+      "subtitle": "A BMG editor for Nintendo, in your browser. No documentation, no SDK. I reverse-engineered it because nobody else did.",
       "tags": [
         "Reverse Engineering",
         "Binary File Format",
@@ -243,7 +243,7 @@
       "category": "Dev",
       "role": "Developer & Dataset Author",
       "heroImage": "assets/images/projects/gptr/header.jpg",
-      "subtitle": "The first French to Guadeloupean Creole translator. The internet had forgotten the language, so I wrote the dataset myself.",
+      "subtitle": "The first French to Guadeloupean Creole translator. The internet had forgotten the language, so I wrote the dataset.",
       "tags": [
         "Python",
         "NLP",
