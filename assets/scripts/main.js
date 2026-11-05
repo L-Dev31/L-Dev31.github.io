@@ -161,13 +161,17 @@ async function initProjects() {
     refreshParallax();
 }
 
+const PLATFORMS = { nes: 'NES', snes: 'SNES', n64: 'Nintendo 64', gb: 'Game Boy', gbc: 'Game Boy Color', gba: 'Game Boy Advance', ds: 'DS', '3ds': '3DS', wii: 'Wii', wiiu: 'Wii U', switch: 'Switch', steam: 'PC', pc: 'PC', android: 'Android', web: 'Web', mame: 'Arcade' };
+
 function cultureList(container, items) {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
     const list = el('ul', 'index-list');
     const entries = [...items].sort((a, b) => b.year - a.year).map(item => {
         const row = el('div', 'index-row');
         row.tabIndex = 0;
-        row.append(el('span', 'index-title', item.title), el('span', 'index-slot'), el('span', 'index-year', String(item.year)));
+        const title = el('span', 'index-title', item.title.replace(/ \([^)]*\)$/, ''));
+        if (item.platform) title.append(el('small', 'index-platform', ` ${PLATFORMS[item.platform] || item.platform}`));
+        row.append(title, el('span', 'index-slot'), el('span', 'index-year', String(item.year)));
         const li = el('li', 'index-item');
         li.append(row);
         list.append(li);
