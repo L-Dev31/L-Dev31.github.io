@@ -1,5 +1,5 @@
 import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
-import { scrubbingText, parallax, scrollScrubbedVideo } from './effects.js';
+import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { journey, clients, logoWall } from './sections.js';
 
@@ -9,6 +9,12 @@ initPage();
 if (!document.querySelector('#header')) reveal(document.querySelectorAll('section, .title'));
 const refreshParallax = parallax();
 logoWall(document.getElementById('logos'));
+const story = document.querySelector('.promise-picture');
+if (story) {
+    let visible = false;
+    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }).observe(story);
+    pixelPicture(story, story.dataset.picture, { mirror: true, color: getComputedStyle(document.documentElement).getPropertyValue('--black').trim(), active: () => visible });
+}
 scrubbingText();
 scrollScrubbedVideo();
 
