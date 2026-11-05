@@ -659,6 +659,7 @@ html.on-accent .mobile-menu-socials a:focus-visible {
 
 .hero-socials {
     display: flex;
+    align-items: center;
     gap: 12px;
     margin-bottom: clamp(16px, 4vh, 40px);
 }
@@ -1778,17 +1779,8 @@ html:has(.project-main)::-webkit-scrollbar {
     line-height: 1;
 }
 
-.navbar-center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
 @media (max-width: 768px) {
-    .navbar-center {
-        display: none;
     }
-}
 
 .mobile-menu {
     clip-path: inset(0 0 0 100%);
