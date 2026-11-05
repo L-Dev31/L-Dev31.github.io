@@ -320,6 +320,40 @@
       "id": "the-nightmare-before-christmas",
       "title": "The Nightmare Before Christmas",
       "year": 1993
+    },
+    {
+      "id": "la-la-land",
+      "title": "La La Land",
+      "year": 2016
+    },
+    {
+      "id": "singin-in-the-rain",
+      "title": "Singin' in the Rain",
+      "year": 1952,
+      "search": [
+        "Singin' in the Rain"
+      ]
+    },
+    {
+      "id": "avatar",
+      "title": "Avatar",
+      "year": 2009,
+      "search": [
+        "Avatar (2009 film)"
+      ]
+    },
+    {
+      "id": "avatar-the-way-of-water",
+      "title": "Avatar: The Way of Water",
+      "year": 2022
+    },
+    {
+      "id": "the-godfather",
+      "title": "The Godfather",
+      "year": 1972,
+      "search": [
+        "The Godfather"
+      ]
     }
   ],
   "books": [
