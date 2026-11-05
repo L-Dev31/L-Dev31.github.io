@@ -129,11 +129,7 @@
     {
       "id": "hook",
       "title": "Hook",
-      "year": 1991,
-      "search": [
-        "Hook (film)",
-        "Hook"
-      ]
+      "year": 1991
     },
     {
       "id": "toy-story",
@@ -219,16 +215,7 @@
     {
       "id": "aladdin",
       "title": "Aladdin",
-      "year": 1992,
-      "search": [
-        "Aladdin (1992 Disney film)",
-        "Aladdin"
-      ]
-    },
-    {
-      "id": "the-return-of-jafar",
-      "title": "The Return of Jafar",
-      "year": 1994
+      "year": 1992
     },
     {
       "id": "the-lion-king",
