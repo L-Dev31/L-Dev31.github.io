@@ -88,11 +88,6 @@
       "year": 1988
     },
     {
-      "id": "beetlejuice-beetlejuice",
-      "title": "Beetlejuice Beetlejuice",
-      "year": 2024
-    },
-    {
       "id": "back-to-the-future",
       "title": "Back to the Future",
       "year": 1985
@@ -256,11 +251,6 @@
       "year": 1996
     },
     {
-      "id": "space-jam-a-new-legacy",
-      "title": "Space Jam: A New Legacy",
-      "year": 2021
-    },
-    {
       "id": "cool-runnings",
       "title": "Cool Runnings",
       "year": 1993
@@ -282,11 +272,6 @@
       "id": "men-in-black-3",
       "title": "Men in Black 3",
       "year": 2012
-    },
-    {
-      "id": "men-in-black-international",
-      "title": "Men in Black: International",
-      "year": 2019
     },
     {
       "id": "dr-no",
@@ -502,15 +487,6 @@
       ]
     },
     {
-      "id": "alice-through-the-looking-glass",
-      "title": "Alice Through the Looking Glass",
-      "year": 2016,
-      "search": [
-        "Alice Through the Looking Glass (2016 film)",
-        "Alice Through the Looking Glass"
-      ]
-    },
-    {
       "id": "ghostbusters",
       "title": "Ghostbusters",
       "year": 1984
@@ -521,32 +497,9 @@
       "year": 1989
     },
     {
-      "id": "ghostbusters-answer-the-call",
-      "title": "Ghostbusters: Answer the Call",
-      "year": 2016,
-      "search": [
-        "Ghostbusters (2016 film)",
-        "Ghostbusters: Answer the Call"
-      ]
-    },
-    {
       "id": "ghostbusters-afterlife",
       "title": "Ghostbusters: Afterlife",
       "year": 2021
-    },
-    {
-      "id": "ghostbusters-frozen-empire",
-      "title": "Ghostbusters: Frozen Empire",
-      "year": 2024
-    },
-    {
-      "id": "dolittle",
-      "title": "Dolittle",
-      "year": 2020,
-      "search": [
-        "Dolittle (film)",
-        "Dolittle"
-      ]
     },
     {
       "id": "charlie-and-the-chocolate-factory",
