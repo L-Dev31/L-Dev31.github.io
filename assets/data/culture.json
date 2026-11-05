@@ -378,7 +378,8 @@
       "title": "Clair Obscur: Expedition 33",
       "year": 2025,
       "platform": "steam",
-      "video_width": 960
+      "video_width": 960,
+      "video_crf": 27
     },
     {
       "id": "return-of-the-obra-dinn-steam",

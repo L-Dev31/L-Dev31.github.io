@@ -85,7 +85,7 @@ def clip(item):
         if not raw:
             return None, None
         done = subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(raw), '-t', str(CLIP), '-an', '-vf', f"scale={item.get('video_width', 320)}:-2,fps=12",
-                               '-c:v', 'libx264', '-crf', '36', '-preset', 'veryslow', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', str(dest)], capture_output=True)
+                               '-c:v', 'libx264', '-crf', str(item.get('video_crf', 36)), '-preset', 'veryslow', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', str(dest)], capture_output=True)
         return (dest, vid) if done.returncode == 0 and dest.exists() else (None, None)
 
 
