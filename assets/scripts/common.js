@@ -85,7 +85,6 @@ export function initPage() {
     cursor();
     anchorLinks(lenis);
     backToTop(lenis);
-    magneticLinks();
     pauseOffscreenVideos();
     return lenis;
 }
@@ -386,19 +385,6 @@ function backToTop(lenis) {
         else scrollTo({ top: 0, behavior: 'smooth' });
     });
     update();
-}
-
-function magneticLinks() {
-    if (isMobile || lowPower) return;
-    document.querySelectorAll('.footer-links a').forEach(link => {
-        link.addEventListener('mousemove', e => {
-            const r = link.getBoundingClientRect();
-            const x = (e.clientX - r.left - r.width / 2) * 0.25;
-            const y = (e.clientY - r.top - r.height / 2) * 0.25;
-            link.style.transform = `translate(${x}px, ${y}px)`;
-        });
-        link.addEventListener('mouseleave', () => link.style.transform = '');
-    });
 }
 
 function pauseOffscreenVideos() {
