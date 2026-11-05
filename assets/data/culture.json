@@ -410,18 +410,6 @@
       "released": "2017-11-22"
     },
     {
-      "id": "the-incredibles",
-      "title": "The Incredibles",
-      "year": 2004,
-      "released": "2004-10-27"
-    },
-    {
-      "id": "incredibles-2",
-      "title": "Incredibles 2",
-      "year": 2018,
-      "released": "2018-06-05"
-    },
-    {
       "id": "zootopia",
       "title": "Zootopia",
       "year": 2016,
@@ -696,12 +684,6 @@
       "title": "The Super Mario Galaxy Movie",
       "year": 2026,
       "released": "2026-04-01"
-    },
-    {
-      "id": "spider-man-2",
-      "title": "Spider-Man 2",
-      "year": 2004,
-      "released": "2004-06-30"
     },
     {
       "id": "spider-man-homecoming",
