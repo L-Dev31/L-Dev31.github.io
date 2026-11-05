@@ -228,6 +228,7 @@ export function dissolve(host, { color, size = 20, total = 900, reverse = false,
     const delay = Array.from({ length: cols * rows }, (_, i) => (i % cols) / cols * 0.55 + Math.random() * 0.35);
     const start = performance.now(), END = 1.15;
     const frame = now => {
+        if (!canvas.isConnected) return;
         const t = Math.min(END, (now - start) / total * 1.45);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (let i = 0; i < delay.length; i++) {

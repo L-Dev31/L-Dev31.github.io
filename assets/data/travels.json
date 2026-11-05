@@ -89,6 +89,15 @@
       "lon": 35.0,
       "when": "10",
       "flag": "tr"
+    },
+    {
+      "place": "Monaco",
+      "country": "Europe",
+      "label": "Monaco",
+      "lat": 43.73,
+      "lon": 7.42,
+      "when": "11",
+      "flag": "mc"
     }
   ]
 }

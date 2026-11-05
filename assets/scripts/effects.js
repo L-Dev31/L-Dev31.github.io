@@ -4,7 +4,7 @@ import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
 const isMobile = breakpoint.isMobile;
 
 const TEXT = '.scrubbing-text, h1, h2, h3, p, li, time, dd, .journey-when, .journey-country';
-const SKIP = '.navbar, .mobile-menu, .index-item, .journey-place, .hero-socials, .footer-sign, .clock, .page-loader';
+const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, .footer-sign, .clock, .page-loader';
 const scrubBlocks = [];
 const scrubSeen = new WeakSet();
 let scrubWired = false;
@@ -17,7 +17,8 @@ export function scrubbingText() {
     for (const block of document.querySelectorAll(TEXT)) {
         if (scrubSeen.has(block) || block.closest(SKIP) || block.querySelector(TEXT)) continue;
         scrubSeen.add(block);
-        scrubBlocks.push({ block, chars: splitChars(block), turn: block.dataset.scrub === 'turn', out: block.dataset.scrub === 'out' });
+        const chars = splitChars(block);
+        if (chars.length) scrubBlocks.push({ block, chars, turn: block.dataset.scrub === 'turn', out: block.dataset.scrub === 'out' });
     }
 
     const paint = () => {
@@ -167,7 +168,8 @@ const cellLayers = new WeakMap();
 
 function glyphGrid(char, rect, cell) {
     const style = getComputedStyle(char);
-    const key = `${char.textContent}|${style.font}|${style.webkitTextStrokeWidth}|${cell}`;
+    const text = style.textTransform === 'uppercase' ? char.textContent.toUpperCase() : char.textContent;
+    const key = `${text}|${style.font}|${style.webkitTextStrokeWidth}|${cell}`;
     let grid = glyphGrids.get(key);
     if (grid) return grid;
     const w = Math.max(1, Math.ceil(rect.width)), h = Math.max(1, Math.ceil(rect.height));
@@ -176,11 +178,11 @@ function glyphGrid(char, rect, cell) {
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     ctx.font = style.font;
     ctx.textBaseline = 'alphabetic';
-    const m = ctx.measureText(char.textContent);
+    const m = ctx.measureText(text);
     const baseline = (h - (m.fontBoundingBoxAscent + m.fontBoundingBoxDescent)) / 2 + m.fontBoundingBoxAscent;
-    ctx.fillText(char.textContent, 0, baseline);
+    ctx.fillText(text, 0, baseline);
     const stroke = parseFloat(style.webkitTextStrokeWidth) || 0;
-    if (stroke) { ctx.lineWidth = stroke; ctx.strokeText(char.textContent, 0, baseline); }
+    if (stroke) { ctx.lineWidth = stroke; ctx.strokeText(text, 0, baseline); }
     const data = ctx.getImageData(0, 0, w, h).data;
     const cols = Math.ceil(w / cell), rows = Math.ceil(h / cell);
     const cover = new Float32Array(cols * rows);

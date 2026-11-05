@@ -180,10 +180,13 @@ function cultureList(container, items) {
     figure.append(img);
     container.replaceChildren(list, figure);
     const cover = pixelCover(figure, color, 16);
-    let current = null;
+    let current = null, leaving = 0;
 
     const show = async ({ item, row }) => {
+        clearTimeout(leaving);
+        if (current === row) return;
         current = row;
+        figure.classList.remove('is-on');
         img.src = item.cover;
         await img.decode().catch(() => {});
         if (current !== row) return;
@@ -192,12 +195,14 @@ function cultureList(container, items) {
         figure.style.left = `${centre - box.left}px`;
         figure.style.top = `${r.top - box.top + r.height / 2}px`;
         cover.show();
-        requestAnimationFrame(() => figure.classList.add('is-on'));
+        requestAnimationFrame(() => { if (current === row) figure.classList.add('is-on'); });
     };
     const hide = row => {
         if (current !== row) return;
-        current = null;
-        cover.hide(() => { if (!current) figure.classList.remove('is-on'); });
+        leaving = setTimeout(() => {
+            current = null;
+            cover.hide(() => { if (!current) figure.classList.remove('is-on'); });
+        }, 80);
     };
 
     const hover = matchMedia('(hover: hover) and (pointer: fine)').matches;
