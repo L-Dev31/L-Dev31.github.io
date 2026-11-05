@@ -1398,6 +1398,71 @@
       "search": [
         "Manon Lescaut"
       ]
+    },
+    {
+      "id": "21-lecons-pour-le-xxie-siecle",
+      "title": "21 leçons pour le XXIe siècle",
+      "year": 2018,
+      "author": "Yuval Noah Harari",
+      "released": "2018-08-30",
+      "search": [
+        "21 Lessons for the 21st Century",
+        "21 leçons pour le XXIe siècle"
+      ]
+    },
+    {
+      "id": "de-la-democratie-en-amerique",
+      "title": "De la démocratie en Amérique",
+      "year": 1835,
+      "author": "Alexis de Tocqueville",
+      "released": "1835-01-23",
+      "search": [
+        "De la démocratie en Amérique",
+        "Democracy in America"
+      ]
+    },
+    {
+      "id": "la-republique",
+      "title": "La République",
+      "year": -375,
+      "author": "Platon",
+      "date": "c. 375 BC",
+      "search": [
+        "La République",
+        "Republic Plato"
+      ]
+    },
+    {
+      "id": "manifeste-du-parti-communiste",
+      "title": "Manifeste du Parti communiste",
+      "year": 1848,
+      "author": "Karl Marx, Friedrich Engels",
+      "released": "1848-02-21",
+      "search": [
+        "Manifeste du Parti communiste",
+        "The Communist Manifesto"
+      ]
+    },
+    {
+      "id": "discours-de-la-servitude-volontaire",
+      "title": "Discours de la servitude volontaire",
+      "year": 1549,
+      "author": "Étienne de La Boétie",
+      "search": [
+        "Discours de la servitude volontaire",
+        "Discourse on Voluntary Servitude"
+      ]
+    },
+    {
+      "id": "du-contrat-social",
+      "title": "Du contrat social",
+      "year": 1762,
+      "author": "Jean-Jacques Rousseau",
+      "released": "1762-04-01",
+      "search": [
+        "Du contrat social",
+        "The Social Contract"
+      ]
     }
   ],
   "games": [
