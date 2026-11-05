@@ -840,21 +840,10 @@ html.menu-open body {
 }
 
 #promise {
+    min-height: 0;
     padding: 0 0 clamp(80px, 14vh, 160px);
     background: var(--accent);
     color: var(--black);
-}
-
-.promise-label {
-    display: inline-block;
-    margin: 0 0 clamp(20px, 4vh, 40px) var(--pad-edge);
-    padding: 5px 12px;
-    border: 1px solid currentColor;
-    border-radius: 999px;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1;
 }
 
 .promise-lead {
@@ -931,6 +920,7 @@ html.menu-open body {
 }
 
 #logos {
+    min-height: 0;
     display: flex;
     flex-direction: column;
     gap: clamp(24px, 4vh, 44px);
@@ -1186,59 +1176,6 @@ html.menu-open body {
     line-height: 1.5;
 }
 
-.client-index {
-    width: 100%;
-    max-width: var(--container-width);
-    box-sizing: border-box;
-    margin: 0 auto;
-    padding: 0 var(--pad-edge) clamp(80px, 14vh, 160px);
-}
-
-.client-list {
-    margin: 0;
-    padding: 0;
-    border-bottom: 1px solid var(--border);
-    list-style: none;
-}
-
-.client-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr) auto;
-    align-items: baseline;
-    gap: clamp(16px, 3vw, 48px);
-    padding: clamp(16px, 2.4vh, 26px) 0;
-    border-top: 1px solid var(--border);
-    color: var(--white);
-    text-decoration: none;
-}
-
-.client-name {
-    display: inline-block;
-    font-family: var(--font-body);
-    font-size: clamp(24px, 2.8vw, 46px);
-    font-weight: 400;
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-    transform-origin: left bottom;
-    transition: font-weight 0.4s var(--ease-out), transform 0.4s var(--ease-out);
-}
-
-.client-what,
-.client-year {
-    color: var(--text-muted);
-    font-size: clamp(14px, 1.1vw, 17px);
-    font-weight: 500;
-}
-
-.client-year {
-    text-align: right;
-}
-
-a.client-row:hover .client-name,
-a.client-row:focus-visible .client-name {
-    font-weight: 800;
-}
-
 @media (max-width: 1024px) {
     .index-groups {
         grid-template-columns: 1fr;
@@ -1261,19 +1198,6 @@ a.client-row:focus-visible .client-name {
         padding-bottom: 12vh;
     }
 
-    .client-row {
-        grid-template-columns: minmax(0, 1fr) auto;
-    }
-
-    .client-what {
-        grid-column: 1;
-        grid-row: 2;
-    }
-
-    .client-year {
-        grid-column: 2;
-        grid-row: 1;
-    }
 }
 
 .about-header {
@@ -2699,28 +2623,11 @@ html:has(.project-main)::-webkit-scrollbar {
     margin-left: 6px;
 }
 
-.clock,
-.index-year,
-.client-year,
-.journey-when,
-.index-count {
-    border: 1px solid currentColor;
-    border-radius: 999px;
-    padding: 5px 12px;
-    white-space: nowrap;
-}
-
 .clock {
     padding: 8px 14px;
 }
 
 .index-year {
-    padding: 4px 11px;
-    font-size: 13px;
-}
-
-.client-year {
-    justify-self: end;
     padding: 4px 11px;
     font-size: 13px;
 }

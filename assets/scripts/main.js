@@ -1,7 +1,7 @@
 import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
 import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
-import { journey, clients, logoWall } from './sections.js';
+import { journey, logoWall } from './sections.js';
 
 const CATEGORIES = ['Design', 'UI/UX', 'Web', 'Marketting', 'Photography', 'Tools', 'Video Games'];
 
@@ -107,5 +107,5 @@ async function initProjects() {
     refreshParallax();
 }
 
-Promise.all([initProjects(), journey(document.querySelector('.journey')), clients(document.querySelector('.client-index'))])
+Promise.all([initProjects(), journey(document.querySelector('.journey'))])
     .then(() => { scrubbingText(); refreshParallax(); });

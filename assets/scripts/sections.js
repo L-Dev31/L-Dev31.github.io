@@ -434,21 +434,6 @@ export async function journey(container) {
     requestAnimationFrame(loop);
 }
 
-export async function clients(container) {
-    if (!container) return;
-    const { clients } = await fetch('assets/data/clients.json').then(r => r.json());
-    const list = el('ul', 'client-list');
-    for (const client of clients) {
-        const item = el('li', 'client-item');
-        const row = el(client.project ? 'a' : 'div', 'client-row');
-        if (client.project) row.href = `project.html?id=${client.project}`;
-        row.append(el('span', 'client-name scrubbing-text', client.name), el('span', 'client-what scrubbing-text', client.what), el('span', 'client-year', client.year));
-        item.append(row);
-        list.append(item);
-    }
-    container.replaceChildren(list);
-}
-
 const LOGOS = [
     { name: 'Geetech', src: 'assets/images/companies/geetech.png' },
     { name: 'Rayon', src: 'assets/images/companies/rayon.png' },
