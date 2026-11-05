@@ -1,5 +1,5 @@
-@font-face { font-family: 'Instrument Serif'; src: url('../fonts/instrument-serif.ttf') format('truetype'); font-display: swap; }
-@font-face { font-family: 'Instrument Serif'; src: url('../fonts/instrument-serif-italic.ttf') format('truetype'); font-style: italic; font-display: swap; }
+@font-face { font-family: 'Gambetta'; src: url('../fonts/gambetta.woff2') format('woff2'); font-weight: 300 700; font-display: swap; }
+@font-face { font-family: 'Gambetta'; src: url('../fonts/gambetta-italic.woff2') format('woff2'); font-weight: 300 700; font-style: italic; font-display: swap; }
 @font-face { font-family: 'Bold'; src: url('../fonts/bold.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Heavitas'; src: url('../fonts/heavitas.ttf') format('truetype'); font-display: swap; }
 @font-face { font-family: 'Satoshi'; src: url('../fonts/satoshi-variable.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
@@ -19,7 +19,7 @@
     --accent: #C2132B;
 
     --font-body: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Instrument Serif', serif;
+    --font-display: 'Gambetta', serif;
     --font-mono: var(--font-body);
 
     --pad-section: clamp(40px, 10vh, 120px);
