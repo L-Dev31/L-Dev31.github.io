@@ -3,7 +3,8 @@ import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
 
 const isMobile = breakpoint.isMobile;
 
-const SCRUBBED = '.scrubbing-text, h1, h2, h3:not(.journey-place), main p, main :is(.journey-when, .journey-country, .timeline-year, .timeline-place, .timeline-role, .timeline-points li)';
+const TEXT = '.scrubbing-text, h1, h2, h3, p, li, time, dd, .journey-when, .journey-country';
+const SKIP = '.navbar, .mobile-menu, .index-item, .journey-place, .hero-socials, .footer-sign, .clock, .page-loader';
 const scrubBlocks = [];
 const scrubSeen = new WeakSet();
 let scrubWired = false;
@@ -13,8 +14,8 @@ export function scrubbingText() {
     const SPREAD = 10;
 
     const touch = matchMedia('(max-width: 1024px)');
-    for (const block of document.querySelectorAll(SCRUBBED)) {
-        if (scrubSeen.has(block)) continue;
+    for (const block of document.querySelectorAll(TEXT)) {
+        if (scrubSeen.has(block) || block.closest(SKIP) || block.querySelector(TEXT)) continue;
         scrubSeen.add(block);
         scrubBlocks.push({ block, chars: splitChars(block), turn: block.dataset.scrub === 'turn', out: block.dataset.scrub === 'out' });
     }
@@ -434,6 +435,7 @@ export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#
     const render = () => {
         const cols = Math.ceil(host.clientWidth / CELL), rows = Math.ceil(host.clientHeight / CELL);
         if (!cols || !rows || !source.naturalWidth) return;
+        const invert = getComputedStyle(host).getPropertyValue('--invert').trim() === '1';
         cells.resize(cols, rows);
         sample.width = cols; sample.height = rows;
         const scale = Math.max(cols / source.naturalWidth, rows / source.naturalHeight);
@@ -442,7 +444,7 @@ export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#
         sampleCtx.drawImage(source, (cols - w) / 2, (rows - h) * 0.25, w, h);
         const rgba = sampleCtx.getImageData(0, 0, cols, rows).data;
         brightness = new Uint8Array(cols * rows);
-        for (let i = 0; i < brightness.length; i++) brightness[i] = Math.min(255, (rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114) * gain);
+        for (let i = 0; i < brightness.length; i++) { const luma = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114; brightness[i] = invert ? 255 - luma : Math.min(255, luma * gain); }
         cells.paint(brightness);
     };
 

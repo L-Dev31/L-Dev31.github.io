@@ -428,6 +428,7 @@ html.menu-open body {
 }
 
 .mobile-menu-picture {
+    --invert: 1;
     position: absolute;
     top: 0;
     right: 0;
@@ -493,6 +494,10 @@ html.menu-open body {
     line-height: 1;
     text-decoration: none;
     transition: background 0.3s ease, color 0.3s ease;
+}
+
+html.on-accent .mobile-menu-picture {
+    --invert: 0;
 }
 
 html.on-accent .mobile-menu-link + .mobile-menu-link {
@@ -791,6 +796,7 @@ html.on-accent .mobile-menu-socials a:focus-visible {
 }
 
 .promise-picture {
+    --invert: 1;
     aspect-ratio: 3 / 4;
     overflow: hidden;
 }
@@ -823,14 +829,20 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     list-style: none;
 }
 
+.promise-links a > span[aria-hidden] {
+    position: absolute;
+    top: 18px;
+    right: 0;
+}
+
 .promise-links li {
     border-top: 1px solid var(--black);
 }
 
 .promise-links a {
-    display: flex;
-    justify-content: space-between;
-    padding: 18px 0;
+    position: relative;
+    display: block;
+    padding: 18px 2em 18px 0;
     color: inherit;
     font-size: 18px;
     font-weight: 500;
@@ -1857,9 +1869,12 @@ html:has(.project-main)::-webkit-scrollbar {
     list-style: none;
 }
 
+.footer-links a > span[aria-hidden] {
+    margin-left: 0.4em;
+}
+
 .footer-links a {
-    display: inline-flex;
-    gap: 6px;
+    display: inline-block;
     padding: 5px 0;
     color: inherit;
     font-size: clamp(14px, 1.2vw, 17px);
@@ -1968,21 +1983,22 @@ html:has(.project-main)::-webkit-scrollbar {
 }
 
 .about-header-text .about-title {
-    align-items: center;
-    text-align: center;
-}
-
-.about-header-text .about-title .about-line {
+    flex-direction: row;
+    align-items: baseline;
     justify-content: center;
+    column-gap: 0.3em;
+    width: auto;
+    max-width: 100%;
+    text-align: center;
 }
 
 .about-header-text .about-hero-lede {
     max-width: none;
+    text-align: center;
 }
 
 .about-hero-lede {
     margin: 0;
-    text-align: left;
     font-size: clamp(17px, 2vw, 24px);
     line-height: 1.4;
 }
