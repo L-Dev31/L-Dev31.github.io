@@ -51,7 +51,7 @@ def pick(item, rows):
     best, best_score = None, 0
     for vid, duration, title in rows:
         low, n = title.lower(), norm(title)
-        if name not in n or re.search(BAD, low) or duration < 240:
+        if name not in n or re.search(BAD, low) or duration < 240 or ('super' in n and 'super' not in name):
             continue
         others = [k for p, k in KEYS.items() if p != platform and re.search(k, low)]
         if others:
@@ -93,6 +93,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--only')
+    parser.add_argument('--platform')
     parser.add_argument('--jobs', type=int, default=4)
     args = parser.parse_args()
     data = json.loads(DATA.read_text())
@@ -101,6 +102,8 @@ def main():
     for item in data['games']:
         dest = OUT / f"{item_id(item)}.mp4"
         if args.only and args.only.lower() not in item['title'].lower():
+            continue
+        if args.platform and item['platform'] != args.platform:
             continue
         if not dest.exists() or args.force:
             todo.append(item)

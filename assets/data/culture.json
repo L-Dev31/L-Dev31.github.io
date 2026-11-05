@@ -39,20 +39,29 @@
       "id": "super-mario-bros-nes",
       "title": "Super Mario Bros.",
       "year": 1985,
-      "platform": "nes"
+      "platform": "nes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "the-legend-of-zelda-nes",
       "title": "The Legend of Zelda",
       "year": 1986,
-      "platform": "nes"
+      "platform": "nes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "punch-out-nes",
       "title": "Punch-Out!!",
       "year": 1987,
       "platform": "nes",
-      "search": "Mike Tyson's Punch-Out!!"
+      "search": "Mike Tyson's Punch-Out!!",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "simcity-snes",
@@ -801,13 +810,19 @@
       "id": "super-mario-bros-3-nes",
       "title": "Super Mario Bros. 3",
       "year": 1988,
-      "platform": "nes"
+      "platform": "nes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "duck-hunt-nes",
       "title": "Duck Hunt",
       "year": 1984,
-      "platform": "nes"
+      "platform": "nes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "tetris-gb",
@@ -819,19 +834,29 @@
       "id": "dr-mario-nes",
       "title": "Dr. Mario",
       "year": 1990,
-      "platform": "nes"
+      "platform": "nes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "mario-bros-nes",
       "title": "Mario Bros.",
       "year": 1983,
-      "platform": "nes"
+      "platform": "nes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5,
+      "video_search": "Mario Bros 1983 NES longplay no commentary"
     },
     {
       "id": "super-mario-bros-2-nes",
       "title": "Super Mario Bros. 2",
       "year": 1988,
-      "platform": "nes"
+      "platform": "nes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "the-legend-of-zelda-twilight-princess-wii",
