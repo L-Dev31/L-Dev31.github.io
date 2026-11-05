@@ -689,6 +689,24 @@
       "search": [
         "Les Misérables (2026 film)"
       ]
+    },
+    {
+      "id": "backrooms",
+      "title": "Backrooms",
+      "year": 2026,
+      "search": [
+        "Backrooms (film)",
+        "Backrooms"
+      ]
+    },
+    {
+      "id": "alice-in-wonderland-tim-burton",
+      "title": "Alice in Wonderland (Tim Burton)",
+      "year": 2010,
+      "search": [
+        "Alice in Wonderland (2010 film)",
+        "Alice in Wonderland (Tim Burton)"
+      ]
     }
   ],
   "books": [
@@ -1761,6 +1779,15 @@
       "title": "Super Mario Maker 2",
       "year": 2019,
       "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "newer-super-mario-bros-wii-wii",
+      "title": "Newer Super Mario Bros. Wii",
+      "year": 2012,
+      "platform": "wii",
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5
