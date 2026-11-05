@@ -2205,3 +2205,26 @@ html:has(.project-main)::-webkit-scrollbar {
     height: auto;
 }
 
+
+.mobile-menu .hero-socials a {
+    border-color: var(--black);
+    background: var(--black);
+    color: var(--white);
+}
+
+.mobile-menu .hero-socials .clock {
+    border-color: var(--black);
+    background: transparent;
+    color: var(--black);
+}
+
+html.on-accent .mobile-menu .hero-socials a {
+    border-color: var(--white);
+    background: var(--white);
+    color: var(--black);
+}
+
+html.on-accent .mobile-menu .hero-socials .clock {
+    border-color: var(--white);
+    color: var(--white);
+}
