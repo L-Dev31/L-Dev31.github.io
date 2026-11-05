@@ -1086,6 +1086,237 @@
         "The Green Mile (film)"
       ],
       "released": "1999-12-10"
+    },
+    {
+      "id": "the-truman-show",
+      "title": "The Truman Show",
+      "year": 1998,
+      "released": "1998-06-01"
+    },
+    {
+      "id": "ace-ventura-pet-detective",
+      "title": "Ace Ventura: Pet Detective",
+      "year": 1994,
+      "released": "1994-02-04"
+    },
+    {
+      "id": "ace-ventura-when-nature-calls",
+      "title": "Ace Ventura: When Nature Calls",
+      "year": 1995,
+      "released": "1995-11-10"
+    },
+    {
+      "id": "dumb-and-dumber",
+      "title": "Dumb and Dumber",
+      "year": 1994,
+      "released": "1994-12-16"
+    },
+    {
+      "id": "dumb-and-dumberer-when-harry-met-lloyd",
+      "title": "Dumb and Dumberer: When Harry Met Lloyd",
+      "year": 2003,
+      "released": "2003-06-13"
+    },
+    {
+      "id": "dumb-and-dumber-to",
+      "title": "Dumb and Dumber To",
+      "year": 2014,
+      "released": "2014-11-13"
+    },
+    {
+      "id": "atanarjuat-the-fast-runner",
+      "title": "Atanarjuat: The Fast Runner",
+      "year": 2001,
+      "released": "2001-05-13"
+    },
+    {
+      "id": "free-willy",
+      "title": "Free Willy",
+      "year": 1993,
+      "released": "1994-02-10"
+    },
+    {
+      "id": "balto",
+      "title": "Balto",
+      "year": 1995,
+      "search": [
+        "Balto (film)"
+      ],
+      "released": "1995-12-22"
+    },
+    {
+      "id": "the-sword-in-the-stone",
+      "title": "The Sword in the Stone",
+      "year": 1963,
+      "search": [
+        "The Sword in the Stone (1963 film)"
+      ],
+      "released": "1963-12-25"
+    },
+    {
+      "id": "babe",
+      "title": "Babe",
+      "year": 1995,
+      "search": [
+        "Babe (film)"
+      ],
+      "released": "1995-12-07"
+    },
+    {
+      "id": "pokemon-the-first-movie",
+      "title": "Pokémon: The First Movie",
+      "year": 1998,
+      "released": "1998-07-18"
+    },
+    {
+      "id": "the-secret-of-nimh",
+      "title": "The Secret of NIMH",
+      "year": 1982,
+      "released": "1982-07-15"
+    },
+    {
+      "id": "the-black-cauldron",
+      "title": "The Black Cauldron",
+      "year": 1985,
+      "search": [
+        "The Black Cauldron (film)"
+      ],
+      "released": "1985-07-24"
+    },
+    {
+      "id": "the-prince-of-egypt",
+      "title": "The Prince of Egypt",
+      "year": 1998,
+      "released": "1998-12-16"
+    },
+    {
+      "id": "the-aristocats",
+      "title": "The Aristocats",
+      "year": 1970,
+      "released": "1970-12-11"
+    },
+    {
+      "id": "pocahontas",
+      "title": "Pocahontas",
+      "year": 1995,
+      "search": [
+        "Pocahontas (1995 film)"
+      ],
+      "released": "1995-06-10"
+    },
+    {
+      "id": "mulan",
+      "title": "Mulan",
+      "year": 1998,
+      "search": [
+        "Mulan (1998 film)"
+      ],
+      "released": "1998-06-05"
+    },
+    {
+      "id": "lady-and-the-tramp",
+      "title": "Lady and the Tramp",
+      "year": 1955,
+      "released": "1955-06-16"
+    },
+    {
+      "id": "101-dalmatians",
+      "title": "101 Dalmatians",
+      "year": 1961,
+      "search": [
+        "One Hundred and One Dalmatians"
+      ],
+      "released": "1961-01-25"
+    },
+    {
+      "id": "hercules",
+      "title": "Hercules",
+      "year": 1997,
+      "search": [
+        "Hercules (1997 film)"
+      ],
+      "released": "1997-06-15"
+    },
+    {
+      "id": "lilo-stitch",
+      "title": "Lilo & Stitch",
+      "year": 2002,
+      "released": "2002-06-21"
+    },
+    {
+      "id": "the-emperor-s-new-groove",
+      "title": "The Emperor's New Groove",
+      "year": 2000,
+      "released": "2000-12-15"
+    },
+    {
+      "id": "moana",
+      "title": "Moana",
+      "year": 2016,
+      "search": [
+        "Moana (2016 film)"
+      ],
+      "released": "2016-11-23"
+    },
+    {
+      "id": "the-hunchback-of-notre-dame",
+      "title": "The Hunchback of Notre Dame",
+      "year": 1996,
+      "search": [
+        "The Hunchback of Notre Dame (1996 film)"
+      ],
+      "released": "1996-06-21"
+    },
+    {
+      "id": "atlantis-the-lost-empire",
+      "title": "Atlantis: The Lost Empire",
+      "year": 2001,
+      "released": "2001-06-22"
+    },
+    {
+      "id": "the-jungle-book",
+      "title": "The Jungle Book",
+      "year": 1967,
+      "search": [
+        "The Jungle Book (1967 film)"
+      ],
+      "released": "1967-10-18"
+    },
+    {
+      "id": "pinocchio",
+      "title": "Pinocchio",
+      "year": 1940,
+      "search": [
+        "Pinocchio (1940 film)"
+      ],
+      "released": "1940-02-23"
+    },
+    {
+      "id": "bambi",
+      "title": "Bambi",
+      "year": 1942,
+      "released": "1942-08-14"
+    },
+    {
+      "id": "wreck-it-ralph",
+      "title": "Wreck-It Ralph",
+      "year": 2012,
+      "released": "2012-10-29"
+    },
+    {
+      "id": "ralph-breaks-the-internet",
+      "title": "Ralph Breaks the Internet",
+      "year": 2018,
+      "released": "2018-11-05"
+    },
+    {
+      "id": "mary-poppins",
+      "title": "Mary Poppins",
+      "year": 1964,
+      "search": [
+        "Mary Poppins (film)"
+      ],
+      "released": "1964-08-27"
     }
   ],
   "books": [
