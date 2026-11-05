@@ -147,34 +147,10 @@ function clock() {
 
 function pixelDissolve(loader) {
     if (reducedMotion) { loader.classList.add('done'); return; }
-    import('./pixel.js').then(({ drawCell }) => {
-        const canvas = document.createElement('canvas');
-        canvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%';
-        loader.append(canvas);
-        const size = 20, cols = Math.ceil(innerWidth / size), rows = Math.ceil(innerHeight / size);
-        const dpr = Math.min(2, devicePixelRatio || 1);
-        canvas.width = cols * size * dpr;
-        canvas.height = rows * size * dpr;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = getComputedStyle(loader).backgroundColor;
+    import('./pixel.js').then(({ dissolve }) => {
+        const color = getComputedStyle(loader).backgroundColor;
         loader.classList.add('dissolving');
-        const delay = Array.from({ length: cols * rows }, (_, i) => (i % cols) / cols * 0.55 + Math.random() * 0.35);
-        const start = performance.now(), TOTAL = 900;
-        const frame = now => {
-            const t = (now - start) / TOTAL * 1.45;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let left = 0;
-            for (let i = 0; i < delay.length; i++) {
-                const p = t - delay[i];
-                const state = p < 0 ? 2 : p < 0.1 ? 1 : p < 0.2 ? 0 : -1;
-                if (state < 0) continue;
-                left++;
-                drawCell(ctx, state, (i % cols) * size * dpr, ((i / cols) | 0) * size * dpr, size * dpr, 1);
-            }
-            if (left) requestAnimationFrame(frame);
-            else loader.classList.add('done');
-        };
-        requestAnimationFrame(frame);
+        dissolve(loader, { color, fixed: true }, () => loader.classList.add('done'));
     });
 }
 

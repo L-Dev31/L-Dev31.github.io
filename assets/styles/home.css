@@ -1012,13 +1012,6 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     background: var(--ink);
 }
 
-.pixel-cover {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-}
-
 .index-info {
     display: flex;
     flex-direction: column;

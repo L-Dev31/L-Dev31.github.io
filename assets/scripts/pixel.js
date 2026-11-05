@@ -213,3 +213,31 @@ export function extrudedSvg(canvas, color) {
         },
     };
 }
+
+export function dissolve(host, { color, size = 20, total = 900, reverse = false, fixed = false }, done) {
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = `position:${fixed ? 'fixed' : 'absolute'};inset:0;width:100%;height:100%`;
+    host.append(canvas);
+    const cols = Math.ceil((fixed ? innerWidth : host.clientWidth) / size);
+    const rows = Math.ceil((fixed ? innerHeight : host.clientHeight) / size);
+    const dpr = Math.min(2, devicePixelRatio || 1), cell = size * dpr;
+    canvas.width = cols * cell;
+    canvas.height = rows * cell;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = color;
+    const delay = Array.from({ length: cols * rows }, (_, i) => (i % cols) / cols * 0.55 + Math.random() * 0.35);
+    const start = performance.now(), END = 1.15;
+    const frame = now => {
+        const t = Math.min(END, (now - start) / total * 1.45);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < delay.length; i++) {
+            const p = (reverse ? END - t : t) - delay[i];
+            const state = p < 0 ? 2 : p < 0.1 ? 1 : p < 0.2 ? 0 : -1;
+            if (state >= 0) drawCell(ctx, state, (i % cols) * cell, ((i / cols) | 0) * cell, cell, 1);
+        }
+        if (t < END) requestAnimationFrame(frame);
+        else done?.(canvas);
+    };
+    requestAnimationFrame(frame);
+    return canvas;
+}
