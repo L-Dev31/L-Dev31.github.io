@@ -253,8 +253,8 @@ h3 {
     padding: 10px 24px;
     border-radius: var(--radius-pill);
     border: 1px solid var(--white);
-    background: transparent;
-    color: var(--white);
+    background: var(--white);
+    color: var(--black);
     font: 500 14px/1 var(--font-body);
     letter-spacing: 0;
     text-decoration: none;
@@ -262,8 +262,8 @@ h3 {
 }
 
 .button:hover {
-    background: var(--white);
-    color: var(--black);
+    background: transparent;
+    color: var(--white);
 }
 
 .tag {
@@ -483,18 +483,29 @@ html.menu-open body {
 
 .mobile-menu-socials a {
     padding: 8px 16px;
-    border: 1px solid currentColor;
+    border: 1px solid var(--black);
     border-radius: 999px;
-    color: inherit;
+    background: var(--black);
+    color: var(--white);
     font-size: 14px;
     font-weight: 500;
     line-height: 1;
     text-decoration: none;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+html:has(.navbar.on-accent) .mobile-menu-socials a {
+    border-color: var(--white);
+    background: var(--white);
+    color: var(--black);
 }
 
 .mobile-menu-socials a:hover,
-.mobile-menu-socials a:focus-visible {
-    text-decoration: underline;
+.mobile-menu-socials a:focus-visible,
+html:has(.navbar.on-accent) .mobile-menu-socials a:hover,
+html:has(.navbar.on-accent) .mobile-menu-socials a:focus-visible {
+    background: transparent;
+    color: inherit;
 }
 
 .mobile-menu-link[aria-current] {
@@ -748,31 +759,27 @@ html.menu-open body {
 .hero-socials a {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    color: var(--white);
+    gap: 8px;
+    padding: 9px 16px;
+    border: 1px solid var(--white);
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--black);
     font-size: 14px;
     font-weight: 500;
     line-height: 1;
     text-decoration: none;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .hero-socials a::after {
-    content: '';
-    width: 7px;
-    height: 7px;
-    background: currentColor;
-    transition: transform 0.3s var(--ease-out);
+    content: '\2197';
 }
 
 .hero-socials a:hover,
 .hero-socials a:focus-visible {
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
-}
-
-.hero-socials a:hover::after,
-.hero-socials a:focus-visible::after {
-    transform: scale(1.7);
+    background: transparent;
+    color: var(--white);
 }
 
 #header.is-turned .hero-socials {
@@ -2594,6 +2601,17 @@ html:has(.project-main)::-webkit-scrollbar {
 .index-year {
     padding: 4px 11px;
     font-size: 13px;
+}
+
+.clock,
+.index-year,
+.journey-when,
+.index-count {
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    padding: 5px 12px;
+    white-space: nowrap;
+    cursor: default;
 }
 
 .journey-when {
