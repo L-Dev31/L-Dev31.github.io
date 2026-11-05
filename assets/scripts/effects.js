@@ -3,7 +3,7 @@ import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
 
 const isMobile = breakpoint.isMobile;
 
-const SCRUBBED = '.scrubbing-text, h1, h2, h3:not(.journey-place), main p, main :is(.journey-when, .journey-country, .exp-year, .exp-role, .exp-list li)';
+const SCRUBBED = '.scrubbing-text, h1, h2, h3:not(.journey-place), main p, main :is(.journey-when, .journey-country, .timeline-year, .timeline-place, .timeline-role, .timeline-points li)';
 const scrubBlocks = [];
 const scrubSeen = new WeakSet();
 let scrubWired = false;
@@ -351,6 +351,7 @@ export function scrollScrubbedVideo() {
     if (!hero) return;
     const home = hero.id === 'header';
     const video = hero.querySelector('video');
+    if (!video) return;
     pixelHero(video);
     const layers = hero.querySelectorAll('video, canvas, .about-header-overlay, .about-header-text');
 
@@ -420,7 +421,7 @@ export function scrollScrubbedVideo() {
     onScroll();
 }
 
-export function pixelPicture(host, src, { mirror = false, color = '#fff', active = () => true } = {}) {
+export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#fff', active = () => true } = {}) {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     host.append(canvas);
@@ -442,7 +443,7 @@ export function pixelPicture(host, src, { mirror = false, color = '#fff', active
         sampleCtx.drawImage(source, (cols - w) / 2, (rows - h) * 0.25, w, h);
         const rgba = sampleCtx.getImageData(0, 0, cols, rows).data;
         brightness = new Uint8Array(cols * rows);
-        for (let i = 0; i < brightness.length; i++) { const luma = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114; brightness[i] = invert ? 255 - luma : Math.min(255, luma * 1.3); }
+        for (let i = 0; i < brightness.length; i++) { const luma = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114; brightness[i] = invert ? 255 - luma : Math.min(255, luma * gain); }
         cells.paint(brightness);
     };
 

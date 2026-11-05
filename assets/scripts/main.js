@@ -8,6 +8,8 @@ const CATEGORIES = ['Graphic Design', 'Webdesign', 'Marketing', 'Dev'];
 initPage();
 if (!document.querySelector('#header')) reveal(document.querySelectorAll('section, .title'));
 const refreshParallax = parallax();
+const cover = document.querySelector('.about-header-picture');
+if (cover) pixelPicture(cover, cover.dataset.picture, { gain: 3.2, color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), active: () => scrollY < innerHeight * 2 });
 const story = document.querySelector('.promise-picture');
 if (story) {
     let visible = false;
