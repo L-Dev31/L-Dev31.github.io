@@ -61,6 +61,8 @@ def pick(item, rows):
         if others:
             continue
         own = re.search(KEYS[platform], low) if platform in KEYS else True
+        if item.get('video_pure') and 'longplay' not in low.split('~')[0]:
+            continue
         # pure uploads from longplay channels have no frame, no webcam and no overlay
         score = 1 + (4 if 'longplay' in low.split('~')[0] else 0) + (2 if own else 0) + (2 if 'longplay' in low else 0) + (1 if 'no commentary' in low else 0)
         if score > best_score:
@@ -71,14 +73,21 @@ def pick(item, rows):
 def clip(item):
     dest = OUT / f"{item_id(item)}.mp4"
     platform = item.get('via') or item['platform']
-    query = item.get('video_search') or f"{item.get('video_name', re.sub(r'\s*\([^)]*\)$', '', item['title']))} {NAMES.get(platform, '')} longplay no commentary"
-    lines = subprocess.run(['yt-dlp', '--no-warnings', '--print', '%(id)s|%(duration)s|%(channel)s ~ %(title)s', f'ytsearch12:{query}'], capture_output=True, text=True, timeout=180).stdout.split('\n')
-    rows = []
-    for line in lines:
-        parts = line.split('|', 2)
-        if len(parts) == 3 and parts[1].replace('.', '').isdigit():
-            rows.append((parts[0], float(parts[1]), parts[2]))
-    found = pick(item, rows)
+    base = item.get('video_name', re.sub(r'\s*\([^)]*\)$', '', item['title']))
+    queries = [item['video_search']] if item.get('video_search') else [
+        f"{base} {NAMES.get(platform, '')} longplay no commentary", f"{base} {NAMES.get(platform, '')} full gameplay walkthrough",
+        f"{base} longplay", f"{base} gameplay part 1 no commentary"]
+    found = None
+    for query in queries:
+        lines = subprocess.run(['yt-dlp', '--no-warnings', '--print', '%(id)s|%(duration)s|%(channel)s ~ %(title)s', f'ytsearch15:{query}'], capture_output=True, text=True, timeout=180).stdout.split('\n')
+        rows = []
+        for line in lines:
+            parts = line.split('|', 2)
+            if len(parts) == 3 and parts[1].replace('.', '').isdigit():
+                rows.append((parts[0], float(parts[1]), parts[2]))
+        found = pick(item, rows)
+        if found:
+            break
     if not found:
         return None, None
     vid, duration = found

@@ -93,16 +93,6 @@
       ]
     },
     {
-      "id": "super-punch-out-snes",
-      "title": "Super Punch-Out!!",
-      "year": 1994,
-      "platform": "snes",
-      "search": "Super Punch-Out!!",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
       "id": "super-mario-64-n64",
       "title": "Super Mario 64",
       "year": 1996,
@@ -176,19 +166,6 @@
       "video_seconds": 5
     },
     {
-      "id": "phoenix-wright-justice-for-all-ds",
-      "title": "Phoenix Wright: Justice for All",
-      "year": 2006,
-      "platform": "ds",
-      "search": "Phoenix Wright: Ace Attorney: Justice for All",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5,
-      "video_skip": [
-        "ZD-E-gkuh_w"
-      ]
-    },
-    {
       "id": "new-super-mario-bros-ds",
       "title": "New Super Mario Bros.",
       "year": 2006,
@@ -243,7 +220,10 @@
       "year": 2009,
       "platform": "android",
       "search": "Angry Birds Trilogy",
-      "via": "3ds"
+      "via": "3ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "punch-out-wii",
@@ -603,22 +583,6 @@
       ]
     },
     {
-      "id": "kirby-super-star-snes",
-      "title": "Kirby Super Star",
-      "year": 1996,
-      "platform": "snes",
-      "search": [
-        "Kirby's Fun Pak",
-        "Kirby Super Star"
-      ],
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5,
-      "video_skip": [
-        "-zmMbyS9AbE"
-      ]
-    },
-    {
       "id": "kirby-star-allies-switch",
       "title": "Kirby Star Allies",
       "year": 2018,
@@ -631,46 +595,19 @@
       "platform": "wii"
     },
     {
-      "id": "kirby-s-dream-buffet-switch",
-      "title": "Kirby's Dream Buffet",
-      "year": 2022,
-      "platform": "switch"
-    },
-    {
-      "id": "pokemon-black-version-ds",
-      "title": "Pokémon Black Version",
-      "year": 2010,
-      "platform": "ds",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
-      "id": "pokemon-white-version-ds",
-      "title": "Pokémon White Version",
-      "year": 2010,
-      "platform": "ds",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
-      "id": "pokemon-black-version-2-ds",
-      "title": "Pokémon Black Version 2",
-      "year": 2012,
-      "platform": "ds",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
       "id": "pokemon-white-version-2-ds",
       "title": "Pokémon White Version 2",
       "year": 2012,
       "platform": "ds",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "3Rt_4fjNsKY",
+        "e9H2Ws-S8-0"
+      ],
+      "video_name": "Pokemon White 2",
+      "video_pure": true
     },
     {
       "id": "pokemon-emerald-version-gba",
@@ -708,12 +645,6 @@
       "title": "Pokémon Sword",
       "year": 2019,
       "platform": "switch"
-    },
-    {
-      "id": "pokken-tournament-wiiu",
-      "title": "Pokkén Tournament",
-      "year": 2015,
-      "platform": "wiiu"
     },
     {
       "id": "super-mario-world-snes",
@@ -788,7 +719,8 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
-        "-3aVTnPfPfY"
+        "-3aVTnPfPfY",
+        "y2UbAZWySvA"
       ]
     },
     {
@@ -807,7 +739,10 @@
       "id": "pokemon-go-android",
       "title": "Pokémon GO",
       "year": 2016,
-      "platform": "android"
+      "platform": "android",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "undertale-steam",
@@ -865,43 +800,55 @@
       "id": "angry-birds-rio-android",
       "title": "Angry Birds Rio",
       "year": 2011,
-      "platform": "android"
+      "platform": "android",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "angry-birds-star-wars-android",
       "title": "Angry Birds Star Wars",
       "year": 2012,
-      "platform": "android"
+      "platform": "android",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "angry-birds-epic-android",
       "title": "Angry Birds Epic",
       "year": 2014,
-      "platform": "android"
+      "platform": "android",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "bad-piggies-android",
       "title": "Bad Piggies",
       "year": 2012,
-      "platform": "android"
+      "platform": "android",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "angry-birds-friends-android",
       "title": "Angry Birds Friends",
       "year": 2012,
-      "platform": "android"
+      "platform": "android",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "plants-vs-zombies-android",
       "title": "Plants vs. Zombies",
       "year": 2009,
-      "platform": "android"
-    },
-    {
-      "id": "clash-royale-android",
-      "title": "Clash Royale",
-      "year": 2016,
-      "platform": "android"
+      "platform": "android",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-bros-3-nes",
@@ -990,6 +937,24 @@
       "title": "Sonic Colours",
       "year": 2010,
       "platform": "wii"
+    },
+    {
+      "id": "jackbox-party-pack-8-steam",
+      "title": "Jackbox Party Pack 8",
+      "year": 2021,
+      "platform": "steam",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "jackbox-party-pack-9-steam",
+      "title": "Jackbox Party Pack 9",
+      "year": 2022,
+      "platform": "steam",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     }
   ]
 }
