@@ -1,4 +1,4 @@
-@font-face { font-family: 'Lux'; src: url('../fonts/lux.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Editorial Old'; src: url('../fonts/editorial-old.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Bold'; src: url('../fonts/bold.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Heavitas'; src: url('../fonts/heavitas.ttf') format('truetype'); font-display: swap; }
 @font-face { font-family: 'Satoshi'; src: url('../fonts/satoshi-variable.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
@@ -18,7 +18,7 @@
     --accent: #C2132B;
 
     --font-body: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Lux', serif;
+    --font-display: 'Editorial Old', serif;
     --font-mono: var(--font-body);
 
     --pad-section: clamp(40px, 10vh, 120px);
@@ -687,8 +687,11 @@ html.menu-open body {
 }
 
 .hero-about .about-title strong {
+    font-family: var(--font-display);
+    font-size: 1.12em;
     font-style: normal;
-    font-weight: 700;
+    font-weight: 400;
+    letter-spacing: -0.01em;
 }
 
 .hero-about .about-hero-lede {
