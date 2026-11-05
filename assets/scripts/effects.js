@@ -23,13 +23,17 @@ export function scrubbingText() {
 
     const paint = () => {
         const readingLine = innerHeight * 0.85;
-        for (const { block, chars, turn, out } of scrubBlocks) {
+        for (const entry of scrubBlocks) {
+            const { block, chars, turn, out } = entry;
             const r = block.getBoundingClientRect();
-            if (r.top > innerHeight || r.bottom < 0) continue;
+            if (r.top > innerHeight || r.bottom < 0 || r.left > innerWidth || r.right < 0) continue;
 
             if (out) {
                 const gone = touch.matches ? 0 : clamp01(heroTurn() / 0.5);
                 const front = gone * (chars.length - 1 + SPREAD);
+                const sig = Math.round(front * 100);
+                if (sig === entry.sig) continue;
+                entry.sig = sig;
                 chars.forEach((char, i) => paintChar(char, 1 - clamp01((front - i) / SPREAD)));
                 drawCells(block, chars);
                 continue;
@@ -39,6 +43,9 @@ export function scrubbingText() {
                 ? (touch.matches ? 1 : clamp01((heroTurn() - 0.3) / 0.6))
                 : clamp01((readingLine - r.top) / Math.max(r.height, 1));
             const head = progress * (chars.length - 1 + SPREAD);
+            const sig = Math.round(head * 100);
+            if (sig === entry.sig) continue;
+            entry.sig = sig;
             chars.forEach((char, i) => paintChar(char, clamp01((head - i) / SPREAD)));
             drawCells(block, chars);
         }
@@ -47,7 +54,10 @@ export function scrubbingText() {
     scrubPaint = throttled(paint);
     if (!scrubWired) {
         scrubWired = true;
-        ['scroll', 'resize', 'load'].forEach(event => addEventListener(event, () => scrubPaint(), { passive: true }));
+        ['scroll', 'resize', 'load'].forEach(event => addEventListener(event, () => {
+            if (event !== 'scroll') scrubBlocks.forEach(entry => { entry.sig = null; });
+            scrubPaint();
+        }, { passive: true }));
     }
     paint();
 }

@@ -18,20 +18,21 @@ export function drawCell(ctx, state, x, y, c, fill) {
     }
 }
 
-function atlas(color, scale) {
-    const size = CELL * scale;
+function tileSet(color, size) {
     const canvas = document.createElement('canvas');
     canvas.width = size * 3;
     canvas.height = size;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     ctx.fillStyle = color;
     for (let state = 0; state < 3; state++) drawCell(ctx, state, state * size, 0, size);
-    return canvas;
+    const px = new Uint32Array(ctx.getImageData(0, 0, size * 3, size).data.buffer);
+    // tiles[state][row] is one row of packed pixels, ready to copy into the frame
+    return [0, 1, 2].map(state => Array.from({ length: size }, (_, y) => px.slice(y * size * 3 + state * size, y * size * 3 + (state + 1) * size)));
 }
 
 export function cellCanvas(canvas, color) {
     const ctx = canvas.getContext('2d');
-    let cols = 0, rows = 0, scale = 1, tiles = null, shown = new Uint8Array(0);
+    let cols = 0, rows = 0, size = CELL, tiles = null, shown = new Uint8Array(0), image = null, frame = null;
 
     let noise = new Float32Array(0), view = new Uint8Array(0), beat = -1;
     const alive = brightness => {
@@ -52,29 +53,42 @@ export function cellCanvas(canvas, color) {
     return {
         resize(c, r) {
             cols = c; rows = r;
-            scale = lowPower ? 1 : Math.min(2, Math.max(1, Math.round(devicePixelRatio)));
-            canvas.width = cols * CELL * scale;
-            canvas.height = rows * CELL * scale;
+            size = CELL * (lowPower ? 1 : Math.min(2, Math.max(1, Math.round(devicePixelRatio))));
+            canvas.width = cols * size;
+            canvas.height = rows * size;
             canvas.style.aspectRatio = `${cols} / ${rows}`;
-            tiles = atlas(color, scale);
+            tiles = tileSet(color, size);
+            image = ctx.createImageData(canvas.width, canvas.height);
+            frame = new Uint32Array(image.data.buffer);
             shown = new Uint8Array(0);
         },
-        invalidate() { ctx.clearRect(0, 0, canvas.width, canvas.height); shown = new Uint8Array(0); },
+        invalidate() { ctx.clearRect(0, 0, canvas.width, canvas.height); frame?.fill(0); shown = new Uint8Array(0); },
         get cols() { return cols; },
         get rows() { return rows; },
+        // cells are copied into one typed array and sent to the canvas once, instead of one canvas call per cell
         paint(brightness) {
-            const size = CELL * scale;
-            const live = alive(brightness);
+            const live = alive(brightness), width = cols * size;
             if (shown.length !== live.length) shown = new Uint8Array(live.length).fill(255);
+            let x0 = cols, y0 = rows, x1 = -1, y1 = -1;
             for (let i = 0; i < live.length; i++) {
                 const b = live[i];
                 const state = b < LEVELS[0] ? 0 : b < LEVELS[1] ? 1 : b < LEVELS[2] ? 2 : 3;
                 if (state === shown[i]) continue;
                 shown[i] = state;
-                const x = (i % cols) * size, y = ((i / cols) | 0) * size;
-                ctx.clearRect(x, y, size, size);
-                if (state) ctx.drawImage(tiles, (state - 1) * size, 0, size, size, x, y, size, size);
+                const col = i % cols, row = (i / cols) | 0;
+                let at = row * size * width + col * size;
+                if (state) {
+                    const tile = tiles[state - 1];
+                    for (let y = 0; y < size; y++, at += width) frame.set(tile[y], at);
+                } else {
+                    for (let y = 0; y < size; y++, at += width) frame.fill(0, at, at + size);
+                }
+                if (col < x0) x0 = col;
+                if (col > x1) x1 = col;
+                if (row < y0) y0 = row;
+                if (row > y1) y1 = row;
             }
+            if (x1 >= 0) ctx.putImageData(image, 0, 0, x0 * size, y0 * size, (x1 - x0 + 1) * size, (y1 - y0 + 1) * size);
         },
     };
 }

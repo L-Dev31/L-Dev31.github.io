@@ -71,6 +71,8 @@ function landGrid() {
 
 const RAD = Math.PI / 180;
 const TILT = 42;
+const WIDTH = 360 * GRID;
+const LAT_ROW = Uint16Array.from({ length: 4096 }, (_, i) => Math.min(180 * GRID - 1, Math.floor((90 - Math.asin(Math.min(1, Math.max(-1, i / 2047.5 - 1))) / RAD) * GRID)));
 const SUN = (() => { const l = [-0.5, 0.45, 0.75], n = Math.hypot(...l); return l.map(v => v / n); })();
 
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
@@ -204,11 +206,18 @@ export async function journey(container) {
 
     const land = landGrid();
     const root = getComputedStyle(document.documentElement);
-    const ink = getComputedStyle(container).color, paper = root.getPropertyValue('--black').trim();
+    const ink = getComputedStyle(container).color;
     const red = root.getPropertyValue('--accent').trim();
     const cells = cellCanvas(canvas, red);
     const pins = cellCanvas(marks, ink);
-    const labels = marks.getContext('2d');
+    const tags = stops.map(stop => {
+        const tag = el('span', 'globe-label', stop.label);
+        tag.hidden = true;
+        tag.setAttribute('aria-hidden', 'true');
+        stage.append(tag);
+        return tag;
+    });
+    const xs = new Float32Array(2048);
     let cols = 0, rows = 0, brightness = null, pinBrightness = null;
     const fit = () => {
         const c = Math.ceil(stage.clientWidth / CELL), r = Math.ceil(stage.clientHeight / CELL);
@@ -239,7 +248,7 @@ export async function journey(container) {
         };
     };
 
-    let active = 0, hovered = -1, pos = 0;
+    let active = 0, hovered = -1, pos = 0, lastKey = '', lastPaint = 0;
     const draw = time => {
         if (!cols) return;
         const introLength = innerHeight * 1.4;
@@ -253,23 +262,34 @@ export async function journey(container) {
             lon0 = from.lon + (((to.lon - from.lon + 540) % 360) - 180) * f;
             lat0 = from.lat + (to.lat - from.lat) * f - (track ? TILT : 0);
         }
+
+        // nothing moved: only let the cells breathe, a few times a second
+        const blink = Math.floor(time / 450) % 2 === 0;
+        const key = `${lon0.toFixed(2)} ${lat0.toFixed(2)} ${v.r.toFixed(1)} ${v.cx.toFixed(1)} ${v.cy.toFixed(1)} ${cols} ${rows} ${pos.toFixed(3)} ${active} ${hovered} ${blink}`;
+        if (key === lastKey) {
+            if (time - lastPaint > 90) { lastPaint = time; cells.paint(brightness); }
+            return;
+        }
+        if (time - lastPaint < 30) return;
+        lastKey = key;
+        lastPaint = time;
+
         const sinL = Math.sin(lat0 * RAD), cosL = Math.cos(lat0 * RAD);
         brightness.fill(0);
         pinBrightness.fill(0);
         const c0 = Math.max(0, Math.floor((v.cx - v.r) / CELL)), c1 = Math.min(cols - 1, Math.ceil((v.cx + v.r) / CELL));
         const r0 = Math.max(0, Math.floor((v.cy - v.r) / CELL)), r1 = Math.min(rows - 1, Math.ceil((v.cy + v.r) / CELL));
+        for (let col = c0; col <= c1; col++) xs[col] = ((col + 0.5) * CELL - v.cx) / v.r;
         for (let row = r0; row <= r1; row++) {
-            const y = (v.cy - (row + 0.5) * CELL) / v.r;
+            const y = (v.cy - (row + 0.5) * CELL) / v.r, yy = y * y, yc = y * cosL, ys = y * sinL, base = row * cols;
             for (let col = c0; col <= c1; col++) {
-                const x = ((col + 0.5) * CELL - v.cx) / v.r;
-                const rr = x * x + y * y;
+                const x = xs[col], rr = x * x + yy;
                 if (rr > 1) continue;
                 const z = Math.sqrt(1 - rr);
-                const lat = Math.asin(z * sinL + y * cosL) / RAD;
-                const lon = ((lon0 + Math.atan2(x, z * cosL - y * sinL) / RAD) % 360 + 540) % 360 - 180;
-                const gx = Math.min(360 * GRID - 1, Math.floor((lon + 180) * GRID)), gy = Math.min(180 * GRID - 1, Math.floor((90 - lat) * GRID));
+                const gy = LAT_ROW[Math.min(4095, ((z * sinL + yc + 1) * 2047.5) | 0)];
+                const gx = ((((lon0 + 180 + Math.atan2(x, z * cosL - ys) / RAD) * GRID) % WIDTH) + WIDTH) % WIDTH | 0;
                 const lit = Math.max(0, x * SUN[0] + y * SUN[1] + z * SUN[2]);
-                brightness[row * cols + col] = land[gy * 360 * GRID + gx] ? 80 + 175 * lit : 10 + 45 * lit;
+                brightness[base + col] = land[gy * WIDTH + gx] ? 80 + 175 * lit : 10 + 45 * lit;
             }
         }
 
@@ -296,7 +316,8 @@ export async function journey(container) {
                 if (done <= 0) continue;
                 const a = vec(stops[j]), b = vec(stops[j + 1]);
                 const omega = Math.acos(Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2])) || 1e-6;
-                for (let k = 0, steps = 200; k <= steps * done; k++) {
+                const steps = Math.max(24, Math.ceil(omega * v.r * 3 / CELL));
+                for (let k = 0; k <= steps * done; k++) {
                     const t = k / steps;
                     const wa = Math.sin((1 - t) * omega) / Math.sin(omega), wb = Math.sin(t * omega) / Math.sin(omega);
                     const q = [wa * a[0] + wb * b[0], wa * a[1] + wb * b[1], wa * a[2] + wb * b[2]];
@@ -308,7 +329,7 @@ export async function journey(container) {
                 const pt = where(stop.lat, stop.lon);
                 if (pt.z < 0.08) return;
                 const isActive = i === (hovered >= 0 ? hovered : active);
-                const ring = isActive && Math.floor(time / 450) % 2 === 0;
+                const ring = isActive && blink;
                 for (let dy = -2; dy <= 2; dy++) {
                     for (let dx = -2; dx <= 2; dx++) {
                         const d = Math.max(Math.abs(dx), Math.abs(dy));
@@ -318,35 +339,23 @@ export async function journey(container) {
                         else if (ring) put(x, y, 100, false);
                     }
                 }
-                shown.push({ stop, pt, isActive });
+                shown.push({ i, pt, isActive });
             });
         }
         cells.paint(brightness);
-        pins.invalidate();
         pins.paint(pinBrightness);
 
-        if (shown.length) {
-            const k = marks.width / stage.clientWidth;
-            labels.save();
-            labels.scale(k, k);
-            labels.font = '500 13px Satoshi, sans-serif';
-            labels.textBaseline = 'middle';
-            const written = [];
-            for (const { stop, pt, isActive } of shown) {
-
-                const close = o => o !== here && Math.hypot(o.pt.x - pt.x, o.pt.y - pt.y) < 60;
-                const here = shown.find(o => o.stop === stop);
-                if (!isActive && (shown.some(o => close(o) && o.isActive) || written.some(close))) continue;
-                written.push(here);
-                const w = labels.measureText(stop.label ?? stop.country).width;
-                const x = pt.x + 22, y = pt.y;
-                labels.fillStyle = isActive ? ink : paper;
-                labels.fillRect(x - 8, y - 12, w + 16, 24);
-                labels.fillStyle = isActive ? paper : ink;
-                labels.fillText(stop.label ?? stop.country, x, y + 1);
-            }
-            labels.restore();
+        const written = [], on = new Set();
+        for (const here of shown) {
+            const { i, pt, isActive } = here;
+            const close = o => o !== here && Math.hypot(o.pt.x - pt.x, o.pt.y - pt.y) < 60;
+            if (!isActive && (shown.some(o => close(o) && o.isActive) || written.some(close))) continue;
+            written.push(here);
+            on.add(i);
+            tags[i].classList.toggle('is-active', isActive);
+            tags[i].style.transform = `translate3d(${Math.round(pt.x + 14)}px, ${Math.round(pt.y - 12)}px, 0)`;
         }
+        tags.forEach((tag, i) => { if (tag.hidden === on.has(i)) tag.hidden = !on.has(i); });
     };
 
     let scrollPos = 0;
@@ -374,44 +383,44 @@ export async function journey(container) {
         });
     }
 
+    let centres = [];
+    const measure = () => { centres = items.map(item => item.offsetLeft + item.offsetWidth / 2); };
     const slide = at => {
+        if (!centres.length) measure();
         const a = Math.min(stops.length - 1, Math.floor(at)), b = Math.min(stops.length - 1, a + 1);
-        const centre = i => items[i].offsetLeft + items[i].offsetWidth / 2;
-        const x = stage.clientWidth / 2 - (centre(a) + (centre(b) - centre(a)) * (at - a));
+        const x = stage.clientWidth / 2 - (centres[a] + (centres[b] - centres[a]) * (at - a));
         list.style.transform = `translate3d(${x.toFixed(1)}px, 0, 0)`;
     };
+    document.fonts?.ready.then(measure);
 
     fit();
     if (reducedMotion) {
         pos = stops.length - 1;
         mark();
-        const still = () => { fit(); if (track) slide(pos); draw(0); openFlags(0, true); };
+        const still = () => { fit(); measure(); if (track) slide(pos); draw(0); openFlags(0, true); };
         still();
         addEventListener('resize', still, { passive: true });
         return;
     }
-    addEventListener('resize', fit, { passive: true });
+    addEventListener('resize', () => { fit(); measure(); }, { passive: true });
     let visible = false;
     new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(stage);
-    let last = 0, frameAt = 0, glide = 0;
+    let frameAt = 0, glide = 0, markedActive = -1, markedHover = -2;
     const loop = time => {
         requestAnimationFrame(loop);
-        if (!visible) return;
-        if (track) {
-            const step = Math.min(0.1, (time - frameAt) / 1000 || 0);
-            frameAt = time;
-            pick();
-            glide += (scrollPos - glide) * (1 - Math.exp(-step * 7));
-            slide(glide);
-        }
-        if (time - last < (lowPower ? 66 : 33)) return;
-        const dt = Math.min(0.1, (time - last) / 1000 || 0);
-        last = time;
+        if (!visible || (lowPower && time - frameAt < 66)) return;
+        const dt = Math.min(0.1, (time - frameAt) / 1000 || 0);
+        frameAt = time;
         pick();
-        if (track) pos = glide;
-        else pos += ((hovered >= 0 ? hovered : scrollPos) - pos) * (1 - Math.exp(-dt * 4));
+        if (track) {
+            glide += (scrollPos - glide) * (1 - Math.exp(-dt * 7));
+            slide(glide);
+            pos = glide;
+        } else {
+            pos += ((hovered >= 0 ? hovered : scrollPos) - pos) * (1 - Math.exp(-dt * 4));
+        }
         active = Math.round(pos);
-        mark();
+        if (active !== markedActive || hovered !== markedHover) { markedActive = active; markedHover = hovered; mark(); }
         draw(time);
         openFlags(time);
     };

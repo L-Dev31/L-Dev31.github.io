@@ -164,7 +164,7 @@ async function initProjects() {
 function cultureList(container, items) {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
     const list = el('ul', 'index-list');
-    const entries = items.map(item => {
+    const entries = [...items].sort((a, b) => a.year - b.year).map(item => {
         const row = el('div', 'index-row');
         row.tabIndex = 0;
         row.append(el('span', 'index-title', item.title), el('span', 'index-slot'), el('span', 'index-year', String(item.year)));
@@ -187,6 +187,7 @@ function cultureList(container, items) {
         if (current === row) return;
         current = row;
         figure.classList.remove('is-on');
+        if (!item.cover) return;
         img.src = item.cover;
         await img.decode().catch(() => {});
         if (current !== row) return;

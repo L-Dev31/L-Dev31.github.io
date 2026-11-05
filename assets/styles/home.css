@@ -1072,6 +1072,26 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     overflow: hidden;
 }
 
+.globe-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    height: 24px;
+    padding: 0 8px;
+    background: var(--black);
+    color: var(--white);
+    font: 500 13px/24px var(--font-body);
+    white-space: nowrap;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.globe-label.is-active {
+    background: var(--white);
+    color: var(--black);
+}
+
 .journey-globe {
     position: absolute;
     inset: 0;

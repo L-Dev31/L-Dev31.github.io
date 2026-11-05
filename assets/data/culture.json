@@ -1,17 +1,207 @@
 {
   "films": [
-    { "title": "Blade Runner", "year": 1982, "cover": "assets/images/culture/blade-runner.webp" },
-    { "title": "Spirited Away", "year": 2001, "cover": "assets/images/culture/spirited-away.webp" },
-    { "title": "Parasite", "year": 2019, "cover": "assets/images/culture/parasite.webp" }
+    {
+      "title": "Blade Runner",
+      "year": 1982,
+      "cover": "assets/images/culture/blade-runner.webp"
+    },
+    {
+      "title": "Spirited Away",
+      "year": 2001,
+      "cover": "assets/images/culture/spirited-away.webp"
+    },
+    {
+      "title": "Parasite",
+      "year": 2019,
+      "cover": "assets/images/culture/parasite.webp"
+    }
   ],
   "books": [
-    { "title": "The Little Prince", "year": 1943, "cover": "assets/images/culture/the-little-prince.webp" },
-    { "title": "Nineteen Eighty-Four", "year": 1949, "cover": "assets/images/culture/nineteen-eighty-four.webp" },
-    { "title": "Dune", "year": 1965, "cover": "assets/images/culture/dune.webp" }
+    {
+      "title": "The Little Prince",
+      "year": 1943,
+      "cover": "assets/images/culture/the-little-prince.webp"
+    },
+    {
+      "title": "Nineteen Eighty-Four",
+      "year": 1949,
+      "cover": "assets/images/culture/nineteen-eighty-four.webp"
+    },
+    {
+      "title": "Dune",
+      "year": 1965,
+      "cover": "assets/images/culture/dune.webp"
+    }
   ],
   "games": [
-    { "title": "Tomodachi Collection", "year": 2009, "cover": "assets/images/culture/tomodachi-collection.webp" },
-    { "title": "Hollow Knight", "year": 2017, "cover": "assets/images/culture/hollow-knight.webp" },
-    { "title": "The Legend of Zelda: Breath of the Wild", "year": 2017, "cover": "assets/images/culture/breath-of-the-wild.webp" }
+    {
+      "title": "Angry Birds",
+      "year": 2009,
+      "cover": "assets/images/culture/angry-birds.webp"
+    },
+    {
+      "title": "Angry Birds 2",
+      "year": 2015,
+      "cover": "assets/images/culture/angry-birds-2.webp"
+    },
+    {
+      "title": "Tomodachi Life",
+      "year": 2013,
+      "cover": "assets/images/culture/tomodachi-life.webp"
+    },
+    {
+      "title": "Tomodachi Collection",
+      "year": 2009,
+      "cover": "assets/images/culture/tomodachi-collection.webp"
+    },
+    {
+      "title": "Miitopia",
+      "year": 2016,
+      "cover": "assets/images/culture/miitopia.webp"
+    },
+    {
+      "title": "La Guerre des Têtes",
+      "year": 2011
+    },
+    {
+      "title": "Super Mario 3D Land",
+      "year": 2011,
+      "cover": "assets/images/culture/super-mario-3d-land.webp"
+    },
+    {
+      "title": "Super Mario 3D World",
+      "year": 2013,
+      "cover": "assets/images/culture/super-mario-3d-world.webp"
+    },
+    {
+      "title": "New Super Mario Bros. (DS)",
+      "year": 2006,
+      "cover": "assets/images/culture/new-super-mario-bros.webp"
+    },
+    {
+      "title": "New Super Mario Bros. 2",
+      "year": 2012,
+      "cover": "assets/images/culture/new-super-mario-bros-2.webp"
+    },
+    {
+      "title": "New Super Mario Bros. U Deluxe",
+      "year": 2019,
+      "cover": "assets/images/culture/new-super-mario-bros-u-deluxe.webp"
+    },
+    {
+      "title": "Super Mario Galaxy",
+      "year": 2007,
+      "cover": "assets/images/culture/super-mario-galaxy.webp"
+    },
+    {
+      "title": "Super Mario Galaxy 2",
+      "year": 2010,
+      "cover": "assets/images/culture/super-mario-galaxy-2.webp"
+    },
+    {
+      "title": "Wii Party",
+      "year": 2010,
+      "cover": "assets/images/culture/wii-party.webp"
+    },
+    {
+      "title": "Wii Party U",
+      "year": 2013,
+      "cover": "assets/images/culture/wii-party-u.webp"
+    },
+    {
+      "title": "Wii Fit",
+      "year": 2007,
+      "cover": "assets/images/culture/wii-fit.webp"
+    },
+    {
+      "title": "Wii Fit U",
+      "year": 2013,
+      "cover": "assets/images/culture/wii-fit-u.webp"
+    },
+    {
+      "title": "Super Mario 64",
+      "year": 1996,
+      "cover": "assets/images/culture/super-mario-64.webp"
+    },
+    {
+      "title": "Super Mario 64 DS",
+      "year": 2004,
+      "cover": "assets/images/culture/super-mario-64-ds.webp"
+    },
+    {
+      "title": "Mario + Rabbids Kingdom Battle",
+      "year": 2017,
+      "cover": "assets/images/culture/mario-rabbids-kingdom-battle.webp"
+    },
+    {
+      "title": "Super Smash Bros. Brawl",
+      "year": 2008,
+      "cover": "assets/images/culture/smash-brawl.webp"
+    },
+    {
+      "title": "Super Smash Bros. for Wii U",
+      "year": 2014,
+      "cover": "assets/images/culture/smash-wii-u.webp"
+    },
+    {
+      "title": "Super Smash Bros. Ultimate",
+      "year": 2018,
+      "cover": "assets/images/culture/smash-ultimate.webp"
+    },
+    {
+      "title": "Super Mario Bros.",
+      "year": 1985,
+      "cover": "assets/images/culture/super-mario-bros.webp"
+    },
+    {
+      "title": "The Legend of Zelda",
+      "year": 1986,
+      "cover": "assets/images/culture/zelda.webp"
+    },
+    {
+      "title": "The Legend of Zelda: A Link to the Past",
+      "year": 1991,
+      "cover": "assets/images/culture/a-link-to-the-past.webp"
+    },
+    {
+      "title": "The Legend of Zelda: Ocarina of Time",
+      "year": 1998,
+      "cover": "assets/images/culture/ocarina-of-time.webp"
+    },
+    {
+      "title": "The Legend of Zelda: Majora's Mask",
+      "year": 2000,
+      "cover": "assets/images/culture/majoras-mask.webp"
+    },
+    {
+      "title": "Gang Beasts",
+      "year": 2017,
+      "cover": "assets/images/culture/gang-beasts.webp"
+    },
+    {
+      "title": "Rayman Origins",
+      "year": 2011,
+      "cover": "assets/images/culture/rayman-origins.webp"
+    },
+    {
+      "title": "Rayman Legends",
+      "year": 2013,
+      "cover": "assets/images/culture/rayman-legends.webp"
+    },
+    {
+      "title": "Rayman 3 (GBA)",
+      "year": 2003,
+      "cover": "assets/images/culture/rayman-3.webp"
+    },
+    {
+      "title": "Phoenix Wright: Ace Attorney (DS)",
+      "year": 2005,
+      "cover": "assets/images/culture/ace-attorney.webp"
+    },
+    {
+      "title": "Phoenix Wright: Justice for All (DS)",
+      "year": 2006,
+      "cover": "assets/images/culture/justice-for-all.webp"
+    }
   ]
 }
