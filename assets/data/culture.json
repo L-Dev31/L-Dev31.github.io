@@ -87,7 +87,8 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
-        "ni0imBcL8no"
+        "ni0imBcL8no",
+        "z5UwmWnS9d0"
       ]
     },
     {
@@ -104,19 +105,28 @@
       "id": "super-mario-64-n64",
       "title": "Super Mario 64",
       "year": 1996,
-      "platform": "n64"
+      "platform": "n64",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "the-legend-of-zelda-ocarina-of-time-n64",
       "title": "The Legend of Zelda: Ocarina of Time",
       "year": 1998,
-      "platform": "n64"
+      "platform": "n64",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "the-legend-of-zelda-majora-s-mask-n64",
       "title": "The Legend of Zelda: Majora's Mask",
       "year": 2000,
-      "platform": "n64"
+      "platform": "n64",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "rayman-3-gba",
@@ -551,6 +561,7 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
+        "3PophqOwQds",
         "VVJtVDiMfAE"
       ]
     },
