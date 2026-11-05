@@ -59,7 +59,7 @@ def pick(item, rows):
         after = n[n.find(name) + len(name):].split()
         if after and after[0].isdigit() and not name.split()[-1].isdigit():
             continue
-        others = [k for p, k in KEYS.items() if p != platform and re.search(k, low)]
+        others = [k for p, k in KEYS.items() if p != platform and re.search(k, low) and not re.search(k, name)]
         if others:
             continue
         own = re.search(KEYS[platform], low) if platform in KEYS else True
@@ -72,13 +72,7 @@ def pick(item, rows):
     return best
 
 
-def clip(item):
-    dest = OUT / f"{item_id(item)}.mp4"
-    platform = item.get('via') or item['platform']
-    base = item.get('video_name', re.sub(r'\s*\([^)]*\)$', '', item['title']))
-    queries = [item['video_search']] if item.get('video_search') else [
-        f"{base} {NAMES.get(platform, '')} longplay no commentary", f"{base} {NAMES.get(platform, '')} full gameplay walkthrough",
-        f"{base} longplay", f"{base} gameplay part 1 no commentary"]
+def find(item, queries):
     found = None
     for query in queries:
         lines = subprocess.run(['yt-dlp', '--no-warnings', '--print', '%(id)s|%(duration)s|%(channel)s ~ %(title)s', f'ytsearch15:{query}'], capture_output=True, text=True, timeout=180).stdout.split('\n')
@@ -90,6 +84,20 @@ def clip(item):
         found = pick(item, rows)
         if found:
             break
+    return found
+
+
+def clip(item):
+    dest = OUT / f"{item_id(item)}.mp4"
+    platform = item.get('via') or item['platform']
+    base = item.get('video_name', re.sub(r'\s*\([^)]*\)$', '', item['title']))
+    queries = [item['video_search']] if item.get('video_search') else [
+        f"{base} {NAMES.get(platform, '')} longplay no commentary", f"{base} {NAMES.get(platform, '')} full gameplay walkthrough",
+        f"{base} longplay", f"{base} gameplay part 1 no commentary"]
+    found = find(item, queries)
+    if item.get('video_replace') and found:
+        item['video_skip'] = sorted(set(item.get('video_skip', []) + [found[0]]))
+        found = find(item, queries)
     if not found:
         return None, None
     vid, duration = found
@@ -105,7 +113,7 @@ def clip(item):
         crops = re.findall(r'crop=(\d+:\d+:\d+:\d+)', probe)
         crop = f'crop={crops[-1]},' if crops else ''
         done = subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(raw), '-t', str(item.get('video_seconds', CLIP)), '-an', '-vf', f"{crop}scale={item.get('video_width', 320)}:-2,fps=12",
-                               '-c:v', 'libx264', '-crf', str(item.get('video_crf', 36)), '-preset', 'veryslow', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', str(dest)], capture_output=True)
+                               '-metadata', f'comment=youtube:{vid}', '-c:v', 'libx264', '-crf', str(item.get('video_crf', 36)), '-preset', 'veryslow', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', str(dest)], capture_output=True)
         return (dest, vid) if done.returncode == 0 and dest.exists() else (None, None)
 
 
@@ -119,6 +127,7 @@ def main():
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--only')
     parser.add_argument('--platform')
+    parser.add_argument('--replace', action='store_true', help='redo the entries marked "video_replace" with another video')
     parser.add_argument('--sharpen', action='store_true', help='redo the clips narrower than their video_width')
     parser.add_argument('--jobs', type=int, default=4)
     args = parser.parse_args()
@@ -131,14 +140,17 @@ def main():
             continue
         if args.platform and item['platform'] != args.platform:
             continue
-        if not dest.exists() or args.force or (args.sharpen and width_of(dest) < item.get('video_width', 320)):
+        if (args.replace and item.get('video_replace')) or ((not args.replace) and (not dest.exists() or args.force or (args.sharpen and width_of(dest) < item.get('video_width', 320)))):
             todo.append(item)
     with concurrent.futures.ThreadPoolExecutor(args.jobs) as pool:
         for item, (dest, vid) in zip(todo, pool.map(clip, todo)):
+            item.pop('video_replace', None) if args.replace else None
             if dest:
                 print(f"ok {item['title']} ({item['platform']}) <- youtube.com/watch?v={vid} {dest.stat().st_size // 1024} KB", flush=True)
             else:
                 print(f"-- {item['title']} ({item['platform']}): no clip", flush=True)
+    if args.replace:
+        DATA.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n')
 
 
 if __name__ == '__main__':

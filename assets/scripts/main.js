@@ -196,6 +196,19 @@ function cultureList(container, items, kind) {
     const cover = pixelCover(figure, color, 16);
     let current = null, leaving = 0;
 
+    // the preview follows the cursor sideways, kept clear of the title on the left and the year on the right
+    const follow = (row, x) => {
+        const box = container.getBoundingClientRect(), r = row.getBoundingClientRect();
+        const title = row.querySelector('.index-title').getBoundingClientRect(), year = row.querySelector('.index-year').getBoundingClientRect();
+        const half = figure.offsetWidth / 2, gap = 24;
+        const low = title.right + gap + half, high = year.left - gap - half;
+        const middle = (title.right + year.left) / 2;
+        const target = low <= high ? Math.min(high, Math.max(low, x ?? middle)) : middle;
+        figure.style.left = `${target - box.left}px`;
+        figure.style.top = `${r.top - box.top + r.height / 2}px`;
+    };
+    let pointerX = null;
+
     const show = async entry => {
         const { item, row } = entry;
         clearTimeout(leaving);
@@ -211,10 +224,7 @@ function cultureList(container, items, kind) {
             if (!await img.decode().then(() => true, () => false)) return;
         }
         if (current !== row) return;
-        const box = container.getBoundingClientRect(), slot = row.querySelector('.index-slot').getBoundingClientRect(), r = row.getBoundingClientRect();
-        const centre = slot.width ? slot.left + slot.width / 2 : r.left + r.width / 2;
-        figure.style.left = `${centre - box.left}px`;
-        figure.style.top = `${r.top - box.top + r.height / 2}px`;
+        follow(row, pointerX);
         cover.show();
         requestAnimationFrame(() => { if (current === row) figure.classList.add('is-on'); });
     };
@@ -229,10 +239,11 @@ function cultureList(container, items, kind) {
     const hover = matchMedia('(hover: hover) and (pointer: fine)').matches;
     for (const entry of entries) {
         if (hover) {
-            entry.row.addEventListener('pointerenter', () => show(entry));
+            entry.row.addEventListener('pointerenter', event => { pointerX = event.clientX; show(entry); });
+            entry.row.addEventListener('pointermove', event => { pointerX = event.clientX; if (current === entry.row) follow(entry.row, pointerX); });
             entry.row.addEventListener('pointerleave', () => hide(entry.row));
         }
-        entry.row.addEventListener('focus', () => show(entry));
+        entry.row.addEventListener('focus', () => { pointerX = null; show(entry); });
         entry.row.addEventListener('blur', () => hide(entry.row));
     }
 }
@@ -242,7 +253,10 @@ async function initCulture() {
     if (!lists.length) return;
     const data = await fetch('assets/data/culture.json').then(r => r.json());
     lists.forEach(container => cultureList(container, data[container.dataset.culture] || [], container.dataset.culture));
-    document.querySelectorAll('.culture-nav [data-count]').forEach(count => { if (data[count.dataset.count]) count.textContent = data[count.dataset.count].length; });
+    const travels = await fetch('assets/data/travels.json').then(r => r.json());
+    const totals = { ...Object.fromEntries(Object.entries(data).map(([kind, list]) => [kind, list.length])), travels: travels.stops.length };
+    document.querySelectorAll('.culture-nav [data-count]').forEach(count => { count.textContent = totals[count.dataset.count] ?? ''; });
+    document.querySelector('.culture-nav')?.dispatchEvent(new Event('relayout'));
 }
 
 // a pill bar to jump between the long culture sections, with the current one highlighted
@@ -251,6 +265,22 @@ function cultureNav() {
     if (!nav) return;
     const links = [...nav.querySelectorAll('a')];
     const sections = links.map(link => document.querySelector(link.hash));
+    // one white pill slides from link to link
+    const pill = document.createElement('span');
+    pill.className = 'culture-nav-pill';
+    pill.setAttribute('aria-hidden', 'true');
+    nav.prepend(pill);
+    let placed = false;
+    const place = () => {
+        const link = nav.querySelector('a[aria-current]');
+        if (!link) { pill.style.opacity = '0'; return; }
+        pill.style.transition = placed ? '' : 'none';
+        pill.style.opacity = '1';
+        pill.style.width = `${link.offsetWidth}px`;
+        pill.style.transform = `translateX(${link.offsetLeft}px)`;
+        if (!placed) { pill.offsetWidth; pill.style.transition = ''; placed = true; }
+    };
+    nav.addEventListener('relayout', place);
     let queued = false;
     const update = () => {
         queued = false;
@@ -259,6 +289,7 @@ function cultureNav() {
         nav.classList.toggle('is-on', first < innerHeight * 0.6 && last > innerHeight * 0.4);
         const index = sections.findLastIndex(section => section.getBoundingClientRect().top <= line);
         links.forEach((link, i) => { if (i === index) link.setAttribute('aria-current', 'true'); else link.removeAttribute('aria-current'); });
+        place();
     };
     addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
     addEventListener('resize', update, { passive: true });

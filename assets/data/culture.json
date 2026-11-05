@@ -1688,7 +1688,10 @@
       "platform": "3ds",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "NHfJsmN42cY"
+      ]
     },
     {
       "id": "super-mario-3d-world-wiiu",
@@ -1733,7 +1736,10 @@
       "platform": "steam",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "ACG2UcHNG0A"
+      ]
     },
     {
       "id": "mario-kart-8-wiiu",
@@ -1770,7 +1776,10 @@
       "platform": "3ds",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "xWsC_ZtLNSQ"
+      ]
     },
     {
       "id": "mario-rabbids-kingdom-battle-switch",
@@ -1806,7 +1815,10 @@
       "platform": "switch",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "4orIsLwvYWo"
+      ]
     },
     {
       "id": "minecraft-bedrock-edition-pc",
@@ -1897,7 +1909,10 @@
       "platform": "wii",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "-1CCvXF6qMY"
+      ]
     },
     {
       "id": "just-dance-3-wii",
@@ -1924,7 +1939,10 @@
       "platform": "wii",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "iXSylOcpRhY"
+      ]
     },
     {
       "id": "just-dance-2015-wii",
@@ -2082,7 +2100,10 @@
       "platform": "3ds",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "t62HRSGPjSU"
+      ]
     },
     {
       "id": "pokemon-sword-switch",
@@ -2109,7 +2130,10 @@
       "platform": "switch",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "mnp1Zv66Ej8"
+      ]
     },
     {
       "id": "new-super-luigi-u-wiiu",
@@ -2301,7 +2325,10 @@
       "platform": "wii",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "4nccwtru0Rw"
+      ]
     },
     {
       "id": "kirby-s-dream-land-gb",
@@ -2328,16 +2355,10 @@
       "platform": "wii",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
-      "id": "jackbox-party-pack-8-steam",
-      "title": "Jackbox Party Pack 8",
-      "year": 2021,
-      "platform": "steam",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "l8RpUZJ02z4"
+      ]
     },
     {
       "id": "jackbox-party-pack-9-steam",
@@ -2355,7 +2376,10 @@
       "platform": "pc",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "2egTQizHTxY"
+      ]
     },
     {
       "id": "clash-royale-android",
@@ -2364,7 +2388,10 @@
       "platform": "android",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "SUHBgWbmRa8"
+      ]
     },
     {
       "id": "yoshi-s-woolly-world-wiiu",
