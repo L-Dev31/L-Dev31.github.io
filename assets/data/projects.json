@@ -7,7 +7,7 @@
       "category": "Graphic Design",
       "role": "Vexillographer & Designer",
       "heroImage": "assets/images/projects/smfl/header.jpg",
-      "subtitle": "Designing a regional flag rooted in history, NAVA vexillological principles, and real-world wind testing.",
+      "subtitle": "A flag for an island that didn't have one. NAVA rules, real history, and a wind test, because a flag has to survive weather.",
       "tags": [
         "Vexillology",
         "Flag Design",
@@ -46,7 +46,7 @@
       "category": "Graphic Design",
       "role": "Brand Designer",
       "heroImage": "assets/images/projects/ogfm/header.jpg",
-      "subtitle": "Brand identity for a punk, DIY, anti-establishment webradio.",
+      "subtitle": "Identity for an anti-establishment webradio. Punk isn't sloppy, and I made that point loudly.",
       "tags": [
         "Brand Identity",
         "Logo Design",
@@ -83,7 +83,7 @@
       "category": "Webdesign",
       "role": "Web Designer & Logo Designer",
       "heroImage": "assets/images/projects/bgaw/header.jpg",
-      "subtitle": "A luxury web redesign for an independent brand fusing precision watchmaking and automotive aesthetics.",
+      "subtitle": "A luxury watch brand that wanted to look expensive online. Precision watchmaking meets car culture, with no apology.",
       "tags": [
         "Web Design",
         "UI/UX Design",
@@ -120,7 +120,7 @@
       "category": "Marketing",
       "role": "Designer",
       "heroImage": "assets/images/projects/mego/header.jpg",
-      "subtitle": "Visual communication package for a GPS cigarette butt collection startup. 48 hours. Real constraints.",
+      "subtitle": "A GPS cigarette-butt collection startup that needed an identity. 48 hours, real constraints, delivered anyway.",
       "tags": [
         "Brochure Design",
         "Editorial Layout",
@@ -144,7 +144,7 @@
       "category": "Webdesign",
       "role": "UX Designer",
       "heroImage": "assets/images/projects/prfy/header.jpg",
-      "subtitle": "A scan-first mobile vault for receipts and warranties. No account. No paper.",
+      "subtitle": "Receipts and warranties, scanned and sorted. No account. No paper. No excuse to lose anything.",
       "tags": [
         "UX Design",
         "UI Design",
@@ -170,7 +170,7 @@
       "category": "Webdesign",
       "role": "Web Designer & Developer",
       "heroImage": "assets/images/projects/cmck/header.jpg",
-      "subtitle": "A composer portfolio built to serve two audiences at once: personal work and paid commissions.",
+      "subtitle": "One site for two audiences: fans and paying clients. Neither one feels like the second choice.",
       "tags": [
         "Web Design",
         "Frontend Development",
@@ -206,7 +206,7 @@
       "category": "Dev",
       "role": "Developer",
       "heroImage": "assets/images/projects/bmge/header.jpg",
-      "subtitle": "A browser-based binary editor for Nintendo's BMG format, built from reverse-engineering. No documentation, no SDK.",
+      "subtitle": "A binary editor for Nintendo's BMG format, in a browser. Built by reverse-engineering with no documentation and no SDK, because I wanted it to exist.",
       "tags": [
         "Reverse Engineering",
         "Binary File Format",
@@ -243,7 +243,7 @@
       "category": "Dev",
       "role": "Developer & Dataset Author",
       "heroImage": "assets/images/projects/gptr/header.jpg",
-      "subtitle": "The first French to Guadeloupean Creole translator. Built from scratch, from a language the internet had forgotten.",
+      "subtitle": "The first French to Guadeloupean Creole translator. The internet had forgotten the language, so I wrote the dataset myself.",
       "tags": [
         "Python",
         "NLP",
