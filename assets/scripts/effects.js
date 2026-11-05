@@ -3,6 +3,7 @@ import { cellCanvas, CELL, drawCell } from './pixel.js';
 
 const isMobile = breakpoint.isMobile;
 
+const SCRUBBED = '.scrubbing-text, main h2, main h3:not(.index-category, .journey-place, .exp-title), .promise-text p';
 const scrubBlocks = [];
 const scrubSeen = new WeakSet();
 let scrubWired = false;
@@ -12,7 +13,7 @@ export function scrubbingText() {
     const SPREAD = 10;
 
     const touch = matchMedia('(max-width: 1024px)');
-    for (const block of document.querySelectorAll('.scrubbing-text')) {
+    for (const block of document.querySelectorAll(SCRUBBED)) {
         if (scrubSeen.has(block)) continue;
         scrubSeen.add(block);
         scrubBlocks.push({ block, chars: splitChars(block), turn: block.dataset.scrub === 'turn', out: block.dataset.scrub === 'out' });
