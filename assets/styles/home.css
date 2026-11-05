@@ -405,13 +405,32 @@ html.menu-open body {
     overflow: hidden;
 }
 
+.mobile-menu-picture {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    width: min(44vw, 720px);
+    pointer-events: none;
+}
+
+@media (min-width: 1025px) {
+    .mobile-menu-picture {
+        display: block;
+    }
+
+    .mobile-menu-links {
+        max-width: min(760px, 50vw);
+    }
+}
+
 .mobile-menu-links {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     width: 100%;
     max-width: 760px;
-    counter-reset: menu;
 }
 
 .mobile-menu-link {
@@ -420,7 +439,6 @@ html.menu-open body {
     align-items: center;
     gap: 0.2em;
     padding: clamp(12px, 2.4vh, 24px) 0;
-    border-top: 1px solid color-mix(in srgb, currentColor 40%, transparent);
     color: inherit;
     font-family: var(--font-body);
     font-size: clamp(36px, 6vw, 88px);
@@ -431,25 +449,8 @@ html.menu-open body {
     transition: font-weight 0.3s var(--ease-out);
 }
 
-.mobile-menu-link::after {
-    counter-increment: menu;
-    content: counter(menu, decimal-leading-zero);
-    position: absolute;
-    top: 50%;
-    right: 0;
-    translate: 0 -50%;
-    padding: 4px 11px;
-    border: 1px solid currentColor;
-    border-radius: 999px;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0;
-    text-decoration: none;
-}
-
-.mobile-menu-link:last-child {
-    border-bottom: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+.mobile-menu-link + .mobile-menu-link {
+    border-top: 1px solid color-mix(in srgb, currentColor 40%, transparent);
 }
 
 .mobile-menu-socials {
@@ -781,6 +782,11 @@ html.menu-open body {
 }
 
 .hero-about .about-title {
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    align-items: flex-start;
+    column-gap: 0.3em;
     -webkit-text-stroke: 0;
     font-family: var(--font-display);
     font-size: clamp(56px, 8vw, 132px);
@@ -795,8 +801,7 @@ html.menu-open body {
 }
 
 .hero-about .about-title .about-hi {
-    display: block;
-    margin-bottom: 0.12em;
+    margin-top: -0.2em;
     font-family: var(--font-body);
     font-size: 0.667em;
     font-weight: 500;

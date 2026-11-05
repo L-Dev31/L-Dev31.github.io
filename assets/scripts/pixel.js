@@ -32,6 +32,34 @@ function atlas(color, scale) {
 export function cellCanvas(canvas, color) {
     const ctx = canvas.getContext('2d');
     let cols = 0, rows = 0, scale = 1, tiles = null, shown = new Uint8Array(0);
+
+    let noise = new Float32Array(0), view = new Uint8Array(0), beat = -1, glitch = null, glitchAt = performance.now() + 3000;
+    const alive = brightness => {
+        if (lowPower) return brightness;
+        const now = performance.now();
+        if (view.length !== brightness.length) {
+            view = new Uint8Array(brightness.length);
+            noise = new Float32Array(brightness.length);
+            beat = -1;
+        }
+        if (Math.floor(now / 240) !== beat) {
+            beat = Math.floor(now / 240);
+            for (let i = 0; i < noise.length; i++) noise[i] = 0.78 + 0.44 * ((((i + 1) * 73856093) ^ (beat * 19349663)) >>> 0) / 4294967295;
+        }
+        for (let i = 0; i < view.length; i++) view[i] = Math.min(255, brightness[i] * noise[i]);
+        if (!glitch && now > glitchAt) {
+            const w = 5 + Math.floor(Math.random() * 6), h = 4 + Math.floor(Math.random() * 5);
+            glitch = { x: Math.floor(cols * (0.3 + Math.random() * 0.4)), y: Math.floor(rows * (0.2 + Math.random() * 0.5)), w, h, until: now + 200 + Math.random() * 160 };
+            glitchAt = now + 4000 + Math.random() * 4000;
+        }
+        if (glitch && now > glitch.until) glitch = null;
+        if (glitch) {
+            for (let y = glitch.y; y < Math.min(rows, glitch.y + glitch.h); y++) {
+                for (let x = glitch.x; x < Math.min(cols, glitch.x + glitch.w); x++) view[y * cols + x] = 255;
+            }
+        }
+        return view;
+    };
     return {
         resize(c, r) {
             cols = c; rows = r;
@@ -47,9 +75,10 @@ export function cellCanvas(canvas, color) {
         get rows() { return rows; },
         paint(brightness) {
             const size = CELL * scale;
-            if (shown.length !== brightness.length) shown = new Uint8Array(brightness.length).fill(255);
-            for (let i = 0; i < brightness.length; i++) {
-                const b = brightness[i];
+            const live = alive(brightness);
+            if (shown.length !== live.length) shown = new Uint8Array(live.length).fill(255);
+            for (let i = 0; i < live.length; i++) {
+                const b = live[i];
                 const state = b < LEVELS[0] ? 0 : b < LEVELS[1] ? 1 : b < LEVELS[2] ? 2 : 3;
                 if (state === shown[i]) continue;
                 shown[i] = state;

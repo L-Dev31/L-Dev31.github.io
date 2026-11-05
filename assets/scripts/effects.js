@@ -309,31 +309,10 @@ function pixelHero(video) {
     const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
-    let base = null, brightness = null, lastTime = -1, lastBox = '';
+    let base = null, lastTime = -1, lastBox = '';
 
-    const calm = lowPower, gap = lowPower ? 80 : 33;
+    const gap = lowPower ? 80 : 33;
     let lastDraw = 0;
-    let glitchAt = performance.now() + 3000, glitch = null, noise = null, lastBeat = -1;
-    const shimmer = now => {
-        const beat = Math.floor(now / 240);
-        if (beat !== lastBeat) {
-            lastBeat = beat;
-            for (let i = 0; i < noise.length; i++) noise[i] = 0.78 + 0.44 * ((((i + 1) * 73856093) ^ (beat * 19349663)) >>> 0) / 4294967295;
-        }
-        for (let i = 0; i < brightness.length; i++) brightness[i] = Math.min(255, base[i] * noise[i]);
-    };
-    const glitchBlock = (now, cols, rows) => {
-        if (!glitch && now > glitchAt) {
-            const w = 5 + Math.floor(Math.random() * 6), h = 4 + Math.floor(Math.random() * 5);
-            glitch = { x: Math.floor(cols * (0.3 + Math.random() * 0.4)), y: Math.floor(rows * (0.2 + Math.random() * 0.5)), w, h, until: now + 200 + Math.random() * 160 };
-            glitchAt = now + 4000 + Math.random() * 4000;
-        }
-        if (!glitch) return;
-        if (now > glitch.until) { glitch = null; return; }
-        for (let y = glitch.y; y < Math.min(rows, glitch.y + glitch.h); y++) {
-            for (let x = glitch.x; x < Math.min(cols, glitch.x + glitch.w); x++) brightness[y * cols + x] = 255;
-        }
-    };
 
     const draw = now => {
         requestAnimationFrame(draw);
@@ -349,9 +328,6 @@ function pixelHero(video) {
             cells.resize(cols, rows);
             sample.width = cols; sample.height = rows;
             base = new Uint8Array(cols * rows);
-            brightness = new Uint8Array(cols * rows);
-            noise = new Float32Array(cols * rows);
-            lastBeat = -1;
             lastTime = -1;
         }
         if (video.currentTime !== lastTime) {
@@ -363,12 +339,7 @@ function pixelHero(video) {
             const rgba = sampleCtx.getImageData(0, 0, cells.cols, cells.rows).data;
             for (let i = 0; i < base.length; i++) base[i] = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114;
         }
-        if (calm) brightness.set(base);
-        else {
-            shimmer(now);
-            glitchBlock(now, cells.cols, cells.rows);
-        }
-        cells.paint(brightness);
+        cells.paint(base);
     };
     requestAnimationFrame(draw);
     return canvas;
@@ -446,4 +417,36 @@ export function scrollScrubbedVideo() {
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', onScroll, { passive: true });
     onScroll();
+}
+
+export function pixelPicture(host, src, { mirror = false, color = '#fff', active = () => true } = {}) {
+    const canvas = document.createElement('canvas');
+    canvas.setAttribute('aria-hidden', 'true');
+    host.append(canvas);
+    const cells = cellCanvas(canvas, color);
+    const sample = document.createElement('canvas');
+    const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
+    const source = new Image();
+    let brightness = null;
+
+    const render = () => {
+        const cols = Math.ceil(host.clientWidth / CELL), rows = Math.ceil(host.clientHeight / CELL);
+        if (!cols || !rows || !source.naturalWidth) return;
+        cells.resize(cols, rows);
+        sample.width = cols; sample.height = rows;
+        const scale = Math.max(cols / source.naturalWidth, rows / source.naturalHeight);
+        const w = source.naturalWidth * scale, h = source.naturalHeight * scale;
+        sampleCtx.setTransform(mirror ? -1 : 1, 0, 0, 1, mirror ? cols : 0, 0);
+        sampleCtx.drawImage(source, (cols - w) / 2, (rows - h) * 0.25, w, h);
+        const rgba = sampleCtx.getImageData(0, 0, cols, rows).data;
+        brightness = new Uint8Array(cols * rows);
+        for (let i = 0; i < brightness.length; i++) brightness[i] = Math.min(255, (rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114) * 1.3);
+        cells.paint(brightness);
+    };
+
+    source.onload = render;
+    source.src = src;
+    addEventListener('resize', render, { passive: true });
+    const timer = setInterval(() => brightness && active() && cells.paint(brightness), lowPower ? 400 : 120);
+    return { destroy() { clearInterval(timer); removeEventListener('resize', render); canvas.remove(); } };
 }

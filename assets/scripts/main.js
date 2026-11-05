@@ -1,4 +1,4 @@
-import { initPage, loadProjects, reducedMotion } from './common.js';
+import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
 import { scrubbingText, parallax, scrollScrubbedVideo } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { journey, clients } from './sections.js';
@@ -6,6 +6,7 @@ import { journey, clients } from './sections.js';
 const CATEGORIES = ['Design', 'UI/UX', 'Web', 'Marketting', 'Photography', 'Tools', 'Video Games'];
 
 initPage();
+if (!document.querySelector('#header')) reveal(document.querySelectorAll('section, .title'));
 const refreshParallax = parallax();
 scrubbingText();
 scrollScrubbedVideo();

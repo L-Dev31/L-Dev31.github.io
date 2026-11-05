@@ -261,6 +261,25 @@ function mobileMenu(lenis) {
     const nav = menu.querySelector('.mobile-menu-links');
     renderMenuLinks(nav);
 
+    const host = document.createElement('div');
+    host.className = 'mobile-menu-picture';
+    host.setAttribute('aria-hidden', 'true');
+    menu.prepend(host);
+    let picture = null;
+    const showPicture = async () => {
+        picture?.destroy();
+        picture = null;
+        if (getComputedStyle(host).display === 'none') return;
+        const { pixelPicture } = await import('./effects.js');
+        const root = getComputedStyle(document.documentElement);
+        const dark = document.querySelector('.navbar.on-accent');
+        picture = pixelPicture(host, 'assets/images/core/menu.jpg', {
+            mirror: true,
+            color: root.getPropertyValue(dark ? '--accent' : '--black').trim(),
+            active: () => menu.classList.contains('open'),
+        });
+    };
+
     const background = [...document.body.children]
         .filter(element => element !== menu && !element.classList.contains('navbar'));
 
@@ -271,7 +290,7 @@ function mobileMenu(lenis) {
         button.setAttribute('aria-expanded', open);
         document.documentElement.classList.toggle('menu-open', open);
         background.forEach(element => { element.inert = open; });
-        if (open) { renderMenuLinks(nav); lenis?.stop(); }
+        if (open) { renderMenuLinks(nav); showPicture(); lenis?.stop(); }
         else lenis?.start();
         if (open) requestAnimationFrame(() => menu.querySelector('a')?.focus());
         else if (returnFocus) button.focus();
