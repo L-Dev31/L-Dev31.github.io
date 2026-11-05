@@ -206,7 +206,7 @@ function cultureList(container, items, kind) {
         // beside the cursor rather than under it: on its right, or on its left when the right side has no room
         let target = middle;
         if (x != null) {
-            const right = x + 324 + half, left = x - 324 - half;
+            const right = x + 216 + half, left = x - 216 - half;
             target = right <= high ? right : left >= low ? left : (high - right > left - low ? right : left);
         }
         target = low <= high ? Math.min(high, Math.max(low, target)) : middle;
