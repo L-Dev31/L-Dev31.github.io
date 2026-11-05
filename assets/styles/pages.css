@@ -843,14 +843,6 @@ html.menu-open body {
     column-gap: 0.3em;
 }
 
-.about-header-text .about-title .about-hi {
-    font-family: var(--font-body);
-    font-size: 0.667em;
-    font-weight: 500;
-    letter-spacing: -0.03em;
-    line-height: 1;
-}
-
 .about-header-text .about-hero-lede {
     color: var(--white);
 }
