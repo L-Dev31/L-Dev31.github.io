@@ -801,12 +801,8 @@ html.menu-open body {
 
 .hero-about .about-title .about-line {
     display: flex;
-    align-items: flex-start;
+    align-items: baseline;
     column-gap: 0.3em;
-}
-
-.hero-about .about-title .about-line .about-hi {
-    margin-top: -0.2em;
 }
 
 .hero-about .about-title .about-hi {

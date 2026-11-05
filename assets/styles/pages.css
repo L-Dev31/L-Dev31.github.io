@@ -839,12 +839,8 @@ html.menu-open body {
 
 .about-header-text .about-title .about-line {
     display: flex;
-    align-items: flex-start;
+    align-items: baseline;
     column-gap: 0.3em;
-}
-
-.about-header-text .about-title .about-line .about-hi {
-    margin-top: -0.2em;
 }
 
 .about-header-text .about-title .about-hi {
