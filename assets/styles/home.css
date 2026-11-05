@@ -664,7 +664,8 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     margin-bottom: clamp(16px, 4vh, 40px);
 }
 
-.hero-socials a {
+.hero-socials a,
+.hero-socials .clock {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -1743,8 +1744,11 @@ html:has(.project-main)::-webkit-scrollbar {
     margin-left: 6px;
 }
 
-.clock {
-    padding: 8px 14px;
+.hero-socials .clock {
+    gap: 8px;
+    padding: 9px 16px;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .index-year {
