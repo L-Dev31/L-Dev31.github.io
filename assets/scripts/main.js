@@ -177,39 +177,20 @@ function cultureList(container, items, kind) {
         list.append(li);
         return { item, row };
     });
-    // files are named after the id of the entry: a clip for a game, a black and white picture drawn in pixels for the rest
+    // files are named after the id of the entry: a clip for a game, a picture for the rest
     const clips = kind === 'games';
     const figure = el('figure', 'culture-preview');
     figure.setAttribute('aria-hidden', 'true');
+    const img = el('img');
+    img.alt = '';
+    img.hidden = clips;
     const clip = el('video');
     Object.assign(clip, { muted: true, loop: true, playsInline: true, preload: 'auto' });
     clip.hidden = !clips;
-    const pixels = el('div', 'culture-pixels');
-    pixels.hidden = clips;
-    figure.append(clip, pixels);
+    figure.append(clip, img);
     container.replaceChildren(list, figure);
     const cover = pixelCover(figure, color, 16);
-    const black = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
-    const layers = new Map();
     let current = null, leaving = 0;
-
-    const pictureOf = async ({ item, row }) => {
-        const src = `assets/images/culture/${item.id}.webp`;
-        if (!layers.has(item.id)) {
-            const probe = new Image();
-            probe.src = src;
-            if (!await probe.decode().then(() => true, () => false)) return false;
-            const height = Math.min(340, Math.max(180, innerHeight * 0.32));
-            const host = el('div', 'culture-picture');
-            host.style.cssText = `width:${Math.round(height * probe.naturalWidth / probe.naturalHeight)}px;height:${Math.round(height)}px;--invert:1`;
-            pixels.append(host);
-            pixelPicture(host, src, { color: black, active: () => current === row });
-            layers.set(item.id, host);
-            await new Promise(done => setTimeout(done, 80));
-        }
-        layers.forEach((host, id) => { host.hidden = id !== item.id; });
-        return true;
-    };
 
     const show = async entry => {
         const { item, row } = entry;
@@ -221,8 +202,9 @@ function cultureList(container, items, kind) {
             clip.src = `assets/videos/culture/${item.id}.mp4`;
             if (!await new Promise(done => { clip.onloadeddata = () => done(true); clip.onerror = () => done(false); })) return;
             clip.play().catch(() => {});
-        } else if (!await pictureOf(entry)) {
-            return;
+        } else {
+            img.src = `assets/images/culture/${item.id}.webp`;
+            if (!await img.decode().then(() => true, () => false)) return;
         }
         if (current !== row) return;
         const box = container.getBoundingClientRect(), slot = row.querySelector('.index-slot').getBoundingClientRect(), r = row.getBoundingClientRect();

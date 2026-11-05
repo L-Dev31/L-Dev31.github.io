@@ -266,7 +266,7 @@ def is_placeholder(raw):
 def save(raw, dest, url=''):
     # the Wii only has its full wrap in high resolution: keep the front, the right 47.5%
     crop = ['-gravity', 'East', '-crop', '47.5%x100%+0+0', '+repage'] if '/wii/coverfull/' in url else []
-    subprocess.run(['magick', '-', *crop, '-resize', 'x440>', '-colorspace', 'Gray', '-strip', '-quality', '60', str(dest)], input=raw, check=True, stderr=subprocess.DEVNULL)
+    subprocess.run(['magick', '-', *crop, '-resize', 'x440>', '-strip', '-quality', '66', str(dest)], input=raw, check=True, stderr=subprocess.DEVNULL)
 
 
 def main():

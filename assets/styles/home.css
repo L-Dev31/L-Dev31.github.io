@@ -2206,13 +2206,3 @@ html:has(.project-main)::-webkit-scrollbar {
     object-fit: cover;
 }
 
-.culture-pixels,
-.culture-picture {
-    display: block;
-}
-
-.culture-picture canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
