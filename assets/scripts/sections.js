@@ -1,4 +1,4 @@
-import { reducedMotion, clamp01 } from './common.js';
+import { reducedMotion, lowPower, clamp01 } from './common.js';
 import { cellCanvas, CELL } from './pixel.js';
 
 const el = (tag, cls, text) => {
@@ -239,7 +239,9 @@ export async function journey(container) {
         const near = instant ? 1 : clamp01(1 - Math.max(0, r.top + r.height / 2 - innerHeight / 2) / (innerHeight * 0.24));
         f.open = ease(near);
         f.slot.style.setProperty('--open', f.open.toFixed(3));
-        f.paint(f.open, time);
+        if (r.bottom < 0 || r.top > innerHeight || (f.open === f.shown && (lowPower || f.open === 0))) return;
+        f.shown = f.open;
+        f.paint(f.open, lowPower ? 0 : time);
     });
     container.replaceChildren(stage, list);
 
@@ -359,6 +361,7 @@ export async function journey(container) {
             });
         }
         cells.paint(brightness);
+        pins.invalidate();
         pins.paint(pinBrightness);
 
         if (shown.length) {
@@ -418,8 +421,8 @@ export async function journey(container) {
     let last = 0;
     const loop = time => {
         requestAnimationFrame(loop);
-        if (!visible) return;
-        const dt = Math.min(0.05, (time - last) / 1000 || 0);
+        if (!visible || time - last < (lowPower ? 66 : 33)) return;
+        const dt = Math.min(0.1, (time - last) / 1000 || 0);
         last = time;
         pick();
         pos += ((hovered >= 0 ? hovered : scrollPos) - pos) * (1 - Math.exp(-dt * 4));

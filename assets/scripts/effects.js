@@ -1,4 +1,4 @@
-import { reducedMotion, clamp01, throttled, breakpoint } from './common.js';
+import { reducedMotion, lowPower, clamp01, throttled, breakpoint } from './common.js';
 import { cellCanvas, CELL, drawCell } from './pixel.js';
 
 const isMobile = breakpoint.isMobile;
@@ -311,7 +311,8 @@ function pixelHero(video) {
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
     let base = null, brightness = null, lastTime = -1, lastBox = '';
 
-    const calm = reducedMotion;
+    const calm = lowPower, gap = lowPower ? 80 : 33;
+    let lastDraw = 0;
     let glitchAt = performance.now() + 3000, glitch = null, noise = null, lastBeat = -1;
     const shimmer = now => {
         const beat = Math.floor(now / 240);
@@ -336,6 +337,8 @@ function pixelHero(video) {
 
     const draw = now => {
         requestAnimationFrame(draw);
+        if (now - lastDraw < gap) return;
+        lastDraw = now;
         if (video.readyState < 2 || !video.videoWidth || canvas.style.visibility === 'hidden') return;
         const w = canvas.offsetWidth, h = canvas.offsetHeight;
         if (!w || !h) return;

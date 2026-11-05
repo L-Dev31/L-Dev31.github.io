@@ -1,4 +1,4 @@
-import { reducedMotion } from './common.js';
+import { reducedMotion, lowPower } from './common.js';
 
 export const CELL = 8;
 const LEVELS = [20, 60, 130];
@@ -31,26 +31,31 @@ function atlas(color, scale) {
 
 export function cellCanvas(canvas, color) {
     const ctx = canvas.getContext('2d');
-    let cols = 0, rows = 0, scale = 1, tiles = null;
+    let cols = 0, rows = 0, scale = 1, tiles = null, shown = new Uint8Array(0);
     return {
         resize(c, r) {
             cols = c; rows = r;
-            scale = Math.max(1, Math.round(devicePixelRatio));
+            scale = lowPower ? 1 : Math.min(2, Math.max(1, Math.round(devicePixelRatio)));
             canvas.width = cols * CELL * scale;
             canvas.height = rows * CELL * scale;
             canvas.style.aspectRatio = `${cols} / ${rows}`;
             tiles = atlas(color, scale);
+            shown = new Uint8Array(0);
         },
+        invalidate() { ctx.clearRect(0, 0, canvas.width, canvas.height); shown = new Uint8Array(0); },
         get cols() { return cols; },
         get rows() { return rows; },
         paint(brightness) {
             const size = CELL * scale;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (shown.length !== brightness.length) shown = new Uint8Array(brightness.length).fill(255);
             for (let i = 0; i < brightness.length; i++) {
                 const b = brightness[i];
-                if (b < LEVELS[0]) continue;
-                const state = b < LEVELS[1] ? 0 : b < LEVELS[2] ? 1 : 2;
-                ctx.drawImage(tiles, state * size, 0, size, size, (i % cols) * size, ((i / cols) | 0) * size, size, size);
+                const state = b < LEVELS[0] ? 0 : b < LEVELS[1] ? 1 : b < LEVELS[2] ? 2 : 3;
+                if (state === shown[i]) continue;
+                shown[i] = state;
+                const x = (i % cols) * size, y = ((i / cols) | 0) * size;
+                ctx.clearRect(x, y, size, size);
+                if (state) ctx.drawImage(tiles, (state - 1) * size, 0, size, size, x, y, size, size);
             }
         },
     };

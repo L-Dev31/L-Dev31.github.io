@@ -2,6 +2,7 @@ const BREAKPOINT_MOBILE = 768;
 const BREAKPOINT_TABLET = 1024;
 
 export const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+export const lowPower = reducedMotion || navigator.hardwareConcurrency <= 2 || navigator.deviceMemory <= 2 || !!navigator.connection?.saveData;
 export const clamp01 = value => Math.max(0, Math.min(1, value));
 
 export const breakpoint = (() => {
