@@ -839,6 +839,10 @@ html.menu-open body {
     letter-spacing: -0.015em;
 }
 
+#promise .title {
+    max-width: 9em;
+}
+
 #promise {
     min-height: 0;
     padding: 0 0 clamp(80px, 14vh, 160px);
@@ -846,18 +850,8 @@ html.menu-open body {
     color: var(--black);
 }
 
-.promise-lead {
-    max-width: 100%;
-    margin: 0 0 clamp(40px, 8vh, 96px) var(--pad-edge);
-    font-family: var(--font-display);
-    font-size: clamp(18px, 4.8vw, 78px);
-    font-style: italic;
-    font-weight: 400;
-    line-height: 1.02;
-    white-space: nowrap;
-}
-
 .promise-story {
+    margin-top: clamp(40px, 8vh, 96px);
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
     gap: clamp(24px, 4vw, 72px);
@@ -880,8 +874,8 @@ html.menu-open body {
 .promise-text {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 40px;
+    justify-content: flex-start;
+    gap: 32px;
 }
 
 .promise-text p {
@@ -962,10 +956,6 @@ html.menu-open body {
 }
 
 @media (max-width: 768px) {
-    .promise-lead {
-        font-size: 6.4vw;
-    }
-
     .promise-story {
         grid-template-columns: 1fr;
         margin-left: 0;
