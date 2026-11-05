@@ -6,9 +6,9 @@
 @font-face { font-family: 'Satoshi'; src: url('../fonts/satoshi-variable-italic.ttf') format('truetype'); font-weight: 300 900; font-style: italic; font-display: swap; }
 :root {
     --white: #F6F2F2;
-    --black: #170206;
-    --dusk: #170206;
-    --ink: #0F0104;
+    --black: #210710;
+    --dusk: #210710;
+    --ink: #170308;
     --text: #E6DCDC;
     --text-muted: var(--white);
     --text-faint: #A8908F;
@@ -26,7 +26,7 @@
     --container-width: 1400px;
     --radius-pill: 50px;
 
-    --section-gradient: radial-gradient(circle at 50% 0%, #2b0a10 0%, #1e0409 30%, var(--black) 80%);
+    --section-gradient: radial-gradient(circle at 50% 0%, #34111a 0%, #280a12 30%, var(--black) 80%);
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -685,7 +685,7 @@ html:has(.navbar.on-accent) .mobile-menu-socials a:focus-visible {
     position: absolute;
     inset: 0;
     z-index: 1;
-    background: linear-gradient(to top, var(--black) 0%, rgba(23, 2, 6, 0.55) 40%, transparent 72%);
+    background: linear-gradient(to top, var(--black) 0%, rgba(33, 7, 16, 0.55) 40%, transparent 72%);
     pointer-events: none;
 }
 
@@ -822,7 +822,7 @@ html:has(.navbar.on-accent) .mobile-menu-socials a:focus-visible {
     position: fixed;
     inset: 0;
     z-index: 3;
-    background: rgba(23, 2, 6, calc(var(--hero-progress) * 0.65));
+    background: rgba(33, 7, 16, calc(var(--hero-progress) * 0.65));
     pointer-events: none;
 }
 
@@ -1575,7 +1575,7 @@ html:has(.project-main)::-webkit-scrollbar {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(180deg, rgba(23, 2, 6, 0.1) 0%, rgba(23, 2, 6, 0.75) 100%);
+    background: linear-gradient(180deg, rgba(33, 7, 16, 0.1) 0%, rgba(33, 7, 16, 0.75) 100%);
     transition: background 0.4s ease;
 }
 
@@ -1967,7 +1967,7 @@ html:has(.project-main)::-webkit-scrollbar {
         position: absolute;
         inset: 0;
         z-index: 1;
-        background: linear-gradient(180deg, rgba(23, 2, 6, 0.12) 0%, rgba(23, 2, 6, 0.82) 72%, rgba(23, 2, 6, 0.94) 100%);
+        background: linear-gradient(180deg, rgba(33, 7, 16, 0.12) 0%, rgba(33, 7, 16, 0.82) 72%, rgba(33, 7, 16, 0.94) 100%);
         pointer-events: none;
     }
 
