@@ -92,7 +92,7 @@ export function initPage() {
 
 function navTone() {
     const bar = document.querySelector('.navbar');
-    const reds = [...document.querySelectorAll('#promise, #featured-projects')];
+    const reds = [...document.querySelectorAll('#promise, #featured-projects, #footer')];
     const aboutHero = document.querySelector('.about-header');
     const projects = document.getElementById('featured-projects');
     if (!bar) return;
@@ -233,8 +233,15 @@ function renderMenuLinks(nav) {
         const link = document.createElement('a');
         link.className = 'mobile-menu-link';
         link.href = page.href;
-        if (page.id === here) link.setAttribute('aria-current', 'page');
-        link.textContent = page.label;
+        if (page.id === here) {
+            link.setAttribute('aria-current', 'page');
+            const arrow = document.createElement('span');
+            arrow.className = 'menu-current';
+            arrow.setAttribute('aria-hidden', 'true');
+            arrow.textContent = '\u2192';
+            link.append(arrow);
+        }
+        link.append(page.label);
         return link;
     }));
     if (!nav.nextElementSibling?.classList.contains('mobile-menu-socials')) {
