@@ -32,7 +32,7 @@
             <p>I opened the files in a hex editor and mapped the structure by hand. A BMG file is split into specific chunks: a header, an index for message sizes, the raw text block, and numeric IDs so the game knows exactly where to look for a string.</p>
         </div>
         <figure class="case-panel">
-            <img src="assets/images/projects/bmge/re.png"
+            <img src="assets/images/projects/bmge/re.webp"
                 alt="Hex view of a BMG file showing section headers and inline tag bytes." loading="lazy"
                 decoding="async">
         </figure>
@@ -44,7 +44,7 @@
             <p>Those inline control tags were the real headache. My editor translates them into readable text like <code>[Color:0200]</code>. When you save your work, the tool re-encodes them perfectly. It reuses the exact original bytes for existing tags and only generates new hex codes for tags you type yourself. This practically eliminates corruption risks.</p>
         </div>
         <figure class="case-panel">
-            <img src="assets/images/projects/bmge/tags.png"
+            <img src="assets/images/projects/bmge/tags.webp"
                 alt="BMGE editor showing inline color tags rendered visually inside a message." loading="lazy"
                 decoding="async">
         </figure>
@@ -63,7 +63,7 @@
             <p>Every Nintendo game handles BMG files a bit differently. Instead of hardcoding the rules just for <em>Tomodachi</em>, I built a plugin system. You just pick the game from a dropdown menu and the editor loads the correct tag vocabulary and visual styling.</p>
         </div>
         <figure class="case-panel" data-no-parallax>
-            <img src="assets/images/projects/bmge/tomodachi.png"
+            <img src="assets/images/projects/bmge/tomodachi.webp"
                 alt="Tomodachi Collection Nintendo DS box art." loading="lazy" decoding="async">
             <figcaption class="media-caption">Tomodachi Collection &copy; Nintendo</figcaption>
         </figure>
@@ -78,7 +78,7 @@
             <p>The UI leans heavily on <code>#FDE404</code>, the signature yellow from <em>Tomodachi Collection</em>. Since translation work means staring at text for hours on end, I went with a dark, low-contrast background to cut down on eye strain.</p>
         </div>
         <figure class="case-panel">
-            <img src="assets/images/projects/bmge/website.png"
+            <img src="assets/images/projects/bmge/website.webp"
                 alt="BMGE editor interface, dark theme with Tomodachi Collection yellow accent." loading="lazy"
                 decoding="async">
         </figure>

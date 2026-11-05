@@ -43,9 +43,9 @@
         }
       ],
       "ctaImages": [
-        "assets/images/projects/dran/structure.png",
-        "assets/images/projects/dran/design.png",
-        "assets/images/projects/dran/roadmap.png"
+        "assets/images/projects/dran/structure.webp",
+        "assets/images/projects/dran/design.webp",
+        "assets/images/projects/dran/roadmap.webp"
       ]
     },
     {
@@ -70,9 +70,9 @@
         }
       ],
       "ctaImages": [
-        "assets/images/projects/lsdp/hero.png",
-        "assets/images/projects/lsdp/menu.png",
-        "assets/images/projects/lsdp/history.png"
+        "assets/images/projects/lsdp/hero.webp",
+        "assets/images/projects/lsdp/menu.webp",
+        "assets/images/projects/lsdp/history.webp"
       ]
     },
     {

@@ -10,3 +10,6 @@
 
 Règles : tout en minuscules (GitHub Pages est sensible à la casse), un dossier = un `id`,
 chemins relatifs à l'intérieur des démos.
+
+Images : `.webp` pour les captures et mockups, `.jpg` (qualité 82, 2400 px max) pour les photos, `.svg` pour les icônes.
+Noms en minuscules, séparés par des tirets (`street-billboard.webp`). Polices dans `assets/fonts/` en minuscules.

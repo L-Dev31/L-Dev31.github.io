@@ -188,9 +188,9 @@
         }
       ],
       "ctaImages": [
-        "assets/images/projects/cmck/typography.png",
+        "assets/images/projects/cmck/typography.webp",
         "assets/images/projects/cmck/website.jpg",
-        "assets/images/projects/cmck/structure.png"
+        "assets/images/projects/cmck/structure.webp"
       ]
     },
     {
@@ -224,9 +224,9 @@
         }
       ],
       "ctaImages": [
-        "assets/images/projects/bmge/tomodachi.png",
-        "assets/images/projects/bmge/tags.png",
-        "assets/images/projects/bmge/re.png"
+        "assets/images/projects/bmge/tomodachi.webp",
+        "assets/images/projects/bmge/tags.webp",
+        "assets/images/projects/bmge/re.webp"
       ]
     },
     {
@@ -260,9 +260,9 @@
         }
       ],
       "ctaImages": [
-        "assets/images/projects/gptr/dictionary.png",
-        "assets/images/projects/gptr/translation.png",
-        "assets/images/projects/gptr/interface.png"
+        "assets/images/projects/gptr/dictionary.webp",
+        "assets/images/projects/gptr/translation.webp",
+        "assets/images/projects/gptr/interface.webp"
       ]
     }
   ]

@@ -1,9 +1,9 @@
 /* ── base ── */
-@font-face { font-family: 'Lux'; src: url('../fonts/Lux.otf') format('opentype'); font-display: swap; }
-@font-face { font-family: 'Bold'; src: url('../fonts/Bold.otf') format('opentype'); font-display: swap; }
-@font-face { font-family: 'Heavitas'; src: url('../fonts/Heavitas.ttf') format('truetype'); font-display: swap; }
-@font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-Variable.ttf') format('truetype'); font-weight: 300 900; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-VariableItalic.ttf') format('truetype'); font-weight: 300 900; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Lux'; src: url('../fonts/lux.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Bold'; src: url('../fonts/bold.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Heavitas'; src: url('../fonts/heavitas.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('../fonts/satoshi-variable.ttf') format('truetype'); font-weight: 300 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('../fonts/satoshi-variable-italic.ttf') format('truetype'); font-weight: 300 900; font-style: italic; font-display: swap; }
 :root {
     --white: #F6F2F2;   /* off-white for the light */
     --black: #170206;   /* a very deep wine red for the dark, never pure black */

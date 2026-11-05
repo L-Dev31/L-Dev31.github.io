@@ -1,8 +1,8 @@
-@font-face { font-family: 'Lux'; src: url('../fonts/Lux.otf') format('opentype'); font-display: swap; }
-@font-face { font-family: 'Bold'; src: url('../fonts/Bold.otf') format('opentype'); font-display: swap; }
-@font-face { font-family: 'Heavitas'; src: url('../fonts/Heavitas.ttf') format('truetype'); font-display: swap; }
-@font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-Variable.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
-@font-face { font-family: 'Satoshi'; src: url('../fonts/Satoshi-VariableItalic.ttf') format('truetype'); font-weight: 100 900; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Lux'; src: url('../fonts/lux.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Bold'; src: url('../fonts/bold.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Heavitas'; src: url('../fonts/heavitas.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('../fonts/satoshi-variable.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('../fonts/satoshi-variable-italic.ttf') format('truetype'); font-weight: 100 900; font-style: italic; font-display: swap; }
 
 :root {
     --white: #F6F2F2;   /* off-white for the light */
@@ -954,24 +954,6 @@ html.menu-open body {
     gap: 10px;
     color: var(--white);
     outline: none;
-}
-
-/* The stop being read is marked by one red pixel, the unit of the pictures. */
-.journey-stop::before {
-    content: '';
-    position: absolute;
-    top: calc(50% - clamp(70px, 8vw, 120px));
-    left: calc(-1 * clamp(18px, 2vw, 28px));
-    width: 10px;
-    height: 10px;
-    background: var(--accent);
-    transform: scale(0);
-    transition: transform 0.4s var(--ease-out);
-}
-
-.journey-stop.is-active::before,
-.journey-stop:focus-visible::before {
-    transform: scale(1);
 }
 
 .journey-when,
