@@ -3,7 +3,7 @@ import { cellCanvas, CELL, drawCell } from './pixel.js';
 
 const isMobile = breakpoint.isMobile;
 
-const SCRUBBED = '.scrubbing-text, h1, h2, h3:not(.journey-place), .promise-text p';
+const SCRUBBED = '.scrubbing-text, h1, h2, h3:not(.journey-place), main p, main :is(.journey-when, .journey-country, .exp-year, .exp-role, .exp-list li)';
 const scrubBlocks = [];
 const scrubSeen = new WeakSet();
 let scrubWired = false;
