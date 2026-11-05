@@ -1,7 +1,7 @@
 # projects/ — conventions
 
 - `cases/<id>.html` — fragment HTML injecté dans `project.html?id=<id>`.
-  Images via `assets/images/projects/<id>/…` ; icône 3D de l’index : `assets/images/projects/icons/<id>.svg`.
+  Images via `assets/images/projects/<id>/…` .
 - `cases/files/<id>-*.pdf` — pièces jointes des case studies (liens `ctas` dans `projects.json`).
 - `demos/<id>/` — site statique autonome lié à un projet visible (`bmge`, `lsdp`, `bgaw`).
 - `assets/data/projects.json` — projets **visibles** uniquement (grille + sitemap).

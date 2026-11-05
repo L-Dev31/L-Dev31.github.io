@@ -452,3 +452,43 @@ export function pixelPicture(host, src, { mirror = false, color = '#fff', active
     const timer = setInterval(() => brightness && active() && cells.paint(brightness), lowPower ? 400 : 120);
     return { destroy() { clearInterval(timer); removeEventListener('resize', render); canvas.remove(); } };
 }
+
+export function pixelCover(host, color) {
+    const canvas = document.createElement('canvas');
+    canvas.className = 'pixel-cover';
+    canvas.setAttribute('aria-hidden', 'true');
+    host.append(canvas);
+    const ctx = canvas.getContext('2d');
+    let cols = 0, rows = 0, order = new Float32Array(0), frame = 0;
+
+    const fit = () => {
+        cols = Math.ceil(host.clientWidth / CELL);
+        rows = Math.ceil(host.clientHeight / CELL);
+        canvas.width = cols * CELL;
+        canvas.height = rows * CELL;
+        order = Float32Array.from({ length: cols * rows }, Math.random);
+    };
+    const paint = p => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = color;
+        for (let i = 0; i < order.length; i++) {
+            if (order[i] >= p) ctx.fillRect((i % cols) * CELL, ((i / cols) | 0) * CELL, CELL, CELL);
+        }
+    };
+    const run = (from, to, done) => {
+        cancelAnimationFrame(frame);
+        if (reducedMotion) { paint(to); done?.(); return; }
+        const start = performance.now(), length = 650;
+        const step = now => {
+            const t = Math.min(1, (now - start) / length);
+            paint(from + (to - from) * t);
+            if (t < 1) frame = requestAnimationFrame(step);
+            else done?.();
+        };
+        frame = requestAnimationFrame(step);
+    };
+    return {
+        show() { fit(); run(0, 1); },
+        hide(done) { run(1, 0, done); },
+    };
+}

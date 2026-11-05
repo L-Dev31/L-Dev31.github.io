@@ -1,6 +1,5 @@
 import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
-import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture } from './effects.js';
-import { extrudedSvg, CELL } from './pixel.js';
+import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture, pixelCover } from './effects.js';
 import { journey } from './sections.js';
 
 const CATEGORIES = ['Graphic Design', 'Webdesign', 'Marketing', 'Dev'];
@@ -17,8 +16,6 @@ if (story) {
 scrubbingText();
 scrollScrubbedVideo();
 
-const DEFAULT_SVG = 'assets/images/core/logo.svg';
-
 const el = (tag, cls, text) => {
     const node = document.createElement(tag);
     if (cls) node.className = cls;
@@ -27,7 +24,51 @@ const el = (tag, cls, text) => {
 };
 
 function projectIndex(container, projects) {
-    const rows = [];
+    const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    const entries = [];
+    let current = null;
+
+    const build = entry => {
+        const { project, detail } = entry;
+        const media = el('div', 'index-media');
+        if (project.video) {
+            const video = el('video');
+            Object.assign(video, { src: project.video, poster: project.heroImage, muted: true, loop: true, playsInline: true, preload: 'none' });
+            entry.video = video;
+            media.append(video);
+        } else {
+            const img = el('img');
+            Object.assign(img, { src: project.heroImage, alt: '', loading: 'lazy', decoding: 'async' });
+            media.append(img);
+        }
+        const info = el('div', 'index-info');
+        const tags = el('ul', 'index-tags');
+        tags.append(...(project.tags || []).map(tag => el('li', 'index-tag', tag)));
+        const go = el('a', 'index-go', 'Read the case study ');
+        go.href = `project.html?id=${project.id}`;
+        go.append(el('span', '', '\u2197'));
+        info.append(el('div', 'index-role', `Worked as a ${project.role}`), el('div', 'index-text', project.subtitle), tags, go);
+        const inner = el('div', 'index-detail-inner');
+        inner.append(media, info);
+        detail.append(inner);
+        entry.cover = pixelCover(media, color);
+    };
+    const open = entry => {
+        if (current && current !== entry) close(current);
+        if (!entry.cover) build(entry);
+        current = entry;
+        entry.item.classList.add('is-open');
+        entry.row.setAttribute('aria-expanded', 'true');
+        entry.cover.show();
+        entry.video?.play().catch(() => {});
+    };
+    const close = entry => {
+        if (current === entry) current = null;
+        entry.item.classList.remove('is-open');
+        entry.row.setAttribute('aria-expanded', 'false');
+        entry.cover?.hide(() => entry.video?.pause());
+    };
+
     const groups = [...new Set(projects.map(p => p.category))]
         .sort((a, b) => CATEGORIES.indexOf(a) - CATEGORIES.indexOf(b))
         .map(category => {
@@ -37,12 +78,18 @@ function projectIndex(container, projects) {
                 const item = el('li', 'index-item');
                 const row = el('a', 'index-row');
                 row.href = `project.html?id=${project.id}`;
-                const year = (project.date || '').slice(0, 4);
-                const title = el('span', 'index-title', project.title);
-                row.append(title, el('span', 'index-slot'), el('span', 'index-year', year));
-                item.append(row);
+                row.setAttribute('role', 'button');
+                row.setAttribute('aria-expanded', 'false');
+                row.append(el('span', 'index-title', project.title), el('span', 'index-year', (project.date || '').slice(0, 4)));
+                const detail = el('div', 'index-detail');
+                item.append(row, detail);
                 list.append(item);
-                rows.push({ project, row });
+                const entry = { project, item, row, detail };
+                row.addEventListener('click', event => {
+                    event.preventDefault();
+                    item.classList.contains('is-open') ? close(entry) : open(entry);
+                });
+                entries.push(entry);
             }
             const heading = el('h3', 'index-category');
             heading.append(el('span', '', category), el('span', 'index-count', String(list.children.length).padStart(2, '0')));
@@ -52,57 +99,13 @@ function projectIndex(container, projects) {
     const columns = el('div', 'index-groups');
     columns.append(...groups);
     container.replaceChildren(columns);
-    return rows;
-}
-
-function projectPreview(container, rows) {
-    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-
-    const figure = el('figure', 'index-preview');
-    figure.setAttribute('aria-hidden', 'true');
-    const canvas = el('canvas');
-    figure.append(canvas);
-    container.append(figure);
-    const solid = extrudedSvg(canvas, getComputedStyle(container).color);
-    let current = null;
-
-    const show = (row, project) => {
-        current = row;
-        const box = container.getBoundingClientRect();
-        const slot = row.querySelector('.index-slot').getBoundingClientRect();
-        const r = row.getBoundingClientRect();
-
-        const cols = Math.max(16, Math.floor((slot.width - 16) / CELL / 4) * 4);
-        figure.style.left = `${slot.left - box.left + (slot.width - cols * CELL) / 2}px`;
-        figure.style.top = `${r.top - box.top + r.height / 2}px`;
-        figure.style.width = `${cols * CELL}px`;
-        solid.show([project.svg || `assets/images/projects/icons/${project.id}.svg`, DEFAULT_SVG], cols).then(() => {
-            if (current !== row) return;
-            figure.offsetWidth;
-            figure.classList.add('is-on');
-        });
-    };
-    const hide = row => {
-        if (current !== row) return;
-        current = null;
-        figure.classList.remove('is-on');
-        solid.hide();
-    };
-
-    for (const { row, project } of rows) {
-        row.addEventListener('pointerenter', () => show(row, project));
-        row.addEventListener('pointerleave', () => hide(row));
-        row.addEventListener('focus', () => show(row, project));
-        row.addEventListener('blur', () => hide(row));
-    }
 }
 
 async function initProjects() {
     const container = document.querySelector('.project-index');
     if (!container) return;
     const projects = (await loadProjects()).filter(p => CATEGORIES.includes(p.category));
-    const rows = projectIndex(container, projects);
-    projectPreview(container, rows);
+    projectIndex(container, projects);
     refreshParallax();
 }
 
