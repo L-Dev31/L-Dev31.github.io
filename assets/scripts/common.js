@@ -275,7 +275,7 @@ function mobileMenu(lenis) {
         const { pixelPicture } = await import('./effects.js');
         const root = getComputedStyle(document.documentElement);
         const dark = document.documentElement.classList.contains('on-accent');
-        picture = pixelPicture(host, 'assets/images/core/menu.jpg', {
+        picture = pixelPicture(host, 'assets/images/core/menu.webp', {
             mirror: true,
             color: root.getPropertyValue(dark ? '--accent' : '--black').trim(),
             active: () => menu.classList.contains('open'),
