@@ -231,7 +231,8 @@ h3 {
 
 #promise .section-note,
 #my-story .section-note,
-#featured-projects .section-note {
+#featured-projects .section-note,
+.accent-section .section-note {
     color: var(--black);
 }
 
@@ -849,7 +850,8 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
 
 #promise .title,
 #my-story .title,
-#featured-projects .title {
+#featured-projects .title,
+.accent-section .title {
     color: var(--black);
 }
 
@@ -1116,7 +1118,7 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     position: relative;
     flex: none;
     height: 0.7em;
-    width: calc(var(--open) * var(--aspect) * 0.7em + var(--open) * 0.3em);
+    width: calc(var(--open) * var(--aspect) * 0.7em + var(--open) * 0.3em + 0.22em);
 }
 
 .journey-flag-canvas {
@@ -1551,7 +1553,8 @@ html:has(.project-main)::-webkit-scrollbar {
         grid-template-columns: 1fr;
     }
 
-    .index-row {
+    .index-row,
+    .culture-list .index-row {
         grid-template-columns: minmax(0, 1fr) auto;
     }
 
@@ -2088,4 +2091,55 @@ html:has(.project-main)::-webkit-scrollbar {
         grid-template-columns: 1fr;
         gap: 12px;
     }
+}
+
+.accent-section {
+    background: var(--accent);
+    color: var(--black);
+}
+
+.culture-section {
+    min-height: 0;
+    padding: 0 0 clamp(140px, 24vh, 260px);
+    justify-content: flex-start;
+}
+
+.culture-section .section-head {
+    margin-bottom: clamp(80px, 16vh, 180px);
+}
+
+.culture-list .index-row {
+    grid-template-columns: minmax(0, 1fr) clamp(200px, 21vw, 320px) minmax(0, 1fr);
+}
+
+.culture-list .index-item:last-child {
+    border-bottom: 1px solid var(--black);
+}
+
+.culture-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    margin: 0;
+    overflow: hidden;
+    visibility: hidden;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.culture-preview.is-on {
+    visibility: visible;
+}
+
+.culture-preview img {
+    display: block;
+    width: auto;
+    height: clamp(180px, 32vh, 340px);
+    max-width: min(70vw, 440px);
+    object-fit: contain;
+}
+
+#travels .journey-stop {
+    min-height: 56vh;
 }

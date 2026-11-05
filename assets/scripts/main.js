@@ -161,5 +161,62 @@ async function initProjects() {
     refreshParallax();
 }
 
-Promise.all([initProjects(), journey(document.querySelector('.journey'))])
+function cultureList(container, items) {
+    const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    const list = el('ul', 'index-list');
+    const entries = items.map(item => {
+        const row = el('div', 'index-row');
+        row.tabIndex = 0;
+        row.append(el('span', 'index-title', item.title), el('span', 'index-slot'), el('span', 'index-year', String(item.year)));
+        const li = el('li', 'index-item');
+        li.append(row);
+        list.append(li);
+        return { item, row };
+    });
+    const figure = el('figure', 'culture-preview');
+    const img = el('img');
+    img.alt = '';
+    figure.setAttribute('aria-hidden', 'true');
+    figure.append(img);
+    container.replaceChildren(list, figure);
+    const cover = pixelCover(figure, color, 16);
+    let current = null;
+
+    const show = async ({ item, row }) => {
+        current = row;
+        img.src = item.cover;
+        await img.decode().catch(() => {});
+        if (current !== row) return;
+        const box = container.getBoundingClientRect(), slot = row.querySelector('.index-slot').getBoundingClientRect(), r = row.getBoundingClientRect();
+        const centre = slot.width ? slot.left + slot.width / 2 : r.left + r.width / 2;
+        figure.style.left = `${centre - box.left}px`;
+        figure.style.top = `${r.top - box.top + r.height / 2}px`;
+        cover.show();
+        requestAnimationFrame(() => figure.classList.add('is-on'));
+    };
+    const hide = row => {
+        if (current !== row) return;
+        current = null;
+        cover.hide(() => { if (!current) figure.classList.remove('is-on'); });
+    };
+
+    const hover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    for (const entry of entries) {
+        if (hover) {
+            entry.row.addEventListener('pointerenter', () => show(entry));
+            entry.row.addEventListener('pointerleave', () => hide(entry.row));
+        }
+        entry.row.addEventListener('focus', () => show(entry));
+        entry.row.addEventListener('blur', () => hide(entry.row));
+    }
+}
+
+async function initCulture() {
+    const lists = document.querySelectorAll('[data-culture]');
+    if (!lists.length) return;
+    const data = await fetch('assets/data/culture.json').then(r => r.json());
+    lists.forEach(container => cultureList(container, data[container.dataset.culture] || []));
+}
+
+Promise.all([initProjects(), initCulture(), ...[...document.querySelectorAll('.journey')].map(journey)])
     .then(() => { scrubbingText(); refreshParallax(); });

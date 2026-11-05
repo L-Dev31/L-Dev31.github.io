@@ -455,12 +455,12 @@ export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#
     return { destroy() { clearInterval(timer); removeEventListener('resize', render); canvas.remove(); } };
 }
 
-export function pixelCover(host, color) {
+export function pixelCover(host, color, size) {
     let layer = null;
     const run = (reverse, done) => {
         layer?.remove();
         if (reducedMotion) { layer = null; done?.(); return; }
-        layer = dissolve(host, { color, total: 800, reverse }, canvas => {
+        layer = dissolve(host, { color, size, total: 800, reverse }, canvas => {
             if (!reverse) { canvas.remove(); layer = null; }
             done?.();
         });

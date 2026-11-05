@@ -161,13 +161,21 @@ function waving(host, key) {
         canvas.style.height = `${(rows + 2 * pad) * FLAG_CELL}px`;
 
         const tw = cols * 2, th = rows * 2;
+        texture = new Uint8Array(tw * th);
+        if (spec.grid) {
+            const gh = spec.grid.length, gw = spec.grid[0].length;
+            for (let y = 0; y < th; y++) {
+                const line = spec.grid[Math.min(gh - 1, Math.floor(y / th * gh))];
+                for (let x = 0; x < tw; x++) texture[y * tw + x] = line.charCodeAt(Math.min(gw - 1, Math.floor(x / tw * gw))) - 48;
+            }
+            return true;
+        }
         const off = document.createElement('canvas');
         off.width = tw; off.height = th;
         const g = off.getContext('2d', { willReadFrequently: true });
         g.imageSmoothingEnabled = false;
         spec.draw(g, tw, th);
         const px = g.getImageData(0, 0, tw, th).data;
-        texture = new Uint8Array(tw * th);
         for (let i = 0; i < texture.length; i++) {
             let best = 0, bestD = Infinity;
             rgb.forEach((c, k) => {
@@ -207,7 +215,8 @@ function waving(host, key) {
 
 export async function journey(container) {
     if (!container) return;
-    const { stops } = await fetch('assets/data/journey.json').then(r => r.json());
+    const { stops } = await fetch(container.dataset.src || 'assets/data/journey.json').then(r => r.json());
+    if (!stops.every(stop => FLAGS[stop.flag])) Object.assign(FLAGS, await fetch('assets/data/flags.json').then(r => r.json()));
 
     const stage = el('div', 'journey-stage');
     const canvas = el('canvas', 'journey-globe');
@@ -227,8 +236,8 @@ export async function journey(container) {
         slot.style.setProperty('--aspect', FLAGS[stop.flag]?.aspect ?? 1.5);
         place.append(el('span', 'journey-half scrubbing-text', words.slice(0, cut).join(' ')), slot,
             el('span', 'journey-half scrubbing-text', words.slice(cut).join(' ')));
-        item.append(el('span', 'journey-when', stop.when), place,
-            el('span', 'journey-country', stop.country), el('p', 'journey-what scrubbing-text', stop.what));
+        item.append(...[stop.when && el('span', 'journey-when', stop.when), place,
+            el('span', 'journey-country', stop.country), stop.what && el('p', 'journey-what scrubbing-text', stop.what)].filter(Boolean));
         list.append(item);
         return item;
     });
@@ -378,12 +387,12 @@ export async function journey(container) {
                 const here = shown.find(o => o.stop === stop);
                 if (!isActive && (shown.some(o => close(o) && o.isActive) || written.some(close))) continue;
                 written.push(here);
-                const w = labels.measureText(stop.country).width;
+                const w = labels.measureText(stop.label ?? stop.country).width;
                 const x = pt.x + 22, y = pt.y;
                 labels.fillStyle = isActive ? ink : paper;
                 labels.fillRect(x - 8, y - 12, w + 16, 24);
                 labels.fillStyle = isActive ? paper : ink;
-                labels.fillText(stop.country, x, y + 1);
+                labels.fillText(stop.label ?? stop.country, x, y + 1);
             }
             labels.restore();
         }

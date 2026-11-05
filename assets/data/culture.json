@@ -1,0 +1,17 @@
+{
+  "films": [
+    { "title": "Blade Runner", "year": 1982, "cover": "assets/images/culture/blade-runner.webp" },
+    { "title": "Spirited Away", "year": 2001, "cover": "assets/images/culture/spirited-away.webp" },
+    { "title": "Parasite", "year": 2019, "cover": "assets/images/culture/parasite.webp" }
+  ],
+  "books": [
+    { "title": "The Little Prince", "year": 1943, "cover": "assets/images/culture/the-little-prince.webp" },
+    { "title": "Nineteen Eighty-Four", "year": 1949, "cover": "assets/images/culture/nineteen-eighty-four.webp" },
+    { "title": "Dune", "year": 1965, "cover": "assets/images/culture/dune.webp" }
+  ],
+  "games": [
+    { "title": "Tomodachi Collection", "year": 2009, "cover": "assets/images/culture/tomodachi-collection.webp" },
+    { "title": "Hollow Knight", "year": 2017, "cover": "assets/images/culture/hollow-knight.webp" },
+    { "title": "The Legend of Zelda: Breath of the Wild", "year": 2017, "cover": "assets/images/culture/breath-of-the-wild.webp" }
+  ]
+}
