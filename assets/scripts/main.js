@@ -3,7 +3,7 @@ import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture } from './ef
 import { extrudedSvg, CELL } from './pixel.js';
 import { journey } from './sections.js';
 
-const CATEGORIES = ['Design', 'UI/UX', 'Web', 'Marketting', 'Photography', 'Tools', 'Video Games'];
+const CATEGORIES = ['Graphic Design', 'Webdesign', 'Marketing', 'Dev'];
 
 initPage();
 if (!document.querySelector('#header')) reveal(document.querySelectorAll('section, .title'));
@@ -44,8 +44,8 @@ function projectIndex(container, projects) {
                 list.append(item);
                 rows.push({ project, row });
             }
-            const heading = el('h3', 'index-category', category);
-            heading.append(el('span', 'index-count', String(list.children.length).padStart(2, '0')));
+            const heading = el('h3', 'index-category');
+            heading.append(el('span', '', category), el('span', 'index-count', String(list.children.length).padStart(2, '0')));
             group.append(heading, list);
             return group;
         });
