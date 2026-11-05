@@ -1,9 +1,23 @@
 {
   "films": [
     {
-      "id": "blade-runner",
-      "title": "Blade Runner",
-      "year": 1982
+      "id": "howl-s-moving-castle",
+      "title": "Howl's Moving Castle",
+      "year": 2004,
+      "search": [
+        "Howl's Moving Castle (film)",
+        "Howl's Moving Castle"
+      ]
+    },
+    {
+      "id": "porco-rosso",
+      "title": "Porco Rosso",
+      "year": 1992
+    },
+    {
+      "id": "the-boy-and-the-heron",
+      "title": "The Boy and the Heron",
+      "year": 2023
     },
     {
       "id": "spirited-away",
@@ -11,10 +25,542 @@
       "year": 2001
     },
     {
-      "id": "parasite",
-      "title": "Parasite",
-      "year": 2019,
-      "search": "Parasite (2019 film)"
+      "id": "from-up-on-poppy-hill",
+      "title": "From Up on Poppy Hill",
+      "year": 2011
+    },
+    {
+      "id": "grave-of-the-fireflies",
+      "title": "Grave of the Fireflies",
+      "year": 1988
+    },
+    {
+      "id": "wolf-children",
+      "title": "Wolf Children",
+      "year": 2012
+    },
+    {
+      "id": "kiki-s-delivery-service",
+      "title": "Kiki's Delivery Service",
+      "year": 1989
+    },
+    {
+      "id": "the-cat-returns",
+      "title": "The Cat Returns",
+      "year": 2002
+    },
+    {
+      "id": "whisper-of-the-heart",
+      "title": "Whisper of the Heart",
+      "year": 1995
+    },
+    {
+      "id": "princess-mononoke",
+      "title": "Princess Mononoke",
+      "year": 1997
+    },
+    {
+      "id": "e-t-the-extra-terrestrial",
+      "title": "E.T. the Extra-Terrestrial",
+      "year": 1982
+    },
+    {
+      "id": "peter-pan",
+      "title": "Peter Pan",
+      "year": 1953,
+      "search": [
+        "Peter Pan (1953 film)",
+        "Peter Pan"
+      ]
+    },
+    {
+      "id": "snow-white-and-the-seven-dwarfs",
+      "title": "Snow White and the Seven Dwarfs",
+      "year": 1937,
+      "search": [
+        "Snow White and the Seven Dwarfs (1937 film)",
+        "Snow White and the Seven Dwarfs"
+      ]
+    },
+    {
+      "id": "beetlejuice",
+      "title": "Beetlejuice",
+      "year": 1988
+    },
+    {
+      "id": "beetlejuice-beetlejuice",
+      "title": "Beetlejuice Beetlejuice",
+      "year": 2024
+    },
+    {
+      "id": "back-to-the-future",
+      "title": "Back to the Future",
+      "year": 1985
+    },
+    {
+      "id": "back-to-the-future-part-ii",
+      "title": "Back to the Future Part II",
+      "year": 1989
+    },
+    {
+      "id": "back-to-the-future-part-iii",
+      "title": "Back to the Future Part III",
+      "year": 1990
+    },
+    {
+      "id": "jurassic-park",
+      "title": "Jurassic Park",
+      "year": 1993,
+      "search": [
+        "Jurassic Park (film)",
+        "Jurassic Park"
+      ]
+    },
+    {
+      "id": "raiders-of-the-lost-ark",
+      "title": "Raiders of the Lost Ark",
+      "year": 1981
+    },
+    {
+      "id": "indiana-jones-and-the-temple-of-doom",
+      "title": "Indiana Jones and the Temple of Doom",
+      "year": 1984
+    },
+    {
+      "id": "indiana-jones-and-the-last-crusade",
+      "title": "Indiana Jones and the Last Crusade",
+      "year": 1989
+    },
+    {
+      "id": "hook",
+      "title": "Hook",
+      "year": 1991,
+      "search": [
+        "Hook (film)",
+        "Hook"
+      ]
+    },
+    {
+      "id": "toy-story",
+      "title": "Toy Story",
+      "year": 1995
+    },
+    {
+      "id": "toy-story-2",
+      "title": "Toy Story 2",
+      "year": 1999
+    },
+    {
+      "id": "toy-story-3",
+      "title": "Toy Story 3",
+      "year": 2010
+    },
+    {
+      "id": "toy-story-4",
+      "title": "Toy Story 4",
+      "year": 2019
+    },
+    {
+      "id": "midsommar",
+      "title": "Midsommar",
+      "year": 2019
+    },
+    {
+      "id": "backrooms",
+      "title": "Backrooms",
+      "year": 2026,
+      "search": [
+        "Backrooms (film)",
+        "Backrooms"
+      ]
+    },
+    {
+      "id": "making-a-living",
+      "title": "Making a Living",
+      "year": 1914
+    },
+    {
+      "id": "the-kid",
+      "title": "The Kid",
+      "year": 1921,
+      "search": [
+        "The Kid (1921 film)",
+        "The Kid"
+      ]
+    },
+    {
+      "id": "modern-times",
+      "title": "Modern Times",
+      "year": 1936,
+      "search": [
+        "Modern Times (film)",
+        "Modern Times"
+      ]
+    },
+    {
+      "id": "the-great-dictator",
+      "title": "The Great Dictator",
+      "year": 1940
+    },
+    {
+      "id": "the-good-the-bad-and-the-ugly",
+      "title": "The Good, the Bad and the Ugly",
+      "year": 1966
+    },
+    {
+      "id": "once-upon-a-time-in-the-west",
+      "title": "Once Upon a Time in the West",
+      "year": 1968
+    },
+    {
+      "id": "the-shining",
+      "title": "The Shining",
+      "year": 1980,
+      "search": [
+        "The Shining (film)",
+        "The Shining"
+      ]
+    },
+    {
+      "id": "aladdin",
+      "title": "Aladdin",
+      "year": 1992,
+      "search": [
+        "Aladdin (1992 Disney film)",
+        "Aladdin"
+      ]
+    },
+    {
+      "id": "the-return-of-jafar",
+      "title": "The Return of Jafar",
+      "year": 1994
+    },
+    {
+      "id": "the-lion-king",
+      "title": "The Lion King",
+      "year": 1994
+    },
+    {
+      "id": "mrs-doubtfire",
+      "title": "Mrs. Doubtfire",
+      "year": 1993
+    },
+    {
+      "id": "fight-club",
+      "title": "Fight Club",
+      "year": 1999
+    },
+    {
+      "id": "space-jam",
+      "title": "Space Jam",
+      "year": 1996
+    },
+    {
+      "id": "space-jam-a-new-legacy",
+      "title": "Space Jam: A New Legacy",
+      "year": 2021
+    },
+    {
+      "id": "cool-runnings",
+      "title": "Cool Runnings",
+      "year": 1993
+    },
+    {
+      "id": "men-in-black",
+      "title": "Men in Black",
+      "year": 1997,
+      "search": [
+        "Men in Black (1997 film)"
+      ]
+    },
+    {
+      "id": "men-in-black-ii",
+      "title": "Men in Black II",
+      "year": 2002
+    },
+    {
+      "id": "men-in-black-3",
+      "title": "Men in Black 3",
+      "year": 2012
+    },
+    {
+      "id": "men-in-black-international",
+      "title": "Men in Black: International",
+      "year": 2019
+    },
+    {
+      "id": "dr-no",
+      "title": "Dr. No",
+      "year": 1962,
+      "search": [
+        "Dr. No (film)",
+        "Dr. No"
+      ]
+    },
+    {
+      "id": "from-russia-with-love",
+      "title": "From Russia with Love",
+      "year": 1963,
+      "search": [
+        "From Russia with Love (film)",
+        "From Russia with Love"
+      ]
+    },
+    {
+      "id": "goldfinger",
+      "title": "Goldfinger",
+      "year": 1964,
+      "search": [
+        "Goldfinger (film)",
+        "Goldfinger"
+      ]
+    },
+    {
+      "id": "thunderball",
+      "title": "Thunderball",
+      "year": 1965,
+      "search": [
+        "Thunderball (film)",
+        "Thunderball"
+      ]
+    },
+    {
+      "id": "you-only-live-twice",
+      "title": "You Only Live Twice",
+      "year": 1967,
+      "search": [
+        "You Only Live Twice (film)",
+        "You Only Live Twice"
+      ]
+    },
+    {
+      "id": "on-her-majesty-s-secret-service",
+      "title": "On Her Majesty's Secret Service",
+      "year": 1969,
+      "search": [
+        "On Her Majesty's Secret Service (film)",
+        "On Her Majesty's Secret Service"
+      ]
+    },
+    {
+      "id": "diamonds-are-forever",
+      "title": "Diamonds Are Forever",
+      "year": 1971,
+      "search": [
+        "Diamonds Are Forever (film)",
+        "Diamonds Are Forever"
+      ]
+    },
+    {
+      "id": "live-and-let-die",
+      "title": "Live and Let Die",
+      "year": 1973,
+      "search": [
+        "Live and Let Die (film)",
+        "Live and Let Die"
+      ]
+    },
+    {
+      "id": "the-man-with-the-golden-gun",
+      "title": "The Man with the Golden Gun",
+      "year": 1974,
+      "search": [
+        "The Man with the Golden Gun (film)",
+        "The Man with the Golden Gun"
+      ]
+    },
+    {
+      "id": "the-spy-who-loved-me",
+      "title": "The Spy Who Loved Me",
+      "year": 1977,
+      "search": [
+        "The Spy Who Loved Me (film)",
+        "The Spy Who Loved Me"
+      ]
+    },
+    {
+      "id": "moonraker",
+      "title": "Moonraker",
+      "year": 1979,
+      "search": [
+        "Moonraker (film)",
+        "Moonraker"
+      ]
+    },
+    {
+      "id": "for-your-eyes-only",
+      "title": "For Your Eyes Only",
+      "year": 1981,
+      "search": [
+        "For Your Eyes Only (film)",
+        "For Your Eyes Only"
+      ]
+    },
+    {
+      "id": "octopussy",
+      "title": "Octopussy",
+      "year": 1983
+    },
+    {
+      "id": "a-view-to-a-kill",
+      "title": "A View to a Kill",
+      "year": 1985
+    },
+    {
+      "id": "the-living-daylights",
+      "title": "The Living Daylights",
+      "year": 1987
+    },
+    {
+      "id": "licence-to-kill",
+      "title": "Licence to Kill",
+      "year": 1989
+    },
+    {
+      "id": "goldeneye",
+      "title": "GoldenEye",
+      "year": 1995
+    },
+    {
+      "id": "tomorrow-never-dies",
+      "title": "Tomorrow Never Dies",
+      "year": 1997
+    },
+    {
+      "id": "the-world-is-not-enough",
+      "title": "The World Is Not Enough",
+      "year": 1999
+    },
+    {
+      "id": "die-another-day",
+      "title": "Die Another Day",
+      "year": 2002
+    },
+    {
+      "id": "casino-royale",
+      "title": "Casino Royale",
+      "year": 2006,
+      "search": [
+        "Casino Royale (2006 film)",
+        "Casino Royale"
+      ]
+    },
+    {
+      "id": "quantum-of-solace",
+      "title": "Quantum of Solace",
+      "year": 2008
+    },
+    {
+      "id": "skyfall",
+      "title": "Skyfall",
+      "year": 2012
+    },
+    {
+      "id": "spectre",
+      "title": "Spectre",
+      "year": 2015,
+      "search": [
+        "Spectre (2015 film)",
+        "Spectre"
+      ]
+    },
+    {
+      "id": "no-time-to-die",
+      "title": "No Time to Die",
+      "year": 2021
+    },
+    {
+      "id": "home-alone",
+      "title": "Home Alone",
+      "year": 1990
+    },
+    {
+      "id": "beauty-and-the-beast",
+      "title": "Beauty and the Beast",
+      "year": 1991,
+      "search": [
+        "Beauty and the Beast (1991 film)",
+        "Beauty and the Beast"
+      ]
+    },
+    {
+      "id": "alice-in-wonderland",
+      "title": "Alice in Wonderland",
+      "year": 1951,
+      "search": [
+        "Alice in Wonderland (1951 film)",
+        "Alice in Wonderland"
+      ]
+    },
+    {
+      "id": "alice-in-wonderland-tim-burton",
+      "title": "Alice in Wonderland (Tim Burton)",
+      "year": 2010,
+      "search": [
+        "Alice in Wonderland (2010 film)",
+        "Alice in Wonderland (Tim Burton)"
+      ]
+    },
+    {
+      "id": "alice-through-the-looking-glass",
+      "title": "Alice Through the Looking Glass",
+      "year": 2016,
+      "search": [
+        "Alice Through the Looking Glass (2016 film)",
+        "Alice Through the Looking Glass"
+      ]
+    },
+    {
+      "id": "ghostbusters",
+      "title": "Ghostbusters",
+      "year": 1984
+    },
+    {
+      "id": "ghostbusters-ii",
+      "title": "Ghostbusters II",
+      "year": 1989
+    },
+    {
+      "id": "ghostbusters-answer-the-call",
+      "title": "Ghostbusters: Answer the Call",
+      "year": 2016,
+      "search": [
+        "Ghostbusters (2016 film)",
+        "Ghostbusters: Answer the Call"
+      ]
+    },
+    {
+      "id": "ghostbusters-afterlife",
+      "title": "Ghostbusters: Afterlife",
+      "year": 2021
+    },
+    {
+      "id": "ghostbusters-frozen-empire",
+      "title": "Ghostbusters: Frozen Empire",
+      "year": 2024
+    },
+    {
+      "id": "dolittle",
+      "title": "Dolittle",
+      "year": 2020,
+      "search": [
+        "Dolittle (film)",
+        "Dolittle"
+      ]
+    },
+    {
+      "id": "charlie-and-the-chocolate-factory",
+      "title": "Charlie and the Chocolate Factory",
+      "year": 2005,
+      "search": [
+        "Charlie and the Chocolate Factory (film)",
+        "Charlie and the Chocolate Factory"
+      ]
+    },
+    {
+      "id": "the-nightmare-before-christmas",
+      "title": "The Nightmare Before Christmas",
+      "year": 1993
     }
   ],
   "books": [

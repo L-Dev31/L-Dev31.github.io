@@ -204,7 +204,7 @@ function cultureList(container, items, kind) {
             if (!await new Promise(done => { clip.onloadeddata = () => done(true); clip.onerror = () => done(false); })) return;
             clip.play().catch(() => {});
         } else {
-            img.src = `assets/images/culture/${item.id}.webp`;
+            img.src = `assets/images/culture/${kind}/${item.id}.webp`;
             if (!await img.decode().then(() => true, () => false)) return;
         }
         if (current !== row) return;

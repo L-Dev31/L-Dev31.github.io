@@ -275,18 +275,18 @@ def main():
     parser.add_argument('--only')
     args = parser.parse_args()
     data = json.loads(DATA.read_text())
-    OUT.mkdir(parents=True, exist_ok=True)
     kept, missing = set(), []
     for kind, items in data.items():
         if kind == 'games':  # games are shown as short clips, see fetch-previews.py
             continue
+        (OUT / kind).mkdir(parents=True, exist_ok=True)
         for item in items:
-            dest = OUT / f"{item_id(item)}.webp"
+            dest = OUT / kind / f"{item_id(item)}.webp"
             item['kind'] = kind
             wanted = not args.only or args.only.lower() in item['title'].lower()
             if (dest.exists() and not args.force) or not wanted:
                 if dest.exists():
-                    kept.add(dest.name)
+                    kept.add(dest)
                 item.pop('kind')
                 continue
             candidates = [('image', item['image'])] if item.get('image') else []
@@ -310,11 +310,11 @@ def main():
                 print(f"-- {item['title']}: no cover found")
                 continue
             save(raw, dest, url)
-            kept.add(dest.name)
+            kept.add(dest)
             print(f"ok {item['title']} <- {source}: {url}")
     if not args.only:
-        for file in OUT.glob('*.webp'):
-            if file.name not in kept:
+        for file in OUT.glob('*/*.webp'):
+            if file not in kept:
                 file.unlink()
     print('missing:', missing or 'none')
 
