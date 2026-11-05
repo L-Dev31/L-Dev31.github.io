@@ -224,11 +224,6 @@
       "year": 1999
     },
     {
-      "id": "space-jam",
-      "title": "Space Jam",
-      "year": 1996
-    },
-    {
       "id": "cool-runnings",
       "title": "Cool Runnings",
       "year": 1993
@@ -388,43 +383,6 @@
       "search": [
         "Brave (2012 film)"
       ]
-    },
-    {
-      "id": "onward",
-      "title": "Onward",
-      "year": 2020,
-      "search": [
-        "Onward (film)"
-      ]
-    },
-    {
-      "id": "luca",
-      "title": "Luca",
-      "year": 2021,
-      "search": [
-        "Luca (2021 film)"
-      ]
-    },
-    {
-      "id": "cars",
-      "title": "Cars",
-      "year": 2006,
-      "search": [
-        "Cars (film)"
-      ]
-    },
-    {
-      "id": "elemental",
-      "title": "Elemental",
-      "year": 2023,
-      "search": [
-        "Elemental (2023 film)"
-      ]
-    },
-    {
-      "id": "the-good-dinosaur",
-      "title": "The Good Dinosaur",
-      "year": 2015
     },
     {
       "id": "ratatouille",
