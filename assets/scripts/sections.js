@@ -448,3 +448,29 @@ export async function clients(container) {
     }
     container.replaceChildren(list);
 }
+
+const LOGOS = [
+    { name: 'Geetech', src: 'assets/images/companies/geetech.png' },
+    { name: 'Rayon', src: 'assets/images/companies/rayon.png' },
+    { name: 'Red Planet Pictures', src: 'assets/images/companies/redplanet.png' },
+    { name: 'Ynov Campus', src: 'assets/images/companies/ynov.png' },
+    { name: 'Sonny Rupaire', src: 'assets/images/companies/sonnyrupaire.png' },
+    { name: 'McDonald\'s', src: 'assets/images/companies/mcdonalds.webp' },
+];
+
+export function logoWall(section) {
+    if (!section) return;
+    section.querySelectorAll('.marquee-track').forEach((track, row) => {
+        const set = LOGOS.map((_, i) => LOGOS[(i + row * 3) % LOGOS.length]);
+        for (let copy = 0; copy < 4; copy++) {
+            for (const { name, src } of set) {
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = copy ? '' : name;
+                img.loading = 'lazy';
+                img.decoding = 'async';
+                track.append(img);
+            }
+        }
+    });
+}

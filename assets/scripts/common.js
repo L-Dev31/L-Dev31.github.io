@@ -92,7 +92,7 @@ export function initPage() {
 
 function navTone() {
     const bar = document.querySelector('.navbar');
-    const reds = [...document.querySelectorAll('#featured-projects')];
+    const reds = [...document.querySelectorAll('#promise, #featured-projects')];
     const aboutHero = document.querySelector('.about-header');
     const projects = document.getElementById('featured-projects');
     if (!bar) return;
