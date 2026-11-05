@@ -15,7 +15,7 @@
     --hairline: rgba(246, 242, 242, 0.08);
     --border: var(--white);
 
-    --accent: #C2132B;
+    --accent: #E0382E;
 
     --font-body: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
     --font-ui: var(--font-body);
@@ -178,6 +178,30 @@ html.custom-cursor * {
     cursor: none;
 }
 
+h1,
+h2,
+h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 0.9;
+    text-align: left;
+}
+
+h1 {
+    font-size: clamp(40px, 6.4vw, 112px);
+}
+
+h2 {
+    font-size: clamp(40px, 5.6vw, 92px);
+}
+
+h3 {
+    font-size: clamp(24px, 2.6vw, 44px);
+    line-height: 1.1;
+}
+
 .title {
     width: 100%;
     max-width: var(--container-width);
@@ -185,12 +209,6 @@ html.custom-cursor * {
     margin: var(--pad-section) auto clamp(48px, 8vh, 100px);
     padding: 0 var(--pad-edge);
     color: var(--white);
-    font-family: var(--font-display);
-    font-size: clamp(40px, 5.6vw, 92px);
-    font-weight: 400;
-    line-height: 0.9;
-    text-align: left;
-    font-style: italic;
 }
 
 .button {
@@ -537,7 +555,7 @@ html.menu-open body {
     gap: clamp(20px, 4vw, 40px);
 }
 
-.footer-col h3 {
+.footer-col h2 {
     margin: 0 0 clamp(10px, 2vw, 20px);
     font-size: clamp(9px, 0.9vw, 11px);
     letter-spacing: 2px;
@@ -826,7 +844,7 @@ html.menu-open body {
     white-space: nowrap;
     -webkit-text-stroke: 0;
     font-family: var(--font-display);
-    font-size: clamp(56px, 8vw, 132px);
+    font-size: clamp(36px, 5vw, 84px);
     font-weight: 400;
     letter-spacing: -0.01em;
     line-height: 0.95;
@@ -880,7 +898,7 @@ html.menu-open body {
     text-align: right;
 }
 
-.story-text h3 {
+.story-text h2 {
     margin-top: 0;
     margin-bottom: clamp(8px, 2vh, 20px);
     color: var(--white);
@@ -1628,7 +1646,7 @@ html:has(.project-main)::-webkit-scrollbar {
 .project-hero-live,
 .project-cta-bottom-link,
 .project-pager-dir,
-.footer-col h3,
+.footer-col h2,
 .case-table thead th,
 .media-caption,
 .skip-link {
@@ -1909,7 +1927,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .about-header-text .about-title {
-        font-size: clamp(52px, 15vw, 84px);
+        font-size: clamp(34px, 10vw, 56px);
     }
 
     .story {
