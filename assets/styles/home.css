@@ -670,11 +670,6 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     margin-bottom: clamp(16px, 4vh, 40px);
 }
 
-.hero-socials .clock {
-    background: transparent;
-    color: var(--white);
-}
-
 .hero-socials a,
 .hero-socials .clock {
     display: inline-flex;
@@ -690,6 +685,11 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     line-height: 1;
     text-decoration: none;
     transition: font-weight 0.15s var(--ease-out);
+}
+
+.hero-socials .clock {
+    background: transparent;
+    color: var(--white);
 }
 
 .hero-socials a::after {

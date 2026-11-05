@@ -191,8 +191,8 @@ const PAGES = [
 ];
 
 const SOCIALS = [
-    { label: 'Instagram', href: 'https://www.instagram.com/l_dev31/' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/léo-tosku' },
+    { label: 'Instagram', href: 'https://www.instagram.com/ltosku31/' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/l%C3%A9o-tosku-de-vries-8432242a0/' },
     { label: 'GitHub', href: 'https://github.com/L-Dev31' },
 ];
 
