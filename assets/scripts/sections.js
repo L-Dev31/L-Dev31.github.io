@@ -1,4 +1,3 @@
-// Home sections built from data: the journey on a pixel Earth, and the clients.
 import { reducedMotion, clamp01 } from './common.js';
 import { cellCanvas, CELL } from './pixel.js';
 
@@ -9,50 +8,48 @@ const el = (tag, cls, text) => {
     return node;
 };
 
-// Coarse coastlines, [longitude, latitude]: enough for a globe a few dozen cells wide.
 const LAND = [
-    // North America
+
     [[-168, 66], [-163, 69], [-156, 71], [-141, 70], [-125, 70], [-110, 68], [-95, 68], [-94, 64], [-94, 59], [-87, 56], [-82, 55], [-80, 51], [-78, 56], [-77, 62], [-70, 61], [-65, 60], [-62, 56], [-56, 52], [-60, 50], [-66, 50], [-64, 47], [-61, 45], [-66, 44], [-70, 43], [-70, 41.5], [-74, 40.5], [-76, 37], [-76, 35], [-81, 31], [-80, 27], [-80, 25], [-83, 28], [-84, 30], [-89, 30], [-94, 29.5], [-97, 27.5], [-97.5, 22], [-96, 19], [-91, 18.5], [-90, 21], [-87, 21.5], [-88, 16], [-84, 15.5], [-83.5, 11], [-81, 8.5], [-77.5, 8.5], [-80, 7.5], [-84, 9], [-87, 13], [-92, 14.5], [-96, 15.7], [-101, 17.5], [-105.5, 20], [-106, 23.5], [-110, 27], [-114.5, 31], [-112, 26], [-110, 23], [-112, 25.5], [-114.5, 28], [-117, 32.5], [-120.5, 34.5], [-122.5, 37.5], [-124, 40.5], [-124, 46], [-124.5, 48.5], [-128, 51], [-131, 55], [-136, 58], [-141, 60], [-147, 61], [-152, 59], [-158, 56.5], [-164, 54.5], [-160, 58.5], [-165, 61], [-164.5, 64.5], [-168, 66]],
-    // Greenland
+
     [[-73, 78], [-60, 82], [-32, 83.5], [-19, 80], [-18, 76], [-22, 70.5], [-32, 67], [-40, 65], [-43.5, 60], [-49, 61.5], [-53, 66], [-54, 70], [-58, 75.5], [-67, 76.5]],
-    // South America
+
     [[-77.5, 8.5], [-75.5, 10.5], [-72, 12], [-68, 10.5], [-62, 10.5], [-57, 6], [-52, 5], [-50, 1.5], [-48, -1], [-44, -2.5], [-40, -3], [-35, -5.5], [-35, -9], [-38.5, -13], [-39, -18], [-41, -22], [-44.5, -23], [-48.5, -26], [-49, -29], [-53, -33.5], [-56, -35], [-58, -34.5], [-57, -38], [-62, -39], [-65, -41], [-65, -45], [-67.5, -46.5], [-69, -51], [-68.5, -53], [-71, -54.5], [-74.5, -51], [-75.5, -47], [-73.5, -42], [-73.5, -37], [-71.5, -30], [-70.5, -23], [-70.5, -18.5], [-76, -14], [-79, -8], [-81, -5], [-80, -1], [-79, 1.5], [-77.5, 4], [-77.5, 8.5]],
-    // Europe and Asia
+
     [[-9.5, 37], [-9, 43], [-2, 43.5], [-1.5, 46.5], [-4.5, 48.5], [-1, 49.5], [2, 51], [5, 53], [8.5, 54], [8.5, 57], [10.5, 57.7], [12.5, 56], [11, 54], [14, 54], [19, 54.5], [21, 57], [24, 57.5], [23.5, 59.5], [30, 60], [23, 60.5], [21.5, 63], [25.5, 65.5], [22, 66], [17.5, 62.5], [18.5, 60], [16.5, 57], [12.5, 56.2], [10.5, 59], [6, 58], [5, 61], [8, 63.5], [14, 67.5], [18, 69.8], [25, 71], [31, 70], [40, 67.5], [44, 68.5], [54, 68.5], [60, 69.5], [68, 68.5], [73, 72.5], [80, 73.5], [87, 75], [100, 77], [107, 77], [113, 73.5], [127, 73.5], [140, 72], [152, 70.5], [161, 69.5], [170, 70], [180, 69], [180, 65], [178, 64], [173, 61], [163, 60], [162, 57], [156, 51], [156, 57.5], [151, 59.5], [142, 59.3], [137, 54], [141, 52.5], [140, 48], [132.5, 43], [129.5, 41], [129.5, 35.5], [126.5, 34.5], [125, 39.5], [121.5, 39], [122, 40.5], [119, 39], [119, 37], [122.5, 37], [120, 34.5], [122, 30.5], [121, 28], [119.5, 25.5], [116.5, 23], [113, 22], [109.5, 21.5], [108, 21.5], [106.5, 20], [106, 18], [108.5, 15], [109, 11.5], [105, 8.6], [103, 10.5], [100, 13.5], [99.5, 9], [101, 6.5], [103.5, 1.3], [101, 2.8], [98.5, 8], [98.5, 13], [97.5, 16.5], [94.5, 16], [94, 19.5], [92, 22], [90, 22], [87, 21.5], [86.5, 20], [84.5, 18.5], [80.5, 15.5], [80, 10], [77.5, 8], [76.5, 9], [74, 14.5], [72.8, 19], [72.5, 21], [70, 22.5], [68.5, 23.5], [66.5, 25.5], [61.5, 25.2], [57.5, 25.7], [56.3, 27.2], [52, 27.8], [50, 30], [48, 30], [50, 26.5], [51.5, 24.5], [54, 24], [56.5, 24.5], [56.3, 26.3], [59.8, 22.5], [58.5, 20.5], [55, 17], [52, 16], [45, 13], [43, 12.7], [42.7, 15.5], [39.5, 21], [38.5, 24], [35, 28], [34.5, 29.5], [32.5, 30], [34.5, 31.5], [35.5, 34], [36, 36.5], [32, 36.2], [29, 36.5], [26.5, 38.5], [26.5, 40], [29, 41], [28, 42], [28.5, 43.5], [30, 45.5], [33.5, 44.5], [36.5, 45.2], [38, 47], [41.5, 41.5], [36, 41.5], [31, 41.2], [29, 41], [26, 41], [23.5, 40], [22.5, 40.5], [24, 38], [22, 36.5], [21, 38.5], [19.5, 41.5], [19, 42.5], [16, 43.5], [13.5, 45.5], [12.3, 45.2], [14, 42.5], [16, 41.5], [18.5, 40.2], [16.5, 39], [15.6, 38], [16, 39.8], [15, 40.2], [12.5, 41.5], [10.5, 43], [8.7, 44.4], [6.5, 43.1], [3, 43.2], [3.2, 42], [0, 39.5], [-0.5, 38], [-2.2, 36.8], [-5.5, 36], [-7.5, 37.2], [-9.5, 37]],
-    // Great Britain and Ireland
+
     [[-5.7, 50], [1.4, 51.2], [1.7, 52.7], [0, 53.5], [-1.5, 55], [-2, 56], [-1.8, 57.6], [-3.3, 58.6], [-5, 58.6], [-5.6, 56.3], [-4.8, 54.8], [-3, 53.9], [-4.5, 53.3], [-4.8, 52.1], [-3, 51.4], [-5.7, 50]],
     [[-6, 52], [-6, 54], [-7.5, 55.3], [-10, 54.2], [-10, 51.6]],
-    // Iceland
+
     [[-22.5, 64], [-21, 66.2], [-15, 66.5], [-13.5, 65], [-18, 63.4]],
-    // Africa
+
     [[-17, 21], [-16.5, 16], [-17.2, 14.7], [-15, 11], [-13, 8], [-11, 6.5], [-7.5, 4.4], [-2, 4.8], [2, 6.3], [6, 4.3], [8.5, 4.5], [9.8, 2.5], [9, -1], [12, -5], [13.5, -11], [12, -17], [14.5, -22.5], [16.5, -28.5], [18.5, -34.2], [22, -34], [26, -33.8], [30, -31], [32.5, -28.5], [33, -26], [35.5, -24], [35, -20], [40, -16], [40.5, -11], [39.5, -6], [41.5, -1.5], [44, 1.5], [48, 5], [51, 10.5], [51.2, 12], [48, 11.2], [44, 10.5], [43.3, 12], [41, 14.8], [38.5, 18.5], [37, 22], [35.5, 24], [34, 27], [32.5, 29.9], [30, 31.3], [25, 31.6], [20, 30.8], [19.5, 32.5], [15, 32.3], [11, 33.2], [10.3, 36.9], [7.5, 37], [3, 36.8], [-1.5, 35.2], [-5.5, 35.8], [-7, 34], [-9.8, 30.5], [-11, 28.2], [-13, 27.5], [-15, 24.5], [-17, 21]],
-    // Madagascar
+
     [[49.3, -12], [50.5, -15.5], [49.5, -18], [47, -25], [44, -25], [43.5, -22], [44.5, -16.5], [47.5, -14]],
-    // Arabia is part of Asia above. Japan
+
     [[130, 31.5], [131.5, 34], [133, 34.5], [135, 34], [136.5, 34.3], [140, 35.2], [141, 38], [142, 39.5], [141.5, 41.5], [140, 40.5], [139.5, 38], [137, 37], [136, 35.8], [132.5, 35.5], [130.8, 33.8]],
     [[140, 41.5], [141.7, 42.5], [143.5, 42], [145.5, 43.3], [142, 45.5], [140, 43.5]],
-    // Indonesia, New Guinea, Philippines
+
     [[95.3, 5.5], [98, 4], [104, -2], [106, -6], [104.5, -5.8], [101, -3], [98.5, 0], [95.5, 4]],
     [[105.5, -6.8], [110, -7], [114.5, -7.8], [114.5, -8.8], [110, -8.2], [106, -7.6]],
     [[109, 1.5], [110, -1.5], [114, -4], [116.5, -3.5], [118.5, 1], [117.5, 4.5], [116, 7], [113, 3.2], [111, 2]],
     [[119, -5.5], [120.5, 1], [125, 1.5], [121.5, -1], [123, -5.5]],
     [[131, -1], [134, -0.8], [138, -1.6], [141, -2.6], [145, -4], [147.5, -6], [150.5, -10.5], [147, -10], [144, -7.8], [141, -9.2], [138, -8.3], [137.5, -5], [133, -4], [131.5, -2.5]],
     [[120, 18.5], [122.5, 18.5], [124, 13.5], [126.5, 7], [125.5, 6], [122, 7], [123.5, 10.5], [121, 13.8]],
-    // Australia
+
     [[113.5, -22], [114, -26.5], [115, -34], [118, -35], [123, -33.8], [129, -31.6], [134, -32.5], [137.8, -35.8], [140, -38], [144, -38.3], [147.5, -38], [150, -37.5], [153, -31], [153, -25.5], [150.5, -22.5], [146.3, -19], [145.3, -15], [142.5, -10.7], [141.5, -15], [140.8, -17.5], [139, -17], [135.5, -15], [136.5, -12], [132.5, -11.5], [130, -13], [127, -14], [125, -15.5], [122, -18], [121, -19.5], [117, -20.7], [113.5, -22]],
     [[145, -40.8], [148.3, -41], [147.5, -43.5], [146, -43.5]],
-    // New Zealand
+
     [[172.7, -34.5], [174.5, -36], [178.5, -37.5], [177, -39.5], [175, -41.5], [174.5, -40], [173.8, -39]],
     [[172.5, -40.5], [174.3, -41.8], [171, -44.5], [169, -46.6], [166.5, -46], [168, -44]],
-    // Sri Lanka, Cuba, Hispaniola
+
     [[79.8, 9.8], [81.9, 7.5], [81.3, 6.2], [80, 6.2]],
     [[-85, 21.8], [-82, 23.2], [-78, 22.4], [-74.2, 20.2], [-77.7, 19.9], [-80.5, 21.7], [-84.8, 21.4]],
     [[-74.5, 19.8], [-72.8, 19.9], [-69.8, 19.6], [-68.4, 18.6], [-71.4, 17.6], [-74.4, 18.4]],
-    // Antarctica
+
     [[-180, -84], [-180, -78], [-160, -77.5], [-150, -76], [-130, -74], [-110, -74], [-100, -73], [-75, -73], [-62, -64], [-57, -63.5], [-60, -70], [-60, -75], [-45, -78], [-30, -76], [-10, -71], [10, -70], [30, -69.5], [50, -67], [70, -68], [90, -66.5], [110, -66], [130, -66.3], [150, -68.5], [165, -71], [170, -77.5], [180, -78], [180, -84]],
 ];
 
-// Land on a 720 x 360 grid, two cells per degree (fine enough for the Earth filling the screen).
 const GRID = 2;
 function landGrid() {
     const canvas = document.createElement('canvas');
@@ -75,20 +72,13 @@ function landGrid() {
 const RAD = Math.PI / 180;
 const SUN = (() => { const l = [-0.5, 0.45, 0.75], n = Math.hypot(...l); return l.map(v => v / n); })();
 
-// ─── Journey ──────────────────────────────────────────────────────────────────
-// The Earth, in red, fills the screen when the section arrives. Scrolling turns it a full
-// 360° while it shrinks and moves to the right; there it stays while the stops of the path scroll by on the left and
-// the path, in white like the pins, draws itself between them.
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
-// ─── Flags ────────────────────────────────────────────────────────────────────
-// A flag waving in the wind, drawn like the rest of the site: in small square cells, from a texture of a few flat colours
-// that is rippled column by column (a travelling wave, pinned at the pole) and shaded by the slope of the cloth.
-const FLAG_CELL = 3;                                  // css px per cell
-const FLAG_WAVE = 0.07;                               // height of the ripple, in flag heights
+const FLAG_CELL = 3;
+const FLAG_WAVE = 0.07;
 const SHADES = 12;
 const FLAGS = {
-    // The flag of Provence (3:2), the Guadeloupe flag (2:1): green, white, red, with the yellow star; Monaco (5:4): red over white.
+
     gp: {
         aspect: 2,
         palette: ['#078A34', '#F6F2F2', '#DA1218', '#FFDE0A'],
@@ -113,7 +103,7 @@ const FLAGS = {
             g.fillStyle = '#FAE525'; g.fillRect(0, 0, w, h);
             poly([[0, 0], [1200, 0], [600, 800]], '#005493');
             poly([[313, 75], [888, 75], [931, 186], [813, 186], [840, 118], [633, 118], [661, 186], [541, 186], [568, 118], [363, 118], [388, 186], [268, 186]], '#E31F29');
-            // The fleur-de-lis: a tall petal, two curled ones, a band and a tail (the curves drawn on 1200 x 800, mirrored).
+
             g.fillStyle = '#FAE525';
             const shape = (cmds, mirror) => {
                 g.beginPath();
@@ -151,7 +141,7 @@ function waving(host, key) {
     host.append(canvas);
     const ctx = canvas.getContext('2d');
     const rgb = spec.palette.map(hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16)));
-    // fills[colour][shade]: the strings are made once, not once per cell and frame.
+
     const fills = rgb.map(c => Array.from({ length: SHADES }, (_, s) => {
         const f = 0.5 + s * 0.6 / (SHADES - 1);
         return `rgb(${Math.min(255, c[0] * f) | 0},${Math.min(255, c[1] * f) | 0},${Math.min(255, c[2] * f) | 0})`;
@@ -169,7 +159,7 @@ function waving(host, key) {
         canvas.height = (rows + 2 * pad) * FLAG_CELL * scale;
         canvas.style.width = `${cols * FLAG_CELL}px`;
         canvas.style.height = `${(rows + 2 * pad) * FLAG_CELL}px`;
-        // The texture: the flag drawn at twice the cell grid, read back as one palette index per texel.
+
         const tw = cols * 2, th = rows * 2;
         const off = document.createElement('canvas');
         off.width = tw; off.height = th;
@@ -189,7 +179,6 @@ function waving(host, key) {
         return true;
     };
 
-    // p (0 → 1): how much of the flag there is, a block of cells growing from its middle.
     return (p, time) => {
         if (p <= 0.001 || !build()) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
         const tw = cols * 2, th = rows * 2, size = FLAG_CELL * scale, side = Math.max(1, Math.round(size * 0.25));
@@ -230,7 +219,7 @@ export async function journey(container) {
     const items = stops.map(stop => {
         const item = el('li', 'journey-stop');
         item.tabIndex = 0;
-        // The title, split in two: the flag opens between the halves as the stop comes to the middle of the screen.
+
         const words = stop.place.split(' '), cut = Math.ceil(words.length / 2);
         const place = el('h3', 'journey-place'), slot = el('span', 'journey-flag');
         place.setAttribute('aria-label', stop.place);
@@ -258,8 +247,8 @@ export async function journey(container) {
     const root = getComputedStyle(document.documentElement);
     const ink = getComputedStyle(container).color, paper = root.getPropertyValue('--black').trim();
     const red = root.getPropertyValue('--accent').trim();
-    const cells = cellCanvas(canvas, red);   // the Earth in red, like the face
-    const pins = cellCanvas(marks, ink);     // the path and the pins in white
+    const cells = cellCanvas(canvas, red);
+    const pins = cellCanvas(marks, ink);
     const labels = marks.getContext('2d');
     let cols = 0, rows = 0, brightness = null, pinBrightness = null;
     const fit = () => {
@@ -272,18 +261,17 @@ export async function journey(container) {
         pinBrightness = new Uint8Array(c * r);
     };
 
-    // The globe for the intro at p (0 → 1): its centre and radius in px, and the point it faces.
     const touch = matchMedia('(max-width: 1024px)');
     const view = p => {
         const W = stage.clientWidth, H = stage.clientHeight, e = ease(p);
-        const r0 = Math.max(W * 0.62, H * 0.95), y0 = H * 0.22 + r0;            // huge, only its top in view
+        const r0 = Math.max(W * 0.62, H * 0.95), y0 = H * 0.22 + r0;
         const r1 = touch.matches ? Math.min(W * 0.42, H * 0.26) : Math.min(H * 0.36, W * 0.25);
         const x1 = touch.matches ? W * 0.5 : W * 0.72, y1 = touch.matches ? H * 0.3 : H * 0.5;
         return {
             r: r0 * (r1 / r0) ** e,
             cx: W / 2 + (x1 - W / 2) * e,
             cy: y0 + (y1 - y0) * e,
-            lon: stops[0].lon - 360 * (1 - e),                                   // one full turn
+            lon: stops[0].lon - 360 * (1 - e),
             lat: 30 + (stops[0].lat - 30) * e,
         };
     };
@@ -296,7 +284,7 @@ export async function journey(container) {
         const v = view(p);
         let lon0 = v.lon, lat0 = v.lat;
         if (p >= 1) {
-            // Settled: the view follows the path between the two stops it is on.
+
             const i = Math.min(stops.length - 2, Math.floor(pos)), f = clamp01(pos - i);
             const from = stops[i], to = stops[Math.min(stops.length - 1, i + 1)];
             lon0 = from.lon + (((to.lon - from.lon + 540) % 360) - 180) * f;
@@ -322,8 +310,6 @@ export async function journey(container) {
             }
         }
 
-        // Once the globe has settled: the path, a white arc lifted off the globe, drawn as far as the visit has got,
-        // and the stops, a white cell in a cleared halo, the one being read ringed.
         const settled = clamp01((p - 0.9) / 0.1);
         const where = (lat, lon, lift = 1) => {
             const la = lat * RAD, dl = (lon - lon0) * RAD;
@@ -375,7 +361,6 @@ export async function journey(container) {
         cells.paint(brightness);
         pins.paint(pinBrightness);
 
-        // The names of the stops, small and square-cornered: the stop being read is inverted.
         if (shown.length) {
             const k = marks.width / stage.clientWidth;
             labels.save();
@@ -384,7 +369,7 @@ export async function journey(container) {
             labels.textBaseline = 'middle';
             const written = [];
             for (const { stop, pt, isActive } of shown) {
-                // Two stops nearly on top of each other (Dracénie, Monaco): only the one being read keeps its name.
+
                 const close = o => o !== here && Math.hypot(o.pt.x - pt.x, o.pt.y - pt.y) < 60;
                 const here = shown.find(o => o.stop === stop);
                 if (!isActive && (shown.some(o => close(o) && o.isActive) || written.some(close))) continue;
@@ -400,7 +385,6 @@ export async function journey(container) {
         }
     };
 
-    // Where the visit stands, in stops: the stop centred on screen, plus how far the next one has come up.
     let scrollPos = 0;
     const pick = () => {
         const centres = items.map(item => { const r = item.getBoundingClientRect(); return r.top + r.height / 2 - innerHeight / 2; });
@@ -447,7 +431,6 @@ export async function journey(container) {
     requestAnimationFrame(loop);
 }
 
-// ─── Clients ──────────────────────────────────────────────────────────────────
 export async function clients(container) {
     if (!container) return;
     const { clients } = await fetch('assets/data/clients.json').then(r => r.json());

@@ -1,32 +1,27 @@
-// Shared by every page: page loader, smooth scroll, menu, cursor, back-to-top, reveal on scroll.
-
-// Single source of truth for device/breakpoint detection
 const BREAKPOINT_MOBILE = 768;
 const BREAKPOINT_TABLET = 1024;
 
 export const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const clamp01 = value => Math.max(0, Math.min(1, value));
 
-// Breakpoint manager - single source of truth for all modules
 export const breakpoint = (() => {
     const BREAKPOINT_MOBILE = 768;
     const BREAKPOINT_TABLET = 1024;
     const mobileMQ = matchMedia(`(max-width: ${BREAKPOINT_MOBILE}px)`);
     const tabletMQ = matchMedia(`(max-width: ${BREAKPOINT_TABLET}px)`);
-    
-    // Fallback: also check innerWidth for cases where matchMedia doesn't update (devtools device toolbar)
+
     const getFromWidth = () => innerWidth <= BREAKPOINT_MOBILE ? 'mobile' : innerWidth <= BREAKPOINT_TABLET ? 'tablet' : 'desktop';
     let current = mobileMQ.matches ? 'mobile' : tabletMQ.matches ? 'tablet' : 'desktop';
-    // Ensure initial value matches innerWidth as fallback
+
     if (current !== getFromWidth()) current = getFromWidth();
-    
+
     const subscribers = new Set();
 
     const check = () => {
-        // Use both matchMedia and innerWidth for reliability
+
         const mqResult = mobileMQ.matches ? 'mobile' : tabletMQ.matches ? 'tablet' : 'desktop';
         const widthResult = getFromWidth();
-        const next = mqResult === widthResult ? mqResult : widthResult; // prefer width if mismatch
+        const next = mqResult === widthResult ? mqResult : widthResult;
         if (next !== current) {
             current = next;
             subscribers.forEach(fn => fn(current));
@@ -34,7 +29,7 @@ export const breakpoint = (() => {
     };
     mobileMQ.addEventListener('change', check);
     tabletMQ.addEventListener('change', check);
-    // Also listen to resize as ultimate fallback
+
     addEventListener('resize', check, { passive: true });
 
     return {
@@ -50,13 +45,11 @@ export const breakpoint = (() => {
 
 const isMobile = breakpoint.isMobile;
 
-// Visible case studies, newest first. Parked projects live in disabled-projects.json (not loaded).
 export const loadProjects = () => fetch('assets/data/projects.json')
     .then(res => res.json())
     .then(data => data.projects
         .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? '')));
 
-// Wraps fn so it runs at most once per animation frame.
 export function throttled(fn) {
     let queued = false;
     return () => {
@@ -69,7 +62,6 @@ export function throttled(fn) {
     };
 }
 
-// Adds .visible to elements entering the viewport, and removes it when they leave through the bottom.
 export function reveal(elements) {
     if (reducedMotion) {
         elements.forEach(el => el.classList.add('visible'));
@@ -97,7 +89,6 @@ export function initPage() {
     return lenis;
 }
 
-// The navigation bar is accent red, except over the accent red sections where it turns black.
 function navTone() {
     const bar = document.querySelector('.navbar');
     const reds = [...document.querySelectorAll('#featured-projects')];
@@ -106,7 +97,7 @@ function navTone() {
     if (!bar) return;
     const update = () => {
         const y = bar.offsetHeight / 2;
-        // Over the dark hero the bar is coral rather than red.
+
         const overHero = aboutHero ? aboutHero.getBoundingClientRect().bottom > y : projects ? projects.getBoundingClientRect().top > y : false;
         bar.classList.toggle('on-dark', overHero);
         bar.classList.toggle('on-accent', reds.some(el => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; }));
@@ -116,8 +107,6 @@ function navTone() {
     update();
 }
 
-// Where Léo is: the time in Monaco with its offset from GMT, and a pixel sun or moon for day or night there.
-// Fills every [data-clock] (the corner of the hero, the footer).
 const MONACO = { lat: 43.73, lon: 7.42 };
 const pixelIcon = rows => `<svg class="clock-icon" viewBox="0 0 7 7" aria-hidden="true">${rows
     .flatMap((row, y) => [...row].map((c, x) => (c === '#' ? `<rect x="${x}" y="${y}" width="1" height="1"/>` : '')))
@@ -125,7 +114,6 @@ const pixelIcon = rows => `<svg class="clock-icon" viewBox="0 0 7 7" aria-hidden
 const SUN = pixelIcon(['...#...', '.#...#.', '..###..', '#.###.#', '..###..', '.#...#.', '...#...']);
 const MOON = pixelIcon(['..###..', '.###...', '###....', '###....', '###....', '.###...', '..###..']);
 
-// Is the sun up in Monaco? (solar elevation above the horizon, to a few minutes)
 function daylight(date) {
     const rad = Math.PI / 180;
     const day = (date - Date.UTC(date.getUTCFullYear(), 0, 0)) / 864e5;
@@ -155,8 +143,6 @@ function clock() {
     setInterval(tick, 15000);
 }
 
-// The loading cover leaves the way the pictures are made: its cells go solid, checkerboard, dots, nothing, sweeping from
-// the left with a little chance in it, instead of fading.
 function pixelDissolve(loader) {
     if (reducedMotion) { loader.classList.add('done'); return; }
     import('./pixel.js').then(({ drawCell }) => {
@@ -173,7 +159,7 @@ function pixelDissolve(loader) {
         const delay = Array.from({ length: cols * rows }, (_, i) => (i % cols) / cols * 0.55 + Math.random() * 0.35);
         const start = performance.now(), TOTAL = 900;
         const frame = now => {
-            const t = (now - start) / TOTAL * 1.45;      // 0 → 1.45: the last cell starts at 0.9 and takes 0.3 to melt
+            const t = (now - start) / TOTAL * 1.45;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             let left = 0;
             for (let i = 0; i < delay.length; i++) {
@@ -209,10 +195,9 @@ function pageLoader() {
 }
 
 function smoothScroll() {
-    // Native scrolling is more reliable on touch screens and preserves browser
-    // gestures such as pull-to-refresh and history navigation.
+
     if (isMobile || reducedMotion || !window.Lenis) return null;
-    const lenis = new Lenis({ lerp: 0.06, wheelMultiplier: 0.85, touchMultiplier: 2 })   // a heavy glide: it keeps coasting after the wheel stops;
+    const lenis = new Lenis({ lerp: 0.06, wheelMultiplier: 0.85, touchMultiplier: 2 })
     const raf = time => {
         lenis.raf(time);
         requestAnimationFrame(raf);
@@ -221,8 +206,6 @@ function smoothScroll() {
     return lenis;
 }
 
-// The menu lists the pages; the one you are on is bold, the one under the pointer italic. Rebuilt each time it opens
-// (the project pages fill themselves in late).
 const PAGES = [
     { id: 'home', label: 'Home', href: 'index.html' },
     { id: 'about', label: 'About', href: 'about.html' },
@@ -301,7 +284,6 @@ function mobileMenu(lenis) {
         }
     });
 
-    // Close menu on breakpoint change to desktop
     breakpoint.onChange(bp => {
         if (bp === 'desktop' && menu.classList.contains('open')) {
             toggle(false, true);
@@ -309,7 +291,6 @@ function mobileMenu(lenis) {
     });
 }
 
-// White dot that replaces the mouse pointer and shrinks over links and buttons.
 function cursor() {
     const dot = document.querySelector('.cursor');
     if (isMobile || reducedMotion) return;
@@ -338,7 +319,6 @@ function backToTop(lenis) {
     const ring = button.querySelector('.btt-text');
     const footer = document.getElementById('footer');
 
-    // Lay the label out in a circle: one rotated span per character.
     const chars = [...ring.textContent];
     ring.textContent = '';
     chars.forEach((char, i) => {
@@ -348,7 +328,6 @@ function backToTop(lenis) {
         ring.append(span);
     });
 
-    // Shown once at least half of the footer is on screen
     const update = () => {
         const { top, height } = footer.getBoundingClientRect();
         button.classList.toggle('visible', innerHeight - top >= height / 2);
@@ -361,7 +340,6 @@ function backToTop(lenis) {
     update();
 }
 
-// Nav and footer links lean towards the mouse.
 function magneticLinks() {
     if (isMobile || reducedMotion) return;
     document.querySelectorAll('.footer-links a').forEach(link => {

@@ -1,4 +1,3 @@
-// Case study page: project.html?id=<id> renders projects/cases/<id>.html with data from projects.json.
 import { initPage, reveal, loadProjects, reducedMotion, throttled, clamp01, breakpoint } from './common.js';
 import { scrollyScenes } from './effects.js';
 
@@ -70,7 +69,6 @@ function render(project, html, projects) {
     parallaxHero();
 }
 
-// Keep search and social previews specific to the project currently displayed.
 function updateSearchMetadata(project) {
     const url = new URL(`project.html?id=${encodeURIComponent(project.id)}`, location.origin).href;
     const image = new URL(project.heroImage, location.href).href;
@@ -111,7 +109,6 @@ function setMeta(attribute, name, content) {
     document.querySelector(`meta[${attribute}="${name}"]`).content = content;
 }
 
-// Every link goes in the hero; all of them are repeated in the bottom section next to three preview tiles.
 function callsToAction({ ctas = [], ctaImages = [] }, section) {
     const heroLinks = document.querySelector('.project-hero-links');
     if (ctas.length) {
@@ -165,7 +162,6 @@ function pager(project, projects) {
     nav.hidden = false;
 }
 
-// Hero image sinks slower than the page.
 function parallaxHero() {
     if (isMobile || reducedMotion) return;
     const heroImg = document.querySelector('.project-hero-img');
@@ -176,7 +172,6 @@ function parallaxHero() {
     update();
 }
 
-// Slim reading progress bar stuck to the bottom (replaces the hidden scrollbar).
 function progressBar(lenis) {
     const bar = document.createElement('div');
     bar.className = 'reading-progress';

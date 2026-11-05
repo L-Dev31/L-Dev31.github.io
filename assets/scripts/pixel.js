@@ -1,16 +1,10 @@
-// Drawing the way the hero video is drawn: a grid of cells, each one solid, a checkerboard, a few dots or nothing,
-// picked from a brightness 0-255.
 import { reducedMotion } from './common.js';
 
-export const CELL = 8;                  // css px per cell
-const LEVELS = [20, 60, 130];           // where dots, checkerboard and solid start
+export const CELL = 8;
+const LEVELS = [20, 60, 130];
 
-// One cell of side c (device px) at (x, y), the terminal way: 0 dots, 1 checkerboard, 2 solid. Between two cells there is a
-// gap of a round number of pixels (2 css px for an 8px cell); the square is what is left, drawn on a lattice of whole
-// pixels (an 8px cell: a 6px square of 6 x 6 pixels). `fill` (optional) sets the square as a share of the cell instead,
-// 1 for no gap at all. Also used by the text reveal (drawCells() in effects.js), so letters and pictures match.
 export function drawCell(ctx, state, x, y, c, fill) {
-    const gap = Math.max(1, Math.round(c * 0.25));   // a quarter of the cell, in whole pixels: 2px in a 8px cell
+    const gap = Math.max(1, Math.round(c * 0.25));
     const s = fill === undefined ? c - gap : c * fill;
     if (state === 2) {
         ctx.fillRect(x, y, s, s);
@@ -24,7 +18,6 @@ export function drawCell(ctx, state, x, y, c, fill) {
     }
 }
 
-// The three drawn states of one cell, side by side: dots, checkerboard, solid.
 function atlas(color, scale) {
     const size = CELL * scale;
     const canvas = document.createElement('canvas');
@@ -36,7 +29,6 @@ function atlas(color, scale) {
     return canvas;
 }
 
-// A canvas of cols x rows cells. paint() takes one brightness per cell.
 export function cellCanvas(canvas, color) {
     const ctx = canvas.getContext('2d');
     let cols = 0, rows = 0, scale = 1, tiles = null;
@@ -64,12 +56,9 @@ export function cellCanvas(canvas, color) {
     };
 }
 
-// ─── An SVG extruded into a block ─────────────────────────────────────────────
-
 const MASK = 128;
 const masks = new Map();
 
-// The SVG's coverage on a MASK x MASK grid, with the outward normal of its outline at every point.
 function loadMask(url) {
     if (masks.has(url)) return masks.get(url);
     const promise = new Promise((resolve, reject) => {
@@ -90,7 +79,7 @@ function loadMask(url) {
                 const x = i % MASK, y = (i / MASK) | 0;
                 x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
             }
-            // Outward normals from the gradient of the coverage (y up).
+
             const nx = new Float32Array(solid.length), ny = new Float32Array(solid.length);
             const at = (x, y) => solid[Math.min(MASK - 1, Math.max(0, y)) * MASK + Math.min(MASK - 1, Math.max(0, x))];
             for (let y = 0; y < MASK; y++) {
@@ -114,12 +103,11 @@ function loadMask(url) {
     return promise;
 }
 
-const DEPTH = 0.12;                                 // half the thickness of the block, the outline spanning 1.8
-const TILT = 0.22;                                  // seen a little from above
+const DEPTH = 0.12;
+const TILT = 0.22;
 const LIGHT = (() => { const l = [-0.45, 0.55, 0.7], n = Math.hypot(...l); return l.map(v => v / n); })();
-const BASE_SPIN = 0.9;                              // rad/s, turning right
+const BASE_SPIN = 0.9;
 
-// Turns the SVG at `url` steadily on its vertical axis in `canvas`. Returns { show(url, cols), hide() }.
 export function extrudedSvg(canvas, color) {
     const cells = cellCanvas(canvas, color);
     let mask = null, angle = -0.5, frame = 0, last = 0, running = false;
@@ -128,11 +116,11 @@ export function extrudedSvg(canvas, color) {
     const render = () => {
         const { solid, nx, ny, cx, cy, half } = mask;
         const cols = cells.cols, rows = cells.rows;
-        const k = half / 0.9;                       // mask px per unit
+        const k = half / 0.9;
         const cT = Math.cos(angle), sT = Math.sin(angle), cP = Math.cos(TILT), sP = Math.sin(TILT);
-        // R = Rx(tilt)·Ry(angle), rows.
+
         const r0 = [cT, 0, sT], r1 = [sP * sT, cP, -sP * cT], r2 = [-cP * sT, sP, cP * cT];
-        // The light in object space (Rᵀ·L): a normal in the object dotted with it gives the shade.
+
         for (let i = 0; i < 3; i++) light[i] = r0[i] * LIGHT[0] + r1[i] * LIGHT[1] + r2[i] * LIGHT[2];
         const step = 0.03, zMax = 1.35;
         for (let row = 0; row < rows; row++) {
@@ -142,7 +130,7 @@ export function extrudedSvg(canvas, color) {
                     for (let sx = 0; sx < 2; sx++) {
                         const X = ((col + 0.25 + sx * 0.5) / cols) * 2 - 1;
                         const Y = 1 - ((row + 0.25 + sy * 0.5) / rows) * 2;
-                        // Object point for view depth Z: Rᵀ·(X, Y, Z), marched from the front.
+
                         let u = r0[0] * X + r1[0] * Y + r2[0] * zMax;
                         let v = r0[1] * X + r1[1] * Y + r2[1] * zMax;
                         let w = r0[2] * X + r1[2] * Y + r2[2] * zMax;
@@ -177,11 +165,11 @@ export function extrudedSvg(canvas, color) {
     };
 
     return {
-        // `urls`: the SVG to extrude, then the ones to fall back on if it does not exist.
+
         async show(urls, cols) {
             let next = null;
             for (const url of [].concat(urls)) {
-                try { next = await loadMask(url); break; } catch { /* try the next one */ }
+                try { next = await loadMask(url); break; } catch {}
             }
             if (!next) return;
             mask = next;

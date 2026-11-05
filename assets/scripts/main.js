@@ -1,10 +1,8 @@
-// Home and about pages.
 import { initPage, loadProjects, reducedMotion } from './common.js';
 import { scrubbingText, parallax, scrollScrubbedVideo } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { journey, clients } from './sections.js';
 
-// ─── Shared constants ─────────────────────────────────────────────────────────
 const CATEGORIES = ['Design', 'UI/UX', 'Web', 'Marketting', 'Photography', 'Tools', 'Video Games'];
 
 initPage();
@@ -12,9 +10,6 @@ const refreshParallax = parallax();
 scrubbingText();
 scrollScrubbedVideo();
 
-// ─── Project index ────────────────────────────────────────────────────────────
-// Title with its category boxed under it, an empty column where the project's SVG turns in 3D on hover,
-// and the year. A project's SVG is assets/images/projects/icons/{id}.svg; without one it shows the logo.
 const DEFAULT_SVG = 'assets/images/core/logo.svg';
 
 const el = (tag, cls, text) => {
@@ -53,8 +48,6 @@ function projectIndex(container, projects) {
     return rows;
 }
 
-// On a pointer device the hovered (or focused) row shows its SVG in its own column, extruded and drawn
-// in black cells like the hero; a tall drawing simply runs over the rows around it.
 function projectPreview(container, rows) {
     if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
@@ -71,7 +64,7 @@ function projectPreview(container, rows) {
         const box = container.getBoundingClientRect();
         const slot = row.querySelector('.index-slot').getBoundingClientRect();
         const r = row.getBoundingClientRect();
-        // Inside the column with a margin of 8px on each side, in a round number of cells (a multiple of 4).
+
         const cols = Math.max(16, Math.floor((slot.width - 16) / CELL / 4) * 4);
         figure.style.left = `${slot.left - box.left + (slot.width - cols * CELL) / 2}px`;
         figure.style.top = `${r.top - box.top + r.height / 2}px`;
@@ -106,6 +99,5 @@ async function initProjects() {
     refreshParallax();
 }
 
-// Text that arrives with its data scrubs in too, once it exists.
 Promise.all([initProjects(), journey(document.querySelector('.journey')), clients(document.querySelector('.client-index'))])
     .then(() => { scrubbingText(); refreshParallax(); });

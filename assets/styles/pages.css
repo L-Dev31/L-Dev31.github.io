@@ -1,21 +1,20 @@
-/* ── base ── */
 @font-face { font-family: 'Lux'; src: url('../fonts/lux.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Bold'; src: url('../fonts/bold.otf') format('opentype'); font-display: swap; }
 @font-face { font-family: 'Heavitas'; src: url('../fonts/heavitas.ttf') format('truetype'); font-display: swap; }
 @font-face { font-family: 'Satoshi'; src: url('../fonts/satoshi-variable.ttf') format('truetype'); font-weight: 300 900; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Satoshi'; src: url('../fonts/satoshi-variable-italic.ttf') format('truetype'); font-weight: 300 900; font-style: italic; font-display: swap; }
 :root {
-    --white: #F6F2F2;   /* off-white for the light */
-    --black: #170206;   /* a very deep wine red for the dark, never pure black */
+    --white: #F6F2F2;
+    --black: #170206;
     --dusk: #170206;
-    --face: #E40613;   /* the red the face is drawn in */
+    --face: #E40613;
     --ink: #0F0104;
     --text: #E6DCDC;
     --text-muted: var(--white);
     --text-faint: #A8908F;
     --hairline: rgba(246, 242, 242, 0.08);
     --border: var(--white);
-    /* Brand red. Too dim for small text on --black: use it for large type, shapes and fills. */
+
     --accent: #E40613;
 
     --font-body: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
@@ -30,8 +29,6 @@
     --section-gradient: radial-gradient(circle at 50% 0%, #2b0a10 0%, #1e0409 30%, var(--black) 80%);
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
-
-/* Base */
 
 html {
     overflow-x: clip;
@@ -135,8 +132,6 @@ html.lenis body {
     overflow: hidden;
 }
 
-/* Page loader */
-
 .page-loader {
     position: fixed;
     inset: 0;
@@ -158,8 +153,6 @@ html.lenis body {
     background: var(--white);
     transition: width 0.7s var(--ease-out);
 }
-
-/* Cursors */
 
 .cursor {
     display: none;
@@ -184,8 +177,6 @@ html.custom-cursor,
 html.custom-cursor * {
     cursor: none;
 }
-
-/* Shared components */
 
 .title {
     width: 100%;
@@ -220,7 +211,6 @@ html.custom-cursor * {
     transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Hover inverts the button: white field, black text. */
 .button:hover {
     background: var(--white);
     color: var(--black);
@@ -236,8 +226,6 @@ html.custom-cursor * {
     letter-spacing: 1.5px;
     text-transform: uppercase;
 }
-
-/* Navbar */
 
 .navbar {
     position: fixed;
@@ -255,7 +243,6 @@ html.custom-cursor * {
     transition: color 0.3s ease;
 }
 
-/* Over the accent red (the projects, the footer) the bar turns black; set by navTone() in common.js. */
 .navbar.on-accent {
     color: var(--black);
 }
@@ -265,7 +252,6 @@ html.custom-cursor * {
     align-items: center;
 }
 
-/* The signature is the logo as a mask, so it takes the bar's colour. */
 .brand a {
     display: block;
     color: inherit;
@@ -286,8 +272,6 @@ html.custom-cursor * {
     gap: clamp(8px, 1.5vw, 20px);
 }
 
-/* Menu button: a long line over a line made of two halves. Opening slides the halves to the end of the
-   long line and twists them into the head of an arrow pointing right. */
 .hamburger {
     position: relative;
     display: inline-flex;
@@ -314,7 +298,6 @@ html.custom-cursor * {
     transition: top 0.35s var(--ease-out) 0.2s;
 }
 
-/* Closing: the head untwists first, then the halves slide back under the line. */
 .hamburger-half {
     top: 26px;
     width: 50%;
@@ -331,7 +314,6 @@ html.custom-cursor * {
     transition-delay: 0s;
 }
 
-/* Opening: slide to the tip, then twist. */
 .hamburger[aria-expanded="true"] .hamburger-half {
     top: 21px;
     scale: 0.66 1;
@@ -352,8 +334,6 @@ html.custom-cursor * {
     .hamburger-line,
     .hamburger-half { transition: none; }
 }
-
-/* Menu: a flat red field wiping down, links in black, flush left */
 
 .mobile-menu {
     position: fixed;
@@ -377,7 +357,6 @@ html.custom-cursor * {
     pointer-events: auto;
 }
 
-/* Over the red, the bar stops inverting and turns black. */
 html.menu-open .navbar {
     mix-blend-mode: normal;
     color: var(--black);
@@ -421,13 +400,11 @@ html.menu-open body {
     font-weight: 800;
 }
 
-/* Before the link of the page you are on: a black pixel that appears once the menu is open. */
 .mobile-menu.open .mobile-menu-link {
     opacity: 1;
     transform: translateY(0);
 }
 
-/* The entrance is staggered; the bold on hover is not delayed. */
 .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-delay: 0.15s, 0.15s, 0s; }
 .mobile-menu.open .mobile-menu-link:nth-child(2) { transition-delay: 0.22s, 0.22s, 0s; }
 .mobile-menu.open .mobile-menu-link:nth-child(3) { transition-delay: 0.29s, 0.29s, 0s; }
@@ -449,9 +426,6 @@ html.menu-open body {
 .mobile-menu.open .mobile-menu-footer {
     opacity: 1;
 }
-
-/* ── home ── */
-/* Footer */
 
 #footer {
     position: relative;
@@ -478,8 +452,6 @@ html.menu-open body {
     pointer-events: none;
 }
 
-/* TOSKU, bold, spanning the page between the two margins. */
-/* TOSKU, in Lux, spanning the page between the two margins. */
 .big-name {
     margin: 0;
     color: var(--white);
@@ -492,7 +464,7 @@ html.menu-open body {
     letter-spacing: 0;
     text-align: left;
     white-space: nowrap;
-    transform: translateY(50%);   /* half of the name is below the edge of the screen */
+    transform: translateY(50%);
 }
 
 .footer-top-links {
@@ -543,8 +515,6 @@ html.menu-open body {
     height: 1em;
     fill: currentColor;
 }
-
-/* Back to top */
 
 .back-to-top {
     --size: 100px;
@@ -607,8 +577,6 @@ html.menu-open body {
         transform: rotate(360deg);
     }
 }
-
-/* Home: hero */
 
 #header {
     --hero-progress: 0;
@@ -729,15 +697,10 @@ html.menu-open body {
     line-height: 1.55;
 }
 
-/* Home: project grid */
-
 #featured-projects {
     padding: clamp(48px, 8vh, 96px) 0 clamp(120px, 18vh, 220px);
     overflow-x: clip;
 }
-
-/* ── about ── */
-/* About: hero */
 
 .about-header {
     --hero-progress: 0;
@@ -757,7 +720,6 @@ html.menu-open body {
     pointer-events: none;
 }
 
-/* The video only supplies frames; the cells are drawn on this canvas (pixelHero() in effects.js). */
 #hero-pixels {
     position: fixed;
     inset: 0;
@@ -824,8 +786,6 @@ html.menu-open body {
     }
 }
 
-/* About: story */
-
 #my-story {
     padding: var(--pad-section) 0;
 }
@@ -884,8 +844,6 @@ html.menu-open body {
     backface-visibility: hidden;
     will-change: transform;
 }
-
-/* About: experience & education */
 
 .exp-stack {
     width: min(1500px, 100%);
@@ -1033,9 +991,6 @@ html.menu-open body {
     line-height: 1.4;
 }
 
-/* ── project ── */
-/* Project page: hero */
-
 .project-hero {
     position: relative;
     height: 100svh;
@@ -1145,8 +1100,6 @@ html.menu-open body {
     max-width: min(440px, calc(100% - 2 * var(--pad-edge)));
     pointer-events: none;
 }
-
-/* Project page: case study */
 
 .case-intro,
 .case-chapter {
@@ -1435,8 +1388,6 @@ html:has(.project-main)::-webkit-scrollbar {
     object-fit: cover;
 }
 
-/* Project page: bottom call to action */
-
 .project-cta-bottom {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1478,8 +1429,6 @@ html:has(.project-main)::-webkit-scrollbar {
 
 .project-cta-tile:nth-child(1) { margin-top: 40px; }
 .project-cta-tile:nth-child(3) { margin-top: 60px; }
-
-/* Project page: previous / next */
 
 .project-pager {
     display: grid;
@@ -1569,8 +1518,6 @@ html:has(.project-main)::-webkit-scrollbar {
     font-size: clamp(12px, 1vw, 15px);
 }
 
-/* Project page: not found */
-
 .project-not-found {
     min-height: 60vh;
     display: flex;
@@ -1600,9 +1547,6 @@ html:has(.project-main)::-webkit-scrollbar {
 .project-not-found a:hover {
     color: var(--white);
 }
-
-/* ── responsive ── */
-/* Responsive */
 
 .button,
 .tag,
@@ -2182,7 +2126,6 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 }
 
-/* Characters of a scrubbed reveal: boxes of their own so the ember filter can displace each one. */
 .scrubbing-char {
     display: inline-block;
 }
@@ -2191,7 +2134,6 @@ html:has(.project-main)::-webkit-scrollbar {
     white-space: nowrap;
 }
 
-/* The cells of the pictures, on the text: a reveal is drawn on this canvas over the block (drawCells() in effects.js). */
 .scrubbing-text {
     position: relative;
 }
@@ -2204,7 +2146,6 @@ html:has(.project-main)::-webkit-scrollbar {
     pointer-events: none;
 }
 
-/* Pink on indigo: the fixed dark behind the About hero. */
 .about-header::before {
     content: '';
     position: fixed;
@@ -2220,7 +2161,6 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 }
 
-/* The time in Monaco: a pixel sun or moon, the place, the time, the offset (clock() in common.js). */
 .clock {
     display: inline-flex;
     align-items: center;
@@ -2250,7 +2190,6 @@ html:has(.project-main)::-webkit-scrollbar {
     border-radius: 999px;
 }
 
-/* The time in Monaco sits in the middle of the bar. */
 .navbar-center {
     position: absolute;
     left: 50%;
@@ -2263,7 +2202,6 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 }
 
-/* The menu comes in from the right and leaves to the right, the way the arrow on the button points. */
 .mobile-menu {
     clip-path: inset(0 0 0 100%);
 }
