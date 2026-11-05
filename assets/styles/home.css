@@ -2237,3 +2237,72 @@ html.on-accent .mobile-menu .hero-socials .clock {
     border-color: var(--white);
     color: var(--white);
 }
+
+.culture-nav {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    z-index: 996;
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 999px;
+    background: var(--black);
+    box-shadow: 0 0 0 1px rgba(246, 242, 242, 0.22);
+    transform: translate(-50%, 160%);
+    transition: transform 0.45s var(--ease-out);
+}
+
+.culture-nav.is-on {
+    transform: translate(-50%, 0);
+}
+
+.culture-nav a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    transition: font-weight 0.15s var(--ease-out), background 0.2s var(--ease-out), color 0.2s var(--ease-out);
+}
+
+.culture-nav a:hover,
+.culture-nav a:focus-visible {
+    font-weight: 800;
+}
+
+.culture-nav a[aria-current] {
+    background: var(--white);
+    color: var(--black);
+}
+
+.culture-nav a span {
+    font-size: 11px;
+    opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+    .culture-nav {
+        bottom: max(16px, env(safe-area-inset-bottom));
+        left: 12px;
+        transform: translate(0, 160%);
+    }
+
+    .culture-nav.is-on {
+        transform: none;
+    }
+
+    .culture-nav a {
+        padding: 9px 11px;
+        font-size: 13px;
+    }
+
+    .culture-nav a span {
+        display: none;
+    }
+}

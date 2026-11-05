@@ -242,7 +242,30 @@ async function initCulture() {
     if (!lists.length) return;
     const data = await fetch('assets/data/culture.json').then(r => r.json());
     lists.forEach(container => cultureList(container, data[container.dataset.culture] || [], container.dataset.culture));
+    document.querySelectorAll('.culture-nav [data-count]').forEach(count => { if (data[count.dataset.count]) count.textContent = data[count.dataset.count].length; });
 }
+
+// a pill bar to jump between the long culture sections, with the current one highlighted
+function cultureNav() {
+    const nav = document.querySelector('.culture-nav');
+    if (!nav) return;
+    const links = [...nav.querySelectorAll('a')];
+    const sections = links.map(link => document.querySelector(link.hash));
+    let queued = false;
+    const update = () => {
+        queued = false;
+        const line = innerHeight / 2;
+        const first = sections[0].getBoundingClientRect().top, last = sections.at(-1).getBoundingClientRect().bottom;
+        nav.classList.toggle('is-on', first < innerHeight * 0.6 && last > innerHeight * 0.4);
+        const index = sections.findLastIndex(section => section.getBoundingClientRect().top <= line);
+        links.forEach((link, i) => { if (i === index) link.setAttribute('aria-current', 'true'); else link.removeAttribute('aria-current'); });
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update, { passive: true });
+    update();
+}
+
+cultureNav();
 
 Promise.all([initProjects(), initCulture(), ...[...document.querySelectorAll('.journey')].map(journey)])
     .then(() => { scrubbingText(); refreshParallax(); });
