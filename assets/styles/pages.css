@@ -487,11 +487,6 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     color: inherit;
 }
 
-.mobile-menu-link:hover,
-.mobile-menu-link:focus-visible {
-    font-weight: 800;
-}
-
 .mobile-menu.open .mobile-menu-link {
     opacity: 1;
     transform: translateY(0);
@@ -1228,8 +1223,6 @@ html:has(.project-main)::-webkit-scrollbar {
 
 .media-caption a {
     color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 2px;
 }
 
 .quote-grid {
@@ -2163,12 +2156,6 @@ html:has(.project-main)::-webkit-scrollbar {
     font-size: clamp(14px, 1.2vw, 17px);
     font-weight: 500;
     text-decoration: none;
-    transition: font-weight 0.15s var(--ease-out);
-}
-
-.footer-links a:hover,
-.footer-links a:focus-visible {
-    font-weight: 800;
 }
 
 .footer-sign {
@@ -2191,4 +2178,22 @@ html:has(.project-main)::-webkit-scrollbar {
     .footer-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+}
+
+.footer-links a,
+.promise-links a,
+.media-caption a {
+    text-decoration: none;
+    transition: font-weight 0.15s var(--ease-out);
+}
+
+.footer-links a:hover,
+.footer-links a:focus-visible,
+.promise-links a:hover,
+.promise-links a:focus-visible,
+.media-caption a:hover,
+.media-caption a:focus-visible,
+.mobile-menu-link:hover,
+.mobile-menu-link:focus-visible {
+    font-weight: 800;
 }
