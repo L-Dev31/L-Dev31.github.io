@@ -203,7 +203,10 @@ function cultureList(container, items, kind) {
         const half = figure.offsetWidth / 2, gap = 24;
         const low = title.right + gap + half, high = year.left - gap - half;
         const middle = (title.right + year.left) / 2;
-        const target = low <= high ? Math.min(high, Math.max(low, x ?? middle)) : middle;
+        // beside the cursor rather than under it: on its right, or on its left when the right side has no room
+        let target = x == null ? middle : x + 36 + half;
+        if (x != null && target > high) target = x - 36 - half;
+        target = low <= high ? Math.min(high, Math.max(low, target)) : middle;
         figure.style.left = `${target - box.left}px`;
         figure.style.top = `${r.top - box.top + r.height / 2}px`;
     };
