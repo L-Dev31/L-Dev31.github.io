@@ -230,7 +230,7 @@ export async function journey(container) {
     const openFlags = (time, instant) => flags.forEach((f, i) => {
         if (!f.paint) return;
         const r = items[i].getBoundingClientRect();
-        const near = instant ? 1 : clamp01(1 - Math.abs(r.top + r.height / 2 - innerHeight / 2) / (innerHeight * 0.24));
+        const near = instant ? 1 : clamp01(1 - Math.max(0, r.top + r.height / 2 - innerHeight / 2) / (innerHeight * 0.24));
         f.open = ease(near);
         f.slot.style.setProperty('--open', f.open.toFixed(3));
         f.paint(f.open, time);
