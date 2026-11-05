@@ -475,7 +475,6 @@ html.menu-open body {
 }
 
 .mobile-menu .hero-socials {
-    flex-wrap: wrap;
     margin: clamp(24px, 4vh, 40px) 0 0;
 }
 
@@ -637,6 +636,7 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
 
 .hero-socials {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 12px;
     margin-bottom: clamp(16px, 4vh, 40px);
@@ -1887,6 +1887,10 @@ html:has(.project-main)::-webkit-scrollbar {
 @media (max-width: 768px) {
     .footer-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .footer-col:nth-child(n + 3) {
+        grid-column: 1 / -1;
     }
 }
 
