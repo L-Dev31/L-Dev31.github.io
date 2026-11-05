@@ -101,7 +101,7 @@ const FLAG_CELL = 3;                                  // css px per cell
 const FLAG_WAVE = 0.07;                               // height of the ripple, in flag heights
 const SHADES = 12;
 const FLAGS = {
-    // The Guadeloupe flag (2:1): green, white, red, with the yellow star; Monaco (5:4): red over white.
+    // The flag of Provence (3:2), the Guadeloupe flag (2:1): green, white, red, with the yellow star; Monaco (5:4): red over white.
     gp: {
         aspect: 2,
         palette: ['#078A34', '#F6F2F2', '#DA1218', '#FFDE0A'],
@@ -115,6 +115,36 @@ const FLAGS = {
                 g[i ? 'lineTo' : 'moveTo'](172 / 960 * w + Math.cos(a) * r, 248 / 480 * h + Math.sin(a) * r);
             }
             g.fill();
+        },
+    },
+    pv: {
+        aspect: 1.5,
+        palette: ['#FAE525', '#005493', '#E31F29'],
+        draw(g, w, h) {
+            const X = x => x / 1200 * w, Y = y => y / 800 * h;
+            const poly = (pts, c) => { g.fillStyle = c; g.beginPath(); pts.forEach(([x, y], i) => g[i ? 'lineTo' : 'moveTo'](X(x), Y(y))); g.fill(); };
+            g.fillStyle = '#FAE525'; g.fillRect(0, 0, w, h);
+            poly([[0, 0], [1200, 0], [600, 800]], '#005493');
+            poly([[313, 75], [888, 75], [931, 186], [813, 186], [840, 118], [633, 118], [661, 186], [541, 186], [568, 118], [363, 118], [388, 186], [268, 186]], '#E31F29');
+            // The fleur-de-lis: a tall petal, two curled ones, a band and a tail (the curves drawn on 1200 x 800, mirrored).
+            g.fillStyle = '#FAE525';
+            const shape = (cmds, mirror) => {
+                g.beginPath();
+                for (const [op, ...n] of cmds) {
+                    const q = n.map((v, i) => i % 2 ? Y(v) : X(mirror ? 1200 - v : v));
+                    g[op](...q);
+                }
+                g.fill();
+            };
+            const petal = [['moveTo', 600, 262], ['bezierCurveTo', 570, 300, 550, 340, 555, 380], ['bezierCurveTo', 560, 440, 580, 480, 588, 520],
+                ['lineTo', 612, 520], ['bezierCurveTo', 620, 480, 640, 440, 645, 380], ['bezierCurveTo', 650, 340, 630, 300, 600, 262]];
+            const side = [['moveTo', 575, 470], ['bezierCurveTo', 540, 400, 470, 385, 460, 425], ['bezierCurveTo', 455, 470, 500, 495, 525, 497],
+                ['bezierCurveTo', 515, 470, 530, 455, 548, 470], ['bezierCurveTo', 560, 485, 570, 500, 578, 520], ['lineTo', 600, 520], ['lineTo', 600, 470]];
+            const tail = [['moveTo', 580, 528], ['bezierCurveTo', 575, 560, 560, 570, 534, 578], ['bezierCurveTo', 560, 580, 575, 585, 581, 600],
+                ['bezierCurveTo', 583, 615, 590, 622, 600, 628], ['bezierCurveTo', 610, 622, 617, 615, 619, 600], ['bezierCurveTo', 625, 585, 640, 580, 666, 578],
+                ['bezierCurveTo', 640, 570, 625, 560, 620, 528]];
+            shape(petal); shape(side); shape(side, true); shape(tail);
+            g.fillRect(X(535), Y(508), X(130), Y(20));
         },
     },
     mc: {
@@ -367,6 +397,8 @@ export async function journey(container) {
             labels.font = '500 13px Satoshi, sans-serif';
             labels.textBaseline = 'middle';
             for (const { stop, pt, isActive } of shown) {
+                // Two stops nearly on top of each other (Dracénie, Monaco): only the one being read keeps its name.
+                if (!isActive && shown.some(o => o.isActive && Math.hypot(o.pt.x - pt.x, o.pt.y - pt.y) < 60)) continue;
                 const w = labels.measureText(stop.country).width;
                 const x = pt.x + 22, y = pt.y;
                 labels.fillStyle = isActive ? ink : paper;

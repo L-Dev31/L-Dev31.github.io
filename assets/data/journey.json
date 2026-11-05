@@ -1,6 +1,15 @@
 {
   "stops": [
     {
+      "place": "Provence Varoise",
+      "country": "La Dracénie",
+      "lat": 43.54,
+      "lon": 6.47,
+      "when": "Early years",
+      "flag": "pv",
+      "what": "Where it started: the first creative years, growing up in the Var, in the Dracénie."
+    },
+    {
       "place": "French Caribbean",
       "country": "Guadeloupe",
       "lat": 16.31,
