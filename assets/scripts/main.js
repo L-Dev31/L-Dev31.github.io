@@ -50,7 +50,7 @@ function projectIndex(container, projects) {
         const info = el('div', 'index-info');
         const tags = el('ul', 'index-tags');
         tags.append(...(project.tags || []).map(tag => el('li', 'index-tag', tag)));
-        const go = el('a', 'index-go', 'How I did it ');
+        const go = el('a', 'index-go', 'Read the case study ');
         go.href = `project.html?id=${project.id}`;
         go.append(el('span', '', '\u2197'));
         info.append(el('div', 'index-role', `Role: ${project.role}`), el('div', 'index-text', project.subtitle), tags, go);
