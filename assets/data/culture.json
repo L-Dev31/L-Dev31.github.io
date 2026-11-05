@@ -87,6 +87,7 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
+        "G2M9MFJVzpI",
         "ni0imBcL8no",
         "z5UwmWnS9d0"
       ]
@@ -150,34 +151,49 @@
       "id": "super-mario-64-ds-ds",
       "title": "Super Mario 64 DS",
       "year": 2004,
-      "platform": "ds"
+      "platform": "ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "mario-kart-ds-ds",
       "title": "Mario Kart DS",
       "year": 2005,
-      "platform": "ds"
+      "platform": "ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "phoenix-wright-ace-attorney-ds",
       "title": "Phoenix Wright: Ace Attorney",
       "year": 2005,
       "platform": "ds",
-      "search": "Phoenix Wright: Ace Attorney"
+      "search": "Phoenix Wright: Ace Attorney",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "phoenix-wright-justice-for-all-ds",
       "title": "Phoenix Wright: Justice for All",
       "year": 2006,
       "platform": "ds",
-      "search": "Phoenix Wright: Ace Attorney: Justice for All"
+      "search": "Phoenix Wright: Ace Attorney: Justice for All",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "new-super-mario-bros-ds",
       "title": "New Super Mario Bros.",
       "year": 2006,
       "platform": "ds",
-      "search": "New Super Mario Bros."
+      "search": "New Super Mario Bros.",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "wii-play-wii",
@@ -227,7 +243,10 @@
       "id": "tomodachi-collection-ds",
       "title": "Tomodachi Collection",
       "year": 2009,
-      "platform": "ds"
+      "platform": "ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "punch-out-wii",
@@ -624,25 +643,37 @@
       "id": "pokemon-black-version-ds",
       "title": "Pokémon Black Version",
       "year": 2010,
-      "platform": "ds"
+      "platform": "ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "pokemon-white-version-ds",
       "title": "Pokémon White Version",
       "year": 2010,
-      "platform": "ds"
+      "platform": "ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "pokemon-black-version-2-ds",
       "title": "Pokémon Black Version 2",
       "year": 2012,
-      "platform": "ds"
+      "platform": "ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "pokemon-white-version-2-ds",
       "title": "Pokémon White Version 2",
       "year": 2012,
-      "platform": "ds"
+      "platform": "ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "pokemon-emerald-version-gba",
@@ -755,7 +786,10 @@
       "id": "newer-super-mario-bros-ds-ds",
       "title": "Newer Super Mario Bros. DS",
       "year": 2010,
-      "platform": "ds"
+      "platform": "ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "wii-music-wii",
@@ -815,7 +849,10 @@
       "id": "mario-luigi-bowser-s-inside-story-ds",
       "title": "Mario & Luigi: Bowser's Inside Story",
       "year": 2009,
-      "platform": "ds"
+      "platform": "ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "pokemon-let-s-go-eevee-switch",

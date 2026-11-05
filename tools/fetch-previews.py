@@ -53,6 +53,10 @@ def pick(item, rows):
         low, n = title.lower(), norm(title)
         if vid in item.get('video_skip', []) or name not in n or re.search(BAD, low) or duration < 240 or ('super' in n and 'super' not in name):
             continue
+        # "Pokemon White Version" must not take the video of "Pokemon White Version 2"
+        after = n[n.find(name) + len(name):].split()
+        if after and after[0].isdigit() and not name.split()[-1].isdigit():
+            continue
         others = [k for p, k in KEYS.items() if p != platform and re.search(k, low)]
         if others:
             continue
