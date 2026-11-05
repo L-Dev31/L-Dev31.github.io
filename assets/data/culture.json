@@ -246,37 +246,55 @@
       "id": "wii-play-wii",
       "title": "Wii Play",
       "year": 2006,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "wii-sports-wii",
       "title": "Wii Sports",
       "year": 2006,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-galaxy-wii",
       "title": "Super Mario Galaxy",
       "year": 2007,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "wii-fit-wii",
       "title": "Wii Fit",
       "year": 2007,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-smash-bros-brawl-wii",
       "title": "Super Smash Bros. Brawl",
       "year": 2008,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "mario-kart-wii-wii",
       "title": "Mario Kart Wii",
       "year": 2008,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "angry-birds-android",
@@ -302,79 +320,118 @@
       "title": "Punch-Out!!",
       "year": 2009,
       "platform": "wii",
-      "search": "Punch-Out!!"
+      "search": "Punch-Out!!",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-galaxy-2-wii",
       "title": "Super Mario Galaxy 2",
       "year": 2010,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "wii-party-wii",
       "title": "Wii Party",
       "year": 2010,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-3d-land-3ds",
       "title": "Super Mario 3D Land",
       "year": 2011,
-      "platform": "3ds"
+      "platform": "3ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "rayman-origins-wii",
       "title": "Rayman Origins",
       "year": 2011,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "wii-play-motion-wii",
       "title": "Wii Play: Motion",
       "year": 2011,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "new-super-mario-bros-2-3ds",
       "title": "New Super Mario Bros. 2",
       "year": 2012,
-      "platform": "3ds"
+      "platform": "3ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "nintendo-land-wiiu",
       "title": "Nintendo Land",
       "year": 2012,
-      "platform": "wiiu"
+      "platform": "wiiu",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "tomodachi-life-3ds",
       "title": "Tomodachi Life",
       "year": 2013,
-      "platform": "3ds"
+      "platform": "3ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-3d-world-wiiu",
       "title": "Super Mario 3D World",
       "year": 2013,
-      "platform": "wiiu"
+      "platform": "wiiu",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "wii-party-u-wiiu",
       "title": "Wii Party U",
       "year": 2013,
-      "platform": "wiiu"
+      "platform": "wiiu",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "wii-fit-u-wiiu",
       "title": "Wii Fit U",
       "year": 2013,
-      "platform": "wiiu"
+      "platform": "wiiu",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "rayman-legends-wiiu",
       "title": "Rayman Legends",
       "year": 2013,
-      "platform": "wiiu"
+      "platform": "wiiu",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "grand-theft-auto-v-steam",
@@ -386,26 +443,38 @@
       "id": "mario-kart-8-wiiu",
       "title": "Mario Kart 8",
       "year": 2014,
-      "platform": "wiiu"
+      "platform": "wiiu",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-smash-bros-for-wii-u-wiiu",
       "title": "Super Smash Bros. for Wii U",
       "year": 2014,
-      "platform": "wiiu"
+      "platform": "wiiu",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "minecraft-wii-u-edition-wiiu",
       "title": "Minecraft: Wii U Edition",
       "year": 2015,
       "platform": "wiiu",
-      "search": "Minecraft: Wii U Edition"
+      "search": "Minecraft: Wii U Edition",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "miitopia-3ds",
       "title": "Miitopia",
       "year": 2016,
-      "platform": "3ds"
+      "platform": "3ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "mario-rabbids-kingdom-battle-switch",
@@ -454,7 +523,10 @@
       "id": "warioware-gold-3ds",
       "title": "WarioWare Gold",
       "year": 2018,
-      "platform": "3ds"
+      "platform": "3ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "new-super-mario-bros-u-deluxe-switch",
@@ -493,79 +565,55 @@
       "id": "just-dance-wii",
       "title": "Just Dance",
       "year": 2009,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "just-dance-2-wii",
       "title": "Just Dance 2",
       "year": 2010,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "just-dance-3-wii",
       "title": "Just Dance 3",
       "year": 2011,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "just-dance-4-wii",
       "title": "Just Dance 4",
       "year": 2012,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "just-dance-2014-wii",
       "title": "Just Dance 2014",
       "year": 2013,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "just-dance-2015-wii",
       "title": "Just Dance 2015",
       "year": 2014,
-      "platform": "wii"
-    },
-    {
-      "id": "just-dance-2016-wiiu",
-      "title": "Just Dance 2016",
-      "year": 2015,
-      "platform": "wiiu"
-    },
-    {
-      "id": "just-dance-2017-wiiu",
-      "title": "Just Dance 2017",
-      "year": 2016,
-      "platform": "wiiu"
-    },
-    {
-      "id": "just-dance-2018-switch",
-      "title": "Just Dance 2018",
-      "year": 2017,
-      "platform": "switch"
-    },
-    {
-      "id": "just-dance-2019-switch",
-      "title": "Just Dance 2019",
-      "year": 2018,
-      "platform": "switch"
-    },
-    {
-      "id": "just-dance-2020-switch",
-      "title": "Just Dance 2020",
-      "year": 2019,
-      "platform": "switch"
-    },
-    {
-      "id": "just-dance-2021-switch",
-      "title": "Just Dance 2021",
-      "year": 2020,
-      "platform": "switch"
-    },
-    {
-      "id": "just-dance-2022-switch",
-      "title": "Just Dance 2022",
-      "year": 2021,
-      "platform": "switch"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "animal-crossing-city-folk-wii",
@@ -575,7 +623,10 @@
       "search": [
         "Animal Crossing: Let's Go to the City",
         "Animal Crossing: City Folk"
-      ]
+      ],
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "animal-crossing-new-horizons-switch",
@@ -587,7 +638,10 @@
       "id": "donkey-kong-country-returns-wii",
       "title": "Donkey Kong Country Returns",
       "year": 2010,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "donkey-kong-mame",
@@ -632,7 +686,10 @@
       "search": [
         "Kirby's Adventure Wii",
         "Kirby's Return to Dream Land"
-      ]
+      ],
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "kirby-star-allies-switch",
@@ -644,7 +701,10 @@
       "id": "kirby-s-epic-yarn-wii",
       "title": "Kirby's Epic Yarn",
       "year": 2010,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "pokemon-white-version-2-ds",
@@ -684,13 +744,19 @@
       "id": "pokemon-x-3ds",
       "title": "Pokémon X",
       "year": 2013,
-      "platform": "3ds"
+      "platform": "3ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "pokemon-moon-3ds",
       "title": "Pokémon Moon",
       "year": 2016,
-      "platform": "3ds"
+      "platform": "3ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "pokemon-sword-switch",
@@ -717,25 +783,37 @@
       "id": "new-super-luigi-u-wiiu",
       "title": "New Super Luigi U",
       "year": 2013,
-      "platform": "wiiu"
+      "platform": "wiiu",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "mario-party-8-wii",
       "title": "Mario Party 8",
       "year": 2007,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "mario-party-9-wii",
       "title": "Mario Party 9",
       "year": 2012,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "mario-party-10-wiiu",
       "title": "Mario Party 10",
       "year": 2015,
-      "platform": "wiiu"
+      "platform": "wiiu",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-party-switch",
@@ -753,13 +831,19 @@
       "id": "newer-super-mario-bros-wii-wii",
       "title": "Newer Super Mario Bros. Wii",
       "year": 2012,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "wii-music-wii",
       "title": "Wii Music",
       "year": 2008,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "pokemon-quest-switch",
@@ -817,7 +901,10 @@
       "search": [
         "Minecraft: Story Mode",
         "Minecraft: Story Mode - The Complete Adventure"
-      ]
+      ],
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "angry-birds-rio-android",
@@ -865,7 +952,8 @@
       "video_seconds": 5,
       "video_name": "Plants vs Zombies",
       "video_skip": [
-        "BqZlJSWUuz4"
+        "BqZlJSWUuz4",
+        "ij5UZxOYOWk"
       ]
     },
     {
@@ -930,7 +1018,10 @@
       "id": "the-legend-of-zelda-twilight-princess-wii",
       "title": "The Legend of Zelda: Twilight Princess",
       "year": 2006,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "kirby-s-dream-land-gb",
@@ -954,7 +1045,10 @@
       "id": "sonic-colours-wii",
       "title": "Sonic Colours",
       "year": 2010,
-      "platform": "wii"
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "jackbox-party-pack-8-steam",
