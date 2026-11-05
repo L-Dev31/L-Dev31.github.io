@@ -41,7 +41,8 @@ function projectIndex(container, projects) {
             media.append(video);
         } else {
             const img = el('img');
-            Object.assign(img, { src: project.heroImage, alt: '', loading: 'lazy', decoding: 'async' });
+            Object.assign(img, { src: project.cover || project.heroImage, alt: '', decoding: 'async' });
+            entry.ready = img.decode().catch(() => {});
             media.append(img);
         }
         const info = el('div', 'index-info');
@@ -62,7 +63,7 @@ function projectIndex(container, projects) {
         current = entry;
         entry.item.classList.add('is-open');
         entry.row.setAttribute('aria-expanded', 'true');
-        entry.cover.show();
+        (entry.ready || Promise.resolve()).then(() => entry.cover.show());
         entry.video?.play().catch(() => {});
     };
     const close = entry => {

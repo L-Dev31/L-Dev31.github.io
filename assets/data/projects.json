@@ -36,7 +36,8 @@
         "assets/images/projects/smfl/problem.jpg",
         "assets/images/projects/smfl/symbol.jpg",
         "assets/images/projects/smfl/flag-final.jpg"
-      ]
+      ],
+      "cover": "assets/images/projects/smfl.webp"
     },
     {
       "id": "ogfm",
@@ -72,7 +73,8 @@
         "assets/images/projects/ogfm/process1.jpg",
         "assets/images/projects/ogfm/process2.jpg",
         "assets/images/projects/ogfm/process3.jpg"
-      ]
+      ],
+      "cover": "assets/images/projects/ogfm.webp"
     },
     {
       "id": "bgaw",
@@ -108,7 +110,8 @@
         "assets/images/projects/bgaw/identity.jpg",
         "assets/images/projects/bgaw/logo.jpg",
         "assets/images/projects/bgaw/web.jpg"
-      ]
+      ],
+      "cover": "assets/images/projects/bgaw.webp"
     },
     {
       "id": "mego",
@@ -131,7 +134,8 @@
         "Circular Economy",
         "Public Sector",
         "48-Hour Challenge"
-      ]
+      ],
+      "cover": "assets/images/projects/mego.webp"
     },
     {
       "id": "prfy",
@@ -156,7 +160,8 @@
         "iOS Design",
         "Privacy by Design",
         "OCR Scanning"
-      ]
+      ],
+      "cover": "assets/images/projects/prfy.webp"
     },
     {
       "id": "cmck",
@@ -191,7 +196,8 @@
         "assets/images/projects/cmck/typography.webp",
         "assets/images/projects/cmck/website.jpg",
         "assets/images/projects/cmck/structure.webp"
-      ]
+      ],
+      "cover": "assets/images/projects/cmck.webp"
     },
     {
       "id": "bmge",
@@ -227,7 +233,8 @@
         "assets/images/projects/bmge/tomodachi.webp",
         "assets/images/projects/bmge/tags.webp",
         "assets/images/projects/bmge/re.webp"
-      ]
+      ],
+      "cover": "assets/images/projects/bmge.webp"
     },
     {
       "id": "gptr",
@@ -263,7 +270,8 @@
         "assets/images/projects/gptr/dictionary.webp",
         "assets/images/projects/gptr/translation.webp",
         "assets/images/projects/gptr/interface.webp"
-      ]
+      ],
+      "cover": "assets/images/projects/gptr.webp"
     }
   ]
 }
