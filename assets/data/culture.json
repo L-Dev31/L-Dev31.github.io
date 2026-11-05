@@ -698,25 +698,10 @@
       "released": "2026-04-01"
     },
     {
-      "id": "spider-man",
-      "title": "Spider-Man",
-      "year": 2002,
-      "search": [
-        "Spider-Man (2002 film)"
-      ],
-      "released": "2002-05-03"
-    },
-    {
       "id": "spider-man-2",
       "title": "Spider-Man 2",
       "year": 2004,
       "released": "2004-06-30"
-    },
-    {
-      "id": "the-amazing-spider-man-2",
-      "title": "The Amazing Spider-Man 2",
-      "year": 2014,
-      "released": "2014-04-17"
     },
     {
       "id": "spider-man-homecoming",
@@ -793,12 +778,6 @@
       "released": "2021-07-14"
     },
     {
-      "id": "men-in-black-international",
-      "title": "Men in Black: International",
-      "year": 2019,
-      "released": "2019-06-12"
-    },
-    {
       "id": "alice-through-the-looking-glass",
       "title": "Alice Through the Looking Glass",
       "year": 2016,
@@ -809,22 +788,6 @@
       "released": "2016-05-26"
     },
     {
-      "id": "ghostbusters-answer-the-call",
-      "title": "Ghostbusters: Answer the Call",
-      "year": 2016,
-      "search": [
-        "Ghostbusters (2016 film)",
-        "Ghostbusters: Answer the Call"
-      ],
-      "released": "2016-07-15"
-    },
-    {
-      "id": "ghostbusters-frozen-empire",
-      "title": "Ghostbusters: Frozen Empire",
-      "year": 2024,
-      "released": "2024-03-14"
-    },
-    {
       "id": "dolittle",
       "title": "Dolittle",
       "year": 2020,
@@ -833,18 +796,6 @@
         "Dolittle"
       ],
       "released": "2020-01-16"
-    },
-    {
-      "id": "men-in-black-ii",
-      "title": "Men in Black II",
-      "year": 2002,
-      "released": "2002-07-03"
-    },
-    {
-      "id": "men-in-black-3",
-      "title": "Men in Black 3",
-      "year": 2012,
-      "released": "2012-05-23"
     },
     {
       "id": "ghostbusters-afterlife",
@@ -904,6 +855,12 @@
         "Zion (film, 2025)"
       ],
       "released": "2025-03-14"
+    },
+    {
+      "id": "paprika",
+      "title": "Paprika",
+      "year": 2006,
+      "released": "2006-09-02"
     }
   ],
   "books": [
