@@ -437,7 +437,10 @@
       "id": "grand-theft-auto-v-steam",
       "title": "Grand Theft Auto V",
       "year": 2013,
-      "platform": "steam"
+      "platform": "steam",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "mario-kart-8-wiiu",
@@ -480,50 +483,62 @@
       "id": "mario-rabbids-kingdom-battle-switch",
       "title": "Mario + Rabbids Kingdom Battle",
       "year": 2017,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "gang-beasts-steam",
       "title": "Gang Beasts",
       "year": 2017,
-      "platform": "steam"
+      "platform": "steam",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "mario-kart-8-deluxe-switch",
       "title": "Mario Kart 8 Deluxe",
       "year": 2017,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "1-2-switch-switch",
       "title": "1-2-Switch",
       "year": 2017,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "minecraft-bedrock-edition-pc",
       "title": "Minecraft: Bedrock Edition",
       "year": 2017,
       "platform": "pc",
-      "image": "https://minecraft.wiki/images/Minecraft_Java_%26_Bedrock_Edition_for_PC_vertical_key_art.jpg"
+      "image": "https://minecraft.wiki/images/Minecraft_Java_%26_Bedrock_Edition_for_PC_vertical_key_art.jpg",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "red-dead-redemption-2-steam",
       "title": "Red Dead Redemption 2",
       "year": 2018,
-      "platform": "steam"
+      "platform": "steam",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-smash-bros-ultimate-switch",
       "title": "Super Smash Bros. Ultimate",
       "year": 2018,
-      "platform": "switch"
-    },
-    {
-      "id": "warioware-gold-3ds",
-      "title": "WarioWare Gold",
-      "year": 2018,
-      "platform": "3ds",
+      "platform": "switch",
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5
@@ -532,13 +547,19 @@
       "id": "new-super-mario-bros-u-deluxe-switch",
       "title": "New Super Mario Bros. U Deluxe",
       "year": 2019,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "balatro-steam",
       "title": "Balatro",
       "year": 2024,
-      "platform": "steam"
+      "platform": "steam",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "clair-obscur-expedition-33-steam",
@@ -553,13 +574,19 @@
       "id": "return-of-the-obra-dinn-steam",
       "title": "Return of the Obra Dinn",
       "year": 2018,
-      "platform": "steam"
+      "platform": "steam",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "human-fall-flat-steam",
       "title": "Human: Fall Flat",
       "year": 2016,
-      "platform": "steam"
+      "platform": "steam",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "just-dance-wii",
@@ -632,7 +659,10 @@
       "id": "animal-crossing-new-horizons-switch",
       "title": "Animal Crossing: New Horizons",
       "year": 2020,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "donkey-kong-country-returns-wii",
@@ -695,7 +725,10 @@
       "id": "kirby-star-allies-switch",
       "title": "Kirby Star Allies",
       "year": 2018,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "kirby-s-epic-yarn-wii",
@@ -762,7 +795,10 @@
       "id": "pokemon-sword-switch",
       "title": "Pokémon Sword",
       "year": 2019,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "super-mario-world-snes",
@@ -777,7 +813,10 @@
       "id": "super-mario-odyssey-switch",
       "title": "Super Mario Odyssey",
       "year": 2017,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "new-super-luigi-u-wiiu",
@@ -819,13 +858,19 @@
       "id": "super-mario-party-switch",
       "title": "Super Mario Party",
       "year": 2018,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "mario-party-jamboree-switch",
       "title": "Mario Party Jamboree",
       "year": 2024,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "newer-super-mario-bros-wii-wii",
@@ -849,13 +894,19 @@
       "id": "pokemon-quest-switch",
       "title": "Pokémon Quest",
       "year": 2018,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "undertale-steam",
       "title": "Undertale",
       "year": 2015,
-      "platform": "steam"
+      "platform": "steam",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "deltarune-chapter-1-steam",
@@ -891,7 +942,10 @@
       "id": "pokemon-let-s-go-eevee-switch",
       "title": "Pokémon: Let's Go, Eevee!",
       "year": 2018,
-      "platform": "switch"
+      "platform": "switch",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "minecraft-story-mode-wiiu",
@@ -1082,6 +1136,33 @@
       "title": "Clash Royale",
       "year": 2016,
       "platform": "android",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "yoshi-s-woolly-world-wiiu",
+      "title": "Yoshi's Woolly World",
+      "year": 2015,
+      "platform": "wiiu",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "super-mario-maker-wiiu",
+      "title": "Super Mario Maker",
+      "year": 2015,
+      "platform": "wiiu",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "super-mario-maker-2-switch",
+      "title": "Super Mario Maker 2",
+      "year": 2019,
+      "platform": "switch",
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5

@@ -109,11 +109,17 @@ def clip(item):
         return (dest, vid) if done.returncode == 0 and dest.exists() else (None, None)
 
 
+def width_of(path):
+    out = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'stream=width', '-of', 'csv=p=0', str(path)], capture_output=True, text=True).stdout.split()
+    return int(out[0]) if out else 0
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--only')
     parser.add_argument('--platform')
+    parser.add_argument('--sharpen', action='store_true', help='redo the clips narrower than their video_width')
     parser.add_argument('--jobs', type=int, default=4)
     args = parser.parse_args()
     data = json.loads(DATA.read_text())
@@ -125,7 +131,7 @@ def main():
             continue
         if args.platform and item['platform'] != args.platform:
             continue
-        if not dest.exists() or args.force:
+        if not dest.exists() or args.force or (args.sharpen and width_of(dest) < item.get('video_width', 320)):
             todo.append(item)
     with concurrent.futures.ThreadPoolExecutor(args.jobs) as pool:
         for item, (dest, vid) in zip(todo, pool.map(clip, todo)):
