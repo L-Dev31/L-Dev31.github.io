@@ -22,7 +22,7 @@
     <meta name="twitter:description" content="Self-taught designer since age 10. Founder of Rayon. Now at Ynov Sophia.">
     <meta name="twitter:image" content="https://l-dev31.github.io/assets/images/core/portrait.jpg">
 
-    <link rel="stylesheet" href="assets/styles/pages.css">
+    <link rel="stylesheet" href="assets/styles/home.css">
     <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" defer></script>
     <script src="assets/scripts/main.js" type="module"></script>
 
@@ -99,145 +99,130 @@
             </div>
         </div>
 
-        <section id="my-story" aria-label="About me">
-            <div class="story">
-                <div class="story-text">
-                    <h2 class="scrubbing-text">About me</h2>
-                    <div class="story-paragraph scrubbing-text">
-                        From my early creative years in Provence to an entrepreneurial chapter in Guadeloupe, my
-                        journey has always been about building.
-                        After launching my first marketplace project at 17, I am now refining my craft as a
-                        designer, keeping a T-shaped perspective
-                        where design meets curiosity in code, history, and culture. I build digital work that is
-                        clear, ambitious, and grounded in real use.
+        <section id="my-story" aria-labelledby="story-title">
+            <div class="section-head">
+                <h2 class="title scrubbing-text" id="story-title">About me</h2>
+                <p class="section-note scrubbing-text">A designer who also builds: brand, interface and code, carried to the end.</p>
+            </div>
+            <div class="promise-story">
+                <div class="promise-picture" style="--invert: 0" data-picture="assets/images/core/story.webp" role="img" aria-label="Portrait of Léo Tosku"></div>
+                <div class="promise-text">
+                    <p>From my early creative years in Provence to an entrepreneurial chapter in Guadeloupe, my journey has always been about building. After launching my first marketplace project at 17, I am now refining my craft as a designer, keeping a T-shaped perspective where design meets curiosity in code, history, and culture. I build digital work that is clear, ambitious, and grounded in real use.</p>
+                    <ul class="promise-links">
+                        <li><a href="index.html#featured-projects">See the projects <span aria-hidden="true">&uarr;</span></a></li>
+                        <li><a href="mailto:leotoskuepro@gmail.com">Say hello <span aria-hidden="true">&nearr;</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="timeline-section" aria-labelledby="experience-title">
+            <div class="section-head">
+                <h2 class="title scrubbing-text" id="experience-title">Experience</h2>
+                <p class="section-note scrubbing-text">Marketing, design and development, in studios, companies and my own venture.</p>
+            </div>
+            <ol class="timeline">
+                <li class="timeline-item">
+                    <time class="timeline-year" datetime="2026">2026</time>
+                    <div>
+                        <h3 class="timeline-company">Geetech - Superyacht Engineering</h3>
+                        <p class="timeline-place">Antibes, France · Port-Hercule, Monaco</p>
                     </div>
-                </div>
-                <div class="story-image">
-                    <img src="assets/images/core/story.jpg" data-parallax-speed="90" alt="About Léo Tosku" loading="lazy" decoding="async">
-                </div>
-            </div>
+                    <div>
+                        <p class="timeline-role"><span lang="fr">Responsable Marketing, Communication, Design</span></p>
+                        <ul class="timeline-points">
+                            <li>500+ orders a day managed within ninety-second windows.</li>
+                            <li>Mastery of HACCP food safety standards and high-volume flow management.</li>
+                            <li>Synchronous teamwork under extreme high-pressure environments.</li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="timeline-item">
+                    <time class="timeline-year" datetime="2025/2026">2025 / 2026</time>
+                    <div>
+                        <h3 class="timeline-company">McDonald's</h3>
+                        <p class="timeline-place">Antibes, France</p>
+                    </div>
+                    <div>
+                        <p class="timeline-role"><span lang="fr">Employé polyvalent</span></p>
+                        <ul class="timeline-points">
+                            <li>500+ orders a day managed within ninety-second windows.</li>
+                            <li>Mastery of HACCP food safety standards and high-volume flow management.</li>
+                            <li>Synchronous teamwork under extreme high-pressure environments.</li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="timeline-item">
+                    <time class="timeline-year" datetime="2024/2025">2024 / 2025</time>
+                    <div>
+                        <h3 class="timeline-company">Red Planet Pictures</h3>
+                        <p class="timeline-place">Deshaies, Guadeloupe (On-site) · London, United Kingdom (Remotely)</p>
+                    </div>
+                    <div>
+                        <p class="timeline-role">Assistant graphic designer</p>
+                        <ul class="timeline-points">
+                            <li>Audiovisual studio, 100% English-speaking art direction. Visual identity, print, digital / the full pipeline under tight turnarounds.</li>
+                            <li>Fifty+ finished pieces across series promo and brand identity work.</li>
+                            <li>Two hundred cuts a day at peak, print and digital, same tone held across all of them.</li>
+                            <li>Learned to think in story arcs, not single frames.</li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="timeline-item">
+                    <time class="timeline-year" datetime="2022/2025">2022 / 2025</time>
+                    <div>
+                        <h3 class="timeline-company">Rayon</h3>
+                        <p class="timeline-place">Deshaies, Guadeloupe</p>
+                    </div>
+                    <div>
+                        <p class="timeline-role">Founder &amp; full-stack developer</p>
+                        <ul class="timeline-points">
+                            <li>Built a full-stack C2C marketplace for the French West Indies from scratch.</li>
+                            <li>Developed custom PHP backend, vanilla JS frontend, and secure auth systems.</li>
+                            <li>Managed end-to-end product design, execution, and regional logistics.</li>
+                            <li>Stack: PHP · JavaScript · MySQL · HTML · CSS</li>
+                        </ul>
+                    </div>
+                </li>
+            </ol>
         </section>
 
-        <section id="experience" aria-labelledby="experience-title">
-            <h2 id="experience-title" class="title">Experience</h2>
-            <div class="exp-stack">
-
-                <article class="exp-block">
-                    <header class="exp-head">
-                        <time class="exp-year" datetime="2026">2026</time>
-                        <h3 class="exp-title">
-                            <img src="assets/images/companies/geetech.png" alt="Geetech" class="company-logo">
-                            <span class="exp-company-name">Geetech - Superyacht Engineering</span>
-                            <span class="exp-location">Antibes, France <br>Port-Hercule, Monaco</span>
-                        </h3>
-                        <p class="exp-role"><span lang="fr">Responsable Marketing, Communication, Design</span></p>
-                    </header>
-                    <ul class="exp-list">
-                        <li>500+ orders a day managed within ninety-second windows.</li>
-                        <li>Mastery of HACCP food safety standards and high-volume flow management.</li>
-                        <li>Synchronous teamwork under extreme high-pressure environments.</li>
-                    </ul>
-                </article>
-
-                <article class="exp-block">
-                    <header class="exp-head">
-                        <time class="exp-year" datetime="2025/2026">2025 / 2026</time>
-                        <h3 class="exp-title">
-                            <img src="assets/images/companies/mcdonalds.webp" alt="McDonald's" class="company-logo">
-                            <span class="exp-company-name">McDonald's</span>
-                            <span class="exp-location">Antibes, France</span>
-                        </h3>
-                        <p class="exp-role"><span lang="fr">Employé polyvalent</span></p>
-                    </header>
-                    <ul class="exp-list">
-                        <li>500+ orders a day managed within ninety-second windows.</li>
-                        <li>Mastery of HACCP food safety standards and high-volume flow management.</li>
-                        <li>Synchronous teamwork under extreme high-pressure environments.</li>
-                    </ul>
-                </article>
-
-                <article class="exp-block">
-                    <header class="exp-head">
-                        <time class="exp-year" datetime="2024/2025">2024 / 2025</time>
-                        <h3 class="exp-title">
-                            <img src="assets/images/companies/redplanet.png" alt="Red Planet Pictures" class="company-logo">
-                            <span class="exp-company-name">Red Planet Pictures</span>
-                            <span class="exp-location">Deshaies, Guadeloupe (On-site) <br> London, United Kingdom (Remotely)</span>
-                        </h3>
-                        <p class="exp-role">Assistant graphic designer</p>
-                    </header>
-                    <p class="exp-lede">
-                        Audiovisual studio, 100% English-speaking art direction. Visual identity, print, digital / the
-                        full pipeline under tight turnarounds.
-                    </p>
-                    <ul class="exp-list">
-                        <li>Fifty+ finished pieces across series promo and brand identity work.</li>
-                        <li>Two hundred cuts a day at peak, print and digital, same tone held across all of them.</li>
-                        <li>Learned to think in story arcs, not single frames.</li>
-                    </ul>
-                </article>
-
-                <article class="exp-block">
-                    <header class="exp-head">
-                        <time class="exp-year" datetime="2022/2025">2022 / 2025</time>
-                        <h3 class="exp-title">
-                            <img src="assets/images/companies/rayon.png" alt="Rayon" class="company-logo">
-                            <span class="exp-company-name">Rayon</span>
-                            <span class="exp-location">Deshaies, Guadeloupe</span>
-                        </h3>
-                        <p class="exp-role">Founder &amp; full-stack developer</p>
-                    </header>
-                    <ul class="exp-list">
-                        <li>Built a full-stack C2C marketplace for the French West Indies from scratch.</li>
-                        <li>Developed custom PHP backend, vanilla JS frontend, and secure auth systems.</li>
-                        <li>Managed end-to-end product design, execution, and regional logistics.</li>
-                    </ul>
-                    <dl class="exp-facts">
-                        <div>
-                            <dt>Stack</dt>
-                            <dd>PHP · JavaScript · MySQL · HTML · CSS</dd>
-                        </div>
-                    </dl>
-                </article>
+        <section id="education" class="timeline-section" aria-labelledby="education-title">
+            <div class="section-head">
+                <h2 class="title scrubbing-text" id="education-title">Education</h2>
+                <p class="section-note scrubbing-text">Digital project management and design, built on a general baccalaureate in computer science and maths.</p>
             </div>
-        </section>
-
-        <section id="education" aria-labelledby="education-title">
-            <h2 id="education-title" class="title">Education</h2>
-            <div class="exp-stack">
-                <article class="exp-block">
-                    <header class="exp-head">
-                        <time class="exp-year" datetime="2025/2028">2025 / 2028</time>
-                        <h3 class="exp-title">
-                            <img src="assets/images/companies/ynov.png" alt="Sophia Ynov Campus" class="company-logo">
-                            <span class="exp-company-name">Sophia Ynov Campus</span>
-                            <span class="exp-location">Sophia Antipolis, France</span>
-                        </h3>
-                        <p class="exp-role">Bachelor, Digital Project Management &amp; Design</p>
-                    </header>
-                    <ul class="exp-list">
-                        <li>Framework-based approach to digital project management and design.</li>
-                        <li>TOEIC 2025: 955/990 (C2 Proficiency level).</li>
-                        <li>2026 Eloquence competition (Concours d'Éloquence) regional participant</li>
-                    </ul>
-                </article>
-
-                <article class="exp-block">
-                    <header class="exp-head">
-                        <time class="exp-year" datetime="2022/2025">2022 / 2025</time>
-                        <h3 class="exp-title">
-                            <img src="assets/images/companies/sonnyrupaire.png" alt="LGT Sonny Rupaire" class="company-logo">
-                            <span class="exp-company-name">LGT Sonny Rupaire</span>
-                            <span class="exp-location">Sainte-Rose, Guadeloupe</span>
-                        </h3>
-                        <p class="exp-role"><span lang="fr">Baccalauréat général</span> / NSI &amp; Maths</p>
-                    </header>
-                    <ul class="exp-list">
-                        <li>NSI Trophy 2023–2024 winner for technical excellence in computer science.</li>
-                        <li>Winner of the 2024 Eloquence Competition (Concours d'Éloquence).</li>
-                    </ul>
-                </article>
-            </div>
+            <ol class="timeline">
+                <li class="timeline-item">
+                    <time class="timeline-year" datetime="2025/2028">2025 / 2028</time>
+                    <div>
+                        <h3 class="timeline-company">Sophia Ynov Campus</h3>
+                        <p class="timeline-place">Sophia Antipolis, France</p>
+                    </div>
+                    <div>
+                        <p class="timeline-role">Bachelor, Digital Project Management &amp; Design</p>
+                        <ul class="timeline-points">
+                            <li>Framework-based approach to digital project management and design.</li>
+                            <li>TOEIC 2025: 955/990 (C2 Proficiency level).</li>
+                            <li>2026 Eloquence competition (Concours d'Éloquence) regional participant</li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="timeline-item">
+                    <time class="timeline-year" datetime="2022/2025">2022 / 2025</time>
+                    <div>
+                        <h3 class="timeline-company">LGT Sonny Rupaire</h3>
+                        <p class="timeline-place">Sainte-Rose, Guadeloupe</p>
+                    </div>
+                    <div>
+                        <p class="timeline-role"><span lang="fr">Baccalauréat général</span> / NSI &amp; Maths</p>
+                        <ul class="timeline-points">
+                            <li>NSI Trophy 2023–2024 winner for technical excellence in computer science.</li>
+                            <li>Winner of the 2024 Eloquence Competition (Concours d'Éloquence).</li>
+                        </ul>
+                    </div>
+                </li>
+            </ol>
         </section>
     </main>
 
