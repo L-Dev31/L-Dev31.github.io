@@ -1,14 +1,13 @@
 import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
 import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
-import { journey, logoWall } from './sections.js';
+import { journey } from './sections.js';
 
 const CATEGORIES = ['Design', 'UI/UX', 'Web', 'Marketting', 'Photography', 'Tools', 'Video Games'];
 
 initPage();
 if (!document.querySelector('#header')) reveal(document.querySelectorAll('section, .title'));
 const refreshParallax = parallax();
-logoWall(document.getElementById('logos'));
 const story = document.querySelector('.promise-picture');
 if (story) {
     let visible = false;
