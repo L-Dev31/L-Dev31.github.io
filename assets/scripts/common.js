@@ -126,9 +126,9 @@ function daylight(date) {
     return elevation > Math.sin(-0.833 * rad);
 }
 
+let tickClock = () => {};
+
 function clock() {
-    const clocks = document.querySelectorAll('[data-clock]');
-    if (!clocks.length) return;
     const time = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Monaco', hour: '2-digit', minute: '2-digit', hour12: false });
     const zone = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Monaco', timeZoneName: 'shortOffset' });
     const tick = () => {
@@ -136,11 +136,12 @@ function clock() {
         const day = daylight(now);
         const t = time.format(now);
         const offset = zone.formatToParts(now).find(part => part.type === 'timeZoneName')?.value || '';
-        for (const el of clocks) {
+        for (const el of document.querySelectorAll('[data-clock]')) {
             el.innerHTML = `${day ? SUN : MOON}<span class="clock-place">Monaco, MC</span><span class="clock-time">${t}</span><span class="clock-zone">${offset}</span>`;
             el.setAttribute('aria-label', `Monaco, ${t}, ${offset}, ${day ? 'daytime' : 'night'}`);
         }
     };
+    tickClock = tick;
     tick();
     setInterval(tick, 15000);
 }
@@ -219,10 +220,14 @@ function renderMenuLinks(nav) {
         link.append(page.label);
         return link;
     }));
-    if (!nav.nextElementSibling?.classList.contains('mobile-menu-socials')) {
-        const socials = document.createElement('div');
-        socials.className = 'mobile-menu-socials';
-        socials.append(...SOCIALS.map(({ label, href }) => {
+    if (!nav.nextElementSibling?.classList.contains('hero-socials')) {
+        const socials = document.createElement('nav');
+        socials.className = 'hero-socials';
+        socials.setAttribute('aria-label', 'Social links');
+        const clock = document.createElement('p');
+        clock.className = 'clock';
+        clock.dataset.clock = '';
+        socials.append(clock, ...SOCIALS.map(({ label, href }) => {
             const link = document.createElement('a');
             link.href = href;
             link.target = '_blank';
@@ -231,6 +236,7 @@ function renderMenuLinks(nav) {
             return link;
         }));
         nav.after(socials);
+        tickClock();
     }
 }
 
