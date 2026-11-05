@@ -783,10 +783,9 @@ html.menu-open body {
 
 .hero-about .about-title {
     display: flex;
-    flex-wrap: nowrap;
-    white-space: nowrap;
+    flex-direction: column;
     align-items: flex-start;
-    column-gap: 0.3em;
+    white-space: nowrap;
     -webkit-text-stroke: 0;
     font-family: var(--font-display);
     font-size: clamp(56px, 8vw, 132px);
@@ -800,8 +799,17 @@ html.menu-open body {
     font-weight: 400;
 }
 
-.hero-about .about-title .about-hi {
+.hero-about .about-title .about-line {
+    display: flex;
+    align-items: flex-start;
+    column-gap: 0.3em;
+}
+
+.hero-about .about-title .about-line .about-hi {
     margin-top: -0.2em;
+}
+
+.hero-about .about-title .about-hi {
     font-family: var(--font-body);
     font-size: 0.667em;
     font-weight: 500;
