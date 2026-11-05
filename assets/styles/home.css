@@ -229,7 +229,6 @@ h3 {
     line-height: 1.5;
 }
 
-#promise .section-note,
 #my-story .section-note,
 #featured-projects .section-note,
 .accent-section .section-note {
@@ -763,8 +762,19 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
 #my-story {
     min-height: 0;
     padding: 0 0 clamp(80px, 14vh, 160px);
+}
+
+#my-story {
     background: var(--accent);
     color: var(--black);
+}
+
+#promise .promise-picture {
+    --invert: 0;
+}
+
+#promise .promise-links li {
+    border-color: rgba(246, 242, 242, 0.25);
 }
 
 .promise-story {
@@ -845,7 +855,6 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     color: var(--black);
 }
 
-#promise .title,
 #my-story .title,
 #featured-projects .title,
 .accent-section .title {
