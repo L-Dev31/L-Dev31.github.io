@@ -259,12 +259,12 @@ h3 {
     font: 500 14px/1 var(--font-body);
     letter-spacing: 0;
     text-decoration: none;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: font-weight 0.15s var(--ease-out);
 }
 
-.button:hover {
-    background: transparent;
-    color: var(--white);
+.button:hover,
+.button:focus-visible {
+    font-weight: 800;
 }
 
 .tag {
@@ -664,6 +664,11 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     margin-bottom: clamp(16px, 4vh, 40px);
 }
 
+.hero-socials .clock {
+    background: transparent;
+    color: var(--white);
+}
+
 .hero-socials a,
 .hero-socials .clock {
     display: inline-flex;
@@ -672,13 +677,13 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     padding: 9px 16px;
     border: 1px solid var(--white);
     border-radius: 999px;
-    background: transparent;
-    color: var(--white);
+    background: var(--white);
+    color: var(--black);
     font-size: 14px;
     font-weight: 500;
     line-height: 1;
     text-decoration: none;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: font-weight 0.15s var(--ease-out);
 }
 
 .hero-socials a::after {
@@ -687,8 +692,7 @@ html.on-accent .mobile-menu-socials a:focus-visible {
 
 .hero-socials a:hover,
 .hero-socials a:focus-visible {
-    background: var(--white);
-    color: var(--black);
+    font-weight: 800;
 }
 
 #header.is-turned .hero-socials {
@@ -1068,13 +1072,12 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     font-weight: 500;
     line-height: 1;
     text-decoration: none;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: font-weight 0.15s var(--ease-out);
 }
 
 .index-go:hover,
 .index-go:focus-visible {
-    background: transparent;
-    color: var(--black);
+    font-weight: 800;
 }
 
 .journey {
@@ -1841,8 +1844,7 @@ html:has(.project-main)::-webkit-scrollbar {
 
 .footer-mail:hover,
 .footer-mail:focus-visible {
-    background: transparent;
-    color: var(--black);
+    font-weight: 800;
 }
 
 .footer-grid {
