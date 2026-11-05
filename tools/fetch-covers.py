@@ -85,6 +85,10 @@ def norm(name):
     return ' '.join(re.sub(r'[^a-z0-9]+', ' ', name.replace('&', ' and ')).split())
 
 
+def item_id(item):
+    return slug(item['title'], item.get('platform', ''))
+
+
 def slug(title, platform=''):
     text = unicodedata.normalize('NFKD', f'{title} {platform}').encode('ascii', 'ignore').decode().lower()
     return re.sub(r'[^a-z0-9]+', '-', text).strip('-')
@@ -262,7 +266,7 @@ def is_placeholder(raw):
 def save(raw, dest, url=''):
     # the Wii only has its full wrap in high resolution: keep the front, the right 47.5%
     crop = ['-gravity', 'East', '-crop', '47.5%x100%+0+0', '+repage'] if '/wii/coverfull/' in url else []
-    subprocess.run(['magick', '-', *crop, '-resize', 'x560>', '-strip', '-quality', '66', str(dest)], input=raw, check=True, stderr=subprocess.DEVNULL)
+    subprocess.run(['magick', '-', *crop, '-resize', 'x440>', '-colorspace', 'Gray', '-strip', '-quality', '60', str(dest)], input=raw, check=True, stderr=subprocess.DEVNULL)
 
 
 def main():
@@ -274,13 +278,14 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     kept, missing = set(), []
     for kind, items in data.items():
+        if kind == 'games':  # games are shown as short clips, see fetch-previews.py
+            continue
         for item in items:
-            dest = OUT / f"{slug(item['title'], item.get('platform', ''))}.webp"
+            dest = OUT / f"{item_id(item)}.webp"
             item['kind'] = kind
             wanted = not args.only or args.only.lower() in item['title'].lower()
             if (dest.exists() and not args.force) or not wanted:
                 if dest.exists():
-                    item['cover'] = f'assets/images/culture/{dest.name}'
                     kept.add(dest.name)
                 item.pop('kind')
                 continue
@@ -301,15 +306,12 @@ def main():
                 raw = None
             item.pop('kind')
             if not raw:
-                item.pop('cover', None)
                 missing.append(item['title'])
                 print(f"-- {item['title']}: no cover found")
                 continue
             save(raw, dest, url)
-            item['cover'] = f'assets/images/culture/{dest.name}'
             kept.add(dest.name)
             print(f"ok {item['title']} <- {source}: {url}")
-    DATA.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n')
     if not args.only:
         for file in OUT.glob('*.webp'):
             if file.name not in kept:

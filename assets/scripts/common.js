@@ -188,6 +188,7 @@ function smoothScroll() {
 const PAGES = [
     { id: 'home', label: 'Home', href: 'index.html' },
     { id: 'about', label: 'About', href: 'about.html' },
+    { id: 'culture', label: 'Culture', href: 'culture.html' },
     { id: 'contact', label: 'Contact', href: 'mailto:leotoskuepro@gmail.com' },
 ];
 
@@ -199,7 +200,7 @@ const SOCIALS = [
 
 function renderMenuLinks(nav) {
     const file = location.pathname.split('/').pop() || 'index.html';
-    const here = file === 'about.html' ? 'about' : file === 'project.html' ? 'project' : 'home';
+    const here = file === 'about.html' ? 'about' : file === 'culture.html' ? 'culture' : file === 'project.html' ? 'project' : 'home';
     const pages = [...PAGES];
     if (here === 'project') {
         const title = document.querySelector('.article-header h1, .project-hero h1')?.textContent.trim() || document.title.split(' — ')[0] || 'Project';

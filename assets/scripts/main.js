@@ -163,7 +163,7 @@ async function initProjects() {
 
 const PLATFORMS = { nes: 'NES', snes: 'SNES', n64: 'Nintendo 64', gb: 'Game Boy', gbc: 'Game Boy Color', gba: 'Game Boy Advance', ds: 'DS', '3ds': '3DS', wii: 'Wii', wiiu: 'Wii U', switch: 'Switch', steam: 'PC', pc: 'PC', android: 'Android', web: 'Web', mame: 'Arcade' };
 
-function cultureList(container, items) {
+function cultureList(container, items, kind) {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
     const list = el('ul', 'index-list');
     const entries = [...items].sort((a, b) => b.year - a.year).map(item => {
@@ -177,32 +177,52 @@ function cultureList(container, items) {
         list.append(li);
         return { item, row };
     });
+    // files are named after the id of the entry: a clip for a game, a black and white picture drawn in pixels for the rest
+    const clips = kind === 'games';
     const figure = el('figure', 'culture-preview');
-    const img = el('img');
-    img.alt = '';
     figure.setAttribute('aria-hidden', 'true');
     const clip = el('video');
     Object.assign(clip, { muted: true, loop: true, playsInline: true, preload: 'auto' });
-    figure.append(img, clip);
+    clip.hidden = !clips;
+    const pixels = el('div', 'culture-pixels');
+    pixels.hidden = clips;
+    figure.append(clip, pixels);
     container.replaceChildren(list, figure);
     const cover = pixelCover(figure, color, 16);
+    const black = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
+    const layers = new Map();
     let current = null, leaving = 0;
 
-    const show = async ({ item, row }) => {
+    const pictureOf = async ({ item, row }) => {
+        const src = `assets/images/culture/${item.id}.webp`;
+        if (!layers.has(item.id)) {
+            const probe = new Image();
+            probe.src = src;
+            if (!await probe.decode().then(() => true, () => false)) return false;
+            const height = Math.min(340, Math.max(180, innerHeight * 0.32));
+            const host = el('div', 'culture-picture');
+            host.style.cssText = `width:${Math.round(height * probe.naturalWidth / probe.naturalHeight)}px;height:${Math.round(height)}px;--invert:1`;
+            pixels.append(host);
+            pixelPicture(host, src, { color: black, active: () => current === row });
+            layers.set(item.id, host);
+            await new Promise(done => setTimeout(done, 80));
+        }
+        layers.forEach((host, id) => { host.hidden = id !== item.id; });
+        return true;
+    };
+
+    const show = async entry => {
+        const { item, row } = entry;
         clearTimeout(leaving);
         if (current === row) return;
         current = row;
         figure.classList.remove('is-on');
-        if (!item.cover && !item.video) return;
-        img.hidden = !!item.video;
-        clip.hidden = !item.video;
-        if (item.video) {
-            clip.src = item.video;
-            await new Promise(done => { clip.onloadeddata = clip.onerror = done; });
+        if (clips) {
+            clip.src = `assets/videos/culture/${item.id}.mp4`;
+            if (!await new Promise(done => { clip.onloadeddata = () => done(true); clip.onerror = () => done(false); })) return;
             clip.play().catch(() => {});
-        } else {
-            img.src = item.cover;
-            await img.decode().catch(() => {});
+        } else if (!await pictureOf(entry)) {
+            return;
         }
         if (current !== row) return;
         const box = container.getBoundingClientRect(), slot = row.querySelector('.index-slot').getBoundingClientRect(), r = row.getBoundingClientRect();
@@ -235,7 +255,7 @@ async function initCulture() {
     const lists = document.querySelectorAll('[data-culture]');
     if (!lists.length) return;
     const data = await fetch('assets/data/culture.json').then(r => r.json());
-    lists.forEach(container => cultureList(container, data[container.dataset.culture] || []));
+    lists.forEach(container => cultureList(container, data[container.dataset.culture] || [], container.dataset.culture));
 }
 
 Promise.all([initProjects(), initCulture(), ...[...document.querySelectorAll('.journey')].map(journey)])

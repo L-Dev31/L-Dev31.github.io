@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Culture — Léo Tosku</title>
+    <meta name="description" content="The films, books and games Léo Tosku has watched, read and played, and the places he has been to.">
+    <meta name="author" content="Léo Tosku">
+    <link rel="canonical" href="https://l-dev31.github.io/culture.html">
+    <link rel="icon" type="image/png" href="assets/images/core/favicon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://l-dev31.github.io/culture.html">
+    <meta property="og:title" content="Culture — Léo Tosku">
+    <meta property="og:description" content="Films, books, games and travels.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Culture — Léo Tosku">
+
+    <link rel="stylesheet" href="assets/styles/home.css">
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" defer></script>
+    <script src="assets/scripts/main.js" type="module"></script>
+
+</head>
+
+<body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="page-loader" aria-hidden="true"><div class="page-loader-bar"></div></div>
+    <div class="cursor" aria-hidden="true"></div>
+
+    <nav class="navbar" aria-label="Main navigation">
+        <div class="brand">
+            <a href="index.html" aria-label="Home"><img src="assets/images/core/logo.svg" alt="L-Dev31 logo"></a>
+        </div>
+        <div class="links-container">
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span class="hamburger-line" aria-hidden="true"></span>
+                <span class="hamburger-half" aria-hidden="true"></span>
+                <span class="hamburger-half" aria-hidden="true"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" aria-hidden="true">
+        <nav class="mobile-menu-links" aria-label="Menu">
+            <a href="index.html#featured-projects" class="mobile-menu-link">Work</a>
+            <a href="about.html" class="mobile-menu-link">About</a>
+            <a href="culture.html" class="mobile-menu-link active" aria-current="page"><span class="menu-current" aria-hidden="true"></span>Culture</a>
+            <a href="mailto:leotoskuepro@gmail.com" class="mobile-menu-link">Contact</a>
+        </nav>
+        <div class="mobile-menu-footer">
+            <span>Léo TOSKU</span>
+            <span>&copy; <span data-year>2026</span></span>
+        </div>
+    </div>
+
+    <main id="main-content">
+        <div class="about-header">
+            <div class="about-header-picture" data-picture="assets/images/core/culture.webp" aria-hidden="true"></div>
+            <div class="about-header-overlay" aria-hidden="true"></div>
+            <div class="about-header-text">
+                <h1 class="about-title"><span class="about-line">Culture.</span></h1>
+                <p class="about-hero-lede">Films, books, games and the places I have been to.</p>
+            </div>
+        </div>
+
+        <section id="films" class="accent-section culture-section" aria-labelledby="films-title">
+            <div class="section-head">
+                <h2 class="title scrubbing-text" id="films-title">Films</h2>
+                <p class="section-note scrubbing-text">Some of the films I have seen.<br>Point at a title to see<br>its poster.</p>
+            </div>
+            <div class="project-index culture-list" data-culture="films"></div>
+        </section>
+
+        <section id="books" class="accent-section culture-section" aria-labelledby="books-title">
+            <div class="section-head">
+                <h2 class="title scrubbing-text" id="books-title">Books</h2>
+                <p class="section-note scrubbing-text">Some of the books I have read,<br>with the cover behind<br>each title.</p>
+            </div>
+            <div class="project-index culture-list" data-culture="books"></div>
+        </section>
+
+        <section id="games" class="accent-section culture-section" aria-labelledby="games-title">
+            <div class="section-head">
+                <h2 class="title scrubbing-text" id="games-title">Games</h2>
+                <p class="section-note scrubbing-text">Some of the games I have played.<br>The year each one came out<br>is on the right.</p>
+            </div>
+            <div class="project-index culture-list" data-culture="games"></div>
+        </section>
+
+        <section id="travels" aria-labelledby="travels-title">
+            <div class="section-head">
+                <h2 class="title scrubbing-text" id="travels-title">Travels</h2>
+                <p class="section-note scrubbing-text">Places I have been to,<br>in the order I went.<br>Scroll to follow the route.</p>
+            </div>
+            <div class="journey" data-layout="track" data-src="assets/data/travels.json"></div>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <div class="footer-cta">
+            <h2>Let's talk.</h2>
+            <p class="footer-note">Let's have a coffee, in person or online, and go through every idea you have.</p>
+            <a class="footer-mail" href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com <span aria-hidden="true">&nearr;</span></a>
+        </div>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h2>Navigation</h2>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#featured-projects">Work</a></li>
+                    <li><a href="index.html#journey">Journey</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="culture.html">Culture</a></li>
+                    <li><a href="mailto:leotoskuepro@gmail.com">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h2>Socials</h2>
+                <ul class="footer-links">
+                    <li><a href="https://www.instagram.com/ltosku31/" target="_blank" rel="noopener noreferrer">Instagram <span aria-hidden="true">&nearr;</span></a></li>
+                    <li><a href="https://www.linkedin.com/in/l%C3%A9o-tosku-de-vries-8432242a0/" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">&nearr;</span></a></li>
+                    <li><a href="https://github.com/L-Dev31" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">&nearr;</span></a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h2>Contact</h2>
+                <ul class="footer-links">
+                    <li><a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a></li>
+                    <li><a href="tel:+33745370469">+33 7 45 37 04 69</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h2>Local time</h2>
+                <p class="clock" data-clock></p>
+            </div>
+        </div>
+        <div class="footer-sign" aria-hidden="true"><p class="big-name">TOSKU</p></div>
+    </footer>
+
+    <button class="back-to-top" aria-label="Back to top">
+        <span class="btt-text" aria-hidden="true">Back to Top • Back to Top •</span>
+        <img class="btt-icon" src="assets/images/core/top-arrow.svg" alt="">
+    </button>
+</body>
+
+</html>
