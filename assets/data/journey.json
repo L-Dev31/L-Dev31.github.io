@@ -1,31 +1,25 @@
 {
   "stops": [
     {
-      "place": "Provence Varoise",
-      "country": "La Dracénie",
-      "lat": 43.54,
-      "lon": 6.47,
+      "id": "pv",
+      "title": "Provence Varoise",
+      "caption": "La Dracénie",
       "when": "Early years",
-      "flag": "pv",
       "what": "Early creative years, growing up in the Var."
     },
     {
-      "place": "French Caribbean",
-      "country": "Guadeloupe",
-      "lat": 16.31,
-      "lon": -61.8,
+      "id": "gp",
+      "title": "French Caribbean",
+      "caption": "Guadeloupe",
       "when": "2022 — 2025",
-      "what": "Baccalauréat at LGT Sonny Rupaire. I founded Rayon, a full-stack marketplace, and worked remotely as a graphic designer for Red Planet Pictures in London.",
-      "flag": "gp"
+      "what": "Baccalauréat at LGT Sonny Rupaire. I founded Rayon, a full-stack marketplace, and worked remotely as a graphic designer for Red Planet Pictures in London."
     },
     {
-      "place": "French Riviera",
-      "country": "Monaco",
-      "lat": 43.6,
-      "lon": 7.1,
+      "id": "mc",
+      "title": "French Riviera",
+      "caption": "Monaco",
       "when": "2025 —",
-      "what": "Bachelor at Sophia Ynov Campus, and marketing, communication and design at Geetech, between Antibes and Monaco.",
-      "flag": "mc"
+      "what": "Bachelor at Sophia Ynov Campus, and marketing, communication and design at Geetech, between Antibes and Monaco."
     }
   ]
 }

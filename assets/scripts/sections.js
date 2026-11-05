@@ -78,62 +78,9 @@ const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 const FLAG_CELL = 3;
 const FLAG_WAVE = 0.07;
 const SHADES = 12;
-const FLAGS = {
-
-    gp: {
-        aspect: 2,
-        palette: ['#078A34', '#F6F2F2', '#DA1218', '#FFDE0A'],
-        draw(g, w, h) {
-            const band = (y0, y1, c) => { g.fillStyle = c; g.fillRect(0, y0 * h, w, (y1 - y0) * h); };
-            band(0, 1, '#078A34'); band(60 / 480, 420 / 480, '#F6F2F2'); band(84 / 480, 396 / 480, '#DA1218');
-            g.fillStyle = '#FFDE0A';
-            g.beginPath();
-            for (let i = 0; i < 10; i++) {
-                const r = (i % 2 ? 0.382 : 1) * 86 / 480 * h, a = -Math.PI / 2 + i * Math.PI / 5;
-                g[i ? 'lineTo' : 'moveTo'](172 / 960 * w + Math.cos(a) * r, 248 / 480 * h + Math.sin(a) * r);
-            }
-            g.fill();
-        },
-    },
-    pv: {
-        aspect: 1.5,
-        palette: ['#FAE525', '#005493', '#E31F29'],
-        draw(g, w, h) {
-            const X = x => x / 1200 * w, Y = y => y / 800 * h;
-            const poly = (pts, c) => { g.fillStyle = c; g.beginPath(); pts.forEach(([x, y], i) => g[i ? 'lineTo' : 'moveTo'](X(x), Y(y))); g.fill(); };
-            g.fillStyle = '#FAE525'; g.fillRect(0, 0, w, h);
-            poly([[0, 0], [1200, 0], [600, 800]], '#005493');
-            poly([[313, 75], [888, 75], [931, 186], [813, 186], [840, 118], [633, 118], [661, 186], [541, 186], [568, 118], [363, 118], [388, 186], [268, 186]], '#E31F29');
-
-            g.fillStyle = '#FAE525';
-            const shape = (cmds, mirror) => {
-                g.beginPath();
-                for (const [op, ...n] of cmds) {
-                    const q = n.map((v, i) => i % 2 ? Y(v) : X(mirror ? 1200 - v : v));
-                    g[op](...q);
-                }
-                g.fill();
-            };
-            const petal = [['moveTo', 600, 262], ['bezierCurveTo', 570, 300, 550, 340, 555, 380], ['bezierCurveTo', 560, 440, 580, 480, 588, 520],
-                ['lineTo', 612, 520], ['bezierCurveTo', 620, 480, 640, 440, 645, 380], ['bezierCurveTo', 650, 340, 630, 300, 600, 262]];
-            const side = [['moveTo', 575, 470], ['bezierCurveTo', 540, 400, 470, 385, 460, 425], ['bezierCurveTo', 455, 470, 500, 495, 525, 497],
-                ['bezierCurveTo', 515, 470, 530, 455, 548, 470], ['bezierCurveTo', 560, 485, 570, 500, 578, 520], ['lineTo', 600, 520], ['lineTo', 600, 470]];
-            const tail = [['moveTo', 580, 528], ['bezierCurveTo', 575, 560, 560, 570, 534, 578], ['bezierCurveTo', 560, 580, 575, 585, 581, 600],
-                ['bezierCurveTo', 583, 615, 590, 622, 600, 628], ['bezierCurveTo', 610, 622, 617, 615, 619, 600], ['bezierCurveTo', 625, 585, 640, 580, 666, 578],
-                ['bezierCurveTo', 640, 570, 625, 560, 620, 528]];
-            shape(petal); shape(side); shape(side, true); shape(tail);
-            g.fillRect(X(535), Y(508), X(130), Y(20));
-        },
-    },
-    mc: {
-        aspect: 1.25,
-        palette: ['#CE1126', '#F6F2F2'],
-        draw(g, w, h) {
-            g.fillStyle = '#CE1126'; g.fillRect(0, 0, w, h / 2);
-            g.fillStyle = '#F6F2F2'; g.fillRect(0, h / 2, w, h / 2);
-        },
-    },
-};
+const FLAGS = {};
+const cache = new Map();
+const load = url => cache.get(url) ?? cache.set(url, fetch(url).then(r => r.json())).get(url);
 
 function waving(host, key) {
     const spec = FLAGS[key];
@@ -163,27 +110,10 @@ function waving(host, key) {
 
         const tw = cols * 2, th = rows * 2;
         texture = new Uint8Array(tw * th);
-        if (spec.grid) {
-            const gh = spec.grid.length, gw = spec.grid[0].length;
-            for (let y = 0; y < th; y++) {
-                const line = spec.grid[Math.min(gh - 1, Math.floor(y / th * gh))];
-                for (let x = 0; x < tw; x++) texture[y * tw + x] = line.charCodeAt(Math.min(gw - 1, Math.floor(x / tw * gw))) - 48;
-            }
-            return true;
-        }
-        const off = document.createElement('canvas');
-        off.width = tw; off.height = th;
-        const g = off.getContext('2d', { willReadFrequently: true });
-        g.imageSmoothingEnabled = false;
-        spec.draw(g, tw, th);
-        const px = g.getImageData(0, 0, tw, th).data;
-        for (let i = 0; i < texture.length; i++) {
-            let best = 0, bestD = Infinity;
-            rgb.forEach((c, k) => {
-                const d = (px[i * 4] - c[0]) ** 2 + (px[i * 4 + 1] - c[1]) ** 2 + (px[i * 4 + 2] - c[2]) ** 2;
-                if (d < bestD) { bestD = d; best = k; }
-            });
-            texture[i] = best;
+        const gh = spec.grid.length, gw = spec.grid[0].length;
+        for (let y = 0; y < th; y++) {
+            const line = spec.grid[Math.min(gh - 1, Math.floor(y / th * gh))];
+            for (let x = 0; x < tw; x++) texture[y * tw + x] = line.charCodeAt(Math.min(gw - 1, Math.floor(x / tw * gw))) - 48;
         }
         return true;
     };
@@ -216,10 +146,17 @@ function waving(host, key) {
 
 export async function journey(container) {
     if (!container) return;
-    const { stops } = await fetch(container.dataset.src || 'assets/data/journey.json').then(r => r.json());
-    if (!stops.every(stop => FLAGS[stop.flag])) Object.assign(FLAGS, await fetch('assets/data/flags.json').then(r => r.json()));
-
     const track = container.dataset.layout === 'track';
+    const [data, places, flagData] = await Promise.all([load(container.dataset.src || 'assets/data/journey.json'), load('assets/data/places.json'), load('assets/data/flags.json')]);
+    Object.assign(FLAGS, flagData);
+    const stops = data.stops.map((entry, i) => {
+        const stop = typeof entry === 'string' ? { id: entry } : entry, place = places[stop.id];
+        return {
+            ...place, flag: stop.id, label: place.name, place: stop.title ?? place.name, country: stop.caption ?? place.region,
+            when: stop.when ?? (track ? String(i + 1).padStart(2, '0') : ''), what: stop.what,
+        };
+    });
+
     const stage = el('div', 'journey-stage');
     const canvas = el('canvas', 'journey-globe');
     const marks = el('canvas', 'journey-globe');
@@ -248,7 +185,7 @@ export async function journey(container) {
         if (!f.paint) return;
         const r = items[i].getBoundingClientRect();
         const near = instant ? 1 : track
-            ? clamp01(1 - Math.abs(r.left + r.width / 2 - innerWidth / 2) / (innerWidth * 0.3))
+            ? clamp01(1 - Math.max(0, r.left + r.width / 2 - innerWidth / 2) / (innerWidth * 0.3))
             : clamp01(1 - Math.max(0, r.top + r.height / 2 - innerHeight / 2) / (innerHeight * 0.24));
         f.open = ease(near);
         f.slot.style.setProperty('--open', f.open.toFixed(3));
