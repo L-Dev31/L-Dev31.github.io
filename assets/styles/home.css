@@ -468,7 +468,7 @@ html.menu-open body {
     line-height: 1;
     letter-spacing: -0.045em;
     text-decoration: none;
-    transition: font-weight 0.3s var(--ease-out);
+    transition: font-weight 0.15s var(--ease-out);
 }
 
 .mobile-menu-link + .mobile-menu-link {
@@ -882,7 +882,7 @@ html.on-accent .mobile-menu-socials a:focus-visible {
 .index-category {
     display: flex;
     align-items: baseline;
-    margin: 0 0 clamp(16px, 3vh, 28px);
+    margin: 0 0 clamp(80px, 16vh, 180px);
     font-family: var(--font-display);
     font-size: clamp(36px, 4.4vw, 72px);
     font-weight: 400;
@@ -920,7 +920,7 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     letter-spacing: -0.03em;
     line-height: 1.05;
     transform-origin: left bottom;
-    transition: font-weight 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+    transition: font-weight 0.2s var(--ease-out), transform 0.4s var(--ease-out);
 }
 
 .index-row:hover .index-title,
@@ -937,7 +937,7 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     font-size: clamp(14px, 1.2vw, 18px);
     font-weight: 500;
     transform-origin: right bottom;
-    transition: font-weight 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+    transition: font-weight 0.2s var(--ease-out), transform 0.4s var(--ease-out);
 }
 
 .index-row:hover .index-year,
@@ -1783,12 +1783,12 @@ html:has(.project-main)::-webkit-scrollbar {
     font-size: clamp(14px, 1.2vw, 17px);
     font-weight: 500;
     text-decoration: none;
+    transition: font-weight 0.15s var(--ease-out);
 }
 
 .footer-links a:hover,
 .footer-links a:focus-visible {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+    font-weight: 800;
 }
 
 .footer-sign {

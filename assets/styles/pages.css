@@ -438,7 +438,7 @@ html.menu-open body {
     text-decoration: none;
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.5s ease, transform 0.5s var(--ease-out), font-weight 0.3s var(--ease-out);
+    transition: opacity 0.5s ease, transform 0.5s var(--ease-out), font-weight 0.15s var(--ease-out);
 }
 
 .mobile-menu-link + .mobile-menu-link {
@@ -2163,12 +2163,12 @@ html:has(.project-main)::-webkit-scrollbar {
     font-size: clamp(14px, 1.2vw, 17px);
     font-weight: 500;
     text-decoration: none;
+    transition: font-weight 0.15s var(--ease-out);
 }
 
 .footer-links a:hover,
 .footer-links a:focus-visible {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+    font-weight: 800;
 }
 
 .footer-sign {
