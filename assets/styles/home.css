@@ -538,7 +538,7 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     position: fixed;
     bottom: 40px;
     right: 40px;
-    z-index: 1000;
+    z-index: 997;
     width: var(--size);
     height: var(--size);
     display: flex;
@@ -547,16 +547,20 @@ html.on-accent .mobile-menu-socials a:focus-visible {
     padding: 0;
     border: none;
     background: none;
-    color: var(--white);
-    mix-blend-mode: difference;
+    color: var(--black);
+    opacity: 0;
+    transform: translateY(24px);
     visibility: hidden;
     pointer-events: none;
+    transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out), visibility 0s linear 0.4s;
 }
 
 .back-to-top.visible {
+    opacity: 1;
+    transform: none;
     visibility: visible;
     pointer-events: auto;
-    transform: scale(1);
+    transition-delay: 0s;
 }
 
 .back-to-top.visible:hover {
@@ -584,7 +588,7 @@ html.on-accent .mobile-menu-socials a:focus-visible {
 
 .btt-icon {
     width: 75%;
-    filter: brightness(0) invert(1);
+    filter: brightness(0);
 }
 
 @keyframes spin {
