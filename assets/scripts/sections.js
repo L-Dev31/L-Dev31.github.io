@@ -59,7 +59,7 @@ function landGrid() {
     canvas.width = 360 * GRID; canvas.height = 180 * GRID;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     ctx.scale(GRID, GRID);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = '#F6F2F2';
     for (const shape of LAND) {
         ctx.beginPath();
         shape.forEach(([lon, lat], i) => ctx[i ? 'lineTo' : 'moveTo'](lon + 180, 90 - lat));

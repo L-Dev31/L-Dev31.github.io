@@ -31,7 +31,7 @@
     --container-width: 1400px;
     --radius-pill: 50px;
 
-    --section-gradient: radial-gradient(circle at 50% 0%, #333 0%, #202020 30%, var(--black) 80%);
+    --section-gradient: radial-gradient(circle at 50% 0%, #2b0a10 0%, #1e0409 30%, var(--black) 80%);
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
     --smoke-filter: url(#perlin-smoke);
 }
@@ -669,7 +669,7 @@ html.menu-open body {
     position: absolute;
     inset: 0;
     z-index: 1;
-    background: linear-gradient(to top, var(--black) 0%, rgba(0, 0, 0, 0.55) 40%, transparent 72%);
+    background: linear-gradient(to top, var(--black) 0%, rgba(23, 2, 6, 0.55) 40%, transparent 72%);
     pointer-events: none;
 }
 
@@ -909,7 +909,7 @@ html.menu-open body {
     flex-direction: column;
     gap: 3px;
     padding: 28px 14px 12px;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.88));
+    background: linear-gradient(transparent, rgba(23, 2, 6, 0.88));
     color: var(--white);
     opacity: 0;
     transform: translateY(8px);
@@ -995,7 +995,7 @@ html.menu-open body {
     position: fixed;
     inset: 0;
     z-index: 3;
-    background: rgba(0, 0, 0, calc(var(--hero-progress) * 0.65));
+    background: rgba(23, 2, 6, calc(var(--hero-progress) * 0.65));
     pointer-events: none;
 }
 
@@ -1436,14 +1436,14 @@ html:has(.project-main)::-webkit-scrollbar {
     bottom: 0;
     z-index: 999;
     height: 3px;
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(246, 242, 242, 0.14);
     pointer-events: none;
 }
 
 .reading-progress > span {
     display: block;
     height: 100%;
-    background: #fff;
+    background: var(--white);
     transform: scaleX(0);
     transform-origin: left;
 }
@@ -1749,7 +1749,7 @@ html:has(.project-main)::-webkit-scrollbar {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.75) 100%);
+    background: linear-gradient(180deg, rgba(23, 2, 6, 0.1) 0%, rgba(23, 2, 6, 0.75) 100%);
     transition: background 0.4s ease;
 }
 
@@ -1959,7 +1959,7 @@ html:has(.project-main)::-webkit-scrollbar {
 
     .button,
     .filter-btn {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(246, 242, 242, 0.08);
     }
 }
 
@@ -2229,7 +2229,7 @@ html:has(.project-main)::-webkit-scrollbar {
         position: absolute;
         inset: 0;
         z-index: 1;
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.82) 72%, rgba(0, 0, 0, 0.94) 100%);
+        background: linear-gradient(180deg, rgba(23, 2, 6, 0.12) 0%, rgba(23, 2, 6, 0.82) 72%, rgba(23, 2, 6, 0.94) 100%);
         pointer-events: none;
     }
 
