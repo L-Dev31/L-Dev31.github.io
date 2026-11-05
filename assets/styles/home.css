@@ -1807,6 +1807,14 @@ html:has(.project-main)::-webkit-scrollbar {
     max-width: 10em;
 }
 
+.footer-note {
+    max-width: 36ch;
+    margin: 0;
+    font-size: clamp(15px, 1.4vw, 21px);
+    font-weight: 500;
+    line-height: 1.45;
+}
+
 .footer-mail {
     display: inline-flex;
     gap: 8px;
