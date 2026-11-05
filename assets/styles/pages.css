@@ -362,6 +362,15 @@ html.menu-open .navbar {
     color: var(--black);
 }
 
+html:has(.navbar.on-accent) .mobile-menu {
+    background: var(--black);
+    color: var(--white);
+}
+
+html.menu-open:has(.navbar.on-accent) .navbar {
+    color: var(--white);
+}
+
 html.menu-open,
 html.menu-open body {
     overflow: hidden;
