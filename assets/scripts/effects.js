@@ -420,7 +420,7 @@ export function scrollScrubbedVideo() {
     onScroll();
 }
 
-export function pixelPicture(host, src, { mirror = false, invert = false, color = '#fff', active = () => true } = {}) {
+export function pixelPicture(host, src, { mirror = false, color = '#fff', active = () => true } = {}) {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     host.append(canvas);
@@ -441,7 +441,7 @@ export function pixelPicture(host, src, { mirror = false, invert = false, color 
         sampleCtx.drawImage(source, (cols - w) / 2, (rows - h) * 0.25, w, h);
         const rgba = sampleCtx.getImageData(0, 0, cols, rows).data;
         brightness = new Uint8Array(cols * rows);
-        for (let i = 0; i < brightness.length; i++) { const luma = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114; brightness[i] = invert ? 255 - luma : Math.min(255, luma * 1.3); }
+        for (let i = 0; i < brightness.length; i++) brightness[i] = Math.min(255, (rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114) * 1.3);
         cells.paint(brightness);
     };
 
