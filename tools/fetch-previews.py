@@ -51,6 +51,8 @@ def pick(item, rows):
     best, best_score = None, 0
     for vid, duration, title in rows:
         low, n = title.lower(), norm(title)
+        if item.get('video_reject') and re.search(item['video_reject'], low):
+            continue
         if vid in item.get('video_skip', []) or name not in n or re.search(BAD.replace(r'\bvs\b|', '') if 'vs' in name.split() else BAD, low) or duration < 240 or ('super' in n and 'super' not in name):
             continue
         # "Pokemon White Version" must not take the video of "Pokemon White Version 2"

@@ -289,8 +289,13 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
+        "rGwcKgCgU2Q",
         "SM89AeHHTFQ"
-      ]
+      ],
+      "video_name": "Angry Birds",
+      "video_pure": false,
+      "video_search": "Angry Birds original 2009 Android gameplay Poached Eggs",
+      "video_reject": "rio|seasons|space|star wars|friends|epic|2\\b|go\\b|trilogy|transformers|stella|toons|movie|blast|dream"
     },
     {
       "id": "punch-out-wii",
@@ -763,15 +768,6 @@
       "platform": "switch"
     },
     {
-      "id": "pokemon-go-android",
-      "title": "Pokémon GO",
-      "year": 2016,
-      "platform": "android",
-      "video_width": 960,
-      "video_crf": 27,
-      "video_seconds": 5
-    },
-    {
       "id": "undertale-steam",
       "title": "Undertale",
       "year": 2015,
@@ -867,7 +863,10 @@
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5,
-      "video_name": "Plants vs Zombies"
+      "video_name": "Plants vs Zombies",
+      "video_skip": [
+        "BqZlJSWUuz4"
+      ]
     },
     {
       "id": "super-mario-bros-3-nes",
@@ -980,6 +979,15 @@
       "title": "Fortnite",
       "year": 2017,
       "platform": "pc",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "clash-royale-android",
+      "title": "Clash Royale",
+      "year": 2016,
+      "platform": "android",
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5
