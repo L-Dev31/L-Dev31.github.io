@@ -408,13 +408,19 @@ html.menu-open body {
 .mobile-menu-links {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    width: 100%;
+    max-width: 760px;
+    counter-reset: menu;
 }
 
 .mobile-menu-link {
-    display: inline-flex;
+    position: relative;
+    display: flex;
     align-items: center;
     gap: 0.2em;
+    padding: clamp(12px, 2.4vh, 24px) 0;
+    border-top: 1px solid color-mix(in srgb, currentColor 40%, transparent);
     color: inherit;
     font-family: var(--font-body);
     font-size: clamp(36px, 6vw, 88px);
@@ -423,6 +429,50 @@ html.menu-open body {
     letter-spacing: -0.045em;
     text-decoration: none;
     transition: font-weight 0.3s var(--ease-out);
+}
+
+.mobile-menu-link::after {
+    counter-increment: menu;
+    content: counter(menu, decimal-leading-zero);
+    position: absolute;
+    top: 50%;
+    right: 0;
+    translate: 0 -50%;
+    padding: 4px 11px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-decoration: none;
+}
+
+.mobile-menu-link:last-child {
+    border-bottom: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+}
+
+.mobile-menu-socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: clamp(24px, 4vh, 40px);
+}
+
+.mobile-menu-socials a {
+    padding: 8px 16px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    color: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.mobile-menu-socials a:hover,
+.mobile-menu-socials a:focus-visible {
+    text-decoration: underline;
 }
 
 .mobile-menu-link[aria-current] {
@@ -662,6 +712,51 @@ html.menu-open body {
 #site-title > * {
 }
 
+.hero-socials {
+    position: absolute;
+    right: var(--pad-edge);
+    bottom: clamp(34px, 7vh, 61px);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.hero-socials a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.hero-socials a::after {
+    content: '';
+    width: 7px;
+    height: 7px;
+    background: currentColor;
+    transition: transform 0.3s var(--ease-out);
+}
+
+.hero-socials a:hover,
+.hero-socials a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+}
+
+.hero-socials a:hover::after,
+.hero-socials a:focus-visible::after {
+    transform: scale(1.7);
+}
+
+#header.is-turned .hero-socials {
+    visibility: hidden;
+}
+
 .header-subtitles {
     color: var(--white);
     font-size: 13px;
@@ -686,20 +781,27 @@ html.menu-open body {
 }
 
 .hero-about .about-title {
-    font-family: var(--font-body);
     -webkit-text-stroke: 0;
-    font-size: clamp(40px, 5vw, 84px);
-    font-weight: 500;
-    letter-spacing: -0.04em;
-    line-height: 0.98;
+    font-family: var(--font-display);
+    font-size: clamp(56px, 8vw, 132px);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 0.95;
 }
 
 .hero-about .about-title strong {
-    font-family: var(--font-display);
-    font-size: 1.12em;
     font-style: normal;
     font-weight: 400;
-    letter-spacing: -0.01em;
+}
+
+.hero-about .about-title .about-hi {
+    display: block;
+    margin-bottom: 0.12em;
+    font-family: var(--font-body);
+    font-size: 0.667em;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
 }
 
 .hero-about .about-hero-lede {
@@ -2090,7 +2192,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .hero-about .about-title {
-        font-size: clamp(36px, 10.5vw, 52px);
+        font-size: clamp(52px, 15vw, 84px);
     }
 
     .header-subtitles {
@@ -2122,7 +2224,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .about-header-text .about-title {
-        font-size: clamp(44px, 13vw, 68px);
+        font-size: clamp(52px, 15vw, 84px);
     }
 
     .story {

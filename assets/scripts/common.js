@@ -213,6 +213,12 @@ const PAGES = [
     { id: 'contact', label: 'Contact', href: 'mailto:leotoskuepro@gmail.com' },
 ];
 
+const SOCIALS = [
+    { label: 'Instagram', href: 'https://www.instagram.com/l_dev31/' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/léo-tosku' },
+    { label: 'GitHub', href: 'https://github.com/L-Dev31' },
+];
+
 function renderMenuLinks(nav) {
     const file = location.pathname.split('/').pop() || 'index.html';
     const here = file === 'about.html' ? 'about' : file === 'project.html' ? 'project' : 'home';
@@ -229,6 +235,19 @@ function renderMenuLinks(nav) {
         link.textContent = page.label;
         return link;
     }));
+    if (!nav.nextElementSibling?.classList.contains('mobile-menu-socials')) {
+        const socials = document.createElement('div');
+        socials.className = 'mobile-menu-socials';
+        socials.append(...SOCIALS.map(({ label, href }) => {
+            const link = document.createElement('a');
+            link.href = href;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = label;
+            return link;
+        }));
+        nav.after(socials);
+    }
 }
 
 function mobileMenu(lenis) {
