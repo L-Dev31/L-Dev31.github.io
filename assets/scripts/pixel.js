@@ -2,15 +2,15 @@
 // picked from a brightness 0-255.
 import { reducedMotion } from './common.js';
 
-export const CELL = 6;                  // css px per cell
-const LEVELS = [22, 60, 130];           // where dots, checkerboard and solid start
+export const CELL = 8;                  // css px per cell
+const LEVELS = [20, 60, 130];           // where dots, checkerboard and solid start
 
 // One cell of side c (device px) at (x, y), the terminal way: 0 dots, 1 checkerboard, 2 solid. Between two cells there is a
-// gap of a round number of pixels (1 css px for a 6px cell); the square is what is left, drawn on a lattice of whole
-// pixels (a 6px cell: a 5px square of 5 x 5 pixels). `fill` (optional) sets the square as a share of the cell instead,
+// gap of a round number of pixels (2 css px for an 8px cell); the square is what is left, drawn on a lattice of whole
+// pixels (an 8px cell: a 6px square of 6 x 6 pixels). `fill` (optional) sets the square as a share of the cell instead,
 // 1 for no gap at all. Also used by the text reveal (drawCells() in effects.js), so letters and pictures match.
 export function drawCell(ctx, state, x, y, c, fill) {
-    const gap = Math.max(1, Math.round(c / 6));
+    const gap = Math.max(1, Math.round(c * 0.25));   // a quarter of the cell, in whole pixels: 2px in a 8px cell
     const s = fill === undefined ? c - gap : c * fill;
     if (state === 2) {
         ctx.fillRect(x, y, s, s);
