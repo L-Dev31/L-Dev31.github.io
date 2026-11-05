@@ -181,7 +181,9 @@ function cultureList(container, items) {
     const img = el('img');
     img.alt = '';
     figure.setAttribute('aria-hidden', 'true');
-    figure.append(img);
+    const clip = el('video');
+    Object.assign(clip, { muted: true, loop: true, playsInline: true, preload: 'auto' });
+    figure.append(img, clip);
     container.replaceChildren(list, figure);
     const cover = pixelCover(figure, color, 16);
     let current = null, leaving = 0;
@@ -191,9 +193,17 @@ function cultureList(container, items) {
         if (current === row) return;
         current = row;
         figure.classList.remove('is-on');
-        if (!item.cover) return;
-        img.src = item.cover;
-        await img.decode().catch(() => {});
+        if (!item.cover && !item.video) return;
+        img.hidden = !!item.video;
+        clip.hidden = !item.video;
+        if (item.video) {
+            clip.src = item.video;
+            await new Promise(done => { clip.onloadeddata = clip.onerror = done; });
+            clip.play().catch(() => {});
+        } else {
+            img.src = item.cover;
+            await img.decode().catch(() => {});
+        }
         if (current !== row) return;
         const box = container.getBoundingClientRect(), slot = row.querySelector('.index-slot').getBoundingClientRect(), r = row.getBoundingClientRect();
         const centre = slot.width ? slot.left + slot.width / 2 : r.left + r.width / 2;

@@ -2198,3 +2198,10 @@ html:has(.project-main)::-webkit-scrollbar {
     opacity: 0.7;
     white-space: nowrap;
 }
+
+.culture-preview video {
+    display: block;
+    width: clamp(240px, 26vw, 420px);
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}

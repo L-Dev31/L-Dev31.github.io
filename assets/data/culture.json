@@ -38,180 +38,152 @@
     {
       "title": "Super Mario Bros.",
       "year": 1985,
-      "platform": "nes",
-      "cover": "assets/images/culture/super-mario-bros-nes.webp"
+      "platform": "nes"
     },
     {
       "title": "The Legend of Zelda",
       "year": 1986,
-      "platform": "nes",
-      "cover": "assets/images/culture/the-legend-of-zelda-nes.webp"
+      "platform": "nes"
     },
     {
       "title": "Punch-Out!!",
       "year": 1987,
       "platform": "nes",
-      "search": "Mike Tyson's Punch-Out!!",
-      "cover": "assets/images/culture/punch-out-nes.webp"
+      "search": "Mike Tyson's Punch-Out!!"
     },
     {
       "title": "SimCity",
       "year": 1991,
       "platform": "snes",
-      "search": "SimCity",
-      "cover": "assets/images/culture/simcity-snes.webp"
+      "search": "SimCity"
     },
     {
       "title": "The Legend of Zelda: A Link to the Past",
       "year": 1991,
-      "platform": "snes",
-      "cover": "assets/images/culture/the-legend-of-zelda-a-link-to-the-past-snes.webp"
+      "platform": "snes"
     },
     {
       "title": "Super Punch-Out!!",
       "year": 1994,
       "platform": "snes",
-      "search": "Super Punch-Out!!",
-      "cover": "assets/images/culture/super-punch-out-snes.webp"
+      "search": "Super Punch-Out!!"
     },
     {
       "title": "Super Mario 64",
       "year": 1996,
-      "platform": "n64",
-      "cover": "assets/images/culture/super-mario-64-n64.webp"
+      "platform": "n64"
     },
     {
       "title": "The Legend of Zelda: Ocarina of Time",
       "year": 1998,
-      "platform": "n64",
-      "cover": "assets/images/culture/the-legend-of-zelda-ocarina-of-time-n64.webp"
+      "platform": "n64"
     },
     {
       "title": "The Legend of Zelda: Majora's Mask",
       "year": 2000,
-      "platform": "n64",
-      "cover": "assets/images/culture/the-legend-of-zelda-majora-s-mask-n64.webp"
+      "platform": "n64"
     },
     {
       "title": "Rayman 3",
       "year": 2003,
       "platform": "gba",
-      "search": "Rayman 3",
-      "cover": "assets/images/culture/rayman-3-gba.webp"
+      "search": "Rayman 3"
     },
     {
       "title": "Super Mario 64 DS",
       "year": 2004,
-      "platform": "ds",
-      "cover": "assets/images/culture/super-mario-64-ds-ds.webp"
+      "platform": "ds"
     },
     {
       "title": "Mario Kart DS",
       "year": 2005,
-      "platform": "ds",
-      "cover": "assets/images/culture/mario-kart-ds-ds.webp"
+      "platform": "ds"
     },
     {
       "title": "Phoenix Wright: Ace Attorney",
       "year": 2005,
       "platform": "ds",
-      "search": "Phoenix Wright: Ace Attorney",
-      "cover": "assets/images/culture/phoenix-wright-ace-attorney-ds.webp"
+      "search": "Phoenix Wright: Ace Attorney"
     },
     {
       "title": "Phoenix Wright: Justice for All",
       "year": 2006,
       "platform": "ds",
-      "search": "Phoenix Wright: Ace Attorney: Justice for All",
-      "cover": "assets/images/culture/phoenix-wright-justice-for-all-ds.webp"
+      "search": "Phoenix Wright: Ace Attorney: Justice for All"
     },
     {
       "title": "New Super Mario Bros.",
       "year": 2006,
       "platform": "ds",
-      "search": "New Super Mario Bros.",
-      "cover": "assets/images/culture/new-super-mario-bros-ds.webp"
+      "search": "New Super Mario Bros."
     },
     {
       "title": "Wii Play",
       "year": 2006,
-      "platform": "wii",
-      "cover": "assets/images/culture/wii-play-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Wii Sports",
       "year": 2006,
-      "platform": "wii",
-      "cover": "assets/images/culture/wii-sports-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Super Mario Galaxy",
       "year": 2007,
-      "platform": "wii",
-      "cover": "assets/images/culture/super-mario-galaxy-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Wii Fit",
       "year": 2007,
-      "platform": "wii",
-      "cover": "assets/images/culture/wii-fit-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Super Smash Bros. Brawl",
       "year": 2008,
-      "platform": "wii",
-      "cover": "assets/images/culture/super-smash-bros-brawl-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Mario Kart Wii",
       "year": 2008,
-      "platform": "wii",
-      "cover": "assets/images/culture/mario-kart-wii-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Angry Birds",
       "year": 2009,
       "platform": "android",
       "search": "Angry Birds Trilogy",
-      "via": "3ds",
-      "cover": "assets/images/culture/angry-birds-android.webp"
+      "via": "3ds"
     },
     {
       "title": "Tomodachi Collection",
       "year": 2009,
-      "platform": "ds",
-      "cover": "assets/images/culture/tomodachi-collection-ds.webp"
+      "platform": "ds"
     },
     {
       "title": "Punch-Out!!",
       "year": 2009,
       "platform": "wii",
-      "search": "Punch-Out!!",
-      "cover": "assets/images/culture/punch-out-wii.webp"
+      "search": "Punch-Out!!"
     },
     {
       "title": "Super Mario Galaxy 2",
       "year": 2010,
-      "platform": "wii",
-      "cover": "assets/images/culture/super-mario-galaxy-2-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Wii Party",
       "year": 2010,
-      "platform": "wii",
-      "cover": "assets/images/culture/wii-party-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Mario Kart 7",
       "year": 2011,
-      "platform": "3ds",
-      "cover": "assets/images/culture/mario-kart-7-3ds.webp"
+      "platform": "3ds"
     },
     {
       "title": "Super Mario 3D Land",
       "year": 2011,
-      "platform": "3ds",
-      "cover": "assets/images/culture/super-mario-3d-land-3ds.webp"
+      "platform": "3ds"
     },
     {
       "title": "Face Raiders",
@@ -222,257 +194,210 @@
     {
       "title": "Rayman Origins",
       "year": 2011,
-      "platform": "wii",
-      "cover": "assets/images/culture/rayman-origins-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Wii Play: Motion",
       "year": 2011,
-      "platform": "wii",
-      "cover": "assets/images/culture/wii-play-motion-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Minecraft: Java Edition",
       "year": 2011,
       "platform": "pc",
-      "image": "https://minecraft.wiki/images/Minecraft_Java_%26_Bedrock_Edition_for_PC_vertical_key_art.jpg",
-      "cover": "assets/images/culture/minecraft-java-edition-pc.webp"
+      "image": "https://minecraft.wiki/images/Minecraft_Java_%26_Bedrock_Edition_for_PC_vertical_key_art.jpg"
     },
     {
       "title": "New Super Mario Bros. 2",
       "year": 2012,
-      "platform": "3ds",
-      "cover": "assets/images/culture/new-super-mario-bros-2-3ds.webp"
+      "platform": "3ds"
     },
     {
       "title": "Nintendo Land",
       "year": 2012,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/nintendo-land-wiiu.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Tomodachi Life",
       "year": 2013,
-      "platform": "3ds",
-      "cover": "assets/images/culture/tomodachi-life-3ds.webp"
+      "platform": "3ds"
     },
     {
       "title": "Super Mario 3D World",
       "year": 2013,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/super-mario-3d-world-wiiu.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Wii Party U",
       "year": 2013,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/wii-party-u-wiiu.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Wii Fit U",
       "year": 2013,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/wii-fit-u-wiiu.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Rayman Legends",
       "year": 2013,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/rayman-legends-wiiu.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Grand Theft Auto V",
       "year": 2013,
-      "platform": "steam",
-      "cover": "assets/images/culture/grand-theft-auto-v-steam.webp"
+      "platform": "steam"
     },
     {
       "title": "Mario Kart 8",
       "year": 2014,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/mario-kart-8-wiiu.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Super Smash Bros. for Wii U",
       "year": 2014,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/super-smash-bros-for-wii-u-wiiu.webp"
-    },
-    {
-      "title": "Angry Birds 2",
-      "year": 2015,
-      "platform": "android",
-      "cover": "assets/images/culture/angry-birds-2-android.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Minecraft: Wii U Edition",
       "year": 2015,
       "platform": "wiiu",
-      "search": "Minecraft: Wii U Edition",
-      "cover": "assets/images/culture/minecraft-wii-u-edition-wiiu.webp"
+      "search": "Minecraft: Wii U Edition"
     },
     {
       "title": "Miitopia",
       "year": 2016,
-      "platform": "3ds",
-      "cover": "assets/images/culture/miitopia-3ds.webp"
+      "platform": "3ds"
     },
     {
       "title": "Mario + Rabbids Kingdom Battle",
       "year": 2017,
-      "platform": "switch",
-      "cover": "assets/images/culture/mario-rabbids-kingdom-battle-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Gang Beasts",
       "year": 2017,
-      "platform": "steam",
-      "cover": "assets/images/culture/gang-beasts-steam.webp"
+      "platform": "steam"
     },
     {
       "title": "Mario Kart 8 Deluxe",
       "year": 2017,
-      "platform": "switch",
-      "cover": "assets/images/culture/mario-kart-8-deluxe-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "1-2-Switch",
       "year": 2017,
-      "platform": "switch",
-      "cover": "assets/images/culture/1-2-switch-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Minecraft: Bedrock Edition",
       "year": 2017,
       "platform": "pc",
-      "image": "https://minecraft.wiki/images/Minecraft_Java_%26_Bedrock_Edition_for_PC_vertical_key_art.jpg",
-      "cover": "assets/images/culture/minecraft-bedrock-edition-pc.webp"
+      "image": "https://minecraft.wiki/images/Minecraft_Java_%26_Bedrock_Edition_for_PC_vertical_key_art.jpg"
     },
     {
       "title": "Red Dead Redemption 2",
       "year": 2018,
-      "platform": "steam",
-      "cover": "assets/images/culture/red-dead-redemption-2-steam.webp"
+      "platform": "steam"
     },
     {
       "title": "Super Smash Bros. Ultimate",
       "year": 2018,
-      "platform": "switch",
-      "cover": "assets/images/culture/super-smash-bros-ultimate-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "WarioWare Gold",
       "year": 2018,
-      "platform": "3ds",
-      "cover": "assets/images/culture/warioware-gold-3ds.webp"
+      "platform": "3ds"
     },
     {
       "title": "New Super Mario Bros. U Deluxe",
       "year": 2019,
-      "platform": "switch",
-      "cover": "assets/images/culture/new-super-mario-bros-u-deluxe-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Balatro",
       "year": 2024,
-      "platform": "steam",
-      "cover": "assets/images/culture/balatro-steam.webp"
+      "platform": "steam"
     },
     {
       "title": "Clair Obscur: Expedition 33",
       "year": 2025,
-      "platform": "steam",
-      "cover": "assets/images/culture/clair-obscur-expedition-33-steam.webp"
+      "platform": "steam"
     },
     {
       "title": "Return of the Obra Dinn",
       "year": 2018,
-      "platform": "steam",
-      "cover": "assets/images/culture/return-of-the-obra-dinn-steam.webp"
+      "platform": "steam"
     },
     {
       "title": "Human: Fall Flat",
       "year": 2016,
-      "platform": "steam",
-      "cover": "assets/images/culture/human-fall-flat-steam.webp"
+      "platform": "steam"
     },
     {
       "title": "Just Dance",
       "year": 2009,
-      "platform": "wii",
-      "cover": "assets/images/culture/just-dance-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Just Dance 2",
       "year": 2010,
-      "platform": "wii",
-      "cover": "assets/images/culture/just-dance-2-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Just Dance 3",
       "year": 2011,
-      "platform": "wii",
-      "cover": "assets/images/culture/just-dance-3-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Just Dance 4",
       "year": 2012,
-      "platform": "wii",
-      "cover": "assets/images/culture/just-dance-4-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Just Dance 2014",
       "year": 2013,
-      "platform": "wii",
-      "cover": "assets/images/culture/just-dance-2014-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Just Dance 2015",
       "year": 2014,
-      "platform": "wii",
-      "cover": "assets/images/culture/just-dance-2015-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Just Dance 2016",
       "year": 2015,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/just-dance-2016-wiiu.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Just Dance 2017",
       "year": 2016,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/just-dance-2017-wiiu.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Just Dance 2018",
       "year": 2017,
-      "platform": "switch",
-      "cover": "assets/images/culture/just-dance-2018-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Just Dance 2019",
       "year": 2018,
-      "platform": "switch",
-      "cover": "assets/images/culture/just-dance-2019-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Just Dance 2020",
       "year": 2019,
-      "platform": "switch",
-      "cover": "assets/images/culture/just-dance-2020-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Just Dance 2021",
       "year": 2020,
-      "platform": "switch",
-      "cover": "assets/images/culture/just-dance-2021-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Just Dance 2022",
       "year": 2021,
-      "platform": "switch",
-      "cover": "assets/images/culture/just-dance-2022-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Animal Crossing: City Folk",
@@ -481,39 +406,33 @@
       "search": [
         "Animal Crossing: Let's Go to the City",
         "Animal Crossing: City Folk"
-      ],
-      "cover": "assets/images/culture/animal-crossing-city-folk-wii.webp"
+      ]
     },
     {
       "title": "Animal Crossing: New Horizons",
       "year": 2020,
-      "platform": "switch",
-      "cover": "assets/images/culture/animal-crossing-new-horizons-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Donkey Kong Country Returns",
       "year": 2010,
-      "platform": "wii",
-      "cover": "assets/images/culture/donkey-kong-country-returns-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Donkey Kong",
       "year": 1981,
       "platform": "mame",
-      "search": "Donkey Kong",
-      "cover": "assets/images/culture/donkey-kong-mame.webp"
+      "search": "Donkey Kong"
     },
     {
       "title": "Super Mario Land",
       "year": 1989,
-      "platform": "gb",
-      "cover": "assets/images/culture/super-mario-land-gb.webp"
+      "platform": "gb"
     },
     {
       "title": "Super Mario Land 2: 6 Golden Coins",
       "year": 1992,
-      "platform": "gb",
-      "cover": "assets/images/culture/super-mario-land-2-6-golden-coins-gb.webp"
+      "platform": "gb"
     },
     {
       "title": "Kirby's Return to Dream Land",
@@ -522,8 +441,7 @@
       "search": [
         "Kirby's Adventure Wii",
         "Kirby's Return to Dream Land"
-      ],
-      "cover": "assets/images/culture/kirby-s-return-to-dream-land-wii.webp"
+      ]
     },
     {
       "title": "Kirby Super Star",
@@ -532,148 +450,124 @@
       "search": [
         "Kirby's Fun Pak",
         "Kirby Super Star"
-      ],
-      "cover": "assets/images/culture/kirby-super-star-snes.webp"
+      ]
     },
     {
       "title": "Kirby Star Allies",
       "year": 2018,
-      "platform": "switch",
-      "cover": "assets/images/culture/kirby-star-allies-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Kirby's Epic Yarn",
       "year": 2010,
-      "platform": "wii",
-      "cover": "assets/images/culture/kirby-s-epic-yarn-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Kirby's Dream Buffet",
       "year": 2022,
-      "platform": "switch",
-      "cover": "assets/images/culture/kirby-s-dream-buffet-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Pokémon Black Version",
       "year": 2010,
-      "platform": "ds",
-      "cover": "assets/images/culture/pokemon-black-version-ds.webp"
+      "platform": "ds"
     },
     {
       "title": "Pokémon White Version",
       "year": 2010,
-      "platform": "ds",
-      "cover": "assets/images/culture/pokemon-white-version-ds.webp"
+      "platform": "ds"
     },
     {
       "title": "Pokémon Black Version 2",
       "year": 2012,
-      "platform": "ds",
-      "cover": "assets/images/culture/pokemon-black-version-2-ds.webp"
+      "platform": "ds"
     },
     {
       "title": "Pokémon White Version 2",
       "year": 2012,
-      "platform": "ds",
-      "cover": "assets/images/culture/pokemon-white-version-2-ds.webp"
+      "platform": "ds"
     },
     {
       "title": "Pokémon Emerald Version",
       "year": 2004,
-      "platform": "gba",
-      "cover": "assets/images/culture/pokemon-emerald-version-gba.webp"
+      "platform": "gba"
     },
     {
       "title": "Pokémon Red Version",
       "year": 1996,
       "platform": "gb",
-      "search": "Pokémon Red Version",
-      "cover": "assets/images/culture/pokemon-red-version-gb.webp"
+      "search": "Pokémon Red Version"
     },
     {
       "title": "Pokémon X",
       "year": 2013,
-      "platform": "3ds",
-      "cover": "assets/images/culture/pokemon-x-3ds.webp"
+      "platform": "3ds"
     },
     {
       "title": "Pokémon Moon",
       "year": 2016,
-      "platform": "3ds",
-      "cover": "assets/images/culture/pokemon-moon-3ds.webp"
+      "platform": "3ds"
     },
     {
       "title": "Pokémon Sword",
       "year": 2019,
-      "platform": "switch",
-      "cover": "assets/images/culture/pokemon-sword-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Pokkén Tournament",
       "year": 2015,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/pokken-tournament-wiiu.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Super Mario World",
       "year": 1990,
-      "platform": "snes",
-      "cover": "assets/images/culture/super-mario-world-snes.webp"
+      "platform": "snes"
     },
     {
       "title": "Super Mario Odyssey",
       "year": 2017,
-      "platform": "switch",
-      "cover": "assets/images/culture/super-mario-odyssey-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "New Super Luigi U",
       "year": 2013,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/new-super-luigi-u-wiiu.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Gartic Phone",
       "year": 2020,
       "platform": "web",
-      "search": "Gartic Phone",
-      "cover": "assets/images/culture/gartic-phone-web.webp"
+      "search": "Gartic Phone"
     },
     {
       "title": "Mario Party 8",
       "year": 2007,
-      "platform": "wii",
-      "cover": "assets/images/culture/mario-party-8-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Mario Party 9",
       "year": 2012,
-      "platform": "wii",
-      "cover": "assets/images/culture/mario-party-9-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Mario Party 10",
       "year": 2015,
-      "platform": "wiiu",
-      "cover": "assets/images/culture/mario-party-10-wiiu.webp"
+      "platform": "wiiu"
     },
     {
       "title": "Super Mario Party",
       "year": 2018,
-      "platform": "switch",
-      "cover": "assets/images/culture/super-mario-party-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Mario Party Jamboree",
       "year": 2024,
-      "platform": "switch",
-      "cover": "assets/images/culture/mario-party-jamboree-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Newer Super Mario Bros. Wii",
       "year": 2011,
-      "platform": "wii",
-      "cover": "assets/images/culture/newer-super-mario-bros-wii-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Newer Super Mario Bros. DS",
@@ -683,59 +577,50 @@
     {
       "title": "Wii Music",
       "year": 2008,
-      "platform": "wii",
-      "cover": "assets/images/culture/wii-music-wii.webp"
+      "platform": "wii"
     },
     {
       "title": "Pokémon Quest",
       "year": 2018,
-      "platform": "switch",
-      "cover": "assets/images/culture/pokemon-quest-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Pokémon GO",
       "year": 2016,
-      "platform": "android",
-      "cover": "assets/images/culture/pokemon-go-android.webp"
+      "platform": "android"
     },
     {
       "title": "Undertale",
       "year": 2015,
-      "platform": "steam",
-      "cover": "assets/images/culture/undertale-steam.webp"
+      "platform": "steam"
     },
     {
       "title": "Deltarune: Chapter 1",
       "year": 2018,
       "platform": "steam",
-      "search": "Deltarune",
-      "cover": "assets/images/culture/deltarune-chapter-1-steam.webp"
+      "search": "Deltarune"
     },
     {
       "title": "Deltarune: Chapter 2",
       "year": 2021,
       "platform": "steam",
-      "search": "Deltarune",
-      "cover": "assets/images/culture/deltarune-chapter-2-steam.webp"
+      "search": "Deltarune"
     },
     {
       "title": "Deltarune: Chapter 3",
       "year": 2025,
       "platform": "steam",
-      "search": "Deltarune",
-      "cover": "assets/images/culture/deltarune-chapter-3-steam.webp"
+      "search": "Deltarune"
     },
     {
       "title": "Mario & Luigi: Bowser's Inside Story",
       "year": 2009,
-      "platform": "ds",
-      "cover": "assets/images/culture/mario-luigi-bowser-s-inside-story-ds.webp"
+      "platform": "ds"
     },
     {
       "title": "Pokémon: Let's Go, Eevee!",
       "year": 2018,
-      "platform": "switch",
-      "cover": "assets/images/culture/pokemon-let-s-go-eevee-switch.webp"
+      "platform": "switch"
     },
     {
       "title": "Minecraft: Story Mode",
@@ -749,38 +634,27 @@
     {
       "title": "Angry Birds Rio",
       "year": 2011,
-      "platform": "android",
-      "cover": "assets/images/culture/angry-birds-rio-android.webp"
+      "platform": "android"
     },
     {
       "title": "Angry Birds Star Wars",
       "year": 2012,
-      "platform": "android",
-      "cover": "assets/images/culture/angry-birds-star-wars-android.webp"
+      "platform": "android"
     },
     {
       "title": "Angry Birds Epic",
       "year": 2014,
-      "platform": "android",
-      "cover": "assets/images/culture/angry-birds-epic-android.webp"
+      "platform": "android"
     },
     {
       "title": "Bad Piggies",
       "year": 2012,
-      "platform": "android",
-      "cover": "assets/images/culture/bad-piggies-android.webp"
+      "platform": "android"
     },
     {
       "title": "Angry Birds Friends",
       "year": 2012,
-      "platform": "android",
-      "cover": "assets/images/culture/angry-birds-friends-android.webp"
-    },
-    {
-      "title": "Jetpack Joyride",
-      "year": 2011,
-      "platform": "android",
-      "cover": "assets/images/culture/jetpack-joyride-android.webp"
+      "platform": "android"
     },
     {
       "title": "Plants vs. Zombies",
@@ -790,8 +664,42 @@
     {
       "title": "Clash Royale",
       "year": 2016,
-      "platform": "android",
-      "cover": "assets/images/culture/clash-royale-android.webp"
+      "platform": "android"
+    },
+    {
+      "title": "Super Mario Bros. 3",
+      "year": 1988,
+      "platform": "nes"
+    },
+    {
+      "title": "Duck Hunt",
+      "year": 1984,
+      "platform": "nes"
+    },
+    {
+      "title": "Tetris",
+      "year": 1989,
+      "platform": "gb"
+    },
+    {
+      "title": "Dr. Mario",
+      "year": 1990,
+      "platform": "nes"
+    },
+    {
+      "title": "Mario Bros.",
+      "year": 1983,
+      "platform": "nes"
+    },
+    {
+      "title": "Super Mario Bros. 2",
+      "year": 1988,
+      "platform": "nes"
+    },
+    {
+      "title": "The Legend of Zelda: Twilight Princess",
+      "year": 2006,
+      "platform": "wii"
     }
   ]
 }
