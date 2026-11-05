@@ -380,12 +380,12 @@ html.menu-open .navbar {
     color: var(--black);
 }
 
-html:has(.navbar.on-accent) .mobile-menu {
+html.on-accent .mobile-menu {
     background: var(--black);
     color: var(--white);
 }
 
-html.menu-open:has(.navbar.on-accent) .navbar {
+html.menu-open.on-accent .navbar {
     color: var(--white);
 }
 
@@ -441,7 +441,7 @@ html.menu-open body {
 }
 
 .mobile-menu-link + .mobile-menu-link {
-    border-top: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+    border-top: 1px solid rgba(33, 7, 16, 0.4);
 }
 
 .mobile-menu-socials {
@@ -464,7 +464,11 @@ html.menu-open body {
     transition: background 0.3s ease, color 0.3s ease;
 }
 
-html:has(.navbar.on-accent) .mobile-menu-socials a {
+html.on-accent .mobile-menu-link + .mobile-menu-link {
+    border-color: rgba(246, 242, 242, 0.4);
+}
+
+html.on-accent .mobile-menu-socials a {
     border-color: var(--white);
     background: var(--white);
     color: var(--black);
@@ -472,8 +476,8 @@ html:has(.navbar.on-accent) .mobile-menu-socials a {
 
 .mobile-menu-socials a:hover,
 .mobile-menu-socials a:focus-visible,
-html:has(.navbar.on-accent) .mobile-menu-socials a:hover,
-html:has(.navbar.on-accent) .mobile-menu-socials a:focus-visible {
+html.on-accent .mobile-menu-socials a:hover,
+html.on-accent .mobile-menu-socials a:focus-visible {
     background: transparent;
     color: inherit;
 }
@@ -701,70 +705,10 @@ html:has(.navbar.on-accent) .mobile-menu-socials a:focus-visible {
     pointer-events: none;
 }
 
-#hero-video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    filter: grayscale(1) blur(calc(var(--hero-progress) * 26px)) brightness(calc(1 - var(--hero-progress) * 0.55));
-    transition: filter 0.1s linear;
-}
-
-#hero-video {
-    z-index: 0;
-    object-fit: cover;
-    background: var(--black);
-}
-
-.header-content {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12.5px;
-    padding: 50px;
-    mix-blend-mode: difference;
-    pointer-events: auto;
-}
-
-.header-subtitles {
-    width: auto;
-    color: var(--white);
-    font-size: clamp(14px, 2.5vw, 28px);
-    letter-spacing: 1px;
-}
-
-#site-title {
-    margin: 0 0 clamp(8px, 1.5vh, 20px);
-    color: var(--white);
-    font-family: var(--font-display);
-    font-size: clamp(48px, 18vw, 250px);
-    line-height: 1;
-    white-space: nowrap;
-    pointer-events: none;
-    font-style: italic;
-}
-
 .hero-spacer {
     height: 100vh;
     height: 100svh;
     height: 100dvh;
-}
-
-.intro {
-    position: relative;
-    width: min(1500px, 100%);
-    min-height: 80vh;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(48px, 8vw, 140px);
-    margin: 0 auto;
-    padding: clamp(100px, 15vh, 200px) var(--pad-edge);
 }
 
 .about-title {
@@ -942,7 +886,6 @@ html:has(.navbar.on-accent) .mobile-menu-socials a:focus-visible {
     height: auto;
     object-fit: cover;
     backface-visibility: hidden;
-    will-change: transform;
 }
 
 .exp-stack {
@@ -1102,7 +1045,6 @@ html:has(.navbar.on-accent) .mobile-menu-socials a:focus-visible {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    will-change: transform;
 }
 
 .article-header {
@@ -1364,7 +1306,6 @@ html:has(.project-main)::-webkit-scrollbar {
     width: 100%;
     height: auto;
     object-fit: cover;
-    will-change: transform;
 }
 
 .media-caption {
@@ -1524,7 +1465,6 @@ html:has(.project-main)::-webkit-scrollbar {
     width: 100%;
     aspect-ratio: 3 / 5;
     background: #1a1a1a center / cover;
-    will-change: transform;
 }
 
 .project-cta-tile:nth-child(1) { margin-top: 40px; }
@@ -1665,11 +1605,6 @@ html:has(.project-main)::-webkit-scrollbar {
 }
 
 @media (max-width: 1024px) {
-    .intro {
-        flex-direction: column-reverse;
-        gap: 32px;
-        text-align: center;
-    }
 
     .project-pager {
         grid-template-columns: 1fr;
@@ -1678,9 +1613,6 @@ html:has(.project-main)::-webkit-scrollbar {
     .project-pager-item--next {
         justify-content: flex-start;
         text-align: left;
-    }
-    .header-content{
-        bottom: 40%;
     }
 }
 
@@ -1749,13 +1681,6 @@ html:has(.project-main)::-webkit-scrollbar {
 }
 
 @media (max-width: 768px) {
-    *, *::before, *::after {
-        will-change: auto !important;
-    }
-
-    #hero-video {
-        filter: grayscale(1);
-    }
 
     .button {
         background: rgba(246, 242, 242, 0.08);
@@ -1898,35 +1823,6 @@ html:has(.project-main)::-webkit-scrollbar {
     #header {
         height: 100svh;
         height: 100dvh;
-    }
-
-    .header-content {
-        right: 0;
-        bottom: max(24px, env(safe-area-inset-bottom));
-        align-items: flex-start;
-        gap: 8px;
-        padding: 24px var(--pad-edge);
-    }
-
-    #site-title {
-        margin-bottom: 8px;
-        font-size: clamp(48px, 16vw, 70px);
-        white-space: normal;
-    }
-
-    .header-subtitles {
-        max-width: 25ch;
-        font-size: 16px;
-        line-height: 1.4;
-    }
-
-    .intro {
-        min-height: 100svh;
-        flex-direction: row;
-        align-items: center;
-        gap: 0;
-        padding: 40px var(--pad-edge);
-        position: relative;
     }
 
     #featured-projects {

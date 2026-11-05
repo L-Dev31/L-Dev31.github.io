@@ -101,7 +101,9 @@ function navTone() {
 
         const overHero = aboutHero ? aboutHero.getBoundingClientRect().bottom > y : projects ? projects.getBoundingClientRect().top > y : false;
         bar.classList.toggle('on-dark', overHero);
-        bar.classList.toggle('on-accent', reds.some(el => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; }));
+        const onAccent = reds.some(el => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; });
+        bar.classList.toggle('on-accent', onAccent);
+        document.documentElement.classList.toggle('on-accent', onAccent);
     };
     addEventListener('scroll', throttled(update), { passive: true });
     addEventListener('resize', update, { passive: true });
@@ -197,7 +199,7 @@ function pageLoader() {
 
 function smoothScroll() {
 
-    if (isMobile || reducedMotion || !window.Lenis) return null;
+    if (isMobile || lowPower || !window.Lenis) return null;
     const lenis = new Lenis({ lerp: 0.06, wheelMultiplier: 0.85, touchMultiplier: 2 })
     const raf = time => {
         lenis.raf(time);
@@ -272,7 +274,7 @@ function mobileMenu(lenis) {
         if (getComputedStyle(host).display === 'none') return;
         const { pixelPicture } = await import('./effects.js');
         const root = getComputedStyle(document.documentElement);
-        const dark = document.querySelector('.navbar.on-accent');
+        const dark = document.documentElement.classList.contains('on-accent');
         picture = pixelPicture(host, 'assets/images/core/menu.jpg', {
             mirror: true,
             color: root.getPropertyValue(dark ? '--accent' : '--black').trim(),
@@ -332,7 +334,7 @@ function mobileMenu(lenis) {
 
 function cursor() {
     const dot = document.querySelector('.cursor');
-    if (isMobile || reducedMotion) return;
+    if (isMobile || lowPower) return;
 
     let small = false;
     document.documentElement.classList.add('custom-cursor');
@@ -380,7 +382,7 @@ function backToTop(lenis) {
 }
 
 function magneticLinks() {
-    if (isMobile || reducedMotion) return;
+    if (isMobile || lowPower) return;
     document.querySelectorAll('.footer-links a').forEach(link => {
         link.addEventListener('mousemove', e => {
             const r = link.getBoundingClientRect();
