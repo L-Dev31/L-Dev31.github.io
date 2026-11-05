@@ -7,7 +7,7 @@
       "category": "Graphic Design",
       "role": "Vexillographer & Designer",
       "heroImage": "assets/images/projects/smfl/header.jpg",
-      "subtitle": "A regional flag for Saint-Martin, built on vexillological principles and real history, and tested in actual wind.",
+      "subtitle": "A regional flag for Saint-Martin, drawn from NAVA principles and the island's history, then tested in 3D wind simulations.",
       "tags": [
         "Vexillology",
         "Flag Design",
@@ -46,7 +46,7 @@
       "category": "Graphic Design",
       "role": "Brand Designer",
       "heroImage": "assets/images/projects/ogfm/header.jpg",
-      "subtitle": "Brand identity for a punk, DIY, anti-establishment webradio.",
+      "subtitle": "Brand identity for a punk, DIY, anti-establishment webradio, with a logo drawn by hand in ballpoint pen.",
       "tags": [
         "Brand Identity",
         "Logo Design",
@@ -83,7 +83,7 @@
       "category": "Webdesign",
       "role": "Web Designer & Logo Designer",
       "heroImage": "assets/images/projects/bgaw/header.jpg",
-      "subtitle": "A luxury web redesign for an independent brand, between precision watchmaking and automotive aesthetics.",
+      "subtitle": "A luxury web redesign for an independent watchmaker, between precision horology and automotive design.",
       "tags": [
         "Web Design",
         "UI/UX Design",
@@ -120,7 +120,7 @@
       "category": "Marketing",
       "role": "Designer",
       "heroImage": "assets/images/projects/mego/header.jpg",
-      "subtitle": "Visual communication for a startup that collects cigarette butts by GPS. Done in 48 hours, under real constraints.",
+      "subtitle": "A brochure and an Instagram kit for a startup that collects cigarette butts by GPS, produced in 48 hours for a jury.",
       "tags": [
         "Brochure Design",
         "Editorial Layout",
@@ -144,7 +144,7 @@
       "category": "Webdesign",
       "role": "UX Designer",
       "heroImage": "assets/images/projects/prfy/header.jpg",
-      "subtitle": "A scan-first mobile vault for receipts and warranties. No account, no paper.",
+      "subtitle": "A mobile app that scans receipts and keeps warranties on the phone, with no account to create.",
       "tags": [
         "UX Design",
         "UI Design",
@@ -170,7 +170,7 @@
       "category": "Webdesign",
       "role": "Web Designer & Developer",
       "heroImage": "assets/images/projects/cmck/header.jpg",
-      "subtitle": "A composer's portfolio that serves two audiences: personal work and paid commissions.",
+      "subtitle": "A portfolio for a composer, built to carry personal work and paid commissions on the same site.",
       "tags": [
         "Web Design",
         "Frontend Development",
@@ -206,7 +206,7 @@
       "category": "Dev",
       "role": "Developer",
       "heroImage": "assets/images/projects/bmge/header.jpg",
-      "subtitle": "A browser-based editor for Nintendo's BMG format, built through reverse-engineering, with no documentation and no SDK.",
+      "subtitle": "A browser editor for Nintendo's BMG text format, written after mapping the file structure by hand in a hex editor.",
       "tags": [
         "Reverse Engineering",
         "Binary File Format",
@@ -243,7 +243,7 @@
       "category": "Dev",
       "role": "Developer & Dataset Author",
       "heroImage": "assets/images/projects/gptr/header.jpg",
-      "subtitle": "The first French to Guadeloupean Creole translator, built from scratch with a dataset I wrote myself.",
+      "subtitle": "A French to Guadeloupean Creole translator, built on a dataset I corrected with a native speaker.",
       "tags": [
         "Python",
         "NLP",
