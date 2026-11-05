@@ -379,7 +379,8 @@
       "year": 2025,
       "platform": "steam",
       "video_width": 960,
-      "video_crf": 27
+      "video_crf": 27,
+      "video_seconds": 5
     },
     {
       "id": "return-of-the-obra-dinn-steam",
