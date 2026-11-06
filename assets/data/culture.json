@@ -1463,6 +1463,16 @@
         "Du contrat social",
         "The Social Contract"
       ]
+    },
+    {
+      "id": "utopia",
+      "title": "Utopia",
+      "year": 1516,
+      "author": "Thomas More",
+      "search": [
+        "Utopia",
+        "Utopia Thomas More"
+      ]
     }
   ],
   "games": [
@@ -1755,12 +1765,22 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
+        "AHQoTJ58O-0",
         "IKg4cgpjCps",
+        "M1Lq7iUpF6M",
+        "MMoa_xPo9Fk",
+        "MbpuYW9z0dg",
         "NHfJsmN42cY",
-        "O3l3iybtEqs"
+        "O3l3iybtEqs",
+        "R0HbFl7pCxo",
+        "WOynXSC5LoU",
+        "luOXBE0WqDo",
+        "nlj9yJjEtKY",
+        "onWs9LskMnw",
+        "rg-zHLLydaE"
       ],
-      "video_reject": "dream|switch|2025|2026|living",
-      "video_search": "Tomodachi Life 3DS longplay no commentary"
+      "video_reject": "dream|switch|2025|2026|living|alex|first ?look|part \\d",
+      "video_search": "Tomodachi Life 3DS Citra gameplay"
     },
     {
       "id": "super-mario-3d-world-wiiu",
@@ -1919,7 +1939,9 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
-        "m6bzjdSm3lY"
+        "kSItgxanAo4",
+        "m6bzjdSm3lY",
+        "siIOJ8_pBwc"
       ]
     },
     {
@@ -1986,8 +2008,10 @@
       "video_seconds": 5,
       "video_skip": [
         "-1CCvXF6qMY",
+        "-J7VtsrKukE",
         "6l1VyNPMPkI",
-        "WM2iJIhJykw"
+        "WM2iJIhJykw",
+        "XGYl015kX4s"
       ],
       "video_reject": "just dance 2\\d|wii u|2 \\(|ps[34]|xbox|2020|2019|2018",
       "video_search": "Just Dance 2 Wii 2010 gameplay"
@@ -2213,6 +2237,8 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_skip": [
+        "2O7IGkXcq9U",
+        "BAQvfU1dikk",
         "mnp1Zv66Ej8"
       ]
     },
@@ -2479,7 +2505,10 @@
       "platform": "wiiu",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "video_skip": [
+        "qWBHyFhRsG4"
+      ]
     },
     {
       "id": "super-mario-maker-wiiu",
@@ -2577,6 +2606,49 @@
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5
+    },
+    {
+      "id": "the-legend-of-zelda-breath-of-the-wild-switch",
+      "title": "The Legend of Zelda: Breath of the Wild",
+      "year": 2017,
+      "platform": "switch",
+      "released": "2017-03-03",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5,
+      "video_name": "Breath of the Wild"
+    },
+    {
+      "id": "the-legend-of-zelda-tears-of-the-kingdom-switch",
+      "title": "The Legend of Zelda: Tears of the Kingdom",
+      "year": 2023,
+      "platform": "switch",
+      "released": "2023-05-12",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5,
+      "video_name": "Tears of the Kingdom"
+    },
+    {
+      "id": "super-paper-mario-wii",
+      "title": "Super Paper Mario",
+      "year": 2007,
+      "platform": "wii",
+      "released": "2007-04-09",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "paper-mario-color-splash-wiiu",
+      "title": "Paper Mario: Color Splash",
+      "year": 2016,
+      "platform": "wiiu",
+      "released": "2016-10-07",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5,
+      "video_name": "Paper Mario Color Splash"
     }
   ]
 }
