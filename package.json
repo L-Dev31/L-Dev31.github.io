@@ -1,0 +1,16 @@
+{
+  "name": "l-dev31-portfolio",
+  "private": true,
+  "type": "module",
+  "description": "Portfolio of Léo Tosku. The site itself has no build step; these scripts only produce the optimised copy in dist/.",
+  "scripts": {
+    "optimize": "node tools/optimize.mjs build",
+    "audit": "node tools/optimize.mjs audit"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "html-minifier-terser": "^7.2.0",
+    "postcss": "^8.5.32",
+    "purgecss": "^8.0.0"
+  }
+}
