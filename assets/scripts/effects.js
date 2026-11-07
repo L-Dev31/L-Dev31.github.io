@@ -1,5 +1,6 @@
 import { reducedMotion, lowPower, clamp01, throttled, breakpoint, track, entrance, heroEntrance } from './common.js';
 import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
+import { TEXT_ENTRANCE, HERO_PICTURE_RAMP_SECONDS } from './config.js';
 
 const isMobile = breakpoint.isMobile;
 
@@ -9,8 +10,6 @@ const scrubBlocks = [];
 const scrubSeen = new WeakSet();
 let scrubWired = false;
 // the text on screen when the intro leaves comes in letter by letter, block after block
-const INTRO_RATE = 55; // letters a second
-const INTRO_STEP = 0.2; // seconds between two blocks
 let introOrder = 0, introWired = false;
 export function scrubbingText() {
 
@@ -23,12 +22,12 @@ export function scrubbingText() {
         scrubSeen.add(block);
         const turn = block.dataset.scrub === 'turn';
         const r = block.getBoundingClientRect();
-        const intro = !turn && entrance() === 0 && r.bottom > 0 && r.top < innerHeight ? 0.15 + INTRO_STEP * introOrder++ : null;
+        const intro = !turn && entrance() === 0 && r.bottom > 0 && r.top < innerHeight ? TEXT_ENTRANCE.firstBlockDelaySeconds + TEXT_ENTRANCE.secondsBetweenBlocks * introOrder++ : null;
         const chars = splitChars(block);
         if (chars.length) scrubBlocks.push({ block, chars, turn, out: block.dataset.scrub === 'out', intro });
     }
     // how far the intro has brought a block's letters: none before the hero appears, all once it is done
-    const introHead = entry => (entry.intro == null ? Infinity : (entrance() - entry.intro) * INTRO_RATE);
+    const introHead = entry => (entry.intro == null ? Infinity : (entrance() - entry.intro) * TEXT_ENTRANCE.lettersPerSecond);
     const introSig = (entry, head) => (head >= entry.chars.length - 1 + SPREAD ? 'in' : Math.round(head * 10));
 
     const paint = () => {
@@ -67,7 +66,7 @@ export function scrubbingText() {
         introWired = true;
         // repainted every frame while the hero's text comes in
         heroEntrance.then(() => {
-            const end = Math.max(0, ...scrubBlocks.filter(entry => entry.intro != null).map(entry => entry.intro + (entry.chars.length + SPREAD) / INTRO_RATE));
+            const end = Math.max(0, ...scrubBlocks.filter(entry => entry.intro != null).map(entry => entry.intro + (entry.chars.length + SPREAD) / TEXT_ENTRANCE.lettersPerSecond));
             const frame = () => { scrubPaint(); if (entrance() < end + 0.1) requestAnimationFrame(frame); };
             requestAnimationFrame(frame);
         });
@@ -310,7 +309,7 @@ function splitChars(block) {
 }
 
 // the hero's pictures come in through the cell levels: their brightness grows from nothing as the hero appears
-const RAMP = 1.2; // seconds
+const RAMP = HERO_PICTURE_RAMP_SECONDS;
 function appear(brightness, out) {
     const t = clamp01(entrance() / RAMP);
     if (t >= 1) return brightness;

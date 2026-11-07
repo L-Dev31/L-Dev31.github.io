@@ -1,310 +1,455 @@
-import { reducedMotion, lowPower, track } from './common.js';
+import { reducedMotion, lowPower } from './env.js';
+import { track } from './intro.js';
+import { PIXEL, SIGNATURE } from './config.js';
 
-const cellFor = () => Math.max(3, Math.round(innerWidth / 180));
-export let CELL = cellFor();
-addEventListener('resize', () => { CELL = cellFor(); }, { passive: true });
-const LEVELS = [20, 60, 130];
+const computeCell = () => Math.max(PIXEL.minCellPx, Math.round(innerWidth / PIXEL.screenWidthPerCell));
+export let CELL = computeCell();
+addEventListener('resize', () => { CELL = computeCell(); }, { passive: true });
 
-export function drawCell(ctx, state, x, y, c, fill) {
-    const gap = Math.max(1, Math.round(c * 0.25));
-    const s = fill === undefined ? c - gap : c * fill;
-    if (state === 2) {
-        ctx.fillRect(x, y, s, s);
+const [DOT_THRESHOLD, CHECKER_THRESHOLD, SOLID_THRESHOLD] = PIXEL.brightnessLevels;
+
+const DOTS = 0, CHECKER = 1, SOLID = 2;
+
+export function drawCell(context, level, x, y, cellSize, fillShare) {
+    const gap = Math.max(1, Math.round(cellSize * PIXEL.gapShare));
+    const side = fillShare === undefined ? cellSize - gap : cellSize * fillShare;
+    if (level === SOLID) {
+        context.fillRect(x, y, side, side);
         return;
     }
-    const q = Math.max(1, Math.round(s / 5)), n = Math.floor(s / q);
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < n; j++) {
-            if (state === 1 ? (i + j) % 2 === 0 : i % 2 === 1 && j % 2 === 1) ctx.fillRect(x + i * q, y + j * q, q, q);
+    const dotSize = Math.max(1, Math.round(side / 5));
+    const dotsPerSide = Math.floor(side / dotSize);
+    for (let i = 0; i < dotsPerSide; i++) {
+        for (let j = 0; j < dotsPerSide; j++) {
+            const lit = level === CHECKER ? (i + j) % 2 === 0 : i % 2 === 1 && j % 2 === 1;
+            if (lit) context.fillRect(x + i * dotSize, y + j * dotSize, dotSize, dotSize);
         }
     }
 }
 
-function tileSet(color, size) {
-    const canvas = document.createElement('canvas');
-    canvas.width = size * 3;
-    canvas.height = size;
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    ctx.fillStyle = color;
-    for (let state = 0; state < 3; state++) drawCell(ctx, state, state * size, 0, size);
-    const px = new Uint32Array(ctx.getImageData(0, 0, size * 3, size).data.buffer);
-    // tiles[state][row] is one row of packed pixels, ready to copy into the frame
-    return [0, 1, 2].map(state => Array.from({ length: size }, (_, y) => px.slice(y * size * 3 + state * size, y * size * 3 + (state + 1) * size)));
+function buildTiles(color, size) {
+    const sheet = document.createElement('canvas');
+    sheet.width = size * 3;
+    sheet.height = size;
+    const context = sheet.getContext('2d', { willReadFrequently: true });
+    context.fillStyle = color;
+    for (let level = DOTS; level <= SOLID; level++) drawCell(context, level, level * size, 0, size);
+
+    const pixels = new Uint32Array(context.getImageData(0, 0, size * 3, size).data.buffer);
+    return [DOTS, CHECKER, SOLID].map(level => Array.from({ length: size }, (_, y) => {
+        const rowStart = y * size * 3 + level * size;
+        return pixels.slice(rowStart, rowStart + size);
+    }));
+}
+
+function levelOf(brightness) {
+    if (brightness < DOT_THRESHOLD) return 0;
+    if (brightness < CHECKER_THRESHOLD) return 1;
+    if (brightness < SOLID_THRESHOLD) return 2;
+    return 3;
 }
 
 export function cellCanvas(canvas, color) {
-    const ctx = canvas.getContext('2d');
-    let cols = 0, rows = 0, size = CELL, tiles = null, shown = new Uint8Array(0), image = null, frame = null;
+    const context = canvas.getContext('2d');
+    let cols = 0, rows = 0;
+    let cellPx = CELL;
+    let tiles = null;
+    let shownLevels = new Uint8Array(0);
+    let imageData = null;
+    let frame = null;
 
-    let noise = new Float32Array(0), view = new Uint8Array(0), beat = -1;
-    const alive = brightness => {
+    let shimmer = new Float32Array(0);
+    let shimmered = new Uint8Array(0);
+    let shimmerBeat = -1;
+
+    function withShimmer(brightness) {
         if (lowPower) return brightness;
-        const now = performance.now();
-        if (view.length !== brightness.length) {
-            view = new Uint8Array(brightness.length);
-            noise = new Float32Array(brightness.length);
-            beat = -1;
+        if (shimmered.length !== brightness.length) {
+            shimmered = new Uint8Array(brightness.length);
+            shimmer = new Float32Array(brightness.length);
+            shimmerBeat = -1;
         }
-        if (Math.floor(now / 240) !== beat) {
-            beat = Math.floor(now / 240);
-            for (let i = 0; i < noise.length; i++) noise[i] = 0.78 + 0.44 * ((((i + 1) * 73856093) ^ (beat * 19349663)) >>> 0) / 4294967295;
+        const beat = Math.floor(performance.now() / PIXEL.shimmerBeatMs);
+        if (beat !== shimmerBeat) {
+            shimmerBeat = beat;
+            const low = 1 - PIXEL.shimmerAmount, span = PIXEL.shimmerAmount * 2;
+            for (let i = 0; i < shimmer.length; i++) {
+                const hash = (((i + 1) * 73856093) ^ (beat * 19349663)) >>> 0;
+                shimmer[i] = low + (span * hash) / 4294967295;
+            }
         }
-        for (let i = 0; i < view.length; i++) view[i] = Math.min(255, brightness[i] * noise[i]);
-        return view;
-    };
+        for (let i = 0; i < shimmered.length; i++) shimmered[i] = Math.min(255, brightness[i] * shimmer[i]);
+        return shimmered;
+    }
+
     return {
-        resize(c, r) {
-            cols = c; rows = r;
-            size = CELL * (lowPower ? 1 : Math.min(2, Math.max(1, Math.round(devicePixelRatio))));
-            canvas.width = cols * size;
-            canvas.height = rows * size;
+        resize(newCols, newRows) {
+            cols = newCols;
+            rows = newRows;
+            const ratio = lowPower ? 1 : Math.min(PIXEL.maxDevicePixelRatio, Math.max(1, Math.round(devicePixelRatio)));
+            cellPx = CELL * ratio;
+            canvas.width = cols * cellPx;
+            canvas.height = rows * cellPx;
             canvas.style.aspectRatio = `${cols} / ${rows}`;
-            tiles = tileSet(color, size);
-            image = ctx.createImageData(canvas.width, canvas.height);
-            frame = new Uint32Array(image.data.buffer);
-            shown = new Uint8Array(0);
+            tiles = buildTiles(color, cellPx);
+            imageData = context.createImageData(canvas.width, canvas.height);
+            frame = new Uint32Array(imageData.data.buffer);
+            shownLevels = new Uint8Array(0);
         },
-        invalidate() { ctx.clearRect(0, 0, canvas.width, canvas.height); frame?.fill(0); shown = new Uint8Array(0); },
-        // every cell is drawn again in the new colour at the next paint
-        recolor(next) {
-            if (next === color) return;
-            color = next;
-            if (cols) tiles = tileSet(color, size);
-            shown = new Uint8Array(0);
+        invalidate() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            frame?.fill(0);
+            shownLevels = new Uint8Array(0);
+        },
+        recolor(newColor) {
+            if (newColor === color) return;
+            color = newColor;
+            if (cols) tiles = buildTiles(color, cellPx);
+            shownLevels = new Uint8Array(0);
         },
         get cols() { return cols; },
         get rows() { return rows; },
-        // cells are copied into one typed array and sent to the canvas once, instead of one canvas call per cell
         paint(brightness) {
-            const live = alive(brightness), width = cols * size;
-            if (shown.length !== live.length) shown = new Uint8Array(live.length).fill(255);
-            let x0 = cols, y0 = rows, x1 = -1, y1 = -1;
+            const live = withShimmer(brightness);
+            const rowWidth = cols * cellPx;
+            if (shownLevels.length !== live.length) shownLevels = new Uint8Array(live.length).fill(255);
+
+            let minCol = cols, minRow = rows, maxCol = -1, maxRow = -1;
             for (let i = 0; i < live.length; i++) {
-                const b = live[i];
-                const state = b < LEVELS[0] ? 0 : b < LEVELS[1] ? 1 : b < LEVELS[2] ? 2 : 3;
-                if (state === shown[i]) continue;
-                shown[i] = state;
+                const level = levelOf(live[i]);
+                if (level === shownLevels[i]) continue;
+                shownLevels[i] = level;
+
                 const col = i % cols, row = (i / cols) | 0;
-                let at = row * size * width + col * size;
-                if (state) {
-                    const tile = tiles[state - 1];
-                    for (let y = 0; y < size; y++, at += width) frame.set(tile[y], at);
+                let offset = row * cellPx * rowWidth + col * cellPx;
+                if (level) {
+                    const tile = tiles[level - 1];
+                    for (let y = 0; y < cellPx; y++, offset += rowWidth) frame.set(tile[y], offset);
                 } else {
-                    for (let y = 0; y < size; y++, at += width) frame.fill(0, at, at + size);
+                    for (let y = 0; y < cellPx; y++, offset += rowWidth) frame.fill(0, offset, offset + cellPx);
                 }
-                if (col < x0) x0 = col;
-                if (col > x1) x1 = col;
-                if (row < y0) y0 = row;
-                if (row > y1) y1 = row;
+                minCol = Math.min(minCol, col);
+                maxCol = Math.max(maxCol, col);
+                minRow = Math.min(minRow, row);
+                maxRow = Math.max(maxRow, row);
             }
-            if (x1 >= 0) ctx.putImageData(image, 0, 0, x0 * size, y0 * size, (x1 - x0 + 1) * size, (y1 - y0 + 1) * size);
+            if (maxCol >= 0) {
+                context.putImageData(imageData, 0, 0, minCol * cellPx, minRow * cellPx, (maxCol - minCol + 1) * cellPx, (maxRow - minRow + 1) * cellPx);
+            }
         },
     };
 }
 
 const MASK = 128;
-const masks = new Map();
+const ALPHA_THRESHOLD = 100;
+const NORMAL_REACH = 2;
+const maskCache = new Map();
+
+function computeNormals(solid) {
+    const normalX = new Float32Array(solid.length);
+    const normalY = new Float32Array(solid.length);
+    const isSolid = (x, y) => solid[Math.min(MASK - 1, Math.max(0, y)) * MASK + Math.min(MASK - 1, Math.max(0, x))];
+
+    for (let y = 0; y < MASK; y++) {
+        for (let x = 0; x < MASK; x++) {
+            let gradientX = 0, gradientY = 0;
+            for (let d = -NORMAL_REACH; d <= NORMAL_REACH; d++) {
+                gradientX += isSolid(x + NORMAL_REACH, y + d) - isSolid(x - NORMAL_REACH, y + d);
+                gradientY += isSolid(x + d, y - NORMAL_REACH) - isSolid(x + d, y + NORMAL_REACH);
+            }
+            const length = Math.hypot(gradientX, gradientY) || 1;
+            normalX[y * MASK + x] = -gradientX / length;
+            normalY[y * MASK + x] = -gradientY / length;
+        }
+    }
+    return { normalX, normalY };
+}
 
 function loadMask(url) {
-    if (masks.has(url)) return masks.get(url);
+    if (maskCache.has(url)) return maskCache.get(url);
+
     const promise = new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
+        const image = new Image();
+        image.onload = () => {
             const canvas = document.createElement('canvas');
             canvas.width = canvas.height = MASK;
-            const ctx = canvas.getContext('2d', { willReadFrequently: true });
-            const w = img.naturalWidth || 300, h = img.naturalHeight || 300;
-            const fit = MASK / Math.max(w, h);
-            ctx.drawImage(img, (MASK - w * fit) / 2, (MASK - h * fit) / 2, w * fit, h * fit);
-            const rgba = ctx.getImageData(0, 0, MASK, MASK).data;
+            const context = canvas.getContext('2d', { willReadFrequently: true });
+            const width = image.naturalWidth || 300, height = image.naturalHeight || 300;
+            const fit = MASK / Math.max(width, height);
+            context.drawImage(image, (MASK - width * fit) / 2, (MASK - height * fit) / 2, width * fit, height * fit);
+            const rgba = context.getImageData(0, 0, MASK, MASK).data;
+
             const solid = new Uint8Array(MASK * MASK);
-            let x0 = MASK, y0 = MASK, x1 = 0, y1 = 0;
+            let minX = MASK, minY = MASK, maxX = 0, maxY = 0;
             for (let i = 0; i < solid.length; i++) {
-                if (rgba[i * 4 + 3] < 100) continue;
+                if (rgba[i * 4 + 3] < ALPHA_THRESHOLD) continue;
                 solid[i] = 1;
                 const x = i % MASK, y = (i / MASK) | 0;
-                x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+                minX = Math.min(minX, x);
+                maxX = Math.max(maxX, x);
+                minY = Math.min(minY, y);
+                maxY = Math.max(maxY, y);
             }
 
-            const nx = new Float32Array(solid.length), ny = new Float32Array(solid.length);
-            const at = (x, y) => solid[Math.min(MASK - 1, Math.max(0, y)) * MASK + Math.min(MASK - 1, Math.max(0, x))];
-            for (let y = 0; y < MASK; y++) {
-                for (let x = 0; x < MASK; x++) {
-                    let gx = 0, gy = 0;
-                    for (let d = -2; d <= 2; d++) {
-                        gx += at(x + 2, y + d) - at(x - 2, y + d);
-                        gy += at(x + d, y - 2) - at(x + d, y + 2);
-                    }
-                    const len = Math.hypot(gx, gy) || 1;
-                    nx[y * MASK + x] = -gx / len;
-                    ny[y * MASK + x] = -gy / len;
-                }
-            }
-            resolve({ solid, nx, ny, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, half: Math.max(x1 - x0, y1 - y0) / 2 || 1 });
+            const { normalX, normalY } = computeNormals(solid);
+            resolve({
+                solid,
+                normalX,
+                normalY,
+                centerX: (minX + maxX) / 2,
+                centerY: (minY + maxY) / 2,
+                halfSize: Math.max(maxX - minX, maxY - minY) / 2 || 1,
+                flat: url.startsWith('data:'),
+            });
         };
-        img.onerror = reject;
-        img.src = url;
+        image.onerror = reject;
+        image.src = url;
     });
-    masks.set(url, track(url, promise));
+    maskCache.set(url, track(url, promise));
     return promise;
 }
 
-const DEPTH = 0.12;
-const TILT = 0.22;
-const LIGHT = (() => { const l = [-0.45, 0.55, 0.7], n = Math.hypot(...l); return l.map(v => v / n); })();
-const BASE_SPIN = 0.9;
+const LIGHT_DIRECTION = (() => {
+    const light = [-0.45, 0.55, 0.7];
+    const length = Math.hypot(...light);
+    return light.map(value => value / length);
+})();
 
-const MORPH = 0.45; // seconds for the cells to go from one shape to the next
+const RAY_STEP = 0.03;
+const RAY_START_DEPTH = 1.35;
+const SHAPE_SCALE = 0.9;
+const MAX_CELLS_FOR_ANTIALIASING = 2500;
 
-// with `morph`, a new shape is reached by its cells reassembling; otherwise it simply replaces the old one
-export function extrudedSvg(canvas, color, { morph = false } = {}) {
-    const cells = cellCanvas(canvas, color);
-    let mask = null, from = null, morphStart = 0, angle = -0.5, frame = 0, last = 0, running = false, facing = false, drawn = '';
-    let light = [0, 0, 0], brightness = new Uint8Array(0), before = new Uint8Array(0), order = new Float32Array(0);
-    let r0 = [], r1 = [], r2 = [];
+function samplingGrid(cols, rows) {
+    const raysPerSide = cols * rows > MAX_CELLS_FOR_ANTIALIASING ? 1 : 2;
+    return { raysPerSide, offset: 0.5 / raysPerSide, tall: rows / cols };
+}
 
-    // the shape seen through the current rotation, one brightness per cell
-    const march = ({ solid, nx, ny, cx, cy, half }, out) => {
-        const cols = cells.cols, rows = cells.rows;
-        const k = half / 0.9;
-        const step = 0.03, zMax = 1.35;
-        // a wide grid keeps square cells: the height spans rows / cols of the width
-        const tall = rows / cols;
-        // a large grid is drawn with one ray a cell instead of four, so a frame keeps its time
-        const n = cols * rows > 2500 ? 1 : 2, off = 0.5 / n;
-        for (let row = 0; row < rows; row++) {
-            for (let col = 0; col < cols; col++) {
-                let sum = 0;
-                for (let sy = 0; sy < n; sy++) {
-                    for (let sx = 0; sx < n; sx++) {
-                        const X = ((col + off + sx / n) / cols) * 2 - 1;
-                        const Y = (1 - ((row + off + sy / n) / rows) * 2) * tall;
+function sampleFlat(mask, cols, rows, output) {
+    const { solid, centerX, centerY, halfSize } = mask;
+    const scale = halfSize / SHAPE_SCALE;
+    const { raysPerSide, offset, tall } = samplingGrid(cols, rows);
 
-                        let u = r0[0] * X + r1[0] * Y + r2[0] * zMax;
-                        let v = r0[1] * X + r1[1] * Y + r2[1] * zMax;
-                        let w = r0[2] * X + r1[2] * Y + r2[2] * zMax;
-                        const du = -r2[0] * step, dv = -r2[1] * step, dw = -r2[2] * step;
-                        let inSlab = false;
-                        for (let z = zMax; z > -zMax; z -= step, u += du, v += dv, w += dw) {
-                            if (w > DEPTH || w < -DEPTH) { inSlab = false; continue; }
-                            const mx = (cx + u * k) | 0, my = (cy - v * k) | 0;
-                            if (mx < 0 || my < 0 || mx >= MASK || my >= MASK) { inSlab = true; continue; }
-                            const m = my * MASK + mx;
-                            if (solid[m]) {
-                                const d = inSlab ? nx[m] * light[0] + ny[m] * light[1] : Math.sign(w) * light[2];
-                                sum += 255 * (0.14 + 0.86 * Math.max(0, d));
-                                break;
-                            }
-                            inSlab = true;
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            let hits = 0;
+            for (let sampleY = 0; sampleY < raysPerSide; sampleY++) {
+                for (let sampleX = 0; sampleX < raysPerSide; sampleX++) {
+                    const x = ((col + offset + sampleX / raysPerSide) / cols) * 2 - 1;
+                    const y = (1 - ((row + offset + sampleY / raysPerSide) / rows) * 2) * tall;
+                    const maskX = (centerX + x * scale) | 0, maskY = (centerY - y * scale) | 0;
+                    const inside = maskX >= 0 && maskY >= 0 && maskX < MASK && maskY < MASK;
+                    if (inside && solid[maskY * MASK + maskX]) hits++;
+                }
+            }
+            output[row * cols + col] = (255 * hits) / (raysPerSide * raysPerSide);
+        }
+    }
+}
+
+function rotationAxes(angle) {
+    const turn = { cos: Math.cos(angle), sin: Math.sin(angle) };
+    const tilt = { cos: Math.cos(SIGNATURE.tilt), sin: Math.sin(SIGNATURE.tilt) };
+    return {
+        right: [turn.cos, 0, turn.sin],
+        up: [tilt.sin * turn.sin, tilt.cos, -tilt.sin * turn.cos],
+        toward: [-tilt.cos * turn.sin, tilt.sin, tilt.cos * turn.cos],
+    };
+}
+
+function sampleExtruded(mask, axes, light, cols, rows, output) {
+    const { solid, normalX, normalY, centerX, centerY, halfSize } = mask;
+    const { right, up, toward } = axes;
+    const scale = halfSize / SHAPE_SCALE;
+    const { raysPerSide, offset, tall } = samplingGrid(cols, rows);
+
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            let brightnessSum = 0;
+            for (let sampleY = 0; sampleY < raysPerSide; sampleY++) {
+                for (let sampleX = 0; sampleX < raysPerSide; sampleX++) {
+                    const x = ((col + offset + sampleX / raysPerSide) / cols) * 2 - 1;
+                    const y = (1 - ((row + offset + sampleY / raysPerSide) / rows) * 2) * tall;
+
+                    let u = right[0] * x + up[0] * y + toward[0] * RAY_START_DEPTH;
+                    let v = right[1] * x + up[1] * y + toward[1] * RAY_START_DEPTH;
+                    let w = right[2] * x + up[2] * y + toward[2] * RAY_START_DEPTH;
+                    const stepU = -toward[0] * RAY_STEP, stepV = -toward[1] * RAY_STEP, stepW = -toward[2] * RAY_STEP;
+
+                    let insideSlab = false;
+                    for (let depth = RAY_START_DEPTH; depth > -RAY_START_DEPTH; depth -= RAY_STEP, u += stepU, v += stepV, w += stepW) {
+                        if (w > SIGNATURE.depth || w < -SIGNATURE.depth) {
+                            insideSlab = false;
+                            continue;
                         }
+                        const maskX = (centerX + u * scale) | 0, maskY = (centerY - v * scale) | 0;
+                        if (maskX < 0 || maskY < 0 || maskX >= MASK || maskY >= MASK) {
+                            insideSlab = true;
+                            continue;
+                        }
+                        const index = maskY * MASK + maskX;
+                        if (solid[index]) {
+                            const lighting = insideSlab
+                                ? normalX[index] * light[0] + normalY[index] * light[1]
+                                : Math.sign(w) * light[2];
+                            brightnessSum += 255 * (0.14 + 0.86 * Math.max(0, lighting));
+                            break;
+                        }
+                        insideSlab = true;
                     }
                 }
-                out[row * cols + col] = sum / (n * n);
             }
+            output[row * cols + col] = brightnessSum / (raysPerSide * raysPerSide);
         }
-    };
+    }
+}
 
-    const render = () => {
-        // holding still (a word facing the viewer, no morph): the cells are only repainted
+export function extrudedSvg(canvas, color, { morph = false } = {}) {
+    const cells = cellCanvas(canvas, color);
+
+    let mask = null;
+    let previousMask = null;
+    let morphStartedAt = 0;
+    let angle = -0.5;
+    let animationFrame = 0;
+    let lastTick = 0;
+    let running = false;
+    let facingViewer = false;
+    let lastDrawnState = '';
+
+    let brightness = new Uint8Array(0);
+    let previousBrightness = new Uint8Array(0);
+    let morphOrder = new Float32Array(0);
+    let axes = rotationAxes(angle);
+    const light = [0, 0, 0];
+
+    function march(shape, output) {
+        const { cols, rows } = cells;
+        if (shape.flat) sampleFlat(shape, cols, rows, output);
+        else sampleExtruded(shape, axes, light, cols, rows, output);
+    }
+
+    function render() {
         const state = `${angle.toFixed(4)}|${cells.cols}x${cells.rows}`;
-        if (!from && state === drawn) return cells.paint(brightness);
-        drawn = state;
-        const cT = Math.cos(angle), sT = Math.sin(angle), cP = Math.cos(TILT), sP = Math.sin(TILT);
-        r0 = [cT, 0, sT]; r1 = [sP * sT, cP, -sP * cT]; r2 = [-cP * sT, sP, cP * cT];
-        for (let i = 0; i < 3; i++) light[i] = r0[i] * LIGHT[0] + r1[i] * LIGHT[1] + r2[i] * LIGHT[2];
+        if (!previousMask && state === lastDrawnState) {
+            cells.paint(brightness);
+            return;
+        }
+        lastDrawnState = state;
+
+        axes = rotationAxes(angle);
+        for (let i = 0; i < 3; i++) {
+            light[i] = axes.right[i] * LIGHT_DIRECTION[0] + axes.up[i] * LIGHT_DIRECTION[1] + axes.toward[i] * LIGHT_DIRECTION[2];
+        }
         march(mask, brightness);
-        const t = from ? (performance.now() - morphStart) / 1000 / MORPH : 1;
-        if (t < 1) {
-            // each cell leaves the old shape for the new one at its own moment: the pixels reassemble
-            march(from, before);
-            for (let i = 0; i < brightness.length; i++) if (order[i] > t) brightness[i] = before[i];
+
+        const morphProgress = previousMask ? (performance.now() - morphStartedAt) / 1000 / SIGNATURE.morphSeconds : 1;
+        if (morphProgress < 1) {
+            march(previousMask, previousBrightness);
+            for (let i = 0; i < brightness.length; i++) {
+                if (morphOrder[i] > morphProgress) brightness[i] = previousBrightness[i];
+            }
         } else {
-            from = null;
+            previousMask = null;
         }
         cells.paint(brightness);
-    };
+    }
 
-    const tick = now => {
-        const dt = Math.min(0.05, (now - last) / 1000 || 0);
-        last = now;
-        if (facing) {
-            // it turns back to face the viewer, the nearest way round, and holds
-            const front = Math.round(angle / (2 * Math.PI)) * 2 * Math.PI;
-            angle += (front - angle) * Math.min(1, dt * 5);
-            if (Math.abs(front - angle) < 1e-3) angle = front;
+    function tick(now) {
+        const seconds = Math.min(0.05, (now - lastTick) / 1000 || 0);
+        lastTick = now;
+        if (facingViewer) {
+            const FULL_TURN = 2 * Math.PI;
+            const nearestFront = Math.round(angle / FULL_TURN) * FULL_TURN;
+            angle += (nearestFront - angle) * Math.min(1, seconds * SIGNATURE.faceViewerEase);
+            if (Math.abs(nearestFront - angle) < 1e-3) angle = nearestFront;
         } else {
-            angle += BASE_SPIN * dt;
+            angle += SIGNATURE.spinRadiansPerSecond * seconds;
         }
         render();
-        frame = running ? requestAnimationFrame(tick) : 0;
-    };
+        animationFrame = running ? requestAnimationFrame(tick) : 0;
+    }
+
+    const randomOrder = count => Float32Array.from({ length: count }, () => Math.random());
 
     return {
-
-        /** Draws the first of `urls` that loads, on a grid of cols by rows cells (rows = cols by default). */
         async show(urls, cols, rows = cols) {
-            let next = null;
+            let nextMask = null;
             for (const url of [].concat(urls)) {
-                try { next = await loadMask(url); break; } catch {}
+                try {
+                    nextMask = await loadMask(url);
+                    break;
+                } catch {}
             }
-            if (!next) return;
-            if (morph && mask && next !== mask && !reducedMotion) {
-                from = mask;
-                morphStart = performance.now();
-                order = Float32Array.from({ length: cols * rows }, () => Math.random());
+            if (!nextMask) return;
+
+            if (morph && mask && nextMask !== mask && !reducedMotion) {
+                previousMask = mask;
+                morphStartedAt = performance.now();
+                morphOrder = randomOrder(cols * rows);
             }
-            if (next !== mask) drawn = '';
-            mask = next;
+            if (nextMask !== mask) lastDrawnState = '';
+            mask = nextMask;
+
             if (cols !== cells.cols || rows !== cells.rows) {
                 cells.resize(cols, rows);
                 brightness = new Uint8Array(cols * rows);
-                before = new Uint8Array(cols * rows);
-                if (order.length !== cols * rows) order = Float32Array.from({ length: cols * rows }, () => Math.random());
+                previousBrightness = new Uint8Array(cols * rows);
+                if (morphOrder.length !== cols * rows) morphOrder = randomOrder(cols * rows);
             }
+
             if (reducedMotion) return render();
             if (!running) {
                 running = true;
-                last = performance.now();
-                frame = requestAnimationFrame(tick);
+                lastTick = performance.now();
+                animationFrame = requestAnimationFrame(tick);
             }
         },
         hide() {
             running = false;
-            cancelAnimationFrame(frame);
+            cancelAnimationFrame(animationFrame);
         },
-        /** Turns the shape a little more, by an angle in radians. */
         nudge(radians) { angle += radians; },
-        /** Stops turning and faces the viewer (a word must be read), or turns again. */
-        face(on) { facing = on; },
-        recolor(next) { cells.recolor(next); },
+        face(on) { facingViewer = on; },
+        recolor(newColor) { cells.recolor(newColor); },
     };
 }
 
-export function dissolve(host, { color, size = CELL, total = 900, reverse = false, fixed = false }, done) {
+const DISSOLVE_DELAY_BY_COLUMN = 0.55;
+const DISSOLVE_DELAY_RANDOM = 0.35;
+const DISSOLVE_SPEED = 1.45;
+const DISSOLVE_END = 1.15;
+const DISSOLVE_DOTS_UNTIL = 0.2, DISSOLVE_CHECKER_UNTIL = 0.1;
+
+export function dissolve(host, { color, size = CELL, total = PIXEL.dissolveDurationMs, reverse = false, fixed = false }, done) {
     const canvas = document.createElement('canvas');
     canvas.style.cssText = `position:${fixed ? 'fixed' : 'absolute'};inset:0;width:100%;height:100%`;
     host.append(canvas);
+
     const cols = Math.ceil((fixed ? innerWidth : host.clientWidth) / size);
     const rows = Math.ceil((fixed ? innerHeight : host.clientHeight) / size);
-    const dpr = Math.min(2, devicePixelRatio || 1), cell = size * dpr;
-    canvas.width = cols * cell;
-    canvas.height = rows * cell;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = color;
-    const delay = Array.from({ length: cols * rows }, (_, i) => (i % cols) / cols * 0.55 + Math.random() * 0.35);
-    const start = performance.now(), END = 1.15;
-    const frame = now => {
+    const ratio = Math.min(PIXEL.maxDevicePixelRatio, devicePixelRatio || 1);
+    const cellPx = size * ratio;
+    canvas.width = cols * cellPx;
+    canvas.height = rows * cellPx;
+
+    const context = canvas.getContext('2d');
+    context.fillStyle = color;
+    const delays = Array.from({ length: cols * rows }, (_, i) => ((i % cols) / cols) * DISSOLVE_DELAY_BY_COLUMN + Math.random() * DISSOLVE_DELAY_RANDOM);
+    const startedAt = performance.now();
+
+    function frame(now) {
         if (!canvas.isConnected) return;
-        const t = Math.min(END, (now - start) / total * 1.45);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let i = 0; i < delay.length; i++) {
-            const p = (reverse ? END - t : t) - delay[i];
-            const state = p < 0 ? 2 : p < 0.1 ? 1 : p < 0.2 ? 0 : -1;
-            if (state >= 0) drawCell(ctx, state, (i % cols) * cell, ((i / cols) | 0) * cell, cell, 1);
+        const progress = Math.min(DISSOLVE_END, ((now - startedAt) / total) * DISSOLVE_SPEED);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < delays.length; i++) {
+            const remaining = (reverse ? DISSOLVE_END - progress : progress) - delays[i];
+            const level = remaining < 0 ? SOLID : remaining < DISSOLVE_CHECKER_UNTIL ? CHECKER : remaining < DISSOLVE_DOTS_UNTIL ? DOTS : -1;
+            if (level >= 0) drawCell(context, level, (i % cols) * cellPx, ((i / cols) | 0) * cellPx, cellPx, 1);
         }
-        if (t < END) requestAnimationFrame(frame);
+        if (progress < DISSOLVE_END) requestAnimationFrame(frame);
         else done?.(canvas);
-    };
+    }
     requestAnimationFrame(frame);
     return canvas;
 }
