@@ -1528,6 +1528,24 @@
         "Wolfwalkers"
       ],
       "featured": true
+    },
+    {
+      "id": "le-dirigeable-vole",
+      "title": "Le Dirigeable volé",
+      "year": 1966,
+      "search": [
+        "The Stolen Airship",
+        "Le Dirigeable volé"
+      ],
+      "featured": true
+    },
+    {
+      "id": "kanun",
+      "title": "Kanun",
+      "year": 2022,
+      "search": [
+        "Kanun (film)"
+      ]
     }
   ],
   "series": [
@@ -1759,6 +1777,35 @@
         "New Testament"
       ],
       "image": "https://covers.openlibrary.org/b/id/10231890-L.jpg"
+    },
+    {
+      "id": "l-ami-retrouve",
+      "title": "L'Ami retrouvé",
+      "year": 1971,
+      "author": "Fred Uhlman",
+      "search": [
+        "Reunion",
+        "L'Ami retrouvé"
+      ],
+      "image": "https://covers.openlibrary.org/b/id/10638846-L.jpg"
+    },
+    {
+      "id": "eldorado",
+      "title": "Eldorado",
+      "year": 2006,
+      "author": "Laurent Gaudé",
+      "search": [
+        "Eldorado"
+      ]
+    },
+    {
+      "id": "ulysse-from-bagdad",
+      "title": "Ulysse from Bagdad",
+      "year": 2008,
+      "author": "Éric-Emmanuel Schmitt",
+      "search": [
+        "Ulysse from Bagdad"
+      ]
     }
   ],
   "games": [
