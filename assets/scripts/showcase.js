@@ -1,10 +1,8 @@
-import { reducedMotion, lowPower, breakpoint, clamp01, entrance } from './common.js';
+import { reducedMotion, lowPower, breakpoint, clamp01, entrance, loadProjects, projectMark, SIGNATURE, INTRO_STEP, introLoaded } from './common.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { pixelWrite } from './effects.js';
 
 const isMobile = breakpoint.isMobile;
-const SIGNATURE = 'assets/images/core/logo.svg';
-export const projectMark = project => project.svg || `assets/images/projects/icons/${project.id}.svg`;
 const token = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const smooth = t => t * t * (3 - 2 * t);
 
@@ -140,6 +138,10 @@ export function thread(first) {
     const logo = document.querySelector('.brand a');
     if (logo) logo.style.opacity = '0';
     let shape = null, color = '', cols = 0, lastY = scrollY, introFrame = null;
+    // in the intro it goes through the projects while the page loads, then becomes the signature
+    let introMarks = [], loaded = false;
+    loadProjects().then(list => { introMarks = list.map(projectMark); }, () => {});
+    introLoaded.then(() => { loaded = true; });
 
     // where the intro put the signature: read while it shows, then kept for the flight
     const introBox = () => {
@@ -200,7 +202,7 @@ export function thread(first) {
         // as many cells as the size takes at the site's cell size, by fours, within what a frame can draw
         const nextCols = Math.max(16, Math.min(lowPower ? 32 : 56, Math.round(box.size / CELL / 4) * 4));
         const target = t > 0.5 ? next : docks[from];
-        const nextShape = target.shape();
+        const nextShape = since <= 0 && !loaded && introMarks.length ? introMarks[Math.floor(performance.now() / INTRO_STEP) % introMarks.length] : target.shape();
         if (nextShape !== shape || nextCols !== cols) {
             shape = nextShape;
             cols = nextCols;

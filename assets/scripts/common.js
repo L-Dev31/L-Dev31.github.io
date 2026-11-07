@@ -45,6 +45,10 @@ window.fetch = (input, init) => {
     return response;
 };
 
+let markLoaded = () => {};
+/** Resolves when everything the page loads is in: the intro's solid then becomes the signature. */
+export const introLoaded = new Promise(resolve => { markLoaded = resolve; });
+
 let entranceAt = Infinity;
 let startEntrance = () => {};
 /** Resolves when the hero starts to appear, as the intro leaves. */
@@ -95,10 +99,16 @@ export const breakpoint = (() => {
 
 const isMobile = breakpoint.isMobile;
 
-export const loadProjects = () => fetch('assets/data/projects.json')
+let projectList = null;
+export const loadProjects = () => (projectList ??= fetch('assets/data/projects.json')
     .then(res => res.json())
     .then(data => data.projects
-        .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? '')));
+        .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))));
+/** A project's mark, the svg its pixel solid is drawn from. */
+export const projectMark = project => project.svg || `assets/images/projects/icons/${project.id}.svg`;
+export const SIGNATURE = 'assets/images/core/logo.svg';
+// while the page loads, the intro's solid goes through the marks of the projects, one every INTRO_STEP ms
+export const INTRO_STEP = 550;
 
 export function throttled(fn) {
     let queued = false;
@@ -244,8 +254,20 @@ function pageLoader() {
         const cols = Math.max(16, Math.min(40, Math.floor((Math.min(innerWidth, innerHeight) * 0.42) / CELL / 4) * 4));
         loader.style.setProperty('--sign', `${cols * CELL}px`);
         if (travels) return;
-        mark = extrudedSvg(loader.querySelector('.page-loader-sign'), getComputedStyle(root).getPropertyValue('--accent').trim());
-        mark.show('assets/images/core/logo.svg', cols);
+        mark = extrudedSvg(loader.querySelector('.page-loader-sign'), getComputedStyle(root).getPropertyValue('--accent').trim(), { morph: true });
+        mark.show(SIGNATURE, cols);
+        // the projects one after the other while the page loads, the signature to end
+        loadProjects().then(list => {
+            const marks = list.map(projectMark);
+            let i = 0;
+            const next = () => {
+                if (finished || !marks.length) return;
+                mark.show(marks[i++ % marks.length], cols);
+                setTimeout(next, INTRO_STEP);
+            };
+            next();
+        }, () => {});
+        introLoaded.then(() => mark.show(SIGNATURE, cols));
     });
 
     const leave = () => {
@@ -264,11 +286,13 @@ function pageLoader() {
         finished = true;
         loading.open = false;
         window.fetch = nativeFetch;
+        markLoaded();
         if (complete) {
             bar.style.transform = 'scaleX(1)';
             count.textContent = '100%';
         }
-        setTimeout(leave, reducedMotion ? 0 : 450);
+        // long enough for the solid to become the signature before it leaves
+        setTimeout(leave, reducedMotion ? 0 : 750);
     };
 
     // the fonts the layout asked for, and those it asks for while the intro shows: they are looked
