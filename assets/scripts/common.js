@@ -77,16 +77,16 @@ function daylight(date) {
 let tickClock = () => {};
 
 function clock() {
-    const time = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Monaco', hour: '2-digit', minute: '2-digit', hour12: false });
-    const zone = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Monaco', timeZoneName: 'shortOffset' });
+    const time = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hour12: false });
+    const zone = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', timeZoneName: 'shortOffset' });
     const tick = () => {
         const now = new Date();
         const day = daylight(now);
         const t = time.format(now);
         const offset = zone.formatToParts(now).find(part => part.type === 'timeZoneName')?.value || '';
         for (const el of document.querySelectorAll('[data-clock]')) {
-            el.innerHTML = `${day ? SUN : MOON}<span class="clock-place">Monaco, MC</span><span class="clock-time">${t}</span><span class="clock-zone">${offset}</span>`;
-            el.setAttribute('aria-label', `Monaco, ${t}, ${offset}, ${day ? 'daytime' : 'night'}`);
+            el.innerHTML = `${day ? SUN : MOON}<span class="clock-place">French Riviera, FR</span><span class="clock-time">${t}</span><span class="clock-zone">${offset}</span>`;
+            el.setAttribute('aria-label', `French Riviera, ${t}, ${offset}, ${day ? 'daytime' : 'night'}`);
         }
     };
     tickClock = tick;

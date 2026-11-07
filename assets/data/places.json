@@ -1,10 +1,4 @@
 {
-  "pv": {
-    "name": "La Dracénie",
-    "region": "Provence",
-    "lat": 43.54,
-    "lon": 6.47
-  },
   "fr": {
     "name": "France",
     "region": "Europe",
@@ -70,5 +64,11 @@
     "region": "Europe",
     "lat": 43.73,
     "lon": 7.42
+  },
+  "riviera": {
+    "name": "French Riviera",
+    "region": "Europe",
+    "lat": 43.6,
+    "lon": 7.1
   }
 }
