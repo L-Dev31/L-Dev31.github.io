@@ -4,8 +4,8 @@ import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_VIDEO } from './config.js';
 
 const isMobile = breakpoint.isMobile;
 
-const TEXT = '.scrubbing-text, h1, h2, h3, p, li, time, dd, .journey-when, .journey-country';
-const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, .footer-sign, .clock, .page-loader, .showcase';
+const TEXT = '.scrubbing-text, h1, h2, h3, p, li, time, dd, .pullquote, .journey-when, .journey-country';
+const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, .footer-sign, .clock, .page-loader, .showcase, .project-hero';
 const scrubBlocks = [];
 const scrubSeen = new WeakSet();
 let scrubWired = false;
@@ -81,109 +81,6 @@ export function scrubbingText() {
     paint();
 }
 let scrubPaint = () => {};
-
-export function scrollyScenes() {
-    const SPREAD = TEXT_ENTRANCE.scrubSpreadLettersInProjects;
-    const scenes = [];
-    const selector = '.project-main .case-intro, .project-main .case-pullquote, .project-main .case-chapter';
-
-    if (isMobile || reducedMotion) {
-        document.querySelectorAll(selector).forEach(section => {
-            section.classList.add('case-scene', 'case-scene--static');
-            section.querySelectorAll('.case-row').forEach(row => row.classList.add('visible'));
-        });
-        return;
-    }
-
-    for (const chapter of document.querySelectorAll('.project-main .case-chapter')) {
-        const rows = [...chapter.querySelectorAll(':scope > .case-row')];
-        if (rows.length < 2) continue;
-
-        const title = chapter.querySelector(':scope > .title');
-        const sequence = [...chapter.children];
-        const fragment = document.createDocumentFragment();
-        let rowIndex = 0;
-
-        for (const child of sequence) {
-            if (child.classList.contains('case-row')) {
-                const scene = document.createElement('section');
-                scene.className = 'case-chapter';
-                if (rowIndex === 0 && chapter.id) scene.id = chapter.id;
-                if (rowIndex === 0 && title) scene.append(title);
-                scene.append(child);
-                fragment.append(scene);
-                rowIndex++;
-            } else if (child !== title) {
-
-                fragment.append(child);
-            }
-        }
-        chapter.replaceWith(fragment);
-    }
-
-    for (const section of document.querySelectorAll(selector)) {
-        section.classList.add('case-scene');
-        const pin = document.createElement('div');
-        pin.className = 'case-scene-pin';
-        pin.append(...section.childNodes);
-        section.append(pin);
-        const chars = [];
-
-        for (const el of pin.querySelectorAll('h1, h3, p, blockquote, li, figcaption')) chars.push(...splitChars(el));
-
-        section.querySelectorAll('.case-row').forEach(el => el.classList.add('visible'));
-
-        const padTop = pin.getBoundingClientRect().top - section.getBoundingClientRect().top;
-        scenes.push({ section, pin, padTop, chars });
-    }
-    if (!scenes.length) return;
-
-    const paintChars = (revealT, chars, host) => {
-        const head = revealT * (chars.length - 1 + SPREAD);
-        for (let i = 0; i < chars.length; i++) {
-            const t = clamp01((head - i) / SPREAD);
-            paintChar(chars[i], t);
-        }
-        if (host) drawCells(host, chars);
-    };
-
-    const paint = () => {
-        const vh = innerHeight;
-        for (const { section, pin, padTop, chars } of scenes) {
-            const r = section.getBoundingClientRect();
-            if (r.bottom < 0 || r.top > vh) continue;
-            const travel = Math.max(r.height - vh, 1);
-            const pinH = pin.offsetHeight;
-
-            const pinned = r.height - vh > vh * 0.3 && pinH <= vh;
-            if (!pinned) {
-
-                paintChars(clamp01(((vh * 0.9 - r.top) / travel) / 0.62), chars, pin);
-                if (pin.dataset.scrubbed) {
-                    pin.style.opacity = '';
-                    pin.style.transform = '';
-                    delete pin.dataset.scrubbed;
-                }
-                continue;
-            }
-
-            const topMax = (vh - pinH) / 2;
-            const stuckMax = Math.max(r.height - padTop - pinH, 0);
-            const stuck = Math.min(Math.max(topMax - r.top - padTop, 0), stuckMax);
-            paintChars(clamp01(stuck / Math.max(stuckMax * 0.62, 1)), chars, pin);
-
-            const fadeIn = clamp01(stuck / 150);
-            const out = clamp01((stuck / Math.max(stuckMax, 1) - 0.80) / 0.20);
-            pin.style.opacity = (fadeIn * (1 - out)).toFixed(3);
-            pin.style.transform = stuck ? `translate3d(0, ${stuck.toFixed(1)}px, 0)` : '';
-            pin.dataset.scrubbed = '1';
-        }
-    };
-
-    const schedule = throttled(paint);
-    ['scroll', 'resize', 'load'].forEach(event => addEventListener(event, schedule, { passive: true }));
-    paint();
-}
 
 export function pixelWrite(block, text, duration = 0.55) {
     cellLayers.delete(block);

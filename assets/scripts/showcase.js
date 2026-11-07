@@ -148,25 +148,19 @@ function blendBoxes(from, to, amount) {
 }
 
 function dockScrollRange(dock) {
-    if (dock.scrollRange) return dock.scrollRange();
     const box = dock.element.getBoundingClientRect();
     const halfScreen = innerHeight * 0.5;
     return [box.top + scrollY - halfScreen, Math.max(0, box.bottom + scrollY - halfScreen)];
 }
 
-function openFlights(ranges, docks) {
+function openFlights(ranges) {
     const minFlight = innerHeight * SIGNATURE.flightMinScreens;
     for (let i = 0; i < ranges.length - 1; i++) {
         const gap = ranges[i + 1][0] - ranges[i][1];
-        if (docks[i + 1].late || gap >= minFlight) continue;
+        if (gap >= minFlight) continue;
         const middle = (ranges[i][1] + ranges[i + 1][0]) / 2;
         ranges[i][1] = middle - minFlight / 2;
         ranges[i + 1][0] = middle + minFlight / 2;
-    }
-    for (let i = 1; i < ranges.length; i++) {
-        if (!docks[i].late) continue;
-        const flightStart = ranges[i][0] - innerHeight * SIGNATURE.lateFlightScreens;
-        ranges[i - 1][1] = Math.max(ranges[i - 1][1], flightStart);
     }
 }
 
@@ -185,7 +179,6 @@ export function thread(firstDocks) {
     if (isMobile || reducedMotion || !firstDocks.length) return null;
 
     let docks = firstDocks;
-    docks.forEach(dock => dock.claim?.());
 
     const canvas = createElement('canvas', 'thread is-intro');
     canvas.setAttribute('aria-hidden', 'true');
@@ -222,7 +215,7 @@ export function thread(firstDocks) {
         requestAnimationFrame(frame);
         const scroll = scrollY;
         const ranges = docks.map(dockScrollRange);
-        openFlights(ranges, docks);
+        openFlights(ranges);
         const { from, progress } = locateOnPath(ranges, scroll);
         const fromDock = docks[from];
         const toDock = progress > 0 ? docks[from + 1] : fromDock;
@@ -254,8 +247,6 @@ export function thread(firstDocks) {
         canvas.classList.toggle('at-rest', isResting);
 
         const targetDock = progress > 0.5 ? toDock : fromDock;
-        solid.face(!!targetDock.face);
-
         const shape = shapeFor(targetDock, seconds);
         if (shape !== shownShape || cols !== shownCols || rows !== shownRows) {
             shownShape = shape;
@@ -273,7 +264,6 @@ export function thread(firstDocks) {
         setDocks(list) {
             if (!list.length) return;
             docks = list;
-            docks.forEach(dock => dock.claim?.());
         },
     };
 }
@@ -293,66 +283,7 @@ const restingInNavbar = element => ({
     box: navbarLogoBox,
 });
 
-const footerName = () => document.querySelector('.footer-sign .big-name');
-
-let footerNameMask = null;
-
-function footerNameShape() {
-    if (footerNameMask) return footerNameMask;
-    const MASK_SIZE = 1024;
-    const MEASURE_FONT_PX = 200;
-    const FILL_WIDTH = 1000;
-    const name = footerName();
-    const style = getComputedStyle(name);
-    const font = size => `${style.fontStyle} ${style.fontWeight} ${size}px ${style.fontFamily}`;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = MASK_SIZE;
-    const context = canvas.getContext('2d');
-    context.font = font(MEASURE_FONT_PX);
-    const measured = context.measureText(name.textContent).width;
-    context.font = font(Math.floor((MEASURE_FONT_PX * FILL_WIDTH) / measured));
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText(name.textContent, MASK_SIZE / 2, MASK_SIZE / 2);
-    footerNameMask = canvas.toDataURL('image/png');
-    return footerNameMask;
-}
-
-function footerNameBox() {
-    const CAP_HEIGHT_EM = 0.7;
-    const BASELINE_GAP_EM = 0.25;
-    const MASK_FILL = 0.9;
-    const name = footerName();
-    const range = document.createRange();
-    range.selectNodeContents(name);
-    const text = range.getBoundingClientRect();
-    const fontSize = parseFloat(getComputedStyle(name).fontSize);
-    return {
-        x: text.left + text.width / 2,
-        y: text.bottom - fontSize * BASELINE_GAP_EM - (fontSize * CAP_HEIGHT_EM) / 2,
-        size: text.width / MASK_FILL,
-        aspect: SIGNATURE.footerNameRowsPerCol,
-    };
-}
-
-function footerDock(footer) {
-    return {
-        element: footer,
-        face: true,
-        late: true,
-        scrollRange: () => [document.documentElement.scrollHeight - innerHeight - 2, Infinity],
-        color: () => getComputedStyle(footerName()).color,
-        shape: footerNameShape,
-        box: footerNameBox,
-        claim: () => { footerName().style.visibility = 'hidden'; },
-    };
-}
-
 export function restDocks() {
-    const footer = document.querySelector('#footer');
-    const main = document.querySelector('main');
-    if (footer && main && footerName()) return [restingInNavbar(main), footerDock(footer)];
     return [restingInNavbar(document.body)];
 }
 
@@ -375,8 +306,5 @@ export function homeDocks(stage) {
 
     const promise = document.querySelector('#promise');
     if (promise) docks.push(restingInNavbar(promise));
-
-    const footer = document.querySelector('#footer');
-    if (footer && footerName()) docks.push(footerDock(footer));
     return docks;
 }

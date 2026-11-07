@@ -27,14 +27,6 @@
     font-family: 'Remarcle', 'Nunito', sans-serif !important;
 }
 
-.font-vipnagorgialla {
-    font-family: 'Vipnagorgialla', 'Nunito', sans-serif !important;
-}
-
-.font-nunito {
-    font-family: 'Nunito', sans-serif !important;
-}
-
 /* Scrollbar styling */
 ::-webkit-scrollbar {
     width: 6px;
@@ -377,10 +369,6 @@ section.sticky-panel:not(.no-effect):has(+ section.sticky-panel:not(.no-effect))
     color: #333;
     background: #fff;
     font-weight: 300;
-}
-
-.carousel-status[data-type="error"] {
-    border-color: rgba(139, 21, 56, 0.35);
 }
 
 .main-header {

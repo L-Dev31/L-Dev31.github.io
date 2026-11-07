@@ -2,7 +2,7 @@ import { reducedMotion, lowPower } from './env.js';
 import { track } from './intro.js';
 import { PIXEL, SIGNATURE } from './config.js';
 
-const computeCell = () => Math.max(PIXEL.minCellPx, Math.round(innerWidth / PIXEL.screenWidthPerCell));
+const computeCell = () => Math.max(PIXEL.minCellPx, Math.round(innerWidth / PIXEL.cellsAcrossScreen));
 export let CELL = computeCell();
 addEventListener('resize', () => { CELL = computeCell(); }, { passive: true });
 
@@ -199,7 +199,6 @@ function loadMask(url) {
                 centerX: (minX + maxX) / 2,
                 centerY: (minY + maxY) / 2,
                 halfSize: Math.max(maxX - minX, maxY - minY) / 2 || 1,
-                flat: url.startsWith('data:'),
             });
         };
         image.onerror = reject;
@@ -223,28 +222,6 @@ const MAX_CELLS_FOR_ANTIALIASING = 2500;
 function samplingGrid(cols, rows) {
     const raysPerSide = cols * rows > MAX_CELLS_FOR_ANTIALIASING ? 1 : 2;
     return { raysPerSide, offset: 0.5 / raysPerSide, tall: rows / cols };
-}
-
-function sampleFlat(mask, cols, rows, output) {
-    const { solid, centerX, centerY, halfSize } = mask;
-    const scale = halfSize / SHAPE_SCALE;
-    const { raysPerSide, offset, tall } = samplingGrid(cols, rows);
-
-    for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-            let hits = 0;
-            for (let sampleY = 0; sampleY < raysPerSide; sampleY++) {
-                for (let sampleX = 0; sampleX < raysPerSide; sampleX++) {
-                    const x = ((col + offset + sampleX / raysPerSide) / cols) * 2 - 1;
-                    const y = (1 - ((row + offset + sampleY / raysPerSide) / rows) * 2) * tall;
-                    const maskX = (centerX + x * scale) | 0, maskY = (centerY - y * scale) | 0;
-                    const inside = maskX >= 0 && maskY >= 0 && maskX < MASK && maskY < MASK;
-                    if (inside && solid[maskY * MASK + maskX]) hits++;
-                }
-            }
-            output[row * cols + col] = (255 * hits) / (raysPerSide * raysPerSide);
-        }
-    }
 }
 
 function rotationAxes(angle) {
@@ -314,7 +291,6 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
     let animationFrame = 0;
     let lastTick = 0;
     let running = false;
-    let facingViewer = false;
     let lastDrawnState = '';
 
     let brightness = new Uint8Array(0);
@@ -324,9 +300,7 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
     const light = [0, 0, 0];
 
     function march(shape, output) {
-        const { cols, rows } = cells;
-        if (shape.flat) sampleFlat(shape, cols, rows, output);
-        else sampleExtruded(shape, axes, light, cols, rows, output);
+        sampleExtruded(shape, axes, light, cells.cols, cells.rows, output);
     }
 
     function render() {
@@ -358,14 +332,7 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
     function tick(now) {
         const seconds = Math.min(0.05, (now - lastTick) / 1000 || 0);
         lastTick = now;
-        if (facingViewer) {
-            const FULL_TURN = 2 * Math.PI;
-            const nearestFront = Math.round(angle / FULL_TURN) * FULL_TURN;
-            angle += (nearestFront - angle) * Math.min(1, seconds * SIGNATURE.faceViewerEase);
-            if (Math.abs(nearestFront - angle) < 1e-3) angle = nearestFront;
-        } else {
-            angle += SIGNATURE.spinRadiansPerSecond * seconds;
-        }
+        angle += SIGNATURE.spinRadiansPerSecond * seconds;
         render();
         animationFrame = running ? requestAnimationFrame(tick) : 0;
     }
@@ -410,7 +377,6 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
             cancelAnimationFrame(animationFrame);
         },
         nudge(radians) { angle += radians; },
-        face(on) { facingViewer = on; },
         recolor(newColor) { cells.recolor(newColor); },
     };
 }
