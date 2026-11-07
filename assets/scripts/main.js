@@ -159,7 +159,7 @@ async function initProjects() {
     if (!container) return;
     const projects = (await loadProjects()).filter(p => CATEGORIES.includes(p.category));
 
-    const stage = showcase(document.querySelector('.showcase'), projects, lenis);
+    const stage = showcase(document.querySelector('.showcase'), projects.filter(project => project.featured), lenis);
     signature?.setDocks(homeDocks(stage));
     projectPreview(container, projectIndex(container, projects));
     refreshParallax();
@@ -260,9 +260,10 @@ async function initCulture() {
     const lists = document.querySelectorAll('[data-culture]');
     if (!lists.length) return;
     const data = await fetch('assets/data/culture.json').then(r => r.json());
-    lists.forEach(container => cultureList(container, data[container.dataset.culture] || [], container.dataset.culture));
+    const shown = (kind, list) => (kind === 'books' ? list : list.filter(item => item.featured));
+    lists.forEach(container => cultureList(container, shown(container.dataset.culture, data[container.dataset.culture] || []), container.dataset.culture));
     const travels = await fetch('assets/data/travels.json').then(r => r.json());
-    const totals = { ...Object.fromEntries(Object.entries(data).map(([kind, list]) => [kind, list.length])), travels: travels.stops.length };
+    const totals = { ...Object.fromEntries(Object.entries(data).map(([kind, list]) => [kind, shown(kind, list).length])), travels: travels.stops.length };
     document.querySelectorAll('.section-nav [data-count]').forEach(count => { count.textContent = totals[count.dataset.count] ?? ''; });
     document.querySelector('.section-nav')?.dispatchEvent(new Event('relayout'));
 }

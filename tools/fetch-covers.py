@@ -292,6 +292,8 @@ def main():
             continue
         (OUT / kind).mkdir(parents=True, exist_ok=True)
         for item in items:
+            if kind != 'books' and not item.get('featured'):
+                continue
             dest = OUT / kind / f"{item_id(item)}.webp"
             item['kind'] = kind
             wanted = not args.only or any(query.lower() in item['title'].lower() for query in args.only)

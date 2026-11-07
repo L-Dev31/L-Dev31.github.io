@@ -32,6 +32,7 @@ export function initPage() {
     anchorLinks(lenis);
     backToTop(lenis);
     footerReveal();
+    copyHandles();
     pauseOffscreenVideos();
     return lenis;
 }
@@ -314,6 +315,14 @@ function backToTop(lenis) {
         if (lenis) lenis.scrollTo(0);
         else scrollTo({ top: 0, behavior: 'smooth' });
     });
+}
+
+function copyHandles() {
+    document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', async () => {
+        const label = button.textContent;
+        try { await navigator.clipboard.writeText(button.dataset.copy); button.textContent = 'Copied'; } catch { button.textContent = button.dataset.copy; }
+        setTimeout(() => { button.textContent = label; }, 1600);
+    }));
 }
 
 function footerReveal() {

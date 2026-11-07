@@ -135,6 +135,8 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     todo = []
     for item in data['games']:
+        if not item.get('featured'):
+            continue
         dest = OUT / f"{item_id(item)}.mp4"
         if args.only and args.only.lower() not in item['title'].lower():
             continue

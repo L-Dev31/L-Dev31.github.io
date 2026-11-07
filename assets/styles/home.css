@@ -350,6 +350,13 @@ h3 {
     padding: 0 var(--pad-edge);
 }
 
+.section-aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+}
+
 .section-note {
     flex: none;
     white-space: nowrap;
@@ -1834,7 +1841,8 @@ main {
     margin-left: 0.4em;
 }
 
-.footer-line a {
+.footer-line a,
+.footer-line button {
     color: inherit;
     font-size: clamp(14px, 1.2vw, 17px);
     font-weight: 500;
@@ -1853,7 +1861,17 @@ main {
     height: 100%;
 }
 
+.footer-line button {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: inherit;
+    line-height: inherit;
+    cursor: pointer;
+}
+
 .footer-line a,
+.footer-line button,
 .promise-links a {
     text-decoration: none;
     transition: font-weight 0.15s var(--ease-out);
@@ -1861,6 +1879,8 @@ main {
 
 .footer-line a:hover,
 .footer-line a:focus-visible,
+.footer-line button:hover,
+.footer-line button:focus-visible,
 .promise-links a:hover,
 .promise-links a:focus-visible,
 .mobile-menu-link:hover,
@@ -2252,5 +2272,121 @@ html.menu-open .section-nav {
 
     .section-nav a span {
         display: none;
+    }
+}
+
+.all-main {
+    min-height: 100svh;
+    padding: clamp(120px, 20vh, 200px) var(--pad-edge) clamp(80px, 14vh, 160px);
+    background: var(--black);
+}
+
+.all-head,
+.all-list {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.all-main .all-list {
+    display: block;
+    min-height: 0;
+    padding: 0;
+    background: none;
+}
+
+.all-back {
+    display: inline-block;
+    margin-bottom: clamp(24px, 4vh, 40px);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: font-weight 0.15s var(--ease-out);
+}
+
+.all-back:hover,
+.all-back:focus-visible,
+.all-tabs a:hover,
+.all-tabs a:focus-visible {
+    font-weight: 800;
+}
+
+.all-note {
+    max-width: 52ch;
+    margin: 20px 0 0;
+    color: var(--text);
+    font-size: clamp(15px, 1.3vw, 18px);
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+.all-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: clamp(28px, 5vh, 48px) 0;
+}
+
+.all-tabs a {
+    padding: 8px 16px;
+    border: 1px solid var(--white);
+    border-radius: var(--radius-pill);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    transition: font-weight 0.15s var(--ease-out);
+}
+
+.all-tabs a[aria-current] {
+    background: var(--white);
+    color: var(--black);
+}
+
+.all-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: clamp(14px, 1.2vw, 17px);
+    font-variant-numeric: tabular-nums;
+}
+
+.all-table th,
+.all-table td {
+    padding: 12px 16px 12px 0;
+    border-bottom: 1px solid var(--hairline);
+    text-align: left;
+}
+
+.all-table th {
+    color: var(--text-faint);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.all-table td {
+    color: var(--white);
+    font-weight: 400;
+}
+
+.all-table td:nth-child(2),
+.all-table th:nth-child(2) {
+    width: 90px;
+}
+
+.all-download {
+    display: inline-block;
+    margin-top: clamp(28px, 5vh, 48px);
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+}
+
+@media (max-width: 768px) {
+    .section-aside {
+        width: 100%;
     }
 }

@@ -37,7 +37,8 @@
         "assets/images/projects/smfl/symbol.jpg",
         "assets/images/projects/smfl/flag-final.jpg"
       ],
-      "cover": "assets/images/projects/smfl.webp"
+      "cover": "assets/images/projects/smfl.webp",
+      "featured": true
     },
     {
       "id": "ogfm",
@@ -111,7 +112,8 @@
         "assets/images/projects/bgaw/logo.jpg",
         "assets/images/projects/bgaw/web.jpg"
       ],
-      "cover": "assets/images/projects/bgaw.webp"
+      "cover": "assets/images/projects/bgaw.webp",
+      "featured": true
     },
     {
       "id": "mego",
@@ -161,7 +163,8 @@
         "Privacy by Design",
         "OCR Scanning"
       ],
-      "cover": "assets/images/projects/prfy.webp"
+      "cover": "assets/images/projects/prfy.webp",
+      "featured": true
     },
     {
       "id": "cmck",
@@ -197,7 +200,8 @@
         "assets/images/projects/cmck/website.jpg",
         "assets/images/projects/cmck/structure.webp"
       ],
-      "cover": "assets/images/projects/cmck.webp"
+      "cover": "assets/images/projects/cmck.webp",
+      "featured": true
     },
     {
       "id": "bmge",
@@ -234,7 +238,8 @@
         "assets/images/projects/bmge/tags.webp",
         "assets/images/projects/bmge/re.webp"
       ],
-      "cover": "assets/images/projects/bmge.webp"
+      "cover": "assets/images/projects/bmge.webp",
+      "featured": true
     },
     {
       "id": "gptr",
