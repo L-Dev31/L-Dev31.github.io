@@ -1,0 +1,170 @@
+<div class="lesson-container">
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-layer-group"></i>
+                1. Les piles (Stack) - LIFO
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Principe LIFO
+                </div>
+                <p><strong>Last In, First Out</strong> : le dernier élément ajouté est le premier à être retiré. Comme une pile d'assiettes.</p>
+            </div>
+
+            <div class="code-block">
+# Implémentation avec une liste Python
+pile = []
+
+# Opérations de base
+pile.append(1)      # push(1) - empiler
+pile.append(2)      # push(2)
+pile.append(3)      # push(3)
+print(pile)         # [1, 2, 3]
+
+element = pile.pop() # pop() - dépiler
+print(element)      # 3 (dernier entré)
+print(pile)         # [1, 2]
+
+# Vérifier si vide
+if pile:
+    sommet = pile[-1]  # peek() - regarder sans retirer
+            </div>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">Opérations principales</div>
+                <ul>
+                    <li><code>push(x)</code> : empiler x <span class="complexity-badge">O(1)</span></li>
+                    <li><code>pop()</code> : dépiler et retourner le sommet <span class="complexity-badge">O(1)</span></li>
+                    <li><code>peek()</code> : voir le sommet sans le retirer <span class="complexity-badge">O(1)</span></li>
+                    <li><code>is_empty()</code> : vérifier si vide <span class="complexity-badge">O(1)</span></li>
+                </ul>
+            </div>
+
+            <div class="example-box">
+                <div class="example-title">Applications des piles</div>
+                <ul>
+                    <li><strong>Navigation web</strong> : historique (bouton "Précédent")</li>
+                    <li><strong>Éditeurs</strong> : fonction "Annuler" (Ctrl+Z)</li>
+                    <li><strong>Algorithmes</strong> : gestion de la récursivité</li>
+                    <li><strong>Expressions</strong> : vérification des parenthèses</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-arrow-right"></i>
+                2. Les files (Queue) - FIFO
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Principe FIFO
+                </div>
+                <p><strong>First In, First Out</strong> : le premier élément ajouté est le premier à être retiré. Comme une file d'attente.</p>
+            </div>
+
+            <div class="code-block">
+# Implémentation avec collections.deque (plus efficace)
+from collections import deque
+
+file = deque()
+
+# Opérations de base
+file.append(1)      # enqueue(1) - enfiler à droite
+file.append(2)      # enqueue(2)
+file.append(3)      # enqueue(3)
+print(file)         # deque([1, 2, 3])
+
+element = file.popleft()  # dequeue() - défiler à gauche
+print(element)      # 1 (premier entré)
+print(file)         # deque([2, 3])
+
+# Alternative avec liste (moins efficace)
+file_simple = []
+file_simple.append(4)      # enfiler
+premier = file_simple.pop(0)  # défiler (O(n) !)
+            </div>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">Complexités importantes</div>
+                <ul>
+                    <li><strong>avec deque</strong> : enqueue/dequeue <span class="complexity-badge">O(1)</span></li>
+                    <li><strong>avec liste</strong> : enqueue O(1), dequeue <span class="complexity-badge">O(n)</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-code"></i>
+                3. Implémentations complètes
+            </h2>
+
+            <div class="code-block">
+class Pile:
+    def __init__(self):
+        self.elements = []
+    
+    def push(self, x):
+        self.elements.append(x)
+    
+    def pop(self):
+        if self.is_empty():
+            raise IndexError("Pile vide")
+        return self.elements.pop()
+    
+    def peek(self):
+        if self.is_empty():
+            raise IndexError("Pile vide")
+        return self.elements[-1]
+    
+    def is_empty(self):
+        return len(self.elements) == 0
+    
+    def size(self):
+        return len(self.elements)
+
+# Test
+pile = Pile()
+pile.push("A")
+pile.push("B")
+print(pile.pop())  # "B"
+            </div>
+
+            <div class="code-block">
+from collections import deque
+
+class File:
+    def __init__(self):
+        self.elements = deque()
+    
+    def enqueue(self, x):
+        self.elements.append(x)
+    
+    def dequeue(self):
+        if self.is_empty():
+            raise IndexError("File vide")
+        return self.elements.popleft()
+    
+    def front(self):
+        if self.is_empty():
+            raise IndexError("File vide")
+        return self.elements[0]
+    
+    def is_empty(self):
+        return len(self.elements) == 0
+
+# Test
+file = File()
+file.enqueue("Premier")
+file.enqueue("Second")
+print(file.dequeue())  # "Premier"
+            </div>
+        </div>
+</div>

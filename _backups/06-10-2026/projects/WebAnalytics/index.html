@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLUE S.E.A. — Le Crime Économique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/screens.css">
+<link rel="stylesheet" href="css/choice.css">
+<link rel="stylesheet" href="css/title.css">
+<link rel="stylesheet" href="css/panels.css">
+<link rel="stylesheet" href="css/game.css">
+<link rel="stylesheet" href="css/dialogue.css">
+<link rel="stylesheet" href="css/shake.css">
+<link rel="stylesheet" href="css/lesson.css">
+</head>
+<body>
+
+<!-- TITLE SCREEN -->
+<section id="screen-title" class="screen">
+  <img class="title-logo" src="images/logo.png" alt="BLUE S.E.A.">
+  <nav class="menu focus-group">
+    <button class="choice menu-btn" data-action="play">JOUER</button>
+    <button class="choice menu-btn" data-action="settings">OPTIONS</button>
+    <button class="choice menu-btn" data-action="credits">CREDITS</button>
+  </nav>
+</section>
+
+<!-- SETTINGS -->
+<section id="screen-settings" class="screen hidden">
+  <div class="panel focus-group">
+    <h2>Options</h2>
+    <div class="row">
+      <span>Musique</span>
+      <button id="toggle-music" class="toggle">ON</button>
+    </div>
+    <div class="row">
+      <span>Lecture auto</span>
+      <button id="toggle-autoplay" class="toggle">OFF</button>
+    </div>
+    <button class="choice back focus-item" data-action="back-title">Retour</button>
+  </div>
+</section>
+
+<!-- CREDITS -->
+<section id="screen-credits" class="screen hidden">
+  <div class="panel focus-group">
+    <h2>CREDITS</h2>
+    <div class="credits-grid">
+      <div class="credit-card">
+        <div class="credit-head"></div>
+        <div class="credit-name">Leo TOSKU</div>
+        <div class="credit-role">Design & Dev</div>
+      </div>
+      <div class="credit-card">
+        <div class="credit-head"></div>
+        <div class="credit-name">Clement DEZON HULIN</div>
+        <div class="credit-role">Scénariste</div>
+      </div>
+    </div>
+    <button class="choice back focus-item" data-action="back-title">Retour</button>
+  </div>
+</section>
+
+<!-- GAME -->
+<section id="screen-game" class="screen hidden">
+
+  <!-- Environment transition overlay -->
+  <div id="env-overlay" class="hidden">
+    <span id="env-overlay-label"></span>
+  </div>
+
+  <!-- Background -->
+  <div id="background"></div>
+
+  <!-- Sprites + dialogue -->
+  <div id="game-ui">
+    <div id="sprites">
+      <div id="sprite-left"  class="sprite inactive hidden"></div>
+      <div id="sprite-right" class="sprite inactive hidden"></div>
+    </div>
+    <div id="dialogue-box" class="hidden">
+      <div id="name-tag-left"  class="name-tag left hidden"></div>
+      <div id="name-tag-right" class="name-tag right hidden"></div>
+      <div id="dialogue-text"></div>
+      <div id="dialogue-hint" class="hidden"><img src="images/icon.png" alt=""></div>
+    </div>
+    <div id="choice-panel" class="hidden">
+      <div id="choice-avatar"></div>
+      <div id="choice-options" class="focus-group"></div>
+    </div>
+  </div>
+
+  <button id="back-to-title" class="choice back-small" aria-label="Menu">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <line x1="4" y1="7" x2="20" y2="7"/>
+      <line x1="4" y1="12" x2="20" y2="12"/>
+      <line x1="4" y1="17" x2="20" y2="17"/>
+    </svg>
+  </button>
+  <button id="open-lessons" class="choice lessons-small" aria-label="Cours">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/>
+      <path d="M4 19a2 2 0 0 1 2-2h13"/>
+    </svg>
+    <span id="lessons-new-badge" class="lessons-new-badge hidden">NEW</span>
+  </button>
+</section>
+
+<!-- LESSON OVERLAY -->
+<div id="lesson-overlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="lesson-title">
+  <div id="lesson-panel">
+    <div id="lesson-header">
+      <h2 id="lesson-title">Leçon</h2>
+    </div>
+    <div id="lesson-body"></div>
+  </div>
+</div>
+<button id="lesson-close" class="choice choice-btn hidden" aria-label="Fermer">Continuer</button>
+
+<!-- REUSABLE POPUP -->
+<section id="screen-popup" class="screen hidden">
+  <div class="panel popup-panel">
+    <h2 id="popup-title" class="popup-title">ATTENTION</h2>
+    <div id="popup-body" class="popup-body">Voulez-vous vraiment continuer ?</div>
+    <div class="popup-buttons focus-group">
+      <button id="popup-confirm" class="choice popup-btn">CONFIRMER</button>
+      <button id="popup-cancel"  class="choice popup-btn">ANNULER</button>
+    </div>
+  </div>
+</section>
+
+<!-- LESSONS INVENTORY POPUP -->
+<section id="screen-lessons" class="screen hidden">
+  <div class="panel popup-panel lessons-panel">
+    <h2 class="popup-title">COURS</h2>
+    <div id="lessons-list" class="lessons-list"></div>
+    <div class="popup-buttons focus-group">
+      <button id="lessons-close" class="choice popup-btn">FERMER</button>
+    </div>
+  </div>
+</section>
+
+<!-- GAME MENU POPUP -->
+<section id="screen-game-menu" class="screen hidden">
+  <div class="panel popup-panel">
+    <h2 class="popup-title">MENU</h2>
+    <p class="popup-body">Si vous partez, toute votre progression sera perdue. L'enquete n'est pas sauvegardee. Etes-vous certain de vouloir quitter ?</p>
+    <div class="popup-buttons focus-group">
+      <button id="game-menu-quit"   class="choice popup-btn">PARTIR</button>
+      <button id="game-menu-cancel" class="choice popup-btn">ANNULER</button>
+    </div>
+  </div>
+</section>
+
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

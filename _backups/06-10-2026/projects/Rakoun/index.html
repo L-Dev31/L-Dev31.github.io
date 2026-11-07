@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rakoun — Traducteur Français ⇄ Créole guadeloupéen (hors-ligne)</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Traducteur gratuit français ⇄ créole guadeloupéen (kréyòl gwadloup). Fonctionne 100% hors-ligne : dictionnaire et règles grammaticales embarqués, aucune donnée envoyée.">
+  <meta name="keywords" content="traducteur créole guadeloupéen, français créole, kréyòl gwadloup, traduction créole, dictionnaire créole guadeloupéen, traducteur hors-ligne">
+  <meta name="author" content="Rakoun">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://l-dev31.github.io/projects/Rakoun/">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Rakoun">
+  <meta property="og:title" content="Rakoun — Traducteur Français ⇄ Créole guadeloupéen">
+  <meta property="og:description" content="Traduisez du français au créole guadeloupéen (et l'inverse) gratuitement, même sans connexion. Dictionnaire et grammaire embarqués.">
+  <meta property="og:url" content="https://l-dev31.github.io/projects/Rakoun/">
+  <meta property="og:image" content="https://l-dev31.github.io/projects/Rakoun/images/og-image.png">
+  <meta property="og:image:width" content="668">
+  <meta property="og:image:height" content="667">
+  <meta property="og:locale" content="fr_FR">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Rakoun — Traducteur Français ⇄ Créole guadeloupéen">
+  <meta name="twitter:description" content="Traducteur gratuit français ⇄ créole guadeloupéen, 100% hors-ligne.">
+  <meta name="twitter:image" content="https://l-dev31.github.io/projects/Rakoun/images/og-image.png">
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Rakoun",
+    "url": "https://l-dev31.github.io/projects/Rakoun/",
+    "description": "Traducteur français ⇄ créole guadeloupéen fonctionnant 100% hors-ligne.",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "inLanguage": ["fr", "gcf"],
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+  }
+  </script>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e1420" media="(prefers-color-scheme: dark)">
+  <!-- iOS (Safari n'exploite pas entièrement le manifest) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Rakoun">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KX9Z3K4');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google AdSense — à activer une fois le compte approuvé (remplace ca-pub-XXXXXXXXXXXXXXXX) :
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+  -->
+
+</head>
+<body>
+
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KX9Z3K4" height="0"  width="0"  style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <header>
+    <div class="logo-wrap">
+      <img class="logo" src="images/rakoun.png" alt="Rakoun">
+      <img class="eye-pupil" id="eye-left" src="images/eye.png" alt="">
+      <img class="eye-pupil" id="eye-right" src="images/eye.png" alt="">
+    </div>
+    <h1>Rakoun</h1>
+  </header>
+
+  <main>
+    <div class="translator" id="translator">
+
+      <div class="lang-section" id="section-src">
+        <div class="lang-header">
+          <picture>
+            <source media="(max-width: 640px)" srcset="images/flags/fr_square.png" id="flag-src-mobile">
+            <img class="flag" id="flag-src" src="images/flags/fr.png" alt="Drapeau Français">
+          </picture>
+          <div>
+            <div class="lang-name" id="lang-src">Français</div>
+            <div class="lang-native" id="lang-src-native">Fwansé</div>
+            <div class="lang-abbr" id="lang-src-abbr" aria-hidden="true">FR</div>
+          </div>
+        </div>
+        <div class="panel">
+          <textarea id="input" placeholder="Écrivez ici…" maxlength="5000" autofocus></textarea>
+          <div class="panel-action">
+            <span class="char-count" id="char-count">0 / 1500</span>
+            <button id="listen" class="listen" title="Écouter le texte" aria-label="Écouter le texte">
+              <iconify-icon icon="fluent:speaker-2-16-filled"></iconify-icon>
+            </button>
+            <button id="copy" class="copy" title="Copier le texte" aria-label="Copier le texte">
+              <iconify-icon icon="fluent:copy-16-filled"></iconify-icon>
+            </button>
+            <button id="clear" class="clear is-collapsed" title="Effacer le texte" aria-label="Effacer le texte">
+              <iconify-icon icon="fluent:delete-16-filled"></iconify-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button id="swap" class="swap" title="Inverser les langues" aria-label="Inverser les langues">
+        <iconify-icon icon="fluent:arrow-swap-16-filled"></iconify-icon>
+      </button>
+
+      <div class="lang-section" id="section-tgt">
+        <div class="lang-header">
+          <picture>
+            <source media="(max-width: 640px)" srcset="images/flags/gp_square.png" id="flag-tgt-mobile">
+            <img class="flag" id="flag-tgt" src="images/flags/gp.png" alt="Drapeau Créole">
+          </picture>
+          <div>
+            <div class="lang-name" id="lang-tgt">Créole</div>
+            <div class="lang-native" id="lang-tgt-native">Kréyòl</div>
+            <div class="lang-abbr" id="lang-tgt-abbr" aria-hidden="true">GP</div>
+          </div>
+        </div>
+        <div class="panel panel-output">
+          <textarea id="output" placeholder="Traduction…" readonly></textarea>
+          <div class="panel-action">
+            <button id="listen-tgt" title="Écouter la traduction" aria-label="Écouter la traduction">
+              <iconify-icon icon="fluent:speaker-2-16-filled"></iconify-icon>
+            </button>
+            <button id="copy-tgt" title="Copier la traduction" aria-label="Copier la traduction">
+              <iconify-icon icon="fluent:copy-16-filled"></iconify-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© <span id="year"></span> Rakoun. Tous droits réservés.</p>
+
+    <!-- Bannière Google AdSense — à activer une fois le compte approuvé :
+    1. Renseigne data-ad-client (même ID que dans le <head>)
+    2. Renseigne data-ad-slot avec l'ID du bloc créé dans le dashboard AdSense
+    3. Décommente ce bloc
+    <div class="ad-footer">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="XXXXXXXXXX"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    -->
+  </footer>
+
+  <script src="js/engine.js?v=32"></script>
+  <script src="js/listen.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/eyes.js"></script>
+</body>
+</html>

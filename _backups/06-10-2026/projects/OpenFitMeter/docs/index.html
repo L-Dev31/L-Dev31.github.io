@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How it works - Open Fit Meter</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #2c3e50; }
+        h1:nth-of-type(n+2) { margin-top: 60px; }
+        h2 { color: #34495e; margin-top: 30px; }
+        h3 { color: #34495e; margin-top: 15px; }
+        p { margin-bottom: 15px; }
+        .separator { border-top: 1px solid #ccc; margin: 40px 0; }
+        footer { margin-top: 40px; text-align: center; font-size: 0.9em; color: #777; background-color: #f2f2f2; padding: 10px; }
+        .contact { margin-bottom: 10px; }
+        .warning { color: red; font-weight: bold; }
+        section { margin-bottom: 20px; outline: solid 1px black; border-radius: 10px; padding: 15px; }
+        
+        /* Auto TOC Styling */
+        .toc { background-color: #f9f9f9; border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin: 20px 0; }
+        .toc-title { margin-top: 0; font-size: 1.2em; color: #2c3e50; font-weight: bold; margin-bottom: 10px; }
+        .toc ul { margin: 0; padding-left: 20px; list-style-type: disc; }
+        .toc ul ul { padding-left: 20px; margin-top: 5px; list-style-type: circle; }
+        .toc li { margin-bottom: 4px; }
+        .toc a { color: #2980b9; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        code { font-family: monospace; color: green; padding: 2px 4px; border-radius: 4px; }
+        img { width: 100%; height: auto; display: block; margin: 10px 0; }
+
+        /* Frame examples: plain background colors, white text */
+        .magic, .sid, .flags, .size, .prefix, .op, .data, .crc { color: white; padding: 2px 4px; margin: 0 1px; font-family: monospace; }
+        .magic { background: red; }
+        .sid { background: blue; }
+        .flags { background: orange; }
+        .size { background: purple; }
+        .prefix { background: gray; }
+        .op { background: green; }
+        .data { background: teal; }
+        .crc { background: black; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false}]});"></script>
+</head>
+<body>
+
+    <h1>Documentations</h1>
+    <p>Last updated: October 2026</p>
+    <p>Open Fit Meter was made by me (L-DEV31) using Ghidra, VSCode and Android Studio as well of a <s>shit ton</s> of documentation, github repos, and sleepless nights.</p>
+    <p class="warning"><i class="fa-solid fa-triangle-exclamation"></i> Although OFM was human made, AI were used to guide me beyond steps in which i was stuck.</p>
+
+    <!-- Automatic Table of Contents -->
+    <nav class="toc" id="toc">
+        <div class="toc-title">Table of Contents</div>
+    </nav>
+
+    <h2>How the Fit Meter and Wii Fit U talk to each other?</h2>
+
+    <section>
+        <h3>1. Where it happens</h3> 
+        <img src="irda.png" alt="IrDA port">
+        <p>To communicate the fit meter sends data <strong>over the infrared (IrDA-SIR) port on the GamePad</strong> at <strong>115200 bps</strong></p>
+    </section>
+
+    <section>
+        <h3>2. Three software layers</h3> 
+
+        <p>The communication is split into three discoverable layers:</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Layer</th>
+                    <th>What it does</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>CCRCDC</strong></td>
+                    <td>Low-level IR driver. Opens/closes the IR link and moves raw bytes (<code>CCRCDCPerIrdaControl</code>).</td>
+                </tr>
+                <tr>
+                    <td><strong>IRCU</strong></td>
+                    <td>A Wiimote-style rendezvous/state machine (<code>WiimoteMgr</code> / <code>IRCMgr</code>). Drives connect &rarr; exchange &rarr; disconnect and parses incoming frames (<code>IRC_Proc</code>).</td>
+                </tr>
+                <tr>
+                    <td><strong>SAMU</strong></td>
+                    <td>The game's business logic (<code>RPHealthSaveManager</code> / <code>RPStepSAMUData</code>). Decides what data to ask for and stores the result.</td>
+                </tr>
+            </tbody>
+        </table>
+        <img src="software.png" alt="Communication graph">
+    </section>
+
+    <section>
+        <h3>3. The wire frame is an "A5" frame with a CRC-8</h3> 
+        <p>Every IR message is: 
+            <br><code>A5  &lt;sessionId&gt;  &lt;flags&gt;  [&lt;size8&gt;]  &lt;2-byte prefix (semantics unresolved)&gt;  &lt;msg&gt;  &lt;crc8&gt;</code></p>
+
+        <p>Every IR message is sent in an <strong>A5 frame</strong>. It comes in two versions: a short <strong>SETUP</strong> frame to connect, and a <strong>Standard</strong> frame to transfer data.</p>
+
+        <ul>
+            <li><code>0xA5</code>: Start byte marking a new packet.</li>
+            <li><code>sessionId</code>: Sender ID (Console or Fit Meter).</li>
+            <li><code>flags</code>: Tells the packet type and data size.</li>
+            <li><code>prefix</code>: Extra 2-byte header (standard frames only).</li>
+            <li><code>msg</code>: Main data content.</li>
+            <li><code>CRC-8</code>: Final byte to check for transmission errors.</li>
+        </ul>
+
+        <img src="crc8.png" alt="CRC8 graph">
+    </section>
+
+    <section>
+        <h3>4. CRC-8 explained</h3>
+
+        <p><strong>What it is.</strong> A CRC-8 is a 1-byte fingerprint of a message. The sender computes it and appends it to the frame. The receiver recomputes it on what it received. If the two values differ, a bit was corrupted in transit and the frame is dropped.</p>
+
+        <p><strong>The math.</strong> Treat the message bits as the coefficients of a polynomial \(M(x)\) over \(\mathbb{F}_2\) (arithmetic where \(1+1=0\), so addition is XOR). The CRC is the remainder of a polynomial division:</p>
+        \[ \mathrm{CRC}(M) = \big(M(x)\cdot x^8\big) \bmod G(x) \]
+        <p>Here \(G(x)\) is the <em>generator polynomial</em>. Open Fit Meter uses the polynomial <code>0x07</code>:</p>
+        \[ G(x) = x^8 + x^2 + x + 1 \quad\Longleftrightarrow\quad \texttt{1 0000 0111} \]
+        <p>The leading \(x^8\) is implicit, so only the low 8 bits <code>0x07</code> are written in code. The remainder has degree below 8, so it always fits in one byte.</p>
+
+        <p><strong>The practical algorithm.</strong> Dividing bit by bit is what the loop in the code does. Start with \(c = 0\). For each message byte \(b\):</p>
+        <ol>
+            <li>\(c \leftarrow c \oplus b\) (XOR the byte into the register)</li>
+            <li>Repeat 8 times:
+                \[ c \leftarrow \begin{cases} (c \ll 1) \oplus \texttt{0x07} & \text{if the top bit of } c \text{ is } 1 \\ c \ll 1 & \text{otherwise} \end{cases} \]
+                (\(c\) stays 8 bits, so the bit shifted out on the left is discarded.)</li>
+        </ol>
+        <p>Shifting left multiplies by \(x\). When a 1 falls off the top, that is an \(x^8\) term, which the division replaces by \(x^2+x+1\), that is <code>0x07</code>. After the last byte, \(c\) is the CRC.</p>
+
+        <p><strong>How it is applied here.</strong> The CRC covers every byte of the frame from <code>A5</code> up to the byte before the CRC. The sender appends the result as the last byte. The receiver can then run the same loop over the <em>whole</em> frame including the CRC: because there is no final XOR, a valid frame always gives:</p>
+        \[ \mathrm{CRC}(\text{frame} \,\|\, \mathrm{CRC}) = 0 \]
+
+        <p><strong>Worked example.</strong> Frame <code>A5 02 81 02</code> should give <code>CA</code> (the open-ack from case B). Byte 1, <code>A5</code>, with \(c = 0\):</p>
+        <p>\[ c = 00000000 \oplus 10100101 = 10100101 \]</p>
+        <table>
+            <thead><tr><th>Step</th><th>c before</th><th>Top bit</th><th>Operation</th><th>c after</th></tr></thead>
+            <tbody>
+                <tr><td>1</td><td><code>10100101</code></td><td>1</td><td>shift, then XOR <code>00000111</code></td><td><code>01001101</code></td></tr>
+                <tr><td>2</td><td><code>01001101</code></td><td>0</td><td>shift only</td><td><code>10011010</code></td></tr>
+                <tr><td>3</td><td><code>10011010</code></td><td>1</td><td>shift, then XOR <code>00000111</code></td><td><code>00110011</code></td></tr>
+                <tr><td>4</td><td><code>00110011</code></td><td>0</td><td>shift only</td><td><code>01100110</code></td></tr>
+                <tr><td>5</td><td><code>01100110</code></td><td>0</td><td>shift only</td><td><code>11001100</code></td></tr>
+                <tr><td>6</td><td><code>11001100</code></td><td>1</td><td>shift, then XOR <code>00000111</code></td><td><code>10011111</code></td></tr>
+                <tr><td>7</td><td><code>10011111</code></td><td>1</td><td>shift, then XOR <code>00000111</code></td><td><code>00111001</code></td></tr>
+                <tr><td>8</td><td><code>00111001</code></td><td>0</td><td>shift only</td><td><code>01110010</code></td></tr>
+            </tbody>
+        </table>
+        <p>After <code>A5</code>: \(c = \texttt{0x72}\). The other bytes work the same way:</p>
+        <table>
+            <thead><tr><th>Byte</th><th>c before</th><th>c ⊕ byte</th><th>c after 8 shifts</th></tr></thead>
+            <tbody>
+                <tr><td><code>A5</code></td><td><code>00</code></td><td><code>A5</code></td><td><code>72</code></td></tr>
+                <tr><td><code>02</code></td><td><code>72</code></td><td><code>70</code></td><td><code>57</code></td></tr>
+                <tr><td><code>81</code></td><td><code>57</code></td><td><code>D6</code></td><td><code>2C</code></td></tr>
+                <tr><td><code>02</code></td><td><code>2C</code></td><td><code>2E</code></td><td><code>CA</code></td></tr>
+            </tbody>
+        </table>
+        <p>The final register is <code>CA</code>, which is the CRC byte at the end of the frame.</p>
+
+        <h4>For those who did NOT understand that (e.g. me):</h3>
+        <img src="crc8expl.png" alt="CRC8 calculation explained graph">
+    </section>
+
+    <section>
+        <h3>5. Typical frames</h3>
+        <p>Legend: <span class="magic">A5</span> <span class="sid">sessionId</span> <span class="flags">flags</span> <span class="size">size8</span> <span class="prefix">prefix</span> <span class="op">opcode</span> <span class="data">data</span> <span class="crc">crc8</span></p>
+        <table>
+            <thead><tr><th>Case</th><th>Frame</th><th>Explanation</th></tr></thead>
+            <tbody>
+            <tr><td><strong>A. SETUP open<br>meter → console</strong></td><td><span class="magic">A5</span> <span class="sid">00</span> <span class="flags">84</span> <span class="data">01 03 04 EB</span> <span class="crc">F9</span></td><td>Flags <code>84</code> = SETUP + size 4. No prefix. <code>EB</code> is the meter id.</td></tr>
+            <tr><td><strong>B. SETUP open-ack<br>console → meter</strong></td><td><span class="magic">A5</span> <span class="sid">02</span> <span class="flags">81</span> <span class="data">02</span> <span class="crc">CA</span></td><td>Flags <code>81</code> = SETUP + size 1. <code>02</code> is the console id.</td></tr>
+            <tr><td><strong>B. SETUP close<br>console → meter</strong></td><td><span class="magic">A5</span> <span class="sid">02</span> <span class="flags">81</span> <span class="data">0F</span> <span class="crc">E9</span></td><td>Same shape, data <code>0F</code> closes the session.</td></tr>
+            <tr><td><strong>C. Status<br>meter → console</strong></td><td><span class="magic">A5</span> <span class="sid">EB</span> <span class="flags">03</span> <span class="prefix">00 00</span> <span class="op">F3</span> <span class="crc">33</span></td><td>No data: size 3 = prefix (2) + opcode (1). <code>F3</code> = ready, <code>F2</code> = ack.</td></tr>
+            <tr><td><strong>D. Request data<br>console → meter</strong></td><td><span class="magic">A5</span> <span class="sid">02</span> <span class="flags">06</span> <span class="prefix">00 1E</span> <span class="op">F4</span> <span class="data">02 00 17</span> <span class="crc">C1</span></td><td><code>02</code> = METs (bit 7 clear = request). <code>00 17</code> = 23 bytes wanted.</td></tr>
+            <tr><td><strong>E. Send data<br>console → meter</strong></td><td><span class="magic">A5</span> <span class="sid">02</span> <span class="flags">06</span> <span class="prefix">00 07</span> <span class="op">F4</span> <span class="data">85 00 00</span> <span class="crc">F0</span></td><td><code>85</code> = <code>80 | 05</code>: bit 7 set = console sends calories.</td></tr>
+            <tr><td><strong>F. Data chunk<br>meter → console</strong></td><td><span class="magic">A5</span> <span class="sid">EB</span> <span class="flags">0E</span> <span class="prefix">00 12</span> <span class="op">F1</span> <span class="data">A8 A8 AF AA A8 A8 B0 AA A8 AE AA</span> <span class="crc">DF</span></td><td>Size <code>0E</code> = 14 = prefix + opcode + 11 data bytes. Data is XOR <code>AA</code>.</td></tr>
+            <tr><td><strong>G. LARGE frame<br>meter → console</strong></td><td><span class="magic">A5</span> <span class="sid">EB</span> <span class="flags">40</span> <span class="size">7B</span> <span class="prefix">80 F4</span> <span class="op">F1</span> <span class="data">…</span> <span class="crc">05</span></td><td>Flags <code>40</code> = LARGE. Size = <code>((flags &amp; 3F) &lt;&lt; 8) | size8</code> = 123.</td></tr>
+            </tbody>
+        </table>
+
+        <p><strong>Common misconception:</strong> <code>0x80</code> is <strong>not</strong> an opcode. It is the <strong>SETUP flag</strong> inside the <code>flags</code> byte (<code>0x84</code>, <code>0x81</code> above). The real application opcodes are <code>0xF1</code> to <code>0xF4</code> (SETUP/beacon, ACK, END, TRANSFER). Older notes listing <code>0x80</code>/<code>0x81</code> as commands misread the SETUP flag.</p>
+    </section>
+
+    <section>
+        <h3>6. Transfer model: <code>f4</code> with send-vs-request, chunked</h3>
+
+        <p>All data moves through the <strong><code>f4</code> frame</strong>:</p>
+        <p><code>f4  &lt;cmd&gt;  &lt;size:2 bytes BE&gt;  [&lt;data&gt;]</code></p>
+
+        <p>The <code>cmd</code> byte determines the direction:</p>
+        <ul>
+            <li><strong><code>cmd | 0x80</code></strong> → console <strong>sends</strong> data to the meter. The meter replies with <code>0xF2</code> (ACK).</li>
+            <li><strong><code>cmd &amp; 0x7F</code></strong> → console <strong>requests</strong> data from the meter. The meter sends chunks, and the console expects <code>0xF3</code> (END).</li>
+        </ul>
+
+        <p><strong>Large payloads are split into chunks:</strong></p>
+        <ul>
+            <li><code>0xF0</code> = chunk (not last). Acknowledged with <code>0xF2</code>.</li>
+            <li><code>0xF1</code> = last chunk. Acknowledged with <code>0xF3</code>.</li>
+            <li>Chunks are at most <strong>60 bytes</strong> of data.</li>
+            <li>The chunk <strong>data section is XORed with <code>0xAA</code></strong> by the application layer (the decoder de-XORs it on the game side).</li>
+        </ul>
+
+        <img src="f4.png" alt="f4 graph">
+    </section>
+
+    <section>
+        <h3>7. What the console asks for</h3>
+        <p>The console pulls exactly <strong>five data categories</strong> plus the <strong>Mii</strong>, each with its own <code>cmd</code>:</p>
+
+        <table>
+            <thead><tr><th><code>cmd</code></th><th>Content</th><th>Size</th></tr></thead>
+            <tbody>
+                <tr><td><code>0x02</code></td><td>METs per minute</td><td>up to 10080 bytes</td></tr>
+                <tr><td><code>0x03</code></td><td>Height per minute</td><td>up to 10080 bytes</td></tr>
+                <tr><td><code>0x04</code></td><td>Activity tag per minute</td><td>up to 10080 bytes</td></tr>
+                <tr><td><code>0x05</code></td><td>Daily calories</td><td>120 bytes</td></tr>
+                <tr><td><code>0x06</code></td><td>Daily steps</td><td>120 bytes</td></tr>
+                <tr><td>—</td><td><strong>Mii</strong> (0x60-byte FFSD)</td><td>96 bytes</td></tr>
+            </tbody>
+        </table>
+
+        <p>The per-minute buffers cover 7 days &times; 1440 minutes = 10080 minutes. The daily buffers cover 51 day slots + 9 tail slots.</p>
+    </section>
+
+    <section>
+        <h3>8. Handshake</h3>
+        <p>The rendez vous follows fixed roles:</p>
+
+        <ul>
+            <li>
+                <strong>Console (Wii Fit U) = initiator (mode 0):</strong> sends an <code>f4</code> request, then waits for a single <code>0xF3</code> from the meter.
+            </li>
+            <li>
+                <strong>Meter = acceptor (mode 1):</strong> sends a <code>0xF3</code> frame to announce itself, then handles the console's <code>f4</code> commands.
+            </li>
+            <li>
+                <strong>Session = connect → exchange → disconnect:</strong> the console sends a <code>0xF3</code> to start, then a series of <code>f4</code> requests and <code>f3</code> responses, then a final <code>0xF3</code> to end.
+            </li>
+        </ul>
+
+        <img src="handshake.png" alt="Handshake graph">
+    </section>
+
+    <section>
+        <h3>9. No authentication, no encryption: fully emulatable</h3>
+        <p>The link is <strong>completely unauthenticated and unencrypted</strong>. The console never issues a cryptographic challenge, a nonce or a signed handshake. It is a deterministic request/response exchange. A <strong>recorded conversation can be replayed verbatim</strong>, and the game accepts it as a real meter.</p>
+
+        <p>Concretely, the WUPS plugin:</p>
+        <ol>
+            <li>hooks <code>CCRCDCPerIrdaControl</code> (IR driver) and <code>VPADBASEGetIRCStatus</code> (IR status bits),</li>
+            <li>forces the "connected / has data" bits the game checks,</li>
+            <li>relays every frame over <strong>TCP</strong> to a PC running <code>GUI/fitmeter.py</code> or Open Fit Meter app, which returns the emulated meter's replies.</li>
+        </ol>
+
+        <img src="emulated.png" alt="Emulation graph">
+    </section>
+
+    
+
+    <h1>Sources</h1>
+
+    <section>
+        <h3>1. Projects</h3>
+        <table>
+            <thead><tr><th>Project</th><th>Author</th><th>License</th><th>Used for</th></tr></thead>
+            <tbody>
+                <tr><td><a href="https://github.com/HenkKalkwater/fitmetersync">fitmetersync</a></td><td>Henk Kalkwater</td><td>GPL-3.0</td><td>First public protocol documentation: IR link, A5 frame, handshake</td></tr>
+                <tr><td><a href="https://github.com/ariankordi/FFL.js">FFL.js</a></td><td>Arian Kordi</td><td>AGPL-3.0</td><td>Mii rendering, FFL engine port</td></tr>
+                <tr><td><a href="https://github.com/ariankordi/FFL-Testing">FFL-Testing</a></td><td>Arian Kordi</td><td>—</td><td>FFL renderer, resource handling</td></tr>
+                <tr><td><a href="https://github.com/TeamWheelWizard/WheelWizard">WheelWizard</a></td><td>Team WheelWizard</td><td>—</td><td>Where to obtain the FFL resource</td></tr>
+                <tr><td><a href="https://github.com/cemu-project/Cemu">Cemu</a></td><td>Cemu project</td><td>—</td><td>RPL header layout, maps virtual addresses to file offsets in <code>Step.rpx</code></td></tr>
+                <tr><td><a href="https://github.com/Barakat/mii-js">mii-js</a></td><td>Barakat</td><td>—</td><td>Mii Studio data decoding</td></tr>
+                <tr><td><a href="https://github.com/wiiu-env/WiiUPluginSystem">WUPS</a></td><td>wiiu-env</td><td>—</td><td>Hooks the IR driver on the console</td></tr>
+                <tr><td><a href="https://github.com/devkitPro/wut">wut</a></td><td>devkitPro</td><td>—</td><td>IR structures from <code>nsysccr</code> and <code>irda.h</code></td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h3>2. FFL resource</h3>
+        <p><code>FFLResHigh.dat</code> is Nintendo data supplied by the user. It is never shipped, downloaded or transmitted. Without it the apps show a neutral placeholder.</p>
+    </section>
+
+    <section>
+        <h3>3. Addresses in <code>Step.rpx</code></h3>
+        <table>
+            <thead><tr><th>Symbol</th><th>Address</th><th>Purpose</th></tr></thead>
+            <tbody>
+                <tr><td><code>GetDatePos</code> u8</td><td><code>0x023265fc</code></td><td>Scans the 10080-byte buffer backwards for the <code>0xFD</code>/<code>0xFC</code> marker</td></tr>
+                <tr><td><code>GetDatePos</code> u16</td><td><code>0x0232b578</code></td><td>Same for the 120-byte daily blocks</td></tr>
+                <tr><td><code>SaveU8Data</code></td><td><code>0x0232aef4</code></td><td>Parses a minute buffer</td></tr>
+                <tr><td><code>SaveU16Data</code></td><td><code>0x0232bebc</code></td><td>Parses the daily blocks</td></tr>
+                <tr><td>METs write</td><td><code>0x02327a24</code></td><td>RLE expansion, day-slot copy</td></tr>
+                <tr><td>Height write</td><td><code>0x02328ce0</code></td><td>7-bit delta stream</td></tr>
+                <tr><td>Tag write</td><td><code>0x02329f80</code></td><td>Activity tags</td></tr>
+                <tr><td><code>GetSaveDataIndexWithClearData</code></td><td><code>0x0232687c</code></td><td>Finds or creates the save slot of a day</td></tr>
+                <tr><td>Date pack</td><td><code>0x022c76a0</code></td><td><code>(y&lt;&lt;9)|(m&lt;&lt;5)|d</code> into a u16 day code</td></tr>
+                <tr><td>Date unpack</td><td><code>0x022c76c4</code></td><td>u32 date into year, month, day, hour, minute</td></tr>
+                <tr><td>Date minus 1 day</td><td><code>0x022c807c</code></td><td>Midnight crossing</td></tr>
+            </tbody>
+        </table>
+        <p>Virtual address to file offset: section table at file offset <code>0x40</code>. <code>.text</code> is at VA <code>0x02000020</code>, file offset <code>0xA100C0</code>, size <code>0xB3BCF8</code>.</p>
+    </section>
+
+    <section>
+        <h3>4. Verified constants</h3>
+        <ul>
+            <li>Session ids: <code>0xEB</code> meter, <code>0x02</code> and <code>0x08</code> console.</li>
+            <li>Ops: <code>f4</code> command, <code>f0</code>/<code>f1</code> chunks, <code>f2</code>/<code>f3</code> acks, <code>f5</code> resend.</li>
+            <li>Bulk payloads are XOR <code>0xAA</code>.</li>
+            <li>Mii CRC-16: poly <code>0x1021</code>, init <code>0x0000</code>, MSB-first, over bytes <code>0x00</code> to <code>0x5D</code> plus 16 zero bits, stored big-endian at <code>0x5E</code>.</li>
+        </ul>
+    </section>
+
+    <footer>
+        <div class="contact">If you have any questions or concerns, please contact me at <a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a>.</div>
+        <p>&copy; <span id="year"></span> Open Fit Meter. All rights reserved.</p> 
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tocContainer = document.getElementById('toc');
+            const headings = document.querySelectorAll('h1:nth-of-type(n+2), h2, h3');
+            const mainList = document.createElement('ul');
+
+            let currentH2Item = null;
+            let currentH3List = null;
+
+            headings.forEach((heading, index) => {
+                // Generate automatic ID if not present
+                if (!heading.id) {
+                    heading.id = 'section-' + (index + 1);
+                }
+
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#' + heading.id;
+                a.textContent = heading.textContent;
+                li.appendChild(a);
+
+                if (heading.tagName.toLowerCase() !== 'h3') {
+                    mainList.appendChild(li);
+                    currentH2Item = li;
+                    currentH3List = document.createElement('ul');
+                    currentH2Item.appendChild(currentH3List);
+                } else if (heading.tagName.toLowerCase() === 'h3') {
+                    if (currentH3List) {
+                        currentH3List.appendChild(li);
+                    } else {
+                        mainList.appendChild(li);
+                    }
+                }
+            });
+
+            // Clean up any empty nested lists
+            mainList.querySelectorAll('ul').forEach(ul => {
+                if (ul.children.length === 0) ul.remove();
+            });
+
+            tocContainer.appendChild(mainList);
+        });
+
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

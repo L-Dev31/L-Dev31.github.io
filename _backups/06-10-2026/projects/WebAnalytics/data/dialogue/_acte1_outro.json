@@ -1,0 +1,50 @@
+{
+  "_location": "_acte1_outro",
+  "_comment": "Carton de fin d'ACTE I - Carnet d'Enquete, Chapitre I clos. Recap dramatique + recap pedagogique. Pose le ton de l'Acte II. Aucun choix : sequence lineaire qui se conclut sur 'Continuer l'enquete' -> ouverture Acte II.",
+
+  "sequence": [
+    { "type": "line", "char": "will", "text": "Marine n'est pas la coupable. Elle est la **preuve** qu'on peut couler une boite sans rien faire de mal --- juste en faisant mal son metier. Et qu'on peut etre a l'origine de cette mauvaise pratique sans le savoir, en oubliant simplement d'expliquer ce qu'on attend.", "sprite": "doubting" },
+    { "type": "line", "char": "will", "text": "Reste **deux portes**. Et un mot qui revient deux fois : ##six mois##.", "sprite": "doubting" },
+
+    {
+      "type": "lesson",
+      "id": "lesson_acte1_recap",
+      "intro": { "char": "will", "text": "Avant d'aller plus loin. Posons. Tout ce que cet acte vient de m'apprendre tient en une page. Si je l'oublie, je referai les memes erreurs que cette equipe.", "sprite": "doubting" },
+      "title": "ACTE I --- L'acquisition et le cadrage",
+      "blocks": [
+        { "type": "heading", "content": "Les fiches acquises pendant l'Acte I" },
+        {
+          "type": "list",
+          "items": [
+            "**Definition du web analytics** --- collecter, mesurer, analyser, decider",
+            "**Mesurer n'est pas analyser** --- voir ≠ comprendre ≠ decider",
+            "**La fiche de cadrage** --- objectif, public, action, indicateur, outil, decision",
+            "**Panorama des outils** --- GA4, Matomo, Adobe, GTM, plateformes sociales",
+            "**Les UTM** --- conventions stables ou attribution morte",
+            "**Comparer les canaux** --- volume + qualite + cout + conversion",
+            "**Objectifs mesurables et ROI** --- clair, mesurable, decisionnel",
+            "**Lire une courbe** --- contextualiser, comparer, croiser, segmenter"
+          ]
+        },
+        { "type": "separator" },
+        { "type": "heading", "content": "Le pilotage d'une campagne en cinq questions" },
+        {
+          "type": "list",
+          "items": [
+            "**Pourquoi** je lance ? *(objectif business)*",
+            "**Pour qui** ? *(public cible)*",
+            "**Quoi** mesurer ? *(KPI principal)*",
+            "**Avec quoi** ? *(outil + UTM coherents)*",
+            "**Et apres** ? *(seuil + decision si succes / echec)*"
+          ]
+        },
+        { "type": "text", "content": "Skipper une de ces cinq questions = aveugle sur sa propre campagne. C'est exactement ce que cette boite a fait six mois durant." },
+        { "type": "separator" },
+        { "type": "note", "content": "Marine amene des visiteurs vers une porte. Maintenant il faut voir **qui a construit la porte** --- et **pourquoi personne ne la franchit**." }
+      ]
+    },
+
+    { "type": "line", "char": "narrateur", "text": "Will referme son carnet. La porte du Poste Dev, au fond du couloir, est entrouverte." },
+    { "type": "line", "char": "narrateur", "text": "L'Acte II sera redige dans la prochaine etape du chantier narratif." }
+  ]
+}

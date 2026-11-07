@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Idyll - Virtual Computer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" href="images/favicon.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="overlay">
+    <div class="background" id="background"></div>
+    <div class="gradient"></div>
+    <div class="info">
+      <img src="images/logo.png" alt="Logo" class="logo" id="logo">
+    </div>
+    
+    <!-- Image indicators -->
+    <div class="image-indicators" id="imageIndicators"></div>
+  </div>
+
+  <!-- Login Screen -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-container">
+      <div class="profile-picture">
+        <i class="fa-regular fa-circle-user"></i>
+      </div>
+      <div class="user-name">Keira Mayhew</div>
+      <div class="login-form">
+        <input type="password" class="password-input" placeholder="Password" id="passwordInput">
+        <button class="submit-button" id="submitButton">
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transition Overlay -->
+  <div id="fadeOverlay"></div>
+
+  <script>
+    // Background slideshow
+    const backgrounds = [
+      'images/BG/1.jpg',
+      'images/BG/2.jpg', 
+      'images/BG/3.jpg',
+      'images/BG/4.jpg',
+      'images/BG/5.jpg',
+      'images/BG/6.jpg',
+      'images/BG/219692.jpg',
+      'images/BG/7704801.jpg',
+      'images/BG/8957663.jpg'
+    ];
+
+    let currentBgIndex = 0;
+    const backgroundElement = document.getElementById('background');
+    const indicatorsContainer = document.getElementById('imageIndicators');
+
+    // Wait for DOM to be loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      // Create indicators
+      if (indicatorsContainer) {
+        backgrounds.forEach((_, index) => {
+          const dot = document.createElement('div');
+          dot.className = `indicator-dot ${index === 0 ? 'active' : ''}`;
+          dot.addEventListener('click', () => changeBackground(index));
+          indicatorsContainer.appendChild(dot);
+        });
+      }
+
+      // Initialize first background
+      changeBackground(0);
+      
+      // Auto change every 10 seconds
+      setInterval(nextBackground, 10000);
+
+      // Show login screen on click or after delay
+      document.addEventListener('click', showLoginScreen);
+      setTimeout(showLoginScreen, 5000);
+    });
+
+    function changeBackground(index) {
+      currentBgIndex = index;
+      if (backgroundElement) {
+        backgroundElement.style.backgroundImage = `url(${backgrounds[index]})`;
+      }
+      
+      // Update indicators
+      document.querySelectorAll('.indicator-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    }
+
+    // Auto slideshow
+    function nextBackground() {
+      currentBgIndex = (currentBgIndex + 1) % backgrounds.length;
+      changeBackground(currentBgIndex);
+    }
+
+    // Login functionality
+    const passwordInput = document.getElementById('passwordInput');
+    const submitButton = document.getElementById('submitButton');
+    const loginScreen = document.getElementById('loginScreen');
+
+    function showLoginScreen() {
+      document.body.classList.add('blur-mode');
+      if (loginScreen) {
+        loginScreen.classList.add('active');
+        setTimeout(() => {
+          if (passwordInput) passwordInput.focus();
+        }, 500);
+      }
+    }
+
+    function hideLoginScreen() {
+      if (loginScreen) {
+        loginScreen.classList.remove('active');
+      }
+      document.body.classList.remove('blur-mode');
+    }
+
+    function handleLogin() {
+      const password = passwordInput ? passwordInput.value : '';
+      
+      if (password === '312007' || password === '') {
+        console.log('✅ Login successful');
+        
+        const overlay = document.getElementById('fadeOverlay');
+        if (overlay) {
+          overlay.classList.add('login-transition');
+          
+          setTimeout(() => {
+            overlay.classList.add('zoom-in');
+          }, 100);
+        }
+        
+        setTimeout(() => {
+          window.location.href = 'desktop.html';
+        }, 1200);
+      } else {
+        // Wrong password animation
+        const loginContainer = document.querySelector('.login-container');
+        if (loginContainer) {
+          loginContainer.style.animation = 'shake 0.5s ease-in-out';
+          
+          setTimeout(() => {
+            loginContainer.style.animation = '';
+            if (passwordInput) {
+              passwordInput.value = '';
+              passwordInput.focus();
+            }
+          }, 500);
+        }
+      }
+    }
+
+    // Event listeners - wait for DOM
+    document.addEventListener('DOMContentLoaded', () => {
+      if (submitButton) {
+        submitButton.addEventListener('click', handleLogin);
+      }
+      
+      if (passwordInput) {
+        passwordInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            handleLogin();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

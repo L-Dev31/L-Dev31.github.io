@@ -1,0 +1,16 @@
+.loading-spinner {
+  text-align: center;
+}
+
+
+.spinner {
+    width: 150px;
+    height: 150px;
+}
+
+.loading-spinner p {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    margin: 0;
+}

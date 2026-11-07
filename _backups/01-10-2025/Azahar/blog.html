@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azahar - Modern Nintendo 3DS Emulator</title>
+    <meta name="description" content="Play your 3DS games on PC, Mac & Android with Azahar - a fast, accurate, and open-source Nintendo 3DS emulator.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="shortcut icon" href="favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="blog.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <a href="index.html" class="logo">
+                    <img src="navlogo.png" alt="Azahar">
+                </a>
+                <div class="nav-links">
+                    <a href="index.html">Home <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                </div>
+                <button class="menu-toggle"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="blog-header">
+            <div class="container"></div>
+        </section>
+                
+        <section class="blog-content">
+            <div class="container">
+                <div class="blog-filter">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search posts...">
+                        <button id="search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div class="filter-options">
+                        <button class="filter-btn active" data-category="all">All Posts</button>
+                        <button class="filter-btn" data-category="news">News</button>
+                        <button class="filter-btn" data-category="technical">Technical</button>
+                        <button class="filter-btn" data-category="community">Community</button>
+                    </div>
+                </div>
+    
+                <div class="blog-posts" id="blog-posts-container">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading posts...</p>
+                    </div>
+                </div>
+    
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be populated by JS -->
+                </div>
+            </div>
+        </section>
+    
+        <!-- Blog Post Modal -->
+        <div class="blog-modal" id="blog-modal">
+            <div class="modal-content">
+                <span class="modal-close" id="modal-close">&times;</span>
+                <div class="blog-post-full" id="blog-post-content">
+                    <!-- Post content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Azahar</h3>
+                    <p>A modern, open-source Nintendo 3DS emulator focused on accuracy and performance.</p>
+                    <div class="social-links">
+                        <a href="https://discord.com/invite/4ZjMpAp3M6" target="_blank" class="social-link"><i class="fab fa-discord"></i></a>
+                        <a href="https://github.com/azahar-emu/azahar" target="_blank" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="https://patreon.com/azahar" target="_blank" class="social-link"><i class="fab fa-patreon"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Emulator</h4>
+                    <a href="#features"><i class="fas fa-chevron-right"></i> Features</a>
+                    <a href="#compatibility"><i class="fas fa-chevron-right"></i> Compatibility</a>
+                    <a href="#guides"><i class="fas fa-chevron-right"></i> Guides</a>
+                    <a href="#community"><i class="fas fa-chevron-right"></i> Community</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <a href="https://discord.com/invite/4ZjMpAp3M6"><i class="fab fa-discord"></i> Discord</a>
+                    <a href="https://github.com/azahar-emu/azahar"><i class="fab fa-github"></i> GitHub</a>
+                    <a href="https://patreon.com/azahar"><i class="fab fa-patreon"></i> Patreon</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a>
+                    <a href="https://github.com/azahar-emu/azahar/issues"><i class="fas fa-bug"></i> Report a Bug</a>
+                    <a href="mailto:contact@azahar-emu.org"><i class="fas fa-envelope"></i> Contact</a>
+                    <a href="#legal"><i class="fas fa-gavel"></i> Legal</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Azahar Emulator. All rights reserved.</p>
+                <p>Nintendo 3DS is a trademark of Nintendo Co., Ltd. Azahar is not affiliated with Nintendo in any way.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

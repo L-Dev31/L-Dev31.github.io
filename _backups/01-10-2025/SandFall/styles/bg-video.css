@@ -1,0 +1,63 @@
+/* Styles centralisés pour la vidéo de fond bg.mp4 */
+
+/* Style global pour les pages blog et team - position fixed */
+.blog-container ~ .hero-bg-video,
+.team-page-container ~ .hero-bg-video,
+body:has(.blog-container) .hero-bg-video,
+body:has(.team-page-container) .hero-bg-video {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: cover !important;
+    z-index: -10 !important;
+    filter: brightness(0.12) !important;
+    pointer-events: none !important;
+}
+
+/* Overlay gradient pour les pages blog et team */
+.blog-container::before,
+.team-page-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.8) 100%);
+    z-index: -5;
+    pointer-events: none;
+}
+
+/* Styles mobiles pour les pages blog et team */
+@media (max-width: 768px) {
+    .blog-container ~ .hero-bg-video,
+    .team-page-container ~ .hero-bg-video,
+    body:has(.blog-container) .hero-bg-video,
+    body:has(.team-page-container) .hero-bg-video {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        object-fit: cover !important;
+        z-index: -10 !important;
+        filter: brightness(0.12) !important;
+        pointer-events: none !important;
+    }
+
+    /* Overlay gradient mobile pour les pages blog et team */
+    .blog-container::before,
+    .team-page-container::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.8) 100%);
+        z-index: -5;
+        pointer-events: none;
+    }
+}

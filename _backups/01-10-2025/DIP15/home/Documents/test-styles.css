@@ -1,0 +1,10 @@
+/* Test CSS file for automatic detection */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.test-class {
+    color: #333;
+    padding: 10px;
+}

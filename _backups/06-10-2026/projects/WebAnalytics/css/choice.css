@@ -1,0 +1,45 @@
+.choice {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #bbb;
+  transition: color 0.3s ease, opacity 0.3s ease;
+  user-select: none;
+  isolation: isolate;
+}
+
+.choice::before {
+  content: '';
+  position: absolute;
+  inset: 10% 0;
+  background: linear-gradient(to top right, #aaa, #fff);
+  mix-blend-mode: difference;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.choice:hover { color: #fff; }
+
+.choice:hover::before {
+  animation: menuRectEnter 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) forwards,
+             menuRectFloat 4s ease-in-out 0.45s infinite;
+}
+
+@keyframes menuRectEnter {
+  0%   { opacity: 0; transform: rotateY(90deg); }
+  100% { opacity: 1; transform: rotateX(2deg) rotateY(-2deg) rotateZ(1deg); }
+}
+
+@keyframes menuRectFloat {
+  0%   { transform: rotateX(2deg)  rotateY(-2deg) rotateZ(1deg); }
+  50%  { transform: rotateX(-2deg) rotateY(2deg)  rotateZ(-1deg); }
+  100% { transform: rotateX(2deg)  rotateY(-2deg) rotateZ(1deg); }
+}
+
+.focus-group:has(.choice:hover) .choice:not(:hover) { opacity: 0.4; }

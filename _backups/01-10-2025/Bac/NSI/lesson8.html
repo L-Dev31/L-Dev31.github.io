@@ -1,0 +1,235 @@
+<div class="lesson-container">
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-puzzle-piece"></i>
+                1. Modules en Python
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Qu'est-ce qu'un module ?
+                </div>
+                <p>Un module est un fichier Python contenant des définitions de fonctions, classes et variables qui peuvent être importées et utilisées dans d'autres programmes.</p>
+            </div>
+
+            <div class="code-block">
+# Fichier: math_utils.py
+def addition(a, b):
+    """Additionne deux nombres"""
+    return a + b
+
+def multiplication(a, b):
+    """Multiplie deux nombres"""
+    return a * b
+
+def factorielle(n):
+    """Calcule la factorielle de n"""
+    if n <= 1:
+        return 1
+    return n * factorielle(n - 1)
+
+PI = 3.14159
+
+# Fichier: main.py
+import math_utils
+from math_utils import addition, PI
+import math_utils as mu
+
+# Différentes façons d'utiliser un module
+resultat1 = math_utils.addition(5, 3)
+resultat2 = addition(10, 20)  # Import direct
+resultat3 = mu.multiplication(4, 7)  # Alias
+print(f"PI = {PI}")
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-plug"></i>
+                2. Interfaces et API
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Interface de programmation
+                </div>
+            </div>
+
+            <div class="code-block">
+# Interface pour une calculatrice
+class CalculatriceInterface:
+    """Interface définissant les opérations d'une calculatrice"""
+    
+    def additionner(self, a, b):
+        raise NotImplementedError("Méthode à implémenter")
+    
+    def soustraire(self, a, b):
+        raise NotImplementedError("Méthode à implémenter")
+    
+    def multiplier(self, a, b):
+        raise NotImplementedError("Méthode à implémenter")
+    
+    def diviser(self, a, b):
+        raise NotImplementedError("Méthode à implémenter")
+
+# Implémentation simple
+class CalculatriceSimple(CalculatriceInterface):
+    def additionner(self, a, b):
+        return a + b
+    
+    def soustraire(self, a, b):
+        return a - b
+    
+    def multiplier(self, a, b):
+        return a * b
+    
+    def diviser(self, a, b):
+        if b != 0:
+            return a / b
+        raise ValueError("Division par zéro")
+
+# Implémentation scientifique
+class CalculatriceScientifique(CalculatriceInterface):
+    def additionner(self, a, b):
+        result = a + b
+        print(f"Addition: {a} + {b} = {result}")
+        return result
+    
+    def soustraire(self, a, b):
+        return a - b
+    
+    def multiplier(self, a, b):
+        return a * b
+    
+    def diviser(self, a, b):
+        if b == 0:
+            return float('inf')
+        return a / b
+    
+    def puissance(self, a, b):
+        return a ** b
+
+# Utilisation polymorphique
+def utiliser_calculatrice(calc: CalculatriceInterface):
+    print(f"5 + 3 = {calc.additionner(5, 3)}")
+    print(f"10 - 4 = {calc.soustraire(10, 4)}")
+
+calc1 = CalculatriceSimple()
+calc2 = CalculatriceScientifique()
+
+utiliser_calculatrice(calc1)
+utiliser_calculatrice(calc2)
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-layer-group"></i>
+                3. Architecture modulaire
+            </h2>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-cogs"></i>
+                    Bonnes pratiques
+                </div>
+                <ul>
+                    <li><strong>Séparation des responsabilités</strong> : chaque module a un rôle précis</li>
+                    <li><strong>Faible couplage</strong> : modules indépendants autant que possible</li>
+                    <li><strong>Forte cohésion</strong> : éléments d'un module liés logiquement</li>
+                    <li><strong>Documentation</strong> : interfaces clairement documentées</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+# Exemple: système de gestion de bibliothèque
+
+# Module: models.py
+class Livre:
+    def __init__(self, titre, auteur, isbn):
+        self.titre = titre
+        self.auteur = auteur
+        self.isbn = isbn
+        self.emprunte = False
+
+class Utilisateur:
+    def __init__(self, nom, id_utilisateur):
+        self.nom = nom
+        self.id = id_utilisateur
+        self.livres_empruntes = []
+
+# Module: database.py
+class BibliothequeDB:
+    def __init__(self):
+        self.livres = {}
+        self.utilisateurs = {}
+    
+    def ajouter_livre(self, livre):
+        self.livres[livre.isbn] = livre
+    
+    def ajouter_utilisateur(self, utilisateur):
+        self.utilisateurs[utilisateur.id] = utilisateur
+    
+    def rechercher_livre(self, isbn):
+        return self.livres.get(isbn)
+
+# Module: services.py
+class ServiceEmprunt:
+    def __init__(self, db):
+        self.db = db
+    
+    def emprunter_livre(self, isbn, id_utilisateur):
+        livre = self.db.rechercher_livre(isbn)
+        utilisateur = self.db.utilisateurs.get(id_utilisateur)
+        
+        if livre and utilisateur and not livre.emprunte:
+            livre.emprunte = True
+            utilisateur.livres_empruntes.append(livre)
+            return True
+        return False
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <div class="code-block">
+    
+    def retourner_livre(self, isbn, id_utilisateur):
+        livre = self.db.rechercher_livre(isbn)
+        utilisateur = self.db.utilisateurs.get(id_utilisateur)
+        
+        if livre and utilisateur and livre in utilisateur.livres_empruntes:
+            livre.emprunte = False
+            utilisateur.livres_empruntes.remove(livre)
+            return True
+        return False
+
+# Utilisation
+from models import Livre, Utilisateur
+from database import BibliothequeDB
+from services import ServiceEmprunt
+
+# Initialisation
+db = BibliothequeDB()
+service = ServiceEmprunt(db)
+
+# Ajout de données
+livre1 = Livre("1984", "George Orwell", "123456789")
+user1 = Utilisateur("Alice", "U001")
+
+db.ajouter_livre(livre1)
+db.ajouter_utilisateur(user1)
+
+# Emprunt
+success = service.emprunter_livre("123456789", "U001")
+print(f"Emprunt réussi: {success}")
+            </div>
+        </div>
+    </div>

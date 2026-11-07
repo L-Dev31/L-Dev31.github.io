@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Nemeris</title>
+    <meta name="description" content="Questions fréquentes sur Nemeris : ce que c'est, d'où viennent les données, conseil ou pas, où sont stockées tes données.">
+    <link rel="canonical" href="https://l-dev31.github.io/projects/Stock/faq.html">
+    <meta property="og:title" content="FAQ - Nemeris">
+    <meta property="og:description" content="Questions fréquentes sur Nemeris : ce que c'est, d'où viennent les données, conseil ou pas, où sont stockées tes données.">
+    <meta property="og:image" content="https://l-dev31.github.io/projects/Stock/img/icon/og-image.png">
+    <meta property="og:url" content="https://l-dev31.github.io/projects/Stock/faq.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="FAQ - Nemeris">
+    <meta name="twitter:description" content="Questions fréquentes sur Nemeris : ce que c'est, d'où viennent les données, conseil ou pas, où sont stockées tes données.">
+    <link rel="icon" href="img/icon/favicon.png" type="image/png">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "C'est quoi Nemeris ?", "acceptedAnswer": { "@type": "Answer", "text": "Une appli web gratuite pour suivre ton portefeuille, comprendre chaque action simplement, tester tes idées et demander à une IA qui connaît ton portefeuille." } },
+        { "@type": "Question", "name": "C'est un conseil financier ?", "acceptedAnswer": { "@type": "Answer", "text": "Non. Nemeris donne des informations et des outils, pas de conseil. Les signaux sont des calculs sur le passé, pas des prédictions." } },
+        { "@type": "Question", "name": "D'où viennent les données ?", "acceptedAnswer": { "@type": "Answer", "text": "De Yahoo Finance. Elles peuvent être différées ou parfois indisponibles." } },
+        { "@type": "Question", "name": "Mes données sont privées ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui. Pas de compte : ton portefeuille et tes réglages restent dans ton navigateur." } },
+        { "@type": "Question", "name": "C'est payant ?", "acceptedAnswer": { "@type": "Answer", "text": "Nemeris est gratuit." } }
+      ]
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..600&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="styles/legal.css">
+    <script>
+        (function () {
+            var l; try { l = localStorage.getItem('nemeris_lang'); } catch (e) { l = null; }
+            if (l !== 'fr' && l !== 'en') l = 'en';
+            document.documentElement.lang = l; document.documentElement.dataset.lang = l;
+            if (l === 'en') document.title = 'FAQ - Nemeris';
+            document.addEventListener('click', function (e) {
+                var a = e.target.closest('.lang-link'); if (!a) return;
+                e.preventDefault(); try { localStorage.setItem('nemeris_lang', a.dataset.to); } catch (err) { /* storage blocked */ } location.reload();
+            });
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="topbar"><div class="topbar-inner"><img src="img/icon/favicon.png" alt="Logo Nemeris"><a href="index.html">Nemeris</a><a class="lang-link" href="#" data-to="en" lang="en">English</a><a class="lang-link" href="#" data-to="fr" lang="fr">Français</a></div></div>
+    <div class="wrap" lang="fr">
+        <h1>Questions fréquentes</h1>
+        <p class="updated">Mis à jour le 26 septembre 2026</p>
+
+        <h2>C'est quoi Nemeris ?</h2>
+        <p>Une appli web gratuite pour suivre ton portefeuille, comprendre chaque action simplement, tester tes idées et demander à une IA qui connaît ton portefeuille. La clarté d'abord.</p>
+
+        <h2>C'est un conseil financier ?</h2>
+        <p>Non. Nemeris donne des informations et des outils, pas de conseil. Les signaux sont des calculs sur le passé, pas des prédictions. Lis l'<a href="disclaimer.html">avertissement</a> et fais toujours tes propres recherches.</p>
+
+        <h2>D'où viennent les données ?</h2>
+        <p>De Yahoo Finance. Elles peuvent être différées ou parfois indisponibles.</p>
+
+        <h2>Il faut un compte ?</h2>
+        <p>Non. Aucune inscription.</p>
+
+        <h2>Où est stocké mon portefeuille ?</h2>
+        <p>Dans ton navigateur, sur ton appareil. Rien n'est envoyé chez nous. Vider les données du site l'efface. Voir la <a href="privacy.html">politique de confidentialité</a>.</p>
+
+        <h2>Comment marche l'IA ?</h2>
+        <p>Tu branches l'IA de ton choix dans Réglages › IA : une IA sur ton ordinateur (LM Studio, Ollama...) ou un service en ligne (Claude, ChatGPT...). Nemeris marche aussi sans IA.</p>
+
+        <h2>C'est payant ?</h2>
+        <p>Nemeris est gratuit.</p>
+
+        <h2>Pourquoi rien ne s'affiche ?</h2>
+        <p>Nemeris récupère les prix via un relais. Si les graphiques sont vides, vérifie le relais dans Réglages › Général, ou réessaie plus tard : la source peut être temporairement limitée.</p>
+
+        <h2>Te contacter ?</h2>
+        <p>Écris à <strong>contact@nemeris.app</strong>.</p>
+
+        <a class="back" href="index.html">← Retour à Nemeris</a>
+
+        <footer>
+            <a href="disclaimer.html">Avertissement</a><a href="privacy.html">Confidentialité</a><a href="terms.html">Conditions</a><a href="cookies.html">Cookies</a><a href="faq.html">FAQ</a>
+        </footer>
+    </div>
+    <div class="wrap" lang="en">
+        <h1>Frequently asked questions</h1>
+        <p class="updated">Updated September 26, 2026</p>
+
+        <h2>What is Nemeris?</h2>
+        <p>A free web app to follow your portfolio, understand each stock simply, test your ideas and ask an AI that knows your portfolio. Clarity first.</p>
+
+        <h2>Is it financial advice?</h2>
+        <p>No. Nemeris gives information and tools, not advice. Signals are calculations on the past, not predictions. Read the <a href="disclaimer.html">disclaimer</a> and always do your own research.</p>
+
+        <h2>Where does the data come from?</h2>
+        <p>From Yahoo Finance. It can be delayed or sometimes unavailable.</p>
+
+        <h2>Do I need an account?</h2>
+        <p>No. No sign-up.</p>
+
+        <h2>Where is my portfolio stored?</h2>
+        <p>In your browser, on your device. Nothing is sent to us. Clearing the site's data erases it. See the <a href="privacy.html">privacy policy</a>.</p>
+
+        <h2>How does the AI work?</h2>
+        <p>You plug in the AI of your choice in Settings › AI: an AI on your computer (LM Studio, Ollama...) or an online service (Claude, ChatGPT...). Nemeris also works without AI.</p>
+
+        <h2>Does it cost anything?</h2>
+        <p>Nemeris is free.</p>
+
+        <h2>Why is nothing showing?</h2>
+        <p>Nemeris gets prices through a relay. If charts are empty, check the relay in Settings › General, or try again later: the source may be temporarily limited.</p>
+
+        <h2>How can I contact you?</h2>
+        <p>Write to <strong>contact@nemeris.app</strong>.</p>
+
+        <a class="back" href="index.html">← Back to Nemeris</a>
+
+        <footer>
+            <a href="disclaimer.html">Disclaimer</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="faq.html">FAQ</a>
+        </footer>
+    </div>
+</body>
+
+</html>

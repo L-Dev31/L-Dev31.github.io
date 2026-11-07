@@ -1,0 +1,214 @@
+<div class="lesson-container">
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-table"></i>
+                1. Concepts fondamentaux
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Le modèle relationnel
+                </div>
+                <p>Le modèle relationnel organise les données en <strong>tables</strong> (relations) constituées de <strong>lignes</strong> (tuples) et de <strong>colonnes</strong> (attributs).</p>
+            </div>
+
+            <div class="example-box">
+                <div class="example-title">
+                    <i class="fas fa-table"></i>
+                    Exemple : Table "Élèves"
+                </div>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                    <tr style="background: var(--nsi-light);">
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">id_eleve</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">nom</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">prenom</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">classe</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">age</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">1</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Martin</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Alice</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">TermNSI</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">17</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">2</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Durand</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Bob</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">TermNSI</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">18</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-cogs"></i>
+                    Terminologie
+                </div>
+                <ul>
+                    <li><strong>Relation/Table</strong> : structure de données bidimensionnelle</li>
+                    <li><strong>Tuple/Ligne</strong> : un enregistrement de données</li>
+                    <li><strong>Attribut/Colonne</strong> : une caractéristique des données</li>
+                    <li><strong>Domaine</strong> : ensemble des valeurs possibles pour un attribut</li>
+                    <li><strong>Schéma</strong> : structure de la table (noms et types des attributs)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-key"></i>
+                2. Clés et contraintes
+            </h2>
+
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Types de clés
+                </div>
+                <p><strong>Clé primaire</strong> : identifiant unique de chaque tuple<br>
+                <strong>Clé étrangère</strong> : référence vers la clé primaire d'une autre table</p>
+            </div>
+
+            <div class="example-box">
+                <div class="example-title">
+                    <i class="fas fa-database"></i>
+                    Exemple avec deux tables reliées
+                </div>
+                
+                <h4>Table "Matières"</h4>
+                <table style="width: 100%; border-collapse: collapse; margin: 0.5rem 0;">
+                    <tr style="background: var(--nsi-light);">
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">id_matiere (PK)</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">nom_matiere</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">coefficient</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">1</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">NSI</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">16</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">2</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">Mathématiques</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">16</td>
+                    </tr>
+                </table>
+
+                <h4>Table "Notes"</h4>
+                <table style="width: 100%; border-collapse: collapse; margin: 0.5rem 0;">
+                    <tr style="background: var(--nsi-light);">
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">id_note (PK)</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">id_eleve (FK)</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">id_matiere (FK)</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">note</th>
+                        <th style="padding: 0.5rem; border: 1px solid var(--nsi-border);">date_eval</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">1</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">1</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">1</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">15.5</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">2024-03-15</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">2</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">2</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">2</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">18.0</td>
+                        <td style="padding: 0.5rem; border: 1px solid var(--nsi-border);">2024-03-16</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <h2 class="section-title">
+                <i class="fas fa-project-diagram"></i>
+                3. Relations et normalisation
+            </h2>
+
+            <div class="algorithm-box">
+                <div class="algorithm-title">
+                    <i class="fas fa-cogs"></i>
+                    Types de relations
+                </div>
+                <ul>
+                    <li><strong>Un-à-un (1:1)</strong> : chaque tuple d'une table correspond à un seul tuple de l'autre</li>
+                    <li><strong>Un-à-plusieurs (1:N)</strong> : un tuple peut correspondre à plusieurs tuples</li>
+                    <li><strong>Plusieurs-à-plusieurs (N:M)</strong> : nécessite une table de liaison</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+# Modélisation en Python d'une base de données simple
+
+class BaseDonnees:
+    def __init__(self):
+        self.eleves = {}      # id_eleve -> {nom, prenom, classe, age}
+        self.matieres = {}    # id_matiere -> {nom_matiere, coefficient}
+        self.notes = {}       # id_note -> {id_eleve, id_matiere, note, date}
+        self.next_id_note = 1
+    
+    def ajouter_eleve(self, id_eleve, nom, prenom, classe, age):
+        self.eleves[id_eleve] = {
+            'nom': nom,
+            'prenom': prenom,
+            'classe': classe,
+            'age': age
+        }
+    
+    def ajouter_matiere(self, id_matiere, nom_matiere, coefficient):
+        self.matieres[id_matiere] = {
+            'nom_matiere': nom_matiere,
+            'coefficient': coefficient
+        }
+      def ajouter_note(self, id_eleve, id_matiere, note, date):
+        # Vérifier l'intégrité référentielle
+        if id_eleve in self.eleves and id_matiere in self.matieres:
+            self.notes[self.next_id_note] = {
+                'id_eleve': id_eleve,
+                'id_matiere': id_matiere,
+                'note': note,
+                'date': date
+            }
+            self.next_id_note += 1
+            return True
+        return False
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="lesson-section">
+            <div class="code-block">
+    
+    def calculer_moyenne_eleve(self, id_eleve):
+        notes_eleve = [n['note'] for n in self.notes.values() 
+                      if n['id_eleve'] == id_eleve]
+        return sum(notes_eleve) / len(notes_eleve) if notes_eleve else 0
+
+# Utilisation
+db = BaseDonnees()
+
+# Ajouter des données
+db.ajouter_eleve(1, "Martin", "Alice", "TermNSI", 17)
+db.ajouter_eleve(2, "Durand", "Bob", "TermNSI", 18)
+
+db.ajouter_matiere(1, "NSI", 16)
+db.ajouter_matiere(2, "Mathématiques", 16)
+
+db.ajouter_note(1, 1, 15.5, "2024-03-15")
+db.ajouter_note(1, 2, 17.0, "2024-03-16")
+
+moyenne_alice = db.calculer_moyenne_eleve(1)
+print(f"Moyenne d'Alice: {moyenne_alice}")</div>
+        </div>
+    </div>
