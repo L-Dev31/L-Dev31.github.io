@@ -1660,12 +1660,6 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 }
 
-@media (max-width: 768px) {
-    .button {
-        background: rgba(246, 242, 242, 0.08);
-    }
-}
-
 @media (max-width: 1024px) {
     body::before {
         content: '';
