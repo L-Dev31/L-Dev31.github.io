@@ -1,7 +1,7 @@
 import { initPage } from './common.js';
 import { thread, restDocks } from './showcase.js';
 
-const TITLES = { films: 'All films', series: 'All series', games: 'All games', books: 'All books' };
+const TITLES = { films: 'All films', series: 'All series', anime: 'All anime', games: 'All games', books: 'All books' };
 
 initPage();
 thread(restDocks());

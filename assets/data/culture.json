@@ -1,81 +1,6 @@
 {
   "films": [
     {
-      "id": "howl-s-moving-castle",
-      "title": "Howl's Moving Castle",
-      "year": 2004,
-      "search": [
-        "Howl's Moving Castle (film)",
-        "Howl's Moving Castle"
-      ],
-      "released": "2004-09-05",
-      "featured": true
-    },
-    {
-      "id": "porco-rosso",
-      "title": "Porco Rosso",
-      "year": 1992,
-      "released": "1992-07-18"
-    },
-    {
-      "id": "the-boy-and-the-heron",
-      "title": "The Boy and the Heron",
-      "year": 2023,
-      "released": "2023-07-14",
-      "featured": true
-    },
-    {
-      "id": "spirited-away",
-      "title": "Spirited Away",
-      "year": 2001,
-      "released": "2001-07-20",
-      "featured": true
-    },
-    {
-      "id": "from-up-on-poppy-hill",
-      "title": "From Up on Poppy Hill",
-      "year": 2011,
-      "released": "2011-07-16"
-    },
-    {
-      "id": "grave-of-the-fireflies",
-      "title": "Grave of the Fireflies",
-      "year": 1988,
-      "released": "1988-04-16",
-      "featured": true
-    },
-    {
-      "id": "wolf-children",
-      "title": "Wolf Children",
-      "year": 2012,
-      "released": "2012-07-21"
-    },
-    {
-      "id": "kiki-s-delivery-service",
-      "title": "Kiki's Delivery Service",
-      "year": 1989,
-      "released": "1989-07-29"
-    },
-    {
-      "id": "the-cat-returns",
-      "title": "The Cat Returns",
-      "year": 2002,
-      "released": "2002-07-19"
-    },
-    {
-      "id": "whisper-of-the-heart",
-      "title": "Whisper of the Heart",
-      "year": 1995,
-      "released": "1995-02-05"
-    },
-    {
-      "id": "princess-mononoke",
-      "title": "Princess Mononoke",
-      "year": 1997,
-      "released": "1997-07-12",
-      "featured": true
-    },
-    {
       "id": "e-t-the-extra-terrestrial",
       "title": "E.T. the Extra-Terrestrial",
       "year": 1982,
@@ -818,12 +743,6 @@
       "released": "2025-03-14"
     },
     {
-      "id": "paprika",
-      "title": "Paprika",
-      "year": 2006,
-      "released": "2006-09-02"
-    },
-    {
       "id": "pirates-of-the-caribbean-the-curse-of-the-black-pearl",
       "title": "Pirates of the Caribbean: The Curse of the Black Pearl",
       "year": 2003,
@@ -1031,12 +950,6 @@
         "Beauty and the Beast (1946 film)"
       ],
       "released": "1946-12-29"
-    },
-    {
-      "id": "ponyo",
-      "title": "Ponyo",
-      "year": 2008,
-      "released": "2008-07-19"
     },
     {
       "id": "the-wolf-of-wall-street",
@@ -1604,219 +1517,190 @@
       "featured": true
     }
   ],
-  "books": [
+  "anime": [
     {
-      "id": "1984",
-      "title": "1984",
-      "year": 1949,
-      "author": "George Orwell",
+      "id": "howl-s-moving-castle",
+      "title": "Howl's Moving Castle",
+      "year": 2004,
       "search": [
-        "Nineteen Eighty-Four",
-        "1984"
+        "Howl's Moving Castle (film)",
+        "Howl's Moving Castle"
       ],
+      "released": "2004-09-05",
+      "featured": true,
+      "note": "Film",
+      "via": "film"
+    },
+    {
+      "id": "porco-rosso",
+      "title": "Porco Rosso",
+      "year": 1992,
+      "released": "1992-07-18",
+      "note": "Film",
+      "via": "film"
+    },
+    {
+      "id": "the-boy-and-the-heron",
+      "title": "The Boy and the Heron",
+      "year": 2023,
+      "released": "2023-07-14",
+      "featured": true,
+      "note": "Film",
+      "via": "film"
+    },
+    {
+      "id": "spirited-away",
+      "title": "Spirited Away",
+      "year": 2001,
+      "released": "2001-07-20",
+      "featured": true,
+      "note": "Film",
+      "via": "film"
+    },
+    {
+      "id": "from-up-on-poppy-hill",
+      "title": "From Up on Poppy Hill",
+      "year": 2011,
+      "released": "2011-07-16",
+      "note": "Film",
+      "via": "film"
+    },
+    {
+      "id": "grave-of-the-fireflies",
+      "title": "Grave of the Fireflies",
+      "year": 1988,
+      "released": "1988-04-16",
+      "featured": true,
+      "note": "Film",
+      "via": "film"
+    },
+    {
+      "id": "wolf-children",
+      "title": "Wolf Children",
+      "year": 2012,
+      "released": "2012-07-21",
+      "note": "Film",
+      "via": "film",
       "featured": true
     },
     {
-      "id": "le-prince",
-      "title": "Le Prince",
-      "year": 1532,
-      "author": "Nicolas Machiavel",
-      "search": [
-        "Le Prince",
-        "The Prince"
-      ],
-      "featured": true
+      "id": "kiki-s-delivery-service",
+      "title": "Kiki's Delivery Service",
+      "year": 1989,
+      "released": "1989-07-29",
+      "note": "Film",
+      "via": "film"
     },
     {
-      "id": "rhinoceros",
-      "title": "Rhinocéros",
-      "year": 1959,
-      "author": "Eugène Ionesco",
-      "search": [
-        "Rhinocéros",
-        "Rhinoceros"
-      ],
-      "featured": true
+      "id": "the-cat-returns",
+      "title": "The Cat Returns",
+      "year": 2002,
+      "released": "2002-07-19",
+      "note": "Film",
+      "via": "film"
     },
     {
-      "id": "l-odyssee",
-      "title": "L'Odyssée",
-      "year": -700,
-      "author": "Homère",
-      "date": "8th century BC",
-      "search": [
-        "L'Odyssée",
-        "The Odyssey"
-      ],
-      "featured": true
+      "id": "whisper-of-the-heart",
+      "title": "Whisper of the Heart",
+      "year": 1995,
+      "released": "1995-02-05",
+      "note": "Film",
+      "via": "film"
     },
     {
-      "id": "l-ile-au-tresor",
-      "title": "L'Île au trésor",
-      "year": 1883,
-      "author": "Robert Louis Stevenson",
-      "search": [
-        "L'Île au trésor",
-        "Treasure Island"
-      ]
+      "id": "princess-mononoke",
+      "title": "Princess Mononoke",
+      "year": 1997,
+      "released": "1997-07-12",
+      "featured": true,
+      "note": "Film",
+      "via": "film"
     },
     {
-      "id": "la-parure",
-      "title": "La Parure",
-      "year": 1884,
-      "author": "Guy de Maupassant",
-      "search": [
-        "La Parure",
-        "The Necklace"
-      ]
-    },
-    {
-      "id": "boule-de-suif",
-      "title": "Boule de suif",
-      "year": 1880,
-      "author": "Guy de Maupassant",
-      "search": [
-        "Boule de suif"
-      ]
-    },
-    {
-      "id": "manon-lescaut",
-      "title": "Manon Lescaut",
-      "year": 1731,
-      "author": "Abbé Prévost",
-      "search": [
-        "Manon Lescaut"
-      ]
-    },
-    {
-      "id": "21-lecons-pour-le-xxie-siecle",
-      "title": "21 leçons pour le XXIe siècle",
-      "year": 2018,
-      "author": "Yuval Noah Harari",
-      "released": "2018-08-30",
-      "search": [
-        "21 Lessons for the 21st Century",
-        "21 leçons pour le XXIe siècle"
-      ],
-      "featured": true
-    },
-    {
-      "id": "de-la-democratie-en-amerique",
-      "title": "De la démocratie en Amérique",
-      "year": 1835,
-      "author": "Alexis de Tocqueville",
-      "released": "1835-01-23",
-      "search": [
-        "De la démocratie en Amérique",
-        "Democracy in America"
-      ]
-    },
-    {
-      "id": "la-republique",
-      "title": "La République",
-      "year": -375,
-      "author": "Platon",
-      "date": "c. 375 BC",
-      "search": [
-        "La République",
-        "Republic Plato"
-      ]
-    },
-    {
-      "id": "manifeste-du-parti-communiste",
-      "title": "Manifeste du Parti communiste",
-      "year": 1848,
-      "author": "Karl Marx, Friedrich Engels",
-      "released": "1848-02-21",
-      "search": [
-        "Manifeste du Parti communiste",
-        "The Communist Manifesto"
-      ]
-    },
-    {
-      "id": "discours-de-la-servitude-volontaire",
-      "title": "Discours de la servitude volontaire",
-      "year": 1549,
-      "author": "Étienne de La Boétie",
-      "search": [
-        "Discours de la servitude volontaire",
-        "Discourse on Voluntary Servitude"
-      ]
-    },
-    {
-      "id": "du-contrat-social",
-      "title": "Du contrat social",
-      "year": 1762,
-      "author": "Jean-Jacques Rousseau",
-      "released": "1762-04-01",
-      "search": [
-        "Du contrat social",
-        "The Social Contract"
-      ]
-    },
-    {
-      "id": "utopia",
-      "title": "Utopia",
-      "year": 1516,
-      "author": "Thomas More",
-      "search": [
-        "Utopia",
-        "Utopia Thomas More"
-      ],
-      "featured": true
-    },
-    {
-      "id": "all-tomorrows",
-      "title": "All Tomorrows",
+      "id": "paprika",
+      "title": "Paprika",
       "year": 2006,
-      "author": "C. M. Kosemen",
+      "released": "2006-09-02",
+      "note": "Film",
+      "via": "film",
+      "featured": true,
       "search": [
-        "All Tomorrows"
-      ],
-      "featured": true
+        "Paprika (2006 film)"
+      ]
     },
     {
-      "id": "le-nouveau-testament",
-      "title": "Le Nouveau Testament",
-      "year": 100,
-      "author": "Divers auteurs",
-      "search": [
-        "New Testament"
-      ],
-      "image": "https://covers.openlibrary.org/b/id/10231890-L.jpg",
-      "featured": true
-    },
-    {
-      "id": "l-ami-retrouve",
-      "title": "L'Ami retrouvé",
-      "year": 1971,
-      "author": "Fred Uhlman",
-      "search": [
-        "Reunion",
-        "L'Ami retrouvé"
-      ],
-      "image": "https://covers.openlibrary.org/b/id/10638846-L.jpg",
-      "featured": true
-    },
-    {
-      "id": "eldorado",
-      "title": "Eldorado",
-      "year": 2006,
-      "author": "Laurent Gaudé",
-      "search": [
-        "Eldorado"
-      ],
-      "featured": true
-    },
-    {
-      "id": "ulysse-from-bagdad",
-      "title": "Ulysse from Bagdad",
+      "id": "ponyo",
+      "title": "Ponyo",
       "year": 2008,
-      "author": "Éric-Emmanuel Schmitt",
+      "released": "2008-07-19",
+      "note": "Film",
+      "via": "film"
+    },
+    {
+      "id": "dan-da-dan",
+      "title": "Dan Da Dan",
+      "year": 2024,
+      "note": "Series",
+      "via": "web",
+      "featured": true,
       "search": [
-        "Ulysse from Bagdad"
-      ],
+        "Dandadan"
+      ]
+    },
+    {
+      "id": "beastars",
+      "title": "Beastars",
+      "year": 2019,
+      "note": "Series",
+      "via": "web",
       "featured": true
+    },
+    {
+      "id": "death-note",
+      "title": "Death Note",
+      "year": 2006,
+      "note": "Series",
+      "via": "web",
+      "featured": true
+    },
+    {
+      "id": "dr-stone",
+      "title": "Dr. Stone",
+      "year": 2019,
+      "note": "Series",
+      "via": "web",
+      "featured": true
+    },
+    {
+      "id": "dragon-ball-z",
+      "title": "Dragon Ball Z",
+      "year": 1989,
+      "note": "Series",
+      "via": "web",
+      "featured": true
+    },
+    {
+      "id": "dragon-ball-super",
+      "title": "Dragon Ball Super",
+      "year": 2015,
+      "note": "Series",
+      "via": "web",
+      "featured": true
+    },
+    {
+      "id": "mashle",
+      "title": "Mashle",
+      "year": 2023,
+      "note": "Series",
+      "via": "web",
+      "featured": true
+    },
+    {
+      "id": "dragon-ball",
+      "title": "Dragon Ball",
+      "year": 1986,
+      "note": "Series",
+      "via": "web"
     }
   ],
   "games": [
@@ -3029,6 +2913,221 @@
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5,
+      "featured": true
+    }
+  ],
+  "books": [
+    {
+      "id": "1984",
+      "title": "1984",
+      "year": 1949,
+      "author": "George Orwell",
+      "search": [
+        "Nineteen Eighty-Four",
+        "1984"
+      ],
+      "featured": true
+    },
+    {
+      "id": "le-prince",
+      "title": "Le Prince",
+      "year": 1532,
+      "author": "Nicolas Machiavel",
+      "search": [
+        "Le Prince",
+        "The Prince"
+      ],
+      "featured": true
+    },
+    {
+      "id": "rhinoceros",
+      "title": "Rhinocéros",
+      "year": 1959,
+      "author": "Eugène Ionesco",
+      "search": [
+        "Rhinocéros",
+        "Rhinoceros"
+      ],
+      "featured": true
+    },
+    {
+      "id": "l-odyssee",
+      "title": "L'Odyssée",
+      "year": -700,
+      "author": "Homère",
+      "date": "8th century BC",
+      "search": [
+        "L'Odyssée",
+        "The Odyssey"
+      ],
+      "featured": true
+    },
+    {
+      "id": "l-ile-au-tresor",
+      "title": "L'Île au trésor",
+      "year": 1883,
+      "author": "Robert Louis Stevenson",
+      "search": [
+        "L'Île au trésor",
+        "Treasure Island"
+      ]
+    },
+    {
+      "id": "la-parure",
+      "title": "La Parure",
+      "year": 1884,
+      "author": "Guy de Maupassant",
+      "search": [
+        "La Parure",
+        "The Necklace"
+      ]
+    },
+    {
+      "id": "boule-de-suif",
+      "title": "Boule de suif",
+      "year": 1880,
+      "author": "Guy de Maupassant",
+      "search": [
+        "Boule de suif"
+      ]
+    },
+    {
+      "id": "manon-lescaut",
+      "title": "Manon Lescaut",
+      "year": 1731,
+      "author": "Abbé Prévost",
+      "search": [
+        "Manon Lescaut"
+      ]
+    },
+    {
+      "id": "21-lecons-pour-le-xxie-siecle",
+      "title": "21 leçons pour le XXIe siècle",
+      "year": 2018,
+      "author": "Yuval Noah Harari",
+      "released": "2018-08-30",
+      "search": [
+        "21 Lessons for the 21st Century",
+        "21 leçons pour le XXIe siècle"
+      ],
+      "featured": true
+    },
+    {
+      "id": "de-la-democratie-en-amerique",
+      "title": "De la démocratie en Amérique",
+      "year": 1835,
+      "author": "Alexis de Tocqueville",
+      "released": "1835-01-23",
+      "search": [
+        "De la démocratie en Amérique",
+        "Democracy in America"
+      ]
+    },
+    {
+      "id": "la-republique",
+      "title": "La République",
+      "year": -375,
+      "author": "Platon",
+      "date": "c. 375 BC",
+      "search": [
+        "La République",
+        "Republic Plato"
+      ]
+    },
+    {
+      "id": "manifeste-du-parti-communiste",
+      "title": "Manifeste du Parti communiste",
+      "year": 1848,
+      "author": "Karl Marx, Friedrich Engels",
+      "released": "1848-02-21",
+      "search": [
+        "Manifeste du Parti communiste",
+        "The Communist Manifesto"
+      ]
+    },
+    {
+      "id": "discours-de-la-servitude-volontaire",
+      "title": "Discours de la servitude volontaire",
+      "year": 1549,
+      "author": "Étienne de La Boétie",
+      "search": [
+        "Discours de la servitude volontaire",
+        "Discourse on Voluntary Servitude"
+      ]
+    },
+    {
+      "id": "du-contrat-social",
+      "title": "Du contrat social",
+      "year": 1762,
+      "author": "Jean-Jacques Rousseau",
+      "released": "1762-04-01",
+      "search": [
+        "Du contrat social",
+        "The Social Contract"
+      ]
+    },
+    {
+      "id": "utopia",
+      "title": "Utopia",
+      "year": 1516,
+      "author": "Thomas More",
+      "search": [
+        "Utopia",
+        "Utopia Thomas More"
+      ],
+      "featured": true
+    },
+    {
+      "id": "all-tomorrows",
+      "title": "All Tomorrows",
+      "year": 2006,
+      "author": "C. M. Kosemen",
+      "search": [
+        "All Tomorrows"
+      ],
+      "featured": true
+    },
+    {
+      "id": "le-nouveau-testament",
+      "title": "Le Nouveau Testament",
+      "year": 100,
+      "author": "Divers auteurs",
+      "search": [
+        "New Testament"
+      ],
+      "image": "https://covers.openlibrary.org/b/id/10231890-L.jpg",
+      "featured": true
+    },
+    {
+      "id": "l-ami-retrouve",
+      "title": "L'Ami retrouvé",
+      "year": 1971,
+      "author": "Fred Uhlman",
+      "search": [
+        "Reunion",
+        "L'Ami retrouvé"
+      ],
+      "image": "https://covers.openlibrary.org/b/id/10638846-L.jpg",
+      "featured": true
+    },
+    {
+      "id": "eldorado",
+      "title": "Eldorado",
+      "year": 2006,
+      "author": "Laurent Gaudé",
+      "search": [
+        "Eldorado"
+      ],
+      "featured": true
+    },
+    {
+      "id": "ulysse-from-bagdad",
+      "title": "Ulysse from Bagdad",
+      "year": 2008,
+      "author": "Éric-Emmanuel Schmitt",
+      "search": [
+        "Ulysse from Bagdad"
+      ],
       "featured": true
     }
   ]
