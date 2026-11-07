@@ -1,7 +1,7 @@
 // Pixel rendering and animation settings.
 export const PIXEL = {
     // Cells across screen width; lower means bigger pixels.
-    cellsAcrossScreen: 180,
+    cellsAcrossScreen: 220,
     // Minimum cell size in px.
     minCellPx: 5,
     maxDevicePixelRatio: 2,
@@ -65,6 +65,22 @@ export const CURSOR = {
     pressedSizePx: 10,
     // Cursor lag; 1 means none.
     followEase: 0.2,
+};
+
+// Pixel portrait that scatters under the cursor to show the photo behind (class cursor-reveal).
+export const CURSOR_REVEAL = {
+    // Radius of the area, as a share of the picture width.
+    radiusShare: 0.34,
+    // How far the pixels are pushed out (0 stays in place, 1 reaches the edge of the area).
+    spread: 0.85,
+    // Largest turn of a pixel, in radians.
+    maxRotation: 3.2,
+    // Floating drift in px and its speed.
+    floatPx: 6,
+    floatSpeed: 0.0016,
+    // How fast the area follows the cursor, and how fast it opens and closes (1 = instant).
+    followEase: 0.28,
+    fadeEase: 0.12,
 };
 
 // Cursor-following elements.

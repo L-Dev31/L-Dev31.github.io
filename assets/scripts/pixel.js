@@ -42,7 +42,7 @@ function buildTiles(color, size) {
     }));
 }
 
-function levelOf(brightness) {
+export function levelOf(brightness) {
     if (brightness < DOT_THRESHOLD) return 0;
     if (brightness < CHECKER_THRESHOLD) return 1;
     if (brightness < SOLID_THRESHOLD) return 2;
