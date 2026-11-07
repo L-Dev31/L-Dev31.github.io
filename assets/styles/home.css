@@ -2150,7 +2150,7 @@ html.on-accent .mobile-menu .hero-socials .clock {
     color: var(--white);
 }
 
-.culture-nav {
+.section-nav {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -2167,13 +2167,22 @@ html.on-accent .mobile-menu .hero-socials .clock {
     transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
 }
 
-.culture-nav.is-on {
+.section-nav-pill {
+    display: block;
+}
+
+html.menu-open .section-nav {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.section-nav.is-on {
     opacity: 1;
     pointer-events: auto;
     transform: translate(-50%, -50%);
 }
 
-.culture-nav a {
+.section-nav a {
     position: relative;
     z-index: 1;
     display: inline-flex;
@@ -2189,21 +2198,21 @@ html.on-accent .mobile-menu .hero-socials .clock {
     transition: font-weight 0.15s var(--ease-out), color 0.2s var(--ease-out);
 }
 
-.culture-nav a:hover,
-.culture-nav a:focus-visible {
+.section-nav a:hover,
+.section-nav a:focus-visible {
     font-weight: 800;
 }
 
-.culture-nav a[aria-current] {
+.section-nav a[aria-current] {
     color: var(--black);
 }
 
-.culture-nav a span {
+.section-nav a span {
     font-size: 10px;
     opacity: 0.6;
 }
 
-.culture-nav-pill {
+.section-nav-pill {
     position: absolute;
     top: 4px;
     bottom: 4px;
@@ -2216,12 +2225,32 @@ html.on-accent .mobile-menu .hero-socials .clock {
 }
 
 @media (max-width: 768px) {
-    .culture-nav a {
-        padding: 8px 10px;
-        font-size: 12px;
+    .section-nav {
+        position: fixed;
+        top: auto;
+        bottom: max(16px, env(safe-area-inset-bottom));
+        max-width: calc(100vw - 2 * var(--pad-edge));
+        overflow-x: auto;
+        scrollbar-width: none;
     }
 
-    .culture-nav a span {
+    .section-nav,
+    .section-nav.is-on {
+        transform: translateX(-50%);
+    }
+
+    .section-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .section-nav a {
+        flex: none;
+        padding: 8px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .section-nav a span {
         display: none;
     }
 }

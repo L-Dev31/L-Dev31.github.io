@@ -1,7 +1,7 @@
 // Pixel rendering and animation settings.
 export const PIXEL = {
     // Cells across screen width; lower means bigger pixels.
-    cellsAcrossScreen: 180,
+    cellsAcrossScreen: 230,
     // Minimum cell size in px.
     minCellPx: 5,
     maxDevicePixelRatio: 2,
@@ -74,7 +74,7 @@ export const MAGNET = {
     maxPx: 10,
     ease: 0.2,
     // Magnetic element selector.
-    selector: '.hero-socials a, .button, .hamburger, .brand a, .index-go, .culture-nav a, .showcase-step',
+    selector: '.hero-socials a, .button, .hamburger, .brand a, .index-go, .section-nav a, .showcase-step',
 };
 
 // Page transition.

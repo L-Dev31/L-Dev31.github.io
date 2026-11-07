@@ -263,47 +263,9 @@ async function initCulture() {
     lists.forEach(container => cultureList(container, data[container.dataset.culture] || [], container.dataset.culture));
     const travels = await fetch('assets/data/travels.json').then(r => r.json());
     const totals = { ...Object.fromEntries(Object.entries(data).map(([kind, list]) => [kind, list.length])), travels: travels.stops.length };
-    document.querySelectorAll('.culture-nav [data-count]').forEach(count => { count.textContent = totals[count.dataset.count] ?? ''; });
-    document.querySelector('.culture-nav')?.dispatchEvent(new Event('relayout'));
+    document.querySelectorAll('.section-nav [data-count]').forEach(count => { count.textContent = totals[count.dataset.count] ?? ''; });
+    document.querySelector('.section-nav')?.dispatchEvent(new Event('relayout'));
 }
-
-function cultureNav() {
-    const nav = document.querySelector('.culture-nav');
-    if (!nav) return;
-    const links = [...nav.querySelectorAll('a')];
-    const sections = links.map(link => document.querySelector(link.hash));
-
-    const pill = document.createElement('span');
-    pill.className = 'culture-nav-pill';
-    pill.setAttribute('aria-hidden', 'true');
-    nav.prepend(pill);
-    let placed = false;
-    const place = () => {
-        const link = nav.querySelector('a[aria-current]');
-        if (!link) { pill.style.opacity = '0'; return; }
-        pill.style.transition = placed ? '' : 'none';
-        pill.style.opacity = '1';
-        pill.style.width = `${link.offsetWidth}px`;
-        pill.style.transform = `translateX(${link.offsetLeft}px)`;
-        if (!placed) { pill.offsetWidth; pill.style.transition = ''; placed = true; }
-    };
-    nav.addEventListener('relayout', place);
-    let queued = false;
-    const update = () => {
-        queued = false;
-        const line = innerHeight / 2;
-        const first = sections[0].getBoundingClientRect().top, last = sections.at(-1).getBoundingClientRect().bottom;
-        nav.classList.toggle('is-on', first < innerHeight * 0.6 && last > innerHeight * 0.4);
-        const index = sections.findLastIndex(section => section.getBoundingClientRect().top <= line);
-        links.forEach((link, i) => { if (i === index) link.setAttribute('aria-current', 'true'); else link.removeAttribute('aria-current'); });
-        place();
-    };
-    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
-    addEventListener('resize', update, { passive: true });
-    update();
-}
-
-cultureNav();
 
 const signature = thread(restDocks());
 

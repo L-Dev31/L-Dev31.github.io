@@ -1,4 +1,4 @@
-import { initPage, reveal, loadProjects, reducedMotion, throttled, clamp01, breakpoint, track, heroEntrance } from './common.js';
+import { initPage, sectionNav, reveal, loadProjects, reducedMotion, throttled, clamp01, breakpoint, track, heroEntrance } from './common.js';
 import { scrubbingText } from './effects.js';
 import { thread, restDocks } from './showcase.js';
 
@@ -76,9 +76,25 @@ function render(project, html, projects) {
     cta.insertAdjacentHTML('beforebegin', html);
     callsToAction(project, cta);
     pager(project, projects);
+    chapterNav();
     scrubbingText();
     reveal(document.querySelectorAll('.case-row, .pullquote, .gallery-item, .project-cta-bottom, .project-pager'));
     parallaxHero();
+}
+
+function chapterNav() {
+    const nav = document.querySelector('.section-nav');
+    const titles = [...document.querySelectorAll('.project-main .title')];
+    if (!nav || titles.length < 2) return nav?.remove();
+    titles.forEach((title, i) => {
+        const section = title.closest('section');
+        if (!section.id) section.id = `chapter-${i + 1}`;
+        const link = document.createElement('a');
+        link.href = `#${section.id}`;
+        link.textContent = title.textContent.replace(/^The /, '');
+        nav.append(link);
+    });
+    sectionNav(nav, lenis);
 }
 
 function updateSearchMetadata(project) {
