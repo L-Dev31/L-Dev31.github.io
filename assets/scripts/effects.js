@@ -385,82 +385,116 @@ export function scrollScrubbedVideo() {
     onScroll();
 }
 
-function cursorReveal(host, cells, color) {
+function cursorReveal(host, cells, color, anchor) {
     const settings = CURSOR_REVEAL;
     const photo = new Image();
-    photo.className = 'reveal-photo';
-    photo.alt = '';
     photo.src = host.dataset.reveal;
-    host.prepend(photo);
-    const overlay = document.createElement('canvas');
-    overlay.className = 'reveal-cells';
-    overlay.setAttribute('aria-hidden', 'true');
-    host.append(overlay);
-    const context = overlay.getContext('2d');
+    const below = document.createElement('canvas');
+    below.className = 'reveal-photo';
+    below.setAttribute('aria-hidden', 'true');
+    host.prepend(below);
+    const above = document.createElement('canvas');
+    above.className = 'reveal-cells';
+    above.setAttribute('aria-hidden', 'true');
+    host.append(above);
+    const photoContext = below.getContext('2d');
+    const cellContext = above.getContext('2d');
 
     let inside = false, running = false, strength = 0;
     let targetX = 0, targetY = 0, x = 0, y = 0;
     let shown = null, hollowed = new Uint8Array(0);
     let repaint = () => {};
 
-    const radius = () => host.clientWidth * settings.radiusShare;
     const smooth = t => t * t * (3 - 2 * t);
     const hash = (i, seed) => ((((i + 1) * seed) ^ 0x9e3779b9) >>> 0) / 4294967295;
+
+    function grid() {
+        const width = host.clientWidth, height = host.clientHeight;
+        const { cols, rows } = cells;
+        const radius = width * settings.radiusShare;
+        return {
+            width, height, cols, rows, radius,
+            cw: width / cols, ch: height / rows,
+            firstRow: Math.max(0, Math.floor((y - radius) / (height / rows))),
+            lastRow: Math.min(rows - 1, Math.ceil((y + radius) / (height / rows))),
+            firstCol: Math.max(0, Math.floor((x - radius) / (width / cols))),
+            lastCol: Math.min(cols - 1, Math.ceil((x + radius) / (width / cols))),
+        };
+    }
+
+    const pushAt = (cx, cy, radius) => {
+        const distance = Math.hypot(cx - x, cy - y);
+        return distance >= radius ? 0 : smooth(1 - distance / radius) * strength;
+    };
 
     function hollow(brightness) {
         shown = brightness;
         if (strength < 0.01) return brightness;
         if (hollowed.length !== brightness.length) hollowed = new Uint8Array(brightness.length);
         hollowed.set(brightness);
-        const { cols, rows } = cells;
-        const cw = host.clientWidth / cols, ch = host.clientHeight / rows, r = radius();
-        const firstRow = Math.max(0, Math.floor((y - r) / ch)), lastRow = Math.min(rows - 1, Math.ceil((y + r) / ch));
-        const firstCol = Math.max(0, Math.floor((x - r) / cw)), lastCol = Math.min(cols - 1, Math.ceil((x + r) / cw));
-        for (let row = firstRow; row <= lastRow; row++) {
-            for (let col = firstCol; col <= lastCol; col++) {
-                if (Math.hypot((col + 0.5) * cw - x, (row + 0.5) * ch - y) < r) hollowed[row * cols + col] = 0;
+        const g = grid();
+        for (let row = g.firstRow; row <= g.lastRow; row++) {
+            for (let col = g.firstCol; col <= g.lastCol; col++) {
+                if (pushAt((col + 0.5) * g.cw, (row + 0.5) * g.ch, g.radius) > 0) hollowed[row * g.cols + col] = 0;
             }
         }
         return hollowed;
     }
 
-    function drawScattered(now) {
+    function fit(canvas, context, width, height) {
         const ratio = Math.min(2, devicePixelRatio || 1);
-        const width = host.clientWidth, height = host.clientHeight;
-        if (overlay.width !== Math.round(width * ratio) || overlay.height !== Math.round(height * ratio)) {
-            overlay.width = Math.round(width * ratio);
-            overlay.height = Math.round(height * ratio);
+        if (canvas.width !== Math.round(width * ratio) || canvas.height !== Math.round(height * ratio)) {
+            canvas.width = Math.round(width * ratio);
+            canvas.height = Math.round(height * ratio);
         }
         context.setTransform(ratio, 0, 0, ratio, 0, 0);
         context.clearRect(0, 0, width, height);
+    }
+
+    function draw(now) {
+        const g = grid();
+        fit(below, photoContext, g.width, g.height);
+        fit(above, cellContext, g.width, g.height);
         if (!shown || strength < 0.01) return;
-        context.fillStyle = color;
-        const { cols, rows } = cells;
-        const cw = width / cols, ch = height / rows, r = radius();
-        const firstRow = Math.max(0, Math.floor((y - r) / ch)), lastRow = Math.min(rows - 1, Math.ceil((y + r) / ch));
-        const firstCol = Math.max(0, Math.floor((x - r) / cw)), lastCol = Math.min(cols - 1, Math.ceil((x + r) / cw));
-        for (let row = firstRow; row <= lastRow; row++) {
-            for (let col = firstCol; col <= lastCol; col++) {
-                const i = row * cols + col;
+
+        const ready = photo.complete && photo.naturalWidth;
+        const scale = ready ? Math.max(g.width / photo.naturalWidth, g.height / photo.naturalHeight) : 1;
+        const offsetX = ready ? (g.width - photo.naturalWidth * scale) / 2 : 0;
+        const offsetY = ready ? (g.height - photo.naturalHeight * scale) * anchor : 0;
+        cellContext.fillStyle = color;
+
+        for (let row = g.firstRow; row <= g.lastRow; row++) {
+            for (let col = g.firstCol; col <= g.lastCol; col++) {
+                const left = col * g.cw, top = row * g.ch;
+                const cx = left + g.cw / 2, cy = top + g.ch / 2;
+                const push = pushAt(cx, cy, g.radius);
+                if (!push) continue;
+                const i = row * g.cols + col;
+
+                if (ready) {
+                    photoContext.globalAlpha = Math.min(1, push * settings.photoGain);
+                    photoContext.drawImage(photo, (left - offsetX) / scale, (top - offsetY) / scale, g.cw / scale, g.ch / scale, left, top, g.cw + 0.5, g.ch + 0.5);
+                }
+
                 const level = levelOf(shown[i]);
                 if (!level) continue;
-                const cx = (col + 0.5) * cw, cy = (row + 0.5) * ch;
-                const dx = cx - x, dy = cy - y, distance = Math.hypot(dx, dy);
-                if (distance >= r) continue;
-                const push = smooth(1 - distance / r) * strength;
-                const heading = distance > 1 ? Math.atan2(dy, dx) : hash(i, 19349663) * Math.PI * 2;
-                const moved = distance + (r - distance) * settings.spread * push;
+                const away = Math.atan2(cy - y, cx - x) + (hash(i, 19349663) - 0.5) * settings.jitter;
+                const travel = g.radius * settings.spread * push * (0.6 + 0.8 * hash(i, 2654435761));
                 const phase = hash(i, 83492791) * Math.PI * 2;
                 const floatX = Math.cos(now * settings.floatSpeed + phase) * settings.floatPx * push;
                 const floatY = Math.sin(now * settings.floatSpeed * 0.8 + phase * 1.7) * settings.floatPx * push;
-                const turn = (hash(i, 73856093) * 2 - 1) * settings.maxRotation * push + Math.sin(now * settings.floatSpeed + phase) * 0.4 * push;
-                context.save();
-                context.translate(x + Math.cos(heading) * moved + floatX, y + Math.sin(heading) * moved + floatY);
-                context.rotate(turn);
-                drawCell(context, level - 1, -cw / 2, -ch / 2, cw);
-                context.restore();
+                const turn = (hash(i, 73856093) * 2 - 1) * settings.maxRotation * push;
+                const size = g.cw * (1 - settings.shrink * push);
+                cellContext.globalAlpha = 1 - settings.fadeOut * push;
+                cellContext.save();
+                cellContext.translate(cx + Math.cos(away) * travel + floatX, cy + Math.sin(away) * travel + floatY);
+                cellContext.rotate(turn);
+                drawCell(cellContext, level - 1, -size / 2, -size / 2, size);
+                cellContext.restore();
             }
         }
+        photoContext.globalAlpha = 1;
+        cellContext.globalAlpha = 1;
     }
 
     function tick(now) {
@@ -470,18 +504,12 @@ function cursorReveal(host, cells, color) {
         if (!inside && strength < 0.01) {
             strength = 0;
             running = false;
-            photo.style.opacity = '0';
             repaint();
-            drawScattered(now);
+            draw(now);
             return;
         }
-        const r = radius();
-        host.style.setProperty('--reveal-x', `${x.toFixed(1)}px`);
-        host.style.setProperty('--reveal-y', `${y.toFixed(1)}px`);
-        host.style.setProperty('--reveal-r', `${r.toFixed(1)}px`);
-        photo.style.opacity = strength.toFixed(3);
         repaint();
-        drawScattered(now);
+        draw(now);
         requestAnimationFrame(tick);
     }
 
@@ -504,7 +532,7 @@ function cursorReveal(host, cells, color) {
     return {
         hollow,
         bind(callback) { repaint = callback; },
-        destroy() { photo.remove(); overlay.remove(); },
+        destroy() { below.remove(); above.remove(); },
     };
 }
 
@@ -520,7 +548,7 @@ export function pixelPicture(host, src, { mirror = false, gain = PICTURE.default
     let brightness = null, dim = null;
 
     const reveal = host.classList.contains('cursor-reveal') && host.dataset.reveal && !reducedMotion && matchMedia('(hover: hover) and (pointer: fine)').matches
-        ? cursorReveal(host, cells, color) : null;
+        ? cursorReveal(host, cells, color, anchor) : null;
 
     const paint = () => {
         if (!brightness) return;

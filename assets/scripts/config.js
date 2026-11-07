@@ -70,17 +70,22 @@ export const CURSOR = {
 // Pixel portrait that scatters under the cursor to show the photo behind (class cursor-reveal).
 export const CURSOR_REVEAL = {
     // Radius of the area, as a share of the picture width.
-    radiusShare: 0.34,
-    // How far the pixels are pushed out (0 stays in place, 1 reaches the edge of the area).
-    spread: 0.85,
-    // Largest turn of a pixel, in radians.
-    maxRotation: 3.2,
+    radiusShare: 0.24,
+    // How far the pixels fly, as a share of the radius, and how much their direction varies.
+    spread: 0.9,
+    jitter: 1.1,
+    // Largest turn of a pixel, in radians; how much it shrinks and fades as it leaves.
+    maxRotation: 2.4,
+    shrink: 0.45,
+    fadeOut: 0.85,
+    // How quickly the photo shows in the holes the pixels leave (higher = sooner).
+    photoGain: 2.2,
     // Floating drift in px and its speed.
-    floatPx: 6,
+    floatPx: 7,
     floatSpeed: 0.0016,
     // How fast the area follows the cursor, and how fast it opens and closes (1 = instant).
-    followEase: 0.28,
-    fadeEase: 0.12,
+    followEase: 0.22,
+    fadeEase: 0.1,
 };
 
 // Cursor-following elements.

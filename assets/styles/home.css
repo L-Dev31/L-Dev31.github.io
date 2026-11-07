@@ -913,17 +913,11 @@ html.on-accent .mobile-menu-link + .mobile-menu-link {
     isolation: isolate;
 }
 
-.reveal-photo {
+.cursor-reveal .reveal-photo {
     position: absolute;
     inset: 0;
     z-index: -1;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 50% 25%;
-    opacity: 0;
     pointer-events: none;
-    mask-image: radial-gradient(circle at var(--reveal-x, 50%) var(--reveal-y, 50%), #000 calc(var(--reveal-r, 0px) * 0.62), transparent calc(var(--reveal-r, 0px) * 0.9));
 }
 
 .cursor-reveal .reveal-cells {
