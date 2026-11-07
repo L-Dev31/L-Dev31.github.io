@@ -1318,6 +1318,199 @@
       ],
       "released": "1964-08-27"
     }
+    ,{
+      "id": "oppenheimer",
+      "title": "Oppenheimer",
+      "year": 2023
+    },
+    {
+      "id": "dune-1984",
+      "title": "Dune (1984)",
+      "year": 1984,
+      "search": ["Dune (1984 film)"]
+    },
+    {
+      "id": "dune-part-one",
+      "title": "Dune: Part One",
+      "year": 2021
+    },
+    {
+      "id": "dune-part-two",
+      "title": "Dune: Part Two",
+      "year": 2024
+    },
+    {
+      "id": "lucy",
+      "title": "Lucy",
+      "year": 2014
+    },
+    {
+      "id": "valerian-and-the-city-of-a-thousand-planets",
+      "title": "Valerian and the City of a Thousand Planets",
+      "year": 2017
+    },
+    {
+      "id": "sing",
+      "title": "Sing",
+      "year": 2016
+    },
+    {
+      "id": "sing-2",
+      "title": "Sing 2",
+      "year": 2021
+    },
+    {
+      "id": "project-hail-mary",
+      "title": "Project Hail Mary",
+      "year": 2026
+    },
+    {
+      "id": "coyote-vs-acme",
+      "title": "Coyote vs. Acme",
+      "year": 2026
+    },
+    {
+      "id": "batman-v-superman-dawn-of-justice",
+      "title": "Batman v Superman: Dawn of Justice",
+      "year": 2016
+    },
+    {
+      "id": "wonder-woman",
+      "title": "Wonder Woman",
+      "year": 2017
+    },
+    {
+      "id": "wonder-woman-1984",
+      "title": "Wonder Woman 1984",
+      "year": 2020
+    },
+    {
+      "id": "the-dark-knight",
+      "title": "The Dark Knight",
+      "year": 2008
+    },
+    {
+      "id": "obsession-2025",
+      "title": "Obsession (2025)",
+      "year": 2025,
+      "search": ["Obsession (2025 film)"]
+    },
+    {
+      "id": "dear-zachary",
+      "title": "Dear Zachary: A Letter to a Son About His Father",
+      "year": 2008
+    },
+    {
+      "id": "war-of-the-worlds-2005",
+      "title": "War of the Worlds",
+      "year": 2005,
+      "search": ["War of the Worlds (2005 film)"]
+    },
+    {
+      "id": "disclosure-day",
+      "title": "Disclosure Day",
+      "year": 2026
+    },
+    {
+      "id": "coraline",
+      "title": "Coraline",
+      "year": 2009
+    },
+    {
+      "id": "minions",
+      "title": "Minions",
+      "year": 2015
+    },
+    {
+      "id": "minions-the-rise-of-gru",
+      "title": "Minions: The Rise of Gru",
+      "year": 2022
+    },
+    {
+      "id": "despicable-me",
+      "title": "Despicable Me",
+      "year": 2010
+    },
+    {
+      "id": "despicable-me-2",
+      "title": "Despicable Me 2",
+      "year": 2013
+    },
+    {
+      "id": "despicable-me-3",
+      "title": "Despicable Me 3",
+      "year": 2017
+    },
+    {
+      "id": "top-gun-maverick",
+      "title": "Top Gun: Maverick",
+      "year": 2022
+    },
+    {
+      "id": "la-vie-scolaire",
+      "title": "La Vie scolaire",
+      "year": 2019
+    },
+    {
+      "id": "le-brio",
+      "title": "Le Brio",
+      "year": 2017
+    },
+    {
+      "id": "the-northman",
+      "title": "The Northman",
+      "year": 2022
+    }
+  ],
+  "series": [
+    {
+      "id": "squid-game",
+      "title": "Squid Game",
+      "year": 2021,
+      "note": "All seasons"
+    },
+    {
+      "id": "the-8-show",
+      "title": "The 8 Show",
+      "year": 2024,
+      "note": "All seasons"
+    },
+    {
+      "id": "all-of-us-are-dead",
+      "title": "All of Us Are Dead",
+      "year": 2022,
+      "note": "All seasons"
+    },
+    {
+      "id": "alice-in-borderland",
+      "title": "Alice in Borderland",
+      "year": 2020,
+      "note": "All seasons"
+    },
+    {
+      "id": "breaking-bad",
+      "title": "Breaking Bad",
+      "year": 2008,
+      "note": "All seasons"
+    },
+    {
+      "id": "better-call-saul",
+      "title": "Better Call Saul",
+      "year": 2015,
+      "note": "1 season"
+    },
+    {
+      "id": "black-mirror",
+      "title": "Black Mirror",
+      "year": 2011,
+      "note": "1 season"
+    },
+    {
+      "id": "stranger-things",
+      "title": "Stranger Things",
+      "year": 2016,
+      "note": "All seasons"
+    }
   ],
   "books": [
     {

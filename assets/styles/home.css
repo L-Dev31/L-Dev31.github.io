@@ -1737,7 +1737,7 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: clamp(96px, 16vh, 160px) var(--pad-edge) 0;
+    padding: clamp(128px, 22vh, 240px) var(--pad-edge) 0;
     overflow: hidden;
     background: var(--accent);
     color: var(--black);
@@ -1751,8 +1751,8 @@ main {
 .footer-inner {
     display: flex;
     flex-direction: column;
-    gap: clamp(32px, 6vh, 64px);
-    padding-bottom: clamp(32px, 6vh, 64px);
+    gap: clamp(24px, 4vh, 40px);
+    padding-bottom: clamp(24px, 4vh, 40px);
     transform: translateY(calc((var(--reveal) - 1) * 24vh));
     opacity: calc(0.3 + var(--reveal) * 0.7);
 }
@@ -1769,7 +1769,7 @@ main {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     justify-items: start;
-    row-gap: 28px;
+    row-gap: 18px;
     column-gap: 24px;
 }
 
@@ -1785,8 +1785,16 @@ main {
 
 .footer-cta h2 {
     margin: 0;
-    font-size: clamp(64px, 13vw, 220px);
+    font-size: clamp(56px, 11vw, 190px);
     line-height: 0.9;
+}
+
+.footer-note {
+    max-width: 60ch;
+    margin: 0;
+    font-size: clamp(15px, 1.3vw, 19px);
+    font-weight: 500;
+    line-height: 1.4;
 }
 
 .footer-mail {
@@ -1833,21 +1841,16 @@ main {
 }
 
 .footer-sign {
-    position: relative;
+    --invert: 1;
     flex: 1 1 0;
     min-height: 26svh;
-    margin: 0 calc(-1 * var(--pad-edge));
-    background: #fff;
     transform: translateY(calc((1 - var(--reveal)) * 14vh));
 }
 
-.footer-sign img {
-    position: absolute;
-    inset: 0;
+.footer-sign canvas {
+    display: block;
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    object-position: center bottom;
 }
 
 .footer-line a,
@@ -1870,6 +1873,11 @@ main {
     position: relative;
     z-index: 1;
     height: 125vh;
+}
+
+.about-header.is-past::before,
+.about-header.is-past > * {
+    visibility: hidden;
 }
 
 .about-header::before {

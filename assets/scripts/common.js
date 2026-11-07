@@ -273,10 +273,19 @@ function footerReveal() {
     const footer = document.getElementById('footer');
     const space = document.querySelector('.footer-space');
     if (!footer || !space) return;
+    const sign = footer.querySelector('.footer-sign');
+    let signStarted = false;
+    const showSign = async () => {
+        signStarted = true;
+        const { pixelPicture } = await import('./effects.js');
+        const black = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
+        pixelPicture(sign, sign.dataset.picture, { color: black, fit: 'contain', focus: 0.76, anchor: 1, watch: true, active: () => footer.classList.contains('is-near') });
+    };
     const update = () => {
         const top = space.getBoundingClientRect().top;
         footer.classList.toggle('is-near', top < innerHeight + 2);
         footer.style.setProperty('--reveal', clamp01(1 - top / innerHeight).toFixed(3));
+        if (sign && !signStarted && top < innerHeight * 2.5) showSign();
     };
     addEventListener('scroll', throttled(update), { passive: true });
     addEventListener('resize', update, { passive: true });

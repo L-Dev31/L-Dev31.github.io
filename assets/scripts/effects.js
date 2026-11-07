@@ -307,14 +307,13 @@ export function scrollScrubbedVideo() {
     const hero = document.querySelector('.about-header, #header');
     if (!hero) return;
     const home = hero.id === 'header';
-    if (home) {
-
-        const spacer = document.querySelector('.hero-spacer');
-        const past = () => hero.classList.toggle('is-past', getComputedStyle(hero).position === 'fixed' && scrollY > (spacer?.offsetHeight || innerHeight) + innerHeight);
-        addEventListener('scroll', throttled(past), { passive: true });
-        addEventListener('resize', past, { passive: true });
-        past();
-    }
+    const heroSpacer = document.querySelector('.hero-spacer');
+    const past = () => hero.classList.toggle('is-past', home
+        ? getComputedStyle(hero).position === 'fixed' && scrollY > (heroSpacer?.offsetHeight || innerHeight) + innerHeight
+        : scrollY > hero.offsetHeight);
+    addEventListener('scroll', throttled(past), { passive: true });
+    addEventListener('resize', past, { passive: true });
+    past();
     const video = hero.querySelector('video');
     if (!video) return;
     pixelHero(video);
@@ -386,13 +385,14 @@ export function scrollScrubbedVideo() {
     onScroll();
 }
 
-export function pixelPicture(host, src, { mirror = false, gain = PICTURE.defaultGain, color = '#fff', active = () => true, intro = false } = {}) {
+export function pixelPicture(host, src, { mirror = false, gain = PICTURE.defaultGain, color = '#fff', active = () => true, intro = false, anchor = 0.25, fit = 'cover', focus = 0, watch = false } = {}) {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     host.append(canvas);
     const cells = cellCanvas(canvas, color);
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
+    sampleCtx.imageSmoothingQuality = 'high';
     const source = new Image();
     let brightness = null, dim = null;
 
@@ -409,10 +409,13 @@ export function pixelPicture(host, src, { mirror = false, gain = PICTURE.default
         const invert = getComputedStyle(host).getPropertyValue('--invert').trim() === '1';
         cells.resize(cols, rows);
         sample.width = cols; sample.height = rows;
-        const scale = Math.max(cols / source.naturalWidth, rows / source.naturalHeight);
+        let scale = (fit === 'contain' ? Math.min : Math.max)(cols / source.naturalWidth, rows / source.naturalHeight);
+        if (focus) scale = Math.max(scale, Math.min(cols / (source.naturalWidth * focus), rows / source.naturalHeight));
         const w = source.naturalWidth * scale, h = source.naturalHeight * scale;
         sampleCtx.setTransform(mirror ? -1 : 1, 0, 0, 1, mirror ? cols : 0, 0);
-        sampleCtx.drawImage(source, (cols - w) / 2, (rows - h) * 0.25, w, h);
+        sampleCtx.fillStyle = invert ? '#fff' : '#000';
+        sampleCtx.fillRect(0, 0, cols, rows);
+        sampleCtx.drawImage(source, (cols - w) / 2, (rows - h) * anchor, w, h);
         const rgba = sampleCtx.getImageData(0, 0, cols, rows).data;
         brightness = new Uint8Array(cols * rows);
         for (let i = 0; i < brightness.length; i++) { const luma = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114; brightness[i] = invert ? 255 - luma : Math.min(255, luma * gain); }
@@ -423,12 +426,14 @@ export function pixelPicture(host, src, { mirror = false, gain = PICTURE.default
     track(src, new Promise(resolve => { source.addEventListener('load', resolve, { once: true }); source.addEventListener('error', resolve, { once: true }); }));
     source.src = src;
     addEventListener('resize', render, { passive: true });
+    const watcher = watch ? new ResizeObserver(render) : null;
+    watcher?.observe(host);
     const timer = setInterval(() => active() && paint(), lowPower ? PICTURE.refreshMsLowPower : PICTURE.refreshMs);
     if (intro) heroEntrance.then(() => {
         const frame = () => { paint(); if (entrance() < RAMP) requestAnimationFrame(frame); };
         requestAnimationFrame(frame);
     });
-    return { destroy() { clearInterval(timer); removeEventListener('resize', render); canvas.remove(); } };
+    return { destroy() { clearInterval(timer); watcher?.disconnect(); removeEventListener('resize', render); canvas.remove(); } };
 }
 
 export function pixelCover(host, color, size) {
