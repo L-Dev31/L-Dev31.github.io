@@ -126,6 +126,9 @@ export function thread(docks) {
     canvas.setAttribute('aria-hidden', 'true');
     document.body.append(canvas);
     const mark = extrudedSvg(canvas, docks[0].color());
+    // the navbar logo and the thread are the same signature: the logo shows while the thread rests
+    // in its place, and the thread shows while it travels
+    const logo = document.querySelector('.brand a');
     let shape = null, color = docks[0].color(), cols = 0, lastY = scrollY;
 
     const mix = (a, b, k) => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, size: a.size + (b.size - a.size) * k });
@@ -138,7 +141,8 @@ export function thread(docks) {
 
     const span = dock => {
         const r = dock.el.getBoundingClientRect();
-        return [r.top + scrollY - innerHeight * 0.5, r.bottom + scrollY - innerHeight * 0.5];
+        // a dock that is not tall (the hero on a tablet) still holds while the page is at the top
+        return [r.top + scrollY - innerHeight * 0.5, Math.max(0, r.bottom + scrollY - innerHeight * 0.5)];
     };
 
     const frame = () => {
@@ -172,6 +176,9 @@ export function thread(docks) {
         canvas.style.transform = `translate(${(box.x - box.size / 2).toFixed(1)}px, ${(box.y - box.size / 2).toFixed(1)}px)`;
         const size = box.size;
 
+        const resting = t === 0 && docks[from].rest && since >= 1.6;
+        canvas.style.visibility = resting ? 'hidden' : '';
+        if (logo) logo.style.opacity = resting || since <= 0 ? '' : '0';
         const target = t > 0.5 ? docks[from + 1] : docks[from];
         // red like the intro while it leaves it, then the colour of the part it is in
         const nextColor = since < 1.1 ? token('--accent') : target.color();
@@ -193,29 +200,23 @@ export function thread(docks) {
 
 /** The docks of the home page: the hero, the showcase, then the promise and the footer. */
 export function homeDocks(stage) {
-    const accent = () => token('--accent'), black = () => token('--black'), white = () => token('--white');
-    const edge = () => parseFloat(getComputedStyle(document.querySelector('.header-content') || document.body).left) || 40;
-    const small = () => Math.max(96, Math.min(150, Math.min(innerWidth, innerHeight) * 0.14));
-    const corner = () => {
-        // under the menu button, on the right
-        const s = small(), bar = document.querySelector('.navbar')?.getBoundingClientRect().bottom ?? 80;
-        return { x: innerWidth - edge() - s / 2, y: bar + 24 + s / 2, size: s };
+    const black = () => token('--black');
+    const logoBox = () => {
+        const r = document.querySelector('.brand img').getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2, size: r.width };
     };
+    // at rest the thread sits where the navbar logo is, in the logo's own colour
+    const logoColor = () => getComputedStyle(document.querySelector('.brand a')).color;
     const docks = [];
     const hero = document.querySelector('.hero-spacer');
-    if (hero) docks.push({
-        // white over the red pixels of the portrait
-        el: hero, color: white, shape: () => SIGNATURE,
-        // low on the right, level with the title
-        box: () => { const s = small(); return { x: innerWidth - edge() - s / 2, y: innerHeight - edge() - s / 2, size: s }; },
-    });
+    if (hero) docks.push({ el: hero, rest: true, color: logoColor, shape: () => SIGNATURE, box: logoBox });
     if (stage) docks.push({
         el: stage.anchor.closest('.showcase'), color: black, shape: () => projectMark(stage.current()),
         box: () => { const r = stage.anchor.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, size: r.width }; },
     });
     const promise = document.querySelector('#promise');
-    if (promise) docks.push({ el: promise, color: accent, shape: () => SIGNATURE, box: corner });
+    if (promise) docks.push({ el: promise, rest: true, color: logoColor, shape: () => SIGNATURE, box: logoBox });
     const footer = document.querySelector('#footer');
-    if (footer) docks.push({ el: footer, color: black, shape: () => SIGNATURE, box: corner });
+    if (footer) docks.push({ el: footer, rest: true, color: logoColor, shape: () => SIGNATURE, box: logoBox });
     return docks;
 }
