@@ -1740,6 +1740,25 @@
         "Utopia",
         "Utopia Thomas More"
       ]
+    },
+    {
+      "id": "all-tomorrows",
+      "title": "All Tomorrows",
+      "year": 2006,
+      "author": "C. M. Kosemen",
+      "search": [
+        "All Tomorrows"
+      ]
+    },
+    {
+      "id": "le-nouveau-testament",
+      "title": "Le Nouveau Testament",
+      "year": 100,
+      "author": "Divers auteurs",
+      "search": [
+        "New Testament"
+      ],
+      "image": "https://covers.openlibrary.org/b/id/10231890-L.jpg"
     }
   ],
   "games": [
