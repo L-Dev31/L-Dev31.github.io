@@ -873,6 +873,7 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     max-width: 26ch;
 }
 
+/* scroll length of the home hero: 200vh for the title, 200vh for the introduction */
 .hero-spacer {
     height: 400vh;
 }
@@ -1111,6 +1112,7 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     height: auto;
 }
 
+/* scroll length of the project showcase: 200vh per project (see the two height rules) */
 .showcase {
     --count: 8;
     position: relative;
@@ -1198,6 +1200,7 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
 }
 
 .showcase-anchor {
+    /* size of the pixel mark shown with each project */
     width: min(60vmin, 600px);
     aspect-ratio: 1;
     pointer-events: none;
