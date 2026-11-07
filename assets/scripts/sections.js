@@ -99,7 +99,7 @@ function waving(host, key) {
     const build = () => {
         const h = host.clientHeight;
         if (!h) return false;
-        // the flags are drawn on the site's one cell size too
+
         const nr = Math.max(3, Math.round(h / CELL)), nc = Math.round(nr * spec.aspect);
         const dpr = Math.max(1, Math.round(devicePixelRatio));
         if (nr === rows && nc === cols && dpr === scale && canvas.dataset.cell === String(CELL)) return true;
@@ -264,7 +264,6 @@ export async function journey(container) {
             lat0 = from.lat + (to.lat - from.lat) * f - (track ? TILT : 0);
         }
 
-        // nothing moved: only let the cells breathe, a few times a second
         const blink = Math.floor(time / 450) % 2 === 0;
         const key = `${lon0.toFixed(2)} ${lat0.toFixed(2)} ${v.r.toFixed(1)} ${v.cx.toFixed(1)} ${v.cy.toFixed(1)} ${cols} ${rows} ${pos.toFixed(3)} ${active} ${hovered} ${blink}`;
         if (key === lastKey) {
@@ -384,7 +383,6 @@ export async function journey(container) {
         });
     }
 
-    // the opening flag pushes the split name apart, so the strip is laid out from the scroll position
     let bases = [], extras = [], gap = 0;
     const measure = () => {
         if (!track) return;

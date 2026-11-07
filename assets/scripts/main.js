@@ -153,12 +153,11 @@ function projectPreview(container, entries) {
     }
 }
 
-
 async function initProjects() {
     const container = document.querySelector('.project-index');
     if (!container) return;
     const projects = (await loadProjects()).filter(p => CATEGORIES.includes(p.category));
-    // the projects pass one screen at a time, then the list keeps them all at hand
+
     const stage = showcase(document.querySelector('.showcase'), projects, lenis);
     signature?.setDocks(homeDocks(stage));
     projectPreview(container, projectIndex(container, projects));
@@ -167,7 +166,6 @@ async function initProjects() {
 
 const PLATFORMS = { nes: 'NES', snes: 'SNES', n64: 'Nintendo 64', gb: 'Game Boy', gbc: 'Game Boy Color', gba: 'Game Boy Advance', ds: 'DS', '3ds': '3DS', wii: 'Wii', wiiu: 'Wii U', switch: 'Switch', steam: 'PC', pc: 'PC', android: 'Android', web: 'Web', mame: 'Arcade' };
 
-// the exact release date when the data has one, the year otherwise
 const when = item => (item.released ? Date.parse(item.released) : Date.UTC(item.year, 0, 1));
 
 function cultureList(container, items, kind) {
@@ -185,7 +183,7 @@ function cultureList(container, items, kind) {
         list.append(li);
         return { item, row };
     });
-    // files are named after the id of the entry: a clip for a game, a picture for the rest
+
     const clips = kind === 'games';
     const figure = el('figure', 'culture-preview');
     figure.setAttribute('aria-hidden', 'true');
@@ -200,14 +198,13 @@ function cultureList(container, items, kind) {
     const cover = pixelCover(figure, color);
     let current = null, leaving = 0;
 
-    // the preview follows the cursor sideways, kept clear of the title on the left and the year on the right
     const follow = (row, x) => {
         const box = container.getBoundingClientRect(), r = row.getBoundingClientRect();
         const title = row.querySelector('.index-title').getBoundingClientRect(), year = row.querySelector('.index-year').getBoundingClientRect();
         const half = figure.offsetWidth / 2, gap = 24;
         const low = title.right + gap + half, high = year.left - gap - half;
         const middle = (title.right + year.left) / 2;
-        // beside the cursor rather than under it: on its right, or on its left when the right side has no room
+
         let target = middle;
         if (x != null) {
             const right = x + 216 + half, left = x - 216 - half;
@@ -269,13 +266,12 @@ async function initCulture() {
     document.querySelector('.culture-nav')?.dispatchEvent(new Event('relayout'));
 }
 
-// a pill bar to jump between the long culture sections, with the current one highlighted
 function cultureNav() {
     const nav = document.querySelector('.culture-nav');
     if (!nav) return;
     const links = [...nav.querySelectorAll('a')];
     const sections = links.map(link => document.querySelector(link.hash));
-    // one white pill slides from link to link
+
     const pill = document.createElement('span');
     pill.className = 'culture-nav-pill';
     pill.setAttribute('aria-hidden', 'true');
@@ -307,7 +303,7 @@ function cultureNav() {
 }
 
 cultureNav();
-// the signature is there from the intro: on the home page it travels (see initProjects), on the others it stays in the navbar
+
 const signature = thread(restDocks());
 
 Promise.all([initProjects(), initCulture(), ...[...document.querySelectorAll('.journey')].map(journey)])

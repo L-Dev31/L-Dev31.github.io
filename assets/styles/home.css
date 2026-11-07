@@ -135,7 +135,6 @@ html.lenis body {
     pointer-events: none;
 }
 
-/* the signature, an extruded pixel solid turning like the project marks */
 .page-loader-sign {
     display: block;
     width: var(--sign);
@@ -155,7 +154,6 @@ html.lenis body {
     overflow: hidden;
 }
 
-/* its length is what has really loaded, never a timer */
 .page-loader-bar {
     height: 100%;
     background: var(--white);
@@ -194,7 +192,6 @@ html.lenis body {
     transform: scale(0.94);
 }
 
-/* the signature turning here is the thread, above this: its canvas only keeps the place, and stays put */
 .page-loader.has-thread .page-loader-sign {
     visibility: hidden;
     transform: none;
@@ -219,7 +216,6 @@ html.lenis body {
     display: none;
 }
 
-/* the hero appears once the intro leaves: hidden while it shows, then each part rises in turn */
 @keyframes rise {
     from {
         opacity: 0;
@@ -257,7 +253,6 @@ html.lenis body {
     animation: rise 0.7s var(--ease-out) 0.46s both;
 }
 
-/* on a phone the text has no letter by letter effect: it rises like the rest */
 @media (max-width: 768px) {
     .intro-waiting #site-title,
     .intro-waiting .header-subtitles,
@@ -276,7 +271,6 @@ html.lenis body {
     }
 }
 
-/* the cursor is a few of the site's cells, drawn white on a layer that inverts what is under it */
 .cursor {
     display: none;
     position: fixed;
@@ -292,14 +286,12 @@ html.lenis body {
     height: 100%;
 }
 
-/* the curtain of pixels another page opens behind */
 .page-cover {
     position: fixed;
     inset: 0;
     z-index: 99998;
 }
 
-/* the signature carried through the home page, above the sections and under the menu */
 .thread {
     position: fixed;
     top: 0;
@@ -312,7 +304,6 @@ html.lenis body {
     will-change: transform;
 }
 
-/* during the intro it turns above it, then flies to the navbar */
 .thread.is-intro {
     z-index: 100000;
 }
@@ -355,7 +346,7 @@ h3 {
     max-width: 600px;
     margin: 0;
     color: var(--white);
-    
+
 }
 
 .section-head {
@@ -646,7 +637,6 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     font-weight: 500;
 }
 
-/* in the footer's call to action, on the right, always there */
 .back-to-top {
     --size: 100px;
     position: relative;
@@ -1100,7 +1090,6 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     height: auto;
 }
 
-/* the projects one screen at a time: the stage holds still while the scroll goes through them */
 .showcase {
     --count: 8;
     position: relative;
@@ -1139,7 +1128,6 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     translate: 0 -11px;
 }
 
-/* a 2px bar, the whole step to click on */
 .showcase-step {
     width: 28px;
     height: 24px;
@@ -1188,7 +1176,6 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     letter-spacing: -0.01em;
 }
 
-/* where the signature docks, in front of the name */
 .showcase-anchor {
     width: min(60vmin, 600px);
     aspect-ratio: 1;
@@ -2044,7 +2031,6 @@ html:has(.project-main)::-webkit-scrollbar {
     font-weight: 400;
 }
 
-/* the page sits above the footer: when its end lifts away, the footer is under it, the whole screen high */
 main {
     position: relative;
     z-index: 2;
@@ -2080,7 +2066,6 @@ main {
     visibility: visible;
 }
 
-/* its content comes down into place as the page lifts off it */
 .footer-inner {
     display: flex;
     flex-direction: column;
@@ -2178,7 +2163,6 @@ main {
     line-height: 1;
     white-space: nowrap;
 }
-
 
 .footer-line a,
 .promise-links a,
@@ -2459,7 +2443,6 @@ main {
     font-size: clamp(40px, 10vw, 170px);
 }
 
-
 .index-platform {
     font-size: 0.5em;
     font-weight: 500;
@@ -2473,7 +2456,6 @@ main {
     width: clamp(240px, 26vw, 420px);
     height: auto;
 }
-
 
 .mobile-menu .hero-socials a {
     border-color: var(--black);

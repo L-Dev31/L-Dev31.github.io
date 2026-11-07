@@ -6,7 +6,6 @@ export { reducedMotion, lowPower, clamp01, breakpoint, throttled } from './env.j
 export { track, entrance, heroEntrance, introLoaded } from './intro.js';
 export { loadProjects, projectMark } from './projects.js';
 
-
 export function reveal(elements) {
     if (reducedMotion) {
         elements.forEach(el => el.classList.add('visible'));
@@ -270,7 +269,6 @@ function backToTop(lenis) {
     });
 }
 
-// the footer waits under the page and shows as the end of the page lifts off it
 function footerReveal() {
     const footer = document.getElementById('footer');
     const space = document.querySelector('.footer-space');

@@ -9,7 +9,7 @@ const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, .footer-sign, .
 const scrubBlocks = [];
 const scrubSeen = new WeakSet();
 let scrubWired = false;
-// the text on screen when the intro leaves comes in letter by letter, block after block
+
 let introOrder = 0, introWired = false;
 export function scrubbingText() {
 
@@ -26,7 +26,7 @@ export function scrubbingText() {
         const chars = splitChars(block);
         if (chars.length) scrubBlocks.push({ block, chars, turn, out: block.dataset.scrub === 'out', intro });
     }
-    // how far the intro has brought a block's letters: none before the hero appears, all once it is done
+
     const introHead = entry => (entry.intro == null ? Infinity : (entrance() - entry.intro) * TEXT_ENTRANCE.lettersPerSecond);
     const introSig = (entry, head) => (head >= entry.chars.length - 1 + SPREAD ? 'in' : Math.round(head * 10));
 
@@ -64,7 +64,7 @@ export function scrubbingText() {
     scrubPaint = throttled(paint);
     if (!introWired) {
         introWired = true;
-        // repainted every frame while the hero's text comes in
+
         heroEntrance.then(() => {
             const end = Math.max(0, ...scrubBlocks.filter(entry => entry.intro != null).map(entry => entry.intro + (entry.chars.length + SPREAD) / TEXT_ENTRANCE.lettersPerSecond));
             const frame = () => { scrubPaint(); if (entrance() < end + 0.1) requestAnimationFrame(frame); };
@@ -185,7 +185,6 @@ export function scrollyScenes() {
     paint();
 }
 
-/** Writes a text into a block and brings it in letter by letter through the cell stages. */
 export function pixelWrite(block, text, duration = 0.55) {
     cellLayers.delete(block);
     block.textContent = text;
@@ -264,7 +263,7 @@ function drawCells(host, chars) {
         if (!stage) continue;
         const r = char.getBoundingClientRect();
         const style = getComputedStyle(char);
-        // the site's one cell size, whatever the size of the text
+
         const cell = CELL;
         const { cols, rows, cover } = glyphGrid(char, r, cell);
         ctx.fillStyle = style.color;
@@ -308,7 +307,6 @@ function splitChars(block) {
     return [...block.querySelectorAll('.scrubbing-char')];
 }
 
-// the hero's pictures come in through the cell levels: their brightness grows from nothing as the hero appears
 const RAMP = HERO_PICTURE_RAMP_SECONDS;
 function appear(brightness, out) {
     const t = clamp01(entrance() / RAMP);
@@ -413,7 +411,7 @@ export function scrollScrubbedVideo() {
     if (!hero) return;
     const home = hero.id === 'header';
     if (home) {
-        // the fixed hero is taken off once the scroll has gone past it, so nothing of it covers the footer
+
         const spacer = document.querySelector('.hero-spacer');
         const past = () => hero.classList.toggle('is-past', getComputedStyle(hero).position === 'fixed' && scrollY > (spacer?.offsetHeight || innerHeight) + innerHeight);
         addEventListener('scroll', throttled(past), { passive: true });
@@ -501,7 +499,6 @@ export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#
     const source = new Image();
     let brightness = null, dim = null;
 
-    // a picture of the hero comes in with it (intro), the others are drawn as they are
     const paint = () => {
         if (!brightness) return;
         if (!intro) return cells.paint(brightness);

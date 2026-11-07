@@ -60,7 +60,7 @@ function render(project, html, projects) {
         tags.append(tag);
     }
     header.replaceChildren(title, subtitle, meta, tags);
-    // the title rises once the intro has left (at once if the intro is already gone)
+
     if (reducedMotion) header.classList.add('loaded');
     else heroEntrance.then(() => requestAnimationFrame(() => header.classList.add('loaded')));
 

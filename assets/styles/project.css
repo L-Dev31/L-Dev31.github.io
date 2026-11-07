@@ -732,7 +732,6 @@ section.visible > * {
     transition: font-weight 0.15s var(--ease-out);
 }
 
-/* over the banner of a project, the text and the navbar invert what is under them, so they read on any picture */
 html:has(.project-main) .navbar,
 html:has(.project-main) .thread.at-rest,
 .project-hero .article-header,
