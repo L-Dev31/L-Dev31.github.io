@@ -3039,7 +3039,7 @@
       "title": "La République",
       "year": -375,
       "author": "Platon",
-      "date": "c. 375 BC",
+      "date": "4th century BC",
       "search": [
         "La République",
         "Republic Plato"
@@ -3148,7 +3148,8 @@
         "Theogony"
       ],
       "image": "https://covers.openlibrary.org/b/id/4650708-L.jpg",
-      "featured": true
+      "featured": true,
+      "date": "8th century BC"
     }
   ]
 }
