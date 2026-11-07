@@ -467,7 +467,7 @@ h3 {
 
 .brand img {
     display: block;
-    width: clamp(40px, 8vh, 72px);
+    width: clamp(60px, 12vh, 108px);
     opacity: 0;
 }
 
@@ -1783,7 +1783,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .brand img {
-        width: 40px;
+        width: 60px;
     }
 
     .mobile-menu {
