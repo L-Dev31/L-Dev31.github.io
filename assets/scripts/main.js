@@ -9,7 +9,7 @@ initPage();
 if (!document.querySelector('#header')) reveal(document.querySelectorAll('section, .title'));
 const refreshParallax = parallax();
 const cover = document.querySelector('.about-header-picture');
-if (cover) pixelPicture(cover, cover.dataset.picture, { gain: 3.2, color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), active: () => scrollY < innerHeight * 2 });
+if (cover) pixelPicture(cover, cover.dataset.picture, { gain: 3.2, color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), active: () => scrollY < innerHeight * 2, intro: true });
 const story = document.querySelector('.promise-picture');
 if (story) {
     let visible = false;

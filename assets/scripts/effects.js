@@ -1,4 +1,4 @@
-import { reducedMotion, lowPower, clamp01, throttled, breakpoint } from './common.js';
+import { reducedMotion, lowPower, clamp01, throttled, breakpoint, track, entrance, heroEntrance } from './common.js';
 import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
 
 const isMobile = breakpoint.isMobile;
@@ -8,6 +8,10 @@ const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, .footer-sign, .
 const scrubBlocks = [];
 const scrubSeen = new WeakSet();
 let scrubWired = false;
+// the text on screen when the intro leaves comes in letter by letter, block after block
+const INTRO_RATE = 55; // letters a second
+const INTRO_STEP = 0.2; // seconds between two blocks
+let introOrder = 0, introWired = false;
 export function scrubbingText() {
 
     if (isMobile || reducedMotion) return;
@@ -17,9 +21,15 @@ export function scrubbingText() {
     for (const block of document.querySelectorAll(TEXT)) {
         if (scrubSeen.has(block) || block.closest(SKIP) || block.querySelector(TEXT)) continue;
         scrubSeen.add(block);
+        const turn = block.dataset.scrub === 'turn';
+        const r = block.getBoundingClientRect();
+        const intro = !turn && entrance() === 0 && r.bottom > 0 && r.top < innerHeight ? 0.15 + INTRO_STEP * introOrder++ : null;
         const chars = splitChars(block);
-        if (chars.length) scrubBlocks.push({ block, chars, turn: block.dataset.scrub === 'turn', out: block.dataset.scrub === 'out' });
+        if (chars.length) scrubBlocks.push({ block, chars, turn, out: block.dataset.scrub === 'out', intro });
     }
+    // how far the intro has brought a block's letters: none before the hero appears, all once it is done
+    const introHead = entry => (entry.intro == null ? Infinity : (entrance() - entry.intro) * INTRO_RATE);
+    const introSig = (entry, head) => (head >= entry.chars.length - 1 + SPREAD ? 'in' : Math.round(head * 10));
 
     const paint = () => {
         const readingLine = innerHeight * 0.85;
@@ -28,13 +38,14 @@ export function scrubbingText() {
             const r = block.getBoundingClientRect();
             if (r.top > innerHeight || r.bottom < 0 || r.left > innerWidth || r.right < 0) continue;
 
+            const intro = introHead(entry);
             if (out) {
                 const gone = touch.matches ? 0 : clamp01(heroTurn() / 0.5);
                 const front = gone * (chars.length - 1 + SPREAD);
-                const sig = Math.round(front * 100);
+                const sig = `${Math.round(front * 100)}|${introSig(entry, intro)}`;
                 if (sig === entry.sig) continue;
                 entry.sig = sig;
-                chars.forEach((char, i) => paintChar(char, 1 - clamp01((front - i) / SPREAD)));
+                chars.forEach((char, i) => paintChar(char, Math.min(1 - clamp01((front - i) / SPREAD), clamp01((intro - i) / SPREAD))));
                 drawCells(block, chars);
                 continue;
             }
@@ -43,15 +54,24 @@ export function scrubbingText() {
                 ? (touch.matches ? 1 : clamp01((heroTurn() - 0.3) / 0.6))
                 : clamp01((readingLine - r.top) / Math.max(r.height, 1));
             const head = progress * (chars.length - 1 + SPREAD);
-            const sig = Math.round(head * 100);
+            const sig = `${Math.round(head * 100)}|${introSig(entry, intro)}`;
             if (sig === entry.sig) continue;
             entry.sig = sig;
-            chars.forEach((char, i) => paintChar(char, clamp01((head - i) / SPREAD)));
+            chars.forEach((char, i) => paintChar(char, Math.min(clamp01((head - i) / SPREAD), clamp01((intro - i) / SPREAD))));
             drawCells(block, chars);
         }
     };
 
     scrubPaint = throttled(paint);
+    if (!introWired) {
+        introWired = true;
+        // repainted every frame while the hero's text comes in
+        heroEntrance.then(() => {
+            const end = Math.max(0, ...scrubBlocks.filter(entry => entry.intro != null).map(entry => entry.intro + (entry.chars.length + SPREAD) / INTRO_RATE));
+            const frame = () => { scrubPaint(); if (entrance() < end + 0.1) requestAnimationFrame(frame); };
+            requestAnimationFrame(frame);
+        });
+    }
     if (!scrubWired) {
         scrubWired = true;
         ['scroll', 'resize', 'load'].forEach(event => addEventListener(event, () => {
@@ -270,6 +290,16 @@ function splitChars(block) {
     return [...block.querySelectorAll('.scrubbing-char')];
 }
 
+// the hero's pictures come in through the cell levels: their brightness grows from nothing as the hero appears
+const RAMP = 1.2; // seconds
+function appear(brightness, out) {
+    const t = clamp01(entrance() / RAMP);
+    if (t >= 1) return brightness;
+    const k = 1 - (1 - t) ** 3;
+    for (let i = 0; i < brightness.length; i++) out[i] = brightness[i] * k;
+    return out;
+}
+
 const TURN_START = 1.1;
 const TURN_LENGTH = 1.0;
 const heroTurn = () => clamp01((scrollY / innerHeight - TURN_START) / TURN_LENGTH);
@@ -323,7 +353,7 @@ function pixelHero(video) {
     const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
-    let base = null, lastTime = -1, lastBox = '';
+    let base = null, dim = null, lastTime = -1, lastBox = '';
 
     const gap = lowPower ? 80 : 33;
     let lastDraw = 0;
@@ -342,6 +372,7 @@ function pixelHero(video) {
             cells.resize(cols, rows);
             sample.width = cols; sample.height = rows;
             base = new Uint8Array(cols * rows);
+            dim = new Uint8Array(cols * rows);
             lastTime = -1;
         }
         if (video.currentTime !== lastTime) {
@@ -353,7 +384,7 @@ function pixelHero(video) {
             const rgba = sampleCtx.getImageData(0, 0, cells.cols, cells.rows).data;
             for (let i = 0; i < base.length; i++) base[i] = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114;
         }
-        cells.paint(base);
+        cells.paint(appear(base, dim));
     };
     requestAnimationFrame(draw);
     return canvas;
@@ -434,7 +465,7 @@ export function scrollScrubbedVideo() {
     onScroll();
 }
 
-export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#fff', active = () => true } = {}) {
+export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#fff', active = () => true, intro = false } = {}) {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     host.append(canvas);
@@ -442,7 +473,15 @@ export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
     const source = new Image();
-    let brightness = null;
+    let brightness = null, dim = null;
+
+    // a picture of the hero comes in with it (intro), the others are drawn as they are
+    const paint = () => {
+        if (!brightness) return;
+        if (!intro) return cells.paint(brightness);
+        if (dim?.length !== brightness.length) dim = new Uint8Array(brightness.length);
+        cells.paint(appear(brightness, dim));
+    };
 
     const render = () => {
         const cols = Math.ceil(host.clientWidth / CELL), rows = Math.ceil(host.clientHeight / CELL);
@@ -457,13 +496,18 @@ export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#
         const rgba = sampleCtx.getImageData(0, 0, cols, rows).data;
         brightness = new Uint8Array(cols * rows);
         for (let i = 0; i < brightness.length; i++) { const luma = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114; brightness[i] = invert ? 255 - luma : Math.min(255, luma * gain); }
-        cells.paint(brightness);
+        paint();
     };
 
     source.onload = render;
+    track(src, new Promise(resolve => { source.addEventListener('load', resolve, { once: true }); source.addEventListener('error', resolve, { once: true }); }));
     source.src = src;
     addEventListener('resize', render, { passive: true });
-    const timer = setInterval(() => brightness && active() && cells.paint(brightness), lowPower ? 400 : 120);
+    const timer = setInterval(() => active() && paint(), lowPower ? 400 : 120);
+    if (intro) heroEntrance.then(() => {
+        const frame = () => { paint(); if (entrance() < RAMP) requestAnimationFrame(frame); };
+        requestAnimationFrame(frame);
+    });
     return { destroy() { clearInterval(timer); removeEventListener('resize', render); canvas.remove(); } };
 }
 

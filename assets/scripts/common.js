@@ -5,6 +5,55 @@ export const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matc
 export const lowPower = reducedMotion || navigator.hardwareConcurrency <= 2 || navigator.deviceMemory <= 2 || !!navigator.connection?.saveData;
 export const clamp01 = value => Math.max(0, Math.min(1, value));
 
+// ---------------------------------------------------------------- what the page loads
+// The intro's bar counts the resources the page really loads, one each: track() registers one,
+// and every fetch made while the intro shows is registered on its own.
+
+const loading = { total: 0, done: 0, open: true, last: '', changed: () => {} };
+const nativeFetch = window.fetch.bind(window);
+
+const fileName = url => {
+    try {
+        const { pathname, hostname } = new URL(url, location.href);
+        const local = /assets\/(.+)$/.exec(pathname);
+        if (local) return local[1];
+        const file = pathname.split('/').pop() || 'index.html';
+        return hostname === location.hostname ? file : `${hostname} ${file}`;
+    } catch {
+        return String(url);
+    }
+};
+
+/** Counts one resource for the intro's bar, done once the promise settles; returns the promise. */
+export function track(url, promise) {
+    if (!loading.open) return promise;
+    loading.total++;
+    const settle = () => {
+        loading.done++;
+        if (url) loading.last = fileName(url);
+        loading.changed();
+    };
+    Promise.resolve(promise).then(settle, settle);
+    loading.changed();
+    return promise;
+}
+
+// a fetch counts until its body has arrived, not only its headers
+window.fetch = (input, init) => {
+    const response = nativeFetch(input, init);
+    if (loading.open) track(typeof input === 'string' ? input : input.url, response.then(r => r.clone().arrayBuffer()));
+    return response;
+};
+
+let entranceAt = Infinity;
+let startEntrance = () => {};
+/** Resolves when the hero starts to appear, as the intro leaves. */
+export const heroEntrance = new Promise(resolve => {
+    startEntrance = () => { entranceAt = performance.now(); resolve(); };
+});
+/** Seconds since the hero started to appear: 0 while the intro shows, all of it at once with reduced motion. */
+export const entrance = () => (reducedMotion ? 1e6 : entranceAt === Infinity ? 0 : (performance.now() - entranceAt) / 1000);
+
 export const breakpoint = (() => {
     const BREAKPOINT_MOBILE = 768;
     const BREAKPOINT_TABLET = 1024;
@@ -146,31 +195,116 @@ function clock() {
     setInterval(tick, 15000);
 }
 
-function pixelDissolve(loader) {
-    if (reducedMotion) { loader.classList.add('done'); return; }
+function pixelDissolve(loader, done) {
+    if (reducedMotion) { loader.classList.add('done'); done(); return; }
     import('./pixel.js').then(({ dissolve }) => {
         const color = getComputedStyle(loader).backgroundColor;
         loader.classList.add('dissolving');
-        dissolve(loader, { color, fixed: true }, () => loader.classList.add('done'));
+        dissolve(loader, { color, fixed: true }, () => { loader.classList.add('done'); done(); });
     });
 }
 
+/** The @font-face files, by family and style, so the readout can name the font it waited for. */
+function fontFiles() {
+    const files = new Map();
+    for (const sheet of document.styleSheets) {
+        let rules;
+        try { rules = sheet.cssRules; } catch { continue; }
+        for (const rule of rules) {
+            if (!(rule instanceof CSSFontFaceRule)) continue;
+            const family = rule.style.getPropertyValue('font-family').replace(/["']/g, '').trim();
+            const url = /url\(["']?([^"')]+)/.exec(rule.style.getPropertyValue('src'))?.[1];
+            if (url) files.set(`${family}|${rule.style.getPropertyValue('font-style') || 'normal'}`, new URL(url, sheet.href || location.href).href);
+        }
+    }
+    return files;
+}
+
+const LOADER_LIMIT = 8000; // the intro never holds the page longer than this
+const until = (target, events) => new Promise(resolve => events.forEach(event => target.addEventListener(event, resolve, { once: true })));
+
+// The intro: the signature turning in pixels while the bar follows what really loads, then the hero
 function pageLoader() {
     const loader = document.querySelector('.page-loader');
-    const bar = loader.firstElementChild;
-    let finished = false;
+    const root = document.documentElement;
+    const bar = loader.querySelector('.page-loader-bar');
+    const count = loader.querySelector('.page-loader-count');
+    const file = loader.querySelector('.page-loader-file');
+    let shown = 0, finished = false, pageLoaded = document.readyState === 'complete', mark = null, settling = 0;
+    if (!reducedMotion) root.classList.add('intro-waiting');
 
-    const finish = () => {
+    import('./pixel.js').then(({ extrudedSvg, CELL }) => {
         if (finished) return;
-        finished = true;
-        bar.style.width = '100%';
-        setTimeout(() => pixelDissolve(loader), 350);
+        const cols = Math.max(16, Math.min(40, Math.floor((Math.min(innerWidth, innerHeight) * 0.42) / CELL / 4) * 4));
+        loader.style.setProperty('--sign', `${cols * CELL}px`);
+        mark = extrudedSvg(loader.querySelector('.page-loader-sign'), getComputedStyle(root).getPropertyValue('--accent').trim());
+        mark.show('assets/images/core/logo.svg', cols);
+    });
+
+    const leave = () => {
+        loader.classList.add('is-leaving');
+        setTimeout(() => {
+            root.classList.remove('intro-waiting');
+            root.classList.add('intro-in');
+            startEntrance();
+            pixelDissolve(loader, () => mark?.hide());
+            setTimeout(() => root.classList.remove('intro-in'), 2400);
+        }, reducedMotion ? 0 : 280);
     };
 
-    requestAnimationFrame(() => bar.style.width = '85%');
-    if (document.readyState === 'complete') return finish();
-    addEventListener('load', finish, { once: true });
-    setTimeout(finish, 2000);
+    const finish = complete => {
+        if (finished) return;
+        finished = true;
+        loading.open = false;
+        window.fetch = nativeFetch;
+        if (complete) {
+            bar.style.transform = 'scaleX(1)';
+            count.textContent = '100%';
+        }
+        setTimeout(leave, reducedMotion ? 0 : 450);
+    };
+
+    // the fonts the layout asked for, and those it asks for while the intro shows: they are looked
+    // for on every paint, since the 'loading' event only fires when no other font was loading
+    const fonts = fontFiles(), counted = new WeakSet();
+    const trackFace = face => {
+        if (counted.has(face) || face.status === 'unloaded') return;
+        counted.add(face);
+        track(fonts.get(`${face.family.replace(/["']/g, '')}|${face.style}`) || face.family, face.loaded);
+    };
+
+    const paint = () => {
+        if (finished) return;
+        document.fonts.forEach(trackFace);
+        // until the page's own load event, something not counted may still be on its way
+        const ceiling = pageLoaded ? 1 : 0.99;
+        shown = Math.max(shown, loading.total ? Math.min(ceiling, loading.done / loading.total) : 0);
+        bar.style.transform = `scaleX(${shown})`;
+        count.textContent = `${String(Math.floor(shown * 100)).padStart(3, '0')}%`;
+        file.textContent = loading.last;
+        // everything in, and still everything in a moment later: nothing new started meanwhile
+        clearTimeout(settling);
+        if (pageLoaded && loading.done === loading.total) settling = setTimeout(() => { document.fonts.forEach(trackFace); if (loading.done === loading.total) finish(true); }, 120);
+    };
+    loading.changed = throttled(paint);
+
+    // what is already there counts as loaded
+    track(location.href, Promise.resolve());
+    for (const el of document.querySelectorAll('link[rel="stylesheet"][href], script[src]')) track(el.href || el.src, Promise.resolve());
+    for (const img of document.images) {
+        if (!img.getAttribute('src') || img.loading === 'lazy') continue;
+        track(img.src, img.complete ? Promise.resolve() : until(img, ['load', 'error']));
+    }
+    for (const video of document.querySelectorAll('video[preload="auto"]')) {
+        // a phone may keep the video until a tap: it is not waited for longer than 3 s
+        track(video.currentSrc || video.src, video.readyState >= 2 ? Promise.resolve() : Promise.race([until(video, ['loadeddata', 'error']), new Promise(resolve => setTimeout(resolve, 3000))]));
+    }
+    document.fonts.forEach(trackFace);
+    document.fonts.addEventListener('loading', event => event.fontfaces.forEach(trackFace));
+
+    if (!pageLoaded) addEventListener('load', () => { pageLoaded = true; loading.changed(); }, { once: true });
+    setTimeout(() => finish(false), LOADER_LIMIT);
+    loading.changed();
 }
 
 function smoothScroll() {

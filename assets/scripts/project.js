@@ -1,4 +1,4 @@
-import { initPage, reveal, loadProjects, reducedMotion, throttled, clamp01, breakpoint } from './common.js';
+import { initPage, reveal, loadProjects, reducedMotion, throttled, clamp01, breakpoint, track, heroEntrance } from './common.js';
 import { scrollyScenes } from './effects.js';
 
 const isMobile = breakpoint.isMobile;
@@ -28,6 +28,7 @@ function render(project, html, projects) {
     heroImg.src = project.heroImage;
     heroImg.alt = project.title;
     heroImg.hidden = false;
+    track(project.heroImage, heroImg.decode().catch(() => {}));
 
     const details = [
         project.role && `As a ${project.role}`,
@@ -57,8 +58,9 @@ function render(project, html, projects) {
         tags.append(tag);
     }
     header.replaceChildren(title, subtitle, meta, tags);
+    // the title rises once the intro has left (at once if the intro is already gone)
     if (reducedMotion) header.classList.add('loaded');
-    else requestAnimationFrame(() => requestAnimationFrame(() => header.classList.add('loaded')));
+    else heroEntrance.then(() => requestAnimationFrame(() => header.classList.add('loaded')));
 
     const cta = document.querySelector('.project-cta-bottom');
     cta.insertAdjacentHTML('beforebegin', html);

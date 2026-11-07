@@ -122,32 +122,152 @@ html.lenis body {
 }
 
 .page-loader {
+    --sign: 320px;
     position: fixed;
     inset: 0;
     z-index: 99999;
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
     background: var(--black);
     pointer-events: none;
+}
+
+/* the signature, an extruded pixel solid turning like the project marks */
+.page-loader-sign {
+    display: block;
+    width: var(--sign);
+    height: auto;
+    aspect-ratio: 1;
+}
+
+.page-loader-track,
+.page-loader-status {
+    width: var(--sign);
+    max-width: calc(100vw - 2 * var(--pad-edge));
+}
+
+.page-loader-track {
+    height: 2px;
+    background: var(--hairline);
+    overflow: hidden;
+}
+
+/* its length is what has really loaded, never a timer */
+.page-loader-bar {
+    height: 100%;
+    background: var(--white);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease-out);
+}
+
+.page-loader-status {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin: -16px 0 0;
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.page-loader-file {
+    overflow: hidden;
+    color: var(--text-faint);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.page-loader-sign,
+.page-loader-track,
+.page-loader-status {
+    transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out);
+}
+
+.page-loader.is-leaving .page-loader-sign {
+    opacity: 0;
+    transform: scale(0.94);
+}
+
+.page-loader.is-leaving .page-loader-track,
+.page-loader.is-leaving .page-loader-status {
+    opacity: 0;
 }
 
 .page-loader.dissolving {
     background: transparent;
 }
 
-.page-loader.dissolving .page-loader-bar {
-    display: none;
+.page-loader.dissolving .page-loader-sign,
+.page-loader.dissolving .page-loader-track,
+.page-loader.dissolving .page-loader-status {
+    visibility: hidden;
 }
 
 .page-loader.done {
     display: none;
 }
 
-.page-loader-bar {
-    width: 0;
-    height: 2px;
-    background: var(--white);
-    transition: width 0.7s var(--ease-out);
+/* the hero appears once the intro leaves: hidden while it shows, then each part rises in turn */
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+}
+
+@keyframes settle {
+    from {
+        opacity: 0;
+        transform: scale(1.04);
+    }
+}
+
+.intro-waiting .navbar,
+.intro-waiting .hero-socials,
+.intro-waiting .project-hero-img,
+.intro-waiting .project-hero-links {
+    opacity: 0;
+}
+
+.intro-in .navbar {
+    animation: rise 0.7s var(--ease-out) 0.3s both;
+}
+
+.intro-in #header .hero-socials {
+    animation: rise 0.7s var(--ease-out) 0.38s both;
+}
+
+.intro-in .project-hero-img {
+    animation: settle 1.2s var(--ease-out) both;
+}
+
+.intro-in .project-hero-links {
+    animation: rise 0.7s var(--ease-out) 0.46s both;
+}
+
+/* on a phone the text has no letter by letter effect: it rises like the rest */
+@media (max-width: 768px) {
+    .intro-waiting #site-title,
+    .intro-waiting .header-subtitles,
+    .intro-waiting .about-header-text > * {
+        opacity: 0;
+    }
+
+    .intro-in #site-title,
+    .intro-in .about-header-text > :first-child {
+        animation: rise 0.7s var(--ease-out) 0.1s both;
+    }
+
+    .intro-in .header-subtitles,
+    .intro-in .about-header-text > :nth-child(2) {
+        animation: rise 0.7s var(--ease-out) 0.18s both;
+    }
 }
 
 .cursor {

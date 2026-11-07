@@ -1,4 +1,4 @@
-import { reducedMotion, lowPower } from './common.js';
+import { reducedMotion, lowPower, track } from './common.js';
 
 export const CELL = 8;
 const LEVELS = [20, 60, 130];
@@ -136,7 +136,7 @@ function loadMask(url) {
         img.onerror = reject;
         img.src = url;
     });
-    masks.set(url, promise);
+    masks.set(url, track(url, promise));
     return promise;
 }
 
