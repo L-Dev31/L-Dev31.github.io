@@ -272,18 +272,39 @@ html.lenis body {
 }
 
 .cursor {
+    --cursor-size: 14px;
     display: none;
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
     z-index: 9999;
     pointer-events: none;
     mix-blend-mode: difference;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.cursor canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
+.cursor.is-visible {
+    opacity: 1;
+}
+
+.cursor-dot {
+    display: grid;
+    place-items: center;
+    width: var(--cursor-size);
+    height: var(--cursor-size);
+    margin: calc(var(--cursor-size) / -2) 0 0 calc(var(--cursor-size) / -2);
+    border-radius: 50%;
+    background: #fff;
+    transition: width 0.3s var(--ease-out), height 0.3s var(--ease-out), margin 0.3s var(--ease-out);
+}
+
+.cursor-label {
+    color: #000;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .page-cover {

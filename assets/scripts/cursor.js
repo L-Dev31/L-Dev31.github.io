@@ -8,82 +8,27 @@ const CURSOR_WORDS = [
 
 const POINTER_ON_LINK = 'a, button, [role="button"], label, summary';
 
-const FONT_3X5 = {
-    A: '.#. #.# ### #.# #.#', B: '##. #.# ##. #.# ##.', C: '.## #.. #.. #.. .##', D: '##. #.# #.# #.# ##.', E: '### #.. ##. #.. ###',
-    F: '### #.. ##. #.. #..', G: '.## #.. #.# #.# .##', H: '#.# #.# ### #.# #.#', I: '### .#. .#. .#. ###', J: '..# ..# ..# #.# .#.',
-    K: '#.# #.# ##. #.# #.#', L: '#.. #.. #.. #.. ###', M: '#.# ### ### #.# #.#', N: '##. #.# #.# #.# #.#', O: '.#. #.# #.# #.# .#.',
-    P: '##. #.# ##. #.. #..', Q: '.#. #.# #.# ##. .##', R: '##. #.# ##. #.# #.#', S: '.## #.. .#. ..# ##.', T: '### .#. .#. .#. .#.',
-    U: '#.# #.# #.# #.# ###', V: '#.# #.# #.# #.# .#.', W: '#.# #.# ### ### #.#', X: '#.# #.# .#. #.# #.#', Y: '#.# #.# .#. .#. .#.',
-    Z: '### ..# .#. #.. ###', 0: '### #.# #.# #.# ###', 1: '.#. ##. .#. .#. ###', 2: '##. ..# .#. #.. ###', 3: '##. ..# .#. ..# ##.',
-    4: '#.# #.# ### ..# ..#', 5: '### #.. ##. ..# ##.', 6: '.## #.. ### #.# ###', 7: '### ..# .#. .#. .#.', 8: '### #.# ### #.# ###',
-    9: '### #.# ### ..# ##.',
-};
-
-const ARROW_ROWS = ['.###', '..##', '.#.#', '#...'];
-
-const centeredCells = (width, height, isOn) => {
-    const cells = [];
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-            if (isOn(x, y)) cells.push([x - Math.floor(width / 2), y - Math.floor(height / 2)]);
-        }
-    }
-    return cells;
-};
-
-const SQUARE_CELLS = centeredCells(CURSOR.squareCells, CURSOR.squareCells, () => true);
-const ARROW_CELLS = centeredCells(4, 4, (x, y) => ARROW_ROWS[y][x] === '#');
-
-function wordCells(text) {
-    const letters = [...text.toUpperCase()].filter(letter => FONT_3X5[letter] || letter === ' ');
-    const widthInCells = letters.length * 4 - 1;
-    const cells = [];
-    letters.forEach((letter, index) => {
-        const rows = FONT_3X5[letter]?.split(' ');
-        if (!rows) return;
-        rows.forEach((row, y) => [...row].forEach((pixel, x) => {
-            if (pixel === '#') cells.push([index * 4 + x - Math.floor(widthInCells / 2), y - 2]);
-        }));
-    });
-    return cells;
-}
-
-function shapeUnderPointer(target) {
-    for (const [selector, getWord] of CURSOR_WORDS) {
-        const element = target.closest(selector);
-        if (element) return wordCells(getWord(element));
-    }
-    return target.closest(POINTER_ON_LINK) ? ARROW_CELLS : SQUARE_CELLS;
-}
-
 export function cursor() {
     const host = document.querySelector('.cursor');
     const hasFinePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
     if (isMobile || lowPower || !hasFinePointer) return;
 
     document.documentElement.classList.add('custom-cursor');
-    const canvas = document.createElement('canvas');
-    host.append(canvas);
-    const context = canvas.getContext('2d');
+    const dot = document.createElement('span');
+    dot.className = 'cursor-dot';
+    const label = document.createElement('span');
+    label.className = 'cursor-label';
+    dot.append(label);
+    host.append(dot);
 
-    let pixelModule = null;
-    import('./pixel.js').then(module => { pixelModule = module; });
+    host.style.setProperty('--cursor-size', `${CURSOR.dotSizePx}px`);
+    const setSize = px => host.style.setProperty('--cursor-size', `${px}px`);
 
     let pointerX = -100, pointerY = -100;
     let easedX = -100, easedY = -100;
-    let shape = SQUARE_CELLS;
-    let pressed = false;
     let insideWindow = false;
-    let litCells = new Set();
-    const leftAt = new Map();
-
-    const resizeCanvas = () => {
-        const ratio = Math.min(2, Math.max(1, Math.round(devicePixelRatio)));
-        canvas.width = innerWidth * ratio;
-        canvas.height = innerHeight * ratio;
-    };
-    resizeCanvas();
-    addEventListener('resize', resizeCanvas, { passive: true });
+    let restingSize = CURSOR.dotSizePx;
+    let pressed = false;
 
     document.addEventListener('mousemove', event => {
         pointerX = event.clientX;
@@ -92,50 +37,35 @@ export function cursor() {
             easedX = pointerX;
             easedY = pointerY;
             insideWindow = true;
+            host.classList.add('is-visible');
         }
     });
-    document.addEventListener('mouseleave', () => { insideWindow = false; });
-    document.addEventListener('mousedown', () => { pressed = true; });
-    document.addEventListener('mouseup', () => { pressed = false; });
-    document.addEventListener('mouseover', event => { shape = shapeUnderPointer(event.target); });
+    document.addEventListener('mouseleave', () => {
+        insideWindow = false;
+        host.classList.remove('is-visible');
+    });
+    document.addEventListener('mousedown', () => { pressed = true; setSize(CURSOR.pressedSizePx); });
+    document.addEventListener('mouseup', () => { pressed = false; setSize(restingSize); });
 
-    const FULL_CELL = 2, CHECKER_CELL = 1, DOT_CELL = 0;
-    const trailLevel = age => (age < 1 / 3 ? FULL_CELL : age < 2 / 3 ? CHECKER_CELL : DOT_CELL);
+    document.addEventListener('mouseover', event => {
+        const named = CURSOR_WORDS.map(([selector, getWord]) => [event.target.closest(selector), getWord]).find(([element]) => element);
+        if (named) {
+            label.textContent = named[1](named[0]);
+            restingSize = CURSOR.overWordSizePx;
+        } else {
+            label.textContent = '';
+            restingSize = event.target.closest(POINTER_ON_LINK) ? CURSOR.overLinkSizePx : CURSOR.dotSizePx;
+        }
+        if (!pressed) setSize(restingSize);
+    });
 
-    const draw = now => {
-        requestAnimationFrame(draw);
-        if (!pixelModule) return;
-
-        const cell = pixelModule.CELL;
-        const pixelsPerCell = (canvas.width / innerWidth) * cell;
+    function follow() {
+        requestAnimationFrame(follow);
         easedX += (pointerX - easedX) * CURSOR.followEase;
         easedY += (pointerY - easedY) * CURSOR.followEase;
-        const column = Math.round(easedX / cell);
-        const row = Math.round(easedY / cell);
-
-        const nowLit = new Set(insideWindow ? shape.map(([dx, dy]) => `${column + dx},${row + dy}`) : []);
-        for (const key of litCells) if (!nowLit.has(key)) leftAt.set(key, now);
-        for (const key of nowLit) leftAt.delete(key);
-        litCells = nowLit;
-
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.fillStyle = '#fff';
-
-        for (const [key, since] of leftAt) {
-            const age = (now - since) / 1000 / CURSOR.trailSeconds;
-            if (age >= 1) {
-                leftAt.delete(key);
-                continue;
-            }
-            const [x, y] = key.split(',').map(Number);
-            pixelModule.drawCell(context, trailLevel(age), x * pixelsPerCell, y * pixelsPerCell, pixelsPerCell);
-        }
-        for (const key of litCells) {
-            const [x, y] = key.split(',').map(Number);
-            pixelModule.drawCell(context, pressed ? CHECKER_CELL : FULL_CELL, x * pixelsPerCell, y * pixelsPerCell, pixelsPerCell);
-        }
-    };
-    requestAnimationFrame(draw);
+        host.style.transform = `translate(${easedX.toFixed(1)}px, ${easedY.toFixed(1)}px)`;
+    }
+    requestAnimationFrame(follow);
 }
 
 export function magnets() {

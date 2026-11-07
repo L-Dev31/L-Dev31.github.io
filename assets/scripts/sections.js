@@ -1,5 +1,6 @@
 import { reducedMotion, lowPower, clamp01 } from './common.js';
 import { cellCanvas, CELL } from './pixel.js';
+import { FLAGS as FLAG_SETTINGS } from './config.js';
 
 const el = (tag, cls, text) => {
     const node = document.createElement(tag);
@@ -77,8 +78,8 @@ const SUN = (() => { const l = [-0.5, 0.45, 0.75], n = Math.hypot(...l); return 
 
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
-const FLAG_WAVE = 0.07;
-const SHADES = 12;
+const FLAG_WAVE = FLAG_SETTINGS.waveAmount;
+const SHADES = FLAG_SETTINGS.shades;
 const FLAGS = {};
 const cache = new Map();
 const load = url => cache.get(url) ?? cache.set(url, fetch(url).then(r => r.json())).get(url);

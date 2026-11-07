@@ -1,6 +1,6 @@
 import { reducedMotion, lowPower, clamp01, throttled, breakpoint, track, entrance, heroEntrance } from './common.js';
 import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
-import { TEXT_ENTRANCE, HERO_PICTURE_RAMP_SECONDS } from './config.js';
+import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_VIDEO } from './config.js';
 
 const isMobile = breakpoint.isMobile;
 
@@ -14,7 +14,7 @@ let introOrder = 0, introWired = false;
 export function scrubbingText() {
 
     if (isMobile || reducedMotion) return;
-    const SPREAD = 10;
+    const SPREAD = TEXT_ENTRANCE.scrubSpreadLetters;
 
     const touch = matchMedia('(max-width: 1024px)');
     for (const block of document.querySelectorAll(TEXT)) {
@@ -83,7 +83,7 @@ export function scrubbingText() {
 let scrubPaint = () => {};
 
 export function scrollyScenes() {
-    const SPREAD = 12;
+    const SPREAD = TEXT_ENTRANCE.scrubSpreadLettersInProjects;
     const scenes = [];
     const selector = '.project-main .case-intro, .project-main .case-pullquote, .project-main .case-chapter';
 
@@ -271,7 +271,7 @@ function drawCells(host, chars) {
         for (let j = 0; j < rows; j++) {
             for (let i = 0; i < cols; i++) {
                 const v = cover[j * cols + i];
-                const state = stage === 1 ? (v > 0.15 ? 0 : -1) : stage === 2 ? (v > 0.25 ? 1 : -1) : v > 0.4 ? 2 : -1;
+                const state = stage === 1 ? (v > TEXT_PIXELS.showDotsFromCoverage ? 0 : -1) : stage === 2 ? (v > TEXT_PIXELS.showCheckerFromCoverage ? 1 : -1) : v > TEXT_PIXELS.showSolidFromCoverage ? 2 : -1;
                 if (state >= 0) drawCell(ctx, state, ox + i * c, oy + j * c, c);
             }
         }
@@ -307,7 +307,7 @@ function splitChars(block) {
     return [...block.querySelectorAll('.scrubbing-char')];
 }
 
-const RAMP = HERO_PICTURE_RAMP_SECONDS;
+const RAMP = PICTURE.appearSeconds;
 function appear(brightness, out) {
     const t = clamp01(entrance() / RAMP);
     if (t >= 1) return brightness;
@@ -371,7 +371,7 @@ function pixelHero(video) {
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
     let base = null, dim = null, lastTime = -1, lastBox = '';
 
-    const gap = lowPower ? 80 : 33;
+    const gap = lowPower ? HERO_VIDEO.refreshMsLowPower : HERO_VIDEO.refreshMs;
     let lastDraw = 0;
 
     const draw = now => {
@@ -489,7 +489,7 @@ export function scrollScrubbedVideo() {
     onScroll();
 }
 
-export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#fff', active = () => true, intro = false } = {}) {
+export function pixelPicture(host, src, { mirror = false, gain = PICTURE.defaultGain, color = '#fff', active = () => true, intro = false } = {}) {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     host.append(canvas);
@@ -526,7 +526,7 @@ export function pixelPicture(host, src, { mirror = false, gain = 1.3, color = '#
     track(src, new Promise(resolve => { source.addEventListener('load', resolve, { once: true }); source.addEventListener('error', resolve, { once: true }); }));
     source.src = src;
     addEventListener('resize', render, { passive: true });
-    const timer = setInterval(() => active() && paint(), lowPower ? 400 : 120);
+    const timer = setInterval(() => active() && paint(), lowPower ? PICTURE.refreshMsLowPower : PICTURE.refreshMs);
     if (intro) heroEntrance.then(() => {
         const frame = () => { paint(); if (entrance() < RAMP) requestAnimationFrame(frame); };
         requestAnimationFrame(frame);

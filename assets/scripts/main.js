@@ -2,6 +2,7 @@ import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
 import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture, pixelCover } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { journey } from './sections.js';
+import { PICTURE } from './config.js';
 import { showcase, thread, homeDocks, restDocks } from './showcase.js';
 
 const CATEGORIES = ['Graphic Design', 'Webdesign', 'Marketing', 'Dev'];
@@ -10,7 +11,7 @@ const lenis = initPage();
 if (!document.querySelector('#header')) reveal(document.querySelectorAll('section, .title'));
 const refreshParallax = parallax();
 const cover = document.querySelector('.about-header-picture');
-if (cover) pixelPicture(cover, cover.dataset.picture, { gain: 3.2, color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), active: () => scrollY < innerHeight * 2, intro: true });
+if (cover) pixelPicture(cover, cover.dataset.picture, { gain: PICTURE.aboutHeroGain, color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), active: () => scrollY < innerHeight * 2, intro: true });
 const story = document.querySelector('.promise-picture');
 if (story) {
     let visible = false;

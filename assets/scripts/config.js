@@ -41,9 +41,11 @@ export const SIGNATURE = {
 };
 
 export const CURSOR = {
-    squareCells: 2,
-    trailSeconds: 0.27,
-    followEase: 0.45,
+    dotSizePx: 14,
+    overLinkSizePx: 36,
+    overWordSizePx: 76,
+    pressedSizePx: 10,
+    followEase: 0.2,
 };
 
 export const MAGNET = {
@@ -63,6 +65,29 @@ export const TEXT_ENTRANCE = {
     secondsBetweenBlocks: 0.2,
     firstBlockDelaySeconds: 0.15,
     scrubSpreadLetters: 10,
+    scrubSpreadLettersInProjects: 12,
 };
 
-export const HERO_PICTURE_RAMP_SECONDS = 1.2;
+export const PICTURE = {
+    defaultGain: 1.3,
+    aboutHeroGain: 3.2,
+    refreshMs: 120,
+    refreshMsLowPower: 400,
+    appearSeconds: 1.2,
+};
+
+export const HERO_VIDEO = {
+    refreshMs: 33,
+    refreshMsLowPower: 80,
+};
+
+export const TEXT_PIXELS = {
+    showDotsFromCoverage: 0.15,
+    showCheckerFromCoverage: 0.25,
+    showSolidFromCoverage: 0.4,
+};
+
+export const FLAGS = {
+    waveAmount: 0.07,
+    shades: 12,
+};
