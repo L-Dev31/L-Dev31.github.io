@@ -204,6 +204,8 @@ export function thread(first) {
         canvas.style.transform = `translate(${(box.x - (nextCols * CELL) / 2).toFixed(1)}px, ${(box.y - (nextRows * CELL) / 2).toFixed(1)}px)`;
 
         if (tint !== color) mark.recolor(color = tint);
+        // in the navbar it takes the navbar's blend (the project pages invert what is under it)
+        canvas.classList.toggle('at-rest', t === 0 && !!docks[from].rest && since >= 1.6);
         mark.face(!!(t > 0.5 ? next : docks[from]).face);
         const target = t > 0.5 ? next : docks[from];
         const nextShape = since <= 0 && !loaded && introMarks.length ? introMarks[Math.floor(performance.now() / INTRO_STEP) % introMarks.length] : target.shape();
@@ -227,7 +229,7 @@ const logoBox = () => {
 };
 // at rest the signature sits in the navbar, in the colour the navbar gives its logo
 const logoColor = () => getComputedStyle(document.querySelector('.brand a')).color;
-const atRest = el => ({ el, color: logoColor, shape: () => SIGNATURE, box: logoBox });
+const atRest = el => ({ el, rest: true, color: logoColor, shape: () => SIGNATURE, box: logoBox });
 
 // the big name of the footer, drawn as a mask in its own typeface so the signature can become it
 let nameMask = null;
