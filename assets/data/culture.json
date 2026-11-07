@@ -679,8 +679,7 @@
       "id": "the-super-mario-bros-movie",
       "title": "The Super Mario Bros. Movie",
       "year": 2023,
-      "released": "2023-03-31",
-      "featured": true
+      "released": "2023-03-31"
     },
     {
       "id": "the-super-mario-galaxy-movie",
@@ -1400,8 +1399,7 @@
       "year": 2016,
       "search": [
         "Sing (2016 American film)"
-      ],
-      "featured": true
+      ]
     },
     {
       "id": "sing-2",
@@ -1466,8 +1464,7 @@
       "year": 2015,
       "search": [
         "Minions (film)"
-      ],
-      "featured": true
+      ]
     },
     {
       "id": "minions-the-rise-of-gru",
@@ -1480,8 +1477,7 @@
       "year": 2010,
       "search": [
         "Despicable Me (film)"
-      ],
-      "featured": true
+      ]
     },
     {
       "id": "despicable-me-2",
@@ -1504,8 +1500,7 @@
       "year": 2019,
       "search": [
         "School Life (2019 film)"
-      ],
-      "featured": true
+      ]
     },
     {
       "id": "le-brio",
