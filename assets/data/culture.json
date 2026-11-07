@@ -1537,7 +1537,8 @@
       "year": 1992,
       "released": "1992-07-18",
       "note": "Film",
-      "via": "film"
+      "via": "film",
+      "featured": true
     },
     {
       "id": "the-boy-and-the-heron",
@@ -1563,7 +1564,8 @@
       "year": 2011,
       "released": "2011-07-16",
       "note": "Film",
-      "via": "film"
+      "via": "film",
+      "featured": true
     },
     {
       "id": "grave-of-the-fireflies",
@@ -1589,7 +1591,8 @@
       "year": 1989,
       "released": "1989-07-29",
       "note": "Film",
-      "via": "film"
+      "via": "film",
+      "featured": true
     },
     {
       "id": "the-cat-returns",
@@ -1597,7 +1600,8 @@
       "year": 2002,
       "released": "2002-07-19",
       "note": "Film",
-      "via": "film"
+      "via": "film",
+      "featured": true
     },
     {
       "id": "whisper-of-the-heart",
@@ -1605,7 +1609,8 @@
       "year": 1995,
       "released": "1995-02-05",
       "note": "Film",
-      "via": "film"
+      "via": "film",
+      "featured": true
     },
     {
       "id": "princess-mononoke",
@@ -1634,7 +1639,8 @@
       "year": 2008,
       "released": "2008-07-19",
       "note": "Film",
-      "via": "film"
+      "via": "film",
+      "featured": true
     },
     {
       "id": "dan-da-dan",
@@ -1642,7 +1648,6 @@
       "year": 2024,
       "note": "Series",
       "via": "web",
-      "featured": true,
       "search": [
         "Dandadan"
       ]
@@ -1692,8 +1697,7 @@
       "title": "Mashle",
       "year": 2023,
       "note": "Series",
-      "via": "web",
-      "featured": true
+      "via": "web"
     },
     {
       "id": "dragon-ball",
