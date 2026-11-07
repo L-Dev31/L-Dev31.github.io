@@ -1,6 +1,6 @@
 import { reducedMotion, lowPower, clamp01, throttled, breakpoint, track, entrance, heroEntrance } from './common.js';
-import { cellCanvas, CELL, drawCell, dissolve, levelOf } from './pixel.js';
-import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_VIDEO, CURSOR_REVEAL } from './config.js';
+import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
+import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_VIDEO } from './config.js';
 
 const isMobile = breakpoint.isMobile;
 
@@ -385,157 +385,6 @@ export function scrollScrubbedVideo() {
     onScroll();
 }
 
-function cursorReveal(host, cells, color, anchor) {
-    const settings = CURSOR_REVEAL;
-    const photo = new Image();
-    photo.src = host.dataset.reveal;
-    const below = document.createElement('canvas');
-    below.className = 'reveal-photo';
-    below.setAttribute('aria-hidden', 'true');
-    host.prepend(below);
-    const above = document.createElement('canvas');
-    above.className = 'reveal-cells';
-    above.setAttribute('aria-hidden', 'true');
-    host.append(above);
-    const photoContext = below.getContext('2d');
-    const cellContext = above.getContext('2d');
-
-    let inside = false, running = false, strength = 0;
-    let targetX = 0, targetY = 0, x = 0, y = 0;
-    let shown = null, hollowed = new Uint8Array(0);
-    let repaint = () => {};
-
-    const smooth = t => t * t * (3 - 2 * t);
-    const hash = (i, seed) => ((((i + 1) * seed) ^ 0x9e3779b9) >>> 0) / 4294967295;
-
-    function grid() {
-        const width = host.clientWidth, height = host.clientHeight;
-        const { cols, rows } = cells;
-        const radius = width * settings.radiusShare;
-        return {
-            width, height, cols, rows, radius,
-            cw: width / cols, ch: height / rows,
-            firstRow: Math.max(0, Math.floor((y - radius) / (height / rows))),
-            lastRow: Math.min(rows - 1, Math.ceil((y + radius) / (height / rows))),
-            firstCol: Math.max(0, Math.floor((x - radius) / (width / cols))),
-            lastCol: Math.min(cols - 1, Math.ceil((x + radius) / (width / cols))),
-        };
-    }
-
-    const pushAt = (cx, cy, radius) => {
-        const distance = Math.hypot(cx - x, cy - y);
-        return distance >= radius ? 0 : smooth(1 - distance / radius) * strength;
-    };
-
-    function hollow(brightness) {
-        shown = brightness;
-        if (strength < 0.01) return brightness;
-        if (hollowed.length !== brightness.length) hollowed = new Uint8Array(brightness.length);
-        hollowed.set(brightness);
-        const g = grid();
-        for (let row = g.firstRow; row <= g.lastRow; row++) {
-            for (let col = g.firstCol; col <= g.lastCol; col++) {
-                if (pushAt((col + 0.5) * g.cw, (row + 0.5) * g.ch, g.radius) > 0) hollowed[row * g.cols + col] = 0;
-            }
-        }
-        return hollowed;
-    }
-
-    function fit(canvas, context, width, height) {
-        const ratio = Math.min(2, devicePixelRatio || 1);
-        if (canvas.width !== Math.round(width * ratio) || canvas.height !== Math.round(height * ratio)) {
-            canvas.width = Math.round(width * ratio);
-            canvas.height = Math.round(height * ratio);
-        }
-        context.setTransform(ratio, 0, 0, ratio, 0, 0);
-        context.clearRect(0, 0, width, height);
-    }
-
-    function draw(now) {
-        const g = grid();
-        fit(below, photoContext, g.width, g.height);
-        fit(above, cellContext, g.width, g.height);
-        if (!shown || strength < 0.01) return;
-
-        const ready = photo.complete && photo.naturalWidth;
-        const scale = ready ? Math.max(g.width / photo.naturalWidth, g.height / photo.naturalHeight) : 1;
-        const offsetX = ready ? (g.width - photo.naturalWidth * scale) / 2 : 0;
-        const offsetY = ready ? (g.height - photo.naturalHeight * scale) * anchor : 0;
-        cellContext.fillStyle = color;
-
-        for (let row = g.firstRow; row <= g.lastRow; row++) {
-            for (let col = g.firstCol; col <= g.lastCol; col++) {
-                const left = col * g.cw, top = row * g.ch;
-                const cx = left + g.cw / 2, cy = top + g.ch / 2;
-                const push = pushAt(cx, cy, g.radius);
-                if (!push) continue;
-                const i = row * g.cols + col;
-
-                if (ready) {
-                    photoContext.globalAlpha = Math.min(1, push * settings.photoGain);
-                    photoContext.drawImage(photo, (left - offsetX) / scale, (top - offsetY) / scale, g.cw / scale, g.ch / scale, left, top, g.cw + 0.5, g.ch + 0.5);
-                }
-
-                const level = levelOf(shown[i]);
-                if (!level) continue;
-                const away = Math.atan2(cy - y, cx - x) + (hash(i, 19349663) - 0.5) * settings.jitter;
-                const travel = g.radius * settings.spread * push * (0.6 + 0.8 * hash(i, 2654435761));
-                const phase = hash(i, 83492791) * Math.PI * 2;
-                const floatX = Math.cos(now * settings.floatSpeed + phase) * settings.floatPx * push;
-                const floatY = Math.sin(now * settings.floatSpeed * 0.8 + phase * 1.7) * settings.floatPx * push;
-                const turn = (hash(i, 73856093) * 2 - 1) * settings.maxRotation * push;
-                const size = g.cw * (1 - settings.shrink * push);
-                cellContext.globalAlpha = 1 - settings.fadeOut * push;
-                cellContext.save();
-                cellContext.translate(cx + Math.cos(away) * travel + floatX, cy + Math.sin(away) * travel + floatY);
-                cellContext.rotate(turn);
-                drawCell(cellContext, level - 1, -size / 2, -size / 2, size);
-                cellContext.restore();
-            }
-        }
-        photoContext.globalAlpha = 1;
-        cellContext.globalAlpha = 1;
-    }
-
-    function tick(now) {
-        x += (targetX - x) * settings.followEase;
-        y += (targetY - y) * settings.followEase;
-        strength += ((inside ? 1 : 0) - strength) * settings.fadeEase;
-        if (!inside && strength < 0.01) {
-            strength = 0;
-            running = false;
-            repaint();
-            draw(now);
-            return;
-        }
-        repaint();
-        draw(now);
-        requestAnimationFrame(tick);
-    }
-
-    host.addEventListener('pointermove', event => {
-        if (event.pointerType !== 'mouse') return;
-        const box = host.getBoundingClientRect();
-        targetX = event.clientX - box.left;
-        targetY = event.clientY - box.top;
-        if (!inside) {
-            inside = true;
-            if (strength < 0.01) { x = targetX; y = targetY; }
-        }
-        if (!running) {
-            running = true;
-            requestAnimationFrame(tick);
-        }
-    });
-    host.addEventListener('pointerleave', () => { inside = false; });
-
-    return {
-        hollow,
-        bind(callback) { repaint = callback; },
-        destroy() { below.remove(); above.remove(); },
-    };
-}
-
 export function pixelPicture(host, src, { mirror = false, gain = PICTURE.defaultGain, color = '#fff', active = () => true, intro = false, anchor = 0.25, fit = 'cover', focus = 0, watch = false } = {}) {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
@@ -547,19 +396,12 @@ export function pixelPicture(host, src, { mirror = false, gain = PICTURE.default
     const source = new Image();
     let brightness = null, dim = null;
 
-    const reveal = host.classList.contains('cursor-reveal') && host.dataset.reveal && !reducedMotion && matchMedia('(hover: hover) and (pointer: fine)').matches
-        ? cursorReveal(host, cells, color, anchor) : null;
-
     const paint = () => {
         if (!brightness) return;
-        let levels = brightness;
-        if (intro) {
-            if (dim?.length !== brightness.length) dim = new Uint8Array(brightness.length);
-            levels = appear(brightness, dim);
-        }
-        cells.paint(reveal ? reveal.hollow(levels) : levels);
+        if (!intro) return cells.paint(brightness);
+        if (dim?.length !== brightness.length) dim = new Uint8Array(brightness.length);
+        cells.paint(appear(brightness, dim));
     };
-    reveal?.bind(paint);
 
     const render = () => {
         const cols = Math.ceil(host.clientWidth / CELL), rows = Math.ceil(host.clientHeight / CELL);
@@ -591,7 +433,7 @@ export function pixelPicture(host, src, { mirror = false, gain = PICTURE.default
         const frame = () => { paint(); if (entrance() < RAMP) requestAnimationFrame(frame); };
         requestAnimationFrame(frame);
     });
-    return { destroy() { clearInterval(timer); reveal?.destroy(); watcher?.disconnect(); removeEventListener('resize', render); canvas.remove(); } };
+    return { destroy() { clearInterval(timer); watcher?.disconnect(); removeEventListener('resize', render); canvas.remove(); } };
 }
 
 export function pixelCover(host, color, size) {

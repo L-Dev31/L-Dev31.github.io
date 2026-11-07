@@ -908,24 +908,6 @@ html.on-accent .mobile-menu-link + .mobile-menu-link {
     height: 100%;
 }
 
-.cursor-reveal {
-    position: relative;
-    isolation: isolate;
-}
-
-.cursor-reveal .reveal-photo {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-}
-
-.cursor-reveal .reveal-cells {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-}
-
 .promise-text {
     display: flex;
     flex-direction: column;
