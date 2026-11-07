@@ -157,7 +157,7 @@ const MORPH = 0.45; // seconds for the cells to go from one shape to the next
 // with `morph`, a new shape is reached by its cells reassembling; otherwise it simply replaces the old one
 export function extrudedSvg(canvas, color, { morph = false } = {}) {
     const cells = cellCanvas(canvas, color);
-    let mask = null, from = null, morphStart = 0, angle = -0.5, frame = 0, last = 0, running = false;
+    let mask = null, from = null, morphStart = 0, angle = -0.5, frame = 0, last = 0, running = false, facing = false;
     let light = [0, 0, 0], brightness = new Uint8Array(0), before = new Uint8Array(0), order = new Float32Array(0);
     let r0 = [], r1 = [], r2 = [];
 
@@ -217,7 +217,13 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
     const tick = now => {
         const dt = Math.min(0.05, (now - last) / 1000 || 0);
         last = now;
-        angle += BASE_SPIN * dt;
+        if (facing) {
+            // it turns back to face the viewer, the nearest way round, and holds
+            const front = Math.round(angle / (2 * Math.PI)) * 2 * Math.PI;
+            angle += (front - angle) * Math.min(1, dt * 5);
+        } else {
+            angle += BASE_SPIN * dt;
+        }
         render();
         frame = running ? requestAnimationFrame(tick) : 0;
     };
@@ -255,6 +261,8 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
         },
         /** Turns the shape a little more, by an angle in radians. */
         nudge(radians) { angle += radians; },
+        /** Stops turning and faces the viewer (a word must be read), or turns again. */
+        face(on) { facing = on; },
         recolor(next) { cells.recolor(next); },
     };
 }

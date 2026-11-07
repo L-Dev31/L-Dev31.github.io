@@ -114,29 +114,38 @@ export function showcase(container, projects, lenis) {
     };
 }
 
+const rgb = color => (color.startsWith('#') ? [1, 3, 5].map(i => parseInt(color.slice(i, i + 2), 16)) : color.match(/[\d.]+/g).slice(0, 3).map(Number));
+const lerpColor = (from, to, k) => {
+    const a = rgb(from), b = rgb(to);
+    return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * k)).join(',')})`;
+};
+const mix = (a, b, k) => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, size: a.size + (b.size - a.size) * k });
+
 /**
- * The signature, carried from the intro through the page. Each dock is a part of the page with
+ * The signature, one object from the intro to the end of the page. It turns in the middle of the
+ * intro, above it, then flies to the navbar and stays there. Each dock is a part of the page with
  * the place the mark takes on screen while the scroll is in it, its shape and its colour; between
- * two docks the mark flies from one place to the other, and its pixels reassemble into the next
- * shape halfway.
+ * two docks the mark flies from one place to the other, its pixels reassemble into the next shape
+ * and its colour moves to the next one on the way.
  */
-export function thread(docks) {
-    if (isMobile || reducedMotion || !docks.length) return;
-    const canvas = el('canvas', 'thread');
+export function thread(first) {
+    if (isMobile || reducedMotion || !first.length) return null;
+    let docks = first;
+    docks.forEach(dock => dock.claim?.());
+    const canvas = el('canvas', 'thread is-intro');
     canvas.setAttribute('aria-hidden', 'true');
     document.body.append(canvas);
-    const mark = extrudedSvg(canvas, docks[0].color(), { morph: true });
+    const mark = extrudedSvg(canvas, token('--accent'), { morph: true });
     // the signature of the navbar is this pixel solid: the drawn logo is only kept for the link under it
     const logo = document.querySelector('.brand a');
     if (logo) logo.style.opacity = '0';
-    let shape = null, color = docks[0].color(), cols = 0, lastY = scrollY;
+    let shape = null, color = '', cols = 0, lastY = scrollY, introFrame = null;
 
-    const mix = (a, b, k) => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, size: a.size + (b.size - a.size) * k });
+    // where the intro put the signature: read while it shows, then kept for the flight
     const introBox = () => {
-        const size = parseFloat(getComputedStyle(document.querySelector('.page-loader')).getPropertyValue('--sign')) || 320;
-        // the intro centres the signature above its bar and readout
         const sign = document.querySelector('.page-loader-sign')?.getBoundingClientRect();
-        return sign?.width ? { x: sign.left + sign.width / 2, y: sign.top + sign.height / 2, size: sign.width } : { x: innerWidth / 2, y: innerHeight / 2, size };
+        if (sign?.width && entrance() <= 0) introFrame = { x: sign.left + sign.width / 2, y: sign.top + sign.height / 2, size: sign.width };
+        return introFrame ?? { x: innerWidth / 2, y: innerHeight / 2, size: 320 };
     };
 
     const span = dock => {
@@ -148,14 +157,18 @@ export function thread(docks) {
     const frame = () => {
         requestAnimationFrame(frame);
         const y = scrollY;
-        const spans = docks.map(span);
+        const spans = docks.map(dock => (dock.span ? dock.span() : span(dock)));
         // between two docks the mark flies over at least 60 % of a screen
         const flight = innerHeight * 0.6;
         for (let i = 0; i < spans.length - 1; i++) {
-            if (spans[i + 1][0] - spans[i][1] >= flight) continue;
+            if (docks[i + 1].late || spans[i + 1][0] - spans[i][1] >= flight) continue;
             const mid = (spans[i][1] + spans[i + 1][0]) / 2;
             spans[i][1] = mid - flight / 2;
             spans[i + 1][0] = mid + flight / 2;
+        }
+        // a late dock is only flown to at the end, over the last 40 % of a screen before it
+        for (let i = 1; i < spans.length; i++) {
+            if (docks[i].late) spans[i - 1][1] = Math.max(spans[i - 1][1], spans[i][0] - innerHeight * 0.4);
         }
         let from = docks.length - 1, t = 0;
         for (let i = 0; i < spans.length; i++) {
@@ -166,22 +179,27 @@ export function thread(docks) {
                 break;
             }
         }
-        const a = docks[from].box(), b = t > 0 ? docks[from + 1].box() : a;
-        let box = mix(a, b, smooth(clamp01(t)));
-        // it leaves the intro where the intro drew it, in the middle, and settles in its place
+        const next = t > 0 ? docks[from + 1] : docks[from], k = smooth(clamp01(t));
+        let box = mix(docks[from].box(), next.box(), k);
+        let tint = lerpColor(docks[from].color(), next.color(), k);
+
+        // in the intro it turns where the intro drew it, in red; then it settles in its place and takes its colour
         const since = entrance();
-        canvas.style.opacity = since > 0 ? '' : '0';
-        if (since < 1.6) box = mix(introBox(), box, smooth(clamp01((since - 0.25) / 1.3)));
+        if (since < 1.6) {
+            const m = since <= 0 ? 0 : smooth(clamp01((since - 0.25) / 1.3));
+            box = mix(introBox(), box, m);
+            tint = lerpColor(token('--accent'), tint, m);
+        } else if (canvas.classList.contains('is-intro')) {
+            canvas.classList.remove('is-intro');
+        }
         canvas.style.width = `${box.size}px`;
         canvas.style.transform = `translate(${(box.x - box.size / 2).toFixed(1)}px, ${(box.y - box.size / 2).toFixed(1)}px)`;
-        const size = box.size;
 
-        const target = t > 0.5 ? docks[from + 1] : docks[from];
-        // red like the intro while it leaves it, then the colour of the part it is in
-        const nextColor = since < 1.1 ? token('--accent') : target.color();
-        if (nextColor !== color) mark.recolor(color = nextColor);
+        if (tint !== color) mark.recolor(color = tint);
+        mark.face(!!(t > 0.5 ? next : docks[from]).face);
         // as many cells as the size takes at the site's cell size, by fours, within what a frame can draw
-        const nextCols = Math.max(16, Math.min(lowPower ? 32 : 56, Math.round(size / CELL / 4) * 4));
+        const nextCols = Math.max(16, Math.min(lowPower ? 32 : 56, Math.round(box.size / CELL / 4) * 4));
+        const target = t > 0.5 ? next : docks[from];
         const nextShape = target.shape();
         if (nextShape !== shape || nextCols !== cols) {
             shape = nextShape;
@@ -193,6 +211,7 @@ export function thread(docks) {
         lastY = y;
     };
     requestAnimationFrame(frame);
+    return { setDocks: list => { if (!list.length) return; docks = list; docks.forEach(dock => dock.claim?.()); } };
 }
 
 const logoBox = () => {
@@ -203,10 +222,48 @@ const logoBox = () => {
 const logoColor = () => getComputedStyle(document.querySelector('.brand a')).color;
 const atRest = el => ({ el, color: logoColor, shape: () => SIGNATURE, box: logoBox });
 
-/** A page with no travelling to do: the signature stays in the navbar. */
-export const restDocks = () => [atRest(document.body)];
+// the big name of the footer, drawn as a mask in its own typeface so the signature can become it
+let nameMask = null;
+const bigName = () => document.querySelector('.footer-sign .big-name');
+const nameShape = () => {
+    if (nameMask) return nameMask;
+    const name = bigName(), style = getComputedStyle(name);
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 1024;
+    const ctx = canvas.getContext('2d');
+    ctx.font = `${style.fontStyle} ${style.fontWeight} 200px ${style.fontFamily}`;
+    const width = ctx.measureText(name.textContent).width;
+    ctx.font = `${style.fontStyle} ${style.fontWeight} ${Math.floor(200 * 1000 / width)}px ${style.fontFamily}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(name.textContent, 512, 512);
+    return (nameMask = canvas.toDataURL('image/png'));
+};
+// the box that puts the mask's letters on the letters of the page: the shape spans 90 % of its canvas
+const nameBox = () => {
+    const range = document.createRange();
+    range.selectNodeContents(bigName());
+    const r = range.getBoundingClientRect();
+    const style = getComputedStyle(bigName());
+    const cap = parseFloat(style.fontSize) * 0.7;
+    return { x: r.left + r.width / 2, y: r.bottom - parseFloat(style.fontSize) * 0.25 - cap / 2, size: r.width / 0.9 };
+};
+// the drawn name gives its place to the signature that becomes it (only where the signature travels)
+const footerDock = footer => ({
+    // the name is at the very bottom: the signature reaches it when the page does
+    el: footer, face: true, late: true,
+    span: () => { const end = document.documentElement.scrollHeight - innerHeight; return [end - 2, Infinity]; }, color: () => getComputedStyle(bigName()).color, shape: nameShape, box: nameBox,
+    claim: () => { bigName().style.visibility = 'hidden'; },
+});
 
-/** The docks of the home page: the hero, the showcase, then the promise and the footer. */
+/** A page with no travelling to do: the signature stays in the navbar, then becomes the name of the footer. */
+export const restDocks = () => {
+    const footer = document.querySelector('#footer');
+    const main = document.querySelector('main');
+    return footer && main && bigName() ? [atRest(main), footerDock(footer)] : [atRest(document.body)];
+};
+
+/** The docks of the home page: the hero, the showcase, the promise, then the name of the footer. */
 export function homeDocks(stage) {
     const black = () => token('--black');
     const docks = [];
@@ -219,6 +276,6 @@ export function homeDocks(stage) {
     const promise = document.querySelector('#promise');
     if (promise) docks.push(atRest(promise));
     const footer = document.querySelector('#footer');
-    if (footer) docks.push(atRest(footer));
+    if (footer && bigName()) docks.push(footerDock(footer));
     return docks;
 }

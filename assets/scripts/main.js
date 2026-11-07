@@ -160,7 +160,7 @@ async function initProjects() {
     const projects = (await loadProjects()).filter(p => CATEGORIES.includes(p.category));
     // the projects pass one screen at a time, then the list keeps them all at hand
     const stage = showcase(document.querySelector('.showcase'), projects, lenis);
-    thread(homeDocks(stage));
+    signature?.setDocks(homeDocks(stage));
     projectPreview(container, projectIndex(container, projects));
     refreshParallax();
 }
@@ -307,8 +307,8 @@ function cultureNav() {
 }
 
 cultureNav();
-// the home page's signature travels (see initProjects), on the others it stays in the navbar
-if (!document.querySelector('.project-index')) thread(restDocks());
+// the signature is there from the intro: on the home page it travels (see initProjects), on the others it stays in the navbar
+const signature = thread(restDocks());
 
 Promise.all([initProjects(), initCulture(), ...[...document.querySelectorAll('.journey')].map(journey)])
     .then(() => { scrubbingText(); refreshParallax(); });

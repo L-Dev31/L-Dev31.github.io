@@ -194,6 +194,12 @@ html.lenis body {
     transform: scale(0.94);
 }
 
+/* the signature turning here is the thread, above this: its canvas only keeps the place, and stays put */
+.page-loader.has-thread .page-loader-sign {
+    visibility: hidden;
+    transform: none;
+}
+
 .page-loader.is-leaving .page-loader-track,
 .page-loader.is-leaving .page-loader-status {
     opacity: 0;
@@ -327,6 +333,11 @@ html.lenis body {
     image-rendering: pixelated;
     pointer-events: none;
     will-change: transform;
+}
+
+/* during the intro it turns above it, then flies to the navbar */
+.thread.is-intro {
+    z-index: 100000;
 }
 
 .custom-cursor .cursor {

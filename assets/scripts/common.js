@@ -234,11 +234,16 @@ function pageLoader() {
     const file = loader.querySelector('.page-loader-file');
     let shown = 0, finished = false, pageLoaded = document.readyState === 'complete', mark = null, settling = 0;
     if (!reducedMotion) root.classList.add('intro-waiting');
+    // where the signature travels (see showcase.js), it is the one that turns here, above the intro, and the
+    // canvas of the intro only keeps its place; elsewhere the intro draws its own
+    const travels = !isMobile && !reducedMotion;
+    loader.classList.toggle('has-thread', travels);
 
     import('./pixel.js').then(({ extrudedSvg, CELL }) => {
         if (finished) return;
         const cols = Math.max(16, Math.min(40, Math.floor((Math.min(innerWidth, innerHeight) * 0.42) / CELL / 4) * 4));
         loader.style.setProperty('--sign', `${cols * CELL}px`);
+        if (travels) return;
         mark = extrudedSvg(loader.querySelector('.page-loader-sign'), getComputedStyle(root).getPropertyValue('--accent').trim());
         mark.show('assets/images/core/logo.svg', cols);
     });
