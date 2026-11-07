@@ -1701,6 +1701,14 @@
       "year": 1986,
       "note": "Series",
       "via": "web"
+    },
+    {
+      "id": "pokemon",
+      "title": "Pokémon",
+      "year": 1997,
+      "note": "Series",
+      "via": "web",
+      "featured": true
     }
   ],
   "games": [
@@ -3107,8 +3115,7 @@
         "Reunion",
         "L'Ami retrouvé"
       ],
-      "image": "https://covers.openlibrary.org/b/id/10638846-L.jpg",
-      "featured": true
+      "image": "https://covers.openlibrary.org/b/id/10638846-L.jpg"
     },
     {
       "id": "eldorado",
@@ -3127,7 +3134,14 @@
       "author": "Éric-Emmanuel Schmitt",
       "search": [
         "Ulysse from Bagdad"
-      ],
+      ]
+    },
+    {
+      "id": "52-histoires-de-la-mythologie-grecque",
+      "title": "52 histoires de la mythologie grecque",
+      "year": 2020,
+      "author": "Arnaud Pizzuti, Gaëlle Berthelet",
+      "image": "https://covers.openlibrary.org/b/id/10455600-L.jpg",
       "featured": true
     }
   ]
