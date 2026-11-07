@@ -413,6 +413,14 @@ export function scrollScrubbedVideo() {
     const hero = document.querySelector('.about-header, #header');
     if (!hero) return;
     const home = hero.id === 'header';
+    if (home) {
+        // the fixed hero is taken off once the scroll has gone past it, so nothing of it covers the footer
+        const spacer = document.querySelector('.hero-spacer');
+        const past = () => hero.classList.toggle('is-past', getComputedStyle(hero).position === 'fixed' && scrollY > (spacer?.offsetHeight || innerHeight) + innerHeight);
+        addEventListener('scroll', throttled(past), { passive: true });
+        addEventListener('resize', past, { passive: true });
+        past();
+    }
     const video = hero.querySelector('video');
     if (!video) return;
     pixelHero(video);

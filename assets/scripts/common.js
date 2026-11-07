@@ -146,13 +146,14 @@ export function initPage() {
     pageTransitions();
     anchorLinks(lenis);
     backToTop(lenis);
+    footerReveal();
     pauseOffscreenVideos();
     return lenis;
 }
 
 function navTone() {
     const bar = document.querySelector('.navbar');
-    const reds = [...document.querySelectorAll('#my-story, #featured-projects, #footer, .accent-section')];
+    const reds = [...document.querySelectorAll('#my-story, #featured-projects, .footer-space, .accent-section')];
     const aboutHero = document.querySelector('.about-header');
     const projects = document.getElementById('featured-projects');
     if (!bar) return;
@@ -486,29 +487,96 @@ function mobileMenu(lenis) {
     });
 }
 
-// what the cursor says over a zone: an element can name it with data-cursor
+// The cursor is drawn with the site's cells: a 3 x 3 square at rest, a ↗ over a link, a word over a zone
+// that names what it does (data-cursor). Cells it leaves behind go out through the cell levels.
 const CURSOR_LABELS = [['[data-cursor]', el => el.dataset.cursor], ['a.index-row', () => 'Open']];
+// a 3 x 5 pixel font: five rows of three cells per character
+const GLYPHS = {
+    A: '.#. #.# ### #.# #.#', B: '##. #.# ##. #.# ##.', C: '.## #.. #.. #.. .##', D: '##. #.# #.# #.# ##.', E: '### #.. ##. #.. ###',
+    F: '### #.. ##. #.. #..', G: '.## #.. #.# #.# .##', H: '#.# #.# ### #.# #.#', I: '### .#. .#. .#. ###', J: '..# ..# ..# #.# .#.',
+    K: '#.# #.# ##. #.# #.#', L: '#.. #.. #.. #.. ###', M: '#.# ### ### #.# #.#', N: '##. #.# #.# #.# #.#', O: '.#. #.# #.# #.# .#.',
+    P: '##. #.# ##. #.. #..', Q: '.#. #.# #.# ##. .##', R: '##. #.# ##. #.# #.#', S: '.## #.. .#. ..# ##.', T: '### .#. .#. .#. .#.',
+    U: '#.# #.# #.# #.# ###', V: '#.# #.# #.# #.# .#.', W: '#.# #.# ### ### #.#', X: '#.# #.# .#. #.# #.#', Y: '#.# #.# .#. .#. .#.',
+    Z: '### ..# .#. #.. ###', 0: '### #.# #.# #.# ###', 1: '.#. ##. .#. .#. ###', 2: '##. ..# .#. #.. ###', 3: '##. ..# .#. ..# ##.',
+    4: '#.# #.# ### ..# ..#', 5: '### #.. ##. ..# ##.', 6: '.## #.. ### #.# ###', 7: '### ..# .#. .#. .#.', 8: '### #.# ### #.# ###',
+    9: '### #.# ### ..# ##.',
+};
+const SQUARE = [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1], [0, 2], [1, 2], [2, 2]].map(([x, y]) => [x - 1, y - 1]);
+const ARROW = ['..###', '...##', '..#.#', '.#...', '#....'].flatMap((row, y) => [...row].map((c, x) => (c === '#' ? [x - 2, y - 2] : null))).filter(Boolean);
+// a word, centred on the pointer
+const wordCells = text => {
+    const chars = [...text.toUpperCase()].filter(c => GLYPHS[c] || c === ' ');
+    const width = chars.length * 4 - 1, cells = [];
+    chars.forEach((c, i) => {
+        const glyph = GLYPHS[c];
+        if (!glyph) return;
+        glyph.split(' ').forEach((row, y) => [...row].forEach((on, x) => { if (on === '#') cells.push([i * 4 + x - Math.floor(width / 2), y - 2]); }));
+    });
+    return cells;
+};
 
 function cursor() {
-    const dot = document.querySelector('.cursor');
-    if (isMobile || lowPower) return;
-
-    const label = document.createElement('span');
-    label.className = 'cursor-label';
-    dot.append(label);
-    let small = false;
+    const host = document.querySelector('.cursor');
+    if (isMobile || lowPower || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     document.documentElement.classList.add('custom-cursor');
-    document.addEventListener('mousemove', e => {
-        dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)${small ? ' scale(0.5)' : ''}`;
-    });
-    // over a link or a button the dot shrinks, over a zone that says what it does it grows and says it
+    const canvas = document.createElement('canvas');
+    host.append(canvas);
+    const ctx = canvas.getContext('2d');
+    let cellSize = 8, drawCell = null;
+    import('./pixel.js').then(module => { drawCell = module.drawCell; cellSize = () => module.CELL; });
+
+    let x = -100, y = -100, ex = -100, ey = -100, shape = SQUARE, pressed = false, shown = false;
+    const trail = new Map(); // "col,row" -> when the cursor left that cell
+    let lit = new Set();
+
+    const resize = () => {
+        const dpr = Math.min(2, Math.max(1, Math.round(devicePixelRatio)));
+        canvas.width = innerWidth * dpr;
+        canvas.height = innerHeight * dpr;
+    };
+    resize();
+    addEventListener('resize', resize, { passive: true });
+
+    document.addEventListener('mousemove', e => { x = e.clientX; y = e.clientY; if (!shown) { ex = x; ey = y; shown = true; } });
+    document.addEventListener('mouseleave', () => { shown = false; });
+    document.addEventListener('mousedown', () => { pressed = true; });
+    document.addEventListener('mouseup', () => { pressed = false; });
     document.addEventListener('mouseover', e => {
         const named = CURSOR_LABELS.map(([selector, text]) => [e.target.closest(selector), text]).find(([el]) => el);
         const word = named ? named[1](named[0]) : '';
-        if (word) label.textContent = word;
-        dot.classList.toggle('is-label', !!word);
-        small = !word && !!e.target.closest('a, button');
+        shape = word ? wordCells(word) : e.target.closest('a, button, [role="button"], label, summary') ? ARROW : SQUARE;
     });
+
+    const FADE = 0.27; // seconds for a left cell to go out
+    const frame = now => {
+        requestAnimationFrame(frame);
+        if (!drawCell) return;
+        const cell = typeof cellSize === 'function' ? cellSize() : cellSize;
+        const dpr = canvas.width / innerWidth, c = cell * dpr;
+        ex += (x - ex) * 0.45;
+        ey += (y - ey) * 0.45;
+        // the cursor sits on the site's cell grid
+        const col = Math.round(ex / cell), row = Math.round(ey / cell);
+        const next = new Set(shown ? shape.map(([dx, dy]) => `${col + dx},${row + dy}`) : []);
+        for (const key of lit) if (!next.has(key)) trail.set(key, now);
+        for (const key of next) trail.delete(key);
+        lit = next;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fff';
+        for (const [key, since] of trail) {
+            const age = (now - since) / 1000 / FADE;
+            if (age >= 1) { trail.delete(key); continue; }
+            const [cx, cy] = key.split(',').map(Number);
+            // solid, then checker, then dots, then gone
+            drawCell(ctx, age < 0.34 ? 2 : age < 0.67 ? 1 : 0, cx * c, cy * c, c);
+        }
+        for (const key of lit) {
+            const [cx, cy] = key.split(',').map(Number);
+            drawCell(ctx, pressed ? 1 : 2, cx * c, cy * c, c);
+        }
+    };
+    requestAnimationFrame(frame);
 }
 
 // pills and buttons lean towards the cursor while it is over them, and settle back when it leaves
@@ -602,6 +670,21 @@ function backToTop(lenis) {
         if (lenis) lenis.scrollTo(0);
         else scrollTo({ top: 0, behavior: 'smooth' });
     });
+}
+
+// the footer waits under the page and shows as the end of the page lifts off it
+function footerReveal() {
+    const footer = document.getElementById('footer');
+    const space = document.querySelector('.footer-space');
+    if (!footer || !space) return;
+    const update = () => {
+        const top = space.getBoundingClientRect().top;
+        footer.classList.toggle('is-near', top < innerHeight + 2);
+        footer.style.setProperty('--reveal', clamp01(1 - top / innerHeight).toFixed(3));
+    };
+    addEventListener('scroll', throttled(update), { passive: true });
+    addEventListener('resize', update, { passive: true });
+    update();
 }
 
 function pauseOffscreenVideos() {

@@ -7,20 +7,6 @@ section.visible > * {
     opacity: 1;
 }
 
-.cursor {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    background: var(--white);
-    pointer-events: none;
-    transition: transform 0.1s ease-out, opacity 0.3s ease;
-}
-
 .title {
     width: 100%;
     max-width: var(--container-width);
@@ -741,7 +727,7 @@ section.visible > * {
     border-radius: 999px;
 }
 
-.footer-links a, .media-caption a {
+.footer-line a, .media-caption a {
     text-decoration: none;
     transition: font-weight 0.15s var(--ease-out);
 }

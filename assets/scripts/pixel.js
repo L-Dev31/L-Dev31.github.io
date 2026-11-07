@@ -1,7 +1,5 @@
 import { reducedMotion, lowPower, track } from './common.js';
 
-// One cell size for every pixel drawing of the site, the same everywhere on a page and relative to the
-// screen: 8 px on a 1440 px wide screen, never under 3 px. A live value: renderers read it when they lay out.
 const cellFor = () => Math.max(3, Math.round(innerWidth / 180));
 export let CELL = cellFor();
 addEventListener('resize', () => { CELL = cellFor(); }, { passive: true });
