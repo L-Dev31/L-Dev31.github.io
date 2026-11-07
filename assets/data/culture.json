@@ -126,7 +126,8 @@
         "The Kid (1921 film)",
         "The Kid"
       ],
-      "released": "1921-01-16"
+      "released": "1921-01-16",
+      "featured": true
     },
     {
       "id": "modern-times",
@@ -136,8 +137,7 @@
         "Modern Times (film)",
         "Modern Times"
       ],
-      "released": "1936-02-05",
-      "featured": true
+      "released": "1936-02-05"
     },
     {
       "id": "the-great-dictator",
