@@ -281,7 +281,52 @@ html.lenis body {
     border-radius: 50%;
     background: var(--white);
     pointer-events: none;
-    transition: transform 0.1s ease-out, opacity 0.3s ease;
+    translate: -50% -50%;
+    transition: transform 0.1s ease-out, opacity 0.3s ease, width 0.3s var(--ease-out), height 0.3s var(--ease-out);
+}
+
+/* over a zone that says what it does, the dot grows and says it */
+.cursor-label {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--black);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s var(--ease-out);
+}
+
+.cursor.is-label {
+    width: 76px;
+    height: 76px;
+}
+
+.cursor.is-label .cursor-label {
+    opacity: 1;
+}
+
+/* the curtain of pixels another page opens behind */
+.page-cover {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+}
+
+/* the signature carried through the home page, above the sections and under the menu */
+.thread {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 900;
+    width: 120px;
+    height: auto;
+    image-rendering: pixelated;
+    pointer-events: none;
+    will-change: transform;
 }
 
 .custom-cursor .cursor {
@@ -1074,6 +1119,176 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     display: block;
     width: 100%;
     height: auto;
+}
+
+/* the projects one screen at a time: the stage holds still while the scroll goes through them */
+.showcase {
+    --count: 8;
+    position: relative;
+    width: 100%;
+    height: calc(var(--count) * 70vh + 100vh);
+    margin-bottom: clamp(80px, 14vh, 160px);
+}
+
+.showcase-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+}
+
+.showcase-count,
+.showcase-steps {
+    position: absolute;
+    top: clamp(96px, 15vh, 140px);
+}
+
+.showcase-count {
+    left: var(--pad-edge);
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.showcase-steps {
+    right: var(--pad-edge);
+    display: flex;
+    gap: 4px;
+    translate: 0 -11px;
+}
+
+/* a 2px bar, the whole step to click on */
+.showcase-step {
+    width: 28px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.showcase-step::before {
+    content: '';
+    display: block;
+    height: 2px;
+    background: currentColor;
+    opacity: 0.25;
+    transition: opacity 0.3s var(--ease-out);
+}
+
+.showcase-step.is-current::before {
+    opacity: 1;
+}
+
+.showcase-link,
+.showcase-anchor {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+}
+
+.showcase-link {
+    width: 92vw;
+    color: inherit;
+    text-align: center;
+    text-decoration: none;
+}
+
+.showcase-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: max(44px, var(--fit, 11vw));
+    font-style: italic;
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+}
+
+/* where the signature docks, in front of the name */
+.showcase-anchor {
+    width: min(40vmin, 400px);
+    aspect-ratio: 1;
+    pointer-events: none;
+}
+
+.showcase-mark {
+    display: block;
+    width: 60%;
+    height: 60%;
+    margin: 20%;
+    object-fit: contain;
+}
+
+.showcase-side {
+    position: absolute;
+    bottom: clamp(32px, 7vh, 64px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.showcase-left {
+    left: var(--pad-edge);
+    max-width: min(40vw, 420px);
+}
+
+.showcase-right {
+    right: var(--pad-edge);
+    width: min(34vw, 380px);
+}
+
+.showcase-right .index-role,
+.showcase-right .index-text {
+    margin: 0;
+}
+
+.showcase-go {
+    margin-top: 8px;
+}
+
+.is-changing .showcase-side {
+    animation: rise 0.6s var(--ease-out) both;
+}
+
+.is-changing .showcase-right {
+    animation-delay: 0.06s;
+}
+
+@media (max-width: 768px) {
+    .showcase {
+        height: calc(var(--count) * 60vh + 100vh);
+    }
+
+    .showcase-link,
+    .showcase-anchor {
+        top: 36%;
+    }
+
+    .showcase-anchor {
+        width: 52vw;
+    }
+
+    .showcase-side {
+        left: var(--pad-edge);
+        right: var(--pad-edge);
+        width: auto;
+        max-width: none;
+    }
+
+    .showcase-left {
+        bottom: auto;
+        top: 60%;
+    }
+
+    .showcase-right {
+        bottom: clamp(24px, 5vh, 40px);
+    }
 }
 
 .index-detail {

@@ -63,6 +63,13 @@ export function cellCanvas(canvas, color) {
             shown = new Uint8Array(0);
         },
         invalidate() { ctx.clearRect(0, 0, canvas.width, canvas.height); frame?.fill(0); shown = new Uint8Array(0); },
+        // every cell is drawn again in the new colour at the next paint
+        recolor(next) {
+            if (next === color) return;
+            color = next;
+            if (cols) tiles = tileSet(color, size);
+            shown = new Uint8Array(0);
+        },
         get cols() { return cols; },
         get rows() { return rows; },
         // cells are copied into one typed array and sent to the canvas once, instead of one canvas call per cell
@@ -145,20 +152,18 @@ const TILT = 0.22;
 const LIGHT = (() => { const l = [-0.45, 0.55, 0.7], n = Math.hypot(...l); return l.map(v => v / n); })();
 const BASE_SPIN = 0.9;
 
+const MORPH = 0.45; // seconds for the cells to go from one shape to the next
+
 export function extrudedSvg(canvas, color) {
     const cells = cellCanvas(canvas, color);
-    let mask = null, angle = -0.5, frame = 0, last = 0, running = false;
-    let light = [0, 0, 0], brightness = new Uint8Array(0);
+    let mask = null, from = null, morphStart = 0, angle = -0.5, frame = 0, last = 0, running = false;
+    let light = [0, 0, 0], brightness = new Uint8Array(0), before = new Uint8Array(0), order = new Float32Array(0);
+    let r0 = [], r1 = [], r2 = [];
 
-    const render = () => {
-        const { solid, nx, ny, cx, cy, half } = mask;
+    // the shape seen through the current rotation, one brightness per cell
+    const march = ({ solid, nx, ny, cx, cy, half }, out) => {
         const cols = cells.cols, rows = cells.rows;
         const k = half / 0.9;
-        const cT = Math.cos(angle), sT = Math.sin(angle), cP = Math.cos(TILT), sP = Math.sin(TILT);
-
-        const r0 = [cT, 0, sT], r1 = [sP * sT, cP, -sP * cT], r2 = [-cP * sT, sP, cP * cT];
-
-        for (let i = 0; i < 3; i++) light[i] = r0[i] * LIGHT[0] + r1[i] * LIGHT[1] + r2[i] * LIGHT[2];
         const step = 0.03, zMax = 1.35;
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
@@ -187,8 +192,23 @@ export function extrudedSvg(canvas, color) {
                         }
                     }
                 }
-                brightness[row * cols + col] = sum / 4;
+                out[row * cols + col] = sum / 4;
             }
+        }
+    };
+
+    const render = () => {
+        const cT = Math.cos(angle), sT = Math.sin(angle), cP = Math.cos(TILT), sP = Math.sin(TILT);
+        r0 = [cT, 0, sT]; r1 = [sP * sT, cP, -sP * cT]; r2 = [-cP * sT, sP, cP * cT];
+        for (let i = 0; i < 3; i++) light[i] = r0[i] * LIGHT[0] + r1[i] * LIGHT[1] + r2[i] * LIGHT[2];
+        march(mask, brightness);
+        const t = from ? (performance.now() - morphStart) / 1000 / MORPH : 1;
+        if (t < 1) {
+            // each cell leaves the old shape for the new one at its own moment: the pixels reassemble
+            march(from, before);
+            for (let i = 0; i < brightness.length; i++) if (order[i] > t) brightness[i] = before[i];
+        } else {
+            from = null;
         }
         cells.paint(brightness);
     };
@@ -209,10 +229,17 @@ export function extrudedSvg(canvas, color) {
                 try { next = await loadMask(url); break; } catch {}
             }
             if (!next) return;
+            if (mask && next !== mask && !reducedMotion) {
+                from = mask;
+                morphStart = performance.now();
+                order = Float32Array.from({ length: cols * cols }, () => Math.random());
+            }
             mask = next;
             if (cols !== cells.cols) {
                 cells.resize(cols, cols);
                 brightness = new Uint8Array(cols * cols);
+                before = new Uint8Array(cols * cols);
+                if (order.length !== cols * cols) order = Float32Array.from({ length: cols * cols }, () => Math.random());
             }
             if (reducedMotion) return render();
             if (!running) {
@@ -225,6 +252,9 @@ export function extrudedSvg(canvas, color) {
             running = false;
             cancelAnimationFrame(frame);
         },
+        /** Turns the shape a little more, by an angle in radians. */
+        nudge(radians) { angle += radians; },
+        recolor(next) { cells.recolor(next); },
     };
 }
 

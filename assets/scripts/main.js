@@ -2,10 +2,11 @@ import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
 import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture, pixelCover } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { journey } from './sections.js';
+import { showcase, thread, homeDocks } from './showcase.js';
 
 const CATEGORIES = ['Graphic Design', 'Webdesign', 'Marketing', 'Dev'];
 
-initPage();
+const lenis = initPage();
 if (!document.querySelector('#header')) reveal(document.querySelectorAll('section, .title'));
 const refreshParallax = parallax();
 const cover = document.querySelector('.about-header-picture');
@@ -157,6 +158,9 @@ async function initProjects() {
     const container = document.querySelector('.project-index');
     if (!container) return;
     const projects = (await loadProjects()).filter(p => CATEGORIES.includes(p.category));
+    // the projects pass one screen at a time, then the list keeps them all at hand
+    const stage = showcase(document.querySelector('.showcase'), projects, lenis);
+    thread(homeDocks(stage));
     projectPreview(container, projectIndex(container, projects));
     refreshParallax();
 }

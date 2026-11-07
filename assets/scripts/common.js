@@ -132,6 +132,8 @@ export function initPage() {
     const lenis = smoothScroll();
     mobileMenu(lenis);
     cursor();
+    magnets();
+    pageTransitions();
     anchorLinks(lenis);
     backToTop(lenis);
     pauseOffscreenVideos();
@@ -455,17 +457,92 @@ function mobileMenu(lenis) {
     });
 }
 
+// what the cursor says over a zone: an element can name it with data-cursor
+const CURSOR_LABELS = [['[data-cursor]', el => el.dataset.cursor], ['a.index-row', () => 'Open']];
+
 function cursor() {
     const dot = document.querySelector('.cursor');
     if (isMobile || lowPower) return;
 
+    const label = document.createElement('span');
+    label.className = 'cursor-label';
+    dot.append(label);
     let small = false;
     document.documentElement.classList.add('custom-cursor');
     document.addEventListener('mousemove', e => {
         dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)${small ? ' scale(0.5)' : ''}`;
     });
-    document.addEventListener('mouseover', e => { if (e.target.closest('a, button')) small = true; });
-    document.addEventListener('mouseout', e => { if (e.target.closest('a, button')) small = false; });
+    // over a link or a button the dot shrinks, over a zone that says what it does it grows and says it
+    document.addEventListener('mouseover', e => {
+        const named = CURSOR_LABELS.map(([selector, text]) => [e.target.closest(selector), text]).find(([el]) => el);
+        const word = named ? named[1](named[0]) : '';
+        if (word) label.textContent = word;
+        dot.classList.toggle('is-label', !!word);
+        small = !word && !!e.target.closest('a, button');
+    });
+}
+
+// pills and buttons lean towards the cursor while it is over them, and settle back when it leaves
+const MAGNETIC = '.hero-socials a, .button, .hamburger, .brand a, .index-go, .culture-nav a, .showcase-step';
+
+function magnets() {
+    if (isMobile || lowPower || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const moving = new Map(); // element -> { x, y, tx, ty }
+    let frame = 0;
+    const step = () => {
+        frame = 0;
+        for (const [el, m] of moving) {
+            m.x += (m.tx - m.x) * 0.2;
+            m.y += (m.ty - m.y) * 0.2;
+            const settled = Math.abs(m.tx - m.x) < 0.05 && Math.abs(m.ty - m.y) < 0.05;
+            if (settled && !m.tx && !m.ty) {
+                el.style.translate = '';
+                moving.delete(el);
+            } else {
+                el.style.translate = `${m.x.toFixed(2)}px ${m.y.toFixed(2)}px`;
+            }
+        }
+        if (moving.size) frame = requestAnimationFrame(step);
+    };
+    let current = null;
+    document.addEventListener('pointermove', e => {
+        const el = e.target.closest(MAGNETIC);
+        if (current && current !== el) moving.get(current).tx = moving.get(current).ty = 0;
+        current = el;
+        if (el) {
+            const r = el.getBoundingClientRect();
+            const m = moving.get(el) ?? { x: 0, y: 0, tx: 0, ty: 0 };
+            // a third of the way to the cursor, never more than 10 px
+            m.tx = Math.max(-10, Math.min(10, (e.clientX - (r.left + r.width / 2) + m.x) * 0.3));
+            m.ty = Math.max(-10, Math.min(10, (e.clientY - (r.top + r.height / 2) + m.y) * 0.3));
+            moving.set(el, m);
+        }
+        if (moving.size && !frame) frame = requestAnimationFrame(step);
+    }, { passive: true });
+}
+
+// another page of the site opens behind a curtain of pixels, the way the intro leaves
+function pageTransitions() {
+    if (reducedMotion) return;
+    document.addEventListener('click', event => {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const link = event.target.closest('a[href]');
+        if (!link || (link.target && link.target !== '_self') || link.hasAttribute('download')) return;
+        const url = new URL(link.href, location.href);
+        if (url.origin !== location.origin || !/(\.html|\/)$/.test(url.pathname)) return;
+        if (url.pathname === location.pathname && url.search === location.search) return;
+        event.preventDefault();
+        const cover = document.createElement('div');
+        cover.className = 'page-cover';
+        document.body.append(cover);
+        import('./pixel.js').then(({ dissolve }) => {
+            dissolve(cover, { color: getComputedStyle(document.documentElement).getPropertyValue('--black').trim(), fixed: true, reverse: true, total: 620 }, () => { location.href = url.href; });
+        });
+        // a navigation that does not happen must not leave the curtain down
+        setTimeout(() => cover.remove(), 4000);
+    });
+    // back through the history, the page comes back with its curtain: lift it
+    addEventListener('pageshow', event => { if (event.persisted) document.querySelectorAll('.page-cover').forEach(cover => cover.remove()); });
 }
 
 function anchorLinks(lenis) {
