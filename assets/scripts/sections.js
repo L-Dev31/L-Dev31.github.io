@@ -77,7 +77,6 @@ const SUN = (() => { const l = [-0.5, 0.45, 0.75], n = Math.hypot(...l); return 
 
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
-const FLAG_CELL = 3;
 const FLAG_WAVE = 0.07;
 const SHADES = 12;
 const FLAGS = {};
@@ -100,15 +99,17 @@ function waving(host, key) {
     const build = () => {
         const h = host.clientHeight;
         if (!h) return false;
-        const nr = Math.max(6, Math.round(h / FLAG_CELL)), nc = Math.round(nr * spec.aspect);
+        // the flags are drawn on the site's one cell size too
+        const nr = Math.max(3, Math.round(h / CELL)), nc = Math.round(nr * spec.aspect);
         const dpr = Math.max(1, Math.round(devicePixelRatio));
-        if (nr === rows && nc === cols && dpr === scale) return true;
+        if (nr === rows && nc === cols && dpr === scale && canvas.dataset.cell === String(CELL)) return true;
+        canvas.dataset.cell = CELL;
         rows = nr; cols = nc; scale = dpr;
         pad = Math.ceil(FLAG_WAVE * rows) + 1;
-        canvas.width = cols * FLAG_CELL * scale;
-        canvas.height = (rows + 2 * pad) * FLAG_CELL * scale;
-        canvas.style.width = `${cols * FLAG_CELL}px`;
-        canvas.style.height = `${(rows + 2 * pad) * FLAG_CELL}px`;
+        canvas.width = cols * CELL * scale;
+        canvas.height = (rows + 2 * pad) * CELL * scale;
+        canvas.style.width = `${cols * CELL}px`;
+        canvas.style.height = `${(rows + 2 * pad) * CELL}px`;
 
         const tw = cols * 2, th = rows * 2;
         texture = new Uint8Array(tw * th);
@@ -122,7 +123,7 @@ function waving(host, key) {
 
     return (p, time) => {
         if (p <= 0.001 || !build()) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
-        const tw = cols * 2, th = rows * 2, size = FLAG_CELL * scale, side = Math.max(1, Math.round(size * 0.25));
+        const tw = cols * 2, th = rows * 2, size = CELL * scale, side = Math.max(1, Math.round(size * 0.25));
         const sq = size - side, t = time / 1000 * 2.6;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const span = Math.max(1, Math.round(cols * p)), x0 = Math.round((cols - span) / 2);

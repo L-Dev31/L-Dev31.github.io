@@ -265,7 +265,8 @@ function drawCells(host, chars) {
         if (!stage) continue;
         const r = char.getBoundingClientRect();
         const style = getComputedStyle(char);
-        const cell = Math.max(5, Math.round(parseFloat(style.fontSize) * 0.16));
+        // the site's one cell size, whatever the size of the text
+        const cell = CELL;
         const { cols, rows, cover } = glyphGrid(char, r, cell);
         ctx.fillStyle = style.color;
         const ox = (r.left - hr.left) * dpr, oy = (r.top - hr.top) * dpr, c = cell * dpr;

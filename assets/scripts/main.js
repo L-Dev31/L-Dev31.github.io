@@ -197,7 +197,7 @@ function cultureList(container, items, kind) {
     clip.hidden = !clips;
     figure.append(clip, img);
     container.replaceChildren(list, figure);
-    const cover = pixelCover(figure, color, 16);
+    const cover = pixelCover(figure, color);
     let current = null, leaving = 0;
 
     // the preview follows the cursor sideways, kept clear of the title on the left and the year on the right

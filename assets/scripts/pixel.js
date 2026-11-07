@@ -1,6 +1,10 @@
 import { reducedMotion, lowPower, track } from './common.js';
 
-export const CELL = 8;
+// One cell size for every pixel drawing of the site, the same everywhere on a page and relative to the
+// screen: 8 px on a 1440 px wide screen, never under 3 px. A live value: renderers read it when they lay out.
+const cellFor = () => Math.max(3, Math.round(innerWidth / 180));
+export let CELL = cellFor();
+addEventListener('resize', () => { CELL = cellFor(); }, { passive: true });
 const LEVELS = [20, 60, 130];
 
 export function drawCell(ctx, state, x, y, c, fill) {
@@ -157,7 +161,7 @@ const MORPH = 0.45; // seconds for the cells to go from one shape to the next
 // with `morph`, a new shape is reached by its cells reassembling; otherwise it simply replaces the old one
 export function extrudedSvg(canvas, color, { morph = false } = {}) {
     const cells = cellCanvas(canvas, color);
-    let mask = null, from = null, morphStart = 0, angle = -0.5, frame = 0, last = 0, running = false, facing = false;
+    let mask = null, from = null, morphStart = 0, angle = -0.5, frame = 0, last = 0, running = false, facing = false, drawn = '';
     let light = [0, 0, 0], brightness = new Uint8Array(0), before = new Uint8Array(0), order = new Float32Array(0);
     let r0 = [], r1 = [], r2 = [];
 
@@ -166,13 +170,17 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
         const cols = cells.cols, rows = cells.rows;
         const k = half / 0.9;
         const step = 0.03, zMax = 1.35;
+        // a wide grid keeps square cells: the height spans rows / cols of the width
+        const tall = rows / cols;
+        // a large grid is drawn with one ray a cell instead of four, so a frame keeps its time
+        const n = cols * rows > 2500 ? 1 : 2, off = 0.5 / n;
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
                 let sum = 0;
-                for (let sy = 0; sy < 2; sy++) {
-                    for (let sx = 0; sx < 2; sx++) {
-                        const X = ((col + 0.25 + sx * 0.5) / cols) * 2 - 1;
-                        const Y = 1 - ((row + 0.25 + sy * 0.5) / rows) * 2;
+                for (let sy = 0; sy < n; sy++) {
+                    for (let sx = 0; sx < n; sx++) {
+                        const X = ((col + off + sx / n) / cols) * 2 - 1;
+                        const Y = (1 - ((row + off + sy / n) / rows) * 2) * tall;
 
                         let u = r0[0] * X + r1[0] * Y + r2[0] * zMax;
                         let v = r0[1] * X + r1[1] * Y + r2[1] * zMax;
@@ -193,12 +201,16 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
                         }
                     }
                 }
-                out[row * cols + col] = sum / 4;
+                out[row * cols + col] = sum / (n * n);
             }
         }
     };
 
     const render = () => {
+        // holding still (a word facing the viewer, no morph): the cells are only repainted
+        const state = `${angle.toFixed(4)}|${cells.cols}x${cells.rows}`;
+        if (!from && state === drawn) return cells.paint(brightness);
+        drawn = state;
         const cT = Math.cos(angle), sT = Math.sin(angle), cP = Math.cos(TILT), sP = Math.sin(TILT);
         r0 = [cT, 0, sT]; r1 = [sP * sT, cP, -sP * cT]; r2 = [-cP * sT, sP, cP * cT];
         for (let i = 0; i < 3; i++) light[i] = r0[i] * LIGHT[0] + r1[i] * LIGHT[1] + r2[i] * LIGHT[2];
@@ -221,6 +233,7 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
             // it turns back to face the viewer, the nearest way round, and holds
             const front = Math.round(angle / (2 * Math.PI)) * 2 * Math.PI;
             angle += (front - angle) * Math.min(1, dt * 5);
+            if (Math.abs(front - angle) < 1e-3) angle = front;
         } else {
             angle += BASE_SPIN * dt;
         }
@@ -230,7 +243,8 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
 
     return {
 
-        async show(urls, cols) {
+        /** Draws the first of `urls` that loads, on a grid of cols by rows cells (rows = cols by default). */
+        async show(urls, cols, rows = cols) {
             let next = null;
             for (const url of [].concat(urls)) {
                 try { next = await loadMask(url); break; } catch {}
@@ -239,14 +253,15 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
             if (morph && mask && next !== mask && !reducedMotion) {
                 from = mask;
                 morphStart = performance.now();
-                order = Float32Array.from({ length: cols * cols }, () => Math.random());
+                order = Float32Array.from({ length: cols * rows }, () => Math.random());
             }
+            if (next !== mask) drawn = '';
             mask = next;
-            if (cols !== cells.cols) {
-                cells.resize(cols, cols);
-                brightness = new Uint8Array(cols * cols);
-                before = new Uint8Array(cols * cols);
-                if (order.length !== cols * cols) order = Float32Array.from({ length: cols * cols }, () => Math.random());
+            if (cols !== cells.cols || rows !== cells.rows) {
+                cells.resize(cols, rows);
+                brightness = new Uint8Array(cols * rows);
+                before = new Uint8Array(cols * rows);
+                if (order.length !== cols * rows) order = Float32Array.from({ length: cols * rows }, () => Math.random());
             }
             if (reducedMotion) return render();
             if (!running) {
@@ -267,7 +282,7 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
     };
 }
 
-export function dissolve(host, { color, size = 20, total = 900, reverse = false, fixed = false }, done) {
+export function dissolve(host, { color, size = CELL, total = 900, reverse = false, fixed = false }, done) {
     const canvas = document.createElement('canvas');
     canvas.style.cssText = `position:${fixed ? 'fixed' : 'absolute'};inset:0;width:100%;height:100%`;
     host.append(canvas);

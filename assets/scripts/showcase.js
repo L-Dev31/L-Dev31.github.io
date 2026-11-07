@@ -117,7 +117,8 @@ const lerpColor = (from, to, k) => {
     const a = rgb(from), b = rgb(to);
     return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * k)).join(',')})`;
 };
-const mix = (a, b, k) => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, size: a.size + (b.size - a.size) * k });
+// a box is a centre, a width (size) and a height as a share of the width (aspect)
+const mix = (a, b, k) => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, size: a.size + (b.size - a.size) * k, aspect: (a.aspect ?? 1) + ((b.aspect ?? 1) - (a.aspect ?? 1)) * k });
 
 /**
  * The signature, one object from the intro to the end of the page. It turns in the middle of the
@@ -137,7 +138,7 @@ export function thread(first) {
     // the signature of the navbar is this pixel solid: the drawn logo is only kept for the link under it
     const logo = document.querySelector('.brand a');
     if (logo) logo.style.opacity = '0';
-    let shape = null, color = '', cols = 0, lastY = scrollY, introFrame = null;
+    let shape = null, color = '', cols = 0, rows = 0, lastY = scrollY, introFrame = null;
     // in the intro it goes through the projects while the page loads, then becomes the signature
     let introMarks = [], loaded = false;
     loadProjects().then(list => { introMarks = list.map(projectMark); }, () => {});
@@ -194,19 +195,23 @@ export function thread(first) {
         } else if (canvas.classList.contains('is-intro')) {
             canvas.classList.remove('is-intro');
         }
-        canvas.style.width = `${box.size}px`;
-        canvas.style.transform = `translate(${(box.x - box.size / 2).toFixed(1)}px, ${(box.y - box.size / 2).toFixed(1)}px)`;
+        // the grid is the site's cell size times a whole number of cells (by fours, so a flight does not
+        // rebuild it at every step), and the canvas exactly that size: its pixels are everyone's pixels
+        const nextCols = Math.max(4, Math.min(lowPower ? 96 : 400, Math.round(box.size / CELL / 4) * 4));
+        const nextRows = Math.max(4, Math.round(nextCols * (box.aspect ?? 1)));
+        canvas.style.width = `${nextCols * CELL}px`;
+        canvas.style.height = `${nextRows * CELL}px`;
+        canvas.style.transform = `translate(${(box.x - (nextCols * CELL) / 2).toFixed(1)}px, ${(box.y - (nextRows * CELL) / 2).toFixed(1)}px)`;
 
         if (tint !== color) mark.recolor(color = tint);
         mark.face(!!(t > 0.5 ? next : docks[from]).face);
-        // as many cells as the size takes at the site's cell size, by fours, within what a frame can draw
-        const nextCols = Math.max(16, Math.min(lowPower ? 32 : 56, Math.round(box.size / CELL / 4) * 4));
         const target = t > 0.5 ? next : docks[from];
         const nextShape = since <= 0 && !loaded && introMarks.length ? introMarks[Math.floor(performance.now() / INTRO_STEP) % introMarks.length] : target.shape();
-        if (nextShape !== shape || nextCols !== cols) {
+        if (nextShape !== shape || nextCols !== cols || nextRows !== rows) {
             shape = nextShape;
             cols = nextCols;
-            mark.show([shape, SIGNATURE], cols);
+            rows = nextRows;
+            mark.show([shape, SIGNATURE], cols, rows);
         }
         // the scroll turns it a little more
         mark.nudge((y - lastY) * 0.003);
@@ -248,7 +253,8 @@ const nameBox = () => {
     const r = range.getBoundingClientRect();
     const style = getComputedStyle(bigName());
     const cap = parseFloat(style.fontSize) * 0.7;
-    return { x: r.left + r.width / 2, y: r.bottom - parseFloat(style.fontSize) * 0.25 - cap / 2, size: r.width / 0.9 };
+    // a band, not a square: the word is wide and the grid only as tall as the word needs
+    return { x: r.left + r.width / 2, y: r.bottom - parseFloat(style.fontSize) * 0.25 - cap / 2, size: r.width / 0.9, aspect: 0.34 };
 };
 // the drawn name gives its place to the signature that becomes it (only where the signature travels)
 const footerDock = footer => ({
