@@ -260,7 +260,7 @@ async function initCulture() {
     const lists = document.querySelectorAll('[data-culture]');
     if (!lists.length) return;
     const data = await fetch('assets/data/culture.json').then(r => r.json());
-    const shown = (kind, list) => (kind === 'books' ? list : list.filter(item => item.featured));
+    const shown = (kind, list) => list.filter(item => item.featured);
     lists.forEach(container => cultureList(container, shown(container.dataset.culture, data[container.dataset.culture] || []), container.dataset.culture));
     const travels = await fetch('assets/data/travels.json').then(r => r.json());
     const totals = { ...Object.fromEntries(Object.entries(data).map(([kind, list]) => [kind, shown(kind, list).length])), travels: travels.stops.length };
