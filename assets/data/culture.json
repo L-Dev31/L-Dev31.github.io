@@ -3141,11 +3141,14 @@
       ]
     },
     {
-      "id": "52-histoires-de-la-mythologie-grecque",
-      "title": "52 histoires de la mythologie grecque",
-      "year": 2020,
-      "author": "Arnaud Pizzuti, Gaëlle Berthelet",
-      "image": "https://covers.openlibrary.org/b/id/10455600-L.jpg",
+      "id": "theogonie",
+      "title": "Théogonie",
+      "year": -700,
+      "author": "Hésiode",
+      "search": [
+        "Theogony"
+      ],
+      "image": "https://covers.openlibrary.org/b/id/4650708-L.jpg",
       "featured": true
     }
   ]
