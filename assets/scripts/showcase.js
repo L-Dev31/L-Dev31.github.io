@@ -177,7 +177,7 @@ export function thread(docks) {
         const nextColor = since < 1.1 ? token('--accent') : target.color();
         if (nextColor !== color) mark.recolor(color = nextColor);
         // as many cells as the size takes at the site's cell size, by fours, within what a frame can draw
-        const nextCols = Math.max(16, Math.min(lowPower ? 32 : 44, Math.round(size / CELL / 4) * 4));
+        const nextCols = Math.max(16, Math.min(lowPower ? 32 : 56, Math.round(size / CELL / 4) * 4));
         const nextShape = target.shape();
         if (nextShape !== shape || nextCols !== cols) {
             shape = nextShape;

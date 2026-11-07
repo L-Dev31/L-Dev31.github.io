@@ -1211,7 +1211,7 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
 
 /* where the signature docks, in front of the name */
 .showcase-anchor {
-    width: min(40vmin, 400px);
+    width: min(60vmin, 600px);
     aspect-ratio: 1;
     pointer-events: none;
 }
@@ -1271,7 +1271,7 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     }
 
     .showcase-anchor {
-        width: 52vw;
+        width: 78vw;
     }
 
     .showcase-side {
