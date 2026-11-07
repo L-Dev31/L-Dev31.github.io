@@ -154,7 +154,8 @@ const BASE_SPIN = 0.9;
 
 const MORPH = 0.45; // seconds for the cells to go from one shape to the next
 
-export function extrudedSvg(canvas, color) {
+// with `morph`, a new shape is reached by its cells reassembling; otherwise it simply replaces the old one
+export function extrudedSvg(canvas, color, { morph = false } = {}) {
     const cells = cellCanvas(canvas, color);
     let mask = null, from = null, morphStart = 0, angle = -0.5, frame = 0, last = 0, running = false;
     let light = [0, 0, 0], brightness = new Uint8Array(0), before = new Uint8Array(0), order = new Float32Array(0);
@@ -229,7 +230,7 @@ export function extrudedSvg(canvas, color) {
                 try { next = await loadMask(url); break; } catch {}
             }
             if (!next) return;
-            if (mask && next !== mask && !reducedMotion) {
+            if (morph && mask && next !== mask && !reducedMotion) {
                 from = mask;
                 morphStart = performance.now();
                 order = Float32Array.from({ length: cols * cols }, () => Math.random());

@@ -125,7 +125,7 @@ export function thread(docks) {
     const canvas = el('canvas', 'thread');
     canvas.setAttribute('aria-hidden', 'true');
     document.body.append(canvas);
-    const mark = extrudedSvg(canvas, docks[0].color());
+    const mark = extrudedSvg(canvas, docks[0].color(), { morph: true });
     // the signature of the navbar is this pixel solid: the drawn logo is only kept for the link under it
     const logo = document.querySelector('.brand a');
     if (logo) logo.style.opacity = '0';
