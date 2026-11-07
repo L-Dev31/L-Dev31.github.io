@@ -1538,7 +1538,8 @@
       "released": "1992-07-18",
       "note": "Film",
       "via": "film",
-      "featured": true
+      "featured": true,
+      "image": "https://upload.wikimedia.org/wikipedia/en/f/fc/Porco_Rosso_%28Movie_Poster%29.jpg"
     },
     {
       "id": "the-boy-and-the-heron",
