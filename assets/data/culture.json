@@ -2106,8 +2106,7 @@
       "video_seconds": 5,
       "video_skip": [
         "ACG2UcHNG0A"
-      ],
-      "featured": true
+      ]
     },
     {
       "id": "mario-kart-8-wiiu",
@@ -2176,8 +2175,7 @@
       "platform": "switch",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5,
-      "featured": true
+      "video_seconds": 5
     },
     {
       "id": "1-2-switch-switch",
@@ -2711,8 +2709,7 @@
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5,
-      "video_search": "Mario Bros 1983 arcade longplay no commentary",
-      "featured": true
+      "video_search": "Mario Bros 1983 arcade longplay no commentary"
     },
     {
       "id": "super-mario-bros-2-nes",
