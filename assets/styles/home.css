@@ -669,12 +669,10 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     font-weight: 500;
 }
 
+/* in the footer's call to action, on the right, always there */
 .back-to-top {
     --size: 100px;
-    position: fixed;
-    bottom: 40px;
-    right: 40px;
-    z-index: 997;
+    position: relative;
     width: var(--size);
     height: var(--size);
     display: flex;
@@ -684,22 +682,11 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     border: none;
     background: none;
     color: var(--black);
-    opacity: 0;
-    transform: translateY(24px);
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out), visibility 0s linear 0.4s;
+    cursor: pointer;
+    transition: transform 0.4s var(--ease-out);
 }
 
-.back-to-top.visible {
-    opacity: 1;
-    transform: none;
-    visibility: visible;
-    pointer-events: auto;
-    transition-delay: 0s;
-}
-
-.back-to-top.visible:hover {
+.back-to-top:hover {
     transform: scale(0.9);
 }
 
@@ -1948,8 +1935,6 @@ html:has(.project-main)::-webkit-scrollbar {
 
     .back-to-top {
         --size: 64px;
-        right: 16px;
-        bottom: max(16px, env(safe-area-inset-bottom));
     }
 
     .btt-text span {
@@ -2093,10 +2078,21 @@ html:has(.project-main)::-webkit-scrollbar {
 }
 
 .footer-cta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 28px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    justify-items: start;
+    row-gap: 28px;
+    column-gap: 24px;
+}
+
+.footer-cta > * {
+    grid-column: 1;
+}
+
+.footer-cta > .back-to-top {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: end;
 }
 
 .footer-cta h2 {

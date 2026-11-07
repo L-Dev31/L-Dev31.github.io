@@ -586,8 +586,8 @@ function anchorLinks(lenis) {
 
 function backToTop(lenis) {
     const button = document.querySelector('.back-to-top');
+    if (!button) return;
     const ring = button.querySelector('.btt-text');
-    const footer = document.getElementById('footer');
 
     const chars = [...ring.textContent];
     ring.textContent = '';
@@ -598,16 +598,10 @@ function backToTop(lenis) {
         ring.append(span);
     });
 
-    const update = () => {
-        const { top, height } = footer.getBoundingClientRect();
-        button.classList.toggle('visible', innerHeight - top >= height / 2);
-    };
-    addEventListener('scroll', throttled(update), { passive: true });
     button.addEventListener('click', () => {
         if (lenis) lenis.scrollTo(0);
         else scrollTo({ top: 0, behavior: 'smooth' });
     });
-    update();
 }
 
 function pauseOffscreenVideos() {
