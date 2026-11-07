@@ -40,7 +40,7 @@ const { default: postcss } = await need('postcss');
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 const ORIGIN = 'https://l-dev31.github.io/';
-const LEFT_OUT_DIRS = new Set(['node_modules', 'dist', 'tools']); // dot-folders (.git, .vscode, ...) are left out too
+const LEFT_OUT_DIRS = new Set(['node_modules', 'dist', 'tools', '_backups']); // dot-folders (.git, .vscode, ...) are left out too
 const LEFT_OUT_FILES = /^(package(-lock)?\.json|\.gitignore|.*\.md)$/i;
 const TEXT = /\.(html|css|js|json)$/i;
 // classes that a library puts on the page while it runs, so no file of the site mentions them

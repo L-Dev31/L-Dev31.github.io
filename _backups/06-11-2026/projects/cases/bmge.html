@@ -1,0 +1,104 @@
+<section class="case-intro">
+    <h2 class="title">The Brief</h2>
+    <p>In late 2026, I started translating the Japan-only Nintendo DS game Tomodachi Collection into French. All of its text sits inside BMG files, an undocumented, proprietary Nintendo format. The few fan-made tools available were unreliable and kept corrupting my saves.</p>
+<p>I needed a tool that worked, so I built a browser-based BMG editor. It opens, edits and re-exports files and keeps every original byte it has no reason to change.</p>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">A hex editor, a lot of trial and error, and no documentation or SDK.</blockquote>
+</section>
+
+<section class="case-chapter" id="problem">
+    <h2 class="title">The Problem</h2>
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">Locked Files, Broken Tools</h3>
+            <p>Nintendo uses the BMG format for dialogue across many DS and Wii games, and never released a public spec. Community editors existed, but they often crashed the game by breaking offset tables or padding rules.</p>
+<p>Tomodachi Collection adds raw hex control tags inside its text strings, to trigger colors or insert Mii names. An editor that didn't understand them stripped them out, and the file broke.</p>
+        </div>
+        <figure class="case-panel" data-no-parallax>
+            <img src="assets/images/projects/bmge/problem.jpg"
+                alt="MSBT Editor by AeonSake, an existing Nintendo text editor, the kind of tool that existed but couldn't handle BMG files reliably."
+                loading="lazy" decoding="async">
+            <figcaption class="media-caption">MSBT Editor by <a href="https://gitlab.com/AeonSake/msbt-editor"
+                    target="_blank" rel="noopener noreferrer">AeonSake</a></figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="case-chapter" id="process">
+    <h2 class="title">The Process</h2>
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">1. Reverse-Engineering the Format</h3>
+            <p>I opened the files in a hex editor and mapped the structure by hand. A BMG file is split into chunks: a header, an index of message sizes, the raw text block, and numeric IDs that tell the game where to find each string.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/bmge/re.webp"
+                alt="Hex view of a BMG file showing section headers and inline tag bytes." loading="lazy"
+                decoding="async">
+        </figure>
+    </div>
+
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">2. Parsing Inline Tags</h3>
+            <p>The inline control tags were the hardest part. The editor shows them as readable text like [Color:0200] and encodes them back on save. Existing tags reuse their original bytes, and only tags you type yourself get new hex codes. This nearly removes the risk of corruption.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/bmge/tags.webp"
+                alt="BMGE editor showing inline color tags rendered visually inside a message." loading="lazy"
+                decoding="async">
+        </figure>
+    </div>
+
+    <div class="case-row">
+        <div>
+            <h3 class="case-heading">3. Non-Destructive Export</h3>
+            <p>The export rule is simple: only touch what changed. A message you didn't edit keeps its original bytes. A message you edited is re-encoded and padded, and the index is updated to point to the new location. Everything else stays as it was.</p>
+        </div>
+    </div>
+
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">4. Game-Specific Profiles</h3>
+            <p>Every Nintendo game handles BMG files a little differently. Instead of hardcoding the rules for Tomodachi Collection, I built a plugin system: pick the game from a menu and the editor loads the right tag vocabulary and styling.</p>
+        </div>
+        <figure class="case-panel" data-no-parallax>
+            <img src="assets/images/projects/bmge/tomodachi.webp"
+                alt="Tomodachi Collection Nintendo DS box art." loading="lazy" decoding="async">
+            <figcaption class="media-caption">Tomodachi Collection &copy; Nintendo</figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="case-chapter" id="design">
+    <h2 class="title">The Design</h2>
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">5. Visual Language</h3>
+            <p>The interface leans on #FDE404, the signature yellow of Tomodachi Collection. Translation means reading text for hours, so I chose a dark, low-contrast background to limit eye strain.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/bmge/website.webp"
+                alt="BMGE editor interface, dark theme with Tomodachi Collection yellow accent." loading="lazy"
+                decoding="async">
+        </figure>
+    </div>
+
+    <div class="case-row">
+        <div>
+            <h3 class="case-heading">6. Workflow Decisions</h3>
+            <p>Translating a game means handling hundreds of files, and opening them one by one is slow. I added a folder mode to load a whole directory, and keyboard shortcuts for every action, so the editor works as a daily workspace.</p>
+        </div>
+    </div>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">The editor leaves a Mii name alone because it only touches the bytes that changed.</blockquote>
+</section>
+
+<section class="case-intro">
+    <h2 class="title">The Outcome</h2>
+    <p>A translation side project became a complete browser-based binary editor for a closed console format. It parses, edits and rebuilds these files safely, without any official documentation.</p>
+</section>

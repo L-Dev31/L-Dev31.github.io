@@ -1,0 +1,44 @@
+# Tools and editors
+.codegpt
+.vscode/
+.idea/
+.claude/
+graphify-out/
+
+# Dependencies and build output
+node_modules/
+dist/
+.cache/
+
+# Logs and test output
+*.log
+logs/
+npm-debug.log*
+yarn-error.log*
+coverage/
+test-results/
+playwright-report/
+
+# Temporary and backup files
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.swp
+*~
+tmp/
+
+# Python
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+tools/.cache/

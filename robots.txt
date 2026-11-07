@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /_backups/
 
 Sitemap: https://l-dev31.github.io/sitemap.xml

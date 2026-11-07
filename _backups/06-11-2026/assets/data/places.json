@@ -1,0 +1,74 @@
+{
+  "pv": {
+    "name": "La Dracénie",
+    "region": "Provence",
+    "lat": 43.54,
+    "lon": 6.47
+  },
+  "fr": {
+    "name": "France",
+    "region": "Europe",
+    "lat": 46.6,
+    "lon": 2.4
+  },
+  "al": {
+    "name": "Albania",
+    "region": "Europe",
+    "lat": 41.2,
+    "lon": 20.0
+  },
+  "nl": {
+    "name": "Netherlands",
+    "region": "Europe",
+    "lat": 52.2,
+    "lon": 5.3
+  },
+  "es": {
+    "name": "Spain",
+    "region": "Europe",
+    "lat": 40.4,
+    "lon": -3.7
+  },
+  "it": {
+    "name": "Italy",
+    "region": "Europe",
+    "lat": 42.0,
+    "lon": 12.5
+  },
+  "sm": {
+    "name": "San Marino",
+    "region": "Europe",
+    "lat": 43.94,
+    "lon": 12.46
+  },
+  "gp": {
+    "name": "Guadeloupe",
+    "region": "Caribbean",
+    "lat": 16.3,
+    "lon": -61.7
+  },
+  "th": {
+    "name": "Thailand",
+    "region": "Asia",
+    "lat": 15.0,
+    "lon": 101.0
+  },
+  "lu": {
+    "name": "Luxembourg",
+    "region": "Europe",
+    "lat": 49.6,
+    "lon": 6.1
+  },
+  "tr": {
+    "name": "Turkey",
+    "region": "Asia Minor",
+    "lat": 39.0,
+    "lon": 35.0
+  },
+  "mc": {
+    "name": "Monaco",
+    "region": "Europe",
+    "lat": 43.73,
+    "lon": 7.42
+  }
+}

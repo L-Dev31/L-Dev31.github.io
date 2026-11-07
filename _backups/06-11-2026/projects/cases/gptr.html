@@ -1,0 +1,77 @@
+<section class="case-intro">
+    <h2 class="title">The Brief</h2>
+    <p>In 2023, as a first-year student at Lycée Sonny Rupaire in Sainte-Rose, Guadeloupe, I entered the Trophées NSI, a competition where high school students build a project in Python. I was living in Guadeloupe without being Guadeloupean. Every day I heard Guadeloupean Creole around me and understood nothing, which was isolating.</p>
+<p>The idea came from there: a tool I would use myself. With my classmate Korail Lamothe-Jacob, who grew up speaking Creole, we decided to build the first French ↔ Guadeloupean Creole translator. We wanted something usable every day.</p>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">The language was everywhere. The tools to understand it did not exist, so we built them.</blockquote>
+</section>
+
+<section class="case-chapter" id="problem">
+    <h2 class="title">The Problem</h2>
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">A Language With No Digital Footprint</h3>
+            <p>Guadeloupean Creole is spoken by hundreds of thousands of people, yet it has no mainstream dictionary, translation API or structured dataset. We searched online, in libraries and in academic sources, and found no bilingual wordlist or corpus a program could use. We nearly abandoned the project.</p>
+<p>After weeks of searching, I found one old database of Guadeloupean terms, unmaintained and buried. It was incomplete, inconsistent and full of errors, but it was the only one. We took it.</p>
+        </div>
+        <figure class="case-panel" data-no-parallax>
+            <img src="assets/images/projects/gptr/guadeloupean.webp"
+                alt="Empty search results: no Guadeloupean Creole dictionary or translation dataset found online."
+                loading="lazy" decoding="async">
+            <figcaption class="media-caption">Photo by <a href="https://matikaa.com/" target="_blank"
+                    rel="noopener noreferrer">Matikaa.com</a></figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="case-chapter" id="process">
+    <h2 class="title">The Process</h2>
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">1. Building the Dataset</h3>
+            <p>Korail and I went through the recovered database entry by entry. He corrected the Creole terms, and I restructured everything into a clean JSON dictionary we could query. It isn't perfect, since Guadeloupean Creole has no standardized spelling, but every entry was checked by a native speaker, not generated. That dictionary became the foundation of the algorithm.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/gptr/dictionary.webp"
+                alt="The hand-corrected bilingual JSON dictionary built from a recovered Guadeloupean Creole database."
+                loading="lazy" decoding="async">
+        </figure>
+    </div>
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">2. The Translation Algorithm</h3>
+            <p>Translating natural language into a low-resource language is hard because phrases rarely have direct equivalents, and a word-for-word lookup fails immediately.</p>
+<p>So the algorithm takes the full sentence and looks for the longest substring that matches the dictionary. If it finds one, it translates that span and moves past it. If not, it drops one word from the right and tries again. If it ends on a single word with no match, it leaves that word as it is and restarts from the next one.</p>
+<p>The result favors phrase-level accuracy over broken word-for-word substitution.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/gptr/translation.webp"
+                alt="Diagram of the greedy longest-match algorithm: sliding window, fallback on drop, advance on match."
+                loading="lazy" decoding="async">
+        </figure>
+    </div>
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">3. Interface &amp; Bidirectional Translation</h3>
+            <p>The tool works in both directions, French to Creole and Creole to French. The interface uses Tkinter, so it runs without installation, with an input field, a language selector, a translate button and an output display. Everything runs locally and offline, because a tool meant for school computers in Guadeloupe could not depend on an internet connection.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/gptr/interface.webp"
+                alt="GPTranslator Tkinter interface showing bidirectional French / Guadeloupean Creole translation."
+                loading="lazy" decoding="async">
+        </figure>
+    </div>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">A tool built from nothing, for a language the internet had forgotten.</blockquote>
+</section>
+
+<section class="case-intro">
+    <h2 class="title">The Outcome</h2>
+    <p>A Python desktop application that translates in both directions between French and Guadeloupean Creole, using a hand-corrected bilingual JSON dataset and a greedy longest-match algorithm written without an NLP library. The jury gave it a special selection, outside the top prizes, for tackling a problem with no existing solution.</p>
+<p>What I took from it: finding data nobody had gathered was harder than writing the code.</p>
+    <p class="case-team">Léo Tosku &middot; Korail Lamothe&#8209;Jacob (native speaker &amp; dataset correction)</p>
+</section>

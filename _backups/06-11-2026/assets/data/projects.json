@@ -1,0 +1,277 @@
+{
+  "projects": [
+    {
+      "id": "smfl",
+      "title": "Saint-Martin Flag Project",
+      "date": "2026-09-15",
+      "category": "Graphic Design",
+      "role": "Vexillographer & Designer",
+      "heroImage": "assets/images/projects/smfl/header.jpg",
+      "subtitle": "A regional flag for Saint-Martin, drawn from NAVA principles and the island's history, then tested in 3D wind simulations.",
+      "tags": [
+        "Vexillology",
+        "Flag Design",
+        "Identity Design",
+        "Brand Strategy",
+        "Symbol Design",
+        "Color Theory",
+        "Geometry",
+        "NAVA Guidelines",
+        "3D Wind Simulation",
+        "Cultural Heritage",
+        "Territorial Branding",
+        "Design Research"
+      ],
+      "ctas": [
+        {
+          "label": "Note d'intention (PDF)",
+          "url": "projects/cases/files/smfl-note-intention.pdf"
+        },
+        {
+          "label": "Processus Créatif (PDF)",
+          "url": "projects/cases/files/smfl-note-processus-creatif.pdf"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/smfl/problem.jpg",
+        "assets/images/projects/smfl/symbol.jpg",
+        "assets/images/projects/smfl/flag-final.jpg"
+      ],
+      "cover": "assets/images/projects/smfl.webp"
+    },
+    {
+      "id": "ogfm",
+      "title": "L'Oreille qui Gratte",
+      "date": "2026-04-01",
+      "category": "Graphic Design",
+      "role": "Brand Designer",
+      "heroImage": "assets/images/projects/ogfm/header.jpg",
+      "subtitle": "Brand identity for a punk, DIY, anti-establishment webradio, with a logo drawn by hand in ballpoint pen.",
+      "tags": [
+        "Brand Identity",
+        "Logo Design",
+        "Logotype",
+        "Brand Guidelines",
+        "Graphic Charter",
+        "Art Direction",
+        "Typography",
+        "Print Design",
+        "Poster Design",
+        "Fanzine",
+        "Punk Aesthetic",
+        "Social Media Assets",
+        "Adobe Illustrator",
+        "Music Industry"
+      ],
+      "ctas": [
+        {
+          "label": "Charte Graphique (PDF)",
+          "url": "projects/cases/files/ogfm-brand-guidelines.pdf"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/ogfm/process1.jpg",
+        "assets/images/projects/ogfm/process2.jpg",
+        "assets/images/projects/ogfm/process3.jpg"
+      ],
+      "cover": "assets/images/projects/ogfm.webp"
+    },
+    {
+      "id": "bgaw",
+      "title": "Black Goose",
+      "date": "2026-03-01",
+      "category": "Webdesign",
+      "role": "Web Designer & Logo Designer",
+      "heroImage": "assets/images/projects/bgaw/header.jpg",
+      "subtitle": "A luxury web redesign for an independent watchmaker, between precision horology and automotive design.",
+      "tags": [
+        "Web Design",
+        "UI/UX Design",
+        "Brand Identity",
+        "Logo Design",
+        "Art Direction",
+        "Market Research",
+        "Competitive Audit",
+        "Luxury Branding",
+        "Watchmaking",
+        "Automotive Design",
+        "User Journey",
+        "Web Concept",
+        "Adobe Illustrator",
+        "Conversion Design"
+      ],
+      "ctas": [
+        {
+          "label": "View Presentation (PDF)",
+          "url": "projects/cases/files/bgaw-presentation.pdf"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/bgaw/identity.jpg",
+        "assets/images/projects/bgaw/logo.jpg",
+        "assets/images/projects/bgaw/web.jpg"
+      ],
+      "cover": "assets/images/projects/bgaw.webp"
+    },
+    {
+      "id": "mego",
+      "title": "Mégoteur",
+      "date": "2026-02-01",
+      "category": "Marketing",
+      "role": "Designer",
+      "heroImage": "assets/images/projects/mego/header.jpg",
+      "subtitle": "A brochure and an Instagram kit for a startup that collects cigarette butts by GPS, produced in 48 hours for a jury.",
+      "tags": [
+        "Brochure Design",
+        "Editorial Layout",
+        "Print Design",
+        "Social Media Kit",
+        "Instagram Carousel",
+        "B2G Communication",
+        "Pitch Deck",
+        "Information Hierarchy",
+        "Art Direction",
+        "Circular Economy",
+        "Public Sector",
+        "48-Hour Challenge"
+      ],
+      "cover": "assets/images/projects/mego.webp"
+    },
+    {
+      "id": "prfy",
+      "title": "Proofy",
+      "date": "2026-02-01",
+      "category": "Webdesign",
+      "role": "UX Designer",
+      "heroImage": "assets/images/projects/prfy/header.jpg",
+      "subtitle": "A mobile app that scans receipts and keeps warranties on the phone, with no account to create.",
+      "tags": [
+        "UX Design",
+        "UI Design",
+        "Product Design",
+        "Mobile App Design",
+        "MVP Scoping",
+        "MoSCoW Prioritization",
+        "User Stories",
+        "User Flow",
+        "Information Architecture",
+        "Figma Prototype",
+        "Glassmorphism",
+        "iOS Design",
+        "Privacy by Design",
+        "OCR Scanning"
+      ],
+      "cover": "assets/images/projects/prfy.webp"
+    },
+    {
+      "id": "cmck",
+      "title": "Charlie McKenzie",
+      "date": "2026-01-01",
+      "category": "Webdesign",
+      "role": "Web Designer & Developer",
+      "heroImage": "assets/images/projects/cmck/header.jpg",
+      "subtitle": "A portfolio for a composer, built to carry personal work and paid commissions on the same site.",
+      "tags": [
+        "Web Design",
+        "Frontend Development",
+        "JavaScript",
+        "Interaction Design",
+        "HTML",
+        "CSS",
+        "Responsive Design",
+        "Portfolio Website",
+        "Typography",
+        "Pixel Art Aesthetic",
+        "Copywriting",
+        "Music Industry",
+        "Client Project"
+      ],
+      "ctas": [
+        {
+          "label": "View Live Site",
+          "url": "https://charliemckenziemusic.com"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/cmck/typography.webp",
+        "assets/images/projects/cmck/website.jpg",
+        "assets/images/projects/cmck/structure.webp"
+      ],
+      "cover": "assets/images/projects/cmck.webp"
+    },
+    {
+      "id": "bmge",
+      "title": "BMG Editor",
+      "date": "2025-10-01",
+      "category": "Dev",
+      "role": "Developer",
+      "heroImage": "assets/images/projects/bmge/header.jpg",
+      "subtitle": "A browser editor for Nintendo's BMG text format, written after mapping the file structure by hand in a hex editor.",
+      "tags": [
+        "Reverse Engineering",
+        "Binary File Format",
+        "JavaScript",
+        "Web Application",
+        "Developer Tool",
+        "Game Modding",
+        "Nintendo DS",
+        "BMG Format",
+        "Hex Editing",
+        "Parser Design",
+        "Plugin Architecture",
+        "Non-Destructive Editing",
+        "UI Design",
+        "Fan Translation"
+      ],
+      "ctas": [
+        {
+          "label": "Open Editor",
+          "url": "projects/demos/bmge/index.html"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/bmge/tomodachi.webp",
+        "assets/images/projects/bmge/tags.webp",
+        "assets/images/projects/bmge/re.webp"
+      ],
+      "cover": "assets/images/projects/bmge.webp"
+    },
+    {
+      "id": "gptr",
+      "title": "GPTranslator",
+      "date": "2023-05-01",
+      "category": "Dev",
+      "role": "Developer & Dataset Author",
+      "heroImage": "assets/images/projects/gptr/header.jpg",
+      "subtitle": "A French to Guadeloupean Creole translator, built on a dataset I corrected with a native speaker.",
+      "tags": [
+        "Python",
+        "NLP",
+        "Machine Translation",
+        "Low-Resource Language",
+        "Guadeloupean Creole",
+        "Dataset Creation",
+        "JSON",
+        "Tkinter",
+        "Desktop Application",
+        "Longest-Match Algorithm",
+        "Bidirectional Translation",
+        "Offline Tool",
+        "Linguistics",
+        "Trophées NSI"
+      ],
+      "ctas": [
+        {
+          "label": "View on GitHub",
+          "url": "https://github.com/L-Dev31/GPTranslator"
+        }
+      ],
+      "ctaImages": [
+        "assets/images/projects/gptr/dictionary.webp",
+        "assets/images/projects/gptr/translation.webp",
+        "assets/images/projects/gptr/interface.webp"
+      ],
+      "cover": "assets/images/projects/gptr.webp"
+    }
+  ]
+}
