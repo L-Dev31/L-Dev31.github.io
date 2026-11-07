@@ -1928,7 +1928,8 @@
       "platform": "wii",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "featured": true
     },
     {
       "id": "super-smash-bros-brawl-wii",
@@ -1996,7 +1997,8 @@
       "platform": "wii",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "featured": true
     },
     {
       "id": "super-mario-3d-land-3ds",
@@ -2480,7 +2482,8 @@
       "platform": "3ds",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "featured": true
     },
     {
       "id": "pokemon-moon-3ds",
@@ -2940,6 +2943,16 @@
       "video_crf": 27,
       "video_seconds": 5,
       "video_name": "Paper Mario Color Splash"
+    },
+    {
+      "id": "omori-steam",
+      "title": "Omori",
+      "year": 2020,
+      "platform": "steam",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5,
+      "featured": true
     }
   ]
 }
