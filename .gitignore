@@ -42,3 +42,17 @@ __pycache__/
 Thumbs.db
 desktop.ini
 tools/.cache/
+
+# Development files: build scripts, notes and tooling stay on this machine
+tools/
+package.json
+package-lock.json
+*.md
+.claude/
+.cache/
+.pytest_cache/
+.ruff_cache/
+.eslintcache
+*.pyc
+.vscode/
+.idea/
