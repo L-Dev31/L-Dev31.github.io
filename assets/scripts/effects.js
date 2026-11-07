@@ -363,70 +363,6 @@ export function parallax() {
     return refresh;
 }
 
-// The hero answers the pointer: a lens follows the cursor, spreading and lighting the cells under
-// it, and a click sends a ring of light through them.
-function pointerField(canvas) {
-    if (reducedMotion) return source => source;
-    const lens = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5, on: 0, target: 0 };
-    const rings = [];
-    const RADIUS = 14; // cells
-    const where = e => {
-        const r = canvas.getBoundingClientRect();
-        return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height];
-    };
-    const inside = (u, v) => u >= 0 && u <= 1 && v >= 0 && v <= 1 && canvas.style.visibility !== 'hidden';
-    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-        addEventListener('pointermove', e => {
-            [lens.tx, lens.ty] = where(e);
-            lens.target = inside(lens.tx, lens.ty) ? 1 : 0;
-        }, { passive: true });
-        document.addEventListener('pointerleave', () => { lens.target = 0; });
-    }
-    addEventListener('pointerdown', e => {
-        const [u, v] = where(e);
-        if (inside(u, v) && !e.target.closest('a, button')) rings.push({ u, v, start: performance.now() });
-    });
-
-    return (source, out, cols, rows) => {
-        lens.on += (lens.target - lens.on) * 0.15;
-        lens.x += (lens.tx - lens.x) * 0.3;
-        lens.y += (lens.ty - lens.y) * 0.3;
-        if (lens.on < 0.01 && !rings.length) return source;
-        out.set(source);
-        const at = (x, y) => source[Math.min(rows - 1, Math.max(0, y)) * cols + Math.min(cols - 1, Math.max(0, x))];
-        if (lens.on >= 0.01) {
-            const cx = lens.x * cols, cy = lens.y * rows, reach = RADIUS + 2;
-            for (let row = Math.max(0, Math.floor(cy - reach)); row <= Math.min(rows - 1, Math.ceil(cy + reach)); row++) {
-                for (let col = Math.max(0, Math.floor(cx - reach)); col <= Math.min(cols - 1, Math.ceil(cx + reach)); col++) {
-                    const dx = col + 0.5 - cx, dy = row + 0.5 - cy, d = Math.hypot(dx, dy), i = row * cols + col;
-                    if (d >= RADIUS) {
-                        // the cells pushed out of the lens leave a dark rim around it
-                        if (d < reach) out[i] *= 1 - 0.85 * lens.on * (1 - (d - RADIUS) / 2);
-                        continue;
-                    }
-                    const s = Math.min(1, (1 - d / RADIUS) * 1.4) * lens.on;
-                    // the picture is read closer to the centre, so the cells under the cursor spread apart, and light up
-                    const v = at(Math.round(cx + dx * (1 - 0.7 * s) - 0.5), Math.round(cy + dy * (1 - 0.7 * s) - 0.5));
-                    out[i] = Math.min(255, v + 150 * s);
-                }
-            }
-        }
-        const now = performance.now();
-        for (let k = rings.length - 1; k >= 0; k--) {
-            const ring = rings[k], age = (now - ring.start) / 1000;
-            if (age > 1.4) { rings.splice(k, 1); continue; }
-            const radius = age * 70, fade = 1 - age / 1.4, rx = ring.u * cols, ry = ring.v * rows;
-            for (let row = Math.max(0, Math.floor(ry - radius - 3)); row <= Math.min(rows - 1, Math.ceil(ry + radius + 3)); row++) {
-                for (let col = Math.max(0, Math.floor(rx - radius - 3)); col <= Math.min(cols - 1, Math.ceil(rx + radius + 3)); col++) {
-                    const d = Math.abs(Math.hypot(col + 0.5 - rx, row + 0.5 - ry) - radius);
-                    if (d < 2.5) out[row * cols + col] = Math.min(255, out[row * cols + col] + 200 * (1 - d / 2.5) * fade);
-                }
-            }
-        }
-        return out;
-    };
-}
-
 function pixelHero(video) {
     const canvas = document.createElement('canvas');
     canvas.id = 'hero-pixels';
@@ -435,8 +371,7 @@ function pixelHero(video) {
     const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
-    let base = null, dim = null, lit = null, lastTime = -1, lastBox = '';
-    const touch = pointerField(canvas);
+    let base = null, dim = null, lastTime = -1, lastBox = '';
 
     const gap = lowPower ? 80 : 33;
     let lastDraw = 0;
@@ -456,7 +391,6 @@ function pixelHero(video) {
             sample.width = cols; sample.height = rows;
             base = new Uint8Array(cols * rows);
             dim = new Uint8Array(cols * rows);
-            lit = new Uint8Array(cols * rows);
             lastTime = -1;
         }
         if (video.currentTime !== lastTime) {
@@ -468,7 +402,7 @@ function pixelHero(video) {
             const rgba = sampleCtx.getImageData(0, 0, cells.cols, cells.rows).data;
             for (let i = 0; i < base.length; i++) base[i] = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114;
         }
-        cells.paint(touch(appear(base, dim), lit, cells.cols, cells.rows));
+        cells.paint(appear(base, dim));
     };
     requestAnimationFrame(draw);
     return canvas;

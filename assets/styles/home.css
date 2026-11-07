@@ -1126,7 +1126,7 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
     --count: 8;
     position: relative;
     width: 100%;
-    height: calc(var(--count) * 70vh + 100vh);
+    height: calc(var(--count) * 200vh + 100vh);
     margin-bottom: clamp(80px, 14vh, 160px);
 }
 
@@ -1262,7 +1262,7 @@ html.on-accent .mobile-menu.open .mobile-menu-link:nth-child(1) { transition-del
 
 @media (max-width: 768px) {
     .showcase {
-        height: calc(var(--count) * 60vh + 100vh);
+        height: calc(var(--count) * 200vh + 100vh);
     }
 
     .showcase-link,

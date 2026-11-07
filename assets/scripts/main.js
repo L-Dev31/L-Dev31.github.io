@@ -2,7 +2,7 @@ import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
 import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture, pixelCover } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { journey } from './sections.js';
-import { showcase, thread, homeDocks } from './showcase.js';
+import { showcase, thread, homeDocks, restDocks } from './showcase.js';
 
 const CATEGORIES = ['Graphic Design', 'Webdesign', 'Marketing', 'Dev'];
 
@@ -307,6 +307,8 @@ function cultureNav() {
 }
 
 cultureNav();
+// the home page's signature travels (see initProjects), on the others it stays in the navbar
+if (!document.querySelector('.project-index')) thread(restDocks());
 
 Promise.all([initProjects(), initCulture(), ...[...document.querySelectorAll('.journey')].map(journey)])
     .then(() => { scrubbingText(); refreshParallax(); });

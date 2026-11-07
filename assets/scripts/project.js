@@ -1,9 +1,11 @@
 import { initPage, reveal, loadProjects, reducedMotion, throttled, clamp01, breakpoint, track, heroEntrance } from './common.js';
 import { scrollyScenes } from './effects.js';
+import { thread, restDocks } from './showcase.js';
 
 const isMobile = breakpoint.isMobile;
 
 const lenis = initPage();
+thread(restDocks());
 progressBar(lenis);
 load();
 
