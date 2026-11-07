@@ -1,5 +1,5 @@
 import { initPage, reveal, loadProjects, reducedMotion, throttled, clamp01, breakpoint, track, heroEntrance } from './common.js';
-import { scrollyScenes } from './effects.js';
+import { scrubbingText } from './effects.js';
 import { thread, restDocks } from './showcase.js';
 
 const isMobile = breakpoint.isMobile;
@@ -33,10 +33,10 @@ function render(project, html, projects) {
     track(project.heroImage, heroImg.decode().catch(() => {}));
 
     const details = [
-        project.role && `As a ${project.role}`,
-        project.date && `In ${project.date.slice(0, 4)}`,
-        project.client && `For ${project.client}`,
-    ].filter(Boolean);
+        ['Role', project.role],
+        ['Year', project.date?.slice(0, 4)],
+        ['Client', project.client],
+    ].filter(([, value]) => value);
 
     const header = document.querySelector('.article-header');
     const title = document.createElement('h1');
@@ -47,9 +47,17 @@ function render(project, html, projects) {
     subtitle.className = 'article-subtitle';
     subtitle.textContent = project.subtitle;
 
-    const meta = document.createElement('p');
-    meta.className = 'article-meta';
-    meta.textContent = details.join(' · ');
+    const facts = document.createElement('dl');
+    facts.className = 'article-facts';
+    for (const [label, value] of details) {
+        const fact = document.createElement('div');
+        const term = document.createElement('dt');
+        const description = document.createElement('dd');
+        term.textContent = label;
+        description.textContent = value;
+        fact.append(term, description);
+        facts.append(fact);
+    }
 
     const tags = document.createElement('div');
     tags.className = 'article-tags';
@@ -59,17 +67,17 @@ function render(project, html, projects) {
         tag.textContent = label;
         tags.append(tag);
     }
-    header.replaceChildren(title, subtitle, meta, tags);
+    header.replaceChildren(title, subtitle, facts, tags);
 
     if (reducedMotion) header.classList.add('loaded');
     else heroEntrance.then(() => requestAnimationFrame(() => header.classList.add('loaded')));
 
     const cta = document.querySelector('.project-cta-bottom');
     cta.insertAdjacentHTML('beforebegin', html);
-    scrollyScenes();
     callsToAction(project, cta);
     pager(project, projects);
-    reveal(document.querySelectorAll('.project-cta-bottom, .project-pager, .case-gallery, .case-scene .title'));
+    scrubbingText();
+    reveal(document.querySelectorAll('.case-row, .pullquote, .gallery-item, .project-cta-bottom, .project-pager'));
     parallaxHero();
 }
 
