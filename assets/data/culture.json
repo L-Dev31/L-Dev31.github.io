@@ -392,8 +392,7 @@
       "search": [
         "Inside Out (2015 film)"
       ],
-      "released": "2015-05-18",
-      "featured": true
+      "released": "2015-05-18"
     },
     {
       "id": "inside-out-2",
@@ -1520,6 +1519,15 @@
         "Iron Lung (film)"
       ],
       "featured": true
+    },
+    {
+      "id": "wolfwalkers",
+      "title": "Wolfwalkers",
+      "year": 2020,
+      "search": [
+        "Wolfwalkers"
+      ],
+      "featured": true
     }
   ],
   "series": [
@@ -1978,7 +1986,8 @@
       "platform": "wii",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "featured": true
     },
     {
       "id": "wii-party-wii",
@@ -2158,8 +2167,7 @@
       "platform": "steam",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5,
-      "featured": true
+      "video_seconds": 5
     },
     {
       "id": "mario-kart-8-deluxe-switch",
@@ -2235,8 +2243,7 @@
       "platform": "steam",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5,
-      "featured": true
+      "video_seconds": 5
     },
     {
       "id": "clair-obscur-expedition-33-steam",
@@ -2355,8 +2362,7 @@
       "platform": "switch",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5,
-      "featured": true
+      "video_seconds": 5
     },
     {
       "id": "donkey-kong-country-returns-wii",
@@ -2729,7 +2735,8 @@
         "4nccwtru0Rw",
         "DxQRqPWPMZk",
         "RV6WPT_n_Jo"
-      ]
+      ],
+      "featured": true
     },
     {
       "id": "kirby-s-dream-land-gb",
@@ -2782,8 +2789,7 @@
         "2egTQizHTxY",
         "ZaTXV0myrSM",
         "fouf4ahb9jg"
-      ],
-      "featured": true
+      ]
     },
     {
       "id": "yoshi-s-woolly-world-wiiu",
