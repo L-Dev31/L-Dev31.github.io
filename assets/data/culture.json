@@ -2379,8 +2379,7 @@
       "search": "Donkey Kong",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5,
-      "featured": true
+      "video_seconds": 5
     },
     {
       "id": "super-mario-land-gb",
