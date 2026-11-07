@@ -220,6 +220,17 @@ def itunes(item):
     return None
 
 
+def tvmaze(item):
+    for name in names(item):
+        found = fetch_json('https://api.tvmaze.com/search/shows?' + urllib.parse.urlencode({'q': name}))
+        target = norm(name)
+        for entry in found:
+            show = entry['show']
+            if norm(show['name']) == target and show.get('image') and (not item.get('year') or str(item['year']) == (show.get('premiered') or '')[:4]):
+                return show['image'].get('original') or show['image'].get('medium')
+    return None
+
+
 def openlibrary(item):
     for name in names(item):
         found = fetch_json('https://openlibrary.org/search.json?' + urllib.parse.urlencode({'title': name, 'author': item.get('author', '').split(',')[0], 'limit': 8, 'fields': 'title,cover_i'})).get('docs', [])
@@ -245,7 +256,7 @@ CHAIN = {
     'switch': [gametdb, nintendo_europe, mariowiki, wikipedia],
     'steam': [steam],
     'android': [itunes, wikipedia],
-    'web': [wikipedia],
+    'web': [tvmaze, wikipedia],
     'pc': [],
     'film': [itunes, wikipedia],
     'book': [openlibrary, wikipedia],
@@ -272,7 +283,7 @@ def save(raw, dest, url=''):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--force', action='store_true')
-    parser.add_argument('--only')
+    parser.add_argument('--only', action='append', default=[])
     args = parser.parse_args()
     data = json.loads(DATA.read_text())
     kept, missing = set(), []
@@ -283,7 +294,7 @@ def main():
         for item in items:
             dest = OUT / kind / f"{item_id(item)}.webp"
             item['kind'] = kind
-            wanted = not args.only or args.only.lower() in item['title'].lower()
+            wanted = not args.only or any(query.lower() in item['title'].lower() for query in args.only)
             if (dest.exists() and not args.force) or not wanted:
                 if dest.exists():
                     kept.add(dest)
@@ -291,7 +302,7 @@ def main():
                 continue
             candidates = [('image', item['image'])] if item.get('image') else []
             if not candidates:
-                platform = item.get('via') or item.get('platform') or ('film' if kind == 'films' else 'book' if kind == 'books' else 'pc')
+                platform = item.get('via') or item.get('platform') or ('film' if kind == 'films' else 'book' if kind == 'books' else 'web' if kind == 'series' else 'pc')
                 candidates = [(finder.__name__, finder) for finder in CHAIN.get(platform, [])]
             raw = url = source = None
             for source, finder in candidates:

@@ -1317,17 +1317,22 @@
         "Mary Poppins (film)"
       ],
       "released": "1964-08-27"
-    }
-    ,{
+    },
+    {
       "id": "oppenheimer",
       "title": "Oppenheimer",
-      "year": 2023
+      "year": 2023,
+      "search": [
+        "Oppenheimer (film)"
+      ]
     },
     {
       "id": "dune-1984",
       "title": "Dune (1984)",
       "year": 1984,
-      "search": ["Dune (1984 film)"]
+      "search": [
+        "Dune (1984 film)"
+      ]
     },
     {
       "id": "dune-part-one",
@@ -1342,7 +1347,10 @@
     {
       "id": "lucy",
       "title": "Lucy",
-      "year": 2014
+      "year": 2014,
+      "search": [
+        "Lucy (2014 film)"
+      ]
     },
     {
       "id": "valerian-and-the-city-of-a-thousand-planets",
@@ -1352,7 +1360,10 @@
     {
       "id": "sing",
       "title": "Sing",
-      "year": 2016
+      "year": 2016,
+      "search": [
+        "Sing (2016 American film)"
+      ]
     },
     {
       "id": "sing-2",
@@ -1362,7 +1373,10 @@
     {
       "id": "project-hail-mary",
       "title": "Project Hail Mary",
-      "year": 2026
+      "year": 2026,
+      "search": [
+        "Project Hail Mary (film)"
+      ]
     },
     {
       "id": "coyote-vs-acme",
@@ -1375,16 +1389,6 @@
       "year": 2016
     },
     {
-      "id": "wonder-woman",
-      "title": "Wonder Woman",
-      "year": 2017
-    },
-    {
-      "id": "wonder-woman-1984",
-      "title": "Wonder Woman 1984",
-      "year": 2020
-    },
-    {
       "id": "the-dark-knight",
       "title": "The Dark Knight",
       "year": 2008
@@ -1393,18 +1397,14 @@
       "id": "obsession-2025",
       "title": "Obsession (2025)",
       "year": 2025,
-      "search": ["Obsession (2025 film)"]
+      "search": [
+        "Obsession (2025 film)"
+      ]
     },
     {
       "id": "dear-zachary",
       "title": "Dear Zachary: A Letter to a Son About His Father",
       "year": 2008
-    },
-    {
-      "id": "war-of-the-worlds-2005",
-      "title": "War of the Worlds",
-      "year": 2005,
-      "search": ["War of the Worlds (2005 film)"]
     },
     {
       "id": "disclosure-day",
@@ -1414,12 +1414,18 @@
     {
       "id": "coraline",
       "title": "Coraline",
-      "year": 2009
+      "year": 2009,
+      "search": [
+        "Coraline (film)"
+      ]
     },
     {
       "id": "minions",
       "title": "Minions",
-      "year": 2015
+      "year": 2015,
+      "search": [
+        "Minions (film)"
+      ]
     },
     {
       "id": "minions-the-rise-of-gru",
@@ -1429,7 +1435,10 @@
     {
       "id": "despicable-me",
       "title": "Despicable Me",
-      "year": 2010
+      "year": 2010,
+      "search": [
+        "Despicable Me (film)"
+      ]
     },
     {
       "id": "despicable-me-2",
@@ -1449,7 +1458,10 @@
     {
       "id": "la-vie-scolaire",
       "title": "La Vie scolaire",
-      "year": 2019
+      "year": 2019,
+      "search": [
+        "School Life (2019 film)"
+      ]
     },
     {
       "id": "le-brio",
