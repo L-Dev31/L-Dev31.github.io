@@ -45,16 +45,43 @@ function renderSections(nav, page) {
     }
 }
 
-const placeholders = [...document.querySelectorAll('site-navbar, site-footer, site-page-loader')];
-await Promise.all(placeholders.map(async placeholder => {
-    const name = placeholder.localName.slice('site-'.length);
-    const template = document.createElement('template');
-    template.innerHTML = await loadComponent(name);
-    if (name === 'navbar') {
-        const page = placeholder.dataset.page;
-        const brand = template.content.querySelector('.brand a');
-        if (page === 'home') brand.href = '#header';
-        renderSections(template.content.querySelector('.section-nav'), page);
+const templates = new Map();
+
+function template(name) {
+    if (!templates.has(name)) {
+        templates.set(name, loadComponent(name).then(html => {
+            const node = document.createElement('template');
+            node.innerHTML = html;
+            return node;
+        }));
     }
-    placeholder.replaceWith(template.content);
-}));
+    return templates.get(name);
+}
+
+async function hydrate(root) {
+    const placeholders = [...root.querySelectorAll('site-navbar, site-footer, site-page-loader, site-socials')];
+    await Promise.all(placeholders.map(async placeholder => {
+        const name = placeholder.localName.slice('site-'.length);
+        const content = (await template(name)).content.cloneNode(true);
+        if (name === 'navbar') {
+            const brand = content.querySelector('.brand a');
+            if (placeholder.dataset.page === 'home') brand.href = '#header';
+            renderSections(content.querySelector('.section-nav'), placeholder.dataset.page);
+        }
+        if (name === 'socials') {
+            const nav = document.createElement('nav');
+            nav.className = placeholder.dataset.class ?? '';
+            nav.setAttribute('aria-label', 'Social links');
+            nav.append(content);
+            placeholder.replaceWith(nav);
+            return;
+        }
+        await hydrate(content);
+        placeholder.replaceWith(content);
+    }));
+}
+
+const socials = await template('socials');
+export const socialLinks = () => socials.content.cloneNode(true);
+
+await hydrate(document);

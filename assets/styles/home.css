@@ -837,8 +837,13 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     visibility: hidden;
 }
 
-.hero-socials a::after {
+.hero-socials a[target="_blank"]::after,
+.footer-socials a[target="_blank"]::after {
     content: '\2197';
+}
+
+.footer-socials a[target="_blank"]::after {
+    margin-left: 0.4em;
 }
 
 .hero-socials button:hover,
@@ -1909,12 +1914,15 @@ main {
     border-top: 1px solid var(--black);
 }
 
-.footer-line .clock {
-    margin: 0 auto 0 0;
+.footer-socials {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 28px;
 }
 
-.footer-line a > span[aria-hidden] {
-    margin-left: 0.4em;
+.footer-line .clock {
+    margin: 0 auto 0 0;
 }
 
 .footer-line a,

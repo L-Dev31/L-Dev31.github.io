@@ -2,6 +2,7 @@ import { reducedMotion, lowPower, clamp01, breakpoint, isMobile, throttled } fro
 import { pageLoader } from './intro.js';
 import { cursor, magnets, pageTransitions } from './cursor.js';
 import { loadProjects } from './projects.js';
+import { socialLinks } from './components.js';
 
 export { reducedMotion, lowPower, clamp01, breakpoint, throttled } from './config.js';
 export { track, entrance, heroEntrance, introLoaded } from './intro.js';
@@ -111,14 +112,6 @@ const PAGES = [
     { id: 'about', label: 'About', href: 'about.html', children: [{ id: 'culture', label: 'Culture', href: 'culture.html' }] },
 ];
 
-const SOCIALS = [
-    { label: 'Instagram', href: 'https://www.instagram.com/ltosku31/', external: true },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/l%C3%A9o-tosku-de-vries-8432242a0/', external: true },
-    { label: 'GitHub', href: 'https://github.com/L-Dev31', external: true },
-    { label: 'Email', href: 'mailto:leotoskuepro@gmail.com' },
-    { label: 'Discord', copy: 'ldev.' },
-];
-
 const CURRENT_PAGE = {
     'about.html': 'about',
     'culture.html': 'culture',
@@ -170,22 +163,6 @@ function menuGroup(page, projects) {
     return group;
 }
 
-function socialLinks(className, extra) {
-    return SOCIALS.map(({ label, href, copy, external }) => {
-        if (copy) {
-            const button = element('button', extra, label);
-            button.type = 'button';
-            button.dataset.copy = copy;
-            button.setAttribute('aria-label', `Copy my ${label} username, ${copy}`);
-            return button;
-        }
-        const link = element('a', className, label);
-        link.href = href;
-        if (external) Object.assign(link, { target: '_blank', rel: 'noopener noreferrer' });
-        return link;
-    });
-}
-
 function renderMenu(nav, projects) {
     nav.replaceChildren(...PAGES.map(page => menuGroup(page, projects)));
     if (nav.nextElementSibling?.classList.contains('hero-socials')) return;
@@ -193,7 +170,7 @@ function renderMenu(nav, projects) {
     socials.setAttribute('aria-label', 'Social links');
     const clock = element('p', 'clock');
     clock.dataset.clock = '';
-    socials.append(clock, ...socialLinks('', 'copy-handle'));
+    socials.append(clock, socialLinks());
     nav.after(socials);
     tickClock();
 }
