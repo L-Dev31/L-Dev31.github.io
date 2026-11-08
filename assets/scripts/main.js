@@ -1,3 +1,4 @@
+import './components.js';
 import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
 import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture, pixelCover } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';

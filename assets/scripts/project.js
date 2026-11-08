@@ -1,3 +1,4 @@
+import './components.js';
 import { initPage, sectionNav, reveal, loadProjects, reducedMotion, throttled, clamp01, breakpoint, track, heroEntrance } from './common.js';
 import { scrubbingText } from './effects.js';
 import { thread, restDocks } from './showcase.js';
@@ -23,7 +24,7 @@ async function load() {
 }
 
 function render(project, html, projects) {
-    document.title = `${project.title} — Léo Tosku`;
+    document.title = `${project.title} — Léo Tosku | Design, Dev, Marketing`;
     updateSearchMetadata(project);
 
     const heroImg = document.querySelector('.project-hero-img');
@@ -46,7 +47,7 @@ function render(project, html, projects) {
 
     const subtitle = document.createElement('p');
     subtitle.className = 'article-subtitle';
-    subtitle.textContent = project.subtitle;
+    subtitle.textContent = `${project.subtitle} — Léo Tosku | Design, Dev, Marketing`;
 
     const facts = document.createElement('dl');
     facts.className = 'article-facts';
@@ -101,15 +102,15 @@ function chapterNav() {
 function updateSearchMetadata(project) {
     const url = new URL(`project.html?id=${encodeURIComponent(project.id)}`, location.origin).href;
     const image = new URL(project.heroImage, location.href).href;
-    const description = (project.subtitle || `Case study: ${project.title} by Léo Tosku.`).slice(0, 160);
+    const description = `Léo Tosku | Design, Dev, Marketing: ${project.subtitle || `case study, ${project.title}`}`.slice(0, 160);
 
     document.querySelector('link[rel="canonical"]').href = url;
     document.querySelector('meta[name="description"]').content = description;
-    setMeta('property', 'og:title', `${project.title} — Léo Tosku`);
+    setMeta('property', 'og:title', `${project.title} — Léo Tosku | Design, Dev, Marketing`);
     setMeta('property', 'og:description', description);
     setMeta('property', 'og:url', url);
     setMeta('property', 'og:image', image);
-    setMeta('name', 'twitter:title', `${project.title} — Léo Tosku`);
+    setMeta('name', 'twitter:title', `${project.title} — Léo Tosku | Design, Dev, Marketing`);
     setMeta('name', 'twitter:description', description);
     setMeta('name', 'twitter:image', image);
 
@@ -121,7 +122,7 @@ function updateSearchMetadata(project) {
         url,
         image,
         dateCreated: project.date,
-        creator: { '@type': 'Person', name: 'Léo Tosku', url: 'https://l-dev31.github.io/' },
+        creator: { '@type': 'Person', name: 'Léo Tosku', jobTitle: 'Design, Development and Marketing', url: 'https://l-dev31.github.io/' },
         keywords: project.tags?.join(', '),
     };
     let schema = document.querySelector('#project-schema');
@@ -217,7 +218,7 @@ function progressBar(lenis) {
 }
 
 function notFound() {
-    document.title = 'Project not found — Léo Tosku';
+    document.title = 'Project not found — Léo Tosku | Design, Dev, Marketing';
     document.querySelector('.project-main').innerHTML =
         '<div class="project-not-found"><p>Project not found.</p><a href="index.html">← Back</a></div>';
 }

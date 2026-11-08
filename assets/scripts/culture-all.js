@@ -1,3 +1,4 @@
+import './components.js';
 import { initPage } from './common.js';
 import { thread, restDocks } from './showcase.js';
 
@@ -27,7 +28,14 @@ function parseCsv(text) {
 async function show() {
     const asked = new URLSearchParams(location.search).get('kind');
     const kind = TITLES[asked] ? asked : 'films';
-    document.title = `${TITLES[kind]} — Culture — Léo Tosku`;
+    const pageTitle = `${TITLES[kind]} — Culture — Léo Tosku | Design, Dev, Marketing`;
+    const description = `Complete list of ${kind}, curated by Léo Tosku.`;
+    document.title = pageTitle;
+    document.querySelector('meta[name="description"]').content = description;
+    document.querySelector('meta[property="og:title"]').content = pageTitle;
+    document.querySelector('meta[property="og:description"]').content = description;
+    document.querySelector('meta[name="twitter:title"]').content = pageTitle;
+    document.querySelector('meta[name="twitter:description"]').content = description;
     document.querySelector('#all-title').textContent = TITLES[kind];
     document.querySelectorAll('.all-tabs a').forEach(link => {
         if (link.dataset.kind === kind) link.setAttribute('aria-current', 'true');

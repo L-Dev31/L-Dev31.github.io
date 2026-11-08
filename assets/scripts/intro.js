@@ -1,4 +1,4 @@
-import { reducedMotion, isMobile, throttled } from './env.js';
+import { reducedMotion, isMobile, throttled } from './config.js';
 import { INTRO } from './config.js';
 import { loadProjects, projectMark, SIGNATURE_URL } from './projects.js';
 

@@ -1,4 +1,4 @@
-import { reducedMotion, lowPower, isMobile, clamp01 } from './env.js';
+import { reducedMotion, lowPower, isMobile, clamp01 } from './config.js';
 import { entrance, introLoaded } from './intro.js';
 import { loadProjects, projectMark, SIGNATURE_URL } from './projects.js';
 import { INTRO, SIGNATURE } from './config.js';

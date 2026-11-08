@@ -1,9 +1,9 @@
-import { reducedMotion, lowPower, clamp01, breakpoint, isMobile, throttled } from './env.js';
+import { reducedMotion, lowPower, clamp01, breakpoint, isMobile, throttled } from './config.js';
 import { pageLoader } from './intro.js';
 import { cursor, magnets, pageTransitions } from './cursor.js';
 import { loadProjects } from './projects.js';
 
-export { reducedMotion, lowPower, clamp01, breakpoint, throttled } from './env.js';
+export { reducedMotion, lowPower, clamp01, breakpoint, throttled } from './config.js';
 export { track, entrance, heroEntrance, introLoaded } from './intro.js';
 export { loadProjects, projectMark } from './projects.js';
 
@@ -34,6 +34,7 @@ export function initPage() {
     backToTop(lenis);
     footerReveal();
     copyHandles();
+    kofi();
     pauseOffscreenVideos();
     return lenis;
 }
@@ -109,80 +110,90 @@ function smoothScroll() {
 const PAGES = [
     { id: 'home', label: 'Home', href: 'index.html', children: 'projects' },
     { id: 'about', label: 'About', href: 'about.html', children: [{ id: 'culture', label: 'Culture', href: 'culture.html' }] },
-    { id: 'contact', label: 'Contact', href: 'mailto:leotoskuepro@gmail.com' },
 ];
-
-let menuProjects = [];
 
 const SOCIALS = [
-    { label: 'Instagram', href: 'https://www.instagram.com/ltosku31/' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/l%C3%A9o-tosku-de-vries-8432242a0/' },
-    { label: 'GitHub', href: 'https://github.com/L-Dev31' },
+    { label: 'Instagram', href: 'https://www.instagram.com/ltosku31/', external: true },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/l%C3%A9o-tosku-de-vries-8432242a0/', external: true },
+    { label: 'GitHub', href: 'https://github.com/L-Dev31', external: true },
+    { label: 'Email', href: 'mailto:leotoskuepro@gmail.com' },
+    { label: 'Discord', copy: 'ldev.' },
 ];
 
-function renderMenuLinks(nav) {
-    const params = new URLSearchParams(location.search);
-    const file = location.pathname.split('/').pop() || 'index.html';
-    const here = { 'about.html': 'about', 'culture.html': 'culture', 'culture-all.html': 'culture', 'project.html': `project:${params.get('id')}` }[file] ?? 'home';
-    const parentOf = here === 'culture' ? 'about' : here.startsWith('project:') ? 'home' : here;
+const CURRENT_PAGE = {
+    'about.html': 'about',
+    'culture.html': 'culture',
+    'culture-all.html': 'culture',
+    'project.html': `project:${new URLSearchParams(location.search).get('id')}`,
+}[location.pathname.split('/').pop()] ?? 'home';
 
-    const createLink = (className, page, isCurrent) => {
-        const link = document.createElement('a');
-        link.className = className;
-        link.href = page.href;
-        if (isCurrent) {
-            link.setAttribute('aria-current', 'page');
-            if (className === 'mobile-menu-link') {
-                const arrow = document.createElement('span');
-                arrow.className = 'menu-current';
-                arrow.setAttribute('aria-hidden', 'true');
-                arrow.textContent = '\u2192';
-                link.append(arrow);
-            }
-        }
-        link.append(page.label);
-        return link;
-    };
+const PARENT_OF_CURRENT = CURRENT_PAGE === 'culture' ? 'about' : CURRENT_PAGE.startsWith('project:') ? 'home' : CURRENT_PAGE;
 
-    nav.replaceChildren(...PAGES.map(page => {
-        const group = document.createElement('div');
-        group.className = 'mobile-menu-group';
-        if (page.id === parentOf && here !== page.id) group.classList.add('is-active-branch');
-        group.append(createLink('mobile-menu-link', page, page.id === here));
+function element(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text) node.textContent = text;
+    return node;
+}
 
-        let children = page.children === 'projects'
-            ? menuProjects.map(project => ({ id: `project:${project.id}`, label: project.title, href: `project.html?id=${project.id}` }))
-            : page.children;
-        if (page.id === 'home' && here.startsWith('project:') && !children.some(child => child.id === here)) {
-            const title = document.querySelector('.article-header h1')?.textContent.trim() || 'This project';
-            children = [...children, { id: here, label: title, href: location.pathname + location.search }];
+function menuLink(className, { label, href }, isCurrent) {
+    const link = element('a', className);
+    link.href = href;
+    if (isCurrent) {
+        link.setAttribute('aria-current', 'page');
+        if (className === 'mobile-menu-link') {
+            const arrow = element('span', 'menu-current', '\u2192');
+            arrow.setAttribute('aria-hidden', 'true');
+            link.append(arrow);
         }
-        if (children?.length) {
-            const sub = document.createElement('div');
-            sub.className = 'mobile-menu-sub';
-            sub.append(...children.map(child => createLink('mobile-menu-sublink', child, child.id === here)));
-            group.append(sub);
-        }
-        return group;
-    }));
-    if (!nav.nextElementSibling?.classList.contains('hero-socials')) {
-        const socials = document.createElement('nav');
-        socials.className = 'hero-socials';
-        socials.setAttribute('aria-label', 'Social links');
-        const clock = document.createElement('p');
-        clock.className = 'clock';
-        clock.dataset.clock = '';
-        socials.append(clock, ...SOCIALS.map(({ label, href }) => {
-            const link = document.createElement('a');
-            link.href = href;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.textContent = label;
-            return link;
-        }));
-        nav.after(socials);
-        tickClock();
     }
+    link.append(label);
+    return link;
+}
+
+function menuGroup(page, projects) {
+    const group = element('div', 'mobile-menu-group');
+    group.append(menuLink('mobile-menu-link', page, page.id === CURRENT_PAGE));
+    if (page.id === PARENT_OF_CURRENT && page.id !== CURRENT_PAGE) group.classList.add('is-active-branch');
+
+    let children = page.children === 'projects'
+        ? projects.map(project => ({ id: `project:${project.id}`, label: project.title, href: `project.html?id=${project.id}` }))
+        : page.children;
+    if (page.id === 'home' && CURRENT_PAGE.startsWith('project:') && !children.some(child => child.id === CURRENT_PAGE)) {
+        const label = document.querySelector('.article-header h1')?.textContent.trim() || 'This project';
+        children = [...children, { id: CURRENT_PAGE, label, href: location.pathname + location.search }];
+    }
+    if (children.length) {
+        const list = element('div', 'mobile-menu-sub');
+        list.append(...children.map(child => menuLink('mobile-menu-sublink', child, child.id === CURRENT_PAGE)));
+        group.append(list);
+    }
+    return group;
+}
+
+function socialLinks(className, extra) {
+    return SOCIALS.map(({ label, href, copy, external }) => {
+        if (copy) {
+            const button = element('button', extra, label);
+            button.type = 'button';
+            button.dataset.copy = copy;
+            button.setAttribute('aria-label', `Copy my ${label} username, ${copy}`);
+            return button;
+        }
+        const link = element('a', className, label);
+        link.href = href;
+        if (external) Object.assign(link, { target: '_blank', rel: 'noopener noreferrer' });
+        return link;
+    });
+}
+
+function renderMenu(nav, projects) {
+    nav.replaceChildren(...PAGES.map(page => menuGroup(page, projects)));
+    if (nav.nextElementSibling?.classList.contains('hero-socials')) return;
+    const socials = element('nav', 'hero-socials');
+    socials.setAttribute('aria-label', 'Social links');
+    socials.append(...socialLinks('', 'copy-handle'));
+    nav.after(socials);
 }
 
 function mobileMenu(lenis) {
@@ -191,34 +202,33 @@ function mobileMenu(lenis) {
     if (!button || !menu) return;
 
     menu.id ||= 'mobile-menu';
-    button.setAttribute('aria-controls', menu.id);
     menu.inert = true;
+    button.setAttribute('aria-controls', menu.id);
     button.setAttribute('aria-label', 'Open menu');
-    const nav = menu.querySelector('.mobile-menu-links');
-    renderMenuLinks(nav);
-    loadProjects().then(list => { menuProjects = list; renderMenuLinks(nav); }, () => {});
 
-    const host = document.createElement('div');
-    host.className = 'mobile-menu-picture';
-    host.setAttribute('aria-hidden', 'true');
-    menu.prepend(host);
-    let picture = null;
+    const nav = menu.querySelector('.mobile-menu-links');
+    renderMenu(nav, []);
+    loadProjects().then(projects => renderMenu(nav, projects), () => {});
+
+    const picture = element('div', 'mobile-menu-picture');
+    picture.setAttribute('aria-hidden', 'true');
+    menu.prepend(picture);
+    let pixels = null;
     const showPicture = async () => {
-        picture?.destroy();
-        picture = null;
-        if (getComputedStyle(host).display === 'none') return;
+        pixels?.destroy();
+        pixels = null;
+        if (getComputedStyle(picture).display === 'none') return;
         const { pixelPicture } = await import('./effects.js');
         const root = getComputedStyle(document.documentElement);
         const dark = document.documentElement.classList.contains('on-accent');
-        picture = pixelPicture(host, dark ? 'assets/images/core/menu.webp' : 'assets/images/core/menu-accent.webp', {
+        pixels = pixelPicture(picture, dark ? 'assets/images/core/menu.webp' : 'assets/images/core/menu-accent.webp', {
             mirror: true,
             color: root.getPropertyValue(dark ? '--accent' : '--black').trim(),
             active: () => menu.classList.contains('open'),
         });
     };
 
-    const background = [...document.body.children]
-        .filter(element => element !== menu && !element.classList.contains('navbar'));
+    const background = [...document.body.children].filter(child => child !== menu && !child.classList.contains('navbar'));
 
     const toggle = (open, returnFocus = false) => {
         menu.classList.toggle('open', open);
@@ -227,45 +237,31 @@ function mobileMenu(lenis) {
         button.setAttribute('aria-expanded', open);
         button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
         document.documentElement.classList.toggle('menu-open', open);
-        background.forEach(element => { element.inert = open; });
-        if (open) { renderMenuLinks(nav); showPicture(); lenis?.stop(); }
-        else lenis?.start();
-        if (open) requestAnimationFrame(() => menu.querySelector('a')?.focus());
-        else if (returnFocus) button.focus();
+        background.forEach(child => { child.inert = open; });
+        if (open) {
+            showPicture();
+            lenis?.stop();
+            requestAnimationFrame(() => menu.querySelector('a')?.focus());
+        } else {
+            lenis?.start();
+            if (returnFocus) button.focus();
+        }
     };
 
     button.addEventListener('click', () => toggle(!menu.classList.contains('open')));
     menu.addEventListener('click', event => {
-        if (event.target.closest('a')) toggle(false);
-    });
-    menu.addEventListener('click', event => {
-        if (event.target === menu) toggle(false);
+        if (event.target === menu || event.target.closest('a')) toggle(false);
     });
     document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && menu.classList.contains('open')) {
-            toggle(false, true);
-            return;
-        }
-        if (event.key !== 'Tab' || !menu.classList.contains('open')) return;
-
-        const links = [...menu.querySelectorAll('a[href]')];
-        if (!links.length) return;
-        const first = links[0];
-        const last = links.at(-1);
-        if (event.shiftKey && document.activeElement === first) {
-            event.preventDefault();
-            last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-            event.preventDefault();
-            first.focus();
-        }
+        if (!menu.classList.contains('open')) return;
+        if (event.key === 'Escape') return toggle(false, true);
+        if (event.key !== 'Tab') return;
+        const links = menu.querySelectorAll('a[href], button');
+        const first = links[0], last = links[links.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     });
-
-    breakpoint.onChange(bp => {
-        if (bp === 'desktop' && menu.classList.contains('open')) {
-            toggle(false, true);
-        }
-    });
+    breakpoint.onChange(size => { if (size === 'desktop' && menu.classList.contains('open')) toggle(false, true); });
 }
 
 export function sectionNav(nav, lenis) {
@@ -345,11 +341,29 @@ function backToTop(lenis) {
 }
 
 function copyHandles() {
-    document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', async () => {
+    document.addEventListener('click', async event => {
+        const button = event.target.closest('[data-copy]');
+        if (!button) return;
         const label = button.textContent;
         try { await navigator.clipboard.writeText(button.dataset.copy); button.textContent = 'Copied'; } catch { button.textContent = button.dataset.copy; }
         setTimeout(() => { button.textContent = label; }, 1600);
-    }));
+    });
+}
+
+function kofi() {
+    const load = () => {
+        const script = document.createElement('script');
+        script.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
+        script.onload = () => window.kofiWidgetOverlay?.draw('leotosku', {
+            'type': 'floating-chat',
+            'floating-chat.donateButton.text': 'Support me',
+            'floating-chat.donateButton.background-color': '#00b9fe',
+            'floating-chat.donateButton.text-color': '#fff',
+        });
+        document.head.append(script);
+    };
+    if (document.readyState === 'complete') load();
+    else addEventListener('load', load, { once: true });
 }
 
 function footerReveal() {

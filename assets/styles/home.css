@@ -59,25 +59,6 @@ p {
     outline-offset: 4px;
 }
 
-.skip-link {
-    position: fixed;
-    top: 12px;
-    left: 12px;
-    z-index: 100000;
-    padding: 12px 16px;
-    border-radius: 8px;
-    background: var(--white);
-    color: var(--ink);
-    font-weight: 700;
-    text-decoration: none;
-    transform: translateY(-150%);
-    transition: transform 0.2s ease;
-}
-
-.skip-link:focus {
-    transform: translateY(0);
-}
-
 [hidden] {
     display: none !important;
 }
@@ -640,10 +621,6 @@ html.menu-open body {
     font-weight: 700;
 }
 
-.mobile-menu-group.is-active-branch > .mobile-menu-link {
-    font-style: italic;
-}
-
 .mobile-menu .hero-socials {
     margin: clamp(24px, 4vh, 40px) 0 0;
 }
@@ -794,7 +771,9 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
 }
 
 .hero-socials,
-.hero-socials a {
+.hero-socials a,
+.hero-socials button,
+.header-meta .clock {
     pointer-events: auto;
 }
 
@@ -807,7 +786,9 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
 }
 
 .hero-socials a,
-.hero-socials .clock {
+.hero-socials button,
+.hero-socials .clock,
+.header-meta .clock {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -823,13 +804,36 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     transition: font-weight 0.15s var(--ease-out);
 }
 
-.hero-socials .clock {
+.hero-socials .clock,
+.header-meta .clock {
     background: transparent;
     color: var(--white);
 }
 
+.hero-socials button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.header-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+}
+
+.header-meta .clock {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
 .hero-socials a::after {
     content: '\2197';
+}
+
+.hero-socials button:hover,
+.hero-socials button:focus-visible {
+    font-weight: 800;
 }
 
 .hero-socials a:hover,
@@ -2209,28 +2213,20 @@ main {
     height: auto;
 }
 
-.mobile-menu .hero-socials a {
+.mobile-menu .hero-socials a,
+.mobile-menu .hero-socials button {
     border-color: var(--black);
     background: var(--black);
     color: var(--white);
 }
 
-.mobile-menu .hero-socials .clock {
-    border-color: var(--black);
-    background: transparent;
-    color: var(--black);
-}
-
-html.on-accent .mobile-menu .hero-socials a {
+html.on-accent .mobile-menu .hero-socials a,
+html.on-accent .mobile-menu .hero-socials button {
     border-color: var(--white);
     background: var(--white);
     color: var(--black);
 }
 
-html.on-accent .mobile-menu .hero-socials .clock {
-    border-color: var(--white);
-    color: var(--white);
-}
 
 .section-nav {
     position: absolute;
@@ -2466,4 +2462,10 @@ html.menu-open .section-nav {
     .mobile-menu .hero-socials {
         margin-top: 16px;
     }
+}
+
+.mobile-menu-footer .clock {
+    padding: 0;
+    border: 0;
+    font-size: 13px;
 }

@@ -1,4 +1,4 @@
-import { reducedMotion, lowPower, isMobile } from './env.js';
+import { reducedMotion, lowPower, isMobile } from './config.js';
 import { CURSOR, MAGNET, PAGE_TRANSITION } from './config.js';
 
 const CURSOR_WORDS = [

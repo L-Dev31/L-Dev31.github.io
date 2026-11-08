@@ -4,71 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>All of it — Culture — Léo Tosku</title>
-    <meta name="description" content="The complete lists of the films, series, games and books behind Léo Tosku's culture, as plain tables.">
+    <title>Culture lists — Léo Tosku | Design, Dev, Marketing</title>
+    <meta name="description" content="Complete lists of films, series, anime, games and books curated by Léo Tosku.">
     <meta name="author" content="Léo Tosku">
     <link rel="canonical" href="https://l-dev31.github.io/culture-all.html">
     <link rel="icon" type="image/png" href="assets/images/core/favicon.png">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://l-dev31.github.io/culture-all.html">
-    <meta property="og:title" content="Culture — Léo Tosku">
-    <meta property="og:description" content="Films, books, games and travels.">
+    <meta property="og:title" content="Culture lists — Léo Tosku | Design, Dev, Marketing">
+    <meta property="og:description" content="Complete lists of films, series, anime, games and books curated by Léo Tosku.">
     <meta property="og:image" content="https://l-dev31.github.io/assets/images/core/share.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Léo Tosku, UI/UX &amp; Product Designer">
+    <meta property="og:image:alt" content="Léo Tosku | Design, Dev, Marketing">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Culture — Léo Tosku">
+    <meta name="twitter:title" content="Culture lists — Léo Tosku | Design, Dev, Marketing">
+    <meta name="twitter:description" content="Complete lists of films, series, anime, games and books curated by Léo Tosku.">
     <meta name="twitter:image" content="https://l-dev31.github.io/assets/images/core/share.png">
-    <meta name="twitter:image:alt" content="Léo Tosku, UI/UX &amp; Product Designer">
+    <meta name="twitter:image:alt" content="Léo Tosku | Design, Dev, Marketing">
 
     <link rel="stylesheet" href="assets/styles/home.css">
     <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" defer></script>
+    <script src="assets/scripts/components.js" type="module"></script>
     <script src="assets/scripts/culture-all.js" type="module"></script>
 
 </head>
 
 <body>
-    <a class="skip-link" href="#main-content">Skip to content</a>
-    <div class="page-loader" aria-hidden="true">
-        <canvas class="page-loader-sign"></canvas>
-        <div class="page-loader-track"><div class="page-loader-bar"></div></div>
-        <p class="page-loader-status"><span class="page-loader-count">000%</span><span class="page-loader-file"></span></p>
-    </div>
+    <site-page-loader></site-page-loader>
     <div class="cursor" aria-hidden="true"></div>
 
-    <nav class="navbar" aria-label="Main navigation">
-        <div class="brand">
-            <a href="index.html" aria-label="Home"><img src="assets/images/core/logo.svg" alt="L-Dev31 logo"></a>
-        </div>
-        <div class="links-container">
-            <button class="hamburger" aria-label="Menu" aria-expanded="false">
-                <span class="hamburger-line" aria-hidden="true"></span>
-                <span class="hamburger-half" aria-hidden="true"></span>
-                <span class="hamburger-half" aria-hidden="true"></span>
-            </button>
-        </div>
-    </nav>
-
-    <div class="mobile-menu" aria-hidden="true">
-        <nav class="mobile-menu-links" aria-label="Menu">
-            <a href="index.html#featured-projects" class="mobile-menu-link">Work</a>
-            <a href="about.html" class="mobile-menu-link">About</a>
-            <a href="culture-all.html" class="mobile-menu-link active" aria-current="page"><span class="menu-current" aria-hidden="true"></span>Culture</a>
-            <a href="mailto:leotoskuepro@gmail.com" class="mobile-menu-link">Contact</a>
-        </nav>
-        <div class="mobile-menu-footer">
-            <span>Léo TOSKU</span>
-            <span>&copy; <span data-year>2026</span></span>
-        </div>
-    </div>
+    <site-navbar data-page="culture-all"></site-navbar>
 
     <main id="main-content" class="all-main">
         <header class="all-head">
             <a class="all-back" href="culture.html">&larr; Culture</a>
             <h1 id="all-title">All films</h1>
-            <p class="all-note">The complete list, plain and without pictures. The pages of Culture only show the works that best stand for me today.</p>
+            <p class="all-note">Léo Tosku | Design, Dev, Marketing. The complete list, plain and without pictures; Culture shows the works that best stand for me today.</p>
             <nav class="all-tabs" aria-label="Lists">
                 <a href="culture-all.html?kind=films" data-kind="films">Films</a>
                 <a href="culture-all.html?kind=series" data-kind="series">Series</a>
@@ -83,29 +56,7 @@
         </section>
     </main>
 
-    <div class="footer-space" aria-hidden="true"></div>
-    <footer id="footer">
-        <div class="footer-inner">
-            <div class="footer-cta">
-                <h2>Let's talk.</h2>
-                <p class="footer-note">Let's have a coffee, online or in person, to talk about your project or a work-study position.</p>
-                <a class="footer-mail" href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com <span aria-hidden="true">&nearr;</span></a>
-                <button class="back-to-top" aria-label="Back to top">
-                    <span class="btt-text" aria-hidden="true">Back to Top • Back to Top •</span>
-                    <img class="btt-icon" src="assets/images/core/top-arrow.svg" alt="">
-                </button>
-            </div>
-            <div class="footer-line">
-                <p class="clock" data-clock></p>
-                <a href="https://www.instagram.com/ltosku31/" target="_blank" rel="noopener noreferrer">Instagram <span aria-hidden="true">&nearr;</span></a>
-                <a href="https://www.linkedin.com/in/l%C3%A9o-tosku-de-vries-8432242a0/" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">&nearr;</span></a>
-                <a href="https://github.com/L-Dev31" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">&nearr;</span></a>
-                <button type="button" class="copy-handle" data-copy="ldev." aria-label="Copy my Discord username, ldev.">Discord ldev.</button>
-                <a href="tel:+33780762099">+33 7 80 76 20 99</a>
-            </div>
-        </div>
-        <div class="footer-sign" data-picture="assets/images/core/footer.webp" role="img" aria-label="Two people toasting with coffee cups"></div>
-    </footer>
+    <site-footer></site-footer>
 
 </body>
 

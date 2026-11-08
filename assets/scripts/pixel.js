@@ -1,4 +1,4 @@
-import { reducedMotion, lowPower } from './env.js';
+import { reducedMotion, lowPower } from './config.js';
 import { track } from './intro.js';
 import { PIXEL, SIGNATURE } from './config.js';
 
