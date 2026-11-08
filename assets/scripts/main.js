@@ -274,7 +274,12 @@ async function initCulture() {
     const shown = (kind, list) => list.filter(item => item.featured);
     lists.forEach(container => cultureList(container, shown(container.dataset.culture, data[container.dataset.culture] || []), container.dataset.culture));
     const travels = await fetch('assets/data/travels.json').then(r => r.json());
-    const totals = { ...Object.fromEntries(Object.entries(data).map(([kind, list]) => [kind, shown(kind, list).length])), travels: travels.stops.length };
+    // Each section shows its featured works; a "+" means the full list (culture-all.html) has more.
+    const totals = Object.fromEntries(Object.entries(data).map(([kind, list]) => {
+        const featured = shown(kind, list).length;
+        return [kind, list.length > featured ? `${featured}+` : String(featured)];
+    }));
+    totals.travels = String(travels.stops.length);
     document.querySelectorAll('.section-nav [data-count]').forEach(count => { count.textContent = totals[count.dataset.count] ?? ''; });
     document.querySelector('.section-nav')?.dispatchEvent(new Event('relayout'));
 }
