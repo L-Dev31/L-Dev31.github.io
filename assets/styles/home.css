@@ -13,7 +13,7 @@
     --text-faint: #A8908F;
     --hairline: rgba(246, 242, 242, 0.08);
 
-    --accent: #E0382E;
+    --accent: #E13F36;
 
     --font-body: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Editorial Old', serif;
@@ -201,24 +201,6 @@ html.lenis body {
 
 .intro-in #header .hero-socials {
     animation: rise 0.7s var(--ease-out) 0.38s both;
-}
-
-@media (max-width: 768px) {
-    .intro-waiting #site-title,
-    .intro-waiting .header-subtitles,
-    .intro-waiting .about-header-text > * {
-        opacity: 0;
-    }
-
-    .intro-in #site-title,
-    .intro-in .about-header-text > :first-child {
-        animation: rise 0.7s var(--ease-out) 0.1s both;
-    }
-
-    .intro-in .header-subtitles,
-    .intro-in .about-header-text > :nth-child(2) {
-        animation: rise 0.7s var(--ease-out) 0.18s both;
-    }
 }
 
 .cursor {
@@ -723,34 +705,35 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     left: 0;
     z-index: 0;
     width: 100%;
-    height: 100dvh;
+    height: 100vh;
+    height: 100lvh;
     overflow: hidden;
     pointer-events: none;
+}
+
+#header.is-turned #site-title,
+#header.is-turned .header-subtitles {
+    visibility: hidden;
 }
 
 #header.is-past {
     display: none;
 }
 
-#hero-video,
 #hero-pixels {
     position: absolute;
     inset: 0;
     z-index: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
     transform: translateX(22vw);
-}
-
-#hero-video {
-    opacity: 0;
 }
 
 .header-content {
     --name-size: clamp(40px, 6.4vw, 112px);
     position: absolute;
     bottom: clamp(34px, 7vh, 61px);
+    bottom: calc(100lvh - 100svh + clamp(34px, 7vh, 61px));
     left: var(--pad-edge);
     right: var(--pad-edge);
     z-index: 2;
@@ -1474,9 +1457,14 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 10px;
     color: var(--white);
     outline: none;
+}
+
+.journey-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .journey-when,
@@ -1545,46 +1533,14 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     .journey-stop {
         min-height: 100vh;
         justify-content: flex-end;
-        padding-bottom: 12vh;
-    }
-}
-
-@media (max-width: 1024px) {
-    section {
-        background: transparent;
+        padding-bottom: 8vh;
     }
 
-    #header {
-        position: relative;
-        z-index: 1;
+    .journey-card {
+        margin: 0 calc(-1 * var(--pad-edge));
+        padding: 24px var(--pad-edge);
         background: var(--black);
     }
-
-    .hero-spacer {
-        display: none;
-    }
-
-    #hero-video,
-    #hero-pixels {
-        transform: none;
-    }
-
-    .header-content {
-        top: auto;
-        bottom: max(24px, env(safe-area-inset-bottom));
-        transform: none;
-        opacity: 1;
-    }
-
-    .hero-about {
-        top: clamp(84px, 13vh, 120px);
-        right: var(--pad-edge);
-        width: auto;
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-    }
-
 }
 
 @media (max-width: 768px) {
@@ -1650,19 +1606,57 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
         top: max(12px, env(safe-area-inset-top));
     }
 
-    #hero-video,
     #hero-pixels {
-        inset: auto;
-        left: 50%;
-        bottom: 0;
-        width: 210vw;
-        height: auto;
-        transform: translateX(-48%);
+        inset: clamp(52px, 8svh, 72px) 0 auto;
+        height: 66lvh;
+        transform: none;
     }
 
     .header-content {
-        --name-size: clamp(26px, 7.2vw, 40px);
+        --name-size: clamp(38px, 13vw, 72px);
         gap: 13px;
+    }
+
+    .hero-socials {
+        margin-bottom: 4px;
+    }
+
+    .hero-socials a,
+    .hero-socials button {
+        padding: 11px 15px;
+    }
+
+    .footer-line a,
+    .footer-line .copy-handle {
+        display: inline-block;
+        padding: 8px 0;
+    }
+
+    .all-back {
+        display: inline-block;
+        padding: 10px 0;
+    }
+
+    .all-head .all-tabs a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .hero-about {
+        top: auto;
+        right: var(--pad-edge);
+        bottom: clamp(34px, 7vh, 61px);
+        bottom: calc(100lvh - 100svh + clamp(34px, 7vh, 61px));
+        width: auto;
+        transform: translateX(calc((1 - var(--turn, 0)) * -24px));
+    }
+
+    .index-category {
+        margin-bottom: clamp(48px, 10vh, 96px);
+    }
+
+    .journey-place {
+        font-size: clamp(24px, 7.8vw, 40px);
     }
 
 .hero-about .about-title,
@@ -1995,8 +1989,9 @@ main {
 
 .about-header-picture {
     position: fixed;
-    inset: 0;
+    inset: 0 0 auto;
     z-index: 0;
+    height: 100lvh;
     pointer-events: none;
 }
 
@@ -2108,22 +2103,6 @@ main {
 }
 
 @media (max-width: 1024px) {
-    .about-header {
-        height: 100svh;
-        background: var(--black);
-    }
-
-    .about-header-picture,
-    .about-header-overlay,
-    .about-header-text {
-        position: absolute;
-    }
-
-    .about-header-text {
-        height: auto;
-        padding: 80px var(--pad-edge) 40px;
-    }
-
     .about-header-text > * {
         max-width: none;
     }
@@ -2149,8 +2128,10 @@ main {
     margin-bottom: clamp(80px, 16vh, 180px);
 }
 
-.culture-list .index-row {
-    grid-template-columns: minmax(0, 1fr) clamp(200px, 21vw, 320px) minmax(0, 1fr);
+@media (min-width: 769px) {
+    .culture-list .index-row {
+        grid-template-columns: minmax(0, 1fr) clamp(200px, 21vw, 320px) minmax(0, 1fr);
+    }
 }
 
 .culture-list .index-item:last-child {
@@ -2221,7 +2202,6 @@ main {
     font-size: 0.5em;
     font-weight: 500;
     letter-spacing: 0;
-    opacity: 0.7;
     white-space: nowrap;
 }
 
@@ -2322,17 +2302,9 @@ html.menu-open .section-nav {
 
 @media (max-width: 768px) {
     .section-nav {
-        position: fixed;
-        top: auto;
-        bottom: max(16px, env(safe-area-inset-bottom));
-        max-width: calc(100vw - 2 * var(--pad-edge));
+        max-width: calc(100vw - 2 * (var(--pad-edge) + 72px));
         overflow-x: auto;
         scrollbar-width: none;
-    }
-
-    .section-nav,
-    .section-nav.is-on {
-        transform: translateX(-50%);
     }
 
     .section-nav::-webkit-scrollbar {
@@ -2341,7 +2313,7 @@ html.menu-open .section-nav {
 
     .section-nav a {
         flex: none;
-        padding: 8px 10px;
+        padding: 11px 7px;
         font-size: 12px;
         white-space: nowrap;
     }
@@ -2349,6 +2321,34 @@ html.menu-open .section-nav {
     .section-nav a span {
         display: none;
     }
+}
+
+.noscript {
+    position: relative;
+    z-index: 5;
+    margin: 0;
+    padding: 16px var(--pad-edge);
+    background: var(--white);
+    color: var(--black);
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.not-found-title {
+    margin: 0 0 clamp(16px, 3vh, 28px);
+    color: var(--white);
+    font-family: var(--font-display);
+    font-size: clamp(56px, 11vw, 190px);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 0.9;
+}
+
+.not-found-note {
+    max-width: 34ch;
+    margin: 0 0 clamp(24px, 4vh, 40px);
+    font-size: clamp(17px, 1.6vw, 22px);
+    line-height: 1.45;
 }
 
 .all-main {
@@ -2465,6 +2465,13 @@ html.menu-open .section-nav {
     }
 }
 
+@media (max-height: 500px) {
+    .showcase-right .index-role,
+    .showcase-right .index-text {
+        display: none;
+    }
+}
+
 @media (max-height: 720px) {
     .mobile-menu-link {
         padding-block: 8px;
@@ -2491,20 +2498,20 @@ html.on-accent .mobile-menu .hero-socials .clock {
     color: var(--white);
 }
 
-div:has(> .floatingchat-container) {
+[id^="kofi-widget-overlay"] > * {
     right: 12px !important;
     bottom: max(12px, env(safe-area-inset-bottom)) !important;
     left: auto !important;
-    visibility: hidden;
+    visibility: hidden !important;
     pointer-events: none;
 }
 
-html.menu-open div:has(> .floatingchat-container) {
-    visibility: visible;
+html.menu-open [id^="kofi-widget-overlay"] > * {
+    visibility: visible !important;
     pointer-events: auto;
 }
 
-.floatingchat-container {
+iframe[class*="floatingchat-container"] {
     right: 0 !important;
     left: auto !important;
     transform: scale(0.68);

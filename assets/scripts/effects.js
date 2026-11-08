@@ -1,8 +1,6 @@
-import { reducedMotion, lowPower, clamp01, throttled, breakpoint, track, entrance, heroEntrance } from './common.js';
+import { reducedMotion, lowPower, clamp01, throttled, track, entrance, heroEntrance } from './common.js';
 import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
-import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_VIDEO } from './config.js';
-
-const isMobile = breakpoint.isMobile;
+import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_FRAMES } from './config.js';
 
 const TEXT = '.scrubbing-text, h1, h2, h3, p, li, time, dd, .pullquote, .journey-when, .journey-country';
 const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, .footer-sign, .clock, .page-loader, .showcase, .project-hero';
@@ -13,10 +11,9 @@ let scrubWired = false;
 let introOrder = 0, introWired = false;
 export function scrubbingText() {
 
-    if (isMobile || reducedMotion) return;
+    if (lowPower) return;
     const SPREAD = TEXT_ENTRANCE.scrubSpreadLetters;
 
-    const touch = matchMedia('(max-width: 1024px)');
     for (const block of document.querySelectorAll(TEXT)) {
         if (scrubSeen.has(block) || block.closest(SKIP) || block.querySelector(TEXT)) continue;
         scrubSeen.add(block);
@@ -39,7 +36,7 @@ export function scrubbingText() {
 
             const intro = introHead(entry);
             if (out) {
-                const gone = touch.matches ? 0 : clamp01(heroTurn() / 0.5);
+                const gone = clamp01(heroTurn() / 0.5);
                 const front = gone * (chars.length - 1 + SPREAD);
                 const sig = `${Math.round(front * 100)}|${introSig(entry, intro)}`;
                 if (sig === entry.sig) continue;
@@ -50,7 +47,7 @@ export function scrubbingText() {
             }
 
             const progress = turn
-                ? (touch.matches ? 1 : clamp01((heroTurn() - 0.3) / 0.6))
+                ? clamp01((heroTurn() - 0.3) / 0.6)
                 : clamp01((readingLine - r.top) / Math.max(r.height, 1));
             const head = progress * (chars.length - 1 + SPREAD);
             const sig = `${Math.round(head * 100)}|${introSig(entry, intro)}`;
@@ -85,7 +82,7 @@ let scrubPaint = () => {};
 export function pixelWrite(block, text, duration = 0.55) {
     cellLayers.delete(block);
     block.textContent = text;
-    if (isMobile || reducedMotion) return;
+    if (lowPower) return;
     const SPREAD = 6;
     const chars = splitChars(block);
     const start = performance.now(), end = chars.length - 1 + SPREAD;
@@ -215,14 +212,18 @@ function appear(brightness, out) {
 
 const TURN_START = 1.1;
 const TURN_LENGTH = 1.0;
-const heroTurn = () => clamp01((scrollY / innerHeight - TURN_START) / TURN_LENGTH);
+let screenHeight = innerHeight;
+const measureScreen = () => { screenHeight = document.getElementById('header')?.offsetHeight || innerHeight; };
+measureScreen();
+addEventListener('resize', measureScreen, { passive: true });
+const heroTurn = () => clamp01((scrollY / screenHeight - TURN_START) / TURN_LENGTH);
 
 export function parallax() {
     const hero = document.querySelector('#header, .about-header');
     let items = [];
 
     const measure = () => {
-        if (isMobile || reducedMotion) return;
+        if (reducedMotion) return;
         items = [...document.querySelectorAll('[data-parallax-speed]')].map(el => {
             el.style.transform = '';
             const r = el.getBoundingClientRect();
@@ -258,44 +259,63 @@ export function parallax() {
     return refresh;
 }
 
-function pixelHero(video) {
+function pixelHero(host) {
+    const { url, width, height, columns, turnFrames, swayFrames } = HERO_FRAMES;
     const canvas = document.createElement('canvas');
     canvas.id = 'hero-pixels';
     canvas.setAttribute('aria-hidden', 'true');
-    video.after(canvas);
+    host.prepend(canvas);
     const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
-    let base = null, dim = null, lastTime = -1, lastBox = '';
 
-    const gap = lowPower ? HERO_VIDEO.refreshMsLowPower : HERO_VIDEO.refreshMs;
-    let lastDraw = 0;
+    const frames = new Image();
+    track(url, new Promise(resolve => { frames.addEventListener('load', resolve, { once: true }); frames.addEventListener('error', resolve, { once: true }); }));
+    frames.src = url;
+
+    const sways = !reducedMotion && matchMedia('(hover: hover)').matches;
+    const gap = lowPower ? HERO_FRAMES.refreshMsLowPower : HERO_FRAMES.refreshMs;
+    let base = null, dim = null, shown = 0, lastIndex = -1, lastBox = '', lastDraw = 0;
 
     const draw = now => {
         requestAnimationFrame(draw);
         if (now - lastDraw < gap) return;
         lastDraw = now;
-        if (video.readyState < 2 || !video.videoWidth || canvas.style.visibility === 'hidden') return;
+        if (!frames.naturalWidth || canvas.style.visibility === 'hidden') return;
         const w = canvas.offsetWidth, h = canvas.offsetHeight;
         if (!w || !h) return;
         const box = `${w}x${h}`;
         if (box !== lastBox) {
             lastBox = box;
-            const cols = Math.ceil(w / CELL), rows = Math.ceil(h / CELL);
-            cells.resize(cols, rows);
-            sample.width = cols; sample.height = rows;
-            base = new Uint8Array(cols * rows);
-            dim = new Uint8Array(cols * rows);
-            lastTime = -1;
+            cells.resize(Math.ceil(w / CELL), Math.ceil(h / CELL));
+            sample.width = cells.cols; sample.height = cells.rows;
+            base = new Uint8Array(cells.cols * cells.rows);
+            dim = new Uint8Array(cells.cols * cells.rows);
+            lastIndex = -1;
         }
-        if (video.currentTime !== lastTime) {
-            lastTime = video.currentTime;
 
-            const va = video.videoWidth / video.videoHeight, ba = w / h;
-            const sw = ba > va ? video.videoWidth : video.videoHeight * ba, sh = ba > va ? video.videoWidth / ba : video.videoHeight;
-            sampleCtx.drawImage(video, (video.videoWidth - sw) / 2, (video.videoHeight - sh) / 2, sw, sh, 0, 0, cells.cols, cells.rows);
+        const turn = reducedMotion ? 0 : heroTurn();
+        const sway = sways ? swayFrames * (0.5 + 0.5 * Math.sin(now / 2600)) * (1 - clamp01(turn * 6)) : 0;
+        shown += (turn * (turnFrames - 1) + sway - shown) * 0.2;
+        const index = Math.min(turnFrames, Math.round(shown));
+        if (index !== lastIndex) {
+            lastIndex = index;
+            const boxShape = w / h, frameShape = width / height;
+            const sw = boxShape > frameShape ? width : height * boxShape, sh = boxShape > frameShape ? width / boxShape : height;
+            // The head drifts left as it turns: on a narrow crop, follow it so it stays in frame.
+            const sx = Math.max(0, Math.min(width - sw, width * (0.5 - 0.09 * turn) - sw / 2));
+            const fx = (index % columns) * width, fy = Math.floor(index / columns) * height;
+            sampleCtx.drawImage(frames, fx + sx, fy + (height - sh) / 2, sw, sh, 0, 0, cells.cols, cells.rows);
             const rgba = sampleCtx.getImageData(0, 0, cells.cols, cells.rows).data;
-            for (let i = 0; i < base.length; i++) base[i] = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114;
+            for (let i = 0; i < base.length; i++) base[i] = rgba[i * 4];
+            // On a portrait box the bust stops above the screen edge: let it dissolve into the page.
+            if (h > w) {
+                const { cols, rows } = cells, fade = Math.round(rows * 0.26);
+                for (let row = rows - fade; row < rows; row++) {
+                    const keep = (rows - row) / fade;
+                    for (let col = 0; col < cols; col++) base[row * cols + col] *= keep;
+                }
+            }
         }
         cells.paint(appear(base, dim));
     };
@@ -303,86 +323,43 @@ function pixelHero(video) {
     return canvas;
 }
 
-export function scrollScrubbedVideo() {
+export function heroPortrait() {
     const hero = document.querySelector('.about-header, #header');
     if (!hero) return;
     const home = hero.id === 'header';
-    const heroSpacer = document.querySelector('.hero-spacer');
+    const spacer = document.querySelector('.hero-spacer');
     const past = () => hero.classList.toggle('is-past', home
-        ? getComputedStyle(hero).position === 'fixed' && scrollY > (heroSpacer?.offsetHeight || innerHeight) + innerHeight
+        ? scrollY > (spacer?.offsetHeight || innerHeight) + innerHeight
         : scrollY > hero.offsetHeight);
     addEventListener('scroll', throttled(past), { passive: true });
     addEventListener('resize', past, { passive: true });
     past();
-    const video = hero.querySelector('video');
-    if (!video) return;
-    pixelHero(video);
-    const layers = hero.querySelectorAll('video, canvas, .about-header-overlay, .about-header-text');
+    if (!home) return;
 
-    video.pause();
+    const canvas = pixelHero(hero);
+    const hideWhenCovered = () => { canvas.style.visibility = scrollY >= spacer.offsetHeight ? 'hidden' : ''; };
+    addEventListener('scroll', throttled(hideWhenCovered), { passive: true });
+    hideWhenCovered();
+}
+
+export function pixelReveal(hosts) {
     if (reducedMotion) return;
-    if (isMobile) {
-        video.loop = true;
-        video.play().catch(() => {});
-        return;
-    }
-    video.currentTime = 0;
-
-    let target = 0, frame = null, waitingForFrame = false;
-
-    const seek = () => {
-        frame = null;
-        if (!video.duration) {
-            frame = requestAnimationFrame(seek);
-            return;
-        }
-        const diff = target - video.currentTime;
-        if (Math.abs(diff) < 0.02) {
-            video.pause();
-            video.playbackRate = 1;
-        } else if (diff > 0) {
-            const rate = Math.min(8, Math.max(0.25, diff * 6));
-            if (Math.abs(video.playbackRate - rate) > 0.05) video.playbackRate = rate;
-            if (video.paused) video.play().catch(() => {});
-            frame = requestAnimationFrame(seek);
-        } else {
-            video.pause();
-            video.currentTime = Math.max(0, video.currentTime + diff * 0.35);
-            if (!video.requestVideoFrameCallback) {
-                frame = requestAnimationFrame(seek);
-                return;
-            }
-            waitingForFrame = true;
-            video.requestVideoFrameCallback(() => {
-                waitingForFrame = false;
-                frame = requestAnimationFrame(seek);
-            });
-        }
-    };
-
-    const spacer = home && document.querySelector('.hero-spacer');
-    const onScroll = () => {
-        if (!video.duration) return;
-        if (home) {
-
-            const sway = reducedMotion ? 0 : 0.5 * (0.5 + 0.5 * Math.sin(performance.now() / 2600)) * (1 - clamp01(heroTurn() * 6));
-            target = heroTurn() * video.duration / 2 + sway;
-        } else {
-            const scrollable = hero.offsetHeight - innerHeight;
-            if (scrollable <= 0) return;
-            target = clamp01(-hero.getBoundingClientRect().top / scrollable) * video.duration;
-        }
-        if (!frame && !waitingForFrame) frame = requestAnimationFrame(seek);
-
-        const scrolledPast = scrollY >= (home && spacer.offsetHeight || hero.offsetHeight);
-        layers.forEach(el => el.style.visibility = scrolledPast ? 'hidden' : '');
-    };
-
-    if (home) setInterval(onScroll, 90);
-    video.addEventListener('loadedmetadata', onScroll);
-    addEventListener('scroll', onScroll, { passive: true });
-    addEventListener('resize', onScroll, { passive: true });
-    onScroll();
+    const color = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
+    const observer = new IntersectionObserver(entries => entries.forEach(({ target, isIntersecting }) => {
+        if (!isIntersecting) return;
+        observer.unobserve(target);
+        const start = () => {
+            target.classList.remove('is-waiting');
+            pixelCover(target, color).show();
+        };
+        const image = target.querySelector('img');
+        if (image) image.decode().then(start, start);
+        else start();
+    }), { threshold: 0.12 });
+    hosts.forEach(host => {
+        host.classList.add('is-waiting');
+        observer.observe(host);
+    });
 }
 
 export function pixelPicture(host, src, { mirror = false, gain = PICTURE.defaultGain, color = '#fff', active = () => true, intro = false, anchor = 0.25, fit = 'cover', focus = 0, watch = false } = {}) {

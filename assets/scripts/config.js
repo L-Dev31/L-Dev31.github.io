@@ -19,9 +19,8 @@ export const PIXEL = {
 // Loading intro.
 export const INTRO = {
     // Maximum wait time.
-    maxWaitMs: 8000,
+    maxWaitMs: 5000,
     settleMs: 120,
-    videoMaxWaitMs: 3000,
     // Project mark interval.
     projectMarkEveryMs: 550,
     // Final pause.
@@ -103,7 +102,15 @@ export const PICTURE = {
 };
 
 // Home hero video.
-export const HERO_VIDEO = {
+// Home hero portrait: a sheet of video frames, moved by the scroll.
+export const HERO_FRAMES = {
+    url: 'assets/images/core/hero-frames.webp',
+    width: 400,
+    height: 226,
+    columns: 7,
+    // Frames used while the hero turns, and by the idle sway on devices with a mouse.
+    turnFrames: 43,
+    swayFrames: 15,
     refreshMs: 33,
     refreshMsLowPower: 80,
 };

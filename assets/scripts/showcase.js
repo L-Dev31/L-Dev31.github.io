@@ -1,4 +1,4 @@
-import { reducedMotion, lowPower, isMobile, clamp01 } from './config.js';
+import { reducedMotion, lowPower, clamp01 } from './config.js';
 import { entrance, introLoaded } from './intro.js';
 import { loadProjects, projectMark, SIGNATURE_URL } from './projects.js';
 import { INTRO, SIGNATURE } from './config.js';
@@ -71,7 +71,7 @@ export function showcase(container, projects, lenis) {
         stepButtons.append(button);
     });
 
-    const stillMark = isMobile || reducedMotion ? createElement('img', 'showcase-mark') : null;
+    const stillMark = reducedMotion ? createElement('img', 'showcase-mark') : null;
     if (stillMark) {
         stillMark.alt = '';
         markAnchor.append(stillMark);
@@ -175,7 +175,7 @@ function locateOnPath(ranges, scroll) {
 }
 
 export function thread(firstDocks) {
-    if (isMobile || reducedMotion || !firstDocks.length) return null;
+    if (reducedMotion || !firstDocks.length) return null;
 
     let docks = firstDocks;
 

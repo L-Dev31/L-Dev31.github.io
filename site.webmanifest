@@ -1,0 +1,9 @@
+{
+  "name": "Léo Tosku | Design, Dev, Marketing",
+  "short_name": "Léo Tosku",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#210710",
+  "theme_color": "#210710",
+  "icons": [{ "src": "assets/images/core/favicon.png", "sizes": "256x256", "type": "image/png" }]
+}

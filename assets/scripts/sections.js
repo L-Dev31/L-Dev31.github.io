@@ -179,8 +179,10 @@ export async function journey(container) {
         slot.style.setProperty('--aspect', FLAGS[stop.flag]?.aspect ?? 1.5);
         place.append(el('span', 'journey-half scrubbing-text', words.slice(0, cut).join(' ')), slot,
             el('span', 'journey-half scrubbing-text', words.slice(cut).join(' ')));
-        item.append(...[stop.when && el('span', 'journey-when', stop.when), place,
+        const body = track ? item : el('div', 'journey-card');
+        body.append(...[stop.when && el('span', 'journey-when', stop.when), place,
             el('span', 'journey-country', stop.country), stop.what && el('p', 'journey-what scrubbing-text', stop.what)].filter(Boolean));
+        if (!track) item.append(body);
         list.append(item);
         return item;
     });
@@ -354,7 +356,9 @@ export async function journey(container) {
             written.push(here);
             on.add(i);
             tags[i].classList.toggle('is-active', isActive);
-            tags[i].style.transform = `translate3d(${Math.round(pt.x + 14)}px, ${Math.round(pt.y - 12)}px, 0)`;
+            const width = tags[i].offsetWidth;
+            const tagX = pt.x + 14 + width > stage.clientWidth ? pt.x - 14 - width : pt.x + 14;
+            tags[i].style.transform = `translate3d(${Math.round(tagX)}px, ${Math.round(pt.y - 12)}px, 0)`;
         }
         tags.forEach((tag, i) => { if (tag.hidden === on.has(i)) tag.hidden = !on.has(i); });
     };

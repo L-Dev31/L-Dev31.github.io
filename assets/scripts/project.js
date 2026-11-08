@@ -1,9 +1,7 @@
 import './components.js';
-import { initPage, sectionNav, reveal, loadProjects, reducedMotion, throttled, clamp01, breakpoint, track, heroEntrance } from './common.js';
-import { scrubbingText } from './effects.js';
+import { initPage, sectionNav, loadProjects, reducedMotion, throttled, clamp01, track, heroEntrance } from './common.js';
+import { scrubbingText, pixelReveal } from './effects.js';
 import { thread, restDocks } from './showcase.js';
-
-const isMobile = breakpoint.isMobile;
 
 const lenis = initPage();
 thread(restDocks());
@@ -80,7 +78,7 @@ function render(project, html, projects) {
     pager(project, projects);
     chapterNav();
     scrubbingText();
-    reveal(document.querySelectorAll('.case-row, .pullquote, .gallery-item, .project-cta-bottom'));
+    pixelReveal(document.querySelectorAll('figure.case-panel, .gallery-item'));
     parallaxHero();
 }
 
@@ -210,7 +208,7 @@ function pager(project, projects) {
 }
 
 function parallaxHero() {
-    if (isMobile || reducedMotion) return;
+    if (reducedMotion) return;
     const heroImg = document.querySelector('.project-hero-img');
     const update = () => { heroImg.style.transform = `translateY(${scrollY * 0.3}px)`; };
     const scheduled = throttled(update);

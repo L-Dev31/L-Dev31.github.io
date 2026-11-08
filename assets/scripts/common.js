@@ -1,4 +1,4 @@
-import { reducedMotion, lowPower, clamp01, breakpoint, isMobile, throttled } from './config.js';
+import { lowPower, clamp01, breakpoint, isMobile, throttled } from './config.js';
 import { pageLoader } from './intro.js';
 import { cursor, magnets, pageTransitions } from './cursor.js';
 import { loadProjects } from './projects.js';
@@ -7,18 +7,6 @@ import { socialLinks } from './components.js';
 export { reducedMotion, lowPower, clamp01, breakpoint, throttled } from './config.js';
 export { track, entrance, heroEntrance, introLoaded } from './intro.js';
 export { loadProjects, projectMark } from './projects.js';
-
-export function reveal(elements) {
-    if (reducedMotion) {
-        elements.forEach(el => el.classList.add('visible'));
-        return;
-    }
-    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
-        else if (entry.boundingClientRect.top > 0) entry.target.classList.remove('visible');
-    }), { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
-    elements.forEach(el => observer.observe(el));
-}
 
 export function initPage() {
     document.querySelectorAll('[data-year]').forEach(el => el.textContent = new Date().getFullYear());
@@ -262,7 +250,7 @@ export function sectionNav(nav, lenis) {
         else target.scrollIntoView({ behavior: 'smooth' });
     }));
 
-    let placed = false;
+    let placed = false, centred = null;
     const place = () => {
         const link = nav.querySelector('a[aria-current]');
         if (!link) { pill.style.opacity = '0'; return; }
@@ -271,7 +259,8 @@ export function sectionNav(nav, lenis) {
         pill.style.width = `${link.offsetWidth}px`;
         pill.style.transform = `translateX(${link.offsetLeft}px)`;
         if (!placed) { pill.offsetWidth; pill.style.transition = ''; placed = true; }
-        if (nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2, behavior: 'smooth' });
+        if (link !== centred && nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2, behavior: 'smooth' });
+        centred = link;
     };
     nav.addEventListener('relayout', place);
 

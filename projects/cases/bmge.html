@@ -17,7 +17,7 @@
 <p>Tomodachi Collection adds raw hex control tags inside its text strings, to trigger colors or insert Mii names. An editor that didn't understand them stripped them out, and the file broke.</p>
         </div>
         <figure class="case-panel" data-no-parallax>
-            <img src="assets/images/projects/bmge/problem.jpg"
+            <img src="assets/images/projects/bmge/problem.jpg" width="600" height="600"
                 alt="MSBT Editor by AeonSake, an existing Nintendo text editor, the kind of tool that existed but couldn't handle BMG files reliably."
                 loading="lazy" decoding="async">
             <figcaption class="media-caption">MSBT Editor by <a href="https://gitlab.com/AeonSake/msbt-editor"
@@ -34,7 +34,7 @@
             <p>I opened the files in a hex editor and mapped the structure by hand. A BMG file is split into chunks: a header, an index of message sizes, the raw text block, and numeric IDs that tell the game where to find each string.</p>
         </div>
         <figure class="case-panel">
-            <img src="assets/images/projects/bmge/re.webp"
+            <img src="assets/images/projects/bmge/re.webp" width="1080" height="1080"
                 alt="Hex view of a BMG file showing section headers and inline tag bytes." loading="lazy"
                 decoding="async">
         </figure>
@@ -46,7 +46,7 @@
             <p>The inline control tags were the hardest part. The editor shows them as readable text like [Color:0200] and encodes them back on save. Existing tags reuse their original bytes, and only tags you type yourself get new hex codes. This nearly removes the risk of corruption.</p>
         </div>
         <figure class="case-panel">
-            <img src="assets/images/projects/bmge/tags.webp"
+            <img src="assets/images/projects/bmge/tags.webp" width="1080" height="1080"
                 alt="BMGE editor showing inline color tags rendered visually inside a message." loading="lazy"
                 decoding="async">
         </figure>
@@ -65,7 +65,7 @@
             <p>Every Nintendo game handles BMG files a little differently. Instead of hardcoding the rules for Tomodachi Collection, I built a plugin system: pick the game from a menu and the editor loads the right tag vocabulary and styling.</p>
         </div>
         <figure class="case-panel" data-no-parallax>
-            <img src="assets/images/projects/bmge/tomodachi.webp"
+            <img src="assets/images/projects/bmge/tomodachi.webp" width="774" height="708"
                 alt="Tomodachi Collection Nintendo DS box art." loading="lazy" decoding="async">
             <figcaption class="media-caption">Tomodachi Collection &copy; Nintendo</figcaption>
         </figure>
@@ -80,7 +80,7 @@
             <p>The interface leans on #FDE404, the signature yellow of Tomodachi Collection. Translation means reading text for hours, so I chose a dark, low-contrast background to limit eye strain.</p>
         </div>
         <figure class="case-panel">
-            <img src="assets/images/projects/bmge/website.webp"
+            <img src="assets/images/projects/bmge/website.webp" width="1440" height="810"
                 alt="BMGE editor interface, dark theme with Tomodachi Collection yellow accent." loading="lazy"
                 decoding="async">
         </figure>

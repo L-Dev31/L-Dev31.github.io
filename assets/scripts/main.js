@@ -1,6 +1,6 @@
 import './components.js';
-import { initPage, reveal, loadProjects, reducedMotion } from './common.js';
-import { scrubbingText, parallax, scrollScrubbedVideo, pixelPicture, pixelCover } from './effects.js';
+import { initPage, loadProjects } from './common.js';
+import { scrubbingText, parallax, heroPortrait, pixelPicture, pixelCover } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { journey } from './sections.js';
 import { PICTURE } from './config.js';
@@ -9,10 +9,13 @@ import { showcase, thread, homeDocks, restDocks } from './showcase.js';
 const CATEGORIES = ['Graphic Design', 'Webdesign', 'Marketing', 'Dev'];
 
 const lenis = initPage();
-if (!document.querySelector('#header')) reveal(document.querySelectorAll('section, .title'));
 const refreshParallax = parallax();
 const cover = document.querySelector('.about-header-picture');
-if (cover) pixelPicture(cover, cover.dataset.picture, { gain: PICTURE.aboutHeroGain, color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), active: () => scrollY < innerHeight * 2, intro: true });
+if (cover) {
+    // These photos are wide: on a tall screen, frame the subject instead of cropping into it.
+    const framing = innerHeight > innerWidth ? { fit: 'contain', focus: Number(cover.dataset.tallFocus), anchor: Number(cover.dataset.tallAnchor) } : {};
+    pixelPicture(cover, cover.dataset.picture, { gain: PICTURE.aboutHeroGain, color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), active: () => scrollY < innerHeight * 2, intro: true, ...framing });
+}
 const story = document.querySelector('.promise-picture');
 if (story) {
     let visible = false;
@@ -20,7 +23,7 @@ if (story) {
     pixelPicture(story, story.dataset.picture, { color: getComputedStyle(document.documentElement).getPropertyValue(story.closest('#promise') ? '--accent' : '--black').trim(), active: () => visible });
 }
 scrubbingText();
-scrollScrubbedVideo();
+heroPortrait();
 
 const DEFAULT_SVG = 'assets/images/core/logo.svg';
 
@@ -53,9 +56,8 @@ function projectIndex(container, projects) {
         const info = el('div', 'index-info');
         const tags = el('ul', 'index-tags');
         tags.append(...(project.tags || []).map(tag => el('li', 'index-tag', tag)));
-        const go = el('a', 'index-go', 'Read the case study ');
+        const go = el('a', 'index-go', 'Read the case study');
         go.href = `project.html?id=${project.id}`;
-        go.append(el('span', '', '\u2197'));
         info.append(el('div', 'index-role', `Role: ${project.role}`), el('div', 'index-text', project.subtitle), tags, go);
         const inner = el('div', 'index-detail-inner');
         inner.append(media, info);
@@ -213,6 +215,7 @@ function cultureList(container, items, kind) {
             target = right <= high ? right : left >= low ? left : (high - right > left - low ? right : left);
         }
         target = low <= high ? Math.min(high, Math.max(low, target)) : middle;
+        target = Math.max(box.left + half, Math.min(box.right - half, target));
         figure.style.setProperty('--x', `${Math.round(target - box.left - half)}px`);
         figure.style.setProperty('--y', `${Math.round(r.top - box.top + r.height / 2 - figure.offsetHeight / 2)}px`);
     };
@@ -254,7 +257,14 @@ function cultureList(container, items, kind) {
         }
         entry.row.addEventListener('focus', () => { pointerX = null; show(entry); });
         entry.row.addEventListener('blur', () => hide(entry.row));
+        if (!hover) entry.row.addEventListener('click', event => {
+            event.stopPropagation();
+            pointerX = null;
+            if (current === entry.row) hide(entry.row);
+            else show(entry);
+        });
     }
+    if (!hover) document.addEventListener('click', () => { if (current) hide(current); });
 }
 
 async function initCulture() {

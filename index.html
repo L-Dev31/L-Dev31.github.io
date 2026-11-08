@@ -9,6 +9,11 @@
     <meta name="author" content="Léo Tosku">
     <link rel="canonical" href="https://l-dev31.github.io/">
     <link rel="icon" type="image/png" href="assets/images/core/favicon.png">
+    <meta name="theme-color" content="#210710">
+    <link rel="apple-touch-icon" href="assets/images/core/favicon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="preload" as="font" href="assets/fonts/satoshi-variable.ttf" type="font/ttf" crossorigin>
+    <link rel="preload" as="font" href="assets/fonts/editorial-old-italic.otf" type="font/otf" crossorigin>
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://l-dev31.github.io/">
@@ -24,6 +29,7 @@
     <meta name="twitter:image" content="https://l-dev31.github.io/assets/images/core/share.png">
     <meta name="twitter:image:alt" content="Léo Tosku | Design, Dev, Marketing">
 
+    <link rel="preload" as="image" href="assets/images/core/hero-frames.webp">
     <link rel="stylesheet" href="assets/styles/home.css">
     <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" defer></script>
     <script src="assets/scripts/components.js" type="module"></script>
@@ -34,7 +40,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "Léo Tosku",
-    "jobTitle": "Design, Development and Marketing",
+      "jobTitle": "Design, Development and Marketing",
       "url": "https://l-dev31.github.io/",
       "image": "https://l-dev31.github.io/assets/images/core/share.png",
       "sameAs": [
@@ -42,13 +48,14 @@
         "https://www.linkedin.com/in/l%C3%A9o-tosku-de-vries-8432242a0/",
         "https://www.instagram.com/ltosku31/"
       ],
-    "description": "Léo Tosku works across design, development and marketing on the French Riviera, taking brands and interfaces from first sketch to live site.",
+      "description": "Léo Tosku works across design, development and marketing on the French Riviera, taking brands and interfaces from first sketch to live site.",
       "knowsAbout": ["UI/UX Design", "Graphic Design", "Digital Project Management", "Web Design"]
     }
     </script>
 </head>
 
 <body>
+    <noscript><p class="noscript">This site needs JavaScript for its menu and animations. You can reach me at <a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a>.</p></noscript>
 
     <site-page-loader></site-page-loader>
     <div class="cursor" aria-hidden="true"></div>
@@ -57,7 +64,6 @@
 
     <main id="main-content">
     <header id="header">
-        <video id="hero-video" src="assets/images/core/hero-source.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
         <div class="header-content">
             <site-socials data-class="hero-socials"></site-socials>
             <h1 id="site-title" class="scrubbing-text" data-scrub="out"><span>I'll ship it all</span> <span>beautifully.</span></h1>

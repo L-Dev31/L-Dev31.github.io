@@ -604,21 +604,13 @@ html:has(.project-main)::-webkit-scrollbar {
     transform-origin: left;
 }
 
-.case-row,
-.pullquote,
-.gallery-item,
-.project-cta-bottom > * {
-    opacity: 0;
-    transform: translateY(32px);
-    transition: opacity 1s var(--ease-out), transform 1s var(--ease-out);
+figure.case-panel,
+.gallery-item {
+    position: relative;
 }
 
-.case-row.visible,
-.pullquote.visible,
-.gallery-item.visible,
-.project-cta-bottom.visible > * {
-    opacity: 1;
-    transform: none;
+.is-waiting {
+    visibility: hidden;
 }
 
 @media (max-width: 1024px) {
@@ -650,7 +642,7 @@ html:has(.project-main)::-webkit-scrollbar {
     }
 
     .project-hero::after {
-        background: linear-gradient(180deg, rgba(33, 7, 16, 0.7) 0%, rgba(33, 7, 16, 0.12) 24%, rgba(33, 7, 16, 0.82) 62%, rgba(33, 7, 16, 0.96) 100%);
+        background: linear-gradient(180deg, rgba(33, 7, 16, 0.6) 0%, rgba(33, 7, 16, 0.15) 14%, rgba(33, 7, 16, 0.88) 40%, rgba(33, 7, 16, 0.97) 100%);
     }
 
     .article-header,
@@ -781,10 +773,6 @@ html:has(.project-main)::-webkit-scrollbar {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .case-row,
-    .pullquote,
-    .gallery-item,
-    .project-cta-bottom > *,
     .article-header > * {
         opacity: 1;
         transform: none;
@@ -793,5 +781,11 @@ html:has(.project-main)::-webkit-scrollbar {
 
     .project-pager-img {
         transition: none;
+    }
+}
+
+@media (max-height: 500px) {
+    .article-tags {
+        display: none;
     }
 }

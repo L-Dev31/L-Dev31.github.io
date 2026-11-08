@@ -1,4 +1,4 @@
-import { reducedMotion, isMobile, throttled } from './config.js';
+import { reducedMotion, throttled } from './config.js';
 import { INTRO } from './config.js';
 import { loadProjects, projectMark, SIGNATURE_URL } from './projects.js';
 
@@ -103,12 +103,6 @@ function trackExistingResources(trackFont) {
         if (!image.getAttribute('src') || image.loading === 'lazy') continue;
         track(image.src, image.complete ? Promise.resolve() : eventually(image, ['load', 'error']));
     }
-    for (const video of document.querySelectorAll('video[preload="auto"]')) {
-        const ready = video.readyState >= 2
-            ? Promise.resolve()
-            : Promise.race([eventually(video, ['loadeddata', 'error']), new Promise(resolve => setTimeout(resolve, INTRO.videoMaxWaitMs))]);
-        track(video.currentSrc || video.src, ready);
-    }
 
     document.fonts.forEach(trackFont);
     document.fonts.addEventListener('loading', event => event.fontfaces.forEach(trackFont));
@@ -140,7 +134,7 @@ export function pageLoader() {
 
     if (!reducedMotion) root.classList.add('intro-waiting');
 
-    const signatureTravels = !isMobile && !reducedMotion;
+    const signatureTravels = !reducedMotion;
     loader.classList.toggle('has-thread', signatureTravels);
 
     drawIntroSignature(loader, signatureCanvas, (extrudedSvg, cols) => {
