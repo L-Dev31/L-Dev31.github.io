@@ -2924,7 +2924,10 @@
       "video_width": 960,
       "video_crf": 27,
       "video_seconds": 5,
-      "featured": true
+      "featured": true,
+      "video_skip": [
+        "LuGJl4UVpxQ"
+      ]
     }
   ],
   "books": [
