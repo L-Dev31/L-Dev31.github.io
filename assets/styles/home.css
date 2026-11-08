@@ -1407,6 +1407,12 @@ html.on-accent .lang-option:not([aria-pressed="true"]) {
     background: var(--ink);
 }
 
+/* Hidden until the pixel cover has painted its first frame, so the picture never flashes. */
+.is-covered img,
+.is-covered video {
+    visibility: hidden;
+}
+
 .index-info {
     display: flex;
     flex-direction: column;

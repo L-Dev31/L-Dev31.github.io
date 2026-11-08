@@ -405,15 +405,24 @@ export function pixelPicture(host, src, { mirror = false, gain = PICTURE.default
     return { destroy() { clearInterval(timer); watcher?.disconnect(); removeEventListener('resize', render); canvas.remove(); } };
 }
 
+// A host marked "is-covered" keeps its picture hidden until the cover has painted its first frame.
 export function pixelCover(host, color, size) {
     let layer = null;
     const run = (reverse, done) => {
-        layer?.remove();
-        if (reducedMotion) { layer = null; done?.(); return; }
+        const previous = layer;
+        if (reducedMotion) {
+            previous?.remove();
+            layer = null;
+            host.classList.remove('is-covered');
+            done?.();
+            return;
+        }
         layer = dissolve(host, { color, size, total: 800, reverse }, canvas => {
             if (!reverse) { canvas.remove(); layer = null; }
             done?.();
         });
+        host.classList.remove('is-covered');
+        previous?.remove();
     };
     return {
         show() { run(false); },

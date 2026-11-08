@@ -43,7 +43,7 @@ function projectIndex(container, projects) {
 
     const build = entry => {
         const { project, detail } = entry;
-        const media = el('div', 'index-media');
+        const media = el('div', 'index-media is-covered');
         if (project.video) {
             const video = el('video');
             Object.assign(video, { src: project.video, poster: project.heroImage, muted: true, loop: true, playsInline: true, preload: 'none' });
@@ -52,7 +52,7 @@ function projectIndex(container, projects) {
         } else {
             const img = el('img');
             Object.assign(img, { src: project.cover || project.heroImage, alt: '', decoding: 'async' });
-            entry.ready = img.decode().catch(() => {});
+            entry.image = img;
             media.append(img);
         }
         const info = el('div', 'index-info');
@@ -72,7 +72,7 @@ function projectIndex(container, projects) {
         current = entry;
         entry.item.classList.add('is-open');
         entry.row.setAttribute('aria-expanded', 'true');
-        (entry.ready || Promise.resolve()).then(() => entry.cover.show());
+        (entry.image?.decode().catch(() => {}) ?? Promise.resolve()).then(() => { if (current === entry) entry.cover.show(); });
         entry.video?.play().catch(() => {});
     };
     const close = entry => {
@@ -81,6 +81,23 @@ function projectIndex(container, projects) {
         entry.row.setAttribute('aria-expanded', 'false');
         entry.cover?.hide(() => entry.video?.pause());
     };
+
+    // Build the details a little before the list comes into view, so a tap finds the pictures loaded.
+    const idle = callback => ('requestIdleCallback' in window ? requestIdleCallback(callback, { timeout: 1500 }) : setTimeout(callback, 200));
+    const prepare = () => {
+        const waiting = entries.filter(entry => !entry.cover);
+        const next = () => {
+            const entry = waiting.shift();
+            if (entry && !entry.cover) build(entry);
+            if (waiting.length) idle(next);
+        };
+        idle(next);
+    };
+    new IntersectionObserver(([hit], observer) => {
+        if (!hit.isIntersecting) return;
+        observer.disconnect();
+        prepare();
+    }, { rootMargin: '900px 0px' }).observe(container);
 
     const groups = [...new Set(projects.map(p => p.category))]
         .sort((a, b) => CATEGORIES.indexOf(a) - CATEGORIES.indexOf(b))

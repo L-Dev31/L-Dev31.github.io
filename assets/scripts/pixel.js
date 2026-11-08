@@ -416,6 +416,8 @@ export function dissolve(host, { color, size = CELL, total = PIXEL.dissolveDurat
         if (progress < DISSOLVE_END) requestAnimationFrame(frame);
         else done?.(canvas);
     }
-    requestAnimationFrame(frame);
+    // The first frame is drawn right now, not on the next animation frame: whatever sits under the
+    // canvas must never be seen for a frame before the cover is there.
+    frame(startedAt);
     return canvas;
 }
