@@ -13,6 +13,18 @@
   font-size: 16px;
 }
 
+[data-theme="light"] {
+  --bg: #f2f2f2;
+  --panel: #ffffff;
+  --panel-alt: #eaeaea;
+  --border: #d0d0d0;
+  --accent: #c9a800;
+  --accent-muted: #a88e00;
+  --text: #1a1a1a;
+  --muted: #666666;
+  --banner-color: #ffffff;
+}
+
 /* === Reset & Base === */
 * { box-sizing: border-box; }
 
