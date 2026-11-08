@@ -308,14 +308,6 @@ function pixelHero(host) {
             sampleCtx.drawImage(frames, fx + sx, fy + (height - sh) / 2, sw, sh, 0, 0, cells.cols, cells.rows);
             const rgba = sampleCtx.getImageData(0, 0, cells.cols, cells.rows).data;
             for (let i = 0; i < base.length; i++) base[i] = rgba[i * 4];
-            // On a portrait box the bust stops above the screen edge: let it dissolve into the page.
-            if (h > w) {
-                const { cols, rows } = cells, fade = Math.round(rows * 0.26);
-                for (let row = rows - fade; row < rows; row++) {
-                    const keep = (rows - row) / fade;
-                    for (let col = 0; col < cols; col++) base[row * cols + col] *= keep;
-                }
-            }
         }
         cells.paint(appear(base, dim));
     };
@@ -362,7 +354,7 @@ export function pixelReveal(hosts) {
     });
 }
 
-export function pixelPicture(host, src, { mirror = false, gain = PICTURE.defaultGain, color = '#fff', active = () => true, intro = false, anchor = 0.25, fit = 'cover', focus = 0, watch = false } = {}) {
+export function pixelPicture(host, src, { mirror = false, gain = PICTURE.defaultGain, color = '#fff', active = () => true, intro = false, anchor = 0.25, center = 0.5, fit = 'cover', focus = 0, watch = false } = {}) {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     host.append(canvas);
@@ -392,7 +384,7 @@ export function pixelPicture(host, src, { mirror = false, gain = PICTURE.default
         sampleCtx.setTransform(mirror ? -1 : 1, 0, 0, 1, mirror ? cols : 0, 0);
         sampleCtx.fillStyle = invert ? '#fff' : '#000';
         sampleCtx.fillRect(0, 0, cols, rows);
-        sampleCtx.drawImage(source, (cols - w) / 2, (rows - h) * anchor, w, h);
+        sampleCtx.drawImage(source, cols / 2 - center * w, (rows - h) * anchor, w, h);
         const rgba = sampleCtx.getImageData(0, 0, cols, rows).data;
         brightness = new Uint8Array(cols * rows);
         for (let i = 0; i < brightness.length; i++) { const luma = rgba[i * 4] * 0.299 + rgba[i * 4 + 1] * 0.587 + rgba[i * 4 + 2] * 0.114; brightness[i] = invert ? 255 - luma : Math.min(255, luma * gain); }

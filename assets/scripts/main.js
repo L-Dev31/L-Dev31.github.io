@@ -12,8 +12,9 @@ const lenis = initPage();
 const refreshParallax = parallax();
 const cover = document.querySelector('.about-header-picture');
 if (cover) {
-    // These photos are wide: on a tall screen, frame the subject instead of cropping into it.
-    const framing = innerHeight > innerWidth ? { fit: 'contain', focus: Number(cover.dataset.tallFocus), anchor: Number(cover.dataset.tallAnchor) } : {};
+    // On a portrait screen the wide photo is cropped around its subject and sits at the bottom, like the home portrait.
+    const portrait = matchMedia('(max-aspect-ratio: 1/1)').matches;
+    const framing = portrait ? { center: Number(cover.dataset.center) || 0.5, anchor: 1 } : {};
     pixelPicture(cover, cover.dataset.picture, { gain: PICTURE.aboutHeroGain, color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), active: () => scrollY < innerHeight * 2, intro: true, ...framing });
 }
 const story = document.querySelector('.promise-picture');
