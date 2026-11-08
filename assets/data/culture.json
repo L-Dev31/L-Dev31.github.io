@@ -1458,6 +1458,167 @@
       "search": [
         "Kanun (film)"
       ]
+    },
+    {
+      "id": "the-conjuring",
+      "title": "The Conjuring",
+      "year": 2013
+    },
+    {
+      "id": "the-conjuring-2",
+      "title": "The Conjuring 2",
+      "year": 2016
+    },
+    {
+      "id": "the-conjuring-the-devil-made-me-do-it",
+      "title": "The Conjuring: The Devil Made Me Do It",
+      "year": 2021
+    },
+    {
+      "id": "the-conjuring-last-rites",
+      "title": "The Conjuring: Last Rites",
+      "year": 2025
+    },
+    {
+      "id": "the-croods",
+      "title": "The Croods",
+      "year": 2013
+    },
+    {
+      "id": "the-croods-a-new-age",
+      "title": "The Croods: A New Age",
+      "year": 2020
+    },
+    {
+      "id": "monsieur-hublot",
+      "title": "Monsieur Hublot",
+      "year": 2013
+    },
+    {
+      "id": "puss-in-boots",
+      "title": "Puss in Boots",
+      "year": 2011
+    },
+    {
+      "id": "puss-in-boots-the-last-wish",
+      "title": "Puss in Boots: The Last Wish",
+      "year": 2022
+    },
+    {
+      "id": "shrek",
+      "title": "Shrek",
+      "year": 2001
+    },
+    {
+      "id": "shrek-2",
+      "title": "Shrek 2",
+      "year": 2004
+    },
+    {
+      "id": "shrek-the-third",
+      "title": "Shrek the Third",
+      "year": 2007
+    },
+    {
+      "id": "kung-fu-panda",
+      "title": "Kung Fu Panda",
+      "year": 2008
+    },
+    {
+      "id": "kung-fu-panda-2",
+      "title": "Kung Fu Panda 2",
+      "year": 2011
+    },
+    {
+      "id": "kung-fu-panda-3",
+      "title": "Kung Fu Panda 3",
+      "year": 2016
+    },
+    {
+      "id": "kung-fu-panda-4",
+      "title": "Kung Fu Panda 4",
+      "year": 2024
+    },
+    {
+      "id": "rise-of-the-guardians",
+      "title": "Rise of the Guardians",
+      "year": 2012
+    },
+    {
+      "id": "the-spongebob-squarepants-movie",
+      "title": "The SpongeBob SquarePants Movie",
+      "year": 2004
+    },
+    {
+      "id": "the-spongebob-movie-sponge-out-of-water",
+      "title": "The SpongeBob Movie: Sponge Out of Water",
+      "year": 2015
+    },
+    {
+      "id": "the-spongebob-movie-sponge-on-the-run",
+      "title": "The SpongeBob Movie: Sponge on the Run",
+      "year": 2020
+    },
+    {
+      "id": "asterix-the-gaul",
+      "title": "Asterix the Gaul",
+      "year": 1967
+    },
+    {
+      "id": "asterix-and-cleopatra",
+      "title": "Asterix and Cleopatra",
+      "year": 1968
+    },
+    {
+      "id": "asterix-in-britain",
+      "title": "Asterix in Britain",
+      "year": 1986
+    },
+    {
+      "id": "asterix-and-the-vikings",
+      "title": "Asterix and the Vikings",
+      "year": 2006
+    },
+    {
+      "id": "asterix-at-the-olympic-games",
+      "title": "Asterix at the Olympic Games",
+      "year": 2008
+    },
+    {
+      "id": "asterix-and-obelix-mission-cleopatra",
+      "title": "Asterix and Obelix: Mission Cleopatra",
+      "year": 2002
+    },
+    {
+      "id": "asterix-and-obelix-vs-caesar",
+      "title": "Asterix and Obelix vs. Caesar",
+      "year": 1999
+    },
+    {
+      "id": "asterix-the-mansions-of-the-gods",
+      "title": "Asterix: The Mansions of the Gods",
+      "year": 2014
+    },
+    {
+      "id": "asterix-the-secret-of-the-magic-potion",
+      "title": "Asterix: The Secret of the Magic Potion",
+      "year": 2018
+    },
+    {
+      "id": "asterix-and-obelix-god-save-britannia",
+      "title": "Asterix and Obelix: God Save Britannia",
+      "year": 2012
+    },
+    {
+      "id": "asterix-and-obelix-the-middle-kingdom",
+      "title": "Asterix and Obelix: The Middle Kingdom",
+      "year": 2023
+    },
+    {
+      "id": "ernest-c-lestine",
+      "title": "Ernest & Célestine",
+      "year": 2012,
+      "featured": true
     }
   ],
   "series": [
@@ -1950,7 +2111,8 @@
       "search": "Punch-Out!!",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "featured": true
     },
     {
       "id": "super-mario-galaxy-2-wii",
@@ -2343,7 +2505,8 @@
       "platform": "wii",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "featured": true
     },
     {
       "id": "donkey-kong-mame",
@@ -2802,7 +2965,8 @@
       "platform": "wii",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "featured": true
     },
     {
       "id": "wii-play-motion-wii",
@@ -2928,6 +3092,179 @@
       "video_skip": [
         "LuGJl4UVpxQ"
       ]
+    },
+    {
+      "id": "super-mario-all-stars-snes",
+      "title": "Super Mario All-Stars",
+      "year": 1993,
+      "platform": "snes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "sonic-unleashed-wii",
+      "title": "Sonic Unleashed",
+      "year": 2008,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "mario-sonic-at-the-olympic-games-wii",
+      "title": "Mario & Sonic at the Olympic Games",
+      "year": 2007,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "mario-sonic-at-the-london-2012-olympic-games-wii",
+      "title": "Mario & Sonic at the London 2012 Olympic Games",
+      "year": 2011,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "crash-titans-ps3",
+      "title": "Crash Titans",
+      "year": 2010,
+      "platform": "ps3",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "brain-academy-wii",
+      "title": "Brain Academy",
+      "year": 2008,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "wii-fit-plus-wii",
+      "title": "Wii Fit Plus",
+      "year": 2009,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "rhythm-heaven-fever-wii",
+      "title": "Rhythm Heaven Fever",
+      "year": 2011,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "super-mario-galaxy-the-lost-level-director-s-cut-content-demo-wii",
+      "title": "Super Mario Galaxy: The Lost Level Director's Cut Content (demo)",
+      "year": 2007,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "rayman-raving-rabbids-2-wii",
+      "title": "Rayman Raving Rabbids 2",
+      "year": 2007,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "donkey-kong-country-returns-3d-3ds",
+      "title": "Donkey Kong Country Returns 3D",
+      "year": 2013,
+      "platform": "3ds",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "lego-star-wars-the-complete-saga-wii",
+      "title": "LEGO Star Wars: The Complete Saga",
+      "year": 2007,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "lego-batman-wii",
+      "title": "LEGO Batman",
+      "year": 2008,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "lego-batman-2-dc-super-heroes-wii",
+      "title": "LEGO Batman 2: DC Super Heroes",
+      "year": 2012,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "wario-land-shake-it-wii",
+      "title": "Wario Land: Shake It!",
+      "year": 2008,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "disney-universe-wii",
+      "title": "Disney Universe",
+      "year": 2011,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "spongebob-squarepants-atlantis-squarepantis-wii",
+      "title": "SpongeBob SquarePants: Atlantis SquarePantis",
+      "year": 2007,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5
+    },
+    {
+      "id": "yoshi-s-island-snes",
+      "title": "Yoshi's Island",
+      "year": 1995,
+      "platform": "snes",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5,
+      "featured": true
+    },
+    {
+      "id": "the-legend-of-zelda-skyward-sword-wii",
+      "title": "The Legend of Zelda: Skyward Sword",
+      "year": 2011,
+      "platform": "wii",
+      "video_width": 960,
+      "video_crf": 27,
+      "video_seconds": 5,
+      "featured": true
     }
   ],
   "books": [
