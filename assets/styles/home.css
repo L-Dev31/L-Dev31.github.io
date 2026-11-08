@@ -485,7 +485,9 @@ h3 {
 }
 
 .mobile-menu {
+    overflow-x: hidden;
     overflow-y: auto;
+    scrollbar-width: none;
     position: fixed;
     inset: 0;
     z-index: 998;
@@ -527,6 +529,7 @@ html.menu-open body {
 }
 
 .mobile-menu-picture {
+    overflow: hidden;
     --invert: 1;
     position: absolute;
     top: 0;
@@ -642,21 +645,23 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
 .mobile-menu.open .mobile-menu-group:nth-child(3) { transition-delay: 0.29s, 0.29s; }
 .mobile-menu.open .mobile-menu-group:nth-child(4) { transition-delay: 0.36s, 0.36s; }
 
-.mobile-menu-footer {
+.mobile-menu-credit {
     position: absolute;
-    bottom: clamp(24px, 5vh, 48px);
-    left: 0;
-    right: 0;
+    top: clamp(12px, 2.5vh, 28px);
+    right: calc(var(--pad-edge) + 56px + 20px);
     display: flex;
-    justify-content: space-between;
-    padding: 0 var(--pad-edge);
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    margin: 0;
     font-size: 13px;
     font-weight: 500;
+    line-height: 1;
     opacity: 0;
     transition: opacity 0.5s ease 0.4s;
 }
 
-.mobile-menu.open .mobile-menu-footer {
+.mobile-menu.open .mobile-menu-credit {
     opacity: 1;
 }
 
@@ -1636,8 +1641,8 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
         align-items: center;
     }
 
-    .mobile-menu-footer {
-        bottom: max(24px, env(safe-area-inset-bottom));
+    .mobile-menu-credit {
+        top: max(12px, env(safe-area-inset-top));
     }
 
     #hero-video,
@@ -2469,16 +2474,28 @@ html.menu-open .section-nav {
     }
 }
 
-.mobile-menu-footer .clock {
-    padding: 0;
-    border: 0;
-    font-size: 13px;
+.mobile-menu .hero-socials .clock {
+    border-color: var(--black);
+    background: transparent;
+    color: var(--black);
+}
+
+html.on-accent .mobile-menu .hero-socials .clock {
+    border-color: var(--white);
+    color: var(--white);
 }
 
 div:has(> .floatingchat-container) {
     right: 12px !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
     left: auto !important;
-    bottom: 12px !important;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+html.menu-open div:has(> .floatingchat-container) {
+    visibility: visible;
+    pointer-events: auto;
 }
 
 .floatingchat-container {
@@ -2486,16 +2503,4 @@ div:has(> .floatingchat-container) {
     left: auto !important;
     transform: scale(0.68);
     transform-origin: right bottom;
-}
-
-html.menu-open div:has(> .floatingchat-container) {
-    opacity: 0;
-    pointer-events: none;
-}
-
-@media (max-width: 768px) {
-    div:has(> .floatingchat-container) {
-        right: 4px !important;
-        bottom: 72px !important;
-    }
 }
