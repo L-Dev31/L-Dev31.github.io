@@ -24,11 +24,11 @@
       ],
       "ctas": [
         {
-          "label": "Note d'intention (PDF)",
+          "label": "Read the statement of intent (PDF)",
           "url": "projects/cases/files/smfl-note-intention.pdf"
         },
         {
-          "label": "Processus Créatif (PDF)",
+          "label": "Read the creative process (PDF)",
           "url": "projects/cases/files/smfl-note-processus-creatif.pdf"
         }
       ],
@@ -62,7 +62,7 @@
       ],
       "ctas": [
         {
-          "label": "Charte Graphique (PDF)",
+          "label": "Read the brand guidelines (PDF)",
           "url": "projects/cases/files/ogfm-brand-guidelines.pdf"
         }
       ],
@@ -95,7 +95,7 @@
       ],
       "ctas": [
         {
-          "label": "View Presentation (PDF)",
+          "label": "View the presentation (PDF)",
           "url": "projects/cases/files/bgaw-presentation.pdf"
         }
       ],
@@ -179,7 +179,7 @@
       ],
       "ctas": [
         {
-          "label": "View Live Site",
+          "label": "View the live site",
           "url": "https://charliemckenziemusic.com"
         }
       ],
@@ -213,7 +213,7 @@
       ],
       "ctas": [
         {
-          "label": "Open Editor",
+          "label": "Open the editor",
           "url": "projects/demos/bmge/index.html"
         }
       ],

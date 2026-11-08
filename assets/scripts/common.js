@@ -193,6 +193,7 @@ function mobileMenu(lenis) {
     menu.id ||= 'mobile-menu';
     button.setAttribute('aria-controls', menu.id);
     menu.inert = true;
+    button.setAttribute('aria-label', 'Open menu');
     const nav = menu.querySelector('.mobile-menu-links');
     renderMenuLinks(nav);
     loadProjects().then(list => { menuProjects = list.filter(project => project.featured); renderMenuLinks(nav); }, () => {});
@@ -224,6 +225,7 @@ function mobileMenu(lenis) {
         menu.setAttribute('aria-hidden', !open);
         menu.inert = !open;
         button.setAttribute('aria-expanded', open);
+        button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
         document.documentElement.classList.toggle('menu-open', open);
         background.forEach(element => { element.inert = open; });
         if (open) { renderMenuLinks(nav); showPicture(); lenis?.stop(); }
