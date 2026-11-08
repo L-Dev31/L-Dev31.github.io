@@ -47,7 +47,7 @@ function render(project, html, projects) {
 
     const subtitle = document.createElement('p');
     subtitle.className = 'article-subtitle';
-    subtitle.textContent = `${project.subtitle} · Léo Tosku | Design, Dev, Marketing`;
+    subtitle.textContent = project.subtitle;
 
     const facts = document.createElement('dl');
     facts.className = 'article-facts';

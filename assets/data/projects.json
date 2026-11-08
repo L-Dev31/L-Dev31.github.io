@@ -188,6 +188,37 @@
       "ctaPreview": "assets/images/projects/cmck/website.jpg"
     },
     {
+      "id": "smag",
+      "title": "Super Mario Another Galaxy",
+      "date": "2025-10-12",
+      "category": "Dev",
+      "role": "Project Lead & 3D Artist",
+      "heroImage": "assets/images/projects/smag/header.jpg",
+      "subtitle": "A Super Mario Galaxy 2 mod I started in 2020 and still lead, with ten new galaxies and an original soundtrack.",
+      "tags": [
+        "Game Modding",
+        "3D Modeling",
+        "Blender",
+        "Level Design",
+        "Vertex Shading",
+        "Project Leadership",
+        "Remote Team",
+        "Logo Design",
+        "Web Development",
+        "JavaScript",
+        "Localization",
+        "Super Mario Galaxy 2"
+      ],
+      "ctas": [
+        {
+          "label": "Visit the website",
+          "url": "projects/demos/super-mario-another-galaxy/index.html"
+        }
+      ],
+      "cover": "assets/images/projects/smag.webp",
+      "ctaPreview": "assets/images/projects/smag/preview.webp"
+    },
+    {
       "id": "bmge",
       "title": "BMG Editor",
       "date": "2025-10-01",
