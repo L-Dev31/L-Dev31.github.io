@@ -34,8 +34,9 @@ export function initPage() {
 
 function navTone() {
     const bar = document.querySelector('.navbar');
-    const reds = [...document.querySelectorAll('#my-story, #featured-projects, .contact-rest, .accent-section, .culture-section--light')];
+    const reds = [...document.querySelectorAll('#my-story, #featured-projects, #promise, #experience, .contact-rest, .accent-section, .culture-section--light')];
     const stage = document.querySelector('.contact-stage');
+    const showcase = document.querySelector('.showcase-stage');
     const aboutHero = document.querySelector('.about-header');
     const projects = document.getElementById('featured-projects');
     if (!bar) return;
@@ -45,7 +46,8 @@ function navTone() {
         const overHero = aboutHero ? aboutHero.getBoundingClientRect().bottom > y : projects ? projects.getBoundingClientRect().top > y : false;
         bar.classList.toggle('on-dark', overHero);
         const covers = el => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; };
-        const onAccent = reds.some(covers) || (stage?.dataset.tone === 'light' && covers(stage));
+        const darkProject = showcase?.dataset.tone === 'dark' && covers(showcase);
+        const onAccent = !darkProject && (reds.some(covers) || (stage?.dataset.tone === 'light' && covers(stage)));
         bar.classList.toggle('on-accent', onAccent);
         document.documentElement.classList.toggle('on-accent', onAccent);
     };

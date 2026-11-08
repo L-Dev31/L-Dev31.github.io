@@ -22,7 +22,7 @@ const story = document.querySelector('.promise-picture');
 if (story) {
     let visible = false;
     new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }).observe(story);
-    pixelPicture(story, story.dataset.picture, { color: getComputedStyle(document.documentElement).getPropertyValue(story.closest('#promise') ? '--accent' : '--black').trim(), active: () => visible });
+    pixelPicture(story, story.dataset.picture, { color: getComputedStyle(document.documentElement).getPropertyValue('--black').trim(), active: () => visible });
 }
 scrubbingText();
 heroPortrait();

@@ -997,14 +997,6 @@ html.on-accent .lang-option:not([aria-pressed="true"]) {
     color: var(--black);
 }
 
-#promise .promise-picture {
-    --invert: 0;
-}
-
-#promise .promise-links li {
-    border-color: rgba(246, 242, 242, 0.25);
-}
-
 .promise-story {
     margin-top: clamp(40px, 8vh, 96px);
     display: grid;
@@ -1077,7 +1069,7 @@ html.on-accent .lang-option:not([aria-pressed="true"]) {
 }
 
 #featured-projects {
-    padding: 0 0 clamp(120px, 18vh, 220px);
+    padding: 0 0 clamp(24px, 6vh, 64px);
     overflow-x: clip;
     background: var(--accent);
     color: var(--black);
@@ -1203,7 +1195,6 @@ html.on-accent .lang-option:not([aria-pressed="true"]) {
     position: relative;
     width: 100%;
     height: calc(var(--count) * 200vh + 100vh);
-    margin-bottom: clamp(80px, 14vh, 160px);
 }
 
 .showcase-stage {
@@ -2690,6 +2681,195 @@ main {
     display: block;
     width: clamp(240px, 26vw, 420px);
     height: auto;
+}
+
+/* Home: each project of the showcase has its own tone and composition. */
+.showcase-stage {
+    background: var(--accent);
+    color: var(--black);
+    transition: background-color 0.7s var(--ease-out), color 0.7s var(--ease-out);
+}
+
+.showcase-stage[data-tone="dark"] {
+    background: var(--black);
+    color: var(--white);
+}
+
+.showcase-stage[data-tone="white"] {
+    background: var(--white);
+    color: var(--black);
+}
+
+.showcase-stage[data-tone="dark"] .showcase-go {
+    border-color: var(--white);
+    background: var(--white);
+    color: var(--black);
+}
+
+@media (min-width: 769px) {
+    .showcase-link,
+    .showcase-anchor,
+    .showcase-left,
+    .showcase-right {
+        transition: top 0.8s var(--ease-out), left 0.8s var(--ease-out), bottom 0.8s var(--ease-out), translate 0.8s var(--ease-out), width 0.8s var(--ease-out);
+    }
+
+    .showcase-stage[data-layout="left"] .showcase-link {
+        left: var(--pad-edge);
+        width: 56vw;
+        translate: 0 -50%;
+        text-align: left;
+    }
+
+    .showcase-stage[data-layout="left"] .showcase-anchor {
+        left: 78%;
+        width: min(50vmin, 480px);
+    }
+
+    .showcase-stage[data-layout="right"] .showcase-link {
+        left: calc(100% - var(--pad-edge));
+        width: 56vw;
+        translate: -100% -50%;
+        text-align: right;
+    }
+
+    .showcase-stage[data-layout="right"] .showcase-anchor {
+        left: 22%;
+        width: min(50vmin, 480px);
+    }
+
+    .showcase-stage[data-layout="bottom"] .showcase-link {
+        top: calc(100% - clamp(48px, 9vh, 96px));
+        translate: -50% -100%;
+    }
+
+    .showcase-stage[data-layout="bottom"] .showcase-anchor {
+        top: 34%;
+        width: min(44vmin, 420px);
+    }
+
+    .showcase-stage[data-layout="bottom"] .showcase-left,
+    .showcase-stage[data-layout="bottom"] .showcase-right {
+        bottom: 62%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .showcase-stage,
+    .showcase-link,
+    .showcase-anchor,
+    .showcase-left,
+    .showcase-right {
+        transition: none;
+    }
+}
+
+/* The list of all projects sits on a dark band of its own. */
+.index-section {
+    min-height: 0;
+    padding: clamp(80px, 14vh, 160px) 0 clamp(100px, 16vh, 200px);
+    background: var(--black);
+    color: var(--white);
+}
+
+.index-section .index-row {
+    border-top-color: rgba(246, 242, 242, 0.3);
+    color: var(--white);
+}
+
+.index-section .index-row:focus-visible {
+    outline-color: var(--white);
+}
+
+.index-section .index-go {
+    border-color: var(--white);
+    background: var(--white);
+    color: var(--black);
+}
+
+/* What you get is white, with its head turned around. */
+#promise {
+    background: var(--white);
+    color: var(--black);
+}
+
+#promise .title,
+#promise .section-note {
+    color: var(--black);
+}
+
+@media (min-width: 1025px) {
+    #promise .section-head {
+        flex-direction: row-reverse;
+    }
+
+    #promise .section-head .title {
+        text-align: right;
+    }
+}
+
+/* About: the story turned around, Experience on white, Education as two cards on red. */
+@media (min-width: 769px) {
+    #my-story .promise-story {
+        grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+        margin-right: clamp(0px, 12vw, 200px);
+        margin-left: 0;
+    }
+
+    #my-story .promise-picture {
+        order: 2;
+    }
+}
+
+#experience,
+#education {
+    padding-bottom: clamp(80px, 14vh, 160px);
+}
+
+#experience {
+    background: var(--white);
+    color: var(--black);
+}
+
+#experience .title,
+#experience .section-note {
+    color: var(--black);
+}
+
+#experience .timeline-item {
+    border-top-color: rgba(33, 7, 16, 0.35);
+}
+
+#experience .timeline-points li {
+    color: var(--black);
+}
+
+#education .timeline {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(32px, 5vw, 80px);
+}
+
+#education .timeline-item {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 18px;
+    padding: 22px 0 0;
+    border-top: 2px solid var(--black);
+}
+
+#education .timeline-company {
+    font-size: clamp(32px, 3.6vw, 60px);
+}
+
+#education .timeline-points li {
+    color: var(--black);
+}
+
+@media (max-width: 1024px) {
+    #education .timeline {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 
 /* Culture: each category has its own colour, head and list format. */

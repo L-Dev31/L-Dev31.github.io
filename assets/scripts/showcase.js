@@ -17,11 +17,19 @@ function createElement(tag, className, text) {
     return element;
 }
 
-function titleFontSize(title) {
-    const MAX_VW = 13;
-    const VW_BUDGET = 88;
+// Each project has its own tone and its own composition. They follow each other in a loop.
+const TONES = ['red', 'dark', 'white', 'dark', 'red'];
+const LAYOUTS = ['center', 'left', 'bottom', 'right', 'center'];
+// Room for the title, in vw, and the largest size it may take, for each composition.
+const FIT = { center: [88, 13], left: [54, 11], right: [54, 11], bottom: [90, 18] };
+// The pixel mark is black on red and red on the other tones.
+const MARK = { red: () => cssVariable('--black'), dark: () => cssVariable('--accent'), white: () => cssVariable('--accent') };
+const narrow = matchMedia('(max-width: 768px)');
+
+function titleFontSize(title, layout) {
+    const [budget, largest] = narrow.matches ? FIT.center : FIT[layout] ?? FIT.center;
     const AVERAGE_LETTER_WIDTH = 0.46;
-    return `${Math.min(MAX_VW, VW_BUDGET / (title.length * AVERAGE_LETTER_WIDTH)).toFixed(2)}vw`;
+    return `${Math.min(largest, budget / (title.length * AVERAGE_LETTER_WIDTH)).toFixed(2)}vw`;
 }
 
 export function showcase(container, projects, lenis) {
@@ -87,7 +95,10 @@ export function showcase(container, projects, lenis) {
 
         counter.textContent = `${pad2(index + 1)} / ${pad2(projects.length)}`;
         titleLink.href = caseStudyLink.href = `project.html?id=${project.id}`;
-        title.style.setProperty('--fit', titleFontSize(project.title));
+        const layout = LAYOUTS[index % LAYOUTS.length];
+        stage.dataset.layout = layout;
+        stage.dataset.tone = TONES[index % TONES.length];
+        title.style.setProperty('--fit', titleFontSize(project.title, layout));
         if (isFirst) title.textContent = project.title;
         else pixelWrite(title, project.title);
 
@@ -119,10 +130,17 @@ export function showcase(container, projects, lenis) {
     addEventListener('resize', updateFromScroll, { passive: true });
     updateFromScroll();
 
+    let markShown = null;
     return {
         anchor: markAnchor,
         current: () => projects[Math.max(0, currentIndex)],
         onChange: listener => changeListeners.add(listener),
+        // The mark changes colour gently when the tone changes.
+        markColor() {
+            const target = (MARK[stage.dataset.tone] ?? MARK.red)();
+            markShown = markShown ? blendColors(markShown, target, 0.1) : target;
+            return markShown;
+        },
     };
 }
 
@@ -295,7 +313,7 @@ export function homeDocks(stage) {
     if (stage) {
         docks.push({
             element: stage.anchor.closest('.showcase'),
-            color: () => cssVariable('--black'),
+            color: () => stage.markColor(),
             shape: () => projectMark(stage.current()),
             box: () => {
                 const box = stage.anchor.getBoundingClientRect();
