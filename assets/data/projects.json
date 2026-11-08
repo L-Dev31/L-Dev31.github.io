@@ -32,13 +32,9 @@
           "url": "projects/cases/files/smfl-note-processus-creatif.pdf"
         }
       ],
-      "ctaImages": [
-        "assets/images/projects/smfl/problem.jpg",
-        "assets/images/projects/smfl/symbol.jpg",
-        "assets/images/projects/smfl/flag-final.jpg"
-      ],
       "cover": "assets/images/projects/smfl.webp",
-      "featured": true
+      "featured": true,
+      "ctaPreview": "assets/images/projects/smfl/flag-final.jpg"
     },
     {
       "id": "ogfm",
@@ -70,12 +66,8 @@
           "url": "projects/cases/files/ogfm-brand-guidelines.pdf"
         }
       ],
-      "ctaImages": [
-        "assets/images/projects/ogfm/process1.jpg",
-        "assets/images/projects/ogfm/process2.jpg",
-        "assets/images/projects/ogfm/process3.jpg"
-      ],
-      "cover": "assets/images/projects/ogfm.webp"
+      "cover": "assets/images/projects/ogfm.webp",
+      "ctaPreview": "assets/images/projects/ogfm/process1.jpg"
     },
     {
       "id": "bgaw",
@@ -107,13 +99,9 @@
           "url": "projects/cases/files/bgaw-presentation.pdf"
         }
       ],
-      "ctaImages": [
-        "assets/images/projects/bgaw/identity.jpg",
-        "assets/images/projects/bgaw/logo.jpg",
-        "assets/images/projects/bgaw/web.jpg"
-      ],
       "cover": "assets/images/projects/bgaw.webp",
-      "featured": true
+      "featured": true,
+      "ctaPreview": "assets/images/projects/bgaw/web.jpg"
     },
     {
       "id": "mego",
@@ -195,13 +183,9 @@
           "url": "https://charliemckenziemusic.com"
         }
       ],
-      "ctaImages": [
-        "assets/images/projects/cmck/typography.webp",
-        "assets/images/projects/cmck/website.jpg",
-        "assets/images/projects/cmck/structure.webp"
-      ],
       "cover": "assets/images/projects/cmck.webp",
-      "featured": true
+      "featured": true,
+      "ctaPreview": "assets/images/projects/cmck/website.jpg"
     },
     {
       "id": "bmge",
@@ -233,13 +217,9 @@
           "url": "projects/demos/bmge/index.html"
         }
       ],
-      "ctaImages": [
-        "assets/images/projects/bmge/tomodachi.webp",
-        "assets/images/projects/bmge/tags.webp",
-        "assets/images/projects/bmge/re.webp"
-      ],
       "cover": "assets/images/projects/bmge.webp",
-      "featured": true
+      "featured": true,
+      "ctaPreview": "assets/images/projects/bmge/tomodachi.webp"
     },
     {
       "id": "gptr",
@@ -271,12 +251,8 @@
           "url": "https://github.com/L-Dev31/GPTranslator"
         }
       ],
-      "ctaImages": [
-        "assets/images/projects/gptr/dictionary.webp",
-        "assets/images/projects/gptr/translation.webp",
-        "assets/images/projects/gptr/interface.webp"
-      ],
-      "cover": "assets/images/projects/gptr.webp"
+      "cover": "assets/images/projects/gptr.webp",
+      "ctaPreview": "assets/images/projects/gptr/interface.webp"
     }
   ]
 }

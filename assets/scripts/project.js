@@ -30,6 +30,7 @@ function render(project, html, projects) {
     heroImg.src = project.heroImage;
     heroImg.alt = project.title;
     heroImg.hidden = false;
+    heroImg.fetchPriority = 'high';
     track(project.heroImage, heroImg.decode().catch(() => {}));
 
     const details = [
@@ -78,7 +79,7 @@ function render(project, html, projects) {
     pager(project, projects);
     chapterNav();
     scrubbingText();
-    reveal(document.querySelectorAll('.case-row, .pullquote, .gallery-item, .project-cta-bottom, .project-pager'));
+    reveal(document.querySelectorAll('.case-row, .pullquote, .gallery-item, .project-cta-bottom'));
     parallaxHero();
 }
 
@@ -137,25 +138,21 @@ function setMeta(attribute, name, content) {
     document.querySelector(`meta[${attribute}="${name}"]`).content = content;
 }
 
-function callsToAction({ ctas = [], ctaImages = [] }, section) {
+function callsToAction({ ctas = [], ctaPreview, heroImage }, section) {
     const heroLinks = document.querySelector('.project-hero-links');
-    if (ctas.length) {
-        for (const { label, url } of ctas) {
-            const heroLink = document.createElement('a');
-            heroLink.className = 'project-hero-live';
-            heroLink.href = url;
-            heroLink.target = '_blank';
-            heroLink.rel = 'noopener noreferrer';
-            heroLink.textContent = `${label} →`;
-            heroLinks.append(heroLink);
-        }
-    } else {
+    if (!ctas.length) {
         heroLinks.remove();
+        return section.remove();
     }
-
-    if (!ctas.length && !ctaImages.length) return section.remove();
-
     for (const { label, url } of ctas) {
+        const heroLink = document.createElement('a');
+        heroLink.className = 'project-hero-live';
+        heroLink.href = url;
+        heroLink.target = '_blank';
+        heroLink.rel = 'noopener noreferrer';
+        heroLink.textContent = `${label} →`;
+        heroLinks.append(heroLink);
+
         const link = document.createElement('a');
         link.className = 'project-cta-bottom-link';
         link.href = url;
@@ -164,11 +161,10 @@ function callsToAction({ ctas = [], ctaImages = [] }, section) {
         link.textContent = `${label} →`;
         section.querySelector('.project-cta-text').append(link);
     }
-
-    if (!ctaImages.length) return section.querySelector('.project-cta-gallery').remove();
-    section.querySelectorAll('.project-cta-tile').forEach((tile, i) => {
-        if (ctaImages[i]) tile.style.backgroundImage = `url('${ctaImages[i]}')`;
-    });
+    const preview = section.querySelector('.project-cta-preview');
+    preview.href = ctas[0].url;
+    preview.setAttribute('aria-label', `Open: ${ctas[0].label}`);
+    preview.querySelector('img').src = ctaPreview || heroImage;
 }
 
 function pager(project, projects) {

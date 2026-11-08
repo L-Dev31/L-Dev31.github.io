@@ -1,6 +1,7 @@
 import { reducedMotion, lowPower, clamp01, breakpoint, isMobile, throttled } from './env.js';
 import { pageLoader } from './intro.js';
 import { cursor, magnets, pageTransitions } from './cursor.js';
+import { loadProjects } from './projects.js';
 
 export { reducedMotion, lowPower, clamp01, breakpoint, throttled } from './env.js';
 export { track, entrance, heroEntrance, introLoaded } from './intro.js';
@@ -106,11 +107,12 @@ function smoothScroll() {
 }
 
 const PAGES = [
-    { id: 'home', label: 'Home', href: 'index.html' },
-    { id: 'about', label: 'About', href: 'about.html' },
-    { id: 'culture', label: 'Culture', href: 'culture.html' },
+    { id: 'home', label: 'Home', href: 'index.html', children: 'projects' },
+    { id: 'about', label: 'About', href: 'about.html', children: [{ id: 'culture', label: 'Culture', href: 'culture.html' }] },
     { id: 'contact', label: 'Contact', href: 'mailto:leotoskuepro@gmail.com' },
 ];
+
+let menuProjects = [];
 
 const SOCIALS = [
     { label: 'Instagram', href: 'https://www.instagram.com/ltosku31/' },
@@ -119,27 +121,49 @@ const SOCIALS = [
 ];
 
 function renderMenuLinks(nav) {
+    const params = new URLSearchParams(location.search);
     const file = location.pathname.split('/').pop() || 'index.html';
-    const here = file === 'about.html' ? 'about' : file === 'culture.html' ? 'culture' : file === 'project.html' ? 'project' : 'home';
-    const pages = [...PAGES];
-    if (here === 'project') {
-        const title = document.querySelector('.article-header h1, .project-hero h1')?.textContent.trim() || document.title.split(' — ')[0] || 'Project';
-        pages.splice(1, 0, { id: 'project', label: title, href: location.pathname + location.search });
-    }
-    nav.replaceChildren(...pages.map(page => {
+    const here = { 'about.html': 'about', 'culture.html': 'culture', 'culture-all.html': 'culture', 'project.html': `project:${params.get('id')}` }[file] ?? 'home';
+    const parentOf = here === 'culture' ? 'about' : here.startsWith('project:') ? 'home' : here;
+
+    const createLink = (className, page, isCurrent) => {
         const link = document.createElement('a');
-        link.className = 'mobile-menu-link';
+        link.className = className;
         link.href = page.href;
-        if (page.id === here) {
+        if (isCurrent) {
             link.setAttribute('aria-current', 'page');
-            const arrow = document.createElement('span');
-            arrow.className = 'menu-current';
-            arrow.setAttribute('aria-hidden', 'true');
-            arrow.textContent = '\u2192';
-            link.append(arrow);
+            if (className === 'mobile-menu-link') {
+                const arrow = document.createElement('span');
+                arrow.className = 'menu-current';
+                arrow.setAttribute('aria-hidden', 'true');
+                arrow.textContent = '\u2192';
+                link.append(arrow);
+            }
         }
         link.append(page.label);
         return link;
+    };
+
+    nav.replaceChildren(...PAGES.map(page => {
+        const group = document.createElement('div');
+        group.className = 'mobile-menu-group';
+        if (page.id === parentOf && here !== page.id) group.classList.add('is-active-branch');
+        group.append(createLink('mobile-menu-link', page, page.id === here));
+
+        let children = page.children === 'projects'
+            ? menuProjects.map(project => ({ id: `project:${project.id}`, label: project.title, href: `project.html?id=${project.id}` }))
+            : page.children;
+        if (page.id === 'home' && here.startsWith('project:') && !children.some(child => child.id === here)) {
+            const title = document.querySelector('.article-header h1')?.textContent.trim() || 'This project';
+            children = [...children, { id: here, label: title, href: location.pathname + location.search }];
+        }
+        if (children?.length) {
+            const sub = document.createElement('div');
+            sub.className = 'mobile-menu-sub';
+            sub.append(...children.map(child => createLink('mobile-menu-sublink', child, child.id === here)));
+            group.append(sub);
+        }
+        return group;
     }));
     if (!nav.nextElementSibling?.classList.contains('hero-socials')) {
         const socials = document.createElement('nav');
@@ -171,6 +195,7 @@ function mobileMenu(lenis) {
     menu.inert = true;
     const nav = menu.querySelector('.mobile-menu-links');
     renderMenuLinks(nav);
+    loadProjects().then(list => { menuProjects = list.filter(project => project.featured); renderMenuLinks(nav); }, () => {});
 
     const host = document.createElement('div');
     host.className = 'mobile-menu-picture';
