@@ -1,0 +1,20 @@
+{
+  "title": "BLUE S.E.A.",
+  "subtitle": "Le Crime Économique",
+  "start_location": "intro",
+  "menu_prompt": {
+    "char": "will",
+    "text": "Que devrais-je faire maintenant...",
+    "sprite": "doubting"
+  },
+  "menu_prompt_talk": {
+    "char": "will",
+    "text": "Que devrais-je lui demander...",
+    "sprite": "doubting"
+  },
+  "menu_prompt_travel": {
+    "char": "will",
+    "text": "Ou devrais-je aller...",
+    "sprite": "doubting"
+  }
+}

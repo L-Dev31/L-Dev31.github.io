@@ -1,0 +1,54 @@
+{
+  "_location": "pascal",
+  "_comment": "ACTE I - Scene 3 ECLAIR uniquement. Pascal est interroge brievement pour : 1) confirmer que Marine n'est pas la coupable (alibi croise) 2) livrer 2 indices techniques necessaires a la salle data (UTM chaos + Ina solo SEO) 3) glisser une bribe de burnout (preparation Acte II). Les vraies options d'enquete sur Pascal sont GATEES par 'acte2_ouvert' qui ne s'active qu'a la fin de l'Acte I.",
+
+  "on_first_visit": [
+    { "type": "line", "char": "pascal", "text": "Vous etes le **detective**. Marine m'a texte il y a quatre minutes. ##'Le mec arrive il va te poser plein de questions stp sois sympa'##. Donc voila. Soyez sympa, j'ai pas dormi.", "sprite": "explaining" },
+    { "type": "line", "char": "will",   "text": "~~Casque autour du cou, trois mugs vides, ecran tres lumineux. Il dit qu'il a pas dormi. C'est probablement vrai depuis longtemps.~~", "sprite": "doubting" },
+    { "type": "line", "char": "will",   "text": "**Une question, pas plus.** Marine depense trop. C'est elle, votre saboteuse ?", "sprite": "normal" },
+    { "type": "line", "char": "pascal", "text": "~~...Non.~~ Marine elle ramene du monde, vraiment. Le probleme c'est que sur la home, ils restent **trois secondes**. **Quatre-vingt-treize pour cent** de rebond. La home, c'est moi. Donc le probleme, c'est aussi un peu **moi**.", "sprite": "explaining" },
+    { "type": "line", "char": "will",   "text": "93 %. Vous avez le chiffre **exact** en tete.", "sprite": "doubting" },
+    { "type": "line", "char": "pascal", "text": "Je le regarde tous les matins. Comme un cardio qui regarde un patient qui meurt.", "sprite": "laughing" },
+    { "type": "line", "char": "narrateur", "text": "Pascal rit. C'est plus lourd qu'une blague." },
+
+    { "type": "line", "char": "will",   "text": "Et les **UTM** de Marine, vous y avez acces ?", "sprite": "doubting" },
+    { "type": "line", "char": "pascal", "text": "Ouais, et c'est une **boucherie**. 'linkedin', 'LinkedIn', 'Linkedin majuscule', 'LNKDN'... ##GA4 croit voir quatre canaux##. Mais c'est pas mon job de lui dire. Je code, je code, je code.", "sprite": "explaining" },
+    { "type": "line", "char": "will",   "text": "Et qui c'est, son job ?", "sprite": "doubting" },
+    { "type": "line", "char": "pascal", "text": "**Ina.** Mais Ina y touche pas. Personne touche a rien chez Ina. Lui, il fait son truc. Et on est tous censes faire **confiance**.", "sprite": "normal" },
+
+    { "type": "set_flag", "flag": "pascal_premier_contact" },
+    { "type": "set_flag", "flag": "indice_utm_chaos" },
+    { "type": "set_flag", "flag": "indice_ina_seul_seo" },
+    { "type": "set_flag", "flag": "pascal_délègue_ina" },
+
+    { "type": "line", "char": "will", "text": "~~Marine ramene, Pascal expose, Ina gere seul. Trois silos, zero communication. Le sabotage peut tres bien ne pas etre un acte --- ca peut etre une **absence d'acte**.~~", "sprite": "doubting" },
+    { "type": "line", "char": "will", "text": "On en reparlera. Reposez-vous.", "sprite": "normal" },
+    { "type": "line", "char": "pascal", "text": "Ouais. ~~Bonne nuit dans quatre jours.~~", "sprite": "laughing" }
+  ],
+
+  "menu": {
+    "options": [
+      {
+        "text": "(Aller a la Salle des Donnees)",
+        "id": "pascal_sortie_data",
+        "requires_flag": "indice_utm_chaos",
+        "sequence": [
+          { "type": "line", "char": "will", "text": "Je descends voir le GA4. Si je dois blanchir ou enfoncer Marine, ce sera devant des chiffres, pas devant son cafe.", "sprite": "doubting" },
+          { "type": "goto", "goto": "data" }
+        ]
+      },
+      {
+        "text": "(Revenir voir Marine d'abord)",
+        "id": "pascal_retour_marine",
+        "forbids_flag": "marine_resolved",
+        "sequence": [
+          { "type": "goto", "goto": "marine" }
+        ]
+      }
+    ]
+  },
+
+  "characters_present": [
+    { "label": "Pascal Poinet", "key": "pascal", "forbids_flag": "acte1_fin_amorce" }
+  ]
+}

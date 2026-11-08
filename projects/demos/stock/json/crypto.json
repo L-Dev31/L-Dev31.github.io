@@ -1,0 +1,47 @@
+[
+  {
+    "symbol": "BTC",
+    "ticker": "BTC-USD",
+    "name": "Bitcoin",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto"
+  },
+  {
+    "symbol": "ETH",
+    "ticker": "ETH-USD",
+    "name": "Ethereum",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto"
+  },
+  {
+    "symbol": "SOL",
+    "ticker": "SOL-USD",
+    "name": "Solana",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto"
+  },
+  {
+    "symbol": "XRP",
+    "ticker": "XRP-USD",
+    "name": "Ripple",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto"
+  },
+  {
+    "symbol": "DOGE",
+    "ticker": "DOGE-USD",
+    "name": "Dogecoin",
+    "isin": null,
+    "country": "CRYPTO",
+    "currency": "USD",
+    "type": "crypto"
+  }
+]
