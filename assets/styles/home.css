@@ -825,6 +825,11 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
 .header-meta .clock {
     padding: 6px 12px;
     font-size: 12px;
+    opacity: max(0, calc(1 - var(--turn, 0) * 3));
+}
+
+#header.is-turned .header-meta .clock {
+    visibility: hidden;
 }
 
 .hero-socials a::after {
@@ -2468,4 +2473,29 @@ html.menu-open .section-nav {
     padding: 0;
     border: 0;
     font-size: 13px;
+}
+
+div:has(> .floatingchat-container) {
+    right: 12px !important;
+    left: auto !important;
+    bottom: 12px !important;
+}
+
+.floatingchat-container {
+    right: 0 !important;
+    left: auto !important;
+    transform: scale(0.68);
+    transform-origin: right bottom;
+}
+
+html.menu-open div:has(> .floatingchat-container) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    div:has(> .floatingchat-container) {
+        right: 4px !important;
+        bottom: 72px !important;
+    }
 }
