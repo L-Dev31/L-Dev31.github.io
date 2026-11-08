@@ -196,7 +196,7 @@ function mobileMenu(lenis) {
     button.setAttribute('aria-label', 'Open menu');
     const nav = menu.querySelector('.mobile-menu-links');
     renderMenuLinks(nav);
-    loadProjects().then(list => { menuProjects = list.filter(project => project.featured); renderMenuLinks(nav); }, () => {});
+    loadProjects().then(list => { menuProjects = list; renderMenuLinks(nav); }, () => {});
 
     const host = document.createElement('div');
     host.className = 'mobile-menu-picture';
