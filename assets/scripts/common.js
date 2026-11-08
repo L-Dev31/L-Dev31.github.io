@@ -23,6 +23,7 @@ export function initPage() {
     anchorLinks(lenis);
     backToTop(lenis);
     footerReveal();
+    contactPicture();
     copyHandles();
     pauseOffscreenVideos();
     return lenis;
@@ -30,7 +31,7 @@ export function initPage() {
 
 function navTone() {
     const bar = document.querySelector('.navbar');
-    const reds = [...document.querySelectorAll('#my-story, #featured-projects, .footer-space, .accent-section')];
+    const reds = [...document.querySelectorAll('#my-story, #featured-projects, .contact-section, .accent-section')];
     const aboutHero = document.querySelector('.about-header');
     const projects = document.getElementById('featured-projects');
     if (!bar) return;
@@ -346,23 +347,31 @@ function footerReveal() {
     const footer = document.getElementById('footer');
     const space = document.querySelector('.footer-space');
     if (!footer || !space) return;
-    const sign = footer.querySelector('.footer-sign');
-    let signStarted = false;
-    const showSign = async () => {
-        signStarted = true;
-        const { pixelPicture } = await import('./effects.js');
-        const black = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
-        pixelPicture(sign, sign.dataset.picture, { color: black, fit: 'contain', focus: 0.76, anchor: 1, watch: true, active: () => footer.classList.contains('is-near') });
-    };
     const update = () => {
         const top = space.getBoundingClientRect().top;
         footer.classList.toggle('is-near', top < innerHeight + 2);
-        footer.style.setProperty('--reveal', clamp01(1 - top / innerHeight).toFixed(3));
-        if (sign && !signStarted && top < innerHeight * 2.5) showSign();
+        footer.style.setProperty('--reveal', clamp01((innerHeight - top) / Math.max(space.offsetHeight, 1)).toFixed(3));
     };
     addEventListener('scroll', throttled(update), { passive: true });
     addEventListener('resize', update, { passive: true });
     update();
+}
+
+function contactPicture() {
+    const host = document.querySelector('.contact-sign');
+    if (!host) return;
+    const start = async () => {
+        const { pixelPicture } = await import('./effects.js');
+        const black = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
+        const onScreen = () => { const { top, bottom } = host.getBoundingClientRect(); return bottom > 0 && top < innerHeight; };
+        pixelPicture(host, host.dataset.picture, { color: black, fit: 'contain', focus: 0.76, anchor: 1, watch: true, active: onScreen });
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        start();
+    }, { rootMargin: '250% 0px' });
+    observer.observe(host);
 }
 
 function pauseOffscreenVideos() {
