@@ -34,7 +34,7 @@ export function initPage() {
 
 function navTone() {
     const bar = document.querySelector('.navbar');
-    const reds = [...document.querySelectorAll('#my-story, #featured-projects, .contact-rest, .accent-section')];
+    const reds = [...document.querySelectorAll('#my-story, #featured-projects, .contact-rest, .accent-section, .culture-section--light')];
     const stage = document.querySelector('.contact-stage');
     const aboutHero = document.querySelector('.about-header');
     const projects = document.getElementById('featured-projects');

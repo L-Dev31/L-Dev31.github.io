@@ -229,8 +229,21 @@ export function parallax() {
     const tag = () => {
         for (const [selector, speed, compactSpeed] of PARALLAX.auto) {
             for (const el of document.querySelectorAll(selector)) {
-                el.dataset.parallaxSpeed ||= speed;
-                el.dataset.parallaxCompact ||= compactSpeed;
+                // A title above its note, in a column, would overlap it as they drift apart.
+                const head = el.closest('.section-head');
+                const stacked = head && getComputedStyle(head).flexDirection.startsWith('column');
+                if (stacked || (el.dataset.parallaxSpeed && !el.dataset.parallaxAuto)) {
+                    if (stacked && el.dataset.parallaxAuto) {
+                        delete el.dataset.parallaxSpeed;
+                        delete el.dataset.parallaxCompact;
+                        delete el.dataset.parallaxAuto;
+                        el.style.transform = '';
+                    }
+                    continue;
+                }
+                el.dataset.parallaxSpeed = speed;
+                el.dataset.parallaxCompact = compactSpeed;
+                el.dataset.parallaxAuto = '1';
             }
         }
     };

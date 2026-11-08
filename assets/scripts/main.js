@@ -191,22 +191,105 @@ const PLATFORMS = { nes: 'NES', snes: 'SNES', n64: 'Nintendo 64', gb: 'Game Boy'
 
 const when = item => (item.released ? Date.parse(item.released) : Date.UTC(item.year, 0, 1));
 
+// Each category has its own format: a list, two columns, giant titles, a wall of pixel posters,
+// tiles that play their clip, or book spines. They share the same works and the same data.
 function cultureList(container, items, kind) {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    const layout = container.dataset.layout || 'list';
     const list = el('ul', 'index-list');
-    const entries = [...items].sort((a, b) => when(b) - when(a)).map(item => {
+    const entries = [...items].sort((a, b) => when(b) - when(a)).map((item, i) => {
         const row = el('div', 'index-row');
         row.tabIndex = 0;
         const title = el('span', 'index-title', item.title.replace(/ \([^)]*\)$/, ''));
         const note = item.platform ? PLATFORMS[item.platform] || item.platform : item.note ? t(item.note, 'note') : item.author;
         if (note) title.append(el('small', 'index-platform', ` ${note}`));
         row.append(title, el('span', 'index-slot'), el('span', 'index-year', item.date ?? String(item.year)));
+        // Spines of slightly different heights, the same every time.
+        if (layout === 'spines') row.style.setProperty('--h', (0.84 + (i * 37 % 17) / 17 * 0.16).toFixed(3));
         const li = el('li', 'index-item');
         li.append(row);
         list.append(li);
         return { item, row };
     });
 
+    if (layout === 'columns') {
+        const rows = Math.ceil(entries.length / 2);
+        list.style.setProperty('--rows', rows);
+        entries[rows - 1]?.row.parentElement.classList.add('is-end');
+    }
+    if (layout === 'grid') posterGrid(container, list, entries, kind, color);
+    else if (layout === 'tiles') videoTiles(container, list, entries, color);
+    else floatingPreview(container, list, entries, kind, color, layout);
+}
+
+const hoverDevice = () => matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+// Every work is a pixel poster. Posters are drawn when they come near the screen.
+function posterGrid(container, list, entries, kind, color) {
+    const works = new WeakMap();
+    const seen = new IntersectionObserver(found => found.forEach(({ target, isIntersecting }) => {
+        target.dataset.seen = isIntersecting ? '1' : '';
+        if (!isIntersecting || target.dataset.started) return;
+        target.dataset.started = '1';
+        pixelPicture(target, `assets/images/culture/${kind}/${works.get(target).id}.webp`, { color, gain: 0.7, anchor: 0.35, watch: true, active: () => target.dataset.seen === '1' });
+    }), { rootMargin: '120% 0px' });
+    for (const { item, row } of entries) {
+        const poster = el('div', 'culture-poster');
+        poster.setAttribute('aria-hidden', 'true');
+        works.set(poster, item);
+        row.prepend(poster);
+        seen.observe(poster);
+    }
+    container.replaceChildren(list);
+}
+
+// Every game is a tile that plays its clip in place.
+function videoTiles(container, list, entries, color) {
+    container.replaceChildren(list);
+    const tiles = entries.map(({ item, row }) => {
+        const media = el('figure', 'culture-tile-media');
+        media.setAttribute('aria-hidden', 'true');
+        const clip = el('video');
+        Object.assign(clip, { muted: true, loop: true, playsInline: true, preload: 'none' });
+        media.append(clip);
+        row.append(media);
+        return { row, clip, cover: pixelCover(media, color), src: `assets/videos/culture/${item.id}.mp4` };
+    });
+    let current = null;
+    const close = tile => {
+        if (current !== tile) return;
+        current = null;
+        tile.clip.pause();
+        tile.cover.hide(() => { if (current !== tile) tile.row.classList.remove('is-on'); });
+    };
+    const open = tile => {
+        if (current === tile) return;
+        if (current) close(current);
+        current = tile;
+        if (!tile.clip.getAttribute('src')) tile.clip.src = tile.src;
+        tile.clip.play().catch(() => {});
+        tile.row.classList.add('is-on');
+        tile.cover.show();
+    };
+    const hover = hoverDevice();
+    for (const tile of tiles) {
+        if (hover) {
+            tile.row.addEventListener('pointerenter', () => open(tile));
+            tile.row.addEventListener('pointerleave', () => close(tile));
+        }
+        tile.row.addEventListener('focus', () => open(tile));
+        tile.row.addEventListener('blur', () => close(tile));
+        if (!hover) tile.row.addEventListener('click', event => {
+            event.stopPropagation();
+            if (current === tile) close(tile);
+            else open(tile);
+        });
+    }
+    if (!hover) document.addEventListener('click', () => { if (current) close(current); });
+}
+
+// A picture or a clip follows the pointer along the rows. On spines it sits over the book.
+function floatingPreview(container, list, entries, kind, color, layout) {
     const clips = kind === 'games';
     const figure = el('figure', 'culture-preview');
     figure.setAttribute('aria-hidden', 'true');
@@ -223,17 +306,21 @@ function cultureList(container, items, kind) {
 
     const follow = (row, x) => {
         const box = container.getBoundingClientRect(), r = row.getBoundingClientRect();
-        const title = row.querySelector('.index-title').getBoundingClientRect(), year = row.querySelector('.index-year').getBoundingClientRect();
         const half = figure.offsetWidth / 2, gap = 24;
-        const low = title.right + gap + half, high = year.left - gap - half;
-        const middle = (title.right + year.left) / 2;
-
-        let target = middle;
-        if (x != null) {
-            const right = x + 216 + half, left = x - 216 - half;
-            target = right <= high ? right : left >= low ? left : (high - right > left - low ? right : left);
+        let target;
+        if (layout === 'giant' || layout === 'spines') {
+            target = layout === 'spines' || x == null ? r.left + r.width / 2 : x;
+        } else {
+            const title = row.querySelector('.index-title').getBoundingClientRect(), year = row.querySelector('.index-year').getBoundingClientRect();
+            const low = title.right + gap + half, high = year.left - gap - half;
+            const middle = (title.right + year.left) / 2;
+            target = middle;
+            if (x != null) {
+                const right = x + 216 + half, left = x - 216 - half;
+                target = right <= high ? right : left >= low ? left : (high - right > left - low ? right : left);
+            }
+            target = low <= high ? Math.min(high, Math.max(low, target)) : middle;
         }
-        target = low <= high ? Math.min(high, Math.max(low, target)) : middle;
         target = Math.max(box.left + half, Math.min(box.right - half, target));
         figure.style.setProperty('--x', `${Math.round(target - box.left - half)}px`);
         figure.style.setProperty('--y', `${Math.round(r.top - box.top + r.height / 2 - figure.offsetHeight / 2)}px`);
@@ -267,7 +354,7 @@ function cultureList(container, items, kind) {
         }, 80);
     };
 
-    const hover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const hover = hoverDevice();
     for (const entry of entries) {
         if (hover) {
             entry.row.addEventListener('pointerenter', event => { pointerX = event.clientX; show(entry); });
