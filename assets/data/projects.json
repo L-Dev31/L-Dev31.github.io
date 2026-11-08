@@ -216,7 +216,9 @@
         }
       ],
       "cover": "assets/images/projects/smag.webp",
-      "ctaVideo": "MMpBh_gVShs"
+      "ctaVideo": "MMpBh_gVShs",
+      "trailerUrl": "https://www.youtube.com/watch?v=MMpBh_gVShs",
+      "trailerLabel": "Watch the 2025 trailer"
     },
     {
       "id": "bmge",

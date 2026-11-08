@@ -139,7 +139,7 @@ function setMeta(attribute, name, content) {
     document.querySelector(`meta[${attribute}="${name}"]`).content = content;
 }
 
-function callsToAction({ ctas = [], ctaPreview, ctaVideo, heroImage, title }, section) {
+function callsToAction({ ctas = [], ctaPreview, ctaVideo, trailerUrl, trailerLabel, heroImage, title }, section) {
     const heroLinks = document.querySelector('.project-hero-links');
     if (!ctas.length) {
         heroLinks.remove();
@@ -160,6 +160,15 @@ function callsToAction({ ctas = [], ctaPreview, ctaVideo, heroImage, title }, se
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
         link.textContent = label;
+        section.querySelector('.project-cta-text').append(link);
+    }
+    if (trailerUrl) {
+        const link = document.createElement('a');
+        link.className = 'project-cta-bottom-link';
+        link.href = trailerUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = trailerLabel || 'Watch the trailer';
         section.querySelector('.project-cta-text').append(link);
     }
     const preview = section.querySelector('.project-cta-preview');
