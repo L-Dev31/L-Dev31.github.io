@@ -108,8 +108,7 @@
     "fr": "dans",
     "gp": [
       "adan",
-      "dan",
-      "nan"
+      "dan"
     ],
     "type": "prep"
   },
@@ -237,10 +236,7 @@
       "merci",
       "mrc"
     ],
-    "gp": [
-      "mèsi",
-      "mèci"
-    ],
+    "gp": "mèsi",
     "type": "interj"
   },
   {
@@ -374,7 +370,7 @@
   },
   {
     "fr": "si",
-    "gp": "wi",
+    "gp": "si",
     "type": "conj"
   },
   {
@@ -733,10 +729,7 @@
     "type": "misc"
   },
   {
-    "gp": [
-      "oui",
-      "wi"
-    ],
+    "gp": "wi",
     "fr": "oui",
     "type": "misc"
   },
@@ -869,24 +862,9 @@
     "type": "misc"
   },
   {
-    "gp": "lapot",
-    "fr": "la porte",
-    "type": "misc"
-  },
-  {
     "gp": "adan",
     "fr": "dans",
     "type": "prep"
-  },
-  {
-    "gp": "ek",
-    "fr": "et",
-    "type": "conj"
-  },
-  {
-    "gp": "èk",
-    "fr": "et",
-    "type": "conj"
   },
   {
     "gp": "paski",
@@ -1183,7 +1161,7 @@
       "bon courage",
       "courage"
     ],
-    "gp": "bay kò-w fòs",
+    "gp": "ba kò-w fòs",
     "type": "expr"
   },
   {
@@ -1301,8 +1279,8 @@
   },
   {
     "gp": [
-      "bay kò-w fòs",
-      "bay kò -w fòs"
+      "ba kò-w fòs",
+      "ba kò -w fòs"
     ],
     "fr": "bon courage",
     "type": "expr"
@@ -1453,7 +1431,7 @@
     "type": "expr"
   },
   {
-    "gp": "bay chabon",
+    "gp": "ba chabon",
     "fr": "mets le paquet",
     "type": "expr"
   },
@@ -1658,7 +1636,7 @@
     "type": "expr"
   },
   {
-    "gp": "ti punch",
+    "gp": "ti ponch",
     "fr": "petit punch",
     "type": "misc"
   },
@@ -1989,7 +1967,7 @@
   },
   {
     "fr": "Capesterre",
-    "gp": ["Capèstè", "kapèstè"],
+    "gp": "Kapèstè",
     "type": "lieu"
   },
   {
@@ -2011,11 +1989,6 @@
     "fr": "Capesterre",
     "gp": "kapèstè",
     "type": "lieu"
-  },
-  {
-    "fr": "well",
-    "gp": "well",
-    "type": "interj"
   },
   {
     "fr": "Ô",
@@ -2045,6 +2018,19 @@
   {
     "fr": "Ka ka kawmòs",
     "gp": "Ka ka kawmòs",
+    "type": "expr"
+  },
+  {
+    "fr": [
+      "ah",
+      "ha"
+    ],
+    "gp": "ah",
+    "type": "interj"
+  },
+  {
+    "fr": "tout mon sommeil",
+    "gp": "tout dòmi an mwen",
     "type": "expr"
   }
 ]

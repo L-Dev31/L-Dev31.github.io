@@ -10698,10 +10698,6 @@
     ]
   },
   {
-    "fr": "vraiment?",
-    "gp": "sérieu?"
-  },
-  {
     "fr": [
       "vélo",
       "vélos",
@@ -10841,10 +10837,6 @@
   {
     "fr": "à demain",
     "gp": "a dèmen"
-  },
-  {
-    "fr": "à+lieu",
-    "gp": "atè+lieu"
   },
   {
     "fr": "âme",
@@ -11554,11 +11546,6 @@
     "gp": "è",
     "genre": "f",
     "type": "nom"
-  },
-  {
-    "gp": "kay",
-    "fr": "maison",
-    "genre": "f"
   },
   {
     "gp": "rasin",
@@ -13840,10 +13827,7 @@
     "genre": "f"
   },
   {
-    "gp": [
-      "muzik",
-      "mizik"
-    ],
+    "gp": "mizik",
     "fr": "musique",
     "type": "nom",
     "genre": "f"
@@ -14273,14 +14257,6 @@
   {
     "fr": "enfant",
     "gp": "pitit",
-    "genre": "m"
-  },
-  {
-    "fr": [
-      "enfant",
-      "enfants"
-    ],
-    "gp": "zanfan",
     "genre": "m"
   },
   {
@@ -14929,5 +14905,288 @@
     "gp": "satan",
     "genre": "m",
     "type": "nom"
+  },
+  {
+    "fr": [
+      "parents"
+    ],
+    "gp": "paran",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "expérience",
+      "expériences"
+    ],
+    "gp": "éksperyans",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "passion",
+      "passions"
+    ],
+    "gp": "pasyon",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "entreprise",
+      "entreprises"
+    ],
+    "gp": "antrepriz",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "équipe",
+      "équipes"
+    ],
+    "gp": "ekip",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "projet",
+      "projets"
+    ],
+    "gp": "pwojè",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "art",
+      "arts"
+    ],
+    "gp": "lart",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "style",
+      "styles"
+    ],
+    "gp": "stil",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "paysage",
+      "paysages"
+    ],
+    "gp": "payizaj",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "paradis"
+    ],
+    "gp": "paradi",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "monument",
+      "monuments"
+    ],
+    "gp": "monimen",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "volcan",
+      "volcans"
+    ],
+    "gp": "vòlkan",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "culture",
+      "cultures"
+    ],
+    "gp": "kilti",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "merveille",
+      "merveilles"
+    ],
+    "gp": "mèvèy",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "théâtre",
+      "théâtres"
+    ],
+    "gp": "téyat",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "période",
+      "périodes"
+    ],
+    "gp": "peryòd",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "option",
+      "options"
+    ],
+    "gp": "opsyon",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "succès"
+    ],
+    "gp": "siksè",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "appartement",
+      "appartements"
+    ],
+    "gp": "apatman",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "recette",
+      "recettes"
+    ],
+    "gp": "resèt",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "série",
+      "séries"
+    ],
+    "gp": "séri",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "concours"
+    ],
+    "gp": "konkou",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "talent",
+      "talents"
+    ],
+    "gp": "talan",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "congé",
+      "congés"
+    ],
+    "gp": "konjé",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "collègue",
+      "collègues"
+    ],
+    "gp": "kolèg",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "opportunité",
+      "opportunités"
+    ],
+    "gp": "okazyon",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "énergie",
+      "énergies"
+    ],
+    "gp": "enèji",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "km",
+      "kilomètre",
+      "kilomètres"
+    ],
+    "gp": "kilomèt",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "château",
+      "châteaux"
+    ],
+    "gp": "chato",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "pause",
+      "pauses"
+    ],
+    "gp": "pòz",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "emploi",
+      "emplois"
+    ],
+    "gp": "anplwa",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "ambiance",
+      "ambiances"
+    ],
+    "gp": "anbyans",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "festival",
+      "festivals"
+    ],
+    "gp": "festival",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "club",
+      "clubs"
+    ],
+    "gp": "klob",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "étape",
+      "étapes"
+    ],
+    "gp": "etap",
+    "genre": "f"
+  },
+  {
+    "fr": [
+      "Michel"
+    ],
+    "gp": "Michèl"
   }
 ]

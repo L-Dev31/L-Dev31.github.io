@@ -2079,6 +2079,77 @@
       }
       return null;
     });
+    // « tou » (GP) : nom « trou », adverbe « aussi » (« an ka vini tou » = je viens aussi), « du tout » après « pa ».
+    // Un « tou » quantifieur (« tou moun », « tou » + nom) reste à h_tout ; en tête de phrase, rien ne change.
+    HG.push(function h_tou_homographe(e) {
+      const { tokens, i, n } = e; const tok = tokens[i], cle = tok.toLowerCase();
+      if (cle !== "tou" || i === 0 || !est_mot(tokens[i - 1])) return null;
+      const prevL = tokens[i - 1].toLowerCase();
+      const suiv = i + 1 < n ? tokens[i + 1] : null, suivL = suiv ? suiv.toLowerCase() : "";
+      for (let j = i - 1; j >= 0 && est_mot(tokens[j]); j--) if (tokens[j].toLowerCase() === rules.R.marqueur_negation) { e.emettre(reporter_casse(tok, "du tout")); return i + 1; }
+      if (suivL === "la" || suivL === "lan") { e.emettre(reporter_casse(tok, "trou")); return i + 1; }
+      if (suiv !== null && est_mot(suiv) && !est_verbe_gp(suiv) && !rules.marqueurs.has(suivL) && !rules.pronoms_gp.has(suivL) && ["nom", "lieu"].includes(type_gp(suiv))) return null;
+      const nominal = ["on", "yon", "yonn"].includes(prevL) || ["adj", "num", "prep"].includes(type_gp(tokens[i - 1]));
+      e.emettre(reporter_casse(tok, nominal ? "trou" : "aussi")); return i + 1;
+    });
+    // « tou » en tête de phrase : « tou ka vini » = tout le monde vient ; « tou té ka vini » = tout le monde venait ;
+    // « tou yo » = tous viennent ; « tou lè » = toujours ; « tou sa » = tout ça ; « tou pa » = tous ne… pas ;
+    // « tou X-la » = tout le / toute la X (singulier défini, article postposé). Le pluriel nu (« tou kaz ») reste à h_tout.
+    HG.push(function h_tou_debut(e) {
+      const { tokens, i, n, state, conj, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
+      if (cle !== "tou" || (i > 0 && est_mot(tokens[i - 1]))) return null;
+      const suiv = i + 1 < n ? tokens[i + 1] : null;
+      if (suiv === null || !est_mot(suiv)) return null;
+      const sl = suiv.toLowerCase();
+      if (sl === "lè") { e.emettre(reporter_casse(tok, "toujours")); return i + 2; }
+      if (sl === "sa") {
+        if (i + 2 < n && tokens[i + 2].toLowerCase() === "sé") { e.emettre(reporter_casse(tok, "tout ça c'est")); return i + 3; }
+        e.emettre(reporter_casse(tok, "tout ça")); return i + 2;
+      }
+      if (sl === "pa") { e.emettre(reporter_casse(tok, "tous")); state.pluriel = true; return i + 1; }
+      if (sl === "sé") { e.emettre(reporter_casse(tok, "tous")); state.pluriel = true; return i + 1; }
+      if (sl === "bagay") { e.emettre(reporter_casse(tok, "tout")); state.pluriel = false; return i + 2; }
+      if (rules.marqueurs.has(sl)) {
+        const [temps, adverbe, j2] = lire_marqueurs(tokens, i + 1, n);
+        if (j2 < n && est_verbe_gp(tokens[j2])) {
+          e.emettre(reporter_casse(tok, "tout le monde")); state.pluriel = false;
+          conj[sortie.length] = ["il", temps || "present", false, adverbe]; return j2;
+        }
+        return null;
+      }
+      if (sl === "nou" || sl === "zot") {
+        let k = i + 2; while (k < n && !est_mot(tokens[k])) k++;
+        const [temps, adverbe, j2] = lire_marqueurs(tokens, k, n);
+        if (j2 < n && est_verbe_gp(tokens[j2])) {
+          const pr = sl === "nou" ? "nous" : "vous";
+          e.emettre(reporter_casse(tok, pr + " tous")); state.pluriel = true;
+          conj[sortie.length] = [pr, temps || "present", false, adverbe]; return j2;
+        }
+        return null;
+      }
+      if (sl === "yo") {
+        let k = i + 2; while (k < n && !est_mot(tokens[k])) k++;
+        const [temps, adverbe, j2] = lire_marqueurs(tokens, k, n);
+        if (j2 < n && est_verbe_gp(tokens[j2])) {
+          e.emettre(reporter_casse(tok, "tous")); state.pluriel = true;
+          conj[sortie.length] = ["ils", temps || "present", false, adverbe]; return j2;
+        }
+        return null;
+      }
+      if (["nom", "lieu"].includes(type_gp(suiv)) && i + 2 < n && tokens[i + 2].toLowerCase() === "la") {
+        const nomFr = fr_de_gp(suiv);
+        if (nomFr) {
+          const fem = ctx.genre_fr[nomFr.toLowerCase()] === "f";
+          const voy = commence_par_voyelle(nomFr); const det = fem ? (voy ? "toute l'" : "toute la") : (voy ? "tout l'" : "tout le");
+          if (voy) e.emettre(reporter_casse(tok, det + nomFr)); else { e.emettre(reporter_casse(tok, det)); e.emettre(nomFr); }
+          state.pluriel = false;
+          const [temps, adverbe, j2] = lire_marqueurs(tokens, i + 3, n);
+          if (j2 < n && est_verbe_gp(tokens[j2])) { conj[sortie.length] = ["il", temps || "present", false, adverbe]; return j2; }
+          return i + 3;
+        }
+      }
+      return null;
+    });
     HG.push(function h_tout(e) {
       const { tokens, i, n, state, conj, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null;

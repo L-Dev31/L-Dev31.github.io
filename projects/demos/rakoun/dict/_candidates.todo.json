@@ -1,17 +1,5 @@
 [
   {
-    "fr": "étape",
-    "gp": "",
-    "freq": 4,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "ah",
-    "gp": "",
-    "freq": 4,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "impressionnant",
     "gp": "",
     "freq": 4,
@@ -19,18 +7,6 @@
   },
   {
     "fr": "excellente",
-    "gp": "",
-    "freq": 3,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "expérience",
-    "gp": "",
-    "freq": 3,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "passionnant",
     "gp": "",
     "freq": 3,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -48,43 +24,13 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "parents",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "enrichissante",
     "gp": "",
     "freq": 2,
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "entreprise",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "projets",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "là-bas",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "projet",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "passion",
     "gp": "",
     "freq": 2,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -97,12 +43,6 @@
   },
   {
     "fr": "initiative",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "équipe",
     "gp": "",
     "freq": 2,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -126,49 +66,13 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "énergie-la",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "art",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "km",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "paysages-la",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "particulier",
     "gp": "",
     "freq": 2,
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "paysages",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "weekend",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "pratique",
     "gp": "",
     "freq": 2,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -181,12 +85,6 @@
   },
   {
     "fr": "alimentaires",
-    "gp": "",
-    "freq": 2,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "paradis",
     "gp": "",
     "freq": 2,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -246,12 +144,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "bel",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "accomplissement",
     "gp": "",
     "freq": 1,
@@ -271,12 +163,6 @@
   },
   {
     "fr": "agrandit",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "succès",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -366,12 +252,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "emploi",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "enthousiaste",
     "gp": "",
     "freq": 1,
@@ -384,19 +264,7 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "concours",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "doué",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "talent",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -415,12 +283,6 @@
   },
   {
     "fr": "mérites-la",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "terminé",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -456,12 +318,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "opportunité",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "compétences",
     "gp": "",
     "freq": 1,
@@ -492,18 +348,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "passionné",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "collègue",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "démissionner",
     "gp": "",
     "freq": 1,
@@ -528,19 +372,7 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "pauses",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "labeur",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "congé",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -582,12 +414,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "personnel",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "responsabilité",
     "gp": "",
     "freq": 1,
@@ -613,12 +439,6 @@
   },
   {
     "fr": "repris",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "ancienne",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -702,24 +522,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "club",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "théâtre",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "art-la",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "dramatique",
     "gp": "",
     "freq": 1,
@@ -774,19 +576,7 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "moyen",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "perfectionner",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "style",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -834,12 +624,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "personnelle",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "initié",
     "gp": "",
     "freq": 1,
@@ -853,12 +637,6 @@
   },
   {
     "fr": "bienfaits",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "appartement",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -900,12 +678,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "recette",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "recommanderais",
     "gp": "",
     "freq": 1,
@@ -937,12 +709,6 @@
   },
   {
     "fr": "recommandations",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "séries",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -984,12 +750,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "options-la",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "savouré",
     "gp": "",
     "freq": 1,
@@ -997,12 +757,6 @@
   },
   {
     "fr": "trekking",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "tropicale",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -1044,12 +798,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "traditionnels",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "souks-la",
     "gp": "",
     "freq": 1,
@@ -1057,12 +805,6 @@
   },
   {
     "fr": "impressionnants",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "châteaux-la",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -1098,25 +840,7 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "festival",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "traditionnel",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "sensationnel",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "merveille",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -1134,18 +858,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "période",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "ambiance",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "incomparable",
     "gp": "",
     "freq": 1,
@@ -1153,18 +865,6 @@
   },
   {
     "fr": "randonné",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "monument",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "historique",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -1248,18 +948,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "volcans",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "culture",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "légendaires",
     "gp": "",
     "freq": 1,
@@ -1291,12 +979,6 @@
   },
   {
     "fr": "base",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "entreprise-la",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"
@@ -1344,12 +1026,6 @@
     "_todo": "à valider par locuteur/dico faisant autorité"
   },
   {
-    "fr": "entreprises-la",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
     "fr": "effectifs-la",
     "gp": "",
     "freq": 1,
@@ -1357,12 +1033,6 @@
   },
   {
     "fr": "inverse-la",
-    "gp": "",
-    "freq": 1,
-    "_todo": "à valider par locuteur/dico faisant autorité"
-  },
-  {
-    "fr": "michel",
     "gp": "",
     "freq": 1,
     "_todo": "à valider par locuteur/dico faisant autorité"

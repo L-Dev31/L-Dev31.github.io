@@ -1255,10 +1255,6 @@
     "gp": "nouvo"
   },
   {
-    "fr": "petit",
-    "gp": "piti"
-  },
-  {
     "fr": "intelligent",
     "gp": "entèlijan"
   },
@@ -1362,5 +1358,97 @@
   {
     "fr": ["second", "seconde", "seconds", "secondes"],
     "gp": "sègond"
+  },
+  {
+    "fr": [
+      "bel"
+    ],
+    "gp": "bèl"
+  },
+  {
+    "fr": [
+      "passionnant",
+      "passionnante",
+      "passionnants",
+      "passionnantes"
+    ],
+    "gp": "pasyonan"
+  },
+  {
+    "fr": [
+      "passionné",
+      "passionnée",
+      "passionnés",
+      "passionnées"
+    ],
+    "gp": "pasyoné"
+  },
+  {
+    "fr": [
+      "moyen",
+      "moyenne",
+      "moyens",
+      "moyennes"
+    ],
+    "gp": "mwayen"
+  },
+  {
+    "fr": [
+      "tropical",
+      "tropicale",
+      "tropicaux",
+      "tropicales"
+    ],
+    "gp": "tropikal"
+  },
+  {
+    "fr": [
+      "traditionnel",
+      "traditionnelle",
+      "traditionnels",
+      "traditionnelles"
+    ],
+    "gp": "tradisyonèl"
+  },
+  {
+    "fr": [
+      "historique",
+      "historiques"
+    ],
+    "gp": "istorik"
+  },
+  {
+    "fr": [
+      "pratique",
+      "pratiques"
+    ],
+    "gp": "pratik"
+  },
+  {
+    "fr": [
+      "ancien",
+      "ancienne",
+      "anciens",
+      "anciennes"
+    ],
+    "gp": "ansyen"
+  },
+  {
+    "fr": [
+      "terminé",
+      "terminée",
+      "terminés",
+      "terminées"
+    ],
+    "gp": "fini"
+  },
+  {
+    "fr": [
+      "personnel",
+      "personnelle",
+      "personnels",
+      "personnelles"
+    ],
+    "gp": "pèsonèl"
   }
 ]
