@@ -648,7 +648,7 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
 .mobile-menu-credit {
     position: absolute;
     top: clamp(12px, 2.5vh, 28px);
-    right: calc(var(--pad-edge) + 56px + 20px);
+    left: var(--pad-edge);
     display: flex;
     align-items: center;
     gap: 10px;
