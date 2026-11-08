@@ -504,6 +504,7 @@ h3 {
 }
 
 .mobile-menu {
+    overflow-y: auto;
     position: fixed;
     inset: 0;
     z-index: 998;
@@ -604,15 +605,13 @@ html.menu-open body {
     display: flex;
     flex-wrap: wrap;
     gap: 2px clamp(16px, 2vw, 28px);
-    padding: 0 0 clamp(14px, 2.2vh, 22px) 0.4em;
+    margin: 0 0 clamp(14px, 2.2vh, 22px) 0.2em;
+    padding-left: clamp(12px, 1.4vw, 18px);
+    border-left: 1px solid rgba(33, 7, 16, 0.3);
 }
 
-.mobile-menu-sub::before {
-    content: '\21B3';
-    align-self: center;
-    margin-right: -8px;
-    font-size: 14px;
-    opacity: 0.55;
+html.on-accent .mobile-menu-sub {
+    border-color: rgba(246, 242, 242, 0.3);
 }
 
 .mobile-menu-sublink {
@@ -623,21 +622,17 @@ html.menu-open body {
     letter-spacing: -0.01em;
     line-height: 1.2;
     text-decoration: none;
-    opacity: 0.85;
-    transition: font-weight 0.15s var(--ease-out), opacity 0.15s var(--ease-out);
+    text-underline-offset: 0.25em;
 }
 
 .mobile-menu-sublink:hover,
-.mobile-menu-sublink:focus-visible {
-    font-weight: 800;
-    opacity: 1;
+.mobile-menu-sublink:focus-visible,
+.mobile-menu-sublink[aria-current] {
+    text-decoration: underline;
 }
 
 .mobile-menu-sublink[aria-current] {
-    font-weight: 800;
-    opacity: 1;
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
+    font-weight: 700;
 }
 
 .mobile-menu-group.is-active-branch > .mobile-menu-link {
@@ -1608,10 +1603,17 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
         padding: max(76px, calc(env(safe-area-inset-top) + 56px)) var(--pad-edge) max(32px, env(safe-area-inset-bottom));
     }
 
+    .mobile-menu-sub {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 16px;
+    }
+
     .mobile-menu-sublink {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         min-height: 44px;
+        padding: 0;
     }
 
     .mobile-menu-link {
@@ -2443,5 +2445,20 @@ html.menu-open .section-nav {
 @media (max-width: 768px) {
     .section-aside {
         width: 100%;
+    }
+}
+
+@media (max-height: 720px) {
+    .mobile-menu-link {
+        padding-block: 8px;
+        font-size: clamp(30px, 5vw, 56px);
+    }
+
+    .mobile-menu-sub {
+        padding-bottom: 8px;
+    }
+
+    .mobile-menu .hero-socials {
+        margin-top: 16px;
     }
 }
