@@ -1,6 +1,7 @@
 import { reducedMotion, lowPower, clamp01 } from './common.js';
 import { cellCanvas, CELL } from './pixel.js';
 import { FLAGS as FLAG_SETTINGS } from './config.js';
+import { t as tr } from './i18n.js';
 
 const el = (tag, cls, text) => {
     const node = document.createElement(tag);
@@ -156,8 +157,8 @@ export async function journey(container) {
     const stops = data.stops.map((entry, i) => {
         const stop = typeof entry === 'string' ? { id: entry } : entry, place = places[stop.id];
         return {
-            ...place, flag: stop.id, label: place.name, place: stop.title ?? place.name, country: stop.caption ?? place.region,
-            when: stop.when ?? (track ? String(i + 1).padStart(2, '0') : ''), what: stop.what,
+            ...place, flag: stop.id, label: tr(place.name), place: tr(stop.title ?? place.name), country: tr(stop.caption ?? place.region),
+            when: tr(stop.when ?? (track ? String(i + 1).padStart(2, '0') : '')), what: tr(stop.what),
         };
     });
 

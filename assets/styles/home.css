@@ -62,6 +62,18 @@ p {
     display: none !important;
 }
 
+/* French visitors: the page stays hidden until it is translated, so no English flashes by. */
+html.is-translating body {
+    visibility: hidden;
+    animation: show-anyway 0s 3s forwards;
+}
+
+@keyframes show-anyway {
+    to {
+        visibility: visible;
+    }
+}
+
 section {
     position: relative;
     z-index: 2;
@@ -644,6 +656,58 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
 
 .mobile-menu.open .mobile-menu-credit {
     opacity: 1;
+}
+
+.mobile-menu-lang {
+    position: absolute;
+    top: clamp(12px, 2.5vh, 28px);
+    right: calc(var(--pad-edge) + 56px + 12px);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 44px;
+    opacity: 0;
+    transition: opacity 0.5s ease 0.4s;
+}
+
+.mobile-menu.open .mobile-menu-lang {
+    opacity: 1;
+}
+
+.lang-option {
+    min-width: 44px;
+    min-height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--black);
+    border-radius: 999px;
+    background: var(--black);
+    color: var(--white);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: font-weight 0.15s var(--ease-out);
+}
+
+.lang-option:hover,
+.lang-option:focus-visible {
+    font-weight: 800;
+}
+
+.lang-option[aria-pressed="true"] {
+    border-color: currentColor;
+    background: transparent;
+    color: inherit;
+    font-weight: 500;
+    cursor: default;
+}
+
+html.on-accent .lang-option:not([aria-pressed="true"]) {
+    border-color: var(--white);
+    background: var(--white);
+    color: var(--black);
 }
 
 .back-to-top {
@@ -1601,7 +1665,8 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
         align-items: center;
     }
 
-    .mobile-menu-credit {
+    .mobile-menu-credit,
+    .mobile-menu-lang {
         top: max(12px, env(safe-area-inset-top));
     }
 
@@ -2043,6 +2108,7 @@ main {
 
 .about-header-text .about-title {
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: baseline;
     justify-content: center;
     column-gap: 0.3em;

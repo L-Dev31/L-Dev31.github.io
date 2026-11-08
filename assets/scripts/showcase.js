@@ -4,6 +4,7 @@ import { loadProjects, projectMark, SIGNATURE_URL } from './projects.js';
 import { INTRO, SIGNATURE } from './config.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { pixelWrite } from './effects.js';
+import { t, colon } from './i18n.js';
 
 const cssVariable = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const smoothstep = t => t * t * (3 - 2 * t);
@@ -33,7 +34,7 @@ export function showcase(container, projects, lenis) {
     const counter = createElement('p', 'showcase-count');
     const title = createElement('p', 'showcase-title');
     const titleLink = createElement('a', 'showcase-link');
-    titleLink.dataset.cursor = 'View';
+    titleLink.dataset.cursor = t('View');
     titleLink.tabIndex = -1;
     titleLink.append(title);
 
@@ -43,7 +44,7 @@ export function showcase(container, projects, lenis) {
 
     const role = createElement('p', 'index-role');
     const subtitle = createElement('p', 'index-text');
-    const caseStudyLink = createElement('a', 'index-go showcase-go', 'Read the case study');
+    const caseStudyLink = createElement('a', 'index-go showcase-go', t('Read the case study'));
     caseStudyLink.tabIndex = -1;
     const rightSide = createElement('div', 'showcase-side showcase-right');
     rightSide.append(role, subtitle, caseStudyLink);
@@ -91,8 +92,8 @@ export function showcase(container, projects, lenis) {
         else pixelWrite(title, project.title);
 
         const firstTags = (project.tags || []).slice(0, 3);
-        tags.replaceChildren(...[project.category, ...firstTags].map(tag => createElement('li', 'index-tag', tag)));
-        role.textContent = `Role: ${project.role}`;
+        tags.replaceChildren(...[project.categoryLabel ?? project.category, ...firstTags].map(tag => createElement('li', 'index-tag', tag)));
+        role.textContent = `${t('Role')}${colon}${project.role}`;
         subtitle.textContent = project.subtitle;
         if (stillMark) stillMark.src = projectMark(project);
 

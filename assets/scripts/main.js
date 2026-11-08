@@ -1,5 +1,6 @@
 import './components.js';
 import { initPage, loadProjects } from './common.js';
+import { t, colon } from './i18n.js';
 import { scrubbingText, parallax, heroPortrait, pixelPicture, pixelCover } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { journey } from './sections.js';
@@ -57,9 +58,9 @@ function projectIndex(container, projects) {
         const info = el('div', 'index-info');
         const tags = el('ul', 'index-tags');
         tags.append(...(project.tags || []).map(tag => el('li', 'index-tag', tag)));
-        const go = el('a', 'index-go', 'Read the case study');
+        const go = el('a', 'index-go', t('Read the case study'));
         go.href = `project.html?id=${project.id}`;
-        info.append(el('div', 'index-role', `Role: ${project.role}`), el('div', 'index-text', project.subtitle), tags, go);
+        info.append(el('div', 'index-role', `${t('Role')}${colon}${project.role}`), el('div', 'index-text', project.subtitle), tags, go);
         const inner = el('div', 'index-detail-inner');
         inner.append(media, info);
         detail.append(inner);
@@ -104,7 +105,7 @@ function projectIndex(container, projects) {
                 entries.push(entry);
             }
             const heading = el('h3', 'index-category');
-            heading.append(el('span', '', category), el('span', 'index-count', String(list.children.length).padStart(2, '0')));
+            heading.append(el('span', '', t(category)), el('span', 'index-count', String(list.children.length).padStart(2, '0')));
             group.append(heading, list);
             return group;
         });
@@ -180,7 +181,7 @@ function cultureList(container, items, kind) {
         const row = el('div', 'index-row');
         row.tabIndex = 0;
         const title = el('span', 'index-title', item.title.replace(/ \([^)]*\)$/, ''));
-        const note = item.platform ? PLATFORMS[item.platform] || item.platform : item.note || item.author;
+        const note = item.platform ? PLATFORMS[item.platform] || item.platform : item.note ? t(item.note, 'note') : item.author;
         if (note) title.append(el('small', 'index-platform', ` ${note}`));
         row.append(title, el('span', 'index-slot'), el('span', 'index-year', item.date ?? String(item.year)));
         const li = el('li', 'index-item');

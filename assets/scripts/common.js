@@ -3,6 +3,7 @@ import { pageLoader } from './intro.js';
 import { cursor, magnets, pageTransitions } from './cursor.js';
 import { loadProjects } from './projects.js';
 import { socialLinks } from './components.js';
+import { t, lang, setLanguage } from './i18n.js';
 
 export { reducedMotion, lowPower, clamp01, breakpoint, throttled } from './config.js';
 export { track, entrance, heroEntrance, introLoaded } from './intro.js';
@@ -72,11 +73,11 @@ function clock() {
     const tick = () => {
         const now = new Date();
         const day = daylight(now);
-        const t = time.format(now);
+        const clockTime = time.format(now);
         const offset = zone.formatToParts(now).find(part => part.type === 'timeZoneName')?.value || '';
         for (const el of document.querySelectorAll('[data-clock]')) {
-            el.innerHTML = `${day ? SUN : MOON}<span class="clock-place">French Riviera, FR</span><span class="clock-time">${t}</span><span class="clock-zone">${offset}</span>`;
-            el.setAttribute('aria-label', `French Riviera, ${t}, ${offset}, ${day ? 'daytime' : 'night'}`);
+            el.innerHTML = `${day ? SUN : MOON}<span class="clock-place">${t('French Riviera, FR')}</span><span class="clock-time">${clockTime}</span><span class="clock-zone">${offset}</span>`;
+            el.setAttribute('aria-label', `${t('French Riviera')}, ${clockTime}, ${offset}, ${day ? t('daytime') : t('night')}`);
         }
     };
     tickClock = tick;
@@ -127,7 +128,7 @@ function menuLink(className, { label, href }, isCurrent) {
             link.append(arrow);
         }
     }
-    link.append(label);
+    link.append(t(label));
     return link;
 }
 
@@ -155,7 +156,7 @@ function renderMenu(nav, projects) {
     nav.replaceChildren(...PAGES.map(page => menuGroup(page, projects)));
     if (nav.nextElementSibling?.classList.contains('hero-socials')) return;
     const socials = element('nav', 'hero-socials');
-    socials.setAttribute('aria-label', 'Social links');
+    socials.setAttribute('aria-label', t('Social links'));
     const clock = element('p', 'clock');
     clock.dataset.clock = '';
     socials.append(clock, socialLinks());
@@ -171,7 +172,7 @@ function mobileMenu(lenis) {
     menu.id ||= 'mobile-menu';
     menu.inert = true;
     button.setAttribute('aria-controls', menu.id);
-    button.setAttribute('aria-label', 'Open menu');
+    button.setAttribute('aria-label', t('Open menu'));
 
     const nav = menu.querySelector('.mobile-menu-links');
     renderMenu(nav, []);
@@ -202,7 +203,7 @@ function mobileMenu(lenis) {
         menu.setAttribute('aria-hidden', !open);
         menu.inert = !open;
         button.setAttribute('aria-expanded', open);
-        button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        button.setAttribute('aria-label', open ? t('Close menu') : t('Open menu'));
         document.documentElement.classList.toggle('menu-open', open);
         background.forEach(child => { child.inert = open; });
         if (open) {
@@ -215,6 +216,12 @@ function mobileMenu(lenis) {
             if (returnFocus) button.focus();
         }
     };
+
+    for (const option of menu.querySelectorAll('.lang-option')) {
+        const current = option.dataset.lang === lang;
+        option.setAttribute('aria-pressed', String(current));
+        option.addEventListener('click', () => setLanguage(option.dataset.lang));
+    }
 
     button.addEventListener('click', () => toggle(!menu.classList.contains('open')));
     menu.addEventListener('click', event => {
@@ -314,7 +321,7 @@ function copyHandles() {
         const button = event.target.closest('[data-copy]');
         if (!button) return;
         const label = button.textContent;
-        try { await navigator.clipboard.writeText(button.dataset.copy); button.textContent = 'Copied'; } catch { button.textContent = button.dataset.copy; }
+        try { await navigator.clipboard.writeText(button.dataset.copy); button.textContent = t('Copied'); } catch { button.textContent = button.dataset.copy; }
         setTimeout(() => { button.textContent = label; }, 1600);
     });
 }
@@ -328,7 +335,7 @@ function loadKofi() {
     script.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
     script.onload = () => window.kofiWidgetOverlay?.draw('leotosku', {
         'type': 'floating-chat',
-        'floating-chat.donateButton.text': 'Support me',
+        'floating-chat.donateButton.text': t('Support me'),
         'floating-chat.donateButton.background-color': '#F6F2F2',
         'floating-chat.donateButton.text-color': '#210710',
     });
