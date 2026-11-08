@@ -2,6 +2,7 @@ import { lowPower, clamp01, breakpoint, isMobile, throttled } from './config.js'
 import { pageLoader } from './intro.js';
 import { cursor, magnets, pageTransitions } from './cursor.js';
 import { loadProjects } from './projects.js';
+import { contactScene, contactLanding } from './contact.js';
 import { socialLinks } from './components.js';
 import { t, lang, setLanguage } from './i18n.js';
 
@@ -23,6 +24,7 @@ export function initPage() {
     anchorLinks(lenis);
     backToTop(lenis);
     footerReveal();
+    contactScene();
     contactPictures();
     import('./effects.js').then(({ parallax }) => parallax());
     copyHandles();
@@ -32,7 +34,8 @@ export function initPage() {
 
 function navTone() {
     const bar = document.querySelector('.navbar');
-    const reds = [...document.querySelectorAll('#my-story, #featured-projects, .contact-section, .accent-section')];
+    const reds = [...document.querySelectorAll('#my-story, #featured-projects, .contact-rest, .accent-section')];
+    const stage = document.querySelector('.contact-stage');
     const aboutHero = document.querySelector('.about-header');
     const projects = document.getElementById('featured-projects');
     if (!bar) return;
@@ -41,7 +44,8 @@ function navTone() {
 
         const overHero = aboutHero ? aboutHero.getBoundingClientRect().bottom > y : projects ? projects.getBoundingClientRect().top > y : false;
         bar.classList.toggle('on-dark', overHero);
-        const onAccent = reds.some(el => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; });
+        const covers = el => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; };
+        const onAccent = reds.some(covers) || (stage?.dataset.tone === 'light' && covers(stage));
         bar.classList.toggle('on-accent', onAccent);
         document.documentElement.classList.toggle('on-accent', onAccent);
     };
@@ -293,7 +297,9 @@ function anchorLinks(lenis) {
         const target = document.getElementById(link.hash.slice(1));
         if (!target) return;
         e.preventDefault();
-        if (lenis) lenis.scrollTo(target, { duration: 1.2, offset: -100 });
+        const landing = target.id === 'contact' ? contactLanding() : null;
+        if (lenis) lenis.scrollTo(landing ?? target, { duration: 1.2, offset: landing == null ? -100 : 0 });
+        else if (landing != null) scrollTo({ top: landing, behavior: 'smooth' });
         else target.scrollIntoView({ behavior: 'smooth' });
     }));
 }
@@ -365,7 +371,7 @@ function contactPictures() {
         const { pixelPicture } = await import('./effects.js');
         const black = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
         const onScreen = () => { const { top, bottom } = host.getBoundingClientRect(); return bottom > 0 && top < innerHeight; };
-        pixelPicture(host, host.dataset.picture, { color: black, fit: 'cover', center: Number(host.dataset.center ?? 0.5), anchor: Number(host.dataset.anchor ?? 0.5), watch: true, active: onScreen });
+        pixelPicture(host, host.dataset.picture, { color: black, center: Number(host.dataset.center ?? 0.5), anchor: Number(host.dataset.anchor ?? 0.5), watch: true, active: onScreen });
     };
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {
         if (!entry.isIntersecting) return;

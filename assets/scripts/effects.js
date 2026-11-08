@@ -3,7 +3,7 @@ import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
 import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_FRAMES, PARALLAX } from './config.js';
 
 const TEXT = '.scrubbing-text, h1, h2, h3, p, li, time, dd, .pullquote, .journey-when, .journey-country';
-const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, #footer, .clock, .page-loader, .showcase, .project-hero';
+const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, #footer, .contact-heading, .clock, .page-loader, .showcase, .project-hero';
 const scrubBlocks = [];
 const scrubSeen = new WeakSet();
 let scrubWired = false;

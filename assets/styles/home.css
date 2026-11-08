@@ -1858,13 +1858,109 @@ main {
 
 .contact-section {
     display: block;
-    height: 200vh;
-    height: 200svh;
-    box-sizing: border-box;
+    min-height: 0;
     padding: 0;
-    overflow: clip;
+    background: var(--black);
+    color: var(--black);
+}
+
+.contact-intro {
+    --dwell: 130vh;
+    position: relative;
+    height: calc(100vh + var(--dwell));
+    height: calc(100svh + var(--dwell));
+    background: var(--black);
+}
+
+.contact-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    background: var(--black);
+    color: var(--white);
+}
+
+.contact-heading {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    font-size: clamp(64px, 12vw, 200px);
+    line-height: 1;
+    opacity: var(--appear, 0);
+    pointer-events: none;
+}
+
+.contact-half {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opacity: var(--half, 1);
+    white-space: nowrap;
+    will-change: transform, opacity;
+}
+
+.contact-half:first-child {
+    transform-origin: right center;
+    transform: translate(calc(-100% + var(--join, 0px) - var(--off, 0px)), -50%) scale(var(--g, 1));
+}
+
+.contact-half:last-child {
+    transform-origin: left center;
+    transform: translate(calc(var(--join, 0px) + var(--off, 0px)), -50%) scale(var(--g, 1));
+}
+
+.contact-stage[data-axis="y"] .contact-half:first-child {
+    transform-origin: center bottom;
+    transform: translate(-50%, calc(-100% - var(--off, 0px))) scale(var(--g, 1));
+}
+
+.contact-stage[data-axis="y"] .contact-half:last-child {
+    transform-origin: center top;
+    transform: translate(-50%, var(--off, 0px)) scale(var(--g, 1));
+}
+
+.contact-window {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(50% 50%);
+}
+
+.contact-face {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 26vw;
+    height: 56vh;
+    height: 56svh;
+    background: linear-gradient(155deg, color-mix(in srgb, var(--accent) 50%, var(--ink)) 0%, var(--accent) 74%);
+    transform: translate(-50%, -50%) scale(var(--k, 1));
+    will-change: transform;
+}
+
+.contact-face canvas {
+    image-rendering: pixelated;
+}
+
+.contact-marks {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--w, 0px);
+    height: var(--h, 0px);
+    color: var(--white);
+    opacity: var(--marks, 1);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+
+.contact-scene {
+    position: absolute;
+    inset: 0;
     background: var(--white);
     color: var(--black);
+    opacity: var(--wipe, 0);
 }
 
 .contact-title {
@@ -1917,11 +2013,6 @@ main {
     right: 31vw;
 }
 
-.contact-terms {
-    top: 104svh;
-    right: var(--pad-edge);
-}
-
 .contact-frame {
     position: absolute;
     margin: 0;
@@ -1929,7 +2020,8 @@ main {
     background: linear-gradient(155deg, color-mix(in srgb, var(--accent) 50%, var(--ink)) 0%, var(--accent) 74%);
 }
 
-.contact-frame::after {
+.contact-frame::after,
+.contact-marks::after {
     --m: 13px;
     content: '';
     position: absolute;
@@ -1953,13 +2045,6 @@ main {
     height: 72svh;
 }
 
-.contact-frame--toast {
-    top: 128svh;
-    left: 38vw;
-    width: 36vw;
-    height: 30svh;
-}
-
 .contact-picture {
     --invert: 1;
     position: absolute;
@@ -1972,9 +2057,29 @@ main {
     height: 100%;
 }
 
+.contact-rest {
+    position: relative;
+    height: 104vh;
+    height: 104svh;
+    background: var(--white);
+    color: var(--black);
+}
+
+.contact-terms {
+    top: 12svh;
+    right: var(--pad-edge);
+}
+
+.contact-frame--toast {
+    top: 34svh;
+    left: 38vw;
+    width: 36vw;
+    height: 30svh;
+}
+
 .contact-links {
     position: absolute;
-    top: 152svh;
+    top: 70svh;
     left: var(--pad-edge);
     display: flex;
     flex-direction: column;
@@ -2021,24 +2126,53 @@ main {
     font-weight: 500;
 }
 
+.contact-intro.is-static {
+    height: auto;
+}
+
+.contact-intro.is-static .contact-stage {
+    position: relative;
+    background: var(--white);
+}
+
+.contact-intro.is-static .contact-heading,
+.contact-intro.is-static .contact-face,
+.contact-intro.is-static .contact-marks {
+    display: none;
+}
+
+.contact-intro.is-static .contact-window {
+    clip-path: none;
+}
+
+.contact-intro.is-static .contact-scene {
+    opacity: 1;
+}
+
 @media (max-width: 900px), (max-aspect-ratio: 1/1) {
-    .contact-section {
-        min-height: 200vh;
-        min-height: 200svh;
-        height: auto;
+    .contact-heading {
+        font-size: clamp(56px, 21vw, 180px);
+    }
+
+    .contact-face {
+        width: 62vw;
+        height: 34vh;
+        height: 34svh;
+    }
+
+    .contact-scene {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         justify-content: space-between;
-        gap: 40px;
-        padding: clamp(96px, 14svh, 140px) var(--pad-edge) clamp(48px, 8svh, 88px);
+        gap: 20px;
+        box-sizing: border-box;
+        padding: clamp(88px, 13svh, 120px) var(--pad-edge) clamp(24px, 4svh, 40px);
     }
 
     .contact-title,
     .contact-looking,
-    .contact-terms,
-    .contact-frame,
-    .contact-links {
+    .contact-frame--portrait {
         position: relative;
         inset: auto;
     }
@@ -2064,9 +2198,29 @@ main {
 
     .contact-frame--portrait {
         align-self: flex-end;
-        width: 72vw;
-        height: 52svh;
+        width: 62vw;
+        height: 34svh;
         margin-right: calc(var(--pad-edge) * -1);
+    }
+
+    .contact-rest {
+        height: auto;
+        min-height: 100vh;
+        min-height: 100svh;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 40px;
+        padding: clamp(56px, 9svh, 96px) var(--pad-edge) clamp(48px, 8svh, 88px);
+    }
+
+    .contact-terms,
+    .contact-frame--toast,
+    .contact-links {
+        position: relative;
+        inset: auto;
     }
 
     .contact-frame--toast {
@@ -2121,6 +2275,7 @@ main {
 }
 
 .footer-inner {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: start;
@@ -2167,8 +2322,8 @@ main {
 
 .footer-inner a:hover,
 .footer-inner a:focus-visible,
-.footer-inner button:hover,
-.footer-inner button:focus-visible {
+.footer-inner .copy-handle:hover,
+.footer-inner .copy-handle:focus-visible {
     font-weight: 800;
 }
 
@@ -2191,15 +2346,15 @@ main {
     line-height: 1;
 }
 
-#footer .back-to-top {
-    flex: none;
-    align-self: center;
-    margin: auto;
+.footer-inner .back-to-top {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 .footer-name {
     flex: none;
-    margin: 0 0 calc(var(--name-size) * -0.06);
+    margin: auto 0 calc(var(--name-size) * -0.06);
     color: var(--white);
     font-family: var(--font-display);
     font-size: var(--name-size);
@@ -2226,16 +2381,12 @@ main {
         padding-top: 72px;
     }
 
-    #footer .back-to-top {
+    .footer-inner .back-to-top {
         display: none;
     }
 
     .footer-inner {
         row-gap: 16px;
-    }
-
-    .footer-name {
-        margin-top: auto;
     }
 }
 
