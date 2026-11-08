@@ -139,7 +139,7 @@ function setMeta(attribute, name, content) {
     document.querySelector(`meta[${attribute}="${name}"]`).content = content;
 }
 
-function callsToAction({ ctas = [], ctaPreview, heroImage }, section) {
+function callsToAction({ ctas = [], ctaPreview, ctaVideo, heroImage, title }, section) {
     const heroLinks = document.querySelector('.project-hero-links');
     if (!ctas.length) {
         heroLinks.remove();
@@ -163,6 +163,19 @@ function callsToAction({ ctas = [], ctaPreview, heroImage }, section) {
         section.querySelector('.project-cta-text').append(link);
     }
     const preview = section.querySelector('.project-cta-preview');
+    if (ctaVideo && /^[\w-]+$/.test(ctaVideo)) {
+        const video = document.createElement('div');
+        video.className = 'project-cta-preview project-cta-video';
+        const frame = document.createElement('iframe');
+        frame.src = `https://www.youtube-nocookie.com/embed/${ctaVideo}`;
+        frame.title = `${title}, video`;
+        frame.loading = 'lazy';
+        frame.allow = 'accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+        frame.referrerPolicy = 'strict-origin-when-cross-origin';
+        frame.allowFullscreen = true;
+        video.append(frame);
+        return preview.replaceWith(video);
+    }
     preview.href = ctas[0].url;
     preview.setAttribute('aria-label', `Open: ${ctas[0].label}`);
     preview.querySelector('img').src = ctaPreview || heroImage;
