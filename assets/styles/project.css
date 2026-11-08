@@ -106,11 +106,9 @@ html:has(.project-main)::-webkit-scrollbar {
 .article-facts dt {
     margin: 0 0 6px;
     color: var(--text-faint);
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.14em;
-    line-height: 1;
-    text-transform: uppercase;
+    line-height: 1.2;
 }
 
 .article-facts dd {
@@ -175,10 +173,6 @@ html:has(.project-main)::-webkit-scrollbar {
     font-weight: 800;
 }
 
-.project-main {
-    counter-reset: chapter;
-}
-
 :where(.project-main) > section {
     display: block;
     width: 100%;
@@ -190,20 +184,6 @@ html:has(.project-main)::-webkit-scrollbar {
 .project-main .title {
     max-width: none;
     margin: 0 0 clamp(48px, 9vh, 112px);
-    counter-increment: chapter;
-}
-
-.project-main .title::before {
-    content: counter(chapter, decimal-leading-zero);
-    display: block;
-    margin-bottom: 18px;
-    color: var(--accent);
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-style: normal;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    line-height: 1;
 }
 
 .case-prose p,
@@ -391,10 +371,8 @@ html:has(.project-main)::-webkit-scrollbar {
 
 .case-table thead th {
     color: var(--text-faint);
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
 }
 
 .case-table td:first-child {
@@ -561,10 +539,8 @@ html:has(.project-main)::-webkit-scrollbar {
 
 .project-pager-dir {
     color: var(--white);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
 }
 
 .project-pager-title {

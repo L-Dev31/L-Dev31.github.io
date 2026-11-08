@@ -28,7 +28,7 @@ function parseCsv(text) {
 async function show() {
     const asked = new URLSearchParams(location.search).get('kind');
     const kind = TITLES[asked] ? asked : 'films';
-    const pageTitle = `${TITLES[kind]} — Culture — Léo Tosku | Design, Dev, Marketing`;
+    const pageTitle = `${TITLES[kind]} · Culture · Léo Tosku | Design, Dev, Marketing`;
     const description = `Complete list of ${kind}, curated by Léo Tosku.`;
     document.title = pageTitle;
     document.querySelector('meta[name="description"]').content = description;

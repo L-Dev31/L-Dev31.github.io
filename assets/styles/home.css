@@ -2437,10 +2437,8 @@ html.menu-open .section-nav {
 
 .all-table th {
     color: var(--text-faint);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
 }
 
 .all-table td {

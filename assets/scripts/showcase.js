@@ -43,8 +43,7 @@ export function showcase(container, projects, lenis) {
 
     const role = createElement('p', 'index-role');
     const subtitle = createElement('p', 'index-text');
-    const caseStudyLink = createElement('a', 'index-go showcase-go', 'Read the case study ');
-    caseStudyLink.append(createElement('span', '', '↗'));
+    const caseStudyLink = createElement('a', 'index-go showcase-go', 'Read the case study');
     caseStudyLink.tabIndex = -1;
     const rightSide = createElement('div', 'showcase-side showcase-right');
     rightSide.append(role, subtitle, caseStudyLink);

@@ -24,7 +24,7 @@ async function load() {
 }
 
 function render(project, html, projects) {
-    document.title = `${project.title} — Léo Tosku | Design, Dev, Marketing`;
+    document.title = `${project.title} · Léo Tosku | Design, Dev, Marketing`;
     updateSearchMetadata(project);
 
     const heroImg = document.querySelector('.project-hero-img');
@@ -47,7 +47,7 @@ function render(project, html, projects) {
 
     const subtitle = document.createElement('p');
     subtitle.className = 'article-subtitle';
-    subtitle.textContent = `${project.subtitle} — Léo Tosku | Design, Dev, Marketing`;
+    subtitle.textContent = `${project.subtitle} · Léo Tosku | Design, Dev, Marketing`;
 
     const facts = document.createElement('dl');
     facts.className = 'article-facts';
@@ -106,11 +106,11 @@ function updateSearchMetadata(project) {
 
     document.querySelector('link[rel="canonical"]').href = url;
     document.querySelector('meta[name="description"]').content = description;
-    setMeta('property', 'og:title', `${project.title} — Léo Tosku | Design, Dev, Marketing`);
+    setMeta('property', 'og:title', `${project.title} · Léo Tosku | Design, Dev, Marketing`);
     setMeta('property', 'og:description', description);
     setMeta('property', 'og:url', url);
     setMeta('property', 'og:image', image);
-    setMeta('name', 'twitter:title', `${project.title} — Léo Tosku | Design, Dev, Marketing`);
+    setMeta('name', 'twitter:title', `${project.title} · Léo Tosku | Design, Dev, Marketing`);
     setMeta('name', 'twitter:description', description);
     setMeta('name', 'twitter:image', image);
 
@@ -151,7 +151,7 @@ function callsToAction({ ctas = [], ctaPreview, heroImage }, section) {
         heroLink.href = url;
         heroLink.target = '_blank';
         heroLink.rel = 'noopener noreferrer';
-        heroLink.textContent = `${label} →`;
+        heroLink.textContent = label;
         heroLinks.append(heroLink);
 
         const link = document.createElement('a');
@@ -159,7 +159,7 @@ function callsToAction({ ctas = [], ctaPreview, heroImage }, section) {
         link.href = url;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
-        link.textContent = `${label} →`;
+        link.textContent = label;
         section.querySelector('.project-cta-text').append(link);
     }
     const preview = section.querySelector('.project-cta-preview');
@@ -218,7 +218,7 @@ function progressBar(lenis) {
 }
 
 function notFound() {
-    document.title = 'Project not found — Léo Tosku | Design, Dev, Marketing';
+    document.title = 'Project not found · Léo Tosku | Design, Dev, Marketing';
     document.querySelector('.project-main').innerHTML =
-        '<div class="project-not-found"><p>Project not found.</p><a href="index.html">← Back</a></div>';
+        '<div class="project-not-found"><p>Project not found.</p><a href="index.html">Back</a></div>';
 }
