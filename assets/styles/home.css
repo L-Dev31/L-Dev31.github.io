@@ -602,25 +602,30 @@ html.menu-open body {
 }
 
 .mobile-menu-sub {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
-    gap: 2px clamp(16px, 2vw, 28px);
-    margin: 0 0 clamp(14px, 2.2vh, 22px) 0.2em;
-    padding-left: clamp(12px, 1.4vw, 18px);
-    border-left: 1px solid rgba(33, 7, 16, 0.3);
+    gap: 0 clamp(12px, 1.6vw, 20px);
+    margin: 0 0 clamp(10px, 1.6vh, 16px) 0;
+    padding-left: 1.3em;
 }
 
-html.on-accent .mobile-menu-sub {
-    border-color: rgba(246, 242, 242, 0.3);
+.mobile-menu-sub::before {
+    content: '\21B3';
+    position: absolute;
+    top: 3px;
+    left: 0.2em;
+    font-size: 13px;
+    opacity: 0.6;
 }
 
 .mobile-menu-sublink {
-    padding: 6px 0;
+    padding: 3px 0;
     color: inherit;
-    font-size: clamp(15px, 1.5vw, 21px);
+    font-size: clamp(13px, 1.1vw, 16px);
     font-weight: 400;
     letter-spacing: -0.01em;
-    line-height: 1.2;
+    line-height: 1.25;
     text-decoration: none;
     text-underline-offset: 0.25em;
 }
@@ -1606,13 +1611,13 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     .mobile-menu-sub {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0 16px;
+        gap: 0 12px;
     }
 
     .mobile-menu-sublink {
         display: flex;
         align-items: center;
-        min-height: 44px;
+        min-height: 34px;
         padding: 0;
     }
 
