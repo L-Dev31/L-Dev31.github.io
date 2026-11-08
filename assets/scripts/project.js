@@ -1,6 +1,6 @@
 import './components.js';
 import { initPage, sectionNav, loadProjects, reducedMotion, throttled, clamp01, track, heroEntrance } from './common.js';
-import { scrubbingText, pixelReveal } from './effects.js';
+import { scrubbingText, pixelReveal, parallax } from './effects.js';
 import { thread, restDocks } from './showcase.js';
 import { t, colon, addTranslations, translate } from './i18n.js';
 
@@ -82,6 +82,15 @@ function render(project, html, projects) {
     scrubbingText();
     pixelReveal(document.querySelectorAll('figure.case-panel, .gallery-item'));
     parallaxHero();
+    casePanels();
+}
+
+function casePanels() {
+    document.querySelectorAll('.case-row .case-panel').forEach((panel, i) => {
+        panel.dataset.parallaxSpeed = i % 2 ? 106 : 94;
+        panel.dataset.parallaxCompact = i % 2 ? 103 : 97;
+    });
+    parallax()();
 }
 
 function chapterNav() {

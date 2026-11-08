@@ -23,7 +23,8 @@ export function initPage() {
     anchorLinks(lenis);
     backToTop(lenis);
     footerReveal();
-    contactPicture();
+    contactPictures();
+    import('./effects.js').then(({ parallax }) => parallax());
     copyHandles();
     pauseOffscreenVideos();
     return lenis;
@@ -357,21 +358,21 @@ function footerReveal() {
     update();
 }
 
-function contactPicture() {
-    const host = document.querySelector('.contact-sign');
-    if (!host) return;
-    const start = async () => {
+function contactPictures() {
+    const hosts = [...document.querySelectorAll('.contact-picture')];
+    if (!hosts.length) return;
+    const start = async host => {
         const { pixelPicture } = await import('./effects.js');
         const black = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
         const onScreen = () => { const { top, bottom } = host.getBoundingClientRect(); return bottom > 0 && top < innerHeight; };
-        pixelPicture(host, host.dataset.picture, { color: black, fit: 'contain', focus: 0.76, anchor: 1, watch: true, active: onScreen });
+        pixelPicture(host, host.dataset.picture, { color: black, fit: 'cover', center: Number(host.dataset.center ?? 0.5), anchor: Number(host.dataset.anchor ?? 0.5), watch: true, active: onScreen });
     };
-    const observer = new IntersectionObserver(([entry]) => {
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
         if (!entry.isIntersecting) return;
-        observer.disconnect();
-        start();
-    }, { rootMargin: '250% 0px' });
-    observer.observe(host);
+        observer.unobserve(entry.target);
+        start(entry.target);
+    }), { rootMargin: '250% 0px' });
+    hosts.forEach(host => observer.observe(host));
 }
 
 function pauseOffscreenVideos() {

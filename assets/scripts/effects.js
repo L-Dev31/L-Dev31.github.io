@@ -1,6 +1,6 @@
 import { reducedMotion, lowPower, clamp01, throttled, track, entrance, heroEntrance } from './common.js';
 import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
-import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_FRAMES } from './config.js';
+import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_FRAMES, PARALLAX } from './config.js';
 
 const TEXT = '.scrubbing-text, h1, h2, h3, p, li, time, dd, .pullquote, .journey-when, .journey-country';
 const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, #footer, .clock, .page-loader, .showcase, .project-hero';
@@ -218,32 +218,53 @@ measureScreen();
 addEventListener('resize', measureScreen, { passive: true });
 const heroTurn = () => clamp01((scrollY / screenHeight - TURN_START) / TURN_LENGTH);
 
+let parallaxRefresh = null;
+
 export function parallax() {
+    if (parallaxRefresh) return parallaxRefresh;
     const hero = document.querySelector('#header, .about-header');
+    const compact = matchMedia(PARALLAX.compactQuery);
     let items = [];
 
+    const tag = () => {
+        for (const [selector, speed, compactSpeed] of PARALLAX.auto) {
+            for (const el of document.querySelectorAll(selector)) {
+                el.dataset.parallaxSpeed ||= speed;
+                el.dataset.parallaxCompact ||= compactSpeed;
+            }
+        }
+    };
+
     const measure = () => {
-        if (reducedMotion) return;
-        items = [...document.querySelectorAll('[data-parallax-speed]')].map(el => {
-            el.style.transform = '';
+        if (lowPower) return;
+        tag();
+        const found = [...document.querySelectorAll('[data-parallax-speed]')];
+        found.forEach(el => { el.style.transform = ''; });
+        items = found.map(el => {
             const r = el.getBoundingClientRect();
-            return { el, factor: el.dataset.parallaxSpeed / 100 - 1, center: r.top + scrollY + r.height / 2 };
+            const speed = Number((compact.matches && el.dataset.parallaxCompact) || el.dataset.parallaxSpeed);
+            return { el, factor: speed / 100 - 1, center: r.top + scrollY + r.height / 2 };
         });
     };
 
     const update = () => {
-        const start = Math.max(0, hero.offsetHeight - innerHeight);
-        const length = Math.min(hero.offsetHeight, innerHeight) || 1;
-        hero.style.setProperty('--hero-progress', clamp01((scrollY - start) / length).toFixed(4));
-        if (hero.id === 'header') {
-            const turn = heroTurn();
-            hero.style.setProperty('--turn', turn.toFixed(4));
-            hero.classList.toggle('is-turned', turn > 0.45);
+        if (hero) {
+            const start = Math.max(0, hero.offsetHeight - innerHeight);
+            const length = Math.min(hero.offsetHeight, innerHeight) || 1;
+            hero.style.setProperty('--hero-progress', clamp01((scrollY - start) / length).toFixed(4));
+            if (hero.id === 'header') {
+                const turn = heroTurn();
+                hero.style.setProperty('--turn', turn.toFixed(4));
+                hero.classList.toggle('is-turned', turn > 0.45);
+            }
         }
 
         const viewportCenter = scrollY + innerHeight / 2;
+        const reach = innerHeight * PARALLAX.reachScreens;
         for (const { el, factor, center } of items) {
-            if (factor) el.style.transform = `translateY(${(center - viewportCenter) * factor}px)`;
+            const distance = center - viewportCenter;
+            if (!factor || Math.abs(distance) > reach) continue;
+            el.style.transform = `translate3d(0, ${(distance * factor).toFixed(1)}px, 0)`;
         }
     };
 
@@ -255,7 +276,10 @@ export function parallax() {
     addEventListener('scroll', throttled(update), { passive: true });
     addEventListener('resize', refresh, { passive: true });
     addEventListener('load', refresh);
+    new ResizeObserver(throttled(refresh)).observe(document.body);
+    compact.addEventListener('change', refresh);
     refresh();
+    parallaxRefresh = refresh;
     return refresh;
 }
 
