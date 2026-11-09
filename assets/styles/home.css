@@ -504,8 +504,8 @@ html.menu-open.on-accent .navbar {
     color: var(--white);
 }
 
-html.menu-open,
-html.menu-open body {
+/* Only the root locks the scroll: an overflow on body would make it a scroll container and unstick the showcase. */
+html.menu-open {
     overflow: hidden;
 }
 
@@ -3032,15 +3032,15 @@ html.on-accent .mobile-menu .hero-socials .clock {
     color: var(--white);
 }
 
-[id^="kofi-widget-overlay"] > * {
+/* Only the widget's own children (button and popup) are moved: the popup's inner parts also carry that id prefix and must stay where the widget puts them. */
+[id^="kofi-widget-overlay"]:not([id*="popup"]) > * {
     right: auto !important;
-    bottom: max(clamp(14px, 2.6vh, 30px), env(safe-area-inset-bottom)) !important;
     left: var(--pad-edge) !important;
     visibility: hidden !important;
     pointer-events: none;
 }
 
-html.menu-open [id^="kofi-widget-overlay"] > * {
+html.menu-open [id^="kofi-widget-overlay"]:not([id*="popup"]) > * {
     visibility: visible !important;
     pointer-events: auto;
 }
