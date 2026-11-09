@@ -2150,7 +2150,8 @@
       "platform": "wii",
       "video_width": 960,
       "video_crf": 27,
-      "video_seconds": 5
+      "video_seconds": 5,
+      "featured": true
     },
     {
       "id": "new-super-mario-bros-2-3ds",
