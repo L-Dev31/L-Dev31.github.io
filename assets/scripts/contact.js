@@ -4,8 +4,9 @@ const ease = x => x * x * (3 - 2 * x);
 const range = (value, from, to) => clamp01((value - from) / (to - from));
 
 // How the contact section opens. "Let's talk." sits alone on a dark screen. As the page scrolls the
-// two words part, like the travel flags, and a window opens between them. The window shows the
-// portrait, then grows until it is the whole screen and the white section takes over.
+// two words part, like the travel flags, and a window opens between them. The window shows a pixel
+// picture, then grows until it is the whole screen and the white section takes over. The picture is
+// drawn again with more cells as the window grows, so a cell keeps the size it has everywhere else.
 const TIMELINE = {
     // Share of the pinned scroll for each step.
     open: [0, 0.3],
@@ -39,10 +40,13 @@ export function contactScene() {
     const heading = stage.querySelector('.contact-heading');
     const halves = [...heading.querySelectorAll('.contact-half')];
     const view = stage.querySelector('.contact-window');
-    const face = stage.querySelector('.contact-face');
+    const picture = stage.querySelector('.contact-picture');
     const compact = matchMedia(COMPACT);
-    let size = { W: 0, H: 0, bw: 1, bh: 1, dwell: 1, font: 16, shift: 0, vertical: false, joined: false };
+    let size = { W: 0, H: 0, bw: 1, bh: 1, dwell: 1, font: 16, shift: 0, vertical: false };
     let lastState = '';
+
+    // The size of the window when it opens is set in the stylesheet, as a share of the screen.
+    const opening = name => parseFloat(getComputedStyle(stage).getPropertyValue(name)) || 0.5;
 
     const measure = () => {
         const vertical = compact.matches;
@@ -51,21 +55,19 @@ export function contactScene() {
             vertical,
             W: stage.clientWidth,
             H: stage.clientHeight,
-            bw: face.offsetWidth || 1,
-            bh: face.offsetHeight || 1,
+            bw: stage.clientWidth * opening('--face-width') || 1,
+            bh: stage.clientHeight * opening('--face-height') || 1,
             dwell: Math.max(1, intro.offsetHeight - stage.offsetHeight),
             font: parseFloat(getComputedStyle(heading).fontSize) || 16,
             // The two words are not the same width: the join starts off centre so the title reads as centred.
             shift: vertical ? 0 : (halves[0].offsetWidth - halves[1].offsetWidth) / 2,
-            // A word cut at a hyphen ("Parlons-" and "en.") starts with no gap, so it still reads as one word.
-            joined: /[-\u2010-\u2015]$/.test(halves[0].textContent.trim()),
         };
     };
 
     const set = (name, value) => stage.style.setProperty(name, value);
 
     const update = () => {
-        const { vertical, W, H, bw, bh, dwell, font, shift, joined } = size;
+        const { vertical, W, H, bw, bh, dwell, font, shift } = size;
         const top = intro.getBoundingClientRect().top;
         // Out of sight the scene does not change, so it is only updated once when it leaves.
         const state = top > innerHeight ? 'before' : top < -intro.offsetHeight ? 'after' : 'active';
@@ -84,19 +86,22 @@ export function contactScene() {
         set('--appear', ease(range(approach, 0.55, 1)).toFixed(3));
         set('--half', ((1 - 0.15 * open) * (1 - grow)).toFixed(3));
         set('--g', scale.toFixed(3));
-        const pad = font * TIMELINE.gap * (joined ? open : 1);
+        const pad = font * TIMELINE.gap;
         set('--off', `${((vertical ? h : w) / 2 + pad).toFixed(1)}px`);
         set('--join', `${(shift * (1 - open)).toFixed(1)}px`);
-        set('--k', Math.max(1, w / bw, h / bh).toFixed(3));
         set('--w', `${w.toFixed(1)}px`);
         set('--h', `${h.toFixed(1)}px`);
-        set('--marks', (1 - wipe).toFixed(3));
         set('--wipe', wipe.toFixed(3));
         view.style.clipPath = `inset(${((H - h) / 2).toFixed(1)}px ${((W - w) / 2).toFixed(1)}px)`;
         stage.dataset.tone = wipe > TIMELINE.lightAfter ? 'light' : 'dark';
     };
 
     const refresh = () => { measure(); update(); };
+
+    import('./effects.js').then(({ pixelPicture }) => {
+        const black = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
+        pixelPicture(picture, picture.dataset.picture, { color: black, center: Number(picture.dataset.center ?? 0.5), anchor: 0.5, watch: true, active: () => lastState === 'active' });
+    });
 
     landing = () => intro.getBoundingClientRect().top + scrollY + size.dwell;
 

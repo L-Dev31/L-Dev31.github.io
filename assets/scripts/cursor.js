@@ -1,10 +1,9 @@
 import { reducedMotion, lowPower, isMobile } from './config.js';
 import { CURSOR, MAGNET, PAGE_TRANSITION } from './config.js';
-import { t } from './i18n.js';
 
 const CURSOR_WORDS = [
     ['[data-cursor]', element => element.dataset.cursor],
-    ['a.index-row', () => t('Open')],
+    ['a.index-row', () => 'Open'],
 ];
 
 const POINTER_ON_LINK = 'a, button, [role="button"], label, summary';

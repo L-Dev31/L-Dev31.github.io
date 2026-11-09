@@ -1,5 +1,3 @@
-import { t, translate, translateHead } from './i18n.js';
-
 const sections = {
     home: [
         ['#selected-projects', 'Selected'],
@@ -37,7 +35,7 @@ function renderSections(nav, page) {
     for (const [href, label, count] of sections[page] ?? []) {
         const link = document.createElement('a');
         link.href = href;
-        link.append(t(label));
+        link.append(label);
         if (count) {
             const value = document.createElement('span');
             value.dataset.count = count;
@@ -87,6 +85,3 @@ const socials = await template('socials');
 export const socialLinks = () => socials.content.cloneNode(true);
 
 await hydrate(document);
-translate(document.body);
-translateHead();
-document.documentElement.classList.remove('is-translating');

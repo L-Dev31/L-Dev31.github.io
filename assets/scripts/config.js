@@ -94,20 +94,6 @@ export const TEXT_ENTRANCE = {
 // Phones and portrait screens, where the layouts stack.
 export const COMPACT = '(max-width: 900px), (max-aspect-ratio: 1/1)';
 
-// Scroll parallax. 100 follows the page, below 100 trails it, above 100 runs ahead of it.
-// Elements can also opt in with data-parallax-speed, and data-parallax-compact for phones and portrait screens.
-export const PARALLAX = {
-    // Selector, speed, speed on compact screens.
-    auto: [
-        ['.section-head .title', 91, 96],
-        ['.section-head .section-note, .section-head .section-aside', 109, 104],
-        ['.promise-picture', 90, 96],
-    ],
-    compactQuery: COMPACT,
-    // How far from the screen center, in screen heights, an element is still moved.
-    reachScreens: 1.6,
-};
-
 // Pixel images.
 export const PICTURE = {
     // Contrast; higher lights more cells.

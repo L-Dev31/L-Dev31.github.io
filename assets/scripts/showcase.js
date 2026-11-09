@@ -4,7 +4,6 @@ import { loadProjects, projectMark, SIGNATURE_URL } from './projects.js';
 import { INTRO, SIGNATURE } from './config.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { pixelWrite } from './effects.js';
-import { t, colon } from './i18n.js';
 
 const cssVariable = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const smoothstep = t => t * t * (3 - 2 * t);
@@ -17,17 +16,11 @@ function createElement(tag, className, text) {
     return element;
 }
 
-// Each project has its own tone and its own composition. They follow each other in a loop.
-const TONES = ['red', 'dark', 'white', 'dark', 'red'];
-const LAYOUTS = ['center', 'left', 'bottom', 'right', 'center'];
-// Room for the title, in vw, and the largest size it may take, for each composition.
-const FIT = { center: [88, 13], left: [54, 11], right: [54, 11], bottom: [90, 18] };
-// The pixel mark is black on red and red on the other tones.
-const MARK = { red: () => cssVariable('--black'), dark: () => cssVariable('--accent'), white: () => cssVariable('--accent') };
-const narrow = matchMedia('(max-width: 768px)');
+// Room for the title, in vw, and the largest size it may take.
+const TITLE_FIT = [88, 13];
 
-function titleFontSize(title, layout) {
-    const [budget, largest] = narrow.matches ? FIT.center : FIT[layout] ?? FIT.center;
+function titleFontSize(title) {
+    const [budget, largest] = TITLE_FIT;
     const AVERAGE_LETTER_WIDTH = 0.46;
     return `${Math.min(largest, budget / (title.length * AVERAGE_LETTER_WIDTH)).toFixed(2)}vw`;
 }
@@ -42,8 +35,9 @@ export function showcase(container, projects, lenis) {
     const counter = createElement('p', 'showcase-count');
     const title = createElement('p', 'showcase-title');
     const titleLink = createElement('a', 'showcase-link');
-    titleLink.dataset.cursor = t('View');
+    titleLink.dataset.cursor = 'View';
     titleLink.tabIndex = -1;
+    titleLink.setAttribute('aria-hidden', 'true');
     titleLink.append(title);
 
     const tags = createElement('ul', 'index-tags showcase-tags');
@@ -52,15 +46,16 @@ export function showcase(container, projects, lenis) {
 
     const role = createElement('p', 'index-role');
     const subtitle = createElement('p', 'index-text');
-    const caseStudyLink = createElement('a', 'index-go showcase-go', t('Read the case study'));
+    const caseStudyLink = createElement('a', 'index-go showcase-go', 'Read the case study');
     caseStudyLink.tabIndex = -1;
     const rightSide = createElement('div', 'showcase-side showcase-right');
     rightSide.append(role, subtitle, caseStudyLink);
 
     const stepButtons = createElement('div', 'showcase-steps');
     const markAnchor = createElement('div', 'showcase-anchor');
-    stage.append(counter, titleLink, leftSide, rightSide, stepButtons, markAnchor);
+    stage.append(counter, leftSide, rightSide, stepButtons, markAnchor);
     container.replaceChildren(stage);
+    document.body.append(titleLink);
 
     const scrollTravel = () => Math.max(1, container.offsetHeight - innerHeight);
 
@@ -89,22 +84,31 @@ export function showcase(container, projects, lenis) {
     let currentIndex = -1;
 
     function showProject(index) {
-        const isFirst = currentIndex === -1;
         currentIndex = index;
         const project = projects[index];
 
         counter.textContent = `${pad2(index + 1)} / ${pad2(projects.length)}`;
         titleLink.href = caseStudyLink.href = `project.html?id=${project.id}`;
-        const layout = LAYOUTS[index % LAYOUTS.length];
-        stage.dataset.layout = layout;
-        stage.dataset.tone = TONES[index % TONES.length];
-        title.style.setProperty('--fit', titleFontSize(project.title, layout));
-        if (isFirst) title.textContent = project.title;
-        else pixelWrite(title, project.title);
+        // The colours come from the project's data. Without them the section keeps its default red.
+        const palette = project.showcaseColors ?? {};
+        const accent = palette.accentGradient ?? palette.accent ?? 'var(--black)';
+        stage.dataset.tone = palette.tone ?? 'red';
+        stage.dataset.paletteActive = 'true';
+        titleLink.style.color = palette.text ?? 'var(--black)';
+        titleLink.classList.add('is-visible');
+        stage.style.setProperty('--showcase-background', palette.background ?? 'var(--accent)');
+        stage.style.setProperty('--showcase-foreground', palette.text ?? 'var(--black)');
+        stage.style.setProperty('--showcase-accent', palette.accent ?? 'var(--black)');
+        stage.style.setProperty('--showcase-mark', accent);
+        stage.style.setProperty('--showcase-button-background', accent);
+        stage.style.setProperty('--showcase-button-foreground', palette.buttonText ?? 'var(--white)');
+        dispatchEvent(new Event('showcasepalettechange'));
+        title.style.setProperty('--fit', titleFontSize(project.title));
+        pixelWrite(title, project.title);
 
         const firstTags = (project.tags || []).slice(0, 3);
-        tags.replaceChildren(...[project.categoryLabel ?? project.category, ...firstTags].map(tag => createElement('li', 'index-tag', tag)));
-        role.textContent = `${t('Role')}${colon}${project.role}`;
+        tags.replaceChildren(...[project.category, ...firstTags].map(tag => createElement('li', 'index-tag', tag)));
+        role.textContent = `Role: ${project.role}`;
         subtitle.textContent = project.subtitle;
         if (stillMark) stillMark.src = projectMark(project);
 
@@ -115,18 +119,42 @@ export function showcase(container, projects, lenis) {
         changeListeners.forEach(listener => listener(project));
     }
 
-    let updateQueued = false;
+    function resetPalette() {
+        stage.dataset.tone = 'red';
+        delete stage.dataset.paletteActive;
+        titleLink.classList.remove('is-visible');
+        for (const name of ['background', 'foreground', 'accent', 'mark', 'button-background', 'button-foreground']) {
+            stage.style.removeProperty(`--showcase-${name}`);
+        }
+        dispatchEvent(new Event('showcasepalettechange'));
+    }
+
     function updateFromScroll() {
-        updateQueued = false;
-        const progress = clamp01(-container.getBoundingClientRect().top / scrollTravel());
+        const bounds = container.getBoundingClientRect();
+        if (bounds.top > 0) {
+            if (currentIndex !== -1) {
+                currentIndex = -1;
+                resetPalette();
+            }
+            return;
+        }
+        if (bounds.bottom < innerHeight) {
+            const wasActive = stage.dataset.paletteActive === 'true';
+            delete stage.dataset.paletteActive;
+            titleLink.classList.remove('is-visible');
+            if (wasActive) dispatchEvent(new Event('showcasepalettechange'));
+            return;
+        }
+        const progress = clamp01(-bounds.top / scrollTravel());
         const index = Math.min(projects.length - 1, Math.floor(progress * projects.length));
         if (index !== currentIndex) showProject(index);
+        else if (stage.dataset.paletteActive !== 'true') {
+            stage.dataset.paletteActive = 'true';
+            titleLink.classList.add('is-visible');
+            dispatchEvent(new Event('showcasepalettechange'));
+        }
     }
-    addEventListener('scroll', () => {
-        if (updateQueued) return;
-        updateQueued = true;
-        requestAnimationFrame(updateFromScroll);
-    }, { passive: true });
+    addEventListener('scroll', updateFromScroll, { passive: true });
     addEventListener('resize', updateFromScroll, { passive: true });
     updateFromScroll();
 
@@ -137,7 +165,7 @@ export function showcase(container, projects, lenis) {
         onChange: listener => changeListeners.add(listener),
         // The mark changes colour gently when the tone changes.
         markColor() {
-            const target = (MARK[stage.dataset.tone] ?? MARK.red)();
+            const target = getComputedStyle(stage).getPropertyValue('--showcase-mark').trim() || cssVariable('--black');
             markShown = markShown ? blendColors(markShown, target, 0.1) : target;
             return markShown;
         },
@@ -149,10 +177,23 @@ function parseColor(color) {
     return color.match(/[\d.]+/g).slice(0, 3).map(Number);
 }
 
+function colorStops(color) {
+    if (color.startsWith('linear-gradient(')) {
+        const stops = color.match(/#[\da-f]{3,8}|rgba?\([^)]*\)/gi);
+        if (stops?.length > 1) return [parseColor(stops[0]), parseColor(stops.at(-1))];
+    }
+    const solid = parseColor(color);
+    return [solid, solid];
+}
+
 function blendColors(from, to, amount) {
-    const start = parseColor(from), end = parseColor(to);
-    const channels = start.map((value, i) => Math.round(value + (end[i] - value) * amount));
-    return `rgb(${channels.join(',')})`;
+    const start = colorStops(from), end = colorStops(to);
+    const mix = (first, last) => `rgb(${first.map((value, i) => Math.round(value + (last[i] - value) * amount)).join(',')})`;
+    const first = mix(start[0], end[0]);
+    if (from.startsWith('linear-gradient(') || to.startsWith('linear-gradient(')) {
+        return `linear-gradient(90deg, ${first}, ${mix(start[1], end[1])})`;
+    }
+    return first;
 }
 
 function blendBoxes(from, to, amount) {

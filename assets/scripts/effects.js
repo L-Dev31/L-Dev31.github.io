@@ -1,6 +1,6 @@
 import { reducedMotion, lowPower, clamp01, throttled, track, entrance, heroEntrance } from './common.js';
 import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
-import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_FRAMES, PARALLAX } from './config.js';
+import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_FRAMES } from './config.js';
 
 const TEXT = '.scrubbing-text, h1, h2, h3, p, li, time, dd, .pullquote, .journey-when, .journey-country';
 const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, #footer, .contact-heading, .clock, .page-loader, .showcase, .project-hero';
@@ -218,82 +218,24 @@ measureScreen();
 addEventListener('resize', measureScreen, { passive: true });
 const heroTurn = () => clamp01((scrollY / screenHeight - TURN_START) / TURN_LENGTH);
 
-let parallaxRefresh = null;
-
-export function parallax() {
-    if (parallaxRefresh) return parallaxRefresh;
+export function heroScrollState() {
     const hero = document.querySelector('#header, .about-header');
-    const compact = matchMedia(PARALLAX.compactQuery);
-    let items = [];
-
-    const tag = () => {
-        for (const [selector, speed, compactSpeed] of PARALLAX.auto) {
-            for (const el of document.querySelectorAll(selector)) {
-                // A title above its note, in a column, would overlap it as they drift apart.
-                const head = el.closest('.section-head');
-                const stacked = head && getComputedStyle(head).flexDirection.startsWith('column');
-                if (stacked || (el.dataset.parallaxSpeed && !el.dataset.parallaxAuto)) {
-                    if (stacked && el.dataset.parallaxAuto) {
-                        delete el.dataset.parallaxSpeed;
-                        delete el.dataset.parallaxCompact;
-                        delete el.dataset.parallaxAuto;
-                        el.style.transform = '';
-                    }
-                    continue;
-                }
-                el.dataset.parallaxSpeed = speed;
-                el.dataset.parallaxCompact = compactSpeed;
-                el.dataset.parallaxAuto = '1';
-            }
-        }
-    };
-
-    const measure = () => {
-        if (lowPower) return;
-        tag();
-        const found = [...document.querySelectorAll('[data-parallax-speed]')];
-        found.forEach(el => { el.style.transform = ''; });
-        items = found.map(el => {
-            const r = el.getBoundingClientRect();
-            const speed = Number((compact.matches && el.dataset.parallaxCompact) || el.dataset.parallaxSpeed);
-            return { el, factor: speed / 100 - 1, center: r.top + scrollY + r.height / 2 };
-        });
-    };
+    if (!hero) return;
 
     const update = () => {
-        if (hero) {
-            const start = Math.max(0, hero.offsetHeight - innerHeight);
-            const length = Math.min(hero.offsetHeight, innerHeight) || 1;
-            hero.style.setProperty('--hero-progress', clamp01((scrollY - start) / length).toFixed(4));
-            if (hero.id === 'header') {
-                const turn = heroTurn();
-                hero.style.setProperty('--turn', turn.toFixed(4));
-                hero.classList.toggle('is-turned', turn > 0.45);
-            }
-        }
-
-        const viewportCenter = scrollY + innerHeight / 2;
-        const reach = innerHeight * PARALLAX.reachScreens;
-        for (const { el, factor, center } of items) {
-            const distance = center - viewportCenter;
-            if (!factor || Math.abs(distance) > reach) continue;
-            el.style.transform = `translate3d(0, ${(distance * factor).toFixed(1)}px, 0)`;
+        const start = Math.max(0, hero.offsetHeight - innerHeight);
+        const length = Math.min(hero.offsetHeight, innerHeight) || 1;
+        hero.style.setProperty('--hero-progress', clamp01((scrollY - start) / length).toFixed(4));
+        if (hero.id === 'header') {
+            const turn = heroTurn();
+            hero.style.setProperty('--turn', turn.toFixed(4));
+            hero.classList.toggle('is-turned', turn > 0.45);
         }
     };
-
-    const refresh = () => {
-        measure();
-        update();
-    };
-
-    addEventListener('scroll', throttled(update), { passive: true });
-    addEventListener('resize', refresh, { passive: true });
-    addEventListener('load', refresh);
-    new ResizeObserver(throttled(refresh)).observe(document.body);
-    compact.addEventListener('change', refresh);
-    refresh();
-    parallaxRefresh = refresh;
-    return refresh;
+    const scheduled = throttled(update);
+    addEventListener('scroll', scheduled, { passive: true });
+    addEventListener('resize', scheduled, { passive: true });
+    update();
 }
 
 function pixelHero(host) {
@@ -409,10 +351,15 @@ export function pixelPicture(host, src, { mirror = false, gain = PICTURE.default
         cells.paint(appear(brightness, dim));
     };
 
+    // The picture is drawn again only when the grid changes, so a host that grows pixel by pixel gets one draw per new cell.
+    let drawn = '';
     const render = () => {
         const cols = Math.ceil(host.clientWidth / CELL), rows = Math.ceil(host.clientHeight / CELL);
         if (!cols || !rows || !source.naturalWidth) return;
         const invert = getComputedStyle(host).getPropertyValue('--invert').trim() === '1';
+        const grid = `${cols}x${rows}x${Math.round(devicePixelRatio)}x${invert}`;
+        if (grid === drawn) return;
+        drawn = grid;
         cells.resize(cols, rows);
         sample.width = cols; sample.height = rows;
         let scale = (fit === 'contain' ? Math.min : Math.max)(cols / source.naturalWidth, rows / source.naturalHeight);

@@ -27,19 +27,39 @@ export function drawCell(context, level, x, y, cellSize, fillShare) {
     }
 }
 
-function buildTiles(color, size) {
+function colorChannels(color) {
+    if (color.startsWith('#')) return [1, 3, 5].map(start => parseInt(color.slice(start, start + 2), 16));
+    return color.match(/[\d.]+/g).slice(0, 3).map(Number);
+}
+
+function colorBetween(first, last, progress) {
+    const start = colorChannels(first), end = colorChannels(last);
+    return `rgb(${start.map((value, index) => Math.round(value + (end[index] - value) * progress)).join(',')})`;
+}
+
+function buildTiles(color, size, cols) {
+    const stops = color.startsWith('linear-gradient(') ? color.match(/#[\da-f]{3,8}|rgba?\([^)]*\)/gi) : null;
+    const gradient = stops?.length > 1;
+    const columns = gradient ? cols : 1;
     const sheet = document.createElement('canvas');
-    sheet.width = size * 3;
+    sheet.width = size * 3 * columns;
     sheet.height = size;
     const context = sheet.getContext('2d', { willReadFrequently: true });
-    context.fillStyle = color;
-    for (let level = DOTS; level <= SOLID; level++) drawCell(context, level, level * size, 0, size);
+    for (let col = 0; col < columns; col++) {
+        const fill = gradient ? colorBetween(stops[0], stops.at(-1), cols === 1 ? 0.5 : col / (cols - 1)) : color;
+        for (let level = DOTS; level <= SOLID; level++) {
+            context.fillStyle = fill;
+            drawCell(context, level, (col * 3 + level) * size, 0, size);
+        }
+    }
 
-    const pixels = new Uint32Array(context.getImageData(0, 0, size * 3, size).data.buffer);
-    return [DOTS, CHECKER, SOLID].map(level => Array.from({ length: size }, (_, y) => {
-        const rowStart = y * size * 3 + level * size;
-        return pixels.slice(rowStart, rowStart + size);
-    }));
+    const pixels = new Uint32Array(context.getImageData(0, 0, sheet.width, size).data.buffer);
+    const byColumn = Array.from({ length: columns }, (_, col) => [DOTS, CHECKER, SOLID].map(level =>
+        Array.from({ length: size }, (_, y) => {
+            const rowStart = y * sheet.width + (col * 3 + level) * size;
+            return pixels.slice(rowStart, rowStart + size);
+        })));
+    return gradient ? { columns: byColumn, solid: null } : { columns: null, solid: byColumn[0] };
 }
 
 function levelOf(brightness) {
@@ -53,7 +73,7 @@ export function cellCanvas(canvas, color) {
     const context = canvas.getContext('2d');
     let cols = 0, rows = 0;
     let cellPx = CELL;
-    let tiles = null;
+    let tiles = null, tilesKey = '';
     let shownLevels = new Uint8Array(0);
     let imageData = null;
     let frame = null;
@@ -82,6 +102,14 @@ export function cellCanvas(canvas, color) {
         return shimmered;
     }
 
+    // The tiles only change with the colour and the cell size. A gradient has one set per column.
+    function updateTiles() {
+        const key = `${color}|${cellPx}|${color.startsWith('linear-gradient(') ? cols : 0}`;
+        if (key === tilesKey) return;
+        tilesKey = key;
+        tiles = buildTiles(color, cellPx, cols);
+    }
+
     return {
         resize(newCols, newRows) {
             cols = newCols;
@@ -91,10 +119,11 @@ export function cellCanvas(canvas, color) {
             canvas.width = cols * cellPx;
             canvas.height = rows * cellPx;
             canvas.style.aspectRatio = `${cols} / ${rows}`;
-            tiles = buildTiles(color, cellPx);
+            updateTiles();
             imageData = context.createImageData(canvas.width, canvas.height);
             frame = new Uint32Array(imageData.data.buffer);
-            shownLevels = new Uint8Array(0);
+            // The canvas and the frame are empty, so every cell counts as shown empty and only lit cells are drawn.
+            shownLevels = new Uint8Array(cols * rows);
         },
         invalidate() {
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -104,7 +133,7 @@ export function cellCanvas(canvas, color) {
         recolor(newColor) {
             if (newColor === color) return;
             color = newColor;
-            if (cols) tiles = buildTiles(color, cellPx);
+            if (cols) updateTiles();
             shownLevels = new Uint8Array(0);
         },
         get cols() { return cols; },
@@ -123,7 +152,7 @@ export function cellCanvas(canvas, color) {
                 const col = i % cols, row = (i / cols) | 0;
                 let offset = row * cellPx * rowWidth + col * cellPx;
                 if (level) {
-                    const tile = tiles[level - 1];
+                    const tile = tiles.columns ? tiles.columns[col][level - 1] : tiles.solid[level - 1];
                     for (let y = 0; y < cellPx; y++, offset += rowWidth) frame.set(tile[y], offset);
                 } else {
                     for (let y = 0; y < cellPx; y++, offset += rowWidth) frame.fill(0, offset, offset + cellPx);

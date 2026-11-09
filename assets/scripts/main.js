@@ -1,7 +1,6 @@
 import './components.js';
 import { initPage, loadProjects } from './common.js';
-import { t, colon } from './i18n.js';
-import { scrubbingText, parallax, heroPortrait, pixelPicture, pixelCover } from './effects.js';
+import { scrubbingText, heroPortrait, heroScrollState, pixelPicture, pixelCover } from './effects.js';
 import { extrudedSvg, CELL } from './pixel.js';
 import { journey } from './sections.js';
 import { PICTURE } from './config.js';
@@ -10,7 +9,7 @@ import { showcase, thread, homeDocks, restDocks } from './showcase.js';
 const CATEGORIES = ['Graphic Design', 'Webdesign', 'Marketing', 'Dev'];
 
 const lenis = initPage();
-const refreshParallax = parallax();
+heroScrollState();
 const cover = document.querySelector('.about-header-picture');
 if (cover) {
     // On a portrait screen the wide photo is cropped around its subject and sits at the bottom, like the home portrait.
@@ -58,9 +57,9 @@ function projectIndex(container, projects) {
         const info = el('div', 'index-info');
         const tags = el('ul', 'index-tags');
         tags.append(...(project.tags || []).map(tag => el('li', 'index-tag', tag)));
-        const go = el('a', 'index-go', t('Read the case study'));
+        const go = el('a', 'index-go', 'Read the case study');
         go.href = `project.html?id=${project.id}`;
-        info.append(el('div', 'index-role', `${t('Role')}${colon}${project.role}`), el('div', 'index-text', project.subtitle), tags, go);
+        info.append(el('div', 'index-role', `Role: ${project.role}`), el('div', 'index-text', project.subtitle), tags, go);
         const inner = el('div', 'index-detail-inner');
         inner.append(media, info);
         detail.append(inner);
@@ -122,7 +121,7 @@ function projectIndex(container, projects) {
                 entries.push(entry);
             }
             const heading = el('h3', 'index-category');
-            heading.append(el('span', '', t(category)), el('span', 'index-count', String(list.children.length).padStart(2, '0')));
+            heading.append(el('span', '', category), el('span', 'index-count', String(list.children.length).padStart(2, '0')));
             group.append(heading, list);
             return group;
         });
@@ -184,112 +183,39 @@ async function initProjects() {
     const stage = showcase(document.querySelector('.showcase'), projects.filter(project => project.featured), lenis);
     signature?.setDocks(homeDocks(stage));
     projectPreview(container, projectIndex(container, projects));
-    refreshParallax();
 }
 
 const PLATFORMS = { nes: 'NES', snes: 'SNES', n64: 'Nintendo 64', gb: 'Game Boy', gbc: 'Game Boy Color', gba: 'Game Boy Advance', ds: 'DS', '3ds': '3DS', wii: 'Wii', wiiu: 'Wii U', switch: 'Switch', steam: 'PC', pc: 'PC', android: 'Android', web: 'Web', mame: 'Arcade' };
 
 const when = item => (item.released ? Date.parse(item.released) : Date.UTC(item.year, 0, 1));
 
-// Each category has its own format: a list, two columns, giant titles, a wall of pixel posters,
-// tiles that play their clip, or book spines. They share the same works and the same data.
+// Every category is the same two-column list of its featured works. A picture, or a clip for games,
+// follows the pointer along the row.
 function cultureList(container, items, kind) {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-    const layout = container.dataset.layout || 'list';
     const list = el('ul', 'index-list');
-    const entries = [...items].sort((a, b) => when(b) - when(a)).map((item, i) => {
+    const entries = [...items].sort((a, b) => when(b) - when(a)).map(item => {
         const row = el('div', 'index-row');
         row.tabIndex = 0;
         const title = el('span', 'index-title', item.title.replace(/ \([^)]*\)$/, ''));
-        const note = item.platform ? PLATFORMS[item.platform] || item.platform : item.note ? t(item.note, 'note') : item.author;
+        const note = item.platform ? PLATFORMS[item.platform] || item.platform : item.note || item.author;
         if (note) title.append(el('small', 'index-platform', ` ${note}`));
         row.append(title, el('span', 'index-slot'), el('span', 'index-year', item.date ?? String(item.year)));
-        // Spines of slightly different heights, the same every time.
-        if (layout === 'spines') row.style.setProperty('--h', (0.84 + (i * 37 % 17) / 17 * 0.16).toFixed(3));
         const li = el('li', 'index-item');
         li.append(row);
         list.append(li);
         return { item, row };
     });
 
-    if (layout === 'columns') {
-        const rows = Math.ceil(entries.length / 2);
-        list.style.setProperty('--rows', rows);
-        entries[rows - 1]?.row.parentElement.classList.add('is-end');
-    }
-    if (layout === 'grid') posterGrid(container, list, entries, kind, color);
-    else if (layout === 'tiles') videoTiles(container, list, entries, color);
-    else floatingPreview(container, list, entries, kind, color, layout);
+    const rows = Math.ceil(entries.length / 2);
+    list.style.setProperty('--rows', rows);
+    entries[rows - 1]?.row.parentElement.classList.add('is-end');
+    floatingPreview(container, list, entries, kind, color);
 }
 
 const hoverDevice = () => matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-// Every work is a pixel poster. Posters are drawn when they come near the screen.
-function posterGrid(container, list, entries, kind, color) {
-    const works = new WeakMap();
-    const seen = new IntersectionObserver(found => found.forEach(({ target, isIntersecting }) => {
-        target.dataset.seen = isIntersecting ? '1' : '';
-        if (!isIntersecting || target.dataset.started) return;
-        target.dataset.started = '1';
-        pixelPicture(target, `assets/images/culture/${kind}/${works.get(target).id}.webp`, { color, gain: 0.7, anchor: 0.35, watch: true, active: () => target.dataset.seen === '1' });
-    }), { rootMargin: '120% 0px' });
-    for (const { item, row } of entries) {
-        const poster = el('div', 'culture-poster');
-        poster.setAttribute('aria-hidden', 'true');
-        works.set(poster, item);
-        row.prepend(poster);
-        seen.observe(poster);
-    }
-    container.replaceChildren(list);
-}
-
-// Every game is a tile that plays its clip in place.
-function videoTiles(container, list, entries, color) {
-    container.replaceChildren(list);
-    const tiles = entries.map(({ item, row }) => {
-        const media = el('figure', 'culture-tile-media');
-        media.setAttribute('aria-hidden', 'true');
-        const clip = el('video');
-        Object.assign(clip, { muted: true, loop: true, playsInline: true, preload: 'none' });
-        media.append(clip);
-        row.append(media);
-        return { row, clip, cover: pixelCover(media, color), src: `assets/videos/culture/${item.id}.mp4` };
-    });
-    let current = null;
-    const close = tile => {
-        if (current !== tile) return;
-        current = null;
-        tile.clip.pause();
-        tile.cover.hide(() => { if (current !== tile) tile.row.classList.remove('is-on'); });
-    };
-    const open = tile => {
-        if (current === tile) return;
-        if (current) close(current);
-        current = tile;
-        if (!tile.clip.getAttribute('src')) tile.clip.src = tile.src;
-        tile.clip.play().catch(() => {});
-        tile.row.classList.add('is-on');
-        tile.cover.show();
-    };
-    const hover = hoverDevice();
-    for (const tile of tiles) {
-        if (hover) {
-            tile.row.addEventListener('pointerenter', () => open(tile));
-            tile.row.addEventListener('pointerleave', () => close(tile));
-        }
-        tile.row.addEventListener('focus', () => open(tile));
-        tile.row.addEventListener('blur', () => close(tile));
-        if (!hover) tile.row.addEventListener('click', event => {
-            event.stopPropagation();
-            if (current === tile) close(tile);
-            else open(tile);
-        });
-    }
-    if (!hover) document.addEventListener('click', () => { if (current) close(current); });
-}
-
-// A picture or a clip follows the pointer along the rows. On spines it sits over the book.
-function floatingPreview(container, list, entries, kind, color, layout) {
+function floatingPreview(container, list, entries, kind, color) {
     const clips = kind === 'games';
     const figure = el('figure', 'culture-preview');
     figure.setAttribute('aria-hidden', 'true');
@@ -304,24 +230,23 @@ function floatingPreview(container, list, entries, kind, color, layout) {
     const cover = pixelCover(figure, color);
     let current = null, leaving = 0;
 
+    // The picture sits beside the pointer, level with the row, and slides along the row as the pointer does.
+    // It keeps clear of the title and the year when the row has room for that. A row is only two columns wide,
+    // so when it has not, the picture may cover the year, and then the title too.
     const follow = (row, x) => {
         const box = container.getBoundingClientRect(), r = row.getBoundingClientRect();
+        const title = row.querySelector('.index-title').getBoundingClientRect(), year = row.querySelector('.index-year').getBoundingClientRect();
         const half = figure.offsetWidth / 2, gap = 24;
-        let target;
-        if (layout === 'giant' || layout === 'spines') {
-            target = layout === 'spines' || x == null ? r.left + r.width / 2 : x;
-        } else {
-            const title = row.querySelector('.index-title').getBoundingClientRect(), year = row.querySelector('.index-year').getBoundingClientRect();
-            const low = title.right + gap + half, high = year.left - gap - half;
-            const middle = (title.right + year.left) / 2;
-            target = middle;
-            if (x != null) {
-                const right = x + 216 + half, left = x - 216 - half;
-                target = right <= high ? right : left >= low ? left : (high - right > left - low ? right : left);
-            }
-            target = low <= high ? Math.min(high, Math.max(low, target)) : middle;
+        let low = title.right + gap + half, high = year.left - gap - half;
+        if (low > high) high = r.right - half;
+        if (low > high) low = r.left + half;
+
+        let target = (low + high) / 2;
+        if (x != null) {
+            const right = x + 216 + half, left = x - 216 - half;
+            target = right <= high ? right : left >= low ? left : (high - right > left - low ? right : left);
         }
-        target = Math.max(box.left + half, Math.min(box.right - half, target));
+        target = Math.max(box.left + half, Math.min(box.right - half, Math.min(high, Math.max(low, target))));
         figure.style.setProperty('--x', `${Math.round(target - box.left - half)}px`);
         figure.style.setProperty('--y', `${Math.round(r.top - box.top + r.height / 2 - figure.offsetHeight / 2)}px`);
     };
@@ -393,4 +318,4 @@ async function initCulture() {
 const signature = thread(restDocks());
 
 Promise.all([initProjects(), initCulture(), ...[...document.querySelectorAll('.journey')].map(journey)])
-    .then(() => { scrubbingText(); refreshParallax(); });
+    .then(() => scrubbingText());

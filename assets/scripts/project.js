@@ -1,8 +1,7 @@
 import './components.js';
 import { initPage, sectionNav, loadProjects, reducedMotion, throttled, clamp01, track, heroEntrance } from './common.js';
-import { scrubbingText, pixelReveal, parallax } from './effects.js';
+import { scrubbingText, pixelReveal } from './effects.js';
 import { thread, restDocks } from './showcase.js';
-import { t, colon, addTranslations, translate } from './i18n.js';
 
 const lenis = initPage();
 thread(restDocks());
@@ -13,7 +12,7 @@ async function load() {
     const id = new URLSearchParams(location.search).get('id') ?? '';
     if (!/^[\w-]+$/.test(id)) return notFound();
     try {
-        const [projects, res] = await Promise.all([loadProjects(), fetch(`projects/cases/${id}.html`), addTranslations(`../i18n/cases/${id}.fr.json`)]);
+        const [projects, res] = await Promise.all([loadProjects(), fetch(`projects/cases/${id}.html`)]);
         const project = projects.find(p => p.id === id);
         if (!project || !res.ok) return notFound();
         render(project, await res.text(), projects);
@@ -34,9 +33,9 @@ function render(project, html, projects) {
     track(project.heroImage, heroImg.decode().catch(() => {}));
 
     const details = [
-        [t('Role'), project.role],
-        [t('Year'), project.date?.slice(0, 4)],
-        [t('Client'), project.client],
+        ['Role', project.role],
+        ['Year', project.date?.slice(0, 4)],
+        ['Client', project.client],
     ].filter(([, value]) => value);
 
     const header = document.querySelector('.article-header');
@@ -75,22 +74,11 @@ function render(project, html, projects) {
 
     const cta = document.querySelector('.project-cta-bottom');
     cta.insertAdjacentHTML('beforebegin', html);
-    translate(document.querySelector('.project-main'));
     callsToAction(project, cta);
     pager(project, projects);
     chapterNav();
     scrubbingText();
     pixelReveal(document.querySelectorAll('figure.case-panel, .gallery-item'));
-    parallaxHero();
-    casePanels();
-}
-
-function casePanels() {
-    document.querySelectorAll('.case-row .case-panel').forEach((panel, i) => {
-        panel.dataset.parallaxSpeed = i % 2 ? 106 : 94;
-        panel.dataset.parallaxCompact = i % 2 ? 103 : 97;
-    });
-    parallax()();
 }
 
 function chapterNav() {
@@ -178,7 +166,7 @@ function callsToAction({ ctas = [], ctaPreview, ctaVideo, trailerUrl, trailerLab
         link.href = trailerUrl;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
-        link.textContent = trailerLabel || t('Watch the trailer');
+        link.textContent = trailerLabel || 'Watch the trailer';
         section.querySelector('.project-cta-text').append(link);
     }
     const preview = section.querySelector('.project-cta-preview');
@@ -187,7 +175,7 @@ function callsToAction({ ctas = [], ctaPreview, ctaVideo, trailerUrl, trailerLab
         video.className = 'project-cta-preview project-cta-video';
         const frame = document.createElement('iframe');
         frame.src = `https://www.youtube-nocookie.com/embed/${ctaVideo}`;
-        frame.title = `${title}, ${t('video')}`;
+        frame.title = `${title}, video`;
         frame.loading = 'lazy';
         frame.allow = 'accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen';
         frame.referrerPolicy = 'strict-origin-when-cross-origin';
@@ -196,7 +184,7 @@ function callsToAction({ ctas = [], ctaPreview, ctaVideo, trailerUrl, trailerLab
         return preview.replaceWith(video);
     }
     preview.href = ctas[0].url;
-    preview.setAttribute('aria-label', `${t('Open')}${colon}${ctas[0].label}`);
+    preview.setAttribute('aria-label', `Open: ${ctas[0].label}`);
     preview.querySelector('img').src = ctaPreview || heroImage;
 }
 
@@ -209,7 +197,7 @@ function pager(project, projects) {
     const [prevLink, nextLink] = nav.querySelectorAll('a');
     const fill = (link, p, direction) => {
         link.href = `project.html?id=${p.id}`;
-        link.setAttribute('aria-label', `${t(`${direction} project`)}${colon}${p.title}`);
+        link.setAttribute('aria-label', `${direction} project: ${p.title}`);
         link.querySelector('.project-pager-title').textContent = p.title;
         link.querySelector('.project-pager-role').textContent = p.role;
         link.querySelector('.project-pager-img').style.backgroundImage = `url('${p.heroImage}')`;
@@ -217,16 +205,6 @@ function pager(project, projects) {
     fill(prevLink, caseStudies.at(i - 1), 'Previous');
     fill(nextLink, caseStudies[(i + 1) % caseStudies.length], 'Next');
     nav.hidden = false;
-}
-
-function parallaxHero() {
-    if (reducedMotion) return;
-    const heroImg = document.querySelector('.project-hero-img');
-    const update = () => { heroImg.style.transform = `translateY(${scrollY * 0.3}px)`; };
-    const scheduled = throttled(update);
-    if (lenis) lenis.on('scroll', scheduled);
-    else addEventListener('scroll', scheduled, { passive: true });
-    update();
 }
 
 function progressBar(lenis) {
@@ -250,7 +228,7 @@ function progressBar(lenis) {
 }
 
 function notFound() {
-    document.title = `${t('Project not found')} · Léo Tosku | Design, Dev, Marketing`;
+    document.title = 'Project not found · Léo Tosku | Design, Dev, Marketing';
     document.querySelector('.project-main').innerHTML =
-        `<div class="project-not-found"><p>${t('Project not found.')}</p><a href="index.html">${t('Back')}</a></div>`;
+        '<div class="project-not-found"><p>Project not found.</p><a href="index.html">Back</a></div>';
 }

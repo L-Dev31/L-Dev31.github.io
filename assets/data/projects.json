@@ -34,7 +34,14 @@
       ],
       "cover": "assets/images/projects/smfl.webp",
       "featured": true,
-      "ctaPreview": "assets/images/projects/smfl/flag-final.jpg"
+      "ctaPreview": "assets/images/projects/smfl/flag-final.jpg",
+      "showcaseColors": {
+        "tone": "dark",
+        "background": "#0071CD",
+        "text": "#ffffff",
+        "accent": "#f3d54a",
+        "buttonText": "#071014"
+      }
     },
     {
       "id": "ogfm",
@@ -101,7 +108,14 @@
       ],
       "cover": "assets/images/projects/bgaw.webp",
       "featured": true,
-      "ctaPreview": "assets/images/projects/bgaw/web.jpg"
+      "ctaPreview": "assets/images/projects/bgaw/web.jpg",
+      "showcaseColors": {
+        "tone": "white",
+        "background": "#F5F5F0",
+        "text": "#303234",
+        "accent": "#df3d36",
+        "buttonText": "#ffffff"
+      }
     },
     {
       "id": "mego",
@@ -152,7 +166,14 @@
         "OCR Scanning"
       ],
       "cover": "assets/images/projects/prfy.webp",
-      "featured": true
+      "featured": true,
+      "showcaseColors": {
+        "tone": "white",
+        "background": "#ffffff",
+        "text": "#3d4143",
+        "accent": "#0aabff",
+        "buttonText": "#ffffff"
+      }
     },
     {
       "id": "cmck",
@@ -185,7 +206,15 @@
       ],
       "cover": "assets/images/projects/cmck.webp",
       "featured": true,
-      "ctaPreview": "assets/images/projects/cmck/website.jpg"
+      "ctaPreview": "assets/images/projects/cmck/website.jpg",
+      "showcaseColors": {
+        "tone": "dark",
+        "background": "#0e0f10",
+        "text": "#ffffff",
+        "accent": "#83c9ff",
+        "accentGradient": "linear-gradient(90deg, #83c9ff, #ef9bd1)",
+        "buttonText": "#0e0f10"
+      }
     },
     {
       "id": "smag",
@@ -252,7 +281,14 @@
       ],
       "cover": "assets/images/projects/bmge.webp",
       "featured": true,
-      "ctaPreview": "assets/images/projects/bmge/tomodachi.webp"
+      "ctaPreview": "assets/images/projects/bmge/tomodachi.webp",
+      "showcaseColors": {
+        "tone": "dark",
+        "background": "#0e0f10",
+        "text": "#ffffff",
+        "accent": "#fde404",
+        "buttonText": "#0e0f10"
+      }
     },
     {
       "id": "gptr",

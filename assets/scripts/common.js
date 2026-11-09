@@ -1,10 +1,10 @@
-import { lowPower, clamp01, breakpoint, isMobile, throttled } from './config.js';
+import { lowPower, clamp01, breakpoint, isMobile, throttled, PICTURE } from './config.js';
 import { pageLoader } from './intro.js';
 import { cursor, magnets, pageTransitions } from './cursor.js';
 import { loadProjects } from './projects.js';
 import { contactScene, contactLanding } from './contact.js';
 import { socialLinks } from './components.js';
-import { t, lang, setLanguage } from './i18n.js';
+import { initContactParallax } from './contact-parallax.js';
 
 export { reducedMotion, lowPower, clamp01, breakpoint, throttled } from './config.js';
 export { track, entrance, heroEntrance, introLoaded } from './intro.js';
@@ -24,9 +24,9 @@ export function initPage() {
     anchorLinks(lenis);
     backToTop(lenis);
     footerReveal();
+    footerPortrait();
     contactScene();
-    contactPictures();
-    import('./effects.js').then(({ parallax }) => parallax());
+    initContactParallax();
     copyHandles();
     pauseOffscreenVideos();
     return lenis;
@@ -34,9 +34,8 @@ export function initPage() {
 
 function navTone() {
     const bar = document.querySelector('.navbar');
-    const reds = [...document.querySelectorAll('#my-story, #featured-projects, #promise, #experience, .contact-rest, .accent-section, .culture-section--light')];
+    const reds = [...document.querySelectorAll('#my-story, #featured-projects, #projects-index, #promise, .contact-rest, .accent-section')];
     const stage = document.querySelector('.contact-stage');
-    const showcase = document.querySelector('.showcase-stage');
     const aboutHero = document.querySelector('.about-header');
     const projects = document.getElementById('featured-projects');
     if (!bar) return;
@@ -44,15 +43,20 @@ function navTone() {
         const y = bar.offsetHeight / 2;
 
         const overHero = aboutHero ? aboutHero.getBoundingClientRect().bottom > y : projects ? projects.getBoundingClientRect().top > y : false;
-        bar.classList.toggle('on-dark', overHero);
         const covers = el => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; };
-        const darkProject = showcase?.dataset.tone === 'dark' && covers(showcase);
-        const onAccent = !darkProject && (reds.some(covers) || (stage?.dataset.tone === 'light' && covers(stage)));
+        const showcase = document.querySelector('.showcase-stage');
+        const activeShowcase = showcase?.dataset.paletteActive === 'true' && covers(showcase);
+        if (activeShowcase) bar.style.color = getComputedStyle(showcase).getPropertyValue('--showcase-foreground').trim();
+        else bar.style.removeProperty('color');
+        bar.style.transition = activeShowcase ? 'none' : '';
+        bar.classList.toggle('on-dark', activeShowcase ? showcase.dataset.tone === 'dark' : overHero);
+        const onAccent = !activeShowcase && (reds.some(covers) || (stage?.dataset.tone === 'light' && covers(stage)));
         bar.classList.toggle('on-accent', onAccent);
         document.documentElement.classList.toggle('on-accent', onAccent);
     };
     addEventListener('scroll', throttled(update), { passive: true });
     addEventListener('resize', update, { passive: true });
+    addEventListener('showcasepalettechange', update);
     update();
 }
 
@@ -84,8 +88,8 @@ function clock() {
         const clockTime = time.format(now);
         const offset = zone.formatToParts(now).find(part => part.type === 'timeZoneName')?.value || '';
         for (const el of document.querySelectorAll('[data-clock]')) {
-            el.innerHTML = `${day ? SUN : MOON}<span class="clock-place">${t('French Riviera, FR')}</span><span class="clock-time">${clockTime}</span><span class="clock-zone">${offset}</span>`;
-            el.setAttribute('aria-label', `${t('French Riviera')}, ${clockTime}, ${offset}, ${day ? t('daytime') : t('night')}`);
+            el.innerHTML = `${day ? SUN : MOON}<span class="clock-place">French Riviera, FR</span><span class="clock-time">${clockTime}</span><span class="clock-zone">${offset}</span>`;
+            el.setAttribute('aria-label', `French Riviera, ${clockTime}, ${offset}, ${day ? 'daytime' : 'night'}`);
         }
     };
     tickClock = tick;
@@ -136,7 +140,7 @@ function menuLink(className, { label, href }, isCurrent) {
             link.append(arrow);
         }
     }
-    link.append(t(label));
+    link.append(label);
     return link;
 }
 
@@ -164,7 +168,7 @@ function renderMenu(nav, projects) {
     nav.replaceChildren(...PAGES.map(page => menuGroup(page, projects)));
     if (nav.nextElementSibling?.classList.contains('hero-socials')) return;
     const socials = element('nav', 'hero-socials');
-    socials.setAttribute('aria-label', t('Social links'));
+    socials.setAttribute('aria-label', 'Social links');
     const clock = element('p', 'clock');
     clock.dataset.clock = '';
     socials.append(clock, socialLinks());
@@ -180,7 +184,7 @@ function mobileMenu(lenis) {
     menu.id ||= 'mobile-menu';
     menu.inert = true;
     button.setAttribute('aria-controls', menu.id);
-    button.setAttribute('aria-label', t('Open menu'));
+    button.setAttribute('aria-label', 'Open menu');
 
     const nav = menu.querySelector('.mobile-menu-links');
     renderMenu(nav, []);
@@ -211,7 +215,7 @@ function mobileMenu(lenis) {
         menu.setAttribute('aria-hidden', !open);
         menu.inert = !open;
         button.setAttribute('aria-expanded', open);
-        button.setAttribute('aria-label', open ? t('Close menu') : t('Open menu'));
+        button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
         document.documentElement.classList.toggle('menu-open', open);
         background.forEach(child => { child.inert = open; });
         if (open) {
@@ -224,12 +228,6 @@ function mobileMenu(lenis) {
             if (returnFocus) button.focus();
         }
     };
-
-    for (const option of menu.querySelectorAll('.lang-option')) {
-        const current = option.dataset.lang === lang;
-        option.setAttribute('aria-pressed', String(current));
-        option.addEventListener('click', () => setLanguage(option.dataset.lang));
-    }
 
     button.addEventListener('click', () => toggle(!menu.classList.contains('open')));
     menu.addEventListener('click', event => {
@@ -331,7 +329,7 @@ function copyHandles() {
         const button = event.target.closest('[data-copy]');
         if (!button) return;
         const label = button.textContent;
-        try { await navigator.clipboard.writeText(button.dataset.copy); button.textContent = t('Copied'); } catch { button.textContent = button.dataset.copy; }
+        try { await navigator.clipboard.writeText(button.dataset.copy); button.textContent = 'Copied'; } catch { button.textContent = button.dataset.copy; }
         setTimeout(() => { button.textContent = label; }, 1600);
     });
 }
@@ -345,7 +343,7 @@ function loadKofi() {
     script.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
     script.onload = () => window.kofiWidgetOverlay?.draw('leotosku', {
         'type': 'floating-chat',
-        'floating-chat.donateButton.text': t('Support me'),
+        'floating-chat.donateButton.text': 'Support me',
         'floating-chat.donateButton.background-color': '#F6F2F2',
         'floating-chat.donateButton.text-color': '#210710',
     });
@@ -366,21 +364,17 @@ function footerReveal() {
     update();
 }
 
-function contactPictures() {
-    const hosts = [...document.querySelectorAll('.contact-picture')];
-    if (!hosts.length) return;
-    const start = async host => {
-        const { pixelPicture } = await import('./effects.js');
-        const black = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
-        const onScreen = () => { const { top, bottom } = host.getBoundingClientRect(); return bottom > 0 && top < innerHeight; };
-        pixelPicture(host, host.dataset.picture, { color: black, center: Number(host.dataset.center ?? 0.5), anchor: Number(host.dataset.anchor ?? 0.5), watch: true, active: onScreen });
-    };
-    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        observer.unobserve(entry.target);
-        start(entry.target);
-    }), { rootMargin: '250% 0px' });
-    hosts.forEach(host => observer.observe(host));
+// The portrait of the about page, in pixels, drawn here the way the about hero draws it.
+function footerPortrait() {
+    const host = document.querySelector('.footer-portrait');
+    if (!host) return;
+    const footer = host.closest('#footer');
+    // On a portrait screen the wide photo is cropped around its subject and sits at the bottom, like in the hero.
+    const framing = matchMedia('(max-aspect-ratio: 1/1)').matches ? { center: 0.4, anchor: 1 } : { anchor: 0.7 };
+    import('./effects.js').then(({ pixelPicture }) => {
+        const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+        pixelPicture(host, host.dataset.picture, { gain: PICTURE.aboutHeroGain, color: accent, active: () => footer.classList.contains('is-near'), ...framing });
+    });
 }
 
 function pauseOffscreenVideos() {
