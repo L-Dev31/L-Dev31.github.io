@@ -1206,16 +1206,23 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     color: inherit;
     text-align: center;
     text-decoration: none;
+    opacity: 0;
     visibility: hidden;
     pointer-events: none;
+    /* It fades out, then leaves the layer; coming back it is visible at once and fades in. */
+    transition: opacity 0.4s var(--ease-out), visibility 0s linear 0.4s;
 }
 
 .showcase-link.is-visible {
+    opacity: 1;
     visibility: visible;
+    transition-delay: 0s;
 }
 
 html.menu-open .showcase-link {
+    opacity: 0;
     visibility: hidden;
+    transition-delay: 0s, 0.4s;
 }
 
 .showcase-title {
@@ -3038,11 +3045,31 @@ html.on-accent .mobile-menu .hero-socials .clock {
     left: var(--pad-edge) !important;
     visibility: hidden !important;
     pointer-events: none;
+    /* It leaves the layer once the menu has swept off. */
+    transition: visibility 0s linear 0.6s;
 }
 
 html.menu-open [id^="kofi-widget-overlay"]:not([id*="popup"]) > * {
     visibility: visible !important;
     pointer-events: auto;
+    transition-delay: 0s;
+}
+
+/* The menu opens as a wipe from the right. --menu-sweep is the wipe's left edge, on the same timing as the menu,
+   so the Ko-fi button is uncovered when the wipe reaches it instead of appearing on its own. */
+@property --menu-sweep {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 100vw;
+}
+
+html {
+    --menu-sweep: 100vw;
+    transition: --menu-sweep 0.6s var(--ease-out);
+}
+
+html.menu-open {
+    --menu-sweep: 0px;
 }
 
 iframe[class*="floatingchat-container"] {
@@ -3051,4 +3078,5 @@ iframe[class*="floatingchat-container"] {
     left: 0 !important;
     transform: scale(0.68);
     transform-origin: left bottom;
+    clip-path: inset(0 0 0 max(0px, calc((var(--menu-sweep) - var(--pad-edge)) / 0.68)));
 }
