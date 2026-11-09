@@ -10,6 +10,13 @@ const sections = {
         ['#education', 'Education'],
         ['#journey', 'Journey'],
     ],
+    legal: [
+        ['#legal-notice', 'Legal notice'],
+        ['#demos', 'Demo projects'],
+        ['#privacy', 'Privacy'],
+        ['#cookies', 'Cookies'],
+        ['#accessibility', 'Accessibility'],
+    ],
     culture: [
         ['#films', 'Films', 'films'],
         ['#series', 'Series', 'series'],
@@ -71,7 +78,7 @@ async function hydrate(root) {
         if (name === 'socials') {
             const nav = document.createElement('nav');
             nav.className = placeholder.dataset.class ?? '';
-            nav.setAttribute('aria-label', 'Social links');
+            nav.setAttribute('aria-label', placeholder.dataset.label ?? 'Social links');
             nav.append(content);
             placeholder.replaceWith(nav);
             return;

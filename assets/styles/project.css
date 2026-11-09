@@ -468,6 +468,40 @@ html:has(.project-main)::-webkit-scrollbar {
     border: 0;
 }
 
+/* The video is only requested from YouTube once the visitor presses play. */
+.project-cta-play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background-color: var(--ink);
+    background-position: center;
+    background-size: cover;
+    color: var(--black);
+    cursor: pointer;
+}
+
+.project-cta-play-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 14px 22px;
+    border-radius: 18px;
+    background: var(--white);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.project-cta-play-label small {
+    font-size: 12px;
+    font-weight: 500;
+}
+
 .project-cta-preview:hover img,
 .project-cta-preview:focus-visible img {
     transform: scale(1.04);

@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self'; frame-src https://www.youtube-nocookie.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
     <title>About · Léo Tosku | Design, Dev, Marketing</title>
     <meta name="description" content="Meet Léo Tosku, working across design, development and marketing on the French Riviera, from early websites to founding a Caribbean marketplace.">
     <meta name="author" content="Léo Tosku">
     <link rel="canonical" href="https://www.leotosku.com/about.html">
-    <link rel="icon" type="image/png" href="assets/images/core/favicon.png">
+    <link rel="icon" type="image/png" href="assets/images/core/favicon.png?v=2">
     <meta name="theme-color" content="#210710">
-    <link rel="apple-touch-icon" href="assets/images/core/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/core/favicon.png?v=2">
     <link rel="manifest" href="site.webmanifest">
     <link rel="preload" as="font" href="assets/fonts/satoshi-variable.woff2" type="font/woff2" crossorigin>
     <link rel="preload" as="font" href="assets/fonts/editorial-old-italic.woff2" type="font/woff2" crossorigin>
@@ -33,6 +34,7 @@
 
     <link rel="stylesheet" href="assets/styles/home.css">
     <script src="assets/vendor/lenis.min.js" defer></script>
+    <script src="assets/scripts/stats.js" defer></script>
     <script src="assets/scripts/components.js" type="module"></script>
     <script src="assets/scripts/main.js" type="module"></script>
 
@@ -67,13 +69,13 @@
 </head>
 
 <body>
-    <noscript><p class="noscript">This site needs JavaScript for its menu and animations. You can reach me at <a href="mailto:leotoskuepro@gmail.com">leotoskuepro@gmail.com</a>.</p></noscript>
+    <noscript><p class="noscript">This site needs JavaScript for its menu and animations. You can reach me at <a href="mailto:contact@leotosku.com">contact@leotosku.com</a>.</p></noscript>
     <site-page-loader></site-page-loader>
     <div class="cursor" aria-hidden="true"></div>
 
     <site-navbar data-page="about"></site-navbar>
 
-    <main id="main-content">
+    <main id="main-content" tabindex="-1">
         <div class="about-header">
             <div class="about-header-picture" data-picture="assets/images/core/about.webp" data-center="0.40" aria-hidden="true"></div>
             <div class="about-header-overlay" aria-hidden="true"></div>
@@ -94,7 +96,7 @@
                     <p>I started young, making simple websites and minigames. Then I got hooked on taking games apart and rebuilding them, and game modding taught me English, 3D modelling, design, communication, team management and code. I grew up in Provence, moved to Guadeloupe and launched my first marketplace at 17. I now study on the French Riviera and bring that same deep work to companies. I like to work on a project as a whole: the research, the visual identity, the interface and the code. Doing it all myself lets me adapt the design to what the code allows, and the other way around, which is how a flag, a binary editor and a Creole translator ended up in the same portfolio.</p>
                     <ul class="promise-links">
                         <li><a href="index.html#featured-projects">See the work</a></li>
-                        <li><a href="mailto:leotoskuepro@gmail.com">Get in touch <span aria-hidden="true">&nearr;</span></a></li>
+                        <li><a href="mailto:contact@leotosku.com">Get in touch <span aria-hidden="true">&nearr;</span></a></li>
                     </ul>
                 </div>
             </div>

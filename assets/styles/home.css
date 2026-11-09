@@ -3044,44 +3044,115 @@ html.on-accent .mobile-menu .hero-socials .clock {
     color: var(--white);
 }
 
-/* Only the widget's own children (button and popup) are moved: the popup's inner parts also carry that id prefix and must stay where the widget puts them. */
-[id^="kofi-widget-overlay"]:not([id*="popup"]) > * {
-    right: auto !important;
-    left: var(--pad-edge) !important;
-    visibility: hidden !important;
-    pointer-events: none;
-    /* It leaves the layer once the menu has swept off. */
-    transition: visibility 0s linear 0.6s;
+/* Support link: a plain link to the Ko-fi page, so nothing from Ko-fi loads on this site.
+   It lives in the menu, so it follows the menu's transition. */
+.kofi-link {
+    position: absolute;
+    bottom: max(clamp(14px, 2.6vh, 30px), env(safe-area-inset-bottom));
+    left: var(--pad-edge);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--black);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    transition: font-weight 0.15s var(--ease-out);
 }
 
-html.menu-open [id^="kofi-widget-overlay"]:not([id*="popup"]) > * {
-    visibility: visible !important;
-    pointer-events: auto;
-    transition-delay: 0s;
+.kofi-link svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--accent);
 }
 
-/* The menu opens as a wipe from the right. --menu-sweep is the wipe's left edge, on the same timing as the menu,
-   so the Ko-fi button is uncovered when the wipe reaches it instead of appearing on its own. */
-@property --menu-sweep {
-    syntax: '<length>';
-    inherits: true;
-    initial-value: 100vw;
+.kofi-link:hover,
+.kofi-link:focus-visible {
+    font-weight: 800;
 }
 
-html {
-    --menu-sweep: 100vw;
-    transition: --menu-sweep 0.6s var(--ease-out);
+/* Skip link: first thing a keyboard user reaches; visible only when focused. */
+.skip-link {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 100002;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--black);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    transform: translateY(-200%);
 }
 
-html.menu-open {
-    --menu-sweep: 0px;
+.skip-link:focus-visible {
+    transform: none;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 
-iframe[class*="floatingchat-container"] {
-    right: auto !important;
-    bottom: max(clamp(14px, 2.6vh, 30px), env(safe-area-inset-bottom)) !important;
-    left: 0 !important;
-    transform: scale(0.68);
-    transform-origin: left bottom;
-    clip-path: inset(0 0 0 max(0px, calc((var(--menu-sweep) - var(--pad-edge)) / 0.68)));
+#main-content:focus {
+    outline: none;
+}
+
+/* Legal page: plain reading text. */
+.legal {
+    width: 100%;
+    text-align: left;
+    max-width: 760px;
+    margin: 0 auto;
+    color: var(--text);
+}
+
+.legal section {
+    padding-top: clamp(32px, 6vh, 56px);
+}
+
+.legal h2 {
+    margin: 0 0 20px;
+    font-family: var(--font-display);
+    font-size: clamp(32px, 4vw, 52px);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.legal h3 {
+    margin: 36px 0 14px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.legal p,
+.legal li {
+    font-size: clamp(15px, 1.3vw, 17px);
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.legal p {
+    margin: 0 0 14px;
+}
+
+.legal ul {
+    margin: 0 0 14px;
+    padding-left: 1.2em;
+}
+
+.legal a {
+    color: inherit;
+    text-underline-offset: 3px;
+}
+
+.legal code {
+    font-size: 0.92em;
 }

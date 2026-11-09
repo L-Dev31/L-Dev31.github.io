@@ -56,3 +56,6 @@ package-lock.json
 *.pyc
 .vscode/
 .idea/
+
+# Local Cloudflare CLI cache (holds the account id)
+.cloudflare/

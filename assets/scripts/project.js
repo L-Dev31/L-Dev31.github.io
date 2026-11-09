@@ -173,14 +173,22 @@ function callsToAction({ ctas = [], ctaPreview, ctaVideo, trailerUrl, trailerLab
     if (ctaVideo && /^[\w-]+$/.test(ctaVideo)) {
         const video = document.createElement('div');
         video.className = 'project-cta-preview project-cta-video';
-        const frame = document.createElement('iframe');
-        frame.src = `https://www.youtube-nocookie.com/embed/${ctaVideo}`;
-        frame.title = `${title}, video`;
-        frame.loading = 'lazy';
-        frame.allow = 'accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen';
-        frame.referrerPolicy = 'strict-origin-when-cross-origin';
-        frame.allowFullscreen = true;
-        video.append(frame);
+        const play = document.createElement('button');
+        play.type = 'button';
+        play.className = 'project-cta-play';
+        play.style.backgroundImage = `url('${ctaPreview || heroImage}')`;
+        play.innerHTML = '<span class="project-cta-play-label">Play the video <small>Loads content from YouTube</small></span>';
+        play.addEventListener('click', () => {
+            const frame = document.createElement('iframe');
+            frame.src = `https://www.youtube-nocookie.com/embed/${ctaVideo}?autoplay=1`;
+            frame.title = `${title}, video`;
+            frame.allow = 'autoplay; accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+            frame.referrerPolicy = 'strict-origin-when-cross-origin';
+            frame.allowFullscreen = true;
+            play.replaceWith(frame);
+            frame.focus();
+        });
+        video.append(play);
         return preview.replaceWith(video);
     }
     preview.href = ctas[0].url;
@@ -197,7 +205,6 @@ function pager(project, projects) {
     const [prevLink, nextLink] = nav.querySelectorAll('a');
     const fill = (link, p, direction) => {
         link.href = `project.html?id=${p.id}`;
-        link.setAttribute('aria-label', `${direction} project: ${p.title}`);
         link.querySelector('.project-pager-title').textContent = p.title;
         link.querySelector('.project-pager-role').textContent = p.role;
         link.querySelector('.project-pager-img').style.backgroundImage = `url('${p.heroImage}')`;

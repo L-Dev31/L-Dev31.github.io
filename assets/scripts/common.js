@@ -168,7 +168,7 @@ function renderMenu(nav, projects) {
     nav.replaceChildren(...PAGES.map(page => menuGroup(page, projects)));
     if (nav.nextElementSibling?.classList.contains('hero-socials')) return;
     const socials = element('nav', 'hero-socials');
-    socials.setAttribute('aria-label', 'Social links');
+    socials.setAttribute('aria-label', 'Social links, menu');
     const clock = element('p', 'clock');
     clock.dataset.clock = '';
     socials.append(clock, socialLinks());
@@ -220,7 +220,6 @@ function mobileMenu(lenis) {
         background.forEach(child => { child.inert = open; });
         if (open) {
             showPicture();
-            loadKofi();
             lenis?.stop();
             requestAnimationFrame(() => menu.querySelector('a')?.focus());
         } else {
@@ -332,22 +331,6 @@ function copyHandles() {
         try { await navigator.clipboard.writeText(button.dataset.copy); button.textContent = 'Copied'; } catch { button.textContent = button.dataset.copy; }
         setTimeout(() => { button.textContent = label; }, 1600);
     });
-}
-
-let kofiRequested = false;
-
-function loadKofi() {
-    if (kofiRequested) return;
-    kofiRequested = true;
-    const script = document.createElement('script');
-    script.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
-    script.onload = () => window.kofiWidgetOverlay?.draw('leotosku', {
-        'type': 'floating-chat',
-        'floating-chat.donateButton.text': 'Support me',
-        'floating-chat.donateButton.background-color': '#F6F2F2',
-        'floating-chat.donateButton.text-color': '#210710',
-    });
-    document.head.append(script);
 }
 
 function footerReveal() {
