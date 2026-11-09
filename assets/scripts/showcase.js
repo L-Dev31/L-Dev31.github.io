@@ -106,8 +106,7 @@ export function showcase(container, projects, lenis) {
         title.style.setProperty('--fit', titleFontSize(project.title));
         pixelWrite(title, project.title);
 
-        const firstTags = (project.tags || []).slice(0, 3);
-        tags.replaceChildren(...[project.category, ...firstTags].map(tag => createElement('li', 'index-tag', tag)));
+        tags.replaceChildren(...[project.category, ...(project.tags || [])].map(tag => createElement('li', 'index-tag', tag)));
         role.textContent = `Role: ${project.role}`;
         subtitle.textContent = project.subtitle;
         if (stillMark) stillMark.src = projectMark(project);

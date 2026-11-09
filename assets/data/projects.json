@@ -12,15 +12,9 @@
         "Vexillology",
         "Flag Design",
         "Identity Design",
-        "Brand Strategy",
         "Symbol Design",
-        "Color Theory",
-        "Geometry",
         "NAVA Guidelines",
-        "3D Wind Simulation",
-        "Cultural Heritage",
-        "Territorial Branding",
-        "Design Research"
+        "3D Wind Simulation"
       ],
       "ctas": [
         {
@@ -54,18 +48,10 @@
       "tags": [
         "Brand Identity",
         "Logo Design",
-        "Logotype",
         "Brand Guidelines",
-        "Graphic Charter",
         "Art Direction",
-        "Typography",
-        "Print Design",
         "Poster Design",
-        "Fanzine",
-        "Punk Aesthetic",
-        "Social Media Assets",
-        "Adobe Illustrator",
-        "Music Industry"
+        "Fanzine"
       ],
       "ctas": [
         {
@@ -85,20 +71,12 @@
       "heroImage": "assets/images/projects/bgaw/header.jpg",
       "subtitle": "A luxury web redesign for an independent watchmaker, between precision horology and automotive design.",
       "tags": [
-        "Web Design",
         "UI/UX Design",
         "Brand Identity",
         "Logo Design",
-        "Art Direction",
-        "Market Research",
-        "Competitive Audit",
         "Luxury Branding",
-        "Watchmaking",
-        "Automotive Design",
-        "User Journey",
-        "Web Concept",
-        "Adobe Illustrator",
-        "Conversion Design"
+        "Art Direction",
+        "Watchmaking"
       ],
       "ctas": [
         {
@@ -130,13 +108,7 @@
         "Editorial Layout",
         "Print Design",
         "Social Media Kit",
-        "Instagram Carousel",
-        "B2G Communication",
         "Pitch Deck",
-        "Information Hierarchy",
-        "Art Direction",
-        "Circular Economy",
-        "Public Sector",
         "48-Hour Challenge"
       ],
       "cover": "assets/images/projects/mego.webp"
@@ -152,18 +124,10 @@
       "tags": [
         "UX Design",
         "UI Design",
-        "Product Design",
         "Mobile App Design",
         "MVP Scoping",
-        "MoSCoW Prioritization",
-        "User Stories",
         "User Flow",
-        "Information Architecture",
-        "Figma Prototype",
-        "Glassmorphism",
-        "iOS Design",
-        "Privacy by Design",
-        "OCR Scanning"
+        "Figma Prototype"
       ],
       "cover": "assets/images/projects/prfy.webp",
       "featured": true,
@@ -184,18 +148,11 @@
       "heroImage": "assets/images/projects/cmck/header.jpg",
       "subtitle": "A portfolio for a composer, built to carry personal work and paid commissions on the same site.",
       "tags": [
-        "Web Design",
         "Frontend Development",
         "JavaScript",
         "Interaction Design",
-        "HTML",
-        "CSS",
         "Responsive Design",
-        "Portfolio Website",
         "Typography",
-        "Pixel Art Aesthetic",
-        "Copywriting",
-        "Music Industry",
         "Client Project"
       ],
       "ctas": [
@@ -229,13 +186,7 @@
         "3D Modeling",
         "Blender",
         "Level Design",
-        "Vertex Shading",
         "Project Leadership",
-        "Remote Team",
-        "Logo Design",
-        "Web Development",
-        "JavaScript",
-        "Localization",
         "Super Mario Galaxy 2"
       ],
       "ctas": [
@@ -259,19 +210,11 @@
       "subtitle": "A browser editor for Nintendo's BMG text format, written after mapping the file structure by hand in a hex editor.",
       "tags": [
         "Reverse Engineering",
-        "Binary File Format",
         "JavaScript",
-        "Web Application",
         "Developer Tool",
         "Game Modding",
         "Nintendo DS",
-        "BMG Format",
-        "Hex Editing",
-        "Parser Design",
-        "Plugin Architecture",
-        "Non-Destructive Editing",
-        "UI Design",
-        "Fan Translation"
+        "BMG Format"
       ],
       "ctas": [
         {
@@ -302,17 +245,9 @@
         "Python",
         "NLP",
         "Machine Translation",
-        "Low-Resource Language",
         "Guadeloupean Creole",
         "Dataset Creation",
-        "JSON",
-        "Tkinter",
-        "Desktop Application",
-        "Longest-Match Algorithm",
-        "Bidirectional Translation",
-        "Offline Tool",
-        "Linguistics",
-        "Trophées NSI"
+        "Desktop Application"
       ],
       "ctas": [
         {
