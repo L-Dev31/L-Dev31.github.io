@@ -1631,6 +1631,11 @@ html.menu-open .showcase-link {
         margin-bottom: 4px;
     }
 
+    /* On a phone the links live in the menu; the hero keeps its title and portrait. */
+    #header .hero-socials {
+        display: none;
+    }
+
     .hero-socials a,
     .hero-socials button {
         padding: 11px 15px;
