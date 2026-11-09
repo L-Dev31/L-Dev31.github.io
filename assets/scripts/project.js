@@ -120,7 +120,7 @@ function updateSearchMetadata(project) {
         url,
         image,
         dateCreated: project.date,
-        creator: { '@type': 'Person', name: 'Léo Tosku', jobTitle: 'Design, Development and Marketing', url: 'https://l-dev31.github.io/' },
+        creator: { '@type': 'Person', name: 'Léo Tosku', jobTitle: 'Design, Development and Marketing', url: 'https://www.leotosku.com/' },
         keywords: project.tags?.join(', '),
     };
     let schema = document.querySelector('#project-schema');

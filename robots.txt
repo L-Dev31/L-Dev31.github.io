@@ -2,6 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /_backups/
 
-Sitemap: https://l-dev31.github.io/sitemap.xml
+Sitemap: https://www.leotosku.com/sitemap.xml
 Sitemap: https://l-dev31.github.io/projects/demos/rakoun/sitemap.xml
 Sitemap: https://l-dev31.github.io/projects/demos/stock/sitemap.xml
