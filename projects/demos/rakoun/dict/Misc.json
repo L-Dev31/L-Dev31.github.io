@@ -269,9 +269,9 @@
     "type": "num"
   },
   {
-    "fr": "or",
+    "fr": "beaucoup",
     "gp": "lo",
-    "type": "conj"
+    "type": "adv"
   },
   {
     "fr": "ou",
@@ -1161,7 +1161,7 @@
       "bon courage",
       "courage"
     ],
-    "gp": "ba kò-w fòs",
+    "gp": "bay kò-w fòs",
     "type": "expr"
   },
   {
@@ -1279,8 +1279,8 @@
   },
   {
     "gp": [
-      "ba kò-w fòs",
-      "ba kò -w fòs"
+      "bay kò-w fòs",
+      "bay kò -w fòs"
     ],
     "fr": "bon courage",
     "type": "expr"
@@ -1431,7 +1431,7 @@
     "type": "expr"
   },
   {
-    "gp": "ba chabon",
+    "gp": "bay chabon",
     "fr": "mets le paquet",
     "type": "expr"
   },
@@ -1832,12 +1832,18 @@
   },
   {
     "fr": "je t'aime",
-    "gp": ["je t'aime", "je t aime"],
+    "gp": [
+      "je t'aime",
+      "je t aime"
+    ],
     "type": "expr"
   },
   {
     "fr": "c'est le syndrome de Stockholm",
-    "gp": ["sé syndrome", "sé syndrome de Stockholm"],
+    "gp": [
+      "sé syndrome",
+      "sé syndrome de Stockholm"
+    ],
     "type": "expr"
   },
   {
@@ -1952,17 +1958,26 @@
   },
   {
     "fr": "David",
-    "gp": ["David", "david"],
+    "gp": [
+      "David",
+      "david"
+    ],
     "type": "nom"
   },
   {
     "fr": "Goliath",
-    "gp": ["Goliath", "goliath"],
+    "gp": [
+      "Goliath",
+      "goliath"
+    ],
     "type": "nom"
   },
   {
     "fr": "Kobay Bay",
-    "gp": ["Kobay Bay", "kobay bay"],
+    "gp": [
+      "Kobay Bay",
+      "kobay bay"
+    ],
     "type": "nom"
   },
   {
@@ -2001,8 +2016,16 @@
     "type": "interj"
   },
   {
-    "fr": ["âgé", "âgée", "âgées"],
-    "gp": ["âgé", "âgée", "âgées"],
+    "fr": [
+      "âgé",
+      "âgée",
+      "âgées"
+    ],
+    "gp": [
+      "âgé",
+      "âgée",
+      "âgées"
+    ],
     "type": "adj"
   },
   {
@@ -2031,6 +2054,905 @@
   {
     "fr": "tout mon sommeil",
     "gp": "tout dòmi an mwen",
+    "type": "expr"
+  },
+  {
+    "gp": "lagè",
+    "fr": "guerre",
+    "type": "misc"
+  },
+  {
+    "gp": "lagyè",
+    "fr": "guerre",
+    "type": "misc"
+  },
+  {
+    "gp": "bèw",
+    "fr": "beurre",
+    "type": "misc"
+  },
+  {
+    "gp": "konpé",
+    "fr": "camarade",
+    "type": "misc"
+  },
+  {
+    "gp": "kabouèt",
+    "fr": "charrette",
+    "type": "misc"
+  },
+  {
+    "gp": "chagwen",
+    "fr": "chagrin",
+    "type": "misc"
+  },
+  {
+    "gp": "zannimo",
+    "fr": "animal",
+    "type": "misc"
+  },
+  {
+    "gp": "chich",
+    "fr": "avare",
+    "type": "misc"
+  },
+  {
+    "gp": "kòd",
+    "fr": "corde",
+    "type": "misc"
+  },
+  {
+    "gp": "méné",
+    "fr": "conduire",
+    "type": "misc"
+  },
+  {
+    "gp": "chaché",
+    "fr": "chercher",
+    "type": "misc"
+  },
+  {
+    "gp": "baré",
+    "fr": "arrêter",
+    "type": "misc"
+  },
+  {
+    "gp": "aresté",
+    "fr": "arrêter",
+    "type": "misc"
+  },
+  {
+    "gp": "bwété",
+    "fr": "boiter",
+    "type": "misc"
+  },
+  {
+    "gp": "kokotyé",
+    "fr": "cocotier",
+    "type": "misc"
+  },
+  {
+    "gp": "bwanbwann",
+    "fr": "bijoux",
+    "type": "misc"
+  },
+  {
+    "gp": [
+      "simityè",
+      "cimityé"
+    ],
+    "fr": "cimetière",
+    "type": "lieu"
+  },
+  {
+    "gp": [
+      "kynbé",
+      "kymbé"
+    ],
+    "fr": "tenir",
+    "type": "misc"
+  },
+  {
+    "gp": "kyenbé",
+    "fr": "tenir",
+    "type": "misc"
+  },
+  {
+    "gp": "gyèl",
+    "fr": "gueule",
+    "type": "misc"
+  },
+  {
+    "gp": "agou",
+    "fr": "goût",
+    "type": "misc"
+  },
+  {
+    "gp": "lèspri",
+    "fr": "esprit",
+    "type": "misc"
+  },
+  {
+    "gp": "lèsprit",
+    "fr": "esprit",
+    "type": "misc"
+  },
+  {
+    "gp": "aimein",
+    "fr": "aimer",
+    "type": "misc"
+  },
+  {
+    "gp": "aséfié",
+    "fr": "arrêter",
+    "type": "misc"
+  },
+  {
+    "gp": "zami",
+    "fr": "ami",
+    "type": "misc"
+  },
+  {
+    "gp": "bizoin",
+    "fr": "besoin",
+    "type": "misc"
+  },
+  {
+    "gp": "Mouch-a-miel",
+    "fr": "abeille",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Zégouïe",
+    "fr": "aiguille",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Améikin",
+    "fr": "américain",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Longualé",
+    "fr": "autrefois",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Valé",
+    "fr": "avaler",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Bandé",
+    "fr": "bander",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Bolom",
+    "fr": "bonhomme",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Bouden",
+    "fr": "boudin",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Bwui",
+    "fr": "bruit",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Dalot",
+    "fr": "caniveau",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Kawòt",
+    "fr": "carotte",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Cosé",
+    "fr": "causer",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Chimin",
+    "fr": "chemin",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Kokotié",
+    "fr": "cocotier",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Kyè",
+    "fr": "cœur",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Kioc",
+    "fr": "coup",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Palavié",
+    "fr": "coup",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Kouraj",
+    "fr": "courage",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Kuiyè",
+    "fr": "cuillère",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Kuit",
+    "fr": "cuire",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Kuysine",
+    "fr": "cuisine",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Lakuysine",
+    "fr": "cuisine",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Doubout",
+    "fr": "debout",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Dézòd",
+    "fr": "désordre",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Babyé",
+    "fr": "dispute",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Blesse",
+    "fr": "douleur",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Brokanté",
+    "fr": "échanger",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Zenmi",
+    "fr": "ennemi",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Lestomak",
+    "fr": "estomac",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Fèble",
+    "fr": "faible",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Fenm",
+    "fr": "femme",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Fos",
+    "fr": "force",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Laforé",
+    "fr": "forêt",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Madras",
+    "fr": "foulard",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Fwuy",
+    "fr": "fruit",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Gangné",
+    "fr": "gagner",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Gyé",
+    "fr": "gai",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Gouté",
+    "fr": "goûter",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Gwan",
+    "fr": "grand",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Gwa",
+    "fr": "gras",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Gwinyé",
+    "fr": "grimace",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Lagrimas",
+    "fr": "grimace",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Guèp",
+    "fr": "guêpe",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Guinen",
+    "fr": "guinée",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Zabi",
+    "fr": "habit",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Z’habitud",
+    "fr": "habitude",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Luil",
+    "fr": "huile",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Yame",
+    "fr": "igname",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Ziyanm",
+    "fr": "igname",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Z’indien",
+    "fr": "indiens",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Malbar",
+    "fr": "indiens",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Coolie",
+    "fr": "indiens",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Soula",
+    "fr": "ivrogne",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Janmai",
+    "fr": "jamais",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Jadin",
+    "fr": "jardin",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Jistis",
+    "fr": "justice",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Anoli",
+    "fr": "lézard",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Zanoli",
+    "fr": "lézard",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Longyè",
+    "fr": "longueur",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Klendendeng",
+    "fr": "luciole",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Line",
+    "fr": "lune",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Maig",
+    "fr": "maigre",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Mayi",
+    "fr": "maïs",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Maladwa",
+    "fr": "maladroit",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Maédisyon",
+    "fr": "malédiction",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Marché",
+    "fr": "marcher",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Matela",
+    "fr": "matelas",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Montagn",
+    "fr": "montagne",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Marengwen",
+    "fr": "moustique",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Milèt",
+    "fr": "mulet",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Nouwiw",
+    "fr": "nourrir",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Nyouz",
+    "fr": "nouvelle",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Lodè",
+    "fr": "odeur",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Zoi",
+    "fr": "oie",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Zozio",
+    "fr": "oiseau",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Panié",
+    "fr": "panier",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Péyé",
+    "fr": "payer",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Bitaco",
+    "fr": "paysan",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Z’habitan",
+    "fr": "paysan",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Jacot",
+    "fr": "perroquet",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Moune",
+    "fr": "gens",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Pouèl",
+    "fr": "poil",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Popote",
+    "fr": "poupée",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Lapriyè",
+    "fr": "prière",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Khé",
+    "fr": "queue",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Grage",
+    "fr": "râpe",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Racoon",
+    "fr": "raton laveur",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Risivwé",
+    "fr": "recevoir",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Rimyé",
+    "fr": "remuer",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Kontré",
+    "fr": "rencontrer",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Rikin",
+    "fr": "requin",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Sanbl",
+    "fr": "ressembler",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Rwa",
+    "fr": "roi",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Salopri",
+    "fr": "salaud",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Sikrè",
+    "fr": "secret",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Simé",
+    "fr": "semer",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Sevyèt",
+    "fr": "serviette",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Socié",
+    "fr": "sorcier",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Piaï",
+    "fr": "sort",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Kynbwa",
+    "fr": "sort",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Sousé",
+    "fr": "sucer",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Asu",
+    "fr": "sur",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Tambou",
+    "fr": "tambour",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Raler",
+    "fr": "tirer",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Tonnew",
+    "fr": "tonnerre",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Badiné",
+    "fr": "tromper",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Twon",
+    "fr": "tronc",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Twouvé",
+    "fr": "trouver",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Kuyé",
+    "fr": "tuer",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Wach",
+    "fr": "vague",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "Konsolation",
+    "fr": "consolation",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "min",
+    "fr": "mais",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "lakanpayn",
+    "fr": "campagne",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "gp": "kan",
+    "fr": "quand",
+    "type": "misc",
+    "gp_seulement": true
+  },
+  {
+    "fr": "ce caca",
+    "gp": "sa kaka",
+    "type": "expr"
+  },
+  {
+    "fr": "parler à",
+    "gp": "palé épi",
+    "type": "expr"
+  },
+  {
+    "fr": "parler aux",
+    "gp": "palé épi",
+    "type": "expr"
+  },
+  {
+    "fr": "lorsque",
+    "gp": "los",
+    "type": "conj"
+  },
+  {
+    "fr": "il fait chaud",
+    "gp": [
+      "i cho",
+      "ka fé cho",
+      "fé cho"
+    ],
+    "type": "expr"
+  },
+  {
+    "fr": "est faite de",
+    "gp": "fèt épi",
+    "type": "expr"
+  },
+  {
+    "fr": "est fait de",
+    "gp": "fèt épi",
+    "type": "expr"
+  },
+  {
+    "fr": "sont faites de",
+    "gp": "fèt épi",
+    "type": "expr"
+  },
+  {
+    "fr": "sont faits de",
+    "gp": "fèt épi",
+    "type": "expr"
+  },
+  {
+    "fr": "faite de",
+    "gp": "fèt épi",
+    "type": "expr"
+  },
+  {
+    "fr": "faites de",
+    "gp": "fèt épi",
+    "type": "expr"
+  },
+  {
+    "fr": "faits de",
+    "gp": "fèt épi",
+    "type": "expr"
+  },
+  {
+    "fr": "en ville",
+    "gp": "anvil",
+    "type": "expr"
+  },
+  {
+    "fr": "une personne",
+    "gp": "yon moun",
     "type": "expr"
   }
 ]

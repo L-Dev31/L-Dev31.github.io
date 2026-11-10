@@ -237,6 +237,7 @@
       "grandes"
     ],
     "gp": [
+      "gwo",
       "gran",
       "totoblo"
     ]
@@ -365,7 +366,7 @@
       "mourru",
       "mourrues"
     ],
-    "gp": "mô"
+    "gp": "mò"
   },
   {
     "fr": "mou",
@@ -431,10 +432,14 @@
     "gp": "ti"
   },
   {
+    "fr": "petit",
+    "gp": "piti"
+  },
+  {
     "fr": "plastique",
     "gp": [
       "plastik",
-      "tôl"
+      "tòl"
     ]
   },
   {
@@ -475,7 +480,7 @@
   },
   {
     "fr": "sacripant",
-    "gp": "sakabôy"
+    "gp": "sakabòy"
   },
   {
     "fr": "sale",
@@ -866,7 +871,11 @@
   },
   {
     "gp": "dwòl",
-    "fr": "drôle",
+    "fr": [
+      "drôle",
+      "bizarre",
+      "loufoque"
+    ],
     "type": "adj"
   },
   {
@@ -1348,15 +1357,30 @@
     "gp": "majik"
   },
   {
-    "fr": ["énervé", "énervée", "énervés", "énervées"],
+    "fr": [
+      "énervé",
+      "énervée",
+      "énervés",
+      "énervées"
+    ],
     "gp": "anrajé"
   },
   {
-    "fr": ["fâché", "fâchée", "fâchés", "fâchées"],
+    "fr": [
+      "fâché",
+      "fâchée",
+      "fâchés",
+      "fâchées"
+    ],
     "gp": "faché"
   },
   {
-    "fr": ["second", "seconde", "seconds", "secondes"],
+    "fr": [
+      "second",
+      "seconde",
+      "seconds",
+      "secondes"
+    ],
     "gp": "sègond"
   },
   {
@@ -1450,5 +1474,73 @@
       "personnelles"
     ],
     "gp": "pèsonèl"
+  },
+  {
+    "fr": "bas",
+    "gp": "ba"
+  },
+  {
+    "fr": "seule",
+    "gp": "sèl"
+  },
+  {
+    "fr": "laide",
+    "gp": "lèd"
+  },
+  {
+    "fr": "honteux",
+    "gp": "wout"
+  },
+  {
+    "fr": "savant",
+    "gp": "savan"
+  },
+  {
+    "fr": "ivre",
+    "gp": "sou"
+  },
+  {
+    "fr": "hébété",
+    "gp": "ababa"
+  },
+  {
+    "fr": "aveugle",
+    "gp": "avèg"
+  },
+  {
+    "fr": "gourmand",
+    "gp": "gouman"
+  },
+  {
+    "fr": "débrouillard",
+    "gp": "débouya"
+  },
+  {
+    "fr": "bossu",
+    "gp": "bòsi"
+  },
+  {
+    "fr": "chimérique",
+    "gp": "chimérik"
+  },
+  {
+    "fr": "alcoolique",
+    "gp": "zakolik"
+  },
+  {
+    "fr": "catholique",
+    "gp": "katolik"
+  },
+  {
+    "fr": "sot",
+    "gp": "sott"
+  },
+  {
+    "fr": "raide",
+    "gp": "raid"
+  },
+  {
+    "fr": "rance",
+    "gp": "rasi"
   }
 ]

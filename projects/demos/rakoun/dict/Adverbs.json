@@ -21,13 +21,17 @@
   },
   {
     "fr": "aussi",
-    "gp": "tou"
+    "gp": [
+      "tou",
+      "osi"
+    ]
   },
   {
     "fr": "autrefois",
     "gp": [
-      "nanni",
-      "tanlontan"
+      "tan lontan",
+      "tanlontan",
+      "nanni"
     ]
   },
   {
@@ -38,7 +42,7 @@
     "gp": [
       "onlo",
       "anpil",
-      "antchô"
+      "antchò"
     ]
   },
   {
@@ -58,11 +62,17 @@
   },
   {
     "fr": "comment",
-    "gp": "kijan"
+    "gp": [
+      "kijan",
+      "ki jan"
+    ]
   },
   {
     "fr": "dehors",
-    "gp": "déro"
+    "gp": [
+      "déro",
+      "andèwò"
+    ]
   },
   {
     "fr": "demain",
@@ -216,7 +226,8 @@
     "fr": "très",
     "gp": [
       "trè",
-      "tré"
+      "tré",
+      "onpil"
     ]
   },
   {
@@ -284,7 +295,8 @@
     "fr": "plus",
     "gp": [
       "pi",
-      "pli"
+      "pli",
+      "plis"
     ],
     "type": "adv"
   },
@@ -299,7 +311,9 @@
       "jodi",
       "jòdi",
       "jodla",
-      "jodi-la"
+      "jodi-la",
+      "jòdi la",
+      "jòdi-la"
     ],
     "type": "adv"
   },
@@ -439,5 +453,13 @@
   {
     "fr": "soudainement",
     "gp": "toudenkou"
+  },
+  {
+    "fr": "vitement",
+    "gp": "vitman"
+  },
+  {
+    "fr": "immédiatement",
+    "gp": "astè"
   }
 ]

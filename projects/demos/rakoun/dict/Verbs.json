@@ -742,6 +742,16 @@
         "vous": "croyez",
         "ils": "croient",
         "elles": "croient"
+      },
+      "mourir": {
+        "je": "meurs",
+        "tu": "meurs",
+        "il": "meurt",
+        "elle": "meurt",
+        "nous": "mourons",
+        "vous": "mourez",
+        "ils": "meurent",
+        "elles": "meurent"
       }
     },
     "participes_passes": {
@@ -1167,11 +1177,14 @@
     },
     {
       "fr": "arrête",
-      "gp": "asé"
+      "gp": "aresté"
     },
     {
       "fr": "arrêter",
-      "gp": "sispann"
+      "gp": [
+        "aresté",
+        "sispann"
+      ]
     },
     {
       "fr": "as",
@@ -1336,10 +1349,6 @@
     {
       "fr": "beurre",
       "gp": "bè"
-    },
-    {
-      "fr": "bizarre",
-      "gp": "mistik"
     },
     {
       "fr": "blesser",
@@ -1637,10 +1646,6 @@
       "gp": "kourilèt"
     },
     {
-      "fr": "cours",
-      "gp": "montray"
-    },
-    {
       "fr": [
         "couturier",
         "couturiers",
@@ -1717,11 +1722,10 @@
     },
     {
       "fr": "danser",
-      "gp": "zouké"
-    },
-    {
-      "fr": "danser",
-      "gp": "dansé"
+      "gp": [
+        "dansé",
+        "zouké"
+      ]
     },
     {
       "fr": "dechirer",
@@ -1856,7 +1860,7 @@
         "pioncer",
         "sommeiller"
       ],
-      "gp": "dômi"
+      "gp": "dòmi"
     },
     {
       "fr": "doser",
@@ -2019,7 +2023,10 @@
     },
     {
       "fr": "empêcher",
-      "gp": "opozé"
+      "gp": [
+        "opozé",
+        "ampéché"
+      ]
     },
     {
       "fr": "encoignure",
@@ -2043,7 +2050,10 @@
     },
     {
       "fr": "enjamber",
-      "gp": "janbé"
+      "gp": [
+        "janbé",
+        "jambé"
+      ]
     },
     {
       "fr": "enlever",
@@ -2236,7 +2246,10 @@
     },
     {
       "fr": "frapper",
-      "gp": "fwapé"
+      "gp": [
+        "fwapé",
+        "kongné"
+      ]
     },
     {
       "fr": "freiner",
@@ -2296,7 +2309,10 @@
     },
     {
       "fr": "gratter",
-      "gp": "graté"
+      "gp": [
+        "graté",
+        "gwaté"
+      ]
     },
     {
       "fr": "grimacer",
@@ -2496,14 +2512,6 @@
       "gp": "mentjenn"
     },
     {
-      "fr": [
-        "maire",
-        "maires"
-      ],
-      "gp": "mè",
-      "secondaire": true
-    },
-    {
       "fr": "malpropre",
       "gp": "malpwop"
     },
@@ -2521,7 +2529,10 @@
         "bouffer",
         "dévorer"
       ],
-      "gp": "manjé"
+      "gp": [
+        "manjé",
+        "majé"
+      ]
     },
     {
       "fr": "manges",
@@ -2540,11 +2551,7 @@
     },
     {
       "fr": "marcher",
-      "gp": [
-        "maché",
-        "pilé"
-      ],
-      "secondaire": true
+      "gp": "maché"
     },
     {
       "fr": "marier",
@@ -2608,10 +2615,6 @@
       "gp": "modé"
     },
     {
-      "fr": "mourir",
-      "gp": "mouri"
-    },
-    {
       "fr": "mégère",
       "gp": "masoukrèl"
     },
@@ -2633,7 +2636,10 @@
     },
     {
       "fr": "nettoyer",
-      "gp": "nétouyé"
+      "gp": [
+        "nétouyé",
+        "pwòpté"
+      ]
     },
     {
       "fr": "niquer",
@@ -2681,7 +2687,7 @@
     },
     {
       "fr": "octroyer",
-      "gp": "akôdé"
+      "gp": "akòdé"
     },
     {
       "fr": "offrir",
@@ -2712,7 +2718,9 @@
       "fr": "oublier",
       "gp": [
         "bliyé",
-        "oubliyé"
+        "oubliyé",
+        "oublyé",
+        "obliyé"
       ]
     },
     {
@@ -2772,7 +2780,7 @@
     },
     {
       "fr": "peignoir",
-      "gp": "gôl"
+      "gp": "gòl"
     },
     {
       "fr": "peindre",
@@ -2810,16 +2818,15 @@
       "gp": "pé"
     },
     {
-      "fr": "pierre",
-      "gp": "roch"
-    },
-    {
       "fr": "pilier",
       "gp": "potomitan"
     },
     {
       "fr": "piquer",
-      "gp": "pitché"
+      "gp": [
+        "pitché",
+        "pitje"
+      ]
     },
     {
       "fr": "pisser",
@@ -2871,7 +2878,10 @@
     },
     {
       "fr": "porter",
-      "gp": "pòté"
+      "gp": [
+        "pòté",
+        "mété"
+      ]
     },
     {
       "fr": "poser",
@@ -2879,7 +2889,10 @@
     },
     {
       "fr": "pousser",
-      "gp": "pousé"
+      "gp": [
+        "pousé",
+        "bouré"
+      ]
     },
     {
       "fr": "pouvoir",
@@ -3004,7 +3017,10 @@
     },
     {
       "fr": "ramasser",
-      "gp": "ranmasé"
+      "gp": [
+        "ranmasé",
+        "ramasé"
+      ]
     },
     {
       "fr": "ramener",
@@ -3109,7 +3125,10 @@
     },
     {
       "fr": "remplir",
-      "gp": "ranpli"
+      "gp": [
+        "ranpli",
+        "plein"
+      ]
     },
     {
       "fr": "rencontrer",
@@ -3162,8 +3181,9 @@
     {
       "fr": "ressembler",
       "gp": [
+        "sanm",
         "pasé pou",
-        "sanm"
+        "sembl"
       ]
     },
     {
@@ -3327,7 +3347,7 @@
     },
     {
       "fr": "sectionner",
-      "gp": "kaskôdé"
+      "gp": "kaskòdé"
     },
     {
       "fr": "sembler",
@@ -3456,11 +3476,17 @@
     },
     {
       "fr": "tirer",
-      "gp": "tiré"
+      "gp": [
+        "tiré",
+        "halé"
+      ]
     },
     {
       "fr": "tomber",
-      "gp": "tonbé"
+      "gp": [
+        "tonbé",
+        "tombé"
+      ]
     },
     {
       "fr": "tonnelier",
@@ -3498,7 +3524,8 @@
       "fr": "travailler",
       "gp": [
         "travay",
-        "woulé"
+        "woulé",
+        "twavail"
       ]
     },
     {
@@ -3711,11 +3738,14 @@
     },
     {
       "fr": "éclairer",
-      "gp": "kléré"
+      "gp": [
+        "kléré",
+        "kairé"
+      ]
     },
     {
       "fr": "écorcher",
-      "gp": "kôché"
+      "gp": "kòché"
     },
     {
       "fr": "écouter",
@@ -3723,7 +3753,10 @@
     },
     {
       "fr": "écrire",
-      "gp": "matjé"
+      "gp": [
+        "maké",
+        "matjé"
+      ]
     },
     {
       "fr": "écumoire",
@@ -3860,7 +3893,10 @@
         "emporte",
         "emportent"
       ],
-      "gp": "emporté"
+      "gp": [
+        "emporté",
+        "chayé"
+      ]
     },
     {
       "fr": [
@@ -3949,10 +3985,7 @@
         "mort",
         "morte"
       ],
-      "gp": [
-        "mò",
-        "mouri"
-      ]
+      "gp": "mò"
     },
     {
       "fr": [
@@ -4138,7 +4171,7 @@
     },
     {
       "gp": "goumé",
-      "fr": "goûter",
+      "fr": "combattre",
       "type": "verbe"
     },
     {
@@ -4467,10 +4500,6 @@
       "gp": "haché"
     },
     {
-      "fr": "mâcher",
-      "gp": "maché"
-    },
-    {
       "fr": "rêver",
       "gp": "révé"
     },
@@ -4666,10 +4695,6 @@
       "gp": "aidé"
     },
     {
-      "fr": "marcher",
-      "gp": "mache"
-    },
-    {
       "fr": "comprendre",
       "gp": "konpwann"
     },
@@ -4781,6 +4806,146 @@
     {
       "fr": "commander",
       "gp": "komandé"
+    },
+    {
+      "fr": "amarrer",
+      "gp": "maré"
+    },
+    {
+      "fr": "blâmer",
+      "gp": "blanmé"
+    },
+    {
+      "fr": "bouder",
+      "gp": "boudé"
+    },
+    {
+      "fr": "bruiner",
+      "gp": "fifiné"
+    },
+    {
+      "fr": "confondre",
+      "gp": "konfonn"
+    },
+    {
+      "fr": "couver",
+      "gp": "kouvé"
+    },
+    {
+      "fr": "dessoucher",
+      "gp": "déchouké"
+    },
+    {
+      "fr": "écraser",
+      "gp": "krasé"
+    },
+    {
+      "fr": "embarrasser",
+      "gp": "mélé"
+    },
+    {
+      "fr": "enfler",
+      "gp": "anflé"
+    },
+    {
+      "fr": "étrangler",
+      "gp": "tranglé"
+    },
+    {
+      "fr": "flatter",
+      "gp": "flaté"
+    },
+    {
+      "fr": "méler",
+      "gp": "mélé"
+    },
+    {
+      "fr": "méfier",
+      "gp": "méfyé"
+    },
+    {
+      "fr": "mollir",
+      "gp": "moli"
+    },
+    {
+      "fr": "prévoir",
+      "gp": "prévwè"
+    },
+    {
+      "fr": "quitter",
+      "gp": "kité"
+    },
+    {
+      "fr": "rayer",
+      "gp": "rayé"
+    },
+    {
+      "fr": "rouler",
+      "gp": "roulé"
+    },
+    {
+      "fr": "salir",
+      "gp": "sali"
+    },
+    {
+      "fr": "songer",
+      "gp": "chongé"
+    },
+    {
+      "fr": "suer",
+      "gp": "swé"
+    },
+    {
+      "fr": "tourner",
+      "gp": "touné"
+    },
+    {
+      "fr": "virer",
+      "gp": "viré"
+    },
+    {
+      "fr": "viser",
+      "gp": "vizé"
+    },
+    {
+      "fr": "veiller",
+      "gp": "véyé"
+    },
+    {
+      "fr": "haïr",
+      "gp": "rayi"
+    },
+    {
+      "fr": "user",
+      "gp": "izé"
+    },
+    {
+      "fr": "vanter",
+      "gp": "vanté"
+    },
+    {
+      "fr": "saouler",
+      "gp": "soulé"
+    },
+    {
+      "fr": "fréquenter",
+      "gp": "frékanté"
+    },
+    {
+      "fr": "crever",
+      "gp": "krévé"
+    },
+    {
+      "fr": "scier",
+      "gp": "siyé"
+    },
+    {
+      "fr": "prospérer",
+      "gp": "pwospéré"
+    },
+    {
+      "fr": "piler",
+      "gp": "pilé"
     }
   ]
 }

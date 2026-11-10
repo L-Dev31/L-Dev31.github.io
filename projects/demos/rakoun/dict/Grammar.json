@@ -189,7 +189,12 @@
     "aussi",
     "tellement",
     "vraiment",
-    "si"
+    "si",
+    "tout",
+    "complètement",
+    "assez",
+    "bien",
+    "extrêmement"
   ],
   "suffixes_feminins": [
     "tion",
@@ -413,12 +418,30 @@
     "leur"
   ],
   "possessifs_postposes": {
-    "mwen": { "m": "mon", "f": "ma" },
-    "ou": { "m": "ton", "f": "ta" },
-    "li": { "m": "son", "f": "sa" },
-    "nou": { "m": "notre", "f": "notre" },
-    "zot": { "m": "votre", "f": "votre" },
-    "zòt": { "m": "votre", "f": "votre" }
+    "mwen": {
+      "m": "mon",
+      "f": "ma"
+    },
+    "ou": {
+      "m": "ton",
+      "f": "ta"
+    },
+    "li": {
+      "m": "son",
+      "f": "sa"
+    },
+    "nou": {
+      "m": "notre",
+      "f": "notre"
+    },
+    "zot": {
+      "m": "votre",
+      "f": "votre"
+    },
+    "zòt": {
+      "m": "votre",
+      "f": "votre"
+    }
   },
   "terminaisons_temps": {
     "conditionnel": [
@@ -707,10 +730,17 @@
     "mè": "mais"
   },
   "conjonctions_gp_debut": {
-    "mè": ["alè", "sé"]
+    "mè": [
+      "alè",
+      "sé"
+    ]
   },
   "prepositions_gp_contextuelles": {
-    "si": ["enpo", "taks", "do"]
+    "si": [
+      "enpo",
+      "taks",
+      "do"
+    ]
   },
   "verbes_reflexifs_gp": {
     "asosyé": "s'associer"
@@ -1088,7 +1118,12 @@
       "chaleur",
       "fumée",
       "boue",
-      "herbe"
+      "herbe",
+      "caca"
+    ],
+    "noms_pluriels_fr": [
+      "gens",
+      "personnes"
     ]
   },
   "contractions_fr": [

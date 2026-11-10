@@ -498,7 +498,7 @@
   },
   {
     "fr": "anguille",
-    "gp": "tanbandô"
+    "gp": "tanbandò"
   },
   {
     "fr": "anneau",
@@ -1141,7 +1141,8 @@
     "fr": "besoin",
     "gp": [
       "bizwen",
-      "bouzon"
+      "bouzon",
+      "bezwen"
     ]
   },
   {
@@ -1449,7 +1450,7 @@
   },
   {
     "fr": "bout",
-    "gp": "môso"
+    "gp": "mòso"
   },
   {
     "fr": [
@@ -1505,6 +1506,7 @@
   {
     "fr": "bruit",
     "gp": [
+      "bri",
       "voukoum",
       "bwi"
     ]
@@ -1732,7 +1734,7 @@
   },
   {
     "fr": "caid",
-    "gp": "majô"
+    "gp": "majò"
   },
   {
     "fr": [
@@ -2108,7 +2110,10 @@
       "chat",
       "chats"
     ],
-    "gp": "chat",
+    "gp": [
+      "chat",
+      "chet"
+    ],
     "genre": "m"
   },
   {
@@ -2782,7 +2787,7 @@
   },
   {
     "fr": "corne",
-    "gp": "kôn"
+    "gp": "kòn"
   },
   {
     "fr": [
@@ -2831,7 +2836,7 @@
   },
   {
     "fr": "coté",
-    "gp": "kan"
+    "gp": "bò"
   },
   {
     "fr": "cou",
@@ -2981,7 +2986,10 @@
       "crapaud",
       "crapauds"
     ],
-    "gp": "krapo",
+    "gp": [
+      "krapo",
+      "kwapo"
+    ],
     "genre": "m"
   },
   {
@@ -3049,7 +3057,7 @@
   },
   {
     "fr": "croque-mort",
-    "gp": "chayèdmounmô"
+    "gp": "chayèdmounmò"
   },
   {
     "fr": "crotte",
@@ -3173,7 +3181,7 @@
   },
   {
     "fr": "Côte d'Ivoire",
-    "gp": "Kôte d'ivoire",
+    "gp": "Kòte d'ivoire",
     "type": "lieu"
   },
   {
@@ -3846,7 +3854,10 @@
   },
   {
     "fr": "femme",
-    "gp": "fanm",
+    "gp": [
+      "fanm",
+      "madanm"
+    ],
     "genre": "f"
   },
   {
@@ -4357,7 +4368,10 @@
   },
   {
     "fr": "gens",
-    "gp": "moun"
+    "gp": [
+      "moun",
+      "moune"
+    ]
   },
   {
     "fr": "gestes",
@@ -4820,7 +4834,10 @@
   },
   {
     "fr": "hache",
-    "gp": "rach"
+    "gp": [
+      "rach",
+      "hach"
+    ]
   },
   {
     "fr": "haillon",
@@ -4878,7 +4895,7 @@
   },
   {
     "fr": "haussement",
-    "gp": "wôsman"
+    "gp": "wòsman"
   },
   {
     "fr": "Haïti",
@@ -5073,7 +5090,7 @@
   },
   {
     "fr": "il est mort",
-    "gp": "i mô"
+    "gp": "i mò"
   },
   {
     "fr": "il fait chaud",
@@ -5093,7 +5110,7 @@
   },
   {
     "fr": "ils sont morts",
-    "gp": "yo mô"
+    "gp": "yo mò"
   },
   {
     "fr": "Ils vont",
@@ -5185,7 +5202,10 @@
       "infirmiere",
       "infirmieres"
     ],
-    "gp": "enfiymié",
+    "gp": [
+      "enfiymié",
+      "enfirmyèz"
+    ],
     "genre": "m"
   },
   {
@@ -5448,7 +5468,7 @@
   },
   {
     "fr": "je suis mort",
-    "gp": "an mô"
+    "gp": "an mò"
   },
   {
     "fr": "Je vais",
@@ -5964,7 +5984,10 @@
   },
   {
     "fr": "lieu",
-    "gp": "plas"
+    "gp": [
+      "plas",
+      "lié"
+    ]
   },
   {
     "fr": "limon",
@@ -6189,7 +6212,10 @@
   },
   {
     "fr": "madame",
-    "gp": "madanm",
+    "gp": [
+      "madanm",
+      "madam"
+    ],
     "genre": "f"
   },
   {
@@ -7434,7 +7460,7 @@
       "nous sommes mortes",
       "on est morte"
     ],
-    "gp": "nou mô"
+    "gp": "nou mò"
   },
   {
     "fr": "oncle",
@@ -7724,7 +7750,10 @@
   },
   {
     "fr": "paquet",
-    "gp": "patché"
+    "gp": [
+      "patché",
+      "paké"
+    ]
   },
   {
     "fr": "Paraguay",
@@ -8457,7 +8486,7 @@
   },
   {
     "fr": "près",
-    "gp": "bô"
+    "gp": "bò"
   },
   {
     "fr": "précisément",
@@ -9303,7 +9332,7 @@
   },
   {
     "fr": "secession",
-    "gp": "kaskôd"
+    "gp": "kaskòd"
   },
   {
     "fr": "secours",
@@ -10251,7 +10280,7 @@
   },
   {
     "fr": "tu es mort",
-    "gp": "ou mô"
+    "gp": "ou mò"
   },
   {
     "fr": "tu me casses les couilles",
@@ -10688,7 +10717,7 @@
   },
   {
     "fr": "vous etes mort",
-    "gp": "zot mô"
+    "gp": "zot mò"
   },
   {
     "fr": "voyou",
@@ -10850,7 +10879,10 @@
       "bourrique",
       "bourriques"
     ],
-    "gp": "bourik",
+    "gp": [
+      "bourik",
+      "bourikèt"
+    ],
     "genre": "m"
   },
   {
@@ -13805,7 +13837,10 @@
     "genre": "m"
   },
   {
-    "gp": "latè",
+    "gp": [
+      "latè",
+      "atè"
+    ],
     "fr": "terre",
     "type": "lieu",
     "genre": "f"
@@ -13961,7 +13996,7 @@
   },
   {
     "fr": "colline",
-    "gp": "môn",
+    "gp": "mòn",
     "type": "nom"
   },
   {
@@ -14282,7 +14317,11 @@
   },
   {
     "fr": "malheur",
-    "gp": "malè",
+    "gp": [
+      "malè",
+      "malhè",
+      "malèw"
+    ],
     "genre": "m"
   },
   {
@@ -15188,5 +15227,556 @@
       "Michel"
     ],
     "gp": "Michèl"
+  },
+  {
+    "fr": "barbe",
+    "gp": "bab"
+  },
+  {
+    "fr": "bain",
+    "gp": "ben"
+  },
+  {
+    "fr": "chasse",
+    "gp": "chas"
+  },
+  {
+    "fr": "confession",
+    "gp": "konfesyon"
+  },
+  {
+    "fr": "consolation",
+    "gp": "konsolasyon"
+  },
+  {
+    "fr": "crise",
+    "gp": "kriz"
+  },
+  {
+    "fr": "cancrelat",
+    "gp": "ravèt"
+  },
+  {
+    "fr": "bon dieu",
+    "gp": "bondyé"
+  },
+  {
+    "fr": "misère",
+    "gp": "mizé"
+  },
+  {
+    "fr": "peine",
+    "gp": "lapenn"
+  },
+  {
+    "fr": "plaisir",
+    "gp": "plèzi"
+  },
+  {
+    "fr": "promesse",
+    "gp": "promès"
+  },
+  {
+    "fr": "siège",
+    "gp": "chèz"
+  },
+  {
+    "fr": "tort",
+    "gp": "tò"
+  },
+  {
+    "fr": "torchon",
+    "gp": "tòch"
+  },
+  {
+    "fr": "gaz",
+    "gp": "gaz"
+  },
+  {
+    "fr": "gombo",
+    "gp": "gonmbo"
+  },
+  {
+    "fr": "grain",
+    "gp": "gren"
+  },
+  {
+    "fr": "graine",
+    "gp": [
+      "grenn",
+      "gwenn"
+    ]
+  },
+  {
+    "fr": "graisse",
+    "gp": "gwès"
+  },
+  {
+    "fr": "gouffre",
+    "gp": "gouf"
+  },
+  {
+    "fr": "sucrerie",
+    "gp": "sik"
+  },
+  {
+    "fr": "usinier",
+    "gp": "usinié"
+  },
+  {
+    "fr": "saindoux",
+    "gp": "saindou"
+  },
+  {
+    "fr": "commune",
+    "gp": "komine"
+  },
+  {
+    "fr": "combat",
+    "gp": "konba"
+  },
+  {
+    "fr": "complot",
+    "gp": "konplot"
+  },
+  {
+    "fr": "coupe",
+    "gp": "lakoup"
+  },
+  {
+    "fr": "cage",
+    "gp": "kaloj"
+  },
+  {
+    "fr": "canot",
+    "gp": "kannot"
+  },
+  {
+    "fr": "carême",
+    "gp": "karenm"
+  },
+  {
+    "fr": "cassave",
+    "gp": "kasav"
+  },
+  {
+    "fr": "cacao",
+    "gp": "kako"
+  },
+  {
+    "fr": "calinda",
+    "gp": "kalinda"
+  },
+  {
+    "fr": "charité",
+    "gp": "chawité"
+  },
+  {
+    "fr": "chaudière",
+    "gp": "chodyè"
+  },
+  {
+    "fr": "colique",
+    "gp": "kolik"
+  },
+  {
+    "fr": "coffre-fort",
+    "gp": "kof-fò"
+  },
+  {
+    "fr": "évangile",
+    "gp": "lévangil"
+  },
+  {
+    "fr": "messe",
+    "gp": "lanmès"
+  },
+  {
+    "fr": "miséricorde",
+    "gp": "mizéricod"
+  },
+  {
+    "fr": "étole",
+    "gp": "totol"
+  },
+  {
+    "fr": "honnêteté",
+    "gp": "lonnètté"
+  },
+  {
+    "fr": "intérêt",
+    "gp": "lentérè"
+  },
+  {
+    "fr": "jupon",
+    "gp": "jipon"
+  },
+  {
+    "fr": "jambette",
+    "gp": "janbèt"
+  },
+  {
+    "fr": "enclume",
+    "gp": "lanklim"
+  },
+  {
+    "fr": "macaque",
+    "gp": "makak"
+  },
+  {
+    "fr": "mancenillier",
+    "gp": "menceniyé"
+  },
+  {
+    "fr": "mélasse",
+    "gp": "mélas"
+  },
+  {
+    "fr": "mépris",
+    "gp": "mépri"
+  },
+  {
+    "fr": "merle",
+    "gp": "mèl"
+  },
+  {
+    "fr": "moustache",
+    "gp": "mousach"
+  },
+  {
+    "fr": "piège",
+    "gp": "pyèj"
+  },
+  {
+    "fr": "pilule",
+    "gp": "pilil"
+  },
+  {
+    "fr": "poteau",
+    "gp": "poteau"
+  },
+  {
+    "fr": "poudre",
+    "gp": "poud"
+  },
+  {
+    "fr": "précaution",
+    "gp": "pokosyon"
+  },
+  {
+    "fr": "profiteur",
+    "gp": "profitan"
+  },
+  {
+    "fr": "raquette",
+    "gp": "rakèt"
+  },
+  {
+    "fr": "renommée",
+    "gp": "larinonmé"
+  },
+  {
+    "fr": "risque",
+    "gp": "risk"
+  },
+  {
+    "fr": "surelle",
+    "gp": "sirèl"
+  },
+  {
+    "fr": "soupir",
+    "gp": "soupi"
+  },
+  {
+    "fr": "voracité",
+    "gp": "vorasité"
+  },
+  {
+    "fr": "figure",
+    "gp": "figui"
+  },
+  {
+    "fr": "flacon",
+    "gp": "poban"
+  },
+  {
+    "fr": "flèche",
+    "gp": "flèch"
+  },
+  {
+    "fr": "fagot",
+    "gp": "fago"
+  },
+  {
+    "fr": "feinte",
+    "gp": "masco"
+  },
+  {
+    "fr": "fuite",
+    "gp": "marron"
+  },
+  {
+    "fr": "gale",
+    "gp": "gal"
+  },
+  {
+    "fr": "gibier",
+    "gp": "gibyé"
+  },
+  {
+    "fr": "girouette",
+    "gp": "girouèt"
+  },
+  {
+    "fr": "burgau",
+    "gp": "bougo"
+  },
+  {
+    "fr": "bourbier",
+    "gp": "labou"
+  },
+  {
+    "fr": "bourdon",
+    "gp": "vonvon"
+  },
+  {
+    "fr": "bougre",
+    "gp": "boug"
+  },
+  {
+    "fr": "balisier",
+    "gp": "balizié"
+  },
+  {
+    "fr": "barracuda",
+    "gp": "becune"
+  },
+  {
+    "fr": "barrique",
+    "gp": "barik"
+  },
+  {
+    "fr": "billet",
+    "gp": "biyé"
+  },
+  {
+    "fr": "bordée",
+    "gp": "bòdé"
+  },
+  {
+    "fr": "blâme",
+    "gp": "blanm"
+  },
+  {
+    "fr": "bruine",
+    "gp": "fifine"
+  },
+  {
+    "fr": "canaille",
+    "gp": "kannay"
+  },
+  {
+    "fr": "cacahuète",
+    "gp": "pistach"
+  },
+  {
+    "fr": "couvercle",
+    "gp": "koubvèti"
+  },
+  {
+    "fr": "crachat",
+    "gp": "kracha"
+  },
+  {
+    "fr": "croyance",
+    "gp": "kwayans"
+  },
+  {
+    "fr": "défaut",
+    "gp": [
+      "défòt",
+      "défo"
+    ]
+  },
+  {
+    "fr": "délégation",
+    "gp": "délégasyon"
+  },
+  {
+    "fr": "déveine",
+    "gp": "ladevenn"
+  },
+  {
+    "fr": "douceur maternelle",
+    "gp": "adoumanman"
+  },
+  {
+    "fr": "élection",
+    "gp": "elèksion"
+  },
+  {
+    "fr": "éléphantiasis",
+    "gp": "pelpèl"
+  },
+  {
+    "fr": "énervement",
+    "gp": "chalèré"
+  },
+  {
+    "fr": "enterrement",
+    "gp": "lantèman"
+  },
+  {
+    "fr": "étrenne",
+    "gp": "zetrèn"
+  },
+  {
+    "fr": "éperon",
+    "gp": "zépwon"
+  },
+  {
+    "fr": "excrément",
+    "gp": "kaka"
+  },
+  {
+    "fr": "gourdin",
+    "gp": "baton"
+  },
+  {
+    "fr": "hallier",
+    "gp": "razyé"
+  },
+  {
+    "fr": "partage",
+    "gp": "pataj"
+  },
+  {
+    "fr": "pian",
+    "gp": "pian"
+  },
+  {
+    "fr": "quimboiseur",
+    "gp": "kynbwasè"
+  },
+  {
+    "fr": "lassitude",
+    "gp": "las"
+  },
+  {
+    "fr": "pierre",
+    "gp": "roch",
+    "genre": "f"
+  },
+  {
+    "fr": "abattoir",
+    "gp": "zabatoiw"
+  },
+  {
+    "fr": "agonie",
+    "gp": "agoniseman"
+  },
+  {
+    "fr": "amérique",
+    "gp": "lamérik"
+  },
+  {
+    "fr": "appétit",
+    "gp": "lapéti"
+  },
+  {
+    "fr": "arouage",
+    "gp": "z’aroua"
+  },
+  {
+    "fr": "bossale",
+    "gp": "bossale"
+  },
+  {
+    "fr": "chant",
+    "gp": "kant"
+  },
+  {
+    "fr": "charbonnier",
+    "gp": "chabonyé"
+  },
+  {
+    "fr": "connaissance",
+    "gp": "konesans"
+  },
+  {
+    "fr": "coulirou",
+    "gp": "koulirou"
+  },
+  {
+    "fr": "dame-jeanne",
+    "gp": "danmjann"
+  },
+  {
+    "fr": "débarras",
+    "gp": "magazin"
+  },
+  {
+    "fr": "garde",
+    "gp": "gad"
+  },
+  {
+    "fr": "masque",
+    "gp": "mas"
+  },
+  {
+    "fr": "geôle",
+    "gp": "lojòl"
+  },
+  {
+    "fr": "marinade",
+    "gp": "marinad"
+  },
+  {
+    "fr": "la Toussaint",
+    "gp": "latousin",
+    "genre": "f"
+  },
+  {
+    "fr": "les morts",
+    "gp": "lémo",
+    "genre": "m"
+  },
+  {
+    "fr": "sieste",
+    "gp": "ti dòmi",
+    "genre": "f"
+  },
+  {
+    "fr": "pince",
+    "gp": "modan",
+    "genre": "f"
+  },
+  {
+    "fr": "galet",
+    "gp": "galèt",
+    "genre": "m"
+  },
+  {
+    "fr": "poulailler",
+    "gp": "poulayé",
+    "genre": "m"
+  },
+  {
+    "fr": "foutriquet",
+    "gp": "foubin",
+    "genre": "m"
+  },
+  {
+    "fr": [
+      "mulâtre",
+      "mulâtresse"
+    ],
+    "gp": "milat",
+    "genre": "m"
+  },
+  {
+    "fr": "maire",
+    "gp": "sèw",
+    "genre": "m"
   }
 ]
