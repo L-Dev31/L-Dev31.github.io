@@ -28,7 +28,7 @@ const sections = {
 };
 
 async function loadComponent(name) {
-    const response = await fetch(new URL(`../components/${name}.html`, import.meta.url));
+    const response = await fetch(new URL(`../../components/${name}.html`, import.meta.url));
     if (!response.ok) throw new Error(`Could not load ${name} component`);
     return response.text();
 }

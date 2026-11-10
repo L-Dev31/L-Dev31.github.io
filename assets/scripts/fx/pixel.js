@@ -1,6 +1,6 @@
-import { reducedMotion, lowPower } from './config.js';
-import { track } from './intro.js';
-import { PIXEL, SIGNATURE } from './config.js';
+import { reducedMotion, lowPower, PIXEL, SIGNATURE } from '../core/config.js';
+import { track } from '../core/intro.js';
+import { gradientStops, isGradient, mixColors } from '../core/color.js';
 
 const computeCell = () => Math.max(PIXEL.minCellPx, Math.round(innerWidth / PIXEL.cellsAcrossScreen));
 export let CELL = computeCell();
@@ -27,26 +27,16 @@ export function drawCell(context, level, x, y, cellSize, fillShare) {
     }
 }
 
-function colorChannels(color) {
-    if (color.startsWith('#')) return [1, 3, 5].map(start => parseInt(color.slice(start, start + 2), 16));
-    return color.match(/[\d.]+/g).slice(0, 3).map(Number);
-}
-
-function colorBetween(first, last, progress) {
-    const start = colorChannels(first), end = colorChannels(last);
-    return `rgb(${start.map((value, index) => Math.round(value + (end[index] - value) * progress)).join(',')})`;
-}
-
 function buildTiles(color, size, cols) {
-    const stops = color.startsWith('linear-gradient(') ? color.match(/#[\da-f]{3,8}|rgba?\([^)]*\)/gi) : null;
-    const gradient = stops?.length > 1;
+    const stops = gradientStops(color);
+    const gradient = !!stops;
     const columns = gradient ? cols : 1;
     const sheet = document.createElement('canvas');
     sheet.width = size * 3 * columns;
     sheet.height = size;
     const context = sheet.getContext('2d', { willReadFrequently: true });
     for (let col = 0; col < columns; col++) {
-        const fill = gradient ? colorBetween(stops[0], stops.at(-1), cols === 1 ? 0.5 : col / (cols - 1)) : color;
+        const fill = gradient ? mixColors(stops[0], stops.at(-1), cols === 1 ? 0.5 : col / (cols - 1)) : color;
         for (let level = DOTS; level <= SOLID; level++) {
             context.fillStyle = fill;
             drawCell(context, level, (col * 3 + level) * size, 0, size);
@@ -104,7 +94,7 @@ export function cellCanvas(canvas, color) {
 
     // The tiles only change with the colour and the cell size. A gradient has one set per column.
     function updateTiles() {
-        const key = `${color}|${cellPx}|${color.startsWith('linear-gradient(') ? cols : 0}`;
+        const key = `${color}|${cellPx}|${isGradient(color) ? cols : 0}`;
         if (key === tilesKey) return;
         tilesKey = key;
         tiles = buildTiles(color, cellPx, cols);

@@ -823,7 +823,13 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     content: '\2197';
 }
 
-.footer-socials a[target="_blank"]::after {
+.hero-socials a[download]::after,
+.footer-socials a[download]::after {
+    content: '\2193';
+}
+
+.footer-socials a[target="_blank"]::after,
+.footer-socials a[download]::after {
     margin-left: 0.4em;
 }
 
@@ -1935,10 +1941,8 @@ main {
 
 .contact-looking em,
 .contact-terms em {
-    font-family: var(--font-display);
-    font-size: 1.12em;
-    font-style: italic;
-    font-weight: 400;
+    font-style: normal;
+    font-weight: 800;
 }
 
 .contact-looking {
@@ -1952,23 +1956,6 @@ main {
     overflow: hidden;
     color: var(--white);
     background: linear-gradient(155deg, color-mix(in srgb, var(--accent) 50%, var(--ink)) 0%, var(--accent) 74%);
-}
-
-.contact-frame::after {
-    --m: 13px;
-    content: '';
-    position: absolute;
-    inset: 14px;
-    pointer-events: none;
-    background:
-        linear-gradient(currentColor, currentColor) left 0 top 6px / var(--m) 1px no-repeat,
-        linear-gradient(currentColor, currentColor) left 6px top 0 / 1px var(--m) no-repeat,
-        linear-gradient(currentColor, currentColor) right 0 top 6px / var(--m) 1px no-repeat,
-        linear-gradient(currentColor, currentColor) right 6px top 0 / 1px var(--m) no-repeat,
-        linear-gradient(currentColor, currentColor) left 0 bottom 6px / var(--m) 1px no-repeat,
-        linear-gradient(currentColor, currentColor) left 6px bottom 0 / 1px var(--m) no-repeat,
-        linear-gradient(currentColor, currentColor) right 0 bottom 6px / var(--m) 1px no-repeat,
-        linear-gradient(currentColor, currentColor) right 6px bottom 0 / 1px var(--m) no-repeat;
 }
 
 .contact-frame img {
@@ -2037,7 +2024,8 @@ main {
     line-height: 1.32;
 }
 
-.contact-socials a[href^="mailto:"] {
+.contact-socials a[href^="mailto:"],
+.contact-socials a[download] {
     display: none;
 }
 
@@ -2064,6 +2052,17 @@ main {
 .contact-email {
     font-size: clamp(15px, 1.2vw, 19px);
     font-weight: 500;
+}
+
+/* The résumé sits alone in the bottom right corner: a filled pill on the light background. */
+.contact-resume {
+    position: absolute;
+    right: var(--pad-edge);
+    bottom: clamp(24px, 5svh, 56px);
+    margin: 0;
+    border-color: var(--black);
+    background: var(--black);
+    color: var(--white);
 }
 
 .contact-intro.is-static {
@@ -2152,9 +2151,14 @@ main {
 
     .contact-terms,
     .contact-frame--speaker,
-    .contact-links {
+    .contact-links,
+    .contact-resume {
         position: relative;
         inset: auto;
+    }
+
+    .contact-resume {
+        align-self: flex-end;
     }
 
     .contact-frame--speaker {

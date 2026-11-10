@@ -13,19 +13,19 @@ export const PIXEL = {
     shimmerAmount: 0.22,
     shimmerBeatMs: 240,
     // Dissolve duration.
-    dissolveDurationMs: 900,
+    dissolveDurationMs: 650,
 };
 
 // Loading intro.
 export const INTRO = {
     // Maximum wait time.
-    maxWaitMs: 5000,
-    settleMs: 120,
+    maxWaitMs: 10000,
+    settleMs: 60,
     // Project mark interval.
     projectMarkEveryMs: 550,
     // Final pause.
-    holdAfterLoadedMs: 750,
-    fadeOutBeforeEntranceMs: 280,
+    holdAfterLoadedMs: 150,
+    fadeOutBeforeEntranceMs: 100,
     entranceClassMs: 2400,
     signature: {
         // Share of the shortest screen side.
@@ -78,7 +78,7 @@ export const MAGNET = {
 
 // Page transition.
 export const PAGE_TRANSITION = {
-    coverMs: 620,
+    coverMs: 420,
     giveUpMs: 4000,
 };
 
@@ -136,7 +136,12 @@ const TABLET_MAX_WIDTH = 1024;
 
 export const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const lowPower = reducedMotion || navigator.hardwareConcurrency <= 2 || navigator.deviceMemory <= 2 || !!navigator.connection?.saveData;
-export const clamp01 = value => Math.max(0, Math.min(1, value));
+// A value that is not a number (0 / 0 in a scroll computation) counts as 0.
+export const clamp01 = value => (value > 0 ? (value < 1 ? value : 1) : 0);
+// 0 to 1 with a soft start and end.
+export const smoothstep = t => t * t * (3 - 2 * t);
+// How far `value` is between `from` and `to`, as 0 to 1.
+export const range = (value, from, to) => clamp01((value - from) / (to - from));
 
 export const breakpoint = (() => {
     const mobileQuery = matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`);

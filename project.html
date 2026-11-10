@@ -26,12 +26,33 @@
     <meta name="twitter:title" content="Projects · Léo Tosku | Design, Dev, Marketing">
     <meta name="twitter:description" content="Selected case studies by Léo Tosku. Brand identity, digital design, development and marketing.">
     <meta name="twitter:image" content="https://www.leotosku.com/assets/images/core/share.png">
-    <link rel="stylesheet" href="assets/styles/home.css">
+    <link rel="stylesheet" href="assets/styles/site.css">
     <link rel="stylesheet" href="assets/styles/project.css">
     <script src="assets/vendor/lenis.min.js" defer></script>
-    <script src="assets/scripts/stats.js" defer></script>
-    <script src="assets/scripts/components.js" type="module"></script>
-    <script src="assets/scripts/project.js" type="module"></script>
+    <!-- preload:start -->
+    <link rel="preload" as="fetch" href="assets/components/navbar.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/components/footer.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/components/socials.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/components/page-loader.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/data/projects.json" crossorigin>
+    <link rel="modulepreload" href="assets/scripts/blocks/contact-parallax.js">
+    <link rel="modulepreload" href="assets/scripts/blocks/contact.js">
+    <link rel="modulepreload" href="assets/scripts/blocks/showcase.js">
+    <link rel="modulepreload" href="assets/scripts/core/color.js">
+    <link rel="modulepreload" href="assets/scripts/core/common.js">
+    <link rel="modulepreload" href="assets/scripts/core/components.js">
+    <link rel="modulepreload" href="assets/scripts/core/config.js">
+    <link rel="modulepreload" href="assets/scripts/core/dom.js">
+    <link rel="modulepreload" href="assets/scripts/core/intro.js">
+    <link rel="modulepreload" href="assets/scripts/core/projects.js">
+    <link rel="modulepreload" href="assets/scripts/fx/cursor.js">
+    <link rel="modulepreload" href="assets/scripts/fx/effects.js">
+    <link rel="modulepreload" href="assets/scripts/fx/pixel.js">
+    <link rel="modulepreload" href="assets/scripts/pages/project.js">
+    <!-- preload:end -->
+    <script src="assets/scripts/core/stats.js" defer></script>
+    <script src="assets/scripts/core/components.js" type="module"></script>
+    <script src="assets/scripts/pages/project.js" type="module"></script>
 </head>
 
 <body>
@@ -53,7 +74,7 @@
                 <p class="project-cta-heading">See the project for yourself.</p>
             </div>
             <a class="project-cta-preview" target="_blank" rel="noopener noreferrer" aria-label="Open the project">
-                <img alt="" loading="lazy" decoding="async">
+                <img alt="" decoding="async">
             </a>
         </section>
 

@@ -1,5 +1,4 @@
-import { reducedMotion, throttled } from './config.js';
-import { INTRO } from './config.js';
+import { reducedMotion, throttled, INTRO } from './config.js';
 import { loadProjects, projectMark, SIGNATURE_URL } from './projects.js';
 
 const loading = { total: 0, done: 0, open: true, lastFile: '', onChange: () => {} };
@@ -83,7 +82,7 @@ function dissolveLoader(loader, whenDone) {
         whenDone();
         return;
     }
-    import('./pixel.js').then(({ dissolve }) => {
+    import('../fx/pixel.js').then(({ dissolve }) => {
         const color = getComputedStyle(loader).backgroundColor;
         loader.classList.add('dissolving');
         dissolve(loader, { color, fixed: true }, () => {
@@ -93,23 +92,43 @@ function dissolveLoader(loader, whenDone) {
     });
 }
 
+// The pictures of a part of the page count as part of the load. A lazy one is told to load now: the
+// intro is the one moment a wait is expected, so nothing should be left to appear while scrolling.
+export function trackImages(root = document) {
+    for (const image of root.querySelectorAll('img[src]')) {
+        if (image.dataset.tracked) continue;
+        image.dataset.tracked = '1';
+        image.loading = 'eager';
+        track(image.currentSrc || image.src, image.complete ? Promise.resolve() : eventually(image, ['load', 'error']));
+    }
+}
+
+// A picture that a script uses later (a background, a preview): fetched now so that it is cached when it is needed.
+const preloaded = new Set();
+export function preloadImage(url) {
+    if (!url || preloaded.has(url)) return;
+    preloaded.add(url);
+    track(url, new Promise(resolve => {
+        const image = new Image();
+        image.onload = image.onerror = resolve;
+        image.src = url;
+    }));
+}
+
 function trackExistingResources(trackFont) {
     track(location.href, Promise.resolve());
 
     for (const element of document.querySelectorAll('link[rel="stylesheet"][href], script[src]')) {
         track(element.href || element.src, Promise.resolve());
     }
-    for (const image of document.images) {
-        if (!image.getAttribute('src') || image.loading === 'lazy') continue;
-        track(image.src, image.complete ? Promise.resolve() : eventually(image, ['load', 'error']));
-    }
+    trackImages();
 
     document.fonts.forEach(trackFont);
     document.fonts.addEventListener('loading', event => event.fontfaces.forEach(trackFont));
 }
 
 function drawIntroSignature(loader, canvas, onReady) {
-    import('./pixel.js').then(({ extrudedSvg, CELL }) => {
+    import('../fx/pixel.js').then(({ extrudedSvg, CELL }) => {
         const { screenShare, minCols, maxCols } = INTRO.signature;
         const shortSide = Math.min(innerWidth, innerHeight);
         const cols = Math.max(minCols, Math.min(maxCols, Math.floor((shortSide * screenShare) / CELL / 4) * 4));

@@ -1,6 +1,7 @@
-import { reducedMotion, lowPower, clamp01, throttled, track, entrance, heroEntrance } from './common.js';
+import { reducedMotion, lowPower, clamp01, throttled } from '../core/config.js';
+import { track, entrance, heroEntrance } from '../core/intro.js';
 import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
-import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_FRAMES } from './config.js';
+import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_FRAMES } from '../core/config.js';
 
 const TEXT = '.scrubbing-text, h1, h2, h3, p, li, time, dd, .pullquote, .journey-when, .journey-country';
 const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, #footer, .contact-heading, .clock, .page-loader, .showcase, .project-hero';

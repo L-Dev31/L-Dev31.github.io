@@ -1,17 +1,15 @@
 import { lowPower, clamp01, breakpoint, isMobile, throttled, PICTURE } from './config.js';
 import { pageLoader } from './intro.js';
-import { cursor, magnets, pageTransitions } from './cursor.js';
+import { cursor, magnets, pageTransitions } from '../fx/cursor.js';
 import { loadProjects } from './projects.js';
-import { contactScene, contactLanding } from './contact.js';
+import { contactScene, contactLanding } from '../blocks/contact.js';
 import { socialLinks } from './components.js';
-import { initContactParallax } from './contact-parallax.js';
+import { el } from './dom.js';
+import { initContactParallax } from '../blocks/contact-parallax.js';
 
-export { reducedMotion, lowPower, clamp01, breakpoint, throttled } from './config.js';
-export { track, entrance, heroEntrance, introLoaded } from './intro.js';
-export { loadProjects, projectMark } from './projects.js';
 
 export function initPage() {
-    document.querySelectorAll('[data-year]').forEach(el => el.textContent = new Date().getFullYear());
+    document.querySelectorAll('[data-year]').forEach(node => node.textContent = new Date().getFullYear());
     clock();
     navTone();
     pageLoader();
@@ -43,7 +41,7 @@ function navTone() {
         const y = bar.offsetHeight / 2;
 
         const overHero = aboutHero ? aboutHero.getBoundingClientRect().bottom > y : projects ? projects.getBoundingClientRect().top > y : false;
-        const covers = el => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; };
+        const covers = node => { const r = node.getBoundingClientRect(); return r.top <= y && r.bottom >= y; };
         const showcase = document.querySelector('.showcase-stage');
         const activeShowcase = showcase?.dataset.paletteActive === 'true' && covers(showcase);
         if (activeShowcase) bar.style.color = getComputedStyle(showcase).getPropertyValue('--showcase-foreground').trim();
@@ -87,9 +85,9 @@ function clock() {
         const day = daylight(now);
         const clockTime = time.format(now);
         const offset = zone.formatToParts(now).find(part => part.type === 'timeZoneName')?.value || '';
-        for (const el of document.querySelectorAll('[data-clock]')) {
-            el.innerHTML = `${day ? SUN : MOON}<span class="clock-place">French Riviera, FR</span><span class="clock-time">${clockTime}</span><span class="clock-zone">${offset}</span>`;
-            el.setAttribute('aria-label', `French Riviera, ${clockTime}, ${offset}, ${day ? 'daytime' : 'night'}`);
+        for (const node of document.querySelectorAll('[data-clock]')) {
+            node.innerHTML = `${day ? SUN : MOON}<span class="clock-place">French Riviera, FR</span><span class="clock-time">${clockTime}</span><span class="clock-zone">${offset}</span>`;
+            node.setAttribute('aria-label', `French Riviera, ${clockTime}, ${offset}, ${day ? 'daytime' : 'night'}`);
         }
     };
     tickClock = tick;
@@ -117,25 +115,20 @@ const CURRENT_PAGE = {
     'about.html': 'about',
     'culture.html': 'culture',
     'culture-all.html': 'culture',
+    'legal.html': 'legal',
+    '404.html': 'not-found',
     'project.html': `project:${new URLSearchParams(location.search).get('id')}`,
 }[location.pathname.split('/').pop()] ?? 'home';
 
 const PARENT_OF_CURRENT = CURRENT_PAGE === 'culture' ? 'about' : CURRENT_PAGE.startsWith('project:') ? 'home' : CURRENT_PAGE;
 
-function element(tag, className, text) {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (text) node.textContent = text;
-    return node;
-}
-
 function menuLink(className, { label, href }, isCurrent) {
-    const link = element('a', className);
+    const link = el('a', className);
     link.href = href;
     if (isCurrent) {
         link.setAttribute('aria-current', 'page');
         if (className === 'mobile-menu-link') {
-            const arrow = element('span', 'menu-current', '\u2192');
+            const arrow = el('span', 'menu-current', '\u2192');
             arrow.setAttribute('aria-hidden', 'true');
             link.append(arrow);
         }
@@ -145,7 +138,7 @@ function menuLink(className, { label, href }, isCurrent) {
 }
 
 function menuGroup(page, projects) {
-    const group = element('div', 'mobile-menu-group');
+    const group = el('div', 'mobile-menu-group');
     group.append(menuLink('mobile-menu-link', page, page.id === CURRENT_PAGE));
     if (page.id === PARENT_OF_CURRENT && page.id !== CURRENT_PAGE) group.classList.add('is-active-branch');
 
@@ -157,7 +150,7 @@ function menuGroup(page, projects) {
         children = [...children, { id: CURRENT_PAGE, label, href: location.pathname + location.search }];
     }
     if (children.length) {
-        const list = element('div', 'mobile-menu-sub');
+        const list = el('div', 'mobile-menu-sub');
         list.append(...children.map(child => menuLink('mobile-menu-sublink', child, child.id === CURRENT_PAGE)));
         group.append(list);
     }
@@ -167,9 +160,9 @@ function menuGroup(page, projects) {
 function renderMenu(nav, projects) {
     nav.replaceChildren(...PAGES.map(page => menuGroup(page, projects)));
     if (nav.nextElementSibling?.classList.contains('hero-socials')) return;
-    const socials = element('nav', 'hero-socials');
+    const socials = el('nav', 'hero-socials');
     socials.setAttribute('aria-label', 'Social links, menu');
-    const clock = element('p', 'clock');
+    const clock = el('p', 'clock');
     clock.dataset.clock = '';
     socials.append(clock, socialLinks());
     nav.after(socials);
@@ -190,7 +183,7 @@ function mobileMenu(lenis) {
     renderMenu(nav, []);
     loadProjects().then(projects => renderMenu(nav, projects), () => {});
 
-    const picture = element('div', 'mobile-menu-picture');
+    const picture = el('div', 'mobile-menu-picture');
     picture.setAttribute('aria-hidden', 'true');
     menu.prepend(picture);
     let pixels = null;
@@ -198,7 +191,7 @@ function mobileMenu(lenis) {
         pixels?.destroy();
         pixels = null;
         if (getComputedStyle(picture).display === 'none') return;
-        const { pixelPicture } = await import('./effects.js');
+        const { pixelPicture } = await import('../fx/effects.js');
         const root = getComputedStyle(document.documentElement);
         const dark = document.documentElement.classList.contains('on-accent');
         pixels = pixelPicture(picture, dark ? 'assets/images/core/menu.webp' : 'assets/images/core/menu-accent.webp', {
@@ -354,7 +347,7 @@ function footerPortrait() {
     const footer = host.closest('#footer');
     // On a portrait screen the wide photo is cropped around its subject and sits at the bottom, like in the hero.
     const framing = matchMedia('(max-aspect-ratio: 1/1)').matches ? { center: 0.4, anchor: 1 } : { anchor: 0.7 };
-    import('./effects.js').then(({ pixelPicture }) => {
+    import('../fx/effects.js').then(({ pixelPicture }) => {
         const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
         pixelPicture(host, host.dataset.picture, { gain: PICTURE.aboutHeroGain, color: accent, active: () => footer.classList.contains('is-near'), ...framing });
     });

@@ -1,13 +1,6 @@
-import { reducedMotion, lowPower, clamp01 } from './common.js';
-import { cellCanvas, CELL } from './pixel.js';
-import { FLAGS as FLAG_SETTINGS } from './config.js';
-
-const el = (tag, cls, text) => {
-    const node = document.createElement(tag);
-    if (cls) node.className = cls;
-    if (text != null) node.textContent = text;
-    return node;
-};
+import { reducedMotion, lowPower, clamp01, FLAGS as FLAG_SETTINGS } from '../core/config.js';
+import { el } from '../core/dom.js';
+import { cellCanvas, CELL } from '../fx/pixel.js';
 
 const LAND = [
 

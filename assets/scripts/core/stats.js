@@ -34,7 +34,8 @@
         let kind = 'ui', destination = '';
         if (link) {
             const url = new URL(link.href, location.href);
-            if (url.protocol === 'mailto:') kind = 'email';
+            if (link.hasAttribute('download')) { kind = 'file'; destination = url.pathname.split('/').pop(); }
+            else if (url.protocol === 'mailto:') kind = 'email';
             else if (url.protocol === 'tel:') kind = 'tel';
             else if (url.host !== location.host) { kind = 'out'; destination = url.host.replace(/^www\./, ''); }
             else { kind = 'in'; destination = url.pathname.replace(/index\.html$/, '') + (url.searchParams.get('id') ? `?id=${url.searchParams.get('id')}` : ''); }

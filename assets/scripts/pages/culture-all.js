@@ -1,6 +1,6 @@
-import './components.js';
-import { initPage } from './common.js';
-import { thread, restDocks } from './showcase.js';
+import '../core/components.js';
+import { initPage } from '../core/common.js';
+import { thread, restDocks } from '../blocks/showcase.js';
 
 const TITLES = { films: 'All films', series: 'All series', anime: 'All anime', games: 'All games', books: 'All books' };
 
@@ -47,7 +47,9 @@ async function show() {
     const [header, ...rows] = parseCsv(await (await fetch(file)).text());
     const table = document.querySelector('.all-table');
     const head = document.createElement('thead');
-    head.innerHTML = '<tr>' + header.map(name => `<th scope="col">${name}</th>`).join('') + '</tr>';
+    const headRow = document.createElement('tr');
+    header.forEach(name => { const th = document.createElement('th'); th.scope = 'col'; th.textContent = name; headRow.append(th); });
+    head.append(headRow);
     const body = document.createElement('tbody');
     for (const cells of rows) {
         const tr = document.createElement('tr');

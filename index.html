@@ -31,11 +31,33 @@
     <meta name="twitter:image:alt" content="Léo Tosku | Design, Dev, Marketing">
 
     <link rel="preload" as="image" href="assets/images/core/hero-frames.webp">
-    <link rel="stylesheet" href="assets/styles/home.css">
+    <link rel="stylesheet" href="assets/styles/site.css">
     <script src="assets/vendor/lenis.min.js" defer></script>
-    <script src="assets/scripts/stats.js" defer></script>
-    <script src="assets/scripts/components.js" type="module"></script>
-    <script src="assets/scripts/main.js" type="module"></script>
+    <!-- preload:start -->
+    <link rel="preload" as="fetch" href="assets/components/navbar.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/components/footer.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/components/socials.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/components/page-loader.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/data/projects.json" crossorigin>
+    <link rel="modulepreload" href="assets/scripts/blocks/contact-parallax.js">
+    <link rel="modulepreload" href="assets/scripts/blocks/contact.js">
+    <link rel="modulepreload" href="assets/scripts/blocks/journey.js">
+    <link rel="modulepreload" href="assets/scripts/blocks/showcase.js">
+    <link rel="modulepreload" href="assets/scripts/core/color.js">
+    <link rel="modulepreload" href="assets/scripts/core/common.js">
+    <link rel="modulepreload" href="assets/scripts/core/components.js">
+    <link rel="modulepreload" href="assets/scripts/core/config.js">
+    <link rel="modulepreload" href="assets/scripts/core/dom.js">
+    <link rel="modulepreload" href="assets/scripts/core/intro.js">
+    <link rel="modulepreload" href="assets/scripts/core/projects.js">
+    <link rel="modulepreload" href="assets/scripts/fx/cursor.js">
+    <link rel="modulepreload" href="assets/scripts/fx/effects.js">
+    <link rel="modulepreload" href="assets/scripts/fx/pixel.js">
+    <link rel="modulepreload" href="assets/scripts/pages/main.js">
+    <!-- preload:end -->
+    <script src="assets/scripts/core/stats.js" defer></script>
+    <script src="assets/scripts/core/components.js" type="module"></script>
+    <script src="assets/scripts/pages/main.js" type="module"></script>
 
     <script type="application/ld+json">
     {

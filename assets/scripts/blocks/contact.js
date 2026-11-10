@@ -1,7 +1,4 @@
-import { clamp01, throttled, reducedMotion, lowPower, COMPACT } from './config.js';
-
-const ease = x => x * x * (3 - 2 * x);
-const range = (value, from, to) => clamp01((value - from) / (to - from));
+import { clamp01, smoothstep as ease, range, throttled, reducedMotion, lowPower, COMPACT } from '../core/config.js';
 
 // How the contact section opens. "Let's talk." sits alone on a dark screen. As the page scrolls the
 // two words part, like the travel flags, and a window opens between them. The window shows a pixel
@@ -98,7 +95,7 @@ export function contactScene() {
 
     const refresh = () => { measure(); update(); };
 
-    import('./effects.js').then(({ pixelPicture }) => {
+    import('../fx/effects.js').then(({ pixelPicture }) => {
         const black = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
         pixelPicture(picture, picture.dataset.picture, { color: black, center: Number(picture.dataset.center ?? 0.5), anchor: 0.5, watch: true, active: () => lastState === 'active' });
     });

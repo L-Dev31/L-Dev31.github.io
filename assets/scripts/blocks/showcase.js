@@ -1,20 +1,13 @@
-import { reducedMotion, lowPower, clamp01 } from './config.js';
-import { entrance, introLoaded } from './intro.js';
-import { loadProjects, projectMark, SIGNATURE_URL } from './projects.js';
-import { INTRO, SIGNATURE } from './config.js';
-import { extrudedSvg, CELL } from './pixel.js';
-import { pixelWrite } from './effects.js';
+import { reducedMotion, lowPower, clamp01, smoothstep, INTRO, SIGNATURE } from '../core/config.js';
+import { el as createElement } from '../core/dom.js';
+import { colorEnds, isGradient } from '../core/color.js';
+import { entrance, introLoaded } from '../core/intro.js';
+import { loadProjects, projectMark, SIGNATURE_URL } from '../core/projects.js';
+import { extrudedSvg, CELL } from '../fx/pixel.js';
+import { pixelWrite } from '../fx/effects.js';
 
 const cssVariable = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-const smoothstep = t => t * t * (3 - 2 * t);
 const pad2 = number => String(number).padStart(2, '0');
-
-function createElement(tag, className, text) {
-    const element = document.createElement(tag);
-    if (className) element.className = className;
-    if (text != null) element.textContent = text;
-    return element;
-}
 
 // Room for the title, in vw, and the largest size it may take.
 const TITLE_FIT = [88, 13];
@@ -171,25 +164,11 @@ export function showcase(container, projects, lenis) {
     };
 }
 
-function parseColor(color) {
-    if (color.startsWith('#')) return [1, 3, 5].map(start => parseInt(color.slice(start, start + 2), 16));
-    return color.match(/[\d.]+/g).slice(0, 3).map(Number);
-}
-
-function colorStops(color) {
-    if (color.startsWith('linear-gradient(')) {
-        const stops = color.match(/#[\da-f]{3,8}|rgba?\([^)]*\)/gi);
-        if (stops?.length > 1) return [parseColor(stops[0]), parseColor(stops.at(-1))];
-    }
-    const solid = parseColor(color);
-    return [solid, solid];
-}
-
 function blendColors(from, to, amount) {
-    const start = colorStops(from), end = colorStops(to);
+    const start = colorEnds(from), end = colorEnds(to);
     const mix = (first, last) => `rgb(${first.map((value, i) => Math.round(value + (last[i] - value) * amount)).join(',')})`;
     const first = mix(start[0], end[0]);
-    if (from.startsWith('linear-gradient(') || to.startsWith('linear-gradient(')) {
+    if (isGradient(from) || isGradient(to)) {
         return `linear-gradient(90deg, ${first}, ${mix(start[1], end[1])})`;
     }
     return first;
@@ -217,8 +196,8 @@ function openFlights(ranges) {
         const gap = ranges[i + 1][0] - ranges[i][1];
         if (gap >= minFlight) continue;
         const middle = (ranges[i][1] + ranges[i + 1][0]) / 2;
-        ranges[i][1] = middle - minFlight / 2;
-        ranges[i + 1][0] = middle + minFlight / 2;
+        ranges[i][1] = Math.max(ranges[i][0], middle - minFlight / 2);
+        ranges[i + 1][0] = Math.min(ranges[i + 1][1], middle + minFlight / 2);
     }
 }
 

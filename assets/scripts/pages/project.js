@@ -1,7 +1,10 @@
-import './components.js';
-import { initPage, sectionNav, loadProjects, reducedMotion, throttled, clamp01, track, heroEntrance } from './common.js';
-import { scrubbingText, pixelReveal } from './effects.js';
-import { thread, restDocks } from './showcase.js';
+import '../core/components.js';
+import { initPage, sectionNav } from '../core/common.js';
+import { reducedMotion, throttled, clamp01 } from '../core/config.js';
+import { heroEntrance, trackImages, preloadImage } from '../core/intro.js';
+import { loadProjects } from '../core/projects.js';
+import { scrubbingText, pixelReveal } from '../fx/effects.js';
+import { thread, restDocks } from '../blocks/showcase.js';
 
 const lenis = initPage();
 thread(restDocks());
@@ -30,7 +33,6 @@ function render(project, html, projects) {
     heroImg.alt = project.title;
     heroImg.hidden = false;
     heroImg.fetchPriority = 'high';
-    track(project.heroImage, heroImg.decode().catch(() => {}));
 
     const details = [
         ['Role', project.role],
@@ -77,6 +79,7 @@ function render(project, html, projects) {
     callsToAction(project, cta);
     pager(project, projects);
     chapterNav();
+    trackImages();
     scrubbingText();
     pixelReveal(document.querySelectorAll('figure.case-panel, .gallery-item'));
 }
@@ -176,6 +179,7 @@ function callsToAction({ ctas = [], ctaPreview, ctaVideo, trailerUrl, trailerLab
         const play = document.createElement('button');
         play.type = 'button';
         play.className = 'project-cta-play';
+        preloadImage(ctaPreview || heroImage);
         play.style.backgroundImage = `url('${ctaPreview || heroImage}')`;
         play.innerHTML = '<span class="project-cta-play-label">Play the video <small>Loads content from YouTube</small></span>';
         play.addEventListener('click', () => {
@@ -207,6 +211,7 @@ function pager(project, projects) {
         link.href = `project.html?id=${p.id}`;
         link.querySelector('.project-pager-title').textContent = p.title;
         link.querySelector('.project-pager-role').textContent = p.role;
+        preloadImage(p.heroImage);
         link.querySelector('.project-pager-img').style.backgroundImage = `url('${p.heroImage}')`;
     };
     fill(prevLink, caseStudies.at(i - 1), 'Previous');

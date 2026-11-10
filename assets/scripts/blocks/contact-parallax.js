@@ -1,4 +1,4 @@
-import { lowPower, reducedMotion, COMPACT } from './config.js';
+import { lowPower, reducedMotion, COMPACT } from '../core/config.js';
 
 // The only parallax on the site. An element of the contact section opts in with data-contact-parallax-speed
 // (100 follows the page, below 100 trails it, above 100 runs ahead of it), and data-contact-parallax-compact

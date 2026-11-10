@@ -1,10 +1,13 @@
-import './components.js';
-import { initPage, loadProjects } from './common.js';
-import { scrubbingText, heroPortrait, heroScrollState, pixelPicture, pixelCover } from './effects.js';
-import { extrudedSvg, CELL } from './pixel.js';
-import { journey } from './sections.js';
-import { PICTURE } from './config.js';
-import { showcase, thread, homeDocks, restDocks } from './showcase.js';
+import '../core/components.js';
+import { initPage } from '../core/common.js';
+import { loadProjects, projectMark } from '../core/projects.js';
+import { preloadImage } from '../core/intro.js';
+import { el } from '../core/dom.js';
+import { scrubbingText, heroPortrait, heroScrollState, pixelPicture, pixelCover } from '../fx/effects.js';
+import { extrudedSvg, CELL } from '../fx/pixel.js';
+import { journey } from '../blocks/journey.js';
+import { PICTURE } from '../core/config.js';
+import { showcase, thread, homeDocks, restDocks } from '../blocks/showcase.js';
 
 const CATEGORIES = ['Graphic Design', 'Webdesign', 'Marketing', 'Dev'];
 
@@ -27,13 +30,6 @@ scrubbingText();
 heroPortrait();
 
 const DEFAULT_SVG = 'assets/images/core/logo.svg';
-
-const el = (tag, cls, text) => {
-    const node = document.createElement(tag);
-    if (cls) node.className = cls;
-    if (text != null) node.textContent = text;
-    return node;
-};
 
 function projectIndex(container, projects) {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
@@ -179,6 +175,11 @@ async function initProjects() {
     const container = document.querySelector('.project-index');
     if (!container) return;
     const projects = (await loadProjects()).filter(p => CATEGORIES.includes(p.category));
+    // What the index and the showcase draw later is fetched during the intro.
+    for (const project of projects) {
+        preloadImage(projectMark(project));
+        if (!project.video) preloadImage(project.cover || project.heroImage);
+    }
 
     const stage = showcase(document.querySelector('.showcase'), projects.filter(project => project.featured), lenis);
     signature?.setDocks(homeDocks(stage));
@@ -303,6 +304,10 @@ async function initCulture() {
     if (!lists.length) return;
     const data = await fetch('assets/data/culture.json').then(r => r.json());
     const shown = (kind, list) => list.filter(item => item.featured);
+    // Where there is a pointer to hover with, the preview of each work is fetched during the intro, so that hovering a title never waits.
+    for (const [kind, list] of Object.entries(data)) {
+        if (hoverDevice() && kind !== 'games') shown(kind, list).forEach(item => preloadImage(`assets/images/culture/${kind}/${item.id}.webp`));
+    }
     lists.forEach(container => cultureList(container, shown(container.dataset.culture, data[container.dataset.culture] || []), container.dataset.culture));
     const travels = await fetch('assets/data/travels.json').then(r => r.json());
     // Each section shows its featured works; a "+" means the full list (culture-all.html) has more.

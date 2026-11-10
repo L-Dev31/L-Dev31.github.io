@@ -23,11 +23,32 @@
     <meta property="og:image" content="https://www.leotosku.com/assets/images/core/share.png">
     <meta name="twitter:card" content="summary_large_image">
 
-    <link rel="stylesheet" href="assets/styles/home.css">
+    <link rel="stylesheet" href="assets/styles/site.css">
     <script src="assets/vendor/lenis.min.js" defer></script>
-    <script src="assets/scripts/stats.js" defer></script>
-    <script src="assets/scripts/components.js" type="module"></script>
-    <script src="assets/scripts/legal.js" type="module"></script>
+    <!-- preload:start -->
+    <link rel="preload" as="fetch" href="assets/components/navbar.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/components/footer.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/components/socials.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/components/page-loader.html" crossorigin>
+    <link rel="preload" as="fetch" href="assets/data/projects.json" crossorigin>
+    <link rel="modulepreload" href="assets/scripts/blocks/contact-parallax.js">
+    <link rel="modulepreload" href="assets/scripts/blocks/contact.js">
+    <link rel="modulepreload" href="assets/scripts/blocks/showcase.js">
+    <link rel="modulepreload" href="assets/scripts/core/color.js">
+    <link rel="modulepreload" href="assets/scripts/core/common.js">
+    <link rel="modulepreload" href="assets/scripts/core/components.js">
+    <link rel="modulepreload" href="assets/scripts/core/config.js">
+    <link rel="modulepreload" href="assets/scripts/core/dom.js">
+    <link rel="modulepreload" href="assets/scripts/core/intro.js">
+    <link rel="modulepreload" href="assets/scripts/core/projects.js">
+    <link rel="modulepreload" href="assets/scripts/fx/cursor.js">
+    <link rel="modulepreload" href="assets/scripts/fx/effects.js">
+    <link rel="modulepreload" href="assets/scripts/fx/pixel.js">
+    <link rel="modulepreload" href="assets/scripts/pages/static.js">
+    <!-- preload:end -->
+    <script src="assets/scripts/core/stats.js" defer></script>
+    <script src="assets/scripts/core/components.js" type="module"></script>
+    <script src="assets/scripts/pages/static.js" type="module"></script>
 </head>
 
 <body>
@@ -51,7 +72,7 @@
                 <p>As a non-professional publisher, my postal address is held by the host below and can be given to the judicial authorities (article 6, III, 2 of the French LCEN law of 21 June 2004).</p>
                 <p><strong>Hosting:</strong> GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA.</p>
                 <p><strong>Domain, DNS, security and email routing:</strong> Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, USA.</p>
-                <p><strong>Intellectual property:</strong> the text, design and code of this site are the work of Léo Tosku, unless stated otherwise. Names, logos and visuals that belong to clients or to third parties, including the works listed on the Culture pages, remain the property of their owners. To ask for a correction or a removal, write to the address above.</p>
+                <p><strong>Intellectual property:</strong> the text, design and code of this site are the work of Léo Tosku, unless stated otherwise. Names, logos and visuals that belong to clients or to third parties, including the works the site mentions, remain the property of their owners. To ask for a correction or a removal, write to the address above.</p>
 
                 <div lang="fr">
                     <h3>Mentions légales</h3>
@@ -59,31 +80,19 @@
                     <p>Éditeur non professionnel, mon adresse postale est conservée par l'hébergeur ci-dessous et peut être transmise aux autorités judiciaires (article 6, III, 2 de la loi n° 2004-575 du 21 juin 2004, LCEN).</p>
                     <p><strong>Hébergement :</strong> GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.</p>
                     <p><strong>Domaine, DNS, sécurité et redirection des e-mails :</strong> Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis.</p>
-                    <p><strong>Propriété intellectuelle :</strong> les textes, le design et le code de ce site sont l'œuvre de Léo Tosku, sauf mention contraire. Les noms, logos et visuels appartenant à des clients ou à des tiers, y compris les œuvres citées dans les pages Culture, restent la propriété de leurs titulaires. Pour demander une correction ou un retrait, écrivez à l'adresse ci-dessus.</p>
+                    <p><strong>Propriété intellectuelle :</strong> les textes, le design et le code de ce site sont l'œuvre de Léo Tosku, sauf mention contraire. Les noms, logos et visuels appartenant à des clients ou à des tiers, y compris les œuvres que le site mentionne, restent la propriété de leurs titulaires. Pour demander une correction ou un retrait, écrivez à l'adresse ci-dessus.</p>
                 </div>
             </section>
 
             <section id="demos" aria-labelledby="demos-title">
                 <h2 id="demos-title">Demo projects</h2>
-                <p>This page covers the portfolio at www.leotosku.com: the home page, About, Culture, the project case studies and this page. The demos hosted under <code>/projects/demos/</code> are separate works. Each one has its own publisher details, licence, terms, data practices and cookies, which may differ from everything on this page. For example, a demo can load analytics or advertising from a third party.</p>
+                <p>This page covers the portfolio itself. Demos and other projects published alongside it are separate works. Each one may have its own publisher details, licence, terms, data practices and cookies, which can differ from everything on this page. For example, a demo can load analytics or advertising from a third party.</p>
                 <p>Please read the notices of the demo you use. Where a demo has none, nothing promised on this page applies to it, and you can write to <a href="mailto:contact@leotosku.com">contact@leotosku.com</a>. A project based on an existing game, film or brand stays subject to the rights of its owners.</p>
-                <p>Demos with their own pages:</p>
-                <ul>
-                    <li>Stock: <a href="projects/demos/stock/privacy.html">privacy</a>, <a href="projects/demos/stock/terms.html">terms</a>, <a href="projects/demos/stock/cookies.html">cookies</a>, <a href="projects/demos/stock/disclaimer.html">disclaimer</a></li>
-                    <li>OpenFitMeter: <a href="projects/demos/openfitmeter/privacy/">privacy</a></li>
-                    <li>Rakoun: may load Google Tag Manager and Google advertising scripts, outside this page's scope</li>
-                </ul>
 
                 <div lang="fr">
                     <h3>Projets de démonstration</h3>
-                    <p>Cette page couvre le portfolio www.leotosku.com : l'accueil, À propos, Culture, les études de cas et cette page. Les démos hébergées sous <code>/projects/demos/</code> sont des œuvres distinctes. Chacune a ses propres éditeur, licence, conditions, pratiques de données et cookies, qui peuvent différer de tout ce qui figure sur cette page. Une démo peut par exemple charger des statistiques ou de la publicité d'un tiers.</p>
+                    <p>Cette page couvre le portfolio lui-même. Les démos et autres projets publiés à côté sont des œuvres distinctes. Chacun peut avoir ses propres éditeur, licence, conditions, pratiques de données et cookies, qui peuvent différer de tout ce qui figure sur cette page. Une démo peut par exemple charger des statistiques ou de la publicité d'un tiers.</p>
                     <p>Reportez-vous aux mentions de la démo que vous utilisez. Si elle n'en a pas, rien de ce qui est promis sur cette page ne s'y applique, et vous pouvez écrire à <a href="mailto:contact@leotosku.com">contact@leotosku.com</a>. Un projet fondé sur un jeu, un film ou une marque existants reste soumis aux droits de leurs titulaires.</p>
-                    <p>Démos ayant leurs propres pages :</p>
-                    <ul>
-                        <li>Stock : <a href="projects/demos/stock/privacy.html">confidentialité</a>, <a href="projects/demos/stock/terms.html">conditions</a>, <a href="projects/demos/stock/cookies.html">cookies</a>, <a href="projects/demos/stock/disclaimer.html">avertissement</a></li>
-                        <li>OpenFitMeter : <a href="projects/demos/openfitmeter/privacy/">confidentialité</a></li>
-                        <li>Rakoun : peut charger Google Tag Manager et des scripts publicitaires Google, hors du périmètre de cette page</li>
-                    </ul>
                 </div>
             </section>
 
@@ -91,23 +100,23 @@
                 <h2 id="privacy-title">Privacy</h2>
                 <p><strong>Data controller:</strong> Léo Tosku, <a href="mailto:contact@leotosku.com">contact@leotosku.com</a>.</p>
                 <p><strong>What the portfolio collects.</strong> There is no account, no form, no advertising and no tracking across sites. Nothing is stored in your browser.</p>
-                <p><strong>Audience measurement.</strong> To learn which parts of the portfolio are useful, the site counts anonymous events: pages viewed, links clicked, sections reached, how far a page is scrolled and for how long, the website you came from, the campaign tag in a link if there is one (<code>utm_</code> parameters), your country, device type, browser, operating system and language. No IP address is stored, and there is no cookie, no persistent identifier and no fingerprinting, so a visit cannot be linked to a person or to another visit. The measurement is designed to fit the CNIL exemption for strictly anonymous audience measurement. It is skipped when your browser sends Do Not Track or Global Privacy Control. Legal basis: legitimate interest (GDPR article 6.1.f). Events are kept for three months.</p>
-                <p><strong>Technical logs.</strong> GitHub and Cloudflare process connection data, including IP addresses, to deliver and protect the site, under their own policies: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener noreferrer" target="_blank">GitHub</a> and <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener noreferrer" target="_blank">Cloudflare</a>.</p>
-                <p><strong>Third-party content.</strong> The video on a project page is loaded from YouTube (youtube-nocookie.com) only after you press play. Links to LinkedIn, Instagram, GitHub and Ko-fi open those sites, which apply their own rules.</p>
+                <p><strong>Audience measurement.</strong> To learn which parts of the portfolio are useful, the site counts anonymous events: pages viewed, links clicked, sections reached, how far a page is scrolled and for how long, the website you came from, the campaign tag of a link, if any, your country, device type, browser, operating system and language. No IP address is stored, and there is no cookie, no persistent identifier and no fingerprinting, so a visit cannot be linked to a person or to another visit. The measurement is designed to fit the CNIL exemption for strictly anonymous audience measurement. It is skipped when your browser sends Do Not Track or Global Privacy Control. Legal basis: legitimate interest (GDPR article 6.1.f). Events are kept for three months.</p>
+                <p><strong>Technical logs.</strong> GitHub and Cloudflare process connection data, including IP addresses, to deliver and protect the site, under their own policies: <a href="https://github.com" rel="noopener noreferrer" target="_blank">GitHub</a> and <a href="https://www.cloudflare.com" rel="noopener noreferrer" target="_blank">Cloudflare</a>.</p>
+                <p><strong>Third-party content.</strong> A video, where the site shows one, is loaded from YouTube only after you press play. Links to other sites, such as social networks, open those sites, which apply their own rules.</p>
                 <p><strong>Email.</strong> If you write to <a href="mailto:contact@leotosku.com">contact@leotosku.com</a>, your address and message are used only to reply. They are forwarded by Cloudflare Email Routing to a mailbox hosted by Google, and kept as long as the exchange needs.</p>
                 <p><strong>Transfers outside the EU.</strong> GitHub, Cloudflare and Google are US companies. They rely on the transfer mechanisms described in their own policies.</p>
-                <p><strong>Your rights.</strong> You can ask for access, correction, erasure, restriction or portability of your data, and object to its processing (GDPR articles 15 to 21), by writing to <a href="mailto:contact@leotosku.com">contact@leotosku.com</a>. You can also complain to the CNIL: <a href="https://www.cnil.fr/fr/plaintes" rel="noopener noreferrer" target="_blank">cnil.fr/fr/plaintes</a>.</p>
+                <p><strong>Your rights.</strong> You can ask for access, correction, erasure, restriction or portability of your data, and object to its processing (GDPR articles 15 to 21), by writing to <a href="mailto:contact@leotosku.com">contact@leotosku.com</a>. You can also complain to the CNIL: <a href="https://www.cnil.fr" rel="noopener noreferrer" target="_blank">cnil.fr</a>.</p>
 
                 <div lang="fr">
                     <h3>Confidentialité</h3>
                     <p><strong>Responsable du traitement :</strong> Léo Tosku, <a href="mailto:contact@leotosku.com">contact@leotosku.com</a>.</p>
                     <p><strong>Ce que le portfolio collecte.</strong> Il n'y a ni compte, ni formulaire, ni publicité, ni suivi entre sites. Rien n'est enregistré dans votre navigateur.</p>
-                    <p><strong>Mesure d'audience.</strong> Pour savoir quelles parties du portfolio sont utiles, le site compte des événements anonymes : pages vues, liens cliqués, sections atteintes, profondeur de défilement et durée, site d'origine, étiquette de campagne d'un lien s'il y en a une (paramètres <code>utm_</code>), pays, type d'appareil, navigateur, système et langue. Aucune adresse IP n'est conservée, et il n'y a ni cookie, ni identifiant persistant, ni empreinte numérique : une visite ne peut être reliée ni à une personne ni à une autre visite. La mesure est conçue pour entrer dans l'exemption CNIL de la mesure d'audience strictement anonyme. Elle est désactivée si votre navigateur envoie Do Not Track ou Global Privacy Control. Base légale : intérêt légitime (article 6.1.f du RGPD). Les événements sont conservés trois mois.</p>
+                    <p><strong>Mesure d'audience.</strong> Pour savoir quelles parties du portfolio sont utiles, le site compte des événements anonymes : pages vues, liens cliqués, sections atteintes, profondeur de défilement et durée, site d'origine, étiquette de campagne d'un lien, le cas échéant, pays, type d'appareil, navigateur, système et langue. Aucune adresse IP n'est conservée, et il n'y a ni cookie, ni identifiant persistant, ni empreinte numérique : une visite ne peut être reliée ni à une personne ni à une autre visite. La mesure est conçue pour entrer dans l'exemption CNIL de la mesure d'audience strictement anonyme. Elle est désactivée si votre navigateur envoie Do Not Track ou Global Privacy Control. Base légale : intérêt légitime (article 6.1.f du RGPD). Les événements sont conservés trois mois.</p>
                     <p><strong>Journaux techniques.</strong> GitHub et Cloudflare traitent des données de connexion, dont les adresses IP, pour diffuser et protéger le site, selon leurs propres politiques : voir les liens ci-dessus.</p>
-                    <p><strong>Contenus tiers.</strong> La vidéo d'une page projet n'est chargée depuis YouTube (youtube-nocookie.com) qu'après un clic sur lecture. Les liens vers LinkedIn, Instagram, GitHub et Ko-fi ouvrent ces sites, qui appliquent leurs propres règles.</p>
+                    <p><strong>Contenus tiers.</strong> Une vidéo, lorsque le site en présente une, n'est chargée depuis YouTube qu'après un clic sur lecture. Les liens vers d'autres sites, comme les réseaux sociaux, ouvrent ces sites, qui appliquent leurs propres règles.</p>
                     <p><strong>E-mail.</strong> Si vous écrivez à <a href="mailto:contact@leotosku.com">contact@leotosku.com</a>, votre adresse et votre message ne servent qu'à vous répondre. Ils sont transmis par Cloudflare Email Routing vers une boîte hébergée par Google, et conservés le temps nécessaire à l'échange.</p>
                     <p><strong>Transferts hors UE.</strong> GitHub, Cloudflare et Google sont des sociétés américaines. Elles s'appuient sur les mécanismes de transfert décrits dans leurs propres politiques.</p>
-                    <p><strong>Vos droits.</strong> Vous pouvez demander l'accès, la rectification, l'effacement, la limitation ou la portabilité de vos données, et vous opposer à leur traitement (articles 15 à 21 du RGPD), en écrivant à <a href="mailto:contact@leotosku.com">contact@leotosku.com</a>. Vous pouvez aussi saisir la CNIL : <a href="https://www.cnil.fr/fr/plaintes" rel="noopener noreferrer" target="_blank">cnil.fr/fr/plaintes</a>.</p>
+                    <p><strong>Vos droits.</strong> Vous pouvez demander l'accès, la rectification, l'effacement, la limitation ou la portabilité de vos données, et vous opposer à leur traitement (articles 15 à 21 du RGPD), en écrivant à <a href="mailto:contact@leotosku.com">contact@leotosku.com</a>. Vous pouvez aussi saisir la CNIL : <a href="https://www.cnil.fr" rel="noopener noreferrer" target="_blank">cnil.fr</a>.</p>
                 </div>
             </section>
 
@@ -123,10 +132,10 @@
 
             <section id="accessibility" aria-labelledby="accessibility-title">
                 <h2 id="accessibility-title">Accessibility statement</h2>
-                <p>I aim for WCAG 2.2 level AA and the French RGAA. <strong>Status: not audited, partly tested.</strong> This site has not had a full RGAA audit and has not been tested with screen readers. Automated checks with axe-core on the main pages (9 November 2026 build, desktop and mobile) report no remaining WCAG A or AA violation that the tool can detect, which is not a claim of conformity.</p>
+                <p>I aim for WCAG 2.2 level AA and the French RGAA. <strong>Status: not audited, partly tested.</strong> This site has not had a full RGAA audit and has not been tested with screen readers. Automated checks on the main pages report no remaining WCAG A or AA violation that they can detect, which is not a claim of conformity.</p>
                 <p><strong>Known limits:</strong></p>
                 <ul>
-                    <li>Some brand colour pairs are below a 4.5:1 contrast ratio, for example white text on the red accent (3.8:1) and the accent on light backgrounds in some project palettes.</li>
+                    <li>Some brand colour pairs are below the recommended contrast ratio, for example white text on the red accent and the accent on light backgrounds in some project palettes.</li>
                     <li>The pixel portrait and text effects keep moving and have no pause control. They are reduced when your system asks for reduced motion.</li>
                     <li>The page transitions and the custom cursor are decorative.</li>
                 </ul>
@@ -134,10 +143,10 @@
 
                 <div lang="fr">
                     <h3>Déclaration d'accessibilité</h3>
-                    <p>Je vise le niveau AA des WCAG 2.2 et le RGAA. <strong>État : non audité, partiellement testé.</strong> Ce site n'a pas fait l'objet d'un audit RGAA complet et n'a pas été testé avec des lecteurs d'écran. Des contrôles automatiques avec axe-core sur les pages principales (version du 9 novembre 2026, ordinateur et mobile) ne signalent plus de non-conformité WCAG A ou AA détectable par l'outil, ce qui n'est pas une déclaration de conformité.</p>
+                    <p>Je vise le niveau AA des WCAG 2.2 et le RGAA. <strong>État : non audité, partiellement testé.</strong> Ce site n'a pas fait l'objet d'un audit RGAA complet et n'a pas été testé avec des lecteurs d'écran. Des contrôles automatiques sur les pages principales ne signalent plus de non-conformité WCAG A ou AA détectable, ce qui n'est pas une déclaration de conformité.</p>
                     <p><strong>Limites connues :</strong></p>
                     <ul>
-                        <li>Certaines paires de couleurs de la marque sont sous le ratio de contraste de 4,5:1, par exemple le texte blanc sur le rouge d'accent (3,8:1) et l'accent sur fond clair dans certaines palettes de projet.</li>
+                        <li>Certaines paires de couleurs de la marque sont sous le ratio de contraste recommandé, par exemple le texte blanc sur le rouge d'accent et l'accent sur fond clair dans certaines palettes de projet.</li>
                         <li>Le portrait en pixels et les effets de texte restent animés et n'ont pas de commande de pause. Ils sont réduits quand votre système demande de limiter les animations.</li>
                         <li>Les transitions de page et le curseur personnalisé sont décoratifs.</li>
                     </ul>

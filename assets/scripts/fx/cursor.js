@@ -1,5 +1,4 @@
-import { reducedMotion, lowPower, isMobile } from './config.js';
-import { CURSOR, MAGNET, PAGE_TRANSITION } from './config.js';
+import { reducedMotion, lowPower, isMobile, CURSOR, MAGNET, PAGE_TRANSITION } from '../core/config.js';
 
 const CURSOR_WORDS = [
     ['[data-cursor]', element => element.dataset.cursor],
@@ -112,7 +111,28 @@ export function magnets() {
     }, { passive: true });
 }
 
+// A page the pointer is on its way to is fetched before the click, so the next page is there when the cover is.
+const isSitePage = url => url.origin === location.origin && /(\.html|\/)$/.test(url.pathname);
+
+function prefetchPages() {
+    const asked = new Set();
+    const prefetch = event => {
+        const link = event.target.closest?.('a[href]');
+        if (!link || link.target || link.hasAttribute('download')) return;
+        const url = new URL(link.href, location.href);
+        if (!isSitePage(url) || asked.has(url.href)) return;
+        asked.add(url.href);
+        const hint = document.createElement('link');
+        hint.rel = 'prefetch';
+        hint.href = url.href;
+        document.head.append(hint);
+    };
+    document.addEventListener('pointerover', prefetch, { passive: true });
+    document.addEventListener('touchstart', prefetch, { passive: true });
+}
+
 export function pageTransitions() {
+    prefetchPages();
     if (reducedMotion) return;
 
     document.addEventListener('click', event => {
@@ -123,9 +143,8 @@ export function pageTransitions() {
         if (!link || (link.target && link.target !== '_self') || link.hasAttribute('download')) return;
 
         const url = new URL(link.href, location.href);
-        const isSitePage = url.origin === location.origin && /(\.html|\/)$/.test(url.pathname);
         const isSamePage = url.pathname === location.pathname && url.search === location.search;
-        if (!isSitePage || isSamePage) return;
+        if (!isSitePage(url) || isSamePage) return;
 
         event.preventDefault();
         const cover = document.createElement('div');
