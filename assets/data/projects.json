@@ -1,6 +1,26 @@
 {
   "projects": [
     {
+      "id": "tano",
+      "title": "TANO S.R.L. Business Card",
+      "date": "2026-11-01",
+      "category": "Graphic Design",
+      "role": "Designer & Developer",
+      "client": "TANO S.R.L.",
+      "heroImage": "assets/images/projects/tano/header.jpg",
+      "subtitle": "A business card that gives a construction company a premium, fresh look: an impossible triangle of beams in blueprint lines, made to be kept.",
+      "tags": [
+        "Business Card",
+        "Print Design",
+        "Art Direction",
+        "Brand Identity",
+        "Blender",
+        "three.js"
+      ],
+      "ctas": [],
+      "cover": "assets/images/projects/tano.webp"
+    },
+    {
       "id": "smfl",
       "title": "Saint-Martin Flag Project",
       "date": "2026-09-15",

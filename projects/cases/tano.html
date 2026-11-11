@@ -1,0 +1,93 @@
+<section class="case-intro">
+    <h2 class="title">The Brief</h2>
+    <p>TANO S.R.L. is a construction company in Rocchetta Tanaro, in Piedmont. Building is rarely seen as premium or fresh, and its cards usually go straight into a pocket and stay there. I wanted one people keep, turn over and look at for a while.</p>
+    <p>I set the rules early: a dark, saturated background, luminous blueprint lines, no gradient, no animation, no monospaced type, and every letter of the name readable. I also wanted it to look unlike my own portfolio.</p>
+    <p class="case-team">L&eacute;o Tosku (art direction, 3D modeling, card generator)</p>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">Not a card you forget in a pocket.</blockquote>
+</section>
+
+<section class="case-chapter" id="project">
+    <h2 class="title">The Project</h2>
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">An Impossible Triangle Made of Beams</h3>
+            <p>The front is a Penrose triangle, an object that cannot exist, drawn with building beams. For a company that builds, it speaks of structure and precision, and it catches the eye without a word of text.</p>
+            <p>My first try used three beams and showed the join where they meet. That flaw decided the rest of the work: everything came down to making the seam disappear.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/tano/card-front.webp" width="1304" height="844"
+                alt="The front of the card: white blueprint lines drawing a triangle of three fluted beams on a deep blue background, inside a thin frame." loading="lazy" decoding="async">
+            <figcaption class="media-caption">The front, flat</figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="case-chapter" id="process">
+    <h2 class="title">The Process</h2>
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">1. One Beam, Modeled in Blender</h3>
+            <p>I modeled a single fluted beam in Blender and exported it. The code recenters it, stretches it so its section is square, and builds three copies, plus a fourth that is shifted along the line of sight. On screen that shift is invisible, and it is what lets the triangle close.</p>
+            <p>The drawing is made of edges only. An edge is kept when it belongs to a single face, or when the angle between its two faces is above 15 degrees, so the beam reads as clean lines rather than a wireframe.</p>
+        </div>
+    </div>
+
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">2. Hiding the Seam</h3>
+            <p>I cut the beam with a plane parallel to the line of sight, because a cut across the beam left a visible line. The two halves overlap by a hair so no gap can open between them.</p>
+            <p>I measured the result instead of trusting my eye. The difference between the two versions of the render went from two or three percent to under 0.015 percent.</p>
+        </div>
+    </div>
+
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">3. Lines That Glow</h3>
+            <p>The triangle is rendered with three.js through an orthographic camera. The faces only write depth, so they hide the lines behind them without being drawn. The strokes are thickened according to the screen density, then turned into white with transparency and tinted with the ink colour.</p>
+            <p>The colours can be changed from the toolbar and are remembered, so I could test the card in several palettes before settling on this blue.</p>
+        </div>
+    </div>
+</section>
+
+<section class="case-chapter" id="design">
+    <h2 class="title">The Design</h2>
+    <div class="case-row">
+        <div class="case-prose">
+            <h3 class="case-heading">4. A Back That Spills Out</h3>
+            <p>The name and the details sit on the left, centered vertically. On the right, the same triangle is blown up so far that it leaves the frame, which is what produces the optical effect: you read a few columns and your mind rebuilds the shape.</p>
+            <p>A thin frame sits 22 pixels inside the edge and cuts everything that goes past it. The registration details, VAT number and SDI code stay small at the foot of the card.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/tano/card-back.webp" width="1304" height="844"
+                alt="The back of the card: the name TANO S.R.L. and its contact details on the left, and an enlarged beam running out of the frame on the right." loading="lazy"
+                decoding="async">
+            <figcaption class="media-caption">The back, flat</figcaption>
+        </figure>
+    </div>
+
+    <div class="case-row case-row--reverse">
+        <div class="case-prose">
+            <h3 class="case-heading">5. Two Typefaces</h3>
+            <p>The name, the headings and the labels are set in Monument Extended, in light, regular and black. Running text uses IBM Plex Sans Condensed. A faint grid, finer every ten pixels and stronger every fifty, sits under the card like drafting paper.</p>
+        </div>
+        <figure class="case-panel">
+            <img src="assets/images/projects/tano/detail.webp" width="940" height="520"
+                alt="Close-up of the card back: the name TANO S.R.L., the line Costruzioni &amp; Edilizia and the telephone, mail and address lines." loading="lazy"
+                decoding="async">
+            <figcaption class="media-caption">Monument Extended for the name and the labels</figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="case-pullquote">
+    <blockquote class="pullquote">The seam had to disappear, so I measured it.</blockquote>
+</section>
+
+<section class="case-intro">
+    <h2 class="title">The Outcome</h2>
+    <p>The card is a deep blue blueprint with a triangle that cannot exist, and the join between the beams is no longer visible. It gives a construction company a premium, fresh look, and it is made to be kept and looked at.</p>
+    <p>The project taught me to draw with code and to measure a detail before judging it.</p>
+</section>
