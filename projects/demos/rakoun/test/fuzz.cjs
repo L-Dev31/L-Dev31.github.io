@@ -2,13 +2,7 @@
 const fs = require("fs");
 const path = require("path");
 const ROOT = require("path").resolve(__dirname, "..");
-const { RakounCore } = require(path.join(ROOT, "js", "engine.js"));
-const load = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, "dict", f + ".json"), "utf8"));
-const dicts = {
-  Grammar: load("Grammar"), Verbs: load("Verbs"), Nouns: load("Nouns"),
-  Adjectives: load("Adjectives"), Adverbs: load("Adverbs"), Misc: load("Misc"),
-};
-const engine = RakounCore.createEngine(dicts);
+const { engine } = require("./_engine.cjs"); // chargement commun (moteur + dictionnaires)
 
 const gpWords = Object.keys(engine.ctx.index_gp);
 const frWords = Object.keys(engine.ctx.index_fr);

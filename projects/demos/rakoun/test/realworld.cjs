@@ -20,13 +20,10 @@
 const fs = require("fs");
 const path = require("path");
 const ROOT = path.resolve(__dirname, "..");
-const { RakounCore } = require(path.join(ROOT, "js", "engine.js"));
-const { normalize_token, est_mot } = RakounCore;
+const { RakounCore, engine } = require("./_engine.cjs"); // chargement commun (moteur + dictionnaires)
+const { est_mot } = RakounCore;
+const { normalize_token } = engine;
 
-const FILES = ["Grammar", "Verbs", "Nouns", "Adjectives", "Adverbs", "Misc"];
-const dicts = {};
-for (const f of FILES) dicts[f] = JSON.parse(fs.readFileSync(path.join(ROOT, "dict", f + ".json"), "utf8"));
-const engine = RakounCore.createEngine(dicts);
 const { ctx, rules, classer_fr, trouver_infinitif } = engine;
 const R = rules.R;
 

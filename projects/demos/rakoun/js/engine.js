@@ -12,7 +12,6 @@
   "use strict";
 
   const RE_MOT = /^[\p{L}\p{N}_][\p{L}\p{N}_'-]*$/u;
-  const RE_C_SOFT = /c(?=[eiy])/g;
   const RE_DOUBLE = /(.)\1+/gu;
 
   // Garde-fous anti-abus (DoS) : la traduction est synchrone et son coût croît
@@ -42,21 +41,6 @@
     return traduction;
   }
 
-  const _normCache = new Map();
-  function normalize_token(word) {
-    if (!word) return "";
-    const hit = _normCache.get(word);
-    if (hit !== undefined) return hit;
-    let w = word.normalize("NFD").replace(/\p{Mn}/gu, "").toLowerCase();
-    for (const ch of ["'", "’", "-"]) w = w.split(ch).join("");
-    w = w.replace(/ph/g, "f").replace(/qu/g, "k").replace(/gu/g, "g")
-         .replace(/ç/g, "s").replace(/c/g, "k").replace(/q/g, "k")
-         .replace(/ou/g, "w").replace(/y/g, "i");
-    w = w.replace(RE_C_SOFT, "s");
-    const out = w.replace(RE_DOUBLE, "$1");
-    _normCache.set(word, out);
-    return out;
-  }
 
   // Toutes les tables interrogées par `has` sont à prototype nul : les index du
   // moteur (voir `createEngine`) et les tables de règles (voir `charger`). Une
@@ -94,7 +78,7 @@
     // directe `obj[cle]` devient sûre — donc utilisable dans la boucle chaude
     // à la place de hasOwnProperty, qui pesait 4 % du temps CPU.
     const nul = () => Object.create(null);
-    const ctx = { index_fr: nul(), index_gp: nul(), index_gp_nom: nul(), index_gp_adj: nul(), index_fr_nom: nul(), index_fr_verbe: nul(), type_fr: nul(), genre_fr: nul(), norm_fr: nul(), norm_gp: nul(), phrases_fr_gp: nul(), phrases_gp_fr: nul(), index_fr_propre: nul(), index_gp_propre: nul() };
+    const ctx = { index_fr: nul(), index_gp: nul(), index_gp_nom: nul(), index_gp_adj: nul(), index_fr_nom: nul(), index_fr_verbe: nul(), type_fr: nul(), genre_fr: nul(), norm_fr: nul(), norm_gp: nul(), phrases_fr_gp: nul(), phrases_gp_fr: nul(), index_fr_propre: nul(), index_gp_propre: nul(), attribut_fr: nul() };
     // Longueur maximale (en mots) d'une entrée multi-mots commençant par tel
     // mot. Sans cet index, la boucle de recherche essayait systématiquement
     // les fenêtres de 6 mots à 1 mot pour CHAQUE jeton : 6 découpages, 6
@@ -107,6 +91,23 @@
     // mémoïsation supprime ce recalcul redondant — principal gain de perf.
     const _infCache = new Map();
     const _frGpCache = new Map();
+    // Tables de mots du français (F) et du créole (G) : Grammar.json > fr / gp.
+    // Le moteur ne contient aucun mot : il ne connaît que ces noms de rôles.
+    let F, G;
+    // Clé de recherche approchée (accents, apostrophes, graphies voisines) :
+    // table en données, Grammar.json > normalisation.
+    const _normCache = new Map();
+    function normalize_token(word) {
+      if (!word) return "";
+      const hit = _normCache.get(word);
+      if (hit !== undefined) return hit;
+      let w = word.normalize("NFD").replace(/\p{Mn}/gu, "").toLowerCase();
+      for (const ch of rules.normalisation.supprimer) w = w.split(ch).join("");
+      for (const [de, vers] of rules.normalisation.remplacements) w = w.split(de).join(vers);
+      const out = w.replace(RE_DOUBLE, "$1");
+      _normCache.set(word, out);
+      return out;
+    }
 
     const rules = {
       suffixes_feminins: [], fins_participe: [], suffixes_adjectifs: [], autres_fins_participe: [],
@@ -124,7 +125,7 @@
       pronoms_fr: new Set(), mots_fonctionnels_fr: new Set(), clitiques_objet_fr: new Set(),
       intensifieurs_fr: new Set(), materiaux_fr: new Set(), articles_definis_fr: new Set(),
       pronoms_sujet_fr: new Set(), adjectifs_de_infinitif: new Set(), noms_sans_article_fr: new Set(), contractions_fr: new Map(),
-      R: {},
+      R: {}, normalisation: { supprimer: [], remplacements: [] },
       inverse_irreguliers: {}, participes_inverse: {}, possessifs_gp: {}, interrogatifs_inverse: {},
       toniques_gp: {}, pronoms_gp: new Set(), marqueurs: new Set(),
       etre_formes: new Set(), etre_imparfait: new Set(), etre_futur: new Set(),
@@ -137,32 +138,32 @@
 
     function conjuguer(infinitif, pronom, temps = "present") {
       let inf = infinitif.toLowerCase();
-      if (inf.startsWith("se ") || inf.startsWith("s'")) {
-        const base = inf.startsWith("se ") ? inf.slice(3) : inf.slice(2);
+      const prefRefl = F.conj.refl_prefixes.find((p) => inf.startsWith(p)); if (prefRefl) {
+        const base = inf.slice(prefRefl.length);
         const formeBase = conjuguer(base, pronom, temps);
-        const refl = rules.refl_pronoms[pronom] || "se";
+        const refl = rules.refl_pronoms[pronom] || F.conj.refl_defaut;
         return refl + " " + formeBase;
       }
       if (temps === "present" || temps === "subjonctif")
         return _conjuguer_present(inf, pronom) || infinitif;
       if (temps === "imperatif") {
-        let forme = _conjuguer_present(inf, "tu") || infinitif;
-        if (inf.endsWith("er") && forme.endsWith("es")) forme = forme.slice(0, -1);
+        let forme = _conjuguer_present(inf, F.suj.p2s) || infinitif;
+        if (inf.endsWith(F.conj.fin_er) && forme.endsWith(F.conj.tu_es)) forme = forme.slice(0, -1);
         return forme;
       }
       if (temps === "subjonctif_present") {
-        if (pronom === "nous" || pronom === "vous") return conjuguer(inf, pronom, "imparfait");
-        const ils = _conjuguer_present(inf, "ils") || "";
-        if (ils.endsWith("ent")) {
-          const radical = ils.slice(0, -3);
-          return radical + (rules.subjonctif_present_terminaisons[pronom] || "e");
+        if (pronom === F.suj.p1p || pronom === F.suj.p2p) return conjuguer(inf, pronom, "imparfait");
+        const ils = _conjuguer_present(inf, F.suj.p3p) || "";
+        if (ils.endsWith(F.conj.ils_ent)) {
+          const radical = ils.slice(0, -F.conj.ils_ent.length);
+          return radical + (rules.subjonctif_present_terminaisons[pronom] || F.conj.subj_defaut);
         }
         return infinitif;
       }
       let radical;
       if (temps === "futur" || temps === "conditionnel") {
         radical = (rules.R.futur_radicaux && rules.R.futur_radicaux[inf]) ||
-                  (inf.endsWith("e") ? inf.slice(0, -1) : inf);
+                  (inf.endsWith(F.conj.e_muet) ? inf.slice(0, -1) : inf);
       } else {
         radical = _radical_imparfait(inf);
         if (radical === null) return infinitif;
@@ -170,9 +171,9 @@
       const table = temps === "futur" ? "futur_terminaisons" : "imparfait_terminaisons";
       const fin = rules.R[table][pronom];
       if (fin === undefined) return infinitif;
-      if (fin.startsWith("i")) {
-        if (radical.endsWith("ge")) radical = radical.slice(0, -1);
-        else if (radical.endsWith("ç")) radical = radical.slice(0, -1) + "c";
+      if (fin.startsWith(F.conj.fin_i)) {
+        if (radical.endsWith(F.conj.rad_ge)) radical = radical.slice(0, -1);
+        else if (radical.endsWith(F.conj.rad_cedille)) radical = radical.slice(0, -1) + F.conj.rad_c;
       }
       return radical + fin;
     }
@@ -180,33 +181,33 @@
     function _conjuguer_present(inf, pronom) {
       const irreg = rules.R.verbes_irreguliers[inf];
       if (irreg) return irreg[pronom] !== undefined ? irreg[pronom] : null;
-      if (inf.endsWith("er") && inf.length >= 3) {
+      if (inf.endsWith(F.conj.fin_er) && inf.length >= 3) {
         let racine = inf.slice(0, -2);
-        const fin = rules.R.present_1er_groupe[pronom] !== undefined ? rules.R.present_1er_groupe[pronom] : "e";
-        if (fin === "ons") {
-          if (racine.endsWith("g")) return racine + "eons";
-          if (racine.endsWith("c")) return racine.slice(0, -1) + "çons";
+        const fin = rules.R.present_1er_groupe[pronom] !== undefined ? rules.R.present_1er_groupe[pronom] : F.conj.er_defaut;
+        if (fin === F.conj.nous_ons) {
+          if (racine.endsWith(F.conj.rad_g)) return racine + F.conj.g_ons;
+          if (racine.endsWith(F.conj.rad_c)) return racine.slice(0, -1) + F.conj.c_ons;
         }
-        if ((fin === "e" || fin === "es" || fin === "ent") && racine.length >= 2 &&
-            "eé".includes(racine[racine.length - 2]) &&
-            !"aeiouyéèêAEIOUY".includes(racine[racine.length - 1])) {
-          racine = racine.slice(0, -2) + "è" + racine[racine.length - 1];
+        if (F.conj.fins_muettes.includes(fin) && racine.length >= 2 &&
+            F.conj.e_alternant.includes(racine[racine.length - 2]) &&
+            !F.conj.voyelles_radical.includes(racine[racine.length - 1])) {
+          racine = racine.slice(0, -2) + F.conj.e_grave + racine[racine.length - 1];
         }
         return racine + fin;
       }
-      if (inf.endsWith("ir") && inf.length >= 3)
-        return inf.slice(0, -2) + (rules.R.present_2e_groupe[pronom] !== undefined ? rules.R.present_2e_groupe[pronom] : "it");
-      if (inf.endsWith("re") && inf.length >= 4) {
+      if (inf.endsWith(F.conj.fin_ir) && inf.length >= 3)
+        return inf.slice(0, -2) + (rules.R.present_2e_groupe[pronom] !== undefined ? rules.R.present_2e_groupe[pronom] : F.conj.ir_defaut);
+      if (inf.endsWith(F.conj.fin_re) && inf.length >= 4) {
         const racine = inf.slice(0, -2);
-        if (racine.endsWith("d")) return racine + (rules.present_3e_groupe_re[pronom] !== undefined ? rules.present_3e_groupe_re[pronom] : "");
+        if (racine.endsWith(F.conj.rad_d)) return racine + (rules.present_3e_groupe_re[pronom] !== undefined ? rules.present_3e_groupe_re[pronom] : "");
       }
       return null;
     }
 
     function _radical_imparfait(inf) {
-      if (inf === "être") return rules.R.radical_etre_imparfait;
-      const nous = _conjuguer_present(inf, "nous");
-      if (nous && nous.endsWith("ons")) return nous.slice(0, -3);
+      if (inf === F.inf.etre) return rules.R.radical_etre_imparfait;
+      const nous = _conjuguer_present(inf, F.suj.p1p);
+      if (nous && nous.endsWith(F.conj.nous_ons)) return nous.slice(0, -F.conj.nous_ons.length);
       return null;
     }
 
@@ -214,8 +215,8 @@
       const inf = infinitif.toLowerCase();
       const connu = rules.R.participes_passes[inf];
       if (connu) return connu;
-      if (inf.endsWith("er")) return inf.slice(0, -2) + "é";
-      if (inf.endsWith("ir")) return inf.slice(0, -1);
+      if (inf.endsWith(F.conj.fin_er)) return inf.slice(0, -2) + F.conj.pp_er;
+      if (inf.endsWith(F.conj.fin_ir)) return inf.slice(0, -1);
       return inf;
     }
 
@@ -226,11 +227,11 @@
 
     function accorder_pp_etre(pp, pronom) {
       const p = pronom.toLowerCase();
-      const feminin = p === "elle" || p === "elles";
-      const pluriel = ["nous", "vous", "ils", "elles"].includes(p);
+      const feminin = F.suj.feminins.includes(p);
+      const pluriel = F.suj.pluriels.includes(p);
       let base = pp;
-      if (feminin && !base.endsWith("e")) base += "e";
-      if (pluriel && !base.endsWith("s")) base += "s";
+      if (feminin && !base.endsWith(F.accord.feminin)) base += F.accord.feminin;
+      if (pluriel && !base.endsWith(F.accord.pluriel)) base += F.accord.pluriel;
       return base;
     }
 
@@ -247,39 +248,39 @@
       const temps_etat = temps === "passe" ? "imparfait" : temps_simple;
 
       if (rules.avoir_attributs.has(cle)) {
-        let aux = conjuguer("avoir", pronom, temps_etat);
-        if (nie) aux += " pas";
+        let aux = conjuguer(F.inf.avoir, pronom, temps_etat);
+        if (nie) aux += " " + F.neg.pas;
         if (adverbe) return [aux + " " + adverbe + " " + mot, null];
         return [aux + " " + mot, null];
       }
       const categorie = ctx.type_fr[cle];
       if (categorie === "adj" || (Array.isArray(rules.R.adverbes_degre) && rules.R.adverbes_degre.includes(cle))) {
-        let copule = conjuguer("être", pronom, temps_etat);
-        if (nie) copule += " pas";
+        let copule = conjuguer(F.inf.etre, pronom, temps_etat);
+        if (nie) copule += " " + F.neg.pas;
         if (adverbe) return [copule + " " + adverbe + " " + mot, null];
         return [copule + " " + mot, null];
       }
       if (categorie === "verbe") {
         if (temps === "passe") {
-          const aux_inf = rules.R.verbes_aux_etre.includes(cle) ? "être" : "avoir";
+          const aux_inf = rules.R.verbes_aux_etre.includes(cle) ? F.inf.etre : F.inf.avoir;
           const morceaux = [conjuguer(aux_inf, pronom)];
-          if (nie) morceaux.push("pas");
+          if (nie) morceaux.push(F.neg.pas);
           if (adverbe) morceaux.push(adverbe);
           let pp = participe_passe(cle);
-          if (aux_inf === "être") pp = accorder_pp_etre(pp, pronom);
+          if (aux_inf === F.inf.etre) pp = accorder_pp_etre(pp, pronom);
           morceaux.push(pp);
           return [morceaux.join(" "), null];
         }
         const conjugated = conjuguer(mot, pronom, temps);
         if (nie) {
-          if (adverbe) return [conjugated + " pas " + adverbe, null];
-          return [conjugated, "pas"];
+          if (adverbe) return [conjugated + " " + F.neg.pas + " " + adverbe, null];
+          return [conjugated, F.neg.pas];
         } else {
           if (adverbe) return [conjugated + " " + adverbe, null];
           return [conjugated, null];
         }
       }
-      return [mot, nie ? "pas" : null];
+      return [mot, nie ? F.neg.pas : null];
     }
 
     function appliquer_elision(texte) {
@@ -304,18 +305,18 @@
           sortie.push(forme + suiv); i += 2; continue;
         }
         // Possessif féminin devant voyelle : "ma/ta/sa âme" → "mon/ton/son âme".
-        if (suiv && ["ma", "ta", "sa"].includes(bas) && commence_par_voyelle(suiv) && est_mot(suiv) &&
+        if (suiv && has(F.poss.devant_voyelle, bas) && commence_par_voyelle(suiv) && est_mot(suiv) &&
             ["nom", "lieu"].includes(classer_fr(suiv))) {
-          let forme = { ma: "mon", ta: "ton", sa: "son" }[bas];
+          let forme = F.poss.devant_voyelle[bas];
           if (tok[0] === tok[0].toUpperCase() && tok[0] !== tok[0].toLowerCase()) forme = majuscule(forme);
           sortie.push(forme); i += 1; continue;
         }
-        if (suiv && bas === "si" && (suiv.toLowerCase() === "il" || suiv.toLowerCase() === "ils")) {
-          const forme = (tok[0] === tok[0].toUpperCase() && tok[0] !== tok[0].toLowerCase() ? "S'" : "s'") + suiv;
+        if (suiv && bas === F.elision_si.mot && F.elision_si.devant.includes(suiv.toLowerCase())) {
+          const forme = (tok[0] === tok[0].toUpperCase() && tok[0] !== tok[0].toLowerCase() ? majuscule(F.elision_si.forme) : F.elision_si.forme) + suiv;
           sortie.push(forme); i += 2; continue;
         }
         if (sortie.length && bas === last(sortie).toLowerCase() &&
-            ["le", "la", "les", "un", "une", "des"].includes(bas)) { i += 1; continue; }
+            rules.articles_clause.has(bas)) { i += 1; continue; }
         sortie.push(tok); i += 1;
       }
       return sortie.join(" ");
@@ -325,7 +326,7 @@
       if (!mot) return false;
       const p = mot[0].toLowerCase();
       if (rules.voyelles_set.has(p)) return true;
-      if (p === "h") return rules.h_muet_set.has(mot.toLowerCase().replace(/^[.,!?;:»«"']+|[.,!?;:»«"']+$/g, ""));
+      if (p === F.lettre_h) return rules.h_muet_set.has(mot.toLowerCase().replace(/^[.,!?;:»«"']+|[.,!?;:»«"']+$/g, ""));
       return false;
     }
 
@@ -343,10 +344,10 @@
     // Grammar.json > article_postpose_regles). Règle générale, aucun mot nommé.
     function article_postpose(mot) {
       const R = rules.R.article_postpose_regles;
-      if (!R || !R.regles) return "la";
+      if (!R.regles) return R.defaut;
       const w = forme_gp(mot).toLowerCase();
       for (const r of R.regles) if (w.endsWith(r.suf)) return r.art;
-      return R.defaut || "la";
+      return R.defaut;
     }
     // Graphie GEREC : le déterminant postposé s'accroche au nom par un trait
     // d'union (kaz-la, sé timoun-la). Le jeton est émis préfixé d'un "-" ;
@@ -366,10 +367,10 @@
 
     function pluriel_fr(mot) {
       const bas = mot.toLowerCase();
-      if (endsWithAny(bas, ["s", "x", "z"])) return mot;
-      if (endsWithAny(bas, ["eau", "au", "eu"])) return mot + "x";
-      if (bas.endsWith("al") && !rules.pluriel_invariables_al.has(bas)) return mot.slice(0, -2) + "aux";
-      return mot + "s";
+      if (endsWithAny(bas, F.pluriel.invariables)) return mot;
+      if (endsWithAny(bas, F.pluriel.fins_x)) return mot + F.pluriel.x;
+      if (bas.endsWith(F.pluriel.al) && !rules.pluriel_invariables_al.has(bas)) return mot.slice(0, -2) + F.pluriel.aux;
+      return mot + F.pluriel.s;
     }
 
     function accorder_adjectif(adjectif, genre) {
@@ -382,8 +383,8 @@
       for (const suf in rules.accords_adjectifs_suffixes) {
         if (cle.endsWith(suf)) return adjectif.slice(0, -suf.length) + rules.accords_adjectifs_suffixes[suf];
       }
-      if (cle.endsWith("e")) return adjectif;
-      return adjectif + "e";
+      if (cle.endsWith(F.accord.feminin)) return adjectif;
+      return adjectif + F.accord.feminin;
     }
 
     function resoudre_genre(mot, determinant) {
@@ -396,10 +397,10 @@
       const cle = mot.toLowerCase();
       const g = ctx.genre_fr[cle];
       if (g === undefined || g === cible) return null;
-      const base = cle.endsWith("e") ? cle.slice(0, -1) : cle;
+      const base = cle.endsWith(F.accord.feminin) ? cle.slice(0, -1) : cle;
       for (const cand in ctx.genre_fr) {
         if (ctx.genre_fr[cand] !== cible) continue;
-        const candBase = cand.endsWith("e") ? cand.slice(0, -1) : cand;
+        const candBase = cand.endsWith(F.accord.feminin) ? cand.slice(0, -1) : cand;
         // Préfixe commun d'au moins 4 lettres exigé des deux côtés, sinon
         // "village" s'apparie avec "vie" (préfixe "vi" trop court).
         if (base.length < 4 || candBase.length < 4) continue;
@@ -450,26 +451,24 @@
         if (cle.endsWith(fin)) {
           const racine = cle.slice(0, cle.length - fin.length);
           if (racine.length < 2) continue;
-          for (const inf of [racine + "er", racine + "ger", racine + "cer", racine + "re"]) {
+          for (const inf of F.conj.infinitifs_1er.map((s) => racine + s)) {
             const r = verifier(inf); if (r) return r;
           }
         }
       }
-      if (cle.endsWith("i") || cle.endsWith("u")) { const r = verifier(cle + "r"); if (r) return r; }
-      if (cle.endsWith("ds")) { const r = verifier(cle.slice(0, -1) + "re"); if (r) return r; }
-      if (cle.endsWith("d")) { const r = verifier(cle + "re"); if (r) return r; }
-      if (cle.endsWith("ent") && cle.length > 5) {
-        const racine = cle.slice(0, -3);
-        for (const inf of [racine + "re", racine + "dre"]) { const r = verifier(inf); if (r) return r; }
+      if (endsWithAny(cle, F.conj.pp_voyelle)) { const r = verifier(cle + F.conj.r_infinitif); if (r) return r; }
+      if (cle.endsWith(F.conj.fin_ds)) { const r = verifier(cle.slice(0, -1) + F.conj.fin_re); if (r) return r; }
+      if (cle.endsWith(F.conj.rad_d)) { const r = verifier(cle + F.conj.fin_re); if (r) return r; }
+      if (cle.endsWith(F.conj.ils_ent) && cle.length > 5) {
+        const racine = cle.slice(0, -F.conj.ils_ent.length);
+        for (const inf of F.conj.infinitifs_ent.map((s) => racine + s)) { const r = verifier(inf); if (r) return r; }
       }
-      const FE = ["erons","eront","erez","eras","erai","erait","erais","eraient","era"];
-      const FI = ["irons","iront","irez","iras","irai","irait","irais","iraient","ira"];
-      const FR = ["rons","ront","rez","ras","rai","rait","rais","raient","ra"];
-      for (const fin of FE) if (cle.endsWith(fin) && cle.length - fin.length >= 2) { const r = verifier(cle.slice(0, -fin.length) + "er"); if (r) return r; }
-      for (const fin of FI) if (cle.endsWith(fin) && cle.length - fin.length >= 2) { const r = verifier(cle.slice(0, -fin.length) + "ir"); if (r) return r; }
+      const FE = F.conj.futur_er, FI = F.conj.futur_ir, FR = F.conj.futur_re;
+      for (const fin of FE) if (cle.endsWith(fin) && cle.length - fin.length >= 2) { const r = verifier(cle.slice(0, -fin.length) + F.conj.fin_er); if (r) return r; }
+      for (const fin of FI) if (cle.endsWith(fin) && cle.length - fin.length >= 2) { const r = verifier(cle.slice(0, -fin.length) + F.conj.fin_ir); if (r) return r; }
       for (const fin of FR) if (cle.endsWith(fin) && cle.length - fin.length >= 2) {
         const racine = cle.slice(0, -fin.length);
-        for (const suf of ["ir", "er", "re"]) { const r = verifier(racine + suf); if (r) return r; }
+        for (const suf of F.conj.infinitifs_futur) { const r = verifier(racine + suf); if (r) return r; }
       }
       return null;
     }
@@ -480,7 +479,7 @@
       if (trouver_infinitif(word) !== null) return "verbe";
       const t = ctx.type_fr[cle];
       if (t !== undefined) return t;
-      if (cle.endsWith("s") && ["nom", "lieu"].includes(ctx.type_fr[cle.slice(0, -1)])) return ctx.type_fr[cle.slice(0, -1)];
+      if (cle.endsWith(F.pluriel.s) && ["nom", "lieu"].includes(ctx.type_fr[cle.slice(0, -1)])) return ctx.type_fr[cle.slice(0, -1)];
       return "inconnu";
     }
 
@@ -499,9 +498,7 @@
           if (base && ctx.type_fr[base] === "adj") return true;
         }
       }
-      if (cle.endsWith("ées")) { if (ctx.type_fr[cle.slice(0, -3) + "é"] === "adj") return true; }
-      if (cle.endsWith("ée")) { if (ctx.type_fr[cle.slice(0, -2) + "é"] === "adj") return true; }
-      if (cle.endsWith("és")) { if (ctx.type_fr[cle.slice(0, -1)] === "adj") return true; }
+      for (const [fin, base] of F.accord.participes_adjectifs) if (cle.endsWith(fin) && ctx.type_fr[cle.slice(0, -fin.length) + base] === "adj") return true;
       return false;
     }
 
@@ -553,10 +550,13 @@
     }
 
     function charger(bloc) {
-      const arr = (k) => bloc[k] || [];
+      const arr = (k) => bloc[k] || []; rules.normalisation = bloc.normalisation;
       rules.substitutions_fr = (bloc.substitutions_fr || []).map((s) => [new RegExp(s.re, s.flags || "gi"), s.rep]);
-      rules.gouverneurs_infinitif = new Set(bloc.gouverneurs_infinitif_gp || ["pou", "pour"]);
-      rules.mot_collectif_monde = bloc.mot_collectif_monde || "monde";
+      rules.substitutions_gp = (bloc.substitutions_gp || []).map((s) => [new RegExp(s.re, s.flags || "gi"), s.rep]);
+      rules.verbes_selon_objet_fr = (bloc.verbes_selon_objet_fr || []).map((r) => ({ formes: r.formes,
+        re: new RegExp("\\b(" + Object.keys(r.formes).join("|") + ")\\b((?:-[\\p{L}]+)?)(?=(?:[\\s'’]+[\\p{L}\\-]+){0," + r.ecart + "}?[\\s'’]+(?:" + r.objets.join("|") + ")\\b)", "giu") }));
+      rules.gouverneurs_infinitif = new Set(arr("gouverneurs_infinitif_gp"));
+      rules.mot_collectif_monde = bloc.mot_collectif_monde;
       rules.suffixes_feminins = arr("suffixes_feminins").slice();
       rules.fins_participe = arr("fins_participe").slice();
       rules.suffixes_adjectifs = arr("suffixes_adjectifs").slice();
@@ -596,7 +596,10 @@
       rules.noms_sans_article_fr = new Set(arr("noms_sans_article_fr"));
 
       // Prototype nul : rend `has` (lecture directe) exact et rapide.
-      rules.R = sansPrototype(bloc);
+      rules.R = sansPrototype(bloc); F = rules.R.fr; G = rules.R.gp;
+      rules.re_pluriel_final = new RegExp(F.pluriel.s + "+$"); rules.re_pluriel_s = new RegExp(F.pluriel.s + "$");
+      rules.re_ne_elide = new RegExp("^" + F.neg.n_elide + "['’]");
+      rules.re_jetons = "(?:[" + F.elision.lettres + "]|" + F.elision.groupes.join("|") + ")'|[\\p{L}\\p{N}_]+(?:[-'][\\p{L}\\p{N}_]+)*|[^\\s\\p{L}\\p{N}_]";
 
       const ens = bloc.ensembles_lexicaux || {};
       rules.pluriel_invariables_al = new Set(ens.pluriel_invariables_al || []);
@@ -609,32 +612,22 @@
       rules.materiaux_fr = new Set(ens.materiaux_fr || []);
       rules.articles_definis_fr = new Set(ens.articles_definis_fr || []);
       rules.pronoms_sujet_fr = new Set(ens.pronoms_sujet_fr || []);
-      // Listes externalisées : Grammar.json prioritaire, défaut de sécurité si clé absente.
-      rules.stop_np = new Set(ens.stop_groupe_nominal || [
-        "et","ou","mais","que","car","donc","or","ni",
-        "à","de","dans","sur","sous","pour","avec","sans","vers","chez","en","par","entre","dès","depuis","pendant","malgré","selon","dont","où"
-      ]);
-      rules.prepositions_contexte = new Set(ens.prepositions_contexte || [
-        "sur","dans","avec","sous","pour","sans","vers","chez","à","de","derrière","devant","près"
-      ]);
-      rules.nombres_fr = new Set(ens.nombres_fr || [
-        "dix","vingt","trente","quarante","cinquante","soixante","cent","mille","deux","trois","quatre","cinq","six","sept","huit","neuf","onze","douze","treize","quatorze","quinze","seize"
-      ]);
-      rules.articles_clause = new Set(ens.articles_clause || ["le","la","les","un","une","des"]);
-      rules.coordinateurs = new Set(ens.coordinateurs || ["et","ou","mais"]);
+      // Listes de Grammar.json > ensembles_lexicaux (aucune valeur par défaut dans le code).
+      rules.stop_np = new Set(ens.stop_groupe_nominal || []);
+      rules.prepositions_contexte = new Set(ens.prepositions_contexte || []);
+      rules.nombres_fr = new Set(ens.nombres_fr || []);
+      rules.articles_clause = new Set(ens.articles_clause || []);
+      rules.coordinateurs = new Set(ens.coordinateurs || []);
       rules.conjonctions_gp = new Set(ens.conjonctions_gp || []);
-      rules.mots_negatifs_fr = new Set(ens.mots_negatifs_fr || ["rien","personne","jamais","aucun","aucune","nulle","nul","guère"]);
-      rules.adverbes_quantite_fr = new Set(ens.adverbes_quantite_fr || ["beaucoup","peu","trop","assez","moins","tant","autant","plein"]);
-      rules.prepositions_locatives = new Set(ens.prepositions_locatives || ["sur","sous","dans","derrière","devant","entre","chez"]);
+      rules.mots_negatifs_fr = new Set(ens.mots_negatifs_fr || []);
+      rules.adverbes_quantite_fr = new Set(ens.adverbes_quantite_fr || []);
+      rules.prepositions_locatives = new Set(ens.prepositions_locatives || []);
       // Verbes de PROVENANCE : leur complément de lieu prend "de/d'" (origine),
       // pas "à" (destination) — "je viens DE France", pas "à France".
-      rules.verbes_origine_lieu = new Set(ens.verbes_origine_lieu || ["venir","revenir","sortir","provenir"]);
-      rules.noms_pluriels_fr = new Set(ens.noms_pluriels_fr || ["gens", "personnes"]);
-      rules.noms_masse_fr = new Set(ens.noms_masse_fr || [
-        "eau","argent","pain","riz","lait","sang","sel","sucre","farine","beurre","miel",
-        "café","thé","jus","huile","viande","air","sable","pluie","vent","musique",
-        "courage","force","chance","patience","respect","soleil","chaleur","fumée","boue","herbe"
-      ]);
+      rules.verbes_origine_lieu = new Set(ens.verbes_origine_lieu || []);
+      rules.noms_pluriels_fr = new Set(ens.noms_pluriels_fr || []);
+      rules.noms_masse_fr = new Set(ens.noms_masse_fr || []);
+      rules.noms_objets_homographes_gp = new Set(ens.noms_objets_homographes_gp || []);
       rules.contractions_fr = new Map();
       for (const trip of (bloc.contractions_fr || [])) rules.contractions_fr.set(trip[0] + "\u0000" + trip[1], trip[2]);
 
@@ -648,16 +641,16 @@
       rules.etre_formes_gp_set = new Set(bloc.etre_formes_gp || []);
 
       const R = rules.R;
-      for (const v of Object.values(R.verbes_irreguliers["être"])) rules.etre_formes.add(v);
-      for (const p in R.imparfait_terminaisons) rules.etre_imparfait.add(conjuguer("être", p, "imparfait"));
+      for (const v of Object.values(R.verbes_irreguliers[F.inf.etre])) rules.etre_formes.add(v);
+      for (const p in R.imparfait_terminaisons) rules.etre_imparfait.add(conjuguer(F.inf.etre, p, "imparfait"));
       for (const v of (R.etre_futur || [])) rules.etre_futur.add(v);
       for (const v of (R.etre_conditionnel || [])) rules.etre_conditionnel.add(v);
-      for (const v of Object.values(R.verbes_irreguliers["avoir"])) rules.avoir_formes.add(v);
+      for (const v of Object.values(R.verbes_irreguliers[F.inf.avoir])) rules.avoir_formes.add(v);
       // Symétrie avec être : les formes d'avoir aux temps non-présents doivent
       // aussi être reconnues (sinon "j'avais faim" laisse "avais" non traduit).
-      for (const p in R.imparfait_terminaisons) rules.avoir_imparfait.add(conjuguer("avoir", p, "imparfait"));
-      for (const p in (R.futur_terminaisons || {})) rules.avoir_futur.add(conjuguer("avoir", p, "futur"));
-      for (const p in (R.imparfait_terminaisons)) rules.avoir_conditionnel.add(conjuguer("avoir", p, "conditionnel"));
+      for (const p in R.imparfait_terminaisons) rules.avoir_imparfait.add(conjuguer(F.inf.avoir, p, "imparfait"));
+      for (const p in (R.futur_terminaisons || {})) rules.avoir_futur.add(conjuguer(F.inf.avoir, p, "futur"));
+      for (const p in (R.imparfait_terminaisons)) rules.avoir_conditionnel.add(conjuguer(F.inf.avoir, p, "conditionnel"));
       for (const v of Object.values(R.pronoms_sujets)) rules.pronoms_gp.add(v);
       for (const k in R.pronoms_creole_francais) rules.pronoms_gp.add(k);
       for (const m of [R.marqueur_present, R.marqueur_passe, R.marqueur_futur, R.marqueur_futur_proche]) rules.marqueurs.add(m);
@@ -670,7 +663,7 @@
       for (const inf in R.participes_passes) rules.participes_inverse[R.participes_passes[inf]] = inf;
       for (const inf in R.participes_passes) {
         const p = R.participes_passes[inf];
-        for (const d of [p + "e", p + "s", p + "es"]) if (!has(rules.participes_inverse, d)) rules.participes_inverse[d] = inf;
+        for (const d of F.accord.participe_suffixes.map((s) => p + s)) if (!has(rules.participes_inverse, d)) rules.participes_inverse[d] = inf;
         const norm = normalize_token(p);
         // Un participe sans accent ne doit jamais éclipser un mot grammatical
         // distinct déjà établi ("né" → "ne" collisionnait avec la négation "ne",
@@ -682,15 +675,15 @@
         const collisionMotGrammatical = rules.mots_fonctionnels_fr.has(norm) ||
           rules.determinants_fr.has(norm) || (rules.R.articles_supprimes || []).includes(norm);
         if (norm !== p && !has(rules.participes_inverse, norm) && !collisionMotGrammatical) rules.participes_inverse[norm] = inf;
-        for (const d of [norm + "e", norm + "s", norm + "es"]) if (!has(rules.participes_inverse, d)) rules.participes_inverse[d] = inf;
+        for (const d of F.accord.participe_suffixes.map((s) => norm + s)) if (!has(rules.participes_inverse, d)) rules.participes_inverse[d] = inf;
       }
       for (const cle in R.pronoms_creole_francais) {
         const fr = R.pronoms_creole_francais[cle];
         rules.toniques_gp[cle] = rules.tonique_de_sujet[fr] !== undefined ? rules.tonique_de_sujet[fr] : fr;
       }
-      for (const f of rules.aller_imparfait) if (!has(rules.inverse_irreguliers, f)) rules.inverse_irreguliers[f] = ["aller", "imparfait"];
+      for (const f of rules.aller_imparfait) if (!has(rules.inverse_irreguliers, f)) rules.inverse_irreguliers[f] = [F.inf.aller, "imparfait"];
       for (const inf in R.verbes_irreguliers) {
-        if (inf === "être" || inf === "avoir" || inf === "aller") continue;
+        if (F.inf.auxiliaires.includes(inf)) continue;
         const formes = R.verbes_irreguliers[inf];
         for (const temps of ["present", "imparfait", "futur", "conditionnel"]) {
           for (const pronom in R.imparfait_terminaisons) {
@@ -699,9 +692,9 @@
           }
         }
         const ils = formes.ils || "";
-        if (ils.endsWith("ent")) {
-          const radical = ils.slice(0, -3);
-          for (const fin of ["e", "es", "ent"]) if (!has(rules.inverse_irreguliers, radical + fin)) rules.inverse_irreguliers[radical + fin] = [inf, "subjonctif"];
+        if (ils.endsWith(F.conj.ils_ent)) {
+          const radical = ils.slice(0, -F.conj.ils_ent.length);
+          for (const fin of F.conj.fins_muettes) if (!has(rules.inverse_irreguliers, radical + fin)) rules.inverse_irreguliers[radical + fin] = [inf, "subjonctif"];
         }
       }
       const futRad = R.futur_radicaux || {};
@@ -739,6 +732,7 @@
         ...Object.keys(R.possessifs), ...R.demonstratifs,
         ...rules.determinants_restituer_exclus, ...Object.keys(R.interrogatifs),
       ]);
+      rules.est = conjuguer(F.inf.etre, F.suj.p3s);
       rules.que_sujets = new Set(Object.keys(rules.tonique_de_sujet));
       rules.que_declencheurs = new Set(rules.faut_declencheurs_que);
       for (const verbe of rules.verbes_declencheurs_que)
@@ -768,7 +762,7 @@
           // "dépêche-toi", "grand-mère") n'est pas une inversion : on le garde
           // intact pour que le lookup dico le traduise tel quel.
           if (has(ctx.index_fr, tok.toLowerCase())) { sortie.push(tok); continue; }
-          const parts = tok.split("-").filter((p) => p && p.toLowerCase() !== "t");
+          const parts = tok.split("-").filter((p) => p && p.toLowerCase() !== F.inversion_t);
           if (parts.length === 2) {
             if (rules.inversion_sujets.has(parts[1].toLowerCase())) { sortie.push(parts[1], parts[0]); continue; }
             if (rules.inversion_objets.has(parts[1].toLowerCase())) { sortie.push(parts[0], parts[1]); continue; }
@@ -832,7 +826,7 @@
       // forme française en "-e" (chante, travaille) est un PRÉSENT, pas un
       // participe ; les vrais participes ("-é/-ée") sont déjà captés ci-dessus.
       const norm = normalize_token(cle);
-      if (norm && norm !== cle && !cle.endsWith("e") && (norm.endsWith("i") || norm.endsWith("u") || norm.endsWith("is"))) {
+      if (norm && norm !== cle && !cle.endsWith(F.conj.e_muet) && endsWithAny(norm, rules.autres_fins_participe)) {
         const i2 = trouver_infinitif(token);
         if (i2 && ctx.type_fr[i2] === "verbe") return i2;
       }
@@ -848,7 +842,7 @@
       for (const clitique of clitiques) {
         if (cible && clitique === cible) {
           const vl = verb_gp.toLowerCase(); let lastc = "";
-          for (let z = vl.length - 1; z >= 0; z--) { const c = vl[z]; if (/[a-zà-ÿ]/i.test(c) || voyelles_gp.includes(c)) { lastc = c; break; } }
+          for (let z = vl.length - 1; z >= 0; z--) { const c = vl[z]; if (/\p{L}/u.test(c) || voyelles_gp.includes(c)) { lastc = c; break; } }
           processed.push(voyelles_gp.includes(lastc) ? (regle.apres_voyelle || clitique) : (regle.apres_consonne || clitique));
         } else processed.push(clitique);
       }
@@ -870,12 +864,12 @@
         if (!est_mot(tok)) { k++; continue; }
         const bas = tok.toLowerCase();
         if (rules.R.negation_pas.includes(bas)) {
-          if (k + 1 < n && tokens[k + 1].toLowerCase() === "encore") { pas_encore = true; k += 2; }
+          if (k + 1 < n && tokens[k + 1].toLowerCase() === F.adv.encore) { pas_encore = true; k += 2; }
           else k++;
           continue;
         }
-        if (bas === "déjà") { marqueur_ja = true; k++; continue; }
-        if (bas === "encore") { pas_encore = nie; k++; continue; }
+        if (bas === F.adv.deja) { marqueur_ja = true; k++; continue; }
+        if (bas === F.adv.encore) { pas_encore = nie; k++; continue; }
         break;
       }
       if (k >= n || participe(tokens[k]) === null) return null;
@@ -888,8 +882,8 @@
     }
 
     function traiter_etre(tok, cle, tokens, j, n, sortie, deja) {
-      if (j + 3 < n && tokens[j + 1].toLowerCase() === "en" && tokens[j + 2].toLowerCase() === "train" &&
-          (tokens[j + 3].toLowerCase() === "de" || tokens[j + 3].toLowerCase() === "d")) {
+      if (j + 3 < n && tokens[j + 1].toLowerCase() === F.progressif[0] && tokens[j + 2].toLowerCase() === F.progressif[1] &&
+          F.prep.de_formes.includes(tokens[j + 3].toLowerCase())) {
         const k = j + 4;
         if (k < n && est_verbe(tokens[k])) {
           if (rules.etre_imparfait.has(cle)) { sortie.push(rules.R.marqueur_passe); deja.push(true); }
@@ -898,15 +892,15 @@
         }
       }
       const suiv = j + 1 < n ? tokens[j + 1] : null;
-      if (suiv === null || !est_mot(suiv)) { sortie.push("yé"); deja.push(true); return j + 1; }
-      const locatifs = rules.R.locatifs_fr || ["là", "ici"];
+      if (suiv === null || !est_mot(suiv)) { sortie.push(G.copule_finale); deja.push(true); return j + 1; }
+      const locatifs = rules.R.locatifs_fr;
       let kloc = j + 1;
-      while (kloc < n && ["plus", "jamais", "encore", "déjà"].includes(tokens[kloc].toLowerCase())) kloc++;
+      while (kloc < n && F.adv.apres_etre.includes(tokens[kloc].toLowerCase())) kloc++;
       // Copule + locatif (là/ici) OU préposition locative (sur/sous/dans…) : le
       // créole n'a pas de copule ici ("le livre EST sur la table" = "liv la asou
       // tab la"). On garde juste le marqueur de temps.
       if (kloc < n && (locatifs.includes(tokens[kloc].toLowerCase()) || rules.prepositions_locatives.has(tokens[kloc].toLowerCase()) ||
-          tokens[kloc].toLowerCase() === "en")) {
+          tokens[kloc].toLowerCase() === F.prep.en)) {
         if (rules.etre_imparfait.has(cle)) { sortie.push(rules.R.marqueur_passe); deja.push(true); }
         else if (rules.etre_futur.has(cle)) { sortie.push(rules.R.marqueur_futur); deja.push(true); }
         else if (rules.etre_conditionnel.has(cle)) { sortie.push(rules.R.marqueur_passe); deja.push(true); sortie.push(rules.R.marqueur_futur); deja.push(true); }
@@ -921,7 +915,7 @@
         }
         // Passé réfléchi ("je ME SUIS levé", "elle S'EST cassé…") : l'auxiliaire
         // disparaît, le participe devient le verbe au passé (nu en créole).
-        const reflAvant = j > 0 && ["me", "m", "te", "t", "se", "s", "nou", "nous", "vous"].includes(tokens[j - 1].toLowerCase());
+        const reflAvant = j > 0 && F.clit.devant_auxiliaire_etre.includes(tokens[j - 1].toLowerCase());
         if (inf !== null && (rules.R.verbes_aux_etre.includes(inf) || reflAvant)) {
           const gp = ctx.index_fr[inf];
           if (gp) { sortie.push(reporter_casse(suiv, gp)); deja.push(true); return j + 2; }
@@ -968,12 +962,12 @@
     function traiter_pronom(tok, cle, tokens, i, n, sortie, deja) {
       let j = i + 1, nie = false;
       while (j < n && rules.R.negation_ne.includes(tokens[j].toLowerCase())) { nie = true; j++; }
-      if (cle === "il" && j + 1 < n && tokens[j].toLowerCase() === "y") {
+      if (cle === F.suj.p3s && j + 1 < n && tokens[j].toLowerCase() === F.clit.y) {
         const av = tokens[j + 1].toLowerCase();
         // "il y a / avait / aura / aurait" → ni, té ni, ké ni, té ké ni.
-        const avImp = ["avait", "avaient"].includes(av);
-        const avFut = ["aura", "auront"].includes(av);
-        const avCond = ["aurait", "auraient"].includes(av);
+        const avImp = F.il_y_a.imparfait.includes(av);
+        const avFut = F.il_y_a.futur.includes(av);
+        const avCond = F.il_y_a.conditionnel.includes(av);
         if (rules.avoir_formes.has(av) || avImp || avFut || avCond) {
           if (nie) { sortie.push(rules.R.marqueur_negation); deja.push(true); }
           if (avImp || avCond) { sortie.push(rules.R.marqueur_passe); deja.push(true); }
@@ -982,21 +976,21 @@
           return j + 2;
         }
       }
-      if (cle === "il" && j < n && tokens[j].toLowerCase() === "faut") {
+      if (cle === F.suj.p3s && j < n && tokens[j].toLowerCase() === F.falloir.present) {
         sortie.push(reporter_casse(tok, rules.R.traductions_fr_gp.il_faut)); deja.push(true);
         return j + 1;
       }
       // « je suis / je serai… » : devant une forme de être, le pronom est « mwen » (« Mwen sé… »), jamais « an ».
       const devantEtre = j < n && (rules.etre_formes.has(tokens[j].toLowerCase()) || rules.etre_imparfait.has(tokens[j].toLowerCase()) ||
         rules.etre_futur.has(tokens[j].toLowerCase()) || rules.etre_conditionnel.has(tokens[j].toLowerCase()));
-      const pronomSujet = (cle === "je" || cle === "j") && devantEtre ? "mwen" : rules.R.pronoms_sujets[cle];
+      const pronomSujet = F.suj.p1s_formes.includes(cle) && devantEtre ? G.suj.p1s_plein : rules.R.pronoms_sujets[cle];
       sortie.push(reporter_casse(tok, pronomSujet)); deja.push(true);
       if (nie) { sortie.push(rules.R.marqueur_negation); deja.push(true); }
       const clitiques = [], objets = rules.R.clitiques_objets;
-      while (j < n && (has(objets, tokens[j].toLowerCase()) || tokens[j].toLowerCase() === "s")) {
+      while (j < n && (has(objets, tokens[j].toLowerCase()) || tokens[j].toLowerCase() === F.clit.se_elide)) {
         const bas = tokens[j].toLowerCase();
-        if (bas === "se" || bas === "s") { j++; continue; }
-        if ((bas === "me" && (cle === "je" || cle === "j")) || (bas === "te" && cle === "tu")) {
+        if (F.clit.reflechis.includes(bas)) { j++; continue; }
+        if ((bas === F.clit.me && F.suj.p1s_formes.includes(cle)) || (bas === F.clit.te && cle === F.suj.p2s)) {
           let k2 = j + 1; while (k2 < n && !est_mot(tokens[k2])) k2++;
           const apres2 = k2 < n ? tokens[k2] : null;
           if (apres2 !== null && est_verbe(apres2)) { j++; continue; }
@@ -1023,12 +1017,12 @@
         }
         if (rules.aller_imparfait.has(cle_suiv)) {
           for (const m of marqueurs_aspect("imparfait")) { sortie.push(m); deja.push(true); }
-          sortie.push(ctx.index_fr.aller || "alé"); deja.push(true);
+          sortie.push(ctx.index_fr[F.inf.aller]); deja.push(true);
           return j + 1;
         }
         return j;
       }
-      if (rules.venir_present.has(cle_suiv) && j + 2 < n && (tokens[j + 1].toLowerCase() === "de" || tokens[j + 1].toLowerCase() === "d") && est_verbe(tokens[j + 2])) {
+      if (rules.venir_present.has(cle_suiv) && j + 2 < n && F.prep.de_formes.includes(tokens[j + 1].toLowerCase()) && est_verbe(tokens[j + 2])) {
         sortie.push(rules.R.traductions_fr_gp.venir_de); deja.push(true);
         return j + 2;
       }
@@ -1096,19 +1090,19 @@
       if (j >= n) return null;
       const suiv = tokens[j];
       if (suiv.toLowerCase() === rules.mot_collectif_monde || est_verbe(suiv) || trouver_infinitif(suiv) !== null) return null;
-      if (cle === "les") {
+      if (cle === F.art.pluriel) {
         // Pluriel défini créole = "sé …-la" (marqueur "sé" antéposé + "la"
         // postposé, invariable). Sans le "sé", le groupe se relisait au
         // singulier ("l'enfant" au lieu de "les enfants").
-        e.emettre(reporter_casse(tokens[i], rules.R.traductions_fr_gp.les_pluriel || "sé"));
-        e.state.post_la = "la"; e.state.post_la_min = e.sortie.length;
+        e.emettre(reporter_casse(tokens[i], rules.R.traductions_fr_gp.les_pluriel));
+        e.state.post_la = rules.R.article_postpose_regles.defaut; e.state.post_la_min = e.sortie.length;
         e.state.post_la_pluriel = true; e.state.pluriel = true; return i + 1;
       }
       // Partitif "de la / de l'" + nom de masse ("de l'eau", "de la farine") :
       // nom NU en créole ("dlo", "farin") — pas d'article postposé.
       const prevTok = i > 0 ? tokens[i - 1].toLowerCase() : null;
-      if ((prevTok === "de" || prevTok === "d") && rules.noms_masse_fr.has(suiv.toLowerCase())) return i + 1;
-      e.state.post_la = "la"; e.state.post_la_min = e.sortie.length;
+      if (F.prep.de_formes.includes(prevTok) && rules.noms_masse_fr.has(suiv.toLowerCase())) return i + 1;
+      e.state.post_la = rules.R.article_postpose_regles.defaut; e.state.post_la_min = e.sortie.length;
       return i + 1;
     });
     // Devant un NOM DE LIEU, le créole ne met pas de préposition : "An k'ay
@@ -1118,7 +1112,7 @@
     // type "lieu" de l'entrée du dico — donc extensible sans toucher au JS.
     HF.push(function hf_preposition_lieu(e) {
       const { tokens, i, n } = e; const cle = tokens[i].toLowerCase();
-      const preps = rules.R.prepositions_lieu_supprimees || ["à", "au", "aux"];
+      const preps = rules.R.prepositions_lieu_supprimees;
       if (!preps.includes(cle)) return null;
       let j = i + 1; while (j < n && !est_mot(tokens[j])) j++;
       if (j >= n) return null;
@@ -1128,27 +1122,27 @@
     HF.push(function hf_articles_et_est_ce(e) {
       const { tokens, i, n } = e; const cle = tokens[i].toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1].toLowerCase() : null;
-      if (["le", "la", "les", "du", "de", "d", "d'"].includes(cle) && suiv === rules.mot_collectif_monde) return null;
+      if (F.art.devant_collectif.includes(cle) && suiv === rules.mot_collectif_monde) return null;
       if (rules.R.articles_supprimes.includes(cle)) {
-        if (cle === "à" || cle === "en" || cle === "au") {
+        if (F.prep.devant_lieu.includes(cle)) {
           if (i + 1 < n && tokens[i + 1][0] === tokens[i + 1][0].toUpperCase() && tokens[i + 1][0] !== tokens[i + 1][0].toLowerCase()) return null;
           let j = i + 1; while (j < n && rules.R.articles_supprimes.includes(tokens[j].toLowerCase())) j++;
           if (j < n && est_mot(tokens[j]) && ctx.type_fr[tokens[j].toLowerCase()] === "lieu") return null;
         }
         return i + 1;
       }
-      if (cle === "est-ce" && (suiv === "que" || suiv === "qu" || suiv === "qui")) return i + 2;
+      if (cle === F.interro.est_ce && F.interro.est_ce_suite.includes(suiv)) return i + 2;
       return null;
     });
     HF.push(function hf_cest(e) {
       const { tokens, i, n } = e; const tok = tokens[i], cle = tok.toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1].toLowerCase() : null;
-      if (cle === "c" && suiv && rules.etre_formes.has(suiv)) {
+      if (cle === F.dem.c_elide && suiv && rules.etre_formes.has(suiv)) {
         const apres = i + 2 < n ? tokens[i + 2] : null;
         const trad = rules.R.traductions_fr_gp;
         // « c'est bizarre », « c'est très beau » : prédicat adjectival, sans copule → « sa » + adjectif.
         let kAdj = i + 2; while (kAdj < n && rules.R.adverbes_degre.includes(tokens[kAdj].toLowerCase())) kAdj++;
-        if (kAdj < n && est_adjectif(tokens[kAdj])) { e.emettre(reporter_casse(tok, "sa")); return i + 2; }
+        if (kAdj < n && est_adjectif(tokens[kAdj])) { e.emettre(reporter_casse(tok, G.cela)); return i + 2; }
         const isFin = apres === null || !est_mot(apres);
         e.emettre(reporter_casse(tok, isFin ? trad.c_est_fin : trad.c_est_suite));
         return i + 2;
@@ -1157,27 +1151,27 @@
     });
     HF.push(function hf_interrogatifs(e) {
       const { tokens, i, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
-      if (cle === "que" || cle === "qu" || cle === "quoi") {
-        if (cle === "quoi" || !sortie.length) e.emettre(reporter_casse(tok, rules.R.interrogatifs.quoi));
-        else if (i > 0 && ctx.type_fr[tokens[i - 1].toLowerCase()] === "adj") e.emettre("ki");
+      if (F.interro.que_formes.includes(cle)) {
+        if (cle === F.interro.quoi || !sortie.length) e.emettre(reporter_casse(tok, rules.R.interrogatifs[F.interro.quoi]));
+        else if (i > 0 && ctx.type_fr[tokens[i - 1].toLowerCase()] === "adj") e.emettre(G.rel);
         return i + 1;
       }
-      if (cle === "qui") { e.emettre(reporter_casse(tok, !sortie.length ? rules.R.interrogatifs.qui : "ki")); return i + 1; }
-      if (cle === "quand") {
+      if (cle === F.interro.qui) { e.emettre(reporter_casse(tok, !sortie.length ? rules.R.interrogatifs[F.interro.qui] : G.rel)); return i + 1; }
+      if (cle === F.interro.quand) {
         const question = tokens.slice(i + 1).includes("?");
-        e.emettre(reporter_casse(tok, question ? rules.R.interrogatifs.quand : "lè"));
+        e.emettre(reporter_casse(tok, question ? rules.R.interrogatifs[F.interro.quand] : G.quand));
         return i + 1;
       }
-      if (cle === "si") { e.emettre(reporter_casse(tok, rules.R.traductions_fr_gp.si)); return i + 1; }
+      if (cle === F.interro.si) { e.emettre(reporter_casse(tok, rules.R.traductions_fr_gp.si)); return i + 1; }
       if (has(rules.R.interrogatifs, cle)) { e.emettre(reporter_casse(tok, rules.R.interrogatifs[cle])); return i + 1; }
       return null;
     });
     HF.push(function hf_pronoms_toniques(e) {
       const { tokens, i, n, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
-      if (i > 0 && tokens[i - 1].toLowerCase() === "chez") return null;
+      if (i > 0 && tokens[i - 1].toLowerCase() === F.prep.chez) return null;
       if (Rin("pronoms_toniques", cle) && (i + 1 >= n || !est_verbe(tokens[i + 1]))) {
         const comp = rules.R.comp_remplacement;
-        if (sortie.length && last(sortie) === "ki" && has(comp, cle)) e.emettre(reporter_casse(tok, comp[cle]));
+        if (sortie.length && last(sortie) === G.rel && has(comp, cle)) e.emettre(reporter_casse(tok, comp[cle]));
         else e.emettre(reporter_casse(tok, rules.R.pronoms_toniques[cle]));
         return i + 1;
       }
@@ -1213,8 +1207,8 @@
       // « ces femmes » → « sé madanm-lasa » (marqueur de pluriel « sé » antéposé,
       // comme pour « les » — APiCS 50 : « Sé madanm-lasa bèl »).
       const estDem = rules.R.demonstratifs.includes(cle) && group.length > 0;
-      const pluDem = estDem && cle === "ces";
-      if (pluDem) e.emettre(reporter_casse(tokens[i], rules.R.traductions_fr_gp.les_pluriel || "sé"));
+      const pluDem = estDem && cle === F.dem.pluriel;
+      if (pluDem) e.emettre(reporter_casse(tokens[i], rules.R.traductions_fr_gp.les_pluriel));
       group.forEach((t, gi) => e.emettre(gi === 0 && !pluDem ? reporter_casse(tokens[i], t) : t, false));
       if (pluDem) e.state.pluriel = true;
       e.emettre(group.length ? (estDem ? marque_postposee(pp) : pp) : reporter_casse(tokens[i], pp));
@@ -1239,10 +1233,10 @@
         // n'est-ce pas → pa vré (absorbe les 3 tokens)
         const { n } = e;
         let j = i + 1; while (j < n && !est_mot(tokens[j])) j++;
-        if (j < n && tokens[j].toLowerCase() === "est-ce") {
+        if (j < n && tokens[j].toLowerCase() === F.interro.est_ce) {
           let k = j + 1; while (k < n && !est_mot(tokens[k])) k++;
-          if (k < n && tokens[k].toLowerCase() === "pas") {
-            e.emettre(reporter_casse(tok, "pa vré")); return k + 1;
+          if (k < n && tokens[k].toLowerCase() === F.neg.pas) {
+            e.emettre(reporter_casse(tok, rules.R.traductions_fr_gp.n_est_ce_pas)); return k + 1;
           }
         }
         e.emettre(rules.R.marqueur_negation); return i + 1;
@@ -1257,11 +1251,11 @@
     HF.push(function hf_comparatif_allons(e) {
       const { tokens, i, n, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1].toLowerCase() : null;
-      if (cle === "aussi" && suiv && est_adjectif(suiv)) { e.emettre(reporter_casse(tok, rules.R.traductions_fr_gp.aussi_comparatif)); return i + 1; }
-      if (cle === "plus" && suiv && est_adjectif(suiv)) { e.emettre(reporter_casse(tok, rules.R.traductions_fr_gp.plus_comparatif)); return i + 1; }
-      if (cle === "allons" && !sortie.length) {
+      if (cle === F.comp.aussi && suiv && est_adjectif(suiv)) { e.emettre(reporter_casse(tok, rules.R.traductions_fr_gp.aussi_comparatif)); return i + 1; }
+      if (cle === F.comp.plus && suiv && est_adjectif(suiv)) { e.emettre(reporter_casse(tok, rules.R.traductions_fr_gp.plus_comparatif)); return i + 1; }
+      if (cle === F.aller_imperatif && !sortie.length) {
         if (suiv && est_verbe(tokens[i + 1])) { e.emettre(reporter_casse(tok, rules.R.traductions_fr_gp.allons)); return i + 1; }
-        if (["à", "a", "au", "aux", "à la", "en"].includes(suiv)) {
+        if (F.prep.apres_allons.includes(suiv)) {
           e.emettre(reporter_casse(tok, rules.R.traductions_fr_gp.allons));
           e.emettre(rules.R.traductions_fr_gp.aller);
           return i + 1;
@@ -1284,12 +1278,12 @@
       const is_pre = sujet_nominal_devant(sortie) || (sortie.length && rules.pronoms_gp.has(last(sortie).toLowerCase()));
       if (is_strict || (is_amb && is_pre)) {
         const clitiques = []; let j = i; const objets = rules.R.clitiques_objets;
-        while (j < n && (has(objets, tokens[j].toLowerCase()) || tokens[j].toLowerCase() === "s")) {
+        while (j < n && (has(objets, tokens[j].toLowerCase()) || tokens[j].toLowerCase() === F.clit.se_elide)) {
           const bas = tokens[j].toLowerCase();
-          if (bas === "se" || bas === "s") { j++; continue; }
+          if (F.clit.reflechis.includes(bas)) { j++; continue; }
           let kAfter = j + 1; while (kAfter < n && !est_mot(tokens[kAfter])) kAfter++;
           const apres = kAfter < n ? tokens[kAfter] : null;
-          if (apres === null || !(est_verbe(apres) || has(objets, apres.toLowerCase()) || apres.toLowerCase() === "s")) break;
+          if (apres === null || !(est_verbe(apres) || has(objets, apres.toLowerCase()) || apres.toLowerCase() === F.clit.se_elide)) break;
           const forme = objets[bas]; if (forme) clitiques.push(forme);
           j = kAfter;
         }
@@ -1311,7 +1305,7 @@
     HF.push(function hf_se_verbe(e) {
       const { tokens, i, n } = e; const cle = tokens[i].toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null;
-      if (["se", "s", "me", "te", "m", "t"].includes(cle) && suiv !== null && est_mot(suiv)) {
+      if (F.clit.pronominaux.includes(cle) && suiv !== null && est_mot(suiv)) {
         if (est_verbe(suiv)) return i + 1;
         const st = ctx.type_fr[suiv.toLowerCase()];
         if (!["nom", "lieu", "adj", "num", "prep", "adv"].includes(st)) return i + 1;
@@ -1322,25 +1316,25 @@
     // le créole n'a pas de réfléchi ici — on saute le clitique, le verbe suit.
     HF.push(function hf_clitique_reflechi(e) {
       const { tokens, i, n } = e; const cle = tokens[i].toLowerCase();
-      if ((cle === "se" || cle === "s") && i + 1 < n && est_mot(tokens[i + 1]) && est_verbe(tokens[i + 1])) return i + 1;
+      if (F.clit.reflechis.includes(cle) && i + 1 < n && est_mot(tokens[i + 1]) && est_verbe(tokens[i + 1])) return i + 1;
       return null;
     });
     // « Le silence fait beaucoup de bruit » : « fait » après un nom sujet (ni auxiliaire ni pronom) est le présent : ka fè.
     HF.push(function hf_fait_present(e) {
       const { tokens, i } = e; const tok = tokens[i], cle = tok.toLowerCase();
-      if (cle !== "fait" || i === 0 || !est_mot(tokens[i - 1])) return null;
+      const infAmbigu = F.presents_ambigus[cle]; if (infAmbigu === undefined || i === 0 || !est_mot(tokens[i - 1])) return null;
       const p = tokens[i - 1].toLowerCase();
       if (rules.avoir_formes.has(p) || rules.etre_formes.has(p) || rules.etre_imparfait.has(p) || has(rules.R.pronoms_sujets, p)) return null;
       if (!(["nom", "lieu"].includes(ctx.type_fr[p]))) return null;
-      e.emettre(rules.R.marqueur_present); e.emettre(reporter_casse(tok, ctx.index_fr["faire"] || "fè")); return i + 1;
+      e.emettre(rules.R.marqueur_present); e.emettre(reporter_casse(tok, ctx.index_fr[infAmbigu])); return i + 1;
     });
     // « la maison est grande » (attribut après une copule) : gran (APiCS). Devant un nom, « gwo » (épithète, gold).
     HF.push(function hf_grand_predicat(e) {
       const { tokens, i } = e; const tok = tokens[i], cle = tok.toLowerCase();
-      if (!["grand", "grande", "grands", "grandes"].includes(cle)) return null;
+      const attribut = ctx.attribut_fr[cle]; if (attribut === undefined) return null;
       let p = i - 1; while (p >= 0 && rules.R.adverbes_degre.includes(tokens[p].toLowerCase())) p--;
       if (p < 0 || !rules.etre_formes.has(tokens[p].toLowerCase())) return null;
-      e.emettre(reporter_casse(tok, "gran")); return i + 1;
+      e.emettre(reporter_casse(tok, attribut)); return i + 1;
     });
     HF.push(function hf_sujet_nominal_devant(e) {
       const { tokens, i, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
@@ -1348,7 +1342,7 @@
       // un article contracté ("avec DU beurre") reste un NOM, jamais un verbe
       // forcé — et après une préposition il est complément, pas sujet.
       const apresDeterminant = i > 0 && (rules.determinants_fr.has(tokens[i - 1].toLowerCase()) ||
-        ["du", "des", "au", "aux", "de", "d'", "d"].includes(tokens[i - 1].toLowerCase()));
+        F.art.contractes.includes(tokens[i - 1].toLowerCase()));
       const prevOut = sortie.length ? sortie[sortie.length - 1].toLowerCase() : null;
       const apresPrep = prevOut !== null && ctx.type_fr[prevOut] === "prep";
       // « est vide » : le mot qui suit une forme de être (adverbes d’intensité permis) est un prédicat, pas un sujet verbal.
@@ -1408,11 +1402,11 @@
           // l'article appartient au nom suivant ("ferme la porte" ≠ "ferme-la").
           if (key !== null && after !== null && est_mot(after)) {
             const dernier = key.split(" ").pop();
-            if (["la", "le", "les", "l'"].includes(dernier)) continue;
+            if (F.art.fin_de_locution.includes(dernier)) continue;
             // Les phrases "sé …" (exclamations : "sé bon" = c'est bon) ne
             // matchent qu'en fin d'énoncé — sinon "sé bon biten" doit rester
             // compositionnel ("c'est un bon objet").
-            if (key.startsWith("sé ")) continue;
+            if (key.startsWith(G.copule + " ")) continue;
           }
           if (key !== null) {
             const sentinelle = String.fromCharCode(0xE000 + ph++);
@@ -1456,11 +1450,11 @@
     // pronom sujet "an" (= je).
     HF.splice(2, 0, function hf_un_article(e) {
       const { tokens, i, n } = e; const cle = tokens[i].toLowerCase();
-      if (cle !== "un" && cle !== "une") return null;
+      if (!rules.indefinis_singuliers.has(cle)) return null;
       let j = i + 1; while (j < n && !est_mot(tokens[j])) j++;
       if (j >= n) return null;
       if (["nom", "lieu"].includes(classer_fr(tokens[j])) || est_adjectif(tokens[j])) {
-        e.emettre(reporter_casse(tokens[i], rules.R.traductions_fr_gp.article_indefini || "on")); return i + 1;
+        e.emettre(reporter_casse(tokens[i], rules.R.traductions_fr_gp.article_indefini)); return i + 1;
       }
       return null;
     });
@@ -1489,7 +1483,7 @@
       // Réorganisation "ankò"
       const sortie = e.sortie, deja = e.deja; let iAnk = 0; const nAnk = sortie.length;
       while (iAnk < nAnk) {
-        if (sortie[iAnk].toLowerCase() === "ankò") {
+        if (sortie[iAnk].toLowerCase() === G.encore) {
           let target = iAnk;
           while (target + 1 < nAnk) {
             const nxt = sortie[target + 1];
@@ -1514,7 +1508,7 @@
       if (marqueur === normalize_token(rules.R.marqueur_futur_proche)) return [passe ? "futur_proche_passe" : "futur_proche", null, j + 1];
       if (marqueur === normalize_token(rules.R.marqueur_present)) return [passe ? "imparfait" : "present", null, j + 1];
       if (marqueur === normalize_token(rules.R.marqueur_futur)) return [passe ? "conditionnel" : "futur", null, j + 1];
-      if (marqueur === "ja") return ["passe", "déjà", j + 1];
+      if (marqueur === normalize_token(rules.R.marqueurs_supplementaires[0])) return ["passe", F.adv.deja, j + 1];
       // "poko"/"pòkò" ("pas encore") est un marqueur d'aspect à part entière
       // (Grammar.json > marqueurs_supplementaires), donc rules.marqueurs.has()
       // le fait entrer ici — mais sans cette branche, aucun cas ci-dessus ne le
@@ -1523,9 +1517,9 @@
       // "poko" suivait un sujet NOMINAL (ex. "kaz poko" figeait le moteur ;
       // après un PRONOM, traiter_pronom_gp a sa propre gestion de "poko" et
       // n'appelle pas cette fonction pour ce cas).
-      if (rules.R.poko_formes.some((f) => normalize_token(f) === marqueur)) return ["passe", "encore", j + 1];
+      if (rules.R.poko_formes.some((f) => normalize_token(f) === marqueur)) return ["passe", F.adv.encore, j + 1];
       if (j < n && rules.R.poko_prefixes.includes(tokens[j].toLowerCase()) &&
-          j + 1 < n && rules.R.poko_suffixes.includes(tokens[j + 1].toLowerCase())) return ["passe", "encore", j + 2];
+          j + 1 < n && rules.R.poko_suffixes.includes(tokens[j + 1].toLowerCase())) return ["passe", F.adv.encore, j + 2];
       if (passe) return ["passe", null, j];
       return [null, null, j];
     }
@@ -1544,15 +1538,15 @@
         }
         fus.push(tokens[i]); i++;
       }
-      const particules = new Set([rules.R.particule_demonstrative, "la", "lan"]);
+      const particules = new Set([rules.R.particule_demonstrative, ...G.art.definis]);
       const clitiques = new Set(rules.R.clitiques_postposes ? Object.keys(rules.R.clitiques_postposes) : []);
       const sortie = [];
       for (const tok of fus) {
         // « ay » sans trait d’union après un nom = possessif a-y (« chat ay » = son chat), jamais le verbe aller.
-        if (tok.toLowerCase() === "ay" && sortie.length && typeof sortie[sortie.length - 1] === "string" && est_mot(sortie[sortie.length - 1]) &&
+        if (tok.toLowerCase() === G.poss.soude_ambigu && sortie.length && typeof sortie[sortie.length - 1] === "string" && est_mot(sortie[sortie.length - 1]) &&
             ["nom", "lieu"].includes(type_gp(sortie[sortie.length - 1])) && !est_verbe_gp(sortie[sortie.length - 1]) &&
-            !rules.marqueurs.has(sortie[sortie.length - 1].toLowerCase()) && !rules.pronoms_gp.has(sortie[sortie.length - 1].toLowerCase())) { sortie.push("a-y"); continue; }
-        if (tok.toLowerCase() === "pani") {
+            !rules.marqueurs.has(sortie[sortie.length - 1].toLowerCase()) && !rules.pronoms_gp.has(sortie[sortie.length - 1].toLowerCase())) { sortie.push(G.poss.soudes[G.poss.soude_ambigu]); continue; }
+        if (tok.toLowerCase() === rules.R.eclat_pani.prefixe + rules.R.eclat_pani.suffixe) {
           const ec = rules.R.eclat_pani;
           const pPart = (tok[0] === tok[0].toUpperCase() && tok[0] !== tok[0].toLowerCase())
             ? ec.prefixe.charAt(0).toUpperCase() + ec.prefixe.slice(1).toLowerCase() : ec.prefixe;
@@ -1565,13 +1559,13 @@
           if (base && clitiques.has(fin.toLowerCase())) { sortie.push(base, "-" + fin.toLowerCase()); continue; }
           // Suffixe possessif contracté ("kòn-ay" = "kòn a-y" = sa corne).
           // On rétablit la forme espacée que gère déjà la postposition possessive.
-          const possSuff = { ay: "a-y", aw: "a-w", ayo: "a-yo", anou: "a-nou", "azòt": "a-zòt", azot: "a-zòt" };
+          const possSuff = G.poss.soudes;
           if (base && has(possSuff, fin.toLowerCase())) { sortie.push(base, possSuff[fin.toLowerCase()]); continue; }
           // Possessif contracté générique "a-<mot>" (ex. "bòdaj a-route" = "bòdaj
           // a route" = bord de route) : la particule possessive "a" collée à un
           // mot. On rétablit la forme espacée, mais seulement si le tout n'est
           // pas déjà un mot GP connu (les possessifs a-y/a-w sont traités plus haut).
-          if (base.toLowerCase() === "a" && fin && !has(ctx.index_gp, tok.toLowerCase())) {
+          if (base.toLowerCase() === G.poss.particule && fin && !has(ctx.index_gp, tok.toLowerCase())) {
             sortie.push(base, fin); continue;
           }
         }
@@ -1584,7 +1578,7 @@
       const pronom_fr = rules.R.pronoms_creole_francais[cle];
       const phraseAttributive = (t) => {
         const fr = phMap && phMap.get ? phMap.get(t) : undefined;
-        return typeof fr === "string" && /^en(\s|')/i.test(fr);
+        return typeof fr === "string" && F.prep.en_debut.some((d) => fr.toLowerCase().startsWith(d));
       };
       let j = i + 1; while (j < n && !est_mot(tokens[j]) && !est_sentinelle(tokens[j])) j++;
       // Phrase pré-traduite juste après le pronom : pronom emphatique → forme
@@ -1595,7 +1589,7 @@
       if (j < n && est_sentinelle(tokens[j])) {
         if (phraseAttributive(tokens[j])) {
           sortie.push(reporter_casse(tok, pronom_fr)); deja.push(true);
-          sortie.push(conjuguer("être", pronom_fr, "present")); deja.push(true);
+          sortie.push(conjuguer(F.inf.etre, pronom_fr, "present")); deja.push(true);
           return j;
         }
         // Phrase commençant par un verbe conjugué : le pronom reste SUJET
@@ -1612,66 +1606,66 @@
       sortie.push(reporter_casse(tok, pronom_fr)); deja.push(true);
       let nie = false;
       if (j < n && tokens[j].toLowerCase() === rules.R.marqueur_negation) {
-        nie = true; sortie.push("ne"); deja.push(true); j++;
+        nie = true; sortie.push(F.neg.ne); deja.push(true); j++;
         while (j < n && !est_mot(tokens[j])) j++;
       }
       const isPoko = () => j < n && (rules.R.poko_formes.includes(tokens[j].toLowerCase()) ||
         (rules.R.poko_prefixes.includes(tokens[j].toLowerCase()) && j + 1 < n && rules.R.poko_suffixes.includes(tokens[j + 1].toLowerCase())));
       if (isPoko()) {
         j += rules.R.poko_formes.includes(tokens[j].toLowerCase()) ? 1 : 2;
-        if (!nie) { sortie.push("ne"); deja.push(true); }
+        if (!nie) { sortie.push(F.neg.ne); deja.push(true); }
         if (j < n && est_mot(tokens[j])) {
           let skipped = null;
           if (est_adverbe_gp(tokens[j])) {
             const advGp = tokens[j].toLowerCase(); const advFr = ctx.index_gp[advGp] !== undefined ? ctx.index_gp[advGp] : advGp;
             skipped = reporter_casse(tokens[j], advFr); j++; while (j < n && !est_mot(tokens[j])) j++;
           }
-          if (j < n && est_mot(tokens[j])) conj[sortie.length] = [pronom_fr, "passe", true, skipped ? "encore " + skipped : "encore"];
+          if (j < n && est_mot(tokens[j])) conj[sortie.length] = [pronom_fr, "passe", true, skipped ? F.adv.encore + " " + skipped : F.adv.encore];
         }
         return j;
       }
       if (j + 1 < n && tokens[j].toLowerCase() === rules.R.traductions_fr_gp.venir_de && est_verbe_gp(tokens[j + 1])) {
-        sortie.push(conjuguer("venir", pronom_fr)); deja.push(true); sortie.push("de"); deja.push(true); return j + 1;
+        sortie.push(conjuguer(F.inf.venir, pronom_fr)); deja.push(true); sortie.push(F.prep.de); deja.push(true); return j + 1;
       }
-      if (j + 1 < n && (tokens[j].toLowerCase() === "fèk" || tokens[j].toLowerCase() === "fek") && est_verbe_gp(tokens[j + 1])) {
-        sortie.push(conjuguer("venir", pronom_fr)); deja.push(true); sortie.push("de"); deja.push(true); return j + 1;
+      if (j + 1 < n && G.venir_de.includes(tokens[j].toLowerCase()) && est_verbe_gp(tokens[j + 1])) {
+        sortie.push(conjuguer(F.inf.venir, pronom_fr)); deja.push(true); sortie.push(F.prep.de); deja.push(true); return j + 1;
       }
-      if (j < n && ctx.index_gp[tokens[j].toLowerCase()] === "avoir") {
+      if (j < n && ctx.index_gp[tokens[j].toLowerCase()] === F.inf.avoir) {
         let k = j + 1; while (k < n && !est_mot(tokens[k])) k++;
         if (k < n && est_verbe_gp(tokens[k])) { conj[sortie.length] = [pronom_fr, "passe", nie, null]; return k; }
       }
       let temps, adverbe; [temps, adverbe, j] = lire_marqueurs(tokens, j, n);
       if (isPoko()) {
         j += rules.R.poko_formes.includes(tokens[j].toLowerCase()) ? 1 : 2;
-        if (!nie) { sortie.push("ne"); deja.push(true); }
+        if (!nie) { sortie.push(F.neg.ne); deja.push(true); }
         if (j < n && est_mot(tokens[j])) {
           let skipped = null;
           if (est_adverbe_gp(tokens[j])) {
             const advGp = tokens[j].toLowerCase(); const advFr = ctx.index_gp[advGp] !== undefined ? ctx.index_gp[advGp] : advGp;
             skipped = reporter_casse(tokens[j], advFr); j++; while (j < n && !est_mot(tokens[j])) j++;
           }
-          if (j < n && est_mot(tokens[j])) conj[sortie.length] = [pronom_fr, temps || "passe", true, skipped ? "encore " + skipped : "encore"];
+          if (j < n && est_mot(tokens[j])) conj[sortie.length] = [pronom_fr, temps || "passe", true, skipped ? F.adv.encore + " " + skipped : F.adv.encore];
         }
         return j;
       }
       if (temps === "futur_proche" || temps === "futur_proche_passe") {
-        const aller = conjuguer("aller", pronom_fr, temps === "futur_proche_passe" ? "imparfait" : "present");
+        const aller = conjuguer(F.inf.aller, pronom_fr, temps === "futur_proche_passe" ? "imparfait" : "present");
         sortie.push(aller); deja.push(true);
-        if (nie) { sortie.push("pas"); deja.push(true); }
+        if (nie) { sortie.push(F.neg.pas); deja.push(true); }
         return j;
       }
-      if (j < n && (tokens[j].toLowerCase() === "la" || tokens[j].toLowerCase() === "lan") && (j + 1 >= n || !est_mot(tokens[j + 1]) || temps !== null)) {
-        sortie.push(conjuguer("être", pronom_fr, temps || "present")); deja.push(true);
-        if (nie) { sortie.push("pas"); deja.push(true); }
+      if (j < n && G.loc.la.includes(tokens[j].toLowerCase()) && (j + 1 >= n || !est_mot(tokens[j + 1]) || temps !== null)) {
+        sortie.push(conjuguer(F.inf.etre, pronom_fr, temps || "present")); deja.push(true);
+        if (nie) { sortie.push(F.neg.pas); deja.push(true); }
         if (adverbe) { sortie.push(adverbe); deja.push(true); }
-        sortie.push("là"); deja.push(true); return j + 1;
+        sortie.push(F.adv.la); deja.push(true); return j + 1;
       }
-      if (temps === null && sortie.length >= 2 && sortie[sortie.length - 2].toLowerCase() === "que") temps = "subjonctif_present";
+      if (temps === null && sortie.length >= 2 && sortie[sortie.length - 2].toLowerCase() === F.sub.que) temps = "subjonctif_present";
       // Marqueur(s) lu(s) puis phrase attributive ("I té an kolè") : copule au
       // temps du marqueur ("il ÉTAIT en colère").
       if (j < n && est_sentinelle(tokens[j]) && phraseAttributive(tokens[j])) {
-        sortie.push(conjuguer("être", pronom_fr, temps || "present")); deja.push(true);
-        if (nie) { sortie.push("pas"); deja.push(true); }
+        sortie.push(conjuguer(F.inf.etre, pronom_fr, temps || "present")); deja.push(true);
+        if (nie) { sortie.push(F.neg.pas); deja.push(true); }
         return j;
       }
       let skipped_adverb = null;
@@ -1682,11 +1676,11 @@
         // fort qu'un ours) : "otan" se lit "aussi" ici, pas sa traduction
         // lexicale par défaut "autant", et pose un état consommé par h_qui
         // pour que le "ki" qui suit l'adjectif devienne "que", pas "qui".
-        if (advGp === "otan" && state) {
+        if (advGp === rules.R.traductions_fr_gp.aussi_comparatif && state) {
           let jAdj = j + 1; while (jAdj < n && !est_mot(tokens[jAdj])) jAdj++;
           let jKi = jAdj + 1; while (jKi < n && !est_mot(tokens[jKi])) jKi++;
-          if (jAdj < n && est_adjectif_gp(tokens[jAdj]) && jKi < n && tokens[jKi].toLowerCase() === "ki") {
-            skipped_adverb = reporter_casse(tokens[j], "aussi");
+          if (jAdj < n && est_adjectif_gp(tokens[jAdj]) && jKi < n && tokens[jKi].toLowerCase() === G.rel) {
+            skipped_adverb = reporter_casse(tokens[j], F.comp.aussi);
             state.attenteComparatifKi = true;
           }
         }
@@ -1697,24 +1691,24 @@
         }
       }
       if (j < n && est_mot(tokens[j])) {
-        if (tokens[j].toLowerCase() === "an" && j + 1 < n && est_mot(tokens[j + 1])) {
-          const bi = "an " + tokens[j + 1].toLowerCase();
+        if (tokens[j].toLowerCase() === G.prep.en && j + 1 < n && est_mot(tokens[j + 1])) {
+          const bi = G.prep.en + " " + tokens[j + 1].toLowerCase();
           let etat = ctx.index_gp[bi];
           if (etat === undefined) etat = (rules.R.locutions_gp_fr || {})[bi];
           if (etat === undefined && j + 2 < n && est_mot(tokens[j + 2])) {
             const tri = bi + " " + tokens[j + 2].toLowerCase();
             etat = (rules.R.locutions_gp_fr || {})[tri];
           }
-          if (etat && etat.startsWith("en ")) {
-            sortie.push(conjuguer("être", pronom_fr, temps || "present")); deja.push(true);
-            if (nie) { sortie.push("pas"); deja.push(true); }
+          if (etat && etat.startsWith(F.prep.en + " ")) {
+            sortie.push(conjuguer(F.inf.etre, pronom_fr, temps || "present")); deja.push(true);
+            if (nie) { sortie.push(F.neg.pas); deja.push(true); }
             return j;
           }
         }
         const attr_fr = ctx.index_gp[tokens[j].toLowerCase()];
         if (attr_fr && rules.avoir_attributs.has(attr_fr.toLowerCase()) && !est_verbe_gp(tokens[j])) {
-          sortie.push(conjuguer("avoir", pronom_fr, temps || "present")); deja.push(true);
-          if (nie) { sortie.push("pas"); deja.push(true); }
+          sortie.push(conjuguer(F.inf.avoir, pronom_fr, temps || "present")); deja.push(true);
+          if (nie) { sortie.push(F.neg.pas); deja.push(true); }
           sortie.push(reporter_casse(tokens[j], attr_fr)); deja.push(true);
           return j + 1;
         }
@@ -1730,12 +1724,12 @@
               return j2;
             }
           }
-          const conjSub = ["que", "qu'il", "qu'elle", "qu'on", "si", "quoi", "ke", "k"];
+          const conjSub = F.sub.conjonctions;
           const enSub = sortie.length >= 2 && (conjSub.includes(last(sortie).toLowerCase()) || conjSub.includes(sortie[sortie.length - 2].toLowerCase()));
           if (temps === null && !enSub) {
             const infNu = ctx.index_gp[tokens[j].toLowerCase()];
             if (infNu && (rules.R.verbes_aux_etre || []).includes(infNu)) temps = "passe";
-            else if (sortie.length && last(sortie).toLowerCase() === "quand") temps = "passe";
+            else if (sortie.length && last(sortie).toLowerCase() === F.interro.quand) temps = "passe";
           }
           conj[sortie.length] = [pronom_fr, temps || "present", nie, skipped_adverb || adverbe];
         } else if (temps === "present" || (temps === null && nie)) {
@@ -1748,14 +1742,14 @@
           // continue de dépendre d'inserer_copule comme avant.
           conj[sortie.length] = [pronom_fr, temps || "present", nie, skipped_adverb || adverbe];
         } else if (skipped_adverb !== null) {
-          sortie.push(conjuguer("être", pronom_fr, "present")); deja.push(true);
-          if (nie) { sortie.push("pas"); deja.push(true); }
+          sortie.push(conjuguer(F.inf.etre, pronom_fr, "present")); deja.push(true);
+          if (nie) { sortie.push(F.neg.pas); deja.push(true); }
           sortie.push(skipped_adverb); deja.push(true);
         } else if (temps !== null) {
-          sortie.push(conjuguer("être", pronom_fr, temps)); deja.push(true);
-          if (nie) { sortie.push("pas"); deja.push(true); }
+          sortie.push(conjuguer(F.inf.etre, pronom_fr, temps)); deja.push(true);
+          if (nie) { sortie.push(F.neg.pas); deja.push(true); }
         }
-      } else if (nie) { sortie.push("pas"); deja.push(true); }
+      } else if (nie) { sortie.push(F.neg.pas); deja.push(true); }
       return j;
     }
 
@@ -1771,13 +1765,13 @@
     // de phrase ("Kaka a vwazen nwè" : "kaka" est un NOM ici, pas l'impératif
     // de "chier", car suivi du génitif "a vwazen").
     function suit_genitif_gp(tokens, j, n) {
-      if (j >= n || tokens[j].toLowerCase() !== "a") return false;
+      if (j >= n || tokens[j].toLowerCase() !== G.poss.particule) return false;
       const suiv = j + 1 < n ? tokens[j + 1] : null;
       return suiv !== null && est_mot(suiv) && !est_verbe_gp(suiv) &&
         !rules.marqueurs.has(suiv.toLowerCase()) && !rules.pronoms_gp.has(suiv.toLowerCase()) &&
         (["nom", "lieu"].includes(type_gp(suiv)) ||
          (suiv[0] === suiv[0].toUpperCase() && suiv[0] !== suiv[0].toLowerCase()) ||
-         ["tout", "tou"].includes(suiv.toLowerCase()));
+         G.tout.includes(suiv.toLowerCase()));
     }
 
     // Le sujet nominal déjà émis est-il PLURIEL ? On remonte le groupe nominal à
@@ -1790,73 +1784,82 @@
         if (typeof w !== "string") break;
         if (!est_mot(w)) {
           const morceaux = w.toLowerCase().split(/\s+/);
-          if (morceaux.includes("les") || morceaux.includes("des") || morceaux.includes("ces")) return true;
+          if (morceaux.some((m) => F.pluriel.articles.includes(m))) return true;
           break;
         }
         const wl = w.toLowerCase();
         if (rules.pronoms_gp.has(wl) || rules.marqueurs.has(wl) || est_verbe_gp(w)) break;
         if (/^\d+$/.test(wl)) { if (parseInt(wl, 10) >= 2) return true; continue; }
         const fr = (fr_de_gp(w) || wl).toLowerCase();
-        if (rules.nombres_fr.has(fr) && fr !== "un" && fr !== "une") return true;
-        if (["les", "des", "ces", "plusieurs"].includes(wl) || ["les", "des", "ces", "gens", "personnes"].includes(fr)) return true;
+        if (rules.nombres_fr.has(fr) && !rules.indefinis_singuliers.has(fr)) return true;
+        if (F.pluriel.determinants.includes(wl) || F.pluriel.mots.includes(fr)) return true;
       }
       return false;
     }
 
     const HG = [];
-    // « dan » : dent (possessif, adjectif devant, « dan an … », tête de phrase) ; sinon dans.
-    // « an » : dans après un verbe ou un pronom, devant un nom ; sinon le sens existant (je / un).
-    // « lèt » : lait par défaut ; lettre après un verbe d’écriture ou d’envoi (maké, matjé, voyé, ékri).
-    HG.push(function h_lèt_lettre(e) {
+    // Homographes créoles tranchés par le contexte — règles en données
+    // (Grammar.json > homographes_gp). Chaque règle { mot, fr, apres, en_sautant }
+    // dit : « mot » se traduit « fr » quand le mot qui précède (les mots de
+    // « en_sautant » ne comptent pas) est dans « apres ».
+    HG.push(function h_homographes_gp(e) {
       const { tokens, i } = e; const tok = tokens[i], cle = tok.toLowerCase();
-      if (cle !== "lèt" || !est_mot(tok)) return null;
-      let p = i - 1;
-      while (p >= 0 && (!est_mot(tokens[p]) || ["on", "yon", "yonn", "an", "la", "lan", "sa", "lasa"].includes(tokens[p].toLowerCase()))) p--;
-      const prev = p >= 0 ? tokens[p].toLowerCase() : "";
-      if (["maké", "matjé", "voyé", "ékri"].includes(prev)) { e.emettre(reporter_casse(tok, "lettre")); return i + 1; }
+      if (!est_mot(tok)) return null;
+      for (const r of rules.R.homographes_gp) {
+        if (r.mot !== cle) continue;
+        let p = i - 1;
+        while (p >= 0 && (!est_mot(tokens[p]) || r.en_sautant.includes(tokens[p].toLowerCase()))) p--;
+        if (p >= 0 && r.apres.includes(tokens[p].toLowerCase())) { e.emettre(reporter_casse(tok, r.fr)); return i + 1; }
+      }
       return null;
     });
-    HG.push(function h_dan_an(e) {
+    // Nom créole homographe d'une préposition (Grammar.json >
+    // homographes_nom_preposition) : le contexte tranche entre le nom, la
+    // préposition et un nom propre.
+    HG.push(function h_homographe_nom_preposition(e) {
       const { tokens, i, n } = e; const tok = tokens[i], cle = tok.toLowerCase();
-      if (cle !== "dan" && cle !== "an") return null;
+      const r = rules.R.homographes_nom_preposition[cle];
+      if (r === undefined) return null;
       const prevW = i > 0 && est_mot(tokens[i - 1]) ? tokens[i - 1] : null;
       const brut = i + 1 < n && typeof tokens[i + 1] === "string" ? tokens[i + 1].toLowerCase() : "";
       const nextW = i + 1 < n && est_mot(tokens[i + 1]) ? tokens[i + 1] : null;
       const nl = nextW ? nextW.toLowerCase() : "";
-      if (cle === "dan") {
-        if (nl === "an") { e.emettre(reporter_casse(tok, "dans")); return i + 1; }
-        // Clitique collé (« dan-yo », « dan-w » : le tiret reste sur le clitique) ou
-        // possessif contracté (« dan-ay » = « dan a-y ») : c'est la dent.
-        // Possessif pluriel : « dan-yo » = leurs dents (le clitique est consommé ici).
-        const PL = { "-yo": "leurs", "yo": "leurs", "a-yo": "leurs", "-nou": "nos", "a-nou": "nos", "-zot": "vos", "a-zot": "vos" };
-        if (PL[brut]) { e.emettre(reporter_casse(tok, PL[brut])); e.emettre("dents"); return i + 2; }
-        // Possessif singulier détaché : « dan-w » = ta dent, « dan-mwen » = ma dent, « dan-li » = sa dent.
-        const SG = { "-w": "ta", "-mwen": "ma", "-m": "ma", "-li": "sa", "-y": "sa" };
-        if (SG[brut]) { e.emettre(reporter_casse(tok, SG[brut])); e.emettre("dent"); return i + 2; }
-        const POSS = ["a-y", "a-w", "a-yo", "a-nou", "a-zot", "an-mwen", "ay", "aw", "yo"];
-        if (brut.startsWith("-") || POSS.includes(brut)) { e.emettre(reporter_casse(tok, "dent")); return i + 1; }
-        if (!prevW) {
-          // Tête de phrase : « Dan pa di zami » = nom propre Dan devant négation,
-          // marqueur ou verbe ; « dan la ka fè mal » = la dent fait mal.
-          const apresLa = (nl === "la" || nl === "lan") && i + 2 < n && est_mot(tokens[i + 2]) &&
-            (rules.marqueurs.has(tokens[i + 2].toLowerCase()) || est_verbe_gp(tokens[i + 2]));
-          if (apresLa) { e.emettre(reporter_casse(tok, "dent")); return i + 1; }
-          if (nextW && (rules.marqueurs.has(nl) || nl === rules.R.marqueur_negation || est_verbe_gp(nextW))) { e.emettre("Dan"); return i + 1; }
-          return null;
-        }
-        if (type_gp(prevW) === "adj") { e.emettre(reporter_casse(tok, "dent")); return i + 1; }
+      if (r.preposition_devant.includes(nl)) { e.emettre(reporter_casse(tok, r.preposition)); return i + 1; }
+      // Possessif pluriel collé au nom : le clitique est consommé ici.
+      if (r.possessifs_pluriel[brut]) { e.emettre(reporter_casse(tok, r.possessifs_pluriel[brut])); e.emettre(r.nom_pluriel); return i + 2; }
+      // Possessif singulier détaché.
+      if (r.possessifs_singulier[brut]) { e.emettre(reporter_casse(tok, r.possessifs_singulier[brut])); e.emettre(r.nom); return i + 2; }
+      if (brut.startsWith("-") || r.possessifs.includes(brut)) { e.emettre(reporter_casse(tok, r.nom)); return i + 1; }
+      if (!prevW) {
+        // Tête de phrase : nom devant l'article suivi d'un verbe ; nom propre
+        // devant une négation, un marqueur ou un verbe.
+        const apresLa = G.art.definis.includes(nl) && i + 2 < n && est_mot(tokens[i + 2]) &&
+          (rules.marqueurs.has(tokens[i + 2].toLowerCase()) || est_verbe_gp(tokens[i + 2]));
+        if (apresLa) { e.emettre(reporter_casse(tok, r.nom)); return i + 1; }
+        if (nextW && (rules.marqueurs.has(nl) || nl === rules.R.marqueur_negation || est_verbe_gp(nextW))) { e.emettre(r.nom_propre); return i + 1; }
         return null;
       }
-      // « an » = dans seulement après un verbe et devant un lieu (« ka maché an lari-la »).
-      // Après un pronom sujet il reste je / un (« mwen an biten » ne donne pas « dans »).
-      // Homographe « maché » (marcher / marché) : son sens nominal est un lieu.
+      if (type_gp(prevW) === "adj") { e.emettre(reporter_casse(tok, r.nom)); return i + 1; }
+      return null;
+    });
+    // Préposition de lieu créole homographe d'autres mots (Grammar.json >
+    // preposition_lieu_gp) : elle ne se lit préposition qu'après un nom ou un
+    // verbe, ou en tête de phrase, et devant un lieu.
+    HG.push(function h_preposition_lieu_gp(e) {
+      const { tokens, i, n } = e; const tok = tokens[i], cle = tok.toLowerCase();
+      const r = rules.R.preposition_lieu_gp;
+      if (cle !== r.mot) return null;
+      const prevW = i > 0 && est_mot(tokens[i - 1]) ? tokens[i - 1] : null;
+      const nextW = i + 1 < n && est_mot(tokens[i + 1]) ? tokens[i + 1] : null;
+      const nl = nextW ? nextW.toLowerCase() : "";
+      // Homographe nom/verbe dont le sens nominal est un lieu.
       const nomLieu = nextW !== null && has(ctx.index_gp_nom, nl) && ctx.type_fr[String(ctx.index_gp_nom[nl]).toLowerCase()] === "lieu";
       const apresNomOuVerbe = prevW !== null && (est_verbe_gp(prevW) || ["nom", "lieu"].includes(type_gp(prevW)));
-      // « an » devant un lieu est une préposition après un nom ou un verbe, et en tête de phrase (« An lari-la » = dans la rue).
       if ((apresNomOuVerbe || prevW === null) && nextW && (type_gp(nextW) === "lieu" || nomLieu)) {
-        // « an lakay » : la glose du lieu porte déjà « à » (à la maison) ; « an » ne s’ajoute pas.
-        if (/^à(\s|$)/i.test(fr_de_gp(nextW) || "")) return i + 1;
-        e.emettre(reporter_casse(tok, "dans"));
+        // La glose du lieu porte déjà sa préposition : on n'en ajoute pas.
+        const glose = (fr_de_gp(nextW) || "").toLowerCase();
+        if (glose === r.glose_deja_prepositionnelle || glose.startsWith(r.glose_deja_prepositionnelle + " ")) return i + 1;
+        e.emettre(reporter_casse(tok, r.fr));
         if (nomLieu && type_gp(nextW) !== "lieu") { e.emettre(ctx.index_gp_nom[nl]); return i + 2; }
         return i + 1;
       }
@@ -1900,68 +1903,68 @@
       return null;
     });
     HG.push(function h_vocatif_gp(e) {
-      if (e.cle !== "o" || !e.debut_de_phrase() || e.suiv === null) return null;
+      if (e.cle !== G.vocatif || !e.debut_de_phrase() || e.suiv === null) return null;
       const s = e.suiv;
-      if (s[0] && s[0] === s[0].toUpperCase() && s[0] !== s[0].toLowerCase()) { e.emettre("Ô"); return e.i + 1; }
+      if (s[0] && s[0] === s[0].toUpperCase() && s[0] !== s[0].toLowerCase()) { e.emettre(F.vocatif); return e.i + 1; }
       return null;
     });
     HG.push(function h_copule_coordination_gp(e) {
-      if (e.cle !== "sé" || e.i === 0 || e.suiv === null) return null;
+      if (e.cle !== G.copule || e.i === 0 || e.suiv === null) return null;
       const prev = e.tokens[e.i - 1].toLowerCase();
       const suivantPronom = rules.pronoms_gp.has(e.suiv.toLowerCase()) ||
-        (est_sentinelle(e.suiv) && e.phMap && String(e.phMap.get(e.suiv) || "").toLowerCase().includes("eux-mêmes"));
-      if ((prev === "é" || prev === "et" || prev === "mè") && suivantPronom) {
+        (est_sentinelle(e.suiv) && e.phMap && String(e.phMap.get(e.suiv) || "").toLowerCase().includes(F.eux_memes));
+      if (G.coord.devant_copule.includes(prev) && suivantPronom) {
         if (est_sentinelle(e.suiv)) e.state.pluriel = true;
-        e.emettre("c'est");
-        if (!est_sentinelle(e.suiv) && e.suiv.toLowerCase() === "vou") { e.emettre("vous"); return e.i + 2; }
+        e.emettre(rules.R.traductions_gp_fr.se_cest);
+        if (!est_sentinelle(e.suiv) && e.suiv.toLowerCase() === G.suj.p2_tonique) { e.emettre(F.suj.p2p); return e.i + 2; }
         return e.i + 1;
       }
       return null;
     });
     HG.push(function h_article_initial_gp(e) {
-      if (e.cle !== "la" || !e.debut_de_phrase() || e.suiv === null || !est_mot(e.suiv)) return null;
+      if (e.cle !== G.art.defini || !e.debut_de_phrase() || e.suiv === null || !est_mot(e.suiv)) return null;
       if (!est_verbe_gp(e.suiv) && !rules.marqueurs.has(e.suiv.toLowerCase()) && !rules.pronoms_gp.has(e.suiv.toLowerCase())) {
-        e.emettre("la"); return e.i + 1;
+        e.emettre(F.art.la); return e.i + 1;
       }
       return null;
     });
     HG.push(function h_articles_gp(e) {
-      if (e.cle !== "lé" || e.suiv === null || !est_mot(e.suiv)) return null;
+      if (e.cle !== G.art.pluriel_francise || e.suiv === null || !est_mot(e.suiv)) return null;
       if (!est_verbe_gp(e.suiv) && !rules.marqueurs.has(e.suiv.toLowerCase()) && !rules.pronoms_gp.has(e.suiv.toLowerCase()) &&
-          (est_nom(e.suiv) || ctx.index_gp_nom[e.suiv.toLowerCase()] !== undefined || e.suiv.toLowerCase() === "personnes")) {
-        e.emettre("les"); return e.i + 1;
+          (est_nom(e.suiv) || ctx.index_gp_nom[e.suiv.toLowerCase()] !== undefined || e.suiv.toLowerCase() === F.nom.personnes)) {
+        e.emettre(F.art.pluriel); return e.i + 1;
       }
       return null;
     });
     HG.push(function h_de_preposition_gp(e) {
-      if (e.cle !== "dè" || e.suiv === null || !est_mot(e.suiv)) return null;
+      if (e.cle !== G.prep.de_francise || e.suiv === null || !est_mot(e.suiv)) return null;
       const prev = e.i > 0 ? e.tokens[e.i - 1] : null;
-      const prevSentNom = prev && est_sentinelle(prev) && e.phMap && /\b(?:homme|femme|gens|monde|mêmes?)\b/i.test(String(e.phMap.get(prev) || ""));
+      const prevSentNom = prev && est_sentinelle(prev) && e.phMap && String(e.phMap.get(prev) || "").toLowerCase().split(/[^\p{L}]+/u).some((w) => F.nom.humains_generiques.includes(w));
       const prevImperatif = prev && has(rules.R.imperatifs_gp || {}, prev);
       if (rules.pronoms_gp.has(e.suiv.toLowerCase()) || prevSentNom || prevImperatif ||
           (prev && est_mot(prev) && (est_nom(prev) || ctx.index_gp_nom[prev.toLowerCase()] !== undefined))) {
-        e.emettre("de"); return e.i + 1;
+        e.emettre(F.prep.de); return e.i + 1;
       }
       return null;
     });
     HG.push(function h_preposition_contextuelle_gp(e) {
       const decl = (rules.R.prepositions_gp_contextuelles || {})[e.cle];
       if (!decl || e.suiv === null || !decl.includes(e.suiv.toLowerCase())) return null;
-      e.emettre("sur"); return e.i + 1;
+      e.emettre(F.prep.sur); return e.i + 1;
     });
     HG.push(function h_pon_contextuel_gp(e) {
-      if (e.cle !== "pon" || e.suiv === null || !est_mot(e.suiv)) return null;
+      if (e.cle !== G.aucun || e.suiv === null || !est_mot(e.suiv)) return null;
       const fr = fr_de_gp(e.suiv) || e.suiv;
       if (est_nom(e.suiv) || ctx.index_gp_nom[e.suiv.toLowerCase()] !== undefined) {
-        const f = genre_nom(fr) === "f" ? "aucune" : "aucun";
+        const f = genre_nom(fr) === "f" ? F.det.aucune : F.det.aucun;
         e.emettre(f); return e.i + 1;
       }
       return null;
     });
     HG.push(function h_verbe_reflexif_gp(e) {
       const inf = (rules.R.verbes_reflexifs_gp || {})[e.cle];
-      if (!inf || e.i === 0 || e.tokens[e.i - 1].toLowerCase() !== "yo") return null;
-      e.emettre("s'associent"); return e.i + 1;
+      if (!inf || e.i === 0 || e.tokens[e.i - 1].toLowerCase() !== G.suj.p3p) return null;
+      e.emettre(conjuguer(inf, F.suj.p3p).replace(F.conj.refl_defaut + " ", F.conj.refl_prefixes[1])); return e.i + 1;
     });
     HG.push(function h_infinitif_contextuel_gp(e) {
       const prev = e.i > 0 ? e.tokens[e.i - 1].toLowerCase() : null;
@@ -1983,33 +1986,33 @@
       const map = rules.R.noms_definis_gp || {};
       if (!has(map, e.cle)) return null;
       const prev = e.i > 0 ? e.tokens[e.i - 1].toLowerCase() : null;
-      const prevAvec = prev === "èvè" || prev === "épi" ||
-        (prev && est_sentinelle(prev) && e.phMap && /avec$/i.test(String(e.phMap.get(prev) || "")));
+      const prevAvec = G.avec.includes(prev) ||
+        (prev && est_sentinelle(prev) && e.phMap && String(e.phMap.get(prev) || "").toLowerCase().endsWith(F.prep.avec));
       if (prevAvec) { e.emettre(map[e.cle]); return e.i + 1; }
       return null;
     });
     HG.push(function h_pani_gp(e) {
-      if (e.cle !== "pani") return null;
+      if (e.cle !== rules.R.eclat_pani.prefixe + rules.R.eclat_pani.suffixe) return null;
       const prev = e.i > 0 ? e.tokens[e.i - 1].toLowerCase() : null;
       if (prev && rules.pronoms_gp.has(prev)) return null;
-      e.emettre("il"); e.emettre("n'y"); e.emettre("a"); e.emettre("pas"); e.emettre("de"); return e.i + 1;
+      for (const m of rules.R.patterns_ni_gp.pa_ni) e.emettre(m); e.emettre(F.prep.de); return e.i + 1;
     });
     HG.push(function h_sa_w_gp(e) {
-      if (e.cle !== "sa" || e.suiv !== "-w") return null;
-      e.emettre("ce que tu"); return e.i + 2;
+      if (e.cle !== G.cela || e.suiv !== G.clit.p2s_colle) return null;
+      e.emettre(rules.R.traductions_gp_fr.sa_w); return e.i + 2;
     });
     // « épi » signifie « avec » devant un complément, mais « et » entre deux
     // noms (notamment deux noms propres). Cette règle ne remplace donc pas la
     // préposition générale du dictionnaire.
     HG.push(function h_coordination_nominale(e) {
-      if (e.cle !== "épi" && e.cle !== "epi") return null;
+      if (!G.coord.et_avec.includes(e.cle)) return null;
       const { i, sortie } = e;
       if (!sortie.length || !est_mot(last(sortie)) || e.suiv === null || !est_mot(e.suiv)) return null;
       const precedentNom = est_nom(last(sortie)) || (last(sortie)[0] === last(sortie)[0].toUpperCase() && last(sortie)[0] !== last(sortie)[0].toLowerCase());
       const suivantTrad = fr_de_gp(e.suiv) || "";
       const suivantNom = est_nom(e.suiv) || !!ctx.index_gp_nom[e.suiv.toLowerCase()] || (e.suiv[0] === e.suiv[0].toUpperCase() && e.suiv[0] !== e.suiv[0].toLowerCase()) ||
         (suivantTrad && suivantTrad[0] === suivantTrad[0].toUpperCase() && suivantTrad[0] !== suivantTrad[0].toLowerCase());
-      if (precedentNom && suivantNom) { e.emettre("et"); return i + 1; }
+      if (precedentNom && suivantNom) { e.emettre(F.coord.et); return i + 1; }
       return null;
     });
     HG.push(function h_ponctuation(e) {
@@ -2019,11 +2022,11 @@
     HG.push(function h_clitiques_post(e) {
       const cle = e.cle;
       // « NOM-yo » : pluriel postposé collé → même marque de travail que « NOM yo » (h_pronoms), placée devant le nom.
-      if (cle === "-yo" && e.i > 0 && e.sortie.length && est_mot(last(e.sortie)) && est_mot(e.tokens[e.i - 1]) &&
+      if (cle === G.clit.pluriel_colle && e.i > 0 && e.sortie.length && est_mot(last(e.sortie)) && est_mot(e.tokens[e.i - 1]) &&
           ["nom", "lieu"].includes(type_gp(e.tokens[e.i - 1]))) {
         e.sortie.push(MARQUE_DEM); e.deja.push(true); e.state.pluriel = true;
         const [temps, adverbe, j] = lire_marqueurs(e.tokens, e.i + 1, e.n);
-        if (j < e.n && est_verbe_gp(e.tokens[j])) e.conj[e.sortie.length] = ["ils", temps || "present", false, adverbe];
+        if (j < e.n && est_verbe_gp(e.tokens[j])) e.conj[e.sortie.length] = [F.suj.p3p, temps || "present", false, adverbe];
         return j > e.i + 1 ? j : e.i + 1;
       }
       // Impératif + objet collé (« Bay-mwen » = Donne-moi) : l objet se place derrière le verbe, pas devant.
@@ -2040,19 +2043,19 @@
       // mot non-verbal (ni marqueur, ni pronom, ni article postposé la/lan).
       const precNominal = sortie.length && est_mot(last(sortie)) &&
         (["nom", "lieu"].includes(classer_fr(last(sortie))) || ["nom", "lieu"].includes(type_gp(last(sortie))));
-      if (cle === "a" && precNominal && suit_genitif_gp(tokens, i, e.n)) {
-        e.emettre("de"); return i + 1;
+      if (cle === G.poss.particule && precNominal && suit_genitif_gp(tokens, i, e.n)) {
+        e.emettre(F.prep.de); return i + 1;
       }
-      const aIsArticle = (cle === "a" && (e.suiv === null || !est_verbe_gp(e.suiv) || !est_mot(e.suiv)));
-      if ((cle === "la" || cle === "lan" || aIsArticle) && sortie.length && est_mot(last(sortie))) {
+      const aIsArticle = (cle === G.poss.particule && (e.suiv === null || !est_verbe_gp(e.suiv) || !est_mot(e.suiv)));
+      if ((G.art.definis.includes(cle) || aIsArticle) && sortie.length && est_mot(last(sortie))) {
         const prec = last(sortie).toLowerCase();
         const emisEstNom = ["nom", "lieu"].includes(classer_fr(prec));
-        if (rules.etre_formes.has(prec) || rules.etre_imparfait.has(prec) || (i > 0 && est_verbe_gp(tokens[i - 1]) && !emisEstNom)) { e.emettre("là"); return i + 1; }
+        if (rules.etre_formes.has(prec) || rules.etre_imparfait.has(prec) || (i > 0 && est_verbe_gp(tokens[i - 1]) && !emisEstNom)) { e.emettre(F.adv.la); return i + 1; }
         const precIsNom = rules.marqueurs.has(prec) && ["nom", "lieu"].includes(type_gp(prec));
         if (!Rin("pronoms_creole_francais", prec) && (!rules.marqueurs.has(prec) || precIsNom)) {
           if (aIsArticle && ctx.type_fr[prec] === "adv") return i + 1;
-          const dejaDet = sortie.length >= 2 && (rules.determinants_fr.has(sortie[sortie.length - 2].toLowerCase()) || ["aucun", "aucune", "un"].includes(sortie[sortie.length - 2].toLowerCase()));
-          if (!dejaDet) e.emettre(cle === "a" ? "la" : cle);
+          const dejaDet = sortie.length >= 2 && (rules.determinants_fr.has(sortie[sortie.length - 2].toLowerCase()) || F.det.sans_article.includes(sortie[sortie.length - 2].toLowerCase()));
+          if (!dejaDet) e.emettre(cle === G.poss.particule ? G.art.defini : cle);
           return i + 1;
         }
       }
@@ -2061,12 +2064,12 @@
     // "san" homographe : après un nombre = "cent(s)" ("twa san moun" = trois
     // cents gens), sinon "sang"/"sans" via le dico.
     HG.push(function h_san_cent(e) {
-      const { tokens, i, n } = e; if (tokens[i].toLowerCase() !== "san" || i === 0) return null;
+      const { tokens, i, n } = e; if (tokens[i].toLowerCase() !== G.nombre_cent || i === 0) return null;
       const prevFr = (fr_de_gp(tokens[i - 1]) || "").toLowerCase();
       if (!rules.nombres_fr.has(prevFr) && !/^\d+$/.test(tokens[i - 1])) return null;
       const suiv = i + 1 < n ? tokens[i + 1] : null;
       const suivNombre = suiv && (rules.nombres_fr.has((fr_de_gp(suiv) || "").toLowerCase()) || /^\d+$/.test(suiv));
-      e.emettre(reporter_casse(tokens[i], suivNombre ? "cent" : "cents"));
+      e.emettre(reporter_casse(tokens[i], suivNombre ? F.nombre.cent : F.nombre.cents));
       return i + 1;
     });
     HG.push(function h_interrogatifs(e) {
@@ -2075,22 +2078,22 @@
       // "Ka" en tête de phrase suivi d'un pronom sujet = interrogatif ("Ka ou
       // vlé ?" = qu'est-ce que tu veux ?) — ailleurs "ka" reste le marqueur
       // d'aspect, d'où son exclusion de l'inverse général.
-      if (cle === "ka" && e.debut_de_phrase() && suiv !== null && rules.pronoms_gp.has(suiv.toLowerCase())) {
-        e.emettre(reporter_casse(tok, "qu'est-ce que"));
+      if (cle === rules.R.interrogatifs[F.interro.que] && e.debut_de_phrase() && suiv !== null && rules.pronoms_gp.has(suiv.toLowerCase())) {
+        e.emettre(reporter_casse(tok, rules.R.traductions_gp_fr.interrogatif_que));
         return i + 1;
       }
       // "Ki" interrogatif en tête de phrase devant un nom ("Ki moun ou yé ?" =
       // quel gens…). Exclu de l'inverse général car ailleurs "ki" = relatif "qui".
-      if (cle === "ki" && e.debut_de_phrase() && suiv !== null && est_mot(suiv) && !est_verbe_gp(suiv)) {
-        e.emettre(reporter_casse(tok, "quel"));
+      if (cle === rules.R.interrogatifs[F.interro.quel] && e.debut_de_phrase() && suiv !== null && est_mot(suiv) && !est_verbe_gp(suiv)) {
+        e.emettre(reporter_casse(tok, rules.R.traductions_gp_fr.interrogatif_quel));
         return i + 1;
       }
       if (has(rules.interrogatifs_inverse, cle)) {
         e.emettre(reporter_casse(tok, rules.interrogatifs_inverse[cle]));
         // "combien de" seulement devant un nom — pas devant un pronom ("konmen
         // i kout" = combien il coûte, pas "combien de il").
-        if (rules.interrogatifs_inverse[cle] === "combien" && suiv !== null && est_mot(suiv) &&
-            !est_verbe_gp(suiv) && !rules.pronoms_gp.has(suiv.toLowerCase())) { e.emettre("de"); state.pluriel = true; }
+        if (rules.interrogatifs_inverse[cle] === F.interro.combien && suiv !== null && est_mot(suiv) &&
+            !est_verbe_gp(suiv) && !rules.pronoms_gp.has(suiv.toLowerCase())) { e.emettre(F.prep.de); state.pluriel = true; }
         return i + 1;
       }
       return null;
@@ -2102,34 +2105,34 @@
       // h_qui pour que le "ki" qui suit l'adjectif devienne "que" — sinon h_qui
       // le lit comme le relatif "qui" par défaut.
       const { tokens, i, n, state } = e; const cle = tokens[i].toLowerCase();
-      if (cle !== "otan") return null;
+      if (cle !== rules.R.traductions_fr_gp.aussi_comparatif) return null;
       let j = i + 1; while (j < n && !est_mot(tokens[j])) j++;
       if (j >= n || !est_adjectif_gp(tokens[j])) return null;
       let k = j + 1; while (k < n && !est_mot(tokens[k])) k++;
-      if (k >= n || tokens[k].toLowerCase() !== "ki") return null;
-      e.emettre("aussi");
+      if (k >= n || tokens[k].toLowerCase() !== G.rel) return null;
+      e.emettre(F.comp.aussi);
       state.attenteComparatifKi = true;
       return i + 1;
     });
     HG.push(function h_comparatif(e) {
       const { tokens, i, sortie, deja } = e; const cle = tokens[i].toLowerCase();
-      if (cle === "pasé" && sortie.length && est_mot(last(sortie)) && est_adjectif_gp(last(sortie))) {
+      if (cle === G.comp.depasse && sortie.length && est_mot(last(sortie)) && est_adjectif_gp(last(sortie))) {
         const adjPos = sortie.length - 1;
-        const dejaCmp = adjPos > 0 && ["plus", "pli", "moins"].includes(sortie[adjPos - 1].toLowerCase());
-        if (!dejaCmp) { sortie.splice(adjPos, 0, "plus"); deja.splice(adjPos, 0, true); }
-        e.emettre("que"); return i + 1;
+        const dejaCmp = adjPos > 0 && F.comp.deja_marque.includes(sortie[adjPos - 1].toLowerCase());
+        if (!dejaCmp) { sortie.splice(adjPos, 0, F.comp.plus); deja.splice(adjPos, 0, true); }
+        e.emettre(F.sub.que); return i + 1;
       }
       return null;
     });
     HG.push(function h_demonstratif_possessif(e) {
       const { tokens, i } = e; const cle = tokens[i].toLowerCase();
-      if (i > 0 && tokens[i - 1].toLowerCase() === "lakay") return null;
+      if (i > 0 && tokens[i - 1].toLowerCase() === rules.R.traductions_fr_gp.chez) return null;
       if (has(rules.possessifs_gp, cle) || cle === rules.R.particule_demonstrative) { e.emettre(cle); return i + 1; }
       return null;
     });
     HG.push(function h_se(e) {
       const { tokens, i, n, state, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
-      if (cle !== "sé") return null;
+      if (cle !== G.copule) return null;
       const suiv = i + 1 < n ? tokens[i + 1] : null;
       // Une sentinelle de phrase pré-traduite ("ti moun"…) est un groupe nominal.
       if (suiv === null || (!est_mot(suiv) && !est_sentinelle(suiv))) return null;
@@ -2137,7 +2140,7 @@
       // "sé pa X" = "ce n'est pas X" ("sé pa zafè a-w", "sé pa fòt an-mwen"),
       // y compris en milieu de phrase.
       if (suivL === rules.R.marqueur_negation) {
-        e.emettre(reporter_casse(tok, "ce")); e.emettre("n'est"); e.emettre("pas");
+        const np = rules.R.traductions_gp_fr.se_negatif; e.emettre(reporter_casse(tok, np[0])); for (const m of np.slice(1)) e.emettre(m);
         return i + 2;
       }
       const estPronom = Rin("pronoms_creole_francais", suivL);
@@ -2156,13 +2159,13 @@
           if (est_sentinelle(t)) { nomVu = true; vus++; continue; }
           if (!est_mot(t)) continue;
           const tl = t.toLowerCase();
-          if (tl === "pi" || tl === "pli") break; // comparatif → superlatif prédicatif ("sé pi bèl la" = c'est le plus beau), pas pluriel
+          if (G.comp.plus.includes(tl)) break; // comparatif → superlatif prédicatif ("sé pi bèl la" = c'est le plus beau), pas pluriel
           // "sé [adjectif] la" sans nom = superlatif prédicatif ("sé miyò la" =
           // c'est le meilleur), pas un pluriel.
-          if (tl === "la" || tl === "lan") {
+          if (G.art.definis.includes(tl)) {
             // "sé X la ki …" = clivée ("C'est X qui…"), pas un pluriel.
             let k = j + 1; while (k < n && !est_mot(tokens[k])) k++;
-            pluriel = (k < n && tokens[k].toLowerCase() === "ki") ? false : nomVu;
+            pluriel = (k < n && tokens[k].toLowerCase() === G.rel) ? false : nomVu;
             break;
           }
           if (est_adjectif_gp(t) && !["nom", "lieu"].includes(type_gp(t))) { vus++; continue; }
@@ -2170,7 +2173,7 @@
           // "sé" + nom(s) + marqueur d'aspect : groupe nominal sujet pluriel
           // ("sé pwason ka najé" = LES poissons nagent, pas "c'est des poissons").
           if (vus > 0 && rules.marqueurs.has(tl)) { pluriel = true; break; }
-          if (est_verbe_gp(t) || rules.pronoms_gp.has(tl) || rules.marqueurs.has(tl) || tl === "ki") break;
+          if (est_verbe_gp(t) || rules.pronoms_gp.has(tl) || rules.marqueurs.has(tl) || tl === G.rel) break;
           vus++;
         }
       }
@@ -2209,73 +2212,73 @@
     // Un « tou » quantifieur (« tou moun », « tou » + nom) reste à h_tout ; en tête de phrase, rien ne change.
     HG.push(function h_tou_homographe(e) {
       const { tokens, i, n } = e; const tok = tokens[i], cle = tok.toLowerCase();
-      if (cle !== "tou" || i === 0 || !est_mot(tokens[i - 1])) return null;
+      if (cle !== G.quant.court || i === 0 || !est_mot(tokens[i - 1])) return null;
       const prevL = tokens[i - 1].toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null, suivL = suiv ? suiv.toLowerCase() : "";
-      for (let j = i - 1; j >= 0 && est_mot(tokens[j]); j--) if (tokens[j].toLowerCase() === rules.R.marqueur_negation) { e.emettre(reporter_casse(tok, "du tout")); return i + 1; }
-      if (suivL === "la" || suivL === "lan") { e.emettre(reporter_casse(tok, "trou")); return i + 1; }
+      for (let j = i - 1; j >= 0 && est_mot(tokens[j]); j--) if (tokens[j].toLowerCase() === rules.R.marqueur_negation) { e.emettre(reporter_casse(tok, F.quant.du_tout)); return i + 1; }
+      if (G.art.definis.includes(suivL)) { e.emettre(reporter_casse(tok, ctx.index_gp_nom[cle])); return i + 1; }
       if (suiv !== null && est_mot(suiv) && !est_verbe_gp(suiv) && !rules.marqueurs.has(suivL) && !rules.pronoms_gp.has(suivL) && ["nom", "lieu"].includes(type_gp(suiv))) return null;
-      const nominal = ["on", "yon", "yonn"].includes(prevL) || ["adj", "num", "prep"].includes(type_gp(tokens[i - 1]));
-      e.emettre(reporter_casse(tok, nominal ? "trou" : "aussi")); return i + 1;
+      const nominal = G.art.indefinis_surs.includes(prevL) || ["adj", "num", "prep"].includes(type_gp(tokens[i - 1]));
+      e.emettre(reporter_casse(tok, nominal ? ctx.index_gp_nom[cle] : F.comp.aussi)); return i + 1;
     });
     // « tou » en tête de phrase : « tou ka vini » = tout le monde vient ; « tou té ka vini » = tout le monde venait ;
     // « tou yo » = tous viennent ; « tou lè » = toujours ; « tou sa » = tout ça ; « tou pa » = tous ne… pas ;
     // « tou X-la » = tout le / toute la X (singulier défini, article postposé). Le pluriel nu (« tou kaz ») reste à h_tout.
     HG.push(function h_tou_debut(e) {
       const { tokens, i, n, state, conj, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
-      if (cle !== "tou" || (i > 0 && est_mot(tokens[i - 1]))) return null;
+      if (cle !== G.quant.court || (i > 0 && est_mot(tokens[i - 1]))) return null;
       const suiv = i + 1 < n ? tokens[i + 1] : null;
       if (suiv === null || !est_mot(suiv)) return null;
       const sl = suiv.toLowerCase();
-      if (sl === "lè") { e.emettre(reporter_casse(tok, "toujours")); return i + 2; }
-      if (sl === "sa") {
-        if (i + 2 < n && tokens[i + 2].toLowerCase() === "sé") { e.emettre(reporter_casse(tok, "tout ça c'est")); return i + 3; }
-        e.emettre(reporter_casse(tok, "tout ça")); return i + 2;
+      if (sl === G.quand) { e.emettre(reporter_casse(tok, F.quant.toujours)); return i + 2; }
+      if (sl === G.cela) {
+        if (i + 2 < n && tokens[i + 2].toLowerCase() === G.copule) { e.emettre(reporter_casse(tok, F.quant.tout_ca_cest)); return i + 3; }
+        e.emettre(reporter_casse(tok, F.quant.tout_ca)); return i + 2;
       }
-      if (sl === "pa") { e.emettre(reporter_casse(tok, "tous")); state.pluriel = true; return i + 1; }
-      if (sl === "sé") { e.emettre(reporter_casse(tok, "tous")); state.pluriel = true; return i + 1; }
-      if (sl === "bagay") { e.emettre(reporter_casse(tok, "tout")); state.pluriel = false; return i + 2; }
+      if (sl === rules.R.marqueur_negation) { e.emettre(reporter_casse(tok, F.quant.tous)); state.pluriel = true; return i + 1; }
+      if (sl === G.copule) { e.emettre(reporter_casse(tok, F.quant.tous)); state.pluriel = true; return i + 1; }
+      if (sl === G.quant.chose) { e.emettre(reporter_casse(tok, F.quant.tout)); state.pluriel = false; return i + 2; }
       if (rules.marqueurs.has(sl)) {
         const [temps, adverbe, j2] = lire_marqueurs(tokens, i + 1, n);
         if (j2 < n && est_verbe_gp(tokens[j2])) {
-          e.emettre(reporter_casse(tok, "tout le monde")); state.pluriel = false;
-          conj[sortie.length] = ["il", temps || "present", false, adverbe]; return j2;
+          e.emettre(reporter_casse(tok, F.quant.tout_le_monde)); state.pluriel = false;
+          conj[sortie.length] = [F.suj.p3s, temps || "present", false, adverbe]; return j2;
         }
         return null;
       }
-      if (sl === "nou" || sl === "zot") {
+      if (has(G.quant.sujets_pluriels, sl)) {
         let k = i + 2; while (k < n && !est_mot(tokens[k])) k++;
         const [temps, adverbe, j2] = lire_marqueurs(tokens, k, n);
         if (j2 < n && est_verbe_gp(tokens[j2])) {
-          const pr = sl === "nou" ? "nous" : "vous";
-          e.emettre(reporter_casse(tok, pr + " tous")); state.pluriel = true;
+          const pr = G.quant.sujets_pluriels[sl];
+          e.emettre(reporter_casse(tok, pr + " " + F.quant.tous)); state.pluriel = true;
           conj[sortie.length] = [pr, temps || "present", false, adverbe]; return j2;
         }
         return null;
       }
-      if (sl === "yo") {
+      if (sl === G.suj.p3p) {
         let k = i + 2; while (k < n && !est_mot(tokens[k])) k++;
         const [temps, adverbe, j2] = lire_marqueurs(tokens, k, n);
         if (j2 < n && est_verbe_gp(tokens[j2])) {
-          e.emettre(reporter_casse(tok, "tous")); state.pluriel = true;
-          conj[sortie.length] = ["ils", temps || "present", false, adverbe]; return j2;
+          e.emettre(reporter_casse(tok, F.quant.tous)); state.pluriel = true;
+          conj[sortie.length] = [F.suj.p3p, temps || "present", false, adverbe]; return j2;
         }
         return null;
       }
-      if (["nom", "lieu"].includes(type_gp(suiv)) && i + 2 < n && tokens[i + 2].toLowerCase() === "la") {
+      if (["nom", "lieu"].includes(type_gp(suiv)) && i + 2 < n && tokens[i + 2].toLowerCase() === G.art.defini) {
         const nomFr = fr_de_gp(suiv);
         if (nomFr) {
           const [temps, adverbe, j2] = lire_marqueurs(tokens, i + 3, n);
           const verbe = j2 < n && est_verbe_gp(tokens[j2]) && ctx.type_fr[String(ctx.index_gp[tokens[j2].toLowerCase()] || "").toLowerCase()] === "verbe";
-          const copule = i + 3 < n && tokens[i + 3].toLowerCase() === "sé";
+          const copule = i + 3 < n && tokens[i + 3].toLowerCase() === G.copule;
           const fin = i + 3 >= n || !est_mot(tokens[i + 3]);
           if (!verbe && !copule && !fin) return null;
           const fem = ctx.genre_fr[nomFr.toLowerCase()] === "f";
           const voy = commence_par_voyelle(nomFr);
-          const det = fem ? (voy ? "toute l'" : "toute la") : (voy ? "tout l'" : "tout le");
+          const det = F.quant.defini[fem ? "f" : "m"][voy ? 1 : 0];
           if (voy) e.emettre(reporter_casse(tok, det + nomFr)); else { e.emettre(reporter_casse(tok, det)); e.emettre(nomFr); }
           state.pluriel = false;
-          if (verbe) { conj[sortie.length] = ["il", temps || "present", false, adverbe]; return j2; }
+          if (verbe) { conj[sortie.length] = [F.suj.p3s, temps || "present", false, adverbe]; return j2; }
           return i + 3;
         }
       }
@@ -2284,16 +2287,16 @@
     HG.push(function h_tout(e) {
       const { tokens, i, n, state, conj, sortie } = e; const tok = tokens[i], cle = tok.toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null;
-      if ((cle === "tout" || cle === "tou") && suiv !== null && est_mot(suiv) && !est_verbe_gp(suiv)) {
-        if (suiv.toLowerCase() === "moun" || suiv.toLowerCase() === "monn") {
-          e.emettre(reporter_casse(tok, "tout le monde")); state.pluriel = false;
+      if (G.tout.includes(cle) && suiv !== null && est_mot(suiv) && !est_verbe_gp(suiv)) {
+        if (G.quant.monde.includes(suiv.toLowerCase())) {
+          e.emettre(reporter_casse(tok, F.quant.tout_le_monde)); state.pluriel = false;
           let j = i + 2; while (j < n && !est_mot(tokens[j])) j++;
           let temps, adverbe, j2; [temps, adverbe, j2] = lire_marqueurs(tokens, j, n);
-          if (j2 < n && est_verbe_gp(tokens[j2])) { conj[sortie.length] = ["il", temps || "present", false, adverbe]; return j2; }
-          if (temps !== null) { e.emettre(conjuguer("être", "il", temps)); return j2; }
+          if (j2 < n && est_verbe_gp(tokens[j2])) { conj[sortie.length] = [F.suj.p3s, temps || "present", false, adverbe]; return j2; }
+          if (temps !== null) { e.emettre(conjuguer(F.inf.etre, F.suj.p3s, temps)); return j2; }
           return i + 2;
         }
-        if (rules.demonstratifs_gp.has(suiv.toLowerCase())) { e.emettre(reporter_casse(tok, "tout")); return i + 1; }
+        if (rules.demonstratifs_gp.has(suiv.toLowerCase())) { e.emettre(reporter_casse(tok, F.quant.tout)); return i + 1; }
         e.emettre(reporter_casse(tok, rules.R.traductions_gp_fr.tout));
         e.emettre(rules.R.traductions_gp_fr.se_les); state.pluriel = true; return i + 1;
       }
@@ -2311,7 +2314,7 @@
       let j = i + 1; while (j < n && !est_mot(tokens[j])) j++;
       if (j >= n) return null;
       const sl = tokens[j].toLowerCase();
-      if (sl !== "la" && sl !== "lan") return null;
+      if (!G.art.definis.includes(sl)) return null;
       e.emettre(reporter_casse(tok, ctx.index_gp_nom[cle]));
       return i + 1;
     });
@@ -2340,8 +2343,8 @@
       // article indéfini ("an bouké flè" = un bouquet de fleurs) : trop ambigu
       // pour servir de signal de sujet ici sans la désambiguïsation complète que
       // fait h_pronoms ailleurs — on l'exclut pour ne pas casser le sens nominal.
-      const sujetPronom = prev !== null && prev !== "an" && rules.pronoms_gp.has(prev);
-      const sujetNominal = prev === "la" || prev === "lan";
+      const sujetPronom = prev !== null && prev !== G.suj.p1s_ambigu && rules.pronoms_gp.has(prev);
+      const sujetNominal = G.art.definis.includes(prev);
       if (!sujetPronom && !sujetNominal) return null;
       e.emettre(reporter_casse(tok, ctx.index_gp_adj[cle]));
       return i + 1;
@@ -2349,18 +2352,18 @@
     HG.push(function h_negation_debut(e) {
       const { tokens, i, n, conj, sortie } = e; const cle = tokens[i].toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null; const neg = rules.R.marqueur_negation;
-      if ((cle === neg || cle === "pas") && e.debut_de_phrase() && suiv !== null && !["ni", "tini"].includes(suiv.toLowerCase()) && est_mot(suiv) && est_verbe_gp(suiv)) {
-        e.emettre("ne"); conj[sortie.length] = ["tu", "imperatif", true, null]; return i + 1;
+      if ((cle === neg || cle === F.neg.pas) && e.debut_de_phrase() && suiv !== null && !G.avoir.includes(suiv.toLowerCase()) && est_mot(suiv) && est_verbe_gp(suiv)) {
+        e.emettre(F.neg.ne); conj[sortie.length] = [F.suj.p2s, "imperatif", true, null]; return i + 1;
       }
       return null;
     });
     HG.push(function h_ni(e) {
       const { tokens, i, n } = e; const cle = tokens[i].toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null; const neg = rules.R.marqueur_negation;
-      const EXIST = ["ni", "tini"]; // « ni » / « tini » en tête de phrase = il y a (existentiel)
+      const EXIST = G.avoir; // « ni » / « tini » en tête de phrase = il y a (existentiel)
       if (e.debut_de_phrase() && (EXIST.includes(cle) || (cle === neg && suiv !== null && EXIST.includes(suiv.toLowerCase())))) {
         const ni = rules.R.patterns_ni_gp; const nie = cle === neg; let idx = nie ? i + 2 : i + 1;
-        if (nie && idx < n && tokens[idx].toLowerCase() === "pon") { for (const m of ni.pa_ni_pon) e.emettre(m); return idx + 1; }
+        if (nie && idx < n && tokens[idx].toLowerCase() === G.aucun) { for (const m of ni.pa_ni_pon) e.emettre(m); return idx + 1; }
         for (const m of (nie ? ni.pa_ni : ni.ni)) e.emettre(m);
         // Pas de "du" forcé ici : la restitution d'articles générale choisit le
         // bon déterminant (des/du/de l'/beaucoup de…) selon le nom qui suit.
@@ -2371,7 +2374,7 @@
     HG.push(function h_il_faut(e) {
       const { tokens, i, n } = e; const tok = tokens[i], cle = tok.toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null;
-      const formes = [rules.R.traductions_fr_gp.il_faut, "fok", "fo"];
+      const formes = G.il_faut;
       if (formes.includes(cle) && e.debut_de_phrase() && suiv !== null) {
         const t = rules.R.traductions_gp_fr;
         e.emettre(reporter_casse(tok, t.fo_il)); e.emettre(t.fo_faut);
@@ -2383,19 +2386,19 @@
     HG.push(function h_qui(e) {
       const { tokens, i, n, sortie, conj, state } = e; const cle = tokens[i].toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null;
-      if (cle === "ki" && state.attenteComparatifKi) {
-        state.attenteComparatifKi = false; e.emettre("que"); return i + 1;
+      if (cle === G.rel && state.attenteComparatifKi) {
+        state.attenteComparatifKi = false; e.emettre(F.sub.que); return i + 1;
       }
-      if (cle === "ki" && sortie.length) {
-        if (suiv !== null && has(rules.toniques_gp, suiv.toLowerCase())) { e.emettre("que"); e.emettre(rules.toniques_gp[suiv.toLowerCase()]); return i + 2; }
+      if (cle === G.rel && sortie.length) {
+        if (suiv !== null && has(rules.toniques_gp, suiv.toLowerCase())) { e.emettre(F.sub.que); e.emettre(rules.toniques_gp[suiv.toLowerCase()]); return i + 2; }
         else if (suiv !== null && rules.etre_formes_gp_set.has(suiv.toLowerCase())) {
-          if (last(sortie).toLowerCase() !== "qui") e.emettre("qui");
-          e.emettre("est");
-          return (suiv.toLowerCase() === "yé" || suiv.toLowerCase() === "sé") ? i + 2 : i + 1;
+          if (last(sortie).toLowerCase() !== F.interro.qui) e.emettre(F.interro.qui);
+          e.emettre(conjuguer(F.inf.etre, F.suj.p3s));
+          return G.copules.includes(suiv.toLowerCase()) ? i + 2 : i + 1;
         } else {
-          e.emettre("qui");
+          e.emettre(F.interro.qui);
           if (suiv !== null && est_mot(suiv) && est_verbe_gp(suiv)) {
-            const pronom = state.pluriel ? "ils" : "il";
+            const pronom = state.pluriel ? F.suj.p3p : F.suj.p3s;
             const [, , jRel] = lire_marqueurs(tokens, i + 1, n);
             if (jRel > i + 1) { /* marqueur géré par h_marqueurs_aspect */ }
             else conj[sortie.length] = [pronom, "present", false, null];
@@ -2411,21 +2414,21 @@
       if (rules.R.declencheurs_ba.includes(cle) && suiv !== null && Rin("pronoms_creole_francais", suiv.toLowerCase())) {
         const ton = rules.toniques_gp[suiv.toLowerCase()]; let pv = false;
         if (sortie.length) { const lw = last(sortie); if (est_verbe(lw) || est_verbe_gp(lw)) pv = true; }
-        if (pv) { e.emettre("à"); e.emettre(ton); return i + 2; }
+        if (pv) { e.emettre(F.prep.a); e.emettre(ton); return i + 2; }
         if (e.debut_de_phrase()) { e.emettre(rules.R.traductions_gp_fr.ba_donner); e.emettre(ton); return i + 2; }
       }
       if (rules.R.declencheurs_ba.includes(cle) && suiv !== null && est_mot(suiv) && !est_verbe_gp(suiv) &&
           !rules.marqueurs.has(suiv.toLowerCase()) && sortie.length && est_mot(last(sortie)) &&
-          (est_verbe(last(sortie)) || est_verbe_gp(last(sortie)))) { e.emettre("à"); return i + 1; }
+          (est_verbe(last(sortie)) || est_verbe_gp(last(sortie)))) { e.emettre(F.prep.a); return i + 1; }
       return null;
     });
     HG.push(function h_particule_a(e) {
       const { tokens, i, n, sortie, deja, conj } = e; const tok = tokens[i], cle = tok.toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null;
-      if (cle === "a" && sortie.length && est_mot(last(sortie))) {
+      if (cle === G.poss.particule && sortie.length && est_mot(last(sortie))) {
         const prevGp = last(sortie).toLowerCase();
         const prevIsNoun = ["nom", "lieu"].includes(type_gp(prevGp));
-        if (suiv === null || !est_mot(suiv)) { if (prevIsNoun) { e.emettre("la"); return i + 1; } }
+        if (suiv === null || !est_mot(suiv)) { if (prevIsNoun) { e.emettre(G.art.defini); return i + 1; } }
         else {
           const sl = suiv.toLowerCase();
           const st = ctx.type_fr[ctx.index_gp[sl] !== undefined ? ctx.index_gp[sl] : sl];
@@ -2433,9 +2436,9 @@
           const isMarq = rules.marqueurs.has(sl);
           const isDet = st === "adj" || st === "num" || (rules.R.determinants_gp || []).includes(sl);
           const isAdv = st === "adv" || est_adverbe_gp(suiv);
-          if (prevIsNoun && (isPrepVerb || isMarq || isDet || isAdv)) { e.emettre("la"); return i + 1; }
-          if (isMarq) { e.emettre("la"); return i + 1; }
-          if ((suiv[0] === suiv[0].toUpperCase() && suiv[0] !== suiv[0].toLowerCase()) || est_lieu_gp(suiv)) e.emettre("à");
+          if (prevIsNoun && (isPrepVerb || isMarq || isDet || isAdv)) { e.emettre(G.art.defini); return i + 1; }
+          if (isMarq) { e.emettre(G.art.defini); return i + 1; }
+          if ((suiv[0] === suiv[0].toUpperCase() && suiv[0] !== suiv[0].toLowerCase()) || est_lieu_gp(suiv)) e.emettre(F.prep.a);
           else e.emettre(rules.R.traductions_gp_fr.a_de);
           return i + 1;
         }
@@ -2464,7 +2467,7 @@
         // Verbe + pronom objet + article ("Ban MWEN on ti bo").
         (i > 1 && rules.pronoms_gp.has(tokens[i - 1].toLowerCase()) && est_verbe_gp(tokens[i - 2])) ||
         // Coordination : "on ponm É ON pwa" — l'article vaut aussi après la conjonction.
-        ["é", "oben", "men", "mé"].includes(tokens[i - 1].toLowerCase()) ||
+        G.coord.conjonctions.includes(tokens[i - 1].toLowerCase()) ||
         (est_sentinelle(tokens[i - 1]) && sortie.length &&
          porte_verbe(String(last(sortie)).split(/[ -]/)[0])));
       // Sans prédicat dans la suite de la clause ("an pwa", "on bèl kaz"),
@@ -2501,7 +2504,7 @@
       if (e.debut_de_phrase() && est_mot(tok) && est_verbe_gp(tok) && clauseImp && !rules.etre_formes_gp_set.has(cle) &&
           !(has(ctx.index_gp_nom, cle) && (suit_genitif_gp(tokens, i + 1, e.n) ||
             i + 1 >= e.n || !est_mot(tokens[i + 1])))) {
-        conj[sortie.length] = ["tu", "imperatif", false, null]; e.emettre(tok, false); return i + 1;
+        conj[sortie.length] = [F.suj.p2s, "imperatif", false, null]; e.emettre(tok, false); return i + 1;
       }
       return null;
     });
@@ -2529,10 +2532,10 @@
     // sujet (« ils sont déjà… »), pas un tonique isolé. La règle s'applique à
     // tout adjectif du dictionnaire, sans dépendre d'une phrase complète.
     HG.push(function h_pronom_ja_adjectif(e) {
-      if (e.cle !== "yo" || e.i + 2 >= e.n || e.tokens[e.i + 1].toLowerCase() !== "ja") return null;
+      if (e.cle !== G.suj.p3p || e.i + 2 >= e.n || e.tokens[e.i + 1].toLowerCase() !== rules.R.marqueurs_supplementaires[0]) return null;
       const adj = e.tokens[e.i + 2];
       if (!est_adjectif_gp(adj)) return null;
-      e.emettre("ils"); e.emettre("sont"); e.emettre("déjà"); e.state.pluriel = true;
+      e.emettre(F.suj.p3p); e.emettre(conjuguer(F.inf.etre, F.suj.p3p)); e.emettre(F.adv.deja); e.state.pluriel = true;
       return e.i + 2;
     });
     HG.push(function h_pronoms(e) {
@@ -2543,11 +2546,11 @@
       // pas "attrape je"). placer_clitiques le remettra devant le verbe.
       if (Rin("pronoms_creole_francais", cle) && i > 0 && est_mot(tokens[i - 1]) && est_verbe_gp(tokens[i - 1]) &&
           (suiv === null || !est_mot(suiv) || !(rules.marqueurs.has(suiv.toLowerCase()) || est_verbe_gp(suiv) || rules.pronoms_gp.has(suiv.toLowerCase())))) {
-        const objet = rules.R.clitiques_postposes[cle] || ({ ou: "te", i: "le" })[cle];
+        const objet = rules.R.clitiques_postposes[cle] || rules.R.pronoms_objet_gp[cle];
         if (objet) { e.emettre(objet); return i + 1; }
       }
       if (Rin("pronoms_creole_francais", cle)) {
-        if (cle === "yo" && sortie.length && est_mot(last(sortie))) {
+        if (cle === G.suj.p3p && sortie.length && est_mot(last(sortie))) {
           const prev = last(sortie).toLowerCase();
           const prevFr = ctx.index_gp[prev] !== undefined ? ctx.index_gp[prev] : prev;
           // Après une préposition, « yo » est un pronom tonique (« pour eux »),
@@ -2561,11 +2564,11 @@
               !est_verbe_gp(last(sortie)) && !["adv", "prep", "conj"].includes(ctx.type_fr[prev]) && !["adv", "prep", "conj"].includes(ctx.type_fr[prevFr])) {
             sortie.push(MARQUE_DEM); deja.push(true); e.state.pluriel = true;
             let [temps, adverbe, j] = lire_marqueurs(tokens, i + 1, n);
-            if (j < n && est_verbe_gp(tokens[j])) conj[sortie.length] = ["ils", temps || "present", false, adverbe];
+            if (j < n && est_verbe_gp(tokens[j])) conj[sortie.length] = [F.suj.p3p, temps || "present", false, adverbe];
             return j > i + 1 ? j : i + 1;
           }
         }
-        if (cle === "an" && sortie.length && est_mot(last(sortie))) {
+        if (cle === G.suj.p1s_ambigu && sortie.length && est_mot(last(sortie))) {
           const prevGp = i > 0 ? tokens[i - 1].toLowerCase() : "";
           const prevFrAn = ctx.index_gp[prevGp] !== undefined ? ctx.index_gp[prevGp] : "";
           let isNum = (["adj", "nom"].includes(ctx.type_fr[prevFrAn]) && !isDigits(prevFrAn) && isDigits(prevGp));
@@ -2574,24 +2577,24 @@
           }
           if (isNum) return null;
         }
-        if (cle === "an" && i > 0 && est_mot(tokens[i - 1])) {
+        if (cle === G.suj.p1s_ambigu && i > 0 && est_mot(tokens[i - 1])) {
           const prevGpTok = tokens[i - 1].toLowerCase();
           const prevFrTok = ctx.index_gp[prevGpTok] !== undefined ? ctx.index_gp[prevGpTok] : prevGpTok;
           if (["nom", "lieu"].includes(ctx.type_fr[prevFrTok]) && !est_verbe_gp(tokens[i - 1])) {
             const dejaDet = sortie.length >= 2 && rules.determinants_fr.has(sortie[sortie.length - 2].toLowerCase());
-            if (!dejaDet) e.emettre("la");
+            if (!dejaDet) e.emettre(G.art.defini);
             return i + 1;
           }
         }
-        if (cle === "an" && suiv !== null && est_mot(suiv)) {
+        if (cle === G.suj.p1s_ambigu && suiv !== null && est_mot(suiv)) {
           const atStart = !sortie.length || rules.R.ponctuation_fin_phrase.includes(last(sortie));
           if (!atStart) {
-            if (suiv[0] === suiv[0].toUpperCase() && suiv[0] !== suiv[0].toLowerCase()) { sortie.push("en"); deja.push(true); return i + 1; }
+            if (suiv[0] === suiv[0].toUpperCase() && suiv[0] !== suiv[0].toLowerCase()) { sortie.push(F.prep.en); deja.push(true); return i + 1; }
             // Lieu : soit typé directement, soit via le sens nominal d'un
             // homographe ("maché" = marcher OU marché-lieu).
             const suivNom = ctx.index_gp_nom[suiv.toLowerCase()];
-            if (est_lieu_gp(suiv) || (suivNom && ctx.type_fr[suivNom.toLowerCase()] === "lieu")) { sortie.push("dans"); deja.push(true); return i + 1; }
-            if (rules.materiaux_fr.has(ctx.index_gp[suiv.toLowerCase()] !== undefined ? ctx.index_gp[suiv.toLowerCase()] : "")) { sortie.push("en"); deja.push(true); return i + 1; }
+            if (est_lieu_gp(suiv) || (suivNom && ctx.type_fr[suivNom.toLowerCase()] === "lieu")) { sortie.push(F.prep.dans); deja.push(true); return i + 1; }
+            if (rules.materiaux_fr.has(ctx.index_gp[suiv.toLowerCase()] !== undefined ? ctx.index_gp[suiv.toLowerCase()] : "")) { sortie.push(F.prep.en); deja.push(true); return i + 1; }
           }
         }
         const prevLower = sortie.length ? last(sortie).toLowerCase() : "";
@@ -2619,38 +2622,38 @@
       return null;
     });
     HG.push(function h_relatif_pli(e) {
-      if ((e.cle !== "pli" && e.cle !== "pi") || !e.sortie.length) return null;
-      if (last(e.sortie).toLowerCase() !== "qui") return null;
+      if (!G.comp.plus.includes(e.cle) || !e.sortie.length) return null;
+      if (last(e.sortie).toLowerCase() !== F.interro.qui) return null;
       if (e.suiv === null || !est_adjectif_gp(e.suiv)) return null;
       const sujet = e.sortie.length >= 2 ? String(e.sortie[e.sortie.length - 2]).toLowerCase() : "";
-      e.emettre(sujet === "vous" ? "êtes" : "est"); e.emettre("le"); e.emettre("plus"); return e.i + 1;
+      e.emettre(conjuguer(F.inf.etre, sujet === F.suj.p2p ? F.suj.p2p : F.suj.p3s)); e.emettre(F.art.le); e.emettre(F.comp.plus); return e.i + 1;
     });
     HG.push(function h_fek_standalone(e) {
-      if (e.cle !== "fèk" && e.cle !== "fek") return null;
-      e.emettre("vient"); e.emettre("de"); return e.i + 1;
+      if (!G.venir_de.includes(e.cle)) return null;
+      e.emettre(conjuguer(F.inf.venir, F.suj.p3s)); e.emettre(F.prep.de); return e.i + 1;
     });
     HG.push(function h_imperatif_objet(e) {
       const { tokens, i, n, sortie, conj } = e; const tok = tokens[i];
       const suiv = i + 1 < n ? tokens[i + 1] : null;
       if (e.debut_de_phrase() && est_mot(tok) && est_verbe_gp(tok) && suiv !== null && suiv.startsWith("-") && has(rules.objet_imperatif, suiv.slice(1).toLowerCase())) {
-        conj[sortie.length] = ["tu", "imperatif", false, null]; e.emettre(tok, false); e.emettre("-" + rules.objet_imperatif[suiv.slice(1).toLowerCase()]); return i + 2; // « -moi » : assemble le colle au verbe (Donne-moi)
+        conj[sortie.length] = [F.suj.p2s, "imperatif", false, null]; e.emettre(tok, false); e.emettre("-" + rules.objet_imperatif[suiv.slice(1).toLowerCase()]); return i + 2; // « -moi » : assemble le colle au verbe (Donne-moi)
       }
       return null;
     });
     HG.push(function h_pani_decompose_gp(e) {
-      if (e.cle !== "pa" || e.suiv !== "ni") return null;
+      if (e.cle !== rules.R.eclat_pani.prefixe || e.suiv !== rules.R.eclat_pani.suffixe) return null;
       const prev = e.i > 0 ? e.tokens[e.i - 1].toLowerCase() : null;
       if (prev && rules.pronoms_gp.has(prev)) return null;
-      e.emettre("il"); e.emettre("n'y"); e.emettre("a"); e.emettre("pas"); e.emettre("de"); return e.i + 2;
+      for (const m of rules.R.patterns_ni_gp.pa_ni) e.emettre(m); e.emettre(F.prep.de); return e.i + 2;
     });
     HG.push(function h_parce_que_gp(e) {
-      if (e.cle !== "pas" || e.suiv === null || e.suiv.toLowerCase() !== "yo") return null;
-      e.emettre("parce que"); return e.i + 1;
+      if (e.cle !== G.parce_que_court || e.suiv === null || e.suiv.toLowerCase() !== G.suj.p3p) return null;
+      e.emettre(F.sub.parce_que); return e.i + 1;
     });
     HG.push(function h_negation_milieu(e) {
       const { tokens, i, sortie, state } = e; const cle = tokens[i].toLowerCase(); const neg = rules.R.marqueur_negation;
       if (cle === neg && sortie.length && (est_mot(last(sortie)) || [...last(sortie)].some((c) => /\p{L}/u.test(c)))) {
-        e.emettre("ne"); state.nie_attente = true; return i + 1;
+        e.emettre(F.neg.ne); state.nie_attente = true; return i + 1;
       }
       return null;
     });
@@ -2666,16 +2669,16 @@
       // « kay » après une préposition de lieu n'est pas un marqueur (le marqueur suit le sujet) :
       // « dan kay-la » ne doit pas devenir « dans va ». Le mot reste alors non traduit (graphie hors GP).
       const prevLoc = i > 0 && typeof tokens[i - 1] === "string" ? tokens[i - 1].toLowerCase() : "";
-      const pasMarqueurLoc = cle === rules.R.marqueur_futur_proche && ["dan", "adan", "nan", "épi", "sou", "anba", "anlè", "douvan", "dèyè"].includes(prevLoc);
+      const pasMarqueurLoc = cle === rules.R.marqueur_futur_proche && G.prep.locatives.includes(prevLoc);
       if (rules.marqueurs.has(cle) && prevNominal && !prevConj && !pasMarqueurLoc) {
         let [temps, adverbe, j] = lire_marqueurs(tokens, i, n);
         const nie = state.nie_attente; state.nie_attente = false;
-        const pronom = (state.pluriel || sujet_pluriel_gp(sortie)) ? "ils" : "il";
+        const pronom = (state.pluriel || sujet_pluriel_gp(sortie)) ? F.suj.p3p : F.suj.p3s;
         if (temps === "futur_proche" || temps === "futur_proche_passe") {
-          e.emettre(conjuguer("aller", pronom, temps === "futur_proche_passe" ? "imparfait" : "present"));
-          if (nie) e.emettre("pas");
-        } else if (j < n && (tokens[j].toLowerCase() === "la" || tokens[j].toLowerCase() === "lan") && (j + 1 >= n || !est_mot(tokens[j + 1]))) {
-          e.emettre(conjuguer("être", pronom, temps || "present")); if (nie) e.emettre("pas"); e.emettre("là"); j++;
+          e.emettre(conjuguer(F.inf.aller, pronom, temps === "futur_proche_passe" ? "imparfait" : "present"));
+          if (nie) e.emettre(F.neg.pas);
+        } else if (j < n && G.loc.la.includes(tokens[j].toLowerCase()) && (j + 1 >= n || !est_mot(tokens[j + 1]))) {
+          e.emettre(conjuguer(F.inf.etre, pronom, temps || "present")); if (nie) e.emettre(F.neg.pas); e.emettre(F.adv.la); j++;
         } else if (j < n && est_mot(tokens[j]) && est_verbe_gp(tokens[j])) {
           conj[sortie.length] = [pronom, temps, nie, adverbe];
         } else if (j < n && est_mot(tokens[j]) && temps === "present") {
@@ -2683,7 +2686,7 @@
         } else if (j < n && est_mot(tokens[j]) && (est_adjectif(tokens[j]) || ctx.index_gp[tokens[j].toLowerCase()] !== undefined)) {
           conj[sortie.length] = [pronom, temps, nie, adverbe];
         } else if (temps !== null) {
-          e.emettre(conjuguer("être", pronom, temps)); if (nie) e.emettre("pas");
+          e.emettre(conjuguer(F.inf.etre, pronom, temps)); if (nie) e.emettre(F.neg.pas);
         }
         return j;
       }
@@ -2691,35 +2694,32 @@
     });
     HG.push(function h_etre_ye(e) {
       const { tokens, i, sortie, state } = e; const cle = tokens[i].toLowerCase();
-      if (cle === "yé" && sortie.length && est_mot(last(sortie)) && !state.nie_attente && tokens[i - 1].toLowerCase() !== "sa" && tokens[i - 1].toLowerCase() !== "ka") {
+      if (cle === G.copule_finale && sortie.length && est_mot(last(sortie)) && !state.nie_attente && tokens[i - 1].toLowerCase() !== G.cela && tokens[i - 1].toLowerCase() !== rules.R.marqueur_present) {
         // "yé" complément d'un verbe ("pansé yé jardinyé" = penser ÊTRE
         // jardinier) : infinitif, pas de conjugaison.
         if (est_verbe_gp(last(sortie)) && !rules.pronoms_gp.has(last(sortie).toLowerCase())) {
-          e.emettre("être"); return i + 1;
+          e.emettre(F.inf.etre); return i + 1;
         }
         const pl = last(sortie).toLowerCase(); let sujet;
-        if (pl === "tu") sujet = "tu"; else if (pl === "je" || pl === "j") sujet = "je";
-        else if (pl === "nous") sujet = "nous"; else if (pl === "vous") sujet = "vous";
-        else sujet = state.pluriel ? "ils" : "il";
-        e.emettre(conjuguer("être", sujet)); return i + 1;
+        if (has(F.suj.formes_reconnues, pl)) sujet = F.suj.formes_reconnues[pl];
+        else sujet = state.pluriel ? F.suj.p3p : F.suj.p3s;
+        e.emettre(conjuguer(F.inf.etre, sujet)); return i + 1;
       }
       return null;
     });
-    // Homographe nom/verbe (ex. "kaka" = caca OU chier) : s'il a un sens nominal
-    // ET qu'il suit un adjectif ou un nombre (contexte nominal : "twa ti kaka"),
-    // on émet le nom — sinon h_verbe_nu le prendrait pour un verbe. Après un
-    // marqueur (ka/ké/té) ou un pronom, le contexte reste verbal → non déclenché.
-    // « kaka » : excrément (nom) ou chier (verbe). Nom après un verbe (« manjé kaka », « fè kaka »)
-    // ou sujet nominal suivi d'un marqueur (« sa kaka ka sent »). Partout ailleurs : chier.
-    HG.push(function h_kaka_homographe(e) {
-      const { tokens, i, n } = e; const tok = tokens[i];
-      if (!est_mot(tok) || tok.toLowerCase() !== "kaka" || !has(ctx.index_gp_nom, "kaka")) return null;
+    // Homographe nom/verbe à lecture verbale par défaut (Grammar.json >
+    // ensembles_lexicaux > noms_objets_homographes_gp) : le nom n'est retenu
+    // qu'après un verbe (complément d'objet) ou comme sujet démonstratif
+    // suivi d'un marqueur. Partout ailleurs le verbe l'emporte.
+    HG.push(function h_nom_objet_homographe(e) {
+      const { tokens, i, n } = e; const tok = tokens[i]; const cle = est_mot(tok) ? tok.toLowerCase() : "";
+      if (!rules.noms_objets_homographes_gp.has(cle) || !has(ctx.index_gp_nom, cle)) return null;
       const prev = i > 0 && est_mot(tokens[i - 1]) ? tokens[i - 1] : null;
       const next = i + 1 < n && est_mot(tokens[i + 1]) ? tokens[i + 1].toLowerCase() : null;
       const apresVerbe = prev !== null && est_verbe_gp(prev) && !rules.marqueurs.has(prev.toLowerCase());
-      const sujetNominal = prev !== null && prev.toLowerCase() === "sa" && next !== null && rules.marqueurs.has(next);
+      const sujetNominal = prev !== null && prev.toLowerCase() === G.cela && next !== null && rules.marqueurs.has(next);
       if (!apresVerbe && !sujetNominal) return null;
-      e.emettre(reporter_casse(tok, ctx.index_gp_nom["kaka"])); return i + 1;
+      e.emettre(reporter_casse(tok, ctx.index_gp_nom[cle])); return i + 1;
     });
     HG.push(function h_nom_homographe(e) {
       const { tokens, i, n } = e; const tok = tokens[i], cle = tok.toLowerCase();
@@ -2739,7 +2739,7 @@
       if (rules.marqueurs.has(prevCle) || rules.pronoms_gp.has(prevCle)) return null;
       // "ki" déjà émis comme relatif ("…qui fè sa") : le mot qui suit est le
       // verbe de la relative, pas un nom ("quel fer"). On se fie à la sortie.
-      if (e.sortie.length && last(e.sortie).toLowerCase() === "qui") return null;
+      if (e.sortie.length && last(e.sortie).toLowerCase() === F.interro.qui) return null;
       const tp = type_gp(prev);
       const prevFr = (fr_de_gp(prev) || "").toLowerCase();
       // Après une préposition RÉGISSANTE, un homographe nom/verbe est le NOM
@@ -2766,15 +2766,15 @@
       const { tokens, i, n, sortie, conj, state } = e; const tok = tokens[i], cle = tok.toLowerCase();
       const suiv = i + 1 < n ? tokens[i + 1] : null;
       if (state.nie_attente && est_mot(tok)) {
-        conj[sortie.length] = [state.pluriel ? "ils" : "il", "present", true, null]; state.nie_attente = false; return null;
+        conj[sortie.length] = [state.pluriel ? F.suj.p3p : F.suj.p3s, "present", true, null]; state.nie_attente = false; return null;
       }
       if (est_mot(tok) && est_verbe_gp(tok) && !has(conj, String(sortie.length)) && sortie.length &&
-          ["é", "et", "oben", "ou"].includes(last(sortie).toLowerCase()) && Object.keys(conj).length) {
+          G.coord.entre_verbes.includes(last(sortie).toLowerCase()) && Object.keys(conj).length) {
         const maxK = Math.max(...Object.keys(conj).map(Number));
         const [pron, temps, nie] = conj[maxK];
         conj[sortie.length] = [pron, temps, nie, null]; return null;
       }
-      const pronom = (state.pluriel || sujet_pluriel_gp(sortie)) ? "ils" : "il";
+      const pronom = (state.pluriel || sujet_pluriel_gp(sortie)) ? F.suj.p3p : F.suj.p3s;
       // est_mot OU groupe composite nominal ("Tout le monde") comme sujet.
       const prevSortieOk = sortie.length && (est_mot(last(sortie)) ||
         (typeof last(sortie) === "string" && last(sortie).includes(" ") && !contient_verbe(last(sortie))));
@@ -2833,7 +2833,7 @@
       const cle = mot.toLowerCase();
       return mot.includes(" ") || rules.etre_formes.has(cle) || rules.avoir_formes.has(cle) ||
         rules.etre_formes.has(cle.split("'").pop()) || rules.avoir_formes.has(cle.split("'").pop()) ||
-        Object.values(rules.R.verbes_irreguliers.aller).includes(cle) ||
+        Object.values(rules.R.verbes_irreguliers[F.inf.aller]).includes(cle) ||
         has(rules.inverse_irreguliers, cle) || trouver_infinitif(mot) !== null;
     }
     function contient_verbe(mot) {
@@ -2841,7 +2841,7 @@
         const p = part.toLowerCase();
         if (rules.etre_formes.has(p) || rules.avoir_formes.has(p) ||
             rules.etre_formes.has(p.split("'").pop()) || rules.avoir_formes.has(p.split("'").pop()) ||
-            Object.values(rules.R.verbes_irreguliers.aller).includes(p) || has(rules.inverse_irreguliers, p) || trouver_infinitif(part) !== null) return true;
+            Object.values(rules.R.verbes_irreguliers[F.inf.aller]).includes(p) || has(rules.inverse_irreguliers, p) || trouver_infinitif(part) !== null) return true;
       }
       return false;
     }
@@ -2882,8 +2882,8 @@
           // Le second nom est encore NU (aucun déterminant restitué avant lui,
           // sinon on aurait pris la branche de la tête de groupe ci-dessus) :
           // un complément de nom français en prend un ("le cheval DU facteur").
-          if (!bEstTeteDeterminee) out.push(determinant_devant({ m: "du", f: "de la" }, b)[0]);
-          else out.push("de");
+          if (!bEstTeteDeterminee) out.push(determinant_devant(F.art.partitif, b)[0]);
+          else out.push(F.prep.de);
         }
       }
       return out;
@@ -2895,7 +2895,7 @@
         if (sortie.length && est_mot(last(sortie))) {
           const isPoss = has(rules.possessifs_gp, cle);
           const isDem = cle === rules.R.particule_demonstrative;
-          const isArt = cle === "la" || cle === "lan";
+          const isArt = G.art.definis.includes(cle);
           const isDemMark = mot === MARQUE_DEM;
           if (isPoss || isDem || isArt || isDemMark) {
             let idxNom = -1, repli = -1;
@@ -2940,8 +2940,8 @@
                   sortie[sortie.length - 1] = pd;
                   sortie.push(...npWords);
                 } else {
-                  let det = "les"; const fw = npWords[0];
-                  if (fw[0] === fw[0].toUpperCase() && fw[0] !== fw[0].toLowerCase()) { det = "Les"; npWords[0] = minuscule(fw); }
+                  let det = F.art.pluriel; const fw = npWords[0];
+                  if (fw[0] === fw[0].toUpperCase() && fw[0] !== fw[0].toLowerCase()) { det = majuscule(F.art.pluriel); npWords[0] = minuscule(fw); }
                   sortie.push(det); sortie.push(...npWords);
                 }
                 processed = true;
@@ -2955,8 +2955,8 @@
                 const modAfter = npWords.slice(idxNomInNp + 1);
                 let formes;
                 if (isPoss) formes = rules.possessifs_gp[cle];
-                else if (isDem) formes = { m: commence_par_voyelle(nom) ? "cet" : "ce", f: "cette" };
-                else formes = { m: "le", f: "la" };
+                else if (isDem) formes = { m: commence_par_voyelle(nom) ? F.dem.m_voyelle : F.dem.m, f: F.dem.f };
+                else formes = F.art.defini;
                 let det = formes[genre_nom(nom)] || formes.m;
                 const firstWord = modBefore.length ? modBefore[0] : nom;
                 if (firstWord && firstWord[0] === firstWord[0].toUpperCase() && firstWord[0] !== firstWord[0].toLowerCase()) {
@@ -3004,7 +3004,7 @@
       while (i < mots.length) {
         let j = i; while (j < mots.length && !FIN.includes(mots[j])) j++;
         for (let p = i; p < j; p++) {
-          if (mots[p] && mots[p].toLowerCase() === "pas") {
+          if (mots[p] && mots[p].toLowerCase() === F.neg.pas) {
             for (let k = p + 1; k < j; k++) {
               if (mots[k] && String(mots[k]).toLowerCase().split(/\s+/).some((w) => NEG.has(w))) { remove[p] = true; break; }
             }
@@ -3017,13 +3017,13 @@
       const out = [];
       for (let k = 0; k < mots.length; k++) {
         const m = mots[k];
-        if (out.length && out[out.length - 1].toLowerCase() === "pas") {
+        if (out.length && out[out.length - 1].toLowerCase() === F.neg.pas) {
           const ml = m.toLowerCase();
-          if (ml === "du" || ml === "des") { out.push("de"); continue; }
-          if (ml === "de" && k + 1 < mots.length) {
+          if (F.art.partitifs_nies.includes(ml)) { out.push(F.prep.de); continue; }
+          if (ml === F.prep.de && k + 1 < mots.length) {
             const nx = mots[k + 1];
-            if (nx.toLowerCase() === "la" && k + 2 < mots.length && est_mot(mots[k + 2])) { out.push("de"); k++; continue; }
-            if (nx.toLowerCase().startsWith("l'")) { out.push("d'" + nx.slice(2)); k++; continue; }
+            if (nx.toLowerCase() === F.art.la && k + 2 < mots.length && est_mot(mots[k + 2])) { out.push(F.prep.de); k++; continue; }
+            if (nx.toLowerCase().startsWith(F.art.l_elide)) { out.push(F.prep.d_elide + nx.slice(F.art.l_elide.length)); k++; continue; }
           }
         }
         out.push(m);
@@ -3038,7 +3038,7 @@
         const prev = mots[i - 1].toLowerCase();
         if (!rules.etre_formes.has(prev) && !rules.etre_imparfait.has(prev)) continue;
         const cle = mots[i].toLowerCase();
-        if (ctx.type_fr[cle] === "verbe" && /(er|ir|re)$/.test(cle)) {
+        if (ctx.type_fr[cle] === "verbe" && endsWithAny(cle, F.conj.fins_infinitif)) {
           mots[i] = reporter_casse(mots[i], participe_passe(cle));
         }
       }
@@ -3048,21 +3048,21 @@
     function inserer_qui_cleft(mots) {
       if (!mots.length) return mots;
       for (let i = 0; i + 2 < mots.length; i++) {
-        if (mots[i].toLowerCase() !== "c'est") continue;
-        if (typeof mots[i + 1] === "string" && mots[i + 1].includes("eux-mêmes")) {
+        if (mots[i].toLowerCase() !== rules.R.traductions_gp_fr.se_cest) continue;
+        if (typeof mots[i + 1] === "string" && mots[i + 1].includes(F.eux_memes)) {
           let j = i + 2;
           while (j < mots.length && rules.clitiques_objet_fr.has(String(mots[j]).toLowerCase())) j++;
-          if (j < mots.length && contient_verbe(mots[j]) && mots[j].toLowerCase() !== "est") {
-            mots.splice(i + 2, 0, "qui"); i++;
+          if (j < mots.length && contient_verbe(mots[j]) && mots[j].toLowerCase() !== rules.est) {
+            mots.splice(i + 2, 0, F.interro.qui); i++;
           }
         }
       }
-      if (mots[0].toLowerCase() !== "c'est") return mots;
+      if (mots[0].toLowerCase() !== rules.R.traductions_gp_fr.se_cest) return mots;
       for (let i = 1; i < mots.length; i++) {
         const cle = mots[i].toLowerCase();
         if (!est_mot(mots[i])) break;
-        if (cle === "qui" || cle === "que") return mots;
-        if (trouver_infinitif(mots[i]) !== null && ctx.type_fr[cle] === undefined) return mots.slice(0, i).concat(["qui"], mots.slice(i));
+        if (cle === F.interro.qui || cle === F.sub.que) return mots;
+        if (trouver_infinitif(mots[i]) !== null && ctx.type_fr[cle] === undefined) return mots.slice(0, i).concat([F.interro.qui], mots.slice(i));
       }
       return mots;
     }
@@ -3075,11 +3075,11 @@
         if (sortie.length && rules.que_declencheurs.has(last(sortie).toLowerCase())) {
           const motL = mot.toLowerCase();
           if (rules.que_sujets.has(motL)) {
-            sortie.push("que");
+            sortie.push(F.sub.que);
           } else if (ART_CLAUSE.has(motL) && i + 2 < mots.length) {
             // article + nom + verbe conjugué → complétive nominale
             const t1 = ctx.type_fr[mots[i + 1].toLowerCase()];
-            if ((t1 === "nom" || t1 === "lieu") && contient_verbe(mots[i + 2])) sortie.push("que");
+            if ((t1 === "nom" || t1 === "lieu") && contient_verbe(mots[i + 2])) sortie.push(F.sub.que);
           }
         }
         sortie.push(mot);
@@ -3098,8 +3098,8 @@
         const motFinal = String(mot).toLowerCase().split(/\s+/).pop();
         if (!rules.verbes_declencheurs_de.has(String(mot).toLowerCase()) && !rules.adjectifs_de_infinitif.has(motFinal)) continue;
         const suivant = mots[i + 1];
-        if (!suivant || String(suivant).toLowerCase() === "de" || String(suivant).toLowerCase().startsWith("d'")) continue;
-        if (ctx.type_fr[String(suivant).toLowerCase()] === "verbe" || trouver_infinitif(String(suivant), true) !== null) sortie.push("de");
+        if (!suivant || String(suivant).toLowerCase() === F.prep.de || String(suivant).toLowerCase().startsWith(F.prep.d_elide)) continue;
+        if (ctx.type_fr[String(suivant).toLowerCase()] === "verbe" || trouver_infinitif(String(suivant), true) !== null) sortie.push(F.prep.de);
       }
       return sortie;
     }
@@ -3109,10 +3109,10 @@
     // bougent pas; la règle reste limitée aux adverbes déclarés dans le dico.
     function replacer_adverbes(mots) {
       for (let i = 0; i < mots.length; i++) {
-        if (String(mots[i]).toLowerCase() === "même" && i >= 2 && String(mots[i - 2]).toLowerCase() === "pas") {
+        if (String(mots[i]).toLowerCase() === F.adv.meme && i >= 2 && String(mots[i - 2]).toLowerCase() === F.neg.pas) {
           const adv = mots.splice(i, 1)[0]; mots.splice(i - 2, 0, adv); i--; continue;
         }
-        if (String(mots[i]).toLowerCase() !== "toujours") continue;
+        if (String(mots[i]).toLowerCase() !== F.adv.toujours) continue;
         let j = i + 1;
         while (j < mots.length && mots[j] !== "." && mots[j] !== "!" && mots[j] !== "?" &&
                !((est_mot(mots[j]) || (typeof mots[j] === "string" && mots[j].includes(" "))) &&
@@ -3120,7 +3120,7 @@
         if (j >= mots.length || mots[j] === "." || mots[j] === "!" || mots[j] === "?") continue;
         mots.splice(i, 1);
         if (j > i) j--;
-        mots.splice(j + 1, 0, "toujours");
+        mots.splice(j + 1, 0, F.adv.toujours);
         i = j + 1;
       }
       return mots;
@@ -3136,7 +3136,7 @@
           // adverbes ("vois pas te" → "te vois pas", "penserai toujours te").
           let v = i - 1;
           while (v > 0 && est_mot(mots[v]) && !mots[v].includes(" ") &&
-                 (mots[v].toLowerCase() === "pas" || ctx.type_fr[mots[v].toLowerCase()] === "adv")) v--;
+                 (mots[v].toLowerCase() === F.neg.pas || ctx.type_fr[mots[v].toLowerCase()] === "adv")) v--;
           const cible = v >= 0 ? mots[v] : null;
           const estVerbe = cible !== null && (
             (est_mot(cible) && !cible.includes(" ") && classer_fr(cible) === "verbe") ||
@@ -3158,7 +3158,7 @@
         let mot = mots[i];
         // Après "ne/n'" le mot est un VERBE nié ("ne joue pas"), jamais un nom à
         // articuler — même si c'est un homographe typé nom ("joue").
-        const precNeg = i > 0 && ["ne", "n'"].includes(mots[i - 1].toLowerCase());
+        const precNeg = i > 0 && F.neg.ne_formes.includes(mots[i - 1].toLowerCase());
         if (!precNeg && est_mot(mot) && !rules.restituer_determinants.has(mot.toLowerCase()) &&
             !rules.etre_formes.has(mot.toLowerCase()) && !rules.avoir_formes.has(mot.toLowerCase()) &&
             !rules.etre_imparfait.has(mot.toLowerCase()) && ["nom", "lieu"].includes(classer_fr(mot))) {
@@ -3167,9 +3167,9 @@
           const precType = prec ? (ctx.type_fr[prec] || ctx.type_fr[prec.split(" ").pop().replace(/^.*['’]/, "")] || null) : null;
           // "avoir faim/soif/peur…" sans article, y compris à la forme négative
           // ("je n'ai pas faim") où le mot suit "pas" et l'avoir est deux crans avant.
-          const stripNeg = w => (w || "").replace(/^n['’]/, "");
+          const stripNeg = w => (w || "").replace(rules.re_ne_elide, "");
           const avoirDevant = prec && (rules.avoir_formes.has(prec) || rules.avoir_formes.has(stripNeg(prec)) ||
-            (prec === "pas" && i >= 2 && rules.avoir_formes.has(stripNeg(mots[i - 2].toLowerCase()))));
+            (prec === F.neg.pas && i >= 2 && rules.avoir_formes.has(stripNeg(mots[i - 2].toLowerCase()))));
           if (rules.avoir_attributs.has(mot.toLowerCase()) && avoirDevant) { sortie.push(mot); continue; }
           if (mot[0] === mot[0].toUpperCase() && mot[0] !== mot[0].toLowerCase()) {
             const atStart = !sortie.length || rules.R.ponctuation_fin_phrase.includes(last(sortie));
@@ -3180,16 +3180,16 @@
                 // Provenance ("je viens DE France") vs destination/lieu ("je vais À Paris").
                 const infPrec = trouver_infinitif(mots[i - 1]);
                 if (infPrec && rules.verbes_origine_lieu.has(infPrec)) {
-                  if (commence_par_voyelle(mot)) { sortie.push("d'" + mot); continue; }
-                  sortie.push("de");
+                  if (commence_par_voyelle(mot)) { sortie.push(F.prep.d_elide + mot); continue; }
+                  sortie.push(F.prep.de);
                 } else if (["nom", "lieu"].includes(precType)) {
                   // Nom propre juxtaposé SANS verbe à un nom commun : même génitif
                   // créole que "kaz vwazen" ("la maison DU voisin") — "kaz Pais-ba"
                   // = la maison DES Pays-Bas, pas "à Pays-Bas" (réservé au verbe de
                   // déplacement ci-dessus, où "à" marque la destination).
-                  if (commence_par_voyelle(mot)) { sortie.push("d'" + mot); continue; }
-                  sortie.push("de");
-                } else sortie.push("à");
+                  if (commence_par_voyelle(mot)) { sortie.push(F.prep.d_elide + mot); continue; }
+                  sortie.push(F.prep.de);
+                } else sortie.push(F.prep.a);
               }
               sortie.push(mot); continue;
             }
@@ -3198,35 +3198,35 @@
           if (rules.mots_negatifs_fr.has(mot.toLowerCase())) { sortie.push(mot); continue; }
           // Adverbe de quantité + nom nu → "de" ("beaucoup de gens", "trop de bruit").
           if (prec !== null && rules.adverbes_quantite_fr.has(prec)) {
-            if (commence_par_voyelle(mot) || mot.toLowerCase()[0] === "h") sortie.push("d'" + mot);
-              else sortie.push("de", rules.noms_masse_fr.has(mot.toLowerCase()) ? mot : pluriel_fr(mot));
+            if (commence_par_voyelle(mot) || mot.toLowerCase()[0] === F.lettre_h) sortie.push(F.prep.d_elide + mot);
+              else sortie.push(F.prep.de, rules.noms_masse_fr.has(mot.toLowerCase()) ? mot : pluriel_fr(mot));
               continue;
           }
           const precDernier = prec ? prec.split(" ").pop() : null;
           const afterNum = prec !== null && (/^\d+$/.test(prec) || rules.nombres_fr.has(prec) || rules.nombres_fr.has(prec.replace(/s$/, "")) ||
-            (precDernier && (rules.nombres_fr.has(precDernier) || rules.nombres_fr.has(precDernier.replace(/s$/, "")))));
-          const prepContr = ["au", "aux", "du", "des"].includes(prec);
+            (precDernier && (rules.nombres_fr.has(precDernier) || rules.nombres_fr.has(precDernier.replace(rules.re_pluriel_s, "")))));
+          const prepContr = F.art.contractes_prep.includes(prec);
           const apresClit = rules.clitiques_objet_fr.has(prec);
-          const apresPronSujet = rules.pronoms_sujet_fr.has(prec) || (prec !== null && prec.endsWith("'") && ["j", "c", "m", "t", "s", "l", "n"].includes(prec.slice(0, -1)));
-          if (prec === "de") { sortie.push(mot); continue; }
-          const precEstDet = prec !== null && (rules.restituer_determinants.has(prec) || (prec.includes(" ") && (rules.restituer_determinants.has(prec.split(" ").pop()) || ["la", "le", "les"].includes(prec.split(" ").pop()))));
+          const apresPronSujet = rules.pronoms_sujet_fr.has(prec) || (prec !== null && prec.endsWith("'") && F.elision.sujets_elides.includes(prec.slice(0, -1)));
+          if (prec === F.prep.de) { sortie.push(mot); continue; }
+          const precEstDet = prec !== null && (rules.restituer_determinants.has(prec) || (prec.includes(" ") && (rules.restituer_determinants.has(prec.split(" ").pop()) || F.art.definis_pleins.includes(prec.split(" ").pop()))));
           const nu = (!afterNum && !prepContr && !apresClit && !apresPronSujet &&
             (prec === null || (!est_mot(mots[i - 1]) && !precEstDet && !["adj", "nom", "num", "adv"].includes(precType)) || (!precEstDet && !["adj", "nom", "num", "adv"].includes(precType))));
           if (nu) {
-            if (rules.noms_pluriels_fr.has(mot.toLowerCase())) { sortie.push("les", mot); continue; }
-            if (precType === "prep") sortie.push(...determinant_devant({ m: "le", f: "la" }, mot));
-            else if (prec !== null && (rules.etre_formes.has(prec) || prec === "être")) sortie.push(...determinant_devant({ m: "un", f: "une" }, mot));
+            if (rules.noms_pluriels_fr.has(mot.toLowerCase())) { sortie.push(F.art.pluriel, mot); continue; }
+            if (precType === "prep") sortie.push(...determinant_devant(F.art.defini, mot));
+            else if (prec !== null && (rules.etre_formes.has(prec) || prec === F.inf.etre)) sortie.push(...determinant_devant(F.art.indefini, mot));
             else if (ctx.type_fr[mot.toLowerCase()] === "lieu") {
-              if (commence_par_voyelle(mot) || mot.toLowerCase()[0] === "h") sortie.push("à", "l'" + mot.toLowerCase());
-              else { sortie.push("à"); sortie.push(...determinant_devant({ m: "le", f: "la" }, mot)); }
-            } else if (prec === null) sortie.push(...determinant_devant({ m: "le", f: "la" }, mot));
+              if (commence_par_voyelle(mot) || mot.toLowerCase()[0] === F.lettre_h) sortie.push(F.prep.a, F.art.l_elide + mot.toLowerCase());
+              else { sortie.push(F.prep.a); sortie.push(...determinant_devant(F.art.defini, mot)); }
+            } else if (prec === null) sortie.push(...determinant_devant(F.art.defini, mot));
             else if (rules.noms_masse_fr.has(mot.toLowerCase())) {
               // Nom de masse (indénombrable) nu : partitif français, jamais "des"
               // ("ban mwen dlo" = donne-moi DE L'eau, "an ni lajan" = j'ai DE L'argent).
-              if (commence_par_voyelle(mot) || mot.toLowerCase()[0] === "h") sortie.push("de", "l'" + mot);
-              else sortie.push(...determinant_devant({ m: "du", f: "de la" }, mot));
+              if (commence_par_voyelle(mot) || mot.toLowerCase()[0] === F.lettre_h) sortie.push(F.prep.de, F.art.l_elide + mot);
+              else sortie.push(...determinant_devant(F.art.partitif, mot));
             }
-            else sortie.push("des", mot);
+            else sortie.push(F.art.des, mot);
             continue;
           }
           if (prec !== null && ctx.type_fr[prec] === "nom") {
@@ -3239,8 +3239,8 @@
               // Le second nom est nu : un complément de nom français en prend
               // un ("la famille DU jardinier"), comme pour tout nom nu ailleurs
               // dans cette fonction (cf. branche "nom de masse" ci-dessus).
-              if (commence_par_voyelle(mot) || mot.toLowerCase()[0] === "h") sortie.push("de", "l'" + minuscule(mot));
-              else sortie.push(...determinant_devant({ m: "du", f: "de la" }, mot));
+              if (commence_par_voyelle(mot) || mot.toLowerCase()[0] === F.lettre_h) sortie.push(F.prep.de, F.art.l_elide + minuscule(mot));
+              else sortie.push(...determinant_devant(F.art.partitif, mot));
               continue;
             }
           }
@@ -3252,7 +3252,7 @@
             const noDet = (!isNum && (beforeAdj === null || (!rules.restituer_determinants.has(beforeAdj) && !["nom", "num", "adv"].includes(ctx.type_fr[beforeAdj]))));
             if (noDet) {
               const adjStart = j + 1;
-              let det = determinant_devant({ m: "un", f: "une" }, mot)[0];
+              let det = determinant_devant(F.art.indefini, mot)[0];
               if (adjStart < sortie.length && sortie[adjStart][0] === sortie[adjStart][0].toUpperCase() && sortie[adjStart][0] !== sortie[adjStart][0].toLowerCase()) {
                 det = majuscule(det); sortie[adjStart] = minuscule(sortie[adjStart]);
               }
@@ -3274,7 +3274,7 @@
     function pluraliser(mots) {
       for (let i = 0; i < mots.length - 1; i++) {
         const mot = mots[i];
-        if (mot.toLowerCase() === "de" && i > 0 && rules.quantificateurs_pluriel.has(mots[i - 1].toLowerCase())) {
+        if (mot.toLowerCase() === F.prep.de && i > 0 && rules.quantificateurs_pluriel.has(mots[i - 1].toLowerCase())) {
           const nom = mots[i + 1]; if (est_nom(nom)) mots[i + 1] = pluriel_fr(nom); continue;
         }
         let nomGenre, j2;
@@ -3297,8 +3297,8 @@
       const n = mots.length;
       for (let i = 0; i < n; i++) {
         const mot = mots[i];
-        if ((mot.toLowerCase() === "tous" || mot.toLowerCase() === "toutes") && i + 2 < n && mots[i + 1].toLowerCase() === "les" && est_mot(mots[i + 2])) {
-          const genre = genre_nom(mots[i + 2].replace(/s+$/, "")); mots[i] = reporter_casse(mot, genre === "m" ? "tous" : "toutes"); continue;
+        if (F.quant.tous_formes.includes(mot.toLowerCase()) && i + 2 < n && mots[i + 1].toLowerCase() === F.art.pluriel && est_mot(mots[i + 2])) {
+          const genre = genre_nom(mots[i + 2].replace(rules.re_pluriel_final, "")); mots[i] = reporter_casse(mot, genre === "m" ? F.quant.tous : F.quant.toutes); continue;
         }
         const formes = rules.determinants_genre[mot.toLowerCase()];
         if (!formes) continue;
@@ -3344,7 +3344,7 @@
           // chaque mot de chaque token de la clause.
           const dejaCopule = sentence.slice(cStart, cEnd).some(tok =>
             String(tok).toLowerCase().split(" ").some(w =>
-              rules.etre_formes.has(w) || rules.etre_imparfait.has(w) || w === "c'est" || w === "c'était"));
+              rules.etre_formes.has(w) || rules.etre_imparfait.has(w) || F.dem.cest_formes.includes(w)));
           if (dejaCopule) continue;
           // Un token composite ("a pris", "avons fait") échoue est_mot et rendait
           // le verbe invisible au scan → copule insérée dans une clause verbale.
@@ -3355,16 +3355,16 @@
             else if (typeof tok === "string" && tok.includes(" ") && contient_verbe(tok)) clauseVerbale = true;
           }
           if (clauseVerbale || words.length < 2) continue;
-          let subjSeen = false, subjGenre = "m", subjPronom = "il", copuleIdx = null, plur = false;
+          let subjSeen = false, subjGenre = "m", subjPronom = F.suj.p3s, copuleIdx = null, plur = false;
           for (let pos = 0; pos < words.length; pos++) {
             const [idx, m] = words[pos]; const cle = m.toLowerCase(); const t = ctx.type_fr[cle];
             if (contient_verbe(m)) break;
-            if (Object.values(rules.pluriel_map).includes(cle) || ["les", "des", "ces"].includes(cle)) plur = true;
+            if (Object.values(rules.pluriel_map).includes(cle) || F.pluriel.articles.includes(cle)) plur = true;
             if (rules.determinants_fr.has(cle) || t === "article") continue;
             // Le pronom sujet se teste AVANT la branche "type inconnu", sinon
             // "nous/tu/…" y tombent et la copule reste conjuguée à "il".
-            if (rules.pronoms_sujet_fr.has(cle)) { subjSeen = true; subjGenre = ["elle", "elles"].includes(cle) ? "f" : "m"; subjPronom = cle === "ça" || cle === "cela" ? "il" : cle; }
-            else if (t === "nom" || t === "lieu") { subjSeen = true; subjGenre = genre_nom(m); subjPronom = plur ? "ils" : "il"; }
+            if (rules.pronoms_sujet_fr.has(cle)) { subjSeen = true; subjGenre = F.suj.feminins.includes(cle) ? "f" : "m"; subjPronom = F.dem.neutres.includes(cle) ? F.suj.p3s : cle; }
+            else if (t === "nom" || t === "lieu") { subjSeen = true; subjGenre = genre_nom(m); subjPronom = plur ? F.suj.p3p : F.suj.p3s; }
             else if (t === undefined && !subjSeen) { subjSeen = true; }
             else if (subjSeen && (t === "adj" || est_adjectif(m))) {
               // Homographe nom/adjectif de même orthographe (ex. "voisine" = la
@@ -3380,18 +3380,18 @@
           }
           if (copuleIdx !== null) {
             let [startPos, startIdx] = copuleIdx;
-            const genreAccord = ["elle", "elles"].includes(subjPronom) ? "f" : subjGenre;
+            const genreAccord = F.suj.feminins.includes(subjPronom) ? "f" : subjGenre;
             for (let pos = startPos; pos < words.length; pos++) {
               const [idx, m] = words[pos]; const cle = m.toLowerCase();
               if (ctx.type_fr[cle] === "adj" || est_adjectif(m)) {
                 const accorde = accorder_adjectif(cle, genreAccord);
-                sentence[idx] = reporter_casse(m, ["ils", "elles", "nous", "vous"].includes(subjPronom) ? pluriel_fr(accorde) : accorde);
+                sentence[idx] = reporter_casse(m, F.suj.pluriels.includes(subjPronom) ? pluriel_fr(accorde) : accorde);
               } else if (COORD.has(cle) || cle === "," || m === ",") continue;
               else break;
             }
             while (startIdx > 0 && rules.intensifieurs_fr.has(sentence[startIdx - 1].toLowerCase())) startIdx--;
             if (TRACE) console.error("COPULE inserted at", startIdx, "in", JSON.stringify(sentence));
-            insertions.push({ idx: startIdx, word: conjuguer("être", subjPronom, "present") });
+            insertions.push({ idx: startIdx, word: conjuguer(F.inf.etre, subjPronom, "present") });
           }
         }
         for (let k = insertions.length - 1; k >= 0; k--) sentence.splice(insertions[k].idx, 0, insertions[k].word);
@@ -3429,6 +3429,8 @@
           if ((wt === "nom" || wt === "lieu") && !has(ctx.index_fr_nom, key)) ctx.index_fr_nom[key] = canonGp;
           if (wt && ctx.type_fr[key] !== "verbe") ctx.type_fr[key] = wt;
           if (wordGenre === "m" || wordGenre === "f") ctx.genre_fr[key] = wordGenre;
+          // Champ « attribut » d'une entrée : forme créole quand le mot est attribut (après « être »).
+          if (entry.attribut && !has(ctx.attribut_fr, key)) ctx.attribut_fr[key] = entry.attribut;
           if (!key.includes(" ")) { const nk = normalize_token(key); if (!has(ctx.norm_fr, nk)) ctx.norm_fr[nk] = key; }
         }
         // Nom propre CRÉOLISÉ = les deux formes sont capitalisées ET diffèrent
@@ -3446,7 +3448,7 @@
           if (nomPropre) continue;
           if (entry.secondaire) { /* skip index_gp */ }
           else if (existing === undefined) ctx.index_gp[key] = canonFr;
-          else if (wt === "verbe") { if (!(existing.endsWith("er") || existing.endsWith("ir") || existing.endsWith("re"))) ctx.index_gp[key] = canonFr; }
+          else if (wt === "verbe") { if (!endsWithAny(existing, F.conj.fins_infinitif)) ctx.index_gp[key] = canonFr; }
           if (!key.includes(" ") && has(ctx.index_gp, key)) { const nk = normalize_token(key); if (!has(ctx.norm_gp, nk)) ctx.norm_gp[nk] = key; }
           // Sens nominal (nom/lieu) gardé à part : sert à désambiguïser "X la"
           // quand le sens verbe a gagné dans index_gp (ex. maché=marcher / marché).
@@ -3493,7 +3495,7 @@
     }
 
     function tokenize(text) {
-      const re = /(?:[jlcdnmts]|qu)'|[\p{L}\p{N}_]+(?:[-'][\p{L}\p{N}_]+)*|[^\s\p{L}\p{N}_]/giu;
+      const re = new RegExp(rules.re_jetons, "giu");
       const out = []; let m;
       while ((m = re.exec(text)) !== null) {
         let t = m[0];
@@ -3508,9 +3510,9 @@
       const seen = new Set();
       const push = (x) => { if (x && x.length > 1 && x !== key && !seen.has(x)) { seen.add(x); c.push(x); } };
       // Dé-pluralisation
-      if (key.endsWith("aux") && key.length > 4) push(key.slice(0, -3) + "al");
-      if ((key.endsWith("eaux") || key.endsWith("eux")) && key.length > 4) push(key.slice(0, -1));
-      if ((key.endsWith("s") || key.endsWith("x")) && key.length > 2) push(key.slice(0, -1));
+      if (key.endsWith(F.pluriel.aux) && key.length > 4) push(key.slice(0, -F.pluriel.aux.length) + F.pluriel.al);
+      if (endsWithAny(key, F.pluriel.fins_eaux) && key.length > 4) push(key.slice(0, -1));
+      if (endsWithAny(key, F.pluriel.marques) && key.length > 2) push(key.slice(0, -1));
       // Féminin -> masculin : appliqué à la clé et aux formes déjà dé-pluralisées
       // (ex. "froide" -> "froid", "vertes" -> "verte" -> "vert", "heureuse" -> "heureux").
       const bases = [key, ...c];
@@ -3520,7 +3522,7 @@
           const fem = rules.accords_adjectifs_suffixes[masc];
           if (b.endsWith(fem) && b.length > fem.length + 1) push(b.slice(0, -fem.length) + masc);
         }
-        if (b.endsWith("e")) push(b.slice(0, -1));
+        if (b.endsWith(F.accord.feminin)) push(b.slice(0, -1));
       }
       return c;
     }
@@ -3569,17 +3571,10 @@
       if (typeof text !== "string" || !text.trim()) return "";
       if (!["fr", "gp"].includes(source_lang) || !["fr", "gp"].includes(target_lang)) return text.trim();
       if (source_lang === target_lang) return text.trim();
-      // « femme » : fanm pour « une femme » ; madanm (GCF, APiCS) après un déterminant défini, démonstratif ou possessif.
-      if (source_lang === "fr") text = text.replace(/\b(la|le|les|cette|ce|ces|ma|mon|mes|sa|son|ses|ta|ton|tes|notre|nos|votre|vos|leur|leurs)(\s+)femmes?\b/giu, (m, d, sp) => d + sp + "madame");
-      // « porter » + vêtement ou accessoire (« Il porte un chapeau ») = mettre (mété) ; « porter » seul reste pòté.
-      // Le suffixe pronominal à trait d’union (« portent-elles ») est conservé.
-      if (source_lang === "fr") {
-        const vet = "chapeaux?|lunettes?|chaussures?|chaussettes?|souliers?|pulls?|robes?|vestes?|manteaux?|pantalons?|jupes?|chemises?|gants?|écharpes?|foulards?|cravates?|bonnets?|casquettes?|casques?|ceintures?|gilets?|pyjamas?|pijamas?|palmes?|shorts?|bermudas?|jeans?|blouses?|tabliers?|uniformes?|combinaisons?|sous-vêtements?|culottes?|bagues?|bijoux?|colliers?|bracelets?|montres?|masques?|bottes?|sandales?|tee-shirts?|t-shirts?|maillots?|costumes?|tenues?|vêtements?|habits?";
-        const map = { porte: "met", portes: "mets", portent: "mettent", porter: "mettre", portons: "mettons", portez: "mettez", portais: "mettais", portait: "mettait", portaient: "mettaient", porterai: "mettrai", porterais: "mettrais", porterait: "mettrait", porteraient: "mettraient", portera: "mettra", porteront: "mettront" };
-        const re = new RegExp("\\b(" + Object.keys(map).join("|") + ")\\b((?:-[\\p{L}]+)?)(?=(?:[\\s'’]+[\\p{L}\\-]+){0,3}?[\\s'’]+(?:" + vet + ")\\b)", "giu");
-        text = text.replace(re, (m, v, suf) => { const r = map[v.toLowerCase()]; return (v[0] === v[0].toUpperCase() ? r[0].toUpperCase() + r.slice(1) : r) + suf; });
-      }
-      if (source_lang === "gp") text = text.replace(/(^|[^\p{L}])([kK])['’](?=\p{L})/gu, (m, p, k) => p + (k === "K" ? "Ka " : "ka "));
+      // Verbe français remplacé par un autre devant certains compléments
+      // (Grammar.json > verbes_selon_objet_fr) ; le suffixe pronominal à trait
+      // d'union (« portent-elles ») est conservé.
+      if (source_lang === "fr") for (const r of rules.verbes_selon_objet_fr) text = text.replace(r.re, (m, v, suf) => { const f = r.formes[v.toLowerCase()]; return (v[0] === v[0].toUpperCase() ? f[0].toUpperCase() + f.slice(1) : f) + suf; });
       // Apostrophe typographique (U+2019) ramenée à l'apostrophe droite : sinon « c’est » est découpé en « c », « ’ », « est ».
       text = text.split("\u2019").join("'");
       // Garde-fou 1 : borne dure sur la longueur totale. Au-delà, on tronque —
@@ -3604,10 +3599,9 @@
           .join("");
       }
       if (source_lang === "fr") for (const [re, rep] of rules.substitutions_fr) text = text.replace(re, rep);
-      // Créole : pronom objet enclitique attaché par apostrophe (enmé'w, tjwé'y,
-      // wè'm) → on le détache en forme pleine, qui suit ensuite le chemin normal.
-      if (source_lang === "gp") text = text.replace(/(\p{L})['’](w|y|m)(?![\p{L}\p{N}])/gu,
-        (_, a, p) => a + " " + (p === "w" ? "ou" : p === "y" ? "li" : "mwen"));
+      // Retouches du texte créole avant analyse (Grammar.json > substitutions_gp) :
+      // marqueur élidé (k'ay), pronom objet collé par une apostrophe (enmé'w)…
+      if (source_lang === "gp") for (const [re, rep] of rules.substitutions_gp) text = text.replace(re, rep);
 
       const db = target_lang === "gp" ? ctx.index_fr : ctx.index_gp;
       const dbNorm = target_lang === "gp" ? ctx.norm_fr : ctx.norm_gp;
@@ -3737,7 +3731,7 @@
             // Mot intraduisible : on le garde tel quel, mais la NÉGATION de la
             // consigne ne doit pas se perdre ("i pa ka plé" → "il ne plé PAS").
             translation.push(word);
-            if (consigne !== undefined && consigne[2]) translation.push("pas");
+            if (consigne !== undefined && consigne[2]) translation.push(F.neg.pas);
           }
           index++;
         }
@@ -3758,10 +3752,10 @@
     loadDicts(dicts);
     // `classer_fr`/`trouver_infinitif` sont exposés pour l'outillage de
     // vérification (détection de parasites), en plus de l'API de traduction.
-    return { traduire, ctx, rules, classer_fr, trouver_infinitif };
+    return { traduire, ctx, rules, classer_fr, trouver_infinitif, normalize_token };
   }
 
-  root.RakounCore = { createEngine, normalize_token, est_mot };
+  root.RakounCore = { createEngine, est_mot };
 })(typeof module !== "undefined" && module.exports
    ? module.exports
    : (typeof window !== "undefined" ? window : globalThis));

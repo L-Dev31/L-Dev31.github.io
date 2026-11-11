@@ -1,11 +1,12 @@
+// Jeu d'or FR→créole : compare la sortie du moteur à une référence humaine.
+//   node test/gold.cjs gold4.apics.fr-cr.json           résumé (F1, phrases exactes, pires cas)
+//   node test/gold.cjs gold4.apics.fr-cr.json --fails   liste TOUTES les phrases non exactes
 "use strict";
 const fs=require("fs"),path=require("path");
-const ROOT=path.resolve(__dirname,"..");
-const {RakounCore}=require(path.join(ROOT,"js","engine.js"));
-const FILES=["Grammar","Verbs","Nouns","Adjectives","Adverbs","Misc"];
-const dicts={};for(const f of FILES)dicts[f]=JSON.parse(fs.readFileSync(path.join(ROOT,"dict",f+".json"),"utf8"));
-const engine=RakounCore.createEngine(dicts);
-const gold=JSON.parse(fs.readFileSync(path.join(__dirname, process.argv[2]||"gold.fr-cr.json"),"utf8")).phrases;
+const {engine}=require("./_engine.cjs");
+const args=process.argv.slice(2).filter(a=>!a.startsWith("--"));
+const FAILS=process.argv.includes("--fails");
+const gold=JSON.parse(fs.readFileSync(path.join(__dirname, args[0]||"gold.fr-cr.json"),"utf8")).phrases;
 
 const stripAcc=s=>s.normalize("NFD").replace(/\p{Mn}/gu,"");
 function norm(s,loose){
@@ -29,9 +30,15 @@ for(const {fr,cr} of gold){
   rows.push({fr,cr,out,s,l});
 }
 const N=gold.length;
+if(FAILS){
+  let k=0;
+  for(const r of rows){ if(norm(r.out,true).join(" ")===norm(r.cr,true).join(" "))continue; k++; console.log(r.fr+"\n   réf : "+r.cr+"\n   out : "+r.out); }
+  console.log("("+k+" non exactes sur "+N+")");
+  process.exit(0);
+}
 rows.sort((a,b)=>a.l-b.l);
 console.log("═".repeat(70));
-console.log("RAKOUN — ÉVAL SUR GOLD SET (100 phrases FR→GP, réf. humaine)");
+console.log("RAKOUN — ÉVAL SUR GOLD SET ("+N+" phrases FR→GP, réf. humaine)");
 console.log("═".repeat(70));
 console.log(`F1 strict (accents)   : ${(100*sumS/N).toFixed(1)}%`);
 console.log(`F1 tolérant (sans acc): ${(100*sumL/N).toFixed(1)}%`);

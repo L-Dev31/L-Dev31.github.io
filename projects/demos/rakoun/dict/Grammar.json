@@ -702,7 +702,8 @@
     "il_faut": "fò",
     "venir_de": "sòti",
     "article_indefini": "on",
-    "les_pluriel": "sé"
+    "les_pluriel": "sé",
+    "n_est_ce_pas": "pa vré"
   },
   "traductions_gp_fr": {
     "se_les": "les",
@@ -724,7 +725,15 @@
     "ba_donner": "donne",
     "fo_il": "il",
     "fo_faut": "faut",
-    "fo_que": "que"
+    "fo_que": "que",
+    "sa_w": "ce que tu",
+    "interrogatif_que": "qu'est-ce que",
+    "interrogatif_quel": "quel",
+    "se_negatif": [
+      "ce",
+      "n'est",
+      "pas"
+    ]
   },
   "traductions_conjonctions_gp_fr": {
     "mè": "mais"
@@ -1124,6 +1133,15 @@
     "noms_pluriels_fr": [
       "gens",
       "personnes"
+    ],
+    "verbes_origine_lieu": [
+      "venir",
+      "revenir",
+      "sortir",
+      "provenir"
+    ],
+    "noms_objets_homographes_gp": [
+      "kaka"
     ]
   },
   "contractions_fr": [
@@ -1164,6 +1182,12 @@
     "defaut": "la"
   },
   "substitutions_fr": [
+    {
+      "_note": "« femme » : fanm pour « une femme » ; madanm après un déterminant défini, démonstratif ou possessif (« madame » se traduit madanm).",
+      "re": "\\b(la|le|les|cette|ce|ces|ma|mon|mes|sa|son|ses|ta|ton|tes|notre|nos|votre|vos|leur|leurs)(\\s+)femmes?\\b",
+      "rep": "$1$2madame",
+      "flags": "giu"
+    },
     {
       "re": "\\bpas\\s+du\\s+tout\\b",
       "rep": "ditou"
@@ -1234,5 +1258,890 @@
     "à",
     "au",
     "aux"
-  ]
+  ],
+  "fr": {
+    "_note": "FRANÇAIS — mots-outils et terminaisons dont les règles du moteur ont besoin. Le moteur ne contient aucun mot : il lit tout ici. Ce bloc décrit le français, il est commun à toutes les langues cibles.",
+    "suj": {
+      "_note": "Pronoms sujets (p1s = 1re personne du singulier, etc.). Ce sont aussi les clés des tables de conjugaison.",
+      "p2s": "tu",
+      "p3s": "il",
+      "p1p": "nous",
+      "p2p": "vous",
+      "p3p": "ils",
+      "feminins": [
+        "elle",
+        "elles"
+      ],
+      "pluriels": [
+        "nous",
+        "vous",
+        "ils",
+        "elles"
+      ],
+      "p1s_formes": [
+        "je",
+        "j"
+      ],
+      "formes_reconnues": {
+        "tu": "tu",
+        "je": "je",
+        "j": "je",
+        "nous": "nous",
+        "vous": "vous"
+      }
+    },
+    "inf": {
+      "_note": "Infinitifs des verbes à rôle grammatical.",
+      "etre": "être",
+      "avoir": "avoir",
+      "aller": "aller",
+      "auxiliaires": [
+        "être",
+        "avoir",
+        "aller"
+      ],
+      "venir": "venir"
+    },
+    "neg": {
+      "_note": "Négation.",
+      "pas": "pas",
+      "ne": "ne",
+      "ne_formes": [
+        "ne",
+        "n'"
+      ],
+      "n_elide": "n"
+    },
+    "conj": {
+      "_note": "Terminaisons et retouches orthographiques de la conjugaison française (génération et reconnaissance des formes).",
+      "refl_prefixes": [
+        "se ",
+        "s'"
+      ],
+      "refl_defaut": "se",
+      "fin_er": "er",
+      "fin_ir": "ir",
+      "fin_re": "re",
+      "tu_es": "es",
+      "ils_ent": "ent",
+      "subj_defaut": "e",
+      "e_muet": "e",
+      "fin_i": "i",
+      "rad_ge": "ge",
+      "rad_cedille": "ç",
+      "rad_c": "c",
+      "rad_g": "g",
+      "rad_d": "d",
+      "er_defaut": "e",
+      "ir_defaut": "it",
+      "nous_ons": "ons",
+      "g_ons": "eons",
+      "c_ons": "çons",
+      "fins_muettes": [
+        "e",
+        "es",
+        "ent"
+      ],
+      "e_alternant": "eé",
+      "voyelles_radical": "aeiouyéèêAEIOUY",
+      "e_grave": "è",
+      "pp_er": "é",
+      "infinitifs_1er": [
+        "er",
+        "ger",
+        "cer",
+        "re"
+      ],
+      "pp_voyelle": [
+        "i",
+        "u"
+      ],
+      "r_infinitif": "r",
+      "fin_ds": "ds",
+      "infinitifs_ent": [
+        "re",
+        "dre"
+      ],
+      "futur_er": [
+        "erons",
+        "eront",
+        "erez",
+        "eras",
+        "erai",
+        "erait",
+        "erais",
+        "eraient",
+        "era"
+      ],
+      "futur_ir": [
+        "irons",
+        "iront",
+        "irez",
+        "iras",
+        "irai",
+        "irait",
+        "irais",
+        "iraient",
+        "ira"
+      ],
+      "futur_re": [
+        "rons",
+        "ront",
+        "rez",
+        "ras",
+        "rai",
+        "rait",
+        "rais",
+        "raient",
+        "ra"
+      ],
+      "infinitifs_futur": [
+        "ir",
+        "er",
+        "re"
+      ],
+      "fins_infinitif": [
+        "er",
+        "ir",
+        "re"
+      ]
+    },
+    "accord": {
+      "_note": "Accords en genre et en nombre.",
+      "feminin": "e",
+      "pluriel": "s",
+      "participe_suffixes": [
+        "e",
+        "s",
+        "es"
+      ],
+      "participes_adjectifs": [
+        [
+          "ées",
+          "é"
+        ],
+        [
+          "ée",
+          "é"
+        ],
+        [
+          "és",
+          "é"
+        ]
+      ]
+    },
+    "pluriel": {
+      "_note": "Pluriel des noms.",
+      "invariables": [
+        "s",
+        "x",
+        "z"
+      ],
+      "fins_x": [
+        "eau",
+        "au",
+        "eu"
+      ],
+      "x": "x",
+      "al": "al",
+      "aux": "aux",
+      "s": "s",
+      "articles": [
+        "les",
+        "des",
+        "ces"
+      ],
+      "determinants": [
+        "les",
+        "des",
+        "ces",
+        "plusieurs"
+      ],
+      "mots": [
+        "les",
+        "des",
+        "ces",
+        "gens",
+        "personnes"
+      ],
+      "fins_eaux": [
+        "eaux",
+        "eux"
+      ],
+      "marques": [
+        "s",
+        "x"
+      ]
+    },
+    "poss": {
+      "_note": "Possessifs.",
+      "devant_voyelle": {
+        "ma": "mon",
+        "ta": "ton",
+        "sa": "son"
+      }
+    },
+    "elision_si": {
+      "mot": "si",
+      "devant": [
+        "il",
+        "ils"
+      ],
+      "forme": "s'"
+    },
+    "lettre_h": "h",
+    "inversion_t": "t",
+    "adv": {
+      "_note": "Adverbes à rôle grammatical.",
+      "deja": "déjà",
+      "encore": "encore",
+      "apres_etre": [
+        "plus",
+        "jamais",
+        "encore",
+        "déjà"
+      ],
+      "la": "là",
+      "meme": "même",
+      "toujours": "toujours"
+    },
+    "progressif": [
+      "en",
+      "train"
+    ],
+    "prep": {
+      "_note": "Prépositions.",
+      "de_formes": [
+        "de",
+        "d"
+      ],
+      "en": "en",
+      "chez": "chez",
+      "devant_lieu": [
+        "à",
+        "en",
+        "au"
+      ],
+      "apres_allons": [
+        "à",
+        "a",
+        "au",
+        "aux",
+        "à la",
+        "en"
+      ],
+      "en_debut": [
+        "en ",
+        "en'"
+      ],
+      "de": "de",
+      "sur": "sur",
+      "avec": "avec",
+      "a": "à",
+      "dans": "dans",
+      "d_elide": "d'"
+    },
+    "clit": {
+      "_note": "Pronoms clitiques (compléments placés devant le verbe).",
+      "y": "y",
+      "me": "me",
+      "te": "te",
+      "se_elide": "s",
+      "reflechis": [
+        "se",
+        "s"
+      ],
+      "devant_auxiliaire_etre": [
+        "me",
+        "m",
+        "te",
+        "t",
+        "se",
+        "s",
+        "nou",
+        "nous",
+        "vous"
+      ],
+      "pronominaux": [
+        "se",
+        "s",
+        "me",
+        "te",
+        "m",
+        "t"
+      ]
+    },
+    "il_y_a": {
+      "_note": "Formes de « avoir » dans « il y avait / aura / aurait ».",
+      "imparfait": [
+        "avait",
+        "avaient"
+      ],
+      "futur": [
+        "aura",
+        "auront"
+      ],
+      "conditionnel": [
+        "aurait",
+        "auraient"
+      ]
+    },
+    "falloir": {
+      "present": "faut"
+    },
+    "art": {
+      "_note": "Articles.",
+      "pluriel": "les",
+      "devant_collectif": [
+        "le",
+        "la",
+        "les",
+        "du",
+        "de",
+        "d",
+        "d'"
+      ],
+      "contractes": [
+        "du",
+        "des",
+        "au",
+        "aux",
+        "de",
+        "d'",
+        "d"
+      ],
+      "fin_de_locution": [
+        "la",
+        "le",
+        "les",
+        "l'"
+      ],
+      "la": "la",
+      "le": "le",
+      "partitif": {
+        "m": "du",
+        "f": "de la"
+      },
+      "defini": {
+        "m": "le",
+        "f": "la"
+      },
+      "indefini": {
+        "m": "un",
+        "f": "une"
+      },
+      "partitifs_nies": [
+        "du",
+        "des"
+      ],
+      "l_elide": "l'",
+      "contractes_prep": [
+        "au",
+        "aux",
+        "du",
+        "des"
+      ],
+      "definis_pleins": [
+        "la",
+        "le",
+        "les"
+      ],
+      "des": "des"
+    },
+    "interro": {
+      "_note": "Mots interrogatifs et relatifs.",
+      "est_ce": "est-ce",
+      "est_ce_suite": [
+        "que",
+        "qu",
+        "qui"
+      ],
+      "que_formes": [
+        "que",
+        "qu",
+        "quoi"
+      ],
+      "quoi": "quoi",
+      "qui": "qui",
+      "quand": "quand",
+      "si": "si",
+      "combien": "combien",
+      "quel": "quel",
+      "que": "que"
+    },
+    "dem": {
+      "_note": "Démonstratifs.",
+      "c_elide": "c",
+      "pluriel": "ces",
+      "m": "ce",
+      "m_voyelle": "cet",
+      "f": "cette",
+      "cest_formes": [
+        "c'est",
+        "c'était"
+      ],
+      "neutres": [
+        "ça",
+        "cela"
+      ]
+    },
+    "comp": {
+      "_note": "Comparatifs.",
+      "aussi": "aussi",
+      "plus": "plus",
+      "deja_marque": [
+        "plus",
+        "pli",
+        "moins"
+      ]
+    },
+    "aller_imperatif": "allons",
+    "presents_ambigus": {
+      "_note": "Formes lues comme un PRÉSENT quand elles suivent un nom sujet (forme → infinitif).",
+      "fait": "faire"
+    },
+    "sub": {
+      "_note": "Subordination.",
+      "que": "que",
+      "conjonctions": [
+        "que",
+        "qu'il",
+        "qu'elle",
+        "qu'on",
+        "si",
+        "quoi",
+        "ke",
+        "k"
+      ],
+      "parce_que": "parce que"
+    },
+    "vocatif": "Ô",
+    "eux_memes": "eux-mêmes",
+    "nom": {
+      "_note": "Noms à rôle grammatical.",
+      "personnes": "personnes",
+      "humains_generiques": [
+        "homme",
+        "femme",
+        "gens",
+        "monde",
+        "même",
+        "mêmes"
+      ]
+    },
+    "det": {
+      "_note": "Déterminants.",
+      "aucun": "aucun",
+      "aucune": "aucune",
+      "sans_article": [
+        "aucun",
+        "aucune",
+        "un"
+      ]
+    },
+    "coord": {
+      "_note": "Coordination.",
+      "et": "et"
+    },
+    "nombre": {
+      "_note": "Nombres.",
+      "cent": "cent",
+      "cents": "cents"
+    },
+    "quant": {
+      "_note": "Quantifieur « tout ».",
+      "du_tout": "du tout",
+      "toujours": "toujours",
+      "tout_ca_cest": "tout ça c'est",
+      "tout_ca": "tout ça",
+      "tous": "tous",
+      "tout": "tout",
+      "tout_le_monde": "tout le monde",
+      "defini": {
+        "m": [
+          "tout le",
+          "tout l'"
+        ],
+        "f": [
+          "toute la",
+          "toute l'"
+        ]
+      },
+      "tous_formes": [
+        "tous",
+        "toutes"
+      ],
+      "toutes": "toutes"
+    },
+    "elision": {
+      "_note": "Élision : lettres qui s'élident devant une apostrophe (découpage des mots).",
+      "lettres": "jlcdnmts",
+      "groupes": [
+        "qu"
+      ],
+      "sujets_elides": [
+        "j",
+        "c",
+        "m",
+        "t",
+        "s",
+        "l",
+        "n"
+      ]
+    }
+  },
+  "normalisation": {
+    "_note": "Clé de recherche approchée : un mot mal accentué ou écrit « à la française » retrouve quand même son entrée. « supprimer » = signes ignorés ; « remplacements » = graphies ramenées à une même lettre (dans l'ordre).",
+    "supprimer": [
+      "'",
+      "’",
+      "-"
+    ],
+    "remplacements": [
+      [
+        "ph",
+        "f"
+      ],
+      [
+        "qu",
+        "k"
+      ],
+      [
+        "gu",
+        "g"
+      ],
+      [
+        "c",
+        "k"
+      ],
+      [
+        "q",
+        "k"
+      ],
+      [
+        "ou",
+        "w"
+      ],
+      [
+        "y",
+        "i"
+      ]
+    ]
+  },
+  "gp": {
+    "_note": "CRÉOLE — mots-outils que les règles du moteur reconnaissent ou produisent. Le moteur ne contient aucun mot créole : pour une autre langue cible, c'est ce bloc (avec les dictionnaires) qu'on réécrit.",
+    "suj": {
+      "_note": "Pronoms sujets.",
+      "p1s_plein": "mwen",
+      "p2_tonique": "vou",
+      "p3p": "yo",
+      "p1s_ambigu": "an"
+    },
+    "cela": "sa",
+    "rel": "ki",
+    "quand": "lè",
+    "copule": "sé",
+    "copule_finale": "yé",
+    "encore": "ankò",
+    "art": {
+      "_note": "Articles.",
+      "definis": [
+        "la",
+        "lan"
+      ],
+      "defini": "la",
+      "pluriel_francise": "lé",
+      "indefinis_surs": [
+        "on",
+        "yon",
+        "yonn"
+      ]
+    },
+    "poss": {
+      "_note": "Possessifs.",
+      "particule": "a",
+      "soude_ambigu": "ay",
+      "soudes": {
+        "ay": "a-y",
+        "aw": "a-w",
+        "ayo": "a-yo",
+        "anou": "a-nou",
+        "azòt": "a-zòt",
+        "azot": "a-zòt"
+      }
+    },
+    "venir_de": [
+      "fèk",
+      "fek"
+    ],
+    "loc": {
+      "_note": "Locatifs.",
+      "la": [
+        "la",
+        "lan"
+      ]
+    },
+    "prep": {
+      "_note": "Prépositions.",
+      "en": "an",
+      "de_francise": "dè",
+      "locatives": [
+        "dan",
+        "adan",
+        "nan",
+        "épi",
+        "sou",
+        "anba",
+        "anlè",
+        "douvan",
+        "dèyè"
+      ]
+    },
+    "tout": [
+      "tout",
+      "tou"
+    ],
+    "vocatif": "o",
+    "coord": {
+      "_note": "Coordination.",
+      "devant_copule": [
+        "é",
+        "et",
+        "mè"
+      ],
+      "et_avec": [
+        "épi",
+        "epi"
+      ],
+      "conjonctions": [
+        "é",
+        "oben",
+        "men",
+        "mé"
+      ],
+      "entre_verbes": [
+        "é",
+        "et",
+        "oben",
+        "ou"
+      ]
+    },
+    "aucun": "pon",
+    "avec": [
+      "èvè",
+      "épi"
+    ],
+    "clit": {
+      "_note": "Pronoms collés au mot qui précède.",
+      "p2s_colle": "-w",
+      "pluriel_colle": "-yo"
+    },
+    "nombre_cent": "san",
+    "comp": {
+      "_note": "Comparatifs.",
+      "depasse": "pasé",
+      "plus": [
+        "pi",
+        "pli"
+      ]
+    },
+    "quant": {
+      "_note": "Quantifieur « tout ».",
+      "court": "tou",
+      "chose": "bagay",
+      "monde": [
+        "moun",
+        "monn"
+      ],
+      "sujets_pluriels": {
+        "nou": "nous",
+        "zot": "vous"
+      }
+    },
+    "avoir": [
+      "ni",
+      "tini"
+    ],
+    "il_faut": [
+      "fò",
+      "fok",
+      "fo"
+    ],
+    "copules": [
+      "yé",
+      "sé"
+    ],
+    "parce_que_court": "pas"
+  },
+  "homographes_gp": [
+    {
+      "_note": "lèt = lait par défaut ; lettre après un verbe d'écriture ou d'envoi (les déterminants intercalés ne comptent pas).",
+      "mot": "lèt",
+      "fr": "lettre",
+      "apres": [
+        "maké",
+        "matjé",
+        "voyé",
+        "ékri"
+      ],
+      "en_sautant": [
+        "on",
+        "yon",
+        "yonn",
+        "an",
+        "la",
+        "lan",
+        "sa",
+        "lasa"
+      ]
+    }
+  ],
+  "homographes_nom_preposition": {
+    "dan": {
+      "_note": "dan = dent (devant un possessif, après un adjectif, en tête devant l'article), dans (devant « an ») ou le prénom Dan (en tête devant une négation, un marqueur ou un verbe).",
+      "preposition": "dans",
+      "preposition_devant": [
+        "an"
+      ],
+      "nom": "dent",
+      "nom_pluriel": "dents",
+      "nom_propre": "Dan",
+      "possessifs_pluriel": {
+        "-yo": "leurs",
+        "yo": "leurs",
+        "a-yo": "leurs",
+        "-nou": "nos",
+        "a-nou": "nos",
+        "-zot": "vos",
+        "a-zot": "vos"
+      },
+      "possessifs_singulier": {
+        "-w": "ta",
+        "-mwen": "ma",
+        "-m": "ma",
+        "-li": "sa",
+        "-y": "sa"
+      },
+      "possessifs": [
+        "a-y",
+        "a-w",
+        "a-yo",
+        "a-nou",
+        "a-zot",
+        "an-mwen",
+        "ay",
+        "aw",
+        "yo"
+      ]
+    }
+  },
+  "preposition_lieu_gp": {
+    "_note": "an = dans, seulement après un nom ou un verbe (ou en tête de phrase) et devant un lieu ; ailleurs il garde ses autres sens (je, un). Si la traduction du lieu commence déjà par « à », on n'ajoute rien.",
+    "mot": "an",
+    "fr": "dans",
+    "glose_deja_prepositionnelle": "à"
+  },
+  "substitutions_gp": [
+    {
+      "_note": "k'ay, k'alé… : « k' » est la forme élidée du marqueur « ka ».",
+      "re": "(^|[^\\p{L}])k['’](?=\\p{L})",
+      "rep": "$1ka ",
+      "flags": "gu"
+    },
+    {
+      "re": "(^|[^\\p{L}])K['’](?=\\p{L})",
+      "rep": "$1Ka ",
+      "flags": "gu"
+    },
+    {
+      "_note": "Pronom objet collé par une apostrophe (enmé'w, tjwé'y, wè'm) : on le détache en forme pleine.",
+      "re": "(\\p{L})['’]w(?![\\p{L}\\p{N}])",
+      "rep": "$1 ou",
+      "flags": "gu"
+    },
+    {
+      "re": "(\\p{L})['’]y(?![\\p{L}\\p{N}])",
+      "rep": "$1 li",
+      "flags": "gu"
+    },
+    {
+      "re": "(\\p{L})['’]m(?![\\p{L}\\p{N}])",
+      "rep": "$1 mwen",
+      "flags": "gu"
+    }
+  ],
+  "verbes_selon_objet_fr": [
+    {
+      "_note": "porter + vêtement ou accessoire = mettre (mété) ; « porter » seul reste pòté. « objets » : motifs des compléments ; « ecart » : nombre de mots tolérés entre le verbe et le complément.",
+      "formes": {
+        "porte": "met",
+        "portes": "mets",
+        "portent": "mettent",
+        "porter": "mettre",
+        "portons": "mettons",
+        "portez": "mettez",
+        "portais": "mettais",
+        "portait": "mettait",
+        "portaient": "mettaient",
+        "porterai": "mettrai",
+        "porterais": "mettrais",
+        "porterait": "mettrait",
+        "porteraient": "mettraient",
+        "portera": "mettra",
+        "porteront": "mettront"
+      },
+      "objets": [
+        "chapeaux?",
+        "lunettes?",
+        "chaussures?",
+        "chaussettes?",
+        "souliers?",
+        "pulls?",
+        "robes?",
+        "vestes?",
+        "manteaux?",
+        "pantalons?",
+        "jupes?",
+        "chemises?",
+        "gants?",
+        "écharpes?",
+        "foulards?",
+        "cravates?",
+        "bonnets?",
+        "casquettes?",
+        "casques?",
+        "ceintures?",
+        "gilets?",
+        "pyjamas?",
+        "pijamas?",
+        "palmes?",
+        "shorts?",
+        "bermudas?",
+        "jeans?",
+        "blouses?",
+        "tabliers?",
+        "uniformes?",
+        "combinaisons?",
+        "sous-vêtements?",
+        "culottes?",
+        "bagues?",
+        "bijoux?",
+        "colliers?",
+        "bracelets?",
+        "montres?",
+        "masques?",
+        "bottes?",
+        "sandales?",
+        "tee-shirts?",
+        "t-shirts?",
+        "maillots?",
+        "costumes?",
+        "tenues?",
+        "vêtements?",
+        "habits?"
+      ],
+      "ecart": 3
+    }
+  ],
+  "determinants_gp": []
 }

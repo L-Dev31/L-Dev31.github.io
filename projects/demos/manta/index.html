@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manta Technologies</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="intro">
+
+  <div id="backdrop">
+    <div id="glow"></div>
+  </div>
+  <canvas id="network"></canvas>
+
+  <div id="cursor-ring"></div>
+  <div id="cursor-dot"></div>
+  <p id="hint" data-i18n="hint">[ Click to deploy your model to every device ]</p>
+
+  <div class="page">
+    <header>
+      <a class="brand" href="#">
+        <img class="brand-mark" src="assets/manta-logo.svg" alt="">
+        <span class="wordmark">manta<small>technologies</small></span>
+      </a>
+
+      <div class="lang">
+        <a href="#" data-lang="en" aria-current="true">EN</a> | <a href="#" data-lang="fr">FR</a>
+      </div>
+
+      <nav>
+        <a class="external" href="https://docs.manta-tech.io/" target="_blank" rel="noopener noreferrer">
+          <span data-i18n="docs">Docs</span>
+          <svg viewBox="0 0 10 10" aria-hidden="true">
+            <path d="M2 8l6-6M3 2h5v5"/>
+          </svg>
+        </a>
+        <a class="btn" href="https://mail.google.com/mail/u/0/?fs=1&amp;tf=cm&amp;source=mailto&amp;su=Beta+access+request&amp;to=manta@manta-tech.io&amp;body=Name:%0ACompany:%0AUse+case:%0ANumber+of+accounts/seats+needed:%0ADeployment+type+(cloud+/+on-prem+/+hybrid):%0ATarget+timeline:" target="_blank" rel="noopener noreferrer" data-i18n="beta">Become a beta tester</a>
+        <a class="btn btn-solid" href="https://dashboard.manta-tech.io/login" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="10.5"/>
+            <circle cx="12" cy="9.5" r="3.2"/>
+            <path d="M5.8 18.6c1.2-3 3.5-4.1 6.2-4.1s5 1.1 6.2 4.1"/>
+          </svg>
+          <span data-i18n="connect">Connect</span>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <h1 data-i18n="title">Deploy AI anywhere.<br>Maintain total control.</h1>
+      <h2 data-i18n="subtitle">Distribute, update, and secure your machine learning models on edge hardware without relying on the cloud.</h2>
+      <a class="btn" href="#" data-i18n="more">See more about Manta Technologies</a>
+    </main>
+
+    <footer>
+      <a class="contact" href="#"><i>[</i><span data-i18n="contact">Contact us</span><i>]</i></a>
+      <ul class="logos">
+        <li><img src="logos/21st.svg" alt="21st by CentraleSupélec" class="tall"></li>
+        <li><img src="logos/bpifrance.svg" alt="Bpifrance"></li>
+        <li><img src="logos/inria.svg" alt="Inria Startup Studio"></li>
+        <li><img src="logos/pca.svg" alt="Incubateur Provence-Côte d'Azur" class="tall"></li>
+        <li><img src="logos/france2030.svg" alt="France 2030" class="tall"></li>
+        <li><img src="logos/skyld.svg" alt="Skyld"></li>
+        <li><img src="logos/sentiens.svg" alt="Sentiens"></li>
+        <li><img src="logos/ferrcad.svg" alt="Ferrcad" class="small"></li>
+        <li><img src="logos/sunwaves.svg" alt="Sunwaves Medtech"></li>
+      </ul>
+    </footer>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
