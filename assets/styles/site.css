@@ -190,7 +190,8 @@ html.lenis body {
 }
 
 .intro-waiting .navbar,
-.intro-waiting .hero-socials {
+.intro-waiting .hero-socials,
+.intro-waiting .hero-cta {
     opacity: 0;
 }
 
@@ -198,7 +199,8 @@ html.lenis body {
     animation: rise 0.7s var(--ease-out) 0.3s both;
 }
 
-.intro-in #header .hero-socials {
+.intro-in #header .hero-socials,
+.intro-in #header .hero-cta {
     animation: rise 0.7s var(--ease-out) 0.38s both;
 }
 
@@ -810,6 +812,8 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
 
 .header-meta .clock {
     padding: 6px 12px;
+    /* The portrait runs behind these pills: a veil keeps their text readable. */
+    background: color-mix(in srgb, var(--black) 78%, transparent);
     font-size: 12px;
     opacity: max(0, calc(1 - var(--turn, 0) * 3));
 }
@@ -848,11 +852,42 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
 }
 
 .header-subtitles {
+    flex: 1 1 100%;
+    max-width: 46em;
+    text-wrap: balance;
     color: var(--white);
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.01em;
     line-height: 1.4;
+}
+
+/* The one action of the first screen: filled with the accent, with the answer to "is he free?" inside it. */
+.hero-cta {
+    align-self: flex-start;
+    margin: 0;
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--black);
+    pointer-events: auto;
+}
+
+.hero-cta-free {
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+}
+
+#header.is-turned .hero-cta {
+    visibility: hidden;
+}
+
+/* Email and the resume come first among the links: they are the ones that lead to a conversation. */
+#header .hero-socials a[href^="mailto:"] {
+    order: -2;
+}
+
+#header .hero-socials a[download] {
+    order: -1;
 }
 
 .hero-about {
@@ -1629,7 +1664,8 @@ html.menu-open .showcase-link {
     }
 
     .header-content {
-        --name-size: clamp(38px, 13vw, 72px);
+        /* The longest line of the title is 8.4 em wide: it has to fit the width of the screen. */
+        --name-size: clamp(26px, 10vw, 72px);
         gap: 13px;
     }
 
