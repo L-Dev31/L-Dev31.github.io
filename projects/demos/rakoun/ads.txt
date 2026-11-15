@@ -2,8 +2,8 @@
 #
 # ATTENTION : ce fichier ne sera lu par les crawlers AdSense QUE lorsque Rakoun
 # sera servi depuis la racine de son propre domaine (ex: https://rakoun.xxx/ads.txt).
-# Tant que le site vit sous https://l-dev31.github.io/projects/demos/rakoun/, cette copie
-# est ignorée : il faut un ads.txt à https://l-dev31.github.io/ads.txt pour que
+# Tant que le site vit sous https://www.leotosku.com/projects/demos/rakoun/, cette copie
+# est ignorée : il faut un ads.txt à https://www.leotosku.com/ads.txt pour que
 # les pubs se valident sur ce domaine.
 #
 # Une fois ton compte Google AdSense validé, va dans AdSense > Sites > (ton domaine)

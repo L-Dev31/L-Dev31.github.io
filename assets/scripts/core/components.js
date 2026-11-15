@@ -4,7 +4,7 @@ const sections = {
     home: [
         ['#selected-projects', 'Selected'],
         ['#all-projects', 'All projects'],
-        ['#promise', 'What to expect'],
+        ['#promise', 'What you get'],
     ],
     about: [
         ['#my-story', 'About me'],
