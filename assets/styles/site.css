@@ -2441,6 +2441,10 @@ main {
         --size: 64px;
     }
 
+    .btt-text span {
+        font-size: 7px;
+    }
+
     .footer-inner {
         row-gap: 16px;
     }
