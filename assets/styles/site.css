@@ -373,7 +373,7 @@ h3 {
     padding: clamp(12px, 2.5vh, 28px) var(--pad-edge);
     color: var(--white);
     font-size: clamp(13px, 1.4vw, 16px);
-    transition: color 0.3s ease;
+    transition: color var(--tone-fade, 0.3s) ease;
 }
 
 .navbar.on-accent {
@@ -648,9 +648,14 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     opacity: 1;
 }
 
+/* Back to top: fixed at the bottom right, at the navbar's edge, once the page's hero is behind.
+   Its colour follows what passes under it, like the navbar's; the ring turns with the scroll (common.js). */
 .back-to-top {
     --size: 100px;
-    position: relative;
+    position: fixed;
+    right: var(--pad-edge);
+    bottom: max(clamp(12px, 2.5vh, 28px), env(safe-area-inset-bottom));
+    z-index: 997;
     width: var(--size);
     height: var(--size);
     display: flex;
@@ -661,7 +666,25 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     background: none;
     color: var(--white);
     cursor: pointer;
-    transition: transform 0.4s var(--ease-out);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s var(--ease-out), visibility 0s linear 0.4s, color var(--tone-fade, 0.3s) ease, transform 0.4s var(--ease-out);
+}
+
+.back-to-top.is-shown {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+}
+
+.back-to-top.on-accent {
+    color: var(--black);
+}
+
+/* Over the big name at the foot of the page it inverts what is under it, so it reads on the letters and between them. */
+.back-to-top.on-name {
+    color: #fff;
+    mix-blend-mode: difference;
 }
 
 .back-to-top:hover {
@@ -671,7 +694,6 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
 .btt-text {
     position: absolute;
     inset: 0;
-    animation: spin 15s linear infinite;
     pointer-events: none;
 }
 
@@ -689,12 +711,8 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
 
 .btt-icon {
     width: 75%;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    height: 75%;
+    fill: currentColor;
 }
 
 #header {
@@ -1764,12 +1782,6 @@ html.menu-open .showcase-link {
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .btt-text {
-        animation: none;
-    }
-}
-
 .scrubbing-char {
     display: inline;
 }
@@ -2249,7 +2261,6 @@ main {
 }
 
 .footer-inner {
-    position: relative;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: start;
@@ -2318,12 +2329,6 @@ main {
     line-height: 1;
 }
 
-.footer-inner .back-to-top {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
 /* The portrait takes the whole width, and all the height the links and the name leave. */
 .footer-portrait {
     flex: 1 1 0;
@@ -2369,8 +2374,8 @@ main {
         padding-top: 72px;
     }
 
-    .footer-inner .back-to-top {
-        display: none;
+    .back-to-top {
+        --size: 64px;
     }
 
     .footer-inner {

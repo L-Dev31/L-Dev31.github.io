@@ -1,4 +1,4 @@
-import { lowPower, clamp01, breakpoint, isMobile, throttled, PICTURE } from './config.js';
+import { lowPower, reducedMotion, clamp01, breakpoint, isMobile, throttled, PICTURE } from './config.js';
 import { pageLoader } from './intro.js';
 import { cursor, magnets, pageTransitions } from '../fx/cursor.js';
 import { loadProjects } from './projects.js';
@@ -11,7 +11,6 @@ import { initContactParallax } from '../blocks/contact-parallax.js';
 export function initPage() {
     document.querySelectorAll('[data-year]').forEach(node => node.textContent = new Date().getFullYear());
     clock();
-    navTone();
     pageLoader();
     const lenis = smoothScroll();
     mobileMenu(lenis);
@@ -25,26 +24,47 @@ export function initPage() {
     footerPortrait();
     contactScene();
     initContactParallax();
+    // Last, so that on each scroll it reads the reveal and the Let's talk tone the parts above have just set.
+    navTone();
     copyHandles();
     return lenis;
 }
 
+// The navbar at the top and the back-to-top ring at the bottom take the tone of what passes under them: the
+// showcase's own colours (at once, since the showcase changes at once), dark ink on the red sections and on the
+// light end of Let's talk, white everywhere else.
 function navTone() {
     const bar = document.querySelector('.navbar');
+    const ring = document.querySelector('.back-to-top');
     const reds = [...document.querySelectorAll('#my-story, #featured-projects, #projects-index, #promise, .contact-rest, .accent-section')];
     const stage = document.querySelector('.contact-stage');
+    const footerSpace = document.querySelector('.footer-space');
+    const footerName = document.querySelector('.footer-name');
     if (!bar) return;
+    const coversAt = (node, y) => { const r = node.getBoundingClientRect(); return r.top <= y && r.bottom >= y; };
+    // The capitals of the footer name rise about a quarter of its font size above its line box.
+    const overName = box => {
+        const r = footerName.getBoundingClientRect();
+        return box.bottom > r.top - parseFloat(getComputedStyle(footerName).fontSize) * 0.25 && box.top < r.bottom;
+    };
+    const toneAt = (element, y, showcase) => {
+        const covers = node => coversAt(node, y);
+        const onShowcase = showcase?.dataset.paletteActive === 'true' && covers(showcase);
+        if (onShowcase) element.style.color = getComputedStyle(showcase).getPropertyValue('--showcase-foreground').trim();
+        else element.style.removeProperty('color');
+        element.style.setProperty('--tone-fade', onShowcase ? '0s' : '');
+        const onAccent = !onShowcase && (reds.some(covers) || (stage?.dataset.tone === 'light' && covers(stage)));
+        element.classList.toggle('on-accent', onAccent);
+        return onAccent;
+    };
     const update = () => {
-        const y = bar.offsetHeight / 2;
-        const covers = node => { const r = node.getBoundingClientRect(); return r.top <= y && r.bottom >= y; };
         const showcase = document.querySelector('.showcase-stage');
-        const activeShowcase = showcase?.dataset.paletteActive === 'true' && covers(showcase);
-        if (activeShowcase) bar.style.color = getComputedStyle(showcase).getPropertyValue('--showcase-foreground').trim();
-        else bar.style.removeProperty('color');
-        bar.style.transition = activeShowcase ? 'none' : '';
-        const onAccent = !activeShowcase && (reds.some(covers) || (stage?.dataset.tone === 'light' && covers(stage)));
-        bar.classList.toggle('on-accent', onAccent);
-        document.documentElement.classList.toggle('on-accent', onAccent);
+        document.documentElement.classList.toggle('on-accent', toneAt(bar, bar.offsetHeight / 2, showcase));
+        if (ring) {
+            const box = ring.getBoundingClientRect(), y = box.top + box.height / 2;
+            toneAt(ring, y, showcase);
+            ring.classList.toggle('on-name', !!footerName && coversAt(footerSpace, y) && overName(box));
+        }
     };
     addEventListener('scroll', throttled(update), { passive: true });
     addEventListener('resize', update, { passive: true });
@@ -279,20 +299,60 @@ function anchorLinks(lenis) {
     }));
 }
 
+// Back to top: fixed at the bottom right once the page's hero is behind. Its ring of text turns with the scroll,
+// so it rests when the page rests, and it turns the other way while the pointer is on it.
+const RING = {
+    degreesPerPx: 0.1,
+    // A long jump (back to the top, a section link) turns it quickly, not in one blur.
+    maxDegreesPerEvent: 12,
+    hoverDegreesPerSecond: 40,
+};
+
 function backToTop(lenis) {
     const button = document.querySelector('.back-to-top');
     if (!button) return;
     const ring = button.querySelector('.btt-text');
 
     const chars = [...ring.textContent];
-    ring.textContent = '';
-    chars.forEach((char, i) => {
+    ring.replaceChildren(...chars.map((char, i) => {
         const span = el('span', '', char);
         span.style.transform = `rotate(${i * 360 / chars.length}deg)`;
-        ring.append(span);
-    });
+        return span;
+    }));
 
     button.addEventListener('click', () => scrollPage(lenis, 0));
+
+    const hero = document.querySelector('.hero-spacer, .about-header, .project-hero, .all-head');
+    const heroBottom = () => (hero ? hero.getBoundingClientRect().bottom : innerHeight - scrollY);
+    const reveal = () => button.classList.toggle('is-shown', heroBottom() <= 0);
+    addEventListener('scroll', throttled(reveal), { passive: true });
+    addEventListener('resize', reveal, { passive: true });
+    reveal();
+
+    if (reducedMotion) return;
+    let angle = 0, lastY = scrollY, hovered = false, lastFrame = 0;
+    const turn = degrees => {
+        angle = (angle + degrees) % 360;
+        ring.style.rotate = `${angle.toFixed(2)}deg`;
+    };
+    addEventListener('scroll', () => {
+        const degrees = Math.max(-RING.maxDegreesPerEvent, Math.min(RING.maxDegreesPerEvent, (scrollY - lastY) * RING.degreesPerPx));
+        turn(hovered ? -degrees : degrees);
+        lastY = scrollY;
+    }, { passive: true });
+    const spin = now => {
+        if (!hovered) return;
+        turn(-RING.hoverDegreesPerSecond * Math.min(0.05, (now - lastFrame) / 1000));
+        lastFrame = now;
+        requestAnimationFrame(spin);
+    };
+    button.addEventListener('pointerenter', () => {
+        if (hovered) return;
+        hovered = true;
+        lastFrame = performance.now();
+        requestAnimationFrame(spin);
+    });
+    button.addEventListener('pointerleave', () => { hovered = false; });
 }
 
 function copyHandles() {
