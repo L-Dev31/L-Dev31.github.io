@@ -299,13 +299,19 @@ function anchorLinks(lenis) {
     }));
 }
 
-// Back to top: fixed at the bottom right once the page's hero is behind. Its ring of text turns with the scroll,
-// so it rests when the page rests, and it turns the other way while the pointer is on it.
+// Back to top: fixed at the bottom right once the page's hero is behind. Its ring of text always turns, slowly, like the
+// signature: scrolling down speeds it up, scrolling up turns it back, and under the pointer it slows down.
 const RING = {
-    degreesPerPx: 0.1,
-    // A long jump (back to the top, a section link) turns it quickly, not in one blur.
-    maxDegreesPerEvent: 12,
-    hoverDegreesPerSecond: 40,
+    // A turn in about 30 seconds while the page is still.
+    idleDegreesPerSecond: 12,
+    // What the scroll adds: down turns it forward, up turns it back.
+    degreesPerScrolledPx: 0.12,
+    // A long jump (back to the top, a section link) turns it quickly, never in a blur.
+    maxDegreesPerSecond: 360,
+    // Under the pointer it turns at this share of its speed.
+    hoverShare: 0.3,
+    // How quickly its speed follows the scroll and the pointer, per second.
+    ease: 6,
 };
 
 function backToTop(lenis) {
@@ -330,28 +336,32 @@ function backToTop(lenis) {
     reveal();
 
     if (reducedMotion) return;
-    let angle = 0, lastY = scrollY, hovered = false, lastFrame = 0;
-    const turn = degrees => {
-        angle = (angle + degrees) % 360;
+    let angle = 0;
+    let speed = RING.idleDegreesPerSecond;
+    let share = 1;
+    let hovered = false;
+    let lastY = scrollY;
+    let lastFrame = performance.now();
+
+    const turn = now => {
+        requestAnimationFrame(turn);
+        const seconds = Math.min(0.05, (now - lastFrame) / 1000);
+        const scrolled = scrollY - lastY;
+        lastFrame = now;
+        lastY = scrollY;
+        if (!seconds || !button.classList.contains('is-shown')) return;
+
+        const target = RING.idleDegreesPerSecond + (scrolled / seconds) * RING.degreesPerScrolledPx;
+        const limited = Math.max(-RING.maxDegreesPerSecond, Math.min(RING.maxDegreesPerSecond, target));
+        const follow = 1 - Math.exp(-seconds * RING.ease);
+        speed += (limited - speed) * follow;
+        share += ((hovered ? RING.hoverShare : 1) - share) * follow;
+        angle = (angle + speed * share * seconds) % 360;
         ring.style.rotate = `${angle.toFixed(2)}deg`;
     };
-    addEventListener('scroll', () => {
-        const degrees = Math.max(-RING.maxDegreesPerEvent, Math.min(RING.maxDegreesPerEvent, (scrollY - lastY) * RING.degreesPerPx));
-        turn(hovered ? -degrees : degrees);
-        lastY = scrollY;
-    }, { passive: true });
-    const spin = now => {
-        if (!hovered) return;
-        turn(-RING.hoverDegreesPerSecond * Math.min(0.05, (now - lastFrame) / 1000));
-        lastFrame = now;
-        requestAnimationFrame(spin);
-    };
-    button.addEventListener('pointerenter', () => {
-        if (hovered) return;
-        hovered = true;
-        lastFrame = performance.now();
-        requestAnimationFrame(spin);
-    });
+    requestAnimationFrame(turn);
+
+    button.addEventListener('pointerenter', () => { hovered = true; });
     button.addEventListener('pointerleave', () => { hovered = false; });
 }
 
