@@ -55,7 +55,8 @@ function navTone() {
     };
     const toneAt = (element, y, showcase) => {
         const covers = node => coversAt(node, y);
-        const onShowcase = showcase?.dataset.paletteActive === 'true' && covers(showcase);
+        // The showcase keeps its last colours after it ends, so it counts while it is on screen, not only while active.
+        const onShowcase = !!showcase && covers(showcase);
         if (onShowcase)
             element.style.color = getComputedStyle(showcase).getPropertyValue('--showcase-foreground').trim();
         else element.style.removeProperty('color');
