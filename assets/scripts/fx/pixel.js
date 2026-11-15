@@ -4,11 +4,19 @@ import { gradientStops, isGradient, mixColors } from '../core/color.js';
 
 const computeCell = () => Math.max(PIXEL.minCellPx, Math.round(innerWidth / PIXEL.cellsAcrossScreen));
 export let CELL = computeCell();
-addEventListener('resize', () => { CELL = computeCell(); }, { passive: true });
+addEventListener(
+    'resize',
+    () => {
+        CELL = computeCell();
+    },
+    { passive: true },
+);
 
 const [DOT_THRESHOLD, CHECKER_THRESHOLD, SOLID_THRESHOLD] = PIXEL.brightnessLevels;
 
-const DOTS = 0, CHECKER = 1, SOLID = 2;
+const DOTS = 0,
+    CHECKER = 1,
+    SOLID = 2;
 
 export function drawCell(context, level, x, y, cellSize, fillShare) {
     const gap = Math.max(1, Math.round(cellSize * PIXEL.gapShare));
@@ -44,11 +52,14 @@ function buildTiles(color, size, cols) {
     }
 
     const pixels = new Uint32Array(context.getImageData(0, 0, sheet.width, size).data.buffer);
-    const byColumn = Array.from({ length: columns }, (_, col) => [DOTS, CHECKER, SOLID].map(level =>
-        Array.from({ length: size }, (_, y) => {
-            const rowStart = y * sheet.width + (col * 3 + level) * size;
-            return pixels.slice(rowStart, rowStart + size);
-        })));
+    const byColumn = Array.from({ length: columns }, (_, col) =>
+        [DOTS, CHECKER, SOLID].map(level =>
+            Array.from({ length: size }, (_, y) => {
+                const rowStart = y * sheet.width + (col * 3 + level) * size;
+                return pixels.slice(rowStart, rowStart + size);
+            }),
+        ),
+    );
     return gradient ? { columns: byColumn, solid: null } : { columns: null, solid: byColumn[0] };
 }
 
@@ -61,9 +72,11 @@ function levelOf(brightness) {
 
 export function cellCanvas(canvas, color) {
     const context = canvas.getContext('2d');
-    let cols = 0, rows = 0;
+    let cols = 0,
+        rows = 0;
     let cellPx = CELL;
-    let tiles = null, tilesKey = '';
+    let tiles = null,
+        tilesKey = '';
     let shownLevels = new Uint8Array(0);
     let imageData = null;
     let frame = null;
@@ -82,7 +95,8 @@ export function cellCanvas(canvas, color) {
         const beat = Math.floor(performance.now() / PIXEL.shimmerBeatMs);
         if (beat !== shimmerBeat) {
             shimmerBeat = beat;
-            const low = 1 - PIXEL.shimmerAmount, span = PIXEL.shimmerAmount * 2;
+            const low = 1 - PIXEL.shimmerAmount,
+                span = PIXEL.shimmerAmount * 2;
             for (let i = 0; i < shimmer.length; i++) {
                 const hash = (((i + 1) * 73856093) ^ (beat * 19349663)) >>> 0;
                 shimmer[i] = low + (span * hash) / 4294967295;
@@ -121,20 +135,28 @@ export function cellCanvas(canvas, color) {
             if (cols) updateTiles();
             shownLevels = new Uint8Array(0);
         },
-        get cols() { return cols; },
-        get rows() { return rows; },
+        get cols() {
+            return cols;
+        },
+        get rows() {
+            return rows;
+        },
         paint(brightness) {
             const live = withShimmer(brightness);
             const rowWidth = cols * cellPx;
             if (shownLevels.length !== live.length) shownLevels = new Uint8Array(live.length).fill(255);
 
-            let minCol = cols, minRow = rows, maxCol = -1, maxRow = -1;
+            let minCol = cols,
+                minRow = rows,
+                maxCol = -1,
+                maxRow = -1;
             for (let i = 0; i < live.length; i++) {
                 const level = levelOf(live[i]);
                 if (level === shownLevels[i]) continue;
                 shownLevels[i] = level;
 
-                const col = i % cols, row = (i / cols) | 0;
+                const col = i % cols,
+                    row = (i / cols) | 0;
                 let offset = row * cellPx * rowWidth + col * cellPx;
                 if (level) {
                     const tile = tiles.columns ? tiles.columns[col][level - 1] : tiles.solid[level - 1];
@@ -148,7 +170,15 @@ export function cellCanvas(canvas, color) {
                 maxRow = Math.max(maxRow, row);
             }
             if (maxCol >= 0) {
-                context.putImageData(imageData, 0, 0, minCol * cellPx, minRow * cellPx, (maxCol - minCol + 1) * cellPx, (maxRow - minRow + 1) * cellPx);
+                context.putImageData(
+                    imageData,
+                    0,
+                    0,
+                    minCol * cellPx,
+                    minRow * cellPx,
+                    (maxCol - minCol + 1) * cellPx,
+                    (maxRow - minRow + 1) * cellPx,
+                );
             }
         },
     };
@@ -166,7 +196,8 @@ function computeNormals(solid) {
 
     for (let y = 0; y < MASK; y++) {
         for (let x = 0; x < MASK; x++) {
-            let gradientX = 0, gradientY = 0;
+            let gradientX = 0,
+                gradientY = 0;
             for (let d = -NORMAL_REACH; d <= NORMAL_REACH; d++) {
                 gradientX += isSolid(x + NORMAL_REACH, y + d) - isSolid(x - NORMAL_REACH, y + d);
                 gradientY += isSolid(x + d, y - NORMAL_REACH) - isSolid(x + d, y + NORMAL_REACH);
@@ -188,17 +219,22 @@ function loadMask(url) {
             const canvas = document.createElement('canvas');
             canvas.width = canvas.height = MASK;
             const context = canvas.getContext('2d', { willReadFrequently: true });
-            const width = image.naturalWidth || 300, height = image.naturalHeight || 300;
+            const width = image.naturalWidth || 300,
+                height = image.naturalHeight || 300;
             const fit = MASK / Math.max(width, height);
             context.drawImage(image, (MASK - width * fit) / 2, (MASK - height * fit) / 2, width * fit, height * fit);
             const rgba = context.getImageData(0, 0, MASK, MASK).data;
 
             const solid = new Uint8Array(MASK * MASK);
-            let minX = MASK, minY = MASK, maxX = 0, maxY = 0;
+            let minX = MASK,
+                minY = MASK,
+                maxX = 0,
+                maxY = 0;
             for (let i = 0; i < solid.length; i++) {
                 if (rgba[i * 4 + 3] < ALPHA_THRESHOLD) continue;
                 solid[i] = 1;
-                const x = i % MASK, y = (i / MASK) | 0;
+                const x = i % MASK,
+                    y = (i / MASK) | 0;
                 minX = Math.min(minX, x);
                 maxX = Math.max(maxX, x);
                 minY = Math.min(minY, y);
@@ -265,15 +301,22 @@ function sampleExtruded(mask, axes, light, cols, rows, output) {
                     let u = right[0] * x + up[0] * y + toward[0] * RAY_START_DEPTH;
                     let v = right[1] * x + up[1] * y + toward[1] * RAY_START_DEPTH;
                     let w = right[2] * x + up[2] * y + toward[2] * RAY_START_DEPTH;
-                    const stepU = -toward[0] * RAY_STEP, stepV = -toward[1] * RAY_STEP, stepW = -toward[2] * RAY_STEP;
+                    const stepU = -toward[0] * RAY_STEP,
+                        stepV = -toward[1] * RAY_STEP,
+                        stepW = -toward[2] * RAY_STEP;
 
                     let insideSlab = false;
-                    for (let depth = RAY_START_DEPTH; depth > -RAY_START_DEPTH; depth -= RAY_STEP, u += stepU, v += stepV, w += stepW) {
+                    for (
+                        let depth = RAY_START_DEPTH;
+                        depth > -RAY_START_DEPTH;
+                        depth -= RAY_STEP, u += stepU, v += stepV, w += stepW
+                    ) {
                         if (w > SIGNATURE.depth || w < -SIGNATURE.depth) {
                             insideSlab = false;
                             continue;
                         }
-                        const maskX = (centerX + u * scale) | 0, maskY = (centerY - v * scale) | 0;
+                        const maskX = (centerX + u * scale) | 0,
+                            maskY = (centerY - v * scale) | 0;
                         if (maskX < 0 || maskY < 0 || maskX >= MASK || maskY >= MASK) {
                             insideSlab = true;
                             continue;
@@ -327,7 +370,10 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
 
         axes = rotationAxes(angle);
         for (let i = 0; i < 3; i++) {
-            light[i] = axes.right[i] * LIGHT_DIRECTION[0] + axes.up[i] * LIGHT_DIRECTION[1] + axes.toward[i] * LIGHT_DIRECTION[2];
+            light[i] =
+                axes.right[i] * LIGHT_DIRECTION[0] +
+                axes.up[i] * LIGHT_DIRECTION[1] +
+                axes.toward[i] * LIGHT_DIRECTION[2];
         }
         march(mask, brightness);
 
@@ -390,8 +436,12 @@ export function extrudedSvg(canvas, color, { morph = false } = {}) {
             running = false;
             cancelAnimationFrame(animationFrame);
         },
-        nudge(radians) { angle += radians; },
-        recolor(newColor) { cells.recolor(newColor); },
+        nudge(radians) {
+            angle += radians;
+        },
+        recolor(newColor) {
+            cells.recolor(newColor);
+        },
     };
 }
 
@@ -399,7 +449,8 @@ const DISSOLVE_DELAY_BY_COLUMN = 0.55;
 const DISSOLVE_DELAY_RANDOM = 0.35;
 const DISSOLVE_SPEED = 1.45;
 const DISSOLVE_END = 1.15;
-const DISSOLVE_DOTS_UNTIL = 0.2, DISSOLVE_CHECKER_UNTIL = 0.1;
+const DISSOLVE_DOTS_UNTIL = 0.2,
+    DISSOLVE_CHECKER_UNTIL = 0.1;
 
 export function dissolve(host, { color, total = PIXEL.dissolveDurationMs, reverse = false, fixed = false }, done) {
     const size = CELL;
@@ -416,7 +467,10 @@ export function dissolve(host, { color, total = PIXEL.dissolveDurationMs, revers
 
     const context = canvas.getContext('2d');
     context.fillStyle = color;
-    const delays = Array.from({ length: cols * rows }, (_, i) => ((i % cols) / cols) * DISSOLVE_DELAY_BY_COLUMN + Math.random() * DISSOLVE_DELAY_RANDOM);
+    const delays = Array.from(
+        { length: cols * rows },
+        (_, i) => ((i % cols) / cols) * DISSOLVE_DELAY_BY_COLUMN + Math.random() * DISSOLVE_DELAY_RANDOM,
+    );
     const startedAt = performance.now();
 
     function frame(now) {
@@ -425,7 +479,14 @@ export function dissolve(host, { color, total = PIXEL.dissolveDurationMs, revers
         context.clearRect(0, 0, canvas.width, canvas.height);
         for (let i = 0; i < delays.length; i++) {
             const remaining = (reverse ? DISSOLVE_END - progress : progress) - delays[i];
-            const level = remaining < 0 ? SOLID : remaining < DISSOLVE_CHECKER_UNTIL ? CHECKER : remaining < DISSOLVE_DOTS_UNTIL ? DOTS : -1;
+            const level =
+                remaining < 0
+                    ? SOLID
+                    : remaining < DISSOLVE_CHECKER_UNTIL
+                      ? CHECKER
+                      : remaining < DISSOLVE_DOTS_UNTIL
+                        ? DOTS
+                        : -1;
             if (level >= 0) drawCell(context, level, (i % cols) * cellPx, ((i / cols) | 0) * cellPx, cellPx, 1);
         }
         if (progress < DISSOLVE_END) requestAnimationFrame(frame);

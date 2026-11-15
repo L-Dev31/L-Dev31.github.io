@@ -7,9 +7,8 @@ import { socialLinks } from './components.js';
 import { el, cssVariable, scrollPage } from './dom.js';
 import { initContactParallax } from '../blocks/contact-parallax.js';
 
-
 export function initPage() {
-    document.querySelectorAll('[data-year]').forEach(node => node.textContent = new Date().getFullYear());
+    document.querySelectorAll('[data-year]').forEach(node => (node.textContent = new Date().getFullYear()));
     clock();
     pageLoader();
     const lenis = smoothScroll();
@@ -36,12 +35,19 @@ export function initPage() {
 function navTone() {
     const bar = document.querySelector('.navbar');
     const ring = document.querySelector('.back-to-top');
-    const reds = [...document.querySelectorAll('#my-story, #featured-projects, #projects-index, #promise, .contact-rest, .accent-section')];
+    const reds = [
+        ...document.querySelectorAll(
+            '#my-story, #featured-projects, #projects-index, #promise, .contact-rest, .accent-section',
+        ),
+    ];
     const stage = document.querySelector('.contact-stage');
     const footerSpace = document.querySelector('.footer-space');
     const footerName = document.querySelector('.footer-name');
     if (!bar) return;
-    const coversAt = (node, y) => { const r = node.getBoundingClientRect(); return r.top <= y && r.bottom >= y; };
+    const coversAt = (node, y) => {
+        const r = node.getBoundingClientRect();
+        return r.top <= y && r.bottom >= y;
+    };
     // The capitals of the footer name rise about a quarter of its font size above its line box.
     const overName = box => {
         const r = footerName.getBoundingClientRect();
@@ -50,7 +56,8 @@ function navTone() {
     const toneAt = (element, y, showcase) => {
         const covers = node => coversAt(node, y);
         const onShowcase = showcase?.dataset.paletteActive === 'true' && covers(showcase);
-        if (onShowcase) element.style.color = getComputedStyle(showcase).getPropertyValue('--showcase-foreground').trim();
+        if (onShowcase)
+            element.style.color = getComputedStyle(showcase).getPropertyValue('--showcase-foreground').trim();
         else element.style.removeProperty('color');
         element.style.setProperty('--tone-fade', onShowcase ? '0s' : '');
         const onAccent = !onShowcase && (reds.some(covers) || (stage?.dataset.tone === 'light' && covers(stage)));
@@ -61,7 +68,8 @@ function navTone() {
         const showcase = document.querySelector('.showcase-stage');
         document.documentElement.classList.toggle('on-accent', toneAt(bar, bar.offsetHeight / 2, showcase));
         if (ring) {
-            const box = ring.getBoundingClientRect(), y = box.top + box.height / 2;
+            const box = ring.getBoundingClientRect(),
+                y = box.top + box.height / 2;
             toneAt(ring, y, showcase);
             ring.classList.toggle('on-name', !!footerName && coversAt(footerSpace, y) && overName(box));
         }
@@ -73,26 +81,36 @@ function navTone() {
 }
 
 const MONACO = { lat: 43.73, lon: 7.42 };
-const pixelIcon = rows => `<svg class="clock-icon" viewBox="0 0 7 7" aria-hidden="true">${rows
-    .flatMap((row, y) => [...row].map((c, x) => (c === '#' ? `<rect x="${x}" y="${y}" width="1" height="1"/>` : '')))
-    .join('')}</svg>`;
+const pixelIcon = rows =>
+    `<svg class="clock-icon" viewBox="0 0 7 7" aria-hidden="true">${rows
+        .flatMap((row, y) =>
+            [...row].map((c, x) => (c === '#' ? `<rect x="${x}" y="${y}" width="1" height="1"/>` : '')),
+        )
+        .join('')}</svg>`;
 const SUN = pixelIcon(['...#...', '.#...#.', '..###..', '#.###.#', '..###..', '.#...#.', '...#...']);
 const MOON = pixelIcon(['..###..', '.###...', '###....', '###....', '###....', '.###...', '..###..']);
 
 function daylight(date) {
     const rad = Math.PI / 180;
     const day = (date - Date.UTC(date.getUTCFullYear(), 0, 0)) / 864e5;
-    const declination = -23.44 * Math.cos((2 * Math.PI / 365) * (day + 10)) * rad;
+    const declination = -23.44 * Math.cos(((2 * Math.PI) / 365) * (day + 10)) * rad;
     const hours = date.getUTCHours() + date.getUTCMinutes() / 60 + MONACO.lon / 15;
-    const hourAngle = (hours - 12) * 15 * rad, lat = MONACO.lat * rad;
-    const elevation = Math.sin(lat) * Math.sin(declination) + Math.cos(lat) * Math.cos(declination) * Math.cos(hourAngle);
+    const hourAngle = (hours - 12) * 15 * rad,
+        lat = MONACO.lat * rad;
+    const elevation =
+        Math.sin(lat) * Math.sin(declination) + Math.cos(lat) * Math.cos(declination) * Math.cos(hourAngle);
     return elevation > Math.sin(-0.833 * rad);
 }
 
 let tickClock = () => {};
 
 function clock() {
-    const time = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hour12: false });
+    const time = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Europe/Paris',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+    });
     const zone = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', timeZoneName: 'shortOffset' });
     const tick = () => {
         const now = new Date();
@@ -100,7 +118,12 @@ function clock() {
         const clockTime = time.format(now);
         const offset = zone.formatToParts(now).find(part => part.type === 'timeZoneName')?.value || '';
         for (const node of document.querySelectorAll('[data-clock]')) {
-            node.innerHTML = `${day ? SUN : MOON}<span class="clock-place">French Riviera, FR</span><span class="clock-time">${clockTime}</span><span class="clock-zone">${offset}</span>`;
+            node.innerHTML = [
+                day ? SUN : MOON,
+                '<span class="clock-place">French Riviera, FR</span>',
+                `<span class="clock-time">${clockTime}</span>`,
+                `<span class="clock-zone">${offset}</span>`,
+            ].join('');
             node.setAttribute('aria-label', `French Riviera, ${clockTime}, ${offset}, ${day ? 'daytime' : 'night'}`);
         }
     };
@@ -109,9 +132,8 @@ function clock() {
     setInterval(tick, 15000);
 }
 function smoothScroll() {
-
     if (isMobile || lowPower || !window.Lenis) return null;
-    const lenis = new Lenis({ lerp: 0.06, wheelMultiplier: 0.85, touchMultiplier: 2 })
+    const lenis = new Lenis({ lerp: 0.06, wheelMultiplier: 0.85, touchMultiplier: 2 });
     const raf = time => {
         lenis.raf(time);
         requestAnimationFrame(raf);
@@ -122,17 +144,23 @@ function smoothScroll() {
 
 const PAGES = [
     { id: 'home', label: 'Home', href: 'index.html', children: 'projects' },
-    { id: 'about', label: 'About', href: 'about.html', children: [{ id: 'culture', label: 'Culture', href: 'culture.html' }] },
+    {
+        id: 'about',
+        label: 'About',
+        href: 'about.html',
+        children: [{ id: 'culture', label: 'Culture', href: 'culture.html' }],
+    },
 ];
 
-const CURRENT_PAGE = {
-    'about.html': 'about',
-    'culture.html': 'culture',
-    'culture-all.html': 'culture',
-    'legal.html': 'legal',
-    '404.html': 'not-found',
-    'project.html': `project:${new URLSearchParams(location.search).get('id')}`,
-}[location.pathname.split('/').pop()] ?? 'home';
+const CURRENT_PAGE =
+    {
+        'about.html': 'about',
+        'culture.html': 'culture',
+        'culture-all.html': 'culture',
+        'legal.html': 'legal',
+        '404.html': 'not-found',
+        'project.html': `project:${new URLSearchParams(location.search).get('id')}`,
+    }[location.pathname.split('/').pop()] ?? 'home';
 
 function menuLink(className, { label, href }, isCurrent) {
     const link = el('a', className);
@@ -153,10 +181,19 @@ function menuGroup(page, projects) {
     const group = el('div', 'mobile-menu-group');
     group.append(menuLink('mobile-menu-link', page, page.id === CURRENT_PAGE));
 
-    let children = page.children === 'projects'
-        ? projects.map(project => ({ id: `project:${project.id}`, label: project.title, href: `project.html?id=${project.id}` }))
-        : page.children;
-    if (page.id === 'home' && CURRENT_PAGE.startsWith('project:') && !children.some(child => child.id === CURRENT_PAGE)) {
+    let children =
+        page.children === 'projects'
+            ? projects.map(project => ({
+                  id: `project:${project.id}`,
+                  label: project.title,
+                  href: `project.html?id=${project.id}`,
+              }))
+            : page.children;
+    if (
+        page.id === 'home' &&
+        CURRENT_PAGE.startsWith('project:') &&
+        !children.some(child => child.id === CURRENT_PAGE)
+    ) {
         const label = document.querySelector('.article-header h1')?.textContent.trim() || 'This project';
         children = [...children, { id: CURRENT_PAGE, label, href: location.pathname + location.search }];
     }
@@ -192,7 +229,10 @@ function mobileMenu(lenis) {
 
     const nav = menu.querySelector('.mobile-menu-links');
     renderMenu(nav, []);
-    loadProjects().then(projects => renderMenu(nav, projects), () => {});
+    loadProjects().then(
+        projects => renderMenu(nav, projects),
+        () => {},
+    );
 
     const picture = el('div', 'mobile-menu-picture');
     picture.setAttribute('aria-hidden', 'true');
@@ -211,7 +251,9 @@ function mobileMenu(lenis) {
         });
     };
 
-    const background = [...document.body.children].filter(child => child !== menu && !child.classList.contains('navbar'));
+    const background = [...document.body.children].filter(
+        child => child !== menu && !child.classList.contains('navbar'),
+    );
 
     const toggle = (open, returnFocus = false) => {
         menu.classList.toggle('open', open);
@@ -220,7 +262,9 @@ function mobileMenu(lenis) {
         button.setAttribute('aria-expanded', open);
         button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
         document.documentElement.classList.toggle('menu-open', open);
-        background.forEach(child => { child.inert = open; });
+        background.forEach(child => {
+            child.inert = open;
+        });
         if (open) {
             showPicture();
             lenis?.stop();
@@ -240,11 +284,19 @@ function mobileMenu(lenis) {
         if (event.key === 'Escape') return toggle(false, true);
         if (event.key !== 'Tab') return;
         const links = menu.querySelectorAll('a[href], button');
-        const first = links[0], last = links[links.length - 1];
-        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        const first = links[0],
+            last = links[links.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
     });
-    breakpoint.onChange(size => { if (size === 'desktop' && menu.classList.contains('open')) toggle(false, true); });
+    breakpoint.onChange(size => {
+        if (size === 'desktop' && menu.classList.contains('open')) toggle(false, true);
+    });
 }
 
 export function sectionNav(nav, lenis) {
@@ -257,31 +309,46 @@ export function sectionNav(nav, lenis) {
     pill.setAttribute('aria-hidden', 'true');
     nav.prepend(pill);
 
-    links.forEach(link => link.addEventListener('click', event => {
-        event.preventDefault();
-        scrollPage(lenis, document.querySelector(link.hash), { duration: 1.2, offset: -100 });
-    }));
+    links.forEach(link =>
+        link.addEventListener('click', event => {
+            event.preventDefault();
+            scrollPage(lenis, document.querySelector(link.hash), { duration: 1.2, offset: -100 });
+        }),
+    );
 
-    let placed = false, centred = null;
+    let placed = false,
+        centred = null;
     const place = () => {
         const link = nav.querySelector('a[aria-current]');
-        if (!link) { pill.style.opacity = '0'; return; }
+        if (!link) {
+            pill.style.opacity = '0';
+            return;
+        }
         pill.style.transition = placed ? '' : 'none';
         pill.style.opacity = '1';
         pill.style.width = `${link.offsetWidth}px`;
         pill.style.transform = `translateX(${link.offsetLeft}px)`;
-        if (!placed) { pill.offsetWidth; pill.style.transition = ''; placed = true; }
-        if (link !== centred && nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2, behavior: 'smooth' });
+        if (!placed) {
+            pill.offsetWidth;
+            pill.style.transition = '';
+            placed = true;
+        }
+        if (link !== centred && nav.scrollWidth > nav.clientWidth)
+            nav.scrollTo({ left: link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2, behavior: 'smooth' });
         centred = link;
     };
     nav.addEventListener('relayout', place);
 
     const update = () => {
         const line = innerHeight / 2;
-        const first = sections[0].getBoundingClientRect().top, last = sections.at(-1).getBoundingClientRect().bottom;
+        const first = sections[0].getBoundingClientRect().top,
+            last = sections.at(-1).getBoundingClientRect().bottom;
         nav.classList.toggle('is-on', first < innerHeight * 0.6 && last > innerHeight * 0.4);
         const index = sections.findLastIndex(section => section.getBoundingClientRect().top <= line);
-        links.forEach((link, i) => { if (i === index) link.setAttribute('aria-current', 'true'); else link.removeAttribute('aria-current'); });
+        links.forEach((link, i) => {
+            if (i === index) link.setAttribute('aria-current', 'true');
+            else link.removeAttribute('aria-current');
+        });
         place();
     };
     addEventListener('scroll', throttled(update), { passive: true });
@@ -290,17 +357,19 @@ export function sectionNav(nav, lenis) {
 }
 
 function anchorLinks(lenis) {
-    document.querySelectorAll('a[href^="#"]:not(.section-nav a)').forEach(link => link.addEventListener('click', e => {
-        const target = document.getElementById(link.hash.slice(1));
-        if (!target) return;
-        e.preventDefault();
-        const landing = target.id === 'contact' ? contactLanding() : null;
-        scrollPage(lenis, landing ?? target, { duration: 1.2, offset: landing == null ? -100 : 0 });
-    }));
+    document.querySelectorAll('a[href^="#"]:not(.section-nav a)').forEach(link =>
+        link.addEventListener('click', e => {
+            const target = document.getElementById(link.hash.slice(1));
+            if (!target) return;
+            e.preventDefault();
+            const landing = target.id === 'contact' ? contactLanding() : null;
+            scrollPage(lenis, landing ?? target, { duration: 1.2, offset: landing == null ? -100 : 0 });
+        }),
+    );
 }
 
-// Back to top: fixed at the bottom right once the page's hero is behind. Its ring of text always turns, slowly, like the
-// signature: scrolling down speeds it up, scrolling up turns it back, and under the pointer it slows down.
+// Back to top: fixed at the bottom right once the page's hero is behind. Its ring of text always turns, slowly,
+// like the signature: scrolling down speeds it up, scrolling up turns it back, and under the pointer it slows down.
 const RING = {
     // A turn in about 30 seconds while the page is still.
     idleDegreesPerSecond: 12,
@@ -320,11 +389,13 @@ function backToTop(lenis) {
     const ring = button.querySelector('.btt-text');
 
     const chars = [...ring.textContent];
-    ring.replaceChildren(...chars.map((char, i) => {
-        const span = el('span', '', char);
-        span.style.transform = `rotate(${i * 360 / chars.length}deg)`;
-        return span;
-    }));
+    ring.replaceChildren(
+        ...chars.map((char, i) => {
+            const span = el('span', '', char);
+            span.style.transform = `rotate(${(i * 360) / chars.length}deg)`;
+            return span;
+        }),
+    );
 
     button.addEventListener('click', () => scrollPage(lenis, 0));
 
@@ -361,8 +432,12 @@ function backToTop(lenis) {
     };
     requestAnimationFrame(turn);
 
-    button.addEventListener('pointerenter', () => { hovered = true; });
-    button.addEventListener('pointerleave', () => { hovered = false; });
+    button.addEventListener('pointerenter', () => {
+        hovered = true;
+    });
+    button.addEventListener('pointerleave', () => {
+        hovered = false;
+    });
 }
 
 function copyHandles() {
@@ -370,8 +445,15 @@ function copyHandles() {
         const button = event.target.closest('[data-copy]');
         if (!button) return;
         const label = button.textContent;
-        try { await navigator.clipboard.writeText(button.dataset.copy); button.textContent = 'Copied'; } catch { button.textContent = button.dataset.copy; }
-        setTimeout(() => { button.textContent = label; }, 1600);
+        try {
+            await navigator.clipboard.writeText(button.dataset.copy);
+            button.textContent = 'Copied';
+        } catch {
+            button.textContent = button.dataset.copy;
+        }
+        setTimeout(() => {
+            button.textContent = label;
+        }, 1600);
     });
 }
 
@@ -395,6 +477,11 @@ function footerPortrait() {
     if (!host) return;
     const footer = host.closest('#footer');
     import('../fx/effects.js').then(({ pixelPicture, portraitFraming }) => {
-        pixelPicture(host, host.dataset.picture, { gain: PICTURE.aboutHeroGain, color: cssVariable('--accent'), active: () => footer.classList.contains('is-near'), ...portraitFraming(0.4, { anchor: 0.7 }) });
+        pixelPicture(host, host.dataset.picture, {
+            gain: PICTURE.aboutHeroGain,
+            color: cssVariable('--accent'),
+            active: () => footer.classList.contains('is-near'),
+            ...portraitFraming(0.4, { anchor: 0.7 }),
+        });
     });
 }

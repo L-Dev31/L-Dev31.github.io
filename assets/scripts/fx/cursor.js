@@ -23,8 +23,10 @@ export function cursor() {
     host.style.setProperty('--cursor-size', `${CURSOR.dotSizePx}px`);
     const setSize = px => host.style.setProperty('--cursor-size', `${px}px`);
 
-    let pointerX = -100, pointerY = -100;
-    let easedX = -100, easedY = -100;
+    let pointerX = -100,
+        pointerY = -100;
+    let easedX = -100,
+        easedY = -100;
     let insideWindow = false;
     let restingSize = CURSOR.dotSizePx;
     let pressed = false;
@@ -43,11 +45,19 @@ export function cursor() {
         insideWindow = false;
         host.classList.remove('is-visible');
     });
-    document.addEventListener('mousedown', () => { pressed = true; setSize(CURSOR.pressedSizePx); });
-    document.addEventListener('mouseup', () => { pressed = false; setSize(restingSize); });
+    document.addEventListener('mousedown', () => {
+        pressed = true;
+        setSize(CURSOR.pressedSizePx);
+    });
+    document.addEventListener('mouseup', () => {
+        pressed = false;
+        setSize(restingSize);
+    });
 
     document.addEventListener('mouseover', event => {
-        const named = CURSOR_WORDS.map(([selector, getWord]) => [event.target.closest(selector), getWord]).find(([element]) => element);
+        const named = CURSOR_WORDS.map(([selector, getWord]) => [event.target.closest(selector), getWord]).find(
+            ([element]) => element,
+        );
         if (named) {
             label.textContent = named[1](named[0]);
             restingSize = CURSOR.overWordSizePx;
@@ -92,22 +102,26 @@ export function magnets() {
     const clampToMax = value => Math.max(-MAGNET.maxPx, Math.min(MAGNET.maxPx, value));
     let hovered = null;
 
-    document.addEventListener('pointermove', event => {
-        const element = event.target.closest(MAGNET.selector);
-        if (hovered && hovered !== element) {
-            const previous = leaning.get(hovered);
-            previous.targetX = previous.targetY = 0;
-        }
-        hovered = element;
-        if (element) {
-            const box = element.getBoundingClientRect();
-            const lean = leaning.get(element) ?? { x: 0, y: 0, targetX: 0, targetY: 0 };
-            lean.targetX = clampToMax((event.clientX - (box.left + box.width / 2) + lean.x) * MAGNET.pull);
-            lean.targetY = clampToMax((event.clientY - (box.top + box.height / 2) + lean.y) * MAGNET.pull);
-            leaning.set(element, lean);
-        }
-        if (leaning.size && !frame) frame = requestAnimationFrame(animate);
-    }, { passive: true });
+    document.addEventListener(
+        'pointermove',
+        event => {
+            const element = event.target.closest(MAGNET.selector);
+            if (hovered && hovered !== element) {
+                const previous = leaning.get(hovered);
+                previous.targetX = previous.targetY = 0;
+            }
+            hovered = element;
+            if (element) {
+                const box = element.getBoundingClientRect();
+                const lean = leaning.get(element) ?? { x: 0, y: 0, targetX: 0, targetY: 0 };
+                lean.targetX = clampToMax((event.clientX - (box.left + box.width / 2) + lean.x) * MAGNET.pull);
+                lean.targetY = clampToMax((event.clientY - (box.top + box.height / 2) + lean.y) * MAGNET.pull);
+                leaning.set(element, lean);
+            }
+            if (leaning.size && !frame) frame = requestAnimationFrame(animate);
+        },
+        { passive: true },
+    );
 }
 
 // A page the pointer is on its way to is fetched before the click, so the next page is there when the cover is.
@@ -151,7 +165,13 @@ export function pageTransitions() {
         document.body.append(cover);
 
         import('./pixel.js').then(({ dissolve }) => {
-            dissolve(cover, { color: cssVariable('--black'), fixed: true, reverse: true, total: PAGE_TRANSITION.coverMs }, () => { location.href = url.href; });
+            dissolve(
+                cover,
+                { color: cssVariable('--black'), fixed: true, reverse: true, total: PAGE_TRANSITION.coverMs },
+                () => {
+                    location.href = url.href;
+                },
+            );
         });
         setTimeout(() => cover.remove(), PAGE_TRANSITION.giveUpMs);
     });

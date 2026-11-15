@@ -135,7 +135,11 @@ const MOBILE_MAX_WIDTH = 768;
 const TABLET_MAX_WIDTH = 1024;
 
 export const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-export const lowPower = reducedMotion || navigator.hardwareConcurrency <= 2 || navigator.deviceMemory <= 2 || !!navigator.connection?.saveData;
+export const lowPower =
+    reducedMotion ||
+    navigator.hardwareConcurrency <= 2 ||
+    navigator.deviceMemory <= 2 ||
+    !!navigator.connection?.saveData;
 // A value that is not a number (0 / 0 in a scroll computation) counts as 0.
 export const clamp01 = value => (value > 0 ? (value < 1 ? value : 1) : 0);
 // 0 to 1 with a soft start and end.
@@ -145,18 +149,27 @@ export const range = (value, from, to) => clamp01((value - from) / (to - from));
 
 export const breakpoint = (() => {
     const subscribers = new Set();
-    const fromWidth = () => (innerWidth <= MOBILE_MAX_WIDTH ? 'mobile' : innerWidth <= TABLET_MAX_WIDTH ? 'tablet' : 'desktop');
+    const fromWidth = () =>
+        innerWidth <= MOBILE_MAX_WIDTH ? 'mobile' : innerWidth <= TABLET_MAX_WIDTH ? 'tablet' : 'desktop';
     let current = fromWidth();
-    addEventListener('resize', () => {
-        const next = fromWidth();
-        if (next === current) return;
-        current = next;
-        subscribers.forEach(callback => callback(current));
-    }, { passive: true });
+    addEventListener(
+        'resize',
+        () => {
+            const next = fromWidth();
+            if (next === current) return;
+            current = next;
+            subscribers.forEach(callback => callback(current));
+        },
+        { passive: true },
+    );
 
     return {
-        get isMobile() { return current === 'mobile'; },
-        onChange(callback) { subscribers.add(callback); },
+        get isMobile() {
+            return current === 'mobile';
+        },
+        onChange(callback) {
+            subscribers.add(callback);
+        },
     };
 })();
 

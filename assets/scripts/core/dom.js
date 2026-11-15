@@ -14,6 +14,7 @@ export const cssVariable = name => getComputedStyle(document.documentElement).ge
 // Scrolls the page to an element or an offset: through Lenis when it runs, natively otherwise.
 export function scrollPage(lenis, target, options = {}) {
     if (lenis) return lenis.scrollTo(target, options);
-    const top = typeof target === 'number' ? target : target.getBoundingClientRect().top + scrollY + (options.offset ?? 0);
+    const top =
+        typeof target === 'number' ? target : target.getBoundingClientRect().top + scrollY + (options.offset ?? 0);
     scrollTo({ top, behavior: reducedMotion ? 'auto' : 'smooth' });
 }

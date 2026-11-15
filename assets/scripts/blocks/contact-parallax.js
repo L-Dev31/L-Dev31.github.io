@@ -15,7 +15,9 @@ export function initContactParallax() {
         const viewportCenter = scrollY + innerHeight / 2;
         for (const item of items) {
             const box = item.getBoundingClientRect();
-            const speed = Number((compact.matches && item.dataset.contactParallaxCompact) || item.dataset.contactParallaxSpeed);
+            const speed = Number(
+                (compact.matches && item.dataset.contactParallaxCompact) || item.dataset.contactParallaxSpeed,
+            );
             const distance = box.top + scrollY + box.height / 2 - viewportCenter;
             item.style.translate = `0 ${(distance * (speed / 100 - 1)).toFixed(1)}px`;
         }

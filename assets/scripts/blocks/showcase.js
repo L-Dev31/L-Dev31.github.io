@@ -96,7 +96,9 @@ export function showcase(container, projects, lenis) {
         title.style.setProperty('--fit', titleFontSize(project.title));
         pixelWrite(title, project.title);
 
-        tags.replaceChildren(...[project.category, ...(project.tags || [])].map(tag => createElement('li', 'index-tag', tag)));
+        tags.replaceChildren(
+            ...[project.category, ...(project.tags || [])].map(tag => createElement('li', 'index-tag', tag)),
+        );
         role.textContent = `Role: ${project.role}`;
         subtitle.textContent = project.subtitle;
         if (stillMark) stillMark.src = projectMark(project);
@@ -161,9 +163,12 @@ export function showcase(container, projects, lenis) {
 }
 
 function blendColors(from, to, amount) {
-    const start = colorEnds(from), end = colorEnds(to);
+    const start = colorEnds(from),
+        end = colorEnds(to);
     const first = mixChannels(start[0], end[0], amount);
-    return isGradient(from) || isGradient(to) ? `linear-gradient(90deg, ${first}, ${mixChannels(start[1], end[1], amount)})` : first;
+    return isGradient(from) || isGradient(to)
+        ? `linear-gradient(90deg, ${first}, ${mixChannels(start[1], end[1], amount)})`
+        : first;
 }
 
 function blendBoxes(from, to, amount) {
@@ -217,14 +222,23 @@ export function thread(firstDocks) {
     const drawnLogo = document.querySelector('.brand a');
     if (drawnLogo) drawnLogo.style.opacity = '0';
 
-    let shownShape = null, shownColor = '';
-    let shownCols = 0, shownRows = 0;
+    let shownShape = null,
+        shownColor = '';
+    let shownCols = 0,
+        shownRows = 0;
     let lastScroll = scrollY;
     let introBox = null;
     let introMarks = [];
     let pageLoaded = false;
-    loadProjects().then(projects => { introMarks = projects.map(projectMark); }, () => {});
-    introLoaded.then(() => { pageLoaded = true; });
+    loadProjects().then(
+        projects => {
+            introMarks = projects.map(projectMark);
+        },
+        () => {},
+    );
+    introLoaded.then(() => {
+        pageLoaded = true;
+    });
 
     function readIntroBox() {
         const sign = document.querySelector('.page-loader-sign')?.getBoundingClientRect();
@@ -256,7 +270,8 @@ export function thread(firstDocks) {
         const seconds = entrance();
         const intro = SIGNATURE.introFlight;
         if (seconds < intro.endsAtSeconds) {
-            const settled = seconds <= 0 ? 0 : smoothstep(clamp01((seconds - intro.startsAtSeconds) / intro.lastsSeconds));
+            const settled =
+                seconds <= 0 ? 0 : smoothstep(clamp01((seconds - intro.startsAtSeconds) / intro.lastsSeconds));
             box = blendBoxes(readIntroBox(), box, settled);
             color = blendColors(cssVariable('--accent'), color, settled);
         } else if (canvas.classList.contains('is-intro')) {
@@ -268,7 +283,9 @@ export function thread(firstDocks) {
         const rows = Math.max(SIGNATURE.minCols, Math.round(cols * (box.aspect ?? 1)));
         canvas.style.width = `${cols * CELL}px`;
         canvas.style.height = `${rows * CELL}px`;
-        canvas.style.transform = `translate(${(box.x - (cols * CELL) / 2).toFixed(1)}px, ${(box.y - (rows * CELL) / 2).toFixed(1)}px)`;
+        const left = (box.x - (cols * CELL) / 2).toFixed(1);
+        const top = (box.y - (rows * CELL) / 2).toFixed(1);
+        canvas.style.transform = `translate(${left}px, ${top}px)`;
 
         if (color !== shownColor) solid.recolor((shownColor = color));
 

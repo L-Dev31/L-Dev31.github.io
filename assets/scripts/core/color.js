@@ -28,7 +28,8 @@ export function colorEnds(color) {
 }
 
 // The colour between two others given as channels, as an rgb() string.
-export const mixChannels = (start, end, progress) => `rgb(${start.map((value, index) => Math.round(value + (end[index] - value) * progress)).join(',')})`;
+export const mixChannels = (start, end, progress) =>
+    `rgb(${start.map((value, index) => Math.round(value + (end[index] - value) * progress)).join(',')})`;
 
 // The colour between two others, as an rgb() string.
 export const mixColors = (first, last, progress) => mixChannels(parseColor(first), parseColor(last), progress);

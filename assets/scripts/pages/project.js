@@ -39,7 +39,11 @@ function render(project, html, projects) {
     heroImg.fetchPriority = 'high';
 
     const facts = el('dl', 'article-facts');
-    for (const [label, value] of [['Role', project.role], ['Year', project.date?.slice(0, 4)], ['Client', project.client]]) {
+    for (const [label, value] of [
+        ['Role', project.role],
+        ['Year', project.date?.slice(0, 4)],
+        ['Client', project.client],
+    ]) {
         if (!value) continue;
         const fact = el('div');
         fact.append(el('dt', '', label), el('dd', '', value));
@@ -49,7 +53,12 @@ function render(project, html, projects) {
     tags.append(...(project.tags ?? []).map(label => el('span', 'tag', label)));
 
     const header = document.querySelector('.article-header');
-    header.replaceChildren(el('h1', 'article-title', project.title), el('p', 'article-subtitle', project.subtitle), facts, tags);
+    header.replaceChildren(
+        el('h1', 'article-title', project.title),
+        el('p', 'article-subtitle', project.subtitle),
+        facts,
+        tags,
+    );
 
     if (reducedMotion) header.classList.add('loaded');
     else heroEntrance.then(() => requestAnimationFrame(() => header.classList.add('loaded')));
@@ -102,7 +111,12 @@ function updateSearchMetadata(project, pageTitle) {
         url,
         image,
         dateCreated: project.date,
-        creator: { '@type': 'Person', name: 'Léo Tosku', jobTitle: 'Design, Development and Marketing', url: 'https://www.leotosku.com/' },
+        creator: {
+            '@type': 'Person',
+            name: 'Léo Tosku',
+            jobTitle: 'Design, Development and Marketing',
+            url: 'https://www.leotosku.com/',
+        },
         keywords: project.tags?.join(', '),
     };
     let schema = document.querySelector('#project-schema');
@@ -120,7 +134,8 @@ function setMeta(attribute, name, content) {
 }
 
 // A link that opens in a new tab.
-const externalLink = (className, href, label) => Object.assign(el('a', className, label), { href, target: '_blank', rel: 'noopener noreferrer' });
+const externalLink = (className, href, label) =>
+    Object.assign(el('a', className, label), { href, target: '_blank', rel: 'noopener noreferrer' });
 
 function callsToAction({ ctas = [], ctaPreview, ctaVideo, trailerUrl, trailerLabel, heroImage, title }, section) {
     const heroLinks = document.querySelector('.project-hero-links');
@@ -133,7 +148,8 @@ function callsToAction({ ctas = [], ctaPreview, ctaVideo, trailerUrl, trailerLab
         heroLinks.append(externalLink('project-hero-live', url, label));
         links.append(externalLink('project-cta-bottom-link', url, label));
     }
-    if (trailerUrl) links.append(externalLink('project-cta-bottom-link', trailerUrl, trailerLabel || 'Watch the trailer'));
+    if (trailerUrl)
+        links.append(externalLink('project-cta-bottom-link', trailerUrl, trailerLabel || 'Watch the trailer'));
     const preview = section.querySelector('.project-cta-preview');
     if (ctaVideo && /^[\w-]+$/.test(ctaVideo)) {
         const video = el('div', 'project-cta-preview project-cta-video');
@@ -141,7 +157,8 @@ function callsToAction({ ctas = [], ctaPreview, ctaVideo, trailerUrl, trailerLab
         play.type = 'button';
         preloadImage(ctaPreview || heroImage);
         play.style.backgroundImage = `url('${ctaPreview || heroImage}')`;
-        play.innerHTML = '<span class="project-cta-play-label">Play the video <small>Loads content from YouTube</small></span>';
+        play.innerHTML =
+            '<span class="project-cta-play-label">Play the video <small>Loads content from YouTube</small></span>';
         play.addEventListener('click', () => {
             const frame = Object.assign(el('iframe'), {
                 src: `https://www.youtube-nocookie.com/embed/${ctaVideo}?autoplay=1`,

@@ -94,10 +94,19 @@ export function contactScene() {
         stage.dataset.tone = wipe > TIMELINE.lightAfter ? 'light' : 'dark';
     };
 
-    const refresh = () => { measure(); update(); };
+    const refresh = () => {
+        measure();
+        update();
+    };
 
     import('../fx/effects.js').then(({ pixelPicture }) => {
-        pixelPicture(picture, picture.dataset.picture, { color: cssVariable('--black'), center: Number(picture.dataset.center ?? 0.5), anchor: 0.5, watch: true, active: () => lastState === 'active' });
+        pixelPicture(picture, picture.dataset.picture, {
+            color: cssVariable('--black'),
+            center: Number(picture.dataset.center ?? 0.5),
+            anchor: 0.5,
+            watch: true,
+            active: () => lastState === 'active',
+        });
     });
 
     landing = () => intro.getBoundingClientRect().top + scrollY + size.dwell;

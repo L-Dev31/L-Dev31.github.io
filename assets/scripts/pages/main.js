@@ -3,7 +3,14 @@ import { initPage } from '../core/common.js';
 import { loadProjects, projectMark, SIGNATURE_URL } from '../core/projects.js';
 import { preloadImage } from '../core/intro.js';
 import { el, cssVariable } from '../core/dom.js';
-import { scrubbingText, heroPortrait, heroScrollState, pixelPicture, pixelCover, portraitFraming } from '../fx/effects.js';
+import {
+    scrubbingText,
+    heroPortrait,
+    heroScrollState,
+    pixelPicture,
+    pixelCover,
+    portraitFraming,
+} from '../fx/effects.js';
 import { extrudedSvg, CELL } from '../fx/pixel.js';
 import { journey } from '../blocks/journey.js';
 import { PICTURE, finePointer } from '../core/config.js';
@@ -15,12 +22,20 @@ const lenis = initPage();
 heroScrollState();
 const cover = document.querySelector('.about-header-picture');
 if (cover) {
-    pixelPicture(cover, cover.dataset.picture, { gain: PICTURE.aboutHeroGain, color: cssVariable('--accent'), active: () => scrollY < innerHeight * 2, intro: true, ...portraitFraming(Number(cover.dataset.center) || 0.5) });
+    pixelPicture(cover, cover.dataset.picture, {
+        gain: PICTURE.aboutHeroGain,
+        color: cssVariable('--accent'),
+        active: () => scrollY < innerHeight * 2,
+        intro: true,
+        ...portraitFraming(Number(cover.dataset.center) || 0.5),
+    });
 }
 const story = document.querySelector('.promise-picture');
 if (story) {
     let visible = false;
-    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }).observe(story);
+    new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+    }).observe(story);
     pixelPicture(story, story.dataset.picture, { color: cssVariable('--black'), active: () => visible });
 }
 scrubbingText();
@@ -41,7 +56,12 @@ function projectIndex(container, projects) {
         tags.append(...(project.tags || []).map(tag => el('li', 'index-tag', tag)));
         const go = el('a', 'index-go', 'Read the case study');
         go.href = `project.html?id=${project.id}`;
-        info.append(el('div', 'index-role', `Role: ${project.role}`), el('div', 'index-text', project.subtitle), tags, go);
+        info.append(
+            el('div', 'index-role', `Role: ${project.role}`),
+            el('div', 'index-text', project.subtitle),
+            tags,
+            go,
+        );
         const inner = el('div', 'index-detail-inner');
         inner.append(media, info);
         detail.append(inner);
@@ -53,7 +73,12 @@ function projectIndex(container, projects) {
         current = entry;
         entry.item.classList.add('is-open');
         entry.row.setAttribute('aria-expanded', 'true');
-        entry.image.decode().catch(() => {}).then(() => { if (current === entry) entry.cover.show(); });
+        entry.image
+            .decode()
+            .catch(() => {})
+            .then(() => {
+                if (current === entry) entry.cover.show();
+            });
     };
     const close = entry => {
         if (current === entry) current = null;
@@ -63,7 +88,8 @@ function projectIndex(container, projects) {
     };
 
     // Build the details a little before the list comes into view, so a tap finds the pictures loaded.
-    const idle = callback => ('requestIdleCallback' in window ? requestIdleCallback(callback, { timeout: 1500 }) : setTimeout(callback, 200));
+    const idle = callback =>
+        'requestIdleCallback' in window ? requestIdleCallback(callback, { timeout: 1500 }) : setTimeout(callback, 200);
     const prepare = () => {
         const waiting = entries.filter(entry => !entry.cover);
         const next = () => {
@@ -73,11 +99,14 @@ function projectIndex(container, projects) {
         };
         idle(next);
     };
-    new IntersectionObserver(([hit], observer) => {
-        if (!hit.isIntersecting) return;
-        observer.disconnect();
-        prepare();
-    }, { rootMargin: '900px 0px' }).observe(container);
+    new IntersectionObserver(
+        ([hit], observer) => {
+            if (!hit.isIntersecting) return;
+            observer.disconnect();
+            prepare();
+        },
+        { rootMargin: '900px 0px' },
+    ).observe(container);
 
     const groups = [...new Set(projects.map(p => p.category))]
         .sort((a, b) => CATEGORIES.indexOf(a) - CATEGORIES.indexOf(b))
@@ -90,7 +119,11 @@ function projectIndex(container, projects) {
                 row.href = `project.html?id=${project.id}`;
                 row.setAttribute('role', 'button');
                 row.setAttribute('aria-expanded', 'false');
-                row.append(el('span', 'index-title', project.title), el('span', 'index-slot'), el('span', 'index-year', (project.date || '').slice(0, 4)));
+                row.append(
+                    el('span', 'index-title', project.title),
+                    el('span', 'index-slot'),
+                    el('span', 'index-year', (project.date || '').slice(0, 4)),
+                );
                 const detail = el('div', 'index-detail');
                 item.append(row, detail);
                 list.append(item);
@@ -102,7 +135,10 @@ function projectIndex(container, projects) {
                 entries.push(entry);
             }
             const heading = el('h3', 'index-category');
-            heading.append(el('span', '', category), el('span', 'index-count', String(list.children.length).padStart(2, '0')));
+            heading.append(
+                el('span', '', category),
+                el('span', 'index-count', String(list.children.length).padStart(2, '0')),
+            );
             group.append(heading, list);
             return group;
         });
@@ -166,12 +202,33 @@ async function initProjects() {
         preloadImage(project.cover || project.heroImage);
     }
 
-    const stage = showcase(document.querySelector('.showcase'), projects.filter(project => project.featured), lenis);
+    const stage = showcase(
+        document.querySelector('.showcase'),
+        projects.filter(project => project.featured),
+        lenis,
+    );
     signature?.setDocks(homeDocks(stage));
     projectPreview(container, projectIndex(container, projects));
 }
 
-const PLATFORMS = { nes: 'NES', snes: 'SNES', n64: 'Nintendo 64', gb: 'Game Boy', gbc: 'Game Boy Color', gba: 'Game Boy Advance', ds: 'DS', '3ds': '3DS', wii: 'Wii', wiiu: 'Wii U', switch: 'Switch', steam: 'PC', pc: 'PC', android: 'Android', web: 'Web', mame: 'Arcade' };
+const PLATFORMS = {
+    nes: 'NES',
+    snes: 'SNES',
+    n64: 'Nintendo 64',
+    gb: 'Game Boy',
+    gbc: 'Game Boy Color',
+    gba: 'Game Boy Advance',
+    ds: 'DS',
+    '3ds': '3DS',
+    wii: 'Wii',
+    wiiu: 'Wii U',
+    switch: 'Switch',
+    steam: 'PC',
+    pc: 'PC',
+    android: 'Android',
+    web: 'Web',
+    mame: 'Arcade',
+};
 
 const when = item => (item.released ? Date.parse(item.released) : Date.UTC(item.year, 0, 1));
 
@@ -180,18 +237,20 @@ const when = item => (item.released ? Date.parse(item.released) : Date.UTC(item.
 function cultureList(container, items, kind) {
     const color = cssVariable('--accent');
     const list = el('ul', 'index-list');
-    const entries = [...items].sort((a, b) => when(b) - when(a)).map(item => {
-        const row = el('div', 'index-row');
-        row.tabIndex = 0;
-        const title = el('span', 'index-title', item.title.replace(/ \([^)]*\)$/, ''));
-        const note = item.platform ? PLATFORMS[item.platform] || item.platform : item.note || item.author;
-        if (note) title.append(el('small', 'index-platform', ` ${note}`));
-        row.append(title, el('span', 'index-slot'), el('span', 'index-year', item.date ?? String(item.year)));
-        const li = el('li', 'index-item');
-        li.append(row);
-        list.append(li);
-        return { item, row };
-    });
+    const entries = [...items]
+        .sort((a, b) => when(b) - when(a))
+        .map(item => {
+            const row = el('div', 'index-row');
+            row.tabIndex = 0;
+            const title = el('span', 'index-title', item.title.replace(/ \([^)]*\)$/, ''));
+            const note = item.platform ? PLATFORMS[item.platform] || item.platform : item.note || item.author;
+            if (note) title.append(el('small', 'index-platform', ` ${note}`));
+            row.append(title, el('span', 'index-slot'), el('span', 'index-year', item.date ?? String(item.year)));
+            const li = el('li', 'index-item');
+            li.append(row);
+            list.append(li);
+            return { item, row };
+        });
 
     const rows = Math.ceil(entries.length / 2);
     list.style.setProperty('--rows', rows);
@@ -212,23 +271,29 @@ function floatingPreview(container, list, entries, kind, color) {
     figure.append(clip, img);
     container.replaceChildren(list, figure);
     const cover = pixelCover(figure, color);
-    let current = null, leaving = 0;
+    let current = null,
+        leaving = 0;
 
     // The picture sits beside the pointer, level with the row, and slides along the row as the pointer does.
     // It keeps clear of the title and the year when the row has room for that. A row is only two columns wide,
     // so when it has not, the picture may cover the year, and then the title too.
     const follow = (row, x) => {
-        const box = container.getBoundingClientRect(), r = row.getBoundingClientRect();
-        const title = row.querySelector('.index-title').getBoundingClientRect(), year = row.querySelector('.index-year').getBoundingClientRect();
-        const half = figure.offsetWidth / 2, gap = 24;
-        let low = title.right + gap + half, high = year.left - gap - half;
+        const box = container.getBoundingClientRect(),
+            r = row.getBoundingClientRect();
+        const title = row.querySelector('.index-title').getBoundingClientRect(),
+            year = row.querySelector('.index-year').getBoundingClientRect();
+        const half = figure.offsetWidth / 2,
+            gap = 24;
+        let low = title.right + gap + half,
+            high = year.left - gap - half;
         if (low > high) high = r.right - half;
         if (low > high) low = r.left + half;
 
         let target = (low + high) / 2;
         if (x != null) {
-            const right = x + 216 + half, left = x - 216 - half;
-            target = right <= high ? right : left >= low ? left : (high - right > left - low ? right : left);
+            const right = x + 216 + half,
+                left = x - 216 - half;
+            target = right <= high ? right : left >= low ? left : high - right > left - low ? right : left;
         }
         target = Math.max(box.left + half, Math.min(box.right - half, Math.min(high, Math.max(low, target))));
         figure.style.setProperty('--x', `${Math.round(target - box.left - half)}px`);
@@ -244,42 +309,71 @@ function floatingPreview(container, list, entries, kind, color) {
         figure.classList.remove('is-on');
         if (clips) {
             clip.src = `assets/videos/culture/${item.id}.mp4`;
-            if (!await new Promise(done => { clip.onloadeddata = () => done(true); clip.onerror = () => done(false); })) return;
+            if (
+                !(await new Promise(done => {
+                    clip.onloadeddata = () => done(true);
+                    clip.onerror = () => done(false);
+                }))
+            )
+                return;
             clip.play().catch(() => {});
         } else {
             img.src = `assets/images/culture/${kind}/${item.id}.webp`;
-            if (!await img.decode().then(() => true, () => false)) return;
+            if (
+                !(await img.decode().then(
+                    () => true,
+                    () => false,
+                ))
+            )
+                return;
         }
         if (current !== row) return;
         follow(row, pointerX);
         cover.show();
-        requestAnimationFrame(() => { if (current === row) figure.classList.add('is-on'); });
+        requestAnimationFrame(() => {
+            if (current === row) figure.classList.add('is-on');
+        });
     };
     const hide = row => {
         if (current !== row) return;
         leaving = setTimeout(() => {
             current = null;
-            cover.hide(() => { if (!current) figure.classList.remove('is-on'); });
+            cover.hide(() => {
+                if (!current) figure.classList.remove('is-on');
+            });
         }, 80);
     };
 
     const hover = finePointer();
     for (const entry of entries) {
         if (hover) {
-            entry.row.addEventListener('pointerenter', event => { pointerX = event.clientX; show(entry); });
-            entry.row.addEventListener('pointermove', event => { pointerX = event.clientX; if (current === entry.row) follow(entry.row, pointerX); });
+            entry.row.addEventListener('pointerenter', event => {
+                pointerX = event.clientX;
+                show(entry);
+            });
+            entry.row.addEventListener('pointermove', event => {
+                pointerX = event.clientX;
+                if (current === entry.row) follow(entry.row, pointerX);
+            });
             entry.row.addEventListener('pointerleave', () => hide(entry.row));
         }
-        entry.row.addEventListener('focus', () => { pointerX = null; show(entry); });
-        entry.row.addEventListener('blur', () => hide(entry.row));
-        if (!hover) entry.row.addEventListener('click', event => {
-            event.stopPropagation();
+        entry.row.addEventListener('focus', () => {
             pointerX = null;
-            if (current === entry.row) hide(entry.row);
-            else show(entry);
+            show(entry);
         });
+        entry.row.addEventListener('blur', () => hide(entry.row));
+        if (!hover)
+            entry.row.addEventListener('click', event => {
+                event.stopPropagation();
+                pointerX = null;
+                if (current === entry.row) hide(entry.row);
+                else show(entry);
+            });
     }
-    if (!hover) document.addEventListener('click', () => { if (current) hide(current); });
+    if (!hover)
+        document.addEventListener('click', () => {
+            if (current) hide(current);
+        });
 }
 
 async function initCulture() {
@@ -287,23 +381,32 @@ async function initCulture() {
     if (!lists.length) return;
     const data = await fetch('assets/data/culture.json').then(r => r.json());
     const featured = list => list.filter(item => item.featured);
-    // Where there is a pointer to hover with, the preview of each work is fetched during the intro, so that hovering a title never waits.
+    // Where there is a pointer to hover with, the preview of each work is fetched during the intro,
+    // so that hovering a title never waits.
     for (const [kind, list] of Object.entries(data)) {
-        if (finePointer() && kind !== 'games') featured(list).forEach(item => preloadImage(`assets/images/culture/${kind}/${item.id}.webp`));
+        if (finePointer() && kind !== 'games')
+            featured(list).forEach(item => preloadImage(`assets/images/culture/${kind}/${item.id}.webp`));
     }
-    lists.forEach(container => cultureList(container, featured(data[container.dataset.culture] || []), container.dataset.culture));
+    lists.forEach(container =>
+        cultureList(container, featured(data[container.dataset.culture] || []), container.dataset.culture),
+    );
     const travels = await fetch('assets/data/travels.json').then(r => r.json());
     // Each section shows its featured works; a "+" means the full list (culture-all.html) has more.
-    const totals = Object.fromEntries(Object.entries(data).map(([kind, list]) => {
-        const count = featured(list).length;
-        return [kind, list.length > count ? `${count}+` : String(count)];
-    }));
+    const totals = Object.fromEntries(
+        Object.entries(data).map(([kind, list]) => {
+            const count = featured(list).length;
+            return [kind, list.length > count ? `${count}+` : String(count)];
+        }),
+    );
     totals.travels = String(travels.stops.length);
-    document.querySelectorAll('.section-nav [data-count]').forEach(count => { count.textContent = totals[count.dataset.count] ?? ''; });
+    document.querySelectorAll('.section-nav [data-count]').forEach(count => {
+        count.textContent = totals[count.dataset.count] ?? '';
+    });
     document.querySelector('.section-nav')?.dispatchEvent(new Event('relayout'));
 }
 
 const signature = thread(restDocks());
 
-Promise.all([initProjects(), initCulture(), ...[...document.querySelectorAll('.journey')].map(journey)])
-    .then(() => scrubbingText());
+Promise.all([initProjects(), initCulture(), ...[...document.querySelectorAll('.journey')].map(journey)]).then(() =>
+    scrubbingText(),
+);

@@ -33,13 +33,18 @@ window.fetch = (input, init) => {
     const response = nativeFetch(input, init);
     if (loading.open) {
         const url = typeof input === 'string' ? input : input.url;
-        track(url, response.then(finished => finished.clone().arrayBuffer()));
+        track(
+            url,
+            response.then(finished => finished.clone().arrayBuffer()),
+        );
     }
     return response;
 };
 
 let resolveIntroLoaded = () => {};
-export const introLoaded = new Promise(resolve => { resolveIntroLoaded = resolve; });
+export const introLoaded = new Promise(resolve => {
+    resolveIntroLoaded = resolve;
+});
 
 let entranceStartedAt = Infinity;
 let startEntrance = () => {};
@@ -60,7 +65,11 @@ function fontFileUrls() {
     const urls = new Map();
     for (const sheet of document.styleSheets) {
         let rules;
-        try { rules = sheet.cssRules; } catch { continue; }
+        try {
+            rules = sheet.cssRules;
+        } catch {
+            continue;
+        }
         for (const rule of rules) {
             if (!(rule instanceof CSSFontFaceRule)) continue;
             const family = rule.style.getPropertyValue('font-family').replace(/["']/g, '').trim();
@@ -72,9 +81,10 @@ function fontFileUrls() {
     return urls;
 }
 
-const eventually = (target, events) => new Promise(resolve => {
-    events.forEach(name => target.addEventListener(name, resolve, { once: true }));
-});
+const eventually = (target, events) =>
+    new Promise(resolve => {
+        events.forEach(name => target.addEventListener(name, resolve, { once: true }));
+    });
 
 function dissolveLoader(loader, whenDone) {
     if (reducedMotion) {
@@ -108,11 +118,14 @@ const preloaded = new Set();
 export function preloadImage(url) {
     if (!url || preloaded.has(url)) return;
     preloaded.add(url);
-    track(url, new Promise(resolve => {
-        const image = new Image();
-        image.onload = image.onerror = resolve;
-        image.src = url;
-    }));
+    track(
+        url,
+        new Promise(resolve => {
+            const image = new Image();
+            image.onload = image.onerror = resolve;
+            image.src = url;
+        }),
+    );
 }
 
 function trackExistingResources(trackFont) {
@@ -222,10 +235,14 @@ export function pageLoader() {
     trackExistingResources(trackFont);
 
     if (!pageLoaded) {
-        addEventListener('load', () => {
-            pageLoaded = true;
-            loading.onChange();
-        }, { once: true });
+        addEventListener(
+            'load',
+            () => {
+                pageLoaded = true;
+                loading.onChange();
+            },
+            { once: true },
+        );
     }
     setTimeout(() => finish(false), INTRO.maxWaitMs);
     loading.onChange();

@@ -57,35 +57,40 @@ const templates = new Map();
 
 function template(name) {
     if (!templates.has(name)) {
-        templates.set(name, loadComponent(name).then(html => {
-            const node = el('template');
-            node.innerHTML = html;
-            return node;
-        }));
+        templates.set(
+            name,
+            loadComponent(name).then(html => {
+                const node = el('template');
+                node.innerHTML = html;
+                return node;
+            }),
+        );
     }
     return templates.get(name);
 }
 
 async function hydrate(root) {
     const placeholders = [...root.querySelectorAll('site-navbar, site-footer, site-page-loader, site-socials')];
-    await Promise.all(placeholders.map(async placeholder => {
-        const name = placeholder.localName.slice('site-'.length);
-        const content = (await template(name)).content.cloneNode(true);
-        if (name === 'navbar') {
-            const brand = content.querySelector('.brand a');
-            if (placeholder.dataset.page === 'home') brand.href = '#header';
-            renderSections(content.querySelector('.section-nav'), placeholder.dataset.page);
-        }
-        if (name === 'socials') {
-            const nav = el('nav', placeholder.dataset.class);
-            nav.setAttribute('aria-label', placeholder.dataset.label ?? 'Social links');
-            nav.append(content);
-            placeholder.replaceWith(nav);
-            return;
-        }
-        await hydrate(content);
-        placeholder.replaceWith(content);
-    }));
+    await Promise.all(
+        placeholders.map(async placeholder => {
+            const name = placeholder.localName.slice('site-'.length);
+            const content = (await template(name)).content.cloneNode(true);
+            if (name === 'navbar') {
+                const brand = content.querySelector('.brand a');
+                if (placeholder.dataset.page === 'home') brand.href = '#header';
+                renderSections(content.querySelector('.section-nav'), placeholder.dataset.page);
+            }
+            if (name === 'socials') {
+                const nav = el('nav', placeholder.dataset.class);
+                nav.setAttribute('aria-label', placeholder.dataset.label ?? 'Social links');
+                nav.append(content);
+                placeholder.replaceWith(nav);
+                return;
+            }
+            await hydrate(content);
+            placeholder.replaceWith(content);
+        }),
+    );
 }
 
 const socials = await template('socials');

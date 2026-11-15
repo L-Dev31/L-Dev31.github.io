@@ -8,6 +8,9 @@ export function loadProjects() {
     projectsPromise ??= fetch('assets/data/projects.json')
         .then(response => response.json())
         .then(data => data.projects.sort((a, b) => (b.date ?? '').localeCompare(a.date ?? '')))
-        .catch(error => { projectsPromise = null; throw error; });
+        .catch(error => {
+            projectsPromise = null;
+            throw error;
+        });
     return projectsPromise;
 }
