@@ -1,5 +1,0 @@
-This is a test document created to verify automatic file detection.
-The Files app should now detect this file automatically when using the refresh button.
-
-Date: July 7, 2025
-Purpose: Testing automatic file detection feature

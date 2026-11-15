@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /_backups/
 
 Sitemap: https://www.leotosku.com/sitemap.xml
 Sitemap: https://www.leotosku.com/projects/demos/rakoun/sitemap.xml
