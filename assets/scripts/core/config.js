@@ -70,7 +70,7 @@ export const CURSOR = {
 export const MAGNET = {
     // Pull strength and pixel limit.
     pull: 0.3,
-    maxPx: 10,
+    maxPx: 4,
     ease: 0.2,
     // Magnetic element selector.
     selector: '.hero-socials a, .button, .hamburger, .brand a, .index-go, .section-nav a, .showcase-step',
