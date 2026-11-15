@@ -115,11 +115,6 @@ export function cellCanvas(canvas, color) {
             // The canvas and the frame are empty, so every cell counts as shown empty and only lit cells are drawn.
             shownLevels = new Uint8Array(cols * rows);
         },
-        invalidate() {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            frame?.fill(0);
-            shownLevels = new Uint8Array(0);
-        },
         recolor(newColor) {
             if (newColor === color) return;
             color = newColor;
@@ -406,7 +401,8 @@ const DISSOLVE_SPEED = 1.45;
 const DISSOLVE_END = 1.15;
 const DISSOLVE_DOTS_UNTIL = 0.2, DISSOLVE_CHECKER_UNTIL = 0.1;
 
-export function dissolve(host, { color, size = CELL, total = PIXEL.dissolveDurationMs, reverse = false, fixed = false }, done) {
+export function dissolve(host, { color, total = PIXEL.dissolveDurationMs, reverse = false, fixed = false }, done) {
+    const size = CELL;
     const canvas = document.createElement('canvas');
     canvas.style.cssText = `position:${fixed ? 'fixed' : 'absolute'};inset:0;width:100%;height:100%`;
     host.append(canvas);

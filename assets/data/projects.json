@@ -50,7 +50,6 @@
       "featured": true,
       "ctaPreview": "assets/images/projects/smfl/flag-final.jpg",
       "showcaseColors": {
-        "tone": "dark",
         "background": "#0071CD",
         "text": "#ffffff",
         "accent": "#f3d54a",
@@ -108,7 +107,6 @@
       "featured": true,
       "ctaPreview": "assets/images/projects/bgaw/web.jpg",
       "showcaseColors": {
-        "tone": "white",
         "background": "#F5F5F0",
         "text": "#303234",
         "accent": "#df3d36",
@@ -152,7 +150,6 @@
       "cover": "assets/images/projects/prfy.webp",
       "featured": true,
       "showcaseColors": {
-        "tone": "white",
         "background": "#ffffff",
         "text": "#3d4143",
         "accent": "#0aabff",
@@ -185,7 +182,6 @@
       "featured": true,
       "ctaPreview": "assets/images/projects/cmck/website.jpg",
       "showcaseColors": {
-        "tone": "dark",
         "background": "#0e0f10",
         "text": "#ffffff",
         "accent": "#83c9ff",
@@ -246,7 +242,6 @@
       "featured": true,
       "ctaPreview": "assets/images/projects/bmge/tomodachi.webp",
       "showcaseColors": {
-        "tone": "dark",
         "background": "#0e0f10",
         "text": "#ffffff",
         "accent": "#fde404",

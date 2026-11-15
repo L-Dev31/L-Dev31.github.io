@@ -2,6 +2,7 @@ import { reducedMotion, lowPower, clamp01, throttled } from '../core/config.js';
 import { track, entrance, heroEntrance } from '../core/intro.js';
 import { cellCanvas, CELL, drawCell, dissolve } from './pixel.js';
 import { TEXT_ENTRANCE, TEXT_PIXELS, PICTURE, HERO_FRAMES } from '../core/config.js';
+import { cssVariable } from '../core/dom.js';
 
 const TEXT = '.scrubbing-text, h1, h2, h3, p, li, time, dd, .pullquote, .journey-when, .journey-country';
 const SKIP = '.navbar, .mobile-menu, .index-item, .hero-socials, #footer, .contact-heading, .clock, .page-loader, .showcase, .project-hero';
@@ -245,7 +246,7 @@ function pixelHero(host) {
     canvas.id = 'hero-pixels';
     canvas.setAttribute('aria-hidden', 'true');
     host.prepend(canvas);
-    const cells = cellCanvas(canvas, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
+    const cells = cellCanvas(canvas, cssVariable('--accent'));
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
 
@@ -316,7 +317,7 @@ export function heroPortrait() {
 
 export function pixelReveal(hosts) {
     if (reducedMotion) return;
-    const color = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
+    const color = cssVariable('--black');
     const observer = new IntersectionObserver(entries => entries.forEach(({ target, isIntersecting }) => {
         if (!isIntersecting) return;
         observer.unobserve(target);
@@ -334,7 +335,10 @@ export function pixelReveal(hosts) {
     });
 }
 
-export function pixelPicture(host, src, { mirror = false, gain = PICTURE.defaultGain, color = '#fff', active = () => true, intro = false, anchor = 0.25, center = 0.5, fit = 'cover', focus = 0, watch = false } = {}) {
+// On a portrait screen a wide photo is cropped around its subject and sits at the bottom; elsewhere it keeps `otherwise`.
+export const portraitFraming = (center, otherwise = {}) => (matchMedia('(max-aspect-ratio: 1/1)').matches ? { center, anchor: 1 } : otherwise);
+
+export function pixelPicture(host, src, { mirror = false, gain = PICTURE.defaultGain, color = '#fff', active = () => true, intro = false, anchor = 0.25, center = 0.5, watch = false } = {}) {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     host.append(canvas);
@@ -363,8 +367,7 @@ export function pixelPicture(host, src, { mirror = false, gain = PICTURE.default
         drawn = grid;
         cells.resize(cols, rows);
         sample.width = cols; sample.height = rows;
-        let scale = (fit === 'contain' ? Math.min : Math.max)(cols / source.naturalWidth, rows / source.naturalHeight);
-        if (focus) scale = Math.max(scale, Math.min(cols / (source.naturalWidth * focus), rows / source.naturalHeight));
+        const scale = Math.max(cols / source.naturalWidth, rows / source.naturalHeight);
         const w = source.naturalWidth * scale, h = source.naturalHeight * scale;
         sampleCtx.setTransform(mirror ? -1 : 1, 0, 0, 1, mirror ? cols : 0, 0);
         sampleCtx.fillStyle = invert ? '#fff' : '#000';
@@ -391,7 +394,7 @@ export function pixelPicture(host, src, { mirror = false, gain = PICTURE.default
 }
 
 // A host marked "is-covered" keeps its picture hidden until the cover has painted its first frame.
-export function pixelCover(host, color, size) {
+export function pixelCover(host, color) {
     let layer = null;
     const run = (reverse, done) => {
         const previous = layer;
@@ -402,7 +405,7 @@ export function pixelCover(host, color, size) {
             done?.();
             return;
         }
-        layer = dissolve(host, { color, size, total: 800, reverse }, canvas => {
+        layer = dissolve(host, { color, total: 800, reverse }, canvas => {
             if (!reverse) { canvas.remove(); layer = null; }
             done?.();
         });

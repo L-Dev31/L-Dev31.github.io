@@ -1,6 +1,7 @@
 import '../core/components.js';
 import { initPage } from '../core/common.js';
 import { thread, restDocks } from '../blocks/showcase.js';
+import { el } from '../core/dom.js';
 
 const TITLES = { films: 'All films', series: 'All series', anime: 'All anime', games: 'All games', books: 'All books' };
 
@@ -46,14 +47,14 @@ async function show() {
 
     const [header, ...rows] = parseCsv(await (await fetch(file)).text());
     const table = document.querySelector('.all-table');
-    const head = document.createElement('thead');
-    const headRow = document.createElement('tr');
-    header.forEach(name => { const th = document.createElement('th'); th.scope = 'col'; th.textContent = name; headRow.append(th); });
+    const head = el('thead');
+    const headRow = el('tr');
+    headRow.append(...header.map(name => Object.assign(el('th', '', name), { scope: 'col' })));
     head.append(headRow);
-    const body = document.createElement('tbody');
+    const body = el('tbody');
     for (const cells of rows) {
-        const tr = document.createElement('tr');
-        cells.forEach(text => { const td = document.createElement('td'); td.textContent = text; tr.append(td); });
+        const tr = el('tr');
+        tr.append(...cells.map(text => el('td', '', text)));
         body.append(tr);
     }
     table.replaceChildren(head, body);

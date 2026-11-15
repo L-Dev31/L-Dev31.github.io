@@ -1,6 +1,6 @@
 export const SIGNATURE_URL = 'assets/images/core/logo.svg';
 
-export const projectMark = project => project.svg || `assets/images/projects/icons/${project.id}.svg`;
+export const projectMark = project => `assets/images/projects/icons/${project.id}.svg`;
 
 let projectsPromise = null;
 

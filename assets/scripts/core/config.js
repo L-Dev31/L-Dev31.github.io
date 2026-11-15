@@ -144,38 +144,26 @@ export const smoothstep = t => t * t * (3 - 2 * t);
 export const range = (value, from, to) => clamp01((value - from) / (to - from));
 
 export const breakpoint = (() => {
-    const mobileQuery = matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`);
-    const tabletQuery = matchMedia(`(max-width: ${TABLET_MAX_WIDTH}px)`);
     const subscribers = new Set();
-
     const fromWidth = () => (innerWidth <= MOBILE_MAX_WIDTH ? 'mobile' : innerWidth <= TABLET_MAX_WIDTH ? 'tablet' : 'desktop');
     let current = fromWidth();
-
-    const recheck = () => {
+    addEventListener('resize', () => {
         const next = fromWidth();
         if (next === current) return;
         current = next;
         subscribers.forEach(callback => callback(current));
-    };
-    mobileQuery.addEventListener('change', recheck);
-    tabletQuery.addEventListener('change', recheck);
-    addEventListener('resize', recheck, { passive: true });
+    }, { passive: true });
 
     return {
-        get current() { return current; },
         get isMobile() { return current === 'mobile'; },
-        get isTablet() { return current === 'tablet'; },
-        get isDesktop() { return current === 'desktop'; },
-        onChange(callback) {
-            subscribers.add(callback);
-            return () => subscribers.delete(callback);
-        },
-        BREAKPOINT_MOBILE: MOBILE_MAX_WIDTH,
-        BREAKPOINT_TABLET: TABLET_MAX_WIDTH,
+        onChange(callback) { subscribers.add(callback); },
     };
 })();
 
 export const isMobile = breakpoint.isMobile;
+
+// A mouse or a trackpad: a pointer that can hover and aim precisely.
+export const finePointer = () => matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 export function throttled(callback) {
     let queued = false;

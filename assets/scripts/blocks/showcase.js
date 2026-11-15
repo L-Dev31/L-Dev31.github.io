@@ -1,12 +1,11 @@
 import { reducedMotion, lowPower, clamp01, smoothstep, INTRO, SIGNATURE } from '../core/config.js';
-import { el as createElement } from '../core/dom.js';
-import { colorEnds, isGradient } from '../core/color.js';
+import { el as createElement, cssVariable, scrollPage } from '../core/dom.js';
+import { colorEnds, isGradient, mixChannels } from '../core/color.js';
 import { entrance, introLoaded } from '../core/intro.js';
 import { loadProjects, projectMark, SIGNATURE_URL } from '../core/projects.js';
 import { extrudedSvg, CELL } from '../fx/pixel.js';
 import { pixelWrite } from '../fx/effects.js';
 
-const cssVariable = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const pad2 = number => String(number).padStart(2, '0');
 
 // Room for the title, in vw, and the largest size it may take.
@@ -55,8 +54,7 @@ export function showcase(container, projects, lenis) {
     function scrollToProject(index) {
         const top = container.getBoundingClientRect().top + scrollY;
         const target = top + ((index + 0.5) / projects.length) * scrollTravel();
-        if (lenis) lenis.scrollTo(target, { duration: 1.1 });
-        else scrollTo({ top: target, behavior: reducedMotion ? 'auto' : 'smooth' });
+        scrollPage(lenis, target, { duration: 1.1 });
     }
 
     projects.forEach((project, index) => {
@@ -85,7 +83,6 @@ export function showcase(container, projects, lenis) {
         // The colours come from the project's data. Without them the section keeps its default red.
         const palette = project.showcaseColors ?? {};
         const accent = palette.accentGradient ?? palette.accent ?? 'var(--black)';
-        stage.dataset.tone = palette.tone ?? 'red';
         stage.dataset.paletteActive = 'true';
         titleLink.style.color = palette.text ?? 'var(--black)';
         titleLink.classList.add('is-visible');
@@ -112,7 +109,6 @@ export function showcase(container, projects, lenis) {
     }
 
     function resetPalette() {
-        stage.dataset.tone = 'red';
         delete stage.dataset.paletteActive;
         titleLink.classList.remove('is-visible');
         for (const name of ['background', 'foreground', 'accent', 'mark', 'button-background', 'button-foreground']) {
@@ -166,12 +162,8 @@ export function showcase(container, projects, lenis) {
 
 function blendColors(from, to, amount) {
     const start = colorEnds(from), end = colorEnds(to);
-    const mix = (first, last) => `rgb(${first.map((value, i) => Math.round(value + (last[i] - value) * amount)).join(',')})`;
-    const first = mix(start[0], end[0]);
-    if (isGradient(from) || isGradient(to)) {
-        return `linear-gradient(90deg, ${first}, ${mix(start[1], end[1])})`;
-    }
-    return first;
+    const first = mixChannels(start[0], end[0], amount);
+    return isGradient(from) || isGradient(to) ? `linear-gradient(90deg, ${first}, ${mixChannels(start[1], end[1], amount)})` : first;
 }
 
 function blendBoxes(from, to, amount) {
@@ -280,9 +272,6 @@ export function thread(firstDocks) {
 
         if (color !== shownColor) solid.recolor((shownColor = color));
 
-        const isResting = progress === 0 && !!fromDock.rest && seconds >= intro.endsAtSeconds;
-        canvas.classList.toggle('at-rest', isResting);
-
         const targetDock = progress > 0.5 ? toDock : fromDock;
         const shape = shapeFor(targetDock, seconds);
         if (shape !== shownShape || cols !== shownCols || rows !== shownRows) {
@@ -314,7 +303,6 @@ const navbarLogoColor = () => getComputedStyle(document.querySelector('.brand a'
 
 const restingInNavbar = element => ({
     element,
-    rest: true,
     color: navbarLogoColor,
     shape: () => SIGNATURE_URL,
     box: navbarLogoBox,

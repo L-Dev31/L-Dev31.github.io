@@ -1,5 +1,5 @@
 import { reducedMotion, throttled, INTRO } from './config.js';
-import { loadProjects, projectMark, SIGNATURE_URL } from './projects.js';
+import { SIGNATURE_URL } from './projects.js';
 
 const loading = { total: 0, done: 0, open: true, lastFile: '', onChange: () => {} };
 const nativeFetch = window.fetch.bind(window);
@@ -127,7 +127,7 @@ function trackExistingResources(trackFont) {
     document.fonts.addEventListener('loading', event => event.fontfaces.forEach(trackFont));
 }
 
-function drawIntroSignature(loader, canvas, onReady) {
+function drawIntroSignature(loader, onReady) {
     import('../fx/pixel.js').then(({ extrudedSvg, CELL }) => {
         const { screenShare, minCols, maxCols } = INTRO.signature;
         const shortSide = Math.min(innerWidth, innerHeight);
@@ -156,23 +156,11 @@ export function pageLoader() {
     const signatureTravels = !reducedMotion;
     loader.classList.toggle('has-thread', signatureTravels);
 
-    drawIntroSignature(loader, signatureCanvas, (extrudedSvg, cols) => {
+    // With reduced motion the signature does not travel: the loader draws it once, still.
+    drawIntroSignature(loader, (extrudedSvg, cols) => {
         if (signatureTravels || finished) return;
-        const accent = getComputedStyle(root).getPropertyValue('--accent').trim();
-        loaderSolid = extrudedSvg(signatureCanvas, accent, { morph: true });
+        loaderSolid = extrudedSvg(signatureCanvas, getComputedStyle(root).getPropertyValue('--accent').trim());
         loaderSolid.show(SIGNATURE_URL, cols);
-
-        loadProjects().then(projects => {
-            const marks = projects.map(projectMark);
-            let next = 0;
-            const showNextMark = () => {
-                if (finished || !marks.length) return;
-                loaderSolid.show(marks[next++ % marks.length], cols);
-                setTimeout(showNextMark, INTRO.projectMarkEveryMs);
-            };
-            showNextMark();
-        }, () => {});
-        introLoaded.then(() => loaderSolid.show(SIGNATURE_URL, cols));
     });
 
     const leaveIntro = () => {

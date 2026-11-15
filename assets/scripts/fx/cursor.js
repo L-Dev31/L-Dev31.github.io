@@ -1,4 +1,5 @@
-import { reducedMotion, lowPower, isMobile, CURSOR, MAGNET, PAGE_TRANSITION } from '../core/config.js';
+import { reducedMotion, lowPower, isMobile, finePointer, CURSOR, MAGNET, PAGE_TRANSITION } from '../core/config.js';
+import { cssVariable } from '../core/dom.js';
 
 const CURSOR_WORDS = [
     ['[data-cursor]', element => element.dataset.cursor],
@@ -9,8 +10,7 @@ const POINTER_ON_LINK = 'a, button, [role="button"], label, summary';
 
 export function cursor() {
     const host = document.querySelector('.cursor');
-    const hasFinePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if (isMobile || lowPower || !hasFinePointer) return;
+    if (isMobile || lowPower || !finePointer()) return;
 
     document.documentElement.classList.add('custom-cursor');
     const dot = document.createElement('span');
@@ -68,8 +68,7 @@ export function cursor() {
 }
 
 export function magnets() {
-    const hasFinePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if (isMobile || lowPower || !hasFinePointer) return;
+    if (isMobile || lowPower || !finePointer()) return;
 
     const leaning = new Map();
     let frame = 0;
@@ -152,8 +151,7 @@ export function pageTransitions() {
         document.body.append(cover);
 
         import('./pixel.js').then(({ dissolve }) => {
-            const color = getComputedStyle(document.documentElement).getPropertyValue('--black').trim();
-            dissolve(cover, { color, fixed: true, reverse: true, total: PAGE_TRANSITION.coverMs }, () => { location.href = url.href; });
+            dissolve(cover, { color: cssVariable('--black'), fixed: true, reverse: true, total: PAGE_TRANSITION.coverMs }, () => { location.href = url.href; });
         });
         setTimeout(() => cover.remove(), PAGE_TRANSITION.giveUpMs);
     });

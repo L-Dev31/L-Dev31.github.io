@@ -1,12 +1,12 @@
 import '../core/components.js';
 import { initPage } from '../core/common.js';
-import { loadProjects, projectMark } from '../core/projects.js';
+import { loadProjects, projectMark, SIGNATURE_URL } from '../core/projects.js';
 import { preloadImage } from '../core/intro.js';
-import { el } from '../core/dom.js';
-import { scrubbingText, heroPortrait, heroScrollState, pixelPicture, pixelCover } from '../fx/effects.js';
+import { el, cssVariable } from '../core/dom.js';
+import { scrubbingText, heroPortrait, heroScrollState, pixelPicture, pixelCover, portraitFraming } from '../fx/effects.js';
 import { extrudedSvg, CELL } from '../fx/pixel.js';
 import { journey } from '../blocks/journey.js';
-import { PICTURE } from '../core/config.js';
+import { PICTURE, finePointer } from '../core/config.js';
 import { showcase, thread, homeDocks, restDocks } from '../blocks/showcase.js';
 
 const CATEGORIES = ['Graphic Design', 'Webdesign', 'Marketing', 'Dev'];
@@ -15,41 +15,27 @@ const lenis = initPage();
 heroScrollState();
 const cover = document.querySelector('.about-header-picture');
 if (cover) {
-    // On a portrait screen the wide photo is cropped around its subject and sits at the bottom, like the home portrait.
-    const portrait = matchMedia('(max-aspect-ratio: 1/1)').matches;
-    const framing = portrait ? { center: Number(cover.dataset.center) || 0.5, anchor: 1 } : {};
-    pixelPicture(cover, cover.dataset.picture, { gain: PICTURE.aboutHeroGain, color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), active: () => scrollY < innerHeight * 2, intro: true, ...framing });
+    pixelPicture(cover, cover.dataset.picture, { gain: PICTURE.aboutHeroGain, color: cssVariable('--accent'), active: () => scrollY < innerHeight * 2, intro: true, ...portraitFraming(Number(cover.dataset.center) || 0.5) });
 }
 const story = document.querySelector('.promise-picture');
 if (story) {
     let visible = false;
     new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }).observe(story);
-    pixelPicture(story, story.dataset.picture, { color: getComputedStyle(document.documentElement).getPropertyValue('--black').trim(), active: () => visible });
+    pixelPicture(story, story.dataset.picture, { color: cssVariable('--black'), active: () => visible });
 }
 scrubbingText();
 heroPortrait();
 
-const DEFAULT_SVG = 'assets/images/core/logo.svg';
-
 function projectIndex(container, projects) {
-    const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    const color = cssVariable('--accent');
     const entries = [];
     let current = null;
 
     const build = entry => {
         const { project, detail } = entry;
         const media = el('div', 'index-media is-covered');
-        if (project.video) {
-            const video = el('video');
-            Object.assign(video, { src: project.video, poster: project.heroImage, muted: true, loop: true, playsInline: true, preload: 'none' });
-            entry.video = video;
-            media.append(video);
-        } else {
-            const img = el('img');
-            Object.assign(img, { src: project.cover || project.heroImage, alt: '', decoding: 'async' });
-            entry.image = img;
-            media.append(img);
-        }
+        entry.image = Object.assign(el('img'), { src: project.cover || project.heroImage, alt: '', decoding: 'async' });
+        media.append(entry.image);
         const info = el('div', 'index-info');
         const tags = el('ul', 'index-tags');
         tags.append(...(project.tags || []).map(tag => el('li', 'index-tag', tag)));
@@ -67,14 +53,13 @@ function projectIndex(container, projects) {
         current = entry;
         entry.item.classList.add('is-open');
         entry.row.setAttribute('aria-expanded', 'true');
-        (entry.image?.decode().catch(() => {}) ?? Promise.resolve()).then(() => { if (current === entry) entry.cover.show(); });
-        entry.video?.play().catch(() => {});
+        entry.image.decode().catch(() => {}).then(() => { if (current === entry) entry.cover.show(); });
     };
     const close = entry => {
         if (current === entry) current = null;
         entry.item.classList.remove('is-open');
         entry.row.setAttribute('aria-expanded', 'false');
-        entry.cover?.hide(() => entry.video?.pause());
+        entry.cover?.hide();
     };
 
     // Build the details a little before the list comes into view, so a tap finds the pictures loaded.
@@ -128,7 +113,7 @@ function projectIndex(container, projects) {
 }
 
 function projectPreview(container, entries) {
-    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (!finePointer()) return;
 
     const figure = el('figure', 'index-preview');
     figure.setAttribute('aria-hidden', 'true');
@@ -149,7 +134,7 @@ function projectPreview(container, entries) {
         figure.style.left = `${slot.left - box.left + (slot.width - cols * CELL) / 2}px`;
         figure.style.top = `${r.top - box.top + r.height / 2}px`;
         figure.style.width = `${cols * CELL}px`;
-        solid.show([project.svg || `assets/images/projects/icons/${project.id}.svg`, DEFAULT_SVG], cols).then(() => {
+        solid.show([projectMark(project), SIGNATURE_URL], cols).then(() => {
             if (current !== row) return;
             figure.offsetWidth;
             figure.classList.add('is-on');
@@ -178,7 +163,7 @@ async function initProjects() {
     // What the index and the showcase draw later is fetched during the intro.
     for (const project of projects) {
         preloadImage(projectMark(project));
-        if (!project.video) preloadImage(project.cover || project.heroImage);
+        preloadImage(project.cover || project.heroImage);
     }
 
     const stage = showcase(document.querySelector('.showcase'), projects.filter(project => project.featured), lenis);
@@ -193,7 +178,7 @@ const when = item => (item.released ? Date.parse(item.released) : Date.UTC(item.
 // Every category is the same two-column list of its featured works. A picture, or a clip for games,
 // follows the pointer along the row.
 function cultureList(container, items, kind) {
-    const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    const color = cssVariable('--accent');
     const list = el('ul', 'index-list');
     const entries = [...items].sort((a, b) => when(b) - when(a)).map(item => {
         const row = el('div', 'index-row');
@@ -213,8 +198,6 @@ function cultureList(container, items, kind) {
     entries[rows - 1]?.row.parentElement.classList.add('is-end');
     floatingPreview(container, list, entries, kind, color);
 }
-
-const hoverDevice = () => matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 function floatingPreview(container, list, entries, kind, color) {
     const clips = kind === 'games';
@@ -280,7 +263,7 @@ function floatingPreview(container, list, entries, kind, color) {
         }, 80);
     };
 
-    const hover = hoverDevice();
+    const hover = finePointer();
     for (const entry of entries) {
         if (hover) {
             entry.row.addEventListener('pointerenter', event => { pointerX = event.clientX; show(entry); });
@@ -303,17 +286,17 @@ async function initCulture() {
     const lists = document.querySelectorAll('[data-culture]');
     if (!lists.length) return;
     const data = await fetch('assets/data/culture.json').then(r => r.json());
-    const shown = (kind, list) => list.filter(item => item.featured);
+    const featured = list => list.filter(item => item.featured);
     // Where there is a pointer to hover with, the preview of each work is fetched during the intro, so that hovering a title never waits.
     for (const [kind, list] of Object.entries(data)) {
-        if (hoverDevice() && kind !== 'games') shown(kind, list).forEach(item => preloadImage(`assets/images/culture/${kind}/${item.id}.webp`));
+        if (finePointer() && kind !== 'games') featured(list).forEach(item => preloadImage(`assets/images/culture/${kind}/${item.id}.webp`));
     }
-    lists.forEach(container => cultureList(container, shown(container.dataset.culture, data[container.dataset.culture] || []), container.dataset.culture));
+    lists.forEach(container => cultureList(container, featured(data[container.dataset.culture] || []), container.dataset.culture));
     const travels = await fetch('assets/data/travels.json').then(r => r.json());
     // Each section shows its featured works; a "+" means the full list (culture-all.html) has more.
     const totals = Object.fromEntries(Object.entries(data).map(([kind, list]) => {
-        const featured = shown(kind, list).length;
-        return [kind, list.length > featured ? `${featured}+` : String(featured)];
+        const count = featured(list).length;
+        return [kind, list.length > count ? `${count}+` : String(count)];
     }));
     totals.travels = String(travels.stops.length);
     document.querySelectorAll('.section-nav [data-count]').forEach(count => { count.textContent = totals[count.dataset.count] ?? ''; });

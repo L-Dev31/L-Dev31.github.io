@@ -1,3 +1,5 @@
+import { el } from './dom.js';
+
 const sections = {
     home: [
         ['#selected-projects', 'Selected'],
@@ -40,11 +42,10 @@ function renderSections(nav, page) {
         return;
     }
     for (const [href, label, count] of sections[page] ?? []) {
-        const link = document.createElement('a');
+        const link = el('a', '', label);
         link.href = href;
-        link.append(label);
         if (count) {
-            const value = document.createElement('span');
+            const value = el('span');
             value.dataset.count = count;
             link.append(' ', value);
         }
@@ -57,7 +58,7 @@ const templates = new Map();
 function template(name) {
     if (!templates.has(name)) {
         templates.set(name, loadComponent(name).then(html => {
-            const node = document.createElement('template');
+            const node = el('template');
             node.innerHTML = html;
             return node;
         }));
@@ -76,8 +77,7 @@ async function hydrate(root) {
             renderSections(content.querySelector('.section-nav'), placeholder.dataset.page);
         }
         if (name === 'socials') {
-            const nav = document.createElement('nav');
-            nav.className = placeholder.dataset.class ?? '';
+            const nav = el('nav', placeholder.dataset.class);
             nav.setAttribute('aria-label', placeholder.dataset.label ?? 'Social links');
             nav.append(content);
             placeholder.replaceWith(nav);

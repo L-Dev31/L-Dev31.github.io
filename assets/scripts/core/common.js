@@ -4,7 +4,7 @@ import { cursor, magnets, pageTransitions } from '../fx/cursor.js';
 import { loadProjects } from './projects.js';
 import { contactScene, contactLanding } from '../blocks/contact.js';
 import { socialLinks } from './components.js';
-import { el } from './dom.js';
+import { el, cssVariable, scrollPage } from './dom.js';
 import { initContactParallax } from '../blocks/contact-parallax.js';
 
 
@@ -26,7 +26,6 @@ export function initPage() {
     contactScene();
     initContactParallax();
     copyHandles();
-    pauseOffscreenVideos();
     return lenis;
 }
 
@@ -34,20 +33,15 @@ function navTone() {
     const bar = document.querySelector('.navbar');
     const reds = [...document.querySelectorAll('#my-story, #featured-projects, #projects-index, #promise, .contact-rest, .accent-section')];
     const stage = document.querySelector('.contact-stage');
-    const aboutHero = document.querySelector('.about-header');
-    const projects = document.getElementById('featured-projects');
     if (!bar) return;
     const update = () => {
         const y = bar.offsetHeight / 2;
-
-        const overHero = aboutHero ? aboutHero.getBoundingClientRect().bottom > y : projects ? projects.getBoundingClientRect().top > y : false;
         const covers = node => { const r = node.getBoundingClientRect(); return r.top <= y && r.bottom >= y; };
         const showcase = document.querySelector('.showcase-stage');
         const activeShowcase = showcase?.dataset.paletteActive === 'true' && covers(showcase);
         if (activeShowcase) bar.style.color = getComputedStyle(showcase).getPropertyValue('--showcase-foreground').trim();
         else bar.style.removeProperty('color');
         bar.style.transition = activeShowcase ? 'none' : '';
-        bar.classList.toggle('on-dark', activeShowcase ? showcase.dataset.tone === 'dark' : overHero);
         const onAccent = !activeShowcase && (reds.some(covers) || (stage?.dataset.tone === 'light' && covers(stage)));
         bar.classList.toggle('on-accent', onAccent);
         document.documentElement.classList.toggle('on-accent', onAccent);
@@ -120,8 +114,6 @@ const CURRENT_PAGE = {
     'project.html': `project:${new URLSearchParams(location.search).get('id')}`,
 }[location.pathname.split('/').pop()] ?? 'home';
 
-const PARENT_OF_CURRENT = CURRENT_PAGE === 'culture' ? 'about' : CURRENT_PAGE.startsWith('project:') ? 'home' : CURRENT_PAGE;
-
 function menuLink(className, { label, href }, isCurrent) {
     const link = el('a', className);
     link.href = href;
@@ -140,7 +132,6 @@ function menuLink(className, { label, href }, isCurrent) {
 function menuGroup(page, projects) {
     const group = el('div', 'mobile-menu-group');
     group.append(menuLink('mobile-menu-link', page, page.id === CURRENT_PAGE));
-    if (page.id === PARENT_OF_CURRENT && page.id !== CURRENT_PAGE) group.classList.add('is-active-branch');
 
     let children = page.children === 'projects'
         ? projects.map(project => ({ id: `project:${project.id}`, label: project.title, href: `project.html?id=${project.id}` }))
@@ -192,11 +183,10 @@ function mobileMenu(lenis) {
         pixels = null;
         if (getComputedStyle(picture).display === 'none') return;
         const { pixelPicture } = await import('../fx/effects.js');
-        const root = getComputedStyle(document.documentElement);
         const dark = document.documentElement.classList.contains('on-accent');
         pixels = pixelPicture(picture, dark ? 'assets/images/core/menu.webp' : 'assets/images/core/menu-accent.webp', {
             mirror: true,
-            color: root.getPropertyValue(dark ? '--accent' : '--black').trim(),
+            color: cssVariable(dark ? '--accent' : '--black'),
             active: () => menu.classList.contains('open'),
         });
     };
@@ -243,16 +233,13 @@ export function sectionNav(nav, lenis) {
     if (!links.length) return;
     const sections = links.map(link => document.querySelector(link.hash));
 
-    const pill = document.createElement('span');
-    pill.className = 'section-nav-pill';
+    const pill = el('span', 'section-nav-pill');
     pill.setAttribute('aria-hidden', 'true');
     nav.prepend(pill);
 
     links.forEach(link => link.addEventListener('click', event => {
         event.preventDefault();
-        const target = document.querySelector(link.hash);
-        if (lenis) lenis.scrollTo(target, { duration: 1.2, offset: -100 });
-        else target.scrollIntoView({ behavior: 'smooth' });
+        scrollPage(lenis, document.querySelector(link.hash), { duration: 1.2, offset: -100 });
     }));
 
     let placed = false, centred = null;
@@ -269,9 +256,7 @@ export function sectionNav(nav, lenis) {
     };
     nav.addEventListener('relayout', place);
 
-    let queued = false;
     const update = () => {
-        queued = false;
         const line = innerHeight / 2;
         const first = sections[0].getBoundingClientRect().top, last = sections.at(-1).getBoundingClientRect().bottom;
         nav.classList.toggle('is-on', first < innerHeight * 0.6 && last > innerHeight * 0.4);
@@ -279,7 +264,7 @@ export function sectionNav(nav, lenis) {
         links.forEach((link, i) => { if (i === index) link.setAttribute('aria-current', 'true'); else link.removeAttribute('aria-current'); });
         place();
     };
-    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('scroll', throttled(update), { passive: true });
     addEventListener('resize', update, { passive: true });
     update();
 }
@@ -290,9 +275,7 @@ function anchorLinks(lenis) {
         if (!target) return;
         e.preventDefault();
         const landing = target.id === 'contact' ? contactLanding() : null;
-        if (lenis) lenis.scrollTo(landing ?? target, { duration: 1.2, offset: landing == null ? -100 : 0 });
-        else if (landing != null) scrollTo({ top: landing, behavior: 'smooth' });
-        else target.scrollIntoView({ behavior: 'smooth' });
+        scrollPage(lenis, landing ?? target, { duration: 1.2, offset: landing == null ? -100 : 0 });
     }));
 }
 
@@ -304,16 +287,12 @@ function backToTop(lenis) {
     const chars = [...ring.textContent];
     ring.textContent = '';
     chars.forEach((char, i) => {
-        const span = document.createElement('span');
-        span.textContent = char;
+        const span = el('span', '', char);
         span.style.transform = `rotate(${i * 360 / chars.length}deg)`;
         ring.append(span);
     });
 
-    button.addEventListener('click', () => {
-        if (lenis) lenis.scrollTo(0);
-        else scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    button.addEventListener('click', () => scrollPage(lenis, 0));
 }
 
 function copyHandles() {
@@ -345,18 +324,7 @@ function footerPortrait() {
     const host = document.querySelector('.footer-portrait');
     if (!host) return;
     const footer = host.closest('#footer');
-    // On a portrait screen the wide photo is cropped around its subject and sits at the bottom, like in the hero.
-    const framing = matchMedia('(max-aspect-ratio: 1/1)').matches ? { center: 0.4, anchor: 1 } : { anchor: 0.7 };
-    import('../fx/effects.js').then(({ pixelPicture }) => {
-        const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-        pixelPicture(host, host.dataset.picture, { gain: PICTURE.aboutHeroGain, color: accent, active: () => footer.classList.contains('is-near'), ...framing });
+    import('../fx/effects.js').then(({ pixelPicture, portraitFraming }) => {
+        pixelPicture(host, host.dataset.picture, { gain: PICTURE.aboutHeroGain, color: cssVariable('--accent'), active: () => footer.classList.contains('is-near'), ...portraitFraming(0.4, { anchor: 0.7 }) });
     });
-}
-
-function pauseOffscreenVideos() {
-    const observer = new IntersectionObserver(entries => entries.forEach(({ target, isIntersecting }) => {
-        if (isIntersecting) target.play().catch(() => {});
-        else target.pause();
-    }), { threshold: 0.01 });
-    document.querySelectorAll('video[autoplay]').forEach(video => observer.observe(video));
 }

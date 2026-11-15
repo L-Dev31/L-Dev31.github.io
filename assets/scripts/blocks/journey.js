@@ -1,5 +1,5 @@
 import { reducedMotion, lowPower, clamp01, FLAGS as FLAG_SETTINGS } from '../core/config.js';
-import { el } from '../core/dom.js';
+import { el, cssVariable } from '../core/dom.js';
 import { cellCanvas, CELL } from '../fx/pixel.js';
 
 const LAND = [
@@ -202,10 +202,8 @@ export async function journey(container) {
     }
 
     const land = landGrid();
-    const root = getComputedStyle(document.documentElement);
     const ink = getComputedStyle(container).color;
-    const red = root.getPropertyValue('--accent').trim();
-    const cells = cellCanvas(canvas, red);
+    const cells = cellCanvas(canvas, cssVariable('--accent'));
     const pins = cellCanvas(marks, ink);
     const tags = stops.map(stop => {
         const tag = el('span', 'globe-label', stop.label);

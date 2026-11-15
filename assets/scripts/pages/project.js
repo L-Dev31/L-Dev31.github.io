@@ -3,8 +3,11 @@ import { initPage, sectionNav } from '../core/common.js';
 import { reducedMotion, throttled, clamp01 } from '../core/config.js';
 import { heroEntrance, trackImages, preloadImage } from '../core/intro.js';
 import { loadProjects } from '../core/projects.js';
+import { el } from '../core/dom.js';
 import { scrubbingText, pixelReveal } from '../fx/effects.js';
 import { thread, restDocks } from '../blocks/showcase.js';
+
+const SITE = 'Léo Tosku | Design, Dev, Marketing';
 
 const lenis = initPage();
 thread(restDocks());
@@ -25,8 +28,9 @@ async function load() {
 }
 
 function render(project, html, projects) {
-    document.title = `${project.title} · Léo Tosku | Design, Dev, Marketing`;
-    updateSearchMetadata(project);
+    const pageTitle = `${project.title} · ${SITE}`;
+    document.title = pageTitle;
+    updateSearchMetadata(project, pageTitle);
 
     const heroImg = document.querySelector('.project-hero-img');
     heroImg.src = project.heroImage;
@@ -34,42 +38,18 @@ function render(project, html, projects) {
     heroImg.hidden = false;
     heroImg.fetchPriority = 'high';
 
-    const details = [
-        ['Role', project.role],
-        ['Year', project.date?.slice(0, 4)],
-        ['Client', project.client],
-    ].filter(([, value]) => value);
-
-    const header = document.querySelector('.article-header');
-    const title = document.createElement('h1');
-    title.className = 'article-title';
-    title.textContent = project.title;
-
-    const subtitle = document.createElement('p');
-    subtitle.className = 'article-subtitle';
-    subtitle.textContent = project.subtitle;
-
-    const facts = document.createElement('dl');
-    facts.className = 'article-facts';
-    for (const [label, value] of details) {
-        const fact = document.createElement('div');
-        const term = document.createElement('dt');
-        const description = document.createElement('dd');
-        term.textContent = label;
-        description.textContent = value;
-        fact.append(term, description);
+    const facts = el('dl', 'article-facts');
+    for (const [label, value] of [['Role', project.role], ['Year', project.date?.slice(0, 4)], ['Client', project.client]]) {
+        if (!value) continue;
+        const fact = el('div');
+        fact.append(el('dt', '', label), el('dd', '', value));
         facts.append(fact);
     }
+    const tags = el('div', 'article-tags');
+    tags.append(...(project.tags ?? []).map(label => el('span', 'tag', label)));
 
-    const tags = document.createElement('div');
-    tags.className = 'article-tags';
-    for (const label of project.tags ?? []) {
-        const tag = document.createElement('span');
-        tag.className = 'tag';
-        tag.textContent = label;
-        tags.append(tag);
-    }
-    header.replaceChildren(title, subtitle, facts, tags);
+    const header = document.querySelector('.article-header');
+    header.replaceChildren(el('h1', 'article-title', project.title), el('p', 'article-subtitle', project.subtitle), facts, tags);
 
     if (reducedMotion) header.classList.add('loaded');
     else heroEntrance.then(() => requestAnimationFrame(() => header.classList.add('loaded')));
@@ -91,27 +71,26 @@ function chapterNav() {
     titles.forEach((title, i) => {
         const section = title.closest('section');
         if (!section.id) section.id = `chapter-${i + 1}`;
-        const link = document.createElement('a');
-        link.href = `#${section.id}`;
         const label = title.textContent.replace(/^(The|Le|La|Les|L['\u2019])\s*/i, '');
-        link.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+        const link = el('a', '', label.charAt(0).toUpperCase() + label.slice(1));
+        link.href = `#${section.id}`;
         nav.append(link);
     });
     sectionNav(nav, lenis);
 }
 
-function updateSearchMetadata(project) {
+function updateSearchMetadata(project, pageTitle) {
     const url = new URL(`project.html?id=${encodeURIComponent(project.id)}`, location.origin).href;
     const image = new URL(project.heroImage, location.href).href;
-    const description = `Léo Tosku | Design, Dev, Marketing: ${project.subtitle || `case study, ${project.title}`}`.slice(0, 160);
+    const description = `${SITE}: ${project.subtitle || `case study, ${project.title}`}`.slice(0, 160);
 
     document.querySelector('link[rel="canonical"]').href = url;
     document.querySelector('meta[name="description"]').content = description;
-    setMeta('property', 'og:title', `${project.title} · Léo Tosku | Design, Dev, Marketing`);
+    setMeta('property', 'og:title', pageTitle);
     setMeta('property', 'og:description', description);
     setMeta('property', 'og:url', url);
     setMeta('property', 'og:image', image);
-    setMeta('name', 'twitter:title', `${project.title} · Léo Tosku | Design, Dev, Marketing`);
+    setMeta('name', 'twitter:title', pageTitle);
     setMeta('name', 'twitter:description', description);
     setMeta('name', 'twitter:image', image);
 
@@ -128,7 +107,7 @@ function updateSearchMetadata(project) {
     };
     let schema = document.querySelector('#project-schema');
     if (!schema) {
-        schema = document.createElement('script');
+        schema = el('script');
         schema.id = 'project-schema';
         schema.type = 'application/ld+json';
         document.head.append(schema);
@@ -140,55 +119,37 @@ function setMeta(attribute, name, content) {
     document.querySelector(`meta[${attribute}="${name}"]`).content = content;
 }
 
+// A link that opens in a new tab.
+const externalLink = (className, href, label) => Object.assign(el('a', className, label), { href, target: '_blank', rel: 'noopener noreferrer' });
+
 function callsToAction({ ctas = [], ctaPreview, ctaVideo, trailerUrl, trailerLabel, heroImage, title }, section) {
     const heroLinks = document.querySelector('.project-hero-links');
     if (!ctas.length) {
         heroLinks.remove();
         return section.remove();
     }
+    const links = section.querySelector('.project-cta-text');
     for (const { label, url } of ctas) {
-        const heroLink = document.createElement('a');
-        heroLink.className = 'project-hero-live';
-        heroLink.href = url;
-        heroLink.target = '_blank';
-        heroLink.rel = 'noopener noreferrer';
-        heroLink.textContent = label;
-        heroLinks.append(heroLink);
-
-        const link = document.createElement('a');
-        link.className = 'project-cta-bottom-link';
-        link.href = url;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.textContent = label;
-        section.querySelector('.project-cta-text').append(link);
+        heroLinks.append(externalLink('project-hero-live', url, label));
+        links.append(externalLink('project-cta-bottom-link', url, label));
     }
-    if (trailerUrl) {
-        const link = document.createElement('a');
-        link.className = 'project-cta-bottom-link';
-        link.href = trailerUrl;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.textContent = trailerLabel || 'Watch the trailer';
-        section.querySelector('.project-cta-text').append(link);
-    }
+    if (trailerUrl) links.append(externalLink('project-cta-bottom-link', trailerUrl, trailerLabel || 'Watch the trailer'));
     const preview = section.querySelector('.project-cta-preview');
     if (ctaVideo && /^[\w-]+$/.test(ctaVideo)) {
-        const video = document.createElement('div');
-        video.className = 'project-cta-preview project-cta-video';
-        const play = document.createElement('button');
+        const video = el('div', 'project-cta-preview project-cta-video');
+        const play = el('button', 'project-cta-play');
         play.type = 'button';
-        play.className = 'project-cta-play';
         preloadImage(ctaPreview || heroImage);
         play.style.backgroundImage = `url('${ctaPreview || heroImage}')`;
         play.innerHTML = '<span class="project-cta-play-label">Play the video <small>Loads content from YouTube</small></span>';
         play.addEventListener('click', () => {
-            const frame = document.createElement('iframe');
-            frame.src = `https://www.youtube-nocookie.com/embed/${ctaVideo}?autoplay=1`;
-            frame.title = `${title}, video`;
-            frame.allow = 'autoplay; accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen';
-            frame.referrerPolicy = 'strict-origin-when-cross-origin';
-            frame.allowFullscreen = true;
+            const frame = Object.assign(el('iframe'), {
+                src: `https://www.youtube-nocookie.com/embed/${ctaVideo}?autoplay=1`,
+                title: `${title}, video`,
+                allow: 'autoplay; accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen',
+                referrerPolicy: 'strict-origin-when-cross-origin',
+                allowFullscreen: true,
+            });
             play.replaceWith(frame);
             frame.focus();
         });
@@ -207,23 +168,22 @@ function pager(project, projects) {
     if (i === -1 || caseStudies.length < 2) return nav.remove();
 
     const [prevLink, nextLink] = nav.querySelectorAll('a');
-    const fill = (link, p, direction) => {
+    const fill = (link, p) => {
         link.href = `project.html?id=${p.id}`;
         link.querySelector('.project-pager-title').textContent = p.title;
         link.querySelector('.project-pager-role').textContent = p.role;
         preloadImage(p.heroImage);
         link.querySelector('.project-pager-img').style.backgroundImage = `url('${p.heroImage}')`;
     };
-    fill(prevLink, caseStudies.at(i - 1), 'Previous');
-    fill(nextLink, caseStudies[(i + 1) % caseStudies.length], 'Next');
+    fill(prevLink, caseStudies.at(i - 1));
+    fill(nextLink, caseStudies[(i + 1) % caseStudies.length]);
     nav.hidden = false;
 }
 
 function progressBar(lenis) {
-    const bar = document.createElement('div');
-    bar.className = 'reading-progress';
+    const bar = el('div', 'reading-progress');
     bar.setAttribute('aria-hidden', 'true');
-    const fill = document.createElement('span');
+    const fill = el('span');
     bar.append(fill);
     document.body.append(bar);
 
@@ -240,7 +200,7 @@ function progressBar(lenis) {
 }
 
 function notFound() {
-    document.title = 'Project not found · Léo Tosku | Design, Dev, Marketing';
+    document.title = `Project not found · ${SITE}`;
     document.querySelector('.project-main').innerHTML =
         '<div class="project-not-found"><p>Project not found.</p><a href="index.html">Back</a></div>';
 }
