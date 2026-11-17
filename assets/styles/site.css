@@ -127,22 +127,6 @@ html.lenis body {
 body:not(.js-ready) .page-loader {
     animation: page-loader-fallback 3.2s steps(1, end) forwards;
 }
-.page-loader-skip {
-    pointer-events: auto;
-    min-height: 44px;
-    padding: 10px 14px;
-    border: 1px solid var(--hairline);
-    background: transparent;
-    color: var(--text-faint);
-    font: inherit;
-    font-size: 12px;
-    cursor: pointer;
-}
-.page-loader-skip:hover,
-.page-loader-skip:focus-visible {
-    border-color: var(--white);
-    color: var(--white);
-}
 
 .page-loader-sign {
     display: block;
@@ -209,8 +193,7 @@ body:not(.js-ready) .page-loader {
 }
 
 .page-loader.is-leaving .page-loader-track,
-.page-loader.is-leaving .page-loader-status,
-.page-loader.is-leaving .page-loader-skip {
+.page-loader.is-leaving .page-loader-status {
     opacity: 0;
 }
 
@@ -220,8 +203,7 @@ body:not(.js-ready) .page-loader {
 
 .page-loader.dissolving .page-loader-sign,
 .page-loader.dissolving .page-loader-track,
-.page-loader.dissolving .page-loader-status,
-.page-loader.dissolving .page-loader-skip {
+.page-loader.dissolving .page-loader-status {
     visibility: hidden;
 }
 
@@ -245,8 +227,7 @@ body:not(.js-ready) .page-loader {
 
 .intro-waiting .navbar,
 .intro-waiting .hero-socials,
-.intro-waiting .hero-cta,
-.intro-waiting .hero-proof {
+.intro-waiting .hero-cta {
     opacity: 0;
 }
 
@@ -255,8 +236,7 @@ body:not(.js-ready) .page-loader {
 }
 
 .intro-in #header .hero-socials,
-.intro-in #header .hero-cta,
-.intro-in #header .hero-proof {
+.intro-in #header .hero-cta {
     animation: rise 0.7s var(--ease-out) 0.38s both;
 }
 
@@ -963,15 +943,6 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     letter-spacing: 0.01em;
     line-height: 1.4;
 }
-.hero-proof {
-    margin: 16px 0 0;
-    color: var(--text-faint);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    line-height: 1.4;
-}
-
 /* The one action of the first screen: filled with the accent, with the answer to "is he free?" inside it. */
 .hero-cta {
     align-self: flex-start;

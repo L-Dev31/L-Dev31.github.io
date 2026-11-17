@@ -157,7 +157,6 @@ export function pageLoader() {
     const percentText = loader.querySelector('.page-loader-count');
     const fileText = loader.querySelector('.page-loader-file');
     const signatureCanvas = loader.querySelector('.page-loader-sign');
-    const skipButton = loader.querySelector('.page-loader-skip');
 
     let shownShare = 0;
     let finished = false;
@@ -235,10 +234,6 @@ export function pageLoader() {
         }, INTRO.settleMs);
     };
     loading.onChange = throttled(repaintProgress);
-    skipButton?.addEventListener('click', () => finish(false));
-    addEventListener('keydown', event => {
-        if (event.key === 'Escape') finish(false);
-    });
 
     trackExistingResources(trackFont);
 

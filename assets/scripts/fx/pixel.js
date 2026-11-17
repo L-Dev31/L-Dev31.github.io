@@ -12,6 +12,19 @@ addEventListener(
     { passive: true },
 );
 
+const holoEnabled = !reducedMotion && !lowPower && matchMedia('(hover: hover) and (pointer: fine)').matches;
+const holoPointer = { x: innerWidth * 0.5, y: innerHeight * 0.35 };
+if (holoEnabled) {
+    addEventListener(
+        'pointermove',
+        event => {
+            holoPointer.x = event.clientX;
+            holoPointer.y = event.clientY;
+        },
+        { passive: true },
+    );
+}
+
 const [DOT_THRESHOLD, CHECKER_THRESHOLD, SOLID_THRESHOLD] = PIXEL.brightnessLevels;
 
 const DOTS = 0,
@@ -84,6 +97,9 @@ export function cellCanvas(canvas, color) {
     let shimmer = new Float32Array(0);
     let shimmered = new Uint8Array(0);
     let shimmerBeat = -1;
+    let holographic = new Uint8Array(0);
+    let holoBeat = -1;
+    let holoBounds = null;
 
     function withShimmer(brightness) {
         if (lowPower) return brightness;
@@ -104,6 +120,33 @@ export function cellCanvas(canvas, color) {
         }
         for (let i = 0; i < shimmered.length; i++) shimmered[i] = Math.min(255, brightness[i] * shimmer[i]);
         return shimmered;
+    }
+
+    function withHolographicLight(brightness) {
+        if (!holoEnabled) return brightness;
+        if (holographic.length !== brightness.length) holographic = new Uint8Array(brightness.length);
+        const beat = Math.floor(performance.now() / 150);
+        if (beat !== holoBeat) {
+            holoBeat = beat;
+            holoBounds = canvas.getBoundingClientRect();
+        }
+        if (!holoBounds?.width || !holoBounds.height) return brightness;
+        const pointerX = (holoPointer.x - holoBounds.left) / holoBounds.width;
+        const pointerY = (holoPointer.y - holoBounds.top) / holoBounds.height;
+        for (let i = 0; i < brightness.length; i++) {
+            const col = i % cols;
+            const row = (i / cols) | 0;
+            const u = cols > 1 ? col / (cols - 1) : 0.5;
+            const v = rows > 1 ? row / (rows - 1) : 0.5;
+            const distance = Math.hypot((u - pointerX) * 1.2, (v - pointerY) * 1.2);
+            const light = Math.max(0, 1 - distance * 1.7);
+            const grainSeed = (i + 1) * 374761393 + beat * 668265263;
+            const grain = ((grainSeed ^ (grainSeed >>> 13)) >>> 0) / 4294967295 - 0.5;
+            const foil = Math.sin((u * 1.6 + v * 0.9 + beat * 0.025) * Math.PI * 10) * 0.025;
+            const gain = 1 + light * 0.22 + grain * 0.065 + foil;
+            holographic[i] = brightness[i] ? Math.min(255, brightness[i] * gain) : 0;
+        }
+        return holographic;
     }
 
     // The tiles only change with the colour and the cell size. A gradient has one set per column.
@@ -142,7 +185,7 @@ export function cellCanvas(canvas, color) {
             return rows;
         },
         paint(brightness) {
-            const live = withShimmer(brightness);
+            const live = withHolographicLight(withShimmer(brightness));
             const rowWidth = cols * cellPx;
             if (shownLevels.length !== live.length) shownLevels = new Uint8Array(live.length).fill(255);
 
