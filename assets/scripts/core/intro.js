@@ -157,12 +157,15 @@ export function pageLoader() {
     const percentText = loader.querySelector('.page-loader-count');
     const fileText = loader.querySelector('.page-loader-file');
     const signatureCanvas = loader.querySelector('.page-loader-sign');
+    const skipButton = loader.querySelector('.page-loader-skip');
 
     let shownShare = 0;
     let finished = false;
     let pageLoaded = document.readyState === 'complete';
     let loaderSolid = null;
     let settleTimer = 0;
+    document.body.classList.add('js-ready');
+    document.documentElement.setAttribute('aria-busy', 'true');
 
     if (!reducedMotion) root.classList.add('intro-waiting');
 
@@ -193,6 +196,7 @@ export function pageLoader() {
         finished = true;
         loading.open = false;
         window.fetch = nativeFetch;
+        document.documentElement.setAttribute('aria-busy', 'false');
         resolveIntroLoaded();
         if (allLoaded) {
             bar.style.transform = 'scaleX(1)';
@@ -231,6 +235,10 @@ export function pageLoader() {
         }, INTRO.settleMs);
     };
     loading.onChange = throttled(repaintProgress);
+    skipButton?.addEventListener('click', () => finish(false));
+    addEventListener('keydown', event => {
+        if (event.key === 'Escape') finish(false);
+    });
 
     trackExistingResources(trackFont);
 

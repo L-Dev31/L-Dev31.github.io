@@ -124,6 +124,25 @@ html.lenis body {
     background: var(--black);
     pointer-events: none;
 }
+body:not(.js-ready) .page-loader {
+    animation: page-loader-fallback 3.2s steps(1, end) forwards;
+}
+.page-loader-skip {
+    pointer-events: auto;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--hairline);
+    background: transparent;
+    color: var(--text-faint);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+.page-loader-skip:hover,
+.page-loader-skip:focus-visible {
+    border-color: var(--white);
+    color: var(--white);
+}
 
 .page-loader-sign {
     display: block;
@@ -190,7 +209,8 @@ html.lenis body {
 }
 
 .page-loader.is-leaving .page-loader-track,
-.page-loader.is-leaving .page-loader-status {
+.page-loader.is-leaving .page-loader-status,
+.page-loader.is-leaving .page-loader-skip {
     opacity: 0;
 }
 
@@ -200,12 +220,20 @@ html.lenis body {
 
 .page-loader.dissolving .page-loader-sign,
 .page-loader.dissolving .page-loader-track,
-.page-loader.dissolving .page-loader-status {
+.page-loader.dissolving .page-loader-status,
+.page-loader.dissolving .page-loader-skip {
     visibility: hidden;
 }
 
 .page-loader.done {
     display: none;
+}
+
+@keyframes page-loader-fallback {
+    to {
+        visibility: hidden;
+        opacity: 0;
+    }
 }
 
 @keyframes rise {
@@ -217,7 +245,8 @@ html.lenis body {
 
 .intro-waiting .navbar,
 .intro-waiting .hero-socials,
-.intro-waiting .hero-cta {
+.intro-waiting .hero-cta,
+.intro-waiting .hero-proof {
     opacity: 0;
 }
 
@@ -226,7 +255,8 @@ html.lenis body {
 }
 
 .intro-in #header .hero-socials,
-.intro-in #header .hero-cta {
+.intro-in #header .hero-cta,
+.intro-in #header .hero-proof {
     animation: rise 0.7s var(--ease-out) 0.38s both;
 }
 
@@ -931,6 +961,14 @@ html.on-accent .mobile-menu-group + .mobile-menu-group {
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.01em;
+    line-height: 1.4;
+}
+.hero-proof {
+    margin: 16px 0 0;
+    color: var(--text-faint);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
     line-height: 1.4;
 }
 

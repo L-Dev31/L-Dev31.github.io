@@ -19,7 +19,7 @@ export const PIXEL = {
 // Loading intro.
 export const INTRO = {
     // Maximum wait time.
-    maxWaitMs: 10000,
+    maxWaitMs: 3200,
     settleMs: 60,
     // Project mark interval.
     projectMarkEveryMs: 550,
