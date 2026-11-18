@@ -115,6 +115,7 @@ export function createHoloSurface(source, pointer) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
     const positionLocation = gl.getAttribLocation(program, 'a_position');
     const pointerLocation = gl.getUniformLocation(program, 'u_pointer');
