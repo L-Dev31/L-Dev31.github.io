@@ -65,7 +65,7 @@ function createProgram(gl) {
     return null;
 }
 
-function copySurfaceStyle(source, overlay) {
+function copySurfaceStyle(source, overlay, sourceOpacity) {
     const style = getComputedStyle(source);
     const bounds = source.getBoundingClientRect();
     overlay.style.position = 'fixed';
@@ -76,7 +76,7 @@ function copySurfaceStyle(source, overlay) {
     overlay.style.margin = '0';
     overlay.style.transform = 'none';
     overlay.style.visibility = style.visibility;
-    overlay.style.opacity = style.opacity;
+    overlay.style.opacity = source.style.visibility === 'hidden' ? '0' : sourceOpacity;
     overlay.style.zIndex = String(parseInt(style.zIndex, 10) || 0);
 }
 
@@ -86,6 +86,7 @@ export function createHoloSurface(source, pointer) {
     overlay.setAttribute('aria-hidden', 'true');
     overlay.style.pointerEvents = 'none';
     source.after(overlay);
+    const sourceOpacity = getComputedStyle(source).opacity;
 
     const gl = overlay.getContext('webgl', {
         alpha: true,
@@ -103,6 +104,9 @@ export function createHoloSurface(source, pointer) {
         overlay.remove();
         return null;
     }
+
+    // Keep the 2D canvas as a texture buffer, but composite only the WebGL result.
+    source.style.opacity = '0';
 
     const position = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, position);
@@ -133,7 +137,7 @@ export function createHoloSurface(source, pointer) {
         const styleBeat = Math.floor(now / 120);
         if (styleBeat !== lastStyleSync) {
             lastStyleSync = styleBeat;
-            copySurfaceStyle(source, overlay);
+            copySurfaceStyle(source, overlay, sourceOpacity);
         }
         const size = `${source.width}x${source.height}`;
         if (size !== lastSize) {
