@@ -297,12 +297,6 @@ body:not(.js-ready) .page-loader {
     will-change: transform;
 }
 
-.pixel-holo {
-    display: block;
-    image-rendering: pixelated;
-    pointer-events: none;
-}
-
 .thread.is-intro {
     z-index: 100000;
 }

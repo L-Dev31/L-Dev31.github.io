@@ -1,7 +1,6 @@
 import { reducedMotion, lowPower, PIXEL, SIGNATURE } from '../core/config.js';
 import { track } from '../core/intro.js';
 import { gradientStops, isGradient, mixColors } from '../core/color.js';
-import { createHoloSurface } from './holo.js';
 
 const computeCell = () => Math.max(PIXEL.minCellPx, Math.round(innerWidth / PIXEL.cellsAcrossScreen));
 export let CELL = computeCell();
@@ -13,14 +12,14 @@ addEventListener(
     { passive: true },
 );
 
-const holoEnabled = !reducedMotion && (matchMedia('(hover: hover)').matches || innerWidth >= 700);
-const holoPointer = { x: innerWidth * 0.5, y: innerHeight * 0.35 };
-if (holoEnabled) {
+const pixelLightEnabled = !reducedMotion && (matchMedia('(hover: hover)').matches || innerWidth >= 700);
+const lightPointer = { x: innerWidth * 0.5, y: innerHeight * 0.35 };
+if (pixelLightEnabled) {
     addEventListener(
         'pointermove',
         event => {
-            holoPointer.x = event.clientX;
-            holoPointer.y = event.clientY;
+            lightPointer.x = event.clientX;
+            lightPointer.y = event.clientY;
         },
         { passive: true },
     );
@@ -84,9 +83,8 @@ function levelOf(brightness) {
     return 3;
 }
 
-export function cellCanvas(canvas, color, { holo = false } = {}) {
+export function cellCanvas(canvas, color, { lighting = false } = {}) {
     const context = canvas.getContext('2d');
-    const holoSurface = holo && holoEnabled ? createHoloSurface(canvas, holoPointer) : null;
     let cols = 0,
         rows = 0;
     let cellPx = CELL;
@@ -99,9 +97,9 @@ export function cellCanvas(canvas, color, { holo = false } = {}) {
     let shimmer = new Float32Array(0);
     let shimmered = new Uint8Array(0);
     let shimmerBeat = -1;
-    let holographic = new Uint8Array(0);
-    let holoBeat = -1;
-    let holoBounds = null;
+    let litBrightness = new Uint8Array(0);
+    let lightBeat = -1;
+    let lightBounds = null;
 
     function withShimmer(brightness) {
         if (lowPower) return brightness;
@@ -124,31 +122,49 @@ export function cellCanvas(canvas, color, { holo = false } = {}) {
         return shimmered;
     }
 
-    function withHolographicLight(brightness) {
-        if (!holoEnabled) return brightness;
-        if (holographic.length !== brightness.length) holographic = new Uint8Array(brightness.length);
+    function withCursorLight(brightness) {
+        if (!lighting || !pixelLightEnabled) return brightness;
+        if (litBrightness.length !== brightness.length) litBrightness = new Uint8Array(brightness.length);
         const beat = Math.floor(performance.now() / 150);
-        if (beat !== holoBeat) {
-            holoBeat = beat;
-            holoBounds = canvas.getBoundingClientRect();
+        if (beat !== lightBeat) {
+            lightBeat = beat;
+            lightBounds = canvas.getBoundingClientRect();
         }
-        if (!holoBounds?.width || !holoBounds.height) return brightness;
-        const pointerX = (holoPointer.x - holoBounds.left) / holoBounds.width;
-        const pointerY = (holoPointer.y - holoBounds.top) / holoBounds.height;
+        if (!lightBounds?.width || !lightBounds.height) return brightness;
+        const pointerX = (lightPointer.x - lightBounds.left) / lightBounds.width;
+        const pointerY = (lightPointer.y - lightBounds.top) / lightBounds.height;
         for (let i = 0; i < brightness.length; i++) {
             const col = i % cols;
             const row = (i / cols) | 0;
             const u = cols > 1 ? col / (cols - 1) : 0.5;
             const v = rows > 1 ? row / (rows - 1) : 0.5;
-            const distance = Math.hypot((u - pointerX) * 1.2, (v - pointerY) * 1.2);
-            const light = Math.max(0, 1 - distance * 1.7);
-            const grainSeed = (i + 1) * 374761393 + beat * 668265263;
-            const grain = ((grainSeed ^ (grainSeed >>> 13)) >>> 0) / 4294967295 - 0.5;
-            const foil = Math.sin((u * 1.6 + v * 0.9 + beat * 0.025) * Math.PI * 10) * 0.025;
-            const gain = 1 + light * 0.22 + grain * 0.065 + foil;
-            holographic[i] = brightness[i] ? Math.min(255, brightness[i] * gain) : 0;
+            const height = brightness[i] / 255;
+            const left = col ? brightness[i - 1] / 255 : height;
+            const right = col + 1 < cols ? brightness[i + 1] / 255 : height;
+            const down = row ? brightness[i - cols] / 255 : height;
+            const up = row + 1 < rows ? brightness[i + cols] / 255 : height;
+            const normalX = (left - right) * 1.8;
+            const normalY = (down - up) * 1.8;
+            const normalZ = 1;
+            const normalLength = Math.hypot(normalX, normalY, normalZ);
+            const nx = normalX / normalLength;
+            const ny = normalY / normalLength;
+            const nz = normalZ / normalLength;
+            const lightX = (pointerX - u) * 1.35;
+            const lightY = (pointerY - v) * 1.1;
+            const lightZ = 1.45;
+            const lightLength = Math.hypot(lightX, lightY, lightZ);
+            const diffuse = Math.max(0, (nx * lightX + ny * lightY + nz * lightZ) / lightLength);
+            const viewDot = Math.max(0, nz);
+            const edgeLight = (1 - viewDot) ** 2;
+            const halfX = lightX / lightLength;
+            const halfY = lightY / lightLength;
+            const halfZ = (lightZ / lightLength + 1) * 0.5;
+            const specular = Math.max(0, nx * halfX + ny * halfY + nz * halfZ) ** 18;
+            const gain = 0.62 + diffuse * 0.58 + edgeLight * 0.08 + specular * 0.16;
+            litBrightness[i] = brightness[i] ? Math.min(255, brightness[i] * gain) : 0;
         }
-        return holographic;
+        return litBrightness;
     }
 
     // The tiles only change with the colour and the cell size. A gradient has one set per column.
@@ -187,7 +203,7 @@ export function cellCanvas(canvas, color, { holo = false } = {}) {
             return rows;
         },
         paint(brightness) {
-            const live = holoSurface ? withShimmer(brightness) : withHolographicLight(withShimmer(brightness));
+            const live = withCursorLight(withShimmer(brightness));
             const rowWidth = cols * cellPx;
             if (shownLevels.length !== live.length) shownLevels = new Uint8Array(live.length).fill(255);
 
@@ -384,7 +400,7 @@ function sampleExtruded(mask, axes, light, cols, rows, output) {
 }
 
 export function extrudedSvg(canvas, color, { morph = false } = {}) {
-    const cells = cellCanvas(canvas, color, { holo: true });
+    const cells = cellCanvas(canvas, color, { lighting: true });
 
     let mask = null;
     let previousMask = null;

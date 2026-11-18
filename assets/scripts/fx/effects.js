@@ -309,7 +309,7 @@ function pixelHero(host) {
     canvas.id = 'hero-pixels';
     canvas.setAttribute('aria-hidden', 'true');
     host.prepend(canvas);
-    const cells = cellCanvas(canvas, cssVariable('--accent'), { holo: true });
+    const cells = cellCanvas(canvas, cssVariable('--accent'), { lighting: true });
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
 
@@ -444,7 +444,7 @@ export function pixelPicture(
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     host.append(canvas);
-    const cells = cellCanvas(canvas, color, { holo: true });
+    const cells = cellCanvas(canvas, color, { lighting: true });
     const sample = document.createElement('canvas');
     const sampleCtx = sample.getContext('2d', { willReadFrequently: true });
     sampleCtx.imageSmoothingQuality = 'high';
