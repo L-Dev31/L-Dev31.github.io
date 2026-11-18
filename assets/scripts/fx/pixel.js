@@ -1,6 +1,7 @@
 import { reducedMotion, lowPower, PIXEL, SIGNATURE } from '../core/config.js';
 import { track } from '../core/intro.js';
 import { gradientStops, isGradient, mixColors } from '../core/color.js';
+import { createHoloSurface } from './holo.js';
 
 const computeCell = () => Math.max(PIXEL.minCellPx, Math.round(innerWidth / PIXEL.cellsAcrossScreen));
 export let CELL = computeCell();
@@ -12,7 +13,7 @@ addEventListener(
     { passive: true },
 );
 
-const holoEnabled = !reducedMotion && !lowPower && matchMedia('(hover: hover) and (pointer: fine)').matches;
+const holoEnabled = !reducedMotion && matchMedia('(hover: hover) and (pointer: fine)').matches;
 const holoPointer = { x: innerWidth * 0.5, y: innerHeight * 0.35 };
 if (holoEnabled) {
     addEventListener(
@@ -83,8 +84,9 @@ function levelOf(brightness) {
     return 3;
 }
 
-export function cellCanvas(canvas, color) {
+export function cellCanvas(canvas, color, { holo = false } = {}) {
     const context = canvas.getContext('2d');
+    const holoSurface = holo && holoEnabled ? createHoloSurface(canvas, holoPointer) : null;
     let cols = 0,
         rows = 0;
     let cellPx = CELL;
@@ -185,7 +187,7 @@ export function cellCanvas(canvas, color) {
             return rows;
         },
         paint(brightness) {
-            const live = withHolographicLight(withShimmer(brightness));
+            const live = holoSurface ? withShimmer(brightness) : withHolographicLight(withShimmer(brightness));
             const rowWidth = cols * cellPx;
             if (shownLevels.length !== live.length) shownLevels = new Uint8Array(live.length).fill(255);
 
@@ -382,7 +384,7 @@ function sampleExtruded(mask, axes, light, cols, rows, output) {
 }
 
 export function extrudedSvg(canvas, color, { morph = false } = {}) {
-    const cells = cellCanvas(canvas, color);
+    const cells = cellCanvas(canvas, color, { holo: true });
 
     let mask = null;
     let previousMask = null;
