@@ -13,7 +13,7 @@ addEventListener(
     { passive: true },
 );
 
-const holoEnabled = !reducedMotion && matchMedia('(hover: hover) and (pointer: fine)').matches;
+const holoEnabled = !reducedMotion && (matchMedia('(hover: hover)').matches || innerWidth >= 700);
 const holoPointer = { x: innerWidth * 0.5, y: innerHeight * 0.35 };
 if (holoEnabled) {
     addEventListener(

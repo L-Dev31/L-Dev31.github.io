@@ -23,20 +23,20 @@ void main() {
     if (base.a < 0.01) discard;
 
     float distanceToLight = distance(v_uv, u_pointer);
-    float light = smoothstep(0.68, 0.0, distanceToLight);
+    float light = smoothstep(0.82, 0.0, distanceToLight);
     float sweep = sin((v_uv.x * 0.82 + v_uv.y * 1.18 + u_time * 0.035) * 18.0);
     float grain = hash(floor(v_uv * 240.0) + floor(u_time * 2.0)) - 0.5;
     vec3 spectrum = 0.5 + 0.5 * cos(
         6.2831853 * (v_uv.x * 0.72 + v_uv.y * 0.48 + u_time * 0.018)
         + vec3(0.0, 2.0943951, 4.1887902)
     );
-    vec3 foil = spectrum * (0.035 + light * 0.19) * (0.68 + sweep * 0.32);
+    vec3 foil = spectrum * (0.075 + light * 0.42) * (0.52 + sweep * 0.48);
     vec3 chroma = vec3(
-        light * 0.035 * (0.5 + spectrum.r),
-        light * 0.025 * (0.5 + spectrum.g),
-        light * 0.045 * (0.5 + spectrum.b)
+        light * 0.075 * (0.5 + spectrum.r),
+        light * 0.055 * (0.5 + spectrum.g),
+        light * 0.095 * (0.5 + spectrum.b)
     );
-    vec3 color = base.rgb + foil + chroma + grain * (0.018 + light * 0.035);
+    vec3 color = base.rgb * (1.0 + light * 0.12) + foil + chroma + grain * (0.03 + light * 0.07);
     gl_FragColor = vec4(clamp(color, 0.0, 1.0), base.a);
 }
 `;
